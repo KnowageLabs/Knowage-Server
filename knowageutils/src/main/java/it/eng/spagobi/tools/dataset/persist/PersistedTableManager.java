@@ -17,6 +17,19 @@
  */
 package it.eng.spagobi.tools.dataset.persist;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
@@ -37,19 +50,6 @@ import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 /**
  * Functions that manage the persistence of the dataset
@@ -540,12 +540,15 @@ public class PersistedTableManager implements IPersistedManager {
 		if (this.isRowCountColumIncluded()) {
 			IDataBase dataBase = DataBase.getDataBase(dataSource);
 			toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(PersistedTableManager.getRowCountColumnName(), dataSource) + " "
-					+ dataBase.getDataBaseType(Long.class) + " , ";
+					+ dataBase.getDataBaseType(Long.class);
+			toReturn += (md.getFieldCount() > 0) ? " , " : "";
 		}
 
+		logger.debug("Create table cmd : it will manage #" + md.getFieldCount() + " fields...");
 		for (int i = 0, l = md.getFieldCount(); i < l; i++) {
 			IFieldMetaData fmd = md.getFieldMeta(i);
 			String columnName = getSQLColumnName(fmd);
+			logger.debug("Adding field #" + i + " with column name [" + columnName + "]");
 			toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource) + getDBFieldType(dataSource, fmd);
 			toReturn += ((i < l - 1) ? " , " : "");
 		}
