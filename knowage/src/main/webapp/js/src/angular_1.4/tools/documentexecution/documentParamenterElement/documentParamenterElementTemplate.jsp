@@ -1,7 +1,3 @@
-<!--  md-button aria-label="Clear parameter" class="md-button md-icon-button"
-		ng-click="documentExecuteServices.resetParameter(parameter)">
-	<i class="fa fa-eraser"></i>
-</md-button-->
 <div flex layout-align="start" class="parametersSidenav">
 	
 	<!-- Map input -->		
@@ -31,7 +27,7 @@
 	<!-- lov LOOKUP single and multiple input -->
 	<div ng-if="parameter.selectionType=='LOOKUP'" layout="column" class="lookupParameter" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
-			<md-icon md-font-icon="fa fa-history" ng-click="documentExecuteServices.resetParameter(parameter)">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
@@ -53,7 +49,7 @@
 	<!-- Tree input -->
 	<div ng-if="parameter.selectionType=='TREE'" layout="column" class="lookupParameter">
 		<div layout="row" layout-align="start center" class="labelContainer">
-			<md-icon md-font-icon="fa fa-history" ng-click="documentExecuteServices.resetParameter(parameter)">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
@@ -100,7 +96,7 @@
 	<!-- manual text input -->
 	<div ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" layout-margin class="textInput">
 		<div layout="row" layout-align="start center" class="labelContainer">
-			<md-icon md-font-icon="fa fa-history" ng-click="documentExecuteServices.resetParameter(parameter)">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
@@ -113,7 +109,7 @@
 	<!-- lov list radio input -->
 	<div ng-if="parameter.selectionType=='LIST' && !parameter.multivalue" layout="column" layout-margin class="radioParameter">
 		<div layout="row" layout-align="start center" class="labelContainer">
-			<md-icon md-font-icon="fa fa-history" ng-click="documentExecuteServices.resetParameter(parameter)">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
@@ -128,7 +124,7 @@
 	<!-- lov list multiple input -->
 	<div ng-if="parameter.selectionType=='LIST' && parameter.multivalue" layout="column" layout-margin class="checkBoxParameter">
 		<div layout="row" layout-align="start center" class="labelContainer">
-			<md-icon md-font-icon="fa fa-history" ng-click="documentExecuteServices.resetParameter(parameter)">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
@@ -145,7 +141,7 @@
 	
 	<div ng-if="parameter.selectionType=='COMBOBOX'" layout="column" layout-margin class="selectParameter">
 		<div layout="row" layout-align="start center" class="labelContainer">
-			<md-icon md-font-icon="fa fa-history" ng-click="documentExecuteServices.resetParameter(parameter)">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 

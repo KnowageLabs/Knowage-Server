@@ -13,7 +13,7 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 	<div layout="row" layout-align="space-around center">	
 		<md-button aria-label="Reset Parameter" class="md-icon-button" ng-click="clearListParametersForm();">
 			<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.clear")}}</md-tooltip>
-			<md-icon md-font-icon="fa fa-history"></md-icon>
+			<md-icon md-font-icon="fa fa-reply-all"></md-icon>
 		</md-button>	
 		<% 
 		if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.SEE_VIEWPOINTS_FUNCTIONALITY}) || 
@@ -33,6 +33,9 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 </md-toolbar>
 		
 <div ng-show="showSelectRoles" ng-cloak layout-padding>
+	<div class="kn-info" ng-if="!selectedRole.name">
+		{{::translate.load("sbi.execution.parametersselection.info.selectuser")}}
+	</div>
 	<md-input-container class="md-block">
 		<label>{{::translate.load("sbi.users.roles")}}</label>
 		<md-select aria-label="aria-label" ng-model="selectedRole.name" ng-disabled="::crossNavigationScope.isNavigationInProgress()" >
