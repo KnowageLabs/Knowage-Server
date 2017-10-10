@@ -140,26 +140,20 @@ In this case you have to create those objects first, using the standard web GUI.
 + Request (application/json)
 
         {
-            "name": "Sales and costs",
-            "description": "",
-            "label": "Sales and costs",
+            "name": "My Report",
+            "description": "My Report",
+            "label": "My Report",
             "visible": true,
             "stateCode": "REL",
-            "creationUser": "demo_admin",
-            "objMetaDataAndContents": null,
-            "tenant": "DEFAULT",
-            "previewFile": null,
-            "docVersion": null,
+            "tenant": "DEMO",
             "parametersRegion": "east",
-            "dataSourceLabel": "foodmart",
-            "dataSetLabel": "DEMO_SALES_COSTS",
+            "dataSourceLabel": "Foodmart",
             "typeCode": "REPORT",
             "public": true,
-            "engine": "knowagebirtreportengine",
+            "engine": "knowagebirtreporteng",
             "functionalities": [
-                "/Functionalities/DOC_DEMO/Reports"
-            ],
-            "creationDate": "2015-04-20 10:12:08.0"
+                "/Functionalities/Demo/Demo_Dashboards/Single documents"
+            ]
         }
         
 + Response 200 (application/json)
