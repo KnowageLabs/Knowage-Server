@@ -19,6 +19,7 @@ package it.eng.spagobi.api;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -1033,7 +1034,7 @@ public class SelfServiceDataSetCRUD {
 						 * values, but rather those that are specified for types (Integer, Double, String). So, skip these two.
 						 */
 						if (!pvalue.equals("MEASURE") && !pvalue.equals("ATTRIBUTE")) {
-
+							Object obj = dataStore.getRecordAt(j).getFieldAt(index).getValue();
 							/**
 							 * Try to convert a value that current field has to the type that is set for that field. If the converting (casting) does not go
 							 * well, an exception will be thrown and we will handle it by providing an information about the validation problem for that
@@ -1044,7 +1045,11 @@ public class SelfServiceDataSetCRUD {
 							case "DOUBLE":
 
 								try {
-									Double.parseDouble((String) dataStore.getRecordAt(j).getFieldAt(index).getValue());
+
+									if(obj!=null && !(obj instanceof BigDecimal) && !(obj instanceof Double) && !(obj instanceof Float) ) {
+										Double.parseDouble(obj.toString());
+									}
+
 								} catch (NumberFormatException nfe) {
 									logger.error("The cell cannot be formatted as a Double value", nfe);
 									validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
@@ -1056,7 +1061,9 @@ public class SelfServiceDataSetCRUD {
 							case "INTEGER":
 
 								try {
-									Integer.parseInt((String) dataStore.getRecordAt(j).getFieldAt(index).getValue());
+									if(obj!=null && !(obj instanceof Integer) && !(obj instanceof Long)  ) {
+										Integer.parseInt(obj.toString());
+									}
 								} catch (NumberFormatException nfe) {
 									logger.error("The cell cannot be formatted as an Integer value", nfe);
 									validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
