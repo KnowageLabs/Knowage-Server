@@ -1102,6 +1102,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 										d2.id = parseInt(d2.id);
 										if(d1.id == d2.id){
 											angular.merge(d1,d2);
+											break;
 										}
 									}
 								}
