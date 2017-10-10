@@ -717,6 +717,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if(filterOperator != ""  //filterVals.length>0
 						){
 					var values=[];
+
+					// if filterOperator is IN and filterVals has , must split
+					if(filterOperator == "IN" && filterVals[0] && filterVals[0].includes(",") ){
+						filterVals = filterVals[0].split(",");
+					}
+
 					angular.forEach(filterVals, function(item){
 						this.push("('" + item + "')");
 					}, values);

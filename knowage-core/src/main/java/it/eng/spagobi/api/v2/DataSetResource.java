@@ -816,21 +816,7 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 							for (int j = 0; j < valuesArray.length; j++) {
 								String column = columnsList.get(j % columnsList.size());
 								String value = valuesArray[j];
-
-								// if filterOperator is IN and value contains , split values
-								if (filterOperator.equalsIgnoreCase("IN") && value.contains(",")) {
-									logger.debug("Multivalue case for IN clause, split");
-									String[] valuesSplitted = value.split(",");
-									for (int k = 0; k < valuesSplitted.length; k++) {
-										String valueSplitted = valuesSplitted[k];
-										valueSplitted = valueSplitted.trim();
-										valuesList.add(getValueForQuery(valueSplitted, dateColumnNamesList.contains(column), dataSource));
-									}
-
-								} else {
-									logger.debug("Single value case");
-									valuesList.add(getValueForQuery(value, dateColumnNamesList.contains(column), dataSource));
-								}
+								valuesList.add(getValueForQuery(value, dateColumnNamesList.contains(column), dataSource));
 							}
 						}
 
@@ -844,8 +830,12 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 						List<String> zeroOperandOperators = Arrays.asList("is null", "is not null");
 
 						if (filterOperator.equals("IN")) {
-							Operand rightOperand = new Operand(valuesList);
-							filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
+							if (!valuesList.isEmpty()) {
+								Operand rightOperand = new Operand(valuesList);
+								filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
+							} else {
+								filterCriteria = new FilterCriteria(leftOperand, "IS NULL", null);
+							}
 						} else if (oneOperandOperators.contains(filterOperator)) {
 							// if val not found do not put criteria, it could be already handled by associations
 							String val = "''";
