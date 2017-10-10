@@ -48,18 +48,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </form>
   	
 	<md-card class="placedWidget flexCard" ng-style="borderShadowStyle" ng-class="{'shadowedBox': extendedStyle.shadows, 'noTitle':(!extendedStyle.titles && !widExp),'editWidgetMode':cockpitModule_properties.EDIT_MODE}" layout="column" layout-fill>
-		<md-card-title ng-style="titleStyle">
+		<md-card-title ng-style="titleStyle" layout="row" layout-align="start center" ng-dblclick="editWidgetName();" ng-class="{'titleOnTop':editingWidgetName}">
 			<md-toolbar style="height:{{headerHeight}}px" class="widgetToolbar">
 				<div class="md-toolbar-tools draggableToolbar" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp)}" layout="row">
-					<span ng-click="editWidgetName(); "   class="md-headline editWidgetNameSpan " ng-style="titleStyle" ng-show="editingWidgetName!=true">{{ngModel.content.name | parameter_fill}}</span>
+					<span  class="md-headline editWidgetNameSpan " ng-style="titleStyle" ng-show="editingWidgetName!=true">{{ngModel.content.name | parameter_fill}}</span>
 					<div layout="row"  flex class="editWidgetNameInput" ng-show="editingWidgetName==true">
 						<md-input-container flex md-no-float class="md-block noMargin">
 				          <input ng-model="tmpWidgetContent.name" placeholder="Widget name">
 				        </md-input-container>
-				        <md-button class="md-icon-button saveEditText"  aria-label="edit"   ng-click="applyEditName()">
+				        <md-button class="md-icon-button saveEditText"  aria-label="edit"   ng-click="applyEditName($event)">
 							<md-icon md-font-icon="fa fa-check"  ></md-icon>
 						</md-button>
-						 <md-button class="md-icon-button cancelEditText"  aria-label="edit"  ng-click="cancelEditName()">
+						 <md-button class="md-icon-button cancelEditText"  aria-label="edit"  ng-click="cancelEditName($event)">
 							<md-icon md-font-icon="fa fa-times"  ></md-icon>
 						</md-button>
 					</div>
@@ -67,15 +67,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-toolbar>
 		</md-card-title>
 		<div class="showActionButtonHandler" ng-if="!widExp && !( cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE)" layout="row" layout-align="start">
-			<md-button class="md-icon-button alwaysOnTopButton" aria-label="unselectable button" ng-if="cliccable==true && ngModel.type=='chart'" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
-				<md-tooltip md-direction="top" md-delay="1000">
-          			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}}
-       			 </md-tooltip>
-				<span class="fa-stack">
-		  			<i class="fa fa-hand-o-up fa-stack-1x"></i>
-		  			<i ng-if="ngModel.cliccable==false" class="fa fa-ban fa-stack-2x fa-negative"></i>
-				</span>
-			</md-button>
 			<md-button class="md-icon-button menuOnTopButton"  aria-label="show menu" ng-click="showWidgetActionButtons()">
 				<md-icon md-font-icon="fa fa-ellipsis-v"></md-icon>
 			</md-button>
@@ -138,6 +129,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				  <i class="fa fa-refresh fa-stack-1x"></i>
 				  <i ng-if="ngModel.updateble==false" class="fa fa-ban fa-stack-2x fa-negative"></i>
 				</span>
+			</md-button>
+			
+			<md-button class="md-icon-button" aria-label="unselectable button" ng-if="cliccable==true && ngModel.type=='chart'" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
+				<md-tooltip md-direction="top" md-delay="1000">
+          			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}}
+       			 </md-tooltip>
+       			 <i class="fa fa-mouse-pointer" ng-show="ngModel.cliccable"></i>
+       			 <i class="fa fa-filter" ng-show="!ngModel.cliccable"></i>
+				<!--  span class="fa-stack">
+		  			<i class="fa fa-hand-o-up fa-stack-1x"></i>
+		  			<i ng-if="ngModel.cliccable==false" class="fa fa-ban fa-stack-2x fa-negative"></i>
+				</span-->
 			</md-button>
 
 			

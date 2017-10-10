@@ -787,12 +787,14 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			angular.copy($scope.ngModel.content,$scope.tmpWidgetContent);
 		}
 	}
-	$scope.applyEditName=function(){
+	$scope.applyEditName=function(e){
+		e.stopPropagation();
 		$scope.editingWidgetName=false;
 		$scope.ngModel.content.name=$scope.tmpWidgetContent.name;
 		$scope.tmpWidgetContent={};
 	}
-	$scope.cancelEditName=function(){
+	$scope.cancelEditName=function(e){
+		e.stopPropagation();
 		$scope.editingWidgetName=false;
 		$scope.tmpWidgetContent={};
 	}
@@ -801,8 +803,6 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		angular.copy({},$scope.extendedStyle);
 		angular.copy({},$scope.borderShadowStyle);
 		angular.copy({},$scope.titleStyle);
-		//angular.copy({},$scope.headerHeight);
-		//$scope.headerHeight={};
 
 		// update extended style
 		angular.copy(angular.merge({},cockpitModule_template.configuration.style,$scope.ngModel.style),$scope.extendedStyle);

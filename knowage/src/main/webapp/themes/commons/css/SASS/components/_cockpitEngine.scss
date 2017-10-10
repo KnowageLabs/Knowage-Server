@@ -680,6 +680,10 @@
             
             md-card-title{
            	 flex: inherit;
+           	 &.titleOnTop {
+           	 	position: relative;
+           	 	z-index: 9999;
+           	 }
             }
             &:hover {
             	.showActionButtonHandler {
@@ -690,9 +694,9 @@
 			    position: absolute;
 			    right: 0;
 			    opacity: 0;
-				//width: 40px;
+				width: 60px;
 				height: 40px;
-				z-index: 9999;
+				z-index: 9990;
 				button:hover {
 					background-color: rgba($ternaryColor, 0.5);
 				}
