@@ -885,15 +885,22 @@ public class BIObject implements Serializable, Cloneable {
 	public void setStateCodeStr(String stateCodeStr) {
 		this.stateCodeStr = stateCodeStr;
 	}
-	 @Override
-	  public boolean equals(Object v) {
-	        boolean retVal = false;
 
-	        if (v instanceof BIObject){
-	        	BIObject ptr = (BIObject) v;
-	            retVal = ptr.id.longValue() == this.id;
-	        }
+	@Override
+	public boolean equals(Object v) {
+		if (this == v) return true;
+		
+		boolean toReturn = false;
 
-	     return retVal;
-	  }
+		if (v instanceof BIObject) {
+			BIObject ptr = (BIObject) v;
+			if (ptr.id != null) {
+				toReturn = ptr.id.longValue() == this.id;
+			} else {
+				toReturn = ptr.label.equals(this.label);
+			}
+		}
+
+		return toReturn;
+	}
 }

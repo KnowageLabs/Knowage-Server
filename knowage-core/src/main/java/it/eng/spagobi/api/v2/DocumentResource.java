@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -73,6 +74,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IOutputParameterDAO;
+import it.eng.spagobi.api.AbstractDocumentResource;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -118,7 +120,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 @Path("/2.0/documents")
 @ManageAuthorization
-public class DocumentResource extends AbstractSpagoBIResource {
+public class DocumentResource extends AbstractDocumentResource {
 	static protected Logger logger = Logger.getLogger(DocumentResource.class);
 
 	@GET
@@ -140,6 +142,13 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		return JsonConverter.objectToJson(parameters, parameters.getClass());
 	}
 
+	@POST
+	@Path("/")
+	@Consumes("application/json")
+	public Response insertDocument(String body) {
+		return super.insertDocument(body);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/withData")

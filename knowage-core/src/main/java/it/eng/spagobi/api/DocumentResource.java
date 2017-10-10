@@ -86,7 +86,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
  */
 @Path("/1.0/documents")
 @ManageAuthorization
-public class DocumentResource extends AbstractSpagoBIResource {
+public class DocumentResource extends AbstractDocumentResource {
 	static protected Logger logger = Logger.getLogger(DocumentResource.class);
 
 /*	@GET
@@ -131,41 +131,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Consumes("application/json")
 	public Response insertDocument(String body) {
-		BIObject document = (BIObject) JsonConverter.jsonToValidObject(body, BIObject.class);
-
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-
-		document.setTenant(getUserProfile().getOrganization());
-		document.setCreationUser((String) getUserProfile().getUserId());
-
-		List<Integer> functionalities = document.getFunctionalities();
-		for (Integer functionality : functionalities) {
-			if (!ObjectsAccessVerifier.canDev(functionality, getUserProfile())) {
-				String path = "";
-				try {
-					path = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(functionality, false).getPath();
-				} catch (EMFUserError e) {
-					// Do nothing, the correct SpagoBIRuntimeException will be
-					// throwed anyway. Only the path will be missing
-				}
-
-				throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to create a document inside [" + path + "]");
-			}
-		}
-
-		if (documentManager.isAnExistingDocument(document))
-			throw new SpagoBIRuntimeException("The document already exists");
-
-		documentManager.saveDocument(document, null);
-
-		try {
-			String encodedLabel = URLEncoder.encode(document.getLabel(), "UTF-8");
-			encodedLabel = encodedLabel.replaceAll("\\+", "%20");
-			return Response.created(new URI("1.0/documents/" + encodedLabel)).build();
-		} catch (Exception e) {
-			logger.error("Error while creating url of the new resource", e);
-			throw new SpagoBIRuntimeException("Error while creating url of the new resource", e);
-		}
+		return super.insertDocument(body);
 	}
 
 	@GET
