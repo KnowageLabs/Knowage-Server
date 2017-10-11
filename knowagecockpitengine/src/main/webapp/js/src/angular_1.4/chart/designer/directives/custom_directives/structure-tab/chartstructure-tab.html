@@ -509,10 +509,10 @@
 			</md-toolbar>
 			
 			<!-- hide-md: Hide if the width of the screen is lower than 1280px -->
-			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element" style="overflow:auto">		
-				<div ng-show="true">
+			<md-whiteframe flex layout class="md-whiteframe-4dp whiteframe-element" style="overflow:auto">		
+				<div ng-show="true" flex layout>
 					<md-content flex>					
-						<div ng-include src="structureTabDetailsTemplateURL"></div>					
+						<div ng-include src="structureTabDetailsTemplateURL" flex layout></div>					
 					</md-content>
 				</div>			
 			</md-whiteframe>
