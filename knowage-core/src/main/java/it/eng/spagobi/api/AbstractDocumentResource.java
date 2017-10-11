@@ -23,14 +23,21 @@ import java.util.List;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
+import org.apache.clerezza.jaxrs.utils.form.FormFile;
+import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
@@ -147,4 +154,121 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		logger.debug("Document identifier [" + documentIdentifier + "]");
 		return documentIdentifier;
 	}
+	
+	public Response getDocumentTemplate(String label) {
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		BIObject document = documentManager.getDocument(label);
+		if (document == null)
+			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
+
+		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
+			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label
+					+ "]");
+
+		ResponseBuilder rb;
+		ObjTemplate template = document.getActiveTemplate();
+
+		// The template has not been found
+		if (template == null)
+			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't contain a template");
+		try {
+			rb = Response.ok(template.getContent());
+		} catch (Exception e) {
+			logger.error("Error while getting document template", e);
+			throw new SpagoBIRuntimeException("Error while getting document template", e);
+		}
+
+		rb.header("Content-Disposition", "attachment; filename=" + document.getActiveTemplate().getName());
+		return rb.build();
+	}
+	
+	public Response addDocumentTemplate(String label, MultiPartBody input) {
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
+		BIObject document = documentManager.getDocument(label);
+		if (document == null)
+			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
+
+		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
+			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName()
+					+ "] has no rights to manage the template of document with label [" + label + "]");
+
+		final FormFile file = input.getFormFileParameterValues("file")[0];
+
+		if (file == null)
+			return Response.status(Response.Status.BAD_REQUEST).build();
+
+		try {
+
+			byte[] content = file.getContent();
+
+			ObjTemplate template = new ObjTemplate();
+			template.setContent(content);
+			template.setName(file.getFileName());
+
+			documentManager.saveDocument(document, template);
+
+			return Response.ok().build();
+		} catch (SpagoBIRuntimeException e) {
+			throw e;
+		} catch (Exception e) {
+			logger.error("Error while getting the template", e);
+			throw new SpagoBIRuntimeException("Error while getting the template", e);
+		}
+
+	}
+	
+	public Response deleteCurrentTemplate(String documentLabel) {
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		BIObject document = documentManager.getDocument(documentLabel);
+		if (document == null)
+			throw new SpagoBIRuntimeException("Document with label [" + documentLabel + "] doesn't exist");
+
+		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
+			throw new SpagoBIRuntimeException(
+					"User [" + getUserProfile().getUserName() + "] has no rights to manage the template of document with label [" + documentLabel + "]");
+
+		IObjTemplateDAO templateDAO = null;
+		try {
+			templateDAO = DAOFactory.getObjTemplateDAO();
+			ObjTemplate template = templateDAO.getBIObjectActiveTemplate(document.getId());
+			if (template != null) {
+				templateDAO.setPreviousTemplateActive(document.getId(), template.getId());
+				templateDAO.deleteBIObjectTemplate(template.getId());
+			} else {
+				logger.debug("Document with label [" + documentLabel + "] has no active template, nothing to delete...");
+			}
+
+		} catch (Exception e) {
+			logger.error("Error with deleting current template for document with label: " + documentLabel, e);
+			throw new SpagoBIRestServiceException("Error with deleting template for document with label: " + documentLabel, buildLocaleFromSession(), e);
+		}
+		return Response.ok().build();
+	}
+	
+	public Response deleteTemplateById(String documentLabel, Integer templateId) {
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		BIObject document = documentManager.getDocument(documentLabel);
+		if (document == null)
+			throw new SpagoBIRuntimeException("Document with label [" + documentLabel + "] doesn't exist");
+
+		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
+			throw new SpagoBIRuntimeException(
+					"User [" + getUserProfile().getUserName() + "] has no rights to manage the template of document with label [" + documentLabel + "]");
+
+		IObjTemplateDAO templateDAO = null;
+		try {
+			templateDAO = DAOFactory.getObjTemplateDAO();
+			if (document.getActiveTemplate().getId().equals(templateId)) {
+				templateDAO.setPreviousTemplateActive(document.getId(), templateId);
+			}
+			templateDAO.deleteBIObjectTemplate(templateId);
+
+		} catch (Exception e) {
+			logger.error("Error with deleting template with id: " + templateId, e);
+			throw new SpagoBIRestServiceException("Error with deleting template with id: " + templateId, buildLocaleFromSession(), e);
+		}
+		return Response.ok().build();
+	}
+
 }

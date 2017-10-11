@@ -49,6 +49,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
@@ -892,32 +893,32 @@ public class DocumentResource extends AbstractDocumentResource {
 		}
 
 	}
+	
+	@GET
+	@Path("/{label}/template")
+	public Response getDocumentTemplate(@PathParam("label") String label) {
+		return super.getDocumentTemplate(label);
+	}
+	
+	@POST
+	@Path("/{label}/template")
+	public Response addDocumentTemplate(@PathParam("label") String label, MultiPartBody input) {
+		return super.addDocumentTemplate(label, input);
+	}
 
+	@DELETE
+	@Path("/{label}/template")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response deleteCurrentTemplate(@PathParam("label") String label) {
+		return super.deleteCurrentTemplate(label);
+	}
+	
 	@DELETE
 	@Path("/{label}/template/{id}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response deleteTemplate(@PathParam("label") String label, @PathParam("id") Integer tempId) {
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-		BIObject document = documentManager.getDocument(label);
-		if (document == null)
-			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
-
-		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
-			throw new SpagoBIRuntimeException(
-					"User [" + getUserProfile().getUserName() + "] has no rights to manage the template of document with label [" + label + "]");
-
-		IObjTemplateDAO templateDAO = null;
-		try {
-			templateDAO = DAOFactory.getObjTemplateDAO();
-			if (document.getActiveTemplate().getId().equals(tempId)) {
-				templateDAO.setPreviousTemplateActive(document.getId(), tempId);
-			}
-			templateDAO.deleteBIObjectTemplate(tempId);
-
-		} catch (Exception e) {
-			logger.error("Error with deleting template with id: " + tempId, e);
-			throw new SpagoBIRestServiceException("Error with deleting template with id: " + tempId, buildLocaleFromSession(), e);
-		}
-		return Response.ok().build();
+	public Response deleteTemplateById(@PathParam("label") String label, @PathParam("id") Integer templateId) {
+		return super.deleteTemplateById(label, templateId);
 	}
+	
+
 }

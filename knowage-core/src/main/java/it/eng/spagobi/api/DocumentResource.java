@@ -158,30 +158,7 @@ public class DocumentResource extends AbstractDocumentResource {
 	@GET
 	@Path("/{label}/template")
 	public Response getDocumentTemplate(@PathParam("label") String label) {
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-		BIObject document = documentManager.getDocument(label);
-		if (document == null)
-			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
-
-		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
-			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label
-					+ "]");
-
-		ResponseBuilder rb;
-		ObjTemplate template = document.getActiveTemplate();
-
-		// The template has not been found
-		if (template == null)
-			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't contain a template");
-		try {
-			rb = Response.ok(template.getContent());
-		} catch (Exception e) {
-			logger.error("Error while getting document template", e);
-			throw new SpagoBIRuntimeException("Error while getting document template", e);
-		}
-
-		rb.header("Content-Disposition", "attachment; filename=" + document.getActiveTemplate().getName());
-		return rb.build();
+		return super.getDocumentTemplate(label);
 	}
 
 	@GET
@@ -217,44 +194,10 @@ public class DocumentResource extends AbstractDocumentResource {
 		return rb.build();
 	}
 
-	// The file has to be put in a field called "file"
 	@POST
 	@Path("/{label}/template")
 	public Response addDocumentTemplate(@PathParam("label") String label, MultiPartBody input) {
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-		BIObject document = documentManager.getDocument(label);
-		if (document == null)
-			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
-
-		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
-			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to manage the template of document with label ["
-					+ label + "]");
-		
-		final FormFile file = input.getFormFileParameterValues("file")[0];
-		
-		if (file == null)
-			return Response.status(Response.Status.BAD_REQUEST).build();
-
-
-			try {
-
-				byte[] content = file.getContent();
-
-				ObjTemplate template = new ObjTemplate();
-				template.setContent(content);
-				template.setName(file.getFileName());
-
-				documentManager.saveDocument(document, template);
-
-				return Response.ok().build();
-			} catch (SpagoBIRuntimeException e) {
-				throw e;
-			} catch (Exception e) {
-				logger.error("Error while getting the template", e);
-				throw new SpagoBIRuntimeException("Error while getting the template", e);
-			}
-
-
+		return super.addDocumentTemplate(label, input);
 	}
 
 	@GET
