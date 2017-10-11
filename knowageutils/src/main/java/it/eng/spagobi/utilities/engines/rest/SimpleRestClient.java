@@ -34,6 +34,11 @@ import org.apache.axis.encoding.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.SingletonConfig;
@@ -117,14 +122,14 @@ public class SimpleRestClient {
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected Response executePostServiceWithFormParams(Map<String, Object> parameters, Map<String, Object> form, String serviceUrl, String userId,
-			String mediaType) throws Exception {
+	protected Response executePostServiceWithFormParams(Map<String, Object> parameters, byte[] form, String serviceUrl, String userId, String mediaType)
+			throws Exception {
 		return executeService(parameters, form, serviceUrl, userId, RequestTypeEnum.POST, mediaType, null);
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	private Response executeService(Map<String, Object> parameters, Map<String, Object> form, String serviceUrl, String userId, RequestTypeEnum type,
-			String mediaType, Object data) throws Exception {
+	private Response executeService(Map<String, Object> parameters, byte[] form, String serviceUrl, String userId, RequestTypeEnum type, String mediaType,
+			Object data) throws Exception {
 		logger.debug("IN");
 
 		MultivaluedMap<String, Object> myHeaders = new MultivaluedHashMap<String, Object>();
@@ -142,6 +147,11 @@ public class SimpleRestClient {
 		Client client = ClientBuilder.newBuilder().sslContext(SSLContext.getDefault()).build();
 
 		WebTarget target = client.target(serviceUrl);
+		Builder request = target.request(mediaType);
+
+		logger.debug("adding headers");
+
+		addAuthorizations(request, userId, myHeaders);
 
 		if (parameters != null) {
 			Iterator<String> iter = parameters.keySet().iterator();
@@ -152,23 +162,33 @@ public class SimpleRestClient {
 			}
 		}
 
-		Builder request = target.request(mediaType);
-
-		logger.debug("adding headers");
-		addAuthorizations(request, userId, myHeaders);
-
 		logger.debug("Call service");
 		Response response = null;
 
 		// provide authentication exactly before of call
 		authenticationProvider.provideAuthentication(request, target, myHeaders, data);
 		if (type.equals(RequestTypeEnum.POST))
-			if (form == null && data != null) {
+			if (form == null) {
 				response = request.post(Entity.json(data.toString()));
-			} else if (form != null) {
-				response = request.post(Entity.entity(form, mediaType));
 			} else {
-				response = request.post(Entity.json("{x:'x'}"));// fake json object
+				try {
+
+					MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+					builder.addPart("file", new ByteArrayBody(form, "file"));
+					HttpPost request1 = new HttpPost(serviceUrl);
+					request1.setEntity(builder.build());
+					org.apache.http.client.HttpClient client1 = new DefaultHttpClient();
+
+					String encodedBytes = Base64.encode(userId.getBytes("UTF-8"));
+					request1.addHeader("Authorization", "Direct " + encodedBytes);
+
+					authenticationProvider.provideAuthenticationMultiPart(request1, myHeaders);
+
+					HttpResponse response1 = client1.execute(request1);
+
+				} catch (Exception e) {
+					logger.debug("Error while persisting the PPT in the database.");
+				}
 			}
 
 		else

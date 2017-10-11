@@ -569,6 +569,12 @@
 		    <version>9.2.12.v20150709</version>
 		    <scope>test</scope>
 		</dependency>
+
+         <dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+             <artifactId>httpmime</artifactId>
+             <version>4.3.1</version>
+         </dependency>
 		
 	</dependencies>
 	

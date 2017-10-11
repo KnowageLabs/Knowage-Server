@@ -8,7 +8,6 @@ package it.eng.knowage.api.dossier.utils;
 
 import java.io.File;
 
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -18,11 +17,7 @@ public class DossierExecutionUtilities {
 
 	public static File getDossierExecutionFolder() {
 
-		String resourcePath = "";
-		String jndiBean = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-		if (jndiBean != null) {
-			resourcePath = SpagoBIUtilities.readJndiResource(jndiBean) + "/SPAGOBI";
-		}
+		String resourcePath = SpagoBIUtilities.getResourcePath();
 
 		File file = new File(resourcePath);
 		if (!file.exists()) {

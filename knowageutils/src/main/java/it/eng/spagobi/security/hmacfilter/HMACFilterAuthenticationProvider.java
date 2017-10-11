@@ -17,9 +17,6 @@
  */
 package it.eng.spagobi.security.hmacfilter;
 
-import it.eng.spagobi.utilities.Helper;
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
@@ -32,8 +29,12 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.http.client.methods.HttpPost;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * Provide client HMAC authentication for {@link HMACFilter}.
@@ -58,27 +59,27 @@ public class HMACFilterAuthenticationProvider {
 		this.validator = validator;
 	}
 
-//	/**
-//	 * For REST Easy {@link ClientRequest}
-//	 *
-//	 * @param req
-//	 * @throws HMACSecurityException
-//	 */
-//	public void provideAuthentication(ClientRequest req) throws HMACSecurityException {
-//		Helper.checkNotNull(req, "req");
-//
-//		String token = validator.generateToken();
-//		Assert.assertNotNull(token, "token");
-//		String signature;
-//		try {
-//			signature = getSignature(req, token);
-//		} catch (Exception e) {
-//			throw new HMACSecurityException("Problems while signing the request", e);
-//		}
-//
-//		req.header(HMACUtils.HMAC_TOKEN_HEADER, token);
-//		req.header(HMACUtils.HMAC_SIGNATURE_HEADER, signature);
-//	}
+	// /**
+	// * For REST Easy {@link ClientRequest}
+	// *
+	// * @param req
+	// * @throws HMACSecurityException
+	// */
+	// public void provideAuthentication(ClientRequest req) throws HMACSecurityException {
+	// Helper.checkNotNull(req, "req");
+	//
+	// String token = validator.generateToken();
+	// Assert.assertNotNull(token, "token");
+	// String signature;
+	// try {
+	// signature = getSignature(req, token);
+	// } catch (Exception e) {
+	// throw new HMACSecurityException("Problems while signing the request", e);
+	// }
+	//
+	// req.header(HMACUtils.HMAC_TOKEN_HEADER, token);
+	// req.header(HMACUtils.HMAC_SIGNATURE_HEADER, signature);
+	// }
 
 	/**
 	 * For REST Easy {@link ClientRequest}
@@ -86,7 +87,7 @@ public class HMACFilterAuthenticationProvider {
 	 * @param req
 	 * @throws HMACSecurityException
 	 */
-	public void provideAuthentication(Builder request, WebTarget target,  MultivaluedMap<String, Object> myHeaders, Object data) throws HMACSecurityException {
+	public void provideAuthentication(Builder request, WebTarget target, MultivaluedMap<String, Object> myHeaders, Object data) throws HMACSecurityException {
 		Helper.checkNotNull(request, "req");
 
 		String token = validator.generateToken();
@@ -100,6 +101,25 @@ public class HMACFilterAuthenticationProvider {
 
 		request.header(HMACUtils.HMAC_TOKEN_HEADER, token);
 		request.header(HMACUtils.HMAC_SIGNATURE_HEADER, signature);
+		myHeaders.add(HMACUtils.HMAC_TOKEN_HEADER, token);
+		myHeaders.add(HMACUtils.HMAC_SIGNATURE_HEADER, signature);
+
+	}
+
+	public void provideAuthenticationMultiPart(HttpPost request, MultivaluedMap<String, Object> myHeaders) throws HMACSecurityException {
+		Helper.checkNotNull(request, "req");
+
+		String token = validator.generateToken();
+		Assert.assertNotNull(token, "token");
+		String signature;
+		try {
+			signature = getSignatureM(request, myHeaders, token);
+		} catch (Exception e) {
+			throw new HMACSecurityException("Problems while signing the request", e);
+		}
+
+		request.addHeader(HMACUtils.HMAC_TOKEN_HEADER, token);
+		request.addHeader(HMACUtils.HMAC_SIGNATURE_HEADER, signature);
 		myHeaders.add(HMACUtils.HMAC_TOKEN_HEADER, token);
 		myHeaders.add(HMACUtils.HMAC_SIGNATURE_HEADER, signature);
 
@@ -125,45 +145,55 @@ public class HMACFilterAuthenticationProvider {
 		method.addRequestHeader(HMACUtils.HMAC_SIGNATURE_HEADER, signature);
 	}
 
-//	private String getSignature(ClientRequest req, String token) throws IOException, Exception {
-//		String res = HMACUtils.sign(getBody(req), getQueryPath(req), getParamsString(req), getHeaders(req), token, key);
-//		return res;
-//	}
+	// private String getSignature(ClientRequest req, String token) throws IOException, Exception {
+	// String res = HMACUtils.sign(getBody(req), getQueryPath(req), getParamsString(req), getHeaders(req), token, key);
+	// return res;
+	// }
 
-	private String getSignature(Builder request, WebTarget target, Object data, MultivaluedMap<String, Object> myHeaders, String token) throws IOException, Exception {
+	private String getSignature(Builder request, WebTarget target, Object data, MultivaluedMap<String, Object> myHeaders, String token)
+			throws IOException, Exception {
 		ObjectMapper mo = new ObjectMapper();
 		String body = "";
-
-
 
 		String res = HMACUtils.sign(body, getQueryPath(target), "", getHeaders(myHeaders), token, key);
 		return res;
 	}
 
+	private String getSignatureM(HttpPost request, MultivaluedMap<String, Object> myHeaders, String token) throws IOException, Exception {
+		ObjectMapper mo = new ObjectMapper();
+		String body = "";
 
+		String res = HMACUtils.sign(body, request.getURI().getPath(), "", getHeaders(myHeaders), token, key);
+		return res;
+	}
 
 	private String getSignature(HttpMethodBase method, String body, String token) throws IOException, Exception {
 		String res = HMACUtils.sign(body, getQueryPath(method), getParamsString(method), getHeaders(method), token, key);
 		return res;
 	}
 
-//	private static String getHeaders(ClientRequest req) {
-//		MultivaluedMap<String, String> headers = req.getHeaders();
-//		StringBuilder res = new StringBuilder();
-//		for (String name : HMACUtils.HEADERS_SIGNED) {
-//			List<String> values = headers.get(name); // only 1 value admitted
-//			if (values == null) {
-//				// header not present
-//				continue;
-//			}
-//			Assert.assertTrue(values.size() == 1, "only one value admitted for each header");
-//			res.append(name);
-//			res.append(values.get(0));
-//		}
-//		return res.toString();
-//	}
-//
-//
+	private String getSignatureM(HttpMethodBase method, String body, String token) throws IOException, Exception {
+		String res = HMACUtils.sign(body, getQueryPath(method), getParamsString(method), getHeaders(method), token, key);
+		return res;
+	}
+
+	// private static String getHeaders(ClientRequest req) {
+	// MultivaluedMap<String, String> headers = req.getHeaders();
+	// StringBuilder res = new StringBuilder();
+	// for (String name : HMACUtils.HEADERS_SIGNED) {
+	// List<String> values = headers.get(name); // only 1 value admitted
+	// if (values == null) {
+	// // header not present
+	// continue;
+	// }
+	// Assert.assertTrue(values.size() == 1, "only one value admitted for each header");
+	// res.append(name);
+	// res.append(values.get(0));
+	// }
+	// return res.toString();
+	// }
+	//
+	//
 	private static String getHeaders(MultivaluedMap<String, Object> headers) {
 
 		StringBuilder res = new StringBuilder();
@@ -180,39 +210,39 @@ public class HMACFilterAuthenticationProvider {
 		return res.toString();
 	}
 
-//	private static String getBody(ClientRequest req) throws IOException {
-//		Object body = req.getBody();
-//		if (body == null) {
-//			return "";
-//		}
-//		if (body instanceof String) {
-//			String bodyS = (String) body;
-//			return bodyS;
-//		}
-//		if (body instanceof InputStream) {
-//			InputStream stream = (InputStream) body;
-//			String s = StringUtilities.readStream(stream);
-//			// replace the already read stream
-//			InputStream replace = new ByteArrayInputStream(s.getBytes(StringUtilities.DEFAULT_CHARSET));
-//			req.body(req.getBodyContentType(), replace);
-//			return s;
-//		}
-//		Assert.assertUnreachable("body object not supported");
-//		return null;
-//	}
+	// private static String getBody(ClientRequest req) throws IOException {
+	// Object body = req.getBody();
+	// if (body == null) {
+	// return "";
+	// }
+	// if (body instanceof String) {
+	// String bodyS = (String) body;
+	// return bodyS;
+	// }
+	// if (body instanceof InputStream) {
+	// InputStream stream = (InputStream) body;
+	// String s = StringUtilities.readStream(stream);
+	// // replace the already read stream
+	// InputStream replace = new ByteArrayInputStream(s.getBytes(StringUtilities.DEFAULT_CHARSET));
+	// req.body(req.getBodyContentType(), replace);
+	// return s;
+	// }
+	// Assert.assertUnreachable("body object not supported");
+	// return null;
+	// }
 
-//	private static String getParamsString(ClientRequest req) throws Exception {
-//		String uri = req.getUri();
-//		URL url = new URL(uri);
-//		return url.getQuery();
-//	}
-//
-//
-//	private static String getQueryPath(ClientRequest req) throws Exception {
-//		String uri = req.getUri();
-//		URL url = new URL(uri);
-//		return url.getPath();
-//	}
+	// private static String getParamsString(ClientRequest req) throws Exception {
+	// String uri = req.getUri();
+	// URL url = new URL(uri);
+	// return url.getQuery();
+	// }
+	//
+	//
+	// private static String getQueryPath(ClientRequest req) throws Exception {
+	// String uri = req.getUri();
+	// URL url = new URL(uri);
+	// return url.getPath();
+	// }
 
 	private static String getQueryPath(WebTarget target) throws Exception {
 		URI uri = target.getUri();
