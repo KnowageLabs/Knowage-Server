@@ -127,7 +127,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 
 					// delete no more present filters
-					for(var i=0;i<filtersToRemoveIndexArray.length;i++){
+					for(var i=filtersToRemoveIndexArray.length-1;i>=0;i--){
 						$scope.ngModelShared.filters.splice(filtersToRemoveIndexArray[i], 1);
 					}
 
