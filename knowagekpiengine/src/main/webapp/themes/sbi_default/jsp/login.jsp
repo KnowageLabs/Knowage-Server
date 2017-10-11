@@ -231,23 +231,26 @@
                 
 		<div>
 		<div class="row">
-			 <div class="col-sm-4">
+			<!--
+			<div class="col-sm-4">
 				<button data-toggle="tooltip" data-placement="bottom" aria-label="Business User (biuser/biuser)" title="Business User (biuser/biuser)" type="button" class="btn btn-default" onclick="setUser('biuser','biuser'); login.submit()" >
 				<span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span>
 				</button>
-			 </div>
-			 <div class="col-sm-4">
+			</div>
+			<div class="col-sm-4">
 				<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" aria-label="Showcase User (bidemo/bidemo)" title="Showcase User (bidemo/bidemo)" onclick="setUser('bidemo','bidemo'); login.submit()">
 				<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
 				</button>
-			 </div>
-			 <div class="col-sm-4">
+			</div>
+			<div class="col-sm-4">
 				<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" aria-label="Administrator (biadmin/biadmin)" title="Administrator (biadmin/biadmin)" onclick="setUser('biadmin','biadmin'); login.submit()">
 				<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
 				</button>
-			 </div>
-			 <!-- Uncommet this for adding the Change Password Link -->
-			 <!-- <div class="col-sm-6"><a class="lightLink" href="<%=contextName %>/ChangePwdServlet?start_url=<%=startUrl%>">	<%=msgBuilder.getMessage("changePwd")%> </a></div> -->
+			</div>
+			-->
+			
+			<!-- Uncommet this for adding the Change Password Link -->
+			<!-- <div class="col-sm-6"><a class="lightLink" href="<%=contextName %>/ChangePwdServlet?start_url=<%=startUrl%>">	<%=msgBuilder.getMessage("changePwd")%> </a></div> -->
 		</div>
 		<div class ="row" style='color: red; font-size: 11pt;'><br /><%=authFailed%></div>
 		
