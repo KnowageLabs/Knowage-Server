@@ -495,6 +495,11 @@
 				label {
 					padding-left: 6px;
 					font-size: $headerFontSize;
+					&.filterLabel {
+						white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
+					}
 				}
 				&:nth-child(even) {
 					background-color: lighten($ternaryColor,15%);
