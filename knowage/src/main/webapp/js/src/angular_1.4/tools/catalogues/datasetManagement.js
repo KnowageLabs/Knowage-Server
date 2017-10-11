@@ -862,17 +862,22 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	$scope.reverseOrdering = reverseOrdering;
     	$scope.columnOrdering = columnOrdering;
     	$scope.searchValue = searchValue;
+    	var columnOrderingLabel = "";
+    	if($scope.columnOrdering){
+    		columnOrderingLabel = $scope.columnOrdering.label;
+    	}
+    	
     	if($scope.searchValue!=""){
     		sbiModule_restServices.promiseGet("1.0/datasets", "countDataSetSearch/"+$scope.searchValue)
     		.then(function(response) {
     			$scope.numOfDs = response.data;
-    			$scope.loadDatasetList(0, itemsPerPage, searchValue,  columnOrdering.label,reverseOrdering);
+    			$scope.loadDatasetList(0, itemsPerPage, searchValue,  columnOrderingLabel,reverseOrdering);
     		}, function(response) {
     			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
     		});
 
     	} else if ($scope.searchValue=="") {
-    		$scope.loadDatasetList(0, itemsPerPage, searchValue, columnOrdering.label,reverseOrdering);
+    		$scope.loadDatasetList(0, itemsPerPage, searchValue, columnOrderingLabel,reverseOrdering);
     	}
     };
 
@@ -894,10 +899,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     				$scope.reverseOrdering=false;
     			}
     			
-    			if($scope.columnOrdering==undefined){
-    				$scope.columnOrdering="";
-    			}
-    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue,$scope.columnOrdering.label, $scope.reverseOrdering);
+    			var columnOrderingLabel = "";
+    	    	if($scope.columnOrdering){
+    	    		columnOrderingLabel = $scope.columnOrdering.label;
+    	    	}
+    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue,columnOrderingLabel, $scope.reverseOrdering);
     		}, function(response) {
     			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
     		});
@@ -998,12 +1004,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 									function(response) {
 
 			 						   				sbiModule_messaging.showSuccessMessage($scope.translate.format($scope.translate.load('sbi.ds.deletedataset.success'), item.label));
-
+			 						   			var columnOrderingLabel = "";
+			 					    	    	if($scope.columnOrdering){
+			 					    	    		columnOrderingLabel = $scope.columnOrdering.label;
+			 					    	    	}
 				 						   			var start = 0;
 				 					    			if($scope.currentPageNumber>1){
 				 					    				start = ($scope.currentPageNumber - 1) * $scope.currentItemsPerPage;
 				 					    			}
-				 					    			$scope.loadDatasetList(start, $scope.currentItemsPerPage, null,$scope.columnOrdering.label,$scope.reverseOrdering);
+				 					    			$scope.loadDatasetList(start, $scope.currentItemsPerPage, null,columnOrderingLabel,$scope.reverseOrdering);
 			 						   				/*// If the dataset that is deleted is selected, deselect it and hence close its details.
 			 						   				if ($scope.selectedDataSet && $scope.selectedDataSet.label == item.label) {
 			 						   					$scope.selectedDataSet = null;
