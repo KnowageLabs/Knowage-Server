@@ -1,5 +1,15 @@
 .kn-measure-list {
-
+	.saveDialogMeasureKpi {
+		.saveDialogMeasureKpiName {
+			margin: 20px 8px 5px 8px !important;
+			.md-errors-spacer{
+				display: none;
+			}
+			.md-chips {
+				box-shadow: none;
+			}
+		}
+	}
 }
 
 /* IE11 fix */

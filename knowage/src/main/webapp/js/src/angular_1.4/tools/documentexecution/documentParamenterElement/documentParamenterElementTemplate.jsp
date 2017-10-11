@@ -47,7 +47,7 @@
 	</div>
 	
 	<!-- Tree input -->
-	<div ng-if="parameter.selectionType=='TREE'" layout="column" class="lookupParameter">
+	<div ng-if="parameter.selectionType=='TREE'" layout="column" class="lookupParameter" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
@@ -69,14 +69,24 @@
 	</div>
 			
 	<!-- Date -->
-	<div ng-if="parameter.type=='DATE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" class="datePicker" >
-		<label 	ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label>
-		<md-datepicker ng-model="parameter.parameterValue"  md-placeholder="{{parameter.label}}" style="margin-right:0;max-height:90px;"></md-datepicker>
+	<div ng-if="parameter.type=='DATE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" class="datePickerParameter" layout-margin>
+		<div layout="row" layout-align="start center" class="labelContainer">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
+				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+			</md-icon>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
+		</div>
+		<md-datepicker ng-model="parameter.parameterValue" style="margin-right:0;max-height:90px;" layout="row" layout-align="start center"></md-datepicker>
 	</div>		
 	
 	<!-- Date RANGE-->
-	<section ng-if="parameter.type=='DATE_RANGE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" class="datePicker">
-		<label 	ng-class="showRequiredFieldMessageDateRange(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label>
+	<section ng-if="parameter.type=='DATE_RANGE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" class="datePickerParameter" layout-margin>
+		<div layout="row" layout-align="start center" class="labelContainer">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
+				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+			</md-icon>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
+		</div>
 		<md-datepicker ng-model="parameter.parameterValue"  md-placeholder="{{parameter.label}}" ></md-datepicker>
 		<md-select ng-model="parameter.datarange.opt"> 
 			<md-option></md-option>
@@ -88,8 +98,13 @@
 	</section>	
 	
 	<!-- manual number input -->
-	<md-input-container class="md-block" ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'">
-		<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">{{parameter.label}}</label>
+	<md-input-container class="md-block" ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" layout-margin>
+		<div layout="row" layout-align="start center" class="labelContainer">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
+				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+			</md-icon>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
+		</div>
 		<input class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" type="number">	
 	</md-input-container>
 	
@@ -164,9 +179,6 @@
 			</md-select>
 		</md-input-container>
 	</div>
-	<!--  md-icon ng-show="parameter.lovNotDefine && parameter.selectionType=='COMBOBOX'" md-font-icon="fa fa-info-circle">
-		  <md-tooltip >{{sbiModule_translate.load("sbi.execution.parameter.lovnotdefined")}} </md-tooltip>
-	   </md-icon-->
 	
 	
 	<!-- "DEFAULT VALID MESSAGE " message -->

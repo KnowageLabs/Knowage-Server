@@ -270,6 +270,29 @@
 				margin: 0;
 			}
 		}
+		.datePickerParameter {
+			md-datepicker {
+				margin: 0;
+				.md-datepicker-input-container {
+					width: 100%;
+					input {
+						font-size: $mediumFontSize;
+					}
+				}
+				.md-datepicker-triangle-button {
+					margin: 0 6px !important; 
+				}
+				md-icon {
+					font: normal normal normal 14px/1 'FontAwesome';
+					svg {
+						display: none;
+					}
+					&:before {
+						content: '\f133';
+					}
+				}
+			}
+		}
 	}
 }
 
