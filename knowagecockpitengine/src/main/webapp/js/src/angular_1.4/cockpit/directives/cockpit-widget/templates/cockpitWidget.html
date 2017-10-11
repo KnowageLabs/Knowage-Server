@@ -131,9 +131,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</span>
 			</md-button>
 			
-			<md-button class="md-icon-button" aria-label="unselectable button" ng-if="cliccable==true && ngModel.type=='chart'" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
+			<!-- CLICKABLE BUTTON -->
+			<md-button class="md-icon-button " aria-label="unselectable button" ng-if="cliccable==true && cockpitModule_properties.EDIT_MODE && ngModel.content.chartTemplate.CHART.type.toLowerCase()!='treemap'" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
 				<md-tooltip md-direction="top" md-delay="1000">
-          			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}}
+		          {{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}}
+		        </md-tooltip>
+				<span class="fa-stack">
+				  <i class="fa fa-hand-o-up fa-stack-1x"></i>
+				  <i ng-if="ngModel.cliccable==false" class="fa fa-ban fa-stack-2x fa-negative"></i>
+				</span>
+			</md-button>
+			
+			<!-- DRILL/SELECT BUTTON -->
+			<md-button class="md-icon-button" aria-label="unselectable button" ng-if="cliccable==true && ngModel.type=='chart' && ngModel.content.chartTemplate.CHART.type.toLowerCase()=='treemap'" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
+				<md-tooltip md-direction="top" md-delay="1000">
+          			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description.treemap")}}
        			 </md-tooltip>
        			 <i class="fa fa-mouse-pointer" ng-show="ngModel.cliccable"></i>
        			 <i class="fa fa-filter" ng-show="!ngModel.cliccable"></i>
