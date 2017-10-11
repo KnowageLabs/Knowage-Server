@@ -703,7 +703,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				// if type is undefined get it from metadata
 				if(type == undefined){
 					var found = false;
-					for(var j=0;i<dataset.metadata.fieldsMeta.length & !found;j++){
+					for(var j=0; j<dataset.metadata.fieldsMeta.length && !found; j++){
 						var metaElement=dataset.metadata.fieldsMeta[j];
 						if(metaElement.name == colName){
 							filterElement.type = metaElement.type;
