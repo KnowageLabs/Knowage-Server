@@ -92,6 +92,69 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 
+		/**
+		 *  Update filters in chart Case
+		 */
+
+		$scope.refreshChartFilters=function(dsId){
+
+					if(!$scope.ngModelShared.filters){
+						$scope.ngModelShared.filters=[];
+					}
+
+					 // format [{colName : "..."  ,  filterVals : ["filterStr1" , "filterStr2", ... ]}   ,   {colName : "..."  ,  filterVals : [...] }]
+					//$scope.selectedDsId=$scope.ngModelShared.dataset.dsId;
+					$scope.selectedDsId=dsId;
+					angular.copy(cockpitModule_datasetServices.getDatasetById($scope.selectedDsId), $scope.localDS);
+
+					// if there are already filters must delete old one and create new ones
+
+					var metadataArray= new Array();
+					for(var i=0;i<$scope.localDS.metadata.fieldsMeta.length;i++){
+						metadataArray.push($scope.localDS.metadata.fieldsMeta[i].name);
+					}
+					var filtersArray= new Array();
+					var filtersToRemoveIndexArray= new Array();
+
+					for(var i=0;i<$scope.ngModelShared.filters.length;i++){
+						var colName = $scope.ngModelShared.filters[i].colName;
+						if(!metadataArray.includes(colName)){
+							filtersToRemoveIndexArray.push(i);
+						}
+						else{
+							filtersArray.push(colName);
+						}
+					}
+
+					// delete no more present filters
+					for(var i=0;i<filtersToRemoveIndexArray.length;i++){
+						$scope.ngModelShared.filters.splice(filtersToRemoveIndexArray[i], 1);
+					}
+
+					//remove all
+
+					for(var i=0;i<$scope.localDS.metadata.fieldsMeta.length;i++)
+					{
+
+						// before inserting new filter check it is not already present
+
+						var objToInsert={};
+						objToInsert.colName=$scope.localDS.metadata.fieldsMeta[i].name;
+						if(!filtersArray.includes(objToInsert.colName)){
+
+						objToInsert.filterVals=[];
+						objToInsert.filterOperator="";
+						objToInsert.type=$scope.localDS.metadata.fieldsMeta[i].type;
+
+						$scope.ngModelShared.filters.push(objToInsert);
+					}
+				}
+
+
+				}
+
+
+
 		$scope.eraseFilter=function(filterName){
 
 			var filterFound = false;
@@ -114,10 +177,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			{
 				if(oldValue!=undefined) //not initialization phase
 				{
-					if($scope.ngModelShared.filters==undefined)	//if filters are not defined, I create them
-					{
-						$scope.updateFilters($scope.ngModelShared.datasetId);
-					}
+					//if($scope.ngModelShared.filters==undefined)	//if filters are not defined, I create them
+					//{
+						$scope.refreshChartFilters($scope.ngModelShared.datasetId);
+					//}
 				}else{
 					//initialization phase, there is no dataset
 				}
@@ -158,6 +221,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							}
 							if(!filterFound){
 								filterToAdd.colName=obj.name;
+								filterToAdd.type=obj.type;
 								filterToAdd.filterVals=[];
 								$scope.ngModelShared.filters.push(filterToAdd);
 							}
