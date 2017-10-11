@@ -1040,6 +1040,9 @@
     #foreach($valueKey in $seriesMap.keySet())
 	    #set($relatedSerie = $seriesMap.get($valueKey))
 	    #set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
+	   	#if($chart.isCockpitEngine != 'true')
+	      	#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
+	    #end
 	   	#set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
 	   	
 		#if( $relatedSerie.type == 'arearangelow' )		
@@ -1051,8 +1054,10 @@
 	#end
     #foreach($element in $seriesMap)
     #set($relatedSerieColName = "$element.name"+"_#if($element.groupingFunction)$element.groupingFunction#{else}SUM#end")
-	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
-	
+	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
+		#if($chart.isCockpitEngine != 'true')
+	    	#set($relatedSerieColName = "$element.column"+"_#if($element.groupingFunction)$element.groupingFunction#{else}SUM#end")
+	   	#end	
         
     	#if( $element.type == 'arearangelow' || $element.type == 'arearangehigh')
     		 #set($seriesMap = $datasettransformer.seriesMapTransformedMethod($seriesMap))
@@ -1110,6 +1115,10 @@
 	    	
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
+	    	  	#if($chart.isCockpitEngine != 'true')
+	    	  	#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
+	    	  	#end
+	    	  
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
 	    	   	#foreach($row in $rows)
 					#if( $row.get($serieColumnsMapped))
