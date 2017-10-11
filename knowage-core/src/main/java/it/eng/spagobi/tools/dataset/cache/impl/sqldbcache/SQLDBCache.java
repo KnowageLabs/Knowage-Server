@@ -680,18 +680,18 @@ public class SQLDBCache implements ICache {
 									}
 									leftOperand += ")";
 								} else {
-									if (filter.getLeftOperand().isCostant()) {
-										// why? warning!
-										leftOperand = filter.getLeftOperand().getOperandValueAsString();
-									} else { // it's a column
-										Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
-										String datasetLabel = filter.getLeftOperand().getOperandDataSet();
-										leftOperand = filter.getLeftOperand().getOperandValueAsString();
-										if (datasetAlias != null) {
-											leftOperand = datasetAlias.get(datasetLabel) + " - " + filter.getLeftOperand().getOperandValueAsString();
-										}
-										leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
+									// if (filter.getLeftOperand().isCostant()) {
+									// why? warning!
+									// leftOperand = filter.getLeftOperand().getOperandValueAsString();
+									// } else { // it's a column
+									Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
+									String datasetLabel = filter.getLeftOperand().getOperandDataSet();
+									leftOperand = filter.getLeftOperand().getOperandValueAsString();
+									if (datasetAlias != null) {
+										leftOperand = datasetAlias.get(datasetLabel) + " - " + filter.getLeftOperand().getOperandValueAsString();
 									}
+									leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
+									// }
 								}
 
 								StringBuilder rightOperandSB = new StringBuilder();
