@@ -27,6 +27,7 @@
 		<ENGINE label="knowageofficeengine" />
 		<ENGINE label="knowagebirtreporteng" />
 		<ENGINE label="knowagejasperreporte" />
+		<ENGINE label="knowagedossierengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowagePM" active="true">
 		<ENGINE label="knowagecompositedoce" />

@@ -82,4 +82,8 @@
 		mainUrl="/knowagewhatifengine/restful-services/olap/startolap" driverNm="it.eng.spagobi.engines.drivers.whatif.OlapDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="OLAP" useDataSet="false"
 		useDataSource="true" encrypt="0" />
+	<ENGINE label="knowagedssierengine" name="Dossier Engine" descr="Dossier Engine"
+		mainUrl="/knowagedossierengine/api/start" driverNm="it.eng.spagobi.engines.drivers.dossier.DossierDriver"
+		engineTypeCd="EXT" classNm="" biobjTypeCd="DOSSIER" useDataSet="false"
+		useDataSource="false" encrypt="0" />
 </ENGINES>
