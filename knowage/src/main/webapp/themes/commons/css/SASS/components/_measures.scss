@@ -5,9 +5,9 @@
 			.md-errors-spacer{
 				display: none;
 			}
-			.md-chips {
-				box-shadow: none;
-			}
+		}
+		.md-chips.md-readonly {
+			box-shadow: none;
 		}
 	}
 }
