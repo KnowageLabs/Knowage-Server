@@ -990,7 +990,7 @@ angular.module('ChartDesignerService', [])
 					"style":{
 						"axisColNamePadd":0,
 						"brushWidth":5,
-						"axisColor":"",
+						"axisColor":"#000000",
 						"brushColor":""
 						
 					}
@@ -1036,32 +1036,32 @@ angular.module('ChartDesignerService', [])
 				"LEGEND": {
 					"TITLE": {
 						"style":{
-		                	  "fontFamily":"",
-		                	  "fontWeight":"",
-		                	  "fontSize":""
+		                	  "fontFamily":"Arial",
+		                	  "fontWeight":"normal",
+		                	  "fontSize":"12px"
 		                  },
 						"text": ""
 					},
 					"ELEMENT": {
 						"style":{
-		                	  "fontFamily":"",
-		                	  "fontWeight":"",
-		                	  "fontSize":""
+		                	  "fontFamily":"Arial",
+		                	  "fontWeight":"italic",
+		                	  "fontSize":"12px"
 		                  }
 					}
 				},
 				"LIMIT": {
 					"groupByCategory": true,
 					"style":{
-						"maxNumberOfLines":0,
+						"maxNumberOfLines":5,
 						"serieFilterColumn":"",
-						"orderTopMinBottomMax":""
+						"orderTopMinBottomMax":"top"
 					}
 				},
 				"PARALLEL_TOOLTIP": {
 					"style":{
-						"fontFamily":"",
-						"fontSize":"",
+						"fontFamily":"Arial",
+						"fontSize":"12px",
 						"border":0,
 						"borderRadius":0,
 						"fontWeight":""
@@ -1600,13 +1600,13 @@ angular.module('ChartDesignerService', [])
 				},
 				"TIP": {
 					"style":{
-						"fontFamily":"",
-						"fontWeight":"",
-						"fontSize":"",
-						"color":"",
-						"width":0
+						"fontFamily":"Arial",
+						"fontWeight":"normal",
+						"fontSize":"12px",
+						"color":"#000000",
+						"width":10
 					},
-					"text": ""
+					"text": "input explanation here"
 				},
 				"SUBTITLE": {
 					"style":{
@@ -1620,13 +1620,13 @@ angular.module('ChartDesignerService', [])
 				},
 				"TOOLBAR": {
 					"style":{
-						"position":"",
+						"position":"top",
 						"spacing":5,
 						"tail":10,
-						"percFontColor":"",
+						"percFontColor":"#000000",
 						"fontFamily":"",
-						"fontWeight":"",
-						"fontSize":"",
+						"fontWeight":"normal",
+						"fontSize":"12px",
 					}
 				},
 				"EMPTYMESSAGE":{  
