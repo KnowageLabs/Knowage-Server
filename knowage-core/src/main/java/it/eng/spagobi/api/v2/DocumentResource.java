@@ -75,7 +75,6 @@ import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IOutputParameterDAO;
 import it.eng.spagobi.api.AbstractDocumentResource;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
@@ -98,6 +97,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.indexing.IndexingConstants;
 import it.eng.spagobi.commons.utilities.indexing.LuceneSearcher;
@@ -149,55 +149,25 @@ public class DocumentResource extends AbstractDocumentResource {
 		return super.insertDocument(body);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@GET
-	@Path("/withData")
-	public Response getDocumentsBeforeDate(@QueryParam("type") String type, @QueryParam("folderId") String folderIdStr, @Context HttpServletRequest req)
-			throws EMFInternalError {
-		IBIObjectDAO documentsDao = null;
-		String data = null;
-		List<BIObject> allObjects;
-		List<BIObject> objects = null;
-		Integer functionalityId = getNumberOrNull(folderIdStr);
-
-		boolean isTypeFilterValid = type != null && !type.isEmpty();
-		boolean isFolderFilterValid = functionalityId != null;
-
-		data = req.getParameter("data");
-		if (data == null || data.equals("")) {
-			throw new SpagoBIRuntimeException("The data passed in the request is null or empty");
-		}
-
-		try {
-			documentsDao = DAOFactory.getBIObjectDAO();
-			allObjects = documentsDao.loadDocumentsBeforeDate(data);
-			UserProfile profile = getUserProfile();
-			objects = new ArrayList<BIObject>();
-			for (BIObject obj : allObjects) {
-				if (ObjectsAccessVerifier.canSee(obj, profile) && (!isTypeFilterValid || obj.getBiObjectTypeCode().equals(type))
-						&& (!isFolderFilterValid || obj.getFunctionalities().contains(functionalityId)))
-					objects.add(obj);
-			}
-			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
-			return Response.ok(toBeReturned).build();
-		} catch (EMFUserError e) {
-			logger.error(e.getDescription());
-			throw new SpagoBIRestServiceException(e.getDescription(), getLocale(), e);
-		}
+	@Path("/{labelOrId}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getDocumentDetails(@PathParam("labelOrId") String labelOrId) {
+		Object documentIdentifier = this.getObjectIdentifier(labelOrId);
+		return super.getDocumentDetails(documentIdentifier);
 	}
 
-	@SuppressWarnings("unchecked")
-	@GET
-	@Path("docName/{id}")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDocByDocumentId(@PathParam("id") Integer id) {
-		try {
-			BIObject biObj = DAOFactory.getBIObjectDAO().loadBIObjectById(id);
-			return JsonConverter.objectToJson(biObj, biObj.getClass()); //
-		} catch (EMFUserError e) {
-			logger.error("Error while try to retrieve document by document id [" + id + "]", e);
-			throw new SpagoBIRuntimeException("Error while try to retrieve document by document id [" + id + "]", e);
-		}
+	@PUT
+	@Path("/{label}")
+	@Produces(MediaType.APPLICATION_JSON )
+	public Response updateDocument(@PathParam("label") String label, String body) {
+		return super.updateDocument(label, body);
+	}
+	
+	@DELETE
+	@Path("/{label}")
+	public Response deleteDocument(@PathParam("label") String label) {
+		return super.deleteDocument(label);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -551,13 +521,8 @@ public class DocumentResource extends AbstractDocumentResource {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	@GET
-	@Path("/searchDocument")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getDocumentByLucene(@QueryParam("value") String valueFilter, @QueryParam("attributes") String attributes,
-			@QueryParam("similar") Boolean similar) {
-		Monitor monitor = MonitorFactory.start("it.eng.spagobi.api.v2.DocumentResource.getDocumentByLucene()");
+	public List<BIObject> searchDocumentsWithLucene(String valueFilter, String attributes, Boolean similar) {
+		Monitor monitor = MonitorFactory.start("it.eng.spagobi.api.v2.DocumentResource.searchDocumentsWithLucene()");
 		logger.debug("IN");
 		try {
 			UserProfile profile = getUserProfile();
@@ -622,16 +587,8 @@ public class DocumentResource extends AbstractDocumentResource {
 						if (!biobjIds.contains(biobjId)) {
 							BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForDetail(Integer.valueOf(biobjId));
 							if (obj != null) {
-								// hide if user is not admin or devel and
-								// visible is false
-								if (!obj.isVisible() && !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
-										&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
-									continue;
-								}
-								if (ObjectsAccessVerifier.canSee(obj, profile)) {
-									objects.add(obj);
-									biobjIds.add(biobjId);
-								}
+								objects.add(obj);
+								biobjIds.add(biobjId);
 							}
 						}
 					}
@@ -647,8 +604,7 @@ public class DocumentResource extends AbstractDocumentResource {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIException("Wrong query syntax", e);
 			}
-			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
-			return Response.ok(toBeReturned).build();
+			return objects;
 		} catch (Exception e) {
 			logger.error("Error while getting the list of documents", e);
 			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
@@ -662,7 +618,8 @@ public class DocumentResource extends AbstractDocumentResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getDocumentsV2(@QueryParam("type") String type, @QueryParam("folderId") String folderIdStr) {
+	public Response getDocumentsV2(@QueryParam("type") String type, @QueryParam("folderId") String folderIdStr, @QueryParam("date") String date, 
+			@QueryParam("searchKey") String searchKey, @QueryParam("searchAttributes") String attributes, @QueryParam("searchSimilar") Boolean similar) {
 		logger.debug("IN");
 		IBIObjectDAO documentsDao = null;
 		List<BIObject> allObjects = null;
@@ -670,13 +627,29 @@ public class DocumentResource extends AbstractDocumentResource {
 
 		Integer functionalityId = getNumberOrNull(folderIdStr);
 
-		boolean isTypeFilterValid = type != null && !type.isEmpty();
+		boolean isTypeFilterValid = !StringUtilities.isEmpty(type);
 		boolean isFolderFilterValid = functionalityId != null;
+		boolean isDateFilterValid = !StringUtilities.isEmpty(date);
+		boolean isSearchFilterValid = !StringUtilities.isEmpty(searchKey);
 
 		try {
 			documentsDao = DAOFactory.getBIObjectDAO();
-			allObjects = documentsDao.loadAllBIObjects();
-
+			// NOTICE: at the time being, filter on date, folder and search key are mutually exclusive, i.e. the service cannot filter on date and folder and 
+			// search for a specified key at the same time
+			if (isDateFilterValid) {
+				logger.debug("Date input parameter found: [" + date + "]. Loading documents before that date...");
+				allObjects = documentsDao.loadDocumentsBeforeDate(date);
+			} else if (isFolderFilterValid) {
+				logger.debug("Folder id parameter found: [" + functionalityId + "]. Loading documents belonging to that folder...");
+				allObjects = documentsDao.loadAllBIObjectsByFolderId(functionalityId);
+			} else if (isSearchFilterValid) {
+				logger.debug("Search key found: [" + searchKey + "]. Using Lucene indexes...");
+				allObjects = this.searchDocumentsWithLucene(searchKey, attributes, similar);
+			} else {
+				logger.debug("Neither filter on date nor on folder nor a search key was found, loading all documents...");
+				allObjects = documentsDao.loadAllBIObjects();
+			}
+			
 			UserProfile profile = getUserProfile();
 			objects = new ArrayList<BIObject>();
 
@@ -687,9 +660,9 @@ public class DocumentResource extends AbstractDocumentResource {
 							&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
 						continue;
 					}
-					if (ObjectsAccessVerifier.canSee(obj, profile) && (!isTypeFilterValid || obj.getBiObjectTypeCode().equals(type))
-							&& (!isFolderFilterValid || obj.getFunctionalities().contains(functionalityId)))
+					if (ObjectsAccessVerifier.canSee(obj, profile) && (!isTypeFilterValid || obj.getBiObjectTypeCode().equals(type))) {
 						objects.add(obj);
+					}
 				} catch (EMFInternalError e) {
 					throw new RuntimeException("Error while checking visibility of a document", e);
 				}
@@ -704,61 +677,6 @@ public class DocumentResource extends AbstractDocumentResource {
 		} finally {
 			logger.debug("OUT");
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@GET
-	@Path("/getDocumentsByFolder")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getDocumentsByFolder(@QueryParam("folderId") String folderIdStr) {
-		logger.debug("IN");
-		IBIObjectDAO documentsDao = null;
-		List<BIObject> allObjects = null;
-		List<BIObject> objects = null;
-
-		Integer functionalityId = getNumberOrNull(folderIdStr);
-
-		boolean isFolderFilterValid = functionalityId != null;
-
-		try {
-
-			documentsDao = DAOFactory.getBIObjectDAO();
-			// allObjects = documentsDao.loadAllBIObjects();
-			allObjects = documentsDao.loadAllBIObjectsByFolderId(functionalityId);
-			UserProfile profile = getUserProfile();
-			objects = new ArrayList<BIObject>();
-			// for (BIObject obj : allObjects) {
-			// try {
-			// if (ObjectsAccessVerifier.canSee(obj, profile) &&
-			// (!isFolderFilterValid ||
-			// obj.getFunctionalities().contains(functionalityId)))
-			// objects.add(obj);
-			// } catch (EMFInternalError e) {
-			// }
-			// }
-
-			for (BIObject obj : allObjects) {
-				try {
-					// hide if user is not admin or devel and visible is false
-					if (!obj.isVisible() && !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
-							&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
-						continue;
-					}
-					if (ObjectsAccessVerifier.canSee(obj, profile)) {
-						objects.add(obj);
-					}
-				} catch (EMFInternalError e) {
-				}
-			}
-			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
-			return Response.ok(toBeReturned).build();
-		} catch (Exception e) {
-			logger.error("Error while getting the list of documents", e);
-			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
-		} finally {
-			logger.debug("OUT");
-		}
-
 	}
 
 	@GET

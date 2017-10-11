@@ -135,73 +135,24 @@ public class DocumentResource extends AbstractDocumentResource {
 	}
 
 	@GET
-	@Path("/{label}")
-	@Produces(MediaType.APPLICATION_JSON )
-	public Response getDocumentDetails(@PathParam("label") String label) {
-
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-		BIObject document = documentManager.getDocument(label);
-		if (document == null)
-			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
-
-		try {
-			if (ObjectsAccessVerifier.canSee(document, getUserProfile())) {
-				String toBeReturned = JsonConverter.objectToJson(document, BIObject.class);
-				return Response.ok(toBeReturned).build();
-			} else
-				throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to see document with label [" + label + "]");
-
-		} catch (SpagoBIRuntimeException e) {
-			throw e;
-		} catch (EMFInternalError e) {
-			logger.error("Error while looking for authorizations", e);
-			throw new SpagoBIRuntimeException("Error while looking for authorizations", e);
-		} catch (Exception e) {
-			logger.error("Error while converting document in Json", e);
-			throw new SpagoBIRuntimeException("Error while converting document in Json", e);
-		}
-
+	@Path("/{labelOrId}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getDocumentDetails(@PathParam("labelOrId") String labelOrId) {
+		Object documentIdentifier = this.getObjectIdentifier(labelOrId);
+		return super.getDocumentDetails(documentIdentifier);
 	}
 
 	@PUT
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON )
 	public Response updateDocument(@PathParam("label") String label, String body) {
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-		BIObject oldDocument = documentManager.getDocument(label);
-		if (oldDocument == null)
-			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
-
-		Integer id = oldDocument.getId();
-		if (!ObjectsAccessVerifier.canDevBIObject(id, getUserProfile()))
-			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to update document with label [" + label + "]");
-
-		BIObject document = (BIObject) JsonConverter.jsonToValidObject(body, BIObject.class);
-
-		document.setLabel(label);
-		document.setId(id);
-		documentManager.saveDocument(document, null);
-		return Response.ok().build();
+		return super.updateDocument(label, body);
 	}
 
 	@DELETE
 	@Path("/{label}")
 	public Response deleteDocument(@PathParam("label") String label) {
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-		BIObject document = documentManager.getDocument(label);
-		if (document == null)
-			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
-
-		if (ObjectsAccessVerifier.canDeleteBIObject(document.getId(), getUserProfile())) {
-			try {
-				DAOFactory.getBIObjectDAO().eraseBIObject(document, null);
-			} catch (EMFUserError e) {
-				logger.error("Error while deleting the specified document", e);
-				throw new SpagoBIRuntimeException("Error while deleting the specified document", e);
-			}
-			return Response.ok().build();
-		} else
-			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to delete document with label [" + label + "]");
+		return super.deleteDocument(label);
 	}
 
 	@GET

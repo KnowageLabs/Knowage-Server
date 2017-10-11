@@ -75,7 +75,7 @@ function documentBrowserFunction(
 	
 	$scope.loadFolderDocuments=function(folderId){
 		$scope.hideProgressCircular=false;
-		sbiModule_restServices.promiseGet("2.0","documents/getDocumentsByFolder?folderId=" +folderId)
+		sbiModule_restServices.promiseGet("2.0","documents","folderId=" + folderId)
 		.then(function(response) {
 			angular.copy(response.data,$scope.folderDocuments);
 			$scope.hideProgressCircular=true;
@@ -218,7 +218,7 @@ function documentBrowserFunction(
 			if (newSearchInput == $scope.searchInput) {
 				if (newSearchInput.length > 0){
 					$scope.searchingDocuments=true;
-					sbiModule_restServices.promiseGet("2.0/documents", "searchDocument?attributes=all&value=" + newSearchInput + "*", null)
+					sbiModule_restServices.promiseGet("2.0", "documents", "searchAttributes=all&searchKey=" + newSearchInput + "*")
 					.then(function(response) {
 						$scope.searchDocuments = response.data;
 						$scope.searchingDocuments=false;

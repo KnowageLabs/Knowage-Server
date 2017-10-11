@@ -718,7 +718,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 				});
 	}
 	$scope.getDocName = function(objId) {
-		sbiModule_restServices.promiseGet("2.0/documents/docName", objId).then(
+		sbiModule_restServices.promiseGet("2.0/documents", objId).then(
 				function(response) {
 					$scope.selectedMenu.document = {
 						fromDoc : null

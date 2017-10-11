@@ -55,7 +55,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);
 			});
 			
-			sbiModule_restServices.get("2.0/documents", 'withData',"data="+$scope.data_format).success(
+			sbiModule_restServices.get("2.0", "documents","date="+$scope.data_format).success(
 					function(data, status, headers, config) {
 
 						$scope.isLoading=false;

@@ -21,8 +21,10 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.List;
 
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -71,4 +73,78 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		}
 	}
 	
+	public Response getDocumentDetails(Object documentIdentifier) {
+
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		BIObject document = documentManager.getDocument(documentIdentifier);
+		if (document == null)
+			throw new SpagoBIRuntimeException("Document with identifier [" + documentIdentifier + "] doesn't exist");
+
+		try {
+			if (ObjectsAccessVerifier.canSee(document, getUserProfile())) {
+				String toBeReturned = JsonConverter.objectToJson(document, BIObject.class);
+				return Response.ok(toBeReturned).build();
+			} else
+				throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to see document with identifier [" + documentIdentifier + "]");
+
+		} catch (SpagoBIRuntimeException e) {
+			throw e;
+		} catch (EMFInternalError e) {
+			logger.error("Error while looking for authorizations", e);
+			throw new SpagoBIRuntimeException("Error while looking for authorizations", e);
+		} catch (Exception e) {
+			logger.error("Error while converting document in Json", e);
+			throw new SpagoBIRuntimeException("Error while converting document in Json", e);
+		}
+
+	}
+	
+	public Response updateDocument(String label, String body) {
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		BIObject oldDocument = documentManager.getDocument(label);
+		if (oldDocument == null)
+			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
+
+		Integer id = oldDocument.getId();
+		if (!ObjectsAccessVerifier.canDevBIObject(id, getUserProfile()))
+			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to update document with label [" + label + "]");
+
+		BIObject document = (BIObject) JsonConverter.jsonToValidObject(body, BIObject.class);
+
+		document.setLabel(label);
+		document.setId(id);
+		documentManager.saveDocument(document, null);
+		return Response.ok().build();
+	}
+	
+	public Response deleteDocument(@PathParam("label") String label) {
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		BIObject document = documentManager.getDocument(label);
+		if (document == null)
+			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
+
+		if (ObjectsAccessVerifier.canDeleteBIObject(document.getId(), getUserProfile())) {
+			try {
+				DAOFactory.getBIObjectDAO().eraseBIObject(document, null);
+			} catch (EMFUserError e) {
+				logger.error("Error while deleting the specified document", e);
+				throw new SpagoBIRuntimeException("Error while deleting the specified document", e);
+			}
+			return Response.ok().build();
+		} else
+			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to delete document with label [" + label + "]");
+	}
+	
+	protected Object getObjectIdentifier(String labelOrId) {
+		Object documentIdentifier = null;
+		try {
+			Integer id = Integer.parseInt(labelOrId);
+			documentIdentifier = id;
+		} catch (NumberFormatException e) {
+			logger.debug("Cannot parse input parameter [" + labelOrId + "] as an integer");
+			documentIdentifier = labelOrId;
+		}
+		logger.debug("Document identifier [" + documentIdentifier + "]");
+		return documentIdentifier;
+	}
 }
