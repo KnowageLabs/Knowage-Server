@@ -552,7 +552,7 @@ angular.module('ChartDesignerService', [])
 							"minorTickLength": 0,
 							"lineWidth": 0,
 							"endOnTickGauge": false,
-							"minorTickInterval": 0,
+							"minorTickInterval": "auto",
 							"minorTickPosition": "",
 							"minorTickWidth": 0,
 							"minorTickColor": "",

@@ -13,10 +13,22 @@
 		options="colorPickerOptionsCockpit"
 		ng-model="axisForDisplay.minorTickColor" name ="gauge_minor_tickColor"></color-picker> </md-input-container>
 
-<md-input-container class="md-block"> 
-	<label>{{translate.load("sbi.chartengine.axisstylepopup.minorTickParams.minorTickInterval")}}</label>
-		 <input type="number" step="any" name="gauge_minor_tickPxInterval"
-		ng-model="axisForDisplay.minorTickInterval" min="0" /> </md-input-container>
+
+<div layout="row" layout-padding>
+
+	
+	<md-input-container class="md-block" flex> 
+		<label>{{translate.load("sbi.chartengine.axisstylepopup.minorTickParams.minorTickInterval")}}</label>
+		<input ng-if="axisForDisplay.minorTickInterval!='auto'" type="number" step="any" name="gauge_minor_tickPxInterval"
+			ng-model="axisForDisplay.minorTickInterval"  /> 
+	</md-input-container>
+	<md-input-container class="md-block" flex"> 
+		
+		<md-checkbox ng-model="axisForDisplay.minorTickInterval" ng-true-value="0" ng-false-value="'auto'"></md-checkbox>
+		<md-tooltip md-direction="top" md-delay="1000">Enable minor</md-tooltip>
+	</md-input-container>
+
+</div>
 
 <md-input-container class="md-block"> 
 	<label>{{translate.load("sbi.chartengine.axisstylepopup.minorTickParams.minorTickWidth")}}</label>

@@ -318,8 +318,7 @@
 	            #if($yAxis.endOnTickGauge)
 	            	endOnTick: $yAxis.endOnTickGauge,
 	            #end
-	            
-	        	#if($yAxis.minorTickInterval == '' ||  $yAxis.minorTickInterval == 0)
+	        	#if($yAxis.minorTickInterval == '' ||  $yAxis.minorTickInterval == '0')
 	        		minorTickInterval: 'auto',
         		#else
         			minorTickInterval: $yAxis.minorTickInterval,
