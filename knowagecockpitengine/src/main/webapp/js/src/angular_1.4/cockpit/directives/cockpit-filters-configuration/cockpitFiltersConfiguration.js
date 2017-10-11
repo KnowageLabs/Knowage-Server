@@ -227,7 +227,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							}
 						}
 
-
+						var arrayIndexToDelete = new Array();
 						for(var k=0;k<$scope.ngModelShared.filters.length;k++)   //filters
 						{
 							filterFound=false;
@@ -239,9 +239,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								}
 							}
 							if(!filterFound){ //if filter is not in columns
-								$scope.ngModelShared.filters.splice(k,1); //remove filter from filter list
+								arrayIndexToDelete.push(k);
+
 							}
 						}
+
+						for(var k=arrayIndexToDelete.length-1;k>=0;k--)   //filters
+						{
+							var index = arrayIndexToDelete[k];
+							$scope.ngModelShared.filters.splice(index,1); //remove filter from filter list
+						}
+
+
 					}
 				}else{
 					//initialization phase, there is no dataset
