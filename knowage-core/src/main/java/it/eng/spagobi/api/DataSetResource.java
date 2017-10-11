@@ -103,14 +103,12 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 @Path("/1.0/datasets")
 @ManageAuthorization
 public class DataSetResource extends DataSetResourceAbstractResource {
-
 
 	static protected Logger logger = Logger.getLogger(DataSetResource.class);
 
@@ -727,6 +725,7 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 			logger.debug("OUT");
 		}
 	}
+
 	@Override
 	@GET
 	@Path("/{label}/data")
@@ -741,8 +740,6 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 		return super.getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isRealtime);
 
 	}
-
-
 
 	private String executeDataSet(String label, SDKDataSetParameter[] params) {
 		logger.debug("IN: label in input = " + label);
@@ -949,7 +946,6 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 		return toReturn;
 	}
 
-
 	@GET
 	@Path("/federated")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1096,7 +1092,6 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 		}
 	}
 
-
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -1196,7 +1191,8 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 				Object isSegmentAttributeObj = fieldMetaData.getProperty(PROPERTY_IS_SEGMENT_ATTRIBUTE);
 				logger.debug("Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
 				String attributeNature = (isSegmentAttributeObj != null && (Boolean.parseBoolean(isSegmentAttributeObj.toString()) == true))
-						? "segment_attribute" : "attribute";
+						? "segment_attribute"
+						: "attribute";
 
 				logger.debug("The nature of the attribute is recognized as " + attributeNature);
 				fieldMetaDataJSON.put("nature", attributeNature);
@@ -1476,13 +1472,13 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 			labels = RestUtilities.readBodyAsJSONObject(request);
 		} catch (Exception e1) {
 			logger.error("error reading the labels from request: ", e1);
-			throw new RuntimeException("error reading the labels from request ",e1);
+			throw new RuntimeException("error reading the labels from request ", e1);
 		}
 
 		return persistDataSets(labels);
 	}
 
-	public String persistDataSets( JSONObject labels) {
+	public String persistDataSets(JSONObject labels) {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("spagobi.dataset.persist");
 		JSONObject labelsJSON = new JSONObject();
@@ -1591,11 +1587,15 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 
 		if (ordering != null) {
 			boolean reverseOrdering = ordering.optBoolean("reverseOrdering");
-			if (reverseOrdering) {
-				hsql += "order by h.name desc";
-			} else {
-				hsql += "order by h.name asc";
+			String columnOrdering = ordering.optString("columnOrdering");
+			if (columnOrdering != null && !columnOrdering.isEmpty()) {
+				if (reverseOrdering) {
+					hsql += "order by h." + columnOrdering.toLowerCase() + " desc";
+				} else {
+					hsql += "order by h." + columnOrdering.toLowerCase() + " asc";
+				}
 			}
+
 		}
 		logger.debug("OUT");
 		return hsql;

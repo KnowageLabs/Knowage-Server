@@ -104,6 +104,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					highlights-selected-item=true
 					click-function="loadDataSet(item,index)"
 					selected-item="selectedDataSetInit" 
+					sortable-column="sortableColumn"
 					speed-menu-option="manageDataset"
 					current-page-number=datasetTableLastPage
 					total-item-count=numOfDs

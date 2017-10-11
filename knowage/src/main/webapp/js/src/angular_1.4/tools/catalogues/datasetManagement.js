@@ -57,6 +57,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	    {"label":$scope.translate.load("sbi.generic.type"), "name":"dsTypeCd", "size":"70px"},
 	    {"label":$scope.translate.load("sbi.ds.numDocs"), "name":"usedByNDocs", "size":"60px"}
     ];
+	
+	$scope.sortableColumn = ["name","label","dsTypeCd"]
 
 	$scope.selectedDatasetVersion = null;
 
@@ -858,18 +860,19 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
     $scope.datasetLike = function (searchValue, itemsPerPage,currentPageNumber, columnsSearch, columnOrdering, reverseOrdering) {
     	$scope.reverseOrdering = reverseOrdering;
+    	$scope.columnOrdering = columnOrdering;
     	$scope.searchValue = searchValue;
     	if($scope.searchValue!=""){
     		sbiModule_restServices.promiseGet("1.0/datasets", "countDataSetSearch/"+$scope.searchValue)
     		.then(function(response) {
     			$scope.numOfDs = response.data;
-    			$scope.loadDatasetList(0, itemsPerPage, searchValue, reverseOrdering);
+    			$scope.loadDatasetList(0, itemsPerPage, searchValue,  columnOrdering.label,reverseOrdering);
     		}, function(response) {
     			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
     		});
 
     	} else if ($scope.searchValue=="") {
-    		$scope.loadDatasetList(0, itemsPerPage, searchValue, reverseOrdering);
+    		$scope.loadDatasetList(0, itemsPerPage, searchValue, columnOrdering.label,reverseOrdering);
     	}
     };
 
@@ -890,7 +893,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     			if($scope.reverseOrdering==undefined){
     				$scope.reverseOrdering=false;
     			}
-    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue, $scope.reverseOrdering);
+    			
+    			if($scope.columnOrdering==undefined){
+    				$scope.columnOrdering="";
+    			}
+    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue,$scope.columnOrdering.label, $scope.reverseOrdering);
     		}, function(response) {
     			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
     		});
@@ -903,7 +910,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     			if(currentPageNumber>1){
     				start = (currentPageNumber - 1) * itemsPerPage;
     			}
-    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue, null);
+    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue, "",null);
     		}, function(response) {
     			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
     		});
@@ -915,7 +922,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 * 	service that loads datasets filtered by provided configuration
 	 *
 	 */
-	$scope.loadDatasetList = function(start, limit, filter, reverseOrdering){
+	$scope.loadDatasetList = function(start, limit, filter,columnOrderingName, reverseOrdering){
 
 		var queryParams = "offset="+start+"&fetchSize="+limit;
 		if(filter!=null && filter!=""){
@@ -923,7 +930,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			queryParams = queryParams+"&filters="+angular.toJson(filters);
 		}
 		if(reverseOrdering!==null && reverseOrdering!==""){
-			var ordering = {"reverseOrdering":reverseOrdering};
+			var ordering = {"reverseOrdering":reverseOrdering,
+							"columnOrdering":columnOrderingName
+					
+			};
 			queryParams = queryParams+"&ordering="+angular.toJson(ordering);
 		}
 
@@ -993,7 +1003,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				 					    			if($scope.currentPageNumber>1){
 				 					    				start = ($scope.currentPageNumber - 1) * $scope.currentItemsPerPage;
 				 					    			}
-				 					    			$scope.loadDatasetList(start, $scope.currentItemsPerPage, null, $scope.reverseOrdering);
+				 					    			$scope.loadDatasetList(start, $scope.currentItemsPerPage, null,$scope.columnOrdering.label,$scope.reverseOrdering);
 			 						   				/*// If the dataset that is deleted is selected, deselect it and hence close its details.
 			 						   				if ($scope.selectedDataSet && $scope.selectedDataSet.label == item.label) {
 			 						   					$scope.selectedDataSet = null;
