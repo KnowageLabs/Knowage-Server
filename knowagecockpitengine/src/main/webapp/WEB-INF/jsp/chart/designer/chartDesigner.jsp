@@ -73,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- 				<md-button aria-label="Preview" ng-click="testChart()">TEST</md-button> -->
 				<!--commented perview button -->
 
-				<md-button aria-label="Preview" ng-if="previewChartEnable" ng-click="previewChart()">{{translate.load("sbi.generic.preview")}}</md-button>
+			<!-- 	<md-button aria-label="Preview" ng-if="previewChartEnable" ng-click="previewChart()">{{translate.load("sbi.generic.preview")}}</md-button> -->
 				<md-button aria-label="Save" type="submit" ng-disabled="userForm.$invalid">{{translate.load("sbi.generic.save")}}</md-button>
 				<md-button aria-label="Back" ng-click="goBackFromDesigner()">{{translate.load("sbi.generic.back")}}</md-button>
 			</div>
