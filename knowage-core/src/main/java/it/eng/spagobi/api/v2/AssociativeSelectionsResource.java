@@ -73,7 +73,6 @@ public class AssociativeSelectionsResource extends DataSetResourceAbstractResour
 	static protected Logger logger = Logger.getLogger(AssociativeSelectionsResource.class);
 	
 	@GET
-	@Path("/loadAssociativeSelections")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getAssociativeSelections(@QueryParam("associationGroup") String associationGroupString, @QueryParam("selections") String selectionsString,
