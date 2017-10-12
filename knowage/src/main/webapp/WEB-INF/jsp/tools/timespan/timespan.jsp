@@ -83,7 +83,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									</md-input-container>
 								</div>
 							</div>
-							<div ng-if="ctrl.selectedItem.type!=undefined && ctrl.selectedItem.type!=''" class="md-whiteframe-2dp" flex layout>
+							
+						<!-- TEMPORAL CASE -->							
+						<div ng-if="ctrl.selectedItem.type!=undefined && ctrl.selectedItem.type!='' && ctrl.selectedItem.type=='temporal'" class="md-whiteframe-2dp" flex layout>
+								<angular-table  flex layout-padding style="background-color: white;"
+									id='newTimespanIntervals' 
+				               		ng-model=ctrl.selectedItem.definition
+				               		no-pagination=true
+				               		columns='[{label:translate.load("sbi.timespan.from") , name:"fromLocalized"},{label:translate.load("sbi.timespan.to") , name:"toLocalized"}]'
+				               		speed-menu-option=ctrl.timespanIntervalAction
+				               		scope-functions="ctrl.newtimespanTableFunction" 
+				               	  >
+				               		 <queue-table>
+											<div layout="row" layout-align="space-around center" > 
+												<md-datepicker flex ng-if="scopeFunctions.selectedItem.type=='temporal'" ng-model="scopeFunctions.from" md-placeholder="Enter date"></md-datepicker>
+												<md-datepicker flex ng-if="scopeFunctions.selectedItem.type=='temporal'" ng-model="scopeFunctions.to" md-placeholder="Enter date" ></md-datepicker>
+												<md-button class="md-raised absoluteToRight" ng-disabled="scopeFunctions.from=='' || scopeFunctions.to==''" ng-click="scopeFunctions.addInterval(scopeFunctions.from,scopeFunctions.to)">add</md-button>
+											</div>
+										</queue-table> 
+				              	</angular-table>
+							
+							</div>
+							
+							<!-- TIME CASE -->							
+							<div ng-if="ctrl.selectedItem.type!=undefined && ctrl.selectedItem.type!=''  && ctrl.selectedItem.type=='time'" class="md-whiteframe-2dp" flex layout>
 								<angular-table  flex layout-padding style="background-color: white;"
 									id='newTimespanIntervals' 
 				               		ng-model=ctrl.selectedItem.definition
@@ -94,10 +117,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				               	  >
 				               		 <queue-table>
 											<div layout="row" layout-align="space-around center" > 
-												<md-datepicker flex ng-if="scopeFunctions.selectedItem.type=='temporal'" ng-model="scopeFunctions.from" md-placeholder="Enter date"></md-datepicker>
 												<angular-time-picker id="fromTP" flex ng-if="scopeFunctions.selectedItem.type=='time'"  ng-model="scopeFunctions.from" ></angular-time-picker>
-												
-												<md-datepicker flex ng-if="scopeFunctions.selectedItem.type=='temporal'" ng-model="scopeFunctions.to" md-placeholder="Enter date" ></md-datepicker>
 												<angular-time-picker id="toTP" flex ng-if="scopeFunctions.selectedItem.type=='time'"  ng-model="scopeFunctions.to" ></angular-time-picker>
 												<md-button class="md-raised absoluteToRight" ng-disabled="scopeFunctions.from=='' || scopeFunctions.to==''" ng-click="scopeFunctions.addInterval(scopeFunctions.from,scopeFunctions.to)">add</md-button>
 												
