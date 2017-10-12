@@ -290,7 +290,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		 */
 		var functionsToCall = arguments;
 
-		sbiModule_restServices.promiseGet("2.0/datasets/listNotDerivedDataset", "")
+		sbiModule_restServices.promiseGet("2.0/datasets", "", "includeDerived=no")
 		.then(function(response) {
 
 			//angular.copy(response.data,$scope.notDerivedDatasets);

@@ -109,7 +109,7 @@ function federationDefinitionFunction
 	
 	$scope.getDataSets = function() {
 		
-		sbiModule_restServices.promiseGet("2.0/datasets", "listNotDerivedDataset")
+		sbiModule_restServices.promiseGet("2.0/datasets", "", "includeDerived=no")
 			.then(function(response) {
 				for (var i = 0; i < response.data.length; i++) {
 					if(response.data[i].pars.length==0){
@@ -156,7 +156,7 @@ function federationDefinitionFunction
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 		  });
 		
-		sbiModule_restServices.promiseGet("2.0/datasets", "listNotDerivedDataset")
+		sbiModule_restServices.promiseGet("2.0/datasets", "", "includeDerived=no")
 		.then(function(response) {
 			for (var i = 0; i < response.data.length; i++) {
 				if(response.data[i].pars.length==0){

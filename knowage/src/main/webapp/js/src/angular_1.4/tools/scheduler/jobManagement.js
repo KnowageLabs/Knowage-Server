@@ -935,7 +935,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				};
 
 				activityEventCtrl.loadDataset = function() {
-					sbiModule_restServices.get("2.0/datasets", "listDataset")
+					sbiModule_restServices.get("2.0/datasets", "", "asPagedList=true")
 						.success(function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
 								console.error(sbiModule_translate.load("sbi.glossary.load.error"))

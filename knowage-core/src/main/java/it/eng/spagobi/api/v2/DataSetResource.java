@@ -21,19 +21,16 @@ import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -47,7 +44,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.jgrapht.graph.Pseudograph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,8 +53,6 @@ import com.mongodb.util.JSON;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.common.DataSetResourceAbstractResource;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.constants.ConfigurationConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
@@ -68,35 +62,20 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
-import it.eng.spagobi.tools.dataset.associativity.IAssociativityManager;
-import it.eng.spagobi.tools.dataset.associativity.strategy.AssociativeStrategyFactory;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.Operand;
 import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
-import it.eng.spagobi.tools.dataset.common.association.Association;
-import it.eng.spagobi.tools.dataset.common.association.Association.Field;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
-import it.eng.spagobi.tools.dataset.graph.AssociationAnalyzer;
-import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
-import it.eng.spagobi.tools.dataset.graph.associativity.Config;
-import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
@@ -104,13 +83,9 @@ import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.StringUtils;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
@@ -125,19 +100,45 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 
 	static protected Logger logger = Logger.getLogger(DataSetResource.class);
 
-	static final private String DEFAULT_TABLE_NAME_DOT = DataStore.DEFAULT_TABLE_NAME + ".";
+	public String getNotDerivedDataSets(@QueryParam("callback") String callback) {
+		logger.debug("IN");
 
-	private static final String DATE_TIME_FORMAT_MYSQL = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "%Y").replace("MM", "%m")
-			.replace("dd", "%d").replace("HH", "%H").replace("mm", "%i").replace("ss", "%s");
-	private static final String DATE_TIME_FORMAT_SQL_STANDARD = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
-			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
-	private static final String DATE_TIME_FORMAT_SQLSERVER = "yyyyMMdd HH:mm:ss";
+		IDataSetDAO dsDAO = getDataSetDAO();
 
+		List<IDataSet> toBeReturned = dsDAO.loadNotDerivedDataSets(getUserProfile());
+
+		try {
+			logger.debug("OUT");
+			if (callback == null || callback.isEmpty())
+
+				return ((JSONArray) SerializerFactory.getSerializer("application/json").serialize(toBeReturned, buildLocaleFromSession())).toString();
+
+			else {
+				String jsonString = ((JSONArray) SerializerFactory.getSerializer("application/json").serialize(toBeReturned, buildLocaleFromSession()))
+						.toString();
+
+				return callback + "(" + jsonString + ")";
+			}
+		} catch (SerializationException e) {
+			throw new SpagoBIRestServiceException(getLocale(), e);
+		}
+	}
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
+	public String getDataSets(@QueryParam("includeDerived") String includeDerived, @QueryParam("callback") String callback, 
+			@QueryParam("asPagedList") Boolean paged, @QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr, 
+			@QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical, @QueryParam("ids") String ids) {
 		logger.debug("IN");
+		
+		if ("no".equalsIgnoreCase(includeDerived)) {
+			return getNotDerivedDataSets(callback);
+		}
+		
+		if (Boolean.TRUE.equals(paged)) {
+			return getDatasetsAsPagedList(pageStr, itemPerPageStr, search, seeTechnical, ids);
+		}
 
 		ISbiDataSetDAO dsDAO;
 		try {
@@ -165,74 +166,21 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 			return callback + "(" + jsonString + ")";
 		}
 	}
-
+	
 	@GET
-	@Path("/listNotDerivedDataset")
+	@Path("/{label}")
+	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getNotDerivedDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
-		logger.debug("IN");
-
-		IDataSetDAO dsDAO = getDataSetDAO();
-
-		List<IDataSet> toBeReturned = dsDAO.loadNotDerivedDataSets(getUserProfile());
-
-		try {
-			logger.debug("OUT");
-			if (callback == null || callback.isEmpty())
-
-				return ((JSONArray) SerializerFactory.getSerializer("application/json").serialize(toBeReturned, buildLocaleFromSession())).toString();
-
-			else {
-				String jsonString = ((JSONArray) SerializerFactory.getSerializer("application/json").serialize(toBeReturned, buildLocaleFromSession()))
-						.toString();
-
-				return callback + "(" + jsonString + ")";
-			}
-		} catch (SerializationException e) {
-			throw new SpagoBIRestServiceException(getLocale(), e);
-		}
+	public String getDataSet(@PathParam("label") String label) {
+		return super.getDataSet(label);
 	}
-
-	private IDataSetDAO getDataSetDAO() {
-		IDataSetDAO dsDAO;
-		try {
-			dsDAO = DAOFactory.getDataSetDAO();
-		} catch (EMFUserError e) {
-			String error = "Error while looking for datasets";
-			logger.error(error, e);
-			throw new SpagoBIRuntimeException(error, e);
-		}
-		return dsDAO;
-	}
-
-	private IDataSourceDAO getDataSourceDAO() {
-		IDataSourceDAO dataSourceDAO;
-		try {
-			dataSourceDAO = DAOFactory.getDataSourceDAO();
-		} catch (EMFUserError e) {
-			String error = "Error while looking for datasources";
-			logger.error(error, e);
-			throw new SpagoBIRuntimeException(error, e);
-		}
-		return dataSourceDAO;
-	}
-
-	public String getDataSet(String label) {
-
-		ISbiDataSetDAO dsDAO;
-		try {
-			dsDAO = DAOFactory.getSbiDataSetDAO();
-		} catch (EMFUserError e) {
-			logger.error("Error while looking for datasets", e);
-			throw new SpagoBIRuntimeException("Error while looking for datasets", e);
-		}
-
-		SbiDataSet dataset = dsDAO.loadSbiDataSetByLabel(label);
-
-		if (dataset != null)
-			return JsonConverter.objectToJson(dataset, SbiDataSet.class);
-		else
-			throw new SpagoBIRuntimeException("Dataset with label [" + label + "] doesn't exist");
+	
+	@GET
+	@Path("/{label}/content")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public Response execute(@PathParam("label") String label, String body) {
+		return super.execute(label, body);
 	}
 
 	@POST
@@ -305,27 +253,28 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 
 		return Response.ok().build();
 	}
-
-	@GET
-	@Path("/listDataset")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	
+	@DELETE
+	@Path("/{label}")
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getDocumentSearchAndPaginate(@Context HttpServletRequest req, @QueryParam("Page") String pageStr,
-			@QueryParam("ItemPerPage") String itemPerPageStr, @QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical,
-			@QueryParam("ids") String ids) throws EMFUserError {
+	public Response deleteDataset(@PathParam("label") String label) {
+		return super.deleteDataset(label);
+	}
 
-		ISbiDataSetDAO dao = DAOFactory.getSbiDataSetDAO();
-		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		// TODO check if profile is null
-		dao.setUserProfile(profile);
-
-		Integer page = getNumberOrNull(pageStr);
-		Integer item_per_page = getNumberOrNull(itemPerPageStr);
-		search = search != null ? search : "";
-
-		Integer[] idArray = getIdsAsIntegers(ids);
+	public String getDatasetsAsPagedList(String pageStr, String itemPerPageStr, String search, Boolean seeTechnical, String ids) {
 
 		try {
+			ISbiDataSetDAO dao = DAOFactory.getSbiDataSetDAO();
+			IEngUserProfile profile = this.getUserProfile();
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
+	
+			Integer page = getNumberOrNull(pageStr);
+			Integer item_per_page = getNumberOrNull(itemPerPageStr);
+			search = search != null ? search : "";
+	
+			Integer[] idArray = getIdsAsIntegers(ids);
+
 			List<SbiDataSet> dataset = null;
 			if (UserUtilities.isAdministrator(getUserProfile())) {
 				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, null, null, idArray);
@@ -347,323 +296,6 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
 		} finally {
 			logger.debug("OUT");
-		}
-	}
-
-	@GET
-	@Path("/loadAssociativeSelections")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getAssociativeSelections(@QueryParam("associationGroup") String associationGroupString, @QueryParam("selections") String selectionsString,
-			@QueryParam("datasets") String datasetsString, @QueryParam("nearRealtime") String nearRealtimeDatasetsString) {
-		logger.debug("IN");
-
-		try {
-			IDataSetDAO dataSetDAO = getDataSetDAO();
-			dataSetDAO.setUserProfile(getUserProfile());
-
-			// parse selections
-			if (selectionsString == null || selectionsString.isEmpty()) {
-				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [selections] cannot be null or empty");
-			}
-
-			JSONObject selectionsObject = new JSONObject(selectionsString);
-
-			// parse association group
-			if (associationGroupString == null) {
-				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [associationGroup] cannot be null");
-			}
-
-			AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
-
-			JSONObject associationGroupObject = new JSONObject(associationGroupString);
-			AssociationGroup associationGroup = serializer.deserialize(associationGroupObject);
-			fixAssociationGroup(associationGroup);
-
-			// parse documents
-			Set<String> documents = new HashSet<>();
-			JSONArray associations = associationGroupObject.optJSONArray("associations");
-			if (associations != null) {
-				for (int associationIndex = 0; associationIndex < associations.length(); associationIndex++) {
-					JSONObject association = associations.getJSONObject(associationIndex);
-					JSONArray fields = association.optJSONArray("fields");
-					if (fields != null) {
-						for (int fieldIndex = fields.length() - 1; fieldIndex >= 0; fieldIndex--) {
-							JSONObject field = fields.getJSONObject(fieldIndex);
-							String type = field.optString("type");
-							if ("document".equalsIgnoreCase(type)) {
-								String store = field.optString("store");
-								documents.add(store);
-							}
-						}
-					}
-				}
-			}
-
-			JSONObject associationGroupObjectWithoutParams = new JSONObject(associationGroupString);
-			JSONArray associationsWithoutParams = associationGroupObjectWithoutParams.optJSONArray("associations");
-			if (associationsWithoutParams != null) {
-				for (int associationIndex = associationsWithoutParams.length() - 1; associationIndex >= 0; associationIndex--) {
-					JSONObject association = associationsWithoutParams.getJSONObject(associationIndex);
-					JSONArray fields = association.getJSONArray("fields");
-					for (int fieldIndex = fields.length() - 1; fieldIndex >= 0; fieldIndex--) {
-						JSONObject field = fields.getJSONObject(fieldIndex);
-						String column = field.getString("column");
-						String store = field.getString("store");
-						String type = field.optString("type");
-						if (("document".equalsIgnoreCase(type)) || (column.startsWith("$P{") && column.endsWith("}"))
-								|| dataSetDAO.loadDataSetByLabel(store).isRealtime()) {
-							fields.remove(fieldIndex);
-						}
-					}
-				}
-			}
-			AssociationGroup associationGroupWithoutParams = serializer.deserialize(associationGroupObjectWithoutParams);
-			fixAssociationGroup(associationGroupWithoutParams);
-
-			// parse dataset parameters
-			Map<String, Map<String, String>> datasetParameters = new HashMap<>();
-			if (datasetsString != null && !datasetsString.isEmpty()) {
-				JSONObject datasetsObject = new JSONObject(datasetsString);
-				Iterator<String> datasetsIterator = datasetsObject.keys();
-				while (datasetsIterator.hasNext()) {
-					String datasetLabel = datasetsIterator.next();
-
-					Map<String, String> parameters = new HashMap<>();
-					datasetParameters.put(datasetLabel, parameters);
-
-					JSONObject datasetObject = datasetsObject.getJSONObject(datasetLabel);
-					Iterator<String> datasetIterator = datasetObject.keys();
-					while (datasetIterator.hasNext()) {
-						String param = datasetIterator.next();
-						String value = datasetObject.getString(param);
-						parameters.put(param, value);
-					}
-				}
-			}
-
-			// parse near realtime datasets
-			Set<String> nearRealtimeDatasets = new HashSet<>();
-			if (nearRealtimeDatasetsString != null && !nearRealtimeDatasetsString.isEmpty()) {
-				JSONArray jsonArray = new JSONArray(nearRealtimeDatasetsString);
-				for (int i = 0; i < jsonArray.length(); i++) {
-					nearRealtimeDatasets.add(jsonArray.getString(i));
-				}
-			}
-
-			AssociationAnalyzer analyzerWithoutParams = new AssociationAnalyzer(associationGroupWithoutParams.getAssociations());
-			analyzerWithoutParams.process();
-			Map<String, Map<String, String>> datasetToAssociationToColumnMap = analyzerWithoutParams.getDatasetToAssociationToColumnMap();
-
-			AssociationAnalyzer analyzer = new AssociationAnalyzer(associationGroup.getAssociations());
-			analyzer.process();
-			Pseudograph<String, LabeledEdge<String>> graph = analyzer.getGraph();
-
-			IDataSource cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
-
-			// get datasets from selections
-			List<Selection> filters = new ArrayList<>();
-			Map<String, Map<String, Set<String>>> selectionsMap = new HashMap<>();
-
-			Iterator<String> it = selectionsObject.keys();
-			while (it.hasNext()) {
-				String datasetDotColumn = it.next();
-				Assert.assertTrue(datasetDotColumn.indexOf(".") >= 0, "Data not compliant with format <DATASET_LABEL>.<COLUMN> [" + datasetDotColumn + "]");
-				String[] tmpDatasetAndColumn = datasetDotColumn.split("\\.");
-				Assert.assertTrue(tmpDatasetAndColumn.length == 2, "Impossible to get both dataset label and column");
-
-				String datasetLabel = tmpDatasetAndColumn[0];
-				String column = SqlUtils.unQuote(tmpDatasetAndColumn[1]);
-
-				Assert.assertNotNull(datasetLabel, "A dataset label in selections is null");
-				Assert.assertTrue(!datasetLabel.isEmpty(), "A dataset label in selections is empty");
-				Assert.assertNotNull(column, "A column for dataset " + datasetLabel + "  in selections is null");
-				Assert.assertTrue(!column.isEmpty(), "A column for dataset " + datasetLabel + " in selections is empty");
-
-				IDataSet dataset = getDataSetDAO().loadDataSetByLabel(datasetLabel);
-				boolean isNearRealtime = nearRealtimeDatasets.contains(datasetLabel);
-				IDataSource dataSource = getDataSource(dataset, isNearRealtime);
-				boolean isDateColumn = isDateColumn(column, dataset);
-
-				String values = null;
-				String valuesForQuery = null;
-				Object object = selectionsObject.getJSONArray(datasetDotColumn).get(0);
-				if (object instanceof JSONArray) {
-					if (isDateColumn) {
-						JSONArray jsonArray = (JSONArray) object;
-						List<String> valueList = new ArrayList<>();
-						List<String> valueForQueryList = new ArrayList<>();
-						for (int i = 0; i < jsonArray.length(); i++) {
-							String value = convertDateString(jsonArray.getString(i), CockpitJSONDataWriter.DATE_TIME_FORMAT,
-									CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT);
-							valueForQueryList.add(getDateForQuery(value, dataSource));
-							valueList.add("'" + value + "'");
-						}
-						values = StringUtils.join(valueList, ",");
-						valuesForQuery = StringUtils.join(valueForQueryList, ",");
-					} else {
-						values = ("\"" + ((JSONArray) object).join("\",\"") + "\"").replace("\"\"", "'").replace("\"", "'");
-						valuesForQuery = values;
-					}
-				} else {
-					if (isDateColumn) {
-						values = convertDateString(object.toString(), CockpitJSONDataWriter.DATE_TIME_FORMAT, CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT);
-						valuesForQuery = getDateForQuery(values, dataSource);
-						values = "'" + values + "'";
-					} else {
-						values = "'" + object.toString() + "'";
-						valuesForQuery = values;
-					}
-				}
-
-				filters.add(new Selection(datasetLabel, getFilter(dataset, isNearRealtime, column, valuesForQuery)));
-
-				if (!selectionsMap.containsKey(datasetLabel)) {
-					selectionsMap.put(datasetLabel, new HashMap<String, Set<String>>());
-				}
-				Map<String, Set<String>> selection = selectionsMap.get(datasetLabel);
-				if (!selection.containsKey(column)) {
-					selection.put(column, new HashSet<String>());
-				}
-				selection.get(column).add("(" + values + ")");
-			}
-
-			logger.debug("Filter list: " + filters);
-
-			String strategy = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_DATASET_ASSOCIATIVE_LOGIC_STRATEGY);
-			Config config = AssociativeLogicUtils.buildConfig(strategy, graph, datasetToAssociationToColumnMap, filters, nearRealtimeDatasets,
-					datasetParameters, documents);
-
-			IAssociativityManager manager = AssociativeStrategyFactory.createStrategyInstance(config, getUserProfile());
-			AssociativeLogicResult result = manager.process();
-
-			Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroup, graph, result);
-
-			for (String d : selectionsMap.keySet()) {
-				if (!selections.containsKey(d)) {
-					selections.put(d, new HashMap<String, Set<String>>());
-				}
-				selections.get(d).putAll(selectionsMap.get(d));
-			}
-
-			String stringFeed = JsonConverter.objectToJson(selections, Map.class);
-			return stringFeed;
-		} catch (Exception e) {
-			String errorMessage = "An error occurred while getting associative selections";
-			logger.error(errorMessage, e);
-			throw new SpagoBIRestServiceException(errorMessage, buildLocaleFromSession(), e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	private String getFilter(IDataSet dataset, boolean isNearRealtime, String column, String values) {
-		IDataSource dataSource = getDataSource(dataset, isNearRealtime);
-		String tablePrefix = getTablePrefix(dataset, isNearRealtime);
-		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataset, isNearRealtime);
-
-		if (DatasetEvaluationStrategy.NEAR_REALTIME.equals(strategy) || SqlUtils.hasSqlServerDialect(dataSource)) {
-			return getOrFilterString(column, values, dataSource, tablePrefix);
-		} else {
-			return getInFilterString(column, values, dataSource, tablePrefix);
-		}
-	}
-
-	private String getOrFilterString(String column, String values, IDataSource dataSource, String tablePrefix) {
-		String encapsulateColumnName = tablePrefix + AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
-		String[] singleValues = values.split(",");
-		StringBuilder sb = new StringBuilder();
-
-		for (int i = 0; i < singleValues.length; i++) {
-			if (i > 0) {
-				sb.append(" OR ");
-			}
-			sb.append(encapsulateColumnName);
-			sb.append("=");
-			sb.append(singleValues[i]);
-		}
-
-		return sb.toString();
-	}
-
-	private String getInFilterString(String column, String values, IDataSource dataSource, String tablePrefix) {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(tablePrefix);
-		sb.append(AbstractJDBCDataset.encapsulateColumnName(column, dataSource));
-		sb.append(" IN (");
-		sb.append(values);
-		sb.append(")");
-
-		return sb.toString();
-	}
-
-	private String getTablePrefix(IDataSet dataset, boolean isNearRealtime) {
-		DatasetEvaluationStrategy datasetEvaluationStrategy = getDatasetEvaluationStrategy(dataset, isNearRealtime);
-		if (datasetEvaluationStrategy == DatasetEvaluationStrategy.NEAR_REALTIME) {
-			return DEFAULT_TABLE_NAME_DOT;
-		} else {
-			return "";
-		}
-	}
-
-	private enum DatasetEvaluationStrategy {
-		PERSISTED, FLAT, JDBC, NEAR_REALTIME, CACHED
-	}
-
-	private DatasetEvaluationStrategy getDatasetEvaluationStrategy(IDataSet dataSet, boolean isNearRealtime) {
-		DatasetEvaluationStrategy result;
-
-		if (dataSet.isPersisted()) {
-			result = DatasetEvaluationStrategy.PERSISTED;
-		} else if (dataSet.isFlatDataset()) {
-			result = DatasetEvaluationStrategy.FLAT;
-		} else {
-			boolean isJDBCDataSet = DatasetManagementAPI.isJDBCDataSet(dataSet);
-			boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
-			if (isNearRealtime && isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
-				result = DatasetEvaluationStrategy.JDBC;
-			} else if (isNearRealtime) {
-				result = DatasetEvaluationStrategy.NEAR_REALTIME;
-			} else {
-				result = DatasetEvaluationStrategy.CACHED;
-			}
-		}
-
-		return result;
-	}
-
-	private void fixAssociationGroup(AssociationGroup associationGroup) {
-		IDataSetDAO dataSetDAO = getDataSetDAO();
-
-		Map<String, IMetaData> dataSetLabelToMedaData = new HashMap<>();
-		for (Association association : associationGroup.getAssociations()) {
-			if (association.getDescription().contains(".")) {
-				for (Field field : association.getFields()) {
-					String fieldName = field.getFieldName();
-					if (fieldName.contains(":")) {
-						String dataSetLabel = field.getDataSetLabel();
-
-						IMetaData metadata = null;
-						if (dataSetLabelToMedaData.containsKey(dataSetLabel)) {
-							metadata = dataSetLabelToMedaData.get(dataSetLabel);
-						} else {
-							metadata = dataSetDAO.loadDataSetByLabel(dataSetLabel).getMetadata();
-							dataSetLabelToMedaData.put(dataSetLabel, metadata);
-						}
-
-						for (int i = 0; i < metadata.getFieldCount(); i++) {
-							IFieldMetaData fieldMeta = metadata.getFieldMeta(i);
-							String alias = fieldMeta.getAlias();
-							if (fieldMeta.getName().equals(fieldName)) {
-								association.setDescription(association.getDescription().replace(dataSetLabel + "." + fieldName, dataSetLabel + "." + alias));
-								field.setFieldName(alias);
-								break;
-							}
-						}
-					}
-				}
-			}
 		}
 	}
 
@@ -933,16 +565,6 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 		return dateColumnNamesList;
 	}
 
-	private boolean isDateColumn(String columnName, IDataSet dataSet) {
-		for (int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
-			IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
-			if (fieldMeta.getName().equals(columnName) && Date.class.isAssignableFrom(fieldMeta.getType())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	@Override
 	protected List<FilterCriteria> getLikeFilterCriteria(String datasetLabel, JSONObject likeSelectionsObject, boolean isNearRealtime,
 			Map<String, String> columnAliasToColumnName, List<ProjectionCriteria> projectionCriteria, boolean getAttributes) throws JSONException {
@@ -1033,26 +655,6 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 		return attributesOrMeasures;
 	}
 
-	private IDataSource getDataSource(IDataSet dataSet, boolean isNearRealTime) {
-		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isNearRealTime);
-		IDataSource dataSource = null;
-
-		if (strategy == DatasetEvaluationStrategy.PERSISTED) {
-			dataSource = dataSet.getDataSourceForWriting();
-		} else if (strategy == DatasetEvaluationStrategy.FLAT || strategy == DatasetEvaluationStrategy.JDBC) {
-			try {
-				dataSource = dataSet.getDataSource();
-			} catch (UnreachableCodeException e) {
-			}
-		} else if (strategy == DatasetEvaluationStrategy.NEAR_REALTIME) {
-			dataSource = null;
-		} else {
-			dataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
-		}
-
-		return dataSource;
-	}
-
 	private String[] getDistinctValues(String values) {
 		ArrayList<String> arrayList = new ArrayList<>();
 		// get values between "'"
@@ -1075,41 +677,6 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 			} else {
 				return "'" + value + "'";
 			}
-		}
-	}
-
-	private String getDateForQuery(String dateStringToConvert, IDataSource dataSource) {
-		String properDateString = dateStringToConvert;
-
-		if (dataSource != null && dateStringToConvert != null) {
-			String actualDialect = dataSource.getHibDialectClass();
-
-			if (SqlUtils.DIALECT_MYSQL.equalsIgnoreCase(actualDialect)) {
-				properDateString = "STR_TO_DATE('" + dateStringToConvert + "', '" + DATE_TIME_FORMAT_MYSQL + "')";
-			} else if (SqlUtils.DIALECT_POSTGRES.equalsIgnoreCase(actualDialect) || SqlUtils.DIALECT_ORACLE.equalsIgnoreCase(actualDialect)
-					|| SqlUtils.DIALECT_ORACLE9i10g.equalsIgnoreCase(actualDialect) || SqlUtils.DIALECT_HSQL.equalsIgnoreCase(actualDialect)
-					|| SqlUtils.DIALECT_TERADATA.equalsIgnoreCase(actualDialect)) {
-				properDateString = "TO_DATE('" + dateStringToConvert + "','" + DATE_TIME_FORMAT_SQL_STANDARD + "')";
-			} else if (SqlUtils.DIALECT_SQLSERVER.equalsIgnoreCase(actualDialect)) {
-				properDateString = "'" + convertDateString(dateStringToConvert, CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT, DATE_TIME_FORMAT_SQLSERVER) + "'";
-			} else if (SqlUtils.DIALECT_INGRES.equalsIgnoreCase(actualDialect)) {
-				properDateString = "DATE('" + dateStringToConvert + "')";
-			}
-		}
-
-		return properDateString;
-	}
-
-	private String convertDateString(String dateString, String srcFormatString, String dstFormatString) {
-		try {
-			SimpleDateFormat srcFormat = new SimpleDateFormat(srcFormatString);
-			Date date = srcFormat.parse(dateString);
-			SimpleDateFormat dstFormat = new SimpleDateFormat(dstFormatString);
-			return dstFormat.format(date);
-		} catch (ParseException e) {
-			String message = "Unable to parse date [" + dateString + "] with format [" + srcFormatString + "]";
-			logger.error(message, e);
-			throw new SpagoBIRuntimeException(message, e);
 		}
 	}
 

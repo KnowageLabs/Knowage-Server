@@ -512,7 +512,7 @@ function funzione_associazione_dataset(sbiModule_config, sbiModule_translate, sb
 
 
 	datasetAss.loadDatasetList=function(item){
-		sbiModule_restServices.get("2.0/datasets", "listDataset", item).success(
+		sbiModule_restServices.get("2.0/datasets", "", "asPagedList=true&" + item).success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						global.showToast(sbiModule_translate.load("sbi.glossary.load.error"),3000);

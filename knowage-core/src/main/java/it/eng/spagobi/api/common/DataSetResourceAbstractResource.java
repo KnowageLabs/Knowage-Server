@@ -17,39 +17,82 @@
  */
 package it.eng.spagobi.api.common;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.GroupCriteria;
 import it.eng.spagobi.tools.dataset.cache.Operand;
 import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.exceptions.DatasetInUseException;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(DataSetResourceAbstractResource.class);
+	
+	static final protected String DEFAULT_TABLE_NAME_DOT = DataStore.DEFAULT_TABLE_NAME + ".";
+	
+	private static final String DATE_TIME_FORMAT_MYSQL = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "%Y").replace("MM", "%m")
+			.replace("dd", "%d").replace("HH", "%H").replace("mm", "%i").replace("ss", "%s");
+	private static final String DATE_TIME_FORMAT_SQL_STANDARD = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
+			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
+	private static final String DATE_TIME_FORMAT_SQLSERVER = "yyyyMMdd HH:mm:ss";
 
+	protected enum DatasetEvaluationStrategy {
+		PERSISTED, FLAT, JDBC, NEAR_REALTIME, CACHED
+	}
+	
 	// ===================================================================
 	// UTILITY METHODS
 	// ===================================================================
@@ -349,5 +392,390 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			}
 		}
 	}
+	
+	protected String serializeDataSet(IDataSet dataSet, String typeDocWizard) throws JSONException {
+		try {
+			JSONObject datasetsJSONObject = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataSet, null);
+			JSONArray datasetsJSONArray = new JSONArray();
+			datasetsJSONArray.put(datasetsJSONObject);
+			JSONArray datasetsJSONReturn = putActions(getUserProfile(), datasetsJSONArray, typeDocWizard);
+			return datasetsJSONReturn.toString();
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured while serializing results", t);
+		}
+	}
+	
+	/**
+	 * @param profile
+	 * @param datasetsJSONArray
+	 * @param typeDocWizard
+	 *            Usato dalla my analysis per visualizzare solo i dataset su cui è possi bile costruire un certo tipo di analisi selfservice. Al momento filtra
+	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
+	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
+	 *            rifattorizzata al più presto.
+	 * @return
+	 * @throws JSONException
+	 * @throws EMFInternalError
+	 */
+	protected JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray, String typeDocWizard) throws JSONException, EMFInternalError {
 
+		Engine qbeEngine = null;
+		try {
+			qbeEngine = ExecuteAdHocUtility.getQbeEngine();
+		} catch (SpagoBIRuntimeException r) {
+			// the qbe engine is not found
+			logger.info("Engine not found. ", r);
+		}
+
+		Engine geoEngine = null;
+		try {
+			geoEngine = ExecuteAdHocUtility.getGeoreportEngine();
+		} catch (SpagoBIRuntimeException r) {
+			// the geo engine is not found
+			logger.info("Engine not found. ", r);
+		}
+
+		JSONObject detailAction = new JSONObject();
+		detailAction.put("name", "detaildataset");
+		detailAction.put("description", "Dataset detail");
+
+		JSONObject deleteAction = new JSONObject();
+		deleteAction.put("name", "delete");
+		deleteAction.put("description", "Delete dataset");
+
+		JSONObject georeportAction = new JSONObject();
+		georeportAction.put("name", "georeport");
+		georeportAction.put("description", "Show Map");
+
+		JSONObject qbeAction = new JSONObject();
+		qbeAction.put("name", "qbe");
+		qbeAction.put("description", "Show Qbe");
+
+		JSONArray datasetsJSONReturn = new JSONArray();
+		for (int i = 0; i < datasetsJSONArray.length(); i++) {
+			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);
+			JSONArray actions = new JSONArray();
+
+			if (typeDocWizard == null) {
+				actions.put(detailAction);
+				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))) {
+					// the delete action is able only for private dataset
+					actions.put(deleteAction);
+				}
+			}
+
+			boolean isGeoDataset = false;
+
+			try {
+				// String meta = datasetJSON.getString("meta"); // [A]
+				// isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta); //
+				// [A]
+
+				String meta = datasetJSON.optString("meta");
+
+				if (meta != null && !meta.equals(""))
+					isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta);
+
+			} catch (Exception e) {
+				logger.error("Error during check of Geo spatial column", e);
+			}
+
+			if (isGeoDataset && geoEngine != null) {
+				actions.put(georeportAction);
+			}
+
+			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
+			if (dsType == null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
+				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
+					if (profile.getFunctionalities() != null && profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
+						actions.put(qbeAction);
+					}
+				}
+			}
+
+			datasetJSON.put("actions", actions);
+
+			if ("GEO".equalsIgnoreCase(typeDocWizard)) {
+				// if is caming from myAnalysis - create Geo Document - must
+				// shows only ds geospatial --> isGeoDataset == true
+				if (geoEngine != null && isGeoDataset) {
+					datasetsJSONReturn.put(datasetJSON);
+				}
+			} else {
+				datasetsJSONReturn.put(datasetJSON);
+			}
+
+		}
+		return datasetsJSONReturn;
+	}
+	
+	public String getDataSet(String label) {
+		logger.debug("IN");
+		try {
+			IDataSet dataSet = getDatasetManagementAPI().getDataSet(label);
+			return serializeDataSet(dataSet, null);
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	public Response deleteDataset(String label) {
+		IDataSetDAO datasetDao = null;
+		try {
+			datasetDao = DAOFactory.getDataSetDAO();
+		} catch (EMFUserError e) {
+			logger.error("Internal error", e);
+			throw new SpagoBIRuntimeException("Internal error", e);
+		}
+
+		IDataSet dataset = getDatasetManagementAPI().getDataSet(label);
+
+		try {
+			datasetDao.deleteDataSet(dataset.getId());
+		} catch (Exception e) {
+			String message = null;
+			if (e instanceof DatasetInUseException) {
+				DatasetInUseException dui = (DatasetInUseException) e;
+				message = dui.getMessage() + "Used by: objects" + dui.getObjectsLabel() + " federations: " + dui.getFederationsLabel();
+			} else {
+				message = "Error while deleting the specified dataset";
+			}
+
+			logger.error("Error while deleting the specified dataset", e);
+			throw new SpagoBIRuntimeException(message, e);
+		}
+
+		return Response.ok().build();
+	}
+	
+	public Response execute(String label, String body) {
+		SDKDataSetParameter[] parameters = null;
+
+		if (request.getParameterMap() != null && request.getParameterMap().size() > 0) {
+
+			parameters = new SDKDataSetParameter[request.getParameterMap().size()];
+
+			int i = 0;
+			for (Iterator iterator = request.getParameterMap().keySet().iterator(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				String[] values = request.getParameterMap().get(key);
+				SDKDataSetParameter sdkDataSetParameter = new SDKDataSetParameter();
+				sdkDataSetParameter.setName(key);
+				sdkDataSetParameter.setValues(values);
+				parameters[i] = sdkDataSetParameter;
+				i++;
+			}
+		}
+		return Response.ok(executeDataSet(label, parameters)).build();
+	}
+	
+	protected String executeDataSet(String label, SDKDataSetParameter[] params) {
+		logger.debug("IN: label in input = " + label);
+
+		try {
+			if (label == null) {
+				logger.warn("DataSet identifier in input is null!");
+				return null;
+			}
+			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+			if (dataSet == null) {
+				logger.warn("DataSet with label [" + label + "] not existing.");
+				return null;
+			}
+			if (params != null && params.length > 0) {
+				HashMap parametersFilled = new HashMap();
+				for (int i = 0; i < params.length; i++) {
+					SDKDataSetParameter par = params[i];
+					parametersFilled.put(par.getName(), par.getValues()[0]);
+					logger.debug("Add parameter: " + par.getName() + "/" + par.getValues()[0]);
+				}
+				dataSet.setParamsMap(parametersFilled);
+			}
+
+			// add the jar retriver in case of a Qbe DataSet
+			if (dataSet instanceof QbeDataSet
+					|| (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof QbeDataSet)) {
+				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+				Map parameters = dataSet.getParamsMap();
+				if (parameters == null) {
+					parameters = new HashMap();
+					dataSet.setParamsMap(parameters);
+				}
+				dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+			}
+
+			dataSet.loadData();
+			// toReturn = dataSet.getDataStore().toXml();
+
+			JSONDataWriter writer = new JSONDataWriter();
+			return (writer.write(dataSet.getDataStore())).toString();
+		} catch (Exception e) {
+			logger.error("Error while executing dataset", e);
+			throw new SpagoBIRuntimeException("Error while executing dataset", e);
+		}
+	}
+	
+	protected IDataSetDAO getDataSetDAO() {
+		IDataSetDAO dsDAO;
+		try {
+			dsDAO = DAOFactory.getDataSetDAO();
+		} catch (EMFUserError e) {
+			String error = "Error while looking for datasets";
+			logger.error(error, e);
+			throw new SpagoBIRuntimeException(error, e);
+		}
+		return dsDAO;
+	}
+
+	protected IDataSourceDAO getDataSourceDAO() {
+		IDataSourceDAO dataSourceDAO;
+		try {
+			dataSourceDAO = DAOFactory.getDataSourceDAO();
+		} catch (EMFUserError e) {
+			String error = "Error while looking for datasources";
+			logger.error(error, e);
+			throw new SpagoBIRuntimeException(error, e);
+		}
+		return dataSourceDAO;
+	}
+	
+	protected String convertDateString(String dateString, String srcFormatString, String dstFormatString) {
+		try {
+			SimpleDateFormat srcFormat = new SimpleDateFormat(srcFormatString);
+			Date date = srcFormat.parse(dateString);
+			SimpleDateFormat dstFormat = new SimpleDateFormat(dstFormatString);
+			return dstFormat.format(date);
+		} catch (ParseException e) {
+			String message = "Unable to parse date [" + dateString + "] with format [" + srcFormatString + "]";
+			logger.error(message, e);
+			throw new SpagoBIRuntimeException(message, e);
+		}
+	}
+	
+	protected String getDateForQuery(String dateStringToConvert, IDataSource dataSource) {
+		String properDateString = dateStringToConvert;
+
+		if (dataSource != null && dateStringToConvert != null) {
+			String actualDialect = dataSource.getHibDialectClass();
+
+			if (SqlUtils.DIALECT_MYSQL.equalsIgnoreCase(actualDialect)) {
+				properDateString = "STR_TO_DATE('" + dateStringToConvert + "', '" + DATE_TIME_FORMAT_MYSQL + "')";
+			} else if (SqlUtils.DIALECT_POSTGRES.equalsIgnoreCase(actualDialect) || SqlUtils.DIALECT_ORACLE.equalsIgnoreCase(actualDialect)
+					|| SqlUtils.DIALECT_ORACLE9i10g.equalsIgnoreCase(actualDialect) || SqlUtils.DIALECT_HSQL.equalsIgnoreCase(actualDialect)
+					|| SqlUtils.DIALECT_TERADATA.equalsIgnoreCase(actualDialect)) {
+				properDateString = "TO_DATE('" + dateStringToConvert + "','" + DATE_TIME_FORMAT_SQL_STANDARD + "')";
+			} else if (SqlUtils.DIALECT_SQLSERVER.equalsIgnoreCase(actualDialect)) {
+				properDateString = "'" + convertDateString(dateStringToConvert, CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT, DATE_TIME_FORMAT_SQLSERVER) + "'";
+			} else if (SqlUtils.DIALECT_INGRES.equalsIgnoreCase(actualDialect)) {
+				properDateString = "DATE('" + dateStringToConvert + "')";
+			}
+		}
+
+		return properDateString;
+	}
+	
+	protected boolean isDateColumn(String columnName, IDataSet dataSet) {
+		for (int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
+			IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
+			if (fieldMeta.getName().equals(columnName) && Date.class.isAssignableFrom(fieldMeta.getType())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	protected IDataSource getDataSource(IDataSet dataSet, boolean isNearRealTime) {
+		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isNearRealTime);
+		IDataSource dataSource = null;
+
+		if (strategy == DatasetEvaluationStrategy.PERSISTED) {
+			dataSource = dataSet.getDataSourceForWriting();
+		} else if (strategy == DatasetEvaluationStrategy.FLAT || strategy == DatasetEvaluationStrategy.JDBC) {
+			try {
+				dataSource = dataSet.getDataSource();
+			} catch (UnreachableCodeException e) {
+			}
+		} else if (strategy == DatasetEvaluationStrategy.NEAR_REALTIME) {
+			dataSource = null;
+		} else {
+			dataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
+		}
+
+		return dataSource;
+	}
+	
+	protected DatasetEvaluationStrategy getDatasetEvaluationStrategy(IDataSet dataSet, boolean isNearRealtime) {
+		DatasetEvaluationStrategy result;
+
+		if (dataSet.isPersisted()) {
+			result = DatasetEvaluationStrategy.PERSISTED;
+		} else if (dataSet.isFlatDataset()) {
+			result = DatasetEvaluationStrategy.FLAT;
+		} else {
+			boolean isJDBCDataSet = DatasetManagementAPI.isJDBCDataSet(dataSet);
+			boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
+			if (isNearRealtime && isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
+				result = DatasetEvaluationStrategy.JDBC;
+			} else if (isNearRealtime) {
+				result = DatasetEvaluationStrategy.NEAR_REALTIME;
+			} else {
+				result = DatasetEvaluationStrategy.CACHED;
+			}
+		}
+
+		return result;
+	}
+	
+	protected String getFilter(IDataSet dataset, boolean isNearRealtime, String column, String values) {
+		IDataSource dataSource = getDataSource(dataset, isNearRealtime);
+		String tablePrefix = getTablePrefix(dataset, isNearRealtime);
+		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataset, isNearRealtime);
+
+		if (DatasetEvaluationStrategy.NEAR_REALTIME.equals(strategy) || SqlUtils.hasSqlServerDialect(dataSource)) {
+			return getOrFilterString(column, values, dataSource, tablePrefix);
+		} else {
+			return getInFilterString(column, values, dataSource, tablePrefix);
+		}
+	}
+
+	
+	private String getOrFilterString(String column, String values, IDataSource dataSource, String tablePrefix) {
+		String encapsulateColumnName = tablePrefix + AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
+		String[] singleValues = values.split(",");
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < singleValues.length; i++) {
+			if (i > 0) {
+				sb.append(" OR ");
+			}
+			sb.append(encapsulateColumnName);
+			sb.append("=");
+			sb.append(singleValues[i]);
+		}
+
+		return sb.toString();
+	}
+
+	private String getInFilterString(String column, String values, IDataSource dataSource, String tablePrefix) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(tablePrefix);
+		sb.append(AbstractJDBCDataset.encapsulateColumnName(column, dataSource));
+		sb.append(" IN (");
+		sb.append(values);
+		sb.append(")");
+
+		return sb.toString();
+	}
+
+	private String getTablePrefix(IDataSet dataset, boolean isNearRealtime) {
+		DatasetEvaluationStrategy datasetEvaluationStrategy = getDatasetEvaluationStrategy(dataset, isNearRealtime);
+		if (datasetEvaluationStrategy == DatasetEvaluationStrategy.NEAR_REALTIME) {
+			return DEFAULT_TABLE_NAME_DOT;
+		} else {
+			return "";
+		}
+	}
 }

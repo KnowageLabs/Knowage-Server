@@ -325,15 +325,7 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSet(@PathParam("label") String label) {
-		logger.debug("IN");
-		try {
-			IDataSet dataSet = getDatasetManagementAPI().getDataSet(label);
-			return serializeDataSet(dataSet, null);
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
-		} finally {
-			logger.debug("OUT");
-		}
+		return super.getDataSet(label);
 	}
 
 	@GET
@@ -504,24 +496,7 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response execute(@PathParam("label") String label, String body) {
-		SDKDataSetParameter[] parameters = null;
-
-		if (request.getParameterMap() != null && request.getParameterMap().size() > 0) {
-
-			parameters = new SDKDataSetParameter[request.getParameterMap().size()];
-
-			int i = 0;
-			for (Iterator iterator = request.getParameterMap().keySet().iterator(); iterator.hasNext();) {
-				String key = (String) iterator.next();
-				String[] values = request.getParameterMap().get(key);
-				SDKDataSetParameter sdkDataSetParameter = new SDKDataSetParameter();
-				sdkDataSetParameter.setName(key);
-				sdkDataSetParameter.setValues(values);
-				parameters[i] = sdkDataSetParameter;
-				i++;
-			}
-		}
-		return Response.ok(executeDataSet(label, parameters)).build();
+		return super.execute(label, body);
 	}
 
 	// @POST
@@ -541,32 +516,7 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 	@Path("/{label}")
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response deleteDataset(@PathParam("label") String label) {
-		IDataSetDAO datasetDao = null;
-		try {
-			datasetDao = DAOFactory.getDataSetDAO();
-		} catch (EMFUserError e) {
-			logger.error("Internal error", e);
-			throw new SpagoBIRuntimeException("Internal error", e);
-		}
-
-		IDataSet dataset = getDatasetManagementAPI().getDataSet(label);
-
-		try {
-			datasetDao.deleteDataSet(dataset.getId());
-		} catch (Exception e) {
-			String message = null;
-			if (e instanceof DatasetInUseException) {
-				DatasetInUseException dui = (DatasetInUseException) e;
-				message = dui.getMessage() + "Used by: objects" + dui.getObjectsLabel() + " federations: " + dui.getFederationsLabel();
-			} else {
-				message = "Error while deleting the specified dataset";
-			}
-
-			logger.error("Error while deleting the specified dataset", e);
-			throw new SpagoBIRuntimeException(message, e);
-		}
-
-		return Response.ok().build();
+		return super.deleteDataset(label);
 	}
 
 	/**
@@ -739,52 +689,6 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 
 		return super.getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isRealtime);
 
-	}
-
-	private String executeDataSet(String label, SDKDataSetParameter[] params) {
-		logger.debug("IN: label in input = " + label);
-
-		try {
-			if (label == null) {
-				logger.warn("DataSet identifier in input is null!");
-				return null;
-			}
-			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
-			if (dataSet == null) {
-				logger.warn("DataSet with label [" + label + "] not existing.");
-				return null;
-			}
-			if (params != null && params.length > 0) {
-				HashMap parametersFilled = new HashMap();
-				for (int i = 0; i < params.length; i++) {
-					SDKDataSetParameter par = params[i];
-					parametersFilled.put(par.getName(), par.getValues()[0]);
-					logger.debug("Add parameter: " + par.getName() + "/" + par.getValues()[0]);
-				}
-				dataSet.setParamsMap(parametersFilled);
-			}
-
-			// add the jar retriver in case of a Qbe DataSet
-			if (dataSet instanceof QbeDataSet
-					|| (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof QbeDataSet)) {
-				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
-				Map parameters = dataSet.getParamsMap();
-				if (parameters == null) {
-					parameters = new HashMap();
-					dataSet.setParamsMap(parameters);
-				}
-				dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
-			}
-
-			dataSet.loadData();
-			// toReturn = dataSet.getDataStore().toXml();
-
-			JSONDataWriter writer = new JSONDataWriter();
-			return (writer.write(dataSet.getDataStore())).toString();
-		} catch (Exception e) {
-			logger.error("Error while executing dataset", e);
-			throw new SpagoBIRuntimeException("Error while executing dataset", e);
-		}
 	}
 
 	@Override
@@ -1261,18 +1165,6 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 		return fieldColumnType;
 	}
 
-	protected String serializeDataSet(IDataSet dataSet, String typeDocWizard) throws JSONException {
-		try {
-			JSONObject datasetsJSONObject = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataSet, null);
-			JSONArray datasetsJSONArray = new JSONArray();
-			datasetsJSONArray.put(datasetsJSONObject);
-			JSONArray datasetsJSONReturn = putActions(getUserProfile(), datasetsJSONArray, typeDocWizard);
-			return datasetsJSONReturn.toString();
-		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while serializing results", t);
-		}
-	}
-
 	protected String serializeDataSets(List<IDataSet> dataSets, String typeDocWizard) {
 		try {
 			JSONArray datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
@@ -1296,109 +1188,7 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 		return paramsMetaDataJSON;
 	}
 
-	/**
-	 * @param profile
-	 * @param datasetsJSONArray
-	 * @param typeDocWizard
-	 *            Usato dalla my analysis per visualizzare solo i dataset su cui è possi bile costruire un certo tipo di analisi selfservice. Al momento filtra
-	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
-	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
-	 *            rifattorizzata al più presto.
-	 * @return
-	 * @throws JSONException
-	 * @throws EMFInternalError
-	 */
-	private JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray, String typeDocWizard) throws JSONException, EMFInternalError {
 
-		Engine qbeEngine = null;
-		try {
-			qbeEngine = ExecuteAdHocUtility.getQbeEngine();
-		} catch (SpagoBIRuntimeException r) {
-			// the qbe engine is not found
-			logger.info("Engine not found. ", r);
-		}
-
-		Engine geoEngine = null;
-		try {
-			geoEngine = ExecuteAdHocUtility.getGeoreportEngine();
-		} catch (SpagoBIRuntimeException r) {
-			// the geo engine is not found
-			logger.info("Engine not found. ", r);
-		}
-
-		JSONObject detailAction = new JSONObject();
-		detailAction.put("name", "detaildataset");
-		detailAction.put("description", "Dataset detail");
-
-		JSONObject deleteAction = new JSONObject();
-		deleteAction.put("name", "delete");
-		deleteAction.put("description", "Delete dataset");
-
-		JSONObject georeportAction = new JSONObject();
-		georeportAction.put("name", "georeport");
-		georeportAction.put("description", "Show Map");
-
-		JSONObject qbeAction = new JSONObject();
-		qbeAction.put("name", "qbe");
-		qbeAction.put("description", "Show Qbe");
-
-		JSONArray datasetsJSONReturn = new JSONArray();
-		for (int i = 0; i < datasetsJSONArray.length(); i++) {
-			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);
-			JSONArray actions = new JSONArray();
-
-			if (typeDocWizard == null) {
-				actions.put(detailAction);
-				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))) {
-					// the delete action is able only for private dataset
-					actions.put(deleteAction);
-				}
-			}
-
-			boolean isGeoDataset = false;
-
-			try {
-				// String meta = datasetJSON.getString("meta"); // [A]
-				// isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta); //
-				// [A]
-
-				String meta = datasetJSON.optString("meta");
-
-				if (meta != null && !meta.equals(""))
-					isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta);
-
-			} catch (Exception e) {
-				logger.error("Error during check of Geo spatial column", e);
-			}
-
-			if (isGeoDataset && geoEngine != null) {
-				actions.put(georeportAction);
-			}
-
-			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
-			if (dsType == null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
-				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
-					if (profile.getFunctionalities() != null && profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
-						actions.put(qbeAction);
-					}
-				}
-			}
-
-			datasetJSON.put("actions", actions);
-
-			if ("GEO".equalsIgnoreCase(typeDocWizard)) {
-				// if is caming from myAnalysis - create Geo Document - must
-				// shows only ds geospatial --> isGeoDataset == true
-				if (geoEngine != null && isGeoDataset) {
-					datasetsJSONReturn.put(datasetJSON);
-				}
-			} else {
-				datasetsJSONReturn.put(datasetJSON);
-			}
-
-		}
-		return datasetsJSONReturn;
-	}
 
 	@POST
 	@Path("/{datasetLabel}/cleanCache")

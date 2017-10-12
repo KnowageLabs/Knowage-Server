@@ -283,7 +283,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	}
 
 	$scope.obtainDatasetLabelsRESTcall = function() {
-		sbiModule_restServices.get("2.0/datasets", "listDataset").success(
+		sbiModule_restServices.get("2.0/datasets", "", "asPagedList=true").success(
 				function(datasets) {
 					$log.info("Received Datasets ", datasets);
 
