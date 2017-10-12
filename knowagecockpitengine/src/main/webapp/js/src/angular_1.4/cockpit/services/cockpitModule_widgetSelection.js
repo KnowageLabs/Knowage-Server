@@ -543,7 +543,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			var param = "?associationGroup="+associationsEncoded+"&selections="+selection+"&datasets="+datasets+"&nearRealtime="+nearRealTimeDs;
 
 			sbiModule_restServices.restToRootProject();
-			sbiModule_restServices.promiseGet("2.0/associativeSelections" + param)
+			sbiModule_restServices.promiseGet("2.0", "associativeSelections" + param)
 			.then(function(response){
 				var index = ws.currentSelectionContainsAss(response.data);
 				if(index==-1){
