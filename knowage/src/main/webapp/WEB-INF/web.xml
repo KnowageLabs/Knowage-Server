@@ -328,6 +328,11 @@ EXO -->
 END-LIFERAY -->
 
 	<servlet-mapping>
+		<servlet-name>StickyCaptcha</servlet-name>
+		<url-pattern>/stickyImg</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
 		<servlet-name>ChangePwdServlet</servlet-name>
 		<url-pattern>/ChangePwdServlet</url-pattern>
 	</servlet-mapping>
