@@ -17,14 +17,6 @@
  */
 package it.eng.spagobi.commons.initializers.metadata;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.metadata.SbiCommonInfo;
-import it.eng.spagobi.commons.metadata.SbiProductType;
-import it.eng.spagobi.commons.metadata.SbiProductTypeEngine;
-import it.eng.spagobi.commons.metadata.SbiProductTypeEngineId;
-import it.eng.spagobi.engines.config.metadata.SbiEngines;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -33,6 +25,14 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
+import it.eng.spagobi.commons.metadata.SbiProductType;
+import it.eng.spagobi.commons.metadata.SbiProductTypeEngine;
+import it.eng.spagobi.commons.metadata.SbiProductTypeEngineId;
+import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -156,6 +156,13 @@ public class ProductTypesInitializer extends SpagoBIInitializer {
 				alreadyExamined.addAll(productTypesXmlList);
 			}
 		}
+
+		//update engines of product types
+		it = productTypesList.iterator();
+		while (it.hasNext()) {
+			SourceBean aProductTypeSB = (SourceBean) it.next();
+			updateEngineAssociations(aSession, aProductTypeSB);
+		}
 		logger.debug("OUT");
 	}
 
@@ -227,6 +234,41 @@ public class ProductTypesInitializer extends SpagoBIInitializer {
 			association.setId(id);
 
 			aSession.save(association);
+
+		}
+	}
+
+	private void updateEngineAssociations(Session aSession, SourceBean aProductTypeSB) {
+
+		List enginesList = aProductTypeSB.getAttributeAsList("ENGINE");
+		String productTypeName = (String) aProductTypeSB.getAttribute("label");
+		if (enginesList == null || enginesList.isEmpty()) {
+			throw new SpagoBIRuntimeException("No associated engines for " + productTypeName + " !!!");
+		}
+		Iterator it = enginesList.iterator();
+		while (it.hasNext()) {
+			SourceBean anEngineSB = (SourceBean) it.next();
+			SbiEngines anEngine = findEngine(aSession, (String) anEngineSB.getAttribute("label"));
+			SbiProductType aProductType = findProductType(aSession, (String) aProductTypeSB.getAttribute("label"));
+
+			SbiProductTypeEngine association = findProductEngineType(aSession,  (String) anEngineSB.getAttribute("label"), (String) aProductTypeSB.getAttribute("label"));
+			if(association==null) {
+				association = new SbiProductTypeEngine();
+				association.setSbiProductType(aProductType);
+				association.setSbiEngines(anEngine);
+				SbiCommonInfo commonInfo = new SbiCommonInfo();
+				commonInfo.setUserIn("server");
+				commonInfo.setTimeIn(new Date());
+
+				association.setCommonInfo(commonInfo);
+
+				SbiProductTypeEngineId id = new SbiProductTypeEngineId();
+				id.setProductTypeId(aProductType.getProductTypeId());
+				id.setEngineId(anEngine.getEngineId());
+				association.setId(id);
+
+				aSession.save(association);
+			}
 
 		}
 	}

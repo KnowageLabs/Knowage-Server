@@ -187,6 +187,18 @@ public abstract class SpagoBIInitializer extends AbstractHibernateDAO implements
 		return tenant;
 	}
 
+
+	protected SbiProductTypeEngine findProductEngineType(Session aSession, String engine, String productType) {
+		logger.debug("IN");
+		String hql = "from SbiProductTypeEngine p where p.sbiEngines.label = :engine and p.sbiProductType.label = :productLabel";
+		Query hibQuery = aSession.createQuery(hql);
+		hibQuery.setString("engine", engine);
+		hibQuery.setString("productLabel", productType);
+		SbiProductTypeEngine result = (SbiProductTypeEngine) hibQuery.uniqueResult();
+		logger.debug("OUT");
+		return result;
+	}
+
 	protected SbiOrganizationProductType findOrganizationProductType(Session aSession, String tenant, String productType) {
 		logger.debug("IN");
 		String hql = "from SbiOrganizationProductType p where p.sbiOrganizations.name = :tenantName and p.sbiProductType.label = :productLabel";
