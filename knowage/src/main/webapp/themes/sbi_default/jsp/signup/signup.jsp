@@ -1,538 +1,132 @@
-<%@ page language="java"
-         extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPagePortlet"
-         contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8"
-         session="true" 
-         import="it.eng.spago.base.*,
-                 it.eng.spagobi.commons.constants.SpagoBIConstants"
-%>
-<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
-<%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
-<%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
-<%@page import="it.eng.spago.base.SourceBean"%>
-<%@page import="it.eng.spago.navigation.LightNavigationManager"%>
-<%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
-<%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="java.util.Enumeration"%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="it.eng.spagobi.community.mapping.SbiCommunity"%>
+<%--
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 
-<%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>  
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-<%
-String redirectUrl ="";
-String active = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE");
-String strUsePublicUser = SingletonConfig.getInstance().getConfigValue(SpagoBIConstants.USE_PUBLIC_USER);
-Boolean usePublicUser = (strUsePublicUser == null)?false:Boolean.valueOf(strUsePublicUser);
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-if (active == null || active.equalsIgnoreCase("false")) {
-    String context = request.getContextPath();
-    if (usePublicUser){
-        context += "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE";
-        redirectUrl = context;
-    }else{
-        redirectUrl = context;
-    }
-}
-else if (active != null && active.equalsIgnoreCase("true")) {
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--%>
 
-    String urlLogout =  SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.SECURITY_LOGOUT_URL");
-//    if(backUrlB==true){
-//        redirectUrl = backUrl; 
-//    }
-    redirectUrl = urlLogout;
+<%@ page language="java" pageEncoding="utf-8" session="true"%>
 
-} 
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA IMPORTS															--%>
+<%-- ---------------------------------------------------------------------- --%>
+<%@page import="it.eng.spagobi.tools.dataset.service.SelfServiceDatasetAction" %>
+<%@page import="java.util.Map" %>
+<%@page import="org.json.JSONObject"%>
 
 
-	String defaultOrganization = msgBuilder.getMessage("profileattr.company",request); 
-	String defaultName = msgBuilder.getMessage("profileattr.firstname",request);
-	String defaultSurname = msgBuilder.getMessage("profileattr.lastname",request);
-	String defaultUsername = msgBuilder.getMessage("username",request); //"Username";
-	String defaultPassword = msgBuilder.getMessage("password",request); //"Password";
-	String defaultEmail = msgBuilder.getMessage("profileattr.email",request);
-	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",request);
-	String defaultCaptcha = msgBuilder.getMessage("signup.form.captcha",request); 
-	String defaultLocation = msgBuilder.getMessage("signup.form.location",request);
-	String defaultLanguage = msgBuilder.getMessage("signup.form.language",request);
-	String defaultItalian = msgBuilder.getMessage("signup.form.langItalian",request);
-	String defaultEnglish = msgBuilder.getMessage("signup.form.langEnglish",request);
-	String defaultFrench = msgBuilder.getMessage("signup.form.langFrench",request);
-	String defaultSpanish = msgBuilder.getMessage("signup.form.langSpanish",request);
-	String defaultBirthday = msgBuilder.getMessage("signup.form.birthday",request);
-	String defaultGender = msgBuilder.getMessage("signup.form.gender",request);
-	String defaultMan = msgBuilder.getMessage("signup.form.genderMan",request);
-	String defaultWoman = msgBuilder.getMessage("signup.form.genderWoman",request);
-	String defaultCommunity = msgBuilder.getMessage("signup.form.community",request);
-	String defaultShortBio = msgBuilder.getMessage("signup.form.shortBio",request);
-		
-	String registrationSuccessMsg = msgBuilder.getMessage("signup.msg.success",request);
-	Locale localeSignup =  (request.getAttribute("locale")==null)?null:(Locale)request.getAttribute("locale");
-	List comunities = (request.getAttribute("communities")==null)?new ArrayList():(List)request.getAttribute("communities");
-	
-%>
-
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all-debug.js'></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js'></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ux/RowExpander.js'></script>
-
-<script type="text/javascript">
-
-Ext.ns("Sbi.config");
-Sbi.config.loginUrl = "";
-
-
-function nascondi(){
-  var optDiv = document.getElementById("optional");
-  var a = document.getElementById("nascondi");
-  if (optDiv.style.display == 'none') {
-    optDiv.style.display = '';
-    a.innerHTML = '<%=msgBuilder.getMessage("signup.form.hideOptional",request) %>';
-  }
-  else {
-    optDiv.style.display = 'none';
-    a.innerHTML = '<%=msgBuilder.getMessage("signup.form.showOptional",request) %>';
-  }
-}
-
-function register() {
-
-	
-  //Service Registry creation
-  var url = {
-    	host: '<%= request.getServerName()%>'
-    	, port: '<%= request.getServerPort()%>'
-    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>'
-    	, controllerPath: null // no cotroller just servlets   
-    };
-  
-  Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
-	baseUrl: url
-    , baseParams: params
-  });
-
-
-this.services = [];
- 
-//Adding a new service to the registry
-this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-	serviceName: 'signup/create',
-	baseParams: {}
-});
-
-    var form             = document.myForm;
-	var name             = document.getElementById("name").value;
-	var surname          = document.getElementById("surname").value;
-	var username         = document.getElementById("username").value;
-	var password         = document.getElementById("password").value;
-	var confirmPassword = document.getElementById("confirmPassword").value;
-	var email            = document.getElementById("email").value;
-	var sex            = document.getElementById("sex").value;
-	var birthDate      = document.getElementById("birthDate").value;
-	var address        = document.getElementById("address").value;
-	var enterprise          = document.getElementById("enterprise").value;
-	var biography        = document.getElementById("biography").value;
-	var language           = document.getElementById("language").value;
-	var captcha          = document.getElementById("captcha").value;
-	var check            = document.getElementById("terms");
-	var terms = 'false';
-    if( check.checked ) terms = 'true';
-    
-	var params = new Object();
-	params.locale	= '<%=localeSignup%>';
-	params.name     = name;
-	params.surname  = surname;
-	params.username = username;
-	params.password = password;
-	params.confirmPassword 
-	                = confirmPassword;
-	params.email    = email;
-	params.sex    = sex;
-	params.birthDate = birthDate;
-	params.address   = address;
-	params.enterprise     = enterprise;
-	params.biography   = biography;
-	params.terms     = terms;
-	params.language      = language;
-	params.captcha     = captcha;
-		
-	//params.modify      = true;
-
-	var goOn = false;
-	if (document.getElementById("enterpriseIsChanged").value == "true"){
-		Ext.MessageBox.confirm(
-				  "Warning",
-				  "<%=msgBuilder.getMessage("signup.msg.confirmCreateComm", request)%>",
-				  function(btn, text){					  
-					  if (btn=='yes') {
-						  execCreation(params);
-						  return;
-					  }
-				  }
-		);
-	}else 
-		goOn=true;
-	
-	if (goOn){
-		execCreation(params);
-	}
-}
-
-function execCreation(params){
-	var registrationSuccessMsg = "<%=registrationSuccessMsg%>";
-	
-	Ext.Ajax.request({
-		url: this.services["create"],
-		method: "POST",
-		params: params,			
-		success : function(response, options) {	
-	
-		    if(response != undefined  && response.responseText != undefined ) {
-				if( response.responseText != null && response.responseText != undefined ){
-			    var jsonData = Ext.decode( response.responseText );
-			    if( jsonData.message != undefined && jsonData.message != null && jsonData.message == 'validation-error' ){
-			      Sbi.exception.ExceptionHandler.handleFailure(response);
-			    }else{
-			    	 function redirect()
-	                  {
-	                      window.location = "<%=redirectUrl%>"
-	                  }
-			    	
-			    	Sbi.exception.ExceptionHandler.showInfoMessageWithCallback(registrationSuccessMsg, 'OK', {fn: redirect});
-			      
-			    }		
-			  }		
-			}
-			else {
-				
-			  Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-			}
-	    },
-			scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure
-		});
-}
-</script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js'></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/exception/ExceptionHandler.js'></script>
-
-<link id="extall"     rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
-<link id="theme-gray" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
-<link id="spagobi-ext-4" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
-
+<!DOCTYPE html>
 <html>
   <head>
-  <style media="screen" type="text/css">
-
-	
-	body {
-		background: #dedede; /* Old browsers *
-		background: -moz-linear-gradient(top,  #dedede 0%, #efefef 100%); /* FF3.6+ */
-		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dedede), color-stop(100%,#efefef)); /* Chrome,Safari4+ */
-		background: -webkit-linear-gradient(top,  #dedede 0%,#efefef 100%); /* Chrome10+,Safari5.1+ */
-		background: -o-linear-gradient(top,  #dedede 0%,#efefef 100%); /* Opera 11.10+ */
-		background: -ms-linear-gradient(top,  #dedede 0%,#efefef 100%); /* IE10+ */
-		background: linear-gradient(to bottom,  #dedede 0%,#efefef 100%); /* W3C */
-		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dedede', endColorstr='#efefef',GradientType=0 ); /* IE6-9 */
-		height: 100%;
-		margin: 0;
-		background-repeat: no-repeat;
-		background-attachment: fixed;
-	}
-	td.login-label{
- 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 10 px;
-	color: #7d7d7d;
-}
-
-a:link{
- 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 14px;
-	color: #F8A400;
-	text-decoration:none;
-}
-a:visited{
- 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 14px;
-	color: #F8A400;
-	text-decoration:none;
-}
-a:hover{
- 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 14px;
-	color: #F8A400;
-	text-decoration:none;
-}
-
-.submit{clear:both;width:auto;padding-top:12px;text-align:center}
-.submit input{border:0;height:42px;width:198px;padding:2px 31px 0;text-align:center;cursor:pointer;margin:0 0 20px;font-family:cabinregular,arial,helvetica,sans-serif;font-size:1.33em;font-weight:bold;line-height:100%;text-transform:uppercase;background:#F8A400;color:#fff;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
-.submit input:hover{opacity:0.9;filter:alpha(opacity = 90)}
-
-.footerMsg {color:#193B54;}
-
- </style>
-  
-  <link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "img/favicon.ico")%>" />
-  <title>SpagoBI signup</title>
-  <LINK rel='StyleSheet' 
-    href='${pageContext.request.contextPath}/themes/sbi_default/css/spagobi_shared.css' 
-    type='text/css' />
-  
-  <style>
-      body {
-	       padding: 0;
-	       margin: 0;
-      }
-  </style> 
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Knowage">
+    <title>Knowage - Signup</title>
+    
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
   </head>
 
-  <body>
-   
-	 <div id="content" style="height:100%">  
-    		<form name="myForm" method="post" action="${pageContext.request.contextPath}/">
-            	<input type="hidden" id="locale" name="locale" value="<%=locale%>" />
-       
-		        	<div style="padding: 20px " >
-		        	<!--
-		        	DO NOT DELETE THIS COMMENT
-		        	If you change the tag table with this one  you can have the border of the box with the shadow via css
-		        	the problem is that it doesn't work with ie	
-		     		
-		     		<table style="background: none repeat scroll 0 0 #fff; border-radius: 10px 10px 10px 10px;  box-shadow: 0 0 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
-		        	 -->
+  <body class="kn-login" ng-app="signUp" ng-controller="signUpCtrl" ng-cloak>
+  
+  
+  	<div layout="row" layout-align="center center" layout-fill class="signUpContainer">
+      <md-card flex=50 flex-xs=100>
+        <md-card-content layout="column" layout-align="start center">
+        	<img class="headerLogoImg" src="${pageContext.request.contextPath}/themes/sbi_default/img/wapp/logo.png">
+        	<h3>SignUp</h3>
+        	<div layout="row" layout-wrap>
+        		<md-input-container class="md-block" flex=50 flex-xs=100>
+			        <label>Name</label>
+			        <input ng-model="newUser.name" type="text">
+			      </md-input-container>
+			      <md-input-container class="md-block" flex=50 flex-xs=100>
+			        <label>Surname</label>
+			        <input ng-model="newUser.surname" type="text">
+			      </md-input-container>
+			      <md-input-container class="md-block" flex=50 flex-xs=100>
+			        <label>Username</label>
+			        <input ng-model="newUser.username" type="text">
+			      </md-input-container>
+			      <md-input-container class="md-block" flex=50 flex-xs=100>
+			        <label>Email address</label>
+			        <input ng-model="newUser.email" type="text">
+			      </md-input-container>
+			      <md-input-container class="md-block" flex=50 flex-xs=100>
+			        <label>Password</label>
+			        <input ng-model="newUser.password" type="password">
+			      </md-input-container>
+			      <md-input-container class="md-block" flex=50 flex-xs=100>
+			        <label>Confirm Password</label>
+			        <input ng-model="newUser.confirmPassword" type="password">
+			      </md-input-container>
+			      <div flex=50 flex-xs=100>
+			      	<div id="sticky" style="background-image:url('${pageContext.request.contextPath}/stickyImg')">
+			      		<!--  img src='${pageContext.request.contextPath}/stickyImg' width='250px' height='75px' /-->
+			      	</div>
+			      	</div>
+			      <md-input-container class="md-block" flex=50 flex-xs=100>
+			        <label>Insert captcha</label>
+			        <input ng-model="newUser.captcha" type="text">
+			      </md-input-container>
+			
+        	</div>
+          
+        </md-card-content>
+        <md-card-actions layout="column" layout-align="center">
+          <md-button class="md-primary md-raised" ng-click="register()">Register</md-button>
+        </md-card-actions>
+      </md-card>
+     </div>
+  
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
 
-				<table border="0" align="center" style="border-collapse:separate; background: none repeat scroll 0 0; border-radius: 5px 5px 5px 5px;  box-shadow: 0px 0px 10px #888;  -webkit-box-shadow:  0px 0px 10px #888;  -moz-box-shadow:  0px 0px 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
-				   <tr>
-						<td></td>
-						<td>
-						<img id="profile-img" class="logoHeader" 
-						      src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logo.png", currTheme)%>' />
-						<!--  <img
-							src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/spagobi40logo.png'
-							width='180px' height='51px' style="margin: 20px 0px"/>-->
-						</td>
-						<td width='50px'></td>
-						<td></td>
-					</tr> 
-					<tr>
-						<td width="120px">&nbsp;</td>
-						<td width="550px">
-                            
-							<table border="0">
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*&nbsp;<%=defaultName%>:</td>
-									<td width="75px">&nbsp;</td>
+	<!-- angular reference-->
+	<!-- START-DEBUG -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.js"></script> 
+	<!-- END-DEBUG -->
+	
+	<!-- START-PRODUCTION 
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.min.js"></script> 
+	END-PRODUCTION -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-animate.min.js"></script> 
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-aria.min.js"></script> 
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script> 
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-messages.min.js"></script> 
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-cookies.js"></script> 
 
-									<td class='login-label'>*&nbsp;<%=defaultSurname%>:</td>
+  	<!-- Angular Material Library -->
+  	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+  
+  	<!-- Your application bootstrap  -->
+  	<script type="text/javascript">    
 
-								</tr>
-								<tr>
-									<td><input id="name" name="name" type="text" size="25"
-										class="login"></td>
-									<td></td>
-
-									<td><input id="surname" name="surname" type="text"
-										size="25" class="login"></td>
-
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*
-										<%=defaultUsername%>:</td>
-									<td width="25px"></td>
-									<td class='login-label'>*&nbsp;<%=defaultEmail%>:</td>
-
-								</tr>
-								<tr>
-									<td><input id="username" name="username" type="text"
-										size="25" class="login">
-									</td>
-									<td></td>
-
-									<td><input id="email" name="email" type="text" size="25"
-										class="login">
-									</td>
-
-								</tr>
-
-
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*&nbsp;<%=defaultPassword%>:</td>
-									<td width="25px">&nbsp;</td>
-
-									<td class='login-label'>*&nbsp;<%=defaultConfirmPwd%>:</td>
-
-								</tr>
-								<tr>
-									<td valign="top"><input id="password" name="password"
-										type="password" size="25" class="login">
-									</td>
-									<td></td>
-
-									<td><input id="confirmPassword" name="confirmPassword"
-										type="password" size="25" class="login">
-									</td>
-
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*&nbsp;<%=defaultCaptcha%>:</td>
-									<td width="25px">&nbsp;</td>
-                                    <td></td>
-							    </tr>
-								<tr>
-									<td colspan="3"><input id="captcha" name="captcha"
-										type="text" size="25" class="login" />
-									</td>
-								</tr>
-								<tr height="7px">
-									<td></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td colspan="3"><div id="sticky"><img
-										src='${pageContext.request.contextPath}/stickyImg'
-										width='250px' height='75px' /></div>
-									</td>
-									
-								</tr>
-								
-								<tr>
-								  <td colspan="3" class='login-label'>*&nbsp;<%=msgBuilder.getMessage("signup.form.agreeTerms",request) %>:</td>
-							    </tr>
-								<tr>
-									<td colspan="3" height="30px"><input type="checkbox"
-										name="terms" id="terms" class="login" />
-									</td>
-								</tr>
-								<tr><td colspan="3"><a href="#" onclick="javascript:nascondi();"><div id="nascondi" style="font-weight:bold"><%=msgBuilder.getMessage("signup.form.showOptional",request) %></div></a></td></tr>
-							</table>
-							<div id="optional" style="display:none">
-							<table border="0">
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left"><%=defaultLocation%>:</td>
-									<td width="75px">&nbsp;</td>
-
-									<td class='login-label'><%=defaultLanguage %>:</td>
-
-								</tr>
-
-								<tr>
-									<td><input id="address" name="address" type="text"
-										size="25" class="login" />
-									</td>
-									<td></td>
-
-									<td><select class="login" name="language" id="language"
-										style="width: 214px">
-											<option value=""></option>
-											<option value="it_IT"><%=defaultItalian%></option>
-											<option value="en_US"><%=defaultEnglish%></option>
-											<option value="fr_FR"><%=defaultFrench%></option>
-											<option value="es_ES"><%=defaultSpanish%></option>
-									</select>
-									</td>
-
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left"><%=defaultGender %>:</td>
-									<td width="25px">&nbsp;</td>
-
-									<td class='login-label'><%=defaultBirthday %> (dd/mm/yyyy):</td>
-
-								</tr>
-
-								<tr>
-									<td><select class="login" name="sex" id="sex"
-										style="width: 214px">
-											<option value=""></option>
-											<option value="M"><%=defaultMan %></option>
-											<option value="F"><%=defaultWoman %></option>
-									</select>
-									</td>
-									<td></td>
-
-									<td><input id="birthDate" name="birthDate" type="text"
-										size="25" class="login" />
-									</td>
-
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left" ><%=defaultCommunity %>:</td>
-									<td></td>
-									<td class='login-label'></td>
-								</tr>
-								<tr>
-									<td>
-										<!-- <input id="azienda" name="azienda" type="text" size="25" class="login"/> --> 
-										<div class="login" style="position:relative;width:200px;height:25px;border:0;padding:0;margin:0;">
-											<select style="position:absolute;top:0px;left:0px;width:214px; height:25px;line-height:20px;margin:0;padding:0;" onchange="document.getElementById('enterprise').value=this.options[this.selectedIndex].text;">											
-												<option></option>	
-												<%for(int i=0; i<comunities.size(); i++){
-													SbiCommunity objComm = (SbiCommunity)comunities.get(i); %>
-													<option value="<%=objComm.getName()%>"><%=objComm.getName() %></option>	
-												<%} %>																															
-											</select>											
-											<input type="text" name="enterprise" placeholder="" id="enterprise" style="position:absolute;top:1px;left:2px;width:183px;height:23px;border:0px;" onfocus="this.select()" onKeyPress="document.getElementById('enterpriseIsChanged').value=true">											
-											<input type="hidden" name="enterpriseIsChanged" id="enterpriseIsChanged"> 									
-										</div>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left"><%=defaultShortBio %>:</td>
-									<td width="75px">&nbsp;</td>
-									<td></td>
-
-								</tr>
-								<tr>
-									<td colspan="3"><textarea style="width: 500px"
-											class="login" rows="5" cols="35" name="biography"
-											id="biography"></textarea>
-									</td>
-
-								</tr>
-								</table>
-								</div>
-								<table border="0">
-								  <tr>
-								    <td colspan="0">
-								     <table border="0">
-								      <tr height="20px"><td colspan="3">&nbsp;</td></tr>
-								      <tr>
-									 <!--  <td align="right">
-									    <a href="${pageContext.request.contextPath}/" >
-									      <img src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/back.png' width='100px' height='37px' />
-									    </a>
-									  </td> -->
-									  <td width="50px">&nbsp;</td>
-									  <!-- <td>
-									    <a href="#" onclick="javascript:register();">
-									      <img src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/register.png' title="Register" alt="Register" />
-									    </a>                              
-									  </td> -->
-									    <div class="submit">
-			                                <input type="button" value="<%=msgBuilder.getMessage("signup",request)%>" onclick="javascript:register();" />
-			                                <p class="footerMsg"><%=msgBuilder.getMessage("yesAccount",request)%> <a href="${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE">Login</a></p>                                
-			                            </div>
-									  </tr>
-									</table>									
-								   </td>
-
-								</tr>
-							   </table>
-							</td>
-						
-						<td style="padding-top: 20px">
-						</td>
-					</tr>					
-
-				</table>
-			</div>
-			</form>
-	        </div>
+    angular.module('signUp', ['ngMaterial'])
+    .controller('signUpCtrl', function($scope,$http) {
+	  $scope.helloworld = 'hello World';
+	  $scope.newUser = {};
+	  $scope.register = function(){
+		  $http.post('${pageContext.request.contextPath}/restful-services/signup/create?SBI_EXECUTION_ID=-1', $scope.newUser)
+		  .then(function(response) {console.log(response)},
+				  function(error) {alert(error)})
+	  }
+		
+	});
+    
+    
+  	</script>
   </body>
 </html>

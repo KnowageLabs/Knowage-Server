@@ -202,12 +202,25 @@
 	    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.43);
 	}
 	.signUpContainer {
+		h3 {
+			margin:0;
+			text-transform: uppercase;
+			font-size: $defaultSize;
+		}
+		label {
+			color: #002956 !important;
+			text-shadow: none;
+		}
 		md-card {
 			background-color: rgba(238, 238, 238, 0.38);
 			.headerLogoImg {
 
 			}
 			md-input-container {
+				&:not(.md-input-invalid).md-input-focused .md-input {
+					border-color: #002956;
+				}
+
 				.md-input-has-value {
 					label {
 						color: white !important;
@@ -215,11 +228,25 @@
 				}	
 			}
 		}
+		#sticky {
+		    height: 75px;
+		    background-size: cover;
+		    background-position: center;
+		    border-radius: 4px;
+		    margin: 0 8px;
+		    background-repeat: no-repeat;
+		    box-shadow: 0px 2px 2px $shadowsColor;
+		}
 	}
 }
 
 @media all and (max-width: 800px) {
 	.kn-login {
+		.signUpContainer {
+			md-card {
+				margin-top: 20px;
+			}
+		}
 		.card {
 			margin-top: 10px;
 		}
