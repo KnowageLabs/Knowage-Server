@@ -17,35 +17,6 @@
  */
 package it.eng.spagobi.signup.service.rest;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiCommonInfo;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.community.bo.CommunityManager;
-import it.eng.spagobi.community.mapping.SbiCommunity;
-import it.eng.spagobi.profiling.bean.SbiUser;
-import it.eng.spagobi.profiling.bean.SbiUserAttributes;
-import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
-import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
-import it.eng.spagobi.profiling.dao.ISbiUserDAO;
-import it.eng.spagobi.rest.publishers.PublisherService;
-import it.eng.spagobi.security.Password;
-import it.eng.spagobi.services.rest.annotations.PublicService;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.locks.DistributedLockFactory;
-import it.eng.spagobi.utilities.themes.ThemesManager;
-import it.eng.spagobi.wapp.services.ChangeTheme;
-
 import java.io.IOException;
 import java.net.URL;
 import java.security.Security;
@@ -74,8 +45,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import nl.captcha.Captcha;
-
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -83,6 +52,36 @@ import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
 import com.hazelcast.core.IMap;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.community.bo.CommunityManager;
+import it.eng.spagobi.community.mapping.SbiCommunity;
+import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.profiling.bean.SbiUserAttributes;
+import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
+import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
+import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.rest.publishers.PublisherService;
+import it.eng.spagobi.security.Password;
+import it.eng.spagobi.services.rest.annotations.PublicService;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.locks.DistributedLockFactory;
+import it.eng.spagobi.utilities.themes.ThemesManager;
+import it.eng.spagobi.wapp.services.ChangeTheme;
+import nl.captcha.Captcha;
 
 @Path("/signup")
 public class Signup {
@@ -100,7 +99,7 @@ public class Signup {
 	@GET
 	@Path("/prepareUpdate")
 	public void prepareUpdate(@Context HttpServletRequest req) {
-
+		logger.debug("IN");
 		try {
 			UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
@@ -121,6 +120,7 @@ public class Signup {
 			req.setAttribute("data", data);
 
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing the subscribe action", t);
 			throw new SpagoBIServiceException("An unexpected error occured while executing the subscribe action", t);
 		}
 		try {
@@ -143,15 +143,17 @@ public class Signup {
 		} catch (IOException e) {
 			logger.error("Error writing content");
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing the subscribe action", t);
 			throw new SpagoBIServiceException("An unexpected error occured while executing the subscribe action", t);
 		}
+		logger.debug("OUT");
 	}
 
 	@POST
 	@Path("/delete")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String delete(@Context HttpServletRequest req) {
-
+		logger.debug("IN");
 		try {
 			UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
@@ -174,14 +176,16 @@ public class Signup {
 			// servletResponse.sendRedirect(url.toString());
 
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing the subscribe action", t);
 			throw new SpagoBIServiceException("An unexpected error occured while executing the subscribe action", t);
 		}
+		logger.debug("OUT");
 		return new JSONObject().toString();
 
 	}
 
 	private void updAttribute(ISbiUserDAO userDao, ISbiAttributeDAO dao, String attributeValue, String userId, int id, int attributeId) throws EMFUserError {
-
+		logger.debug("IN");
 		if (attributeValue != null) {
 			SbiUserAttributes userAttribute = dao.loadSbiAttributesByUserAndId(id, attributeId);
 			if (userAttribute != null) {
@@ -208,16 +212,18 @@ public class Signup {
 					userDao.deleteSbiUserAttributeById(id, attributeId);
 				}
 			} catch (EMFUserError err) {
+				logger.error("Error while deleting user", err);
+				throw new SpagoBIServiceException("Error while deleting user", err);
 			}
 		}
+		logger.debug("OUT");
 	}
-
 
 	@POST
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String update(@Context HttpServletRequest req) {
-
+		logger.debug("IN");
 		String name = GeneralUtilities.trim(req.getParameter("name"));
 		String surname = GeneralUtilities.trim(req.getParameter("surname"));
 		String password = GeneralUtilities.trim(req.getParameter("password"));
@@ -268,8 +274,10 @@ public class Signup {
 			}
 
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing the subscribe action", t);
 			throw new SpagoBIServiceException("An unexpected error occured while executing the subscribe action", t);
 		}
+		logger.debug("OUT");
 		return new JSONObject().toString();
 	}
 
@@ -306,7 +314,7 @@ public class Signup {
 	@Path("/prepareActive")
 	@PublicService
 	public void prepareActive(@Context HttpServletRequest req) {
-
+		logger.debug("IN");
 		try {
 			String theme_name = (String) req.getAttribute(ChangeTheme.THEME_NAME);
 			logger.debug("theme selected: " + theme_name);
@@ -325,12 +333,14 @@ public class Signup {
 		} catch (IOException e) {
 			logger.error("Error writing content");
 		}
+		logger.debug("OUT");
 	}
 
 	@POST
 	@Path("/active")
 	@PublicService
 	public String active(@Context HttpServletRequest req) {
+		logger.debug("IN");
 
 		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 		String id = req.getParameter("accountId");
@@ -360,12 +370,13 @@ public class Signup {
 			user.setFlgPwdBlocked(false);
 			userDao.updateSbiUser(user, null);
 
+			logger.debug("OUT");
 			return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.userActivationOK", "messages", locale) + "'}").toString();
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing the subscribe action", t);
 			throw new SpagoBIServiceException("An unexpected error occured while executing the subscribe action", t);
 		}
 	}
-
 
 	// @GET
 	// @Path("/prepareActive")
@@ -434,7 +445,7 @@ public class Signup {
 	@Produces(MediaType.APPLICATION_JSON)
 	@PublicService
 	public String create(@Context HttpServletRequest req) {
-
+		logger.debug("IN");
 
 		// String strLocale = GeneralUtilities.trim(req.getParameter("locale"));
 		// Locale locale = new Locale(strLocale.substring(0, strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_")+1));
@@ -580,8 +591,10 @@ public class Signup {
 
 			sendMail(email, subject, mailTxt);
 		} catch (Throwable t) {
+			logger.error("Error during user creation", t);
 			throw new SpagoBIServiceException(msgBuilder.getMessage("signup.check.error", "messages", locale), t);
 		}
+		logger.debug("OUT");
 		return new JSONObject().toString();
 	}
 
