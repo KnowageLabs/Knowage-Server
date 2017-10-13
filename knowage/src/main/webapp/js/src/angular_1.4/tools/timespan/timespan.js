@@ -401,11 +401,11 @@ function behavior(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog
 			}
 		}
 
+		var FirstTemp=extendedTS.definition[extendedTS.definition.length-1];
 
-		var FirstTemp=extendedTS.definition[0];
-		var f_date = new Date(FirstTemp.from);
-		var t_date = new Date(FirstTemp.to);
 
+			var f_date = new Date(FirstTemp.from.replace( /(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3') );
+			var t_date = new Date(FirstTemp.to.replace( /(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3') );
 
 		var millsDay=86400000;
 		var tmpFT={};
