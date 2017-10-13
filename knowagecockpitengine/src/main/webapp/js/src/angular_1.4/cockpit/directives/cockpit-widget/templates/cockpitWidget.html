@@ -71,15 +71,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</md-button>
 		<md-fab-speed-dial md-open="ngModel.menuOpened" md-direction="down" class="showActionButtonHandler md-scale" ng-class="{'noMouse':ngModel.menuOpened==true}" ng-if="!widExp && !( cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE)">
         <md-fab-trigger>
-          	<md-button  class="md-icon-button menuOnTopButton" aria-label="show menu" ng-class="{'dragCursor':ngModel.menuOpened && cockpitModule_properties.EDIT_MODE,'draggableToolbar':ngModel.menuOpened && cockpitModule_properties.EDIT_MODE}">
-				<md-icon md-font-icon="fa fa-ellipsis-v"></md-icon>
-			</md-button>
+          	<div  class="md-button md-icon-button menuOnTopButton" aria-label="show menu" ng-class="{'dragCursor':ngModel.menuOpened && cockpitModule_properties.EDIT_MODE,'draggableToolbar':ngModel.menuOpened && cockpitModule_properties.EDIT_MODE}">
+				<md-icon md-font-icon="fa fa-ellipsis-v" ng-if="!ngModel.menuOpened || !cockpitModule_properties.EDIT_MODE"></md-icon>
+				<md-icon md-font-icon="fa fa-arrows" ng-if="ngModel.menuOpened && cockpitModule_properties.EDIT_MODE"></md-icon>
+			</div>
         </md-fab-trigger>
 
         <md-fab-actions>	
-        	<div  class="md-button md-icon-button draggableToolbar dragCursor" aria-label="drag widget" ng-if="ngModel.menuOpened && cockpitModule_properties.EDIT_MODE">
-				<md-icon md-font-icon="fa fa-arrows"></md-icon>
-			</div>		
+
 			<md-button class="md-icon-button "  aria-label="expand button" ng-click="expandWidget();$event.stopPropagation();" >
 				<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
 				<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
