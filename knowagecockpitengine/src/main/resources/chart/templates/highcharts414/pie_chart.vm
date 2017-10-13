@@ -23,8 +23,7 @@
 #set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
 #set($crossNavigation = '')
 #set($crossNavigation = $chart.DRILL)
-
-
+#set($axis = $chart.AXES_LIST.AXIS[0])
 {
     chart: {
    		type: 'pie',
@@ -689,13 +688,33 @@
 			                
 						#end
 				, 
-				
-				title: {
-		            align: 'left',
+				#if($axis.TITLESERIE)
+					#set($serieTitleShow = $axis.TITLESERIE.showTitle)
+					#if($serieTitleShow=="true")
+					title: {
 		            format: '<b>{name}</b>',
+		            
+		            align: '$axis.TITLESERIE.style.align',
+		            style:{
+			    		#foreach($styleName in $axis.TITLESERIE.style.keySet())
+        	#set ($titleStyleValue = $axis.TITLESERIE.style[$styleName])
+    			#if ($styleName == 'fontWeight' && ($titleStyleValue == 'italic' || $titleStyleValue == 'normal')) 
+        			fontStyle: '$titleStyleValue',
+				#elseif($styleName == 'fontWeight' && $titleStyleValue == 'underline')
+        			textDecoration: 'underline',
+				#else		        			
+        			$styleName: '$titleStyleValue',
+        		#end
+        	#end
+					},
+		            
+		            
 		            verticalAlign: 'top',
 		            y: -40
 		        },  
+					#end
+				#end
+				
 				
 				data: [
 	    	    

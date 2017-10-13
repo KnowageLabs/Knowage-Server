@@ -378,7 +378,17 @@ angular.module('ChartDesignerService', [])
 					                	  "fontWeight":"",
 					                	  "fontSize":""
 					                  }
-					               }
+					               },
+					               "TITLESERIE":{  
+					            	   "showTitle": false,
+					            	   "style":{
+						                	  "align":"",
+						                	  "color":"",
+						                	  "fontFamily":"",
+						                	  "fontWeight":"",
+						                	  "fontSize":""
+						                  }
+						               }
 					            },
 					            {  
 					               "id":"X",
@@ -2348,6 +2358,9 @@ angular.module('ChartDesignerService', [])
 			case "plotbands": templatesURLs = sbiModule_config.contextName + 
 			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/plotbands.html"; break;
 			
+			case "serieTitle": templatesURLs = sbiModule_config.contextName + 
+			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/serie_title_details.html"; break;
+			
 			
 		};
 		
@@ -2371,6 +2384,7 @@ angular.module('ChartDesignerService', [])
 			case "categoriesAxisTitleDetails": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.axis.title.toolbar.title"); break;
 			case "categoriesOrdering": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.title"); break;
 			case "categoriesDateTime": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.dateTimeAndGrouping"); break;
+			case "serieTitle": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.serie.serieTitle"); break;
 			default : detailsNameToReturn = translate.load("Gauge axis additional options"); break;
 		}
 		

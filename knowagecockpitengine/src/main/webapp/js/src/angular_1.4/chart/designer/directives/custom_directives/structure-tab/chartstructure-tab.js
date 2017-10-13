@@ -952,10 +952,10 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
     // TODO: we need also to take care if the series container is the main (for plus)/additional (for X)
     $scope.seriesContainerAddAndRemoveIncludeTypes = ["bar","line"];
 
-    $scope.seriesContainerConfigDropDownExcludeTypes = ["pie","sunburst","treemap","wordcloud"];
+    $scope.seriesContainerConfigDropDownExcludeTypes = ["sunburst","treemap","wordcloud"];
 
-    $scope.seriesAxisTitleExcludeTypes = ["chord","parallel"];
-    $scope.seriesAxisMajorMinorGirdExcludeTypes = ["chord","gauge","heatmap","parallel"];
+    $scope.seriesAxisTitleExcludeTypes = ["chord","pie","parallel"];
+    $scope.seriesAxisMajorMinorGirdExcludeTypes = ["chord","pie","gauge","heatmap","parallel"];
 
     /**
      * Manage visibility (show/hide) of the options for the Series container.

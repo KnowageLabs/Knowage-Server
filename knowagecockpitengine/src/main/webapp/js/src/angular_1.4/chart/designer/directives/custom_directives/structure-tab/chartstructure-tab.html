@@ -335,9 +335,9 @@
 						        	<md-icon md-menu-origin class="fa fa-angle-down" style="display:inline"></md-icon>
 						      	</md-button>
 						      	
-						      	<md-menu-content width="4">
+						      	<md-menu-content width="5">
 							    
-					        		<md-menu-item ng-if="disableHtmlElementForChartJs()">
+					        		<md-menu-item ng-if=" selectedChartType.toLowerCase()!='pie' && disableHtmlElementForChartJs()">
 					          			<md-button ng-click="showStructureDetails('axisConfiguration',seriesContainer.name)">
 					 						<md-icon class="fa fa-pencil-square-o" style="display:inline"></md-icon>
 						            		<span>Axis configuration</span>
@@ -362,6 +362,12 @@
 						          		<md-button ng-click="showStructureDetails('axisMinorGridConfiguration',seriesContainer.name)" >
 						            		<md-icon class="fa fa-th" style="display:inline"></md-icon>
 						            		<span>Minor grid configuration</span>
+						          		</md-button>
+						        	</md-menu-item>	
+						        	<md-menu-item ng-if=" selectedChartType.toLowerCase()=='pie' && disableHtmlElementForChartJs()">
+						          		<md-button ng-click="showStructureDetails('serieTitle',seriesContainer.name)" >
+						            		<md-icon class="fa fa-pencil-square-o" style="display:inline"></md-icon>
+						            		<span>Serie title configuration</span>
 						          		</md-button>
 						        	</md-menu-item>	
 								        						        
