@@ -441,7 +441,9 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	}
 
 	$scope.cloneWidget = function(){
-		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,angular.copy($scope.ngModel));
+		var newModel = angular.copy($scope.ngModel);
+		newModel.id = new Date().getTime();
+		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
 	}
 
 	//dialog to choose the sheet where to move the widget
