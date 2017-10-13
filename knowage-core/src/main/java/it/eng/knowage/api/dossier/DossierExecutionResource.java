@@ -97,14 +97,15 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 			if (progressThreadId != null) {
 				deleteDBRowInCaseOfError(progressThreadId);
 			}
-			throw new SpagoBIRuntimeException("An unexpected error occured while executing dossier execution service", e);
+			logger.error("Error while generating PDF documents for PPT template.", e);
+			throw new SpagoBIRuntimeException(e.getMessage(), e);
+
 		} catch (Throwable t) {
 			if (progressThreadId != null) {
 				deleteDBRowInCaseOfError(progressThreadId);
 			}
-			throw new SpagoBIRuntimeException("An unexpected error occured while executing dossier execution service", t);
-		} finally {
-			logger.debug("OUT");
+			logger.error("Error while generating PDF documents for PPT template.", t.getCause());
+			throw new SpagoBIRuntimeException(t.getMessage(), t);
 		}
 		return null;
 
