@@ -238,6 +238,9 @@
 		    box-shadow: 0px 2px 2px $shadowsColor;
 		}
 		.goTologin {
+			&:hover {
+				background-color: lighten(#c50754,10%) !important; 
+			}
 			background-color: #c50754;
 		}
 	}

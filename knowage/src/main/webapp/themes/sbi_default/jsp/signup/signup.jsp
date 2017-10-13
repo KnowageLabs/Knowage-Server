@@ -120,7 +120,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   	<script type="text/javascript">    
 
     angular.module('signUp', ['ngMaterial'])
-    .controller('signUpCtrl', function($scope,$http,$window,$mdToast) {
+    .controller('signUpCtrl', function($scope,$http,$window,$mdToast,$timeout) {
 	  $scope.helloworld = 'hello World';
 	  $scope.newUser = {};
 	  $scope.emailFormat = /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/;
@@ -141,7 +141,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				  $mdToast.show(
 				    $mdToast.simple()
 				      .textContent('the password inserted are different')
-				      .action('CLOSE')
 				      .hideDelay(10000)
 				  );
 				  return;
@@ -152,11 +151,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$mdToast.show(
 						    $mdToast.simple()
 						      .textContent(response.data.errors[0].message)
-						      .action('CLOSE')
 						      .hideDelay(10000)
 						  );
 				  }else{
-					  $window.location.href = '${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE';
+					  $mdToast.show(
+					    $mdToast.simple()
+					      .textContent(response.message)
+					      .hideDelay(10000)
+					  );
+					  $timeout(function(){
+						  $window.location.href = '${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE';
+					  }, 10000);
+					  
 				  }
 			  });
 		  }else{
