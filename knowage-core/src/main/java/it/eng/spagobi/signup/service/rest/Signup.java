@@ -475,7 +475,8 @@ public class Signup {
 		String language = GeneralUtilities.trim(requestJSON.optString("language"));
 		String captcha = GeneralUtilities.trim(requestJSON.optString("captcha"));
 
-		String strUseCaptcha = (requestJSON.optString("useCaptcha") == null) ? "true" : requestJSON.optString("useCaptcha");
+		String strUseCaptcha = (requestJSON.optString("useCaptcha") == null || requestJSON.optString("useCaptcha").equals("")) ? "true"
+				: requestJSON.optString("useCaptcha");
 		boolean useCaptcha = Boolean.valueOf(strUseCaptcha);
 		try {
 			Captcha c = (Captcha) req.getSession().getAttribute(Captcha.NAME);
@@ -483,7 +484,7 @@ public class Signup {
 				logger.error("Invalid captcha");
 				JSONObject errorMsg = new JSONObject();
 				JSONArray errors = new JSONArray();
-				errors.put(new JSONObject("{message: '" + msgBuilder.getMessage("signup.check.captchEmpty", "messages", locale) + "'}"));
+				errors.put(new JSONObject("{message: '" + msgBuilder.getMessage("signup.check.captchWrong", "messages", locale) + "'}"));
 				errorMsg.put("errors", errors);
 				errorMsg.put("message", "validation-error");
 				return Response.ok(errorMsg.toString()).build();
