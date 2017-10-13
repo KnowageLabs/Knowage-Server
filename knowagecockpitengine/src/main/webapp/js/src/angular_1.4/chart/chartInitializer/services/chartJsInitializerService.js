@@ -41,18 +41,19 @@ angular.module('chartInitializer')
 		var chartPanelSubtitle = angular.element("<div></div>")[0];
 		var chartPanelTitleOrNoData = angular.element("<div></div>")[0];
 		var chartPanelCanvas = angular.element("<canvas ></canvas>")[0];
-		var chartPanelLegend = angular.element("<div id='js-legend' class='chart-legend'></div>")[0];
-		var chartPanelCanvasDiv = angular.element("<div flex></div>")[0];
+		var mdcontent = angular.element("<md-content flex style='float:right'></md-content>")
+		var chartPanelLegend = angular.element("<div id='js-legend' class='chart-legend' ></div>")[0];
+		var chartPanelCanvasDiv = angular.element("<div style='float:left'></div>")[0];
 		chartPanelCanvasDiv.append(chartPanelCanvas);
-		chartPanelCanvasDiv.append(chartPanelLegend);
 		mainPanelRegion.append(chartPanelTitleOrNoData);
 		mainPanelRegion.append(chartPanelSubtitle);
 		mainPanelRegion.append(chartPanelCanvasDiv);
-
+		mdcontent.append(chartPanelLegend);
+		mainPanelRegion.append(mdcontent);
+		
 		var setNoDataTitle = function(){
 
 		}
-
 
 		// No data to represent
 		if ((chartConf.data.labels && chartConf.data.labels.length == 0)
@@ -232,19 +233,8 @@ angular.module('chartInitializer')
 				(needed for reseting (destroying) the canvas content - the chart itself when resizing).
 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			*/
-		 	if (chartType == 'line') {
-				 this.chart = new Chart(ctx).Line(chartConf.data, chartConf.options);
-			} else if (chartType == 'pie') {
-				var legend = {};
-				legend.display = chartConf.chart.showLegend;
-				legend.position = chartConf.chart.legendPosition;
-				legend.labels = {};
-				legend.labels.fontColor = 'rgb(255, 99, 132';
-				chartConf.options.legend = legend;
-				this.chart = new Chart(ctx).Pie(chartConf.data, chartConf.options);
-			} else { // bar
-				this.chart = new Chart(ctx).Bar(chartConf.data, chartConf.options);
-			}
+			this.chart = createChart(chartType, chartConf, this.chart,ctx);
+		 	
 
 		 	var mychart = this.chart
 		 /*	var originalShowTooltip = mychart.showTooltip;
@@ -257,12 +247,13 @@ angular.module('chartInitializer')
 		 	    }, delay);
 		 	}*/
 		 	if (chartConf.chart.showLegend==true){
-			 	document.getElementById('js-legend').innerHTML = this.chart.generateLegend()
-			 	var legendDivHeight = chartPanelLegend.clientHeight;
-			 	mainPanelRegion[0].clientHeight = mainPanelRegion[0].offsetHeight + legendDivHeight;
+		 		chartPanelLegend.innerHTML = this.chart.generateLegend();
+		 	 	var legendWidth =  mdcontent[0].clientWidth;
+			 	var canvasWidth =  mainPanelRegion[0].offsetWidth-50-legendWidth+"px";
+			 	mdcontent[0].style.height = chartPanelCanvasDiv.offsetHeight+"px";
+			 	this.chart = createChart(chartType, chartConf, this.chart,ctx, true,canvasWidth);
 			}
-
-
+		
 		 	chartPanelCanvas.onclick = function (evt) {
 		 		var activePoints = null;
 		 		var series = {};
@@ -375,6 +366,37 @@ angular.module('chartInitializer')
 
 		}
 	}
+	
+	
+	var createChart = function (chartType, chartConf,chart, ctx, redraw,canvasWidth){
+		if (chartType == 'line') {
+			if(redraw){
+				chart.destroy();
+				ctx.canvas.style.width = canvasWidth;
+			}
+			return new Chart(ctx).Line(chartConf.data, chartConf.options);
+		} else if (chartType == 'pie') {
+			var legend = {};
+			legend.display = chartConf.chart.showLegend;
+			legend.position = chartConf.chart.legendPosition;
+			legend.labels = {};
+			legend.labels.fontColor = 'rgb(255, 99, 132';
+			chartConf.options.legend = legend;
+			if(redraw){
+				chart.destroy();
+				ctx.canvas.style.width = canvasWidth;
+			}
+			return new Chart(ctx).Pie(chartConf.data, chartConf.options);
+		} else {
+			if(redraw){
+				chart.destroy();
+				ctx.canvas.style.width = canvasWidth;
+			}
+			return new Chart(ctx).Bar(chartConf.data, chartConf.options);
+		}
+		
+	}
+	
 	var handleCrossNavigationTo =function(e) {
 		var t = chartConfConf;
 
