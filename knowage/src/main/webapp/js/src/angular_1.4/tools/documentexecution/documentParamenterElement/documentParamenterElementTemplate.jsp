@@ -46,16 +46,9 @@
 		</div>
 	</div>
 	
-	
-	<div layout="row" layout-align="start">
-				<md-button ng-click="getTreeParameterValue()" ng-required="::parameter.mandatory"
-						id="{{::parameter.urlName}}" aria-label="{{parameter.label}}">
-					<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label>
-<!-- 				<i class="fa fa-sitemap"></i> -->
-					<i class="fa fa-external-link"></i>
-				</md-button>
-			</div>
-	<!-- Tree input -->	<div ng-if="parameter.selectionType=='TREE'" layout="column" class="lookupParameter" layout-margin>
+
+	<!-- Tree input -->	
+	<div ng-if="parameter.selectionType=='TREE'" layout="column" class="lookupParameter" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
