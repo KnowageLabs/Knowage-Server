@@ -44,6 +44,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -79,6 +80,7 @@ import it.eng.spagobi.security.Password;
 import it.eng.spagobi.services.rest.annotations.PublicService;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.services.ChangeTheme;
 import nl.captcha.Captcha;
@@ -444,7 +446,7 @@ public class Signup {
 	@Path("/create")
 	@Produces(MediaType.APPLICATION_JSON)
 	@PublicService
-	public String create(@Context HttpServletRequest req) {
+	public Response create(@Context HttpServletRequest req) {
 		logger.debug("IN");
 
 		// String strLocale = GeneralUtilities.trim(req.getParameter("locale"));
@@ -452,20 +454,28 @@ public class Signup {
 		MessageBuilder msgBuilder = new MessageBuilder();
 		Locale locale = msgBuilder.getLocale(req);
 
-		String name = GeneralUtilities.trim(req.getParameter("name"));
-		String surname = GeneralUtilities.trim(req.getParameter("surname"));
-		String username = GeneralUtilities.trim(req.getParameter("username"));
-		String password = GeneralUtilities.trim(req.getParameter("password"));
-		String email = GeneralUtilities.trim(req.getParameter("email"));
-		String sex = GeneralUtilities.trim(req.getParameter("sex"));
-		String birthDate = GeneralUtilities.trim(req.getParameter("birthDate"));
-		String address = GeneralUtilities.trim(req.getParameter("address"));
-		String enterprise = GeneralUtilities.trim(req.getParameter("enterprise"));
-		String biography = GeneralUtilities.trim(req.getParameter("biography"));
-		String language = GeneralUtilities.trim(req.getParameter("language"));
-		String captcha = GeneralUtilities.trim(req.getParameter("captcha"));
+		JSONObject requestJSON = null;
+		try {
+			requestJSON = RestUtilities.readBodyAsJSONObject(req);
+		} catch (Throwable t) {
+			logger.error("Error during body read", t);
+			throw new SpagoBIServiceException(msgBuilder.getMessage("signup.check.error", "messages", locale), t);
+		}
 
-		String strUseCaptcha = (req.getParameter("useCaptcha") == null) ? "true" : req.getParameter("useCaptcha");
+		String name = GeneralUtilities.trim(requestJSON.optString("name"));
+		String surname = GeneralUtilities.trim(requestJSON.optString("surname"));
+		String username = GeneralUtilities.trim(requestJSON.optString("username"));
+		String password = GeneralUtilities.trim(requestJSON.optString("password"));
+		String email = GeneralUtilities.trim(requestJSON.optString("email"));
+		String sex = GeneralUtilities.trim(requestJSON.optString("sex"));
+		String birthDate = GeneralUtilities.trim(requestJSON.optString("birthDate"));
+		String address = GeneralUtilities.trim(requestJSON.optString("address"));
+		String enterprise = GeneralUtilities.trim(requestJSON.optString("enterprise"));
+		String biography = GeneralUtilities.trim(requestJSON.optString("biography"));
+		String language = GeneralUtilities.trim(requestJSON.optString("language"));
+		String captcha = GeneralUtilities.trim(requestJSON.optString("captcha"));
+
+		String strUseCaptcha = (requestJSON.optString("useCaptcha") == null) ? "true" : requestJSON.optString("useCaptcha");
 		boolean useCaptcha = Boolean.valueOf(strUseCaptcha);
 		try {
 			Captcha c = (Captcha) req.getSession().getAttribute(Captcha.NAME);
@@ -476,7 +486,7 @@ public class Signup {
 				errors.put(new JSONObject("{message: '" + msgBuilder.getMessage("signup.check.captchEmpty", "messages", locale) + "'}"));
 				errorMsg.put("errors", errors);
 				errorMsg.put("message", "validation-error");
-				return errorMsg.toString();
+				return Response.ok(errorMsg.toString()).build();
 			}
 
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
@@ -487,7 +497,7 @@ public class Signup {
 				errors.put(new JSONObject("{message: '" + msgBuilder.getMessage("signup.check.userInUse", "messages", locale) + "'}"));
 				errorMsg.put("errors", errors);
 				errorMsg.put("message", "validation-error");
-				return errorMsg.toString();
+				return Response.ok(errorMsg.toString()).build();
 			}
 
 			SbiUser user = new SbiUser();
@@ -510,7 +520,7 @@ public class Signup {
 				errors.put(new JSONObject("{message: '" + msgBuilder.getMessage("signup.check.invalidRole", "messages", locale) + "'}"));
 				errorMsg.put("errors", errors);
 				errorMsg.put("message", "validation-error");
-				return errorMsg.toString();
+				return Response.ok(errorMsg.toString()).build();
 			}
 			r.setExtRoleId(signupRole.getId());
 			r.getCommonInfo().setOrganization(defaultTenant);
@@ -590,12 +600,16 @@ public class Signup {
 			mapLocks.put(Integer.valueOf(id).toString(), uuid.toString());
 
 			sendMail(email, subject, mailTxt);
+
+			String okMsg = msgBuilder.getMessage("signup.ok.message", "messages", locale);
+			logger.debug("OUT");
+			return Response.ok(new JSONObject().put("message", okMsg).toString()).build();
+
 		} catch (Throwable t) {
 			logger.error("Error during user creation", t);
 			throw new SpagoBIServiceException(msgBuilder.getMessage("signup.check.error", "messages", locale), t);
 		}
-		logger.debug("OUT");
-		return new JSONObject().toString();
+
 	}
 
 	private void addAttribute(Set<SbiUserAttributes> attributes, int attrId, String attrValue) {
