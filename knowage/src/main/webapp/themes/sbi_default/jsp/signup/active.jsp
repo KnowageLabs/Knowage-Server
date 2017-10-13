@@ -62,7 +62,7 @@ IMessageBuilder msgBuilder = MessageBuilderFactory
 
   //Adding a new service to the registry
   this.services["active"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-	serviceName: 'signup/active',
+	serviceName: 'signup/active',	
 	baseParams: {}
   });
 
@@ -79,11 +79,11 @@ IMessageBuilder msgBuilder = MessageBuilderFactory
 	    if(response != undefined  && response.responseText != undefined ) {
 			if( response.responseText != null && response.responseText != undefined ){
 		      var jsonData = Ext.decode( response.responseText );
-		      Sbi.exception.ExceptionHandler.showInfoMessage(jsonData.message, <%=msgBuilder.getMessage("signup.active.title")%>, {});
+		      Sbi.exception.ExceptionHandler.showInfoMessage(jsonData.message, '<%=msgBuilder.getMessage("signup.active.title")%>', {});
 		    }		
 		}
 		else {
-			  Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.serviceResponseEmpty'), LN('sbi.generic.serviceError'));
+			  Sbi.exception.ExceptionHandler.showErrorMessage('<%=msgBuilder.getMessage("sbi.generic.serviceResponseEmpty")%>', '<%=msgBuilder.getMessage("sbi.generic.serviceError")%>');
 		}
       },
 	  scope: this,

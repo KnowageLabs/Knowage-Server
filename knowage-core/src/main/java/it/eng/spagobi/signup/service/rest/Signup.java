@@ -48,6 +48,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
@@ -318,6 +319,7 @@ public class Signup {
 	public void prepareActive(@Context HttpServletRequest req) {
 		logger.debug("IN");
 		try {
+
 			String theme_name = (String) req.getAttribute(ChangeTheme.THEME_NAME);
 			logger.debug("theme selected: " + theme_name);
 
@@ -335,6 +337,7 @@ public class Signup {
 		} catch (IOException e) {
 			logger.error("Error writing content");
 		}
+
 		logger.debug("OUT");
 	}
 
@@ -442,6 +445,21 @@ public class Signup {
 	// }
 	// }
 
+	private JSONObject buildErrorMessage(MessageBuilder msgBuilder, Locale locale, String errorString) {
+		logger.debug("IN");
+		JSONObject errorMsg = new JSONObject();
+		JSONArray errors = new JSONArray();
+		try {
+			errors.put(new JSONObject("{message: '" + msgBuilder.getMessage(errorString, "messages", locale) + "'}"));
+			errorMsg.put("errors", errors);
+			errorMsg.put("message", "validation-error");
+		} catch (JSONException e) {
+			throw new SpagoBIServiceException(msgBuilder.getMessage("signup.check.error", "messages", locale), e);
+		}
+		logger.debug("OUT");
+		return errorMsg;
+	}
+
 	@POST
 	@Path("/create")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -465,8 +483,27 @@ public class Signup {
 		String name = GeneralUtilities.trim(requestJSON.optString("name"));
 		String surname = GeneralUtilities.trim(requestJSON.optString("surname"));
 		String username = GeneralUtilities.trim(requestJSON.optString("username"));
+		if (username == null || username.equals("")) {
+			logger.error("Username is mandatory");
+			JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.usernameMandatory");
+			return Response.ok(errObj.toString()).build();
+		}
+
 		String password = GeneralUtilities.trim(requestJSON.optString("password"));
+		String confirmPassword = GeneralUtilities.trim(requestJSON.optString("confirmPassword"));
+		if (password == null || password.equals("") || confirmPassword == null || !password.equals(confirmPassword)) {
+			logger.error("Passwortd and confirm password are different");
+			JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.pwdNotEqual");
+			return Response.ok(errObj.toString()).build();
+		}
+
 		String email = GeneralUtilities.trim(requestJSON.optString("email"));
+		if (email == null || email.equals("")) {
+			logger.error("email is mandatory");
+			JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.emailMandatory");
+			return Response.ok(errObj.toString()).build();
+		}
+
 		String sex = GeneralUtilities.trim(requestJSON.optString("sex"));
 		String birthDate = GeneralUtilities.trim(requestJSON.optString("birthDate"));
 		String address = GeneralUtilities.trim(requestJSON.optString("address"));
@@ -478,27 +515,25 @@ public class Signup {
 		String strUseCaptcha = (requestJSON.optString("useCaptcha") == null || requestJSON.optString("useCaptcha").equals("")) ? "true"
 				: requestJSON.optString("useCaptcha");
 		boolean useCaptcha = Boolean.valueOf(strUseCaptcha);
+
 		try {
 			Captcha c = (Captcha) req.getSession().getAttribute(Captcha.NAME);
-			if (useCaptcha && !c.isCorrect(captcha)) {
+
+			if (useCaptcha && captcha == null) {
+				logger.error("empty captcha");
+				JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.captchEmpty");
+				return Response.ok(errObj.toString()).build();
+			} else if (useCaptcha && !c.isCorrect(captcha)) {
 				logger.error("Invalid captcha");
-				JSONObject errorMsg = new JSONObject();
-				JSONArray errors = new JSONArray();
-				errors.put(new JSONObject("{message: '" + msgBuilder.getMessage("signup.check.captchWrong", "messages", locale) + "'}"));
-				errorMsg.put("errors", errors);
-				errorMsg.put("message", "validation-error");
-				return Response.ok(errorMsg.toString()).build();
+				JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.captchWrong");
+				return Response.ok(errObj.toString()).build();
 			}
 
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			if (userDao.isUserIdAlreadyInUse(username) != null) {
 				logger.error("Username already in use");
-				JSONObject errorMsg = new JSONObject();
-				JSONArray errors = new JSONArray();
-				errors.put(new JSONObject("{message: '" + msgBuilder.getMessage("signup.check.userInUse", "messages", locale) + "'}"));
-				errorMsg.put("errors", errors);
-				errorMsg.put("message", "validation-error");
-				return Response.ok(errorMsg.toString()).build();
+				JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.userInUse");
+				return Response.ok(errObj.toString()).build();
 			}
 
 			SbiUser user = new SbiUser();
@@ -516,13 +551,11 @@ public class Signup {
 			if (signupRole == null) {
 				logger.error("Invalid role " + defaultRole + " for the new user. "
 						+ " Check the attibute SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP configuration and set a valid role name ! ");
-				JSONObject errorMsg = new JSONObject();
-				JSONArray errors = new JSONArray();
-				errors.put(new JSONObject("{message: '" + msgBuilder.getMessage("signup.check.invalidRole", "messages", locale) + "'}"));
-				errorMsg.put("errors", errors);
-				errorMsg.put("message", "validation-error");
-				return Response.ok(errorMsg.toString()).build();
+
+				JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.invalidRole");
+				return Response.ok(errObj.toString()).build();
 			}
+
 			r.setExtRoleId(signupRole.getId());
 			r.getCommonInfo().setOrganization(defaultTenant);
 			roles.add(r);
