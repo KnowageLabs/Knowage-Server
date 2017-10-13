@@ -44,52 +44,57 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
   
   	<div layout="row" layout-align="center center" layout-fill class="signUpContainer">
+      
       <md-card flex=50 flex-xs=100>
+      <form name="signUpForm">
         <md-card-content layout="column" layout-align="start center">
         	<img class="headerLogoImg" src="${pageContext.request.contextPath}/themes/sbi_default/img/wapp/logo.png">
         	<h3>SignUp</h3>
         	<div layout="row" layout-wrap>
         		<md-input-container class="md-block" flex=50 flex-xs=100>
 			        <label>Name</label>
-			        <input ng-model="newUser.name" type="text">
+			        <input ng-model="newUser.name" name="name" type="text" required>
 			      </md-input-container>
 			      <md-input-container class="md-block" flex=50 flex-xs=100>
 			        <label>Surname</label>
-			        <input ng-model="newUser.surname" type="text">
+			        <input ng-model="newUser.surname" name="surname" type="text" required>
 			      </md-input-container>
 			      <md-input-container class="md-block" flex=50 flex-xs=100>
 			        <label>Username</label>
-			        <input ng-model="newUser.username" type="text">
+			        <input ng-model="newUser.username" name="username" type="text" required>
 			      </md-input-container>
 			      <md-input-container class="md-block" flex=50 flex-xs=100>
 			        <label>Email address</label>
-			        <input ng-model="newUser.email" type="text">
+			        <input ng-model="newUser.email" name="email" type="text" ng-pattern="emailFormat" required>
 			      </md-input-container>
 			      <md-input-container class="md-block" flex=50 flex-xs=100>
 			        <label>Password</label>
-			        <input ng-model="newUser.password" type="password">
+			        <input ng-model="newUser.password" name="password" type="password" required>
 			      </md-input-container>
 			      <md-input-container class="md-block" flex=50 flex-xs=100>
 			        <label>Confirm Password</label>
-			        <input ng-model="newUser.confirmPassword" type="password">
+			        <input ng-model="newUser.confirmPassword" name="confirmPassword" type="password" required>
 			      </md-input-container>
 			      <div flex=50 flex-xs=100>
 			      	<div id="sticky" style="background-image:url('${pageContext.request.contextPath}/stickyImg')">
-			      		<!--  img src='${pageContext.request.contextPath}/stickyImg' width='250px' height='75px' /-->
 			      	</div>
 			      	</div>
 			      <md-input-container class="md-block" flex=50 flex-xs=100>
 			        <label>Insert captcha</label>
-			        <input ng-model="newUser.captcha" type="text">
+			        <input ng-model="newUser.captcha" name="captcha" type="text" required>
 			      </md-input-container>
 			
         	</div>
           
         </md-card-content>
+        
         <md-card-actions layout="column" layout-align="center">
-          <md-button class="md-primary md-raised" ng-click="register()">Register</md-button>
+          <md-button class="md-primary md-raised" ng-click="register()" type="submit">Register</md-button>
+          <md-button class="md-primary md-raised goTologin" ng-click="goToLogin()">Login</md-button>
         </md-card-actions>
+         </form>
       </md-card>
+     
      </div>
   
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
@@ -115,13 +120,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   	<script type="text/javascript">    
 
     angular.module('signUp', ['ngMaterial'])
-    .controller('signUpCtrl', function($scope,$http) {
+    .controller('signUpCtrl', function($scope,$http,$window,$mdToast) {
 	  $scope.helloworld = 'hello World';
 	  $scope.newUser = {};
+	  $scope.emailFormat = /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/;
+	  $scope.$watch("newUser.confirmPassword", function(newValue, oldValue) {
+		    if (newValue == $scope.newUser.password) {
+		    	$scope.signUpForm.confirmPassword.$setValidity('correct',true) ;
+		    }else{
+		    	$scope.signUpForm.confirmPassword.$setValidity('correct',false) ;
+		    }
+		});
+	  $scope.goToLogin = function(){
+		  $window.location.href = '${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE';
+	  }
 	  $scope.register = function(){
-		  $http.post('${pageContext.request.contextPath}/restful-services/signup/create?SBI_EXECUTION_ID=-1', $scope.newUser)
-		  .then(function(response) {console.log(response)},
-				  function(error) {alert(error)})
+		  if($scope.signUpForm.$valid){
+			  if($scope.newUser.password != $scope.newUser.confirmPassword){
+				  $scope.signUpForm.confirmPassword.$setValidity('incorrect', false);
+				  $mdToast.show(
+				    $mdToast.simple()
+				      .textContent('the password inserted are different')
+				      .action('CLOSE')
+				      .hideDelay(10000)
+				  );
+				  return;
+			  }
+			  $http.post('${pageContext.request.contextPath}/restful-services/signup/create?SBI_EXECUTION_ID=-1', $scope.newUser)
+			  .then(function(response) {
+				  if(response.data.errors){
+						$mdToast.show(
+						    $mdToast.simple()
+						      .textContent(response.data.errors[0].message)
+						      .action('CLOSE')
+						      .hideDelay(10000)
+						  );
+				  }else{
+					  $window.location.href = '${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE';
+				  }
+			  });
+		  }else{
+			  return;
+		  }
+		  
 	  }
 		
 	});
