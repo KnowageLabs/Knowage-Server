@@ -80,11 +80,18 @@ IMessageBuilder msgBuilder = MessageBuilderFactory
 			if( response.responseText != null && response.responseText != undefined ){
 		      var jsonData = Ext.decode( response.responseText );
 		      Sbi.exception.ExceptionHandler.showInfoMessage(jsonData.message, '<%=msgBuilder.getMessage("signup.active.title")%>', {});
-		    }		
+			}		
 		}
 		else {
 			  Sbi.exception.ExceptionHandler.showErrorMessage('<%=msgBuilder.getMessage("sbi.generic.serviceResponseEmpty")%>', '<%=msgBuilder.getMessage("sbi.generic.serviceError")%>');
 		}
+	    
+	    setTimeout(
+	    		function(){
+	    			window.location.href = '${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE';	
+	    	}, 3000);
+	    
+	    
       },
 	  scope: this,
 	  failure: Sbi.exception.ExceptionHandler.handleFailure

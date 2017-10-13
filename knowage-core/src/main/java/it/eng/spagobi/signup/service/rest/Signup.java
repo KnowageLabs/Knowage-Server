@@ -365,8 +365,10 @@ public class Signup {
 
 			}
 
-			if (!user.getFlgPwdBlocked())
-				return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.userActive", "messages", locale) + "'}").toString();
+			if (!user.getFlgPwdBlocked()) {
+				String msg = msgBuilder.getMessage("signup.msg.userActiveKO", "messages", locale);
+				return new JSONObject("{message: '" + msg + "'}").toString();
+			}
 
 			long now = System.currentTimeMillis();
 			if (now > user.getCommonInfo().getTimeIn().getTime() + Long.parseLong(expired_time) * 24 * 60 * 60 * 1000)
