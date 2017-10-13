@@ -1,4 +1,5 @@
 angular.module('cockpitModule').factory('cockpitModule_gridsterOptions',function($timeout,cockpitModule_widgetServices,cockpitModule_properties,$rootScope){
+	var preventClick = function (e) { e.stopPropagation(); e.preventDefault(); };
 	return{
 		columns : 50,
 		margins: [0, 0],
@@ -34,15 +35,19 @@ angular.module('cockpitModule').factory('cockpitModule_gridsterOptions',function
 			enabled : cockpitModule_properties.EDIT_MODE, // whether dragging items is supported
 			handle : '.draggableToolbar', // optional selector for resize handle
 			start : function(event, $element, widget) {
-				$element.find("md-card-content").addClass('fadeOut');
-				$element.find("md-card-content").removeClass('fadeIn');
-			},  
+				// Stop event from propagating down the tree on the capture phase
+				$element[0].addEventListener('click', preventClick, true);
+			},
 			drag : function(event, $element, widget) {
+
+
 			}, // optional callback fired when item is moved,
 			stop : function(event, $element, widget) {
-				$element.find("md-card-content").addClass('fadeIn');
-				$element.find("md-card-content").removeClass('fadeOut');
-			}  
+				setTimeout(function () {
+					$element[0].removeEventListener('click', preventClick, true);
+			        });
+
+			}
 		}
 	};
 });
