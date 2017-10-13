@@ -3737,7 +3737,7 @@ ALTER TABLE SBI_KPI_VALUE ALTER LOGICAL_KEY TYPE VARCHAR(4000);
 
 -- 28.09.2017 Dragan Pirkovic
 -- adding foreign key from sbi.metamodel.DATA_SOURCE_ID to sbi_data_source.DS_ID
-ALTER TABLE SBI_META_MODEL add  Foreign Key (DATA_SOURCE_ID) references SBI_DATA_SOURCE (DS_ID);
+ALTER TABLE SBI_META_MODELS add  Foreign Key (DATA_SOURCE_ID) references SBI_DATA_SOURCE (DS_ID);
 
 -- 05.10.2015 Alberto Ghedin removed mobile. The engine is not deleted because there can be some chart document in installation
 delete from SBI_PRODUCT_TYPE_ENGINE where ENGINE_ID in(select ENGINE_ID from SBI_ENGINES where NAME='Mobile Chart Engine');
