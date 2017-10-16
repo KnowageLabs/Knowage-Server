@@ -37,17 +37,6 @@
 
 				</AXES_LIST>
 
-				<VALUES>					
-					<SERIE color="" postfixChar="" precision="0" prefixChar="" showValue="true">
-						<TOOLTIP backgroundColor="" borderWidth="0" borderRadius="0"
-						style="color:;fontFamily:;fontWeight:;fontSize:;align:;"/>
-					</SERIE>
-					<CATEGORY 	column=""
-					            groupby=""
-					            groupbyNames="" name=""
-					            orderColumn="" orderType="" stacked="" stackedType=""/>
-				</VALUES>
-
 			</CHART>
 
 		</generic>
@@ -69,14 +58,7 @@
 		</line>
 
 		<pie>
-			<CHART type="PIE">
-				<VALUES>					
-					<SERIE postfixChar="" precision="0" prefixChar="" showAbsValue="false" showPercentage="false">
-						<TOOLTIP backgroundColor=""
-						style="color:;fontFamily:;fontWeight:;fontSize:;align:;"/>
-					</SERIE>
-				</VALUES>
-			</CHART>
+			<CHART type="PIE"/>
 		</pie>
 
 		<treemap>
@@ -124,7 +106,7 @@
 				<AXES_LIST>
 					<AXIS type='Serie' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:;">
 						<MAJORGRID interval="" style="typeline:;color:;"/>
-						<MINORGRID interval="" typeline="typeline:;color:;"/>
+						<MINORGRID interval="" style="typeline:;color:;"/>
 						<TITLE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
 					</AXIS>
 
@@ -165,15 +147,6 @@
 				</AXES_LIST>
 
 				<PANE endAngle="" startAngle=""/>
-
-				<VALUES>
-
-					<SERIE animation="true" color="" pointInterval="" postfixChar="" precision="" prefixChar="" showInLegend=""
-	                   showValue="">
-						<TOOLTIP backgroundColor="transparent" style="color:;fontFamily:;fontWeight:;fontSize:;align:"/>
-					</SERIE>
-
-				</VALUES>
 
 			</CHART>
 		</gauge>
