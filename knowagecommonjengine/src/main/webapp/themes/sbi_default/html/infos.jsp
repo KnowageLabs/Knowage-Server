@@ -32,7 +32,7 @@
 		<md-content layout="column" layout-align="space-between stretch">
 			<md-content layout="column" layout-align="space-around stretch"> 
 				<md-content  style="margin-left:5px;margin-right:20px">
-					Version: 6.0.0
+					Version: 6.1.0
 				</md-content>
 				<md-content  style="margin-left:5px;margin-right:20px">
 					Logged User: <%= userName %>
@@ -55,7 +55,7 @@
 	<md-dialog-content layout="column" layout-padding layout-margin>
 		 	 <img src="<%=contextName %>/themes/sbi_default/img/wapp/logo.png" width="234" layout-margin />
 		 	 <div layout-padding>
-				<p>Version: 6.0.0</p>
+				<p>Version: 6.1.0</p>
 				<p >
 					Logged User: <%= userName %>
 				</p>
