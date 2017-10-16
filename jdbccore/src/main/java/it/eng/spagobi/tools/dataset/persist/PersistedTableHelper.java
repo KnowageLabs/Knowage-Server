@@ -65,8 +65,9 @@ public class PersistedTableHelper {
 						}
 					}
 				} catch (Throwable t) {
-					throw new RuntimeException("An unexpected error occured while converting to double measure field [" + fieldMetaName + "] whose value is ["
-							+ fieldValue + "]", t);
+					throw new RuntimeException(
+							"An unexpected error occured while converting to double measure field [" + fieldMetaName + "] whose value is [" + fieldValue + "]",
+							t);
 				}
 			} else if (fieldMetaTypeName.contains("String")) {
 				Integer lenValue = (fieldValue == null) ? new Integer("0") : new Integer(fieldValue.toString().length());
@@ -101,7 +102,8 @@ public class PersistedTableHelper {
 				if (fieldValue == null) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.INTEGER);
 				} else {
-					insertStatement.setByte(fieldIndex + 1, (Byte) fieldValue);
+					// insertStatement.setByte(fieldIndex + 1, (Byte) fieldValue);
+					insertStatement.setByte(fieldIndex + 1, Byte.parseByte(fieldValue.toString()));
 				}
 			} else if (fieldMetaTypeName.contains("Short")) {
 				// only for primitive type is necessary to use setNull method if value is null
@@ -185,6 +187,7 @@ public class PersistedTableHelper {
 				logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 			}
 		} catch (Throwable t) {
+			logger.error("FieldValue [" + fieldValue + "] has class typeName : " + fieldValue.getClass().getTypeName());
 			throw new RuntimeException("An unexpected error occured while adding to statement value [" + fieldValue + "] of field [" + fieldMetaName
 					+ "] whose type is equal to [" + fieldMetaTypeName + "]", t);
 		}
