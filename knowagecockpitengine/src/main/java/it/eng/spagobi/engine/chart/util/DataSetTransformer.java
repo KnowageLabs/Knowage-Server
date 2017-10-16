@@ -695,7 +695,8 @@ public class DataSetTransformer {
 	 *
 	 */
 
-	public LinkedHashMap<String, ArrayList<String>> prepareDataForGroupingForBar(List<Object> dataRows, String isCockpitEngine) throws JSONException {
+	public LinkedHashMap<String, ArrayList<String>> prepareDataForGroupingForBar(List<Object> dataRows, String isCockpitEngine, String categorieColumnsMapped)
+			throws JSONException {
 		boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
 		LinkedHashMap<String, ArrayList<String>> map = new LinkedHashMap<>();
 		String primCat;
@@ -704,8 +705,8 @@ public class DataSetTransformer {
 			primCat = "column_1";
 			secCat = "column_2";
 		} else {
-			primCat = "column_2";
-			secCat = "column_3";
+			primCat = categorieColumnsMapped;
+			secCat = "column_" + (Integer.parseInt(categorieColumnsMapped.substring(7)) + 1);
 		}
 		for (Object singleObject : dataRows) {
 			Map mapObject = (Map) singleObject;

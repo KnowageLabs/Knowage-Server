@@ -828,7 +828,7 @@
 		## author: rselakov, radmila.selakovic@mht.net
 		## Calling the method for reconfiguring the original data about the ordering column and its category values		
 		#if($chart.groupCategories && $chart.groupCategories =='true')
-		#set($map = $datasettransformer.prepareDataForGroupingForBar($rows,$chart.isCockpitEngine))
+		#set($map = $datasettransformer.prepareDataForGroupingForBar($rows,$chart.isCockpitEngine,$categorieColumnsMapped))
             categories: [
             	#foreach($element in $map.entrySet())
             		{ 
