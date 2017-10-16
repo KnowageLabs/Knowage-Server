@@ -300,6 +300,8 @@
             },
             link: function(scope, elem, attr) {
             	scope.translate=sbiModule_translate;
+            	scope.Math = window.Math;
+
             	scope.widgetWidth = elem[0].clientWidth;
             	scope.settings.page = scope.settings.page != 0 ? scope.settings.page : 1;
 
