@@ -187,7 +187,7 @@ public class PersistedTableHelper {
 				logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 			}
 		} catch (Throwable t) {
-			logger.error("FieldValue [" + fieldValue + "] has class typeName : " + fieldValue.getClass().getTypeName());
+			logger.error("FieldValue [" + fieldValue + "] has class name [" + fieldValue.getClass().getName() + "]");
 			throw new RuntimeException("An unexpected error occured while adding to statement value [" + fieldValue + "] of field [" + fieldMetaName
 					+ "] whose type is equal to [" + fieldMetaTypeName + "]", t);
 		}
