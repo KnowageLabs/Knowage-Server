@@ -149,6 +149,8 @@ INSERT INTO @tbldroplist (TblName) VALUES ('SBI_FUNCTIONS_ORGANIZER');
 
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_WHATIF_WORKFLOW');
 
+INSERT INTO @tbldroplist (TblName) VALUES ('SBI_DOSSIER_ACTIVITY');
+
 
 DECLARE tblcursor CURSOR FOR
 SELECT TblName FROM @tbldroplist
