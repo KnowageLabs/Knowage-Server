@@ -6,7 +6,7 @@
         </md-select>
     </div>
     <div class="label page-position" ng-if="widgetWidth > 210">{{min()}} - {{max()}} {{::translate.load('sbi.cockpit.widgets.table.pagination.of')}} {{settings.rowsCount}}</div>
-    <div class="label page-position" ng-if="widgetWidth <= 210">{{settings.page}} / {{Math.floor(settings.rowsCount / settings.pagination.itemsNumber)}}</div>
+    <div class="label page-position" ng-if="widgetWidth <= 210">{{settings.page}} / {{Math.ceil(settings.rowsCount / settings.pagination.itemsNumber)}}</div>
     <md-button class="md-icon-button" aria-label="Previous" ng-click="previous()" ng-disabled="!hasPrevious()">
         <i class="fa fa-angle-left"></i>
     </md-button>
