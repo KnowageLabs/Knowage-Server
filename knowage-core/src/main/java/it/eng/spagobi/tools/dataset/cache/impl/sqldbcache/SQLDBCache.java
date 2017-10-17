@@ -1140,6 +1140,13 @@ public class SQLDBCache implements ICache {
 	@Deprecated
 	public long put(IDataSet dataSet, IDataStore dataStore, boolean forceUpdate) {
 		logger.trace("IN");
+
+		if (dataStore.getMetaData().getFieldCount() == 0) {
+			logger.debug("Dataset hasn't fields. The Dataset will not persisted.");
+			return 0;
+		}
+		logger.error("Dataset has #" + dataStore.getMetaData().getFieldCount() + "  fields. The Dataset will be persisted.");
+
 		String signature = dataSet.getSignature();
 		String hashedSignature = Helper.sha256(dataSet.getSignature());
 		long timeSpent = 0;

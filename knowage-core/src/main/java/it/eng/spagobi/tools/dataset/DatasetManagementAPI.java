@@ -409,8 +409,19 @@ public class DatasetManagementAPI {
 						} else {
 							logger.debug("Copying dataset in cache by loading the whole set of data in memory");
 							dataSet.loadData();
+							if (dataSet.getDataStore().getMetaData().getFieldCount() == 0) {
+								// update only datasource's metadata from dataset if for some strange cause it hasn't got fields
+								logger.debug("Update datastore's metadata with dataset's metadata for nodata found...");
+								dataStore = new DataStore();
+								IMetaData metadata = dataSet.getMetadata();
+								metadata.setProperty("resultNumber", 0);
+								dataStore.setMetaData(metadata);
+								adjustMetadata((DataStore) dataStore, dataSet, null);
+								return dataStore;
+							}
 							cache.put(dataSet, dataSet.getDataStore());
 						}
+						// getting data from cache...
 						dataStore = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize, maxRowCount);
 						if (dataStore == null) {
 							throw new CacheException(message);
@@ -420,6 +431,7 @@ public class DatasetManagementAPI {
 
 						// if result was not cached put refresh date as now
 						dataStore.setCacheDate(new Date());
+
 					} else {
 						dataStore = cachedResultSet;
 						/*
