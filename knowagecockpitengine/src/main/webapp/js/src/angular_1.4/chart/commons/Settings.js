@@ -49,7 +49,7 @@ angular
 			
 			tree_D_Options:
 			{
-				 alpha: 15,
+				 alpha: 25,
 	             beta: 15,
 	             depth: 50,
 	             viewDistance: 25
