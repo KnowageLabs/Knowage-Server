@@ -158,6 +158,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		setFormDirty: $scope.setFormDirty
 	};
 
+	$scope.jsonPathTypes = ["string", "int", "double", "date yyy-MM-dd", "timestamp yyyy-MM-dd HH:mm:ss", "time HH:mm:ss", "boolean"];
+
 	$scope.fieldsMetadataColumns = [
 		{
 			label:"Field name",
@@ -539,7 +541,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	         hideTooltip:true,
 
 	         transformer: function() {
-	    		 return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.jsonPathType" ng-change="scopeFunctions.setFormDirty()"></md-input-container>';
+	        	 return '<md-select ng-model=row.jsonPathType class="noMargin"><md-option ng-repeat="type in scopeFunctions.jsonPathTypes" value="{{type}}">{{type}}</md-option></md-select>';
 	    	 }
 	     }
      ];
@@ -548,7 +550,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.counterJsonAttributes = 0;
 
 	$scope.jsonPathAttrScopeFunctions = {
-		setFormDirty: $scope.setFormDirty
+		setFormDirty: $scope.setFormDirty,
+		jsonPathTypes: $scope.jsonPathTypes
 	};
 
 	$scope.restJsonPathAttributesAddItem = function() {
