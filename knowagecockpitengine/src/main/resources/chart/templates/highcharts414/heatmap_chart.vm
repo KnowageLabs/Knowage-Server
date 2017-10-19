@@ -105,7 +105,7 @@
     		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	*#
     	zoomType: 'xy',
- 		
+ 		#if(!$exportWebApp) 
 	  	  #if($chart.height != '' && $chart.isCockpitEngine!="true")
         	height: $chart.height,
         #end
@@ -131,7 +131,7 @@
   	   	#else 
 	  	   	widthDimType: 'pixels',
         #end
-    	
+    	#end
         	
         isCockpit: $chart.isCockpitEngine,
        

@@ -65,7 +65,7 @@
 		#if ($chart.TITLE.text == "" && $chart.SUBTITLE.text == "")
 			marginTop: 40,
 		#end
-        
+        #if(!$exportWebApp) 
        #if($chart.height != '' && $chart.isCockpitEngine!="true")
         height: $chart.height,
         #end
@@ -91,7 +91,7 @@
   	   	#else 
 	  	   	widthDimType: 'pixels',
         #end
-    	
+    	#end
     	#*
         	Remove border around the chart if this property is set to true.
         	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -904,7 +904,7 @@
 		                },
 						#end
 	    	
-	    	 
+	    	#if(!$exportWebApp) 
             events :{ 
                #if($chart.isCockpitEngine=="false")
 						click: scope.chartInitializer.handleCrossNavigationTo,
@@ -914,6 +914,7 @@
 
 		         #end
 	    	}, 
+	    	#end
 	    	tooltip: { 
 			#set($seriePrefix = $relatedSerie.prefixChar)
 			#if($seriePrefix != '')
