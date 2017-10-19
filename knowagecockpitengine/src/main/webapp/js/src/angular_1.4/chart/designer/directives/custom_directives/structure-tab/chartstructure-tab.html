@@ -532,7 +532,7 @@
 		<!-- <div hide-md layout="column" flex={{structurePreviewFlex}} style="padding:0">  -->
 		
 		<!--commented perview panel -->
-		<!--<div hide-md layout="column" flex={{structurePreviewFlex}} style="padding:0" ng-if=!isCockpitEng > 
+		<div hide-md layout="column" flex={{structurePreviewFlex}} style="padding:0" ng-if=!isCockpitEng ng-show="openPreviewPanel"> 
 			<md-toolbar class="secondaryToolbar">
 				<div class="md-toolbar-tools">
 					<h2>
@@ -553,10 +553,10 @@
 			</div>
 			
 				
-			
+			<div id ="forSVGPreview" />
 			</md-whiteframe>
 			
-		</div>  -->
+		</div>  
 	
 	</div>
 	
