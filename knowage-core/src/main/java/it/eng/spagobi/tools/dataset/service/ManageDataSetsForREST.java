@@ -1066,7 +1066,7 @@ public class ManageDataSetsForREST {
 	private void setNumericValuesAsMeasures(IMetaData metaData) {
 		for (int i = 0; i < metaData.getFieldCount(); i++) {
 			IFieldMetaData ifmd = metaData.getFieldMeta(i);
-			if (ifmd.getType().getName().equalsIgnoreCase("java.lang.Integer")) {
+			if (Number.class.isAssignableFrom(ifmd.getType())) {
 				ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 			}
 		}
