@@ -325,6 +325,7 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 		return f;
 	}
 	$scope.previewChart = function () {
+		$scope.openPreviewPanel = true;
 		$scope.hideStructureDetails();
 		$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
 		prepareTemplate();

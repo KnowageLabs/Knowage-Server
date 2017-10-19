@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 		<%@include file="/WEB-INF/jsp/chart/commons/angular/angularImport.jsp"%>
 		<%@include file="/WEB-INF/jsp/chart/designer/chartImport.jsp"%>
+		<%@include file="/WEB-INF/jsp/chart/execution/chartRenderImport.jsp"%> 
 	
 		<link rel="stylesheet" type="text/css" href="<%=GeneralUtilities.getSpagoBiContext()%>/themes/commons/css/customStyle.css">
 		
@@ -73,7 +74,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- 				<md-button aria-label="Preview" ng-click="testChart()">TEST</md-button> -->
 				<!--commented perview button -->
 
-			<!-- 	<md-button aria-label="Preview" ng-if="previewChartEnable" ng-click="previewChart()">{{translate.load("sbi.generic.preview")}}</md-button> -->
+				<md-button aria-label="Preview" ng-if="previewChartEnable" ng-disabled="userForm.$invalid" ng-click="previewChart()">{{translate.load("sbi.generic.preview")}}</md-button> 
 				<md-button aria-label="Save" type="submit" ng-disabled="userForm.$invalid">{{translate.load("sbi.generic.save")}}</md-button>
 				<md-button aria-label="Back" ng-click="goBackFromDesigner()">{{translate.load("sbi.generic.back")}}</md-button>
 			</div>
@@ -116,6 +117,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.advanced");}}' md-on-select="refreshJsonTree()"><advanced-tab></advanced-tab> </md-tab> 
 		</md-tabs>
 		</form>
+
 	</body>
 	
 </html>
