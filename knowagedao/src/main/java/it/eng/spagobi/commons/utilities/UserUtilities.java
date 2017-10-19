@@ -1035,26 +1035,29 @@ public class UserUtilities {
 
 	public static AccessibilityPreferences readAccessibilityPreferencesByUser(IEngUserProfile user) {
 		AccessibilityPreferences preferences = null;
-		String userId = (String) user.getUserUniqueIdentifier();
 
-		try {
-			it.eng.spagobi.profiling.dao.ISbiAccessibilityPreferencesDAO dao = DAOFactory.getSiAccessibilityPreferencesDAO();
-			SbiAccessibilityPreferences ap = dao.readUserAccessibilityPreferences(userId);
-			if (ap != null) {
-				preferences = new AccessibilityPreferences();
-				preferences.setId(ap.getId());
-				preferences.setUser((String) user.getUserUniqueIdentifier());
-				preferences.setEnableUio(ap.isEnableUio());
-				preferences.setEnableRobobraille(ap.isEnableRobobraille());
-				preferences.setEnableGraphSonification(ap.isEnableGraphSonification());
-				preferences.setEnableVoice(ap.isEnableVoice());
-				preferences.setPreferences(ap.getPreferences());
+		if (user != null) {
+			String userId = (String) user.getUserUniqueIdentifier();
+
+			try {
+				it.eng.spagobi.profiling.dao.ISbiAccessibilityPreferencesDAO dao = DAOFactory.getSiAccessibilityPreferencesDAO();
+				SbiAccessibilityPreferences ap = dao.readUserAccessibilityPreferences(userId);
+				if (ap != null) {
+					preferences = new AccessibilityPreferences();
+					preferences.setId(ap.getId());
+					preferences.setUser((String) user.getUserUniqueIdentifier());
+					preferences.setEnableUio(ap.isEnableUio());
+					preferences.setEnableRobobraille(ap.isEnableRobobraille());
+					preferences.setEnableGraphSonification(ap.isEnableGraphSonification());
+					preferences.setEnableVoice(ap.isEnableVoice());
+					preferences.setPreferences(ap.getPreferences());
+				}
+			} catch (EMFUserError e) {
+				logger.error("Impossible to get preferences for user [" + user + "]", e);
+				// e.printStackTrace();
 			}
-		} catch (EMFUserError e) {
-			logger.error("Impossible to get preferences for user [" + user + "]", e);
-			// e.printStackTrace();
+			// dao.setTenant(organization);
 		}
-		// dao.setTenant(organization);
 
 		return preferences;
 

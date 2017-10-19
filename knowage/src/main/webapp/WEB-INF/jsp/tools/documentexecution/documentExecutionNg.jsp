@@ -16,12 +16,14 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
+<%@page import="org.jgrapht.util.PrefetchIterator.NextElementFunctor"%>
 <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.BIObject"%>
 <%@page import="it.eng.spagobi.commons.utilities.ObjectsAccessVerifier"%>
 <%@page import="it.eng.spagobi.engines.config.bo.Engine"%>
 <%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
+<%@page import="java.util.Enumeration"%>
 
 <%@ page language="java" pageEncoding="utf-8" session="true"%>
 
@@ -35,7 +37,6 @@ Integer objId = null;
 String objId = null;
 String objLabel = null;
 
-IEngUserProfile profile = null;
 List<String> executionRoleNames = new ArrayList();
 
 Engine executingEngine = null;
@@ -50,8 +51,6 @@ String executedFrom = null;
 boolean isFromCross = false;
 
 try{
-    profile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE); 
-        
     objId = (String)(request.getParameter(SpagoBIConstants.OBJECT_ID));
     objLabel = (String)(request.getParameter(SpagoBIConstants.OBJECT_LABEL));
     //For default gets the object document through the DAO by the label found into the request:
@@ -94,9 +93,9 @@ try{
     
     if(objId != null && !("null".equalsIgnoreCase(objId))) {
         Integer objIdInt = new Integer(objId);
-        executionRoleNames = ObjectsAccessVerifier.getCorrectRolesForExecution(objIdInt, profile);
+        executionRoleNames = ObjectsAccessVerifier.getCorrectRolesForExecution(objIdInt, userProfile);
     } else {
-        executionRoleNames = ObjectsAccessVerifier.getCorrectRolesForExecution(obj.getLabel(), profile);        
+        executionRoleNames = ObjectsAccessVerifier.getCorrectRolesForExecution(obj.getLabel(), userProfile);        
     }
     
 }catch (Exception e) {

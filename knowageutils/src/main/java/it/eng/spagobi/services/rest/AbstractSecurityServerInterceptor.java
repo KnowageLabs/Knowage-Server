@@ -97,6 +97,10 @@ public abstract class AbstractSecurityServerInterceptor implements ContainerRequ
 			// Profile is not null
 			UserProfileManager.setProfile(profile);
 
+			if (getUserProfileFromSession() == null) {
+				setUserProfileInSession(profile);
+			}
+
 			// look for @UserConstraint annotation
 			CheckFunctionalitiesParser checkFunctionalitiesParser = new CheckFunctionalitiesParser();
 
