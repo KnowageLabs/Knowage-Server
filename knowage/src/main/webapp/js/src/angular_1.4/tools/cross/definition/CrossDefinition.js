@@ -18,16 +18,17 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 
 
 
-			$scope.selectedCrossMode = []
 
 			s.translate = sbiModule_translate;
 
 			$scope.crossModes = [{label:s.translate.load("sbi.crossnavigation.modality.normal"),value:0},
-			                     {label:s.translate.load("sbi.crossnavigation.modality.popup"),value:1}
+								 {label:s.translate.load("sbi.crossnavigation.modality.popup"),value:1},
 			                    ];
+			
 
 			ctr.list = [];
 			ctr.detail = newRecord();
+			ctr.crossmodality = $scope.crossModes[0];
 			ctr.dragging = false;
 
 			ctr.addFixedParam = function(){
@@ -62,6 +63,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 						var data = response.data;
 						ctr.detailLoadingSpinner = false;
 						ctr.detail = data;
+						ctr.crossmodality = $scope.crossModes[data.simpleNavigation.type];
 
 					},function(response){
 						console.log(response);
@@ -91,11 +93,13 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 
 			};
 			ctr.saveFunc = function(){
+				ctr.detail.simpleNavigation.type = ctr.crossmodality.value;
 				sbiModule_restServices.promisePost('1.0/crossNavigation/save', "", ctr.detail)
 				.then(function(response){
 					$scope.showActionOK("sbi.crossnavigation.save.ok");
 					ctr.navigationList.loadNavigationList();
 					ctr.detail = newRecord();
+					ctr.crossmodality = $scope.crossModes[0];
 					$angularListDetail.goToList();
 				},function(response){
 					$scope.showActionOK(response.data.errors);
@@ -103,6 +107,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			};
 			ctr.cancelFunc = function(){
 				ctr.detail = newRecord();
+				ctr.crossmodality = $scope.crossModes[0];
 				$angularListDetail.goToList();
 			};
 

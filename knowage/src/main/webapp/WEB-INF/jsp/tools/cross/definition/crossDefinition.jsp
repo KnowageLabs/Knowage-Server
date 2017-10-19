@@ -167,8 +167,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<div flex="50">
 					      <md-input-container class="md-block" >
 							<label>{{translate.load("sbi.crossnavigation.modality.lbl")}}</label>
-					        <md-select ng-model="ctrl.detail.simpleNavigation.type" >
-					          <md-option ng-repeat="crossMode in crossModes track by $index" ng-value="crossMode.value" ng-selected="$first">{{crossMode.label}}</md-option>
+					        <md-select ng-model="ctrl.crossmodality" ng-model-options="{trackBy: '$value.value'}">
+					          <md-option ng-value="crossMode" ng-repeat="crossMode in crossModes">{{crossMode.label}}</md-option>
 					        </md-select>						      
 					      </md-input-container>
 					</div>					
