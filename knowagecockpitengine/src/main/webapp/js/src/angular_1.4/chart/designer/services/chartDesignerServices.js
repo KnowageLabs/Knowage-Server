@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('ChartDesignerService', [])
+angular.module('ChartDesignerService', ['chartRendererModule'])
 .service('ChartDesignerData',function(sbiModule_restServices, sbiModule_messaging,sbiModule_translate,sbiModule_config, $http){
 	
 	this.getFontSizeOptions = function(){
@@ -2412,12 +2412,35 @@ angular.module('ChartDesignerService', [])
 	
 })	
 
-.service("PreviewService", function(sbiModule_restServices,sbiModule_messaging,sbiModule_translate,sbiModule_config, $http, $q){
+.service("PreviewService", function(sbiModule_restServices,chartInitializerRetriver,sbiModule_messaging,sbiModule_translate,sbiModule_config, $http, $q){
 	this.run = function(temp) {
 		
 		var deferred = $q.defer();
 
 		var chartTemp = {"CHART": temp}
+		if( (chartTemp.CHART.groupCategories || chartTemp.CHART.groupSeries) && chartTemp.CHART.VALUES.CATEGORY.groupby!=""){
+			var arrayOfCateg = [];
+			arrayOfCateg.push(chartTemp.CHART.VALUES.CATEGORY)
+			 if (chartTemp.CHART.VALUES.CATEGORY.groupby.indexOf(',') == -1) { 
+					subs = chartTemp.CHART.VALUES.CATEGORY.groupby ;
+				}
+				
+				else {
+					subs = angular.copy(chartTemp.CHART.VALUES.CATEGORY.groupby.substring(0, chartTemp.CHART.VALUES.CATEGORY.groupby.indexOf(',')));
+				}
+			var groupby = {};
+			groupby['column'] = subs;
+			groupby['groupby'] = "";
+			groupby['name'] = subs;
+			groupby['groupbyNames'] = "";
+			groupby['orderColumn'] = chartTemp.CHART.VALUES.CATEGORY.orderColumn;
+			groupby['orderType'] =chartTemp.CHART.VALUES.CATEGORY.orderType;;
+			groupby['stackedType'] = chartTemp.CHART.VALUES.CATEGORY.stackedType;
+			groupby['stacked'] =  chartTemp.CHART.VALUES.CATEGORY.stacked;
+			arrayOfCateg.push(groupby);
+			delete chartTemp.CHART.VALUES.CATEGORY;
+			 chartTemp.CHART.VALUES.CATEGORY = arrayOfCateg;
+		}
 		
 		var configParams = { 
     			headers: {
@@ -2434,15 +2457,56 @@ angular.module('ChartDesignerService', [])
 		
 		sbiModule_restServices.promisePost('../api/1.0/chart/jsonChartTemplate/readChartTemplate','', 'jsonTemplate='+angular.toJson(chartTemp)+'&exportWebApp=true', configParams)
 		.then(function(response) {
+			
+			var chartConf = eval("(" + response.data + ")");
+			
+			var chartType = chartConf.chart.type;
+			var d3Types = ["sunburst","parallel","wordcloud","chord"];
+			var highSpec = ["heatmap", "treemap"]
+			var lib = "d3js244";
+			if(d3Types.indexOf(chartType.toLowerCase())>=0){
+				lib = "d3js244"
+			} else {
+				lib="highcharts414"
+			}
+			var encoded = {};
+			if(d3Types.indexOf(chartType.toLowerCase())>=0 || highSpec.indexOf(chartType.toLowerCase())>=0){
+				var chartInitializer = chartInitializerRetriver.getChartInitializer(lib);
+				if(lib=="highcharts414"){
+
+					chartConf = chartInitializer.renderChart(chartConf,null, null, true);	
+				} else {
+					document.getElementById("forSVGPreview").style.height = "500px";
+					document.getElementById("forSVGPreview").style.width = "500px";
+					chartInitializer.renderChart(chartConf,document.getElementById('forSVGPreview'), null, null, true);	
+
+					encoded = btoa(document.getElementById('forSVGPreview').innerHTML);
+					
+
+					document.getElementById("forSVGPreview").style.height = "0px";
+					document.getElementById("forSVGPreview").style.width = "0px";
+				}
+			}
+				
+			
+			
 			var parameters = {
-						options: response.data,
-						content:'options',
-						type:'image/png',
-						scale: undefined,
-						constr:'Chart',
-						callback: undefined,
-						async: 'true'
-				};
+				type:'image/png',
+				scale: undefined,
+				constr:'Chart',
+				callback: undefined,
+				async: 'true'
+			};
+			if(lib=="d3js244"){
+				parameters.options = encoded;
+				parameters.content = 'html';
+			} else {
+				parameters.options = JSON.stringify(chartConf);
+				parameters.content = 'options';
+			}
+			
+				
+			
 			$http({
 			    method: 'POST',
 			    url: sbiHost + '/highcharts-export-web/',

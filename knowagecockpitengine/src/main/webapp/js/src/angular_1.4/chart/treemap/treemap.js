@@ -1,6 +1,6 @@
-function renderTreemap(chartConf,handleCockpitSelection, handleCrossNavigationTo ) {
+function renderTreemap(chartConf,handleCockpitSelection, handleCrossNavigationTo, exportWebApp ) {
 	
-    chartConf = prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCrossNavigationTo);
+    chartConf = prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCrossNavigationTo, exportWebApp);
     
     /**
      * Text that will be displayed inside the Back (drillup) button
@@ -27,7 +27,9 @@ function renderTreemap(chartConf,handleCockpitSelection, handleCrossNavigationTo
 			);			
 		}(Highcharts)
 	);
-    
+    if (exportWebApp){
+    	return chartConf;
+    }
 	var chart = new Highcharts.Chart(chartConf);
 	
 	return chart;
@@ -65,10 +67,12 @@ function renderTreemap(chartConf,handleCockpitSelection, handleCrossNavigationTo
 
 
 
-function renderHeatmap(chartConf,handleCockpitSelection,handleCrossNavigationTo){
+function renderHeatmap(chartConf,handleCockpitSelection,handleCrossNavigationTo, exportWebApp){
     
-    chartConfig = prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCrossNavigationTo); 
-    
+    chartConfig = prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCrossNavigationTo, exportWebApp); 
+    if (exportWebApp){
+    	return chartConfig;
+    }
     var chart = new Highcharts.Chart(chartConfig);
     
     return chart;
@@ -183,7 +187,7 @@ function getCrossParamsForTreemap(point,chartConf){
 	
 }
 
-function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCrossNavigationTo) {
+function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCrossNavigationTo, exportWebApp) {
 	
 	var colors = [];
 	
@@ -383,8 +387,6 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 	{
 		chartObject =     	
 		{
-			height: chartConf.chart.height ? Number(chartConf.chart.height) : undefined,
-			width: chartConf.chart.width ? Number(chartConf.chart.width) : undefined,
 			//zoomType: 'xy', // Causes problems when zooming out (Zoom reset) (danristo)
 			marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
 					
@@ -403,7 +405,13 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 										fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
 					}
 		};
-		
+		if(!exportWebApp){
+			chartObject =     	
+			{
+				height: chartConf.chart.height ? Number(chartConf.chart.height) : undefined,
+				width: chartConf.chart.width ? Number(chartConf.chart.width) : undefined,
+			};
+		}
 		if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
 			chartObject.backgroundColor = chartConf.chart.backgroundColor;
 	}
@@ -491,16 +499,19 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 			events:{
 				click: function(event){
 //					console.log(event.point);
-			        if(chartConf.chart.isCockpit==true){
-			        	if(chartConf.chart.outcomingEventsEnabled){
-			        	handleCockpitSelection(event);
-			        	}
-			        }else if(event.point.node.children.length==0){
-						
-		            	var params=getCrossParamsForTreemap(event.point,chartConf);
-		            	handleCrossNavigationTo(params);
-		            	
+					if(!exportWebApp){
+						 if(chartConf.chart.isCockpit==true){
+					        	if(chartConf.chart.outcomingEventsEnabled){
+					        	handleCockpitSelection(event);
+					        	}
+					        }else if(event.point.node.children.length==0){
+								
+				            	var params=getCrossParamsForTreemap(event.point,chartConf);
+				            	handleCrossNavigationTo(params);
+				            	
+							}
 					}
+			       
 				}
 			}
 		}],
@@ -984,18 +995,21 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
             events: {
             click: function(event){
 //            	console.log(event.point);
-            	if(chartConf.chart.isCockpit==true){
-            		if(chartConf.chart.outcomingEventsEnabled){
-            		var selectParams = getCrossParamsForHeatmap(event.point,chartConf);
-            		handleCockpitSelection(selectParams);
-            		}
-            	}else{ 
-            		
-            		
-            		var params=getCrossParamsForHeatmap(event.point,chartConf);
-            	    handleCrossNavigationTo(params);
-            	
-            	}		
+            	if(!exportWebApp){
+                	if(chartConf.chart.isCockpit==true){
+                		if(chartConf.chart.outcomingEventsEnabled){
+                		var selectParams = getCrossParamsForHeatmap(event.point,chartConf);
+                		handleCockpitSelection(selectParams);
+                		}
+                	}else{ 
+                		
+                		
+                		var params=getCrossParamsForHeatmap(event.point,chartConf);
+                	    handleCrossNavigationTo(params);
+                	
+                	}	          		
+            	}
+	
             }
             },
             turboThreshold: Number.MAX_VALUE// #3404, remove after 4.0.5 release
