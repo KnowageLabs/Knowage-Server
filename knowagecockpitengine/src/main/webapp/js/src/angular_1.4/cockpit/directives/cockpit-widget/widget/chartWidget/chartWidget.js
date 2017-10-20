@@ -1064,7 +1064,7 @@ function setAggregationsOnChartEngine(wconf){
 
 				aggregations.push(obj);
 
-				if( (chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries) && chartCategory.groupby!=""){
+				if( (chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries || chartTemplate.CHART.groupSeriesCateg) && chartCategory.groupby!=""){
 					var subs = "";
 					if (chartCategory.groupby.indexOf(',') == -1) {
 						subs = chartCategory.groupby
