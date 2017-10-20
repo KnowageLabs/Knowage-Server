@@ -160,6 +160,11 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		}
 
 //		dataToSend.crosstabDefinition = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition, 'style', false);
+		dataToSend.crosstabDefinition.measures = $scope.initializeStyleFormat(dataToSend.crosstabDefinition.measures);
+		dataToSend.crosstabDefinition.rows = $scope.initializeStyleFormat(dataToSend.crosstabDefinition.rows);
+		dataToSend.crosstabDefinition.columns = $scope.initializeStyleFormat(dataToSend.crosstabDefinition.columns);
+		
+		
 		dataToSend.crosstabDefinition.measures = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.measures, 'style', false);
 		dataToSend.crosstabDefinition.rows = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.rows, 'style', false);
 		dataToSend.crosstabDefinition.columns = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.columns, 'style', false);
@@ -177,6 +182,31 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 					$scope.hideWidgetSpinner();
 					}
 				)
+	}
+	
+	$scope.initializeStyleFormat = function(config){
+		//add an empty style format on the config objects if it's not found
+		if (Array.isArray(config)){
+			var toReturnArray = [];
+			for (var i=0; i < config.length; i++){
+				var configElement = config[i];
+				if (!configElement.hasOwnProperty('style')){
+					//style not defined, we add it as an empty obj
+					configElement.style = new Object();
+					configElement.style.format = "";
+				}
+				toReturnArray.push(configElement);
+			}
+			return toReturnArray;
+		} else {
+			if (!config.hasOwnProperty('style')){
+				//style not defined, we add it as an empty obj
+				config.style = new Object();
+				configElement.style.format = "";
+			}
+			return config;
+		}
+		
 	}
 
 
@@ -200,6 +230,7 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		}
 	}
 
+	/*
 	$scope.retroCompatibilityCheckToVersion1=function(config){
 		for (var c in config){
 			if (c == 'Style'){
@@ -220,6 +251,7 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 			}
 		}
 	}
+	*/
 
 	$scope.selectMeasure=function(rowHeaders, rowsValues, columnsHeaders, columnValues){
 		var lstHeaders = []; //list of all headers (columns and rows)
