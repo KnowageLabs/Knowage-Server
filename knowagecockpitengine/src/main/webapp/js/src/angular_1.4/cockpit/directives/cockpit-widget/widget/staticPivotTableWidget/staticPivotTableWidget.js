@@ -230,28 +230,6 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		}
 	}
 
-	/*
-	$scope.retroCompatibilityCheckToVersion1=function(config){
-		for (var c in config){
-			if (c == 'Style'){
-				if (typeof config[c] == 'object'){
-					var objProp = config[c];
-					var propToReturn = {};
-					for (p in objProp){
-						if (!admitObject && p.startsWith("{\"")){
-							continue;	//skip the object element. ONLY attribute are added
-						}
-						//retrocompatibility management for tag 'style'
-						$scope.moveProperty(objProp[p], "style.th.text-align", "style.headerStyle.textalign");
-						$scope.moveProperty(objProp[p], "style.th.font-size", "style.headerStyle.fontsize");
-						$scope.moveProperty(objProp[p], "style.th.font-weight", "style.headerStyle.fontweight");
-						propToReturn[p] = objProp[p];
-					}
-				}
-			}
-		}
-	}
-	*/
 
 	$scope.selectMeasure=function(rowHeaders, rowsValues, columnsHeaders, columnValues){
 		var lstHeaders = []; //list of all headers (columns and rows)
