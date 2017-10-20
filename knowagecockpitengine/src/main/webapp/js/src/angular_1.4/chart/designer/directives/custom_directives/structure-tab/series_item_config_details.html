@@ -78,7 +78,9 @@ ng-if="(selectedChartType != 'chord' && selectedChartType != 'heatmap' && select
 </div>
 
 <div ng-if="selectedChartType == 'pie'">
-
+<md-subheader class="md-primary">
+	{{translate.load("sbi.chartengine.designer.valueConfiguration")}}
+</md-subheader>
 <div layout="row" flex layout-margin>
 	<label>{{translate.load("sbi.chartengine.designer.showAbsValue")}}</label>
 	<md-input-container class="small counter"> 
@@ -93,6 +95,12 @@ ng-if="(selectedChartType != 'chord' && selectedChartType != 'heatmap' && select
 	</md-input-container>	
 </div>
 
+<div layout="row" flex layout-margin>
+	<label>{{translate.load("sbi.chartengine.designer.showCategoryValue")}}</label>
+	<md-input-container class="small counter"> 
+		<md-checkbox ng-model="detailsForSeriesItem.showCategoryValue" aria-label="Show series item showCategoryValue"></md-checkbox>
+	</md-input-container>	
+</div>
 </div>
 
 <!-- Scale factor for series values (if it is going to be shown as a raw value or in kilos, megas) -->

@@ -969,6 +969,7 @@
     
      tooltip: {
 	    followTouchMove:false,
+        followPointer:true,
         useHTML: true,
         backgroundColor: null,
         borderWidth: 2,

@@ -320,6 +320,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					                 "showValue":true,
 					                 "showAbsValue":false,
 					                 "showPercentage":false,
+					                 "showCategoryValue":false,
 					                 "scaleFactor":"empty",
 					                 "type":"",
 					                 "TOOLTIP":{  
@@ -492,6 +493,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			              "show3D" : false,
 			              "groupCategories" : false,
 			              "groupSeries" : false,
+			              "groupSeriesCateg" : false,
 			              "dateTime":false,
 			              "dateFormat":"day"
 					   }
@@ -2418,7 +2420,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		var deferred = $q.defer();
 
 		var chartTemp = {"CHART": temp}
-		if( (chartTemp.CHART.groupCategories || chartTemp.CHART.groupSeries) && chartTemp.CHART.VALUES.CATEGORY.groupby!=""){
+		if( (chartTemp.CHART.groupCategories || chartTemp.CHART.groupSeries || chartTemp.CHART.groupSeriesCateg) && chartTemp.CHART.VALUES.CATEGORY.groupby!=""){
 			var arrayOfCateg = [];
 			arrayOfCateg.push(chartTemp.CHART.VALUES.CATEGORY)
 			 if (chartTemp.CHART.VALUES.CATEGORY.groupby.indexOf(',') == -1) { 
