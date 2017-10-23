@@ -132,7 +132,7 @@ function getCrossParamsForHeatmap(point,chartConf){
     	
     	params.point.category=chartConf.additionalData.columns[0].value;
     	if(chartConf.chart.xAxisDate){
-    	params.point.name= new Date(point.x);
+    	params.point.name= point.original;
     	}else{
     	params.point.name=	chartConf.additionalData.firstCategory[point.x];
     	}
@@ -606,13 +606,16 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
     	}
     	
     	var xValue;
+    	var xValueOriginal;
     	if(chartConf.chart.xAxisDate){
     		xValue=new Date(data[i][chartConf.additionalData.columns[0].value]).getTime();
+    		xValueOriginal =data[i][chartConf.additionalData.columns[0].value];
     	}else{
     		xValue=chartConf.additionalData.firstCategory.indexOf(data[i][chartConf.additionalData.columns[0].value]);
     	}
     	var point={
     		"x":xValue,
+    		"original":xValueOriginal,
     		"y":chartConf.additionalData.storeresult.indexOf(data[i][chartConf.additionalData.columns[1].value]),
     		"value":data[i][chartConf.additionalData.serie.value],
     		"label":data[i][chartConf.additionalData.columns[1].value]
