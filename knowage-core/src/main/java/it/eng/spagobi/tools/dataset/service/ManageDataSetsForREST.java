@@ -1056,7 +1056,20 @@ public class ManageDataSetsForREST {
 		if (dataStore == null)
 			return null;
 
+		if (JSONUtils.toJSONArray(metadata).length() == 0) {
+			setNumericValuesAsMeasures(dataStore.getMetaData());
+		}
+
 		return dataStore.getMetaData();
+	}
+
+	private void setNumericValuesAsMeasures(IMetaData metaData) {
+		for (int i = 0; i < metaData.getFieldCount(); i++) {
+			IFieldMetaData ifmd = metaData.getFieldMeta(i);
+			if (Number.class.isAssignableFrom(ifmd.getType())) {
+				ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+			}
+		}
 	}
 
 	private boolean isRemovingMetadataFields(IMetaData previousMetadata, IMetaData currentMetadata) {

@@ -98,6 +98,12 @@ public class PersistedTableManager implements IPersistedManager {
 		String tableName = dataset.getTableNameForReading();
 		// changed
 
+		logger.debug("The datastore metadata object contains # [" + dataset.getDataStore().getMetaData().getFieldCount() + "] fields");
+		if (dataset.getDataStore().getMetaData().getFieldCount() == 0) {
+			logger.debug("The datastore metadata object hasn't fields. Dataset doesn't persisted!!");
+			return;
+		}
+
 		// get data source for writing not only getDataSource
 		IDataSource dsPersist = dataset.getDataSourceForWriting();
 		if (dsPersist == null) {
@@ -111,6 +117,11 @@ public class PersistedTableManager implements IPersistedManager {
 	public void persistDataSet(IDataSet dataset, IDataSource dsPersist, String tableName) throws Exception {
 		logger.debug("IN");
 
+		logger.debug("The datastore metadata object contains # [" + dataset.getDataStore().getMetaData().getFieldCount() + "] fields");
+		if (dataset.getDataStore().getMetaData().getFieldCount() == 0) {
+			logger.debug("The datastore metadata object hasn't fields. Dataset doesn't persisted!!");
+			return;
+		}
 		// get persisted table name
 		this.setTableName(tableName);
 		logger.debug("Persisted table name is [" + getTableName() + "]");
@@ -138,6 +149,13 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	public void persistDataset(IDataSet dataSet, IDataStore datastore, IDataSource datasource, String tableName) throws Exception {
+
+		logger.debug("The datastore metadata object contains # [" + dataSet.getDataStore().getMetaData().getFieldCount() + "] fields");
+		if (dataSet.getDataStore().getMetaData().getFieldCount() == 0) {
+			logger.debug("The datastore metadata object hasn't fields. Dataset doesn't persisted!!");
+			return;
+		}
+
 		this.setTableName(tableName);
 		this.setDialect(datasource.getHibDialectClass());
 
@@ -211,6 +229,11 @@ public class PersistedTableManager implements IPersistedManager {
 		Connection connection = null;
 		String dialect = datasource.getHibDialectClass();
 		try {
+			logger.debug("The datastore metadata object contains # [" + datastore.getMetaData().getFieldCount() + "] fields");
+			if (datastore.getMetaData().getFieldCount() == 0) {
+				logger.debug("The datastore metadata object hasn't fields. Dataset doesn't persisted!!");
+				return;
+			}
 			connection = getConnection(datasource);
 
 			// VoltDB does not allow explicit commit/rollback actions.
@@ -261,6 +284,9 @@ public class PersistedTableManager implements IPersistedManager {
 
 		IMetaData storeMeta = datastore.getMetaData();
 		int fieldCount = storeMeta.getFieldCount();
+
+		if (fieldCount == 0)
+			return new PreparedStatement[0];
 
 		String insertQuery = "insert into " + getTableName();
 		String values = " values ";
@@ -364,6 +390,9 @@ public class PersistedTableManager implements IPersistedManager {
 		PreparedStatement statement;
 
 		int fieldCount = storeMeta.getFieldCount();
+
+		if (fieldCount == 0)
+			return null;
 
 		String insertQuery = "insert into " + getTableName();
 		String values = " values ";
@@ -535,24 +564,30 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	private String getCreateTableQuery(IMetaData md, IDataSource dataSource) {
-		String toReturn = "create table " + tableName + " (";
+		String toReturn = null;
 
-		if (this.isRowCountColumIncluded()) {
-			IDataBase dataBase = DataBase.getDataBase(dataSource);
-			toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(PersistedTableManager.getRowCountColumnName(), dataSource) + " "
-					+ dataBase.getDataBaseType(Long.class);
-			toReturn += (md.getFieldCount() > 0) ? " , " : "";
-		}
+		// creates the table only when metadata has fields
+		if (md.getFieldCount() > 0) {
+			toReturn = "create table " + tableName + " (";
 
-		logger.debug("Create table cmd : it will manage #" + md.getFieldCount() + " fields...");
-		for (int i = 0, l = md.getFieldCount(); i < l; i++) {
-			IFieldMetaData fmd = md.getFieldMeta(i);
-			String columnName = getSQLColumnName(fmd);
-			logger.debug("Adding field #" + i + " with column name [" + columnName + "]");
-			toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource) + getDBFieldType(dataSource, fmd);
-			toReturn += ((i < l - 1) ? " , " : "");
+			if (this.isRowCountColumIncluded()) {
+				IDataBase dataBase = DataBase.getDataBase(dataSource);
+				toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(PersistedTableManager.getRowCountColumnName(), dataSource) + " "
+						+ dataBase.getDataBaseType(Long.class) + " , ";
+			}
+
+			logger.debug("Create table cmd : it will manage #" + md.getFieldCount() + " fields...");
+			for (int i = 0, l = md.getFieldCount(); i < l; i++) {
+				IFieldMetaData fmd = md.getFieldMeta(i);
+				String columnName = getSQLColumnName(fmd);
+				logger.debug("Adding field #" + i + " with column name [" + columnName + "]");
+				toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource) + getDBFieldType(dataSource, fmd);
+				toReturn += ((i < l - 1) ? " , " : "");
+			}
+			toReturn += " )";
+		} else {
+			logger.debug("Metadata fields object not found! Doesn't create temporary table.");
 		}
-		toReturn += " )";
 
 		return toReturn;
 	}
@@ -812,9 +847,11 @@ public class PersistedTableManager implements IPersistedManager {
 		logger.debug("IN");
 		// Steps #1: define create table statement
 		String createStmtQuery = getCreateTableQuery(md, dataSource);
-		dropTableIfExists(dataSource);
-		// Step #2: execute create table statement
-		executeStatement(createStmtQuery, dataSource);
+		if (createStmtQuery != null) {
+			dropTableIfExists(dataSource);
+			// Step #2: execute create table statement
+			executeStatement(createStmtQuery, dataSource);
+		}
 		logger.debug("OUT");
 	}
 

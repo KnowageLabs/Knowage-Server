@@ -6,7 +6,7 @@
 	#end
 #end
 #set($rows = $data.rows) ## data in table rows
-#if($chart.groupCategories =='true' && $chart.isCockpitEngine == 'false')
+#if(($chart.groupCategories =='true' || $chart.groupSeries =='true' || $chart.groupSeriesCateg =='true') && $chart.isCockpitEngine == 'false')
 #set($categorieColumns = $chart.VALUES.CATEGORY.get(0))
 #else
 #set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
@@ -155,7 +155,7 @@
         #if($chart.orientation == 'horizontal' && $chartTypeToPrint != 'radar')
         	inverted: true,
         #end
-        
+          #if(!$exportWebApp)
         #if($chart.height != '' && $chart.isCockpitEngine!="true")
         	height: $chart.height,
         #end
@@ -181,7 +181,7 @@
   	   	#else 
 	  	   	widthDimType: 'pixels',
         #end
-    	
+    	#end
     	#*
         	Remove border around the chart if this property is set to true.
         	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -842,8 +842,8 @@
 				#end
             ]
 		#end
-		#if($chart.groupSeries && $chart.groupSeries =='true')
-		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine))
+		#if(($chart.groupSeries && $chart.groupSeries =='true') || ($chart.groupSeriesCateg && $chart.groupSeriesCateg =='true'))	
+		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine, $chart.groupSeries, $chart.groupSeriesCateg))
             categories: [
             	 #foreach($valueKey in $map.keySet())
 				 #if($valueKey!="null")
@@ -1066,7 +1066,7 @@
     #end
 
 	series: [
-	#if($chart.groupSeries !='true')
+	#if($chart.groupSeries !='true' && $chart.groupSeriesCateg !='true')
 	#foreach($valueKey in $seriesMap.keySet())
 	    #set($relatedSerie = $seriesMap.get($valueKey))
 	    	
@@ -1319,7 +1319,7 @@
 	    }, 
 	#end
 	#end
-	#if($chart.groupSeries && $chart.groupSeries =='true')	
+	#if(($chart.groupSeries && $chart.groupSeries =='true') || ($chart.groupSeriesCateg && $chart.groupSeriesCateg =='true'))	
 		#foreach($valueKey in $map.keySet())
 		#if($valueKey!="null")
 		{
@@ -1339,6 +1339,7 @@
     
     tooltip: {
     followTouchMove:false,
+    followPointer:true,
     	## NOTE (TOOLTIP PROBLEM): disable the tooltip in order to provide possibility to hide the tooltip after set amount of time after hover 
 		## enabled:false,
 		
@@ -1710,6 +1711,7 @@
         
         series: {
             cursor: 'pointer', 
+            #if(!$exportWebApp)
             point: {
             
                #if($chart.isCockpitEngine=="false" && !$enableDrilldown)
@@ -1722,6 +1724,7 @@
 		            	}
 		         #end
             }, 
+            #end
             dataLabels: {
                    allowOverlap: true,
                    y:-10

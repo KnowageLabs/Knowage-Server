@@ -42,7 +42,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	$scope.categoriesContainer = [];
 	$scope.categories = [];
 	$scope.seriesContainers = [];
-
+	$scope.openPreviewPanel = false;
 	$scope.seriesNumber = 0;
 	$scope.checkCategoriesLength = 0;
 	

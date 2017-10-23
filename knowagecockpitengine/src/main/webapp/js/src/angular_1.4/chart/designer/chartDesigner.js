@@ -23,9 +23,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller("ChartDesignerController", ["sbiModule_translate","$scope","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging", "PreviewService","sbiModule_logger", "$mdToast","sbiModule_user",ChartDesignerFunction]);
+app.controller("ChartDesignerController", ["sbiModule_translate","$scope","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging", "PreviewService","sbiModule_logger", "$mdToast","sbiModule_user","$httpParamSerializer",ChartDesignerFunction]);
 
-function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiModule_restServices, sbiModule_messaging,PreviewService,sbiModule_logger,$mdToast,sbiModule_user) {
+function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiModule_restServices, sbiModule_messaging,PreviewService,sbiModule_logger,$mdToast,sbiModule_user,$httpParamSerializer) {
 	
 	$scope.previewChartEnable =( sbiModule_user.functionalities.indexOf("PreviewChart")>-1)? true:false;
 	if(parent.angular.element(window.frameElement).scope().isCockpitEng){
@@ -37,6 +37,7 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 	console.log($scope.isCockpitEng);
 	//sbiModule_logger.disableConsole();
 	$scope.translate = sbiModule_translate;
+	$scope.httpParamSerializer = $httpParamSerializer;
 	$scope.previewButtonEnabled = false;
 	$scope.selectedChartType = "";
 
@@ -75,8 +76,13 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 				if(temp.CHART.VALUES.CATEGORY.name=="" || temp.CHART.VALUES.CATEGORY.name==null || temp.CHART.VALUES.CATEGORY.name==undefined){
 					temp.CHART.VALUES.CATEGORY.name=temp.CHART.VALUES.CATEGORY.column
 				}
-			}		
-			sbiModule_restServices.promisePost('../api/1.0/chart/template/save','', 'jsonTemplate='+angular.toJson(temp)+'&docLabel='+docLabel+'&userId='+userId, {
+			}	
+			
+			var toSend = {}
+			toSend.jsonTemplate = angular.toJson(temp);
+			toSend.docLabel = docLabel;
+			toSend.userId = userId;
+			sbiModule_restServices.promisePost('../api/1.0/chart/template/save','',$scope.httpParamSerializer(toSend) , {
 				transformRequest:angular.identity,
 				headers:{'Content-Type': ' application/x-www-form-urlencoded; charset=utf-8'}
 			})
@@ -319,6 +325,7 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 		return f;
 	}
 	$scope.previewChart = function () {
+		$scope.openPreviewPanel = true;
 		$scope.hideStructureDetails();
 		$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
 		prepareTemplate();

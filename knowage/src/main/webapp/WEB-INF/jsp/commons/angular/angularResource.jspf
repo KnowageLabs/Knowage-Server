@@ -91,6 +91,9 @@
 	
 	//load user profile 
 	IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	if(userProfile == null){
+		userProfile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+    }
 	
 	String userUniqueIdentifier="";
 	String userId="";

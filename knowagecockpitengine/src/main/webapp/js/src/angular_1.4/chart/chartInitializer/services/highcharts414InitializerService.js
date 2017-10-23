@@ -24,20 +24,29 @@ angular.module('chartInitializer')
 	this.chart = null;
 	var chartConfConf = null;
 
-	this.renderChart = function(chartConf,element,handleCockpitSelection){
+	this.renderChart = function(chartConf,element,handleCockpitSelection,exportWebApp){
 		chartConfConf = chartConf;
-		adjustChartSize(element,chartConf);
+		if(!exportWebApp) {
+			adjustChartSize(element,chartConf);
+		}
 		var chartType = chartConf.chart.type.toLowerCase();
 
 		if (chartType == 'treemap')
 		{
 			delete this.updateData;
-			this.chart = renderTreemap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo );
+			if(exportWebApp) {
+				return  renderTreemap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo,exportWebApp );
+			} else {
+				this.chart = renderTreemap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo);
+			}
 		}
 		else if (chartType == 'heatmap')
 		{
 			delete this.updateData;
-			this.chart = renderHeatmap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo );
+			if(exportWebApp) {
+				return renderHeatmap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo,exportWebApp );
+			}
+			this.chart = renderHeatmap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo);
 		}
 		else
 		{

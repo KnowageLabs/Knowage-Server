@@ -7,7 +7,7 @@
 	</md-input-container>	
 </div>
 
-
+<div ng-show="axisForDisplay.TITLESERIE.showTitle" layout="column">
 <md-input-container class="md-block" >
 	 <label>{{translate.load("sbi.chartengine.designer.serietitle.align")}}</label>
 		 <md-select ng-model="axisForDisplay.TITLESERIE.style.align" name="serie_title_aligment"> <md-option
@@ -37,5 +37,5 @@
 		 <md-select ng-model="axisForDisplay.TITLESERIE.style.fontSize" name="serie_title_fsize"> <md-option
 		ng-repeat="option in fontSize" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>	
-
+</div>
 </div>

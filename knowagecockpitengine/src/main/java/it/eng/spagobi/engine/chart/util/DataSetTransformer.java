@@ -39,10 +39,12 @@ import edu.emory.mathcs.backport.java.util.Collections;
 public class DataSetTransformer {
 
 	public void print(Object object) {
-		/*
-		 * System.out.println("-----------------------"); System.out.println(object); System.out.println(object.getClass().toString());
-		 * System.out.println("-----------------------");
-		 */
+
+		/*System.out.println("-----------------------");
+		System.out.println(object);
+		System.out.println(object.getClass().toString());
+		System.out.println("-----------------------");*/
+
 	}
 
 	public JSONArray toWordcloud(Object columnsNeeded, Object dataColumnsMapper, List<Object> dataRows, Object serie, Object sizeCriteria,
@@ -725,20 +727,39 @@ public class DataSetTransformer {
 
 	}
 
-	public LinkedHashMap<String, ArrayList<JSONObject>> prepareDataForGrouping(List<Object> dataRows, String isCockpitEngine) throws JSONException {
+	public LinkedHashMap<String, ArrayList<JSONObject>> prepareDataForGrouping(List<Object> dataRows, String isCockpitEngine, String groupSeries,
+			String groupSeriesCateg) throws JSONException {
 		boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
+		boolean groupSeriesBool = Boolean.parseBoolean(groupSeries);
+		boolean groupSeriesCategBool = Boolean.parseBoolean(groupSeriesCateg);
 		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
 		String primCat;
 		String secCat;
 		String seria;
 		if (!isCockpit) {
-			primCat = "column_1";
-			secCat = "column_2";
-			seria = "column_3";
+			if (groupSeriesBool) {
+				primCat = "column_1";
+				secCat = "column_2";
+				seria = "column_3";
+			} else {
+				primCat = "column_2";
+				secCat = "column_1";
+				seria = "column_3";
+			}
+
 		} else {
-			primCat = "column_2";
-			secCat = "column_3";
-			seria = "column_1";
+			if (groupSeriesBool) {
+				primCat = "column_2";
+				secCat = "column_3";
+				seria = "column_1";
+
+			} else {
+
+				primCat = "column_1";
+				secCat = "column_3";
+				seria = "column_2";
+
+			}
 		}
 		for (Object singleObject : dataRows) {
 			if (!map.containsKey(((Map) singleObject).get(seria))) {

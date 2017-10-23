@@ -69,7 +69,7 @@ angular.module('JsonChartTemplateServiceModule')
 		readChartTemplate:function(jsonTemplate,exportWebData,datasetLabel,jsonData){
 			
 			var params = {};
-			if( (jsonTemplate.CHART.groupCategories || jsonTemplate.CHART.groupSeries) && jsonTemplate.CHART.VALUES.CATEGORY.groupby!=""){
+			if( (jsonTemplate.CHART.groupCategories || jsonTemplate.CHART.groupSeries || jsonTemplate.CHART.groupSeriesCateg) && jsonTemplate.CHART.VALUES.CATEGORY.groupby!=""){
 				var arrayOfCateg = [];
 				arrayOfCateg.push(jsonTemplate.CHART.VALUES.CATEGORY)
 				 if (jsonTemplate.CHART.VALUES.CATEGORY.groupby.indexOf(',') == -1) { 

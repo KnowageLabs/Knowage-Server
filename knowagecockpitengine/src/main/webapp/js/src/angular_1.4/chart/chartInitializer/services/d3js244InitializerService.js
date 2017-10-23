@@ -26,13 +26,13 @@ angular.module('chartInitializer')
 		d3.select(panel).selectAll("*").remove();
 	}
 	
-	this.renderChart = function(chartConf,panel,handleCockpitSelection,locale){
-		
-		if(!locale){
-			locale = window.navigator.userLanguage || window.navigator.language;
+	this.renderChart = function(chartConf,panel,handleCockpitSelection,locale,exportWebApp){
+		if(!exportWebApp){
+			if(!locale){
+				locale = window.navigator.userLanguage || window.navigator.language;
+			}
 		}
-		
-		this.cleanChart(panel);
+		this.cleanChart(panel);	
 		
 		if(chartConf.chart.type.toLowerCase() == "wordcloud") {			
 			renderWordCloud(chartConf,panel,handleCockpitSelection,locale,this.handleCrossNavigationTo);			
