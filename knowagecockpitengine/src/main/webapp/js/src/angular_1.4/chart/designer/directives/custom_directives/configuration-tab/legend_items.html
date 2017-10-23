@@ -1,0 +1,96 @@
+
+<div ng-form name="legend_itemsForm">
+<div  layout="row" layout-margin>
+
+	<label>{{translate.load("sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title")}}</label>
+	<md-input-container class="small counter"> <md-checkbox
+		ng-model="chartTemplate.LEGEND.show" aria-label="Show legend" ng-disabled="disableLegendCheckbox" name="legenditems_cbshow"></md-checkbox>
+	</md-input-container>
+</div>
+
+<div  layout="column" ng-show="chartTemplate.LEGEND.show && !disableLegendCheckbox">
+
+	<md-input-container ng-if="disableHtmlElementForChartJs()" class="md-block">
+	 <label>{{translate.load("sbi.chartengine.configuration.position")}}</label>
+		 <md-select ng-model="chartTemplate.LEGEND.position" name="legenditems_position"> <md-option
+		ng-repeat="option in positionType" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
+		 <md-select ng-model="chartTemplate.LEGEND.style.fontFamily" name="legenditems_ffamily"> <md-option
+		ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
+		 <md-select ng-model="chartTemplate.LEGEND.style.fontSize" name="legenditems_fsize"> <md-option
+		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontstyle")}}</label>
+		 <md-select ng-model="chartTemplate.LEGEND.style.fontWeight" name="legenditems_fstyle"> <md-option
+		ng-repeat="option in fontStyleOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder")}}</label>
+		 <input type="number" step="any" name="legenditems_borderWidth"
+		ng-model="chartTemplate.LEGEND.style.borderWidth" min="0" /> </md-input-container>
+		
+	<md-input-container class="md-block colorInputContainer" >
+	<label>{{translate.load("sbi.chartengine.designer.tooltip.color")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="chartTemplate.LEGEND.style.color" name="legenditems_color"></color-picker> </md-input-container>
+
+	<md-input-container class="md-block colorInputContainer" >
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.bgcolor")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="chartTemplate.LEGEND.style.backgroundColor" name="legenditems_bgColor"></color-picker> </md-input-container>
+
+
+</div>
+
+<div  ng-show="chartTemplate.LEGEND.show && disableLegendCheckbox && selectedChartType == 'heatmap'" layout="column">
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.configuration.title.verticalAlignCombo")}}</label>
+		 <md-select ng-model="chartTemplate.LEGEND.style.align" name="legenditems_verticalAlign"> <md-option
+		ng-repeat="option in verticalAlignType" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.configuration.heatmap.symbolHeight")}}</label>
+		 <input type="number" step="any" name="symbolHeight"
+		ng-model="chartTemplate.LEGEND.symbolHeight" min="0" 
+		ng-required="chartTemplate.type.toLowerCase() == 'heatmap'"/> </md-input-container>
+		
+</div>
+
+<div  ng-show="chartTemplate.LEGEND.show && disableLegendCheckbox && selectedChartType == 'parallel'" layout="column">
+
+	<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontstyle")}}</label>
+		 <md-select ng-model="chartTemplate.LEGEND.ELEMENT.style.fontWeight" name="legenditems_fweight"
+		 ng-required="chartTemplate.type.toLowerCase() == 'parallel'"> <md-option
+		ng-repeat="option in fontStyleOptionsNS" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
+		 <md-select ng-model="chartTemplate.LEGEND.ELEMENT.style.fontSize" name="legenditems_element_fsize"
+		 ng-required="chartTemplate.type.toLowerCase() == 'parallel'"> <md-option
+		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
+		 <md-select ng-model="chartTemplate.LEGEND.ELEMENT.style.fontFamily" name="legenditems_element_ffamily"> <md-option
+		ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+</div>
+</div>

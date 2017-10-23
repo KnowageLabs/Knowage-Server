@@ -1,0 +1,55 @@
+<md-dialog  class="filter-dialog-dimensions" layout="column">
+	
+	<md-toolbar class="knowage-blue dialog-toolbar" flex=10 layout="column">
+		<span flex>
+			{{filterDialogToolbarName}}	
+		</span>
+		
+	</md-toolbar>
+
+	<md-content class="dialog-style" flex=90 >
+		<span class="dialog-msg" ng-if="searchText.length > 0 && searchText.length < minNumOfLetters")>
+			You need at least {{minNumOfLetters}} letters to start search!
+		</span>	
+		<div class="no-wrap">
+			<input	ng-class="bgColor()?'filter-search-redbg filter-search':'filter-search'"
+        			ng-show="true" 
+        			ng-model="searchText" 
+        			placeholder="Insert text here" 
+        			ng-keypress="searchFilter($event)"
+        			width="70%!important"/>				
+				<!-- showSearchInput -->
+				<md-button ng-show="true" ng-click="searchFilter()" class="md-icon-button" ng-disabled="minNumOfLetters > searchText.length">
+					<md-tooltip md-direction="top">
+          				Search
+        			</md-tooltip>
+					<md-icon class="fa fa-search"></md-icon>
+				</md-button>
+				
+				<md-checkbox ng-show="true" ng-model="showSiblings" aria-label="Show bros" style="display:initial;">
+					<span style="font-size: 10px">{{showSiblings?'Show siblings':'Hide siblings'}}</span>
+				</md-checkbox>	
+    	</div>
+		<div layout="row" flex>
+		<div ui-tree>
+			<ul ui-tree-nodes="" ng-model="data" class="tree" >
+				<filter-tree-first-level ng-show="!loadingFilter"></filter-tree-first-level>
+			</ul>
+		</div ui-tree>
+		<span flex></span>
+	
+		<filter-parameters-list ng-show="olapMode && isSlicer" drivers-list="adParams" selected-attribute="selectedAttribute" attribute-list="profileAttributes" select-item-action="selectAd(ad)" selected-filter="lastSelectedFilter" bind-mode="bindMode"></filter-parameters-list>
+		</div>
+		<md-progress-circular md-mode="indeterminate" ng-show="loadingFilter"></md-progress-circular>
+	</md-content>
+
+	<md-dialog-actions layout="row">
+		<md-button ng-click="closeFiltersDialog()">
+			Cancel
+		</md-button>
+		<md-button ng-click="filterDialogSave()">
+			Save
+		</md-button>		
+	</md-dialog-actions>
+	
+</md-dialog>

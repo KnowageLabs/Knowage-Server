@@ -1,0 +1,4 @@
+<!-- CometD library -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/cometd/cometd.js"></script>
+<!-- Angular CometD binding -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-cometd/angular-cometd.js"></script>

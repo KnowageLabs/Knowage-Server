@@ -1,0 +1,84 @@
+<div ng-form name="structure-seriesItemTooltipDetailsForm" flex >
+<!-- The original name of the series item (not an alias) -->
+<md-subheader class="md-primary">
+	Series item: <strong>{{detailsForSeriesItem.column}} ({{detailsForSeriesItem.axis}})</strong>
+</md-subheader>
+
+<!-- Series tooltip font color -->
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block colorInputContainer" flex>
+		<label>{{translate.load("sbi.chartengine.designer.tooltip.color")}}</label>
+	 	<color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="detailsForSeriesTooltip.style.color">
+		</color-picker> 
+	</md-input-container>
+</div>
+
+<!-- Series tooltip background color -->
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block colorInputContainer" flex>
+		<label>{{translate.load("sbi.chartengine.designer.tooltip.bckgcolor")}}</label>
+	 	<color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="detailsForSeriesTooltip.backgroundColor">
+		</color-picker> 
+	</md-input-container>
+</div>
+
+<!-- Series tooltip text alignment -->
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex> 
+		<label>{{translate.load('sbi.chartengine.designer.tab.configuration.textalignment')}}</label>
+		<md-select ng-model="detailsForSeriesTooltip.style.align"> 
+			<md-option ng-repeat="option in textAlignment" value="{{option.value}}">{{option.name}}</md-option>
+		</md-select> 
+	</md-input-container>
+</div>
+
+<!-- Series tooltip text font family -->
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex> 
+		<label>{{translate.load('sbi.chartengine.configuration.font')}}</label>
+		<md-select ng-model="detailsForSeriesTooltip.style.fontFamily"> 
+			<md-option ng-repeat="option in fontFamily" value="{{option.value}}">{{option.name}}</md-option>
+		</md-select> 
+	</md-input-container>
+</div>
+
+<!-- Series tooltip text font style -->
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex> 
+		<label>{{translate.load('sbi.chartengine.configuration.fontweight')}}</label>
+		<md-select ng-model="detailsForSeriesTooltip.style.fontWeight"> 
+			<md-option ng-repeat="option in fontStyle" value="{{option.value}}">{{option.name}}</md-option>
+		</md-select> 
+	</md-input-container>
+</div>
+
+<!-- Series tooltip text font size -->
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex> 
+		<label>{{translate.load('sbi.chartengine.configuration.fontsize')}}</label>
+		<md-select ng-model="detailsForSeriesTooltip.style.fontSize"> 
+			<md-option ng-repeat="option in fontSize" value="{{option.value}}">{{option.name}}</md-option>
+		</md-select> 
+	</md-input-container>
+</div>
+
+<div ng-if="selectedChartType == 'chord' || selectedChartType == 'wordcloud'">
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex>
+		<label>{{translate.load('sbi.chartengine.configuration.borderwidth')}}</label>
+		<input type="number" name="tooltip_borderWidth" ng-model="detailsForSeriesTooltip.borderWidth" min="0"/> 
+	</md-input-container>	
+</div>
+
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex>
+		<label>{{translate.load('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius')}}</label>
+		<input type="number" name="tooltip_borderRadius" ng-model="detailsForSeriesTooltip.borderRadius" min="0"/> 
+	</md-input-container>	
+</div>
+</div>
+</div>

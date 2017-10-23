@@ -1,0 +1,70 @@
+<!-- element of the tree, recursive call on this template to create the tree -->
+<script type="text/ng-template" id="componentTreeHtmlScript">
+
+<div layout="row" layout-align="start center" class="customTreeNode kn-componentTree" >
+
+	<div layout="row" layout-align="start center">
+		<md-checkbox ng-if="showNodeCheckbox(node)" ng-model="node.checked"
+				ng-change="toogleSelected(node)" aria-label="Checkbox"></md-checkbox>
+		<md-icon ng-click="openFolder(node,false)"
+				ng-if="isFolder(node)"
+				md-font-icon ng-class="folderIcon(node)"></md-icon>
+		<md-icon ng-click="openFolder(node,false)"
+				ng-if="isOpenFolder(node)"
+				md-font-icon ng-class="openFolderIcon(node)"></md-icon>
+		<md-icon ng-click="openFolder(node,false)"
+				ng-if="isLeaf(node)"
+				md-font-icon ng-class="getLeafIcon(node)"></md-icon>
+		
+		<div ng-if="orderBy !== undefined && orderBy.length > 0 && node.type =='node'">
+			<md-icon ng-if="node.sortDirection=='asc'"
+				ng-click="toogleSort(node)" class="fa fa-sort-asc"></md-icon>
+			<md-icon ng-if="node.sortDirection=='desc'"
+				ng-click="toogleSort(node)" class="fa fa-sort-desc"></md-icon>
+		</div>
+		<div ng-click="openFolder(node,true)" class="line-container" ng-class="{'selectedNode': selectedItem.id!=undefined ? (selectedItem.id == node.id) : (selectedItem.$$hashKey == node.$$hashKey) }">
+			<span> &nbsp;{{node[label]}}</span>
+		</div>
+	</div>
+	<div class="menu-container"
+			ng-if="menuOption.length!=0 && menuOption!=undefined"
+			ng-show="node.isHover" layout="row" layout-aling="end center">
+		<div class="icon-container" ng-repeat=" menuItem in menuOption"
+				role="menuitem" ng-click="menuItem.action(node, node.$parent,$event)"
+				ng-if="menuItem.showItem === undefined || menuItem.showItem(node, $event)"
+				tabindex="{{$index}}">
+			<md-icon md-font-icon="{{menuItem.icon}}"></md-idcon> 
+			<md-tooltip md-direction="left">{{menuItem.label}}</md-tooltip>
+		</div>
+	</div>
+</div>
+
+<ol id="{{id}}-tree-element-{{$parent.$index}}-{{$index}}"
+		ui-tree-nodes="" ng-model="node[subfoldersId]"
+		ng-if="node.expanded">
+
+	<li layout="column" layout-align="start stretch" ng-show="node.visible"
+			ng-repeat="node in node[subfoldersId]" ng-if="showFolder(node)"
+			ui-tree-node ng-include="'componentTreeHtmlScript'"></li>
+	<li ng-if="showLeafSubNodes(node)"
+			layout="column" layout-align="start stretch" ng-repeat="node in node[leafKey]" 
+			ng-show="node.visible" ui-tree-node ng-include="'componentTreeHtmlScript'" >
+	</li>
+</ol>
+</script>
+
+<!-- seeTree is true when the tree is initialized and elaborated -->
+<div ng-show="seeTree==true || notHideOnLoad==true">
+	<div class="{{classLayout}}" id ="{{id}}">
+		<!-- create the tree structure -->
+		<div id="tree-container" ui-tree="optionsDragDrop" data-drag-delay="500" data-drag-enabled="{{enableDrag==true}}" >	
+			<ol id="{{id}}-tree-root" ui-tree-nodes ng-model="folders" id="tree-root">
+				<li layout="column" layout-align="start stretch" ng-repeat="node in folders" ui-tree-node
+						ng-include="'componentTreeHtmlScript'"
+						ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
+				</li>
+			</ol>
+		</div>
+	</div>
+</div>
+ 

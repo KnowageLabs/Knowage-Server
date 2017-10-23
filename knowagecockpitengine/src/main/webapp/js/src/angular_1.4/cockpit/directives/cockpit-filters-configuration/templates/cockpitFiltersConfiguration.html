@@ -1,0 +1,90 @@
+<md-content class="filters" layout="column" layout-fill ng-cloak>
+	<md-card ng-if="ngModelShared.filters!=undefined" >
+		<md-card-content layout="column">
+			<div layout="row" layout-align="center center" ng-show="ngModelShared.type != 'static-pivot-table' || ngModelShared.limitRows.enable == true">
+				<md-switch ng-model="ngModelShared.limitRows.enable" aria-label="Limit rows">
+					{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.limitrows")}} &nbsp;
+				</md-switch>
+				
+				<md-input-container>
+					<label>{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.maxrowsnumber")}}</label>
+					<input type="number" ng-model="ngModelShared.limitRows.rows" ng-disabled="!ngModelShared.limitRows.enable" min="1">
+				</md-input-container>
+			</div>
+
+ 			<!-- Cycle on all filters -->
+			<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="filterObj in ngModelShared.filters" >     			
+            	<label flex=20 class="filterLabel">
+            		<md-tooltip md-delay="1000">{{filterObj.colName}}</md-tooltip>
+            		{{filterObj.colName}}
+            	</label>
+
+	 			<!-- Operator on combo basing on filter type: String, Number, Date-->
+	      		<md-input-container  flex=40 ng-show="filterObj.type == 'java.lang.String'">
+	                <label>Operator</label>
+	             	<md-select ng-model="filterObj.filterOperator" >
+	                    <md-option ng-repeat="op in operatorsTypeString" ng-value="op">{{op}}</md-option>
+	                </md-select>   
+	            </md-input-container>
+            
+				<md-input-container flex=40  ng-show="filterObj.type == 'java.lang.Integer' || filterObj.type == 'java.lang.Double' || filterObj.type == 'java.lang.Float' || filterObj.type == 'java.math.BigDecimal' ||filterObj.type == 'java.lang.Long'">
+					<label>Operator</label>
+					<md-select ng-model="filterObj.filterOperator" >
+					    <md-option  ng-repeat="op in operatorsTypeNumber" ng-value="op">{{op}}</md-option>
+					</md-select>    
+				</md-input-container>
+            
+				<md-input-container  flex=40 ng-show="filterObj.type == 'java.lang.Date' || filterObj.type == 'java.sql.Date' || filterObj.type == 'java.sql.Timestamp'">
+				     <label>Operator</label>
+				     <md-select ng-model="filterObj.filterOperator" >
+				         <md-option  ng-repeat="op in operatorsTypeDate" ng-value="op">{{op}}</md-option>
+				     </md-select>    
+				</md-input-container>
+ 
+ 				<!-- Optional 0, 1 or 2 operands basing on chosen operator -->           
+	            <md-input-container flex=35 ng-show="filterObj.filterOperator == '=' 
+                			|| filterObj.filterOperator == '!=' 
+                			|| filterObj.filterOperator == '>' 
+                			|| filterObj.filterOperator == '<'
+                			|| filterObj.filterOperator == '<='
+                			|| filterObj.filterOperator == '>='
+                			|| filterObj.filterOperator == 'like'
+                			|| filterObj.filterOperator == 'IN'
+                			"> 
+	                <label ng-show="filterObj.type != 'java.lang.Date' && filterObj.type != 'java.sql.Timestamp'">{{translate.load("Value")}}</label>
+	                <label ng-show="filterObj.type == 'java.lang.Date' || filterObj.type == 'java.sql.Timestamp'">{{translate.load("Value")}}: yyyy-MM-dd hh:mm:ss</label>	
+	                <input   maxlength="100" type="text" ng-model="filterObj.filterVals[0]"> 
+	      		</md-input-container>
+      		
+				<md-input-container flex=35 ng-show="filterObj.filterOperator == 'range'"> 
+					<label ng-show="filterObj.type != 'java.lang.Date' && filterObj.type != 'java.sql.Timestamp'">{{translate.load("From")}}</label>
+	                <label ng-show="filterObj.type == 'java.lang.Date' || filterObj.type == 'java.sql.Timestamp'">{{translate.load("From")}}: yyyy-MM-dd hh:mm:ss</label>	
+					<input maxlength="100" type="text" ng-model="filterObj.filterVals[0]"> 
+				</md-input-container>
+				
+                <md-input-container  flex=35 ng-show="filterObj.filterOperator == 'range'"> 
+					<label ng-show="filterObj.type != 'java.lang.Date' && filterObj.type != 'java.sql.Timestamp'">{{translate.load("To")}}</label>
+	                <label ng-show="filterObj.type == 'java.lang.Date' || filterObj.type == 'java.sql.Timestamp'">{{translate.load("To")}}: yyyy-MM-dd hh:mm:ss</label>	
+	                <input maxlength="100" type="text" ng-model="filterObj.filterVals[1]"> 
+            	</md-input-container>
+            	
+            	<div flex></div>
+            	
+            	<md-button  class="md-icon-button">
+            		<md-icon md-font-icon="fa fa-eraser" ng-click="eraseFilter(filterObj.colName)"></md-icon>
+            		<md-tooltip md-delay="1000" >Clear Filter</md-tooltip>
+            	</md-button>      		
+      			
+			</div>	
+		</md-card-content>
+	</md-card>
+	
+	<md-card ng-if="ngModelShared.filters==undefined">
+		<md-card class="noWidget ng-scope _md md-knowage-theme">
+			<md-card-content layout-align="center center" class="layout-align-center-center">
+				{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.specifydatasettofilter")}}
+			</md-card-content>
+		</md-card>
+	</md-card>
+	
+</md-content>

@@ -1,0 +1,65 @@
+<div class="infoBar multiSelect animation fade-down " ng-if="bulkSelection" layout="row" layout-align="center center">
+	<div flex></div>
+	<md-button ng-click="clickItem($event,selectedRows,bulkSelection)"><i class="fa fa-bolt"></i> {{::translate.load('sbi.cockpit.widgets.table.selection.launchselection')}}</md-button>
+	<div flex></div>
+	<md-button  class="md-icon-button" ng-click="cancelBulkSelection()" >
+       	<md-icon md-font-icon="fa fa-times"></md-icon>
+   	</md-button>	
+</div>
+<div class="cockpitTableContainer">
+	<table ng-class="" class="cockpitTable" ng-style="settings.style.table" ng-cloak fixed-header>
+	    <thead>
+	        <tr ng-style="settings.style.header">
+	            <th scope="col" ng-repeat="column in columns track by $index" ng-if="!column.style.hiddenColumn" ng-style="getThStyle(styledata.th,column)" ng-click="sort(column,$event)" ng-class="{'hiddenIcon':column.aliasToShow != settings.sortingColumn,'active':column.aliasToShow == settings.sortingColumn}">
+	                <span class="thText">{{column.aliasToShow}}
+	                	<md-tooltip ng-if="!column.hideTooltip" md-direction="bottom" md-delay="500">{{column.aliasToShow}}</md-tooltip>
+	                </span>
+	                <span class="sortingIcon" ng-class="{'inverse':settings.sortingOrder == 'ASC'}"><i class="fa fa-arrow-down"></i></span>
+	            </th>
+	        </tr>
+	    </thead>
+	    <thead ng-if="loading" class="loadingBar">
+	        <tr>
+	            <th colspan="1000">
+	                <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+	            </th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <tr ng-repeat="row in model | orderBy : getSortingColumnFilter() : getSortingOrderAsBoolean() | limitTo : settings.pagination.enabled?settings.pagination.itemsNumber:undefined : (settings.pagination.enabled && settings.pagination.frontEnd)?(settings.page-1)*settings.pagination.itemsNumber:0" ng-style="::getRowStyle($even)" class="en-row" >
+	            <td ng-repeat="column in columns" ng-if="!column.style.hiddenColumn" ng-click="selectCell($event,row,column)" ng-style="getCellStyle(column,row[column.aliasToShow])" ng-class="{'highlight': isCellSelected(row,column)}">
+	                <md-tooltip ng-if="!column.hideTooltip" md-direction="top" md-delay="500">{{formatValue(row[column.aliasToShow],column)}}</md-tooltip>
+					<div class="cellContainer" ng-style="::getContainerStyle(column)">
+		                <span ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex-50':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
+			                <span ng-if="column.style.prefix">{{column.style.prefix}}</span> 
+			                	{{formatValue(row[column.aliasToShow],column)}} 
+			                <span ng-if="column.style.suffix">{{column.style.suffix}}</span>
+		                </span>
+		                <i  class="fa fa-search showFullContentIcon" ng-if="column.style.maxChars!= '' && row[column.aliasToShow].length > column.style.maxChars" ng-click="showFullContent($event,row[column.aliasToShow])"></i>
+		                    
+		                <div class="barChart" ng-if="column.barchart && column.barchart != {}" flex ng-class="{'flex-50':column.text.enabled}">
+		                    <div class="progressTrack" ng-style="{'height':column.barchart.style['height']}">
+		                        <div class="progressFill" ng-style="{'height':column.barchart.style['height'],'line-height':column.barchart.style['height'],'width':getBarChartFill(row[column.aliasToShow],column.barchart.minValue,column.barchart.maxValue),'background-color':column.barchart.style['background-color'], 'color':column.barchart.style['color']}">
+		                        </div>
+		                    </div>
+		                </div>
+		                
+		                <span ng-if="column.ranges && column.ranges.length > 0">
+		                    <md-icon ng-class="getDynamicIcon(column,row[column.aliasToShow]).iconClass" ng-style="{color:getDynamicIcon(column,row[column.aliasToShow]).iconColor}"></md-icon>
+		                </span>
+	                </div>
+	
+	            </td>
+	        </tr>
+	    </tbody>
+	    <tfoot>
+			<tr ng-if="settings.summary.enabled" class="summary">
+	            <td ng-repeat="column in columns" ng-style="getSummaryStyle(column)" ng-if="!column.style.hiddenColumn">
+	            <md-tooltip md-direction="top" md-delay="500">{{formatValue(settings.summary.row[column.aliasToShow],column)}}</md-tooltip>
+	            {{formatValue(settings.summary.row[column.aliasToShow],column)}}</td>
+	        </tr>
+	    </tfoot>
+	
+	</table>
+</div>
+<!--  cockpit-table-pagination ng-if="settings.pagination && settings.pagination.enabled && model" model="model" page="page" settings="settings"></cockpit-table-pagination-->

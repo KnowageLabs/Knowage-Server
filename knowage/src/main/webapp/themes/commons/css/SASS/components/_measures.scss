@@ -1,0 +1,27 @@
+.kn-measure-list {
+	.saveDialogMeasureKpi {
+		.saveDialogMeasureKpiName {
+			margin: 20px 8px 5px 8px !important;
+			.md-errors-spacer{
+				display: none;
+			}
+		}
+		.md-chips.md-readonly {
+			box-shadow: none;
+		}
+	}
+}
+
+/* IE11 fix */
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.kn-measure-list {
+		.absolute {
+			position: relative;
+			min-height: 500px;
+		}
+		.CodeMirror {
+			height: 100% !Important;
+		}
+	}
+}

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<CHARTSTYLE name="default" isDefault="false">
+
+	<TEMPLATE>
+
+		<generic>
+
+			<CHART height="100" heightDimType="percentage" seriesStacking="false" width="100" widthDimType="percentage" isCockpitEngine="" orientation="" style="fontFamily:;fontSize:;fontWeight:;backgroundColor:#FFFFFF;" styleName="default">
+
+				<TITLE style="align:;fontFamily:;fontSize:;fontWeight:;color:;" text=""/>
+
+				<SUBTITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+
+				<EMPTYMESSAGE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+
+				<LEGEND layout="" position="top" show="false"
+					style="align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;">
+					<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+				</LEGEND>
+				
+				<COLORPALETTE>
+					<COLOR id='' order='' name="" value=""/>
+				</COLORPALETTE>
+
+				<AXES_LIST>
+
+					<AXIS type='Serie' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:;position:;">
+						<MAJORGRID interval="" style="typeline:;color:;"/>
+						<MINORGRID interval="" style="typeline:;color:;"/>
+						<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+					</AXIS>
+
+					<AXIS type='Category' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;position:;">
+						<TITLE style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+					</AXIS>
+
+				</AXES_LIST>
+
+			</CHART>
+
+		</generic>
+
+		<wordcloud>
+			<CHART type="WORDCLOUD" maxAngle='0' maxFontSize='10' minFontSize='5' maxWords='10' minAngle='0' sizeCriteria='serie' wordPadding='2' wordLayout='horizontal' preventOverlap='false'
+			style="fontFamily:;fontSize:;fontWeight:;backgroundColor:#FFFFFF;">
+			 <WORDCLOUD_TOOLTIP backgroundColor="" borderRadius="0"
+              borderWidth="0" postfix="" precision="0" prefix="" style="fontFamily:;fontSize:;fontWeight:;color:;align:;"/>
+		    </CHART>
+		</wordcloud>
+
+		<bar>
+			<CHART type="BAR"/>
+		</bar>
+
+		<line>
+			<CHART type="LINE"/>
+		</line>
+
+		<pie>
+			<CHART type="PIE"/>
+		</pie>
+
+		<treemap>
+			<CHART type="TREEMAP"/>
+		</treemap>
+
+		<parallel>
+			<CHART type="PARALLEL">
+
+				<AXES_LIST style="axisColNamePadd:0;brushWidth:5;axisColor:;brushColor:;">
+
+					<AXIS type='Serie' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;"/>
+
+					<AXIS type='Category' style="color:;fontFamily:;fontWeight:;fontSize:;"/>		
+				</AXES_LIST>
+
+				<LIMIT groupByCategory="true" style="maxNumberOfLines:0;orderTopMinBottomMax:;serieFilterColumn:;"/>
+
+				<PARALLEL_TOOLTIP style="fontFamily:;fontSize:;border:0;borderRadius:0;"/>
+
+				<LEGEND>
+					<TITLE style="fontFamily:;fontSize:;fontWeight:;"/>
+					<ELEMENT style="fontFamily:;fontSize:;fontWeight:;"/>
+				</LEGEND>
+
+			</CHART>
+
+		</parallel>
+
+		<heatmap>
+			<CHART type="HEATMAP">
+				<LEGEND symbolHeight='0' style="align:;"/>
+				<TOOLTIP style="fontFamily:;fontSize:;color:;fontWeight:;"/>
+			</CHART>
+		</heatmap>
+
+		<radar>
+			<CHART type="RADAR"/>
+		</radar>
+
+		<scatter>
+
+			<CHART type="SCATTER" zoomType="">
+
+				<AXES_LIST>
+					<AXIS type='Serie' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:;">
+						<MAJORGRID interval="" style="typeline:;color:;"/>
+						<MINORGRID interval="" style="typeline:;color:;"/>
+						<TITLE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
+					</AXIS>
+
+					<AXIS type='Category' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;" startOnTick="true" showLastLabel="true" endOnTick="true">
+						<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+					</AXIS>
+
+				</AXES_LIST>
+
+			</CHART>
+
+		</scatter>
+
+		<gauge>
+
+			<CHART type="GAUGE">
+
+				<AXES_LIST>
+
+					<AXIS lineColor="" lineWidth="0" minorTickColor="" minorTickLength="0" minorTickPosition="" minorTickWidth="0"
+		              offset="" minorTickInterval="0" tickColor="" tickLength="0" type='Serie'
+		              tickPixelInterval="0" tickPosition="" tickWidth="0" style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:;">
+
+						<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+
+						<LABELS distance="0" rotation="0"/>
+
+						<PLOTBANDS>
+							<PLOT color="" from="" to=""/>
+						</PLOTBANDS>
+
+					</AXIS>
+
+					<AXIS type='Category' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;">
+						<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+					</AXIS>
+
+				</AXES_LIST>
+
+				<PANE endAngle="" startAngle=""/>
+
+			</CHART>
+		</gauge>
+
+		<sunburst>
+			<CHART type="SUNBURST" opacMouseOver="0">
+				<TOOLBAR  style="position:;spacing:5;tail:10;percFontColor:;fontFamily:;fontWeight:;fontSize:;"/>
+				<TIP style="fontFamily:;fontWeight:;fontSize:;color:;width:0;" text=""/>
+			</CHART>
+		</sunburst>
+
+		<chord>
+			<CHART type="CHORD"/>
+		</chord>
+	</TEMPLATE>
+</CHARTSTYLE>

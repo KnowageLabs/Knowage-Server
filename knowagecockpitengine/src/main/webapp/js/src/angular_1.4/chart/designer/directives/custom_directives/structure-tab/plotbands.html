@@ -1,0 +1,38 @@
+<div flex>
+	<md-button ng-click="addNewPlotband()">ADD NEW</md-button>
+
+	<div ng-form name="structure-plotbandsForm"  ng-repeat=" plot in axisForDisplay.PLOTBANDS.PLOT track by $index">
+
+		
+
+		<div layout="row" class="plotbandsInputs" layout-padding>
+			<md-input-container class="md-block colorInputContainer noMarginBottom" flex="35">
+				<label>{{translate.load("sbi.chartengine.axisstylepopup.plotbandParams.columnColor")}}</label>
+	 				<color-picker
+					options="colorPickerOptionsCockpit"
+					ng-model="plot.color" name ="plotbands_color_$index"></color-picker> 
+			</md-input-container>
+			
+			<md-input-container class="md-block noMarginBottom" flex="25"> 
+				<label>{{translate.load("sbi.chartengine.axisstylepopup.plotbandParams.columnFrom")}}</label>
+		 		<input type="number" step="any" name="plotbands_from_$index"
+					ng-model="plot.from" min="axisForDisplay.min"  max="axisForDisplay.max" /> 
+			</md-input-container>
+		
+			<md-input-container class="md-block noMarginBottom" flex="25"> 
+				<label>{{translate.load("sbi.chartengine.axisstylepopup.plotbandParams.columnTo")}}</label>
+		 		<input type="number" step="any" name="plotbands_to_$index"
+				ng-model="plot.to" min="axisForDisplay.min"  max="axisForDisplay.max"/> 
+			</md-input-container>
+		
+
+
+			<md-button class="md-icon-button" aria-label="delete" ng-click="deletePlotband($index)" >
+				<md-icon md-font-icon="fa fa-trash"></md-icon>
+			</md-button>
+
+		</div>
+
+	</div>
+
+</div>

@@ -1,0 +1,39 @@
+<weblogic-web-app xmlns="http://xmlns.oracle.com/weblogic/weblogic-web-app">
+	<container-descriptor>
+		<show-archived-real-path-enabled>true</show-archived-real-path-enabled>
+		<prefer-application-packages>
+			<package-name>org.hibernate.*</package-name>
+<package-name>org.sl4j.*</package-name>
+			<package-name>javax.validation.*</package-name>
+			<package-name>javax.validation.spi.*</package-name>
+		</prefer-application-packages>
+	</container-descriptor>
+	
+	<resource-description>  
+		<res-ref-name>resource_path</res-ref-name>  
+		<jndi-name>java:/comp/env/resource_path</jndi-name>  
+	</resource-description>  
+	<resource-description>  
+		<res-ref-name>spagobi_resource_path</res-ref-name>  
+		<jndi-name>java:/comp/env/resource_path</jndi-name>  
+	</resource-description>  
+	<resource-description>  
+		<res-ref-name>host_url</res-ref-name>  
+		<jndi-name>java:/comp/env/host_url</jndi-name>  
+	</resource-description>  	
+	<resource-description>  
+		<res-ref-name>service_url</res-ref-name>  
+		<jndi-name>java:/comp/env/service_url</jndi-name>  
+	</resource-description>  
+	<resource-description>  
+		<res-ref-name>hmacKey</res-ref-name>  
+		<jndi-name>java:/comp/env/hmacKey</jndi-name>  
+	</resource-description> 
+	<resource-description>  
+		<res-ref-name>sso_class</res-ref-name>  
+		<jndi-name>java:/comp/env/sso_class</jndi-name>  
+	</resource-description>  
+	
+
+	
+</weblogic-web-app>

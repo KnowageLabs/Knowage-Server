@@ -1,0 +1,581 @@
+#set($category = $chart.VALUES.CATEGORY)
+#set($chartType = $CHART.type)
+#set($dataRows = $data.rows)
+#set($dataFields = $data.metaData.fields) ## columns of data table
+#set($dataColumnsMapper = {})
+
+#foreach ($dataField in $dataFields) ## conversion column name to internal column name
+	#if($dataField.class.name == 'java.util.LinkedHashMap')
+		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header , $dataField.name))
+	#end
+#end
+
+#set($columnsNeeded = {})
+
+#set($columnCouter = 0)
+
+#foreach($value in $category) 
+ #set($columnsNeeded[$columnCouter] = $value.name)
+ 
+ #set($columnCouter = $columnCouter + 1)
+#end
+
+## class java.util.LinkedHashMap - collection when rendering the chart
+## class java.util.ArrayList - collection when exporting the chart (preview from the Designer)
+
+#*
+	According to the collection that we have for series for HEATMAP
+	(an array or a map) we will take data from SERIE tag appropriately
+	and proceed with the execution of the VM code. Since we have a 
+	single serie item for this chart type, there will be no further
+	inconsistency.
+	
+	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+*#
+#if ($chart.VALUES.SERIE.class.name == 'java.util.LinkedHashMap')
+	#set($serie = $chart.VALUES.SERIE.name)
+	#set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)	
+#elseif ($chart.VALUES.SERIE.class.name == 'java.util.ArrayList')
+	#set($serie = $chart.VALUES.SERIE[0].name)
+	#set($groupingFunction = $chart.VALUES.SERIE[0].groupingFunction)
+#end
+
+#set($serieName = $datasettransformer.getSerieName($serie))
+
+#set($columnNames = $datasettransformer.getColumnNames($columnsNeeded))
+
+#set($firstresult = $datasettransformer.getData($dataRows,$serie,$columnsNeeded,$dataColumnsMapper, $groupingFunction))
+
+#set($firstCategory='')
+
+#set($isFirstDate=$datasettransformer.isFirstCategoryDate($firstresult,$columnsNeeded[0]))
+
+#if($isFirstDate==true)
+#set($firstCategory = $datasettransformer.getDateResult($firstresult,$columnsNeeded[0]))
+#else
+
+#set($firstCategory = $datasettransformer.getStoreResult($firstresult,$columnsNeeded[0]))
+
+#end
+
+##set($dateresult = $datasettransformer.getDateResult($firstresult,$columnsNeeded[0]))
+##set($dummy = $datasettransformer.getStoreResult($firstresult,$columnsNeeded[0]))
+#set($storeresult = $datasettransformer.getStoreResult($firstresult,$columnsNeeded[1]))
+
+#set($result = $datasettransformer.getResult($firstresult, $serie, $columnsNeeded,$isFirstDate))
+
+#set($axisList = $chart.AXES_LIST.AXIS)
+
+    #set($xAxisList = {}) ## X Axises list container
+    #set($yAxisList = {}) ## Y Axises list container
+    #set($xAxisPositions = {}) ## X Axises integer positions list, for series references
+    #set($yAxisPositions = {}) ## Y Axises integer positions list, for series references
+    #set($xAxisCounter = 0) 
+    #set($yAxisCounter = 0) 
+    
+    #foreach($axis in $axisList)
+	 	#if($axis.type == 'Category')
+	 		#set($workAroundNoPrint = $xAxisList.put($axis.alias, $axis))
+	 		#set($workAroundNoPrint = $xAxisPositions.put($axis.alias , $xAxisCounter))
+	 		
+	 		#set($xAxisCounter = $xAxisCounter + 1)
+	 	#end
+	 	
+	 	#if($axis.type == 'Serie')
+	 		
+		 		#set($workAroundNoPrint = $yAxisList.put($axis.alias , $axis))
+		 		#set($workAroundNoPrint = $yAxisPositions.put($axis.alias , $yAxisCounter))
+	 		
+		 		#set($yAxisCounter = $yAxisCounter + 1)
+	 		
+	 	#end
+	#end
+	
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)	
+
+{
+ 	chart: 
+ 	{
+ 		type: '$chartType',
+ 		
+ 		#*
+    		The zoom in option for HEATMAP chart. User will be able to zoom in on either of those two chart types
+    		by both axes ('x' and 'y'). [KNOWAGE-1110 JIRA ISSUE]    		
+    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	*#
+    	zoomType: 'xy',
+ 		#if(!$exportWebApp) 
+	  	  #if($chart.height != '' && $chart.isCockpitEngine!="true")
+        	height: $chart.height,
+        #end
+        
+        #*
+    		Dimension type (pixels or percentage) parameter for height of the chart
+    		is provided.     		
+    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').    				
+    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	*#
+     	#if($chart.heightDimType && $chart.isCockpitEngine!="true")
+       	 	heightDimType: '$chart.heightDimType',
+       	#else 
+      	 	heightDimType: 'pixels',
+        #end
+        
+        #if($chart.width != '' && $chart.isCockpitEngine!="true")
+    		width: $chart.width,
+    	#end
+    	
+    	#if($chart.widthDimType && $chart.isCockpitEngine!="true")
+        	widthDimType: '$chart.widthDimType',
+  	   	#else 
+	  	   	widthDimType: 'pixels',
+        #end
+    	#end
+        	
+        isCockpit: $chart.isCockpitEngine,
+       
+		#*
+  			If we are previewing a chart inside a Designer widget in the Cockpit, the 'chart.outcomingEventsEnabled' will be NULL, so we need to check if this is the case.
+  			If not providing this check, we will experience rendering problem within the Highcharts Export (value for 'outcomingEventsEnabled' template property will be 
+  			'$chart.outcomingEventsEnabled'.
+  			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  		*#
+  		#if($chart.isCockpitEngine=='true' && "$!chart.outcomingEventsEnabled" != "")
+  			outcomingEventsEnabled: $chart.outcomingEventsEnabled,
+  		#end
+
+  		xAxisDate: $isFirstDate,
+  		style:
+		{			
+			fontFamily: '$chart.style.fontFamily',
+			fontSize: '$chart.style.fontSize',
+			backgroundColor: '$chart.style.backgroundColor',
+					
+			#if($chart.style.fontWeight == 'italic' || $chart.style.fontWeight == 'normal')
+    			fontStyle: '$chart.style.fontWeight',
+			#elseif($chart.style.fontWeight == 'underline')
+    			textDecoration: '$chart.style.fontWeight',
+			#elseif($chart.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.style.fontWeight',
+    		#end	
+  		}
+  },
+  
+ 	#*
+    	Handle the situation in which there are no colors inside the color palette as
+    	the Highcharts library expects.    	
+    	
+    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    *#
+   	#if("$!chart.COLORPALETTE"!="" && (($chart.COLORPALETTE!="" && $chart.COLORPALETTE.class.name == 'java.lang.String') || 
+   		($chart.COLORPALETTE.class.name == 'java.util.LinkedHashMap' && "$!chart.COLORPALETTE.COLOR"!="" && $chart.COLORPALETTE.COLOR.size()>0)))
+    colors: [	 
+ 		#*
+ 			If user specified more than one color from the color palette
+ 			on the Designer when creating the chart, then we have an array
+ 			list of elements. Otherwise, we are dealing with a hashmap.
+ 			
+ 			In the first case, create an array of colors. In the second 
+ 			case take the only color user specified and put it as the only
+ 			element of the array that we are now creating.
+ 			
+ 			@modifiedBy: danristo (danilo.ristovski@mht.net)
+ 		*#	
+ 			
+		#*#if ($chart.COLORPALETTE.COLOR.class.name == 'java.util.ArrayList')
+			#foreach($color in $chart.COLORPALETTE.COLOR)
+				'$color.get('value')',			
+			#end			
+		#else
+			'$chart.COLORPALETTE.COLOR.value'
+		#end	*#
+		
+		#*
+			If user specifies at least 2 colors (class name of the structure that hold data
+			about colors picked in the color palette of the Designer will in this case be
+			LinkedList, instead of LinkedHashMap as in other case - just one element) go 
+			into the if-statement. If there are no picked color or there is just one, go
+			into the else-statement.
+			@author: danristo (danilo.ristovski@mht.net)
+		*#
+ 		
+ 		#if ($chart.COLORPALETTE.COLOR && $chart.COLORPALETTE.COLOR.class.name != 'java.util.LinkedHashMap') 
+			
+			#foreach($color in $chart.COLORPALETTE.COLOR)
+				'$color.value', 
+			#end	
+					
+		#else		
+			
+			#*
+				If user does not specify any color inside the color palette the chart
+				will take predefined value for the color (#000000) (else-case).	Otherwise, 
+				we will take the single value specified in the palette (if-case).
+				@author: danristo (danilo.ristovski@mht.net)
+			*#
+			
+			#if ($chart.COLORPALETTE.COLOR)
+				'$chart.COLORPALETTE.COLOR.value'
+			#else
+				'#000000'
+			#end
+			
+		#end		
+    ],
+ 	#else
+    	colors: {},
+	#end
+ 
+ 	emptymessage:
+	{
+		text: "$chart.EMPTYMESSAGE.text",
+		
+		style:
+		{
+			fontFamily: '$chart.EMPTYMESSAGE.style.fontFamily',
+			fontSize: '$chart.EMPTYMESSAGE.style.fontSize',
+			fontColor: '$chart.EMPTYMESSAGE.style.color',
+			textAlign: '$chart.EMPTYMESSAGE.style.align',
+					
+			#if($chart.EMPTYMESSAGE.style.fontWeight == 'italic' || $chart.EMPTYMESSAGE.style.fontWeight == 'normal')
+    			fontStyle: '$chart.EMPTYMESSAGE.style.fontWeight',
+			#elseif($chart.EMPTYMESSAGE.style.fontWeight == 'underline')
+    			textDecoration: '$chart.EMPTYMESSAGE.style.fontWeight',
+			#elseif($chart.EMPTYMESSAGE.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
+    		#end	
+		}
+	},
+	
+	title:
+	{
+		text: "$chart.TITLE.text",
+		
+		style:
+		{
+			fontFamily: '$chart.TITLE.style.fontFamily',
+			fontSize: '$chart.TITLE.style.fontSize',
+			fontColor: '$chart.TITLE.style.color',
+			textAlign: '$chart.TITLE.style.align',
+					
+			#if($chart.TITLE.style.fontWeight == 'italic' || $chart.TITLE.style.fontWeight == 'normal')
+    			fontStyle: '$chart.TITLE.style.fontWeight',
+			#elseif($chart.TITLE.style.fontWeight == 'underline')
+    			textDecoration: '$chart.TITLE.style.fontWeight',
+			#elseif($chart.TITLE.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.TITLE.style.fontWeight',
+    		#end	
+		}
+	},
+	
+	subtitle:
+	{
+		text: "$chart.SUBTITLE.text",
+		
+		style:
+		{
+			fontFamily: '$chart.SUBTITLE.style.fontFamily',
+			fontSize: '$chart.SUBTITLE.style.fontSize',
+			fontColor: '$chart.SUBTITLE.style.color',
+			textAlign: '$chart.SUBTITLE.style.align',
+					
+			#if($chart.SUBTITLE.style.fontWeight == 'italic' || $chart.SUBTITLE.style.fontWeight == 'normal')
+    			fontStyle: '$chart.SUBTITLE.style.fontWeight',
+			#elseif($chart.SUBTITLE.style.fontWeight == 'underline')
+    			textDecoration: '$chart.SUBTITLE.style.fontWeight',
+			#elseif($chart.SUBTITLE.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.SUBTITLE.style.fontWeight',
+    		#end	
+		}
+	},
+	
+	#*
+		Property changed from 'symbolWidth' for the former horizontal orientation
+		of the legend to 'symbolHeight' for its vertical orientation. Now the
+		alignment is one of these: top, middle, bottom.
+		
+		@modifiedBy: danristo (danilo.ristovski@mht.net)
+	*#
+	legend:
+	{
+		symbolHeight: '$chart.LEGEND.symbolHeight',
+		
+		style:
+		{
+			align: '$chart.LEGEND.style.align'
+		},
+		#if('$!chart.LEGEND.TITLE' != "" && '$chart.LEGEND.TITLE'!='')
+		title:
+		        {
+		            #if('$chart.LEGEND.TITLE.text'!='')
+		        	text:"$chart.LEGEND.TITLE.text",
+		        	#end
+		        	style:
+		        	{	
+		       	    #if ($chart.LEGEND.TITLE.style.color != '')
+		        	   color: '$chart.LEGEND.TITLE.style.color',
+		            #end
+		        	##if ($chart.LEGEND.TITLE.style.align != '')
+		        	##	align: '$chart.LEGEND.TITLE.style.align',
+		            ##end
+		            #if ($chart.LEGEND.TITLE.style.fontSize != '')	
+		        		fontSize: '$chart.LEGEND.TITLE.style.fontSize', 
+		        	#end
+		        	#if ($chart.LEGEND.TITLE.style.fontFamily != '')
+		        		fontFamily: '$chart.LEGEND.TITLE.style.fontFamily',
+		        	#end
+		        	
+		        	
+		        	#if ($chart.LEGEND.TITLE.style.fontWeight == 'italic')
+		        		fontStyle: 'italic',
+		        	#elseif ($chart.LEGEND.TITLE.style.fontWeight == 'underline')
+		        		textDecoration: 'underline',
+		        	#else
+		        		fontWeight: '$chart.LEGEND.TITLE.style.fontWeight',
+		        	#end
+		        	}	
+		        }
+	#end	        
+		
+	},
+	
+	tooltip:
+	{
+		style:
+		{
+			align: '$chart.TOOLTIP.style.align',
+			fontFamily: '$chart.TOOLTIP.style.fontFamily',
+			fontSize: '$chart.TOOLTIP.style.fontSize',
+			fontColor: '$chart.TOOLTIP.style.color'
+		}
+	},
+	
+	
+	xaxis:
+	{		
+		## We have only one X-axis, hence use the only present key of this axis (the single X-axis key)
+		## (danilo.ristovski@mht.net)
+		
+		#foreach($xAxisKey in $xAxisList.keySet())
+			
+			#set($xAxis = $xAxisList.get($xAxisKey))
+					
+			title: 
+			{
+			 	 #if($chart.hideAxisTitleCategory)
+					#if($chart.hideAxisTitleCategory=="true")
+				 		 text: "",	
+				 
+					#else
+				  		text: "$xAxis.TITLE.text",		
+					#end 
+				#else
+			 		 text: "$xAxis.TITLE.text",		
+				#end		 
+			 
+				 style:
+				 {				 	
+		        	#foreach($styleName in $xAxis.TITLE.style.keySet())
+			        	#set ($axisTitleStyle = $xAxis.TITLE.style[$styleName])
+			        	
+			        	#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+		        			fontStyle: '$axisTitleStyle',
+						#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+		        			textDecoration: 'underline',
+	        			#elseif($styleName == 'align')
+		        			#set($labelAlign=$axisTitleStyle) 
+						#else
+		        			$styleName: '$axisTitleStyle',
+		        		#end
+		        	#end
+			     },
+			     
+		     	#if ($labelAlign == 'center' || $labelAlign=="")
+					align: 'middle',
+				#elseif ($labelAlign == 'left' )
+					align: 'low',
+				#elseif ($labelAlign == 'right' )
+					align: 'high',
+				#end
+		 	},
+			
+			labels:
+			{				 
+				 #if( $xAxis.style != '' )         		
+        		
+        		style:{
+	        	#foreach($styleName in $xAxis.style.keySet())
+	        		#set ($axisStyle = $xAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		},
+        		
+        		#*
+        			
+        			
+        			@author: danristo (danilo.ristovski@mht.net)
+        		*#  
+        		#if($labelAlign)
+        			align: "$labelAlign",
+        		#end
+        		
+        		#if($rotation!="" &&  $rotation!="null")
+        			rotation: $rotation,
+    			#end
+        	#end
+		 },
+		
+		#end
+	},
+	
+	yaxis:
+	{		
+		## We have only one Y-axis, hence use the only present key of this axis (the single Y-axis key)
+		## (danilo.ristovski@mht.net)
+		
+		#foreach($yAxisKey in $yAxisList.keySet())
+			
+			#set($yAxis = $yAxisList.get($yAxisKey))
+			
+			title: 
+			{
+			 	#if($chart.hideAxisTitleSerie)
+				 	#if($chart.hideAxisTitleSerie=="true")
+				 	 	text: "",	
+				 
+				 	#else
+				 	 	text: "$yAxis.TITLE.text",		
+				 	#end   
+			 	#else
+			  		text: "$yAxis.TITLE.text",		
+				#end 
+			 	 			 
+				 style:
+				 {				 	
+		        	#foreach($styleName in $yAxis.TITLE.style.keySet())
+			        	#set ($axisTitleStyle = $yAxis.TITLE.style[$styleName])
+			        	
+			        	#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+		        			fontStyle: '$axisTitleStyle',
+						#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+		        			textDecoration: 'underline',	
+	        			#elseif($styleName == 'align')
+		        			#set($labelAlign=$axisTitleStyle)        			
+						#else
+		        			$styleName: '$axisTitleStyle',
+		        		#end
+		        	#end
+			     },
+			     
+				#if ($labelAlign == 'center' || $labelAlign=="")
+					align: 'middle',
+				#elseif ($labelAlign == 'left' )
+					align: 'low',
+				#elseif ($labelAlign == 'right' )
+					align: 'high',
+				#end
+		 	},
+		 	
+		 	#if($yAxis.min)
+				min: $yAxis.min,
+				max: $yAxis.max,
+			#end
+			#if(!$yAxis.min)
+				min: 0,
+				max: 0,
+			#end
+			labels:{
+				 
+				 #if( $yAxis.style != '' ) 
+				 
+        		style:{
+	        	#foreach($styleName in $yAxis.style.keySet())
+	        		#set ($axisStyle = $yAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		},
+        			        		       		
+        		#if($labelAlign)
+        			align: "$labelAlign",
+        		#end
+        		
+        		#if($rotation!="" &&  $rotation!="null")
+        			rotation: $rotation,
+    			#end
+        	#end
+		 },
+					
+		#end
+	},
+	
+	## Additional data needed for rendering the HEATMAP chart	
+	## (danilo.ristovski@mht.net)	
+	additionalData:
+	{
+		categoryColumn: '$category[0].column',
+		categoryGroupBy: '$category[1].column',
+		firstCategory: $firstCategory,
+  		storeresult: $storeresult,
+  		serie: $serieName,
+  		columns: $columnNames
+	},
+	
+	#*
+		Remove credits from the TREEMAP chart (the "Highcharts.com" link at the 
+		bottom right side of the chart).
+		@author: danristo (danilo.ristovski@mht.net)
+	 *# 
+	credits: 
+	{ 
+    	enabled: false
+    },
+	
+	plotOptions:
+	{
+		series:
+		{
+			#* 
+            	From Highcharts API: When a series contains a data array that is longer than this, 
+            	only one dimensional arrays of numbers, or two dimensional arrays with x and y values 
+            	are allowed. Also, only the first point is tested, and the rest are assumed to be the 
+            	same format. This saves expensive data checking and indexing in long series. Set it to 
+            	0 disable. Defaults to 1000.
+            	
+            	URL: http://api.highcharts.com/highcharts#plotOptions.series.turboThreshold
+            	
+            	We will increase this value in order to display series that contain a data array bigger
+            	than 1000 (default), because it is most likely that we will have this situation very 
+            	often.
+            	
+            	@author: danristo (danilo.ristovski@mht.net)
+            *#
+            turboThreshold: 5000
+		}
+	},
+	
+	data:
+ 	[
+ 		$result
+ 	]
+}

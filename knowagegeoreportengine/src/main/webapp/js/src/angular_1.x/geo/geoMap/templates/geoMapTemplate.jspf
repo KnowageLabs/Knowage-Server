@@ -1,0 +1,36 @@
+<div layout="row" layout-wrap layout-fill ng-cloak >
+    <rest-loading></rest-loading>
+	<div flex="" id='map'>
+		<div id="popup" class="ol-popup">
+		<md-toolbar layout-row>
+		 	<div class="md-toolbar-tools">
+				<h2>Region details</h2>
+				<span flex></span>
+				<md-button class="md-icon-button" aria-label="close" ng-click="closePopup()">
+        			<md-icon md-font-icon="fa fa-times"></md-icon>
+      			</md-button>
+   			</div>
+		</md-toolbar>
+			<div id="popup-content" class="ol-popup-content"></div>
+		</div>
+		<div layout="row" 	style="bottom: 0; right: 0; position: absolute;">
+		<span flex></span>
+		
+		    <geo-dataset ng-if="!geoModule_template.noDatasetReport" tabindex="4"></geo-dataset>
+			<geo-legend id="legend" ng-if="!geoModule_template.noDatasetReport" ng-show="visibility.showLegendButton" tabindex="4"></geo-legend>
+			<geo-distance-calculator id="calculator" ng-show="visibility.showDistanceCalculator" tabindex="4"></geo-distance-calculator>
+			<geo-download ng-show="visibility.showDownloadButton" tabindex="4"></geo-download>
+			<geo-save ng-show="showSaveButton==true" tabindex="4"></geo-save>
+			
+		</div>
+	</div>
+
+	<geo-rigth-menu id="menu" ng-show="visibility.showRightConfigMenu"></geo-rigth-menu>
+	
+	<geo-cross-nav-multiselect></geo-cross-nav-multiselect>
+
+	<!-- this is to include child directive -->
+	<div ng-transclude></div>
+
+
+</div>

@@ -1,0 +1,16 @@
+<cockpit-table flex
+	ng-cloak   
+	model=itemList
+	columns=ngModel.content.columnSelectedOfDataset
+	click-function = "selectRow(row,column,listId,index,evt,columnName)"
+	settings=ngModel.settings
+	styledata=ngModel.style
+></cockpit-table>
+
+<cockpit-table-pagination ng-if="ngModel.settings.pagination && ngModel.settings.pagination.enabled && itemList" model="itemList" page="ngModel.settings.page" settings="ngModel.settings"></cockpit-table-pagination>
+
+
+<accessible-angular-table ng-if=accessibilityModeEnabled ng-hide = true
+	ng-model=itemList columns=tableColumns
+>
+</accessible-angular-table>

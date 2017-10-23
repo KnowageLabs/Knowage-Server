@@ -1,0 +1,50 @@
+<div ng-form name="structure-minorTickForm" layout="column" layout-padding flex>
+
+<md-input-container class="md-block">
+ <label>{{translate.load("sbi.chartengine.axisstylepopup.minorTickParams.minorTickPosition")}}</label>
+ <md-select
+		ng-model="axisForDisplay.minorTickPosition" name="gauge_minor_tick_position"> <md-option
+		ng-repeat="option in gaugeTicksPositionOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+	
+<md-input-container class="md-block colorInputContainer">
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.minorTickParams.tickColor")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="axisForDisplay.minorTickColor" name ="gauge_minor_tickColor"></color-picker> </md-input-container>
+
+
+<div layout="row"  layout-align="start center" >
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.minorTickParams.enable.minorTickInterval")}}</label>
+	<md-input-container class="small counter">  
+		<md-checkbox ng-model="axisForDisplay.minorTickInterval" ng-true-value="0" ng-false-value="'auto'"
+		style="margin:0 8px" aria-label="enableMinorTickInterval" name="enableMinorTickInterval"></md-checkbox>
+	</md-input-container>
+</div>
+
+<md-input-container class="md-block" ng-if="axisForDisplay.minorTickInterval!='auto'"> 
+		<label>{{translate.load("sbi.chartengine.axisstylepopup.minorTickParams.minorTickInterval")}}</label>
+		<input  type="number" step="any" name="gauge_minor_tickPxInterval"
+			ng-model="axisForDisplay.minorTickInterval"  /> 
+	</md-input-container>
+	
+<md-input-container class="md-block" ng-if="axisForDisplay.minorTickInterval=='auto'"> 
+		<label>{{translate.load("sbi.chartengine.axisstylepopup.minorTickParams.minorTickInterval")}}</label>
+		<input readonly step="any" name="gauge_minor_tickPxInterval"
+			ng-model="axisForDisplay.minorTickInterval"  /> 
+	</md-input-container>
+	
+	
+
+<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.minorTickParams.minorTickWidth")}}</label>
+		 <input type="number" step="any" name="gauge_minor_tickWidth"
+		ng-model="axisForDisplay.minorTickWidth" min="0" /> </md-input-container>
+		
+<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.minorTickParams.minorTickLength")}}</label>
+		 <input type="number" step="any" name="gauge_minor_tickLength"
+		ng-model="axisForDisplay.minorTickLength" min="0" /> </md-input-container>
+
+
+</div>

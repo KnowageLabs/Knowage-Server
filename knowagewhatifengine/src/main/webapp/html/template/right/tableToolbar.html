@@ -1,0 +1,86 @@
+<div>
+<div class="menu-text" style="padding-bottom:5%">{{translate.load("sbi.olap.toolbar.drill_on_dimension.title")}}</div>
+<md-grid-list
+	md-cols="3"	md-row-height="25px" md-gutter="0px">
+	
+	<md-grid-tile>
+		<md-button class="drill-buttons left" ng-click="changeDrillType('position')" ng-disabled="isDisabledType('position')">{{translate.load("sbi.olap.toolbar.drill_on_dimension.button.position.label")}}</md-button>
+	</md-grid-tile>
+	 
+	<md-grid-tile>
+		<md-button class="drill-buttons middle" ng-click="changeDrillType('member')" ng-disabled="isDisabledType('member')">{{translate.load("sbi.olap.toolbar.drill_on_dimension.button.member.label")}}</md-button>
+	</md-grid-tile>
+	 
+	<md-grid-tile>
+		<md-button class="drill-buttons right" ng-click="changeDrillType('replace') " ng-disabled="isDisabledType('replace')" id = "drill-replace-btn">{{translate.load("sbi.olap.toolbar.drill_on_dimension.button.replace.label")}}</md-button>
+	</md-grid-tile>
+</md-grid-list>
+<div ng-hide="olapMode">
+<div class="menu-text" style="padding-bottom:5%" ng-if="DTEnabled">{{translate.load("sbi.olap.toolbar.drill_on_data.button.title")}}</div>
+<md-button 
+		ng-if="DTEnabled"
+		id="drill-trough-btn"
+		class="drill-buttons down" 
+		style="min-width:100px!important;margin-left:calc( 50% - 50px );" 
+		ng-click="enableDisableDrillThrough()">
+		
+		{{translate.load("sbi.olap.toolbar.drill_on_data.button.drill_through.label")}}
+</md-button>
+<div class="menu-text" ng-show="olapGridNeeded || modelConfig.crossNavigation">{{translate.load("sbi.olap.toolbar.olap_functions.title")}}</div>
+<md-grid-list
+        md-cols="3" md-row-height="50px" ng-show="olapGridNeeded || modelConfig.crossNavigation">
+    <md-grid-tile ng-repeat="obtn in olapToolbarButtons">
+    	<md-button class="right-toolbar-menu {{obtn.img}}" ng-click="btnFunctions(obtn.img)">
+    		<md-tooltip md-direction="bottom">
+				{{obtn.tooltip}}
+			</md-tooltip>
+    	</md-button>
+    </md-grid-tile>
+        
+     <md-grid-tile ng-if="modelConfig.crossNavigation">
+    	<md-button  ng-click="enableCrossNavigation()" class="right-toolbar-menu BUTTON_CROSS_NAVIGATION">
+			<md-tooltip md-direction="bottom">
+				{{crossNavigationEnabled?'Disable cross navigation' : 'Enable crossnavigation'}}
+			</md-tooltip>
+		</md-button>
+    </md-grid-tile>
+    
+</md-grid-list>
+
+<div class="menu-text"  ng-show="tableGridNeeded">{{translate.load("sbi.olap.toolbar.table_functions.title")}}</div>
+<md-grid-list
+        md-cols="3" md-row-height="50px"  ng-show="tableGridNeeded">
+    <md-grid-tile ng-repeat="tbtn in tableToolbarButtons">
+    	<md-button class="right-toolbar-menu {{tbtn.img}}" ng-click="btnFunctions(tbtn.name)">
+    		<md-tooltip md-direction="bottom">
+				{{tbtn.tooltip}}
+			</md-tooltip>
+    	</md-button>
+    </md-grid-tile>
+</md-grid-list>
+
+<div class="menu-text" ng-show="wiGridNeeded">{{translate.load("sbi.olap.toolbar.what_if.title")}}</div>
+<div class="what-if-msg" ng-if="wiMessageNeeded">{{wiMsg}}</div>
+<md-grid-list
+        md-cols="3" 
+        md-row-height="50px"
+         ng-show="wiGridNeeded">
+    <md-grid-tile  ng-if="!wiMessageNeeded && isWorkFlowExists">
+    	<md-button class="right-toolbar-menu {{lockerClass}}"  ng-click="lockFunction()">
+    		<md-tooltip md-direction="bottom">
+				{{lockTooltip}}
+			</md-tooltip>
+    	</md-button>
+    </md-grid-tile>
+    <md-grid-tile ng-repeat="wbtn in whatifToolbarButtons">
+    	<md-button class="right-toolbar-menu {{wbtn.img}}" ng-click="btnFunctions(wbtn.img)">
+    		<md-tooltip md-direction="bottom">
+				{{wbtn.tooltip}}
+			</md-tooltip>
+    	</md-button>
+    </md-grid-tile>
+</md-grid-list>
+</div>
+<olap_designer_toolbar ng-show="olapMode"></olap_designer_toolbar>
+
+</div>

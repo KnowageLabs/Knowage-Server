@@ -1,0 +1,1137 @@
+#set($dataFields = $data.metaData.fields) ## columns of data table
+#set($dataColumnsMapper = {})
+#foreach ($dataField in $dataFields) ## conversion column name to internal column name
+	#if($dataField.class.name == 'java.util.LinkedHashMap')
+		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header , $dataField.name))
+	#end
+#end
+#set($isCockpitEngine = $chart.isCockpitEngine)
+#set($rows = $data.rows) ## data in table rows
+
+#set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
+#set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
+#foreach($element in $dataFields)
+#if($element.header == $categorieColumns.column || $element.header == $categorieColumns.name)
+	#set($columnMap = $element.name)
+#end
+#end
+
+#set($series = $chart.VALUES.SERIE) ## metadata related to series
+
+#set($seriesMap = {}) ## conversion series metadata to map object
+
+#if($series.class.name == 'java.util.LinkedHashMap')
+	#set($workAroundNoPrint = $seriesMap.put($series.name , $series))
+#else
+	#set($serieKeyFeed = 0)
+	#foreach($serie in $series)
+		#set($serieMapKey = $serie.column + '_' + $serieKeyFeed)
+		#set($workAroundNoPrint = $seriesMap.put($serieMapKey , $serie))
+		
+		#set($serieKeyFeed = $serieKeyFeed + 1)
+	#end
+#end
+
+{
+    chart: {
+    
+    	## Additional data needed for cross navigation paramteres	
+			
+		additionalData:
+		{
+			categoryColumn: '$categorieColumns.column',
+			categoryGroupBy: '$categorieColumns.groupby',
+			categoryGroupByNamens: '$categorieColumns.groupbyNames',
+			categoryName: '$categorieColumns.name',
+			categoryOrderColumn: '$categorieColumns.orderColumn',
+			categoryOrderType: '$categorieColumns.orderType',
+			categoryStacked: '$categorieColumns.stacked',
+			categoryStackedType: '$categorieColumns.stackedType'
+		},
+        
+        type: 'scatter',
+        
+        #*
+        	Zoom type will be fixed to the 'xy', since all other chart types that possess this feature are defined with 
+        	that value (again, statically).	[KNOWAGE-1114 JIRA ISSUE]
+			@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+        *#
+        zoomType: 'xy',
+        panning:true,
+        
+        backgroundColor: '$chart.style.backgroundColor', ##outer chart background
+        
+        ## I think this is necessary when title and subtitle are not provided (danristo)
+		#if ($chart.TITLE.text == "" && $chart.SUBTITLE.text == "")
+			marginTop: 40,
+		#end
+        #if(!$exportWebApp) 
+       #if($chart.height != '' && $chart.isCockpitEngine!="true")
+        height: $chart.height,
+        #end
+        
+        #*
+    		Dimension type (pixels or percentage) parameter for height of the chart
+    		is provided.     		
+    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').    				
+    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	*#
+     	#if($chart.heightDimType && $chart.isCockpitEngine!="true")
+     	heightDimType: '$chart.heightDimType',
+       	#else 
+      	 	heightDimType: 'pixels',
+        #end
+        
+        #if($chart.width != '' && $chart.isCockpitEngine!="true")
+         width: $chart.width,
+    	#end
+    	
+    	#if($chart.widthDimType && $chart.isCockpitEngine!="true")
+    widthDimType: '$chart.widthDimType',
+  	   	#else 
+	  	   	widthDimType: 'pixels',
+        #end
+    	#end
+    	#*
+        	Remove border around the chart if this property is set to true.
+        	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+        *#
+        #if ($chart.borderVisible == false)
+	        plotBackgroundColor: null,
+	        plotBorderWidth: null,
+	        plotShadow: false,
+        #end
+        
+        borderColor: '$chart.style.backgroundColor',
+    	style:{
+    		#foreach($styleName in $chart.style.keySet())
+    			#set ($chartStyleValue = $chart.style[$styleName])
+    			#if ($styleName == 'fontWeight' && ($chartStyleValue == 'italic' || $chartStyleValue == 'normal')) 
+        			fontStyle: '$chartStyleValue',
+				#elseif($styleName == 'fontWeight' && $chartStyleValue == 'underline')
+        			textDecoration: 'underline',
+				#else
+        			$styleName: '$chartStyleValue',
+        		#end
+    		#end
+    	},
+    },
+    
+   	#*
+    	Handle the situation in which there are no colors inside the color palette as
+    	the Highcharts library expects.    	
+    	
+    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    *#
+   	#if("$!chart.COLORPALETTE"!="" && (($chart.COLORPALETTE!="" && $chart.COLORPALETTE.class.name == 'java.lang.String') || 
+   		($chart.COLORPALETTE.class.name == 'java.util.LinkedHashMap' && "$!chart.COLORPALETTE.COLOR"!="" && $chart.COLORPALETTE.COLOR.size()>0)))
+    colors: [
+		#foreach($color in $chart.COLORPALETTE.COLOR)
+			'$color.value', 
+		#end
+    ],    
+    #else
+    	colors: {},
+	#end
+    
+    title: {
+        text: "$chart.TITLE.text",
+        
+        #set ($titleAlign = $chart.TITLE.style.align)
+        #if ($titleAlign != '' )
+        
+        	#if ($titleAlign == 'left')
+        	x: 70,
+        	#elseif ($titleAlign == 'right')
+        	x: -70,
+        	#end
+        
+        align: '$titleAlign',
+        #end
+        
+        style:{
+        #foreach($styleName in $chart.TITLE.style.keySet())
+        	#set ($axisTitleStyle = $chart.TITLE.style[$styleName])
+    		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+    			fontStyle: '$axisTitleStyle',
+			#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+    			textDecoration: 'underline',
+			#else		        			
+    			$styleName: '$axisTitleStyle',
+    		#end
+		#end
+	    }
+    },
+    
+    #if($chart.SUBTITLE.text != '')
+    subtitle: {
+        text: "$chart.SUBTITLE.text",
+        
+        #set ($subtitleAlign = $chart.SUBTITLE.style.align)
+        #if ($subtitleAlign != '' )
+        
+        	#if ($subtitleAlign == 'left')
+        	x: 70,
+        	#elseif ($subtitleAlign == 'right')
+        	x: -70,
+        	#end
+        
+        align: '$subtitleAlign',
+        #end
+        
+        style:{
+        #foreach($styleName in $chart.SUBTITLE.style.keySet())
+        	#set ($axisSubtitleStyle = $chart.SUBTITLE.style[$styleName])
+    		#if ($styleName == 'fontWeight' && ($axisSubtitleStyle == 'italic' || $axisSubtitleStyle == 'normal'))
+    			fontStyle: '$axisSubtitleStyle',
+			#elseif($styleName == 'fontWeight' && $axisSubtitleStyle == 'underline')
+    			textDecoration: 'underline',
+			#else		        			
+    			$styleName: '$axisSubtitleStyle',
+    		#end
+		#end
+		}
+    },
+    #end
+    
+    #if($chart.LEGEND.style.borderWidth != '')
+    	#set($borderWidth = $chart.LEGEND.style.borderWidth)
+    #end
+	 
+    #*
+    	The logic for handling data needed for rendering of the chart.
+    	
+    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    *#
+    #if ($chart.LEGEND.show != '' && ($chart.LEGEND.show == 'true' || $chart.LEGEND.show == true))
+	    
+	    #if ($chart.LEGEND.position == "")      
+		 	
+		 	legend: 
+		 	{
+		        align: 'center', 
+		        verticalAlign: 'bottom',
+		        layout: 'horizontal',
+		    
+	    #end
+	    
+	    #if ($chart.LEGEND.position == "bottom")
+	  
+		    legend: 
+		    {
+		            align: 'center',
+		            verticalAlign: '$chart.LEGEND.position', 
+		            layout: 'horizontal',
+		    
+	 	#end
+	 	
+	 	#if ($chart.LEGEND.position == "top")
+	 	
+	 		#*
+		    	Take the size of the font that is used for the chart's title 
+		    	and subtitle. We will use this for determining how much we
+		    	should move the top legend downwards (towards the chart itself).
+		    *#
+		    #set($titleFontSize = $chart.TITLE.style.fontSize)
+		    #set($subtitleFontSize = $chart.SUBTITLE.style.fontSize)
+		    #set($titleText = $chart.TITLE.text)
+		    #set($subtitleText = $chart.SUBTITLE.text)
+		    
+		    #set($totalDistanceLegend = 0)
+		    
+		    #if ($titleText != "")
+		    
+			    #*
+					Take only numeric value from the font size parameter (that is 
+					actually the string in this moment. 
+					
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+				*#
+			    #if ($titleFontSize != "")
+				    #foreach ($element in $titleFontSize.split("px"))  
+				    	#set($titleFontSize = $element)
+					#end				
+				#else
+					#set($titleFontSize = "15")
+				#end
+				
+			#else 		
+				
+		    	#set($titleFontSize = "0")
+		    					
+			#end
+			
+			#if ($subtitleText != "")
+		    
+			    #*
+					Take only numeric value from the font size parameter (that is 
+					actually the string in this moment. 
+					
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+				*#
+			    #if ($subtitleFontSize != "")
+				    #foreach ($element in $subtitleFontSize.split("px"))  
+				    	#set($subtitleFontSize = $element)
+					#end				
+				#else
+					#set($subtitleFontSize = "15")
+				#end
+				
+			#else 
+				
+				#set($subtitleFontSize = "0")
+				
+			#end
+		   
+		 	#*
+				Convert chart's title and subtitle heights to Integer.
+				
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+			*#
+		    #set($intTitleFontSize = 0)
+		    #set($intSubtitleFontSize = 0)
+		    #set($intBorderWidth = 0)
+			#set($Integer1 = 0)
+			#set($Integer2 = 0)
+			#set($Integer3 = 0)
+			#set($intTitleFontSize = $Integer1.parseInt($titleFontSize))		
+			#set($intSubtitleFontSize = $Integer2.parseInt($subtitleFontSize))
+			
+			## If the parameter is NOT NULL
+			#if ("$!borderWidth" != "")
+				#set($intBorderWidth = $Integer3.parseInt($borderWidth))
+			#end
+		
+			#if ($titleText == "" && $subtitleText == "")
+				#set($offsetFromTitleSubtitle = 0)
+			#else
+				#set($offsetFromTitleSubtitle = 15)
+			#end		
+		
+			#*
+				Append the offset to the total height of the chart's title and subtitle
+				so it can have always the same distance from those two chart elements
+				(no matter what is the size of title and subtitle).
+				
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+			*#
+			#set($totalDistanceLegend  = ($intTitleFontSize + $intSubtitleFontSize + $intBorderWidth) + $offsetFromTitleSubtitle)
+				 	
+	 		legend: 
+		    {
+		            align: 'center',
+		            verticalAlign: '$chart.LEGEND.position', 
+		            layout: 'horizontal',
+		          	y: $totalDistanceLegend,
+		    
+	 	#end
+	        
+	 	#if ($chart.LEGEND.position == "right" || $chart.LEGEND.position == "left")      
+		 	
+		 	legend: 
+		 	{
+		        align: '$chart.LEGEND.position', 
+		        verticalAlign: 'middle',
+		        layout: 'vertical',
+		    
+	    #end
+	    	    
+			    #if($chart.LEGEND.style.backgroundColor != '')
+		        	backgroundColor: '$chart.LEGEND.style.backgroundColor',
+			    #end
+			    
+		        #if($chart.LEGEND.style.borderWidth != '')
+		        	borderWidth: $borderWidth,
+			    #end
+			    
+		        shadow: true,
+		        
+		        itemStyle: 
+		        { 
+		        	color: '$chart.LEGEND.style.color', 
+		        	
+		        	fontSize: '$chart.LEGEND.style.fontSize', 
+		        			        	
+		        	#if ($chart.LEGEND.style.fontFamily != '')
+		        		fontFamily: '$chart.LEGEND.style.fontFamily',
+		        	#end
+		        	
+		        	#if ($chart.LEGEND.style.fontWeight == 'italic')
+		        		fontStyle: 'italic',
+		        	#elseif ($chart.LEGEND.style.fontWeight == 'underline')
+		        		textDecoration: 'underline',
+		        	#else
+		        		fontWeight: '$chart.LEGEND.style.fontWeight',
+		        	#end
+		        },
+		         title:
+		        {
+		        	text:"$chart.LEGEND.TITLE.text",
+		        	style:
+		        	{	
+		        		color: '$chart.LEGEND.TITLE.style.color',
+		        		align: '$chart.LEGEND.TITLE.style.align',
+		        		
+		        		fontSize: '$chart.LEGEND.TITLE.style.fontSize', 
+		        	
+		        	#if ($chart.LEGEND.TITLE.style.fontFamily != '')
+		        		fontFamily: '$chart.LEGEND.TITLE.style.fontFamily',
+		        	#end
+		        	
+		        	#if ($chart.LEGEND.TITLE.style.fontWeight == 'italic')
+		        		fontStyle: 'italic',
+		        	#elseif ($chart.LEGEND.TITLE.style.fontWeight == 'underline')
+		        		textDecoration: 'underline',
+		        	#else
+		        		fontWeight: '$chart.LEGEND.TITLE.style.fontWeight',
+		        	#end
+		        	}	
+		        }
+		          
+		        
+        	},
+	   
+  	#else
+		
+		#* 
+			If legend is disabled this JSON property ('enabled') should be false.
+			
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)			
+		*#
+		legend:
+		{
+			enabled: false,
+		},
+	    
+    #end
+    
+    #*
+    legend: {
+	    #if ($chart.LEGEND.show != '' && $chart.LEGEND.show == 'false')
+	    enabled: false,
+	    #end
+	    
+        #if ($chart.LEGEND.layout != '' )
+        layout: '$chart.LEGEND.layout',
+        #end
+        
+        #if ($chart.LEGEND.position != '' )
+        verticalAlign: '$chart.LEGEND.position',
+        #end
+        
+        #if ($chart.LEGEND.style && $chart.LEGEND.style.align )
+        align: '$chart.LEGEND.style.align',
+        #end
+        
+               
+        #if($chart.LEGEND.style.backgroundColor != '')
+        backgroundColor: '$chart.LEGEND.style.backgroundColor',
+	    #end
+	    
+        #if($chart.LEGEND.style.borderWidth != '')
+        borderWidth: $chart.LEGEND.style.borderWidth,
+	    #end
+	    
+        shadow: true,
+        itemStyle: { 
+        	color: '$chart.LEGEND.style.color', 
+        	fontSize: '$chart.LEGEND.style.fontSize', 
+        	#if ($chart.LEGEND.style.fontWeight == 'italic')
+        	fontStyle: 'italic',
+        	#elseif ($chart.LEGEND.style.fontWeight == 'underline')
+        	textDecoration: 'underline',
+        	#else
+        	fontWeight: '$chart.LEGEND.style.fontWeight',
+        	#end
+        }
+    },*#
+
+    ## Axises selection
+    #set($axisList = $chart.AXES_LIST.AXIS)
+
+    #set($xAxisList = {}) ## X Axises list container
+    #set($yAxisList = {}) ## Y Axises list container
+    #set($xAxisPositions = {}) ## X Axises integer positions list, for series references
+    #set($yAxisPositions = {}) ## Y Axises integer positions list, for series references
+    #set($xAxisCounter = 0) 
+    #set($yAxisCounter = 0) 
+    
+    #foreach($axis in $axisList)
+	 	#if($axis.type == 'Category')
+	 		#set($workAroundNoPrint = $xAxisList.put($axis.alias , $axis))
+	 		#set($workAroundNoPrint = $xAxisPositions.put($axis.alias , $xAxisCounter))
+	 		
+	 		#set($xAxisCounter = $xAxisCounter + 1)
+	 	#end
+	 	
+	 	#if($axis.type == 'Serie')
+	 		#set($workAroundNoPrint = $yAxisList.put($axis.alias , $axis))
+	 		#set($workAroundNoPrint = $yAxisPositions.put($axis.alias , $yAxisCounter))
+ 		
+	 		#set($yAxisCounter = $yAxisCounter + 1)
+	 	#end
+	#end
+	
+    xAxis:
+	 #foreach($xAxisKey in $xAxisList.keySet())
+	 #set ($xAxis = $xAxisList[$xAxisKey])
+	 {
+		 title: {
+		 	 #if($xAxis.TITLE.enabled)
+		 	 	enabled: $xAxis.TITLE.enabled
+		 	 #end
+			 #if($chart.hideAxisTitleCategory)
+				#if($chart.hideAxisTitleCategory=="true")
+				 	 text: "",	
+				 
+				#else
+				  	text: "$xAxis.TITLE.text",		
+				#end 
+			#else
+			  text: "$xAxis.TITLE.text",		
+			#end
+			 style:{
+	        	#foreach($styleName in $xAxis.TITLE.style.keySet())
+		        	#set ($axisTitleStyle = $xAxis.TITLE.style[$styleName])
+		        	#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+	        			fontStyle: '$axisTitleStyle',
+					#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+	        			textDecoration: 'underline',
+	        		#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisTitleStyle)
+					#elseif($axisTitleStyle != '')
+	        			$styleName: '$axisTitleStyle',
+	        		#end
+	        	#end
+		     },
+		     
+		     #if ($labelAlign == 'center' || $labelAlign == '')
+			align: 'middle',
+			#elseif ($labelAlign == 'left' )
+			align: 'low',
+			#elseif ($labelAlign == 'right' )
+			align: 'high',
+			#end
+		 },
+		#set ($counter = $datasettransformer.prepareDataForScater($rows,$columnMap,$isCockpitEngine,null).entrySet())
+   		#if($chart.dateTime!="true")    
+   		categories:  [
+            #foreach($element in $counter)
+            	#set( $elementKey = $element.key )
+            	#set( $elementKey = $elementKey.replace("""", "\""") )
+            	"$elementKey",
+             
+    		#end
+        ],
+            
+        min: 0.6, 
+        max: $counter.size()-1.5,
+            
+		#end 
+		labels:{
+		#if($xAxis.step)
+			#if($xAxis.step!="")
+			step: $xAxis.step,
+			#end
+		#end
+				 #if( $xAxis.style != '' ) 
+        		        		
+        		style:{
+	        	#foreach($styleName in $xAxis.style.keySet())
+	        		#set ($axisStyle = $xAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		},        		
+        		
+        		#if($labelAlign)
+        			align:"$labelAlign",
+        		#end
+        		
+        		#if($rotation!="" &&  $rotation!="null")
+        			rotation: $rotation,
+    			#end
+        	#end
+        	#if($chart.dateFormat=="year")
+				#set($dateFormat = "%Y")
+			#elseif($chart.dateFormat=="month")
+				#set($dateFormat = "%B %Y")
+			#elseif($chart.dateFormat=="week")
+				#set($dateFormat = "Week from %A, %b %e, %Y")
+			#elseif($chart.dateFormat=="day")
+				#set($dateFormat = "%A, %b %e, %Y")
+			#elseif($chart.dateFormat=="hour")
+				#set($dateFormat = "%A, %b %e, %H")
+			#elseif($chart.dateFormat=="minute")
+				#set($dateFormat = "%A, %b %e, %H:%M")
+			#elseif($chart.dateFormat=="second")
+				#set($dateFormat = "%A, %b %e, %H:%M:%S")
+			#else
+				#set($dateFormat = "%A, %b %e, %H:%M:%S.%L")
+			#end 
+			#if($chart.dateTime=="true")
+            formatter: function() {
+                return '' + Highcharts.dateFormat('$dateFormat', this.value);
+            },
+            #end
+		 },
+
+		 #if( $xAxis.position == 'top' )
+		 	opposite: true,
+		 #end
+		 		 
+		 #if( !$xAxis.startOnTick || $xAxis.startOnTick == "" )
+		 	startOnTick: false,
+		 #else
+		 	startOnTick: $xAxis.startOnTick,		 	
+		 #end
+		 
+		 #if( !$xAxis.endOnTick || $xAxis.endOnTick == "" )
+		 	endOnTick: false,		 	
+		 #else
+		 	endOnTick: $xAxis.endOnTick,
+		 #end
+		 
+		 #if( !$xAxis.showLastLabel || $xAxis.showLastLabel == "" )		 	
+		 	showLastLabel: false,
+		 #else
+		 	showLastLabel: $xAxis.showLastLabel,
+		 #end		 
+		#if($chart.dateTime=="true")
+		ordinal:false,
+			type: 'datetime',
+		#end 
+		#if($chart.dateTime!="true")
+			type: 'category',
+			 
+		#end
+	 },
+	 #end
+    
+    
+    yAxis: 
+    [
+        ## START Serie add
+        #foreach($yAxisKey in $yAxisList.keySet())
+        	#set ($yAxis = $yAxisList[$yAxisKey] )
+        
+        {        
+        	title: {
+	        	#if($yAxis.TITLE.enabled)
+			 	 	enabled: $yAxis.TITLE.enabled
+			 	#end
+		 	 
+        		#if($chart.hideAxisTitleSerie)
+				 	#if($chart.hideAxisTitleSerie=="true")
+				 	 	text: "",	
+				 
+				 	#else
+				 	 	text: "$yAxis.TITLE.text",		
+				 	#end   
+			 	#else
+			  		text: "$yAxis.TITLE.text",		
+				#end 
+			 			 
+        		style:{
+		        	#foreach($styleName in $yAxis.TITLE.style.keySet())
+		        		#set ($axisTitleStyle = $yAxis.TITLE.style[$styleName])
+		        		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+		        			fontStyle: '$axisTitleStyle',
+						#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+		        			textDecoration: 'underline',
+		        		#elseif($styleName == 'align')
+	        				#set($labelAlign=$axisTitleStyle)
+						#else		        			
+		        			$styleName: '$axisTitleStyle',
+		        		#end
+		        	#end
+        		},        		        		
+        		
+        		#if ($labelAlign == 'center' || $labelAlign == '')
+					align: 'middle',
+				#elseif ($labelAlign == 'left' )
+					align: 'low',
+				#elseif ($labelAlign == 'right' )
+					align: 'high',
+				#end
+        	},
+        	
+        	labels:{
+				 
+				 #if( $yAxis.style != '' ) 
+        		
+        		##x:0,
+				 
+        		style:{
+	        	#foreach($styleName in $yAxis.style.keySet())
+	        		#set ($axisStyle = $yAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		},
+        		
+        		#if($labelAlign)
+        			align:"$labelAlign",
+        		#end
+        		
+        		
+        		#if($rotation!="" &&  $rotation!="null")
+        			rotation: $rotation,
+    			#end
+        	#end
+		 },
+        	
+        	#if($yAxis.MAJORGRID)
+		        #if($yAxis.MAJORGRID.interval != '')
+	        		tickInterval: $yAxis.MAJORGRID.interval,
+			    #end
+			    
+		        #if($yAxis.MAJORGRID.style.color)
+	        		gridLineColor: '$yAxis.MAJORGRID.style.color',
+			    #end
+	        	
+	        	#set($typeline = $yAxis.MAJORGRID.style.typeline)
+	        	#if($yAxis.MAJORGRID.style.typeline)
+		        	#if($typeline == 'dashed')
+		        		#set($convertedTypeline = 'Dash')
+		        	#elseif($typeline == 'dotted')
+		        		#set($convertedTypeline = 'Dot')
+		    		#elseif($typeline == 'solid')
+		        		#set($convertedTypeline = 'Solid')
+					#else
+		        		#set($convertedTypeline = $typeline)
+		        	#end
+		        	gridLineDashStyle: '$convertedTypeline',
+	        	#end
+        	#end
+        	
+        	#if($yAxis.MINORGRID)
+		        #if($yAxis.MINORGRID.interval != '')
+	        	minorTickInterval: $yAxis.MINORGRID.interval,
+			    #end
+			    
+		        #if($yAxis.MINORGRID.style.color)
+	        	minorGridLineColor: '$yAxis.MINORGRID.style.color',
+			    #end
+	        	
+	        	#set($typeline = $yAxis.MINORGRID.style.typeline)
+	        	#if($typeline == 'dashed')
+	        		#set($convertedMinorTpeline = 'Dash')
+	    		#elseif($typeline == 'dotted')
+	        		#set($convertedMinorTpeline = 'Dot')
+	    		#elseif($typeline == 'solid')
+	        		#set($convertedMinorTpeline = 'Solid')
+	        	#else
+	        		#set($convertedMinorTpeline = $typeline)
+	        	#end
+	        	minorGridLineDashStyle: '$convertedMinorTpeline',
+        	#end
+        	
+        	#*
+		 		NOTE: The Opposite option is disabled completely from every chart (also for the SCATTER
+		 		chart) since the behavior of the parameter in combination with other axis parameters was 
+		 		providing more troubles than bringing advantages.
+		 
+		  		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		         	
+        	*#
+        	## (by danilo.ristovski@mht.net)
+        	## opposite: $yAxis.style.opposite
+        	
+        },
+        #end
+        ## END Serie add
+            
+    ],
+    
+	series: [
+	#foreach($valueKey in $seriesMap.keySet())
+	    #set($relatedSerie = $seriesMap.get($valueKey))
+	    	
+	    {	
+		#set($relatedSerieColor = false)
+		#set($relatedSerieColor = $relatedSerie.color)
+		#if($relatedSerieColor && $relatedSerieColor != '')
+			color: '$relatedSerieColor',
+	    #end
+		
+			name: '$relatedSerie.name',
+			#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
+	    	 #if($chart.isCockpitEngine != 'true')
+	      			#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
+	   			 #end
+	    	#set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
+			#if($chart.dateTime!="true")
+			data: [
+	    		
+            	#foreach($element in $datasettransformer.prepareDataForScater($rows,$columnMap,$isCockpitEngine,$serieColumnsMapped).entrySet())
+            		#foreach($el in $element.value)
+            			$el,
+					#end 
+            		
+				#end 
+            
+				       
+	    	],
+	    	
+			#end 	
+	    	
+	    	#if($chart.dateTime=="true")
+			data: [
+	    			
+				#foreach($row in $rows)
+			   
+					#set ($serieValue = $row.get($serieColumnsMapped))
+					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
+					#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
+					#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
+					
+						#if($chart.isCockpitEngine=="true")
+						#set($date = $serieCategoryName.split("/"))
+						#set($day = $date.get(0))
+						#set($month = $Integer.parseInt($date.get(1)))
+						#set($month = $month - 1 )
+						#set($year= $date.get(2))
+						#else
+						#set($date = $serieCategoryName.split("-"))
+						#set($day = $date.get(2))
+						#set($month = $Integer.parseInt($date.get(1)))
+						#set($month =$month - 1 )
+						#set($year= $date.get(0))
+						#end
+						[Date.UTC($year, $month, $day), $serieValue],
+					
+				#end	       
+	    	],
+	    	
+			#end 
+	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
+						#if ($relatedSerieShowValue != '')
+						dataLabels: {
+		                    enabled: $relatedSerieShowValue,
+		                    
+		                    #set ($postfixValueAsString = '')
+		                    #if ($relatedSerie.postfixChar != '')
+			                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
+							#end
+		                    
+		                    #set ($prefixValueAsString = '')
+		                    #if ($relatedSerie.prefixChar != '')
+			                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
+							#end
+		                    
+		                    #set ($precisionValueAsString = '')
+		                    #if ($relatedSerie.precision != '')
+			                    #set ($precisionValueAsString = ':,.' + $relatedSerie.precision + 'f')
+		                   	#else
+		                   		#set ($precisionValueAsString = ':,.0f')
+							#end
+		                    
+		                    labelFormat: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}',
+		                    
+		                    /* 
+		                    	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+		                    	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+		                    	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
+		                    	is included into the formatting of the number that is going to be displayed, as well as precision.
+		                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+                     		*/ 
+		                   	formatter: function() {
+			                     
+			                    var value = this.y;	
+			                    var newValue = "";	                  
+			                    
+		                      	var scaleFactor = '${relatedSerie.scaleFactor}';
+		                      	
+		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+		                      	
+		                      	var precision = '${relatedSerie.precision}';
+		                      	
+		                      	switch(scaleFactor.toUpperCase()) {
+		                      	
+		                      		case "EMPTY":
+		                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
+		                      			newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
+		                      			break;
+		                      		case "K":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";	
+		                      			break;
+		                      		case "M":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";	
+		                      			break;
+		                      		case "G":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+		                      			break;
+	                      			case "T":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+		                      			break;
+		                      		case "P":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+		                      			break;
+	                      			case "E":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+		                      			break;
+	                      			default:
+	                      				/* The same as for the case when user picked "no selection" - in case when the chart 
+	                      				template does not contain the scale factor for current serie */
+	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
+		                      			break;
+		                      	
+		                      	}						
+	                        		                       
+	                          	return newValue;
+			            	},
+		                      
+		                },
+						#end
+	    	
+	    	#if(!$exportWebApp) 
+            events :{ 
+               #if($chart.isCockpitEngine=="false")
+						click: scope.chartInitializer.handleCrossNavigationTo,
+
+		         #elseif($chart.outcomingEventsEnabled == 'true')
+		                	click: handleCockpitSelection
+
+		         #end
+	    	}, 
+	    	#end
+	    	tooltip: { 
+			#set($seriePrefix = $relatedSerie.prefixChar)
+			#if($seriePrefix != '')
+				valuePrefix: '$seriePrefix',
+			#end
+				
+			#set($seriePostfix = $relatedSerie.postfixChar)
+			#if($seriePostfix != '')
+				valueSuffix: '$seriePostfix',
+			#end
+				
+			#if ($relatedSerie.precision != '')
+				valueDecimals: $relatedSerie.precision ,
+			#end
+				
+			#*
+				If background color for the serie tooltip is not defined (empty)
+				take the default value (#FCFFC5) so the tooltip can be readable 
+				over the chart that stays behind it. Otherwise, take the value 
+				of the background color specified by the user.				
+				@author: danristo (danilo.ristovski@mht.net)
+			*#
+			#if ($relatedSerie.TOOLTIP.backgroundColor!="")
+                ttBackColor: '$relatedSerie.TOOLTIP.backgroundColor',
+            #else
+            	ttBackColor: '#FCFFC5',	## default background color for the serie tooltip
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.color != '')
+				ttColor: '$relatedSerie.TOOLTIP.style.color' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.align != '')
+				ttAlign: '$relatedSerie.TOOLTIP.style.align' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontFamily && $relatedSerie.TOOLTIP.style.fontFamily != '')
+				ttFont: '$relatedSerie.TOOLTIP.style.fontFamily' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontWeight != '')
+				ttFontWeight: '$relatedSerie.TOOLTIP.style.fontWeight' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontSize != '')
+				ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
+			#end
+			},
+	    },
+	#end
+    ],
+    
+     tooltip: {
+	    followTouchMove:false,
+        followPointer:true,
+        useHTML: true,
+        backgroundColor: null,
+        borderWidth: 2,
+        style: {
+            padding: 0
+        },
+        formatter: function() {
+        	var ttColor = this.series.tooltipOptions.ttColor ? this.series.tooltipOptions.ttColor : '';
+        	var ttBackColor = this.series.tooltipOptions.ttBackColor ? this.series.tooltipOptions.ttBackColor : '';
+        	
+        	var ttAlign = this.series.tooltipOptions.ttAlign ? this.series.tooltipOptions.ttAlign : '';
+        	var ttFont = this.series.tooltipOptions.ttFont ? ' ' + this.series.tooltipOptions.ttFont : '';
+        	var ttFontSize = this.series.tooltipOptions.ttFontSize ? ' ' + this.series.tooltipOptions.ttFontSize : '';
+        	var ttFontWeight = this.series.tooltipOptions.ttFontWeight ? ' ' + this.series.tooltipOptions.ttFontWeight : '';
+        	       	
+        	#*
+        		Depending on font style chosen by the user for the serie tooltip
+        		we will specify respective CSS attribute so it can be taken by the
+        		tooltip.
+        		@author: danristo (danilo.ristovski@mht.net)
+        	*#
+        	var tooltipFontStyle = "";
+        	
+        	if (ttFontWeight == " underline") {
+        		tooltipFontStyle = " text-decoration: underline;";
+        	} else if (ttFontWeight == " italic") {
+        		tooltipFontStyle = "font-style: italic;";
+        	} else if (ttFontWeight == " bold") {
+        		tooltipFontStyle = "font-weight: bold;";
+        	} else {
+        		tooltipFontStyle = "font-weight: normal;";
+        	}
+        	
+        	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : 0;
+        	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
+        	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
+        	
+        	var thisValue = this.y;
+        	
+        	/*
+        		When there is no precision set by the user, force the precison of
+        		value zero, since it has the same effect whether is set or not, but
+        		it helps for other situations in which the value is not zero. 
+        		
+        		Also, always set the thousands separator, no matter what.
+        		
+        		@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+        	*/
+        	var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
+        			thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+        			
+    		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
+        	
+        	thisValue = valuePrefix + thisValue + valueSuffix;
+        	
+        	#*
+        		Separate font elements (family, size and weight (style)) so the tooltip
+        		font characteristics can be separately (independently) specified by the user.
+        		@modifiedBy: danristo (danilo.ristovski@mht.net)
+        	*# 
+            var result = 
+            	'<div style="padding:10px;color:' + ttColor + '; opacity: 0.9; background:' + ttBackColor + ';' + " font-family: " + ttFont + "; "
+            					+ tooltipFontStyle + " font-size: " + ttFontSize + ';text-align:' + ttAlign + ';">'; 
+            
+            #*
+        		Removed bold font style (weight) as default one for the serie value, since
+        		style of the fonts on the tooltip will be the same for every single font
+        		element on it. HTML tag <strong> is removed.
+        		@modifiedBy: danristo (danilo.ristovski@mht.net)
+        	*# 	
+			#if($chart.dateTime!="false")
+			result += '<span>' + Highcharts.dateFormat('$dateFormat', this.key) + '</span><br/>' + this.series.name + ': ' + thisValue + '</div>';
+			#else
+			result += '<span>' + this.key + '</span><br/>' + this.series.name + ': '+ thisValue + '</div>';
+			#end
+            return result;
+        }
+    },
+    
+    lang: {
+        noData: '$chart.EMPTYMESSAGE.text'
+    },
+    noData: {
+    	style:{
+    	
+    		fontFamily: '$chart.EMPTYMESSAGE.style.fontFamily',		
+			fontSize: '$chart.EMPTYMESSAGE.style.fontSize',
+			color: '$chart.EMPTYMESSAGE.style.color',
+			#set ($styleAlign = $chart.EMPTYMESSAGE.style.align)
+			
+			#if ($styleAlign == "")      
+			 	
+			 	align: "center",
+			#else		        			
+        		align: '$styleAlign' ,  
+		    #end		
+			#if($chart.EMPTYMESSAGE.style.fontWeight == 'italic' || $chart.EMPTYMESSAGE.style.fontWeight == 'normal')
+    			fontStyle: '$chart.EMPTYMESSAGE.style.fontWeight',
+    			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
+			#elseif($chart.EMPTYMESSAGE.style.fontWeight == 'underline')
+    			textDecoration: '$chart.EMPTYMESSAGE.style.fontWeight',
+    			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
+			#elseif($chart.EMPTYMESSAGE.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
+    		#end
+    	
+		},
+		position: {
+			#set ($positionVerticalAlign = $chart.EMPTYMESSAGE.position.verticalAlign)
+			
+		    #if ($positionVerticalAlign == "")      
+			 	
+			 	verticalAlign: "middle"
+			 #else		        			
+        		verticalAlign: '$positionVerticalAlign'    
+		    #end
+			
+
+		}
+    },
+    
+    credits: { ##remove bottom credits text
+    	enabled: false
+    },
+    
+    plotOptions: 
+    {
+            scatter: {
+                marker: {
+                    radius: 5,
+                    states: {
+                        hover: {
+                            enabled: true,
+                            lineColor: 'rgb(100,100,100)'
+                        }
+                    }
+                },
+                
+                states: {
+                    hover: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+            },
+            
+            #* 
+            	From Highcharts API: When a series contains a data array that is longer than this, 
+            	only one dimensional arrays of numbers, or two dimensional arrays with x and y values 
+            	are allowed. Also, only the first point is tested, and the rest are assumed to be the 
+            	same format. This saves expensive data checking and indexing in long series. Set it to 
+            	0 disable. Defaults to 1000.
+            	
+            	URL: http://api.highcharts.com/highcharts#plotOptions.series.turboThreshold
+            	
+            	We will increase this value in order to display series that contain a data array bigger
+            	than 1000 (default), because it is most likely that we will have this situation very 
+            	often.
+                
+            	@author: danristo (danilo.ristovski@mht.net)
+            *#
+            turboThreshold: 5000            
+            }
+        }
+}

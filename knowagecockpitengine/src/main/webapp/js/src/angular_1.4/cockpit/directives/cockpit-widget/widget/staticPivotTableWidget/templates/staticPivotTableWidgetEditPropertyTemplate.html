@@ -1,0 +1,481 @@
+<md-card class="flexCard customTableWidgetConfiguration pivotTableWidget" ng-cloak>
+	<md-card-content flex layout="column" class="noPadding">
+		<md-toolbar>
+		  <div class="md-toolbar-tools">
+		    <h2>{{translate.format(translate.load('sbi.cockpit.widget.configuration'),translate.load('sbi.cockpit.widget.pivot'))}}</h2>
+		    <span flex></span>
+		  </div>
+		</md-toolbar>
+		<md-content flex layout="column">
+		   
+		  <md-tabs flex md-border-bottom md-selected="tabsUtils.selectedIndex">
+		  
+		  <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
+		  	<div layout="column" layout-fill ng-cloak ng-if="tabsUtils.selectedIndex==0">
+		      	
+			   <dataset-selector ng-model=localModel.dataset.dsId on-change="changeDatasetFunction(dsId)"></dataset-selector>
+			   
+			   <md-card ng-if="localModel.dataset.dsId!=undefined" layout="column" flex class="flexCard">	
+			     	<md-card-content flex layout="row" class="pivotTableDesigner" >			     		
+			     		<div layout="column" class="measureAttributeTab">
+			     			<div layout="column" flex="50">
+			     				<md-toolbar class="md-hue-2">
+		      						<div class="md-toolbar-tools">
+			      						<h2 flex>{{translate.load("sbi.cockpit.pivot.measures")}}</h2>
+		      						</div>
+		      					</md-toolbar>
+		      					<md-content flex layout="column" ng-class="{'dropZone': (sbiModule_device.browser.name=='chrome' && dragUtils.dragObjectType=='MEASURE-PT')}">
+		      						<md-list flex dnd-list="currentDataset.metadata.fieldsMeta" dnd-allowed-types="['MEASURE-PT']" dnd-drop="dropCallback(event, index,currentDataset.metadata.fieldsMeta, item, external, type, 'MEASURE')">
+		      							<md-list-item ng-repeat="item in currentDataset.metadata.fieldsMeta"
+		      							ng-if="item.fieldType=='MEASURE'"
+		      							dnd-draggable="item"
+		      							dnd-moved="currentDataset.metadata.fieldsMeta.splice($index, 1)"
+		      							dnd-type="'MEASURE'"
+		      							dnd-dragstart="dragUtils.dragObjectType='MEASURE'"
+		      							dnd-dragend="dragUtils.dragObjectType=undefined">
+		      							 <md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>
+		      							{{item.alias}}
+		      							</md-list-item>
+		      							<md-list-item class="dndPlaceholder" >
+									        {{translate.load("sbi.cockpit.pivot.messages.drop.measure.remove")}}
+									    </md-list-item>
+		      						</md-list>
+		      					</md-content>
+			     			</div>
+			     			<div layout="column" flex="50">
+			     				<md-toolbar class="md-hue-2">
+		      						<div class="md-toolbar-tools">
+			      						<h2 flex>{{translate.load("sbi.cockpit.pivot.attributes")}}</h2>
+		      						</div>
+		      					</md-toolbar>
+		      					<md-content flex layout="column"ng-class="{'dropZone': (sbiModule_device.browser.name=='chrome' && (dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS'))}">
+		      						<md-list flex dnd-list="currentDataset.metadata.fieldsMeta" dnd-allowed-types="['COLUMNS','ROWS']" dnd-drop="dropCallback(event, index,currentDataset.metadata.fieldsMeta, item, external, type, 'ATTRIBUTE')">
+		      							<md-list-item ng-repeat="item in currentDataset.metadata.fieldsMeta" 
+		      							ng-if="item.fieldType=='ATTRIBUTE'"
+										dnd-draggable="item"
+		      							dnd-moved="currentDataset.metadata.fieldsMeta.splice($index, 1)"
+		      							dnd-type="'ATTRIBUTE'"
+		      							dnd-dragstart="dragUtils.dragObjectType='ATTRIBUTE'"
+		      							dnd-dragend="dragUtils.dragObjectType=undefined">
+		      							 <md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>
+		      							{{item.alias}}
+		      							</md-list-item>
+		      							<md-list-item class="dndPlaceholder" >
+									        {{translate.load("sbi.cockpit.pivot.messages.drop.attribute.remove")}}
+									    </md-list-item>
+		      						</md-list>
+		      					</md-content>
+			     			</div>
+			     		</div>
+			     		<div layout="column" flex layout-padding class="contentElementTab">
+			     			<div layout="row" flex="50" class="noPadding">
+			     				<span flex="50"></span>
+				     			<div flex="50"   class="contentElementBox noPadding" layout="column">
+				     				<md-toolbar class="md-hue-2 ternaryToolbar">  
+			      						<div class="md-toolbar-tools">
+				      						<h2 flex>{{translate.load("sbi.cockpit.pivot.columns")}}</h2>
+			      						</div>
+			      					</md-toolbar>
+			      					<md-content flex layout="column" ng-class="{'dropZone': sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='ATTRIBUTE' || dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS')  }" >
+			      						<md-list flex dnd-list="localModel.content.crosstabDefinition.columns"  dnd-allowed-types="['ATTRIBUTE','ROWS','COLUMNS']"dnd-drop="dropCallback(event, index,localModel.content.crosstabDefinition.columns, item, external, type, 'COLUMNS')">
+			      							<md-list-item  class="noright" ng-repeat="item in localModel.content.crosstabDefinition.columns"
+			      							dnd-draggable="item"
+			      							dnd-moved="localModel.content.crosstabDefinition.columns.splice($index, 1)"
+			      							dnd-type="'COLUMNS'"
+			      							dnd-dragstart="dragUtils.dragObjectType='COLUMNS'"
+		      								dnd-dragend="dragUtils.dragObjectType=undefined"
+			      							 >
+			      							 <md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>
+			      							{{item.alias}}
+			      							 <md-icon md-font-icon="fa fa-cog" aria-label="Checkbox 1" class="md-secondary" ng-click="editFieldsProperty(item)"></md-icon>
+			      							</md-list-item>
+			      							<md-list-item class="dndPlaceholder" >
+										       {{translate.load("sbi.cockpit.pivot.messages.drop.attribute")}}
+										    </md-list-item>
+			      						</md-list>
+			      					</md-content>
+				     			</div>
+			     			</div>
+			     			<div layout="row" flex="50" class="noPadding">
+			     				<div flex="50" class="contentElementBox" layout="column">
+			     					<md-toolbar class="md-hue-2 ternaryToolbar">  
+			      						<div class="md-toolbar-tools">
+				      						<h2 flex>{{translate.load("sbi.cockpit.pivot.rows")}}</h2>
+			      						</div>
+			      					</md-toolbar>
+			      					<md-content flex layout="column" ng-class="{'dropZone': sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='ATTRIBUTE' || dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS')  }">
+			      						<md-list flex dnd-list="localModel.content.crosstabDefinition.rows"  dnd-allowed-types="['ATTRIBUTE','COLUMNS','ROWS']" dnd-drop="dropCallback(event, index,localModel.content.crosstabDefinition.rows, item, external, type, 'ROWS')">
+			      							<md-list-item  class="noright" ng-repeat="item in localModel.content.crosstabDefinition.rows"
+			      							dnd-draggable="item"
+			      							dnd-moved="localModel.content.crosstabDefinition.rows.splice($index, 1)"
+			      							dnd-type="'ROWS'"
+			      							dnd-dragstart="dragUtils.dragObjectType='ROWS'"
+		      								dnd-dragend="dragUtils.dragObjectType=undefined"
+			      							 >
+			      							 <md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>
+			      							{{item.alias}}
+			      							 <md-icon md-font-icon="fa fa-cog" aria-label="Checkbox 1" class="md-secondary" ng-click="editFieldsProperty(item)"></md-icon>
+			      							</md-list-item>
+			      							<md-list-item class="dndPlaceholder" >
+										       {{translate.load("sbi.cockpit.pivot.messages.drop.attribute")}}
+										    </md-list-item>
+			      						</md-list>
+			      					</md-content>
+			     				</div>
+			     				<div flex="50" class="contentElementBox" layout="column">
+				     				<md-toolbar class="md-hue-2 ternaryToolbar">  
+			      						<div class="md-toolbar-tools">
+				      						<h2 flex>{{translate.load("sbi.cockpit.pivot.measures")}}</h2>
+			      						</div>
+			      					</md-toolbar>
+			      					<md-content flex layout="column" ng-class="{'dropZone': sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='MEASURE' ||dragUtils.dragObjectType=='MEASURE-PT')  }">
+			      						<md-list flex dnd-list="localModel.content.crosstabDefinition.measures"  dnd-allowed-types="['MEASURE','MEASURE-PT']"  dnd-drop="dropCallback(event, index,localModel.content.crosstabDefinition.measures, item, external, type, 'MEASURE-PT')">
+			      							<md-list-item  class="noright" ng-repeat="item in localModel.content.crosstabDefinition.measures"
+			      							dnd-draggable="item"
+			      							dnd-moved="localModel.content.crosstabDefinition.measures.splice($index,1)"
+			      							dnd-type="'MEASURE-PT'"
+			      							dnd-dragstart="dragUtils.dragObjectType='MEASURE-PT'"
+		      								dnd-dragend="dragUtils.dragObjectType=undefined"
+			      							 >
+			      							 <md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>
+			      							{{item.alias}}
+			      							 <md-icon md-font-icon="fa fa-cog" aria-label="Checkbox 1" class="md-secondary" ng-click="editFieldsProperty(item)"></md-icon>
+			      							</md-list-item>
+			      							<md-list-item class="dndPlaceholder" >
+										       {{translate.load("sbi.cockpit.pivot.messages.drop.measure")}}
+										    </md-list-item>
+			      						</md-list>
+			      					</md-content>
+			     				</div>
+			     			</div>
+			     		
+			     		</div>
+			     	
+			     	
+	
+			     	</md-card-content>
+			    </md-card>
+		  		</div>
+		     </md-tab>
+		  
+		  	<md-tab label="{{translate.load('sbi.cockpit.pivot.config')}}">
+		  	
+		  		<md-card ng-if="tabsUtils.selectedIndex==1">
+					<md-card-title>
+						<md-card-title-text layout="row">
+							<span flex class="md-headline">{{translate.load("sbi.cockpit.pivot.general")}}</span>
+						</md-card-title-text>
+					</md-card-title>
+					<md-card-content layout="column" >
+						<md-input-container class="md-block">
+				          <label>{{translate.load("sbi.cockpit.pivot.maxCellsNumber")}}</label>
+				          <input  ng-model="localModel.content.crosstabDefinition.config.maxcellnumber">
+				        </md-input-container>
+				        
+				        <div layout="row" layout-margin>
+							<span >{{translate.load("sbi.crosstab.crosstabdetailswizard.measureson")}}</span>
+							<md-radio-group flex layout="row" ng-model="localModel.content.crosstabDefinition.config.measureson" >
+								<md-radio-button value="columns" class="md-primary">{{translate.load("sbi.cockpit.pivot.columns")}}</md-radio-button>
+								<md-radio-button value="rows" class="md-primary"> {{translate.load("sbi.cockpit.pivot.rows")}} </md-radio-button>
+							</md-radio-group>
+						</div>
+						
+						<div layout="row" layout-margin>
+							<span >{{translate.load("sbi.crosstab.crosstabdetailswizard.percenton")}}</span>
+							<md-radio-group flex layout="row" ng-model="localModel.content.crosstabDefinition.config.percenton" >
+								<md-radio-button value="column" class="md-primary">{{translate.load("sbi.cockpit.pivot.columns")}}</md-radio-button>
+								<md-radio-button value="row" class="md-primary"> {{translate.load("sbi.cockpit.pivot.rows")}} </md-radio-button>
+								<md-radio-button value="no" class="md-primary"> {{translate.load("sbi.crosstab.crosstabdetailswizard.nopercent")}} </md-radio-button>
+							</md-radio-group>
+						</div>
+					
+					</md-card-content>
+				</md-card>
+				
+				<md-card ng-if="tabsUtils.selectedIndex==1">
+					<md-card-title>
+						<md-card-title-text layout="row">
+							<span flex class="md-headline">{{translate.load("sbi.crosstab.crosstabdetailswizard.onrows")}}</span>
+						</md-card-title-text>
+					</md-card-title>
+					<md-card-content layout="row" layout-align="space-around center">
+						<md-checkbox ng-model="localModel.content.crosstabDefinition.config.calculatetotalsonrows" aria-label="Checkbox 1">
+				        	{{translate.load("sbi.crosstab.crosstabdetailswizard.calculatetotalsonrows")}}
+				        </md-checkbox>
+						<md-checkbox ng-model="localModel.content.crosstabDefinition.config.calculatesubtotalsonrows" aria-label="Checkbox 1">
+				        	{{translate.load("sbi.crosstab.crosstabdetailswizard.calculatesubtotalsonrows")}}
+				        </md-checkbox>
+					</md-card-content>
+				</md-card>
+				
+				<md-card ng-if="tabsUtils.selectedIndex==1">
+					<md-card-title>
+						<md-card-title-text layout="row">
+							<span flex class="md-headline">{{translate.load("sbi.crosstab.crosstabdetailswizard.oncolumns")}}</span>
+						</md-card-title-text>
+					</md-card-title>
+					<md-card-content layout="row" layout-align="space-around center">
+						<md-checkbox ng-model="localModel.content.crosstabDefinition.config.calculatetotalsoncolumns" aria-label="Checkbox 1">
+					        	{{translate.load("sbi.crosstab.crosstabdetailswizard.calculatetotalsoncolumns")}}
+					        </md-checkbox>
+							<md-checkbox ng-model="localModel.content.crosstabDefinition.config.calculatesubtotalsoncolumns" aria-label="Checkbox 1">
+					        	{{translate.load("sbi.crosstab.crosstabdetailswizard.calculatesubtotalsoncolumns")}}
+					        </md-checkbox>
+					</md-card-content>
+				</md-card>
+		  	
+				     	
+		    </md-tab>
+		  
+		    <md-tab label="{{translate.load('sbi.cockpit.style')}}">
+	        	
+		     	<cockpit-style-configurator widget ng-model="localModel.style" ng-if="tabsUtils.selectedIndex==2">
+		     	
+		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.crosstabFontGeneralOpts')" layout="column">
+		     			<div layout=row >
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.fontSize')}}</label>
+								<md-select ng-model="localModel.content.style.generic['font-size']">
+									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontSizeDimension" ng-value="meas.value" >
+									{{meas.label}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.font')}}</label>
+								<md-select ng-model="localModel.content.style.generic['font']">
+									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontType" ng-value="meas.value" >
+									{{meas.label}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+						</div>
+		     		
+		     		</cockpit-style-custom-widget-configurator>
+		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.crosstabHeadersFontOpts')" layout="column">
+		     			<div layout=row >
+				     		<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.crossTabHeaders.color "></color-picker>
+							</md-input-container>
+							<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.crossTabHeaders['background-color'] "></color-picker>
+							</md-input-container>
+			     		</div>
+			     		<div layout=row >
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.fontSize')}}</label>
+								<md-select ng-model="localModel.content.style.crossTabHeaders['font-size']">
+									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontSizeDimension" ng-value="meas.value" >
+									{{meas.label}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.fontWeight')}}</label>
+								<md-select ng-model="localModel.content.style.crossTabHeaders['font-weight']">
+									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontWeight" ng-value="meas.value" >
+									{{meas.label}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.textDecoration')}}</label>
+								<md-select ng-model="localModel.content.style.crossTabHeaders['text-decoration']">
+									<md-option ng-repeat="meas in cockpitModule_generalOptions.textDecoration" ng-value="meas.value" >
+									{{meas.label}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     		</div>
+		     		
+		     		</cockpit-style-custom-widget-configurator>
+		     	
+		     	
+		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.measuresFontOpts')" layout="column">
+			     		<div layout=row >
+				     		<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measures.color "></color-picker>
+							</md-input-container>
+							<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measures['background-color'] "></color-picker>
+							</md-input-container>
+			     		</div>
+			     		<div layout=row >
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.fontSize')}}</label>
+								<md-select ng-model="localModel.content.style.measures['font-size']">
+									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontSizeDimension" ng-value="meas.value" >
+									{{meas.label}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.fontWeight')}}</label>
+								<md-select ng-model="localModel.content.style.measures['font-weight']">
+									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontWeight" ng-value="meas.value" >
+									{{meas.label}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.textDecoration')}}</label>
+								<md-select ng-model="localModel.content.style.measures['text-decoration']">
+									<md-option ng-repeat="meas in cockpitModule_generalOptions.textDecoration" ng-value="meas.value" >
+									{{meas.label}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     		</div>
+			     	
+			     	</cockpit-style-custom-widget-configurator>
+		     	
+		     		<!--  <cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.measuresAlternateRows')" layout="column">		     			
+			     		<div layout=row >
+				     		<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.table.alternate.evenrows')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresRow['even-background-color']" ></color-picker>
+							</md-input-container>
+							<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.table.alternate.oddrows')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresRow['odd-background-color']" ></color-picker>
+							</md-input-container>
+			     		</div>
+			     	</cockpit-style-custom-widget-configurator>   -->
+			     	<cockpit-style-custom-widget-configurator label="'Grid'">
+			           <div layout="row" flex ng-cloak>
+				           <div flex=20 layout=column>
+				           		<div flex  layout="row" layout-align="start center">
+						           <md-checkbox layout-align="space-around center" ng-model="localModel.content.style.showGrid"  class="md-block"
+											aria-label="Checkbox 1" ng-click="enableGrid()">{{translate.load('sbi.cockpit.table.grid.showgrid')}}</md-checkbox>
+								</div>
+								<div flex  layout="row" layout-align="start center">
+						          <md-checkbox layout-align="space-around center" ng-model="localModel.content.style.showAlternateRows"  class="md-block"
+											aria-label="Checkbox 1"  ng-click ="enableAlternate()">{{translate.load('sbi.cockpit.table.alternate')}}</md-checkbox>
+								</div>
+				           </div>
+				           <div flex layout=column >
+					           	<div flex layout="row">
+									<md-input-container class="md-block" flex=50 >
+										<label>{{translate.load("sbi.cockpit.style.borders.style")}}</label>
+										<md-select ng-model="localModel.content.style.measuresRow['border-style']" ng-disabled ="!localModel.content.style.showGrid">
+											<md-option ng-repeat=" bsize in bordersSize" ng-value="bsize.value">{{bsize.label}} <span ng-class="bsize.exampleClass"></span></md-option>
+										</md-select>
+									</md-input-container>
+									<md-input-container class="md-block" flex=33>
+										<label>{{translate.load("sbi.cockpit.style.borders.thickness")}}</label>
+										<md-select ng-model="localModel.content.style.measuresRow['border-width']" ng-disabled ="!localModel.content.style.showGrid">
+											<md-option ng-repeat="bwidth in bordersWidth" ng-value="bwidth.value">{{bwidth.label}}</md-option>
+										</md-select>	
+									</md-input-container>									
+									<md-input-container flex=33 class="md-block"> 
+										<label>{{translate.load('sbi.cockpit.table.grid.color')}}</label>
+										<color-picker  options="colorPickerPropertyGrid" ng-model="localModel.content.style.measuresRow['border-color'] "></color-picker>
+									</md-input-container>
+										
+					           	</div>
+					           	<div flex layout=column >
+						           	<div layout=row >
+							     		<md-input-container flex=50 class="md-block"> 
+											<label>{{translate.load('sbi.cockpit.table.alternate.evenrows')}}</label>
+											<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresRow['even-background-color']" ></color-picker>
+										</md-input-container>
+										<md-input-container flex=50 class="md-block"> 
+											<label>{{translate.load('sbi.cockpit.table.alternate.oddrows')}}</label>
+											<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresRow['odd-background-color']" ></color-picker>
+										</md-input-container>
+						     		</div>
+				           		</div>
+				           	</div>
+			           </div>
+			        </cockpit-style-custom-widget-configurator> 
+			        
+		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.measuresHeaders')" layout="column">
+		     			<div layout=row flex >		     							     			
+				     		<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders.color"></color-picker>
+							</md-input-container>
+							<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders['background-color']" ></color-picker>
+							</md-input-container>
+			     		</div>
+			     		<div layout=row >
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.fontSize')}}</label>
+								<md-select ng-model="localModel.content.style.measuresHeaders['font-size']">
+									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontSizeDimension" ng-value="meas.value" >
+									{{meas.label}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.fontWeight')}}</label>
+								<md-select ng-model="localModel.content.style.measuresHeaders['font-weight']">
+									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontWeight" ng-value="meas.value" >
+									{{meas.label}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.textDecoration')}}</label>
+								<md-select ng-model="localModel.content.style.measuresHeaders['text-decoration']">
+									<md-option ng-repeat="meas in cockpitModule_generalOptions.textDecoration" ng-value="meas.value" >
+									{{meas.label}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     		</div>
+		     		
+		     		</cockpit-style-custom-widget-configurator>
+
+		     	 
+		     	
+		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.pivot.totals')">
+			     		<div layout=row flex>
+				     		<md-input-container flex class="md-block md-icon-right"> 
+								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
+								<color-picker options="colorPickerProperty" ng-model="localModel.content.style.totals.color "></color-picker>
+							</md-input-container>
+							<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.totals['background-color'] "></color-picker>
+							</md-input-container>
+			     		</div>
+			        </cockpit-style-custom-widget-configurator>
+			        <cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.pivot.subtotals')">
+			     		<div layout=row flex>
+				     		<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.subTotals.color "></color-picker>
+							</md-input-container>
+							<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.subTotals['background-color'] "></color-picker>
+							</md-input-container>
+			     		</div>
+			        </cockpit-style-custom-widget-configurator>
+			        
+		     	</cockpit-style-configurator>
+		     </md-tab>
+		     
+		     <md-tab label="{{translate.load('sbi.cockpit.widget.table.filters')}}">
+	      		<cockpit-filters-configuration ng-model-shared="localModel">
+		     </md-tab>
+		     
+		  </md-tabs>
+		</md-content>
+    </md-card-content>
+    <md-card-actions layout="row" layout-align="end center">
+      <md-button ng-click="cancelConfiguration()" >
+         {{translate.load('sbi.generic.cancel')}}
+      </md-button>
+      <md-button ng-click="saveConfiguration()"  >
+         {{translate.load('sbi.generic.save')}}
+      </md-button>
+    </md-card-actions>
+</md-card>

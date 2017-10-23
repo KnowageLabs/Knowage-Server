@@ -1,0 +1,36 @@
+<md-card layout-fill layout="column" class="flexCard" style="position:absolute" >
+
+	<md-card-content flex layout="column" class="noPadding" style="overflow-y:auto;">
+
+		<md-toolbar >
+			<div class="md-toolbar-tools">
+				Selezione dataset
+			</div>
+		</md-toolbar>
+		
+		<md-content flex layout="column" layout-align="center center">
+			<md-progress-circular ng-hide="isDatasetListLoaded" md-mode='indeterminate'></md-progress-circular>
+
+			<angular-table flex ng-show="isDatasetListLoaded"
+				id="cockpitDatasetChoice"
+				ng-model='datasetList'
+				columns="cockpitDatasetColumn"
+				sortable-column="['label','name']"
+				columns-search="['label','name','description']"
+				show-search-bar="true"
+				multi-select=multiple
+				highlights-selected-item=(!multiple)
+				no-pagination="true"
+				selected-item="tmpCurrentAvaiableDataset"
+				comparison-column="'id'">
+			</angular-table>
+		</md-content>
+		
+	</md-card-content>
+	
+	<md-card-actions layout="row" layout-align="end center">
+		<md-button ng-click="closeDialog()">Cancel</md-button>
+		<md-button ng-click="saveDataset()">Save</md-button>
+	</md-card-actions>
+	
+</md-card>

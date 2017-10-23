@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ENGINE-CONFIGURATION>
+
+	<!-- ====================================================================================== -->
+	<!--  GENERAL SETTINGS 																        --> 
+	<!-- ====================================================================================== -->
+	<CACHE_CONFIG>
+		<DATA_TYPES>			
+			<TYPE name="Object" bytes="8" />
+			<TYPE name="Float" bytes="16" />
+			<TYPE name="Double" bytes="16" />
+			<TYPE name="Integer" bytes="16" />
+			<TYPE name="Long" bytes="16" />
+			<TYPE name="BigInteger" bytes="56" />
+			<TYPE name="BigDecimal" bytes="72" />
+			<TYPE name="Boolean" bytes="16" />
+			<TYPE name="Date" bytes="24" />
+			<TYPE name="Timestamp" bytes="32" />			
+			<TYPE name="String" bytes="4038" />
+			<TYPE name="[B" bytes="1048576" /> <!-- BLOB default: 1024x1024 -->
+			<TYPE name="[C" bytes="10000" />   <!-- CLOB -->
+		</DATA_TYPES>
+	</CACHE_CONFIG>
+	
+	<JNDI_THREAD_MANAGER>java:/comp/env/wm/SpagoWorkManager</JNDI_THREAD_MANAGER>
+			
+	
+	<!-- ====================================================================================== -->
+	<!--  SSO settings 																	--> 
+	<!-- ====================================================================================== -->
+	<INTEGRATION_CLASS_JNDI>java://comp/env/sso_class</INTEGRATION_CLASS_JNDI>
+	<FILTER_RECEIPT>/proxyCallback</FILTER_RECEIPT>
+	<PASS>PASS</PASS>
+	
+	<!--  SPAGOBI_SERVER_URL Address for invoking WebService, if empty use the request parameters -->
+	<SPAGOBI_SERVER_URL></SPAGOBI_SERVER_URL>
+	<SPAGOBI_SERVER_URL_JNDI_NAME>java://comp/env/service_url</SPAGOBI_SERVER_URL_JNDI_NAME>	
+	
+	<!--  THE JNDI RESOURCE NAME FOR RETRIVE THE RESOURCE PATH -->
+	<RESOURCE_PATH_JNDI_NAME>java://comp/env/resource_path</RESOURCE_PATH_JNDI_NAME>
+	
+	<!--  THE JNDI NAME FOR SPAGOBI DOMAIN -->
+	<!--SPAGOBI_DOMAIN_JNDI_NAME>java://comp/env/spagobi_domain</SPAGOBI_DOMAIN_JNDI_NAME-->	
+	<SecurityServiceProxy_URL>/services/SecurityService</SecurityServiceProxy_URL>
+	<SchedulerServiceProxy_URL>/services/SchedulerService</SchedulerServiceProxy_URL>
+	<EventServiceProxy_URL>/services/EventService</EventServiceProxy_URL>
+	<ContentServiceProxy_URL>/services/ContentService</ContentServiceProxy_URL>
+	<AuditServiceProxy_URL>/services/AuditService</AuditServiceProxy_URL>
+	<DataSourceServiceProxy_URL>/services/DataSourceService</DataSourceServiceProxy_URL>
+	<DocumentExecuteServiceProxy_URL>/services/DocumentExecuteService</DocumentExecuteServiceProxy_URL>
+	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>
+	<MetamodelServiceProxy_URL>/services/MetamodelService</MetamodelServiceProxy_URL>
+	
+	<!-- ====================================================================================== -->
+	<!--  CHART ENGINE CONFIG 																	--> 
+	<!-- ====================================================================================== -->
+	
+	<!-- 
+		You can define a different js library for each chart type.
+		Attributes 'type' and 'name ' are mandatory. 
+		Others defaults as follows:
+		
+			- Velocity Model properties
+				vmPath="/chart/templates/{name}/"
+				vmName="{type}_chart.vm"
+			
+			- Library Initializer properties
+				libIniPath="/chartlib/"
+				libIniName="{name}Initializer.jspf"
+	 -->
+	<chartConfiguration>
+		<!-- 
+			Not needed, not handled by the Designer.
+			@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		<chart type="column"	name="highcharts414" 	vmName="column_chart.vm"	/> 
+		-->
+		
+		<!-- chart js conf START -->
+		<chart type="line" 		name="chartJs" 			vmName="line_chart_chartJs.vm"	enabledInCockpit="true"/>
+		<chart type="pie"		name="chartJs" 			vmName="pie_chart_chartJs.vm"	enabledInCockpit="true"/>	
+		<chart type="bar" 		name="chartJs" 			vmName="bar_chart_chartJs.vm" 	enabledInCockpit="true"/>
+		
+		<chart type="sunburst"	name="d3js244"  		vmName="sunburst_chart.vm"	enabledInCockpit="true"/>
+		<chart type="parallel"	name="d3js244"  		vmName="parallel_chart.vm"	enabledInCockpit="true"/>
+		<chart type="wordcloud"	name="d3js244"  		vmName="wordcloud_chart.vm"	enabledInCockpit="true"/> 
+		<chart type="chord" 	name="d3js244" 			vmName="chord_chart.vm"		enabledInCockpit="true"/>
+		<!-- chart js conf END -->
+
+		<!-- highcharts414 conf START
+		<chart type="line" 		name="highcharts414"	vmName="column_chart.vm"	enabledInCockpit="true"/> 
+		<chart type="pie"		name="highcharts414" 	vmName="pie_chart.vm"		enabledInCockpit="true"/>	
+		<chart type="bar" 		name="highcharts414" 	vmName="column_chart.vm" 	enabledInCockpit="true"/>
+				
+		<chart type="radar"		name="highcharts414" 	vmName="column_chart.vm" 	enabledInCockpit="true"/>
+		<chart type="gauge" 	name="highcharts414" 	vmName="gauge_chart.vm"		enabledInCockpit="true"/> 	
+		<chart type="scatter"	name="highcharts414" 	vmName="scatter_chart.vm"	enabledInCockpit="true"/>
+		<chart type="sunburst"	name="d3js244"  		vmName="sunburst_chart.vm"	enabledInCockpit="true"/>
+		<chart type="parallel"	name="d3js244"  		vmName="parallel_chart.vm"	enabledInCockpit="true"/>
+		<chart type="wordcloud"	name="d3js244"  		vmName="wordcloud_chart.vm"	enabledInCockpit="true"/> 
+		<chart type="treemap" 	name="highcharts414" 	vmName="treemap_chart.vm"	enabledInCockpit="false"/> 
+		<chart type="heatmap" 	name="highcharts414" 	vmName="heatmap_chart.vm"	enabledInCockpit="true"/>
+		<chart type="chord" 	name="d3js244" 			vmName="chord_chart.vm"		enabledInCockpit="true"/>
+		highcharts414 conf END -->
+		
+	</chartConfiguration>
+	
+	<ChartEngineContextName>knowagecockpitengine</ChartEngineContextName>
+	<KpiEngineContextName>knowagekpiengine</KpiEngineContextName>
+	
+	<HMAC_JNDI_LOOKUP>java:/comp/env/hmacKey</HMAC_JNDI_LOOKUP>
+	
+</ENGINE-CONFIGURATION>

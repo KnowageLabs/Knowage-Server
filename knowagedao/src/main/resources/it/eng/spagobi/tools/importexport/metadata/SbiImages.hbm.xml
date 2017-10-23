@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.images.metadata.SbiImages" table="SBI_IMAGES" >
+        <id name="imageId" type="int">
+           <column name="IMAGE_ID" />
+        </id>
+
+		<property name="name" type="string">
+			<column name="NAME" length="100" not-null="true" />
+		</property>
+		<!-- <property name="content" type="blob">
+			<column name="CONTENT" not-null="true" />
+		</property>  -->
+		
+		<property name="content" type="binary">
+			<column name="CONTENT" not-null="true" sql-type="longvarbinary" />
+		</property>
+		
+		<!-- <property name="contentIco" type="blob">
+			<column name="CONTENT_ICO" not-null="true" />
+		</property>  -->
+		
+		<property name="contentIco" type="binary">
+			<column name="CONTENT_ICO" not-null="true" sql-type="longvarbinary" />
+		</property>
+	</class>
+
+</hibernate-mapping>

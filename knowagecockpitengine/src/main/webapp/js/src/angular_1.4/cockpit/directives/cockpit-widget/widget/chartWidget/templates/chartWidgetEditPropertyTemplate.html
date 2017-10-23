@@ -1,0 +1,47 @@
+<md-card   class="flexCard customTableWidgetConfiguration" >
+	<md-card-content flex layout="column" class="noPadding">
+		<md-toolbar>
+		  <div class="md-toolbar-tools">
+		    <h2>{{translate.format(translate.load('sbi.cockpit.widget.configuration'),translate.load('sbi.cockpit.widget.chart'))}}</h2>
+		    <span flex></span>
+		  </div>
+		</md-toolbar>
+		<md-content flex layout="column">
+		   
+			<md-tabs flex md-border-bottom md-selected='selectedTab.tab'>
+		  
+		  		<md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
+		   			<dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsId)"></dataset-selector>  	
+		     	</md-tab>
+		     	
+		     	<md-tab label="{{translate.load('sbi.cockpit.widgets.chartengine.chartEngineDesigner.title')}}" md-on-select="handleEvent('openConfiguration')" md-on-deselect="handleEvent('closeConfiguration')">
+		     	 	<div ng-show="confSpinner" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
+       					<md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
+    				</div>
+ 		     	 	<post-iframe iframe-id="chartConfigurationIframe" ng-if="localModel.datasetId" dataset-label="localModel.datasetLabel"  dataset-id="localModel.datasetId" is-cockpit-eng=true local-mod=localModel></post-iframe> 
+
+		     	 	<p ng-if="!localModel.datasetId" >{{translate.load('sbi.cockpit.table.missingdataset')}}</p>
+			    </md-tab>
+		  
+			    <md-tab label="{{translate.load('sbi.cockpit.style')}}" md-on-select="handleEvent('openStyle')">
+			     	<cockpit-style-configurator widget ng-model="localStyle"></cockpit-style-configurator>
+			    </md-tab>
+			    <md-tab label="{{translate.load('sbi.cockpit.widget.table.cross')}}" md-on-select="handleEvent('openCross')">
+               		<cockpit-cross-configurator  ng-if="selectedTab.tab ==3" widget ng-cloak ng-model="localModel">
+          		</md-tab>
+          		
+          		<md-tab label="{{translate.load('sbi.cockpit.widget.table.filters')}}" md-on-select="handleEvent('openFilters')">
+	      			<cockpit-filters-configuration ng-model-shared="localModel">
+			    </md-tab>
+		  </md-tabs>
+		</md-content>
+    </md-card-content>
+    <md-card-actions layout="row" layout-align="end center">
+      <md-button ng-click="cancelConfiguration()" >
+         {{translate.load('sbi.generic.cancel')}}
+      </md-button>
+      <md-button ng-click="handleEvent('save')"  >
+         {{translate.load('sbi.generic.save')}}
+      </md-button>
+    </md-card-actions>
+</md-card>

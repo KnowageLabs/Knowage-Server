@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<USER_FUNCTIONALITIES>
+	<!-- Knowage BD Functionalities -->
+	<USER_FUNCTIONALITY productType="KnowageBD" name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ReadEnginesManagement" description="ReadEnginesManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="FunctionalitiesManagement" description="FunctionalitiesManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="LovsManagement" description="LovsManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ConstraintManagement" description="ConstraintManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ParameterManagement" description="ParameterManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentAdministration" description="DocumentAdministration" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentDevManagement" description="DocumentDevManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentTestManagement" description="DocumentTestManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentAdminManagement" description="DocumentAdminManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="EventsManagement" description="EventsManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="WorkspaceManagement" description="WorkspaceManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="WorklistManagement" description="WorklistManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentManagement" description="DocumentManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ProfileAttributeManagement" description="ProfileAttributeManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DataSourceManagement" description="DataSourceManagement" />
+    <USER_FUNCTIONALITY productType="KnowageBD" name="DataSourceRead" description="DataSourceRead" />
+    <USER_FUNCTIONALITY productType="KnowageBD" name="DataSourceBigData" description="DataSourceBigData" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentUserManagement" description="DocumentUserManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentDeleteManagement" description="DocumentDeleteManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentStateManagement" description="DocumentStateManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentDetailManagement" description="DocumentDetailManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentMetadataManagement" description="DocumentMetadataManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="LovsView" description="LovsView" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ConstraintView" description="ConstraintView" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ParameterView" description="ParameterView" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DatasetManagement" description="DatasetManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentMoveDownState" description="DocumentMoveDownState" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentMoveUpState" description="DocumentMoveUpState" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ModifyRefresh" description="ModifyRefresh" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="MenuManagement" description="MenuManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="HotLinkManagement" description="HotLinkManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ProfileManagement" description="ProfileManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateChartFunctionality" description="CreateChartFunctionality" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="CkanIntegrationFunctionality" description="CkanIntegrationFunctionality" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="GeoLayersManagement" description="GeoLayersManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ImagesManagement" description="ImagesManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="FederationDefinition" description="FederationDefinition" />	
+	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="MultisheetCockpit" description="MultisheetCockpit" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ChartWidget" description="ChartWidget" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="StaticWidget" description="StaticWidget" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="AnalyticalWidget" description="AnalyticalWidget" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DomainWrite" description="DomainWrite" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ManageCrossNavigation" description="ManageCrossNavigation" />	
+    <USER_FUNCTIONALITY productType="KnowageBD" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />  	
+	
+	<!-- Authorizations for KnowageSI -->
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="LovsManagement" description="LovsManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ConstraintManagement" description="ConstraintManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ParameterManagement" description="ParameterManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentAdministration" description="DocumentAdministration"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentDevManagement" description="DocumentDevManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentTestManagement" description="DocumentTestManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentAdminManagement" description="DocumentAdminManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="EventsManagement" description="EventsManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="WorkspaceManagement" description="WorkspaceManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="WorklistManagement" description="WorklistManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentManagement" description="DocumentManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ProfileAttributeManagement" description="ProfileAttributeManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DataSourceManagement" description="DataSourceManagement"/>
+    <USER_FUNCTIONALITY productType="KnowageSI" name="DataSourceRead" description="DataSourceRead"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentUserManagement" description="DocumentUserManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentDeleteManagement" description="DocumentDeleteManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentStateManagement" description="DocumentStateManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentDetailManagement" description="DocumentDetailManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DistributionListUser" description="DistributionListUser"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DistributionListManagement" description="DistributionListManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentMetadataManagement" description="DocumentMetadataManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="LovsView" description="LovsView"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ConstraintView" description="ConstraintView"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ParameterView" description="ParameterView"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DatasetManagement" description="DatasetManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentMoveDownState" description="DocumentMoveDownState"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentMoveUpState" description="DocumentMoveUpState"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ModifyRefresh" description="ModifyRefresh"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="MenuManagement" description="MenuManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="HotLinkManagement" description="HotLinkManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ProfileManagement" description="ProfileManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ImagesManagement" description="ImagesManagement" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="CreateChartFunctionality" description="CreateChartFunctionality" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="FederationDefinition" description="FederationDefinition" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="RegistryDataEntry" description="RegistryDataEntry" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="MultisheetCockpit" description="MultisheetCockpit" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ChartWidget" description="ChartWidget" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="StaticWidget" description="StaticWidget" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DomainWrite" description="DomainWrite" />
+	
+	<!-- Authorizations for KnowageER -->
+	<USER_FUNCTIONALITY productType="KnowageER" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="LovsManagement" description="LovsManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="ConstraintManagement" description="ConstraintManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="ParameterManagement" description="ParameterManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentAdministration" description="DocumentAdministration"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentDevManagement" description="DocumentDevManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentTestManagement" description="DocumentTestManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentAdminManagement" description="DocumentAdminManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="EventsManagement" description="EventsManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="WorklistManagement" description="WorklistManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentManagement" description="DocumentManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="ProfileAttributeManagement" description="ProfileAttributeManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DataSourceManagement" description="DataSourceManagement"/>
+    <USER_FUNCTIONALITY productType="KnowageER" name="DataSourceRead" description="DataSourceRead"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentUserManagement" description="DocumentUserManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentDeleteManagement" description="DocumentDeleteManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentStateManagement" description="DocumentStateManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentDetailManagement" description="DocumentDetailManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DistributionListUser" description="DistributionListUser"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DistributionListManagement" description="DistributionListManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentMetadataManagement" description="DocumentMetadataManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="LovsView" description="LovsView"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="ConstraintView" description="ConstraintView"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="ParameterView" description="ParameterView"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DatasetManagement" description="DatasetManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentMoveDownState" description="DocumentMoveDownState"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentMoveUpState" description="DocumentMoveUpState"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="ModifyRefresh" description="ModifyRefresh"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="MenuManagement" description="MenuManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="HotLinkManagement" description="HotLinkManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="ProfileManagement" description="ProfileManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="ImagesManagement" description="ImagesManagement" />	
+	<USER_FUNCTIONALITY productType="KnowageER" name="CreateChartFunctionality" description="CreateChartFunctionality" />
+	<USER_FUNCTIONALITY productType="KnowageER" name="ManageCrossNavigation" description="ManageCrossNavigation" />
+	<USER_FUNCTIONALITY productType="KnowageER" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
+	<USER_FUNCTIONALITY productType="KnowageER" name="SharedDevelopment" description="SharedDevelopment" />
+	<USER_FUNCTIONALITY productType="KnowageER" name="DomainWrite" description="DomainWrite" />
+	
+	<!-- Authorizations for KnowagePM -->
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ConstraintManagement" description="ConstraintManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ConstraintView" description="ConstraintView"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="CreateChartFunctionality" description="CreateChartFunctionality" />
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DataSourceManagement" description="DataSourceManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DataSourceRead" description="DataSourceRead"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DatasetManagement" description="DatasetManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentAdminManagement" description="DocumentAdminManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentAdministration" description="DocumentAdministration"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentDeleteManagement" description="DocumentDeleteManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentDetailManagement" description="DocumentDetailManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentDevManagement" description="DocumentDevManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentManagement" description="DocumentManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentMetadataManagement" description="DocumentMetadataManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentMoveDownState" description="DocumentMoveDownState"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentMoveUpState" description="DocumentMoveUpState"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentStateManagement" description="DocumentStateManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentTestManagement" description="DocumentTestManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentUserManagement" description="DocumentUserManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ImagesManagement" description="ImagesManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePM" name="KpiManagement" description="KpiManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePM" name="KpiSchedulation" description="KpiSchedulation" />
+	<USER_FUNCTIONALITY productType="KnowagePM" name="LovsManagement" description="LovsManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="LovsView" description="LovsView"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ManageCrossNavigation" description="ManageCrossNavigation" />
+    <USER_FUNCTIONALITY productType="KnowagePM" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />	
+	<USER_FUNCTIONALITY productType="KnowagePM" name="MenuManagement" description="MenuManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ModifyRefresh" description="ModifyRefresh"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ParameterManagement" description="ParameterManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ParameterView" description="ParameterView"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ProfileAttributeManagement" description="ProfileAttributeManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ProfileManagement" description="ProfileManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DomainWrite" description="DomainWrite" />
+	<USER_FUNCTIONALITY productType="KnowagePM" name="AlertManagement" description="AlertManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePM" name="NotifyContextBrokerAction" description="NotifyContextBrokerAction" />
+	
+	<!-- Authorizations for KnowageLI -->
+	<USER_FUNCTIONALITY productType="KnowageLI" name="AnalyticalWidget" description="AnalyticalWidget" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="ConstraintManagement" description="ConstraintManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="ConstraintView" description="ConstraintView" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="CreateChartFunctionality" description="CreateChartFunctionality" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DataSourceManagement" description="DataSourceManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DataSourceRead" description="DataSourceRead" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DatasetManagement" description="DatasetManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DistributionListManagement" description="DistributionListManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DistributionListUser" description="DistributionListUser" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DocumentAdminManagement" description="DocumentAdminManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DocumentAdministration" description="DocumentAdministration" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DocumentDeleteManagement" description="DocumentDeleteManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DocumentDetailManagement" description="DocumentDetailManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DocumentDevManagement" description="DocumentDevManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DocumentManagement" description="DocumentManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DocumentMetadataManagement" description="DocumentMetadataManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DocumentMoveDownState" description="DocumentMoveDownState" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DocumentMoveUpState" description="DocumentMoveUpState" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DocumentStateManagement" description="DocumentStateManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DocumentTestManagement" description="DocumentTestManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DocumentUserManagement" description="DocumentUserManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="DomainWrite" description="DomainWrite" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="EventsManagement" description="EventsManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="FunctionalitiesManagement" description="FunctionalitiesManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="GeoLayersManagement" description="GeoLayersManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="GisWebDesigner" description="GisWebDesigner" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="HotLinkManagement" description="HotLinkManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="ImagesManagement" description="ImagesManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="LovsManagement" description="LovsManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="LovsView" description="LovsView" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
+    <USER_FUNCTIONALITY productType="KnowageLI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />	
+	<USER_FUNCTIONALITY productType="KnowageLI" name="MapCatalogueManagement" description="MapCatalogueManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="MenuManagement" description="MenuManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="ModifyRefresh" description="ModifyRefresh" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="ParameterManagement" description="ParameterManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="ParameterView" description="ParameterView" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="ProfileAttributeManagement" description="ProfileAttributeManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="ProfileManagement" description="ProfileManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="ReadEnginesManagement" description="ReadEnginesManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="WorklistManagement" description="WorklistManagement" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="WorkspaceManagement" description="WorkspaceManagement"/>
+		
+	<!-- Authorizations for KnowagePA -->
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ConstraintManagement" description="ConstraintManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ConstraintView" description="ConstraintView" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="CreateChartFunctionality" description="CreateChartFunctionality" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DataSourceManagement" description="DataSourceManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DataSourceRead" description="DataSourceRead" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DatasetManagement" description="DatasetManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DistributionListManagement" description="DistributionListManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DistributionListUser" description="DistributionListUser" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DocumentAdminManagement" description="DocumentAdminManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DocumentAdministration" description="DocumentAdministration" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DocumentDeleteManagement" description="DocumentDeleteManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DocumentDetailManagement" description="DocumentDetailManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DocumentDevManagement" description="DocumentDevManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DocumentManagement" description="DocumentManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DocumentMetadataManagement" description="DocumentMetadataManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DocumentMoveDownState" description="DocumentMoveDownState" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DocumentMoveUpState" description="DocumentMoveUpState" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DocumentStateManagement" description="DocumentStateManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DocumentTestManagement" description="DocumentTestManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DocumentUserManagement" description="DocumentUserManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="DomainWrite" description="DomainWrite" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="EventsManagement" description="EventsManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="FunctionalitiesManagement" description="FunctionalitiesManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="FunctionsCatalogManagement" description="FunctionsCatalogManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="HotLinkManagement" description="HotLinkManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ImagesManagement" description="ImagesManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="LovsManagement" description="LovsManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="LovsView" description="LovsView" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ManageCrossNavigation" description="ManageCrossNavigation" />
+    <USER_FUNCTIONALITY productType="KnowagePA" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />	
+	<USER_FUNCTIONALITY productType="KnowagePA" name="MenuManagement" description="MenuManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ModifyRefresh" description="ModifyRefresh" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ParameterManagement" description="ParameterManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ParameterView" description="ParameterView" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ProfileAttributeManagement" description="ProfileAttributeManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ProfileManagement" description="ProfileManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ReadEnginesManagement" description="ReadEnginesManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="WorklistManagement" description="WorklistManagement" />
+	
+</USER_FUNCTIONALITIES>

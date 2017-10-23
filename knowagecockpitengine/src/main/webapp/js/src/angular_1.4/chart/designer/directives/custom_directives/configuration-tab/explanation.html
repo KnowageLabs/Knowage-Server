@@ -1,0 +1,47 @@
+<div ng-form name="explanationForm" layout="column">
+
+	<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontstyle")}}</label>
+		 <md-select ng-model="chartTemplate.TIP.style.fontWeight" name="explanation_fstyle"
+		 ng-required="chartTemplate.type.toLowerCase()=='sunburst'"> <md-option
+		ng-repeat="option in fontStyleOptionsNS" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block colorInputContainer" ng-show="selectedChartType != 'parallel'">
+	<label ng-class="{'kn-inputError':configurationForm.explanationForm.explanation_fontColor.$invalid}">{{translate.load("sbi.chartengine.configuration.sunburst.tip.fontColorRequired")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="chartTemplate.TIP.style.color" name="explanation_fontColor"
+		ng-required="chartTemplate.type.toLowerCase()=='sunburst'"></color-picker> </md-input-container>
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
+		 <md-select ng-model="chartTemplate.TIP.style.fontSize" name="explanation_fsize"
+		 ng-required="chartTemplate.type.toLowerCase()=='sunburst'"> <md-option
+		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
+		 <md-select ng-model="chartTemplate.TIP.style.fontFamily" name="explanation_ffamily"
+		 ng-required="chartTemplate.type.toLowerCase()=='sunburst'"> <md-option
+		ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.configuration.sunburst.toolbar.width")}}</label>
+		 <input type="number" step="any" name="tip_width"
+		ng-model="chartTemplate.TIP.style.width" min="10" 
+		ng-required="chartTemplate.type.toLowerCase()=='sunburst'"/> </md-input-container>
+
+	  <md-input-container class="md-block" flex>
+          <label>{{translate.load("sbi.chartengine.configuration.sunburst.tip.text")}}</label>
+          <textarea ng-model="chartTemplate.TIP.text" name="tip_text"md-maxlength="150" rows="5" md-select-on-focus
+         ></textarea>
+        </md-input-container>
+	
+	
+</div>
+
+
+

@@ -1,0 +1,29 @@
+	
+<md-toolbar class="secondaryToolbar">
+	
+			<div class="md-toolbar-tools" layout='row'>
+				{{tableDef.name}}
+				
+				
+			</div>
+			
+</md-toolbar>
+
+<angular-table 	flex
+									id="{{tableDef.name}}" 
+									ng-model='itemList'
+									columns='[
+									{"label":"LABEL","name":"label"},
+									{"label":"NAME","name":"name"}
+									]'
+									click-function ="itemSelected(item)"
+									selected-item = "selectedItem"
+									show-search-bar=true
+									columns-search='["label","name"]'
+									highlights-selected-item=true
+									no-pagination=false
+									ng-show=true
+									
+									> 
+									
+</angular-table>

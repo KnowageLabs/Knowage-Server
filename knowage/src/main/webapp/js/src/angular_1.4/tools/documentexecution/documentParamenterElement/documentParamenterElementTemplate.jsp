@@ -1,0 +1,190 @@
+<div flex layout-align="start" class="parametersSidenav">
+	
+	<!-- Map input -->		
+	<div ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in'" layout="column">
+	 	<div layout="row" layout-align="start">
+	 		<label ng-class="parameter.showMapDriver && showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}
+					<md-tooltip ng-if="!parameter.showMapDriver"> {{sbiModule_translate.load("sbi.execution.parametersselection.message.parametersdisabled")}} </md-tooltip>
+				</label>
+			<md-button ng-disabled="!parameter.showMapDriver" ng-click="popupMapParameterDialog(parameter)" ng-required="::parameter.mandatory"	id="{{::parameter.urlName}}" aria-label="{{parameter.label}}">
+				<i class="fa fa-external-link"></i>
+			</md-button>
+		</div>
+		<span ng-class="{'layout-padding': parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0}" ng-show="(parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0)">
+			<md-chips>
+				<md-chip ng-repeat="paramVal in parameter.parameterValue">
+					{{paramVal}}
+				</md-chip>
+			</md-chips>
+		</span>
+		<span ng-class="{'layout-padding': !parameter.multivalue && parameter.parameterValue && parameter.parameterValue != ''}" ng-show="(!parameter.multivalue && parameter.parameterValue && parameter.parameterValue != '')">
+			<md-chips>
+				<md-chip>{{parameter.parameterValue}}</md-chip>
+			</md-chips>
+		</span> 
+	</div>
+	
+	<!-- lov LOOKUP single and multiple input -->
+	<div ng-if="parameter.selectionType=='LOOKUP'" layout="column" class="lookupParameter" layout-margin>
+		<div layout="row" layout-align="start center" class="labelContainer">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
+				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+			</md-icon>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
+		</div>
+		<div layout="row" layout-align="start center">
+			<md-button class="md-icon-button" id="{{::parameter.urlName}}" ng-click="popupLookupParameterDialog(parameter)">
+				<md-icon md-font-icon="fa fa-external-link"></md-icon>
+			</md-button>
+			<div flex>				
+				<md-chips ng-model="parameter.parameterValue" readonly="true">
+					 <md-chip-template>
+				          <strong>{{parameter.parameterDescription[$chip]}}</strong>
+			        </md-chip-template>
+				</md-chips>
+			</div>
+		</div>
+	</div>
+	
+
+	<!-- Tree input -->	
+	<div ng-if="parameter.selectionType=='TREE'" layout="column" class="lookupParameter" layout-margin>
+		<div layout="row" layout-align="start center" class="labelContainer">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
+				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+			</md-icon>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
+		</div>
+		<div layout="row" layout-align="start center">
+			<md-button class="md-icon-button" id="{{::parameter.urlName}}" ng-click="getTreeParameterValue()">
+				<md-icon md-font-icon="fa fa-external-link"></md-icon>
+			</md-button>
+			<div flex>				
+				<md-chips ng-model="parameter.parameterValue" readonly="true">
+					 <md-chip-template>
+				          <strong>{{parameter.parameterDescription[$chip]}}</strong>
+			        </md-chip-template>
+				</md-chips>
+			</div>
+		</div>
+	</div>
+			
+	<!-- Date -->
+	<div ng-if="parameter.type=='DATE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" class="datePickerParameter" layout-margin>
+		<div layout="row" layout-align="start center" class="labelContainer">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
+				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+			</md-icon>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
+		</div>
+		<md-datepicker ng-model="parameter.parameterValue" style="margin-right:0;max-height:90px;" layout="row" layout-align="start center"></md-datepicker>
+	</div>		
+	
+	<!-- Date RANGE-->
+	<section ng-if="parameter.type=='DATE_RANGE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" class="datePickerParameter" layout-margin>
+		<div layout="row" layout-align="start center" class="labelContainer">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
+				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+			</md-icon>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
+		</div>
+		<md-datepicker ng-model="parameter.parameterValue"  md-placeholder="{{parameter.label}}" ></md-datepicker>
+		<md-select ng-model="parameter.datarange.opt"> 
+			<md-option></md-option>
+			<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" >
+				{{defaultParameter.label}}
+			</md-option>
+		</md-select>	
+		<md-input-container class="md-block">{{sbiModule_translate.load("sbi.generic.to")}} : {{endDateRange(parameter.datarange.opt,parameter)}}</md-input-container>	
+	</section>	
+	
+	<!-- manual number input -->
+	<md-input-container class="md-block" ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" layout-margin>
+		<div layout="row" layout-align="start center" class="labelContainer">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
+				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+			</md-icon>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
+		</div>
+		<input class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" type="number">	
+	</md-input-container>
+	
+	<!-- manual text input -->
+	<div ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" layout-margin class="textInput">
+		<div layout="row" layout-align="start center" class="labelContainer">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
+				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+			</md-icon>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
+		</div>
+		<md-input-container class="md-block noMargin" flex>
+			<input class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" >
+		</md-input-container>
+	</div>
+	
+	<!-- lov list radio input -->
+	<div ng-if="parameter.selectionType=='LIST' && !parameter.multivalue" layout="column" layout-margin class="radioParameter">
+		<div layout="row" layout-align="start center" class="labelContainer">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
+				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+			</md-icon>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
+		</div>
+		<md-radio-group ng-model="parameter.parameterValue" ng-required="::parameter.mandatory">
+			<md-radio-button class="md-primary" ng-repeat="defaultParameter in parameter.defaultValues" ng-if="defaultParameter.isEnabled" value="{{::defaultParameter.value}}" ng-click="toggleRadioParameter(defaultParameter.value, defaultParameter.description, parameter)">
+				{{::defaultParameter.label}} 
+			</md-radio-button>
+		</md-radio-group>
+	</div>
+	
+	<!-- lov list multiple input -->
+	<div ng-if="parameter.selectionType=='LIST' && parameter.multivalue" layout="column" layout-margin class="checkBoxParameter">
+		<div layout="row" layout-align="start center" class="labelContainer">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
+				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+			</md-icon>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
+		</div>
+		<div ng-repeat="defaultParameter in parameter.defaultValues">
+			<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled"
+					ng-checked="checkboxParameterExists(defaultParameter.value, parameter)" ng-click="toggleCheckboxParameter(defaultParameter.value, defaultParameter.description, parameter)" >
+				{{::defaultParameter.label}}
+			</md-checkbox>
+		</div>
+	</div>
+	
+	<!-- lov combobox single and multiple input -->
+	
+	<div ng-if="parameter.selectionType=='COMBOBOX'" layout="column" layout-margin class="selectParameter">
+		<div layout="row" layout-align="start center" class="labelContainer">
+			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
+				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+			</md-icon>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
+		</div>
+		<md-input-container class="md-block" ng-if="parameter.selectionType=='COMBOBOX'">
+		<!-- multiple -->
+			<md-select ng-model="parameter.parameterValue" multiple ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
+		 		ng-change="toggleComboParameter(parameter)"	ng-if="showDefaultValueAreValid(parameter) && parameter.multivalue" > 
+				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
+					{{defaultParameter.label}}
+				</md-option>
+			</md-select>
+			<!-- single -->
+			<md-select ng-model="parameter.parameterValue" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' "
+		        ng-change="toggleComboParameter(parameter)" ng-if="showDefaultValueAreValid(parameter) && !parameter.multivalue"> 
+				<md-option></md-option>
+				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
+					{{defaultParameter.label}}
+				</md-option>
+			</md-select>
+		</md-input-container>
+	</div>
+	
+	
+	<!-- "DEFAULT VALID MESSAGE " message -->
+	<div ng-if="!showDefaultValueAreValid(parameter)">
+	 	<div ng-message="required">{{sbiModule_translate.load("sbi.execution.parametersselection.defaulLovDuplicateVaue")}}</div>
+	</div>
+</div>
+<md-divider></md-divider>

@@ -1,0 +1,92 @@
+<div layout="row" flex class="workspaceDocumentsList">
+	
+	<div flex layout="column">
+		
+			<md-content layout="row" flex layout-fill class="workspaceBckgColorRightSide">
+			
+				<recent-view 	class="kn-documentBrowser" flex
+			 					ng-model=recentDocumentsList
+			 					show-grid-view=showGridView
+			 					show-add-to-organizer="true"
+			 					selected-row=selectedRow
+			 					selected-document=selectedDocument
+			 					table-speed-menu-option=recentSpeedMenu
+			 					execute-document-action="executeRecent(doc)"
+			 					select-document-action="selectDocument(doc)">
+				</recent-view>
+			
+			</md-content>
+		
+	
+	</div>
+		
+	<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightDoc" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDocumentDetails()">
+			
+		<md-toolbar class="ternaryToolbar">
+			<div layout="row" layout-align="space-around center">
+				<md-button ng-if="smallScreen" title="{{translate.load('sbi.documentbrowser.execute')}}" aria-label="Close panel" class="md-icon-button" ng-click="selectDocument();toggleDocumentDetail();">
+									<md-icon md-font-icon="fa fa-times" ></md-icon>
+							</md-button>
+
+							<md-button title="{{translate.load('sbi.workspace.execute.document')}}" aria-label="Execute Document" class="md-icon-button" ng-click="executeRecent(selectedDocument)">
+									<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
+							</md-button>
+                            <!-- hidden because organizaer is not implemented -->
+							<md-button  class="md-icon-button" ng-show="false" aria-label="Organizer" ng-click="addToOrganizerAction({doc:document});">
+			            		<md-icon  md-font-icon="fa fa-plus-circle"></md-icon>
+			          		</md-button>
+			          		
+			          		<!-- @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) -->
+			          		<md-button title="{{translate.load('sbi.workspace.dataset.detail.close')}}" aria-label="Close Recent Details" class="md-icon-button" ng-click="hideRightSidePanel()">
+									<md-icon md-font-icon="fa fa-times" ></md-icon>
+							</md-button>
+
+			</div>
+		</md-toolbar>
+		
+		<md-content layout-margin>
+			
+			<md-list>
+
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+		 	            <h3><b>{{translate.load('sbi.workspace.recent.documentName')}}</b></h3>
+		 	            <p>{{selectedDocument.documentName}}</p>
+	 	         	 </div>
+				</md-list-item>
+	
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+	 	            	<h3><b>{{translate.load('sbi.workspace.recent.documentLabel')}}</b></h3>
+	 	            	<p>{{selectedDocument.documentLabel}}</p>
+	 	          	</div>
+					</md-list-item>
+	
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+	 	           		<h3><b>{{translate.load('sbi.workspace.recent.documentDescr')}}</b></h3>
+	 	            	<p>{{selectedDocument.documentDescription}}</p>
+ 	         		 </div>
+					</md-list-item>
+	
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+	 	           		<h3><b>{{translate.load('sbi.workspace.recent.documentType')}}</b></h3>
+	 	            	<p>{{selectedDocument.documentType}}</p>
+	 	          	</div>
+					</md-list-item>
+					
+					<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+	 	           		<h3><b>{{translate.load('sbi.workspace.recent.requestTime')}}</b></h3>
+	 	            	<p>{{selectedDocument.requestTime}}</p>
+	 	          	</div>
+					</md-list-item>
+
+			</md-list>
+			
+		</md-content>
+			
+	</md-sidenav>
+		
+</div>

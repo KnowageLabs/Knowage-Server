@@ -1,0 +1,32 @@
+<div ng-form name="structure-additionalParametersForm" layout="column" layout-padding flex>
+
+<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.additionalParams.minValueYAxis")}}</label>
+		 <input type="number" step="any" name="gauge_ap_min" ng-required="chartTemplate.type.toLowerCase()=='gauge'"
+		ng-model="axisForDisplay.min"/></md-input-container>
+
+<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.additionalParams.maxValueYAxis")}}</label>
+		 <input type="number" step="any" name="gauge_ap_max" ng-required="chartTemplate.type.toLowerCase()=='gauge'"
+		ng-model="axisForDisplay.max"/></md-input-container>
+
+<md-input-container class="md-block colorInputContainer">
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.additionalParams.lineColor")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="axisForDisplay.lineColor" name ="gauge_ap_lineColor"></color-picker> </md-input-container>
+		
+<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.additionalParams.lineWidth")}}</label>
+		 <input type="number" step="any" name="gauge_ap_lineWidth"
+		ng-model="axisForDisplay.lineWidth" min="0" /> </md-input-container>
+
+<div layout="row" layout-margin>
+		
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.additionalParams.endOnTick")}}</label>
+	<md-input-container class="small counter"> <md-checkbox
+		ng-model="axisForDisplay.endOnTickGauge" name="gauge_ap_endTick"></md-checkbox>
+	</md-input-container>				
+</div>
+
+</div>

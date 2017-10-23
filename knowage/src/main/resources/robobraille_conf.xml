@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<robobraille-configuration>
+
+	<host>2.109.50.18</host>
+	<port>5150</port>
+	<protocol>http</protocol>
+	
+	<hawk-authentication>
+		<id>9d3a2c9d-9714-e711-88c6-1c6f65d84158</id>
+		<key>f4b9be89-f819-45f9-8a50-10d21445ff22</key>
+		<algorithm></algorithm>
+		
+	</hawk-authentication>
+
+</robobraille-configuration>

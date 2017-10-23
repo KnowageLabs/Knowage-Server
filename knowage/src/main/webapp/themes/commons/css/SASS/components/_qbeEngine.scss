@@ -1,0 +1,245 @@
+.kn-qbe {
+    .expanderList {
+        h3 {
+            &.opened {
+                box-shadow: 0px 3px 3px 0px $ternaryColor;
+                border-bottom: none;
+            }
+            background-color: $baseColor;
+            color: white;
+            font-weight: 400;
+            border-bottom: 1px solid $ternaryColor;
+            margin: 0;
+            margin-bottom: 4px;
+            padding: 4px;
+            font-size: 1rem;
+            .chip {
+                background-color: $ternaryColor;
+                color: $baseColor;
+                display: flex;
+                padding: 0px 16px;
+                border-radius: 50px;
+                font-size: .8rem;
+                font-weight: normal;
+                line-height: 19px;
+            }
+        }
+        .expandableEntities,
+        .expandableSubqueries {
+            h4 {
+                display: flex;
+                background-color: $lightTextColor;
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-start;
+                height: 1rem;
+                line-height: 1rem;
+                margin: 0;
+                padding: 4px 8px 4px 8px;
+                font-size: .8rem;
+                font-family: 'Roboto';
+                border-bottom: 1px solid $ternaryColor;
+                outline: none;
+                cursor: pointer;
+                .colorSquare {
+                    height: .8rem;
+                    margin-right: 5px;
+                    width: .8rem;
+                    display: block;
+                }
+                span {
+                    margin-left: 5px;
+                }
+                &.expanded {}
+            }
+            ul {
+                background-color: $pageBackground;
+                margin: 0;
+                list-style: none;
+                padding-left: 0;
+                li {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: flex-start;
+                    padding: 4px 0px 4px 20px;
+                    font-size: .8rem;
+                    border-bottom: 1px solid $ternaryColor;
+                    line-height: 1.5rem;
+                    height: 1.5rem;
+                    cursor: move;
+                    button {
+                        margin: 0;
+                        padding: 0;
+                        width: 32px;
+                    }
+                    &:hover {
+                        background-color: darken($pageBackground, 10%);
+                    }
+                    i {
+                        line-height: 1rem;
+                    }
+                    span {
+                        padding-left: 5px;
+                    }
+                }
+            }
+        }
+        //fontAwesome icons remapping
+        .fa {
+            &.cube:before {
+                content: "\f1b2"
+            }
+            &.generic:before {
+                content: "\f022"
+            }
+            &.measure:before {
+                content: "\f02b"
+            }
+        }
+
+        //qbecustom icons remapping
+
+        .qbe:before{
+          font-family: "qbe-custom" !important;
+          font-style: normal !important;
+          font-weight: normal !important;
+          font-variant: normal !important;
+          text-transform: none !important;
+          speak: none;
+          line-height: 1rem;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+        .measure:before {
+          content: "\62";
+        }
+        .attribute:before {
+          content: "\63";
+        }
+        .calculation:before {
+          content: "\61";
+        }
+        .relation:before {
+          content: "\64";
+        }
+        .time_dimension:before {
+          content: "\65";
+        }
+        .geographic_dimension:before {
+          content: "\67";
+        }
+        .default_hierarchy:before {
+          content: "\68";
+        }
+        .segment_attribute_text:before {
+          content: "\69";
+        }
+        .cube:before {
+          content: "\6a";
+        }
+        .database:before {
+          content: "\6b";
+        }
+        .generic:before {
+          content: "\6d";
+        }
+        .view:before {
+          content: "\6e";
+        }
+        .temporal_dimension:before {
+          content: "\66";
+        }
+        .dimensions:before {
+          content: "\6f";
+        }
+    }
+    .vertical-devider {
+    	border-left: 1px solid $baseColor;
+    }
+    .qbeMenuContent {
+        max-height: 400px;
+        md-checkbox > div.md-container {
+            left: 16px;
+        }
+        ._md-nested-menu {
+            padding: 0;
+            margin: 0;
+            button {
+                padding: 0 16px;
+                margin: 0;
+                height: 48px;
+                span {
+                    padding-left: 16px;
+                }
+                &:hover {
+                    color: $baseColor;
+                    background-color: rgba($baseColor,0.3);
+                }
+                
+            }
+        }
+    }
+    .qbeCustomTable {
+        padding: 4px; 
+        min-height: 500px;
+        min-width: 100%;
+        overflow: auto;
+        .qbeCustomColumn {
+            border-right: 1px solid $ternaryColor;
+            max-width: 200px;
+            &:first-child {
+                border-left: 1px solid $ternaryColor;  
+            }
+            .qbeCustomTopColor {
+                height: 4px;
+                display: block;
+                width: 100%;
+            }
+            .md-toolbar-tools {
+                padding: 0;
+                h2 {
+                    line-height: 2rem;
+                    max-width: 110px;
+                    display: block;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+                button.md-icon-button {
+                    margin: 0;
+                }
+            } 
+            .qbeCustomRow {
+                font-size: $baseFontSize;
+                padding: 0 4px;
+                width: calc(100% - 8px);
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                display: block;
+                &:nth-child(even) {
+                    background-color: $contentBackground;
+                }
+                &:nth-child(odd) {
+                    background-color: $lightTextColor;
+                }
+            }
+            .qbeCustomFooter {
+                background-color: $secondaryColor;
+                height: 24px;
+            }
+            md-icon {
+                line-height: 24px;
+            }
+        }
+    }
+    .advancedFiltersVisualization {
+        .container-element {
+            ul {
+                min-height: 10px;
+            }
+        }
+    }
+}

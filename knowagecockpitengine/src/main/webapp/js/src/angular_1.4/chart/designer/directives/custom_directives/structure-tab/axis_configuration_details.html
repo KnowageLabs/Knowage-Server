@@ -1,0 +1,71 @@
+<!-- The original name of the series item (not an alias) -->
+<div ng-form name="structure-axisConfigurationDetailsForm" layout="column" flex>
+
+<md-subheader class="md-primary">
+	Series container alias: <strong>{{axisForDisplay.alias}}</strong>
+</md-subheader>
+
+<div  layout="row" layout-margin ng-if="selectedChartType == 'radar'">
+
+	<label>{{translate.load("sbi.chartengine.designer.radar.showMeasures")}}</label>
+	<md-input-container class="small counter"> <md-checkbox
+		ng-model="axisForDisplay.labels.enabled" aria-label="Show legend" name="yAxis_names_show"></md-checkbox>
+	</md-input-container>
+</div>
+
+<div layout="column" layout-padding ng-if="selectedChartType == 'heatmap' || selectedChartType == 'line' ">
+<md-input-container class="md-block">
+	<label>{{translate.load("sbi.chartengine.designer.heatmap.axisMin")}}</label>
+	<input type="number" step="any" name="axis_min"
+		ng-model="axisForDisplay.min"/> </md-input-container>
+		
+<md-input-container class="md-block">
+	<label>{{translate.load("sbi.chartengine.designer.heatmap.axisMax")}}</label>
+	<input type="number" step="any" name="axis_max"
+		ng-model="axisForDisplay.max" /> </md-input-container>		
+
+</div>
+
+<div layout="column" layout-padding>
+<!-- The rotation (in degrees) of axis labels -->
+<md-input-container class="md-block">
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.rotate")}}</label>
+	<input type="number" step="any" name="axis_rotate"
+		ng-model="axisForDisplay.style.rotate" min="0" /> </md-input-container>
+
+<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.axisstylepopup.axis.align")}}</label>
+		 <md-select ng-model="axisForDisplay.style.align" name="axis_aligment"> <md-option
+		ng-repeat="option in textAlignment" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+<md-input-container class="md-block colorInputContainer">
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.color")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="axisForDisplay.style.color" name="axis_color"></color-picker> </md-input-container>
+	
+<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
+		 <md-select ng-model="axisForDisplay.style.fontFamily" name="axis_ffamily"> <md-option
+		ng-repeat="option in fontFamily" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+	
+<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.axisstylepopup.fontweight")}}</label>
+		 <md-select ng-model="axisForDisplay.style.fontWeight" name="axis_fweight"> <md-option
+		ng-repeat="option in fontStyle" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.axisstylepopup.fontsize")}}</label>
+		 <md-select ng-model="axisForDisplay.style.fontSize" name="axis_fsize"> <md-option
+		ng-repeat="option in fontSize" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>		
+
+
+
+
+</div>
+
+</div>

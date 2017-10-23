@@ -1,0 +1,169 @@
+<div id="geoLayerMenu">
+	<md-content>
+		 
+		<expander-box id="selectModeInt" ng-show="visibility.showSelectMode" color="white" expanded='true' title='{{::translate.load("gisengine.info.message.selectMode")}}' >
+			<md-radio-group ng-model="selectModeInteraction.type">
+				<md-radio-button ng-repeat="item in selectModeTypeList" class="md-primary"
+						ng-value="item.type" ng-hide="isCrossRadioButtonDisabled(item.type)" ng-click="setDefaultDraw()">
+					{{item.label}}
+				</md-radio-button>
+			</md-radio-group>
+			
+			<expander-box id="filterSpatialtype"    border-color="rgb(204, 204, 204)"  color="black" toolbar-class="ternaryToolbar" expanded='true' title='{{::translate.load("gisengine.info.message.spatialFilter")}}' ng-if="selectModeInteraction.type=='cross'">
+
+				<md-radio-group ng-model="selectModeInteraction.selectedFilterType">
+					<div layout="row" layout-wrap>
+						<div flex=30>
+							<md-radio-button ng-repeat="item in filterTypes" class="md-primary" 
+							ng-value="item.type" ng-click="setSelectedFilterType(item.type)">{{item.label}}</md-radio-button> 
+						</div>
+						<div flex = 20 style="margin-top: -30px;margin-left:30px;">
+			  				<md-input-container  ng-show="selectModeInteraction.selectedFilterType=='near'" class="md-block">
+	      		 				<label>Insert</label>
+	       		 				<input required type="number" min="0" step="any" name="rate" ng-model="measureInsert"  ng-change="saveMeasure(selectMisure,measureInsert,'near')" />
+	  						</md-input-container>
+			 			</div>
+						<div flex=20 style="margin-top: -30px;margin-left:20px;">
+							<md-select class="md-block" selected="kilometers" ng-model="selectMisure" placeholder="Select a unite of misure" ng-show="selectModeInteraction.selectedFilterType=='near'"
+					 		ng-change="saveMeasure(selectMisure,measureInsert,'near')">
+				 				<md-option ng-value="misure.type" ng-repeat="misure in typeOfMisure">{{ misure.label }}</md-option>
+		  					</md-select>
+		  				</div>
+	  				</div>
+				</md-radio-group>
+		 
+			</expander-box>
+		</expander-box>
+		
+		<expander-box id="layer" layout="column" expanded='true' title='{{::translate.load("gisengine.rigthMenu.tabs.layer")}}' ng-show="visibility.showLayer"> 
+			<custom-toolbar-action>
+			<span flex ></span>
+				<md-button   aria-label="add more" class="md-icon-button" ng-click="addLayerFromCatalogue($event);$event.stopPropagation();">
+					<md-icon md-menu-origin md-font-icon="fa fa-plus">
+					</md-icon>
+				</md-button>
+			</custom-toolbar-action>
+			
+			<expander-box id="targetLayer" color="black" toolbar-class="ternaryToolbar"  border-color="rgb(204, 204, 204)" expanded='true' title="{{::translate.load('gisengine.filter.targetLayers')}}">
+				<div  layout="row" layout-wrap  ng-repeat="(targName,targObj) in geoModule_templateLayerData">
+						<md-checkbox ng-checked="targetLayerIsLoaded(targObj)" ng-click="toggleTargetLayer(targObj)" class="md-primary" >
+							{{targName}}
+						</md-checkbox>
+					</div>
+				</div>
+			</expander-box>
+			
+			<expander-box layout="column" id="categoryLayer" color="black"    toolbar-class="ternaryToolbar"  border-color="rgb(204, 204, 204)" expanded='true' title='CatKey'  ng-repeat="(CatKey,CatVal) in layers">
+				<div  layout="row" ng-repeat="(key,val) in CatVal" layout-align="start center">
+					<md-checkbox ng-checked="geoModule_layerServices.layerIsLoaded(val)" ng-click="toggleLayer(val)" class="md-primary" >
+						{{val.label}}
+					</md-checkbox>
+					<div flex></div>
+					<md-button class="md-icon-button" style="margin-top:-5px" ng-click="selectFilters($event,val)" ng-switch on="filterOFF(val)">
+						<md-icon md-font-icon="fa fa-filter"  ng-switch-when="false" aria-label="Close dialog"></md-icon>
+						<md-icon md-font-icon="fa fa-filter" ng-switch-when="true" style="color:red"  aria-label="Close dialog"></md-icon>
+					</md-button>
+				</div>
+			</expander-box>
+		</expander-box>
+		
+		<expander-box id="baseLayer" layout="column" ng-show="visibility.showBaseLayer" local-scope="layerLocalScope"  expanded='true' title='{{::translate.load("gisengine.geoLayer.catalogue.tableColumn.baseLayer")}}'> 
+			
+			<md-radio-group ng-model="geoModule_layerServices.selectedBaseLayerOBJ">
+				<expander-box id="catBaseLayer" layout="column" color="black" toolbar-class="ternaryToolbar" border-color="rgb(204, 204, 204)"  expanded='true' title='CatKey'  ng-repeat="(CatKey,CatVal) in baseLayers">
+					<md-radio-button ng-repeat="(key,val) in CatVal"   ng-click="showBaseLayer(val)"  class="md-primary" ng-value="val"  >
+		     	 		{{val.label}}
+		         	</md-radio-button>
+		         </expander-box>
+			</md-radio-group>
+		</expander-box>
+
+		<expander-box id="analitycalFilter" layout="column"  expanded='true' title='{{::translate.load("gisengine.filter.analitical")}}' ng-if="geoModule_template.noDatasetReport && geoModule_template.showFilters"> 
+			
+			<md-input-container ng-if="geoModule_driverParameters[analF]!=undefined && geoModule_driverParameters[analF].length>0" ng-repeat="analF in geoModule_template.analitycalFilter" class="md-block">
+				<label>{{analF}}</label>
+				<md-select ng-model="geoModule_template.selectedAnalyticalFilter[analF]" multiple md-on-close="updateAllTargetLayer()">
+					<md-option ng-repeat="alFVal in geoModule_driverParameters[analF]" value="{{alFVal}}"  >
+						{{alFVal}}
+					</md-option>
+				</md-select>
+			</md-input-container>
+		</expander-box>
+			 
+	</md-content>
+	
+</div>
+
+	
+	  <!-- template -->
+
+<script type="text/ng-template" id="layerFromCatalogueTemplate.html">
+<md-dialog aria-label="select catalogue"  ng-cloak style="  height: 80% ;width: 80%;">
+  <form layout-fill>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{title}}</h2>
+        <span flex></span>
+        
+      </div>
+    </md-toolbar>
+    <md-dialog-content flex style=" padding: 0; position:relative;">
+  
+		<angular-table layout-fill style="position:absolute"
+						 id="layerCatalogue"
+						 ng-model=layerCatalogueList
+ 						 columns=columnList
+						 columns-search=columnSearch
+						 highlights-selected-item=true
+						 show-search-bar=true
+						 multi-select=true
+						selected-item=selectedLayerList
+						click-function="toggleLayerFromCatalogue(row)"
+						menu-option=menuItem
+		></angular-table>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+  
+      <span flex></span>
+      <md-button ng-click="cancel()">
+     Annulla
+      </md-button>
+      <md-button ng-click="updateChange()" style="margin-right:20px;" >
+        Salva
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
+
+</script>
+
+<script  type="text/ng-template" id="filtersforLayerTemplate.html">
+<md-dialog aria-label="layer" ng-cloak  >
+<md-toolbar >
+    	<div  class="md-toolbar-tools">
+   		Select Filters
+   		 </div>
+
+  </md-toolbar>
+
+  <md-dialog-content>
+      <div class="md-dialog-content" style="height: 50%;padding: 0;">
+			<md-input-container style="margin-left:50px; margin-right:50px;" class="md-block" ng-repeat="filterObj in filters" class="block">
+  				<label>{{filterObj.filter}}</label>
+
+ 				<input type="text" ng-model="filterObj.model">
+			</md-input-container>
+  		 </div>
+   </md-dialog-content>
+
+ <md-dialog-actions layout="row">
+  
+      <span flex></span>
+		<md-button ng-click="applyFilter()">Ok</md-button>
+	
+		<md-button ng-click="cancelFilter()">Cancel</md-button>
+	</md-dialog-actions>
+
+</md-dialog>
+</script>
