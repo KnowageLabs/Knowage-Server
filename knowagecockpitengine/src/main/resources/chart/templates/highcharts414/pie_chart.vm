@@ -530,7 +530,11 @@
 		   	
 		    #set($relatedSerieShowAbsValue = $relatedSerie.showAbsValue)
 			#set($relatedSerieShowPercentage = $relatedSerie.showPercentage)
-			#set($relatedSerieCategoryValue = $relatedSerie.showCategoryValue)
+			#if(!$relatedSerie.showCategoryValue)
+				#set($relatedSerieCategoryValue = true)
+			#else
+				#set($relatedSerieCategoryValue = $relatedSerie.showCategoryValue)
+			#end
 			#set($showDataLabels = $relatedSerieShowAbsValue || $relatedSerieShowPercentage || $relatedSerieCategoryValue)						
 			
 			#if ($relatedSerie.precision == "")
