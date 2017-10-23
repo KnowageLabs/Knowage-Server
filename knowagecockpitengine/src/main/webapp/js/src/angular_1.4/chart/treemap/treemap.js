@@ -583,7 +583,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 
 
 
-function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCrossNavigationTo) {
+function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCrossNavigationTo,exportWebApp) {
 	var start;
 	 var startDate;
 	 var endDate;
