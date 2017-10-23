@@ -35,6 +35,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
+import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
@@ -117,7 +118,7 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 
 	private void fillParametersValues(BIObject document, List<Parameter> parameters) {
 		logger.debug("IN");
-
+		ParametersDecoder decoder = new ParametersDecoder();
 		logger.debug("fill values of object " + document.getLabel());
 		List<BIObjectParameter> documentParameters = document.getBiObjectParameters();
 		for (BIObjectParameter documentParameter : documentParameters) {
@@ -128,6 +129,9 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 			for (Parameter parameter : parameters) {
 				if (parameter.getUrlName().equals(parameterUrl)) {
 					String value = parameter.getValue();
+
+					value = decoder.decodeParameter(value);
+
 					if (value != null) {
 						documentParameterValues.add(value);
 						hasValue = true;
