@@ -314,7 +314,8 @@ public class ExecutionProxy {
 
 			// built the request to sent to the engine
 			HttpMethod httpMethod;
-			if ("it.eng.spagobi.engines.drivers.cockpit.CockpitDriver".equals(eng.getDriverName())) {
+			if ("it.eng.spagobi.engines.drivers.cockpit.CockpitDriver".equals(eng.getDriverName())
+					|| "it.eng.spagobi.engines.drivers.chart.ChartDriver".equals(eng.getDriverName())) {
 				GetMethod getMethod = new GetMethod(urlEngine);
 				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 				Iterator iterMapPar = mapPars.keySet().iterator();
@@ -380,7 +381,10 @@ public class ExecutionProxy {
 		Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""), "External engine url is not defined!!");
 		urlEngine = resolveRelativeUrls(urlEngine);
 
-		if (!"it.eng.spagobi.engines.drivers.cockpit.CockpitDriver".equals(eng.getDriverName())) {
+		if (!"it.eng.spagobi.engines.drivers.cockpit.CockpitDriver".equals(eng.getDriverName())
+				&& !"it.eng.spagobi.engines.drivers.chart.ChartDriver".equals(eng.getDriverName())
+
+		) {
 			// ADD this extension because this is a BackEnd engine invocation
 			urlEngine = urlEngine + backEndExtension;
 		}

@@ -14,7 +14,19 @@
 		dee.getExportationUrl = function(format,paramsExportType,actionPath){
 			// https://production.eng.it/jira/browse/KNOWAGE-1443
 			// actionPath has no '/' at the beginning
-			var urlService = sbiModule_config.host + '/' + actionPath+'?';
+
+			if(!actionPath.startsWith('/')){
+				actionPath = '/' + actionPath;
+			}
+
+			var urlService = null;
+			if(actionPath.includes('?')){
+				urlService = sbiModule_config.host + actionPath+'&';
+			}
+			else{
+				urlService = sbiModule_config.host + actionPath+'?';
+			}
+
 			var sbiContext = 'SBICONTEXT='+sbiModule_config.contextName
 			var docName = '&documentName='+execProperties.executionInstance.OBJECT_LABEL;
 			var sbiExeRole = '&SBI_EXECUTION_ROLE='+execProperties.selectedRole.name;
@@ -224,6 +236,14 @@
 
 
 		}
+
+
+		dee.exportDocCompTo = function(exportType, mimeType){
+			dee.exporting = true;
+
+			window.open(dee.getExportationUrl(exportType,'',sbiModule_config.adapterPath+'?ACTION_NAME=EXPORT_DOCUMENT_COMPOSITION_PDF&inline=false') , 'name', 'resizable=1,height=750,width=1000');
+		};
+
 
 		dee.exportCockpitTo = function(exportType, mimeType){
 			dee.exporting = true;
@@ -587,16 +607,42 @@
 			case "DOCUMENT_COMPOSITE":
 				switch (type) {
 				case "XLS":
-					expObj.func = function(){dee.exportCockpitTo('xls','application/vnd.ms-excel')};
-					break;
+					expObj.func = function(){
+					if(engineDriver!=""){
+						dee.exportCockpitTo('xls','application/vnd.ms-excel');
+					}
+					else{
+						dee.exportDocCompTo('xls','application/vnd.ms-excel');
+					}
+				};
+				break;
 				case "XLSX":
-					expObj.func = function(){dee.exportCockpitTo('xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')};
-					break;
+					expObj.func = function(){
+					if(engineDriver!=""){
+						dee.exportCockpitTo('xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+					}
+					else{
+						dee.exportDocCompTo('xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+					}
+				};
+				break;
 				case "PDF":
-					expObj.func = function(){dee.exportCockpitTo('pdf','application/pdf')};
-					break;
+					expObj.func = function(){
+					if(engineDriver!=""){
+						dee.exportCockpitTo('pdf','application/pdf')}
+					else{
+						dee.exportDocCompTo('pdf','application/pdf')};
+
+				};
+				break;
 				case "JPG":
-					expObj.func = function(){dee.exportCockpitTo('JPG')};
+					expObj.func = function(){
+					if(engineDriver!=""){
+						dee.exportCockpitTo('JPG')}
+					else{
+						dee.exportDocCompTo('JPG')};
+				};
+
 					break;
 				case "APDF":
 					expObj.func = function(){dee.exportCockpitTablesToAPDF()};
