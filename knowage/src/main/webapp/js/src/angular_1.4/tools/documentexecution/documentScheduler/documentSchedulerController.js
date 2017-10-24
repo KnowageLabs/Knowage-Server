@@ -1,41 +1,41 @@
 (function() {
 	var documentExecutionModule = angular.module('documentExecutionModule');
-	
+
 	documentExecutionModule.directive('documentScheduler', ['sbiModule_config', function(sbiModule_config){
 		return {
 			restrict: 'E',
-			templateUrl: sbiModule_config.contextName 
+			templateUrl: sbiModule_config.contextName
 				+ '/js/src/angular_1.4/tools/documentexecution/documentScheduler/documentSchedulerTemplate.jsp',
 			controller: documentSchedulerCtrl,
 		};
 	}]);
-	
-	
+
+
 	var documentSchedulerCtrl = function($scope, sbiModule_config, sbiModule_translate, documentExecuteServices, $mdDialog
 			,sbiModule_restServices,docExecute_urlViewPointService,execProperties,docExecute_paramRolePanelService,$filter,sbiModule_download) {
-			
+
 		$scope.column = [
                         {label:sbiModule_translate.load("sbi.generic.name"),name:"name"},
                         {label:sbiModule_translate.load("sbi.generic.descr"),name:"description"},
                         {label:sbiModule_translate.load("sbi.generic.creationdate"),name:"dateCreation",transformer:function(data){
-                       	 return $filter('date')(data, "dd/MM/yyyy")
+                        	return $filter('date')(data, sbiModule_config.dateFormat);
                        	 }}];
 
 		$scope.closeFilter = function(){
 			$mdDialog.cancel();
 		}
-		
-		
+
+
 		$scope.getDownload=function(item){
-			
+
 			console.log('item to download ' , item);
-			
+
 			sbiModule_restServices.get("1.0/documentsnapshot","getSnapshotContent","idSnap="+item.id+"&biobjectId="+item.biobjId).success(
 					function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
 							console.log("Snapshot non Ottenuti");
 						} else {
-							var text ;		
+							var text ;
 							var arr = data.snapshot;
 							var byteArray = new Uint8Array(arr);
 							sbiModule_download.getBlob(byteArray, item.name, item.contentType,'');
@@ -54,18 +54,18 @@
 
 
 		}
-		
-		
-		
-		$scope.gvpCtrlSchedulerMenuOpt = 
-			[ 			 		               	
+
+
+
+		$scope.gvpCtrlSchedulerMenuOpt =
+			[
 			 { // Fill Form
 				 label: sbiModule_translate.load("sbi.generic.download"),
 				 icon:"fa fa-download",
 				 color:'#222222',
-				 action : function(item) { 
+				 action : function(item) {
 					 docExecute_urlViewPointService.snapshotItem = item;
-					 
+
 					 docExecute_urlViewPointService.snapshotUrl=docExecute_urlViewPointService.snapshotUrlPath+
 					   "&ACTION_NAME=GET_SNAPSHOT_CONTENT"+"&SNAPSHOT_ID=" + item.id+"&OBJECT_ID=" + item.biobjId+
 					   "&LIGHT_NAVIGATOR_DISABLED=TRUE";
@@ -77,8 +77,8 @@
 							//parent: angular.element(document.body),
 							clickOutsideToClose:true
 						})
-					 					 
-				 }	
+
+				 }
 			 }
 			 ,{   //Delete Action
 				 label: sbiModule_translate.load("sbi.generic.delete"),
@@ -97,7 +97,7 @@
 						);
 					$mdDialog.show(confirm).then(function() {
 						var index =docExecute_urlViewPointService.gvpCtrlSchedulers.indexOf(item);
-						console.log('item ' , item); 
+						console.log('item ' , item);
 						var objSnapshot = JSON.parse('{ "SNAPSHOT" : "'+ item.id +'"}');
 							sbiModule_restServices.post(
 									"1.0/documentsnapshot",
@@ -107,7 +107,7 @@
 									   documentExecuteServices.showToast(data.errors[0].message);
 									 }else{
 										 docExecute_urlViewPointService.gvpCtrlSchedulers.splice(index, 1);
-											 //message success 
+											 //message success
 									 }
 								   //gvpctl.selectedParametersFilter = [];
 							})
@@ -116,15 +116,15 @@
 					}, function() {
 						console.log('Annulla');
 						//docExecute_urlViewPointService.getViewpoints();
-					});	
+					});
 				 }
-			 } 	
+			 }
 		 ];
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
 	};
 })();

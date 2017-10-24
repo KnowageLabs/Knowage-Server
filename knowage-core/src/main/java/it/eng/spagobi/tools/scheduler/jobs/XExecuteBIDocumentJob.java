@@ -125,8 +125,10 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 					if (sbiWsEvents.size() != 0) {
 						Date attDate = new Date();
 						for (SbiWsEvent sb : sbiWsEvents) {
-							sb.setTakeChargeDate(attDate);
-							wsEventsDao.updateEvent(sb);
+							if (sb.getTakeChargeDate() == null) {
+								sb.setTakeChargeDate(attDate);
+								wsEventsDao.updateEvent(sb);
+							}
 						}
 						eventSolved = true;
 					}

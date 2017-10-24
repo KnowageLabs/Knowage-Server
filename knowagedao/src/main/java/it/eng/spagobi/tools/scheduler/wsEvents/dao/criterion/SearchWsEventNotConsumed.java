@@ -15,26 +15,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.tools.scheduler.wsEvents.dao;
+package it.eng.spagobi.tools.scheduler.wsEvents.dao.criterion;
 
-import java.util.List;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 
-import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.tools.scheduler.wsEvents.SbiWsEvent;
 
-public interface SbiWsEventsDao extends ISpagoBIDao {
+public class SearchWsEventNotConsumed implements ICriterion<SbiWsEvent> {
 
-	public List<SbiWsEvent> getWsEventList();
+	public SearchWsEventNotConsumed() {
+	}
 
-	public SbiWsEvent loadSbiWsEvent(Integer id);
-
-	public List<SbiWsEvent> loadSbiWsEvents(String eventName);
-
-	public List<SbiWsEvent> loadSbiWsEventsNotConsumed();
-
-	public Integer triggerEvent(SbiHibernateModel sbiWsEvent);
-
-	public void updateEvent(SbiHibernateModel sbiWsEvent);
+	@Override
+	public Criteria evaluate(Session session) {
+		Criteria c = session.createCriteria(SbiWsEvent.class);
+		c.add(Restrictions.isNull("takeChargeDate"));
+		return c;
+	}
 
 }

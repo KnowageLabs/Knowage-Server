@@ -17,12 +17,6 @@
  */
 package it.eng.spagobi.tools.scheduler.dao.quartz;
 
-import it.eng.spagobi.tools.scheduler.bo.CronExpression;
-import it.eng.spagobi.tools.scheduler.bo.Job;
-import it.eng.spagobi.tools.scheduler.bo.Trigger;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -36,6 +30,12 @@ import org.json.JSONObject;
 import org.quartz.JobDataMap;
 import org.quartz.Scheduler;
 import org.quartz.TriggerUtils;
+
+import it.eng.spagobi.tools.scheduler.bo.CronExpression;
+import it.eng.spagobi.tools.scheduler.bo.Job;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -64,13 +64,13 @@ public class QuartzNativeObjectsConverter {
 
 		JobDataMap parameters = convertParametersToNativeObject(spagobiJob.getParameters());
 		if (parameters.containsKey(MERGE_ALL_SNAPSHOTS)) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while converting Job to native object: " + MERGE_ALL_SNAPSHOTS
-					+ " property already defined");
+			throw new SpagoBIRuntimeException(
+					"An unexpected error occured while converting Job to native object: " + MERGE_ALL_SNAPSHOTS + " property already defined");
 		}
 		parameters.put(MERGE_ALL_SNAPSHOTS, spagobiJob.isMergeAllSnapshots() ? "true" : "false");
 		if (parameters.containsKey(COLLATE_SNAPSHOTS)) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while converting Job to native object: " + COLLATE_SNAPSHOTS
-					+ " property already defined");
+			throw new SpagoBIRuntimeException(
+					"An unexpected error occured while converting Job to native object: " + COLLATE_SNAPSHOTS + " property already defined");
 		}
 		parameters.put(COLLATE_SNAPSHOTS, spagobiJob.isCollateSnapshots() ? "true" : "false");
 		quartzJob.setJobDataMap(parameters);
@@ -252,7 +252,10 @@ public class QuartzNativeObjectsConverter {
 		Set<String> parameterNames = quartzParameters.keySet();
 		for (String parameterName : parameterNames) {
 			String parameterValue = (String) quartzParameters.get(parameterName);
-			spagobiParameters.put(parameterName, parameterValue.replaceAll("\"", "'"));
+			if (parameterValue != null) {
+				parameterValue = parameterValue.replaceAll("\"", "'");
+			}
+			spagobiParameters.put(parameterName, parameterValue);
 		}
 		return spagobiParameters;
 	}
