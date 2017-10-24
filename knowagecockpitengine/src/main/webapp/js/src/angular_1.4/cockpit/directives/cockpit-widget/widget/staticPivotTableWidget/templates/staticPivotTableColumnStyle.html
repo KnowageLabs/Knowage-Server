@@ -31,14 +31,20 @@
 				 </div>
 				 
 				 <div class="md-dialog-content" layout="column"  ng-if="selectedColumn.widgetType=='staticPivotTable'">
-				 <!-- only for static pivot table -->
+
 				 	<md-checkbox ng-disabled="selectedColumn.disableShowHeader" flex ng-model="selectedColumn.showHeader">
 								{{translate.load("sbi.cockpit.table.showHeader")}}
 					</md-checkbox>
-					<md-input-container>
-					  <label>{{translate.load('sbi.cockpit.table.alias')}}</label>
-					  <input ng-model="selectedColumn.alias">
-					</md-input-container>							
+				 	<div layout-margin layout="row" flex class="relative"> 
+						<md-input-container flex=50>
+						  <label>{{translate.load('sbi.cockpit.table.columnname')}}</label>
+						  <input ng-model="selectedColumn.id"  ng-disabled="true">
+						</md-input-container>
+						<md-input-container flex=50>
+						  <label>{{translate.load('sbi.cockpit.table.title')}}</label>
+						  <input ng-model="selectedColumn.alias">
+						</md-input-container>	
+				    </div> 					
 					<md-input-container ng-if="selectedColumn.fieldType=='MEASURE'">
 						<label>{{translate.load('sbi.cockpit.aggregationwindow.selectAggregation')}}</label>
 						<md-select ng-model="selectedColumn.funct">
