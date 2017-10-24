@@ -105,9 +105,9 @@ public class ExcelExporter {
 			}
 		}
 
-		String[] csvData = getCsvSheets(templateString);
-		if (csvData != null) {
-			importCsvData(csvData, wb);
+		ExcelSheet[] excelSheets = getExcelSheets(templateString);
+		if (excelSheets != null) {
+			importCsvData(excelSheets, wb);
 		}
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -122,83 +122,168 @@ public class ExcelExporter {
 		return out.toByteArray();
 	}
 
-	private String[] getCsvSheets(String templateString) {
-		List<String> csvs = new ArrayList<String>(0);
+	private ExcelSheet[] getExcelSheets(String templateString) {
+		List<ExcelSheet> sheets = new ArrayList<>(0);
 		try {
 			JSONObject template = new JSONObject(templateString);
-
-			JSONObject configuration = template.getJSONObject("configuration");
-
-			JSONArray sheets = template.getJSONArray("sheets");
-			for (int i = 0; i < sheets.length(); i++) {
-				JSONObject sheet = sheets.getJSONObject(i);
-				int sheetIndex = sheet.getInt("index");
-
-				JSONArray widgets = sheet.getJSONArray("widgets");
-				for (int j = 0; j < widgets.length(); j++) {
-					JSONObject widget = widgets.getJSONObject(j);
-					String widgetType = widget.getString("type");
-					if ("table".equals(widgetType)) {
-						JSONObject datasetObj = widget.getJSONObject("dataset");
-						int datasetId = datasetObj.getInt("dsId");
-						IDataSet iDataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
-						String datasetLabel = iDataset.getLabel();
-
-						Map<String, Object> map = new java.util.HashMap<String, Object>();
-
-						JSONObject aggregations = getAggregationsFromTableWidget(widget, configuration);
-						logger.debug("aggregations = " + aggregations);
-						map.put("aggregations", URLEncoder.encode(aggregations.toString(), "UTF-8"));
-
-						JSONObject parameters = getParametersFromTableWidget(widget, configuration);
-						logger.debug("parameters = " + parameters);
-						map.put("parameters", URLEncoder.encode(parameters.toString(), "UTF-8"));
-
-						JSONObject summaryRow = getSummaryRowFromTableWidget(widget);
-						if (summaryRow != null) {
-							logger.debug("summaryRow = " + summaryRow);
-							map.put("summaryRow", URLEncoder.encode(summaryRow.toString(), "UTF-8"));
-						}
-
-						if (getRealtimeFromTableWidget(datasetId, configuration)) {
-							logger.debug("realtime = true");
-							map.put("realtime", true);
-						}
-
-						int limit = getLimitFromTableWidget(widget);
-						if (limit > 0) {
-							logger.debug("limit = " + limit);
-							map.put("limit", limit);
-						}
-
-						JSONObject likeSelections = getLikeSelectionsFromTableWidget(widget, configuration);
-						if (likeSelections != null) {
-							logger.debug("likeSelections = " + likeSelections);
-							map.put("likeSelections", URLEncoder.encode(likeSelections.toString(), "UTF-8"));
-						}
-
-						JSONObject selections = getSelectionsFromTableWidget(widget, configuration);
-						logger.debug("selections = " + URLEncoder.encode(selections.toString(), "UTF-8"));
-
-						ExcelExporterClient client = new ExcelExporterClient();
-						String csv;
-						try {
-							JSONObject datastore = client.getDataStore(map, datasetLabel, userUniqueIdentifier, selections.toString());
-							logger.debug("datastore = " + datastore.toString());
-							csv = getCsvSheet(datastore, widget);
-						} catch (Exception e) {
-							logger.error("Unable to get data", e);
-							csv = "";
-						}
-						csvs.add(csv);
-					}
-				}
-			}
+			sheets.addAll(getCsvsFromDatasets(template));
+			sheets.addAll(getCsvsFromWidgets(template));
 		} catch (JSONException | EMFUserError | UnsupportedEncodingException e) {
 			logger.error("Unable to load template", e);
 		}
 
-		return csvs.toArray(new String[0]);
+		return sheets.toArray(new ExcelSheet[0]);
+	}
+
+	private List<ExcelSheet> getCsvsFromDatasets(JSONObject template) throws JSONException, EMFUserError, UnsupportedEncodingException {
+		logger.debug("IN");
+
+		JSONObject configuration = template.getJSONObject("configuration");
+		JSONArray datasetsObj = configuration.getJSONArray("datasets");
+
+		List<ExcelSheet> excelSheets = new ArrayList<>(datasetsObj.length());
+		for (int i = 0; i < datasetsObj.length(); i++) {
+			JSONObject datasetObj = datasetsObj.getJSONObject(i);
+			int datasetId = datasetObj.getInt("dsId");
+			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
+			String datasetLabel = dataset.getLabel();
+
+			Map<String, Object> map = new java.util.HashMap<String, Object>();
+
+			JSONObject parameters = datasetObj.getJSONObject("parameters");
+			logger.debug("parameters = " + parameters);
+			map.put("parameters", URLEncoder.encode(parameters.toString(), "UTF-8"));
+
+			if (getRealtimeFromTableWidget(datasetId, configuration)) {
+				logger.debug("realtime = true");
+				map.put("realtime", true);
+			}
+
+			JSONObject datastoreObj = getDatastore(datasetLabel, map, "");
+			String csv = datastoreObj != null ? getCsvSheet(datastoreObj) : "";
+			excelSheets.add(new ExcelSheet(datasetLabel, csv));
+		}
+
+		logger.debug("OUT");
+		return excelSheets;
+	}
+
+	private List<ExcelSheet> getCsvsFromWidgets(JSONObject template) throws JSONException, EMFUserError, UnsupportedEncodingException {
+		logger.debug("IN");
+
+		JSONObject configuration = template.getJSONObject("configuration");
+		JSONArray sheets = template.getJSONArray("sheets");
+
+		List<ExcelSheet> excelSheets = new ArrayList<>(sheets.length());
+		for (int i = 0; i < sheets.length(); i++) {
+			excelSheets.add(null); // manage sheet index later
+		}
+
+		for (int i = 0; i < sheets.length(); i++) {
+			JSONObject sheet = sheets.getJSONObject(i);
+			int sheetIndex = sheet.getInt("index");
+
+			JSONArray widgets = sheet.getJSONArray("widgets");
+			for (int j = 0; j < widgets.length(); j++) {
+				JSONObject widget = widgets.getJSONObject(j);
+				String widgetType = widget.getString("type");
+				JSONObject content = widget.getJSONObject("content");
+				String widgetName = content.getString("name");
+
+				if ("table".equals(widgetType)) {
+					JSONObject datasetObj = widget.getJSONObject("dataset");
+					int datasetId = datasetObj.getInt("dsId");
+					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
+					String datasetLabel = dataset.getLabel();
+
+					Map<String, Object> map = new java.util.HashMap<String, Object>();
+
+					JSONObject aggregations = getAggregationsFromTableWidget(widget, configuration);
+					logger.debug("aggregations = " + aggregations);
+					map.put("aggregations", URLEncoder.encode(aggregations.toString(), "UTF-8"));
+
+					JSONObject parameters = getParametersFromTableWidget(widget, configuration);
+					logger.debug("parameters = " + parameters);
+					map.put("parameters", URLEncoder.encode(parameters.toString(), "UTF-8"));
+
+					JSONObject summaryRow = getSummaryRowFromTableWidget(widget);
+					if (summaryRow != null) {
+						logger.debug("summaryRow = " + summaryRow);
+						map.put("summaryRow", URLEncoder.encode(summaryRow.toString(), "UTF-8"));
+					}
+
+					if (getRealtimeFromTableWidget(datasetId, configuration)) {
+						logger.debug("realtime = true");
+						map.put("realtime", true);
+					}
+
+					int limit = getLimitFromTableWidget(widget);
+					if (limit > 0) {
+						logger.debug("limit = " + limit);
+						map.put("limit", limit);
+					}
+
+					JSONObject likeSelections = getLikeSelectionsFromTableWidget(widget, configuration);
+					if (likeSelections != null) {
+						logger.debug("likeSelections = " + likeSelections);
+						map.put("likeSelections", URLEncoder.encode(likeSelections.toString(), "UTF-8"));
+					}
+
+					JSONObject selections = getSelectionsFromTableWidget(widget, configuration);
+					logger.debug("selections = " + selections);
+
+					JSONObject datastoreObj = getDatastore(datasetLabel, map, selections.toString());
+					String csv = datastoreObj != null ? getCsvSheet(datastoreObj, widget) : "";
+					excelSheets.set(sheetIndex, new ExcelSheet(widgetName, csv));
+				}
+			}
+		}
+
+		logger.debug("OUT");
+		return excelSheets;
+	}
+
+	private JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections) {
+		ExcelExporterClient client = new ExcelExporterClient();
+		try {
+			JSONObject datastore = client.getDataStore(map, datasetLabel, userUniqueIdentifier, selections);
+			return datastore;
+		} catch (Exception e) {
+			logger.error("Unable to get data", e);
+			return null;
+		}
+	}
+
+	private String getCsvSheet(JSONObject datastore) throws JSONException {
+		StringBuilder sb = new StringBuilder();
+
+		JSONObject metaData = datastore.getJSONObject("metaData");
+		JSONArray fields = metaData.getJSONArray("fields");
+		String[] columnMap = new String[fields.length() - 1];
+		for (int i = 1; i < fields.length(); i++) {
+			JSONObject field = fields.getJSONObject(i);
+			String name = field.getString("name");
+			String header = field.getString("header");
+			columnMap[i - 1] = name;
+			sb.append(header);
+			sb.append(CSV_DELIMITER);
+		}
+		sb.append(CSV_LINE_FEED);
+
+		JSONArray rows = datastore.getJSONArray("rows");
+		for (int i = 0; i < rows.length(); i++) {
+			JSONObject row = rows.getJSONObject(i);
+			for (String column : columnMap) {
+				String value = row.optString(column);
+				if (value != null) {
+					sb.append(value);
+				}
+				sb.append(CSV_DELIMITER);
+			}
+			sb.append(CSV_LINE_FEED);
+		}
+
+		return sb.toString();
 	}
 
 	private String getCsvSheet(JSONObject datastore, JSONObject widget) throws JSONException {
@@ -486,10 +571,13 @@ public class ExcelExporter {
 		return selections;
 	}
 
-	private void importCsvData(String[] csvData, Workbook wb) {
-		for (int csvIndex = 0; csvIndex < csvData.length; csvIndex++) {
-			Sheet sheet = wb.createSheet();
-			String data = csvData[csvIndex];
+	private void importCsvData(ExcelSheet[] excelSheets, Workbook wb) {
+		for (int i = 0; i < excelSheets.length; i++) {
+			ExcelSheet excelSheet = excelSheets[i];
+
+			Sheet sheet = wb.createSheet(excelSheet.getLabel());
+
+			String data = excelSheet.getCsv();
 			String[] rows = data.split(CSV_LINE_FEED);
 			for (int rowIndex = 0; rowIndex < rows.length; rowIndex++) {
 				Row row = sheet.createRow(rowIndex);
