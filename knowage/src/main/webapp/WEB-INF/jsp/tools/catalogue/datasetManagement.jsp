@@ -594,7 +594,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						        
 								<md-input-container class="md-block">
 								
-							    	<label>{{translate.load("sbi.ds.script")}}</label>
 									<textarea  	ui-codemirror="cmOption" ng-model="selectedDataSet.script" 
 												md-select-on-focus ng-required="selectedDataSet.dsTypeCd=='Script'" ng-change="setFormDirty()"></textarea>
 									

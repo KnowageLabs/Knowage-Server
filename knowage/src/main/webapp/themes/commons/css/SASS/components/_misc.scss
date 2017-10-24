@@ -801,8 +801,20 @@ md-tab-item {
   }
 }
 
-.codeMirrorScriptEditor .CodeMirror-gutter-wrapper {
-  left: -30px !important;
+.codeMirrorScriptEditor {
+  pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+    word-wrap: break-word;
+  }
+  .CodeMirror-gutter-wrapper {
+    left: -30px !important;
+  }
+  md-card {
+    md-input-container{
+      margin: 0;
+    }
+  }
 }
 
 color-picker {

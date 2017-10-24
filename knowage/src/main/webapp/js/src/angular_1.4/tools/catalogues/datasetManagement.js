@@ -57,7 +57,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	    {"label":$scope.translate.load("sbi.generic.type"), "name":"dsTypeCd", "size":"70px"},
 	    {"label":$scope.translate.load("sbi.ds.numDocs"), "name":"usedByNDocs", "size":"60px"}
     ];
-	
+
 	$scope.sortableColumn = ["name","label","dsTypeCd"]
 
 	$scope.selectedDatasetVersion = null;
@@ -869,7 +869,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	if($scope.columnOrdering){
     		columnOrderingLabel = $scope.columnOrdering.label;
     	}
-    	
+
     	if($scope.searchValue!=""){
     		sbiModule_restServices.promiseGet("1.0/datasets", "countDataSetSearch/"+$scope.searchValue)
     		.then(function(response) {
@@ -901,7 +901,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     			if($scope.reverseOrdering==undefined){
     				$scope.reverseOrdering=false;
     			}
-    			
+
     			var columnOrderingLabel = "";
     	    	if($scope.columnOrdering){
     	    		columnOrderingLabel = $scope.columnOrdering.label;
@@ -941,7 +941,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		if(reverseOrdering!==null && reverseOrdering!==""){
 			var ordering = {"reverseOrdering":reverseOrdering,
 							"columnOrdering":columnOrderingName
-					
+
 			};
 			queryParams = queryParams+"&ordering="+angular.toJson(ordering);
 		}
@@ -2544,26 +2544,25 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	  };
 
 	 $scope.queryScripts = [
-	                        {
-	                         name: 'javascript',
-		 					 mode: 'text/javascript'
-	                        },
-	                        {
-	                         name: 'SQL',
-	                         mode: 'text/x-sql'
-	                        }
-	                       ];
+	    {
+	     name: 'javascript',
+	     mode: 'text/javascript'
+	    },
+	    {
+		 name: 'SQL',
+		 mode: 'text/x-sql'
+	    }
+    ];
 
 	 $scope.codemirrorOptions = {
-			   mode : "text/x-sql",
-			   indentWithTabs: true,
-			   smartIndent: true,
-			   lineWrapping : true,
-			   matchBrackets : true,
-			   autofocus: true,
-			   theme:"eclipse",
-			   lineNumbers: true,
-			 };
+		 mode: 'text/x-sql',
+		 lineWrapping : true,
+	   indentWithTabs: true,
+	   smartIndent: true,
+	   matchBrackets : true,
+	   theme:"eclipse",
+	   lineNumbers: true
+	 };
 
 
 	 $scope.getScriptTypes = function() {
@@ -2579,6 +2578,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 $scope.getScriptTypes();
 
 	 $scope.openEditScriptDialog = function () {
+		 $scope.forceRefresh = false;
 		   $mdDialog
 		   .show({
 		    scope : $scope,
@@ -2589,7 +2589,16 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		    clickOutsideToClose : false,
 		    hasBackdrop : false
 		   });
+
+		   $timeout(function(){
+			   if(angular.element(document).find('md-dialog').length > 0){
+					 $scope.forceRefresh = true;
+				 }
+		   },1000)
+
 	 }
+
+
 
 	 $scope.saveScript = function () {
 		 $mdDialog.hide();
@@ -2923,29 +2932,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	    }
     }
 
-    /*$scope.changePreviewPage = function(itemsPerPage, currentPageNumber){
-	var start = 0;
-	if(currentPageNumber>1){
-		start = (currentPageNumber - 1) * itemsPerPage;
-	}
-	 $scope.selectedDataSet.start = start;
- 	 $scope.selectedDataSet.limit = itemsPerPage;
- 	 sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
-	 .then(
-		function(response) {
-			console.log(response.data);
-			$scope.newDatasetMeta = response.data;
-			$scope.getPreviewSet(null);
-		},
-		function(response) {
-			$scope.translate.load(response.data.errors.messages)
-		}
-	 );
-}*/
-
-
-//$scope.numOfDSPreview = response.data.results;
-
     $scope.getNextPreviewSet = function(){
     	 if($scope.startPreviewIndex+$scope.itemsPerPage > $scope.totalItemsInPreview){
     		 $scope.startPreviewIndex=$scope.totalItemsInPreview-($scope.totalItemsInPreview%$scope.itemsPerPage);
@@ -3193,19 +3179,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	$scope.isFromSaveNoMetadata = true;
     	$scope.saveDataset();
     }
-
-//    $scope.openHelp = function () {
-//    	$mdDialog
-//		   .show({
-//		    scope : $scope,
-//		    preserveScope : true,
-//		    parent : angular.element(document.body),
-//		    controllerAs : 'openHelpDataset',
-//		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/helpDataSet.html',
-//		    clickOutsideToClose : false,
-//		    hasBackdrop : false
-//		   });
-//    }
 
     $scope.openHelp = function() {
 

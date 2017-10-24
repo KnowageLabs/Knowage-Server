@@ -28,23 +28,29 @@
 	   <md-tabs md-dynamic-height  md-border-bottom="">	            			
 			 <md-tab label='{{translate.load("sbi.ds.script");}}'>
 			 	<md-content flex class="ToolbarBox miniToolbar noBorder codeMirrorScriptEditor">
-					<md-card layout-padding>
-					<label>{{translate.load("sbi.ds.script")}}</label>
-						<md-input-container class="md-block">		    	
-							<textarea  	ui-codemirror ui-codemirror-opts="cmOption" ng-model="selectedDataSet.queryScript" 
-										md-select-on-focus ng-change="setFormDirty()"></textarea>
+					<md-card >
+						<md-input-container class="md-block noPadding">		    	
+							<div  	
+								ui-codemirror 
+								ui-codemirror-opts="cmOption" 
+								ui-refresh='forceRefresh'
+								ng-model="selectedDataSet.queryScript" 
+								md-select-on-focus 
+								ng-change="setFormDirty()"
+								></div>
 						</md-input-container>
 					</md-card>
 				</md-content>
 			</md-tab>
 			<md-tab label='{{translate.load("sbi.ds.query");}}'>
-			 	<md-content flex class="ToolbarBox miniToolbar noBorder">
-					<md-card layout-padding>
-						<md-input-container class="md-block">
-					    	<label>{{translate.load("sbi.ds.query")}}</label>
-							<textarea 	ng-model="selectedDataSet.query" ui-codemirror="{ onLoad : codemirrorLoaded }" 
-										ui-codemirror-opts="codemirrorOptions" rows="8" md-select-on-focus
-										ng-change="setFormDirty()"></textarea>
+			 	<md-content flex class="ToolbarBox miniToolbar noBorder codeMirrorScriptEditor">
+					<md-card>
+						<md-input-container class="md-block noPadding">
+							<ui-codemirror  	
+								ng-model="selectedDataSet.query" 
+								ui-refresh='forceRefresh'
+								ui-codemirror-opts="codemirrorOptions" 
+								ng-change="setFormDirty()"></ui-codemirror>
 						</md-input-container>
 					</md-card>
 				</md-content>
@@ -54,11 +60,11 @@
    </md-dialog-content>
 
     <md-dialog-actions layout="row">
-     <md-button ng-click="saveScript()" class="md-raised"  md-autofocus>
-         {{translate.load("sbi.federationdefinition.template.button.save")}}
-      </md-button>
-      <md-button ng-click="closeScript()" class="md-raised" style="margin-right:20px;" >
-        {{translate.load("sbi.federationdefinition.template.button.close")}}
-      </md-button>
+	    <md-button ng-click="closeScript()" class="md-raised md-primary" >
+	    	{{translate.load("sbi.federationdefinition.template.button.close")}}
+	    </md-button>
+	    <md-button ng-click="saveScript()" class="md-raised md-primary"  md-autofocus>
+	        {{translate.load("sbi.federationdefinition.template.button.save")}}
+	    </md-button>
     </md-dialog-actions>
 </md-dialog>
