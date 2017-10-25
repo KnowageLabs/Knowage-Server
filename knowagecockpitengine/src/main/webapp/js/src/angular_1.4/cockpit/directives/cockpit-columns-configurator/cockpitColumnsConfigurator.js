@@ -138,7 +138,7 @@
 		                             {
 		                            	 "label":"Column",
 		                            	 "name":"alias",
-		                            	 transformer:function(row,column,index){
+		                            	 transformer:function(item){
 		                            		 var template='<md-input-container class="md-block"> '
 		                            			 +'<md-select ng-model="row.alias" ng-change="scopeFunctions.changeColumn(row)">'
 		                            			 +'<md-option ng-repeat="col in scopeFunctions.columnList" ng-value="col.alias" >'
@@ -232,7 +232,7 @@
 				return angular.equals(row.fieldType, "MEASURE");
 			},
 			typeList: [{"code":"java.lang.String", "name":"String"},{"code":"java.lang.Integer", "name":"Number"},{"code":"java.math.BigDecimal", "name":"Number"}],
-			columnList : $scope.local.metadata.fieldsMeta,
+			columnList : ($scope.local && $scope.local.metadata) ? $scope.local.metadata.fieldsMeta : [] ,
 			getColor :function(){
 				return $scope.selectedColumn.style !=undefined ? $scope.selectedColumn.style.color : "";
 			},
