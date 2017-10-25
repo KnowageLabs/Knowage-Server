@@ -27,6 +27,10 @@
 									<div flex layout=column >
 										<div flex layout="row" >
 											<md-input-container flex class="md-block">
+												<label>{{::translate.load('sbi.cockpit.table.summary.title')}}</label>
+												<input class="input_class" ng-disabled="!model.settings.summary.enabled" ng-model="model.settings.summary.title" />
+											</md-input-container>
+											<md-input-container flex class="md-block">
 												<label>{{::translate.load('sbi.cockpit.table.fontfamily')}}</label>
 												<md-select ng-disabled ="!model.settings.summary.enabled" aria-label="aria-label" ng-model="model.style.summary['font-family']">
 													<md-option ng-repeat="fam in fontFamily" value="{{fam}}">{{fam}}</md-option>
@@ -38,25 +42,24 @@
 													<md-option ng-repeat="fs in cockpitModule_generalOptions.fontSizeDimension" ng-value="fs.value">{{fs.label}}</md-option>
 												</md-select>
 											</md-input-container>
+										</div>
+										<div flex layout="row" >
 											<md-input-container flex class="md-block">
 												<label>{{::translate.load('sbi.cockpit.table.fontweight')}}</label>
 												<md-select ng-disabled ="!model.settings.summary.enabled" aria-label="aria-label" ng-model="model.style.summary['font-weight']">
 													<md-option ng-repeat="weight in fontWeight" value="{{weight}}">{{weight}}</md-option>
 												</md-select>
 											</md-input-container>
+											<md-input-container flex class="md-block">
+												<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
+												<color-picker options="colorPickerProperty" ng-model="model.style.summary['color']"/>
+											</md-input-container>
+											<md-input-container flex class="md-block">
+												<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
+												<color-picker options="colorPickerProperty" ng-model="model.style.summary['background-color']"/>
+											</md-input-container>
 										</div>
-										<div flex layout=column >
-											<div flex layout="row" >
-												<md-input-container flex class="md-block">
-													<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
-													<color-picker options="colorPickerProperty" ng-model="model.style.summary['color']"/>
-												</md-input-container>
-												<md-input-container flex class="md-block">
-													<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
-													<color-picker options="colorPickerProperty" ng-model="model.style.summary['background-color']"/>
-												</md-input-container>
-											</div>
-										</div>
+											
 									</div>
 								</div>
 							</div>
@@ -208,10 +211,10 @@
 	
 	<md-card-actions layout="row" layout-align="end center">
 		<span flex></span>
-		<md-button ng-click="cancelConfiguration()" >
+		<md-button ng-click="cancelConfiguration()" class=" md-raised" >
 			{{::translate.load('sbi.generic.cancel')}}
 		</md-button>
-		<md-button ng-click="saveConfiguration()" >
+		<md-button ng-click="saveConfiguration()" class="md-primary md-raised" >
 			{{::translate.load('sbi.generic.save')}}
 		</md-button>
 	</md-card-actions>

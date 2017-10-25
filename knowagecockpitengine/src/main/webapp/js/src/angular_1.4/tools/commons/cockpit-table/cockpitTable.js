@@ -173,10 +173,6 @@
 
                 	scope.getContainerStyle = function(column){
                 		var style = {};
-//                		if(column.style && column.style.width){
-//                			style['width'] = column.style.width;
-//                			if(style['width'].indexOf('%') != -1 && column.barchart) style['width'] = '100%';
-//                		}
                 		if(column.style && column.style.td && column.style.td['justify-content']) style['justify-content'] = column.style.td['justify-content'];
                 		return style;
                 	}
