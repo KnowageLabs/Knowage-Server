@@ -5,7 +5,25 @@
 	   </md-toolbar>
 	   
 	   <md-dialog-content class="designer-buttons-dialog-content">
-	   
+	   		<md-card >
+	   			<md-card-content layout="row" >
+    				<md-checkbox aria-label="Select All Visible"
+                         ng-checked="isVisibleChecked()"
+                         ng-click="toggleAllVisible()">
+              			<span ng-if="isVisibleChecked()">Un-</span>Select All Visible
+            		</md-checkbox>
+            	
+            	
+  			
+			
+	   				<md-checkbox aria-label="Select All Clicked"
+                         ng-checked="isClickedChecked()"
+                         ng-click="toggleAllClicked()">
+              		<span ng-if="isClickedChecked()">Un-</span>Select All Clicked
+            		</md-checkbox>
+	   			 </md-card-content>
+	   		</md-card>
+	   			
 	   		   <angular-table
 							flex
 							id="olapDesignerButtonsList"
