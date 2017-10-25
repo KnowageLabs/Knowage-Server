@@ -38,7 +38,7 @@ angular.module('olap_designer_toolbar', ['sbiModule','olap_template'])
 
 function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
-		toastr, $cookies, sbiModule_docInfo, sbiModule_config,OlapTemplateService) {
+		toastr, $cookies, sbiModule_docInfo, sbiModule_config,sbiModule_user,OlapTemplateService) {
 		
 	/**
 	 * TOOLBAR is the array of button objects to send to olap template object.
@@ -934,6 +934,31 @@ $scope.setAndLoadCN = function(num) {
 	 	}
 		 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+sbiModule_config.externalBasePath;
 		 url+= "/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID="+sbiModule_docInfo.id;
+		 window.parent.location.href=url;
+
+	 }
+	 
+	 /**
+	  * Open first step
+	  */
+	 $scope.openFisrtStep = function(){
+	 
+	 	if(sbiModule_config.externalBasePath == 'null'){
+	 		sbiModule_config.externalBasePath = '/knowage';
+	 	}
+		 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port
+		 url+= 	"/"+sbiModule_config.contextName+"/restful-services/olap/startwhatif/edit?" +
+		 		"SBICONTEXT="+sbiModule_config.externalBasePath +
+		 		//"&SBI_HOST="+url +
+		 		"&DOCUMENT_LABEL="+sbiModule_docInfo.label +
+		 		"&mode=edit" +
+		 		"&user_id=" + sbiModule_user.userId +
+		 		"&document="+sbiModule_docInfo.id +
+		 		"&ENGINE=knowagewhatifengine" +
+		 		"&SBI_LANGUAGE" + sbiModule_config.curr_country
+		 		"&SBI_COUNTRY" + sbiModule_config.curr_language
+		 		"&SBI_EXECUTION_ID=" + JSsbiExecutionID
+		
 		 window.parent.location.href=url;
 
 	 }
