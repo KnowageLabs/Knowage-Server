@@ -70,7 +70,8 @@ author:...
        String jsonTemplate = null;
        String editModeCurrentContentId = null;
        ExecutionSession es = new ExecutionSession(request, request.getSession());
-       
+       String curr_language=(String)es.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+  		String curr_country=(String)es.getAttribute(SpagoBIConstants.AF_COUNTRY);
        
       whatIfEngineInstance = (WhatIfEngineInstance)es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE );
 
