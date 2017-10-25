@@ -26,16 +26,16 @@ public class ToolbarButtonManager {
 
 	private static void init() {
 		listOfToolbarButtons = new ArrayList<SbiToolbarButton>();
-		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_DRILL_THROUGH", false, false, false, ToolbarButtonCategory.DRILL_ON_DATA.toString()));
-		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_MDX", false, false, false, ToolbarButtonCategory.OLAP_FUNCTIONS.toString()));
+		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_DRILL_THROUGH", true, false, false, ToolbarButtonCategory.DRILL_ON_DATA.toString()));
+		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_MDX", true, false, false, ToolbarButtonCategory.OLAP_FUNCTIONS.toString()));
 		// listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_EDIT_MDX", false, false, false, ToolbarButtonCategory.OLAP_FUNCTIONS.toString()));
-		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_FATHER_MEMBERS", false, false, true, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
-		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_CC", false, false, false, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
-		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_HIDE_SPANS", false, false, true, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
-		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SORTING_SETTINGS", false, false, false, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
+		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_FATHER_MEMBERS", true, false, true, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
+		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_CC", true, false, false, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
+		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_HIDE_SPANS", true, false, true, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
+		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SORTING_SETTINGS", true, false, false, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
 		// listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SORTING", false, false, false, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
-		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SHOW_PROPERTIES", false, false, true, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
-		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_HIDE_EMPTY", false, false, true, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
+		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SHOW_PROPERTIES", true, false, true, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
+		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_HIDE_EMPTY", true, false, true, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SAVE_NEW", false, false, false, ToolbarButtonCategory.WHAT_IF.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_UNDO", false, false, false, ToolbarButtonCategory.WHAT_IF.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_VERSION_MANAGER", false, false, false, ToolbarButtonCategory.WHAT_IF.toString()));
