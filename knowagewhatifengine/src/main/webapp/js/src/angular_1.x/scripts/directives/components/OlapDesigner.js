@@ -145,6 +145,20 @@ $scope.saveMDX = function(){
 			
 		});			
 		};
+		
+		/**
+		  * Close the wizard
+		  */
+	$scope.closeOlapTemplate = function(){
+		 
+		 	if(sbiModule_config.externalBasePath == 'null'){
+		 		sbiModule_config.externalBasePath = '/knowage';
+		 	}
+			 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+sbiModule_config.externalBasePath;
+			 url+= "/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID="+sbiModule_docInfo.id;
+			 window.parent.location.href=url;
+
+		 }
 
 };
 
