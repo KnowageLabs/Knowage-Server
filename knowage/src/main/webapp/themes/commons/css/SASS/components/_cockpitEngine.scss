@@ -273,6 +273,14 @@
 			        }
 			        tfoot {
 			        	tr {
+			        		&.summaryTitle {
+		        				position: absolute;
+		        				td{
+		        					min-height: 30px;
+		        					line-height: 28px;
+		        					vertical-align: middle;
+		        				}
+		        			}
 			        		border-bottom: none;
 			        		&.summary {
 			        			border-bottom: 1px solid #ddd;

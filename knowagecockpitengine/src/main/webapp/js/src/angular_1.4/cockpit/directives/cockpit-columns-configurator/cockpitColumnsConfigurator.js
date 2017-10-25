@@ -115,6 +115,8 @@
 	    		  $scope.model.content.columnSelectedOfDataset.splice(index,1);
 	    	  }
 	      }];
+
+
 		$scope.metadataTableColumns=[
 		                             {
 		                            	 label:"  ",
@@ -134,9 +136,18 @@
 		                            	 hideTooltip:true
 		                             },
 		                             {
-		                            	 "label":"Column Name",
+		                            	 "label":"Column",
 		                            	 "name":"alias",
+		                            	 transformer:function(row,column,index){
+		                            		 var template='<md-input-container class="md-block"> '
+		                            			 +'<md-select ng-model="row.alias" ng-change="scopeFunctions.changeColumn(row)">'
+		                            			 +'<md-option ng-repeat="col in scopeFunctions.columnList" ng-value="col.alias" >'
+		                            			 +'{{col.alias}}'
+		                            			 +'</md-option>'
+		                            			 +'</md-select></md-input-container>';
 
+		                            		 return template;
+		                            	 },
 		                            	 hideTooltip:true
 
 		                             },
@@ -208,10 +219,20 @@
 			moveDown: function(evt,index){
 				$scope.model.content.columnSelectedOfDataset.splice(index+1, 0, $scope.model.content.columnSelectedOfDataset.splice(index, 1)[0]);
 			},
+			changeColumn: function(row){
+				for(var k in $scope.model.content.columnSelectedOfDataset){
+					if($scope.model.content.columnSelectedOfDataset[k].$$hashKey == row.$$hashKey){
+						$scope.model.content.columnSelectedOfDataset[k].alias = row.alias;
+						$scope.model.content.columnSelectedOfDataset[k].name = row.alias;
+						break;
+					}
+				}
+			},
 			canSee : function(row){
 				return angular.equals(row.fieldType, "MEASURE");
 			},
 			typeList: [{"code":"java.lang.String", "name":"String"},{"code":"java.lang.Integer", "name":"Number"},{"code":"java.math.BigDecimal", "name":"Number"}],
+			columnList : $scope.local.metadata.fieldsMeta,
 			getColor :function(){
 				return $scope.selectedColumn.style !=undefined ? $scope.selectedColumn.style.color : "";
 			},
