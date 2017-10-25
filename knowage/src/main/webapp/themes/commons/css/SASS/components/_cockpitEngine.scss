@@ -112,6 +112,9 @@
 		                margin-right: 10px;
 		            }
 		        }
+		        .next, .prev{
+		        	margin: 0;
+		        }
 		    }
 		cockpit-table {
 			outline: none;
@@ -126,27 +129,22 @@
 	        display: flex;
 		    flex-direction: column;
 		    height: 100%;
-		    overflow-y: auto;
+		    //overflow-y: auto;
 		    position: relative;
-		    &::-webkit-scrollbar-track{
-				-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-				border-radius: 10px;
-				background-color: #F5F5F5;
-			}
-
-			&::-webkit-scrollbar{
-				width: 6px;
-				height: 6px;
-				background-color: #F5F5F5;
-			}
-
-			&::-webkit-scrollbar-thumb{
-				border-radius: 10px;
-				-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-				background-color: lighten($baseColor,15%);
-			}
 		    .cockpitTableContainer {
 		    	width: 100%;
+		    	&.main {
+		    		overflow-y: auto;
+		    		@include coolScrollBars($baseColor,6px);
+		    		margin-top: 32px; 
+		    		thead {
+		    			display: none;
+		    		}
+		    	}
+		    	&.fake {
+		    		position: absolute;
+		    		top: 0;
+		    	}
 		    	//overflow-y: auto;
 		    	table.cockpitTable {
 		    		table-layout: fixed;
