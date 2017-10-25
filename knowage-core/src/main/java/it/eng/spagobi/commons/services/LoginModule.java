@@ -60,10 +60,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -112,8 +114,8 @@ public class LoginModule extends AbstractHttpModule {
 		SessionContainer sessCont = reqCont.getSessionContainer();
 		SessionContainer permSess = sessCont.getPermanentContainer();
 
-		HttpServletRequest servletRequest=getHttpRequest();
-		HttpSession httpSession=servletRequest.getSession();
+		HttpServletRequest servletRequest = getHttpRequest();
+		HttpSession httpSession = servletRequest.getSession();
 
 		// Set THEME
 		if (theme_name!=null && theme_name.length()>0){
@@ -357,6 +359,7 @@ public class LoginModule extends AbstractHttpModule {
 		}
 
 		try {
+			httpSession = regenerateSession(servletRequest);
 			profile=UserUtilities.getUserProfile(userId);
 			if (profile == null){		            	
 				logger.error("user not created");
@@ -475,6 +478,32 @@ public class LoginModule extends AbstractHttpModule {
         }
 
 		logger.debug("OUT");		
+	}
+	
+	private HttpSession regenerateSession(HttpServletRequest request) {
+
+		HttpSession oldSession = request.getSession();
+
+		Enumeration attrNames = oldSession.getAttributeNames();
+		Properties props = new Properties();
+
+		if (attrNames != null) {
+			while (attrNames.hasMoreElements()) {
+				String key = (String) attrNames.nextElement();
+				props.put(key, oldSession.getAttribute(key));
+			}
+		}	
+		//Invalidating previous session
+		oldSession.invalidate();
+		//Generate new session
+		HttpSession newSession = request.getSession(true);
+		attrNames = props.keys();
+
+		while (attrNames.hasMoreElements()) {
+			String key = (String) attrNames.nextElement();
+			newSession.setAttribute(key, props.get(key));
+		}
+		return newSession;
 	}
 
 	private boolean checkPwd(SbiUser user) throws Exception{
