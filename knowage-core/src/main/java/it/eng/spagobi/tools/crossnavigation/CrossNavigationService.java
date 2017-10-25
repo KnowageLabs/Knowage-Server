@@ -138,7 +138,7 @@ public class CrossNavigationService {
 			}
 		} catch (Exception e) {
 			logger.error("Error while saving Cross Navigation", e);
-			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while saving cross navigation");
 		}
 		return Response.ok().build();
 	}
