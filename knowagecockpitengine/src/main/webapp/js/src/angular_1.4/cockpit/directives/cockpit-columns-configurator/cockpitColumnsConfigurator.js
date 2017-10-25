@@ -211,6 +211,11 @@
 		                             ];
 
 
+		$scope.$watch('local',function(newValue,oldValue){
+			if($scope.functionsCockpitColumn.columnList && newValue){
+				angular.copy(newValue.metadata.fieldsMeta,$scope.functionsCockpitColumn.columnList);
+			}
+		})
 		$scope.functionsCockpitColumn = {
 			translate:sbiModule_translate,
 			moveUp: function(evt,index){
@@ -222,7 +227,6 @@
 			changeColumn: function(row){
 				for(var k in $scope.model.content.columnSelectedOfDataset){
 					if($scope.model.content.columnSelectedOfDataset[k].$$hashKey == row.$$hashKey){
-						$scope.model.content.columnSelectedOfDataset[k].alias = row.alias;
 						$scope.model.content.columnSelectedOfDataset[k].name = row.alias;
 						break;
 					}
