@@ -982,6 +982,50 @@ $scope.setAndLoadCN = function(num) {
 		$scope.showEditCubeInfo=function(){
 			$scope.showInfo=!$scope.showInfo;
 		}
+		
+		
+		  
+		 $scope.isClickedChecked = function() {
+			  for(var i =0;i<$scope.toolbar.length;i++){
+				  if($scope.toolbar[i].clicked!=true&&$scope.toolbar[i].clickable)
+					return false;
+				}
+			  return true;
+		};
+		
+		$scope.toggleAllClicked = function() {
+			var toChange = !$scope.isClickedChecked();
+			
+			for(var i =0;i<$scope.toolbar.length;i++){
+					if($scope.toolbar[i].clickable){
+						$scope.toolbar[i].clicked = toChange;
+						if(toChange){
+							$scope.toolbar[i].visible = toChange;
+						}
+					}
+				}
+		}
+		
+		$scope.isVisibleChecked = function() {
+			  for(var i =0;i<$scope.toolbar.length;i++){
+				  if($scope.toolbar[i].visible!=true)
+					return false;
+				}
+			  return true;
+		};
+		
+		$scope.toggleAllVisible = function() {
+			var toChange = !$scope.isVisibleChecked();
+			
+			for(var i =0;i<$scope.toolbar.length;i++){
+					
+					$scope.toolbar[i].visible = toChange;
+					if($scope.toolbar[i].clickable&&!toChange){
+						$scope.toolbar[i].clicked = toChange;
+					}
+				
+			}
+		}
 	
 };
 
