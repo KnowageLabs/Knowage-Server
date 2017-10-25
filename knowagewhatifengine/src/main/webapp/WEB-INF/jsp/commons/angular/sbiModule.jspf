@@ -34,7 +34,9 @@ sbiM.factory('sbiModule_config',function(){
 		host: '<%= request.getServerName()%>',
 	    port: '<%= request.getServerPort()%>',
 		contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
-    	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>"		
+    	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>"	,
+    	curr_country: '<%= curr_country %>',
+    	curr_language: '<%= curr_language%>',
 	};
 });
 
