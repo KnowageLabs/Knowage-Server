@@ -205,47 +205,11 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <body>
 	<%} %>
 
-
-
-	<script type="text/javascript"
-		src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/adapter/ext/ext-base.js")%>"></script>
-	<%-- Ext lib debug: --%>
-	<%--<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ext-all-debug.js")%>"></script>--%>
-	<%-- Ext lib for release --%>
-	<script type="text/javascript"
-		src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ext-all.js")%>"></script>
-	<%-- Ext js overrides --%>
-	<script type="text/javascript"
-		src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/overrides/overrides.js")%>"></script>
-
-	<%-- MIF library --%>
-	<script type="text/javascript"
-		src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/miframe/miframe-debug.js")%>"></script>
-	<script type="text/javascript"
-		src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/miframe/mifmsg.js")%>"></script>
-	<!--  jQuery (HighCharts dependency) -->
-	<script type="text/javascript"
-		src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.5.1/jquery-1.5.1.js")%>"></script>
-
-	<!--  HighCharts 
-	<script type="text/javascript"
-		src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/highcharts.js")%>"></script>
-	<script type="text/javascript"
-		src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/highcharts-more.js")%>"></script>
-	<script type="text/javascript"
-		src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/modules/exporting.js")%>"></script>
--->
 	<script type="text/javascript">
-    Ext.BLANK_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-3.1.1/resources/images/default/s.gif")%>';
 
-
-	Ext.Ajax.defaultHeaders = {
-			'Powered-By': 'Ext'
-	};
-	Ext.Ajax.timeout = 300000;
 
     // general SpagoBI configuration
-    Ext.ns("Sbi.config");
+    Sbi = new Object();
     Sbi.config = function () {
         return {
        		// login url, used when session is expired
@@ -292,7 +256,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 
 	
     // javascript-side user profile object
-    Ext.ns("Sbi.user");
+    Sbi.user = new Object();
     Sbi.user.userUniqueIdentifier = '<%= StringEscapeUtils.escapeJavaScript(userUniqueIdentifier) %>';
     Sbi.user.userId = '<%= StringEscapeUtils.escapeJavaScript(userId) %>';
     Sbi.user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>';    
@@ -337,68 +301,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 </script>
 
 
-	<%-- <SCRIPT language='JavaScript' src='<%=linkSbijs%>'></SCRIPT>--%>
-
-	<!-- import css  -->
-	<%
-	// based on mode import right css 
-	if (sbiMode.equalsIgnoreCase("WEB")) {
-%>
-
-	<LINK rel='StyleSheet'
-		href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_wa.css",currTheme)%>'
-		type='text/css' />
-	<%  } else {  %>
-	<LINK rel='StyleSheet'
-		href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_portlet.css",currTheme)%>'
-		type='text/css' />
-	<%	} %>
-
-	<LINK rel='StyleSheet'
-		href='<%=urlBuilder.getResourceLinkByTheme(request, "css/jsr168.css",currTheme)%>'
-		type='text/css' />
-
-	<LINK rel='StyleSheet'
-		href='<%=urlBuilder.getResourceLinkByTheme(request, "css/external.css",currTheme)%>'
-		type='text/css' />
-
-	<LINK rel='StyleSheet'
-		href='<%=urlBuilder.getResourceLinkByTheme(request, "css/menu.css",currTheme)%>'
-		type='text/css' />
-
-	<LINK rel='StyleSheet'
-		href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/resources/css/ext-all.css")%>'
-		type='text/css' />
-
-	<% // get the current ext theme
-	 String extTheme=ThemesManager.getTheExtTheme(currTheme);
-	 %>
-
-	<LINK rel='StyleSheet'
-		href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/resources/css/"+extTheme)%>'
-		type='text/css' />
-
-	<link rel='stylesheet' type='text/css'
-		href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/css/RowEditor.css")
-		%>' />
-
-<link rel='stylesheet' 
-		type='text/css' 
-		href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/css/MultiSelect.css")
-		%>'/>		
-		
-<link rel='stylesheet' 
-		type='text/css' 
-		href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/css/Ext.ux.ColorField.css")
-		%>' />
-
-	<%-- Ext css overrides --%>
-	<LINK rel='StyleSheet'
-		href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/overrides/resources/css/overrides.css")%>'
-		type='text/css' />
-
 	<%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
-	<%@ include file="/WEB-INF/jsp/commons/importSbiJS311.jspf"%>
 
 	<script>
 	document.onselectstart = function() { return true; }
