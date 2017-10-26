@@ -255,8 +255,10 @@ a.md-button.md-knowage-theme.md-primary, .md-button.md-knowage-theme.md-primary 
 }
 a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.md-primary.md-raised {
     &:not([disabled]) {
+        color: $lightTextColor;
         background-color: $baseColor;
         &:focus {
+            color: $lightTextColor;
             background-color: $baseColor;
         }
     }
@@ -853,3 +855,13 @@ color-picker {
   
 }
 
+/* print media */ 
+@media print {
+  @page {
+    size: auto;   /* auto is the initial value */
+    margin: 0;  /* this affects the margin in the printer settings */
+  }
+  .kn-cockpit .cockpitSheetTabsHook md-tabs-canvas .md-tab md-tab-item {
+    display: none !important; 
+  } 
+}

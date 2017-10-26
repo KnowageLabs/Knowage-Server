@@ -705,6 +705,17 @@
 				}
 				
             }
+            .floatingSearch,.floatingFilter{
+            	position: absolute;
+			    right: 0;
+			    top: 4px;
+				width: 40px !important;
+				height: 40px;
+				z-index: 11;
+				&.activeSearch{
+					right:40px;
+				}
+            }
             .noMouse {
             	pointer-events: none;
             }
