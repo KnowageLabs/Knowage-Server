@@ -1,5 +1,5 @@
 html{
-  height: 100%;
+  height: 100%; 
 }
 
 #doc, #iframeDoc {
@@ -835,6 +835,9 @@ color-picker {
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  html{
+    overflow: hidden;
+  }
   .itemboxGU {
     min-height: 100px;
   }

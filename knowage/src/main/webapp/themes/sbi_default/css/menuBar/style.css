@@ -335,7 +335,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
   
 }
 #contieniLinkAdmin ul {
-  padding-top:10px;
   padding-left: 5px;
   list-style: none;
   font-family: 'Roboto', 'Helvetica Neue, Helvetica, Arial', sans-serif;
@@ -345,6 +344,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
 #contieniLinkAdmin li {
   position: relative;
   margin-left: 1em;
+  line-height: 1.5rem
 }
 #contieniLinkAdmin li:before {
   font-family: 'FontAwesome';
@@ -352,6 +352,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
   left: -1em;
   content: "\f105";
   font-size: 12px;
+  top: 1px;
 }
 #contieniLinkAdmin li a{
   text-decoration: none;
@@ -809,6 +810,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
 .sidebar-inverse .sidebar-brand {
   color: #757575;
   background-color: transparent;
+  font-size: 12px;
 }
 .sidebar-inverse .sidebar-brand:hover,
 .sidebar-inverse .sidebar-brand:focus {
@@ -1222,6 +1224,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
     display: inline-block;
     float: none;
     width: 100%;
+    list-style-type: none;
+    padding: 0;
 }
 
 @media screen and (max-width: 768px) {
@@ -1243,6 +1247,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
     display: inline-block;
     float: none;
     width: 100%;
+    list-style-type: none;
+    padding: 0;
 }
 
 .iconBarAdmin li{

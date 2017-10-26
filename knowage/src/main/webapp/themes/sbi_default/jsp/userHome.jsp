@@ -23,17 +23,6 @@
 <!-- %@ page trimDirectiveWhitespaces="true"% -->
 <%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%>
 
-<%
-/*
-	if(isFirstUrlToCallEqualsToDefaultPage == true && jsonMenuList.length() > 0 ){
-		JSONObject menuItem = jsonMenuList.getJSONObject(0);
-		String url = menuItem.optString("firstUrl");
-		if(url != null) {
-			firstUrlToCall = url;
-		}
-	}
-*/
-%>
 
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
 <script>
@@ -42,59 +31,8 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 var firstUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
 firstUrlTocallvar = firstUrl;
 
-Ext.onReady(function () {
-	
-
-    Ext.tip.QuickTipManager.init();
-    this.mainframe = Ext.create('Ext.ux.IFrame', 
-    			{ xtype: 'uxiframe'
-    			, renderTpl: ['<iframe src="{src}" id="iframeDoc" name="{frameName}" width="100%" height="100%" frameborder="0"></iframe>']
-	  			, src: firstUrl
-  	  			, height: '100%'
-  	  			});
-    Sbi.execution.ExporterUtils.setIFrame( this.mainframe );
-    
-
-	
-	function hideItem( menu, e, eOpts){
-       // console.log('bye bye ');
-        menu.hide();
-    }
-	
-	<%if (isDirectExec.equals("FALSE")){%>
-		this.mainpanel =  Ext.create("Ext.panel.Panel",{
-	    	autoScroll: true,
-	    	height: '100%',
-	    	items: [
-				//this.titlePath	,		
-	    	    mainframe]
-	    	, dockedItems: [/*{
-		   	    xtype: 'toolbar',
-		   	    dock: 'left',
-		   	    items: itemsM
-	    	}*/]
-	    });
-	<%}else{%>	
-		this.mainpanel =  Ext.create("Ext.panel.Panel",{
-			autoScroll: true,
-			height: '100%',
-			items: [
-				//this.titlePath	,		
-			    mainframe]		
-		});
-	<%}%>  
-	
-    Ext.create('Ext.Viewport', {
-    	
-        layout: 'fit',
-        items: [this.mainpanel]
-    });
-    
-    
-    
-});
-
 </script>
+<iframe src="<%= firstUrlToCall %>" id="iframeDoc" width="100%" height="100%" frameborder="0"></iframe>
 <!-- Include AngularJS application -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/menu/menuApp.js"></script>
 

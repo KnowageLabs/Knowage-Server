@@ -111,8 +111,52 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 			
 			$scope.roleSelection = function roleSelection(){				
 				if(Sbi.user.roles && Sbi.user.roles.length > 1){
-					this.win_roles = new Sbi.home.DefaultRoleWindow({'SBI_EXECUTION_ID': ''});
-					this.win_roles.show();
+					$scope.toggleMenu();
+					$scope.serviceUrl = Sbi.config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=SET_DEFAULT_ROLE_ACTION";
+					var parentEl = angular.element(document.body);
+					$mdDialog.show({
+						parent: parentEl,
+						templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/roleSelection.html',
+						locals: {
+							title : sbiModule_translate.load('sbi.browser.defaultRole.title'),
+							okMessage : sbiModule_translate.load('sbi.browser.defaultRole.save'),
+							noDefaultRole : sbiModule_translate.load('sbi.browser.defaultRole.noDefRole'),
+							serviceUrl : $scope.serviceUrl,
+							sbiModule_translate : sbiModule_translate
+						},
+						controller: roleDialogController
+					});
+					
+					function roleDialogController(scope, $mdDialog, title, okMessage, noDefaultRole, serviceUrl,sbiModule_translate) {
+						 	scope.translate = sbiModule_translate;
+							scope.noDefaultRole = noDefaultRole;
+		        	        scope.title = title;
+		        	        scope.okMessage = okMessage;
+		        	        scope.roles = Sbi.user.roles;
+		        	        scope.defaultRole = Sbi.user.defaultRole;
+		        	        scope.serviceUrl = serviceUrl;
+		        	        scope.closeDialog = function() {
+		        	          $mdDialog.hide();
+		        	        }
+		        	        scope.save = function() {
+		        	        	$http.get(scope.serviceUrl,{
+		        	        	    params: { 
+		        	        	    		SELECTED_ROLE: scope.defaultRole, 
+		        	        	    	}
+		        	        	}).success(function(data){
+		        	        		console.log("default role set correcty");
+		        	        		 //call again the home page
+		        	        		var homeUrl = Sbi.config.contextName+"/servlet/AdapterHTTP?PAGE=LoginPage"
+		        	        		window.location.href=homeUrl;		
+		        	        	}).
+		        	        	error(function(error){
+		        	        		console.log("Error: default role NOT set");
+		        	        		$scope.showAlert('Attention, ' + $scope.userName,"Error setting default role. Please check if the server or connection is working.")
+		        	        	});		        	        	
+		        	        }
+	        	      }
+					
+					
 				} else {
 					$scope.openAside = false;
 					$scope.showAlert('Role Selection','You currently have only one role');
@@ -131,8 +175,8 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 					parent: parentEl,
 					templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/infos.jsp',
 					locals: {
-						title : LN('sbi.home.Info'),
-						okMessage : LN('sbi.general.ok')
+						title : sbiModule_translate.load('sbi.home.Info'),
+						okMessage : sbiModule_translate.load('sbi.general.ok')
 					},
 					controller: infoDialogController
 				});

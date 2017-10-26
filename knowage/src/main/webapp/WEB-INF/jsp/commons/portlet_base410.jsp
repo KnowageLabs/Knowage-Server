@@ -134,11 +134,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	// urls for resources
 	String linkSbijs = urlBuilder.getResourceLink(request, "/js/spagobi.js");
-	String linkProto = urlBuilder.getResourceLink(request, "/js/prototype/javascripts/prototype.js");
-	String linkProtoWin = urlBuilder.getResourceLink(request, "/js/prototype/javascripts/window.js");
-	String linkProtoEff = urlBuilder.getResourceLink(request, "/js/prototype/javascripts/effects.js");
-	String linkProtoDefThem = urlBuilder.getResourceLink(request, "/js/prototype/themes/default.css");
-	String linkProtoAlphaThem = urlBuilder.getResourceLink(request, "/js/prototype/themes/alphacube.css");
+	//String linkProto = urlBuilder.getResourceLink(request, "/js/prototype/javascripts/prototype.js");
+	//String linkProtoWin = urlBuilder.getResourceLink(request, "/js/prototype/javascripts/window.js");
+	//String linkProtoEff = urlBuilder.getResourceLink(request, "/js/prototype/javascripts/effects.js");
+	//String linkProtoDefThem = urlBuilder.getResourceLink(request, "/js/prototype/themes/default.css");
+	//String linkProtoAlphaThem = urlBuilder.getResourceLink(request, "/js/prototype/themes/alphacube.css");
 
 	SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
 	
@@ -262,57 +262,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<%} %>
 
 
-	<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
-commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library
-<script type="text/javascript">
-	document.domain='<%= GeneralUtilities.getSpagoBiDomain() %>';
-</script>
-<!-- END SCRIPT FOR DOMAIN DEFINITION --%>
 
-
-
-
-<%-- ---------------------------------------------------------------------- --%>
-<%-- INCLUDE EXT UX															--%>
-<%-- ---------------------------------------------------------------------- --%>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request,"/js/lib/ext-4.1.1a/ext-all.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request,"/js/lib/ext-4.1.1a/examples/ux/IFrame.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request,"/js/lib/ext-4.1.1a/ux/RowExpander.js")%>'></script>
-
-
-	<%-- ---------------------------------------------------------------------- --%>
-	<%-- INCLUDE CUSTOM CODE													--%>
-	<%-- ---------------------------------------------------------------------- --%>
-	<script type="text/javascript"
-		src='<%=urlBuilder.getResourceLink(request,"/js/src/ext/sbi/service/ServiceRegistry.js")%>' /></script>
-	<script type="text/javascript"
-		src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/service/ServiceRegistry.js")%>'></script>
-	<link id="spagobi-ext-4" rel="styleSheet"
-		href="<%=urlBuilder.getResourceLink(request,"/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css")%>"
-		type="text/css" />
-
-	<%-- ---------------------------------------------------------------------- --%>
-	<%-- INCLUDE CUSTOM EXT													--%>
-	<%-- ---------------------------------------------------------------------- --%>
-	<link id="extall" rel="styleSheet"
-		href="<%=urlBuilder.getResourceLink(request,"/js/lib/ext-4.1.1a/resources/css/ext-all.css")%>"
-		type="text/css" />
-	<link id="theme-gray" rel="styleSheet"
-		href="<%=urlBuilder.getResourceLink(request,"/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css")%>"
-		type="text/css" />
 
 	<script type="text/javascript">
-	Ext.BLANK_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/resources/images/default/s.gif")%>';
-	Ext.LEAF_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-4.1.1a/resources/themes/images/default/tree/leaf.gif")%>';
 
-
-	Ext.Ajax.defaultHeaders = {
-			'Powered-By': 'Ext'
-	};
-	Ext.Ajax.timeout = 300000;
-
-    // general SpagoBI configuration
-    Ext.ns("Sbi.config");
+    Sbi = new Object();
     Sbi.config = function () {
         return {
        		// login url, used when session is expired
@@ -354,25 +308,11 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
         	isSSOEnabled: <%= GeneralUtilities.isSSOEnabled() %>
         };
     }();
-    
-  
-   
-    var url = {
-    	host: '<%= request.getServerName()%>'
-    	, port: '<%= request.getServerPort()%>'
-    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
-    	   				  request.getContextPath().substring(1):
-    	   				  request.getContextPath()%>'
-    	    
-    };
 
-    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
-    	baseUrl: url
-    });
-	
 
     // javascript-side user profile object
-    Ext.ns("Sbi.user");
+    
+    Sbi.user = new Object();
     Sbi.user.userUniqueIdentifier = '<%= StringEscapeUtils.escapeJavaScript(userUniqueIdentifier) %>';
     Sbi.user.userId = '<%= StringEscapeUtils.escapeJavaScript(userId) %>';
     Sbi.user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>';    
@@ -412,9 +352,9 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	
 	// Sbi.user.functionalities is a javascript array containing all user functionalities' names
 	Sbi.user.functionalities = <%= buffer.toString() %>;
+	
 </script>
 
-	<script type="text/javascript" src='<%=linkSbijs%>'></script>
 
 
 	<% // get the current ext theme
@@ -438,14 +378,10 @@ String extTheme=ThemesManager.getTheExtTheme(currTheme);
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	
 	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/bootstrap/css/bootstrap.min.css")%>">
+	<!-- Integrate this css in customStyle.css -->
 	<link id="spagobi-angular" rel="styleSheet"	href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/css/menuBar/style.css")%>" type="text/css" />
 	<link id="spagobi-angular" rel="styleSheet"	href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>" type="text/css" />
 
-<%-- ---------------------------------------------------------------------- --%>
-<%-- INCLUDE JQuery															--%>
-<%-- ---------------------------------------------------------------------- --%>	
-<script src="<%=urlBuilder.getResourceLink(request,"/js/lib/jquery-1.11.3/jquery-1.11.3.min.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/jquery-ui-1.11.4/jquery-ui.min.js")%>" ></script>
 <%-- ---------------------------------------------------------------------- --%>
 <%-- INCLUDE Bootstrap														--%>
 <%-- ---------------------------------------------------------------------- --%>		
@@ -453,7 +389,4 @@ String extTheme=ThemesManager.getTheExtTheme(currTheme);
 <script src="<%=urlBuilder.getResourceLink(request,"/js/lib/bootstrap/bootstrap.min.js")%>"></script>
 
 
-
 <%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>
-<%@ include file="/WEB-INF/jsp/commons/importSbiJS410.jspf"%>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/ext-4.1.1a/overrides/overrides.js")%>"></script>

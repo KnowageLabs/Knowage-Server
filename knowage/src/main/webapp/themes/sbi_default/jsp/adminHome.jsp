@@ -26,89 +26,9 @@
 <script>
 sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 
-Ext.onReady(function () {
-	
-	var firstUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
-	firstUrlTocallvar = firstUrl;
-    Ext.tip.QuickTipManager.init();
-    this.mainframe = Ext.create('Ext.ux.IFrame', { 
-    	xtype: 'uxiframe'
-    	, renderTpl: ['<iframe src="{src}" id="iframeDoc" name="{frameName}" width="100%" height="100%" frameborder="0"></iframe>']
-    	, id: 'doc'
-  	  	, src: firstUrl
-  	  	, height: '100%'
-  	});
-    
-    Sbi.execution.ExporterUtils.setIFrame( this.mainframe );
-    
-    this.titlePath = Ext.create("Ext.Panel",{title :'Home'});
-    var itemsM = <%=jsonMenuList%>;
-	for(i=0; i< itemsM.length; i++){
-		var menuItem = itemsM[i];
-		if(menuItem.itemLabel != null && menuItem.itemLabel == "LANG"){
-	 		var languagesMenuItems = [];
-	 		for (var j = 0; j < Sbi.config.supportedLocales.length ; j++) {
-	 			var aLocale = Sbi.config.supportedLocales[j];
-	 			aLocale.currTheme = '<%=currTheme%>';
- 				var aLanguagesMenuItem = new Ext.menu.Item({
-					id: '',
-					text: aLocale.language,
-					iconCls:'icon-' + aLocale.language,
-					href: this.getLanguageUrl(aLocale)
-				})
- 				languagesMenuItems.push(aLanguagesMenuItem);
-	 		}
-	 		menuItem.menu= languagesMenuItems;
-		}else if(menuItem.itemLabel != null && menuItem.itemLabel == "ROLE"){
-			if(Sbi.user.roles && Sbi.user.roles.length == 1){
-				menuItem.hidden=true;
-			}
-		}else if(menuItem.itemLabel != null && menuItem.itemLabel == "HOME"){
-			menuItem.tooltip = '<p style="color: blue; ">'+LN('sbi.home.Welcome')+'<b>'+ 
-			'<p style="color: white; font-weight: bold;">'+Sbi.user.userName+'</p>'
-								+'<b></p>'
-		}
-		
-	}
-	function hideItem( menu, e, eOpts){
-        //console.log('bye bye ');
-        menu.hide();
-    }
-    
-    <%if (isDirectExec.equals("FALSE")){%>
-		this.mainpanel =  Ext.create("Ext.panel.Panel",{
-	    	autoScroll: true,
-	    	height: '100%',
-	    	items: [
-				//this.titlePath	,		
-	    	    mainframe]
-	    	, dockedItems: [/*{
-		   	    xtype: 'toolbar',
-		   	    dock: 'left',
-		   	    items: itemsM
-	    	}*/]
-	    });
-	<%}else{%>	
-		this.mainpanel =  Ext.create("Ext.panel.Panel",{
-			autoScroll: true,
-			height: '100%',
-			items: [
-				//this.titlePath	,		
-			    mainframe]		
-		});
-	<%}%>
-    
-    Ext.create('Ext.Viewport', {
-    	
-        layout: 'fit',
-        items: [this.mainpanel]
-    });
-    
-    
-});
-
-	
 </script>
+<iframe src="<%= firstUrlToCall %>" id="iframeDoc" width="100%" height="100%" frameborder="0"></iframe>
+
 <!-- Include AngularJS application -->
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/menu/menuAppAdmin.js"></script> 
