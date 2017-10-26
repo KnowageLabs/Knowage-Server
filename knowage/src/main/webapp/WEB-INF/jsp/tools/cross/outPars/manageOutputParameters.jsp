@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 
-<!-- include file="/WEB-INF/jsp/commons/portlet_base.jsp" --> 
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.BIObject"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.service.DetailBIObjectModule"%>
