@@ -31,10 +31,10 @@
    	<qbe-filter-visualization ng-if="selectedVisualization=='filters'"></qbe-filter-visualization>
    	
    	<div layout="column" ng-if="selectedVisualization=='previewData' && !smartPreview">
-   		<md-card layout-padding style="height:90%; margin:0px">			      						
+   		<md-card layout-padding layout="column">			      						
 			<angular-table
 				id="basicView"
-				flex
+				layout-fill
 				ng-model="ngModel"
 				columns='basicViewColumns'
 				scope-functions=basicViewScopeFunctions
@@ -170,7 +170,7 @@
 	   		</div>   		
 	    	</md-toolbar>
 	   	
-   		<div ng-repeat="r in n.data | orderedById:idIndex track by r.id" class="qbeCustomRow">{{r.value}}</div>
+   		<div ng-repeat="r in n.data | orderedById:idIndex track by r.id" class="qbeCustomRow">{{r.value}}&nbsp;</div>
 	   	<div  class="qbeCustomFooter">
 	   		<label style="font-size:.8rem; padding: 0 4px;  font-weight: bold;">{{checkDescription(n)}}</label>
         	<md-icon class="fa fa-filter" ng-click="openFilters(n)" style="float:right"></md-icon>      	

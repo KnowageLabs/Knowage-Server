@@ -47,12 +47,17 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			}
 			$scope.meta.push(meta);
 		}
+		if(parent.globalQbeJson){
+			$scope.bodySend.catalogue = [];
+			$scope.bodySend.catalogue.push($scope.editQueryObj);
+		}
 		$scope.filters = $scope.editQueryObj.filters;
 		if(query_service.smartView){
 			$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, false);
 		} else {
 			$scope.addToQueryModelWithoutExecutingQuery($scope.editQueryObj, $scope.queryModel);
 		}
+		window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
 	},true)
 
 	entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
@@ -123,7 +128,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		$scope.addField(field);
 
     };
-
+    
 	$rootScope.$on('applyFunction', function (event, data) {
 		var indexOfEntity = findWithAttr($scope.entityModel.entities,'qtip', data.entity);
 		var indexOfFieldInEntity = findWithAttr($scope.entityModel.entities[indexOfEntity].children,'id', data.fieldId);
@@ -444,5 +449,9 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     }
     $scope.stopEditingSubqueries = function(){
     	$scope.editQueryObj = $scope.query;
+    }
+    
+    if(parent.globalQbeJson){
+    	$scope.editQueryObj = parent.globalQbeJson.catalogue.queries[0];
     }
 }

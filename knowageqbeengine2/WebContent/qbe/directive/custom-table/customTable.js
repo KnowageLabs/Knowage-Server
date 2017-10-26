@@ -210,6 +210,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 					}
 					$scope.closePanel = function () {
 						mdPanelRef.close();
+						mdPanelRef.destroy();
 					}
 					$scope.translate = sbiModule_translate;
 				},

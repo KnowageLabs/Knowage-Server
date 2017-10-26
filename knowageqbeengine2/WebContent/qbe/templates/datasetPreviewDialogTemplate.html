@@ -1,5 +1,5 @@
-<md-card>
-	<md-card-content flex layout="column" class="noPadding" style="height:500px;">
+<md-card class="qbePreviewDialog">
+	<md-card-content flex layout="column" class="noPadding">
 		<md-toolbar class="secondaryToolbar" >
 			<div class="md-toolbar-tools">{{translate.load("kn.qbe.custom.table.preview")}}
 				<span flex></span>
@@ -11,7 +11,7 @@
 		</md-toolbar>
 		<angular-table
 				id="basicView"
-				layout-fill
+				flex layout-padding
 				ng-model="model.previewModel"
 				columns='model.completeResultsColumns'
 				page-changed-function="changeDatasetPage(itemsPerPage, currentPageNumber)"

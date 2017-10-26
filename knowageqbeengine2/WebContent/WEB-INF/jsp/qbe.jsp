@@ -65,12 +65,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-button  ng-click="stopEditingSubqueries()">
                     	{{query.name}}
                 	</md-button>
-                	<md-icon ng-if="editQueryObj !== query" md-font-icon="fa fa-chevron-right"></md-icon>
-                	<md-button ng-if="editQueryObj !== query">
+                	<md-icon ng-if="editQueryObj.name !== query.name" md-font-icon="fa fa-chevron-right"></md-icon>
+                	<md-button ng-if="editQueryObj.name !== query.name">
                     	 {{editQueryObj.name}} 
                 	</md-button>
 				</div>
-				
 			</qbe-custom-table>
 		</div>
 	</div>

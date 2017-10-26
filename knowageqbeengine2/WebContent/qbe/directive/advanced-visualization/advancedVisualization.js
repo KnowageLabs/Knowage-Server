@@ -35,85 +35,7 @@ angular.module('qbe_advanced_visualization', ['dndLists'])
 	}
 });
 
-function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbiModule_config, filters_service, $mdDialog){
-	$scope.advancedFilters = [{
-		"type": "group",
-		"id": 3,
-		"columns": [[{
-			"type": "item",
-			"id": "12",
-			"columns": [[],
-			[]],
-			"name": "Filter12",
-			"connector": "AND"
-		},
-		{
-			"type": "item",
-			"id": "13",
-			"columns": [[],
-			[]],
-			"name": "Filter13",
-			"connector": "AND"
-		},
-		],
-		[]],
-		connector:"AND"
-	},
-	{
-		"type": "group",
-		"id": 1,
-		"columns": [[{
-			"type": "item",
-			"id": "14",
-			"columns": [[],
-			[]],
-			"name": "Filter14",
-			"connector": "AND"
-		},
-		{
-			"type": "item",
-			"id": "15",
-			"columns": [[],
-			[]],
-			"name": "Filter15",
-			"connector": "AND"
-		},
-		],
-		[]],
-		connector:"AND"
-	},
-	{
-		"type": "item",
-		"id": "1",
-		"columns": [[],
-		[]],
-		"name": "Filter1",
-		"connector": "AND"
-	},
-	{
-		"type": "item",
-		"id": "2",
-		"columns": [[],
-		[]],
-		"name": "Filter2",
-		"connector": "AND"
-	},
-	{
-		"type": "item",
-		"id": "3",
-		"columns": [[],
-		[]],
-		"name": "Filter3",
-		"connector": "AND"
-	},
-	{
-		"type": "item",
-		"id": "4",
-		"columns": [[],
-		[]],
-		"name": "Filter4",
-		"connector": "AND"
-	}];
+function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbiModule_config, filters_service, $element, $mdDialog){
 
 	$scope.models = {
 		        selected: null,
@@ -126,15 +48,20 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 		        	    }
 
 	  };
+		
+	$scope.getBooleanConnectors = filters_service.getBooleanConnectors;
+	
 	$scope.$watch('models.dropzones', function(model) {
         $scope.modelAsJson = angular.toJson(model, true);
+        console.log("model"+angular.toJson(model));
     }, true);
 
 
 
 	$scope.saveFiltersAdvanced = function(){
-		var advanceFiltersSaved = angular.copy($scope.advancedFilters);
-//		generateAdvancedExpression (advanceFiltersSaved);
+		var advanceFiltersSaved = angular.copy($scope.ngModel.advancedFilters);
+		generateAdvancedExpression (advanceFiltersSaved);
+		$scope.ngModel.mdPanelRef.close();
 
 	}
 
@@ -171,71 +98,77 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 			}
 		}
 	}
-	var generateAdvancedExpression = function (advancedFilters){
+	
+	var generateAdvancedExpression = function (advancedFiltersAndGroups){
+		
+		var finalExpression = {};
+		
 		var nop = {};
 		nop.value = "";
 		nop.type = "NODE_OP";
 		nop.childNodes = [];
 		var nopForInsert = {};
-		for (var i = advancedFilters.length-1; i >= 0 ; i--) {
-			if (i-1==-1 || advancedFilters[i].connector!=advancedFilters[i-1].connector) {
-
-
+		for (var i = advancedFiltersAndGroups.length-1; i >= 0 ; i--) {
+			
+			if(i-1==-1 && advancedFiltersAndGroups[i].type=="group") {
+				angular.copy(createGroupNode(advancedFiltersAndGroups[i].columns[0]) ,finalExpression);
 			} else {
-				if(advancedFilters[i].type=="group"){
-					nop.value = "PAR"
-					generateAdvancedExpression(advancedFilters[i].columns[0])
+				if ((i-1==-1 && advancedFiltersAndGroups[i].type=="item") || advancedFiltersAndGroups[i].connector!=advancedFiltersAndGroups[i-1].connector) {
+					nop.value = advancedFiltersAndGroups[i].connector;
+					if(advancedFiltersAndGroups[i].type=="item"){
+						var nodeConstObj = {};
+						nodeConstObj.value = '$F{' + advancedFiltersAndGroups[i].name + '}';
+						nodeConstObj.type = "NODE_CONST";
+						nodeConstObj.childNodes = [];
+						nop.childNodes.unshift(nodeConstObj);
+					}
+					if(nopForInsert.value){
+						nop.childNodes.unshift(nopForInsert);
+					}
+					nopForInsert = angular.copy(nop);
+					nop.value = "";
+					nop.type = "NODE_OP";
+					nop.childNodes.length = 0;
 				} else {
-
-				}
-				nop.childNodes.push(nodeConstArray[i]);
-			}
-		}
-
-	}
-	var generateExpressions = function (advancedFilters, expression){
-
-		advancedFilters.length = 0;
-	 // if filters are empty set expression to empty object
-		if(advancedFilters.length==0){
-			angular.copy({},expression);
-		} else {
-			var nodeConstArray = [];
-			for (var i = 0; i < advancedFilters.length; i++) {
-				var nodeConstObj = {};
-				nodeConstObj.value = '$F{' + advancedFilters[i].name + '}';
-				nodeConstObj.type = "NODE_CONST";
-				nodeConstObj.childNodes = [];
-				nodeConstArray.push(nodeConstObj);
-			}
-			if (advancedFilters.length==1){
-				angular.copy(nodeConstArray[0],expression);
-			} else if (advancedFilters.length>1) {
-				var nop = {};
-				nop.value = "";
-				nop.type = "NODE_OP";
-				nop.childNodes = [];
-				var nopForInsert = {};
-				for (var i = advancedFilters.length-1; i >= 0 ; i--) {
-					if (i-1==-1 || advancedFilters[i].connector!=advancedFilters[i-1].connector) {
-						nop.value = advancedFilters[i].connector;
-						nop.childNodes.push(nodeConstArray[i]);
-						if(nopForInsert.value){
-							nop.childNodes.push(nopForInsert);
-						}
-						nopForInsert = angular.copy(nop);
-						nop.value = "";
-						nop.type = "NODE_OP";
-						nop.childNodes.length = 0;
-					} else {
-						nop.childNodes.push(nodeConstArray[i]);
+					if(advancedFiltersAndGroups[i].type=="item"){
+						var nodeConstObj = {};
+						nodeConstObj.value = '$F{' + advancedFiltersAndGroups[i].name + '}';
+						nodeConstObj.type = "NODE_CONST";
+						nodeConstObj.childNodes = [];
+						nop.childNodes.unshift(nodeConstObj);
+					} else if (advancedFiltersAndGroups[i].type=="group"){
+						nop.childNodes.unshift(createGroupNode(advancedFiltersAndGroups[i].columns[0]));
 					}
 				}
-				angular.copy(nopForInsert,expression);
+				angular.copy(nopForInsert,finalExpression);
 			}
 		}
+		angular.copy(finalExpression, $scope.ngModel.expression);
+		console.log($scope.ngModel);
+	}
+	
+	var createGroupNode = function (group) {
+		
+		var nodeParObj = {};
+		nodeParObj.value = "PAR";
+		nodeParObj.type = "NODE_OP";
+		nodeParObj.childNodes = [];
+		
+		for (var i = 0; i < group.length; i++) {
+			if(group[i].type=="item"){
+				var nodeConstObj = {};
+				nodeConstObj.value = '$F{' + group[i].name + '}';
+				nodeConstObj.type = "NODE_CONST";
+				nodeConstObj.childNodes = [];
+				nodeParObj.childNodes.push(nodeConstObj);
+			} else {
+				nodeParObj.childNodes.push(createGroupNode(group[i].columns[0]));
+			}
+		}
+		
+		return nodeParObj;
+	}
 
-	};
 
 	$scope.filterColumnsAV = [
 		{
