@@ -76,8 +76,43 @@
 			}
 			md-radio-button {
 				outline: none;
+				span {
+					font-size: $baseFontSize;
+				}
 			}
+			md-checkbox {
+				span {
+					font-size: $baseFontSize;
+				}
+			}
+			md-select {
+				span {
+					font-size: $baseFontSize;
+				}
+			}
+			md-slider{
+				span {
+					font-size: $baseFontSize;
+				}
+			}
+			md-input-container {
+				input {
+					font-size: $baseFontSize;
+				}
+			}
+			md-content{
+				span {
+					font-size: $baseFontSize;
+				}
+			}
+			md-chips{
+				input {
+					font-size: $baseFontSize;
+				}
+			}
+			
 		}
+		
 		button#showMenu {
 		    border-radius: 0;
 		    width: 31px;

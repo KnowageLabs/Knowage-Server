@@ -66,13 +66,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- SINGLE SELECT FROM LAYER CATALOG  WHEN DATASET IS CHOSEN-->
 	<expander-box id="layersList" color="white" background-color="#a9c3db" ng-if="isDatasetChosen" expanded="true" title="{{::translate.load('gisengine.designer.layer.select')}}">
 		<div flex  class="innerExpander" layout-column> 
-		
-		<!-- div layout="row" layout-align="center">
+		<!-- 
+		<div layout="row" layout-align="center">
 			<div class="kn-info">
-				{{translate.load(Message to show)}}
+				{{::translate.load('gisengine.designer.layer.detail')}}
 			</div>
-		</div-->
-		
+		</div>
+		 -->
 	 		<angular-table class="datasetLayer"
 			id='table' ng-model="selectedLayer"
 			columns='[{"label":"ID","name":"layerId"},{"label":"Name","name":"name"},{"label":"Description","name":"descr"},{"label":"Type","name":"type"}]'
@@ -92,7 +92,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<!-- MULTI SELECT LAYER  -->
 	<expander-box id="layersListMultiSelect" color="white" background-color="#a9c3db" ng-if="!isDatasetChosen" expanded="true" title="{{::translate.load('gisengine.designer.layer.select')}}">
 		<div class="innerExpander" layout-column>  
-
 	 		<angular-table 
 			id='tableLayerMultiSelect' ng-model="selectedLayer"
 			columns='[{"label":"ID","name":"layerId"},{"label":"Name","name":"name"},{"label":"Description","name":"descr"},{"label":"Type","name":"type"}]'
@@ -148,12 +147,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<!-- DATASET INDICATORS -->
 	<expander-box id="datasetIndicators" color="white" background-color="#a9c3db" ng-if="isDatasetChosen" expanded="false" title="{{::translate.load('gisengine.designer.dataset.indicators')}}">
 	<div class="innerExpander" layout-column> 
-	    <angular-table 
-		id='indicatorsTable' ng-model="datasetIndicators"
-		columns='[{"label":"Measure","name":"indicatorNameView","hideTooltip":true},{"label":"Label","name":"indicatorLabel","hideTooltip":true,"editable":true}]'
-		columns-search='["indicatorName","indicatorLabel"]' show-search-bar=true
-		scope-functions='tableFunctionIndicator' speed-menu-option='indicatorsSpeedMenu'
-		allow-edit="true"
+		 <angular-table 
+			id='indicatorsTable' ng-model="datasetIndicators"
+			columns='indicatorColumns'
+			columns-search='["indicatorName","indicatorLabel"]' show-search-bar=true
+			scope-functions='tableFunctionIndicator' speed-menu-option='indicatorsSpeedMenu'
+			allow-edit="true"
 		>
 			<queue-table>
 				<div layout="row"> 
@@ -167,9 +166,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<!-- DATASET FILTERS  -->
 	<expander-box id="datasetFilters" color="white" background-color="#a9c3db" ng-if="isDatasetChosen" expanded="false" title="{{::translate.load('gisengine.designer.dataset.filters')}}">
 	<div class="innerExpander" layout-column> 
-	    <angular-table 
+		<angular-table 
 		id='filtersTable' ng-model="datasetFilters"
-		columns='[{"label":"Name","name":"dsFilterNameView","hideTooltip":true},{"label":"Label","name":"dsFilterLabel","hideTooltip":true,"editable":true}]'
+		columns='filterColumns'
 		columns-search='["dsFilterName","dsFilterLabel"]' show-search-bar=true
 		scope-functions='tableFunctionDatasetFilters' speed-menu-option='dsFiltersSpeedMenu'
 		allow-edit="true"
@@ -183,7 +182,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</angular-table>	
 	</div>
 	</expander-box>
-	<!-- GEO CONFIC VISIBILITY SETTINGS -->
+	<!-- GEO CONFIG VISIBILITY SETTINGS -->
 	<expander-box id="visibilitySettings" background-color="#a9c3db" aria-label="menu configuration" color="white" expanded="false" title="{{::translate.load('gisengine.designer.menuConfiguration')}}">
  	<div flex layout="row" layout-wrap> 
  	      
