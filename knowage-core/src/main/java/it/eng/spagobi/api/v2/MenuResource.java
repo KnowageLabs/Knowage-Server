@@ -17,21 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.qbe.serializer.SerializationException;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-import it.eng.spagobi.wapp.bo.Menu;
-import it.eng.spagobi.wapp.dao.IMenuDAO;
+import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.toJsonTreeLowFunctionality;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,6 +41,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.qbe.serializer.SerializationException;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -104,6 +93,35 @@ public class MenuResource extends AbstractSpagoBIResource {
 			allMenus = dao.loadAllMenues();
 
 			return Response.ok(allMenus).build();
+		} catch (Exception e) {
+			String errorString = "sbi.menu.load.menus.error";
+			logger.error(errorString, e);
+			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path("/functionalities")
+	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getFunctionalities() {
+		logger.debug("IN");
+		JSONObject resp = new JSONObject();
+		try {
+			ILowFunctionalityDAO lowfuncdao = DAOFactory.getLowFunctionalityDAO();
+			IEngUserProfile profile = getUserProfile();
+			lowfuncdao.setUserProfile(profile);
+
+			@SuppressWarnings("unchecked")
+			List<LowFunctionality> functionalities = lowfuncdao.loadAllLowFunctionalities(false);
+
+			JSONArray array = toJsonTreeLowFunctionality(functionalities);
+			resp.put("functionality", array);
+			return resp.toString();
+
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.menus.error";
 			logger.error(errorString, e);
@@ -295,9 +313,16 @@ public class MenuResource extends AbstractSpagoBIResource {
 				menu.setExternalApplicationUrl(paramsObj.getString("externalApplicationUrl"));
 			}
 
+			if (paramsObj.getString("functionality").equals("null")) {
+				menu.setFunctionality(null);
+			} else {
+				menu.setFunctionality(paramsObj.getString("functionality"));
+			}
+
 			menu.setName(paramsObj.getString("name"));
 			menu.setHideSliders(paramsObj.getBoolean("hideSliders"));
 			menu.setHideToolbar(paramsObj.getBoolean("hideToolbar"));
+
 			menu.setLevel(paramsObj.getInt("level"));
 			if (paramsObj.getString("objId").equals("null")) {
 				menu.setObjId(null);
@@ -378,6 +403,12 @@ public class MenuResource extends AbstractSpagoBIResource {
 				menu.setExternalApplicationUrl(paramsObj.getString("externalApplicationUrl"));
 			}
 
+			if (paramsObj.has("functionality") == false || paramsObj.getString("functionality").equals("null")) {
+				menu.setFunctionality(null);
+			} else {
+				menu.setFunctionality(paramsObj.getString("functionality"));
+			}
+
 			menu.setName(paramsObj.getString("name"));
 
 			menu.setHasChildren(paramsObj.getBoolean("hasChildren"));
@@ -409,6 +440,13 @@ public class MenuResource extends AbstractSpagoBIResource {
 			} else {
 
 				menu.setStaticPage(paramsObj.getString("staticPage"));
+			}
+
+			if (paramsObj.getString("initialPath").equals("null")) {
+				menu.setInitialPath(null);
+			} else {
+
+				menu.setInitialPath(paramsObj.getString("initialPath"));
 			}
 
 			menu.setViewIcons(paramsObj.getBoolean("viewIcons"));

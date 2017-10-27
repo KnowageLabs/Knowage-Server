@@ -4,7 +4,14 @@
 	<APPLICATION code="DocumentUserBrowser" 
 	             title="#menu.DocumentUserBrowser"  
 	             functionality="DocumentUserBrowser" 
-	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION" 
+	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION" 
+	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/bidocuments16.png">
+	</APPLICATION>
+	
+		<APPLICATION code="WorkspaceManagement" 
+	             title="#menu.Workspace"  
+	             functionality="WorkspaceManagement" 
+	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_WORKSPACE" 
 	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/bidocuments16.png">
 	</APPLICATION>
 

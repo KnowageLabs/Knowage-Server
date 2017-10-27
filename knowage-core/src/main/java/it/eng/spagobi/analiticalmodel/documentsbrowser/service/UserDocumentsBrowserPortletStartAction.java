@@ -17,6 +17,22 @@
  */
 package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.portlet.PortletPreferences;
+import javax.portlet.PortletRequest;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.axis.utils.StringUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -37,21 +53,6 @@ import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.portlet.PortletPreferences;
-import javax.portlet.PortletRequest;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.axis.utils.StringUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.json.JSONObject;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -136,7 +137,6 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 
 				// If this is a "custom" Document Browser we have a subtree path as parameter
 				String functID = null;
-
 				String subTree = (String) request.getAttribute(LABEL_SUBTREE_NODE);
 				if (subTree != null) {
 
@@ -144,10 +144,17 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 						LowFunctionality funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath(subTree, false);
 						if (funct != null) {
 							functID = String.valueOf(funct.getId());
-						}
+
 					}
 
 				}
+
+				String initialWorkpsaceMenu = null;
+				Object initialWorkpsaceMenuObj = request.getAttribute("currentOptionMainMenu");
+				if (initialWorkpsaceMenuObj != null && !initialWorkpsaceMenuObj.toString().equals("")) {
+					initialWorkpsaceMenu = initialWorkpsaceMenuObj.toString();
+				}
+
 				// ----------------------------------------------
 				// Defining action urls
 				String executionId = ExecuteAdHocUtility.createNewExecutionId();
@@ -180,6 +187,7 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 
 				JSONObject jsonObj = config.toJSON();
 
+
 				if (functID != null) {
 					jsonObj.put("defaultFolderId", functID);
 				}
@@ -189,6 +197,9 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 				// jsonObj.put("labelSubTreeNode", labelSubTreeNode);
 				response.setAttribute("metaConfiguration", jsonObj);
 				response.setAttribute("engineUrls", jsonUrlObj);
+				if (initialWorkpsaceMenu != null) {
+					response.setAttribute("currentOptionMainMenu", initialWorkpsaceMenu);
+				}
 			}
 
 		} catch (Throwable t) {

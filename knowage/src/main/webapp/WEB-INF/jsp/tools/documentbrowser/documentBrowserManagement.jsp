@@ -39,6 +39,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/documentbrowser/documentBrowser.js"></script>
 	
+	<!-- path passed by document browser menu to open default folder -->
+		<%  
+		String defaultFoldersId = request.getParameter("defaultFoldersId");
+		%>
+		<script language="javascript" type="text/javascript">		   
+				  var defaultFoldersId = '<%=defaultFoldersId != null ? defaultFoldersId : ""%>';
+		   </script>
+
 	
 	 
 </head>

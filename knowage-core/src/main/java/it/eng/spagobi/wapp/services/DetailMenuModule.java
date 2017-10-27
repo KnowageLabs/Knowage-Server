@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,25 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.wapp.services;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.axis.utils.StringUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
@@ -31,6 +45,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.service.BIObjectsModule;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.service.TreeObjectsModule;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
@@ -43,17 +58,6 @@ import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.bo.Menu;
 import it.eng.spagobi.wapp.dao.IMenuDAO;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Gavardi Giulio
@@ -100,6 +104,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 	 * @throws Exception
 	 *             the exception
 	 */
+	@Override
 	public void service(SourceBean request, SourceBean response) throws Exception {
 		String message = (String) request.getAttribute(AdmintoolsConstants.MESSAGE_DETAIL);
 		Object documentLookup = request.getAttribute("loadDocumentLookup");
@@ -304,8 +309,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Instantiates a new <code>Menu<code> object when a new menu
-	 * insertion is required, in order to prepare the page for the insertion.
+	 * Instantiates a new <code>Menu<code> object when a new menu insertion is required, in order to prepare the page for the insertion.
 	 *
 	 * @param response
 	 *            The response SourceBean
@@ -665,10 +669,21 @@ public class DetailMenuModule extends AbstractHttpModule {
 					if (functionality.equals(SpagoBIConstants.DOCUMENT_BROWSER_USER)) {
 						String initialPath = menu.getInitialPath();
 						if (initialPath != null && !initialPath.trim().equals("")) {
-							url += "&" + BIObjectsModule.MODALITY + "=" + BIObjectsModule.FILTER_TREE + "&" + TreeObjectsModule.PATH_SUBTREE + "="
-									+ initialPath;
+							// url += "&" + BIObjectsModule.MODALITY + "=" + BIObjectsModule.FILTER_TREE + "&" + TreeObjectsModule.PATH_SUBTREE + "="
+							// + initialPath;
+
+							String idsPath = convertPathInIds(initialPath);
+							url += "&" + BIObjectsModule.MODALITY + "=" + BIObjectsModule.FILTER_TREE + "&" + TreeObjectsModule.PATH_SUBTREE + "=" + initialPath
+									+ "&defaultFoldersId=" + idsPath;
+
+						}
+					} else if (functionality.equals(SpagoBIConstants.WORKSPACE_MANAGEMENT)) {
+						String initialPath = menu.getInitialPath();
+						if (initialPath != null && !initialPath.trim().equals("")) {
+							url += "&currentOptionMainMenu" + "=" + initialPath;
 						}
 					}
+
 				} else {
 					logger.warn("No configuration found for SpagoBI functionality [" + menu.getFunctionality() + "]");
 				}
@@ -679,6 +694,41 @@ public class DetailMenuModule extends AbstractHttpModule {
 			logger.debug("OUT: url = [" + url + "]");
 		}
 		return url;
+	}
+
+	public static String convertPathInIds(String subTree) throws EMFUserError {
+		// If this is a "custom" Document Browser we have a subtree path as parameter
+		JSONArray functIds = new JSONArray();
+		logger.debug("IN");
+		if (subTree != null) {
+
+			if (!StringUtils.isEmpty(subTree)) {
+				ArrayList<LowFunctionality> toMerge = new ArrayList<>();
+				LowFunctionality funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath(subTree, false);
+				if (funct != null) {
+					toMerge.add(funct);
+					Integer parentId = funct.getParentId();
+					while (parentId != null) {
+						LowFunctionality more = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(parentId, false);
+						if (more != null) {
+							toMerge.add(more);
+							parentId = more.getParentId();
+						}
+					}
+
+					// toMerge contains all Id to be read in reverse order
+					for (int i = toMerge.size() - 1; i >= 0; i--) {
+						LowFunctionality lf = toMerge.get(i);
+						functIds.put(lf.getId());
+					}
+
+				}
+			}
+
+		}
+		logger.debug("OUT");
+
+		return functIds.toString();
 	}
 
 }

@@ -250,11 +250,60 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-input-container>
 			</div>
 			
+		  <div flex=100 ng-if="selectedMenuItem.typeId==4">
+					<md-input-container class="md-block"> 
+				<label>{{translate.load("sbi.menu.chooseFunctionality")}}:</label>
+				<md-select  ng-required="true" aria-label="aria-label" ng-model=selectedMenu.functionality ng-change="setFormDirty();"> 
+					<md-option ng-value="func.code" value="func.name" ng-repeat="func in allFunctionalities" >{{func.name}}</md-option>
+				</md-select>
+			</md-input-container></div>
 			
+			<!--  INITAL PATH FOLDER -->
+	 <div ng-if="selectedMenu.functionality == 'WorkspaceManagement'">
+	 		<md-input-container class="md-block"> 
+				<label>{{translate.load("sbi.menu.ws.initialPath")}}:</label>
+				<md-select  ng-required="false" aria-label="aria-label" ng-model=selectedMenu.initialPath ng-change="setFormDirty();"> 
+					<md-option ng-value="path.code" value="path.name" ng-repeat="path in allWorkspacePaths" >{{path.name}}</md-option>
+				</md-select>
+			</md-input-container>
+	 </div>
+
+			
+	 <div ng-if="selectedMenu.functionality == 'DocumentUserBrowser'">
+				<img style="margin: 0 0 -5px -6px;" src="${pageContext.request.contextPath}/themes/sbi_default/img/treebase.gif" alt="" /> 
+				
+				<span>{{translate.load("sbi.menu.folders", "component_scheduler_messages")}}</span>
+				
+				<div id="docTree" ui-tree="" data-drag-enabled="false"
+						data-drag-delay="false" data-empty-placeholder-enabled="false">
+					
+					<script type="text/ng-template" id="lowFunctionalityTreeNodeTemplate">						
+						<div ui-tree-handle layout="row">
+							<div class="indicator-child "></div>
+							<span class="fa fa-folder-open-o" style="color: turquoise;"></span>
+							<md-checkbox md-no-ink style="margin: -3px 0 0 5px;" aria-label="Checkbox 1" 
+									ng-click="toggleDocFunct(selectedMenu, elementToIterate.path);"
+									ng-checked="isChecked(elementToIterate.path, selectedMenu.initialPath, true)">
+								{{elementToIterate.name}}
+							</md-checkbox>
+						</div>
+						<ol ui-tree-nodes ng-model="elementToIterate" ng-if="elementToIterate.childs">
+							<li ng-repeat="elementToIterate in elementToIterate.childs" 
+									ui-tree-node class="figlioVisibile" 
+									ng-include="'lowFunctionalityTreeNodeTemplate'"></li>
+						</ol>
+					</script>
+					
+					<ol id="olchiproot" ui-tree-nodes ng-model="folders">
+						<li ng-repeat="elementToIterate in folders" ui-tree-node 
+								ng-include="'lowFunctionalityTreeNodeTemplate'"></li>
+					</ol>
+					
+				</div>
+			</div>
 			
 			
 			</md-card>  
-		 
 		
 			 <angular-table layout-fill id="menuRoles_id" ng-model="roles" columns='columnsArray'  no-pagination=true
 					selected-item="role" highlights-selected-item="true"  scope-functions = tableFunction>

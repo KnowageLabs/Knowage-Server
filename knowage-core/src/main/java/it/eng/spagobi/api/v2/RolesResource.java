@@ -17,25 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleBO;
-import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.domains.DomainCRUD;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -58,6 +39,25 @@ import javax.ws.rs.core.Response;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleBO;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.domains.DomainCRUD;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 @Path("/2.0/roles")
 @ManageAuthorization
@@ -168,8 +168,6 @@ public class RolesResource extends AbstractSpagoBIResource {
 		}
 	}
 
-
-
 	@SuppressWarnings({ "unchecked", "unchecked" })
 	@GET
 	@Path("/ds_categories")
@@ -183,29 +181,29 @@ public class RolesResource extends AbstractSpagoBIResource {
 			UserProfile up = getUserProfile();
 			Collection<String> roles = up.getRoles();
 
-				List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
-				if (UserUtilities.isAdministrator(up)) {
-					resp = array;
+			List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+			if (UserUtilities.isAdministrator(up)) {
+				resp = array;
 
-				}else{
-					for (Iterator iterator = roles.iterator(); iterator.hasNext();) {
-						String role = (String) iterator.next();
-						rolesDao = DAOFactory.getRoleDAO();
-						rolesDao.setUserProfile(getUserProfile());
-						ds.addAll(rolesDao.getDataSetCategoriesForRole(role));
-					}
-					for (RoleMetaModelCategory r : ds) {
-						for (Domain dom : array) {
-							if (r.getCategoryId().equals(dom.getValueId())) {
-								resp.add(dom);
-							}
+			} else {
+				for (Iterator iterator = roles.iterator(); iterator.hasNext();) {
+					String role = (String) iterator.next();
+					rolesDao = DAOFactory.getRoleDAO();
+					rolesDao.setUserProfile(getUserProfile());
+					ds.addAll(rolesDao.getDataSetCategoriesForRole(role));
+				}
+				for (RoleMetaModelCategory r : ds) {
+					for (Domain dom : array) {
+						if (r.getCategoryId().equals(dom.getValueId())) {
+							resp.add(dom);
 						}
 					}
 				}
+			}
 
 			return DomainCRUD.translate(resp, null).toString();
 		} catch (Exception e) {
-			logger.error("Error loading the list of dataset categories associated to user",  e);
+			logger.error("Error loading the list of dataset categories associated to user", e);
 			throw new SpagoBIRestServiceException("Error loading the list of dataset categories associated to user", buildLocaleFromSession(), e);
 		}
 	}

@@ -33,6 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   boolean isTechnicalUser =  UserUtilities.isTechnicalUser(userProfile);
   boolean isDeveloper =  UserUtilities.hasDeveloperRole(userProfile);
   SingletonConfig serverConfig1 = SingletonConfig.getInstance();
+  
+  String initialOptionMainMenu = request.getParameter("currentOptionMainMenu");
   String maxSizeStr = serverConfig1.getConfigValue("SPAGOBI.DATASET_FILE_MAX_SIZE");
    
 %>
@@ -59,8 +61,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		   var isAdmin =<%=isAdmin%>;
 		   var isTechnicalUser = <%=isTechnicalUser%>;
 		   var isDeveloper = <%=isDeveloper%>;
-		   var maxSizeStr = <%=maxSizeStr%>;
-		</script>
+		   var maxSizeStr = <%=maxSizeStr%>; 
+		   var initialOptionMainMenu = '<%=initialOptionMainMenu != null ? initialOptionMainMenu : ""%>';
+
+		   </script>
 		
 	</head>
 	

@@ -1,5 +1,5 @@
 /**
-   @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net) 
+   @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net)
  */
 
 var app = angular.module("MenuConfigurationModule", ['angular-list-detail', 'ui.tree', 'sbiModule', 'angular_table' ]);
@@ -14,31 +14,33 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 	// getting all menus
 	$scope.getListOfMenu = function() {
 		sbiModule_restServices.promiseGet("2.0/menu", "").then(
-				function(response) { 
+				function(response) {
 					$scope.listOfMenu = angular.copy(response.data);
-					
+
 					$scope.listOfMenu_copy = angular.copy($scope.listOfMenu);
 					$scope.listOfMenu_copy = $scope.generateTree($scope.listOfMenu_copy);
 					$scope.listOfMenu_copy.unshift({
 						name : "Menu tree",
 						menuId : null
 					});
-				
+
 				},
 				function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
 				});
 	};
-	
+
+
+
 	$scope.generateTree = function( menus, parent) {
     		if (menus !== undefined && menus.length > 0 ){
-	    		var mapmenu = {};	
-				
+	    		var mapmenu = {};
+
 				for (var i = 0 ; i < menus.length; i ++ ){
 					menus[i].lstChildren = [];
-					mapmenu[menus[i].menuId]= menus[i]; 
+					mapmenu[menus[i].menuId]= menus[i];
 				}
-				
+
 				var treemenus = [];
 				for (var i = 0 ; i < menus.length; i ++ ){
 					//if menu has not father, is a root menu
@@ -58,28 +60,41 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 					}
 					//update linear structure with tree structure
 				}
-				menus=treemenus; 
+				menus=treemenus;
     		}
-		
+
 		return menus;
 	};
 	// getting all roles
 	$scope.getRoles = function() {
 		sbiModule_restServices.promiseGet("2.0/roles/short", "").then(
 				function(response) {
-					$scope.roles = response.data; 
+					$scope.roles = response.data;
 				},
 				function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
 				});
 	};
+
+	// getting all Folders
+	$scope.getListOfFolders = function() {
+		sbiModule_restServices.promiseGet("2.0/menu/functionalities","").then(
+				function(response) {
+					$scope.folders = response.data.functionality;
+				},
+				function(response) {
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.errors[0].message), 'Error');
+				});
+	};
+
+
 	$scope.getHTMLFiles= function() {
-		
-		 
+
+
 		sbiModule_restServices.promiseGet("2.0/menu/htmls","").then(
 				function(response) {
-					$scope.files = response.data; 
-					
+					$scope.files = response.data;
+
 				},
 				function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
@@ -87,9 +102,10 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 	};
 	angular.element(document).ready(function() { // on page load function
 		$scope.getListOfMenu();
+		$scope.getListOfFolders();
 		$scope.getRoles();
 		$scope.getHTMLFiles();
-		 
+
 
 	});
 
@@ -102,6 +118,9 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 	$scope.role = [];
 	$scope.dirtyForm = false;
 	$scope.files =[];
+	$scope.folders =[];
+
+
 
 	$scope.parent = {};
 
@@ -110,7 +129,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 		$scope.role = [];
 		$scope.showme = false;
 		$scope.dirtyForm=false;
-		
+
 	}
 	$scope.fake = {};
 	$scope.save = function() {
@@ -121,6 +140,8 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 				descr : $scope.selectedMenu.descr,
 
 				externalApplicationUrl : $scope.selectedMenu.externalApplicationUrl,
+				functionality : $scope.selectedMenu.functionality,
+				initialPath : $scope.selectedMenu.initialPath,
 
 				hasChildren : $scope.selectedMenu.hasChildren,
 				hideSliders : $scope.selectedMenu.hideSliders,
@@ -152,7 +173,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 						$scope.dirtyForm = false;
 
 					},
-					function(response) { 
+					function(response) {
 						sbiModule_messaging.showErrorMessage(
 								sbiModule_translate
 										.load(response.data.errors[0].message),
@@ -164,9 +185,12 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 			$scope.fake = {
 				descr : $scope.selectedMenu.descr,
 				externalApplicationUrl : $scope.selectedMenu.externalApplicationUrl,
+				functionality : $scope.selectedMenu.functionality,
+				initialPath : $scope.selectedMenu.initialPath,
 
 				hideSliders : $scope.selectedMenu.hideSliders,
 				hideToolbar : $scope.selectedMenu.hideToolbar,
+
 				level : $scope.selectedMenu.level,
 
 				name : $scope.selectedMenu.name,
@@ -194,7 +218,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.
 							load(response.data.errors[0].message), 'Error');
-				});	
+				});
 		}
 
 	}
@@ -202,19 +226,19 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 	$scope.setDirty = function() {
 		$scope.dirtyForm = true;
 	}
-	
-	 
+
+
 	$scope.nodeTemp = {};
-	
+
 	$scope.mouseenter = function(node) {
 		$scope.nodeTemp = node;
 	}
-	
+
 	$scope.mouseleave = function(node) {
 		$scope.nodeTemp = null;
 	}
-	
-	$scope.tooggle = function (scope){ 
+
+	$scope.tooggle = function (scope){
 		scope.toggle();
 	}
 
@@ -225,7 +249,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 			$scope.role = $scope.roles;
 			$scope.selectedMenu.level = 0;
 			$scope.parentID = null;
-		} 
+		}
 
 		$scope.selectedMenu.descr = "";
 		$scope.selectedMenu.name = "";
@@ -236,16 +260,18 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 		$scope.selectedMenu.hideSliders = false;
 		$scope.selectedMenuItem = null;
 		$scope.selectedMenu.externalApplicationUrl = "";
+		$scope.selectedMenu.functionality = "";
+		$scope.selectedMenu.initialPath = "";
 		$scope.selectedMenu.viewIcons = false;
 		$scope.selectedMenu.document = null;
 		$scope.selectedMenu.objParameters = "";
 		$scope.selectedMenu.staticPage = null;
-		$scope.selectedMenu.parentId = $scope.parentID; 
+		$scope.selectedMenu.parentId = $scope.parentID;
 		$scope.showme = true;
-		
-		
+
+
 	}
-	$scope.columnsArray = [ 
+	$scope.columnsArray = [
 		{
 
 			"label" : sbiModule_translate.load("sbi.menu.columns.roles"),
@@ -261,7 +287,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 			transformer : function() {
 				return " <md-checkbox  ng-checked=scopeFunctions.isChecked(row)  ng-click=scopeFunctions.checkRole(row)   ng-disabled=!scopeFunctions.isDisabled(row)  aria-label='' ></md-checkbox>";
 			}
-	    } 
+	    }
 	];
 
 	$scope.allTypes = [ {
@@ -281,25 +307,66 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 		name : "app",
 		id : 2,
 		label : sbiModule_translate.load("sbi.menu.nodeExternalApp")
+	}, {
+		name : "intLink",
+		id : 4,
+		label : sbiModule_translate.load("sbi.menu.functionality")
 	}
-
 	];
+
+	$scope.allFunctionalities = [ {
+		code : "DocumentUserBrowser",
+		name : sbiModule_translate.load("sbi.menu.linkDocumentBrowser")
+
+	}, {
+		code : "WorkspaceManagement",
+		name : sbiModule_translate.load("sbi.menu.linkWorkspace")
+	}
+	];
+
+	$scope.allWorkspacePaths = [
+		{
+			code : "recent",
+			name : sbiModule_translate.load("sbi.menu.ws.recent")
+		},
+		{
+			code : "documents",
+			name : sbiModule_translate.load("sbi.menu.ws.documents")
+		},
+		{
+			code : "data",
+			name : sbiModule_translate.load("sbi.menu.ws.data")
+		},
+		{
+			code : "datasets",
+			name : sbiModule_translate.load("sbi.menu.ws.datasets")
+		},
+		{
+			code : "models",
+			name : sbiModule_translate.load("sbi.menu.ws.models")
+		},
+		{
+			code : "analysis",
+			name : sbiModule_translate.load("sbi.menu.ws.analysis")
+		}
+		];
+
 	$scope.selectedMenuItem = {};
-	
+
 	$scope.tableFunction = {
 			isChecked : function(row) {
-				
+
 				if ($scope.selectedMenu.roles != undefined) {
 					for (var j = 0; j < $scope.selectedMenu.roles.length; j++) {
 						if ($scope.selectedMenu.roles[j].name == row.name) {
 							return true;
 						}
-						
+
 					}
 				}
-				
+
 			},
-			
+
 			/*
 				method that disable choosing role that parent does not have
 			*/
@@ -311,14 +378,14 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 								if ($scope.parent.roles[j].name == row.name) {
 									return true;
 								}
-								
+
 							}
-						} 
+						}
 					}
 					else return true;
-					
-				}  
-				
+
+				}
+
 			},
 			checkRole : function(item) {
 				if ($scope.selectedMenu.roles == null) {
@@ -357,7 +424,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
 				});
 	}
-	$scope.checkHtml = function(menuItem) { 
+	$scope.checkHtml = function(menuItem) {
 		if (menuItem.staticPage) {
 
 			for (i = 0; i < $scope.files.length; i++) {
@@ -372,7 +439,14 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 	}
 	$scope.checkPropertiesFromSelectedMenu = function(menuItem) {
 
-		if (menuItem.externalApplicationUrl != null && menuItem.externalApplicationUrl != "") {
+		if (menuItem.functionality != null && menuItem.functionality != "") {
+			for (i = 0; i < $scope.allTypes.length; i++) {
+				if ($scope.allTypes[i].name.toLowerCase() === "intlink") {
+					$scope.selectedMenuItem.typeId = $scope.allTypes[i].id;
+					break;
+				}
+			}
+		} else if (menuItem.externalApplicationUrl != null && menuItem.externalApplicationUrl != "") {
 			for (i = 0; i < $scope.allTypes.length; i++) {
 				if ($scope.allTypes[i].name.toLowerCase() === "app") {
 					$scope.selectedMenuItem.typeId = $scope.allTypes[i].id;
@@ -414,9 +488,13 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 		$scope.selectedMenu.objParameters = null;
 		$scope.selectedMenu.hideToolbar = false;
 		$scope.selectedMenu.hideSliders = false;
+		$scope.selectedMenu.functionality = null;
+		$scope.selectedMenu.initialPath = null;
 		$scope.selectedMenu.externalApplicationUrl = null;
-		
+
 	}
+
+
 	$scope.setRoles = function() {
 		$scope.role = [];
 		for (var i = 0; i < $scope.roles.length; i++) {
@@ -457,7 +535,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 		});
 	};
 
-	function loadOutputParameters(documentId, callbackFunction) { 
+	function loadOutputParameters(documentId, callbackFunction) {
 		sbiModule_restServices.promiseGet(
 				'2.0/documents/' + documentId + '/listOutParams', "", null)
 				.then(function(response) {
@@ -507,7 +585,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 			$scope.translate = translate;
 			$scope.loading = true;
 			$scope.totalCount = 0
-			$scope.loadListDocuments = function(item) { 
+			$scope.loadListDocuments = function(item) {
 				sbiModule_restServices.promiseGet("2.0/documents",
 						"listDocument", item).then(function(response) {
 					$scope.loading = false;
@@ -543,8 +621,8 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 
 	}
 	$scope.styleO = "";
-	$scope.showSelectedMenu = function(item) { 
-		$scope.nodeTempT = item; 
+	$scope.showSelectedMenu = function(item) {
+		$scope.nodeTempT = item;
 		if ($scope.selectedMenu.menuId != item.menuId) {
 			$scope.selectedMenu = {};
 			$scope.selectedMenuItem = {
@@ -558,7 +636,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 					}
 					$scope.checkPropertiesFromSelectedMenu($scope.selectedMenu);
 					if ($scope.selectedMenu.staticPage) {
-					
+
 						 $scope.checkHtml($scope.selectedMenu);
 					}
 					if ($scope.selectedMenu.objId) {
@@ -595,7 +673,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 			}
 		}
 
-		
+
 	}
 	var map = {};
 	$scope.canBeMovedDown = function(item) {
@@ -640,7 +718,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 				return false;
 			}
 		}
-		
+
 	}
 	$scope.canBeMovedUp = function(item) {
 		//!(node.prog== 1) && node.menuId!=null
@@ -661,9 +739,9 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 			if(item.prog!=1 ) {
 				return true
 			} else return false;
-		} else return false; 
+		} else return false;
 	}
-	
+
 	$scope.canBeChangedWithFather = function (item) {
 		if(item.roles ){
 			var father = {};
@@ -677,22 +755,22 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 				return true
 			}
 			else return false
-		} 
+		}
 		else return false;
-		
-		
+
+
 	}
 	var getFather = function (parentId){
 		for (var i = 0; i < $scope.listOfMenu.length; i++) {
 			if($scope.listOfMenu[i].menuId==parentId)
 				return $scope.listOfMenu[i]
 		}
-		
+
 	}
 	//(node) node.parentId!=null && node.menuId!=null
 	$scope.moveUp = function (item){
 		sbiModule_restServices.promiseGet("2.0/menu/moveUp", item.menuId).then(
-				function(response) {	
+				function(response) {
 					$scope.getListOfMenu();
 				},
 				function(response) {
@@ -701,7 +779,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 	}
 	$scope.moveDown = function (item){
 		sbiModule_restServices.promiseGet("2.0/menu/moveDown", item.menuId).then(
-				function(response) {	
+				function(response) {
 					$scope.getListOfMenu();
 				},
 				function(response) {
@@ -710,7 +788,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 	}
 	$scope.changeWithFather = function (item){
 		sbiModule_restServices.promiseGet("2.0/menu/changeWithFather", item.menuId).then(
-				function(response) {	
+				function(response) {
 					$scope.getListOfMenu();
 				},
 				function(response) {
@@ -732,7 +810,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 							.load(response.data.errors[0].message), 'Error');
 				});
 	}
-	
+
 	$scope.deleteMenu= function (item,$event){
 		var confirm = $mdDialog.confirm()
 		.title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
@@ -746,8 +824,8 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
     }, function() {
 
     });
-	
-		
+
+
 	}
 	$scope.deleteMenuItem= function (id){
 		sbiModule_restServices.promiseDelete("2.0/menu", id).then(
@@ -762,6 +840,35 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
 				});
 	}
+
+
+
+	$scope.toggleDocFunct = function(doc, funct) {
+		if(funct != undefined) {
+			if(doc.initialPath == funct) { //unselect}
+				doc.initialPath = null;
+			}
+			else{
+				doc.initialPath = funct;
+			}
+		}
+	};
+
+	$scope.isChecked = function (item, funct, condition) {
+		if(condition) {
+			if(funct != undefined){
+				return item == funct;
+			}
+			else{
+				return false;
+			}
+		} else {
+			return false;
+		}
+	};
+
+
+
 	$scope.confirm = $mdDialog.confirm().title(
 			sbiModule_translate.load("sbi.catalogues.generic.modify")).content(
 			sbiModule_translate.load("sbi.catalogues.generic.modify.msg"))
