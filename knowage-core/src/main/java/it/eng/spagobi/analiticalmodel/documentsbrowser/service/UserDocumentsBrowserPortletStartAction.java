@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -145,8 +144,9 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 						if (funct != null) {
 							functID = String.valueOf(funct.getId());
 
-					}
+						}
 
+					}
 				}
 
 				String initialWorkpsaceMenu = null;
@@ -186,7 +186,6 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 				// ----------------------------------------------
 
 				JSONObject jsonObj = config.toJSON();
-
 
 				if (functID != null) {
 					jsonObj.put("defaultFolderId", functID);
