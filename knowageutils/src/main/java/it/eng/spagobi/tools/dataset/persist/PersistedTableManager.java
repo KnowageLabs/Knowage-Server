@@ -138,12 +138,6 @@ public class PersistedTableManager implements IPersistedManager {
 
 	public void persistDataset(IDataSet dataSet, IDataStore datastore, IDataSource datasource, String tableName) throws Exception {
 
-		logger.debug("The datastore metadata object contains # [" + dataSet.getDataStore().getMetaData().getFieldCount() + "] fields");
-		if (dataSet.getDataStore().getMetaData().getFieldCount() == 0) {
-			logger.debug("The datastore metadata object hasn't fields. Dataset doesn't persisted!!");
-			return;
-		}
-
 		this.setTableName(tableName);
 		this.setDialect(datasource.getHibDialectClass());
 
