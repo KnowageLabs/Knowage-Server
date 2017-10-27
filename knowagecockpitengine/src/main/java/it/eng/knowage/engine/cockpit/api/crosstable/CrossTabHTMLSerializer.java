@@ -845,6 +845,9 @@ public class CrossTabHTMLSerializer {
 				if (valueStyle != null && !valueStyle.equals("")) {
 					// normalize label properties
 					switch (keyStyle) {
+					case "textVerticalAlign":
+						keyStyle = "vertical-align";
+						break;
 					case "textAlign":
 						keyStyle = "text-align";
 						break;

@@ -202,14 +202,20 @@
 				</md-select>
 			</md-input-container>
 				</div>
-			    <div flex>
+			 <div layout="row" flex class="relative"> 	
 		       		<md-input-container flex class="md-block"> 
 							<label>{{translate.load('sbi.cockpit.table.alignment')}}</label>
 							<md-select aria-label="aria-label" ng-model="selectedColumn.style.textAlign">
 									<md-option ng-repeat="a in cockpitModule_generalOptions.textAlign" ng-value="a.value">{{a.label}}</md-option>
 							</md-select>
 					</md-input-container>
-				</div> 
+		       		<md-input-container flex class="md-block"> 
+							<label>{{translate.load('sbi.cockpit.table.vertical.alignment')}}</label>
+							<md-select aria-label="aria-label" ng-model="selectedColumn.style.textVerticalAlign">
+									<md-option ng-repeat="a in cockpitModule_generalOptions.textVerticalAlign" ng-value="a.value">{{a.label}}</md-option>
+							</md-select>
+					</md-input-container>
+			</div>					
 				</md-card-content>
 				</md-card>
 		      </div>
