@@ -14,7 +14,7 @@ The sub-products of the suite are:
 
 Knowage supports a modern vision of the data analytics, providing new self-service capabilities that give autonomy to the end-user, now able to build his own analysis and explore his own data space, also combining data that come from different sources.
 
-If this is your first contact with Knowage, it is highly recommended to have a look at the [Knowage site](https://www.knowage-suite.com) and at the online [demo](https://demo.knowage-suite.com/).
+If this is your first contact with Knowage, it is highly recommended to have a look at the [Knowage website](https://www.knowage-suite.com) and at the online [demo](https://demo.knowage-suite.com/).
 
 Knowage takes part in the [FIWARE](https://www.fiware.org/) community, being the reference implementation of the Data Visualization GE.
 
