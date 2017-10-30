@@ -17,16 +17,16 @@
  */
 package it.eng.spagobi.engines.georeport;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.crossnavigation.dao.ICrossNavigationDAO;
-
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.crossnavigation.dao.ICrossNavigationDAO;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -71,7 +71,7 @@ public class GeoReportEngine {
 		try {
 			JSONObject templ = new JSONObject(template);
 			templ.put("crossNavigation", isCross);
-			templ.put("crossNavigationMultiselect", isCross);
+			// templ.put("crossNavigationMultiselect", isCross);
 			template = templ.toString();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

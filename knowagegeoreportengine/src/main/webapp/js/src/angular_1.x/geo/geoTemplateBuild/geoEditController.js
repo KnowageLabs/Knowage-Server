@@ -81,6 +81,9 @@
 				showMapConfig:true
 		};
 
+		$scope.crossOption={crossNavigationMultiselect:true};
+
+
 		//indicator section metadata (transformed for the required manual input)
 		$scope.indicatorColumns=[
 			{"label":"Measure",
@@ -253,15 +256,13 @@
 
 
 			}else{
-				// call service that will save the template
-				//then redirect to gis document for configuring style
+				// call service that will save the template, then redirect to gis document for configuring style
 				if($scope.docLabel==''){
 
 
 					$mdDialog
 					.show({
 						controller : DialogControllerSaveDoc,
-//						templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateSaveNewMapDocument.html',
 						templateUrl : sbiModule_config.contextName + '/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateSaveNewMapDocument.html',
 						clickOutsideToClose : false,
 						preserveScope : true,
@@ -274,10 +275,9 @@
 				temp.TEMPLATE=template;
 				temp.DOCUMENT_LABEL= $scope.docLabel;
 
-				sbiModule_restServices
-				.alterContextPath(sbiModule_config.externalBasePath);
-		sbiModule_restServices.promisePost("restful-services/1.0/documents",
-				"saveGeoReportTemplate", temp).then(
+				sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath);
+
+				sbiModule_restServices.promisePost("restful-services/1.0/documents","saveGeoReportTemplate", temp).then(
 				function(response) {
 					$scope.template=template;
 					$scope.editDisabled = false;
@@ -285,8 +285,6 @@
 				},
 				function(response) {
 					sbiModule_messaging.showErrorMessage(response.data,"error saving tempate");
-					//sbiModule_restServices.errorHandler(response.data,
-					//		"error saving template");
 				});
 			}
 			}
@@ -307,8 +305,6 @@
 					},
 					function(response) {
 						sbiModule_messaging.showErrorMessage(response.data,"error loading analytical driver parameters");
-						//sbiModule_restServices.errorHandler(
-						//		response.data, "error loading analytical driver parameters");
 					});
 		}
 
@@ -326,7 +322,6 @@
 				$mdDialog
 						.show({
 							controller : DialogControllerLayerList,
-//							templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateLayerList.html',
 							templateUrl : sbiModule_config.contextName + '/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateLayerList.html',
 							clickOutsideToClose : false,
 							preserveScope : true,
@@ -347,7 +342,6 @@
 				$mdDialog
 						.show({
 							controller : DialogControllerLayerList,
-//							templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateLayerList.html',
 							templateUrl : sbiModule_config.contextName + '/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateLayerList.html',
 							clickOutsideToClose : false,
 							preserveScope : true,
@@ -708,11 +702,6 @@
 
 					}
 				}
-
-
-
-
-
 			} else {
 				// template building when dataset is not selected
 				if ($scope.selectedLayer.length == 0) {
@@ -730,32 +719,15 @@
 
 				}
 
-
-
-
-					template.analitycalFilter=[];
-//					for (var i = 0; i < $scope.selectedFilters.length; i++) {
-//						template.analitycalFilter.push($scope.selectedFilters[i].property);
-//					}
-					for (var i = 0; i < $scope.selectedDriverParamteres.length; i++) {
-						template.analitycalFilter.push($scope.selectedDriverParamteres[i].url);
-					}
+				template.analitycalFilter=[];
+				for (var i = 0; i < $scope.selectedDriverParamteres.length; i++) {
+					template.analitycalFilter.push($scope.selectedDriverParamteres[i].url);
+				}
 
 			}
 			template.visibilityControls= $scope.visibility;
-
-//			template.visibilityControls= {
-//					showRightConfigMenu:$scope.showRightConfigMenu,
-//					showLegendButton:$scope.showLegendButton,
-//					showDistanceCalculator:$scope.showDistanceCalculator,
-//					showDownloadButton:$scope.showDownloadButton,
-//					showSelectMode:$scope.showSelectMode,
-//					showLayer:$scope.showLayer,
-//					showBaseLayer:$scope.showBaseLayer,
-//					showMapConfig:$scope.showMapConfig
-//			};
+			template.crossNavigationMultiselect= $scope.crossOption.crossNavigationMultiselect;
 			console.log(template.visibilityControls);
-           // template.visibilityControls= visibilityControls;
 
 			return template;
 		}
@@ -763,19 +735,22 @@
 
 		function initializeFromTemplate(){
 			if($scope.template.mapName){
-			$scope.mapName=$scope.template.mapName;
+				$scope.mapName=$scope.template.mapName;
 			}
 			//initializeDatasetJoinColumns();
 			initializeIndicators();
 			initilizeDatasetFilters();
 			if(!$scope.tecnicalUser){
-			initializeLayerFilters();
+				initializeLayerFilters();
 			}
 			if($scope.template.visibilityControls){
-			$scope.visibility= $scope.template.visibilityControls;
+				$scope.visibility= $scope.template.visibilityControls;
+			}
+			if($scope.template.crossNavigationMultiselect !== undefined){
+				$scope.crossOption.crossNavigationMultiselect= $scope.template.crossNavigationMultiselect;
 			}
 
-			}
+		}
 
 		function initializeSelectedLayer(){
 	    	if($scope.isDatasetChosen){
@@ -816,31 +791,20 @@
 
 					$scope.layerProperties= response.data;
 					$scope.tableFunctionsJoin.layerColumnsStore= $scope.layerProperties;
-//					var newRow = {
-//							datasetColumn : '',
-//							layerColumn : '',
-//							datasetColumnView : '<md-select ng-model=row.datasetColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumnsStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
-//							layerColumnView : '<md-select ng-model=row.layerColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.layerColumnsStore" value="{{col.property}}">{{col.property}}</md-option></md-select>'
-//						};
-//
-//						$scope.datasetJoinColumns.push(newRow);
-						for (var i = 0; i < dsJoinCols.length; i++) {
-							var newRow = {
-									datasetColumn : dsJoinCols[i],
-									layerColumn :layerJoinCols[i],
-									datasetColumnView : '<md-select ng-model=row.datasetColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumnsStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
-									layerColumnView : '<md-select ng-model=row.layerColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.layerColumnsStore" value="{{col.property}}">{{col.property}}</md-option></md-select>'
-								};
+					for (var i = 0; i < dsJoinCols.length; i++) {
+						var newRow = {
+								datasetColumn : dsJoinCols[i],
+								layerColumn :layerJoinCols[i],
+								datasetColumnView : '<md-select ng-model=row.datasetColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumnsStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
+								layerColumnView : '<md-select ng-model=row.layerColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.layerColumnsStore" value="{{col.property}}">{{col.property}}</md-option></md-select>'
+							};
 
-								$scope.datasetJoinColumns.push(newRow);
-						}
+							$scope.datasetJoinColumns.push(newRow);
+					}
 
 				},
 				function(response) {
 					sbiModule_messaging.showErrorMessage(response.data,"error loading layer filters");
-
-					//sbiModule_restServices.errorHandler(response.data,
-					//		"error loading layer filters");
 				});
 
 			}
@@ -853,7 +817,6 @@
 							indicatorName : $scope.template.indicators[i].name,
 							indicatorLabel :$scope.template.indicators[i].label,
 							indicatorNameView : '<md-select ng-model=row.indicatorName class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetMeasuresStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
-						//	indicatorLabelView : '<md-input-container class="md-block"><label>indicator label</label><input type="text" ng-model="row.indicatorLabel"></md-input-container>'
 					};
 
 
@@ -894,12 +857,6 @@
 						}
 
 					}
-//				     if(!driver){
-//				    	 var filter={};
-//							filter.property=$scope.template.analitycalFilter[i];
-//							$scope.selectedFilters.push(filter);
-//				     }
-
 				}
 			}
 		}
@@ -1083,9 +1040,6 @@
         		    $mdDialog.cancel();
         		}, function errorCallback(response) {
     				sbiModule_messaging.showErrorMessage(response.data,"error saving template");
-
-        			//sbiModule_restServices.errorHandler(response.data,
-					//"error saving template");
         		  });
 
 

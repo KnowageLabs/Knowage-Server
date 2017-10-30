@@ -9,8 +9,7 @@
 				</md-radio-button>
 			</md-radio-group>
 			
-			<expander-box id="filterSpatialtype"  border-color="rgb(204, 204, 204)"  color="black" toolbar-class="ternaryToolbar" expanded='true' title='{{::translate.load("gisengine.info.message.spatialFilter")}}' ng-if="selectModeInteraction.type=='cross'">
-
+			<expander-box id="filterSpatialtype"  border-color="rgb(204, 204, 204)"  color="black" toolbar-class="ternaryToolbar" expanded='true' title='{{::translate.load("gisengine.info.message.spatialFilter")}}' ng-if="selectModeInteraction.type=='cross' && isCrossMultiselectRequired()">
 				<md-radio-group ng-model="selectModeInteraction.selectedFilterType">
 					<div layout="row" layout-wrap>
 						<div flex=30>

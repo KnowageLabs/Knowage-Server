@@ -672,8 +672,9 @@ geoM.service(
 			}
 			this.doClickAction = function(evt, prop) {
 				layerServ.selectedFeatures = evt.target.getFeatures().getArray();
-				//qui aggiungo anche la features con il shift click
+				//adds features with shift+click
 				geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
+				var multiSelect = geoModule_template.crossNavigation  && geoModule_template.crossNavigationMultiselect ? geoModule_template.crossNavigationMultiselect : null;
 
 				if (geo_interaction.type == "identify") {
 
@@ -691,18 +692,17 @@ geoM.service(
 //					$map.getOverlays().getArray()[0].setPosition(coordinate);
 					$map.getOverlays().getArray()[$map.getOverlays().getArray().length-1].setPosition(coordinate);
 
-				}else if (geo_interaction.type == "cross" && geo_interaction.selectedFilterType == "near") {
+				}else if (multiSelect && geo_interaction.type == "cross" && geo_interaction.selectedFilterType == "near") {
 					layerServ.spy();
-				} else if (geo_interaction.type == "cross" && geo_interaction.selectedFilterType == "intersect") {
+				} else if (multiSelect && geo_interaction.type == "cross" && geo_interaction.selectedFilterType == "intersect") {
 					layerServ.intersectFeature();
-				} else if (geo_interaction.type == "cross" && geo_interaction.selectedFilterType == "inside") {
+				} else if (multiSelect && geo_interaction.type == "cross" && geo_interaction.selectedFilterType == "inside") {
 					layerServ.insideFeature();
 				} else if (geo_interaction.type == "cross") {
 
-					layerServ.overlay.setPosition(undefined); // hides
-					// eventual messages present on the map
+					layerServ.overlay.setPosition(undefined); // hides eventual messages present on the map
 
-					var multiSelect = geoModule_template.crossNavigation  && geoModule_template.crossNavigationMultiselect ? geoModule_template.crossNavigationMultiselect : null;
+//					var multiSelect = geoModule_template.crossNavigation  && geoModule_template.crossNavigationMultiselect ? geoModule_template.crossNavigationMultiselect : null;
 					switch (multiSelect) {
 					case (multiSelect !== undefined && true):
 						/*

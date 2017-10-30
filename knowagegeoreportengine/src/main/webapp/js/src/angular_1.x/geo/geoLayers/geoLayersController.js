@@ -58,6 +58,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	$scope.geoModule_driverParameters=geoModule_driverParameters;
 
 	$scope.visibility= geoModule_template.visibilityControls;
+	$scope.crossNavigationMultiselect= geoModule_template.crossNavigationMultiselect;
 
 	$scope.selectModeTypeList = [
 	                             {label:sbiModule_translate.load("gisengine.rigthMapMenu.selectModeType.identify"), type:"identify"},
@@ -70,9 +71,8 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	                      ];
 
 	$scope.typeOfMisure = [
-	                       {label: "m",type:"miglia"},
-	                       {label: "km",type:"kilometers"},
-
+	                       {label: "M",type:"miglia"},
+	                       {label: "Km",type:"kilometers"}
 	                       ];
 	//inizializzo il valore dell'indicator
 	for(var i=0;i<geoModule_indicators.length;i++){
@@ -91,6 +91,12 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		var isCrossRadioButtonOptionDisabled = (isCross && !isCrossNavigationInTemplate);
 
 		return isCrossRadioButtonOptionDisabled;
+	};
+
+	$scope.isCrossMultiselectRequired = function() {
+		var isCrossMultivalueInTemplate = (geoModule_template.crossNavigationMultiselect == true);
+
+		return isCrossMultivalueInTemplate;
 	};
 
 	$scope.setSelectedFilterType = function(type) {
