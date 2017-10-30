@@ -212,7 +212,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <md-checkbox ng-model="visibility.showMapConfig" ng-disabled="!visibility.showRightConfigMenu" aria-label="show map style configuration panel" flex=40>
             {{::translate.load('gisengine.designer.showMapConfig')}}
           </md-checkbox> 
-           <md-checkbox ng-model="crossOption.crossNavigationMultiselect"   aria-label="active cross with multiselection" flex=40>
+           <md-checkbox ng-model="crossOption.crossNavigationMultiselect" ng-disabled="!visibility.showRightConfigMenu || !showCrossOptions" aria-label="active cross with multiselection" flex=40>
             {{::translate.load('gisengine.designer.showCrossMultiSelection')}}
           </md-checkbox> 
  	</div>

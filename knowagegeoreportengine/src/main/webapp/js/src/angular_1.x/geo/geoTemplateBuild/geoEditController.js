@@ -80,7 +80,7 @@
 				showBaseLayer: true,
 				showMapConfig:true
 		};
-
+		$scope.showCrossOptions=$scope.template.crossNavigation==true;
 		$scope.crossOption={crossNavigationMultiselect:true};
 
 
