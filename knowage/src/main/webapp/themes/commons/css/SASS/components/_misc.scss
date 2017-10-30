@@ -861,7 +861,7 @@ color-picker {
     size: auto;   /* auto is the initial value */
     margin: 0;  /* this affects the margin in the printer settings */
   }
-  .kn-cockpit .cockpitSheetTabsHook md-tabs-canvas .md-tab md-tab-item {
+  .kn-cockpit .cockpitSheetTabsHook md-tabs-canvas md-tab-item.md-tab {
     display: none !important; 
   } 
 }
