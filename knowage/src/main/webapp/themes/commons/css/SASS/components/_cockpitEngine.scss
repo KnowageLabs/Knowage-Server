@@ -683,9 +683,27 @@
            	 	z-index: 9999;
            	 }
             }
-            &:hover {
-            	.showActionButtonHandler {
+            .viewModeMenu {
+            	position: absolute;
+            	top: 0;
+            	width: 100%;
+            	z-index: 20;
+            	.floatingFilter {
             		opacity: 1 !important;
+            	}
+            	.md-button {
+            		margin: 0;
+            		opacity: 0;
+            	}
+            }
+            &:hover {
+            	.showActionButtonHandler, .floatingSearch {
+            		opacity: 1 !important;
+            	}
+            	.viewModeMenu {
+            		.md-button {
+            			opacity: 1 !important;
+            		}
             	}
             }
             .compressWidget {
@@ -705,7 +723,7 @@
 				}
 				
             }
-            .floatingSearch,.floatingFilter{
+            .floatingSearch{
             	position: absolute;
 			    right: 0;
 			    top: 4px;
@@ -714,6 +732,9 @@
 				z-index: 11;
 				&.activeSearch{
 					right:40px;
+				}
+				&:hover{
+					opacity:.5;
 				}
             }
             .noMouse {
@@ -746,6 +767,9 @@
 						color: $lightTextColor;
 					}
 					box-shadow: 0px 2px 3px $shadowsColor;
+				}
+				.stackedIcons {
+					padding: 4px;
 				}
 			}
 			

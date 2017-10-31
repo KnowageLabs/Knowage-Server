@@ -476,8 +476,28 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	    });
 	}
 
-	$scope.openSearchBar = function(){
-		$scope.widgetSearchBar == false ? $scope.widgetSearchBar = true : $scope.widgetSearchBar = false;
+	$scope.openSearchBar = function(ev,widgetName){
+		//$scope.widgetSearchBar == false ? $scope.widgetSearchBar = true : $scope.widgetSearchBar = false;
+		$mdDialog.show({
+			controller: function ($scope,$mdDialog,ngModel) {
+				$scope.widgetName = widgetName;
+				$scope.searchColumnsModal = function(){
+					$mdDialog.hide();
+				}
+				$scope.cancel = function(){
+					$mdDialog.cancel();
+				}
+			},
+			scope: $scope,
+			preserveScope:true,
+	      templateUrl: currentScriptPath+'/templates/tableSearch.tpl.html',
+	      targetEvent: ev,
+	      clickOutsideToClose:true,
+	      locals: {ngModel:$scope.ngModel}
+	    })
+	    .then(function() {
+	    	$scope.searchColumns();
+	    });
 	}
 
 	$scope.doSelection = function(columnName,columnValue,modalColumn,modalValue,row, skipRefresh){

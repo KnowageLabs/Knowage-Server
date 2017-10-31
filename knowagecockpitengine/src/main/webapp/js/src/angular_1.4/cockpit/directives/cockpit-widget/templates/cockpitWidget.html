@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
     
     <form>
-	    <div class="widgetSearchBar md-whiteframe-2dp animation slide-down" ng-if="widgetSearchBar" layout="row" layout-align="start center" layout-wrap>
+	    <!--  div class="widgetSearchBar md-whiteframe-2dp animation slide-down" ng-if="widgetSearchBar" layout="row" layout-align="start center" layout-wrap>
 	    	<i class="fa fa-search" layout-padding></i>
 			<md-input-container class="md-block" flex flex-xs=40>
 	        	<label>{{translate.load("sbi.cockpit.widgets.table.search")}}</label>
@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-icon md-font-icon="fa fa-times"></md-icon>
 			</md-button>
 			
-	    </div>
+	    </div-->
     </form>
 	<md-card class="placedWidget flexCard" ng-style="borderShadowStyle" ng-class="{'shadowedBox': extendedStyle.shadows, 'noTitle':(!extendedStyle.titles && !widExp),'editWidgetMode':cockpitModule_properties.EDIT_MODE}" layout="column" layout-fill>
 		<md-card-title ng-style="titleStyle" layout="row" layout-align="start center" ng-dblclick="editWidgetName();" ng-class="{'titleOnTop':editingWidgetName}">
@@ -65,12 +65,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 			</md-toolbar>
 		</md-card-title>
-		<md-button class="md-icon-button compressWidget" ng-if="widExp" aria-label="compress button" ng-click="expandWidget();$event.stopPropagation();" >
-			<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.collapse")}}</md-tooltip>
-			<md-icon md-font-icon="fa fa-compress"></md-icon>
-		</md-button>
+		
+		<div layout="row" class="viewModeMenu" ng-if="(!cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE) || widExp" layout-align="end center">
+		
+			<md-button class="md-icon-button "  ng-click="expandWidget();$event.stopPropagation();" >
+				<md-tooltip md-direction="bottom" ng-if="!widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
+				<md-tooltip md-direction="bottom" ng-if="widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.collapse")}}</md-tooltip>
+				<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
+			</md-button>
+			
+			<md-button class="md-icon-button " ng-if="ngModel.type == 'table' && !cockpitModule_properties.EDIT_MODE && !widExp" ng-class="{'activeSearch':activeSearch}" ng-click="openSearchBar($event);$event.stopPropagation();">
+				<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.search")}}</md-tooltip>
+				<md-icon md-font-icon="fa fa-search"></md-icon>
+			</md-button>
+			
+			<md-button class="md-icon-button floatingFilter" ng-if="ngModel.type == 'table' && activeSearch && !cockpitModule_properties.EDIT_MODE" ng-click="resetSearch();$event.stopPropagation();">
+				<md-tooltip md-direction="bottom" md-delay="1000">Filtered table, click to reset search</md-tooltip>
+				<md-icon md-font-icon="fa fa-filter"></md-icon>
+			</md-button>
+			
+		</div>
+		
 		<md-fab-speed-dial md-open="ngModel.menuOpened" md-direction="down" class="showActionButtonHandler md-scale" ng-class="{'noMouse':ngModel.menuOpened==true}" ng-if="!widExp && !( cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE)">
-        <md-fab-trigger>
+        <md-fab-trigger ng-if="cockpitModule_properties.EDIT_MODE">
           	<div  class="md-button md-icon-button menuOnTopButton" aria-label="show menu" ng-class="{'dragCursor':ngModel.menuOpened && cockpitModule_properties.EDIT_MODE,'draggableToolbar':ngModel.menuOpened && cockpitModule_properties.EDIT_MODE}">
 				<md-icon md-font-icon="fa fa-ellipsis-v" ng-if="!ngModel.menuOpened || !cockpitModule_properties.EDIT_MODE"></md-icon>
 				<md-icon md-font-icon="fa fa-arrows" ng-if="ngModel.menuOpened && cockpitModule_properties.EDIT_MODE"></md-icon>
@@ -79,13 +96,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <md-fab-actions>	
 
-			<md-button class="md-icon-button "  aria-label="expand button" ng-click="expandWidget();$event.stopPropagation();" >
+			<md-button class="md-icon-button "  aria-label="expand button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="expandWidget();$event.stopPropagation();" >
 				<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
 				<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
 			</md-button>
 			
 			<!-- SEARCH BUTTON for table widget only -->
-			<md-button class="md-icon-button " aria-label="search button" ng-if="ngModel.type == 'table'" ng-click="openSearchBar();$event.stopPropagation();">
+			<md-button class="md-icon-button " aria-label="search button" ng-if="cockpitModule_properties.EDIT_MODE && ngModel.type == 'table'" ng-click="openSearchBar($event);$event.stopPropagation();" >
 				<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.search")}}</md-tooltip>
 				<span class="fa-stack">
 				  <md-icon md-font-icon="fa fa-search fa-stack-1x"></md-icon>
@@ -130,7 +147,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-button>
 			
 			<!-- clickable BUTTON -->
-			<md-button class="md-icon-button " aria-label="unselectable button" ng-if="cliccable==true && cockpitModule_properties.EDIT_MODE && ngModel.content.chartTemplate.CHART.type.toLowerCase()!='treemap'" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
+			<md-button class="md-icon-button stackedIcons" aria-label="unselectable button" ng-if="cliccable==true && cockpitModule_properties.EDIT_MODE && ngModel.content.chartTemplate.CHART.type.toLowerCase()!='treemap'" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable" style="padding:4px;">
 				<md-tooltip md-direction="top" md-delay="1000">
 		          {{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}}
 		        </md-tooltip>
