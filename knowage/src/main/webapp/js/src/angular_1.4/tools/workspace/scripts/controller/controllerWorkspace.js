@@ -312,16 +312,16 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			$scope.selectedDocument = null;
-			$scope.selectDocument(undefined);
+			if($scope.selectDocument) $scope.selectDocument(undefined);
 
 			$scope.showOrganizerDocumentInfo = null;
-			$scope.selectOrganizerDocument(undefined);
+			if($scope.selectOrganizerDocument) $scope.selectOrganizerDocument(undefined);
 
 			$scope.showDatasetInfo = null;
-			$scope.selectDataset(undefined);
+			if($scope.selectDataset) $scope.selectDataset(undefined);
 
 			$scope.showModelInfo = null;
-			$scope.selectModel(undefined);
+			if($scope.selectModel) $scope.selectModel(undefined);
 
 			/**
 			 * Handle the situation of clicking on the left menu option, keeping track of the state of the search input field. In the if-block
@@ -923,6 +923,7 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 			setDocumentDetailOpen(document !== undefined);
 		}
 	};
+
 
 
 

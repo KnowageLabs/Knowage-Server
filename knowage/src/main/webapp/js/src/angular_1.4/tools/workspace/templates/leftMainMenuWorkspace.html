@@ -15,7 +15,6 @@
 	<md-list ng-cloak>
 	
 	    <div ng-repeat="option in leftMainMenu">
-			<div ng-if="option.name.toLowerCase() == currentOptionMainMenu">{{leftMenuItemPicked(option,true)}}</div>
 			<md-list-item 	ng-click="leftMenuItemPicked(option)" ng-if="optionVisibility(option)"
 							ng-class="option.name.toLowerCase() == currentOptionMainMenu ? 'selectedLeftMenuItem' : 'notSelectedLeftMenuItem'">
 	    		<md-icon id="{{option.label}}" md-font-icon="{{option.icon}}"></md-icon>
@@ -35,8 +34,6 @@
 		  	 	
 		  	 	
 		  	 <div ng-repeat="suboption in option.submenuOptions">
-		  	 	<div ng-if="suboption.name.toLowerCase() == currentOptionMainMenu">{{leftMenuItemPicked(suboption,true)}}{{setExpanded(option)}}</div>
-		  	  	
 		  	  	<md-list-item 	ng-class="suboption.name.toLowerCase() == currentOptionMainMenu ? 'workspace-submenu selectedLeftMenuItem'
 		  	  							 : 'workspace-submenu notSelectedLeftMenuItem'" 
 		  	  					ng-show="option.active && suboption.visible" 

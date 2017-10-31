@@ -1,7 +1,7 @@
 /**
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,17 +11,17 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 (function() {
-	
+
 	var scripts = document.getElementsByTagName("script");
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
-	
+
 angular
 	.module('smartfilters_view_workspace', [])
 
@@ -38,16 +38,16 @@ angular
 		      controller: smartfiltersController
 		  };
 	});
-	
+
  function smartfiltersController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_user,$documentViewer){
-	 
+
 	   $scope.smartFiltersListInitial=[];
 	   $scope.smartFilterEnabled=function(){
-		   
+
 		   return datasetParameters.IS_SMARTFILTER_ENABLED === "true";
-		   
-	   }  
-	 
+
+	   }
+
 		$scope.loadSmartFilters= function(){
 			params={};
 			config={};
@@ -63,16 +63,44 @@ angular
 				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.smartfilter.load.error'));
 			});
 		}
-		
+
 		$scope.filterSpeedMenu=[{
 			label : sbiModule_translate.load('sbi.generic.run'),
 			icon:'fa fa-play-circle' ,
-			backgroundColor:'transparent',	
+			backgroundColor:'transparent',
 			action : function(item,event) {
 				$scope.executeDocument(item);
 			}
 		} ];
-		
-    
+
+
+		var currentOptMenuInit = $scope.$watch('currentOptionMainMenu',function(newValue, oldValue){
+			var selectedMenu = null;
+			var found = false;
+			for (i=0; i<$scope.leftMainMenu.length && found==false; i++) {
+
+				if($scope.leftMainMenu[i].submenuOptions){
+					for (j=0; i<$scope.leftMainMenu[i].submenuOptions.length && found==false; j++) {
+
+						if($scope.leftMainMenu[i].submenuOptions[j].name.toLowerCase() == newValue){
+							selectedMenu = $scope.leftMainMenu[i].submenuOptions[j];
+							found = true;
+						}
+					}
+				}
+
+				if($scope.leftMainMenu[i].name.toLowerCase() == newValue){
+					selectedMenu = $scope.leftMainMenu[i];
+					found = true;
+				}
+			}
+
+
+			$scope.leftMenuItemPicked(selectedMenu,true);
+
+			currentOptMenuInit();
+		});
+
+
 }
 })();
