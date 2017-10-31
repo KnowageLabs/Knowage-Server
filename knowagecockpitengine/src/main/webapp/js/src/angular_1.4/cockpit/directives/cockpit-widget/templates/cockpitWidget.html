@@ -147,7 +147,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-button>
 			
 			<!-- clickable BUTTON -->
-			<md-button class="md-icon-button stackedIcons" aria-label="unselectable button" ng-if="cliccable==true && cockpitModule_properties.EDIT_MODE && ngModel.content.chartTemplate.CHART.type.toLowerCase()!='treemap'" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable" style="padding:4px;">
+			<md-button class="md-icon-button stackedIcons" aria-label="unselectable button" ng-if="cliccable==true && cockpitModule_properties.EDIT_MODE && ngModel.content.chartTemplate.CHART.type.toLowerCase()!='treemap'" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
 				<md-tooltip md-direction="top" md-delay="1000">
 		          {{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}}
 		        </md-tooltip>
