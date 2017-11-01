@@ -41,6 +41,7 @@ import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
 import it.eng.spagobi.dossier.dao.ISbiDossierActivityDAO;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
+import it.eng.spagobi.engines.config.dao.ISbiExportersDAO;
 import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
 import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
 import it.eng.spagobi.georeport.dao.IFeaturesProviderFileDAO;
@@ -966,6 +967,10 @@ public class DAOFactory {
 
 	public static ISbiDossierActivityDAO getDossierActivityDao() {
 		return (ISbiDossierActivityDAO) createDAOInstance("DossierActivityDAO");
+	}
+	
+	public static ISbiExportersDAO getExportersDao() {
+		return (ISbiExportersDAO) createDAOInstance("ExportersDAO");
 	}
 
 }

@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -146,15 +147,21 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			} catch (Throwable t) {
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
-
-			SbiExporters hibExporter = (SbiExporters) session.load(SbiExporters.class, new SbiExportersId(exporter.getEngineId(), exporter.getDomainId()));
-			logger.debug("Exporter loaded");
-
+			
 			SbiDomains sbiDomain = new SbiDomains();
 			sbiDomain.setValueId(exporter.getDomainId());
 
 			SbiEngines sbiEngine = new SbiEngines();
 			sbiEngine.setEngineId(exporter.getEngineId());
+			
+			SbiExportersId id = new SbiExportersId();
+			id.setEngineId(exporter.getEngineId());
+			id.setDomainId(exporter.getDomainId());
+
+			SbiExporters hibExporter = (SbiExporters) session.load(SbiExporters.class, id);
+			logger.debug("Exporter loaded");
+
+			
 
 			hibExporter.setSbiDomains(sbiDomain);
 			hibExporter.setSbiEngines(sbiEngine);
@@ -207,9 +214,14 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			SbiEngines sbiEngine = new SbiEngines();
 			sbiEngine.setEngineId(exporter.getEngineId());
-
+			
+			SbiExportersId id = new SbiExportersId();
+			id.setDomainId(exporter.getDomainId());
+			id.setEngineId(exporter.getEngineId());
+			
 			hibExporter.setSbiDomains(sbiDomain);
 			hibExporter.setSbiEngines(sbiEngine);
+			hibExporter.setId(id);
 
 			session.save(hibExporter);
 
