@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: KnowageQbeEngine.war
+Implementation-Title: KnowageQbeEngine
+Implementation-Version: 6.0.0
+

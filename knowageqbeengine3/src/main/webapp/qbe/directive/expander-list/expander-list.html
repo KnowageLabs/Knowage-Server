@@ -1,0 +1,35 @@
+<div class="expanderList">
+    <div ng-repeat="(key, value) in ngModel">
+        <h3 layout="row" ng-class="{'opened':value.length>0}">{{key}}
+            <span flex></span>
+            <ng-transclude></ng-transclude>
+            <span class="chip">{{value.length}}</span>
+           
+        </h3>
+        <div class="expandableEntities" ng-repeat="entity in value">
+            <h4 ng-click="toggleExpander(entity)" ng-class="{'expanded':entity.expanded}" ng-drag="dragEnabled" ng-drag-data="entity" ng-drag-success="dragLi($data,$event)">
+                <div ng-if="colors" class="colorSquare" ng-style="{'background-color':entity.color}"></div>
+                <i ng-class="[fontIcons, entity.iconCls]"></i>
+                <span>{{entity.text}}</span>
+                 <span>{{entity.name}}</span>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-repeat="entAction in entitiesActions" ng-click="$event.stopPropagation();entAction.action(entity,$event)">
+                    <md-icon md-font-icon="{{entAction.icon}}"></md-icon>
+                </md-button>
+                <i class="fa" ng-class="{'fa-chevron-up':entity.expanded, 'fa-chevron-down':!entity.expanded}"></i>
+            </h4>
+            <ul ng-show="entity.expanded">
+                <li ng-repeat="field in entity[childrenName]" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)" layout="row"">
+                    <i ng-class="[fontIcons, field.iconCls]"></i>
+                    <span>{{field["text"]}}</span>
+                   <span>{{field["alias"]}}</span>
+                   <md-tooltip md-direction="top">{{checkDescription(field)}}</md-tooltip>
+                    <span flex></span>
+                    <md-button class="md-icon-button" ng-repeat="fieldAction in fieldsActions" ng-click="$event.stopPropagation();fieldAction.action(field,$event)">
+                        <md-icon md-font-icon="{{fieldAction.icon}}"></md-icon>
+                    </md-button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

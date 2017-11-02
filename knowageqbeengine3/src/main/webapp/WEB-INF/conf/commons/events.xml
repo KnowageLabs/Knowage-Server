@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EVENTS>
+	<EVENTS-NOTIFICATION-ENABLED>true</EVENTS-NOTIFICATION-ENABLED>
+	
+	<EVENTS-NOTIFIER notifierClass="it.eng.spago.event.SynchronousEventNotifier"/>
+		
+	<EVENTS-LISTENER listenerClass="it.eng.spago.listeners.CacheResponseListener"/>
+	<!--  
+	<EVENTS-LISTENER listenerClass="it.eng.qbe.sinapsi.SinapsiCasListener"/>
+	-->
+</EVENTS>

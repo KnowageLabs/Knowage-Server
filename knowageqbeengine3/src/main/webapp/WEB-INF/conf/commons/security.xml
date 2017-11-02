@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SECURITY>
+	<APPLICATION>Qbe Web</APPLICATION>
+	<GLOBAL_SETTING>DISABLED</GLOBAL_SETTING>
+	<ACTIONS_EXCLUDED_FROM_GLOBAL>
+		<!--
+			<ACTION name="LOGIN_ACTION"/>
+		-->
+	</ACTIONS_EXCLUDED_FROM_GLOBAL>
+	<PAGE_MODULES_EXCLUDED_FROM_GLOBAL>
+		<!--
+			<PAGE_MODULE page="" module=""/>
+		-->
+	</PAGE_MODULES_EXCLUDED_FROM_GLOBAL>
+
+	<!-- Spago XML Authentication Handler  -->
+	<AUTHENTICATION_HANDLER>it.eng.spago.security.xmlauthorizations.XMLAuthenticationHandler</AUTHENTICATION_HANDLER>
+	<!-- Spago XML Athorization Handler  -->
+	<AUTHORIZATION_HANDLER>it.eng.spago.security.xmlauthorizations.XMLAuthorizationHandler</AUTHORIZATION_HANDLER>
+	
+	 
+	<!-- Profilatura con CAS
+	
+	<AUTHORIZATION_HANDLER>it.eng.qbe.sinapsi.SinapsiAuthorizationHandler</AUTHORIZATION_HANDLER>
+	 
+	  --> 
+</SECURITY>
