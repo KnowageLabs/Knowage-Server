@@ -38,6 +38,7 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 	//sbiModule_logger.disableConsole();
 	$scope.translate = sbiModule_translate;
 	$scope.httpParamSerializer = $httpParamSerializer;
+	$scope.showimg = false;
 	$scope.previewButtonEnabled = false;
 	$scope.selectedChartType = "";
 
@@ -62,9 +63,6 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 			if($scope.chartTemplate.type.toUpperCase()=="SCATTER"){
 				showAction($scope.translate.load('sbi.cockpit.select.no.aggregation.for.all.series'));
 			}
-			if ($scope.chartTemplate.type.toUpperCase()=="HEATMAP") {
-				showAction($scope.translate.load('sbi.chartengine.validation.addserie.heatmap.twoSerieConstraint'));
-			} 
 			if ($scope.chartTemplate.type.toUpperCase()=="BAR" || $scope.chartTemplate.type.toUpperCase()=="LINE" ) {
 				showAction($scope.translate.load('sbi.chartengine.validation.addserie.arearange.parLowHigh'));
 			}
@@ -300,10 +298,6 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 			} 
 			if(counter ==0 ) f = true;
 			
-		} else if ($scope.selectedChartType.toUpperCase() == "HEATMAP") {
-			if ($scope.chartTemplate.VALUES.CATEGORY.length!=2) {
-				f = false;
-			}
 		}  else if (($scope.selectedChartType.toUpperCase() == "BAR" || $scope.selectedChartType.toUpperCase() == "LINE") &&  $scope.chartTemplate.VALUES.SERIE.length>0) {
 			  var allSeries =  $scope.chartTemplate.VALUES.SERIE;
 				var counterlow = 0;
@@ -334,18 +328,18 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 			if($scope.chartTemplate.type.toUpperCase()=="SCATTER"){
 				showAction($scope.translate.load('sbi.cockpit.select.no.aggregation.for.all.series'));
 			}
-			if ($scope.chartTemplate.type.toUpperCase()=="HEATMAP") {
-				showAction($scope.translate.load('sbi.chartengine.validation.addserie.heatmap.twoCategoryConstraint'));
-			}
 			if ($scope.chartTemplate.type.toUpperCase()=="BAR" || $scope.chartTemplate.type.toUpperCase()=="LINE" ) {
 				showAction($scope.translate.load('sbi.chartengine.validation.addserie.arearange.parLowHigh'));
 			}
 			
 		}
 		else {
-		
+			$scope.showimg = false; 
+			$scope.showEl = true; 			
 			PreviewService.run($scope.chartTemplate).then(
 					function successPreviewUrl (response) {
+						$scope.showEl = false; 
+						$scope.showimg = true;
 						$scope.previewUrl = sbiHost + '/highcharts-export-web/' + response.data;
 					}, function errorPreviewUrl (response) {
 						sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');

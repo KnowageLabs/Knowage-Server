@@ -2414,7 +2414,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 	
 })	
 
-.service("PreviewService", function(sbiModule_restServices,chartInitializerRetriver,sbiModule_messaging,sbiModule_translate,sbiModule_config, $http, $q){
+.service("PreviewService", function(sbiModule_restServices,chartInitializerRetriver,sbiModule_messaging,sbiModule_translate,sbiModule_config, $http, $q, $timeout){
 	this.run = function(temp) {
 		
 		var deferred = $q.defer();
@@ -2472,59 +2472,75 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				lib="highcharts414"
 			}
 			var encoded = {};
+			var prepareDataForRequest = function (){
+				encoded =  btoa(document.getElementById('forSVGPreview').innerHTML);
+				
+				var parameters = {
+						type:'image/png',
+						scale: undefined,
+						constr:'Chart',
+						callback: undefined,
+						async: 'true'
+					};
+					if(lib=="d3js244"){
+						parameters.options = encoded;
+						parameters.content = 'html';
+					} else {
+						parameters.options = JSON.stringify(chartConf);
+						parameters.content = 'options';
+					}
+					
+						
+					
+					$http({
+					    method: 'POST',
+					    url: sbiHost + '/highcharts-export-web/',
+					    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'},
+					    transformRequest: function(obj) {
+					        var str = [];
+					        for(var p in obj)
+					        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+					        return str.join("&");
+					    },
+					    data: parameters
+					}).then(function successExportPng(response) {
+						deferred.resolve(response);
+					},function errorExportPng(response) {
+						deferred.reject(response);
+					});
+					
+			}
 			if(d3Types.indexOf(chartType.toLowerCase())>=0 || highSpec.indexOf(chartType.toLowerCase())>=0){
 				var chartInitializer = chartInitializerRetriver.getChartInitializer(lib);
 				if(lib=="highcharts414"){
 
 					chartConf = chartInitializer.renderChart(chartConf,null, null, true);	
+					prepareDataForRequest();	
 				} else {
 					document.getElementById("forSVGPreview").style.height = "500px";
 					document.getElementById("forSVGPreview").style.width = "500px";
 					chartInitializer.renderChart(chartConf,document.getElementById('forSVGPreview'), null, null, true);	
 
-					encoded = btoa(document.getElementById('forSVGPreview').innerHTML);
-					
-
 					document.getElementById("forSVGPreview").style.height = "0px";
 					document.getElementById("forSVGPreview").style.width = "0px";
+					if(chartType.toLowerCase()=='wordcloud'){
+						$timeout(function(){								
+							prepareDataForRequest();
+							
+						}, 3000);
+
+					} else {
+						prepareDataForRequest();
+					}
+					
 				}
-			}
-				
-			
-			
-			var parameters = {
-				type:'image/png',
-				scale: undefined,
-				constr:'Chart',
-				callback: undefined,
-				async: 'true'
-			};
-			if(lib=="d3js244"){
-				parameters.options = encoded;
-				parameters.content = 'html';
 			} else {
-				parameters.options = JSON.stringify(chartConf);
-				parameters.content = 'options';
+				prepareDataForRequest();
 			}
-			
 				
 			
-			$http({
-			    method: 'POST',
-			    url: sbiHost + '/highcharts-export-web/',
-			    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'},
-			    transformRequest: function(obj) {
-			        var str = [];
-			        for(var p in obj)
-			        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-			        return str.join("&");
-			    },
-			    data: parameters
-			}).then(function successExportPng(response) {
-				deferred.resolve(response);
-			},function errorExportPng(response) {
-				deferred.reject(response);
-			});
+			
+		
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 		});
