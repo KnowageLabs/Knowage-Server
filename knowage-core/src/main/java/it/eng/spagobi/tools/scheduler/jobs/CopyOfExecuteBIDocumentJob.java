@@ -17,6 +17,41 @@
  */
 package it.eng.spagobi.tools.scheduler.jobs;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
+import org.apache.commons.validator.GenericValidator;
+import org.apache.log4j.Logger;
+import org.quartz.Job;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -58,42 +93,6 @@ import it.eng.spagobi.tools.scheduler.utils.BIObjectParametersIterator;
 import it.eng.spagobi.tools.scheduler.utils.JavaClassDestination;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
-import org.apache.commons.validator.GenericValidator;
-import org.apache.log4j.Logger;
-import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
-
 public class CopyOfExecuteBIDocumentJob implements Job {
 
 	static private Logger logger = Logger.getLogger(CopyOfExecuteBIDocumentJob.class);
@@ -126,7 +125,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			String doclabelsConcat = jobDataMap.getString("documentLabels");
 			String[] docLabels = doclabelsConcat.split(",");
 			Iterator itr = jobDataMap.keySet().iterator();
-			while(itr.hasNext()) {
+			while (itr.hasNext()) {
 				Object key = itr.next();
 				Object value = jobDataMap.get(key);
 				logger.debug("jobDataMap parameter [" + key + "] is equal to [" + value + "]");
@@ -135,10 +134,10 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			long startSchedule = System.currentTimeMillis();
 			logger.debug("Scheduled activity contains [" + docLabels.length + "] documnt(s)");
 
-			for(int ind = 0; ind < docLabels.length; ind++) {
+			for (int ind = 0; ind < docLabels.length; ind++) {
 				documentInstanceName = docLabels[ind];
 				documentLabel = documentInstanceName.substring(0, documentInstanceName.lastIndexOf("__"));
-				logger.debug("Processing document [" + (ind+1) + "] with label [" + documentLabel + "] ...");
+				logger.debug("Processing document [" + (ind + 1) + "] with label [" + documentLabel + "] ...");
 
 				inputParametersQueryString = jobDataMap.getString(documentInstanceName);
 				logger.debug("Input parameters query string for documet [" + documentLabel + "] is equal to [" + inputParametersQueryString + "]");
@@ -147,7 +146,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 				biobj = biobjdao.loadBIObjectByLabel(documentLabel);
 
 				// get the save options
-				String saveOptString = jobDataMap.getString("biobject_id_" + biobj.getId() + "__"+ (ind+1));
+				String saveOptString = jobDataMap.getString("biobject_id_" + biobj.getId() + "__" + (ind + 1));
 				DispatchContext saveInfo = SchedulerUtilities.decodeDispatchContext(saveOptString);
 
 				// create the execution controller
@@ -171,7 +170,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 
 				retrieveParametersValues(biobj);
 
-				//gets the dataset data about the email address
+				// gets the dataset data about the email address
 				IDataStore emailDispatchDataStore = null;
 				if (saveInfo.isUseDataSet()) {
 					IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(saveInfo.getDataSetLabel());
@@ -179,13 +178,13 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 					dataSet.loadData();
 					emailDispatchDataStore = dataSet.getDataStore();
 				}
-				//gets the dataset data about the folder for the document save
+				// gets the dataset data about the folder for the document save
 				IDataStore folderDispatchDataSotre = null;
 				if (saveInfo.isUseFolderDataSet()) {
 					IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(saveInfo.getDataSetFolderLabel());
-				  	dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
+					dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
 					dataSet.loadData();
-					 folderDispatchDataSotre = dataSet.getDataStore();
+					folderDispatchDataSotre = dataSet.getDataStore();
 				}
 
 				eventManager = EventsManager.getInstance();
@@ -194,13 +193,11 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 				String startExecMsg = "${scheduler.startexecsched} " + biobj.getName();
 				Integer idEvent = eventManager.registerEvent("Scheduler", startExecMsg, "", roles);
 
-
 				Map tempParMap = new HashMap();
 				BIObjectParametersIterator objectParametersIterator = new BIObjectParametersIterator(biobj.getBiObjectParameters());
 				while (objectParametersIterator.hasNext()) {
 					List parameters = (List) objectParametersIterator.next();
 					biobj.setBiObjectParameters(parameters);
-
 
 					StringBuffer toBeAppendedToName = new StringBuffer();
 					StringBuffer toBeAppendedToDescription = new StringBuffer(" [");
@@ -231,15 +228,13 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 					String dateStr = sdf.format(date);
 					toBeAppendedToName.append("_" + dateStr);
 
-
-
-					//check parameters value: if a parameter hasn't value but isn't mandatory the process
-					//must go on and so hasValidValue is set to true
+					// check parameters value: if a parameter hasn't value but isn't mandatory the process
+					// must go on and so hasValidValue is set to true
 					List tmpBIObjectParameters = biobj.getBiObjectParameters();
 					Iterator it = tmpBIObjectParameters.iterator();
-					while (it.hasNext()){
+					while (it.hasNext()) {
 						boolean isMandatory = false;
-						BIObjectParameter aBIObjectParameter = (BIObjectParameter)it.next();
+						BIObjectParameter aBIObjectParameter = (BIObjectParameter) it.next();
 						List checks = aBIObjectParameter.getParameter().getChecks();
 						if (checks != null && !checks.isEmpty()) {
 							Iterator checksIt = checks.iterator();
@@ -251,16 +246,14 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 								}
 							}
 						}
-						if (!isMandatory &&
-								(aBIObjectParameter.getParameterValues() == null  || aBIObjectParameter.getParameterValues().size() == 0)) {
+						if (!isMandatory && (aBIObjectParameter.getParameterValues() == null || aBIObjectParameter.getParameterValues().size() == 0)) {
 							aBIObjectParameter.setParameterValues(new ArrayList());
 							aBIObjectParameter.setHasValidValues(true);
 						}
 					}
 
-
 					// exec the document only if all its parameter are filled
-					if(executionController.directExecution()) {
+					if (executionController.directExecution()) {
 
 						logger.debug("Save as snapshot is eual to [" + saveInfo.isSnapshootDispatchChannelEnabled() + "]");
 						logger.debug("Dispatch to a distribution list is eual to [" + saveInfo.isDistributionListDispatchChannelEnabled() + "]");
@@ -268,35 +261,39 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 						logger.debug("Dispatch by mail-list is eual to [" + saveInfo.isMailDispatchChannelEnabled() + "]");
 						logger.debug("Dispatch by folder-list is eual to [" + saveInfo.isFunctionalityTreeDispatchChannelEnabled() + "]");
 
-						if(!saveInfo.isSnapshootDispatchChannelEnabled() && !saveInfo.isDistributionListDispatchChannelEnabled() && !saveInfo.isJavaClassDispatchChannelEnabled()) {
+						if (!saveInfo.isSnapshootDispatchChannelEnabled() && !saveInfo.isDistributionListDispatchChannelEnabled()
+								&& !saveInfo.isJavaClassDispatchChannelEnabled()) {
 							boolean noValidDispatchTarget = false;
-							if(saveInfo.isMailDispatchChannelEnabled()) {
+							if (saveInfo.isMailDispatchChannelEnabled()) {
 								String[] recipients = findRecipients(saveInfo, biobj, emailDispatchDataStore);
 								if (recipients != null && recipients.length > 0) {
 									noValidDispatchTarget = false;
 									logger.debug("Found at least one target of type mail");
-								}else{
+								} else {
 									noValidDispatchTarget = true;
 								}
 							}
 
-							if(saveInfo.isFunctionalityTreeDispatchChannelEnabled()) {
+							if (saveInfo.isFunctionalityTreeDispatchChannelEnabled()) {
 								List storeInFunctionalities = findFolders(saveInfo, biobj, folderDispatchDataSotre);
-								if(storeInFunctionalities != null && !storeInFunctionalities.isEmpty()) {
+								if (storeInFunctionalities != null && !storeInFunctionalities.isEmpty()) {
 									noValidDispatchTarget = false;
 									logger.debug("Found at least one target of type folder");
-								}else{
+								} else {
 									noValidDispatchTarget = true;
 								}
 							}
 
-							if(noValidDispatchTarget) {
-								logger.debug("No valid dispatch target for document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters [" + toBeAppendedToDescription +"]");
-								logger.info("Document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription + " not executed: no valid dispatch target");
+							if (noValidDispatchTarget) {
+								logger.debug("No valid dispatch target for document [" + (ind + 1) + "] with label [" + documentInstanceName
+										+ "] and parameters [" + toBeAppendedToDescription + "]");
+								logger.info("Document [" + (ind + 1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription
+										+ " not executed: no valid dispatch target");
 								continue;
-							} else if(!saveInfo.isFunctionalityTreeDispatchChannelEnabled() && !saveInfo.isMailDispatchChannelEnabled()){
-								logger.debug("There are no dispatch targets for document with label [" + documentInstanceName + "] - if not an ETL, WEKA or KPI document a dispatch target should be added");
-							}else{
+							} else if (!saveInfo.isFunctionalityTreeDispatchChannelEnabled() && !saveInfo.isMailDispatchChannelEnabled()) {
+								logger.debug("There are no dispatch targets for document with label [" + documentInstanceName
+										+ "] - if not an ETL, WEKA or KPI document a dispatch target should be added");
+							} else {
 								logger.debug("There is at list one dispatch target for document with label [" + documentInstanceName + "]");
 							}
 						}
@@ -304,10 +301,8 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 						executionProxy = new ExecutionProxy();
 						executionProxy.setBiObject(biobj);
 
-
-
-
-						logger.info("Executing document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription +" ...");
+						logger.info("Executing document [" + (ind + 1) + "] with label [" + documentInstanceName + "] and parameters "
+								+ toBeAppendedToDescription + " ...");
 						long start = System.currentTimeMillis();
 						byte[] response = executionProxy.exec(profile, "SCHEDULATION", null);
 						if (response == null || response.length == 0) {
@@ -316,45 +311,46 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 						String retCT = executionProxy.getReturnedContentType();
 						String fileextension = executionProxy.getFileExtensionFromContType(retCT);
 						long end = System.currentTimeMillis();
-						long elapsed = (end - start)/1000;
-						logger.info("Document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription +" executed in [" + elapsed + "]");
+						long elapsed = (end - start) / 1000;
+						logger.info("Document [" + (ind + 1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription
+								+ " executed in [" + elapsed + "]");
 
-
-						if(saveInfo.isSnapshootDispatchChannelEnabled()) {
-							saveAsSnap(saveInfo, biobj, response, toBeAppendedToName.toString(), toBeAppendedToDescription.toString(),profile);
+						if (saveInfo.isSnapshootDispatchChannelEnabled()) {
+							saveAsSnap(saveInfo, biobj, response, toBeAppendedToName.toString(), toBeAppendedToDescription.toString(), profile);
 						}
 
-						if(saveInfo.isFunctionalityTreeDispatchChannelEnabled()) {
-							saveAsDocument(saveInfo, biobj,jobExecutionContext, response, fileextension, folderDispatchDataSotre, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
+						if (saveInfo.isFunctionalityTreeDispatchChannelEnabled()) {
+							saveAsDocument(saveInfo, biobj, jobExecutionContext, response, fileextension, folderDispatchDataSotre,
+									toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
 						}
 
-						if(saveInfo.isMailDispatchChannelEnabled()) {
-							sendMail(saveInfo, biobj, tempParMap, response, retCT, fileextension, emailDispatchDataStore, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
+						if (saveInfo.isMailDispatchChannelEnabled()) {
+							sendMail(saveInfo, biobj, tempParMap, response, retCT, fileextension, emailDispatchDataStore, toBeAppendedToName.toString(),
+									toBeAppendedToDescription.toString());
 						}
-						if(saveInfo.isDistributionListDispatchChannelEnabled()) {
+						if (saveInfo.isDistributionListDispatchChannelEnabled()) {
 							sendToDl(saveInfo, biobj, response, retCT, fileextension, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
-							if(jobExecutionContext.getNextFireTime()== null){
+							if (jobExecutionContext.getNextFireTime() == null) {
 								String triggername = jobExecutionContext.getTrigger().getName();
 								List dlIds = saveInfo.getDlIds();
 								it = dlIds.iterator();
-								while(it.hasNext()){
-									Integer dlId = (Integer)it.next();
+								while (it.hasNext()) {
+									Integer dlId = (Integer) it.next();
 									DistributionList dl = DAOFactory.getDistributionListDAO().loadDistributionListById(dlId);
 									DAOFactory.getDistributionListDAO().eraseDistributionListObjects(dl, (biobj.getId()).intValue(), triggername);
 								}
 							}
 						}
 
-						if(saveInfo.isJavaClassDispatchChannelEnabled()) {
+						if (saveInfo.isJavaClassDispatchChannelEnabled()) {
 							sendToJavaClass(saveInfo, biobj, response);
 						}
 
-
 					} else {
-						logger.warn("The document with label "+documentInstanceName+" cannot be executed directly, " +
-						"maybe some prameters are not filled ");
-						throw new Exception("The document with label "+documentInstanceName+" cannot be executed directly, " +
-						"maybe some prameters are not filled ");
+						logger.warn(
+								"The document with label " + documentInstanceName + " cannot be executed directly, " + "maybe some prameters are not filled ");
+						throw new Exception(
+								"The document with label " + documentInstanceName + " cannot be executed directly, " + "maybe some prameters are not filled ");
 					}
 				}
 
@@ -363,19 +359,15 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 
 			}
 
-
 			long endSchedule = System.currentTimeMillis();
-			long elapsedSchedule = (endSchedule-startSchedule)/1000;
-			logger.info("Scheduled activity succesfully ended in [" + elapsedSchedule +"] sec.");
+			long elapsedSchedule = (endSchedule - startSchedule) / 1000;
+			logger.info("Scheduled activity succesfully ended in [" + elapsedSchedule + "] sec.");
 		} catch (Exception e) {
 			logger.error("Error while executiong job ", e);
 		} finally {
 			logger.debug("OUT");
 		}
 	}
-
-
-
 
 	private void retrieveParametersValues(BIObject biobj) throws Exception {
 		logger.debug("IN");
@@ -396,7 +388,8 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 					try {
 						values = retriever.retrieveValues(parameter);
 					} catch (Exception e) {
-						logger.error("Error while retrieving values for parameter with url name [" + parameter.getParameterUrlName() + "] of document [" + biobj.getLabel() + "].", e);
+						logger.error("Error while retrieving values for parameter with url name [" + parameter.getParameterUrlName() + "] of document ["
+								+ biobj.getLabel() + "].", e);
 						throw e;
 					}
 					logger.debug("Values retrieved.");
@@ -408,9 +401,6 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			logger.debug("OUT");
 		}
 	}
-
-
-
 
 	private void setLoadAtRuntimeParameters(BIObject biobj, String loadAtRuntimeParametersString) {
 		logger.debug("IN");
@@ -452,9 +442,6 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			logger.debug("OUT");
 		}
 	}
-
-
-
 
 	private void setIterativeParameters(BIObject biobj, String iterativeParametersString) {
 		logger.debug("IN");
@@ -525,57 +512,51 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 		}
 	}
 
-
-	private void sendToJavaClass(DispatchContext sInfo,BIObject biobj, byte[] response) throws Exception {
+	private void sendToJavaClass(DispatchContext sInfo, BIObject biobj, byte[] response) throws Exception {
 		logger.debug("IN");
 
 		String javaClass = sInfo.getJavaClassPath();
-		if( (javaClass==null) || javaClass.trim().equals("")) {
+		if ((javaClass == null) || javaClass.trim().equals("")) {
 			logger.error("Classe java nons specificata");
 			return;
 		}
 		// try to get new Instance
-		JavaClassDestination jcDest=null;
-		try{
-			jcDest=(JavaClassDestination)Class.forName(javaClass).newInstance();
-		}
-		catch (ClassCastException e) {
-			logger.error("Class "+javaClass+" does not extend JavaClassDestination class as expected");
+		JavaClassDestination jcDest = null;
+		try {
+			jcDest = (JavaClassDestination) Class.forName(javaClass).newInstance();
+		} catch (ClassCastException e) {
+			logger.error("Class " + javaClass + " does not extend JavaClassDestination class as expected");
+			return;
+		} catch (Exception e) {
+			logger.error("Error while instantiating the class " + javaClass);
 			return;
 		}
-		catch (Exception e) {
-			logger.error("Error while instantiating the class "+javaClass);
-			return;
-			}
 
-		logger.debug("Sucessfull instantiation of "+javaClass);
+		logger.debug("Sucessfull instantiation of " + javaClass);
 
 		jcDest.setBiObj(biobj);
 		jcDest.setDocumentByte(response);
 
-		try{
+		try {
 			jcDest.execute();
-		}
-		catch (Exception e) {
-			logger.error("Error during execution",e);
+		} catch (Exception e) {
+			logger.error("Error during execution", e);
 			return;
 		}
 
-
 		logger.debug("OUT");
-
 
 	}
 
-
-	private void saveAsSnap(DispatchContext sInfo,BIObject biobj, byte[] response, String toBeAppendedToName, String toBeAppendedToDescription,IEngUserProfile profile) {
+	private void saveAsSnap(DispatchContext sInfo, BIObject biobj, byte[] response, String toBeAppendedToName, String toBeAppendedToDescription,
+			IEngUserProfile profile) {
 		logger.debug("IN");
 		try {
 			String snapName = sInfo.getSnapshotName();
-			if( (snapName==null) || snapName.trim().equals("")) {
+			if ((snapName == null) || snapName.trim().equals("")) {
 				throw new Exception("Document name not specified");
 			}
-			//snapName += toBeAppendedToName;
+			// snapName += toBeAppendedToName;
 			if (snapName.length() > 100) {
 				logger.warn("Snapshot name [" + snapName + "] exceeds maximum length that is 100, it will be truncated");
 				snapName = snapName.substring(0, 100);
@@ -600,40 +581,38 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			int numSnap = snapshots.size();
 			// if the number of snapshot is greater or equal to the history length then
 			// delete the unecessary snapshots
-			if((historylengthStr!=null) && !historylengthStr.trim().equals("")){
-				try{
+			if ((historylengthStr != null) && !historylengthStr.trim().equals("")) {
+				try {
 					Integer histLenInt = new Integer(historylengthStr);
 					int histLen = histLenInt.intValue();
-					if(numSnap>=histLen){
+					if (numSnap >= histLen) {
 						int delta = numSnap - histLen;
-						for(int i=0; i<=delta; i++) {
-							Snapshot snap = SchedulerUtilities.getNamedHistorySnapshot(allsnapshots, snapName, histLen-1);
+						for (int i = 0; i <= delta; i++) {
+							Snapshot snap = SchedulerUtilities.getNamedHistorySnapshot(allsnapshots, snapName, histLen - 1);
 							Integer snapId = snap.getId();
 							snapDao.deleteSnapshot(snapId);
 						}
 					}
-				} catch(Exception e) {
+				} catch (Exception e) {
 					logger.error("Error while deleting object snapshots", e);
 				}
 			}
 
-			snapDao.saveSnapshot(response, biobj.getId(), snapName, snapDesc, null,sInfo.getSchedulationStartDate(),sInfo.getJobExecutionContext().getTrigger().getJobName(), sInfo.getJobExecutionContext().getTrigger().getName(), sInfo.getSequence());
+			snapDao.saveSnapshot(response, biobj.getId(), snapName, snapDesc, null, sInfo.getSchedulationStartDate(),
+					sInfo.getJobExecutionContext().getTrigger().getJobName(), sInfo.getJobExecutionContext().getTrigger().getName(), sInfo.getSequence());
 		} catch (Exception e) {
 			logger.error("Error while saving schedule result as new snapshot", e);
-		}finally{
+		} finally {
 			logger.debug("OUT");
 		}
 	}
 
-
-
-
-
-	private void saveAsDocument(DispatchContext sInfo,BIObject biobj, JobExecutionContext jex, byte[] response, String fileExt, IDataStore dataStore, String toBeAppendedToName, String toBeAppendedToDescription) {
+	private void saveAsDocument(DispatchContext sInfo, BIObject biobj, JobExecutionContext jex, byte[] response, String fileExt, IDataStore dataStore,
+			String toBeAppendedToName, String toBeAppendedToDescription) {
 		logger.debug("IN");
-		try{
+		try {
 			String docName = sInfo.getDocumentName();
-			if( (docName==null) || docName.trim().equals("")) {
+			if ((docName == null) || docName.trim().equals("")) {
 				throw new Exception(" Document name not specified");
 			}
 			docName += toBeAppendedToName;
@@ -647,29 +626,23 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			// recover engine
 			IEngineDAO engineDAO = DAOFactory.getEngineDAO();
 			List engines = engineDAO.loadAllEnginesForBIObjectType(officeDocDom.getValueCd());
-			if(engines.isEmpty()) {
+			if (engines.isEmpty()) {
 				throw new Exception(" No suitable engines for the new document");
 			}
-			Engine engine = (Engine)engines.get(0);
+			Engine engine = (Engine) engines.get(0);
 			// load the template
 			ObjTemplate objTemp = new ObjTemplate();
 			objTemp.setActive(new Boolean(true));
 			objTemp.setContent(response);
 			objTemp.setName(docName + fileExt);
 			// load all functionality
-			/*orig
-			List storeInFunctionalities = new ArrayList();
-			String functIdsConcat = sInfo.getFunctionalityIds();
-			String[] functIds =  functIdsConcat.split(",");
-			for(int i=0; i<functIds.length; i++) {
-				String functIdStr = functIds[i];
-				if(functIdStr.trim().equals(""))
-					continue;
-				Integer functId = Integer.valueOf(functIdStr);
-				storeInFunctionalities.add(functId);
-			}*/
+			/*
+			 * orig List storeInFunctionalities = new ArrayList(); String functIdsConcat = sInfo.getFunctionalityIds(); String[] functIds =
+			 * functIdsConcat.split(","); for(int i=0; i<functIds.length; i++) { String functIdStr = functIds[i]; if(functIdStr.trim().equals("")) continue;
+			 * Integer functId = Integer.valueOf(functIdStr); storeInFunctionalities.add(functId); }
+			 */
 			List storeInFunctionalities = findFolders(sInfo, biobj, dataStore);
-			if(storeInFunctionalities.isEmpty()) {
+			if (storeInFunctionalities.isEmpty()) {
 				throw new Exception(" No functionality specified where store the new document");
 			}
 			// create biobject
@@ -694,55 +667,52 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			newbiobj.setVisible(new Integer(1));
 			newbiobj.setFunctionalities(storeInFunctionalities);
 			IBIObjectDAO objectDAO = DAOFactory.getBIObjectDAO();
-			 Timestamp aoModRecDate;
+			Timestamp aoModRecDate;
 			BIObject biobjexist = objectDAO.loadBIObjectByLabel(label);
-			if(biobjexist==null){
+			if (biobjexist == null) {
 				objectDAO.insertBIObject(newbiobj, objTemp);
 			} else {
 				newbiobj.setId(biobjexist.getId());
 				objectDAO.modifyBIObject(newbiobj, objTemp);
 			}
 		} catch (Throwable t) {
-			logger.error("Error while saving schedule result as new document", t );
-		}finally{
+			logger.error("Error while saving schedule result as new document", t);
+		} finally {
 			logger.debug("OUT");
 		}
 	}
 
-
-
-
-	private void sendMail(DispatchContext sInfo, BIObject biobj,Map parMap, byte[] response, String retCT, String fileExt, IDataStore dataStore, String toBeAppendedToName, String toBeAppendedToDescription) {
+	private void sendMail(DispatchContext sInfo, BIObject biobj, Map parMap, byte[] response, String retCT, String fileExt, IDataStore dataStore,
+			String toBeAppendedToName, String toBeAppendedToDescription) {
 		logger.debug("IN");
-		try{
+		try {
 
 			String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtphost");
-		    String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtpport");
-		    int smptPort=25;
+			String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtpport");
+			int smptPort = 25;
 
-			if( (smtphost==null) || smtphost.trim().equals(""))
+			if ((smtphost == null) || smtphost.trim().equals(""))
 				throw new Exception("Smtp host not configured");
-			if( (smtpport==null) || smtpport.trim().equals("")){
+			if ((smtpport == null) || smtpport.trim().equals("")) {
 				throw new Exception("Smtp host not configured");
-			}else{
-				smptPort=Integer.parseInt(smtpport);
+			} else {
+				smptPort = Integer.parseInt(smtpport);
 			}
-
 
 			String from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.from");
-			if( (from==null) || from.trim().equals(""))
+			if ((from == null) || from.trim().equals(""))
 				from = "spagobi.scheduler@eng.it";
 			String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.user");
-			if( (user==null) || user.trim().equals("")){
+			if ((user == null) || user.trim().equals("")) {
 				logger.debug("Smtp user not configured");
-				user=null;
+				user = null;
 			}
-			//	throw new Exception("Smtp user not configured");
+			// throw new Exception("Smtp user not configured");
 			String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.password");
-			if( (pass==null) || pass.trim().equals("")){
-			logger.debug("Smtp password not configured");
+			if ((pass == null) || pass.trim().equals("")) {
+				logger.debug("Smtp password not configured");
 			}
-			//	throw new Exception("Smtp password not configured");
+			// throw new Exception("Smtp password not configured");
 
 			String mailSubj = sInfo.getMailSubj();
 			mailSubj = StringUtilities.substituteParametersInString(mailSubj, parMap, null, false);
@@ -755,22 +725,22 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 				return;
 			}
 
-			//Set the host smtp address
+			// Set the host smtp address
 			Properties props = new Properties();
 			props.put("mail.smtp.host", smtphost);
 			props.put("mail.smtp.port", smptPort);
 
 			// open session
-			Session session=null;
+			Session session = null;
 
 			// create autheticator object
 			Authenticator auth = null;
-			if (user!=null) {
+			if (user != null) {
 				auth = new SMTPAuthenticator(user, pass);
 				props.put("mail.smtp.auth", "true");
 				session = Session.getDefaultInstance(props, auth);
 				logger.error("Session.getDefaultInstance(props, auth)");
-			}else{
+			} else {
 				session = Session.getDefaultInstance(props);
 				logger.error("Session.getDefaultInstance(props)");
 			}
@@ -781,7 +751,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			InternetAddress addressFrom = new InternetAddress(from);
 			msg.setFrom(addressFrom);
 			InternetAddress[] addressTo = new InternetAddress[recipients.length];
-			for (int i = 0; i < recipients.length; i++)  {
+			for (int i = 0; i < recipients.length; i++) {
 				addressTo[i] = new InternetAddress(recipients[i]);
 			}
 			msg.setRecipients(Message.RecipientType.TO, addressTo);
@@ -807,14 +777,13 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			// send message
 			Transport.send(msg);
 		} catch (Exception e) {
-			logger.error("Error while sending schedule result mail",e);
-		}finally{
+			logger.error("Error while sending schedule result mail", e);
+		} finally {
 			logger.debug("OUT");
 		}
 	}
 
-	private String[] findRecipients(DispatchContext info, BIObject biobj,
-			IDataStore dataStore) {
+	private String[] findRecipients(DispatchContext info, BIObject biobj, IDataStore dataStore) {
 		logger.debug("IN");
 		String[] toReturn = null;
 		List<String> recipients = new ArrayList();
@@ -891,7 +860,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 				}
 			}
 			// we must substitute parameter values on the expression
-			String recipientStr = StringUtilities.substituteParametersInString(expression, parametersMap,null, false);
+			String recipientStr = StringUtilities.substituteParametersInString(expression, parametersMap, null, false);
 			logger.debug("The expression, after substitution, now is [" + recipientStr + "].");
 			String[] recipientsArray = recipientStr.split(",");
 			logger.debug("Recipients found with expression: " + recipientsArray);
@@ -901,8 +870,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 		return recipients;
 	}
 
-	private List<String> findRecipientsFromDataSet(DispatchContext info, BIObject biobj,
-			IDataStore dataStore) throws Exception {
+	private List<String> findRecipientsFromDataSet(DispatchContext info, BIObject biobj, IDataStore dataStore) throws Exception {
 		logger.debug("IN");
 		List<String> recipients = new ArrayList();
 		if (info.isUseDataSet()) {
@@ -942,7 +910,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			Iterator it = dataStore.iterator();
 			while (it.hasNext()) {
 				String recipient = null;
-				IRecord record = (IRecord)it.next();
+				IRecord record = (IRecord) it.next();
 				// the parameter value is used to filter on the first dataset field
 				IField valueField = record.getFieldAt(0);
 				Object valueObj = valueField.getValue();
@@ -983,7 +951,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 		try {
 			folders.addAll(findFoldersFromDataSet(info, biobj, dataStore));
 		} catch (NullPointerException en) {
-			logger.error("Folders defined into dataset " + info.getDataSetFolderLabel()+ "  not found.");
+			logger.error("Folders defined into dataset " + info.getDataSetFolderLabel() + "  not found.");
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -997,10 +965,10 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 		logger.debug("IN");
 		List folders = new ArrayList();
 		String functIdsConcat = info.getFunctionalityIds();
-		String[] functIds =  functIdsConcat.split(",");
-		for(int i=0; i<functIds.length; i++) {
+		String[] functIds = functIdsConcat.split(",");
+		for (int i = 0; i < functIds.length; i++) {
 			String functIdStr = functIds[i];
-			if(functIdStr.trim().equals(""))
+			if (functIdStr.trim().equals(""))
 				continue;
 			Integer functId = Integer.valueOf(functIdStr);
 			folders.add(functId);
@@ -1009,7 +977,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 		return folders;
 	}
 
-	private List findFoldersFromDataSet(DispatchContext info, BIObject biobj,IDataStore dataStore) throws Exception {
+	private List findFoldersFromDataSet(DispatchContext info, BIObject biobj, IDataStore dataStore) throws Exception {
 		logger.debug("IN");
 		List folders = new ArrayList();
 		if (info.isUseFolderDataSet()) {
@@ -1049,7 +1017,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			Iterator it = dataStore.iterator();
 			while (it.hasNext()) {
 				String folder = null;
-				IRecord record = (IRecord)it.next();
+				IRecord record = (IRecord) it.next();
 				// the parameter value is used to filter on the first dataset field
 				IField valueField = record.getFieldAt(0);
 				Object valueObj = valueField.getValue();
@@ -1069,11 +1037,11 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 					}
 				}
 				if (folder != null) {
-					//get the folder Id corresponding to the label folder and add it to the return list
-					try{
+					// get the folder Id corresponding to the label folder and add it to the return list
+					try {
 						LowFunctionality func = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(folder, false);
 						folders.add(func.getId());
-					}catch (EMFUserError emf){
+					} catch (EMFUserError emf) {
 						logger.debug("Folder with code: " + folder + " not exists.");
 					}
 				}
@@ -1084,54 +1052,57 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 		return folders;
 	}
 
-	private void sendToDl(DispatchContext sInfo, BIObject biobj, byte[] response, String retCT, String fileExt, String toBeAppendedToName, String toBeAppendedToDescription) {
+	private void sendToDl(DispatchContext sInfo, BIObject biobj, byte[] response, String retCT, String fileExt, String toBeAppendedToName,
+			String toBeAppendedToDescription) {
 		logger.debug("IN");
-		try{
+		try {
 
 			String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtphost");
-			if( (smtphost==null) || smtphost.trim().equals(""))
+			if ((smtphost == null) || smtphost.trim().equals(""))
 				throw new Exception("Smtp host not configured");
 			String from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.from");
-			if( (from==null) || from.trim().equals(""))
+			if ((from == null) || from.trim().equals(""))
 				from = "spagobi.scheduler@eng.it";
 			String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.user");
-			if( (user==null) || user.trim().equals(""))
+			if ((user == null) || user.trim().equals(""))
 				throw new Exception("Smtp user not configured");
 			String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.password");
-			if( (pass==null) || pass.trim().equals(""))
+			if ((pass == null) || pass.trim().equals(""))
 				throw new Exception("Smtp password not configured");
 
 			String mailTos = "";
 			List dlIds = sInfo.getDlIds();
 			Iterator it = dlIds.iterator();
-			while(it.hasNext()){
+			while (it.hasNext()) {
 
-				Integer dlId = (Integer)it.next();
+				Integer dlId = (Integer) it.next();
 				DistributionList dl = DAOFactory.getDistributionListDAO().loadDistributionListById(dlId);
 
 				List emails = new ArrayList();
 				emails = dl.getEmails();
 				Iterator j = emails.iterator();
-				while(j.hasNext()){
+				while (j.hasNext()) {
 					Email e = (Email) j.next();
 					String email = e.getEmail();
 					String userTemp = e.getUserId();
 					IEngUserProfile userProfile = GeneralUtilities.createNewUserProfile(userTemp);
-					if(ObjectsAccessVerifier.canSee(biobj, userProfile))	{
-						if (j.hasNext()) {mailTos = mailTos+email+",";}
-						else {mailTos = mailTos+email;}
+					if (ObjectsAccessVerifier.canSee(biobj, userProfile)) {
+						if (j.hasNext()) {
+							mailTos = mailTos + email + ",";
+						} else {
+							mailTos = mailTos + email;
+						}
 					}
 
 				}
 			}
 
-
-			if( (mailTos==null) || mailTos.trim().equals("")) {
+			if ((mailTos == null) || mailTos.trim().equals("")) {
 				throw new Exception("No recipient address found");
 			}
 
 			String[] recipients = mailTos.split(",");
-			//Set the host smtp address
+			// Set the host smtp address
 			Properties props = new Properties();
 			props.put("mail.smtp.host", smtphost);
 			props.put("mail.smtp.auth", "true");
@@ -1145,7 +1116,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			InternetAddress addressFrom = new InternetAddress(from);
 			msg.setFrom(addressFrom);
 			InternetAddress[] addressTo = new InternetAddress[recipients.length];
-			for (int i = 0; i < recipients.length; i++)  {
+			for (int i = 0; i < recipients.length; i++) {
 				addressTo[i] = new InternetAddress(recipients[i]);
 			}
 			msg.setRecipients(Message.RecipientType.TO, addressTo);
@@ -1154,8 +1125,8 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			String subject = biobj.getName() + toBeAppendedToName;
 			msg.setSubject(subject);
 			// create and fill the first message part
-			//MimeBodyPart mbp1 = new MimeBodyPart();
-			//mbp1.setText(mailTxt);
+			// MimeBodyPart mbp1 = new MimeBodyPart();
+			// mbp1.setText(mailTxt);
 			// create the second message part
 			MimeBodyPart mbp2 = new MimeBodyPart();
 			// attach the file to the message
@@ -1164,28 +1135,25 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			mbp2.setFileName(sds.getName());
 			// create the Multipart and add its parts to it
 			Multipart mp = new MimeMultipart();
-			//mp.addBodyPart(mbp1);
+			// mp.addBodyPart(mbp1);
 			mp.addBodyPart(mbp2);
 			// add the Multipart to the message
 			msg.setContent(mp);
 			// send message
 			Transport.send(msg);
 		} catch (Exception e) {
-			logger.error("Error while sending schedule result mail",e);
-		}finally{
+			logger.error("Error while sending schedule result mail", e);
+		} finally {
 			logger.debug("OUT");
 		}
 	}
 
-
-	private class SMTPAuthenticator extends javax.mail.Authenticator
-	{
+	private class SMTPAuthenticator extends javax.mail.Authenticator {
 		private String username = "";
 		private String password = "";
 
 		@Override
-		public PasswordAuthentication getPasswordAuthentication()
-		{
+		public PasswordAuthentication getPasswordAuthentication() {
 			return new PasswordAuthentication(username, password);
 		}
 
@@ -1194,7 +1162,6 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			this.password = pass;
 		}
 	}
-
 
 	private class SchedulerDataSource implements DataSource {
 

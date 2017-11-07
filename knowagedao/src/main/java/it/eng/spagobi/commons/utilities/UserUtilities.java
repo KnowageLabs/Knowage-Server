@@ -594,6 +594,9 @@ public class UserUtilities {
 			if (virtualRole.isAbleToSeeSnapshots()) {
 				roleFunctionalities.add(SpagoBIConstants.SEE_SNAPSHOTS_FUNCTIONALITY);
 			}
+			if (virtualRole.isAbleToRunSnapshots()) {
+				roleFunctionalities.add(SpagoBIConstants.RUN_SNAPSHOTS_FUNCTIONALITY);
+			}
 			if (virtualRole.isAbleToSeeViewpoints()) {
 				roleFunctionalities.add(SpagoBIConstants.SEE_VIEWPOINTS_FUNCTIONALITY);
 			}
@@ -745,6 +748,7 @@ public class UserUtilities {
 		virtualRole.setIsAbleToSaveSubobjects(false);
 		virtualRole.setIsAbleToSeeSubobjects(false);
 		virtualRole.setIsAbleToSeeSnapshots(false);
+		virtualRole.setIsAbleToRunSnapshots(false);
 		virtualRole.setIsAbleToSeeViewpoints(false);
 		virtualRole.setIsAbleToSeeMetadata(false);
 		virtualRole.setIsAbleToSaveMetadata(false);
@@ -788,6 +792,10 @@ public class UserUtilities {
 					if (anotherRole.isAbleToSeeSnapshots()) {
 						logger.debug("User has role " + roleName + " that is able to see snapshots.");
 						virtualRole.setIsAbleToSeeSnapshots(true);
+					}
+					if (anotherRole.isAbleToRunSnapshots()) {
+						logger.debug("User has role " + roleName + " that is able to run snapshots.");
+						virtualRole.setIsAbleToRunSnapshots(true);
 					}
 					if (anotherRole.isAbleToSeeMetadata()) {
 						logger.debug("User has role " + roleName + " that is able to see metadata.");

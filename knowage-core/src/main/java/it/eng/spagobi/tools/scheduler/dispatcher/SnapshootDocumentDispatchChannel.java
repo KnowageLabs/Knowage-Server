@@ -17,6 +17,10 @@
  */
 package it.eng.spagobi.tools.scheduler.dispatcher;
 
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
@@ -24,10 +28,6 @@ import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
-
-import java.util.List;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -55,7 +55,7 @@ public class SnapshootDocumentDispatchChannel implements IDocumentDispatchChanne
 	}
 
 	@Override
-	public boolean canDispatch(BIObject document)  {
+	public boolean canDispatch(BIObject document) {
 		return true;
 	}
 
@@ -70,7 +70,7 @@ public class SnapshootDocumentDispatchChannel implements IDocumentDispatchChanne
 			descriptionSuffix = dispatchContext.getDescriptionSuffix();
 
 			String snapName = dispatchContext.getSnapshotName();
-			if( (snapName==null) || snapName.trim().equals("")) {
+			if ((snapName == null) || snapName.trim().equals("")) {
 				throw new Exception("Document name not specified");
 			}
 
@@ -98,29 +98,31 @@ public class SnapshootDocumentDispatchChannel implements IDocumentDispatchChanne
 			int numSnap = snapshots.size();
 			// if the number of snapshot is greater or equal to the history length then
 			// delete the unecessary snapshots
-			if((historylengthStr!=null) && !historylengthStr.trim().equals("")){
-				try{
+			if ((historylengthStr != null) && !historylengthStr.trim().equals("")) {
+				try {
 					Integer histLenInt = new Integer(historylengthStr);
 					int histLen = histLenInt.intValue();
-					if(numSnap>=histLen){
+					if (numSnap >= histLen) {
 						int delta = numSnap - histLen;
-						for(int i=0; i<=delta; i++) {
-							Snapshot snap = SchedulerUtilities.getNamedHistorySnapshot(allsnapshots, snapName, histLen-1);
+						for (int i = 0; i <= delta; i++) {
+							Snapshot snap = SchedulerUtilities.getNamedHistorySnapshot(allsnapshots, snapName, histLen - 1);
 							Integer snapId = snap.getId();
 							snapDao.deleteSnapshot(snapId);
 						}
 					}
-				} catch(Exception e) {
+				} catch (Exception e) {
 					logger.error("Error while deleting object snapshots", e);
 				}
 			}
 
-			snapDao.saveSnapshot(executionOutput, document.getId(), snapName, snapDesc, dispatchContext.getContentType(),dispatchContext.getSchedulationStartDate(),dispatchContext.getJobExecutionContext().getTrigger().getJobName(), dispatchContext.getJobExecutionContext().getTrigger().getName(), dispatchContext.getSequence());
+			snapDao.saveSnapshot(executionOutput, document.getId(), snapName, snapDesc, dispatchContext.getContentType(),
+					dispatchContext.getSchedulationStartDate(), dispatchContext.getJobExecutionContext().getTrigger().getJobName(),
+					dispatchContext.getJobExecutionContext().getTrigger().getName(), dispatchContext.getSequence());
 
 		} catch (Exception e) {
 			logger.error("Error while saving schedule result as new snapshot", e);
 			return false;
-		} finally{
+		} finally {
 			logger.debug("OUT");
 		}
 

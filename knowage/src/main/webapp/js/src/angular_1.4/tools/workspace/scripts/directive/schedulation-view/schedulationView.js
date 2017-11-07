@@ -41,7 +41,7 @@ angular.module('schedulation_view', ['ngMaterial'])
 			addToOrganizerAction:"&",
 			orderingDocumentCards:"=?"
 		},
-		link: function (scope, elem, attrs) { 
+		link: function (scope, elem, attrs) {
 			elem.css("position","relative")
 			 if(!attrs.tableSpeedMenuOption){
 				 scope.tableSpeedMenuOption=[];
@@ -50,21 +50,24 @@ angular.module('schedulation_view', ['ngMaterial'])
 	}
 });
 
-function recentViewControllerFunction($scope,sbiModule_translate, sbiModule_config){
-	
+function recentViewControllerFunction($scope,sbiModule_translate, sbiModule_config, sbiModule_user){
+
 	$scope.sbiModule_config = sbiModule_config;
 	$scope.clickDocument=function(item){
-		
+
 		 $scope.selectDocumentAction({doc: item});
 	}
-	
+
 	$scope.translate=sbiModule_translate;
-	
+
+    $scope.showSnapshots= (sbiModule_user.functionalities.indexOf("SeeSnapshotsFunctionality")>-1)? true:false;
+    $scope.runSnapshots= (sbiModule_user.functionalities.indexOf("RunSnapshotsFunctionality")>-1)? true:false;
+
 	$scope.schedulationColumns = [
 	    {"label":$scope.translate.load("sbi.schedulation.jobName"),"name":"jobName"},
 	    {"label":$scope.translate.load("sbi.schedulation.jobDesc"), "name":"jobDescription"}
     ];
-	
+
 	$scope.onlySnapshots = function (item) {
 		var schedulationTypes = {snapshot:"saveassnapshot", file:"saveasfile",document:"saveasdocument", mail:"sendmail", jclass:"saveasclass"};
 		var value = item.jobParameters[0].value;

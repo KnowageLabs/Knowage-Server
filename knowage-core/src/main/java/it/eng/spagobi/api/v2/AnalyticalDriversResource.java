@@ -221,7 +221,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response insertDriver( String body) {
+	public Response insertDriver(String body) {
 
 		IParameterDAO driversDao = null;
 		Parameter driver = null;
@@ -257,7 +257,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	@Path("/modes")
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response insertUseMode( String  body) {
+	public Response insertUseMode(String body) {
 		ObjectMapper mapper = new ObjectMapper();
 		ParameterUse useMode = null;
 		try {
@@ -267,7 +267,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
 		}
 		IParameterUseDAO useModesDao = null;
-		
+
 		List<LinkedHashMap> roles = useMode.getAssociatedRoles();
 		List<LinkedHashMap> checks = useMode.getAssociatedChecks();
 		if (useMode.getUseID() != null) {
@@ -470,6 +470,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		role.setIsAbleToSeeSubobjects(bo.isAbleToSeeSubobjects());
 		role.setIsAbleToSeeViewpoints(bo.isAbleToSeeViewpoints());
 		role.setIsAbleToSeeSnapshots(bo.isAbleToSeeSnapshots());
+		role.setIsAbleToRunSnapshots(bo.isAbleToRunSnapshots());
 		role.setIsAbleToSeeNotes(bo.isAbleToSeeNotes());
 		role.setIsAbleToSendMail(bo.isAbleToSendMail());
 		role.setIsAbleToSaveRememberMe(bo.isAbleToSaveRememberMe());

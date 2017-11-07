@@ -92,6 +92,7 @@ Role getVirtualRole(IEngUserProfile profile, BIObject obj, String baseRoleName) 
 	Role virtualRole = new Role(baseRoleName, "");
 	virtualRole.setIsAbleToSeeSubobjects(false);
 	virtualRole.setIsAbleToSeeSnapshots(false);
+	virtualRole.setIsAbleToRunSnapshots(false);
 	virtualRole.setIsAbleToSeeViewpoints(false);
 	virtualRole.setIsAbleToSeeMetadata(false);
 	virtualRole.setIsAbleToSendMail(false);
@@ -117,6 +118,7 @@ Role getVirtualRole(IEngUserProfile profile, BIObject obj, String baseRoleName) 
 		Role anotherRole = DAOFactory.getRoleDAO().loadByName(roleName);
 		if (anotherRole.isAbleToSeeViewpoints()) virtualRole.setIsAbleToSeeSubobjects(true);
 		if (anotherRole.isAbleToSeeSnapshots()) virtualRole.setIsAbleToSeeSnapshots(true);
+		if (anotherRole.isAbleToRunSnapshots()) virtualRole.setIsAbleToRunSnapshots(true);
 		if (anotherRole.isAbleToSeeViewpoints()) virtualRole.setIsAbleToSeeViewpoints(true);
 		if (anotherRole.isAbleToSeeMetadata()) virtualRole.setIsAbleToSeeMetadata(true);
 		if (anotherRole.isAbleToSendMail()) virtualRole.setIsAbleToSendMail(true);

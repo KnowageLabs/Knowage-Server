@@ -17,16 +17,16 @@
  */
 package it.eng.spagobi.commons.serializer;
 
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IRoleDAO;
-
 import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -46,6 +46,7 @@ public class RoleJSONSerializer implements Serializer {
 	private static final String SEE_META = "seeMeta";
 	private static final String SEE_NOTES = "seeNotes";
 	private static final String SEE_SNAPSHOT = "seeSnapshot";
+	private static final String RUN_SNAPSHOT = "runSnapshot";
 	private static final String SEE_SUBOBJ = "seeSubobj";
 	private static final String SEE_VIEWPOINTS = "seeViewpoints";
 	private static final String SEND_MAIL = "sendMail";
@@ -103,6 +104,7 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(SEE_META, role.isAbleToSeeMetadata());
 			result.put(SEE_NOTES, role.isAbleToSeeNotes());
 			result.put(SEE_SNAPSHOT, role.isAbleToSeeSnapshots());
+			result.put(RUN_SNAPSHOT, role.isAbleToRunSnapshots());
 			result.put(SEE_SUBOBJ, role.isAbleToSeeSubobjects());
 			result.put(SEE_VIEWPOINTS, role.isAbleToSeeViewpoints());
 			result.put(SEND_MAIL, role.isAbleToSendMail());

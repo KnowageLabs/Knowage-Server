@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,24 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.analiticalmodel.document.service;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
@@ -48,8 +61,6 @@ import it.eng.spagobi.analiticalmodel.execution.service.SelectParametersLookupMo
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Subreport;
@@ -58,39 +69,23 @@ import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.container.ContextManager;
 import it.eng.spagobi.container.CoreContextManager;
 import it.eng.spagobi.container.SpagoBISessionContainer;
 import it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy;
 import it.eng.spagobi.engines.InternalEngineIFace;
 import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
 /**
- * Executes a report, according to three phases; each phase is identified by a
- * message string.
+ * Executes a report, according to three phases; each phase is identified by a message string.
  * <p>
  * 1) Creates the page
  * <p>
  * 2) Selects the role
  * <p>
  * 3) From the field input values loads the object and starts execution
- * 
+ *
  * @author Zerbetto
  * @author Fiscato
  * @author Bernabei
@@ -109,27 +104,31 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 	public static final String MESSAGE_EXECUTION = "MESSAGEEXEC";
 	public static final String SUBMESSAGEDET = "SUBMESSAGEDET";
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spago.dispatching.module.AbstractModule#init(it.eng.spago.base.SourceBean)
 	 */
+	@Override
 	public void init(SourceBean config) {
 	}
 
 	/**
-	 * Manage all the request in order to exec all the different BIObject
-	 * execution phases.
-	 * 
-	 * @param request The request source bean
-	 * @param response The response Source bean
-	 * 
-	 * @throws Exception If an Exception occurred
+	 * Manage all the request in order to exec all the different BIObject execution phases.
+	 *
+	 * @param request
+	 *            The request source bean
+	 * @param response
+	 *            The response Source bean
+	 *
+	 * @throws Exception
+	 *             If an Exception occurred
 	 */
-	public void service(SourceBean request, SourceBean response)
-	throws Exception {
+	@Override
+	public void service(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 
-		String messageExec = (String) request
-		.getAttribute(SpagoBIConstants.MESSAGEDET);
+		String messageExec = (String) request.getAttribute(SpagoBIConstants.MESSAGEDET);
 		logger.debug("using message" + messageExec);
 		String subMessageExec = (String) request.getAttribute(SUBMESSAGEDET);
 		logger.debug("using sub-message" + subMessageExec);
@@ -139,8 +138,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		errorHandler = getErrorHandler();
 		requestContainer = this.getRequestContainer();
 		SessionContainer session = requestContainer.getSessionContainer();
-		contextManager = new CoreContextManager(new SpagoBISessionContainer(session), 
-				new LightNavigatorContextRetrieverStrategy(request));
+		contextManager = new CoreContextManager(new SpagoBISessionContainer(session), new LightNavigatorContextRetrieverStrategy(request));
 
 		permanentSession = session.getPermanentContainer();
 		logger.debug("errorHanlder, requestContainer, session, permanentSession retrived ");
@@ -148,52 +146,38 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		try {
 			if (messageExec == null || messageExec.equalsIgnoreCase(SpagoBIConstants.EXEC_PHASE_CREATE_PAGE)) {
 				initNewExecutionHandler(request, response);
-			} else if (messageExec
-					.equalsIgnoreCase(SpagoBIConstants.EXEC_PHASE_SELECTED_ROLE)) {
+			} else if (messageExec.equalsIgnoreCase(SpagoBIConstants.EXEC_PHASE_SELECTED_ROLE)) {
 				initNewExecutionHandler(request, response);
-			} else if (messageExec
-					.equalsIgnoreCase(SpagoBIConstants.EXEC_PHASE_RUN_SUBOJECT)) {
+			} else if (messageExec.equalsIgnoreCase(SpagoBIConstants.EXEC_PHASE_RUN_SUBOJECT)) {
 				executionSubObjectHandler(request, response);
-			} else if (messageExec
-					.equalsIgnoreCase(SpagoBIConstants.EXEC_PHASE_DELETE_SUBOJECT)) {
+			} else if (messageExec.equalsIgnoreCase(SpagoBIConstants.EXEC_PHASE_DELETE_SUBOJECT)) {
 				deleteSubObjectHandler(request, response);
-			} else if (messageExec
-					.equalsIgnoreCase(SpagoBIConstants.EXEC_PHASE_RETURN_FROM_LOOKUP)) {
+			} else if (messageExec.equalsIgnoreCase(SpagoBIConstants.EXEC_PHASE_RETURN_FROM_LOOKUP)) {
 				lookUpReturnHandler(request, response);
-			} else if (messageExec
-					.equalsIgnoreCase(SpagoBIConstants.EXEC_PHASE_RUN)) {
+			} else if (messageExec.equalsIgnoreCase(SpagoBIConstants.EXEC_PHASE_RUN)) {
 				executionHandler(request, response);
-			} else if (messageExec
-					.equalsIgnoreCase(SpagoBIConstants.EXEC_PHASE_REFRESH)) {
+			} else if (messageExec.equalsIgnoreCase(SpagoBIConstants.EXEC_PHASE_REFRESH)) {
 				refreshHandler(request, response);
-			} else if (messageExec
-					.equalsIgnoreCase(SpagoBIConstants.EXEC_SNAPSHOT_MESSAGE)) {
+			} else if (messageExec.equalsIgnoreCase(SpagoBIConstants.EXEC_SNAPSHOT_MESSAGE)) {
 				execSnapshotHandler(request, response);
-			} else if (messageExec
-					.equalsIgnoreCase(SpagoBIConstants.ERASE_SNAPSHOT_MESSAGE)) {
+			} else if (messageExec.equalsIgnoreCase(SpagoBIConstants.ERASE_SNAPSHOT_MESSAGE)) {
 				eraseSnapshotHandler(request, response);
-			} else if (messageExec
-					.equalsIgnoreCase(SpagoBIConstants.VIEWPOINT_SAVE)) {
+			} else if (messageExec.equalsIgnoreCase(SpagoBIConstants.VIEWPOINT_SAVE)) {
 				saveViewPoint(request, response);
-			} else if (messageExec
-					.equalsIgnoreCase(SpagoBIConstants.VIEWPOINT_ERASE)) {
+			} else if (messageExec.equalsIgnoreCase(SpagoBIConstants.VIEWPOINT_ERASE)) {
 				eraseViewpoint(request, response);
-			} else if (messageExec
-					.equalsIgnoreCase(SpagoBIConstants.VIEWPOINT_EXEC)) {
+			} else if (messageExec.equalsIgnoreCase(SpagoBIConstants.VIEWPOINT_EXEC)) {
 				execViewpoint(request, response);
-			} else if (messageExec
-					.equalsIgnoreCase(SpagoBIConstants.VIEWPOINT_VIEW)) {
+			} else if (messageExec.equalsIgnoreCase(SpagoBIConstants.VIEWPOINT_VIEW)) {
 				viewViewpoint(request, response);
-			} else if (messageExec
-					.equalsIgnoreCase(SpagoBIConstants.EXEC_CROSS_NAVIGATION)) {
+			} else if (messageExec.equalsIgnoreCase(SpagoBIConstants.EXEC_CROSS_NAVIGATION)) {
 				executeCrossNavigationHandler(request, response);
-			} else if (messageExec
-					.equalsIgnoreCase(SpagoBIConstants.RECOVER_EXECUTION_FROM_CROSS_NAVIGATION)) {
+			} else if (messageExec.equalsIgnoreCase(SpagoBIConstants.RECOVER_EXECUTION_FROM_CROSS_NAVIGATION)) {
 				recoverExecutionFromCrossNavigationHandler(request, response);
 			}
-//			else if (messageExec.equalsIgnoreCase(SpagoBIConstants.SELECT_ALL)) {
-//				selectAllValueForPar(request, response);
-//			}
+			// else if (messageExec.equalsIgnoreCase(SpagoBIConstants.SELECT_ALL)) {
+			// selectAllValueForPar(request, response);
+			// }
 			else if (messageExec.equalsIgnoreCase(SpagoBIConstants.DESELECT_ALL)) {
 				selectNoneValueForPar(request, response);
 			}
@@ -205,8 +189,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		}
 	}
 
-	private void recoverExecutionFromCrossNavigationHandler(SourceBean request, SourceBean response)
-	throws Exception {
+	private void recoverExecutionFromCrossNavigationHandler(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 		try {
 			// recovers required execution details
@@ -228,8 +211,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		}
 	}
 
-	private void executeCrossNavigationHandler(SourceBean request, SourceBean response)
-	throws Exception {
+	private void executeCrossNavigationHandler(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 		try {
 			ExecutionInstance instance = getExecutionInstance();
@@ -240,7 +222,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 				contextManager.set(ExecutionManager.class.getName(), executionManager);
 			}
 			executionManager.registerExecution(instance);
-			// starts new execution 
+			// starts new execution
 			request.setAttribute(SpagoBIConstants.IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS, "true");
 			initNewExecutionHandler(request, response);
 		} finally {
@@ -249,7 +231,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 	}
 
 	private void eraseSnapshotHandler(SourceBean request, SourceBean response)
-	throws EMFUserError, SourceBeanException, NumberFormatException, EMFInternalError {
+			throws EMFUserError, SourceBeanException, NumberFormatException, EMFInternalError {
 		logger.debug("IN");
 		UserProfile profile = (UserProfile) this.getUserProfile();
 		// only if user is administrator, he can erase snapshots
@@ -274,14 +256,13 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Starts a new execution
-	 * 
+	 *
 	 * @param request
 	 *            The Spago Request SourceBean
 	 * @param response
 	 *            The Spago Response SourceBean
 	 */
-	private void initNewExecutionHandler(SourceBean request, SourceBean response)
-	throws Exception {
+	private void initNewExecutionHandler(SourceBean request, SourceBean response) throws Exception {
 
 		logger.debug("IN");
 
@@ -303,7 +284,8 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		logger.debug("Used defined parameters: [" + userProvidedParametersStr + "]");
 		// get execution modality
 		String modality = (String) request.getAttribute(ObjectsTreeConstants.MODALITY);
-		if (modality == null) modality = SpagoBIConstants.NORMAL_EXECUTION_MODALITY;
+		if (modality == null)
+			modality = SpagoBIConstants.NORMAL_EXECUTION_MODALITY;
 		logger.debug("Execution modality: [" + modality + "]");
 
 		Integer id = obj.getId();
@@ -311,8 +293,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 		boolean canSee = ObjectsAccessVerifier.canSee(obj, profile);
 		if (!canSee) {
-			logger.error("Object with label = '" + obj.getLabel()
-					+ "' cannot be executed by the user!!");
+			logger.error("Object with label = '" + obj.getLabel() + "' cannot be executed by the user!!");
 			Vector v = new Vector();
 			v.add(obj.getLabel());
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "1075", v, null);
@@ -332,7 +313,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1078, v, null);
 		}
 
-		// if role is not set, sees if role selection is required 
+		// if role is not set, sees if role selection is required
 		if (role == null) {
 			if (snapshot != null || subObj != null) {
 				// for executing a snapshot or a subObject, role selection is not mandatory, so the first role is selected
@@ -382,7 +363,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		if (ignoreSubNodesStr != null && ignoreSubNodesStr.trim().equalsIgnoreCase("true")) {
 			ignoreSubNodes = true;
 		}
-		
+
 		// finds if it is not important that all parameters have a value
 		String runAnyway = (String) request.getAttribute(SpagoBIConstants.RUN_ANYWAY);
 		boolean runAnywayB = false;
@@ -390,15 +371,14 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 			runAnywayB = true;
 		}
 
-		// check parameters values 
+		// check parameters values
 		List errors = instance.getParametersErrors();
 
 		// (if the object can be directly executed (because it hasn't any parameter to be
 		// filled by the user) and if the object has no subobject / snapshots / viewpoints saved
 		// or the request esplicitely asks to ignore subnodes) or (a valid subobject
 		// is specified by request) then execute it directly without pass through parameters page
-		if (((instance.isDirectExecution()||runAnywayB) && ((subObjects.size() == 0
-				&& snapshots.size() == 0 && viewpoints.size() == 0) || ignoreSubNodes))
+		if (((instance.isDirectExecution() || runAnywayB) && ((subObjects.size() == 0 && snapshots.size() == 0 && viewpoints.size() == 0) || ignoreSubNodes))
 				|| subObj != null) {
 
 			logger.debug("Document can be directly executed");
@@ -420,37 +400,46 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * creates a new ExecutionInstance
-	 * 
-	 * @param contextManager The object for session access
-	 * @param aRoleName the a role name
-	 * @param biobjectId the id of the current document
-	 * @param userProvidedParametersStr the user provided parameters str
-	 * @param profile the user profile
-	 * 
+	 *
+	 * @param contextManager
+	 *            The object for session access
+	 * @param aRoleName
+	 *            the a role name
+	 * @param biobjectId
+	 *            the id of the current document
+	 * @param userProvidedParametersStr
+	 *            the user provided parameters str
+	 * @param profile
+	 *            the user profile
+	 *
 	 * @return the BI object
-	 * 
-	 * @throws EMFUserError the EMF user error
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 */
-	private ExecutionInstance createExecutionInstance(Integer biobjectId, String aRoleName, IEngUserProfile profile, SourceBean request, String modality) throws EMFUserError {
+	private ExecutionInstance createExecutionInstance(Integer biobjectId, String aRoleName, IEngUserProfile profile, SourceBean request, String modality)
+			throws EMFUserError {
 		// create execution id
-		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 		UUID uuidObj = uuidGen.generateTimeBasedUUID();
 		String executionId = uuidObj.toString();
 		executionId = executionId.replaceAll("-", "");
 		// find execution flow id; it is not specified, it means that a new flow is starting, so it is set to execution id value
 		String executionFlowId = (String) request.getAttribute("EXECUTION_FLOW_ID");
 		logger.debug("Execution flow id request parameter: " + executionFlowId);
-		if (executionFlowId == null) 
+		if (executionFlowId == null)
 			executionFlowId = executionId;
 		// find if toolbar must be displayed or not, default value is true
 		String displayToolbarStr = (String) request.getAttribute(SpagoBIConstants.TOOLBAR_VISIBLE);
 		logger.debug("Display toolbar request parameter: " + displayToolbarStr);
-		if (displayToolbarStr == null || displayToolbarStr.trim().equals("")) displayToolbarStr = "true";
+		if (displayToolbarStr == null || displayToolbarStr.trim().equals(""))
+			displayToolbarStr = "true";
 		boolean displayToolbar = Boolean.parseBoolean(displayToolbarStr);
 		// find if sliders must be displayed or not, default value is true
 		String displaySliderStr = (String) request.getAttribute(SpagoBIConstants.SLIDERS_VISIBLE);
 		logger.debug("Display sliders request parameter: " + displaySliderStr);
-		if (displaySliderStr == null || displaySliderStr.trim().equals("")) displaySliderStr = "true";
+		if (displaySliderStr == null || displaySliderStr.trim().equals(""))
+			displaySliderStr = "true";
 		boolean displaySlider = Boolean.parseBoolean(displaySliderStr);
 		// create new execution instance
 		ExecutionInstance instance = null;
@@ -471,9 +460,12 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Get the required BIObject by attribute "OBJECT_ID" or "OBJECT_LABEL" on request.
-	 * @param request The service request
+	 * 
+	 * @param request
+	 *            The service request
 	 * @return the required BIObject
-	 * @throws EMFUserError if the document is not found or if request attribute "OBJECT_ID" or "OBJECT_LABEL" are missing
+	 * @throws EMFUserError
+	 *             if the document is not found or if request attribute "OBJECT_ID" or "OBJECT_LABEL" are missing
 	 */
 	private BIObject getRequiredBIObject(SourceBean request) throws EMFUserError {
 		logger.debug("IN");
@@ -511,10 +503,9 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Finds the subobject required by the request, if any.
-	 * It consider only the subobejcts of the current document, so if a subobject of another document is required it is not found.
-	 * It loads the current document's subobjects and invokes the getRequiredSubObject(request, subobjects)  
-	 * 
+	 * Finds the subobject required by the request, if any. It consider only the subobejcts of the current document, so if a subobject of another document is
+	 * required it is not found. It loads the current document's subobjects and invokes the getRequiredSubObject(request, subobjects)
+	 *
 	 * @param request
 	 * @return the required subobject
 	 * @throws Exception
@@ -529,13 +520,14 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Find the subobject with the name specified by the attribute
-	 * "LABEL_SUB_OBJECT" or "SUBOBJECT_ID" on request among the list of subobjects in input (that must be the current 
-	 * document's subobjects list); if those attributes are missing, null is returned. 
-	 * If such a subobject does not exist or the current user is not able to see that subobject, an error is added into the Error Handler
-	 * and null is returned.
-	 * @param request The service request
-	 * @param subObjects The list of all existing subobjects for the current document
+	 * Find the subobject with the name specified by the attribute "LABEL_SUB_OBJECT" or "SUBOBJECT_ID" on request among the list of subobjects in input (that
+	 * must be the current document's subobjects list); if those attributes are missing, null is returned. If such a subobject does not exist or the current
+	 * user is not able to see that subobject, an error is added into the Error Handler and null is returned.
+	 * 
+	 * @param request
+	 *            The service request
+	 * @param subObjects
+	 *            The list of all existing subobjects for the current document
 	 * @return the required subobject
 	 */
 	// MPenningroth 25-JAN-2008
@@ -580,8 +572,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 			logger.error("Subobject not found.");
 			List l = new ArrayList();
 			l.add(subObjectName);
-			EMFUserError userError = new EMFUserError(
-					EMFErrorSeverity.ERROR, 1080, l);
+			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 1080, l);
 			errorHandler.addError(userError);
 		} else {
 			boolean canSeeSubobject = canSeeSubobject(getUserProfile(), subObj);
@@ -598,10 +589,11 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Finds the snapshot required by the request, if any.
-	 * It consider only the snapshots of the current document, so if a snapshots of another document is required it is not found.
-	 * It loads the current document's snapshots and invokes the getRequiredSnapshot(request, snapshots)  
-	 * @param request The service request
+	 * Finds the snapshot required by the request, if any. It consider only the snapshots of the current document, so if a snapshots of another document is
+	 * required it is not found. It loads the current document's snapshots and invokes the getRequiredSnapshot(request, snapshots)
+	 * 
+	 * @param request
+	 *            The service request
 	 * @return the required snapshot
 	 */
 	private Snapshot getRequiredSnapshot(SourceBean request) throws Exception {
@@ -614,14 +606,14 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Find the snapshot with the name specified by the attribute
-	 * "SNAPSHOT_NAME" and number specified by "SNAPSHOT_NUMBER" or by 
-	 * the attribute "SNAPSHOT_ID" on request among the list of snapshots in input (that must be the current 
-	 * document's snapshots list); if SNAPSHOT_NAME attribute is missing, null is returned. 
-	 * If such a snapshot does not exist an error is added into the Error Handler
-	 * and null is returned.
-	 * @param request The service request
-	 * @param snapshots The list of existing snapshots for the current document
+	 * Find the snapshot with the name specified by the attribute "SNAPSHOT_NAME" and number specified by "SNAPSHOT_NUMBER" or by the attribute "SNAPSHOT_ID" on
+	 * request among the list of snapshots in input (that must be the current document's snapshots list); if SNAPSHOT_NAME attribute is missing, null is
+	 * returned. If such a snapshot does not exist an error is added into the Error Handler and null is returned.
+	 * 
+	 * @param request
+	 *            The service request
+	 * @param snapshots
+	 *            The list of existing snapshots for the current document
 	 * @return the required snapshot
 	 */
 	private Snapshot getRequiredSnapshot(SourceBean request, List snapshots) {
@@ -670,8 +662,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 			List l = new ArrayList();
 			l.add(snapshotName);
 			l.add(snapshotNumberStr);
-			EMFUserError userError = new EMFUserError(
-					EMFErrorSeverity.ERROR, 1081, l);
+			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 1081, l);
 			errorHandler.addError(userError);
 		}
 		logger.debug("OUT");
@@ -680,17 +671,17 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Controls if the user can execute the input subobject
-	 * 
-	 * @param subObj The subobject to be executed
-	 * @param profile The user profile
+	 *
+	 * @param subObj
+	 *            The subobject to be executed
+	 * @param profile
+	 *            The user profile
 	 * @return true if the user can see the subobject, false otherwise
 	 */
 	private boolean canSeeSubobject(IEngUserProfile profile, SubObject subObj) {
 		logger.debug("IN");
 		boolean toReturn = true;
-		if (!subObj.getIsPublic().booleanValue()
-				&& !subObj.getOwner().equals(
-						((UserProfile)profile).getUserId())) {
+		if (!subObj.getIsPublic().booleanValue() && !subObj.getOwner().equals(((UserProfile) profile).getUserId())) {
 			toReturn = false;
 		}
 		logger.debug("OUT");
@@ -699,9 +690,10 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Find bi obj par id.
-	 * 
-	 * @param parIdObj the par id obj
-	 * 
+	 *
+	 * @param parIdObj
+	 *            the par id obj
+	 *
 	 * @return the int
 	 */
 	public int findBIObjParId(Object parIdObj) {
@@ -740,9 +732,10 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Gets the as list.
-	 * 
-	 * @param o the o
-	 * 
+	 *
+	 * @param o
+	 *            the o
+	 *
 	 * @return the as list
 	 */
 	public List getAsList(Object o) {
@@ -760,23 +753,20 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Called after the parameter value lookup selection to continue the
-	 * execution phase
-	 * 
+	 * Called after the parameter value lookup selection to continue the execution phase
+	 *
 	 * @param request
 	 *            The request SourceBean
 	 * @param response
 	 *            The response SourceBean
 	 */
-	private void lookUpReturnHandler(SourceBean request, SourceBean response)
-	throws Exception {
+	private void lookUpReturnHandler(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 		ExecutionInstance instance = getExecutionInstance();
 		// get the object from the session
 		BIObject obj = instance.getBIObject();
 		// get the parameter name and value from the request
-		String parameterNameFromLookUp = (String) request
-		.getAttribute("LOOKUP_PARAMETER_NAME");
+		String parameterNameFromLookUp = (String) request.getAttribute("LOOKUP_PARAMETER_NAME");
 		if (parameterNameFromLookUp == null)
 			parameterNameFromLookUp = contextManager.getString("LOOKUP_PARAMETER_NAME");
 
@@ -790,15 +780,13 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		if (lookUpValueObj != null && !returnStatus.equalsIgnoreCase("ABORT")) {
 
 			List paramValues = getAsList(lookUpValueObj);
-			List paramDescriptions = (lookUpDescObj == null) ? paramValues
-					: getAsList(lookUpDescObj);
+			List paramDescriptions = (lookUpDescObj == null) ? paramValues : getAsList(lookUpDescObj);
 
 			// Set into the righr object parameter the list value
 			List biparams = obj.getBiObjectParameters();
 			Iterator iterParams = biparams.iterator();
 			while (iterParams.hasNext()) {
-				BIObjectParameter biparam = (BIObjectParameter) iterParams
-				.next();
+				BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
 				String nameUrl = biparam.getParameterUrlName();
 
 				if (nameUrl.equalsIgnoreCase(parameterNameFromLookUp)) {
@@ -808,28 +796,25 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 					HashMap paramsDescriptionMap = (HashMap) contextManager.get("PARAMS_DESCRIPTION_MAP");
 					String desc = "";
 					for (int i = 0; i < paramDescriptions.size(); i++) {
-						desc += (i == 0 ? "" : ";")
-						+ paramDescriptions.get(i).toString();
+						desc += (i == 0 ? "" : ";") + paramDescriptions.get(i).toString();
 					}
 					paramsDescriptionMap.put(nameUrl, desc);
 				}
 			}
 		}
-		response.setAttribute(SpagoBIConstants.PUBLISHER_NAME,
-		"ExecuteBIObjectPageParameter");
+		response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ExecuteBIObjectPageParameter");
 		logger.debug("OUT");
 	}
 
 	/**
 	 * Delete a subObject of the current document
-	 * 
+	 *
 	 * @param request
 	 *            The request SourceBean
 	 * @param response
 	 *            The response SourceBean
 	 */
-	private void deleteSubObjectHandler(SourceBean request, SourceBean response)
-	throws Exception {
+	private void deleteSubObjectHandler(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 		UserProfile profile = (UserProfile) getUserProfile();
 		String userId = profile.getUserId().toString();
@@ -870,7 +855,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Get the list of subObjects of a BIObject for the current user
-	 * 
+	 *
 	 * @param obj
 	 *            BIObject container of the subObjects
 	 * @param profile
@@ -882,8 +867,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		List subObjects = new ArrayList();
 		try {
 			ISubObjectDAO subobjdao = DAOFactory.getSubObjectDAO();
-			subObjects = subobjdao
-			.getAccessibleSubObjects(obj.getId(), profile);
+			subObjects = subobjdao.getAccessibleSubObjects(obj.getId(), profile);
 		} catch (Exception e) {
 			logger.error("Error retriving the subObject list", e);
 		}
@@ -893,7 +877,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Get the list of BIObject sbapshots
-	 * 
+	 *
 	 * @param obj
 	 *            BIObject container of the snapshot
 	 * @return the List of the BIObject snapshots
@@ -912,22 +896,18 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Based on the object type launches the right execution mechanism. For
-	 * objects executed by an external engine instantiates the driver for
-	 * execution, gets the execution call parameters map, adds in reponse the
-	 * map of the parameters. For objects executed by an internal engine,
-	 * instantiates the engine class and launches execution method.
-	 * 
+	 * Based on the object type launches the right execution mechanism. For objects executed by an external engine instantiates the driver for execution, gets
+	 * the execution call parameters map, adds in reponse the map of the parameters. For objects executed by an internal engine, instantiates the engine class
+	 * and launches execution method.
+	 *
 	 * @param instance
 	 *            The execution instance
 	 * @param subObj
-	 *            The SubObjectDetail subObject to be executed (in case it is
-	 *            not null)
+	 *            The SubObjectDetail subObject to be executed (in case it is not null)
 	 * @param response
 	 *            The response Source Bean
 	 */
-	private void execute(ExecutionInstance instance, SubObject subObj, String[] vpParameters,
-			SourceBean response) {
+	private void execute(ExecutionInstance instance, SubObject subObj, String[] vpParameters, SourceBean response) {
 		logger.debug("IN");
 
 		EMFErrorHandler errorHandler = getErrorHandler();
@@ -941,13 +921,10 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		Domain engineType = null;
 		Domain compatibleBiobjType = null;
 		try {
-			engineType = DAOFactory.getDomainDAO().loadDomainById(
-					engine.getEngineTypeId());
-			compatibleBiobjType = DAOFactory.getDomainDAO().loadDomainById(
-					engine.getBiobjTypeId());
+			engineType = DAOFactory.getDomainDAO().loadDomainById(engine.getEngineTypeId());
+			compatibleBiobjType = DAOFactory.getDomainDAO().loadDomainById(engine.getBiobjTypeId());
 		} catch (EMFUserError error) {
-			logger.error("Error retrieving document's engine information",
-					error);
+			logger.error("Error retrieving document's engine information", error);
 			errorHandler.addError(error);
 			return;
 		}
@@ -958,16 +935,13 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		// ENGINE
 		if (!compatibleBiobjTypeCd.equalsIgnoreCase(biobjTypeCd)) {
 			// the engine document type and the biobject type are not compatible
-			logger.warn("Engine cannot execute input document type: "
-					+ "the engine " + engine.getName() + " can execute '"
-					+ compatibleBiobjTypeCd + "' type documents "
-					+ "while the input document is a '" + biobjTypeCd + "'.");
+			logger.warn("Engine cannot execute input document type: " + "the engine " + engine.getName() + " can execute '" + compatibleBiobjTypeCd
+					+ "' type documents " + "while the input document is a '" + biobjTypeCd + "'.");
 			Vector params = new Vector();
 			params.add(engine.getName());
 			params.add(compatibleBiobjTypeCd);
 			params.add(biobjTypeCd);
-			errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR,
-					2002, params));
+			errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 2002, params));
 			return;
 		}
 
@@ -987,22 +961,19 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ExecuteBIObjectPageExecution");
 				// instance the driver class
 				String driverClassName = obj.getEngine().getDriverName();
-				IEngineDriver aEngineDriver = (IEngineDriver) Class.forName(
-						driverClassName).newInstance();
+				IEngineDriver aEngineDriver = (IEngineDriver) Class.forName(driverClassName).newInstance();
 				// get the map of the parameters
 				Map mapPars = null;
 
 				if (subObj != null)
-					mapPars = aEngineDriver.getParameterMap(obj, subObj,
-							profile, executionRole);
+					mapPars = aEngineDriver.getParameterMap(obj, subObj, profile, executionRole);
 				else
-					mapPars = aEngineDriver.getParameterMap(obj, profile,
-							executionRole);
+					mapPars = aEngineDriver.getParameterMap(obj, profile, executionRole);
 
 				// adding or substituting parameters for viewpoint
 				if (vpParameters != null) {
 					for (int i = 0; i < vpParameters.length; i++) {
-						String param = (String) vpParameters[i];
+						String param = vpParameters[i];
 						String name = param.substring(0, param.indexOf("="));
 						String value = param.substring(param.indexOf("=") + 1);
 						if (mapPars.get(name) != null) {
@@ -1013,92 +984,75 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 					}
 				}
 
-				//GET DOC CONFIG FOR DOCUMENT COMPOSITION
+				// GET DOC CONFIG FOR DOCUMENT COMPOSITION
 				if (contextManager.get("docConfig") != null)
-					mapPars.put("docConfig", (DocumentCompositionConfiguration) contextManager.get("docConfig"));
+					mapPars.put("docConfig", contextManager.get("docConfig"));
 
 				// set into the reponse the parameters map
-				response.setAttribute(ObjectsTreeConstants.REPORT_CALL_URL,
-						mapPars);
+				response.setAttribute(ObjectsTreeConstants.REPORT_CALL_URL, mapPars);
 				if (subObj != null) {
 					response.setAttribute(SpagoBIConstants.SUBOBJECT, subObj);
 				}
 
 			} catch (Exception e) {
 				logger.error("Error During object execution", e);
-				errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR,
-						100));
+				errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 100));
 			}
 
 			// IF THE ENGINE IS INTERNAL
 		} else {
 
 			String className = engine.getClassName();
-			logger.debug("Try instantiating class " + className
-					+ " for internal engine " + engine.getName() + "...");
+			logger.debug("Try instantiating class " + className + " for internal engine " + engine.getName() + "...");
 			InternalEngineIFace internalEngine = null;
 			// tries to instantiate the class for the internal engine
 			try {
 				if (className == null && className.trim().equals(""))
 					throw new ClassNotFoundException();
-				internalEngine = (InternalEngineIFace) Class.forName(className)
-				.newInstance();
+				internalEngine = (InternalEngineIFace) Class.forName(className).newInstance();
 			} catch (ClassNotFoundException cnfe) {
-				logger.error("The class ['" + className
-						+ "'] for internal engine " + engine.getName()
-						+ " was not found.", cnfe);
+				logger.error("The class ['" + className + "'] for internal engine " + engine.getName() + " was not found.", cnfe);
 				Vector params = new Vector();
 				params.add(className);
 				params.add(engine.getName());
-				errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR,
-						2001, params));
+				errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 2001, params));
 				return;
 			} catch (Exception e) {
 				logger.error("Error while instantiating class " + className, e);
-				errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR,
-						100));
+				errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 100));
 				return;
 			}
 
-			logger
-			.debug("Class "
-					+ className
-					+ " instantiated successfully. Now engine's execution starts.");
+			logger.debug("Class " + className + " instantiated successfully. Now engine's execution starts.");
 
 			// starts engine's execution
 			try {
 
 				if (subObj != null)
-					internalEngine.executeSubObject(this.getRequestContainer(),
-							obj, response, subObj);
+					internalEngine.executeSubObject(this.getRequestContainer(), obj, response, subObj);
 				else
-					internalEngine.execute(this.getRequestContainer(), obj,
-							response);
+					internalEngine.execute(this.getRequestContainer(), obj, response);
 			} catch (EMFUserError e) {
 				logger.error("Error while engine execution", e);
 				errorHandler.addError(e);
 			} catch (Exception e) {
 				logger.error("Error while engine execution", e);
-				errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR,
-						100));
+				errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 100));
 			}
 
 		}
 		logger.debug("OUT");
 	}
 
-	private boolean isSubRptStatusAdmissible(String masterRptStatus,
-			String subRptStatus) {
+	private boolean isSubRptStatusAdmissible(String masterRptStatus, String subRptStatus) {
 
 		if (masterRptStatus.equalsIgnoreCase("DEV")) {
-			if (subRptStatus.equalsIgnoreCase("DEV")
-					|| subRptStatus.equalsIgnoreCase("REL"))
+			if (subRptStatus.equalsIgnoreCase("DEV") || subRptStatus.equalsIgnoreCase("REL"))
 				return true;
 			else
 				return false;
 		} else if (masterRptStatus.equalsIgnoreCase("TEST")) {
-			if (subRptStatus.equalsIgnoreCase("TEST")
-					|| subRptStatus.equalsIgnoreCase("REL"))
+			if (subRptStatus.equalsIgnoreCase("TEST") || subRptStatus.equalsIgnoreCase("REL"))
 				return true;
 			else
 				return false;
@@ -1111,8 +1065,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		return false;
 	}
 
-	private boolean isSubRptExecutableByUser(IEngUserProfile profile,
-			BIObject subrptbiobj) {
+	private boolean isSubRptExecutableByUser(IEngUserProfile profile, BIObject subrptbiobj) {
 		logger.debug("IN");
 		String subrptbiobjStatus = subrptbiobj.getStateCode();
 		List functionalities = subrptbiobj.getFunctionalities();
@@ -1120,18 +1073,15 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		boolean isExecutableByUser = false;
 		while (functionalitiesIt.hasNext()) {
 			Integer functionalityId = (Integer) functionalitiesIt.next();
-			if (ObjectsAccessVerifier.canDev(subrptbiobjStatus,
-					functionalityId, profile)) {
+			if (ObjectsAccessVerifier.canDev(subrptbiobjStatus, functionalityId, profile)) {
 				isExecutableByUser = true;
 				break;
 			}
-			if (ObjectsAccessVerifier.canTest(subrptbiobjStatus,
-					functionalityId, profile)) {
+			if (ObjectsAccessVerifier.canTest(subrptbiobjStatus, functionalityId, profile)) {
 				isExecutableByUser = true;
 				break;
 			}
-			if (ObjectsAccessVerifier.canExec(subrptbiobjStatus,
-					functionalityId, profile)) {
+			if (ObjectsAccessVerifier.canExec(subrptbiobjStatus, functionalityId, profile)) {
 				isExecutableByUser = true;
 				break;
 			}
@@ -1149,21 +1099,16 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 			ISubreportDAO subrptdao = DAOFactory.getSubreportDAO();
 			IBIObjectDAO biobjectdao = DAOFactory.getBIObjectDAO();
 
-			List subreportList = subrptdao
-			.loadSubreportsByMasterRptId(masterReportId);
+			List subreportList = subrptdao.loadSubreportsByMasterRptId(masterReportId);
 			for (int i = 0; i < subreportList.size(); i++) {
 				Subreport subreport = (Subreport) subreportList.get(i);
-				BIObject subrptbiobj = biobjectdao
-				.loadBIObjectForDetail(subreport.getSub_rpt_id());
-				if (!isSubRptStatusAdmissible(masterReportStatus, subrptbiobj
-						.getStateCode())) {
-					errorHandler.addError(new EMFUserError(
-							EMFErrorSeverity.ERROR, 1062));
+				BIObject subrptbiobj = biobjectdao.loadBIObjectForDetail(subreport.getSub_rpt_id());
+				if (!isSubRptStatusAdmissible(masterReportStatus, subrptbiobj.getStateCode())) {
+					errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 1062));
 					return false;
 				}
 				if (!isSubRptExecutableByUser(profile, subrptbiobj)) {
-					errorHandler.addError(new EMFUserError(
-							EMFErrorSeverity.ERROR, 1063));
+					errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 1063));
 					return false;
 				}
 			}
@@ -1179,7 +1124,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Exec a biobject snapshot.
-	 * 
+	 *
 	 * @param request
 	 *            The request SourceBean
 	 * @param response
@@ -1188,7 +1133,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 	private void execSnapshotHandler(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 		Snapshot snapshot = getRequiredSnapshot(request);
-		if (snapshot!= null) {
+		if (snapshot != null) {
 			executeSnapshot(snapshot, response);
 		}
 		logger.debug("OUT");
@@ -1203,18 +1148,15 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Based on the object type lauch the right subobject execution mechanism.
-	 * For object executed by an external engine instances the driver for
-	 * execution, get the execution call parameters map, add in reponse the map
-	 * of the parameters.
-	 * 
+	 * Based on the object type lauch the right subobject execution mechanism. For object executed by an external engine instances the driver for execution, get
+	 * the execution call parameters map, add in reponse the map of the parameters.
+	 *
 	 * @param request
 	 *            The request SourceBean
 	 * @param response
 	 *            The response SourceBean
 	 */
-	private void executionSubObjectHandler(SourceBean request,
-			SourceBean response) throws Exception {
+	private void executionSubObjectHandler(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 		SubObject subObj = getRequiredSubObject(request);
 		// get object from session
@@ -1227,7 +1169,8 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * get ExecutionInstance from session
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	private ExecutionInstance getExecutionInstance() {
 		return contextManager.getExecutionInstance(ExecutionInstance.class.getName());
@@ -1248,8 +1191,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 	}
 
 	private boolean isMultivalueParameter(BIObjectParameter biparam) {
-		return (biparam.getParameterValues() != null && biparam
-				.getParameterValues().size() > 1);
+		return (biparam.getParameterValues() != null && biparam.getParameterValues().size() > 1);
 	}
 
 	private Object getLookedUpObjId(SourceBean request) {
@@ -1274,11 +1216,12 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Gets the looked up parameter.
-	 * 
-	 * @param request the request
-	 * 
+	 *
+	 * @param request
+	 *            the request
+	 *
 	 * @return the looked up parameter
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public BIObjectParameter getLookedUpParameter(SourceBean request) throws Exception {
 		logger.debug("IN");
@@ -1288,8 +1231,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		BIObject obj = getExecutionInstance().getBIObject();
 		Iterator iterParams = obj.getBiObjectParameters().iterator();
 		while (iterParams.hasNext()) {
-			BIObjectParameter aBIParameter = (BIObjectParameter) iterParams
-			.next();
+			BIObjectParameter aBIParameter = (BIObjectParameter) iterParams.next();
 			if (aBIParameter.getId().equals(objParId)) {
 				lookedupBIParameter = aBIParameter;
 				break;
@@ -1307,92 +1249,48 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		logger.debug("OUT");
 	}
 
-
 	/**
 	 * Called when user has selected all values for a multi-value-parameter
-	 * 
+	 *
 	 * @param request
 	 *            The request SourceBean
 	 * @param response
 	 *            The response SourceBean
 	 */
 	/*
-	private void selectAllValueForPar(SourceBean request, SourceBean response)
-	throws Exception {
-		logger.debug("IN");
-		ExecutionInstance instance = getExecutionInstance();
-		instance.refreshParametersValues(request, false);
-		//String roleName=(String)request.getAttribute("roleName");
-		String roleName=instance.getExecutionRole();
-		List toAddValues=new ArrayList();
-		List toAddDescription=new ArrayList();
-		IEngUserProfile profile = getUserProfile();
+	 * private void selectAllValueForPar(SourceBean request, SourceBean response) throws Exception { logger.debug("IN"); ExecutionInstance instance =
+	 * getExecutionInstance(); instance.refreshParametersValues(request, false); //String roleName=(String)request.getAttribute("roleName"); String
+	 * roleName=instance.getExecutionRole(); List toAddValues=new ArrayList(); List toAddDescription=new ArrayList(); IEngUserProfile profile =
+	 * getUserProfile();
+	 * 
+	 * //String parIdS=(String)request.getAttribute("parameterId");
+	 * 
+	 * //id of BIParameter selected String parIdS=(String)request.getAttribute("objParId"); Integer id=Integer.valueOf(parIdS);
+	 * 
+	 * // List of BiParameters, find the one to change List biObjPars=instance.getBIObject().getBiObjectParameters();
+	 * 
+	 * 
+	 * BIObjectParameter currbiObjPar=null; // Find the right BIparameter boolean found=false; for (Iterator iterator = biObjPars.iterator(); iterator.hasNext()
+	 * && found==false;) { BIObjectParameter bipar = (BIObjectParameter) iterator.next(); if(bipar.getId().equals(id)){ currbiObjPar=bipar; found=true; } }
+	 * 
+	 * ModalitiesValue modVal = currbiObjPar.getParameter().getModalityValue(); // get the lov provider String looProvider = modVal.getLovProvider(); // get
+	 * from the request the type of lov ILovDetail lovDetail = LovDetailFactory.getLovFromXML(looProvider); //IEngUserProfile profile =
+	 * GeneralUtilities.createNewUserProfile(userIndentifierToBeUsed); String result = lovDetail.getLovResult(profile); SourceBean rowsSourceBean =
+	 * SourceBean.fromXMLString(result); // filters for parameters correlation rowsSourceBean = filterForParametersCorrelation(rowsSourceBean, currbiObjPar,
+	 * roleName, request); List rows = null; if(rowsSourceBean != null) { rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG); if (rows != null &&
+	 * rows.size() != 0) { Iterator it = rows.iterator(); while(it.hasNext()) { SourceBean row = (SourceBean) it.next(); Object value =
+	 * row.getAttribute(lovDetail.getValueColumnName()); Object description=row.getAttribute(lovDetail.getDescriptionColumnName()); if (value != null) {
+	 * toAddValues.add(value.toString()); if(description!=null) toAddDescription.add(description.toString()); else toAddDescription.add(""); } } } }
+	 * 
+	 * // set list of all values currbiObjPar.setParameterValues(toAddValues); currbiObjPar.setParameterValuesDescription(toAddDescription);
+	 * 
+	 * response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ExecuteBIObjectPageParameter"); logger.debug("OUT");
+	 * 
+	 * ///////////////////////////////////// }
+	 */
 
-		//String parIdS=(String)request.getAttribute("parameterId");
-
-		//id of BIParameter selected
-		String parIdS=(String)request.getAttribute("objParId");
-		Integer id=Integer.valueOf(parIdS);
-
-		// List of BiParameters, find the one to change
-		List biObjPars=instance.getBIObject().getBiObjectParameters();
-
-
-		BIObjectParameter currbiObjPar=null;
-		// Find the right BIparameter
-		boolean found=false;
-		for (Iterator iterator = biObjPars.iterator(); iterator.hasNext() && found==false;) {
-			BIObjectParameter bipar = (BIObjectParameter) iterator.next();
-			if(bipar.getId().equals(id)){
-				currbiObjPar=bipar;	
-				found=true;
-			}
-		}
-		
-		ModalitiesValue modVal = currbiObjPar.getParameter().getModalityValue();
-		// get the lov provider
-		String looProvider = modVal.getLovProvider();
-		// get from the request the type of lov
-		ILovDetail lovDetail = LovDetailFactory.getLovFromXML(looProvider);
-		//IEngUserProfile profile = GeneralUtilities.createNewUserProfile(userIndentifierToBeUsed);
-		String result = lovDetail.getLovResult(profile);
-		SourceBean rowsSourceBean = SourceBean.fromXMLString(result);
-		// filters for parameters correlation
-		rowsSourceBean = filterForParametersCorrelation(rowsSourceBean, currbiObjPar, roleName, request);
-		List rows = null;
-		if(rowsSourceBean != null) {
-			rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
-			if (rows != null && rows.size() != 0) {
-				Iterator it = rows.iterator();
-				while(it.hasNext()) {
-					SourceBean row = (SourceBean) it.next();
-					Object value = row.getAttribute(lovDetail.getValueColumnName());
-					Object description=row.getAttribute(lovDetail.getDescriptionColumnName());
-					if (value != null) {
-						toAddValues.add(value.toString());
-						if(description!=null) 
-							toAddDescription.add(description.toString());
-						else
-							toAddDescription.add("");
-					}
-				}
-			}
-		} 
-
-		// set list of all values
-		currbiObjPar.setParameterValues(toAddValues);
-		currbiObjPar.setParameterValuesDescription(toAddDescription);
-
-		response.setAttribute(SpagoBIConstants.PUBLISHER_NAME,
-		"ExecuteBIObjectPageParameter");
-		logger.debug("OUT");
-
-		/////////////////////////////////////
-	}
-	*/
-
-	
-	private SourceBean filterForParametersCorrelation(SourceBean rowsSourceBean, BIObjectParameter currbiObjPar, String roleName, SourceBean request) throws Exception {
+	private SourceBean filterForParametersCorrelation(SourceBean rowsSourceBean, BIObjectParameter currbiObjPar, String roleName, SourceBean request)
+			throws Exception {
 		logger.debug("IN");
 		SourceBean toReturn = null;
 		if (rowsSourceBean != null) {
@@ -1417,74 +1315,57 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		return toReturn;
 	}
 
-
-
 	/**
 	 * Called when user has selected none values for a multi-value-parameter
-	 * 
+	 *
 	 * @param request
 	 *            The request SourceBean
 	 * @param response
 	 *            The response SourceBean
 	 */
-	private void selectNoneValueForPar(SourceBean request, SourceBean response)
-	throws Exception {
+	private void selectNoneValueForPar(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 		ExecutionInstance instance = getExecutionInstance();
 		instance.refreshParametersValues(request, false);
 
-		String objParIdS=(String)request.getAttribute("objParId");
-		//String roleName=(String)request.getAttribute("roleName");
-		String roleName=instance.getExecutionRole();
+		String objParIdS = (String) request.getAttribute("objParId");
+		// String roleName=(String)request.getAttribute("roleName");
+		String roleName = instance.getExecutionRole();
 
-		Integer objParId=Integer.valueOf(objParIdS);
+		Integer objParId = Integer.valueOf(objParIdS);
 
-		BIObjectParameter currbiObjPar=null;
-		List biObjPars=instance.getBIObject().getBiObjectParameters();
+		BIObjectParameter currbiObjPar = null;
+		List biObjPars = instance.getBIObject().getBiObjectParameters();
 
-		//currbiObjPar.set
+		// currbiObjPar.set
 
-		boolean found=false;
-		for (Iterator iterator = biObjPars.iterator(); iterator.hasNext() && found==false;) {
+		boolean found = false;
+		for (Iterator iterator = biObjPars.iterator(); iterator.hasNext() && found == false;) {
 			BIObjectParameter bipar = (BIObjectParameter) iterator.next();
-			if(bipar.getId().equals(objParId)){
-				currbiObjPar=bipar;	
-				found=true;
+			if (bipar.getId().equals(objParId)) {
+				currbiObjPar = bipar;
+				found = true;
 			}
 		}
 
 		currbiObjPar.setParameterValues(null);
 		currbiObjPar.setParameterValuesDescription(null);
 
-		response.setAttribute(SpagoBIConstants.PUBLISHER_NAME,
-		"ExecuteBIObjectPageParameter");
+		response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ExecuteBIObjectPageParameter");
 		logger.debug("OUT");
 
 		/////////////////////////////////////
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
 	/**
 	 * Handles the final execution of the object
-	 * 
+	 *
 	 * @param request
 	 *            The request SourceBean
 	 * @param response
 	 *            The response SourceBean
 	 */
-	private void executionHandler(SourceBean request, SourceBean response)
-	throws Exception {
+	private void executionHandler(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 		ExecutionInstance instance = getExecutionInstance();
 		instance.refreshParametersValues(request, false);
@@ -1511,13 +1392,10 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 			BIObjectParameter lookupBIParameter = getLookedUpParameter(request);
 
 			if (lookupBIParameter == null) {
-				logger.error("The BIParameter with id = "
-						+ getLookedUpParameterId(request).toString()
-						+ " does not exist.");
+				logger.error("The BIParameter with id = " + getLookedUpParameterId(request).toString() + " does not exist.");
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 1041);
 			}
-			ModalitiesValue modVal = lookupBIParameter.getParameter()
-			.getModalityValue();
+			ModalitiesValue modVal = lookupBIParameter.getParameter().getModalityValue();
 
 			String lookupType = (String) request.getAttribute("LOOKUP_TYPE");
 			if (lookupType == null)
@@ -1525,29 +1403,21 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 			if (lookupType.equalsIgnoreCase("CHECK_LIST")) {
 				response.setAttribute("CHECKLIST", "true");
-				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME,
-				"ChecklistLookupPublisher");
+				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ChecklistLookupPublisher");
 			} else if (lookupType.equalsIgnoreCase("LIST")) {
 				response.setAttribute("LIST", "true");
-				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME,
-				"LookupPublisher");
+				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "LookupPublisher");
 			} else {
 				response.setAttribute("LIST", "true");
-				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME,
-				"LookupPublisher");
+				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "LookupPublisher");
 			}
 
 			response.setAttribute("mod_val_id", modVal.getId().toString());
-			response.setAttribute("LOOKUP_PARAMETER_NAME", lookupBIParameter
-					.getParameterUrlName());
-			response.setAttribute("LOOKUP_PARAMETER_ID", lookupBIParameter
-					.getId().toString());
-			String correlatedParuseId = (String) request
-			.getAttribute("correlatedParuseIdForObjParWithId_"
-					+ lookupObjParId);
+			response.setAttribute("LOOKUP_PARAMETER_NAME", lookupBIParameter.getParameterUrlName());
+			response.setAttribute("LOOKUP_PARAMETER_ID", lookupBIParameter.getId().toString());
+			String correlatedParuseId = (String) request.getAttribute("correlatedParuseIdForObjParWithId_" + lookupObjParId);
 			if (correlatedParuseId != null && !correlatedParuseId.equals(""))
-				response.setAttribute("correlated_paruse_id",
-						correlatedParuseId);
+				response.setAttribute("correlated_paruse_id", correlatedParuseId);
 			return;
 		}
 
@@ -1557,17 +1427,18 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		// if this is a correlation refresh call, errors are ignored
 		if (isRefreshCorrelationCall(request)) {
 			if (errors.size() > 0) {
-				// puts into error handler only errors on parameter values (that are instances of EMFUserError), not on 
+				// puts into error handler only errors on parameter values (that are instances of EMFUserError), not on
 				// checks (that are instances of EMFValidationError)
 				Iterator errorsIt = errors.iterator();
 				while (errorsIt.hasNext()) {
 					EMFUserError error = (EMFUserError) errorsIt.next();
-					if (error instanceof EMFValidationError) continue;
-					else errorHandler.addError(error);
+					if (error instanceof EMFValidationError)
+						continue;
+					else
+						errorHandler.addError(error);
 				}
 			}
-			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME,
-			"ExecuteBIObjectPageParameter");
+			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ExecuteBIObjectPageParameter");
 
 			return;
 		}
@@ -1581,8 +1452,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		// if there are some errors into the errorHandler does not execute the
 		// BIObject
 		if (!errorHandler.isOKBySeverity(EMFErrorSeverity.ERROR)) {
-			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME,
-			"ExecuteBIObjectPageParameter");
+			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ExecuteBIObjectPageParameter");
 
 			return;
 		}
@@ -1593,7 +1463,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Get the list of viewpoints
-	 * 
+	 *
 	 * @param obj
 	 *            BIObject container of the viewpoint
 	 * @return the List of the viewpoints
@@ -1615,14 +1485,16 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Save a viewpoint.
-	 * 
-	 * @param request The request SourceBean
-	 * @param response The response SourceBean
-	 * 
-	 * @throws Exception the exception
+	 *
+	 * @param request
+	 *            The request SourceBean
+	 * @param response
+	 *            The response SourceBean
+	 *
+	 * @throws Exception
+	 *             the exception
 	 */
-	public void saveViewPoint(SourceBean request, SourceBean response)
-	throws Exception {
+	public void saveViewPoint(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 		ExecutionInstance instance = getExecutionInstance();
 		// get the current user profile
@@ -1635,11 +1507,10 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		} else {
 			scopeVP = "Private";
 		}
-		String ownerVP = (String) ((UserProfile)profile).getUserId();
-
+		String ownerVP = (String) ((UserProfile) profile).getUserId();
 
 		instance.refreshParametersValues(request, false);
-		// check parameters values 
+		// check parameters values
 		List errors = instance.getParametersErrors();
 		// add errors into error handler
 		Iterator errorsIt = errors.iterator();
@@ -1648,8 +1519,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		}
 		// if there are some errors into the errorHandler does not save the viewpoint
 		if (!errorHandler.isOKBySeverity(EMFErrorSeverity.ERROR)) {
-			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME,
-			"ExecuteBIObjectPageParameter");
+			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ExecuteBIObjectPageParameter");
 			return;
 		}
 
@@ -1661,7 +1531,8 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		while (iterParams.hasNext()) {
 			BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
 			String value = biparam.getParameterValuesAsString();
-			if (value == null) value = "";
+			if (value == null)
+				value = "";
 			String labelUrl = biparam.getParameterUrlName();
 			// defines the string of parameters to save into db
 			contentVP = contentVP + labelUrl + "%3D" + value + "%26";
@@ -1675,11 +1546,9 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		// check if a viewpoint with the same name yet exists
 		Viewpoint tmpVP = biViewpointDAO.loadViewpointByNameAndBIObjectId(nameVP, obj.getId());
 		if (tmpVP != null) {
-			errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR,
-					6002, null));
+			errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 6002, null));
 			// set into the response the right information for loopback
-			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME,
-			"ExecuteBIObjectPageParameter");
+			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ExecuteBIObjectPageParameter");
 			logger.debug("OUT");
 			return;
 		}
@@ -1702,15 +1571,14 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Delete a viewpoint.
-	 * 
+	 *
 	 * @param request
 	 *            The request SourceBean
 	 * @param response
 	 *            The response SourceBean
-	 * @throws EMFInternalError 
+	 * @throws EMFInternalError
 	 */
-	private void eraseViewpoint(SourceBean request, SourceBean response)
-	throws EMFUserError, SourceBeanException, EMFInternalError {
+	private void eraseViewpoint(SourceBean request, SourceBean response) throws EMFUserError, SourceBeanException, EMFInternalError {
 		logger.debug("IN");
 		UserProfile profile = (UserProfile) getUserProfile();
 		String userId = profile.getUserId().toString();
@@ -1751,28 +1619,26 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Exec a viewpoint.
-	 * 
+	 *
 	 * @param request
 	 *            The request SourceBean
 	 * @param response
 	 *            The response SourceBean
 	 */
-	private void execViewpoint(SourceBean request, SourceBean response)
-	throws Exception {
+	private void execViewpoint(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 		// get object from session
 		ExecutionInstance instance = getExecutionInstance();
-		//Integer id =(Integer) request.getAttribute("id");
-		
+		// Integer id =(Integer) request.getAttribute("id");
+
 		// built the url for the content recovering
-		String content = (request.getAttribute("content") == null) ? ""
-				: (String) request.getAttribute("content");
+		String content = (request.getAttribute("content") == null) ? "" : (String) request.getAttribute("content");
 		content = content.replace("%26", "&");
 		content = content.replace("%3D", "=");
 		// get the current user profile
-		instance.applyViewpoint( content, false);
-		//instance.setParameterValues(content, false);
-		// check parameters values 
+		instance.applyViewpoint(content, false);
+		// instance.setParameterValues(content, false);
+		// check parameters values
 		List errors = instance.getParametersErrors();
 		// add errors into error handler
 		Iterator errorsIt = errors.iterator();
@@ -1781,8 +1647,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		}
 		// if there are some errors into the errorHandler does not execute the BIObject
 		if (!errorHandler.isOKBySeverity(EMFErrorSeverity.ERROR)) {
-			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME,
-			"ExecuteBIObjectPageParameter");
+			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ExecuteBIObjectPageParameter");
 			return;
 		}
 		execute(instance, null, null, response);
@@ -1791,14 +1656,13 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Gets viewpoint's parameters and view theme.
-	 * 
+	 *
 	 * @param request
 	 *            The request SourceBean
 	 * @param response
 	 *            The response SourceBean
 	 */
-	private void viewViewpoint(SourceBean request, SourceBean response)
-	throws Exception {
+	private void viewViewpoint(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("OUT");
 		String id = (String) request.getAttribute("vpId");
 
@@ -1813,9 +1677,9 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		String allParametersValues = vp.getVpValueParams();
 		allParametersValues = allParametersValues.replace("%26", "&");
 		allParametersValues = allParametersValues.replace("%3D", "=");
-		instance.applyViewpoint( allParametersValues, false);
-		//instance.setParameterValues(allParametersValues, false);
-		// check parameters values 
+		instance.applyViewpoint(allParametersValues, false);
+		// instance.setParameterValues(allParametersValues, false);
+		// check parameters values
 		List errors = instance.getParametersErrors();
 		// add errors into error handler
 		Iterator errorsIt = errors.iterator();
@@ -1823,13 +1687,13 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 			errorHandler.addError((EMFUserError) errorsIt.next());
 		}
 
-//		HashMap paramsDescriptionMap = (HashMap) contextManager.get("PARAMS_DESCRIPTION_MAP");
-//		while (iterParams.hasNext()) {
-//		BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
-//		String labelUrl = biparam.getParameterUrlName();
-//		String descr = biparam.getParameterValuesDescription();
-//		paramsDescriptionMap.put(labelUrl, descr);
-//		}
+		// HashMap paramsDescriptionMap = (HashMap) contextManager.get("PARAMS_DESCRIPTION_MAP");
+		// while (iterParams.hasNext()) {
+		// BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
+		// String labelUrl = biparam.getParameterUrlName();
+		// String descr = biparam.getParameterValuesDescription();
+		// paramsDescriptionMap.put(labelUrl, descr);
+		// }
 
 		response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ExecuteBIObjectPageParameter");
 		logger.debug("OUT");

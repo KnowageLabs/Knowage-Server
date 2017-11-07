@@ -363,6 +363,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		role.setIsAbleToSeeSubobjects(bo.isAbleToSeeSubobjects());
 		role.setIsAbleToSeeViewpoints(bo.isAbleToSeeViewpoints());
 		role.setIsAbleToSeeSnapshots(bo.isAbleToSeeSnapshots());
+		role.setIsAbleToRunSnapshots(bo.isAbleToRunSnapshots());
 		role.setIsAbleToSeeNotes(bo.isAbleToSeeNotes());
 		role.setIsAbleToSendMail(bo.isAbleToSendMail());
 		role.setIsAbleToSaveRememberMe(bo.isAbleToSaveRememberMe());

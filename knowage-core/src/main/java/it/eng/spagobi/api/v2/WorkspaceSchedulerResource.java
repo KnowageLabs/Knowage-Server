@@ -17,18 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
-import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +34,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
+import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+
 /**
  * @author Stefan Petrovic (Stefan.Petrovic@mht.net)
  */
@@ -57,9 +57,10 @@ public class WorkspaceSchedulerResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{scheduler}")
-	@UserConstraint(functionalities = { SpagoBIConstants.SEE_SNAPSHOTS_FUNCTIONALITY})
+	@UserConstraint(functionalities = { SpagoBIConstants.SEE_SNAPSHOTS_FUNCTIONALITY })
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getSchedulations(@PathParam("scheduler") String name, @QueryParam("collate") boolean collate) throws IOException, EMFUserError, EMFInternalError, JSONException {
+	public String getSchedulations(@PathParam("scheduler") String name, @QueryParam("collate") boolean collate)
+			throws IOException, EMFUserError, EMFInternalError, JSONException {
 		logger.debug("IN");
 		JSONArray toreturn = new JSONArray();
 
@@ -68,7 +69,7 @@ public class WorkspaceSchedulerResource extends AbstractSpagoBIResource {
 		List<Snapshot> snapshotList = null;
 		try {
 			snapDao = DAOFactory.getSnapshotDAO();
-			list = snapDao.getSnapshotsBySchedulation(name, collate);
+			list = snapDao.getSnapshotsBySchedulation(name, collate, false);
 		} catch (EMFUserError e) {
 			throw new SpagoBIRestServiceException("Error with getting snapshpots", buildLocaleFromSession(), e);
 

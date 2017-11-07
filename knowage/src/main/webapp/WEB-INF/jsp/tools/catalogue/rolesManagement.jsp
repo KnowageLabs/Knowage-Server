@@ -207,6 +207,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       </md-input-container>
 			        <label flex="90">{{translate.load("sbi.roles.seeSnapshot")}}</label>
 			   </div> 
+			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('runSnapshot')">
+			   <md-input-container> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToRunSnapshots" aria-label="check" name="runSnapshot">
+			        </md-checkbox> 
+			       </md-input-container>
+			        <label flex="90">{{translate.load("sbi.roles.runSnapshot")}}</label>
+			   </div>
 			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeSubobj')">
 			    <md-input-container> 
 			        <md-checkbox

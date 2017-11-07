@@ -1,21 +1,5 @@
 package it.eng.spagobi.api;
 
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
-import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -34,6 +18,22 @@ import javax.ws.rs.core.Response;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
+import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/documentsnapshot")
 @ManageAuthorization
@@ -56,12 +56,13 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 		resultAsMap.put("urlPath", GeneralUtilities.getSpagoBIProfileBaseUrl(this.getUserProfile().getUserUniqueIdentifier().toString()));
 		return Response.ok(resultAsMap).build();
 	}
+
 	@GET
 	@Path("/getSnapshootBySchedulation")
-	public Map<String, Map<Integer,List<Snapshot>>> getSnapshoots(@QueryParam("schedulation") String schedulation) {
+	public Map<String, Map<Integer, List<Snapshot>>> getSnapshoots(@QueryParam("schedulation") String schedulation) {
 		try {
 			ISnapshotDAO snapdao = DAOFactory.getSnapshotDAO();
-			return snapdao.getSnapshotsBySchedulation(schedulation, true);
+			return snapdao.getSnapshotsBySchedulation(schedulation, true, true);
 		} catch (EMFUserError e) {
 			logger.error(e);
 			throw new SpagoBIRestServiceException(getLocale(), e);
@@ -71,11 +72,12 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 	@GET
 	@Path("/getSnapshotsForSchedulationAndDocument")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getSnapshotsForSchedulationAndDocument(@QueryParam("id") Integer biobjectId, @QueryParam("scheduler") String scheduler, @Context HttpServletRequest req) {
+	public Response getSnapshotsForSchedulationAndDocument(@QueryParam("id") Integer biobjectId, @QueryParam("scheduler") String scheduler,
+			@Context HttpServletRequest req) {
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 		List snapshotsList = null;
 		try {
-			snapshotsList = DAOFactory.getSnapshotDAO().getSnapshotsForSchedulationAndDocument(biobjectId, scheduler);
+			snapshotsList = DAOFactory.getSnapshotDAO().getSnapshotsForSchedulationAndDocument(biobjectId, scheduler, true);
 		} catch (EMFUserError e) {
 			throw new SpagoBIServiceException("Cannot load scheduled executions", e);
 		}
@@ -83,7 +85,6 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 		resultAsMap.put("urlPath", GeneralUtilities.getSpagoBIProfileBaseUrl(this.getUserProfile().getUserUniqueIdentifier().toString()));
 		return Response.ok(resultAsMap).build();
 	}
-
 
 	@GET
 	@Path("/getSnapshotContent")

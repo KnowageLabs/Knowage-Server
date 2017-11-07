@@ -113,6 +113,7 @@ boolean isSuperAdmin = (Boolean)((UserProfile)userProfile).getIsSuperadmin();
         
 // author: danristo
 boolean isAbleToExecuteAction = userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_SNAPSHOTS_FUNCTIONALITY);
+boolean isAbleToExecuteActionSnapshot = userProfile.isAbleToExecuteAction(SpagoBIConstants.RUN_SNAPSHOTS_FUNCTIONALITY);
 
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -173,6 +174,7 @@ if(executionRoleNames.size() > 0) {
             var isAdmin = <%=isAdmin%>;
             var isSuperAdmin = <%=isSuperAdmin%>;
             var isAbleToExecuteAction = <%=isAbleToExecuteAction%>;
+            var isAbleToExecuteActionRunSnapshot = <%=isAbleToExecuteActionRunSnapshot%>;
         </script>
     
         <div  layout-fill ng-hide="hideProgressCircular.status" style="z-index: 10000; position: absolute; background-color: rgba(0, 0, 0, 0.21);">

@@ -29,14 +29,14 @@
 			        <md-button id="previewDataset" class="md-icon-button" aria-label="previewDataset" ng-click="previewDocumentAction({doc:document});">
 			          	<md-icon md-font-icon="fa fa-eye fa-2x"></md-icon>
 			          	<md-tooltip md-delay="1000">
-			            	{{translate.load('sbi.workspace.dataset.preview')}}
+			            	{{translate.load('sbi.workspace.schedulations.view')}}
 			          	</md-tooltip>
 			        </md-button>    			          			        	 
-			        <md-menu-bar id="menu" ng-if="document.triggers.length>1">
+			        <md-menu-bar id="menu" ng-if="document.triggers.length>1  && runSnapshots">
 						<md-menu>
 							<md-button class="md-icon-button" aria-label="Execute" ng-click="$mdOpenMenu($event)">
 								<md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon>
-								<md-tooltip md-delay="1000"> {{translate.load("sbi.workspace.execute.document")}}</md-tooltip>
+								<md-tooltip md-delay="1000"> {{translate.load("sbi.workspace.execute.schedulation")}}</md-tooltip>
 							</md-button>
 							<md-menu-content>
 								<md-menu-item ng-repeat="item in document.triggers | filter: onlySnapshots">
@@ -47,7 +47,7 @@
 							</md-menu-content>
 						</md-menu>
 					</md-menu-bar>
-					<md-button class="md-icon-button" aria-label="Execute" ng-click="executeDocumentAction({doc:document.triggers[0], merge:document.jobMergeAllSnapshots, document: document});" ng-if="document.triggers.length==1">
+					<md-button class="md-icon-button" aria-label="Execute" ng-click="executeDocumentAction({doc:document.triggers[0], merge:document.jobMergeAllSnapshots, document: document});" ng-if="document.triggers.length==1 && runSnapshots">
 						<md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon>
 						<md-tooltip md-delay="1000"> {{translate.load("sbi.workspace.execute.document")}}</md-tooltip>
 					</md-button>

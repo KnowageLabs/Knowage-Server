@@ -17,17 +17,17 @@
  */
 package it.eng.spagobi.commons.bo;
 
-import it.eng.spagobi.services.validation.Xss;
-
 import java.io.Serializable;
 import java.util.List;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
+import it.eng.spagobi.services.validation.Xss;
+
 /**
  * Defines a <code>Role</code> object.
- * 
+ *
  * @author Petrovic Stefan ( o_stpetrov, Stefan.Petrovic@mht.net )
  */
 
@@ -68,6 +68,7 @@ public class RoleBO implements Serializable {
 	private boolean ableToSeeSubobjects;
 	private boolean ableToSeeViewpoints;
 	private boolean ableToSeeSnapshots;
+	private boolean ableToRunSnapshots;
 	private boolean ableToSeeNotes;
 	private boolean ableToSendMail;
 	private boolean ableToSaveIntoPersonalFolder;
@@ -117,7 +118,7 @@ public class RoleBO implements Serializable {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param name
 	 *            the name
 	 * @param description
@@ -131,7 +132,7 @@ public class RoleBO implements Serializable {
 
 	/**
 	 * Gets the description.
-	 * 
+	 *
 	 * @return role description
 	 */
 
@@ -141,7 +142,7 @@ public class RoleBO implements Serializable {
 
 	/**
 	 * Sets the description.
-	 * 
+	 *
 	 * @param description
 	 *            the description to set
 	 */
@@ -151,7 +152,7 @@ public class RoleBO implements Serializable {
 
 	/**
 	 * Gets the id.
-	 * 
+	 *
 	 * @return role id
 	 */
 	public Integer getId() {
@@ -160,7 +161,7 @@ public class RoleBO implements Serializable {
 
 	/**
 	 * Sets the id.
-	 * 
+	 *
 	 * @param id
 	 *            the role id to set
 	 */
@@ -170,7 +171,7 @@ public class RoleBO implements Serializable {
 
 	/**
 	 * Gets the name.
-	 * 
+	 *
 	 * @return the role name
 	 */
 	public String getName() {
@@ -179,7 +180,7 @@ public class RoleBO implements Serializable {
 
 	/**
 	 * Sets the name.
-	 * 
+	 *
 	 * @param name
 	 *            the name to set
 	 */
@@ -189,7 +190,7 @@ public class RoleBO implements Serializable {
 
 	/**
 	 * Gets the role type cd.
-	 * 
+	 *
 	 * @return Returns the roleTypeCD.
 	 */
 	public String getRoleTypeCD() {
@@ -198,7 +199,7 @@ public class RoleBO implements Serializable {
 
 	/**
 	 * Sets the role type cd.
-	 * 
+	 *
 	 * @param roleTypeCD
 	 *            The roleTypeCD to set.
 	 */
@@ -208,7 +209,7 @@ public class RoleBO implements Serializable {
 
 	/**
 	 * Gets the role type id.
-	 * 
+	 *
 	 * @return Returns the roleTypeID.
 	 */
 	public Integer getRoleTypeID() {
@@ -217,7 +218,7 @@ public class RoleBO implements Serializable {
 
 	/**
 	 * Sets the role type id.
-	 * 
+	 *
 	 * @param roleTypeID
 	 *            The roleTypeID to set.
 	 */
@@ -227,7 +228,7 @@ public class RoleBO implements Serializable {
 
 	/**
 	 * Gets the code.
-	 * 
+	 *
 	 * @return Returns the code.
 	 */
 	public String getCode() {
@@ -236,7 +237,7 @@ public class RoleBO implements Serializable {
 
 	/**
 	 * Sets the code.
-	 * 
+	 *
 	 * @param code
 	 *            The code to set.
 	 */
@@ -290,6 +291,14 @@ public class RoleBO implements Serializable {
 
 	public void setAbleToSeeSnapshots(boolean ableToSeeSnapshots) {
 		this.ableToSeeSnapshots = ableToSeeSnapshots;
+	}
+
+	public boolean isAbleToRunSnapshots() {
+		return ableToRunSnapshots;
+	}
+
+	public void setAbleToRunSnapshots(boolean ableToRunSnapshots) {
+		this.ableToRunSnapshots = ableToRunSnapshots;
 	}
 
 	public boolean isAbleToSeeNotes() {

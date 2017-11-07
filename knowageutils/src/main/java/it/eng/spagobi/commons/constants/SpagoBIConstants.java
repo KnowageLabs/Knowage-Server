@@ -400,6 +400,7 @@ public class SpagoBIConstants {
 	public static final String SEE_SUBOBJECTS_FUNCTIONALITY = "SeeSubobjectsFunctionality";
 	public static final String SEE_VIEWPOINTS_FUNCTIONALITY = "SeeViewpointsFunctionality";
 	public static final String SEE_SNAPSHOTS_FUNCTIONALITY = "SeeSnapshotsFunctionality";
+	public static final String RUN_SNAPSHOTS_FUNCTIONALITY = "RunSnapshotsFunctionality";
 	public static final String SEE_NOTES_FUNCTIONALITY = "SeeNotesFunctionality";
 	public static final String SEND_MAIL_FUNCTIONALITY = "SendMailFunctionality";
 	public static final String SAVE_INTO_FOLDER_FUNCTIONALITY = "SaveIntoFolderFunctionality";

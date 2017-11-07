@@ -19,7 +19,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	$scope.selectedMeta = {};
 	$scope.selectedDs = {};
 	$scope.rolesList = []; // array that hold list of roles
-	$scope.authList = [];  
+	$scope.authList = [];
 	$scope.listType = []; // list that holds list of domain roles
 	$scope.roleMetaModelCategories = [];
 	$scope.category = [];
@@ -44,7 +44,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	               {dbname:"ENABLE_FEDERATED_DATASET",label:"enableFederatedDataset",visible:false, category:"ENABLE"},
 	               {dbname:"SEE_MY_DATA",label:"seeMyData",visible:false, category:"ITEMS"},
 	               {dbname:"SEE_MY_WORKSPACE",label:"seeMyWorkspace",visible:false, category:"ITEMS"},
-	               {dbname:"DO_MASSIVE_EXPORT",label:"doMassiveExport",visible:false, category:"EXPORT"},     
+	               {dbname:"DO_MASSIVE_EXPORT",label:"doMassiveExport",visible:false, category:"EXPORT"},
 	               {dbname:"SEE_SUBSCRIPTIONS",label:"seeSubscriptions",visible:false, category:"ITEMS"},
 	               {dbname:"CREATE_SOCIAL_ANALYSIS",label:"createSocialAnalysis",visible:false, category:"ITEMS"},
 	               {dbname:"VIEW_SOCIAL_ANALYSIS",label:"viewSocialAnalysis",visible:false, category:"ITEMS"},
@@ -52,7 +52,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	               {dbname:"FUNCTIONS_CATALOG_USAGE",label:"functionsCatalogUsage",visible:false, category:"ITEMS"},
 	               {dbname:"HIERARCHIES_MANAGEMENT",label:"hierarchiesManagement",visible:false, category:"ITEMS"}
 	               ];
-	
+
 	var showEEAuthorizations = sbiModule_user.functionalities.indexOf("EnterpriseAuthorizations")>-1;
 	if (showEEAuthorizations){
 		checkboxList.push({dbname:"SEE_NOTES",label:"seeNotes",visible:false, category:"SEE"});
@@ -63,6 +63,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		checkboxList.push({dbname:"MANAGE_GLOSSARY_TECHNICAL",label:"manageGlossaryTechnical",visible:false, category:"MANAGE"});
 		checkboxList.push({dbname:"MANAGE_CALENDAR",label:"manageCalendar",visible:false, category:"MANAGE"});
 		checkboxList.push({dbname:"SEE_SNAPSHOTS",label:"seeSnapshot",visible:false, category:"SEE"});
+		checkboxList.push({dbname:"RUN_SNAPSHOTS",label:"runSnapshot",visible:false, category:"SEE"});
 	}
 
 
@@ -138,6 +139,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		$scope.selectedRole.ableToSeeViewpoints= true;
 		$scope.selectedRole.ableToSeeNotes= true;
 		$scope.selectedRole.ableToSeeSnapshots= false;
+		$scope.selectedRole.runToSeeSnapshots= false;
 		$scope.selectedRole.ableToDoMassiveExport= true;
 		$scope.selectedRole.ableToCreateDocuments= true;
 		$scope.selectedRole.ableToHierarchiesManagement= true;
@@ -149,7 +151,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		$scope.selectedRole.ableToSeeMetadata= true;
 		$scope.selectedRole.ableToSeeToDoList= true;
 		$scope.selectedRole.ableToViewSocialAnalysis= true;
-		$scope.selectedRole.ableToDeleteKpiComm= true;	
+		$scope.selectedRole.ableToDeleteKpiComm= true;
 	}
 
 	$scope.setDirty = function () {
@@ -158,7 +160,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 	/*
 	 * 	function that checks if role is "USER" and enables user available choices
-	 *	also assigns Domain Type values to main item on change																
+	 *	also assigns Domain Type values to main item on change
 	 */
 	$scope.changeType = function(item) {
 		console.log(item);
@@ -168,14 +170,14 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			}
 		}
 		if ($scope.selectedRole.roleTypeCD == "USER") {
-			$scope.disable = false;	
+			$scope.disable = false;
 		}else{
 			$scope.disable = true;
 		}
-		//The admin has all the DataSets associated 
+		//The admin has all the DataSets associated
 		if ($scope.selectedRole.roleTypeCD == "ADMIN") {
 			//Store a backup copy of the selected DataSet and select all the DataSets
-			$scope.ds_category_backup = angular.copy($scope.ds_category); 
+			$scope.ds_category_backup = angular.copy($scope.ds_category);
 			$scope.ds_category = [].concat($scope.roleDataSetCategories);
 		}else{
 			//restore previous DataSet selection
@@ -194,7 +196,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 	/*
 	 * 	function that adds VALUE_TR property to each Domain Type
-	 *  object because of internalization																	
+	 *  object because of internalization
 	 */
 	$scope.addTranslation = function() {
 
@@ -202,19 +204,19 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			switch ($scope.listType[l].VALUE_CD) {
 			case "USER":
 				$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbidomains.nm.user");
-				break;	
+				break;
 			case "ADMIN":
 				$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbidomains.nm.admin");
-				break;	
+				break;
 			case "DEV_ROLE":
 				$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbidomains.nm.dev_role");
-				break;	
+				break;
 			case "TEST_ROLE":
 				$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbidomains.nm.test_role");
-				break;	
+				break;
 			case "MODEL_ADMIN":
 				$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbidomains.nm.model_admin");
-				break;	
+				break;
 			default:
 				break;
 			}
@@ -226,13 +228,13 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	 * 	this function is used to properly format
 	 *  selected roles meta model categories
 	 *  for adding or updating.
-	 *  																	
+	 *
 	 */
 	$scope.formatCategories = function () {
 
 		if ($scope.category.length > 0) {
 
-			var tmpR = []; 
+			var tmpR = [];
 			for (var i = 0; i < $scope.category.length; i++) {
 				$scope.selectedMeta={};
 				$scope.selectedMeta.categoryId=$scope.category[i].VALUE_ID;
@@ -250,7 +252,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	/*
 	 * 	this function is used to properly fill meta model
 	 *  categories table with meta model categories from
-	 *  selected role																	
+	 *  selected role
 	 */
 	$scope.setCetegories = function(data) {
 		if (data.length>0) {
@@ -264,7 +266,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			}
 		}else{
 			$scope.category = [];
-		}	
+		}
 	}
 
 
@@ -272,13 +274,13 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	 * 	this function is used to properly format
 	 *  selected roles data set categories
 	 *  for adding or updating.
-	 *  																	
+	 *
 	 */
 	$scope.formatDsCategories = function () {
 
 		if ($scope.ds_category.length > 0) {
 
-			var tmpR = []; 
+			var tmpR = [];
 			for (var i = 0; i < $scope.ds_category.length; i++) {
 				$scope.selectedDs={};
 				$scope.selectedDs.categoryId=$scope.ds_category[i].VALUE_ID;
@@ -296,7 +298,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	/*
 	 * 	this function is used to properly fill data set
 	 *  categories table with data set categories from
-	 *  selected role																	
+	 *  selected role
 	 */
 	$scope.setDsCategories = function(data) {
 	/*	if (data.length>0) {
@@ -329,7 +331,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 	/*
 	 * 	this function is called when item
-	 *  from table is clicked																	
+	 *  from table is clicked
 	 */
 	$scope.loadRole = function (item) {
 		$scope.getCategoriesByID(item);
@@ -348,7 +350,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 				}
 				var index =$scope.indexInList(response.data[i].categoryId, $scope.roleDataSetCategories,"VALUE_ID");
 				if(index!=-1){
-					
+
 					$scope.ds_category.push($scope.roleDataSetCategories[index]);
 				}
 
@@ -374,10 +376,10 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			$scope.showme = true;
 		}
 		if ($scope.selectedRole.roleTypeCD == "USER") {
-			$scope.disable = false;	
+			$scope.disable = false;
 		}else{
 			$scope.disable = true;
-		}   
+		}
 	}
 
 	$scope.cancel = function () { // on cancel button
@@ -390,16 +392,16 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 	/*
 	 * 	this function is called when clicking
-	 *  on plus button(create)																	
+	 *  on plus button(create)
 	 */
 	$scope.createRole = function () {
 		angular.copy([],$scope.categoriesSelected);
 		if ($scope.dirtyForm) {
-			$mdDialog.show($scope.confirm).then(function () {	
+			$mdDialog.show($scope.confirm).then(function () {
 				$scope.selectedRole = {};
 				$scope.category = [];
 				$scope.ds_category = [];
-			
+
 				$scope.dirtyForm = false;
 				$scope.roleInit();
 				$scope.showme = true;
@@ -424,10 +426,10 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	 *  on save button.
 	 *  If item already exists do update @PUT,
 	 *  If item dont exists insert new one @POST
-	 *  																
+	 *
 	 */
 	$scope.saveRole = function () {
-		
+
 		$scope.formatCategories();
 		$scope.formatDsCategories();
 		console.log($scope.selectedRole.roleMetaModelCategories);
@@ -452,39 +454,39 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			}
 			delete $scope.selectedRole.roleDataSetCategories;
 		}
-		
+
 		if($scope.selectedRole.hasOwnProperty("id")){
 
 			sbiModule_restServices.promisePut("2.0/roles", $scope.selectedRole.id , $scope.selectedRole)
 			.then(function(response) {
 				$scope.rolesList = [];
-				$timeout(function(){								
+				$timeout(function(){
 					$scope.getRoles();
 				}, 1000);
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
 				$scope.selectedRole = {};
 				$scope.showme=false;
-				$scope.dirtyForm=false;	
+				$scope.dirtyForm=false;
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 
 			});
 
 		}else{
-			
+
 			for (var i = 0; i < $scope.rolesList.length; i++) {
 				if($scope.rolesList[i].name.toUpperCase() === $scope.selectedRole.name.toUpperCase()){
 					sbiModule_messaging.showErrorMessage('Role already exists', 'Error');
 					$scope.checkName = true;
 				}
 			}
-				
-			
+
+
 			if(!$scope.checkName){
 			sbiModule_restServices.promisePost("2.0/roles","",angular.toJson($scope.selectedRole, true))
 			.then(function(response) {
 				$scope.rolesList=[];
-				$timeout(function(){								
+				$timeout(function(){
 					$scope.getRoles();
 				}, 1000);
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
@@ -510,7 +512,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 		});
 	}
-	
+
 	$scope.getAuthorizations = function () { // service that gets list of roles GET
 
 		sbiModule_restServices.promiseGet("authorizations","")
@@ -526,9 +528,9 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 	/*
 	 * 	service that gets domain types for
-	 *  dropdown @GET																	
+	 *  dropdown @GET
 	 */
-	$scope.getDomainType = function(){	
+	$scope.getDomainType = function(){
 
 		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=ROLE_TYPE")
 		.then(function(response) {
@@ -542,9 +544,9 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 	/*
 	 * 	service that gets domain types for meta model
-	 *  categories @GET																	
+	 *  categories @GET
 	 */
-	$scope.getCategories = function(){	
+	$scope.getCategories = function(){
 
 		sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=BM_CATEGORY")
 		.then(function(response) {
@@ -555,12 +557,12 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 		});
 	}
-	
-	
+
+
 
 	/*
 	 * 	service that gets loaded meta model categories
-	 *  for selected role @GET																	
+	 *  for selected role @GET
 	 */
 	$scope.getCategoriesByID = function(item){
 
@@ -576,9 +578,9 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 	/*
 	 * 	service that gets domain types for data set
-	 *  categories @GET																	
+	 *  categories @GET
 	 */
-	$scope.getDsCategories = function(){	
+	$scope.getDsCategories = function(){
 
 		sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=CATEGORY_TYPE")
 		.then(function(response) {
@@ -592,7 +594,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 	/*
 	 * 	service that gets loaded data set categories
-	 *  for selected role @GET																	
+	 *  for selected role @GET
 	 */
 	$scope.getDsCategoriesByID = function(item){
 
@@ -608,9 +610,9 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 	/*
 	 * 	this function is called when
-	 *  clicking on delete button @DELETE																	
+	 *  clicking on delete button @DELETE
 	 */
-	$scope.deleteRole = function (item) { 
+	$scope.deleteRole = function (item) {
 
 		sbiModule_restServices.promiseDelete("2.0/roles", item.id)
 		.then(function(response) {
@@ -629,13 +631,13 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 		});
 	}
-	
+
 	initCBList = function(){
 		for(var i=0; i<$scope.authList.root.length;i++){
 			setVisible($scope.authList.root[i].name);
 		}
 	}
-	
+
 	setVisible = function(dbname){
 		for(var i=0; i<checkboxList.length;i++){
 			if(checkboxList[i].dbname == dbname){
@@ -644,14 +646,14 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			}
 		}
 	}
-	
+
 	$scope.isVisible = function(label){
 		for(var i=0; i<checkboxList.length;i++){
 			if(checkboxList[i].label == label)
 				return checkboxList[i].visible;
 		}
 	}
-	
+
 	$scope.isToolbarVisible = function(name){
 		name = name.toUpperCase();
 		for(var i=0; i<checkboxList.length;i++){

@@ -17,6 +17,16 @@
  */
 package it.eng.spagobi.profiling.services;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFUserError;
@@ -33,16 +43,6 @@ import it.eng.spagobi.security.RoleSynchronizer;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class ManageRolesAction extends AbstractSpagoBIAction {
 	/**
@@ -72,6 +72,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 	private final String SEE_SUBOBJECTS = "seeSubobj";
 	private final String SEE_VIEWPOINTS = "seeViewpoints";
 	private final String SEE_SNAPSHOTS = "seeSnapshot";
+	private final String RUN_SNAPSHOTS = "runSnapshot";
 	private final String SEE_NOTES = "seeNotes";
 	private final String SEND_MAIL = "sendMail";
 	private final String SAVE_INTO_PERSONAL_FOLDER = "savePersonalFolder";
@@ -173,6 +174,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 			Boolean seeSubobjects = getAttributeAsBoolean(SEE_SUBOBJECTS);
 			Boolean seeViewpoints = getAttributeAsBoolean(SEE_VIEWPOINTS);
 			Boolean seeSnapshots = getAttributeAsBoolean(SEE_SNAPSHOTS);
+			Boolean runSnapshots = getAttributeAsBoolean(RUN_SNAPSHOTS);
 			Boolean seeNotes = getAttributeAsBoolean(SEE_NOTES);
 			Boolean sendMail = getAttributeAsBoolean(SEND_MAIL);
 			Boolean saveIntoPersonalFolder = getAttributeAsBoolean(SAVE_INTO_PERSONAL_FOLDER);
@@ -273,6 +275,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				role.setIsAbleToSeeMetadata(seeMetadata);
 				role.setIsAbleToSeeNotes(seeNotes);
 				role.setIsAbleToSeeSnapshots(seeSnapshots);
+				role.setIsAbleToRunSnapshots(runSnapshots);
 				role.setIsAbleToSeeSubobjects(seeSubobjects);
 				role.setIsAbleToSeeViewpoints(seeViewpoints);
 				role.setIsAbleToSendMail(sendMail);
@@ -501,7 +504,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 	/**
 	 * Creates a json array with children roles informations
-	 * 
+	 *
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -518,7 +521,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 	/**
 	 * Creates a json array with children informations
-	 * 
+	 *
 	 * @param rows
 	 * @return
 	 * @throws JSONException

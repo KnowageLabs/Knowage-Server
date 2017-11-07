@@ -81,6 +81,7 @@
 		<AUTHORIZATION productType="KnowageBD" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="RUN_SNAPSHOTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageBD" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageBD" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT" />
@@ -99,6 +100,7 @@
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="RUN_SNAPSHOTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT"/>
@@ -118,6 +120,7 @@
 		<AUTHORIZATION productType="KnowageER" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageER" authorizationName="RUN_SNAPSHOTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT"/>
@@ -131,6 +134,7 @@
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowagePM" authorizationName="RUN_SNAPSHOTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT"/>
@@ -154,6 +158,7 @@
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_MY_WORKSPACE" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="RUN_SNAPSHOTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
@@ -171,6 +176,7 @@
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="RUN_SNAPSHOTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT" />
 	</DEFAULT_AUTHORIZATIONS>
