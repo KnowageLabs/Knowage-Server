@@ -681,9 +681,18 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		{
 			$scope.selectedColumn.colorThresholdOptions={};
 			$scope.selectedColumn.colorThresholdOptions.condition=[];
+			$scope.selectedColumn.colorThresholdOptions.condition2=[];
 			for(var i=0;i<3;i++)
 			{
 				$scope.selectedColumn.colorThresholdOptions.condition[i]="none";
+				$scope.selectedColumn.colorThresholdOptions.condition2[i]="none";
+			}
+		}
+		//retrocompatibility check for old version
+		if(!$scope.selectedColumn.colorThresholdOptions.hasOwnProperty('condition2')){
+			$scope.selectedColumn.colorThresholdOptions.condition2=[];
+			for(var i=0;i<3;i++){
+				$scope.selectedColumn.colorThresholdOptions.condition2[i]="none";
 			}
 		}
 

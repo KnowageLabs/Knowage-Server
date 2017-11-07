@@ -131,6 +131,18 @@
 										<input class="input_class" type="number" ng-model="selectedColumn.colorThresholdOptions.conditionValue[i]" required> 
 									</md-input-container>
 									
+									<md-input-container flex class="md-block" flex="33%" ng-if="selectedColumn.colorThresholdOptions.condition[i]!='none'"> 
+										<label>{{translate.load('sbi.cockpit.table.condition')}}</label>
+										<md-select aria-label="aria-label" ng-model="selectedColumn.colorThresholdOptions.condition2[i]">
+											<md-option ng-repeat="c in conditions" value="{{c}}">{{c}}</md-option>
+										</md-select>
+									</md-input-container>
+									
+									<md-input-container flex class="md-block"  ng-if="selectedColumn.colorThresholdOptions.condition[i]!='none'" class="small counter">
+										<label>{{translate.load('sbi.cockpit.table.threshold')}}</label>
+										<input class="input_class" type="number" ng-model="selectedColumn.colorThresholdOptions.conditionValue2[i]" required> 
+									</md-input-container>									
+									
 									<md-input-container flex class="md-block" ng-if="selectedColumn.colorThresholdOptions.condition[i]!='none'"> 
 										<label>{{translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
 										<color-picker options="colorPickerProperty" ng-model="selectedColumn.colorThresholdOptions.color[i]"></color-picker>

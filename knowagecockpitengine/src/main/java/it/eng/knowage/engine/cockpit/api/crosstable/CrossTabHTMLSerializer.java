@@ -754,6 +754,8 @@ public class CrossTabHTMLSerializer {
 		String toReturn = "";
 		JSONArray thresholdConditions = colorThrJ.getJSONArray("condition");
 		JSONObject thresholdConditionValues = (colorThrJ.isNull("conditionValue")) ? null : colorThrJ.getJSONObject("conditionValue");
+		JSONArray thresholdConditions2 = colorThrJ.optJSONArray("condition2");
+		JSONObject thresholdConditionValues2 = (colorThrJ.isNull("conditionValue2")) ? null : colorThrJ.getJSONObject("conditionValue2");
 		JSONObject thresholdColors = (colorThrJ.isNull("color")) ? null : colorThrJ.getJSONObject("color");
 		boolean isConditionVerified = false;
 
@@ -761,39 +763,55 @@ public class CrossTabHTMLSerializer {
 			String thrCond = (String) thresholdConditions.get(c);
 			if (!thrCond.equalsIgnoreCase("none")) {
 				double thrCondValue = thresholdConditionValues.getDouble(String.valueOf(c));
-				switch (thrCond) {
-				case "<":
-					if (value < thrCondValue)
-						isConditionVerified = true;
-					break;
-				case ">":
-					if (value > thrCondValue)
-						isConditionVerified = true;
-					break;
-				case "=":
-					if (value == thrCondValue)
-						isConditionVerified = true;
-					break;
-				case ">=":
-					if (value >= thrCondValue)
-						isConditionVerified = true;
-					break;
-				case "<=":
-					if (value <= thrCondValue)
-						isConditionVerified = true;
-					break;
-				case "!=":
-					if (value != thrCondValue)
-						isConditionVerified = true;
-					break;
-				default:
-					break;
+				isConditionVerified = verifyThresholdCondition(thrCond,thrCondValue,value);
+				if (isConditionVerified && thresholdConditions2 != null) {
+					//check if there is also a second condition that MUST be true
+					String thrCond2 = (String) thresholdConditions2.get(c);
+					if (!thrCond2.equalsIgnoreCase("none")) {
+						double thrCondValue2 = thresholdConditionValues2.getDouble(String.valueOf(c));
+						boolean isCondition2Verified = verifyThresholdCondition(thrCond2,thrCondValue2,value);
+						isConditionVerified = isConditionVerified && isCondition2Verified;
+					}					
 				}
 			}
 			if (isConditionVerified)
 				return thresholdColors.getString(String.valueOf(c));
 		}
 		return toReturn;
+	}
+	
+	private boolean verifyThresholdCondition(String condition, double value, double valueToTest) {
+		boolean isConditionVerified = false;
+
+		switch (condition) {
+		case "<":
+			if (valueToTest < value)
+				isConditionVerified = true;
+			break;
+		case ">":
+			if (valueToTest > value)
+				isConditionVerified = true;
+			break;
+		case "=":
+			if (valueToTest == value)
+				isConditionVerified = true;
+			break;
+		case ">=":
+			if (valueToTest >= value)
+				isConditionVerified = true;
+			break;
+		case "<=":
+			if (valueToTest <= value)
+				isConditionVerified = true;
+			break;
+		case "!=":
+			if (valueToTest != value)
+				isConditionVerified = true;
+			break;
+		default:
+			break;
+		}
+		return isConditionVerified;
 	}
 
 	// get the specific prop from the style definition if it's valorized
