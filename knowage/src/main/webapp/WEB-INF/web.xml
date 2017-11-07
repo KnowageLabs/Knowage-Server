@@ -461,6 +461,7 @@ END-LIFERAY -->
 	</env-entry>	
 -->
 
+	<!-- START TOMCAT RES -->
 	<resource-ref id="knowageds_core">
 		<description>
 		</description>
@@ -469,5 +470,6 @@ END-LIFERAY -->
 		<res-auth>Container</res-auth>
 		<res-sharing-scope>Shareable</res-sharing-scope>
 	</resource-ref>
+	<!-- END TOMCAT RES -->
 
 </web-app>

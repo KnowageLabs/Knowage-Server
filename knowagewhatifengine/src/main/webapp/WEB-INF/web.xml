@@ -192,5 +192,19 @@ ${enable.cas.start} END-CAS -->
     <location>/html/error.html</location>
   </error-page>
   
+	<!-- START jboss RES 
+	<context-param>
+		<param-name>resteasy.scan</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>resteasy.scan.providers</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>resteasy.scan.resources</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	 END jboss RES -->
   
 </web-app>
