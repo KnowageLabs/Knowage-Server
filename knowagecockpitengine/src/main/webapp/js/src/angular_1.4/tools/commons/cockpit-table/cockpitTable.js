@@ -89,8 +89,13 @@
                     //returning the style of the header cell
                     scope.getThStyle = function(thStyle,column){
                     	var style = angular.copy(thStyle?thStyle:{})
-                    	if(column.style && column.style.width) style['max-width'] = column.style.width;
-                    	if(column.style && column.style.width) style.width = column.style.width;
+                    	if(column.style && column.style.width) {
+                    		style['max-width'] = column.style.width;
+                    		style.width = column.style.width;
+                		}else{
+                			delete(style['max-width']);
+                    		delete(style.width);
+                		}
                     	if(column.style && column.style.td) scope.flexToAlign(scope.alignMap,column.style.td['justify-content'],style);
                     	return style;
                     }
