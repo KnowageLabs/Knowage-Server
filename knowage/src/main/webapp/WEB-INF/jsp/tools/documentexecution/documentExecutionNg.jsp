@@ -174,7 +174,6 @@ if(executionRoleNames.size() > 0) {
             var isAdmin = <%=isAdmin%>;
             var isSuperAdmin = <%=isSuperAdmin%>;
             var isAbleToExecuteAction = <%=isAbleToExecuteAction%>;
-            var isAbleToExecuteActionRunSnapshot = <%=isAbleToExecuteActionRunSnapshot%>;
         </script>
     
         <div  layout-fill ng-hide="hideProgressCircular.status" style="z-index: 10000; position: absolute; background-color: rgba(0, 0, 0, 0.21);">
