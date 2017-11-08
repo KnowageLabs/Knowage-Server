@@ -1,4 +1,4 @@
-<md-content layout="row" flex class="workspaceBckgColorRightSide workspaceWhiteframeContainer">
+<div layout="row" flex class="workspaceDocumentsList">
 
 <script type="text/ng-template" id="dialog1.tmpl.html">
 <md-dialog aria-label="Snapshot"  style="height:90%; width:90%; max-width: 100%;  max-height: 100%;" ng-cloak>
@@ -32,12 +32,10 @@
 	
 	</md-whiteframe>
 	
-	<md-whiteframe 	ng-if=!showDocSchedJsp flex layout="column" layout-margin
-					class="md-whiteframe-5dp workspaceBckgColorRightSide workspaceWhiteframe">
+	<div ng-if=!showDocSchedJsp flex layout="column">
 	
-		<md-content layout="row" flex class="workspaceBckgColorRightSide workspaceWhiteframeContent">
+		<md-content layout="row" flex layout-fill class="workspaceBckgColorRightSide">
 		
-			<md-content layout="row" flex layout-fill class="workspaceBckgColorRightSide">
 			
 				<schedulation-view 	class="kn-documentBrowser" flex
 			 					ng-model=schedulationList
@@ -49,11 +47,10 @@
 			 					preview-document-action="openSchedulersDocumentsAndSnapshots(doc)">
 				</schedulation-view>
 			
-			</md-content>
 		
 		</md-content>
 	
-	</md-whiteframe>
+	</div>
 
 		
-</md-content>
+</div>

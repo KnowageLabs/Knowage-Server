@@ -592,5 +592,10 @@ $organizerHeight : 120px;
 			}
 		}
 	 }
+	 .tabOverflow {
+	 	md-tab-content>div{
+	 		overflow-y:auto;
+	 	}
+	 }
 	
 }

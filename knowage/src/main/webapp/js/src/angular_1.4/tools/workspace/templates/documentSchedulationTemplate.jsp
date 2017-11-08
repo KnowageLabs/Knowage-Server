@@ -32,7 +32,7 @@
 		</div>
 	</md-toolbar>
 	
-	<md-tabs md-dynamic-height flex=95>
+	<md-tabs md-dynamic-height flex=95 class="tabOverflow">
 	 <md-tab ng-repeat="d in scheduler.documents" label="{{d.name}}" md-on-select="getDocumentsSnapshots(scheduler.jobName, d.name)"  >
 	  	<div layout-fill layout="column" flex>
 	  	
