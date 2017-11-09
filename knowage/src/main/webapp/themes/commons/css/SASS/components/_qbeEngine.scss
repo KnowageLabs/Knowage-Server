@@ -1,4 +1,19 @@
 .kn-qbe {
+
+	ul {
+		&[dnd-list]{
+        	margin: 0px;
+			min-height: 42px;
+			padding-left: 0px;
+			li {
+				background-color: #fff;
+			    border: 1px solid #ddd;
+			    display: block;
+			    padding: 0px;
+			}
+        }
+	}
+	 
     .expanderList {
         h3 {
             &.opened {
@@ -242,4 +257,42 @@
             }
         }
     }
+    
+    .dndDragging {
+	    opacity: 0.7;
+	}
+	
+	.dndDraggingSource {
+	    display: none;
+	}
+	
+	.dndPlaceholder {
+	    background-color: #a9c3db;
+	    display: block;
+	    min-height: 42px;
+	}
+	.selected {
+		.item {
+			color: #3c763d;
+	   		background-color: #dff0d8;
+		}
+		.box {
+			border-color: #d6e9c6;
+			&>h3 {
+				background-color: #dff0d8;
+	    		background-image: linear-gradient(to bottom,#dff0d8 0,#d0e9c6 100%);
+	    		border-color: #d6e9c6;
+	    		color: #3c763d;
+			}
+		}
+	}
+
+	.item {
+	    padding: 10px 15px;
+	}
+	
+	.container-element {
+	    margin: 10px;
+	}	
+	
 }
