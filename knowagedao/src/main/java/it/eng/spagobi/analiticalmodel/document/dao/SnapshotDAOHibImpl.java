@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -41,6 +42,8 @@ import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 
 public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapshotDAO {
+
+	public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	/*
 	 * (non-Javadoc)
@@ -159,7 +162,8 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 						newSnap.setDescription((String) snapValues[2]);
 					}
 					if (snapValues[3] != null) {
-						newSnap.setDateCreation(((Date) snapValues[3]));
+						newSnap.setDateCreation((Date) snapValues[3]);
+						newSnap.setTime(DATE_FORMATTER.format((Date) snapValues[3]));
 					}
 					if (snapValues[4] != null) {
 						newSnap.setBiobjId(((SbiObjects) snapValues[4]).getBiobjId());
@@ -246,6 +250,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 		snap.setSchedulationStartDate(hibSnap.getSchedulationStartDate());
 		snap.setScheduler(hibSnap.getScheduler());
 		snap.setSchedulationStartDate(hibSnap.getSchedulationStartDate());
+		snap.setTime(DATE_FORMATTER.format(hibSnap.getCreationDate()));
 		return snap;
 	}
 
@@ -415,6 +420,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 					}
 					if (snapValues[3] != null) {
 						snap.setDateCreation(((Date) snapValues[3]));
+						snap.setTime(DATE_FORMATTER.format((Date) snapValues[3]));
 					}
 					if (snapValues[4] != null) {
 						snap.setBiobjId(((SbiObjects) snapValues[4]).getBiobjId());

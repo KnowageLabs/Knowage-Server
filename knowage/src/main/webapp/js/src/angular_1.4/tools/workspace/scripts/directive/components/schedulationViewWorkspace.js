@@ -166,12 +166,13 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 	$scope.schedulatinColumns = [
 	    {"label":$scope.translate.load("sbi.generic.name"),"name":"name"},
 	    {"label":$scope.translate.load("sbi.glossary.description"), "name":"description"},
-	    {"label":$scope.translate.load("sbi.timespan.type.time"), "name":"dateCreation", transformer : function(data){ return $filter('date')(data, "HH:mm:ss yyyy-MM-dd ");  }}
+	    {"label":$scope.translate.load("sbi.timespan.type.dateTime"), "name":"time"},
+	    //{"label":$scope.translate.load("sbi.timespan.type.dateTime"), "name":"dateCreation"} //, transformer : function(data){ return $filter('date')(data, "yyyy-MM-dd HH:mm:ss");  }}
     ];
 
 	$scope.schedulatinMergeColumns = [
 	    {"label":$scope.translate.load("sbi.generic.name"),"name":"name"},
-	    {"label":$scope.translate.load("sbi.timespan.type.time"), "name":"time"}
+	    {"label":$scope.translate.load("sbi.timespan.type.dateTime"), "name":"time"}
     ];
 
 	$scope.triggerExecute = function(doc, merge, document){

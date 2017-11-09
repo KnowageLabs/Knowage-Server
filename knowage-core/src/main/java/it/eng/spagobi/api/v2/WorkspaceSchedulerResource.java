@@ -38,6 +38,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
+import it.eng.spagobi.analiticalmodel.document.dao.SnapshotDAOHibImpl;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -80,7 +81,8 @@ public class WorkspaceSchedulerResource extends AbstractSpagoBIResource {
 				JSONObject obj = new JSONObject();
 				JSONArray ids = new JSONArray();
 				for (int i = 0; i < snapshotList.size(); i++) {
-					obj.put("time", snapshotList.get(i).getDateCreation());
+					// obj.put("time", snapshotList.get(i).getDateCreation());
+					obj.put("time", SnapshotDAOHibImpl.DATE_FORMATTER.format(snapshotList.get(i).getDateCreation()));
 					ids.put(snapshotList.get(i).getId());
 				}
 

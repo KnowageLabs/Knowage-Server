@@ -62,7 +62,7 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 	public Map<String, Map<Integer, List<Snapshot>>> getSnapshoots(@QueryParam("schedulation") String schedulation) {
 		try {
 			ISnapshotDAO snapdao = DAOFactory.getSnapshotDAO();
-			return snapdao.getSnapshotsBySchedulation(schedulation, true, true);
+			return snapdao.getSnapshotsBySchedulation(schedulation, true, false);
 		} catch (EMFUserError e) {
 			logger.error(e);
 			throw new SpagoBIRestServiceException(getLocale(), e);
@@ -75,14 +75,16 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 	public Response getSnapshotsForSchedulationAndDocument(@QueryParam("id") Integer biobjectId, @QueryParam("scheduler") String scheduler,
 			@Context HttpServletRequest req) {
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
-		List snapshotsList = null;
+		List<Snapshot> snapshotsList = null;
 		try {
-			snapshotsList = DAOFactory.getSnapshotDAO().getSnapshotsForSchedulationAndDocument(biobjectId, scheduler, true);
+			snapshotsList = DAOFactory.getSnapshotDAO().getSnapshotsForSchedulationAndDocument(biobjectId, scheduler, false);
 		} catch (EMFUserError e) {
 			throw new SpagoBIServiceException("Cannot load scheduled executions", e);
 		}
+
 		resultAsMap.put("schedulers", snapshotsList);
 		resultAsMap.put("urlPath", GeneralUtilities.getSpagoBIProfileBaseUrl(this.getUserProfile().getUserUniqueIdentifier().toString()));
+
 		return Response.ok(resultAsMap).build();
 	}
 

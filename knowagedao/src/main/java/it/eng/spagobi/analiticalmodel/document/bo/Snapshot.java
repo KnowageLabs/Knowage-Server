@@ -17,14 +17,14 @@
  */
 package it.eng.spagobi.analiticalmodel.document.bo;
 
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.DAOFactory;
-
 import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.DAOFactory;
 
 public class Snapshot implements Serializable {
 
@@ -35,13 +35,14 @@ public class Snapshot implements Serializable {
 	private String name = null;
 	private String description = null;
 	private Date dateCreation = null;
+	private String time = null;
 	private Integer binId = null;
 	private byte[] content = null;
 	private String contentType = null;
-    private String schedulation;
-    private String scheduler;
-    private Integer schedulationStartDate;
-    private Integer sequence;
+	private String schedulation;
+	private String scheduler;
+	private Integer schedulationStartDate;
+	private Integer sequence;
 
 	public String getContentType() {
 		return contentType;
@@ -63,7 +64,8 @@ public class Snapshot implements Serializable {
 	/**
 	 * Sets the id.
 	 *
-	 * @param id the new id
+	 * @param id
+	 *            the new id
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -81,7 +83,8 @@ public class Snapshot implements Serializable {
 	/**
 	 * Sets the biobj id.
 	 *
-	 * @param biobjId the new biobj id
+	 * @param biobjId
+	 *            the new biobj id
 	 */
 	public void setBiobjId(Integer biobjId) {
 		this.biobjId = biobjId;
@@ -99,7 +102,8 @@ public class Snapshot implements Serializable {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name the new name
+	 * @param name
+	 *            the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -117,7 +121,8 @@ public class Snapshot implements Serializable {
 	/**
 	 * Sets the description.
 	 *
-	 * @param description the new description
+	 * @param description
+	 *            the new description
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -135,7 +140,8 @@ public class Snapshot implements Serializable {
 	/**
 	 * Sets the date creation.
 	 *
-	 * @param dateCreation the new date creation
+	 * @param dateCreation
+	 *            the new date creation
 	 */
 	public void setDateCreation(Date dateCreation) {
 		this.dateCreation = dateCreation;
@@ -153,21 +159,22 @@ public class Snapshot implements Serializable {
 	/**
 	 * Sets the bin id.
 	 *
-	 * @param binId the new bin id
+	 * @param binId
+	 *            the new bin id
 	 */
 	public void setBinId(Integer binId) {
 		this.binId = binId;
 	}
 
 	/**
-	 * Tries to load binary content from database for this Snapshot instance, given its binary content identifier,
-	 * if content field is null.
+	 * Tries to load binary content from database for this Snapshot instance, given its binary content identifier, if content field is null.
 	 *
-	 * @return The binary content of this instance; if it is null, it tries to load it from database if binary content identifier
-	 * is available
+	 * @return The binary content of this instance; if it is null, it tries to load it from database if binary content identifier is available
 	 *
-	 * @throws EMFUserError if some errors while reading from db occurs
-	 * @throws EMFInternalError if some errors while reading from db occurs
+	 * @throws EMFUserError
+	 *             if some errors while reading from db occurs
+	 * @throws EMFInternalError
+	 *             if some errors while reading from db occurs
 	 */
 	public byte[] getContent() throws EMFUserError, EMFInternalError {
 		if (content == null) {
@@ -176,12 +183,12 @@ public class Snapshot implements Serializable {
 				try {
 					content = DAOFactory.getBinContentDAO().getBinContent(binId);
 				} catch (EMFUserError e) {
-					logger.error("Error while recovering content of snapshot with id = [" + id + "], binary content id = [" + binId + "], " +
-							"name = [" + name + "] of biobject with id = [" + biobjId + "]" + e);
+					logger.error("Error while recovering content of snapshot with id = [" + id + "], binary content id = [" + binId + "], " + "name = [" + name
+							+ "] of biobject with id = [" + biobjId + "]" + e);
 					throw e;
 				} catch (EMFInternalError e) {
-					logger.error("Error while recovering content of snapshot with id = [" + id + "], binary content id = [" + binId + "], " +
-							"name = [" + name + "] of biobject with id = [" + biobjId + "]" + e);
+					logger.error("Error while recovering content of snapshot with id = [" + id + "], binary content id = [" + binId + "], " + "name = [" + name
+							+ "] of biobject with id = [" + biobjId + "]" + e);
 					throw e;
 				}
 			} else {
@@ -194,7 +201,8 @@ public class Snapshot implements Serializable {
 	/**
 	 * Sets the content.
 	 *
-	 * @param content the new content
+	 * @param content
+	 *            the new content
 	 */
 	public void setContent(byte[] content) {
 		this.content = content;
@@ -232,6 +240,12 @@ public class Snapshot implements Serializable {
 		this.sequence = sequence;
 	}
 
+	public String getTime() {
+		return time;
+	}
 
+	public void setTime(String time) {
+		this.time = time;
+	}
 
 }

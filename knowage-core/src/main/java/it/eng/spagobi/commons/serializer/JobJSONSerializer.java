@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.commons.serializer;
 
-import it.eng.spagobi.tools.scheduler.bo.Job;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -29,6 +27,11 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.scheduler.bo.Job;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -91,19 +94,29 @@ public class JobJSONSerializer implements Serializer {
 				documentsLabels = documentsLabelsParam.split(",");
 			}
 			JSONArray documentsJSON = new JSONArray();
+			IBIObjectDAO biObjDao = DAOFactory.getBIObjectDAO();
 			if (documentsLabels != null) {
 				for (int i = 0; i < documentsLabels.length; i++) {
 					// this will clean the string and get only the document (biobj) real name
-					String documentName = documentsLabels[i].substring(0, documentsLabels[i].lastIndexOf("__"));
+					String documentLabel = documentsLabels[i].substring(0, documentsLabels[i].lastIndexOf("__"));
 					JSONObject aDocumentJSON = new JSONObject();
 
-					aDocumentJSON.put("name", documentName);
+					String documentName = "";
+					BIObject obj = biObjDao.loadBIObjectByLabel(documentLabel);
+					if (obj != null) {
+						documentName = obj.getName();
+					} else {
+						documentName = documentLabel;
+					}
+
+					aDocumentJSON.put("name", documentLabel); // wrongly called name it is label,
+					aDocumentJSON.put("nameTitle", documentName); // real name for tab title
 
 					StringBuffer parametersCondensedString = new StringBuffer();
 
 					JSONArray documentParametersJSON = new JSONArray();
 					// search document parameters
-					String internalDocumentName = documentName + "__" + (i + 1);
+					String internalDocumentName = documentLabel + "__" + (i + 1);
 
 					// retrieve iterative parameters (for document iterating on each document parameter's value)
 					// ------------------------------------------------

@@ -31,9 +31,8 @@
 		 </md-button>
 		</div>
 	</md-toolbar>
-	
 	<md-tabs md-dynamic-height flex=95 class="tabOverflow">
-	 <md-tab ng-repeat="d in scheduler.documents" label="{{d.name}}" md-on-select="getDocumentsSnapshots(scheduler.jobName, d.name)"  >
+	 <md-tab ng-repeat="d in scheduler.documents" label="{{d.nameTitle}}" md-on-select="getDocumentsSnapshots(scheduler.jobName, d.name)"  >
 	  	<div layout-fill layout="column" flex>
 	  	
 	  	<angular-table style="min-height:600px"
