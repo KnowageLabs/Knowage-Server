@@ -230,7 +230,7 @@ function cockpitChartWidgetControllerFunction(
 				} else {
 					dataToPass = $scope.realtimeDataManagement($scope.realTimeDatasetData, nature);
 				}
-				$scope.$broadcast(nature,dataToPass);
+				$scope.$broadcast(nature,dataToPass,dataset.isRealtime);
 
 			} else {
 				//Refresh for Not realtime datasets

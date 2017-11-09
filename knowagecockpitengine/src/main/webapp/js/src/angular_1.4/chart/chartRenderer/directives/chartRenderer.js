@@ -96,12 +96,16 @@ angular.module('chartRendererModule')
 					
 				}
 
-			scope.$on('refresh',function(event,data){		
+			scope.$on('refresh',function(event,data,isRealtime){		
 				if(scope.updateble){
 					if(scope.chartInitializer != undefined && scope.chartInitializer.updateData){			
 						scope.updateChart(scope.widgetData,data);			
-					}else{			
-						scope.loadChart(scope.chartTemplate,scope.datasetLabel,data);
+					}else{
+						var transformedData = data;
+						if(isRealtime){
+							transformedData = scope.chartInitializer.transformeData(scope.widgetData,data);
+						}
+						scope.loadChart(scope.chartTemplate,scope.datasetLabel,transformedData);
 					}
 				}
 			})

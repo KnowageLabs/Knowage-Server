@@ -225,13 +225,22 @@
 	    #end
     
     	#if($serieShowPercentage == true)
-    		#set($serieValueTotal = $serieValueTotal + $ChartEngineUtil.roundToDouble($serieValue, $relatedSeriePrecision))
+    	#if($serieValue.class.name !="java.lang.String")
+    	#set($serieValueTotal = $serieValueTotal + $ChartEngineUtil.roundToDouble($serieValue.toString(), $relatedSeriePrecision))
+    	#else
+    	#set($serieValueTotal = $serieValueTotal + $ChartEngineUtil.roundToDouble($serieValue, $relatedSeriePrecision))
+    	#end
+    		
     	#end
     #end
     
     	{
 	#if($relatedSeriePrecision)
-       		value: '$ChartEngineUtil.roundTo($serieValue, $relatedSeriePrecision)' ,
+		#if($serieValue.class.name !="java.lang.String")
+    	value: '$ChartEngineUtil.roundTo($serieValue.toString(), $relatedSeriePrecision)' ,
+    	#else
+    	value: '$ChartEngineUtil.roundTo($serieValue, $relatedSeriePrecision)' ,
+    	#end
        	#set($seriePrecision = $relatedSeriePrecision)
 	#else
        		value: '$serieValue',

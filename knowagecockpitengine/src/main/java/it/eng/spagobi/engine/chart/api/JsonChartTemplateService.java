@@ -229,4 +229,32 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 		return ChartEngineDataUtil.loadMetaData(dataSet);
 	}
 
+	@GET
+	@Path("/usedDataset")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
+	public String isDatasetRealTime() {
+		IDataSet dataSet = getEngineInstance().getDataSet();
+		return String.valueOf(dataSet.isRealtime());
+	}
+
+	@GET
+	@Path("/usedDataset/{datasetId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
+	public String isDatasetForCockpitRealTime(@PathParam("datasetId") String datasetId) {
+		IDataSet dataSet = null;
+		if (dataSet == null && datasetId != null) {
+			IDataSetDAO dataSetDao;
+			try {
+				dataSetDao = DAOFactory.getDataSetDAO();
+			} catch (Throwable t) {
+				throw new SpagoBIServiceException(this.request.getPathInfo(),
+						"An unexpected error occured while executing service: JsonChartTemplateService.isDatasetForCockpitRealTime", t);
+			}
+			dataSet = dataSetDao.loadDataSetById(Integer.parseInt(datasetId));
+		}
+		return String.valueOf(dataSet.isRealtime());
+	}
+
 }
