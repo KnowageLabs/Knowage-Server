@@ -436,5 +436,105 @@ angular.module('chartInitializer')
 
 
 	};
+	this.transformeData = function(widgetData, data){
+		
+		var dataForReturn = {};
+		
+		dataForReturn.metaData = {};
+		dataForReturn.metaData.fields = [];
+		dataForReturn.metaData.fields.push("recNo");
+		dataForReturn.metaData.id = data.metaData.id;
+		dataForReturn.metaData.root = data.metaData.root;
+		dataForReturn.metaData.totalProperty = data.metaData.totalProperty;
+		
+		dataForReturn.results = data.results;
+		
+		dataForReturn.rows = [];
+		
+		
+		var category = null;
+		var column = null;
+		var orderColumn = null;
+	
+		var counter = 0;
+		var arrayOfMeasuers = [];
+
+		var arrayOfAttributes= [];
+		var arrayOfDatasetColumns= [];
+		var counterAtt = 1;
+		var counterMeas = 2;
+		for (var i = 0; i<widgetData.columnSelectedOfDataset.length; i++){
+
+			if(widgetData.columnSelectedOfDataset[i].fieldType!="MEASURE"){
+				var objekatCat = {};
+				objekatCat.name = "column_"+counterAtt;
+				objekatCat.header = widgetData.columnSelectedOfDataset[i].alias;
+				objekatCat.nameAgg = widgetData.columnSelectedOfDataset[i].name;
+				objekatCat.dataIndex = "column_"+counterAtt;
+				counterAtt++;
+				objekatCat.type = "";
+				arrayOfAttributes.push(objekatCat)
+				arrayOfDatasetColumns.push(objekatCat.nameAgg);
+			} else {
+				var objekatSer = {};
+				objekatSer.name = "column_"+counterMeas;
+				objekatSer.header = widgetData.columnSelectedOfDataset[i].alias;
+				objekatSer.nameAgg = widgetData.columnSelectedOfDataset[i].name;
+				objekatSer.dataIndex = "column_"+counterMeas;
+				counterMeas++;
+				objekatSer.type = "";
+				arrayOfMeasuers.push(objekatSer)
+				arrayOfDatasetColumns.push(objekatSer.nameAgg);
+			}
+		}
+
+		Array.prototype.push.apply(dataForReturn.metaData.fields, arrayOfAttributes);
+		Array.prototype.push.apply(dataForReturn.metaData.fields, arrayOfMeasuers);
+		var newArrayofFields = [];
+		var oldArrayofFields = [];
+		for (var i = 0; i<data.metaData.fields.length; i++){
+			if (arrayOfDatasetColumns.indexOf(data.metaData.fields[i].header)>-1){
+				newArrayofFields.push({"columnName":data.metaData.fields[i].name});
+			
+			}
+		
+		}
+		var counterId = 1;
+		var row = {
+				//"id":counterId
+		}
+	/*	for (var i = 0; i<dataForReturn.metaData.fields.length; i++){
+			if (dataForReturn.metaData.fields[i].name){
+
+				row[dataForReturn.metaData.fields[i].name] = "";
+			
+			}
+		
+		}*/
+		for (var i = 0; i<data.rows.length; i++){
+			for (var j = 0; j<newArrayofFields.length; j++){
+				var rowProp = newArrayofFields[j].columnName;
+				if(data.rows[i].hasOwnProperty(rowProp)){
+					
+					row[rowProp] = data.rows[i][rowProp];
+				}
+			}
+			dataForReturn.rows.push(row)
+			row = {};
+		}
+		
+		for (var i = 0; i<data.metaData.fields.length; i++){
+			for (var j = 0; j<dataForReturn.metaData.fields.length; j++){
+				if(data.metaData.fields[i].header && dataForReturn.metaData.fields[j].nameAgg){
+					if(data.metaData.fields[i].header == dataForReturn.metaData.fields[j].nameAgg){
+						dataForReturn.metaData.fields[j].type = data.metaData.fields[i].type;
+						dataForReturn.metaData.fields[j].name = data.metaData.fields[i].name;
+					}
+				}
+			}
+		}
+	
+		return dataForReturn;
+	}
 
 })

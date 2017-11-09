@@ -233,7 +233,11 @@
             #foreach($row in $data.rows)
 		    	#set ($serieValue = $row.get($serieColumnsMapped)) 
 		    	#if($relatedSeriePrecision)
+					#if($serieValue.class.name !="java.lang.String")
+		    		'$ChartEngineUtil.roundTo($serieValue.toString(), $relatedSeriePrecision)',
+					#else
 		    		'$ChartEngineUtil.roundTo($serieValue, $relatedSeriePrecision)' ,
+		    		#end
 		    	#else
 		    		'$serieValue' ,
 		    	#end
