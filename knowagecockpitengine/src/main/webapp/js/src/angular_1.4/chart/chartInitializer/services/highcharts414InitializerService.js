@@ -24,7 +24,7 @@ angular.module('chartInitializer')
 	this.chart = null;
 	var chartConfConf = null;
 
-	this.renderChart = function(chartConf,element,handleCockpitSelection,exportWebApp){
+	this.renderChart = function(chartConf,element,handleCockpitSelection,exportWebApp,widgetData){
 		chartConfConf = chartConf;
 		if(!exportWebApp) {
 			adjustChartSize(element,chartConf);
@@ -52,6 +52,7 @@ angular.module('chartInitializer')
 		{
 			if (chartType == 'scatter') delete this.updateData;
 			this.chart =  new Highcharts.Chart(chartConf);
+			this.chart.widgetData = widgetData;
 			//return chart;
 
 		}
@@ -95,7 +96,7 @@ angular.module('chartInitializer')
 				drillUpButton:{
 					 position:
 		                {
-		                   align: "center"
+		                   align: "left"
 		                },
 
 			}
@@ -305,9 +306,11 @@ angular.module('chartInitializer')
 
 
 				highchartsDrilldownHelper.drilldown(e.point.name, e.point.series.name);
-
-
-					jsonChartTemplate.drilldownHighchart(JSON.stringify(highchartsDrilldownHelper.breadcrumb))
+				
+					var params = {};
+					params.breadcrumb = JSON.stringify(highchartsDrilldownHelper.breadcrumb); 
+					params.widgetData = chart.widgetData;
+					jsonChartTemplate.drilldownHighchart(params)
 					.then(function(series){
 
 						if(chart.options.drilledCategories.length==0){

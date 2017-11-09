@@ -57,6 +57,7 @@ angular.module('chartInitializer')
 		    	indicator = false;
 			
 		    if (!indicator)
+		    this.breadcrumb.length = 0;
 			this.breadcrumb.push(drill);
 		},
 		

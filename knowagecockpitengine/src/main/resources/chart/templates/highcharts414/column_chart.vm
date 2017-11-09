@@ -23,13 +23,13 @@
 
 #set($enableDrilldown = false) 
 #if($chart.groupCategories)
-	#if($categorieColumns.groupby != ''  && $chart.groupCategories =='false' && $chart.isCockpitEngine == 'false')
+	#if($categorieColumns.groupby != ''  && $chart.groupCategories =='false')
 		#set($enableDrilldown = true)
 	#end
 #end
 #if(!$chart.groupCategories)
 #set($chart.groupCategories ='false')
-	#if($categorieColumns.groupby != ''  && $chart.groupCategories =='false' && $chart.isCockpitEngine == 'false')
+	#if($categorieColumns.groupby != ''  && $chart.groupCategories =='false' )
 		#set($enableDrilldown = true)
 	#end
 #end

@@ -70,4 +70,4 @@ END-PRODUCTION -->
 	execution of the ChartEngine). For example, services such as sbiModule_translate, sbiModule_messaging
 	@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  -->
-<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
+<%@include file="/WEB-INF/jsp/chart/commons/angular/sbiModule.jspf"%>

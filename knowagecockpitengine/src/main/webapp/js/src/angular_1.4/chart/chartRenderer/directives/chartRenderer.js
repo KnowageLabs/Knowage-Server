@@ -63,7 +63,7 @@ angular.module('chartRendererModule')
 				scope.renderChart = function(chartConf){
 					if(scope.chartConf){			
 						scope.chartInitializer.initChartLibrary(element[0],	'drillup', sbiModule_config.dec, sbiModule_config.thous);
-						scope.chartInitializer.renderChart(scope.chartConf,element[0],handleCockpitSelection);		
+						scope.chartInitializer.renderChart(scope.chartConf,element[0],handleCockpitSelection,null,scope.widgetData);		
 					}
 				}
 					

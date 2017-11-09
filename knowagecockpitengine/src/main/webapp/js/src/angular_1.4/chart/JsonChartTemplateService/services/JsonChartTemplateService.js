@@ -105,7 +105,7 @@ angular.module('JsonChartTemplateServiceModule')
 			
 			 var deferred = $q.defer();
 			sbiModule_restServices
-    		.promisePost('1.0/chart/jsonChartTemplate/readChartTemplate', '?SBI_EXECUTION_ID='+sbiExecutionId,$httpParamSerializer(params),config)
+    		.promisePost('1.0/chart/jsonChartTemplate/readChartTemplate', "",$httpParamSerializer(params),config)
     		
         	.then
         	(
@@ -122,18 +122,16 @@ angular.module('JsonChartTemplateServiceModule')
 			 return deferred.promise
 		},
 		
-		drilldownHighchart:function(breadcrumb){
+		drilldownHighchart:function(params){
 			
-			var params = {};
-			
-			params.breadcrumb = breadcrumb;
-			
-			
-			
+			var string = ""
+			if(params.widgetData){
+				string = "ForCockpit"
+			}	
 			
 			 var deferred = $q.defer();
 			sbiModule_restServices
-    		.promisePost('1.0/chart/jsonChartTemplate/drilldownHighchart', '?SBI_EXECUTION_ID='+sbiExecutionId, $httpParamSerializer(params),config)
+    		.promisePost('1.0/chart/jsonChartTemplate/drilldownHighchart'+string, "", $httpParamSerializer(params),config)
     		
         	.then
         	(

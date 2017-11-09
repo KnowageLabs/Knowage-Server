@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 <script>
-
+	debugger;
 	var sbiM = angular.module('sbiModule',["toastr",'ngSanitize']);
 	
 	sbiM.factory('sbiModule_config',function(){
@@ -24,9 +24,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			protocol: '<%= request.getScheme()%>' ,
 			host: '<%= request.getServerName()%>',
 		    port: '<%= request.getServerPort()%>',
+		    curr_country: '<%= curr_country %>',
+	    	curr_language: '<%= curr_language%>',
 			contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
-	    	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>"		
+	    	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>"	,
+	    	thous: '<%= GeneralUtilities.getGroupingSeparator()%>',
+	        dec: '<%= GeneralUtilities.getDecimalSeparator()%>',
 		};
+	});
+	
+	sbiM.factory('sbiModule_user',function(){
+		
+		var user={};
+		user.userUniqueIdentifier = '<%= StringEscapeUtils.escapeJavaScript(userUniqueIdentifier) %>';
+		user.userId = '<%= StringEscapeUtils.escapeJavaScript(userId) %>';
+		user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>'; 
+	<%-- 	user.ismodeweb = <%= sbiMode.equals("WEB")? "true" : "false"%>; --%>
+		user.isSuperAdmin = '<%= profile != null && ((UserProfile)profile).getIsSuperadmin() %>';
+		user.isTechnicalUser = '<%= profile != null && UserUtilities.isTechnicalUser((UserProfile)profile)%>'
+		user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>';
+		// 	set roles
+		user.roles =[];
+		<% for(Object rol : userRoles) { 	%>
+		user.roles.push('<%=StringEscapeUtils.escapeJavaScript(rol.toString())%>');
+		<% } %>
+		
+		//set functionalities
+		user.functionalities =[];
+		<% if (profile != null && profile.getFunctionalities() != null && !profile.getFunctionalities().isEmpty()) {
+			for(Object fun :  profile.getFunctionalities()){ %>
+			user.functionalities.push('<%=StringEscapeUtils.escapeJavaScript(fun.toString())%>');
+			<% } }%>
+		
+		user.isAbleTo=function(func){
+			return user.functionalities.indexOf(func)!=-1;
+		}
+		return user;
 	});
 	
 	sbiM.service('sbiModule_logger',function(){
@@ -202,13 +235,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	
 		function getBaseUrl(endP_path) {		
-			var burl= alteredContextPath==null? sbiModule_config.contextName +'/restful-services/'+ endP_path  : alteredContextPath+ "/restful-services/" + endP_path 
+			var burl= alteredContextPath==null? sbiModule_config.contextName +'/api/'+ endP_path  : alteredContextPath+ "/api/" + endP_path 
 			alteredContextPath=null;
 			return burl ;
 		};
 		
 		this.getCompleteBaseUrl = function(endP_path) {		
-			var burl= alteredContextPath==null? sbiModule_config.contextName +'/restful-services/'+ endP_path  : alteredContextPath+ "/restful-services/" + endP_path 
+			var burl= alteredContextPath==null? sbiModule_config.contextName +'/api/'+ endP_path  : alteredContextPath+ "/api/" + endP_path 
 			alteredContextPath=null;
 			burl = sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+burl;
 			return burl ;
@@ -435,5 +468,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 	  });
+	
+	sbiM.factory('http_sbi_execution_id_interseptor',function($q){
+
+		return {
+		        request: function (config) {
+					config.params = {};
+		            config.params.SBI_EXECUTION_ID=sbiExecutionId
+		            return config;
+		        }
+
+		    }
+	})
+
+	sbiM.config(function ($httpProvider) {
+	    $httpProvider.interceptors.push('http_sbi_execution_id_interseptor');
+	});
 
 </script>

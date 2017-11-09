@@ -40,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -199,6 +200,59 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service: JsonChartTemplateService.drilldownHighchart", t);
 		}
+	}
+
+	@POST
+	@Path("/drilldownHighchartForCockpit")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@SuppressWarnings("rawtypes")
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
+	public String drilldownHighchartForCockpit(@FormParam("breadcrumb") String breadcrumb, @FormParam("widgetData") String widgetData) {
+		logger.debug("IN");
+		logger.debug("Breadcrumb parameter value: " + breadcrumb);
+		logger.debug("WidgetData parameter value: " + widgetData);
+
+		JSONObject widgetDataJson = null;
+		String jsonTemplate = null;
+		UserProfile userProfile = getIOManager().getUserProfile();
+		IDataSet dataSet = null;
+		IDataSetDAO dataSetDao = null;
+		String datasetLabel = null;
+		Map analyticalDrivers = new HashMap<>();
+		Map profileAttributes = new HashMap<>();
+
+		try {
+			widgetDataJson = new JSONObject(widgetData);
+
+			logger.debug("WidgetDataJson created!");
+			datasetLabel = widgetDataJson.getString("datasetLabel");
+			logger.debug("Property datasetLabel of object widgetDataJson is: " + datasetLabel);
+			dataSetDao = DAOFactory.getDataSetDAO();
+			logger.debug("Dataset dao object created!");
+			dataSet = dataSetDao.loadDataSetByLabel(datasetLabel);
+			logger.debug("Dataset with datasetLabel: " + datasetLabel + " is loaded!");
+			jsonTemplate = widgetDataJson.getString("chartTemplate");
+			logger.debug("Property chartTemplate of object widgetDataJson is: " + jsonTemplate);
+			return ChartEngineDataUtil.drilldown(jsonTemplate, breadcrumb, dataSet, analyticalDrivers, profileAttributes, getIOManager().getLocale(), null,
+					userProfile);
+
+		} catch (JSONException e) {
+			logger.error("Error creating json object from query param widgetData");
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: Error creating json object from query param widgetData", e);
+		} catch (EMFUserError e) {
+			logger.error("Error while creating dataset dao");
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: Error while creating dataset dao", e);
+		} catch (Throwable e) {
+			logger.error("Error while trying to drilldown");
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: Error while trying to drilldown", e);
+		} finally {
+			logger.debug("OUT");
+		}
+
 	}
 
 	@GET
