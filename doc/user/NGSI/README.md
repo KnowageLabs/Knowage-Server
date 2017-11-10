@@ -168,6 +168,8 @@ Now we modify a Context Element (please use your preferred application to make R
 
 ![](media/8_Cockpit_Document.png)
 
+**IMPORTANT NOTE:** please notice that, while creating a chart widget through its chart designer, you can only use the **id** entity as category.
+
 ### Chart Engine
 
 In addition to Cockpit Engine it's also possible to add notifications capabilities to a Chart Engine Document. In order to do so, you need to directly change the XML template associated with the document. A snippet for this functionality is the following:
