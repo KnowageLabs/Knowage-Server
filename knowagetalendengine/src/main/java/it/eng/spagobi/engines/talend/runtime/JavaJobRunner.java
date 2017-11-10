@@ -1,22 +1,9 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.talend.runtime;
-
-import it.eng.spagobi.engines.talend.TalendEngineConfig;
-import it.eng.spagobi.engines.talend.exception.ContextNotFoundException;
-import it.eng.spagobi.engines.talend.exception.JobExecutionException;
-import it.eng.spagobi.engines.talend.exception.JobNotFoundException;
-import it.eng.spagobi.engines.talend.utils.TalendScriptAccessUtils;
-import it.eng.spagobi.services.proxy.EventServiceProxy;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.AuditServiceProxy;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.file.FileUtils;
-import it.eng.spagobi.utilities.file.IFileTransformer;
-import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,14 +20,27 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUIDGenerator;
 
+import it.eng.spagobi.engines.talend.TalendEngineConfig;
+import it.eng.spagobi.engines.talend.exception.ContextNotFoundException;
+import it.eng.spagobi.engines.talend.exception.JobExecutionException;
+import it.eng.spagobi.engines.talend.exception.JobNotFoundException;
+import it.eng.spagobi.engines.talend.utils.TalendScriptAccessUtils;
+import it.eng.spagobi.services.proxy.EventServiceProxy;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.AuditServiceProxy;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.file.FileUtils;
+import it.eng.spagobi.utilities.file.IFileTransformer;
+import it.eng.spagobi.utilities.threadmanager.WorkManager;
+
 /**
  * @author Andrea Gioia
- * 
+ *
  * @update Giulio Gavardi
- * 
+ *
  * @contributor November 6th 2014 : Yvo Hooyberghs
- * 
- * 
+ *
+ *
  */
 public class JavaJobRunner implements IJobRunner {
 
@@ -57,6 +57,7 @@ public class JavaJobRunner implements IJobRunner {
 		this.runtimeRepository = runtimeRepository;
 	}
 
+	@Override
 	public void run(Job job, Map parameters) throws JobNotFoundException, ContextNotFoundException, JobExecutionException {
 
 		File executableJobDir;
@@ -79,8 +80,8 @@ public class JavaJobRunner implements IJobRunner {
 			Assert.assertNotNull(tempDir, "Impossible to create a temporary working folder");
 			logger.debug("Temporary working folder created succesfully in [" + tempDir + "]");
 
-			initContexts(job, parameters, tempDir);
-			cmd = getJavaExecutionCmd(job, tempDir);
+			boolean isLocalProject = initContexts(job, parameters, tempDir);
+			cmd = getJavaExecutionCmd(job, tempDir, isLocalProject);
 
 			logger.debug("Java execution command is equal to [" + cmd + "]");
 
@@ -114,7 +115,7 @@ public class JavaJobRunner implements IJobRunner {
 		}
 	}
 
-	private String getJavaExecutionCmd(Job job, File tempDir) {
+	private String getJavaExecutionCmd(Job job, File tempDir, boolean isLocal) {
 		TalendEngineConfig config = TalendEngineConfig.getInstance();
 		String cmd = "java";
 		String classpath;
@@ -130,7 +131,7 @@ public class JavaJobRunner implements IJobRunner {
 
 		String xmsValue = (config.getJavaCommandOption("Xms") != null ? config.getJavaCommandOption("Xms") : DEFAULT_XMS_VALUE);
 		String xmxValue = (config.getJavaCommandOption("Xmx") != null ? config.getJavaCommandOption("Xmx") : DEFAULT_XMX_VALUE);
-		cmd += " -Xms" + xmsValue + "M -Xmx" + xmxValue + "M -cp " + classpath + " " + TalendScriptAccessUtils.getExecutableClass(job);
+		cmd += " -Xms" + xmsValue + "M -Xmx" + xmxValue + "M -cp " + classpath + " " + TalendScriptAccessUtils.getExecutableClass(job, isLocal);
 
 		cmd = cmd + " --context=" + job.getContext();
 
@@ -162,7 +163,7 @@ public class JavaJobRunner implements IJobRunner {
 		return tempDir;
 	}
 
-	private void initContexts(Job job, Map parameters, File destDir) {
+	private boolean initContexts(Job job, Map parameters, File destDir) {
 
 		File contextsBaseDir;
 		File contextsProjectDir;
@@ -170,10 +171,16 @@ public class JavaJobRunner implements IJobRunner {
 
 		logger.debug("IN");
 
+		boolean toReturn = false;
+
 		try {
 
 			contextsBaseDir = TalendScriptAccessUtils.getContextsBaseDir(job, runtimeRepository);
 			contextsProjectDir = new File(contextsBaseDir, job.getProject().toLowerCase());
+			if (!contextsProjectDir.exists()) {
+				contextsProjectDir = new File(contextsBaseDir, "local_project");
+				toReturn = true;
+			}
 			transformer = new ContextFileTransformer(job, parameters, contextsBaseDir, destDir);
 
 			// for each context files in contextsProjectDir apply transformation
@@ -184,7 +191,7 @@ public class JavaJobRunner implements IJobRunner {
 		} finally {
 			logger.debug("OUT");
 		}
-
+		return toReturn;
 	}
 
 	private static class ContextFileTransformer implements IFileTransformer {
@@ -200,6 +207,7 @@ public class JavaJobRunner implements IJobRunner {
 			this.srcDir = srcDir;
 		}
 
+		@Override
 		public boolean transform(File file) {
 			String str1 = file.getName();
 			String str2 = job.getContext() + ".properties";

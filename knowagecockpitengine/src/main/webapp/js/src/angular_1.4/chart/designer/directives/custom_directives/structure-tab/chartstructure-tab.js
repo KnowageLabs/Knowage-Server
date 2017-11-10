@@ -86,8 +86,8 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	// Indicator whether we should show the message that the maximum number of Series containers is exceeded
 	$scope.showMaxNmbSerAxesExceeded = false;
 
-	// Get all metadata of the chart's dataset (all measures and attributes)
-
+	// Get all metadata of the chart's dataset (all measures and attributes)	
+	
 	var urlForMetadata="";
 	if($scope.isCockpitEng){
 		urlForMetadata = "../api/1.0/chart/jsonChartTemplate/fieldsMetadataforCockpit/"+parent.angular.element(window.frameElement).scope().datasetId;
@@ -205,6 +205,18 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		}
 
 		$scope.chartTemplate.AXES_LIST.AXIS[0].PLOTBANDS.PLOT.push(newPlot);
+	}
+	
+	$scope.disableUsingAttributeIfRealtimeDSisUsed = function (attribute){
+		if(!$scope.isRealTimeDataset){
+			return false;
+		} else {
+			if(attribute.id=="id") {
+				return false
+			} else {
+				return true;
+			}
+		}
 	}
 	 // Called when the user clicks on the attribute in its container, so the attribute can be used as a category in the chart.
 	 $scope.moveAttributeToCategories = function(item) {

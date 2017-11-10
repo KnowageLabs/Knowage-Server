@@ -1,6 +1,7 @@
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
+<%@page import="it.eng.knowage.wapp.VersionInfo"%>
 
  <%
 
@@ -55,7 +56,7 @@
 	<md-dialog-content layout="column" layout-padding layout-margin>
 		 	 <img src="<%=contextName %>/themes/sbi_default/img/wapp/logo.png" width="234" layout-margin />
 		 	 <div layout-padding>
-				<p>Version: 6.1.0</p>
+				<p>Version: <%= VersionInfo.COMPLETE_VERSION %></p>
 				<p >
 					Logged User: <%= userName %>
 				</p>

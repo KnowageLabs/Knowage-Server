@@ -213,6 +213,21 @@ ${enable.cas.start} END-CAS -->
 		<env-entry-type>java.lang.String</env-entry-type>
 		<env-entry-value>http://localhost:7001</env-entry-value>
 	</env-entry>
-	 WEBLOGIC CONFS END -->	
-
+	 WEBLOGIC CONFS END -->
+	
+	<!-- START jboss RES 
+	<context-param>
+		<param-name>resteasy.scan</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>resteasy.scan.providers</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>resteasy.scan.resources</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	 END jboss RES -->
+	
  </web-app>

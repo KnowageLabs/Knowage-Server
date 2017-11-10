@@ -19,6 +19,9 @@ package it.eng.spagobi.commons.metadata;
 
 import java.util.Date;
 
+import it.eng.knowage.wapp.Version;
+import it.eng.knowage.wapp.VersionInfo;
+
 public class SbiCommonInfo implements java.io.Serializable {
 
 	/**
@@ -26,7 +29,7 @@ public class SbiCommonInfo implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public final static String SBI_VERSION = "6.0";
+	public final static String SBI_VERSION = VersionInfo.COMPLETE_VERSION;
 
 	private String userIn = "server";
 	private String userUp = null;
