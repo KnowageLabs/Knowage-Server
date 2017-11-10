@@ -87,32 +87,6 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	$scope.showMaxNmbSerAxesExceeded = false;
 
 	// Get all metadata of the chart's dataset (all measures and attributes)
-	var urlForDataset="";
-	if($scope.isCockpitEng){
-		urlForDataset = "../api/1.0/chart/jsonChartTemplate/usedDataset/"+parent.angular.element(window.frameElement).scope().datasetId;
-	}else{
-		urlForDataset = "../api/1.0/chart/jsonChartTemplate/usedDataset";
-	}
-	sbiModule_restServices.promiseGet(urlForDataset, "")
-		.then(function(response) {
-
-			$scope.isRealTimeDataset = response.data;
-
-		}, function(response) {
-
-			var message = "";
-
-			if (response.status==500) {
-				message = response.statusText;
-			}
-			else {
-				message = response.data.errors[0].message;
-			}
-
-			sbiModule_messaging.showErrorMessage(message, 'Error');
-
-		});
-	
 	
 	var urlForMetadata="";
 	if($scope.isCockpitEng){

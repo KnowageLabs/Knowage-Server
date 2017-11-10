@@ -250,6 +250,17 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 	sbiModule_restServices.promiseGet("../api/1.0/chart/pages/types", "")
 	.then(function(response) {
 		$scope.chartTypes = response.data.types;
+		var typeExculded = ["gauge", "heatmap","treemap", "sunburst", "chord"];
+		var index;
+		if($scope.isRealTimeDataset ){
+			for (var i=0; i<typeExculded.length; i++) {
+			    index =  $scope.chartTypes.indexOf(typeExculded[i]);
+			    if (index > -1) {
+			    	$scope.chartTypes.splice(index, 1);
+			    }
+			}
+		}
+		
 		$scope.chartTypes.sort();
 		for (var i = 0; i < $scope.chartTypes.length; i++) {
 			if($scope.chartTypes[i].toUpperCase()==$scope.chartTemplate.type.toUpperCase()){

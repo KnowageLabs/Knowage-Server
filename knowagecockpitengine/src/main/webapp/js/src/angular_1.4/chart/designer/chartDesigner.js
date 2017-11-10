@@ -42,6 +42,31 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 	$scope.previewButtonEnabled = false;
 	$scope.selectedChartType = "";
 
+	var urlForDataset="";
+	if($scope.isCockpitEng){
+		urlForDataset = "../api/1.0/chart/jsonChartTemplate/usedDataset/"+parent.angular.element(window.frameElement).scope().datasetId;
+	}else{
+		urlForDataset = "../api/1.0/chart/jsonChartTemplate/usedDataset";
+	}
+	sbiModule_restServices.promiseGet(urlForDataset, "")
+		.then(function(response) {
+
+			$scope.isRealTimeDataset = response.data;
+
+		}, function(response) {
+
+			var message = "";
+
+			if (response.status==500) {
+				message = response.statusText;
+			}
+			else {
+				message = response.data.errors[0].message;
+			}
+
+			sbiModule_messaging.showErrorMessage(message, 'Error');
+
+		});
 	$scope.disableHtmlElementForChartJs = function() {
 		if($scope.libInUse=='chartJs') {
 			return false;
