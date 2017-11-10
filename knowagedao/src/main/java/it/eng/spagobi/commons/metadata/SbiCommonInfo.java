@@ -19,7 +19,6 @@ package it.eng.spagobi.commons.metadata;
 
 import java.util.Date;
 
-import it.eng.knowage.wapp.Version;
 import it.eng.knowage.wapp.VersionInfo;
 
 public class SbiCommonInfo implements java.io.Serializable {
