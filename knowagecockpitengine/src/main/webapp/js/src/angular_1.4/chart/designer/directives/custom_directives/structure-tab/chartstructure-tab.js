@@ -86,33 +86,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	// Indicator whether we should show the message that the maximum number of Series containers is exceeded
 	$scope.showMaxNmbSerAxesExceeded = false;
 
-	// Get all metadata of the chart's dataset (all measures and attributes)
-	var urlForDataset="";
-	if($scope.isCockpitEng){
-		urlForDataset = "../api/1.0/chart/jsonChartTemplate/usedDataset/"+parent.angular.element(window.frameElement).scope().datasetId;
-	}else{
-		urlForDataset = "../api/1.0/chart/jsonChartTemplate/usedDataset";
-	}
-	sbiModule_restServices.promiseGet(urlForDataset, "")
-		.then(function(response) {
-
-			$scope.isRealTimeDataset = response.data;
-
-		}, function(response) {
-
-			var message = "";
-
-			if (response.status==500) {
-				message = response.statusText;
-			}
-			else {
-				message = response.data.errors[0].message;
-			}
-
-			sbiModule_messaging.showErrorMessage(message, 'Error');
-
-		});
-	
+	// Get all metadata of the chart's dataset (all measures and attributes)	
 	
 	var urlForMetadata="";
 	if($scope.isCockpitEng){
