@@ -331,6 +331,13 @@ public class MenuResource extends AbstractSpagoBIResource {
 				menu.setObjId(paramsObj.getInt("objId"));
 			}
 
+			if (paramsObj.getString("initialPath").equals("null")) {
+				menu.setInitialPath(null);
+			} else {
+
+				menu.setInitialPath(paramsObj.getString("initialPath"));
+			}
+
 			if (paramsObj.getString("objParameters").equals("null")) {
 				menu.setObjParameters(null);
 			} else {

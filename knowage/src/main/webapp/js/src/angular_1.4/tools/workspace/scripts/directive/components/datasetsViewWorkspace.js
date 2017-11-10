@@ -1267,5 +1267,13 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	  $qbeViewer.openQbeInterfaceDSet($scope, true, url);
     }
 
+
+	if(initialOptionMainMenu){
+		if(initialOptionMainMenu.toLowerCase() == 'datasets'){
+			var selectedMenu = $scope.getMenuFromName('datasets');
+			$scope.leftMenuItemPicked(selectedMenu,true);
+		}
+	}
+
 }
 })();

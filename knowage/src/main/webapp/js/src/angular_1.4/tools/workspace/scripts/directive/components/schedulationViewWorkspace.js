@@ -253,6 +253,13 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 		 }
 
 
+		if(initialOptionMainMenu){
+			if(initialOptionMainMenu.toLowerCase() == 'schedulation'){
+				var selectedMenu = $scope.getMenuFromName('schedulation');
+				$scope.leftMenuItemPicked(selectedMenu,true);
+			}
+		}
+
 
 }
 })();

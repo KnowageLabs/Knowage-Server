@@ -40,7 +40,7 @@ angular.module('recent_view', ['ngMaterial','sbiModule'])
 			addToOrganizerAction:"&",
 			orderingDocumentCards:"=?"
 		},
-		link: function (scope, elem, attrs) { 
+		link: function (scope, elem, attrs) {
 			elem.css("position","relative")
 			 if(!attrs.tableSpeedMenuOption){
 				 scope.tableSpeedMenuOption=[];
@@ -50,13 +50,18 @@ angular.module('recent_view', ['ngMaterial','sbiModule'])
 });
 
 function recentViewControllerFunction($scope,sbiModule_translate, sbiModule_config){
-	
+
 	$scope.sbiModule_config = sbiModule_config;
 	$scope.clickDocument=function(item){
-		
+
 		 $scope.selectDocumentAction({doc: item});
 	}
-	
+
 	$scope.translate=sbiModule_translate;
+
+
+
+
+
 }
 })();

@@ -74,32 +74,12 @@ angular
 		} ];
 
 
-		var currentOptMenuInit = $scope.$watch('currentOptionMainMenu',function(newValue, oldValue){
-			var selectedMenu = null;
-			var found = false;
-			for (i=0; i<$scope.leftMainMenu.length && found==false; i++) {
-
-				if($scope.leftMainMenu[i].submenuOptions){
-					for (j=0; i<$scope.leftMainMenu[i].submenuOptions.length && found==false; j++) {
-
-						if($scope.leftMainMenu[i].submenuOptions[j].name.toLowerCase() == newValue){
-							selectedMenu = $scope.leftMainMenu[i].submenuOptions[j];
-							found = true;
-						}
-					}
-				}
-
-				if($scope.leftMainMenu[i].name.toLowerCase() == newValue){
-					selectedMenu = $scope.leftMainMenu[i];
-					found = true;
-				}
+		if(initialOptionMainMenu){
+			if(initialOptionMainMenu.toLowerCase() == 'smartfilters'){
+				var selectedMenu = $scope.getMenuFromName('smartfilters');
+				$scope.leftMenuItemPicked(selectedMenu,true);
 			}
-
-
-			$scope.leftMenuItemPicked(selectedMenu,true);
-
-			currentOptMenuInit();
-		});
+		}
 
 
 }

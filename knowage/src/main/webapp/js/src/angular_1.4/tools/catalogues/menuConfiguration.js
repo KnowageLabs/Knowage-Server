@@ -334,10 +334,6 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 			name : sbiModule_translate.load("sbi.menu.ws.documents")
 		},
 		{
-			code : "data",
-			name : sbiModule_translate.load("sbi.menu.ws.data")
-		},
-		{
 			code : "datasets",
 			name : sbiModule_translate.load("sbi.menu.ws.datasets")
 		},
@@ -348,6 +344,10 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 		{
 			code : "analysis",
 			name : sbiModule_translate.load("sbi.menu.ws.analysis")
+		},
+		{
+			code : "schedulation",
+			name : sbiModule_translate.load("sbi.menu.ws.schedulation")
 		}
 		];
 

@@ -178,5 +178,65 @@ function leftMenuController($scope, sbiModule_translate, sbiModule_user){
 			return option.submenuOptions==undefined && option.visible;
 		}
 	}
+
+
+	$scope.getMenuFromName= function(menuName){
+		var found = false;
+		var selectedMenu;
+
+		if($scope.leftMainMenu){
+			for (i=0; i<$scope.leftMainMenu.length && found==false; i++) {
+
+				if($scope.leftMainMenu[i].submenuOptions){
+					for (j=0; j<$scope.leftMainMenu[i].submenuOptions.length && found==false; j++) {
+
+						if($scope.leftMainMenu[i].submenuOptions[j].name.toLowerCase() == menuName){
+							selectedMenu = $scope.leftMainMenu[i].submenuOptions[j];
+							found = true;
+						}
+					}
+				}
+
+				if($scope.leftMainMenu[i].name.toLowerCase() == menuName){
+					selectedMenu = $scope.leftMainMenu[i];
+					found = true;
+				}
+			}
+		}
+		return selectedMenu;
+	}
+
+
+//	var currentOptMenuInit = $scope.$watch('currentOptionMainMenu',function(newValue, oldValue){
+//		var selectedMenu = null;
+//		var found = false;
+//
+//		if($scope.leftMainMenu){
+//			for (i=0; i<$scope.leftMainMenu.length && found==false; i++) {
+//
+//				if($scope.leftMainMenu[i].submenuOptions){
+//					for (j=0; j<$scope.leftMainMenu[i].submenuOptions.length && found==false; j++) {
+//
+//						if($scope.leftMainMenu[i].submenuOptions[j].name.toLowerCase() == newValue){
+//							selectedMenu = $scope.leftMainMenu[i].submenuOptions[j];
+//							found = true;
+//						}
+//					}
+//				}
+//
+//				if($scope.leftMainMenu[i].name.toLowerCase() == newValue){
+//					selectedMenu = $scope.leftMainMenu[i];
+//					found = true;
+//				}
+//			}
+//		}
+//
+//
+//		$scope.leftMenuItemPicked(selectedMenu,true);
+//
+//		currentOptMenuInit();
+//	});
+
+
 }
 })();

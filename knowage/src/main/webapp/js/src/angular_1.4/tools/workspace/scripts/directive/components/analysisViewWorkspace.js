@@ -533,5 +533,12 @@ function analysisController($scope, sbiModule_restServices, sbiModule_translate,
 
 	}
 
+	if(initialOptionMainMenu){
+		if(initialOptionMainMenu.toLowerCase() == 'analysis'){
+			var selectedMenu = $scope.getMenuFromName('analysis');
+			$scope.leftMenuItemPicked(selectedMenu,true);
+		}
+	}
+
 }
 })();
