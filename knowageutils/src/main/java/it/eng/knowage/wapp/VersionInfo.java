@@ -21,8 +21,8 @@ package it.eng.knowage.wapp;
 public final class VersionInfo {
 	
 	public static final int MAJOR = 6;
-	public static final int MINOR = 2;
-	public static final int PATCH = 0;
+	public static final int MINOR = 1;
+	public static final int PATCH = 1;
 	public static final String VERSION_SEPARATOR = ".";	
 	// this can be "-next", "-rc" "-snapshot" or any optional string
 	public static final String OPTIONAL = "";
