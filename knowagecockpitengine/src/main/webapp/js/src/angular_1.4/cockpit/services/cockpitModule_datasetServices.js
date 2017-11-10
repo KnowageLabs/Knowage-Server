@@ -286,7 +286,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					if(item.description.startsWith("=")){
 						item.description = item.description.substring(1);
 					}else if(item.description.endsWith("=")){
-						item.description = item.description.substring(0, str.length - 1);
+						item.description = item.description.substring(0, item.description.length - 1);
 					}else{
 						item.description = item.description.replace("==", "=");
 					}
