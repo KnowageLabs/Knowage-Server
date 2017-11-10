@@ -26,13 +26,12 @@ import it.eng.knowage.commons.utilities.TimeUtilities;
 
 public final class Version {
 	
-	// <MAJOR>.<MINOR>.<PATCH>[-next]
+	// <MAJOR>.<MINOR>.<PATCH>[-string]
 	private String version = VersionInfo.COMPLETE_VERSION;
 	// YYYY-MM-DD
 	private String releaseDate = VersionInfo.RELEASE_DATE;
 	// N d G h Z m T s P ms 
 	private String uptime = TimeUtilities.getUptimeInDays(ManagementFactory.getRuntimeMXBean().getUptime());
-	private String gitHash = VersionInfo.GIT_HASH;
 	private String doc = VersionInfo.API_DOCUMENTATION;
 	
 	public Version() {
@@ -50,11 +49,6 @@ public final class Version {
 
 	public String getUptime() {
 		return uptime;
-	}
-
-	@JsonProperty("git_hash")
-	public String getGitHash() {
-		return gitHash;
 	}
 
 	public String getDoc() {
