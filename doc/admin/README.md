@@ -344,17 +344,17 @@ Using FIWARE IdM and Knowage
 
 At this point, if you invoke Knowage by your browser, you are redirected into FIWARE IdM instance.
 
-![](media/SpagoBI_application_IdM_authorization.png "Knowage_application_IdM_authentication.png")
+![](media/Knowage_application_IdM_authorization.png "Knowage_application_IdM_authentication.png")
 
 Once logged in, FIWARE IdM will ask you to authorize the application:
 
-![](media/SpagoBI_application_IdM_authorization.png "Knowage_application_IdM_authorization.png")
+![](media/Knowage_application_IdM_authorization.png "Knowage_application_IdM_authorization.png")
 
 Of course you have to authorize the application, and you will sent back to Knowage. As already explained, if the user has no roles defined by the IdM, he will enter Knowage with a default role specified in Knowage configurations.
 
 In this case, the application administrator can add roles to that user (the user has to logout and login again in order to benefit of it). If the user has already been added with some roles for the application, he will automatically inherit those roles in Knowage.
 
-![](media/SpagoBI_home_privileged_user.png "Knowage_home_privileged_user.png")
+![](media/Knowage_home_privileged_user.png "Knowage_home_privileged_user.png")
 
 The application administrator can always change roles of the users (the ones who belong to "DEFAULT" tenant) within the IdM. Organization owners can always change roles of members (and these members will belong to a tenant with the same name of the organization).
 
