@@ -60,8 +60,7 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
-			SbiExporters hibExporter = (SbiExporters) session.load(SbiExporters.class,
-					new SbiExportersId(engineId, domainId));
+			SbiExporters hibExporter = (SbiExporters) session.load(SbiExporters.class, new SbiExportersId(engineId, domainId));
 			logger.debug("Exporter loaded");
 			toReturn = toExporter(hibExporter, session);
 
@@ -70,12 +69,11 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			transaction.rollback();
 
 		} catch (ObjectNotFoundException e) {
-			throw new SpagoBIDAOObjectNotExistingException(
-					"There is no Exporter with engine id " + engineId + "and domain id " + domainId);
+			throw new SpagoBIDAOObjectNotExistingException("There is no Exporter with engine id " + engineId + "and domain id " + domainId);
 		} catch (Exception e) {
 
-			throw new SpagoBIDAOException("An unexpected error occured while loading artifact with engine id ["
-					+ engineId + "] and domain id [" + domainId + "]", e);
+			throw new SpagoBIDAOException(
+					"An unexpected error occured while loading artifact with engine id [" + engineId + "] and domain id [" + domainId + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -128,7 +126,7 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	}
 
 	@Override
-	public void modifyExporter(Exporters exporter) {
+	public void modifyExporter(Exporters exporter, Integer engineId, Integer domainId) {
 		Session session = null;
 		Transaction transaction = null;
 
@@ -149,23 +147,18 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
-			SbiDomains sbiDomain = new SbiDomains();
-			sbiDomain.setValueId(exporter.getDomainId());
-
-			SbiEngines sbiEngine = new SbiEngines();
-			sbiEngine.setEngineId(exporter.getEngineId());
-
-			SbiExportersId id = new SbiExportersId();
-			id.setEngineId(exporter.getEngineId());
-			id.setDomainId(exporter.getDomainId());
-
-			SbiExporters hibExporter = (SbiExporters) session.load(SbiExporters.class, id);
+			// delete exporter
+			SbiExporters hibExportertoDelete = (SbiExporters) session.load(SbiExporters.class, new SbiExportersId(engineId, domainId));
 			logger.debug("Exporter loaded");
+			if (hibExportertoDelete == null) {
+				logger.warn("Exporter with id [" + engineId + "] not found");
+			} else {
+				session.delete(hibExportertoDelete);
+			}
 
-			hibExporter.setSbiDomains(sbiDomain);
-			hibExporter.setSbiEngines(sbiEngine);
+			SbiExporters hibExporterToInsert = toHibExporter(exporter);
 
-			session.save(hibExporter);
+			session.save(hibExporterToInsert);
 
 			transaction.commit();
 		} catch (Throwable t) {
@@ -173,8 +166,7 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException(
-					"An unexpected error occured while saving exporter [" + exporter.getEngineId() + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while saving exporter [" + exporter.getEngineId() + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -207,21 +199,7 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
-			SbiExporters hibExporter = new SbiExporters();
-
-			SbiDomains sbiDomain = new SbiDomains();
-			sbiDomain.setValueId(exporter.getDomainId());
-
-			SbiEngines sbiEngine = new SbiEngines();
-			sbiEngine.setEngineId(exporter.getEngineId());
-
-			SbiExportersId id = new SbiExportersId();
-			id.setDomainId(exporter.getDomainId());
-			id.setEngineId(exporter.getEngineId());
-
-			hibExporter.setSbiDomains(sbiDomain);
-			hibExporter.setSbiEngines(sbiEngine);
-			hibExporter.setId(id);
+			SbiExporters hibExporter = toHibExporter(exporter);
 
 			session.save(hibExporter);
 
@@ -231,8 +209,7 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException(
-					"An unexpected error occured while saving exporter [" + exporter.getEngineId() + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while saving exporter [" + exporter.getEngineId() + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -262,8 +239,7 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
-			SbiExporters hibExporter = (SbiExporters) session.load(SbiExporters.class,
-					new SbiExportersId(engineId, domainId));
+			SbiExporters hibExporter = (SbiExporters) session.load(SbiExporters.class, new SbiExportersId(engineId, domainId));
 			logger.debug("Exporter loaded");
 			if (hibExporter == null) {
 				logger.warn("Artifact with id [" + engineId + "] not found");
@@ -296,8 +272,31 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			toReturn.setEngineId(hibExporter.getSbiEngines().getEngineId());
 			toReturn.setDomainId(hibExporter.getSbiDomains().getValueId());
 			toReturn.setDefaultValue(hibExporter.isDefaultValue());
-			toReturn.setDomainLabel(hibExporter.getSbiDomains().getValueCd());
-			toReturn.setEngineLabel(hibExporter.getSbiEngines().getName());
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	private SbiExporters toHibExporter(Exporters exporter) {
+		logger.debug("IN");
+		SbiExporters toReturn = null;
+		if (exporter != null) {
+			toReturn = new SbiExporters();
+
+			SbiDomains sbiDomain = new SbiDomains();
+			sbiDomain.setValueId(exporter.getDomainId());
+
+			SbiEngines sbiEngine = new SbiEngines();
+			sbiEngine.setEngineId(exporter.getEngineId());
+
+			SbiExportersId id = new SbiExportersId();
+			id.setDomainId(exporter.getDomainId());
+			id.setEngineId(exporter.getEngineId());
+
+			toReturn.setSbiDomains(sbiDomain);
+			toReturn.setSbiEngines(sbiEngine);
+			toReturn.setId(id);
+
 		}
 		logger.debug("OUT");
 		return toReturn;

@@ -28,7 +28,7 @@ public interface ISbiExportersDAO extends ISpagoBIDao {
 
 	public List<Exporters> loadAllSbiExporters();
 
-	public void modifyExporter(Exporters exporter);
+	public void modifyExporter(Exporters exporter, Integer engineId, Integer domainId);
 
 	public void insertExporter(Exporters exporter);
 

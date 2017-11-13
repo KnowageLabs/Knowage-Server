@@ -42,54 +42,54 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 @Path("/2.0/exporters")
 public class ExportersResource extends AbstractSpagoBIResource {
-  
-  static protected Logger logger = Logger.getLogger(ExportersResource.class);
-	
+
+	static protected Logger logger = Logger.getLogger(ExportersResource.class);
+
 	ISbiExportersDAO exportersDAO;
 	Exporters exporters;
 	List<Exporters> exportersList;
-	
+
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Exporters> getAllExporters() {
 		logger.debug("IN");
-		
+
 		try {
-			
+
 			exportersDAO = DAOFactory.getExportersDao();
 			exportersDAO.setUserProfile(getUserProfile());
 			exportersList = exportersDAO.loadAllSbiExporters();
-			
+
 			return exportersList;
-					
+
 		} catch (Exception exception) {
 
-            logger.error("Error while getting the list of exporters", exception);
-            throw new SpagoBIRestServiceException("Error while getting the list of exporters", buildLocaleFromSession(), exception);
-			
+			logger.error("Error while getting the list of exporters", exception);
+			throw new SpagoBIRestServiceException("Error while getting the list of exporters", buildLocaleFromSession(), exception);
+
 		} finally {
-			logger.debug("OUT");			
+			logger.debug("OUT");
 		}
-		
+
 	}
-	
+
 	@GET
 	@Path("/{eId}/{dId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = {SpagoBIConstants.DATASOURCE_READ})
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
 	public String getExportersById(@PathParam("eId") Integer engineId, @PathParam("dId") Integer domainId) {
-	
+
 		logger.debug("IN");
-		
+
 		try {
 			exportersDAO = DAOFactory.getExportersDao();
 			exportersDAO.setUserProfile(getUserProfile());
 			exporters = exportersDAO.loadExporterById(engineId, domainId);
-			
+
 			return JsonConverter.objectToJson(exporters, null);
-			
+
 		} catch (Exception e) {
 			logger.error("Error while loading a single exporter", e);
 			throw new SpagoBIRestServiceException("Error while loading a single exporter", buildLocaleFromSession(), e);
@@ -97,64 +97,58 @@ public class ExportersResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
-		
+
 	@DELETE
 	@Path("/{eId}/{dId}")
 	public void deleteExporterById(@PathParam("eId") Integer engineId, @PathParam("dId") Integer domainId) {
-		
+
 		logger.debug("IN");
-		
-		try {			
+
+		try {
 			exportersDAO = DAOFactory.getExportersDao();
 			exportersDAO.setUserProfile(getUserProfile());
-			exportersDAO.eraseExporter(engineId, domainId);				
-		} catch (Exception e) {			
+			exportersDAO.eraseExporter(engineId, domainId);
+		} catch (Exception e) {
 			logger.error("Error while deleting a single exporter", e);
 			throw new SpagoBIRestServiceException("Error while deleting a single exporter", buildLocaleFromSession(), e);
 		} finally {
 			logger.debug("OUT");
-		}			
+		}
 	}
-	
+
 	@POST
 	@Path("/")
 	public void insertExporter(Exporters exporter) {
-		
+
 		logger.debug("IN");
-		
-		try {			
+
+		try {
 			exportersDAO = DAOFactory.getExportersDao();
 			exportersDAO.setUserProfile(getUserProfile());
-			exportersDAO.insertExporter(exporter);			
-		} catch (Exception e) {			
+			exportersDAO.insertExporter(exporter);
+		} catch (Exception e) {
 			logger.error("Error while inserting a single exporter", e);
 			throw new SpagoBIRestServiceException("Error while inserting a single exporter", buildLocaleFromSession(), e);
 		} finally {
 			logger.debug("OUT");
-		}			
+		}
 	}
-	
+
 	@PUT
-	@Path("/")
-	public void modifyExporter(Exporters exporter) {
-		
+	@Path("/{eId}/{dId}")
+	public void modifyExporter(@PathParam("eId") Integer engineId, @PathParam("dId") Integer domainId, Exporters exporter) {
+
 		logger.debug("IN");
-		
-		try {			
+
+		try {
 			exportersDAO = DAOFactory.getExportersDao();
 			exportersDAO.setUserProfile(getUserProfile());
-			exportersDAO.modifyExporter(exporter);		
-		} catch (Exception e) {			
+			exportersDAO.modifyExporter(exporter, engineId, domainId);
+		} catch (Exception e) {
 			logger.error("Error while modifying a single exporter", e);
 			throw new SpagoBIRestServiceException("Error while modifying a single exporter", buildLocaleFromSession(), e);
 		} finally {
 			logger.debug("OUT");
-		}			
+		}
 	}
 }
-	
-	
-	
-	
-	
-	
