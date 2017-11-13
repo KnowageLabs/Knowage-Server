@@ -344,7 +344,7 @@ Using FIWARE IdM and Knowage
 
 At this point, if you invoke Knowage by your browser, you are redirected into FIWARE IdM instance.
 
-![](media/Knowage_application_IdM_authorization.png "Knowage_application_IdM_authentication.png")
+![](media/Knowage_application_IdM_authentication.png "Knowage_application_IdM_authentication.png")
 
 Once logged in, FIWARE IdM will ask you to authorize the application:
 
