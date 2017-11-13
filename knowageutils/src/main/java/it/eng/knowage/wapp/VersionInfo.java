@@ -24,8 +24,8 @@ public final class VersionInfo {
 	public static final int MINOR = 2;
 	public static final int PATCH = 0;
 	public static final String VERSION_SEPARATOR = ".";	
-	// this can be "-next", "-rc" "-snapshot" or any optional string
-	public static final String OPTIONAL = "-SNAPSHOT";
+	// this can be "-rc" "-snapshot" or any optional string
+	public static final String OPTIONAL = "-S";
 	
 	public static final String COMPLETE_VERSION = VersionInfo.MAJOR + VersionInfo.VERSION_SEPARATOR + VersionInfo.MINOR + VersionInfo.VERSION_SEPARATOR + VersionInfo.PATCH + VersionInfo.OPTIONAL;
 	
