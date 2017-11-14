@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.tools.datasource.bo;
 
-import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
-import it.eng.spagobi.services.validation.Xss;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -41,6 +34,13 @@ import org.apache.log4j.Logger;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
+import it.eng.spagobi.services.validation.Xss;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 /**
  * Defines an <code>DataSource</code> object
@@ -132,7 +132,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#toSpagoBiDataSource()
 	 */
 	@Override
@@ -236,7 +236,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDsId()
 	 */
 	@Override
@@ -246,7 +246,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDsId(int)
 	 */
 	@Override
@@ -256,7 +256,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDescr()
 	 */
 	@Override
@@ -266,7 +266,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDescr(java.lang.String)
 	 */
 	@Override
@@ -276,7 +276,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getLabel()
 	 */
 	@Override
@@ -286,7 +286,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setLabel(java.lang.String)
 	 */
 	@Override
@@ -296,7 +296,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getJndi()
 	 */
 	@Override
@@ -306,7 +306,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setJndi(java.lang.String)
 	 */
 	@Override
@@ -316,7 +316,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getUrlConnection()
 	 */
 	@Override
@@ -326,7 +326,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setUrlConnection(java. lang.String)
 	 */
 	@Override
@@ -336,7 +336,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getUser()
 	 */
 	@Override
@@ -346,7 +346,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setUser(java.lang.String)
 	 */
 	@Override
@@ -356,7 +356,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getPwd()
 	 */
 	@Override
@@ -366,7 +366,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setPwd(java.lang.String)
 	 */
 	@Override
@@ -376,7 +376,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDriver()
 	 */
 	@Override
@@ -386,7 +386,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDriver(java.lang.String )
 	 */
 	@Override
@@ -396,7 +396,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDialectId()
 	 */
 	@Override
@@ -406,7 +406,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDialectId(java.lang .Integer)
 	 */
 	@Override
@@ -416,7 +416,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getEngines()
 	 */
 	@Override
@@ -427,7 +427,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setEngines(java.util.Set)
 	 */
 	@Override
@@ -437,7 +437,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getObjects()
 	 */
 	@Override
@@ -448,7 +448,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setObjects(java.util.Set)
 	 */
 	@Override
@@ -510,11 +510,7 @@ public class DataSource implements Serializable, IDataSource {
 		logger.debug("IN: Statement is [" + statement + "], start = [" + start + "], limit = [" + limit + "], maxResults = [" + maxRowCount + "]");
 		IDataSet dataSet = JDBCDatasetFactory.getJDBCDataSet(this);
 		dataSet.setDataSource(this);
-		((AbstractJDBCDataset) dataSet).setQuery(statement); // all datasets
-																// retrieved by
-																// the factory
-																// extend
-																// AbstractJDBCDataset
+		((AbstractJDBCDataset) dataSet).setQuery(statement); // all datasets retrieved by the factory extend AbstractJDBCDataset
 		if (start == null && limit == null && maxRowCount == null) {
 			dataSet.loadData();
 		} else {
@@ -525,5 +521,4 @@ public class DataSource implements Serializable, IDataSource {
 		logger.debug("OUT");
 		return dataStore;
 	}
-
 }

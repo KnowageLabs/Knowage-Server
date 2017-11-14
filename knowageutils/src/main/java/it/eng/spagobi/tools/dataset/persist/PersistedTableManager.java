@@ -117,8 +117,7 @@ public class PersistedTableManager implements IPersistedManager {
 		this.setDialect(dsPersist.getHibDialectClass());
 		logger.debug("DataSource target dialect is [" + getDialect() + "]");
 		// for the first version not all target dialect are enable
-		if (getDialect().contains(DIALECT_SQLSERVER) || getDialect().contains(DIALECT_DB2) || getDialect().contains(DIALECT_INGRES)
-				|| getDialect().contains(DIALECT_TERADATA)) {
+		if (getDialect().contains(DIALECT_DB2) || getDialect().contains(DIALECT_INGRES) || getDialect().contains(DIALECT_TERADATA)) {
 			logger.error("Persistence management not implemented for dialect " + getDialect() + ".");
 			throw new SpagoBIRuntimeException("Persistence management not implemented for dialect " + getDialect() + ".");
 		}

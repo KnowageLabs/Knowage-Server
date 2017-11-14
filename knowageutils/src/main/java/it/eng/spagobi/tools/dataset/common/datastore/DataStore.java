@@ -535,7 +535,7 @@ public class DataStore implements IDataStore {
 	}
 
 	@Override
-	public IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, int maxRowCount) {
+	public IDataStore aggregateAndFilterRecords(String sqlQuery, List<Object> values, int offset, int fetchSize, int maxRowCount) {
 
 		// **************************************************************************************************************
 		// ***** This part build data structures used to convert a SpagoBI DataStore into an MetaModel DataContext ******
@@ -588,7 +588,7 @@ public class DataStore implements IDataStore {
 		String newSqlQuery = sqlQuery.replace(DEFAULT_TABLE_NAME, uniqueTableName);
 		Query query = dataContext.parseQuery(newSqlQuery);
 		CompiledQuery cQuery = dataContext.compileQuery(query);
-		DataSet dataSet = dataContext.executeQuery(cQuery);
+		DataSet dataSet = dataContext.executeQuery(cQuery, values);
 
 		// *************************************************************************************************
 		// **** This part generates a SpagoBI datastore starting from the Apache MetaModel dataset *********
@@ -626,7 +626,7 @@ public class DataStore implements IDataStore {
 	}
 
 	@Override
-	public DataSet getMetaModelResultSet(String sqlQuery) {
+	public DataSet getMetaModelResultSet(String sqlQuery, List<Object> values) {
 		// **************************************************************************************************************
 		// ***** This part build data structures used to convert a SpagoBI DataStore into an MetaModel DataContext ******
 		// **************************************************************************************************************
@@ -678,7 +678,7 @@ public class DataStore implements IDataStore {
 		String newSqlQuery = sqlQuery.replace(DEFAULT_TABLE_NAME, uniqueTableName);
 		Query query = dataContext.parseQuery(newSqlQuery);
 		CompiledQuery cQuery = dataContext.compileQuery(query);
-		DataSet dataSet = dataContext.executeQuery(cQuery);
+		DataSet dataSet = dataContext.executeQuery(cQuery, values);
 
 		return dataSet;
 	}
@@ -756,5 +756,15 @@ public class DataStore implements IDataStore {
 		}
 
 		return dataStore;
+	}
+
+	@Override
+	public IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, int maxRowCount) {
+		return aggregateAndFilterRecords(sqlQuery, new ArrayList<Object>(0), offset, fetchSize, maxRowCount);
+	}
+
+	@Override
+	public DataSet getMetaModelResultSet(String sqlQuery) {
+		return getMetaModelResultSet(sqlQuery, new ArrayList<Object>(0));
 	}
 }

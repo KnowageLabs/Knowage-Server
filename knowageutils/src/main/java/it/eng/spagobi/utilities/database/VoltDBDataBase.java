@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.utilities.database;
 
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-
 /**
  * VoltDB implementation
  *
@@ -27,8 +25,11 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
  */
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+
 public class VoltDBDataBase extends AbstractDataBase {
 
+	public static final String ALIAS_DELIMITER = "";
 	private static transient Logger logger = Logger.getLogger(VoltDBDataBase.class);
 
 	public VoltDBDataBase(IDataSource dataSource) {
@@ -79,7 +80,7 @@ public class VoltDBDataBase extends AbstractDataBase {
 	 */
 	@Override
 	public String getAliasDelimiter() {
-		return "";
+		return ALIAS_DELIMITER;
 	}
 
 	/*

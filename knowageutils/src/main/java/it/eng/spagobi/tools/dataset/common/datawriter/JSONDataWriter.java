@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.common.datawriter;
 
-import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
-import it.eng.spagobi.tools.dataset.common.datastore.Field;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -38,6 +29,15 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -54,6 +54,8 @@ public class JSONDataWriter implements IDataWriter {
 	public static final String TIME_FORMAT = "HH:mm:ss";
 	public static final String DATE_TIME_FORMAT = DATE_FORMAT + " " + TIME_FORMAT;
 	public static final String CACHE_DATE_TIME_FORMAT = CACHE_DATE_FORMAT + " " + TIME_FORMAT;
+	public static final String TIMESTAMP_FORMAT = DATE_TIME_FORMAT + ".SSS";
+	public static final String CACHE_TIMESTAMP_FORMAT = CACHE_DATE_TIME_FORMAT + ".SSS";
 
 	private boolean putIDs = true;
 	private boolean adjust = false;
@@ -64,8 +66,8 @@ public class JSONDataWriter implements IDataWriter {
 	private boolean useIdProperty;
 
 	public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
-	public static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(DATE_TIME_FORMAT);
-	public static final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat(CACHE_DATE_TIME_FORMAT);
+	public static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(TIMESTAMP_FORMAT);
+	public static final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat(CACHE_TIMESTAMP_FORMAT);
 	public static final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat(TIME_FORMAT);
 
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
@@ -152,8 +154,8 @@ public class JSONDataWriter implements IDataWriter {
 			Assert.assertNotNull(propertyRawValue, "DataStore property [resultNumber] cannot be null");
 			Assert.assertTrue(propertyRawValue instanceof Integer, "DataStore property [resultNumber] must be of type [Integer]");
 			resultNumber = ((Integer) propertyRawValue).intValue();
-			Assert.assertTrue(resultNumber >= 0, "DataStore property [resultNumber] cannot be equal to [" + resultNumber
-					+ "]. It must be greater or equal to zero");
+			Assert.assertTrue(resultNumber >= 0,
+					"DataStore property [resultNumber] cannot be equal to [" + resultNumber + "]. It must be greater or equal to zero");
 
 			// records
 			recNo = 0;
@@ -257,8 +259,8 @@ public class JSONDataWriter implements IDataWriter {
 			Assert.assertNotNull(propertyRawValue, "DataStore property [resultNumber] cannot be null");
 			Assert.assertTrue(propertyRawValue instanceof Integer, "DataStore property [resultNumber] must be of type [Integer]");
 			resultNumber = ((Integer) propertyRawValue).intValue();
-			Assert.assertTrue(resultNumber >= 0, "DataStore property [resultNumber] cannot be equal to [" + resultNumber
-					+ "]. It must be greater or equal to zero");
+			Assert.assertTrue(resultNumber >= 0,
+					"DataStore property [resultNumber] cannot be equal to [" + resultNumber + "]. It must be greater or equal to zero");
 			result.put(TOTAL_PROPERTY, resultNumber);
 
 			recordsJSON = new JSONArray();

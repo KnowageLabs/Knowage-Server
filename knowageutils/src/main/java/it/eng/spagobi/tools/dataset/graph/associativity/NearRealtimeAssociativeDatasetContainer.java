@@ -18,20 +18,21 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity;
 
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -58,14 +59,14 @@ public class NearRealtimeAssociativeDatasetContainer extends AssociativeDatasetC
 	}
 
 	@Override
-	public Set<String> getTupleOfValues(String query) throws ClassNotFoundException, NamingException, SQLException {
+	public Set<String> getTupleOfValues(String query, List<Object> values) throws ClassNotFoundException, NamingException, SQLException {
 		if (dataStore != null) {
 			logger.debug("Executing query with MetaModel: " + query);
-			org.apache.metamodel.data.DataSet rs = dataStore.getMetaModelResultSet(query);
+			org.apache.metamodel.data.DataSet rs = dataStore.getMetaModelResultSet(query, values);
 			return AssociativeLogicUtils.getTupleOfValues(rs);
 		} else {
-			throw new SpagoBIRuntimeException("Error while retrieving the DataStore for real-time dataset with label [" + dataSet
-					+ "]. It is impossible to get values from it.");
+			throw new SpagoBIRuntimeException(
+					"Error while retrieving the DataStore for real-time dataset with label [" + dataSet + "]. It is impossible to get values from it.");
 		}
 	}
 
@@ -74,30 +75,4 @@ public class NearRealtimeAssociativeDatasetContainer extends AssociativeDatasetC
 		return DataStore.DEFAULT_TABLE_NAME + "." + AbstractJDBCDataset.encapsulateColumnName(columnName, null);
 	}
 
-	@Override
-	public String buildFilter(String columnNames, Set<String> filterValues) {
-		StringBuilder sb = new StringBuilder();
-		String[] columnsArray = columnNames.split(",");
-		for (String values : filterValues) {
-			String[] valuesArray = values.substring(1, values.length() - 1).split(",");
-			if (sb.length() > 0) {
-				sb.append(" OR ");
-			}
-			if (valuesArray.length > 1) {
-				sb.append("(");
-			}
-			for (int j = 0; j < valuesArray.length; j++) {
-				if (j > 0) {
-					sb.append(" AND ");
-				}
-				sb.append(AbstractJDBCDataset.encapsulateColumnName(columnsArray[j], null));
-				sb.append("=");
-				sb.append(valuesArray[j]);
-			}
-			if (valuesArray.length > 1) {
-				sb.append(")");
-			}
-		}
-		return sb.toString();
-	}
 }

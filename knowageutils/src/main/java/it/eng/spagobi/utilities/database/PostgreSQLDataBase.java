@@ -17,9 +17,9 @@
  */
 package it.eng.spagobi.utilities.database;
 
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -57,12 +57,12 @@ public class PostgreSQLDataBase extends AbstractDataBase {
 			toReturn = " NUMERIC ";
 		} else if (javaTypeName.contains("java.lang.Boolean")) {
 			toReturn = " BOOLEAN ";
-		} else if (javaTypeName.contains("java.sql.Time")) {
-			toReturn = " TIME ";
 		} else if (javaTypeName.contains("java.sql.Date")) {
 			toReturn = " DATE ";
 		} else if (javaTypeName.toLowerCase().contains("timestamp")) {
 			toReturn = " TIMESTAMP ";
+		} else if (javaTypeName.contains("java.sql.Time")) {
+			toReturn = " TIME ";
 		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
 			toReturn = " BYTEA ";
 		} else if ((javaTypeName.contains("java.lang.String") && getVarcharLength() > MAX_VARCHAR_VALUE) || javaTypeName.contains("[C")

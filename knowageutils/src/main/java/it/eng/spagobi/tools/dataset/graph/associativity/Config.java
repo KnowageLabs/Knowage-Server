@@ -1,7 +1,5 @@
 package it.eng.spagobi.tools.dataset.graph.associativity;
 
-import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,12 +8,15 @@ import java.util.Set;
 
 import org.jgrapht.graph.Pseudograph;
 
+import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
+import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+
 public class Config {
 
 	private String strategy;
 	private Pseudograph<String, LabeledEdge<String>> graph;
 	private Map<String, Map<String, String>> datasetToAssociations;
-	private List<Selection> selections;
+	private List<SimpleFilter> selections;
 	private Set<String> nearRealtimeDatasets;
 	private Map<String, Map<String, String>> datasetParameters;
 	private Set<String> documents;
@@ -50,11 +51,11 @@ public class Config {
 		this.datasetToAssociations = datasetToAssociations;
 	}
 
-	public List<Selection> getSelections() {
+	public List<SimpleFilter> getSelections() {
 		return selections;
 	}
 
-	public void setSelections(List<Selection> selections) {
+	public void setSelections(List<SimpleFilter> selections) {
 		this.selections = selections;
 	}
 

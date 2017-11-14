@@ -17,10 +17,13 @@
  */
 package it.eng.spagobi.tools.dataset.cache;
 
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-
 import java.util.List;
+
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
+import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
+import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -84,28 +87,21 @@ public interface ICache {
 	IDataStore get(String resultsetSignature);
 
 	/**
-	 * Facility method. It is equivalent to get(dataSet.getSignature, groups, filters, projections) call.
-	 *
-	 * @param resultsetSignature
-	 *            the unique resultSet signature
-	 * @param groups
-	 *            grouping criteria for the resultSet
-	 * @param filters
-	 *            filters used on the resultSet
+	 * @param dataSet
+	 *            the dataSet that generate the resultSet
 	 * @param projections
 	 *            (fields to select) on the resultSet
+	 * @param filter
+	 *            filter used on the resultSet
+	 * @param groups
+	 *            grouping criteria for the resultSet
+	 * @param sortings
+	 *            sorting criteria for the resultSet
 	 * @return the resultSet if cached, null elsewhere
 	 */
-	IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int offset, int fetchSize);
 
-	IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
-			List<ProjectionCriteria> summaryRowProjections, int offset, int fetchSize);
-
-	IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, int offset, int fetchSize);
-
-	IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, int offset, int fetchSize, int maxRowCount);
+	IDataStore get(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount);
 
 	// =====================================================================================
 	// LOAD METHODS

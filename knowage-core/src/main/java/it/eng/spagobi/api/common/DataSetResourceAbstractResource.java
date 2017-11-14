@@ -20,11 +20,13 @@ package it.eng.spagobi.api.common;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
@@ -43,6 +45,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
@@ -55,9 +58,18 @@ import it.eng.spagobi.tools.dataset.cache.GroupCriteria;
 import it.eng.spagobi.tools.dataset.cache.Operand;
 import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
+import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
+import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.LikeFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.MultipleProjectionSimpleFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
+import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
+import it.eng.spagobi.tools.dataset.cache.query.item.UnsatisfiedFilter;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
@@ -71,6 +83,7 @@ import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -80,9 +93,9 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
 public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(DataSetResourceAbstractResource.class);
-	
+
 	static final protected String DEFAULT_TABLE_NAME_DOT = DataStore.DEFAULT_TABLE_NAME + ".";
-	
+
 	private static final String DATE_TIME_FORMAT_MYSQL = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "%Y").replace("MM", "%m")
 			.replace("dd", "%d").replace("HH", "%H").replace("mm", "%i").replace("ss", "%s");
 	private static final String DATE_TIME_FORMAT_SQL_STANDARD = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
@@ -92,7 +105,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 	protected enum DatasetEvaluationStrategy {
 		PERSISTED, FLAT, JDBC, NEAR_REALTIME, CACHED
 	}
-	
+
 	// ===================================================================
 	// UTILITY METHODS
 	// ===================================================================
@@ -126,17 +139,17 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 	}
 
 	public String getDataStore(String label, String parameters, String selections, String likeSelections, int maxRowCount, String aggregations,
-			String summaryRow, int offset, int fetchSize, boolean isRealtime) {
+			String summaryRow, int offset, int fetchSize, boolean isNearRealtime) {
 		logger.debug("IN");
 
 		try {
 			int maxResults = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
 			logger.debug("Offset [" + offset + "], fetch size [" + fetchSize + "], max results[" + maxResults + "]");
+
 			if (maxResults <= 0) {
 				throw new SpagoBIRuntimeException("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER value cannot be a non-positive integer");
 			}
-
-			if (offset < 0 || fetchSize <= 0) {
+			if (offset < 0 || fetchSize < 0) {
 				logger.debug("Offset or fetch size are not valid. Setting them to [0] and [" + maxResults + "] by default.");
 				offset = 0;
 				fetchSize = maxResults;
@@ -148,74 +161,61 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 				throw new IllegalArgumentException("The dataset requested is too big. Max row count is equals to [" + maxResults + "]");
 			}
 
-			List<ProjectionCriteria> projectionCriteria = new ArrayList<ProjectionCriteria>();
-			List<GroupCriteria> groupCriteria = new ArrayList<GroupCriteria>();
+			IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
+			dataSetDao.setUserProfile(getUserProfile());
+			IDataSet dataSet = dataSetDao.loadDataSetByLabel(label);
+			Assert.assertNotNull(dataSet, "Unable to load dataset with label [" + label + "]");
+
+			List<Projection> projections = new ArrayList<Projection>(0);
+			List<Projection> groups = new ArrayList<Projection>(0);
+			List<Sorting> sortings = new ArrayList<Sorting>(0);
 			Map<String, String> columnAliasToName = new HashMap<String, String>();
-			if (aggregations != null && !aggregations.equals("")) {
+			if (aggregations != null && !aggregations.isEmpty()) {
 				JSONObject aggregationsObject = new JSONObject(aggregations);
 				JSONArray categoriesObject = aggregationsObject.getJSONArray("categories");
 				JSONArray measuresObject = aggregationsObject.getJSONArray("measures");
 
-				projectionCriteria = getProjectionCriteria(label, categoriesObject, measuresObject);
-				groupCriteria = getGroupCriteria(label, categoriesObject, measuresObject);
-
 				loadColumnAliasToName(categoriesObject, columnAliasToName);
 				loadColumnAliasToName(measuresObject, columnAliasToName);
+
+				projections.addAll(getProjections(dataSet, categoriesObject, measuresObject, columnAliasToName));
+				groups.addAll(getGroups(dataSet, categoriesObject, measuresObject, columnAliasToName));
+				sortings.addAll(getSortings(dataSet, categoriesObject, measuresObject, columnAliasToName));
 			}
 
-			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>();
-			List<FilterCriteria> filterCriteriaForMetaModel = new ArrayList<FilterCriteria>();
-
-			List<ProjectionCriteria> summaryRowProjectionCriteria = new ArrayList<ProjectionCriteria>();
-			if (summaryRow != null && !summaryRow.equals("")) {
-				JSONObject summaryRowObject = new JSONObject(summaryRow);
-				JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
-				summaryRowProjectionCriteria = getProjectionCriteria(label, new JSONArray(), summaryRowMeasuresObject);
-			}
-
-			if (selections != null && !selections.equals("")) {
+			List<SimpleFilter> filters = new ArrayList<>(0);
+			if (selections != null && !selections.isEmpty()) {
 				JSONObject selectionsObject = new JSONObject(selections);
-				// in same case object is empty '{}'
 				if (selectionsObject.names() != null) {
-
-					filterCriteria = getFilterCriteria(label, selectionsObject, false, columnAliasToName);
-					filterCriteriaForMetaModel = getFilterCriteria(label, selectionsObject, true, columnAliasToName);
-
+					filters.addAll(getFilters(label, selectionsObject, columnAliasToName));
 				}
-
 			}
 
-			List<FilterCriteria> havingCriteria = new ArrayList<FilterCriteria>();
-			List<FilterCriteria> havingCriteriaForMetaModel = new ArrayList<FilterCriteria>();
+			List<SimpleFilter> likeFilters = new ArrayList<>(0);
 			if (likeSelections != null && !likeSelections.equals("")) {
 				JSONObject likeSelectionsObject = new JSONObject(likeSelections);
 				if (likeSelectionsObject.names() != null) {
-					filterCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, false, columnAliasToName, projectionCriteria, true));
-					havingCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, false, columnAliasToName, projectionCriteria, false));
-
-					filterCriteriaForMetaModel.addAll(getLikeFilterCriteria(label, likeSelectionsObject, true, columnAliasToName, projectionCriteria, true));
-					havingCriteriaForMetaModel.addAll(getLikeFilterCriteria(label, likeSelectionsObject, true, columnAliasToName, projectionCriteria, false));
+					likeFilters.addAll(getLikeFilters(label, likeSelectionsObject, columnAliasToName));
 				}
 			}
 
-			if (selections != null && !selections.equals("")) {
-				// check if max or min filters are used and caclulate it
-				filterCriteria = getDatasetManagementAPI().calculateMinMaxFilter(label, parameters, selections, likeSelections, maxRowCount, aggregations,
-						summaryRow, offset, fetchSize, false, groupCriteria, filterCriteriaForMetaModel, new ArrayList<ProjectionCriteria>() // ,
-																																				// summaryRowProjectionCriteria
-						, havingCriteria, havingCriteriaForMetaModel, filterCriteria, projectionCriteria);
+			// FIXME
+			filters = getDatasetManagementAPI().calculateMinMaxFilters(dataSet, isNearRealtime, DataSetUtilities.getParametersMap(parameters), projections,
+					filters, likeFilters, groups, offset, fetchSize, maxRowCount);
+
+			Filter where = getDatasetManagementAPI().getWhereFilter(filters, likeFilters);
+
+			List<Projection> summaryRowProjections = new ArrayList<Projection>(0);
+			if (summaryRow != null && !summaryRow.isEmpty()) {
+				JSONObject summaryRowObject = new JSONObject(summaryRow);
+				JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
+				summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
 			}
 
-			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxRowCount, isRealtime,
-					DataSetUtilities.getParametersMap(parameters), groupCriteria, filterCriteria, filterCriteriaForMetaModel, havingCriteria,
-					havingCriteriaForMetaModel, projectionCriteria, summaryRowProjectionCriteria);
-
-			Map<String, Object> properties = new HashMap<String, Object>();
-			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
-			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
-			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
-			dataSetWriter.setLocale(buildLocaleFromSession());
-			JSONObject gridDataFeed = (JSONObject) dataSetWriter.write(dataStore);
+			IDataStore dataStore = getDatasetManagementAPI().getDataStore(dataSet, isNearRealtime, DataSetUtilities.getParametersMap(parameters), projections,
+					where, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
+			IDataWriter dataWriter = getDataSetWriter();
+			JSONObject gridDataFeed = (JSONObject) dataWriter.write(dataStore);
 
 			String stringFeed = gridDataFeed.toString();
 			return stringFeed;
@@ -228,8 +228,249 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		}
 	}
 
+	protected List<Projection> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
+			throws JSONException {
+		ArrayList<Projection> projections = new ArrayList<Projection>(categories.length() + measures.length());
+
+		for (int i = 0; i < categories.length(); i++) {
+			JSONObject category = categories.getJSONObject(i);
+			Projection projection = getProjection(dataSet, category, columnAliasToName);
+			projections.add(projection);
+		}
+
+		for (int i = 0; i < measures.length(); i++) {
+			JSONObject measure = measures.getJSONObject(i);
+			Projection projection = getProjection(dataSet, measure, columnAliasToName);
+			projections.add(projection);
+		}
+
+		return projections;
+	}
+
+	private Projection getProjection(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
+		String columnName = getColumnName(jsonObject, columnAliasToName);
+		String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
+		IAggregationFunction function = AggregationFunctions.get(jsonObject.optString("funct"));
+
+		Projection projection = new Projection(function, dataSet, columnName, columnAlias);
+		return projection;
+	}
+
+	private String getColumnName(JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
+		if (jsonObject.isNull("columnName")) {
+			return getColumnAlias(jsonObject, columnAliasToName);
+		} else {
+			String columnName = jsonObject.getString("columnName");
+			Assert.assertTrue(columnAliasToName.containsKey(columnName) || columnAliasToName.containsValue(columnName),
+					"Column name [" + columnName + "] not found in dataset metadata");
+			return columnName;
+		}
+	}
+
+	private String getColumnAlias(JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
+		String columnAlias = jsonObject.getString("alias");
+		Assert.assertTrue(columnAliasToName.containsKey(columnAlias) || columnAliasToName.containsValue(columnAlias),
+				"Column alias [" + columnAlias + "] not found in dataset metadata");
+		return columnAlias;
+	}
+
+	protected List<Projection> getGroups(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
+			throws JSONException {
+		ArrayList<Projection> groups = new ArrayList<Projection>(0);
+
+		boolean isAggregationPresentOnMeasures = false;
+		for (int i = 0; i < measures.length(); i++) {
+			JSONObject measure = measures.getJSONObject(i);
+			String functionName = measure.optString("funct");
+			if (!AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.NONE)) {
+				isAggregationPresentOnMeasures = true;
+				break;
+			}
+		}
+
+		if (isAggregationPresentOnMeasures) {
+			for (int i = 0; i < categories.length(); i++) {
+				JSONObject category = categories.getJSONObject(i);
+				Projection projection = getProjection(dataSet, category, columnAliasToName);
+				groups.add(projection);
+			}
+		}
+
+		return groups;
+	}
+
+	protected List<Sorting> getSortings(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
+			throws JSONException {
+		ArrayList<Sorting> sortings = new ArrayList<Sorting>(0);
+
+		for (int i = 0; i < categories.length(); i++) {
+			JSONObject categoryObject = categories.getJSONObject(i);
+			Sorting sorting = getSorting(dataSet, categoryObject, columnAliasToName);
+			if (sorting != null) {
+				sortings.add(sorting);
+			}
+		}
+
+		for (int i = 0; i < measures.length(); i++) {
+			JSONObject measure = measures.getJSONObject(i);
+			Sorting sorting = getSorting(dataSet, measure, columnAliasToName);
+			if (sorting != null) {
+				sortings.add(sorting);
+			}
+		}
+
+		return sortings;
+	}
+
+	private Sorting getSorting(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
+		Sorting sorting = null;
+
+		String orderType = (String) jsonObject.opt("orderType");
+		if (orderType != null && !orderType.isEmpty() && ("ASC".equalsIgnoreCase(orderType) || "DESC".equalsIgnoreCase(orderType))) {
+			IAggregationFunction function = AggregationFunctions.get(jsonObject.optString("funct"));
+			String orderColumn = (String) jsonObject.opt("orderColumn");
+
+			Projection projection;
+			if (orderColumn != null && !orderColumn.isEmpty() && !orderType.isEmpty()) {
+				projection = new Projection(function, dataSet, orderColumn);
+			} else {
+				String columnName = getColumnName(jsonObject, columnAliasToName);
+				projection = new Projection(function, dataSet, columnName);
+			}
+
+			boolean isAscending = "ASC".equalsIgnoreCase(orderType);
+
+			sorting = new Sorting(projection, isAscending);
+		}
+
+		return sorting;
+	}
+
+	// FIXME
+	protected List<SimpleFilter> getFilters(String datasetLabel, JSONObject selectionsObject, Map<String, String> columnAliasToColumnName)
+			throws JSONException {
+		List<SimpleFilter> filters = new ArrayList<>(0);
+
+		if (selectionsObject.has(datasetLabel)) {
+			JSONObject datasetSelectionObject = selectionsObject.getJSONObject(datasetLabel);
+			Iterator<String> it = datasetSelectionObject.keys();
+
+			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(datasetLabel);
+
+			boolean isAnEmptySelection = false;
+
+			while (!isAnEmptySelection && it.hasNext()) {
+				String columnsString = it.next();
+
+				JSONArray valuesJsonArray = datasetSelectionObject.getJSONArray(columnsString);
+				if (valuesJsonArray.length() == 0) {
+					isAnEmptySelection = true;
+					break;
+				}
+
+				List<String> columnsList = getColumnList(columnsString, dataSet, columnAliasToColumnName);
+				List<Projection> projections = new ArrayList<>(columnsList.size());
+				for (String columnName : columnsList) {
+					projections.add(new Projection(dataSet, columnName));
+				}
+
+				List<Object> valueObjects = new ArrayList<>(0);
+				for (int i = 0; i < valuesJsonArray.length(); i++) {
+					String[] valuesArray = StringUtilities.getSubstringsBetween(valuesJsonArray.getString(i), "'");
+					for (int j = 0; j < valuesArray.length; j++) {
+						Projection projection = projections.get(j % projections.size());
+						valueObjects.add(DataSetUtilities.getValue(valuesArray[j], projection.getType()));
+					}
+				}
+
+				MultipleProjectionSimpleFilter inFilter = new InFilter(projections, valueObjects);
+				filters.add(inFilter);
+			}
+
+			if (isAnEmptySelection) {
+				filters.clear();
+				filters.add(new UnsatisfiedFilter());
+			}
+		}
+
+		return filters;
+	}
+
+	protected List<SimpleFilter> getLikeFilters(String datasetLabel, JSONObject likeSelectionsObject, Map<String, String> columnAliasToColumnName)
+			throws JSONException {
+		List<SimpleFilter> likeFilters = new ArrayList<>(0);
+
+		if (likeSelectionsObject.has(datasetLabel)) {
+			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(datasetLabel);
+			boolean isAnEmptySelection = false;
+
+			JSONObject datasetSelectionObject = likeSelectionsObject.getJSONObject(datasetLabel);
+			Iterator<String> it = datasetSelectionObject.keys();
+			while (!isAnEmptySelection && it.hasNext()) {
+				String columns = it.next();
+				String value = datasetSelectionObject.getString(columns);
+				if (value == null || value.isEmpty()) {
+					isAnEmptySelection = true;
+					break;
+				}
+				String pattern = "%" + value + "%";
+
+				List<String> columnsList = getColumnList(columns, dataSet, columnAliasToColumnName);
+				List<Projection> projections = new ArrayList<>(columnsList.size());
+				for (String columnName : columnsList) {
+					projections.add(new Projection(dataSet, columnName));
+				}
+
+				for (Projection projection : projections) {
+					SimpleFilter filter = new LikeFilter(projection, pattern);
+					likeFilters.add(filter);
+				}
+			}
+
+			if (isAnEmptySelection) {
+				likeFilters.clear();
+				likeFilters.add(new UnsatisfiedFilter());
+			}
+		}
+
+		return likeFilters;
+	}
+
+	protected List<String> getColumnList(String columns, IDataSet dataSet, Map<String, String> columnAliasToColumnName) {
+		List<String> columnList = new ArrayList<>(Arrays.asList(columns.trim().split("\\s*,\\s*"))); // trim spaces while splitting
+
+		// transform QBE columns
+		for (int i = 0; i < columnList.size(); i++) {
+			String column = columnList.get(i);
+			if (column.contains(":")) {
+				columnList.set(i, getDatasetManagementAPI().getQbeDataSetColumn(dataSet, column));
+			}
+		}
+
+		// transform aliases
+		if (columnAliasToColumnName != null) {
+			Set<String> aliases = columnAliasToColumnName.keySet();
+			if (aliases.size() > 0) {
+				for (int i = 0; i < columnList.size(); i++) {
+					String column = columnList.get(i);
+					if (aliases.contains(column)) {
+						columnList.set(i, columnAliasToColumnName.get(column));
+					}
+				}
+			}
+		}
+
+		return columnList;
+	}
+
+	protected IDataWriter getDataSetWriter() throws JSONException {
+		JSONDataWriter dataWriter = new JSONDataWriter(getDataSetWriterProperties());
+		dataWriter.setLocale(buildLocaleFromSession());
+		return dataWriter;
+	}
+
 	protected List<ProjectionCriteria> getProjectionCriteria(String dataset, JSONArray categoriesObject, JSONArray measuresObject) throws JSONException {
-		List<ProjectionCriteria> projectionCriterias = new ArrayList<ProjectionCriteria>();
+		List<ProjectionCriteria> projectionCriterias = new ArrayList<ProjectionCriteria>(categoriesObject.length() + measuresObject.length());
 		for (int i = 0; i < categoriesObject.length(); i++) {
 			JSONObject categoryObject = categoriesObject.getJSONObject(i);
 
@@ -289,7 +530,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 	}
 
 	protected List<GroupCriteria> getGroupCriteria(String dataset, JSONArray categoriesObject, JSONArray measuresObject) throws JSONException {
-		List<GroupCriteria> groupCriterias = new ArrayList<GroupCriteria>();
+		List<GroupCriteria> groupCriterias = new ArrayList<GroupCriteria>(0);
 
 		boolean isAggregationPresentOnMeasures = false;
 		for (int i = 0; i < measuresObject.length(); i++) {
@@ -325,7 +566,8 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		return groupCriterias;
 	}
 
-	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject, boolean isRealtime, Map<String, String> columnAliasToName)
+	@Deprecated
+	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject, boolean isNearRealtime, Map<String, String> columnAliasToName)
 			throws JSONException {
 		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
 
@@ -352,6 +594,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		return filterCriterias;
 	}
 
+	@Deprecated
 	protected List<FilterCriteria> getLikeFilterCriteria(String datasetLabel, JSONObject likeSelectionsObject, boolean isRealtime,
 			Map<String, String> columnAliasToName, List<ProjectionCriteria> projectionCriteria, boolean getAttributes) throws JSONException {
 		List<FilterCriteria> likeFilterCriterias = new ArrayList<FilterCriteria>();
@@ -392,7 +635,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			}
 		}
 	}
-	
+
 	protected String serializeDataSet(IDataSet dataSet, String typeDocWizard) throws JSONException {
 		try {
 			JSONObject datasetsJSONObject = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataSet, null);
@@ -404,7 +647,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			throw new RuntimeException("An unexpected error occured while serializing results", t);
 		}
 	}
-	
+
 	/**
 	 * @param profile
 	 * @param datasetsJSONArray
@@ -508,7 +751,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		}
 		return datasetsJSONReturn;
 	}
-	
+
 	public String getDataSet(String label) {
 		logger.debug("IN");
 		try {
@@ -520,7 +763,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			logger.debug("OUT");
 		}
 	}
-	
+
 	public Response deleteDataset(String label) {
 		IDataSetDAO datasetDao = null;
 		try {
@@ -549,7 +792,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 
 		return Response.ok().build();
 	}
-	
+
 	public Response execute(String label, String body) {
 		SDKDataSetParameter[] parameters = null;
 
@@ -570,7 +813,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		}
 		return Response.ok(executeDataSet(label, parameters)).build();
 	}
-	
+
 	protected String executeDataSet(String label, SDKDataSetParameter[] params) {
 		logger.debug("IN: label in input = " + label);
 
@@ -616,7 +859,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			throw new SpagoBIRuntimeException("Error while executing dataset", e);
 		}
 	}
-	
+
 	protected IDataSetDAO getDataSetDAO() {
 		IDataSetDAO dsDAO;
 		try {
@@ -640,7 +883,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		}
 		return dataSourceDAO;
 	}
-	
+
 	protected String convertDateString(String dateString, String srcFormatString, String dstFormatString) {
 		try {
 			SimpleDateFormat srcFormat = new SimpleDateFormat(srcFormatString);
@@ -653,7 +896,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			throw new SpagoBIRuntimeException(message, e);
 		}
 	}
-	
+
 	protected String getDateForQuery(String dateStringToConvert, IDataSource dataSource) {
 		String properDateString = dateStringToConvert;
 
@@ -675,7 +918,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 
 		return properDateString;
 	}
-	
+
 	protected boolean isDateColumn(String columnName, IDataSet dataSet) {
 		for (int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
 			IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
@@ -685,7 +928,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		}
 		return false;
 	}
-	
+
 	protected IDataSource getDataSource(IDataSet dataSet, boolean isNearRealTime) {
 		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isNearRealTime);
 		IDataSource dataSource = null;
@@ -705,7 +948,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 
 		return dataSource;
 	}
-	
+
 	protected DatasetEvaluationStrategy getDatasetEvaluationStrategy(IDataSet dataSet, boolean isNearRealtime) {
 		DatasetEvaluationStrategy result;
 
@@ -727,7 +970,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 
 		return result;
 	}
-	
+
 	protected String getFilter(IDataSet dataset, boolean isNearRealtime, String column, String values) {
 		IDataSource dataSource = getDataSource(dataset, isNearRealtime);
 		String tablePrefix = getTablePrefix(dataset, isNearRealtime);
@@ -740,7 +983,6 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		}
 	}
 
-	
 	private String getOrFilterString(String column, String values, IDataSource dataSource, String tablePrefix) {
 		String encapsulateColumnName = tablePrefix + AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
 		String[] singleValues = values.split(",");
@@ -778,4 +1020,5 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			return "";
 		}
 	}
+
 }

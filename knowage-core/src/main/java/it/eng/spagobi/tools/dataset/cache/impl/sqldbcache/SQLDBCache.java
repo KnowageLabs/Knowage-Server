@@ -47,7 +47,6 @@ import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
-import it.eng.spagobi.tools.dataset.cache.GroupCriteria;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheActivity;
 import it.eng.spagobi.tools.dataset.cache.ICacheEvent;
@@ -56,6 +55,10 @@ import it.eng.spagobi.tools.dataset.cache.ICacheTrigger;
 import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.SelectBuilder;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
+import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
+import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
+import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
+import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -76,7 +79,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
-import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
@@ -277,39 +279,15 @@ public class SQLDBCache implements ICache {
 		return dataStore;
 	}
 
-	/*
-	 * (non-Javadoc)int
-	 *
-	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet, java.util.List, java.util.List, java.util.List)
-	 */
-
 	@Override
-	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int offset,
-			int fetchSize) {
-		return get(dataSet, groups, filters, null, projections, null, offset, fetchSize);
-	}
-
-	@Override
-	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
-			List<ProjectionCriteria> summaryRowProjectionCriteria, int offset, int fetchSize) {
-		return get(dataSet, groups, filters, null, projections, summaryRowProjectionCriteria, offset, fetchSize);
-	}
-
-	@Override
-	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjectionCriteria, int offset, int fetchSize) {
-		return get(dataSet, groups, filters, havings, projections, summaryRowProjectionCriteria, offset, fetchSize, -1);
-	}
-
-	@Override
-	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjectionCriteria, int offset, int fetchSize, int maxRowCount) {
+	public IDataStore get(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
 		logger.debug("IN");
 
 		IDataStore dataStore = null;
 		try {
 			if (dataSet != null) {
-				dataStore = getInternal(dataSet, groups, filters, havings, projections, summaryRowProjectionCriteria, offset, fetchSize, maxRowCount);
+				dataStore = getInternal(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 			} else {
 				logger.warn("Input parameter [dataSet] is null");
 			}
@@ -325,8 +303,8 @@ public class SQLDBCache implements ICache {
 		return dataStore;
 	}
 
-	public IDataStore getInternal(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjectionCriteria, int offset, int fetchSize, int maxRowCount) {
+	public IDataStore getInternal(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
 		logger.debug("IN");
 
 		try {
@@ -336,8 +314,8 @@ public class SQLDBCache implements ICache {
 				logger.debug("Not found resultSet with signature [" + resultsetSignature + "] inside the Cache");
 				return null;
 			}
-			return queryStandardCachedDataset(groups, filters, havings, projections, summaryRowProjectionCriteria, resultsetSignature, offset, fetchSize,
-					maxRowCount, dataSet);
+			return queryStandardCachedDataset(dataSet, resultsetSignature, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize,
+					maxRowCount);
 
 		} finally {
 			logger.debug("OUT");
@@ -454,9 +432,8 @@ public class SQLDBCache implements ICache {
 	}
 
 	@SuppressWarnings("unchecked")
-	private IDataStore queryStandardCachedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, String resultsetSignature, int offset, int fetchSize,
-			int maxRowCount, IDataSet dataSet) {
+	private IDataStore queryStandardCachedDataset(IDataSet dataSet, String resultsetSignature, List<Projection> projections, Filter filter,
+			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
 
 		DataStore toReturn = null;
 
@@ -468,375 +445,25 @@ public class SQLDBCache implements ICache {
 				try {
 					if (getMetadata().containsCacheItem(resultsetSignature)) {
 						logger.debug("Found dataset with signature [" + resultsetSignature + "] and hash [" + hashedSignature + "] inside the cache");
+
 						CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
 						cacheItem.setLastUsedDate(new Date());
-						// update DB information about this cacheItem
-						getMetadata().updateCacheItem(cacheItem);
+						getMetadata().updateCacheItem(cacheItem); // update DB information about this cacheItem
+
 						String tableName = cacheItem.getTable();
 						logger.debug("Found resultSet with signature [" + resultsetSignature + "] inside the Cache, table used [" + tableName + "]");
 
-						// https://production.eng.it/jira/browse/KNOWAGE-149
-						// This list is used to create the order by clause
-						List<String> orderColumns = new ArrayList<String>();
-
-						SelectBuilder sqlBuilder = new SelectBuilder();
-						sqlBuilder.from(tableName);
-
-						/**
-						 * orderColumn - the column of the table through which the table will be ordered for the first category.
-						 *
-						 * appendColumnForCategories - the string that will be used for the ORDER BY clause of the query that we are going to construct. The
-						 * ordering by potential column and the category for it comes after the ordering by the series item(s).
-						 *
-						 * arrayCategoriesForOrdering - an array list that contains category, its potential ordering column and their ordering type attached to
-						 * them. When the clause for the order by is going to be created, we will take all items from this array list in order to create a final
-						 * order by SQL string.
-						 *
-						 * keepCategoryForOrdering - the part of the ORDER BY clause that is associated to the first category of the document.
-						 *
-						 * columnAndCategoryAreTheSame - indicator if the column that is set as an ordering one for the first category is of the same value
-						 * (name) as the category. In that case we will skip duplicating of columns of the table that the query should specify in the SELECT,
-						 * GROUP BY and ORDER BY clause.
-						 *
-						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-						 */
-						String orderColumn = "";
-						ArrayList<String> arrayCategoriesForOrdering = new ArrayList<String>();
-						String keepCategoryForOrdering = "";
-						boolean columnAndCategoryAreTheSame = false;
-						boolean isOrderColumnPresent = false;
-						boolean isAggregationPresent = false;
-						Map<String, String> columnNameWithColonToAliasName = new HashMap<String, String>();
-
-						boolean isHsqlDialect = false;
-						boolean isSqlServerDialect = false;
-						if (dataSource != null) {
-							String dialect = dataSource.getHibDialectName();
-							if (dialect != null) {
-								isHsqlDialect = dialect.contains("hsql");
-								isSqlServerDialect = dialect.contains("sqlserver");
-							}
-						}
-
-						// Columns to SELECT
 						DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI();
-						if (projections != null) {
 
-							for (ProjectionCriteria projection : projections) {
-
-								Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
-
-								String columnName = projection.getColumnName();
-								String aliasName = projection.getAliasName();
-								boolean hasAlias = aliasName != null && !aliasName.isEmpty();
-								String aggregateFunction = projection.getAggregateFunction();
-								IAggregationFunction aggregationFunction = AggregationFunctions.get(aggregateFunction);
-
-								if (columnName.contains(":")) {
-									columnName = datasetManagementAPI.getQbeDataSetColumn(dataSet, columnName);
-								}
-
-								if (datasetAlias != null) {
-									columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
-								}
-
-								if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
-									// this is a calculated field!
-									columnName = AbstractJDBCDataset.substituteStandardWithDatasourceDelimiter(columnName, dataSource);
-								} else {
-									columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-								}
-
-								/**
-								 * Aggregation function is possible only for series, hence this is the part for handling them and their ordering criteria for
-								 * the final query.
-								 *
-								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-								 */
-								aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
-								if (aggregationFunction != null && !aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION) && columnName != "*") {
-									columnName = aggregationFunction.apply(columnName);
-									isAggregationPresent = true;
-									if (hasAlias) {
-										// https://production.eng.it/jira/browse/KNOWAGE-149
-										// This variable is used for the order clause
-										String orderType = projection.getOrderType();
-										if (orderType != null && !orderType.isEmpty()) {
-											if (isHsqlDialect) {
-												orderColumns.add(aliasName + " " + orderType);
-											} else {
-												orderColumns.add(columnName + " " + orderType);
-											}
-										}
-										columnName += " AS " + aliasName;
-									} else {
-										throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
-									}
-								} else {
-									/**
-									 * Handling of the ordering criteria set for the first category.
-									 *
-									 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-									 */
-									String orderType = projection.getOrderType();
-									// If the order type is not defined for current item, consider it as it is of an empty value (empty string).
-									if (orderType == null) {
-										orderType = "";
-									}
-
-									orderColumn = projection.getOrderColumn();
-									/**
-									 * If the order column is defined and is not an empty string the column (attribute) through which the first category should
-									 * be ordered is set.
-									 */
-									if (orderColumn != null && !orderColumn.isEmpty()) {
-										isOrderColumnPresent = true;
-										orderColumn = AbstractJDBCDataset.encapsulateColumnName(orderColumn, dataSource);
-
-										if (orderType.isEmpty()) {
-											arrayCategoriesForOrdering.add(orderColumn + " ASC");
-										} else {
-											arrayCategoriesForOrdering.add(orderColumn + " " + orderType);
-										}
-
-										/**
-										 * If the ordering column is the same as the category for which is set.
-										 */
-										if (orderColumn.equals(columnName)) {
-											columnAndCategoryAreTheSame = true;
-										} else {
-											sqlBuilder.column(orderColumn);
-											sqlBuilder.groupBy(orderColumn);
-										}
-									} else {
-										if (!orderType.isEmpty()) {
-											if (hasAlias && isHsqlDialect) {
-												orderColumns.add(aliasName + " " + orderType);
-											} else {
-												orderColumns.add(columnName + " " + orderType);
-											}
-										} else {
-											/**
-											 * Keep the ordering for the first category so it can be appended to the end of the ORDER BY clause when it is
-											 * needed.
-											 */
-											if (keepCategoryForOrdering.isEmpty()) {
-												if (hasAlias && isHsqlDialect) {
-													keepCategoryForOrdering = aliasName + " ASC";
-												} else {
-													keepCategoryForOrdering = columnName + " ASC";
-												}
-											}
-										}
-									}
-
-									if (hasAlias && !aliasName.equals(columnName)) {
-										columnName += " AS " + aliasName;
-									}
-								}
-
-								sqlBuilder.column(columnName);
-							}
-
-							if (isOrderColumnPresent) {
-								/**
-								 * Only in the case when the category name and the name of the column through which it should be ordered are not the same,
-								 * append the part for ordering that category to the end of the ORDER BY clause.
-								 *
-								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-								 */
-								if (!columnAndCategoryAreTheSame && !keepCategoryForOrdering.isEmpty()) {
-									arrayCategoriesForOrdering.add(keepCategoryForOrdering);
-								}
-
-								/**
-								 * Append ordering by categories (columns, attributes) at the end of the array of table columns through which the ordering of
-								 * particular ordering type should be performed. This is the way in which the query is constructed inside the Chart Engine, so
-								 * we will keep the same approach.
-								 *
-								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-								 */
-								for (int i = 0; i < arrayCategoriesForOrdering.size(); i++) {
-									orderColumns.add(arrayCategoriesForOrdering.get(i));
-								}
-							}
-
-							sqlBuilder.setDistinctEnabled(!isAggregationPresent);
-						}
-
-						// WHERE conditions
-						if (filters != null) {
-							for (FilterCriteria filter : filters) {
-								String operator = filter.getOperator();
-
-								String leftOperand = null;
-								String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
-								if (operator.equalsIgnoreCase("IN")) {
-									leftOperand = (isHsqlDialect || isSqlServerDialect) ? "(" : "(1,";
-									String separator = "";
-									for (String value : columns) {
-										leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
-										separator = ",";
-									}
-									leftOperand += ")";
-								} else {
-									// if (filter.getLeftOperand().isCostant()) {
-									// why? warning!
-									// leftOperand = filter.getLeftOperand().getOperandValueAsString();
-									// } else { // it's a column
-									Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
-									String datasetLabel = filter.getLeftOperand().getOperandDataSet();
-									leftOperand = filter.getLeftOperand().getOperandValueAsString();
-									if (datasetAlias != null) {
-										leftOperand = datasetAlias.get(datasetLabel) + " - " + filter.getLeftOperand().getOperandValueAsString();
-									}
-									leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
-									// }
-								}
-
-								StringBuilder rightOperandSB = new StringBuilder();
-								if (filter.getRightOperand() != null) {
-									if (filter.getRightOperand().isCostant()) {
-										if (filter.getRightOperand().isMultivalue()) {
-											if (!isHsqlDialect && !isSqlServerDialect) {
-												rightOperandSB.append("(");
-											}
-											String separator = "";
-											List<String> values = filter.getRightOperand().getOperandValueAsList();
-											for (int i = 0; i < values.size(); i++) {
-												String value = values.get(i);
-												if ("IN".equalsIgnoreCase(operator)) {
-													if (value.startsWith("(") && value.endsWith(")")) {
-														value = value.substring(1, value.length() - 1);
-													}
-													if (i % columns.length == 0) {// 1st item of tuple of values
-														if (i >= columns.length) { // starting from 2nd tuple of values
-															rightOperandSB.append(",");
-														}
-														rightOperandSB.append(isHsqlDialect || isSqlServerDialect ? "(" : "(1");
-													}
-													if (i % columns.length != 0 || (!isHsqlDialect && !isSqlServerDialect)) {
-														rightOperandSB.append(",");
-													}
-													rightOperandSB.append(value);
-													if (i % columns.length == columns.length - 1) { // last item of tuple of values
-														rightOperandSB.append(")");
-													}
-												} else {
-													rightOperandSB.append(separator);
-													rightOperandSB.append("'");
-													rightOperandSB.append(value);
-													rightOperandSB.append("'");
-												}
-												separator = ",";
-											}
-											if (!isHsqlDialect && !isSqlServerDialect) {
-												rightOperandSB.append(")");
-											}
-										} else {
-											rightOperandSB.append(filter.getRightOperand().getOperandValueAsString());
-										}
-									} else { // it's a column
-										rightOperandSB.append(
-												AbstractJDBCDataset.encapsulateColumnName(filter.getRightOperand().getOperandValueAsString(), dataSource));
-									}
-
-									String rightOperandString = rightOperandSB.toString();
-									if (sqlBuilder.isWhereOrEnabled() && !rightOperandString.contains(" AND ")) {
-										sqlBuilder.where(leftOperand + " " + operator + " " + rightOperandString);
-									} else {
-										sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperandString + ")");
-									}
-
-								} else {
-									if (sqlBuilder.isWhereOrEnabled()) {
-										sqlBuilder.where(leftOperand + " " + operator);
-									} else {
-										sqlBuilder.where("(" + leftOperand + " " + operator + ")");
-									}
-								}
-							}
-						}
-
-						// GROUP BY conditions
-						if (groups != null) {
-							List<String> groupColumnNames = new ArrayList<String>();
-
-							for (GroupCriteria group : groups) {
-								String columnName = group.getColumnName();
-								String aggregateFunction = group.getAggregateFunction();
-								IAggregationFunction aggregationFunction = AggregationFunctions.get(aggregateFunction);
-								Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
-
-								if (columnName.contains(":")) {
-									columnName = datasetManagementAPI.getQbeDataSetColumn(dataSet, columnName);
-								}
-
-								if (datasetAlias != null) {
-									columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
-								}
-
-								columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-
-								if (aggregationFunction != null && !aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION) && columnName != "*") {
-									columnName = aggregationFunction.apply(columnName);
-								}
-
-								groupColumnNames.add(columnName);
-							}
-
-							for (String groupColumnName : groupColumnNames) {
-								sqlBuilder.groupBy(groupColumnName);
-							}
-						}
-
-						// HAVING conditions
-						if (havings != null) {
-							for (FilterCriteria having : havings) {
-								String leftOperand = having.getLeftOperand().getOperandValueAsString();
-								String operator = having.getOperator();
-								String rightOperand = having.getRightOperand().getOperandValueAsString();
-								sqlBuilder.having(leftOperand + " " + operator + " " + rightOperand);
-							}
-						}
-
-						// ORDER BY conditions
-						// https://production.eng.it/jira/browse/KNOWAGE-149
-						for (String orderColumnTemp : orderColumns) {
-							sqlBuilder.orderBy(orderColumnTemp);
-						}
-
-						String queryText = sqlBuilder.toString();
-						logger.debug("Cached dataset access query is equal to [" + queryText + "]");
-						IDataStore dataStore = dataSource.executeStatement(queryText, offset, fetchSize, maxRowCount);
+						// String queryText = sqlBuilder.toString();
+						String query = new SelectQuery(dataSet).selectDistinct().select(projections).from(tableName).where(filter).groupBy(groups)
+								.orderBy(sortings).toSql(dataSource);
+						logger.debug("Cached dataset access query is equal to [" + query + "]");
+						IDataStore dataStore = dataSource.executeStatement(query, offset, fetchSize, maxRowCount);
 
 						if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
-							StringBuilder sb = new StringBuilder();
-							sb.append("SELECT ");
-							String comma = "";
-							for (int i = 0; i < projections.size(); i++) {
-								ProjectionCriteria projection = projections.get(i);
-								String alias = projection.getAliasName();
-								String aggregateFunction = null;
-								for (ProjectionCriteria summaryRowProjection : summaryRowProjections) {
-									String columnName = summaryRowProjection.getColumnName();
-									if (columnName.equals(alias)) {
-										aggregateFunction = summaryRowProjection.getAggregateFunction();
-										break;
-									}
-								}
-								IAggregationFunction aggregationFunction = AggregationFunctions.get(aggregateFunction);
-								if (aggregationFunction != null && !aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION)) {
-									sb.append(comma);
-									comma = ",";
-									sb.append(aggregationFunction.apply(AbstractJDBCDataset.encapsulateColumnName(alias, dataSource)));
-								}
-							}
-							sb.append(" FROM (");
-							sb.append(queryText);
-							sb.append(") T");
-
-							String summaryRowQuery = sb.toString();
+							String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter)
+									.groupBy(groups).toSql(dataSource);
 							IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1);
 							datasetManagementAPI.appendSummaryRowToPagedDataStore(projections, summaryRowProjections, dataStore, summaryRowDataStore);
 						}

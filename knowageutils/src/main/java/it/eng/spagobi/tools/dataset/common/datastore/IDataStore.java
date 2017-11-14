@@ -17,18 +17,18 @@
  */
 package it.eng.spagobi.tools.dataset.common.datastore;
 
-import gnu.trove.set.hash.TLongHashSet;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.query.IQuery;
-
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import gnu.trove.set.hash.TLongHashSet;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.query.IQuery;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
@@ -83,9 +83,13 @@ public interface IDataStore {
 
 	IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, int maxRowCount);
 
+	IDataStore aggregateAndFilterRecords(String sqlQuery, List<Object> values, int offset, int fetchSize, int maxRowCount);
+
 	IDataStore aggregateAndFilterRecords(IQuery query);
 
 	org.apache.metamodel.data.DataSet getMetaModelResultSet(String sqlQuery);
+
+	org.apache.metamodel.data.DataSet getMetaModelResultSet(String sqlQuery, List<Object> values);
 
 	/**
 	 * @deprecated use the proper DataWriter instead

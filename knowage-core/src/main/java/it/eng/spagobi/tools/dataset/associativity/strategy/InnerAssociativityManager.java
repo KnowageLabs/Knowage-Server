@@ -18,18 +18,26 @@
 
 package it.eng.spagobi.tools.dataset.associativity.strategy;
 
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.tools.dataset.associativity.AbstractAssociativityManager;
-import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
-import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
-import it.eng.spagobi.tools.dataset.graph.associativity.Config;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.tools.dataset.associativity.AbstractAssociativityManager;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
+import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
+import it.eng.spagobi.tools.dataset.cache.query.item.MultipleProjectionSimpleFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
+import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
+import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
+import it.eng.spagobi.tools.dataset.graph.associativity.Config;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -57,11 +65,16 @@ public class InnerAssociativityManager extends AbstractAssociativityManager {
 							result.getDatasetToEdgeGroup().get(v1).add(group);
 
 							if (!documentsAndExcludedDatasets.contains(v1)) {
-								String tableName = associativeDatasetContainers.get(v1).getTableName();
-								String columnNames = getColumnNames(group.getOrderedEdgeNames(), v1);
+								AssociativeDatasetContainer container = associativeDatasetContainers.get(v1);
+								String tableName = container.getTableName();
+								IDataSet dataSet = container.getDataSet();
+								IDataSource dataSource = container.getDataSource();
+
+								List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), v1);
 								if (!columnNames.isEmpty()) {
-									String query = "SELECT DISTINCT " + columnNames + " FROM " + tableName;
-									Set<String> tuple = getTupleOfValues(v1, query);
+									PreparedStatementData data = new SelectQuery(dataSet).selectDistinct().select(columnNames.toArray(new String[0]))
+											.from(tableName).getPreparedStatementData(dataSource);
+									Set<String> tuple = getTupleOfValues(v1, data.getQuery(), data.getValues());
 
 									if (!result.getEdgeGroupValues().containsKey(group)) {
 										result.getEdgeGroupValues().put(group, tuple);
@@ -88,17 +101,21 @@ public class InnerAssociativityManager extends AbstractAssociativityManager {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, String filter) throws Exception {
-		Set<EdgeGroup> groups = result.getDatasetToEdgeGroup().get(dataset);
-		String tableName = associativeDatasetContainers.get(dataset).getTableName();
+	protected void calculateDatasets(String datasetLabel, EdgeGroup fromEdgeGroup, SimpleFilter filter) throws Exception {
+		Set<EdgeGroup> groups = result.getDatasetToEdgeGroup().get(datasetLabel);
+		AssociativeDatasetContainer container = associativeDatasetContainers.get(datasetLabel);
+		String tableName = container.getTableName();
+		IDataSet dataSet = container.getDataSet();
+		IDataSource dataSource = container.getDataSource();
 
 		// iterate over all the associations
 		for (EdgeGroup group : groups) {
-			String columnNames = getColumnNames(group.getOrderedEdgeNames(), dataset);
-			if (columnNames.length() > 0) {
-				String query = "SELECT DISTINCT " + columnNames + " FROM " + tableName + " WHERE " + filter;
+			List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), datasetLabel);
+			if (columnNames.size() > 0) {
+				PreparedStatementData data = new SelectQuery(dataSet).selectDistinct().select(columnNames.toArray(new String[0])).from(tableName).where(filter)
+						.getPreparedStatementData(dataSource);
 
-				Set<String> distinctValues = getTupleOfValues(dataset, query);
+				Set<String> distinctValues = getTupleOfValues(datasetLabel, data.getQuery(), data.getValues());
 
 				Set<String> baseSet = result.getEdgeGroupValues().get(group);
 				Set<String> intersection = new HashSet<String>(CollectionUtils.intersection(baseSet, distinctValues));
@@ -107,12 +124,12 @@ public class InnerAssociativityManager extends AbstractAssociativityManager {
 						result.getEdgeGroupValues().put(group, intersection);
 
 						for (String datasetInvolved : result.getEdgeGroupToDataset().get(group)) {
-							if (!documentsAndExcludedDatasets.contains(datasetInvolved) && !datasetInvolved.equals(dataset)) {
+							if (!documentsAndExcludedDatasets.contains(datasetInvolved) && !datasetInvolved.equals(datasetLabel)) {
 								columnNames = getColumnNames(group.getOrderedEdgeNames(), datasetInvolved);
-								if (columnNames.length() > 0) {
-									String whereClauses = associativeDatasetContainers.get(dataset).buildFilter(columnNames, intersection);
+								if (columnNames.size() > 0) {
+									MultipleProjectionSimpleFilter whereClause = container.buildInFilter(dataSet, columnNames, intersection);
 									// it will skip the current dataset, from which the filter is fired
-									calculateDatasets(datasetInvolved, group, whereClauses);
+									calculateDatasets(datasetInvolved, group, whereClause);
 								}
 							}
 						}

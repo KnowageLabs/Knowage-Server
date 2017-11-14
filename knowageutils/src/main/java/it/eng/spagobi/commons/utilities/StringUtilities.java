@@ -17,12 +17,6 @@
  */
 package it.eng.spagobi.commons.utilities;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +40,12 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -190,7 +190,8 @@ public class StringUtilities {
 		} else {
 			if (attributeValue.startsWith("{")) {
 				// the profile attribute is multi-value
-				logger.warn("The attribute value seems to be a multi value attribute; trying considering it as a multi value using its own splitter and no prefix and suffix.");
+				logger.warn(
+						"The attribute value seems to be a multi value attribute; trying considering it as a multi value using its own splitter and no prefix and suffix.");
 				try {
 					// checks the sintax
 					String[] values = findAttributeValues(attributeValue);
@@ -440,7 +441,8 @@ public class StringUtilities {
 			} else {
 				if (value.startsWith("{")) {
 					// the profile attribute is multi-value
-					logger.warn("The attribute value seems to be a multi value parameter; trying considering it as a multi value using its own splitter and no prefix and suffix.");
+					logger.warn(
+							"The attribute value seems to be a multi value parameter; trying considering it as a multi value using its own splitter and no prefix and suffix.");
 					try {
 						// checks the sintax
 						String[] values = findAttributeValues(value);
@@ -627,7 +629,8 @@ public class StringUtilities {
 		} else {
 			if (value.startsWith("{")) {
 				// the profile attribute is multi-value
-				logger.warn("The attribute value seems to be a multi value parameter; trying considering it as a multi value using its own splitter and no prefix and suffix.");
+				logger.warn(
+						"The attribute value seems to be a multi value parameter; trying considering it as a multi value using its own splitter and no prefix and suffix.");
 				try {
 					// checks the sintax
 					String[] values = findAttributeValues(value);
@@ -939,4 +942,18 @@ public class StringUtilities {
 		});
 	}
 
+	/**
+	 * Parse values between delimiter.
+	 */
+	public static String[] getSubstringsBetween(String values, String delimiter) {
+		ArrayList<String> arrayList = new ArrayList<>();
+		int start = values.indexOf(delimiter);
+		while (start > -1) {
+			int end = values.indexOf(delimiter, start + 1);
+			arrayList.add(values.substring(start + 1, end));
+			values = values.substring(end + 1);
+			start = values.indexOf(delimiter);
+		}
+		return arrayList.toArray(new String[0]);
+	}
 }

@@ -1,5 +1,5 @@
 /*
- * Knowage, Open Source Business Intelligence suite
+* Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 
  * Knowage is free software: you can redistribute it and/or modify
@@ -23,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -43,7 +42,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.esotericsoftware.kryo.Kryo;
@@ -52,7 +50,6 @@ import com.esotericsoftware.kryo.io.UnsafeInput;
 import commonj.work.Work;
 import commonj.work.WorkException;
 import commonj.work.WorkItem;
-import edu.emory.mathcs.backport.java.util.Arrays;
 import gnu.trove.set.hash.TLongHashSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
@@ -78,13 +75,23 @@ import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.GroupCriteria;
-import it.eng.spagobi.tools.dataset.cache.InLineViewBuilder;
-import it.eng.spagobi.tools.dataset.cache.Operand;
 import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.SelectBuilder;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
+import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
+import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
+import it.eng.spagobi.tools.dataset.cache.query.item.AndFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
+import it.eng.spagobi.tools.dataset.cache.query.item.NullaryFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.OrFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
+import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilterOperator;
+import it.eng.spagobi.tools.dataset.cache.query.item.SingleProjectionSimpleFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
+import it.eng.spagobi.tools.dataset.cache.query.item.UnaryFilter;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
@@ -124,6 +131,7 @@ import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
  * calling directly the DAO.
  *
  * @author gavardi, gioia
+ *
  */
 
 public class DatasetManagementAPI {
@@ -352,16 +360,10 @@ public class DatasetManagementAPI {
 		return tableName;
 	}
 
-	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxRowCount, boolean isNearRealtime, Map<String, String> parametersValues,
-			List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> filtersForMetaModel, List<FilterCriteria> havings,
-			List<FilterCriteria> havingsForMetaModel, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections) {
-
-		String message = "An unexpected error occured while executing method";
+	public IDataStore getDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections, Filter filter,
+			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
+		String errorMessage = "An unexpected error occured while executing method";
 		try {
-			logger.debug("Loading dataset with label [" + label + "]");
-			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
-			Assert.assertNotNull(dataSet, "Impossible to load dataset with label [" + label + "]");
-
 			setDataSetParameters(dataSet, parametersValues);
 
 			// force resolution of parameters
@@ -374,33 +376,30 @@ public class DatasetManagementAPI {
 
 			if (dataSet.isPersisted()) {
 				logger.debug("Querying persisted dataset");
-				dataStore = queryPersistedDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
+				dataStore = queryPersistedDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 				dataStore.setCacheDate(getPersistedDate(dataSet));
 			} else if (dataSet.isFlatDataset()) {
 				logger.debug("Querying flat dataset");
-				dataStore = queryFlatDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
+				dataStore = queryFlatDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 				dataStore.setCacheDate(new Date());
 			} else {
 				boolean isJDBCDataSet = isJDBCDataSet(dataSet);
 				boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
 				if (isNearRealtime && isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
 					logger.debug("Querying near realtime/JDBC dataset");
-					dataStore = queryJDBCDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
+					dataStore = queryJDBCDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
 				} else if (isNearRealtime || dataSet.isRealtime()) {
 					logger.debug("Querying near realtime dataset");
-					dataStore = queryNearRealtimeDataset(groups, filtersForMetaModel, havingsForMetaModel, projections, summaryRowProjections, dataSet, offset,
-							fetchSize, maxRowCount);
+					dataStore = queryNearRealtimeDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
-
 				} else {
 					logger.debug("Querying dataset in cache");
 					SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 					cache.setUserProfile(userProfile);
 
-					IDataStore cachedResultSet = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize,
+					IDataStore cachedResultSet = cache.get(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize,
 							maxRowCount);
-
 					if (cachedResultSet == null) {
 						logger.debug("Dataset not in cache");
 						if (isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
@@ -421,33 +420,28 @@ public class DatasetManagementAPI {
 							}
 							cache.put(dataSet, dataSet.getDataStore());
 						}
-						// getting data from cache...
-						dataStore = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize, maxRowCount);
+						dataStore = cache.get(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 						if (dataStore == null) {
-							throw new CacheException(message);
+							throw new CacheException(errorMessage);
 						}
 						adjustMetadata((DataStore) dataStore, dataSet, null);
 						dataSet.decode(dataStore);
 
 						// if result was not cached put refresh date as now
 						dataStore.setCacheDate(new Date());
-
 					} else {
 						dataStore = cachedResultSet;
-						/*
-						 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and
-						 * alias... therefore we adjust its metadata
-						 */
 						adjustMetadata((DataStore) dataStore, dataSet, null);
 						dataSet.decode(dataStore);
 					}
 				}
 			}
+
 			return dataStore;
 
 		} catch (Throwable t) {
-			logger.error(message, t);
-			throw new RuntimeException(message, t);
+			logger.error(errorMessage, t);
+			throw new RuntimeException(errorMessage, t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -623,13 +617,9 @@ public class DatasetManagementAPI {
 
 			}
 
-			List<ProjectionCriteria> projectionCriteria = this.getProjectionCriteria(label, crosstabDefinition);
-			List<FilterCriteria> filterCriteria = new ArrayList<>(); // empty
-			// in
-			// this
-			// case
-			List<GroupCriteria> groupCriteria = this.getGroupCriteria(label, crosstabDefinition);
-			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria, 0, 0);
+			List<Projection> projections = this.getProjections(dataSet, crosstabDefinition);
+			List<Projection> groups = this.getGroups(dataSet, crosstabDefinition);
+			dataStore = cache.get(dataSet, projections, null, groups, null, null, 0, 0, -1);
 
 			/*
 			 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias...
@@ -870,9 +860,10 @@ public class DatasetManagementAPI {
 	 * @deprecated
 	 */
 	@Deprecated
-	private List<ProjectionCriteria> getProjectionCriteria(String dataset, CrosstabDefinition crosstabDefinition) {
+	private List<Projection> getProjections(IDataSet dataSet, CrosstabDefinition crosstabDefinition) {
 		logger.debug("IN");
-		List<ProjectionCriteria> projectionCriterias = new ArrayList<>();
+
+		List<Projection> projections = new ArrayList<>();
 
 		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
 		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
@@ -883,16 +874,14 @@ public class DatasetManagementAPI {
 		while (columsIt.hasNext()) {
 			CrosstabDefinition.Column aColumn = columsIt.next();
 			String columnName = aColumn.getEntityId();
-			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, columnName);
-			projectionCriterias.add(aProjectionCriteria);
+			projections.add(new Projection(dataSet, columnName));
 		}
 		// appends rows
 		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
 		while (rowsIt.hasNext()) {
 			CrosstabDefinition.Row aRow = rowsIt.next();
 			String columnName = aRow.getEntityId();
-			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, columnName);
-			projectionCriterias.add(aProjectionCriteria);
+			projections.add(new Projection(dataSet, columnName));
 		}
 
 		// appends measures
@@ -915,27 +904,24 @@ public class DatasetManagementAPI {
 				 */
 			} else {
 				if (function != AggregationFunctions.NONE_FUNCTION) {
-					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, function.getName(), columnName);
-					projectionCriterias.add(aProjectionCriteria);
+					projections.add(new Projection(function, dataSet, columnName));
 				} else {
-					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, columnName);
-					projectionCriterias.add(aProjectionCriteria);
+					projections.add(new Projection(dataSet, columnName));
 				}
 			}
-
 		}
 
 		logger.debug("OUT");
-		return projectionCriterias;
+		return projections;
 	}
 
 	/**
 	 * @deprecated
 	 */
 	@Deprecated
-	private List<GroupCriteria> getGroupCriteria(String dataset, CrosstabDefinition crosstabDefinition) {
+	private List<Projection> getGroups(IDataSet dataSet, CrosstabDefinition crosstabDefinition) {
 		logger.debug("IN");
-		List<GroupCriteria> groupCriterias = new ArrayList<>();
+		List<Projection> groups = new ArrayList<>();
 
 		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
 		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
@@ -945,8 +931,7 @@ public class DatasetManagementAPI {
 		while (columsIt.hasNext()) {
 			CrosstabDefinition.Column aColumn = columsIt.next();
 			String columnName = aColumn.getEntityId();
-			GroupCriteria groupCriteria = new GroupCriteria(dataset, columnName, null);
-			groupCriterias.add(groupCriteria);
+			groups.add(new Projection(dataSet, columnName));
 		}
 
 		// appends rows
@@ -954,11 +939,10 @@ public class DatasetManagementAPI {
 		while (rowsIt.hasNext()) {
 			CrosstabDefinition.Row aRow = rowsIt.next();
 			String columnName = aRow.getEntityId();
-			GroupCriteria groupCriteria = new GroupCriteria(dataset, columnName, null);
-			groupCriterias.add(groupCriteria);
+			groups.add(new Projection(dataSet, columnName));
 		}
 		logger.debug("OUT");
-		return groupCriterias;
+		return groups;
 	}
 
 	protected void adjustMetadata(DataStore dataStore, IDataSet dataset, JSONArray fieldOptions) {
@@ -1285,48 +1269,41 @@ public class DatasetManagementAPI {
 		return statement;
 	}
 
-	private IDataStore queryPersistedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount)
-			throws InstantiationException, IllegalAccessException {
+	private IDataStore queryPersistedDataset(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
 		IDataSource dataSource = dataSet.getDataSourceForWriting();
 		String tableName = dataSet.getPersistTableName();
-		return queryDataset(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset,
-				fetchSize, maxRowCount);
+		return queryDataset(dataSet, dataSource, projections, tableName, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 	}
 
-	private IDataStore queryFlatDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount)
-			throws InstantiationException, IllegalAccessException {
+	private IDataStore queryFlatDataset(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
 		IDataSource dataSource = dataSet.getDataSource();
 		String tableName = dataSet.getFlatTableName();
-		return queryDataset(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset,
-				fetchSize, maxRowCount);
+		return queryDataset(dataSet, dataSource, projections, tableName, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 	}
 
-	private IDataStore queryJDBCDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount)
-			throws JSONException, Exception, IllegalAccessException {
+	private IDataStore queryJDBCDataset(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
 		IDataSource dataSource = dataSet.getDataSource();
 		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
-		String tableName = querableBehaviour.getStatement();
-		InLineViewBuilder sqlBuilder = new InLineViewBuilder();
-		return queryDataset(sqlBuilder, dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize,
-				maxRowCount);
+		String tableName = "(" + querableBehaviour.getStatement() + ") T";
+		return queryDataset(dataSet, dataSource, projections, tableName, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 	}
 
-	private IDataStore queryNearRealtimeDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize,
-			int maxRowCount) {
+	private IDataStore queryNearRealtimeDataset(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
 		dataSet.loadData();
 		IDataStore dataStore = dataSet.getDataStore();
 		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
 			String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
 			List<String> orderColumns = new ArrayList<>();
 
-			String originalQuery = getQueryText(null, tableName, groups, filters, havings, projections, null, dataSet, true, orderColumns);
+			PreparedStatementData data = new SelectQuery(dataSet).selectDistinct().select(projections).from(tableName).where(filter).groupBy(groups)
+					.orderBy(sortings).getPreparedStatementData(null);
 			boolean hasSortingOnCalculatedColumns = checkSortingOnCalculatedColumns(orderColumns);
 
-			IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1, maxRowCount);
+			IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(data.getQuery(), data.getValues(), -1, -1, maxRowCount);
 			if (hasSortingOnCalculatedColumns) {
 				appendCalculatedColumnsToDataStore(projections, originalDataStore);
 				sortColumnsOnDataStore(orderColumns, originalDataStore);
@@ -1337,9 +1314,11 @@ public class DatasetManagementAPI {
 				appendCalculatedColumnsToDataStore(projections, pagedDataStore);
 			}
 
-			if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
-				String summaryRowQuery = getQueryText(null, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, true, null);
-				IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1, maxRowCount);
+			if (summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
+				PreparedStatementData summaryRowData = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter)
+						.groupBy(groups).orderBy(sortings).getPreparedStatementData(null);
+				IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowData.getQuery(), summaryRowData.getValues(), -1, -1,
+						maxRowCount);
 				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 			}
 
@@ -1353,7 +1332,7 @@ public class DatasetManagementAPI {
 		return dataStore;
 	}
 
-	private void appendCalculatedColumnsToDataStore(List<ProjectionCriteria> projections, IDataStore pagedDataStore) {
+	private void appendCalculatedColumnsToDataStore(List<Projection> projections, IDataStore pagedDataStore) {
 		if (projections != null) {
 			IMetaData storeMetaData = pagedDataStore.getMetaData();
 
@@ -1361,11 +1340,10 @@ public class DatasetManagementAPI {
 			Map<String, String> basicColumnMap = new HashMap<>(); // aggregated basic column name -> basic column name
 			Map<String, Integer> fieldIndexMap = new HashMap<>(); // basic column name -> field index
 
-			for (ProjectionCriteria projection : projections) {
-				String columnName = projection.getColumnName();
+			for (Projection projection : projections) {
+				String columnName = projection.getName();
 
-				String aggregateFunction = projection.getAggregateFunction();
-				IAggregationFunction aggregationFunction = AggregationFunctions.get(aggregateFunction);
+				IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
 				if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) { // this is a calculated field!
 					for (String basicColumnName : getBasicColumnsFromCalculatedColumn(columnName)) {
@@ -1425,7 +1403,7 @@ public class DatasetManagementAPI {
 						} else {
 							fieldMetaData.setName(columnName);
 						}
-						String aliasName = projection.getAliasName();
+						String aliasName = projection.getAlias();
 						if (aliasName != null && !aliasName.isEmpty()) {
 							fieldMetaData.setAlias(aliasName);
 						}
@@ -1520,15 +1498,15 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	public void appendSummaryRowToPagedDataStore(List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections,
-			IDataStore pagedDataStore, IDataStore summaryRowDataStore) {
+	public void appendSummaryRowToPagedDataStore(List<Projection> projections, List<Projection> summaryRowProjections, IDataStore pagedDataStore,
+			IDataStore summaryRowDataStore) {
 		// calc a map for summaryRowProjections -> projections
 		Map<Integer, Integer> projectionToSummaryRowProjection = new HashMap<>();
 		for (int i = 0; i < summaryRowProjections.size(); i++) {
-			ProjectionCriteria summaryRowProjection = summaryRowProjections.get(i);
+			Projection summaryRowProjection = summaryRowProjections.get(i);
 			for (int j = 0; j < projections.size(); j++) {
-				ProjectionCriteria projection = projections.get(j);
-				if (summaryRowProjection.getColumnName().equals(projection.getAliasName())) {
+				Projection projection = projections.get(j);
+				if (summaryRowProjection.getName().equals(projection.getAlias())) {
 					projectionToSummaryRowProjection.put(j, i);
 					break;
 				}
@@ -1559,17 +1537,17 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	private IDataStore queryDataset(SelectBuilder sqlBuilder, IDataSource dataSource, String tableName, List<GroupCriteria> groups,
-			List<FilterCriteria> filters, List<FilterCriteria> havings, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections,
-			IDataSet dataSet, int offset, int fetchSize, int maxRowCount) throws InstantiationException, IllegalAccessException {
+	private IDataStore queryDataset(IDataSet dataSet, IDataSource dataSource, List<Projection> projections, String tableName, Filter filter,
+			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
 		logger.debug("IN");
 
-		String query = getQueryText(sqlBuilder, dataSource, tableName, groups, filters, havings, projections, null, dataSet, false, null);
+		String query = new SelectQuery(dataSet).selectDistinct().select(projections).from(tableName).where(filter).groupBy(groups).orderBy(sortings)
+				.toSql(dataSource);
 		IDataStore pagedDataStore = dataSource.executeStatement(query, offset, fetchSize, maxRowCount);
 
-		if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
-			String summaryRowQuery = getQueryText(sqlBuilder.getClass().newInstance(), dataSource, tableName, groups, filters, havings, projections,
-					summaryRowProjections, dataSet, false, null);
+		if (summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
+			String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter).groupBy(groups)
+					.toSql(dataSource);
 			IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1, maxRowCount);
 			appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 		}
@@ -1592,6 +1570,7 @@ public class DatasetManagementAPI {
 		if (tableName == null || tableName.isEmpty() || (!isNearRealtime && dataSource == null)) {
 			throw new IllegalArgumentException(
 					"Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource + "] are null or empty.");
+
 		}
 
 		String label = dataSet.getLabel();
@@ -2061,11 +2040,18 @@ public class DatasetManagementAPI {
 						boolean isMultiValue = parameter.optBoolean("multiValuePar");
 						int length = isMultiValue ? values.length : 1;
 
+						String typePar = parameter.optString("typePar");
+						String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
+
 						List<String> newValues = new ArrayList<>();
 						for (int j = 0; j < length; j++) {
 							String value = values[j].trim();
 							if (!value.isEmpty()) {
-								newValues.add(value);
+								if (!value.startsWith(delim) && !value.endsWith(delim)) {
+									newValues.add(delim + value + delim);
+								} else {
+									newValues.add(value);
+								}
 							}
 						}
 						paramValues.put(paramName, StringUtils.join(newValues, ","));
@@ -2108,6 +2094,7 @@ public class DatasetManagementAPI {
 			if (!file.exists()) {
 				logger.debug(
 						"Impossible to find a binary file named [" + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION + "] located at [" + path + "]");
+
 				calculateDomainValues(dataSet, wait);
 			}
 			if (wait) {
@@ -2179,7 +2166,7 @@ public class DatasetManagementAPI {
 	}
 
 	/**
-	 * if a filter has MAX() or MIN() value convert it bay calculating the right value
+	 * if a filter has MAX() or MIN() value convert it by calculating the right value
 	 *
 	 * @param label
 	 * @param parameters
@@ -2201,196 +2188,99 @@ public class DatasetManagementAPI {
 	 * @return
 	 */
 
-	public List<FilterCriteria> calculateMinMaxFilter(String label, String parameters, String selections, String likeSelections, int maxRowCount,
-			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime, List<GroupCriteria> groupCriteria,
-			List<FilterCriteria> filterCriteriaForMetaModel, List<ProjectionCriteria> summaryRowProjectionCriteria, List<FilterCriteria> havingCriteria,
-			List<FilterCriteria> havingCriteriaForMetaModel, List<FilterCriteria> filterCriteria, List<ProjectionCriteria> projectionCriteria) {
+	// FIXME
+	public List<SimpleFilter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues,
+			List<Projection> projections, List<SimpleFilter> filters, List<SimpleFilter> likeFilters, List<Projection> groups, int offset, int fetchSize,
+			int maxRowCount) {
 
 		logger.debug("IN");
 
-		// filters list with max min substituted, to be returned
-		List<FilterCriteria> toReturn = new ArrayList<FilterCriteria>();
+		List<SimpleFilter> newFilters = new ArrayList<>(filters);
 
-		// all other filters, use it to get max min values
-		List<FilterCriteria> noMaxMinfilterCriteria = new ArrayList<FilterCriteria>();
+		List<Integer> minMaxFilterIndexes = new ArrayList<>();
+		List<Projection> minMaxProjections = new ArrayList<>();
 
-		// indexes of max and min filters found in filtersCriteria
-		List<Integer> maxMinFilterCriteriaIndex = new ArrayList<>();
-		// map column name to filter criteria
-		Map<String, Integer> maxMinFilterCriteriaNameToIndex = new HashMap<String, Integer>();
+		List<SimpleFilter> noMinMaxFilters = new ArrayList<>();
 
-		// columns name with a min filter criteria
-		List<String> minFilterCriteriaString = new ArrayList<>();
-		// columns name with a max filter criteria
-		List<String> maxFilterCriteriaString = new ArrayList<>();
+		for (int i = 0; i < filters.size(); i++) {
+			SimpleFilter filter = filters.get(i);
+			SimpleFilterOperator operator = filter.getOperator();
 
-		// what to put in select clause when retrieving for MAX or MIN
-		List<ProjectionCriteria> aggregationProjectionCriteria = new ArrayList<ProjectionCriteria>();
-		ArrayList<String> aggregationFields = new ArrayList<>();
+			if (SimpleFilterOperator.EQUALS_TO_MIN.equals(operator)) {
+				logger.debug("Min filter found at index [" + i + "]");
+				minMaxFilterIndexes.add(i);
 
-		/**
-		 * pass al filters criteria in order ot find MAX() or MIN() filters
-		 */
-		for (int i = 0; i < filterCriteria.size(); i++) {
-			FilterCriteria fc = filterCriteria.get(i);
-			String operator = fc.getOperator();
+				String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
+				Projection projection = new Projection(AggregationFunctions.MIN_FUNCTION, dataSet, columnName);
+				minMaxProjections.add(projection);
+			} else if (SimpleFilterOperator.EQUALS_TO_MAX.equals(operator)) {
+				minMaxFilterIndexes.add(i);
+				logger.debug("Max filter found at index [" + i + "]");
 
-			Operand leftOperand = fc.getLeftOperand();
-			Object lov = leftOperand.getOperandValue();
-			String letOp = lov.toString();
-
-			// Operand rightOperand = fc.getRightOperand();
-			// Object rov = rightOperand.getOperandValue();
-			// String values = rov.toString();
-
-			if (operator.equalsIgnoreCase("min")) {
-				logger.debug("found a MIN filter criteria at index " + i + " for coulmnn " + fc.getLeftOperand().getOperandValueAsString());
-				String columnName = fc.getLeftOperand().getOperandValueAsString();
-				maxMinFilterCriteriaIndex.add(i);
-				maxMinFilterCriteriaNameToIndex.put(letOp, i);
-				minFilterCriteriaString.add(fc.getLeftOperand().getOperandValueAsString());
-
-				ProjectionCriteria aggregatePc = new ProjectionCriteria(null, columnName, "MIN", columnName); // TODO GET DATASET
-				aggregatePc.setOrderType("");
-				aggregationProjectionCriteria.add(aggregatePc);
-				aggregationFields.add(aggregatePc.getAliasName());
-
-			} else if (operator.equalsIgnoreCase("max")) {
-				logger.debug("found a MAX filter criteria at index " + i + " for coulmnn " + fc.getLeftOperand().getOperandValueAsString());
-				String columnName = fc.getLeftOperand().getOperandValueAsString();
-				maxMinFilterCriteriaIndex.add(i);
-				maxMinFilterCriteriaNameToIndex.put(letOp, i);
-				maxFilterCriteriaString.add(fc.getLeftOperand().getOperandValueAsString());
-
-				ProjectionCriteria aggregatePc = new ProjectionCriteria(null, columnName, "MAX", columnName);
-				aggregatePc.setOrderType("");
-				aggregationProjectionCriteria.add(aggregatePc);
-				aggregationFields.add(aggregatePc.getAliasName());
-
+				String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
+				Projection projection = new Projection(AggregationFunctions.MAX_FUNCTION, dataSet, columnName, columnName);
+				minMaxProjections.add(projection);
 			} else {
-				noMaxMinfilterCriteria.add(fc);
+				noMinMaxFilters.add(filter);
 			}
 		}
 
-		/**
-		 * Enters here only if found MAX() or MIN() filter
-		 */
-		if (maxMinFilterCriteriaIndex.size() > 0) {
-			logger.debug("Max or min filter found");
+		if (minMaxFilterIndexes.size() > 0) {
+			logger.debug("MIN/MAX filter found");
 
-			// index projecton Criteria
-			// for each projection if it is in maxMin aggregations write specific projection
-			// for (Iterator iterator = projectionCriteria.iterator(); iterator.hasNext();) {
-			// ProjectionCriteria pc = (ProjectionCriteria) iterator.next();
-			// String columnName = pc.getColumnName();
-			//
-			// if (minFilterCriteriaString.contains(columnName)) {
-			// logger.debug(columnName + " is among MIN aggregation");
-			// ProjectionCriteria aggregatePc = new ProjectionCriteria(pc.getDataset(), columnName, "MIN", columnName);
-			// aggregationProjectionCriteria.add(aggregatePc);
-			// aggregationFields.add(aggregatePc.getAliasName());
-			// }
-			// if (maxFilterCriteriaString.contains(columnName)) {
-			// logger.debug(columnName + " is among MAX aggregation");
-			// ProjectionCriteria aggregatePc = new ProjectionCriteria(pc.getDataset(), columnName, "MAX", columnName);
-			// aggregationProjectionCriteria.add(aggregatePc);
-			// aggregationFields.add(aggregatePc.getAliasName());
-			// }
-			// }
+			Filter where = getWhereFilter(noMinMaxFilters, likeFilters);
 
-			/**
-			 * pre-calculate values to substitute in filters
-			 */
-
-			// get Values to store in filters
-			IDataStore dataStore = getDataStore(label, offset, fetchSize, maxRowCount, isNearRealtime, DataSetUtilities.getParametersMap(parameters), null,
-					// groupCriteria,
-					noMaxMinfilterCriteria, filterCriteriaForMetaModel, null, null,
-					// havingCriteria,
-					// havingCriteriaForMetaModel,
-					aggregationProjectionCriteria, summaryRowProjectionCriteria);
-
+			IDataStore dataStore = getDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, null, null, null, offset, fetchSize,
+					maxRowCount);
 			if (dataStore == null) {
-				logger.error("Error in getting MAX and MIN filters values");
-				throw new SpagoBIRuntimeException("Error in getting MAX and MIN filters values, avlues not returned");
+				String errorMessage = "Error in getting min and max filters values";
+				logger.error(errorMessage);
+				throw new SpagoBIRuntimeException(errorMessage);
 			}
 
-			logger.debug("MIN / MAX filter values calculated");
+			logger.debug("MIN/MAX filter values calculated");
 
-			/**
-			 * get Values from datastore and substitute them in original filters
-			 */
-			// get value and substitute it in filter
-			boolean multiple = false;
-			for (int i = 0; i < aggregationFields.size(); i++) {
-				String aliasField = aggregationFields.get(i);
+			for (int i = 0; i < minMaxProjections.size(); i++) {
+				Projection projection = minMaxProjections.get(i);
+				String alias = projection.getAlias();
+				String errorMessage = "MIN/MAX value for field [" + alias + "] not found";
 
-				List values = dataStore.getFieldValues(dataStore.getMetaData().getFieldIndex(aliasField));
-				Class type = dataStore.getMetaData().getFieldType(dataStore.getMetaData().getFieldIndex(aliasField));
+				int index = minMaxFilterIndexes.get(i);
 
-				String valueString = null;
+				List values = dataStore.getFieldValues(i);
 				if (values == null) {
-					logger.error("Error, MIN/MAX value for field " + aliasField + " not found");
-					throw new SpagoBIRuntimeException("Error, MIN/MAX value for field " + aliasField + " not found");
-				}
-				// this is not an error case because in case of summary row it is normal to have a more row
-				// else if (values.size() > 1) {
-				// logger.error("Error, unexpected multiple MIN/MAX value for field " + aliasField + "");
-				// multiple = true;
-				// throw new SpagoBIRuntimeException("Error, unexpected multiple MIN/MAX value for field " + aliasField + "");
-				// }
-				else if (values.isEmpty()) {
-					logger.warn("no MIN/MAX value for field " + aliasField + " not found, put NULL");
-					valueString = null;
+					logger.error(errorMessage);
+					throw new SpagoBIRuntimeException(errorMessage);
 				} else {
-					Object value = values.get(0);
-					valueString = value.toString();
-					// if it is string type add ''
-					if (type.equals(String.class)) {
-						valueString = "'" + valueString + "'";
-					} else if (type.equals(Timestamp.class) || type.equals(java.sql.Date.class)) {
-						valueString = "'" + valueString + "'";
+					Projection projectionWithoutAggregation = new Projection(projection.getDataset(), projection.getName(), alias);
+					if (values.isEmpty()) {
+						logger.warn(errorMessage + ", put NULL");
+						newFilters.set(index, new NullaryFilter(projectionWithoutAggregation, SimpleFilterOperator.IS_NULL));
+					} else {
+						Object value = values.get(0);
+						logger.debug("MIN/MAX value for field [" + alias + "] is equal to [" + value + "]");
+						newFilters.set(index, new UnaryFilter(projectionWithoutAggregation, SimpleFilterOperator.EQUALS_TO, value));
 					}
 				}
-
-				logger.debug("Filter with name " + aliasField + " have MAX/MIN value " + valueString);
-
-				// among criteria filters find the one to substitute
-				Integer indexOfCriteriaToChange = maxMinFilterCriteriaNameToIndex.get(aliasField);
-				FilterCriteria filterCriteriaToChange = filterCriteria.get(indexOfCriteriaToChange);
-
-				logger.debug("Substitute previous valuewith " + valueString);
-
-				List valueList = null;
-
-				if (multiple) {
-					logger.debug("multiple value , delete filter");
-					filterCriteria.remove(indexOfCriteriaToChange);
-				} else if (valueString != null) {
-					valueList = new ArrayList<>();
-					valueList.add(valueString);
-					filterCriteriaToChange.getRightOperand().setOperandValue(valueList);
-					filterCriteriaToChange.setOperator("IN");
-				} else {
-					filterCriteriaToChange.setOperator("IS");
-					filterCriteriaToChange.getRightOperand().setOperandValue(null);
-					// logger.debug("Value is null so no MIN or MAX is present so delete the filter ");
-					// filterCriteria.remove(indexOfCriteriaToChange);
-
-				}
-
 			}
 		}
+
 		logger.debug("OUT");
-		return filterCriteria;
+		return newFilters;
 	}
 
-	public boolean isZeroOperandsOperator(String operator) throws JSONException {
-		List<String> operators = Arrays.asList(new String[] { "min", "max", "is null", "is not null" });
-		if (operator.contains(operator))
-			return true;
-		else
-			return false;
+	public Filter getWhereFilter(List<SimpleFilter> filters, List<SimpleFilter> likeFilters) {
+		Filter where = null;
+		if (filters.size() > 0) {
+			AndFilter andFilter = new AndFilter(filters);
+			if (likeFilters.size() > 0) {
+				where = andFilter.and(new OrFilter(likeFilters));
+			}
+			where = andFilter;
+		} else if (likeFilters.size() > 0) {
+			where = new OrFilter(likeFilters);
+		}
+		return where;
 	}
 
 }

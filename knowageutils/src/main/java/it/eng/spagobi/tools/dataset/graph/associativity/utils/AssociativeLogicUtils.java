@@ -15,12 +15,12 @@ import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
 import org.jgrapht.graph.Pseudograph;
 
+import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
-import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
 
 public class AssociativeLogicUtils {
 
@@ -99,7 +99,7 @@ public class AssociativeLogicUtils {
 	}
 
 	public static Config buildConfig(String strategy, Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
-			List<Selection> selections, Set<String> nearRealtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
+			List<SimpleFilter> selections, Set<String> nearRealtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
 		Config config = new Config();
 		config.setStrategy(strategy);
 		config.setGraph(graph);

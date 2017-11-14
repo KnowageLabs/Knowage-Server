@@ -27,6 +27,8 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
  */
 public class MySQLDataBase extends AbstractDataBase {
 
+	public static final String ALIAS_DELIMITER = "`";
+
 	private static transient Logger logger = Logger.getLogger(MySQLDataBase.class);
 
 	private static int MAX_CHARSET_RATIO = 4; // utf8mb4
@@ -84,7 +86,7 @@ public class MySQLDataBase extends AbstractDataBase {
 	 */
 	@Override
 	public String getAliasDelimiter() {
-		return "`";
+		return ALIAS_DELIMITER;
 	}
 
 	/*

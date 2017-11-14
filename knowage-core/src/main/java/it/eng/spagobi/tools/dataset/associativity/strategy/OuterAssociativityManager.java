@@ -20,10 +20,14 @@ package it.eng.spagobi.tools.dataset.associativity.strategy;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.associativity.AbstractAssociativityManager;
+import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
+import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
@@ -81,7 +85,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 	}
 
 	@Override
-	protected void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, String filter) throws Exception {
+	protected void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, SimpleFilter filter) throws Exception {
 		Assert.assertTrue(!documentsAndExcludedDatasets.contains(dataset), "Dataset [" + dataset + "] cannot be processed.");
 
 		// clean containers and groups -> set to unresolved
@@ -99,12 +103,12 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 			EdgeGroup group = iterator.next();
 
 			// a. Calcolo i valori distinct
-			String columnNames = getColumnNames(group.getOrderedEdgeNames(), dataset);
-			if (columnNames.length() <= 0) {
+			List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), dataset);
+			if (columnNames.size() <= 0) {
 				throw new SpagoBIException("Impossible to obtain column names for association " + group);
 			}
-			String query = container.buildQuery(columnNames);
-			Set<String> distinctValues = container.getTupleOfValues(query);
+			PreparedStatementData data = container.buildQuery(columnNames);
+			Set<String> distinctValues = container.getTupleOfValues(data.getQuery(), data.getValues());
 
 			// b. Li imposto come unici valori ammissibili per quel gruppo associativo
 			group.addValues(distinctValues);
@@ -121,9 +125,9 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 			for (String child : children) {
 				if (!documentsAndExcludedDatasets.contains(child)) {
 					AssociativeDatasetContainer childContainer = associativeDatasetContainers.get(child);
-					String columns = getColumnNames(group.getOrderedEdgeNames(), child);
+					List<String> columns = getColumnNames(group.getOrderedEdgeNames(), child);
 					if (!columns.isEmpty()) {
-						childContainer.addFilter(columns, distinctValues);
+						childContainer.addFilter(container.getDataSet(), columns, distinctValues);
 					}
 				}
 			}
@@ -153,10 +157,10 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 					if (container.isResolved()) {
 
 						// i. calcolo i valori distinct del gruppo associativo
-						String columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
+						List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
 						if (!columnNames.isEmpty()) {
-							String query = container.buildQuery(columnNames);
-							Set<String> distinctValues = container.getTupleOfValues(query);
+							PreparedStatementData data = container.buildQuery(columnNames);
+							Set<String> distinctValues = container.getTupleOfValues(data.getQuery(), data.getValues());
 
 							// ii. aggiungo tali valori tra quelli ammissibili per quel gruppo associativo
 							group.addValues(distinctValues);
@@ -172,9 +176,9 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 					container = associativeDatasetContainers.get(childDataset);
 					if (!container.isResolved()) {
 
-						String columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
+						List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
 						if (!columnNames.isEmpty()) {
-							container.addFilter(columnNames, group.getValues());
+							container.addFilter(DAOFactory.getDataSetDAO().loadDataSetByLabel(childDataset), columnNames, group.getValues());
 						}
 						totalChildren.add(childDataset);
 					}

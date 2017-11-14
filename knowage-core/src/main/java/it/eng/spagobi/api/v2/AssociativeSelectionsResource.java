@@ -17,7 +17,9 @@
  */
 package it.eng.spagobi.api.v2;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -46,6 +48,9 @@ import it.eng.spagobi.tools.dataset.associativity.IAssociativityManager;
 import it.eng.spagobi.tools.dataset.associativity.strategy.AssociativeStrategyFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
+import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
+import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.common.association.Association;
 import it.eng.spagobi.tools.dataset.common.association.Association.Field;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
@@ -57,9 +62,9 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.AssociationAnalyzer;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
-import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -71,7 +76,7 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
 public class AssociativeSelectionsResource extends DataSetResourceAbstractResource {
 
 	static protected Logger logger = Logger.getLogger(AssociativeSelectionsResource.class);
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
@@ -183,7 +188,7 @@ public class AssociativeSelectionsResource extends DataSetResourceAbstractResour
 			IDataSource cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 
 			// get datasets from selections
-			List<Selection> filters = new ArrayList<>();
+			List<SimpleFilter> filters = new ArrayList<>();
 			Map<String, Map<String, Set<String>>> selectionsMap = new HashMap<>();
 
 			Iterator<String> it = selectionsObject.keys();
@@ -198,46 +203,45 @@ public class AssociativeSelectionsResource extends DataSetResourceAbstractResour
 
 				Assert.assertNotNull(datasetLabel, "A dataset label in selections is null");
 				Assert.assertTrue(!datasetLabel.isEmpty(), "A dataset label in selections is empty");
-				Assert.assertNotNull(column, "A column for dataset " + datasetLabel + "  in selections is null");
-				Assert.assertTrue(!column.isEmpty(), "A column for dataset " + datasetLabel + " in selections is empty");
+				Assert.assertNotNull(column, "A column for dataset [" + datasetLabel + "]  in selections is null");
+				Assert.assertTrue(!column.isEmpty(), "A column for dataset [" + datasetLabel + "] in selections is empty");
 
-				IDataSet dataset = getDataSetDAO().loadDataSetByLabel(datasetLabel);
+				IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(datasetLabel);
 				boolean isNearRealtime = nearRealtimeDatasets.contains(datasetLabel);
-				IDataSource dataSource = getDataSource(dataset, isNearRealtime);
-				boolean isDateColumn = isDateColumn(column, dataset);
+				IDataSource dataSource = getDataSource(dataSet, isNearRealtime);
 
 				String values = null;
-				String valuesForQuery = null;
+				Projection projection = new Projection(dataSet, column);
+				List<Object> valueObjects = new ArrayList<>();
+
 				Object object = selectionsObject.getJSONArray(datasetDotColumn).get(0);
 				if (object instanceof JSONArray) {
-					if (isDateColumn) {
-						JSONArray jsonArray = (JSONArray) object;
-						List<String> valueList = new ArrayList<>();
-						List<String> valueForQueryList = new ArrayList<>();
-						for (int i = 0; i < jsonArray.length(); i++) {
-							String value = convertDateString(jsonArray.getString(i), CockpitJSONDataWriter.DATE_TIME_FORMAT,
-									CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT);
-							valueForQueryList.add(getDateForQuery(value, dataSource));
-							valueList.add("'" + value + "'");
+					List<String> valueList = new ArrayList<>();
+
+					JSONArray jsonArray = (JSONArray) object;
+					for (int i = 0; i < jsonArray.length(); i++) {
+						Object valueForQuery = DataSetUtilities.getValue(jsonArray.getString(i), projection.getType());
+						valueObjects.add(valueForQuery);
+
+						if (Date.class.isAssignableFrom(projection.getType())) {
+							valueList.add("'" + new SimpleDateFormat(CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT).format(valueForQuery) + "'");
+						} else {
+							valueList.add("'" + valueForQuery + "'");
 						}
-						values = StringUtils.join(valueList, ",");
-						valuesForQuery = StringUtils.join(valueForQueryList, ",");
-					} else {
-						values = ("\"" + ((JSONArray) object).join("\",\"") + "\"").replace("\"\"", "'").replace("\"", "'");
-						valuesForQuery = values;
 					}
+					values = StringUtils.join(valueList, ",");
 				} else {
-					if (isDateColumn) {
-						values = convertDateString(object.toString(), CockpitJSONDataWriter.DATE_TIME_FORMAT, CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT);
-						valuesForQuery = getDateForQuery(values, dataSource);
-						values = "'" + values + "'";
+					Object valueForQuery = DataSetUtilities.getValue(object.toString(), projection.getType());
+					valueObjects.add(valueForQuery);
+
+					if (Date.class.isAssignableFrom(projection.getType())) {
+						values = "'" + new SimpleDateFormat(CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT).format(valueForQuery) + "'";
 					} else {
-						values = "'" + object.toString() + "'";
-						valuesForQuery = values;
+						values = "'" + valueForQuery + "'";
 					}
 				}
 
-				filters.add(new Selection(datasetLabel, getFilter(dataset, isNearRealtime, column, valuesForQuery)));
+				filters.add(new InFilter(projection, valueObjects));
 
 				if (!selectionsMap.containsKey(datasetLabel)) {
 					selectionsMap.put(datasetLabel, new HashMap<String, Set<String>>());
@@ -277,7 +281,7 @@ public class AssociativeSelectionsResource extends DataSetResourceAbstractResour
 			logger.debug("OUT");
 		}
 	}
-	
+
 	private void fixAssociationGroup(AssociationGroup associationGroup) {
 		IDataSetDAO dataSetDAO = getDataSetDAO();
 
@@ -311,5 +315,5 @@ public class AssociativeSelectionsResource extends DataSetResourceAbstractResour
 			}
 		}
 	}
-	
+
 }

@@ -17,9 +17,9 @@
  */
 package it.eng.spagobi.utilities.database;
 
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -57,11 +57,11 @@ public class OracleDataBase extends AbstractDataBase {
 			toReturn = " NUMBER ";
 		} else if (javaTypeName.contains("java.lang.Boolean")) {
 			toReturn = " SMALLINT ";
-		} else if (javaTypeName.contains("java.sql.Time")) {
-			toReturn = " TIMESTAMP ";
 		} else if (javaTypeName.contains("java.sql.Date")) {
 			toReturn = " DATE ";
 		} else if (javaTypeName.toLowerCase().contains("timestamp")) {
+			toReturn = " TIMESTAMP ";
+		} else if (javaTypeName.contains("java.sql.Time")) {
 			toReturn = " TIMESTAMP ";
 		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
 			toReturn = " BLOB ";

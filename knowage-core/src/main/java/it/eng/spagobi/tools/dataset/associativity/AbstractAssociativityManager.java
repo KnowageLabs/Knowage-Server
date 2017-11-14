@@ -27,7 +27,6 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.Pseudograph;
 
@@ -39,6 +38,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
@@ -46,7 +46,6 @@ import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 import it.eng.spagobi.tools.dataset.graph.associativity.NearRealtimeAssociativeDatasetContainer;
-import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -69,7 +68,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 	protected Pseudograph<String, LabeledEdge<String>> graph;
 	protected Map<String, AssociativeDatasetContainer> associativeDatasetContainers = new HashMap<>();
 	protected Set<String> documentsAndExcludedDatasets;
-	protected List<Selection> selections;
+	protected List<SimpleFilter> selections;
 
 	protected AssociativeLogicResult result = new AssociativeLogicResult();
 
@@ -77,7 +76,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 	protected abstract void initProcess();
 
-	protected abstract void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, String filter) throws Exception;
+	protected abstract void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, SimpleFilter filter) throws Exception;
 
 	@Override
 	public AssociativeLogicResult process() throws Exception {
@@ -92,15 +91,15 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 		initProcess();
 
 		// (2) user click on widget -> selection!
-		for (Selection selection : selections) {
-			if (!documentsAndExcludedDatasets.contains(selection.getDataset())) {
-				calculateDatasets(selection.getDataset(), null, selection.getFilter());
+		for (SimpleFilter selection : selections) {
+			if (!documentsAndExcludedDatasets.contains(selection.getDataset().getLabel())) {
+				calculateDatasets(selection.getDataset().getLabel(), null, selection);
 			}
 		}
 		return result;
 	}
 
-	protected String getColumnNames(String associationNamesString, String datasetName) {
+	protected List<String> getColumnNames(String associationNamesString, String datasetName) {
 		String[] associationNames = associationNamesString.split(",");
 		List<String> columnNames = new ArrayList<>();
 		for (String associationName : associationNames) {
@@ -108,16 +107,16 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 			if (associationToColumns != null) {
 				String columnName = associationToColumns.get(associationName);
 				if (columnName != null) {
-					columnName = associativeDatasetContainers.get(datasetName).encapsulateColumnName(columnName);
 					columnNames.add(columnName);
 				}
 			}
 		}
-		return StringUtils.join(columnNames.iterator(), ",");
+		return columnNames;
 	}
 
-	protected Set<String> getTupleOfValues(String dataSet, String query) throws ClassNotFoundException, NamingException, SQLException {
-		return associativeDatasetContainers.get(dataSet).getTupleOfValues(query);
+	protected Set<String> getTupleOfValues(String dataSetLabel, String query, List<Object> values)
+			throws ClassNotFoundException, NamingException, SQLException {
+		return associativeDatasetContainers.get(dataSetLabel).getTupleOfValues(query, values);
 	}
 
 	protected void init(Config config, UserProfile userProfile) throws EMFUserError, SpagoBIException {

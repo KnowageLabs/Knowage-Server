@@ -19,24 +19,35 @@
 package it.eng.spagobi.tools.dataset.graph.associativity;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
+import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
+import it.eng.spagobi.tools.dataset.cache.query.item.AndFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.MultipleProjectionSimpleFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
+import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.sql.SqlUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -51,7 +62,7 @@ public class AssociativeDatasetContainer {
 	protected final String tableName;
 	protected final IDataSource dataSource;
 	protected Map<String, String> parameters;
-	protected final Set<String> filters = new HashSet<>();
+	protected final Set<SimpleFilter> filters = new HashSet<>();
 	protected final Set<EdgeGroup> groups = new HashSet<>();
 
 	protected boolean nearRealtime = false;
@@ -78,20 +89,20 @@ public class AssociativeDatasetContainer {
 		return dataSource;
 	}
 
-	public Set<String> getFilters() {
+	public Set<SimpleFilter> getFilters() {
 		return filters;
 	}
 
-	public boolean addFilter(String filter) {
+	public boolean addFilter(SimpleFilter filter) {
 		return filters.add(filter);
 	}
 
-	public boolean addFilters(Set<String> filters) {
+	public boolean addFilters(Set<SimpleFilter> filters) {
 		return this.filters.addAll(filters);
 	}
 
-	public boolean addFilter(String columnNames, Set<String> filterValues) {
-		return filters.add(buildFilter(columnNames, filterValues));
+	public boolean addFilter(IDataSet dataSet, List<String> columnNames, Set<String> filterValues) {
+		return filters.add(buildInFilter(dataSet, columnNames, filterValues));
 	}
 
 	public Set<EdgeGroup> getGroups() {
@@ -142,15 +153,19 @@ public class AssociativeDatasetContainer {
 		return parameters;
 	}
 
-	public Set<String> getTupleOfValues(String query) throws ClassNotFoundException, NamingException, SQLException {
+	public Set<String> getTupleOfValues(String query, List<Object> values) throws ClassNotFoundException, NamingException, SQLException {
 		Connection connection = null;
-		Statement stmt = null;
+		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
 			logger.debug("Executing query: " + query);
 			connection = dataSource.getConnection();
-			stmt = connection.createStatement();
-			rs = stmt.executeQuery(query);
+			stmt = connection.prepareStatement(query);
+			for (int i = 0; i < values.size(); i++) {
+				stmt.setObject(i + 1, values.get(i));
+			}
+			stmt.execute();
+			rs = stmt.getResultSet();
 			return AssociativeLogicUtils.getTupleOfValues(rs);
 		} finally {
 			if (rs != null) {
@@ -177,42 +192,38 @@ public class AssociativeDatasetContainer {
 		}
 	}
 
-	public String buildQuery(String columnNames) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT DISTINCT ");
-		sb.append(columnNames);
-		sb.append(" FROM ");
-		sb.append(tableName);
+	public PreparedStatementData buildQuery(List<String> columnNames) {
+		SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(columnNames.toArray(new String[0])).from(tableName);
 		if (!filters.isEmpty()) {
-			sb.append(" WHERE ");
-			sb.append(StringUtils.join(filters, " AND "));
+			selectQuery.where(new AndFilter(filters.toArray(new SimpleFilter[0])));
 		}
-		return sb.toString();
+		return selectQuery.getPreparedStatementData(dataSource);
 	}
 
 	public String encapsulateColumnName(String columnName) {
 		return AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
 	}
 
-	public String buildFilter(String columnNames, Set<String> filterValues) {
-		if (SqlUtils.hasSqlServerDialect(dataSource)) {
-			return buildAndOrFilter(columnNames, filterValues);
-		} else {
-			return buildInFilter(columnNames, filterValues);
+	public MultipleProjectionSimpleFilter buildInFilter(IDataSet dataSet, List<String> columnNames, Set<String> tuples) {
+		int columnCount = columnNames.size();
+		List<Projection> projections = new ArrayList<Projection>(columnCount);
+		List<IFieldMetaData> metaData = new ArrayList<IFieldMetaData>(columnCount);
+		for (String columnName : columnNames) {
+			projections.add(new Projection(dataSet, columnName));
+			metaData.add(DataSetUtilities.getFieldMetaData(dataSet, columnName));
 		}
-	}
 
-	public String buildInFilter(String columnNames, Set<String> filterValues) {
-		String inClauseColumns;
-		String inClauseValues;
-		if (filterValues.size() > SQL_IN_CLAUSE_LIMIT) {
-			inClauseColumns = "1," + columnNames;
-			inClauseValues = AssociativeLogicUtils.getUnlimitedInClauseValues(filterValues);
-		} else {
-			inClauseColumns = columnNames;
-			inClauseValues = StringUtils.join(filterValues, ",");
+		List<Object> values = new ArrayList<Object>();
+		for (String tuple : tuples) {
+			String[] stringValues = StringUtilities.getSubstringsBetween(tuple, "'");
+			Assert.assertTrue(stringValues.length == columnCount,
+					"Expected tuple length is [" + columnCount + "], actual tuple length is [" + stringValues.length + "]");
+			for (int i = 0; i < stringValues.length; i++) {
+				values.add(DataSetUtilities.getValue(stringValues[i], metaData.get(i).getType()));
+			}
 		}
-		return "(" + inClauseColumns + ") IN (" + inClauseValues + ")";
+
+		return new InFilter(projections, values);
 	}
 
 	public String buildAndOrFilter(String columnNames, Set<String> filterValues) {

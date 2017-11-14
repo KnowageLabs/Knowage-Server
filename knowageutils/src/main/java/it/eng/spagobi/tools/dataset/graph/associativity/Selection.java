@@ -2,11 +2,11 @@ package it.eng.spagobi.tools.dataset.graph.associativity;
 
 public class Selection {
 
-	private String dataset;
+	private String datasetLabel;
 	private String filter;
 
 	public Selection(String dataset, String filter) {
-		this.dataset = dataset;
+		this.datasetLabel = dataset;
 		this.filter = filter;
 	}
 
@@ -15,11 +15,11 @@ public class Selection {
 	}
 
 	public String getDataset() {
-		return dataset;
+		return datasetLabel;
 	}
 
 	public void setDataset(String dataset) {
-		this.dataset = dataset;
+		this.datasetLabel = dataset;
 	}
 
 	public String getFilter() {
@@ -34,7 +34,7 @@ public class Selection {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Selection [dataset=");
-		builder.append(dataset);
+		builder.append(datasetLabel);
 		builder.append(", filter=");
 		builder.append(filter);
 		builder.append("]");
@@ -45,7 +45,7 @@ public class Selection {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((dataset == null) ? 0 : dataset.hashCode());
+		result = prime * result + ((datasetLabel == null) ? 0 : datasetLabel.hashCode());
 		result = prime * result + ((filter == null) ? 0 : filter.hashCode());
 		return result;
 	}
@@ -62,11 +62,11 @@ public class Selection {
 			return false;
 		}
 		Selection other = (Selection) obj;
-		if (dataset == null) {
-			if (other.dataset != null) {
+		if (datasetLabel == null) {
+			if (other.datasetLabel != null) {
 				return false;
 			}
-		} else if (!dataset.equals(other.dataset)) {
+		} else if (!datasetLabel.equals(other.datasetLabel)) {
 			return false;
 		}
 		if (filter == null) {

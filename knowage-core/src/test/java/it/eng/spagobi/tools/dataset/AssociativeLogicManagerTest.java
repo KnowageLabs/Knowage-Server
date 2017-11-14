@@ -21,25 +21,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import it.eng.spagobi.UtilitiesForTest;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.UtilitiesDAOForTest;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.tools.dataset.associativity.strategy.AssociativeStrategyFactory;
-import it.eng.spagobi.tools.dataset.associativity.strategy.InnerAssociativityManager;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
-import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
-import it.eng.spagobi.tools.dataset.graph.associativity.Config;
-import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
-import it.eng.spagobi.user.UserProfileManager;
-import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +37,29 @@ import org.junit.Test;
 
 import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.TcpIpConfig;
+
+import edu.emory.mathcs.backport.java.util.Arrays;
+import it.eng.spagobi.UtilitiesForTest;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.UtilitiesDAOForTest;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.dataset.associativity.strategy.AssociativeStrategyFactory;
+import it.eng.spagobi.tools.dataset.associativity.strategy.InnerAssociativityManager;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
+import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
+import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+import it.eng.spagobi.tools.dataset.graph.associativity.Config;
+import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 
 public class AssociativeLogicManagerTest {
 
@@ -147,8 +151,8 @@ public class AssociativeLogicManagerTest {
 
 	@Test
 	public void testProcessTwoDatasetsOneSimpleAssociation() {
-		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<String, LabeledEdge<String>>(new ClassBasedEdgeFactory<String, LabeledEdge<String>>(
-				(Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
+		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<String, LabeledEdge<String>>(
+				new ClassBasedEdgeFactory<String, LabeledEdge<String>>((Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
 		graph.addVertex(STORE);
 		graph.addVertex(SALES);
 		LabeledEdge<String> labeledEdge = new LabeledEdge<String>(STORE, SALES, A3);
@@ -160,8 +164,9 @@ public class AssociativeLogicManagerTest {
 		datasetToAssociations.put(STORE, associationToColumns);
 		datasetToAssociations.put(SALES, associationToColumns);
 
-		List<Selection> selections = new ArrayList<Selection>();
-		selections.add(new Selection(STORE, "store_type = 'Small Grocery'"));
+		List<SimpleFilter> selections = new ArrayList<>(1);
+		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(STORE);
+		selections.add(new InFilter(new Projection(dataSet, "store_type"), Arrays.asList(("Small Grocery".split("")))));
 
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
@@ -170,8 +175,8 @@ public class AssociativeLogicManagerTest {
 
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 
-		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.INNER_STRATEGY, graph, datasetToAssociations, selections,
-				realtimeDatasets, datasetParameters, documents);
+		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.INNER_STRATEGY, graph, datasetToAssociations, selections, realtimeDatasets,
+				datasetParameters, documents);
 
 		try {
 			InnerAssociativityManager manager = new InnerAssociativityManager(config, UserProfileManager.getProfile());
@@ -198,8 +203,8 @@ public class AssociativeLogicManagerTest {
 
 	@Test
 	public void testProcessThreeDatasetsTwoSimpleAssociations() {
-		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<String, LabeledEdge<String>>(new ClassBasedEdgeFactory<String, LabeledEdge<String>>(
-				(Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
+		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<String, LabeledEdge<String>>(
+				new ClassBasedEdgeFactory<String, LabeledEdge<String>>((Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
 		graph.addVertex(STORE);
 		graph.addVertex(SALES);
 		graph.addVertex(PRODUCT);
@@ -220,8 +225,9 @@ public class AssociativeLogicManagerTest {
 		datasetToAssociations.put(PRODUCT, associationToColumnProduct);
 		datasetToAssociations.put(SALES, associationToColumnSales);
 
-		List<Selection> selections = new ArrayList<Selection>();
-		selections.add(new Selection(PRODUCT, "brand_name= 'Queen'"));
+		List<SimpleFilter> selections = new ArrayList<>(1);
+		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(PRODUCT);
+		selections.add(new InFilter(new Projection(dataSet, "brand_name"), "Queen"));
 
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
@@ -230,8 +236,8 @@ public class AssociativeLogicManagerTest {
 
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 
-		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.INNER_STRATEGY, graph, datasetToAssociations, selections,
-				realtimeDatasets, datasetParameters, documents);
+		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.INNER_STRATEGY, graph, datasetToAssociations, selections, realtimeDatasets,
+				datasetParameters, documents);
 
 		try {
 			InnerAssociativityManager manager = new InnerAssociativityManager(config, UserProfileManager.getProfile());
@@ -268,8 +274,8 @@ public class AssociativeLogicManagerTest {
 
 	@Test
 	public void testProcessTwoDatasetsOneComplexAssociation() {
-		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<String, LabeledEdge<String>>(new ClassBasedEdgeFactory<String, LabeledEdge<String>>(
-				(Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
+		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<String, LabeledEdge<String>>(
+				new ClassBasedEdgeFactory<String, LabeledEdge<String>>((Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
 		graph.addVertex(STORE);
 		graph.addVertex(CUSTOMER);
 		LabeledEdge<String> labeledEdgeStoreCustomer1 = new LabeledEdge<String>(STORE, CUSTOMER, A7);
@@ -287,8 +293,9 @@ public class AssociativeLogicManagerTest {
 		datasetToAssociations.put(STORE, associationToColumnStore);
 		datasetToAssociations.put(CUSTOMER, associationToColumnCustomer);
 
-		List<Selection> selections = new ArrayList<Selection>();
-		selections.add(new Selection(CUSTOMER, "gender = 'F'"));
+		List<SimpleFilter> selections = new ArrayList<>(1);
+		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(CUSTOMER);
+		selections.add(new InFilter(new Projection(dataSet, "gender"), "F"));
 
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
@@ -297,8 +304,8 @@ public class AssociativeLogicManagerTest {
 
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 
-		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.INNER_STRATEGY, graph, datasetToAssociations, selections,
-				realtimeDatasets, datasetParameters, documents);
+		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.INNER_STRATEGY, graph, datasetToAssociations, selections, realtimeDatasets,
+				datasetParameters, documents);
 
 		try {
 			InnerAssociativityManager manager = new InnerAssociativityManager(config, UserProfileManager.getProfile());
@@ -323,8 +330,8 @@ public class AssociativeLogicManagerTest {
 
 	@Test
 	public void testProcessFiveDatasetsTwoComplexAssociationsTwoSimpleAssociations() {
-		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<String, LabeledEdge<String>>(new ClassBasedEdgeFactory<String, LabeledEdge<String>>(
-				(Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
+		Pseudograph<String, LabeledEdge<String>> graph = new Pseudograph<String, LabeledEdge<String>>(
+				new ClassBasedEdgeFactory<String, LabeledEdge<String>>((Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
 
 		graph.addVertex(W);
 		graph.addVertex(Y);
@@ -384,8 +391,9 @@ public class AssociativeLogicManagerTest {
 		datasetToAssociations.put(Z, associationToColumnZ);
 		datasetToAssociations.put(K, associationToColumnK);
 
-		List<Selection> selections = new ArrayList<Selection>();
-		selections.add(new Selection(Z, "country = 'USA'"));
+		List<SimpleFilter> selections = new ArrayList<>(1);
+		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(Z);
+		selections.add(new InFilter(new Projection(dataSet, "country"), "USA"));
 
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
@@ -394,8 +402,8 @@ public class AssociativeLogicManagerTest {
 
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 
-		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.INNER_STRATEGY, graph, datasetToAssociations, selections,
-				realtimeDatasets, datasetParameters, documents);
+		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.INNER_STRATEGY, graph, datasetToAssociations, selections, realtimeDatasets,
+				datasetParameters, documents);
 
 		try {
 			InnerAssociativityManager manager = new InnerAssociativityManager(config, UserProfileManager.getProfile());

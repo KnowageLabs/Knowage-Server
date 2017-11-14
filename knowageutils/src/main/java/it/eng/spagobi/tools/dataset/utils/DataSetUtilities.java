@@ -17,18 +17,12 @@
  */
 package it.eng.spagobi.tools.dataset.utils;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.container.ObjectUtils;
-import it.eng.spagobi.services.proxy.DataSetServiceProxy;
-import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
-import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.utilities.Helper;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.json.JSONUtils;
-
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -38,6 +32,23 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.services.proxy.DataSetServiceProxy;
+import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
+import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.database.AbstractDataBase;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 /**
  * TODO : move it in it.eng.spagobi.tools.dataset and rename to DataSetProfiler (or similar)
@@ -73,7 +84,7 @@ public class DataSetUtilities {
 			return true;
 		}
 		String owner = profile.getUserUniqueIdentifier().toString();
-		return (!owner.equals(null) && owner.equals(dataset.getOwner()));
+		return (owner != null && owner.equals(dataset.getOwner()));
 	}
 
 	public static boolean isExecutableByUser(String ownerDataSet, IEngUserProfile profile) {
@@ -85,7 +96,7 @@ public class DataSetUtilities {
 			return true;
 		}
 		String owner = profile.getUserUniqueIdentifier().toString();
-		return (!owner.equals(null) && owner.equals(ownerDataSet));
+		return (owner != null && owner.equals(ownerDataSet));
 	}
 
 	public static boolean isAdministrator(IEngUserProfile profile) {
@@ -132,7 +143,8 @@ public class DataSetUtilities {
 			return res;
 		} catch (Exception e) {
 			logger.warn(
-					"Default parameters values can't be retrieved from dataSet. I try from dataSet persistence. Empty defaults values map will be returned.", e);
+					"Default parameters values can't be retrieved from dataSet. I try from dataSet persistence. Empty defaults values map will be returned.",
+					e);
 		}
 		return null;
 	}
@@ -289,5 +301,80 @@ public class DataSetUtilities {
 		}
 
 		return toReturn;
+	}
+
+	public static Object getValue(String value, Class type) {
+		Object result = null;
+
+		if (value != null && !value.equalsIgnoreCase("null")) {
+			if (type.toString().toLowerCase().contains("timestamp")) {
+				try {
+					result = Timestamp.valueOf(value);
+				} catch (IllegalArgumentException e) {
+					try {
+						Date date = new SimpleDateFormat(CockpitJSONDataWriter.TIMESTAMP_FORMAT).parse(value);
+						String formattedValue = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_TIMESTAMP_FORMAT).format(date);
+						result = Timestamp.valueOf(formattedValue);
+					} catch (ParseException | IllegalArgumentException ex) {
+						throw new SpagoBIRuntimeException(ex);
+					}
+				}
+			} else if (Date.class.isAssignableFrom(type)) {
+				try {
+					result = new SimpleDateFormat(CockpitJSONDataWriter.DATE_FORMAT).parse(value);
+				} catch (ParseException e) {
+					try {
+						result = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_DATE_FORMAT).parse(value);
+					} catch (ParseException pe) {
+						throw new SpagoBIRuntimeException(pe);
+					}
+				}
+			} else if (Boolean.class.isAssignableFrom(type)) {
+				result = Boolean.valueOf(value.toString());
+			} else if (Byte.class.isAssignableFrom(type)) {
+				result = Byte.valueOf(value.toString());
+			} else if (Short.class.isAssignableFrom(type)) {
+				result = Short.valueOf(value.toString());
+			} else if (Integer.class.isAssignableFrom(type)) {
+				result = Integer.valueOf(value.toString());
+			} else if (Long.class.isAssignableFrom(type)) {
+				result = Long.valueOf(value.toString());
+			} else if (BigInteger.class.isAssignableFrom(type)) {
+				result = new BigInteger(value.toString());
+			} else if (Float.class.isAssignableFrom(type)) {
+				result = Float.valueOf(value.toString());
+			} else if (Double.class.isAssignableFrom(type)) {
+				result = Double.valueOf(value.toString());
+			} else if (BigDecimal.class.isAssignableFrom(type)) {
+				result = new BigDecimal(value.toString());
+			} else if (String.class.isAssignableFrom(type)) {
+				result = value;
+			}
+		}
+
+		return result;
+	}
+
+	public static IFieldMetaData getFieldMetaData(IDataSet dataSet, String columnName) {
+		Assert.assertNotNull(dataSet, "Dataset can't be null");
+		Assert.assertNotNull(columnName, "Column [" + columnName + "] can't be null");
+		Assert.assertTrue(!columnName.isEmpty(), "Column [" + columnName + "] can't be empty");
+
+		String fieldName;
+		if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
+			String[] columnNames = StringUtilities.getSubstringsBetween(columnName, AbstractDataBase.STANDARD_ALIAS_DELIMITER);
+			Assert.assertTrue(columnNames.length > 0 && columnNames.length % 2 == 0, "Column [" + columnName + "] is not a valid calculated column");
+			fieldName = columnNames[0];
+		} else {
+			fieldName = columnName;
+		}
+
+		IMetaData metadata = dataSet.getMetadata();
+		int fieldIndex = metadata.getFieldIndex(fieldName);
+		if (fieldIndex >= 0 && fieldIndex < metadata.getFieldCount()) {
+			return metadata.getFieldMeta(fieldIndex);
+		} else {
+			throw new IllegalArgumentException("Column [" + columnName + "] not found");
+		}
 	}
 }
