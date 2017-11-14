@@ -60,7 +60,8 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
-			SbiExporters hibExporter = (SbiExporters) session.load(SbiExporters.class, new SbiExportersId(engineId, domainId));
+			SbiExporters hibExporter = (SbiExporters) session.load(SbiExporters.class,
+					new SbiExportersId(engineId, domainId));
 			logger.debug("Exporter loaded");
 			toReturn = toExporter(hibExporter, session);
 
@@ -69,11 +70,12 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			transaction.rollback();
 
 		} catch (ObjectNotFoundException e) {
-			throw new SpagoBIDAOObjectNotExistingException("There is no Exporter with engine id " + engineId + "and domain id " + domainId);
+			throw new SpagoBIDAOObjectNotExistingException(
+					"There is no Exporter with engine id " + engineId + "and domain id " + domainId);
 		} catch (Exception e) {
 
-			throw new SpagoBIDAOException(
-					"An unexpected error occured while loading artifact with engine id [" + engineId + "] and domain id [" + domainId + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading artifact with engine id ["
+					+ engineId + "] and domain id [" + domainId + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -148,7 +150,8 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			}
 
 			// delete exporter
-			SbiExporters hibExportertoDelete = (SbiExporters) session.load(SbiExporters.class, new SbiExportersId(engineId, domainId));
+			SbiExporters hibExportertoDelete = (SbiExporters) session.load(SbiExporters.class,
+					new SbiExportersId(engineId, domainId));
 			logger.debug("Exporter loaded");
 			if (hibExportertoDelete == null) {
 				logger.warn("Exporter with id [" + engineId + "] not found");
@@ -166,7 +169,8 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("An unexpected error occured while saving exporter [" + exporter.getEngineId() + "]", t);
+			throw new SpagoBIDAOException(
+					"An unexpected error occured while saving exporter [" + exporter.getEngineId() + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -209,7 +213,8 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("An unexpected error occured while saving exporter [" + exporter.getEngineId() + "]", t);
+			throw new SpagoBIDAOException(
+					"An unexpected error occured while saving exporter [" + exporter.getEngineId() + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -239,7 +244,8 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
-			SbiExporters hibExporter = (SbiExporters) session.load(SbiExporters.class, new SbiExportersId(engineId, domainId));
+			SbiExporters hibExporter = (SbiExporters) session.load(SbiExporters.class,
+					new SbiExportersId(engineId, domainId));
 			logger.debug("Exporter loaded");
 			if (hibExporter == null) {
 				logger.warn("Artifact with id [" + engineId + "] not found");
@@ -272,6 +278,9 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			toReturn.setEngineId(hibExporter.getSbiEngines().getEngineId());
 			toReturn.setDomainId(hibExporter.getSbiDomains().getValueId());
 			toReturn.setDefaultValue(hibExporter.isDefaultValue());
+			toReturn.setEngineLabel(hibExporter.getSbiEngines().getName());
+			toReturn.setDomainLabel(hibExporter.getSbiDomains().getValueCd());
+
 		}
 		logger.debug("OUT");
 		return toReturn;
