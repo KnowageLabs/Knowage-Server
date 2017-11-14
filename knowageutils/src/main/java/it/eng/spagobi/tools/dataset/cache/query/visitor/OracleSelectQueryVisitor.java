@@ -18,8 +18,8 @@
 
 package it.eng.spagobi.tools.dataset.cache.query.visitor;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
@@ -86,12 +86,48 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 	}
 
 	@Override
-	public String getFormattedTimestamp(Timestamp timestamp) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_TIMESTAMP_FORMAT);
+	protected void append(Object operand) {
+		if (operand == null) {
+			queryBuilder.append("NULL");
+		} else {
+			if (buildPreparedStatement) {
+				queryBuilder.append("?");
+				queryParameters.add(operand);
+			} else {
+				if (operand.getClass().toString().toLowerCase().contains("timestamp")) {
+					queryBuilder.append(getFormattedTimestamp(operand.toString()));
+				} else if (Date.class.isAssignableFrom(operand.getClass())) {
+					queryBuilder.append(getFormattedDate((Date) operand));
+				} else if (String.class.isAssignableFrom(operand.getClass())) {
+					queryBuilder.append("'");
+					queryBuilder.append(operand);
+					queryBuilder.append("'");
+				} else {
+					queryBuilder.append(operand);
+				}
+			}
+		}
+	}
+
+	public String getFormattedTimestamp(String timestamp) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("TO_TIMESTAMP('");
+		sb.append(timestamp);
+		sb.append("','");
+		sb.append(NLS_TIMESTAMP_FORMAT);
+		sb.append("')");
+
+		return sb.toString();
+	}
+
+	@Override
+	public String getFormattedDate(Date date) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT);
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("TO_TIMESTAMP('");
-		sb.append(dateFormat.format(timestamp));
+		sb.append("TO_DATE('");
+		sb.append(dateFormat.format(date));
 		sb.append("','");
 		sb.append(NLS_TIMESTAMP_FORMAT);
 		sb.append("')");
