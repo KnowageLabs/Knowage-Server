@@ -32,7 +32,7 @@
 		
 	</div>	
 	<div layout="row"
-		   flex=100 layout-margin ng-if="disableHtmlElementForChartJs()">
+		   flex=100 layout-margin ng-if="selectedChartType.toLowerCase()!='scatter'">
 		
 			<label>{{translate.load("sbi.chartengine.designer.tab.configuration.groupCategories")}}</label>
 			<md-input-container class="small counter"> <md-checkbox  ng-disabled="chartTemplate.groupSeries || chartTemplate.dateTime  || chartTemplate.groupSeriesCateg" 
@@ -44,9 +44,9 @@
 	{{translate.load("sbi.chartengine.designer.tab.configuration.grouping.createsplitting")}}
 	</md-subheader>
 	
-	<div layout="row" >
+	<div layout="row" ng-if="selectedChartType.toLowerCase()!='scatter'">
 	 <div layout="column"
-			  flex=100 layout-margin ng-if="disableHtmlElementForChartJs()">
+			  flex=100 layout-margin>
 		
 			<label>{{translate.load("sbi.chartengine.designer.tab.configuration.groupSeries")}}</label>
 			<md-input-container class="small counter"> <md-checkbox  ng-disabled="chartTemplate.groupCategories || chartTemplate.dateTime  || chartTemplate.groupSeriesCateg"
@@ -54,7 +54,7 @@
 			</md-input-container>
 		</div>  
 	 	<div layout="column"
-			  flex=100 layout-margin ng-if="disableHtmlElementForChartJs()">
+			  flex=100 layout-margin>
 		
 			<label>{{translate.load("sbi.chartengine.designer.tab.configuration.groupSeriesCateg")}}</label>
 			<md-input-container class="small counter"> <md-checkbox  ng-disabled="chartTemplate.groupCategories || chartTemplate.dateTime  || chartTemplate.groupSeries"

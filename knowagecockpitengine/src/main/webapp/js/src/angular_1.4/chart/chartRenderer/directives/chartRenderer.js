@@ -103,7 +103,9 @@ angular.module('chartRendererModule')
 					}else{
 						var transformedData = data;
 						if(isRealtime){
-							transformedData = scope.chartInitializer.transformeData(scope.widgetData,data);
+							if(scope.chartInitializer.transformeData){
+								transformedData = scope.chartInitializer.transformeData(scope.widgetData,data);
+							}							
 						}
 						scope.loadChart(scope.chartTemplate,scope.datasetLabel,transformedData);
 					}

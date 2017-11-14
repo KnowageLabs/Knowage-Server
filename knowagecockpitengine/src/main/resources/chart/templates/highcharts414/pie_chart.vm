@@ -866,7 +866,7 @@
 					},
 		            
 		            
-		            verticalAlign: 'top',
+		            verticalAlign: 'bottom',
 		            y: -40
 		        },  
 					#end

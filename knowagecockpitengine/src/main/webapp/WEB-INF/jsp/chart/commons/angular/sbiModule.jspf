@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 <script>
-	debugger;
+	
 	var sbiM = angular.module('sbiModule',["toastr",'ngSanitize']);
 	
 	sbiM.factory('sbiModule_config',function(){
