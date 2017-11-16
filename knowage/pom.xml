@@ -30,31 +30,35 @@
 
 		<profile>
 			<id>hsql</id>
-			<properties>
-				<enable.hsql.start>--&gt;</enable.hsql.start>
-				<enable.hsql.end>&lt;!--</enable.hsql.end>
-			</properties>
-
 			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-war-plugin</artifactId>
-						<version>2.6</version>
-
-						<configuration>
-							<webResources>
-								<resource>
-									<filtering>true</filtering>
-									<directory>src/main/resources</directory>
-									<includes>
-										<include>hibernate.cfg.xml</include>
-									</includes>
-								</resource>
-							</webResources>
-						</configuration>
-					</plugin>
-				</plugins>
+				<plugin>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.4</version>
+					<configuration>
+						<encoding>UTF-8</encoding>
+					</configuration>
+					<executions>
+						<execution>
+							<id>copy-hibernate</id>
+							<phase>package</phase>
+							<configuration>		
+								<outputDirectory>src/main/resources</outputDirectory>	
+								<resources>
+									<resource>
+										<directory>src/main/resources/hsql</directory>
+										<includes>
+											<include>hibernate.cfg.xml</include>
+											<include>quartz.properties</include>
+											<include>hazelcast.xml</include>
+										</includes>	
+									</resource>
+								</resources>
+								<overwrite>true</overwrite>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				
 			</build>
 		</profile>
 	</profiles>
