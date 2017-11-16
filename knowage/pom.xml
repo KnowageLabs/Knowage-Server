@@ -46,7 +46,7 @@
 							<webResources>
 								<resource>
 									<filtering>true</filtering>
-									<directory>src/main/webapp/resources</directory>
+									<directory>src/main/resources</directory>
 									<includes>
 										<include>hibernate.cfg.xml</include>
 									</includes>
