@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [6.1.0] - 2017-10-25
 
-## [6.0.0] - 2017-06-30
+## 6.0.0 - 2017-06-30
 
 [Unreleased]: https://github.com/KnowageLabs/Knowage-Server/compare/v6.1.1...HEAD
 [6.1.1]: https://github.com/KnowageLabs/Knowage-Server/compare/6.1.0...6.1.1
