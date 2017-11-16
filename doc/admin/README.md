@@ -1,7 +1,7 @@
 Introduction
 ============
 
-This Installation and Administration Guide covers Knowage Server version 6.1. Any feedback on this document is highly welcome, including bugs, typos or things you think should be included but are not. Please create issues on our [Knowage tracker](https://www.knowage-suite.com/jira/) also for this purpose.
+This Installation and Administration Guide covers Knowage Server. Any feedback on this document is highly welcome, including bugs, typos or things you think should be included but are not. Please create issues on our [Knowage tracker](https://www.knowage-suite.com/jira/) also for this purpose.
 
 Installation
 ============
