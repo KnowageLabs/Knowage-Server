@@ -18,12 +18,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Cockpit features and general improvements
    - move a widget from tab to tab 
-	 - manage the look&feel 
-	 - 3d options for charts
-	 - new grouping options
-	 - new table widget with more options
-	 - new filter section on widget
-	 - selector widget has more style options
+   - manage the look&feel 
+   - 3d options for charts
+   - new grouping options
+   - new table widget with more options
+   - new filter section on widget
+   - selector widget has more style options
 - Release of Dossier engine. The Dossier feature allows to automatically build a presentation with predefined reports
 - New Real Time features on NGSI Data Set, which enables user to build real-time console by using the Cockpit engine
 
