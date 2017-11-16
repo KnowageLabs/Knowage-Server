@@ -13,26 +13,36 @@ In this page we'll provide you some basic information, but we'll focus on the in
 Released package description
 ----------------------------
 
-Knowage Server is actually a collection of web applications (core application "knowage" plus external engines "knowage\*\*\*engine"). The released files linked in the catalogue contain [Apache Tomcat](http://tomcat.apache.org/) 7 with all Knowage web applications.
+Knowage Server is a collection of web applications (core application "knowage" plus external engines "knowage\*\*\*engine").
 
 Requirements
 ------------
-
+-   a Java application server (e.g. Apache Tomcat)
 -   JDK 1.7;
 -   a relational Database for storing Knowage Metadata (MySQL, Oracle, Postgres, Ingres or HSQLDB);
+-   a set of external libreries (commons-logging, commons-logging-api, oswego-concurrent, geronimo-commonj, foo-commonj)
+-   the specific JDBC library for the relational Database which we were referring before (e.g. mysql-connector-java)
 -   R (http://cran.r-project.org/) needed only for advanced data-mining and social analysis.
 
 Data to be analyzed with Knowage can be stored both on SQL datasources and NoSQL datasources.
 
 Installation from installer
 ----------------------------------
-You can install Knowage from the released installer. Please check the related documentation  
+You can install Knowage from the released installer [here] (https://forge.ow2.org/project/showfiles.php?group_id=442). Please check also the related documentation  
 [here](http://download.forge.ow2.org/knowage/Knowage-CE-Installer-GettingStarted.pdf).
 
 Installation from released package
 ----------------------------------
+We assume Apache Tomcat 7.0.57 has been chosen as application server and MySQL as relation databse for Knowage Metadata.
+Please download all the required external libraries, as instance from the URLs below:
+-   [commons-logging](https://search.maven.org/remotecontent?filepath=commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar)
+-   [commons-logging-api](https://search.maven.org/remotecontent?filepath=commons-logging/commons-logging-api/1.1/commons-logging-api-1.1.jar)
+-   [oswego-concurrent](https://search.maven.org/remotecontent?filepath=org/lucee/oswego-concurrent/1.3.4/oswego-concurrent-1.3.4.jar)
+-   [geronimo-commonj](https://search.maven.org/remotecontent?filepath=org/apache/geronimo/specs/geronimo-commonj_1.1_spec/1.0/geronimo-commonj_1.1_spec-1.0.jar)
+-   [foo-commonj](http://commonj.myfoo.de/bin/foo-commonj-1.1.0.zip)
+-   [mysql-connector-java](https://search.maven.org/remotecontent?filepath=mysql/mysql-connector-java/5.1.33/mysql-connector-java-5.1.33.jar)
 
-After installation of the required softwares listed before, you have to unzip the released All-In-One-Knowage-6.1-xxxxxxxx.zip file into a folder. We'll refer to that folder as KNOWAGE\_SERVER\_HOME. The metadata database must be created and configured in KNOWAGE\_SERVER\_HOME/conf/server.xml:
+We'll refer to the main folder of the application server as KNOWAGE\_SERVER\_HOME. After installation of the required softwares and download libraries listed before, you have to copy such libraries in the KNOWAGE\_SERVER\_HOME/lib folder. The metadata database must be created and configured in KNOWAGE\_SERVER\_HOME/conf/server.xml:
 
 ``` xml
 <Resource name="jdbc/knowage" auth="Container"
@@ -45,7 +55,7 @@ After installation of the required softwares listed before, you have to unzip th
           maxWait="-1"/>
 ```
 
-providing JDBC URL, username, password and driver class. Refer to the database documentation about the right JDBC driver to be used, and put it in KNOWAGE\_SERVER\_HOME/lib folder. Please notice that released package already contains JDBC drivers for MySQL 5.6, Postgres 9 and Oracle 11, but, in case you need a different JDBC driver, you have to replace them with the correct ones. Then edit the following files in order to set the proper dialect for the database:
+providing JDBC URL, username, password and driver class. Refer to the database documentation about the right JDBC driver to be used, and put it in KNOWAGE\_SERVER\_HOME/lib folder. Then edit the following files in order to set the proper dialect for the database:
 
 -   KNOWAGE\_SERVER\_HOME/webapps/Knowage/WEB-INF/classes/hibernate.cfg.xml (set hibernate.dialect property according to your database)
 -   KNOWAGE\_SERVER\_HOME/webapps/Knowage/WEB-INF/classes/jbpm.hibernate.cfg.xml (set hibernate.dialect property according to your database)
@@ -68,28 +78,21 @@ Then you have to configure some environment variables defined in KNOWAGE\_SERVER
 Installation with provided scripts
 ----------------------------------
 
-It's possible to install Knowage into an Ubuntu 14.04 machine, using this command:
+It's possible to install Knowage into an Ubuntu 16.04 machine, using this command:
 
 ```
-curl https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/ChefCookbooks/installation.sh | ssh -i <identity file> <sudo user>@<ip of machine>
+curl https://raw.githubusercontent.com/KnowageLabs/Knowage-Server-Chef/master/bin/installation.sh | ssh -i <identity file> <sudo user>@<ip of machine>
 ```
 
 which installs a clean Knowage running on MySQL.
 
-If you want to install Knowage with many demo examples then use:
-
-```
-curl https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/ChefCookbooks/installation.sh | ssh -i <identity file> <sudo user>@<ip of machine> 'bash /dev/stdin demo'
-```
-
 Then you can access Knowage on `http://<ip of machine>:8080/knowage`.
-
 
 
 How to start and stop Knowage Server
 ------------------------------------
 
-In order to start Knowage Server, you have to execute KNOWAGE\_SERVER\_HOME/bin/KnowageStartup.bat (for Windows systems) or KNOWAGE\_SERVER\_HOME/bin/KnowageStartup.sh (for Linux systems); use shutdown.bat or shutdown.sh to stop it. You can also install Knowage Server as a service, please refer to Tomcat documentation.
+In order to start Knowage Server, you have to execute KNOWAGE\_SERVER\_HOME/bin/startup.bat (for Windows systems) or KNOWAGE\_SERVER\_HOME/bin/startup.sh (for Linux systems); use shutdown.bat or shutdown.sh to stop it. You can also install Knowage Server as a service, please refer to Tomcat documentation.
 
 Users configuration
 -------------------
