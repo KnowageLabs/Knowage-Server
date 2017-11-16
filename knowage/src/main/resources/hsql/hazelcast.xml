@@ -4,7 +4,7 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <management-center enabled="false">http://localhost:8808/mancenter</management-center>
     <network>
-        <port auto-increment="false" port-count="100">5702</port>
+        <port auto-increment="false" port-count="100">5722</port>
         <join>
             <multicast enabled="false"></multicast>
             <tcp-ip enabled="true">
