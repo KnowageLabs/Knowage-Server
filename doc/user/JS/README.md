@@ -38,7 +38,7 @@ It would be better to not use "authenticate" function (in that way, the user sho
 in order to use the api).
 
 ## Authentication
-In order to use Knowage SDK functions the user has to be authenticated. If the user is already authenticated in Knowage the SDK use cockies to retrieve the session and all functions can be used.
+In order to use Knowage SDK functions the user has to be authenticated. If the user is already authenticated in Knowage the SDK use cookies to retrieve the session and all functions can be used.
 
 If the user is not already authenticated he has to log in. There is the authenticate function for that. As for functions based on REST services, the authenticate function is also available in both Sbi.sdk.api and Sbi.sdk.cors.api namespaces.
 
