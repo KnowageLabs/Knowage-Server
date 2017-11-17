@@ -198,6 +198,11 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 							if (NumberUtils.isNumber((String) field.getValue())) {
 								((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(BigDecimal.class);
 								field.setValue(new BigDecimal(String.valueOf(field.getValue())));
+							} 
+							//check if it's a number using comma decimal separator
+							else if (NumberUtils.isNumber(((String) field.getValue()).replace(",", "."))) {
+								((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(BigDecimal.class);
+								field.setValue(new BigDecimal(((String) field.getValue()).replace(",", ".")));
 							}
 						}
 						record.appendField(field);
