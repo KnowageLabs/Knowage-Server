@@ -27,6 +27,33 @@ public class Exporters implements Serializable {
 	boolean defaultValue;
 	String domainLabel;
 	String engineLabel;
+	boolean persisted;
+	Integer updateDomainId;
+	Integer updateEngineId;
+
+	public Integer getUpdateDomainId() {
+		return updateDomainId;
+	}
+
+	public void setUpdateDomainId(Integer updateDomainId) {
+		this.updateDomainId = updateDomainId;
+	}
+
+	public Integer getUpdateEngineId() {
+		return updateEngineId;
+	}
+
+	public void setUpdateEngineId(Integer updateEngineId) {
+		this.updateEngineId = updateEngineId;
+	}
+
+	public boolean isPersisted() {
+		return persisted;
+	}
+
+	public void setPersisted(boolean persisted) {
+		this.persisted = persisted;
+	}
 
 	public String getDomainLabel() {
 		return domainLabel;
