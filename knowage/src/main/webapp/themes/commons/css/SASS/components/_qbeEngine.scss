@@ -67,11 +67,18 @@
                 }
                 &.expanded {}
             }
+            .second-lvl-padding {
+            	padding-left:40px;
+            }
+            .second-lvl-cursor {
+            	cursor:pointer;
+            }
             ul {
                 background-color: $pageBackground;
                 margin: 0;
                 list-style: none;
                 padding-left: 0;
+                cursor: pointer;
                 li {
                     display: flex;
                     flex-direction: row;
@@ -110,6 +117,9 @@
             }
             &.measure:before {
                 content: "\f02b"
+            }
+            &.temporal_dimension:before {
+                content: "\f073"
             }
         }
 

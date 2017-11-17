@@ -17,7 +17,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 		if(itemsPerPage==undefined){
 			itemsPerPage = 25;
 		}
-		
+
 		if(itemsPerPage==0) return;
 
 		var q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&currentQueryId="+query.id+"&start="+start+"&limit="+itemsPerPage;
@@ -64,10 +64,12 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
      		var message = "";
 
     		if (response.status==500) {
-    			message = response.data.RemoteException.message;
+    			message = response.data.errors[0].message;
+    			sbiModule_messaging.showErrorMessage(message, 'Error');
     		}
     		else {
     			message = response.data.errors[0].message;
+    			sbiModule_messaging.showErrorMessage(message, 'Error');
     		}
 
     		sbiModule_messaging.showErrorMessage(message, 'Error');

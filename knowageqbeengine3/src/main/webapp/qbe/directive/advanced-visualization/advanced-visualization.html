@@ -20,10 +20,13 @@
 <!-- This template is responsible for rendering a container element. It uses
      the above list template to render each container column -->
 <script type="text/ng-template" id="group.html">
-    <md-card  class="container-element box box-blue">
-        <h3>Group {{item.id}} </h3>
-        <div class="column" ng-repeat="list in item.columns" ng-include="'list.html'"></div>
-        <div class="clearfix"></div>
+    <md-card  layout="row" class="container-element box box-blue">
+		<div flex=90>
+			<h3>Group {{item.id}} </h3>
+        	<div class="column" ng-repeat="list in item.columns" ng-include="'list.html'"></div>
+        	<div class="clearfix"></div>
+		</div>
+
     </md-card>
  
 </script>
@@ -38,7 +41,8 @@
 		<md-select ng-model="item.connector" >
 		        	<md-option ng-repeat="c in getBooleanConnectors" value="{{c}}"  >
 		            	{{c}}
-					</md-option></md-select>
+				    </md-option>
+		</md-select>
 	</md-card>
 </div>
  
@@ -52,7 +56,7 @@
 	   	</div>
 	</md-toolbar>
 	<md-tabs  md-dynamic-height>
-		<md-tab label="table">
+		<!-- <md-tab label="table">
 			<angular-table
 					 ng-model="ngModel.filters"
 					columns='filterColumnsAV'
@@ -60,7 +64,7 @@
 					speed-menu-option="speedMenu"
 					 >
 				 </angular-table>
-		</md-tab>
+		</md-tab> -->
 		<md-tab label="drag and drop">
 		<div>
 			<div class="row">

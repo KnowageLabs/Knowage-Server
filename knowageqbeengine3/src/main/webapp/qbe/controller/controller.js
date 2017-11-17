@@ -70,10 +70,10 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			query_service.executeQuery( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage);
 		}else{
 			queryModel.length = 0;
-		}		
+		}
 	}
 
-	$scope.openPanelForSavingQbeDataset = function (){
+	window.parent.openPanelForSavingQbeDataset = function (){
 		var bodySend = angular.copy($scope.bodySend);
 		var finishEdit=$q.defer();
 		var config = {
@@ -128,7 +128,12 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		$scope.addField(field);
 
     };
-    
+
+    $rootScope.$on('addFieldOnClick', function (event, data) {
+    	if(data.connector) return;
+    	$scope.addField(data);
+    });
+
 	$rootScope.$on('applyFunction', function (event, data) {
 		var indexOfEntity = findWithAttr($scope.entityModel.entities,'qtip', data.entity);
 		var indexOfFieldInEntity = findWithAttr($scope.entityModel.entities[indexOfEntity].children,'id', data.fieldId);
@@ -155,7 +160,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	});
 
 	$rootScope.$on('smartView', function (event, data) {
-		
+
 		if(data.length>0 && query_service.smartView){
 			for (var i = 0; i < data.length; i++) {
 				$scope.editQueryObj.fields[i].group = data[i].group;
@@ -178,11 +183,11 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 				$scope.editQueryObj.fields[i].funct = data.fields[i].funct;
 				$scope.editQueryObj.fields[i].visible = data.fields[i].visible;
 				$scope.editQueryObj.fields[i].distinct = data.fields[i].distinct;
-			}	
+			}
 		}
 		$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, true, data.start, data.itemsPerPage);
 	});
-	
+
 	$scope.$on('setVisible', function (event, data) {
 		 var indexOfEntity = findWithAttr($scope.entityModel.entities,'qtip', data.entity);
 		  var indexOfFieldInEntity = findWithAttr($scope.entityModel.entities[indexOfEntity].children,'id', data.fieldId);
@@ -190,7 +195,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		  $scope.isNotChangedFromHidingField = false;
 		  $scope.editQueryObj.fields[indexOfFieldInQuery].visible = data.visible;
 	});
-	
+
 	$scope.$on('showHiddenColumns', function (event, data) {
 		 for (var i = 0; i < $scope.editQueryObj.fields.length; i++) {
 			  $scope.editQueryObj.fields[i].visible = true;
@@ -229,16 +234,16 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	}
 
 	$scope.addField = function (field) {
-		
+
 		if($scope.queryModel != undefined  && !query_service.smartView && $scope.queryModel.length>0){
 			for (var i = 0; i < $scope.queryModel.length; i++) {
 				$scope.editQueryObj.fields[i].group = $scope.queryModel[i].group;
 				$scope.editQueryObj.fields[i].funct = $scope.queryModel[i].funct;
 				$scope.editQueryObj.fields[i].visible = $scope.queryModel[i].visible;
 				$scope.editQueryObj.fields[i].distinct = $scope.queryModel[i].distinct;
-			}	
+			}
 		}
-		
+
 		var newField  = {
 			   "id":field.id,
 			   "alias":field.attributes.field,
@@ -450,7 +455,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     $scope.stopEditingSubqueries = function(){
     	$scope.editQueryObj = $scope.query;
     }
-    
+
     if(parent.globalQbeJson){
     	$scope.editQueryObj = parent.globalQbeJson.catalogue.queries[0];
     }

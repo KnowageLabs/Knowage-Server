@@ -21,7 +21,7 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 angular.module('qbe_expander_list', ['ngDraggable'])
-.directive('qbeExpanderList', function($sce) {
+.directive('qbeExpanderList', function($sce, $rootScope) {
         return {
             restrict: 'E',
             scope: {
@@ -98,6 +98,16 @@ angular.module('qbe_expander_list', ['ngDraggable'])
             			return desc;
 
             		}
+                }
+
+                //broadcast field to root scope
+                scope.moveFieldByClick = function (item) {
+                	if(item.hasOwnProperty('iconCls')){
+                		$rootScope.$broadcast('addFieldOnClick', item);
+                	} else {
+                		item.expanded=!item.expanded;
+                	}
+
                 }
 
                 scope.$watch("ngModel", function(newValue, oldValue) {

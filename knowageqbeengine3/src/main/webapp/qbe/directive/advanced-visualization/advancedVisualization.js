@@ -48,9 +48,9 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 		        	    }
 
 	  };
-		
+
 	$scope.getBooleanConnectors = filters_service.getBooleanConnectors;
-	
+
 	$scope.$watch('models.dropzones', function(model) {
         $scope.modelAsJson = angular.toJson(model, true);
         console.log("model"+angular.toJson(model));
@@ -62,7 +62,6 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 		var advanceFiltersSaved = angular.copy($scope.ngModel.advancedFilters);
 		generateAdvancedExpression (advanceFiltersSaved);
 		$scope.ngModel.mdPanelRef.close();
-
 	}
 
 	$scope.filtersGroup = [];
@@ -98,18 +97,18 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 			}
 		}
 	}
-	
+
 	var generateAdvancedExpression = function (advancedFiltersAndGroups){
-		
+
 		var finalExpression = {};
-		
+
 		var nop = {};
 		nop.value = "";
 		nop.type = "NODE_OP";
 		nop.childNodes = [];
 		var nopForInsert = {};
 		for (var i = advancedFiltersAndGroups.length-1; i >= 0 ; i--) {
-			
+
 			if(i-1==-1 && advancedFiltersAndGroups[i].type=="group") {
 				angular.copy(createGroupNode(advancedFiltersAndGroups[i].columns[0]) ,finalExpression);
 			} else {
@@ -146,14 +145,14 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 		angular.copy(finalExpression, $scope.ngModel.expression);
 		console.log($scope.ngModel);
 	}
-	
+
 	var createGroupNode = function (group) {
-		
+
 		var nodeParObj = {};
 		nodeParObj.value = "PAR";
 		nodeParObj.type = "NODE_OP";
 		nodeParObj.childNodes = [];
-		
+
 		for (var i = 0; i < group.length; i++) {
 			if(group[i].type=="item"){
 				var nodeConstObj = {};
@@ -165,7 +164,7 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 				nodeParObj.childNodes.push(createGroupNode(group[i].columns[0]));
 			}
 		}
-		
+
 		return nodeParObj;
 	}
 

@@ -104,7 +104,16 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			List<SbiExporters> list = session.createCriteria(SbiExporters.class).list();
 
-			Iterator it = list.iterator();
+			List<SbiExporters> exporters = new ArrayList<SbiExporters>();
+
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i).getSbiDomains().getDomainCd().equals("EXPORT_TYPE")) {
+					SbiExporters exp = list.get(i);
+					exporters.add(exp);
+				}
+			}
+
+			Iterator it = exporters.iterator();
 			while (it.hasNext()) {
 				toReturn.add(toExporter((SbiExporters) it.next(), session));
 			}
