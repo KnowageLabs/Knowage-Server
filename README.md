@@ -1,4 +1,4 @@
-## Introduction
+## Welcome to Knowage
 
 Knowage is the professional open source suite for modern business analytics over traditional sources and big data systems. Knowage is the new brand for SpagoBI project: this new brand marks the value of the well-known open source business intelligence suite after significant functional and technological transformations and a new offering model. 
 The suite is composed of several modules, each one conceived for a specific analytical domain. They can be used individually as complete solution for a certain task, or combined with one another to ensure full coverage of user’ requirements. 
@@ -20,3 +20,7 @@ Knowage is available on two versions:
 
 This repository contains the source code of the Community Edition. 
 Please visit [Knowage project website](http://www.knowage-suite.com) for information about the Enterprise Edition.
+
+## Contributions
+
+Before start to contribute, please read and sign the [Contributor License Agreement](https://www.clahub.com/agreements/KnowageLabs/Knowage-Server).
