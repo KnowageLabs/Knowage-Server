@@ -357,9 +357,9 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 
 	protected void buildSelect(SelectQuery query) {
 		queryBuilder.append("SELECT ");
-		if (query.isSelectDistinct()) {
-			queryBuilder.append("DISTINCT ");
-		}
+
+		appendSelectDistinct(query);
+
 		if (query.hasSelectAll()) {
 			queryBuilder.append("* ");
 		} else if (query.hasSelectCount()) {
@@ -375,6 +375,12 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 				queryBuilder.append(",");
 				append(projections.get(i), true);
 			}
+		}
+	}
+
+	protected void appendSelectDistinct(SelectQuery query) {
+		if (query.isSelectDistinct()) {
+			queryBuilder.append("DISTINCT ");
 		}
 	}
 
