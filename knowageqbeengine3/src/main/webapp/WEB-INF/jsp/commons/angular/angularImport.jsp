@@ -58,3 +58,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule/sbiModule.jspf"%>
 
+<%@include file="/WEB-INF/jsp/commons/angular/formulas/formulas.jspf"%>
+

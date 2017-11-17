@@ -16,17 +16,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 <script>
-angular.module('sbiModule')
+angular.module('formulas')
 
-.factory('sbiModule_config',function(){
+.factory('formulaService',function(){
+	
+	var formulas = angular.fromJson('<%= formulasJson%>');
 		return {
-			protocol: '<%= request.getScheme()%>' ,
-			host: '<%= request.getServerName()%>',
-		    port: '<%= request.getServerPort()%>',
-			contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
-	    	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>",
-	    	sbiExecutionID:'<%=request.getParameter(SpagoBIConstants.SBI_EXECUTION_ID)%>',
-	    	formulas: '<%= formulasJson%>'
+			
+	    	getFormulas: function(){
+	    		return formulas;
+	    	}
 		};
 	});
 	

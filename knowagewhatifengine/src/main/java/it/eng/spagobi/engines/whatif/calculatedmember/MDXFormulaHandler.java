@@ -31,7 +31,6 @@ import org.olap4j.OlapException;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
@@ -46,6 +45,11 @@ public class MDXFormulaHandler {
 	private static SpagoBIPivotModel model;
 	private static ModelConfig modelConfig;
 	private static ClassLoader classLoader = MDXFormulaHandler.class.getClassLoader();
+
+	public static void main(String[] args) throws JAXBException, InstantiationException, IllegalAccessException {
+		loadFile();
+		getFormulasFromXML2();
+	}
 
 	public static SpagoBIPivotModel getModel() {
 		return model;
@@ -63,13 +67,10 @@ public class MDXFormulaHandler {
 		MDXFormulaHandler.modelConfig = modelConfig;
 	}
 
-	public MDXFormulaHandler() {
-
-	}
-
 	private static boolean loadFile() {
 
-		xmlFile = new File(WhatIfEngineConfig.getInstance().getEngineResourcePath() + "Olap/formulas.xml");
+		xmlFile = new File(
+				"C:\\Users\\dpirkovic\\servers\\workspace\\apache-tomcat-7.0.81\\apache-tomcat-7.0.81\\resources\\DEFAULT_TENANT\\Olap\\formulas.xml");
 		if (!xmlFile.exists()) {
 			xmlFile = new File(classLoader.getResource(File.separatorChar + "calculated_fields_formulas" + File.separatorChar + "formulas.xml").getPath());
 		}
@@ -86,9 +87,15 @@ public class MDXFormulaHandler {
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
 			formulas = (MDXFormulas) unmarshaller.unmarshal(xmlFile);
 		}
-
 		return formulas;
+
 	};
+
+	private static MDXFormulas getFormulasFromXML2() throws JAXBException, InstantiationException, IllegalAccessException {
+		Box<MDXFormulas> box = new Box<MDXFormulas>();
+		formulas = box.unmarshalFile(xmlFile, MDXFormulas.class);
+		return formulas;
+	}
 
 	public static MDXFormulas getFormulas() throws JAXBException {
 
@@ -173,4 +180,16 @@ public class MDXFormulaHandler {
 		}
 	}
 
+}
+
+class Box<T> {
+
+	@SuppressWarnings("unchecked")
+	public T unmarshalFile(File file, Class<T> clazz) throws JAXBException {
+
+		JAXBContext jc = JAXBContext.newInstance(clazz);
+		Unmarshaller unmarshaller = jc.createUnmarshaller();
+		return (T) unmarshaller.unmarshal(file);
+
+	}
 }

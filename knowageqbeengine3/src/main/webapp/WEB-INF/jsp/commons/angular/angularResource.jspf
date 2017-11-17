@@ -40,7 +40,10 @@ author:...
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
-
+<%@page import="it.eng.spagobi.engines.qbe.query.formula.DAO.Impl.FormulaDAOXmlImpl"%>
+<%@page import="it.eng.spagobi.engines.qbe.query.formula.mapping.Formula"%>
+<%@page import="it.eng.spagobi.engines.qbe.query.formula.DAO.IFormulaDAO"%>
+<%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 
 
 
@@ -58,8 +61,11 @@ author:...
        String documentLabel = null;
        String documentId = null;
        String engine = null;
-       String sbiExecutionID = null;   
-      
+       String sbiExecutionID = null;
+       IFormulaDAO formulaDAO = null;
+       List<Formula> formulas = null;
+       
+       ObjectMapper objectMapper = new ObjectMapper();
        ExecutionSession es = new ExecutionSession(request, request.getSession());
        
        
@@ -90,5 +96,9 @@ author:...
 		
 		  engine = request.getParameter("ENGINE");
 		}
+	   
+	   formulaDAO = new FormulaDAOXmlImpl();
+	   formulas = formulaDAO.getAll();
+	   String formulasJson = objectMapper.writeValueAsString(formulas);
 %>
 <%@include file="/WEB-INF/jsp/commons/angular/includeMessageResource.jspf"%>
