@@ -20,8 +20,11 @@
 
 <html>
 <head>
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/bootstrap/css/bootstrap.min.css">
-	<link id="spagobi-angular" rel="styleSheet"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css" type="text/css" />
+	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
+	
+	
+	<link id="spagobi-angular" rel="styleSheet"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>" type="text/css" />
+
 
 <style>
 
@@ -151,7 +154,10 @@ footer {
         
 
     </header>
- <script src="${pageContext.request.contextPath}/js/lib/jquery-1.11.3/jquery-1.11.3.min.js"></script>
- <script src="${pageContext.request.contextPath}/js/lib/bootstrap/bootstrap.min.js"></script>
+ <script src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.11.3/jquery-1.11.3.min.js")%>"></script>
+ <script src=" <%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/bootstrap.min.js")%>"></script>
+ 
+ 
+
 </body>
 </html>

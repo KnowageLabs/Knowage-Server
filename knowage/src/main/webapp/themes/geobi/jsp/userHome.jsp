@@ -122,7 +122,7 @@ Ext.onReady(function () {
 		if (Sbi.user.userId !== 'public_user'){
 			bannerHTML += 
 			'						<ul> '+		
-	        '                           <li><a href="javascript:execDirectUrl(\'${pageContext.request.contextPath}/restful-services/signup/prepareUpdate\',\'Modify user\')">'+LN('home.header.myAccount')+'</a></li> '+
+	        '                           <li><a href="javascript:execDirectUrl(\'<%=urlBuilder.getResourceLink(request, "restful-services/signup/prepareUpdate")%>\',\'Modify user\')">'+LN('home.header.myAccount')+'</a></li> '+
 	        '                           <li class="last"><a href="<%=logoutUrl%>">Logout</a></li> '+
 	        '                       </ul> ';      
 		}else{ 

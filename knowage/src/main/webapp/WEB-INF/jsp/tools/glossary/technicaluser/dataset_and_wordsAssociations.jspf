@@ -65,7 +65,7 @@
 									ng-class="{hideChildren: collapsed}">
 								<li ng-repeat="item in ctrl.words" data-nodrag ui-tree-node
 										data-collapsed="true"
-										ng-include="'${pageContext.request.contextPath}/js/src/angular_1.4/tools/glossary/commons/templates/neasted_tree_dataset_word.html'"
+										ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/glossary/commons/templates/neasted_tree_dataset_word.html")%>'"
 										class="noBorder"></li>
 							</ol>
 						</div>

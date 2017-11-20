@@ -27,11 +27,12 @@
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>
 
 <script type="text/javascript"
-	src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all-debug.js' ></script>
+	src='<%=urlBuilder.getResourceLink(request, "js/lib/ext-4.1.1a/ext-all-debug.js")%>' ></script>
 <script type="text/javascript"
-	src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js' ></script>
+	src='<%=urlBuilder.getResourceLink(request, "js/lib/ext-4.1.1a/examples/ux/IFrame.js")%>' ></script>
 <script type="text/javascript"
-	src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ux/RowExpander.js' ></script>
+	src='<%=urlBuilder.getResourceLink(request, "js/lib/ext-4.1.1a/ux/RowExpander.js")%>' ></script>
+
 
 <%
 	String defaultOrganization = msgBuilder.getMessage(
@@ -136,7 +137,8 @@ function cancel(){
 							    }else{
 							     // Sbi.exception.ExceptionHandler.showInfoMessage('<%=registrationSuccessMsg%>', 'Saved OK', {});
 							    	//redirect out of the container
-									var logoutUrl = "${pageContext.request.contextPath}/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
+									var logoutUrl = '<%=urlBuilder.getResourceLink(request, "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE")%>';
+									
 									var sessionExpiredSpagoBIJSFound = false;
 									try {
 										var currentWindow = window;
@@ -279,19 +281,20 @@ function execUpdate(params){
 }
 </script>
 <script type="text/javascript"
-	src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js' ></script>
+	src='<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/service/ServiceRegistry.js")%>' ></script>
 <script type="text/javascript"
-	src='${pageContext.request.contextPath}/js/src/ext/sbi/exception/ExceptionHandler.js' ></script>
+	src='<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/exception/ExceptionHandler.js")%>' ></script>
 
 <link id="extall" rel="styleSheet"
-	href="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all.css"
+	href="<%=urlBuilder.getResourceLink(request, "js/lib/ext-4.1.1a/resources/css/ext-all.css")%>"
 	type="text/css" />
 <link id="theme-gray" rel="styleSheet"
-	href="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css"
+	href="<%=urlBuilder.getResourceLink(request, "js/lib/ext-4.1.1a/resources/css/ext-all-gray.css")%>"
 	type="text/css" />
 <link id="spagobi-ext-4" rel="styleSheet"
-	href="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css"
+	href="<%=urlBuilder.getResourceLink(request, "js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css")%>"
 	type="text/css" />
+	
 
 <html>
 <head>
@@ -356,7 +359,7 @@ a:hover{
 	href="<%=urlBuilder.getResourceLink(request, "img/favicon.ico")%>" />
 <title>SpagoBI signup</title>
 <LINK rel='StyleSheet'
-	href='${pageContext.request.contextPath}/themes/sbi_default/css/spagobi_shared.css'
+	href='<%=urlBuilder.getResourceLink(request, "themes/sbi_default/css/spagobi_shared.css")%>'	
 	type='text/css' />
 
 <style>
@@ -386,7 +389,7 @@ body {
 					<tr>
 						<td></td>
 						<td><img
-							src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/spagobi40logo.png'
+							src='<%=urlBuilder.getResourceLink(request, "themes/sbi_default/img/wapp/spagobi40logo.png")%>'
 							width='180px' height='51px' style="margin: 20px 0px" /></td>
 						<td width='50px'></td>
 						<td></td>
@@ -595,10 +598,10 @@ body {
 				<!-- 	<tr>
 						<td colspan="4" align="center"><a href="#"
 							onclick="javascript:modify();"> <img
-								src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/confirm_button.png'
+								src='<%=urlBuilder.getResourceLink(request, "themes/sbi_default/img/wapp/confirm_button.png")%>'
 								title="aggiorna" alt="aggiorna" />
 						</a> <a href="#" onclick="javascript:cancel();"> <img
-								src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/cancel_button.png'
+								src='<%=urlBuilder.getResourceLink(request, "themes/sbi_default/img/wapp/cancel_button.png")%>'
 								title="elimina" alt="elimina" />
 						</a></td>
 

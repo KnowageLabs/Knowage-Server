@@ -35,35 +35,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
  
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/importexport/css/importExportStyle.css">
-<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/importexport/css/importExportStyle.css")%>">
+<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>"> 
 <!-- controller -->
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/userImportExport/importExportUsersController.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/userImportExport/importExportUsersController.js")%>"></script>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importExportDocumentsController.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/documentImportExport/importExportDocumentsController.js")%>"></script>
 
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/userImportExport/importUsersStep0Controller.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/userImportExport/importUsersStep0Controller.js")%>"></script>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/userImportExport/importUsersStep1Controller.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/userImportExport/importUsersStep1Controller.js")%>"></script>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/userImportExport/importUsersStep2Controller.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/userImportExport/importUsersStep2Controller.js")%>"></script>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep1Controller.js">
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep1Controller.js")%>">
 	</script><script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep2Controller.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep2Controller.js")%>"></script>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep3Controller.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep3Controller.js")%>"></script>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep4Controller.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep4Controller.js")%>"></script>
 <link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/themes/importexport/css/importExportStyle.css">
-<%-- 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/generalStyle.css"> --%>
+	href="<%=urlBuilder.getResourceLink(request, "themes/importexport/css/importExportStyle.css")%>">
+<%-- 	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/generalStyle.css")%>"> --%>
 
 <!-- 	breadCrumb -->
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/BreadCrumb.js")%>"></script>
 
 
 

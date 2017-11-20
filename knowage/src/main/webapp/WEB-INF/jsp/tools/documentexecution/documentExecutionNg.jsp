@@ -127,7 +127,7 @@ if(executionRoleNames.size() > 0) {
           <%-- ---------------------------------------------------------------------- --%>
 <%-- INCLUDE Persist JS                                                     --%>
 <%-- ---------------------------------------------------------------------- --%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/persist-0.1.0/persist.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/persist-0.1.0/persist.js")%>"></script>
 <script type="text/javascript">
 	//defining GLOBAL context url for following directives and template usage
 	_CURRENTCONTEXTURL="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution")%>"
@@ -135,7 +135,7 @@ if(executionRoleNames.size() > 0) {
     
         
         <!-- Styles -->
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
+        <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>"> 
         <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>  
         <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/editor.min.css")%>"> 
         
@@ -145,7 +145,7 @@ if(executionRoleNames.size() > 0) {
 	    <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/wheelnav/wheelnav.js")%>"></script>
         
         <!--    breadCrumb -->
-        <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
+        <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/BreadCrumb.js")%>"></script>
         
         <!-- cross navigation -->
         <script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/cross-navigation/crossNavigationDirective.js")%>"></script>
@@ -191,7 +191,7 @@ if(executionRoleNames.size() > 0) {
             <md-sidenav id="sidenavOri" class="md-sidenav-right md-whiteframe-4dp topsidenav" 
                     ng-if="'<%=obj.getParametersRegion() %>' == 'north'" md-component-id="parametersPanelSideNav" 
                     layout="column" md-is-locked-open="showParametersPanel.status" 
-                    ng-include="'${pageContext.request.contextPath}/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.jsp'">
+                    ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.jsp")%>'">
             </md-sidenav>
     <% 
     

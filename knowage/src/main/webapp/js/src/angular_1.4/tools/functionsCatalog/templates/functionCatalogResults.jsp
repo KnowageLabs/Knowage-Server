@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/sbi_default/css/FunctionsCatalog/functionsCatalog.css">
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/css/FunctionsCatalog/functionsCatalog.css")%>">
 
 
 <md-dialog aria-label='{{"sbi.functionscatalog.executionresult.executionresult"}}' ng-cloack>

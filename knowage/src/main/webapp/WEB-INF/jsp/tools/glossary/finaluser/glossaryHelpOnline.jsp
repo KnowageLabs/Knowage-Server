@@ -33,9 +33,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
 <!-- 	breadCrumb -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/bread-crumb.css">
-<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/BreadCrumb.js")%>"></script>
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/glossary/css/bread-crumb.css")%>">
+<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>"> 
 
 <% 
 	String type="",value="",label="",parameter1="",parameter2="";
@@ -71,9 +71,9 @@ var parameter1='<%= parameter1 %>';
 var parameter2='<%= parameter2 %>';
 </script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/glossary/finaluser/glossaryHelpOnline.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/glossary/finaluser/glossaryHelpOnline.js")%>"></script>
 
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/generalStyle.css">
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/glossary/css/generalStyle.css")%>">
 
 <style type="text/css">
 .halfperc {

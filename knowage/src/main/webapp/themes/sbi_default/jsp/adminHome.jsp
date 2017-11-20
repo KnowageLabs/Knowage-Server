@@ -31,7 +31,8 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 
 <!-- Include AngularJS application -->
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/menu/menuAppAdmin.js"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/menu/menuAppAdmin.js")%>"></script> 
+
 
 
 

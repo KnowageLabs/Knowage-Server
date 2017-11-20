@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <head>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/multitenant/tenantManagement.js"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/multitenant/tenantManagement.js")%>"></script>
 
 	<link rel="stylesheet" type="text/css"   href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/multitenant/tenantStyle.css", currTheme)%>">
 	<link rel="stylesheet" type="text/css"   href="<%=urlBuilder.getResourceLinkByTheme(request, "/themes/commons/css/customStyle.css", currTheme)%>">

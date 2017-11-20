@@ -48,7 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<%@include file="/WEB-INF/jsp/commons/workspace/workspaceImport.jsp"%>
 		
 		<!-- Styles -->
-		<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
+		<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>"> 
 		
 	
 		<script language="javascript" type="text/javascript">		   

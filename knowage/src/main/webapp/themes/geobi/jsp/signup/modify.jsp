@@ -126,7 +126,7 @@ function cancel(){
 							    }else{
 							     // Sbi.exception.ExceptionHandler.showInfoMessage('<%=registrationSuccessMsg%>', 'Saved OK', {});
 							    	//redirect out of the container
-									var logoutUrl = "${pageContext.request.contextPath}/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
+									var logoutUrl = "<%=urlBuilder.getResourceLink(request, "servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE")%>";
 									var sessionExpiredSpagoBIJSFound = false;
 									try {
 										var currentWindow = window;

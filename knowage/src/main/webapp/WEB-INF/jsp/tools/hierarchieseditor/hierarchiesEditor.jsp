@@ -40,15 +40,15 @@ if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{SpagoB
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierarchiesController.js"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/hierarchies/hierarchiesController.js")%>"></script>
 
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierMasterController.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierTechnicalController.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierBackupController.js"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/hierarchies/hierMasterController.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/hierarchies/hierTechnicalController.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/hierarchies/hierBackupController.js")%>"></script>
 	
 	<link rel="stylesheet" type="text/css"   href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/hierarchies/hierarchiesStyle.css", currTheme)%>">
 <%-- 	<link rel="stylesheet" type="text/css"   href="<%=urlBuilder.getResourceLinkByTheme(request, "/themes/commons/css/generalStyle.css", currTheme)%>"> --%>
-	<link rel="stylesheet" type="text/css"    href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
+	<link rel="stylesheet" type="text/css"    href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 	
 	
 <title>HierarchiesEditor</title>
@@ -64,17 +64,17 @@ if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{SpagoB
 			<md-tabs md-dynamic-height md-border-bottom>
 				<md-tab label="MASTER" ng-if="<%=canSeeMasterHier%>==true">
 					<md-content layout-padding>
-						<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierMaster.jsp'"></ng-include>
+						<ng-include src="'<%=urlBuilder.getResourceLink(request, "restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierMaster.jsp")%>'"></ng-include>
 					</md-content> 
 				</md-tab>		      
 				<md-tab label="TECHNICAL" md-on-select ="loadTechnical()" ng-if="<%=canSeeTechnicalHier%>==true">
 					<md-content layout-padding ng-if="technicalLoaded">
-						<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierTechnical.jsp'"></ng-include>
+						<ng-include src="'<%=urlBuilder.getResourceLink(request, "restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierTechnical.jsp")%>'"></ng-include>
 					</md-content>
 				</md-tab>
 				<md-tab label="BACKUP"  md-on-select ="loadBackup()" ng-if="<%=canSeeTechnicalHier%>==true">
 					<md-content layout-padding ng-if="backupLoaded">
-						<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierBackup.jsp'"></ng-include>
+						<ng-include src="'<%=urlBuilder.getResourceLink(request, "restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierBackup.jsp")%>'"></ng-include>
 					</md-content>
 				</md-tab>
 			</md-tabs>

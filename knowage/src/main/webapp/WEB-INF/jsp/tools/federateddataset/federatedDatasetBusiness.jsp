@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- 
 		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/federateddataset/federatedDataset.js"></script> 
 --%>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/federateddataset/federatedDataset.js"></script>
+		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/federateddataset/federatedDataset.js")%>"></script>
 		<!-- 
 		<link rel="stylesheet" type="text/css" href="/knowage/themes/federateddataset/css/federateddatasetStyle.css">
 		<link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/generalStyle.css">
@@ -46,7 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- 
 		<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css">
 --%>
-		<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
+		<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 		
 		<!-- Retrieveing datasets used in creating a federation definition, as well as the whole relationships column -->
 		<script> var listaNewEditMode = [];

@@ -35,18 +35,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/scorecardKpiController.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/scorecardSubController/scorecardDefinitionController.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/scorecardSubController/scorecardPerspectiveDefinitionController.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/scorecardSubController/scorecardTargetDefinitionController.js"></script>
+<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>"> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/kpi/scorecardKpiController.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/kpi/scorecardSubController/scorecardDefinitionController.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/kpi/scorecardSubController/scorecardPerspectiveDefinitionController.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/kpi/scorecardSubController/scorecardTargetDefinitionController.js")%>"></script>
 
 <!-- 	breadCrumb -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/bread-crumb.css">
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/BreadCrumb.js")%>"></script>
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/glossary/css/bread-crumb.css")%>">
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/directive/kpiSemaphoreIndicator/kpiSemaphoreIndicator.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/directive/kpiColorIndicator/kpiColorIndicator.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/kpi/directive/kpiSemaphoreIndicator/kpiSemaphoreIndicator.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/kpi/directive/kpiColorIndicator/kpiColorIndicator.js")%>"></script>
 </head>
 <body class="kn-scorecardKpiDefinition" ng-cloak>
 

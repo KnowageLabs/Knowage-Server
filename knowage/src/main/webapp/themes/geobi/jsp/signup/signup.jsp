@@ -229,7 +229,7 @@ function changefield(el){
         	<div class="aux">
             	<div class="reserved-area-container">            		
             		<h1><%=msgBuilder.getMessage("registration",request)%></h1>
-                    <form name="myForm" method="post" action="${pageContext.request.contextPath}/" class="reserved-area-form">
+                    <form name="myForm" method="post" action="<%=urlBuilder.getResourceLink(request, "/")%>" class="reserved-area-form">
                         <fieldset>
                             <div class="field organization">
                                 <label for="organization">Company</label>
@@ -263,7 +263,7 @@ function changefield(el){
 
                             <div class="submit">
                                 <input type="text" value="<%=msgBuilder.getMessage("signup",request)%>" onclick="javascript:register();" />
-                                <p><%=msgBuilder.getMessage("yesAccount",request)%> <a href="${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE">Login</a></p>                                
+                                <p><%=msgBuilder.getMessage("yesAccount",request)%> <a href="<%=urlBuilder.getResourceLink(request, "servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE")%>">Login</a></p>                                
                             </div>
                         </fieldset>
                     </form>

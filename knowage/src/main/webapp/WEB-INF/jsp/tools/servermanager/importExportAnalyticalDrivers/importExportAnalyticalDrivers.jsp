@@ -34,19 +34,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <head>
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 
 <!-- controller -->
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/analyticalDriversImportExport/importExportAnalyticalDriversController.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importExportDocumentsController.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/analyticalDriversImportExport/importAnalyticalDriversStep0Controller.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/analyticalDriversImportExport/importAnalyticalDriversStep1Controller.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/directive/ngExportCatalog.js">"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/analyticalDriversImportExport/importExportAnalyticalDriversController.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/documentImportExport/importExportDocumentsController.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/analyticalDriversImportExport/importAnalyticalDriversStep0Controller.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/analyticalDriversImportExport/importAnalyticalDriversStep1Controller.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/directive/ngExportCatalog.js")%>">"></script>
 
 	
 <!-- 	breadCrumb -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/BreadCrumb.js")%>"></script>
 
 	
 </head>

@@ -86,7 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
 	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> -->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
 	
 
 	<!-- Optional theme -->
@@ -135,8 +135,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         
     </div><!-- /container -->
     <!-- Include all compiled plugins (below), or include individual files as needed -->
- <script src="${pageContext.request.contextPath}/js/lib/jquery-1.11.3/jquery-1.11.3.min.js"></script>
- <script src="${pageContext.request.contextPath}/js/lib/bootstrap/bootstrap.min.js"></script>
+ <script src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.11.3/jquery-1.11.3.min.js")%>"></script>
+ <script src="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/bootstrap.min.js")%>"></script>
 
 <script>
 $(document).ready(function(){

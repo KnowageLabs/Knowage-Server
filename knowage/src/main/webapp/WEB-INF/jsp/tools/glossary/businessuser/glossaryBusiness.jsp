@@ -36,14 +36,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- glossary tree -->
 <link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/themes/glossary/css/tree-style.css">
+	href="<%=urlBuilder.getResourceLink(request, "themes/glossary/css/tree-style.css")%>">
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js")%>"></script>
 
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/glossary/businessuser/glossary.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/glossary/businessuser/glossary.js"></script>
 <link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
+	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 <link rel="stylesheet" type="text/css"
 	href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/glossary/glossaryCustomStyle.css", currTheme)%>">
 <link rel="stylesheet" type="text/css"

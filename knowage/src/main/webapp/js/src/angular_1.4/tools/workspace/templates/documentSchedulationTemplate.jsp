@@ -65,16 +65,27 @@
 			 </md-button>
 			</div>
 		</md-toolbar>
-	 	<angular-table 
-	 		flex=70
-			id="tableMergeSchedulers" ng-model=schedulationListForMerge 
-			columns='schedulatinMergeColumns'
-			highlights-selected-item = "true"
-			initial-sorting="'time'"
-			initial-sorting-asc="true"
-			show-search-bar="true"
-			speed-menu-option=downloadSnapshotSpeedMenuOption
+
+		<div ng-if=mergeAndNotPDF flex layout="column">
+
+			<angular-table flex=70 id="tableMergeSchedulersNoButton"
+				ng-model=schedulationListForMerge columns='schedulatinMergeColumns'
+				highlights-selected-item="true" initial-sorting="'time'"
+				initial-sorting-asc="true" show-search-bar="true"
 				>
-		</angular-table>
-	 </div>
+			</angular-table>
+		</div>
+
+		<div ng-if=!mergeAndNotPDF flex layout="column">
+			<angular-table flex=70 id="tableMergeSchedulersButton"
+				ng-model=schedulationListForMerge columns='schedulatinMergeColumns'
+				highlights-selected-item="true" initial-sorting="'time'"
+				initial-sorting-asc="true" show-search-bar="true"
+				speed-menu-option=downloadSnapshotSpeedMenuOption> </angular-table>
+		</div>
+
+
+
+
+	</div>
  </div>

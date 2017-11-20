@@ -57,9 +57,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    	
 %>
 
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all-debug.js'></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js'></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ux/RowExpander.js'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "js/lib/ext-4.1.1a/ext-all-debug.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "js/lib/ext-4.1.1a/examples/ux/IFrame.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "js/lib/ext-4.1.1a/ux/RowExpander.js")%>'></script>
 
 <script type="text/javascript">
   Ext.ns("Sbi.config");
@@ -121,10 +121,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   }
   
 </script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js'></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/exception/ExceptionHandler.js'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/exception/ExceptionHandler.js")%>'></script>
   
- <link id="extall" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" /> 
+ <link id="extall" rel="styleSheet" href ="<%=urlBuilder.getResourceLink(request, "js/lib/ext-4.1.1a/resources/css/ext-all.css")%>" type="text/css" /> 
 	
 <html>
   <body onload="javascript:active('<%= request.getParameter("accountId") %>')"> 
@@ -138,7 +138,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       	<div class="aux">
           	<div class="reserved-area-container">
           		<h1><%=msgBuilder.getMessage("login",locale)%></h1>
-          		  <form id="formId" name="login" action="${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()"  class="reserved-area-form login">	        		          
+          		  <form id="formId" name="login" action="<%=urlBuilder.getResourceLink(request, "servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE")%>" method="POST" onsubmit="return escapeUserName()"  class="reserved-area-form login">	        		          
                     <fieldset>                    	 
                           <div class="field username">
                               <label for="username"><%=msgBuilder.getMessage("username",locale)%></label>

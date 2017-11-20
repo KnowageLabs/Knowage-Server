@@ -55,7 +55,8 @@ img {
 }
 
 </style> 
-<link id="spagobi-angular" rel="styleSheet"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css" type="text/css" /> 
+<link id="spagobi-angular" rel="styleSheet"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>" type="text/css" /> 
+ 
 </head>
 <body class="landingPageAdmin">
   

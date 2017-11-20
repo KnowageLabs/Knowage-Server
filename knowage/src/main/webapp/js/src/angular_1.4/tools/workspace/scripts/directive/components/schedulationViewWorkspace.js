@@ -39,6 +39,7 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 	$scope.schedulationList = [];
 	$scope.schedulationListForMerge = [];
 	$scope.schedulationListInitial = [];
+	$scope.mergeAndNotPDF = false;
 
 	$scope.loadSchedulations = function(){
 
@@ -75,6 +76,8 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 			sbiModule_logger.log("[LOAD START]: Loading of Shcedulations for selected scheduler is started.");
 			angular.copy(response.data.schedulations,$scope.schedulationListForMerge);
 			$scope.snapshotUrlPath=response.data.urlPath;
+			$scope.mergeAndNotPDF = response.data.mergeAndNotPDF;
+
 			sbiModule_logger.log("[LOAD END]: Loading of Shcedulations for selected scheduler is finished.");
 		},function(response){
 

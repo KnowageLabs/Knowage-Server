@@ -126,7 +126,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Knowage">
-    <link rel="manifest" href="${pageContext.request.contextPath}/manifest.json" />
+    <link rel="manifest" href="<%=urlBuilder.getResourceLink(request, "manifest.json")%>" />
+    
     
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Knowage</title>
@@ -135,7 +136,8 @@
   <script type="text/javascript">
     function signup(){
     	var form = document.getElementById('formId');
-    	var act = '${pageContext.request.contextPath}/restful-services/signup/prepare';
+    	var act = '<%=urlBuilder.getResourceLink(request, "restful-services/signup/prepare")%>';
+    	
     	form.action = act;
     	form.submit();
     	
@@ -165,7 +167,7 @@
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
 	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> -->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
 	
 
 	<!-- Optional theme -->
@@ -289,8 +291,9 @@
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
  -->
- <script src="${pageContext.request.contextPath}/js/lib/jquery-1.11.3/jquery-1.11.3.min.js"></script>
- <script src="${pageContext.request.contextPath}/js/lib/bootstrap/bootstrap.min.js"></script>
+ <script src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.11.3/jquery-1.11.3.min.js")%>"></script>
+  
+ <script src="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/bootstrap.min.js")%>"></script>
 
 <script>
 $(document).ready(function(){

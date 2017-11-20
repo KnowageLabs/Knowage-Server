@@ -24,20 +24,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/menuImportExport/importExportMenuController.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/menuImportExport/importStep0Controller.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/menuImportExport/importExportMenuController.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/menuImportExport/importStep0Controller.js")%>"></script>
 <!-- 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/menuImportExport/importStep1Controller.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/menuImportExport/importStep2Controller.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/menuImportExport/importStep3Controller.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/menuImportExport/importStep4Controller.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/menuImportExport/importStep1Controller.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/menuImportExport/importStep2Controller.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/menuImportExport/importStep3Controller.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/menuImportExport/importStep4Controller.js")%>"></script>
 -->
 
 
 <%-- breadCrumb --%>
 <script type="text/javascript" 
-		src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
+		src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/BreadCrumb.js")%>"></script>
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 
 </head>
 <body class="bodyStyle kn-importExportDocument" ng-app="importExportMenuModule" >

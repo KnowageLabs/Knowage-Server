@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	   	<script>
 		    function signup(){
 		    	var form = document.getElementById('formId');
-		    	var act = '${pageContext.request.contextPath}/restful-services/signup/prepare';
+		    	var act = '<%=urlBuilder.getResourceLink(request, "/restful-services/signup/prepare")%>';
 		    	form.action = act;
 		    	form.submit();		    	
 		    }

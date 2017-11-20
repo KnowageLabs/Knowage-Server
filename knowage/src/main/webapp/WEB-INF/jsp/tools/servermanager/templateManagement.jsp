@@ -37,18 +37,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- non c'entra	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/commons/LayerTree.js"></script> -->
 <%-- breadCrumb --%>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/BreadCrumb.js")%>"></script>
 	
 
 
 <link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
+	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 
 <link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/themes/importexport/css/importExportStyle.css">
+	href="<%=urlBuilder.getResourceLink(request, "themes/importexport/css/importExportStyle.css")%>">
 <!-- controller -->
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/templateManagement.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/servermanager/templateManagement.js")%>"></script>
 
 </head>
 <body class="bodyStyle kn-templatemanagement">

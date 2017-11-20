@@ -45,7 +45,7 @@
 				<div   id="TreeColumn-Word-Bc" ui-tree="BCColumnTreeOptionsWord" data-drag-enabled="true" data-clone-enabled="true">
 					<ol ui-tree-nodes ng-model="sbiGlBcWlist" ng-class="{hideChildren: collapsed}">
 						<li ng-repeat="item in sbiGlBcWlist" data-nodrag ui-tree-node data-collapsed="true" class="noBorder"
-								ng-include="'${pageContext.request.contextPath}/js/src/angular_1.4/tools/glossary/commons/templates/nested_tree_meta_Table_or_Bc_word.html'" >
+								ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/glossary/commons/templates/nested_tree_meta_Table_or_Bc_word.html")%>'" >
 						</li>
 					</ol>
 				</div
