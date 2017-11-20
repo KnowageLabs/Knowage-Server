@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging){
+angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user){
 	var ds=this;
 
 	this.datasetList=[];
@@ -18,7 +18,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			}, dsIds);
 
 			sbiModule_restServices.restToRootProject();
-			sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=TRUE&ids=" + dsIds.join())
+			sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + (sbiModule_user.isTechnicalUser ? "TRUE" : "FALSE") + "&ids=" + dsIds.join())
 			.then(function(response){
 				for(var i in response.data.item){
 					var dataset = response.data.item[i];
@@ -75,7 +75,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		var def=$q.defer();
 		if(!ds.isDatasetListLoaded){
 			sbiModule_restServices.restToRootProject();
-			sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=TRUE")
+			sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + (sbiModule_user.isTechnicalUser ? "TRUE" : "FALSE"))
 			.then(function(response){
 				var allDatasets = response.data.item;
 
