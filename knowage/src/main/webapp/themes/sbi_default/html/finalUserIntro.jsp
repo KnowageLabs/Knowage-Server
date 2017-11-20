@@ -18,6 +18,8 @@
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.Enumeration"%>
 
+<%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
+
 <html>
 <head>
 	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
