@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 		
 		<script type="text/javascript"
-			src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/catalogues/datasetManagement.js"></script>
+			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/catalogues/datasetManagement.js")%>"></script>
 		
 		<script language="javascript" type="text/javascript">		   
 		   var datasetParameters=<%=selfServiceParameters%>;
@@ -53,23 +53,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</script>
 		
 		<!-- Codemirror -->
-		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.css">
-		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/theme/eclipse.css">  
-		<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.js"></script>  
-		<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/codemirror/ui-codemirror.js"></script> 
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.css" />
-		<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.js"></script>
-		<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/sql-hint.js"></script>
-		<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/javascript/javascript.js"></script>
-		<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/groovy/groovy.js"></script>
-		<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/sql/sql.js"></script>
-		<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js"></script>
-		<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/display/autorefresh.js"></script>
+		<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.css")%>">
+		<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/theme/eclipse.css")%>">  
+		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.js")%>"></script>  
+		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/ui-codemirror.js")%>"></script> 
+		<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.css")%>" />
+		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/sql-hint.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/javascript/javascript.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/groovy/groovy.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/sql/sql.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/display/autorefresh.js")%>"></script>
 		
 		<!-- CRON for Dataset Scheduling -->
-		<script src="${pageContext.request.contextPath}/js/lib/prettyCron/prettycron.js"></script>
-		<script src="${pageContext.request.contextPath}/js/lib/prettyCron/later.js"></script> 	
-		<script src="${pageContext.request.contextPath}/js/lib/prettyCron/moment-with-locales.js"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/prettyCron/prettycron.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/prettyCron/later.js")%>"></script> 	
+		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/prettyCron/moment-with-locales.js")%>"></script>
 
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		

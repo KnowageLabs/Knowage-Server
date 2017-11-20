@@ -38,11 +38,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
+<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>"> 
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/alert/alert.css", currTheme)%>">
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/src/angular_1.4/tools/alert/actions/sendMail/templates/senMail.css">
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/alert/actions/sendMail/templates/senMail.css")%>">
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/alert/alertDefinitionController.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/alert/alertDefinitionController.js")%>"></script>
 
 
 <%@include file="/WEB-INF/jsp/tools/alert/include/actions/actionsInclude.jsp"%>
@@ -52,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/editor.min.css")%>"> 
 	
 <!-- cronFrequency -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/cronFrequency/cronFrequency.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/cronFrequency/cronFrequency.js")%>"></script>
   
 
 

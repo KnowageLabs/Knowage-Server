@@ -938,14 +938,13 @@ function saveDocument(goBack) {
 					</span>
 				</div>
 				<div class='div_detail_form'>
-				<!-- ${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=ManageCrossOutParamsPage -->
 					<%
 					Map editOutputParametersMap = new HashMap();
 					editOutputParametersMap.put(SpagoBIConstants.PAGE, SpagoBIConstants.MANAGE_CROSS_OUT_PARAMS_PAGE);
 					editOutputParametersMap.put(ObjectsTreeConstants.OBJECT_ID, obj.getId().toString());
 					String editOutputParameters = urlBuilder.getUrl(request, editOutputParametersMap);
 					%>
-					<a href="${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/outPars/manageOutputParameters.jsp?OBJECT_ID=<%=obj.getId().toString()%>">
+					<a href="<%=urlBuilder.getResourceLink(request, "restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/outPars/manageOutputParameters.jsp?OBJECT_ID="+obj.getId().toString())%>">
 						<img class='header-button-image-portlet-section' 
    				 			 title='<spagobi:message key = "sbi.detailbiobj.editOutputParameters" />' 
    				 			 src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/copytree.gif", currTheme)%>' 
@@ -961,7 +960,6 @@ function saveDocument(goBack) {
 					</span>
 				</div>
 				<div class='div_detail_form'>
-				<!-- ${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=ManageCrossOutParamsPage -->
 						<%
 					Map linkDoc = new HashMap();
 						linkDoc.put(SpagoBIConstants.PAGE, SpagoBIConstants.MANAGE_DOC_LINKS_PAGE);
@@ -969,7 +967,8 @@ function saveDocument(goBack) {
 						linkDoc.put(ObjectsTreeConstants.OBJECT_LABEL, obj.getLabel().toString());
 					String documentLink = urlBuilder.getUrl(request, linkDoc);
 					%>
-					<a href="${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentbrowser/templates/linkDocument.jsp?OBJECT_ID=<%=obj.getId().toString()%>&OBJECT_LABEL=<%=obj.getLabel().toString()%>">
+					<a href="<%=urlBuilder.getResourceLink(request, "restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentbrowser/templates/linkDocument.jsp?OBJECT_ID="+obj.getId().toString()+"&OBJECT_LABEL="+obj.getLabel().toString())%>">
+						
 						<img class='header-button-image-portlet-section' 
    				 			 title='<spagobi:message key = "Link Document" />' 
    				 			 src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/linkDocument.png", currTheme)%>' 
@@ -1927,7 +1926,8 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 	<script>
 	function writeParametersCurrentUrl(objParId){
 		
-		var url = "${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentbrowser/templates/analyticalDriversList.jsp?";
+		var url = '<%=urlBuilder.getResourceLink(request, "restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentbrowser/templates/analyticalDriversList.jsp?")%>';
+		
 	    url+="OBJECT_ID="+<%=obj.getId().toString()%>;
 		
 	    url+="&selected_obj_par_id="+objParId;

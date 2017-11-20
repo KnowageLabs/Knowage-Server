@@ -17,6 +17,21 @@
  */
 package it.eng.spagobi.tools.scheduler.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -36,19 +51,6 @@ import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
 import it.eng.spagobi.tools.scheduler.to.JobTrigger;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class SchedulerUtilitiesV2 {
 
@@ -97,7 +99,7 @@ public class SchedulerUtilitiesV2 {
 			}
 
 			if (validTime) {
-				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
 				try {
 					Date dateStart = sdf.parse(jobt.getStartDate() + " " + jobt.getStartTime());
 					Date dateEnd = sdf.parse(jobt.getEndDate() + " " + jobt.getEndTime());
@@ -184,7 +186,7 @@ public class SchedulerUtilitiesV2 {
 			}
 
 			if (validTime) {
-				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
 				try {
 					Date dateStart = sdf.parse(jobTrigger.getStartDate() + " " + jobTrigger.getStartTime());
 					Date dateEnd = sdf.parse(jobTrigger.getEndDate() + " " + jobTrigger.getEndTime());
@@ -821,8 +823,8 @@ public class SchedulerUtilitiesV2 {
 		}
 	}
 
-	private static void getSaveAsDistributionListOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr) throws EMFUserError,
-			JSONException {
+	private static void getSaveAsDistributionListOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr)
+			throws EMFUserError, JSONException {
 		Boolean sendtodl = request.optBoolean("saveasdl");
 		if (sendtodl) {
 			dispatchContext.setDistributionListDispatchChannelEnabled(true);
@@ -913,8 +915,8 @@ public class SchedulerUtilitiesV2 {
 		for (Integer biobjId : biobjIds) {
 			index++;
 			DispatchContext dispatchContext = new DispatchContext();
-			SourceBean dispatchContextSB = (SourceBean) triggerInfoSB.getFilteredSourceBeanAttribute("JOB_PARAMETERS.JOB_PARAMETER", "name", "biobject_id_"
-					+ biobjId.toString() + "__" + index);
+			SourceBean dispatchContextSB = (SourceBean) triggerInfoSB.getFilteredSourceBeanAttribute("JOB_PARAMETERS.JOB_PARAMETER", "name",
+					"biobject_id_" + biobjId.toString() + "__" + index);
 			if (dispatchContextSB != null) {
 				String encodedDispatchContext = (String) dispatchContextSB.getAttribute("value");
 				dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);
@@ -1137,6 +1139,22 @@ public class SchedulerUtilitiesV2 {
 	}
 
 	public static JSONArray toJsonTreeLowFunctionality(List<LowFunctionality> functionalities) throws JSONException {
+		// sort folders: root folder (with null parent id) should be the first one
+		Collections.sort(functionalities, new Comparator<LowFunctionality>() {
+			@Override
+			public int compare(LowFunctionality f1, LowFunctionality f2) {
+				if (f1.getParentId() == null)
+					return -1;
+				if (f2.getParentId() == null)
+					return 1;
+				if (f1.getParentId().equals(f2.getParentId())) {
+					return f1.getProg().compareTo(f2.getProg());
+				} else {
+					return f1.getParentId().compareTo(f2.getParentId());
+				}
+			}
+		});
+
 		JSONArray tmp = new JSONArray();
 		for (LowFunctionality lf : functionalities) {
 

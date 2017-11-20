@@ -52,14 +52,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <!-- Styles -->
 <link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
+	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 
 <!-- Styles -->
 <script type="text/javascript" src=" "></script>
 
 
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/catalogues/menuConfiguration.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/catalogues/menuConfiguration.js")%>"></script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title></title>
@@ -270,7 +270,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			
 	 <div ng-if="selectedMenu.functionality == 'DocumentUserBrowser'">
-				<img style="margin: 0 0 -5px -6px;" src="${pageContext.request.contextPath}/themes/sbi_default/img/treebase.gif" alt="" /> 
+				<img style="margin: 0 0 -5px -6px;" src="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/img/treebase.gif")%>" alt="" /> 
 				
 				<span>{{translate.load("sbi.menu.folders", "component_scheduler_messages")}}</span>
 				

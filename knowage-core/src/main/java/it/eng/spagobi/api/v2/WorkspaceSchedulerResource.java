@@ -75,6 +75,7 @@ public class WorkspaceSchedulerResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException("Error with getting snapshpots", buildLocaleFromSession(), e);
 
 		}
+		boolean isAllPDf = true;
 		for (Entry<String, Map<Integer, List<Snapshot>>> entry : list.entrySet()) {
 			for (Entry<Integer, List<Snapshot>> deep : entry.getValue().entrySet()) {
 				snapshotList = deep.getValue();
@@ -84,6 +85,9 @@ public class WorkspaceSchedulerResource extends AbstractSpagoBIResource {
 					// obj.put("time", snapshotList.get(i).getDateCreation());
 					obj.put("time", SnapshotDAOHibImpl.DATE_FORMATTER.format(snapshotList.get(i).getDateCreation()));
 					ids.put(snapshotList.get(i).getId());
+					if (snapshotList.get(i).getContentType() == null || !snapshotList.get(i).getContentType().equalsIgnoreCase("application/pdf")) {
+						isAllPDf = false;
+					}
 				}
 
 				obj.put("name", entry.getKey());
@@ -96,6 +100,7 @@ public class WorkspaceSchedulerResource extends AbstractSpagoBIResource {
 		JSONObject resultAsMap = new JSONObject();
 		resultAsMap.put("urlPath", GeneralUtilities.getSpagoBIProfileBaseUrl(this.getUserProfile().getUserUniqueIdentifier().toString()));
 		resultAsMap.put("schedulations", toreturn);
+		resultAsMap.put("mergeAndNotPDF", !isAllPDf);
 		return resultAsMap.toString();
 
 	}

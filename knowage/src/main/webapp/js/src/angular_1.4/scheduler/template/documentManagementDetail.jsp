@@ -1,3 +1,4 @@
+
 <md-chips ng-model="activityEventCtrl.event.documents" readonly="true">
 	<md-chip-template ng-click="activityEventCtrl.selectedDocument=$chip">
 		<strong ng-class="{'selectedDoc' : activityEventCtrl.selectedDocument.label==$chip.label }">{{$chip.label}}</strong>
@@ -111,7 +112,7 @@
 			</div>
 		
 			<div ng-if="activityEventCtrl.selectedDocument.useFixedFolder==true">
-				<img style="margin: 0 0 -5px -6px;" src="${pageContext.request.contextPath}/themes/sbi_default/img/treebase.gif" alt="" /> 
+				<img style="margin: 0 0 -5px -6px;" src="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/img/treebase.gif")%>" alt="" /> 
 				
 				<span>{{translate.load("scheduler.documentstree", "component_scheduler_messages")}}</span>
 				

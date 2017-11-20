@@ -31,7 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <%@include file="/WEB-INF/jsp/behaviouralmodel/analyticaldriver/mapFilter/geoImport.jsp"%>
 
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/mapFilter/geoController.js"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/mapFilter/geoController.js")%>"></script>
+	
 	<title><spagobi:message key="SBIDev.mapFilter.pagetitle"/></title>
 </head>
 

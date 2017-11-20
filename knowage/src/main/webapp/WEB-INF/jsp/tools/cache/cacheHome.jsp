@@ -36,13 +36,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
 	<!-- Styles -->
-	<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angularChart/angular-chart.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/css/cacheChart/css/cache.css">
+	<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
+	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/angularChart/angular-chart.css")%>">
+	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/css/cacheChart/css/cache.css")%>">
 
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/cache/cacheRuntimeController.js"></script>	
-	<script src="${pageContext.request.contextPath}/js/lib/Chart.js/Chart.js"></script>
-	<script src="${pageContext.request.contextPath}/js/lib/angularChart/angular-chart.js"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/cache/cacheRuntimeController.js")%>"></script>	
+	<script src="<%=urlBuilder.getResourceLink(request, "js/lib/Chart.js/Chart.js")%>"></script>
+	<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angularChart/angular-chart.js")%>"></script>
 
 	<title>CacheManager</title>
 

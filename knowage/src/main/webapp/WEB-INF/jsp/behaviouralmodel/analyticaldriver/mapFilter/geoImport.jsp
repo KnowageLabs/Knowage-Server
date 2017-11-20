@@ -19,19 +19,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- openlayer import -->
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/openlayers/3.x.x/ol.js"></script> 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/openlayers/3.x.x/ol.css" type="text/css">
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/openlayers/3.x.x/ol.js")%>"></script> 
+
+
+<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/openlayers/3.x.x/ol.css")%>" type="text/css">
+
+
 
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script>
    google.load('visualization', '1.0', {'packages':['corechart', 'bar']});
 </script>
 	    
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/mapFilter/utils/Ellipsoid.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/mapFilter/utils/Ellipsoid.js")%>"></script>
 
 
 <!-- geo-map import -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/mapFilter/geoModule.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/mapFilter/geoModule.js")%>"></script>
+
 <script>
 var sbiModule=angular.module('sbiModule');
 sbiModule.factory('sbiModule_config',function(){
@@ -61,6 +66,7 @@ sbiModule.factory('sbiModule_config',function(){
 	};
 });
 </script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/mapFilter/utils/geoUtils.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/mapFilter/utils/geoUtils.js")%>"></script>
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/css/mapFilter/mapFilter.css" type="text/css">
+<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/css/mapFilter/mapFilter.css")%>" type="text/css">
+

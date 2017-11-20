@@ -58,8 +58,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/federateddataset/linkDataset.js"></script>
 		<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css"> 
 --%>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/federateddataset/linkDataset.js"></script>
-		<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
+		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/federateddataset/linkDataset.js")%>"></script>
+		<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 	
 		</head>
 

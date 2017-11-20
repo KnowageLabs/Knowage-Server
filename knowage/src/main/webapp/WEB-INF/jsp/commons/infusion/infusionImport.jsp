@@ -9,13 +9,15 @@
 <%@page import="it.eng.spagobi.commons.bo.AccessibilityPreferences" %>
 
 
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/infusion/src/lib/normalize/css/normalize.css" />
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/infusion/src/framework/core/css/fluid.css" />
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/infusion/src/framework/preferences/css/Enactors.css" />
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/infusion/src/framework/preferences/css/PrefsEditor.css" />
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/infusion/src/framework/preferences/css/SeparatedPanelPrefsEditor.css" />
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/infusion/src/lib/normalize/css/normalize.css")%>" />
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/infusion/src/framework/core/css/fluid.css")%>" />
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/infusion/src/framework/preferences/css/Enactors.css")%>" />
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/infusion/src/framework/preferences/css/PrefsEditor.css")%>" />
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/infusion/src/framework/preferences/css/SeparatedPanelPrefsEditor.css")%>" />
 
-<script type="text/javascript"          src="${pageContext.request.contextPath}/js/lib/infusion/infusion-all.js"></script>
+<script type="text/javascript"          src="<%=urlBuilder.getResourceLink(request, "js/lib/infusion/infusion-all.js")%>"></script>
+
+
 <%
    String preferences= null;
    if(ap!= null){

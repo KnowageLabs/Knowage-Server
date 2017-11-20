@@ -44,18 +44,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	src="/knowage/js/src/angular_1.4/tools/catalogues/mondrianSchemasCatalogue.js"></script> 
 --%>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script>
 
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/catalogues/behavioralModelLineage.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/catalogues/behavioralModelLineage.js")%>"></script>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/sbi-container/sbi-containerModule.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/sbi-container/sbi-containerModule.js")%>"></script>
 	<script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/sbi-container/directives/basic-container/basic-container.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/sbi-container/directives/basic-container/basic-container.js")%>"></script>
 	<script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/table-container/table-containerModule.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/table-container/table-containerModule.js")%>"></script>
 	<script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/table-container/directives/table-container/table-container.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/table-container/directives/table-container/table-container.js")%>"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
 

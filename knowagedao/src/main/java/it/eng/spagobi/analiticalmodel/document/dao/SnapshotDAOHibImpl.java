@@ -388,7 +388,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 				hql = "from SbiSnapshots ss where ss.scheduler = ? order by ss.sbiObject.biobjId";
 			} else {
 				hql = "select distinct snap.snapId, snap.name, snap.description, snap.creationDate, snap.sbiObject, "
-						+ "snap.schedulation, snap.schedulationStartDate " + "from SbiSnapshots as snap"
+						+ "snap.schedulation, snap.schedulationStartDate, snap.contentType " + "from SbiSnapshots as snap"
 						+ " where snap.scheduler = ?  order by snap.sbiObject.biobjId";
 			}
 
@@ -430,6 +430,9 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 					}
 					if (snapValues[6] != null) {
 						snap.setSchedulationStartDate((Integer) snapValues[6]);
+					}
+					if (snapValues[7] != null) {
+						snap.setContentType((String) snapValues[7]);
 					}
 				}
 
