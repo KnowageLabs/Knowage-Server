@@ -212,7 +212,7 @@
 
 
 		$scope.$watch('local',function(newValue,oldValue){
-			if($scope.functionsCockpitColumn.columnList && newValue){
+			if($scope.functionsCockpitColumn.columnList && newValue && newValue.metadata.fieldsMeta != $scope.functionsCockpitColumn.columnList){
 				angular.copy(newValue.metadata.fieldsMeta,$scope.functionsCockpitColumn.columnList);
 			}
 		})
