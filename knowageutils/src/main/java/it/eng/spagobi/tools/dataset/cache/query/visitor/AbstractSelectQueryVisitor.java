@@ -349,7 +349,6 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		boolean selectAll = query.hasSelectAll();
 		boolean selectCount = query.hasSelectCount();
 		Assert.assertTrue(!(selectAll && selectCount), "Invalid projections definition");
-		Assert.assertTrue(projections.size() > 0 ^ (selectAll || selectCount), "Invalid projections definition");
 
 		String tableName = query.getTableName();
 		Assert.assertTrue(StringUtilities.isNotEmpty(tableName), "Missing table definition");
