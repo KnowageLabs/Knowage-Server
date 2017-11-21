@@ -99,7 +99,7 @@ public class PersistedTableHelper {
 			} else if (fieldMetaTypeName.contains("Time")) {
 				insertStatement.setTime(fieldIndex + 1, (Time) fieldValue);
 			} else if (fieldMetaTypeName.contains("Byte")) {
-				if (fieldValue == null) {
+				if (fieldValue == null || fieldValue.toString().isEmpty()) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.INTEGER);
 				} else {
 					// insertStatement.setByte(fieldIndex + 1, (Byte) fieldValue);
@@ -107,7 +107,7 @@ public class PersistedTableHelper {
 				}
 			} else if (fieldMetaTypeName.contains("Short")) {
 				// only for primitive type is necessary to use setNull method if value is null
-				if (fieldValue == null) {
+				if (fieldValue == null || fieldValue.toString().isEmpty()) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.INTEGER);
 				} else {
 					if (fieldValue instanceof Integer) {
@@ -120,41 +120,45 @@ public class PersistedTableHelper {
 				}
 			} else if (fieldMetaTypeName.contains("Integer")) {
 				// only for primitive type is necessary to use setNull method if value is null
-				if (fieldValue == null) {
+				if (fieldValue == null || fieldValue.toString().isEmpty()) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.INTEGER);
 				} else {
 					insertStatement.setInt(fieldIndex + 1, (Integer) fieldValue);
 				}
 			} else if (fieldMetaTypeName.contains("Double")) {
 				// only for primitive type is necessary to use setNull method if value is null
-				if (fieldValue == null) {
+				if (fieldValue == null || fieldValue.toString().isEmpty()) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.DOUBLE);
 				} else {
 					insertStatement.setDouble(fieldIndex + 1, (Double) fieldValue);
 				}
 			} else if (fieldMetaTypeName.contains("Float")) {
 				// only for primitive type is necessary to use setNull method if value is null
-				if (fieldValue == null) {
+				if (fieldValue == null || fieldValue.toString().isEmpty()) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.FLOAT);
 				} else {
 					insertStatement.setDouble(fieldIndex + 1, (Float) fieldValue);
 				}
 			} else if (fieldMetaTypeName.contains("Long")) {
 				// only for primitive type is necessary to use setNull method if value is null
-				if (fieldValue == null) {
+				if (fieldValue == null || fieldValue.toString().isEmpty()) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.BIGINT);
 				} else {
 					insertStatement.setLong(fieldIndex + 1, (Long) fieldValue);
 				}
 			} else if (fieldMetaTypeName.contains("Boolean")) {
 				// only for primitive type is necessary to use setNull method if value is null
-				if (fieldValue == null) {
+				if (fieldValue == null || fieldValue.toString().isEmpty()) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.BOOLEAN);
 				} else {
 					insertStatement.setBoolean(fieldIndex + 1, (Boolean) fieldValue);
 				}
 			} else if (fieldMetaTypeName.contains("BigDecimal")) {
-				insertStatement.setBigDecimal(fieldIndex + 1, (BigDecimal) fieldValue);
+				if (fieldValue == null || fieldValue.toString().isEmpty()) {
+					insertStatement.setNull(fieldIndex + 1, java.sql.Types.DECIMAL);
+				} else {
+					insertStatement.setBigDecimal(fieldIndex + 1, (BigDecimal) fieldValue);
+				}
 			} else if (fieldMetaTypeName.contains("[B")) { // BLOB
 				insertStatement.setBytes(fieldIndex + 1, (byte[]) fieldValue);
 			} else if (fieldMetaTypeName.contains("BLOB")) {
