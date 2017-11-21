@@ -1316,7 +1316,7 @@ public class DatasetManagementAPI {
 
 			if (summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
 				PreparedStatementData summaryRowData = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter)
-						.groupBy(groups).orderBy(sortings).getPreparedStatementData(null);
+						.orderBy(sortings).getPreparedStatementData(null);
 				IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowData.getQuery(), summaryRowData.getValues(), -1, -1,
 						maxRowCount);
 				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
@@ -1546,8 +1546,7 @@ public class DatasetManagementAPI {
 		IDataStore pagedDataStore = dataSource.executeStatement(query, offset, fetchSize, maxRowCount);
 
 		if (summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
-			String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter).groupBy(groups)
-					.toSql(dataSource);
+			String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter).toSql(dataSource);
 			IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1, maxRowCount);
 			appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 		}

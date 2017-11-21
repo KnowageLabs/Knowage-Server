@@ -463,7 +463,7 @@ public class SQLDBCache implements ICache {
 
 						if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
 							String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter)
-									.groupBy(groups).toSql(dataSource);
+									.toSql(dataSource);
 							IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1);
 							datasetManagementAPI.appendSummaryRowToPagedDataStore(projections, summaryRowProjections, dataStore, summaryRowDataStore);
 						}
@@ -772,7 +772,7 @@ public class SQLDBCache implements ICache {
 			logger.debug("Dataset hasn't fields. The Dataset will not persisted.");
 			return 0;
 		}
-		logger.error("Dataset has #" + dataStore.getMetaData().getFieldCount() + "  fields. The Dataset will be persisted.");
+		logger.debug("Dataset has #" + dataStore.getMetaData().getFieldCount() + "  fields. The Dataset will be persisted.");
 
 		String signature = dataSet.getSignature();
 		String hashedSignature = Helper.sha256(dataSet.getSignature());
