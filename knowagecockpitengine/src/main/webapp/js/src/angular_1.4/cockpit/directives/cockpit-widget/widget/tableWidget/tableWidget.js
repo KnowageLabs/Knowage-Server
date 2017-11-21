@@ -73,14 +73,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
 		//set a watcher on a variable that can contains the associative selections for realtime dataset
 		var realtimeSelectionsWatcher = $scope.$watchCollection('realTimeSelections',function(newValue,oldValue,scope){
-			var dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId);
-			if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1 ){
-                cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
-            }
-			if(newValue != oldValue && newValue.length > 0){
-				scope.itemList = scope.filterDataset(scope.itemList,scope.reformatSelections(newValue));
-			}else{
-				angular.copy(scope.savedRows, scope.itemList);
+			if(scope.ngModel && scope.ngModel.dataset && scope.ngModel.dataset.dsId){
+				var dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId);
+				if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1 ){
+	                cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
+	            }
+				if(newValue != oldValue && newValue.length > 0){
+					scope.itemList = scope.filterDataset(scope.itemList,scope.reformatSelections(newValue));
+				}else{
+					angular.copy(scope.savedRows, scope.itemList);
+				}
 			}
 		});
 
