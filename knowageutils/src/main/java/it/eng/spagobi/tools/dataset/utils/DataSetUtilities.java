@@ -377,4 +377,13 @@ public class DataSetUtilities {
 			throw new IllegalArgumentException("Column [" + columnName + "] not found");
 		}
 	}
+
+	public static String getColumnNameWithoutQbePrefix(String columnName) {
+		int indexOfQbeSeparator = columnName.indexOf(":");
+		if (indexOfQbeSeparator != -1) {
+			return columnName.substring(indexOfQbeSeparator + 1);
+		} else {
+			return columnName;
+		}
+	}
 }

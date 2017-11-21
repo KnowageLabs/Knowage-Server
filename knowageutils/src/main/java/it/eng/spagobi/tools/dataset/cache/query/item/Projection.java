@@ -46,10 +46,19 @@ public class Projection {
 
 	public Projection(IAggregationFunction aggregationFunction, IDataSet dataSet, String columnName, String alias) {
 		this.aggregationFunction = aggregationFunction;
+
 		this.dataSet = dataSet;
+
 		IFieldMetaData fieldMetaData = DataSetUtilities.getFieldMetaData(dataSet, columnName);
-		this.name = fieldMetaData.getName();
+		String columnNameWithoutQbePrefix = DataSetUtilities.getColumnNameWithoutQbePrefix(fieldMetaData.getName());
+		if (!columnName.equals(columnNameWithoutQbePrefix)) {
+			this.name = alias;
+		} else {
+			this.name = columnName;
+		}
+
 		this.alias = alias;
+
 		this.type = fieldMetaData.getType();
 	}
 
