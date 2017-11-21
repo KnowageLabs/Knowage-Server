@@ -803,7 +803,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',
 	      clickOutsideToClose: false,
 	      escapeToClose :true,
-	      //fullscreen: true,
+	      fullscreen: false,
 	      locals:{
 	    	 // previewDatasetModel:$scope.previewDatasetModel,
 	         // previewDatasetColumns:$scope.previewDatasetColumns

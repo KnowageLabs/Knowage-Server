@@ -597,5 +597,20 @@ $organizerHeight : 120px;
 	 		overflow-y:auto;
 	 	}
 	 }
+	 .workspaceDatasetWizard {
+	 	.validationStep {
+	 		margin-top:8px !important; 
+	 		height:390px;
+	 		max-height:390px;
+	 	}
+	 	.previewStep {
+	 		margin-top:8px !important; 
+	 		height:330px;
+	 		max-height:330px;
+	 		md-card-content {
+	 			overflow-y: hidden;
+	 		}
+	 	}
+	 }
 	
 }
