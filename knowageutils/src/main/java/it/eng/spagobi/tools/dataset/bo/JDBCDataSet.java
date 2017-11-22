@@ -62,34 +62,4 @@ public class JDBCDataSet extends AbstractJDBCDataset {
 	public JDBCDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
 	}
-
-	@Override
-	public DataIterator iterator() {
-		logger.debug("IN");
-		try {
-			QuerableBehaviour querableBehaviour = (QuerableBehaviour) getBehaviour(QuerableBehaviour.class.getName());
-			String statement = querableBehaviour.getStatement();
-			logger.debug("Obtained statement [" + statement + "]");
-			dataProxy.setStatement(statement);
-			JDBCDataProxy jdbcDataProxy = (JDBCDataProxy) dataProxy;
-			IDataSource dataSource = jdbcDataProxy.getDataSource();
-			Assert.assertNotNull(dataSource, "Invalid datasource");
-			Connection connection = dataSource.getConnection(jdbcDataProxy.getSchema());
-			Statement stmt = connection.createStatement();
-			stmt.setFetchSize(10000);
-			ResultSet rs = (ResultSet) dataProxy.getData(dataReader, stmt);
-			DataIterator iterator = new ResultSetIterator(connection, stmt, rs);
-			return iterator;
-		} catch (ClassNotFoundException | SQLException | NamingException e) {
-			throw new SpagoBIRuntimeException(e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	@Override
-	public boolean isIterable() {
-		return true;
-	}
-
 }

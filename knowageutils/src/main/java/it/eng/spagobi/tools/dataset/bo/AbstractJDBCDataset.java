@@ -25,19 +25,28 @@ import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.JDBCStandardDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
+
+import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -244,5 +253,34 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 		}
 		logger.debug("OUT");
 		return columnName;
+	}
+	
+	@Override
+	public DataIterator iterator() {
+		logger.debug("IN");
+		try {
+			QuerableBehaviour querableBehaviour = (QuerableBehaviour) getBehaviour(QuerableBehaviour.class.getName());
+			String statement = querableBehaviour.getStatement();
+			logger.debug("Obtained statement [" + statement + "]");
+			dataProxy.setStatement(statement);
+			JDBCDataProxy jdbcDataProxy = (JDBCDataProxy) dataProxy;
+			IDataSource dataSource = jdbcDataProxy.getDataSource();
+			Assert.assertNotNull(dataSource, "Invalid datasource");
+			Connection connection = dataSource.getConnection(jdbcDataProxy.getSchema());
+			Statement stmt = connection.createStatement();
+			stmt.setFetchSize(5000);
+			ResultSet rs = (ResultSet) dataProxy.getData(dataReader, stmt);
+			DataIterator iterator = new ResultSetIterator(connection, stmt, rs);
+			return iterator;
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
+			throw new SpagoBIRuntimeException(e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@Override
+	public boolean isIterable() {
+		return true;
 	}
 }
