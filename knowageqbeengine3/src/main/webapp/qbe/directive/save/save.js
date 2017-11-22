@@ -71,8 +71,8 @@ function save($scope, $rootScope,save_service, $mdDialog, sbiModule_translate, s
 		$scope.ngModel.bodySend.persistTable = $scope.savingQbeDataSet.persistTable;
 		$scope.ngModel.bodySend.endDateField = $scope.savingQbeDataSet.endDateField;
 		$scope.ngModel.bodySend.startDateField = $scope.savingQbeDataSet.startDateField;
-		$scope.ngModel.bodySend.scopeId = scopeList[0].VALUE_ID;
-		$scope.ngModel.bodySend.scopeCd = scopeList[0].VALUE_CD;
+		$scope.ngModel.bodySend.scopeId = $scope.scopeList[0].VALUE_ID;
+		$scope.ngModel.bodySend.scopeCd = $scope.scopeList[0].VALUE_CD;
 		$scope.ngModel.bodySend.sourceDatasetLabel = "";
 
 

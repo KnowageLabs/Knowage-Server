@@ -32,6 +32,18 @@
 			</md-input-container>
 		</div>
 		
+		<div flex=100>
+			<label class="workspaceLabelForCheckBox">
+    			{{translate.load("kn.ds.hdfs")}}:
+   			</label> 
+               		
+	         <md-input-container class="small counter workspacePersistCheckboxContainer">
+	             <md-checkbox 	aria-label="Checkbox HDFS" 
+	              		ng-model="savingQbeDataSet.exportToHdfs" ng-checked="" class="workspaceCheckbox">
+				</md-checkbox>
+	          </md-input-container>
+		</div>
+		
 	<!-- 	<div flex=100>
 	       <md-input-container class="md-block" > 
 	       		<label>{{translate.load("kn.qbe.save.scope")}}</label>
@@ -72,7 +84,7 @@
 	      <md-button ng-click="closeSaving()" >
 	       {{translate.load("kn.qbe.general.cancel")}}
 	      </md-button>
-	      <md-button ng-click="saveFilters()"  ng-disabled=!datasetForm.$valid>
+	      <md-button ng-click="saveQbeDataSet()"  ng-disabled=!datasetForm.$valid>
 		    {{translate.load("kn.qbe.general.save")}}
 	      </md-button>
 	</md-card-actions>
