@@ -52,7 +52,7 @@ public class Projection {
 		IFieldMetaData fieldMetaData = DataSetUtilities.getFieldMetaData(dataSet, columnName);
 		String columnNameWithoutQbePrefix = DataSetUtilities.getColumnNameWithoutQbePrefix(fieldMetaData.getName());
 		if (!columnName.equals(columnNameWithoutQbePrefix)) {
-			this.name = alias;
+			this.name = fieldMetaData.getAlias();
 		} else {
 			this.name = columnName;
 		}

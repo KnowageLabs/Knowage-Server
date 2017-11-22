@@ -85,8 +85,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				//objToInsert.filterOperator="=";
 				objToInsert.filterOperator="";
 
-				objToInsert.colName=$scope.localDS.metadata.fieldsMeta[i].name;
-				objToInsert.type=$scope.localDS.metadata.fieldsMeta[i].type;
+				objToInsert.colName = $scope.localDS.metadata.fieldsMeta[i].name;
+				objToInsert.type = $scope.localDS.metadata.fieldsMeta[i].type;
 
 				$scope.ngModelShared.filters.push(objToInsert);
 			}
@@ -98,65 +98,57 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.refreshChartFilters=function(dsId){
 
-					if(!$scope.ngModelShared.filters){
-						$scope.ngModelShared.filters=[];
-					}
+			if(!$scope.ngModelShared.filters){
+				$scope.ngModelShared.filters=[];
+			}
 
-					 // format [{colName : "..."  ,  filterVals : ["filterStr1" , "filterStr2", ... ]}   ,   {colName : "..."  ,  filterVals : [...] }]
-					//$scope.selectedDsId=$scope.ngModelShared.dataset.dsId;
-					$scope.selectedDsId=dsId;
-					angular.copy(cockpitModule_datasetServices.getDatasetById($scope.selectedDsId), $scope.localDS);
+			 // format [{colName : "..."  ,  filterVals : ["filterStr1" , "filterStr2", ... ]}   ,   {colName : "..."  ,  filterVals : [...] }]
+			//$scope.selectedDsId=$scope.ngModelShared.dataset.dsId;
+			$scope.selectedDsId=dsId;
+			angular.copy(cockpitModule_datasetServices.getDatasetById($scope.selectedDsId), $scope.localDS);
 
-					// if there are already filters must delete old one and create new ones
+			// if there are already filters must delete old ones and create new ones
+			var metadataArray= new Array();
+			for(var i=0;i<$scope.localDS.metadata.fieldsMeta.length;i++){
+				metadataArray.push($scope.localDS.metadata.fieldsMeta[i].name);
+			}
+			var filtersArray= new Array();
+			var filtersToRemoveIndexArray= new Array();
 
-					var metadataArray= new Array();
-					for(var i=0;i<$scope.localDS.metadata.fieldsMeta.length;i++){
-						metadataArray.push($scope.localDS.metadata.fieldsMeta[i].name);
-					}
-					var filtersArray= new Array();
-					var filtersToRemoveIndexArray= new Array();
-
-					for(var i=0;i<$scope.ngModelShared.filters.length;i++){
-						var colName = $scope.ngModelShared.filters[i].colName;
-						if(!metadataArray.includes(colName)){
-							filtersToRemoveIndexArray.push(i);
-						}
-						else{
-							filtersArray.push(colName);
-						}
-					}
-
-					// delete no more present filters
-					for(var i=filtersToRemoveIndexArray.length-1;i>=0;i--){
-						$scope.ngModelShared.filters.splice(filtersToRemoveIndexArray[i], 1);
-					}
-
-					//remove all
-
-					for(var i=0;i<$scope.localDS.metadata.fieldsMeta.length;i++)
-					{
-
-						// before inserting new filter check it is not already present
-
-						var objToInsert={};
-						objToInsert.colName=$scope.localDS.metadata.fieldsMeta[i].name;
-						if(!filtersArray.includes(objToInsert.colName)){
-
-						objToInsert.filterVals=[];
-						objToInsert.filterOperator="";
-						objToInsert.type=$scope.localDS.metadata.fieldsMeta[i].type;
-
-						$scope.ngModelShared.filters.push(objToInsert);
-					}
+			for(var i=0;i<$scope.ngModelShared.filters.length;i++){
+				var colName = $scope.ngModelShared.filters[i].colName;
+				if(!metadataArray.includes(colName)){
+					filtersToRemoveIndexArray.push(i);
 				}
-
-
+				else{
+					filtersArray.push(colName);
 				}
+			}
 
+			// delete no more present filters
+			for(var i=filtersToRemoveIndexArray.length-1;i>=0;i--){
+				$scope.ngModelShared.filters.splice(filtersToRemoveIndexArray[i], 1);
+			}
 
+			//remove all
+
+			for(var i=0;i<$scope.localDS.metadata.fieldsMeta.length;i++)
+			{
+				// before inserting new filter check it is not already present
+				var objToInsert={};
+				objToInsert.colName=$scope.localDS.metadata.fieldsMeta[i].name;
+				if(!filtersArray.includes(objToInsert.colName)){
+
+					objToInsert.filterVals=[];
+					objToInsert.filterOperator="";
+					objToInsert.type=$scope.localDS.metadata.fieldsMeta[i].type;
+
+					$scope.ngModelShared.filters.push(objToInsert);
+				}
+			}
+		}
 
 		$scope.eraseFilter=function(filterName){
-
 			var filterFound = false;
 			for(var j=0;j<$scope.ngModelShared.filters.length && !filterFound;j++){
 				if($scope.ngModelShared.filters[j].colName==filterName){
@@ -167,8 +159,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 		}
-
-
 
 		//for chartWidget
 		$scope.$watch("ngModelShared.datasetId", function(newValue, oldValue) {
@@ -192,33 +182,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//for tableWidget
 		$scope.$watch("ngModelShared.dataset.dsId", function(newValue, oldValue) {
 			var filterFound=false;
-			if(oldValue==newValue)
-			{
-				if(oldValue!=undefined) //not initialization phase
-				{
-					if($scope.ngModelShared.filters==undefined)	//if filters are not defined, I create them
-					{
+			if(oldValue==newValue){
+				if(oldValue!=undefined){ //not initialization phase
+					if($scope.ngModelShared.filters==undefined){ //if filters are not defined, I create them
 						$scope.updateFilters($scope.ngModelShared.dataset.dsId);
-					}
-					else
-					{
+					}else{
 						$scope.localDSforFilters={};
 						angular.copy(cockpitModule_datasetServices.getDatasetById($scope.ngModelShared.dataset.dsId), $scope.localDSforFilters);
 
-						for(var i=0;i<$scope.localDSforFilters.metadata.fieldsMeta.length;i++)  //columns
-						{
+						for(var i=0;i<$scope.localDSforFilters.metadata.fieldsMeta.length;i++){ //columns
 							var obj = $scope.localDSforFilters.metadata.fieldsMeta[i];
 
 							if($scope.ngModelShared.filters!=undefined){
 								filterFound=false;
 								var filterToAdd={};
-								for(var j=0;j<$scope.ngModelShared.filters.length;j++){        //filters
+								for(var j=0;j<$scope.ngModelShared.filters.length;j++){ //filters
 									if($scope.ngModelShared.filters[j].colName==obj.name){
 										filterFound=true;
 										break;
 									}
 								}
 							}
+
 							if(!filterFound){
 								filterToAdd.colName=obj.name;
 								filterToAdd.type=obj.type;
@@ -228,8 +213,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 
 						var arrayIndexToDelete = new Array();
-						for(var k=0;k<$scope.ngModelShared.filters.length;k++)   //filters
-						{
+						for(var k=0;k<$scope.ngModelShared.filters.length;k++){ //filters
 							filterFound=false;
 							var f = $scope.ngModelShared.filters[k];
 							for(var l=0;l<$scope.localDSforFilters.metadata.fieldsMeta.length;l++){  //columns
@@ -240,17 +224,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							}
 							if(!filterFound){ //if filter is not in columns
 								arrayIndexToDelete.push(k);
-
 							}
 						}
 
-						for(var k=arrayIndexToDelete.length-1;k>=0;k--)   //filters
-						{
+						for(var k=arrayIndexToDelete.length-1;k>=0;k--){ //filters
 							var index = arrayIndexToDelete[k];
 							$scope.ngModelShared.filters.splice(index,1); //remove filter from filter list
 						}
+					}
 
-
+					// clean column name in case of QBE dataset
+					for(var i=0; i<$scope.ngModelShared.filters.length; i++){
+						var columnName = $scope.ngModelShared.filters[i].colName;
+						var colonIndex = columnName.indexOf(":");
+						if(colonIndex > -1){
+							columnName = columnName.substr(colonIndex + 1);
+						}
+						$scope.ngModelShared.filters[i].columnName = columnName;
 					}
 				}else{
 					//initialization phase, there is no dataset

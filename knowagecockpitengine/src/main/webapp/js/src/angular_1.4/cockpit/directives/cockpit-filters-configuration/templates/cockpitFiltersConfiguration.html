@@ -15,12 +15,12 @@
  			<!-- Cycle on all filters -->
 			<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="filterObj in ngModelShared.filters" >     			
             	<label flex=20 class="filterLabel">
-            		<md-tooltip md-delay="1000">{{filterObj.colName}}</md-tooltip>
-            		{{filterObj.colName}}
+            		<md-tooltip md-delay="1000">{{filterObj.columnName}}</md-tooltip>
+            		{{filterObj.columnName}}
             	</label>
 
 	 			<!-- Operator on combo basing on filter type: String, Number, Date-->
-	      		<md-input-container  flex=40 ng-show="filterObj.type == 'java.lang.String'">
+	      		<md-input-container flex=40 ng-show="filterObj.type == 'java.lang.String'">
 	                <label>Operator</label>
 	             	<md-select ng-model="filterObj.filterOperator" >
 	                    <md-option ng-repeat="op in operatorsTypeString" ng-value="op">{{op}}</md-option>
