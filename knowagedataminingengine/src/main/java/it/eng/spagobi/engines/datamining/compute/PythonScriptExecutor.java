@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Iterator;
 
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.jpy.PyLib;
 

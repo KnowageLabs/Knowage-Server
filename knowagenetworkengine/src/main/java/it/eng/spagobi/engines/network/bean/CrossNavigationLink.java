@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -144,7 +144,7 @@ public class CrossNavigationLink {
 		for(int i=0; i<parameters.size(); i++){
 			parameter = parameters.get(i);
 			if(parameter.getType().equals(CrossNavigationParameterType.RELATIVE) || parameter.getType().equals(CrossNavigationParameterType.ABSOLUTE) ){
-				fixedParameter.put(StringEscapeUtils.escapeHtml(parameter.getName()), StringEscapeUtils.escapeHtml(parameter.getValue()));
+				fixedParameter.put(StringEscapeUtils.escapeHtml4(parameter.getName()), StringEscapeUtils.escapeHtml4(parameter.getValue()));
 			}
 		}
 		return fixedParameter;
@@ -167,9 +167,9 @@ public class CrossNavigationLink {
 		for(int i=0; i<parameters.size(); i++){
 			parameter = parameters.get(i);
 			if(parameter.getType().equals(CrossNavigationParameterType.EDGE)){
-				edgesList.put( StringEscapeUtils.escapeHtml(parameter.getProperty()),StringEscapeUtils.escapeHtml(parameter.getName()));
+				edgesList.put( StringEscapeUtils.escapeHtml4(parameter.getProperty()),StringEscapeUtils.escapeHtml4(parameter.getName()));
 			}else if(parameter.getType().equals(CrossNavigationParameterType.NODE)){
-				nodesList.put( StringEscapeUtils.escapeHtml(parameter.getProperty()),StringEscapeUtils.escapeHtml(parameter.getName()));
+				nodesList.put( StringEscapeUtils.escapeHtml4(parameter.getProperty()),StringEscapeUtils.escapeHtml4(parameter.getName()));
 			}
 		}
 		dynamicParameter.put(CrossNavigationParameterType.EDGE.getValue(),edgesList);

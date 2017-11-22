@@ -34,7 +34,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -309,7 +309,7 @@ public class JSONNetwork implements INetwork{
 			
 			throw new SerializationException("Error serializing the network",e);
 		}
-		s = StringEscapeUtils.unescapeJavaScript(s);
+		s = StringEscapeUtils.unescapeEcmaScript(s);
 		return  s; 
 	}
 
