@@ -62,7 +62,6 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 	public AbstractSelectQueryVisitor() {
 		buildPreparedStatement = false;
 		this.aliasDelimiter = AbstractDataBase.STANDARD_ALIAS_DELIMITER;
-		this.dialect = SqlDialect.DEFAULT;
 		this.queryBuilder = new StringBuilder();
 		this.queryParameters = new ArrayList<Object>();
 	}

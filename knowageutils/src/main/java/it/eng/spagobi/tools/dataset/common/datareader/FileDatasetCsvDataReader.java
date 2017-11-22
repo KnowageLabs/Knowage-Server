@@ -42,6 +42,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Marco Cortella marco.cortella@eng.it
@@ -97,28 +98,16 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 
 	@Override
 	public IDataStore read(Object data) {
-		DataStore dataStore = null;
-
-		InputStream inputDataStream;
-
 		logger.debug("IN");
-
-		inputDataStream = (InputStream) data;
-
+		DataStore dataStore = null;
 		try {
+			InputStream inputDataStream = (InputStream) data;
 			dataStore = readWithCsvMapReader(inputDataStream);
-
-		} catch (FileNotFoundException e) {
-			logger.error("Error reading CSV File: " + e);
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error("Error reading CSV File: " + e);
-			e.printStackTrace();
 		} catch (Exception e) {
-			logger.error("Error reading CSV File: " + e);
-			e.printStackTrace();
+			throw new SpagoBIRuntimeException(e);
+		} finally {
+			logger.debug("OUT");
 		}
-
 		return dataStore;
 	}
 

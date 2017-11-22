@@ -18,32 +18,44 @@
 
 package it.eng.spagobi.tools.dataset.cache.query;
 
+import java.util.HashMap;
+
 import it.eng.spagobi.utilities.assertion.Assert;
 
 public enum SqlDialect {
 
-	DEFAULT("-1", true, true), HBASE("hbase", false, false), HIVE("hive", false, false), MONGO("MongoDialect", false, false), CASSANDRA(
-			"org.hibernate.dialect.cassandra", false, false), DB2("org.hibernate.dialect.DB2400Dialect", true, false), DRILL("org.hibernate.dialect.drill",
-					true, false), HSQL("org.hibernate.dialect.HSQLDialect", true, false), IMPALA("org.hibernate.dialect.impala", false, false), INGRES(
-							"org.hibernate.dialect.IngresDialect", true, false), MYSQL("org.hibernate.dialect.MySQLInnoDBDialect", true, true), NEO4J(
-									"org.hibernate.dialect.neo4j", false, false), ORACLE_9I10G("org.hibernate.dialect.Oracle9Dialect", true, true), ORACLE(
+	HBASE("hbase", false, false, false), HIVE("hive", false, false, true), MONGO("MongoDialect", false, false, false), CASSANDRA(
+			"org.hibernate.dialect.cassandra", false, false, false), DB2("org.hibernate.dialect.DB2400Dialect", true, false, true), DRILL("org.hibernate.dialect.drill",
+					true, false, false), HSQL("org.hibernate.dialect.HSQLDialect", true, false, true), IMPALA("org.hibernate.dialect.impala", true, false, true), INGRES(
+							"org.hibernate.dialect.IngresDialect", true, false, false), MYSQL("org.hibernate.dialect.MySQLInnoDBDialect", true, true, true), NEO4J(
+									"org.hibernate.dialect.neo4j", false, false, false), ORACLE_9I10G("org.hibernate.dialect.Oracle9Dialect", true, true, true), ORACLE(
 											"org.hibernate.dialect.OracleDialect", true,
-											true), POSTGRESQL("org.hibernate.dialect.PostgreSQLDialect", true, true), SPARKSQL("org.hibernate.dialect.sparksql",
-													false, false), SQLSERVER("org.hibernate.dialect.SQLServerDialect", true, false), ORACLE_SPATIAL(
-															"org.hibernatespatial.oracle.CustomOracleSpatialDialect", true, true), ORIENT("orient", true,
-																	false), VOLTDB("VoltDBDialect", true, true), METAMODEL("MetaModelDialect", false, false);
-
+											true, true), POSTGRESQL("org.hibernate.dialect.PostgreSQLDialect", true, true, true), SPARKSQL("org.hibernate.dialect.sparksql",
+													false, false, true), SQLSERVER("org.hibernate.dialect.SQLServerDialect", true, false, true), ORACLE_SPATIAL(
+															"org.hibernatespatial.oracle.CustomOracleSpatialDialect", true, true, true), ORIENT("orient", true,
+																	false, true), VOLTDB("VoltDBDialect", true, true, true), METAMODEL("MetaModelDialect", false, false, true);
+	
+	private final static HashMap<String, SqlDialect> dialects = new HashMap<>(SqlDialect.values().length);
+	
+	static {
+		for(SqlDialect dialect : SqlDialect.values()) {
+			dialects.put(dialect.value, dialect);
+		}
+	}
+	
 	private final String value;
 	private final boolean singleColumnInOperatorSupported;
 	private final boolean multiColumnInOperatorSupported;
+	private final boolean inLineViewSupported;
 
-	private SqlDialect(String value, boolean isSingleColumnInOperatorSupported, boolean isMultiColumnInOperatorSupported) {
+	private SqlDialect(String value, boolean isSingleColumnInOperatorSupported, boolean isMultiColumnInOperatorSupported, boolean inLineViewSupported) {
 		Assert.assertTrue(isSingleColumnInOperatorSupported || !isMultiColumnInOperatorSupported,
 				"Dialect can't support multi-column IN operator if it doesn't support single-column IN operator");
 
 		this.value = value;
 		this.singleColumnInOperatorSupported = isSingleColumnInOperatorSupported;
 		this.multiColumnInOperatorSupported = isMultiColumnInOperatorSupported;
+		this.inLineViewSupported = inLineViewSupported;
 	}
 
 	public String getValue() {
@@ -56,6 +68,14 @@ public enum SqlDialect {
 
 	public boolean isMultiColumnInOperatorSupported() {
 		return multiColumnInOperatorSupported;
+	}
+
+	public boolean isInLineViewSupported() {
+		return inLineViewSupported;
+	}
+	
+	public static SqlDialect get(String value) {
+		return dialects.get(value);
 	}
 
 }

@@ -18,12 +18,20 @@
 
 package it.eng.spagobi.tools.dataset.cache.query.visitor;
 
+import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 
 public class ImpalaSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 	public ImpalaSelectQueryVisitor() {
 		this.dialect = SqlDialect.IMPALA;
+	}
+	
+	@Override
+	protected void appendSelectDistinct(SelectQuery query) {
+		if (query.isSelectDistinct() && query.getGroups().isEmpty()) {
+			queryBuilder.append("DISTINCT ");
+		}
 	}
 
 }

@@ -52,7 +52,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.api.common.DataSetResourceAbstractResource;
+import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.deserializer.DeserializerFactory;
@@ -93,7 +93,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
  */
 @Path("/1.0/datasets")
 @ManageAuthorization
-public class DataSetResource extends DataSetResourceAbstractResource {
+public class DataSetResource extends AbstractDataSetResource {
 
 	static protected Logger logger = Logger.getLogger(DataSetResource.class);
 

@@ -51,7 +51,7 @@ import com.mongodb.util.JSON;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.api.common.DataSetResourceAbstractResource;
+import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
@@ -103,7 +103,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/2.0/datasets")
 
 @ManageAuthorization
-public class DataSetResource extends DataSetResourceAbstractResource {
+public class DataSetResource extends AbstractDataSetResource {
 
 	static protected Logger logger = Logger.getLogger(DataSetResource.class);
 
@@ -397,114 +397,6 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 		}
 
 		return filters;
-	}
-
-	@Override
-	@Deprecated
-	protected List<FilterCriteria> getLikeFilterCriteria(String datasetLabel, JSONObject likeSelectionsObject, boolean isNearRealtime,
-			Map<String, String> columnAliasToColumnName, List<ProjectionCriteria> projectionCriteria, boolean getAttributes) throws JSONException {
-		List<FilterCriteria> likeFilterCriteria = new ArrayList<>();
-
-		if (likeSelectionsObject.has(datasetLabel)) {
-			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(datasetLabel);
-			boolean isAnEmptySelection = false;
-
-			JSONObject datasetSelectionObject = likeSelectionsObject.getJSONObject(datasetLabel);
-			Iterator<String> it = datasetSelectionObject.keys();
-			while (!isAnEmptySelection && it.hasNext()) {
-				String columns = it.next();
-				String value = datasetSelectionObject.getString(columns);
-
-				if (value != null && !value.isEmpty()) {
-					List<String> columnsList = new ArrayList<>();
-					String columnNames = fixColumnAliasesAndNames(columns, columnAliasToColumnName);
-					columnsList.addAll(Arrays.asList(columnNames.split("\\s*,\\s*"))); // trim spaces while splitting
-
-					List<String> attributesOrMeasures = getAttributesOrMeasures(columnsList, dataSet, projectionCriteria, isNearRealtime, getAttributes);
-					if (!attributesOrMeasures.isEmpty()) {
-						Operand leftOperand = null;
-						StringBuilder rightOperandSB = new StringBuilder();
-						for (String attributeOrMeasure : attributesOrMeasures) {
-							if (leftOperand == null) {
-								leftOperand = new Operand(attributeOrMeasure);
-
-								rightOperandSB.append("'%");
-								rightOperandSB.append(value);
-								rightOperandSB.append("%'");
-							} else {
-								rightOperandSB.append(" OR ");
-								rightOperandSB.append(attributeOrMeasure);
-								rightOperandSB.append(" LIKE '%");
-								rightOperandSB.append(value);
-								rightOperandSB.append("%'");
-							}
-						}
-						Operand rightOperand = new Operand(rightOperandSB.toString());
-						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "LIKE", rightOperand);
-						likeFilterCriteria.add(filterCriteria);
-					}
-				} else {
-					isAnEmptySelection = true;
-				}
-			}
-
-			if (isAnEmptySelection) {
-				likeFilterCriteria.clear();
-				likeFilterCriteria.add(new FilterCriteria(new Operand("0"), "=", new Operand("1")));
-			}
-		}
-
-		return likeFilterCriteria;
-	}
-
-	private List<String> getAttributesOrMeasures(List<String> columnNames, IDataSet dataSet, List<ProjectionCriteria> projectionCriteria,
-			boolean isNearRealtime, boolean getAttributes) {
-		List<String> attributesOrMeasures = new ArrayList<>();
-
-		String defaultTableNameDot = isNearRealtime ? DEFAULT_TABLE_NAME_DOT : "";
-		String datasetLabel = dataSet.getLabel();
-
-		IDataSource dataSource = getDataSource(dataSet, isNearRealtime);
-
-		for (String columnName : columnNames) {
-			for (ProjectionCriteria projection : projectionCriteria) {
-				if (projection.getDataset().equals(datasetLabel) && projection.getColumnName().equals(columnName)) {
-					IAggregationFunction aggregationFunction = AggregationFunctions.get(projection.getAggregateFunction());
-					boolean isAttribute = aggregationFunction == null || aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION);
-					if (isAttribute == getAttributes) {
-						if (columnName.contains(":")) {
-							columnName = getDatasetManagementAPI().getQbeDataSetColumn(dataSet, columnName);
-						}
-						String encapsulatedColumnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-						if (isAttribute) {
-							attributesOrMeasures.add(defaultTableNameDot + encapsulatedColumnName);
-						} else {
-							attributesOrMeasures.add(defaultTableNameDot + aggregationFunction.apply(encapsulatedColumnName));
-						}
-					}
-					break;
-				}
-			}
-		}
-
-		return attributesOrMeasures;
-	}
-
-	private String fixColumnAliasesAndNames(String columns, Map<String, String> columnAliasToName) {
-		if (columnAliasToName != null) {
-			String[] columnsSplitted = columns.split("\\s*,\\s*");
-			Set<String> aliases = columnAliasToName.keySet();
-
-			for (int i = 0; i < columnsSplitted.length; i++) {
-				String column = columnsSplitted[i].trim();
-				if (aliases.contains(column)) {
-					columnsSplitted[i] = columnAliasToName.get(column);
-				}
-			}
-			return StringUtils.join(columnsSplitted, ",");
-		} else {
-			return columns;
-		}
 	}
 
 	@POST

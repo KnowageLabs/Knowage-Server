@@ -82,6 +82,7 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
 import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
 import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
+import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.dataset.cache.query.item.AndFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
 import it.eng.spagobi.tools.dataset.cache.query.item.NullaryFilter;
@@ -383,9 +384,10 @@ public class DatasetManagementAPI {
 				dataStore = queryFlatDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 				dataStore.setCacheDate(new Date());
 			} else {
-				boolean isJDBCDataSet = isJDBCDataSet(dataSet);
-				boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
-				if (isNearRealtime && isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
+				SqlDialect dialect =  dataSet.getDataSource() != null ? SqlDialect.get(dataSet.getDataSource().getHibDialectClass()) : null;
+				Assert.assertNotNull(dialect, "Datasource dialect cannot be null.");
+				boolean inLineViewSupported = dialect.isInLineViewSupported();
+				if (isNearRealtime && inLineViewSupported && !dataSet.hasDataStoreTransformer()) {
 					logger.debug("Querying near realtime/JDBC dataset");
 					dataStore = queryJDBCDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
@@ -402,7 +404,7 @@ public class DatasetManagementAPI {
 							maxRowCount);
 					if (cachedResultSet == null) {
 						logger.debug("Dataset not in cache");
-						if (isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
+						if (dataSet.getDataSource() != null && !dataSet.hasDataStoreTransformer()) {
 							logger.debug("Copying JDBC dataset in cache using its iterator");
 							cache.put(dataSet);
 						} else {

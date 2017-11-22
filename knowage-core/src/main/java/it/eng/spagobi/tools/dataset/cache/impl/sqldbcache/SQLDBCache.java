@@ -1088,18 +1088,6 @@ public class SQLDBCache implements ICache {
 		logger.debug("[SQLDBCache] All stale tables removed, Cache cleaned ");
 	}
 
-	/**
-	 * Erase existing tables that begins with the prefix
-	 *
-	 * @param prefix
-	 *            table name prefix
-	 *
-	 */
-	private void eraseExistingTables(String prefix) {
-		PersistedTableManager persistedTableManager = new PersistedTableManager();
-		persistedTableManager.dropTablesWithPrefix(getDataSource(), prefix);
-	}
-
 	// ===================================================================================
 	// ACCESSOR METHODS
 	// ===================================================================================
@@ -1128,7 +1116,6 @@ public class SQLDBCache implements ICache {
 	 *            the DataSource
 	 */
 	private void testDatabaseSchema(String schema, IDataSource dataSource) {
-
 		// Create a fake dataStore
 		DataStore dataStore = new DataStore();
 		IMetaData metadata = new MetaData();
@@ -1153,24 +1140,18 @@ public class SQLDBCache implements ICache {
 		int x = ran.nextInt(100);
 		String tableName = "SbiTest" + x;
 		persistedTableManager.setTableName(tableName);
-
+		
 		try {
 			persistedTableManager.persistDataset(dataStore, dataSource);
-		} catch (Exception e) {
-			logger.error("Error persisting dataset", e);
-		}
 
-		// try to query the table using the Schema.TableName syntax if
-		// schemaName is valorized
-
-		try {
+			// try to query the table using the Schema.TableName syntax if
+			// schemaName is valorized
 			dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);
 		} catch (Exception e) {
 			throw new CacheException("An unexpected error occured while testing database schema for cache", e);
 		} finally {
 			// Dropping table
 			persistedTableManager.dropTableIfExists(dataSource, tableName);
-
 		}
 	}
 

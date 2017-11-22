@@ -38,6 +38,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
@@ -159,8 +160,8 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 								parametersValues);
 					} else if (dataSet.isFlatDataset()) {
 						container = new AssociativeDatasetContainer(dataSet, dataSet.getFlatTableName(), dataSet.getDataSource(), parametersValues);
-					} else if (config.getNearRealtimeDatasets().contains(v1) && DatasetManagementAPI.isJDBCDataSet(dataSet)
-							&& !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
+					} else if (config.getNearRealtimeDatasets().contains(v1) && dataSet.getDataSource() != null && SqlDialect.get(dataSet.getDataSource().getHibDialectClass()) != null
+							&& SqlDialect.get(dataSet.getDataSource().getHibDialectClass()).isInLineViewSupported()) {
 						QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 						String tableName = "(" + querableBehaviour.getStatement() + ") T";
 						container = new AssociativeDatasetContainer(dataSet, tableName, dataSet.getDataSource(), parametersValues);

@@ -38,7 +38,7 @@ import org.jgrapht.graph.Pseudograph;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import it.eng.spagobi.api.common.DataSetResourceAbstractResource;
+import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.ConfigurationConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -73,7 +73,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
 @Path("/2.0/associativeSelections")
-public class AssociativeSelectionsResource extends DataSetResourceAbstractResource {
+public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 	static protected Logger logger = Logger.getLogger(AssociativeSelectionsResource.class);
 

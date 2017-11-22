@@ -76,6 +76,7 @@ public class JDBCDataSet extends AbstractJDBCDataset {
 			Assert.assertNotNull(dataSource, "Invalid datasource");
 			Connection connection = dataSource.getConnection(jdbcDataProxy.getSchema());
 			Statement stmt = connection.createStatement();
+			stmt.setFetchSize(10000);
 			ResultSet rs = (ResultSet) dataProxy.getData(dataReader, stmt);
 			DataIterator iterator = new ResultSetIterator(connection, stmt, rs);
 			return iterator;

@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spagobi.api.common.DataSetResourceAbstractResource;
+import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
  */
 @Path("/2.0/datasets")
 @ManageAuthorization
-public class RestDataSetResource extends DataSetResourceAbstractResource {
+public class RestDataSetResource extends AbstractDataSetResource {
 
 	static protected Logger logger = Logger.getLogger(RestDataSetResource.class);
 
