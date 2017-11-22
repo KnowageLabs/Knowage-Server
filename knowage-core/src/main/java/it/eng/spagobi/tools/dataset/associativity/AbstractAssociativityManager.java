@@ -33,7 +33,7 @@ import org.jgrapht.graph.Pseudograph;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
@@ -52,7 +52,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-import it.eng.spagobi.utilities.sql.SqlUtils;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -160,7 +159,8 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 								parametersValues);
 					} else if (dataSet.isFlatDataset()) {
 						container = new AssociativeDatasetContainer(dataSet, dataSet.getFlatTableName(), dataSet.getDataSource(), parametersValues);
-					} else if (config.getNearRealtimeDatasets().contains(v1) && dataSet.getDataSource() != null && SqlDialect.get(dataSet.getDataSource().getHibDialectClass()) != null
+					} else if (config.getNearRealtimeDatasets().contains(v1) && dataSet instanceof AbstractJDBCDataset
+							&& SqlDialect.get(dataSet.getDataSource().getHibDialectClass()) != null
 							&& SqlDialect.get(dataSet.getDataSource().getHibDialectClass()).isInLineViewSupported()) {
 						QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 						String tableName = "(" + querableBehaviour.getStatement() + ") T";
