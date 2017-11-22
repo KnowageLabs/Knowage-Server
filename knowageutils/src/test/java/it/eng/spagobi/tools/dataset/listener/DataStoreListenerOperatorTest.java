@@ -17,6 +17,11 @@
  */
 package it.eng.spagobi.tools.dataset.listener;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
@@ -34,12 +39,6 @@ import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import junit.framework.TestCase;
 
 public class DataStoreListenerOperatorTest extends TestCase {
@@ -712,6 +711,11 @@ public class DataStoreListenerOperatorTest extends TestCase {
 
 		@Override
 		public boolean isRealtime() {
+			return false;
+		}
+
+		@Override
+		public boolean isCachingSupported() {
 			return false;
 		}
 

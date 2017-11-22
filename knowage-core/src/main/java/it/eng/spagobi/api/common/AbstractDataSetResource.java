@@ -17,11 +17,8 @@
  */
 package it.eng.spagobi.api.common;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -46,17 +43,11 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
-import it.eng.spagobi.tools.dataset.cache.GroupCriteria;
-import it.eng.spagobi.tools.dataset.cache.Operand;
-import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
@@ -72,7 +63,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -83,13 +73,10 @@ import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.json.JSONUtils;
-import it.eng.spagobi.utilities.sql.SqlUtils;
 
 public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
@@ -200,7 +187,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				}
 			}
 
-			// FIXME
 			filters = getDatasetManagementAPI().calculateMinMaxFilters(dataSet, isNearRealtime, DataSetUtilities.getParametersMap(parameters), projections,
 					filters, likeFilters, groups, offset, fetchSize, maxRowCount);
 
@@ -715,7 +701,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		}
 		return dsDAO;
 	}
-	
+
 	protected IDataSource getDataSource(IDataSet dataSet, boolean isNearRealTime) {
 		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isNearRealTime);
 		IDataSource dataSource = null;
@@ -744,7 +730,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		} else if (dataSet.isFlatDataset()) {
 			result = DatasetEvaluationStrategy.FLAT;
 		} else {
-			SqlDialect dialect =  dataSet.getDataSource() != null ? SqlDialect.get(dataSet.getDataSource().getHibDialectClass()) : null;
+			SqlDialect dialect = dataSet.getDataSource() != null ? SqlDialect.get(dataSet.getDataSource().getHibDialectClass()) : null;
 			Assert.assertNotNull(dialect, "Datasource dialect cannot be null.");
 			boolean inLineViewSupported = dialect.isInLineViewSupported();
 			if (isNearRealtime && inLineViewSupported && !dataSet.hasDataStoreTransformer()) {

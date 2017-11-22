@@ -961,4 +961,9 @@ public abstract class AbstractDataSet implements IDataSet {
 	public boolean isRealtime() {
 		return false;
 	}
+
+	@Override
+	public boolean isCachingSupported() {
+		return !isPersisted() && !isFlatDataset() && !isRealtime();
+	}
 }

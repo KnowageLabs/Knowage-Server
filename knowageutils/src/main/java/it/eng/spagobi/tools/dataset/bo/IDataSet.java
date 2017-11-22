@@ -17,6 +17,10 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -28,10 +32,6 @@ import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 public interface IDataSet extends Iterable<IRecord> {
 
@@ -281,5 +281,7 @@ public interface IDataSet extends Iterable<IRecord> {
 	public boolean isIterable();
 
 	public boolean isRealtime();
+
+	public boolean isCachingSupported();
 
 }

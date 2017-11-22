@@ -75,6 +75,7 @@ import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.GroupCriteria;
+import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.SelectBuilder;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
@@ -122,7 +123,6 @@ import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.groovy.GroovySandbox;
-import it.eng.spagobi.utilities.sql.SqlUtils;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
 
@@ -384,7 +384,7 @@ public class DatasetManagementAPI {
 				dataStore = queryFlatDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 				dataStore.setCacheDate(new Date());
 			} else {
-				SqlDialect dialect =  dataSet.getDataSource() != null ? SqlDialect.get(dataSet.getDataSource().getHibDialectClass()) : null;
+				SqlDialect dialect = dataSet.getDataSource() != null ? SqlDialect.get(dataSet.getDataSource().getHibDialectClass()) : null;
 				Assert.assertNotNull(dialect, "Datasource dialect cannot be null.");
 				boolean inLineViewSupported = dialect.isInLineViewSupported();
 				if (isNearRealtime && inLineViewSupported && !dataSet.hasDataStoreTransformer()) {
@@ -404,24 +404,20 @@ public class DatasetManagementAPI {
 							maxRowCount);
 					if (cachedResultSet == null) {
 						logger.debug("Dataset not in cache");
-						if (dataSet.getDataSource() != null && !dataSet.hasDataStoreTransformer()) {
-							logger.debug("Copying JDBC dataset in cache using its iterator");
-							cache.put(dataSet);
-						} else {
-							logger.debug("Copying dataset in cache by loading the whole set of data in memory");
-							dataSet.loadData();
-							if (dataSet.getDataStore().getMetaData().getFieldCount() == 0) {
-								// update only datasource's metadata from dataset if for some strange cause it hasn't got fields
-								logger.debug("Update datastore's metadata with dataset's metadata for nodata found...");
-								dataStore = new DataStore();
-								IMetaData metadata = dataSet.getMetadata();
-								metadata.setProperty("resultNumber", 0);
-								dataStore.setMetaData(metadata);
-								adjustMetadata((DataStore) dataStore, dataSet, null);
-								return dataStore;
-							}
-							cache.put(dataSet, dataSet.getDataStore());
+
+						putDataSetInCache(dataSet, cache);
+
+						if (dataSet.getDataStore() != null && dataSet.getDataStore().getMetaData().getFieldCount() == 0) {
+							// update only datasource's metadata from dataset if for some strange cause it hasn't got fields
+							logger.debug("Update datastore's metadata with dataset's metadata for nodata found...");
+							dataStore = new DataStore();
+							IMetaData metadata = dataSet.getMetadata();
+							metadata.setProperty("resultNumber", 0);
+							dataStore.setMetaData(metadata);
+							adjustMetadata((DataStore) dataStore, dataSet, null);
+							return dataStore;
 						}
+
 						dataStore = cache.get(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 						if (dataStore == null) {
 							throw new CacheException(errorMessage);
@@ -446,6 +442,21 @@ public class DatasetManagementAPI {
 			throw new RuntimeException(errorMessage, t);
 		} finally {
 			logger.debug("OUT");
+		}
+	}
+
+	public void putDataSetInCache(IDataSet dataSet, ICache cache) {
+		if (dataSet.isCachingSupported()) {
+			if (dataSet instanceof AbstractJDBCDataset && !dataSet.hasDataStoreTransformer()) {
+				logger.debug("Copying JDBC dataset in cache using its iterator");
+				cache.put(dataSet);
+			} else {
+				logger.debug("Copying dataset in cache by loading the whole set of data in memory");
+				dataSet.loadData();
+				if (dataSet.getDataStore().getMetaData().getFieldCount() > 0) {
+					cache.put(dataSet, dataSet.getDataStore());
+				}
+			}
 		}
 	}
 
@@ -2025,7 +2036,7 @@ public class DatasetManagementAPI {
 		return dataSets;
 	}
 
-	private void setDataSetParameters(IDataSet dataSet, Map<String, String> paramValues) {
+	public void setDataSetParameters(IDataSet dataSet, Map<String, String> paramValues) {
 		List<JSONObject> parameters = getDataSetParameters(dataSet.getLabel());
 		if (parameters.size() > paramValues.size()) {
 			String parameterNotValorizedStr = getParametersNotValorized(parameters, paramValues);
