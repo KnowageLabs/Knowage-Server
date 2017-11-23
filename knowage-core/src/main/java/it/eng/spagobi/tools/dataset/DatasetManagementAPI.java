@@ -385,8 +385,7 @@ public class DatasetManagementAPI {
 				dataStore.setCacheDate(new Date());
 			} else {
 				SqlDialect dialect = dataSet.getDataSource() != null ? SqlDialect.get(dataSet.getDataSource().getHibDialectClass()) : null;
-				Assert.assertNotNull(dialect, "Datasource dialect cannot be null.");
-				boolean inLineViewSupported = dialect.isInLineViewSupported();
+				boolean inLineViewSupported = dialect != null ? dialect.isInLineViewSupported() : false;
 				if (isNearRealtime && inLineViewSupported && !dataSet.hasDataStoreTransformer()) {
 					logger.debug("Querying near realtime/JDBC dataset");
 					dataStore = queryJDBCDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
