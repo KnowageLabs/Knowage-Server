@@ -136,23 +136,23 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 	}
 
-	private static JSONObject isJSON(String responseBody) {
+	private static boolean isJSON(String responseBody) {
 		try {
-			JSONObject res = JSONUtils.toJSONObject(responseBody);
-			return res;
+			JSONUtils.toJSONObject(responseBody);
+			return true;
 		} catch (Exception e) {
 			logger.debug("Error parsing input String as JSONObject", e);
-			return null;
+			return false;
 		}
 	}
 
-	private static org.json.JSONArray isJSONArray(String responseBody) {
+	private static boolean isJSONArray(String responseBody) {
 		try {
-			org.json.JSONArray res = JSONUtils.toJSONArray(responseBody);
-			return res;
+			JSONUtils.toJSONArray(responseBody);
+			return true;
 		} catch (Exception e) {
 			logger.debug("Error parsing input String as JSONObject", e);
-			return null;
+			return false;
 		}
 	}
 
@@ -164,12 +164,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 
 		String d = (String) data;
-		if (ngsi) {
-			JSONArray jsonData = isJSONArray(d);
-			Assert.assertTrue(jsonData != null, String.format("Data must be a valid JSON Array: %s", d));
-		} else {
-			JSONObject jsonData = isJSON(d);
-			Assert.assertTrue(jsonData != null, String.format("Data must be a valid JSON: %s", d));
+		if (!isJSONArray(d) && !isJSON(d)) {
+			throw new JSONPathDataReaderException("Data is neither a JSON object nor a JSON array");
 		}
 
 		try {
