@@ -73,6 +73,12 @@
             .second-lvl-cursor {
             	cursor:pointer;
             }
+            .is-default {
+            	font-weight:bold;
+            }
+            .is-not-default {
+            	font-weight:normal;
+            }
             ul {
                 background-color: $pageBackground;
                 margin: 0;

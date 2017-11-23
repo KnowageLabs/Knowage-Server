@@ -19,28 +19,28 @@
                 <i class="fa" ng-class="{'fa-chevron-up':entity.expanded, 'fa-chevron-down':!entity.expanded}"></i>
             </h4>
             <ul ng-show="entity.expanded">
-            	<div ng-repeat="field in entity[childrenName]" >
-            		<li layout="row"" ng-if="!field.leaf" class="second-lvl-cursor" ng-click="moveFieldByClick(field)">
-            		<i class="fa fa-folder-open-o"></i>
-                   <span>{{field["text"]}}</span>
-                   <span flex></span>
-          		   <i class="fa" ng-class="{'fa-chevron-up':field.expanded, 'fa-chevron-down':!field.expanded}"></i>
-          		   <span flex=5></span>
-            	</li>
-            	
-            	<div ng-click="moveFieldByClick(field)" layout="row"" ng-if="!field.leaf">
-            		<ul ng-show="field.expanded" flex>
-            		<li class="second-lvl-padding" ng-repeat="f in field.children" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)"  ng-click="moveFieldByClick(field)" layout="row"" ng-if="!field.leaf">
-            		<i class="fa fa-calendar"></i>
-                   <span>{{f["text"]}}</span>
+            	<div ng-repeat="field in entity[childrenName]">
+            		<li layout="row"" ng-if="!field.leaf" class="second-lvl-cursor">
+	            		<i class="fa fa-folder-open-o"></i>
+	                    <span ng-class="{'is-default':field.attributes.isdefault, 'is-not-default':!field.attributes.isdefault}">{{field["text"]}}</span>
+	                    <span flex></span>
+	                    <i class="fa fa-sitemap" ng-click="setDefaultHierarchy(field, entity.id)" ng-show="!field.attributes.isdefault"></i>
+	          		    <i class="fa" ng-class="{'fa-chevron-up':field.expanded, 'fa-chevron-down':!field.expanded}" ng-click="field.expanded=!field.expanded;passEntityColorToTemporalFields(entity);"></i>
             		</li>
-            	   </ul>
-          
-            	</div>
+            	
+	            	<div layout="row"" ng-if="!field.leaf">
+	            		<ul ng-show="field.expanded" flex>
+	            		<li class="second-lvl-padding" ng-repeat="f in field.children" ng-drag="dragEnabled" ng-drag-data="f" ng-drag-success="dragLi($data,$event)" layout="row"">
+		            		<i class="fa fa-calendar"></i>
+		                   <span>{{f["text"]}}</span>
+	            		</li>
+	            	   </ul>
+	          
+	            	</div>
             	</div>
             	
             		
-                <li ng-repeat="field in entity[childrenName]" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)"  ng-click="moveFieldByClick(field)" layout="row"" ng-if="field.leaf">
+                <li ng-repeat="field in entity[childrenName]" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)" layout="row"" ng-if="field.leaf">
                     <i ng-class="[fontIcons, field.iconCls]"></i>
                     <span>{{field["text"]}}</span>
                    <span>{{field["alias"]}}</span>

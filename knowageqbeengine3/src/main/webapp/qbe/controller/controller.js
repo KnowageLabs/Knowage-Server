@@ -261,6 +261,12 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			   "distinct":$scope.editQueryObj.distinct,
 			}
 
+		if(!field.hasOwnProperty('id')){
+			newField.id=field.alias;
+			newField.alias=field.text;
+			newField.field=field.text;
+		}
+
 		$scope.editQueryObj.fields.push(newField);
 	}
 

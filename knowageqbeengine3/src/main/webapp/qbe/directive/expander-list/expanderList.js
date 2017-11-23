@@ -21,7 +21,7 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 angular.module('qbe_expander_list', ['ngDraggable'])
-.directive('qbeExpanderList', function($sce, $rootScope) {
+.directive('qbeExpanderList', function($sce, $rootScope, sbiModule_action, sbiModule_inputParams, sbiModule_messaging, sbiModule_translate ) {
         return {
             restrict: 'E',
             scope: {
@@ -108,6 +108,74 @@ angular.module('qbe_expander_list', ['ngDraggable'])
                 		item.expanded=!item.expanded;
                 	}
 
+                }
+
+                scope.passEntityColorToTemporalFields = function (entity) {
+                	for (var i = 0; i < entity.children.length; i++) {
+						if(!entity.children[i].leaf){
+							for (var j = 0; j < entity.children[i].children.length; j++) {
+								if(entity.children[i].children[j].leaf) {
+									if(!entity.children[i].children[j].hasOwnProperty('color')){
+										entity.children[i].children[j].color=entity.color;
+									}
+								}
+							}
+						}
+					}
+                }
+
+                scope.setDefaultHierarchy = function (field, entityId) {
+                	if(!field.isDefault) {
+
+
+                    	item = {};
+                    	item.fieldId = field.id;
+                    	item.entityId = entityId;
+
+                    	queryParam = {};
+
+                		conf = {};
+                		conf.headers = {'Content-Type': 'application/x-www-form-urlencoded'},
+
+        				conf.transformRequest = function(obj) {
+
+        					var str = [];
+
+        					for(var p in obj)
+        						str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+
+        					return str.join("&");
+
+        				}
+
+                		sbiModule_action.promisePost('SET_DEFAULT_HIERARCHY_ACTION',queryParam,item, conf)
+            			.then(function(response) {
+            				console.log("[POST]: SUCCESS!");
+            				var entities = scope.ngModel.entities;
+            				for (var i = 0; i < entities.length; i++) {
+								if(entities[i].id==entityId) {
+									for (var j = 0; j < entities[i].children.length; j++) {
+										if(entities[i].children[j].hasOwnProperty('cls')){
+											delete entities[i].children[j].cls;
+											if(entities[i].children[j].attributes.isdefault==true){
+												entities[i].children[j].attributes.isdefault=false;
+											}
+										}
+									}
+								}
+							}
+
+            				field.cls='default_hierarchy';
+            				if(!field.attributes.isdefault) {
+            					field.attributes.isdefault=true;
+            				}
+
+            				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("kn.qbe.hierarchies.setdefault.success"), 'Success!');
+            			}, function(response) {
+            				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+
+            			});
+                	}
                 }
 
                 scope.$watch("ngModel", function(newValue, oldValue) {
