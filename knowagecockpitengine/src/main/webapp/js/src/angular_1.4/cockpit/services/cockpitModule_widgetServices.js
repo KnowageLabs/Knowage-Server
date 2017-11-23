@@ -93,7 +93,17 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	};
 
 	this.addWidget=function(sheetIndex,item){
-		cockpitModule_template.sheets[sheetIndex].widgets.push(item)
+		cockpitModule_template.sheets[sheetIndex].widgets.push(item);
+	};
+
+	this.moveWidget=function(sheetIndex,item){
+		angular.forEach(cockpitModule_template.sheets,function(value,key){
+			if(value.index==sheetIndex){
+				value.widgets.push(item);
+				return;
+			}
+		})
+
 	};
 
 	this.loadDatasetRecords = function(ngModel, page, itemPerPage,columnOrdering, reverseOrdering){

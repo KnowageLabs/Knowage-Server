@@ -211,7 +211,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	$scope.translate		= sbiModule_translate;
 	$scope.tmpWidgetContent	= {};
 	$scope.editingWidgetName= false;
-	$scope.extendedStyle	= {}; // the merge of the widget style and the
+	$scope.extendedStyle	= {};
 
 	$scope.borderShadowStyle= {};
 	$scope.titleStyle		= {};
@@ -388,7 +388,6 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					if(associativeSelection==undefined || associativeSelection.hasOwnProperty(dataset.label)){
 						var option =$scope.getOptions == undefined? {} :  $scope.getOptions();
 						cockpitModule_widgetServices.refreshWidget($scope.subCockpitWidget,$scope.ngModel,'selections',option);
-// $scope.refreshWidget();
 					}
 				}
 		}
@@ -397,11 +396,8 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				$scope.initWidget();
 			}else{
 				if(associativeSelection==undefined || associativeSelection.hasOwnProperty(document.DOCUMENT_LABEL)){
-// $scope.refreshWidget();
 					var option =$scope.getOptions == undefined? {} :  $scope.getOptions();
 					cockpitModule_widgetServices.refreshWidget($scope.subCockpitWidget,$scope.ngModel,'selections',option);
-					// to-do testare se funziona con la chiamata sotto
-// $scope.refreshWidget(undefined,'selections');
 				}
 			}
 		}
@@ -470,7 +466,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	    })
 	    .then(function() {
 	    	if($scope.targetSheet.index!=cockpitModule_properties.CURRENT_SHEET){
-		    	cockpitModule_widgetServices.addWidget($scope.targetSheet.index,angular.copy($scope.ngModel));
+		    	cockpitModule_widgetServices.moveWidget($scope.targetSheet.index,angular.copy($scope.ngModel));
 				cockpitModule_widgetServices.deleteWidget(cockpitModule_properties.CURRENT_SHEET,$scope.ngModel,true);
 	    	}
 	    });
@@ -839,6 +835,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		}
 		// update title style
 		if($scope.extendedStyle.titles!=undefined && $scope.extendedStyle.titles==true){
+			if($scope.extendedStyle['font-family']) $scope.titleStyle['font-family'] = $scope.extendedStyle['font-family'];
 			angular.merge($scope.titleStyle,$scope.extendedStyle.title);
 		}
 
@@ -863,8 +860,6 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		if($scope.extendedStyle.headerHeight!=undefined){
 			$scope.headerHeight=$scope.extendedStyle.headerHeight;
 		}
-
-
 
 	}
 

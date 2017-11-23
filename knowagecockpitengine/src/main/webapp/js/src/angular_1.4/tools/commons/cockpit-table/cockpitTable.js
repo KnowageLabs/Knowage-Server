@@ -236,6 +236,12 @@
             			var output = value;
             			var precision = 2;
             			if (column.style && column.style.precision >= 0) precision =  column.style.precision;
+
+            			//setting the number precision when format is not present
+            			if (column.style && column.style.precision && !column.style.format) {
+            				output = value.toFixed(column.style.precision);
+            			}
+
             			if (column.style && column.style.format){
             		    	switch (column.style.format) {
             		    	case "#.###":
