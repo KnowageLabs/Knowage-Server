@@ -32,6 +32,7 @@ import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
+import it.eng.spagobi.tools.dataset.graph.associativity.NearRealtimeAssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
@@ -107,8 +108,14 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 			if (columnNames.size() <= 0) {
 				throw new SpagoBIException("Impossible to obtain column names for association " + group);
 			}
-			PreparedStatementData data = container.buildQuery(columnNames);
-			Set<String> distinctValues = container.getTupleOfValues(data.getQuery(), data.getValues());
+
+			Set<String> distinctValues;
+			if (container instanceof NearRealtimeAssociativeDatasetContainer) {
+				distinctValues = container.getTupleOfValues(container.buildQuery(columnNames), null);
+			} else {
+				PreparedStatementData data = container.buildPreparedStatementData(columnNames);
+				distinctValues = container.getTupleOfValues(data.getQuery(), data.getValues());
+			}
 
 			// b. Li imposto come unici valori ammissibili per quel gruppo associativo
 			group.addValues(distinctValues);
@@ -159,8 +166,13 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 						// i. calcolo i valori distinct del gruppo associativo
 						List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
 						if (!columnNames.isEmpty()) {
-							PreparedStatementData data = container.buildQuery(columnNames);
-							Set<String> distinctValues = container.getTupleOfValues(data.getQuery(), data.getValues());
+							Set<String> distinctValues;
+							if (container instanceof NearRealtimeAssociativeDatasetContainer) {
+								distinctValues = container.getTupleOfValues(container.buildQuery(columnNames), null);
+							} else {
+								PreparedStatementData data = container.buildPreparedStatementData(columnNames);
+								distinctValues = container.getTupleOfValues(data.getQuery(), data.getValues());
+							}
 
 							// ii. aggiungo tali valori tra quelli ammissibili per quel gruppo associativo
 							group.addValues(distinctValues);

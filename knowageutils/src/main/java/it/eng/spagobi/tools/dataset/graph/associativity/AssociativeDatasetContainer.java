@@ -192,12 +192,20 @@ public class AssociativeDatasetContainer {
 		}
 	}
 
-	public PreparedStatementData buildQuery(List<String> columnNames) {
+	public String buildQuery(List<String> columnNames) {
+		return getSelectQuery(columnNames).toSql(dataSource);
+	}
+
+	public PreparedStatementData buildPreparedStatementData(List<String> columnNames) {
+		return getSelectQuery(columnNames).getPreparedStatementData(dataSource);
+	}
+
+	private SelectQuery getSelectQuery(List<String> columnNames) {
 		SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(columnNames.toArray(new String[0])).from(tableName);
 		if (!filters.isEmpty()) {
 			selectQuery.where(new AndFilter(filters.toArray(new SimpleFilter[0])));
 		}
-		return selectQuery.getPreparedStatementData(dataSource);
+		return selectQuery;
 	}
 
 	public String encapsulateColumnName(String columnName) {
