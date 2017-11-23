@@ -91,11 +91,7 @@ public class PersistedTableHelper {
 			} else if (fieldMetaTypeName.contains("Date")) {
 				insertStatement.setDate(fieldIndex + 1, (Date) fieldValue);
 			} else if (fieldMetaTypeName.toLowerCase().contains("timestamp")) {
-				if (fieldValue.getClass().toString().contains("oracle.sql.TIMESTAMP")) {
-					insertStatement.setTimestamp(fieldIndex + 1, ((oracle.sql.TIMESTAMP) fieldValue).timestampValue());
-				} else {
-					insertStatement.setTimestamp(fieldIndex + 1, (Timestamp) fieldValue);
-				}
+				insertStatement.setTimestamp(fieldIndex + 1, Timestamp.valueOf(fieldValue.toString()));
 			} else if (fieldMetaTypeName.contains("Time")) {
 				insertStatement.setTime(fieldIndex + 1, (Time) fieldValue);
 			} else if (fieldMetaTypeName.contains("Byte")) {
