@@ -1,5 +1,5 @@
 <Context path="/knowage" >
-	<Loader delegate="true"/>
+<!--	<Loader delegate="true"/>  -->
 	<ResourceLink global="jdbc/knowage" name="jdbc/knowage" type="javax.sql.DataSource" />
 	<ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource" />
 	<ResourceLink global="jdbc/employees" name="jdbc/employees" type="javax.sql.DataSource" />
