@@ -77,20 +77,6 @@
 		</dependency>
 		
 		<dependency>
-		    <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-api</artifactId>
-		    <version>1.6.1</version>
-		    <scope>runtime</scope>
-		</dependency>
-
-		<dependency>
-		    <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-log4j12</artifactId>
-		    <version>1.6.1</version>
-		    <scope>runtime</scope>
-		</dependency>
-		
-		<dependency>
 			<groupId>it.eng.spago</groupId>
 			<artifactId>spago-core</artifactId>
 			<version>2.3.0</version>
@@ -534,15 +520,6 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.4</version>
 			<scope>compile</scope>
-		</dependency>
-		
-		<!-- used mainly by JSP (e.g. /themes/sbi_default/jsp/login.jsp)
-		     To remove it, consider to migrate everything to lang3 -->
-		<dependency>
-		    <groupId>commons-lang</groupId>
-		    <artifactId>commons-lang</artifactId>
-		    <version>2.6</version>
-		    <scope>compile</scope>
 		</dependency>
 
 		<dependency>

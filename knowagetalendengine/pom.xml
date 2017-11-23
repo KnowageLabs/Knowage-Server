@@ -25,14 +25,6 @@
 					<artifactId>cometd-java-server</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>org.apache.hadoop</groupId>
-					<artifactId>hadoop-hdfs</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.hadoop</groupId>
-					<artifactId>hadoop-common</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>org.jboss.resteasy</groupId>
 					<artifactId>resteasy-jaxrs</artifactId>
 				</exclusion>

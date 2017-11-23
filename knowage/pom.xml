@@ -68,23 +68,6 @@
 	</profiles>
 	
 	<dependencies>
-	
-		<dependency>
-			<groupId>it.eng.knowage</groupId>
-			<artifactId>knowage-utils</artifactId>
-			<version>6.2.0-SNAPSHOT</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.hadoop</groupId>
-					<artifactId>hadoop-hdfs</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.hadoop</groupId>
-					<artifactId>hadoop-common</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
