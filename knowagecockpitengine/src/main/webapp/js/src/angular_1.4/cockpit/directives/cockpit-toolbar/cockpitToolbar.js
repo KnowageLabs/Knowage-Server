@@ -118,7 +118,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 		      escapeToClose :true,
 	          preserveScope: true,
 		      fullscreen: true,
-		      controller: function($scope,sbiModule_translate,cockpitModule_template,cockpitModule_properties){
+		      controller: function($scope,sbiModule_translate,cockpitModule_template,cockpitModule_properties,cockpitModule_widgetServices){
 		    	  $scope.translate=sbiModule_translate;
 		    	  $scope.addWidget=function(type){
 		    		  var tmpWidget={
@@ -141,7 +141,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 
 		    			  }
 		    		  }
-		    		  cockpitModule_template.sheets[cockpitModule_properties.CURRENT_SHEET].widgets.push(tmpWidget);
+		    		  cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,tmpWidget);
 		    		  $mdDialog.hide();
 
 		    	  };
