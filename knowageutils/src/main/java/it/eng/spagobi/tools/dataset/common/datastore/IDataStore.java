@@ -89,8 +89,6 @@ public interface IDataStore {
 
 	org.apache.metamodel.data.DataSet getMetaModelResultSet(String sqlQuery);
 
-	org.apache.metamodel.data.DataSet getMetaModelResultSet(String sqlQuery, List<Object> values);
-
 	/**
 	 * @deprecated use the proper DataWriter instead
 	 */

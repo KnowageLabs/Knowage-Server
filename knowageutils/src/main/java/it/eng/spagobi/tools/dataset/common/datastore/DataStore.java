@@ -626,7 +626,7 @@ public class DataStore implements IDataStore {
 	}
 
 	@Override
-	public DataSet getMetaModelResultSet(String sqlQuery, List<Object> values) {
+	public DataSet getMetaModelResultSet(String sqlQuery) {
 		// **************************************************************************************************************
 		// ***** This part build data structures used to convert a SpagoBI DataStore into an MetaModel DataContext ******
 		// **************************************************************************************************************
@@ -678,7 +678,7 @@ public class DataStore implements IDataStore {
 		String newSqlQuery = sqlQuery.replace(DEFAULT_TABLE_NAME, uniqueTableName);
 		Query query = dataContext.parseQuery(newSqlQuery);
 		CompiledQuery cQuery = dataContext.compileQuery(query);
-		DataSet dataSet = dataContext.executeQuery(cQuery, values);
+		DataSet dataSet = dataContext.executeQuery(cQuery);
 
 		return dataSet;
 	}
@@ -763,8 +763,4 @@ public class DataStore implements IDataStore {
 		return aggregateAndFilterRecords(sqlQuery, new ArrayList<Object>(0), offset, fetchSize, maxRowCount);
 	}
 
-	@Override
-	public DataSet getMetaModelResultSet(String sqlQuery) {
-		return getMetaModelResultSet(sqlQuery, new ArrayList<Object>(0));
-	}
 }

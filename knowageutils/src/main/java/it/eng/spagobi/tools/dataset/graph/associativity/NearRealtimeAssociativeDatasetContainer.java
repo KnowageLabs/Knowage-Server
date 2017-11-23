@@ -62,7 +62,7 @@ public class NearRealtimeAssociativeDatasetContainer extends AssociativeDatasetC
 	public Set<String> getTupleOfValues(String query, List<Object> values) throws ClassNotFoundException, NamingException, SQLException {
 		if (dataStore != null) {
 			logger.debug("Executing query with MetaModel: " + query);
-			org.apache.metamodel.data.DataSet rs = dataStore.getMetaModelResultSet(query, values);
+			org.apache.metamodel.data.DataSet rs = dataStore.getMetaModelResultSet(query);
 			return AssociativeLogicUtils.getTupleOfValues(rs);
 		} else {
 			throw new SpagoBIRuntimeException(

@@ -23,6 +23,7 @@ import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 public class MetaModelSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 	public MetaModelSelectQueryVisitor() {
+		this.aliasDelimiter = "";
 		this.dialect = SqlDialect.METAMODEL;
 	}
 

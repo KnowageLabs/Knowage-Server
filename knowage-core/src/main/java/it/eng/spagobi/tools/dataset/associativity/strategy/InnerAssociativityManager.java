@@ -36,6 +36,7 @@ import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
+import it.eng.spagobi.tools.dataset.graph.associativity.NearRealtimeAssociativeDatasetContainer;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -72,9 +73,16 @@ public class InnerAssociativityManager extends AbstractAssociativityManager {
 
 								List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), v1);
 								if (!columnNames.isEmpty()) {
-									PreparedStatementData data = new SelectQuery(dataSet).selectDistinct().select(columnNames.toArray(new String[0]))
-											.from(tableName).getPreparedStatementData(dataSource);
-									Set<String> tuple = getTupleOfValues(v1, data.getQuery(), data.getValues());
+									SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(columnNames.toArray(new String[0]))
+											.from(tableName);
+
+									Set<String> tuple;
+									if (container instanceof NearRealtimeAssociativeDatasetContainer) {
+										tuple = getTupleOfValues(v1, selectQuery.toSql(dataSource), null);
+									} else {
+										PreparedStatementData preparedStatementData = selectQuery.getPreparedStatementData(dataSource);
+										tuple = getTupleOfValues(v1, preparedStatementData.getQuery(), preparedStatementData.getValues());
+									}
 
 									if (!result.getEdgeGroupValues().containsKey(group)) {
 										result.getEdgeGroupValues().put(group, tuple);
@@ -112,10 +120,15 @@ public class InnerAssociativityManager extends AbstractAssociativityManager {
 		for (EdgeGroup group : groups) {
 			List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), datasetLabel);
 			if (columnNames.size() > 0) {
-				PreparedStatementData data = new SelectQuery(dataSet).selectDistinct().select(columnNames.toArray(new String[0])).from(tableName).where(filter)
-						.getPreparedStatementData(dataSource);
+				SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(columnNames.toArray(new String[0])).from(tableName).where(filter);
 
-				Set<String> distinctValues = getTupleOfValues(datasetLabel, data.getQuery(), data.getValues());
+				Set<String> distinctValues;
+				if (container instanceof NearRealtimeAssociativeDatasetContainer) {
+					distinctValues = getTupleOfValues(datasetLabel, selectQuery.toSql(dataSource), null);
+				} else {
+					PreparedStatementData data = selectQuery.getPreparedStatementData(dataSource);
+					distinctValues = getTupleOfValues(datasetLabel, data.getQuery(), data.getValues());
+				}
 
 				Set<String> baseSet = result.getEdgeGroupValues().get(group);
 				Set<String> intersection = new HashSet<String>(CollectionUtils.intersection(baseSet, distinctValues));
