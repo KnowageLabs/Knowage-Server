@@ -22,6 +22,7 @@ import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,9 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.query.item.AndFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.BetweenFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
 import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.LikeFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.NullaryFilter;
@@ -303,9 +306,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	@Override
-	protected List<SimpleFilter> getFilters(String datasetLabel, JSONObject selectionsObject, Map<String, String> columnAliasToColumnName)
-			throws JSONException {
-		List<SimpleFilter> filters = new ArrayList<>(0);
+	protected List<Filter> getFilters(String datasetLabel, JSONObject selectionsObject, Map<String, String> columnAliasToColumnName) throws JSONException {
+		List<Filter> filters = new ArrayList<>(0);
 
 		if (selectionsObject.has(datasetLabel)) {
 			JSONObject datasetSelectionObject = selectionsObject.getJSONObject(datasetLabel);
@@ -318,66 +320,45 @@ public class DataSetResource extends AbstractDataSetResource {
 				String columns = it.next();
 
 				// check two cases: in case of click selection the contained is JSON array and operator is IN, in case of filter the contained is JSON object
-				Object filterObject = datasetSelectionObject.get(columns);
-				String filterOperator = null;
-				JSONArray values = null;
+				Object filtersObject = datasetSelectionObject.get(columns);
 
-				if (filterObject instanceof JSONArray) {
+				String firstFilterOperator = null;
+				JSONArray firstFilterValues = null;
+
+				String secondFilterOperator = null;
+				JSONArray secondFilterValues = null;
+
+				if (filtersObject instanceof JSONArray) {
 					logger.debug("coming from click");
-					filterOperator = "IN";
-					values = (JSONArray) filterObject;
-				} else if (filterObject instanceof JSONObject) {
+					firstFilterOperator = "IN";
+					firstFilterValues = (JSONArray) filtersObject;
+					for (int i = 0; i < firstFilterValues.length(); i++) { // looking for filter embedded in array
+						JSONObject filterJsonObject = firstFilterValues.optJSONObject(i);
+						if (filterJsonObject != null) {
+							secondFilterOperator = filterJsonObject.optString("filterOperator");
+							secondFilterValues = filterJsonObject.getJSONArray("filterVals");
+							firstFilterValues.remove(i);
+							break; // there is at most one filter embedded in array
+						}
+					}
+				} else if (filtersObject instanceof JSONObject) {
 					logger.debug("coming from filters");
-					JSONObject filterJsonObject = (JSONObject) filterObject;
-					filterOperator = filterJsonObject.optString("filterOperator");
-					values = filterJsonObject.getJSONArray("filterVals");
+					JSONObject filterJsonObject = (JSONObject) filtersObject;
+					firstFilterOperator = filterJsonObject.optString("filterOperator");
+					firstFilterValues = filterJsonObject.getJSONArray("filterVals");
 				} else {
-					throw new SpagoBIRuntimeException("Not recognised filter object " + filterObject);
+					throw new SpagoBIRuntimeException("Not recognised filter object " + filtersObject);
 				}
 
-				SimpleFilterOperator operator = SimpleFilterOperator.ofSymbol(filterOperator.toUpperCase());
-
-				if (values.length() > 0 || operator.isNullary() || operator.isPlaceholder()) {
-					List<String> columnsList = getColumnList(columns, dataSet, columnAliasToColumnName);
-
-					List<Projection> projections = new ArrayList<>(columnsList.size());
-					for (String columnName : columnsList) {
-						projections.add(new Projection(dataSet, columnName));
-					}
-
-					List<Object> valueObjects = new ArrayList<>(0);
-					if (!operator.isNullary() && !operator.isPlaceholder()) {
-						for (int i = 0; i < values.length(); i++) {
-							String[] valuesArray = StringUtilities.getSubstringsBetween(values.getString(i), "'");
-							for (int j = 0; j < valuesArray.length; j++) {
-								Projection projection = projections.get(j % projections.size());
-								valueObjects.add(DataSetUtilities.getValue(valuesArray[j], projection.getType()));
-							}
-						}
-					}
-
-					SimpleFilter filter = null;
-					if (operator.isPlaceholder()) {
-						filter = new PlaceholderFilter(projections.get(0), operator);
+				SimpleFilter firstSimpleFilter = getFilter(firstFilterOperator, firstFilterValues, columns, dataSet, columnAliasToColumnName);
+				if (firstSimpleFilter != null) {
+					SimpleFilter secondSimpleFilter = getFilter(secondFilterOperator, secondFilterValues, columns, dataSet, columnAliasToColumnName);
+					if (secondSimpleFilter != null) {
+						Filter compoundFilter = getComplexFilter((InFilter) firstSimpleFilter, secondSimpleFilter);
+						filters.add(compoundFilter);
 					} else {
-						if (SimpleFilterOperator.IN.equals(operator)) {
-							if (valueObjects.isEmpty()) {
-								filter = new NullaryFilter(projections.get(0), SimpleFilterOperator.IS_NULL);
-							} else {
-								filter = new InFilter(projections, valueObjects);
-							}
-						} else if (SimpleFilterOperator.LIKE.equals(operator)) {
-							filter = new LikeFilter(projections.get(0), valueObjects.get(0).toString());
-						} else if (SimpleFilterOperator.BETWEEN.equals(operator)) {
-							filter = new BetweenFilter(projections.get(0), valueObjects.get(0), valueObjects.get(1));
-						} else if (operator.isNullary()) {
-							filter = new NullaryFilter(projections.get(0), operator);
-						} else {
-							filter = new UnaryFilter(projections.get(0), operator, valueObjects.get(0));
-						}
+						filters.add(firstSimpleFilter);
 					}
-
-					filters.add(filter);
 				} else {
 					isAnEmptySelection = true;
 				}
@@ -390,6 +371,70 @@ public class DataSetResource extends AbstractDataSetResource {
 		}
 
 		return filters;
+	}
+
+	public Filter getComplexFilter(InFilter inFilter, SimpleFilter anotherFilter) {
+		final Comparator<Object> comparator = (o1, o2) -> ((String) o1).compareTo((String) o2);
+
+		if (SimpleFilterOperator.EQUALS_TO_MIN.equals(anotherFilter.getOperator())) {
+			Object operand = inFilter.getOperands().stream().min(comparator).get();
+			return new UnaryFilter(inFilter.getProjections().get(0), SimpleFilterOperator.EQUALS_TO, operand);
+		} else if (SimpleFilterOperator.EQUALS_TO_MAX.equals(anotherFilter.getOperator())) {
+			Object operand = inFilter.getOperands().stream().max(comparator).get();
+			return new UnaryFilter(inFilter.getProjections().get(0), SimpleFilterOperator.EQUALS_TO, operand);
+		} else {
+			return new AndFilter(inFilter, anotherFilter);
+		}
+	}
+
+	private SimpleFilter getFilter(String operatorString, JSONArray valuesJsonArray, String columns, IDataSet dataSet,
+			Map<String, String> columnAliasToColumnName) throws JSONException {
+		SimpleFilter filter = null;
+
+		if (operatorString != null) {
+			SimpleFilterOperator operator = SimpleFilterOperator.ofSymbol(operatorString.toUpperCase());
+
+			if (valuesJsonArray.length() > 0 || operator.isNullary() || operator.isPlaceholder()) {
+				List<String> columnsList = getColumnList(columns, dataSet, columnAliasToColumnName);
+
+				List<Projection> projections = new ArrayList<>(columnsList.size());
+				for (String columnName : columnsList) {
+					projections.add(new Projection(dataSet, columnName));
+				}
+
+				List<Object> valueObjects = new ArrayList<>(0);
+				if (!operator.isNullary() && !operator.isPlaceholder()) {
+					for (int i = 0; i < valuesJsonArray.length(); i++) {
+						String[] valuesArray = StringUtilities.getSubstringsBetween(valuesJsonArray.getString(i), "'");
+						for (int j = 0; j < valuesArray.length; j++) {
+							Projection projection = projections.get(j % projections.size());
+							valueObjects.add(DataSetUtilities.getValue(valuesArray[j], projection.getType()));
+						}
+					}
+				}
+
+				if (operator.isPlaceholder()) {
+					filter = new PlaceholderFilter(projections.get(0), operator);
+				} else {
+					if (SimpleFilterOperator.IN.equals(operator)) {
+						if (valueObjects.isEmpty()) {
+							filter = new NullaryFilter(projections.get(0), SimpleFilterOperator.IS_NULL);
+						} else {
+							filter = new InFilter(projections, valueObjects);
+						}
+					} else if (SimpleFilterOperator.LIKE.equals(operator)) {
+						filter = new LikeFilter(projections.get(0), valueObjects.get(0).toString());
+					} else if (SimpleFilterOperator.BETWEEN.equals(operator)) {
+						filter = new BetweenFilter(projections.get(0), valueObjects.get(0), valueObjects.get(1));
+					} else if (operator.isNullary()) {
+						filter = new NullaryFilter(projections.get(0), operator);
+					} else {
+						filter = new UnaryFilter(projections.get(0), operator, valueObjects.get(0));
+					}
+				}
+			}
+		}
+		return filter;
 	}
 
 	@POST

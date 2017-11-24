@@ -2200,37 +2200,41 @@ public class DatasetManagementAPI {
 	 */
 
 	// FIXME
-	public List<SimpleFilter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues,
-			List<Projection> projections, List<SimpleFilter> filters, List<SimpleFilter> likeFilters, List<Projection> groups, int offset, int fetchSize,
-			int maxRowCount) {
+	public List<Filter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections,
+			List<Filter> filters, List<SimpleFilter> likeFilters, List<Projection> groups, int offset, int fetchSize, int maxRowCount) {
 
 		logger.debug("IN");
 
-		List<SimpleFilter> newFilters = new ArrayList<>(filters);
+		List<Filter> newFilters = new ArrayList<>(filters);
 
 		List<Integer> minMaxFilterIndexes = new ArrayList<>();
 		List<Projection> minMaxProjections = new ArrayList<>();
 
-		List<SimpleFilter> noMinMaxFilters = new ArrayList<>();
+		List<Filter> noMinMaxFilters = new ArrayList<>();
 
 		for (int i = 0; i < filters.size(); i++) {
-			SimpleFilter filter = filters.get(i);
-			SimpleFilterOperator operator = filter.getOperator();
+			Filter filter = filters.get(i);
+			if (filter instanceof SimpleFilter) {
+				SimpleFilter simpleFilter = (SimpleFilter) filter;
+				SimpleFilterOperator operator = simpleFilter.getOperator();
 
-			if (SimpleFilterOperator.EQUALS_TO_MIN.equals(operator)) {
-				logger.debug("Min filter found at index [" + i + "]");
-				minMaxFilterIndexes.add(i);
+				if (SimpleFilterOperator.EQUALS_TO_MIN.equals(operator)) {
+					logger.debug("Min filter found at index [" + i + "]");
+					minMaxFilterIndexes.add(i);
 
-				String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
-				Projection projection = new Projection(AggregationFunctions.MIN_FUNCTION, dataSet, columnName);
-				minMaxProjections.add(projection);
-			} else if (SimpleFilterOperator.EQUALS_TO_MAX.equals(operator)) {
-				minMaxFilterIndexes.add(i);
-				logger.debug("Max filter found at index [" + i + "]");
+					String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
+					Projection projection = new Projection(AggregationFunctions.MIN_FUNCTION, dataSet, columnName);
+					minMaxProjections.add(projection);
+				} else if (SimpleFilterOperator.EQUALS_TO_MAX.equals(operator)) {
+					logger.debug("Max filter found at index [" + i + "]");
+					minMaxFilterIndexes.add(i);
 
-				String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
-				Projection projection = new Projection(AggregationFunctions.MAX_FUNCTION, dataSet, columnName, columnName);
-				minMaxProjections.add(projection);
+					String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
+					Projection projection = new Projection(AggregationFunctions.MAX_FUNCTION, dataSet, columnName, columnName);
+					minMaxProjections.add(projection);
+				} else {
+					noMinMaxFilters.add(filter);
+				}
 			} else {
 				noMinMaxFilters.add(filter);
 			}
@@ -2280,7 +2284,7 @@ public class DatasetManagementAPI {
 		return newFilters;
 	}
 
-	public Filter getWhereFilter(List<SimpleFilter> filters, List<SimpleFilter> likeFilters) {
+	public Filter getWhereFilter(List<Filter> filters, List<SimpleFilter> likeFilters) {
 		Filter where = null;
 		if (filters.size() > 0) {
 			AndFilter andFilter = new AndFilter(filters);

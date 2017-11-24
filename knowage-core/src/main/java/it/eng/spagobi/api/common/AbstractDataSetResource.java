@@ -171,7 +171,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				sortings.addAll(getSortings(dataSet, categoriesObject, measuresObject, columnAliasToName));
 			}
 
-			List<SimpleFilter> filters = new ArrayList<>(0);
+			List<Filter> filters = new ArrayList<>(0);
 			if (selections != null && !selections.isEmpty()) {
 				JSONObject selectionsObject = new JSONObject(selections);
 				if (selectionsObject.names() != null) {
@@ -333,10 +333,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return sorting;
 	}
 
-	// FIXME
-	protected List<SimpleFilter> getFilters(String datasetLabel, JSONObject selectionsObject, Map<String, String> columnAliasToColumnName)
-			throws JSONException {
-		List<SimpleFilter> filters = new ArrayList<>(0);
+	protected List<Filter> getFilters(String datasetLabel, JSONObject selectionsObject, Map<String, String> columnAliasToColumnName) throws JSONException {
+		List<Filter> filters = new ArrayList<>(0);
 
 		if (selectionsObject.has(datasetLabel)) {
 			JSONObject datasetSelectionObject = selectionsObject.getJSONObject(datasetLabel);

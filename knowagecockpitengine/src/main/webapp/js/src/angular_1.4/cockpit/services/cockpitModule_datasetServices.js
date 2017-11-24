@@ -712,80 +712,29 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					}
 				}
 
-
 				var filterVals=filterElement.filterVals;
-				if(filterOperator != ""  //filterVals.length>0
-						){
+				if(filterOperator != ""){
 					var values=[];
-
-					// if filterOperator is IN and filterVals has , must split
+					// if filterOperator is IN and filterVals has "," then filterVals must be splitted
 					if(filterOperator == "IN" && filterVals[0] && filterVals[0].includes(",") ){
 						filterVals = filterVals[0].split(",");
 					}
-
 					angular.forEach(filterVals, function(item){
 						this.push("('" + item + "')");
 					}, values);
 
+					var filter = { filterOperator: filterOperator, filterVals: values};
+
 					if(!dataToSend[dataset.label]){
 						dataToSend[dataset.label] = {};
 					}
-					if(!dataToSend[dataset.label][colName]){
-						dataToSend[dataset.label][colName] =
-							{
-								filterOperator: filterOperator,
-								filterVals: values
-							}
+
+ 					if(!dataToSend[dataset.label][colName]){
+						dataToSend[dataset.label][colName] = filter;
 					}else{
-//						dataToSend[dataset.label][colName] = dataToSend[dataset.label][colName].filter(
-//								function(elem) { // intersect arrays
-//									return values.indexOf(elem) !== -1;
-//						}).filter(function (elem, i, c) { // extra step to remove duplicates
-//					        return c.indexOf(elem) === i;
-//					    });
-
-						values = dataToSend[dataset.label][colName].filter(
-								function(elem) { // intersect arrays
-									return values.indexOf(elem) !== -1;
-						}).filter(function (elem, i, c) { // extra step to remove duplicates
-					        return c.indexOf(elem) === i;
-					    });
-
-						dataToSend[dataset.label][colName] =
-							{
-								filterOperator: filterOperator,
-								filterVals: values
-							}
-
-
-
-
-
-
+						dataToSend[dataset.label][colName].push(filter);
 					}
 				}
-
-
-//				var filterVals=filterElement.filterVals;
-//				if(filterVals.length>0){
-//					var values=[];
-//					angular.forEach(filterVals, function(item){
-//						this.push("('" + item + "')");
-//					}, values);
-//
-//					if(!dataToSend[dataset.label]){
-//						dataToSend[dataset.label] = {};
-//					}
-//					if(!dataToSend[dataset.label][colName]){
-//						dataToSend[dataset.label][colName] = values;
-//					}else{
-//						dataToSend[dataset.label][colName] = dataToSend[dataset.label][colName].filter(function(elem) { // intersect arrays
-//						    return values.indexOf(elem) !== -1;
-//						}).filter(function (elem, i, c) { // extra step to remove duplicates
-//					        return c.indexOf(elem) === i;
-//					    });
-//					}
-//				}
 			}
 		}
 
