@@ -731,8 +731,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			result = DatasetEvaluationStrategy.FLAT;
 		} else {
 			SqlDialect dialect = dataSet.getDataSource() != null ? SqlDialect.get(dataSet.getDataSource().getHibDialectClass()) : null;
-			Assert.assertNotNull(dialect, "Datasource dialect cannot be null.");
-			boolean inLineViewSupported = dialect.isInLineViewSupported();
+			boolean inLineViewSupported = dialect != null ? dialect.isInLineViewSupported() : false;
 			if (isNearRealtime && inLineViewSupported && !dataSet.hasDataStoreTransformer()) {
 				result = DatasetEvaluationStrategy.JDBC;
 			} else if (isNearRealtime) {
