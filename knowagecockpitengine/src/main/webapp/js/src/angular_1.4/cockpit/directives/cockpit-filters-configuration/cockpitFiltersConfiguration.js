@@ -171,6 +171,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					//{
 						$scope.refreshChartFilters($scope.ngModelShared.datasetId);
 					//}
+
+					$scope.cleanQbeColumns();
 				}else{
 					//initialization phase, there is no dataset
 				}
@@ -233,15 +235,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					}
 
-					// clean column name in case of QBE dataset
-					for(var i=0; i<$scope.ngModelShared.filters.length; i++){
-						var columnName = $scope.ngModelShared.filters[i].colName;
-						var colonIndex = columnName.indexOf(":");
-						if(colonIndex > -1){
-							columnName = columnName.substr(colonIndex + 1);
-						}
-						$scope.ngModelShared.filters[i].columnName = columnName;
-					}
+					$scope.cleanQbeColumns();
 				}else{
 					//initialization phase, there is no dataset
 				}
@@ -249,6 +243,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.updateFilters($scope.ngModelShared.dataset.dsId);
 			}
 		});
+
+		// clean column name in case of QBE dataset
+		$scope.cleanQbeColumns=function(){
+			for(var i=0; i<$scope.ngModelShared.filters.length; i++){
+				var columnName = $scope.ngModelShared.filters[i].colName;
+				var colonIndex = columnName.indexOf(":");
+				if(colonIndex > -1){
+					columnName = columnName.substr(colonIndex + 1);
+				}
+				$scope.ngModelShared.filters[i].columnName = columnName;
+			}
+		}
 
 		if($scope.ngModelShared.limitRows == undefined){
 			$scope.ngModelShared.limitRows = {enable: false, rows: 10};
