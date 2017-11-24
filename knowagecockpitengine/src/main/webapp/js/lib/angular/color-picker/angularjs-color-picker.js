@@ -920,8 +920,8 @@ var AngularColorPickerController = function () {
 
 AngularColorPickerController.$inject = ['$scope', '$element', '$document', '$timeout', 'ColorPickerOptions'];
 
-function colorPickerDirective() {
-    return {
+function colorPickerDirective($templateCache) {
+	return {
         restrict: 'E',
         require: ['^ngModel'],
         scope: {
@@ -931,7 +931,7 @@ function colorPickerDirective() {
             eventApi: '=?'
         },
         bindToController: true,
-        templateUrl: 'template/color-picker/directive.html',
+        template: $templateCache.get("template/color-picker/directive.html"),
         controller: AngularColorPickerController,
         controllerAs: 'AngularColorPickerController',
         link: function link($scope, element, attrs, control) {
