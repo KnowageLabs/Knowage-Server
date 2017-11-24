@@ -33,6 +33,7 @@ import org.jgrapht.graph.Pseudograph;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
@@ -173,7 +174,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 						CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
 						if (cacheItem == null) {
 							logger.debug("Unable to find dataset [" + v1 + "] in cache. This can be due to changes on dataset parameters");
-							cache.put(dataSet);
+							new DatasetManagementAPI(userProfile).putDataSetInCache(dataSet, cache);
 							cacheItem = cache.getMetadata().getCacheItem(signature);
 							if (cacheItem == null) {
 								throw new SpagoBIException("Unable to find dataset [" + v1 + "] in cache.");

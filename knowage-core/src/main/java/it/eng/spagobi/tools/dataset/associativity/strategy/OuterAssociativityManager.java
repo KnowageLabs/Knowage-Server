@@ -134,7 +134,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 					AssociativeDatasetContainer childContainer = associativeDatasetContainers.get(child);
 					List<String> columns = getColumnNames(group.getOrderedEdgeNames(), child);
 					if (!columns.isEmpty()) {
-						childContainer.addFilter(container.getDataSet(), columns, distinctValues);
+						childContainer.addFilter(childContainer.getDataSet(), columns, distinctValues);
 					}
 				}
 			}

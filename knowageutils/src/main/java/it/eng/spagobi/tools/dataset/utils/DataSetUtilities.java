@@ -374,6 +374,13 @@ public class DataSetUtilities {
 		if (fieldIndex >= 0 && fieldIndex < metadata.getFieldCount()) {
 			return metadata.getFieldMeta(fieldIndex);
 		} else {
+			for (int i = 0; i < metadata.getFieldCount(); i++) {
+				IFieldMetaData fieldMeta = metadata.getFieldMeta(i);
+
+				if (fieldMeta.getName().endsWith(columnName) || fieldMeta.getAlias().equals(columnName)) {
+					return fieldMeta;
+				}
+			}
 			throw new IllegalArgumentException("Column [" + columnName + "] not found");
 		}
 	}
