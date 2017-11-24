@@ -84,6 +84,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 	$scope.csvDelimiter = "";
 	$scope.csvQuoteChar = "";
 	$scope.csvEncoding= "";
+	$scope.dateFormat ="";
 	
 	/**
 	 * If the type of the file that is uploaded for the file dataset is CSV and the dataset is opened in the wizard for the first 
@@ -97,6 +98,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		$scope.csvDelimiter = $scope.dataset.csvDelimiter;
 		$scope.csvQuoteChar = $scope.dataset.csvQuote;
 		$scope.csvEncoding= $scope.dataset.csvEncoding;
+		$scope.dateFormat = $scope.dataset.dateFormat;
 	}
 	
 	/**
@@ -142,7 +144,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 			// If at least one of those parameters is changed, signal to re-parse the file and get new metadata.
 			$scope.csvConfChanged = ($scope.csvDelimiter != $scope.dataset.csvDelimiter 
 										|| $scope.csvQuoteChar != $scope.dataset.csvQuote
-											|| $scope.csvEncoding != $scope.dataset.csvEncoding) ?  true : false;	
+											|| $scope.csvEncoding != $scope.dataset.csvEncoding || $scope.dateFormat != $scope.dataset.dateFormat) ?  true : false;	
 			
 			/**
 			 * If the CSV configuration is changed on the Step 1, set these indicators to false in order to reset the 
@@ -157,6 +159,8 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 			$scope.csvDelimiter = $scope.dataset.csvDelimiter;
 			$scope.csvQuoteChar = $scope.dataset.csvQuote;
 			$scope.csvEncoding= $scope.dataset.csvEncoding;
+			$scope.dateFormat = $scope.dataset.dateFormat;
+
 		}
 		
 		/**
@@ -801,6 +805,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 						$scope.dataset.csvEncoding = $scope.csvEncodingDefault;
 						$scope.dataset.csvDelimiter = $scope.csvDelimiterDefault;
 						$scope.dataset.csvQuote = $scope.csvQuoteDefault;
+						$scope.dataset.dateFormat = $scope.dateFormatDefault;
 						$scope.dataset.skipRows = $scope.skipRowsDefault;
 						$scope.dataset.limitRows = $scope.limitRowsDefault;
 						$scope.dataset.xslSheetNumber = $scope.xslSheetNumberDefault;
@@ -1028,7 +1033,8 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 
 				 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="string".toLowerCase() && insertString || 
 						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="double".toLowerCase()||
-						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="integer".toLowerCase()){
+						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="integer".toLowerCase()||
+						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="date".toLowerCase()){
 					 filteredMetaValues.push($scope.dsMetaValue[j]);
 				 }    			
 			}			
@@ -1058,6 +1064,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 				values[i].pname=values[i].pname.toLowerCase();
 				typeValue = values[i].pvalue;
 				typeValue = typeValue!=null ? typeValue.replace("java.lang.","") : null;
+				typeValue = typeValue!=null ? typeValue.replace("java.util.","") : null;
 				values[i].pvalue = typeValue;
 			}
 		}

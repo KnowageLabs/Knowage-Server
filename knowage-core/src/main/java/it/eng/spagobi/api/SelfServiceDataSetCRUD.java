@@ -20,8 +20,13 @@ package it.eng.spagobi.api;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -86,6 +91,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -1071,7 +1077,26 @@ public class SelfServiceDataSetCRUD {
 								}
 
 								break;
+							case "DATE":
+
+								try {
+									if(obj!=null && !(obj instanceof Date) ) {
+										String dsConfiguration = dataSet.getConfiguration();
+										JSONObject jsonConf = new JSONObject(dsConfiguration);
+										String dateFormat = jsonConf.get(DataSetConstants.FILE_DATE_FORMAT).toString();
+										DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+										LocalDate localDate = LocalDate.parse(obj.toString(), formatter);
+										Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+									}
+								} catch (DateTimeParseException nfe) {
+									logger.error("The cell cannot be formatted as Date value", nfe);
+									validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
+											"sbi.workspace.dataset.wizard.metadata.validation.error.date.title");
+								}
+
+								break;								
 							}
+							
 						}
 
 					}
@@ -1442,6 +1467,8 @@ public class SelfServiceDataSetCRUD {
 			String skipRows = req.getParameter("skipRows");
 			String limitRows = req.getParameter("limitRows");
 			String xslSheetNumber = req.getParameter("xslSheetNumber");
+			String dateFormat = req.getParameter("dateFormat");
+
 			String scopeCd = DataSetConstants.DS_SCOPE_USER;
 
 			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
@@ -1459,6 +1486,8 @@ public class SelfServiceDataSetCRUD {
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
 			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
+			jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
+
 
 		} catch (Exception e) {
 			logger.error("Error while defining dataset configuration. Error: " + e.getMessage());
@@ -1748,11 +1777,19 @@ public class SelfServiceDataSetCRUD {
 			for (int i = 0; i < metaData.getFieldCount(); i++) {
 				IFieldMetaData ifmd = metaData.getFieldMeta(i);
 
-				String gussedType = guessColumnType(dataStore, i);
-
+				String guessedType = guessColumnType(dataStore, i);
+				boolean isDate = false;
+				if (!guessedType.equalsIgnoreCase("Double")) {
+					isDate= isADate(dataSet,dataStore,i);
+				} 
 				// Setting mandatory property to defaults, if specified they
 				// will be overridden
-				if ("Double".equalsIgnoreCase(gussedType)) {
+				if (isDate) {
+					ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+					Class type = Class.forName("java.util.Date");
+					ifmd.setType(type);
+				}
+				else if ("Double".equalsIgnoreCase(guessedType)) {
 					ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 					Class type = Class.forName("java.lang.Double");
 					ifmd.setType(type);
@@ -1777,7 +1814,7 @@ public class SelfServiceDataSetCRUD {
 							} else if (propertyValue.equalsIgnoreCase("ATTRIBUTE")) {
 								ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
 							} else {
-								if ("Double".equalsIgnoreCase(gussedType)) {
+								if ("Double".equalsIgnoreCase(guessedType)) {
 									ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 								} else {
 									ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
@@ -1802,8 +1839,11 @@ public class SelfServiceDataSetCRUD {
 							} else if (propertyValue.equalsIgnoreCase("String") || propertyValue.equalsIgnoreCase("java.lang.String")) {
 								Class type = Class.forName("java.lang.String");
 								ifmd.setType(type);
-							} else {
-								if ("Double".equalsIgnoreCase(gussedType)) {
+							}	else if (propertyValue.equalsIgnoreCase("Date") || propertyValue.equalsIgnoreCase("java.util.Date")) {
+								Class type = Class.forName("java.util.Date");
+								ifmd.setType(type);
+							}  else {
+								if ("Double".equalsIgnoreCase(guessedType)) {
 									Class type = Class.forName("java.lang.Double");
 									ifmd.setType(type);
 								} else {
@@ -1855,6 +1895,31 @@ public class SelfServiceDataSetCRUD {
 		}
 
 		return isNumeric ? "Double" : "String";
+	}
+	
+	private boolean isADate(IDataSet dataSet, IDataStore dataStore, int columnIndex) throws JSONException {
+		String dsConfiguration = dataSet.getConfiguration();
+		JSONObject jsonConf = new JSONObject(dsConfiguration);
+		String dateFormat = jsonConf.get(DataSetConstants.FILE_DATE_FORMAT).toString();
+		for (int i = 0; i < Math.min(10, dataStore.getRecordsCount()); i++) {
+			IRecord record = dataStore.getRecordAt(i);
+			IField field = record.getFieldAt(columnIndex);
+			Object value = field.getValue();
+			if (value instanceof Date) {
+				//it's already a Date, skip the check
+				continue;
+			}
+			try {
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+				LocalDate localDate = LocalDate.parse((String) field.getValue(), formatter);
+				Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+				
+			} catch (DateTimeParseException ex){
+				logger.debug((String) field.getValue()+" is not a date");
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public JSONArray getDatasetColumns(IDataSet dataSet, IEngUserProfile profile) throws Exception {

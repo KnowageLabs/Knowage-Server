@@ -142,6 +142,8 @@ public class DataSetConstants {
 	public static final String XSL_FILE_SKIP_ROWS = "skipRows";
 	public static final String XSL_FILE_LIMIT_ROWS = "limitRows";
 	public static final String XSL_FILE_SHEET_NUMBER = "xslSheetNumber";
+	
+	public static final String FILE_DATE_FORMAT = "dateFormat";
 
 	// CKAN dataset constants
 

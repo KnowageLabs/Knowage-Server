@@ -55,7 +55,7 @@ public class SQLServerDataBase extends AbstractDataBase {
 			toReturn = " NUMERIC ";
 		} else if (javaTypeName.contains("java.lang.Boolean")) {
 			toReturn = " BIT ";
-		} else if (javaTypeName.contains("java.sql.Date")) {
+		} else if (javaTypeName.contains("java.sql.Date") || javaTypeName.contains("java.util.Date")) {
 			toReturn = " DATETIME ";
 		} else if (javaTypeName.toLowerCase().contains("timestamp")) {
 			toReturn = " DATETIME ";

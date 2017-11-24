@@ -58,7 +58,7 @@ public class VoltDBDataBase extends AbstractDataBase {
 			toReturn = " DOUBLE ";
 		} else if (javaTypeName.contains("java.lang.Boolean")) {
 			toReturn = " BOOLEAN ";
-		} else if (javaTypeName.contains("java.sql.Date")) {
+		} else if (javaTypeName.contains("java.sql.Date") || javaTypeName.contains("java.util.Date")) {
 			toReturn = " TIMESTAMP ";
 		} else if (javaTypeName.toLowerCase().contains("timestamp")) {
 			toReturn = " TIMESTAMP ";

@@ -22,6 +22,10 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -89,7 +93,16 @@ public class PersistedTableHelper {
 					insertStatement.setString(fieldIndex + 1, (String) fieldValue);
 				}
 			} else if (fieldMetaTypeName.contains("Date")) {
-				insertStatement.setDate(fieldIndex + 1, (Date) fieldValue);
+				if (fieldValue instanceof java.util.Date) {
+					java.util.Date date = (java.util.Date)fieldValue;
+					Instant instant = date.toInstant();
+					ZonedDateTime zdt = ZonedDateTime.ofInstant ( instant , ZoneId.systemDefault() );
+					LocalDate localDate = zdt.toLocalDate();
+					java.sql.Date sqlDate = java.sql.Date.valueOf( localDate );
+					insertStatement.setDate(fieldIndex + 1, sqlDate);
+				} else {
+					insertStatement.setDate(fieldIndex + 1, (Date) fieldValue);
+				}
 			} else if (fieldMetaTypeName.toLowerCase().contains("timestamp")) {
 				insertStatement.setTimestamp(fieldIndex + 1, Timestamp.valueOf(fieldValue.toString()));
 			} else if (fieldMetaTypeName.contains("Time")) {

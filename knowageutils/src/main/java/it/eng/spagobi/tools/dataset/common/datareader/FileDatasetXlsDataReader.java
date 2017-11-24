@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -28,6 +29,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -280,7 +282,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			// get single cell
 			HSSFCell cell = row.getCell(c);
 
-			String valueField = null;
+			Object valueField = null;
 			try {
 				valueField = parseCell(cell);
 			} catch (Throwable t) {
@@ -288,9 +290,11 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			}
 
 			FieldMetadata fieldMeta = new FieldMetadata();
-			String fieldName = StringUtils.escapeForSQLColumnName(valueField);
-			fieldMeta.setName(fieldName);
-			fieldMeta.setType(String.class);
+			if (valueField instanceof String) {
+				String fieldName = StringUtils.escapeForSQLColumnName((String)valueField);
+				fieldMeta.setName(fieldName);
+				fieldMeta.setType(String.class);
+			}
 			dataStoreMeta.addFiedMeta(fieldMeta);
 		}
 
@@ -317,9 +321,14 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				throw new RuntimeException("Impossible to parse cell [" + c + "]", t);
 			}
 			// update metadata type in order with the real value's type (default was string)
-			if (NumberUtils.isNumber((String) valueField)) {
-				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(BigDecimal.class);
-				valueField = new BigDecimal(String.valueOf(valueField));
+			if (valueField instanceof String) {
+				if (NumberUtils.isNumber((String) valueField)) {
+					((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(BigDecimal.class);
+					valueField = new BigDecimal(String.valueOf(valueField));
+				}
+			}
+			if (valueField instanceof Date) {
+				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Date.class);
 			}
 
 			IField field = new Field(valueField);
@@ -330,8 +339,8 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		return record;
 	}
 
-	private String parseCell(HSSFCell cell) {
-		String valueField = null;
+	private Object parseCell(HSSFCell cell) {
+		Object valueField = null;
 
 		if (cell == null)
 			return "";
@@ -342,15 +351,20 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			break;
 
 		case HSSFCell.CELL_TYPE_NUMERIC:
-			Double numericValue = cell.getNumericCellValue();
-			// testing if the double is an integer value
-			if ((numericValue == Math.floor(numericValue)) && !Double.isInfinite(numericValue)) {
-				// the number is an integer, this will remove the .0 trailing zeros
-				int numericInt = numericValue.intValue();
-				valueField = String.valueOf(numericInt);
-			} else {
-				valueField = String.valueOf(cell.getNumericCellValue());
-			}
+			 if (DateUtil.isCellDateFormatted(cell)) {
+				Date date = cell.getDateCellValue();
+				return date;
+             } else {
+     			Double numericValue = cell.getNumericCellValue();
+    			// testing if the double is an integer value
+    			if ((numericValue == Math.floor(numericValue)) && !Double.isInfinite(numericValue)) {
+    				// the number is an integer, this will remove the .0 trailing zeros
+    				int numericInt = numericValue.intValue();
+    				valueField = String.valueOf(numericInt);
+    			} else {
+    				valueField = String.valueOf(cell.getNumericCellValue());
+    			}
+             }
 			break;
 
 		case HSSFCell.CELL_TYPE_STRING:

@@ -174,6 +174,7 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 	$scope.skipRowsDefault = 0;
 	$scope.limitRowsDefault = null;
 	$scope.xslSheetNumberDefault = 1;
+	$scope.dateFormatDefault = "dd/MM/yyyy";
 
 	// The configuration for the message displayed inside the toaster. (danristo)
 	$scope.toasterConfig = {
@@ -200,6 +201,7 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 		$scope.dataset.csvQuote = dataset!=undefined ? dataset.csvQuote : $scope.csvQuoteDefault;
 
 		$scope.dataset.skipRows = dataset!=undefined ? Number(dataset.skipRows) : Number($scope.skipRowsDefault);
+		$scope.dataset.dateFormat = (dataset!=undefined && dataset.dateFormat!=undefined) ? dataset.dateFormat : $scope.dateFormatDefault;
 
 		/**
 		 * Handle the limitRows property value deserialization (special case: it can be of a value NULL).
@@ -261,6 +263,21 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 	 	{value:"\"",name:"\""},
 	 	{value:"\'",name:"\'"}
  	];
+	
+	$scope.dateFormatTypes = 
+	[
+	 	{value:"dd/MM/yyyy",name:"dd/MM/yyyy"},
+	 	{value:"MM/dd/yyyy",name:"MM/dd/yyyy"},
+	 	{value:"dd-MM-yyyy",name:"dd-MM-yyyy"},
+	 	{value:"MM-dd-yyyy",name:"MM-dd-yyyy"},
+		{value:"yyyy-MM-dd",name:"yyyy-MM-dd"},
+	 	{value:"yyyy:MM:dd",name:"yyyy:MM:dd"},
+	 	{value:"dd.MM.yyyy",name:"dd.MM.yyyy"},
+	 	{value:"MM.dd.yyyy",name:"MM.dd.yyyy"}
+	
+	];
+	
+	
 
 	/**
 	 * Keep and change the values for three comboboxes that appear when user uploads a CSV file when creating a new Dataset.
@@ -276,6 +293,10 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 
 	$scope.chooseEncoding = function(encodingObj) {
 		$scope.dataset.csvEncoding = encodingObj;
+	}
+	
+	$scope.chooseDateFormat = function(dateFormat) {
+		$scope.dataset.dateFormat = dateFormat;
 	}
 
 	/**
