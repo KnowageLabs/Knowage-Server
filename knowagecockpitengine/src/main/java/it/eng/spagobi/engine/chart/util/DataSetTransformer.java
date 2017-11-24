@@ -843,18 +843,22 @@ public class DataSetTransformer {
 
 	public LinkedHashMap<String, LinkedHashMap> seriesMapTransformedMethod(LinkedHashMap<String, LinkedHashMap> serieMap) throws JSONException {
 		LinkedHashMap<String, LinkedHashMap> newSerieMap = new LinkedHashMap<>();
-
+		String serieName = "";
 		for (Map.Entry<String, LinkedHashMap> entry : serieMap.entrySet()) {
 
 			String key = entry.getKey();
+
 			LinkedHashMap value = entry.getValue();
 			if (value.get("type").equals("arearangelow") || value.get("type").equals("arearangehigh")) {
+				serieName += value.get("column") + " ";
 				value.put("type", "arearange");
+
+				value.put("column", serieName);
+				value.put("name", serieName);
 				key = "common";
 
-				if (!newSerieMap.containsKey(key)) {
-					newSerieMap.put(key, value);
-				}
+				newSerieMap.put(key, value);
+
 			} else {
 				newSerieMap.put(key, value);
 			}
@@ -862,6 +866,17 @@ public class DataSetTransformer {
 		}
 		return newSerieMap;
 
+	}
+
+	public String seriesRangeName(LinkedHashMap<String, LinkedHashMap> serieMap) throws JSONException {
+		String serieName = "";
+		for (Map.Entry<String, LinkedHashMap> entry : serieMap.entrySet()) {
+			LinkedHashMap value = entry.getValue();
+			if (value.get("type").equals("arearangelow") || value.get("type").equals("arearangehigh")) {
+				serieName += value.get("column") + " ";
+			}
+		}
+		return serieName;
 	}
 
 	/**
