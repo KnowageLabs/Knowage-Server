@@ -41,6 +41,7 @@ import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.datasource.DataSourceManager;
 
 /**
  * Defines an <code>DataSource</code> object
@@ -222,16 +223,7 @@ public class DataSource implements Serializable, IDataSource {
 	 */
 	@JsonIgnore
 	private Connection getDirectConnection() throws ClassNotFoundException, SQLException {
-		Connection connection = null;
-
-		try {
-			Class.forName(getDriver());
-			connection = DriverManager.getConnection(getUrlConnection(), getUser(), getPwd());
-		} catch (Throwable t) {
-			throw new RuntimeException("Impossible to create a direct connection to database at host [" + getUrlConnection() + "] with user [" + getUser()
-					+ "]. Check if the database is running and if the password is correct.");
-		}
-		return connection;
+		return DataSourceManager.getConnection(this);
 	}
 
 	/*
@@ -520,5 +512,103 @@ public class DataSource implements Serializable, IDataSource {
 		logger.debug("Data store retrieved successfully");
 		logger.debug("OUT");
 		return dataStore;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((descr == null) ? 0 : descr.hashCode());
+		result = prime * result + ((dialectId == null) ? 0 : dialectId.hashCode());
+		result = prime * result + ((driver == null) ? 0 : driver.hashCode());
+		result = prime * result + dsId;
+		result = prime * result + ((engines == null) ? 0 : engines.hashCode());
+		result = prime * result + ((hibDialectClass == null) ? 0 : hibDialectClass.hashCode());
+		result = prime * result + ((hibDialectName == null) ? 0 : hibDialectName.hashCode());
+		result = prime * result + ((jndi == null) ? 0 : jndi.hashCode());
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		result = prime * result + ((multiSchema == null) ? 0 : multiSchema.hashCode());
+		result = prime * result + ((objects == null) ? 0 : objects.hashCode());
+		result = prime * result + ((pwd == null) ? 0 : pwd.hashCode());
+		result = prime * result + ((readOnly == null) ? 0 : readOnly.hashCode());
+		result = prime * result + ((schemaAttribute == null) ? 0 : schemaAttribute.hashCode());
+		result = prime * result + ((urlConnection == null) ? 0 : urlConnection.hashCode());
+		result = prime * result + ((user == null) ? 0 : user.hashCode());
+		result = prime * result + ((writeDefault == null) ? 0 : writeDefault.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof DataSource))
+			return false;
+		DataSource other = (DataSource) obj;
+		if (descr == null) {
+			if (other.descr != null)
+				return false;
+		} else if (!descr.equals(other.descr))
+			return false;
+		if (dialectId == null) {
+			if (other.dialectId != null)
+				return false;
+		} else if (!dialectId.equals(other.dialectId))
+			return false;
+		if (driver == null) {
+			if (other.driver != null)
+				return false;
+		} else if (!driver.equals(other.driver))
+			return false;
+		if (dsId != other.dsId)
+			return false;
+		if (hibDialectClass == null) {
+			if (other.hibDialectClass != null)
+				return false;
+		} else if (!hibDialectClass.equals(other.hibDialectClass))
+			return false;
+		if (hibDialectName == null) {
+			if (other.hibDialectName != null)
+				return false;
+		} else if (!hibDialectName.equals(other.hibDialectName))
+			return false;
+		if (jndi == null) {
+			if (other.jndi != null)
+				return false;
+		} else if (!jndi.equals(other.jndi))
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (multiSchema == null) {
+			if (other.multiSchema != null)
+				return false;
+		} else if (!multiSchema.equals(other.multiSchema))
+			return false;
+		if (pwd == null) {
+			if (other.pwd != null)
+				return false;
+		} else if (!pwd.equals(other.pwd))
+			return false;
+		if (schemaAttribute == null) {
+			if (other.schemaAttribute != null)
+				return false;
+		} else if (!schemaAttribute.equals(other.schemaAttribute))
+			return false;
+		if (urlConnection == null) {
+			if (other.urlConnection != null)
+				return false;
+		} else if (!urlConnection.equals(other.urlConnection))
+			return false;
+		if (user == null) {
+			if (other.user != null)
+				return false;
+		} else if (!user.equals(other.user))
+			return false;
+		return true;
 	}
 }
