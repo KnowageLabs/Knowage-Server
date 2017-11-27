@@ -160,7 +160,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-content flex layout>
 									<md-list class="md-dense" flex>
 										<md-list-item class="md-long-text" ng-repeat="meta in avDataset.metadata.fieldsMeta" 
-										ng-click="toggleAssociation(avDataset.label,meta.name,'dataset')" ng-class="{'selectedRow':jsonCurrentAss[avDataset.label]==('dataset'+meta.name)}">
+										ng-click="toggleAssociation(avDataset.label,meta.alias,'dataset')" ng-class="{'selectedRow':jsonCurrentAss[avDataset.label]==('dataset'+meta.name)}">
 											<span layout="row" flex>
 												<p flex=70 class="metaname" >{{meta.alias}}</p>
                                                 <!--  <p flex=70 class="metaname" ng-if="meta.alias==''">{{meta.name}}</p>   -->
