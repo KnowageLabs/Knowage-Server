@@ -90,6 +90,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 				$scope.ngModelShared.filters.push(objToInsert);
 			}
+
+			$scope.cleanQbeColumns();
 		}
 
 		/**
