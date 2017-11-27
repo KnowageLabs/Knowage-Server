@@ -233,35 +233,4 @@ public class AssociativeDatasetContainer {
 
 		return new InFilter(projections, values);
 	}
-
-	public String buildAndOrFilter(String columnNames, Set<String> filterValues) {
-		StringBuilder sb = new StringBuilder();
-		String or = "";
-		String[] distinctColumns = columnNames.split(",");
-
-		for (String andOrValues : filterValues) {
-			String and = "";
-			String[] distinctValues = andOrValues.substring(1, andOrValues.length() - 1).split(",");
-
-			sb.append(or);
-			sb.append("(");
-
-			for (int i = 0; i < distinctValues.length; i++) {
-				String column = distinctColumns[i];
-				String value = distinctValues[i];
-
-				sb.append(and);
-				sb.append(column);
-				sb.append("=");
-				sb.append(value);
-
-				and = " AND ";
-			}
-
-			sb.append(")");
-
-			or = " OR ";
-		}
-		return sb.toString();
-	}
 }

@@ -46,10 +46,10 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
+import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
 import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.LikeFilter;
@@ -89,10 +89,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	private static final String DATE_TIME_FORMAT_SQL_STANDARD = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
 			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
 	private static final String DATE_TIME_FORMAT_SQLSERVER = "yyyyMMdd HH:mm:ss";
-
-	protected enum DatasetEvaluationStrategy {
-		PERSISTED, FLAT, JDBC, NEAR_REALTIME, CACHED
-	}
 
 	// ===================================================================
 	// UTILITY METHODS
@@ -701,12 +697,12 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	protected IDataSource getDataSource(IDataSet dataSet, boolean isNearRealTime) {
-		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isNearRealTime);
+		DatasetEvaluationStrategy strategy = dataSet.getEvaluationStrategy(isNearRealTime);
 		IDataSource dataSource = null;
 
 		if (strategy == DatasetEvaluationStrategy.PERSISTED) {
 			dataSource = dataSet.getDataSourceForWriting();
-		} else if (strategy == DatasetEvaluationStrategy.FLAT || strategy == DatasetEvaluationStrategy.JDBC) {
+		} else if (strategy == DatasetEvaluationStrategy.FLAT || strategy == DatasetEvaluationStrategy.INLINE_VIEW) {
 			try {
 				dataSource = dataSet.getDataSource();
 			} catch (UnreachableCodeException e) {
@@ -718,27 +714,5 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		}
 
 		return dataSource;
-	}
-
-	protected DatasetEvaluationStrategy getDatasetEvaluationStrategy(IDataSet dataSet, boolean isNearRealtime) {
-		DatasetEvaluationStrategy result;
-
-		if (dataSet.isPersisted()) {
-			result = DatasetEvaluationStrategy.PERSISTED;
-		} else if (dataSet.isFlatDataset()) {
-			result = DatasetEvaluationStrategy.FLAT;
-		} else {
-			SqlDialect dialect = dataSet.getDataSource() != null ? SqlDialect.get(dataSet.getDataSource().getHibDialectClass()) : null;
-			boolean inLineViewSupported = dialect != null ? dialect.isInLineViewSupported() : false;
-			if (isNearRealtime && inLineViewSupported && !dataSet.hasDataStoreTransformer()) {
-				result = DatasetEvaluationStrategy.JDBC;
-			} else if (isNearRealtime) {
-				result = DatasetEvaluationStrategy.NEAR_REALTIME;
-			} else {
-				result = DatasetEvaluationStrategy.CACHED;
-			}
-		}
-
-		return result;
 	}
 }

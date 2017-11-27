@@ -34,12 +34,11 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
@@ -153,20 +152,20 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 					Map<String, String> parametersValues = config.getDatasetParameters().get(v1);
 					dataSet.setParamsMap(parametersValues);
 
-					AssociativeDatasetContainer container;
+					boolean isNearRealtime = config.getNearRealtimeDatasets().contains(v1);
+					DatasetEvaluationStrategy evaluationStrategy = dataSet.getEvaluationStrategy(isNearRealtime);
 
-					if (dataSet.isPersisted()) {
+					AssociativeDatasetContainer container;
+					if (DatasetEvaluationStrategy.PERSISTED.equals(evaluationStrategy)) {
 						container = new AssociativeDatasetContainer(dataSet, dataSet.getPersistTableName(), dataSet.getDataSourceForWriting(),
 								parametersValues);
-					} else if (dataSet.isFlatDataset()) {
+					} else if (DatasetEvaluationStrategy.FLAT.equals(evaluationStrategy)) {
 						container = new AssociativeDatasetContainer(dataSet, dataSet.getFlatTableName(), dataSet.getDataSource(), parametersValues);
-					} else if (config.getNearRealtimeDatasets().contains(v1) && dataSet instanceof AbstractJDBCDataset
-							&& SqlDialect.get(dataSet.getDataSource().getHibDialectClass()) != null
-							&& SqlDialect.get(dataSet.getDataSource().getHibDialectClass()).isInLineViewSupported()) {
+					} else if (DatasetEvaluationStrategy.INLINE_VIEW.equals(evaluationStrategy)) {
 						QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 						String tableName = "(" + querableBehaviour.getStatement() + ") T";
 						container = new AssociativeDatasetContainer(dataSet, tableName, dataSet.getDataSource(), parametersValues);
-					} else if (config.getNearRealtimeDatasets().contains(v1)) {
+					} else if (DatasetEvaluationStrategy.NEAR_REALTIME.equals(evaluationStrategy)) {
 						dataSet.loadData();
 						container = new NearRealtimeAssociativeDatasetContainer(dataSet, dataSet.getDataStore(), parametersValues);
 					} else {

@@ -683,4 +683,9 @@ public class VersionedDataSet implements IDataSet {
 	public boolean isCachingSupported() {
 		return wrappedDataset.isCachingSupported();
 	}
+
+	@Override
+	public DatasetEvaluationStrategy getEvaluationStrategy(boolean isNearRealtime) {
+		return wrappedDataset.getEvaluationStrategy(isNearRealtime);
+	}
 }

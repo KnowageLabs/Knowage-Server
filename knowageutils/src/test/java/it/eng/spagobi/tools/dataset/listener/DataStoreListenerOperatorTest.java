@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -717,6 +718,11 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		@Override
 		public boolean isCachingSupported() {
 			return false;
+		}
+
+		@Override
+		public DatasetEvaluationStrategy getEvaluationStrategy(boolean isNearRealtime) {
+			return DatasetEvaluationStrategy.NEAR_REALTIME;
 		}
 
 	}

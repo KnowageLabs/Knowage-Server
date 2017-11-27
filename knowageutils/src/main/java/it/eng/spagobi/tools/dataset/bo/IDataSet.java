@@ -284,4 +284,5 @@ public interface IDataSet extends Iterable<IRecord> {
 
 	public boolean isCachingSupported();
 
+	public DatasetEvaluationStrategy getEvaluationStrategy(boolean isNearRealtime);
 }

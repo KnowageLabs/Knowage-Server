@@ -69,6 +69,7 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.association.DistinctValuesCalculateWork;
 import it.eng.spagobi.tools.dataset.association.DistinctValuesClearWork;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -83,7 +84,6 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
 import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
 import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.dataset.cache.query.item.AndFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
 import it.eng.spagobi.tools.dataset.cache.query.item.NullaryFilter;
@@ -375,22 +375,22 @@ public class DatasetManagementAPI {
 
 			IDataStore dataStore = null;
 
-			if (dataSet.isPersisted()) {
+			DatasetEvaluationStrategy evaluationStrategy = dataSet.getEvaluationStrategy(isNearRealtime);
+			if (DatasetEvaluationStrategy.PERSISTED.equals(evaluationStrategy)) {
 				logger.debug("Querying persisted dataset");
 				dataStore = queryPersistedDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 				dataStore.setCacheDate(getPersistedDate(dataSet));
-			} else if (dataSet.isFlatDataset()) {
+			} else if (DatasetEvaluationStrategy.FLAT.equals(evaluationStrategy)) {
 				logger.debug("Querying flat dataset");
 				dataStore = queryFlatDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 				dataStore.setCacheDate(new Date());
 			} else {
-				SqlDialect dialect = dataSet.getDataSource() != null ? SqlDialect.get(dataSet.getDataSource().getHibDialectClass()) : null;
-				boolean inLineViewSupported = dialect != null ? dialect.isInLineViewSupported() : false;
-				if (isNearRealtime && inLineViewSupported && !dataSet.hasDataStoreTransformer()) {
+				if (DatasetEvaluationStrategy.INLINE_VIEW.equals(evaluationStrategy)) {
 					logger.debug("Querying near realtime/JDBC dataset");
 					dataStore = queryJDBCDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
-				} else if (isNearRealtime || dataSet.isRealtime()) {
+				} else if (DatasetEvaluationStrategy.NEAR_REALTIME.equals(evaluationStrategy)
+						|| DatasetEvaluationStrategy.REALTIME.equals(evaluationStrategy)) {
 					logger.debug("Querying near realtime dataset");
 					dataStore = queryNearRealtimeDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
