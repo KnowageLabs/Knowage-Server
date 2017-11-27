@@ -426,7 +426,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		String schema = (String) profile.getUserAttribute(schemaAttr);
 		logger.debug("schema:" + schema);
-		Connection connection = null;
 
 		if (jndi != null && jndi.length() > 0) {
 			String jndiName = schema == null ? jndi : jndi + schema;
@@ -435,7 +434,9 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				logger.debug("Lookup JNDI name:" + jndiName);
 				Context ctx = new InitialContext();
 				javax.sql.DataSource ds = (javax.sql.DataSource) ctx.lookup(jndiName);
-				connection = ds.getConnection();
+				try (Connection connection = ds.getConnection()) {
+					logger.debug("Connection performed successfully");
+				}
 			} catch (AuthenticationException e) {
 				logger.error("Error while attempting to reacquire the authentication information on provided JNDI name", e);
 				throw new SpagoBIServiceException(SERVICE_NAME, e);
@@ -482,7 +483,9 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 					throw new SpagoBIRestServiceException("Driver not found: " + driver, buildLocaleFromSession(), e);
 				}
 
-				connection = DriverManager.getConnection(url, user, pwd);
+				try  (Connection connection = DriverManager.getConnection(url, user, pwd)) {
+					logger.debug("Connection performed successfully");
+				}
 
 			}
 
