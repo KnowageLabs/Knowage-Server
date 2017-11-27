@@ -34,7 +34,7 @@
 					</md-select>    
 				</md-input-container>
             
-				<md-input-container  flex=40 ng-show="filterObj.type == 'java.lang.Date' || filterObj.type == 'java.sql.Date' || filterObj.type == 'java.sql.Timestamp'">
+				<md-input-container  flex=40 ng-show="filterObj.type == 'java.util.Date' || filterObj.type == 'java.sql.Date' || filterObj.type == 'java.sql.Timestamp'">
 				     <label>Operator</label>
 				     <md-select ng-model="filterObj.filterOperator" >
 				         <md-option  ng-repeat="op in operatorsTypeDate" ng-value="op">{{op}}</md-option>
@@ -51,20 +51,20 @@
                 			|| filterObj.filterOperator == 'like'
                 			|| filterObj.filterOperator == 'IN'
                 			"> 
-	                <label ng-show="filterObj.type != 'java.lang.Date' && filterObj.type != 'java.sql.Timestamp'">{{translate.load("Value")}}</label>
-	                <label ng-show="filterObj.type == 'java.lang.Date' || filterObj.type == 'java.sql.Timestamp'">{{translate.load("Value")}}: yyyy-MM-dd hh:mm:ss</label>	
+	                <label ng-show="filterObj.type != 'java.util.Date' && filterObj.type != 'java.sql.Timestamp'">{{translate.load("Value")}}</label>
+	                <label ng-show="filterObj.type == 'java.util.Date' || filterObj.type == 'java.sql.Timestamp'">{{translate.load("Value")}}: yyyy-MM-dd hh:mm:ss</label>	
 	                <input   maxlength="100" type="text" ng-model="filterObj.filterVals[0]"> 
 	      		</md-input-container>
       		
 				<md-input-container flex=35 ng-show="filterObj.filterOperator == 'range'"> 
-					<label ng-show="filterObj.type != 'java.lang.Date' && filterObj.type != 'java.sql.Timestamp'">{{translate.load("From")}}</label>
-	                <label ng-show="filterObj.type == 'java.lang.Date' || filterObj.type == 'java.sql.Timestamp'">{{translate.load("From")}}: yyyy-MM-dd hh:mm:ss</label>	
+					<label ng-show="filterObj.type != 'java.util.Date' && filterObj.type != 'java.sql.Timestamp'">{{translate.load("From")}}</label>
+	                <label ng-show="filterObj.type == 'java.util.Date' || filterObj.type == 'java.sql.Timestamp'">{{translate.load("From")}}: yyyy-MM-dd hh:mm:ss</label>	
 					<input maxlength="100" type="text" ng-model="filterObj.filterVals[0]"> 
 				</md-input-container>
 				
                 <md-input-container  flex=35 ng-show="filterObj.filterOperator == 'range'"> 
-					<label ng-show="filterObj.type != 'java.lang.Date' && filterObj.type != 'java.sql.Timestamp'">{{translate.load("To")}}</label>
-	                <label ng-show="filterObj.type == 'java.lang.Date' || filterObj.type == 'java.sql.Timestamp'">{{translate.load("To")}}: yyyy-MM-dd hh:mm:ss</label>	
+					<label ng-show="filterObj.type != 'java.util.Date' && filterObj.type != 'java.sql.Timestamp'">{{translate.load("To")}}</label>
+	                <label ng-show="filterObj.type == 'java.util.Date' || filterObj.type == 'java.sql.Timestamp'">{{translate.load("To")}}: yyyy-MM-dd hh:mm:ss</label>	
 	                <input maxlength="100" type="text" ng-model="filterObj.filterVals[1]"> 
             	</md-input-container>
             	
