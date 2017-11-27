@@ -104,7 +104,9 @@ public class Utils {
 		try {
 			fis = new FileInputStream(htmlFile);
 		} catch (FileNotFoundException e) {
-			throw new RuntimeException("File [" + completeImageFileName + "] not found.", e);
+			logger.warn(completeImageFileName + " file not found, probably end of the file");
+			return;
+			// throw new RuntimeException("File [" + completeImageFileName + "] not found.", e);
 		}
 
 		try {
