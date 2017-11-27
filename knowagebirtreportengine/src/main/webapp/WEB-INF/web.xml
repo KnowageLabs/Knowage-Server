@@ -295,6 +295,17 @@
 			it.eng.spagobi.utilities.engines.EngineTestServlet
 		</servlet-class>
 	</servlet>
+	
+	<servlet>
+        <servlet-name>GetPageServlet</servlet-name>
+        <servlet-class>it.eng.spagobi.engines.birt.GetPageServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+		<servlet-name>GetPageServlet</servlet-name>
+		<url-pattern>/getPage</url-pattern>
+	</servlet-mapping>
+
 
 	<servlet-mapping>
 		<servlet-name>BirtImageServlet</servlet-name>

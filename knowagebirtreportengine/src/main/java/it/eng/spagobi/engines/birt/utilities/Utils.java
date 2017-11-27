@@ -17,32 +17,54 @@
  */
 package it.eng.spagobi.engines.birt.utilities;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.engines.birt.BirtReportServlet;
+
 public class Utils {
+
+	protected static Logger logger = Logger.getLogger(Utils.class);
 
 	/**
 	 * Resolve system properties.
 	 *
-	 * @param logDir the log dir
+	 * @param logDir
+	 *            the log dir
 	 *
 	 * @return the string
 	 */
 	public static String resolveSystemProperties(String logDir) {
-		if (logDir == null) return null;
+		if (logDir == null)
+			return null;
 		int startIndex = logDir.indexOf("${");
-		if (startIndex == -1) return logDir;
-		else return resolveSystemProperties(logDir, startIndex);
+		if (startIndex == -1)
+			return logDir;
+		else
+			return resolveSystemProperties(logDir, startIndex);
 	}
 
 	/**
 	 * Resolve system properties.
 	 *
-	 * @param logDir the log dir
-	 * @param startIndex the start index
+	 * @param logDir
+	 *            the log dir
+	 * @param startIndex
+	 *            the start index
 	 *
 	 * @return the string
 	 */
 	public static String resolveSystemProperties(String logDir, int startIndex) {
-		if (logDir == null) return logDir;
+		if (logDir == null)
+			return logDir;
 		int endIndex = -1;
 		if (logDir.indexOf("${", startIndex) != -1) {
 			int beginIndex = logDir.indexOf("${", startIndex);
@@ -61,5 +83,63 @@ public class Utils {
 			}
 		}
 		return logDir;
+	}
+
+	public static void sendPage(HttpServletResponse response, int pageNumber, String reportExecutionId) {
+		ServletOutputStream ouputStream = null;
+		InputStream fis = null;
+		File htmlFile = null;
+		String completeImageFileName = null;
+		String mimeType = "text/html";
+
+		htmlFile = new File(BirtReportServlet.OUTPUT_FOLDER + File.separator + reportExecutionId, BirtReportServlet.PAGE_FILE_NAME + pageNumber + ".html");
+
+		// file path traversal security check
+		if (!((htmlFile.getParentFile().getParent() + File.separator).equals(BirtReportServlet.OUTPUT_FOLDER))) {
+			logger.error("Security exception: parent folder " + htmlFile.getParent() + " is not equal to expected folder " + BirtReportServlet.OUTPUT_FOLDER);
+			throw new RuntimeException(
+					"Security exception: parent folder " + htmlFile.getParent() + " is not equal to expected folder " + BirtReportServlet.OUTPUT_FOLDER);
+		}
+
+		try {
+			fis = new FileInputStream(htmlFile);
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException("File [" + completeImageFileName + "] not found.", e);
+		}
+
+		try {
+
+			ouputStream = response.getOutputStream();
+
+			response.setContentType(mimeType);
+			response.setHeader("Content-Type", mimeType);
+
+			byte[] buffer = new byte[1024];
+			int len;
+			while ((len = fis.read(buffer)) >= 0)
+				ouputStream.write(buffer, 0, len);
+
+		} catch (Exception e) {
+			logger.error("Error writing image into servlet output stream", e);
+		} finally {
+			if (fis != null)
+				try {
+					fis.close();
+				} catch (IOException e) {
+					logger.error("Error while closing FileInputStream on file " + completeImageFileName, e);
+				}
+			if (ouputStream != null) {
+				try {
+					ouputStream.flush();
+					ouputStream.close();
+				} catch (IOException e) {
+					logger.error("Error flushing servlet output stream", e);
+				}
+			}
+			// if (imageFile != null && imageFile.exists() && imageFile.isFile()) {
+			// imageFile.delete();
+			// }
+		}
+
 	}
 }
