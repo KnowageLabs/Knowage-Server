@@ -495,6 +495,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                     	</md-input-container>
 						                  	</div>
 										</div>
+										<div layout="row" layout-wrap flex=30>
+					                  		<div flex=90 layout-align="center center">
+					                     		<md-input-container class="md-block">
+					                        		
+					                        		<label>{{translate.load("sbi.workspace.dataset.wizard.file.dateFormat")}}</label> 
+					                        		
+					                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.dateFormat"
+					                        					ng-change="setFormDirty()">
+					                           			<md-option 	ng-repeat="dateFormatItem in dateFormatTypes" 
+					                           						value="{{dateFormatItem.value}}">
+			                          						{{dateFormatItem.name}}
+			                     						</md-option>
+					                        		</md-select>
+					                        		
+						                     	</md-input-container>
+						                  	</div>
+										</div>										
 											
 									</div>					
 																

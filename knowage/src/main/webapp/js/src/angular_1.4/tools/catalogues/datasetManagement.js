@@ -326,6 +326,19 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 	{value:"\"",name:"\""},
 	 	{value:"\'",name:"\'"}
  	];
+	
+	$scope.dateFormatTypes = 
+		[
+		 	{value:"dd/MM/yyyy",name:"dd/MM/yyyy"},
+		 	{value:"MM/dd/yyyy",name:"MM/dd/yyyy"},
+		 	{value:"dd-MM-yyyy",name:"dd-MM-yyyy"},
+		 	{value:"MM-dd-yyyy",name:"MM-dd-yyyy"},
+			{value:"yyyy-MM-dd",name:"yyyy-MM-dd"},
+		 	{value:"yyyy:MM:dd",name:"yyyy:MM:dd"},
+		 	{value:"dd.MM.yyyy",name:"dd.MM.yyyy"},
+		 	{value:"MM.dd.yyyy",name:"MM.dd.yyyy"}
+		
+		 ];
 
 	// Dataset preview
 	$scope.previewDatasetModel=[];
@@ -353,6 +366,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.chooseEncoding = function(encodingObj) {
 		$scope.selectedDataSet.csvEncoding = encodingObj;
 	}
+	
+	$scope.chooseDateFormat = function(dateFormat) {
+		$scope.selectedDataSet.dateFormat = dateFormat;
+	}
+
 
 	/**
 	 * Scope variables (properties) for the REST dataset.
@@ -2000,6 +2018,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSet.csvEncoding = item!=undefined ? item.csvEncoding : $scope.csvEncodingDefault;
 		$scope.selectedDataSet.csvDelimiter = item!=undefined ? item.csvDelimiter : $scope.csvDelimiterDefault;
 		$scope.selectedDataSet.csvQuote = item!=undefined ? item.csvQuote : $scope.csvQuoteDefault;
+		$scope.selectedDataSet.csvQuote = item!=undefined ? item.csvQuote : $scope.csvQuoteDefault;
+		$scope.selectedDataSet.dateFormat = (item!=undefined && item.dateFormat!=undefined) ? item.dateFormat : $scope.dateFormatDefault;
 
 		/**
 		 * Handle the limitRows property value deserialization (special case: it can be of a value NULL).
@@ -2466,6 +2486,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						 */
 						$scope.selectedDataSet.csvEncoding = $scope.csvEncodingDefault;
 						$scope.selectedDataSet.csvDelimiter = $scope.csvDelimiterDefault;
+						$scope.selectedDataSet.dateFormat = $scope.dateFormatDefault;
 						$scope.selectedDataSet.csvQuote = $scope.csvQuoteDefault;
 						$scope.selectedDataSet.skipRows = $scope.skipRowsDefault ? $scope.skipRowsDefault : null;
 						$scope.selectedDataSet.limitRows = $scope.limitRowsDefault ? $scope.limitRowsDefault : null;
