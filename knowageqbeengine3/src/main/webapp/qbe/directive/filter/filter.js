@@ -365,7 +365,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, $htt
 					name: filters[i].filterId,
 					connector: filters[i].booleanConnector,
 					color: filters[i].color,
-					entity: filers[i].entity
+					entity: filters[i].entity
 			};
 			advancedFilters.push(advancedFilter);
 		}
