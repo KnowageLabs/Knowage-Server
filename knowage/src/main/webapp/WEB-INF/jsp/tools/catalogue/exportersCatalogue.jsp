@@ -51,23 +51,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				        flex
  						id="exportersList"
  						ng-model="myExporters" 
- 						columns='[ 
- 						         {"label":"Engine name","name":"engineLabel"}, 
- 						         {"label":"Domain name","name":"domainLabel"} 
- 						         ]'
+ 						columns='exportersListColumns'
  						highlights-selected-item=true
- 						speed-menu-option='deleteIcon'
+ 						speed-menu-option='exporterSpeedMenu'
  						click-function="loadExporter(item)">						
  		      </angular-table>
  		    
  		   
  		    
 	</list> 
-	<detail label='(selectedExporter.exporterName==undefined)? "" : selectedExporter.exporterName'  save-function="saveExporter"
+	<detail label='(selectedExporter.exporterName==undefined)? "" : selectedExporter.exporterName'  save-function="saveOrUpdateExporter"
 		cancel-function="cancel"
 		disable-save-button="!exportersForm.$valid"
 		show-save-button="showMe" show-cancel-button="showMe">
-		<form name="exportersForm" ng-submit="exportersForm.$valid && saveExporter()" layout="column">
+		<form name="exportersForm" ng-submit="exportersForm.$valid && saveOrUpdateExporter()" layout="column">
 		   <md-input-container ng-show="showMe">
 	         <md-select ng-model="selectedExporter.engineId" placeholder="Select an engine id">
 	 		      <md-option required ng-value="engine.id" ng-repeat="engine in engines">{{engine.name}}</md-option>
