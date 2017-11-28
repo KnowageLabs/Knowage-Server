@@ -19,7 +19,7 @@
 			, "bidirectional": $jpaRelationship.isBidirectional()
 			, "cardinality": '${jpaRelationship.cardinality}'
 			, "label": '${jpaRelationship.businessRelationship.name}'
-		
+			, "sourceRelationshipProperty": '${jpaRelationship.jpaTable.className}.${jpaRelationship.oppositeRoleName}'		
 			, "sourceTable": {
 				"name": '${jpaRelationship.jpaTable.name}'
 				, "uniqueName": '${jpaRelationship.jpaTable.uniqueName}'
@@ -35,7 +35,8 @@
 		#end
 			#end			
 			]
-			, "destinationTable": {
+			,"destinationRelationshipProperty": '${jpaRelationship.referencedTable.className}.${jpaRelationship.bidirectionalPropertyName}'  
+			,"destinationTable": {
 				"name": '${jpaRelationship.referencedTable.name}'
 				, "uniqueName": '${jpaRelationship.referencedTable.uniqueName}'
 				, "package": '${jpaRelationship.referencedTable.package}'
