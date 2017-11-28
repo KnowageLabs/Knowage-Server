@@ -82,6 +82,32 @@
 	            {{translate.load("kn.qbe.general.field")}}
 	          </md-checkbox>
 	       		</md-menu-item>
+	       		
+	       		<md-menu-item ng-show="n.temporal">
+         			<md-menu>		
+	         			<md-button ng-mouseenter="openMenu($mdOpenMenu, $event)">
+							<md-icon class="fa fa-puzzle-piece" style="display:inline"></md-icon>
+		            		<span>{{translate.load("kn.qbe.custom.table.function.temporal")}}</span>
+		          		</md-button>
+		          			      
+			      		<md-menu-content class="qbeMenuContent">
+				      
+					      	<md-menu-item>
+				          		<md-button ng-click="applyFuntion('none',n.id,n.entity)">
+				            		<span>{{translate.load("kn.qbe.custom.table.none")}}</span>
+				            		</md-button>
+				       		</md-menu-item>
+				       		
+				       		<md-menu-item>
+				          		<md-button ng-click="applyFuntion('sum',n.id,n.entity)">
+				            		<span>{{translate.load("kn.qbe.custom.table.sum")}}</span>
+				            		</md-button>
+				       		</md-menu-item>
+				
+			       		</md-menu-content>
+       				</md-menu>
+	       		</md-menu-item>
+	       		
 	       		<md-menu-item>
 	          		<md-checkbox ng-model="n.group" ng-click="group(n.id,n.entity, n.group)" class="menuCheckbox" aria-label="hide column">
 	            {{translate.load("kn.qbe.custom.table.group")}}
@@ -93,59 +119,61 @@
 	            		<span>{{translate.load("kn.qbe.custom.table.ranges")}}</span>
 	          		</md-button>
 	       		</md-menu-item>
+	       		
 	       		<md-menu-item>
-	       		  
-	         			<md-menu>		
+         			<md-menu>		
 	         			<md-button ng-mouseenter="openMenu($mdOpenMenu, $event)">
 							<md-icon class="fa fa-calculator" style="display:inline"></md-icon>
-	            		<span>{{translate.load("kn.qbe.custom.table.function")}}</span>
-	          		</md-button>	      
-	      	<md-menu-content class="qbeMenuContent">
-		      
-		      	<md-menu-item>
-	          		<md-button ng-click="applyFuntion('none',n.id,n.entity)">
-	            		<span>{{translate.load("kn.qbe.custom.table.none")}}</span>
-	            		</md-button>
+		            		<span>{{translate.load("kn.qbe.custom.table.function")}}</span>
+		          		</md-button>
+		          			      
+			      		<md-menu-content class="qbeMenuContent">
+				      
+					      	<md-menu-item>
+				          		<md-button ng-click="applyFuntion('none',n.id,n.entity)">
+				            		<span>{{translate.load("kn.qbe.custom.table.none")}}</span>
+				            		</md-button>
+				       		</md-menu-item>
+				       		
+				       		<md-menu-item>
+				          		<md-button ng-click="applyFuntion('sum',n.id,n.entity)">
+				            		<span>{{translate.load("kn.qbe.custom.table.sum")}}</span>
+				            		</md-button>
+				       		</md-menu-item>
+				       		
+				       		<md-menu-item>
+				       			<md-button ng-click="applyFuntion('min',n.id,n.entity)">
+				            		<span>{{translate.load("kn.qbe.custom.table.min")}}</span></md-button>
+				       		</md-menu-item>
+				       		
+				       		<md-menu-item>
+				       			<md-button ng-click="applyFuntion('max',n.id,n.entity)">
+				            		<span>{{translate.load("kn.qbe.custom.table.max")}}</span>
+				            	</md-button>
+				       		</md-menu-item>    
+				       		
+				       		<md-menu-item>
+				          		<md-button ng-click="applyFuntion('avg',n.id,n.entity)">
+				            		<span>{{translate.load("kn.qbe.custom.table.avg")}}</span>
+				            	</md-button>
+				       		</md-menu-item>
+				       		
+				       		<md-menu-item>
+				          		<md-button ng-click="applyFuntion('count',n.id,n.entity)">
+				            		<span>{{translate.load("kn.qbe.custom.table.count")}}</span>
+				            	</md-button>
+				       		</md-menu-item>
+				       		
+				       		<md-menu-item>
+				          		<md-button ng-click="applyFuntion('count_distinct',n.id,n.entity)">
+				            		<span>{{translate.load("kn.qbe.custom.table.count.distinct")}}</span>
+				            	</md-button>
+				       		</md-menu-item>      		
+				
+			       		</md-menu-content>
+       				</md-menu>
 	       		</md-menu-item>
 	       		
-	       		<md-menu-item>
-	          		<md-button ng-click="applyFuntion('sum',n.id,n.entity)">
-	            		<span>{{translate.load("kn.qbe.custom.table.sum")}}</span>
-	            		</md-button>
-	       		</md-menu-item>
-	       		
-	       		<md-menu-item>
-	       			<md-button ng-click="applyFuntion('min',n.id,n.entity)">
-	            		<span>{{translate.load("kn.qbe.custom.table.min")}}</span></md-button>
-	       		</md-menu-item>
-	       		
-	       		<md-menu-item>
-	       			<md-button ng-click="applyFuntion('max',n.id,n.entity)">
-	            		<span>{{translate.load("kn.qbe.custom.table.max")}}</span>
-	            	</md-button>
-	       		</md-menu-item>    
-	       		
-	       		<md-menu-item>
-	          		<md-button ng-click="applyFuntion('avg',n.id,n.entity)">
-	            		<span>{{translate.load("kn.qbe.custom.table.avg")}}</span>
-	            	</md-button>
-	       		</md-menu-item>
-	       		
-	       		<md-menu-item>
-	          		<md-button ng-click="applyFuntion('count',n.id,n.entity)">
-	            		<span>{{translate.load("kn.qbe.custom.table.count")}}</span>
-	            	</md-button>
-	       		</md-menu-item>
-	       		
-	       		<md-menu-item>
-	          		<md-button ng-click="applyFuntion('count_distinct',n.id,n.entity)">
-	            		<span>{{translate.load("kn.qbe.custom.table.count.distinct")}}</span>
-	            	</md-button>
-	       		</md-menu-item>      		
-	            		
-	       		</md-menu-content>
-	       		</md-menu>
-	       		</md-menu-item>
 	       		<md-menu-item>
 	       		  
 	         			<md-button ng-click="moveLeft(n.order, n)">

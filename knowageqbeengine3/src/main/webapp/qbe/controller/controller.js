@@ -116,7 +116,10 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
          		    	"order":i+1,
          		    	"filters": []
          		    }
-     				queryModel.push(queryObject);
+     			if(query.fields[i].temporal){
+     				queryObject.temporal = query.fields[i].temporal;
+     			}
+     			queryModel.push(queryObject);
 			}
 		}else{
 			queryModel.length = 0;
@@ -265,6 +268,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			newField.id=field.alias;
 			newField.alias=field.text;
 			newField.field=field.text;
+			newField.temporal=field.temporal;
 		}
 
 		$scope.editQueryObj.fields.push(newField);

@@ -40,6 +40,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
          		    	"distinct":query.distinct,
          		    	"group":query.fields[i].group,
          		    	"order":i+1,
+         		    	"temporal":query.fields[i].temporal,
          		    	"filters": []
          		    }
      			for (var j = 0; j < response.data.rows.length; j++) {

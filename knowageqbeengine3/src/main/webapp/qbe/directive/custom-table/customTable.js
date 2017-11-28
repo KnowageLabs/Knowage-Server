@@ -1,17 +1,17 @@
 /**
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Knowage is distributed in the hope that it will be useful, 
+ * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -46,36 +46,36 @@ angular.module('qbe_custom_table', ['ngDraggable'])
 					ordered.push(input[obj]);
 				}
 			}
-			
+
 		}
         return ordered;
     };
 });
 function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiModule_config, $mdPanel, query_service, $q){
-	
+
 	$scope.smartPreview = true;
-	
+
 	$scope.completeResult = false;
-	
+
 	$scope.completeResultsColumns = [];
-	
+
 	$scope.previewModel = [];
-	
+
 	$scope.start = 0;
-	
+
 	$scope.itemsPerPage = 25;
-	
+
 	$scope.firstExecution = true;
-	
+
 	$scope.$watch('smartPreview',function(newValue,oldValue){
 		query_service.setSmartView(newValue);
 		$rootScope.$emit('smartView', $scope.ngModel);
 	},true)
-	
+
 	$scope.translate = sbiModule_translate;
-	
+
 	$scope.selectedVisualization = 'previewData';
-	
+
 	$scope.orderAsc = true;
 
 	$scope.openMenu = function($mdOpenMenu, ev) {
@@ -89,7 +89,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		var newOrder = currentOrder + 1;
 		var index = $scope.ngModel.indexOf(column);
 		var indexOfNext = index + 1;
-		
+
 		if(index!=undefined && indexOfNext!=-1 && newOrder <= $scope.ngModel.length){
 			$scope.ngModel[index] = $scope.ngModel[indexOfNext];
 			$scope.ngModel[index].order = currentOrder;
@@ -97,7 +97,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			$scope.ngModel[indexOfNext] = column;
 			$scope.ngModel[indexOfNext].order = newOrder;
 		}
-		
+
 	};
 
 	$scope.moveLeft = function(currentOrder, column) {
@@ -105,12 +105,12 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		var newOrder = currentOrder - 1;
 		var index = $scope.ngModel.indexOf(column);
 		var indexOfBefore = index - 1;
-		
+
 		if(index!=undefined && indexOfBefore!=undefined && indexOfBefore!=-1){
-			
+
 			$scope.ngModel[index] = $scope.ngModel[indexOfBefore];
 			$scope.ngModel[index].order = currentOrder;
-			
+
 			$scope.ngModel[indexOfBefore] = column;
 			$scope.ngModel[indexOfBefore].order = newOrder;
 		}
@@ -124,7 +124,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			"entity" : entity
 		});
 	};
-	
+
 	$scope.group = function(id, entity, group) {
 		$rootScope.$emit('group', {
 			"fieldId" : id,
@@ -132,7 +132,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			"group" : !group
 		});
 	};
-	
+
 	$scope.setVisible = function (id, entity, visible) {
 		for (var i = 0; i < $scope.ngModel.length; i++) {
 			if($scope.ngModel[i].id==id){
@@ -145,38 +145,38 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			"visible" : !visible
 		});
 	}
-	
+
 	$scope.removeColumn = function(field) {
 		$rootScope.$emit('removeColumn', {
 			"id" : field.id,
 			"entity" : field.entity
 		});
 	};
-	
+
 	$scope.toggleOrder = function (data, reverse) {
 		var ordered = [];
 		if($scope.orderAsc) {
 			ordered = data.sort(function(a,b) {return (a.value > b.value) ? 1 : ((b.value > a.value) ? -1 : 0);} );
 			$scope.orderAsc = !$scope.orderAsc;
-		} else {			
+		} else {
 			ordered = data.sort(function(a,b) {return (a.value < b.value) ? 1 : ((b.value < a.value) ? -1 : 0);} );
 			$scope.orderAsc = !$scope.orderAsc;
-		}		
+		}
 		$scope.idIndex = [];
 		for(var itemIndex in ordered) {
 			$scope.idIndex.push(ordered[itemIndex].id);
 		}
 	}
-	
+
 	$scope.openFiltersAdvanced = function (){
 		$rootScope.$broadcast('openFiltersAdvanced', true);
 	}
-	
+
 	$scope.executeRequest = function () {
 		$scope.firstExecution = true;
 		$rootScope.$broadcast('executeQuery', {"start":$scope.start, "itemsPerPage":$scope.itemsPerPage, "fields": $scope.ngModel});
 	}
-	
+
 	$scope.$on('queryExecuted', function (event, data) {
 		$scope.completeResult = true;
 		angular.copy(data.columns, $scope.completeResultsColumns);
@@ -186,7 +186,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			$scope.firstExecution = false;
 		}
 	});
-	
+
 	$scope.$on('start', function (event, data) {
 		var start = 0;
 		if(data.currentPageNumber>1){
@@ -194,10 +194,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		}
 		$rootScope.$broadcast('executeQuery', {"start":start, "itemsPerPage":data.itemsPerPage});
 	});
-	
+
 	$scope.openPreviewTemplate = function (completeResult,completeResultsColumns,previewModel,totalNumberOfItems){
-		
-		var finishEdit=$q.defer();		
+
+		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
 				templateUrl: sbiModule_config.contextName +'/qbe/templates/datasetPreviewDialogTemplate.html',
@@ -223,14 +223,14 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		};
 		$mdPanel.open(config);
 		return finishEdit.promise;
-		
-	}	
+
+	}
 	$scope.openFilters = function (field){
 		$rootScope.$broadcast('openFilters', {"field":field});
 	}
 	$scope.checkDescription = function (field){
 		var desc = "";
-		
+
 		for (var i = 0; i < $scope.filters.length; i++) {
 			if($scope.filters[i].leftOperandDescription == field.entity+" : "+field.name){
 
@@ -261,10 +261,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		}
 		$rootScope.$broadcast('showHiddenColumns', true);
 	}
-	
+
 	$scope.idIndex = Array.apply(null, {length: 25}).map(Number.call, Number);
-	
-    
+
+
 	$scope.basicViewColumns = [
 								{
 	                            	"label":$scope.translate.load("kn.qbe.custom.table.entity"),
@@ -288,6 +288,14 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-select ng-model=row.funct class="noMargin" ><md-option ng-repeat="col in scopeFunctions.aggregationFunctions" value="{{col}}">{{col}}</md-option></md-select>';
+	                            	}
+	                        	},
+	                        	{
+	                        		"label":$scope.translate.load("kn.qbe.custom.table.function.temporal"),
+	                            	"name":"functionT",
+	                            	hideTooltip:true,
+	                            	transformer: function() {
+	                            		return '<md-select ng-show="row.temporal" ng-model=row.funct class="noMargin" ><md-option ng-repeat="col in scopeFunctions.aggregationFunctions" value="{{col}}">{{col}}</md-option></md-select>';
 	                            	}
 	                        	},
 	                        	{
@@ -331,7 +339,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	}
 	                        	}
 	]
-	
+
 	$scope.basicViewScopeFunctions = {
 		aggregationFunctions: $scope.aggFunctions,
 		deleteField : function (row) {
@@ -339,11 +347,11 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		},
 		moveUp : function (row) {
 			$scope.moveLeft(row.order, row);
-			
+
 		},
 		moveDown : function (row) {
 			$scope.moveRight(row.order, row);
-			
+
 		},
 		openFilters : function (row) {
 			$scope.openFilters(row);

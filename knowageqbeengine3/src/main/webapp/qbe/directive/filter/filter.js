@@ -36,7 +36,7 @@ angular.module('qbe_filter', ['ngMaterial','angular_table' ])
 	}
 });
 
-function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiModule_config,$mdPanel){
+function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, $http, sbiModule_config,$mdPanel, $mdDialog, $httpParamSerializer, sbiModule_restServices){
 
 	$scope.filters=angular.copy($scope.ngModel.queryFilters);
 	$scope.advancedFilters=angular.copy($scope.ngModel.advancedFilters);
@@ -50,6 +50,8 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	      originatorEv = ev;
 	      $mdOpenMenu(ev);
 	};
+	$scope.selectedTemporalFilter = {};
+	$scope.temporalFilters = [];
 	$scope.fieldFilter = function (item) {
 		if(item.leftOperandValue==$scope.field.id) return item
 	}
@@ -73,6 +75,72 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 		    arrayOfIndex.sort(sortNumber);
 		    return arrayOfIndex[arrayOfIndex.length-1]+1;
 		}
+	}
+
+	$scope.addNewTemporalFilter = function () {
+
+	}
+
+	$scope.loadTemporalFIlters = function () {
+
+		var query = {
+				types: ["DAY_OF_WEEK", "DAY_OF_WEEK", "DAY_OF_WEEK"]
+		}
+
+		sbiModule_restServices.promiseGet("/../../../knowage/restful-services/1.0/timespan/listTimespan", "", $httpParamSerializer(query))
+		.then(function(response) {
+			$scope.temporalFilters = response.data.data;
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+
+		});
+
+		$mdDialog.show({
+			  scope: $scope,
+			  preserveScope: true,
+		      templateUrl: sbiModule_config.contextName + '/qbe/templates/temporalFilters.html',
+		      clickOutsideToClose:true
+		    })
+		    .then(function(answer) {
+		      $scope.status = 'You said the information was "' + answer + '".';
+		    }, function() {
+		      $scope.status = 'You cancelled the dialog.';
+		    });
+	}
+
+	$scope.addSelectedFilter = function () {
+		console.log($scope.selectedTemporalFilter);
+		$scope.filterIndex = checkForIndex();
+		$scope.showTable = false;
+		$scope.targetOption = "default";
+		var object = {
+				"filterId": "Filter"+$scope.filterIndex,
+				"filterDescripion": "Filter"+$scope.filterIndex,
+				"filterInd": $scope.filterIndex,
+				"promptable": false,
+				"leftOperandValue": "it.eng.knowage.meta.Time:the_date",
+				"leftOperandDescription": "Time : The date",
+				"leftOperandLongDescription": "",
+				"leftOperandType": "Field Content",
+				"leftOperandDefaultValue": null,
+				"leftOperandLastValue": null,
+				"leftOperandAlias": null,
+				"leftOperandDataType": "",
+				"operator": "BETWEEN",
+				"rightOperandValue": [$scope.selectedTemporalFilter.definition[0].from, $scope.selectedTemporalFilter.definition[0].to],
+				"rightOperandDescription": $scope.selectedTemporalFilter.definition[0].from+" 00:00:00 "+"---- "+$scope.selectedTemporalFilter.definition[0].to+" 00:00:00",
+				"rightOperandLongDescription": $scope.selectedTemporalFilter.definition[0].from+" 00:00:00 "+"---- "+$scope.selectedTemporalFilter.definition[0].to+" 00:00:00",
+				"rightOperandType": "Static Content",
+				"rightOperandDefaultValue": [""],
+				"rightOperandLastValue": [""],
+				"rightOperandAlias": null,
+				"rightOperandDataType": "",
+				"booleanConnector": "AND",
+				"deleteButton": false
+			}
+		$scope.filters.push(object);
+		console.log($scope.filters);
+		$mdDialog.cancel();
 	}
 
 	$scope.addNewFilter= function (){
@@ -102,7 +170,9 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 				"rightOperandAlias": null,
 				"rightOperandDataType": "",
 				"booleanConnector": "AND",
-				"deleteButton": false
+				"deleteButton": false,
+				"color": $scope.ngModel.field.field.color,
+				"entity": $scope.ngModel.field.field.entity
 			}
 		$scope.filters.push(object);
 	}

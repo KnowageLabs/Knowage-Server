@@ -118,6 +118,9 @@ angular.module('qbe_expander_list', ['ngDraggable'])
 									if(!entity.children[i].children[j].hasOwnProperty('color')){
 										entity.children[i].children[j].color=entity.color;
 									}
+									if(!entity.children[i].children[j].hasOwnProperty('temporal')){
+										entity.children[i].children[j].temporal=true;
+									}
 								}
 							}
 						}
