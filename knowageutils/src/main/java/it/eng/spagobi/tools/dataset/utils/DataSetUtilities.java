@@ -330,23 +330,23 @@ public class DataSetUtilities {
 					}
 				}
 			} else if (Boolean.class.isAssignableFrom(type)) {
-				result = Boolean.valueOf(value.toString());
+				result = Boolean.valueOf(value);
 			} else if (Byte.class.isAssignableFrom(type)) {
-				result = Byte.valueOf(value.toString());
+				result = Byte.valueOf(value.split("\\.")[0]);
 			} else if (Short.class.isAssignableFrom(type)) {
-				result = Short.valueOf(value.toString());
+				result = Short.valueOf(value.split("\\.")[0]);
 			} else if (Integer.class.isAssignableFrom(type)) {
-				result = Integer.valueOf(value.toString());
+				result = Integer.valueOf(value.split("\\.")[0]);
 			} else if (Long.class.isAssignableFrom(type)) {
-				result = Long.valueOf(value.toString());
+				result = Long.valueOf(value.split("\\.")[0]);
 			} else if (BigInteger.class.isAssignableFrom(type)) {
-				result = new BigInteger(value.toString());
+				result = new BigInteger(value.split("\\.")[0]);
 			} else if (Float.class.isAssignableFrom(type)) {
-				result = Float.valueOf(value.toString());
+				result = Float.valueOf(value);
 			} else if (Double.class.isAssignableFrom(type)) {
-				result = Double.valueOf(value.toString());
+				result = Double.valueOf(value);
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
-				result = new BigDecimal(value.toString());
+				result = new BigDecimal(value);
 			} else if (String.class.isAssignableFrom(type)) {
 				result = value;
 			}
