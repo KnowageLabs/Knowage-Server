@@ -1022,17 +1022,24 @@ public class ManageDataSetsForREST {
 
 		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
 		dataSet.setParamsMap(parametersFilled);
+
+
+
 		try {
 			checkFileDataset(dataSet);
 			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
 			dataStore = dataSet.getDataStore();
 			// DatasetMetadataParser dsp = new DatasetMetadataParser();
 
-			JSONArray metadataArray = null;
-			IMetaData metaData = dataStore.getMetaData();
+
+
 
 			try {
-				metadataArray = JSONUtils.toJSONArray(metadata);
+
+				IMetaData metaData = dataStore.getMetaData();
+
+				JSONArray metadataArray = JSONUtils.toJSONArray(metadata);
+
 				for (int i = 0; i < metaData.getFieldCount(); i++) {
 					IFieldMetaData ifmd = metaData.getFieldMeta(i);
 					for (int j = 0; j < metadataArray.length(); j++) {
@@ -1046,6 +1053,10 @@ public class ManageDataSetsForREST {
 						}
 					}
 				}
+
+				if (metadataArray.length() == 0) {
+					setNumericValuesAsMeasures(dataStore.getMetaData());
+				}
 			} catch (ClassCastException e) {
 				logger.debug("Recieving an object instead of array for metadata", e);
 			}
@@ -1056,13 +1067,8 @@ public class ManageDataSetsForREST {
 			throw e;
 		}
 
-		logger.debug("OUT");
-		if (dataStore == null)
-			return null;
 
-		if (JSONUtils.toJSONArray(metadata).length() == 0) {
-			setNumericValuesAsMeasures(dataStore.getMetaData());
-		}
+
 
 		return dataStore.getMetaData();
 	}
