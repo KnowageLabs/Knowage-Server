@@ -12,13 +12,16 @@ function exportersCatalogueFunction(sbiModule_translate,sbiModule_restServices,$
 
 	$scope.showMe = false;
 	$scope.dirtyForm = false;
+	$scope.translate = sbiModule_translate;
 
 	$scope.selectedExporter = {
 			engineId: "",
 			domainId: "",
 			domainLabel: "",
 			engineLabel: "",
-			defaultValue: false
+			defaultValue: false,
+			updateEngineId: "",
+			updateDomainId: ""
 	}
 
     $scope.engines = [];
@@ -43,28 +46,40 @@ function exportersCatalogueFunction(sbiModule_translate,sbiModule_restServices,$
 
 	sbiModule_restServices.promiseGet("2.0/domains", '')
 	.then(function(response) {
-		$scope.domains = response.data;
+		$scope.domains = [];
+		for (var i = 0; i < response.data.length; i++) {
+			if(response.data[i].domainCode == "EXPORT_TYPE") {
+				$scope.domains.push(response.data[i]);
+			}
+		}
 	}, function(response) {
 		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 	});
 
 	$scope.getExporters();
 
-	$scope.deleteIcon = [{
-		label: 'delete',
-		icon: 'fa fa-trash',
-		backgroundColor: 'transparent',
-		action: function(item) {
-			console.log(item);
-			$scope.deleteExporter(item.engineId, item.domainId);
+	$scope.exporterSpeedMenu = [
+		{
+			label: $scope.translate.load("sbi.exporters.delete"),
+			icon: 'fa fa-trash',
+			backgroundColor: 'transparent',
+			action: function(item, event) {
+				console.log(item);
+				$scope.confirmDelete(item, event);
 		}
 	}];
 
 	$scope.deleteExporter = function(engineId, domainId) {
 		sbiModule_restServices.promiseDelete("2.0/exporters"+ "/" + engineId + "/" + domainId, '')
 		.then(function(response) {
-			$scope.getExporters();
+			//$scope.getExporters();
+			for (var i = 0; i < $scope.myExporters.length; i++) {
+				if($scope.myExporters[i].engineId==engineId && $scope.myExporters[i].domainId==domainId){
+					$scope.myExporters.splice(i,1);
+				}
+			}
 			$scope.cancel();
+			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 		});
@@ -73,17 +88,65 @@ function exportersCatalogueFunction(sbiModule_translate,sbiModule_restServices,$
 
 	$scope.createExporters = function() {
       $scope.showMe = true;
+      $scope.selectedExporter = {
+				engineId: "",
+				domainId: "",
+				domainLabel: "",
+				engineLabel: "",
+				defaultValue: false
+		}
 	};
 
-	$scope.saveExporter = function() {
-		console.log($scope.selectedExporter);
-		sbiModule_restServices.promisePost("2.0/exporters", "", angular.toJson($scope.selectedExporter))
-		.then(function(response) {
-			$scope.getExporters();
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-		});
-	};
+//	$scope.saveExporter = function() {
+//		console.log($scope.selectedExporter);
+//		sbiModule_restServices.promisePost("2.0/exporters", "", angular.toJson($scope.selectedExporter))
+//		.then(function(response) {
+//			$scope.getExporters();
+//			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+//		}, function(response) {
+//			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+//		});
+//	};
+
+//	$scope.saveExporter = function() {
+//		console.log($scope.selectedExporter);
+//		sbiModule_restServices.promisePut("2.0/exporters"+ "/" + engineId + "/" + domainId, "", angular.toJson($scope.selectedExporter))
+//		.then(function(response) {
+//			$scope.getExporters();
+//			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+//		}, function(response) {
+//			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+//		});
+//	};
+
+	$scope.saveOrUpdateExporter = function() {
+
+		if($scope.selectedExporter.hasOwnProperty("persisted")) {
+			console.log($scope.selectedExporter);
+			sbiModule_restServices.promisePut("2.0/exporters"+ "/" + $scope.selectedExporter.updateEngineId + "/" + $scope.selectedExporter.updateDomainId, "", angular.toJson($scope.selectedExporter))
+			.then(function(response) {
+				$scope.getExporters();
+				$scope.dirtyForm = false;
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			});
+
+		}else{
+			console.log($scope.selectedExporter);
+
+			sbiModule_restServices.promisePost("2.0/exporters", "", angular.toJson($scope.selectedExporter))
+
+			.then(function(response) {
+				$scope.getExporters();
+				//$scope.myExporters.push(response.data);
+				$scope.dirtyForm = false;
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			});
+	}
+}
 
 	$scope.loadExporter = function(item) {
        if($scope.dirtyForm) {
@@ -110,5 +173,34 @@ function exportersCatalogueFunction(sbiModule_translate,sbiModule_restServices,$
 		$scope.dirtyForm = false;
 	}
 
+	$scope.exportersListColumns = [
+		{"label": $scope.translate.load("sbi.exporters.engine.name"), "name": "engineLabel"},
+		{"label": $scope.translate.load("sbi.exporters.domain.name"), "name": "domainLabel"}
+	];
+
+	$scope.confirm = $mdDialog
+	.confirm()
+	.title(sbiModule_translate.load("sbi.catalogues.generic.modify"))
+	.content(
+			sbiModule_translate
+			.load("sbi.catalogues.generic.modify.msg"))
+			.ariaLabel('Lucky day').ok(
+					sbiModule_translate.load("sbi.general.yes")).cancel(
+							sbiModule_translate.load("sbi.general.No"));
+
+	 $scope.confirmDelete = function(item,ev) {
+		    var confirm = $mdDialog.confirm()
+		          .title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
+		          .content(sbiModule_translate.load("sbi.catalogues.toast.confirm.content"))
+		          .ariaLabel("confirm_delete")
+		          .targetEvent(ev)
+		          .ok(sbiModule_translate.load("sbi.general.continue"))
+		          .cancel(sbiModule_translate.load("sbi.general.cancel"));
+		    $mdDialog.show(confirm).then(function() {
+		    	$scope.deleteExporter(item.engineId, item.domainId);
+		    }, function() {
+
+		    });
+		  };
 }
 
