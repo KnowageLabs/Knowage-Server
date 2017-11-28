@@ -118,7 +118,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	public static final String OUTPUT_FOLDER = System.getProperty("java.io.tmpdir") != null && System.getProperty("java.io.tmpdir").endsWith(File.separator)
 			? System.getProperty("java.io.tmpdir") + "birt" + File.separator
-			: File.separator + System.getProperty("java.io.tmpdir") + "birt" + File.separator;
+			: System.getProperty("java.io.tmpdir") + File.separator + "birt" + File.separator;
 
 	public static final String PAGE_FILE_NAME = "page";
 	public static final String REPORT_EXECUTION_ID = "REPORT_EXECUTION_ID";
