@@ -441,10 +441,43 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getDataStorePost(@PathParam("label") String label, @QueryParam("parameters") String parameters, String selections,
-			@QueryParam("likeSelections") String likeSelections, @DefaultValue("-1") @QueryParam("limit") int maxRowCount,
-			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, @DefaultValue("-1") @QueryParam("offset") int offset,
-			@DefaultValue("-1") @QueryParam("size") int fetchSize, @QueryParam("nearRealtime") boolean isNearRealtime) {
+	public String getDataStorePostWithJsonInBody(@PathParam("label") String label, String body, @DefaultValue("-1") @QueryParam("limit") int maxRowCount,
+			@DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
+			@QueryParam("nearRealtime") boolean isNearRealtime) {
+		try {
+			String parameters = null;
+			String selections = null;
+			String likeSelections = null;
+			String aggregations = null;
+			String summaryRow = null;
+
+			if (StringUtilities.isNotEmpty(body)) {
+				JSONObject jsonBody = new JSONObject(body);
+
+				JSONObject jsonParameters = jsonBody.optJSONObject("parameters");
+				parameters = jsonParameters != null ? jsonParameters.toString() : null;
+
+				JSONObject jsonSelections = jsonBody.optJSONObject("selections");
+				selections = jsonSelections != null ? jsonSelections.toString() : null;
+
+				JSONObject jsonLikeSelections = jsonBody.optJSONObject("likeSelections");
+				likeSelections = jsonLikeSelections != null ? jsonLikeSelections.toString() : null;
+
+				JSONObject jsonAggregations = jsonBody.optJSONObject("aggregations");
+				aggregations = jsonAggregations != null ? jsonAggregations.toString() : null;
+
+				JSONObject jsonSummaryRow = jsonBody.optJSONObject("summaryRow");
+				summaryRow = jsonSummaryRow != null ? jsonSummaryRow.toString() : null;
+			}
+
+			return getDataStorePost(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime);
+		} catch (JSONException e) {
+			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+		}
+	}
+
+	public String getDataStorePost(String label, String parameters, String selections, String likeSelections, int maxRowCount, String aggregations,
+			String summaryRow, int offset, int fetchSize, boolean isNearRealtime) {
 		logger.debug("IN");
 		try {
 			return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime);

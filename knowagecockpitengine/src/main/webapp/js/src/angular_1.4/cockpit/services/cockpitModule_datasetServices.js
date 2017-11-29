@@ -510,17 +510,19 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		//after retry LabelDataset by Id call service for data
 		var dataset = this.getAvaiableDatasetById(dsId);
 		var deferred = $q.defer();
-		var params="";
 
-		var aggregation = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
+		var params="?";
+		var bodyString = "{";
+
+		var aggregations = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
 
 		// apply sorting column & order
 		if(ngModel.settings && ngModel.settings.sortingColumn && ngModel.settings.sortingColumn!=""){
 			var isSortingAlreadyDefined = false;
 
 			// check if a sorting order is alredy defined on categories
-			for(var i=0; i<aggregation.categories.length; i++){
-				var category = aggregation.categories[i];
+			for(var i=0; i<aggregations.categories.length; i++){
+				var category = aggregations.categories[i];
 				if(category.orderType.trim() != ""){
 					isSortingAlreadyDefined = true;
 					break;
@@ -529,8 +531,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 			// check if a sorting order is alredy defined on measures
 			if(!isSortingAlreadyDefined){
-				for(var i=0; i<aggregation.measures.length; i++){
-					var measure = aggregation.measures[i];
+				for(var i=0; i<aggregations.measures.length; i++){
+					var measure = aggregations.measures[i];
 					if(measure.orderType.trim() != ""){
 						isSortingAlreadyDefined = true;
 						break;
@@ -542,8 +544,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				var isSortingApplied = false;
 
 				// apply sorting order on categories
-				for(var i=0; i<aggregation.categories.length; i++){
-					var category = aggregation.categories[i];
+				for(var i=0; i<aggregations.categories.length; i++){
+					var category = aggregations.categories[i];
 					if(category.columnName == ngModel.settings.sortingColumn && category.orderType == ""){
 						category.orderType = ngModel.settings.sortingOrder;
 						isSortingApplied = true;
@@ -553,8 +555,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 				// apply sorting order on measures
 				if(!isSortingApplied){
-					for(var i=0; i<aggregation.measures.length; i++){
-						var measure = aggregation.measures[i];
+					for(var i=0; i<aggregations.measures.length; i++){
+						var measure = aggregations.measures[i];
 						if(measure.columnName == ngModel.settings.sortingColumn && measure.orderType == ""){
 							measure.orderType = ngModel.settings.sortingOrder;
 							isSortingApplied = true;
@@ -571,14 +573,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							id : ngModel.settings.sortingColumn,
 							orderType : ngModel.settings.sortingOrder
 					}
-					aggregation.categories.push(newCategory);
+					aggregations.categories.push(newCategory);
 				}
 			}
 		}
-
-		var aggr = encodeURIComponent(JSON.stringify(aggregation))
-		.replace(/'/g,"%27")
-		.replace(/"/g,"%22");
 
 		var parameters = ds.getDatasetParameters(dsId);
 		var parameterErrors = [];
@@ -611,11 +609,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				parametersString = parametersString.replace("}" , ", \"" + parameter + "\":null}");
 			}
 		}
-		var par = encodeURIComponent(parametersString)
-		.replace(/'/g,"%27")
-		.replace(/"/g,"%22");
-
-
 
 		// if cross navigation referes to a non present column (and widget is a table ) avoid sending aggregation because all columns are needed
 		if(ngModel.type === 'table'){
@@ -639,29 +632,26 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			}
 		}
 
-
-		params =  "?aggregations=" +aggr+"&parameters="+par;
+		bodyString = bodyString + "aggregations:" + JSON.stringify(aggregations) + ",parameters:" + parametersString;
 
 		if(page!=undefined && page>-1 && itemPerPage!=undefined && itemPerPage>-1){
-			params = params + "&offset=" + (page * itemPerPage) + "&size=" + itemPerPage;
+			params = params + "offset=" + (page * itemPerPage) + "&size=" + itemPerPage;
 		}else{
-			params = params + "&offset=-1&size=-1";
+			params = params + "offset=-1&size=-1";
 		}
 
 		if(ngModel.settings && ngModel.settings.summary.enabled){
-			var summaryRow = encodeURIComponent(JSON.stringify(ds.getSummaryRow(ngModel)))
-				.replace(/'/g,"%27")
-				.replace(/"/g,"%22");
-			params =  params+"&summaryRow=" +summaryRow;
+			var summaryRow = ds.getSummaryRow(ngModel);
+			bodyString = bodyString + ",summaryRow:" + JSON.stringify(summaryRow);
 		}
 
 		if(dataset.useCache==false){
 			params+="&nearRealtime=true";
 		}
 
-		var dataToSend=angular.copy(cockpitModule_widgetSelection.getCurrentSelections(dataset.label));
-		if(Object.keys(dataToSend).length==0){
-			dataToSend=cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
+		var filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(dataset.label));
+		if(Object.keys(filtersToSend).length == 0){
+			filtersToSend = cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 		}
 
 		var limitRows;
@@ -725,14 +715,14 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 					var filter = { filterOperator: filterOperator, filterVals: values};
 
-					if(!dataToSend[dataset.label]){
-						dataToSend[dataset.label] = {};
+					if(!filtersToSend[dataset.label]){
+						filtersToSend[dataset.label] = {};
 					}
 
- 					if(!dataToSend[dataset.label][colName]){
-						dataToSend[dataset.label][colName] = filter;
+ 					if(!filtersToSend[dataset.label][colName]){
+						filtersToSend[dataset.label][colName] = filter;
 					}else{
-						dataToSend[dataset.label][colName].push(filter);
+						filtersToSend[dataset.label][colName].push(filter);
 					}
 				}
 			}
@@ -746,13 +736,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			searchData[columns] = ngModel.search.text;
 			var likeSelections = {};
 			likeSelections[dataset.label] = searchData;
-			params += "&likeSelections=" + encodeURIComponent(JSON.stringify(likeSelections)).replace(/'/g,"%27").replace(/"/g,"%22");
+			bodyString = bodyString + ",likeSelections:" + JSON.stringify(likeSelections);
 		}
 
-		var dataToSendWithoutParams = {};
+		var filtersToSendWithoutParams = {};
 		if(dataset.useCache == true || ngModel.updateble == true){
-			angular.copy(dataToSend,dataToSendWithoutParams);
-			angular.forEach(dataToSendWithoutParams, function(item){
+			angular.copy(filtersToSend,filtersToSendWithoutParams);
+			angular.forEach(filtersToSendWithoutParams, function(item){
 				var paramsToDelete = [];
 				for (var property in item) {
 				    if (item.hasOwnProperty(property) && property.startsWith("$P{") && property.endsWith("}")) {
@@ -765,10 +755,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			});
 		}
 
-		params += "&widgetName=" + encodeURIComponent(ngModel.content.name);
+		bodyString = bodyString + ",selections:" + JSON.stringify(filtersToSendWithoutParams) + "}";
 
 		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promisePost("2.0/datasets",encodeURIComponent(dataset.label)+"/data"+params,dataToSendWithoutParams)
+		sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(dataset.label) + "/data" + params, bodyString)
 		.then(function(response){
 			if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 				cockpitModule_properties.DS_IN_CACHE.push(dataset.label);

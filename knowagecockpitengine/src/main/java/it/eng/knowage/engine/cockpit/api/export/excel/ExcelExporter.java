@@ -20,7 +20,6 @@ package it.eng.knowage.engine.cockpit.api.export.excel;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +44,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -148,18 +148,24 @@ public class ExcelExporter {
 			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 			String datasetLabel = dataset.getLabel();
 
-			Map<String, Object> map = new java.util.HashMap<String, Object>();
+			JSONObject body = new JSONObject();
 
 			JSONObject parameters = datasetObj.getJSONObject("parameters");
 			logger.debug("parameters = " + parameters);
-			map.put("parameters", URLEncoder.encode(parameters.toString(), "UTF-8"));
+			body.put("parameters", parameters);
+
+			JSONObject aggregations = getAggregationsFromDataset(dataset);
+			logger.debug("aggregations = " + aggregations);
+			body.put("aggregations", aggregations);
+
+			Map<String, Object> map = new java.util.HashMap<String, Object>();
 
 			if (getRealtimeFromTableWidget(datasetId, configuration)) {
 				logger.debug("realtime = true");
 				map.put("realtime", true);
 			}
 
-			JSONObject datastoreObj = getDatastore(datasetLabel, map, "");
+			JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
 			String csv = datastoreObj != null ? getCsvSheet(datastoreObj) : "";
 			excelSheets.add(new ExcelSheet(datasetLabel, csv));
 		}
@@ -168,16 +174,39 @@ public class ExcelExporter {
 		return excelSheets;
 	}
 
+	private JSONObject getAggregationsFromDataset(IDataSet dataset) throws JSONException {
+		JSONObject aggregations = new JSONObject();
+
+		JSONArray categories = new JSONArray();
+		aggregations.put("categories", categories);
+
+		IMetaData metadata = dataset.getMetadata();
+		for (int i = 0; i < metadata.getFieldCount(); i++) {
+			JSONObject category = new JSONObject();
+			String alias = metadata.getFieldAlias(i);
+			category.put("id", alias);
+			category.put("alias", alias);
+			category.put("columnName", metadata.getFieldName(i));
+			category.put("orderType", "");
+
+			categories.put(category);
+		}
+
+		JSONArray measures = new JSONArray();
+		aggregations.put("measures", measures);
+
+		aggregations.put("dataset", dataset.getLabel());
+
+		return aggregations;
+	}
+
 	private List<ExcelSheet> getCsvsFromWidgets(JSONObject template) throws JSONException, EMFUserError, UnsupportedEncodingException {
 		logger.debug("IN");
 
 		JSONObject configuration = template.getJSONObject("configuration");
 		JSONArray sheets = template.getJSONArray("sheets");
 
-		List<ExcelSheet> excelSheets = new ArrayList<>(sheets.length());
-		for (int i = 0; i < sheets.length(); i++) {
-			excelSheets.add(null); // manage sheet index later
-		}
+		List<ExcelSheet> excelSheets = new ArrayList<>();
 
 		for (int i = 0; i < sheets.length(); i++) {
 			JSONObject sheet = sheets.getJSONObject(i);
@@ -196,21 +225,33 @@ public class ExcelExporter {
 					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 					String datasetLabel = dataset.getLabel();
 
-					Map<String, Object> map = new java.util.HashMap<String, Object>();
+					JSONObject body = new JSONObject();
 
 					JSONObject aggregations = getAggregationsFromTableWidget(widget, configuration);
 					logger.debug("aggregations = " + aggregations);
-					map.put("aggregations", URLEncoder.encode(aggregations.toString(), "UTF-8"));
+					body.put("aggregations", aggregations);
 
 					JSONObject parameters = getParametersFromTableWidget(widget, configuration);
 					logger.debug("parameters = " + parameters);
-					map.put("parameters", URLEncoder.encode(parameters.toString(), "UTF-8"));
+					body.put("parameters", parameters);
 
 					JSONObject summaryRow = getSummaryRowFromTableWidget(widget);
 					if (summaryRow != null) {
 						logger.debug("summaryRow = " + summaryRow);
-						map.put("summaryRow", URLEncoder.encode(summaryRow.toString(), "UTF-8"));
+						body.put("summaryRow", summaryRow);
 					}
+
+					JSONObject likeSelections = getLikeSelectionsFromTableWidget(widget, configuration);
+					if (likeSelections != null) {
+						logger.debug("likeSelections = " + likeSelections);
+						body.put("likeSelections", likeSelections);
+					}
+
+					JSONObject selections = getSelectionsFromTableWidget(widget, configuration);
+					logger.debug("selections = " + selections);
+					body.put("selections", selections);
+
+					Map<String, Object> map = new java.util.HashMap<String, Object>();
 
 					if (getRealtimeFromTableWidget(datasetId, configuration)) {
 						logger.debug("realtime = true");
@@ -223,18 +264,9 @@ public class ExcelExporter {
 						map.put("limit", limit);
 					}
 
-					JSONObject likeSelections = getLikeSelectionsFromTableWidget(widget, configuration);
-					if (likeSelections != null) {
-						logger.debug("likeSelections = " + likeSelections);
-						map.put("likeSelections", URLEncoder.encode(likeSelections.toString(), "UTF-8"));
-					}
-
-					JSONObject selections = getSelectionsFromTableWidget(widget, configuration);
-					logger.debug("selections = " + selections);
-
-					JSONObject datastoreObj = getDatastore(datasetLabel, map, selections.toString());
+					JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
 					String csv = datastoreObj != null ? getCsvSheet(datastoreObj, widget) : "";
-					excelSheets.set(sheetIndex, new ExcelSheet(widgetName, csv));
+					excelSheets.add(new ExcelSheet("Sheet" + sheetIndex + " Widget" + j + " " + widgetName, csv));
 				}
 			}
 		}
