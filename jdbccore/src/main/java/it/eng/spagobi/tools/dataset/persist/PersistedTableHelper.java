@@ -83,25 +83,20 @@ public class PersistedTableHelper {
 				if (!(fieldValue instanceof String)) {
 					logger.debug("An unexpected error occured while extimating field [" + fieldMetaName + "] memory size whose type is equal to ["
 							+ fieldMetaTypeName + "]. Field forced to String");
-					Object nonStringValue = fieldValue;
-					if (nonStringValue != null) {
-						insertStatement.setString(fieldIndex + 1, nonStringValue.toString());
-					} else {
-						insertStatement.setString(fieldIndex + 1, "");
-					}
+					insertStatement.setString(fieldIndex + 1, fieldValue.toString());
 				} else {
 					insertStatement.setString(fieldIndex + 1, (String) fieldValue);
 				}
 			} else if (fieldMetaTypeName.contains("Date")) {
-				if (fieldValue instanceof java.util.Date) {
-					java.util.Date date = (java.util.Date)fieldValue;
-					Instant instant = date.toInstant();
-					ZonedDateTime zdt = ZonedDateTime.ofInstant ( instant , ZoneId.systemDefault() );
-					LocalDate localDate = zdt.toLocalDate();
-					java.sql.Date sqlDate = java.sql.Date.valueOf( localDate );
-					insertStatement.setDate(fieldIndex + 1, sqlDate);
-				} else {
+				if (fieldValue instanceof java.sql.Date) {
 					insertStatement.setDate(fieldIndex + 1, (Date) fieldValue);
+				} else {
+					java.util.Date date = (java.util.Date) fieldValue;
+					Instant instant = date.toInstant();
+					ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
+					LocalDate localDate = zdt.toLocalDate();
+					java.sql.Date sqlDate = java.sql.Date.valueOf(localDate);
+					insertStatement.setDate(fieldIndex + 1, sqlDate);
 				}
 			} else if (fieldMetaTypeName.toLowerCase().contains("timestamp")) {
 				insertStatement.setTimestamp(fieldIndex + 1, Timestamp.valueOf(fieldValue.toString()));
@@ -197,7 +192,8 @@ public class PersistedTableHelper {
 					logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 				}
 			} else {
-				logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
+				logger.error("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
+				insertStatement.setObject(fieldIndex + 1, null);
 			}
 		} catch (Throwable t) {
 			logger.error("FieldValue [" + fieldValue + "] has class name [" + fieldValue.getClass().getName() + "]");
