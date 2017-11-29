@@ -1,6 +1,6 @@
 <div class="expanderList">
     <div ng-repeat="(key, value) in ngModel">
-        <h3 layout="row" ng-class="{'opened':value.length>0}">{{key}}
+        <h3 layout="row" ng-class="{'opened':value.length>0}">{{key=="subqueries"? translate.load("kn.qbe.expander.list.derived.entities"):  translate.load("kn.qbe.expander.list.entities")}}
             <span flex></span>
             <ng-transclude></ng-transclude>
             <span class="chip">{{value.length}}</span>

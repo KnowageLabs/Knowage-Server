@@ -19,12 +19,12 @@
 angular
 	.module('qbe.controller', ['configuration','directive','services'])
 	.controller('qbeController',
-		["$scope","$rootScope","entity_service","query_service","filters_service","save_service","sbiModule_inputParams","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging","$mdDialog", "$mdPanel","$q",qbeFunction]);
+		["$scope","$rootScope","entity_service","query_service","filters_service","save_service","sbiModule_inputParams","sbiModule_translate","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging","$mdDialog", "$mdPanel","$q",qbeFunction]);
 
 
 
-function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,save_service,sbiModule_inputParams,sbiModule_config,sbiModule_restServices,sbiModule_messaging, $mdDialog ,$mdPanel,$q){
-
+function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_restServices,sbiModule_messaging, $mdDialog ,$mdPanel,$q){
+	$scope.translate = sbiModule_translate;
 	var entityService = entity_service;
 	var inputParamService = sbiModule_inputParams;
 	$scope.queryModel = [];
@@ -330,7 +330,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     }
 
     $scope.query = new Query(1);
-    $scope.query.name = "Main query";
+    $scope.query.name = $scope.translate.load("kn.qbe.custom.table.toolbar.main");
 
     $scope.catalogue = [$scope.query];
 

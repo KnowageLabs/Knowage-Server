@@ -66,8 +66,8 @@ function exportersCatalogueFunction(sbiModule_translate,sbiModule_restServices,$
 			action: function(item, event) {
 				console.log(item);
 				$scope.confirmDelete(item, event);
-		}
-	}];
+		    }
+		}];
 
 	$scope.deleteExporter = function(engineId, domainId) {
 		sbiModule_restServices.promiseDelete("2.0/exporters"+ "/" + engineId + "/" + domainId, '')
@@ -141,6 +141,7 @@ function exportersCatalogueFunction(sbiModule_translate,sbiModule_restServices,$
 				$scope.getExporters();
 				//$scope.myExporters.push(response.data);
 				$scope.dirtyForm = false;
+				$scope.showMe = false;
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');

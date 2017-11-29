@@ -67,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 	</md-button>
                 	<md-icon ng-if="editQueryObj.name !== query.name" md-font-icon="fa fa-chevron-right"></md-icon>
                 	<md-button ng-if="editQueryObj.name !== query.name">
-                    	 {{editQueryObj.name}} 
+                    	 {{editQueryObj.name}}
                 	</md-button>
 				</div>
 			</qbe-custom-table>

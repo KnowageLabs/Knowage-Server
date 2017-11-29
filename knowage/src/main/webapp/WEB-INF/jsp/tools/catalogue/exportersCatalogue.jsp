@@ -45,7 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     
 	<angular-list-detail  show-detail="showMe">
 		 	<list label='translate.load("sbi.exporters.title")' new-function="createExporters"> 	
-			
+				
+			   <div ng-show=false ng-repeat="exporter in myExporters"></div>
                
                <angular-table  
 				        flex
@@ -53,6 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  						ng-model="myExporters" 
  						columns='exportersListColumns'
  						highlights-selected-item=true
+ 						show-search-bar=true
  						speed-menu-option='exporterSpeedMenu'
  						click-function="loadExporter(item)">						
  		      </angular-table>
