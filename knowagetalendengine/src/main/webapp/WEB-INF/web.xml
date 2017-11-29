@@ -30,23 +30,23 @@
 
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/JobRunService/*</url-pattern>
+        <url-pattern>/JobRunService</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/EngineInfoService/*</url-pattern>
+        <url-pattern>/EngineInfoService</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/version/*</url-pattern>
+        <url-pattern>/version</url-pattern>
     </filter-mapping>   
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/JobRunServiceBackEnd/*</url-pattern>
+        <url-pattern>/JobRunServiceBackEnd</url-pattern>
     </filter-mapping>   
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/JobUploadService/*</url-pattern>
+        <url-pattern>/JobUploadService</url-pattern>
     </filter-mapping>   
 
 <!-- START-CAS ${enable.cas.end}
@@ -101,53 +101,53 @@ ${enable.cas.start} END-CAS -->
 <!-- START-CAS ${enable.cas.end}
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/JobRunService/*</url-pattern>
+    <url-pattern>/JobRunService</url-pattern>
   </filter-mapping> 
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/EngineInfoService/*</url-pattern>
+    <url-pattern>/EngineInfoService</url-pattern>
   </filter-mapping> 
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/version/*</url-pattern>
+    <url-pattern>/version</url-pattern>
   </filter-mapping>
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/JobUploadService/*</url-pattern>
+    <url-pattern>/JobUploadService</url-pattern>
   </filter-mapping>
 
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/JobRunService/*</url-pattern>
+    <url-pattern>/JobRunService</url-pattern>
   </filter-mapping> 
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/EngineInfoService/*</url-pattern>
+    <url-pattern>/EngineInfoService</url-pattern>
   </filter-mapping> 
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/version/*</url-pattern>
+    <url-pattern>/version</url-pattern>
   </filter-mapping>
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/JobUploadService/*</url-pattern>
+    <url-pattern>/JobUploadService</url-pattern>
   </filter-mapping> 
 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/JobRunService/*</url-pattern>
+    <url-pattern>/JobRunService</url-pattern>
   </filter-mapping> 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/EngineInfoService/*</url-pattern>
+    <url-pattern>/EngineInfoService</url-pattern>
   </filter-mapping> 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/version/*</url-pattern>
+    <url-pattern>/version</url-pattern>
   </filter-mapping>
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/JobUploadService/*</url-pattern>
+    <url-pattern>/JobUploadService</url-pattern>
   </filter-mapping> 
   
   <filter-mapping>
@@ -158,23 +158,23 @@ ${enable.cas.start} END-CAS -->
 	
 	<filter-mapping>
     	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/JobRunService/*</url-pattern>
+    	<url-pattern>/JobRunService</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
     	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/EngineInfoService/*</url-pattern>
+    	<url-pattern>/EngineInfoService</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
     	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/version/*</url-pattern>
+    	<url-pattern>/version</url-pattern>
 	</filter-mapping>	
 	<filter-mapping>
     	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/JobRunServiceBackEnd/*</url-pattern>
+    	<url-pattern>/JobRunServiceBackEnd</url-pattern>
 	</filter-mapping>	
 	<filter-mapping>
     	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/JobUploadService/*</url-pattern>
+    	<url-pattern>/JobUploadService</url-pattern>
 	</filter-mapping>	
 
 	<!--  ============================================================================ -->

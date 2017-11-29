@@ -17,7 +17,7 @@
 
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 
 	<filter>
@@ -104,34 +104,34 @@
 
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-		<url-pattern>/restful-services/publish/*</url-pattern>		
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/restful-services/publish</url-pattern>		
 	</filter-mapping>
 
 	<!-- START-CAS ${enable.cas.end}
 	<filter-mapping>
 		<filter-name>CAS Authentication Filter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-		<url-pattern>/restful-services/publish/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/restful-services/publish</url-pattern>
 	</filter-mapping>  
 
 	<filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-		<url-pattern>/restful-services/publish/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/restful-services/publish</url-pattern>
 	</filter-mapping>    
 
 	<filter-mapping>
 		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-		<url-pattern>/restful-services/publish/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/restful-services/publish</url-pattern>
 	</filter-mapping>  
 	 ${enable.cas.start}  END-CAS --> 
 
 	<!-- START OAUTH 2
 	<filter-mapping>
 		<filter-name>OAuthFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
  	END OAUTH 2 -->
 
@@ -146,18 +146,18 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>HmacLoginFilter</filter-name>
-		<url-pattern>/restful-services/publish/*</url-pattern>
+		<url-pattern>/restful-services/publish</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
 		<filter-name>ProfileFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-		<url-pattern>/restful-services/publish/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/restful-services/publish</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>AntiInjectionFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 
 	<!-- If you want to enable HMAC filter:
