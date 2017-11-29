@@ -6,13 +6,14 @@
      it from the original list yourself using the dnd-moved attribute -->
 <script type="text/ng-template" id="list.html">
     <ul dnd-list="list">
-        <li ng-repeat="item in list"
+        <li ng-repeat="item in list track by $index"
             dnd-draggable="item"
             dnd-effect-allowed="move"
             dnd-moved="list.splice($index, 1)"
             dnd-selected="models.selected = item"
-            ng-class="{selected: models.selected === item}"
-            ng-include="item.type + '.html'">
+            ng-class="{selected: models.selected === item,'innerLast':$index == (list.length-1)}"
+			class="filterItemLi"
+            ng-include="item.type + '.html'">{{item}}
         </li>
     </ul>
 </script>
@@ -20,30 +21,43 @@
 <!-- This template is responsible for rendering a container element. It uses
      the above list template to render each container column -->
 <script type="text/ng-template" id="group.html">
-    <md-card  layout="row" class="container-element box box-blue">
-		<div flex=90>
-			<h3>Group {{item.id}} </h3>
-        	<div class="column" ng-repeat="list in item.columns" ng-include="'list.html'"></div>
+	<div class="groupContainer" layout="row">
+    	<div class="filterGroup">
+			<h3 layout="row" layout-align="start center">Group {{item.id}} 
+				<span flex></span>
+				<md-button class="md-icon-button" ng-click="something()">
+					<md-icon md-font-icon="fa fa-trash"></md-icon>
+				</md-button>
+			</h3>
+        	<div class="column" layout-wrap ng-repeat="list in item.columns" ng-include="'list.html'"></div>
         	<div class="clearfix"></div>
+    	</div>
+		<div class="filterOperator" layout="column">
+			<md-icon md-font-icon="fa fa-link"></md-icon>
+			<md-select ng-model="item.connector" >
+				<md-option ng-repeat="c in getBooleanConnectors" value="{{c}}"  >
+		    		{{c}}
+				</md-option>
+			</md-select>
 		</div>
-
-    </md-card>
+	</div>
  
 </script>
 
 <!-- Template for a normal list item -->
 <script type="text/ng-template" id="item.html">
 <div layout="row">
-	<md-card flex=90 class="item">
-		{{item.name}}
+	<md-card class="filterItem" ng-style={'border-color':item.color}>
+		<h4>{{item.name}}</h4>
 	</md-card>
-	<md-card flex=10>
+	<div layout="column" class="filterOperator">
+		<md-icon md-font-icon="fa fa-link"></md-icon>
 		<md-select ng-model="item.connector" >
-		        	<md-option ng-repeat="c in getBooleanConnectors" value="{{c}}"  >
-		            	{{c}}
-				    </md-option>
+			<md-option ng-repeat="c in getBooleanConnectors" value="{{c}}"  >
+		    	{{c}}
+			</md-option>
 		</md-select>
-	</md-card>
+	</div>
 </div>
  
 </script>
@@ -55,22 +69,28 @@
 			<span flex></span>									 
 	   	</div>
 	</md-toolbar>
-	<md-tabs  md-dynamic-height>
-		<!-- <md-tab label="table">
-			<angular-table
-					 ng-model="ngModel.filters"
-					columns='filterColumnsAV'
-					scope-functions=advancedVisualizationScopeFunctions
-					speed-menu-option="speedMenu"
-					 >
-				 </angular-table>
-		</md-tab> -->
-		<md-tab label="drag and drop">
+		<md-menu-bar>
+          <md-menu>
+          	<button ng-click="$mdMenu.open()">
+            	Add group
+            </button>
+          </md-menu>
+       	</md-menu-bar>
 		<div>
 			<div class="row">
-       				<div ng-repeat="(zone, list) in models.dropzones" class="col-md-6">
+       				<div ng-repeat="(zone, list) in models.dropzones">
            				<div class="dropzone box box-yellow">
-                			<div  ng-include="'list.html'"></div>
+                			<ul dnd-list="list" layout="row" layout-wrap layout-align="start center">
+						        <li ng-repeat="item in list"
+						            dnd-draggable="item"
+						            dnd-effect-allowed="move"
+						            dnd-moved="list.splice($index, 1)"
+						            dnd-selected="models.selected = item"
+						            ng-class="{selected: models.selected === item, 'last':$index == (list.length-1)}"
+						            ng-include="item.type + '.html'"
+						            >
+						        </li>
+						    </ul>
             			</div>
         			</div>
     			</div>
@@ -98,79 +118,14 @@
 			        <input type="text" ng-model="models.selected.id" class="form-control" style="margin-top: 5px" />
 			    </div>
 			    
-			    <div class="trashcan box box-grey box-padding">
-        <!-- If you use [] as referenced list, the dropped elements will be lost -->
+			    <!--div class="trashcan box box-grey box-padding">
 			        <h3>Trashcan</h3>
 			        <ul dnd-list="[]">
 			            <li><md-icon class="fa fa-trash"></li>
 			        </ul>
-   				</div>
+   				</div-->
 		</div>
 			
-		</md-tab>
-	</md-tabs>
-<!-- 	<md-card layout-padding style="height:700px; margin:0px">
-		<div layout="row" flex class="qbeAdvancedVisualization">
-			<div flex=30>
-				<angular-table
-					style="height:700px; margin:0px"
-					 ng-model="ngModel.filters"
-					columns='filterColumnsAV'
-					scope-functions=advancedVisualizationScopeFunctions
-					speed-menu-option="speedMenu"
-					 >
-				 </angular-table>
-			</div>
-			<div flex layout="column">
-				 <div class="row">
-       				<div ng-repeat="(zone, list) in models.dropzones" class="col-md-6">
-           				<div class="dropzone box box-yellow">
-                			<div  ng-include="'list.html'"></div>
-            			</div>
-        			</div>
-    			</div>
-    			
-    	
-    			
-     			<div class="toolbox box box-grey box-padding">
-       				<h3>New Elements</h3>
-       					<ul>
-            The toolbox only allows to copy objects, not move it. After a new
-                 element was created, dnd-copied is invoked and we generate the next id
-				            <li ng-repeat="item in models.templates"
-				                dnd-draggable="item"
-				                dnd-effect-allowed="copy"
-				                dnd-copied="item.id = item.id + 1"
-				                >
-				                <button type="button" class="btn btn-default btn-lg" >{{item.type}}</button>
-				            </li>
-        				</ul>
-    			</div>
-
-			    <div ng-if="models.selected" class="box box-grey box-padding">
-			        <h3>Selected</h3>
-			        <strong>Type: </strong> {{models.selected.type}}<br>
-			        <input type="text" ng-model="models.selected.id" class="form-control" style="margin-top: 5px" />
-			    </div>
-			    
-			    <div class="trashcan box box-grey box-padding">
-        If you use [] as referenced list, the dropped elements will be lost
-			        <h3>Trashcan</h3>
-			        <ul dnd-list="[]">
-			            <li><md-icon class="fa fa-trash"></li>
-			        </ul>
-   				</div>
-			</div> 
-		</div>
-	</md-card> -->
-	<!--  <md-card-actions layout="row" layout-align="end center">
-	      <md-button ng-click="closeFiltersAdvanced()" >
-	      cancel
-	      </md-button>
-	      <md-button ng-click="saveFiltersAdvanced()"  >
-			save
-	      </md-button>
-	</md-card-actions> -->
 	<div flex></div>
         <div class="actionbar" layout="row">
             <md-button ng-click="closeFiltersAdvanced()">

@@ -6,10 +6,72 @@
 			min-height: 42px;
 			padding-left: 0px;
 			li {
-				background-color: #fff;
-			    border: 1px solid #ddd;
 			    display: block;
 			    padding: 0px;
+                .filterOperator {
+                    md-select {
+                        margin-top: 0;
+                    }
+                }
+                .innerLast{                    
+                    .filterOperator {
+                        display: none;
+                    }
+                }
+                &.last{                    
+                    .filterOperator {
+                        display: none;
+                    }
+                }
+                .groupContainer{
+                    align-items: center;
+                    justify-content: space-around;
+                    .filterItemLi{
+                        &>div{
+                            flex-wrap: wrap;
+                            justify-content: center;
+                        }
+                        .filterItem{
+                            min-width: 200px;
+                            width: 100%;
+                        }
+                    }
+
+                }
+                .filterGroup {
+                    background-color: $ternaryColor;
+                    border-radius: 6px;
+                    padding:8px;
+                    margin: 8px;
+                    min-width: 300px;
+                    h3 {
+                        font-size: $baseFontSize;
+                        margin-top: 0;
+                        margin-bottom: 0;
+                        margin-left: 8px;
+                        text-transform: uppercase;
+
+                    }
+                    .filterOperator {
+                        flex-direction: row;
+                        width: auto;
+                        md-select {
+                            margin: 0;  
+                        }
+                    }
+                }
+                .filterItem{
+                    border-top: 5px solid $secondaryColor;
+                    font-size: $baseFontSize; 
+                    height: 70px;
+                    min-height: 70px;
+                    min-width: 300px;
+                    width: 90%;
+                    h4{
+                        text-transform: uppercase;
+                        margin: 4px 0 0 4px;
+                    }
+                }
 			}
         }
 	}
