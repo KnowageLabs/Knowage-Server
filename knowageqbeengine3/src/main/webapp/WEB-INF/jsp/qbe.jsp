@@ -49,14 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			display-property-name="name"
 			children-name="fields"
 			>
-				<md-button class="md-icon-button"  
-				ng-click="createSubquery()"
-				
-				>
-                    <md-icon md-font-icon="fa fa-plus-circle"></md-icon>
-                </md-button>
-                
-                
+            	<md-icon ng-click="createSubquery()" md-font-icon="fa fa-plus-circle"></md-icon>
         	</qbe-expander-list>
 		</div>
 		<div flex layout-fill class="vertical-devider">
