@@ -123,7 +123,7 @@ public class SbiExportersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("An unexpected error occured while loading artifacts' list", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading exporters' list", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
