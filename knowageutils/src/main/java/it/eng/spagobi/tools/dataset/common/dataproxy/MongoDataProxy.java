@@ -132,6 +132,10 @@ public class MongoDataProxy extends AbstractDataProxy {
 		int databaseNameStart = clientUrl.lastIndexOf("/");
 		String databaseUrl = clientUrl.substring(0, databaseNameStart);
 		String databaseName = clientUrl.substring(databaseNameStart + 1);
+		
+		String[] databaseUrlParts = databaseUrl.split(":");
+		String host = databaseUrlParts[0];
+		String port = databaseUrlParts[1];
 
 		logger.debug("Connection URL: " + databaseUrl);
 		logger.debug("Database name: " + databaseName);
@@ -141,8 +145,7 @@ public class MongoDataProxy extends AbstractDataProxy {
 			logger.debug("Connected to mongodb");
 			if (dataSource.getUser() != null && dataSource.getPwd() != null && dataSource.getUser().length() > 0 && dataSource.getPwd().length() > 0) {
 				MongoCredential credential = MongoCredential.createMongoCRCredential(dataSource.getUser(), databaseName, dataSource.getPwd().toCharArray());
-				 mongoClient = new MongoClient(new ServerAddress(clientUrl),
-				 Arrays.asList(credential));
+				 mongoClient = new MongoClient(new ServerAddress(host,Integer.valueOf(port)), Arrays.asList(credential));
 			}else {
 				mongoClient = new MongoClient(databaseUrl);
 			}
