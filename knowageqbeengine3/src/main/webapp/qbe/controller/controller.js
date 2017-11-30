@@ -315,7 +315,6 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         "label": "ranges",
         "icon": "fa fa-sliders",
         "action": function(item, event) {
-            $scope.ammacool(item, event);
         }
     }, {
         "label": "filters",
@@ -324,10 +323,6 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         	$scope.openFilters(item,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries, $scope.editQueryObj.expression, $scope.advancedFilters);
         }
     }];
-
-    $scope.ammacool = function (item, event) {
-    	console.log(item)
-    }
 
     $scope.query = new Query(1);
     $scope.query.name = $scope.translate.load("kn.qbe.custom.table.toolbar.main");
@@ -414,6 +409,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			field.field.id = field_copy.id;
 			field.field.name = field_copy.text;
 			field.field.entity = field_copy.attributes.entity;
+			field.field.iconCls = field_copy.attributes.iconCls;
 			field.field.color = field_copy.color;
 			field.field.visible= true;
 			field.field.group= false;

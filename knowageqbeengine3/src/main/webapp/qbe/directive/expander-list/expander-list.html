@@ -47,7 +47,9 @@
                    <md-tooltip md-direction="top">{{checkDescription(field)}}</md-tooltip>
                     <span flex></span>
                     <md-button class="md-icon-button" ng-repeat="fieldAction in fieldsActions" ng-click="$event.stopPropagation();fieldAction.action(field,$event)">
-                        <md-icon md-font-icon="{{fieldAction.icon}}"></md-icon>
+                        <md-icon ng-class="field.iconCls=='the_date'&&fieldAction.icon=='fa fa-filter' ? 'temporal-filter-avaliable' : ''" md-font-icon="{{fieldAction.icon}}"></md-icon>
+                        <md-tooltip ng-show="field.iconCls=='the_date'&&fieldAction.icon=='fa fa-filter'">{{translate.load('kn.qbe.expander.list.add.temporal.filter')}}</md-tooltip>
+
                     </md-button>
                 </li>
             </ul>

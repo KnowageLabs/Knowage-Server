@@ -4,7 +4,7 @@
 		<div class="md-toolbar-tools">
 	   		<h2><span>{{translate.load("kn.qbe.general.filters")}}</span></h2>
 			<span flex></span>
-			<md-button class="md-icon-button" aria-label="Add new filter" ng-click="loadTemporalFIlters()" 
+			<md-button class="md-icon-button" aria-label="Add new filter" ng-show="field.iconCls=='the_date'" ng-click="loadTemporalFilters()" 
 					title='{{translate.load("kn.qbe.general.field")}}'>
 				<md-icon md-font-icon="fa fa-puzzle-piece" ></md-icon>
 			</md-button>
@@ -31,7 +31,7 @@
 		      </tr>
 		    </thead>
 		    <tbody md-body>
-		      <tr md-row  md-select="filter" md-select-id="name" md-auto-select ng-repeat="filter in filters">
+		      <tr md-row  md-select="filter" md-select-id="name" md-auto-select ng-repeat="filter in filters | filter: fieldFilter ">
 		        <td md-cell>
 		        	<input name="left" ng-model="filter.leftOperandDescription" ng-maxlength="100" ng-readonly="true" >
 		        </td>

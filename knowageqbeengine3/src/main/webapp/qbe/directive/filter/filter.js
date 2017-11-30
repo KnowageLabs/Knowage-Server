@@ -36,7 +36,7 @@ angular.module('qbe_filter', ['ngMaterial','angular_table' ])
 	}
 });
 
-function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, $http, sbiModule_config,$mdPanel, $mdDialog, $httpParamSerializer, sbiModule_restServices){
+function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, sbiModule_translate, $http, sbiModule_config,$mdPanel, $mdDialog, $httpParamSerializer, sbiModule_restServices, entity_service){
 
 	$scope.filters=angular.copy($scope.ngModel.queryFilters);
 	$scope.advancedFilters=angular.copy($scope.ngModel.advancedFilters);
@@ -77,11 +77,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, $htt
 		}
 	}
 
-	$scope.addNewTemporalFilter = function () {
-
-	}
-
-	$scope.loadTemporalFIlters = function () {
+	$scope.loadTemporalFilters = function () {
 
 		var query = {
 				types: ["DAY_OF_WEEK", "DAY_OF_WEEK", "DAY_OF_WEEK"]
@@ -110,6 +106,21 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, $htt
 
 	$scope.addSelectedFilter = function () {
 		console.log($scope.selectedTemporalFilter);
+		var entities = [];
+		var temporalFilter = {};
+
+		entity_service.getEntitiyTree(sbiModule_inputParams.modelName).then(function(response){
+			entities = response.data.entities;
+			for (var i = 0; i < entities.length; i++) {
+				if(entities[i].iconCls=='temporal_dimension'){
+					for (var j = 0; j < entities[i].children.length; j++) {
+						if(entities[i].children[j].iconCls=='the_date'){
+							temporalFilter.id=entities[i].children[j].id;
+							temporalFilter.ld=entities[i].children[j].attributes.longDescription;
+						}
+					}
+				}
+		}
 		$scope.filterIndex = checkForIndex();
 		$scope.showTable = false;
 		$scope.targetOption = "default";
@@ -118,9 +129,9 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, $htt
 				"filterDescripion": "Filter"+$scope.filterIndex,
 				"filterInd": $scope.filterIndex,
 				"promptable": false,
-				"leftOperandValue": "it.eng.knowage.meta.Time:the_date",
-				"leftOperandDescription": "Time : The date",
-				"leftOperandLongDescription": "",
+				"leftOperandValue": temporalFilter.id,
+				"leftOperandDescription": temporalFilter.ld,
+				"leftOperandLongDescription": temporalFilter.ld,
 				"leftOperandType": "Field Content",
 				"leftOperandDefaultValue": null,
 				"leftOperandLastValue": null,
@@ -141,6 +152,8 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, $htt
 		$scope.filters.push(object);
 		console.log($scope.filters);
 		$mdDialog.cancel();
+
+		});
 	}
 
 	$scope.addNewFilter= function (){
