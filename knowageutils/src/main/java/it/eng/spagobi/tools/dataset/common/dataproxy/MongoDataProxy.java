@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import com.mongodb.CommandResult;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
@@ -122,13 +123,15 @@ public class MongoDataProxy extends AbstractDataProxy {
 
 	private CommandResult loadData() {
 		logger.debug("IN");
-		MongoClient mongoClient;
+		//MongoClient mongoClient;
 		CommandResult result = null;
 
 		String clientUrl = dataSource.getUrlConnection();
 
 		logger.debug("Getting the connection URL and db name");
 
+		/*
+		//Old connection method without mongodb uri
 		int databaseNameStart = clientUrl.lastIndexOf("/");
 		String databaseUrl = clientUrl.substring(0, databaseNameStart);
 		String databaseName = clientUrl.substring(databaseNameStart + 1);
@@ -136,24 +139,30 @@ public class MongoDataProxy extends AbstractDataProxy {
 		String[] databaseUrlParts = databaseUrl.split(":");
 		String host = databaseUrlParts[0];
 		String port = databaseUrlParts[1];
+		
 
 		logger.debug("Connection URL: " + databaseUrl);
 		logger.debug("Database name: " + databaseName);
 
-
-
-			logger.debug("Connected to mongodb");
-			if (dataSource.getUser() != null && dataSource.getPwd() != null && dataSource.getUser().length() > 0 && dataSource.getPwd().length() > 0) {
+		logger.debug("Connected to mongodb");
+		if (dataSource.getUser() != null && dataSource.getPwd() != null && dataSource.getUser().length() > 0 && dataSource.getPwd().length() > 0) {
 				MongoCredential credential = MongoCredential.createScramSha1Credential(dataSource.getUser(), databaseName, dataSource.getPwd().toCharArray());
 				 mongoClient = new MongoClient(new ServerAddress(host,Integer.valueOf(port)), Arrays.asList(credential));
-			}else {
+		}else {
 				mongoClient = new MongoClient(databaseUrl);
-			}
-
-
-			logger.debug("Connecting to mongodb");
-
-
+		}
+		*/
+		if (dataSource.getUser() != null && dataSource.getPwd() != null && dataSource.getUser().length() > 0 && dataSource.getPwd().length() > 0) {
+			String authPart = "mongodb://"+dataSource.getUser()+":"+dataSource.getPwd()+"@";
+			clientUrl = clientUrl.replace("mongodb://", authPart);
+		}
+		
+		logger.debug("MongoDB connection URI:"+clientUrl);
+		MongoClientURI mongoClientURI= new MongoClientURI(clientUrl);
+		MongoClient mongoClient = new MongoClient(new MongoClientURI(clientUrl));
+		logger.debug("Connecting to mongodb");
+		String databaseName = mongoClientURI.getDatabase();
+		logger.debug("Database name: " + databaseName);
 
 
 		try {
