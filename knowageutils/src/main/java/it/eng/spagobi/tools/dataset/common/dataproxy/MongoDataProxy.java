@@ -140,11 +140,11 @@ public class MongoDataProxy extends AbstractDataProxy {
 		logger.debug("Connection URL: " + databaseUrl);
 		logger.debug("Database name: " + databaseName);
 
-		try {
+
 
 			logger.debug("Connected to mongodb");
 			if (dataSource.getUser() != null && dataSource.getPwd() != null && dataSource.getUser().length() > 0 && dataSource.getPwd().length() > 0) {
-				MongoCredential credential = MongoCredential.createMongoCRCredential(dataSource.getUser(), databaseName, dataSource.getPwd().toCharArray());
+				MongoCredential credential = MongoCredential.createScramSha1Credential(dataSource.getUser(), databaseName, dataSource.getPwd().toCharArray());
 				 mongoClient = new MongoClient(new ServerAddress(host,Integer.valueOf(port)), Arrays.asList(credential));
 			}else {
 				mongoClient = new MongoClient(databaseUrl);
@@ -154,10 +154,7 @@ public class MongoDataProxy extends AbstractDataProxy {
 			logger.debug("Connecting to mongodb");
 
 
-		} catch (UnknownHostException e) {
-			logger.error("Error connectiong to the MongoClient", e);
-			throw new SpagoBIRuntimeException("Error connectiong to the MongoClient", e);
-		}
+
 
 		try {
 			logger.debug("Connecting to the db " + databaseName);
