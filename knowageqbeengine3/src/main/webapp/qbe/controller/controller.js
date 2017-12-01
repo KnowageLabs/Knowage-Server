@@ -142,7 +142,15 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		var indexOfFieldInEntity = findWithAttr($scope.entityModel.entities[indexOfEntity].children,'id', data.fieldId);
 		var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.fieldId);
 		if(data.funct!= undefined && data.funct !=null && data.funct!="") {
-			$scope.query.fields[indexOfFieldInQuery].funct = data.funct.toUpperCase();
+			if(data.funct=="YTD"||
+					data.funct=="LAST_YEAR"||
+					data.funct=="PARALLEL_YEAR"||
+					data.funct=="MTD"||
+					data.funct=="LAST_MONTH") {
+				$scope.query.fields[indexOfFieldInQuery].temporalOperand = data.funct.toUpperCase();
+			} else {
+				$scope.query.fields[indexOfFieldInQuery].funct = data.funct.toUpperCase();
+			}
 		}
 		if(data.filters!= undefined && data.filters != null ) {
 			$scope.query.filters = data.filters;

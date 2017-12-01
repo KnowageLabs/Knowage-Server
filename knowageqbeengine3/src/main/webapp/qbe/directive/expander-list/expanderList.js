@@ -121,6 +121,9 @@ angular.module('qbe_expander_list', ['ngDraggable'])
 									if(!entity.children[i].children[j].hasOwnProperty('temporal')){
 										entity.children[i].children[j].temporal=true;
 									}
+									if(!entity.children[i].children[j].attributes.hasOwnProperty('longDescription')){
+										entity.children[i].children[j].attributes.longDescription=""+entity.children[i].text+" : "+ entity.children[i].children[j].text+"";
+									}
 								}
 							}
 						}

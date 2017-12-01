@@ -82,7 +82,6 @@
 	            {{translate.load("kn.qbe.general.field")}}
 	          </md-checkbox>
 	       		</md-menu-item>
-	       		
 	       		<md-menu-item ng-show="n.temporal">
          			<md-menu>		
 	         			<md-button ng-mouseenter="openMenu($mdOpenMenu, $event)">
@@ -93,14 +92,32 @@
 			      		<md-menu-content class="qbeMenuContent">
 				      
 					      	<md-menu-item>
-				          		<md-button ng-click="applyFuntion('none',n.id,n.entity)">
-				            		<span>{{translate.load("kn.qbe.custom.table.none")}}</span>
+				          		<md-button ng-click="applyFuntion('YTD',n.id,n.entity)">
+				            		<span>YTD</span>
 				            		</md-button>
 				       		</md-menu-item>
 				       		
 				       		<md-menu-item>
-				          		<md-button ng-click="applyFuntion('sum',n.id,n.entity)">
-				            		<span>{{translate.load("kn.qbe.custom.table.sum")}}</span>
+				          		<md-button ng-click="applyFuntion('LAST_YEAR',n.id,n.entity)">
+				            		<span>LAST_YEAR</span>
+				            		</md-button>
+				       		</md-menu-item>
+				       		
+				       		<md-menu-item>
+				          		<md-button ng-click="applyFuntion('PARALLEL_YEAR',n.id,n.entity)">
+				            		<span>PARALLEL_YEAR</span>
+				            		</md-button>
+				       		</md-menu-item>
+				       		
+				       		<md-menu-item>
+				          		<md-button ng-click="applyFuntion('MTD',n.id,n.entity)">
+				            		<span>MTD</span>
+				            		</md-button>
+				       		</md-menu-item>
+				       		
+				       		<md-menu-item>
+				          		<md-button ng-click="applyFuntion('LAST_MONTH',n.id,n.entity)">
+				            		<span>LAST_MONTH</span>
 				            		</md-button>
 				       		</md-menu-item>
 				

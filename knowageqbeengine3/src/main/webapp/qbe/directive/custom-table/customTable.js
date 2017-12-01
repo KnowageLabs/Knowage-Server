@@ -83,6 +83,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		$mdOpenMenu(ev);
 	};
 	$scope.aggFunctions = [ "NONE", "SUM", "MIN", "MAX", "AVG", "COUNT", "COUNT_DISTINCT" ];
+	$scope.tmpFunctions = ["YTD", "LAST_YEAR", "PARALLEL_YEAR", "MTD", "LAST_MONTH"];
 
 	$scope.moveRight = function(currentOrder, column) {
 
@@ -292,10 +293,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                        	},
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.custom.table.function.temporal"),
-	                            	"name":"functionT",
+	                            	"name":"temporalOperand",
 	                            	hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-select ng-show="row.temporal" ng-model=row.funct class="noMargin" ><md-option ng-repeat="col in scopeFunctions.aggregationFunctions" value="{{col}}">{{col}}</md-option></md-select>';
+	                            		return '<md-select ng-show="row.temporal" ng-model=row.temporalOperand class="noMargin" ><md-option ng-repeat="col in scopeFunctions.temporalFunctions" value="{{col}}">{{col}}</md-option></md-select>';
 	                            	}
 	                        	},
 	                        	{
@@ -342,6 +343,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 	$scope.basicViewScopeFunctions = {
 		aggregationFunctions: $scope.aggFunctions,
+		temporalFunctions: $scope.tmpFunctions,
 		deleteField : function (row) {
 			$scope.removeColumn(row);
 		},
