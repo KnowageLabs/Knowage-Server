@@ -1,5 +1,28 @@
 package it.eng.spagobi.engines.qbe.api;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.jgrapht.Graph;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
@@ -42,39 +65,15 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.jgrapht.Graph;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
 @Path("/qbequery")
 @ManageAuthorization
 public class QbeQueryResource extends AbstractQbeEngineResource {
-	
+
 	public static transient Logger logger = Logger.getLogger(QbeQueryResource.class);
 	public static transient Logger auditlogger = Logger.getLogger("audit.query");
 	protected boolean handleTimeFilter = true;
@@ -155,6 +154,10 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 			IModelAccessModality accessModality = getEngineInstance().getDataSource().getModelAccessModality();
 
+			if (handleTimeFilter) {
+				new TimeAggregationHandler(getEngineInstance().getDataSource()).handleTimeFilters(query);
+			}
+
 			Query filteredQuery = accessModality.getFilteredStatement(query, this.getEngineInstance().getDataSource(), userProfile.getUserAttributes());
 			Map<IModelField, Set<IQueryField>> modelFieldsMap = filteredQuery.getQueryFields(getEngineInstance().getDataSource());
 			Set<IModelField> modelFields = modelFieldsMap.keySet();
@@ -177,7 +180,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			}
 			dataStore = executeQuery(start, limit, filteredQuery);
 			if (thereAreInlineTemporalFilters) {
-				dataStore = new TimeAggregationHandler(null).handleTimeAggregations(filteredQuery, dataStore);
+				dataStore = new TimeAggregationHandler(getEngineInstance().getDataSource()).handleTimeAggregations(filteredQuery, dataStore);
 			}
 			resultNumber = (Integer) dataStore.getMetaData().getProperty("resultNumber");
 
@@ -437,7 +440,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 					}
 				}
 			} catch (SerializationException e) {
-				throw new SpagoBIEngineServiceException(this.request.getPathInfo(), e.getMessage(),e);
+				throw new SpagoBIEngineServiceException(this.request.getPathInfo(), e.getMessage(), e);
 			}
 			String label = jsonEncodedRequest.getString("label");
 			String schedulingCronLine = jsonEncodedRequest.getString("schedulingCronLine");
