@@ -56,6 +56,7 @@ function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, s
 		if(item.leftOperandValue==$scope.field.id) return item
 	}
 
+	$scope.targetTypes = filters_service.getTargetTypes;
 	$scope.params=false;
 	$scope.targetAF = {};
 	var checkForIndex = function(){
@@ -178,6 +179,7 @@ function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, s
 				"rightOperandDescription": "",
 				"rightOperandLongDescription": "",
 				"rightOperandType": "",
+				"rightType" : "",
 				"rightOperandDefaultValue": [""],
 				"rightOperandLastValue": [""],
 				"rightOperandAlias": null,
@@ -264,28 +266,29 @@ function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, s
 	$scope.changeTarget = function (option, filter){
 		switch (option) {
 		case "valueOfField":
-			$scope.targetOption = option;
+			filter.rightOperandType="Static Content";
 			$scope.filter = filter;
 			$scope.value= [];
 			$scope.disableCombo = true;
 			openTableWithValues();
 			break;
 		case "anotherEntity":
-			$scope.targetOption = option;
+			filter.rightOperandType="Field Content";
 			$scope.disableCombo = false;
 			$scope.showTable = false;
 			break;
 		case "subquery":
-			$scope.targetOption = option;
+			filter.rightOperandType="Subquery";
 			$scope.disableCombo = false;
 			$scope.showTable = false;
 			break;
 		case "parameter":
-			$scope.targetOption = option;
+			filter.rightOperandType="Static Content";
 			$scope.disableCombo = false;
 			$scope.showTable = false;
 			break;
 		default:
+			filter.rightOperandType="Static Content";
 			break;
 		}
 	}

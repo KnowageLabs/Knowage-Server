@@ -21,6 +21,15 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 
 		return response;
 	};
+	
+	this.getTargetTypes = [
+		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.manual"),value:""},
+		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.field"),value:"valueOfField"},
+		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.anotherentity"),value:"anotherEntity"},
+		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.param"),value:"parameter"},
+		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.subquery"),value:"subquery"},
+	];
+	
 	this.getOperators = [
 		         {name:sbiModule_translate.load("kn.qbe.filters.operators.equals.to"),value:"EQUALS TO"},
 		         {name:sbiModule_translate.load("kn.qbe.filters.operators.not.equals.to"),value:"NOT EQUALS TO"},
