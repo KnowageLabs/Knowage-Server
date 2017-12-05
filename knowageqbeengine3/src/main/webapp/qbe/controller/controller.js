@@ -22,7 +22,6 @@ angular
 		["$scope","$rootScope","entity_service","query_service","filters_service","save_service","sbiModule_inputParams","sbiModule_translate","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging","$mdDialog", "$mdPanel","$q",qbeFunction]);
 
 
-
 function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_restServices,sbiModule_messaging, $mdDialog ,$mdPanel,$q){
 	$scope.translate = sbiModule_translate;
 	var entityService = entity_service;
@@ -43,7 +42,6 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 					"name":newValue.fields[i].field,
 					"fieldType":newValue.fields[i].fieldType,
 					"type":""
-
 			}
 			$scope.meta.push(meta);
 		}
@@ -289,14 +287,17 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     };
 
     $scope.entitiesFunctions = [{
+        "label": "show information",
+        "icon": "fa fa-info",
+        "action": function(item, event) {
+        	$scope.showInfo(item, event);
+        }
+    	},{
         "label": "add calculated field",
         "icon": "fa fa-calculator",
         "action": function(item, event) {
-            $scope.ammacool(item, event);
         }
     }];
-
-
 
     $scope.queryFunctions = [{
         "label": "start subquery",
@@ -313,11 +314,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         	  $scope.subqueriesModel.subqueries.splice(index, 1);
         	  $scope.stopEditingSubqueries();
         }
-    }
-
-    ];
-
-
+    }];
 
     $scope.fieldsFunctions = [{
         "label": "ranges",
@@ -339,7 +336,6 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 
     $scope.editQueryObj = $scope.query;
     $scope.subqueriesModel.subqueries = $scope.query.subqueries;
-
 
     $scope.bodySend = {
     		"catalogue":$scope.catalogue,
@@ -369,8 +365,6 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 				fullscreen :true,
 				controller: function($scope,mdPanelRef){
 					$scope.model ={ "pars": pars,"mdPanelRef":mdPanelRef};
-
-
 				},
 				locals: {pars: pars},
 				hasBackdrop: true,
@@ -407,7 +401,6 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		$mdPanel.open(config);
 		return finishEdit.promise;
 	}
-
 
 	$scope.openFilters = function(field, tree, pars, queryFilters, subqueries, expression, advancedFilters) {
 		if(field.hasOwnProperty('attributes')){
@@ -473,4 +466,42 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     if(parent.globalQbeJson){
     	$scope.editQueryObj = parent.globalQbeJson.catalogue.queries[0];
     }
+
+    $scope.relationsListColumns = [
+    	{"label": $scope.translate.load("kn.qbe.dialog.table.column.relation.name"), "name": "relationName"},
+    	{"label": $scope.translate.load("kn.qbe.dialog.table.column.source.fields"), "name": "sourceFields"},
+    	{"label": $scope.translate.load("kn.qbe.dialog.table.column.target.entity"), "name": "targetEntity"},
+    	{"label": $scope.translate.load("kn.qbe.dialog.table.column.target.fields"), "name": "targetFields"}
+    ]
+
+    $scope.showInfo = function(item, ev) {
+
+        $scope.entityItem = item;
+
+        if($scope.entityItem.relation.length > 0) {
+	    	$mdDialog.show({
+	            controller: function ($scope, $mdDialog) {
+
+	                $scope.ok= function(){
+	                	console.log($scope)
+	                    $mdDialog.hide();
+	                }
+	            },
+	            scope: $scope,
+	            preserveScope:true,
+	            templateUrl:  sbiModule_config.contextName +'/qbe/templates/relations.html',
+
+	            clickOutsideToClose:true
+	        })
+        } else {
+        	$mdDialog.show(
+        		$mdDialog.alert()
+        		     .clickOutsideToClose(true)
+        		     .title($scope.entityItem.text)
+        		     .textContent($scope.translate.load("kn.qbe.alert.norelations"))
+        		     .ok($scope.translate.load("kn.qbe.general.ok"))
+            );
+        }
+    };
+
 }

@@ -13,9 +13,11 @@
                 <span>{{entity.text}}</span>
                  <span>{{entity.name}}</span>
                 <span flex></span>
+                
                 <md-button class="md-icon-button" ng-repeat="entAction in entitiesActions" ng-click="$event.stopPropagation();entAction.action(entity,$event)">
                     <md-icon md-font-icon="{{entAction.icon}}"></md-icon>
                 </md-button>
+                
                 <i class="fa" ng-class="{'fa-chevron-up':entity.expanded, 'fa-chevron-down':!entity.expanded}"></i>
             </h4>
             <ul ng-show="entity.expanded">
@@ -45,10 +47,8 @@
 		                    </md-button>
 	            		</li>
 	            	   </ul>
-	          
 	            	</div>
-            	</div>
-            	
+            	</div>            	
             		
                 <li ng-repeat="field in entity[childrenName]" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)" layout="row"" ng-if="field.leaf">
                     <i ng-class="[fontIcons, field.iconCls]"></i>
@@ -64,4 +64,5 @@
             </ul>
         </div>
     </div>
+    
 </div>
