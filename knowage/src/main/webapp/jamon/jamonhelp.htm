@@ -10,7 +10,17 @@
 
 <h2>JAMonAdmin Help</h2>
 
-<h3>1) JAMon Action</h3> 
+<h3>1) Instances</h3>
+<ul>
+    <li>'local' is the server that you are viewing JAMon data from.</li>
+    <li>'local-saved' is a saved version of the 'local' JAMon data.  This is configurable via jamonapi.properties file
+        and defaults to every 5 minutes.  </li>
+    <li>A list of any distributed servers you are monitoring.
+</ul>
+
+<h3>2) Cache Results</h3> Allows you to cache the JAMon results so they don't change while you are looking at them.
+
+<h3>3) JAMon Action</h3>
 
 <ul>
 <li>Refresh - Use current form settings to retrieve JAMon data
@@ -18,9 +28,11 @@
 <li>Enable - Enable JAMon.  If already enabled this has no effect.  It will not enable any individual monitors that have been
  disabled.  
 <li>Disable - Disable JAMon.  Monitors will be disabled, but not reset. If monitors are already disabled this has no effect.
+<li>Enable Activity Tracking - This allows you to see how performance correlates to the number the number of things you are monitoring which is a measure of scalability.
+<li>Disable Activity Tracking - Activity stats will be disabled.
 </ul>
 
-<h3>2) MonProxy Action - Enabling/disabling various SQL/Interface monitoring</h3> 
+<h3>4) MonProxy Action - Enabling/disabling various SQL/Interface monitoring</h3>
 
 <ul>
 <li>No Action (currently=TTTT) - No Action indicates that the page request will not enable/disable what is being monitored.  The four letters
@@ -36,13 +48,14 @@ Lines in the JAMon report with labels starting with 'MonProxy-Interface',are aff
 <li>Disable/Enable ResultSet - If ResultSet monitoring is currently set to 'Enable' then this choice will be 'Disable' and vice versa. In addition
 Interface monitoring must be turned on.  ResultSet monitoring can generate lots of data so although this is simply a special case of Interface monitoring
 it can be separately enabled/disabled.  Lines in the JAMon report with labels starting with 'MonProxy-Interface',are affected by this choice. 
-</ul>
+</ul
 
-<h3>3) Output</h3>
+<h3>5) Output</h3>
+
 <blockquote>Determines the output format for the JAMon monitors.  Options for output are HTML, XML, and an MS Excel spreadsheet. 
 HTML is the default.</blockquote>
 
-<h3>4) Range/Units</h3>
+<h3>6) Range/Units</h3>
 <blockquote>Display JAMon monitors that share the same range name such as 'ms.' (typically this will be units).  All columns
  for differing unit types can not be displayed in a tabular report, due to the fact that different units will often have a different number
  of columns (i.e. ranges) in the report.  For example say we have 2 types of units we track in our application:  'ms.' and '$'.  
@@ -59,7 +72,7 @@ HTML is the default.</blockquote>
  When a 'Range Name' is selected all 3 choices available for the 'Display Cols' field are valid.</li>
  </ul></blockquote>
 
-<h3>5) Display Cols</h3>
+<h3>7) Display Cols</h3>
 <blockquote>Determines which columns should be displayed in the report.  This field determines which COLUMNS are displayed and 'Ranges/Units' 
 and 'Filter' determine what ROWS are displayed.  Options follow:
 <ul>
@@ -73,7 +86,7 @@ handy when you want to view more details.
 </ul>
 
 </blockquote>
-<h3>5) Cell Formatting</h3>
+<h3>8) Cell Formatting</h3>
 <blockquote>Indicates how numeric data should be displayed.  Depending on what you are measuring you may want to have decimals appear or
 not. Cell Formatting allows you to toggle between precision when viewing the monitors.  The underlying data is not affected - just the view.
 Note the com.fdsapi.arrays.ArrayConverter class was used to format the data.  You can also pass any String that is accepted to
@@ -89,7 +102,7 @@ DecimalFormat.applyPattern(...)
 </blockquote>
 
 
-<h3>6) Filter (optional)</h3>
+<h3>9) Filter (optional)</h3>
 <blockquote>Filter leverages the com.fdsapi.ArraySQL class to query the JAMon data with a SQL like syntax.  
 <ul>
 <li>If you specify any string within the filter (something like:  com), the string will be used in a Regular Expression to
@@ -108,17 +121,17 @@ your query. Examples follow:
 </ul>
 </blockquote>
 
-<h3>7) Highlight (optional)</h3>
+<h3>10) Highlight (optional)</h3>
 <blockquote>Any text that is entered here and appears in the label column will be hightlighted
 </blockquote>
 
-<h3>8) Text Display Length (optional)</h3>
+<h3>11) Text Display Length (optional)</h3>
 <blockquote>In some cases labels (SQL statements) can become quite large and make the report difficult to read.  By entering an integer in this field
 the display of the label column will be truncated to the specified length.  Note this only affects the display and the actual data in the report is not altered.  
 </blockquote>
 
 
-<h3>9) Links</h3>
+<h3>12) Links</h3>
 <blockquote>Links to various classes from FormattedDataSet API that were used in creating this page.
 <ul>
 <li><a href="http://fdsapi.sourceforge.net/javadocs/com/fdsapi/FormattedDataSet.html" target="_blank">FormattedDataSet</a> - Used to generate

@@ -1,5 +1,7 @@
 <%@ page language="java" buffer="8kb" autoFlush="true" isThreadSafe="true" isErrorPage="false"  %>
-<%@ page import="java.util.*, java.util.regex.*, java.text.*, com.jamonapi.*, com.jamonapi.proxy.*, com.jamonapi.utils.*, com.fdsapi.*, com.fdsapi.arrays.*" %>
+<%@ page import="com.fdsapi.*, com.fdsapi.arrays.*, net.sf.xsshtmlfilter.HTMLFilter, java.text.DateFormat, java.text.DecimalFormat, java.util.Date, java.util.HashMap, java.util.Map, java.util.regex.Matcher" %>
+<%@ page import="java.util.regex.Pattern" %>
+<%@ page import="com.jamonapi.*, com.jamonapi.proxy.*, com.jamonapi.utils.*, com.jamonapi.distributed.*" %>
 
 <%
 
@@ -86,7 +88,7 @@ if ("html".equalsIgnoreCase(outputType)) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<META http-equiv="Content-Type" content="text/html"; charset=UTF-8">
+<META http-equiv="Content-Type" content="text/html"; charset=ISO-8859-1">
 <link rel="stylesheet" type="text/css" href="css/JAMonStyles.css">
 <title>JAMon - Exception Detail (<%=MonProxyFactory.getExceptionBufferSize()%> rows are <%=enabled(MonProxyFactory.isExceptionDetailEnabled())%>) - <%=now()%></title>
 <script type="text/javascript">
@@ -248,7 +250,8 @@ private String now() {
 
 // if the value is null then return the passed in default else return the value
 private static String getValue(String value, String defaultValue) {
-  return (value==null || "".equals(value.trim())) ? defaultValue: value;
+    HTMLFilter  vFilter = new HTMLFilter();
+    return (value==null || "".equals(value.trim())) ? defaultValue: vFilter.filter(value);
 }
 
 // convert arg to an int or return the default

@@ -1,5 +1,6 @@
 <%@ page language="java" buffer="8kb" autoFlush="true" isThreadSafe="true" isErrorPage="false"  %>
-<%@ page import="java.util.*, java.util.regex.*, java.text.*, com.jamonapi.*, com.jamonapi.proxy.*, com.jamonapi.utils.*, com.fdsapi.*, com.fdsapi.arrays.*" %>
+<%@ page import="com.fdsapi.*, com.fdsapi.arrays.*, net.sf.xsshtmlfilter.HTMLFilter, java.util.Date" %>
+<%@ page import="com.jamonapi.*, com.jamonapi.proxy.*, com.jamonapi.utils.*, com.jamonapi.distributed.*" %>
 
 <%
 
@@ -7,42 +8,48 @@ FormattedDataSet fds=new FormattedDataSet();
 
 // Assign request parameters to local variables.
 String action    = getValue(request.getParameter("monitormgmt"),"");
+MonitorComposite mc = (MonitorComposite) session.getAttribute("monitorComposite");
 MonKey key=null;
 
 int keyNum=0;
+// monKey is the previous key that the user picked in session.  i.e. they didn't come by clicking on jamonadmin.jsp
 if (request.getParameter("key")==null  && session.getAttribute("monKey")!=null) {
 //  keyNum=Integer.parseInt((String)session.getAttribute("keyNum"));
   key=(MonKey) session.getAttribute("monKey");
 } else if (request.getParameter("key")!=null) {
   keyNum=getNum(request.getParameter("key"), "1")-1;
-  key=getMonKey((MonitorComposite) session.getAttribute("monitorComposite"), keyNum);
+  key=getMonKey(mc, keyNum);
   session.setAttribute("monKey", key);
-} 
+  session.setAttribute("keyNum", keyNum);
+}
+
 
 String listenerType = "value";
 if (request.getParameter("listenertype")==null  && session.getAttribute("listenerType")!=null)
   listenerType=(String)session.getAttribute("listenerType");
 else if (request.getParameter("listenertype")!=null) {
   listenerType=(String)request.getParameter("listenertype");
-} 
-  
- 
+}
 
-//session.setAttribute("keyNum",new Integer(keyNum).toString());
-//session.setAttribute("monKey", key);
 session.setAttribute("listenerType", listenerType);
-
-executeAction(action, key);
-addListeners(request, key);
-removeListeners(request, key);
+// note can't work on key if there is more than
+if (mc.isLocalInstance()) {
+    executeAction(action, key);
+    addListeners(request, key);
+    removeListeners(request, key);
+}
 
 Monitor mon=null;
 boolean hasListeners=false;
 boolean enabled=false;
-if (MonitorFactory.exists(key)) {
-  mon=MonitorFactory.getMonitor(key);
+if (mc.isLocalInstance() && mc.exists(key)) {
+  mon=mc.getMonitor(key);
   hasListeners=mon.hasListeners();
   enabled=mon.isEnabled();
+} else  {
+    mon=mc.getMonitors()[keyNum];
+    hasListeners=mon.hasListeners();
+    enabled=mon.isEnabled();
 }
 
 %>
@@ -50,7 +57,7 @@ if (MonitorFactory.exists(key)) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<META http-equiv="Content-Type" content="text/html"; charset=UTF-8">
+<META http-equiv="Content-Type" content="text/html"; charset=ISO-8859-1">
 <link rel="stylesheet" type="text/css" href="css/JAMonStyles.css">
 <title>Manage Monitor - <%=key%> - <%=now()%></title>
 <script type="text/javascript">
@@ -88,8 +95,6 @@ function helpWin() {
 <body>
 
 <div align="center">
-
-
 
 <table bgcolor='#DCE2E8'>
 <th>
@@ -141,10 +146,18 @@ Available:<br>
     <input type="submit" name="removelistener" title="Remove Listener" value="<---" onClick="this.form.action='monmanage.jsp'; this.form.submit();">
 </th>
 
+<%
+    String currentListenersHtml = "";
+    if (mc.isLocalInstance()) {
+        currentListenersHtml = fds.getMultiSelectListBox(getCurrentListeners(mc, key, listenerType) , new String[]{""}, 5);
+    } else {
+        currentListenersHtml = fds.getMultiSelectListBox(getCurrentListeners(mon, listenerType) , new String[]{""}, 5);
+    }
 
+%>
 <th>
 Current:<br>
-    <%=fds.getMultiSelectListBox(getCurrentListeners(key, listenerType) , new String[]{""}, 5)%>
+    <%=currentListenersHtml%>
 <br>
 
 <input type="submit" name="displaylistener" title="Display Listener" value="Display" onClick="this.form.action='mondetail.jsp'; this.form.submit();" >
@@ -183,6 +196,15 @@ Current:<br>
 <br>
 <div align="left">
 Monitor: <%=mon%>
+</div>
+<br>
+<div align="center">
+    Data Refreshed for '<%= mc.getInstanceName() %>' on: <%= mc.getDateCreated() %>
+    <br>
+    JAMon configuration properties: <%= JamonDataPersisterFactory.getJamonProperties() %>
+    <br>
+    JamonDataPersister being used: <%= JamonDataPersisterFactory.get().getClass().getCanonicalName()  %>
+</div>
 <br>
 
 <br><br>
@@ -216,20 +238,19 @@ private String checked(String compareType, String listenerType) {
 }
 
 private MonKey getMonKey(MonitorComposite mc, int keyNum) {
-   if (mc==null)
-     return null;
+   if (mc==null) {
+       return null;
+   }
 
    Monitor[] monitors=mc.getMonitors();
-
-   if (monitors==null || monitors[keyNum]==null)
-     return null;
+   if (monitors==null || monitors[keyNum]==null) {
+       return null;
+   }
 
    return monitors[keyNum].getMonKey();
-
-   
 }
 
-private void addListeners(HttpServletRequest request, MonKey key) {
+private void addListeners(HttpServletRequest request,  MonKey key) {
   String addListener=request.getParameter("addlistener");
   String listenerType=request.getParameter("listenertype");
   if (addListener!=null && listenerType!=null) {
@@ -240,12 +261,12 @@ private void addListeners(HttpServletRequest request, MonKey key) {
    if (MonitorFactory.exists(key)) {
      Monitor mon=MonitorFactory.getMonitor(key);
      for (int i=0;i<rows;i++) {
-
-     if (!mon.getListenerType(listenerType).hasListener(add[i])) {
+         
+      if (!mon.hasListener(listenerType,add[i])) {
          JAMonListener listener=JAMonListenerFactory.get(add[i]);
-         mon.getListenerType(listenerType).addListener(listener);
+         mon.addListener(listenerType,listener);
+      }
 
-        }
      }
 
    }
@@ -263,10 +284,12 @@ private void removeListeners(HttpServletRequest request, MonKey key) {
 
    if (MonitorFactory.exists(key)) {
      Monitor mon=MonitorFactory.getMonitor(key);
+     
      for (int i=0;i<rows;i++) {
-        if (mon.getListenerType(listenerType).hasListener(remove[i])) {
-          mon.getListenerType(listenerType).removeListener(remove[i]);
-        }
+        if (mon.hasListener(listenerType, remove[i])) {
+           mon.removeListener(listenerType,remove[i]);
+     }
+
      }
 
    }
@@ -280,14 +303,21 @@ private ResultSetConverter getAvailableListeners() {
  
 }
 
-private ResultSetConverter getCurrentListeners(MonKey key, String listenerType) {
-
-   if (MonitorFactory.exists(key)  && MonitorFactory.getMonitor(key).getListenerType(listenerType).hasListeners()) {
-     return getCurrentListeners(MonitorFactory.getMonitor(key).getListenerType(listenerType).getListener());
+private ResultSetConverter getCurrentListeners(MonitorComposite mc, MonKey key, String listenerType) {
+   if (mc.exists(key)  && mc.getMonitor(key).hasListeners(listenerType)) {
+      return getCurrentListeners(mc.getMonitor(key).getListenerType(listenerType).getListener());
    }
    
    return new ResultSetConverter(new String[]{"none"}, new Object[][]{{"No Listeners"}}).execute("select col0 as currentlistener,col0 as currentlistenerdisp from array order by col0 asc");
  
+}
+
+private ResultSetConverter getCurrentListeners( Monitor mon, String listenerType) {
+   if (mon.hasListeners(listenerType)) {
+            return getCurrentListeners(mon.getListenerType(listenerType).getListener());
+   }
+
+   return new ResultSetConverter(new String[]{"none"}, new Object[][]{{"No Listeners"}}).execute("select col0 as currentlistener,col0 as currentlistenerdisp from array order by col0 asc");
 }
 
 private ResultSetConverter getCurrentListeners(JAMonListener listener) {
@@ -312,11 +342,12 @@ private String now() {
 
 // if the value is null then return the passed in default else return the value
 private static String getValue(String value, String defaultValue) {
-  return (value==null || "".equals(value.trim())) ? defaultValue: value;
+    HTMLFilter  vFilter = new HTMLFilter();
+    return (value==null || "".equals(value.trim())) ? defaultValue: vFilter.filter(value);
 }
 
 
-// convert arg to an int or return the default
+// convert arg to an int or return the default
 private static int getNum(String value, String defaultValue) {
 
   String retValue=getValue(value, defaultValue);
@@ -328,9 +359,9 @@ private static int getNum(String value, String defaultValue) {
   }
 
   if (!isDigit)
-    retValue=defaultValue;
-
-  return Integer.parseInt(retValue);
+    retValue=defaultValue;
+
+  return Integer.parseInt(retValue);
 }
 
 

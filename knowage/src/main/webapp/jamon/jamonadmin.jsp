@@ -1,5 +1,7 @@
 <%@ page language="java" buffer="8kb" autoFlush="true" isThreadSafe="true" isErrorPage="false"  %>
-<%@ page import="java.util.*, java.util.regex.*, java.text.*, com.jamonapi.*, com.jamonapi.proxy.*, com.jamonapi.utils.*, com.fdsapi.*, com.fdsapi.arrays.*" %>
+<%@ page import="com.fdsapi.*, com.fdsapi.arrays.*, net.sf.xsshtmlfilter.HTMLFilter, java.text.DateFormat, java.text.DecimalFormat, java.util.*,  java.util.regex.Matcher" %>
+<%@ page import="java.util.regex.Pattern" %>
+<%@ page import="com.jamonapi.*, com.jamonapi.proxy.*, com.jamonapi.utils.*, com.jamonapi.distributed.*" %>
 
 <%
 
@@ -10,9 +12,11 @@ FormattedDataSet fds=new FormattedDataSet();
 LocaleContext.setLocale(request.getLocale());
 
 // Assign request parameters to local variables.
+List<String> instanceName    = getParatemersAsList(request.getParameterValues("instanceName"),"local");
+
 String action    = getValue(request.getParameter("action"),"Refresh");
 String monProxyAction = getValue(request.getParameter("monProxyAction"),"No Action");
-
+String cache    = getValue(request.getParameter("cache"),"false");
 String outputType= getValue(request.getParameter("outputTypeValue"),"html");
 String formatter = getValue(request.getParameter("formatterValue"), "#,###");
 String arraySQL  = getValue(request.getParameter("ArraySQL"),"");
@@ -38,24 +42,61 @@ if (arraySQLExec.trim().toLowerCase().startsWith("select"))
 else if (arraySQLExec.trim().toLowerCase().startsWith("where")) 
    arraySQLExec="select * from array "+arraySQL;// where clause entered:  where hits>100 and total<50000
 else
-   arraySQLExec="select * from array where col1 like '"+arraySQL+"'";
+   arraySQLExec="select * from array where label like '"+arraySQL+"'";
 
-arraySQLExec = (arraySQLExec.trim().toLowerCase().startsWith("select")) ? arraySQLExec : "select * from array where col1 like '"+arraySQL+"'";
+arraySQLExec = (arraySQLExec.trim().toLowerCase().startsWith("select")) ? arraySQLExec : "select * from array where label like '"+arraySQL+"'";
 
 // Build the request parameter query string that will be part of every clickable column.
 String query="";
+
+query+=toRequestFormat("instanceName", request.getParameterValues("instanceName"));
 query+="&displayTypeValue="+displayType;
 query+="&RangeName="+rangeName;
 query+="&outputTypeValue="+outputType;
 query+="&formatterValue="+java.net.URLEncoder.encode(formatter);
 query+="&ArraySQL="+java.net.URLEncoder.encode(arraySQL);
 query+="&TextSize="+textSize;
-query+="&highlight="+highlightString;   
+query+="&highlight="+highlightString;
+query+="&cache="+cache;
 
 
-executeAction(action);
-enableMonProxy(monProxyAction);
+String outputText;
 
+if (isLocal(instanceName)) {
+  executeAction(action);
+  enableMonProxy(monProxyAction);
+}
+
+JamonDataPersister jamonDataPersister = JamonDataPersisterFactory.get();
+
+if ("Reset".equals(action)) {
+  new MonitorCompositeCombiner(jamonDataPersister).remove(instanceName.toArray(new String[0]));
+  instanceName = getParatemersAsList(null, "local");
+}
+
+MonitorComposite mc = (MonitorComposite) session.getAttribute("monitorComposite");
+Object[][] instanceNamesSelectBoxData = (Object[][]) session.getAttribute("instanceNamesSelectBoxData");
+List<String> prevInstanceName = (List<String>) session.getAttribute("prevInstanceName");
+
+// the way html works is if cache is false it is not passed in hence the not true check on cache.
+if (mc==null || !"true".equalsIgnoreCase(cache) || prevInstanceName==null || !prevInstanceName.equals(instanceName) ) {
+    mc = new MonitorCompositeCombiner(jamonDataPersister).get(instanceName.toArray(new String[0]));
+    prevInstanceName = instanceName;
+    session.setAttribute("prevInstanceName", prevInstanceName);
+    instanceNamesSelectBoxData = getInstanceData(jamonDataPersister.getInstances());
+    session.setAttribute("instanceNamesSelectBoxData", instanceNamesSelectBoxData);
+}
+
+    // If the request contains local data and it is cached we make a copy so we don't see live new jamon data each time
+    // screen is refreshed.  Not having local cache should let the user view and manage the live jamon monitors.  No
+    // other instance name allows for realtime and management of the monitors.
+if (instanceName.contains("local") && "true".equalsIgnoreCase(cache)) {
+    mc = mc.copy();
+}
+
+Date refreshDate = mc.getDateCreated();
+mc = mc.filterByUnits(rangeName);
+session.setAttribute("monitorComposite",mc);
 
 Map map=new HashMap();
 // used for html page
@@ -68,12 +109,7 @@ map.put("imagesDir","images/");
 map.put("rootElement", "JAMonXML");
 
 
-String outputText;
-MonitorComposite mc=MonitorFactory.getComposite(rangeName);
-session.setAttribute("monitorComposite",mc);
-
-
-if (!MonitorFactory.isEnabled())
+if (!MonitorFactory.isEnabled() && mc.isLocalInstance())
   outputText="<div align='center'><br><br><b>JAMon is currently disabled.  To enable monitoring you must select 'Enable'</b></div>";
 else if (!mc.hasData())
   outputText="<div align='center'><br><br><b>No data was returned</b></div>";
@@ -121,7 +157,7 @@ if ("html".equalsIgnoreCase(outputType)) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<META http-equiv="Content-Type" content="text/html"; charset=UTF-8">
+<META http-equiv="Content-Type" content="text/html"; charset=ISO-8859-1">
 <link rel="stylesheet" type="text/css" href="css/JAMonStyles.css">
 <title>JAMon - Administration/Reporting - <%=now()%></title>
 <script type="text/javascript">
@@ -157,7 +193,6 @@ function helpWin() {
 
 </head>
 <body>
-
 <!-- arraySQLExec=<%=arraySQLExec%>-->
 
 <form action="jamonadmin.jsp" method="post">
@@ -169,6 +204,9 @@ function helpWin() {
 <tr>
 <td><table class="layoutmain" border="0" cellpadding="4" cellspacing="0" width="750" align="left">
     <tr class="sectHead">
+    <th>Submit</th>
+    <th>Instances</th>
+    <th>Cache Results</th>
     <th>JAMon Action</th>
     <th>Mon Proxy Action</th>
     <th>Output</th>
@@ -181,6 +219,9 @@ function helpWin() {
     <th align="right"><a href="javascript:helpWin();" style="color:#C5D4E4;">Help</a></th>
     </tr>
     <tr class="even">
+    <td><input type="submit" name="actionSbmt" value="Go !" ></td>
+    <th><%=fds.getMultiSelectListBox(instanceNameHeader, instanceNamesSelectBoxData, instanceName.toArray(new String[0]), 4)%></th>
+    <th><input type="checkbox" name="cache" value="true" <%="true".equalsIgnoreCase(cache) ? "checked" : ""%>></th>
     <th><%=fds.getDropDownListBox(actionHeader, actionBody, "")%></th>
     <th><%=fds.getDropDownListBox(monProxyHeader, getMonProxyBody() , "")%></th>
     <th><%=fds.getDropDownListBox(outputTypeHeader, outputTypeBody, outputType)%></th>
@@ -189,8 +230,8 @@ function helpWin() {
     <th><%=fds.getDropDownListBox(formatHeader, formatBody, formatter)%></th>
     <th><input type='text' name='ArraySQL' value="<%=arraySQL%>" size="45"></th>
     <th><input type='text' name='highlight' value="<%=highlightString%>" size="20"></th>     
-    <th><input type='text' name='TextSize' value="<%=(textSize<=0) ? "" : ""+textSize%>" size="15"></th>
-    <td><input type="submit" name="actionSbmt" value="Go !" ></td>
+    <th><input type='text' name='TextSize' value="<%=(textSize<=0) ? "" : ""+textSize%>" size="10"></th>
+    <th></th>
     </tr>
 </table></td>
 </tr>
@@ -204,6 +245,16 @@ function helpWin() {
 </table>
 
 </form>
+
+
+<br>
+<div align="center">
+    Data Refreshed for '<%= mc.getInstanceName() %>' on: <%= refreshDate %>
+    <br>
+    JAMon configuration properties: <%= JamonDataPersisterFactory.getJamonProperties() %>
+    <br>
+    JamonDataPersister being used: <%= JamonDataPersisterFactory.get().getClass().getCanonicalName()  %>
+</div>
 
 
 
@@ -261,12 +312,26 @@ function helpWin() {
 
 <%!
 
+String[] instanceNameHeader={"instanceName","instanceNameDisplay"};
+private static Object[][] getInstanceData(Set instances) {
+    Object[][] data=new Object[instances.size()][];
+    Object[] instanceArray = instances.toArray();
+    for (int i=0; i<instanceArray.length; i++) {
+        data[i] = new Object[2];
+        data[i][0] = instanceArray[i];
+        data[i][1] = instanceArray[i];
+    }
+    return data;
+}
+
 String[] actionHeader={"action","actionDisplay"};
 Object[][] actionBody={
                  {"Refresh", "Refresh"}, 
                  {"Reset", "Reset"}, 
-	         {"Enable","Enable"}, 
-	         {"Disable","Disable"}, 
+	             {"Enable","Enable"}, 
+	             {"Disable","Disable"}, 
+	             {"Enable Activity Tracking","Enable Activity Tracking"},
+                 {"Disable Activity Tracking","Disable Activity Tracking"},
                 };
 
 String[] monProxyHeader={"monProxyAction","monProxyActionDisplay"};
@@ -278,15 +343,16 @@ private static Object[][] getMonProxyBody() {
       (MonProxyFactory.isInterfaceEnabled() ? "T" : "F")+
       (MonProxyFactory.isResultSetEnabled() ? "T" : "F")+")";
 
+
    String sql=enabledMessage(MonProxyFactory.isSQLSummaryEnabled())+"SQL";
    String exceptions=enabledMessage(MonProxyFactory.isExceptionSummaryEnabled())+"Exceptions";
    String interfaces=enabledMessage(MonProxyFactory.isInterfaceEnabled())+"Interfaces";
    String resultSet=enabledMessage(MonProxyFactory.isResultSetEnabled())+"ResultSet";
 
    return new Object[][] {
-                 {"No Action", enableInfo}, 
-                 {"Enable All", "Enable All"}, 
-                 {"Disable All", "Disable All"}, 
+             {"No Action", enableInfo},
+             {"Enable All", "Enable All"},
+             {"Disable All", "Disable All"},
 	         {sql,sql}, 
 	         {exceptions,exceptions}, 
 	         {interfaces,interfaces}, 
@@ -303,15 +369,15 @@ String[] displayTypeHeader={"displayTypeValue","displayType"};
 Object[][] displayTypeBody={
                  {"RangeColumns", "Basic/Range Cols"}, 
                  {"BasicColumns", "Basic Cols Only"}, 
-	           {"AllColumns","All Cols"}, 
+	             {"AllColumns","All Cols"}, 
                 };
 
 String[] outputTypeHeader={"outputTypeValue","outputType"};
 Object[][] outputTypeBody={
                  {"html", "HTML"}, 
                  {"xml", "XML"}, 
-                 {"csv", "Comma Separated"}, 
-	              {"excel","MS Excel"}, 
+                 {"csv", "CSV"},
+	             {"excel","MS Excel"}, 
                 };
 
 
@@ -355,7 +421,8 @@ private synchronized Template getJAMonTemplate(FormattedDataSet fds) {
 
 // if the value is null then return the passed in default else return the value
 private static String getValue(String value, String defaultValue) {
-  return (value==null || "".equals(value.trim())) ? defaultValue: value;
+  HTMLFilter  vFilter = new HTMLFilter();
+  return (value==null || "".equals(value.trim())) ? defaultValue: vFilter.filter(value);
 }
 
 // convert arg to an int or return the default
@@ -377,13 +444,14 @@ private static int getNum(String value, String defaultValue) {
 
 
 private static void executeAction(String action) {
- if ("Reset".equals(action))
-    MonitorFactory.reset();
- else if ("Enable".equals(action)) 
+ if ("Enable".equals(action))
     MonitorFactory.setEnabled(true);
  else if ("Disable".equals(action))  
     MonitorFactory.setEnabled(false);
-
+ else if ("Enable Activity Tracking".equals(action)) 
+     MonitorFactory.enableActivityTracking(true);
+ else if ("Disable Activity Tracking".equals(action))  
+     MonitorFactory.enableActivityTracking(false);
 }
 
 // Enable/Disable jamon summary stats for MonProxyFactory
@@ -498,6 +566,32 @@ private static Object[][] getRangeNames() {
 
 }
 
+    private static List<String> getParatemersAsList(String[] params, String defaultValue) {
+        if (params==null) {
+            List<String> list = new ArrayList<String>();
+            list.add(defaultValue);
+            return list;
+        }
+        return Arrays.asList(params);
+    }
+
+    private static String toRequestFormat(String paramName, String[] requestParamArray) {
+        if (requestParamArray==null) {
+            return "";
+        }
+
+        String paramString = "";
+        for (int i=0; i<requestParamArray.length; i++) {
+            paramString+= "&"+paramName+"=" + requestParamArray[i];
+        }
+
+        return paramString;
+
+    }
+
+    private static boolean isLocal(List list) {
+        return (list.size()==1 && list.contains("local"));
+    }
 
 public static class TruncateString extends ConverterBase {
     Pattern pattern;

@@ -1,11 +1,12 @@
 <%@ page language="java" buffer="8kb" autoFlush="true" isThreadSafe="true" isErrorPage="false"  %>
-<%@ page import="java.sql.*, javax.sql.*, java.util.*, java.text.*, javax.naming.*, com.jamonapi.*, com.jamonapi.utils.*, com.jamonapi.proxy.*, com.fdsapi.*, com.fdsapi.arrays.*, org.apache.log4j.PropertyConfigurator, org.apache.log4j.Logger" %>
+<%@ page import="com.fdsapi.*, com.fdsapi.arrays.*, org.apache.log4j.Logger, org.apache.log4j.PropertyConfigurator, java.util.Properties" %>
+<%@ page import="com.jamonapi.*, com.jamonapi.proxy.*, com.jamonapi.utils.*, com.jamonapi.distributed.*" %>
 
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
 <html>
 <head>
-<META http-equiv="Content-Type" content="text/html"; charset=UTF-8">
+<META http-equiv="Content-Type" content="text/html"; charset=ISO-8859-1">
 <link rel="stylesheet" type="text/css" href="css/JAMonStyles.css">
 <title>Test log4j JAMon Appender</title>
 <script type="text/javascript">

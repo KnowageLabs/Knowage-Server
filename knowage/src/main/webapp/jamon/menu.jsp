@@ -1,5 +1,6 @@
 <%@ page language="java" buffer="8kb" autoFlush="true" isThreadSafe="true" isErrorPage="false"  %> 
-<%@ page import="java.util.*, java.util.regex.*, java.text.*, com.jamonapi.*, com.jamonapi.proxy.*, com.jamonapi.utils.*, com.fdsapi.*, com.fdsapi.arrays.*" %>  
+<%@ page import="com.fdsapi.*, com.fdsapi.arrays.*" %>
+<%@ page import="com.jamonapi.*, com.jamonapi.proxy.*, com.jamonapi.utils.*, com.jamonapi.distributed.*" %>
 
 <%@page contentType="text/html"%>
 
@@ -56,7 +57,8 @@ if ("Enable Monitoring!".equals(enableAll)) {
 <%=enabled("SQL Summary = ",MonProxyFactory.isSQLSummaryEnabled())%>, 
 <%=enabled("Exception Summary = ",MonProxyFactory.isExceptionSummaryEnabled())%>, 
 <%=enabled("Interface = ",MonProxyFactory.isInterfaceEnabled())%>, 
-<%=enabled("ResultSet = ",MonProxyFactory.isResultSetEnabled())%> 
+<%=enabled("ResultSet = ",MonProxyFactory.isResultSetEnabled())%>,
+<%=enabled("Activity Tracking = ",MonitorFactory.isActivityTrackingEnabled())%> 
 
 )</td>
 
@@ -85,6 +87,7 @@ if ("Enable Monitoring!".equals(enableAll)) {
 <td><table border='0' align='center' width='25%'>
     <tr>
     <th nowrap>JAMon <%=MonitorFactory.getVersion()%></th>
+    <th nowrap><%=getTotalKeySize()%></th>
     </tr>
 </table></td>
 
@@ -94,6 +97,11 @@ if ("Enable Monitoring!".equals(enableAll)) {
 <%!
 private static String enabled(boolean isEnabled) {
    return isEnabled ? "enabled" : "disabled";
+}
+
+private static String getTotalKeySize() {
+    long totalKeySize=MonitorFactory.getTotalKeySize();
+    return  totalKeySize>0 ? "Total number of characters in Monitor keys: "+totalKeySize : "";
 }
 
 private static String enabled(String prefix, boolean isEnabled) {

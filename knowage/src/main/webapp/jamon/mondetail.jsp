@@ -1,14 +1,23 @@
 <%@ page language="java" buffer="8kb" autoFlush="true" isThreadSafe="true" isErrorPage="false"  %>
-<%@ page import="java.util.*, java.util.regex.*, java.text.*, com.jamonapi.*, com.jamonapi.proxy.*, com.jamonapi.utils.*, com.fdsapi.*, com.fdsapi.arrays.*" %>
+<%@ page import="com.fdsapi.*, com.fdsapi.arrays.*, net.sf.xsshtmlfilter.HTMLFilter, java.text.DateFormat, java.text.DecimalFormat, java.util.Date, java.util.HashMap, java.util.Map, java.util.regex.Matcher" %>
+<%@ page import="java.util.regex.Pattern" %>
+<%@ page import="com.jamonapi.*, com.jamonapi.proxy.*, com.jamonapi.utils.*, com.jamonapi.distributed.*" %>
 
 <%
 
 
 FormattedDataSet fds=new FormattedDataSet();
+MonitorComposite mc = (MonitorComposite) session.getAttribute("monitorComposite");
+    MonKey key=null;
+    Integer keyNum = null;
+    if (mc.isLocalInstance()) {
+        key = (MonKey) session.getAttribute("monKey");
+    } else {
+        keyNum = (Integer) session.getAttribute("keyNum");
+    }
 
-
-MonKey key=(MonKey)session.getAttribute("monKey");
 String listenerType = "value";
+
 if (request.getParameter("listenertype")==null  && session.getAttribute("listenerType")!=null)
   listenerType=(String)session.getAttribute("listenerType");
 else if (request.getParameter("listenertype")!=null) {
@@ -70,14 +79,19 @@ map.put("rootElement", "JAMonXML");
 String outputText="";
 
 
-if (key==null)
-  outputText="<div align='center'><br><br><b>A Monitor was not specified.  Select one from jamonadmin.jsp</b></div>";
-else {
+  if ( (key==null && mc.isLocalInstance()) || (keyNum==null && !mc.isLocalInstance()) ) {
+    outputText="<div align='center'><br><br><b>A Monitor was not specified.  Select one from jamonadmin.jsp</b></div>";
+  } else {
 
   JAMonListener listener=null;
 
-  if (MonitorFactory.exists(key))
-    listener=MonitorFactory.getMonitor(key).getListenerType(listenerType).getListener(currentListenerName);
+  if (mc.isLocalInstance() && mc.exists(key))
+    listener=mc.getMonitor(key).getListenerType(listenerType).getListener(currentListenerName);
+  else {
+    Monitor mon = mc.getMonitors()[keyNum];
+    key = mon.getMonKey();
+    listener=mon.getListenerType(listenerType).getListener(currentListenerName);
+   }
 
   if (listener==null)
     outputText="<div align='center'><br><br><b>Null listener returned. Ensure there is a listener for this monitor</b></div>";
@@ -88,7 +102,7 @@ else {
     setBufferSize((JAMonBufferListener) listener, bufferSize);
 
     DetailData detailData=((JAMonBufferListener)listener).getDetailData();
-    ResultSetConverter rsc=getResultSetConverter(detailData.getHeader(), detailData.getData(),arraySQLExec);
+    ResultSetConverter rsc=getResultSetConverter(detailData.getHeader(), detailData.getData(), arraySQLExec);
 
     if (rsc.isEmpty())
      outputText="<div align='center'><br><br><b>No data was returned</b></div>";
@@ -127,7 +141,7 @@ if ("html".equalsIgnoreCase(outputType)) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<META http-equiv="Content-Type" content="text/html"; charset=UTF-8">
+<META http-equiv="Content-Type" content="text/html"; charset=ISO-8859-1">
 <link rel="stylesheet" type="text/css" href="css/JAMonStyles.css">
 <title>JAMon - Monitor Detail - <%=now()%></title>
 <script type="text/javascript">
@@ -223,7 +237,14 @@ function helpWin() {
 </div>
 
 <br><br>
-
+<div align="center">
+    Data Refreshed for '<%= mc.getInstanceName() %>' on: <%= mc.getDateCreated() %>
+    <br>
+    JAMon configuration properties: <%= JamonDataPersisterFactory.getJamonProperties() %>
+    <br>
+    JamonDataPersister being used: <%= JamonDataPersisterFactory.get().getClass().getCanonicalName()  %>
+</div>
+<br>
 <td><table border='0' align='center' width='25%'>
     <tr>
     <th nowrap><a href="http://www.jamonapi.com"><img src="images/jamon_small.jpg" id="monLink" border="0" /></a></th>
@@ -291,10 +312,16 @@ Object[][] formatBody= {
                       };
 
 
-String[] bufferSizeHeader={"bufferSize","bufferSizeDisplay"};
-Object[][] bufferSizeBody={
-                 {"No Action", "No Action"},                  {"50", "50 rows"}, 
-                 {"100", "100 rows"},                  {"250", "250 rows"}, 	             {"500","500 rows"}, 	             {"1000","1000 rows"}, 	             {"2000","2000 rows"},            };
+String[] bufferSizeHeader={"bufferSize","bufferSizeDisplay"};
+Object[][] bufferSizeBody={
+                 {"No Action", "No Action"}, 
+                 {"50", "50 rows"}, 
+                 {"100", "100 rows"}, 
+                 {"250", "250 rows"}, 
+	             {"500","500 rows"}, 
+	             {"1000","1000 rows"}, 
+	             {"2000","2000 rows"}, 
+           };
 
 
 // There is no technical limit to buffer size, so other possibilities could be added.
@@ -302,7 +329,16 @@ private static void setBufferSize(JAMonBufferListener listener, String bufferSiz
 
   if ("50".equals(bufferSize))
 	listener.getBufferList().setBufferSize(50);
-  else if ("100".equals(bufferSize))    listener.getBufferList().setBufferSize(100);  else if ("250".equals(bufferSize))     listener.getBufferList().setBufferSize(250);  else if ("500".equals(bufferSize))    listener.getBufferList().setBufferSize(500);  else if ("1000".equals(bufferSize))    listener.getBufferList().setBufferSize(1000);  else if ("2000".equals(bufferSize))    listener.getBufferList().setBufferSize(2000);
+  else if ("100".equals(bufferSize))
+    listener.getBufferList().setBufferSize(100);
+  else if ("250".equals(bufferSize)) 
+    listener.getBufferList().setBufferSize(250);
+  else if ("500".equals(bufferSize)) 
+   listener.getBufferList().setBufferSize(500);
+  else if ("1000".equals(bufferSize)) 
+   listener.getBufferList().setBufferSize(1000);
+  else if ("2000".equals(bufferSize)) 
+   listener.getBufferList().setBufferSize(2000);
 
 }
 
@@ -333,7 +369,8 @@ private synchronized Template getJAMonTemplate(FormattedDataSet fds) {
 
 // if the value is null then return the passed in default else return the value
 private static String getValue(String value, String defaultValue) {
-  return (value==null || "".equals(value.trim())) ? defaultValue: value;
+    HTMLFilter  vFilter = new HTMLFilter();
+    return (value==null || "".equals(value.trim())) ? defaultValue: vFilter.filter(value);
 }
 
 // convert arg to an int or return the default

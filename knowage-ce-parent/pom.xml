@@ -54,6 +54,17 @@
 			<id>pentaho</id>
 			<url>http://nexus.pentaho.org/content/groups/omni</url>
 		</repository>
+		<!-- We use Nuxeo repository for fdsapi, needed by knowage CE; this library is not available on Maven Central -->
+		<repository>
+			<id>nuxeo</id>
+			<url>https://maven-eu.nuxeo.org/nexus/content/repositories/public/</url>
+		</repository>
+		<!-- We use xss-html-filter repository for xss-html-filter, needed by knowage CE; this library is not available on Maven Central -->
+		<repository>
+			<id>xss-html-filter releases</id>
+			<url>http://xss-html-filter.sf.net/releases/</url>
+		</repository>
+		
 	</repositories>
   
 	<properties>
