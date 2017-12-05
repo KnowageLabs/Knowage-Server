@@ -46,6 +46,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import com.mongodb.util.JSON;
 
 import it.eng.spago.error.EMFUserError;
@@ -445,6 +447,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			@DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
 			@QueryParam("nearRealtime") boolean isNearRealtime) {
 		try {
+			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");			
+			
 			String parameters = null;
 			String selections = null;
 			String likeSelections = null;
@@ -470,21 +474,10 @@ public class DataSetResource extends AbstractDataSetResource {
 				summaryRow = jsonSummaryRow != null ? jsonSummaryRow.toString() : null;
 			}
 
-			return getDataStorePost(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime);
+			timing.stop();
+			return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime);
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
-		}
-	}
-
-	public String getDataStorePost(String label, String parameters, String selections, String likeSelections, int maxRowCount, String aggregations,
-			String summaryRow, int offset, int fetchSize, boolean isNearRealtime) {
-		logger.debug("IN");
-		try {
-			return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime);
-		} catch (Exception e) {
-			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
-		} finally {
-			logger.debug("OUT");
 		}
 	}
 

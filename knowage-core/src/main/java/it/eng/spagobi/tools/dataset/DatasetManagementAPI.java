@@ -46,6 +46,8 @@ import org.json.JSONObject;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.UnsafeInput;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import commonj.work.Work;
 import commonj.work.WorkException;
@@ -364,6 +366,8 @@ public class DatasetManagementAPI {
 	public IDataStore getDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections, Filter filter,
 			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
 		String errorMessage = "An unexpected error occured while executing method";
+		
+		Monitor totalTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore");
 		try {
 			setDataSetParameters(dataSet, parametersValues);
 
@@ -372,7 +376,7 @@ public class DatasetManagementAPI {
 			if (querableBehaviour != null) {
 				querableBehaviour.getStatement();
 			}
-
+			
 			IDataStore dataStore = null;
 
 			DatasetEvaluationStrategy evaluationStrategy = dataSet.getEvaluationStrategy(isNearRealtime);
@@ -387,7 +391,9 @@ public class DatasetManagementAPI {
 			} else {
 				if (DatasetEvaluationStrategy.INLINE_VIEW.equals(evaluationStrategy)) {
 					logger.debug("Querying near realtime/JDBC dataset");
+					Monitor timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:inLineView");
 					dataStore = queryJDBCDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
+					timing.stop();
 					dataStore.setCacheDate(new Date());
 				} else if (DatasetEvaluationStrategy.NEAR_REALTIME.equals(evaluationStrategy)
 						|| DatasetEvaluationStrategy.REALTIME.equals(evaluationStrategy)) {
@@ -399,12 +405,16 @@ public class DatasetManagementAPI {
 					SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 					cache.setUserProfile(userProfile);
 
+					Monitor totalCacheTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:totalCache");
+					
 					IDataStore cachedResultSet = cache.get(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize,
 							maxRowCount);
 					if (cachedResultSet == null) {
 						logger.debug("Dataset not in cache");
 
+						Monitor timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:putInCache");
 						putDataSetInCache(dataSet, cache);
+						timing.stop();
 
 						if (dataSet.getDataStore() != null && dataSet.getDataStore().getMetaData().getFieldCount() == 0) {
 							// update only datasource's metadata from dataset if for some strange cause it hasn't got fields
@@ -416,8 +426,10 @@ public class DatasetManagementAPI {
 							adjustMetadata((DataStore) dataStore, dataSet, null);
 							return dataStore;
 						}
-
+						
+						timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:getFromCache");
 						dataStore = cache.get(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
+						timing.stop();
 						if (dataStore == null) {
 							throw new CacheException(errorMessage);
 						}
@@ -431,6 +443,7 @@ public class DatasetManagementAPI {
 						adjustMetadata((DataStore) dataStore, dataSet, null);
 						dataSet.decode(dataStore);
 					}
+					totalCacheTiming.stop();
 				}
 			}
 
@@ -440,6 +453,7 @@ public class DatasetManagementAPI {
 			logger.error(errorMessage, t);
 			throw new RuntimeException(errorMessage, t);
 		} finally {
+			totalTiming.stop();
 			logger.debug("OUT");
 		}
 	}
@@ -457,15 +471,6 @@ public class DatasetManagementAPI {
 				}
 			}
 		}
-	}
-
-	private boolean haveCountDistinct(List<ProjectionCriteria> projections) {
-		for (ProjectionCriteria projection : projections) {
-			if (AggregationFunctions.COUNT_DISTINCT.equals(projection.getAggregateFunction())) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private Date getPersistedDate(IDataSet dataSet) {
@@ -506,103 +511,6 @@ public class DatasetManagementAPI {
 				logger.debug("Returning an list of records from offset to fetch size");
 				records = records.subList(offset, fetchSize);
 			}
-		}
-	}
-
-	private List<IDataStore> storeDataSetsInCache(List<IDataSet> joinedDataSets, Map<String, String> parametersValues, boolean wait) {
-
-		List<IDataStore> dataStores = new ArrayList<>();
-
-		try {
-			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
-			cache.setUserProfile(userProfile);
-
-			WorkManager spagoBIWorkManager;
-			try {
-				spagoBIWorkManager = new WorkManager(GeneralUtilities.getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
-			} catch (NamingException t) {
-				throw new RuntimeException("Impossible to initialize work manager");
-			}
-			commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
-
-			List<Work> workItemList = new ArrayList<>();
-			for (IDataSet dataSet : joinedDataSets) {
-				// first we set parameters because they change the signature
-				dataSet.setParamsMap(parametersValues);
-
-				// then we verified if the store associated to the joined
-				// dtatset is in cache
-				if (cache.contains(dataSet)) {
-					continue;
-				}
-
-				// if not we create a work to store it and we add it to works
-				// list
-
-				dataSet.loadData();
-				IDataStore dataStore = dataSet.getDataStore();
-
-				Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, dataSet, userProfile);
-
-				workItemList.add(cacheWriteWork);
-			}
-
-			if (workItemList.size() > 0) {
-				if (wait == true) {
-					workManager.waitForAll(workItemList, workManager.INDEFINITE);
-				} else {
-					for (Work work : workItemList) {
-						workManager.schedule(work);
-					}
-				}
-			}
-
-		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while storing datasets in cache", t);
-		} finally {
-			logger.debug("OUT");
-		}
-
-		return dataStores;
-	}
-
-	private IDataStore storeDataSetInCache(IDataSet dataSet, Map<String, String> parametersValues, boolean wait) {
-		try {
-			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
-			cache.setUserProfile(userProfile);
-			dataSet.setParamsMap(parametersValues);
-			dataSet.loadData();
-			IDataStore dataStore = dataSet.getDataStore();
-
-			WorkManager spagoBIWorkManager;
-			try {
-				spagoBIWorkManager = new WorkManager(GeneralUtilities.getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
-			} catch (NamingException t) {
-				throw new RuntimeException("Impossible to initialize work manager");
-			}
-			commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
-
-			List<Work> workItemList = new ArrayList<>();
-			Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, dataSet, userProfile);
-			workItemList.add(cacheWriteWork);
-
-			if (workItemList.size() > 0) {
-				if (wait == true) {
-					workManager.waitForAll(workItemList, workManager.INDEFINITE);
-				} else {
-					for (Work work : workItemList) {
-						workManager.schedule(work);
-					}
-				}
-			}
-
-			return dataStore;
-		} catch (ParametersNotValorizedException p) {
-			throw new ParametersNotValorizedException(p.getMessage());
-		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while executing method", t);
-		} finally {
-			logger.debug("OUT");
 		}
 	}
 
@@ -728,22 +636,6 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	private List<IDataSet> filterDatasetsByUser(List<IDataSet> dataSets, Set<Domain> categories) {
-		List<IDataSet> validDataSets = new LinkedList<>();
-		for (IDataSet ds : dataSets) {
-			Integer idCategory = ds.getCategoryId();
-			if (idCategory != null) {
-				for (Domain dom : categories) {
-					if (idCategory.equals(dom.getValueId())) {
-						validDataSets.add(ds);
-						break;
-					}
-				}
-			}
-		}
-		return validDataSets;
-	}
-
 	public List<IDataSet> getUncertifiedDataSet() {
 		try {
 
@@ -789,79 +681,6 @@ public class DatasetManagementAPI {
 		} finally {
 			logger.debug("OUT");
 		}
-	}
-
-	public Integer creatDataSet(IDataSet dataSet) {
-		logger.debug("IN");
-		Integer toReturn = null;
-		if (dataSet == null) {
-			logger.error("Dataset is null");
-			return null;
-		}
-
-		try {
-
-			validateDataSet(dataSet);
-
-			// validate
-			logger.debug("Getting the data set dao..");
-			IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
-			logger.debug("DatasetDAo loaded");
-			logger.debug("Inserting the data set wit the dao...");
-			toReturn = dataSetDao.insertDataSet(dataSet);
-			logger.debug("Data Set inserted");
-			if (toReturn != null) {
-				logger.info("DataSet " + dataSet.getLabel() + " saved with id = " + toReturn);
-			} else {
-				logger.error("DataSet not saved: check error log");
-			}
-
-		} catch (ValidationException e) {
-			logger.error("Failed validation of dataset " + dataSet.getLabel() + " with cause: " + e.getValidationMessage());
-			throw new RuntimeException(e.getValidationMessage(), e);
-		} catch (EMFUserError e) {
-			logger.error("EmfUserError ", e);
-			throw new RuntimeException("EmfUserError ", e);
-		}
-
-		logger.debug("OUT");
-		return toReturn;
-	}
-
-	private boolean validateDataSet(IDataSet dataSet) throws ValidationException, EMFUserError {
-		logger.debug("IN");
-
-		logger.debug("check the dataset not alreaduy present with same label");
-
-		IDataSet datasetLab = DAOFactory.getDataSetDAO().loadDataSetByLabel(dataSet.getLabel());
-		// checkQbeDataset(datasetLab);
-
-		if (datasetLab != null) {
-			throw new ValidationException("Dataset with label " + dataSet.getLabel() + " already found");
-		}
-
-		logger.debug("OUT");
-		return true;
-
-	}
-
-	public class ValidationException extends Exception {
-		private final String validationMessage;
-
-		ValidationException(String _validationMessage) {
-			super();
-			this.validationMessage = _validationMessage;
-		}
-
-		ValidationException(String _validationMessage, Throwable e) {
-			super(e);
-			this.validationMessage = _validationMessage;
-		}
-
-		public String getValidationMessage() {
-			return this.validationMessage;
-		}
-
 	}
 
 	// ------------------------------------------------------------------------------
@@ -1011,185 +830,6 @@ public class DatasetManagementAPI {
 				}
 			}
 		}
-	}
-
-	/**
-	 * The association is valid if number of records froma ssociation is less than Maximum of single datasets
-	 *
-	 * @param dsLabel1
-	 * @param dsLabel2
-	 * @param field1
-	 * @param field2
-	 * @return
-	 * @throws Exception
-	 */
-
-	public boolean checkAssociation(JSONArray arrayAss) throws Exception {
-		logger.debug("IN");
-
-		logger.debug("Check join");
-		boolean toReturn = false;
-
-		String[] synonims = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "z" };
-		String where = "";
-
-		SelectBuilder joinSqlBuilder = new SelectBuilder();
-		joinSqlBuilder.column("count(*) counter");
-
-		try {
-			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
-			cache.setUserProfile(userProfile);
-			IDataSource dataSource = cache.getDataSource();
-			Long maxSingleCount = 0L;
-
-			// all arrays with fields of a single association
-			ArrayList<JSONArray> assFieldsJSONArray = new ArrayList<>();
-			// mapping datasetLabel to table involved
-			Map<String, String> datasetsLabelsMap = new HashMap<>();
-			// maps each table to the synonim used in the join clause
-			Map<String, String> tableSynonimMap = new HashMap<>();
-
-			logger.debug("cycle on associations");
-			for (int j = 0; j < arrayAss.length(); j++) {
-
-				logger.debug("this is an association");
-
-				JSONObject association = (JSONObject) arrayAss.get(j);
-				JSONArray fieldsAss = association.getJSONArray("fields");
-				assFieldsJSONArray.add(fieldsAss);
-
-				logger.debug("cycle on fields");
-				// Collect all tables involved
-				for (int z = 0; z < fieldsAss.length(); z++) {
-					JSONObject field = (JSONObject) fieldsAss.get(z);
-					String dsLabel = field.getString("store");
-
-					if (!datasetsLabelsMap.keySet().contains(dsLabel)) {
-
-						logger.debug("Dataset with label " + dsLabel);
-						IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
-						// Datasets related to documents are not on DB so
-						// 'dataset' can be null
-						if (dataset == null) {
-							// assFieldsJSONArray.get(assFieldsJSONArray.size()-1).remove(z);
-							fieldsAss.remove(z);
-							continue;
-						}
-						// checkQbeDataset(dataset);
-
-						// check datasets are cached otherwise cache it
-						// IDataStore cachedResultSet = cache.get(dataset);
-						// if (cachedResultSet == null) {
-						if (!cache.getMetadata().containsCacheItem(dataset.getSignature())) {
-							logger.error("dataset " + dataset.getLabel() + " is not already cached, cache it");
-							// IDataStore dataStore = dataStore =
-							// cache.refresh(dataset, false);
-							cache.refresh(dataset, true);
-						}
-
-						String table = cache.getMetadata().getCacheItem(dataset.getSignature()).getTable();
-						logger.debug("Table " + table);
-						// dataset to table mapping
-						datasetsLabelsMap.put(dsLabel, table);
-
-						logger.debug("Execute dataset to count records and keep track of max");
-
-						// count single value
-						SelectBuilder sqlBuilder = new SelectBuilder();
-						sqlBuilder = new SelectBuilder();
-						sqlBuilder.column("count(*) counter");
-						sqlBuilder.from(table + " a");
-						String queryText1 = sqlBuilder.toString();
-						logger.debug("execute " + queryText1);
-						IDataStore dataStore = dataSource.executeStatement(queryText1, 0, 0);
-						Object countO = ((DataStore) dataStore).getRecordAt(0).getFieldAt(0).getValue();
-						Long count1 = (countO instanceof Long) ? (Long) countO : Long.valueOf(((Number) countO).longValue());
-
-						logger.debug("On query on table " + table + " counted " + count1 + " records");
-
-						if (count1 > maxSingleCount) {
-							maxSingleCount = count1;
-						}
-
-					}
-
-				}
-
-				logger.debug("Maximum among tables count is " + maxSingleCount);
-
-			}
-
-			// Build join query
-
-			logger.debug("Write from and join clauses for join query");
-
-			int index = 0;
-			for (Iterator iterator = datasetsLabelsMap.keySet().iterator(); iterator.hasNext();) {
-				String dsLabel = (String) iterator.next();
-				String table = datasetsLabelsMap.get(dsLabel);
-				joinSqlBuilder.from(table + " " + synonims[index]);
-				tableSynonimMap.put(table, synonims[index]);
-
-				index++;
-			}
-
-			// "fields":[{"store":"ds__4221948","column":"Citta"},{"store":"ALTRO_USER","column":"Regione"},{"store":"ds__3714475","column":"Citta"}]}]"
-			logger.debug("Build and write where clauses for join query");
-
-			for (int j = 0; j < assFieldsJSONArray.size(); j++) {
-				JSONArray fieldsJSOONArray = assFieldsJSONArray.get(j);
-				for (int i = 0; i < fieldsJSOONArray.length(); i++) {
-					JSONObject field = fieldsJSOONArray.getJSONObject(i);
-					String dsLabel = field.getString("store");
-					String column = field.getString("column");
-					String table = datasetsLabelsMap.get(dsLabel);
-					String synonim = tableSynonimMap.get(table);
-
-					if (i > 0 && table != null) {
-						if (!where.isEmpty()) {
-							where += " AND ";
-						}
-						JSONObject previousField = fieldsJSOONArray.getJSONObject(i - 1);
-						String previousDsLabel = previousField.getString("store");
-						String previousColumn = previousField.getString("column");
-						String previousTable = datasetsLabelsMap.get(previousDsLabel);
-						String previousSynonim = tableSynonimMap.get(previousTable);
-
-						// add where conditions
-						where += synonim + "." + AbstractJDBCDataset.encapsulateColumnName(column, dataSource) + "=" + previousSynonim + "."
-								+ AbstractJDBCDataset.encapsulateColumnName(previousColumn, dataSource);
-					}
-				}
-			}
-			// checking if there is a where condition
-			if (where == null || "".equals(where)) {
-				// no one association to check
-				toReturn = true;
-			} else {
-				logger.debug("Join where condition is " + where);
-				joinSqlBuilder.where(where);
-
-				String joinQueryText = joinSqlBuilder.toString();
-				logger.debug("Join query is equal to [" + joinQueryText + "]");
-				IDataStore joinDataStore = dataSource.executeStatement(joinQueryText, 0, 0);
-				Object joinCountO = ((DataStore) joinDataStore).getRecordAt(0).getFieldAt(0).getValue();
-				Long joinCount = (joinCountO instanceof Long) ? (Long) joinCountO : Long.valueOf(((Number) joinCountO).longValue());
-
-				if (joinCount > maxSingleCount) {
-					logger.warn("Chosen join among tables return too many rows");
-					toReturn = false;
-				} else {
-					logger.debug("Chosen join among tables is valid");
-					toReturn = true;
-				}
-			}
-		} catch (Exception e) {
-			logger.error("Error while checking the join among tables return too many rows", e);
-			throw new Exception("Error while checking the join among tables", e);
-		} finally {
-			logger.debug("OUT");
-		}
-		return toReturn;
 	}
 
 	/*
@@ -1567,260 +1207,6 @@ public class DatasetManagementAPI {
 		return pagedDataStore;
 	}
 
-	public String getQueryText(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, boolean isNearRealtime,
-			List<String> outputOrderColumns) {
-		return getQueryText(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, isNearRealtime,
-				outputOrderColumns);
-	}
-
-	public String getQueryText(SelectBuilder sqlBuilder, IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
-			List<FilterCriteria> havings, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet,
-			boolean isNearRealtime, List<String> outputOrderColumns) {
-
-		if (tableName == null || tableName.isEmpty() || (!isNearRealtime && dataSource == null)) {
-			throw new IllegalArgumentException(
-					"Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource + "] are null or empty.");
-
-		}
-
-		String label = dataSet.getLabel();
-		logger.debug("Build query for dataset [" + label + "] with table name [" + tableName + "]");
-		logger.debug("Loading data from [" + label + "] to gather its metadata...");
-
-		List<String> orderColumns = new ArrayList<>();
-		String queryText = null;
-		if (summaryRowProjections == null || summaryRowProjections.size() == 0 || !isNearRealtime) {
-			sqlBuilder.from(tableName);
-
-			setColumnsToSelect(dataSource, projections, sqlBuilder, orderColumns, isNearRealtime, dataSet);
-			setWhereConditions(dataSource, filters, sqlBuilder);
-			setGroupbyConditions(dataSource, groups, sqlBuilder, dataSet);
-			setHavingConditions(dataSource, havings, sqlBuilder);
-			setOrderbyConditions(dataSource, orderColumns, sqlBuilder);
-
-			queryText = sqlBuilder.toString();
-		}
-
-		if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT ");
-			String comma = "";
-			for (int i = 0; i < projections.size(); i++) {
-				ProjectionCriteria projection = projections.get(i);
-				String alias = projection.getAliasName();
-				String aggregateFunction = null;
-				for (ProjectionCriteria summaryRowProjection : summaryRowProjections) {
-					String columnName = summaryRowProjection.getColumnName();
-					if (columnName.equals(alias)) {
-						aggregateFunction = summaryRowProjection.getAggregateFunction();
-						break;
-					}
-				}
-				if (aggregateFunction != null) {
-					sb.append(comma);
-					comma = ",";
-					sb.append(aggregateFunction);
-					sb.append("(");
-					sb.append(AbstractJDBCDataset.encapsulateColumnName(alias, dataSource));
-					sb.append(")");
-				}
-			}
-			sb.append(" FROM ");
-			if (isNearRealtime) {
-				sb.append(tableName);
-			} else {
-				sb.append("(");
-				sb.append(queryText);
-				sb.append(") T");
-			}
-
-			queryText = sb.toString();
-		}
-		logger.debug("Dataset access query is equal to [" + queryText + "]");
-
-		if (outputOrderColumns != null) {
-			outputOrderColumns.clear();
-			outputOrderColumns.addAll(orderColumns);
-		}
-
-		return queryText;
-	}
-
-	private void setColumnsToSelect(IDataSource dataSource, List<ProjectionCriteria> projections, SelectBuilder sqlBuilder, List<String> orderColumns,
-			boolean isNearRealtime, IDataSet dataSet) {
-
-		boolean isHsqlDialect = false;
-		if (dataSource != null) {
-			isHsqlDialect = dataSource.getHibDialectName().contains("hsql");
-		}
-
-		if (orderColumns == null) {
-			throw new SpagoBIRuntimeException("Unable to manage ORDER BY clauses");
-		}
-
-		ArrayList<String> arrayCategoriesForOrdering = new ArrayList<>();
-		String keepCategoryForOrdering = "";
-		boolean columnAndCategoryAreTheSame = false;
-		boolean isOrderColumnPresent = false;
-		boolean isAggregationPresent = false;
-
-		if (projections != null) {
-			Set<String> notCalculatedColumns = new HashSet<>();
-			Set<String> aggregatedBasicColumns = new HashSet<>();
-
-			for (ProjectionCriteria projection : projections) {
-				String columnName = projection.getColumnName();
-				boolean isCalculatedColumn = columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER);
-				String aggregateFunction = projection.getAggregateFunction();
-				IAggregationFunction aggregationFunction = AggregationFunctions.get(aggregateFunction);
-				String aliasName = projection.getAliasName();
-				boolean hasAlias = aliasName != null && !aliasName.isEmpty();
-				String orderType = projection.getOrderType().toUpperCase();
-
-				if (columnName.contains(":")) {
-					columnName = getQbeDataSetColumn(dataSet, columnName);
-				}
-
-				if (isCalculatedColumn) {
-					// this is a calculated field!
-					if (isNearRealtime) {
-						if (aggregationFunction == null) {
-							throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an aggregation function");
-						}
-						Set<String> basicColumns = getBasicColumnsFromCalculatedColumn(columnName);
-						for (String basicColumn : basicColumns) {
-							aggregatedBasicColumns.add(aggregationFunction.apply(basicColumn));
-						}
-					} else {
-						columnName = AbstractJDBCDataset.substituteStandardWithDatasourceDelimiter(columnName, dataSource);
-					}
-				} else {
-					if (!columnName.equals("*")) {
-						columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-					}
-				}
-
-				aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
-				if (aggregationFunction != null && !aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION) && columnName != "*") {
-					columnName = aggregationFunction.apply(columnName);
-					isAggregationPresent = true;
-					if (hasAlias) {
-						if (orderType != null && !orderType.isEmpty()) {
-							if (isHsqlDialect) {
-								orderColumns.add(aliasName + " " + orderType);
-							} else {
-								orderColumns.add(columnName + " " + orderType);
-							}
-						}
-					} else {
-						throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
-					}
-				} else {
-					/**
-					 * Handling of the ordering criteria set for the first category.
-					 *
-					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					// If the order type is not defined for current item, consider it as it is of an empty value (empty string).
-					if (orderType == null) {
-						orderType = "";
-					}
-
-					String orderColumn = projection.getOrderColumn();
-					/**
-					 * If the order column is defined and is not an empty string the column (attribute) through which the first category should be ordered is
-					 * set.
-					 */
-					if (orderColumn != null && !orderColumn.isEmpty()) {
-						isOrderColumnPresent = true;
-						orderColumn = AbstractJDBCDataset.encapsulateColumnName(orderColumn, dataSource);
-
-						if (orderType.isEmpty()) {
-							arrayCategoriesForOrdering.add(orderColumn + " ASC");
-						} else {
-							arrayCategoriesForOrdering.add(orderColumn + " " + orderType);
-						}
-
-						/**
-						 * If the ordering column is the same as the category for which is set.
-						 */
-						if (orderColumn.equals(columnName)) {
-							columnAndCategoryAreTheSame = true;
-						} else {
-							sqlBuilder.column(orderColumn);
-							sqlBuilder.groupBy(orderColumn);
-						}
-					} else {
-						if (!orderType.isEmpty()) {
-							if (hasAlias && isHsqlDialect) {
-								orderColumns.add(aliasName + " " + orderType);
-							} else {
-								orderColumns.add(columnName + " " + orderType);
-							}
-						} else {
-							/**
-							 * Keep the ordering for the first category so it can be appended to the end of the ORDER BY clause when it is needed.
-							 */
-							if (keepCategoryForOrdering.isEmpty()) {
-								if (hasAlias && isHsqlDialect) {
-									keepCategoryForOrdering = aliasName + " ASC";
-								} else {
-									keepCategoryForOrdering = columnName + " ASC";
-								}
-							}
-						}
-					}
-				}
-
-				if (!isCalculatedColumn) {
-					notCalculatedColumns.add(columnName);
-				}
-				if (!isCalculatedColumn || !isNearRealtime) {
-					if (hasAlias) {
-						columnName += " AS " + aliasName;
-					}
-					sqlBuilder.column(columnName);
-				}
-			}
-
-			if (isOrderColumnPresent) {
-				/**
-				 * Only in the case when the category name and the name of the column through which it should be ordered are not the same, append the part for
-				 * ordering that category to the end of the ORDER BY clause.
-				 *
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				if (!columnAndCategoryAreTheSame && !keepCategoryForOrdering.isEmpty()) {
-					arrayCategoriesForOrdering.add(keepCategoryForOrdering);
-				}
-
-				/**
-				 * Append ordering by categories (columns, attributes) at the end of the array of table columns through which the ordering of particular
-				 * ordering type should be performed. This is the way in which the query is constructed inside the Chart Engine, so we will keep the same
-				 * approach.
-				 *
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				for (int i = 0; i < arrayCategoriesForOrdering.size(); i++) {
-					orderColumns.add(arrayCategoriesForOrdering.get(i));
-				}
-			}
-
-			if (isNearRealtime && orderColumns.isEmpty() && !keepCategoryForOrdering.isEmpty()) {
-				orderColumns.add(keepCategoryForOrdering);
-			}
-
-			aggregatedBasicColumns.removeAll(notCalculatedColumns);
-
-			for (String additionalColumnName : aggregatedBasicColumns) {
-				sqlBuilder.column(additionalColumnName);
-			}
-
-			sqlBuilder.setDistinctEnabled(!isAggregationPresent);
-		}
-	}
-
 	private Set<String> getBasicColumnsFromCalculatedColumn(String columnName) {
 		int delimiterCount = columnName.length() - columnName.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, "").length();
 		if (delimiterCount % 2 == 1) {
@@ -1838,149 +1224,7 @@ public class DatasetManagementAPI {
 		}
 		return columnNames;
 	}
-
-	private void setWhereConditions(IDataSource dataSource, List<FilterCriteria> filters, SelectBuilder sqlBuilder) {
-		if (filters != null) {
-			boolean isHsqlDialect = false;
-			boolean isSqlServerDialect = false;
-			if (dataSource != null) {
-				String dialect = dataSource.getHibDialectName();
-				if (dialect != null) {
-					isHsqlDialect = dialect.contains("hsql");
-					isSqlServerDialect = dialect.contains("sqlserver");
-				}
-			}
-
-			for (FilterCriteria filter : filters) {
-				String operator = filter.getOperator();
-
-				String leftOperand = null;
-				String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
-				if ("IN".equalsIgnoreCase(operator)) {
-					leftOperand = (isHsqlDialect || isSqlServerDialect) ? "(" : "(1,";
-					String separator = "";
-					for (String value : columns) {
-						leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
-						separator = ",";
-					}
-					leftOperand += ")";
-				} else {
-					if (filter.getLeftOperand().isCostant()) {
-						// why? warning!
-						leftOperand = filter.getLeftOperand().getOperandValueAsString();
-					} else { // it's a column
-						String datasetLabel = filter.getLeftOperand().getOperandDataSet();
-						leftOperand = filter.getLeftOperand().getOperandValueAsString();
-						leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
-					}
-				}
-
-				StringBuilder rightOperandSB = new StringBuilder();
-				if (filter.getRightOperand().isCostant()) {
-					if (filter.getRightOperand().isMultivalue()) {
-						if (!isHsqlDialect && !isSqlServerDialect) {
-							rightOperandSB.append("(");
-						}
-						String separator = "";
-						List<String> values = filter.getRightOperand().getOperandValueAsList();
-						for (int i = 0; i < values.size(); i++) {
-							String value = values.get(i);
-							if ("IN".equalsIgnoreCase(operator)) {
-								if (value.startsWith("(") && value.endsWith(")")) {
-									value = value.substring(1, value.length() - 1);
-								}
-								if (i % columns.length == 0) {// 1st item of tuple of values
-									if (i >= columns.length) { // starting from 2nd tuple of values
-										rightOperandSB.append(",");
-									}
-									rightOperandSB.append(isHsqlDialect || isSqlServerDialect ? "(" : "(1");
-								}
-								if (i % columns.length != 0 || (!isHsqlDialect && !isSqlServerDialect)) {
-									rightOperandSB.append(",");
-								}
-								rightOperandSB.append(value);
-								if (i % columns.length == columns.length - 1) { // last item of tuple of values
-									rightOperandSB.append(")");
-								}
-							} else {
-								rightOperandSB.append(separator);
-								rightOperandSB.append("'");
-								rightOperandSB.append(value);
-								rightOperandSB.append("'");
-							}
-							separator = ",";
-						}
-						if (!isHsqlDialect && !isSqlServerDialect) {
-							rightOperandSB.append(")");
-						}
-					} else {
-						rightOperandSB.append(filter.getRightOperand().getOperandValueAsString());
-					}
-				} else { // it's a column
-					rightOperandSB.append(AbstractJDBCDataset.encapsulateColumnName(filter.getRightOperand().getOperandValueAsString(), dataSource));
-				}
-
-				String rightOperandString = rightOperandSB.toString();
-				sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperandString + ")");
-			}
-		}
-	}
-
-	private void setGroupbyConditions(IDataSource dataSource, List<GroupCriteria> groups, SelectBuilder sqlBuilder, IDataSet dataSet) {
-		if (groups != null) {
-			List<String> groupColumnNames = new ArrayList<>();
-
-			for (GroupCriteria group : groups) {
-				String columnName = group.getColumnName();
-				String aggregateFunction = group.getAggregateFunction();
-
-				if (columnName.contains(":")) {
-					columnName = getQbeDataSetColumn(dataSet, columnName);
-				}
-
-				columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-
-				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
-					columnName = aggregateFunction + "(" + columnName + ")";
-				}
-
-				groupColumnNames.add(columnName);
-			}
-
-			for (String groupColumnName : groupColumnNames) {
-				sqlBuilder.groupBy(groupColumnName);
-			}
-		}
-	}
-
-	private void setHavingConditions(IDataSource dataSource, List<FilterCriteria> filters, SelectBuilder sqlBuilder) {
-		if (filters != null) {
-			for (FilterCriteria filter : filters) {
-				String leftOperand = filter.getLeftOperand().getOperandValueAsString();
-				String operator = filter.getOperator();
-				String rightOperand = filter.getRightOperand().getOperandValueAsString();
-				sqlBuilder.having("(" + leftOperand + " " + operator + " " + rightOperand + ")");
-			}
-		}
-	}
-
-	private void setOrderbyConditions(IDataSource dataSource, List<String> orderColumns, SelectBuilder sqlBuilder) {
-		// ORDER BY conditions
-		// https://production.eng.it/jira/browse/KNOWAGE-149
-		String aliasDelimiter = TemporaryTableManager.getAliasDelimiter(dataSource);
-		for (String orderColumn : orderColumns) {
-			int count = StringUtils.countMatches(orderColumn, aliasDelimiter);
-			if (aliasDelimiter.isEmpty() || count <= 2) {
-				sqlBuilder.orderBy(orderColumn);
-			}
-		}
-	}
-
-	private void setPagingConditions(int limit, int offset, SelectBuilder sqlBuilder) {
-		sqlBuilder.setLimit(limit);
-		sqlBuilder.setOffset(offset);
-	}
-
+	
 	protected List<Integer> getCategories(IEngUserProfile profile) {
 
 		List<Integer> categories = new ArrayList<>();
@@ -2023,18 +1267,6 @@ public class DatasetManagementAPI {
 		return categories;
 	}
 
-	private List<IDataSet> getFilteredDatasets(List<IDataSet> unfilteredDataSets, List<Integer> categories) {
-		List<IDataSet> dataSets = new ArrayList<>();
-		if (categories != null && categories.size() != 0) {
-			for (IDataSet ds : unfilteredDataSets) {
-				if (ds.getCategoryId() == null || categories.contains(ds.getCategoryId())) {
-					dataSets.add(ds);
-				}
-			}
-		}
-		return dataSets;
-	}
-
 	public void setDataSetParameters(IDataSet dataSet, Map<String, String> paramValues) {
 		List<JSONObject> parameters = getDataSetParameters(dataSet.getLabel());
 		if (parameters.size() > paramValues.size()) {
@@ -2071,16 +1303,6 @@ public class DatasetManagementAPI {
 				}
 			}
 			dataSet.setParamsMap(paramValues);
-		}
-	}
-
-	public static boolean isJDBCDataSet(IDataSet dataSet) {
-		if (dataSet instanceof JDBCDataSet) {
-			return true;
-		} else if (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof JDBCDataSet) {
-			return true;
-		} else {
-			return false;
 		}
 	}
 

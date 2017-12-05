@@ -438,11 +438,16 @@ public class SQLDBCache implements ICache {
 		DataStore toReturn = null;
 
 		String hashedSignature = Helper.sha256(resultsetSignature);
-
+		Monitor timing = MonitorFactory.start("Knowage.SQLDBCache.queryStandardCachedDataset:gettingMap");
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		timing.stop();
 		try {
+			timing = MonitorFactory.start("Knowage.SQLDBCache.queryStandardCachedDataset:gettingLock[" + hashedSignature + "]");
 			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
+				timing.stop();
+				
 				try {
+					timing = MonitorFactory.start("Knowage.SQLDBCache.queryStandardCachedDataset:usingLock[" + hashedSignature + "]");
 					if (getMetadata().containsCacheItem(resultsetSignature)) {
 						logger.debug("Found dataset with signature [" + resultsetSignature + "] and hash [" + hashedSignature + "] inside the cache");
 
@@ -479,9 +484,11 @@ public class SQLDBCache implements ICache {
 						logger.debug("Cannot find dataset with signature [" + resultsetSignature + "] and hash [" + hashedSignature + "] inside the cache");
 					}
 				} finally {
+					timing.stop();
 					mapLocks.unlock(hashedSignature);
 				}
 			} else {
+				timing.stop();
 				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout. Returning a null datastore.");
 			}
 		} catch (InterruptedException e) {
@@ -658,10 +665,15 @@ public class SQLDBCache implements ICache {
 		logger.trace("IN");
 		String signature = dataSet.getSignature();
 		String hashedSignature = Helper.sha256(dataSet.getSignature());
+		Monitor timing = MonitorFactory.start("Knowage.SQLDBCache.putWithIterator:gettingMap");
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		timing.stop();
 		try {
+			timing = MonitorFactory.start("Knowage.SQLDBCache.putWithIterator:gettingLock[" + hashedSignature + "]");
 			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
+				timing.stop();
 				try {
+					timing = MonitorFactory.start("Knowage.SQLDBCache.putWithIterator:usingLock[" + hashedSignature + "]");
 					// check again it is not already inserted
 					if (!cacheMetadata.containsCacheItem(signature)) {
 						String tableName = PersistedTableManager.generateRandomTableName(cacheMetadata.getTableNamePrefix());
@@ -669,9 +681,11 @@ public class SQLDBCache implements ICache {
 						cacheMetadata.addCacheItem(signature, tableName, dimension);
 					}
 				} finally {
+					timing.stop();
 					mapLocks.unlock(hashedSignature);
 				}
 			} else {
+				timing.stop();
 				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout.");
 			}
 		} catch (InterruptedException e) {
@@ -777,10 +791,15 @@ public class SQLDBCache implements ICache {
 		String signature = dataSet.getSignature();
 		String hashedSignature = Helper.sha256(dataSet.getSignature());
 		long timeSpent = 0;
+		Monitor timing = MonitorFactory.start("Knowage.SQLDBCache.put:gettingMap");
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		timing.stop();
 		try {
+			timing = MonitorFactory.start("Knowage.SQLDBCache.put:gettingLock[" + hashedSignature + "]");
 			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
+				timing.stop();
 				try {
+					timing = MonitorFactory.start("Knowage.SQLDBCache.put:usingLock[" + hashedSignature + "]");
 					if (forceUpdate) {
 						logger.debug("Update the dataset in cache if its old enought");
 						updateAlreadyPresent();
@@ -789,10 +808,13 @@ public class SQLDBCache implements ICache {
 					if (getMetadata().containsCacheItem(signature)) {
 						logger.debug("Cache item already inserted for dataset with label " + dataSet.getLabel() + " and signature " + dataSet.getSignature());
 					}
-
+					Monitor timingMemory = MonitorFactory.start("Knowage.SQLDBCache.put:calculateRequiredMemory[" + hashedSignature + "]");
 					BigDecimal requiredMemory = getMetadata().getRequiredMemory(dataStore);
+					timingMemory.stop();
+					timingMemory = MonitorFactory.start("Knowage.SQLDBCache.put:calculateTotalMemory[" + hashedSignature + "]");
 					BigDecimal maxUsableMemory = getMetadata().getTotalMemory().multiply(new BigDecimal(getMetadata().getCachePercentageToStore()))
 							.divide(new BigDecimal(100), RoundingMode.FLOOR);
+					timingMemory.stop();
 
 					if (requiredMemory.compareTo(maxUsableMemory) < 1) { // if requiredMemory is less or equal to maxUsableMemory
 						if (getMetadata().isCleaningEnabled() && !getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
@@ -831,9 +853,11 @@ public class SQLDBCache implements ICache {
 								+ " Increase cache size or execute the dataset disabling cache.");
 					}
 				} finally {
+					timing.stop();
 					mapLocks.unlock(hashedSignature);
 				}
 			} else {
+				timing.stop();
 				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout.");
 			}
 		} catch (InterruptedException e) {
