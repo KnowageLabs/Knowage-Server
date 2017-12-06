@@ -168,15 +168,15 @@ public class DataSetSupplier {
 		return dataSetsConfig;
 	}
 
-	public SpagoBiDataSet saveDataSet(SpagoBiDataSet datasetConfig, String userId, HttpSession session) {
+	public SpagoBiDataSet saveDataSet(SpagoBiDataSet datasetConfig, IEngUserProfile profile, HttpSession session) {
 		SpagoBiDataSet toReturn = null;
 
 		logger.debug("IN");
 		try {
+			String userId = ((UserProfile) profile).getUserId().toString();
 			IDataSet dataSet = DataSetFactory.getDataSet(datasetConfig, userId, session);
 			Integer id = DAOFactory.getDataSetDAO().insertDataSet(dataSet);
 			dataSet.setId(id);
-			IEngUserProfile profile = GeneralUtilities.createNewUserProfile(userId);
 			ManageDatasets md = new ManageDatasets();
 			md.setProfile(profile);
 
