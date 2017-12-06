@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- Chart initiliazer Module-->
 <%@page import="it.eng.spagobi.engine.chart.ChartEngineConfig"%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartInitializer/chartInitializerModule.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/services/chartDesignerServices.js"></script>
 
 <!-- Chart initiliazer Services-->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/chartInitializer/services/chartInitializerRetriverService.js"></script>

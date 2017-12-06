@@ -208,19 +208,13 @@ function cockpitChartWidgetControllerFunction(
 	if($scope.ngModel.cross==undefined){
 		$scope.ngModel.cross={};
 	};
-	
-	$scope.$on('changeChartType', function (event, data) {
-		setAggregationsOnChartEngine($scope.ngModel.content, true)
-		$scope.refreshWidget(undefined,'init', true);
-	});
-	
-	
+
 	$scope.init=function(element,width,height){
 		$scope.refreshWidget({type:"chart",chartInit:true},'init');
 	};
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
 
-	$scope.refresh=function(element,width,height,data,nature, undefined, changedChartType){
+	$scope.refresh=function(element,width,height,data,nature){
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			if (dataset.isRealtime == true){
@@ -236,11 +230,11 @@ function cockpitChartWidgetControllerFunction(
 				} else {
 					dataToPass = $scope.realtimeDataManagement($scope.realTimeDatasetData, nature);
 				}
-				$scope.$broadcast(nature,dataToPass,dataset.isRealtime, changedChartType);
+				$scope.$broadcast(nature,dataToPass,dataset.isRealtime);
 
 			} else {
 				//Refresh for Not realtime datasets
-				$scope.$broadcast(nature,data,false, changedChartType);
+				$scope.$broadcast(nature,data);
 			}
 		}
 
@@ -1020,7 +1014,7 @@ function cockpitChartWidgetControllerFunction(
 	}
 };
 
-function setAggregationsOnChartEngine(wconf, changedChartType){
+function setAggregationsOnChartEngine(wconf){
 	var aggregations = [];
 	if(!wconf.chartTemplate.hasOwnProperty("CHART")){
 		wconf.chartTemplate = {"CHART":wconf.chartTemplate};
@@ -1041,7 +1035,6 @@ function setAggregationsOnChartEngine(wconf, changedChartType){
 				obj['aliasToShow'] = obj['alias'];
 				obj['fieldType'] = "MEASURE";
 				aggregations.push(obj);
-				if(chartTemplate.CHART.type.toLowerCase()=="wordcloud") break
 			}
 
 		}
@@ -1061,10 +1054,7 @@ function setAggregationsOnChartEngine(wconf, changedChartType){
 					obj['aliasToShow'] = obj['alias'];
 					obj['fieldType'] = "ATTRIBUTE";
 					aggregations.push(obj);
-					if(chartTemplate.CHART.type.toLowerCase()=="line" || chartTemplate.CHART.type.toLowerCase()=="bar") break;
-					
 				}
-				
 			} else {
 				var obj = {};
 				obj['name'] = chartCategory.column;
@@ -1073,45 +1063,25 @@ function setAggregationsOnChartEngine(wconf, changedChartType){
 				obj['fieldType'] = "ATTRIBUTE";
 
 				aggregations.push(obj);
-				var objectCat = ['bar','line','radar','scatter','pie'];
-				if(objectCat.indexOf(chartTemplate.CHART.type.toLowerCase()) < 0){
-					if(((chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries || chartTemplate.CHART.groupSeriesCateg) && chartCategory.groupby!="" ) || changedChartType ){
-						if (chartCategory.groupby.indexOf(',') == -1) {
-							var subs = chartCategory.groupby
-						}
 
-						else {
-							var subs = chartCategory.groupby.split(",");
-						}
-						if(subs.length){
-							for (var i = 0; i < subs.length; i++) {
-
-								if(subs[i].startsWith(" ")) subs[i] = subs[i].replace(" ","")
-								var groupby = {};
-								groupby['name'] = subs[i];
-								groupby['alias'] = subs[i];
-								groupby['aliasToShow'] = subs[i];
-								groupby['fieldType'] = "ATTRIBUTE";
-								aggregations.push(groupby);
-							}
-						} else {
-							if(subs!=""){
-
-								var groupby = {};
-								groupby['name'] = subs;
-								groupby['alias'] = subs;
-								groupby['aliasToShow'] = subs;
-								groupby['fieldType'] = "ATTRIBUTE";
-								aggregations.push(groupby);
-								
-							}
-						}
+				if( (chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries || chartTemplate.CHART.groupSeriesCateg) && chartCategory.groupby!=""){
+					var subs = "";
+					if (chartCategory.groupby.indexOf(',') == -1) {
+						subs = chartCategory.groupby
 					}
-				}
-		
 
-			
-			}
+					else {
+						subs = angular.copy(chartCategory.groupby.substring(0, chartCategory.groupby.indexOf(',')));
+					}
+					var groupby = {};
+					groupby['name'] = subs;
+					groupby['alias'] = subs;
+					groupby['aliasToShow'] = subs;
+					groupby['fieldType'] = "ATTRIBUTE";
+					aggregations.push(groupby);
+				}
+			};
+
 		}
 	}
 	wconf.columnSelectedOfDataset = aggregations;
