@@ -844,13 +844,18 @@ public class DataSetTransformer {
 	public LinkedHashMap<String, LinkedHashMap> seriesMapTransformedMethod(LinkedHashMap<String, LinkedHashMap> serieMap) throws JSONException {
 		LinkedHashMap<String, LinkedHashMap> newSerieMap = new LinkedHashMap<>();
 		String serieName = "";
+		int counter = 1;
 		for (Map.Entry<String, LinkedHashMap> entry : serieMap.entrySet()) {
 
 			String key = entry.getKey();
-
 			LinkedHashMap value = entry.getValue();
 			if (value.get("type").equals("arearangelow") || value.get("type").equals("arearangehigh")) {
-				serieName += value.get("column") + " ";
+				if (counter == 1) {
+					serieName += value.get("column") + " / ";
+					counter += 1;
+				} else {
+					serieName += value.get("column") + " ";
+				}
 				value.put("type", "arearange");
 
 				value.put("column", serieName);
