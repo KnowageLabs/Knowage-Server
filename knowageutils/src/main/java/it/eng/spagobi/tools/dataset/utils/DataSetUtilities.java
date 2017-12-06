@@ -18,6 +18,7 @@
 package it.eng.spagobi.tools.dataset.utils;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
@@ -72,7 +73,7 @@ public class DataSetUtilities {
 		if (isAdminUser) {
 			return true;
 		}
-		String owner = profile.getUserUniqueIdentifier().toString();
+		String owner = ((UserProfile) profile).getUserId().toString();
 		return (!owner.equals(null) && owner.equals(dataset.getOwner()));
 	}
 
@@ -84,7 +85,7 @@ public class DataSetUtilities {
 		if (isAdminUser) {
 			return true;
 		}
-		String owner = profile.getUserUniqueIdentifier().toString();
+		String owner = ((UserProfile) profile).getUserId().toString();
 		return (!owner.equals(null) && owner.equals(ownerDataSet));
 	}
 
