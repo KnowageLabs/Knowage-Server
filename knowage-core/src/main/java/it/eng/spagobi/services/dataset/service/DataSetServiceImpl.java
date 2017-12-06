@@ -116,13 +116,10 @@ public class DataSetServiceImpl extends AbstractServiceImpl implements DataSetSe
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
 
-			// START -> section added to manage the QBE datamart retriever in DataSetFactory
 			IEngUserProfile profile = GeneralUtilities.createNewUserProfile(user);
 			Assert.assertNotNull(profile, "Impossible to find the user profile");
-			String userId = ((UserProfile) profile).getUserId().toString();
-			// END
 
-			return supplier.saveDataSet(dataset, userId, null);
+			return supplier.saveDataSet(dataset, profile, null);
 		} catch (Exception e) {
 			logger.error("Errors saving dataset " + dataset, e);
 			return null;
