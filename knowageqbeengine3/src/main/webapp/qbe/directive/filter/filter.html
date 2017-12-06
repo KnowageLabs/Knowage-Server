@@ -4,6 +4,10 @@
 		<div class="md-toolbar-tools">
 	   		<h2><span>{{translate.load("kn.qbe.general.filters")}}</span></h2>
 			<span flex></span>
+			<md-button class="md-icon-button" aria-label="Add new filter" ng-show="field.iconCls=='the_date'" ng-click="loadTemporalFilters()" 
+					title='{{translate.load("kn.qbe.general.field")}}'>
+				<md-icon md-font-icon="fa fa-puzzle-piece" ></md-icon>
+			</md-button>
 			<md-button class="md-icon-button" aria-label="Add new filter" ng-click="addNewFilter()" 
 					title='{{translate.load("kn.qbe.filters.add.new.filter")}}'>
 				<md-icon md-font-icon="fa fa-plus-circle" ></md-icon>
