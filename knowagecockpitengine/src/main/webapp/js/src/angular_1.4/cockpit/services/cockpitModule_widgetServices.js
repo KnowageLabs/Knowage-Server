@@ -77,6 +77,48 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		return ret;
 	}
 
+	this.createCompatibleCharts = function () {
+		var minCategoriesSeries = {"categ":{},"serie":{}};
+		
+		minCategoriesSeries.categ.parallel = 1;
+		minCategoriesSeries.categ.sunburst = 2;
+		minCategoriesSeries.categ.scatter = 1;
+		minCategoriesSeries.categ.treemap = 2;
+		minCategoriesSeries.categ.wordcloud = 1;
+		minCategoriesSeries.categ.line = 1;
+		minCategoriesSeries.categ.heatmap = 2;
+		minCategoriesSeries.categ.radar = 1;
+		minCategoriesSeries.categ.bar = 1;
+		minCategoriesSeries.categ.pie = 1;
+		minCategoriesSeries.categ.chord = 2;
+		
+		minCategoriesSeries.serie.parallel = 2;
+		minCategoriesSeries.serie.sunburst = 1;
+		minCategoriesSeries.serie.scatter = 1;
+		minCategoriesSeries.serie.treemap = 1;
+		minCategoriesSeries.serie.wordcloud = 1;
+		minCategoriesSeries.serie.gauge = 1;
+		minCategoriesSeries.serie.line = 1;
+		minCategoriesSeries.serie.heatmap = 1;
+		minCategoriesSeries.serie.radar = 1;
+		minCategoriesSeries.serie.bar = 1;
+		minCategoriesSeries.serie.pie = 1;
+		minCategoriesSeries.serie.chord = 1;
+		
+		return minCategoriesSeries;
+	}
+	
+	this.checkNumOfCategory = function (category){
+		if(category.length){
+			return category.length
+		} else {
+			var counter = 1
+			if(category.groupby!=""){
+				counter = counter + 1 + category.groupby.split(',').length-1
+			}
+			return counter;
+		}
+	}
 	this.getCokpitIndexFromProperty = function(sheetIndex){
 		var indexProperty;
 		for(sheet in cockpitModule_template.sheets){
@@ -194,7 +236,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		}, 400);
 	};
 
-	this.refreshWidget = function(element, config, nature, options, data){
+	this.refreshWidget = function(element, config, nature, options, data, changedChartType){
 
 		var width = angular.element(element)[0].parentElement.offsetWidth;
 		var height = angular.element(element)[0].parentElement.offsetHeight;
@@ -237,7 +279,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 					dsRecords.then(function(data){
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
-						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
+						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,changedChartType:changedChartType});
 					}, function(){
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
 						console.log("Error retry data");

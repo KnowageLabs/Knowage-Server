@@ -190,9 +190,9 @@ angular.module('cockpitModule')
                     			}
                     		};
 
-                    		scope.refreshWidget=function(options,nature){
+                    		scope.refreshWidget=function(options,nature, changedChartType){
                     			var finOptions=options==undefined? (scope.getOptions == undefined? {} :  scope.getOptions()) : options;
-                    			cockpitModule_widgetServices.refreshWidget(angular.element(directive),scope.ngModel,nature==undefined? 'refresh' : nature, finOptions);
+                    			cockpitModule_widgetServices.refreshWidget(angular.element(directive),scope.ngModel,nature==undefined? 'refresh' : nature, finOptions, undefined, changedChartType);
                     		};
                     	}
 
@@ -313,6 +313,14 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		default: console.error("event "+eventType+" not found")
 		}
 	})
+	
+	$scope.chartTypes = []
+	
+	$scope.openMenu = function($mdOpenMenu, ev) {
+	      originatorEv = ev;
+	      $mdOpenMenu(ev);
+	};
+	
 	// specific widget event 'WIDGET_EVENT' with id of widget
 	$rootScope.$on('WIDGET_EVENT'+$scope.ngModel.id,function(config,eventType,config){
 
@@ -323,7 +331,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 				},1000);
 			}else{
-				$scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection);
+				$scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection, config.changedChartType);
 			}
 			break;
 		case "INIT" :
@@ -496,6 +504,44 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	    });
 	}
 
+	$scope.showChartTypes = function(ev,widgetName){
+		$scope.chartTypes.length = 0;
+		var serie = $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE;
+		var numOfCateg = cockpitModule_widgetServices.checkNumOfCategory($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY);
+		var minCategoriesSeries = cockpitModule_widgetServices.createCompatibleCharts();
+		for (var attrname in minCategoriesSeries.serie) {
+			if((minCategoriesSeries.serie[attrname] <= serie.length) && (minCategoriesSeries.categ[attrname] <= numOfCateg)){
+				$scope.chartTypes.push(attrname)
+			} 
+			
+		}
+
+		var index = $scope.chartTypes.indexOf($scope.ngModel.content.chartTemplate.CHART.type.toLowerCase()); 
+		if (index > -1) {
+			$scope.chartTypes.splice(index, 1);
+		}
+		
+		$mdDialog.show({
+			controller: function ($scope,$mdDialog,ngModel) {
+				$scope.widgetName = widgetName;
+				$scope.changeChartType = function(type){
+					$scope.ngModel.content.chartTemplate.CHART.type = type.toUpperCase();
+					$scope.$broadcast("changeChartType",{ "type": type});
+					$mdDialog.hide();
+				}
+				$scope.cancel = function(){
+					$mdDialog.cancel();
+				}
+			},
+			scope: $scope,
+			preserveScope:true,
+	      templateUrl: currentScriptPath+'/templates/chartTypes.tpl.html',
+	      targetEvent: ev,
+	      clickOutsideToClose:true,
+	      locals: {ngModel:$scope.ngModel}
+	    })
+	}
+	
 	$scope.doSelection = function(columnName,columnValue,modalColumn,modalValue,row, skipRefresh){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
