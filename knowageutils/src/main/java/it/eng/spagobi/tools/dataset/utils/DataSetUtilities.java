@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
@@ -83,7 +84,7 @@ public class DataSetUtilities {
 		if (isAdminUser) {
 			return true;
 		}
-		String owner = profile.getUserUniqueIdentifier().toString();
+		String owner = ((UserProfile) profile).getUserId().toString();
 		return (owner != null && owner.equals(dataset.getOwner()));
 	}
 
@@ -95,7 +96,7 @@ public class DataSetUtilities {
 		if (isAdminUser) {
 			return true;
 		}
-		String owner = profile.getUserUniqueIdentifier().toString();
+		String owner = ((UserProfile) profile).getUserId().toString();
 		return (owner != null && owner.equals(ownerDataSet));
 	}
 
