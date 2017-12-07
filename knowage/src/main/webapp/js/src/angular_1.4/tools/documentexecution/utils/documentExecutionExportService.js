@@ -36,7 +36,7 @@
 			var host = '&SBI_HOST='+sbiModule_config.host;
 			var dateFormat = '&dateformat='+sbiModule_config.serverDateFormat;
 			var controller ='&SBI_SPAGO_CONTROLLER='+sbiModule_config.adapterPathNoContext;
-			var userID = '&user_id='+sbiModule_user.userId;
+			var userUniqueIdentifier = '&user_id='+sbiModule_user.userUniqueIdentifier;
 			var sbiExeId= '&SBI_EXECUTION_ID=' + execProperties.executionInstance.SBI_EXECUTION_ID;
 			var isFromCross = '&isFromCross=false';
 			var sbiEnv = '&SBI_ENVIRONMENT=DOCBROWSER';
@@ -72,7 +72,7 @@
 					}
 				}
 			}
-			var exportationUrl =  sbiContext + docName + sbiExeRole + country + idDocument + language + host + dateFormat + controller + userID + sbiExeId + isFromCross + sbiEnv + outputType + paramsFilter + paramsExportType;
+			var exportationUrl =  sbiContext + docName + sbiExeRole + country + idDocument + language + host + dateFormat + controller + userUniqueIdentifier + sbiExeId + isFromCross + sbiEnv + outputType + paramsFilter + paramsExportType;
 			var url = encodeURIComponent(exportationUrl).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
 			return urlService + url;
 		};
