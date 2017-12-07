@@ -299,6 +299,9 @@
 	*#
 	legend:
 	{
+		#if ($chart.LEGEND.show != '' && ($chart.LEGEND.show == 'true' || $chart.LEGEND.show == true))
+		enabled: $chart.LEGEND.show , 
+		#end
 		symbolHeight: '$chart.LEGEND.symbolHeight',
 		
 		style:

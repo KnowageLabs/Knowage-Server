@@ -962,7 +962,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
          * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
          */
         legend: 
-        {
+        {	enabled: chartConf.legend.enabled,
             align: 'right',
             layout: 'vertical',
             verticalAlign: chartConf.legend.style.align,

@@ -854,7 +854,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 	                	  "borderWidth":"",
 	                	  "backgroundColor":""
 	                  },
-					"symbolHeight": 0,
+					"symbolHeight": 50,
 					"x": 0,
 					"y": 0,
 					"TITLE": {

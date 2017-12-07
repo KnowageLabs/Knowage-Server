@@ -253,10 +253,6 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
  $scope.openConfigurationDetails = function(button) {
 	 $scope.selectedConfigurationButton = button;
 	 $scope.disableLegendCheckbox = false;
-	 if($scope.selectedChartType == 'heatmap'){
-		 $scope.chartTemplate.LEGEND.show = true;
-		 $scope.disableLegendCheckbox = true;
-	 }
 	 
 	 if($scope.selectedChartType == 'parallel'){
 		 $scope.chartTemplate.LEGEND.show = true;
