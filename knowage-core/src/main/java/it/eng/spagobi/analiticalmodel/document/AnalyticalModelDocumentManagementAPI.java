@@ -44,6 +44,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDA
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
@@ -493,7 +494,8 @@ public class AnalyticalModelDocumentManagementAPI {
 
 		document.setLabel(buildCopiedString(document.getLabel(), version));
 		document.setName(buildCopiedString(document.getName(), version));
-		document.setCreationUser(String.valueOf(this.documentDAO.getUserProfile().getUserUniqueIdentifier()));
+		String userId = String.valueOf(((UserProfile) this.documentDAO.getUserProfile()).getUserId());
+		document.setCreationUser(userId);
 	}
 
 	private String buildCopiedString(String toCopy, int newVersion) {
