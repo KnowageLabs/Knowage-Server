@@ -276,6 +276,13 @@
 			<version>1.6.1</version>
 			<scope>compile</scope>
  		</dependency>
+		
+		<dependency>
+			<groupId>opensymphony</groupId>
+			<artifactId>quartz-oracle</artifactId>
+			<version>1.6.1</version>
+			<scope>compile</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>com.xebialabs.restito</groupId>
