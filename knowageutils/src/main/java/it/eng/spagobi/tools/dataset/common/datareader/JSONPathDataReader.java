@@ -17,20 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.Field;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.datastore.Record;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.utilities.Helper;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.json.JSONUtils;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
@@ -46,10 +32,23 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 /**
  * This reader convert JSON string to an {@link IDataStore}. The JSON must contains the items to convert, they are found using {@link JsonPath}. The name of
@@ -121,8 +120,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 	private boolean ngsiDefaultItems;
 
 	public JSONPathDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes, boolean useDirectlyAttributes, boolean ngsi) {
-		Helper.checkWithoutNulls(jsonPathAttributes, "pathAttributes");
-		Helper.checkNotNull(jsonPathAttributes, "jsonPathAttributes");
+		// Helper.checkWithoutNulls(jsonPathAttributes, "pathAttributes");
 		this.jsonPathAttributes = jsonPathAttributes;
 		this.useDirectlyAttributes = useDirectlyAttributes;
 		this.ngsi = ngsi;
@@ -174,7 +172,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 			dataStore.setMetaData(dataStoreMeta);
 			List<Object> parsedData = getItems(d);
 			addFieldMetadata(dataStoreMeta, parsedData);
-			addData(d, dataStore, dataStoreMeta, parsedData);
+			addData(d, dataStore, dataStoreMeta, parsedData, false);
 			return dataStore;
 		} catch (ParseException e) {
 			throw new JSONPathDataReaderException(e);
@@ -185,7 +183,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 	}
 
-	private void addData(String data, DataStore dataStore, MetaData dataStoreMeta, List<Object> parsedData) throws ParseException, JSONException {
+	protected void addData(String data, DataStore dataStore, MetaData dataStoreMeta, List<Object> parsedData, boolean skipPagination)
+			throws ParseException, JSONException {
 
 		boolean checkMaxResults = false;
 		if ((maxResults > 0)) {
@@ -194,7 +193,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 		boolean paginated = false;
 		logger.debug("Reading data ...");
-		if (isPaginationSupported() && getOffset() >= 0 && getFetchSize() >= 0) {
+		if ((isPaginationSupported() && getOffset() >= 0 && getFetchSize() >= 0)) {
 			logger.debug("Offset is equal to [" + getOffset() + "] and fetchSize is equal to [" + getFetchSize() + "]");
 			paginated = true;
 		} else {
@@ -203,8 +202,9 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 		int rowFetched = 0;
 		for (Object o : parsedData) {
-			if ((!paginated && (!checkMaxResults || (rowFetched < maxResults)))
-					|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize)) && (!checkMaxResults || (rowFetched - offset < maxResults)))) {
+			if (skipPagination || (!paginated && (!checkMaxResults || (rowFetched < maxResults)))
+					|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize))
+							&& (!checkMaxResults || (rowFetched - offset < maxResults)))) {
 
 				IRecord record = new Record(dataStore);
 
@@ -256,7 +256,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Object> getItems(String data) {
+	protected List<Object> getItems(String data) {
 		Object parsed = JsonPath.read(data, jsonPathItems);
 		if (parsed == null) {
 			throw new JSONPathDataReaderException(String.format("Items not found in %s with json path %s", data, jsonPathItems));
@@ -394,7 +394,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 	 * @param parsedData
 	 *            list of json object (net.minidev)
 	 */
-	private void addFieldMetadata(MetaData dataStoreMeta, List<Object> parsedData) {
+	protected void addFieldMetadata(MetaData dataStoreMeta, List<Object> parsedData) {
 		boolean idSet = false;
 
 		manageNGSI(parsedData);
@@ -638,4 +638,5 @@ public class JSONPathDataReader extends AbstractDataReader {
 	public boolean isMaxResultsSupported() {
 		return true;
 	}
+
 }

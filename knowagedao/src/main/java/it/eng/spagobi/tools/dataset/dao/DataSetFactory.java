@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
@@ -45,6 +56,7 @@ import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
+import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
@@ -59,17 +71,6 @@ import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.sql.SqlUtils;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -247,6 +248,8 @@ public class DataSetFactory {
 				fds.setDsType(FILE_DS_TYPE);
 			} else if (DataSetConstants.DS_REST_TYPE.equalsIgnoreCase(type)) {
 				ds = manageRESTDataSet(jsonConf);
+			} else if (DataSetConstants.DS_SOLR_TYPE.equalsIgnoreCase(type)) {
+				ds = manageSolrDataSet(jsonConf);
 			} else if (type.equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
 				ds = new CkanDataSet();
 				CkanDataSet cds = (CkanDataSet) ds;
@@ -467,8 +470,8 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds
-							.isNumRows()));
+					ds.setDataStoreTransformer(
+							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
@@ -733,8 +736,8 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds
-							.isNumRows()));
+					ds.setDataStoreTransformer(
+							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
@@ -815,6 +818,9 @@ public class DataSetFactory {
 
 			if (DataSetConstants.DS_REST_TYPE.equalsIgnoreCase(sbiDataSet.getType())) {
 				ds = manageRESTDataSet(jsonConf);
+			}
+			if (DataSetConstants.DS_SOLR_TYPE.equalsIgnoreCase(sbiDataSet.getType())) {
+				ds = manageSolrDataSet(jsonConf);
 			}
 
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
@@ -1061,8 +1067,8 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds
-							.isNumRows()));
+					ds.setDataStoreTransformer(
+							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
@@ -1112,6 +1118,12 @@ public class DataSetFactory {
 	private static RESTDataSet manageRESTDataSet(JSONObject jsonConf) {
 		RESTDataSet res = new RESTDataSet(jsonConf);
 		res.setDsType(DataSetConstants.DS_REST_NAME);
+		return res;
+	}
+
+	private static RESTDataSet manageSolrDataSet(JSONObject jsonConf) {
+		SolrDataSet res = new SolrDataSet(jsonConf);
+		res.setDsType(DataSetConstants.DS_SOLR_NAME);
 		return res;
 	}
 }

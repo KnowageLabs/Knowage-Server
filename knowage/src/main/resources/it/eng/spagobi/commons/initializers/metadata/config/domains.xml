@@ -468,6 +468,8 @@
 	
 	<DOMAIN valueCd="REST" valueNm="SbiRESTDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiRESTDataSet"/>
 	
+	<DOMAIN valueCd="Solr" valueNm="SbiSolrDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiSolrDataSet"/>
+	
 	<DOMAIN valueCd="MEASURE" valueNm="sbidomains.nm.measure"
 		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.measure" />
 		

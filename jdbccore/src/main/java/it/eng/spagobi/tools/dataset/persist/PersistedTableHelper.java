@@ -91,6 +91,9 @@ public class PersistedTableHelper {
 				if (fieldValue instanceof java.sql.Date) {
 					insertStatement.setDate(fieldIndex + 1, (Date) fieldValue);
 				} else {
+				if (fieldValue instanceof java.sql.Date) {
+					insertStatement.setDate(fieldIndex + 1, (Date) fieldValue);
+				} else {
 					java.util.Date date = (java.util.Date) fieldValue;
 					Instant instant = date.toInstant();
 					ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
@@ -134,7 +137,14 @@ public class PersistedTableHelper {
 				if (fieldValue == null || fieldValue.toString().isEmpty()) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.DOUBLE);
 				} else {
-					insertStatement.setDouble(fieldIndex + 1, (Double) fieldValue);
+
+					try {
+						insertStatement.setDouble(fieldIndex + 1, (Double) fieldValue);
+					} catch (ClassCastException e) {
+						logger.debug("the type of field [" + fieldValue + "] is not a double, I'm going to transform it in double ");
+						;
+						insertStatement.setDouble(fieldIndex + 1, new Double(fieldValue + ""));
+					}
 				}
 			} else if (fieldMetaTypeName.contains("Float")) {
 				// only for primitive type is necessary to use setNull method if value is null
@@ -194,7 +204,6 @@ public class PersistedTableHelper {
 			} else {
 				logger.error("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 				insertStatement.setObject(fieldIndex + 1, null);
-			}
 		} catch (Throwable t) {
 			logger.error("FieldValue [" + fieldValue + "] has class name [" + fieldValue.getClass().getName() + "]");
 			throw new RuntimeException("An unexpected error occured while adding to statement value [" + fieldValue + "] of field [" + fieldMetaName

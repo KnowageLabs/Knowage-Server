@@ -17,14 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
-import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.utilities.Helper;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
-import it.eng.spagobi.utilities.rest.RestUtilities.Response;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +24,14 @@ import java.util.Map;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
+
+import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
+import it.eng.spagobi.utilities.rest.RestUtilities.Response;
 
 /**
  * This data proxy makes REST calls. Providing all attributes (address, type of method, etc..) it make a http call and read the data store from the response
@@ -47,10 +47,10 @@ public class RESTDataProxy extends AbstractDataProxy {
 	private static final int FETCH_SIZE_NOT_DEFINED = -1;
 	private static final int MAX_RESULT_NOT_DEFINED = -1;
 
-	private final String requestBody;
-	private final String address;
-	private final Map<String, String> requestHeaders;
-	private final HttpMethod method;
+	protected final String requestBody;
+	protected final String address;
+	protected final Map<String, String> requestHeaders;
+	protected final HttpMethod method;
 
 	private final String offsetParam;
 	private final String fetchSizeParam;
@@ -113,10 +113,12 @@ public class RESTDataProxy extends AbstractDataProxy {
 			Helper.checkNotNull(dataReader, "dataReader");
 
 			List<NameValuePair> query = getQuery();
-			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody, query);
+			Response response = RestUtilities.makeRequest(this.method, setPaginationParameters(this.address, dataReader), this.requestHeaders, this.requestBody,
+					query);
 			String responseBody = response.getResponseBody();
 			if (response.getStatusCode() != HttpStatus.SC_OK) {
-				throw new RESTDataProxyException(String.format("The response status is not ok: status=%d, response=%s", response.getStatusCode(), responseBody));
+				throw new RESTDataProxyException(
+						String.format("The response status is not ok: status=%d, response=%s", response.getStatusCode(), responseBody));
 			}
 
 			Assert.assertNotNull(responseBody, "responseBody is null");
@@ -131,7 +133,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 		}
 	}
 
-	private List<NameValuePair> getQuery() {
+	protected List<NameValuePair> getQuery() {
 		List<NameValuePair> res = new ArrayList<NameValuePair>(3);
 		if (offsetParam != null) {
 			if (offset != OFFSET_NOT_DEFINED) {
@@ -152,6 +154,10 @@ public class RESTDataProxy extends AbstractDataProxy {
 		}
 
 		return res;
+	}
+
+	protected String setPaginationParameters(String address, IDataReader dataReader) {
+		return address;
 	}
 
 	public String getRequestBody() {

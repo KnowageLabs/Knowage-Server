@@ -1,4 +1,3 @@
-Insert in this file the history of DB Schema, only for MySQL
 Every items must have:
 - The Developer who has made the change
 - The SQL script that updates the schema ( schema, index and FK )
@@ -4044,4 +4043,8 @@ UPDATE SBI_CONFIG set VALUE_CHECK = 'user' where LABEL = 'SPAGOBI.SECURITY.DEFAU
 
 --- 24.11.2017 Marco Cortella added Date type in domains for file dataset support
 INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS, USER_IN) values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'), 'Date', 'Date', 'DS_META_VALUE', 'Dataset Metadata Value', 'Dataset Metadata Value', '');
+UPDATE hibernate_sequences SET next_val = (SELECT MAX(VALUE_ID) + 1 FROM SBI_DOMAINS) WHERE sequence_name = 'SBI_DOMAINS';
+
+--- 01.12.2017 Alberto Ghedin added Solr dataset in domains 
+INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS, USER_IN) values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'), 'Solr', 'SbiSolrDataSet', 'DATA_SET_TYPE', 'Data Set Type', 'SbiSolrDataSet', '');
 UPDATE hibernate_sequences SET next_val = (SELECT MAX(VALUE_ID) + 1 FROM SBI_DOMAINS) WHERE sequence_name = 'SBI_DOMAINS';
