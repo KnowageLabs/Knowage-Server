@@ -18,6 +18,7 @@
 package it.eng.spagobi.workspace.dao;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.workspace.bo.FunctionsOrganizer;
@@ -49,7 +50,7 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 		try {
 			aSession = getSession();
 			IEngUserProfile user = getUserProfile();
-			String userId = user.getUserUniqueIdentifier().toString();
+			String userId = ((UserProfile) user).getUserId().toString();
 			tx = aSession.beginTransaction();
 
 			Criteria criteria = getSession().createCriteria(SbiFunctionsOrganizer.class);
@@ -82,8 +83,6 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 	@Override
 	public SbiFunctionsOrganizer createFolder(SbiFunctionsOrganizer folder) {
 		logger.debug("IN");
-		IEngUserProfile user = getUserProfile();
-		String userId = user.getUserUniqueIdentifier().toString();
 		Session aSession = null;
 		Transaction tx = null;
 		SbiFunctionsOrganizer hibFunct = null;
