@@ -53,6 +53,7 @@
                 <li ng-repeat="field in entity[childrenName]" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)" layout="row"" ng-if="field.leaf">
                     <i ng-class="[fontIcons, field.iconCls]"></i>
                     <span>{{field["text"]}}</span>
+                    <md-tooltip md-direction="top">{{checkDescription(field)}}</md-tooltip>
                    <span>{{field["alias"]}}</span>
                     <span flex></span>
                     <md-button class="md-icon-button" ng-repeat="fieldAction in fieldsActions" ng-click="$event.stopPropagation();fieldAction.action(field,$event)">

@@ -84,19 +84,16 @@ angular.module('qbe_expander_list', ['ngDraggable'])
                 }
 
                 scope.checkDescription = function (field){
-            		var desc = "";
+            		var desc = 0;
             		for (var i = 0; i < scope.$parent.filters.length; i++) {
             			if(scope.$parent.filters[i].leftOperandDescription == field.attributes.entity+" : "+field.text){
-            				desc =desc.concat(" "
-            				+scope.$parent.filters[i].operator + " " +scope.$parent.filters[i].rightOperandDescription + "\n") ;
+            				desc++;
             			}
             		}
-            		if(desc==""){
-            			return "No filters"
+            		if(desc == 0) {
+            			return "No filters";
             		} else {
-
-            			return desc;
-
+            			return desc + " filters";
             		}
                 }
 

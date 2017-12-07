@@ -1,7 +1,7 @@
 
 var queries = angular.module('queries',['sbiModule']);
 
-queries.service('query_service',function(sbiModule_restServices,sbiModule_config, $q, $rootScope,sbiModule_messaging){
+queries.service('query_service',function(sbiModule_restServices,sbiModule_config, $q, $rootScope,sbiModule_messaging, $mdDialog){
 
 	this.smartView = true;
 
@@ -53,6 +53,17 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 
      				queryModel.push(queryObject);
 			}
+
+     		if(query.filters.length > 0) {
+     			for(var i = 0; i < queryModel.length; i++) {
+     				for(var j = 0; j < query.filters.length; j++) {
+     					if(queryModel[i].id == query.filters[j].leftOperandValue) {
+     						queryModel[i].filters.push(query.filters[j]);
+     					}
+     				}
+     			}
+     		}
+
      		if(isCompleteResult){
      			var columns = [];
      			var data = [];
@@ -62,18 +73,8 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
      		}
 
      	}, function(response) {
-     		var message = "";
 
-    		if (response.status==500) {
-    			message = response.data.errors[0].message;
-    			sbiModule_messaging.showErrorMessage(message, 'Error');
-    		}
-    		else {
-    			message = response.data.errors[0].message;
-    			sbiModule_messaging.showErrorMessage(message, 'Error');
-    		}
-
-    		sbiModule_messaging.showErrorMessage(message, 'Error');
+     		sbiModule_messaging.showErrorMessage("Server response: "+response.status, 'Error');
      	});
 
 
@@ -98,5 +99,6 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 	    }
 	    return -1;
 	}
+
 
 });

@@ -27,7 +27,7 @@ angular.module('qbe_custom_table', ['ngDraggable'])
         controller: qbeCustomTable,
         scope: {
             ngModel: '=',
-            expression: '=',
+        	expression: '=',
             filters: '='
         },
         templateUrl: currentScriptPath + 'custom-table.html',
@@ -230,18 +230,21 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		$rootScope.$broadcast('openFilters', {"field":field});
 	}
 	$scope.checkDescription = function (field){
-		var desc = "";
+		var desc = 0;
 
 		for (var i = 0; i < $scope.filters.length; i++) {
 			if($scope.filters[i].leftOperandDescription == field.entity+" : "+field.name){
-
-				desc =desc.concat(" "
-				+$scope.filters[i].operator + " " +$scope.filters[i].rightOperandDescription + "\n") ;
+				field.filters.push($scope.filters[i]);
+				desc++;
 			}
 		}
-		return desc;
-
+		if(desc == 0) {
+			return "No filters";
+		} else {
+			return desc + " filters";
+		}
 	}
+
 	$scope.openDialogForParams = function (model){
 		$rootScope.$broadcast('openDialogForParams');
 	}
@@ -375,6 +378,41 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		setVisibility : function (row) {
 			$scope.setVisible(row.id, row.entity, row.visible);
 		}
+	};
+
+	$scope.filtersListColumns = [
+    	{"label": $scope.translate.load("kn.qbe.filters.condition"), "name": "operator"},
+    	{"label": $scope.translate.load("kn.qbe.filters.target"), "name": "rightOperandDescription"}
+    ]
+
+	$scope.showFilters = function(field) {
+
+		$scope.field = field;
+
+        if(field.filters.length > 0) {
+	    	$mdDialog.show({
+	            controller: function ($scope, $mdDialog) {
+
+	                $scope.ok= function(){
+	                	console.log($scope)
+	                    $mdDialog.hide();
+	                }
+	            },
+	            scope: $scope,
+	            preserveScope:true,
+	            templateUrl:  sbiModule_config.contextName +'/qbe/templates/filtersInfo.html',
+
+	            clickOutsideToClose:true
+	        })
+        } else {
+        	$mdDialog.show(
+        		$mdDialog.alert()
+        		     .clickOutsideToClose(true)
+        		     .title(field.entity + " : " + field.name)
+        		     .textContent($scope.translate.load("kn.qbe.alert.nofilters"))
+        		     .ok($scope.translate.load("kn.qbe.general.ok"))
+            );
+        }
 	};
 
 }
