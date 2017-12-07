@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.persist;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -134,7 +132,6 @@ public class PersistedTableManager implements IPersistedManager {
 		dataset.setPersisted(false);
 		dataset.loadData();
 		IDataStore datastore = dataset.getDataStore();
-		ajustMetaDataFromFrontend(datastore, dataset);
 		persistDataset(datastore, dsPersist);
 	}
 
@@ -865,60 +862,6 @@ public class PersistedTableManager implements IPersistedManager {
 			Object displaySize = metadata.getFieldMeta(i).getProperty("displaySize");
 			if (displaySize != null) {
 				columnSize.put(metadata.getFieldName(i), (Integer) displaySize);
-			}
-		}
-	}
-
-	public void ajustMetaDataFromFrontend(IDataStore datastore, IDataSet dataset) {
-		IMetaData storeMeta = datastore.getMetaData();
-		IMetaData dataSetMeta = dataset.getMetadata();
-
-		for (int i = 0; i < storeMeta.getFieldCount(); i++) {
-			try {
-				IFieldMetaData storeFieldMeta = storeMeta.getFieldMeta(i);
-				String storeFieldMetaName = storeFieldMeta.getName();
-				String storeFieldMetaTypeName = storeFieldMeta.getType().toString();
-				for (int j = 0; j < dataSetMeta.getFieldCount(); j++) {
-					try {
-						IFieldMetaData dataSetFieldMeta = dataSetMeta.getFieldMeta(j);
-						String dataSetFieldMetaName = dataSetFieldMeta.getName();
-						String dataSetFieldMetaTypeName = dataSetFieldMeta.getType().toString();
-
-						if (dataSetFieldMetaName.equals(storeFieldMetaName)) {
-							if (!dataSetFieldMetaTypeName.equals(storeFieldMetaTypeName)) {
-								storeFieldMeta.setType(dataSetFieldMeta.getType());
-								changeFieldValueType(datastore, dataSetFieldMeta, j, dataSetFieldMeta.getType());
-							}
-						}
-
-					} catch (Throwable t) {
-						throw new RuntimeException("An unexpecetd error occured while ajusting metadata for record [" + j + "]", t);
-					}
-				}
-			} catch (Throwable t) {
-				throw new RuntimeException("An unexpecetd error occured while ajusting metadata for record [" + i + "]", t);
-			}
-		}
-	}
-
-	public void changeFieldValueType(IDataStore datastore, IFieldMetaData dataSetFieldMeta, int index, Class c) {
-
-		for (int i = 0; i < datastore.getRecordsCount(); i++) {
-			IRecord record = datastore.getRecordAt(i);
-			IField field = record.getFieldAt(index);
-			Constructor<?> cons;
-			try {
-				cons = c.getConstructor(String.class);
-			} catch (NoSuchMethodException | SecurityException e) {
-				logger.error("Error while creating construnctor for dynamically instancing class type", e);
-				throw new SpagoBIEngineRuntimeException("Error while creating construnctor for dynamically instancing class type. Table name:" + tableName, e);
-			}
-			try {
-				field.setValue(cons.newInstance(String.valueOf(field.getValue())));
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				logger.error("Error while changing field value to different type that is comming from data set wizard", e);
-				throw new SpagoBIEngineRuntimeException(
-						"Error while changing field value to different type that is comming from data set wizard. Table name:" + tableName, e);
 			}
 		}
 	}
