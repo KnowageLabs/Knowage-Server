@@ -44,6 +44,18 @@ datasetModule
 
 function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer){
 
+	$scope.$watch("selectedDataSet.restNGSI",function(newValue,oldValue){
+		if(newValue && (newValue===true || newValue==="true")){
+			$scope.selectedDataSet.restNGSI = true;
+		}
+	});
+
+	$scope.$watch("selectedDataSet.restDirectlyJSONAttributes",function(newValue,oldValue){
+		if(newValue && (newValue===true || newValue==="true")){
+			$scope.selectedDataSet.restDirectlyJSONAttributes = true;
+		}
+	});
+
 	$scope.showDatasetScheduler = sbiModule_user.functionalities.indexOf("SchedulingDatasetManagement")>-1;
 	$scope.showExportHDFS = sbiModule_user.functionalities.indexOf("DataSourceBigData")>-1;
 
@@ -78,6 +90,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.datasetTableLastPage = 1;
 	$scope.parametersTableLastPage = 1;
 	$scope.restDsRequestHeaderTableLastPage = 1;
+	$scope.restDsRequestAdditionalParametersTableLastPage = 1;
 	$scope.restDsJsonPathAttribTableLastPage = 1;
 
 	$scope.currentPageNumber = 1;
@@ -443,6 +456,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	// Initial list for REST request headers for a new REST dataset
 	$scope.restRequestHeaders = [];
+	$scope.restRequestAdditionalParameters = [];
 
 	$scope.requestHeadersScopeFunctions = {
 		setFormDirty: $scope.setFormDirty
@@ -461,6 +475,28 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					//console.log(page<$scope.restDsRequestHeaderTableLastPage);
 					$scope.restDsRequestHeaderTableLastPage = (page<=$scope.restDsRequestHeaderTableLastPage)
 						? $scope.restDsRequestHeaderTableLastPage : page;
+
+					//console.log($scope.restDsRequestHeaderTableLastPage);
+				},
+
+				300
+			);
+
+	}
+
+	$scope.requestAdditionalParameterAddItem = function() {
+
+		$scope.restRequestAdditionalParameters.push({"name":"","value":"","index":$scope.counterRequestAdditionalParameters++});
+
+		$timeout(
+				function() {
+					var page = $scope.tableLastPage("requestAdditionalParametersTable");
+					console.log(page);
+					console.log($scope.restDsRequestAdditionalParametersTableLastPage);
+					// If the page that is returned is less than the current one, that means that we are already on that page, so keep it (danristo)
+					//console.log(page<$scope.restDsRequestHeaderTableLastPage);
+					$scope.restDsRequestAdditionalParametersTableLastPage = (page<=$scope.restDsRequestAdditionalParametersTableLastPage)
+						? $scope.restDsRequestAdditionalParametersTableLastPage : page;
 
 					//console.log($scope.restDsRequestHeaderTableLastPage);
 				},
@@ -504,6 +540,53 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						 			if ($scope.restRequestHeaders[i].index == item.index) {
 						 				$scope.setFormDirty();
 						 				$scope.restRequestHeaders.splice(i,1);
+						 				break;
+						 			}
+
+						 		}
+
+					 		}
+						);
+
+	 		}
+
+	 	}
+	 ];
+
+	// Provide unique IDs for elements in the Request header grid, so we can remove them easily
+	$scope.counterRequestAdditionalParameters = 0;
+
+	$scope.requestAdditionalParametersDelete =
+	[
+		{
+			label: $scope.translate.load("sbi.generic.delete"),
+		 	icon:'fa fa-trash' ,
+		 	backgroundColor:'transparent',
+
+		 	action: function(item) {
+
+		 		console.log(item);
+
+		 		// TODO: translate
+		 		var confirm = $mdDialog.confirm()
+	 	          .title("Delete of REST dataset request parameter")
+	 	          .targetEvent(event)
+	 	          .textContent("Are you sure you want to delete request parameter")
+	 	          .ariaLabel("Delete of REST dataset request parameter")
+	 	          .ok($scope.translate.load("sbi.general.yes"))
+	 	          .cancel($scope.translate.load("sbi.general.No"));
+
+		 		$mdDialog
+	 				.show(confirm)
+	 				.then(
+
+	 						function() {
+
+				 	        	for (i=0; i<$scope.restRequestAdditionalParameters.length; i++) {
+
+						 			if ($scope.restAdditionalParameters[i].index == item.index) {
+						 				$scope.setFormDirty();
+						 				$scope.restAdditionalParameters.splice(i,1);
 						 				break;
 						 			}
 
@@ -1906,9 +1989,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.parameterItems = parameterItemsTemp;
 
 		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest") {
-
 			// Cast the REST NGSI (transform from the String)
-			$scope.selectedDataSet.restNGSI = JSON.parse($scope.selectedDataSet.restNGSI);
+			if($scope.selectedDataSet.restNGSI){
+				$scope.selectedDataSet.restNGSI = JSON.parse($scope.selectedDataSet.restNGSI);
+			}
+		}
+
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
+
+
 
 			// Cast the REST directly JSON attributes (transform from the String)
 			if($scope.selectedDataSet.restDirectlyJSONAttributes!=""){
@@ -1937,6 +2026,29 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			}
 
 			$scope.restRequestHeaders = restRequestHeadersTemp;
+
+			// REST ADDITIONAL PARAMETERS
+			var restRequestAdditionalParametersTemp = [];
+			//var counter = 0;
+
+			if($scope.selectedDataSet.restRequestAdditionalParameters){
+				for (var key in JSON.parse($scope.selectedDataSet.restRequestAdditionalParameters)) {
+
+					var restRequestAdditionalParameterTemp = {};
+
+					  if (JSON.parse($scope.selectedDataSet.restRequestAdditionalParameters).hasOwnProperty(key)) {
+						  restRequestAdditionalParameterTemp["name"] = key;
+						  restRequestAdditionalParameterTemp["value"] = JSON.parse($scope.selectedDataSet.restRequestAdditionalParameters)[key];
+						  restRequestAdditionalParameterTemp["index"] = $scope.counterRequestAdditionalParameters;
+					  }
+
+					  $scope.counterRequestAdditionalParameters++;
+					  restRequestAdditionalParametersTemp.push(restRequestAdditionalParameterTemp);
+
+				}
+			}
+
+			$scope.restRequestAdditionalParameters = restRequestAdditionalParametersTemp;
 
 			// REST JSON PATH
 			var restJsonPathAttributesTemp = [];
@@ -2170,7 +2282,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					restNGSI: "",
 					restOffset: "",
 					restRequestBody: "",
-					restRequestHeaders: ""
+					restRequestHeaders: "",
+					restRequestAdditionalParameters: "",
+					solrType: "FACETS",
+					solrFacetQuery: "",
+					solrFacetField: "",
+					solrFacetPrefix: ""
 
 			}
 
@@ -2201,7 +2318,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.pivotRowName ? $scope.selectedDataSet.pivotRowName="" : null;
 		}
 
-		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest") {
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
 
 			//----------------------
 			// REQUEST HEADERS
@@ -2213,6 +2330,18 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			}
 
 			$scope.selectedDataSet.restRequestHeaders = angular.copy(JSON.stringify(restRequestHeadersTemp));
+
+			//----------------------
+			// REQUEST ADDITIONAL PARAMETERS
+			//----------------------
+			var restRequestAdditionalParametersTemp = {};
+
+			for (i=0; i<$scope.restRequestAdditionalParameters.length; i++) {
+				restRequestAdditionalParametersTemp[$scope.restRequestAdditionalParameters[i]["name"]] = $scope.restRequestAdditionalParameters[i]["value"];
+			}
+
+			$scope.selectedDataSet.restRequestAdditionalParameters = angular.copy(JSON.stringify(restRequestAdditionalParametersTemp));
+
 
 			//----------------------
 			// JSON PATH ATTRIBUTES
@@ -2753,6 +2882,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			case "jsonPathAttributes":
 				takeTheInfoHtmlContent(sbiModule_config.contextName + "/themes/sbi_default/html/restdataset-json-path-attributes.html");
 				break;
+			case "facetQuery":
+				takeTheInfoHtmlContent(sbiModule_config.contextName + "/themes/sbi_default/html/facet-query.html");
+				break;
 		}
 
 	}
@@ -2865,7 +2997,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		$scope.disableBack = true;
 
-		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest") {
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
 
 			//----------------------
 			// REQUEST HEADERS
@@ -2877,6 +3009,18 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			}
 
 			$scope.selectedDataSet.restRequestHeaders = angular.copy(JSON.stringify(restRequestHeadersTemp));
+
+			//----------------------
+			// REQUEST ADDITIONAL PARAMETERS
+			//----------------------
+			var restRequestAdditionalParametersTemp = {};
+
+			for (i=0; i<$scope.restRequestAdditionalParameters.length; i++) {
+				restRequestAdditionalParametersTemp[$scope.restRequestAdditionalParameters[i]["name"]] = $scope.restRequestAdditionalParameters[i]["value"];
+			}
+
+			$scope.selectedDataSet.restRequestAdditionalParameters = angular.copy(JSON.stringify(restRequestAdditionalParametersTemp));
+
 
 			//----------------------
 			// JSON PATH ATTRIBUTES
@@ -3084,6 +3228,48 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	}
 
     }
+
+    $scope.deleteAllRESTRequestAdditionalParameters = function() {
+
+    	if ($scope.restRequestAdditionalParameters.length>0) {
+
+    		// TODO: translate
+        	var confirm = $mdDialog.confirm()
+    	         .title("Clear all REST request headers")
+    	         .targetEvent(event)
+    	         .textContent("Are you sure you want to delete all REST request headers")
+    	         .ariaLabel("Clear all REST request headers")
+    	         .ok($scope.translate.load("sbi.general.yes"))
+    	         .cancel($scope.translate.load("sbi.general.No"));
+
+    		$mdDialog
+    			.show(confirm)
+    			.then(
+    					function() {
+    						$scope.setFormDirty();
+    						$scope.restRequestAdditionalParameters = [];
+    						$scope.restDsRequestAdditionalParameterTableLastPage = 1;
+    			 		}
+    				);
+
+    	}
+    	else {
+
+    		$mdDialog
+			.show(
+					$mdDialog.alert()
+				        .clickOutsideToClose(true)
+				        .title('Dataset has no REST request headers to delete')
+				        .textContent('There are not REST request headers to delete for the selected dataset')
+				        .ariaLabel('Dataset has no REST request headers to delete')
+				        .ok('Ok')
+			    );
+
+    	}
+
+    }
+
+
 
     $scope.deleteAllRESTJsonPathAttributes = function() {
 
@@ -3316,13 +3502,20 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         		if ($scope.fileObj.hasOwnProperty(key)) {
         			$scope.fileObj[key] = "";
         		}
-
     		}
-
     	}
-    	else if (dsType.toLowerCase()=="rest") {
+    	else if (dsType.toLowerCase()=="rest" || dsType.toLowerCase()=="solr") {
     		$scope.restRequestHeaders = [];
+    		$scope.restRequestAdditionalParameters = [];
     		$scope.restJsonPathAttributes = [];
+    		if(dsType.toLowerCase()=="solr"){
+    			$scope.selectedDataSet.restRequestBody="*:*";
+    			$scope.selectedDataSet.restOffset =  "";
+    			$scope.selectedDataSet.restFetchSize=  "";
+    			$scope.selectedDataSet.restMaxResults=  "";
+    		}else{
+    			$scope.selectedDataSet.restRequestBody="";
+    		}
     	}
 
     	$scope.parameterItems = [];
