@@ -17,7 +17,7 @@
  */
 angular.module('chartRendererModule')
 
-.directive('chartRenderer',function(chartInitializerRetriver,jsonChartTemplate,highchartsDrilldownHelper,sbiModule_config){
+.directive('chartRenderer',function(chartInitializerRetriver,jsonChartTemplate,highchartsDrilldownHelper,sbiModule_config, ChartUpdateService){
 	
 	return{
 		restrict:'E',
@@ -112,13 +112,17 @@ angular.module('chartRendererModule')
 				}
 			})
 			
-			scope.$on('init',function(event,data){
+			scope.$on('init',function(event,data, isRealtime,changedChartType){
 				
 				var lib = getChartExecutionLib(scope.chartTemplate);
 				if(lib){
 					scope.noLib = false;
 					scope.chartInitializer = chartInitializerRetriver.getChartInitializer(lib);
-					scope.loadChart(scope.chartTemplate,scope.datasetLabel,data);
+					var template = scope.chartTemplate;
+					if(changedChartType){
+						template = ChartUpdateService.getTemplate(template);
+					}
+					scope.loadChart(template ,scope.datasetLabel,data);
 					
 				}else{
 					element[0].innerHTML = "no library implementation";

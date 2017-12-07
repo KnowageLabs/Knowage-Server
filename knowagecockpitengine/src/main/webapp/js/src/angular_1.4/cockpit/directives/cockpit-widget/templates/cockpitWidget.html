@@ -84,10 +84,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-icon md-font-icon="fa fa-filter"></md-icon>
 			</md-button>
 			
-			<!-- <md-button class="md-icon-button "  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();">
+			 <md-button class="md-icon-button "  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();">
 				<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.chartType")}}</md-tooltip>
 				<md-icon md-font-icon="fa fa-bar-chart"></md-icon>
-			</md-button>-->
+			</md-button>
 		</div>
 		
 		<md-fab-speed-dial md-open="ngModel.menuOpened" md-direction="down" class="showActionButtonHandler md-scale" ng-class="{'noMouse':ngModel.menuOpened==true}" ng-if="!widExp && !( cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE)">

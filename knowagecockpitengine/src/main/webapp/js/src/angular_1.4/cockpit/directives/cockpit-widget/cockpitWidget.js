@@ -190,9 +190,9 @@ angular.module('cockpitModule')
                     			}
                     		};
 
-                    		scope.refreshWidget=function(options,nature){
+                    		scope.refreshWidget=function(options,nature,changedChartType){
                     			var finOptions=options==undefined? (scope.getOptions == undefined? {} :  scope.getOptions()) : options;
-                    			cockpitModule_widgetServices.refreshWidget(angular.element(directive),scope.ngModel,nature==undefined? 'refresh' : nature, finOptions);
+                    			cockpitModule_widgetServices.refreshWidget(angular.element(directive),scope.ngModel,nature==undefined? 'refresh' : nature, finOptions, undefined, changedChartType);
                     		};
                     	}
 
@@ -323,7 +323,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 				},1000);
 			}else{
-				$scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection);
+				$scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection, config.changedChartType);
 			}
 			break;
 		case "INIT" :
@@ -970,6 +970,45 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			return true;
 		}
 		return false;
+	}
+	$scope.chartTypes = [];
+	$scope.showChartTypes = function(ev,widgetName){
+		$scope.chartTypes.length = 0;
+		var serie = $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE;
+		var numOfCateg = cockpitModule_widgetServices.checkNumOfCategory($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY);
+		var minMaxCategoriesSeries = cockpitModule_widgetServices.createCompatibleCharts();
+		for (var attrname in minMaxCategoriesSeries.serie.min) {
+			if((minMaxCategoriesSeries.serie.min[attrname] <= serie.length) && (minMaxCategoriesSeries.categ.min[attrname] <= numOfCateg) && attrname!=$scope.ngModel.content.chartTemplate.CHART.type.toLowerCase()){
+				$scope.chartTypes.push(attrname)
+			}
+		}
+		
+		$mdDialog.show({
+			controller: function ($scope,$mdDialog,ngModel) {
+				$scope.widgetName = widgetName;
+
+				$scope.changeChartType = function(type){
+					var chartType = $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase();
+					var categories = cockpitModule_widgetServices.checkCategories($scope.ngModel.content.chartTemplate);
+					delete $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
+					var maxcateg = minMaxCategoriesSeries.categ.max[type] ? minMaxCategoriesSeries.categ.max[type] : undefined;
+					$scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY = cockpitModule_widgetServices.compatibleCategories(type, categories, maxcateg);
+					if(minMaxCategoriesSeries.serie.max[type]) $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length = minMaxCategoriesSeries.serie.max[type];
+					$scope.ngModel.content.chartTemplate.CHART.type = type.toUpperCase();
+					$scope.$broadcast("changeChartType",{ "type": type});
+					$mdDialog.hide();
+				}
+				$scope.cancel = function(){
+					$mdDialog.cancel();
+				}
+			},
+			scope: $scope,
+			preserveScope:true,
+	      templateUrl: currentScriptPath+'/templates/chartTypes.tpl.html',
+	      targetEvent: ev,
+	      clickOutsideToClose:true,
+	      locals: {ngModel:$scope.ngModel}
+	    })
 	}
 };
 

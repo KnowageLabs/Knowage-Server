@@ -2546,4 +2546,189 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		});
 		return deferred.promise;
 	}
+})
+.service("ChartUpdateService", function(sbiModule_restServices,StructureTabService,sbiModule_messaging,sbiModule_translate,sbiModule_config, $http, $q, $timeout){
+	this.getTemplate = function (originalTemplate){
+		var type = originalTemplate.CHART.type.toLowerCase();
+		var baseTemplate = {};
+		switch(type){
+		case 'parallel':
+			angular.copy(StructureTabService.getParallelTemplate(), baseTemplate);
+			break;
+		case 'sunburst':
+			angular.copy(StructureTabService.getSunburstTemplate(), baseTemplate);
+			break;
+		case 'scatter':
+			angular.copy(StructureTabService.getScatterTemplate(), baseTemplate);
+			break;
+		case 'treemap':
+			angular.copy( StructureTabService.getTreemapTemplate(), baseTemplate);
+			break;
+		case 'wordcloud':
+			angular.copy(StructureTabService.getWordCloudTemplate(), baseTemplate);
+			break;
+		case 'gauge':
+			angular.copy(StructureTabService.getGaugeTemplate(), baseTemplate);
+			break;
+		case 'line':
+			angular.copy(StructureTabService.getBaseTemplate(), baseTemplate);
+			baseTemplate.type="LINE";
+			break;
+		case 'heatmap':
+			angular.copy(StructureTabService.getHeatmapTemplate(), baseTemplate);
+			break;
+		case 'radar':
+			angular.copy(StructureTabService.getRadarTemplate(), baseTemplate);
+			break;
+		case 'bar':
+			angular.copy(StructureTabService.getBaseTemplate(), baseTemplate);
+			break;
+		case 'pie':
+			angular.copy(StructureTabService.getBaseTemplate(), baseTemplate);
+			baseTemplate.type="PIE";
+			break;
+		case 'chord':
+			angular.copy(StructureTabService.getChordTemplate(), baseTemplate);
+			break;	
+		default:
+			break;
+		}
+		getObjectProperties(baseTemplate, originalTemplate.CHART)
+		baseTemplate.VALUES.CATEGORY=originalTemplate.CHART.VALUES.CATEGORY
+		baseTemplate.VALUES.SERIE=originalTemplate.CHART.VALUES.SERIE
+		
+
+		return {"CHART":baseTemplate};
+	}
+
+	var limitSerieCateg = function () {
+		var maxCategoriesSeries = {"categ":{},"serie":{}};
+
+		maxCategoriesSeries.categ.scatter = 1;
+		maxCategoriesSeries.categ.heatmap = 2;
+		maxCategoriesSeries.categ.radar = 1;
+		maxCategoriesSeries.categ.chord = 2;
+		maxCategoriesSeries.categ.pie = 1;
+		
+		maxCategoriesSeries.serie.treemap = 1;
+		maxCategoriesSeries.serie.wordcloud = 1;
+		maxCategoriesSeries.serie.heatmap = 1;
+	// chartJS	maxCategoriesSeries.serie.pie = 1;
+		maxCategoriesSeries.serie.chord = 1;
+		
+		return maxCategoriesSeries;
+	}
+	var getObjectProperties = function (baseTemplate, originalTemplate) {
+		for (var attrname in originalTemplate) {
+			if(baseTemplate.hasOwnProperty(attrname)){
+				if(!(typeof baseTemplate[attrname] == 'object')){
+					baseTemplate[attrname] = originalTemplate[attrname]; 
+				} else {
+					getObjectProperties(baseTemplate[attrname], originalTemplate[attrname]);
+				}
+			}
+			
+			
+		}
+	}
+	
+	var checkCategories = function (template){
+		var categoriesExist = template.CHART.VALUES.CATEGORY ? true : false;
+		var categories = [];
+		if(categoriesExist){
+			var categoryTag = template.CHART.VALUES.CATEGORY;
+			if (categoryTag.length) {
+				//if($scope.chartTemplate.type=="PARALLEL" || $scope.chartTemplate.type=="HEATMAP" || $scope.chartTemplate.type=="CHORD") {
+					for (i=0; i<categoryTag.length; i++) {
+						categories.push(categoryTag[i]);
+					}
+				//}
+
+			} else {
+				if (categoryTag.groupby.indexOf(",") > -1) {
+
+					//and groupbyNames is an array
+					if(categoryTag.groupbyNames.indexOf(",") > -1) {
+
+						categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+
+						var groupBySplitArray = categoryTag.groupby.split(",");
+						for (i=0; i<groupBySplitArray.length; i++) {
+
+							var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", stacked:"", stackedType:""};
+							obj.column = groupBySplitArray[i];
+							if(obj.column.startsWith(" ")) obj.column = obj.column.replace(" ","")
+							var groupByNameSplitArray = categoryTag.groupbyNames.split(",");
+							for (var j = 0; j < groupByNameSplitArray.length; j++) {
+								if(j==i){
+									obj.name = groupByNameSplitArray[j];
+									if(obj.name.startsWith(" ")) obj.name = obj.name.replace(" ","")
+								}
+							}
+							 categories.push(obj);
+						}
+
+
+					}
+
+					//and groupbyNames is not an array
+					else {
+
+						categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+
+						var gbnCounter = 0;
+						var groupBySplitArray = categoryTag.groupby.split(",");
+						for (i=0; i<groupBySplitArray.length; i++) {
+							var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", stacked:"", stackedType:""};
+							//check if grpupByName is empty and case for first situation
+							 if(categoryTag.groupbyNames!="" && gbnCounter==0) {
+								 obj.column = groupBySplitArray[i];
+								 obj.name = categoryTag.groupbyNames;
+								 gbnCounter++;
+							 } else {
+								 obj.column = groupBySplitArray[i];
+								 obj.name = "";
+							 }
+							 categories.push(obj);
+						}
+					}
+
+				} else {
+
+					//categoryTag.groupby is empty
+					if(categoryTag.groupby=="" && categoryTag.column!=""){
+						categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+					} else {
+
+						 if(categoryTag.name=="" && categoryTag.column!=""){
+							 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+							 } else if(categoryTag.name!="" && categoryTag.column!="") {
+								 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+							 }
+
+						 if(categoryTag.groupbyNames!="") {
+							 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+						 } else if (categoryTag.column!="") {
+							 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+						 }
+					}
+				}
+			}
+			
+		}
+		
+		
+		if(template.CHART.type.toLowerCase()== "bar"|| template.CHART.type.toLowerCase()=="line"){
+			var category = {column:categories[0].column,groupby:"", groupbyNames:"",name:categories[0].name, orderColumn:categories[0].orderColumn,orderType:categories[0].orderType,stacked:categories[0].stacked,stackedType:categories[0].stackedType}
+			var groupby = "";
+			if(categories.length>1)
+			for (var i = 1; i < categories.length; i++) {
+				if(i!=1) groupby+=","
+				groupby += categories[i].column;
+			}
+			category.groupby=groupby;
+			return category
+		} else return categories;
+		
+	}
 });

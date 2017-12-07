@@ -63,6 +63,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			break;
 		case 'wordcloud':
 			$scope.minMaxCategories.min = 1;
+			$scope.minMaxCategories.max = 1;
 			$scope.minMaxSeries.min = 1;
 			$scope.minMaxSeries.max = 1;
 			break;

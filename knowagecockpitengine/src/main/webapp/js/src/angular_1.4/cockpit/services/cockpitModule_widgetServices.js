@@ -194,7 +194,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		}, 400);
 	};
 
-	this.refreshWidget = function(element, config, nature, options, data){
+	this.refreshWidget = function(element, config, nature, options, data, changedChartType){
 
 		var width = angular.element(element)[0].parentElement.offsetWidth;
 		var height = angular.element(element)[0].parentElement.offsetHeight;
@@ -237,7 +237,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 					dsRecords.then(function(data){
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
-						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
+						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,changedChartType:changedChartType});
 					}, function(){
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
 						console.log("Error retry data");
@@ -257,8 +257,191 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		});
 	}
 
+	this.checkNumOfCategory = function (category){
+		if(category.length){
+			return category.length
+		} else {
+			var groupBySplitArray = category.groupby.split(",");
+			if(category.groupby=="") return 1;
+			else return groupBySplitArray.length+1;
+		}
+	};
+	this.createCompatibleCharts = function () {
+		var minMaxCategoriesSeries = {"categ":{"min":{},"max":{}},"serie":{"min":{},"max":{}}};
+		
+		minMaxCategoriesSeries.categ.min.parallel = 1;
+		minMaxCategoriesSeries.categ.min.sunburst = 2;
+		minMaxCategoriesSeries.categ.min.scatter = 1;
+		minMaxCategoriesSeries.categ.max.scatter = 1;
+		minMaxCategoriesSeries.categ.min.treemap = 2;
+		minMaxCategoriesSeries.categ.min.wordcloud = 1;
+		minMaxCategoriesSeries.categ.max.wordcloud = 1;
+		minMaxCategoriesSeries.categ.min.line = 1;
+		minMaxCategoriesSeries.categ.min.heatmap = 2;
+		minMaxCategoriesSeries.categ.max.heatmap = 2;
+		minMaxCategoriesSeries.categ.min.radar = 1;
+		minMaxCategoriesSeries.categ.max.radar = 1;
+		minMaxCategoriesSeries.categ.min.bar = 1;
+		minMaxCategoriesSeries.categ.min.pie = 1;
+		
+		minMaxCategoriesSeries.serie.min.parallel = 2;
+		minMaxCategoriesSeries.serie.min.sunburst = 1;
+		minMaxCategoriesSeries.serie.min.scatter = 1;
+		minMaxCategoriesSeries.serie.min.treemap = 1;
+		minMaxCategoriesSeries.serie.max.treemap = 1;
+		minMaxCategoriesSeries.serie.min.wordcloud = 1;
+		minMaxCategoriesSeries.serie.max.wordcloud = 1;
+		minMaxCategoriesSeries.serie.min.gauge = 1;
+		minMaxCategoriesSeries.serie.min.line = 1;
+		minMaxCategoriesSeries.serie.max.heatmap = 1;
+		minMaxCategoriesSeries.serie.min.radar = 1;
+		minMaxCategoriesSeries.serie.min.bar = 1;
+		minMaxCategoriesSeries.serie.min.pie = 1;
+		
+		return minMaxCategoriesSeries;
+	};
+	
+	this.checkCategories = function (template){
+			var categories = []
+			categoriesExist = template.CHART.VALUES.CATEGORY ? true : false;
+
+			if (categoriesExist) {
+
+				var categoryTag = template.CHART.VALUES.CATEGORY;
+				if (categoryTag.length) {
+					for (i=0; i<categoryTag.length; i++) {
+						categories.push(categoryTag[i]);
+					}
+				}
+
+				else {
+					if (categoryTag.groupby.indexOf(",") > -1) {
+
+						if(categoryTag.groupbyNames.indexOf(",") > -1) {
+
+							categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+
+							var groupBySplitArray = categoryTag.groupby.split(",");
+							for (i=0; i<groupBySplitArray.length; i++) {
+								if(groupBySplitArray[i].startsWith(" ")) groupBySplitArray[i] = groupBySplitArray[i].replace(" ","")
+								
+								var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", stacked:"", stackedType:""};
+								obj.column = groupBySplitArray[i];
+								var groupByNameSplitArray = categoryTag.groupbyNames.split(",");
+								for (var j = 0; j < groupByNameSplitArray.length; j++) {
+									if(groupByNameSplitArray[i].startsWith(" ")) groupByNameSplitArray[i] = groupByNameSplitArray[i].replace(" ","")
+									
+									if(j==i){
+										obj.name = groupByNameSplitArray[j];
+									}
+								}
+								 categories.push(obj);
+							}
 
 
+						}
+
+						else {
+
+							categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+
+							var gbnCounter = 0;
+							var groupBySplitArray = categoryTag.groupby.split(",");
+							for (i=0; i<groupBySplitArray.length; i++) {
+								var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", stacked:"", stackedType:""};
+								 if(categoryTag.groupbyNames!="" && gbnCounter==0) {
+									 obj.column = groupBySplitArray[i];
+									 obj.name = categoryTag.groupbyNames;
+									 gbnCounter++;
+								 } else {
+									 obj.column = groupBySplitArray[i];
+									 obj.name = "";
+								 }
+								 categories.push(obj);
+							}
+						}
+
+					}
+					else {
+						if(categoryTag.groupby=="" && categoryTag.column!=""){
+							categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+						} else {
+
+							 if(categoryTag.name=="" && categoryTag.column!=""){
+								 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+								 } else if(categoryTag.name!="" && categoryTag.column!="") {
+									 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+								 }
+
+							 if(categoryTag.groupbyNames!="") {
+								 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+							 } else if (categoryTag.column!="") {
+								 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+							 }
+						}
+					}
+				}
+			}
+		
+			return categories;
+	
+	}
+	this.compatibleCategories = function (chartType, categories, maxcateg){
+		var maxcategory = maxcateg ? maxcateg : categories.length;
+		var categ = {};
+		if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" || 
+				chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "PARALLEL" || 
+					chartType.toUpperCase() == "HEATMAP" || chartType.toUpperCase() == "CHORD") {
+			if(categories.length>maxcategory) categories.length = maxcategory;
+			return categories;
+		} else if (chartType.toUpperCase() != "GAUGE"){
+			categ = {
+							column:"", 
+							groupby:"", 
+							groupbyNames:"", 
+							name:"", 
+							orderColumn:"", 
+							orderType:"", 
+							stacked:"", 
+							stackedType:""
+					};
+			for (var i = 0; i < maxcategory; i++) {
+				if(i==0){
+					categ.column = categories[i].column;
+					categ.name = categories[i].name;
+					if(categ.orderColumn==""){
+						categ.orderColumn = categories[i].orderColumn;
+					} 
+					
+					if(categ.orderType==""){
+						categ.orderType = categories[i].orderType;
+					} 
+					if(categ.stacked==""){
+						categ.stacked = categories[i].stacked;
+					} 
+					if(categ.stackedType==""){
+						categ.stackedType = categories[i].stackedType;
+					} 
+				} else {
+					if(categ.groupby==""){
+						categ.groupby = categories[i].column;
+					} else {
+						categ.groupby = categ.groupby +", "+ categories[i].column;
+					}
+					if(categ.groupbyNames=="") {
+						if(categories[i].name!="") {
+							categ.groupbyNames = categories[i].name;
+						}
+					} else {
+						if(categories[i].name!="") {
+							categ.groupbyNames = categ.groupbyNames + ", " + categories[i].name;
+						}
+					}					
+				}
+			}
+			return categ
+		}
+	}
 
 });
 

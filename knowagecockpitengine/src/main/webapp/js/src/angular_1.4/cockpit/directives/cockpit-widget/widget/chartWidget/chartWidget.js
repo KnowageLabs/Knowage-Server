@@ -214,7 +214,12 @@ function cockpitChartWidgetControllerFunction(
 	};
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
 
-	$scope.refresh=function(element,width,height,data,nature){
+	$scope.$on('changeChartType', function (event, data) {
+		setAggregationsOnChartEngine($scope.ngModel.content)
+		$scope.refreshWidget(undefined,'init', true);
+	});
+	
+	$scope.refresh=function(element,width,height,data,nature, undefined, changedChartType){
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			if (dataset.isRealtime == true){
@@ -230,11 +235,11 @@ function cockpitChartWidgetControllerFunction(
 				} else {
 					dataToPass = $scope.realtimeDataManagement($scope.realTimeDatasetData, nature);
 				}
-				$scope.$broadcast(nature,dataToPass,dataset.isRealtime);
+				$scope.$broadcast(nature,dataToPass,dataset.isRealtime,changedChartType);
 
 			} else {
 				//Refresh for Not realtime datasets
-				$scope.$broadcast(nature,data);
+				$scope.$broadcast(nature,data, false, changedChartType);
 			}
 		}
 
