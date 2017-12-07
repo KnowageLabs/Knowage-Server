@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,23 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.mongodb.CommandResult;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -30,18 +42,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.mongodb.CommandResult;
-
 public class MongoDataReader extends AbstractDataReader {
 
 	private static transient Logger logger = Logger.getLogger(MongoDataReader.class);
@@ -53,6 +53,7 @@ public class MongoDataReader extends AbstractDataReader {
 	public MongoDataReader() {
 	}
 
+	@Override
 	public IDataStore read(Object data) throws EMFUserError, EMFInternalError {
 		DataStore dataStore = null;
 		MetaData dataStoreMeta;
@@ -104,6 +105,18 @@ public class MongoDataReader extends AbstractDataReader {
 		logger.debug("Processing the result");
 		try {
 
+			int maxObjectLength = 0;
+			// calculate the number of columns.. It is the maximum of the documents length
+			for (int i = start; i < end; i++) {
+				JSONObject document = resultArray.getJSONObject(i);
+				maxObjectLength = Math.max(maxObjectLength, document.length());
+			}
+
+			for (int i = 0; i < maxObjectLength; i++) {
+				FieldMetadata fieldMeta = new FieldMetadata("temp" + i, String.class);
+				dataStoreMeta.addFiedMeta(fieldMeta);
+			}
+
 			for (int i = start; i < end; i++) {
 
 				IRecord record = new Record(dataStore);
@@ -149,7 +162,7 @@ public class MongoDataReader extends AbstractDataReader {
 						fieldMeta.setName(fieldName);
 						setFieldType(field, fieldMeta, fieldValue);
 
-						dataStoreMeta.addFiedMeta(fieldMeta);
+						dataStoreMeta.getFieldsMeta().set(fieldIndex, fieldMeta);
 
 						// add the new field at the end of the fields array
 						fieldsCollection.add(field);
@@ -165,8 +178,11 @@ public class MongoDataReader extends AbstractDataReader {
 						// insert the field in the correct position
 						fieldsCollection.set(fieldIndex, field);
 					}
-
 				}
+				for (int j = keys.length; j < maxObjectLength; j++) {
+					fieldsCollection.add(new Field(null));
+				}
+
 				record.setFields(fieldsCollection);
 				dataStore.appendRecord(record);
 			}
@@ -185,7 +201,7 @@ public class MongoDataReader extends AbstractDataReader {
 
 	/**
 	 * Parse the result in a JSONArray
-	 * 
+	 *
 	 * @param result
 	 * @return
 	 */
@@ -209,7 +225,7 @@ public class MongoDataReader extends AbstractDataReader {
 				if (obj == null || obj.equals("")) {
 					obj = resultObject.optString("_firstBatch");
 				}
-				
+
 				if (obj == null || obj.equals("")) {
 					obj = resultObject.optString("_batch");
 				}

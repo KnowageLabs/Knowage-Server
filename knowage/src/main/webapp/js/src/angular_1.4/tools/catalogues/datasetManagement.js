@@ -44,6 +44,20 @@ datasetModule
 
 function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer){
 
+
+	$scope.$watch("selectedDataSet.restNGSI",function(newValue,oldValue){
+		if(newValue && (newValue===true || newValue==="true")){
+			$scope.selectedDataSet.restNGSI = true;
+		}
+	});
+
+	$scope.$watch("selectedDataSet.restDirectlyJSONAttributes",function(newValue,oldValue){
+		if(newValue && (newValue===true || newValue==="true")){
+			$scope.selectedDataSet.restDirectlyJSONAttributes = true;
+		}
+	});
+
+
 	$scope.showDatasetScheduler = sbiModule_user.functionalities.indexOf("SchedulingDatasetManagement")>-1;
 	$scope.showExportHDFS = sbiModule_user.functionalities.indexOf("DataSourceBigData")>-1;
 
@@ -57,7 +71,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	    {"label":$scope.translate.load("sbi.generic.type"), "name":"dsTypeCd", "size":"70px"},
 	    {"label":$scope.translate.load("sbi.ds.numDocs"), "name":"usedByNDocs", "size":"60px"}
     ];
-	
+
 	$scope.sortableColumn = ["name","label","dsTypeCd"]
 
 	$scope.selectedDatasetVersion = null;
@@ -869,7 +883,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	if($scope.columnOrdering){
     		columnOrderingLabel = $scope.columnOrdering.label;
     	}
-    	
+
     	if($scope.searchValue!=""){
     		sbiModule_restServices.promiseGet("1.0/datasets", "countDataSetSearch/"+$scope.searchValue)
     		.then(function(response) {
@@ -901,7 +915,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     			if($scope.reverseOrdering==undefined){
     				$scope.reverseOrdering=false;
     			}
-    			
+
     			var columnOrderingLabel = "";
     	    	if($scope.columnOrdering){
     	    		columnOrderingLabel = $scope.columnOrdering.label;
@@ -941,7 +955,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		if(reverseOrdering!==null && reverseOrdering!==""){
 			var ordering = {"reverseOrdering":reverseOrdering,
 							"columnOrdering":columnOrderingName
-					
+
 			};
 			queryParams = queryParams+"&ordering="+angular.toJson(ordering);
 		}
@@ -1890,7 +1904,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest") {
 
 			// Cast the REST NGSI (transform from the String)
-			$scope.selectedDataSet.restNGSI = JSON.parse($scope.selectedDataSet.restNGSI);
+			if($scope.selectedDataSet.restNGSI){
+				$scope.selectedDataSet.restNGSI = JSON.parse($scope.selectedDataSet.restNGSI);
+			}
 
 			// Cast the REST directly JSON attributes (transform from the String)
 			if($scope.selectedDataSet.restDirectlyJSONAttributes!=""){
