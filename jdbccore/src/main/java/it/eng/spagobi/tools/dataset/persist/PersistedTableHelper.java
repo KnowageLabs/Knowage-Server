@@ -91,9 +91,6 @@ public class PersistedTableHelper {
 				if (fieldValue instanceof java.sql.Date) {
 					insertStatement.setDate(fieldIndex + 1, (Date) fieldValue);
 				} else {
-				if (fieldValue instanceof java.sql.Date) {
-					insertStatement.setDate(fieldIndex + 1, (Date) fieldValue);
-				} else {
 					java.util.Date date = (java.util.Date) fieldValue;
 					Instant instant = date.toInstant();
 					ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
@@ -204,6 +201,7 @@ public class PersistedTableHelper {
 			} else {
 				logger.error("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 				insertStatement.setObject(fieldIndex + 1, null);
+			}
 		} catch (Throwable t) {
 			logger.error("FieldValue [" + fieldValue + "] has class name [" + fieldValue.getClass().getName() + "]");
 			throw new RuntimeException("An unexpected error occured while adding to statement value [" + fieldValue + "] of field [" + fieldMetaName
