@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -137,18 +137,18 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			if(thereAreInlineTemporalFilters) {
 				limit = 0;
 			}
-			
+
 			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
 			dataStore = executeQuery(start, limit);
 			if(thereAreInlineTemporalFilters) {
 				dataStore = new TimeAggregationHandler(getDataSource()).handleTimeAggregations(query, dataStore);
 			}
-			
+
 			resultNumber = (Integer) dataStore.getMetaData().getProperty("resultNumber");
 
 			logger.debug("Total records: " + resultNumber);
 
-			
+
 			boolean overflow = maxSize != null && resultNumber >= maxSize;
 			if (overflow) {
 				logger.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
@@ -291,7 +291,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();
 			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null ? maxSize : "none") + "]");
 			String jpaQueryStr = statement.getQueryString();
-			
+
 			logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
 
 			logQueryInAudit(qbeDataSet);
