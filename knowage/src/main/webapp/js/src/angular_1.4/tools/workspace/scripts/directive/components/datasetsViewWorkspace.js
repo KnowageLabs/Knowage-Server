@@ -571,7 +571,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		       + (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 
 		 //$window.location.href=url;
-		$qbeViewer.openQbeInterfaceDSet($scope, false, url);
+		$qbeViewer.openQbeInterfaceDSet($scope, false, url, true);
 
     }
 

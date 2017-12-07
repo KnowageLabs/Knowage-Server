@@ -53,7 +53,7 @@ angular
 
 		};
 
-		this.openQbeInterfaceDSet = function($scope, editDSet, url) {
+		this.openQbeInterfaceDSet = function($scope, editDSet, url, isDerived) {
 
 
 			if(datasetParameters.error){
@@ -64,7 +64,7 @@ angular
 
 
 				$scope.editQbeDset = editDSet;
-				if( $scope.selectedDataSet){
+				if( $scope.selectedDataSet && !isDerived){
 					globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
 				}
 
