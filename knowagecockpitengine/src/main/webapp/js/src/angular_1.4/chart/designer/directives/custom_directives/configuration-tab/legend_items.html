@@ -8,7 +8,7 @@
 	</md-input-container>
 </div>
 
-<div  layout="column" ng-show="chartTemplate.LEGEND.show && !disableLegendCheckbox">
+<div  layout="column" ng-show="chartTemplate.LEGEND.show && !disableLegendCheckbox &&  selectedChartType != 'heatmap'">
 
 	<md-input-container ng-if="disableHtmlElementForChartJs()" class="md-block">
 	 <label>{{translate.load("sbi.chartengine.configuration.position")}}</label>
@@ -54,7 +54,7 @@
 
 </div>
 
-<div  ng-show="chartTemplate.LEGEND.show && disableLegendCheckbox && selectedChartType == 'heatmap'" layout="column">
+<div  ng-show="chartTemplate.LEGEND.show && selectedChartType == 'heatmap'" layout="column">
 
 	<md-input-container class="md-block" > 
 	<label>{{translate.load("sbi.chartengine.configuration.title.verticalAlignCombo")}}</label>
