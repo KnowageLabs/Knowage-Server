@@ -22,7 +22,7 @@
             </h4>
             <ul ng-show="entity.expanded">
             	<div ng-repeat="field in entity[childrenName]">
-            		<li layout="row"" ng-if="!field.leaf" class="second-lvl-cursor">
+            		<li layout="row" ng-click="field.expanded=!field.expanded;passEntityColorToTemporalFields(entity);" ng-if="!field.leaf" class="second-lvl-cursor">
 	            		<i class="fa" ng-class="{'fa-folder-open-o':field.expanded, 'fa-folder-o':!field.expanded}"></i>
 	                    <span ng-class="{'is-default':field.attributes.isdefault, 'is-not-default':!field.attributes.isdefault}">{{field["text"]}}</span>
 	                    <span flex></span>
@@ -31,13 +31,13 @@
 	                    	 <md-tooltip>{{translate.load('kn.qbe.hierarchies.setdefault')}}</md-tooltip>
 	                    </md-button>
 	                    <md-button class="md-icon-button">
-	                    	<md-icon class="second-lvl-chevron fa" ng-class="{'fa-chevron-up':field.expanded, 'fa-chevron-down':!field.expanded}" ng-click="field.expanded=!field.expanded;passEntityColorToTemporalFields(entity);"></md-icon>
+	                    	<md-icon class="second-lvl-chevron fa" ng-class="{'fa-chevron-up':field.expanded, 'fa-chevron-down':!field.expanded}"></md-icon>
 	                    </md-button>
             		</li>
             	
 	            	<div layout="row"" ng-if="!field.leaf">
 	            		<ul ng-show="field.expanded" flex>
-	            		<li class="second-lvl-padding" ng-repeat="f in field.children" ng-drag="dragEnabled" ng-drag-data="f" ng-drag-success="dragLi($data,$event)" layout="row"">
+	            		<li class="second-lvl-padding" ng-repeat="f in field.children"  al-click="moveFieldByClick(field)"  ng-drag="dragEnabled" ng-drag-data="f" ng-drag-success="dragLi($data,$event)" layout="row"">
 		            		<i class="fa fa-calendar"></i>
 		                   <span>{{f["text"]}}</span>
 		                   <span flex></span>
@@ -50,10 +50,9 @@
 	            	</div>
             	</div>            	
             		
-                <li ng-repeat="field in entity[childrenName]" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)" layout="row"" ng-if="field.leaf">
+                <li ng-repeat="field in entity[childrenName]" al-click="moveFieldByClick(field)" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)" layout="row"" ng-if="field.leaf">
                     <i ng-class="[fontIcons, field.iconCls]"></i>
                     <span>{{field["text"]}}</span>
-                    <md-tooltip md-direction="top">{{checkDescription(field)}}</md-tooltip>
                    <span>{{field["alias"]}}</span>
                     <span flex></span>
                     <md-button class="md-icon-button" ng-repeat="fieldAction in fieldsActions" ng-click="$event.stopPropagation();fieldAction.action(field,$event)">
