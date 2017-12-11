@@ -13,12 +13,12 @@
                         margin-top: 0;
                     }
                 }
-                .innerLast{                    
-                    .filterOperator {
-                        display: none;
-                    }
-                }
-                &.last{                    
+                &.last{        
+                    .filterGroup {
+                        .filterOperator {
+                            display: flex;
+                        }
+                    }          
                     .filterOperator {
                         display: none;
                     }
@@ -39,8 +39,7 @@
 
                 }
                 .filterGroup {
-                    background-color: $ternaryColor;
-                    border-radius: 6px;
+                    background-color: lighten($ternaryColor,10%);
                     padding:8px;
                     margin: 8px;
                     min-width: 300px;
@@ -51,6 +50,11 @@
                         margin-left: 8px;
                         text-transform: uppercase;
 
+                    }
+                    .innerLast{                    
+                        .filterOperator {
+                            display: none;
+                        }
                     }
                     .filterOperator {
                         flex-direction: row;
