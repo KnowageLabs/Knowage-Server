@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,15 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.qbe.model.structure;
-
-
-
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,14 +32,17 @@ import org.json.JSONObject;
 public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor {
 	JSONObject relationshipJSON;
 	private static transient Logger logger = Logger.getLogger(ModelRelationshipDescriptor.class);
-	
+
 	public ModelRelationshipDescriptor(JSONObject relationshipJSON) {
 		this.relationshipJSON = relationshipJSON;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelRelationshipDescriptor#getType()
 	 */
+	@Override
 	public String getType() {
 		try {
 			return relationshipJSON.getString("cardinality");
@@ -52,9 +51,12 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelRelationshipDescriptor#getSourceEntityName()
 	 */
+	@Override
 	public String getSourceEntityUniqueName() {
 		try {
 			JSONObject destinationTable = relationshipJSON.getJSONObject("sourceTable");
@@ -64,9 +66,12 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelRelationshipDescriptor#getDestinationEntityName()
 	 */
+	@Override
 	public String getDestinationEntityUniqueName() {
 		try {
 			JSONObject destinationTable = relationshipJSON.getJSONObject("destinationTable");
@@ -76,9 +81,12 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelRelationshipDescriptor#getSourceFieldNames()
 	 */
+	@Override
 	public List<String> getSourceFieldUniqueNames() {
 		try {
 			List<String> sourceColumnNames = new ArrayList<String>();
@@ -94,10 +102,13 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 			throw new RuntimeException("Impossible to read source column names from relationship json object", t);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelRelationshipDescriptor#getDestinationFieldNames()
 	 */
+	@Override
 	public List<String> getDestinationFieldUniqueNames() {
 		try {
 			List<String> destinationColumnNames = new ArrayList<String>();
@@ -114,9 +125,12 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelRelationshipDescriptor#getName()
 	 */
+	@Override
 	public String getName() {
 		try {
 			return relationshipJSON.getString("name");
@@ -124,18 +138,20 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 			throw new RuntimeException("Impossible to read property [name] from relationship json object", t);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelRelationshipDescriptor#getName()
 	 */
+	@Override
 	public String getLabel() {
 		return relationshipJSON.optString("label");
 	}
-	
 
 	/**
 	 * retrieves the name of the entity
-	 * 
+	 *
 	 * @param table
 	 * @return
 	 */
@@ -156,7 +172,7 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 
 	/**
 	 * retrieves the name of the field
-	 * 
+	 *
 	 * @param table
 	 * @param column
 	 * @return
@@ -174,5 +190,23 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 		name.append(":");
 		name.append(column);
 		return name.toString();
+	}
+
+	@Override
+	public String getTargetJoinPath() {
+		try {
+			return relationshipJSON.getString("sourceRelationshipProperty");
+		} catch (JSONException t) {
+			throw new RuntimeException("Impossible to read property [sourceRelationshipProperty] from relationship json object", t);
+		}
+	}
+
+	@Override
+	public String getSourceJoinPath() {
+		try {
+			return relationshipJSON.getString("destinationRelationshipProperty");
+		} catch (JSONException t) {
+			throw new RuntimeException("Impossible to read property [destinationRelationshipProperty] from relationship json object", t);
+		}
 	}
 }

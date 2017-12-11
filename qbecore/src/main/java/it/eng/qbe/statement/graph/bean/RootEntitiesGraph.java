@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,17 +11,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.qbe.statement.graph.bean;
-
-import it.eng.qbe.model.structure.FilteredModelEntity;
-import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.IModelField;
-import it.eng.qbe.statement.graph.QueryGraphBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +34,11 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DirectedMultigraph;
+
+import it.eng.qbe.model.structure.FilteredModelEntity;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.statement.graph.QueryGraphBuilder;
 
 /**
  *
@@ -125,12 +125,15 @@ public class RootEntitiesGraph implements Cloneable {
 	}
 
 	public Relationship addRelationship(IModelEntity fromEntity, List<IModelField> fromFields, IModelEntity toEntity, List<IModelField> toFields, String type,
-			String relationName) {
+			String relationName, String sourceJoinPath, String targetJoinPath) {
 		Relationship relationship = new Relationship();
 		relationship.setType(type); // MANY_TO_ONE : FK da 1 a 2
 		relationship.setSourceFields(fromFields);
+		relationship.setSourceJoinPath(sourceJoinPath);
 		relationship.setTargetFields(toFields);
+		relationship.setTargetJoinPath(targetJoinPath);
 		relationship.setName(relationName);
+
 		boolean added = rootEntitiesGraph.addEdge(fromEntity, toEntity, relationship);
 		if (added) {
 			relationships.add(relationship);

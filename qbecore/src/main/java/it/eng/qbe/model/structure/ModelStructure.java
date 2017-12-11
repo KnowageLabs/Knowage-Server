@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,15 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.qbe.model.structure;
-
-import it.eng.qbe.statement.graph.bean.Relationship;
-import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,12 +24,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import it.eng.qbe.statement.graph.bean.Relationship;
+import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
+import it.eng.spagobi.utilities.assertion.Assert;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class ModelStructure extends AbstractModelObject implements IModelStructure {
-
-
 
 	public static class ModelRootEntitiesMap {
 		protected Map<String, RootEntitiesGraph> modelRootEntitiesMap;
@@ -60,9 +58,9 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	protected int maxRecursionLevel;
 
 	protected ModelRootEntitiesMap modelRootEntitiesMap;
-	//protected Map<String, Map<String,IModelEntity>> rootEntities;	// modelName->(entityUniqueName->entity)
+	// protected Map<String, Map<String,IModelEntity>> rootEntities; // modelName->(entityUniqueName->entity)
 
-	protected Map<String, IModelEntity> entities; //entityUniqueName->entity
+	protected Map<String, IModelEntity> entities; // entityUniqueName->entity
 	protected Map<String, IModelField> fields; // uniqueName -> field
 	protected Map<String, List<ModelCalculatedField>> calculatedFields; // entity uniqueName -> fields' list
 	protected Map<String, HierarchicalDimensionField> hierarchicalDimensions;
@@ -79,16 +77,15 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		id = getNextId();
 		name = "Generic Model";
 
-		//rootEntities = new HashMap<String, Map<String,IModelEntity>>();
+		// rootEntities = new HashMap<String, Map<String,IModelEntity>>();
 		modelRootEntitiesMap = new ModelRootEntitiesMap();
 
 		entities = new HashMap<String, IModelEntity>();
 		fields = new HashMap<String, IModelField>();
-		calculatedFields = new  HashMap<String, List<ModelCalculatedField>>();
+		calculatedFields = new HashMap<String, List<ModelCalculatedField>>();
 		initProperties();
 
 	}
-
 
 	// =========================================================================
 	// ACCESORS
@@ -99,14 +96,17 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	 *
 	 * @return the next id
 	 */
+	@Override
 	public long getNextId() {
 		return nextId++;
 	}
 
+	@Override
 	public Set<String> getModelNames() {
 		return modelRootEntitiesMap.getModelNames();
 	}
 
+	@Override
 	public RootEntitiesGraph getRootEntitiesGraph(String modelName, boolean createIfNotExist) {
 		RootEntitiesGraph rootEntitiesGraph;
 
@@ -123,14 +123,17 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure#addRootEntity(String modelName, String name, String path, String role, String type)
 	 */
+	@Override
 	public IModelEntity addRootEntity(String modelName, String name, String path, String role, String type) {
 		IModelEntity entity = new ModelEntity(name, path, role, type, this);
 		addRootEntity(modelName, entity);
 		return entity;
 	}
 
+	@Override
 	public void addRootEntity(String modelName, IModelEntity entity) {
 		RootEntitiesGraph rootEntitiesGraph;
 		rootEntitiesGraph = getRootEntitiesGraph(modelName, true);
@@ -142,18 +145,20 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	/**
 	 * NOTE: At the moment is not possible to have connected entites that belong to different models
 	 */
+	@Override
 	public boolean areRootEntitiesConnected(Set<IModelEntity> entities) {
 		RootEntitiesGraph rootEntitiesGraph;
 
 		// check if all entities belong to the same model
 		String modelName = null;
-		for(IModelEntity entity : entities) {
+		for (IModelEntity entity : entities) {
 			Assert.assertTrue(entity.getParent() == null, "Entity [" + entity.getUniqueName() + "] is not a root entity");
 			Assert.assertTrue(entity.getModelName() != null, "Entity [" + entity.getUniqueName() + "] does not belong to any model");
-			if(modelName == null) {
+			if (modelName == null) {
 				modelName = entity.getModelName();
 			} else {
-				if(modelName.equals( entity.getModelName() ) == false) return false;
+				if (modelName.equals(entity.getModelName()) == false)
+					return false;
 			}
 		}
 
@@ -170,25 +175,28 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		return rootEntitiesGraph.getConnectingRelatiosnhips(entities);
 	}
 
+	@Override
 	public Set<Relationship> getRootEntityDirectConnections(IModelEntity entity) {
 		RootEntitiesGraph rootEntitiesGraph = getRootEntitiesGraph(entity.getModelName(), true);
 		return rootEntitiesGraph.getRootEntityDirectConnections(entity);
 	}
 
-	public Set<Relationship> getDirectConnections(IModelEntity source, IModelEntity target ) {
+	@Override
+	public Set<Relationship> getDirectConnections(IModelEntity source, IModelEntity target) {
 		RootEntitiesGraph rootEntitiesGraph = getRootEntitiesGraph(source.getModelName(), true);
 		return rootEntitiesGraph.getDirectConnections(source, target);
 	}
 	// Root Entities Relationship -------------------------------------------------
 
-
-	/* (non-Javadoc)
-	 * @see it.eng.qbe.model.structure.IModelStructure#addRootEntityRelationship(it.eng.qbe.model.structure.IModelEntity, it.eng.qbe.model.structure.IModelEntity, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.qbe.model.structure.IModelStructure#addRootEntityRelationship(it.eng.qbe.model.structure.IModelEntity,
+	 * it.eng.qbe.model.structure.IModelEntity, java.lang.String)
 	 */
-	public void addRootEntityRelationship(String modelName,
-			IModelEntity fromEntity, List<IModelField> fromFields,
-			IModelEntity toEntity, List<IModelField> toFields,
-			String type, String relationName) {
+	@Override
+	public void addRootEntityRelationship(String modelName, IModelEntity fromEntity, List<IModelField> fromFields, IModelEntity toEntity,
+			List<IModelField> toFields, String type, String relationName, String sourceJoinPath, String targetJoinPath) {
 		RootEntitiesGraph rootEntitiesGraph;
 
 		rootEntitiesGraph = modelRootEntitiesMap.getRootEntities(modelName);
@@ -197,27 +205,29 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 			modelRootEntitiesMap.setRootEntities(modelName, rootEntitiesGraph);
 		}
 
-		rootEntitiesGraph.addRelationship(fromEntity, fromFields, toEntity, toFields, type, relationName);
+		rootEntitiesGraph.addRelationship(fromEntity, fromFields, toEntity, toFields, type, relationName, sourceJoinPath, targetJoinPath);
 	}
-
-
 
 	// Entities ---------------------------------------------------------------------
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure#getRootEntity(String modelName, String entityName)
 	 */
+	@Override
 	public IModelEntity getRootEntity(String modelName, String entityName) {
-		//Map<String, IModelEntity> modelRootEntities = rootEntities.get(modelName);
+		// Map<String, IModelEntity> modelRootEntities = rootEntities.get(modelName);
 		RootEntitiesGraph rootEntitiesGraph = modelRootEntitiesMap.getRootEntities(modelName);
-		return rootEntitiesGraph == null ? null : (IModelEntity)rootEntitiesGraph.getRootEntityByName(entityName);
+		return rootEntitiesGraph == null ? null : (IModelEntity) rootEntitiesGraph.getRootEntityByName(entityName);
 	}
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure#getRootEntity(IModelEntity entity)
 	 */
+	@Override
 	public IModelEntity getRootEntity(IModelEntity entity) {
 		if (entity == null) {
 			return null;
@@ -237,8 +247,10 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure#getRootEntity(IModelEntity entity, String modelName)
 	 */
+	@Override
 	public IModelEntity getRootEntity(IModelEntity entity, String modelName) {
 		if (entity == null) {
 			return null;
@@ -258,16 +270,20 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure#getRootEntityIterator(String modelName)
 	 */
+	@Override
 	public Iterator<IModelEntity> getRootEntityIterator(String modelName) {
 		return getRootEntities(modelName).iterator();
 	}
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure#getRootEntities(String modelName)
 	 */
+	@Override
 	public List<IModelEntity> getRootEntities(String modelName) {
 		List<IModelEntity> list;
 		RootEntitiesGraph rootEntitiesGraph;
@@ -276,21 +292,24 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		return list;
 	}
 
-
 	// Entities -----------------------------------------------------------
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure#ddEntity(IModelEntity entity)
 	 */
+	@Override
 	public void addEntity(IModelEntity entity) {
 		entities.put(entity.getUniqueName(), entity);
 	}
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure#getEntity(String entityUniqueName)
 	 */
+	@Override
 	public IModelEntity getEntity(String entityUniqueName) {
 		IModelEntity entity = entities.get(entityUniqueName);
 		return entity;
@@ -300,16 +319,20 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure#addField(IModelField field)
 	 */
+	@Override
 	public void addField(IModelField field) {
 		fields.put(field.getUniqueName(), field);
 	}
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure# getField(String fieldUniqueName)
 	 */
+	@Override
 	public IModelField getField(String fieldUniqueName) {
 		IModelField field = fields.get(fieldUniqueName);
 		return field;
@@ -319,22 +342,26 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure#getCalculatedFields()
 	 */
+	@Override
 	public Map<String, List<ModelCalculatedField>> getCalculatedFields() {
 		return calculatedFields;
 	}
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure#getCalculatedFieldsByEntity(String entityName)
 	 */
+	@Override
 	public List<ModelCalculatedField> getCalculatedFieldsByEntity(String entityName) {
 		List<ModelCalculatedField> result;
 
 		result = new ArrayList<ModelCalculatedField>();
-		if(calculatedFields.containsKey(entityName)) {
-			result.addAll( calculatedFields.get(entityName) );
+		if (calculatedFields.containsKey(entityName)) {
+			result.addAll(calculatedFields.get(entityName));
 		}
 
 		return result;
@@ -342,54 +369,62 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure#setCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields)
 	 */
+	@Override
 	public void setCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields) {
 		this.calculatedFields = calculatedFields;
 	}
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure#addCalculatedField(String entityName, ModelCalculatedField calculatedFiled)
 	 */
+	@Override
 	public void addCalculatedField(String entityName, ModelCalculatedField calculatedFiled) {
 		List<ModelCalculatedField> calculatedFiledsOnTargetEntity;
-		if(!calculatedFields.containsKey(entityName)) {
+		if (!calculatedFields.containsKey(entityName)) {
 			calculatedFields.put(entityName, new ArrayList<ModelCalculatedField>());
 		}
 		calculatedFiledsOnTargetEntity = calculatedFields.get(entityName);
 		List<ModelCalculatedField> toRemove = new ArrayList<ModelCalculatedField>();
-		for(int i = 0; i < calculatedFiledsOnTargetEntity.size(); i++) {
+		for (int i = 0; i < calculatedFiledsOnTargetEntity.size(); i++) {
 			ModelCalculatedField f = calculatedFiledsOnTargetEntity.get(i);
-			if(f.getName().equals(calculatedFiled.getName())) {
+			if (f.getName().equals(calculatedFiled.getName())) {
 				toRemove.add(f);
 			}
 		}
-		for(int i = 0; i < toRemove.size(); i++) {
+		for (int i = 0; i < toRemove.size(); i++) {
 			calculatedFiledsOnTargetEntity.remove(toRemove.get(i));
 		}
 		calculatedFiledsOnTargetEntity.add(calculatedFiled);
 	}
 
+	@Override
 	public void addHierarchicalDimensionField(String entityName, HierarchicalDimensionField hierarchicalDimensionField) {
-		if(!hierarchicalDimensions.containsKey(entityName)) {
+		if (!hierarchicalDimensions.containsKey(entityName)) {
 			hierarchicalDimensions.put(entityName, new HierarchicalDimensionField());
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.model.structure.IModelStructure#removeCalculatedField(String entityName, ModelCalculatedField calculatedFiled)
 	 */
+	@Override
 	public void removeCalculatedField(String entityName, ModelCalculatedField calculatedFiled) {
 		List<ModelCalculatedField> calculatedFieldsOnTargetEntity;
 
 		calculatedFieldsOnTargetEntity = calculatedFields.get(entityName);
-		if(calculatedFieldsOnTargetEntity != null) {
+		if (calculatedFieldsOnTargetEntity != null) {
 			calculatedFieldsOnTargetEntity.remove(calculatedFiled);
 		}
 	}
 
+	@Override
 	public Map<String, HierarchicalDimensionField> getHierarchicalDimensions() {
 		return this.hierarchicalDimensions;
 	}
@@ -398,11 +433,12 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		this.hierarchicalDimensions = hierarchicalDimensions;
 	}
 
+	@Override
 	public void setMaxRecursionLevel(int maxRecursionLevel) {
 		this.maxRecursionLevel = maxRecursionLevel;
 	}
 
-
+	@Override
 	public int getMaxRecursionLevel() {
 		return this.maxRecursionLevel;
 	}
@@ -417,9 +453,5 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		}
 		return toReturn;
 	}
-
-
-
-
 
 }
