@@ -38,6 +38,9 @@ import org.jgrapht.graph.Pseudograph;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.ConfigurationConstants;
@@ -83,6 +86,8 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 	public String getAssociativeSelections(@QueryParam("associationGroup") String associationGroupString, @QueryParam("selections") String selectionsString,
 			@QueryParam("datasets") String datasetsString, @QueryParam("nearRealtime") String nearRealtimeDatasetsString) {
 		logger.debug("IN");
+		
+		Monitor start = MonitorFactory.start("Knowage.AssociativeSelectionsResource.getAssociativeSelections:total");
 
 		try {
 			IDataSetDAO dataSetDAO = getDataSetDAO();
@@ -278,6 +283,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 			logger.error(errorMessage, e);
 			throw new SpagoBIRestServiceException(errorMessage, buildLocaleFromSession(), e);
 		} finally {
+			start.stop();
 			logger.debug("OUT");
 		}
 	}
