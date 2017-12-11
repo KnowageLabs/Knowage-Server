@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.api.common;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,11 +44,13 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
@@ -534,6 +537,29 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 
 		try {
 			datasetDao.deleteDataSet(dataset.getId());
+			if (dataset instanceof VersionedDataSet) {
+				VersionedDataSet versioneDataSet = (VersionedDataSet)dataset;
+				IDataSet wrappedDataset = versioneDataSet.getWrappedDataset();
+				if (wrappedDataset instanceof FileDataSet) {
+					//remove also the file from resources
+					FileDataSet fileDataSet = (FileDataSet) wrappedDataset;
+					String fileDirectory = SpagoBIUtilities.getDatasetResourcePath()+File.separatorChar+"files";
+					String fileName = fileDataSet.getFileName();
+					File fileToDelete = new File(fileDirectory+File.separatorChar+fileName);
+					if (fileToDelete.exists()) {
+						//delete the file
+						if(fileToDelete.delete()) {
+							//delete success
+							logger.debug("Dataset file correctly delete: "+fileName);
+						} else {
+							//delete failed
+							logger.error("Error deleting file dataset: "+fileName);
+							throw new SpagoBIRuntimeException("Error deleting file dataset: "+fileName);
+						}
+					}					
+				}
+
+			}
 		} catch (Exception e) {
 			String message = null;
 			if (e instanceof DatasetInUseException) {

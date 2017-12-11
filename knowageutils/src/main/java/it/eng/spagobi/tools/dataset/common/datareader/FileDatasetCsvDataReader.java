@@ -22,6 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.math.NumberUtils;
@@ -42,6 +47,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Marco Cortella marco.cortella@eng.it
@@ -52,9 +58,12 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
 	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
 	public static final String CSV_FILE_ENCODING = "csvEncoding";
+	public static final String CSV_FILE_DATE_FORMAT = "dateFormat";
+
 	private String csvDelimiter;
 	private String csvQuote;
 	private String csvEncoding;
+	private String dateFormat;
 
 	public FileDatasetCsvDataReader(JSONObject jsonConf) {
 		super();
@@ -82,6 +91,13 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 				} else {
 					csvEncoding = "windows-1252"; // default
 				}
+				if (jsonConf.has(CSV_FILE_DATE_FORMAT)) {
+					if (jsonConf.get(CSV_FILE_DATE_FORMAT) != null) {
+						dateFormat = jsonConf.get(CSV_FILE_DATE_FORMAT).toString();
+					} else {
+						dateFormat = "";
+					}
+				}
 
 			} catch (JSONException e) {
 				logger.error("Error Deserializing File Dataset Options");
@@ -97,28 +113,16 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 
 	@Override
 	public IDataStore read(Object data) {
-		DataStore dataStore = null;
-
-		InputStream inputDataStream;
-
 		logger.debug("IN");
-
-		inputDataStream = (InputStream) data;
-
+		DataStore dataStore = null;
 		try {
+			InputStream inputDataStream = (InputStream) data;
 			dataStore = readWithCsvMapReader(inputDataStream);
-
-		} catch (FileNotFoundException e) {
-			logger.error("Error reading CSV File: " + e);
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error("Error reading CSV File: " + e);
-			e.printStackTrace();
 		} catch (Exception e) {
-			logger.error("Error reading CSV File: " + e);
-			e.printStackTrace();
+			throw new SpagoBIRuntimeException(e);
+		} finally {
+			logger.debug("OUT");
 		}
-
 		return dataStore;
 	}
 
@@ -198,6 +202,25 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 							if (NumberUtils.isNumber((String) field.getValue())) {
 								((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(BigDecimal.class);
 								field.setValue(new BigDecimal(String.valueOf(field.getValue())));
+							} 
+							//check if it's a number using comma decimal separator
+							else if (NumberUtils.isNumber(((String) field.getValue()).replace(",", "."))) {
+								((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(BigDecimal.class);
+								field.setValue(new BigDecimal(((String) field.getValue()).replace(",", ".")));
+							}
+							//check if it's a Date
+							else {
+								DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+								try {
+									LocalDate localDate = LocalDate.parse((String) field.getValue(), formatter);
+									Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+									((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(Date.class);
+									field.setValue(date);
+									
+								} catch (DateTimeParseException ex){
+									logger.debug((String) field.getValue()+" is not a date");
+								}
+								
 							}
 						}
 						record.appendField(field);
