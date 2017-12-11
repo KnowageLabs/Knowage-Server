@@ -91,7 +91,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -976,6 +975,8 @@ public class SelfServiceDataSetCRUD {
 					}
 				}
 				if (elementFound) {
+					logger.debug(elementFound);
+					logger.debug(i);
 					fieldsArray.remove(i);
 				}
 
@@ -1052,7 +1053,7 @@ public class SelfServiceDataSetCRUD {
 
 								try {
 
-									if(obj!=null && !(obj instanceof BigDecimal) && !(obj instanceof Double) && !(obj instanceof Float) ) {
+									if (obj != null && !(obj instanceof BigDecimal) && !(obj instanceof Double) && !(obj instanceof Float)) {
 										Double.parseDouble(obj.toString());
 									}
 
@@ -1067,7 +1068,7 @@ public class SelfServiceDataSetCRUD {
 							case "INTEGER":
 
 								try {
-									if(obj!=null && !(obj instanceof Integer) && !(obj instanceof Long)  ) {
+									if (obj != null && !(obj instanceof Integer) && !(obj instanceof Long)) {
 										Integer.parseInt(obj.toString());
 									}
 								} catch (NumberFormatException nfe) {
@@ -1080,7 +1081,7 @@ public class SelfServiceDataSetCRUD {
 							case "DATE":
 
 								try {
-									if(obj!=null && !(obj instanceof Date) ) {
+									if (obj != null && !(obj instanceof Date)) {
 										String dsConfiguration = dataSet.getConfiguration();
 										JSONObject jsonConf = new JSONObject(dsConfiguration);
 										String dateFormat = jsonConf.get(DataSetConstants.FILE_DATE_FORMAT).toString();
@@ -1094,9 +1095,9 @@ public class SelfServiceDataSetCRUD {
 											"sbi.workspace.dataset.wizard.metadata.validation.error.date.title");
 								}
 
-								break;								
+								break;
 							}
-							
+
 						}
 
 					}
@@ -1488,7 +1489,6 @@ public class SelfServiceDataSetCRUD {
 			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
 			jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
 
-
 		} catch (Exception e) {
 			logger.error("Error while defining dataset configuration. Error: " + e.getMessage());
 			throw new SpagoBIRuntimeException("Error while defining dataset configuration", e);
@@ -1780,16 +1780,15 @@ public class SelfServiceDataSetCRUD {
 				String guessedType = guessColumnType(dataStore, i);
 				boolean isDate = false;
 				if (!guessedType.equalsIgnoreCase("Double")) {
-					isDate= isADate(dataSet,dataStore,i);
-				} 
+					isDate = isADate(dataSet, dataStore, i);
+				}
 				// Setting mandatory property to defaults, if specified they
 				// will be overridden
 				if (isDate) {
 					ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
 					Class type = Class.forName("java.util.Date");
 					ifmd.setType(type);
-				}
-				else if ("Double".equalsIgnoreCase(guessedType)) {
+				} else if ("Double".equalsIgnoreCase(guessedType)) {
 					ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 					Class type = Class.forName("java.lang.Double");
 					ifmd.setType(type);
@@ -1839,10 +1838,10 @@ public class SelfServiceDataSetCRUD {
 							} else if (propertyValue.equalsIgnoreCase("String") || propertyValue.equalsIgnoreCase("java.lang.String")) {
 								Class type = Class.forName("java.lang.String");
 								ifmd.setType(type);
-							}	else if (propertyValue.equalsIgnoreCase("Date") || propertyValue.equalsIgnoreCase("java.util.Date")) {
+							} else if (propertyValue.equalsIgnoreCase("Date") || propertyValue.equalsIgnoreCase("java.util.Date")) {
 								Class type = Class.forName("java.util.Date");
 								ifmd.setType(type);
-							}  else {
+							} else {
 								if ("Double".equalsIgnoreCase(guessedType)) {
 									Class type = Class.forName("java.lang.Double");
 									ifmd.setType(type);
@@ -1896,7 +1895,7 @@ public class SelfServiceDataSetCRUD {
 
 		return isNumeric ? "Double" : "String";
 	}
-	
+
 	private boolean isADate(IDataSet dataSet, IDataStore dataStore, int columnIndex) throws JSONException {
 		String dsConfiguration = dataSet.getConfiguration();
 		JSONObject jsonConf = new JSONObject(dsConfiguration);
@@ -1906,16 +1905,16 @@ public class SelfServiceDataSetCRUD {
 			IField field = record.getFieldAt(columnIndex);
 			Object value = field.getValue();
 			if (value instanceof Date) {
-				//it's already a Date, skip the check
+				// it's already a Date, skip the check
 				continue;
 			}
 			try {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
 				LocalDate localDate = LocalDate.parse((String) field.getValue(), formatter);
 				Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-				
-			} catch (DateTimeParseException ex){
-				logger.debug((String) field.getValue()+" is not a date");
+
+			} catch (DateTimeParseException ex) {
+				logger.debug((String) field.getValue() + " is not a date");
 				return false;
 			}
 		}
