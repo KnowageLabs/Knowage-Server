@@ -164,7 +164,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		
 		 var mdxvar = $scope.showMdxVar;
 		 mdxvar = mdxvar.replaceAll('&nbsp;', ' ');
-		 mdxvar = mdxvar.replaceAll('<br>','')
+		 mdxvar = mdxvar.replaceAll('<br>',' ')
 		 $scope.mdxQueryObj.mdxQuery = mdxvar
 		 OlapTemplateService.setMDXMondrianQueryTag(mdxvar);
 		 OlapTemplateService.setMdxQueryTag($scope.mdxQueryObj);
