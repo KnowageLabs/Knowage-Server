@@ -18,19 +18,6 @@
 package it.eng.spagobi.engine.chart.util;
 
 import static it.eng.spagobi.engine.chart.util.ChartEngineUtil.ve;
-import it.eng.qbe.query.Query;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
-import it.eng.spagobi.tools.dataset.common.query.IQuery;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -50,6 +37,20 @@ import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
+import it.eng.qbe.query.Query;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.common.query.IQuery;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class ChartEngineDataUtil {
 	public static transient Logger logger = Logger.getLogger(ChartEngineDataUtil.class);
@@ -107,7 +108,7 @@ public class ChartEngineDataUtil {
 		JSONObject category = jo.getJSONObject("CHART").getJSONObject("VALUES").getJSONObject("CATEGORY");
 		String groupBys = category.optString("groupby");
 		String groupByNames = category.optString("groupbyNames");
-
+		Map<String, Object> mapTemplate = null;
 		JSONArray jaBreadcrumb = new JSONArray(breadcrumb);
 		if (groupBys != null) {
 			String drilldownSerie = "";
@@ -149,8 +150,12 @@ public class ChartEngineDataUtil {
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(null, jsonData, false, documentLabel, profile);
-
+			if (jsonTemplate != null) {
+				mapTemplate = ChartEngineUtil.convertJsonToMap(jsonTemplate, true);
+				velocityContext.put("chart", mapTemplate.get("chart") != null ? mapTemplate.get("chart") : mapTemplate.get("CHART"));
+			}
 			velocityContext.put("selectedCategory", selectedCategory);
+			velocityContext.put("chart", mapTemplate);
 			velocityContext.put("drilldownSerie", drilldownSerie);
 			velocityContext.put("drilldownCategory", drilldownCategory);
 			velocityContext.put("drilldownCategoryName", drilldownCategoryName);
@@ -196,17 +201,15 @@ public class ChartEngineDataUtil {
 			}
 		}
 		/*
-		 * @author: radmila.selakovic@mht.net
-		 * rselakov
-		 * checking if all series have no agregation
-		*/
+		 * @author: radmila.selakovic@mht.net rselakov checking if all series have no agregation
+		 */
 		boolean none = false;
 		for (JSONObject serie : seriesList) {
 
 			String serieColumn = serie.getString("column");
 			String serieName = serie.getString("name");
 			String serieFunction = StringUtilities.isNotEmpty(serie.optString("groupingFunction")) ? serie.optString("groupingFunction") : "SUM";
-			if(serieFunction.equals("NONE")) {
+			if (serieFunction.equals("NONE")) {
 				none = true;
 			}
 			/**
@@ -264,20 +267,18 @@ public class ChartEngineDataUtil {
 					 *
 					 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
-					
+
 					/**
 					 * @modifiedBy: Radmila Selakovic (rselakov, radmila.selakovic@mht.net)
-					 * 
-					 * checking if chart type is scatter: if it is, there will not have "group by" 
-					 * in the query
-					*/
-					if(chartType.equals("SCATTER") && none){
+					 *
+					 *              checking if chart type is scatter: if it is, there will not have "group by" in the query
+					 */
+					if (chartType.equals("SCATTER") && none) {
 						q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, false, cat.getString("orderType"), null,
-								cat.getString("orderColumn")); 
-					}
-					else {
+								cat.getString("orderColumn"));
+					} else {
 						q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, true, cat.getString("orderType"), null,
-							cat.getString("orderColumn"));
+								cat.getString("orderColumn"));
 					}
 
 				}
@@ -385,7 +386,8 @@ public class ChartEngineDataUtil {
 			case ATTRIBUTE:
 				Object isSegmentAttributeObj = fieldMetaData.getProperty(PROPERTY_IS_SEGMENT_ATTRIBUTE);
 				logger.debug("Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
-				String attributeNature = (isSegmentAttributeObj != null && (Boolean.parseBoolean(isSegmentAttributeObj.toString()) == true)) ? "segment_attribute"
+				String attributeNature = (isSegmentAttributeObj != null && (Boolean.parseBoolean(isSegmentAttributeObj.toString()) == true))
+						? "segment_attribute"
 						: "attribute";
 
 				logger.debug("The nature of the attribute is recognized as " + attributeNature);

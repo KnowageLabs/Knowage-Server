@@ -17,19 +17,6 @@
  */
 package it.eng.spagobi.engine.chart.util;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.engine.chart.ChartEngineConfig;
-import it.eng.spagobi.engine.chart.model.conf.ChartConfig;
-import it.eng.spagobi.tools.crossnavigation.dao.ICrossNavigationDAO;
-import it.eng.spagobi.tools.dataset.common.association.Association;
-import it.eng.spagobi.tools.dataset.common.association.Association.Field;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -56,6 +43,19 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.engine.chart.ChartEngineConfig;
+import it.eng.spagobi.engine.chart.model.conf.ChartConfig;
+import it.eng.spagobi.tools.crossnavigation.dao.ICrossNavigationDAO;
+import it.eng.spagobi.tools.dataset.common.association.Association;
+import it.eng.spagobi.tools.dataset.common.association.Association.Field;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 
 public class ChartEngineUtil {
 
@@ -138,7 +138,8 @@ public class ChartEngineUtil {
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	public static VelocityContext loadVelocityContext(String jsonToConvert, String jsonData, boolean exportWebApp, String documentLabel, IEngUserProfile profile) {
+	public static VelocityContext loadVelocityContext(String jsonToConvert, String jsonData, boolean exportWebApp, String documentLabel,
+			IEngUserProfile profile) {
 		VelocityContext velocityContext = new VelocityContext();
 
 		Map<String, Object> mapTemplate = null;
@@ -182,7 +183,7 @@ public class ChartEngineUtil {
 		return velocityContext;
 	}
 
-	private static Map<String, Object> convertJsonToMap(String json, boolean escape) throws JsonParseException, JsonMappingException, IOException {
+	public static Map<String, Object> convertJsonToMap(String json, boolean escape) throws JsonParseException, JsonMappingException, IOException {
 		JsonFactory factory = new JsonFactory();
 		ObjectMapper mapper = new ObjectMapper(factory);
 
