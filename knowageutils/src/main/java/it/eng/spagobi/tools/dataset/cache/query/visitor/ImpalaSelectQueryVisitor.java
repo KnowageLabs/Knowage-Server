@@ -18,12 +18,21 @@
 
 package it.eng.spagobi.tools.dataset.cache.query.visitor;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
+import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
+import it.eng.spagobi.utilities.database.ImpalaDataBase;
 
 public class ImpalaSelectQueryVisitor extends AbstractSelectQueryVisitor {
+	
+	private static final String TIMESTAMP_FORMAT =  "yyyy-MM-dd HH:mm:ss.SSSSSS";
 
 	public ImpalaSelectQueryVisitor() {
+		this.aliasDelimiter = ImpalaDataBase.ALIAS_DELIMITER;
 		this.dialect = SqlDialect.IMPALA;
 	}
 	
@@ -32,6 +41,40 @@ public class ImpalaSelectQueryVisitor extends AbstractSelectQueryVisitor {
 		if (query.isSelectDistinct() && query.getGroups().isEmpty()) {
 			queryBuilder.append("DISTINCT ");
 		}
+	}
+	
+	@Override
+	public String getFormattedTimestamp(Timestamp timestamp) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_TIMESTAMP_FORMAT);
+		
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("cast(");
+		sb.append("unix_timestamp('");
+		sb.append(dateFormat.format(timestamp));
+		sb.append("','");
+		sb.append(TIMESTAMP_FORMAT);
+		sb.append("')");
+		sb.append(" as timestamp)");
+
+		return sb.toString();
+	}
+
+	@Override
+	public String getFormattedDate(Date date) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT);
+
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("cast(");
+		sb.append("unix_timestamp('");
+		sb.append(dateFormat.format(date));
+		sb.append("','");
+		sb.append(TIMESTAMP_FORMAT);
+		sb.append("')");
+		sb.append(" as timestamp)");
+
+		return sb.toString();
 	}
 
 }

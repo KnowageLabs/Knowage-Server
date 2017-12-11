@@ -23,6 +23,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.api.v2.DataSetResource;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.associativity.AbstractAssociativityManager;
@@ -44,6 +47,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 
 public class OuterAssociativityManager extends AbstractAssociativityManager {
+	
+	static protected Logger logger = Logger.getLogger(OuterAssociativityManager.class);
 
 	public OuterAssociativityManager(Config config, UserProfile userProfile) throws Exception {
 		init(config, userProfile);
@@ -89,7 +94,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 	protected void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, SimpleFilter filter) throws Exception {
 		Assert.assertTrue(!documentsAndExcludedDatasets.contains(dataset), "Dataset [" + dataset + "] cannot be processed.");
 
-		// clean containers and groups -> set to unresolved
+		logger.debug("Clean containers and groups -> set to unresolved");
 		AssociativeLogicUtils.unresolveDatasetContainers(associativeDatasetContainers.values());
 		resetValues();
 
@@ -98,13 +103,13 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 		AssociativeDatasetContainer container = associativeDatasetContainers.get(dataset);
 		container.addFilter(filter);
 
-		// 1. Per ogni gruppo associativo del dataset primario
+		logger.debug("1. For each associative group of the primary dataset " + container.getDataSet().getLabel() + "do the following:");
 		Iterator<EdgeGroup> iterator = container.getGroups().iterator();
 		while (iterator.hasNext()) {
 			EdgeGroup group = iterator.next();
 
-			// a. Calcolo i valori distinct
 			List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), dataset);
+			logger.debug("a. Calculate the distinct values for columns " + columnNames);
 			if (columnNames.size() <= 0) {
 				throw new SpagoBIException("Impossible to obtain column names for association " + group);
 			}
@@ -117,18 +122,17 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 				distinctValues = container.getTupleOfValues(data.getQuery(), data.getValues());
 			}
 
-			// b. Li imposto come unici valori ammissibili per quel gruppo associativo
+			logger.debug("b. Setting distinct values " + distinctValues + " as the only compatible values for the associative group " + group);
 			group.addValues(distinctValues);
 			result.getEdgeGroupValues().get(group).addAll(distinctValues);
 
-			// c. Rimuovo tale gruppo associativo tra quelli da filtrare per il dataset primario.
-			// Tale gruppo associativo è di fatto un’associazione in uscita
+			//logger.debug("c. Removing the previous associative group among the ones to be filtered for the primary dataset. Such group is indeed an outgoing association");
 			// container.removeGroup(group);
 			// iterator.remove();
 
-			// d. Per ogni dataset coinvolto in questo gruppo associativo, lo inserisco tra quelli filtri tranne il dataset primario
+			logger.debug("d. For each dataset involved in the current associative group, inserting it among the ones to be filtered");
 			Set<String> children = result.getEdgeGroupToDataset().get(group);
-			// children.remove(dataset);
+			// children.remove(dataset); // Do I need to keep the primary dataset?
 			for (String child : children) {
 				if (!documentsAndExcludedDatasets.contains(child)) {
 					AssociativeDatasetContainer childContainer = associativeDatasetContainers.get(child);
@@ -140,21 +144,21 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 			}
 			totalChildren.addAll(children);
 
-			// e. Imposto tutti i children come processati
-			// f. Dichiaro il dataset come risolto
+			logger.debug("e. Setting all the children dataset as processed");
+			logger.debug("f. Declaring the dataset as resolved");
 			resolveDatasets(children);
 
-			// f. Dichiaro tale gruppo associativo come risolto
+			logger.debug("f. Declaring the associative group as resolved");
 			group.resolve();
 		}
 
 		while (!getUnresolvedGroups(totalChildren).isEmpty()) {
 
-			// 3. Calcolo tutti i gruppi associativi non risolti relativi ai soli dataset contenuti in totalChildren
+			logger.debug("3. Calculating all the unresolved associative groups related only to dataset contained in " + totalChildren);
 			Set<EdgeGroup> groups = getUnresolvedGroups(totalChildren);
 			totalChildren.clear();
 
-			// 4. Per ogni gruppo associativo cosi precedentemente calcolato
+			logger.debug("4. For each associative group previously calculated:");
 			iterator = groups.iterator();
 			while (iterator.hasNext()) {
 				EdgeGroup group = iterator.next();
@@ -163,7 +167,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 					container = associativeDatasetContainers.get(childDataset);
 					if (container.isResolved()) {
 
-						// i. calcolo i valori distinct del gruppo associativo
+						logger.debug("i. Calculating distinct values for the associative group " + group + " in dataset " + childDataset); 
 						List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
 						if (!columnNames.isEmpty()) {
 							Set<String> distinctValues;
@@ -174,13 +178,12 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 								distinctValues = container.getTupleOfValues(data.getQuery(), data.getValues());
 							}
 
-							// ii. aggiungo tali valori tra quelli ammissibili per quel gruppo associativo
+							logger.debug("ii. Adding values " + distinctValues + " among the compatible ones for the current associative group");
 							group.addValues(distinctValues);
 							result.getEdgeGroupValues().get(group).addAll(distinctValues);
 						}
 
-						// iii. Rimuovo tale gruppo associativo tra quelli da filtrare per il dataset. Tale gruppo associativo è di fatto un’associazione in
-						// uscita
+						//logger.debug("iii. Removing the previous associative group among the ones to be filtered for the primary dataset. Such group is indeed an outgoing association");
 						// container.removeGroup(group);
 					}
 				}
@@ -198,7 +201,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 				group.resolve();
 			}
 
-			// 5. Terminati i gruppi associativi, imposto tutti i dataset trattati precedentemente come processati
+			logger.debug("5. Finishing to work on associative groups. Setting all the processed datasets " + totalChildren + " as resolved");
 			resolveDatasets(totalChildren);
 		}
 	}

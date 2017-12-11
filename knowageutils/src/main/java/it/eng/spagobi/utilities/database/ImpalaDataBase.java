@@ -15,37 +15,43 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package it.eng.spagobi.utilities.database;
 
-/**
- * VoltDB implementation
- *
- * @author Alessandro Portosa (alessandro.portosa@eng.it)
- *
- */
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-public class VoltDBDataBase extends AbstractDataBase {
+/**
+ * @author Alessandro Portosa (alessandro.portosa@eng.it)
+ *
+ */
 
-	public static final String ALIAS_DELIMITER = "";
-	private static transient Logger logger = Logger.getLogger(VoltDBDataBase.class);
+public class ImpalaDataBase extends AbstractDataBase {
+	
+	private static transient Logger logger = Logger.getLogger(ImpalaDataBase.class);
 
-	public VoltDBDataBase(IDataSource dataSource) {
+	public static final String ALIAS_DELIMITER = "`";
+	
+	private static int MAX_CHARSET_RATIO = 4; // utf8mb4
+	private static int MAX_VARCHAR_BYTE_VALUE = 65535;
+	private static int MAX_VARCHAR_VALUE = MAX_VARCHAR_BYTE_VALUE / MAX_CHARSET_RATIO;
+
+	public ImpalaDataBase(IDataSource dataSource) {
 		super(dataSource);
 	}
-
+	
 	@Override
 	public String getDataBaseType(Class javaType) {
 		String toReturn = null;
 		String javaTypeName = javaType.toString();
-		if (javaTypeName.contains("java.lang.String")) {
+		if (javaTypeName.contains("java.lang.String") && getVarcharLength() <= MAX_VARCHAR_VALUE) {
 			toReturn = " VARCHAR (" + getVarcharLength() + ")";
 		} else if (javaTypeName.contains("java.lang.Byte")) {
 			toReturn = " INTEGER ";
 		} else if (javaTypeName.contains("java.lang.Short")) {
-			toReturn = " SMALLINT ";
+			toReturn = " INTEGER ";
 		} else if (javaTypeName.contains("java.lang.Integer")) {
 			toReturn = " INTEGER ";
 		} else if (javaTypeName.contains("java.lang.Long")) {
@@ -55,41 +61,31 @@ public class VoltDBDataBase extends AbstractDataBase {
 		} else if (javaTypeName.contains("java.lang.Double")) {
 			toReturn = " DOUBLE ";
 		} else if (javaTypeName.contains("java.lang.Float")) {
-			toReturn = " DOUBLE ";
+			toReturn = " FLOAT ";
 		} else if (javaTypeName.contains("java.lang.Boolean")) {
 			toReturn = " BOOLEAN ";
-		} else if (javaTypeName.contains("java.sql.Date") || javaTypeName.contains("java.util.Date")) {
-			toReturn = " TIMESTAMP ";
-		} else if (javaTypeName.toLowerCase().contains("timestamp")) {
+		} else if (javaTypeName.contains("java.sql.Date") || javaTypeName.contains("java.util.Date") || javaTypeName.toLowerCase().contains("timestamp") || javaTypeName.contains("java.sql.Time")) {
 			toReturn = " TIMESTAMP ";
 		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
-			toReturn = " VARBINARY ";
-		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB")) {
-			toReturn = " TEXT ";
+			throw new SpagoBIRuntimeException("Binary large objects such as BLOB, RAW BINARY, and VARBINARY do not currently have an equivalent in Impala.");
+		} else if ((javaTypeName.contains("java.lang.String") && getVarcharLength() > MAX_VARCHAR_VALUE) || javaTypeName.contains("[C")
+				|| javaTypeName.contains("CLOB")) {
+			toReturn = " STRING ";
 		} else {
-			logger.debug("Cannot map java type [" + javaTypeName + "] to a valid database type ");
+			throw new SpagoBIRuntimeException("Cannot map java type [" + javaTypeName + "] to a valid database type ");
 		}
 
 		return toReturn;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
-	 */
 	@Override
 	public String getAliasDelimiter() {
 		return ALIAS_DELIMITER;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		throw new UnsupportedOperationException("Cannot find this information in VoltDB using standard query. Need to call @Statistics(Memory) stored procedure.");
+		throw new UnsupportedOperationException("Cannot find this information in Impala using standard query. Need to call @Statistics(Memory) stored procedure.");
 	}
+
 }

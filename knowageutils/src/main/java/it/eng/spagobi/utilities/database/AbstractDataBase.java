@@ -98,23 +98,5 @@ public abstract class AbstractDataBase implements IDataBase {
 		}
 	}
 
-	// public BigDecimal approximateUsedMemorySize() {
-	// BigDecimal totalSize = new BigDecimal();
-	// Iterator it = cacheRegistry.entrySet().iterator();
-	// while (it.hasNext()) {
-	// BigDecimal size = null;
-	// Map.Entry<String,String> entry = (Map.Entry<String,String>)it.next();
-	// String signature = entry.getValue();
-	// String query = " select * from " + signature;
-	// IDataStore dataStore = dataSource.executeStatement(query, 0, 0);
-	// DataStore ds = (DataStore) dataStore;
-	// BigDecimal rowWeight = getRowWeight(ds.getRecordAt(0), ds.getMetaData());
-	// size = rowWeight.multiply(new BigDecimal(ds.getRecordsCount())) ;
-	// logger.debug("Dimension stimated for cached object "+ signature +" [rowWeight*rows]: " + size + " ["+rowWeight+" * "+ds.getRecordsCount()+"]");
-	// totalSize = totalSize.add(size);
-	// }
-	// return totalSize;
-	// }
-
 	public abstract String getUsedMemorySizeQuery(String schema, String tableNamePrefix);
 }

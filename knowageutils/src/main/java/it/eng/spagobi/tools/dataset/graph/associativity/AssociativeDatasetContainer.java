@@ -233,4 +233,27 @@ public class AssociativeDatasetContainer {
 
 		return new InFilter(projections, values);
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("AssociativeDatasetContainer [dataSet=");
+		builder.append(dataSet);
+		builder.append(", tableName=");
+		builder.append(tableName);
+		builder.append(", dataSource=");
+		builder.append(dataSource);
+		builder.append(", parameters=");
+		builder.append(parameters);
+		builder.append(", filters=");
+		builder.append(filters);
+		builder.append(", groups=");
+		builder.append(groups);
+		builder.append(", nearRealtime=");
+		builder.append(nearRealtime);
+		builder.append(", resolved=");
+		builder.append(resolved);
+		builder.append("]");
+		return builder.toString();
+	}
 }

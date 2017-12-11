@@ -50,7 +50,7 @@ import it.eng.spagobi.utilities.database.AbstractDataBase;
 
 public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor {
 
-	private static final String DATE_TIME_FORMAT_SQL_STANDARD = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
+	protected static final String DATE_TIME_FORMAT_SQL_STANDARD = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
 			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
 
 	protected boolean buildPreparedStatement;

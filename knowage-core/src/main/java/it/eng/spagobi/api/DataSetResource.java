@@ -234,8 +234,6 @@ public class DataSetResource extends AbstractDataSetResource {
 			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
 			ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
-			// List<IDataSet> dataSets = mdsfr.loadDataSetList(jsonString, userProfile)
-			// List<IDataSet> dataSets = dsDao.loadPagedDatasetList(offset, fetchSize);
 
 			List<IDataSet> dataSets = getListOfGenericDatasets(dsDao, offset, fetchSize, filters, ordering);
 
@@ -486,19 +484,6 @@ public class DataSetResource extends AbstractDataSetResource {
 		return super.execute(label, body);
 	}
 
-	// @POST
-	// @Path("/{label}/content")
-	// @Produces(MediaType.APPLICATION_JSON)
-	// @UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	// public Response execute(@PathParam("label") String label, String body) {
-	// SDKDataSetParameter[] parameters = null;
-	// if (body != null && !body.equals("")) {
-	// parameters = (SDKDataSetParameter[]) JsonConverter.jsonToValidObject(body, SDKDataSetParameter[].class);
-	// }
-	//
-	// return Response.ok(executeDataSet(label, parameters)).build();
-	// }
-
 	@Override
 	@DELETE
 	@Path("/{label}")
@@ -660,42 +645,6 @@ public class DataSetResource extends AbstractDataSetResource {
 		} finally {
 			logger.debug("OUT");
 		}
-	}
-
-	@Override
-	@GET
-	@Path("/{label}/data")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getDataStore(@PathParam("label") String label, @QueryParam("parameters") String parameters, @QueryParam("selections") String selections,
-			@QueryParam("likeSelections") String likeSelections, @DefaultValue("-1") @QueryParam("limit") int maxRowCount,
-			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, @DefaultValue("-1") @QueryParam("offset") int offset,
-			@DefaultValue("-1") @QueryParam("size") int fetchSize, @QueryParam("nearRealtime") boolean isNearRealtime) {
-		return super.getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime);
-	}
-
-	private static Map<String, Map<String, String>> getParametersMaps(String parameters) {
-		Map<String, Map<String, String>> toReturn = new HashMap<String, Map<String, String>>();
-
-		if (parameters == null) {
-			return toReturn;
-		}
-
-		try {
-			parameters = JSONUtils.escapeJsonString(parameters);
-			JSONObject parametersJSON = ObjectUtils.toJSONObject(parameters);
-			Iterator<String> datasetLabels = parametersJSON.keys();
-			while (datasetLabels.hasNext()) {
-				String datasetLabel = datasetLabels.next();
-				JSONObject datasetFilters = parametersJSON.getJSONObject(datasetLabel);
-				Map<String, String> filtersMap = DataSetUtilities.getParametersMap(datasetFilters);
-				toReturn.put(datasetLabel, filtersMap);
-			}
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi filters [" + parameters + "]", t);
-		}
-
-		return toReturn;
 	}
 
 	@GET

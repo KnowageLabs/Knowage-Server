@@ -44,4 +44,9 @@ public class PreparedStatementData {
 		return parameters;
 	}
 
+	@Override
+	public String toString() {
+		return "PreparedStatementData [query=" + query + ", parameters=" + parameters + "]";
+	}
+
 }

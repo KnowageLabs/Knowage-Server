@@ -123,35 +123,13 @@ public class MongoDataProxy extends AbstractDataProxy {
 
 	private CommandResult loadData() {
 		logger.debug("IN");
-		//MongoClient mongoClient;
+
 		CommandResult result = null;
 
 		String clientUrl = dataSource.getUrlConnection();
 
 		logger.debug("Getting the connection URL and db name");
 
-		/*
-		//Old connection method without mongodb uri
-		int databaseNameStart = clientUrl.lastIndexOf("/");
-		String databaseUrl = clientUrl.substring(0, databaseNameStart);
-		String databaseName = clientUrl.substring(databaseNameStart + 1);
-		
-		String[] databaseUrlParts = databaseUrl.split(":");
-		String host = databaseUrlParts[0];
-		String port = databaseUrlParts[1];
-		
-
-		logger.debug("Connection URL: " + databaseUrl);
-		logger.debug("Database name: " + databaseName);
-
-		logger.debug("Connected to mongodb");
-		if (dataSource.getUser() != null && dataSource.getPwd() != null && dataSource.getUser().length() > 0 && dataSource.getPwd().length() > 0) {
-				MongoCredential credential = MongoCredential.createScramSha1Credential(dataSource.getUser(), databaseName, dataSource.getPwd().toCharArray());
-				 mongoClient = new MongoClient(new ServerAddress(host,Integer.valueOf(port)), Arrays.asList(credential));
-		}else {
-				mongoClient = new MongoClient(databaseUrl);
-		}
-		*/
 		if (dataSource.getUser() != null && dataSource.getPwd() != null && dataSource.getUser().length() > 0 && dataSource.getPwd().length() > 0) {
 			String authPart = "mongodb://"+dataSource.getUser()+":"+dataSource.getPwd()+"@";
 			clientUrl = clientUrl.replace("mongodb://", authPart);
