@@ -1476,7 +1476,6 @@
         		
         		if (resultY)
         		{
-        			format = resultY[0].dataLabels.labelFormat;    		
         			drilling = true;
         		}
         	}    
@@ -1686,7 +1685,14 @@
                 lineWidth: 2
             }
         },
-        
+        #if ($enableDrilldown)
+        column: {
+			dataLabels: {
+                enabled: true
+            }
+	            
+		},
+		#end
         ## (danristo)        
    		#if ($chart.seriesStacking=="true")
    		
