@@ -66,7 +66,7 @@ public class QueryGraph extends DirectedMultigraph<IModelEntity, Relationship> {
 			String sourceJoinPath = relationship.getSourceJoinPath();
 			String targetJoinPath = relationship.getTargetJoinPath();
 
-			if (sourceJoinPath == null || targetJoinPath == null)
+			if (sourceJoinPath.isEmpty() || sourceJoinPath == null || targetJoinPath.isEmpty() || targetJoinPath == null)
 				return false;
 		}
 		return true;

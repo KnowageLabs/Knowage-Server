@@ -194,19 +194,15 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 
 	@Override
 	public String getTargetJoinPath() {
-		try {
-			return relationshipJSON.getString("sourceRelationshipProperty");
-		} catch (JSONException t) {
-			throw new RuntimeException("Impossible to read property [sourceRelationshipProperty] from relationship json object", t);
-		}
+
+		return relationshipJSON.optString("sourceRelationshipProperty");
+
 	}
 
 	@Override
 	public String getSourceJoinPath() {
-		try {
-			return relationshipJSON.getString("destinationRelationshipProperty");
-		} catch (JSONException t) {
-			throw new RuntimeException("Impossible to read property [destinationRelationshipProperty] from relationship json object", t);
-		}
+
+		return relationshipJSON.optString("destinationRelationshipProperty");
+
 	}
 }
