@@ -22,7 +22,6 @@ import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -376,14 +375,30 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	public Filter getComplexFilter(InFilter inFilter, SimpleFilter anotherFilter) {
-		final Comparator<Object> comparator = (o1, o2) -> ((String) o1).compareTo((String) o2);
-
-		if (SimpleFilterOperator.EQUALS_TO_MIN.equals(anotherFilter.getOperator())) {
-			Object operand = inFilter.getOperands().stream().min(comparator).get();
-			return new UnaryFilter(inFilter.getProjections().get(0), SimpleFilterOperator.EQUALS_TO, operand);
-		} else if (SimpleFilterOperator.EQUALS_TO_MAX.equals(anotherFilter.getOperator())) {
-			Object operand = inFilter.getOperands().stream().max(comparator).get();
-			return new UnaryFilter(inFilter.getProjections().get(0), SimpleFilterOperator.EQUALS_TO, operand);
+		SimpleFilterOperator operator = anotherFilter.getOperator();
+		if (SimpleFilterOperator.EQUALS_TO_MIN.equals(operator) || SimpleFilterOperator.EQUALS_TO_MAX.equals(operator)) {
+			List<Object> operands = inFilter.getOperands();
+			Object result = operands.get(0);
+			if (result instanceof Comparable == false) {
+				throw new SpagoBIRuntimeException("Unable to compare operands of type [" + result.getClass().getName() + "]");
+			}
+			Comparable comparableResult = (Comparable) result;
+			for (int i = 1; i < operands.size(); i++) {
+				Object operand = operands.get(i);
+				Comparable comparableOperand = (Comparable) operand;
+				if (SimpleFilterOperator.EQUALS_TO_MIN.equals(operator)) { // min case
+					if (comparableOperand.compareTo(comparableResult) < 0) {
+						result = operand;
+						comparableResult = comparableOperand;
+					}
+				} else { // max case
+					if (comparableOperand.compareTo(comparableResult) > 0) {
+						result = operand;
+						comparableResult = comparableOperand;
+					}
+				}
+			}
+			return new UnaryFilter(inFilter.getProjections().get(0), SimpleFilterOperator.EQUALS_TO, result);
 		} else {
 			return new AndFilter(inFilter, anotherFilter);
 		}
@@ -447,8 +462,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			@DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
 			@QueryParam("nearRealtime") boolean isNearRealtime) {
 		try {
-			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");			
-			
+			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");
+
 			String parameters = null;
 			String selections = null;
 			String likeSelections = null;
