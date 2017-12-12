@@ -475,7 +475,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        request: function (config) {
 		        	debugger;
 					config.params = {};
-		            config.params.SBI_EXECUTION_ID=sbiExecutionId
+		            config.params.SBI_EXECUTION_ID=<%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
 		            return config;
 		        }
 
