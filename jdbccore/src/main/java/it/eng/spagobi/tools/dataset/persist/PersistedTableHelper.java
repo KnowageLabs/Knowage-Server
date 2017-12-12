@@ -198,6 +198,8 @@ public class PersistedTableHelper {
 				} else {
 					logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 				}
+			} else if (fieldMetaTypeName.contains("JSONArray") || fieldMetaTypeName.contains("JSONObject")) { // JSONObject and JSONArray
+				insertStatement.setString(fieldIndex + 1, fieldValue.toString());
 			} else {
 				logger.error("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 				insertStatement.setObject(fieldIndex + 1, null);

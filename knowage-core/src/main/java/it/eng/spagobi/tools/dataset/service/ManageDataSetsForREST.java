@@ -370,6 +370,7 @@ public class ManageDataSetsForREST {
 					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypeError");
 				}
 
+				// MOVED SECTION OF CODE IN THE getDataset Method, otherwise the preview will not use the isPersisted flag
 				try {
 					getPersistenceInfo(ds, json);
 				} catch (EMFUserError e) {
@@ -808,6 +809,16 @@ public class ManageDataSetsForREST {
 			toReturn = dataSet;
 		}
 
+		// if (toReturn.getDataSourceForReading() == null) {
+		// IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+		// toReturn.setDataSourceForWriting(dataSource);
+		// }
+		// if (toReturn.getDataSourceForReading() == null) {
+		// IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+		// toReturn.setDataSourceForReading(dataSource);
+		// }
+		//
+		// getPersistenceInfo(toReturn, json);
 		toReturn.setConfiguration(jsonDsConfig.toString());
 		return toReturn;
 	}

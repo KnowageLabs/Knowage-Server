@@ -64,7 +64,7 @@ public class VoltDBDataBase extends AbstractDataBase {
 			toReturn = " TIMESTAMP ";
 		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
 			toReturn = " VARBINARY ";
-		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB")) {
+		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB") || javaTypeName.contains("JSON")) {
 			toReturn = " TEXT ";
 		} else {
 			logger.debug("Cannot map java type [" + javaTypeName + "] to a valid database type ");

@@ -41,6 +41,7 @@ public class SolrDataProxy extends RESTDataProxy {
 	private String facetField = null;
 	private boolean facets;
 	private static final Logger logger = Logger.getLogger(SolrDataProxy.class);
+	private int maxRestConf = 999999999;
 
 	public SolrDataProxy(String address, HttpMethod method, String facetField, Map<String, String> requestHeaders, String offsetParam, String fetchSizeParam,
 			String maxResultsParam, boolean facets) {
@@ -52,20 +53,24 @@ public class SolrDataProxy extends RESTDataProxy {
 	@Override
 	protected String setPaginationParameters(String address, IDataReader dataReader) {
 		if (this.facets) {
-			if (dataReader.isOffsetSupported()) {
+			if (dataReader.isOffsetSupported() && dataReader.getOffset() > 0) {
 				address = address + "&facet.offset=" + dataReader.getOffset();
 			}
 
-			if (dataReader.isFetchSizeSupported()) {
+			if (dataReader.isFetchSizeSupported() && dataReader.getFetchSize() > 0) {
 				address = address + "&facet.limit=" + dataReader.getFetchSize();
 			}
 		} else {
-			if (dataReader.isOffsetSupported()) {
+			if (dataReader.isOffsetSupported() && dataReader.getOffset() > 0) {
 				address = address + "&start=" + dataReader.getOffset();
 			}
 
-			if (dataReader.isFetchSizeSupported()) {
+			if (dataReader.isFetchSizeSupported() && dataReader.getFetchSize() > 0) {
 				address = address + "&rows=" + dataReader.getFetchSize();
+			} else if (dataReader.isMaxResultsSupported()) {
+				address = address + "&rows=" + dataReader.getMaxResults();
+			} else {
+				address = address + "&rows=" + maxRestConf;
 			}
 			// if (getOffsetParam() != null) {
 			// address = address + "&start=" + getOffsetParam();

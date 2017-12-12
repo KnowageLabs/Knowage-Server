@@ -63,7 +63,7 @@ public class OracleDataBase extends AbstractDataBase {
 			toReturn = " TIMESTAMP ";
 		} else if (javaTypeName.contains("java.sql.Time")) {
 			toReturn = " TIMESTAMP ";
-		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
+		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB") || javaTypeName.contains("JSON")) {
 			toReturn = " BLOB ";
 		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB")) {
 			toReturn = " CLOB ";

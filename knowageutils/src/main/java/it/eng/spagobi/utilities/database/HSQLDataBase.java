@@ -17,9 +17,9 @@
  */
 package it.eng.spagobi.utilities.database;
 
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -61,7 +61,7 @@ public class HSQLDataBase extends AbstractDataBase {
 			toReturn = " TIMESTAMP ";
 		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
 			toReturn = " LONGVARBINARY ";
-		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB")) {
+		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB") || javaTypeName.contains("JSON")) {
 			toReturn = " TEXT ";
 		} else {
 			logger.debug("Cannot map java type [" + javaTypeName + "] to a valid database type ");
@@ -72,7 +72,7 @@ public class HSQLDataBase extends AbstractDataBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
 	 */
 	@Override
@@ -82,7 +82,7 @@ public class HSQLDataBase extends AbstractDataBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
 	 */
 	@Override

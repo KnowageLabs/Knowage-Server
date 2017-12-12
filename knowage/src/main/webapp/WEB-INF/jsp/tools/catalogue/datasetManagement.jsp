@@ -1009,7 +1009,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<div flex=100 style="display:flex;">											
 																			
 									<md-input-container class="md-block" style="float:left; width:75%">
-								    	<label>JSON Path Items</label>
+								    	<label>Facet Query</label>
 										<input ng-model="selectedDataSet.solrFacetQuery" ng-change="setFormDirty()">
 									</md-input-container>
 									 
