@@ -43,16 +43,19 @@ public class SolrDataSet extends RESTDataSet {
 	private boolean isFacet = true;
 
 	public SolrDataSet() {
+
 	};
 
 	public SolrDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
+
 	}
 
 	public SolrDataSet(JSONObject jsonConf) {
 		this();
 		setConfiguration(jsonConf.toString());
 		initConf(jsonConf, false);
+
 	}
 
 	@Override

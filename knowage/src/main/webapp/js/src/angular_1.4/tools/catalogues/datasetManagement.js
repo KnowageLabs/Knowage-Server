@@ -339,8 +339,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 	{value:"\"",name:"\""},
 	 	{value:"\'",name:"\'"}
  	];
-	
-	$scope.dateFormatTypes = 
+
+	$scope.dateFormatTypes =
 		[
 		 	{value:"dd/MM/yyyy",name:"dd/MM/yyyy"},
 		 	{value:"MM/dd/yyyy",name:"MM/dd/yyyy"},
@@ -350,7 +350,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 	{value:"yyyy:MM:dd",name:"yyyy:MM:dd"},
 		 	{value:"dd.MM.yyyy",name:"dd.MM.yyyy"},
 		 	{value:"MM.dd.yyyy",name:"MM.dd.yyyy"}
-		
+
 		 ];
 
 	// Dataset preview
@@ -379,7 +379,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.chooseEncoding = function(encodingObj) {
 		$scope.selectedDataSet.csvEncoding = encodingObj;
 	}
-	
+
 	$scope.chooseDateFormat = function(dateFormat) {
 		$scope.selectedDataSet.dateFormat = dateFormat;
 	}
@@ -584,9 +584,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 				 	        	for (i=0; i<$scope.restRequestAdditionalParameters.length; i++) {
 
-						 			if ($scope.restAdditionalParameters[i].index == item.index) {
+						 			if ($scope.restRequestAdditionalParameters[i].index == item.index) {
 						 				$scope.setFormDirty();
-						 				$scope.restAdditionalParameters.splice(i,1);
+						 				$scope.restRequestAdditionalParameters.splice(i,1);
 						 				break;
 						 			}
 

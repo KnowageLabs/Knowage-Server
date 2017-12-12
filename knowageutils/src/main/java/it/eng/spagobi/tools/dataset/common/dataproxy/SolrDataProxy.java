@@ -41,7 +41,7 @@ public class SolrDataProxy extends RESTDataProxy {
 	private String facetField = null;
 	private boolean facets;
 	private static final Logger logger = Logger.getLogger(SolrDataProxy.class);
-	private int maxRestConf = 999999999;
+	private int maxRestConf = 999999;
 
 	public SolrDataProxy(String address, HttpMethod method, String facetField, Map<String, String> requestHeaders, String offsetParam, String fetchSizeParam,
 			String maxResultsParam, boolean facets) {
@@ -67,7 +67,7 @@ public class SolrDataProxy extends RESTDataProxy {
 
 			if (dataReader.isFetchSizeSupported() && dataReader.getFetchSize() > 0) {
 				address = address + "&rows=" + dataReader.getFetchSize();
-			} else if (dataReader.isMaxResultsSupported()) {
+			} else if (dataReader.isMaxResultsSupported() && dataReader.getMaxResults() > 0) {
 				address = address + "&rows=" + dataReader.getMaxResults();
 			} else {
 				address = address + "&rows=" + maxRestConf;
