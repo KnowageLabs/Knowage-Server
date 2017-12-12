@@ -280,12 +280,12 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		String alias = item.getAlias();
 		if (useAlias) {
 			if (StringUtilities.isNotEmpty(alias) && !alias.equals(name)) {
-				queryBuilder.append(" ");
+				queryBuilder.append(" as ");
 				queryBuilder.append(aliasDelimiter);
 				queryBuilder.append(alias);
 				queryBuilder.append(aliasDelimiter);
 			} else if (isValidAggregationFunction) {
-				queryBuilder.append(" ");
+				queryBuilder.append(" as ");
 				queryBuilder.append(aliasDelimiter);
 				queryBuilder.append(name);
 				queryBuilder.append(aliasDelimiter);
