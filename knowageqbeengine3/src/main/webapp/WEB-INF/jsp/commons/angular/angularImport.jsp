@@ -51,6 +51,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/al-click/al-click.js"></script> 
 
+<!-- UI.Codemirror  -->
+<link rel="stylesheet" type="text/css" href="<%=spagoBiContext%>/node_modules/codemirror/lib/codemirror.css">
+<link type="text/css" rel="stylesheet" href="<%=spagoBiContext%>/node_modules/codemirror/theme/eclipse.css">
+<script type="text/javascript" src="<%=spagoBiContext%>/node_modules/codemirror/lib/codemirror.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/node_modules/codemirror/addon/mode/simple.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/node_modules/codemirror/mode/javascript/javascript.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/calculated-field-editor/customMode.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/node_modules/angular-ui-codemirror/src/ui-codemirror.js"></script>
+
 
 <!-- main css -->
 <link rel="stylesheet" type="text/css" href="<%=spagoBiContext%>/themes/commons/css/customStyle.css">

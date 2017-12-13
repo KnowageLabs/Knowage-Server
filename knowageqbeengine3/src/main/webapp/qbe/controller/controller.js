@@ -19,10 +19,10 @@
 angular
 	.module('qbe.controller', ['configuration','directive','services'])
 	.controller('qbeController',
-		["$scope","$rootScope","entity_service","query_service","filters_service","save_service","sbiModule_inputParams","sbiModule_translate","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging","$mdDialog", "$mdPanel","$q",qbeFunction]);
+		["$scope","$rootScope","entity_service","query_service","filters_service","formulaService","save_service","sbiModule_inputParams","sbiModule_translate","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging","$mdDialog", "$mdPanel","$q",qbeFunction]);
 
 
-function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_restServices,sbiModule_messaging, $mdDialog ,$mdPanel,$q){
+function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_restServices,sbiModule_messaging, $mdDialog ,$mdPanel,$q){
 	$scope.translate = sbiModule_translate;
 	var entityService = entity_service;
 	var inputParamService = sbiModule_inputParams;
@@ -33,6 +33,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	$scope.advancedFilters = [];
 	$scope.entityModel;
 	$scope.subqueriesModel = {};
+	$scope.formulas = formulaService.getFormulas();
 
 	$scope.$watch('editQueryObj',function(newValue,oldValue){
 		$scope.meta.length = 0;
@@ -296,6 +297,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         "label": "add calculated field",
         "icon": "fa fa-calculator",
         "action": function(item, event) {
+        	$scope.showCalculatedField(item,event);
         }
     }];
 
@@ -503,5 +505,25 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
             );
         }
     };
+
+    $scope.showCalculatedField = function(item,ev){
+    	$scope.cfSelectedEntity = item;
+    	$mdDialog.show({
+            controller: function ($scope, $mdDialog) {
+                $scope.hide = function() {$mdDialog.hide()};
+                $scope.cancel = function() {$mdDialog.cancel()};
+            },
+            templateUrl: sbiModule_config.contextName +'/qbe/templates/calculatedFieldsDialog.html',
+            targetEvent: ev,
+            clickOutsideToClose: true,
+            scope: $scope,
+            preserveScope: true
+        })
+        .then(function() {
+        	//TODO add here the calculated field saving
+        },
+    		function() {});
+    };
+
 
 }

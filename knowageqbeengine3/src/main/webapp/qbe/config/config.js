@@ -16,4 +16,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('configuration', ['ngMaterial', 'sbiModule', 'angular-list-detail', 'ngDraggable', 'angular_table', 'al-click' ]);
+angular.module('configuration', ['ngMaterial', 'sbiModule', 'angular-list-detail', 'ngDraggable', 'angular_table', 'al-click', 'ui.codemirror' ]);

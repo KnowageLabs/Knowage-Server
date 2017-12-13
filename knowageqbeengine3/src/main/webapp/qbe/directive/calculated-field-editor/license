@@ -1,4 +1,4 @@
-<%-- Knowage, Open Source Business Intelligence suite
+Knowage, Open Source Business Intelligence suite
 Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 
 Knowage is free software: you can redistribute it and/or modify
@@ -12,20 +12,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
---%>
-
-<script>
-angular.module('formulas')
-
-.factory('formulaService',function(){
-	var formulas = angular.fromJson('<%= formulasJson%>');
-		return {
-			
-	    	getFormulas: function(){
-	    		return formulas;
-	    	}
-		};
-	});
-	
-</script>
+along with this program.  If not, see <http://www.gnu.org/licenses/>

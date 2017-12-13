@@ -24,6 +24,8 @@ public class Argument {
 	private String default_value;
 	private String argument_description;
 	private boolean hidden;
+	private String type;
+	private String placeholder;
 
 	public String getName() {
 		return name;
@@ -66,6 +68,22 @@ public class Argument {
 
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getPlaceholder() {
+		return placeholder;
+	}
+
+	public void setPlaceholder(String placeholder) {
+		this.placeholder = placeholder;
 	}
 
 }
