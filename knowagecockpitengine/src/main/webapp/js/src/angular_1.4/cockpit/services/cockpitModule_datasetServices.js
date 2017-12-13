@@ -757,6 +757,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		bodyString = bodyString + ",selections:" + JSON.stringify(filtersToSendWithoutParams) + "}";
 
+		params += "&widgetName=" + encodeURIComponent(ngModel.content.name);
+
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(dataset.label) + "/data" + params, bodyString)
 		.then(function(response){
