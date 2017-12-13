@@ -32,7 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	String callLogin = (request.getParameter("login")==null)?"false":(String)request.getParameter("login");
 	//default url
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
-	String redirectURL = contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE";
+	String queryString = request.getQueryString(); // get query string with eventual parameters to propagate them
+	String redirectURL = contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" + (queryString != null ? "&" + queryString : "");
 	if (usePublicUser && callLogin.equals("false")){
 		redirectURL = contextName + "/servlet/AdapterHTTP?ACTION_NAME=START_ACTION_PUBLIC_USER&NEW_SESSION=TRUE";
 	}
