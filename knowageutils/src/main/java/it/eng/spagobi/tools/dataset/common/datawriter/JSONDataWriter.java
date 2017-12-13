@@ -203,8 +203,11 @@ public class JSONDataWriter implements IDataWriter {
 			String fieldName = adjust ? fieldMetaData.getName() : getFieldName(fieldMetaData, i);
 
 			Object fieldValue = getFieldValue(field, fieldMetaData);
-
-			recordJSON.put(fieldName, fieldValue);
+			if (fieldValue == null) {
+				recordJSON.put(fieldName, "");
+			} else {
+				recordJSON.put(fieldName, fieldValue);
+			}
 		}
 		return recordJSON;
 	}
@@ -304,8 +307,11 @@ public class JSONDataWriter implements IDataWriter {
 					String fieldName = adjust ? fieldMetaData.getName() : getFieldName(fieldMetaData, j++);
 
 					Object fieldValue = getFieldValue(field, fieldMetaData);
-
-					recordJSON.put(fieldName, fieldValue);
+					if (fieldValue == null) {
+						recordJSON.put(fieldName, "");
+					} else {
+						recordJSON.put(fieldName, fieldValue);
+					}
 				}
 
 				recordsJSON.put(recordJSON);
