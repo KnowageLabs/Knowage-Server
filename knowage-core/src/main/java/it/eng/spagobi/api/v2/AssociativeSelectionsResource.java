@@ -86,7 +86,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 	public String getAssociativeSelections(@QueryParam("associationGroup") String associationGroupString, @QueryParam("selections") String selectionsString,
 			@QueryParam("datasets") String datasetsString, @QueryParam("nearRealtime") String nearRealtimeDatasetsString) {
 		logger.debug("IN");
-		
+
 		Monitor start = MonitorFactory.start("Knowage.AssociativeSelectionsResource.getAssociativeSelections:total");
 
 		try {
@@ -225,7 +225,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 					JSONArray jsonArray = (JSONArray) object;
 					for (int i = 0; i < jsonArray.length(); i++) {
-						Object valueForQuery = DataSetUtilities.getValue(jsonArray.getString(i), projection.getType());
+						Object valueForQuery = DataSetUtilities.getValue(jsonArray.get(i).toString(), projection.getType());
 						valueObjects.add(valueForQuery);
 
 						if (Date.class.isAssignableFrom(projection.getType())) {
