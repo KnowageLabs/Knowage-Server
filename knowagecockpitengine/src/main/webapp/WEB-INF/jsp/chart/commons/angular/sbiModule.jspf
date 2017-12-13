@@ -470,10 +470,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  });
 	
 	sbiM.factory('http_sbi_execution_id_interseptor',function($q){
-		debugger;
 		return {
 		        request: function (config) {
-		        	debugger;
 					config.params = {};
 		            config.params.SBI_EXECUTION_ID=<%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
 		            return config;

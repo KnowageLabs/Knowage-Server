@@ -234,8 +234,6 @@ author:
 			var thisContextName			= '${pageContext.request.contextPath}';  <%-- knowagechartengine --%>
 			thisContextName = thisContextName.replace('/','');
 			var mainContextName 		= '<%=contextName.replaceAll("/", "")%>';  <%-- knowage --%>
-			var chartedit = {};
-			debugger;
 			var exporterContextName 	= 'highcharts-export-web';
  			
 			

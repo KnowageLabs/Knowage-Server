@@ -36,8 +36,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 	
 		<script>
-		var chartdesigner = {};
-		debugger;
 			var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
 			var userId = '<%=userId%>';
 			var hostName = '<%=request.getServerName()%>';
@@ -46,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var docLabel = '<%= docLabel %>';
 			var docId = '<%= docId %>';
 			
-			var template = <%=template.replaceAll("&#39;","\\\\'")%>;
+			var template = '<%=template.replaceAll("&#39;","\\\\'")%>';
 			var datasetLabel  = '<%=datasetLabel%>'; 
 			
 			var chartLibNamesConfig = <%=ChartEngineUtil.getChartLibNamesConfig()%>;

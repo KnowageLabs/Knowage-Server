@@ -255,8 +255,6 @@ author:
 			
 			var thisContextName			= '${pageContext.request.contextPath}';  //'knowagechartengine';
 			thisContextName.replace('/','');
-			var chartttttt = {};
-			debugger;
 			var exporterContextName 	= 'highcharts-export-web';
 			
 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(protocol, hostName, serverPort, thisContextName, sbiExecutionId, userId);
