@@ -134,7 +134,9 @@ public class PersistedTableManager implements IPersistedManager {
 		dataset.setPersisted(false);
 		dataset.loadData();
 		IDataStore datastore = dataset.getDataStore();
-		ajustMetaDataFromFrontend(datastore, dataset);
+		if (dataset.getDsType().toString().equalsIgnoreCase("File")) {
+			ajustMetaDataFromFrontend(datastore, dataset);
+		}
 		persistDataset(datastore, dsPersist);
 	}
 
@@ -892,10 +894,12 @@ public class PersistedTableManager implements IPersistedManager {
 						}
 
 					} catch (Throwable t) {
+						logger.error("An unexpecetd error occured while ajusting metadata for record [" + j + "]", t);
 						throw new RuntimeException("An unexpecetd error occured while ajusting metadata for record [" + j + "]", t);
 					}
 				}
 			} catch (Throwable t) {
+				logger.error("An unexpecetd error occured while ajusting metadata for record [" + i + "]", t);
 				throw new RuntimeException("An unexpecetd error occured while ajusting metadata for record [" + i + "]", t);
 			}
 		}
