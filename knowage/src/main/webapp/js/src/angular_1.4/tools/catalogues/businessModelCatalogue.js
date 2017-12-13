@@ -690,7 +690,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 
 		 $scope.openGenerateDatamartDialog = function() {
 			 sbiModule_restServices.alterContextPath(sbiModule_config.contextMetaName);
-				sbiModule_restServices.promiseGet("1.0/metaWeb", "modelInfos/"+$scope.selectedBusinessModel.id+"?user_id="+sbiModule_user.userId)
+				sbiModule_restServices.promiseGet("1.0/metaWeb", "modelInfos/"+$scope.selectedBusinessModel.id+"?user_id="+sbiModule_user.userUniqueIdentifier)
 				.then(
 						function(response) {							
 							//parse the response to get schema and catalog
@@ -757,7 +757,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					fullscreen: true,
 //					locals:{url:sbiModule_config.contextName+'/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp&datasourceId='+dsId}
 //					locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name}
-					locals:{url:sbiModule_config.contextMetaName + "/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name}
+					locals:{url:sbiModule_config.contextMetaName + "/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userUniqueIdentifier+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name}
 				}).then(function(){
 					//refresh
 					$scope.getVersions($scope.selectedBusinessModel.id);
