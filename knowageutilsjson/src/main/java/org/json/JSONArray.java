@@ -467,7 +467,6 @@ public class JSONArray extends AbstractJSONArray {
 	 * @return The value that was associated with the index, or null if there was no value.
 	 */
 	public Object remove(int index) {
-		System.out.println("is it inside remove" + index);
 		Object o = this.opt(index);
 		rootNode.remove(index);
 		return o;
