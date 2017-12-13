@@ -22,15 +22,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+
 import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.supercsv.cellprocessor.ift.CellProcessor;
@@ -210,14 +210,15 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 							}
 							//check if it's a Date
 							else {
-								DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+								DateTimeFormatter formatter = DateTimeFormat.forPattern(dateFormat);
 								try {
 									LocalDate localDate = LocalDate.parse((String) field.getValue(), formatter);
-									Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+									//Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+									Date date = localDate.toDate();
 									((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(Date.class);
 									field.setValue(date);
 									
-								} catch (DateTimeParseException ex){
+								} catch (Exception ex){
 									logger.debug((String) field.getValue()+" is not a date");
 								}
 								

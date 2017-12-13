@@ -20,10 +20,6 @@ package it.eng.spagobi.api;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -43,6 +39,9 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1085,11 +1084,11 @@ public class SelfServiceDataSetCRUD {
 										String dsConfiguration = dataSet.getConfiguration();
 										JSONObject jsonConf = new JSONObject(dsConfiguration);
 										String dateFormat = jsonConf.get(DataSetConstants.FILE_DATE_FORMAT).toString();
-										DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+										DateTimeFormatter formatter = DateTimeFormat.forPattern(dateFormat);
 										LocalDate localDate = LocalDate.parse(obj.toString(), formatter);
-										Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+										localDate.toDate();
 									}
-								} catch (DateTimeParseException nfe) {
+								} catch (Exception nfe) {
 									logger.error("The cell cannot be formatted as Date value", nfe);
 									validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
 											"sbi.workspace.dataset.wizard.metadata.validation.error.date.title");
@@ -1909,11 +1908,17 @@ public class SelfServiceDataSetCRUD {
 				continue;
 			}
 			try {
+				//JDK 8 version
+				/*
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
 				LocalDate localDate = LocalDate.parse((String) field.getValue(), formatter);
 				Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+				*/
+				DateTimeFormatter formatter = DateTimeFormat.forPattern(dateFormat);
+				LocalDate localDate = LocalDate.parse((String) field.getValue(), formatter);
+				localDate.toDate();
 
-			} catch (DateTimeParseException ex) {
+			} catch (Exception ex) {
 				logger.debug((String) field.getValue() + " is not a date");
 				return false;
 			}

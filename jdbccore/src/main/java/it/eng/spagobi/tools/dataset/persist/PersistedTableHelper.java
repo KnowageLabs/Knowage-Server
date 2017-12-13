@@ -22,13 +22,13 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Instant;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)
@@ -92,10 +92,14 @@ public class PersistedTableHelper {
 					insertStatement.setDate(fieldIndex + 1, (Date) fieldValue);
 				} else {
 					java.util.Date date = (java.util.Date) fieldValue;
+					//JDK 8 version
+					/*
 					Instant instant = date.toInstant();
 					ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
 					LocalDate localDate = zdt.toLocalDate();
-					java.sql.Date sqlDate = java.sql.Date.valueOf(localDate);
+					*/
+					DateTime dateTime = new DateTime( date, DateTimeZone.getDefault());
+					java.sql.Date sqlDate = new java.sql.Date( dateTime.getMillis() );
 					insertStatement.setDate(fieldIndex + 1, sqlDate);
 				}
 			} else if (fieldMetaTypeName.toLowerCase().contains("timestamp")) {
