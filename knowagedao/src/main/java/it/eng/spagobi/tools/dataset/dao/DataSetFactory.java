@@ -36,7 +36,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
 import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
@@ -232,11 +231,12 @@ public class DataSetFactory {
 				ds = new FileDataSet();
 				FileDataSet fds = (FileDataSet) ds;
 
-				String resourcePath = jsonConf.optString("resourcePath");
-				if (StringUtilities.isEmpty(resourcePath)) {
-					resourcePath = DAOConfig.getResourcePath();
-					jsonConf.put("resourcePath", resourcePath);
-				}
+				// String resourcePath = jsonConf.optString("resourcePath");
+				// if (StringUtilities.isEmpty(resourcePath)) {
+				// resourcePath = DAOConfig.getResourcePath();
+				// jsonConf.put("resourcePath", resourcePath);
+				// }
+				String resourcePath = DAOConfig.getResourcePath();
 				fds.setResourcePath(resourcePath);
 
 				fds.setConfiguration(jsonConf.toString());
@@ -533,11 +533,12 @@ public class DataSetFactory {
 				ds = new FileDataSet();
 				FileDataSet fds = (FileDataSet) ds;
 
-				String resourcePath = jsonConf.optString("resourcePath");
-				if (StringUtilities.isEmpty(resourcePath)) {
-					resourcePath = DAOConfig.getResourcePath();
-					jsonConf.put("resourcePath", resourcePath);
-				}
+				String resourcePath = DAOConfig.getResourcePath();
+				// String resourcePath = jsonConf.optString("resourcePath");
+				// if (StringUtilities.isEmpty(resourcePath)) {
+				// resourcePath = DAOConfig.getResourcePath();
+				// jsonConf.put("resourcePath", resourcePath);
+				// }
 				fds.setResourcePath(resourcePath);
 
 				fds.setConfiguration(jsonConf.toString());
@@ -800,11 +801,12 @@ public class DataSetFactory {
 				ds = new FileDataSet();
 				FileDataSet fds = (FileDataSet) ds;
 
-				String resourcePath = jsonConf.optString("resourcePath");
-				if (StringUtilities.isEmpty(resourcePath)) {
-					resourcePath = DAOConfig.getResourcePath();
-					jsonConf.put("resourcePath", resourcePath);
-				}
+				String resourcePath = DAOConfig.getResourcePath();
+				// String resourcePath = jsonConf.optString("resourcePath");
+				// if (StringUtilities.isEmpty(resourcePath)) {
+				// resourcePath = DAOConfig.getResourcePath();
+				// jsonConf.put("resourcePath", resourcePath);
+				// }
 				fds.setResourcePath(resourcePath);
 
 				fds.setConfiguration(jsonConf.toString());
