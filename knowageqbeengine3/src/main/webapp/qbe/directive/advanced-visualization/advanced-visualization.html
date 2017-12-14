@@ -25,7 +25,7 @@
     	<div class="filterGroup">
 			<h3 layout="row" layout-align="start center">Group {{item.id}} 
 				<span flex></span>
-				<md-button class="md-icon-button" ng-click="something()">
+				<md-button class="md-icon-button" ng-click="removeGroup(item, $index)">
 					<md-icon md-font-icon="fa fa-trash"></md-icon>
 				</md-button>
 			</h3>
@@ -71,8 +71,13 @@
 	</md-toolbar>
 		<md-menu-bar>
           <md-menu>
-          	<button ng-click="$mdMenu.open()">
-            	Add group
+          	<button  class="md-button md-knowage-theme md-ink-ripple"
+          		ng-repeat="item in models.templates"
+				                dnd-draggable="item"
+				                dnd-effect-allowed="copy"
+				                dnd-copied="item.id = item.id + 1"
+          	ng-click="$mdMenu.open()">
+            	Drag to add group
             </button>
           </md-menu>
        	</md-menu-bar>
@@ -94,36 +99,6 @@
             			</div>
         			</div>
     			</div>
-    			
-    	
-    			
-     			<div class="toolbox box box-grey box-padding">
-       				<h3>New Elements</h3>
-       					<ul>
-            <!-- The toolbox only allows to copy objects, not move it. After a new
-                 element was created, dnd-copied is invoked and we generate the next id -->
-				            <li ng-repeat="item in models.templates"
-				                dnd-draggable="item"
-				                dnd-effect-allowed="copy"
-				                dnd-copied="item.id = item.id + 1"
-				                >
-				                <button type="button" class="btn btn-default btn-lg" >{{item.type}}</button>
-				            </li>
-        				</ul>
-    			</div>
-
-			    <div ng-if="models.selected" class="box box-grey box-padding">
-			        <h3>Selected</h3>
-			        <strong>Type: </strong> {{models.selected.type}}<br>
-			        <input type="text" ng-model="models.selected.id" class="form-control" style="margin-top: 5px" />
-			    </div>
-			    
-			    <!--div class="trashcan box box-grey box-padding">
-			        <h3>Trashcan</h3>
-			        <ul dnd-list="[]">
-			            <li><md-icon class="fa fa-trash"></li>
-			        </ul>
-   				</div-->
 		</div>
 			
 	<div flex></div>
