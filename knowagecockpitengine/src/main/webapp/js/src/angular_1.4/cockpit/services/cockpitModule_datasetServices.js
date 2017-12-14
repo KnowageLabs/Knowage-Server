@@ -277,7 +277,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					angular.forEach(widget.content.columnSelectedOfDataset,function(widgetColumn){
 						var isWidgetColumnMatching = false;
 						for(var i = 0; i < actualDs.metadata.fieldsMeta.length; i++){
-							if(actualDs.metadata.fieldsMeta[i].name == widgetColumn.name || widgetColumn.formula){
+							if(actualDs.metadata.fieldsMeta[i].name == widgetColumn.name || actualDs.metadata.fieldsMeta[i].alias == widgetColumn.name || widgetColumn.formula){
 								isWidgetColumnMatching = true;
 								break;
 							}
