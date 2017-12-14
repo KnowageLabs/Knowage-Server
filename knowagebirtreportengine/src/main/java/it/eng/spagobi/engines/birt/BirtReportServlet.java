@@ -771,6 +771,8 @@ public class BirtReportServlet extends HttpServlet {
 				runTask.run(file);
 
 				Utils.sendPage(response, 1, (String) context.get(REPORT_EXECUTION_ID));
+				birtReportEngine = null;
+				BirtEngine.setBirtEngine(null);
 
 			}
 		} catch (Exception e) {
