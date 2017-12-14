@@ -47,7 +47,6 @@ import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-import com.mongodb.util.JSON;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -292,7 +291,14 @@ public class DataSetResource extends AbstractDataSetResource {
 			JSONObject jo = new JSONObject();
 			JSONArray ja = new JSONArray();
 			for (SbiDataSet ds : dataset) {
-				ja.put(JSON.parse(JsonConverter.objectToJson(ds, SbiDataSet.class)));
+				IDataSet iDataSet = DataSetFactory.toDataSet(ds);
+				JSONObject jsonIDataSet = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(iDataSet, null);
+
+				JSONObject jsonSbiDataSet = new JSONObject(JsonConverter.objectToJson(ds, SbiDataSet.class));
+				jsonSbiDataSet.put("isRealtime", iDataSet.isRealtime());
+				jsonSbiDataSet.put("parameters", jsonIDataSet.getJSONArray("pars"));
+
+				ja.put(jsonSbiDataSet);
 			}
 			jo.put("item", ja);
 			jo.put("itemCount", dao.countSbiDataSet(search, idArray));

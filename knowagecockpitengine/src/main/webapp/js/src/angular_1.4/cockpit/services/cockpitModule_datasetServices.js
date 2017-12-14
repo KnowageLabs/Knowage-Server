@@ -27,37 +27,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					ds.datasetMapByLabel[dataset.label] = dataset;
 				}
 
-				sbiModule_restServices.restToRootProject();
-				sbiModule_restServices.promiseGet("1.0/datasets","?ids=" + dsIds.join())
-				.then(function(response){
-					angular.forEach(ds.datasetList, function(dsv2){
-						for(var i=0; i<response.data.root.length; i++){
-							var dsv1=response.data.root[i];
-							if(dsv2.id.dsId == dsv1.id){
-								dsv2.isRealtime = dsv1.isRealtime;
-								for(var i2 in dsv2.parameters){
-									for(var i1 in dsv1.pars){
-										if(dsv2.parameters[i2].name == dsv1.pars[i1].name){
-											dsv2.parameters[i2].multiValue = dsv1.pars[i1].multiValue;
-											break;
-										}
-									}
-								}
-								break;
-							}
-						}
-					});
+				ds.initNearRealTimeValues(ds.datasetList);
+				ds.checkForDSChange();
+				cockpitModule_widgetSelection.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS,undefined,def);
 
-					ds.initNearRealTimeValues(ds.datasetList);
-					ds.checkForDSChange();
-					cockpitModule_widgetSelection.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS,undefined,def);
-
-					ds.isDatasetFromTemplateLoaded = true;
-					def.resolve();
-				},function(response){
-					sbiModule_restServices.errorHandler(response.data,"");
-					def.reject();
-				});
+				ds.isDatasetFromTemplateLoaded = true;
+				def.resolve();
 
 			},function(response){
 				sbiModule_restServices.errorHandler(response.data,"");
@@ -106,35 +81,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					ds.datasetMapByLabel[dataset.label] = dataset;
 				}
 
-				sbiModule_restServices.restToRootProject();
-				sbiModule_restServices.promiseGet("1.0/datasets","")
-				.then(function(response){
-					angular.forEach(ds.datasetList, function(dsv2){
-						if(dsv2.isRealtime == undefined){
-							for(var i=0; i<response.data.root.length; i++){
-								var dsv1=response.data.root[i];
-								if(dsv2.id.dsId == dsv1.id){
-									dsv2.isRealtime = dsv1.isRealtime;
-									for(var i2 in dsv2.parameters){
-										for(var i1 in dsv1.pars){
-											if(dsv2.parameters[i2].name == dsv1.pars[i1].name){
-												dsv2.parameters[i2].multiValue = dsv1.pars[i1].multiValue;
-												break;
-											}
-										}
-									}
-									break;
-								}
-							}
-						}
-					});
+				ds.isDatasetListLoaded = true;
+				def.resolve();
 
-					ds.isDatasetListLoaded = true;
-					def.resolve();
-				},function(response){
-					sbiModule_restServices.errorHandler(response.data,"");
-					def.reject();
-				});
 			},function(response){
 				sbiModule_restServices.errorHandler(response.data,"");
 				def.reject();
