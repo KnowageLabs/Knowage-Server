@@ -102,28 +102,6 @@ function exportersCatalogueFunction(sbiModule_translate,sbiModule_restServices,$
 		}
 	};
 
-//	$scope.saveExporter = function() {
-//		console.log($scope.selectedExporter);
-//		sbiModule_restServices.promisePost("2.0/exporters", "", angular.toJson($scope.selectedExporter))
-//		.then(function(response) {
-//			$scope.getExporters();
-//			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
-//		}, function(response) {
-//			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-//		});
-//	};
-
-//	$scope.saveExporter = function() {
-//		console.log($scope.selectedExporter);
-//		sbiModule_restServices.promisePut("2.0/exporters"+ "/" + engineId + "/" + domainId, "", angular.toJson($scope.selectedExporter))
-//		.then(function(response) {
-//			$scope.getExporters();
-//			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
-//		}, function(response) {
-//			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-//		});
-//	};
-
 	$scope.saveOrUpdateExporter = function() {
 
 		if($scope.selectedExporter.hasOwnProperty("persisted")) {
@@ -144,7 +122,6 @@ function exportersCatalogueFunction(sbiModule_translate,sbiModule_restServices,$
 
 			.then(function(response) {
 				$scope.getExporters();
-				//$scope.myExporters.push(response.data);
 				$scope.dirtyForm = false;
 				$scope.showMe = false;
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
