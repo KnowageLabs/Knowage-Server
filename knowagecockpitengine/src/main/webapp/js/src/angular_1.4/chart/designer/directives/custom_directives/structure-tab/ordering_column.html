@@ -2,14 +2,26 @@
 <div layout="column" layout-padding>
 
 <md-input-container class="md-block">
-	 <label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.orderByColumn.labelText")}}</label>
+	 <label ng-if="selectedChartType.toLowerCase()!='heatmap'">{{translate.load("sbi.chartengine.structure.categoryStyleConfig.orderByColumn.labelText")}}</label>
+	 <label  ng-if="selectedChartType.toLowerCase()=='heatmap'">{{translate.load("sbi.chartengine.structure.categoryStyleConfig.orderByColumnFirstCateg.labelText")}}</label>
 		 <md-select ng-model="categories[0].orderColumn" name="categories_ordering_column"> <md-option
 		ng-repeat="option in allAttributes" value="{{option.id}}">{{option.id}}</md-option>
 	</md-select> </md-input-container>
 	
 <md-input-container class="md-block">
+	 <label >{{translate.load("sbi.chartengine.structure.categoryStyleConfig.orderingType.labelText")}}</label>
+		<md-select ng-model="categories[0].orderType" name="categories_ordering_type"> <md-option
+		ng-repeat="option in seriesItemOrderingTypes" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+<md-input-container class="md-block" ng-if="selectedChartType.toLowerCase()=='heatmap'">
+	 <label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.orderByColumnSecCateg.labelText")}}</label>
+		 <md-select ng-model="categories[1].orderColumn" name="categories_ordering_column"> <md-option
+		ng-repeat="option in allAttributes" value="{{option.id}}">{{option.id}}</md-option>
+	</md-select> </md-input-container>
+	
+<md-input-container class="md-block" ng-if="selectedChartType.toLowerCase()=='heatmap'">
 	 <label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.orderingType.labelText")}}</label>
-		 <md-select ng-model="categories[0].orderType" name="categories_ordering_type"> <md-option
+		 <md-select ng-model="categories[1].orderType" name="categories_ordering_type"> <md-option
 		ng-repeat="option in seriesItemOrderingTypes" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 	

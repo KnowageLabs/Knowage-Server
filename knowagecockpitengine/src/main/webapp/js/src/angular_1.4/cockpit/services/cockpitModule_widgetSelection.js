@@ -53,11 +53,24 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 						obj["orderType"] = reverseOrdering==true ? 'ASC' : 'DESC';
 					}
 				}
-
+				var newCategArray = [];
 				if(ngModel.content.chartTemplate && ngModel.content.chartTemplate.CHART){
 					var category = ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
+					
 					if(category){
-						if(category.column == col.name){
+						if(Array.isArray(category)){
+							
+							for (var j = 0; j < category.length; j++) {
+								if(category[j].column == col.name){
+									obj["orderType"] = category[j].orderType;
+									obj["orderColumn"] = category[j].orderColumn;
+									newCategArray.push(obj)
+								}
+								
+								
+							}
+						}
+						else {
 							obj["orderType"] = category.orderType;
 							obj["orderColumn"] = category.orderColumn;
 						}
@@ -65,7 +78,14 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}
 
 				if(col.fieldType=="ATTRIBUTE"){
-					categories.push(obj)
+					if(newCategArray.length >0 ){
+						for (var m = 0; m < newCategArray.length; m++) {
+							categories.push(newCategArray[m])
+						}
+					}
+					else {
+						categories.push(obj)						
+					}
 				}else{
 					//it is measure
 					if (col.aggregationSelected)
