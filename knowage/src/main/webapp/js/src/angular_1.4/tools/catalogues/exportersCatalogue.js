@@ -27,6 +27,9 @@ function exportersCatalogueFunction(sbiModule_translate,sbiModule_restServices,$
     $scope.engines = [];
 	$scope.domains = [];
 
+	$scope.searchEngineText = "";
+	$scope.searchDomainText = "";
+
 	$scope.getExporters = function () {
 		sbiModule_restServices.promiseGet("2.0/exporters", '')
 		.then(function(response) {
@@ -88,6 +91,8 @@ function exportersCatalogueFunction(sbiModule_translate,sbiModule_restServices,$
 
 	$scope.createExporters = function() {
       $scope.showMe = true;
+      $scope.searchEngineText = "";
+      $scope.searchDomainText = "";
       $scope.selectedExporter = {
 				engineId: "",
 				domainId: "",
@@ -202,6 +207,12 @@ function exportersCatalogueFunction(sbiModule_translate,sbiModule_restServices,$
 		    }, function() {
 
 		    });
-		  };
+	};
+
+	$scope.clearEngineSearch = function() {
+
+		$scope.searchEngineText = "";
+		$scope.searchDomainText = "";
+	};
 }
 
