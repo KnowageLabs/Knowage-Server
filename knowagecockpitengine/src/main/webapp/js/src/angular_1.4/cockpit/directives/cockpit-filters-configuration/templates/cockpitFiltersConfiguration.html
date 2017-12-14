@@ -27,7 +27,7 @@
 	                </md-select>   
 	            </md-input-container>
             
-				<md-input-container flex=40  ng-show="filterObj.type == 'java.lang.Integer' || filterObj.type == 'java.lang.Double' || filterObj.type == 'java.lang.Float' || filterObj.type == 'java.math.BigDecimal' ||filterObj.type == 'java.lang.Long'">
+				<md-input-container flex=40  ng-show="filterObj.type == 'java.lang.Integer' || filterObj.type == 'java.lang.Double' || filterObj.type == 'java.lang.Float' || filterObj.type == 'java.math.BigDecimal' || filterObj.type == 'java.lang.Long' || filterObj.type == 'java.lang.BigInteger' || filterObj.type == 'java.lang.Byte' || filterObj.type == 'java.lang.Short'">
 					<label>Operator</label>
 					<md-select ng-model="filterObj.filterOperator" >
 					    <md-option  ng-repeat="op in operatorsTypeNumber" ng-value="op">{{op}}</md-option>
