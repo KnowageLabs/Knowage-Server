@@ -825,9 +825,18 @@ color-picker {
   display: block;
   .color-picker-wrapper {
     position: absolute;
-    //z-index:9999;
     width: 100%;
+    z-index:9000;
     .color-picker-panel {
+      
+    }
+  }
+}
+
+/* fix to have the selected color-picker always on top */
+.md-input-focused {
+  color-picker {
+    .color-picker-wrapper {
       z-index:9999;
     }
   }

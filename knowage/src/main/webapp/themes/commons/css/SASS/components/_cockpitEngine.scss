@@ -684,12 +684,26 @@
            	 }
             }
             .viewModeMenu {
+            	transition: background-color .3s ease;
             	position: absolute;
             	top: 0;
             	width: 100%;
             	z-index: 20;
             	.floatingFilter {
             		opacity: 1 !important;
+            		md-icon {
+            			top: 8px;
+            			right: 0;
+            		}
+            		.ban{
+            			display:none;
+            			color: red;
+            		}
+            		&:hover {
+            			.ban {
+            				display: block;
+            			}
+            		}
             	}
             	.md-button {
             		margin: 0;
@@ -700,7 +714,8 @@
             	.showActionButtonHandler, .floatingSearch {
             		opacity: 1 !important;
             	}
-            	.viewModeMenu {
+            	.viewModeMenu {	
+					background-color: rgba($secondaryColor,.6);
             		.md-button {
             			opacity: 1 !important;
             		}
