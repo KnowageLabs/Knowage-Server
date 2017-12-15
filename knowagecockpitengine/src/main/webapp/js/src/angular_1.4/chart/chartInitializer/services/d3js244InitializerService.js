@@ -57,7 +57,6 @@ angular.module('chartInitializer')
 	
 	this.handleCockpitSelection = function(e){
 		
-		debugger;
 		var cockpitWidgetManager = window.parent.cockpitPanel.widgetContainer.widgetManager;
 		var cockpitWidgets = cockpitWidgetManager.widgets;
 		//var widgetId = Sbi.chart.viewer.ChartTemplateContainer.widgetId;

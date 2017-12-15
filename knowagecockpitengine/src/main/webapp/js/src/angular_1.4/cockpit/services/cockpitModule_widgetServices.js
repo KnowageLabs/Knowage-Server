@@ -93,7 +93,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	};
 
 	this.addWidget=function(sheetIndex,item){
-		debugger;
 		angular.forEach(cockpitModule_template.sheets,function(value,key){
 			if(value.index==sheetIndex){
 				value.widgets.push(item);
