@@ -22,17 +22,17 @@ public final class VersionInfo {
 
 	public static final int MAJOR = 6;
 	public static final int MINOR = 1;
-	public static final int PATCH = 2;
+	public static final int PATCH = 3;
 	public static final String VERSION_SEPARATOR = ".";
-	// this can be "-rc" (release candidate) or "-s" (snapshot)
-	public static final String OPTIONAL = "";
+	// this can be "-RC" (release candidate) or "-S" (snapshot)
+	public static final String OPTIONAL = "-S";
 
 	public static final String COMPLETE_VERSION = VersionInfo.MAJOR + VersionInfo.VERSION_SEPARATOR + VersionInfo.MINOR + VersionInfo.VERSION_SEPARATOR
 			+ VersionInfo.PATCH + VersionInfo.OPTIONAL;
 
-	public static final String YEAR = "2017";
-	public static final String MONTH = "12";
-	public static final String DAY = "15";
+	public static final String YEAR = "yyyy"; // yyyy
+	public static final String MONTH = "MM"; // MM
+	public static final String DAY = "dd"; // dd
 	public static final String DATE_SEPARATOR = "/";
 
 	public static final String RELEASE_DATE = VersionInfo.YEAR + VersionInfo.DATE_SEPARATOR + VersionInfo.MONTH + VersionInfo.DATE_SEPARATOR + VersionInfo.DAY;
