@@ -22,6 +22,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.utilities.database.AbstractDataBase;
 
 public class Projection {
 
@@ -50,11 +51,16 @@ public class Projection {
 		this.dataSet = dataSet;
 
 		IFieldMetaData fieldMetaData = DataSetUtilities.getFieldMetaData(dataSet, columnName);
-		String columnNameWithoutQbePrefix = DataSetUtilities.getColumnNameWithoutQbePrefix(fieldMetaData.getName());
-		if (!columnName.equals(columnNameWithoutQbePrefix)) {
-			this.name = fieldMetaData.getAlias();
-		} else {
+
+		if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
 			this.name = columnName;
+		} else {
+			String columnNameWithoutQbePrefix = DataSetUtilities.getColumnNameWithoutQbePrefix(fieldMetaData.getName());
+			if (!columnName.equals(columnNameWithoutQbePrefix)) {
+				this.name = fieldMetaData.getAlias();
+			} else {
+				this.name = columnName;
+			}
 		}
 
 		this.alias = alias;

@@ -78,6 +78,7 @@ import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
+import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -129,9 +130,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			String summaryRow, int offset, int fetchSize, boolean isNearRealtime) {
 		logger.debug("IN");
 		Monitor totalTiming = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore");
-		try {	
-			Monitor timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:validateParams");	
-			
+		try {
+			Monitor timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:validateParams");
+
 			int maxResults = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
 			logger.debug("Offset [" + offset + "], fetch size [" + fetchSize + "], max results[" + maxResults + "]");
 
@@ -154,13 +155,14 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			dataSetDao.setUserProfile(getUserProfile());
 			IDataSet dataSet = dataSetDao.loadDataSetByLabel(label);
 			Assert.assertNotNull(dataSet, "Unable to load dataset with label [" + label + "]");
-			
-			timing.stop();		
-			timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:getQueryDetails");	
+
+			timing.stop();
+			timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:getQueryDetails");
 
 			List<Projection> projections = new ArrayList<Projection>(0);
 			List<Projection> groups = new ArrayList<Projection>(0);
 			List<Sorting> sortings = new ArrayList<Sorting>(0);
+			List<Projection> summaryRowProjections = new ArrayList<Projection>(0);
 			Map<String, String> columnAliasToName = new HashMap<String, String>();
 			if (aggregations != null && !aggregations.isEmpty()) {
 				JSONObject aggregationsObject = new JSONObject(aggregations);
@@ -173,6 +175,13 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				projections.addAll(getProjections(dataSet, categoriesObject, measuresObject, columnAliasToName));
 				groups.addAll(getGroups(dataSet, categoriesObject, measuresObject, columnAliasToName));
 				sortings.addAll(getSortings(dataSet, categoriesObject, measuresObject, columnAliasToName));
+
+				if (summaryRow != null && !summaryRow.isEmpty()) {
+					JSONObject summaryRowObject = new JSONObject(summaryRow);
+					JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
+					fixSummaryRowMeasures(summaryRowMeasuresObject, measuresObject);
+					summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
+				}
 			}
 
 			List<Filter> filters = new ArrayList<>(0);
@@ -190,7 +199,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 					likeFilters.addAll(getLikeFilters(label, likeSelectionsObject, columnAliasToName));
 				}
 			}
-			
+
 			Monitor timingMinMax = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:calculateMinMax");
 			filters = getDatasetManagementAPI().calculateMinMaxFilters(dataSet, isNearRealtime, DataSetUtilities.getParametersMap(parameters), projections,
 					filters, likeFilters, groups, offset, fetchSize, maxRowCount);
@@ -198,19 +207,12 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 			Filter where = getDatasetManagementAPI().getWhereFilter(filters, likeFilters);
 
-			List<Projection> summaryRowProjections = new ArrayList<Projection>(0);
-			if (summaryRow != null && !summaryRow.isEmpty()) {
-				JSONObject summaryRowObject = new JSONObject(summaryRow);
-				JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
-				summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
-			}
-			
 			timing.stop();
-			
+
 			IDataStore dataStore = getDatasetManagementAPI().getDataStore(dataSet, isNearRealtime, DataSetUtilities.getParametersMap(parameters), projections,
 					where, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 			IDataWriter dataWriter = getDataSetWriter();
-			
+
 			timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:convertToJson");
 			JSONObject gridDataFeed = (JSONObject) dataWriter.write(dataStore);
 			timing.stop();
@@ -224,6 +226,23 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		} finally {
 			totalTiming.stop();
 			logger.debug("OUT");
+		}
+	}
+
+	private void fixSummaryRowMeasures(JSONArray summaryRowMeasures, JSONArray measures) throws JSONException {
+		for (int i = 0; i < summaryRowMeasures.length(); i++) {
+			JSONObject summaryRowMeasure = summaryRowMeasures.getJSONObject(i);
+			String summaryRowAlias = summaryRowMeasure.getString("alias");
+			for (int j = 0; j < measures.length(); j++) {
+				JSONObject measure = measures.getJSONObject(j);
+				if (measure.getString("alias").equals(summaryRowAlias)) {
+					String columnName = measure.getString("columnName");
+					if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
+						summaryRowMeasure.put("columnName", columnName);
+					}
+					break;
+				}
+			}
 		}
 	}
 

@@ -30,7 +30,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -73,17 +72,10 @@ import it.eng.spagobi.tools.dataset.association.DistinctValuesClearWork;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
-import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
-import it.eng.spagobi.tools.dataset.cache.GroupCriteria;
 import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
-import it.eng.spagobi.tools.dataset.cache.SelectBuilder;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
 import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
 import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.cache.query.item.AndFilter;
@@ -122,7 +114,6 @@ import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
-import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.groovy.GroovySandbox;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
@@ -366,7 +357,7 @@ public class DatasetManagementAPI {
 	public IDataStore getDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections, Filter filter,
 			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
 		String errorMessage = "An unexpected error occured while executing method";
-		
+
 		Monitor totalTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore");
 		try {
 			setDataSetParameters(dataSet, parametersValues);
@@ -376,7 +367,7 @@ public class DatasetManagementAPI {
 			if (querableBehaviour != null) {
 				querableBehaviour.getStatement();
 			}
-			
+
 			IDataStore dataStore = null;
 
 			DatasetEvaluationStrategy evaluationStrategy = dataSet.getEvaluationStrategy(isNearRealtime);
@@ -406,7 +397,7 @@ public class DatasetManagementAPI {
 					cache.setUserProfile(userProfile);
 
 					Monitor totalCacheTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:totalCache");
-					
+
 					IDataStore cachedResultSet = cache.get(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize,
 							maxRowCount);
 					if (cachedResultSet == null) {
@@ -426,7 +417,7 @@ public class DatasetManagementAPI {
 							adjustMetadata((DataStore) dataStore, dataSet, null);
 							return dataStore;
 						}
-						
+
 						timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:getFromCache");
 						dataStore = cache.get(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 						timing.stop();
@@ -1158,7 +1149,8 @@ public class DatasetManagementAPI {
 			Projection summaryRowProjection = summaryRowProjections.get(i);
 			for (int j = 0; j < projections.size(); j++) {
 				Projection projection = projections.get(j);
-				if (summaryRowProjection.getName().equals(projection.getAlias())) {
+				String projectionAlias = projection.getAlias();
+				if (summaryRowProjection.getAlias().equals(projectionAlias) || summaryRowProjection.getName().equals(projectionAlias)) {
 					projectionToSummaryRowProjection.put(j, i);
 					break;
 				}
@@ -1224,7 +1216,7 @@ public class DatasetManagementAPI {
 		}
 		return columnNames;
 	}
-	
+
 	protected List<Integer> getCategories(IEngUserProfile profile) {
 
 		List<Integer> categories = new ArrayList<>();
