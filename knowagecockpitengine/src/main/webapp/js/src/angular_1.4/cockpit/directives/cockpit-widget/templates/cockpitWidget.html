@@ -22,35 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   	<div ng-show="widgetSpinner" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
        <md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
     </div>
-    
-    <form>
-	    <!--  div class="widgetSearchBar md-whiteframe-2dp animation slide-down" ng-if="widgetSearchBar" layout="row" layout-align="start center" layout-wrap>
-	    	<i class="fa fa-search" layout-padding></i>
-			<md-input-container class="md-block" flex flex-xs=40>
-	        	<label>{{translate.load("sbi.cockpit.widgets.table.search")}}</label>
-		        <input ng-model="ngModel.search.text">
-	      	</md-input-container>
-	      	<md-input-container class="md-block" flex flex-xs=40>
-	           	<label>{{translate.load("sbi.cockpit.widgets.table.search.columns")}}</label>
-	           <md-select ng-model="ngModel.search.columns" multiple>
-	            <md-option ng-repeat="col in ngModel.content.columnSelectedOfDataset | filter:{fieldType:'ATTRIBUTE'}" value="{{col.name}}">
-	              {{col.aliasToShow}}
-	            </md-option>
-	           </md-select>
-	         </md-input-container>
-	      	<md-button class="md-raised md-primary" ng-click="searchColumns()"  flex-xs type="submit">{{translate.load("sbi.cockpit.widgets.table.search")}}</md-button>
-	      	<md-button class="md-raised md-warn" ng-if="activeSearch" flex-xs ng-click="resetSearch()">{{translate.load("sbi.cockpit.widgets.table.search.reset")}}</md-button>
-	      	<md-button class="md-icon-button"  aria-label="close"   ng-click="openSearchBar()">
-				<md-icon md-font-icon="fa fa-times"></md-icon>
-			</md-button>
-			
-	    </div-->
-    </form>
-	<md-card class="placedWidget flexCard" ng-style="borderShadowStyle" ng-class="{'shadowedBox': extendedStyle.shadows, 'noTitle':(!extendedStyle.titles && !widExp),'editWidgetMode':cockpitModule_properties.EDIT_MODE}" layout="column" layout-fill>
-		<md-card-title ng-style="titleStyle" layout="row" layout-align="start center" ng-dblclick="editWidgetName();" ng-class="{'titleOnTop':editingWidgetName}">
+	<md-card class="placedWidget flexCard" ng-style="borderShadowStyle" ng-class="{'shadowedBox': extendedStyle.shadows, 'editWidgetMode':cockpitModule_properties.EDIT_MODE}" layout="column" layout-fill>
+		<md-card-title ng-style="extendedStyle.title" layout="row" layout-align="start center" ng-show="extendedStyle.titles" ng-dblclick="editWidgetName();" ng-class="{'titleOnTop':editingWidgetName}">
 			<md-toolbar style="height:{{headerHeight}}px" class="widgetToolbar">
 				<div class="md-toolbar-tools" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp),'draggableToolbar':editingWidgetName!=true}" layout="row">
-					<span  class="md-headline editWidgetNameSpan " ng-style="titleStyle" ng-show="editingWidgetName!=true">{{ngModel.content.name | parameter_fill}}</span>
+					<span  class="md-headline editWidgetNameSpan " ng-style="extendedStyle.title" ng-show="editingWidgetName!=true">{{ngModel.content.name | parameter_fill}}</span>
 					<div layout="row"  flex class="editWidgetNameInput" ng-show="editingWidgetName==true">
 						<md-input-container flex md-no-float class="md-block noMargin">
 				          <input ng-model="tmpWidgetContent.name" placeholder="Widget name">
@@ -79,14 +55,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-icon md-font-icon="fa fa-search"></md-icon>
 			</md-button>
 			
-			<md-button class="md-icon-button floatingFilter" ng-if="ngModel.type == 'table' && activeSearch && !cockpitModule_properties.EDIT_MODE" ng-click="resetSearch();$event.stopPropagation();">
-				<md-tooltip md-direction="bottom" md-delay="1000">Filtered table, click to reset search</md-tooltip>
-				<md-icon md-font-icon="fa fa-filter"></md-icon>
-			</md-button>
-			
-			 <md-button class="md-icon-button "  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();">
+			<md-button class="md-icon-button "  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();" ng-if="ngModel.type == 'chart' && !cockpitModule_properties.EDIT_MODE">
 				<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.chartType")}}</md-tooltip>
 				<md-icon md-font-icon="fa fa-bar-chart"></md-icon>
+			</md-button>
+			
+			<md-button class="md-icon-button" aria-label="unselectable button" ng-if="enterpriseEdition && cliccable==true && ngModel.type=='chart' && (ngModel.content.chartTemplate.CHART.type.toLowerCase()=='treemap' || ngModel.content.chartTemplate.CHART.type.toLowerCase()=='line' || ngModel.content.chartTemplate.CHART.type.toLowerCase()=='bar')" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
+				<md-tooltip md-direction="top" md-delay="1000" ng-show="ngModel.cliccable">
+          			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.cliccable")}}
+       			 </md-tooltip>
+       			 <md-tooltip md-direction="top" md-delay="1000" ng-show="!ngModel.cliccable">
+          			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.notcliccable")}}
+       			 </md-tooltip>
+       			 <md-icon md-font-icon="fa fa-mouse-pointer" ng-show="ngModel.cliccable"></md-icon>
+       			 <md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable"></md-icon>
+			</md-button>
+			
+			<md-button class="md-icon-button floatingFilter" ng-if="ngModel.type == 'table' && activeSearch && !cockpitModule_properties.EDIT_MODE" ng-click="resetSearch();$event.stopPropagation();">
+				<md-tooltip md-direction="bottom" md-delay="1000">Filtered table, click to reset search</md-tooltip>
+				<md-icon md-font-icon="fa fa-filter fa-stack-1x"></md-icon>
+				<md-icon md-font-icon="fa fa-ban fa-stack-2x ban"></md-icon>
 			</md-button>
 		</div>
 		
@@ -151,7 +139,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-button>
 			
 			<!-- clickable BUTTON -->
-			<md-button class="md-icon-button stackedIcons" aria-label="unselectable button" ng-if="cliccable==true && cockpitModule_properties.EDIT_MODE && ngModel.content.chartTemplate.CHART.type.toLowerCase()!='treemap'" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
+			<md-button class="md-icon-button stackedIcons" aria-label="unselectable button" ng-if="cliccable==true && cockpitModule_properties.EDIT_MODE && (ngModel.content.chartTemplate.CHART.type.toLowerCase()!='treemap' && ngModel.content.chartTemplate.CHART.type.toLowerCase()!='line' && ngModel.content.chartTemplate.CHART.type.toLowerCase()!='bar')" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
 				<md-tooltip md-direction="top" md-delay="1000">
 		          {{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}}
 		        </md-tooltip>
@@ -161,7 +149,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</span>
 			</md-button>
 			
-			<md-button class="md-icon-button" aria-label="unselectable button" ng-if="cliccable==true && ngModel.type=='chart' && ngModel.content.chartTemplate.CHART.type.toLowerCase()=='treemap'" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
+			<md-button class="md-icon-button" aria-label="unselectable button" ng-if="cliccable==true && ngModel.type=='chart' && (ngModel.content.chartTemplate.CHART.type.toLowerCase()=='treemap' || ngModel.content.chartTemplate.CHART.type.toLowerCase()=='line' || ngModel.content.chartTemplate.CHART.type.toLowerCase()=='bar')" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
 				<md-tooltip md-direction="top" md-delay="1000" ng-show="ngModel.cliccable">
           			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.cliccable")}}
        			 </md-tooltip>

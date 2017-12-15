@@ -126,7 +126,7 @@ angular.module('cockpitModule')
 
 	}
 })
-.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices){
+.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices, cockpitModule_properties){
 	   return{
 		   templateUrl: baseScriptPath+ '/directives/cockpit-widget/templates/cockpitWidget.html',
 		   controller: cockpitWidgetControllerFunction,
@@ -143,32 +143,33 @@ angular.module('cockpitModule')
                     post: function postLink(scope, element, attrs, ctrl, transclud) {
                     	// init the widget
                     	element.ready(function () {
-                    		var objType=cockpitModule_widgetConfigurator[scope.ngModel.type.toLowerCase()];
-                    		var dataset;
-                    		if (scope.ngModel.dataset){
-                        		dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId)
-                    		}
+	                    		var objType=cockpitModule_widgetConfigurator[scope.ngModel.type.toLowerCase()];
+	                    		var dataset;
+	                    		if (scope.ngModel.dataset){
+	                        		dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId)
+	                    		}
 
-                    		scope.updateble=objType.updateble==undefined? true : objType.updateble;
-                    		//if the dataset is realtime disable the cliccable icon in the toolbar
-                    		if (dataset && dataset != null && dataset.isRealtime){
-                        		scope.cliccable= false;
-                    		} else {
-                        		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
-                    		}
-                    		if(objType!=undefined){
-                    			var directive = document.createElement("cockpit-"+scope.ngModel.type.toLowerCase()+"-widget" );
-                    			var content=element[0].querySelector("md-card-content");
-                    			content.appendChild(directive);
-                    			$compile(content)(scope) ;
-                    			scope.initializeWidgetProperty(directive);
-                    			scope.subCockpitWidget=angular.element(directive);
-                    			scope.gridsterItem=angular.element(scope.cockpitWidgetItem[0].querySelector("li.gridster-item"))
-                    		}else{
-                    			console.error(scope.ngModel.type+" widget not defined");
-                    		}
+	                    		scope.updateble=objType.updateble==undefined? true : objType.updateble;
+	                    		//if the dataset is realtime disable the cliccable icon in the toolbar
+	                    		if (dataset && dataset != null && dataset.isRealtime){
+	                        		scope.cliccable= false;
+	                    		} else {
+	                        		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
+	                    		}
+	                    		if(objType!=undefined){
+	                    			var directive = document.createElement("cockpit-"+scope.ngModel.type.toLowerCase()+"-widget" );
+	                    			var content=element[0].querySelector("md-card-content");
+	                    			content.appendChild(directive);
+	                    			$compile(content)(scope) ;
+	                    			scope.initializeWidgetProperty(directive);
+	                    			scope.subCockpitWidget=angular.element(directive);
+	                    			scope.gridsterItem=angular.element(scope.cockpitWidgetItem[0].querySelector("li.gridster-item"))
+	                    		}else{
+	                    			console.error(scope.ngModel.type+" widget not defined");
+	                    		}
 
-                    		scope.refreshWidgetStyle();
+	                    		scope.refreshWidgetStyle();
+                    		
                         });
 
                     	scope.initializeWidgetProperty=function(directive){
@@ -209,6 +210,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.translate		= sbiModule_translate;
+	$scope.enterpriseEdition = (sbiModule_user.functionalities.indexOf("EnableButtons")>-1)? true:false;
 	$scope.tmpWidgetContent	= {};
 	$scope.editingWidgetName= false;
 	$scope.extendedStyle	= {};
@@ -818,9 +820,6 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	}
 
 	$scope.refreshWidgetStyle=function(){
-		angular.copy({},$scope.extendedStyle);
-		angular.copy({},$scope.borderShadowStyle);
-		angular.copy({},$scope.titleStyle);
 
 		// update extended style
 		angular.copy(angular.merge({},cockpitModule_template.configuration.style,$scope.ngModel.style),$scope.extendedStyle);
@@ -833,11 +832,11 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		if($scope.extendedStyle.shadows!=undefined && $scope.extendedStyle.shadows==true){
 			angular.merge($scope.borderShadowStyle,$scope.extendedStyle.shadow);
 		}
-		// update title style
-		if($scope.extendedStyle.titles!=undefined && $scope.extendedStyle.titles==true){
-			if($scope.extendedStyle['font-family']) $scope.titleStyle['font-family'] = $scope.extendedStyle['font-family'];
-			angular.merge($scope.titleStyle,$scope.extendedStyle.title);
-		}
+//		// update title style
+//		if($scope.extendedStyle.titles!=undefined && $scope.extendedStyle.titles==true){
+//			if($scope.extendedStyle['font-family']) $scope.titleStyle['font-family'] = $scope.extendedStyle['font-family'];
+//			angular.merge($scope.titleStyle,$scope.extendedStyle.title);
+//		}
 
 		// update widgets background color
 		if($scope.extendedStyle.backgroundColor!=undefined) {
@@ -880,9 +879,6 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 
 
 	$scope.expandWidget=function(){
-//		if($scope.ngModel.type == "table"){
-//			$scope.$root.$broadcast("WIDGET_EVENT"+$scope.ngModel.id,"WIDGET_SPINNER",{show:true});
-//		}
 
 		if(angular.element($scope.cockpitWidgetItem[0].firstElementChild).hasClass("fullScreenWidget")){
 			cockpitModule_widgetServices.setFullPageWidget(false);
@@ -982,7 +978,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				$scope.chartTypes.push(attrname)
 			}
 		}
-		
+
 		$mdDialog.show({
 			controller: function ($scope,$mdDialog,ngModel) {
 				$scope.widgetName = widgetName;
