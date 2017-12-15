@@ -6,22 +6,22 @@
 #end
 #end
 #set($rows=$data.rows) ## data in table rows
-
 #set($categorieColumnsMapped=$dataColumnsMapper.get($drilldownCategory.toLowerCase().trim()))
 	#set($name= "name")
 	#set($col= "column")
 #if($chart.CHART.VALUES.SERIE.class.name == 'java.util.ArrayList')
 #foreach($serie in $chart.CHART.VALUES.SERIE)
-
 	#if($serie.get($name) == $drilldownSerie)
-	#set($mainSerie = $serie.get($col))
+	#set($mainSerieName =$serie.get($col))
 	#end
 #end
-#else
+#elseif($chart.CHART.VALUES.SERIE.class.name == 'java.util.LinkedHashMap')
 	#if($chart.CHART.VALUES.SERIE.name == $drilldownSerie)
 		#set($mainSerie = $chart.CHART.VALUES.SERIE)
 		#set($mainSerieName = $mainSerie.column)
 	#end
+#else
+#set($mainSerieName = $drilldownSerie)
 #end
 #set($serieColumnsMapped=$dataColumnsMapper.get($mainSerieName.toLowerCase()))
 
@@ -33,8 +33,10 @@
 	category: '$drilldownCategory',
 	#end
 	serieName:'$drilldownSerie',
+
 	data: [
 #foreach($row in $rows)
+
 #set ($serieValue=$row.get($serieColumnsMapped))
 #set ($serieName= $row.get($categorieColumnsMapped))
 		{
@@ -44,6 +46,5 @@
 		},
 #end
 	],
-	
-		
+
 }

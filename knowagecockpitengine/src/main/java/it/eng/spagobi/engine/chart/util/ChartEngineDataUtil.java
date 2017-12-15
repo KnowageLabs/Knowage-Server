@@ -116,7 +116,7 @@ public class ChartEngineDataUtil {
 			String drilldownCategory = category.getString("column");
 			String drilldownCategoryName = category.getString("name");
 			String selectedCategory = "";
-			String[] gbys = groupBys.split(",");
+			String[] gbys = groupBys.split(", ");
 			String[] gbyNames = (groupByNames != null && !groupByNames.isEmpty()) ? groupByNames.split(",") : gbys;
 			int i;
 			for (i = 0; i < jaBreadcrumb.length(); i++) {
