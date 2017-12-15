@@ -75,7 +75,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 
      	}, function(response) {
 
-     		sbiModule_messaging.showErrorMessage("Server response: "+response.status, 'Error');
+     		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
      	});
 
 		return promise;
