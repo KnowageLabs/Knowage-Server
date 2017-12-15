@@ -22,8 +22,9 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 
 		var q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&currentQueryId="+query.id+"&start="+start+"&limit="+itemsPerPage;
 
-		sbiModule_restServices.promisePost('qbequery/executeQuery',q,bodySend)
-     	.then(function(response) {
+		var promise = sbiModule_restServices.promisePost('qbequery/executeQuery',q,bodySend);
+
+		promise.then(function(response) {
      		queryModel.length = 0;
      		console.log("[POST]: SUCCESS!");
 
@@ -77,7 +78,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
      		sbiModule_messaging.showErrorMessage("Server response: "+response.status, 'Error');
      	});
 
-
+		return promise;
 	}
 
 	var createColumnsForPreview=function(columns, fields){

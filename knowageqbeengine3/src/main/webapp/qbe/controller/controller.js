@@ -52,7 +52,13 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		}
 		$scope.filters = $scope.editQueryObj.filters;
 		if(query_service.smartView){
-			$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, false);
+
+			var finalPromise = 	$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, false);
+			if(finalPromise) {
+				finalPromise.then(function(){},function(){
+					angular.copy(oldValue,$scope.editQueryObj);
+				});
+			}
 		} else {
 			$scope.addToQueryModelWithoutExecutingQuery($scope.editQueryObj, $scope.queryModel);
 		}
@@ -66,7 +72,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 
 	$scope.executeQuery = function ( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage) {
 		if(query.fields.length>0){
-			query_service.executeQuery( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage);
+			return query_service.executeQuery( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage);
 		}else{
 			queryModel.length = 0;
 		}
