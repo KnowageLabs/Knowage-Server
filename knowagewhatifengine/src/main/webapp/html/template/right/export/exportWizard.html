@@ -1,0 +1,28 @@
+<div>
+{{outputWizardDescription}}
+		<br/>
+		<div layout="row">
+			<div style=" width:20%; line-height:5">
+				<span >
+    				{{outputWizardTypeLabel}}:
+    			</span>
+			</div>		
+			
+			<div style="padding-top:10px; width:50%">
+				<md-radio-group ng-model="outputType">
+					<md-radio-button ng-repeat="t in outputTypes" ng-value="t.value">
+						{{t.name}}
+					</md-radio-button>
+				</md-radio-group>
+			</div>	
+		</div>
+		
+		<md-input-container style="min-width:40%">
+        	<label>Version to export:</label>
+        		<md-select ng-model="outputVersion">
+          		<md-option ng-repeat="v in outputVersions" value="{{v.id}}">
+           			{{v.name}}
+          		</md-option>
+        	</md-select>
+      	</md-input-container>
+ 	</div>

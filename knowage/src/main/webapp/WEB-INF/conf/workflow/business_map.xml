@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+		<MAP_PAGE_MODULE pageName="AcceptActivityPage" moduleName="AcceptActivityModule" businessProcess="WorklistManagement" />	
+		<MAP_PAGE_MODULE pageName="CompleteOrRejectActivityPage" moduleName="CompleteOrRejectActivityModule" businessProcess="WorklistManagement" />
+		<MAP_PAGE_MODULE pageName="WorkflowToDoListPage" moduleName="PortletLoginModule" businessProcess="WorklistManagement" />	
+		<MAP_PAGE_MODULE pageName="WorkflowToDoListPage" moduleName="WorkListModule" businessProcess="WorklistManagement" />
+	</MAP_PAGE_MODULES>
+</BUSINESS_MAP>

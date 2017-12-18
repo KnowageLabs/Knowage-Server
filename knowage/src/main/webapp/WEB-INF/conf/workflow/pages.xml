@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+	<PAGE name="AcceptActivityPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="AcceptActivityPage" target="AcceptActivityModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="AcceptActivityModule"/>
+    	</MODULES>
+  	</PAGE>	        
+ 	<PAGE name="CompleteOrRejectActivityPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="CompleteOrRejectActivityPage" target="CompleteOrRejectActivityModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="CompleteOrRejectActivityModule"/>
+    	</MODULES>
+  	</PAGE>	
+	
+
+
+	
+	
+	<PAGE name="WorkflowToDoListPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+    		<DEPENDENCE source="WorkflowToDoListPage" target="PortletLoginModule">
+        		<CONDITIONS>
+        			<PARAMETER name="WEBMODE" scope="SERVICE_REQUEST" value="AF_NOT_DEFINED" />
+        		</CONDITIONS>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+      		<DEPENDENCE source="WorkflowToDoListPage" target="WorkListModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="PortletLoginModule"/>
+      		<MODULE keep_instance="false" keep_response="false" name="WorkListModule"/>
+    	</MODULES>
+  	</PAGE>
+    
+</PAGES>

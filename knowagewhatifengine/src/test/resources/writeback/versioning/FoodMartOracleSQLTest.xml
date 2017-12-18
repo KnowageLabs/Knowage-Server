@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<Schema name="FoodMart">
+  <!-- == $Id: FoodMart.xml,v 1.1 2005/12/13 12:03:52 avix Exp $ == This software is subject to the terms of the Common Public License == Agreement, available at the following URL: == http://www.opensource.org/licenses/cpl.html. == (C) Copyright 2000-2005 Kana Software, Inc. and others. == All Rights Reserved. == You must accept the terms of that agreement to use this software. -->
+  <!-- Shared dimensions -->
+  
+                  <Dimension name="Customers">
+                    <Hierarchy hasAll="true" allMemberName="All Customers" primaryKey="CUSTOMER_ID">
+                        <Table name="CUSTOMER"/>
+                        <Level name="Country" column="COUNTRY" uniqueMembers="true"/>
+                        <Level name="State Province" column="STATE_PROVINCE" uniqueMembers="true"/>
+                        <Level name="City" column="CITY" uniqueMembers="false"/>
+                        <Level name="Name" column="LNAME" uniqueMembers="false"/>
+                    </Hierarchy>
+                    <Hierarchy name="ss" hasAll="true" allMemberName="All Customers" primaryKey="CUSTOMER_ID">
+                        <Table name="CUSTOMER"/>
+                        <Level name="Country" column="COUNTRY" uniqueMembers="true"/>
+                        <Level name="City" column="CITY" uniqueMembers="false"/>
+                    </Hierarchy>
+                  </Dimension>
+				  
+				  
+				     
+                  <Dimension name="Region">
+                     <Hierarchy hasAll="true" allMemberName="All Regions" primaryKey="STORE_ID" primaryKeyTable="STORE">
+                          <Join leftKey="REGION_ID" rightKey="REGION_ID">
+                            <Table name="STORE"/>
+                            <Table name="REGION"/>
+                          </Join>
+                          <Level name="Sales Region" table="REGION" column="SALES_REGION" uniqueMembers="true"/>
+
+                          <Level name="Sales District" table="REGION" column="SALES_DISTRICT" uniqueMembers="false"/>
+                          <Level name="Sales City" table="REGION" column="SALES_CITY" uniqueMembers="false"/>
+                          <Level name="Store Name" table="STORE" column="STORE_NAME" uniqueMembers="true">
+                            <Property name="Store Type" column="STORE_TYPE"/>
+                            <Property name="Store Manager" column="STORE_MANAGER"/>
+                            <Property name="Store Sqft" column="STORE_SQFT" type="Numeric"/>
+                            <Property name="Grocery Sqft" column="GROCERY_SQFT" type="Numeric"/>
+                            <Property name="Frozen Sqft" column="FROZEN_SQFT" type="Numeric"/>
+                            <Property name="Meat Sqft" column="MEAT_SQFT" type="Numeric"/>
+                            <Property name="Has coffee bar" column="COFFEE_BAR" type="Boolean"/>
+                            <Property name="Street address" column="STORE_STREET_ADDRESS" type="String"/>
+                          </Level>
+
+                      </Hierarchy>
+                  </Dimension>
+ 
+                  <Dimension name="Product">
+                    <Hierarchy hasAll="true" allMemberName="All Products" primaryKey="PRODUCT_ID" primaryKeyTable="PRODUCT">
+                      <Join leftKey="PRODUCT_CLASS_ID" rightKey="PRODUCT_CLASS_ID">
+                        <Table name="PRODUCT"/>
+                        <Table name="PRODUCT_CLASS"/>
+                      </Join>
+                      <Level name="Product Family" table="PRODUCT_CLASS" column="PRODUCT_FAMILY" uniqueMembers="true"/>
+                      <Level name="Product Department" table="PRODUCT_CLASS" column="PRODUCT_DEPARTMENT" uniqueMembers="false"/>
+                    
+                    </Hierarchy>
+                  </Dimension>
+                  
+
+                  
+                  <Cube name="Sales">
+                    <Table name="SALES_FACT_1998"/>
+                    <DimensionUsage name="Product" source="Product" foreignKey="PRODUCT_ID"/>
+
+                    <DimensionUsage name="Region" source="Region" foreignKey="STORE_ID"/>   
+					<DimensionUsage name="Customers" source="Customers" foreignKey="CUSTOMER_ID"/>   
+                    <Measure name="Unit Sales" column="UNIT_SALES" aggregator="sum"       formatString="Standard"/>
+                    <Measure name="Store Cost" column="STORE_COST" aggregator="sum"       formatString="#,###.00"/>
+                    <Measure name="Sales Count" column="PRODUCT_ID" aggregator="count"       formatString="#,###"/>
+				    <Measure name="Customer Count" column="CUSTOMER_ID"       aggregator="distinct count" formatString="#,###"/>
+                              
+					<Measure name="Atomic" aggregator="count"/>
+                              
+                  </Cube>
+				  
+				   <Cube name="Sales_Edit">
+                    <Table name="SALES_FACT_1998_VIRTUAL"/>
+                    <DimensionUsage name="Product" source="Product" foreignKey="PRODUCT_ID"/>
+
+                    <DimensionUsage name="Region" source="Region" foreignKey="STORE_ID"/>   
+					<DimensionUsage name="Customers" source="Customers" foreignKey="CUSTOMER_ID"/>   
+					<Dimension name="Version">
+                    <Hierarchy hasAll="false" defaultMember="[Version].[1]"> 
+						<Level name="Versione" column="VERSIONE" uniqueMembers="true" />
+                    </Hierarchy>
+                  </Dimension>
+                    <Measure name="Store Sales" column="STORE_SALES" aggregator="sum"       formatString="#,###.00"/>
+                              
+                  </Cube>
+				  
+				  
+				  <VirtualCube name="Sales_V">
+    <CubeUsages>
+        <CubeUsage cubeName="Sales" ignoreUnrelatedDimensions="true"/>
+        <CubeUsage cubeName="Sales_Edit"/>
+    </CubeUsages>
+    <VirtualCubeDimension cubeName="Sales" name="Customers"/>
+    <VirtualCubeDimension cubeName="Sales" name="Product"/>
+    <VirtualCubeDimension cubeName="Sales" name="Region"/>
+    <VirtualCubeDimension cubeName="Sales_Edit" name="Customers"/>
+    <VirtualCubeDimension cubeName="Sales_Edit" name="Product"/>
+    <VirtualCubeDimension cubeName="Sales_Edit" name="Region"/>
+	<VirtualCubeDimension cubeName="Sales_Edit" name="Version"/>
+    <VirtualCubeMeasure cubeName="Sales" name="[Measures].[Store Cost]"/>
+    <VirtualCubeMeasure cubeName="Sales" name="[Measures].[Unit Sales]"/>
+    <VirtualCubeMeasure cubeName="Sales" name="[Measures].[Sales Count]"/>
+    <VirtualCubeMeasure cubeName="Sales_Edit" name="[Measures].[Store Sales]"/>
+</VirtualCube>
+				  
+                  
+                 
+    
+</Schema>

@@ -1,0 +1,119 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>it.eng.knowage</groupId>
+		<artifactId>knowage-ce-parent</artifactId>
+		<version>6.1.2</version>
+		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>knowage-dao</artifactId>
+	<packaging>jar</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<!-- this configuration is useful to let other projects to use this project's test classes as dependency in their test -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+					<goals>
+						<goal>test-jar</goal>
+					</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-utils</artifactId>
+			<version>6.1.2</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>qbe-core</artifactId>
+			<version>6.1.2</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>batik</groupId>
+					<artifactId>batik-1.5-fop</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geojson</artifactId>
+			<version>2.7.5</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>xerces</groupId>
+					<artifactId>xercesImpl</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.imgscalr</groupId>
+			<artifactId>imgscalr-lib</artifactId>
+			<version>4.2</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.2.1.Final</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.portlet</groupId>
+			<artifactId>portlet-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version> <!-- WebLogic uses 3.1.0, Tomcat 7 uses 3.0 -->
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>5.1.33</version>
+		    <scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-utils</artifactId>
+			<version>6.1.2</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		
+	</dependencies>
+	
+</project>

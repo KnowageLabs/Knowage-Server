@@ -1,0 +1,22 @@
+<div id="filterpanel" filterpanel layout="row" class="top-alignment-auto-height" ng-drop="true" ng-drop-success="dropFilter($data,$event)">
+	
+	<div ng-show="filterCardList.length == 0" class="filter-panel-empty">
+		{{filterPanelEmpty}}
+	</div>
+	
+	<md-button class="md-icon-button filter-shift-arrow" flex=10 
+			   aria-label="Favorite" ng-click="filterShift('right')" 
+			   ng-show="shiftNeeded"><!-- ng-show="shiftNeeded" -->
+		<md-icon md-font-icon="fa fa-arrow-circle-o-left fa-2x" ></md-icon>
+	</md-button>
+	
+	<filter-card></filter-card>
+	
+	<md-button class="md-icon-button filter-shift-arrow" flex=10 
+	           aria-label="Favorite" ng-click="filterShift('left')" 
+	           ng-show="shiftNeeded">
+		<md-icon md-font-icon="fa fa-arrow-circle-o-right fa-2x"></md-icon>
+	</md-button>
+
+</div>
+

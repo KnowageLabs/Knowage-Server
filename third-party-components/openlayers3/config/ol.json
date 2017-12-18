@@ -1,0 +1,40 @@
+{
+  "exports": ["*"],
+  "umd": true,
+  "compile": {
+    "externs": [
+      "externs/bingmaps.js",
+      "externs/cartodb.js",
+      "externs/closure-compiler.js",
+      "externs/esrijson.js",
+      "externs/geojson.js",
+      "externs/oli.js",
+      "externs/olx.js",
+      "externs/proj4js.js",
+      "externs/tilejson.js",
+      "externs/topojson.js"
+    ],
+    "define": [
+      "goog.dom.ASSUME_STANDARDS_MODE=true",
+      "goog.DEBUG=false"
+    ],
+    "jscomp_error": [
+      "*"
+    ],
+    "jscomp_off": [
+      "unnecessaryCasts",
+      "useOfGoogBase",
+      "lintChecks",
+      "analyzerChecks"
+    ],
+    "extra_annotation_name": [
+      "api", "observable"
+    ],
+    "compilation_level": "ADVANCED",
+    "warning_level": "VERBOSE",
+    "use_types_for_optimization": true,
+    "manage_closure_dependencies": true,
+    "create_source_map": "build/ol.js.map",
+    "source_map_format": "V3"
+  }
+}

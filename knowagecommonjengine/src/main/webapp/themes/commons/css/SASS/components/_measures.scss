@@ -1,0 +1,17 @@
+.kn-measure-list {
+
+}
+
+/* IE11 fix */
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.kn-measure-list {
+		.absolute {
+			position: relative;
+			min-height: 500px;
+		}
+		.CodeMirror {
+			height: 100% !Important;
+		}
+	}
+}

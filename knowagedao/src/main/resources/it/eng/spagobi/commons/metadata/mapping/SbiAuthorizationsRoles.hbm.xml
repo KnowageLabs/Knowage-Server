@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2-dic-2013 14.44.45 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+ <class name="it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles" table="SBI_AUTHORIZATIONS_ROLES">
+  <composite-id
+   class="it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId"
+   mapped="false" name="id" unsaved-value="undefined">
+   <key-property name="authorizationId" type="int">
+    <column name="AUTHORIZATION_ID"/>
+   </key-property>
+   <key-property name="roleId" type="int">
+    <column name="ROLE_ID"/>
+   </key-property>
+  </composite-id>
+  <many-to-one class="it.eng.spagobi.commons.metadata.SbiExtRoles"
+   insert="false" name="sbiExtRoles" update="false">
+   <column name="ROLE_ID" not-null="true"/>
+  </many-to-one>
+  <many-to-one class="it.eng.spagobi.commons.metadata.SbiAuthorizations"
+   fetch="join" insert="false" name="sbiAuthorizations" update="false">
+   <column name="AUTHORIZATION_ID" not-null="true"/>
+  </many-to-one>
+  <component class="it.eng.spagobi.commons.metadata.SbiCommonInfo" name="commonInfo">
+   <property generated="never" lazy="false" name="userIn" type="string">
+    <column length="100" name="USER_IN" not-null="true"/>
+   </property>
+   <property generated="never" lazy="false" name="userUp" type="string">
+    <column length="100" name="USER_UP" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="userDe" type="string">
+    <column length="100" name="USER_DE" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="timeIn" type="timestamp">
+    <column name="TIME_IN" not-null="true"/>
+   </property>
+   <property generated="never" lazy="false" name="timeUp" type="timestamp">
+    <column name="TIME_UP" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="timeDe" type="timestamp">
+    <column name="TIME_DE" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="sbiVersionIn" type="string">
+    <column length="10" name="SBI_VERSION_IN" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="sbiVersionUp" type="string">
+    <column length="10" name="SBI_VERSION_UP" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="sbiVersionDe" type="string">
+    <column length="10" name="SBI_VERSION_DE" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="organization" type="string">
+    <column length="20" name="ORGANIZATION" not-null="false"/>
+   </property>
+  </component>
+  		<filter name="tenantFilter" condition="organization=:tenant" />  
+	</class>
+ 	<filter-def name="tenantFilter">
+  		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

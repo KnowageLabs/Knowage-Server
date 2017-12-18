@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ================================================================================= -->
+<!-- XXX BASE ACTIONS 																   -->
+<!-- ================================================================================= -->
+
+<ACTIONS>
+	
+	<!-- ================================================================================= -->
+	<!-- TRAPS																			   -->
+	<!-- ================================================================================= -->
+	
+	<ACTION name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION" 
+			class="it.eng.spagobi.utilities.engines.EngineStartupExceptionTrapAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="NETWORK_EXPORT_ACTION" 
+			class="it.eng.spagobi.engines.network.services.NetworkExportAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	
+
+</ACTIONS>

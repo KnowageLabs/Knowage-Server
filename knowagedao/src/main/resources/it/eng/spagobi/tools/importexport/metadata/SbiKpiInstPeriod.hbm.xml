@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 13-gen-2009 11.26.28 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod" table="SBI_KPI_INST_PERIOD" >
+        <id name="kpiInstPeriodId" type="integer">
+            <column name="KPI_INST_PERIOD_ID" />
+        </id>
+        <many-to-one name="sbiKpiInstance" class="it.eng.spagobi.kpi.config.metadata.SbiKpiInstance" >
+            <column name="KPI_INSTANCE_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiKpiPeriodicity" class="it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity" >
+            <column name="PERIODICITY_ID" not-null="true" />
+        </many-to-one>
+        <property name="default_" type="boolean">
+            <column name="DEFAULT_VALUE" />
+        </property>
+    </class>
+</hibernate-mapping>

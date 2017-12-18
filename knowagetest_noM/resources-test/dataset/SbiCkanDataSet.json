@@ -1,0 +1,109 @@
+{
+	"name": "SbiCkanDataSet",
+	"description": "SbiCkanDataSet",
+	"label": "SbiCkanDataSet",
+	"active": true,
+	"type": "SbiCkanDataSet",
+	"configuration": {
+		"fileType": "CSV",
+		"csvDelimiter": ";",
+		"csvQuote": "\"",
+		"csvEncoding": "UTF-8",
+		"skipRows": "",
+		"limitRows": "",
+		"xslSheetNumber": "",
+		"ckanUrl": "http://demo.ckan.org/dataset/51916227-c5cb-4665-b45f-a228de96658c/resource/a378239a-54b3-4787-8ec5-ace449866165/download/kacitydemogr.csv",
+		"ckanId": "a378239a-54b3-4787-8ec5-ace449866165",
+		"DS_SCOPE": "USER",
+		"fileName": "SbiCkanDataSet.csv"
+	},
+	"pivotColumnName": null,
+	"pivotRowName": null,
+	"pivotColumnValue": null,
+	"numRows": false,
+	"persisted": false,
+	"persistedHDFS": false,
+	"persistTableName": "",
+	"userIn": null,
+	"userUp": null,
+	"userDe": null,
+	"sbiVersionIn": null,
+	"sbiVersionUp": null,
+	"sbiVersionDe": null,
+	"metaVersion": null,
+	"timeIn": null,
+	"timeUp": null,
+	"timeDe": null,
+	"scope": {
+		"valueId": 187,
+		"domainCd": "DS_SCOPE",
+		"domainNm": "Dataset scope",
+		"valueCd": "ENTERPRISE",
+		"valueNm": "ENTERPRISE",
+		"valueDs": "Dataset scope"
+	},
+	"federation": null,
+	"scopeId": 187,
+	"transformerId": null,
+	"metadata": {
+		"fieldsMeta": [{
+			"name": "country",
+			"alias": "country",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "province",
+			"alias": "province",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "city",
+			"alias": "city",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "area_km2",
+			"alias": "area_km2",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "MEASURE"
+		},
+		{
+			"name": "population",
+			"alias": "population",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "MEASURE"
+		},
+		{
+			"name": "dens",
+			"alias": "dens",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "MEASURE"
+		}],
+		"properties": {
+			
+		}
+	},
+	"categoryId": 151,
+	"parameters": []
+}

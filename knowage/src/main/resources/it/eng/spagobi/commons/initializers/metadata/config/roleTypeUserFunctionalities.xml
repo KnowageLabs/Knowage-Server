@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ROLE_TYPE_USER_FUNCTIONALITIES>
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CommunityManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ConstraintManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ConstraintManagement" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ConstraintView" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ConstraintView" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ConstraintView" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DatasetManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DatasetManagement" roleType="DEV_ROLE" />
+		<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DatasetManagement" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DataSourceManagement" roleType="ADMIN" />
+    <ROLE_TYPE_USER_FUNCTIONALITY
+        userFunctionality="DataSourceRead" roleType="ADMIN" />
+    <ROLE_TYPE_USER_FUNCTIONALITY
+        userFunctionality="DataSourceRead" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DistributionListManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DistributionListManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DistributionListUser" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DistributionListUser" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DistributionListUser" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DistributionListUser" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentAdministration" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentAdminManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentDeleteManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentDeleteManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentDetailManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentDetailManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentDevManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentDevManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentMetadataManagement" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentMetadataManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentMetadataManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentMetadataManagement" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentMoveDownState" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentMoveDownState" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentMoveUpState" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentMoveUpState" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentMoveUpState" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentStateManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentTestManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentTestManagement" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentUserManagement" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentUserManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentUserManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="DocumentUserManagement" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="EnginesManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ReadEnginesManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="EventsManagement" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="EventsManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="EventsManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="EventsManagement" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="FunctionalitiesManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="HotLinkManagement" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="HotLinkManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="HotLinkManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="HotLinkManagement" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="HotLinkManagement" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="LovsManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="LovsManagement" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="LovsManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="LovsView" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="LovsView" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="LovsView" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="MapCatalogueManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="MapCatalogueManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="MenuManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ModifyRefresh" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ParameterManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ParameterManagement" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ParameterManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ParameterView" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ParameterView" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ParameterView" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ProfileAttributeManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ProfileAttributeManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="SyncronizeRolesManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ViewMyFolderAdmin" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="WorklistManagement" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="WorklistManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="WorklistManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="WorklistManagement" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="WorkspaceManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="WorkspaceManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="KpiManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="KpiManagement" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="KpiSchedulation" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="KpiSchedulation" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ObjMetadataManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ProfileManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ProfileManagement" roleType="DEV_ROLE" />
+<!--		
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="UserDefinedPropertyManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="UserDefinedPropertyManagement" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="UserDefinedPropertyManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="UserDefinedPropertyManagement" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="UserDefinedPropertyManagement" roleType="MODEL_ADMIN" />
+-->		
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="UserSaveDocumentFunctionality" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="UserSaveDocumentFunctionality" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="UserSaveDocumentFunctionality" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="UserSaveDocumentFunctionality" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="MetaModelsCatalogueManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="MetaModelsCatalogueManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ArtifactCatalogueManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ArtifactCatalogueManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="SelfServiceDatasetManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="SelfServiceDatasetManagement" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="SelfServiceDatasetManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="SelfServiceDatasetManagement" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="SelfServiceDatasetManagement" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="SelfServiceMetaModelManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="SelfServiceMetaModelManagement" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="SelfServiceMetaModelManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="SelfServiceMetaModelManagement" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="SelfServiceMetaModelManagement" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="MeasuresCatalogueManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="MeasuresCatalogueManagement" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="MeasuresCatalogueManagement" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="MeasuresCatalogueManagement" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="MeasuresCatalogueManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="GeoLayersManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="GeoLayersManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CreateCockpitFunctionality" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CreateCockpitFunctionality" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CreateCockpitFunctionality" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CreateCockpitFunctionality" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CreateCockpitFunctionality" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="HierarchiesManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="HierarchiesManagement" roleType="DEV_ROLE" />	
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CreateSocialAnalysis" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ViewSocialAnalysis" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ViewSocialAnalysis" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CreateChartFunctionality" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CreateChartFunctionality" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CreateChartFunctionality" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CreateChartFunctionality" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CreateChartFunctionality" roleType="MODEL_ADMIN" />	
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CkanIntegrationFunctionality" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CkanIntegrationFunctionality" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CkanIntegrationFunctionality" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CkanIntegrationFunctionality" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CkanIntegrationFunctionality" roleType="MODEL_ADMIN" />
+
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="MODEL_ADMIN" />
+	
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="CreateDatasetsAsFinalUser" roleType="USER" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FederationDefinition" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FederationDefinition" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FederationDefinition" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FederationDefinition" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ExecuteCrossNavigation" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ExecuteCrossNavigation" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ExecuteCrossNavigation" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ExecuteCrossNavigation" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ExecuteCrossNavigation" roleType="USER" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="CacheManagement" roleType="ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="RegistryDataEntry" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="RegistryDataEntry" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="RegistryDataEntry" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="RegistryDataEntry" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="RegistryDataEntry" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MetaModelLifecycleManagement" roleType="ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SharedDevelopment" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SharedDevelopment" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SharedDevelopment" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SharedDevelopment" roleType="MODEL_ADMIN" />
+	
+	<!-- Cockpit -->
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MultisheetCockpit" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MultisheetCockpit" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MultisheetCockpit" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MultisheetCockpit" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MultisheetCockpit" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ChartWidget" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ChartWidget" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ChartWidget" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ChartWidget" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ChartWidget" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="StaticWidget" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="StaticWidget" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="StaticWidget" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="StaticWidget" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="StaticWidget" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogManagement" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogManagement" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DomainWrite" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DomainWrite" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DomainWrite" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GisWebDesigner" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GisWebDesigner" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GisWebDesigner" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GisWebDesigner" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GisWebDesigner" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="MODEL_ADMIN" />	
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AlertManagement" roleType="ADMIN" />
+    <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="NotifyContextBrokerAction" roleType="ADMIN" />
+	
+</ROLE_TYPE_USER_FUNCTIONALITIES>

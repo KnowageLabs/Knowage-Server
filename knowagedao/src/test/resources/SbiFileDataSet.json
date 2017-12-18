@@ -1,0 +1,129 @@
+{
+	"id": {
+		"dsId": 79,
+		"versionNum": 1,
+		"organization": "SPAGOBI"
+	},
+	"name": "SbiFileDataSet",
+	"description": null,
+	"label": "SbiFileDataSet",
+	"active": true,
+	"type": "SbiFileDataSet",
+	"configuration": {
+		"fileType": "CSV",
+		"csvDelimiter": ",",
+		"csvQuote": "\"",
+		"skipRows": "",
+		"limitRows": "",
+		"xslSheetNumber": "",
+		"fileName": "SbiFileDataSet.csv"
+	},
+	"pivotColumnName": null,
+	"pivotRowName": null,
+	"pivotColumnValue": null,
+	"numRows": false,
+	"persisted": false,
+	"persistedHDFS": false,
+	"persistTableName": "",
+	"owner": "biadmin",
+	"userIn": null,
+	"userUp": null,
+	"userDe": null,
+	"sbiVersionIn": null,
+	"sbiVersionUp": null,
+	"sbiVersionDe": null,
+	"metaVersion": null,
+	"timeIn": null,
+	"timeUp": null,
+	"timeDe": null,
+	"scope": {
+		"valueId": 187,
+		"domainCd": "DS_SCOPE",
+		"domainNm": "Dataset scope",
+		"valueCd": "ENTERPRISE",
+		"valueNm": "ENTERPRISE",
+		"valueDs": "Dataset scope"
+	},
+	"federation": null,
+	"metadata": {
+		"fieldsMeta": [{
+			"name": "product_id",
+			"alias": "product_id",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "time_id",
+			"alias": "time_id",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "customer_id",
+			"alias": "customer_id",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "promotion_id",
+			"alias": "promotion_id",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "store_id",
+			"alias": "store_id",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "store_sales",
+			"alias": "store_sales",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "store_cost",
+			"alias": "store_cost",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "unit_sales",
+			"alias": "unit_sales",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		}],
+		"properties": {
+			"resultNumber": "2000"
+		}
+	},
+	"scopeId": 187,
+	"transformerId": null,
+	"categoryId": 151,
+	"parameters": []
+}

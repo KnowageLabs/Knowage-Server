@@ -1,0 +1,81 @@
+/*
+JSON-TREE styles
+*/
+json-tree {
+    font-size: 13px;
+    font-family: monospace;
+}
+json-tree input[type="text"]{
+    width: 6em;
+    height: 20px;
+}
+json-tree input[type="number"]{
+    width: 6em;
+    height: 20px;
+    vertical-align: middle;
+}
+json-tree textarea {
+    width: 6em;
+    height: 20px;
+    padding-top: 0;
+    margin-bottom: -4px;
+    border-color: gray;
+    resize: none;
+    overflow: hidden;
+}
+json-tree textarea:focus {
+    width: auto;
+    min-height: 100px;
+    height: auto;
+    position: absolute;
+    z-index: 10;
+    resize: inherit;
+    overflow: auto;
+}
+json-tree textarea:focus.valid {
+    background-color: #d6e9c9;
+}
+json-tree textarea:focus.invalid {
+    background-color: rgb(237, 200, 188);
+}
+json-tree ul {
+    list-style: none;
+    margin: 0 0 0 -24px;
+}
+json-tree ul li {
+	margin: 3px;
+}
+json-tree .key {
+    color: darkred;
+}
+json-tree .add {
+    color: green;
+    cursor: pointer;
+}
+json-tree .reset {
+    color: steelblue;
+    cursor: pointer;
+}
+json-tree .remove {
+    color: red;
+    cursor: pointer;
+}
+json-tree .comma {
+    color: #c0c0c0;
+}
+json-tree .drag {
+    position: absolute;
+    background-color: #e2efff;
+    opacity:0.5;
+    cursor: pointer;
+}
+json-tree .empty {
+    border: 1px dashed darkred;
+    background-color: #e2efff;
+}
+
+json-tree .add-item-block button {
+    margin-left: 3px;
+    font-size:11px;
+    cursor: pointer;
+}

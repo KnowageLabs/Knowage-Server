@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<SCHEMA name="${name}">
+#foreach ($dimension in $dimensions)
+<Dimension name="${dimension.name}">
+#foreach ($hierarchy in $dimension.getHierarchies())
+<Hierarchy hasAll="
+#if ($hierarchy.hasAll != "false" )
+allMemberName="${hierarchy.allMemberName}"
+#end
+primaryKey="${hierarchy.primaryKey}" 
+#if ($hierarchy.defaultHierarchy != "true")
+name="${hierarchy.name}"
+#end
+>
+<Table name="${hierarchy.tableName}"/>
+#foreach ($level in $hierarchy.getLevels())
+<Level name="${level.name}" column="${level.column}" 
+#if ($level.nameColumn)
+nameColumn="${level.nameColumn}"
+#end
+#if ($level.captionColumn)
+captionColumn="${level.captionColumn}"
+#end
+#if ($level.ordinalColumn)
+ordinalColumn="${level.ordinalColumn}"
+#end
+uniqueMembers="${level.uniqueMembers}"
+/>
+#end
+</Hierarchy>
+#end
+</Dimension> 
+#end
+#foreach ($cube in $cubes)
+<Cube name="${cube.name}">
+<Table name="${cube.tableName}"/>
+#foreach ($cubedimension in $cube.getCubeDimensions())
+<DimensionUsage name="${cubedimension.name}" source="${cubedimension.source}" foreignKey="${cubedimension.foreignKey}"/>
+#end
+#foreach ($measure in $cube.getMeasures())
+<Measure name="${measure.name}" column="${measure.column}" aggregator="${measure.aggregator}" formatString="${measure.formatString}"/>
+#end
+</Cube> 
+#end
+</SCHEMA>

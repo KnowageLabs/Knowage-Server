@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+
+
+	<!-- validation for png action-->
+	<SERVICE name="GET_PNG2" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="path">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="60"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+	
+	<SERVICE name="GET_THR_IMAGE" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="fileName">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\_\-])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="60"/>
+				</FIELD>
+				<FIELD name="dirName">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\_\-])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="60"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+
+</VALIDATIONS>

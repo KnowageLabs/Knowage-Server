@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:spagobicontent" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:spagobicontent" xmlns:intf="urn:spagobicontent" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns2="http://bo.content.services.spagobi.eng.it" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema targetNamespace="http://xml.apache.org/xml-soap" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://bo.content.services.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="mapItem">
+    <sequence>
+     <element name="key" nillable="true" type="xsd:anyType"/>
+     <element name="value" nillable="true" type="xsd:anyType"/>
+    </sequence>
+   </complexType>
+   <complexType name="Map">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="apachesoap:mapItem"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="http://bo.content.services.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="Content">
+    <sequence>
+     <element name="content" nillable="true" type="soapenc:string"/>
+     <element name="fileName" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="readSubObjectContentRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="readTemplateByLabelResponse">
+
+      <wsdl:part name="readTemplateByLabelReturn" type="tns2:Content"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="readMapRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="readMapResponse">
+
+      <wsdl:part name="readMapReturn" type="tns2:Content"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="mapCatalogueRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="soapenc:string"/>
+
+      <wsdl:part name="in4" type="soapenc:string"/>
+
+      <wsdl:part name="in5" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="publishTemplateResponse">
+
+      <wsdl:part name="publishTemplateReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="readSubObjectContentResponse1">
+
+      <wsdl:part name="readSubObjectContentReturn" type="tns2:Content"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="readTemplateResponse">
+
+      <wsdl:part name="readTemplateReturn" type="tns2:Content"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadAllRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="publishTemplateRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="apachesoap:Map"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadAllResponse">
+
+      <wsdl:part name="downloadAllReturn" type="tns2:Content"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="mapCatalogueResponse">
+
+      <wsdl:part name="mapCatalogueReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="readTemplateByLabelRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="apachesoap:Map"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="saveSubObjectResponse">
+
+      <wsdl:part name="saveSubObjectReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="saveObjectTemplateResponse">
+
+      <wsdl:part name="saveObjectTemplateReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="saveObjectTemplateRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="soapenc:string"/>
+
+      <wsdl:part name="in4" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="readSubObjectContentRequest1">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="saveSubObjectRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="soapenc:string"/>
+
+      <wsdl:part name="in4" type="soapenc:string"/>
+
+      <wsdl:part name="in5" type="soapenc:string"/>
+
+      <wsdl:part name="in6" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="readSubObjectContentResponse">
+
+      <wsdl:part name="readSubObjectContentReturn" type="tns2:Content"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="readTemplateRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="apachesoap:Map"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="ContentService">
+
+      <wsdl:operation name="readTemplate" parameterOrder="in0 in1 in2 in3">
+
+         <wsdl:input message="impl:readTemplateRequest" name="readTemplateRequest"/>
+
+         <wsdl:output message="impl:readTemplateResponse" name="readTemplateResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="readTemplateByLabel" parameterOrder="in0 in1 in2 in3">
+
+         <wsdl:input message="impl:readTemplateByLabelRequest" name="readTemplateByLabelRequest"/>
+
+         <wsdl:output message="impl:readTemplateByLabelResponse" name="readTemplateByLabelResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="readSubObjectContent" parameterOrder="in0 in1 in2 in3">
+
+         <wsdl:input message="impl:readSubObjectContentRequest" name="readSubObjectContentRequest"/>
+
+         <wsdl:output message="impl:readSubObjectContentResponse" name="readSubObjectContentResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="readSubObjectContent" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:readSubObjectContentRequest1" name="readSubObjectContentRequest1"/>
+
+         <wsdl:output message="impl:readSubObjectContentResponse1" name="readSubObjectContentResponse1"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="saveSubObject" parameterOrder="in0 in1 in2 in3 in4 in5 in6">
+
+         <wsdl:input message="impl:saveSubObjectRequest" name="saveSubObjectRequest"/>
+
+         <wsdl:output message="impl:saveSubObjectResponse" name="saveSubObjectResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="saveObjectTemplate" parameterOrder="in0 in1 in2 in3 in4">
+
+         <wsdl:input message="impl:saveObjectTemplateRequest" name="saveObjectTemplateRequest"/>
+
+         <wsdl:output message="impl:saveObjectTemplateResponse" name="saveObjectTemplateResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadAll" parameterOrder="in0 in1 in2 in3">
+
+         <wsdl:input message="impl:downloadAllRequest" name="downloadAllRequest"/>
+
+         <wsdl:output message="impl:downloadAllResponse" name="downloadAllResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="publishTemplate" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:publishTemplateRequest" name="publishTemplateRequest"/>
+
+         <wsdl:output message="impl:publishTemplateResponse" name="publishTemplateResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="mapCatalogue" parameterOrder="in0 in1 in2 in3 in4 in5">
+
+         <wsdl:input message="impl:mapCatalogueRequest" name="mapCatalogueRequest"/>
+
+         <wsdl:output message="impl:mapCatalogueResponse" name="mapCatalogueResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="readMap" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:readMapRequest" name="readMapRequest"/>
+
+         <wsdl:output message="impl:readMapResponse" name="readMapResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="ContentServiceSoapBinding" type="impl:ContentService">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="readTemplate">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="readTemplateRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="readTemplateResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="readTemplateByLabel">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="readTemplateByLabelRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="readTemplateByLabelResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="readSubObjectContent">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="readSubObjectContentRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="readSubObjectContentResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="readSubObjectContent">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="readSubObjectContentRequest1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="readSubObjectContentResponse1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="saveSubObject">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="saveSubObjectRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="saveSubObjectResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="saveObjectTemplate">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="saveObjectTemplateRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="saveObjectTemplateResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadAll">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadAllRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadAllResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="publishTemplate">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="publishTemplateRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="publishTemplateResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="mapCatalogue">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="mapCatalogueRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="mapCatalogueResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="readMap">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="readMapRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="readMapResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobicontent" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="ContentServiceService">
+
+      <wsdl:port binding="impl:ContentServiceSoapBinding" name="ContentService">
+
+         <wsdlsoap:address location="http://localhost:8080/SpagoBI/services/ContentService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

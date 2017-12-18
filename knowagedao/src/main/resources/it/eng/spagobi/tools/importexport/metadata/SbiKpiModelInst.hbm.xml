@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-nov-2008 17.17.18 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst" table="SBI_KPI_MODEL_INST" >
+        <id name="kpiModelInst" type="integer">
+            <column name="KPI_MODEL_INST" />
+        </id>
+        <many-to-one name="sbiKpiInstance" class="it.eng.spagobi.kpi.config.metadata.SbiKpiInstance" >
+            <column name="id_kpi_instance" />
+        </many-to-one>
+        
+        <many-to-one name="sbiKpiModelInst" class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst" >
+            <column name="KPI_MODEL_INST_PARENT" />
+        </many-to-one>
+         
+        <many-to-one name="sbiKpiModel" class="it.eng.spagobi.kpi.model.metadata.SbiKpiModel" >
+            <column name="KPI_MODEL_ID" />
+        </many-to-one>
+
+        <property name="name" type="string">
+            <column name="name" length="400"/>
+        </property>
+        <property name="label" type="string">
+            <column name="label" length="400"  unique="true" not-null="true" />
+        </property>        
+        <property name="description" type="string">
+            <column name="description" length="1000" />
+        </property>
+        <property name="startDate" type="timestamp">
+            <column name="start_date" length="19" />
+        </property>
+        <property name="endDate" type="timestamp">
+            <column name="end_date" length="19" />
+        </property>
+		<property name="modelUUID" type="string">
+            <column name="modelUUID" length="1000" />
+        </property>        
+        <set name="sbiKpiModelInsts" inverse="true" order-by="name desc" >
+            <key>
+                <column name="KPI_MODEL_INST_PARENT" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst" />
+        </set>
+        <set name="sbiKpiModelResourceses" inverse="true">
+            <key>
+                <column name="KPI_MODEL_INST" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources" />
+        </set>
+    </class>
+</hibernate-mapping>

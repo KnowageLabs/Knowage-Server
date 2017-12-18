@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc" table="SBI_OBJ_FUNC">
+        <composite-id name="id" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFuncId">
+            <key-many-to-one name="sbiFunctions" class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions">
+                <column name="funct_id" />
+            </key-many-to-one>
+            <key-many-to-one name="sbiObjects" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+                <column name="biobj_id" />
+            </key-many-to-one>
+        </composite-id>
+        <property name="prog" type="integer">
+            <column name="prog" />
+        </property>
+    </class>
+</hibernate-mapping>

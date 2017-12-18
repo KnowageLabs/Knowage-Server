@@ -1,0 +1,45 @@
+<md-dialog style="min-width:400px">
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+	  		<h2>{{::vpCtrl.headerTitle}}</h2>
+		</div>
+	</md-toolbar>
+	<form name="parametersForm" class="wordForm" novalidate>
+	  	<md-dialog-content layout="column" layout-margin>
+			<div layout="row">
+				<md-input-container flex>
+					<label>{{::vpCtrl.name}}</label> 
+					<input ng-model="vpCtrl.newViewpoint.NAME" type="text" md-maxlength="40" maxlength="40" >
+				</md-input-container>
+			</div>
+			
+			<div layout="row">
+				<md-input-container flex>
+					<label>{{::vpCtrl.description}}</label>
+					<input ng-model="vpCtrl.newViewpoint.DESCRIPTION" type="text" md-maxlength="160" maxlength="160">
+				</md-input-container>
+			</div>
+			
+			<div layout="row">
+				<md-input-container flex>
+					<label>{{::vpCtrl.visibility}}</label>
+					<md-select ng-model="vpCtrl.newViewpoint.SCOPE"  >				        
+				        <md-option value="PUBLIC">{{::vpCtrl.publicOpt}}</md-option>
+				        <md-option value="PRIVATE">{{::vpCtrl.privateOpt}}</md-option>
+					</md-select>
+				</md-input-container>
+			</div>
+	  	</md-dialog-content>
+	
+	  	<div class="md-actions" layout="row">
+	   
+		    <md-button ng-click="vpCtrl.annulla()">
+		  		{{::vpCtrl.cancelOpt}} 
+		    </md-button>
+		  
+		    <md-button ng-click="vpCtrl.submit()" ng-disabled="!vpCtrl.newViewpoint.NAME || !vpCtrl.newViewpoint.DESCRIPTION || !vpCtrl.newViewpoint.SCOPE"  >
+		    	{{::vpCtrl.submitOpt}} 
+		    </md-button>
+	 	 </div>
+	</form>
+</md-dialog>

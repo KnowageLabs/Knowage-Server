@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+  	
+  	<PAGE name="JobManagementPage" scope="REQUEST" title="Job Management Page" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="JobManagementPage" target="JobManagementModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="JobManagementModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+  	<PAGE name="TriggerManagementPage" scope="REQUEST" title="Trigger Management Page" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="TriggerManagementPage" target="TriggerManagementModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="TriggerManagementModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+  	<PAGE name="SchedulerPage" scope="REQUEST" title="Scheduler Page" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="SchedulerPage" target="SchedulerModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="SchedulerModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+  	<PAGE name="LovLookupAjaxPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="LovLookupAjaxPage" target="LovLookupAjaxModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="LovLookupAjaxModule"/>
+    	</MODULES>
+  	</PAGE>
+
+
+</PAGES>
+

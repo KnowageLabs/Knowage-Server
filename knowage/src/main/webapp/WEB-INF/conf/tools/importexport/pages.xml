@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+  	
+  	<PAGE name="ImportExportPage" scope="REQUEST" title="Import Export service Page" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ImportExportPage" target="ImportExportModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ImportExportModule"/>
+    	</MODULES>
+  	</PAGE>
+
+
+</PAGES>
+

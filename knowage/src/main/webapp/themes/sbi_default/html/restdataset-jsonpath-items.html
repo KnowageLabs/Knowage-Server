@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>REST DataSet - JSON Path Items</title>
+</head>
+<body bgcolor="#0000ff">
+    <div style='width: 600px; font-size: 10px; font-family: verdana;'>
+    <b>JSON Path Items</b> must indicate the place of items in the JSON, like rows of query. It uses <a href="https://github.com/jayway/JsonPath" target="_blank">JsonPath</a> language. It needs to be a single or list of JSON Objects. For example, in this JSON:
+    <pre>
+    {
+      "contextResponses": [
+        {
+          "contextElement": {
+            "id": "pros6_Meter",
+            "type": "Meter",
+            "isPattern": "false",
+            "attributes": [
+              {
+                "name": "atTime",
+                "type": "timestamp",
+                "value": "2015-07-14T17:19:14.014+0200"
+              },
+              {
+                "name": "downstreamActivePower",
+                "type": "double",
+                "value": "4.8"
+              },
+              {
+                "name": "prosumerId",
+                "type": "string",
+                "value": "pros6"
+              },
+              {
+                "name": "unitOfMeasurement",
+                "type": "string",
+                "value": "kW"
+              },
+              {
+                "name": "upstreamActivePower",
+                "type": "double",
+                "value": "0"
+              }
+            ]
+          },
+          "statusCode": {
+            "reasonPhrase": "OK",
+            "code": "200"
+          }
+        },
+        {
+          "contextElement": {
+            "id": "pros1_Meter",
+            "type": "Meter",
+            "isPattern": "false",
+            "attributes": [
+              {
+                "name": "atTime",
+                "type": "timestamp",
+                "value": "2015-07-14T17:19:14.014+0200"
+              },
+              {
+                "name": "downstreamActivePower",
+                "type": "double",
+                "value": "3.5"
+              },
+              {
+                "name": "prosumerId",
+                "type": "string",
+                "value": "pros1"
+              },
+              {
+                "name": "unitOfMeasurement",
+                "type": "string",
+                "value": "kW"
+              },
+              {
+                "name": "upstreamActivePower",
+                "type": "double",
+                "value": "0"
+              }
+            ]
+          },
+          "statusCode": {
+            "reasonPhrase": "OK",
+            "code": "200"
+          }
+        }
+      ]
+    }
+    </pre>
+    if I want to take the two ContextElement items then the JSON Path Items will be:
+    <pre>
+    $.contextResponses[*].contextElement
+    </pre>
+    </div>
+
+</body>
+</html>

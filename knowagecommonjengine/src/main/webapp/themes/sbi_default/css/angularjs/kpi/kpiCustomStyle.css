@@ -1,0 +1,231 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * 
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+.cardinalityTable .measureCell {
+	text-align: center;
+	height: 30px;
+}
+
+.cardinalityTable .invalidCell {
+	color: lightgray;
+	line-height: 30px;
+}
+
+.cardinalityTable .selectedCell {
+	color: green;
+	line-height: 30px;
+}
+
+.cardinalityTable .selectableCell {
+	color: lightgray;
+	line-height: 30px;
+}
+
+.cardinalityTable {
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+}
+
+.cardinalityTable th{
+/*	padding:0 10px;*/
+
+	}
+
+.cardinalityTable .attributeRow {
+	border-bottom: 1px solid #ECEFF1;
+}
+
+.disabledCell {
+	background-color: gray;
+}
+
+.absolute {
+	position: absolute
+}
+.removeHeight {
+	height:0px !important;
+    line-height: 0px;
+    min-height: 0px;
+    display: block;
+    color: transparent;
+}
+
+
+
+.relative {
+	position: relative
+}
+
+.CodeMirror {
+	width: 100%;
+    height: 100% !important;
+}
+
+.CodeMirror-gutters {
+	height: 100% !important;
+}
+
+.headerColumnMeasure {
+	text-align: center;
+	font-size: 14px;
+}
+
+.toolbarFormula {
+	/*background: #a9c3db !important;
+	background-color: rgba(199, 237, 249, 0.39) !important;
+	background-color:#eceff1 !important;*/
+	text-align: center;
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword, span.cm-variable-2
+	{
+	color: #7F0055 !important;
+	font-weight: bold !important;
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::before, span.cm-variable-2::before
+	{
+	content: "f(";
+	color: green;
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::after, span.cm-variable-2::after,
+	.MAX::after, .MIN::after, .COUNT::after, .SUM::after {
+	content: ")";
+	color: green;
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-max::before, .MAX::before
+	{
+	content: "MAX(";
+	color: green;
+}
+
+.MAX, .MIN, .COUNT, .SUM {
+	color: #80004c;
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-min::before, .MIN::before
+	{
+	content: "min(";
+	color: green;
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-count::before, .COUNT::before
+	{
+	content: "COUNT(";
+	color: green;
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-sum::before, .SUM::before
+	{
+	content: "Σ(";
+	color: green;
+}
+
+.error_word {
+	background-image:
+		url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sJDw4cOCW1/KIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAHElEQVQI12NggIL/DAz/GdA5/xkY/qPKMDAwAADLZwf5rvm+LQAAAABJRU5ErkJggg==");
+	background-position: left bottom;
+	background-repeat: repeat-x;
+}
+
+.formula {
+	/*width: 1000px;
+    margin: 0 auto;
+	height: 5%;*/
+}
+
+.overflow {
+	overflow: auto;
+}
+
+.classBold{
+	font-weight:bold;
+}
+
+
+color-picker.tableColorPiker span.color-picker-swatch{
+	top:0px!important;
+}
+
+color-picker.tableColorPiker input.color-picker-input, input.tableInput{
+	width: 100%;
+    background-color: transparent;
+    border: none;
+    min-width: 80px;
+    max-width: 200px;
+}
+
+color-picker.tableColorPiker .color-picker-panel{
+	position: fixed !important;
+	left:auto !important;
+}
+
+.noMargin{
+	margin:0px !important;
+}
+
+button.h20{
+	height: 20px !important;
+}
+
+button.loadThreshold{
+	height: 36px;
+	margin: 22px;
+}
+
+button.addThresholdItem{
+	   margin-bottom: -45px;
+    margin-left: 45px;
+    font-size: 26px!important;
+}
+
+angular-table.thresholdTable #angularFullTableContentBox  {
+
+}
+
+#trFirst {
+  height: 30px;
+}
+
+.cardinalityTable td, th {
+  border-bottom:1px solid #eee;
+  color: #000;
+ /* padding: 10px 25px;*/
+}
+.truncate {
+	max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hasTooltip:hover  {
+ overflow: visible;
+}
+.attribute{
+	max-width: 20px;
+
+}
+
+.cloneWarningTab{
+	margin: 5px;
+    padding: 2px;
+    background-color: white;
+}

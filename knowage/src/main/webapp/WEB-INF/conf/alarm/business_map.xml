@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+		<MAP_ACTION actionName="MANAGE_ALARMS_ACTION" businessProcess="KpiManagement" />
+		<MAP_ACTION actionName="MANAGE_CONTACTS_ACTION" businessProcess="KpiManagement" />
+		
+		<MAP_ACTION actionName="INIT_MANAGE_ALARMS_GUI_ACTION" businessProcess="KpiManagement" />
+		<MAP_ACTION actionName="INIT_MANAGE_CONTACTS_GUI_ACTION" businessProcess="KpiManagement" />
+				
+	</MAP_ACTIONS>
+	
+	<MAP_PAGE_MODULES>
+	</MAP_PAGE_MODULES>
+
+</BUSINESS_MAP>

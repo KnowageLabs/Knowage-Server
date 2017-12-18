@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+		<MAP_ACTION actionName="TEST_CONN" businessProcess="DataSourceManagement" />
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+		<MAP_PAGE_MODULE pageName="ListDataSourcePage" moduleName="ListDataSourceModule" businessProcess="DataSourceManagement" />
+		<MAP_PAGE_MODULE pageName="DetailDataSourcePage" moduleName="DetailDataSourceModule" businessProcess="DataSourceManagement" />	
+	</MAP_PAGE_MODULES>
+	
+</BUSINESS_MAP>

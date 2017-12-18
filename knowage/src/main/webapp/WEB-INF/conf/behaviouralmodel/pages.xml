@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+  	<PAGE name="DetailParameterPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DetailParameterPage" target="DetailParameterModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DetailParameterModule"/>
+    	</MODULES>
+  	</PAGE> 
+   	
+  	<PAGE name="ParametersLookupPage" scope="REQUEST" title="ParametersLookupPage" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ParametersLookupPage" target="ListLookupParametersModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListLookupParametersModule"/>
+    	</MODULES>
+  	</PAGE>
+
+  	
+  	
+  	<PAGE name="ListObjParusePage" scope="REQUEST" title="ObjParuse list page" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ListObjParusePage" target="ListObjParuseModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListObjParuseModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+
+  	
+  	<PAGE name="ListParametersPage" scope="REQUEST">
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ListParametersPage" target="ListParametersModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListParametersModule"/>
+    	</MODULES>
+  	</PAGE>
+	
+
+	
+	<PAGE name="CheckLinksPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="CheckLinksPage" target="CheckLinksModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="CheckLinksModule"/>
+    	</MODULES>
+  	</PAGE>	
+  	<PAGE name="ValidateExecuteBIObjectPage" scope="REQUEST" title="Execute BIObject" >
+    	<DEPENDENCIES>
+	     
+			<DEPENDENCE source="ValidateExecuteBIObjectPage" target="ExecuteBIObjectModule">
+        		<CONDITIONS>
+        			<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="AF_DEFINED"/>
+        		</CONDITIONS>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+			<!--
+			<DEPENDENCE source="ValidateExecuteBIObjectPage" target="ChecklistLookupModalityValuesModule">
+        		<CONDITIONS>
+        			<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="AF_NOT_DEFINED"/>
+        		</CONDITIONS>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+      		-->         		
+      		<!--
+      		<DEPENDENCE source="ValidateExecuteBIObjectPage" target="ListLookupModalityValuesModule">
+        		<CONDITIONS>
+        			<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="AF_NOT_DEFINED"/>
+        			<PARAMETER name="TYPE_LIST" scope="SERVICE_REQUEST" value="AF_DEFINED"/>
+        		</CONDITIONS>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>  	
+      		-->
+      		<!--
+      		<DEPENDENCE source="ExecuteBIObjectModule" target="ChecklistLookupModalityValuesModule">
+        		<CONDITIONS>
+        			<PARAMETER name="ExecuteBIObjectModule.LOOKUP_PARAMETER_NAME" scope="SERVICE_RESPONSE" value="AF_DEFINED"/>
+        			<PARAMETER name="ExecuteBIObjectModule.CHECKLIST" scope="SERVICE_RESPONSE" value="AF_DEFINED"/>
+        		</CONDITIONS>
+        		<CONSEQUENCES>
+        			<PARAMETER name="mod_val_id" type="RELATIVE" scope="SERVICE_RESPONSE" value="ExecuteBIObjectModule.mod_val_id" />
+        			<PARAMETER name="LOOKUP_PARAMETER_NAME" type="RELATIVE" scope="SERVICE_RESPONSE" value="ExecuteBIObjectModule.LOOKUP_PARAMETER_NAME" />
+        			<PARAMETER name="LOOKUP_PARAMETER_ID" type="RELATIVE" scope="SERVICE_RESPONSE" value="ExecuteBIObjectModule.LOOKUP_PARAMETER_ID" />
+        			<PARAMETER name="correlated_paruse_id" type="RELATIVE" scope="SERVICE_RESPONSE" value="ExecuteBIObjectModule.correlated_paruse_id" />
+        		</CONSEQUENCES>
+      		</DEPENDENCE>
+      		-->	
+      		<!--
+      		<DEPENDENCE source="ExecuteBIObjectModule" target="ListLookupModalityValuesModule">
+        		<CONDITIONS>
+        			<PARAMETER name="ExecuteBIObjectModule.LOOKUP_PARAMETER_NAME" scope="SERVICE_RESPONSE" value="AF_DEFINED"/>
+        			<PARAMETER name="ExecuteBIObjectModule.LIST" scope="SERVICE_RESPONSE" value="AF_DEFINED"/>
+        		</CONDITIONS>
+        		<CONSEQUENCES>
+        			<PARAMETER name="mod_val_id" type="RELATIVE" scope="SERVICE_RESPONSE" value="ExecuteBIObjectModule.mod_val_id" />
+        			<PARAMETER name="LOOKUP_PARAMETER_NAME" type="RELATIVE" scope="SERVICE_RESPONSE" value="ExecuteBIObjectModule.LOOKUP_PARAMETER_NAME" />
+        			<PARAMETER name="LOOKUP_PARAMETER_ID" type="RELATIVE" scope="SERVICE_RESPONSE" value="ExecuteBIObjectModule.LOOKUP_PARAMETER_ID" />
+        			<PARAMETER name="correlated_paruse_id" type="RELATIVE" scope="SERVICE_RESPONSE" value="ExecuteBIObjectModule.correlated_paruse_id" />
+        		</CONSEQUENCES>
+      		</DEPENDENCE>
+      		-->
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ExecuteBIObjectModule"/>
+      		<!-- <MODULE keep_instance="false" keep_response="false" name="ListLookupModalityValuesModule"/> -->
+    		<!-- <MODULE keep_instance="false" keep_response="false" name="ChecklistLookupModalityValuesModule"/> -->
+    	</MODULES>
+  	</PAGE>
+  	
+  	
+  	
+  	<PAGE name="DetailModalitiesChecksPage" scope="REQUEST" title="Modalities Checks Detail" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DetailModalitiesChecksPage" target="DetailChecksModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DetailChecksModule"/>
+    	</MODULES>
+  	</PAGE>  	
+  	<PAGE name="ListModalitiesChecksPage" scope="SESSION" >
+    	<DEPENDENCIES>
+    		<DEPENDENCE source="ListModalitiesChecksPage" target="ListPredefinedChecksModule">
+        		<CONDITIONS>
+        			<PARAMETER name="MESSAGE" scope="SERVICE_REQUEST" value="AF_NOT_DEFINED" />
+        			<PARAMETER name="valueFilter" scope="SERVICE_REQUEST" value="AF_NOT_DEFINED" />
+        		</CONDITIONS>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+      		<DEPENDENCE source="ListModalitiesChecksPage" target="ListModalitiesChecksModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+    		<MODULE keep_instance="false" keep_response="true" name="ListPredefinedChecksModule"/>
+      		<MODULE keep_instance="false" keep_response="false" name="ListModalitiesChecksModule"/>
+    	</MODULES>
+  	</PAGE>  	
+  	
+  	<PAGE name="DetailModalitiesValuePage" scope="REQUEST" title="Modalities Value Detail" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DetailModalitiesValuePage" target="DetailModalitiesValueModule">
+				<CONDITIONS>
+        			<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="AF_DEFINED" />
+        		</CONDITIONS>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+      		<DEPENDENCE source="DetailModalitiesValueModule" target="ListTestLovModule">
+        		<CONDITIONS>
+        			<PARAMETER name="DetailModalitiesValueModule.testLov" scope="SERVICE_RESPONSE" value="AF_DEFINED" />
+        		</CONDITIONS>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+      		<DEPENDENCE source="DetailModalitiesValuePage" target="ListTestLovModule">
+				<CONDITIONS>
+        			<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="AF_NOT_DEFINED" />
+        			<PARAMETER name="MODULE" scope="SERVICE_REQUEST" value="ListTestLovModule" />
+        		</CONDITIONS>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+    		<MODULE keep_instance="false" keep_response="false" name="DetailModalitiesValueModule"/>
+      		<MODULE keep_instance="false" keep_response="false" name="ListTestLovModule"/>
+    	</MODULES>
+  	</PAGE>
+ 	<PAGE name="LovLookupPage" scope="REQUEST" title="LovLookupPage" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="LovLookupPage" target="ListLookupLovModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListLookupLovModule"/>
+    	</MODULES>
+  	</PAGE> 	
+
+	<!--
+	<PAGE name="GenericLookupPage" scope="REQUEST" title="LookupPage" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="GenericLookupPage" target="ListLookupModalityValuesModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListLookupModalityValuesModule"/>
+    	</MODULES>
+  	</PAGE>
+  	-->
+  	
+  	<PAGE name="ListLovsPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ListLovsPage" target="ListLovsModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListLovsModule"/>
+    	</MODULES>
+  	</PAGE>    
+</PAGES>
+

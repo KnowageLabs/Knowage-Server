@@ -1,0 +1,47 @@
+
+<md-dialog aria-label="New glossary" style="width: 80%;">
+<md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>{{gloCtrl.headerTitle}}</h2>
+       </div>
+  </md-toolbar>
+  <form name="glossaryForm" class="wordForm" novalidate    >
+  <md-dialog-content layout-padding>
+    
+
+	<div layout="column"  >
+
+			<md-input-container class=" md-block"> 
+				<label>{{translate.load("sbi.generic.name");}}</label> 
+				<input ng-model="gloCtrl.newGloss.GLOSSARY_NM" type="text" maxlength="100" > 
+			</md-input-container>
+	
+
+			<md-input-container class=" md-block"> 
+				<label>{{translate.load("sbi.generic.code");}}</label> 
+				<input ng-model="gloCtrl.newGloss.GLOSSARY_CD" type="text" maxlength="30" > 
+			</md-input-container>
+	
+	
+			<md-input-container class="md-block" >
+				<label>{{translate.load("sbi.generic.descr");}}</label> 
+				 <textarea ng-model="gloCtrl.newGloss.GLOSSARY_DS" columns="1" md-maxlength="500"  ></textarea>
+			 </md-input-container>
+	</div>
+	
+
+  </md-dialog-content>
+      <md-dialog-actions layout="row">
+   
+    <md-button ng-click="gloCtrl.annulla()" class="md-primary">
+  {{translate.load("sbi.ds.wizard.cancel");}} 
+    </md-button>
+  
+    <md-button ng-click="gloCtrl.submit()" class="md-primary" ng-disabled="gloCtrl.newGloss.GLOSSARY_NM.length === 0 "  >
+    {{translate.load("sbi.generic.update");}}
+    </md-button>
+  </md-dialog-actions>
+  
+  
+  </form>
+</md-dialog>

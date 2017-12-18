@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 12-apr-2016 10.43.25 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.metadata.metadata.SbiMetaBc" table="SBI_META_BC">
+        <id name="bcId" type="java.lang.Integer">
+            <column name="BC_ID" />
+          
+        </id>
+        <many-to-one name="sbiMetaModel" class="it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel" lazy="false" fetch="join">
+            <column name="MODEL_ID" not-null="true" />
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="NAME" length="100" not-null="true" />
+        </property>
+        <property name="uniqueName" type="string">
+            <column name="UNIQUE_NAME" length="100" />
+        </property>
+        <property name="deleted" type="boolean">
+	            <column name="DELETED" not-null="true" />
+	    </property>   
+       
+    </class>
+    
+</hibernate-mapping>

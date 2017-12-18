@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+
+  	<PAGE name="HOT_LINK_PAGE" scope="REQUEST" title="Hot Link" >
+    	<DEPENDENCIES>
+    		<DEPENDENCE source="HOT_LINK_PAGE" target="PortletLoginModule">
+        		<CONDITIONS>
+        			<PARAMETER name="OPERATION" scope="SERVICE_REQUEST" value="AF_NOT_DEFINED" />
+        		</CONDITIONS>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+      		<DEPENDENCE source="HOT_LINK_PAGE" target="HotLinkModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+    		<MODULE keep_instance="false" keep_response="false" name="PortletLoginModule"/>
+      		<MODULE keep_instance="false" keep_response="false" name="HotLinkModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+</PAGES>

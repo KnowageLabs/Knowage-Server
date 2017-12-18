@@ -1,0 +1,74 @@
+   <script type="text/javascript">
+   (function () {
+          if(preferences){
+           console.log(preferences);
+    	   var infusionSettings= fluid.prefs.cookieStore.get('fluid-ui-settings');
+    	   var setPrefs= JSON.parse(preferences);
+    	   var options={
+    			   name:'fluid-ui-settings',
+    			   path:'/'
+    	   };
+   
+    	   if(!infusionSettings){
+    		   console.log("setting");
+    		   fluid.prefs.cookieStore.set(setPrefs,options);
+    	   }
+       }
+	})();
+   
+   
+    $(document).ready(function () {
+       var uio = fluid.uiOptions.prefsEditor(".flc-prefsEditor-separatedPanel", {
+            tocTemplate: "${pageContext.request.contextPath}/js/lib/infusion/src/components/tableOfContents/html/TableOfContents.html",
+            terms: {
+                templatePrefix: "${pageContext.request.contextPath}/js/lib/infusion/src/framework/preferences/html",
+                messagePrefix: "${pageContext.request.contextPath}/js/lib/infusion/src/framework/preferences/messages"
+            }
+            
+            
+        });
+     
+       
+    });
+    
+    function save(){
+    	
+    	var infusionSettings= fluid.prefs.cookieStore.get('fluid-ui-settings');
+    	console.log(infusionSettings);
+    	
+    	var newPreferences=JSON.stringify(infusionSettings);
+    	console.log(newPreferences);
+    	var url= baseUrl +"/2.0/preferences/uio/";
+    	
+    	console.log(url);
+    	
+    	$.ajax({
+    	      url: url,
+    	      type: 'POST',
+              data:newPreferences,
+    	      error: function() {
+    	         
+    	      },
+    	       success: function(response) {
+    	         console.log(response);
+    	      }
+    	   
+    	   });
+
+    }
+    
+    </script>
+	
+	<div class="flc-prefsEditor-separatedPanel fl-prefsEditor-separatedPanel">
+    <!-- This is the div that will contain the Preference Editor component -->
+    <div class="flc-slidingPanel-panel flc-prefsEditor-iframe"></div>
+    <!-- This div is for the sliding panel that shows and hides the Preference Editor controls -->
+    <div class="fl-panelBar">
+        <span class="fl-prefsEditor-buttons" style="font-family:'arial' !important;line-height:1em !important; font-size: 16px !important;background-color:white !important; color: black !important;">
+            <button id="reset" onclick="test()" class="flc-prefsEditor-reset fl-prefsEditor-reset" style="line-height:1em !important;font-family:'arial' !important; font-size: 16px !important;background-color:white !important;  color: black !important;"><span class="fl-icon-undo" style=" font-size: 16px !important;line-height:1em !important;background-color:white !important;  color: black !important;"></span> Reset</button>
+            <button id="show-hide" class="flc-slidingPanel-toggleButton fl-prefsEditor-showHide" style="line-height:1em !important;font-family:'arial' !important; font-size: 16px !important;background-color:white !important;  color: black !important;"> Show/Hide</button>
+        </span>
+    </div>
+</div>
+   
+<div class="flc-toc-tocContainer"> </div>

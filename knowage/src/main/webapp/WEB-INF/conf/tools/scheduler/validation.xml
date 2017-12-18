@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+
+	<SERVICE name="JobManagementPage" type="PAGE">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="MESSAGE_SAVE_JOB"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="jobname" label="#scheduler.JobName">
+					<VALIDATOR validatorName="MANDATORY"/>
+					 <VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>
+				<FIELD name="jobdescription" label="#scheduler.JobName">
+				 <VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+	
+	<SERVICE name="TriggerManagementPage" type="PAGE">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="MESSAGE_SAVE_SCHEDULE"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="triggername" label="#scheduler.schedname">
+					 <VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+					<VALIDATOR validatorName="MANDATORY"/>
+				</FIELD>
+				<FIELD name="triggerdescription" label="triggerdescription">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>
+				<FIELD name="startdate" label="#scheduler.startdate">
+					<VALIDATOR validatorName="MANDATORY"/>
+				</FIELD>
+				<FIELD name="starttime" label="#scheduler.starttime">
+					<VALIDATOR validatorName="MANDATORY"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+
+</VALIDATIONS>

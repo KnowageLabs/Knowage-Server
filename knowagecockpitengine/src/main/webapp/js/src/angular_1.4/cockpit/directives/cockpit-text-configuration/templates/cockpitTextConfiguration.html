@@ -1,0 +1,45 @@
+<md-card  class="flexCard datasetParameterDetail" ng-if="ngModelShared.viewDatasets || ngModelShared.viewParameters"  flex="33">
+	<md-toolbar class="secondaryToolbar">
+		  <div class="md-toolbar-tools"> 
+		     <h2>{{translate.load("sbi.cockpit.widgets.text.textWidgetDesigner.dynamic.title")}}</h2> 
+		  </div> 
+	</md-toolbar>
+	<md-card-content class="noPadding">	
+		<div layout="row" layout-align="center center" ng-if="ngModelShared.viewDatasets">
+			<div class="chip"  ng-class="{'active':ngModelShared.selectedAggregation==func}" ng-repeat="func in ngModelShared.functions" ng-click="selectAggregation(func)">
+			{{func}}
+			<md-tooltip md-direction="bottom">{{translate.load("sbi.cockpit.widgets.text.textWidgetDesigner.tooltip.addFunction")}}</md-tooltip>			
+			</div>
+		</div> 
+		<md-list >	
+			<md-subheader layout="row"  ng-if="ngModelShared.viewParameters" class="md-no-sticky"  ng-click="showHideParameters()">
+				<i class="fa fa-book"></i>
+				<i class="fa floatRight" ng-class="{'fa-chevron-down':ngModelShared.viewParametersDett,'fa-chevron-up':!ngModelShared.viewParametersDett}"></i>{{translate.load("sbi.cockpit.widgets.text.textWidgetDesigner.dynamic.parameters")}}
+			</md-subheader>		
+			<div ng-show="ngModelShared.viewParametersDett">
+		        <md-list-item ng-repeat="par in ngModelShared.parameters"  ng-click="addToText('parameter', par.url)">
+					<md-button  class="md-icon-button" >
+			             <md-icon md-font-icon="fa fa-arrow-left"  aria-label="Add To Text"></md-icon>
+			             <md-tooltip md-direction="bottom">{{translate.load("sbi.cockpit.widgets.text.textWidgetDesigner.tooltip.addParameter")}}</md-tooltip>
+		        	</md-button>
+					<p ng-show="ngModelShared.viewParametersDett"> {{par.label}} ({{par.url}}) </p>
+				</md-list-item>
+			</div>
+			<div display="none" ng-repeat="(key,value) in ngModelShared.datasets track by $index" ng-if="ngModelShared.viewDatasets" >
+				<md-subheader layout="row" class="md-no-sticky" ng-click="showHideDatasetFields(key)"><i class="fa fa-database"></i> {{key}}
+					<i class="fa floatRight" ng-class="{'fa-chevron-down':ngModelShared.viewDatasetsDett[key],'fa-chevron-up':!ngModelShared.viewDatasetsDett[key]}" aria-label="Show Fields"></i>					
+				</md-subheader>
+				<div  ng-show="ngModelShared.viewDatasetsDett[key]">
+			        <md-list-item ng-repeat="field in value"  ng-click="addToText('dataset', field.alias, key)">
+						<md-button  class="md-icon-button"  >
+				             <md-icon md-font-icon="fa fa-arrow-left" aria-label="Add To Text"></md-icon>
+				             <md-tooltip md-direction="bottom">{{translate.load("sbi.cockpit.widgets.text.textWidgetDesigner.tooltip.addField")}}</md-tooltip>
+			        	</md-button>
+			        	<p  ng-show="ngModelShared.viewDatasetsDett[key]">  {{field.alias}} </p>						
+					</md-list-item>
+				</div>
+			</div>
+        </md-list> 
+  
+	</md-card-content>
+</md-card>

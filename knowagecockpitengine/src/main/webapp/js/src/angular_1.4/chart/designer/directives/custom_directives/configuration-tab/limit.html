@@ -1,0 +1,28 @@
+<div ng-form name="limitForm" layout="column" >
+
+	<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.configuration.parallel.limit.serieFilterColumn")}}</label>
+		 <md-select ng-model="chartTemplate.LIMIT.style.serieFilterColumn" name ="limit_filterColumn"
+		 > <md-option
+		ng-repeat="option in seriesContainers[0].series" value="{{option}}">{{option}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.configuration.parallel.limit.maxNumberOfLines")}}</label>
+		 <input type="number" step="any" name="limit_max_number_records"
+		ng-model="chartTemplate.LIMIT.style.maxNumberOfLines" ng-required="chartTemplate.type.toLowerCase()=='parallel'" ng-min="chartTemplate.type.toLowerCase()=='parallel'?5:undefined" /> </md-input-container>
+
+	<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.configuration.parallel.limit.orderTopMinBottomMax")}}</label>
+		 <md-select ng-model="chartTemplate.LIMIT.style.orderTopMinBottomMax" name ="limit_order"
+		 ng-required="chartTemplate.type.toLowerCase()=='parallel'"> <md-option
+		ng-repeat="option in orderParallelOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<div layout="row" layout-margin>
+		<label>{{translate.load("sbi.chartengine.configuration.parallel.groupByCategory")}}</label>
+		<md-input-container class="small counter"> <md-checkbox
+			ng-model="chartTemplate.LIMIT.groupByCategory" aria-label="groupByCategory" name ="limit_groupBy"></md-checkbox>
+		</md-input-container>
+	</div>
+</div>

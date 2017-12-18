@@ -1,0 +1,28 @@
+<div ng-form name="axis_linesForm" layout="row" layout-wrap>
+
+	<md-input-container class="md-block colorInputContainer" flex="100">
+	<label ng-class="{'kn-inputError':configurationForm.axis_linesForm.axis_color.$invalid}">{{translate.load("sbi.chartengine.configuration.parallel.axesLines.axisColorRequired")}}</label>
+	 <color-picker 
+		options="colorPickerOptionsCockpit"
+		ng-model="chartTemplate.AXES_LIST.style.axisColor" name ="axis_color"
+		ng-required="chartTemplate.type.toLowerCase()=='parallel'"></color-picker> 
+		
+		</md-input-container>
+
+
+	<md-input-container class="md-block" flex="100"> 
+	<label>{{translate.load("sbi.chartengine.configuration.parallel.axesLines.axisColNamePadd")}}</label>
+		 <input type="number" step="any" name="name_padding" ng-required="chartTemplate.type.toLowerCase()=='parallel'"
+		ng-model="chartTemplate.AXES_LIST.style.axisColNamePadd" min="0" /> </md-input-container>
+
+	<md-input-container class="md-block colorInputContainer" flex="100">
+	<label>{{translate.load("sbi.chartengine.configuration.parallel.axesLines.brushColor")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="chartTemplate.AXES_LIST.style.brushColor" name ="brush_color"></color-picker> </md-input-container>
+
+	<md-input-container class="md-block" flex="100"> 
+	<label>{{translate.load("sbi.chartengine.configuration.parallel.axesLines.brushWidth")}}</label>
+		 <input type="number" step="any" name="brush_width" ng-required="chartTemplate.type.toLowerCase()=='parallel'"
+		ng-model="chartTemplate.AXES_LIST.style.brushWidth" ng-min="chartTemplate.type.toLowerCase()=='parallel'?5:undefined" /> </md-input-container>
+</div>

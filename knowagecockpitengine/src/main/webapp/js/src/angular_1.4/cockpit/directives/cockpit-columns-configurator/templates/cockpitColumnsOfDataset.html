@@ -1,0 +1,22 @@
+<div layout-fill class="overlayGray" layout="row" layout-align="center center">
+<md-dialog aria-label="table configuration" ng-cloak class="width80" layout="column" layout-margin>
+    <md-dialog-content flex layout="column">
+      <angular-table flex ng-show="localDataset!=undefined"
+		id='tableCockpitColumnOfDataset' ng-model="localDataset.metadata.fieldsMeta"
+		columns='[{"label":"Name","name":"name"},{"label":"Alias","name":"alias"},{"label":"Field Type","name":"fieldType"},{"label":"Type","name":"type"}]'
+		columns-search='["name"]' show-search-bar=true
+		no-pagination=true multi-select= true selected-item="columnSelected"
+		> 
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="cancelConfiguration()" >
+        {{translate.load('sbi.generic.cancel')}}
+      </md-button>
+      <md-button ng-click="saveColumnConfiguration()"  >
+        {{translate.load('sbi.generic.save')}}
+      </md-button>
+    </md-dialog-actions>
+
+</md-dialog>
+</div>

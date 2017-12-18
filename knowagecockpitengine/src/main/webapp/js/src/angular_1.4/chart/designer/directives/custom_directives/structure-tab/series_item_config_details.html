@@ -1,0 +1,143 @@
+<div ng-form name="structure-seriesItemConfigDetailsForm" flex>
+<!-- The original name of the series item (not an alias) -->
+<md-subheader class="md-primary">
+	Series item: <strong>{{detailsForSeriesItem.column}} ({{detailsForSeriesItem.axis}})</strong>
+</md-subheader>
+
+<!-- Name (the alias of the series item) -->
+ <div layout="row" flex layout-margin
+ ng-if="selectedChartType != 'chord' && selectedChartType != 'heatmap' && selectedChartType != 'treemap'
+&& selectedChartType != 'parallel' && selectedChartType != 'sunburst' && selectedChartType != 'wordcloud'">  
+ 
+	<md-input-container class="md-block" flex>
+		<label>{{translate.load('sbi.chartengine.designer.series.name')}}</label>
+		<input name="serie_name" ng-model="detailsForSeriesItem.name"/> 
+	</md-input-container>	
+</div> 
+
+<!-- Aggregation type for the series item -->
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex> 
+		<label>{{translate.load('sbi.chartengine.designer.series.aggrtype')}}</label>
+		<md-select ng-model="detailsForSeriesItem.groupingFunction"> 
+			<md-option ng-repeat="option in seriesItemAggregationTypes  | filter: filterAgregations" value="{{option.value}}">{{option.name}}</md-option>
+		</md-select> 
+	</md-input-container>
+</div>
+
+<!-- 
+	Types of series item - despite the main chart type that is picked, e.g. BAR,  
+	the type of individual series item can be any of: BAR, LINE, AREA.
+-->
+<div layout="row" flex layout-margin
+ ng-if="(selectedChartType =='bar' || selectedChartType =='line') && disableHtmlElementForChartJs()">  
+	<md-input-container class="md-block" flex> 
+		<label>{{translate.load('sbi.chartengine.designer.seriestype')}}</label>
+		<md-select ng-model="detailsForSeriesItem.type" > 
+			<md-option ng-repeat="option in seriesItemTypes" value="{{option.value}}">{{option.name}}</md-option>
+		</md-select> 
+	</md-input-container>
+</div>
+
+<!-- 
+	Type of series ordering (ascending/descending). E.g. bars on the BAR chart will be arranged 
+	in ascending order for this series item if this type of ordering is set and vice versa.
+-->
+<div layout="row" flex layout-margin
+ng-if="selectedChartType != 'chord' && selectedChartType != 'heatmap' && selectedChartType != 'treemap'
+&& selectedChartType != 'parallel' && selectedChartType != 'sunburst' && selectedChartType != 'wordcloud'">
+	<md-input-container class="md-block" flex> 
+		<label>{{translate.load('sbi.chartengine.designer.seriesordertype')}}</label>
+		<md-select ng-model="detailsForSeriesItem.orderType"> 
+			<md-option ng-repeat="option in seriesItemOrderingTypes" value="{{option.value}}">{{option.name}}</md-option>
+		</md-select> 
+	</md-input-container>
+</div>
+
+<!-- Color for the particular series item 
+<div layout="row" flex layout-margin
+ng-if="selectedChartType != 'chord' && selectedChartType != 'heatmap' && selectedChartType != 'treemap'
+&& selectedChartType != 'parallel' && selectedChartType != 'sunburst' && selectedChartType != 'wordcloud' && selectedChartType != 'pie'">
+	<md-input-container class="md-block colorInputContainer" flex>
+		<label>{{translate.load("sbi.chartengine.designer.color")}}</label>
+	 	<color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="detailsForSeriesItem.color">
+		</color-picker> 
+	</md-input-container>
+</div>-->
+
+<!-- Indicator that defines if the series item values should be shown on the chart.  -->
+<div layout="row" flex layout-margin
+ng-if="(selectedChartType != 'chord' && selectedChartType != 'heatmap' && selectedChartType != 'treemap'
+&& selectedChartType != 'parallel' && selectedChartType != 'sunburst' && selectedChartType != 'wordcloud' && selectedChartType != 'pie') && disableHtmlElementForChartJs()">
+	<label>{{translate.load("sbi.chartengine.designer.showvalue")}}</label>
+	<md-input-container class="small counter"> 
+		<md-checkbox ng-model="detailsForSeriesItem.showValue" aria-label="Show series item values" ></md-checkbox>
+	</md-input-container>	
+</div>
+
+<div ng-if="selectedChartType == 'pie'">
+<md-subheader class="md-primary">
+	{{translate.load("sbi.chartengine.designer.valueConfiguration")}}
+</md-subheader>
+<div layout="row" flex layout-margin>
+	<label>{{translate.load("sbi.chartengine.designer.showAbsValue")}}</label>
+	<md-input-container class="small counter"> 
+		<md-checkbox ng-model="detailsForSeriesItem.showAbsValue" aria-label="Show series item absolute value"></md-checkbox>
+	</md-input-container>	
+</div>
+
+<div layout="row" flex layout-margin>
+	<label>{{translate.load("sbi.chartengine.designer.showPercentage")}}</label>
+	<md-input-container class="small counter"> 
+		<md-checkbox ng-model="detailsForSeriesItem.showPercentage" aria-label="Show series item percentage"></md-checkbox>
+	</md-input-container>	
+</div>
+
+<div layout="row" flex layout-margin>
+	<label>{{translate.load("sbi.chartengine.designer.showCategoryValue")}}</label>
+	<md-input-container class="small counter"> 
+		<md-checkbox ng-model="detailsForSeriesItem.showCategoryValue" aria-label="Show series item showCategoryValue"></md-checkbox>
+	</md-input-container>	
+</div>
+</div>
+
+<!-- Scale factor for series values (if it is going to be shown as a raw value or in kilos, megas) -->
+<div layout="row" flex layout-margin
+ng-if="(selectedChartType != 'chord' && selectedChartType != 'heatmap' && selectedChartType != 'treemap') && disableHtmlElementForChartJs()">
+	<md-input-container class="md-block" flex> 
+		<label>{{translate.load('sbi.chartengine.designer.scalefactor.label')}}</label>
+		<md-select ng-model="detailsForSeriesItem.scaleFactor" > 
+			<md-option ng-repeat="option in scaleFactorsFixed" value="{{option.value}}">{{option.name}}</md-option>
+		</md-select> 
+	</md-input-container>
+</div>
+
+<!-- Precision of the displayed series value -->
+<div layout="row" flex layout-margin
+ng-if="selectedChartType != 'heatmap' && selectedChartType != 'treemap'">
+	<md-input-container class="md-block" flex>
+		<label>{{translate.load('sbi.chartengine.designer.precision')}}</label>
+		<input type="number" name="height" ng-model="detailsForSeriesItem.precision" min="0"/> 
+	</md-input-container>	
+</div>
+
+<!-- Prefix for the series item tooltip  -->
+<div layout="row" flex layout-margin
+ng-if="(selectedChartType != 'heatmap' && selectedChartType != 'treemap') && disableHtmlElementForChartJs()">
+	<md-input-container class="md-block" flex>
+		<label>{{translate.load('sbi.chartengine.designer.prefixtext')}}</label>
+		<input name="prefix" ng-model="detailsForSeriesItem.prefixChar" /> 
+	</md-input-container>	
+</div>
+
+<!-- Suffix for the series item tooltip  -->
+<div layout="row" flex layout-margin
+ng-if="(selectedChartType != 'heatmap' && selectedChartType != 'treemap') && disableHtmlElementForChartJs()">
+	<md-input-container class="md-block" flex>
+		<label>{{translate.load('sbi.chartengine.designer.postfixtext')}}</label>
+		<input name="suffix" ng-model="detailsForSeriesItem.postfixChar"/> 
+	</md-input-container>	
+</div>	
+</div>

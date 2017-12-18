@@ -1,0 +1,564 @@
+
+<md-tab-content class="knowage-grey-color" layout="column">
+
+	<div layout="row" md-content layout-padding ng-form name="structureForm" flex layout-align="center">
+	
+		<!-- 
+			MEASURES AND ATTRIBUTES CONTAINERS
+			<input ng-show='true' ng-repeat = "seriesContainer in seriesContainers"  name="seriesNumber" min=1 max={{2+1}} type="number" ng-model="seriesContainer.series.length" >
+		 -->
+		<input  ng-if="selectedChartType.toUpperCase() != 'GAUGE'" ng-show='false' name="categoriesNumber"  type="number"  ng-model="categ.lengthh" min={{minMaxCategories.min}} max={{minMaxCategories.max}} > 
+
+		<div layout="column" flex=35 style="padding:0 8 0 0">  
+		
+			<md-toolbar class="secondaryToolbar">
+				<div class="md-toolbar-tools">
+					<h2>
+						<span>{{translate.load("sbi.chartengine.designer.structureTab.attributemeasures.title")}}</span>
+					</h2>
+					<span flex></span>				   		
+				</div>		      
+			</md-toolbar>
+			
+			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element" style="overflow:auto">
+		
+				<md-content flex>
+				
+					<!-- ATTRIBUTES -->
+					<md-card ng-show="selectedChartType.toUpperCase() != 'GAUGE'">
+					
+						<expander-box color="white" expanded="true" title="translate.load('sbi.chartengine.designer.structureTab.attributemeasures.attributes.title')">
+							<md-list flex style="padding-top:0; padding-bottom:0">
+								<md-list-item ng-repeat="attribute in allAttributes" ng-disabled="disableUsingAttributeIfRealtimeDSisUsed(attribute)" ng-click="moveAttributeToCategories(attribute)" class="noright">
+								   <span><b>{{attribute.alias || attribute.id}}</b></span>
+							  	</md-list-item>
+						  	</md-list>
+					  	</expander-box>
+						  
+					</md-card>
+					
+					<!-- MEASURES -->
+					<md-card>
+					
+						<expander-box color="white" expanded="true" title="translate.load('sbi.chartengine.designer.structureTab.attributemeasures.measures.title')">
+							
+							<md-list flex style="padding-top:0; padding-bottom:0" ng-if="numberOfSeriesContainers<=1">
+								<md-list-item ng-repeat="measure in allMeasures" ng-click="moveMeasureToSeries(measure)" class="noright">
+								    <span ><b>{{measure.alias || measure.id}}</b></span>
+							  	</md-list-item>
+						  	</md-list>
+						  	
+						  	<md-list flex style="padding-top:0; padding-bottom:0" ng-if="numberOfSeriesContainers>1">
+								
+								<md-list-item ng-repeat="measure in allMeasures">
+								   
+								    <span class="noright"><b>{{measure.alias || measure.id}}</b></span>
+								     
+								    <md-menu style="padding:0px;">
+							      
+								      	<md-button 	aria-label="Help categories container" class="md-icon-button" 
+								      				ng-click="openMenu($mdOpenMenu, $event);"
+								      				style="margin-left:2; margin-right:2;" >
+								      	</md-button>
+								      	
+								      	<md-menu-content>
+									      
+									      	<span class="noright" style="margin:2 8 6 8"><b>Move to series container:</b></span>
+									      	
+									      	<md-menu-item ng-repeat="seriesContainer in seriesContainers" ng-click="moveMeasureToSeries(measure,seriesContainer)">
+							          			<md-button ng-click="">
+								            		<span>{{seriesContainer.name}}</span>
+								          		</md-button>
+							        		</md-menu-item>
+							        		
+						        		</md-menu-content>
+						        		
+							      	</md-menu>
+							      	
+							  	</md-list-item>
+							  	
+						  	</md-list>						  	
+						  	
+					  	</expander-box>
+					  	
+					</md-card>
+					
+				</md-content>	
+		
+			</md-whiteframe>
+		
+		</div>
+		
+		<!-- 
+			CATEGORIES AND SERIES CONTAINERS
+		 -->
+		<div layout="column" flex=40 style="padding:0 8 0 0" >  
+		
+			<md-toolbar class="secondaryToolbar">
+				<div class="md-toolbar-tools">
+					<h2>
+						<span>{{translate.load("sbi.chartengine.designer.structureTab.categoriesseries.title")}}</span>
+					</h2>
+					<span flex></span>				   		
+				</div>		      
+			</md-toolbar>
+			
+			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element" style="overflow:auto">			
+				
+				<!-- CATEGORIES CONTAINER -->
+				<md-card ng-show="selectedChartType.toUpperCase() != 'GAUGE'">
+				
+					<md-toolbar>
+					
+						<div class="md-toolbar-tools">
+							
+							<h2>
+								<span>{{translate.load("sbi.chartengine.designer.structureTab.categoriesseries.categories.title")}}</span>
+							</h2>
+							
+							<span flex></span>		
+							
+							<md-button class="md-icon-button" ng-click="categoryRemoveAll()" style="margin-left:2; margin-right:2;">
+								<md-icon aria-label="Remove all categories" class="fa fa-eraser" style="display:inline"></md-icon>						
+							</md-button>
+							
+							<!-- Help button (Categories container's empty text) -->
+							<md-menu>
+							      
+						      	<md-button 	aria-label="Help categories container" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)"
+						      				style="margin-left:2; margin-right:2;" ng-class="structureForm.categoriesNumber.$invalid ? 'dangerBorder' : ''">
+						        	<md-icon md-menu-origin class="fa fa-question-circle"  style="display:inline"></md-icon>
+						      	</md-button>
+						      	
+						      	<md-menu-content>
+							      
+					        		<md-menu-item class="noright" style="padding:0 8 0 16">
+					          			<span ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropattributes.' + selectedChartType.toLowerCase())"></span>
+					        		</md-menu-item>
+					        		
+				        		</md-menu-content>
+				        		
+					      	</md-menu>
+							
+							<!-- alternatives: fa-arrows-alt, fa-outdent, fa-wrench -->
+							<!-- <md-button class="md-icon-button" ng-click="" style="margin-left:2; margin-right:2;">
+								<md-icon aria-label="Axis general configuration" class="fa fa-pencil-square-o" style="display:inline"></md-icon>						
+							</md-button> -->
+							
+							<!-- alternatives: fa-font -->
+							<!-- <md-button class="md-icon-button" ng-click="" style="margin-left:2; margin-right:0;">
+								<md-icon aria-label="Axis title configuration" class="fa fa-text-width" style="display:inline"></md-icon>						
+							</md-button> -->
+							
+							<!-- Menu for generic axis customization: axis configuration, title configuration, major grid, minor grid -->
+							<md-menu ng-hide="categoriesContainerConfigDropDownExcludeTypes.indexOf(selectedChartType.toLowerCase())>=0">
+							      
+						      	<md-button 	aria-label="Open generic axis configurations' list" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)"
+						      				style="margin-left:2; margin-right:2;">
+						        	<md-icon md-menu-origin class="fa fa-angle-down" style="display:inline"></md-icon>
+						      	</md-button>
+						      	
+						      	<md-menu-content width="4">
+							      
+					        		<md-menu-item ng-if="categoriesConfigExcludeTypes.indexOf(selectedChartType.toLowerCase())<0 && disableHtmlElementForChartJs()">
+					          			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
+					 						<md-icon class="fa fa-pencil-square-o" style="display:inline"></md-icon>
+						            		<span>Axis configuration</span>
+						          		</md-button>
+					        		</md-menu-item>
+						        
+						        	<md-menu-item ng-if=" categoriesTitleConfigExcludeTypes.indexOf(selectedChartType.toLowerCase())<0 && disableHtmlElementForChartJs()">
+						          		<md-button ng-click="showStructureDetails('categoriesAxisTitleDetails',categoriesAxis.alias)" >
+						            		<md-icon class="fa fa-text-width" style="display:inline"></md-icon>
+						            		<span>Axis' title configuration</span>
+						          		</md-button>
+						        	</md-menu-item>	
+						        	
+						        	<md-menu-item ng-if="categoriesOrderColumnExcludeTypes.indexOf(selectedChartType.toLowerCase())<0">
+						          		<md-button ng-click="showStructureDetails('categoriesOrdering',categoriesAxis.alias)">
+						          			<md-icon class="fa fa-sort-amount-desc" style="display:inline"></md-icon>
+						            		<span>Ordering column</span>
+						          		</md-button>
+						        	</md-menu-item>							        	
+									<md-menu-item ng-if="(selectedChartType.toLowerCase()=='bar' || selectedChartType.toLowerCase()=='line' || selectedChartType.toLowerCase()=='scatter') && disableHtmlElementForChartJs() ">
+						          		<md-button ng-click="showStructureDetails('categoriesDateTime',categoriesAxis.alias)">
+						          			<md-icon class="fa fa-object-group " style="display:inline"></md-icon>
+						            		<span>Datetime and grouping</span>
+						          		</md-button>
+						        	</md-menu-item>				        
+							      </md-menu-content>
+							      
+						    </md-menu>
+									   		
+						</div>	
+					
+					</md-toolbar>
+				
+					<md-list flex ng-class="structureForm.categoriesNumber.$invalid ? 'dangerBorder' : ''">
+							
+						<!-- If the categories container has at least one category item inside of it. -->					
+						<md-list-item  ng-repeat="cat in categories track by $index" class="noright" style="padding:0 8 0 16">
+						    
+						    <span><b>{{cat.name || cat.column}}</b></span>
+						    
+						    <span flex></span>
+						   
+						   	<md-button class="md-icon-button" ng-show="$index>0" ng-click="categoryMoveUp(cat)" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
+						   		<md-icon aria-label="Move category up" class="fa fa-arrow-up" style="display:inline"></md-icon>
+					   		</md-button>
+					   		
+   	 						<md-button class="md-icon-button" ng-show="$index<categories.length-1" ng-click="categoryMoveDown(cat)" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
+   	 							<md-icon aria-label="Move category down" class="fa fa-arrow-down" style="display:inline"></md-icon>
+ 							</md-button>
+ 							
+ 						<!-- 	<md-menu ng-show="selectedChartType!='parallel'">
+			
+						     	<md-button 	aria-label="Category alias" class="md-icon-button" ng-click="openMenuCategory($mdOpenMenu, $event, cat)"
+						      				style="margin-left:2; margin-right:2;">
+						        	<md-icon md-menu-origin class="fa fa-font" style="display:inline"></md-icon>
+						      	</md-button>  
+						      	
+						      	<md-menu-content layout="row" layout-align="end center">
+					        		<md-menu-item class="noright" style="padding:0 8 0 16" flex>
+					          			<md-input-container class="md-block" flex>
+											<label>{{translate.load("sbi.qbe.selectgridpanel.headers.alias")}}</label>
+											<input name="alias"	ng-model="cat.name"/> 
+										</md-input-container>
+					        		</md-menu-item>
+				        		</md-menu-content>
+				        		
+					      	</md-menu>-->
+   	 						   	 						
+   	 						<md-button class="md-icon-button" ng-click="categoryRemove($index)" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
+   	 							<md-icon aria-label="Delete category" class="fa fa-trash-o" style="display:inline"></md-icon>
+	 						</md-button>
+   	 						
+					  	</md-list-item>
+					  	
+					  	<!-- If the categories container is empty - no category data. -->		
+					  	<md-list-item ng-if="categories.length==0" class="noright" style="padding:0 8 0 16">
+				  		 	<span 	ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropattributes.' + selectedChartType.toLowerCase())"
+				  		 			style="color:#bfbfbf">
+		  		 			</span>
+					  	</md-list-item>
+					  	
+				  	</md-list>	
+				  	
+			  	</md-card>
+			  	
+			  	<!-- SERIES CONTAINER -->			  	
+				<md-card ng-cloak ng-repeat="seriesContainer in seriesContainers track by $index">
+					<input ng-show='false' name="seriesNumber"  type="number"  ng-model="seriesNumber" > 
+
+					<md-toolbar>
+					
+						<div class="md-toolbar-tools">
+							
+							<!-- Add additional criteria for ng-if: only for the main SERIES container (instead of 'false') -->
+						    <md-button 	ng-if="!showMaxNmbSerAxesExceeded && seriesContainerAddAndRemoveIncludeTypes.indexOf(selectedChartType.toLowerCase())>=0 && seriesContainer.name=='Y'" 
+						    			class="md-icon-button" ng-click="addSeriesContainer(seriesContainer)" style="margin-left:2; margin-right:2;">
+								<md-icon aria-label="Add new series container" class="fa fa-plus" style="display:inline"></md-icon>						
+							</md-button>
+							
+							<md-menu ng-if="showMaxNmbSerAxesExceeded && seriesContainerAddAndRemoveIncludeTypes.indexOf(selectedChartType.toLowerCase())>=0 && seriesContainer.name=='Y'">
+							      
+						      	<md-button 	aria-label="Prevent adding a Series container - warning" class="md-icon-button" 
+						      				ng-click="openMenu($mdOpenMenu, $event);"
+						      				style="margin-left:2; margin-right:2;">
+						        	<md-icon md-menu-origin class="fa fa-plus" style="display:inline"></md-icon>
+						      	</md-button>
+						      	
+						      	<md-menu-content>
+							      
+					        		<md-menu-item>
+					          			<!-- If the maximum number of series containers is empty, show info. -->		
+									  	<span 	ng-bind-html="translate.load('sbi.chartengine.structure.yAxisPanel.plusButton.maximumNumberOfAxisExceeded')"
+							  		 			style="color:#bfbfbf">
+					  		 			</span>
+					        		</md-menu-item>
+								        						        
+							      </md-menu-content>
+							      
+						    </md-menu>
+							
+							<!-- Add additional criteria for ng-if: only for the additional SERIES container (instead of 'false') -->
+							<md-button 	ng-if="seriesContainerAddAndRemoveIncludeTypes.indexOf(selectedChartType.toLowerCase())>=0 && seriesContainer.name!='Y'" 
+										class="md-icon-button" ng-click="removeSeriesContainer(seriesContainer)" style="margin-left:2; margin-right:2;">
+								<md-icon aria-label="Remove the series container" class="fa fa-times" style="display:inline"></md-icon>						
+							</md-button>
+							
+							<h2>
+								<span>{{translate.load("sbi.chartengine.designer.structureTab.categoriesseries.series.title")}} ({{seriesContainer.name}})</span>
+							</h2>
+							
+							<span flex></span>	
+							
+							<md-button class="md-icon-button" ng-click="seriesRemoveAll(seriesContainer)" style="margin-left:2; margin-right:2;">
+								<md-icon aria-label="Remove all series" class="fa fa-eraser" style="display:inline"></md-icon>						
+							</md-button>
+							
+							<!-- Help button (Series container's empty text) -->
+							<md-menu>
+							      
+						      	<md-button 	aria-label="Help series container" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)"
+						      				style="margin-left:2; margin-right:2;" ng-class="isInvalid(seriesContainer.series) ? 'dangerBorder' : ''">
+						        	<md-icon md-menu-origin class="fa fa-question-circle" style="display:inline"></md-icon>
+						      	</md-button>
+						      	
+						      	<md-menu-content>
+							      
+					        		<md-menu-item class="noright" style="padding:0 8 0 16">
+					          			<span ng-if="selectedChartType.toLowerCase()!='pie' || chartLibNamesConfig.pie!='chartJs'" ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropmeasures.' + selectedChartType.toLowerCase())"></span>
+					        			<span ng-if="selectedChartType.toLowerCase()=='pie' && chartLibNamesConfig.pie=='chartJs'" ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropmeasures.' + selectedChartType.toLowerCase()+'_chartJS')"></span>
+					        		
+					        		</md-menu-item>
+					        		
+				        		</md-menu-content>
+				        		
+					      	</md-menu>
+							
+							<!-- alternatives: fa-arrows-alt, fa-outdent, fa-wrench -->
+							<!-- <md-button class="md-icon-button" ng-click="">
+								<md-icon aria-label="Axis general configuration" class="fa fa-pencil-square-o" style="display:inline"></md-icon>						
+							</md-button> -->
+							
+							<!-- alternatives: fa-font -->
+							<!-- <md-button class="md-icon-button" ng-click="">
+								<md-icon aria-label="Axis title configuration" class="fa fa-text-width" style="display:inline"></md-icon>						
+							</md-button> -->
+							
+							<!-- Menu for generic axis customization: axis configuration, title configuration, major grid, minor grid -->
+							<md-menu ng-hide="seriesContainerConfigDropDownExcludeTypes.indexOf(selectedChartType.toLowerCase())>=0" ng-if="disableHtmlElementForChartJs()">
+							      
+						      	<md-button 	aria-label="Open generic axis configurations' list" class="md-icon-button" 
+						      				ng-click="openMenu($mdOpenMenu, $event);"
+						      				style="margin-left:2; margin-right:2;">
+						        	<md-icon md-menu-origin class="fa fa-angle-down" style="display:inline"></md-icon>
+						      	</md-button>
+						      	
+						      	<md-menu-content width="5">
+							    
+					        		<md-menu-item ng-if=" selectedChartType.toLowerCase()!='pie' && disableHtmlElementForChartJs()">
+					          			<md-button ng-click="showStructureDetails('axisConfiguration',seriesContainer.name)">
+					 						<md-icon class="fa fa-pencil-square-o" style="display:inline"></md-icon>
+						            		<span>Axis configuration</span>
+						          		</md-button>
+					        		</md-menu-item>
+						        
+						        	<md-menu-item ng-if=" seriesAxisTitleExcludeTypes.indexOf(selectedChartType.toLowerCase())<0 && disableHtmlElementForChartJs()">
+						          		<md-button ng-click="showStructureDetails('axisTitleConfiguration',seriesContainer.name)" >
+						            		<md-icon class="fa fa-text-width" style="display:inline"></md-icon>
+						            		<span>Axis' title configuration</span>
+						          		</md-button>
+						        	</md-menu-item>	
+						        	
+						        	<md-menu-item ng-if="seriesAxisMajorMinorGirdExcludeTypes.indexOf(selectedChartType.toLowerCase())<0 && disableHtmlElementForChartJs()">
+						          		<md-button ng-click="showStructureDetails('axisMajorGridConfiguration',seriesContainer.name)" >
+						          			<md-icon class="fa fa-th-large" style="display:inline"></md-icon>
+						            		<span>Major grid configuration</span>
+						          		</md-button>
+						        	</md-menu-item>	
+						        	
+						        	<md-menu-item ng-if=" seriesAxisMajorMinorGirdExcludeTypes.indexOf(selectedChartType.toLowerCase())<0 && disableHtmlElementForChartJs()">
+						          		<md-button ng-click="showStructureDetails('axisMinorGridConfiguration',seriesContainer.name)" >
+						            		<md-icon class="fa fa-th" style="display:inline"></md-icon>
+						            		<span>Minor grid configuration</span>
+						          		</md-button>
+						        	</md-menu-item>	
+						        	<md-menu-item ng-if=" selectedChartType.toLowerCase()=='pie' && disableHtmlElementForChartJs()">
+						          		<md-button ng-click="showStructureDetails('serieTitle',seriesContainer.name)" >
+						            		<md-icon class="fa fa-pencil-square-o" style="display:inline"></md-icon>
+						            		<span>Serie title configuration</span>
+						          		</md-button>
+						        	</md-menu-item>	
+								        						        
+							      </md-menu-content>
+							      
+						    </md-menu>
+						    
+						    <!-- 
+						    	Menu for GAUGE's specific axis customization:
+						    		- 
+						     -->
+							<md-menu ng-if="selectedChartType.toLowerCase()=='gauge'">
+							      
+						      	<md-button 	aria-label="Open generic axis configurations' list" class="md-icon-button" 
+						      				ng-click="openMenu($mdOpenMenu, $event);"
+						      				style="margin-left:2; margin-right:2;">
+						        	<md-icon md-menu-origin class="fa fa-angle-double-down" style="display:inline"></md-icon>
+						      	</md-button>
+						      	
+						      	<md-menu-content width="4">
+							      
+					        		<md-menu-item>
+					          			<md-button ng-click="showStructureDetails('additionalParameters',seriesContainer.name)">
+					 						<md-icon class="fa fa-plus-square" style="display:inline"></md-icon>
+						            		<span>{{translate.load('sbi.chartengine.axisstylepopup.additionalParams.title')}}</span>
+						          		</md-button>
+					        		</md-menu-item>
+						        
+						        	<md-menu-item>
+						          		<md-button ng-click="showStructureDetails('mainTick',seriesContainer.name)">
+						            		<md-icon class="fa fa-list-ul" style="display:inline"></md-icon>
+						            		<span>{{translate.load('sbi.chartengine.axisstylepopup.mainTickParams.title')}}</span>
+						          		</md-button>
+						        	</md-menu-item>	
+						        	
+						        	<md-menu-item>
+						          		<md-button ng-click="showStructureDetails('minorTick',seriesContainer.name)">
+						          			<md-icon class="fa fa-list" style="display:inline"></md-icon>
+						            		<span>{{translate.load('sbi.chartengine.axisstylepopup.minorTickParams.title')}}</span>
+						          		</md-button>
+						        	</md-menu-item>	
+						        	
+						        	<md-menu-item>
+						          		<md-button ng-click="showStructureDetails('gaugeLabels',seriesContainer.name)">
+						            		<md-icon class="fa fa-font" style="display:inline"></md-icon>
+						            		<span>{{translate.load('sbi.chartengine.axisstylepopup.labelParams.title')}}</span>
+						          		</md-button>
+						        	</md-menu-item>	
+						        	
+						        	<md-menu-item>
+						          		<md-button ng-click="showStructureDetails('plotbands',seriesContainer.name)">
+						            		<md-icon class="fa fa-tachometer" style="display:inline"></md-icon>
+						            		<span>{{translate.load('sbi.chartengine.axisstylepopup.plotbandParams.title')}}</span>
+						          		</md-button>
+						        	</md-menu-item>	
+								        						        
+							      </md-menu-content>
+							      
+						    </md-menu>								    		
+							
+						</div>	
+					
+					</md-toolbar>
+				
+					<!-- SERIES ITEMS -->
+					<md-list flex ng-class="isInvalid(seriesContainer.series) ? 'dangerBorder' : ''">
+								
+						<!-- If the series container has at least one series item inside of it. -->		
+						<md-list-item ng-if="seriesContainer.series.length>0" ng-repeat="seriesItem in seriesContainer.series track by $index" class="noright" style="padding:0 8 0 16">
+						    
+						    <span><b>{{seriesItem}}</b></span>
+						    
+						    <span flex></span>
+						 
+						   	<md-button class="md-icon-button" ng-show="$index>0" ng-click="seriesItemMoveUp(seriesItem,seriesContainer)" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
+						   		<md-icon aria-label="Move series item up" class="fa fa-arrow-up" style="display:inline"></md-icon>
+					   		</md-button>
+					   		
+   	 						<md-button 	class="md-icon-button" ng-show="$index<seriesContainer.series.length-1" ng-click="seriesItemMoveDown(seriesItem,seriesContainer)" 
+   	 									style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
+   	 							<md-icon aria-label="Move series item down" class="fa fa-arrow-down" style="display:inline"></md-icon>
+ 	 						</md-button>
+						    
+						    <md-button 	class="md-icon-button" ng-click="showStructureDetails('seriesItemConfig');prepareSeriesItemConfiguration(seriesItem,seriesContainer.name);" 
+						    			style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
+						    	<!-- alternative: fa-paint-brush -->
+						   		<md-icon aria-label="Series item configuration" class="fa fa-pencil-square-o" style="display:inline"></md-icon>
+					   		</md-button>
+					   		
+					   		<div ng-if="(selectedChartType != 'treemap' && selectedChartType != 'heatmap' && selectedChartType != 'sunburst' && selectedChartType != 'parallel'  ) && disableHtmlElementForChartJs() " >
+					   		<md-button class="md-icon-button" ng-click="showStructureDetails('seriesItemTooltip');prepareSeriesItemConfiguration(seriesItem,seriesContainer.name);" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;" >
+					   			<!-- alternative: fa-comment-o -->
+						   		<md-icon aria-label="Series item tooltip configuration" class="fa fa-commenting" style="display:inline"></md-icon>
+					   		</md-button>
+   	 						</div>
+   	 						
+   	 						<md-button class="md-icon-button" ng-click="seriesItemRemove(seriesItem,seriesContainer.name)" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
+   	 							<md-icon aria-label="Delete series item" class="fa fa-trash-o" style="display:inline"></md-icon>
+ 	 						</md-button>
+   	 						
+					  	</md-list-item>
+					  	
+					  	<!-- If the series container is empty - no series data. -->		
+					  	<md-list-item ng-if="seriesContainer.series.length==0" class="noright" style="padding:0 8 0 16">
+				  		 	<span ng-if="selectedChartType.toLowerCase()!='pie' || chartLibNamesConfig.pie!='chartJs'"	ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropmeasures.' + selectedChartType.toLowerCase())"
+				  		 			style="color:#bfbfbf">
+		  		 			</span>
+		  		 			<span ng-if="selectedChartType.toLowerCase()=='pie' && chartLibNamesConfig.pie=='chartJs'"	ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropmeasures.' + selectedChartType.toLowerCase()+'_chartJS')"
+				  		 			style="color:#bfbfbf">
+		  		 			</span>
+					  	</md-list-item>
+					  	
+				  	</md-list>	
+				  	
+			  	</md-card>
+			  			
+			</md-whiteframe>
+			
+		</div>
+		
+		<!-- 
+			DETAILS
+		 -->
+		 <!-- TODO: Uncomment this line and remove the one below, which is  just for development process -->
+		<!-- <div hide-md ng-show="structureDetailsShown" layout="column" flex=25 style="padding:0 8 0 0">   -->
+		<div ng-show="structureDetailsShown" layout="column" flex=25 style="padding:0 8 0 0">  
+			
+			<md-toolbar class="secondaryToolbar">
+			
+				<div class="md-toolbar-tools">
+					
+					<h2>
+						<span>{{structureTabDetailsName}}</span>
+					</h2>
+					
+					<span flex></span>	
+					
+					<!-- Add additional criteria for ng-if: only for the additional SERIES container (instead of 'false') -->
+					<md-button class="md-icon-button" ng-click="hideStructureDetails()" style="margin-left:2; margin-right:2;">
+						<md-icon aria-label="Close Structure details panel" class="fa fa-times" style="display:inline"></md-icon>						
+					</md-button>
+							   		
+				</div>	
+					      
+			</md-toolbar>
+			
+			<!-- hide-md: Hide if the width of the screen is lower than 1280px -->
+			<md-whiteframe flex layout class="md-whiteframe-4dp whiteframe-element" style="overflow:auto">		
+				<div ng-show="true" flex layout>
+					<md-content flex>					
+						<div ng-include src="structureTabDetailsTemplateURL" flex layout></div>					
+					</md-content>
+				</div>			
+			</md-whiteframe>
+			
+		</div>
+		
+		<!-- 
+			PREVIEW OF THE CHART
+		 -->
+		 <!-- TODO: Uncomment this line and remove the one below, which is  just for development process -->
+		<!-- <div hide-md layout="column" flex={{structurePreviewFlex}} style="padding:0">  -->
+		
+		<!--commented perview panel -->
+		<div hide-md layout="column" flex={{structurePreviewFlex}} style="padding:0" ng-if=!isCockpitEng ng-show="openPreviewPanel"> 
+			<md-toolbar class="secondaryToolbar">
+				<div class="md-toolbar-tools">
+					<h2>
+						<span>{{translate.load("sbi.chartengine.designer.tabs.preview.title")}}</span>
+					</h2>
+					<span flex></span>				   		
+				</div>		      
+			</md-toolbar>
+		
+			<md-whiteframe flex layout="row" class="md-whiteframe-4dp whiteframe-element">
+			
+			<div loading ng-show="showEl" flex layout="row" layout-align="center center">
+		 			 <md-progress-circular md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
+			</div>	
+			
+			<div  width="100%" ng-show="showimg">
+				<img ng-src="{{previewUrl}}" width="100%" ng-show="!showEl" />
+			</div>
+			
+				
+			<div id ="forSVGPreview" />
+			</md-whiteframe>
+			
+		</div>  
+	
+	</div>
+	
+</md-tab-content>

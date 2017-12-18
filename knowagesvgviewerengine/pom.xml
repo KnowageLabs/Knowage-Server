@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>it.eng.knowage</groupId>
+		<artifactId>knowage-ce-parent</artifactId>
+		<version>6.1.2</version>
+		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>knowagesvgviewerengine</artifactId>
+	<packaging>war</packaging>
+
+	<dependencies>
+		
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-utils</artifactId>
+			<version>6.1.2</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.cometd.java</groupId>
+					<artifactId>cometd-java-server</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>qbe-core</artifactId>
+			<version>6.1.2</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-dao</artifactId>
+			<version>6.1.2</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>3.1.2.Final</version>
+			<scope>runtime</scope>
+        </dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-legacy</artifactId>
+			<version>3.1.2.Final</version>
+			<scope>runtime</scope>
+        </dependency>
+		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-servlet-initializer</artifactId>
+			<version>3.1.2.Final</version>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-transcoder</artifactId>
+			<version>1.7</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		
+	</dependencies>
+	
+	<name>knowagesvgviewerengine</name>
+</project>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PUBLISHERS>
+   	<PUBLISHER name="DetailEnginePubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.engines.config.presentation.DetailEnginePublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.engines.config.presentation.DetailEnginePublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>   
+  	<PUBLISHER name="ListEnginesPubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.engines.config.presentation.ListEnginesPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.engines.config.presentation.ListEnginesPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="listEngines">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/engines/config/listEngines.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/engines/config/listEngines.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+
+  	
+  	<PUBLISHER name="detailEngine">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/engines/config/detailEngine.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/engines/config/detailEngine.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="detailEngineLoop">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ListEnginesPage" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ListEnginesPage" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+    
+                                  	
+</PUBLISHERS>

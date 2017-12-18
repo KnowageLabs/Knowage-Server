@@ -1,0 +1,54 @@
+<div ng-form name="sequenceForm" layout="column" >
+
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.configuration.position")}}</label>
+		 <md-select ng-model="chartTemplate.TOOLBAR.style.position" name="sequence_position"> <md-option
+		ng-repeat="option in orderParallelOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.configuration.sunburst.toolbar.spacing")}}</label>
+		 <input type="number" step="any" name="sequence_spacing"
+		ng-model="chartTemplate.TOOLBAR.style.spacing" 
+		ng-required="chartTemplate.type.toLowerCase()=='sunburst'"
+		ng-min="chartTemplate.type.toLowerCase()=='sunburst'?1:undefined"
+		 /> </md-input-container>
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.configuration.sunburst.toolbar.tail")}}</label>
+		 <input type="number" step="any" name="sequence_tail"
+		ng-model="chartTemplate.TOOLBAR.style.tail" 
+		ng-required="chartTemplate.type.toLowerCase()=='sunburst'"
+		ng-min="chartTemplate.type.toLowerCase()=='sunburst'?10:undefined"
+		 /> </md-input-container>
+
+	<md-input-container class="md-block colorInputContainer" >
+	<label  ng-class="{'kn-inputError':configurationForm.sequenceForm.sequence_percFontColor.$invalid}">{{translate.load("sbi.chartengine.configuration.sunburst.toolbar.percentageColorRequired")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="chartTemplate.TOOLBAR.style.percFontColor" name="sequence_percFontColor"
+		ng-required="chartTemplate.type.toLowerCase()=='sunburst'"></color-picker> </md-input-container>
+		
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
+		 <md-select ng-model="chartTemplate.TOOLBAR.style.fontFamily" name="sequence_ffamily"> <md-option
+		ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontstyle")}}</label>
+		 <md-select ng-model="chartTemplate.TOOLBAR.style.fontWeight" name="sequence_fstyle"
+		 ng-required="chartTemplate.type.toLowerCase()=='sunburst'"> <md-option
+		ng-repeat="option in fontStyleOptionsNS" value="{{option.value}}"
+		>{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
+		 <md-select ng-model="chartTemplate.TOOLBAR.style.fontSize" name="sequence_fsize"
+		  ng-required="chartTemplate.type.toLowerCase()=='sunburst'"> <md-option
+		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+	
+</div>
+

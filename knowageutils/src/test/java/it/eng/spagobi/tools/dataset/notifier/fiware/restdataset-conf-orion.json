@@ -1,0 +1,41 @@
+{
+    "restAddress": "http://192.168.2.137:1026/v1/queryContext?limit=1000",
+    "restRequestBody": "{\"entities\": [{\"type\": \"Meter\",\"isPattern\": \"true\",\"id\": \".*\"}]}",
+    "restHttpMethod": "post",
+    "restRequestBodyCharset": "UTF-8",
+    "restRequestHeaders": {
+        "Content-Type": "application/json","Accept": "application/json"
+    },
+    "restOffset":"offset1",
+    "restFetchSize":"fetch1",
+    "restMaxResults":"max1",
+    "restDirectlyJSONAttributes":"false",
+    "restJsonPathItems": "$.contextResponses[*].contextElement",
+    "restJsonPathAttributes": [
+        {
+            "name": "downstreamActivePower",
+            "jsonPathValue": "$.attributes[?(@.name==downstreamActivePower)].value",
+            "jsonPathType": "$.attributes[?(@.name==downstreamActivePower)].type"
+        },
+        {
+            "name": "atTime",
+            "jsonPathValue": "$.attributes[?(@.name==atTime)].value",
+            "jsonPathType": "timestamp yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        },
+        {
+            "name": "upstreamActivePower",
+            "jsonPathValue": "$.attributes[?(@.name==upstreamActivePower)].value",
+            "jsonPathType": "double"
+        },
+        {
+            "name": "id",
+            "jsonPathValue": "$.id",
+            "jsonPathType": "string"
+        },
+        {
+            "name": "isPattern",
+            "jsonPathValue": "$.isPattern",
+            "jsonPathType": "boolean"
+        }
+    ]
+}

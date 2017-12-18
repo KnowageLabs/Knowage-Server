@@ -1,0 +1,22 @@
+<md-dialog aria-label="Accessibility dialog"> 
+	<md-toolbar>
+	  <div class="md-toolbar-tools">
+	    <h2>{{translate.load('sbi.accessibility.settings.title')}}</h2>
+	  </div>
+	</md-toolbar>
+	<md-dialog-content>
+		<div class="md-dialog-content">
+			<md-switch ng-model="enableAccessibility" aria-label="enable accessibility mode">
+			  {{translate.load('sbi.accessibility.settings.enable')}}
+			</md-switch>
+		</div>
+	</md-dialog-content>
+	<md-dialog-actions layout="row">
+		<md-button ng-click="closeDialog()" class="md-primary">
+			{{translate.load('sbi.accessibility.settings.close')}}
+  	    </md-button>
+ 		<md-button ng-click="saveAccessibilityPreferences()" class="md-primary">
+			{{translate.load('sbi.accessibility.settings.save')}}
+   	   	</md-button>
+	</md-dialog-actions>
+</md-dialog>                                         

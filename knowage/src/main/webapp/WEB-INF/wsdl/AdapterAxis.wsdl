@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://axis.soap.spago.eng.it" xmlns:impl="http://axis.soap.spago.eng.it" xmlns:intf="http://axis.soap.spago.eng.it" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+<!--WSDL created by Apache Axis version: 1.2.1
+Built on Jun 14, 2005 (09:15:57 EDT)-->
+
+   <wsdl:message name="serviceResponse">
+
+      <wsdl:part name="serviceReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="serviceRequest">
+
+      <wsdl:part name="request" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="AdapterAxis">
+
+      <wsdl:operation name="service" parameterOrder="request">
+
+         <wsdl:input name="serviceRequest" message="impl:serviceRequest"/>
+
+         <wsdl:output name="serviceResponse" message="impl:serviceResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="AdapterAxisSoapBinding" type="impl:AdapterAxis">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="service">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="serviceRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis.soap.spago.eng.it"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="serviceResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis.soap.spago.eng.it"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="AdapterAxisService">
+
+      <wsdl:port name="AdapterAxis" binding="impl:AdapterAxisSoapBinding">
+
+         <wsdlsoap:address location="http://localhost:8080/SpagoAxisService/services/AdapterAxis"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

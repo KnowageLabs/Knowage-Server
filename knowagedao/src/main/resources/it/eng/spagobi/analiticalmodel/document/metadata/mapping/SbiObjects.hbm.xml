@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+ <!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+ <class
+  name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" table="SBI_OBJECTS">
+  <id name="biobjId" type="integer">
+   <column name="biobj_id"/>
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">none</param>
+		<param name="segment_value">SBI_OBJECTS</param>	
+		<param name="initial_value">1</param>	
+   </generator>
+  </id>
+  <component class="it.eng.spagobi.commons.metadata.SbiCommonInfo" name="commonInfo">
+   <property generated="never" lazy="false" name="userIn" type="string">
+    <column length="100" name="USER_IN" not-null="true"/>
+   </property>
+   <property generated="never" lazy="false" name="userUp" type="string">
+    <column length="100" name="USER_UP" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="userDe" type="string">
+    <column length="100" name="USER_DE" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="timeIn" type="timestamp">
+    <column name="TIME_IN" not-null="true"/>
+   </property>
+   <property generated="never" lazy="false" name="timeUp" type="timestamp">
+    <column name="TIME_UP" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="timeDe" type="timestamp">
+    <column name="TIME_DE" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="sbiVersionIn" type="string">
+    <column length="10" name="SBI_VERSION_IN" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="sbiVersionUp" type="string">
+    <column length="10" name="SBI_VERSION_UP" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="sbiVersionDe" type="string">
+    <column length="10" name="SBI_VERSION_DE" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="organization" type="string">
+    <column length="20" name="ORGANIZATION" not-null="false"/>
+   </property>
+  </component>
+   
+  <many-to-one class="it.eng.spagobi.engines.config.metadata.SbiEngines"
+   fetch="join" name="sbiEngines">
+   <column name="engine_id" not-null="true"/>
+  </many-to-one>
+  <many-to-one class="it.eng.spagobi.commons.metadata.SbiDomains" name="stateConsideration">
+   <column name="state_cons_id"/>
+  </many-to-one>
+  <many-to-one class="it.eng.spagobi.commons.metadata.SbiDomains" name="state">
+   <column name="state_id" not-null="true"/>
+  </many-to-one>
+  <many-to-one class="it.eng.spagobi.commons.metadata.SbiDomains" name="execMode">
+   <column name="exec_mode_id"/>
+  </many-to-one>
+  <many-to-one class="it.eng.spagobi.commons.metadata.SbiDomains" name="objectType">
+   <column name="biobj_type_id" not-null="true"/>
+  </many-to-one>
+  <many-to-one
+   class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource"
+   fetch="join" name="dataSource">
+   <column name="data_source_id" not-null="false"/>
+  </many-to-one>
+  <!-- 
+  <many-to-one
+   class="it.eng.spagobi.tools.dataset.metadata.SbiDataSet"
+   fetch="join" name="dataSet">
+   <column name="data_set_id" not-null="false"/>
+  </many-to-one>
+   -->
+   
+  <property generated="never" lazy="false" name="objectTypeCode" type="string">
+   <column length="20" name="biobj_type_cd" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="encrypt" type="short">
+   <column name="encrypt"/>
+  </property>
+  <property generated="never" lazy="false" name="visible" type="short">
+   <column name="visible"/>
+  </property>
+  <property generated="never" lazy="false" name="profiledVisibility" type="string">
+   <column name="PROF_VISIBILITY"/>
+  </property>
+  <property generated="never" lazy="false" name="stateCode" type="string">
+   <column length="20" name="state_cd" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="schedFl" type="short">
+   <column name="sched_fl"/>
+  </property>
+  <property generated="never" lazy="false" name="execModeCode" type="string">
+   <column length="20" name="exec_mode_cd"/>
+  </property>
+  <property generated="never" lazy="false" name="stateConsiderationCode" type="string">
+   <column length="20" name="state_cons_cd"/>
+  </property>
+  <property generated="never" lazy="false" name="label" type="string">
+   <column length="20" name="label" not-null="true" unique="true"/>
+  </property>
+  <property generated="never" lazy="false" name="name" type="string">
+   <column length="200" name="name" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="descr" type="string">
+   <column length="400" name="descr"/>
+  </property>
+  <property generated="never" lazy="false" name="path" type="string">
+   <column length="400" name="path"/>
+  </property>
+  <property generated="never" lazy="false" name="relName" type="string">
+   <column length="400" name="rel_name"/>
+  </property>
+  <property generated="never" lazy="false" name="uuid" type="string">
+   <column length="40" name="UUID" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="creationDate" type="timestamp">
+   <column name="CREATION_DATE"/>
+  </property>
+  <property generated="never" lazy="false" name="creationUser" type="string">
+   <column length="45" name="CREATION_USER"/>
+  </property>
+  <property generated="never" lazy="false" name="refreshSeconds" type="integer">
+   <column name="REFRESH_SECONDS"/>
+  </property>
+  <property generated="never" lazy="false" name="previewFile" type="string">
+   <column length="100" name="PREVIEW_FILE"/>
+  </property>
+  <property generated="never" lazy="false" name="parametersRegion" type="string">
+   <column length="20" name="PARAMETERS_REGION"/>
+  </property>
+     <property generated="never" lazy="false"  name="lockedByUser" type="string">
+            <column name="LOCKED_BY_USER" length="100" />
+   </property>    
+  
+  <set inverse="true" name="sbiObjPars" sort="unsorted">
+   <key>
+    <column name="biobj_id" not-null="true"/>
+   </key>
+   <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar"/>
+  </set>
+  <set name="sbiOutputParameters" lazy="true" inverse="true" >
+   <key>
+    <column name="biobj_id" not-null="true"/>
+   </key>
+   <one-to-many class="it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter"/>
+  </set>
+  <set fetch="join" inverse="true" name="sbiObjFuncs" sort="unsorted">
+   <key>
+    <column name="biobj_id" not-null="true"/>
+   </key>
+   <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc"/>
+  </set>
+  <set inverse="true" name="sbiObjStates" sort="unsorted">
+   <key>
+    <column name="biobj_id" not-null="true"/>
+   </key>
+   <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjState"/>
+  </set>
+  
+  <filter name="tenantFilter" condition="organization=:tenant"/>  
+ </class>
+ <filter-def name="tenantFilter">
+  <filter-param name="tenant" type="string"/>
+ </filter-def>
+</hibernate-mapping>

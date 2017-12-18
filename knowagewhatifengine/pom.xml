@@ -1,0 +1,131 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>it.eng.knowage</groupId>
+		<artifactId>knowage-ce-parent</artifactId>
+		<version>6.1.2</version>
+		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>knowagewhatifengine</artifactId>
+	<packaging>war</packaging>
+
+	<build>
+	    <plugins>
+	        <plugin>
+	            <artifactId>maven-war-plugin</artifactId>
+	            <configuration>
+	                <attachClasses>true</attachClasses>
+	                <classesClassifier>classes</classesClassifier>
+	            </configuration>
+	        </plugin>
+	    </plugins>
+	</build>
+
+	<dependencies>
+		
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-utils</artifactId>
+			<version>6.1.2</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.cometd.java</groupId>
+					<artifactId>cometd-java-server</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.poi</groupId>
+					<artifactId>poi</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.servlet.jsp</groupId>
+					<artifactId>jsp-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-hdfs</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-common</artifactId>
+				</exclusion>
+
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>3.1.2.Final</version>
+			<scope>runtime</scope>
+        </dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-legacy</artifactId>
+			<version>3.1.2.Final</version>
+			<scope>runtime</scope>
+        </dependency>
+		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-servlet-initializer</artifactId>
+			<version>3.1.2.Final</version>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.olap4j</groupId>
+			<artifactId>olap4j</artifactId>
+			<version>1.1.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.pivot4j</groupId>
+			<artifactId>pivot4j-core</artifactId>
+			<version>0.9</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>pentaho</groupId>
+			<artifactId>mondrian</artifactId>
+			<version>3.10.0.0-100</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>jsp-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>3.6.2.Final</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>1.8.0.10</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+	
+	<name>knowagewhatifengine</name>
+</project>

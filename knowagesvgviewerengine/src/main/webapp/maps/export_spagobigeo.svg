@@ -1,0 +1,87 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg 
+	width="1101" 
+	height="751" 
+	viewBox="0 0 1101 751" 
+	xmlns:batik="http://xml.apache.org/batik/ext" 
+	xmlns:attrib="http://www.carto.net/attrib" 
+	xmlns:xlink="http://www.w3.org/1999/xlink" 
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:svg="http://www.w3.org/2000/svg" contentStyleType="text/css"    
+	xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+	xmlns:cc="http://web.resource.org/cc/" sodipodi:version="0.32"
+	zoomAndPan="disable"
+	preserveAspectRatio="xMidYMin meet"
+>
+
+		<title>SpagoBI Geo Engine</title>
+		
+
+		
+		
+		<rect x="0" y="0" width="1100" height="750" stroke="none" fill="#e6e6e6"/>
+		<rect x="0" y="0" width="1100" height="750" fill="none" stroke="dimgray"/>
+		
+		<!-- sfondo della mappa -->
+		<rect x="4" y="34" width="1092" height="690" fill="white"/>
+		
+		
+		
+		<!-- Main Map Frame -->
+		<svg id="mainMap" x="4" y="34" width="1092" height="690" viewBox="0 0 0 0" 
+			xmlns:attrib="http://www.carto.net/attrib" xmlns:xlink="http://www.w3.org/1999/xlink" 
+			xmlns="http://www.w3.org/2000/svg" 
+			preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify">
+			
+			<style type="text/css">
+				<![CDATA[
+				circle {stroke-width:2}
+				]]>
+			</style>
+
+			<g id="mainMapGroup">
+		
+				<rect id="mapBackgroundRect" x="0" y="0" width="0" height="0" fill="none" stroke="none" pointer-events="fill"/>
+
+				<g id="targetMap"> </g>
+				
+				<g id="charts" fill="white" stroke="black" stroke-width="0.2" stroke-linecap="square " stroke-linejoin="miter"> </g>
+				<g id="values" fill="white" stroke="black" stroke-width="0.2" stroke-linecap="square " stroke-linejoin="miter">	</g>
+				
+			</g>
+				
+		</svg>	
+		
+		<!-- cornice della mappa -->
+		<rect x="4" y="34" width="1092" height="690" fill="none" stroke="dimgray"/>
+		
+		
+	    <!-- Legend Window -->
+		<g id="legend" transform="translate(10,40)">
+			
+		</g>
+	        
+	    <g id="mapHeader">  
+	      <text id="header-left" x="6" y="25" font-size="20px" startOffset="0" text-anchor="start" fill="black" width="1092" font-family="Arial,Helvetica" 
+        font-weight="bold" pointer-events="none"></text>
+			 
+		    <text id="header-center" x="542" y="25" font-size="20px" startOffset="0" text-anchor="middle" fill="black" width="1092" font-family="Arial,Helvetica" 
+        font-weight="bold" pointer-events="none"></text>
+		
+			 <text id="header-right" x="1092" y="25" font-size="20px" startOffset="0" text-anchor="end" fill="black" width="1092" 
+        font-family="Arial,Helvetica" font-weight="bold" pointer-events="none"></text>
+		  </g>
+	
+	    <g id="mapFooter">  
+	      <text id="footer-left" x="4" y="743" startOffset="0" text-anchor="start"></text>
+	      <text id="footer-center" x="542" y="743" startOffset="0" text-anchor="middle"></text>
+	    	<text id="footer-right" x="1092" y="743" startOffset="0" text-anchor="end"></text>
+	    </g>
+	    	
+	
+</svg>

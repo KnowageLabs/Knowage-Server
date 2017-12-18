@@ -1,0 +1,32 @@
+<md-dialog aria-label="fields property" class="width80">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{translate.format(translate.load("sbi.cockpit.pivot.field.edit"),(isMeasure ? translate.load("sbi.cockpit.pivot.measures") : translate.load("sbi.cockpit.pivot.attributes")))}}</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content" layout="column">
+		<md-input-container>
+		  <label>{{translate.load('sbi.cockpit.table.alias')}}</label>
+		  <input ng-model="currentItem.alias">
+		</md-input-container>		
+		<md-input-container ng-if="isMeasure">
+			<label>{{translate.load('sbi.cockpit.aggregationwindow.selectAggregation')}}</label>
+			<md-select ng-model="currentItem.funct">
+				<md-option ng-repeat="agF in AggregationFunctions" ng-value="agF.value" >
+				{{agF.label}}
+				</md-option>
+			</md-select>
+		</md-input-container>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row"  layout-align="end center">
+      <md-button ng-click="cancelConfiguration()" >
+         {{translate.load('sbi.generic.cancel')}}
+      </md-button>
+      <md-button ng-click="saveConfiguration()"  >
+         {{translate.load('sbi.generic.save')}}
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

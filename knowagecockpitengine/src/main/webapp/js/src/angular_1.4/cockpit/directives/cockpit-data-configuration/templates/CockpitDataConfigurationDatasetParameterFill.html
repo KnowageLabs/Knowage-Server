@@ -1,0 +1,27 @@
+
+<md-dialog aria-label="table configuration" ng-cloak  layout="column" style="max-height: 80%;width: 80%;">
+<form name="parameterForm"   ng-cloak flex layout="column">
+    <md-toolbar class="secondaryToolbar" layout="row">
+		<h1 flex class="md-toolbar-tools">{{translate.load('sbi.cockpit.mainpanel.btn.parameters')}}</h1>
+	</md-toolbar>
+    <md-dialog-content flex layout=column  >
+    	<div class="md-dialog-content"  flex layout=column >
+	    	<md-input-container ng-repeat="par in tmpParam"    ">
+	          <label>{{par.name}}</label>
+	          <input type={{par.type}} ng-model="par.value" ng-init="par.value=par.value==undefined ? par.defaultValue : par.value" required>
+	        </md-input-container>
+			</div>
+	</md-dialog-content>
+			
+	    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="cancelConfiguration()" >
+        {{translate.load('sbi.generic.cancel')}}
+      </md-button>
+      <md-button ng-click="saveConfiguration()" ng-disabled=" parameterForm.$invalid" >
+        {{translate.load('sbi.generic.save')}} 
+      </md-button>
+    </md-dialog-actions>
+	 
+</form>
+</md-dialog>

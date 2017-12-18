@@ -1,0 +1,256 @@
+#set($category = $chart.VALUES.CATEGORY)
+
+#set($dataRows = $data.rows)
+#set($dataFields = $data.metaData.fields) ## columns of data table
+#set($dataColumnsMapper = {})
+
+#foreach ($dataField in $dataFields) ## conversion column name to internal column name
+ #if($dataField.class.name == 'java.util.LinkedHashMap')
+  #set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header, $dataField.name))
+ #end
+#end
+
+#*  
+ For Java class of dataset transformer we need '$dataRows' (raw JSON dataset),
+ '$columnsNeeded' (name of the columns for sequence) and $$dataColumnsMapper (metadata)
+*#
+
+#set($columnsNeeded = {})
+
+#set($columnCounter = 0)
+
+#if(!$category.column)
+	#foreach($value in $category) 
+		 #set($columnsNeeded[$columnCounter] = $value.name)
+		 
+		 #set($columnCounter = $columnCounter + 1)
+	#end
+#else
+	#set($columnsNeeded[0] = $category.column)
+#end
+
+#if($!chart.VALUES.SERIE)
+
+	#* 
+		Convert an array list with the single element into the HashMap so we can 
+		use it in a general way, even if we are calling the VM for purpose of
+		previewing the CHORD chart.
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	*#
+	#if($chart.VALUES.SERIE.class.name == 'java.util.ArrayList')
+		#set($chart.VALUES.SERIE = $chart.VALUES.SERIE[0])
+	#end
+
+	#set($serieName = $chart.VALUES.SERIE.name)
+#end
+
+## @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) [JIRA 1060 and 1061]
+#set($seriesItem = $chart.VALUES.SERIE)
+#set($seriesItemTooltip = $seriesItem.TOOLTIP)
+
+#if($!chart.VALUES.SERIE)
+	#set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
+#end
+
+#set($sizeCriteria = $chart.sizeCriteria)
+#set($result = $datasettransformer.toWordcloud($columnsNeeded,$dataColumnsMapper,$dataRows,$serieName, $sizeCriteria, $groupingFunction))
+
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
+
+{
+ 	chart: 
+ 	{
+  		type: '$chart.type',
+		
+  		#if($chart.height != '')
+        	height: $chart.height,
+        #end
+        
+        #*
+    		Dimension type (pixels or percentage) parameter for height of the chart
+    		is provided. 
+    		
+    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').
+    				
+    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	*#
+     	#if($chart.heightDimType)
+       	 	heightDimType: '$chart.heightDimType',
+        #end
+        
+        #if($chart.width != '')
+    		width: $chart.width,
+    	#end
+    	
+    	#if($chart.widthDimType)
+        	widthDimType: '$chart.widthDimType',
+        #end
+		
+  		sizeCriteria: '$chart.sizeCriteria',
+  		wordLayout: '$chart.wordLayout',
+  		preventOverlap: $chart.preventOverlap,
+  		maxAngle: $chart.maxAngle,
+  		minAngle: $chart.minAngle,
+  		maxFontSize: $chart.maxFontSize,
+  		minFontSize: $chart.minFontSize,
+  		wordPadding: $chart.wordPadding,
+  		maxWords: $chart.maxWords,
+  		isCockpit: $chart.isCockpitEngine, 
+  		
+		#*
+  			If we are previewing a chart inside a Designer widget in the Cockpit, the 'chart.outcomingEventsEnabled' will be NULL, so we need to check if this is the case.
+  			If not providing this check, we will experience rendering problem within the Highcharts Export (value for 'outcomingEventsEnabled' template property will be 
+  			'$chart.outcomingEventsEnabled'.
+  			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  		*#
+  		#if($chart.isCockpitEngine=='true' && "$!chart.outcomingEventsEnabled" != "")
+  			outcomingEventsEnabled: $chart.outcomingEventsEnabled,
+  		#end
+
+  		style:
+  		{
+  			fontFamily: '$chart.style.fontFamily',
+	  		backgroundColor: '$chart.style.backgroundColor',	  		
+            fontSize:'$chart.style.fontSize',					
+			#if($chart.style.fontWeight == 'italic' || $chart.style.fontWeight == 'normal')
+    			fontStyle: '$chart.style.fontWeight',
+			#elseif($chart.style.fontWeight == 'underline')
+    			textDecoration: '$chart.style.fontWeight',
+			#elseif($chart.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.style.fontWeight',
+    		#end
+  		}  		
+ 	},
+ 
+ 	## Same as for the Sunburst chart
+ 	emptymessage:
+	{
+		text: "$chart.EMPTYMESSAGE.text",		
+		
+		style:
+		{
+			align: '$chart.EMPTYMESSAGE.style.align',
+			fontFamily: '$chart.EMPTYMESSAGE.style.fontFamily',		
+			fontSize: '$chart.EMPTYMESSAGE.style.fontSize',
+			color: '$chart.EMPTYMESSAGE.style.color',
+					
+			#if($chart.EMPTYMESSAGE.style.fontWeight == 'italic' || $chart.EMPTYMESSAGE.style.fontWeight == 'normal')
+    			fontStyle: '$chart.EMPTYMESSAGE.style.fontWeight',
+			#elseif($chart.EMPTYMESSAGE.style.fontWeight == 'underline')
+    			textDecoration: '$chart.EMPTYMESSAGE.style.fontWeight',
+			#elseif($chart.EMPTYMESSAGE.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
+    		#end
+		}
+	},
+	
+	title:
+	{
+		text: "$chart.TITLE.text",		
+		
+		style:
+		{
+			fontFamily: '$chart.TITLE.style.fontFamily',
+			fontSize: '$chart.TITLE.style.fontSize',
+			color: '$chart.TITLE.style.color',
+			align: '$chart.TITLE.style.align',
+					
+			#if($chart.TITLE.style.fontWeight == 'italic' || $chart.TITLE.style.fontWeight == 'normal')
+    			fontStyle: '$chart.TITLE.style.fontWeight',
+			#elseif($chart.TITLE.style.fontWeight == 'underline')
+    			textDecoration: '$chart.TITLE.style.fontWeight',
+			#elseif($chart.TITLE.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.TITLE.style.fontWeight',
+    		#end
+		}
+	},
+
+	subtitle:
+	{
+		text: "$chart.SUBTITLE.text",		
+		
+		style:
+		{
+			fontFamily: '$chart.SUBTITLE.style.fontFamily',
+			fontSize: '$chart.SUBTITLE.style.fontSize',
+			color: '$chart.SUBTITLE.style.color',
+			align: '$chart.SUBTITLE.style.align',
+					
+			#if($chart.SUBTITLE.style.fontWeight == 'italic' || $chart.SUBTITLE.style.fontWeight == 'normal')
+    			fontStyle: '$chart.SUBTITLE.style.fontWeight',
+			#elseif($chart.SUBTITLE.style.fontWeight == 'underline')
+    			textDecoration: '$chart.SUBTITLE.style.fontWeight',
+			#elseif($chart.SUBTITLE.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.SUBTITLE.style.fontWeight',
+    		#end
+		}
+	},
+	
+	#* 
+		The chart does not take parameters for the customization of the series item and its tooltip from separate XML tag, but
+		rather from the SERIE tag of the chart's XML template (tooltip panel is removed from the second tab in the Designer when
+		working with the WORDCLOUD, hence no more WORDCLOUD_TOOLTIP tag in the XML).  
+		@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	*#
+	tooltip:
+	{
+       	precision : '$seriesItem.precision',
+	   	prefix: '$seriesItem.prefixChar',
+	   	postfix: '$seriesItem.postfixChar',
+	   	   
+	   	#*
+			The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+			"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+			these abbreviations (number suffix) along with the scaled number.
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		*# 
+ 		#if($seriesItem.scaleFactor && "$!$seriesItem.scaleFactor" != "")
+			 scaleFactor: '$seriesItem.scaleFactor',
+		#else
+			 scaleFactor: 'empty',
+		#end
+	   
+	   	backgroundColor:'$seriesItemTooltip.backgroundColor',
+	   	fontFamily:'$seriesItemTooltip.style.fontFamily',
+	   	fontSize:'$seriesItemTooltip.style.fontSize',
+	   	align:'$seriesItemTooltip.style.align',
+	   	fontColor:'$seriesItemTooltip.style.color',
+	   	
+	   	#if($seriesItemTooltip.style.fontWeight == 'italic' || $seriesItemTooltip.style.fontWeight == 'normal')
+			fontStyle: '$seriesItemTooltip.style.fontWeight',
+		#elseif($seriesItemTooltip.style.fontWeight == 'underline')
+			textDecoration: '$seriesItemTooltip.style.fontWeight',
+		#elseif($seriesItemTooltip.style.fontWeight == 'bold')		        			
+			fontWeight: '$seriesItemTooltip.style.fontWeight',
+		#end  
+		
+    	borderWidth:'$seriesItemTooltip.borderWidth',
+    	borderRadius:'$seriesItemTooltip.borderRadius'	
+	},
+	
+    crossNavigation:
+    {
+    	#if($crossNavigation != '') 
+						crossNavigationDocumentName: '$crossNavigation.document',
+						crossNavigationDocumentParams: [
+							## if single PARAM node, not array
+							#if($crossNavigation.PARAM_LIST.PARAM.class.name == "java.util.LinkedHashMap")
+								#set($param = $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' }
+							#else
+								##Array of parameters
+								
+								#foreach($param in $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' },
+								#end
+							#end
+						],
+		#end
+    },
+    
+ 	data:
+ 	[
+  		$result
+ 	]
+}

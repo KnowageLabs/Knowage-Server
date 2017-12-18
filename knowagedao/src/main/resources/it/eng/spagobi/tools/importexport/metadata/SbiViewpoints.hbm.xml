@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 7-set-2007 15.54.18 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiViewpoints" table="SBI_VIEWPOINTS">
+        <id name="vpId" type="integer">
+            <column name="VP_ID" />
+        </id>
+        <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+            <column name="BIOBJ_ID" not-null="true" />
+        </many-to-one>
+        <property name="vpName" type="string">
+            <column name="VP_NAME" not-null="true" />
+        </property>
+        <property name="vpOwner" type="string">
+            <column name="VP_OWNER" />
+        </property>                
+        <property name="vpDesc" type="string">
+            <column name="VP_DESC" />
+        </property>
+        <property name="vpScope" type="string">
+            <column name="VP_SCOPE" not-null="true" />
+        </property>
+        <property name="vpValueParams" type="string">
+            <column name="VP_VALUE_PARAMS" />
+        </property>
+        <property name="vpCreationDate" type="timestamp">
+            <column name="VP_CREATION_DATE" not-null="true"/>
+        </property>      
+        
+    </class>
+</hibernate-mapping>

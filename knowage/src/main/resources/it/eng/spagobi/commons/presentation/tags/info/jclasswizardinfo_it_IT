@@ -1,0 +1,25 @@
+<div style='width:600px;font-size:10px;font-family:verdana;' >
+<br/>
+La classe java deve implementare l'interfaccia it.eng.spagobi.bo.javaClassLovs.IJavaClassLov.
+<br/>
+L'interfaccia ha due metodi
+<ul>
+  <li>getValues(IEngUserProfile profile): il metodo restituisce una stringa xml contenente la lista di valori. 
+      La stringa xml deve essere formattata utilizzando la struttura xml riportata di seguito
+  </li>
+  <li>getNamesOfProfileAttributeRequired(): il metodo ritorna una lista java contenente i nomi degli attributi 
+      di profilo utilizzati dalla classe. Se la classe non utilizza attributi di profilo ritorna una lista vuota.
+  </li>
+</ul>
+</ul>
+<br/>
+<b>Struttura Xml della stringa restituita</b>
+<hr/>
+&lt;ROWS&gt;<br/>
+&nbsp;&nbsp;&lt;ROW  nomeAttributo1="valoreAttributo1" nomeAttributo2="valoreAttributo2" ... /&gt;<br/>
+&nbsp;&nbsp;&lt;ROW  nomeAttributo1="valoreAttributo1" nomeAttributo2="valoreAttributo2" ... /&gt;<br/>
+&nbsp;&nbsp;...<br/>
+&nbsp;&nbsp;Tutte le righe devono avere gli stessi attributi !<br/>
+&nbsp;&nbsp;...<br/>
+&lt;/ROWS&gt;<br/>
+</div>

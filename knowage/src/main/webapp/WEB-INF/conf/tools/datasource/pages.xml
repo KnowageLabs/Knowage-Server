@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+
+
+  	<PAGE name="ListDataSourcePage" scope="REQUEST" title="Data Source Configuration" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ListDataSourcePage" target="ListDataSourceModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListDataSourceModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+  	
+  	<PAGE name="DetailDataSourcePage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DetailDataSourcePage" target="DetailDataSourceModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DetailDataSourceModule"/>
+    	</MODULES>
+  	</PAGE>  	
+</PAGES>

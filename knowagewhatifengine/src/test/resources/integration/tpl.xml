@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<olap>
+	<cube reference="Mondrian_what_if_mysql"/>
+ 
+	<!--
+	<MDXquery>
+		WITH MEMBER [Product].[gIVEN] AS '[Product].[Drink]-[Product].[Food]' MEMBER  [Product].[Food].[Dairy].[2Dairy] AS '[Product].[Food].[Dairy].[Dairy]*3'  SELECT         {[Measures].[Store Cost],         [Measures].[Store Sales]}             ON COLUMNS,             Hierarchize(     Union     ( Union ( Union ( Union ({[Product].[Drink], [Product].[Food]}, [Product].[Food].Children), [Product].[Food].[Dairy].Children), [Product].[Food].[Dairy].[Dairy].Children), [Product].[Food].[Dairy].[2Dairy])) ON ROWS FROM [Sales_V]
+	</MDXquery>
+	<MDXMondrianQuery>
+		WITH MEMBER [Product].[gIVEN] AS '[Product].[Drink]-[Product].[Food]' MEMBER  [Product].[Food].[Dairy].[2Dairy] AS '[Product].[Food].[Dairy].[Dairy]*3'  SELECT         {[Measures].[Store Cost],         [Measures].[Store Sales]}             ON COLUMNS,             Hierarchize(     Union     ( Union ( Union ( Union ({[Product].[Drink], [Product].[Food]},  [Product].[Food].[Dairy].[2Dairy]), [Product].[Food].[Dairy].Children), [Product].[Food].[Dairy].[Dairy].Children),  [Product].[Food].Children  )) ON ROWS FROM [Sales_V]
+	</MDXMondrianQuery>
+	-->
+
+	<MDXquery>
+		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[1], [Region].[Mexico Central])
+	</MDXquery>
+	<MDXMondrianQuery>
+		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[1], [Region].[Mexico Central])
+	</MDXMondrianQuery>
+
+	<STANDALONE>
+		<CONNECTION>
+		<USR>root</USR>
+		<PWD></PWD>
+		<CATALOG>\resources\Olap\FoodMartMySQL.xml</CATALOG>
+		<CONNECTIONSTRING>jdbc:mysql://mysql-coll:3306/foodmart_key</CONNECTIONSTRING>
+		<DRIVER>com.mysql.jdbc.Driver</DRIVER>
+		<DIALECT>MySql</DIALECT>
+		</CONNECTION>
+	</STANDALONE>	
+
+		
+	<SCENARIO name="scenario" editCube="Sales_Edit">
+		<MEASURE>Store Sales</MEASURE>
+		<MEASURE>Store Cost</MEASURE>
+		<VARIABLE name="var" value="5"/>
+		<VARIABLE name="PD" value="[Product].[Drink.Dairy]" type="string"/>
+	</SCENARIO>
+
+	<TOOLBAR>
+		<BUTTON_MDX visible="true" menu="false" />
+		<BUTTON_CALCULATED_MEMBERS visible="true" menu="false" />
+		<BUTTON_EDIT_MDX visible="true" menu="false" />                                        
+		<BUTTON_FATHER_MEMBERS visible="true" menu="false"/>                  
+		<BUTTON_HIDE_SPANS visible="true" menu="false"/>                     
+		<BUTTON_SHOW_PROPERTIES visible="true" menu="false"/>               
+		<BUTTON_HIDE_EMPTY visible="true" menu="false" />                   
+        <BUTTON_FLUSH_CACHE visible="true" menu="false"  />                 
+        <BUTTON_SAVE visible="true" menu="false" />                       
+        <BUTTON_SAVE_NEW visible="true" menu="false" />
+        <BUTTON_UNDO visible="true" menu="false" />
+		<BUTTON_VERSION_MANAGER visible="true" menu="false" />
+		<BUTTON_EXPORT_OUTPUT visible="true" menu="false" />  
+		  
+		<!--  NOT YET USED
+		<BUTTON_SHIFT_AXIS visible="true" />
+        <BUTTON_CUBE visible="false" menu="true" />
+		<BUTTON_DRILL_MEMBER visible="true" />
+		<BUTTON_DRILL_POSITION visible="true" />
+		<BUTTON_DRILL_REPLACE visible="false" />
+		<BUTTON_DRILL_THROUGH visible="false" />
+		<BUTTON_SHOW_CHART visible="false" />
+		<BUTTON_CONFIGURE_CHART visible="false" />
+		<BUTTON_CONFIGURE_PRINT visible="false" />
+    <BUTTON_ORDER visible="false" menu="false"/>  -->
+
+	</TOOLBAR>
+
+</olap>

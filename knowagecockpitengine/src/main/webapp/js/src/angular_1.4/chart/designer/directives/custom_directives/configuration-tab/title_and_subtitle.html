@@ -1,0 +1,79 @@
+<div ng-form name="title_and_subtitleForm">
+<md-subheader class="md-primary counterMargin">{{translate.load("sbi.chartengine.configuration.parallel.legend.title.popupTitle")}}</md-subheader>
+<div layout="column" >
+	<md-input-container class="md-block">
+		<label>{{translate.load("sbi.chartengine.configuration.parallel.legend.title.popupTitle")}}</label>
+		<input name="title_text" ng-model="chartTemplate.TITLE.text" > 
+	</md-input-container>
+
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.textalignment")}}</label>
+		 <md-select ng-model="chartTemplate.TITLE.style.align" name="title_align"> <md-option
+		ng-repeat="option in fontAlignOptions" value="{{option.value}}" >{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
+		 <md-select ng-model="chartTemplate.TITLE.style.fontFamily" name="title_ffamily"> <md-option
+		ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
+		 <md-select ng-model="chartTemplate.TITLE.style.fontSize" name="title_fsize"> <md-option
+		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontstyle")}}</label>
+		 <md-select ng-model="chartTemplate.TITLE.style.fontWeight" name="title_fstyle"> <md-option
+		ng-repeat="option in fontStyleOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block colorInputContainer" >
+	<label>{{translate.load("sbi.chartengine.designer.tooltip.color")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="chartTemplate.TITLE.style.color" name="title_color"></color-picker> </md-input-container>
+
+</div>
+
+<md-subheader class="md-primary counterMargin" style="margin: -8px -8px 0 -8px;">{{translate.load("sbi.chartengine.configuration.subtitle")}}</md-subheader>
+<div chartJsLibHide layout="column" >
+	<md-input-container  class="md-block" >
+		<label>{{translate.load("sbi.chartengine.configuration.subtitle")}}</label>
+		<input  name="subtitle_text" ng-model="chartTemplate.SUBTITLE.text"> 
+	</md-input-container>
+
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.textalignment")}}</label>
+		 <md-select ng-model="chartTemplate.SUBTITLE.style.align" name="subtitle_align"> <md-option
+		ng-repeat="option in fontAlignOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
+		 <md-select ng-model="chartTemplate.SUBTITLE.style.fontFamily" name="subtitle_ffamily"> <md-option
+		ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
+		 <md-select ng-model="chartTemplate.SUBTITLE.style.fontSize" name="subtitle_fsize"> <md-option
+		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontstyle")}}</label>
+		 <md-select ng-model="chartTemplate.SUBTITLE.style.fontWeight" name="subtitle_fstyle"> <md-option
+		ng-repeat="option in fontStyleOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block colorInputContainer">
+	<label>{{translate.load("sbi.chartengine.designer.tooltip.color")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="chartTemplate.SUBTITLE.style.color" name="subtitle_color"></color-picker> </md-input-container>
+
+</div>
+<div>

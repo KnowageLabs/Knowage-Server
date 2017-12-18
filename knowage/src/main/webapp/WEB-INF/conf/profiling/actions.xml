@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+
+ <ACTION name="MANAGE_USER_ACTION" class="it.eng.spagobi.profiling.services.ManageUserAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="MANAGE_ROLES_ACTION" class="it.eng.spagobi.profiling.services.ManageRolesAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+ <ACTION name="MANAGE_ATTRIBUTES_ACTION" class="it.eng.spagobi.profiling.services.ManageAttributesAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+ 
+</ACTIONS>
+

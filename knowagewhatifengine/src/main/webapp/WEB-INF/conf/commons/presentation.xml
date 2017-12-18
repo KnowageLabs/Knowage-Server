@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ================================================================================= -->
+<!-- WhatIf BASE PRESENTATIONS															   -->
+<!-- ================================================================================= -->
+
+<PRESENTATION>
+			 
+	<MAPPING business_type="ACTION" 
+			 business_name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION" 
+			 publisher_name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION_PUBLISHER"/>	
+	
+</PRESENTATION>

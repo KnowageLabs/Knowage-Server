@@ -1,0 +1,29 @@
+<md-dialog >
+ <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{::translate.load("sbi.cockpit.editor.widget.movesheet.title")}}</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <md-input-container class="md-block" flex-gt-sm>
+            <label>{{::translate.load("sbi.cockpit.editor.widget.movesheet.sheet")}}</label>
+            <md-select ng-model="targetSheet">
+              <md-option ng-repeat="sheet in cockpitModule_template.sheets" ng-value="sheet">
+                {{sheet.label}}
+              </md-option>
+            </md-select>
+          </md-input-container>
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="cancel()">
+       {{::translate.load("sbi.cockpit.editor.widget.movesheet.cancel")}}
+      </md-button>
+      <md-button ng-click="move()">
+       {{::translate.load("sbi.cockpit.editor.widget.movesheet.move")}}
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

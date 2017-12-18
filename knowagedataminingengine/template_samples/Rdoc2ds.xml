@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATA_MINING>
+    <PARAMETERS>
+        <PARAMETER name="par1" />
+        <PARAMETER name="par2" />
+        <PARAMETER name="par3" />
+    </PARAMETERS> 
+	<SCRIPTS>  
+        <SCRIPT name="salaries" mode="auto" datasets="salaries" label="Salaries">
+			<![CDATA[
+team<-subset(salaries, select = 'salary', subset = teamID =='$P{team}')
+colMean <-colMeans(team)
+rowMean <-rowMeans(team)
+
+			]]>
+		</SCRIPT>
+		<SCRIPT name="timescript2" mode="manual" datasets="datasetB" label="timeplus 2">
+			<![CDATA[
+str(datasetB);
+datasetB$time;
+poison<-datasetB$time;
+			]]>
+		</SCRIPT>
+	</SCRIPTS>	
+	<DATASETS>
+		<DATASET name="salaries" readType="table" type="file" label="salaries" default="defaultds/dirDoc1/rats2.txt" canUpload="true">	
+			<![CDATA[header = TRUE, sep = ",", quote = "\""]]>
+		</DATASET>
+		<DATASET name="datasetB" readType="csv" type="file" label="Data set 2" default="defaultds/dirDoc1/rats2.txt" canUpload="true">
+			<![CDATA[header = TRUE, sep = ",", quote = "\""]]>
+		</DATASET>
+	</DATASETS>	
+	<COMMANDS>
+        <COMMAND name="team_salaries" scriptName="salaries"  label="Salary for Team" mode="auto">
+        	<VARIABLES>
+        		<VARIABLE name="team" default="DET"/>
+        	</VARIABLES>
+            <OUTPUTS>
+                <OUTPUT type="text" name="teamMean" value="$P{meanType}"  mode="auto" label="Team Mean">
+	                <VARIABLES>
+		        		<VARIABLE name="meanType" default="colMean"/>
+		        	</VARIABLES>
+                </OUTPUT>
+            </OUTPUTS>
+        </COMMAND>
+        <COMMAND name="command2" scriptName="timescript2"  label="Command2" mode="manual">
+            <OUTPUTS>
+                <OUTPUT type="text" name="poison" value="poison"  mode="manual" label="Poison"/>
+            </OUTPUTS>
+        </COMMAND>
+    </COMMANDS>
+</DATA_MINING>

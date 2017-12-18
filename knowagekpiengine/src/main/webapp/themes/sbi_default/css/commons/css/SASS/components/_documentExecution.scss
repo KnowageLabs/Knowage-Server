@@ -1,0 +1,169 @@
+.kn-documentExecution{
+
+	.animate-switch-container {
+		position: relative;
+	}
+	
+	.animate-switch.ng-enter, .animate-switch.ng-leave {
+		-webkit-transition: 0.5s linear all;
+		-moz-transition: 0.5s linear all;
+		-o-transition: 0.5s linear all;
+		transition: 0.5s linear all;
+		position: absolute;
+	}
+	
+	.switch-left.ng-enter {
+		left: 100%;
+	}
+	
+	.switch-left.ng-leave, .switch-left.ng-enter.ng-enter-active {
+		left: 0;
+	}
+	
+	.switch-left.ng-leave.ng-leave-active {
+		left: -100%;
+	}
+	
+	.switch-right.ng-enter {
+		right: 100%;
+	}
+	
+	.switch-right.ng-leave, .switch-right.ng-enter.ng-enter-active {
+		right: 0;
+	}
+	
+	.switch-right.ng-leave.ng-leave-active {
+		right: -100%;
+	}
+	
+	/* menu style */
+	#menuButton:hover {
+		color: white;
+	}
+	
+	#menu md-menu-item span, #menu md-menu-item md-icon {
+		color: rgba(0, 0, 0, 0.87) !important
+	}
+	
+	#menu md-menu-item md-icon {
+		z-index: 1;
+		padding-top: 4px;
+	}
+	
+	#menu md-menu-content span.divider {
+		padding-left: 10px;
+		color: gray !important;
+		font-weight: 100;
+		font-style: italic;
+		font-size: smaller;
+	}
+	
+	.well, .lastScore, .ratingSaved {
+		margin-left: 10px;
+	}
+	
+	.rating span {
+		font-size: 30px;
+		color: #E4A400;
+		margin-left: -3px;
+	}
+	
+	.lastScore span {
+		font-size: 30px;
+		color: #E4A400;
+		margin-left: -3px;
+	}
+	
+	.ratingSaved span {
+		font-size: 30px;
+		margin-left: -3px;
+	}
+	
+	#dialogRank {
+		height: 350px;
+		width: 250px;
+	}
+	
+	#buttonRank {
+		margin-left: 130px;
+		bottom: -50px;
+	}
+	
+	#dialogNote {
+		height: 800px;
+		width: 900px;
+	}
+	/* Metadata Dialog*/
+	#metadataDlg md-dialog-content {
+		margin: 0;
+		padding-bottom: 10px;
+	}
+	
+	#metadataDlg expander-box>md-content {
+		border: 0 !important;
+		padding: 0;
+	}
+	
+	.animate-accordion.ng-hide-add, .animate-accordion.ng-hide-remove {
+		transition: linear all 1s;
+	}
+	
+	.animate-accordion.ng-hide {
+		height: 0;
+	}
+	
+	.headerNote {
+		height: 40px;
+	}
+	
+	.headerNote span {
+		margin-top: -17px;
+	}
+	
+	#buttonNote {
+		margin-left: 750px;
+	}
+	
+	.tinyeditor-footer {
+		display: none;
+	}
+	
+	.listNotes {
+		width: 100%;
+		overflow: auto;
+	}
+	
+	.contentListNote {
+		background-color: rgba(148, 148, 148, 0.11);
+	}
+	
+	.md-whiteframe-4dp {
+		background-color: white;
+	}
+	
+	.overflow {
+		overflow: auto;
+	}
+	
+	md-toolbar.documentExecutionToolbar button.md-icon-button {
+		height: 40px;
+		width: 40px;
+	}
+	
+	md-toolbar.documentExecutionToolbar md-menu-bar {
+		padding: 0px;
+	}
+	
+	md-toolbar.documentExecutionToolbar button.md-icon-button md-icon {
+		line-height: 22px;
+	}
+	
+	.parameter-leaf {
+		background-image: url(../img/behavioural/parameter-leaf.png) !important;
+		background-repeat: no-repeat no-repeat;
+	}
+	
+	document-paramenter-element button.md-icon-button.md-button {
+	    margin: 5px 0px;
+	}
+}

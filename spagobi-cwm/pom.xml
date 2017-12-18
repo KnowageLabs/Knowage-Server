@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>it.eng.knowage</groupId>
+		<artifactId>knowage-ce-parent</artifactId>
+		<version>6.1.2</version>
+		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>spagobi-cwm</artifactId>
+	<packaging>jar</packaging>
+
+	<dependencies>
+	
+		<dependency>
+			<groupId>org.andromda.thirdparty.jmi</groupId>
+			<artifactId>jmi</artifactId>
+			<version>20030918</version>
+			<scope>compile</scope>
+		</dependency>
+		
+	</dependencies>
+	
+</project>

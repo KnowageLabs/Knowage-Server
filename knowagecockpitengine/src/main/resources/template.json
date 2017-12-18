@@ -1,0 +1,99 @@
+{
+    "sheets": [
+        {
+            "label": "Sheet1",
+            "widgets": [
+                {
+                    "id": "img1",
+                    "sizeX": 5,
+                    "sizeY": 6,
+                    "row": 0,
+                    "col": 0,
+                    "type": "image",
+                    "content": {
+                        "name": "Logo",
+                        "imgId": 1
+                    }
+                },
+                {
+                    "id": "chart1",
+                    "sizeX": 20,
+                    "sizeY": 8,
+                    "row": 6,
+                    "col": 0,
+                    "type": "text",
+                    "content": {
+                        "name": "Testo",
+                        "text": "CRUSCOTTO"
+                    }
+                },
+                {
+                    "id": "chart3",
+                    "sizeX": 17,
+                    "sizeY": 16,
+                    "row": 6,
+                    "col": 20,
+                    "type": "chart",
+                    "content": {
+                        "name": "Terzo"
+                    },
+                    "style": {},
+                    "dataset": {
+                        "dsId": 1
+                    }
+                }
+            ]
+        },
+        {
+            "label": "Sheet2",
+            "widgets": [
+                {
+                    "id": "chart1",
+                    "sizeX": 20,
+                    "sizeY": 8,
+                    "row": 6,
+                    "col": 0,
+                    "type": "table",
+                    "content": {
+                        "name": "Testo",
+                        "text": "CRUSCOTTO sheet 2"
+                    }
+                }
+            ]
+        }
+    ],
+    "configuration": {
+        "style": {
+            "background": {
+                "background-color": "#ccc"
+            },
+            "borders": true,
+            "border": {
+                "border-color": "#ccc",
+                "border-style": "solid",
+                "border-width": "1px"
+            },
+            "shadows": false,
+            "titles": true,
+            "title": {
+                "font-size": "12px",
+                "font-weight": "regular"
+            },
+            "margins": 0
+        },
+        "datasets": [
+            {
+                "dsId": 18,
+                "useCache": true
+            },
+            {
+                "dsId": 22,
+                "useCache": true
+            },
+            {
+                "dsId": 2,
+                "useCache": true
+            }
+        ]
+    }
+}

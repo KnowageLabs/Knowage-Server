@@ -1,0 +1,321 @@
+#set($category = $chart.VALUES.CATEGORY)
+
+#set($dataRows = $data.rows)
+#set($dataFields = $data.metaData.fields) ## columns of data table
+#set($dataColumnsMapper = {})
+#foreach ($dataField in $dataFields) ## conversion column name to internal column name
+
+
+	#if($dataField.class.name == 'java.util.LinkedHashMap')
+		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header, $dataField.name))
+	#end
+#end
+
+#* 	
+	For Java class of dataset transformer we need '$dataRows' (raw JSON dataset),
+	'$columnsNeeded' (name of the columns for sequence) and $$dataColumnsMapper (metadata)
+*#
+
+#set($columnsNeeded = {})
+
+#set($columnCounter = 0)
+		
+#foreach($value in $category)	
+	#set($columnsNeeded[$columnCounter] = $value.name)
+	#set($columnCounter = $columnCounter + 1)
+#end
+
+#* 
+	Convert an array list with the single element into the HashMap so we can 
+	use it in a general way, even if we are calling the VM for purpose of
+	previewing the SUNBURST chart.
+	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+*#
+#if($chart.VALUES.SERIE.class.name == 'java.util.ArrayList')
+	#set($chart.VALUES.SERIE = $chart.VALUES.SERIE[0])
+#end
+
+#set($serieName = $chart.VALUES.SERIE.name)
+#set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
+
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
+
+{
+	chart: 
+	{
+		type: '$chart.type',
+		opacMouseOver: '$chart.opacMouseOver',	
+		
+		#*
+		  Percentage/absolute value type for displaying tooltip and breadcrumb values for slices that are covered with mouse cursor.
+		  This parameter contains one of two possible values: percentage or absolute.
+		  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 	*#
+		percAbsolSliceValue: '$chart.percAbsolSliceValue',
+			
+		isCockpit: $chart.isCockpitEngine, 
+		
+		#*
+  			If we are previewing a chart inside a Designer widget in the Cockpit, the 'chart.outcomingEventsEnabled' will be NULL, so we need to check if this is the case.
+  			If not providing this check, we will experience rendering problem within the Highcharts Export (value for 'outcomingEventsEnabled' template property will be 
+  			'$chart.outcomingEventsEnabled'.
+  			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  		*#
+  		#if($chart.isCockpitEngine=='true' && "$!chart.outcomingEventsEnabled" != "")
+  			outcomingEventsEnabled: $chart.outcomingEventsEnabled,
+  		#end
+		
+		#if($chart.height != '')
+        	height: $chart.height,
+        #end
+        
+        #*
+    		Dimension type (pixels or percentage) parameter for height of the chart
+    		is provided. 
+    		
+    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').
+    				
+    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	*#
+     	#if($chart.heightDimType)
+       	 	heightDimType: '$chart.heightDimType',
+        #end
+        
+        #if($chart.width != '')
+    		width: $chart.width,
+    	#end
+    	
+    	#if($chart.widthDimType)
+        	widthDimType: '$chart.widthDimType',
+        #end		
+		
+		style:
+		{			
+			fontFamily: '$chart.style.fontFamily',
+			fontSize: '$chart.style.fontSize',				
+			backgroundColor: '$chart.style.backgroundColor',	
+					
+			#if($chart.style.fontWeight == 'italic' || $chart.style.fontWeight == 'normal')
+    			fontStyle: '$chart.style.fontWeight',
+			#elseif($chart.style.fontWeight == 'underline')
+    			textDecoration: '$chart.style.fontWeight',
+			#elseif($chart.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.style.fontWeight',
+    		#end
+		}
+	},
+	
+	categories: $datasettransformer.getColumnNames($columnsNeeded),
+	
+	colors: [
+    	    
+			#*
+	 			If user specified more than one color from the color palette
+	 			on the Designer when creating the chart, then we have an array
+	 			list of elements. Otherwise, we are dealing with a hashmap.
+	 			
+	 			In the first case, create an array of colors. In the second 
+	 			case take the only color user specified and put it as the only
+	 			element of the array that we are now creating.
+	 			
+	 			@modifiedBy: danristo (danilo.ristovski@mht.net)
+	 		*#	
+			
+			#*
+				If user specifies at least 2 colors (class name of the structure that hold data
+				about colors picked in the color palette of the Designer will in this case be
+				LinkedList, instead of LinkedHashMap as in other case - just one element) go 
+				into the if-statement. If there are no picked color or there is just one, go
+				into the else-statement.
+				@author: danristo (danilo.ristovski@mht.net)
+			*#
+	 		
+	 		#if ($chart.COLORPALETTE.COLOR && $chart.COLORPALETTE.COLOR.class.name != 'java.util.LinkedHashMap') 
+				
+				#foreach($color in $chart.COLORPALETTE.COLOR)
+					'$color.value', 
+				#end	
+						
+			#else		
+				
+				#*
+					If user does not specify any color inside the color palette the chart
+					will take predefined value for the color (#000000) (else-case).	Otherwise, 
+					we will take the single value specified in the palette (if-case).
+					@author: danristo (danilo.ristovski@mht.net)
+				*#
+				
+				#if ($chart.COLORPALETTE.COLOR)
+					'$chart.COLORPALETTE.COLOR.value'
+				#end
+				
+			#end
+    ],
+	
+	emptymessage:
+	{
+		text: "$chart.EMPTYMESSAGE.text",		
+		
+		style:
+		{
+			align: '$chart.EMPTYMESSAGE.style.align',
+			fontFamily: '$chart.EMPTYMESSAGE.style.fontFamily',	
+			fontSize: '$chart.EMPTYMESSAGE.style.fontSize',
+			color: '$chart.EMPTYMESSAGE.style.color',
+					
+			#if($chart.EMPTYMESSAGE.style.fontWeight == 'italic' || $chart.EMPTYMESSAGE.style.fontWeight == 'normal')
+    			fontStyle: '$chart.EMPTYMESSAGE.style.fontWeight',
+			#elseif($chart.EMPTYMESSAGE.style.fontWeight == 'underline')
+    			textDecoration: '$chart.EMPTYMESSAGE.style.fontWeight',
+			#elseif($chart.EMPTYMESSAGE.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
+    		#end	
+		}
+	},
+	
+	title:
+	{
+		text: "$chart.TITLE.text",		
+		
+		style:
+		{
+			fontFamily: '$chart.TITLE.style.fontFamily',
+			fontSize: '$chart.TITLE.style.fontSize',
+			color: '$chart.TITLE.style.color',
+			align: '$chart.TITLE.style.align',
+					
+			#if($chart.TITLE.style.fontWeight == 'italic' || $chart.TITLE.style.fontWeight == 'normal')
+    			fontStyle: '$chart.TITLE.style.fontWeight',
+			#elseif($chart.TITLE.style.fontWeight == 'underline')
+    			textDecoration: '$chart.TITLE.style.fontWeight',
+			#elseif($chart.TITLE.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.TITLE.style.fontWeight',
+    		#end
+		}
+	},
+	
+	subtitle:
+	{	
+		text: "$chart.SUBTITLE.text",		
+		
+		style:
+		{
+			fontFamily: '$chart.SUBTITLE.style.fontFamily',
+			fontSize: '$chart.SUBTITLE.style.fontSize',
+			color: '$chart.SUBTITLE.style.color',
+			align: '$chart.SUBTITLE.style.align',
+					
+			#if($chart.SUBTITLE.style.fontWeight == 'italic' || $chart.SUBTITLE.style.fontWeight == 'normal')
+    			fontStyle: '$chart.SUBTITLE.style.fontWeight',
+			#elseif($chart.SUBTITLE.style.fontWeight == 'underline')
+    			textDecoration: '$chart.SUBTITLE.style.fontWeight',
+			#elseif($chart.SUBTITLE.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.SUBTITLE.style.fontWeight',
+    		#end	
+			
+		}
+	},
+	
+	#* 	Something completely new that define through XML template
+		that we would like to have for the SUNBURST chart.  *# 	
+	tip:
+	{
+		text: "$chart.TIP.text",				
+				
+		style:
+		{	
+			fontFamily: '$chart.TIP.style.fontFamily',		
+			fontSize: '$chart.TIP.style.fontSize',			
+			color: '$chart.TIP.style.color',
+			width: '$chart.TIP.style.width',
+			
+			#if($chart.TIP.style.fontWeight == 'italic' || $chart.TIP.style.fontWeight == 'normal')
+    			fontStyle: '$chart.TIP.style.fontWeight',
+			#elseif($chart.TIP.style.fontWeight == 'underline')
+    			textDecoration: '$chart.TIP.style.fontWeight',
+			#elseif($chart.TIP.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.TIP.style.fontWeight',
+    		#end
+		}
+	},
+		
+	#* 	Something completely new that define through XML template
+		that we would like to have for the SUNBURST chart.  *# 	
+	toolbar:
+	{			
+		style:
+		{	
+			position: '$chart.TOOLBAR.style.position',
+			##height: '$chart.TOOLBAR.style.height',
+			##width: '$chart.TOOLBAR.style.width',
+			spacing: '$chart.TOOLBAR.style.spacing',
+			tail: '$chart.TOOLBAR.style.tail',				
+			percFontColor: '$chart.TOOLBAR.style.percFontColor',		
+			fontFamily: '$chart.TOOLBAR.style.fontFamily',		
+			fontSize: '$chart.TOOLBAR.style.fontSize',
+			
+			#if($chart.TOOLBAR.style.fontWeight == 'italic' || $chart.TOOLBAR.style.fontWeight == 'normal')
+    			fontStyle: '$chart.TOOLBAR.style.fontWeight',
+			#elseif($chart.TOOLBAR.style.fontWeight == 'underline')
+    			textDecoration: '$chart.TOOLBAR.style.fontWeight',
+			#elseif($chart.TOOLBAR.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.TOOLBAR.style.fontWeight',
+    		#end
+		}
+	},
+	
+	crossNavigation:
+	{
+	    #if($crossNavigation != '') 
+						crossNavigationDocumentName: '$crossNavigation.document',
+						crossNavigationDocumentParams: [
+							## if single PARAM node, not array
+							#if($crossNavigation.PARAM_LIST.PARAM.class.name == "java.util.LinkedHashMap")
+								#set($param = $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' }
+							#else
+								##Array of parameters
+								
+								#foreach($param in $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' },
+								#end
+							#end
+						],
+						#end
+	},	
+	
+	#*
+		Since we cannot have more than one series items for the SUNBURST chart, we can specify a single parameter customization 
+		(for only one series item). [JIRA 1060 and 1061]
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*#
+	series: {
+	
+		## Added property for the cross-navigation output parameters managing on the front-end. (author: danristo)
+		name: '$serieName',
+	
+		#*
+			The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+			"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+			these abbreviations (number suffix) along with the scaled number. [JIRA 1060 and 1061]
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		*#
+		#if($chart.VALUES.SERIE.scaleFactor && "$!chart.VALUES.SERIE.scaleFactor" != "")
+			scaleFactor: '$chart.VALUES.SERIE.scaleFactor',
+		#else
+			scaleFactor: 'empty',
+		#end
+		
+		precision: '$chart.VALUES.SERIE.precision',
+		prefixChar: '$chart.VALUES.SERIE.prefixChar',
+		postfixChar: '$chart.VALUES.SERIE.postfixChar'
+	
+	},
+	
+	data:
+	[
+	 	$datasettransformer.toTree($columnsNeeded,$serieName,$dataColumnsMapper,$dataRows,$groupingFunction)
+	 	
+	]
+}

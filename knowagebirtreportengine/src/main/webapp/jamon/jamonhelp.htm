@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="css/formatteddataset.css">
+<title>JAmon Admin Help</title>
+</head>
+<body>
+
+<h2>JAMonAdmin Help</h2>
+
+<h3>1) JAMon Action</h3> 
+
+<ul>
+<li>Refresh - Use current form settings to retrieve JAMon data
+<li>Reset - Erases/Removes all JAMon data
+<li>Enable - Enable JAMon.  If already enabled this has no effect.  It will not enable any individual monitors that have been
+ disabled.  
+<li>Disable - Disable JAMon.  Monitors will be disabled, but not reset. If monitors are already disabled this has no effect.
+</ul>
+
+<h3>2) MonProxy Action - Enabling/disabling various SQL/Interface monitoring</h3> 
+
+<ul>
+<li>No Action (currently=TTTT) - No Action indicates that the page request will not enable/disable what is being monitored.  The four letters
+can be any combination of T and F. Each letter indicates whether SQL/Exception/Interface/ResultSet monitoring is enabled.
+<li>Enable All - Enable SQL/Exception/Interface/ResultSet monitoring
+<li>Disable All - Disable SQL/Exception/Interface/ResultSet monitoring
+<li>Disable/Enable SQL - If SQL monitoring is currently set to 'Enable' then this choice will be 'Disable' and vice versa. Lines in the JAMon report
+with labels starting with 'MonProxy-SQL', and 'MonProxy-Match' are affected by this choice (SQL text will be part of the label)
+<li>Disable/Enable Exceptions - If Exception monitoring is currently set to 'Enable' then this choice will be 'Disable' and vice versa. 
+Lines in the JAMon report with labels starting with 'MonProxy-Exception',are affected by this choice. 
+<li>Disable/Enable Interfaces - If Interface monitoring is currently set to 'Enable' then this choice will be 'Disable' and vice versa. 
+Lines in the JAMon report with labels starting with 'MonProxy-Interface',are affected by this choice. Any interface can be monitored.
+<li>Disable/Enable ResultSet - If ResultSet monitoring is currently set to 'Enable' then this choice will be 'Disable' and vice versa. In addition
+Interface monitoring must be turned on.  ResultSet monitoring can generate lots of data so although this is simply a special case of Interface monitoring
+it can be separately enabled/disabled.  Lines in the JAMon report with labels starting with 'MonProxy-Interface',are affected by this choice. 
+</ul>
+
+<h3>3) Output</h3>
+<blockquote>Determines the output format for the JAMon monitors.  Options for output are HTML, XML, and an MS Excel spreadsheet. 
+HTML is the default.</blockquote>
+
+<h3>4) Range/Units</h3>
+<blockquote>Display JAMon monitors that share the same range name such as 'ms.' (typically this will be units).  All columns
+ for differing unit types can not be displayed in a tabular report, due to the fact that different units will often have a different number
+ of columns (i.e. ranges) in the report.  For example say we have 2 types of units we track in our application:  'ms.' and '$'.  
+ In the case of 'ms.' our ranges will make sense for tracking performance in a web application: 0-10ms., 20-40ms., 40-80ms.,...,up to greater than 20,480 ms.  
+ If we are tracking purchases in '$', then these ranges that we use for tracking 'ms.' would not be useful.  However, the following ranges 
+ could be: 0-10$, 10-20$,30-40$,...90-100$, 100-500$,>500$.  'Range/Units' works in conjunction with 'Display Cols' mentioned below.
+ <ul>
+<li>AllMonitors - This selection will show the basic monitoring statistics for all Monitors.  The only 'Display Cols' choice that works with 'AllMonitors' is
+ 'Basic Columns'.  Any other choice selected for 'Display Cols' is automatically changed to 'Basic Columns'. This is because any other 
+ choice will make the number of columns in the report mismatch, and so the report couldn't be displayed properly in an HTML table.
+ For the 'AllMonitors' report the Label, and units (i.e. the key) are combined in the reports first column.   
+ 'AllMonitors' with 'Basic Columns' is the default report when JAMonAdmin.jsp is executed without making a specific choice.</li>
+<li>Range Names - This selection will allow you to choose any available Range names such as: 'ms.', 'MB', '$'.  
+ When a 'Range Name' is selected all 3 choices available for the 'Display Cols' field are valid.</li>
+ </ul></blockquote>
+
+<h3>5) Display Cols</h3>
+<blockquote>Determines which columns should be displayed in the report.  This field determines which COLUMNS are displayed and 'Ranges/Units' 
+and 'Filter' determine what ROWS are displayed.  Options follow:
+<ul>
+<li>Basic Cols Only - Displays basic monitoring statistics (i.e. excludes ranges).  This allows you to look at all monitoring
+ types on one screen.  The 'Label' column will contain both the 'Label' and 'Units' as well as any other key columns.  This is
+ the only selection that lets you view all monitors in one report (see 'Range/Units' - 'AllMonitors'.  'Basic Columns Only' are the default when JAMonAdmin.jsp is executed
+ without making a specific choice.
+<li>Basic/Range Cols - Displays basic monitoring statistics plus ranges.  Ranges are of the format: Hits/Avg (AvgActive/AvgPrimaryActive/AvgGlobalActive)
+<li>All Cols - Displays basic monitoring statistics plus all fields of the ranges.  This is a bit of an ugly dump, but can be 
+handy when you want to view more details.  
+</ul>
+
+</blockquote>
+<h3>5) Cell Formatting</h3>
+<blockquote>Indicates how numeric data should be displayed.  Depending on what you are measuring you may want to have decimals appear or
+not. Cell Formatting allows you to toggle between precision when viewing the monitors.  The underlying data is not affected - just the view.
+Note the com.fdsapi.arrays.ArrayConverter class was used to format the data.  You can also pass any String that is accepted to
+DecimalFormat.applyPattern(...)
+<ul>
+<li>#,### - 1.2345 would show as 1
+<li>#,###.# - 1.2345 would show as 1.2
+<li>#,###.## - 1.2345 would show as 1.23
+<li>#,###.### - 1.2345 would show as 1.234
+<li>#,###.#### - 1.2345 would show as 1.2345
+<li>No Format - Shows all digits
+</ul>
+</blockquote>
+
+
+<h3>6) Filter (optional)</h3>
+<blockquote>Filter leverages the com.fdsapi.ArraySQL class to query the JAMon data with a SQL like syntax.  
+<ul>
+<li>If you specify any string within the filter (something like:  com), the string will be used in a Regular Expression to
+find any monitors with the given pattern in their label.   This allows you to search for monitors of interest.  Note:  A regular expression is used,
+not the more typical SQL 'like' clause (i.e. '%com%').  Also the regular expressions are case insensitive.
+<li>You can also enter a full ArraySQL syntax and do more complex queries on any of the JAMon columns.  
+Note Strings should be surrounded by single quotes not double quotes. You can use the reports column names as part of 
+your query. Examples follow:
+<ul>
+<li>select * from array where label like 'pageHit' or label like 'mypackage'
+<li>select * from array where hits>500
+<li>select * from array where label like 'pageHit' or (label like 'mypackage' and hits>500 and total>100000)
+<li>select * from array where label in ('bytessent', 'bytesreceived')
+<li>Or you can just put in the where clause:  where hits>500
+</ul>
+</ul>
+</blockquote>
+
+<h3>7) Highlight (optional)</h3>
+<blockquote>Any text that is entered here and appears in the label column will be hightlighted
+</blockquote>
+
+<h3>8) Text Display Length (optional)</h3>
+<blockquote>In some cases labels (SQL statements) can become quite large and make the report difficult to read.  By entering an integer in this field
+the display of the label column will be truncated to the specified length.  Note this only affects the display and the actual data in the report is not altered.  
+</blockquote>
+
+
+<h3>9) Links</h3>
+<blockquote>Links to various classes from FormattedDataSet API that were used in creating this page.
+<ul>
+<li><a href="http://fdsapi.sourceforge.net/javadocs/com/fdsapi/FormattedDataSet.html" target="_blank">FormattedDataSet</a> - Used to generate
+dynamic text
+<li><a href="http://fdsapi.sourceforge.net/javadocs/com/fdsapi/arrays/ArrayConverter.html" target="_blank">ArrayConverter</a> - Used to format JAMon
+statistics for display.
+<li><a href="http://fdsapi.sourceforge.net/javadocs/com/fdsapi/arrays/ArraySQL.html" target="_blank">ArraySQL</a> - Used to query Object arrays 
+(Object[][]) that can contain any datatype. 
+</ul>
+</blockquote>
+
+<center><a href="javascript:window.close();">Close</a><br></center>
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<COMMON file_uri_prefix="file:" xhtml_lat1_ent="/WEB-INF/conf/xhtml-lat1.ent" xsl_reload="TRUE"
+                   navigator_enabled="FALSE" monitor_enabled="TRUE" startup_console="FALSE">
+</COMMON>

@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="it.eng.spagobi.profiling.bean.SbiAccessibilityPreferences"
+		table="SBI_ACCESSIBILITY_PREFERENCES">
+		<id name="id" type="int">
+			<column name="ID" />
+			<generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_ACCESSIBILITY_PREFERENCES</param>
+				<param name="initial_value">1</param>
+			</generator>
+		</id>
+
+		<component name="commonInfo" insert="true" update="true"
+			class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+			<property name="userIn" type="string">
+				<column name="USER_IN" length="100" not-null="true" />
+			</property>
+			<property name="userUp" type="string">
+				<column name="USER_UP" length="100" not-null="false" />
+			</property>
+			<property name="userDe" type="string">
+				<column name="USER_DE" length="100" not-null="false" />
+			</property>
+			<property name="timeIn" type="timestamp">
+				<column name="TIME_IN" not-null="true" />
+			</property>
+			<property name="timeUp" type="timestamp">
+				<column name="TIME_UP" not-null="false" />
+			</property>
+			<property name="timeDe" type="timestamp">
+				<column name="TIME_DE" not-null="false" />
+			</property>
+			<property name="sbiVersionIn" type="string">
+				<column name="SBI_VERSION_IN" length="10" not-null="false" />
+			</property>
+			<property name="sbiVersionUp" type="string">
+				<column name="SBI_VERSION_UP" length="10" not-null="false" />
+			</property>
+			<property name="sbiVersionDe" type="string">
+				<column name="SBI_VERSION_DE" length="10" not-null="false" />
+			</property>
+			<property name="organization" type="string">
+				<column name="ORGANIZATION" length="20" not-null="false" />
+			</property>
+		</component>
+		
+		  <property name="enableUio" type="java.lang.Boolean">
+            <column name="ENABLE_UIO" />
+        </property>
+           <property name="enableRobobraille" type="java.lang.Boolean">
+            <column name="ENABLE_RROBOBRAILLE" />
+        </property>
+         <property name="enableGraphSonification" type="java.lang.Boolean">
+            <column name="ENABLE_GRAPH_SONIFICATION" />
+        </property>
+		 <property name="enableVoice" type="java.lang.Boolean">
+            <column name="ENABLE_VOICE" />
+        </property>
+           <property name="preferences" type="string">
+            <column name="PREFERENCES" />
+        </property>
+        
+        <many-to-one name="user" class="it.eng.spagobi.profiling.bean.SbiUser" unique="true" not-null="true" column="USER_ID"
+			cascade="all" >
+
+			</many-to-one>
+		
+		<filter name="tenantFilter" condition="organization=:tenant"/>  
+			
+        </class>
+        
+        <filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

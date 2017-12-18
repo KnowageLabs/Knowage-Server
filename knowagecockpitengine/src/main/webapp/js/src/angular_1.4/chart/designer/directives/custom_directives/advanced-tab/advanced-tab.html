@@ -1,0 +1,22 @@
+<md-tab-content class="knowage-grey-color" layout="column">
+<div layout="row" md-content layout-padding flex>
+<div layout="column" flex=100 style="padding:0 8 0 0">  
+		
+			<md-toolbar class="secondaryToolbar">
+				<div class="md-toolbar-tools">
+					<h2>
+						<span>{{translate.load("sbi.chartengine.designer.advancedTab.title")}}</span>
+					</h2>			   		
+				</div>		      
+			</md-toolbar>
+			
+			<md-whiteframe flex=100 class="md-whiteframe-4dp whiteframe-element" layout-padding style="overflow:auto">
+			
+				<json-tree object="chartTemplate" start-expanded="true" root-name="'CHART'"></json-tree>
+			
+			</md-whiteframe>
+			
+		</div>
+
+</div>
+</md-tab-content>

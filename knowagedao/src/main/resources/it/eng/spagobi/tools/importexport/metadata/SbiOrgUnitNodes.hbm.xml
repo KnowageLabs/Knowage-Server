@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-set-2010 12.29.29 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes" table="SBI_ORG_UNIT_NODES">
+        <id name="nodeId" type="integer">
+            <column name="NODE_ID" />
+        </id>
+        <many-to-one name="sbiOrgUnit" class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit" fetch="select">
+            <column name="OU_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiOrgUnitHierarchies" class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitHierarchies" fetch="select">
+            <column name="HIERARCHY_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiOrgUnitNodes" class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes" fetch="select">
+            <column name="PARENT_NODE_ID" />
+        </many-to-one>
+        <property name="path" type="string">
+            <column name="PATH" length="4000" not-null="true" />
+        </property>
+        <set name="sbiOrgUnitNodeses" inverse="true">
+            <key>
+                <column name="PARENT_NODE_ID" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes" />
+        </set>
+        <set name="sbiOrgUnitGrantNodeses" inverse="true">
+            <key>
+                <column name="NODE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodes" />
+        </set>
+    </class>
+</hibernate-mapping>

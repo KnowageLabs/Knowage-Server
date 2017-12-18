@@ -1,0 +1,67 @@
+.kn-glossary-definition {
+	md-dialog {
+		md-input-container {
+			.md-char-counter {
+				padding-top: 15px;
+			}
+		}
+	}
+	 
+}
+.kn-glossary-execution {
+	.searchBar {
+		md-icon.fa-search{
+			top: 0;
+			margin-top:0;
+		}
+		md-icon.fa-filter {
+			top: 0;
+			margin-top:0;
+			color: $fabPrimaryColor !important;
+		}
+		input {
+			padding-left: 20px !important;
+		}
+	}
+	.selected_item {
+		button, button:hover {
+			background-color: lighten($fabPrimaryColor, 10%) !important;
+			color: white !important;
+			
+		}
+		._md-list-item-inner {
+			.wrapText {
+				color: white !important;
+				z-index: 2;
+			}
+		}
+	}
+
+	.smallListItem, .smallListItem button, .smallListItem .md-list-item-inner {
+		min-height: 32px;
+		height: 32px;
+	}
+	.smallListItem p {
+		max-width: 160px;
+    font-size: 12px;
+	}
+	md-list-item._md-button-wrap>div.md-button:first-child>.md-button:first-child{
+		height: inherit;
+	}
+	md-list-item, md-list-item ._md-list-item-inner {
+		min-height: 32px;
+		height: 32px;
+	}
+	md-list.bottomBorder md-list-item {
+		._md-secondary-container {
+			button {
+				border-bottom: none;
+				height: 24px;
+				width: 24px;
+				padding: 0;
+			}
+		}
+	}
+
+
+}

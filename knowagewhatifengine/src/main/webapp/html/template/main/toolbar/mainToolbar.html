@@ -1,0 +1,58 @@
+<md-toolbar class='md-toolbar-tools knowage-blue'>
+	<section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+		<md-button class="groupX left" ng-click="changeDrillType('position')" ng-disabled="">Position</md-button>
+		
+		<md-button class="groupX middle" ng-click="changeDrillType('member')">Member</md-button>
+		
+		<md-button class="groupX right" ng-click="changeDrillType('replace')">Replace</md-button>
+		
+		<md-button class="main-toolbar-button {{btn.img}}" ng-repeat="btn in toolbarButtons" ng-click="btnFunctions(btn.img)">
+			<md-tooltip md-direction="bottom">
+				{{btn.tooltip}}
+			</md-tooltip>
+		</md-button>
+		<!-- Temporary solution for sorting and stuff -->
+		<md-button ng-class=" modelConfig.sortingEnabled ? 'main-toolbar-button sorting-e-btn' : 'main-toolbar-button sorting-d-btn'" ng-click="enableDisableSorting()" >
+			<md-tooltip md-direction="bottom">
+				{{sortingEnabled?'Disable sorting' : 'Enable sorting'}}
+			</md-tooltip>
+		</md-button>
+						
+		<md-button class="main-toolbar-button sorting-settings" ng-click="showDialog(e,sortSetDial)" >
+			<md-tooltip md-direction="bottom">
+				Sorting settings
+			</md-tooltip>
+		</md-button>
+		
+		<md-button class="main-toolbar-button"  ng-click="enableDisableDrillThrough()">
+			Drilltrough
+			<md-tooltip md-direction="bottom">
+				Drilltrough
+			</md-tooltip>
+		</md-button>
+		<md-button class="main-toolbar-button"  ng-click="showCCWizard()">
+			CC
+			<md-tooltip md-direction="bottom">
+				CC
+			</md-tooltip>
+		</md-button>
+		
+		<!-- Temporary solution for sorting and stuff -->
+		<md-button class="main-toolbar-button" ng-click="showDialog(e,sendMdxDial)">
+			Send MDX
+			<md-tooltip md-direction="bottom">
+				Send MDX
+			</md-tooltip>
+		</md-button>
+		
+		<md-button ng-click="showDialog(e,showMdxDial)" class="main-toolbar-button">
+			Show MDX
+			<md-tooltip md-direction="bottom">
+				Show MDX
+			</md-tooltip>
+		</md-button>
+		<md-button ng-click="enableDisableSorting()" class="main-toolbar-button" ng-hide="true">Disable Sorting</md-button>
+		
+
+	</section>
+</md-toolbar>

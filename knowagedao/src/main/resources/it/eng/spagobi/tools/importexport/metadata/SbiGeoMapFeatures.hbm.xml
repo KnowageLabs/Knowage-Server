@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 31-mag-2007 14.53.27 by Hibernate Tools 3.2.0.beta8 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeatures" table="SBI_GEO_MAP_FEATURES" >   
+        <composite-id name="id" class="it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeaturesId">
+            <key-property name="mapId" type="int">
+                <column name="MAP_ID" />
+            </key-property>
+            <key-property name="featureId" type="int">
+                <column name="FEATURE_ID" />
+            </key-property>
+        </composite-id>
+        
+        <many-to-one name="sbiGeoFeatures" class="it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures" update="false" insert="false" fetch="select">
+            <column name="FEATURE_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiGeoMaps" class="it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps" update="false" insert="false" fetch="select">
+            <column name="MAP_ID" not-null="true" />
+        </many-to-one>
+                
+        <property name="svgGroup" type="string">
+            <column name="SVG_GROUP" />
+        </property>
+        <property name="visibleFlag" type="string">
+            <column name="VISIBLE_FLAG" />
+        </property>
+    </class>
+</hibernate-mapping>

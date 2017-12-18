@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RENDERERS>
+	<RENDERER name="JSP_RENDERER" type="JSP" class="it.eng.spago.presentation.rendering.JSPRenderer">
+		<CONFIG/>
+	</RENDERER>
+	<RENDERER name="XSLT_RENDERER" type="XSL" class="it.eng.spago.presentation.rendering.XsltRenderer">
+		<CONFIG/>
+	</RENDERER>
+	<RENDERER name="FOP_RENDERER" type="FOP" class="it.eng.spago.presentation.rendering.HTTPFOPRenderer">
+		<CONFIG/>
+	</RENDERER>
+	<RENDERER name="LOOP_RENDERER" type="LOOP" class="it.eng.spago.presentation.rendering.HTTPLoopRenderer">
+		<CONFIG/>
+	</RENDERER>
+	<RENDERER name="SERVLET_RENDERER" type="SERVLET" class="it.eng.spago.presentation.rendering.ServletRenderer">
+		<CONFIG/>
+	</RENDERER>
+	<!-- RENDERER name="JAVA_RENDERER" type="JAVA" class="it.eng.spago.presentation.rendering.JavaRenderer"/-->
+
+	<RENDERER name="UNDEFINED_RENDERER" type="UNDEFINED" class="it.eng.spago.presentation.rendering.EmptyRenderer">
+		<CONFIG/>
+	</RENDERER>
+</RENDERERS>

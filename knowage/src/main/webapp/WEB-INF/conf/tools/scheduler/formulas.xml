@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FORMULAS>
+	<FORMULA name="getCurrentDayOfTheMonth" description="#scheduler.formulas.getCurrentDayOfTheMonth">
+	<![CDATA[
+	Date now = new Date();
+	int day = now.getDate();
+	String dayStr = day.toString();
+	return dayStr;
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentMonthOfTheYear" description="#scheduler.formulas.getCurrentMonthOfTheYear">
+	<![CDATA[
+	Date now = new Date();
+	int month = now.getMonth() + 1;
+	String monthStr = month.toString();
+	return monthStr;
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentYear" description="#scheduler.formulas.getCurrentYear">
+	<![CDATA[
+	Date now = new Date();
+	int year = now.getYear() + 1900;
+	String yearStr = year.toString();
+	return yearStr;
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentDate" description="#scheduler.formulas.getCurrentDate">
+	<![CDATA[
+	Date now = new Date();
+  String DATE_FORMAT = "dd/MM/yyyy";
+  java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(DATE_FORMAT);
+  return sdf.format(now);
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentDateTime" description="#scheduler.formulas.getCurrentDateTime">
+	<![CDATA[
+	Date now = new Date();
+  String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+  java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(DATE_FORMAT);
+  return sdf.format(now);
+	]]>
+	</FORMULA>
+</FORMULAS>

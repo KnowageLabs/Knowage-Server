@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation" table="SBI_CROSS_NAVIGATION">
+        
+        <id name="id" type="integer">
+           <column name="ID" />
+        </id>
+        
+        <property name="name" type="string" column="NAME" length="40" not-null="true"/>
+
+  <property name="type" type="int" column="TYPE" />
+	    
+       
+	</class>
+	
+</hibernate-mapping>

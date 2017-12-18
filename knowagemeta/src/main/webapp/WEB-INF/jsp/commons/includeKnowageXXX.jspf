@@ -1,0 +1,27 @@
+<!-- 
+Ignore this note for the moment (mimification script hasn't been implemented yet)
+IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
+create-debug in ant-files/Knowage.x-source/xxx/ant/build.xml must be updated properly
+ -->
+ 
+
+
+<!-- Include stylesheets here: -->
+<link id="theme" rel="styleSheet" href ="${pageContext.request.contextPath}/css/xxx.css" type="text/css" />
+
+<!-- Include localized labels  -->
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/sbi/formats/<%=locale.getLanguage()%>.js'/></script>
+
+<!-- Plugins -->
+
+
+<!-- START-DEBUG -->
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/sbi/commons/Settings.js'/></script>
+<!-- END-DEBUG -->
+
+<!-- START-PRODUCTION
+<script type="text/javascript" src='${pageContext.request.contextPath}${pageContext.request.contextPath}/js/spagobi/xxx-all.js'></script>
+END-PRODUCTION -->
+
+
+

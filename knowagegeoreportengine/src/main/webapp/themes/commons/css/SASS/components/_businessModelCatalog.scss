@@ -1,0 +1,15 @@
+.businessModelCatalog {
+	.bottom-block {
+	  display: block;
+	  position: relative;
+	  background-color: lighten($ternaryColor,10%);
+	  height: 35px;
+	  width: 100%; 
+	  text-align: center;
+	}
+	.bottom-block > span {
+	  display: inline-block;
+	  margin-top: 8px;
+	  font-size: 0.8em; 
+  	}
+}

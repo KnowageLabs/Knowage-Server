@@ -1,0 +1,25 @@
+<md-dialog style='height:45%; width:40%;' layout="column">
+	
+	<md-toolbar class="knowage-blue dialog-toolbar" style="font-size:100%" flex=20>
+		<p>{{translate.load("sbi.olap.toolbar.export.wizard.title")}}</p>
+	</md-toolbar>
+	<md-content class="dialog-style">
+		{{translate.load("sbi.olap.toolbar.save.as.description")}}
+		<br/>
+		<label>{{translate.load("sbi.olap.toolbar.save.as.version.name")}}</label>
+		<input ng-model="saveAsName" required="Name is required" ng-required="true" style="margin:10px"/>
+		<br/>
+		<label>{{translate.load("sbi.olap.toolbar.save.as.version.description")}}</label>
+		<textarea  ng-model="saveAsDescription">
+		</textarea>
+		<md-dialog-actions layout="row">
+			<md-button ng-click="saveAsFunction()">
+				Save
+			</md-button>
+			<md-button ng-click="closeDialogToolbarRight()">
+				Cancel
+			</md-button>
+		</md-dialog-actions>
+	</md-content>
+	
+</md-dialog>

@@ -1,0 +1,55 @@
+{
+	"name": "SbiScriptDataSet",
+	"description": null,
+	"label": "SbiScriptDataSet",
+	"active": true,
+	"type": "SbiScriptDataSet",
+	"configuration": {
+		"Script": "returnValue(new Integer(200).toString());",
+		"scriptLanguage": "groovy"
+	},
+	"pivotColumnName": null,
+	"pivotRowName": null,
+	"pivotColumnValue": null,
+	"numRows": false,
+	"persisted": false,
+	"persistedHDFS": false,
+	"persistTableName": "",
+	"userIn": null,
+	"userUp": null,
+	"userDe": null,
+	"sbiVersionIn": null,
+	"sbiVersionUp": null,
+	"sbiVersionDe": null,
+	"metaVersion": null,
+	"timeIn": null,
+	"timeUp": null,
+	"timeDe": null,
+	"scope": {
+		"valueId": 187,
+		"domainCd": "DS_SCOPE",
+		"domainNm": "Dataset scope",
+		"valueCd": "ENTERPRISE",
+		"valueNm": "ENTERPRISE",
+		"valueDs": "Dataset scope"
+	},
+	"federation": null,
+	"scopeId": 187,
+	"categoryId": 151,
+	"metadata": {
+		"fieldsMeta": [{
+			"name": "value",
+			"alias": "value",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		}],
+		"properties": {
+			"resultNumber": "1"
+		}
+	},
+	"transformerId": null,
+	"parameters": []
+}

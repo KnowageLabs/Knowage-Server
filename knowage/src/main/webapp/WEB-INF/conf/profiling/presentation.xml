@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>
+
+<MAPPING business_type="ACTION" business_name="MANAGE_USER_ACTION" publisher_name="ManageUsersPublisher"/>
+<MAPPING business_type="ACTION" business_name="MANAGE_ROLES_ACTION" publisher_name="ManageRolesPublisher"/>
+<MAPPING business_type="ACTION" business_name="MANAGE_ATTRIBUTES_ACTION" publisher_name="ManageAttributesPublisher"/>
+
+</PRESENTATION>

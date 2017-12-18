@@ -1,0 +1,113 @@
+<!--
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<md-dialog flex ng-controler="DialogCkanController"
+   style=" width:70%; max-height:90%; max-width:90%" ng-cloak>
+ 
+<md-toolbar>
+      <div class="md-toolbar-tools">
+         <h2>{{translate.load('sbi.workspace.dataset.ckan.details')}}</h2>
+         <span flex></span> 
+       
+         <md-button class="" ng-click="closeCkanDetail()"> 
+             <md-icon class="fa fa-times-circle-o fa-2x"></md-icon>
+             </md-button>
+      </div>
+   </md-toolbar> 
+<md-conttent flex>
+
+  <md-toolbar class="secondaryToolbar">
+        <div class="md-toolbar-tools">
+          <h2>
+            <span>{{translate.load('sbi.workspace.dataset.ckan.packagedetails')}}</span>
+          </h2>
+     
+        </div>
+      </md-toolbar>
+ 
+<!--   <md-subheader class="md-no-sticky" style="background-color:#a9c3db;">Package details</md-subheader> -->
+    <md-list>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <h3>{{translate.load('sbi.workspace.dataset.ckan.list.name')}}</h3>
+          <p>{{ckan.configuration.Package.package_name}}</p>
+        </div>
+      </md-list-item>
+      <md-divider></md-divider>
+          <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <h3>{{translate.load('sbi.workspace.dataset.ckan.list.url')}}</h3>
+          <p>{{ckan.configuration.Package.package_url}}</p>
+        </div>
+      </md-list-item>
+     
+ </md-list>
+ 
+ 
+    <md-toolbar class="secondaryToolbar">
+        <div class="md-toolbar-tools">
+          <h2>
+            <span>{{translate.load('sbi.workspace.dataset.ckan.resourcedetails')}}</span>
+          </h2>
+     
+        </div>
+      </md-toolbar>
+      <md-list>
+    <md-list-item class="md-2-line">
+        
+        <div class="md-list-item-text">
+          <h3>{{translate.load('sbi.workspace.dataset.ckan.list.name')}}</h3>
+          <p>{{ckan.configuration.Resource.name}}</p>
+        </div>
+        
+      </md-list-item>
+      <md-divider></md-divider>
+          <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <h3>{{translate.load('sbi.workspace.dataset.ckan.list.url')}}</h3>
+          <p>{{ckan.configuration.Resource.url}}</p>
+        </div>
+    
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item class="md-2-line">
+        <div class="md-list-item-text">{{translate.load('')}}
+          <h3>{{translate.load('sbi.workspace.dataset.ckan.list.description')}}</h3>
+          <p>{{ckan.configuration.Resource.description}}</p>
+        </div>
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <h3>{{translate.load('sbi.workspace.dataset.ckan.list.creationdate')}}</h3>
+          <p>{{ckan.configuration.Resource.created|date:"medium"}}</p>
+        </div>
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <h3>{{translate.load('sbi.workspace.dataset.ckan.list.format')}}</h3>
+          <p>{{ckan.configuration.Resource.format}}</p>
+        </div>
+      </md-list-item>
+     
+ </md-list>
+ 
+</md-conttent>
+
+</md-dialog>

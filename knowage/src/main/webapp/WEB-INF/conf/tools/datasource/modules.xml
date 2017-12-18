@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODULES>
+    <!--
+	<MODULE class="it.eng.spagobi.tools.datasource.service.ListDataSourceModule" name="ListDataSourceModule">
+	    <CONFIG pool="spagobi" rows="20" title="SBISet.ListDataSource.title" >
+	      <QUERIES>
+	        <SELECT_QUERY statement="SELECT_ALL_DS">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+	        </SELECT_QUERY>
+	      </QUERIES>
+	      <COLUMNS>
+	        <COLUMN label="ID" name="ID" hidden="true" />
+	        <COLUMN label="SBISet.ListDS.columnLabel" name="LABEL" />	        
+	        <COLUMN label="SBISet.ListDS.columnDescr" name="DESCR" />
+	      </COLUMNS>
+	      <CAPTIONS>
+	      	<SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="SBISet.ListDS.detailCaption">
+	          	  <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailDataSourcePage"/>
+		          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
+		          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+	        </SELECT_CAPTION>
+	        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="SBISet.ListDS.deleteButton">
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailDataSourcePage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
+	        </DELETE_CAPTION>
+	      </CAPTIONS>
+	      <BUTTONS>
+	        <INSERT_BUTTON confirm="TRUE" image="/img/new.png" label="SBISet.ListDS.InsertButton">
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_NEW"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailDataSourcePage"/>
+	        </INSERT_BUTTON>
+	        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="SBISet.ListDS.backButton" onlyPortletRunning="true">
+	          <PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE" value="START_ACTION"/>
+	          <PARAMETER name="PUBLISHER_NAME" scope="" type="ABSOLUTE" value="LoginSBIResourcesPublisher"/>
+	          <PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE" value="true"/>
+	        </BACK_BUTTON>
+	      </BUTTONS>
+	    </CONFIG>
+  	</MODULE>
+
+
+    
+    <MODULE class="it.eng.spagobi.tools.datasource.service.DetailDataSourceModule" name="DetailDataSourceModule">
+     	<CONFIG/>
+    </MODULE>
+	-->
+</MODULES>
+
+

@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-nov-2008 17.16.34 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.config.metadata.SbiKpi" table="SBI_KPI" >
+        <id name="kpiId" type="java.lang.Integer">
+            <column name="KPI_ID" />
+        </id>
+        <many-to-one name="sbiKpi" class="it.eng.spagobi.kpi.config.metadata.SbiKpi" >
+            <column name="id_kpi_parent" />
+        </many-to-one>
+        <!-- <many-to-one name="sbiDataSet" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" >
+            <column name="DS_ID" />
+        </many-to-one>
+         -->
+		<many-to-one name="sbiDomainsByMeasureType" class="it.eng.spagobi.commons.metadata.SbiDomains" >
+            <column name="measure_type" />
+        </many-to-one>
+        <many-to-one name="sbiDomainsByKpiType" class="it.eng.spagobi.commons.metadata.SbiDomains" >
+            <column name="kpi_type" />
+        </many-to-one>
+        <many-to-one name="sbiThreshold" class="it.eng.spagobi.kpi.threshold.metadata.SbiThreshold" >
+            <column name="THRESHOLD_ID" />
+        </many-to-one>
+        <many-to-one name="sbiMeasureUnit" class="it.eng.spagobi.kpi.config.metadata.SbiMeasureUnit" >
+            <column name="id_measure_unit" />
+        </many-to-one>
+        <many-to-one name="sbiDomainsByMetricScaleType" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="metric_scale_type" />
+        </many-to-one>
+        <property name="sbiDataSet" type="integer">
+            <column name="DS_ID"  />
+        </property>
+        <property name="name" type="string">
+            <column name="name" length="400" not-null="true" />
+        </property>
+        <property name="code" type="string">
+            <column name="code" length="40" />
+        </property>
+        <property name="metric" type="string">
+            <column name="metric" length="2000" />
+        </property>
+        <property name="description" type="string">
+            <column name="description" />
+        </property>
+        <property name="weight" type="double">
+            <column name="weight" precision="22" scale="0" />
+        </property>
+        <property name="flgIsFather" type="character">
+            <column name="flg_is_father" length="1" />
+        </property>
+        <property name="interpretation" type="string">
+            <column name="interpretation" length="1000" />
+        </property>
+         <property name="inputAttributes" type="string">
+            <column name="input_attributes" length="1000" />
+        </property>
+        <property name="modelReference" type="string">
+            <column name="model_reference" />
+        </property>
+        <property name="targetAudience" type="string">
+            <column name="target_audience" length="1000" />
+        </property>  
+        <property name="isAdditive" type="true_false">
+            <column name="is_additive" not-null="false" default="T" />
+        </property>        
+        <set name="sbiKpiModels" inverse="true">
+            <key>
+                <column name="KPI_ID" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.model.metadata.SbiKpiModel" />
+        </set>
+        <set name="sbiKpis" inverse="true">
+            <key>
+                <column name="id_kpi_parent" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpi" />
+        </set>
+        <set name="sbiKpiInstances" inverse="true">
+            <key>
+                <column name="KPI_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiInstance" />
+        </set>
+        <set name="sbiKpiRoles" inverse="true">
+            <key>
+                <column name="KPI_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiRole" />
+        </set>
+        <set name="sbiKpiDocumentses" inverse="true">
+            <key>
+                <column name="KPI_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiDocument" />
+        </set>
+    </class>
+</hibernate-mapping>

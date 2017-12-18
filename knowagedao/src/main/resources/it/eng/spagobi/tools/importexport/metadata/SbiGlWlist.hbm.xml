@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.glossary.metadata.SbiGlWlist" table="SBI_GL_WLIST" >
+        
+        <composite-id name="id" class="it.eng.spagobi.tools.glossary.metadata.SbiGlWlistId">
+            <key-property name="wordId" type="int">
+                <column name="WORD_ID" />
+            </key-property>
+            <key-property name="contentId" type="int">
+                <column name="CONTENT_ID" />
+            </key-property>
+        </composite-id>
+
+        <property name="order" type="integer">
+            <column name="WORD_ORDER" />
+        </property> 
+                
+ </class>
+ 
+</hibernate-mapping>

@@ -1,0 +1,282 @@
+<!-- 
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+
+<md-card class="flexCard" style="position:absolute;" layout-fill id="cockpitDataConfig">
+ <md-card-content flex layout="column" class="noPadding">
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2> Data {{translate.load("sbi.cockpit.settings")}}</h2>
+		</div>
+	</md-toolbar>
+	<md-content flex layout="column">
+	
+	
+		<md-tabs  flex md-border-bottom layout-column>
+		
+			<md-tab  label="{{translate.load('sbi.cockpit.source')}}">
+		        <md-content  layout-fill layout="column" layout-gt-md="row">
+		         		<md-card  class="flexCard" style="position:relative" layout="column" flex ng-controller="datasetManagerController"  >
+			         		<div ng-show="displayDatasetCard!=true;" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
+						       <md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
+						    </div>
+							<md-card-content flex layout="column" ng-if="displayDatasetCard==true;">
+							<md-toolbar style="background-color: transparent!important;   color: black!important;">
+								  <div class="md-toolbar-tools" >
+								    <h2>{{translate.load("sbi.cockpit.datasets")}}</h2>
+								    <span flex></span>
+								  </div>
+								</md-toolbar>
+								  <angular-table flex 
+										id="cockpit-dataset" ng-model='tmpAvaiableDataset'
+										columns='cockpitDatasetTableColumns'
+										columns-search='["label"]'
+										show-search-bar="false"
+										no-pagination="true"
+										speed-menu-option="datasetTableActions"
+										scope-functions="datasetFunctions"
+										show-expander-row-condition="datasetHaveParameter(row)"
+										>
+										<queue-table>
+											<div layout="row" style="background: white;"> 
+												<span flex></span>
+												<md-button type="button" id="add-dataset" ng-click="scopeFunctions.addDataset($event);">{{scopeFunctions.translate.load("sbi.cockpit.add.dataset")}}</md-button>
+											</div>
+										</queue-table>
+										<row-detail>
+										
+											<md-card  layout="column" class="flexCard datasetParameterDetail" >
+												<md-card-content flex layout="column" >
+													<md-toolbar>
+													  <div class="md-toolbar-tools">
+													    <h2>{{scopeFunctions.translate.load("sbi.cockpit.mainpanel.btn.parameters")}}</h2>
+													    <span flex></span>
+													  </div>
+													</md-toolbar>
+													<div  layout-wrap layout="row" >
+												
+														<md-input-container class="md-icon-right" ng-repeat="par in row.parameters" flex="33" >
+												          <label>{{par.name}}</label>
+												          <input  ng-model="par.value" ng-init="par.value=par.value==undefined ? par.defaultValue : par.value" required>
+												          <md-icon ng-if="scopeFunctions.haveAnaliticalDriver" md-font-icon="fa fa-search datasetParameterChoices{{$parent.$parent.$index}}{{$index}}" ng-click="scopeFunctions.selectParameterFromPanel(par,'datasetParameterChoices'+$parent.$parent.$index+''+$index)"></md-icon>
+												        </md-input-container>
+											        </div>
+												</md-card-content>
+											</md-card>
+										
+											
+										</row-detail> 
+									</angular-table>
+							</md-card-content>
+						</md-card>
+		         		
+		         		<md-card  class="flexCard" style="position:relative" flex  layout="column" ng-controller="documentManagerController"  >
+		         		<div ng-show="displayDocumentCard!=true;" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
+					       <md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
+					    </div>
+    
+							<md-card-content flex layout="column" ng-if="displayDocumentCard==true;" >
+								<md-toolbar style="background-color: transparent!important;   color: black!important;">
+								  <div class="md-toolbar-tools" >
+								    <h2>{{translate.load("Documents")}}</h2>
+								    <span flex></span>
+								  </div>
+								</md-toolbar>
+								  <angular-table flex 
+										id="cockpit-document" ng-model='tmpAvaiableDocument'
+										columns='cockpitDocumentTableColumns'
+										columns-search='["label"]'
+										show-search-bar="false"
+										no-pagination="true"
+										speed-menu-option="documentTableActions"
+										scope-functions="documentFunctions"
+										show-expander-row-condition="documentHaveParameter(row)"
+										>
+										<queue-table>
+											<div layout="row" style="background: white;"> 
+												<span flex></span>
+												<md-button type="button" id="add-dataset" ng-click="scopeFunctions.addDocument($event);">{{scopeFunctions.translate.load("sbi.cockpit.add.document")}}</md-button>
+											</div>
+										</queue-table>
+										<row-detail>
+										
+											<md-card   class="flexCard analiticalParameterDetail" >
+												<md-card-content layout="column" flex layout="column" >
+													<md-toolbar>
+													  <div class="md-toolbar-tools">
+													    <h2>{{scopeFunctions.translate.load("sbi.cockpit.mainpanel.btn.parameters")}}</h2>
+													    <span flex></span>
+													  </div>
+													</md-toolbar>
+													<div  layout-wrap layout="row" >
+												
+														<md-input-container class="md-icon-right" ng-repeat="par in row.objParameter" flex="33"  >
+												          <label>{{par.urlName}}</label>
+												          <input  ng-model="par.value">
+												          <md-icon ng-if="scopeFunctions.haveAnaliticalDriver" md-font-icon="fa fa-search documentParameterChoices{{$parent.$parent.$index}}{{$index}}" ng-click="scopeFunctions.selectParameterFromPanel(par,'documentParameterChoices'+$parent.$parent.$index+''+$index)"></md-icon>
+												        </md-input-container>
+												         
+											        </div>
+												</md-card-content>
+											</md-card>
+										
+											
+										</row-detail> 
+									</angular-table>
+							</md-card-content>
+						</md-card>
+		       
+		         
+		        </md-content>
+		 	</md-tab>
+     		<md-tab label="Associations" >
+		        <md-content  layout-fill layout="row" ng-controller="dataAssociationController"> 
+		          <div layout="column" layout-fill ng-if="displayAssociationsContent==true">
+		          	<div flex="50" layout="row" style="overflow: auto;">
+<!-- 		          	Dataset card -->
+						<md-card class=" associationCard flexCard"  ng-repeat="avDataset in tmpAvaiableDataset" layout="column"> 
+							<md-card-content flex="" layout="column" class="noPadding">
+								<md-toolbar class="secondaryToolbar" >
+									<div class="md-toolbar-tools" layout="row">
+										<p class="wrapText" >{{avDataset.label}}</p>
+									</div>
+								</md-toolbar>
+								<md-content flex layout>
+									<md-list class="md-dense" flex>
+										<md-list-item class="md-long-text" ng-repeat="meta in avDataset.metadata.fieldsMeta" 
+										ng-click="toggleAssociation(avDataset.label,meta.name,'dataset')" ng-class="{'selectedRow':jsonCurrentAss[avDataset.label]==('dataset'+meta.name)}">
+											<span layout="row" flex>
+												<p flex=70 class="metaname" >{{meta.alias}}</p>
+                                                <!--  <p flex=70 class="metaname" ng-if="meta.alias==''">{{meta.name}}</p>   -->
+												<p class="metatype">({{meta.type | metatype}})</p>
+											</span>
+											<md-divider ng-if="!$last"></md-divider>
+										</md-list-item>
+										<md-divider></md-divider>
+										<md-list-item class="md-long-text" ng-repeat="param in avDataset.parameters" 
+										ng-click="toggleAssociation(avDataset.label,'$P{'+param.name+'}','dataset')" ng-class="{'selectedRow':jsonCurrentAss[avDataset.label]==('dataset'+'$P{'+param.name+'}')}">
+											<span layout="row" flex>
+												<p flex=70 class="metaname" >$P{<span ng-bind="param.name"></span>}</p>
+												<p class="metatype">({{param.type | metatype}})</p>
+											</span>
+											<md-divider ng-if="!$last"></md-divider>
+										</md-list-item>
+										<md-divider></md-divider>
+									</md-list>
+								</md-content>
+							</md-card-content>
+						</md-card>
+<!-- 						Document card -->
+						<md-card class=" associationCard flexCard"  ng-repeat="avDocument in tmpAvaiableDocument" layout="column" ng-if="avDocument.objParameter.length>0"> 
+							<md-card-content flex="" layout="column" class="noPadding">
+								<md-toolbar class="documentAssociationToolbar" >
+									<div class="md-toolbar-tools" layout="row">
+										<p class="wrapText" >{{avDocument.DOCUMENT_LABEL}}</p>
+									</div>
+								</md-toolbar>
+								<md-content flex layout>
+									<md-list class="md-dense" flex>
+										<md-list-item class="md-long-text" ng-repeat=" param in avDocument.objParameter" 
+										ng-click="toggleAssociation(avDocument.DOCUMENT_LABEL,'$P{'+param.urlName+'}','document')" ng-class="{'selectedRow':jsonCurrentAss[avDocument.DOCUMENT_LABEL]==('document'+'$P{'+param.urlName+'}')}">
+											<span layout="row" flex>
+												<p flex class="metaname">$P{<span ng-bind="param.urlName"></span>}</p>
+												<p class="metatype">({{param.type | parametertype}})</p>
+											</span>
+											<md-divider ng-if="!$last"></md-divider>
+										</md-list-item>
+										<md-divider></md-divider>
+									</md-list>
+								</md-content>
+							</md-card-content>
+						</md-card>
+		          	</div>
+		          	<div flex="50" layout="column">
+		          		<md-toolbar class="secondaryToolbar" >
+							<div class="md-toolbar-tools" layout="row">
+								<p flex class="wrapText" >{{translate.load("sbi.cockpit.association.editor.wizard.list.title")}}</p>
+								<md-button ng-if="showSmartDetection" ng-click="autodetect()" ng-hide="tmpAvaiableDataset.length<2">{{translate.load("sbi.cockpit.association.editor.wizard.list.autodetect")}}</md-button>
+								<md-button ng-click="clearAssociations()">{{translate.load("sbi.cockpit.associations.clear")}}</md-button>
+							</div>
+						</md-toolbar>
+						<md-content flex  >
+							<div  class="associationBox editingAssociation" layout="row"   >
+								<div layout="row" layout-wrap flex>
+									<span layout="row" ng-repeat="item in utils.currentAss.fields">
+										<span>{{item.store}}.{{item.column}}</span>
+										<i class="fa fa-arrows-h associationsArrow" aria-hidden="true" ng-if="!$last"></i>
+									</span>
+								</div>
+								<div layout="row">
+									 <md-button class="md-icon-button" ng-disabled="utils.currentAss.fields.length==0" ng-click="saveCurrentAssociations()" aria-label="save">
+								        <md-icon md-font-icon="fa fa-save"></md-icon>
+								      </md-button>
+								      <md-button class="md-icon-button" ng-click="deleteCurrentAssociations()"  aria-label="delete">
+								        <md-icon md-font-icon="fa fa-times"></md-icon>
+								      </md-button>
+								</div>
+							</div>
+<!-- 							saved associations -->
+
+							<div  class="associationBox " layout="row"   ng-repeat="ass in tmpAssociations" >
+								<div layout="row" layout-wrap flex>
+									<span layout="row" ng-repeat="item in ass.fields">
+										<span>{{item.store}}.{{item.column}}</span>
+										<i class="fa fa-arrows-h associationsArrow" aria-hidden="true" ng-if="!$last"></i>
+									</span>
+								</div>
+								<div layout="row">
+									 <md-button class="md-icon-button" ng-disabled="utils.currentAss.fields.length>0" ng-click="editAssociations(ass)" aria-label="save">
+								        <md-icon md-font-icon="fa fa-edit"></md-icon>
+								      </md-button>
+								      <md-button class="md-icon-button" ng-click="deleteAssociations(ass)"  aria-label="delete">
+								        <md-icon md-font-icon="fa fa-trash"></md-icon>
+								      </md-button>
+								</div>
+							</div>
+						
+						</md-content>
+						
+		          	</div>
+		          </div>
+					 
+		        </md-content>
+		 	</md-tab>
+		 	<md-tab ng-if="showNearRealTimeCockpit" label="Frequency"  md-on-select="refreshFrequencyNearRTData()" >
+		        <md-content layout-fill ng-include="baseScriptPath+'/directives/cockpit-data-configuration/templates/CockpitDataConfigurationAssociationGroup.html'">
+		        </md-content>
+		 	</md-tab>
+		 	<md-tab label="template">
+		        <md-content    >
+		        <pre>{{cockpitModule_template | json}}</pre>
+		        </md-content>
+		 	</md-tab>
+		</md-tabs>
+	</md-content>
+	
+</md-card-content>
+<md-card-actions layout="row" layout-align="end center">
+	  <md-button ng-click="cancelConfiguration()">
+	    {{translate.load("sbi.generic.cancel")}}
+	  </md-button>
+	  <md-button ng-click="saveConfiguration()">
+	    {{translate.load("sbi.generic.save")}}
+	  </md-button>
+</md-card-actions>
+</md-card>
+	 

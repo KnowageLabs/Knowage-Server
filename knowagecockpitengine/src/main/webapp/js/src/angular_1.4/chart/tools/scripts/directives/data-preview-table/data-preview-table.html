@@ -1,0 +1,18 @@
+<table class="data-table" border="1" ng-cloak>
+<caption ng-if="title">
+<h4>{{title}}</h4>
+</caption>
+<thead>
+ <tr>
+    <th sope="col" role="columnheader"><span class="sr-only"></span></th>
+ 	<th ng-repeat="cat in categories track by $index" scope="col">{{cat}}</th>
+ </tr>
+</thead>
+<tbody>
+ <tr ng-repeat="serie in ngModel">
+  <th scope="row">{{serie.label}}</th>
+  <td ng-repeat="value in serie.data">{{value}}</td>
+ </tr>
+</tbody>
+</table>
+

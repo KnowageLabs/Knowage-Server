@@ -1,0 +1,47 @@
+{
+  "name": "knowage",
+  "version": "6.0.0",
+  "description": "Knowage is the professional open source suite for modern business analytics over traditional sources and big data systems.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KnowageLabs/Knowage-Server.git"
+  },
+  "keywords": [
+    "business",
+    "intelligence",
+    "bi",
+    "spagobi",
+    "knowage",
+    "bigdata"
+  ],
+  "homepage": "https://github.com/KnowageLabs/Knowage-Server#readme",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "vendors",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "1.5.1",
+    "angular-animate": "1.5.1",
+    "angular-aria": "1.5.1",
+    "angular-cookies": "1.4.5",
+    "angular-material": "1.1.4",
+    "angular-messages": "1.5.1",
+    "angular-sanitize": "1.5.1",
+    "font-awesome": "^4.7.0",
+    "ngdraggable": "^0.1.10"
+  },
+  "author": "knowage labs <knowage@eng.it>",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/KnowageLabs/Knowage-Server/issues"
+  }
+}

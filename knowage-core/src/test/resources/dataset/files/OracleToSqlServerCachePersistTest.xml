@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test>
+	<cacheConfiguration
+		tableNamePrefix="sbicache"
+		spaceAvailable="104857600"
+		percentageToClean="50"
+		percentageToStore="50"
+		schemaName="ds_cache">
+		cacheConfiguration
+	</cacheConfiguration>
+	<readingDataSource
+		url="jdbc:oracle:thin:@172.27.1.83:1521:repo"
+		user="bilancio_mi"
+		password="bilancio_mi"
+		driver="oracle.jdbc.driver.OracleDriver"
+		hibDialectClass="org.hibernate.dialect.Oracle9Dialect"
+		hibDialectName="sbidomains.nm.oracle_9i10g">
+		datasource_read
+	</readingDataSource>
+	<writingDataSource
+		url="jdbc:sqlserver://FRALUCCHW\\SQLEXPRESS;databaseName=knowage"
+		user="sa"
+		password="root"
+		driver="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+		hibDialectClass="org.hibernate.dialect.SQLServerDialect"
+		hibDialectName="sbidomains.nm.sqlserver">
+		datasource_write
+	</writingDataSource>
+	<table name="CACHE_PERSIST_TEST">
+		<field writingType="java.lang.String">colchar</field>
+		<field writingType="java.lang.String">COLCHARACTER</field>
+		<field writingType="java.lang.String">COLLONG</field>
+		<field writingType="java.lang.String">COLVARCHAR</field>
+		<field writingType="java.lang.String">COLVARCHAR2</field>
+		<field writingType="[B">COLRAW</field>
+		<field writingType="java.math.BigDecimal">COLINT</field>
+		<field writingType="java.math.BigDecimal">COLINTEGER</field>
+		<field writingType="java.math.BigDecimal">COLDEC</field>
+		<field writingType="java.math.BigDecimal">COLDECIMAL</field>
+		<field writingType="java.math.BigDecimal">COLNUMBER</field>
+		<field writingType="java.math.BigDecimal">COLNUMERIC</field>
+		<field writingType="java.math.BigDecimal">COLDOUBLEPRECISION</field>
+		<field writingType="java.math.BigDecimal">COLFLOAT</field>
+		<field writingType="java.math.BigDecimal">COLSMALLINT</field>
+		<field writingType="java.math.BigDecimal">COLREAL</field>
+		<field writingType="java.sql.Timestamp">COLDATE</field>
+		<field writingType="java.sql.Timestamp">COLTIMESTAMP</field>
+		<field writingType="java.lang.String">COLINTERVALDAY</field>
+		<field writingType="java.lang.String">COLINTERVALYEAR</field>
+		<field writingType="java.lang.String">COLCLOB</field>
+		<field writingType="[B">COLBLOB</field>
+	</table>
+</test>

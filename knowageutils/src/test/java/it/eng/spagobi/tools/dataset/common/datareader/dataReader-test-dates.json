@@ -1,0 +1,39 @@
+{
+  "contextResponses": [
+    {
+      "contextElement": {
+        "attributes": [
+          {
+            "name": "atTime",
+            "type": "time",
+            "value": "18:19:14"
+          },
+          {
+            "name": "atDate",
+            "type": "date",
+            "value": "2015-08-14" 
+          },
+          {
+            "name": "atTimestamp",
+            "type": "timestamp",
+            "value": "2015-07-21T14:49:46.968+0200"
+          },
+          {
+            "name": "atDateTime",
+            "type": "datetime",
+            "value": "2015-07-22T14:49:46.968+0200"
+          },
+          {
+            "name": "atDateCustom",
+            "type": "date dd/MM/yyyy",
+            "value": "20/01/1986"
+          }
+        ]
+      },
+      "statusCode": {
+        "reasonPhrase": "OK",
+        "code": "200"
+      }
+    }
+  ]
+}

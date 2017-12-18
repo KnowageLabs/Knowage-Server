@@ -1,0 +1,380 @@
+#set($results = $data.rows)
+#set($dataFields = $data.metaData.fields)
+
+#* 
+	Convert an array list with the single element into the HashMap so we can 
+	use it in a general way, even if we are calling the VM for purpose of
+	previewing the CHORD chart.
+	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+*#
+#if($chart.VALUES.SERIE.class.name == 'java.util.ArrayList')
+	#set($chart.VALUES.SERIE = $chart.VALUES.SERIE[0])
+#end
+
+#set($categories = $chart.VALUES.CATEGORY)
+#set($serieName = $chart.VALUES.SERIE.name)
+	
+#set($serie = $chart.VALUES.SERIE)
+
+#*
+	Get the grouping function (aggregation type) of the serie item user
+	specified for the CHORD chart.	
+	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+*#
+#set($groupingFunction = $serie.groupingFunction)
+
+#set($dataColumnsMapper = {})
+
+#foreach ($dataField in $dataFields) ## conversion column name to internal column name
+	#if($dataField.class.name == 'java.util.LinkedHashMap')		
+		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header, $dataField.name))
+	#end
+#end
+
+#set($columnsNeeded = {})
+
+#set($columnCounter = 0)
+		
+#foreach($value in $categories)	
+
+	#set($columnsNeeded[$columnCounter] = $value.name)
+	#set($columnCounter = $columnCounter + 1)
+#end
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
+
+{
+	chart:
+	{		
+		type: '$chart.type',
+		
+		#if($chart.height != '')
+    		height: $chart.height,
+    	#end
+		
+		#if($chart.width != '')
+    		width: $chart.width,
+    	#end		
+        
+        #*
+    		Dimension type (pixels or percentage) parameter for height of the chart
+    		is provided. 
+    		
+    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').
+    				
+    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	*#
+     	#if($chart.heightDimType)
+       	 	heightDimType: '$chart.heightDimType',
+        #end
+    	
+    	#if($chart.widthDimType)
+        	widthDimType: '$chart.widthDimType',
+        #end
+		
+		isCockpit: $chart.isCockpitEngine,
+		
+		#*
+  			If we are previewing a chart inside a Designer widget in the Cockpit, the 'chart.outcomingEventsEnabled' will be NULL, so we need to check if this is the case.
+  			If not providing this check, we will experience rendering problem within the Highcharts Export (value for 'outcomingEventsEnabled' template property will be 
+  			'$chart.outcomingEventsEnabled'.
+  			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  		*#
+  		#if($chart.isCockpitEngine=='true' && "$!chart.outcomingEventsEnabled" != "")
+  			outcomingEventsEnabled: $chart.outcomingEventsEnabled,
+  		#end
+  		
+		style:
+		{
+			backgroundColor: '$chart.style.backgroundColor',
+			fontSize: '$chart.style.fontSize',
+			
+			#if($chart.style.fontWeight == 'italic' || $chart.style.fontWeight == 'normal')
+    			fontStyle: '$chart.style.fontWeight',
+			#elseif($chart.style.fontWeight == 'underline')
+    			textDecoration: '$chart.style.fontWeight',
+			#elseif($chart.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.style.fontWeight',
+    		#end
+		}		
+	},
+	
+	## Axises selection
+    #set($axisList = $chart.AXES_LIST.AXIS)
+
+    #set($xAxisList = {}) ## X Axises list container
+    #set($yAxisList = {}) ## Y Axises list container
+    #set($xAxisPositions = {}) ## X Axises integer positions list, for series references
+    #set($yAxisPositions = {}) ## Y Axises integer positions list, for series references
+    #set($xAxisCounter = 0) 
+    #set($yAxisCounter = 0) 
+    
+    #foreach($axis in $axisList)
+	 	#if($axis.type == 'Category')
+	 		#set($workAroundNoPrint = $xAxisList.put($axis.alias , $axis))
+	 		#set($workAroundNoPrint = $xAxisPositions.put($axis.alias , $xAxisCounter))
+	 		
+	 		#set($xAxisCounter = $xAxisCounter + 1)
+	 	#end
+	 	
+	 	#if($axis.type == 'Serie')
+	 		#set($workAroundNoPrint = $yAxisList.put($axis.alias , $axis))
+	 		#set($workAroundNoPrint = $yAxisPositions.put($axis.alias , $yAxisCounter))
+ 		
+	 		#set($yAxisCounter = $yAxisCounter + 1)
+	 	#end
+	#end
+	
+	xAxis:
+	 #foreach($xAxisKey in $xAxisList.keySet())
+	 #set ($xAxis = $xAxisList[$xAxisKey])
+	 {
+		labels:{
+				 
+			 #if( $xAxis.style != '' ) 
+        		        		
+        		style:{
+	        	#foreach($styleName in $xAxis.style.keySet())
+	        		#set ($axisStyle = $xAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		},  
+        		
+        	#end
+		 },	 
+			    
+		 type: 'category',
+	 },
+	 #end
+	
+	yAxis: 
+    ## START Serie add
+	#foreach($yAxisKey in $yAxisList.keySet())
+	#set ($yAxis = $yAxisList[$yAxisKey])        
+    {
+    	labels:{
+    				 
+			#if( $yAxis.style != '' )         		
+        		style:{
+	        	#foreach($styleName in $yAxis.style.keySet())
+	        		#set ($axisStyle = $yAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		}
+        	#end
+        	
+	 	},
+	 	
+	 	type: 'serie'
+    },
+	#end
+	## END Serie add
+        
+	
+	title:
+	{
+		text: "$chart.TITLE.text",
+		
+		#*style:
+		{
+			align: '$chart.TITLE.style.align',
+			color: '$chart.TITLE.style.color',
+			fontWeight: '$chart.TITLE.style.fontWeight',
+			fontSize: '$chart.TITLE.style.fontSize'
+		}*#
+		
+		style:{
+        #foreach($styleName in $chart.TITLE.style.keySet())
+        	#set ($axisTitleStyle = $chart.TITLE.style[$styleName])
+    		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+    			fontStyle: '$axisTitleStyle',
+			#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+    			textDecoration: 'underline',
+			#else		        			
+    			$styleName: '$axisTitleStyle',
+    		#end
+		#end
+	    }
+	},
+	
+	subtitle:
+	{
+		text: "$chart.SUBTITLE.text",
+		
+		#*style:
+		{
+			align: '$chart.SUBTITLE.style.align',
+			color: '$chart.SUBTITLE.style.color',
+			fontWeight: '$chart.SUBTITLE.style.fontWeight',
+			fontSize: '$chart.SUBTITLE.style.fontSize'
+		}*#
+		
+		style:{
+        #foreach($styleName in $chart.SUBTITLE.style.keySet())
+        	#set ($axisSubtitleStyle = $chart.SUBTITLE.style[$styleName])
+    		#if ($styleName == 'fontWeight' && ($axisSubtitleStyle == 'italic' || $axisSubtitleStyle == 'normal'))
+    			fontStyle: '$axisSubtitleStyle',
+			#elseif($styleName == 'fontWeight' && $axisSubtitleStyle == 'underline')
+    			textDecoration: 'underline',
+			#else		        			
+    			$styleName: '$axisSubtitleStyle',
+    		#end
+		#end
+		}
+	},
+		
+	emptymessage:
+	{
+		text: "$chart.EMPTYMESSAGE.text",
+		
+		style:
+		{
+			align: '$chart.EMPTYMESSAGE.style.align',
+			fontFamily: '$chart.EMPTYMESSAGE.style.fontFamily',
+			
+			fontSize: '$chart.EMPTYMESSAGE.style.fontSize',
+			color: '$chart.EMPTYMESSAGE.style.color',
+			
+			#if($chart.EMPTYMESSAGE.style.fontWeight == 'italic' || $chart.EMPTYMESSAGE.style.fontWeight == 'normal')
+    			fontStyle: '$chart.EMPTYMESSAGE.style.fontWeight',
+			#elseif($chart.EMPTYMESSAGE.style.fontWeight == 'underline')
+    			textDecoration: '$chart.EMPTYMESSAGE.style.fontWeight',
+			#elseif($chart.EMPTYMESSAGE.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
+    		#end
+		}
+	},
+	
+	colors: 
+	[
+		#*
+ 			If user specified more than one color from the color palette
+ 			on the Designer when creating the chart, then we have an array
+ 			list of elements. Otherwise, we are dealing with a hashmap.
+ 			
+ 			In the first case, create an array of colors. In the second 
+ 			case take the only color user specified and put it as the only
+ 			element of the array that we are now creating.
+ 			
+ 			@modifiedBy: danristo (danilo.ristovski@mht.net)
+ 		*#	
+ 			
+		#*#if ($chart.COLORPALETTE.COLOR.class.name == 'java.util.ArrayList')
+			#foreach($color in $chart.COLORPALETTE.COLOR)
+				'$color.get('value')',			
+			#end			
+		#else
+			'$chart.COLORPALETTE.COLOR.value'
+		#end	*#
+		
+		#*
+			If user specifies at least 2 colors (class name of the structure that hold data
+			about colors picked in the color palette of the Designer will in this case be
+			LinkedList, instead of LinkedHashMap as in other case - just one element) go 
+			into the if-statement. If there are no picked color or there is just one, go
+			into the else-statement.
+			@author: danristo (danilo.ristovski@mht.net)
+		*#
+ 		
+ 		#if ($chart.COLORPALETTE.COLOR && $chart.COLORPALETTE.COLOR.class.name != 'java.util.LinkedHashMap') 
+			
+			#foreach($color in $chart.COLORPALETTE.COLOR)
+				'$color.value', 
+			#end	
+					
+		#else		
+			
+			#*
+				If user does not specify any color inside the color palette the chart
+				will take predefined value for the color (#000000) (else-case).	Otherwise, 
+				we will take the single value specified in the palette (if-case).
+				@author: danristo (danilo.ristovski@mht.net)
+				
+				If user does not specify any color inside the color palette
+				handled by renderD3, removed from velocity
+				@author: atomic (ana.tomic@mht.net)
+			*#
+			
+			#if ($chart.COLORPALETTE.COLOR)
+				'$chart.COLORPALETTE.COLOR.value'
+			#end
+			
+		#end
+    ],	
+    
+   	tooltip:
+ 	{
+ 	    backgroundColor:'$serie.TOOLTIP.backgroundColor',
+		fontFamily: '$serie.TOOLTIP.style.fontFamily',
+		fontSize: '$serie.TOOLTIP.style.fontSize',
+		fontColor: '$serie.TOOLTIP.style.color',
+		align:'$serie.TOOLTIP.style.align',
+		#if ( $serie.TOOLTIP.style.fontWeight == 'italic' || $serie.TOOLTIP.style.fontWeight == 'normal')
+    			fontStyle: '$serie.TOOLTIP.style.fontWeight',
+			#elseif( $serie.TOOLTIP.style.fontWeight == 'underline')
+    			textDecoration: 'underline',
+			#elseif($serie.TOOLTIP.style.fontWeight == 'bold')		        			
+    			fontWeight: '$serie.TOOLTIP.style.fontWeight',
+    		#end
+		borderWidth: '$serie.TOOLTIP.borderWidth',
+	 	borderRadius: '$serie.TOOLTIP.borderRadius',
+	 	prefix:'$serie.prefixChar',
+	 	precision:'$serie.precision',
+	 	postfix:'$serie.postfixChar',
+ 	},
+	
+	crossNavigation:
+	{
+	   #if($crossNavigation != '') 
+						crossNavigationDocumentName: '$crossNavigation.document',
+						crossNavigationDocumentParams: [
+							## if single PARAM node, not array
+							#if($crossNavigation.PARAM_LIST.PARAM.class.name == "java.util.LinkedHashMap")
+								#set($param = $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' }
+							#else
+								##Array of parameters
+								
+								#foreach($param in $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' },
+								#end
+							#end
+						],
+						#end
+	},
+	
+	#*
+		Provide the name of the series item in order to enable complete output parameters binding.
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*#
+	series: {
+		name: '$serie.name'
+	},
+	
+	categories: $datasettransformer.getColumnNames($columnsNeeded),
+	
+	data:
+	[
+		$datasettransformer.toMatrix($results,$columnsNeeded,$serieName,$dataColumnsMapper,$groupingFunction)
+	]
+} 

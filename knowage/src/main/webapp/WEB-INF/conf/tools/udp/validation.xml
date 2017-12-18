@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+	
+	<SERVICE name="MANAGE_UDP_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="CONTACT_DETAIL"/>
+			</CONDITIONS>
+			<FIELDS>
+
+				<FIELD name="name" label="name">
+					<VALIDATOR validatorName="MANDATORY"/>	
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>				
+					<VALIDATOR validatorName="MAXLENGTH" arg0="40"/>
+				</FIELD>
+				<FIELD name="label" label="label">
+					<VALIDATOR validatorName="MANDATORY"/>
+				  	<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>				
+					<VALIDATOR validatorName="MAXLENGTH" arg0="20"/>
+				</FIELD>
+				<FIELD name="DESCRIPTION" label="DESCRIPTION">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>	
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+	
+</VALIDATIONS>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LDAP_AUTHORIZATIONS default="FALSE">
+	<CONFIG>
+		
+		<!--  SERVER -->
+		<HOST>localhost</HOST>
+		<PORT>10389</PORT>	
+		<ADMIN_USER>uid=admin,ou=system</ADMIN_USER>
+		<ADMIN_PSW>secret</ADMIN_PSW> <!-- password in clear text -->
+		<BASE_DN></BASE_DN> <!-- base domain, if any -->
+	
+		<!-- USERS -->
+		<USER_SEARCH_PATH>ou=users,ou=system</USER_SEARCH_PATH> <!-- SpagoBI will look for users under this node -->
+		<USER_OBJECT_CLASS>person</USER_OBJECT_CLASS> <!-- class for users' objects -->
+		<USER_ID_ATTRIBUTE_NAME>sn</USER_ID_ATTRIBUTE_NAME> <!-- name of the attribute containing the user identifier -->
+		<USER_NAME_ATTRIBUTE_NAME>fullName</USER_NAME_ATTRIBUTE_NAME> <!-- name of the attribute(*) containing the user name -->
+		<SUPER_ADMIN_ATTRIBUTE_NAME>superAdmin</SUPER_ADMIN_ATTRIBUTE_NAME> <!-- name of the attribute(*) containing the super admin flag -->
+		<!-- (*) SPAGOBI attribute, not LDAP attribute!!! It must match the "name" attribute of one USER_ATTRIBUTE tag below -->
+		<USER_MEMBEROF_ATTRIBUTE_NAME>memberOf</USER_MEMBEROF_ATTRIBUTE_NAME> <!-- this attribute has to contain the list of groups the user belongs to -->
+		
+		<!-- list of the users' attributes to be loaded when querying the LDAP -->
+		<USER_ATTRIBUTE name="id">sn</USER_ATTRIBUTE> <!-- LDAP attribute to be considered as SpagoBI attribute -->
+		<USER_ATTRIBUTE name="name">cn</USER_ATTRIBUTE>
+		<USER_ATTRIBUTE name="mail">uid</USER_ATTRIBUTE>
+		<USER_ATTRIBUTE name="memberOf">memberOf</USER_ATTRIBUTE>
+		<USER_ATTRIBUTE name="superAdmin">superAdmin</USER_ATTRIBUTE>
+						
+		<!-- GROUPS -->
+		<GROUP_SEARCH_PATH>OU=BI,OU=apps-role</GROUP_SEARCH_PATH> <!-- SpagoBI will look for groups under this node -->
+		<GROUP_OBJECT_CLASS>group</GROUP_OBJECT_CLASS> <!-- class for groups' objects -->
+		<GROUP_ID_ATTRIBUTE_NAME>cn</GROUP_ID_ATTRIBUTE_NAME> <!-- the attribute containing the name of the group -->
+		
+		<!-- list of the users' attributes to be loaded when querying the LDAP -->
+		<GROUP_ATTRIBUTE>cn</GROUP_ATTRIBUTE>
+		<!-- GROUP_ATTRIBUTE>member</GROUP_ATTRIBUTE -->
+		
+		<ACCESS_GROUP_NAME></ACCESS_GROUP_NAME> <!-- Access group name: if specified, users must belong to this group in order to enter SpagoBI -->
+		<GROUP_MEMBERS_ATTRIBUTE_NAME></GROUP_MEMBERS_ATTRIBUTE_NAME>  <!-- this attribute has to contain the list of users belonging to this group, in case the ACCESS_GROUP_NAME is specified -->
+		
+	</CONFIG>
+</LDAP_AUTHORIZATIONS>

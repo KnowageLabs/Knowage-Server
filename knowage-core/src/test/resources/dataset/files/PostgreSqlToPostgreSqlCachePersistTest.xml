@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test>
+	<cacheConfiguration
+		tableNamePrefix="sbicache"
+		spaceAvailable="104857600"
+		percentageToClean="50"
+		percentageToStore="50"
+		schemaName="ds_cache">
+		cacheConfiguration
+	</cacheConfiguration>
+	<readingDataSource
+		url="jdbc:postgresql://spagobidb:5432/knowagecache"
+		user="knowagecache"
+		password="knowagecache"
+		driver="org.postgresql.Driver"
+		hibDialectClass="org.hibernate.dialect.PostgreSQLDialect"
+		hibDialectName="sbidomains.nm.postgresql">
+		datasource_read
+	</readingDataSource>
+	<writingDataSource
+		url="jdbc:postgresql://spagobidb:5432/knowagecache"
+		user="knowagecache"
+		password="knowagecache"
+		driver="org.postgresql.Driver"
+		hibDialectClass="org.hibernate.dialect.PostgreSQLDialect"
+		hibDialectName="sbidomains.nm.postgresql">
+		datasource_write
+	</writingDataSource>
+	<table name="cachepersisttest">
+		<field writingType="java.lang.Integer">colsmallint</field>
+		<field writingType="java.lang.Integer">colint</field>
+		<field writingType="java.lang.Long">colbigint</field>
+		<field writingType="java.math.BigDecimal">colnumeric</field>
+		<field writingType="java.lang.Float">colreal</field>
+		<field writingType="java.lang.Double">coldoubleprecision</field>
+		<field writingType="java.lang.Integer">colserial</field>
+		<field writingType="java.lang.Long">colbigserial</field>
+		<field writingType="java.lang.String">colchar</field>
+		<field writingType="java.lang.String">coltext</field>
+		<field writingType="[B">colbitea</field>
+		<field writingType="java.sql.Date">coldate</field>
+		<field writingType="java.sql.Time">coltime</field>
+		<field writingType="java.sql.Time">coltimetz</field>
+		<field writingType="java.sql.Timestamp">coltimestamp</field>
+		<field writingType="java.sql.Timestamp">coltimestamptz</field>
+		<field writingType="java.lang.Boolean">colboolean</field>
+		<field writingType="java.lang.Boolean">colbit</field>
+	</table>
+</test>

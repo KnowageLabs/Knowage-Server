@@ -1,0 +1,27 @@
+##Note: the one-to-one relationship is mapped as a one-to-many by both sides
+##included template. Generates the @OneToMany annotation.
+##Assumes that the context has a "jpaRelationship" object representing the generated AssociationRole
+##
+#if ($jpaRelationship.isBidirectional())
+	#if ($jpaRelationship.isDestinationRole()) 
+		#set ($members = $jpaRelationship.getOppositeOneToOneWithAnnotation())
+		#set ($members = $jpaRelationship.getGenCascadesWithAnnotation($members))
+		#if($jpaRelationship.genFetch() !="" && $jpaRelationship.genFetch() !="FetchType.LAZY")
+			#set ($members = $jpaRelationship.getGenFetchWithAnnotation($members))
+		#end
+@OneToMany($members)		
+	#else 	
+		##
+		@OneToMany
+		#if ($jpaRelationship.isMultipleRelationship())
+		@JoinColumns({
+			#foreach ($relationship in $jpaRelationship.relationshipColumnsNames)
+				@JoinColumn( name=$relationship.sourceColumnName, referencedColumnName=$relationship.destinationColumnName, insertable = $isUpdatable, updatable = $isUpdatable),
+			#end
+			})
+		#else
+		@JoinColumn( name=$jpaRelationship.getSimpleSourceColumnName(), insertable = $isUpdatable, updatable = $isUpdatable)
+		#end		
+		##
+	#end 
+#end

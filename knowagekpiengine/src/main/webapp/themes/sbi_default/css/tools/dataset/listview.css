@@ -1,0 +1,298 @@
+	.list-view {
+        
+    }
+    
+    .list-view dd {
+        float:none;
+        width:95%;
+        height:121px;
+        margin:0px 10px 0px 10px;
+        cursor:pointer;
+        zoom:1;
+        border-bottom:1px solid #ddd;
+    }
+    
+    
+     /* ============================================================= */
+    /*	item icon layout					  			 		     */
+    /* ============================================================= */
+    
+    .list-view .document-item-icon {
+        margin:5px 0 0 5px;
+        float:left;
+        /* border: solid  #0000FF; */
+    }
+    
+    .list-view .document-item-icon img {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document.png')!important;
+    }
+    
+    .list-view .document-item-icon .REPORT-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_report.png')!important;
+    }
+    
+    .list-view .document-item-icon .OLAP-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_olap.png')!important;
+    }
+    
+    .list-view .document-item-icon .OFFICE_DOC-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_officedoc.png')!important;
+    }
+    
+    .list-view .document-item-icon .DOCUMENT_COMPOSITE-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_idashboard.png')!important;
+    }
+    
+    .list-view .document-item-icon .DASH-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_chart.png')!important;
+    }
+    
+    .list-view .document-item-icon .CHART-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_chart.png')!important;
+    }
+    
+    .list-view .document-item-icon .DATA_MINING-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_datamining.png')!important;
+    }
+    
+    .list-view .document-item-icon .MAP-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_geo.png')!important;
+    }
+    
+    .list-view .document-item-icon .DATAMART-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_qbe.png')!important;
+    }
+    
+    .list-view .document-item-icon .DOSSIER-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_dossier.png')!important;
+    }
+    
+    .group-view .document-item-icon .ETL-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_etl.png')!important;
+    }
+    
+     .list-view .document-item-icon .KPI-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_kpi.png')!important;
+    }
+    
+    .list-view .document-item-icon .SMART_FILTER-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_smart_filter.png')!important;
+    }
+    
+    .list-view .document-item-icon .WORKSHEET-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_worksheet.png')!important;
+    }
+    
+    .list-view .document-item-icon .ACCESSIBLE_HTML-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_acc.png')!important;
+    }
+    
+     .list-view .document-item-icon .CONSOLE-icon {
+    	width:96px;
+        height:96px;
+        background-image:url('../../../img/analiticalmodel/browser/document_console.gif')!important;
+    }
+    
+    .group-view .document-item-icon .MOBILE_REPORT-icon {
+	   	width:96px;
+	    height:96px;
+	    background-image:url('../../../img/analiticalmodel/browser/document_mobile_report.png')!important;
+	}
+	
+	.group-view .document-item-icon .MOBILE_CHART-icon {
+	   	width:96px;
+	    height:96px;
+	    background-image:url('../../../img/analiticalmodel/browser/document_mobile_chart.png')!important;
+	}
+	
+	.group-view .document-item-icon .MOBILE_COCKPIT-icon {
+	   	width:96px;
+	    height:96px;
+	    background-image:url('../../../img/analiticalmodel/browser/document_mobile_cockpit.png')!important;
+	}
+    
+ 	.group-view .document-item-icon .NETWORK-icon {
+	   	width:96px;
+	    height:96px;
+	    background-image:url('../../../img/analiticalmodel/browser/document_network.png')!important;
+	}   
+    
+    .list-view #icon {
+    	height:96px;	
+    	width:96px;	
+        margin:0px 0 0 0px;
+        float:left;
+    }
+    
+    .folder  {
+		background-image: url('../../../img/analiticalmodel/browser/folder.png') !important;
+	}
+	
+	.folder_home  {
+		background-image: url('../../../img/analiticalmodel/browser/folder_home.png') !important;
+	}
+	
+	.document  {
+		background-image: url('../../../img/analiticalmodel/browser/document.png') !important;
+	}
+    
+    /* ============================================================= */
+    /*	item description layout					  			 		 */
+    /* ============================================================= */
+    
+    .list-view .item-desc {
+        float:left;
+        width:460px;
+        margin-left:10px;
+        margin-top:25px;   
+        border: thin #0000FF;     
+    }
+    
+    .list-view .field-label {
+    	font-family:tahoma,arial,san-serif;
+        font-size:11px;
+        font-weight:bold;
+    }
+    
+    /* ------------------------------------------------------------ */
+    /*	layout customization on field name base  			 		 */
+    /* -------------------------------------------------------------*/
+     
+     .list-view .item-desc #id .field-value  {
+     	font-family:tahoma,arial,san-serif;
+        color:#555;
+        font-size:11px;
+        font-weight:bold;
+     }
+     
+     .list-view .item-desc #label .field-value  {
+     	font-family:tahoma,arial,san-serif;
+        color:#555;
+        font-size:11px;
+        font-weight:bold;
+     }
+     
+     .list-view .item-desc #name .field-value  {
+     	font-family:tahoma,arial,san-serif;
+        color:#555;
+        font-size:11px;
+        font-weight:bold;
+     }
+     
+     .list-view .item-desc #creationDate .field-label {
+     	font-size:9px;
+     	font-style: italic;
+     }
+          
+     .list-view .item-desc #creationDate .field-value {
+     	font-size:9px;
+     	font-style: italic;
+     }
+    
+    /* -------------------------------------------------------------*/
+    /* ============================================================= */
+    
+    .list-view .group-header {
+        border-bottom: 2px solid #99bbe8;
+        cursor:pointer;
+        margin: 0 0 20 0;    
+        background:transparent url('../../../img/analiticalmodel/browser/group-expand-sprite.gif') no-repeat 3px -47px;
+        padding:4px 4px 4px 17px;
+        color:#3764a0;
+        font:bold 11px tahoma, arial, helvetica, sans-serif;
+    }
+    .list-view .collapsed .group-header {
+        background-position: 3px 3px;
+    }
+    .list-view .collapsed .group-body {
+        display:none;
+    }
+    
+    .list-view .item-control-panel {
+      height: 23px;
+      width:100%;
+      background-color:#F5F9E3;
+      border-top: 1px solid #d4eaac;
+      border-bottom: 1px solid #d4eaac;
+      visibility: hidden;
+    }
+    .list-view .item-control-panel img {
+      width:16px;
+      height:16px;
+      margin:4 3 3 3;
+      float:right;        
+    }
+    
+    .list-view .item-control-panel .action-delete {
+      width:16px;
+      height:16px;
+      margin:2 2 2 2;
+      float:right;
+      background-image: url('../../../img/analiticalmodel/browser/delete16.gif');
+      background-position:center center;
+	  background-repeat:no-repeat; 
+    }
+    
+    .list-view .item-control-panel .action-georeport {
+      width:16px;
+      height:15px;
+      margin:2 2 2 2;
+      float:right;
+      background-image: url('../../../img/analiticalmodel/browser/metadata.png');
+      background-position:center center;
+	  background-repeat:no-repeat; 
+    }
+    
+    .list-view .item-control-panel .action-detail {
+      width:14px;
+      height: 14px;
+      margin:  2;
+      float:right;
+      background-image: url('../../../img/analiticalmodel/browser/detail.png');
+      background-position:center center;
+	  background-repeat:no-repeat; 
+    }
+   
+    .list-view .group-item .item-desc p {
+        color:#777;
+    }
+    .list-view .group-item.over {
+        background: #F5FDE3;
+    }
+    
+    
+    
+    
+    

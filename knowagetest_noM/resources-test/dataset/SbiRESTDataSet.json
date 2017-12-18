@@ -1,0 +1,84 @@
+{
+	"name": "SbiRESTDataSet",
+	"description": null,
+	"label": "SbiRESTDataSet",
+	"active": true,
+	"type": "SbiRESTDataSet",
+	"configuration": {
+		"restAddress": "http://localhost:8080/knowage/restful-services/2.0/datasets/test/orion",
+		"restRequestBody": "",
+		"restHttpMethod": "Get",
+		"restJsonPathItems": "$.contextResponses[*].contextElement",
+		"restDirectlyJSONAttributes": "false",
+		"restNGSI": "false",
+		"restOffset": "",
+		"restFetchSize": "",
+		"restMaxResults": "",
+		"restRequestHeaders": {
+			"authorization": "Basic YmlhZG1pbjpiaWFkbWlu"
+		},
+		"restJsonPathAttributes": [{
+			"name": "prosumerId",
+			"jsonPathValue": "$.attributes[?(@.name==prosumerId)].value",
+			"jsonPathType": "string"
+		},
+		{
+			"name": "upstreamActivePower",
+			"jsonPathValue": "$.attributes[?(@.name==upstreamActivePower)].value",
+			"jsonPathType": "\"$.attributes[?(@.name==upstreamActivePower)].type"
+		}]
+	},
+	"pivotColumnName": null,
+	"pivotRowName": null,
+	"pivotColumnValue": null,
+	"numRows": false,
+	"persisted": false,
+	"persistedHDFS": false,
+	"persistTableName": "",
+	"userIn": null,
+	"userUp": null,
+	"userDe": null,
+	"sbiVersionIn": null,
+	"sbiVersionUp": null,
+	"sbiVersionDe": null,
+	"metaVersion": null,
+	"timeIn": null,
+	"timeUp": null,
+	"timeDe": null,
+	"scope": {
+		"valueId": 187,
+		"domainCd": "DS_SCOPE",
+		"domainNm": "Dataset scope",
+		"valueCd": "ENTERPRISE",
+		"valueNm": "ENTERPRISE",
+		"valueDs": "Dataset scope"
+	},
+	"federation": null,
+	"scopeId": 187,
+	"metadata": {
+		"fieldsMeta": [{
+			"name": "prosumerId",
+			"alias": "prosumerId",
+			"type": "java.lang.String",
+			"properties": {
+				"jsonPathValue": "$.attributes[?(@.name==prosumerId)].value"
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "upstreamActivePower",
+			"alias": "upstreamActivePower",
+			"type": "java.lang.String",
+			"properties": {
+				"jsonPathValue": "$.attributes[?(@.name==upstreamActivePower)].value"
+			},
+			"fieldType": "ATTRIBUTE"
+		}],
+		"properties": {
+			"resultNumber": "220"
+		}
+	},
+	"categoryId": 151,
+	"transformerId": null,
+	"parameters": []
+}

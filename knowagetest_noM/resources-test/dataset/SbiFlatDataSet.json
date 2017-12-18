@@ -1,0 +1,165 @@
+{
+	"name": "SbiFlatDataSet",
+	"label": "SbiFlatDataSet",
+	"active": true,
+	"type": "SbiFlatDataSet",
+	"configuration": {
+		"flatTableName": "product",
+		"dataSource": "Foodmart"
+	},
+	"numRows": false,
+	"persisted": false,
+	"persistedHDFS": false,
+	"persistTableName": "",
+	"scope": {
+		"valueId": 188,
+		"domainCd": "LAYER_TYPE",
+		"domainNm": "Layer Type",
+		"valueCd": "OSM",
+		"valueNm": "OSM",
+		"valueDs": "Layer Type"
+	},
+	"scopeId": 188,
+	"metadata": {
+		"fieldsMeta": [{
+			"name": "product_class_id",
+			"alias": "product_class_id",
+			"type": "java.lang.Integer",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "product_id",
+			"alias": "product_id",
+			"type": "java.lang.Integer",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "brand_name",
+			"alias": "brand_name",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "product_name",
+			"alias": "product_name",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "SKU",
+			"alias": "SKU",
+			"type": "java.lang.Long",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "SRP",
+			"alias": "SRP",
+			"type": "java.math.BigDecimal",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "gross_weight",
+			"alias": "gross_weight",
+			"type": "java.lang.Double",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "net_weight",
+			"alias": "net_weight",
+			"type": "java.lang.Double",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "recyclable_package",
+			"alias": "recyclable_package",
+			"type": "java.lang.Boolean",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "low_fat",
+			"alias": "low_fat",
+			"type": "java.lang.Boolean",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "units_per_case",
+			"alias": "units_per_case",
+			"type": "java.lang.Integer",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "cases_per_pallet",
+			"alias": "cases_per_pallet",
+			"type": "java.lang.Integer",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "shelf_width",
+			"alias": "shelf_width",
+			"type": "java.lang.Double",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "shelf_height",
+			"alias": "shelf_height",
+			"type": "java.lang.Double",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "shelf_depth",
+			"alias": "shelf_depth",
+			"type": "java.lang.Double",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		}],
+		"properties": {
+			"resultNumber": "1561"
+		}
+	},
+	"categoryId": 151,
+	"parameters": []
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<CFIELDS>
+    <CFIELD entity="it.eng.spagobi.SalesFact1998::SalesFact1998" name="Profitto" type="NUMBER"><![CDATA[
+		
+		
+			dmFields['it.eng.spagobi.SalesFact1998:storeSales'] - dmFields['it.eng.spagobi.SalesFact1998:storeCost'];
+				
+		
+	]]></CFIELD>
+    <CFIELD entity="it.eng.spagobi.SalesFact1998::SalesFact1998" name="Profitto per unità" type="NUMBER"><![CDATA[
+		
+		
+			(dmFields['it.eng.spagobi.SalesFact1998:storeSales'] - dmFields['it.eng.spagobi.SalesFact1998:storeCost'])/dmFields['it.eng.spagobi.SalesFact1998:unitSales'];
+				
+		
+	]]></CFIELD>
+    <CFIELD entity="it.eng.spagobi.SalesFact1998::SalesFact1998" name="BarChart" type="HTML"><![CDATA[
+		
+		
+			double value = dmFields['it.eng.spagobi.SalesFact1998:storeSales']; 
+			value = (value / 23.0) * 100; 
+			return '<div style="width:' +  value  + '%;height:10px;border:1px solid #000;background:gray"/>'; 
+			
+		
+	]]></CFIELD>
+    <CFIELD entity="it.eng.spagobi.SalesFact1998::SalesFact1998" name="BulletChart" type="HTML"><![CDATA[
+		
+		
+			double value = dmFields['it.eng.spagobi.SalesFact1998:storeSales'];  
+			if(value < 7) { 
+				return '<div align=center style="width:100%;"><img  src="../img/querybuilder/redbullet.jpg"></img></div>';  
+			} else { 
+				return ''; 
+			}
+			
+		
+	]]></CFIELD>
+</CFIELDS>

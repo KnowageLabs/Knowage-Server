@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-nov-2008 17.17.19 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiDocument" table="SBI_KPI_DOCUMENTS" >
+        <id name="idKpiDoc" type="integer">
+            <column name="ID_KPI_DOC" />
+        </id>
+        <many-to-one name="sbiKpi" class="it.eng.spagobi.kpi.config.metadata.SbiKpi" >
+            <column name="KPI_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiObjects" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" >
+            <column name="BIOBJ_ID" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>
+

@@ -1,0 +1,54 @@
+{
+	"name": "SbiJClassDataSet",
+	"description": null,
+	"label": "SbiJClassDataSet",
+	"active": true,
+	"type": "SbiJClassDataSet",
+	"configuration": {
+		"jClassName": "it.eng.spagobi.tools.dataset.bo.JavaClassDataSetExample"
+	},
+	"pivotColumnName": null,
+	"pivotRowName": null,
+	"pivotColumnValue": null,
+	"numRows": false,
+	"persisted": false,
+	"persistedHDFS": false,
+	"persistTableName": "",
+	"userIn": null,
+	"userUp": null,
+	"userDe": null,
+	"sbiVersionIn": null,
+	"sbiVersionUp": null,
+	"sbiVersionDe": null,
+	"metaVersion": null,
+	"timeIn": null,
+	"timeUp": null,
+	"timeDe": null,
+	"scope": {
+		"valueId": 187,
+		"domainCd": "DS_SCOPE",
+		"domainNm": "Dataset scope",
+		"valueCd": "ENTERPRISE",
+		"valueNm": "ENTERPRISE",
+		"valueDs": "Dataset scope"
+	},
+	"federation": null,
+	"transformerId": null,
+	"metadata": {
+		"fieldsMeta": [{
+			"name": "VALUE",
+			"alias": "VALUE",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		}],
+		"properties": {
+			"resultNumber": "1"
+		}
+	},
+	"scopeId": 187,
+	"categoryId": 151,
+	"parameters": []
+}

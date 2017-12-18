@@ -1,0 +1,35 @@
+<div layout-fill class="overlayGray" layout="row" layout-align="center center">
+
+<md-dialog aria-label="table configuration" ng-cloak  layout="column" style="width:25%;">
+    <md-toolbar class="secondaryToolbar" layout="row">
+		<h1 flex class="md-toolbar-tools">{{translate.load('sbi.cockpit.summary.info')}}</h1>
+	</md-toolbar>
+    <md-dialog-content flex layout=column>
+    <md-toolbar class="ternaryToolbar" layout="row">
+		<h4 flex class="md-toolbar-tools"> {{translate.load('sbi.cockpit.summary.message')}}{{row.aliasToShow}}</h4>
+	</md-toolbar>
+		<div layout=row>
+		<span flex></span>
+		<md-select	flex=50 aria-label="aria-label" ng-model="row.funcSummary" layout-align-center-center> 
+			<md-option ng-repeat="type in listType" ng-show="type.value!='NONE'" value="{{type.value}}">{{type.label}}</md-option>
+		</md-select>
+		<span flex></span>
+		</div>
+		
+	</md-dialog-content>
+			
+	    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="cancelConfiguration()" >
+        {{translate.load('sbi.generic.cancel')}}
+      </md-button>
+      <md-button ng-click="saveColumnConfiguration()"  >
+        {{translate.load('sbi.generic.save')}}
+      </md-button>
+    </md-dialog-actions>
+	 
+	 
+	
+
+</md-dialog>
+</div>

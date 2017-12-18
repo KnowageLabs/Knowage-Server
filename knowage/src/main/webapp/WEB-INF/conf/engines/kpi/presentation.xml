@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>
+<MAPPING business_type="ACTION" business_name="MANAGE_COMMENTS" publisher_name="KPI_DEFAULT_PUB"/>
+<MAPPING business_type="ACTION" business_name="CREATE_KPI" publisher_name="KPI"/>
+<MAPPING business_type="ACTION" business_name="GET_TREND" publisher_name="TREND"/>
+<MAPPING business_type="ACTION" business_name="GET_KPI_METADATA" publisher_name="KPI_METADATA"/> 
+</PRESENTATION>

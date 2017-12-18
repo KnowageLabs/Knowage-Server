@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 31-mag-2007 14.53.27 by Hibernate Tools 3.2.0.beta8 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers" table="SBI_GEO_LAYERS" >
+        <id name="layerId" type="int">
+            <column name="LAYER_ID" />     
+        </id>
+        
+
+        <property name="label" type="string">
+            <column name="LABEL" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" />
+        </property>
+        <property name="descr" type="string">
+            <column name="DESCR" />
+        </property>
+        <property name="type" type="string">
+            <column name="TYPE" />
+        </property>
+       	<property name="baseLayer" type="boolean">
+            <column name="IS_BASE_LAYER" />
+        </property>   
+        <property name="layerDef" type="binary">
+            <column name="LAYER_DEFINITION" />
+        </property>
+        
+    </class>
+	
+</hibernate-mapping>

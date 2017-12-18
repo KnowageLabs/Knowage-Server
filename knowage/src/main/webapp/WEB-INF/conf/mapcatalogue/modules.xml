@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODULES>
+	<MODULE class="it.eng.spagobi.mapcatalogue.service.ListMapsModule"  name="listMapsModule">
+	      <CONFIG pool="spagobi" rows="20" title="SBIMapCatalogue.listMaps">
+	      <QUERIES>
+	        <SELECT_QUERY statement="SELECT_ALL_MAPS">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER" />
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+	        </SELECT_QUERY>
+	      </QUERIES>
+	      <COLUMNS>
+	        <COLUMN label="MAP_ID" name="MAP_ID" hidden="true"/>       
+	        <COLUMN label="SBIMapCatalogue.columnName" name="NAME"/>
+	        <COLUMN label="SBIMapCatalogue.columnDescr" name="DESCR"/>
+	        <COLUMN label="SBIMapCatalogue.columnFormat" name="FORMAT"/>
+	        <COLUMN label="SBIMapCatalogue.columnNumFeatures" name="NUM_FEATURES"/>
+	      </COLUMNS>
+	      <CAPTIONS>
+	        <SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="SBIMapCatalogue.detailCaption">
+	          	  <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="detailMapPage"/>
+		          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
+		          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="MAP_ID"/>
+	        </SELECT_CAPTION>
+	        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="SBIMapCatalogue.deleteCaption">
+	            <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="MAP_ID"/>
+		        <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="detailMapPage"/>
+		        <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
+	        </DELETE_CAPTION>
+	      </CAPTIONS>
+	      <BUTTONS>
+	        <INSERT_BUTTON confirm="FALSE" image="/img/new.png" label="SBIMapCatalogue.insertButton">
+		      <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_NEW"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="detailMapPage"/> 
+	          <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>
+	        </INSERT_BUTTON>
+	        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="SBIMapCatalogue.backButton" onlyPortletRunning="true">
+	          <PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE" value="START_ACTION"/>
+	          <PARAMETER name="PUBLISHER_NAME" scope="" type="ABSOLUTE" value="LoginSBIMapCataloguePublisher"/>
+	          <PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE" value="true"/>
+		    </BACK_BUTTON>
+	      </BUTTONS>
+	    </CONFIG>
+  	</MODULE>
+  	
+  	<MODULE class="it.eng.spagobi.mapcatalogue.service.ListFeaturesModule"  name="listFeaturesModule">
+	      <CONFIG pool="spagobi" rows="20" title="SBIMapCatalogue.listFeatures">
+	      <QUERIES>
+	        <SELECT_QUERY statement="SELECT_ALL_FEATURES">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+	        </SELECT_QUERY>
+	      </QUERIES>
+	      <COLUMNS>
+	        <COLUMN label="FEATURE_ID" name="FEATURE_ID" hidden="true"/>       
+	        <COLUMN label="SBIMapCatalogue.columnName" name="NAME"/>
+	        <COLUMN label="SBIMapCatalogue.columnDescr" name="DESCR"/>
+	        <COLUMN label="SBIMapCatalogue.columnType" name="TYPE"/>
+	         <COLUMN label="SBIMapCatalogue.columnNumMaps" name="NUM_MAPS"/>
+	      </COLUMNS>
+	      <CAPTIONS>
+	        <SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="SBIMapCatalogue.detailCaption">
+	          	  <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="detailFeaturePage"/>
+		          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
+		          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="FEATURE_ID"/>
+	        </SELECT_CAPTION>
+	        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="SBIMapCatalogue.deleteCaption">
+	            <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="FEATURE_ID"/>
+		        <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="detailFeaturePage"/>
+		        <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>   		        	        
+		        <CONFIRM_CONDITION msg="SBIMapCatalogue.ConfirmDeleteFeature" bundle="component_mapcatalogue_messages" >
+		        	<PARAMETER name="NUM_MAPS" scope="LOCAL" value="0" operator="GREATER_THAN" />
+		        </CONFIRM_CONDITION>
+	        </DELETE_CAPTION>
+	      </CAPTIONS>
+	      <BUTTONS>
+	        <INSERT_BUTTON confirm="FALSE" image="/img/new.png" label="SBIMapCatalogue.insertButton">
+		      <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_NEW"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="detailFeaturePage"/> 
+	        </INSERT_BUTTON>
+	        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="SBIMapCatalogue.backButton" onlyPortletRunning="true">
+	          <PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE" value="START_ACTION"/>
+	          <PARAMETER name="PUBLISHER_NAME" scope="" type="ABSOLUTE" value="LoginSBIMapCataloguePublisher"/>
+	          <PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE" value="true"/>
+		    </BACK_BUTTON>
+	      </BUTTONS>
+	    </CONFIG>
+  	</MODULE>
+  	
+  	<MODULE class="it.eng.spagobi.mapcatalogue.service.DetailMapModule" name="DetailMapModule">
+     	<CONFIG/>
+    </MODULE>
+    
+    <MODULE class="it.eng.spagobi.mapcatalogue.service.DetailFeatureModule" name="DetailFeatureModule">
+     	<CONFIG/>
+    </MODULE>
+    
+   <MODULE class="it.eng.spagobi.mapcatalogue.service.ListLookupFeaturesModule" name="ListLookupFeaturesModule">
+	    <CONFIG pool="spagobi" rows="20" title="SBIMapCatalogue.listFeatures" >
+	      <QUERIES>
+	        <SELECT_QUERY statement="SELECT_LOOKUP_FEATURES">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+	        </SELECT_QUERY>		       
+	      </QUERIES>
+	      <CAPTIONS>
+	        <SELECT_CAPTION confirm="FALSE" image="/img/button_ok.png" label="SBIMapCatalogue.insertButton">
+   	          <PARAMETER name="MAP_ID" scope="SERVICE_REQUEST" type="RELATIVE" value="MAP_ID"/>   	          
+	          <PARAMETER name="FEATURE_ID" scope="LOCAL" type="RELATIVE" value="FEATURE_ID"/>   	          
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailMapPage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="RETURN_FROM_LOOKUP"/>
+	          <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>
+	        </SELECT_CAPTION>
+	     </CAPTIONS>
+	      <COLUMNS>
+	        <COLUMN label="ID" name="ID" />       
+	        <COLUMN label="SBIMapCatalogue.columnName" name="NAME"/>
+	        <COLUMN label="SBIMapCatalogue.columnDescr" name="DESCR"/>
+	        <COLUMN label="SBIMapCatalogue.columnType" name="TYPE"/>
+	      </COLUMNS>
+	      <BUTTONS>
+	        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="SBIMapCatalogue.backButton">
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailMapPage"/>
+   	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="RETURN_BACK_FROM_LOOKUP"/>
+	          <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>
+		    </BACK_BUTTON>
+	      </BUTTONS>
+	    </CONFIG>
+  	</MODULE>
+    
+</MODULES>

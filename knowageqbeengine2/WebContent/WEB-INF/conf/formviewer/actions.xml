@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ACTIONS>
+	
+	<!-- QBE_ENGINE Initializations -->
+	<ACTION name="GET_FILTER_VALUES_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.GetFilterValuesAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	
+	<ACTION name="EXECUTE_MASTER_QUERY_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.formviewer.ExecuteMasterQueryAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="EXECUTE_DETAIL_QUERY_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.formviewer.ExecuteDetailQueryAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="SAVE_FORM_VALUES_SUB_OBJECT_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.formviewer.SaveFormValuesSubObjectAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_SELECTED_COLUMNS_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.formviewer.GetSelectedColumnsAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	
+	
+</ACTIONS>
+

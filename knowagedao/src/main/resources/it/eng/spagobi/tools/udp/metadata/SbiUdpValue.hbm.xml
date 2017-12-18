@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 9-set-2010 10.57.31 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.udp.metadata.SbiUdpValue" table="SBI_UDP_VALUE" >
+        <id name="udpValueId" type="integer">
+            <column name="UDP_VALUE_ID" />
+		   <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">UDP_VALUE_ID</param>	
+				<param name="initial_value">1</param>	
+		   </generator>
+        </id>
+        
+                <component name="commonInfo" insert="true" update="true" 
+  			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+        <property name="userIn" type="string">
+            <column name="USER_IN" length="100" not-null="true" />
+        </property> 
+        <property name="userUp" type="string">
+            <column name="USER_UP" length="100" not-null="false" />
+        </property> 
+        <property name="userDe" type="string">
+            <column name="USER_DE" length="100" not-null="false" />
+        </property>                 
+        <property name="timeIn" type="timestamp">
+            <column name="TIME_IN" not-null="true" />
+        </property> 
+        <property name="timeUp" type="timestamp">
+            <column name="TIME_UP" not-null="false" />
+        </property> 
+        <property name="timeDe" type="timestamp">
+            <column name="TIME_DE" not-null="false" />
+        </property>                      
+        <property name="sbiVersionIn" type="string">
+            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionUp" type="string">
+            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionDe" type="string">
+            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+        </property>                 
+        <property name="organization" type="string">
+            <column name="ORGANIZATION" length="20" not-null="false" />
+        </property>  			 
+  </component>
+  
+        <many-to-one name="sbiUdp" class="it.eng.spagobi.tools.udp.metadata.SbiUdp" fetch="select">
+            <column name="UDP_ID" not-null="true" />
+        </many-to-one>
+        <property name="value" type="string">
+            <column name="VALUE" length="1000" not-null="false" />
+        </property>
+        <property name="prog" type="integer">
+            <column name="PROG" />
+        </property>
+        <property name="label" type="string">
+            <column name="LABEL" length="20" not-null="false" unique="false" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" length="40" />
+        </property>
+        <property name="family" type="string">
+            <column name="FAMILY" length="40" />
+        </property>
+        <property name="beginTs" type="timestamp">
+            <column name="BEGIN_TS" length="19" not-null="true" />
+        </property>
+        <property name="endTs" type="timestamp">
+            <column name="END_TS" length="19" />
+        </property>
+        <property name="referenceId" type="integer">
+            <column name="REFERENCE_ID" />
+        </property>
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
+    </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

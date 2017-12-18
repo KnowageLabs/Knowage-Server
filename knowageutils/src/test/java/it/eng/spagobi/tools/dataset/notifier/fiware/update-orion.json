@@ -1,0 +1,37 @@
+{
+    "contextElements": [
+        {
+          "type" : "Meter",
+          "isPattern" : "false",
+          "id" : "pros6_Meter",
+          "attributes" : [
+            {
+              "name" : "atTime",
+              "type" : "timestamp",
+              "value" : "2015-07-21T14:49:46.968+0200"
+            },
+            {
+              "name" : "downstreamActivePower",
+              "type" : "double",
+              "value" : "0.57"
+            },
+            {
+              "name" : "prosumerId",
+              "type" : "string",
+              "value" : "pros3"
+            },
+            {
+              "name" : "unitOfMeasurement",
+              "type" : "string",
+              "value" : "kW"
+            },
+            {
+              "name" : "upstreamActivePower",
+              "type" : "double",
+              "value" : "3.97"
+            }
+          ]
+        }
+    ],
+    "updateAction": "APPEND"
+}

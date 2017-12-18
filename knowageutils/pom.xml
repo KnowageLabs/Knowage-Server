@@ -1,0 +1,594 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>it.eng.knowage</groupId>
+		<artifactId>knowage-ce-parent</artifactId>
+		<version>6.1.2</version>
+		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>knowage-utils</artifactId>
+	<packaging>jar</packaging>
+	
+	
+	<build>
+	    <plugins>
+	        <plugin>
+	          <!-- this configuration is useful to let other projects to use this project's test classes as dependency in their test -->
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-jar-plugin</artifactId>
+			  <executions>
+			    <execution>
+			      <goals>
+			        <goal>test-jar</goal>
+			      </goals>
+			    </execution>
+			  </executions>
+	        </plugin>
+	    </plugins>
+	</build>
+	
+	<dependencies>
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-jdbc-core</artifactId>
+			<version>6.1.2</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-utils-json</artifactId>
+			<version>6.1.2</version>
+			<scope>compile</scope>
+		</dependency>
+ 
+		<dependency>
+			<groupId>org.dspace.xmlui.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>1.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- is it a runtime dependency??
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2</version>
+		</dependency>
+		-->
+		
+		<!-- is it a runtime dependency??
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+		-->
+		
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.eng.spago</groupId>
+			<artifactId>spago-core</artifactId>
+			<version>2.3.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>hibernate</artifactId>
+					<groupId>org.hibernate</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>hazelcast</artifactId>
+					<groupId>com.hazelcast</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>batik</groupId>
+					<artifactId>batik-1.5-fop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xerces</groupId>
+					<artifactId>xercesImpl</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>it.eng.spago</groupId>
+			<artifactId>spago-portlet</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>portlet-api</groupId>
+					<artifactId>portlet-api</artifactId>		
+				</exclusion>
+			</exclusions>
+			<version>2.3.0</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.portlet</groupId>
+			<artifactId>portlet-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>it.eng.spago</groupId>
+			<artifactId>spago-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
+			<version>2.3.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>nl.bitwalker</groupId>
+			<artifactId>UserAgentUtils</artifactId>
+			<version>1.2.4</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.axis</groupId>
+			<artifactId>axis</artifactId>
+			<version>1.4</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis-wsdl4j</artifactId>
+            <version>1.5.1</version>
+            <scope>runtime</scope>
+        </dependency>
+
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>jaxrpc</artifactId>
+			<version>1.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.ws.security</groupId>
+			<artifactId>wss4j</artifactId>
+			<version>1.5.7</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcprov-jdk14</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jasig.cas</groupId>
+			<artifactId>cas-client-core</artifactId>
+			<version>3.1.6</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.1.0.Final</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jgrapht</groupId>
+			<artifactId>jgrapht-core</artifactId>
+			<version>0.9.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>3.5.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.supercsv</groupId>
+			<artifactId>super-csv</artifactId>
+			<version>2.1.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.7</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<version>2.0.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- is it a runtime dependency???
+		<dependency>
+			<groupId>org.apache.metamodel</groupId>
+			<artifactId>MetaModel-core</artifactId>
+			<version>4.5.4</version>
+		</dependency>
+		-->
+
+		<dependency>
+			<groupId>org.apache.metamodel</groupId>
+			<artifactId>MetaModel-pojo</artifactId>
+			<version>4.5.4</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- is it a runtime dependency???
+		<dependency>
+			<groupId>org.cometd.java</groupId>
+			<artifactId>bayeux-api</artifactId>
+			<version>3.0.5</version>
+		</dependency>
+		-->
+
+		<dependency>
+			<groupId>org.cometd.java</groupId>
+			<artifactId>cometd-java-server</artifactId>
+			<version>3.0.5</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.safehaus.jug</groupId>
+			<artifactId>jug</artifactId>
+			<version>2.0.0</version>
+			<classifier>lgpl</classifier>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+ 			<groupId>opensymphony</groupId>
+ 			<artifactId>quartz</artifactId>
+			<version>1.6.1</version>
+			<scope>compile</scope>
+ 		</dependency>
+		
+		<dependency>
+			<groupId>opensymphony</groupId>
+			<artifactId>quartz-oracle</artifactId>
+			<version>1.6.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.xebialabs.restito</groupId>
+			<artifactId>restito</artifactId>
+			<version>0.5.1</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun.jersey</groupId>
+					<artifactId>jersey-server</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.hbql</groupId>
+			<artifactId>HBql</artifactId>
+			<version>0.90.0.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>de.myfoo</groupId>
+			<artifactId>commonj</artifactId>
+			<version>1.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-commonj_1.1_spec</artifactId>
+			<version>1.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-discovery</groupId>
+			<artifactId>commons-discovery</artifactId>
+			<version>0.2</version>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version> <!-- WebLogic uses 3.1.0, Tomcat 7 uses 3.0 -->
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>2.1.6</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<!-- is it a runtime dependency???
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.10</version>
+		</dependency>
+		-->
+		
+		<dependency>
+			<groupId>org.andromda.thirdparty.netbeans.mdr</groupId>
+			<artifactId>mdrapi</artifactId>
+			<version>20050711</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.andromda.thirdparty.netbeans.mdr</groupId>
+			<artifactId>nbmdr</artifactId>
+			<version>20050711</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.andromda.thirdparty.jmi</groupId>
+			<artifactId>mof</artifactId>
+			<version>20030918</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>jaxrs-api</artifactId>
+			<version>3.0.12.Final</version>
+			<scope>compile</scope>
+        </dependency>
+		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-client</artifactId>
+			<version>3.1.2.Final</version>
+			<scope>compile</scope>
+        </dependency>
+		
+		<!--
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>3.1.2.Final</version>
+			<scope>compile</scope>
+        </dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-legacy</artifactId>
+			<version>3.1.2.Final</version>
+			<scope>compile</scope>
+        </dependency>
+		-->
+		
+		<!--
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-hdfs</artifactId>
+			<version>2.6.0</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xerces</groupId>
+					<artifactId>xercesImpl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>tomcat</groupId>
+					<artifactId>jasper-runtime</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jersey</groupId>
+					<artifactId>jersey-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jersey</groupId>
+					<artifactId>jersey-server</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		-->
+		
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+			<version>2.6.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>tomcat</groupId>
+					<artifactId>jasper-compiler</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>tomcat</groupId>
+					<artifactId>jasper-runtime</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jersey</groupId>
+					<artifactId>jersey-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jersey</groupId>
+					<artifactId>jersey-json</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jersey</groupId>
+					<artifactId>jersey-server</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>jdk.tools</groupId>
+					<artifactId>jdk.tools</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.common</artifactId>
+			<version>2.9.0-v20130528-0742</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+			<version>2.5.0.v20100521-1846</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>2.0.4</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.esotericsoftware</groupId>
+			<artifactId>kryo-shaded</artifactId>
+			<version>4.0.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.trove4j</groupId>
+			<artifactId>trove4j</artifactId>
+			<version>3.0.3</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.license4j</groupId>
+			<artifactId>license4j-runtime-library</artifactId>
+			<version>4.6.1</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.9</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.openhft</groupId>
+			<artifactId>zero-allocation-hashing</artifactId>
+			<version>0.6</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+		
+		<dependency>
+           <groupId>xml-apis</groupId>
+           <artifactId>xml-apis</artifactId>
+           <version>1.4.01</version>
+           <scope>runtime</scope>
+       </dependency>
+		
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.9.3</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>2.3.5.Final</version>
+			<scope>test</scope>
+        </dependency>
+		
+		<dependency>
+		    <groupId>org.eclipse.jetty</groupId>
+		    <artifactId>jetty-server</artifactId>
+		    <version>9.2.12.v20150709</version>
+		    <scope>test</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.eclipse.jetty</groupId>
+		    <artifactId>jetty-servlet</artifactId>
+		    <version>9.2.12.v20150709</version>
+		    <scope>test</scope>
+		</dependency>
+
+        <dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+             <artifactId>httpmime</artifactId>
+             <version>4.3.1</version>
+        </dependency>
+		
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+		
+	</dependencies>
+	
+</project>

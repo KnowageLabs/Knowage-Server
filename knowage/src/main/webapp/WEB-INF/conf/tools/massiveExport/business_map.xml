@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+		<MAP_ACTION actionName="GET_ANALYTICAL_DRIVER_FROM_DOCS_IN_FOLDER_ACTION"  businessProcess="DocumentUserManagement"/>
+		<MAP_ACTION actionName="START_MASSIVE_EXPORT_EXECUTION_PROCESS_ACTION"  businessProcess="DocumentUserManagement"/>
+		<MAP_ACTION actionName="START_MASSIVE_SCHEDULE_ACTION"  businessProcess="DocumentUserManagement"/>
+		<MAP_ACTION actionName="START_MASSIVE_EXPORT_THREAD_ACTION"  businessProcess="DocumentUserManagement"/>
+		<MAP_ACTION actionName="GET_MASSIVE_EXPORT_PROGRESS_STATUS"  businessProcess="DocumentUserManagement"/>
+		<MAP_ACTION actionName="DOWNLOAD_MASSIVE_EXPORT_ZIP"  businessProcess="DocumentUserManagement"/>
+		<MAP_ACTION actionName="DELETE_MASSIVE_EXPORT_ZIP"  businessProcess="DocumentUserManagement"/>	
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+	</MAP_PAGE_MODULES>
+
+
+</BUSINESS_MAP>

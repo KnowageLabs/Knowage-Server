@@ -1,0 +1,22 @@
+<md-dialog style='height:40%; width:25%;' layout="column">
+	
+	<md-toolbar class="knowage-blue dialog-toolbar" style="font-size:100%" flex=20>
+		<p>Sorting settings</p>
+	</md-toolbar>
+	
+	<md-content class="dialog-style">
+		<md-radio-group ng-model="selectedSortingMode">
+      		<md-radio-button ng-repeat="d in sortingModes" ng-value="d.value" aria-label="{{d.label}}">
+         		{{d.label}}
+  			</md-radio-button>
+  			<input type="number" name="count" ng-model="sortingCount" min="1" required ng-show="selectedSortingMode == 'count'">
+    	</md-radio-group>
+    	
+		<md-dialog-actions layout="row">
+			<md-button ng-click="saveSortingSettings()">
+				Save
+			</md-button>
+		</md-dialog-actions>
+	</md-content>
+	
+</md-dialog>

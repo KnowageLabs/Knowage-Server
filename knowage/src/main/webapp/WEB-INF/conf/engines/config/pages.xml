@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+
+  	<PAGE name="DetailEnginePage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DetailEnginePage" target="DetailEngineModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DetailEngineModule"/>
+    	</MODULES>
+  	</PAGE>                                    	
+
+
+  	
+	<PAGE name="ListEnginesPage" scope="REQUEST" title="Engines Management" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ListEnginesPage" target="ListEnginesModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" 
+                  name="ListEnginesModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+</PAGES>

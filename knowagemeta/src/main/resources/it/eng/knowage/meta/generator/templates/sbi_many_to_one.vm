@@ -1,0 +1,21 @@
+##included template. Generates the @ManyToOne annotation.
+##Assumes that the context has a "role" object representing the generated AssociationRole
+##
+#set ($members = $jpaRelationship.getGenCascadesWithAnnotation())
+#if( $jpaRelationship.genFetch() != "" && $jpaRelationship.genFetch() != "FetchType.EAGER")
+#set ($members = $jpaRelationship.getGenFetchWithAnnotation($members))
+#end
+#if($members!="")
+@ManyToOne($members)
+#else
+@ManyToOne
+#end
+#if ($jpaRelationship.isMultipleRelationship())
+@JoinColumns({
+#foreach ($relationship in $jpaRelationship.relationshipColumnsNames)
+	@JoinColumn( name=$relationship.sourceColumnName, referencedColumnName=$relationship.destinationColumnName, insertable = $isUpdatable, updatable = $isUpdatable),
+#end
+})
+#else
+@JoinColumn( name=$jpaRelationship.getSimpleSourceColumnName(), insertable = $isUpdatable, updatable = $isUpdatable)
+#end

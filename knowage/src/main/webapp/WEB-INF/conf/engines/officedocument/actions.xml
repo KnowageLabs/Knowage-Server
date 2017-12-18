@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+
+ <ACTION name="GET_OFFICE_DOC" class="it.eng.spagobi.engines.officedocument.GetOfficeContentAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+
+</ACTIONS>
+

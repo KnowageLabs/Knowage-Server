@@ -1,0 +1,28 @@
+<md-dialog style='height:35%; width:30%;' layout="column">
+	
+	<md-toolbar class="knowage-blue dialog-toolbar" style="font-size:100%" flex=20>
+		<p>Change algorithm</p>
+	</md-toolbar>
+	<md-content class="dialog-style" style="height:90%">
+		<span>
+        	You can change algorithm acting on the form below.
+    	</span>
+    	<br/>
+		<label>Available algorithms:</label>
+		<md-input-container>    		
+    		<select ng-model="activeAlg" >
+    			<option  ng-repeat="alg in availAlgorithms" value="{{alg}}">
+    				<span>{{alg.name}}</span>
+    			</option>
+    		</select>
+    	</md-input-container>
+	</md-content>
+	<md-dialog-actions layout="row">
+			<md-button ng-click="setAlgorithm()">
+				Save
+			</md-button>
+			<md-button ng-click="closeDialogToolbarRight()">
+				Cancel
+			</md-button>
+		</md-dialog-actions>
+</md-dialog>

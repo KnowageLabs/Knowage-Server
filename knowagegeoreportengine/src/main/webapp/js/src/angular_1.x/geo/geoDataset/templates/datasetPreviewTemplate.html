@@ -1,0 +1,29 @@
+<md-dialog aria-label="Preview dataset" class="flex2 previewDataset" style="height:90%" ng-cloak>
+
+   	<md-toolbar>
+     <div class="md-toolbar-tools layout-align-center-center layout-row">
+       	<h2>{{translate.load('gisengine.dataset.preview.title')}}</h2> 
+       <span flex></span>
+       <md-button id="close-preview" class="md-icon-button" ng-click="closeDatasetPreviewDialog()">
+         <md-icon md-font-icon="fa fa-times-circle-o"></md-icon>
+       </md-button>
+     </div>  
+   </md-toolbar>
+   
+     <md-dialog-content class="mdDialogSize" layout-padding>
+		<table class="accessibleTable">
+			<thead>
+				<tr>
+					<th tabindex="1" ng-repeat="col in datasetColumns" scope="col">{{col.label}}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="row in datasetRows">
+					<td tabindex="2" ng-repeat="(key,value) in row" ng-if="key!='id'">{{value}}</td>
+					<!-- td tabindex="2" ng-repeat="(key,value) in row" ng-if="key!='id'">{{value}}</td-->
+				</tr>
+			</tbody>
+		</table>	
+	 </md-dialog-content>
+
+</md-dialog>

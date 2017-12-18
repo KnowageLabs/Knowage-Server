@@ -1,0 +1,61 @@
+md-select-menu.md-knowage-theme md-option[selected] {
+    background-color: #a9c3db;
+}
+
+md-toolbar md-select.md-knowage-theme .md-select-value {
+	border-bottom-color:white;
+	color:white;
+}
+
+md-toolbar md-select.md-knowage-theme .md-select-value .md-select-icon {
+	color:white;
+}
+
+md-toolbar md-select.md-knowage-theme:focus:not([disabled]) .md-select-value {
+	color:white;
+}
+
+.flex-40, .layout-row>.flex-40 {
+    flex: 1 1 30%;
+    max-width: 30%;
+}
+
+.borderBox {
+	border: 1px solid;
+}
+
+.detailBody .checkboxRow {
+	padding-left: 10px !important;
+}
+.checkboxRow label {
+	align-items: center;
+}
+.checkboxRow {
+	align-items: center;
+}
+
+.validation-messages {
+	color: #c70751;
+	font-size: 12px;
+	line-height: 14px;
+	margin: 0 auto;
+}
+
+.bottomButtonsBox {
+	right: 4px;
+	top: 2px;
+	position: fixed;
+}
+
+md-tabs[md-border-bottom]:not(.md-dynamic-height) md-tabs md-tabs-content-wrapper {
+    top: 0px;
+}
+
+md-toolbar md-checkbox.md-knowage-theme .md-icon {
+    border-color: rgb(238,238,238);
+}
+
+.md-block{
+	align-items: center;
+	padding: 5px;
+}

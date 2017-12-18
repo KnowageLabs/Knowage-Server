@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.1
+Created-By: 24.51-b03 (Oracle Corporation)
+
+Name: knowagesdk.war
+Implementation-Title: knowagesdk
+Implementation-Version: 1.1.0
+

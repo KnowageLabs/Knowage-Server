@@ -1,0 +1,25 @@
+<md-dialog aria-label="Select dataset" class="flex2" ng-cloak style="height:80%">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h1>{{translate.load('gisengine.desiner.datasetList')}}</h1>
+        <span flex></span>
+		<md-button class="md-primary" ng-click="changeSelectedDataset()">
+          	{{translate.load('gisengine.desiner.save')}}
+        </md-button>
+		<md-button class="md-primary" ng-click="closeDatasetDialog()">
+			{{translate.load('gisengine.desiner.close')}} 
+        </md-button>
+      </div>
+	
+    </md-toolbar>
+    <md-dialog-content layout="column" class="mdDialogSize">
+     <div class="md-dialog-content" layout="column" style="height:90%" >
+		<angular-table flex
+		id='layersTable' ng-model="allDatasets"
+		columns='[{"label":"Label","name":"label"},{"label":"Name","name":"name"},{"label":"Description","name":"descr"}]'
+		columns-search='["name"]' show-search-bar=true multi-select=false selected-item="chosenDataset" 
+		highlights-selected-item="true" 
+		></angular-table>
+		</div>
+   	 </md-dialog-content>
+</md-dialog>

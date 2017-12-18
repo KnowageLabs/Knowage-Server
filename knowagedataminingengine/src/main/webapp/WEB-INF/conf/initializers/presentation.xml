@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PRESENTATION>
+
+	<MAPPING business_type="ACTION" 
+			 business_name="DATAMINING_ENGINE_START_ACTION" 
+			 publisher_name="DATAMINING_ENGINE_START_ACTION_PUBLISHER"/>
+			
+</PRESENTATION>
+

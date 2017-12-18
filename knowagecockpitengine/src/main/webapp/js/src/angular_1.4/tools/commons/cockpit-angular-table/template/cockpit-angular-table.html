@@ -1,0 +1,179 @@
+<!-- v1.0.2 -->
+<!-- <div id="angularTableTemplate" class="{{id}}ItemBox layout-fill layout-column" style="position:absolute;"> -->
+<angular-table-actions layout="row" layout-align="end center">
+	<md-input-container flex  md-no-float class="tableSearchBar" ng-init="showSearch=true;"  >
+		<md-icon md-font-icon="fa fa-search" ng-click="showSearch=true;"></md-icon> 
+		<input  ng-show="showSearch" ng-model="searchVal" ng-keyup="searchItem(searchVal)" type="text" placeholder="Search ">
+		<md-icon ng-show="showSearch" md-font-icon="fa fa-times" ng-click="showSearch=false;searchVal='';searchItem(searchVal);" class="closeSearchBar"></md-icon> 
+	</md-input-container>
+</angular-table-actions>
+<div flex layout="column" id="angularFullTableContentBox">
+	<div class="infoBar multiSelect animation fade-down " ng-if="bulkSelection" layout="row" layout-align="center center">
+	<div flex></div>
+		<md-button ng-click="clickItem(selectedRows,bulkSelection,selectedCells,$event,0)"><i class="fa fa-bolt"></i> Launch selection</md-button>
+		<div flex></div>
+		<md-button  class="md-icon-button" ng-click="cancelBulkSelection()" >
+        	<md-icon md-font-icon="fa fa-times"></md-icon>
+      	</md-button>	
+	</div>
+	 <!--  table class="fakeTable">
+	 	<thead>
+	 		<tr ng-include="'cockpitHeadThTemplate.html'">
+	 		</tr>
+	 	</thead>
+	 </table-->
+	 
+	<div flex  id="angularTableContentBox">
+		<table class="principalTable" >
+			<thead></thead>
+			<tbody></tbody>
+			<tfoot>
+				<tr >
+					<td colspan="{{tableColumns.length}}" id="tdQueueTableContent"  >
+					<md-content id="queueTableContent">
+					</md-content> 
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+		
+	</div>
+</div> 
+<div id="fixedAngularTableContentBox"></div>
+
+<cockpit-angular-table-footer>
+<div  class="box_pagination_list" layout="row" layout-align="end end">
+<div class="pagSummary" ng-if="tableStyle.showRowsSummary"><span class="pagSummaryTitle">{{tableStyle.rowsSummaryText?tableStyle.rowsSummaryText:'Rows Number: '}}</span> <span class="pagSummaryLenght">{{totalItemCount}}</span></div>
+<!-- 	<dir-pagination-controls max-size="5"  pagination-id='id+"PaginationTable"' on-page-change="pageChangedFunction({searchValue:prevSearch,itemsPerPage:itemsPerPage,currentPageNumber:newPageNumber,columnsSearch:columnsSearch,columnOrdering:column_ordering,reverseOrdering:reverse_col_ord})"></dir-pagination-controls> -->
+	<dir-pagination-controls template-url="cockpitPaginationTemplate.html" max-size="5"  pagination-id='id+"PaginationTable"' on-page-change="pageChangedHandler(prevSearch,itemsPerPage,newPageNumber,columnsSearch,column_ordering,reverse_col_ord,changeFromInput,paginationItem,directivePageChangeFunction)"></dir-pagination-controls>
+</div>
+</cockpit-angular-table-footer>
+
+<script type="text/ng-template" id="cockpitPaginationTemplate.html">
+<ul class="pagination"   ng-if="1 == pages.length"><li class="hiddenPaginationButton"></li></ul>
+<ul class="pagination"   ng-if="1 < pages.length" ng-init="tmpVar={tmpCurrPage:1}">
+    <li ng-if="pagination.last>10" ng-class="{ disabled : (pagination.current == 1 || pagination.current-10<1) }" >
+        <a ng-if="!(pagination.current == 1 || pagination.current-10<1)" ng-click="setCurrent(pagination.current - 10);tmpVar.tmpCurrPage=pagination.current - 10"> -10 </a>
+        <a ng-if="(pagination.current == 1 || pagination.current-10<1)"> -10 </a>
+    </li>
+    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }" >
+        <a href="" ng-if="pagination.current!=1" ng-click="setCurrent(pagination.current - 1) ;tmpVar.tmpCurrPage=pagination.current-1"> < </a>
+        <a href="" ng-if="pagination.current==1"> < </a>
+    </li>
+    <li ng-repeat="pageNumber in pages track by $index" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }" >
+        <a ng-if="pageNumber!=pagination.current" href="" ng-click="setCurrent(pageNumber);tmpVar.tmpCurrPage=pageNumber">{{ pageNumber }}</a>
+      	<input style="width:100%;text-align:center" ng-init="tmpVar.tmpCurrPage=pagination.current" ng-if="pageNumber==pagination.current"  ng-model="tmpVar.tmpCurrPage" ng-change="tmpVar.tmpCurrPage=onPageChange({changeFromInput:tmpVar.tmpCurrPage,paginationItem:pagination,directivePageChangeFunction:setCurrent});" type="text" placeholder="page" >
+   
+ </li>
+
+    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }" >
+        <a href="" ng-if="pagination.current != pagination.last " ng-click="setCurrent(pagination.current + 1);tmpVar.tmpCurrPage=pagination.current+1"   > > </a>
+        <a href="" ng-if="pagination.current == pagination.last "> > </a>
+    </li>
+    <li  ng-if="pagination.last>10" ng-class="{ disabled : (pagination.current == pagination.last || pagination.current +10 > pagination.last)}">
+        <a href="" ng-if="!(pagination.current == pagination.last || pagination.current +10 > pagination.last)" ng-click="setCurrent(pagination.current + 10);tmpVar.tmpCurrPage=pagination.current+10"> +10 </a>
+        <a href="" ng-if="(pagination.current == pagination.last || pagination.current +10 > pagination.last)" > +10 </a>
+    </li>
+</ul>
+</script>
+
+<script type="text/ng-template" id="cockpitHeadThTemplate.html">
+<th ng-repeat="val in tableColumns" width="{{val.size}}" ng-class="[val.customClass, {'hiddenColumn': getDynamicValue(val.style,null,val,-1) && getDynamicValue(val.style,null,val,-1).hiddenColumn}]" ng-style="getHeaderStyle()">
+	<div id="headDiv{{$index}}"  ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--' && val.name!='--ROW_DETAIL--'" ng-click="orderBy(val)"  ng-class="{ 'black': val.name==column_ordering}">		
+		<md-icon  ng-class="{ 'hidden': val.name!=column_ordering.name ,'fa fa-arrow-down' : (val.name==column_ordering.name && reverse_col_ord) ,'fa fa-arrow-up' : (val.name==column_ordering.name && !reverse_col_ord)}"></md-icon>
+		<span >{{val.label}}
+			<md-tooltip md-delay="1000" md-direction="bottom"  >{{val.label}}</md-tooltip>
+		</span>
+	</div>
+
+</th>
+</script>
+
+<script type="text/ng-template" id="cockpitBodyTemplate.html">
+<tr ui-tree-node dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| customOrdering:internal_column_ordering:internal_reverse_col_ord:tableColumns:initialSorting:initialSortingAsc | itemsPerPage:itemsPerPage track by $index" 
+	pagination-id='id+"PaginationTable"' total-items='totalItemCount' current-page='pagination.currentPageNumber'
+	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isRowSelected($$hashKey) )}"  class="animate-repeat-tablerow"
+ 	ng-if="isVisibleRowFunction(row)"
+	ng-style="{'height':tableStyle.autoRowsHeight? 0 :tableStyle.rowsHeight}">
+	<td ng-repeat="column in tableColumns" ng-switch="column.static==true? '--STATIC--' : column.name" sglclick="bulkSelect($event,$parent.$index,column,row,getColumnValue(row,column.name))" ng-dblclick="clickItem(row,column.name,getColumnValue(row,column.name),$event,$parent.$index)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' class="{{column.customRecordsClass}} " 
+			ng-class="{ 'highlight': isCellSelected($parent.$index,column), 'expanded': expanded, 'tableDragBar': column.name=='--DRAG_AND_DROP--', 'hiddenColumn': getDynamicValue(column.style,row,column,$parent.$index) && getDynamicValue(column.style,row,column,$parent.$index).hiddenColumn}" 
+			ng-style="column.style==undefined ? '' :  getDynamicValue(column.style,row,column,$parent.$index)" >
+		<div ng-switch-when="--STATIC--" ng-if="getDynamicValue(column.style,row,column,'-99') && getDynamicValue(column.style,row,column,'-99') != 0" layout="row" layout-align="start center">
+			<span ng-if="column.template==undefined" class="textEllipsis" ng-class="getChangedValueStyle(row,column.name)" ng-bind="row[column.name]" >
+				<md-tooltip ng-if="column.hideTooltip!=true " md-delay="1000" md-direction="bottom"  >{{row[column.name]}}</md-tooltip>
+			</span>
+			<i  class="fa fa-search " ng-if="getDynamicValue(column.style,row,column,'-99') && row[column.name].length > getDynamicValue(column.style,row,column,'-99')" ng-click="showFullContent($event,row[column.name])">
+				<md-tooltip md-delay="1000" md-direction="bottom"  >Click to show complete value</md-tooltip>
+			</i>
+		</div>
+
+			<span  ng-switch-when="--STATIC--" ng-if="!getDynamicValue(column.style,row,column,'-99')" ng-if="column.template==undefined" class="textEllipsis" ng-class="getChangedValueStyle(row,column.name)" ng-bind="row[column.name]" >
+				<md-tooltip ng-if="column.hideTooltip!=true " md-delay="1000" md-direction="bottom"  >{{row[column.name]}}</md-tooltip>
+			</span>
+
+		<span ng-switch-when="--STATIC--" ng-if="column.template!=undefined" ng-class="getChangedValueStyle(row,column.name)" build-template="column.template" ></span>
+
+		<span ng-switch-default ng-switch="allowEdit==true && row.editing==true && column.editable==true" > 
+	 		<!--dynamic cell (default)-->
+			<span  ng-switch-when="false"  ng-class="getChangedValueStyle(row,column.name)"  dynamichtml="getColumnValue(row,column.name,column.transformer)"   >
+				<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom">{{row[column.name]}}</md-tooltip>
+			</span>
+			<input   ng-switch-when="true"   ng-model="row[column.name]" ng-blur="doneEdit(row,column,getColumnValue(row,column.name),$event)" autofocus />
+		</span>
+		
+
+		<md-button ng-init="exp=false" class="md-icon-button rowExpanderButton" ng-if="column.name=='--ROW_DETAIL--' && (showExpanderRowCondition==undefined || showExpanderRowCondition({row:row}))" aria-label="expander row" ng-click="$event.stopPropagation();showRowDetail($event);exp=!exp;" >
+        	<md-icon md-font-icon="fa " ng-class="{'fa-chevron-up': exp,'fa-chevron-down':!exp}"></md-icon>
+      	</md-button>	
+
+		<i ng-switch-when="--DRAG_AND_DROP--" ui-tree-handle class="fa fa-bars "></i>
+		
+		<span layout="row" ng-switch-when="--SPEEDMENU--" ng-if="speedMenuOption.length<=3">
+			<md-button ng-if="getDynamicValue(menuItem.visible,row,column)!=false" 
+				ng-repeat="menuItem in speedMenuOption" 
+			 	ng-click='$event.stopPropagation();menuItem.action(row,$event);'
+			 	class="md-icon-button actionButton" aria-label="More" 
+			 	action-background-color={{menuItem.backgroundColor}} >
+				<md-tooltip ng-if="menuItem.label!=undefined" md-direction="top">{{getDynamicValue(menuItem.label,row,column)}}</md-tooltip>	 
+  	     	 	<md-icon ng-if="menuItem.icon!=undefined" ng-class="getDynamicValue(menuItem.icon,row,column)" aria-label="{{getDynamicValue(menuItem.label,row,column)}}" action-color={{getDynamicValue(menuItem.color,row,column)}}></md-icon>
+ 	      	</md-button>
+		</span>
+
+		<md-menu ng-switch-when="--SPEEDMENU--" ng-if="speedMenuOption.length>3 ">
+      		<md-button aria-label="row interactions menu" class="md-icon-button" ng-click="$event.stopPropagation();$mdOpenMenu($event)">
+      			<md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
+      		</md-button>
+     		<md-menu-content width="4" >
+        		<md-menu-item ng-repeat="menuItem in speedMenuOption" ng-if="getDynamicValue(menuItem.visible,row,column)!=false"> 
+          			<md-button ng-click="$event.stopPropagation();menuItem.action(row,$event);" action-background-color={{menuItem.backgroundColor}}>
+		   				<md-icon  ng-if="menuItem.icon!=undefined" action-color="{{getDynamicValue(menuItem.color,row,column)}}" ng-class="getDynamicValue(menuItem.icon,row,column)" aria-label="{{getDynamicValue(menuItem.label,row,column)}}" md-menu-align-target></md-icon>
+		    			<span ng-if="menuItem.label!=undefined">{{getDynamicValue(menuItem.label,row,column)}}</span> 
+          			</md-button>
+       		 	</md-menu-item>
+      		</md-menu-content>
+   		</md-menu>
+
+		<div class="dropdown_menu_list " style="z-index: 999; " id='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' )>
+			<md-list class="dropdown-menu bottomBorder" role="menu" ng-if="menuOption.length!=0 && menuOption!=undefined && column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--'"> 
+				<md-list-item ng-repeat=" menuItem in menuOption" role="menuitem"	ng-click='menuItem.action(row,getColumnValue(row,column.name),$event);$event.stopPropagation();' tabindex='{{$index}}' >
+					<p >{{menuItem.label}}</p>
+				</md-list-item>
+			</md-list>
+		</div>	
+	</td>
+ 
+</tr>
+
+	
+</script>
+
+<!-- </div> -->
+
+
+<!-- 	<td ng-repeat="column in tableColumns"  ng-style="getDynamicValue(column.style,row,column,$parent.$index)"> -->
+<!-- 		<span ng-class="getChangedValueStyle(row,column.name)" ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--' && column.name!='--ROW_DETAIL--'"  dynamichtml="getColumnValue(row,column.name,column.transformer)"   ng-show="!allowEdit || (allowEdit && !row.editing) || (allowEdit && row.editing && !column.editable)"> -->
+<!-- 			<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom">{{getColumnValue(row,column.name,column.transformer)}}</md-tooltip> -->
+<!-- 		</span> -->
+		
+<!-- 	</td> -->
+

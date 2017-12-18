@@ -1,0 +1,17 @@
+<nav aria-label="Page navigation" class="cockpitTablePagination" ng-show="settings.pagination.enabled && settings.rowsCount > settings.pagination.itemsNumber">
+    <div class="page-select" ng-if="widgetWidth > 315">
+        <label>{{::translate.load('sbi.cockpit.widgets.table.pagination.page')}}</label>
+        <md-select ng-model="settings.page" ng-change="goToPage()">
+            <md-option ng-repeat="pages in getTotalPages() track by $index" value="{{$index+1}}">{{$index+1}}</md-option>
+        </md-select>
+    </div>
+    <div class="label page-position" ng-if="widgetWidth > 210">{{min()}} - {{max()}} {{::translate.load('sbi.cockpit.widgets.table.pagination.of')}} {{settings.rowsCount}}</div>
+    <div class="label page-position" ng-if="widgetWidth <= 210">{{settings.page}} / {{Math.ceil(settings.rowsCount / settings.pagination.itemsNumber)}}</div>
+    <md-button class="md-icon-button" aria-label="Previous" ng-click="previous()" ng-disabled="!hasPrevious()">
+        <i class="fa fa-angle-left"></i>
+    </md-button>
+
+    <md-button class="md-icon-button" aria-label="Next" ng-click="next()" ng-disabled="!hasNext()">
+        <i class="fa fa-angle-right"></i>
+    </md-button>
+</nav>

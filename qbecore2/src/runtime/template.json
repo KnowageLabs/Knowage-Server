@@ -1,0 +1,90 @@
+{
+    "qbeConf": {
+        "datamartsName": []
+        , "query": {}
+    }
+    , "fields": []
+    , "staticClosedFilters": [
+        {
+            "title": "",
+            "singleSelection": true,
+            "allowNoSelection": true,
+            "noSelectionText": "",
+            "height": 150, 
+            "width": 300,
+            "filters": [
+                {
+                    "text": "",
+                    "leftOperandValue": "",
+                    "operator": "",
+                    "rightOperandValue": ""
+                },
+                {
+                    "text": "",
+                    "leftOperandValue": "",
+                    "operator": "",
+                    "rightOperandValue": ""
+                }
+            ]
+        },
+        {
+            "title": "",
+            "singleSelection": false,
+            "height": 150, 
+            "width": 300,
+            "filters": [
+                {
+                    "text": "",
+                    "leftOperandValue": "",
+                    "operator": "",
+                    "rightOperandValue": ""
+                },
+                {
+                    "text": "",
+                    "leftOperandValue": "",
+                    "operator": "",
+                    "rightOperandValue": ""
+                }
+            ]
+        }
+    ] 
+    , "staticOpenFilters": [
+        {
+            "text": "",
+            "field": "",
+            "operator": "EQUALS TO",
+            "singleSelection": false,
+            "maxSelectedNumber": 3,
+            "height": 150, 
+            "width": 300,
+            "query": {
+				"field": "",
+				"orderField": "",
+				"orderType": "ASC"
+			}
+        },
+        {
+            "text": "",
+            "field": "",
+            "height": 150, 
+            "width": 300,
+            "operator": "EQUALS TO",
+            "singleSelection": true
+        }
+    ]
+    , "dynamicFilters": [
+        {
+            "operator": "EQUALS TO",
+            "admissibleFields": [
+               {"field": "", "text": ""}             
+            ]
+        }
+    ]
+    , "groupingVariables": [
+        {
+            "admissibleFields": [
+               {"field": "", "text": ""}             
+            ]
+        }
+    ]
+}

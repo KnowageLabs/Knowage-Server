@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary" table="SBI_GL_GLOSSARY" >
+        <id name="glossaryId" type="integer">
+           <column name="GLOSSARY_ID" />
+        </id>
+        
+        <property name="glossaryCd" type="string">
+            <column name="GLOSSARY_CD" length="30" />
+        </property> 
+        <property name="glossaryNm" type="string">
+            <column name="GLOSSARY_NM" length="100" />
+        </property> 
+        <property name="glossaryDs" type="string">
+            <column name="GLOSSARY_DS" length="500" />
+        </property>
+                
+    
+ </class>
+ 
+</hibernate-mapping>

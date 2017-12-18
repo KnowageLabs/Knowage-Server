@@ -1,0 +1,35 @@
+ <md-whiteframe class="md-whiteframe-4dp layout-padding " layout="column" layout-margin style ="height: 60%;" > 
+ 		<angular-table flex ng-show="typeOfVisualization == 'list'"
+		id='dinamicListTableList' ng-model="ngModel"
+		columns=tableKpisColumnList
+		columns-search='["name"]' show-search-bar=true
+		scope-functions=tableFunction  speed-menu-option=measureMenuOption no-pagination=true
+		> 
+		
+		<queue-table>
+			<div layout="row"> 
+			
+				<span flex></span>
+				<md-button ng-click="scopeFunctions.loadListKPI()">{{scopeFunctions.translate.load('sbi.kpi.addkpiassociation')}}</md-button>
+			</div>
+		</queue-table> 
+		</angular-table>
+		<angular-table flex ng-show="typeOfVisualization == 'widget'"
+		id='dinamicListTableWidget' ng-model="ngModel"
+		columns=tableKpisColumnWidget
+		columns-search='["name"]' show-search-bar=true
+		scope-functions=tableFunction  speed-menu-option=measureMenuOption no-pagination=true
+		> 
+		
+		<queue-table>
+			<div layout="row"> 
+			
+				<span flex></span>
+				<md-button ng-click="scopeFunctions.loadListKPI()">{{scopeFunctions.translate.load('sbi.kpi.addkpiassociation')}}</md-button>
+			</div>
+		</queue-table> 
+		</angular-table>
+		
+   </md-whiteframe>       
+
+

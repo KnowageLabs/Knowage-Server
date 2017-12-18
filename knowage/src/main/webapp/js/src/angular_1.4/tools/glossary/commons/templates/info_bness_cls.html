@@ -1,0 +1,39 @@
+<md-dialog aria-label="Info word"  class="infoBox">
+ <md-toolbar class="md-blue minihead">
+    <div class="md-toolbar-tools">
+      <h4 class="md-flex" >{{translate.load("sbi.generic.details");}}</h4>
+    </div>
+  </md-toolbar>
+<md-dialog-content class="noPadding">
+	<div layout="column">
+		<ul>
+			<li><span>{{translate.load("sbi.glossary.businessclass.metaModel");}}:</span><p> {{infCtrl.info.metaBc.sbiMetaModel.name}} </p></li>
+			<li><span>{{translate.load("sbi.glossary.businessclass");}}:</span><p> {{infCtrl.info.metaBc.name}} </p></li>
+			
+			<li>
+				<span>{{translate.load("sbi.glossary.word.associated");}}:</span>
+				<ul>
+					<li style="  display: list-item;" ng-repeat="colu in infCtrl.info.words " ng-class="{selected_item: ctrl.isSelected(colu)}">
+						{{colu.WORD}}
+					</li>
+				</ul>
+			</li>
+			
+			<li>
+				<span>{{translate.load("sbi.ds.metadata.column.column");}}:</span>
+				<ul>
+					<li style="  display: list-item;" ng-repeat="colu in infCtrl.info.sbiGlBnessClsWlist ">
+						{{colu.name}}
+						<ul>
+							<li ng-class="{selected_item: ctrl.isSelected(wor)}" style="  display: list-item;" ng-repeat="wor in colu.word ">
+							{{wor.WORD}}
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+		
+		</ul>
+	</div>
+</md-dialog-content>
+</md-dialog>

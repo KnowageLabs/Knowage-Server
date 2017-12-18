@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+
+
+	<!-- validation for png action-->
+	<SERVICE name="GET_PNG" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="path">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="60"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+
+</VALIDATIONS>

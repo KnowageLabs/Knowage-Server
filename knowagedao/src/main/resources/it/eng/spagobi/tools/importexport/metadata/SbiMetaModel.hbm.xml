@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 31-mag-2007 14.53.27 by Hibernate Tools 3.2.0.beta8 -->
+<hibernate-mapping>
+	<class name="it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel"
+		table="SBI_META_MODELS">
+		<id name="id" type="int">
+			<column name="ID" />
+		
+		</id>
+		
+		<property name="name" type="string">
+			<column name="NAME" />
+		</property>
+		<property name="description" type="string">
+			<column name="DESCR" />
+		</property>
+		<property name="category" type="integer">
+			<column name="CATEGORY_ID" />
+		</property>
+		<property name="modelLocked" type="boolean">
+            <column name="MODEL_LOCKED" />
+        </property>
+        <property name="modelLocker" type="string">
+            <column name="MODEL_LOCKER" length="200" not-null="false" />
+        </property>
+		 <many-to-one
+		   class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" fetch="join" name="dataSource">
+		   <column name="DATA_SOURCE_ID" not-null="false"/>
+		 </many-to-one> 
+	</class>
+
+</hibernate-mapping>

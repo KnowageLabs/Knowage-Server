@@ -1,0 +1,159 @@
+.workspace {
+
+	.leftRightPanelHeight {
+		height: calc(100% - 40px);
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.rightPanelDocuments {
+		height: calc(100% - 20px);
+		min-height: calc(100% - 20px);
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.rightPanelDocuments {			
+			height: calc(100%);
+			min-height: calc(100%);		
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.md-whiteframe-5dp-rightPanelDocuments {
+		height: calc(100% - 60px);
+		min-height: calc(100% - 60px);
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.md-whiteframe-5dp-rightPanelDocuments {
+			height: calc(100% - 20px);
+			min-height: calc(100% - 20px);
+		}
+	}
+	
+	.panelBackgoundColor {
+		background-color:#ECEFF1;
+	}
+	
+	.yesFav {
+		color:orange;
+	}
+    
+    .workspace_image_dataset{
+	    background-image: url('../../sbi_default/img/dataset/img-dataset-1.jpg')!important;
+	}
+	
+	.workspace_image_federation{
+	    background-image: url('../../sbi_default/img/metamodel/federation.png')!important;
+	}
+	
+	.workspace_image_metamodel{
+	    background-image: url('../../sbi_default/img/metamodel/metamodel.png')!important;
+	}
+	
+	.shared {
+	   color: #c70751;
+	}
+
+	.workspaceSearchInput{
+		color: #FFFFFF !important;
+		border-color: #FFFFFF !important;
+		padding-top:15px;
+		font-size: 16px;
+	}	
+		
+	.workspace-submenu{
+	   padding-left:20px;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.workspaceBckgColorRightSide {
+		background-color: #FAFAFA;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	// Text in tabs is Knowage red (rose)
+	/*md-tabs md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active, md-tabs md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-default-theme.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-focused, md-tabs.md-default-theme.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-focused md-icon {
+	  color: #C70751 !important;
+	}*/
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	md-tab-content {
+		top: 5px;
+	}
+	
+	.datasetWizardPadding{
+		padding: 30px;
+	}
+	.knowageGrey {
+		background-color: #F6F6F6;
+	}
+	
+	.loadFilePadding{
+		padding:10px;
+	}
+	
+	.checkboxPadding{
+		padding-top: 7px;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.selectedLeftMenuItem {
+		border: 3px solid #a9c3db;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.selectedLeftMenuSubitem {
+		border: 3px solid #d9d9d9;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.notSelectedLeftMenuItem {
+		border: 3px solid #FFFFFF;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.addNewDocumentButton {
+		top: 0px !important;
+		right: -15px !important;
+	}
+		
+	/* REMOVE (if not used anymore!!!) */
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.datasetWizardCardHeight {
+		height: 65%;
+		min-height: 65%;
+	}
+	
+	/* REMOVE (if not used anymore!!!) */
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.datasetWizardCardHeight {
+			height: 90%;
+			min-height: 90%;
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.mdDialogDatasetWizard {
+		height:65%; 
+		width:50%; 
+		max-height:65%; 
+		max-width:50%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.mdDialogDatasetWizard {
+			height:70%; 
+			width:50%; 
+			max-height:70%; 
+			max-width:50%;
+		}
+	}
+	
+	.threeCombosThreeNumFields {
+		background-color: #FFFFFF !important;
+	}
+}

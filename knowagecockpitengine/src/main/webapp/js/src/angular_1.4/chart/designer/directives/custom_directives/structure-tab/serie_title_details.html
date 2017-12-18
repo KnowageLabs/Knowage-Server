@@ -1,0 +1,41 @@
+<div ng-form name="structure-serieTitleDetailsForm" layout="column" layout-padding flex>
+
+<div layout="row" flex layout-margin>
+	<label>{{translate.load("sbi.chartengine.designer.serietitle.showserieTitle")}}</label>
+	<md-input-container class="small counter"> 
+		<md-checkbox ng-model="axisForDisplay.TITLESERIE.showTitle" aria-label="Hide serie title"></md-checkbox>
+	</md-input-container>	
+</div>
+
+<div ng-show="axisForDisplay.TITLESERIE.showTitle" layout="column">
+<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.serietitle.align")}}</label>
+		 <md-select ng-model="axisForDisplay.TITLESERIE.style.align" name="serie_title_aligment"> <md-option
+		ng-repeat="option in textAlignment" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+<md-input-container class="md-block colorInputContainer">
+	<label>{{translate.load("sbi.chartengine.designer.serietitle.color")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="axisForDisplay.TITLESERIE.style.color" name="serie_color"></color-picker> </md-input-container>
+	
+<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.designer.serietitle.fontfamily")}}</label>
+		 <md-select ng-model="axisForDisplay.TITLESERIE.style.fontFamily" name="serie_title_ffamily"> <md-option
+		ng-repeat="option in fontFamily" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+	
+<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.designer.serietitle.fontweight")}}</label>
+		 <md-select ng-model="axisForDisplay.TITLESERIE.style.fontWeight" name="serie_title_fweight"> <md-option
+		ng-repeat="option in fontStyle" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.designer.serietitle.fontsize")}}</label>
+		 <md-select ng-model="axisForDisplay.TITLESERIE.style.fontSize" name="serie_title_fsize"> <md-option
+		ng-repeat="option in fontSize" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>	
+</div>
+</div>

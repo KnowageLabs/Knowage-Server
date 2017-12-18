@@ -1,0 +1,251 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>it.eng.knowage</groupId>
+  <artifactId>knowage-ce-parent</artifactId>
+  <version>6.1.2</version>
+  <packaging>pom</packaging>
+  <name>knowage-ce-parent</name>
+
+  	<repositories>
+		<!-- We use SpagoBI repo on GitHub because we cannot find HBql library somewhere else -->
+		<repository>
+			<id>spagobi-releases</id>
+			<url>https://raw.github.com/SpagoBILabs/SpagoBI/mvn-repo/releases</url>
+		</repository>
+		<!-- We use www.license4j.com/maven because license4j is not available on Maven Central, it is available by its own repo -->
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</releases>
+			<id>license4j-runtime-library</id>
+			<name>License4J Runtime Library Maven Repository</name>
+			<url>https://www.license4j.com/maven/</url>
+			<layout>default</layout>
+		</repository>
+		<!-- We use boundlessgeo.com because it contains hibernate-spatial-1.1.1.jar, needed by Qbe core; this library is not available on Maven Central -->
+		<repository>
+			<id>boundlessgeo.com</id>
+			<url>https://repo.boundlessgeo.com/main/</url>
+		</repository>
+		<!-- We use osgeo.org because it contains geotools 2.7.5, needed by knowage DAO; this library is not available on Maven Central -->
+		<repository>
+			<id>osgeo.org</id>
+			<url>http://download.osgeo.org/webdav/geotools/</url>
+		</repository>
+		<!-- We use Enonic Repository because it contains simplecaptcha 1.2.1 library, needed by knowage CE core; this library is not available on Maven Central -->
+		<repository>
+			<id>enonic</id>
+			<url>http://repo.enonic.com/public/</url>
+		</repository>
+		<!-- We use jaspersoft Repository because it contains jasperreports library, needed by knowagejasperreportengine CE; this library is not available on Maven Central -->
+		<repository>
+			<id>jaspersoft</id>
+			<url>http://jaspersoft.artifactoryonline.com/jaspersoft/jr-ce-releases</url>
+		</repository>
+		<!-- We use Public Maven Repository for SNAP (snap-repo-public) because it contains jpy, needed by knowagedataminingengine CE; this library is not available on Maven Central -->
+		<repository>
+			<id>snap-repo-public</id>
+			<url>http://nexus.senbox.net/nexus/content/repositories/releases/</url>
+		</repository>
+		<!-- We use Pentaho repository for mondrian, needed by knowagewhatifengine CE -->
+		<repository>
+			<id>pentaho</id>
+			<url>http://nexus.pentaho.org/content/groups/omni</url>
+		</repository>
+	</repositories>
+  
+	<properties>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<!-- if you want run tests overwrite this property with: mvn test -DskipTests=false -->
+		<skipTests>true</skipTests>
+
+		<!-- For eclipse plugin -->
+		<m2e.jpa.activation>false</m2e.jpa.activation>
+		<m2e.jsf.activation>false</m2e.jsf.activation>
+		<m2e.jaxrs.activation>false</m2e.jaxrs.activation>
+
+		<!-- Minimized version: ixed because in jspf are not dynamic as in pom -->
+		<js.version>${project.version}</js.version>
+	</properties>
+
+  	<modules>
+		<module>../jdbccore</module>
+ 		<module>../knowageutilsjson</module>
+		<module>../knowageutils</module>
+		<module>../qbecore</module>
+		<module>../spagobi-cwm</module>
+		<module>../spagobi-commons-core</module>
+		<module>../spagobi-metamodel-core</module>
+		<module>../spagobi-metamodel-utils</module>
+		<module>../knowagedao</module>
+		<module>../knowage-core</module>
+		<module>../knowageoauth2securityprovider</module>
+		<module>../knowage</module>
+		<module>../knowagejasperreportengine</module>
+		<module>../spagobi.birt.oda</module>
+		<module>../knowagebirtreportengine</module>
+		<module>../slimerjs-wrapper</module>
+		<module>../knowagecockpitengine</module>
+		<module>../knowagecommonjengine</module>
+		<module>../knowagedataminingengine</module>
+		<module>../knowagegeoreportengine</module>
+		<module>../knowagekpiengine</module>
+		<module>../knowagemeta</module>
+		<module>../knowagenetworkengine</module>
+		<module>../knowageqbeengine</module>
+		<module>../knowagesvgviewerengine</module>
+		<module>../knowagetalendenginclientapi</module>
+		<module>../knowagetalendengine</module>
+		<module>../knowagewhatifengine</module>
+		<module>../knowagesdk</module>
+	</modules>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.6</version>
+
+					<configuration>
+
+						<archive>
+							<manifest>
+								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							</manifest>
+							<manifestEntries>
+								<Built-By>Knowage Labs</Built-By>
+							</manifestEntries>
+						</archive>
+					</configuration>
+				</plugin>
+				
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>2.6</version>
+
+					<configuration>
+						<warName>${project.name}</warName>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.19.1</version>
+					<configuration>
+						<skipTests>${skipTests}</skipTests>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>	
+
+	<profiles>
+		<profile>
+			<id>cas-enabled</id>
+			<properties>
+				<enable.cas.start>&lt;!--</enable.cas.start>
+				<enable.cas.end>--&gt;</enable.cas.end>
+			</properties>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.6</version>
+
+						<configuration>
+							<webResources>
+								<resource>
+									<filtering>true</filtering>
+									<directory>src/main/webapp</directory>
+									<includes>
+										<include>**/web.xml</include>
+									</includes>
+								</resource>
+							</webResources>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>console-removed</id>
+			<properties>
+				<disable.console.logging>*/console.log = function() {}; console.warn = function() {}; console.debug = function() {}; console.info = function() {};  /*</disable.console.logging>
+			</properties>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.6</version>
+
+						<configuration>
+							<webResources>
+								<resource>
+									<filtering>true</filtering>
+									<directory>src/main/webapp</directory>
+									<includes>
+										<include>**/angularImport.jsp</include>
+									</includes>
+								</resource>
+							</webResources>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>cas_console-removed</id>
+			<properties>
+				<enable.cas.start>&lt;!--</enable.cas.start>
+				<enable.cas.end>--&gt;</enable.cas.end>
+				<disable.console.logging>*/console.log = function() {}; console.warn = function() {}; console.debug = function() {}; console.info = function() {};  /*</disable.console.logging>
+			</properties>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.6</version>
+
+						<configuration>
+							<webResources>
+								<resource>
+									<filtering>true</filtering>
+									<directory>src/main/webapp</directory>
+									<includes>
+										<include>**/angularImport.jsp</include>
+									</includes>
+								</resource>
+								<resource>
+									<filtering>true</filtering>
+									<directory>src/main/webapp</directory>
+									<includes>
+										<include>**/web.xml</include>
+									</includes>
+								</resource>
+							</webResources>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		
+	</profiles>
+</project>

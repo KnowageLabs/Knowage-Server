@@ -1,0 +1,87 @@
+<md-card class="flexCard customTableWidgetConfiguration" >
+	<md-card-content flex layout="column" class="noPadding">
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<h2>{{translate.format(translate.load('sbi.cockpit.widget.configuration'),translate.load('sbi.cockpit.widget.image'))}}</h2>
+				<span flex></span>
+			</div>
+		</md-toolbar>
+		<md-content flex layout="column">
+			<md-tabs flex md-border-bottom>
+			
+				<md-tab label="{{translate.load('sbi.cockpit.widget.image.gallery')}}">
+					<md-content layout-fill>
+						<div layout="row">
+							<file-upload flex id="ImageUpload" ng-model="uploadImg"></file-upload>
+							<md-button ng-click="upload($event)" aria-label="upload Menu"
+									class="md-fab md-mini">
+								<md-icon md-font-icon="fa fa-upload"/>
+							</md-button>
+							<md-button ng-click="erase($event)" aria-label="upload Menu"
+									class="md-fab md-mini">
+								<md-icon md-font-icon="fa fa-eraser"/>
+							</md-button>
+						</div>
+						<md-grid-list layout-margin
+								md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6"
+								md-row-height-gt-md="1:1" md-row-height="4:3"
+								md-gutter="8px" md-gutter-gt-sm="4px" >
+							<md-grid-tile ng-repeat="img in listImages" flex ng-click="model.content.imgId=img.imgId" ng-class="{'selectedImage' : model.content.imgId==img.imgId }">
+								<img ng-src="{{getImageUrl(img)}}" alt="{{img.name}}" >
+								<md-grid-tile-footer><h3>{{img.name}}</h3></md-grid-tile-footer>
+							</md-grid-tile>
+						</md-grid-list>
+					</md-content>
+				</md-tab>
+
+				<md-tab label="{{translate.load('sbi.cockpit.style')}}">
+					<cockpit-style-configurator widget ng-model="model.style">
+						<cockpit-style-custom-widget-configurator label="'Image'">
+							<div layout="row" flex ng-cloak layout-wrap>
+								<md-input-container flex=50 class="md-block">
+									<label>Height</label>
+									<input ng-model="model.style.heightPerc">
+								</md-input-container>			
+								<md-input-container flex=50 class="md-block">
+									<label>Width</label>
+									<input ng-model="model.style.widthPerc">
+								</md-input-container>	
+								<md-input-container flex=50 class="md-block">
+									<label><i class="fa fa-arrows-h"></i> Horizontal Align</label>
+									<md-select ng-model="model.style.hAlign">
+										<md-option ng-repeat="halign in haligns" value="{{halign}}">
+											{{halign}}
+										</md-option>
+									</md-select>
+								</md-input-container>	
+								<md-input-container flex=50 class="md-block">
+									<label><i class="fa fa-arrows-v"></i> Vertical Align</label>
+									<md-select ng-model="model.style.vAlign">
+										<md-option ng-repeat="valign in valigns" value="{{valign}}">
+											{{valign}}
+										</md-option>
+									</md-select>
+								</md-input-container>
+							
+							</div>
+						</cockpit-style-custom-widget-configurator>
+					</cockpit-style-configurator>
+				</md-tab>
+				
+				<md-tab label="{{translate.load('sbi.cockpit.widget.table.cross')}}">
+					<cockpit-cross-configurator widget ng-cloak ng-model="model.cross"></cockpit-cross-configurator>
+				</md-tab>
+			
+			</md-tabs>
+		</md-content>
+	</md-card-content>
+	
+	<md-card-actions layout="row" layout-align="end center">
+		<md-button ng-click="cancelConfiguration()" >
+			{{translate.load('sbi.generic.cancel')}}
+		</md-button>
+		<md-button ng-click="saveConfiguration()">
+			{{translate.load('sbi.generic.save')}}
+		</md-button>
+	</md-card-actions>
+</md-card>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<COMMON file_uri_prefix="file:" 
+		xhtml_lat1_ent="/WEB-INF/conf/config/xhtml-lat1.ent" 
+		xsl_reload="FALSE" 
+		navigator_enabled="FALSE" 
+		startup_console="FALSE" 
+		monitor_enabled="FALSE">
+        <!-- espresso in minuti -->
+	<PARAM role_val_period="50" />
+</COMMON>

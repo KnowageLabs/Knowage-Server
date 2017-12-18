@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<olap>
+	<cube reference="Mondrian_what_if_mysql"/>
+	
+	<MDXquery>
+		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[0], [Region].[Mexico Central])
+	</MDXquery>
+	<MDXMondrianQuery>
+		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[0], [Region].[Mexico Central])
+	</MDXMondrianQuery>
+	
+	
+	<STANDALONE>
+		<CONNECTION>
+		<USR>root</USR>
+		<PWD>root</PWD>
+		<CATALOG>\Olap\FoodMartMySQL.xml</CATALOG>
+		<CONNECTIONSTRING>jdbc:mysql://localhost:3306/foodmart_key</CONNECTIONSTRING>
+		<DRIVER>com.mysql.jdbc.Driver</DRIVER>
+		</CONNECTION>
+	</STANDALONE>
+	
+	
+	<SCENARIO name="scenario" editCube="Sales_Edit" initialVersion="0">
+		<MEASURE>Store Sales</MEASURE>
+		<MEASURE>Store Cost</MEASURE>
+		<VARIABLE name="var" value="5"/>
+		<VARIABLE name="PD" value="[Product].[Drink.Dairy]" type="string"/>
+	</SCENARIO>
+	
+	<TOOLBAR>
+		<BUTTON_MDX visible="false" menu="true" />                            
+		<BUTTON_FATHER_MEMBERS visible="false" menu="true"/>                  
+		<BUTTON_HIDE_SPANS visible="false" menu="true"/>                     
+		<BUTTON_SHOW_PROPERTIES visible="false" menu="true"/>               
+		<BUTTON_HIDE_EMPTY visible="false" menu="true" />                   
+        <BUTTON_FLUSH_CACHE visible="true" menu="false"  />                 
+        <BUTTON_SAVE visible="true" menu="false" />                       
+        <BUTTON_SAVE_NEW visible="true" menu="false" />                   <!-- I ADDED -->
+        <BUTTON_UNDO visible="true" menu="false" />                       <!-- I ADDED -->
+
+		<!--  NOT YET USED
+		<BUTTON_SHIFT_AXIS visible="true" />
+        <BUTTON_CUBE visible="false" menu="true" />
+		<BUTTON_DRILL_MEMBER visible="true" />
+		<BUTTON_DRILL_POSITION visible="true" />
+		<BUTTON_DRILL_REPLACE visible="false" />
+		<BUTTON_DRILL_THROUGH visible="false" />
+		<BUTTON_SHOW_CHART visible="false" />
+		<BUTTON_CONFIGURE_CHART visible="false" />
+		<BUTTON_CONFIGURE_PRINT visible="false" />
+    <BUTTON_ORDER visible="false" menu="false"/>  -->
+
+	</TOOLBAR>
+
+</olap>

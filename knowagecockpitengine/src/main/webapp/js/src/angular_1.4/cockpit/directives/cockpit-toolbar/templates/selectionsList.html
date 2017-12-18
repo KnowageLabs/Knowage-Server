@@ -1,0 +1,32 @@
+<md-dialog>
+	<md-toolbar class="secondaryToolbar" layout="row">
+		<h1 flex class="md-toolbar-tools">{{translate.load('sbi.cockpit.selections.title')}}</h1>
+		<md-button  class="md-icon-button" ng-click="clearAllSelection()" ng-if="selection.length >0">
+			 <md-icon md-font-icon="fa fa-eraser" aria-label="ClearAll"></md-icon>
+			 <md-tooltip md-direction="bottom">{{translate.load('sbi.cockpit.selections.clearselections')}}</md-tooltip>
+		</md-button>
+	</md-toolbar>
+	
+	<md-dialog-content>
+		<angular-table layout-padding ng-show="selection.length >0" 
+			id='selectionTable' ng-model="selection"
+			columns='columnTableSelection'
+			columns-search='["label"]'
+			no-pagination=true  speed-menu-option= actionsOfSelectionColumns
+		> </angular-table> 
+		<div layout="row" class="noTable" layout-align="center center" ng-if="selection.length ==0" layout-padding>
+			<span>{{translate.load('sbi.cockpit.selections.noselections')}}</span>
+		</div>	       
+	</md-dialog-content>
+	
+	<md-dialog-actions layout="row" layout-align="end center"  >
+	    <span flex></span>
+      <md-button ng-click="cancelConfiguration()" >
+        {{translate.load('sbi.generic.cancel')}}
+      </md-button>
+      <md-button ng-click="saveConfiguration()"  >
+        {{translate.load('sbi.generic.save')}}
+      </md-button>
+
+	</md-dialog-actions>
+</md-dialog>

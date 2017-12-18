@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PUBLISHERS>
+	
+	<PUBLISHER name="GET_FORM_PREVIEW_ACTION_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/formviewer.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+  	
+</PUBLISHERS>

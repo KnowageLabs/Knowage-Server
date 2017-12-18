@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 12-apr-2016 10.43.25 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.metadata.metadata.SbiMetaSource" table="SBI_META_SOURCE">
+        <id name="sourceId" type="java.lang.Integer">
+            <column name="SOURCE_ID" />
+        </id>
+        <property name="name" type="string">
+            <column name="NAME" length="100" not-null="true" />
+        </property>
+        <property name="type" type="string">
+            <column name="TYPE" length="100" not-null="true" />
+        </property>
+        <property name="url" type="string">
+            <column name="URL" length="100" />
+        </property>
+        <property name="location" type="string">
+            <column name="LOCATION" length="100" />
+        </property>
+        <property name="sourceSchema" type="string">
+            <column name="SOURCE_SCHEMA" length="100" />
+        </property>
+        <property name="sourceCatalogue" type="string">
+            <column name="SOURCE_CATALOGUE" length="100" />
+        </property>        
+        <property name="role" type="string">
+            <column name="ROLE" length="100" />
+        </property>         
+        
+<!--         <set name="sbiMetaJobSources" table="sbi_meta_job_source" inverse="true" lazy="false" fetch="select"> -->
+<!--             <key> -->
+<!--                 <column name="SOURCE_ID" not-null="true" /> -->
+<!--             </key> -->
+<!--             <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaJobSource" /> -->
+<!--         </set> -->
+
+        
+    </class>
+</hibernate-mapping>

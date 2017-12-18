@@ -1,0 +1,16 @@
+.workspace {
+
+	.leftRightPanelHeight {
+		height: calc(100% - 40px);
+	}
+	
+	.rightPanelDocuments {
+		height: calc(100% - 65px);
+		min-height: calc(100% - 65px);
+	}
+	
+	.panelBackgoundColor {
+		background-color:#ECEFF1;
+	}
+
+}

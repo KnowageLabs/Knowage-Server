@@ -1,0 +1,88 @@
+<div class="central-panel" layout="row" >
+	<div id="leftaxis" leftaxis class='knowage-blue dimension-left-toolbar' layout="column" ng-drop="true" ng-drop-success="dropLeft($data,$event)">
+		
+		<div class="left-axis-shift">
+			<md-button style="right:10px" class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('down')" ng-if="leftSliderNeeded">
+				<md-icon class="icon-color-white" md-font-icon="fa fa-arrow-circle-o-up fa-2x" ></md-icon>
+			</md-button>
+		</div>	
+		
+		<div class="left-axis">
+			<div  ng-repeat="row in rows|limitTo:maxRows:leftStart">
+				<div class="filter-toolbar-element-left"  
+					 ng-drag="true" 
+					 ng-drag-data="row" 
+					 ng-drag-success="dragSuccess('left',$index)" 
+					 id="left-{{row.name}}">
+					 
+					<md-button class="multi-hierarachy-btn"  ng-click="showMultiHierDialog(e,row)" ng-show="row.hierarchies.length > 1">
+						<md-icon class="fa fa-sitemap" class="icon-color-white"></md-icon>
+					</md-button>
+					
+					<div ng-class="row.hierarchies.length == 1 ? 'name':'name-multi'" title="{{row.caption}}">
+						<div ng-class="row.hierarchies.length > 1 ? 'rotate-text-nop' : 'rotate-text'">
+							{{cutName(row.caption, 1, row.hierarchies.length > 1)}}
+						</div>
+					</div>	
+					
+					<div class="action">
+						<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, row, null);$event.stopPropagation();">
+							<md-icon md-font-icon="fa fa-filter"></md-icon>
+						</md-button>
+					</div>
+				</div>
+				<div ng-hide="hideSwitchIcon(row.positionInAxis,1)"><!-- row.positionInAxis == rows.length-1 -->
+					<md-button class="md-icon-button" style="width:0px" ng-click="switchPosition(row)">
+						<md-icon md-font-icon="fa fa-arrows-v" class="icon-color-white"></md-icon>	
+					</md-button>
+				</div>
+			</div>
+		</div>
+	
+		<div class="left-axis-shift">
+			<md-button style="right:10px;"
+					   class="md-icon-button" 
+					   aria-label="Favorite" 
+					   ng-click="dimensionShift('up')" 
+					   ng-if="leftSliderNeeded">
+				<md-icon class="icon-color-white" md-font-icon="fa fa-arrow-circle-o-down fa-2x"></md-icon>
+			</md-button>
+		</div>
+	</div>
+	
+	<div style="width: calc(100% - 32px);color:#3b678c" layout="row";>
+		<md-content table-wheel-scroll flex layout="column" ng-bind-html="table" compile-template flex>
+			
+			
+	 		
+	 	</md-content>
+		
+		<div ng-if = "modelConfig.pagination" layout="column" style="background-color:rgba(245,245,245,1)">
+			<div  resize height='tableHeaderHeight' width=1 ></div>
+			
+			<table-scroller 
+			
+		cell-height=30
+		cell-width=1
+		column-count=1
+		row-count='modelConfig.rowCount'
+		row-no='modelConfig.startRow'
+		layout='column'
+		flex
+		
+	></table-scroller>
+		
+		</div>
+	
+<!-- 		<md-content ng-if = "modelConfig.pagination" scrolly  > -->
+	
+<!-- 	 		<div   ng-style="{'height':modelConfig.rowCount*100+tableHeight-120,'width':modelConfig.columnCount*100+tableWeight-150}" ></div>	background-color: #3b678c; -->
+<!-- 	 	</md-content> -->
+<!-- 	 	<md-content flex ng-if = "!modelConfig.pagination"> -->
+<!-- 	 		<div ng-bind-html="table" compile-template flex " > -->
+	 		
+<!-- 	 		</div> -->
+<!-- 	 	</md-content> -->
+	 		
+	
+</div>

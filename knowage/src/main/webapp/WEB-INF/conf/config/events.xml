@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EVENTS>
+	<EVENTS-NOTIFICATION-ENABLED>false</EVENTS-NOTIFICATION-ENABLED>
+	
+	<EVENTS-NOTIFIER notifierClass="it.eng.spago.event.SynchronousEventNotifier"/>
+		
+	<EVENTS-LISTENER listenerClass="it.eng.spago.listeners.CacheResponseListener"/>
+	
+</EVENTS>

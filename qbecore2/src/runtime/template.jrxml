@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"  ?>
+<!-- Created with Qbe - Free inquery and adhoc reporting tool of SpagoBI Platform -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="report"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false"
+		 ${pagination}>
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="ISO-8859-1" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<queryString language="${lang}"><![CDATA[
+	${query}
+	]]></queryString>
+
+	${fields}
+	
+	<pageHeader>
+		<band height="30"  isSplitAllowed="true" >
+		</band>
+	</pageHeader>
+	
+	${body}
+	
+	<pageFooter>
+		<band height="30"  isSplitAllowed="true" >
+		</band>
+	</pageFooter>
+		
+</jasperReport>

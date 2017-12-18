@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODULES>
+    
+	<MODULE class="it.eng.spagobi.tools.objmetadata.service.ListObjMetadataModule" name="ListObjMetadataModule">															
+	    <CONFIG pool="spagobi" rows="20" title="metadata.ListObjMetadata.title" >
+	      <QUERIES>
+	        <SELECT_QUERY statement="SELECT_ALL_OBJMETADATA">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+	        </SELECT_QUERY>
+	      </QUERIES>
+	      <COLUMNS>
+	        <COLUMN label="OBJ_META_ID" name="OBJ_META_ID" hidden="true" />
+	        <COLUMN label="metadata.metaLabel" name="LABEL" />
+	        <COLUMN label="metadata.metaName" name="NAME" />	        
+	        <COLUMN label="metadata.metaDescr" name="DESCR" />
+	        <COLUMN label="metadata.metaType" name="TYPE" />
+	        <COLUMN label="metadata.metaNumObj" name="NUM_OBJ" />
+	        <COLUMN label="metadata.metaNumSubObj" name="NUM_SUBOBJ" />
+	      </COLUMNS>
+	      <CAPTIONS>
+	      	<SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="metadata.detailCaption">
+	          	  <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailObjMetadataPage"/>
+		          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
+		          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="OBJ_META_ID"/>
+	        </SELECT_CAPTION>
+	        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="metadata.deleteButton">
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="OBJ_META_ID"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailObjMetadataPage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
+	        </DELETE_CAPTION>
+	      </CAPTIONS>
+	      <BUTTONS>
+	        <INSERT_BUTTON confirm="TRUE" image="/img/new.png" label="metadata.InsertButton">
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_NEW"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailObjMetadataPage"/>
+	        </INSERT_BUTTON>
+	        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="metadata.backButton" onlyPortletRunning="true">
+	          <PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE" value="START_ACTION"/>
+	          <PARAMETER name="PUBLISHER_NAME" scope="" type="ABSOLUTE" value="LoginSBIResourcesPublisher"/>
+	          <PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE" value="true"/>
+	        </BACK_BUTTON>
+	      </BUTTONS>
+	    </CONFIG>
+  	</MODULE>
+
+
+    
+    <MODULE class="it.eng.spagobi.tools.objmetadata.service.DetailObjMetadataModule" name="DetailObjMetadataModule">
+     	<CONFIG/>
+    </MODULE>
+</MODULES>
+
+

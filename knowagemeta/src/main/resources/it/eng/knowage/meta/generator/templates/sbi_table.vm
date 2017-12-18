@@ -1,0 +1,145 @@
+#if ($jpaTable.package != "")
+package ${jpaTable.package};
+#end
+
+import java.io.Serializable;
+import javax.persistence.*;
+import org.hibernate.annotations.Type;
+
+${jpaTable.importStatements}
+
+/**
+ * This class refers to the ${jpaTable.sqlName} table.
+ * 
+ */
+@Entity
+#if( !${table.defaultname} )
+@Table(name="${jpaTable.quotedMappingTableName}"
+#if( $jpaTable.getSchema() )
+, schema="${jpaTable.schema}"
+#end
+#if( $jpaTable.getCatalog() )
+, catalog="${jpaTable.catalog}"
+#end
+)
+#end
+
+
+public class ${jpaTable.className} implements Serializable {
+
+private static final long serialVersionUID = 1L;
+
+public ${jpaTable.className}() {
+}
+	
+###################################################################################
+##### 					fields
+###################################################################################
+#if ($jpaTable.hasCompositeKey())
+@EmbeddedId
+private ${jpaTable.compositeKeyClassName} ${jpaTable.compositeKeyPropertyName}=null;
+#end
+###################################################################################
+#####                                 ADD ONLY THE SIMPLE PROPERTIES
+###################################################################################
+#foreach ($jpaColumn in $jpaTable.getSimpleColumns(true, true, false))
+	#if ($jpaColumn.isIdentifier())
+@Id
+	#end
+#parse("sbi_column.vm")
+private ${jpaColumn.simplePropertyType} ${jpaColumn.propertyName}=null;
+#end
+###################################################################################
+#####                                 GET & SET
+###################################################################################
+#if ($jpaTable.hasCompositeKey())
+
+public $jpaTable.compositeKeyClassName $jpaTable.compositeKeyPropertyNameGetter () {
+	return this.${jpaTable.compositeKeyPropertyName};
+}
+
+public void $jpaTable.compositeKeyPropertyNameSetter ($jpaTable.compositeKeyClassName $jpaTable.compositeKeyPropertyName) {
+	this.${jpaTable.compositeKeyPropertyName} = ${jpaTable.compositeKeyPropertyName};
+}
+#end
+
+#foreach ($jpaColumn in $jpaTable.getSimpleColumns(true, true, false))
+public $jpaColumn.simplePropertyType $jpaColumn.propertyNameGetter () {
+	return this.${jpaColumn.propertyName};
+}
+public void $jpaColumn.propertyNameSetter ($jpaColumn.simplePropertyType $jpaColumn.propertyName) {
+	this.${jpaColumn.propertyName} = ${jpaColumn.propertyName};
+}
+#end
+
+#if (!($jpaTable.isInnerTable()))
+#foreach ($jpaRelationship in $jpaTable.relationships)
+
+#if( !($jpaRelationship.getReferencedTable().isInnerTable()))
+
+###################################################################################
+#####                           field annotations
+###################################################################################
+	#if ( ($jpaRelationship.cardinality == "many-to-one") || ($jpaRelationship.cardinality == "many-to-optional-one") || ($jpaRelationship.cardinality == "optional-many-to-one") )
+#parse("sbi_many_to_one.vm")
+	#elseif ( ($jpaRelationship.cardinality == "one-to-many") || ($jpaRelationship.cardinality == "optional-one-to-many") || ($jpaRelationship.cardinality == "one-to-optional-many")  )
+#parse("sbi_one_to_many.vm")
+	#elseif (  ($jpaRelationship.cardinality == "one-to-one") || ($jpaRelationship.cardinality == "optional-one-to-one") || ($jpaRelationship.cardinality == "one-to-optional-one") )
+#parse("sbi_one_to_one.vm")
+	#end
+###################################################################################
+#####                                   field declaration
+###################################################################################
+#if ( ($jpaRelationship.cardinality == "many-to-one") || ($jpaRelationship.cardinality == "many-to-optional-one") || ($jpaRelationship.cardinality == "optional-many-to-one") )
+private ${jpaRelationship.getReferencedTable().className} ${jpaRelationship.propertyName};
+#elseif (  ($jpaRelationship.cardinality == "one-to-one") || ($jpaRelationship.cardinality == "optional-one-to-one") || ($jpaRelationship.cardinality == "one-to-optional-one") )
+private ${jpaRelationship.collectionType}<${jpaRelationship.getReferencedTable().className}> $jpaRelationship.getBidirectionalPropertyName();
+#elseif ( ($jpaRelationship.cardinality == "one-to-many") || ($jpaRelationship.cardinality == "optional-one-to-many") || ($jpaRelationship.cardinality == "one-to-optional-many")  )
+private ${jpaRelationship.collectionType}<${jpaRelationship.getReferencedTable().className}> $jpaRelationship.getBidirectionalPropertyName();
+#end
+
+#end
+
+#end
+
+
+#end
+###################################################################################
+#####                              GET & SET
+###################################################################################
+
+
+#if( !($jpaTable.isInnerTable()) )
+
+#foreach ($jpaRelationship in $jpaTable.relationships)
+#if( !($jpaRelationship.getReferencedTable().isInnerTable()) )
+
+#if ( ($jpaRelationship.cardinality == "many-to-one") || ($jpaRelationship.cardinality == "many-to-optional-one") || ($jpaRelationship.cardinality == "optional-many-to-one") )
+		#set ($propertyType = ${jpaRelationship.getReferencedTable().className})
+		#set ($propertyN = ${jpaRelationship.propertyName})
+		#set ($getMethod = $jpaRelationship.getGetter( ${jpaRelationship.propertyName}) )
+		#set ($setMethod = $jpaRelationship.getSetter( ${jpaRelationship.propertyName}) )
+#elseif ( ($jpaRelationship.cardinality == "one-to-many") || ($jpaRelationship.cardinality == "optional-one-to-many") || ($jpaRelationship.cardinality == "one-to-optional-many") || ($jpaRelationship.cardinality == "one-to-one") || ($jpaRelationship.cardinality == "optional-one-to-one") || ($jpaRelationship.cardinality == "one-to-optional-one") )
+		#set ($propertyType = "${jpaRelationship.collectionType}<${jpaRelationship.getReferencedTable().className}>")
+		#set ($propertyN = ${jpaRelationship.getBidirectionalPropertyName()})
+		#set ($getMethod = $jpaRelationship.getGetter( ${jpaRelationship.getBidirectionalPropertyName()}) )
+		#set ($setMethod = $jpaRelationship.getSetter( ${jpaRelationship.getBidirectionalPropertyName()}) )		
+#end
+
+public $propertyType $getMethod () {
+	return this.$propertyN;
+}
+
+public void $setMethod ($propertyType $propertyN) {
+	this.$propertyN = $propertyN;
+}
+
+#end
+
+ 
+#end
+
+#end
+
+
+}

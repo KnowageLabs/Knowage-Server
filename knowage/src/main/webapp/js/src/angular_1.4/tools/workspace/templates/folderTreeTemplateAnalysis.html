@@ -1,0 +1,56 @@
+<!-- <md-dialog  flex style="height:60%; width:20%; max-height:100%; max-width:20%" ng-cloak>	
+<md-content flex>
+   	<md-toolbar>
+   	
+     <div class="md-toolbar-tools">
+       <h2>{{translate.load('sbi.workspace.organizer.folder.move.title')}}</h2>
+       <span flex></span>
+       <md-button class="md-icon-button" ng-click="shareDoc()">
+         <md-icon class="fa fa-floppy-o"></md-icon>
+       </md-button>
+       <md-button class="md-icon-button" ng-click="closeDocumentTree()">
+         <md-icon class="fa fa-times-circle-o"></md-icon>
+       </md-button>
+     </div>   
+   </md-toolbar>
+         <md-content layout-margin layout-padding>
+	     				<document-tree 
+	     					ng-model="folders" 
+	     					highlights-selected-item="true" 
+	     					multi-select="true" 
+	     					create-tree="true"
+	     					selected-item="selectedItems" 
+	     				></document-tree>
+		 </md-content>
+   </md-content>
+</md-dialog>
+ -->
+<md-dialog aria-label="share cockpit document" class="saveFederationDefinitionTemplate" flex=30>
+ <div>
+	<md-toolbar class="miniheadfederation">
+		<div class="md-toolbar-tools">
+			<h2 class="md-flex">{{translate.load('sbi.workspace.organizer.folder.move.title')}}</h2>
+			<span flex=""></span>
+			<md-button class="md-icon-button" ng-click="shareDoc()">
+         <md-icon class="fa fa-floppy-o"></md-icon>
+       </md-button>
+       <md-button class="md-icon-button" ng-click="closeDocumentTree()">
+         <md-icon class="fa fa-times-circle-o"></md-icon>
+       </md-button>
+		</div>	
+	</md-toolbar>
+	<md-content class="sticky-container">
+			<document-tree 
+  					ng-model="folders" 
+  					highlights-selected-item="true" 
+  					multi-select="true"
+  					multi-select-leafes="true" 
+  					create-tree="true"
+  					selected-item="selectedItems" 
+  				></document-tree>
+	</md-content>
+
+  			
+	</div>
+ 
+</md-dialog>

@@ -1,0 +1,91 @@
+<md-dialog style='width:50%;'>
+    
+   <md-toolbar class="knowage-blue dialog-toolbar">
+   		<h2 flex="flex" class="md-title">Scenario Wizard</h2>
+   </md-toolbar>
+   
+   <md-dialog-content>
+        <div layout="row">
+   		<p class="md-body-1" style="padding:10px">Selecting an edit cube and an editable measure is mandatory.</p>  
+   		<span flex></span>
+   		
+   		     <md-button class="md-icon-button" aria-label="Info" ng-click="showEditCubeInfo()">
+				          <md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+				        </md-button>
+   		</div>
+   		<p class="md-body-1" style="padding:10px" ng-show="showInfo">
+   		 {{translate.load("sbi.olap.designer.editCube.info")}}
+   		</p>
+   		
+   		<md-card
+   		>
+   			<md-input-container  layout="column" flex=100> 
+	       <label>Select Cube</label>
+	       <md-select class="designer-cube-dialog" ng-change="loadAllMeasures(scenario.editCube)"
+	        ng-model="scenario.editCube"
+	        > <md-option 
+	        ng-repeat="l in cubeList track by $index" value="{{l}}">{{l}} </md-option>
+	       </md-select>
+	        </md-input-container>
+   		</md-card>
+   		
+   		<md-card>
+   			<md-toolbar class="scenario-secondary-toolbar" style="background-color: #A9C3DB !important;">
+	              Editable measures
+	        </md-toolbar>
+          <div style="padding: 5px;">
+          <div ng-if="!hasSelectedCube()">Select a cube in order to see its measures.</div>
+          <div>
+            <md-checkbox ng-if="hasSelectedCube()" aria-label="Select All" ng-checked="isChecked()" md-indeterminate="isIndeterminate()" ng-click="toggleAll()">
+              <span ng-if="isChecked()">Un-</span>Select All
+            </md-checkbox>
+          </div>
+            <div style="padding-left: 30px;" flex="100" ng-repeat="item in measuresList">
+              <md-checkbox ng-checked="exists(item)" ng-click="toggle(item)">
+               {{ item.name }}
+              </md-checkbox>
+            </div>
+          </div>
+   		</md-card>
+   		
+   		
+   		<md-card>
+   		
+   			<div>
+  							Variables
+			<i class="fa fa-plus-square" ng-click="addVariable()" aria-hidden="true" ></i>
+			
+			<div ng-repeat="p in scenario.variables" layout-gt-sm="row" layout-align="start center">
+						<div layout="row"> 								
+								<md-input-container class="md-block" flex-gt-sm>
+      							<label>Parameter Name</label>
+  								<input ng-model="p.name">
+								</md-input-container>
+								
+								<md-input-container class="md-block" flex-gt-sm>
+      							<label>Parameter Value</label>
+  								<input ng-model="p.value">
+								</md-input-container>
+						</div> 						
+    						
+ 						<div>
+							<i class="fa fa-minus-square" ng-click="removeVariable(i)" aria-hidden="true"></i> 	
+						</div>	      						
+			</div>
+		</div>
+   		
+   		</md-card>
+   </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+    <md-button ng-click="clearScenario()" class="md-raised"  md-autofocus>
+        Clear data
+      </md-button>
+     <md-button ng-click="saveScenario()" class="md-raised"  md-autofocus>
+        Save
+      </md-button>
+      <md-button ng-click="closeDialogOlapDesigner()" class="md-raised" style="margin-right:20px;" >
+       Cancel
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+	
+
+
+
+
+  	
+  	<PAGE name="SaveConfigurationPage" scope="REQUEST" title="Save Configuration Page" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="SaveConfigurationPage" target="SaveConfigurationModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="SaveConfigurationModule"/>
+    	</MODULES>
+  	</PAGE>
+
+
+</PAGES>

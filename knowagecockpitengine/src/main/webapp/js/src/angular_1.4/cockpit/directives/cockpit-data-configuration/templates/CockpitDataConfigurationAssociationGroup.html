@@ -1,0 +1,17 @@
+<div layout="row" flex layout-wrap ng-controller="associationGroupController" layout-align="space-around center">
+
+	<md-card  class="flexCard" flex="30" ng-repeat="aggreg in tmpAggregations" layout> 
+		<md-card-content layout="column" flex>
+	 
+				<md-chips flex ng-model="aggreg.datasets" readonly="true" >
+	      			 <md-chip-template ng-class="{'rtchips' : (rtData[$parent.$index].indexOf($chip)!=-1)}" >{{$chip}}</md-chip-template >
+				</md-chips>
+				<md-input-container  class='md-block' ng-if="rtData[$index].length>0">
+					<label>Frequency</label>
+		         	<input type='number'   ng-model='aggreg.frequency' >
+		        </md-input-container>
+			
+		</md-card-content>
+	</md-card>
+
+</div>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+
+	<SERVICE name="SAVE_QUERY_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS/>
+			<FIELDS>
+				<FIELD name="queryName">
+				    <VALIDATOR validatorName="MANDATORY"/>
+				    <VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>
+				<FIELD name="queryDescription">
+				    <VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+
+</VALIDATIONS>

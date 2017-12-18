@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AUTHORIZATIONS default="FALSE">
+	<ENTITIES>
+		<ATTRIBUTES>
+			<ATTRIBUTE name="month" />
+			<ATTRIBUTE name="email"  />
+			<ATTRIBUTE name="name"  />
+			<ATTRIBUTE name="family"  />
+			<ATTRIBUTE name="country"  />
+		</ATTRIBUTES>	
+		<USERS>
+			<USER userID="biadmin" password="biadmin" month="03" name="SpagoAdmin" email="bernabei@eng.it" country="USA" family="Food" />
+			<USER userID="biuser" password="biuser" month="04" name="SpagoUser" email="bernabei@eng.it"/>
+			<USER userID="bidev" password="bidev" />
+			<USER userID="bitest" password="bitest" />
+			<USER userID="bimodeladmin" password="bimodeladmin" />
+			<USER userID="general_manger" password="general_manger" />
+			<USER userID="staff_general_manger" password="staff_general_manger" />
+			<USER userID="product_manger" password="product_manger" />
+			<USER userID="food_director" password="food_director" family="Food"/>
+			<USER userID="drink_director" password="drink_director" family="Drink"/>
+			<USER userID="nonconsumable_director" password="nonconsumable_director" family="Non-Consumable"/>
+			<USER userID="warehouse_manger" password="warehouse_manger" />
+			<USER userID="warehouse_usa_manger" password="warehouse_usa_manger" country="USA" />
+			<USER userID="warehouse_canada_manger" password="warehouse_canada_manger" country="Canada" />
+			<USER userID="warehouse_mexico_manger" password="warehouse_mexico_manger" country="Mexico" />
+		</USERS>
+		<ROLES>
+			<ROLE roleName="/spagobi/dev" description="/spagobi/dev" />
+			<ROLE roleName="/spagobi/user" description="/spagobi/user" />
+			<ROLE roleName="/spagobi/test" description="/spagobi/test" />
+			<ROLE roleName="/spagobi/admin" description="/spagobi/admin" />
+			<ROLE roleName="/spagobi/modeladmin" description="/spagobi/modeladmin" />
+			<ROLE roleName="/spagobi/general_manger" description="/spagobi/general_manger" />
+			<ROLE roleName="/spagobi/staff_general_manger" description="/spagobi/staff_general_manger" />
+			<ROLE roleName="/spagobi/product_manger" description="/spagobi/product_manger" />
+			<ROLE roleName="/spagobi/product_family_director" description="/spagobi/product_family_director" />
+			<ROLE roleName="/spagobi/warehouse_manger" description="/spagobi/warehouse_manger" />
+			<ROLE roleName="/spagobi/warehouse_country_manger" description="/spagobi/warehouse_country_manger" />
+		</ROLES>
+		<FUNCTIONALITIES></FUNCTIONALITIES>
+		<RESOURCES></RESOURCES>
+		<APPLICATIONS></APPLICATIONS>
+	</ENTITIES>
+	<RELATIONS>
+		<BEHAVIOURS>
+			<BEHAVIOUR userID="biuser" roleName="/spagobi/user" />
+			<BEHAVIOUR userID="biadmin" roleName="/spagobi/admin" />
+			<BEHAVIOUR userID="bimodeladmin" roleName="/spagobi/modeladmin" />
+			<BEHAVIOUR userID="bidev" roleName="/spagobi/dev" />
+			<BEHAVIOUR userID="bitest" roleName="/spagobi/test" />
+			<BEHAVIOUR userID="general_manger" roleName="/spagobi/general_manger" />
+			<BEHAVIOUR userID="staff_general_manger" roleName="/spagobi/staff_general_manger" />
+			<BEHAVIOUR userID="product_manger" roleName="/spagobi/product_manger" />
+			<BEHAVIOUR userID="food_director" roleName="/spagobi/product_family_director" />
+			<BEHAVIOUR userID="drink_director" roleName="/spagobi/product_family_director" />
+			<BEHAVIOUR userID="nonconsumable_director" roleName="/spagobi/product_family_director" />
+			<BEHAVIOUR userID="warehouse_manger" roleName="/spagobi/warehouse_manger" />
+			<BEHAVIOUR userID="warehouse_usa_manger" roleName="/spagobi/warehouse_country_manger" />
+			<BEHAVIOUR userID="warehouse_canada_manger" roleName="/spagobi/warehouse_country_manger" />
+			<BEHAVIOUR userID="warehouse_mexico_manger" roleName="/spagobi/warehouse_country_manger" />
+		</BEHAVIOURS>
+	</RELATIONS>
+</AUTHORIZATIONS>

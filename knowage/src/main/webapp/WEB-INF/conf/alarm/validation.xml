@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+	<SERVICE name="MANAGE_ALARMS_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="ALARM_INSERT"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="name" label="name">
+		 	 		<VALIDATOR validatorName="MANDATORY"/>
+				  	<VALIDATOR validatorName="EXTENDED_ALFANUMERIC" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>
+				<FIELD name="description" label="description">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC" />
+		 	 		<VALIDATOR validatorName="MAXLENGTH" arg0="200"/>
+				</FIELD>
+				<FIELD name="label" label="label">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>
+				<FIELD name="text" label="text">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
+				</FIELD>
+				<FIELD name="url" label="url">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="20"/>
+				</FIELD>	
+				<FIELD name="autoDisabled" label="autoDisabled">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>	
+				<FIELD name="singleEvent" label="singleEvent">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+	<SERVICE name="MANAGE_CONTACTS_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="CONTACT_INSERT"/>
+			</CONDITIONS>
+			<FIELDS>
+
+				<FIELD name="name" label="name">
+					<VALIDATOR validatorName="MANDATORY"/>	
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>				
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>
+				</FIELD>
+				<FIELD name="email" label="email">
+					<VALIDATOR validatorName="REGEXP" arg0="([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>					
+				</FIELD>
+				<FIELD name="mobile" label="mobile">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+					<!--VALIDATOR validatorName="REGEXP" arg0="^[0-9/]*$"/-->
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+				<FIELD name="resources" label="resources">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="200"/>
+					<VALIDATOR validatorName="REGEXP" arg0="^[a-zA-Z0-9_-\x2D]*$"/>
+				</FIELD>
+
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+</VALIDATIONS>

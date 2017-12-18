@@ -1,0 +1,208 @@
+<%--
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--%>
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA IMPORTS               --%>
+<%-- ---------------------------------------------------------------------- --%>
+<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jsp"%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html ng-app="cockpitModule">
+<head>
+<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+<%@include file="/WEB-INF/jsp/commons/angular/cockpitImport.jsp"%>
+<%@include file="/WEB-INF/jsp/chart/execution/chartRenderImport.jsp"%>
+
+<script type="text/javascript">
+
+angular.module("cockpitModule").factory("cockpitModule_properties",function(){
+	return {
+		EDIT_MODE:angular.equals("<%= documentMode %>","EDIT"),
+		DOCUMENT_ID: <%=  docId%>,
+		DOCUMENT_NAME: "<%=  docName%>",
+		DOCUMENT_LABEL:"<%=  docLabel%>",
+		DOCUMENT_DESCRIPTION:"<%=  docDescription%>",
+		WIDGET_EXPANDED:{},
+		SELECTED_ROLE:"<%= 	executionRole %>",
+		OUTPUT_PARAMETERS: <%=outputParameters%>,
+		DS_IN_CACHE:[],
+		HAVE_SELECTIONS_OR_FILTERS:false,
+		STARTING_SELECTIONS:[],
+		STARTING_FILTERS:[],
+		CURRENT_SHEET: <%=initialSheet%>,
+		EXPORT_MODE: <%=exportMode%>
+	}
+});
+
+angular.module("cockpitModule").factory("accessibility_preferences",function(){
+	return {
+		accessibilityModeEnabled:<%= isUIOEnabled %>,
+		isUIOEnabled:<%= isUIOEnabled %>,
+		isRobobrailleEnabled:<%= isRobobrailleEnabled %>,
+		isVoiceEnable:<%= isVoiceEnable %>,
+		isGraphSonificationEnabled:<%= isGraphSonificationEnabled %>
+		
+		
+	}
+});
+
+angular.module("cockpitModule").factory("cockpitModule_template",function(sbiModule_translate,cockpitModule_properties){
+	var template = <%=  template%>
+	
+	if(template.sheets==undefined){
+		template.sheets=[{label:sbiModule_translate.load("sbi.cockpit.new.sheet"),widgets:[]}];
+	}
+	
+	if(template.configuration==undefined){
+		template.configuration={};
+	}
+	if(template.configuration.showMenuOnView==undefined){
+		template.configuration.showMenuOnView=true;
+	}
+	
+	if(template.configuration.style==undefined){
+		template.configuration.style={titles : true};
+	}
+	
+	if(template.configuration.datasets==undefined){
+		template.configuration.datasets=[];
+	}
+	
+	if(template.configuration.documents==undefined){
+		template.configuration.documents=[];
+	}
+
+	if(template.configuration.associations==undefined){
+		template.configuration.associations=[];
+	}
+	if(template.configuration.aggregations==undefined){
+		template.configuration.aggregations=[];
+	}
+	if(template.configuration.filters==undefined){
+		template.configuration.filters={};
+	}
+	
+	function filterForInitialSelection(obj){
+		if(!cockpitModule_properties.EDIT_MODE){
+			for(var i=0;i<cockpitModule_properties.STARTING_SELECTIONS.length;i++){
+				if(angular.equals(cockpitModule_properties.STARTING_SELECTIONS[i],obj)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	function filterForInitialFilter(obj){
+		if(!cockpitModule_properties.EDIT_MODE){
+			for(var i=0;i<cockpitModule_properties.STARTING_FILTERS.length;i++){
+				if(angular.equals(cockpitModule_properties.STARTING_FILTERS[i],obj)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}	
+	
+	template.getSelections=function(){
+		
+		template.selections=[];
+		var tmpFilters = {};
+		var tmpSelection=[];
+				
+		angular.copy(template.configuration.filters, tmpFilters);
+		for(var ds in tmpFilters){
+			for(var col in tmpFilters[ds]){
+				var tmpObj={
+						ds :ds,
+						columnName : col,
+						value : tmpFilters[ds][col],
+						aggregated:false
+				}
+				 
+				if(!filterForInitialFilter(tmpObj)){
+					template.selections.push(tmpObj);
+				}
+			}
+		}
+		
+		angular.copy(template.configuration.aggregations, tmpSelection);
+		if(tmpSelection.length >0){
+			for(var i=0;i<tmpSelection.length;i++){
+				selection = tmpSelection[i].selection;
+				for(var key in selection){
+					var string = key.split(".");
+					var obj = {
+							ds : string[0],
+							columnName : string[1],
+							value : selection[key],
+							aggregated:true
+					};
+					if(!filterForInitialSelection(obj)){
+						template.selections.push(obj);
+					}
+				}
+			}
+		}
+		return template.selections;	
+	}
+	
+	console.log("template:"+template);
+	// back compatibility with old document parameters
+	for(var i=0; i<template.configuration.associations.length; i++){
+		var association = template.configuration.associations[i];
+		for(var j=0; j<association.fields.length; j++){
+			var field = association.fields[j];
+			if(field.type=="document"
+					&& !field.column.startsWith("$P{")
+					&& !field.column.endsWith("}")){
+				association.description = association.description.replace(field.store+"."+field.column,field.store+"."+"$P{" + field.column + "}");
+				field.column = "$P{" + field.column + "}";
+			}
+		}
+	}
+	return template;
+});
+
+angular.module("cockpitModule").factory("cockpitModule_analyticalDrivers",function(){
+	var ad = <%=  analyticalDriversParams%>
+	return ad;
+});
+
+angular.module("cockpitModule").factory("cockpitModule_analyticalDriversUrls",function(){
+	var ad = <%= analyticalDriversParamsObj %>
+	return ad;
+});
+
+var chartLibNamesConfig = <%=ChartEngineUtil.getChartLibNamesConfig()%>;
+
+</script>
+<%-- <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> --%>
+<%-- <link rel="stylesheet" type="text/css" href="${request.contextPath}/themes/commons/css/customStyle.css"> --%>
+<!-- <link rel="stylesheet" type="text/css" href="/knowage/themes/commons/css/customStyle.css"> -->
+<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">
+
+<title>Cockpit engine</title>
+</head> 
+
+		<body class="kn-cockpit " ng-class="{'disableanimation':sbiModule_device.browser.name!='chrome'}" md-no-ink ng-controller="cockpitMasterController" layout="column" style="background:url({{imageBackgroundUrl}}); background-color:{{cockpitModule_template.configuration.style.sheetsBackgroundColor}}; background-size:contain; background-repeat: no-repeat; background-position: center;" >
+	
+	<cockpit-toolbar config="configurator"></cockpit-toolbar>
+	<cockpit-sheet flex ng-if="datasetLoaded"></cockpit-sheet>
+</body>
+</html>

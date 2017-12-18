@@ -1,0 +1,263 @@
+<%-- Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--%>
+
+<%-- 
+author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+--%>
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA IMPORTS															--%>
+<%-- ---------------------------------------------------------------------- --%>
+
+<%@page import="it.eng.spagobi.engine.chart.model.conf.ChartConfig"%>
+<%@page import="it.eng.spagobi.engine.chart.ChartEngineConfig"%>
+<%@page import="it.eng.spagobi.engine.chart.util.ChartEngineUtil"%>
+<%@page import="it.eng.spagobi.engine.chart.ChartEngineInstance"%>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="it.eng.spago.base.SourceBean"%>
+<%@page import="it.eng.spagobi.services.common.EnginConf"%>
+<%@page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA IMPORTS															--%>
+<%-- ---------------------------------------------------------------------- --%>
+<%@page import="java.util.Locale"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
+<%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
+<%@page import="it.eng.spago.security.IEngUserProfile"%>
+<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="java.util.Iterator"%>
+<%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
+<%@page import="org.json.JSONObject"%>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
+<%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
+
+<%
+
+	SourceBean sb = ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("ChartEngineContextName"));
+	String chartEngineContextName = sb.getCharacters();
+	
+	ChartEngineInstance engineInstance;
+	IEngUserProfile profile;
+	String profileJSONStr;
+	Map env;
+	String contextName;
+	String environment;
+	String executionRole;
+	Locale locale;
+	String template;
+	String docLabel;
+	String docId;
+	String docLabelComositeDoc;
+	String docVersion;
+	String docAuthor;
+	String docName;
+	String docDescription;
+	String docIsPublic;
+	String docIsVisible;
+	String docPreviewFile;
+	String[] docCommunities;
+	String docCommunity;
+	List docFunctionalities;
+	String userId="";
+	String userUniqueIdentifier="";
+	String isTechnicalUser;
+	List<String> includes;
+	String datasetLabel;
+	String userName="";
+	String defaultRole="";
+	List userRoles = new ArrayList();
+	
+	
+	
+	//from cockpit
+	boolean isCockpit = false;
+	String aggregations = "";
+	String selections = "";
+	String associations = "";
+	String widgetId = "";
+	String metaData = "";
+	
+	ExecutionSession es = new ExecutionSession(request,request.getSession());
+	
+	/*
+		Take the Chart engine instance from the session. This engine instance contains necessary data about the document
+		that should be rendered (e.g. a chart template).
+		@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/
+	engineInstance = (ChartEngineInstance) es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
+	
+	/*The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and 
+	* https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session
+	* is not the place to store and retrive the engine instance, otherwise concurrency issues are raised.
+	* @author: Alessandro Portosa (alessandro.portosa@eng.it)
+	*/
+	//engineInstance = (ChartEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
+	
+	/*
+		This instance contains is a JSON object with various configuration options, such as SBI_COUNTRY=US, SBI_EXECUTION_ID, 
+		DOCUMENT_USER=biadmin, IS_TECHNICAL_USER, SBI_HOST=http://localhost:8080, SBI_EXECUTION_ROLE=admin, DOCUMENT_LABEL=BAR, 
+		DOCUMENT_IS_PUBLIC etc.
+		@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/
+	env = engineInstance.getEnv();
+	
+	/*
+		Information about the profile of the user, organized in a map, where properties, such as userId=biadmin, userName, userAttributes 
+		(sub-properties such as TENANT_ID=DEFAULT_TENANT, country=US, language=en, etc.), organization=DEFAULT_TENANT, etc.
+	*/
+	profile = engineInstance.getUserProfile();
+	
+	profileJSONStr = new ObjectMapper().writeValueAsString(profile);
+	locale = engineInstance.getLocale(); // e.g. en_US
+	String curr_language=locale.getLanguage();
+	String curr_country=locale.getCountry();
+	contextName = request.getParameter(SpagoBIConstants.SBI_CONTEXT); // e.g. '/knowage', '/knowagechartengine'
+	environment = request.getParameter("SBI_ENVIRONMENT"); // e.g. DOCBROWSER
+	executionRole = (String) env.get(EngineConstants.ENV_EXECUTION_ROLE); // e.g. admin
+	if (profile!=null){
+		userId=(String)((UserProfile)profile).getUserId();
+		userUniqueIdentifier=(String)profile.getUserUniqueIdentifier();
+		userName=(String)((UserProfile)profile).getUserName();
+		userRoles = (ArrayList)profile.getRoles();
+		defaultRole = ((UserProfile)profile).getDefaultRole();
+	}
+	isTechnicalUser = (engineInstance.isTechnicalUser()==null) ? "" : engineInstance.isTechnicalUser().toString();
+	
+	// The JSON template of the chart that is about to be rendered.
+	template = engineInstance.getTemplate().toString(0);	
+	
+	/*
+		WORKAROUND: Replace the single quote character wherever in the chart template with the ASCII code for a single quote character, so we can render the chart 
+		inside the Cockpit or Chart Engine even when the JSON template contains	this character (e.g. "L'Italia"). Later, because of rendering the chart, this code
+		will be replaced with the "escaped" single quote character combination (in order not to have "L&#39;Italia").
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/
+	template = template.replaceAll("'","&#39;");	
+	
+	/*
+		Extracting the chart type from the template in order to investigate if the document should be rendered as the chart of ChartJS library
+		or not. For ChartJS charts we need a little bit settings in the client-side logic, as well as in the interface. Namely, inside the HTML
+		and the main DIV in which the chart usually renders, we need to set the CANVAS HTML element in which the ChartJS chart will render (its
+		container).
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/
+	
+	boolean isLibChartJS = true;
+	String chartType = null;
+	ChartConfig chartLib = null;
+	if (!template.equals("{}")) {
+		
+		String templateSubstrFromType = template.substring(template.indexOf("\"type\":"),template.length()-1);
+		int indexOfSeparator = templateSubstrFromType.indexOf(",");
+		chartType = templateSubstrFromType.substring("\"type\":".length()+1,indexOfSeparator-1); // + and -1 to avoid quotes in the chart type name
+		
+		// Set the indicator value so both the interface and the logic could "know" of we are dealing with the ChartJS chart types. (danristo)
+		chartLib = ChartEngineConfig.getChartLibConf().get(chartType.toLowerCase());
+		if(chartLib!=null){
+			isLibChartJS = chartLib.getLibIniName().equals("chartJsInitializer.jsp");
+		}
+		
+		
+	}	
+		
+	if(env.get("EXECUTE_COCKPIT") != null) {
+		
+		isCockpit = true;
+		datasetLabel = env.get(EngineConstants.ENV_DATASET_LABEL)!=null ? (String)env.get(EngineConstants.ENV_DATASET_LABEL) : "";
+		aggregations = env.get("AGGREGATIONS")!=null ? (String)env.get("AGGREGATIONS") : "";
+		selections = env.get("SELECTIONS")!=null ? (String)env.get("SELECTIONS") : "";
+		associations = env.get("ASSOCIATIONS")!=null ? (String)env.get("ASSOCIATIONS") : "";
+		metaData = env.get("METADATA")!=null ? (String)env.get("METADATA") : "";
+		widgetId = env.get("WIDGETID")!=null ? (String)env.get("WIDGETID") : "";
+		
+	} 
+	else {		
+		// The label of the dataset that is used as a source of data for our chart that we are rendering.
+		datasetLabel = (engineInstance.getDataSet() != null ) ? engineInstance.getDataSet().getLabel() : "" ;
+	}
+	
+	/*
+		WORKAROUND: Replace the single quote character in the meta data (information about the data inside the dataset that is picked for the chart/cockpit) 
+		with the "escaped" single quote combination, so we can render the chart inside the Cockpit when the data in the table (dataset) that is picked contains
+		this character (e.g. "L'Italia").
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/
+	metaData = metaData.replaceAll("'","\\\\'");
+	
+	/*
+		docLabel - the LABEL of the chart template document that we are executing (rendering)
+		docVersion - ...
+		docAuthor - who created it
+		docName - the NAME of the chart document that is executing
+		docDescription - the DESCRIPTION of the chart document that is executing
+		docIsPublic - ...
+		docIsVisible - if the user set the document as visible 
+		...
+	*/
+	docLabel = request.getParameter(EngineConstants.DOCUMENT_LABEL);
+	docLabelComositeDoc = request.getParameter(EngineConstants.DOC_LABEL);
+	docId = request.getParameter(EngineConstants.DOCUMENT_ID);
+	docVersion = (engineInstance.getDocumentVersion()==null) ? "" : engineInstance.getDocumentVersion().toString();
+	docAuthor = (engineInstance.getDocumentAuthor()==null) ? "" : engineInstance.getDocumentAuthor().toString();
+	docName = (engineInstance.getDocumentName()==null) ? "" : engineInstance.getDocumentName().toString();
+	docDescription = (engineInstance.getDocumentDescription()==null) ? "" : engineInstance.getDocumentDescription().toString();
+	docIsPublic = (engineInstance.getDocumentIsPublic()==null) ? "" : engineInstance.getDocumentIsPublic().toString();
+	docIsVisible = (engineInstance.getDocumentIsVisible()==null) ? "" : engineInstance.getDocumentIsVisible().toString();
+	docPreviewFile = (engineInstance.getDocumentPreviewFile()==null) ? "" : engineInstance.getDocumentPreviewFile().toString();	
+	docCommunities = (engineInstance.getDocumentCommunities()==null) ? null : engineInstance.getDocumentCommunities();
+	docCommunity = (docCommunities==null || docCommunities.length==0) ? "" : docCommunities[0];
+	docFunctionalities = (engineInstance.getDocumentFunctionalities()==null) ? new ArrayList() : engineInstance.getDocumentFunctionalities();
+			
+	boolean forceIE8Compatibility = false;
+	
+	boolean fromMyAnalysis = false;
+	
+	if(request.getParameter("MYANALYSIS") != null && request.getParameter("MYANALYSIS").equalsIgnoreCase("TRUE")) {
+		fromMyAnalysis = true;
+	}
+	else {
+		if (request.getParameter("SBI_ENVIRONMENT") != null && request.getParameter("SBI_ENVIRONMENT").equalsIgnoreCase("MYANALYSIS")) {
+			fromMyAnalysis = true;
+		}
+	}
+	
+	Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
+	Map driverParamsMap = new HashMap();
+	
+	for(Object key : engineInstance.getAnalyticalDrivers().keySet()) {
+		if(key instanceof String && !key.equals("widgetData")) {
+			String value = request.getParameter((String)key);
+			if(value!=null){
+				driverParamsMap.put(key, value);
+			}
+		}
+	}
+	
+	String driverParams = new JSONObject(driverParamsMap).toString(0).replaceAll("'", "\\\\'");
+	String uuidO = request.getParameter("SBI_EXECUTION_ID")!=null ? request.getParameter("SBI_EXECUTION_ID") : "null";	 	
+	
+%>
+
+<%@include file="/WEB-INF/jsp/chart/commons/angular/includeMessageResource.jspf"%>

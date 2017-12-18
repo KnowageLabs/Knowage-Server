@@ -1,0 +1,42 @@
+<%-- Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--%>
+
+<script>
+angular.module('sbiModule')
+
+.directive('restLoading',   ['$http' ,function ($http)
+	                              	{
+	                              	    return {
+	                              	        template:"<div loading layout-fill style='position:fixed;z-index: 500;background:rgba(0,0,0, 0.3);'>"+
+	                              	    	"<md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%' ></md-progress-circular></div>",
+	                              	        link: function (scope, elm, attrs)
+	                              	        {
+	                              	            scope.$watch(function () {
+	                              	                return $http.pendingRequests.length > 0;
+	                              	            }, function (v)
+	                              	            {
+	                              	                if(v){
+	                              	               	 elm.css("display","block");
+	                              	                }else{
+	                              	               	 elm.css("display","none");
+	                              	                }
+	                              	            });
+	                              	        }
+	                              	    };
+	                              	}]);
+	
+</script>

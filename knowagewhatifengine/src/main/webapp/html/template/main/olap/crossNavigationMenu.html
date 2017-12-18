@@ -1,0 +1,29 @@
+
+<md-dialog style='width:50%;'>
+      <md-toolbar class="knowage-blue dialog-toolbar">
+		<h2 flex="flex" class="md-title">Cross Navigation</h2>
+	</md-toolbar>
+    
+  	 <md-content class="md-padding">
+      <md-list flex>
+        <md-list-item class="md-2-line"
+         ng-repeat="target in modelConfig.crossNavigation.targets"
+         ng-class="{selected:(selectedCrossNavigationDocument.title == target.title)}"
+          ng-click="selectCrossNavigationDocument(target)">
+          <div class="md-list-item-text" layout="column" >
+            <h3>{{ target.title }}</h3>
+            <p>{{ target.description }}</p>
+          </div>
+        </md-list-item>
+    </md-content> 
+  
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised" ng-click="openSelectedCrossNavigationDocument(selectedCrossNavigationDocument)" ng-disabled="checkValidityCrossNav()" md-autofocus>
+        OK
+      </md-button>
+      <md-button class="md-raised" ng-click="closeDialog()" style="margin-right:20px;" >
+       Cancel
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>
+

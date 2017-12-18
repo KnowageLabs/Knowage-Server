@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+		<MAP_ACTION actionName="CREATE_MASTER_MENU" businessProcess="MenuManagement" />
+		<MAP_ACTION actionName="MOVE_UP_MENU" businessProcess="MenuManagement" />
+		<MAP_ACTION actionName="MOVE_DOWN_MENU" businessProcess="MenuManagement" />
+		<MAP_ACTION actionName="GET_PUBLIC_SUBOBJECTS_INFO" businessProcess="MenuManagement" />
+		<MAP_ACTION actionName="GET_SNAPSHOTS_INFO" businessProcess="MenuManagement" />
+		<MAP_ACTION actionName="GET_SUBOBJECT_INFO" businessProcess="MenuManagement" />
+		<!-- <MAP_ACTION actionName="START_ACTION_PUBLIC_USER" businessProcess="MenuManagement" />  -->
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+		<MAP_PAGE_MODULE pageName="LoginPage" moduleName="LoginModule" businessProcess="MenuManagement" />	
+		<MAP_PAGE_MODULE pageName="ViewBuilderPage" moduleName="ViewBuilderModule" businessProcess="MenuManagement" />
+		<MAP_PAGE_MODULE pageName="DirectExecutionPage" moduleName="DirectExecutionModule" businessProcess="MenuManagement" />
+		<MAP_PAGE_MODULE pageName="DetailMenuPage" moduleName="DetailMenuModule" businessProcess="MenuManagement" />
+		<MAP_PAGE_MODULE pageName="MenuConfigurationPage" moduleName="TreeMenuModule" businessProcess="MenuManagement" />
+		<MAP_PAGE_MODULE pageName="DocumentLookupPage" moduleName="ListLookupDocumentModule" businessProcess="MenuManagement" />
+	</MAP_PAGE_MODULES>
+</BUSINESS_MAP>

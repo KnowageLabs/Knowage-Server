@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+
+ <!--
+ <ACTION name="GET_LOV_RESULT" class="it.eng.spagobi.behaviouralmodel.lov.service.GetLovResultAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ -->
+ 
+ <ACTION name="GET_DATASET_RESULT" class="it.eng.spagobi.tools.dataset.service.GetDatasetResultAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+
+</ACTIONS>
+

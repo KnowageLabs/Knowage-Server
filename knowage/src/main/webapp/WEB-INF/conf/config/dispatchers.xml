@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DISPATCHERS>
+	<DISPATCHER class="it.eng.spago.dispatching.action.ActionDispatcher" />
+	<DISPATCHER class="it.eng.spago.dispatching.module.ModuleDispatcher" />
+</DISPATCHERS>

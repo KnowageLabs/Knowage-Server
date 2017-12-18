@@ -1,0 +1,360 @@
+/* General Preferences Editor styles, used for all layouts */
+
+@import "utils/Helpers"
+@import "utils/Themes"
+
+@font-face {
+    font-family: 'InfusionIcons';
+    src: url('../fonts/InfusionIcons-PrefsEditor.ttf'),
+         url('../fonts/InfusionIcons-PrefsEditor.eot');
+}
+
+.fl-prefsEditor {
+    font-family: "Myriad Pro", Helvetica, Arial, sans-serif;
+
+    // Controls
+    .fl-prefsEditor-panels {
+        margin-left: 0;
+        padding: 0;
+        li {
+            list-style: none;
+        }
+    }
+
+    label {
+        font-size: 1.2em;
+    }
+
+    input {
+        &[type="text"] {
+            width:2em;
+            font-size: 1em;
+        }
+
+        // Check boxes
+        &[type="checkbox"] {
+            margin-right:10px;
+            border: 1px solid black;
+        }
+    }
+
+    // Drop downs
+    select {
+        border: 2px solid #ebebeb;
+    }
+
+    select {
+        &#textFont {
+            font-weight:bold;
+            option {
+                &.times {
+                    font-family: "Times New Roman";
+                }
+                &.comic {
+                    font-family: "Comic Sans MS";
+                }
+                &.arial {
+                    font-family: Arial;
+                }
+                &.verdana {
+                    font-family: Verdana;
+                }
+            }
+        }
+
+        &#theme {
+            font-weight:bold;
+            text-transform: uppercase;
+
+            option.fl-prefsEditor-default-theme {
+                color: #000 !important;
+                background-color: #efefef !important;
+            }
+        }
+    }
+
+    // Text and display controls
+    .fl-prefsEditor-text {
+        label {
+            display: block;
+        }
+
+        .fl-inputs {
+            float: left;
+            font-size: 1em;
+        }
+    }
+
+    .fl-prefsEditor-layout div,
+    .fl-prefsEditor-links div {
+        margin-left: 25px;
+    }
+
+    // Sliders
+    .fl-slider {
+        float:left;
+        border: 1px solid #b3b3b3;
+        border-radius: 0.3em;
+        background-color: #dad6d3;
+        padding: 0;
+        position: relative;
+        height: 1em;
+        margin-top: 0;
+        margin-left: 0.8em;
+        margin-right: 1.8em;
+
+        a, .fl-slider-handle {
+            position:absolute;
+            display:block;
+            top:0;
+            left:0;
+            height: 1.5em;
+            width: 1.5em;
+            margin-top: -0.4em;
+            margin-left: -0.4em;
+            background-color: #fff;
+            border: 1px solid #b3b3b3;
+            border-radius: 2em;
+            box-shadow: 4px 2px 3px rgba(0,0,0,0.3);
+            background-image: linear-gradient(right top, rgb(255,255,255) 46%, rgb(233,234,234) 73%);
+
+            &:active {
+                outline: none;
+            }
+        }
+    }
+    .fl-slider-horz {
+        width: 9em;
+    }
+
+    .fl-slider-input {
+        margin-left: 1em;
+        float:left;
+    }
+
+    .fl-slider-range {
+        background-color: #62bb3d;
+        height: 100%;
+    }
+
+    .fl-inputs div[class*='fl-icon-'] {
+        font-size: 1.5em;
+        margin-top: -0.15em;
+    }
+
+    // Theme radio buttons
+    .fl-choice {
+        display: inline;
+        float: left;
+
+        label {
+            margin-right: 5px;
+            border: 1px solid black;
+            border-radius: 5px;
+            height: 3em;
+            width: 3em;
+            text-align: center;
+            vertical-align: middle;
+            display: inline-block;
+            line-height: 3em !important;
+            padding: 2px;
+        }
+        .fl-preview-A {
+            font-size: 2em;
+        }
+
+        // Pseudo content to prevent AT from reading display 'a'
+        .fl-preview-A:before {
+            content: "a";
+        }
+
+        input:focus ~ label {
+            outline: 2px solid black;
+        }
+    }
+
+    // ON/OFF Switch for checkboxes
+    // The container for the toggle, which is also a label for the hidden checkbox.
+    .fl-prefsEditor-onoff {
+        .fl-prefsEditor-switch {
+            border-radius:50px;
+            border: 1px solid #776D67;
+            width: 5em;
+            height: 2em;
+            background-color: #E6E6E6;
+            box-shadow: 1em 1.1em 0 0 rgba(250,250,250,0.53) inset;
+            overflow: hidden;
+            vertical-align: middle;
+            display: block;
+            margin-top: 1em;
+            transition-duration: 0.2s;
+            transition-property: padding-left, width, background-color, margin-left;
+            font-size: 1.2em;
+            font-weight: 600;
+            text-transform: lowercase;
+        }
+
+        // Hide input while still being screen reader accessible
+        input {
+            border: 0 none;
+            clip: rect(0px, 0px, 0px, 0px);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+        }
+
+        input:focus + label {
+            outline: 2px solid black;
+        }
+
+        input:checked + label .fl-prefsEditor-switch {
+            padding-left: 3em;
+            width: 2em;
+            background-color: #2da750;
+            box-shadow: -1em 1.1em 0.1em 0 rgba(172, 216, 92, 0.63) inset;
+
+            .fl-prefsEditor-switch-inner {
+                top:-1.6em;
+                left: 0.46em;
+            }
+        }
+        // With data attributes defining the on/off text, localizing the templates is easier
+        input + label {
+            [data-checkboxStateOn]:before {
+                content: attr(data-checkboxStateOn);
+            }
+            [data-checkboxStateOff]:after {
+                content: attr(data-checkboxStateOff);
+            }
+
+            // The "on" portion of the toggle and the knob.
+            .fl-prefsEditor-switch {
+                &:before {
+                    color: #fff;
+                    border: 1px solid #776D67;
+                    border-radius: 50px;
+                    float:left;
+                    width:1.9em;
+                    height: 1.9em; // Width and height of the knob.
+                    text-indent:-1.6em;
+                    line-height:1.7em;
+                    text-shadow: 1px 1px 1px #000;
+                    background-color: #fff;
+                    box-shadow: 0.2em 0.2em 0.5em #888;
+                    background-image: linear-gradient(bottom, rgb(205,204,202) 0%, rgb(244,244,244) 100%);
+                }
+                // The "off" portion of the toggle.
+                &:after {
+                    float: left;
+                    position: relative;
+                    top: 0.36em;
+                    left: 0.5em;
+                }
+            }
+        }
+
+        // The dark inner circle to the toggle knob.
+        .fl-prefsEditor-switch-inner {
+            border: 1px solid #493A30;
+            border-radius: 50px;
+            width: 1em;
+            height: 1em;
+            position: relative;
+            left: -2.85em;
+            top: 0.46em;
+            background-color: #675243;
+            box-shadow: 0 -0.2em 0.3em 0.05em rgba(250, 250, 250, 0.3) inset;
+            display: inline-block;
+        }
+    }
+
+    // Font Icons
+    .fl-icon-indicator, .fl-icon-crossout, .fl-icon-big-a, .fl-icon-small-a, .fl-icon-line-space-expanded, .fl-icon-line-space-condensed,
+    .fl-icon-contrast, .fl-icon-undo, .fl-icon-line-space, .fl-icon-links, .fl-icon-simplify, .fl-icon-font, .fl-icon-size, .fl-icon-text-to-speech, .fl-icon-toc {
+        font-family: 'InfusionIcons' !important;
+        speak: none;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        -webkit-font-smoothing: antialiased;
+        float: left;
+        margin: 0.2em 0.3em 0 0;
+        font-size: 1.5em;
+    }
+
+    // control icons
+
+    .fl-icon-crossout:before, .fl-choice .fl-prefsEditor-contrast-defaultThemeLabel .fl-crossout:before {
+        content: "\e004";
+    }
+    .fl-icon-big-a:before {
+        content: "\e006";
+    }
+    .fl-icon-small-a:before {
+        content: "\e007";
+    }
+    .fl-icon-line-space-expanded:before {
+        content: "\e009";
+    }
+    .fl-icon-line-space-condensed:before {
+        content: "\e00a";
+    }
+    .fl-icon-indicator:before, .fl-choice input:checked + div:before {
+        content: "\e003";
+    }
+
+    .fl-choice {
+        .fl-indicator {
+            font-family: 'InfusionIcons' !important;
+            font-size: 1.3em;
+            margin: -0.75em 0 0 0.75em;
+            height: 1em;
+        }
+
+        .fl-prefsEditor-contrast-defaultThemeLabel .fl-crossout {
+            font-family: 'InfusionIcons' !important;
+            margin-top: -1.75em;
+            font-size: 1.85em;
+        }
+
+        label.fl-theme-prefsEditor-default,
+        label.fl-theme-prefsEditor-default span,
+        label.fl-prefsEditor-contrast-defaultThemeLabel .fl-crossout {
+            background-color: #FFFFFF !important;
+            border-color: #433F3D !important;
+            color: #433F3D !important;
+        }
+    }
+
+    // header icons
+    .fl-icon-contrast:before {
+        content: "\e005";
+    }
+    .fl-icon-line-space:before {
+        content: "\e00b";
+    }
+    .fl-icon-links:before {
+        content: "\e00c";
+    }
+    .fl-icon-simplify:before {
+        content: "\e00e";
+    }
+    .fl-icon-font:before {
+        content: "\e00f";
+    }
+    .fl-icon-size:before {
+        content: "\e010";
+    }
+    .fl-icon-text-to-speech:before {
+        content: "\e011";
+    }
+    .fl-icon-toc:before {
+        content: "\e012";
+    }
+}
+// Theming
+build-themes-prefsEditor(themes);

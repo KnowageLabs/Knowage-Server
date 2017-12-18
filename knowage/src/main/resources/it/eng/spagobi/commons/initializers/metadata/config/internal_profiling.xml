@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<INTERNAL_PROFILING_INITIALIZER>
+	<DEFAULT_USERS>
+		<USER userId="biadmin" password="biadmin" fullName="Knowage Administrator"
+			organization="DEFAULT_TENANT" isSuperadmin="true">
+			<ATTRIBUTE name="email" value="admin@eng.it" />
+			<ATTRIBUTE name="name" value="Knowage Administrator" />
+			<ROLE name="admin" />
+		</USER>
+		<USER userId="biuser" password="biuser" fullName="Knowage User"
+			organization="DEFAULT_TENANT">
+			<ATTRIBUTE name="name" value="Knowage User" />
+			<ROLE name="user" />
+		</USER>
+		<USER userId="bidemo" password="bidemo" fullName="Knowage Demo User"
+			organization="DEFAULT_TENANT">
+			<ATTRIBUTE name="name" value="Knowage Demo User" />
+			<ROLE name="demo" />
+		</USER>
+		<USER userId="bitest" password="bitest" fullName="Knowage Test User"
+			organization="DEFAULT_TENANT">
+			<ATTRIBUTE name="name" value="SpagoBI TestUser" />
+			<ROLE name="test" />
+		</USER>
+		<USER userId="bidev" password="bidev" fullName="Knowage Developer"
+			organization="DEFAULT_TENANT">
+			<ATTRIBUTE name="name" value="Knowage Developer" />
+			<ROLE name="dev" />
+		</USER>
+		<USER userId="bam" password="bam" fullName="Bam User"
+			organization="DEFAULT_TENANT">
+			<ATTRIBUTE name="name" value="Bam User" />
+			<ROLE name="bam" />
+		</USER>
+		<USER userId="public_user" password="public_user" fullName="Knowage Public User"
+			organization="DEFAULT_TENANT">
+			<ATTRIBUTE name="name" value="Public User" />
+		</USER>
+
+	</DEFAULT_USERS>
+	<DEFAULT_ATTRIBUTES>
+		<ATTRIBUTE name="name" description="name" organization="DEFAULT_TENANT" />
+		<ATTRIBUTE name="surname" description="surname"
+			organization="DEFAULT_TENANT" />
+		<ATTRIBUTE name="address" description="address"
+			organization="DEFAULT_TENANT" />
+		<ATTRIBUTE name="birth_date" description="birth date"
+			organization="DEFAULT_TENANT" />
+		<ATTRIBUTE name="email" description="email" organization="DEFAULT_TENANT" />
+
+	</DEFAULT_ATTRIBUTES>
+	<DEFAULT_ROLES>
+		<ROLE roleName="dev" description="dev"
+			roleTypeCD="DEV_ROLE" organization="DEFAULT_TENANT" />
+		<ROLE roleName="test" description="test"
+			roleTypeCD="TEST_ROLE" organization="DEFAULT_TENANT" />
+		<ROLE roleName="user" description="user"
+			roleTypeCD="USER" organization="DEFAULT_TENANT" />
+		<ROLE roleName="userb" description="userb"
+			roleTypeCD="USER" organization="DEFAULT_TENANT" />
+		<ROLE roleName="admin" description="admin"
+			roleTypeCD="ADMIN" organization="DEFAULT_TENANT" />
+		<ROLE roleName="modeladmin" description="modeladmin"
+			roleTypeCD="MODEL_ADMIN" organization="DEFAULT_TENANT" />
+		<ROLE roleName="op_reva" description="op_reva"
+			roleTypeCD="USER" organization="DEFAULT_TENANT" />
+		<ROLE roleName="an_reva" description="an_reva"
+			roleTypeCD="USER" organization="DEFAULT_TENANT" />
+		<ROLE roleName="bam" description="bam"
+			roleTypeCD="USER" organization="DEFAULT_TENANT" />
+		<ROLE roleName="demo" description="demo"
+			roleTypeCD="USER" organization="DEFAULT_TENANT" />
+
+	</DEFAULT_ROLES>
+	<DEFAULT_AUTHORIZATIONS>
+	
+	<!--
+	<AUTHORIZATION productType="KnowageER" authorizationName="MANAGE_CALENDAR" organization="DEFAULT_TENANT"/>
+	-->
+		<!-- Authorizations for KnowageBD -->
+		<AUTHORIZATION productType="KnowageBD" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="ENABLE_DATASET_PERSISTENCE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_MY_WORKSPACE" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageBD" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageBD" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>	
+		
+		<!-- Authorizations for KnowageSI -->
+		<AUTHORIZATION productType="KnowageSI" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_MY_WORKSPACE" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
+		
+		<!-- Authorizations for KnowageER -->
+		<AUTHORIZATION productType="KnowageER" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageER" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageER" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageER" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageER" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
+	
+		
+		<!-- Authorizations for KnowagePM -->
+		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowagePM" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>
+		
+		<!-- Authorizations for KnowageLI -->
+		<AUTHORIZATION productType="KnowageLI" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="ENABLE_DATASET_PERSISTENCE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_CALENDAR" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_MY_WORKSPACE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
+		
+		<!-- Authorizations for KnowagePA -->
+		<AUTHORIZATION productType="KnowagePA" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_DATASET_PERSISTENCE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_CALENDAR" organization="DEFAULT_TENANT" />
+        <AUTHORIZATION productType="KnowagePA" authorizationName="FUNCTIONS_CATALOG_USAGE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT" />
+	</DEFAULT_AUTHORIZATIONS>
+</INTERNAL_PROFILING_INITIALIZER>

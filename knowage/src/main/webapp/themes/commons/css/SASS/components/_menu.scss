@@ -1,0 +1,39 @@
+#menuAppAdmin, #menuApp{
+.overlayButtonBar {
+		top: 0;
+		cursor: auto;
+		left: 0;
+		background-color: $ternaryColor;
+		border-radius: 0;
+    	width: 40px;
+    	height: 100%;
+    	display: flex;
+    	flex-direction: column;
+    	align-items: center;
+		.logoKnowage {
+			cursor: default;
+			margin: 0;
+		    top: 10px;
+    		position: relative;
+			width: 20px;
+			height: 143px;
+			display: block;
+			opacity: 1;
+			background-image: url('../img/defaultTheme/logotipoVert.png');
+			background-repeat: none;
+			img {
+				display: none;
+			}
+		}
+		.menuKnowage {
+			&>i {
+				color: $baseColor;
+			}
+		}
+	}
+}
+.landingPageEndUser, .landingPageAdmin {
+	.layer>.text {
+	    top: 0px !important;
+	  }
+}

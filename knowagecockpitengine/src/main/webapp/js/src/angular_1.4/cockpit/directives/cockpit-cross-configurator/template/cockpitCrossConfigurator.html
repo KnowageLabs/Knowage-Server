@@ -1,0 +1,66 @@
+<md-content class="md-padding noPadding" layout="column" layout-fill>
+	<md-card>
+		<md-card-title>
+			<md-card-title-text layout="row">
+				<span flex class="md-headline"></span>
+				<md-icon md-font-icon="fa fa-eraser" 
+						ng-show="isWidget && (ngModel.cross!=cockpitCross || !angular.equals(ngModel.cross,cockpitCross))" ng-click="resetCross()"></md-icon>
+			</md-card-title-text>
+		</md-card-title>
+		<md-card-content layout="row" layout-align="space-around center">
+			<md-checkbox ng-model="ngModel.cross.enable" flex ng-change=toggleBorderVisibility()>
+				{{translate.load("sbi.cockpit.cross.check")}}
+			</md-checkbox>
+			
+			<md-checkbox ng-show="crossTable" ng-model="ngModel.cross.allRow" flex ng-change=toggleBorderVisibility()>
+				{{translate.load("sbi.cockpit.cross.allRow")}}
+			</md-checkbox>
+
+			<md-input-container ng-show="crossTable" class="md-block" flex>
+				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
+				<md-select ng-model="ngModel.cross.column" >
+					<md-option ng-repeat="c in localDataset.metadata.fieldsMeta" ng-value="c.name">{{c.name}}</md-option>
+				</md-select>
+			</md-input-container>
+			
+			<md-input-container ng-show="crossChart" class="md-block" flex>
+				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
+				<md-select ng-model="ngModel.cross.column" >
+					<md-option ng-repeat="c in chartProperties" ng-value="c">{{c}}</md-option>
+				</md-select>
+			</md-input-container>
+
+			<md-input-container ng-show="crossTable || crossChart" class="md-block" flex>
+				<label>{{translate.load("sbi.cockpit.cross.output")}}</label>
+				<md-select ng-model="ngModel.cross.outputParameter">
+					<md-option ng-repeat="(key,val) in cockpitModule_properties.OUTPUT_PARAMETERS" ng-value="key">{{key}}</md-option> 
+				</md-select>
+			</md-input-container>
+			
+			<md-input-container class="md-block" flex>
+				<label>{{translate.load("sbi.cockpit.cross.crossName")}}</label>
+				<md-select ng-model="ngModel.cross.crossName">
+					<md-option ng-repeat="cn in crossNavigations" ng-value="cn.crossName">{{cn.crossName}}</md-option>
+				</md-select>
+			</md-input-container>
+		</md-card-content> 
+	</md-card>
+	
+	
+                <md-card layout-padding style="height:300px; margin:0px">
+                                <md-card-title>
+            <md-card-title-text layout="row">
+                <span flex class="md-headline">{{translate.load("sbi.cockpit.cross.staticParameters")}}</span>
+            </md-card-title-text>
+        </md-card-title>        
+        <div flex=100>
+            <md-input-container class="md-block">
+            <label>Example: parameter_1&#61;value_1&amp;parameter_2&#61;value_2</label>
+            <input ng-model="ngModel.cross.staticParameters">
+            </md-input-container>
+            </div>                                                                            
+                  
+                                                                    
+                                </md-card>
+	
+</md-content>

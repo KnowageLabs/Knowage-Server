@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<!-- Auto-generated mapping file from the hibernate.org cfg2hbm engine -->
+	<class name="it.eng.spagobi.kpi.metadata.SbiKpiScorecard" table="SBI_KPI_SCORECARD">
+
+		<id name="id" type="integer">
+			<column name="ID" />
+		</id>
+
+		<property name="parentId" column="PARENT_ID" type="integer" />
+		<property name="name" column="NAME" type="string" length="40" not-null="true" />
+		<property name="options" column="OPTIONS" type="string" length="1000" not-null="true" />
+
+		<property name="criterionId" column="CRITERION_ID" type="integer" />
+		<many-to-one name="criterion" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" insert="false" update="false">
+			<column name="CRITERION_ID" />
+		</many-to-one>
+
+		<set name="subviews" cascade="all,delete-orphan" lazy="true">
+			<key column="PARENT_ID" />
+			<one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiScorecard" />
+		</set>
+
+		<set name="sbiKpiKpis" table="SBI_KPI_SCORECARD_KPI" cascade="save-update"
+			lazy="true">
+			<key>
+				<column name="SCORECARD_ID" />
+			</key>
+			<many-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiKpi">
+				<column name="KPI_VERSION" />
+				<column name="KPI_ID" />
+			</many-to-many>
+		</set>
+
+		<filter name="tenantFilter" condition="organization=:tenant" />
+	</class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string" />
+	</filter-def>
+</hibernate-mapping>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+
+   <ACTION name="SAVE_REMEMBER_ME" class="it.eng.spagobi.hotlink.service.SaveRememberMeAction" scope="REQUEST">
+   </ACTION>    
+   
+</ACTIONS>

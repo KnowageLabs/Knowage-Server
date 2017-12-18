@@ -1,0 +1,35 @@
+<md-dialog class="export-dialog" layout="column">
+	
+	<md-toolbar class="knowage-blue export-dialog-toolbar" >
+		{{outputWizardTitle}}
+    </md-toolbar>
+    
+    <md-dialog-content class="export-dialog-content">
+		<export-version-wizard ng-show = "!showFile && !showTable && !showOVDescription"></export-version-wizard>
+		<export-version-file-wizard ng-show = "showFile && !showOVDescription"></export-version-file-wizard>
+		<export-version-table-wizard ng-show = "showTable && !showOVDescription"></export-version-table-wizard>
+		<export-version-msg ng-show = "showOVDescription"></export-version-msg>
+    </md-dialog-content>
+    
+    <md-dialog-actions layout="row">
+    	<md-button ng-click="exportDialogBack()" 
+    			   style="line-height:25px" 
+    			   ng-disabled="!showFile && !showTable">
+			{{translate.load("sbi.common.prev")}}
+		</md-button>
+		
+		<md-button ng-click="exportDialogNext()" 
+				   style="line-height:25px"
+				   ng-disabled="showFile || showTable || outputVersion == undefined">
+			{{translate.load("sbi.common.next")}}
+		</md-button>
+		<md-button ng-click="exportOutputVersion()" 
+				   style="line-height:25px"
+				   ng-disabled="isOkBtnDisabled()">
+			{{translate.load("sbi.common.ok")}}
+		</md-button>
+    	<md-button ng-click="closeDialogToolbarRight()" style="line-height:25px">
+			{{translate.load("sbi.common.cancel")}}
+		</md-button>
+    </md-dialog-actions>
+</md-dialog>

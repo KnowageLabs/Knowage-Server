@@ -1,0 +1,644 @@
+ /*=================IMPORT====================*/
+@import 
+  'variables',
+  'mixins',
+  'fonts',
+  'components/alerts',
+  'components/layerCatalogue',
+  'components/navbar',
+  'components/federatedDataset',
+  'components/importExportDocuments',
+  'components/templatemanagement',
+  'components/documentBrowser',
+  'components/documentExecution',
+  'components/scorecardKpiDefinition',
+  'components/schedulerKpi',
+  'components/angularTable',
+  'components/documentTree',
+  'components/breadcrumb',
+  'components/workspace',
+  'components/linkDocument',
+  'components/businessModelCatalog',
+  'components/etlMetadata',
+  'components/cacheManager',
+  'components/usersManagement',
+  'components/measures',
+  'components/mondrianSchemaCatalog',
+  'components/angularTimePicker',
+  'components/glossary',
+  'components/angularTree',
+  'components/crossNavigationDefinition',
+  'components/scheduler',
+  'components/svgViewer',
+  'components/functionsCatalog',
+  'components/kpiExecution',
+  'components/target',
+  'components/cockpitEngine';
+   
+
+.no-margin {
+  margin: 0;
+}
+
+.no-padding {
+    padding: 0;
+}
+
+.hidden{
+	display:none !important
+}
+.capitalize {
+    text-transform: capitalize;
+}
+::-ms-clear { display: none !important;width : 0;  height: 0; }
+// Toolbar elements  
+md-toolbar.md-knowage-theme {
+		min-height: $toolbarHeight;
+        outline: none;
+		height: $toolbarHeight;
+		background-color: $headerBackground !important;
+		color: $lightTextColor !important;
+		.md-toolbar-tools {
+			height: $toolbarHeight;
+			font-size: $headerFontSize;
+			text-transform: uppercase;
+			font-weight: $headerFontWeight;
+		}
+}
+
+md-list-item ._md-list-item-inner ._md-secondary-container, md-list-item ._md-secondary-container {
+  height: 0;
+}
+md-list-item._md-button-wrap>div.md-button:first-child ._md-list-item-inner {
+  height: 0;
+}
+
+md-toolbar.secondaryToolbar.md-knowage-theme {
+	background-color: $secondaryColor !important;
+}
+
+md-toolbar.ternaryToolbar.md-knowage-theme {
+	background-color: $ternaryColor !important;
+}
+
+md-input-container.md-knowage-theme {
+  +label {
+      padding: 0;
+      line-height: $inputHeight;
+    }
+  md-checkbox {
+    margin-bottom: 0;
+    &.md-checked ._md-icon {
+      background-color: $baseColor;
+    }
+    
+  }
+}
+
+md-checkbox.md-knowage-theme.md-checked ._md-icon {
+  background-color: $baseColor;
+}
+
+
+
+.md-button.md-knowage-theme.md-fab {
+    &:not([disabled]) {
+            background-color: $fabPrimaryColor !important;
+    }
+    top: $fabTop;
+}
+
+.md-button.md-knowage-theme.md-fab md-icon {
+    font-size: $fabIconSize;
+}
+md-toolbar.md-knowage-theme .md-toolbar-tools .md-button:not[disabled] {
+        color: $toolbarButtonColor;
+        &:hover {
+            background-color: $secondaryColor;
+            color: $baseColor;
+        }
+}
+
+// Input fields
+
+md-input-container.md-knowage-theme .md-errors-spacer {
+    min-height: 0;
+}
+
+md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused {
+
+    .md-input {
+        border-color: $inputLineColor;
+    }
+    
+    md-icon{
+        color: $baseColor;
+    }
+}
+
+md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-has-value label {
+    color: $inactiveLabelColor;
+}
+
+md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused label {
+    color: $activeLabelColor;
+}
+
+md-input-container.md-knowage-theme ng-messages :not(.md-char-counter), md-input-container.md-knowage-theme [ng-messages] :not(.md-char-counter), md-input-container.md-knowage-theme ng-message :not(.md-char-counter), md-input-container.md-knowage-theme data-ng-message :not(.md-char-counter), md-input-container.md-knowage-theme x-ng-message :not(.md-char-counter), md-input-container.md-knowage-theme [ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [data-ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [x-ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [ng-message-exp] :not(.md-char-counter), md-input-container.md-knowage-theme [data-ng-message-exp] :not(.md-char-counter), md-input-container.md-knowage-theme [x-ng-message-exp] :not(.md-char-counter) {
+    color: $fabPrimaryColor;
+}
+
+md-input-container.md-knowage-theme.md-input-invalid .md-input {
+    border-color: $inputInvalidLineColor;
+}
+
+md-input-container.md-knowage-theme.md-input-invalid.md-input-focused label {
+    color: $invalidLabelColor;
+}    
+
+// Radio Buttons and Checkboxes
+
+md-checkbox.md-knowage-theme.md-checked .md-icon {
+    background-color: $baseColor;
+}
+
+md-checkbox.md-knowage-theme .md-icon {
+    border-color: $baseColor;
+}
+
+md-radio-group.md-knowage-theme .md-checked .md-ink-ripple {
+  color: $ternaryColor;
+}
+
+md-radio-button.md-knowage-theme ._md-on {
+    background-color: $baseColor;
+}
+
+md-radio-button.md-knowage-theme ._md-off {
+    border-color: $inactiveLabelColor;
+}
+
+md-radio-button.md-knowage-theme.md-checked ._md-off {
+    border-color: $inactiveLabelColor;
+}
+
+// Comboboxes
+md-select.md-knowage-theme .md-select-value {
+    border-bottom-color: $baseColor;
+    .md-select-icon {
+    	color: $baseColor
+    }
+}
+
+md-select.md-knowage-theme:not([disabled]):focus .md-select-value {
+    border-bottom-color: $baseColor;
+}
+
+md-select-menu.md-knowage-theme md-option[selected] {
+    color: $baseColor;
+}
+
+md-select-menu.md-knowage-theme md-option[selected]:focus {
+    color: $baseColor;
+}
+
+// Tabs
+md-tabs.md-knowage-theme .md-tab.md-active, md-tabs.md-knowage-theme .md-tab.md-active md-icon, md-tabs.md-knowage-theme .md-tab.md-focused, md-tabs.md-knowage-theme .md-tab.md-focused md-icon {
+    color: $baseColor;
+    font-weight: $tabFontWeight;
+}
+
+md-tabs.md-knowage-theme md-ink-bar {
+    color: $baseColor;
+    background: $baseColor;
+}	
+
+// Material Cards
+md-card.md-knowage-theme {
+    background-color: $tabBackground;
+    display: block; 
+    max-height: none !important;
+    &.flexCard{
+      display: flex;
+    }
+}
+
+md-tab-content md-content.md-knowage-theme {
+    background-color: transparent;
+}
+
+// Dialog Buttons
+a.md-button.md-knowage-theme.md-primary, .md-button.md-knowage-theme.md-primary {
+    color: $lightTextColor;
+    background-color: $baseColor;
+}
+a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.md-primary.md-raised {
+    &:not([disabled]) {
+        background-color: $baseColor;
+        &:focus {
+            background-color: $baseColor;
+        }
+    }
+}
+.md-button.md-knowage-theme.md-primary.md-raised:not([disabled]):hover {
+    background-color: lighten($baseColor,10%);
+}
+
+//Raised Button
+.md-button.md-knowage-theme.md-raised {
+    color: $baseColor;
+    background-color: $secondaryColor;
+}
+
+.md-button.md-knowage-theme.md-raised:not([disabled]):hover {
+    background-color: $baseColor;
+    color: white;
+}
+
+// Calendar - Date Picker
+.md-knowage-theme .md-calendar-date.md-calendar-selected-date .md-calendar-date-selection-indicator, .md-knowage-theme .md-calendar-date.md-focus.md-calendar-selected-date .md-calendar-date-selection-indicator {
+    background: $baseColor;
+    color: $lightTextColor;
+    border-color: transparent;
+}
+
+.md-knowage-theme .md-calendar-date-selection-indicator:hover {
+    background: $secondaryColor;
+}
+
+.md-knowage-theme .md-datepicker-input-container {
+    border-bottom-color: $baseColor;
+    
+    &.md-datepicker-focused {
+        border-bottom-color: $baseColor;
+    }
+}
+
+.md-knowage-theme .md-datepicker-input {
+    color: $baseColor;
+}
+
+.md-knowage-theme .md-datepicker-triangle-button .md-datepicker-expand-triangle {
+    border-top-color: $baseColor;
+}
+
+.md-knowage-theme .md-datepicker-triangle-button:hover .md-datepicker-expand-triangle {
+    border-top-color: $baseColor;
+}
+
+.md-knowage-theme .md-calendar-day-header {
+    background: $calendarHeaderBackground;
+    color: $calendarHeaderTextColor;
+}
+
+.md-knowage-theme .md-calendar-date.md-calendar-date-today .md-calendar-date-selection-indicator {
+    border: 1px solid $baseColor;
+}
+
+.md-knowage-theme .md-calendar-date.md-focus .md-calendar-date-selection-indicator {
+    background: $secondaryColor;
+}
+
+//Info box 
+.kn-info {
+    margin: 10px;
+    border: 1px dashed $baseColor;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+}
+
+.kn-close-Info {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
+
+.kn-list md-icon.fa {
+  padding-left:0;
+}
+
+.kn-checkInput {
+  md-input-container {
+    margin: 8px 0;
+  }
+  label {
+    line-height: 28px;
+  }
+  
+}
+.md-block {
+
+}
+
+.ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.noMargin{
+	margin:0px;
+}
+
+.noPadding{
+	padding:0px;
+}
+
+.noBorder{
+	border:0px;
+}
+.removeTransition{
+		transition	:none !important;
+	}
+
+md-content.md-knowage-theme.mainContent {
+    background-color: $contentBackground;
+}
+
+//TOASTS
+md-toast.md-knowage-theme {
+    position: fixed;
+    &.kn-toast-success {
+        background-color: green;
+    }
+    &.md-knowage-theme.kn-toast-error {
+        background-color: red;
+    }
+     height:auto;
+     max-height: 400px;
+     max-width: 100%;
+     overflow:hidden;
+     span {
+        white-space: nowrap;
+     }
+}
+md-toast.md-knowage-theme.kn-toast-success {
+    background-color: green;
+}
+md-toast.md-knowage-theme.kn-toast-error {
+    background-color: red;
+}
+
+
+
+	
+	@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+/* IE10+ CSS styles go here */
+
+.flex {
+  -ms-flex: 1 auto;
+  -webkit-box-flex: 1 auto;
+  -webkit-flex: 1 auto;
+          flex: 1;
+   width:100%;
+   margin:0px !important;
+}
+
+.flex2 {
+  -ms-flex: 1 auto;
+  -webkit-box-flex: 1 auto;
+  -webkit-flex: 1 auto;
+          flex: 1 auto;
+   width:100%;   
+   margin:0px !important;
+}
+
+#angularFullTableContentBox > table > thead > tr{
+width:100%;
+}
+
+md-tab-content > div {
+height:100%;
+}
+
+.rightHeight {
+height:100%;
+}
+
+
+#selectDivKPI{
+height:80%;
+}
+
+#selectDivKPI > angular_table{
+height:80%;
+}
+
+.mdDialogSize{
+height:100% !important;
+}
+
+.heightDivContent{
+height:100%;
+}
+
+.widthDivContent{
+width:100%;
+}
+
+.kn-scorecardKpiDefinition md-content{
+overflow-y: hidden;
+}
+
+.hidden-overflow-orizontal{
+width:100%;
+overflow-y:hidden;
+}
+
+.hidden-overflow-vertical{
+width:100%;
+overflow-x:hidden;
+}
+
+#angularFullTableContentBox{
+width:100%;
+}
+
+#documentListTable{
+width:100%;
+}
+
+}
+
+/* Microsoft Edge Browser 12+ (All) - @supports method */
+
+@supports (-ms-accelerator:true) {
+ 
+.flex {
+  -ms-flex: 1 auto;
+  -webkit-box-flex: 1 auto;
+  -webkit-flex: 1 auto;
+          flex: 1;
+   width:100%;
+   margin:0px !important;
+}
+
+.flex2 {
+  -ms-flex: 1 auto;
+  -webkit-box-flex: 1 auto;
+  -webkit-flex: 1 auto;
+          flex: 1 auto;
+   width:100%;   
+   margin:0px !important;
+}
+
+#angularFullTableContentBox > table > thead > tr{
+width:100%;
+}
+
+md-tab-content > div {
+height:100%;
+}
+
+.rightHeight {
+height:100%;
+}
+
+
+#selectDivKPI{
+height:80%;
+}
+
+#selectDivKPI > angular_table{
+height:80%;
+}
+
+.mdDialogSize{
+height:100% !important;
+}
+
+.heightDivContent{
+height:100%;
+}
+
+.widthDivContent{
+width:100%;
+}
+
+.kn-scorecardKpiDefinition md-content{
+overflow-y: hidden;
+}
+
+.hidden-overflow-orizontal{
+width:100%;
+overflow-y:hidden;
+}
+
+.hidden-overflow-vertical{
+width:100%;
+overflow-x:hidden;
+}
+
+#angularFullTableContentBox{
+width:100%;
+}
+
+#documentListTable{
+width:100%;
+}
+}
+
+//SWITCH
+md-switch.md-knowage-theme.md-checked .md-thumb {
+    background-color: $fabPrimaryColor;
+}
+
+//CUSTOM PAGES CLASSES    
+md-content.md-knowage-theme.config-content-detail {
+   background-color: transparent !important;
+}
+.buttonLabel{
+    line-height: $browseButtonLineHeight;
+}
+form {
+  margin-bottom: 0;
+}
+.listSideNav {
+  width: auto;
+}
+.listOverlay {
+  width: 80% !important;
+  display: block !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 999 !important ;
+  bottom: 0 !important;
+  height: 100% !important;
+  md-content {
+    height: 85% ;
+  } 
+  -webkit-transition: all .5s;
+  transition: all .5s;
+}
+.blackOverlay {
+  top: 0;
+  left:0;
+  bottom:0;
+  right: 0;
+  width: 100%;
+  display: block;
+  position: absolute;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 900;
+}
+.lonelyIcon {
+  top: -4px;
+  position: relative;
+}
+.internalContent {
+  overflow: hidden;
+}
+.layout-margin md-tabs {
+  margin: 0;
+}
+.layout-padding {
+  md-input-container {
+    padding: 0;
+  }
+}
+.searchInput.md-input-has-value, .searchInput.md-input-focused {
+  label {
+    display: none;
+  }
+}
+
+md-menu-content._md-menu-bar-menu .divider {
+  padding-left: $standardLeftPadding;
+  margin-top: $standardMarginTop;
+  color: $baseColor;
+  font-size: $smallFontSize;
+}
+.md-indent .md-button {
+  line-height: 30px;
+} 
+md-menu-content._md-menu-bar-menu.md-dense md-menu-item.md-indent>md-icon {
+  line-height: 20px;
+}
+.noMdError {
+  .md-errors-spacer {
+    min-height: 0 !important;
+  }
+}
+.smallInputs {
+  md-input-container {
+    margin: 10px 0 !important;
+  }
+}
+
+/* IE11 fix */
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  md-checkbox.md-knowage-theme.md-checked ._md-icon:after {
+/*    transform: rotate(135deg);
+    top:10px;*/
+    padding-top: 11px;
+  }
+  
+  md-select-menu[multiple] md-option[selected]._md-checkbox-enabled ._md-icon::after{
+    padding-top: 11px;
+  }
+  
+}

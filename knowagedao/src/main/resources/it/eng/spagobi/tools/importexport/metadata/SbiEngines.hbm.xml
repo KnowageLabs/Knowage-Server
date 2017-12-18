@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.engines.config.metadata.SbiEngines" table="SBI_ENGINES">
+        <id name="engineId" type="integer">
+            <column name="engine_id" />
+        </id>
+
+        <property name="encrypt" type="short">
+            <column name="encrypt" />
+        </property>
+        
+        <property name="label" type="string">
+            <column name="label" length="20" unique="true" not-null="true"/>
+        </property>
+        
+        <property name="name" type="string">
+            <column name="name" length="40"  not-null="true"/>
+        </property>
+        
+        <property name="descr" type="string">
+            <column name="descr" length="160" />
+        </property>
+        <property name="mainUrl" type="string">
+            <column name="main_url" length="400" />
+        </property>
+        <property name="secnUrl" type="string">
+            <column name="secn_url" length="400" />
+        </property>
+        <property name="objUplDir" type="string">
+            <column name="obj_upl_dir" length="400" />
+        </property>
+        <property name="objUseDir" type="string">
+            <column name="obj_use_dir" length="400"  />
+        </property>
+        <property name="driverNm" type="string">
+            <column name="driver_nm" length="400" />
+        </property>
+         <property name="useDataSource" type="boolean">
+            <column name="use_datasource" />
+        </property>
+        <property name="useDataSet" type="boolean">
+            <column name="use_dataset" />
+        </property>
+        <many-to-one name="engineType" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="engine_type" not-null="true" />
+        </many-to-one>
+        <property name="classNm" type="string">
+            <column name="class_nm" length="400" />
+        </property>
+        <many-to-one name="biobjType" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="biobj_type" not-null="true" />
+        </many-to-one>		                          
+    </class>
+</hibernate-mapping>

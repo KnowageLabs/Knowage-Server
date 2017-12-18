@@ -1,0 +1,53 @@
+<div class="dsCreateCatalogContainerOne">
+
+	<div class="dsCreateCatalogContainerTwo">
+	    		    
+			<md-dialog flex layout="column" >
+			  
+				<md-toolbar>
+			      
+					<div class="md-toolbar-tools">
+
+						<h2>
+							{{translate.load('sbi.workspace.analysis.upload.preview.file')}}
+						</h2>		
+						<span flex></span>
+						<md-button 	ng-click="closePreviewFileUploadDialog()" 
+									title="{{translate.load('sbi.workspace.dataset.wizard.closebutton.tooltip')}}">
+							 <md-icon class="fa fa-times"></md-icon>
+						</md-button>
+			            
+					</div>
+			      
+				</md-toolbar>
+			   
+				<md-content>
+				
+				<div layout="row" layout-align="start center" class="analysisUploadPreviewFilePadding">
+						                  	
+						                  	<label layout-align="center center">
+						                  		{{translate.load("sbi.ds.wizard.selectFile")}}:
+					                  		</label>
+						                  	
+						                  	<file-upload 	flex ng-model="previewFile" id="analysisPreviewFile" 
+							                  				title="{{translate.load('sbi.workspace.dataset.wizard.browsefile.tooltip')}}">
+				                			</file-upload>
+						                  	
+						                  	<div class="">
+							                    <md-button 	ng-click="uploadFile()" class="md-raised" 
+							                     			ng-disabled="!previewFile.fileName">
+					                     			{{translate.load("sbi.workspace.dataset.wizard.upload")}}
+				             					</md-button>
+						                  	</div>
+						                  	
+										</div>
+			      
+			   </md-content>
+			   
+			</md-dialog>
+	
+		<!--  /div-->
+	
+	</div>
+	
+</div>

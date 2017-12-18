@@ -1,0 +1,239 @@
+.kn-svgviewer {
+	.svgMainContainer{
+		height: 100%;
+	}
+    .sidenavOpenButton {
+        position:absolute;
+        top:0px;
+        left:0px;
+        z-index: 2;
+        
+    } 
+        
+    .backButton {
+        position:absolute;
+        top:0px;
+        right:0px;
+        z-index: 2;
+        
+    } 
+    
+    .md-accordion {
+    	.expandCollapse { 
+	    	width:30px; 
+	    	height:30px; 
+	    	position:relative; 
+	    	font-size:20px; 
+	    	font-weight:bold; 
+	    	cursor:pointer; 
+	    	color:#fff; 
+	    	display:block; 
+	    	margin-top: -2px; 
+	    	margin-left: -2px; 
+	    	overflow:hidden; 
+	    	&:active {
+	    		border:0px; 
+	    	}
+	    	&:before, &:after {
+	    		width:30px; 
+	    		height:30px; 
+	    		display:block; 
+	    		position:absolute;
+	    		top:0; 
+	    		left:0; 
+	    		line-height:$standardLineHeight; 
+	    		text-align:center; 
+	    		-webkit-transition: .3s all ease-out; 
+	    		transition: .3s all ease-out; 
+	    	}
+	    	&:before {
+	    		opacity:1 ;
+	    		-webkit-transform: rotate(0deg); 
+	    		transform: rotate(0deg); 
+	    		content: "|"; 
+	    		margin-top:-3px; 
+	    	}
+	    	&:after {
+	    		opacity:1; 
+	    		-webkit-transform: rotate(-90deg); 
+	    		transform: rotate(-90deg); 
+	    		content: "|"; 
+	    		margin-left:-3px; 
+
+	    	} 
+
+	    } 
+
+	    .active:before {
+	    	opacity:1; 
+	    	-webkit-transform: rotate(90deg); 
+	    	transform: rotate(90deg); 
+	    	margin-left:3px; 
+	    	margin-top:0px; 
+	    }
+	    .dataContent { 
+	    	background: $contentBackground; 
+	    	height:0px; 
+	    	overflow:hidden; 
+	    	-webkit-transition: .3s all ease-out; 
+	    	transition: .3s all ease-out; 
+	    }
+	    .activeContent {
+	    	height:auto; 
+	    	padding:0; 
+	    	display:block; 
+	    }
+	    md-toolbar{ 
+	    	cursor:pointer; 
+	    	border-bottom:1px solid $baseColor;
+	    }
+	}
+    
+    .divFlex {
+        display: flex;
+        height: 100%;
+    }
+    
+    .zoomButton {
+        position:absolute;
+        bottom:50px;
+        right:50px;
+        z-index:10000;
+    }
+    
+    #container {
+        position:relative;
+        #svgContainer {
+            background-color: white; 
+            position:relative;
+        }
+    }
+    
+    #svgTooltip {
+        position:absolute; 
+        display:none; 
+        width:auto; 
+        border-radius:4px; 
+        height:auto; 
+        white-space: nowrap; 
+        font-size:small; 
+        box-shadow:1px 1px 3px 2px; 
+        background-color: $tooltipBackgroundColor;
+    }
+
+    /*dynamicSvg classes */
+    .graph {
+    	position:absolute;
+    	width: 300px;
+    	cursor:pointer;
+    	border-radius:10px;
+    	&:hover {
+    		background-color:rgba(240,240,240,.2);
+    	}
+    	canvas {
+    		left: -30px;
+    		position: absolute;
+    		bottom: 8px;
+    		&.emptyPie {
+    			left: 0;
+    		}
+    	}
+    	.percLegend {
+	    	position: absolute;
+	    	bottom: 20px;
+	    	right: 0; 
+	    	min-width: 50px; 
+	    	min-height: 50px; 
+	    	display: flex;
+	    	flex-direction:column;
+	    	.graphLabel{
+	    		padding: 5px;
+	    		padding-right: 10px;
+	    		font-family: sans-serif;
+	    		font-size: 12px;
+	    		color: #0042be;
+	    		font-weight: 600;
+	    		display: flex;
+			    flex-direction: row;
+			    justify-content: flex-end;
+			    align-items: center;
+			    .graphSpan {
+			    	text-transform:uppercase;
+			    	text-align: right;
+			    }
+				.graphColor{
+					width:10px; 
+					height:10px;    
+					border: 1px solid white;
+	    			border-radius: 20px;
+	    		}
+			}
+	    }	
+    }
+    #graphLegend {
+    	box-shadow: 0px 3px 5px #ccc;
+    	border:1px solid #ccc; 
+    	position: absolute;
+    	top: 0;
+    	right: 0; 
+    	background-color:rgba(240,240,255,.8);
+    	margin:20px;
+    	 width: 200px; 
+    	min-height: 50px; 
+    	display: flex;
+    	flex-direction:column;
+    	.graphLabel{
+    		padding: 5px;
+    		font-family: sans-serif;
+    		font-size: 12px;
+    		font-weight: 600;
+    		display: flex;
+		    flex-direction: row;
+		    justify-content: space-between;
+		    align-items: center;
+		    .graphSpan {
+		    	text-transform:uppercase;
+		    }
+			.graphColor{
+				width:50px; 
+				height:10px;    
+				border: 1px solid white;
+    			border-radius: 20px;
+    		}
+		}
+    }	
+    #svgInfoSidenav {
+    	md-list {
+    		md-list-item {
+			    min-height: 36px;
+    			height: 36px;
+    			border-bottom: 1px solid #ccc;
+    			p {
+    				text-align: left;
+    				font-size: .9em;
+    				padding-left: 20px;
+    			}
+    			.md-secondary {
+    				text-align: right !important;
+    				padding-left: 0;
+    				font-size: .8em !important;
+    				color: #999;
+    				padding-right: 20px;
+    			}
+    		}
+    	}
+    }
+}
+
+
+/*IE11 FIX */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.kn-svgviewer {
+		.ie11fix {
+			overflow: hidden !important;
+		}
+		md-tabs.md-knowage-theme md-tab-content {
+			overflow: hidden !important;
+		}
+	}
+}

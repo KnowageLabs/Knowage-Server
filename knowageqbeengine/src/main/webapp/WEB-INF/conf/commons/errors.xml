@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ERRORS>
+	<ERROR class="UNDEFINED" trap_name="serviceError"/>
+	<ERROR class="it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException" trap_name="serviceError" CATEGORY="serviceError"/>
+	<ERROR class="it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException" trap_name="startupError" CATEGORY="startupError"/>
+	<ERROR class="it.eng.spago.error.SessionExpiredException" category="sessionExpiredError"/>
+
+</ERRORS>

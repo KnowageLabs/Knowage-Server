@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jonas-web-app xmlns="http://www.objectweb.org/jonas/ns"
+	       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	       xsi:schemaLocation="http://www.objectweb.org/jonas/ns
+	       http://www.objectweb.org/jonas/ns/jonas-web-app_4_0.xsd" >
+<!--
+	<jonas-resource>
+		<res-ref-name>jdbc/sbifoodmart</res-ref-name>
+		<jndi-name>jdbc/sbifoodmart</jndi-name>
+	</jonas-resource>
+-->
+	<java2-delegation-model>false</java2-delegation-model>
+</jonas-web-app> 

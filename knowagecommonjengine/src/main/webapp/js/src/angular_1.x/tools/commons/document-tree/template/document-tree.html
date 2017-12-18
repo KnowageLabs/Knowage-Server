@@ -1,0 +1,178 @@
+<!-- element of the tree, recursive call on this template to create the tree -->
+<script type="text/ng-template" id="folders_renderer.html">
+		<div layout = "row" layout-align="start center" class="customTreeNode" ui-tree-handle ng-class="{'hover-element' : folder.isHover, 'blue-stack' : (selectedItem.name == folder.name && highlightsSelectedItem == true)}" ng-mouseenter="folder.isHover = true" ng-mouseleave="folder.isHover = undefined" >
+			<div layout = "row" layout-align="start center">
+				<md-checkbox ng-if="multiSelect" ng-checked="folder.checked" ng-click="toogleSelected(folder)" aria-label="Checkbox"></md-checkbox>            
+				<md-icon ng-click='openFolder(folder)' ng-if="!folder.expanded && folder[subfoldersId] !== undefined" md-font-icon="{{iconFolder}}"></md-icon>				
+				<md-icon ng-click='openFolder(folder)' ng-if=" folder.expanded && folder[subfoldersId] !== undefined" md-font-icon="{{iconFolderOpen}}"></md-icon>
+				<md-icon ng-click='openFolder(folder)' ng-if="folder.type !== 'folder'" md-font-icon="{{iconDocument}}"></md-icon>
+				
+				<div ng-if="orderBy !== undefined && orderBy.length > 0 && folder.type =='folder'">
+					<md-icon ng-if='folder.sortDirection=="asc"' ng-click='toogleSort(folder)' class = "fa fa-sort-asc"></md-icon>
+					<md-icon ng-if='folder.sortDirection=="desc"' ng-click='toogleSort(folder)' class = "fa fa-sort-desc"></md-icon>
+				</div>
+				<div ng-click='openFolder(folder)' class="line-container">
+					<span> &nbsp;{{folder[label]}}</span> 
+				</div>
+			</div>
+			<div class="menu-container" ng-if="menuOption.length!=0 && menuOption!=undefined" ng-show="folder.isHover" layout="row" layout-aling="end center">
+				<div class="icon-container" ng-repeat=" menuItem in menuOption" role="menuitem" ng-click='menuItem.action(folder,folder.$parent,$event)' ng-if='menuItem.showItem === undefined || menuItem.showItem(folder,$event)' tabindex='{{$index}}' >
+					<md-icon md-font-icon="{{menuItem.icon}}"></md-idcon>
+					<md-tooltip md-direction="left">{{menuItem.label}}</md-tooltip>
+				</div>
+			</div>
+		</div>		
+
+		<ol id="{{id}}-tree-element-{{$parent.$index}}-{{$index}}" ui-tree-nodes="" ng-model="folder[subfoldersId]" ng-if="folder.expanded">
+ 
+
+
+			<li layout="column"  layout-align="start stretch"  ng-repeat="folder in folder[subfoldersId]"  ng-show="folder.visible" ui-tree-node ng-include="'folders_renderer.html'">
+			</li>
+			<li ng-if="showFiles!=false && $parent.folder.biObjects !== undefined && $parent.folder.biObjects.length > 0" layout="column"  layout-align="start stretch" ng-repeat="folder in folder.biObjects"  ng-show="folder.visible" ui-tree-node ng-include="'folders_renderer.html'" >
+			 </li>
+			<!--<li ng-if="showFiles!=false && folder.biObjects !== undefined && folder.biObjects.length > 0" ng-repeat="biObject in folder.biObjects"  ng-show="biObject.visible" ui-tree-node >
+				<div layout = "row" layout-align="start center" class="customTreeNode" ui-tree-handle>
+					<md-checkbox ng-if="multiSelect" ng-checked="biObject.checked" ng-click="toogleSelected(biObject)" aria-label="Checkbox"></md-checkbox>            
+					<md-button ng-class="{'md-primary':biObject.selected,'md-raised':biObject.selected}" ng-click="setSelected(biObject)">
+					<md-icon md-font-icon="fa fa-file-o" style="color: black;"></md-icon>
+						{{biObject.label}}	
+					</md-button>
+				</div>
+			</li>-->
+		</ol>
+</script>
+
+<!-- seeTree is true when the tree is initialized and elaborated -->
+<div ng-show='seeTree == true'>
+	<div class="{{classLayout}}" id ="{{id}}">
+		<!-- create the tree structure -->
+		<div id="tree-container" ui-tree="optionsDragDrop" data-drag-delay="500" data-drag-enabled="{{enableDrag==true}}" data-clone-enabled="{{enableClone==true}}" data-nodrop-enabled="{{noDropEnabled==true}}">	
+			<ol id = "{{id}}-tree-root" ui-tree-nodes ng-model="folders" id="tree-root">
+				<li layout="column"  layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'"
+					ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
+				</li>
+			</ol>
+		</div>
+	</div>
+</div>
+ 
+<div class='waitingContainer' ng-hide='seeTree == true' layout='column' layout-padding layout-align ='space-around center'>
+	<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+	<h4>Please wait...</h4>
+</div>
+ 
+<style>
+	.menu-container{
+		margin-left: 2rem;
+	}
+
+	.line-container{
+		font-family: Roboto,"Helvetica Neue",sans-serif;
+		font-size: 14px;
+		color: rgba(0, 0, 0, 0.87);
+		font-weight: normal;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		max-width: 20rem;
+	}
+	.icon-container{
+		width : 15px;
+		height : 15px;
+		margin-left: 5px;
+	}
+	
+	.hover-element{
+		background-color: rgba(144, 144, 144, 0.5);
+	}
+
+
+	
+	.fa-folder, .fa-folder-open, .fa-leaf{
+		padding-right: 4px;
+		color: black;
+	}
+	.fa-sort-asc, .fa-sort-desc{
+		width: auto;
+		color: black;
+	}
+
+/* dropdown */
+	.dropdown_menu_list {
+		margin-top: -25px;
+		position: fixed !important;
+		left: inherit;
+	}
+	.dropdown_menu_list.open:before {
+   	  content: '';
+	  position: fixed;
+	  z-index: -1;
+	  top: 0;
+	  left: 0;
+	  right: 0;
+	  bottom: 0;
+  }
+	
+	.dropdown_menu_list md-list {
+		position: fixed;
+		top: initial;
+		left: initial;
+		z-index: -1;
+		display: none;
+		float: left;
+		min-width: 160px;
+		padding: 5px 0;
+		margin: 2px 0 0;
+		font-size: 14px;
+		text-align: left;
+		list-style: none;
+		background-color: #fff;
+		background-clip: padding-box;
+		border: 1px solid #ccc;
+		border: 1px solid rgba(0, 0, 0, .15);
+		border-radius: 4px;
+		box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	}
+	
+	.dropdown_menu_list.open md-list {
+		display: block;
+	}
+	
+	.dropdown_menu_list md-list.bottomBorder md-list-item button
+		{
+		border-bottom: 1px solid rgb(176, 190, 197);
+		padding: 0;
+		margin-left: 8px;
+		margin-right: 8px;
+		border-radius: 0;
+	}
+	
+		
+	.minihead-tree {
+	/*  position: absolute !important; */
+	  	background-color: #3B668C !important;
+		color: white !important;	
+	}
+
+	md-toolbar.minihead-tree-small {
+		background-color: #3B668C;
+		color: #000000255255255;
+		height: 35px;
+		min-height: 0px;
+	}
+	
+	.minihead-tree-small{
+		background-color: #3B668C !important;
+		color: white !important;
+		height: 35px;
+}
+
+	.blue-stack{
+	background-color: rgb(169, 195, 219);
+	}
+	.blue-stack span{
+	 font-weight: bold;
+	}
+	
+</style>

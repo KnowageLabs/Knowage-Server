@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+
+	<SERVICE name="SAVE_DATASET_USER_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<FIELDS>
+                <FIELD name="label" label="#sbi.generic.label">
+                    <VALIDATOR validatorName="MANDATORY"/>
+                    <VALIDATOR validatorName="ALFANUMERIC"/>
+                    <VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+                </FIELD>
+				<FIELD name="name" label="#sbi.generic.name">
+		 	 		<VALIDATOR validatorName="MANDATORY"/>
+				  	<VALIDATOR validatorName="EXTENDED_ALFANUMERIC" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>
+				<FIELD name="description" label="#sbi.generic.description">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC" />
+		 	 		<VALIDATOR validatorName="MAXLENGTH" arg0="160"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+
+</VALIDATIONS>

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact" table="SBI_ALARM_CONTACT">
+        <id name="id" type="integer">
+            <column name="ALARM_CONTACT_ID" />
+        </id>
+
+        <property name="name" type="string">
+            <column name="NAME" length="100" not-null="true" />
+        </property>
+        
+        <property name="email" type="string">
+            <column name="EMAIL" length="100" not-null="false" />
+        </property>
+        
+        <property name="mobile" type="string">
+            <column name="MOBILE" length="50" not-null="false" />
+        </property>
+        
+        <property name="resources" type="string">
+            <column name="RESOURCES" length="200" not-null="false" />
+        </property>        
+        
+        <set name="sbiAlarms" table="SBI_ALARM_DISTRIBUTION" cascade="all" inverse="false">
+        	<key column="ALARM_CONTACT_ID"/>
+        	<many-to-many column="ALARM_ID" class="it.eng.spagobi.kpi.alarm.metadata.SbiAlarm" />
+        </set>
+        
+    </class>
+    
+<!-- 
+ALARM_CONTACT_ID	3	NUMBER	38
+NAME	12	VARCHAR2	100
+EMAIL	12	VARCHAR2	100
+MOBILE	12	VARCHAR2	50
+RESOURCES	12	VARCHAR2	200
+ -->    
+
+    
+</hibernate-mapping>

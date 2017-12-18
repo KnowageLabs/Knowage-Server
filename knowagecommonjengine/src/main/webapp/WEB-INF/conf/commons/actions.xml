@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ================================================================================= -->
+<!-- GEO BASE ACTIONS 																   -->
+<!-- ================================================================================= -->
+
+<ACTIONS>
+	
+	<!-- ================================================================================= -->
+	<!-- TRAPS																			   -->
+	<!-- ================================================================================= -->
+	
+<!-- 	<ACTION name="SERVICE_EXCEPTION_TRAP_ACTION" 
+			class="it.eng.spagobi.engines.geo.service.ServiceExceptionTrapAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>   
+	
+	<ACTION name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION" 
+			class="it.eng.spagobi.utilities.engines.EngineStartupExceptionTrapAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+   -->
+</ACTIONS>

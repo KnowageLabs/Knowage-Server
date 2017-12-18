@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="it.eng.spagobi.events.metadata.SbiEventsLog" table="SBI_EVENTS_LOG">
+        <id name="id" type="integer">
+            <column name="id" />
+        </id>
+        <property name="user" type="string">
+            <column name="user_event" not-null="true"/>
+        </property>
+        <property name="date" type="timestamp">
+            <column name="event_date" not-null="true"/>
+        </property>      
+		<property name="desc" type="string">
+            <column name="descr" length="1000" not-null="true" />
+        </property>
+        <property name="params" type="string">
+            <column name="params" length="1000" not-null="false" />
+        </property>
+        <property name="handlerClass" type="string">
+            <column name="handler" length="400" not-null="true" />
+        </property>
+        <set name="roles" inverse="true">
+            <key>
+                <column name="event_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiEventRole" />
+        </set> 
+    </class>
+    
+</hibernate-mapping>

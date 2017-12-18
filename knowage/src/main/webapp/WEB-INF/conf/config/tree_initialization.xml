@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TREE_INITIALIZATION>
+		<TREE_INITIAL_STRUCTURE>
+			<NODE code="Functionalities" name="Functionalities" 
+					description="Functionalities" parentPath="" codeType="LOW_FUNCT" />
+			<!-- 
+			<NODE code="SystemFunctionalities" name="System Functionalities" 
+					description="System Functionalities" parentPath="/Functionalities" codeType="LOW_FUNCT" />
+			-->
+		</TREE_INITIAL_STRUCTURE>
+</TREE_INITIALIZATION>

@@ -1,0 +1,1137 @@
+#set($dataFields = $data.metaData.fields) ## columns of data table
+#set($dataColumnsMapper = {})
+
+#foreach ($dataField in $dataFields) ## conversion column name to internal column name
+	#if($dataField.class.name == 'java.util.LinkedHashMap')
+		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header , $dataField.name))
+	#end
+#end
+
+#set($rows = $data.rows) ## data in table rows
+
+#set($categoriesNumber = $rows.size()) 
+#set($series = $chart.VALUES.SERIE) ## metadata related to series
+
+#set($seriesMap = {}) ## conversion series metadata to map object
+#if($series.class.name == 'java.util.LinkedHashMap')
+	#set($workAroundNoPrint = $seriesMap.put($series.name , $series))
+#else
+	#foreach($serie in $series)
+		#set($workAroundNoPrint = $seriesMap.put($serie.name , $serie))
+	#end
+#end
+#set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
+#set($axis = $chart.AXES_LIST.AXIS[0])
+{
+    chart: {
+   		type: 'pie',
+   		
+    	## Additional data needed for cross navigation paramteres	
+			
+		additionalData:
+		{
+			categoryColumn: '$categorieColumns.column',
+			categoryGroupBy: '$categorieColumns.groupby',
+			categoryGroupByNamens: '$categorieColumns.groupbyNames',
+			categoryName: '$categorieColumns.name',
+			categoryOrderColumn: '$categorieColumns.orderColumn',
+			categoryOrderType: '$categorieColumns.orderType',
+			categoryStacked: '$categorieColumns.stacked',
+			categoryStackedType: '$categorieColumns.stackedType'
+		},
+
+   		#if($chart.style.backgroundColor != '')
+   		backgroundColor: '$chart.style.backgroundColor', ##outer chart background
+    	#end
+   		#if(!$exportWebApp) 
+   	 #if($chart.height != '' && $chart.isCockpitEngine!="true")
+        	height: $chart.height,
+        #end
+        
+        #*
+    		Dimension type (pixels or percentage) parameter for height of the chart
+    		is provided.     		
+    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').    				
+    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	*#
+     	#if($chart.heightDimType && $chart.isCockpitEngine!="true")
+     	heightDimType: '$chart.heightDimType',
+       	#else 
+      	 	heightDimType: 'pixels',
+        #end
+        
+        #if($chart.width != '' && $chart.isCockpitEngine!="true")
+          	width: $chart.width,
+    	#end
+    	
+    	#if($chart.widthDimType && $chart.isCockpitEngine!="true")
+    	 widthDimType: '$chart.widthDimType',
+  	   	#else 
+	  	   	widthDimType: 'pixels',
+        #end
+  	 	#end
+    	##  @author: radmila.selakovic@mht.net
+		##  adding options for 3D
+		#if($chart.show3D)
+			options3d: {
+				enabled: $chart.show3D,
+				alpha:  $chart.alpha,
+				beta:  $chart.beta,
+	               
+			},
+    	#end
+    	#if(!$chart.show3D)
+			options3d: {
+				enabled: false,
+				alpha:  0,
+				beta:  0,
+			},
+    	#end
+    	
+    	
+        borderColor: '$chart.style.backgroundColor',
+        style:{
+        	#foreach($styleName in $chart.style.keySet())
+        	#set ($chartStyleValue = $chart.style[$styleName])
+    			#if ($styleName == 'fontWeight' && ($chartStyleValue == 'italic' || $chartStyleValue == 'normal')) 
+        			fontStyle: '$chartStyleValue',
+				#elseif($styleName == 'fontWeight' && $chartStyleValue == 'underline')
+        			textDecoration: 'underline',
+				#else		        			
+        			$styleName: '$chartStyleValue',
+        		#end
+        	#end
+        },
+        
+        #*
+        	Setting for removing (hiding of) the charts border when it is
+        	rendering.
+        	@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+        *#
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false
+    },
+    
+    #*
+    	Handle the situation in which there are no colors inside the color palette as
+    	the Highcharts library expects.    	
+    	
+    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    *#
+   	#if("$!chart.COLORPALETTE"!="" && (($chart.COLORPALETTE!="" && $chart.COLORPALETTE.class.name == 'java.lang.String') || 
+   		($chart.COLORPALETTE.class.name == 'java.util.LinkedHashMap' && "$!chart.COLORPALETTE.COLOR"!="" && $chart.COLORPALETTE.COLOR.size()>0)))
+    colors: [
+		#*
+			If user specifies at least 2 colors (class name of the structure that hold data
+			about colors picked in the color palette of the Designer will in this case be
+			LinkedList, instead of LinkedHashMap as in other case - just one element) go 
+			into the if-statement. If there are no picked color or there is just one, go
+			into the else-statement.
+			@author: danristo (danilo.ristovski@mht.net)
+		*#
+ 		
+ 		#if ($chart.COLORPALETTE.COLOR && $chart.COLORPALETTE.COLOR.class.name != 'java.util.LinkedHashMap') 
+			
+			#foreach($color in $chart.COLORPALETTE.COLOR)
+				'$color.value', 
+			#end
+			
+		#end
+    ],
+    #else
+    	colors: {},
+	#end
+     backupcolors: [
+		'#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
+		    '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'
+		
+    ],
+    title: {
+        text: "$chart.TITLE.text",
+        
+        #set ($titleAlign = $chart.TITLE.style.align)
+        #if ($titleAlign != '' )
+        
+        	#if ($titleAlign == 'left')
+        	x: 70,
+        	#elseif ($titleAlign == 'right')
+        	x: -70,
+        	#end
+        
+        align: '$titleAlign',
+        #end
+        
+        style:{
+        #foreach($styleName in $chart.TITLE.style.keySet())
+        	#set ($axisTytleStyle = $chart.TITLE.style[$styleName])
+        	#if ($styleName == 'fontWeight' && ($axisTytleStyle == 'italic' || $axisTytleStyle == 'normal'))
+    			fontStyle: '$axisTytleStyle',
+			#elseif($styleName == 'fontWeight' && $axisTytleStyle == 'underline')
+    			textDecoration: 'underline',
+			#else		        			
+    			$styleName: '$axisTytleStyle',
+    		#end
+		#end
+	    }
+    },
+    
+    #if($chart.SUBTITLE.text != '')
+    subtitle: {
+        text: "$chart.SUBTITLE.text",
+        
+        #set ($subtitleAlign = $chart.SUBTITLE.style.align)
+        #if ($subtitleAlign != '' )
+        
+        	#if ($subtitleAlign == 'left')
+        	x: 70,
+        	#elseif ($subtitleAlign == 'right')
+        	x: -70,
+        	#end
+        
+        align: '$subtitleAlign',
+        #end
+        
+        style:{
+        #foreach($styleName in $chart.SUBTITLE.style.keySet())
+        	#set ($axisSubtitleStyle = $chart.SUBTITLE.style[$styleName])
+    		#if ($styleName == 'fontWeight' && ($axisSubtitleStyle == 'italic' || $axisSubtitleStyle == 'normal'))
+    			fontStyle: '$axisSubtitleStyle',
+			#elseif($styleName == 'fontWeight' && $axisSubtitleStyle == 'underline')
+    			textDecoration: 'underline',
+			#else		        			
+    			$styleName: '$axisSubtitleStyle',
+    		#end
+		#end
+		}
+    },
+    #end
+    
+    
+    #*
+    	The logic for handling data needed for rendering of the chart.
+    	
+    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    *#
+    #if ($chart.LEGEND.show != '' && ($chart.LEGEND.show == 'true' || $chart.LEGEND.show == true))
+	     
+	    #if ($chart.LEGEND.position == "")      
+		 	
+		 	legend: 
+		 	{
+		        enabled: true,
+		        align: 'center', 
+		        verticalAlign: 'bottom',
+		        layout: 'horizontal',
+		    
+	    #end
+	    
+	    #if ($chart.LEGEND.position == "bottom")
+	  
+		    legend: 
+		    {
+	            enabled: true,
+	            align: 'center',
+	            verticalAlign: '$chart.LEGEND.position', 
+	            layout: 'horizontal',
+		    
+	 	#end
+	 	
+	 	#if ($chart.LEGEND.position == "top")
+	 	
+	 		#*
+		    	Take the size of the font that is used for the chart's title 
+		    	and subtitle. We will use this for determining how much we
+		    	should move the top legend downwards (towards the chart itself).
+		    *#
+		    #set($titleFontSize = $chart.TITLE.style.fontSize)
+		    #set($subtitleFontSize = $chart.SUBTITLE.style.fontSize)
+		    #set($titleText = $chart.TITLE.text)
+		    #set($subtitleText = $chart.SUBTITLE.text)
+		    
+		    #set($totalDistanceLegend = 0)
+		    
+		    #if ($titleText != "")
+		    
+			    #*
+					Take only numeric value from the font size parameter (that is 
+					actually the string in this moment. 
+					
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+				*#
+			    #if ($titleFontSize != "")
+				    #foreach ($element in $titleFontSize.split("px"))  
+				    	#set($titleFontSize = $element)
+					#end				
+				#else
+					#set($titleFontSize = "15")
+				#end
+				
+			#else 		
+				
+		    	#set($titleFontSize = "0")
+		    					
+			#end
+			
+			#if ($subtitleText != "")
+		    
+			    #*
+					Take only numeric value from the font size parameter (that is 
+					actually the string in this moment. 
+					
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+				*#
+			    #if ($subtitleFontSize != "")
+				    #foreach ($element in $subtitleFontSize.split("px"))  
+				    	#set($subtitleFontSize = $element)
+					#end				
+				#else
+					#set($subtitleFontSize = "15")
+				#end
+				
+			#else 
+				
+				#set($subtitleFontSize = "0")
+				
+			#end
+		   
+		 	#*
+				Convert chart's title and subtitle heights to Integer.
+				
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+			*#
+		    #set($intTitleFontSize = 0)
+		    #set($intSubtitleFontSize = 0)
+		    #set($intBorderWidth = 0)
+			#set($Integer1 = 0)
+			#set($Integer2 = 0)
+			#set($Integer3 = 0)
+			#set($intTitleFontSize = $Integer1.parseInt($titleFontSize))		
+			#set($intSubtitleFontSize = $Integer2.parseInt($subtitleFontSize))
+			
+			## If the parameter is NOT NULL
+			#if ("$!borderWidth" != "")
+				#set($intBorderWidth = $Integer3.parseInt($chart.LEGEND.style.borderWidth))
+			#end
+		
+			#if ($titleText == "" && $subtitleText == "")
+				#set($offsetFromTitleSubtitle = 0)
+			#else
+				#set($offsetFromTitleSubtitle = 15)
+			#end		
+		
+			#*
+				Append the offset to the total height of the chart's title and subtitle
+				so it can have always the same distance from those two chart elements
+				(no matter what is the size of title and subtitle).
+				
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+			*#
+			#set($totalDistanceLegend  = ($intTitleFontSize + $intSubtitleFontSize + $intBorderWidth) + $offsetFromTitleSubtitle)
+				 	
+	 		legend: 
+		    {
+	          	enabled: true,
+	            align: 'center',
+	            verticalAlign: '$chart.LEGEND.position', 
+	            layout: 'horizontal',
+	          	y: $totalDistanceLegend,
+		    
+	 	#end
+	        
+	 	#if ($chart.LEGEND.position == "right" || $chart.LEGEND.position == "left")      
+		 	
+		 	legend: 
+		 	{
+		 		enabled: true,
+		        align: '$chart.LEGEND.position', 
+		        verticalAlign: 'middle',
+		        layout: 'vertical',
+		    
+	    #end
+
+			    #if($chart.LEGEND.style.backgroundColor != '')
+		        	backgroundColor: '$chart.LEGEND.style.backgroundColor',
+			    #end
+			    
+		        #if($chart.LEGEND.style.borderWidth != '')
+		        	borderWidth: $chart.LEGEND.style.borderWidth,
+			    #end
+			    
+		        shadow: true,
+		        
+		        itemStyle: 
+		        { 
+		        	color: '$chart.LEGEND.style.color', 
+		        	
+		        	fontSize: '$chart.LEGEND.style.fontSize', 
+		        	
+		        	#if ($chart.LEGEND.style.fontFamily != '')
+		        		fontFamily: '$chart.LEGEND.style.fontFamily',
+		        	#end
+		        	
+		        	#if ($chart.LEGEND.style.fontWeight == 'italic')
+		        		fontStyle: 'italic',
+		        	#elseif ($chart.LEGEND.style.fontWeight == 'underline')
+		        		textDecoration: 'underline',
+		        	#else
+		        		fontWeight: '$chart.LEGEND.style.fontWeight',
+		        	#end
+		        },
+		        
+		        title:
+		        {
+		        	text:"$chart.LEGEND.TITLE.text",
+		        	style:
+		        	{	
+		        		color: '$chart.LEGEND.TITLE.style.color',
+		        		align: '$chart.LEGEND.TITLE.style.align',
+		        		
+		        		fontSize: '$chart.LEGEND.TITLE.style.fontSize', 
+		        	
+		        	#if ($chart.LEGEND.TITLE.style.fontFamily != '')
+		        		fontFamily: '$chart.LEGEND.TITLE.style.fontFamily',
+		        	#end
+		        	
+		        	#if ($chart.LEGEND.TITLE.style.fontWeight == 'italic')
+		        		fontStyle: 'italic',
+		        	#elseif ($chart.LEGEND.TITLE.style.fontWeight == 'underline')
+		        		textDecoration: 'underline',
+		        	#else
+		        		fontWeight: '$chart.LEGEND.TITLE.style.fontWeight',
+		        	#end
+		        	}	
+		        }
+        	},
+	    
+	#else
+		
+		#* 
+			If legend is disabled this JSON property ('enabled') should be false.
+			
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)			
+		*#
+		legend:
+		{
+			enabled: false,
+		},
+	    
+    #end
+    
+    plotOptions: {
+        pie: {
+            #if($chart.show3D)
+				depth: $chart.depth,
+			#end
+    		#if(!$chart.show3D)
+				depth:  0,
+		   	#end
+            allowPointSelect: true,
+            cursor: 'pointer',
+            
+            dataLabels: {
+                enabled: true,
+                #*format: '<b>{point.name}</b>: {point.percentage:.1f} %',*#
+                style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                }
+            },
+            
+           
+        },
+        
+        series:
+        {
+	        #* 
+	        	From Highcharts API: When a series contains a data array that is longer than this, 
+	        	only one dimensional arrays of numbers, or two dimensional arrays with x and y values 
+	        	are allowed. Also, only the first point is tested, and the rest are assumed to be the 
+	        	same format. This saves expensive data checking and indexing in long series. Set it to 
+	        	0 disable. Defaults to 1000.
+	        	
+	        	URL: http://api.highcharts.com/highcharts#plotOptions.series.turboThreshold
+	        	
+	        	We will increase this value in order to display series that contain a data array bigger
+	        	than 1000 (default), because it is most likely that we will have this situation very 
+	        	often.
+	        	
+	        	@author: danristo (danilo.ristovski@mht.net)
+	        *#
+	        turboThreshold: 5000,
+	        
+	       	 
+        }
+    },
+   
+     #set($i = 1)
+    series: [
+	    #set ($counter = 1)
+    	#foreach($valueKey in $seriesMap.keySet())
+	    	
+	    	#set($relatedSerie = $seriesMap.get($valueKey))
+	    	{
+	    		name: '$relatedSerie.name',
+	    		#if(!$exportWebApp)   		
+		    	point:
+		    	{
+		            #if($chart.isCockpitEngine=="false")
+		              	events:{
+		                	click: scope.chartInitializer.handleCrossNavigationTo,
+		                	
+		                	legendItemClick: function(e) {
+				            	var series = this.series.chart.series,
+								name = this.name,
+				                each = Highcharts.each;
+				
+				                e.preventDefault();
+				
+				                each(series, function(s) {
+				                	each(s.data, function(point) {
+				                    	if (point.name === name) {
+				                      		point.setVisible(!point.visible);
+				                    	}
+				                  	});
+				                });
+				            },
+		            }
+		            
+		            
+		            #elseif($chart.outcomingEventsEnabled == 'true')
+		              	events:{
+		                	click: handleCockpitSelection,
+
+		                	legendItemClick: function(e) {
+				            	var series = this.series.chart.series,
+								name = this.name,
+				                each = Highcharts.each;
+				
+				                e.preventDefault();
+				
+				                each(series, function(s) {
+				                	each(s.data, function(point) {
+				                    	if (point.name === name) {
+				                      		point.setVisible(!point.visible);
+				                    	}
+				                  	});
+				                });
+				            },
+		            }
+
+		            #end		
+	            },
+			#end
+			#if ($chart.LEGEND.show != '' && $chart.LEGEND.show == 'true' && $i==1 )
+            	showInLegend: true,
+            #else
+	            showInLegend: false,
+		   	#end
+		   	
+		    #set($relatedSerieShowAbsValue = $relatedSerie.showAbsValue)
+			#set($relatedSerieShowPercentage = $relatedSerie.showPercentage)
+			#if(!$relatedSerie.showCategoryValue)
+				#set($relatedSerieCategoryValue = true)
+			#else
+				#set($relatedSerieCategoryValue = $relatedSerie.showCategoryValue)
+			#end
+			#set($showDataLabels = $relatedSerieShowAbsValue || $relatedSerieShowPercentage || $relatedSerieCategoryValue)						
+			
+			#if ($relatedSerie.precision == "")
+				#set($precision = 0)
+			#else
+			#set($precision = $relatedSerie.precision)
+			#end
+						
+			#if ($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == false && $relatedSerieCategoryValue == false)
+				
+				dataLabels: 
+					{							
+			         enabled: true,
+			                    
+			                    /* 
+			                    	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+			                    	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+			                    	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
+			                    	is included into the formatting of the number that is going to be displayed, as well as precision.
+			                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	                     		*/ 
+			                    formatter: function() {
+			                     
+				                    var value = this.y;	
+				                    var newValue = "";	                  
+				                    
+			                      	var scaleFactor = '${relatedSerie.scaleFactor}';
+			                      	
+			                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+			                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+			                      				                      	
+			                      	var precision = '${relatedSerie.precision}';
+			                      	var catName = "";  
+			                      	
+	                      	        newValue = catName;        	
+			                      	
+			                      	switch(scaleFactor.toUpperCase()) {
+			                      	
+			                      		case "EMPTY":
+			                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
+			                      			newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
+			                      			break;
+			                      		case "K":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";	
+			                      			break;
+			                      		case "M":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";	
+			                      			break;
+			                      		case "G":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+			                      			break;
+		                      			case "T":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+			                      			break;
+			                      		case "P":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+			                      			break;
+		                      			case "E":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+			                      			break;
+		                      			default:
+		                      				/* The same as for the case when user picked "no selection" - in case when the chart 
+		                      				template does not contain the scale factor for current serie */
+		                      				newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
+			                      			break;
+			                      	
+			                      	}						
+		                        		                       
+		                          	return newValue;
+				            	}
+		               }
+			                
+		          #elseif($relatedSerieShowAbsValue == false && $relatedSerieShowPercentage == true && $relatedSerieCategoryValue == false)
+			              	
+			                dataLabels: 
+							{							
+			                    enabled: true,			                    
+			                    format: '{point.percentage:.' + $precision + 'f}%'
+			                }
+		                
+		                
+		          #elseif($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == true && $relatedSerieCategoryValue == true)
+		               	
+							dataLabels: 
+							{
+			                    enabled: true,
+			                    
+			                    #set ($precisionValueAsString = ':,.' + $precision + 'f')
+			                   	
+			                   	/* 
+			                    	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+			                    	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+			                    	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
+			                    	is included into the formatting of the number that is going to be displayed, as well as precision.
+			                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	                     		*/
+			                   	formatter: function() {
+			                     
+				                    var value = this.y;	
+				                    var newValue = "";	                  
+				                    
+			                      	var scaleFactor = '${relatedSerie.scaleFactor}';
+			                      	
+			                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+			                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+			                      	
+			                      	var precision = '${relatedSerie.precision}';
+			                      	var pointPercentage = this.point.percentage;
+			                      	var catName = "<b>" + this.point.name + "</b>: ";
+			                      	
+	                      	        newValue = catName;        	
+			                      	
+			                      	switch(scaleFactor.toUpperCase()) {
+			                      	
+			                      		case "EMPTY":
+			                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
+			                      			newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
+			                      			break;
+			                      		case "K":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";		
+			                      			break;
+			                      		case "M":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";	
+			                      			break;
+			                      		case "G":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+			                      			break;
+		                      			case "T":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+			                      			break;
+			                      		case "P":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+			                      			break;
+		                      			case "E":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+			                      			break;
+		                      			default:
+		                      				/* The same as for the case when user picked "no selection" - in case when the chart 
+		                      				template does not contain the scale factor for current serie */
+		                      				newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
+			                      			break;
+			                      	
+			                      	}						
+		                        		 
+		                        	newValue += " (" + Highcharts.numberFormat(pointPercentage,precision,decimalPoints,thousandsSep) + "%)"; 
+		                        		                       
+		                          	return newValue;
+				            	}
+			                }
+			                #elseif($relatedSerieShowAbsValue == false && $relatedSerieShowPercentage == false && $relatedSerieCategoryValue == true)
+		               	
+							dataLabels: 
+							{
+			                    enabled: true,
+			                    
+			                    format: '<b>{point.name}</b>'
+
+			              
+			                }  #elseif($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == true && $relatedSerieCategoryValue == false)
+		               	
+							dataLabels: 
+							{
+			                    enabled: true,
+			                    
+			                    #set ($precisionValueAsString = ':,.' + $precision + 'f')
+			                   	
+			                   	/* 
+			                    	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+			                    	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+			                    	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
+			                    	is included into the formatting of the number that is going to be displayed, as well as precision.
+			                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	                     		*/
+			                   	formatter: function() {
+			                     
+				                    var value = this.y;	
+				                    var newValue = "";	                  
+				                    
+			                      	var scaleFactor = '${relatedSerie.scaleFactor}';
+			                      	
+			                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+			                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+			                      	
+			                      	var precision = '${relatedSerie.precision}';
+			                      	var pointPercentage = this.point.percentage;
+			                      	var catName = "";
+			                      	
+	                      	        newValue = catName;        	
+			                      	
+			                      	switch(scaleFactor.toUpperCase()) {
+			                      	
+			                      		case "EMPTY":
+			                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
+			                      			newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
+			                      			break;
+			                      		case "K":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";		
+			                      			break;
+			                      		case "M":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";	
+			                      			break;
+			                      		case "G":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+			                      			break;
+		                      			case "T":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+			                      			break;
+			                      		case "P":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+			                      			break;
+		                      			case "E":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+			                      			break;
+		                      			default:
+		                      				/* The same as for the case when user picked "no selection" - in case when the chart 
+		                      				template does not contain the scale factor for current serie */
+		                      				newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
+			                      			break;
+			                      	
+			                      	}						
+		                        		 
+		                        	newValue += " (" + Highcharts.numberFormat(pointPercentage,precision,decimalPoints,thousandsSep) + "%)"; 
+		                        		                       
+		                          	return newValue;
+				            	}
+			                } 
+			                 #elseif($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == false && $relatedSerieCategoryValue == true )
+		               	
+							dataLabels: 
+							{
+			                    enabled: true,
+			                    
+			                    #set ($precisionValueAsString = ':,.' + $precision + 'f')
+			                   	
+			                   	/* 
+			                    	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+			                    	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+			                    	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
+			                    	is included into the formatting of the number that is going to be displayed, as well as precision.
+			                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	                     		*/
+			                   	formatter: function() {
+			                     
+				                    var value = this.y;	
+				                    var newValue = "";	                  
+				                    
+			                      	var scaleFactor = '${relatedSerie.scaleFactor}';
+			                      	
+			                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+			                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+			                      	
+			                      	var precision = '${relatedSerie.precision}';
+			                      	var pointPercentage = this.point.percentage;
+			                      	var catName = "<b>" + this.point.name + "</b>: ";
+			                      	
+	                      	        newValue = catName;        	
+			                      	
+			                      	switch(scaleFactor.toUpperCase()) {
+			                      	
+			                      		case "EMPTY":
+			                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
+			                      			newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
+			                      			break;
+			                      		case "K":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";		
+			                      			break;
+			                      		case "M":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";	
+			                      			break;
+			                      		case "G":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+			                      			break;
+		                      			case "T":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+			                      			break;
+			                      		case "P":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+			                      			break;
+		                      			case "E":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+			                      			break;
+		                      			default:
+		                      				/* The same as for the case when user picked "no selection" - in case when the chart 
+		                      				template does not contain the scale factor for current serie */
+		                      				newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
+			                      			break;
+			                      	
+			                      	}						
+		                        		 
+		                        		                       
+		                          	return newValue;
+				            	}
+			                }  #elseif($relatedSerieShowAbsValue == false && $relatedSerieShowPercentage == true && $relatedSerieCategoryValue == true )
+		               	
+							dataLabels: 
+							{
+			                    enabled: true,
+			                    
+			                  
+			                    format: '<b>{point.name}</b>: ' +  '{point.percentage:.' + $precision + 'f}%'
+			                }  
+		                #else
+		                
+			                dataLabels: 
+			                {
+			                	enabled: false
+			                }
+			                
+						#end
+				, 
+				#if($axis.TITLESERIE)
+					#set($serieTitleShow = $axis.TITLESERIE.showTitle)
+					#if($serieTitleShow=="true")
+					title: {
+		            format: '<b>{name}</b>',
+		            
+		            align: '$axis.TITLESERIE.style.align',
+		            style:{
+			    		#foreach($styleName in $axis.TITLESERIE.style.keySet())
+        	#set ($titleStyleValue = $axis.TITLESERIE.style[$styleName])
+    			#if ($styleName == 'fontWeight' && ($titleStyleValue == 'italic' || $titleStyleValue == 'normal')) 
+        			fontStyle: '$titleStyleValue',
+				#elseif($styleName == 'fontWeight' && $titleStyleValue == 'underline')
+        			textDecoration: 'underline',
+				#else		        			
+        			$styleName: '$titleStyleValue',
+        		#end
+        	#end
+					},
+		            
+		            
+		            verticalAlign: 'top',
+		            y: -40
+		        },  
+					#end
+				#end
+				
+				
+				data: [
+	    	    
+				#if($categorieColumns.name=="")
+				#set($categorieColumns.name = $categorieColumns.column)
+				#end
+				#if($chart.isCockpitEngine=="true")
+				#set($serieColumnCategory = $dataColumnsMapper.get($categorieColumns.name)) ## "product" -> "column_3"
+				#end
+				#if($chart.isCockpitEngine!="true")
+				#set($serieColumnCategory = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
+				#end
+
+	    	    #set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}'SUM')#end")
+	    	    #if($chart.isCockpitEngine != 'true')
+	      			#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
+	   			#end
+	   			#set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
+
+				#set ($zeroValues =0)
+				#foreach($row in $rows)
+					#set ($serieValue = $row.get($serieColumnsMapped))
+				
+					#if($serieValue==0)
+			    		#set($zeroValues=$zeroValues+1)  
+					#end
+					 
+				#end
+	    	    #if($categoriesNumber!=$zeroValues)
+	    	    #foreach($row in $rows)
+					#set ($serieName = $row.get($serieColumnCategory))
+					#set( $serieName = $serieName.replace("\", "\\") )
+					#set( $serieName = $serieName.replace("""", "\""") )
+					#set ($serieValue = $row.get($serieColumnsMapped))
+					{
+						name: "$serieName",
+						y: $serieValue,
+					},
+				#end
+				#end
+				 
+	    	],
+	    	
+	  #set($i=$i+1)  
+	    	#if($series.size()==2)
+		        size: '50%',
+		        #if($counter==1)
+		        	center: ['25%', '50%'],
+		        #else
+		        	center: ['75%', '50%'],
+		        #end
+	    		#set ($counter = $counter + 1)
+		    #end
+		    
+		    #if($series.size()==3)
+		        size: '40%',
+		        #if($counter==1)
+		        	center: ['50%', '25%'],
+		        #end
+		        #if($counter==2)
+		        	center: ['25%', '75%'],
+		        #end
+		        #if($counter==3)
+		        center: ['75%', '75%'],
+		        #end
+	    		#set ($counter = $counter + 1)
+		    #end
+		    
+		     #if($series.size()==4)
+		        size: '35%',
+		        #if($counter==1)
+		        	center: ['25%', '25%'],
+		        #end
+		        #if($counter==2)
+		        	center: ['75%', '25%'],
+		        #end
+		        #if($counter==3)
+		        center: ['25%', '75%'],
+		        #end
+		        #if($counter==4)
+		        center: ['75%', '75%'],
+		        #end
+	    		#set ($counter = $counter + 1)
+		    #end
+		    
+		    
+	        
+        	tooltip: { 
+			#set($seriePrefix = $relatedSerie.prefixChar)
+			#if($seriePrefix != '')
+				valuePrefix: '$seriePrefix',
+			#end
+				
+			#set($seriePostfix = $relatedSerie.postfixChar)
+			#if($seriePostfix != '')
+				valueSuffix: '$seriePostfix',
+			#end
+				
+			#if ($relatedSerie.precision != '')
+				valueDecimals: $relatedSerie.precision ,
+			#end
+				
+			#*
+				If background color for the serie tooltip is not defined (empty)
+				take the default value (#FCFFC5) so the tooltip can be readable 
+				over the chart that stays behind it. Otherwise, take the value 
+				of the background color specified by the user.				
+				@author: danristo (danilo.ristovski@mht.net)
+			*#
+			#if ($relatedSerie.TOOLTIP.backgroundColor!="")
+                ttBackColor: '$relatedSerie.TOOLTIP.backgroundColor',
+            #else
+            	ttBackColor: '#FCFFC5',	## default background color for the serie tooltip
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.color != '')
+				ttColor: '$relatedSerie.TOOLTIP.style.color' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.align != '')
+				ttAlign: '$relatedSerie.TOOLTIP.style.align' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontFamily != '')
+				ttFont: '$relatedSerie.TOOLTIP.style.fontFamily' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontWeight != '')
+				ttFontWeight: '$relatedSerie.TOOLTIP.style.fontWeight' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontSize != '')
+				ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
+			#end
+			},
+        },
+	    #end
+   
+	],
+    tooltip: {
+        useHTML: true,
+        backgroundColor: null,
+        borderWidth: 2,
+        style: {
+            padding: 0
+        },
+        formatter: function() {
+        	var ttColor = this.series.tooltipOptions.ttColor ? this.series.tooltipOptions.ttColor : '';
+        	var ttBackColor = this.series.tooltipOptions.ttBackColor ? this.series.tooltipOptions.ttBackColor : '';
+        	
+        	var ttAlign = this.series.tooltipOptions.ttAlign ? this.series.tooltipOptions.ttAlign : '';
+        	var ttFont = this.series.tooltipOptions.ttFont ? ' ' + this.series.tooltipOptions.ttFont : '';
+        	var ttFontSize = this.series.tooltipOptions.ttFontSize ? ' ' + this.series.tooltipOptions.ttFontSize : '';
+        	var ttFontWeight = this.series.tooltipOptions.ttFontWeight ? ' ' + this.series.tooltipOptions.ttFontWeight : '';
+        	
+        	#*
+        		Depending on font style chosen by the user for the serie tooltip
+        		we will specify respective CSS attribute so it can be taken by the
+        		tooltip.
+        		@author: danristo (danilo.ristovski@mht.net)
+        	*#
+        	var tooltipFontStyle = "";
+        	
+        	if (ttFontWeight == " underline")
+        	{
+        		tooltipFontStyle = " text-decoration: underline;";
+        	}
+        	else if (ttFontWeight == " italic")
+        	{
+        		tooltipFontStyle = "font-style: italic;";
+        	}
+        	else if (ttFontWeight == " bold")
+        	{
+        		tooltipFontStyle = "font-weight: bold;";
+        	}
+        	else
+        	{
+        		tooltipFontStyle = "font-weight: normal;";
+        	}        	
+        	
+        	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : 0;
+        	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
+        	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
+        	
+        	var thisValue = this.y;
+        	
+        	var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
+        			thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+        			
+    		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
+    		
+        	thisValue = valuePrefix + thisValue + valueSuffix;
+        	
+            #*
+        		Separate font elements (family, size and weight (style)) so the tooltip
+        		font characteristics can be separately (independently) specified by the user.
+        		@modifiedBy: danristo (danilo.ristovski@mht.net)
+        	*# 
+            var result = 
+            	'<div style="padding:10px;color:' + ttColor + '; opacity: 0.9; background:' + ttBackColor + ';' + " font-family: " + ttFont + "; "
+            					+ tooltipFontStyle + " font-size: " + ttFontSize + ';text-align:' + ttAlign + ';">'; 
+            
+            #*
+        		Removed bold font style (weight) as default one for the serie value, since
+        		style of the fonts on the tooltip will be the same for every single font
+        		element on it. HTML tag <strong> is removed.
+        		@modifiedBy: danristo (danilo.ristovski@mht.net)
+        	*# 	
+            result += '<span>' + this.key + '</span><br/>' + this.series.name + ': ' + thisValue + '</div>';
+            
+            return result;
+        }
+    },
+    
+    #if($chart.EMPTYMESSAGE != '')
+    lang: {
+        noData: "$chart.EMPTYMESSAGE.text"
+    },
+    noData: {
+    	style:{
+    		#foreach($styleName in $chart.EMPTYMESSAGE.style.keySet())
+    		fontFamily: '$chart.EMPTYMESSAGE.style.fontFamily',		
+			fontSize: '$chart.EMPTYMESSAGE.style.fontSize',
+			color: '$chart.EMPTYMESSAGE.style.color',
+					
+			#if($chart.EMPTYMESSAGE.style.fontWeight == 'italic' || $chart.EMPTYMESSAGE.style.fontWeight == 'normal')
+    			fontStyle: '$chart.EMPTYMESSAGE.style.fontWeight',
+    			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
+			#elseif($chart.EMPTYMESSAGE.style.fontWeight == 'underline')
+    			textDecoration: '$chart.EMPTYMESSAGE.style.fontWeight',
+    			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
+			#elseif($chart.EMPTYMESSAGE.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
+    		#end
+    	#end
+		},
+		position: {
+			#set ($positionAlign = $chart.EMPTYMESSAGE.position.align)
+			#set ($positionVerticalAlign = $chart.EMPTYMESSAGE.position.verticalAlign)
+			#if ($positionAlign == "")      
+			 	
+			 	align: "center",
+			#else		        			
+        		align: '$positionAlign' ,  
+		    #end
+		    #if ($positionVerticalAlign == "")      
+			 	
+			 	verticalAlign: "middle"
+			 #else		        			
+        		verticalAlign: '$positionVerticalAlign'    
+		    #end
+			
+
+		}
+    },
+    #end
+    
+    credits: { ##remove bottom credits text
+    	enabled: false
+    },
+    
+
+}

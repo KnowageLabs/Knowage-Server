@@ -1,0 +1,32 @@
+<div ng-form name="structure-mainTickForm" layout="column" layout-padding flex>
+
+<md-input-container class="md-block">
+ <label>{{translate.load("sbi.chartengine.axisstylepopup.mainTickParams.tickPosition")}}</label>
+ <md-select
+		ng-model="axisForDisplay.tickPosition" name="gauge_main_tick_position"> <md-option
+		ng-repeat="option in gaugeTicksPositionOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+	
+<md-input-container class="md-block colorInputContainer">
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.mainTickParams.tickColor")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="axisForDisplay.tickColor" name ="gauge_main_tickColor"></color-picker> </md-input-container>
+
+<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.mainTickParams.tickPixelInterval")}}</label>
+		 <input type="number" step="any" name="gauge_main_tickPxInterval"
+		ng-model="axisForDisplay.tickPixelInterval" min="0" /> </md-input-container>
+
+<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.mainTickParams.tickWidth")}}</label>
+		 <input type="number" step="any" name="gauge_main_tickWidth"
+		ng-model="axisForDisplay.tickWidth" min="0" /> </md-input-container>
+		
+<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.mainTickParams.tickLength")}}</label>
+		 <input type="number" step="any" name="gauge_main_tickLength"
+		ng-model="axisForDisplay.tickLength" min="0" /> </md-input-container>
+
+
+</div>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+  
+	<!--START service for new Ext-based interface -->
+	<SERVICE name="MANAGE_RESOURCES_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="RESOURCE_INSERT"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="name" label="#sbi.kpi.label.name" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="200"/>
+				</FIELD>
+				
+				<FIELD name="description" label="#sbi.kpi.label.description" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>
+
+				<FIELD name="code" label="#sbi.kpi.label.code" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)\.\:\;\,])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="45"/>
+				</FIELD>
+
+				<FIELD name="tablename" label="#sbi.kpi.label.tableName" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)\.\:\;\,])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="40"/>
+				</FIELD>
+
+				<FIELD name="columnname" label="#sbi.kpi.label.columnName" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)\.\:\;\,])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="40"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE> 
+	
+	<SERVICE name="MANAGE_PERIODICITIES_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="PERIODICITY_INSERT"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="name" label="#sbi.kpi.label.name" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="MANDATORY" />
+				    <VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)\.\:\;\,])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>
+				<FIELD name="months" label="#scheduler.everyNMonth" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+				<FIELD name="days" label="#scheduler.everyNDays" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+				<FIELD name="hours" label="#scheduler.everyNHours" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+				<FIELD name="mins" label="#scheduler.everyNMinutes" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+				
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE> 
+	
+	<SERVICE name="MANAGE_KPIS_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="KPI_INSERT"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="name" label="#sbi.kpi.label.name" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>
+				
+				<FIELD name="description" label="#sbi.kpi.label.description" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
+				</FIELD>
+
+				<FIELD name="code" label="#sbi.kpi.label.code" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)\.\:\;\,])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="40"/>
+				</FIELD>
+
+				<FIELD name="weight" label="#sbi.kpi.label.weight" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+
+				<FIELD name="interpretation" label="#sbi.kpi.label.interpretation" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
+				</FIELD>
+				
+				<FIELD name="algdesc" label="#sbi.kpi.label.metric" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
+				</FIELD>
+				<FIELD name="inputAttr" label="#sbi.kpi.label.input.attribute" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
+				</FIELD>
+				<FIELD name="modelReference" label="#sbi.kpi.label.model.reference" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="255"/>
+				</FIELD>
+				<FIELD name="targetAudience" label="#sbi.kpi.label.target.audience" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE> 
+	
+	
+	<SERVICE name="MANAGE_THRESHOLDS_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="THRESHOLD_INSERT"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="name" label="#sbi.kpi.label.name" bundle="component_kpi_messages">				
+					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+				</FIELD>
+				
+				<FIELD name="code" label="#sbi.kpi.label.code" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)\.\:\;\,])*$"/>
+          			<VALIDATOR validatorName="MAXLENGTH" arg0="45"/>
+          			<VALIDATOR validatorName="MANDATORY" />
+        		</FIELD>
+        		<FIELD name="description" label="#sbi.kpi.label.description" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+          			<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
+        		</FIELD>
+        		
+        		<!-- For threshold values -->
+        		<FIELD name="label" label="#sbi.kpi.label.label" bundle="component_kpi_messages">
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="20"/>
+				</FIELD>			
+				<FIELD name="position" label="#sbi.kpi.label.position" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="NUMERIC"/>
+        		</FIELD>       		
+				<FIELD name="min" label="#sbi.kpi.label.minValue" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="NUMERIC"/>
+        		</FIELD>       		
+        		<FIELD name="max" label="#sbi.kpi.label.maxValue" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="NUMERIC"/>
+        		</FIELD>	 
+        		<FIELD name="color" label="#sbi.kpi.label.colour" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="MAXLENGTH" arg0="20"/>
+        		</FIELD>   
+        		<FIELD name="minIncluded" label="#sbi.kpi.label.minValueclosed" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="BOOLEAN" />
+        		</FIELD> 
+        		<FIELD name="maxIncluded" label="#sbi.kpi.label.maxValueclosed" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="BOOLEAN" />
+        		</FIELD>      		   		
+        		<FIELD name="val" label="#sbi.kpi.label.value" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="NUMERIC"/>
+        		</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+	<!-- SERVICE name="MANAGE_MODELS_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="MODEL_NODES_SAVE"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="label" label="#sbi.kpi.label.label" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+          			<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>
+          			<VALIDATOR validatorName="MANDATORY" />
+        		</FIELD>
+				<FIELD name="name" label="#sbi.kpi.label.name" bundle="component_kpi_messages">				
+          			<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)\.\:\;\,])*$"/>
+          			<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>
+				
+				<FIELD name="code" label="#sbi.kpi.label.code" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="MAXLENGTH" arg0="40"/>
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)\.\:\;\,])*$"/>
+					<VALIDATOR validatorName="MANDATORY" />
+        		</FIELD>
+        		<FIELD name="description" label="#sbi.kpi.label.description" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+          			<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
+        		</FIELD>
+        		<FIELD name="typeCd" label="#sbi.kpi.model.typeName" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="MANDATORY" />
+        		</FIELD>
+				
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+	<SERVICE name="MANAGE_MODEL_INSTANCES_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="MODELINSTS_NODES_SAVE"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="label" label="#sbi.kpi.label.label" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+          			<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>
+        		</FIELD>
+				<FIELD name="name" label="#sbi.kpi.label.name" bundle="component_kpi_messages">				
+          			<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)\.\:\;\,])*$"/>
+          			<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>
+        		<FIELD name="description" label="#sbi.kpi.label.description" bundle="component_kpi_messages">
+          			<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+          			<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
+        		</FIELD>
+				
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE-->
+	<!--END service for new Ext-based interface -->
+
+  <DINAMIC_VALIDATIONS />
+</VALIDATIONS>
