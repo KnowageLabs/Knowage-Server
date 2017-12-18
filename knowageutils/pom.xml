@@ -86,10 +86,6 @@
 					<groupId>org.hibernate</groupId>
 				</exclusion>
 				<exclusion>
-					<artifactId>hazelcast</artifactId>
-					<groupId>com.hazelcast</groupId>
-				</exclusion>
-				<exclusion>
 					<groupId>batik</groupId>
 					<artifactId>batik-1.5-fop</artifactId>
 				</exclusion>
@@ -582,6 +578,19 @@
              <artifactId>httpmime</artifactId>
              <version>4.3.1</version>
         </dependency>
+         
+         <dependency>
+            <groupId>com.jamonapi</groupId>
+            <artifactId>jamon</artifactId>
+            <version>2.81</version>
+        </dependency>
+        
+        <dependency>
+			<groupId>com.hazelcast</groupId>
+			<artifactId>hazelcast-all</artifactId>
+			<version>3.6.1</version>
+			<scope>compile</scope>
+		</dependency>
 		
 		<dependency>
 			<groupId>com.auth0</groupId>
