@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 </head>
-<body class="bodyStyle" ng-controller="exportersCatalogueController as ctrl" >
+<body class="bodyStyle kn-exportersMenu" ng-controller="exportersCatalogueController as ctrl" >
     
    
     
@@ -66,49 +66,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		cancel-function="cancel"		
 		show-save-button="showMe" show-cancel-button="showMe"
 		disable-save-button="!exportersForm.$valid">
-		<form name="exportersForm" ng-submit="exportersForm.$valid && saveOrUpdateExporter()" layout="column">
-		   <md-input-container ng-show="showMe">
-	         <md-select ng-required="true"
-	         	ng-model="selectedExporter.engineId" 
-	         	placeholder={{translate.load("sbi.exporters.select.engine")}}
-	         	md-on-close="clearEngineSearch()">
-	         	  <md-select-header>
-				        <md-input-container class="md-block">
-				          <input
-				            type="search"
-				            ng-model="searchEngineText"
-				            ng-keydown="$event.stopPropagation()"
-				            placeholder="Search..">
-				          </md-input-container>				        
-				  </md-select-header>
-	 		      <md-option ng-value="engine.id" ng-repeat="engine in engines | orderBy : 'name' | filter:searchEngineText">{{engine.name}}</md-option>
-	 		 </md-select>
-	 		 <div ng-messages="exportersForm.engineId.$error" ng-show="!selectedExporter.engineId">
-			      <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
-			 </div>
-	 	   </md-input-container>
-	 		 
-	 	   <md-input-container ng-show="showMe">
-		 	 <md-select ng-required="true"
-		 	 	ng-model="selectedExporter.domainId" 
-		 	 	placeholder={{translate.load("sbi.exporters.select.domain")}}
-		 	 	md-on-close="clearDomainSearch()">
-		 	 		<md-select-header>
-				        <md-input-container class="md-block">
-				          <input
-				            type="search"
-				            ng-model="searchDomainText"
-				            ng-keydown="$event.stopPropagation()"
-				            placeholder="Search..">
-				          </md-input-container>				        
-				    </md-select-header>
-		 		    <md-option  ng-value="domain.valueId" ng-repeat="domain in domains | orderBy : 'valueCd' | filter:searchDomainText">{{domain.valueCd}}</md-option>
-		 	 </md-select>
-		 		 <div ng-messages="exportersForm.domainId.$error" ng-show="!selectedExporter.domainId">
-			          <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
-			     </div>
-	       </md-input-container>
-		</form>		
+		
+			<md-card>
+				<md-card-content>
+					<div class="kn-info">{{translate.load("sbi.catalogues.exporters.info")}}</div>
+					<form name="exportersForm" ng-submit="exportersForm.$valid && saveOrUpdateExporter()" layout="column">
+					
+						<md-input-container ng-show="showMe" class="firstSelection" >
+				         <md-select ng-required="true" class="exporters"
+				         	ng-model="selectedExporter.engineId" 
+				         	placeholder={{translate.load("sbi.exporters.select.engine")}}
+				         	md-on-close="clearEngineSearch()">
+				         	  <md-select-header>
+							        <md-input-container class="md-block">
+							          <input
+							            type="search"
+							            ng-model="searchEngineText"
+							            ng-keydown="$event.stopPropagation()"
+							            md-autofocus
+							            placeholder="Search..">
+							          </md-input-container>				        
+							  </md-select-header>
+				 		      <md-option ng-value="engine.id" ng-repeat="engine in engines | orderBy : 'name' | filter:searchEngineText">{{engine.name}}</md-option>
+				 		 </md-select>
+				 		 <div ng-messages="exportersForm.engineId.$error" ng-show="!selectedExporter.engineId">
+						      <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+						 </div>
+				 	   </md-input-container>
+				 		 
+				 	   <md-input-container ng-show="showMe">
+					 	 <md-select ng-required="true" class="exporters"
+					 	 	ng-model="selectedExporter.domainId" 
+					 	 	placeholder={{translate.load("sbi.exporters.select.domain")}}
+					 	 	md-on-close="clearDomainSearch()">
+					 	 		<md-select-header>
+							        <md-input-container class="md-block">
+							          <input
+							            type="search"
+							            ng-model="searchDomainText"
+							            ng-keydown="$event.stopPropagation()"
+							            md-autofocus
+							            placeholder="Search..">
+							          </md-input-container>				        
+							    </md-select-header>
+							    <md-option  ng-value="domain.valueId" ng-repeat="domain in domains | orderBy : 'valueCd' | filter:searchDomainText">{{domain.valueCd}}</md-option>
+					 	 </md-select>
+					 		 <div ng-messages="exportersForm.domainId.$error" ng-show="!selectedExporter.domainId">
+						          <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+						     </div>
+				       </md-input-container>
+					</form>	
+				</md-card-content>
+			</md-card>
+		   	
 	</detail>	
 	</angular-list-detail>
 </body>
