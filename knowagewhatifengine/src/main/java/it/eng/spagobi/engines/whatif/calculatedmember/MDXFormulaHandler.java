@@ -31,13 +31,14 @@ import org.olap4j.OlapException;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 
 public class MDXFormulaHandler {
 
-	private static String xmlPath;
+	private static String xmlPath = WhatIfEngineConfig.getInstance().getEngineResourcePath() + "Olap/formulas.xml";;
 	private static File xmlFile;
 	private static MDXFormulas formulas;
 	private static Map<String, String> placeHolders = new HashMap<String, String>();
@@ -69,8 +70,7 @@ public class MDXFormulaHandler {
 
 	private static boolean loadFile() {
 
-		xmlFile = new File(
-				"C:\\Users\\dpirkovic\\servers\\workspace\\apache-tomcat-7.0.81\\apache-tomcat-7.0.81\\resources\\DEFAULT_TENANT\\Olap\\formulas.xml");
+		xmlFile = new File(xmlPath);
 		if (!xmlFile.exists()) {
 			xmlFile = new File(classLoader.getResource(File.separatorChar + "calculated_fields_formulas" + File.separatorChar + "formulas.xml").getPath());
 		}

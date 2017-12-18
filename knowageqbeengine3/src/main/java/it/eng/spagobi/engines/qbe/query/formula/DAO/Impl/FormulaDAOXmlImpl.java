@@ -25,8 +25,6 @@ import javax.xml.bind.JAXBException;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.utilities.SpagoBIUnmarshallerWrapper;
-import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.engines.qbe.query.formula.FormulaConfig;
 import it.eng.spagobi.engines.qbe.query.formula.DAO.IFormulaDAO;
 import it.eng.spagobi.engines.qbe.query.formula.mapping.Formula;
 import it.eng.spagobi.engines.qbe.query.formula.mapping.Formulas;
@@ -40,13 +38,9 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 public class FormulaDAOXmlImpl implements IFormulaDAO {
 
 	public static transient Logger logger = Logger.getLogger(FormulaDAOXmlImpl.class);
-	private static final String ACTIVE_FORMULA_FILE = "qbe.formulas.active";
-	private final FormulaConfig formulaConf;
-	private final String engineResourcePath;
 
 	public FormulaDAOXmlImpl() {
-		formulaConf = new FormulaConfig();
-		engineResourcePath = QbeEngineConfig.getInstance().getEngineResourcePath();
+
 	}
 
 	@Override
@@ -56,14 +50,15 @@ public class FormulaDAOXmlImpl implements IFormulaDAO {
 		SpagoBIUnmarshallerWrapper<Formulas> unmarshaller;
 		Formulas formulas;
 		File xmlFile;
+		FormulaFileRetriver formulaFileRetriver = new FormulaFileRetriver();
 
 		unmarshaller = new SpagoBIUnmarshallerWrapper<>();
 		formulas = new Formulas();
-		xmlFile = new File(getFilePath());
-		logger.debug("File wtih file exists: " + xmlFile.exists());
+		xmlFile = formulaFileRetriver.getFormulaFile();
+
 		try {
 
-			if (xmlFile.exists()) {
+			if (xmlFile != null && xmlFile.exists()) {
 				Formulas temp = unmarshaller.unmarshall(xmlFile, Formulas.class);
 				logger.debug("File " + xmlFile.getName() + " unmarshalled");
 				formulas.setFormulas(temp.getFormulas());
@@ -76,22 +71,6 @@ public class FormulaDAOXmlImpl implements IFormulaDAO {
 		} finally {
 			logger.debug("OUT");
 		}
-
-	}
-
-	private String getFilePath() {
-		logger.debug("IN");
-		String finalFilePath;
-		String relativeFilePath = formulaConf.getProperty(ACTIVE_FORMULA_FILE);
-		if (relativeFilePath == null) {
-			logger.error("Property " + ACTIVE_FORMULA_FILE + "is missing.");
-			throw new SpagoBIEngineRuntimeException("Property " + ACTIVE_FORMULA_FILE + "is missing.");
-		}
-
-		finalFilePath = engineResourcePath + File.separator + relativeFilePath;
-		logger.debug("Final file path is: " + finalFilePath);
-		logger.debug("OUT");
-		return finalFilePath;
 
 	}
 
