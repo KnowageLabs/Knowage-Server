@@ -55,7 +55,7 @@ public class JPQLStatementFromClause extends AbstractStatementFromClause {
 			Map<String, String> queryEntityAliases = (Map) entityAliasesMaps.get(query.getId());
 
 			if (queryGraph.hasJoinPaths()) {
-				return this.buildClause(relationships, queryEntityAliases);
+				return this.buildClause(relationships, queryEntityAliases, entityAliasesMaps);
 			}
 		}
 
@@ -63,14 +63,14 @@ public class JPQLStatementFromClause extends AbstractStatementFromClause {
 
 	}
 
-	public String buildClause(List<Relationship> relationships, Map<String, String> queryEntityAliases) {
+	public String buildClause(List<Relationship> relationships, Map<String, String> queryEntityAliases, Map entityAliasesMaps) {
 
 		List<String> fromClauseElements = new ArrayList<>();
 
 		IModelEntity firstEntity = relationships.get(0).getSourceEntity();
 		String fistEntityName = firstEntity.getName();
-		String firtEntityAlias = queryEntityAliases.get(firstEntity.getUniqueName());
-		List<String> joinStatments = createJoinStatements(relationships, queryEntityAliases);
+		String firtEntityAlias = getAlias(entityAliasesMaps, queryEntityAliases, firstEntity);
+		List<String> joinStatments = createJoinStatements(relationships, queryEntityAliases, entityAliasesMaps);
 
 		fromClauseElements.add(FROM);
 		fromClauseElements.add(fistEntityName);
@@ -81,15 +81,16 @@ public class JPQLStatementFromClause extends AbstractStatementFromClause {
 
 	}
 
-	private List<String> createJoinStatements(List<Relationship> relationships, Map<String, String> queryEntityAliases) {
+	private List<String> createJoinStatements(List<Relationship> relationships, Map<String, String> queryEntityAliases, Map entityAliasesMaps) {
 
 		List<String> joinStatments = new ArrayList<>();
 		for (Relationship relationship : relationships) {
 
 			JoinRelationshipTypeMapping joinRelationshipTypeMapping = new JoinRelationshipTypeMapping();
 			JoinType joinType = joinRelationshipTypeMapping.getJoinType(relationship.getType());
-			String sourceEntityAlias = queryEntityAliases.get(relationship.getSourceEntity().getUniqueName());
-			String targetEntityAlias = queryEntityAliases.get(relationship.getTargetEntity().getUniqueName());
+
+			String sourceEntityAlias = getAlias(entityAliasesMaps, queryEntityAliases, relationship.getSourceEntity());
+			String targetEntityAlias = getAlias(entityAliasesMaps, queryEntityAliases, relationship.getTargetEntity());
 			StringTokenizer st1 = new StringTokenizer(relationship.getTargetJoinPath(), ".");
 			st1.nextToken();
 			String targetPropertyName = st1.nextToken();
@@ -102,6 +103,17 @@ public class JPQLStatementFromClause extends AbstractStatementFromClause {
 			joinStatments.add(join.toString());
 		}
 		return joinStatments;
+	}
+
+	private String getAlias(Map entityAliasesMaps, Map<String, String> queryEntityAliases, IModelEntity entity) {
+		String alias;
+		alias = queryEntityAliases.get(entity.getUniqueName());
+		if (alias == null) {
+			alias = parentStatement.getNextAlias(entityAliasesMaps);
+
+			queryEntityAliases.put(entity.getUniqueName(), alias);
+		}
+		return alias;
 	}
 
 	protected JPQLStatementFromClause(JPQLStatement statement) {
