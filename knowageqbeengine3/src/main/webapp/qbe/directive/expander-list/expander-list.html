@@ -18,7 +18,9 @@
                     <md-icon md-font-icon="{{entAction.icon}}"></md-icon>
                 </md-button>
                 
-                <i class="fa" ng-class="{'fa-chevron-up':entity.expanded, 'fa-chevron-down':!entity.expanded}"></i>
+                <md-button class="md-icon-button" >
+                    <md-icon md-font-icon="fa" ng-class="{'fa-chevron-up':entity.expanded, 'fa-chevron-down':!entity.expanded}"></md-icon>
+                </md-button>
             </h4>
             <ul ng-show="entity.expanded">
             	<div ng-repeat="field in entity[childrenName]">
