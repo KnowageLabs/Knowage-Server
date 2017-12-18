@@ -73,6 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<form name="exportersForm" ng-submit="exportersForm.$valid && saveOrUpdateExporter()" layout="column">
 					
 						<md-input-container ng-show="showMe" class="firstSelection" >
+						<label>{{translate.load("sbi.catalogues.exporters.engine")}}</label>
 				         <md-select ng-required="true" class="exporters"
 				         	ng-model="selectedExporter.engineId" 
 				         	placeholder={{translate.load("sbi.exporters.select.engine")}}
@@ -95,6 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				 	   </md-input-container>
 				 		 
 				 	   <md-input-container ng-show="showMe">
+				 	   <label>{{translate.load("sbi.catalogues.exporters.exporter")}}</label>
 					 	 <md-select ng-required="true" class="exporters"
 					 	 	ng-model="selectedExporter.domainId" 
 					 	 	placeholder={{translate.load("sbi.exporters.select.domain")}}
