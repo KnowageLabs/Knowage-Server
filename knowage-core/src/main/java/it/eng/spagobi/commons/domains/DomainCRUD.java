@@ -17,18 +17,9 @@
  */
 package it.eng.spagobi.commons.domains;
 
-import it.eng.spago.base.Constants;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.serializer.DomainJSONSerializer;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.sql.SqlUtils;
-
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +36,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.base.Constants;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.serializer.DomainJSONSerializer;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.sql.SqlUtils;
+
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
@@ -58,6 +60,7 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(DomainCRUD.class);
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GET
 	@Path("/listValueDescriptionByType")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -75,6 +78,12 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 		try {
 			domaindao = DAOFactory.getDomainDAO();
 			domains = domaindao.loadListDomainsByType(type);
+			Collections.sort(domains, new Comparator() {
+				@Override
+				public int compare(Object domain, Object otherDomain) {
+					return ((Domain) domain).getValueId().compareTo(((Domain) domain).getValueId());
+				}
+			});
 			if (type.equals("DIALECT_HIB")) {
 				filterDataSourceDomains(domains);
 			}
