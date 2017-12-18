@@ -566,9 +566,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				var crossCol = ngModel.cross.cross.column;
 				var found = false;
 				// if column passed is not among visible ones
-				if(aggregation.categories != null){
-					for(var i=0;i<aggregation.categories.length && !found;i++){
-						var id = aggregation.categories[i].id;
+				if(aggregations.categories != null){
+					for(var i=0;i<aggregations.categories.length && !found;i++){
+						var id = aggregations.categories[i].id;
 						if(id === crossCol){
 							found = true;
 						}
