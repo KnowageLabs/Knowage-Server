@@ -17,6 +17,23 @@
  */
 package it.eng.spagobi.commons.filters;
 
+import java.io.IOException;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
@@ -35,26 +52,6 @@ import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.Enumeration;
-
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.log4j.Logger;
 
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
@@ -149,6 +146,8 @@ public class ProfileFilter implements Filter {
 			}
 		} catch (Exception e) {
 			logger.error("Error while service execution", e);
+			((HttpServletResponse)response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			return;
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after
 			// request processed in each case
@@ -158,22 +157,6 @@ public class ProfileFilter implements Filter {
 
 	private static String getSessionFileName() throws NamingException {
 		return (String) (new InitialContext().lookup("java:/comp/env/fileSessionTest"));
-	}
-
-	private static void saveHttpSession(HttpSession session, String fileSession) throws IOException {
-		FileOutputStream fout = new FileOutputStream(fileSession);
-		ObjectOutputStream oos = new ObjectOutputStream(fout);
-		Enumeration<String> attributeNames = session.getAttributeNames();
-		while (attributeNames.hasMoreElements()) {
-			String attributeName = attributeNames.nextElement();
-			oos.writeObject(attributeName);
-			Object attribute = session.getAttribute(attributeName);
-			if (!(attribute instanceof Serializable)) {
-				continue;
-			}
-			oos.writeObject(attribute);
-		}
-		oos.close();
 	}
 
 	private String getUserIdInWebModeWithoutSSO(HttpServletRequest httpRequest) {
@@ -273,13 +256,16 @@ public class ProfileFilter implements Filter {
 	 * @throws Exception
 	 *             in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
 	 */
-	private static String getUserIdWithSSO(HttpServletRequest request) throws Exception {
+	private String getUserIdWithSSO(HttpServletRequest request){
 		logger.debug("IN");
 		String userId = null;
 		try {
 			SsoServiceInterface userProxy = SsoServiceFactory.createProxyService();
 			userId = userProxy.readUserIdentifier(request);
 			request.getSession().setAttribute(SsoServiceInterface.SILENT_LOGIN, Boolean.TRUE);
+		} catch (Exception e) {
+			logger.error("Authentication failed", e);
+			throw new SilentAuthenticationFailedException();
 		} finally {
 			logger.debug("OUT");
 		}
