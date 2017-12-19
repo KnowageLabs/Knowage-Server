@@ -1,3 +1,4 @@
+<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
 <div  layout="column"  layout-fill class="angularListTemplate kn-list-tree"> 
 		<md-input-container ng-show="showSearchBar==true" md-no-float class="searchBarList">
