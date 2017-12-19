@@ -1415,7 +1415,7 @@ public class DatasetManagementAPI {
 
 	// FIXME
 	public List<Filter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections,
-			List<Filter> filters, List<SimpleFilter> likeFilters, List<Projection> groups, int offset, int fetchSize, int maxRowCount) {
+			List<Filter> filters, List<SimpleFilter> likeFilters, List<Projection> groups) {
 
 		logger.debug("IN");
 
@@ -1459,8 +1459,7 @@ public class DatasetManagementAPI {
 
 			Filter where = getWhereFilter(noMinMaxFilters, likeFilters);
 
-			IDataStore dataStore = getDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, null, null, null, offset, fetchSize,
-					maxRowCount);
+			IDataStore dataStore = getDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, null, null, null, -1, -1, -1);
 			if (dataStore == null) {
 				String errorMessage = "Error in getting min and max filters values";
 				logger.error(errorMessage);

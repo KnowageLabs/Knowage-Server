@@ -202,7 +202,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 			Monitor timingMinMax = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:calculateMinMax");
 			filters = getDatasetManagementAPI().calculateMinMaxFilters(dataSet, isNearRealtime, DataSetUtilities.getParametersMap(parameters), projections,
-					filters, likeFilters, groups, offset, fetchSize, maxRowCount);
+					filters, likeFilters, groups);
 			timingMinMax.stop();
 
 			Filter where = getDatasetManagementAPI().getWhereFilter(filters, likeFilters);
