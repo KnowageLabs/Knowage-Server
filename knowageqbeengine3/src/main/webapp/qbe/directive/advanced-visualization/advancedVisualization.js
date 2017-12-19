@@ -177,7 +177,7 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 	            console.log(arr[i]);
 	        }
 	    }
-	    nodeParObj.childNodes = generateFiltersExpression(arr);
+	    nodeParObj.childNodes.push(generateFiltersExpression(arr));
 
 	    return nodeParObj;
 	}
