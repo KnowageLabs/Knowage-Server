@@ -381,7 +381,10 @@ function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, s
 					name: filters[i].filterId,
 					connector: filters[i].booleanConnector,
 					color: filters[i].color,
-					entity: filters[i].entity
+					entity: filters[i].entity,
+					leftValue: filters[i].leftOperandAlias,
+					operator: filters[i].operator,
+					rightValue: filters[i].rightOperandDescription
 			};
 			advancedFilters.push(advancedFilter);
 		}
