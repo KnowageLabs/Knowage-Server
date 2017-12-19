@@ -56,18 +56,18 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				var newCategArray = [];
 				if(ngModel.content.chartTemplate && ngModel.content.chartTemplate.CHART){
 					var category = ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
-					
+
 					if(category){
 						if(Array.isArray(category)){
-							
+
 							for (var j = 0; j < category.length; j++) {
 								if(category[j].column == col.name){
 									obj["orderType"] = category[j].orderType;
 									obj["orderColumn"] = category[j].orderColumn;
 									newCategArray.push(obj)
 								}
-								
-								
+
+
 							}
 						}
 						else {
@@ -84,7 +84,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 						}
 					}
 					else {
-						categories.push(obj)						
+						categories.push(obj)
 					}
 				}else{
 					//it is measure
@@ -225,8 +225,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		var someDelete=false;
 
 		angular.forEach(newAggr,function(newItem){
-			//remove the associations item of respose
-			delete newItem.associations;
 			if(updateFilters){
 				var dl=ws.removeDatasetFromFilters(newItem.datasets);
 				if(dl){
