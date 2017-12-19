@@ -51,7 +51,7 @@ angular.module('qbe_custom_table', ['ngDraggable'])
         return ordered;
     };
 });
-function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiModule_config, $mdPanel, query_service, $q){
+function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiModule_config, $mdPanel, query_service, $q, sbiModule_action){
 
 	$scope.smartPreview = true;
 
@@ -299,7 +299,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"temporalOperand",
 	                            	hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-select ng-show="row.temporal" ng-model=row.temporalOperand class="noMargin" ><md-option ng-repeat="col in scopeFunctions.temporalFunctions" value="{{col}}">{{col}}</md-option></md-select>';
+	                            		return '<md-select ng-show="row.iconCls==measure" ng-model=row.temporalOperand class="noMargin" ><md-option ng-repeat="col in scopeFunctions.temporalFunctions" value="{{col}}">{{col}}</md-option></md-select>';
 	                            	}
 	                        	},
 	                        	{
@@ -414,6 +414,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
             );
         }
 	};
+
+	$scope.showSQLQuery = function () {
+		$rootScope.$broadcast('showSQLQuery', true);
+	}
 
 }
 })();

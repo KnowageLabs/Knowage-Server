@@ -7,6 +7,9 @@
 	   			</ng-transclude>
 	   			
 	   			<span flex></span>
+	   			<md-button class="md-icon-button" ng-click="showSQLQuery()">
+					<md-icon md-font-icon="fa fa-database"></md-icon>
+				</md-button>
 	   			<md-checkbox ng-show="ngModel.length>0"  ng-model="isChecked" ng-click="distinctSelected()" class="distinctCheckbox" aria-label="distinct">{{translate.load("kn.qbe.custom.table.distinct")}}</md-checkbox>
 	   			<md-button class="md-icon-button" ng-click="openDialogForParams(ngModel)">
 					<md-icon md-font-icon="fa fa-product-hunt"></md-icon>
@@ -83,7 +86,7 @@
 	            {{translate.load("kn.qbe.general.field")}}
 	          </md-checkbox>
 	       		</md-menu-item>
-	       		<md-menu-item ng-show="field.temporal">
+	       		<md-menu-item ng-show="field.iconCls=='measure'">
          			<md-menu>		
 	         			<md-button ng-mouseenter="openMenu($mdOpenMenu, $event)">
 							<md-icon class="fa fa-puzzle-piece" style="display:inline"></md-icon>
@@ -138,7 +141,7 @@
 	          		</md-button>
 	       		</md-menu-item>
 	       		
-	       		<md-menu-item>
+	       		<md-menu-item ng-show="field.iconCls=='measure'">
          			<md-menu>		
 	         			<md-button ng-mouseenter="openMenu($mdOpenMenu, $event)">
 							<md-icon class="fa fa-calculator" style="display:inline"></md-icon>
