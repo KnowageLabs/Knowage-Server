@@ -89,7 +89,20 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	}
 
 	this.getWidgets=function(sheetIndex){
-		return cockpitModule_template.sheets[sheetIndex].widgets;
+		var indexProperty = wi.getCokpitIndexFromProperty(sheetIndex);
+		return cockpitModule_template.sheets[indexProperty].widgets;
+	};
+
+	this.isWidgetInSheet=function(widgetId, sheetIndex){
+		var indexProperty = wi.getCokpitIndexFromProperty(sheetIndex);
+		var widgets = cockpitModule_template.sheets[indexProperty].widgets;
+		for(var i=0; i<widgets.length; i++){
+			var widget = widgets[i];
+			if(widgetId == widget.id){
+				return true;
+			}
+		}
+		return false;
 	};
 
 	this.addWidget=function(sheetIndex,item){
@@ -173,20 +186,24 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		try{
 			var width = angular.element(element)[0].parentElement.offsetWidth;
 			var height = angular.element(element)[0].parentElement.offsetHeight;
+
+			if(this.isWidgetInSheet(config.id, cockpitModule_properties.CURRENT_SHEET)){
 				if(config.dataset!=undefined && config.dataset.dsId!=undefined  && cockpitModule_widgetSelection.haveSelection() && cockpitModule_properties.all_widget_initialized!=true){
 					cockpitModule_datasetServices.loadDatasetRecordsById(config.dataset.dsId,options.page,options.itemPerPage,options.columnOrdering, options.reverseOrdering, config)
 					.then(function(){
-					$rootScope.$broadcast("WIDGET_INITIALIZED");
+						$rootScope.$broadcast("WIDGET_INITIALIZED");
 					},function(){});
 				}else{
 					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"INIT",{element:element,width:width,height:height});
 					$rootScope.$broadcast("WIDGET_INITIALIZED");
 				}
-
+			}else{
+				$rootScope.$broadcast("WIDGET_INITIALIZED");
+			}
 		}catch(err){
 			console.error("The init function of "+config.type+" widget is not configured",err)
-
 		}
+
 		$timeout(function() {
 			element.addClass('fadeIn');
 			element.removeClass('fadeOut');
@@ -267,7 +284,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	};
 	this.createCompatibleCharts = function () {
 		var minMaxCategoriesSeries = {"categ":{"min":{},"max":{}},"serie":{"min":{},"max":{}}};
-		
+
 		minMaxCategoriesSeries.categ.min.parallel = 1;
 		minMaxCategoriesSeries.categ.min.sunburst = 2;
 		minMaxCategoriesSeries.categ.min.scatter = 1;
@@ -282,7 +299,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		minMaxCategoriesSeries.categ.max.radar = 1;
 		minMaxCategoriesSeries.categ.min.bar = 1;
 		minMaxCategoriesSeries.categ.min.pie = 1;
-		
+
 		minMaxCategoriesSeries.serie.min.parallel = 2;
 		minMaxCategoriesSeries.serie.min.sunburst = 1;
 		minMaxCategoriesSeries.serie.min.scatter = 1;
@@ -296,10 +313,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		minMaxCategoriesSeries.serie.min.radar = 1;
 		minMaxCategoriesSeries.serie.min.bar = 1;
 		minMaxCategoriesSeries.serie.min.pie = 1;
-		
+
 		return minMaxCategoriesSeries;
 	};
-	
+
 	this.checkCategories = function (template){
 			var categories = []
 			categoriesExist = template.CHART.VALUES.CATEGORY ? true : false;
@@ -323,13 +340,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 							var groupBySplitArray = categoryTag.groupby.split(",");
 							for (i=0; i<groupBySplitArray.length; i++) {
 								if(groupBySplitArray[i].startsWith(" ")) groupBySplitArray[i] = groupBySplitArray[i].replace(" ","")
-								
+
 								var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", stacked:"", stackedType:""};
 								obj.column = groupBySplitArray[i];
 								var groupByNameSplitArray = categoryTag.groupbyNames.split(",");
 								for (var j = 0; j < groupByNameSplitArray.length; j++) {
 									if(groupByNameSplitArray[i].startsWith(" ")) groupByNameSplitArray[i] = groupByNameSplitArray[i].replace(" ","")
-									
+
 									if(j==i){
 										obj.name = groupByNameSplitArray[j];
 									}
@@ -381,27 +398,27 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					}
 				}
 			}
-		
+
 			return categories;
-	
+
 	}
 	this.compatibleCategories = function (chartType, categories, maxcateg){
 		var maxcategory = maxcateg ? maxcateg : categories.length;
 		var categ = {};
-		if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" || 
-				chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "PARALLEL" || 
+		if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" ||
+				chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "PARALLEL" ||
 					chartType.toUpperCase() == "HEATMAP" || chartType.toUpperCase() == "CHORD") {
 			if(categories.length>maxcategory) categories.length = maxcategory;
 			return categories;
 		} else if (chartType.toUpperCase() != "GAUGE"){
 			categ = {
-							column:"", 
-							groupby:"", 
-							groupbyNames:"", 
-							name:"", 
-							orderColumn:"", 
-							orderType:"", 
-							stacked:"", 
+							column:"",
+							groupby:"",
+							groupbyNames:"",
+							name:"",
+							orderColumn:"",
+							orderType:"",
+							stacked:"",
 							stackedType:""
 					};
 			for (var i = 0; i < maxcategory; i++) {
@@ -410,17 +427,17 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					categ.name = categories[i].name;
 					if(categ.orderColumn==""){
 						categ.orderColumn = categories[i].orderColumn;
-					} 
-					
+					}
+
 					if(categ.orderType==""){
 						categ.orderType = categories[i].orderType;
-					} 
+					}
 					if(categ.stacked==""){
 						categ.stacked = categories[i].stacked;
-					} 
+					}
 					if(categ.stackedType==""){
 						categ.stackedType = categories[i].stackedType;
-					} 
+					}
 				} else {
 					if(categ.groupby==""){
 						categ.groupby = categories[i].column;
@@ -435,7 +452,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 						if(categories[i].name!="") {
 							categ.groupbyNames = categ.groupbyNames + ", " + categories[i].name;
 						}
-					}					
+					}
 				}
 			}
 			return categ

@@ -21,17 +21,17 @@ var baseScriptPath  = scripts[scripts.length - 1].src;
 baseScriptPath =baseScriptPath .substring(0, baseScriptPath .lastIndexOf('/'));
 
 (function() {
-	
+
 var cockpitApp= angular.module("cockpitModule",['ngMaterial','cometd','sbiModule','gridster','file_upload','ngWYSIWYG','angular_table','cockpit_angular_table','color.picker','dndLists','chartRendererModule','accessible_angular_table','cockpitTable']);
 cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
- 
 
 
 
- 
+
+
 
 
 cockpitApp.controller("cockpitMasterController",['$scope','cockpitModule_widgetServices','cockpitModule_template','cockpitModule_datasetServices','cockpitModule_documentServices','cockpitModule_crossServices','cockpitModule_nearRealtimeServices','cockpitModule_realtimeServices','cockpitModule_properties','cockpitModule_templateServices','$rootScope','$q','sbiModule_device','accessibility_preferences',cockpitMasterControllerFunction]);
@@ -40,10 +40,37 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	$scope.imageBackgroundUrl=cockpitModule_template.configuration.style.imageBackgroundUrl;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.sbiModule_device=sbiModule_device;
-	//load the dataset list
 
-	
+	$scope.initializedSheets = [0]; // first sheet is always loaded
+
+	var initSheet = $scope.$watch('cockpitModule_properties.CURRENT_SHEET',function(newValue,oldValue){
+        if(newValue!=undefined && $scope.initializedSheets.indexOf(newValue) == -1){
+
+        	var currentSheet; // get sheet checking proper index
+        	for(var i=0; i < cockpitModule_template.sheets.length; i++){
+        		if(cockpitModule_template.sheets[i].index == newValue){
+        			currentSheet = cockpitModule_template.sheets[i];
+        			break;
+        		}
+        	}
+
+        	for(var i=0; i < currentSheet.widgets.length; i++){
+        		var widgetId = currentSheet.widgets[i].id;
+            	var tempElement = angular.element(document.querySelector('#w' + widgetId));
+            	$rootScope.$broadcast("WIDGET_EVENT" + widgetId, "INIT", {element:tempElement});
+        	}
+
+        	$scope.initializedSheets.push(newValue);
+        }
+
+        if($scope.initializedSheets.length == cockpitModule_template.sheets.length){
+        	initSheet();
+        }
+    })
+
+	//load the dataset list
 	$scope.datasetLoaded=false;
+
 	cockpitModule_datasetServices.loadDatasetsFromTemplate().then(function(){
 		$scope.datasetLoaded=true;
 		var dsNotInCache = cockpitModule_templateServices.getDatasetAssociatedNotUsedByWidget();
@@ -56,7 +83,7 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 		}else{
 			$rootScope.$broadcast("WIDGET_INITIALIZED");
 		}
-		
+
 		if(!cockpitModule_properties.EDIT_MODE){
 			cockpitModule_nearRealtimeServices.init();
 			cockpitModule_realtimeServices.init();
@@ -72,7 +99,7 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 				console.error("error when load cross list")
 			});
 	}
-	
+
 	$scope.exportCsv=function(deferred){
 		var finalCsvDataObj = {};
 		var csvDataCount = 0;
