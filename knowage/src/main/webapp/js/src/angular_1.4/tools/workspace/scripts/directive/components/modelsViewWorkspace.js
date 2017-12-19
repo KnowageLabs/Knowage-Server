@@ -82,20 +82,24 @@ function modelsController($scope, sbiModule_restServices, sbiModule_translate, $
 		});
 	}
 
+
 	$scope.getFederatedDatasets();
 
+
 	$scope.loadFederations = function(){
-		sbiModule_restServices.promiseGet("federateddataset", "")
-		.then(function(response) {
-			angular.copy(response.data,$scope.federationDefinitions);
-			angular.copy($scope.federationDefinitions,$scope.federationDefinitionsInitial);
-			console.info("[LOAD END]: Loading of Federation definitions is finished.");
-		},function(response){
+		if(datasetParameters.CAN_USE_FEDERATED_DATASET_AS_FINAL_USER==="true"){
+			sbiModule_restServices.promiseGet("federateddataset", "")
+			.then(function(response) {
+				angular.copy(response.data,$scope.federationDefinitions);
+				angular.copy($scope.federationDefinitions,$scope.federationDefinitionsInitial);
+				console.info("[LOAD END]: Loading of Federation definitions is finished.");
+			},function(response){
 
-			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.federations.load.error'), $scope.toasterConfig);
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(response.data, sbiModule_translate.load('sbi.workspace.federations.load.error'), $scope.toasterConfig);
 
-		});
+			});
+		}
 	}
 
 	//TODO move business models to separate controller
