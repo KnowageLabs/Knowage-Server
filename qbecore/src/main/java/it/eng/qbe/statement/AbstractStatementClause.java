@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -58,8 +58,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 
 	protected IStatement parentStatement;
 
-	public String parseInLinecalculatedField(InLineCalculatedSelectField cf, String slots, Query query,
-			Map entityAliasesMaps) {
+	public String parseInLinecalculatedField(InLineCalculatedSelectField cf, String slots, Query query, Map entityAliasesMaps) {
 		String newExpression;
 
 		logger.debug("IN");
@@ -68,8 +67,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 
 		try {
 			Assert.assertNotNull(parentStatement,
-					"Class member [parentStatement] cannot be null in orser to properly parse inline calculated field expression ["
-							+ cf.getExpression() + "]");
+					"Class member [parentStatement] cannot be null in orser to properly parse inline calculated field expression [" + cf.getExpression() + "]");
 			Assert.assertNotNull(cf.getExpression(), "Input parameter [espression] cannot be null");
 			Assert.assertNotNull(query, "Input parameter [query] cannot be null");
 			Assert.assertNotNull(entityAliasesMaps, "Input parameter [entityAliasesMaps] cannot be null");
@@ -80,8 +78,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 			newExpression = replaceSlotDefinitions(newExpression, cf.getType(), slots, query, entityAliasesMaps);
 			logger.debug("Expression [" + cf.getExpression() + "] paresed succesfully into [" + newExpression + "]");
 		} catch (Throwable t) {
-			throw new RuntimeException(
-					"An unpredicted error occurred while parsing expression [" + cf.getExpression() + "]", t);
+			throw new RuntimeException("An unpredicted error occurred while parsing expression [" + cf.getExpression() + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -89,8 +86,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 		return newExpression;
 	}
 
-	private String replaceFields(InLineCalculatedSelectField cf, boolean isTransientExpression, Query query,
-			Map entityAliasesMaps) {
+	private String replaceFields(InLineCalculatedSelectField cf, boolean isTransientExpression, Query query, Map entityAliasesMaps) {
 		String newExpression;
 		IModelEntity rootEntity;
 		IModelField modelField;
@@ -124,13 +120,11 @@ public abstract class AbstractStatementClause implements IStatementClause {
 
 				if (modelField != null) {
 					if (cf.getType().equals("undefined")) {
-						if (modelField.getType().toLowerCase().contains("timestamp")
-								|| modelField.getType().toLowerCase().contains("date")) {
+						if (modelField.getType().toLowerCase().contains("timestamp") || modelField.getType().toLowerCase().contains("date")) {
 							cf.setType("DATE");
 						}
 					}
-					logger.debug("Expression token [" + token + "] references the model field whose unique name is ["
-							+ modelField.getUniqueName() + "]");
+					logger.debug("Expression token [" + token + "] references the model field whose unique name is [" + modelField.getUniqueName() + "]");
 
 					fieldName = parentStatement.getFieldAliasNoRoles(modelField, entityAliases, entityAliasesMaps);
 
@@ -165,8 +159,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 				cf.setType("STRING");
 			}
 		} catch (Throwable t) {
-			throw new RuntimeException(
-					"An unpredicted error occurred while parsing expression [" + cf.getExpression() + "]", t);
+			throw new RuntimeException("An unpredicted error occurred while parsing expression [" + cf.getExpression() + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -181,8 +174,13 @@ public abstract class AbstractStatementClause implements IStatementClause {
 
 		expression = expression.trim();
 
-		if (expression.startsWith("(")) {
-			expression = expression.substring(expression.indexOf("(") + 1, expression.lastIndexOf(")"));
+		// if (expression.startsWith("(")) {
+		// expression = expression.substring(expression.indexOf("(") + 1, expression.lastIndexOf(")"));
+		// expression = expression.trim();
+		// }
+
+		while (expression.startsWith("(") && expression.endsWith(")")) {
+			expression = expression.substring(1, expression.lastIndexOf(")"));
 			expression = expression.trim();
 		}
 
@@ -328,8 +326,8 @@ public abstract class AbstractStatementClause implements IStatementClause {
 			if (defaultSlot != null) {
 				newExpr += " ELSE '" + defaultSlot.getName() + "'";
 			} else {
-				it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) parentStatement
-						.getDataSource().getConfiguration().loadDataSourceProperties().get("datasource");
+				it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) parentStatement.getDataSource()
+						.getConfiguration().loadDataSourceProperties().get("datasource");
 				String dialect = connection.getHibDialectClass();
 				newExpr += " ELSE (" + SqlUtils.fromObjectToString(expr, dialect) + ")";
 			}
@@ -343,9 +341,8 @@ public abstract class AbstractStatementClause implements IStatementClause {
 	}
 
 	/**
-	 * Parse the date: get the user locale and format the timestamp in the db
-	 * format
-	 * 
+	 * Parse the date: get the user locale and format the timestamp in the db format
+	 *
 	 * @param date
 	 *            the localized date
 	 * @return the date in the db format
@@ -357,8 +354,8 @@ public abstract class AbstractStatementClause implements IStatementClause {
 
 		String toReturn = date;
 
-		it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) parentStatement
-				.getDataSource().getConfiguration().loadDataSourceProperties().get("datasource");
+		it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) parentStatement.getDataSource()
+				.getConfiguration().loadDataSourceProperties().get("datasource");
 		String dialect = connection.getHibDialectClass();
 
 		if (dialect != null) {
@@ -413,11 +410,9 @@ public abstract class AbstractStatementClause implements IStatementClause {
 				}
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
 				/*
-				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS
-				 * DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + "
-				 * (Date,Format 'dd/mm/yyyy')) As Date) because Hibernate does
-				 * not recognize (and validate) those SQL functions. Therefore
-				 * we must use a predefined date format (yyyy-MM-dd).
+				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy'))
+				 * As Date) because Hibernate does not recognize (and validate) those SQL functions. Therefore we must use a predefined date format
+				 * (yyyy-MM-dd).
 				 */
 				try {
 					DateFormat dateFormat;
@@ -441,7 +436,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 
 	/**
 	 * Parse the date: get the user locale and format the date in the db format
-	 * 
+	 *
 	 * @param date
 	 *            the localized date
 	 * @return the date in the db format
@@ -453,8 +448,8 @@ public abstract class AbstractStatementClause implements IStatementClause {
 
 		String toReturn = date;
 
-		it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) parentStatement
-				.getDataSource().getConfiguration().loadDataSourceProperties().get("datasource");
+		it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) parentStatement.getDataSource()
+				.getConfiguration().loadDataSourceProperties().get("datasource");
 		String dialect = connection.getHibDialectClass();
 
 		if (dialect != null) {
@@ -509,11 +504,9 @@ public abstract class AbstractStatementClause implements IStatementClause {
 				}
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
 				/*
-				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS
-				 * DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + "
-				 * (Date,Format 'dd/mm/yyyy')) As Date) because Hibernate does
-				 * not recognize (and validate) those SQL functions. Therefore
-				 * we must use a predefined date format (yyyy-MM-dd).
+				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy'))
+				 * As Date) because Hibernate does not recognize (and validate) those SQL functions. Therefore we must use a predefined date format
+				 * (yyyy-MM-dd).
 				 */
 				try {
 					DateFormat dateFormat;
