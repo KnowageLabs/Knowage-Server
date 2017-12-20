@@ -141,7 +141,7 @@ function modelsController($scope, sbiModule_restServices, sbiModule_translate, $
 	}
 
     queryParamRolesIds = function(roleIds){
-		   var q="?";
+		   var q="";
 		   for(var i=0; i<roleIds.length;i++){
 			   q+="id="+roleIds[i]+"&";
 		   }
@@ -149,7 +149,7 @@ function modelsController($scope, sbiModule_restServices, sbiModule_translate, $
 	};
 
 	 queryParamRolesNames = function(){
-		   var q="?";
+		   var q="";
 		   for(var i=0; i<sbiModule_user.roles.length;i++){
 			   q+="name="+sbiModule_user.roles[i]+"&";
 		   }

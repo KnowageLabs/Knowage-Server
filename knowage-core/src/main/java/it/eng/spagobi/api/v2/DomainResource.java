@@ -81,7 +81,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@Path("/{id}")
+	@Path("/byid/{id}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Domain getSingleDomain(@PathParam("id") Integer id) {
 		logger.debug("IN");
