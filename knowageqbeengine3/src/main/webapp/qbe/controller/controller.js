@@ -609,9 +609,11 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
             preserveScope: true
         })
         .then(function() {
-        	//TODO add here the calculated field saving
+        	//TODO add here the calculated field saving having it inside $scope.output.
         },
-    		function() {});
+    		function() {
+        	$scope.output={};
+        });
     };
 
 

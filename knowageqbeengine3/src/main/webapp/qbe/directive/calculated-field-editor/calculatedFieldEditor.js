@@ -30,7 +30,8 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
         scope: {
             entities: "=",
             functions: "=",
-            selectedEntity: "=?"
+            selectedEntity: "=?",
+            calculatedField: "=?"
         },
         templateUrl: currentScriptPath +'calculatedFieldEditor.html',
         replace: true,
@@ -130,6 +131,10 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
             $scope.changeSelectedEntity = function() {
                 $scope.formula.text = "";
             }
+
+            $scope.$watch('formula.text',function(newValue, oldValue){
+            	angular.copy(newValue,$scope.calculatedField);
+            })
 
         }
     };
