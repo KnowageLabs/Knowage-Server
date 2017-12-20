@@ -633,7 +633,7 @@ sbiM.service('sbiModule_i18n', function(sbiModule_config, sbiModule_restServices
 	// load translation I18n map
 	//alert('country = '+sbiModule_config.curr_country+ ' --- '+' language = '+sbiModule_config.curr_language);
 	self.loadI18nMap = function(locale){			 
-		sbiModule_restServices.promiseGet("2.0/i18nMessages?currCountry="+sbiModule_config.curr_country+"&currLanguage="+sbiModule_config.curr_language+"","").then(
+		sbiModule_restServices.promiseGet("2.0/i18nMessages","?currCountry="+sbiModule_config.curr_country+"&currLanguage="+sbiModule_config.curr_language).then(
 				function(response){
 				// initialize the map
 					self.i18nMap = response.data;
