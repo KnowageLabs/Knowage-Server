@@ -375,6 +375,15 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 				queryBuilder.append(",");
 				append(projections.get(i), true);
 			}
+
+			List<Projection> groups = query.getGroups();
+			List<Sorting> sortings = query.getSortings();
+			if (groups != null && !groups.isEmpty() && sortings != null && !sortings.isEmpty()) {
+				for (Sorting sorting : sortings) {
+					queryBuilder.append(",");
+					append(sorting.getProjection(), false);
+				}
+			}
 		}
 	}
 
@@ -417,6 +426,14 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		for (int i = 1; i < groups.size(); i++) {
 			queryBuilder.append(",");
 			append(groups.get(i), false);
+		}
+
+		List<Sorting> sortings = query.getSortings();
+		if (sortings != null && !sortings.isEmpty()) {
+			for (Sorting sorting : sortings) {
+				queryBuilder.append(",");
+				append(sorting.getProjection(), false);
+			}
 		}
 	}
 
