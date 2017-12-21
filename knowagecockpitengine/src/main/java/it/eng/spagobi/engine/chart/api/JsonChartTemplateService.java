@@ -40,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.engine.cockpit.api.CockpitExecutionClient;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -132,17 +133,13 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@SuppressWarnings("rawtypes")
 	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getJSONChartTemplateForCockpit(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("exportWebApp") String exportWebApp,
-			@FormParam("datasetLabel") String datasetLabel, @FormParam("jsonData") String jsonData, @Context HttpServletResponse servletResponse) {
+			@FormParam("jsonData") String jsonData, @Context HttpServletResponse servletResponse) {
 
 		IDataSet dataSet = null;
 		Map analyticalDrivers = new HashMap<>();
 		Map profileAttributes = new HashMap<>();
 		try {
 
-			if (dataSet == null && datasetLabel != null) {
-				IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
-				dataSet = dataSetDao.loadDataSetByLabel(datasetLabel);
-			}
 			/*
 			 * https://production.eng.it/jira/browse/KNOWAGE-581 if the dataset is null and we have datasetlabel valorized, probabily we are calling this REST
 			 * service from the cockpit. So, we need to get the dataset from his label
@@ -309,6 +306,45 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			dataSet = dataSetDao.loadDataSetById(Integer.parseInt(datasetId));
 		}
 		return String.valueOf(dataSet.isRealtime());
+	}
+
+	@POST
+	@Path("/{label}/getDataAndConf")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@SuppressWarnings("rawtypes")
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
+	public String getDataAndConf(@PathParam("label") String label, String body, @Context HttpServletResponse servletResponse) {
+
+		String jsonTemplate = null;
+		String exportWebApp = null;
+		String jsonData = null;
+		String aggregations = null;
+		String chartConf = null;
+		JSONObject responseObject = new JSONObject();
+		CockpitExecutionClient cockpitExecutionClient;
+		String userId = (String) getUserProfile().getUserId();
+		Map<String, Object> queryParams = null;
+
+		try {
+			if (StringUtilities.isNotEmpty(body)) {
+				JSONObject jsonBody = new JSONObject(body);
+				JSONObject jsonChartTemp = jsonBody.optJSONObject("chartTemp");
+				jsonTemplate = jsonChartTemp != null ? jsonChartTemp.toString() : null;
+				aggregations = jsonBody.getString("aggregations");
+				JSONObject jsonexportWebApp = jsonBody.optJSONObject("exportWebApp");
+				exportWebApp = jsonexportWebApp != null ? jsonexportWebApp.toString() : null;
+			}
+			cockpitExecutionClient = new CockpitExecutionClient();
+			jsonData = cockpitExecutionClient.gatData(aggregations, label, userId, queryParams);
+			responseObject.put("jsonData", jsonData);
+			chartConf = getJSONChartTemplateForCockpit(jsonTemplate, exportWebApp, jsonData, servletResponse);
+			responseObject.put("chartConf", chartConf);
+			return responseObject.toString();
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: JsonChartTemplateService.getDataAndConf", t);
+		}
 	}
 
 }

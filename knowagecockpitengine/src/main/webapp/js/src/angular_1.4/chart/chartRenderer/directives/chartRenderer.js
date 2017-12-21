@@ -67,24 +67,25 @@ angular.module('chartRendererModule')
 					}
 				}
 					
-				scope.loadChart = function(chartTemplate,datesetLabel,jsonData){
+				scope.loadChart = function(chartTemplate,datesetLabel,jsonData,isRealtime,nature,dataAndChartConf){
 						if(scope.widgetData){
-							jsonChartTemplate.readChartTemplateForCockpit(chartTemplate,false,datesetLabel,jsonData)
-							.then(function(data){
-								
-								scope.chartConf = eval("(" + data + ")");
+							if(isRealtime && nature){
+								jsonChartTemplate.readChartTemplateForCockpit(chartTemplate,false,jsonData)
+								.then(function(data){
+									scope.chartConf = eval("(" + data + ")");
+									scope.renderChart(scope.chartConf);
+								})
+							}
+							else {
+								scope.chartConf = eval("(" + dataAndChartConf.chartConf + ")");
+								scope.renderChart(scope.chartConf);
+							}											
 							
-								scope.renderChart(scope.chartConf);											
-								
-							});
 						}else{
 							jsonChartTemplate.readChartTemplate(chartTemplate,false,datesetLabel,jsonData)
 							.then(function(data){
-								
 								scope.chartConf = eval("(" + data + ")");
-							
-								scope.renderChart(scope.chartConf);											
-								
+								scope.renderChart(scope.chartConf);
 							});
 						}
 				}
@@ -98,21 +99,22 @@ angular.module('chartRendererModule')
 
 			scope.$on('refresh',function(event,data,isRealtime){		
 				if(scope.updateble){
-					if(scope.chartInitializer != undefined && scope.chartInitializer.updateData){			
-						scope.updateChart(scope.widgetData,data);			
+					var dataForSending = isRealtime ? data : eval("(" + data + ")");
+					if(scope.chartInitializer != undefined && scope.chartInitializer.updateData){
+						scope.updateChart(scope.widgetData,dataForSending);			
 					}else{
-						var transformedData = data;
+						var transformedData = dataForSending;
 						if(isRealtime){
 							if(scope.chartInitializer.transformeData){
-								transformedData = scope.chartInitializer.transformeData(scope.widgetData,data);
+								transformedData = scope.chartInitializer.transformeData(scope.widgetData,dataForSending);
 							}							
 						}
-						scope.loadChart(scope.chartTemplate,scope.datasetLabel,transformedData);
+						scope.loadChart(scope.chartTemplate,scope.datasetLabel,transformedData,isRealtime, true);
 					}
 				}
 			})
 			
-			scope.$on('init',function(event,data, isRealtime,changedChartType){
+			scope.$on('init',function(event,data, isRealtime,changedChartType,chartConf){
 				
 				var lib = getChartExecutionLib(scope.chartTemplate);
 				if(lib){
@@ -122,7 +124,7 @@ angular.module('chartRendererModule')
 					if(changedChartType){
 						template = ChartUpdateService.getTemplate(template);
 					}
-					scope.loadChart(template ,scope.datasetLabel,data);
+					scope.loadChart(template,scope.datasetLabel,data,isRealtime,false,chartConf);
 					
 				}else{
 					element[0].innerHTML = "no library implementation";

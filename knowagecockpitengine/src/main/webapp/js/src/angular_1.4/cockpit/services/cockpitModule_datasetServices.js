@@ -707,30 +707,56 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		bodyString = bodyString + ",selections:" + JSON.stringify(filtersToSendWithoutParams) + "}";
 
 		params += "&widgetName=" + encodeURIComponent(ngModel.content.name);
+		if(ngModel.content.wtype=="chart"){
+			var body = {"aggregations":bodyString, "chartTemp":ngModel.content.chartTemplate, "exportWebData":false}
+			sbiModule_restServices.promisePost("1.0/chart/jsonChartTemplate", encodeURIComponent(dataset.label) + "/getDataAndConf" + params, body)
+			.then(function(response){
+				if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
+					cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
+				}
+				deferred.resolve(response.data);
+			},function(response){
+				var regex = /(.*)1.0\/chart\/jsonChartTemplate\/(.*)\/getDataAndConf(.*)widgetName=(.*)/g;
+				var array = regex.exec(response.config.url);
+				var datasetLabel = array[2];
+				var widgetName = decodeURIComponent(array[4]);
+				var title = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.widget")
+						.replace("{0}", "<b>" + widgetName + "</b>");
+				var text = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoloaddatafromdataset")
+						.replace("{0}", "<b>" + datasetLabel + "</b>")
+				text += "<br>";
+				text += sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.checkdatasetandwidgetconfig");
+				sbiModule_restServices.errorHandler(text, title);
+				deferred.reject('Error');
+			})
 
-		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(dataset.label) + "/data" + params, bodyString)
-		.then(function(response){
-			if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
-				cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
-			}
-			deferred.resolve(response.data);
-		},function(response){
-			var regex = /(.*)2.0\/datasets\/(.*)\/data(.*)widgetName=(.*)/g;
-			var array = regex.exec(response.config.url);
-			var datasetLabel = array[2];
-			var widgetName = decodeURIComponent(array[4]);
-			var title = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.widget")
-					.replace("{0}", "<b>" + widgetName + "</b>");
-			var text = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoloaddatafromdataset")
-					.replace("{0}", "<b>" + datasetLabel + "</b>")
-			text += "<br>";
-			text += sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.checkdatasetandwidgetconfig");
-			sbiModule_restServices.errorHandler(text, title);
-			deferred.reject('Error');
-		})
+			return deferred.promise;
+		} else {
+			sbiModule_restServices.restToRootProject();
+			sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(dataset.label) + "/data" + params, bodyString)
+			.then(function(response){
+				if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
+					cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
+				}
+				deferred.resolve(response.data);
+			},function(response){
+				var regex = /(.*)2.0\/datasets\/(.*)\/data(.*)widgetName=(.*)/g;
+				var array = regex.exec(response.config.url);
+				var datasetLabel = array[2];
+				var widgetName = decodeURIComponent(array[4]);
+				var title = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.widget")
+						.replace("{0}", "<b>" + widgetName + "</b>");
+				var text = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoloaddatafromdataset")
+						.replace("{0}", "<b>" + datasetLabel + "</b>")
+				text += "<br>";
+				text += sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.checkdatasetandwidgetconfig");
+				sbiModule_restServices.errorHandler(text, title);
+				deferred.reject('Error');
+			})
 
-		return deferred.promise;
+			return deferred.promise;
+		}
+
 
 	}
 

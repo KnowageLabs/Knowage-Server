@@ -34,23 +34,20 @@ angular.module('JsonChartTemplateServiceModule')
 	}
 	return{
 		
-		readChartTemplateForCockpit:function(jsonTemplate,exportWebData,datasetLabel,jsonData){
+		readChartTemplateForCockpit:function(jsonTemplate,exportWebData,jsonData){
 			
 			var params = {};
 			params.jsonTemplate = jsonTemplate;
 			params.exportWebData = exportWebData;
-			params.datasetLabel = datasetLabel;
 			params.jsonData = jsonData;
-			
 			
 			if(jsonTemplate && jsonTemplate.CHART){
 				jsonTemplate.CHART.outcomingEventsEnabled = true;
 			}
 			
-			 var deferred = $q.defer();
+			var deferred = $q.defer();
 			sbiModule_restServices
     		.promisePost('1.0/chart/jsonChartTemplate/readChartTemplateForCockpit', '',$httpParamSerializer(params),config)
-    		
         	.then
         	(
         			function(response) { 
@@ -62,8 +59,7 @@ angular.module('JsonChartTemplateServiceModule')
     				}
     			
         	);
-			
-			 return deferred.promise
+			return deferred.promise
 		},
 			
 		readChartTemplate:function(jsonTemplate,exportWebData,datasetLabel,jsonData){
