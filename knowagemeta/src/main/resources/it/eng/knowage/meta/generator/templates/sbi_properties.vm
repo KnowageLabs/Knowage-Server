@@ -14,6 +14,7 @@ ${jpaTable.uniqueName}.position = $velocityCount
 ${jpaColumn.uniqueName}.visible = $jpaColumn.getAttribute("structural.visible")
 ${jpaColumn.uniqueName}.type = $jpaColumn.getAttribute("structural.columntype")
 ${jpaColumn.uniqueName}.attribute = $jpaColumn.getAttribute("structural.attribute")
+${jpaColumn.uniqueName}.filtercondition = $jpaColumn.getAttribute("structural.filtercondition")
 ${jpaColumn.uniqueName}.datatype = $jpaColumn.getAttribute("structural.datatype")
 ${jpaColumn.uniqueName}.format = $jpaColumn.getAttribute("structural.format")
 ${jpaColumn.uniqueName}.excludedRoles = $jpaColumn.getAttribute("behavioural.notEnabledRoles")

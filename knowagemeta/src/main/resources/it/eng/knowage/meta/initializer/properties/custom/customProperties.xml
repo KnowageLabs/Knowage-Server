@@ -125,6 +125,10 @@
       description="A profile attribute used to filter"
       category="Structural" defaultValue="" />
       
+      <type id="structural.filtercondition" name="Profile Attribute Filter Type"
+      description="The type of filter to use with profile attributes"
+      category="Structural" defaultValue="EQUAL" />  
+      
       <type id="structural.datatype" name="Data Type"
       description="The data type of the given column (VARCHAR, INTEGER, DOUBLE, ...)"
       category="Structural" defaultValue="VARCHAR" />
@@ -179,6 +183,12 @@
       <admissibleValuesOf typeId="structural.attribute">
       </admissibleValuesOf>
       
+      <admissibleValuesOf typeId="structural.filtercondition">
+        <value>EQUAL</value>
+        <value>IN</value>
+        <value>LIKE</value>
+      </admissibleValuesOf>      
+      
       <admissibleValuesOf typeId="structural.datatype">
         <value>VARCHAR</value>
         <value>INTEGER</value>
@@ -222,7 +232,7 @@
       
       <type id="structural.datatype" name="Data Type"
       description="The data type of the given column (STRING, NUMBER)"
-      category="Structural" defaultValue="NUMBER" />
+      category="Structural" defaultValue="NUMBER" />    
       
       <type id="structural.expression" name="Calculated Column expression"
       description="The text of the expression that is used for this calculated column"
