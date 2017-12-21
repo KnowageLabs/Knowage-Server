@@ -1,22 +1,22 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
-  
- 
+
+
+
+
+
  Ext.ns("Sbi.constants");
- 
+
 Sbi.constants.qbe = {
-		
+
 	// select clause field types (twins java constants are defined in class ISelectField)
 	FIELD_TYPE_SIMPLE: 'datamartField'
 	, FIELD_TYPE_CALCULATED: 'calculated.field'
 	, FIELD_TYPE_INLINE_CALCULATED: 'inline.calculated.field'
-			
+
 	// where clause operand types (twins java constants are defined in class AbstractStatement)
 	, OPERAND_TYPE_STATIC_VALUE: 'Static Content'
 	, OPERAND_TYPE_SUBQUERY: 'Subquery'
@@ -24,7 +24,7 @@ Sbi.constants.qbe = {
 	, OPERAND_TYPE_SIMPLE_FIELD: 'Field Content'
 	, OPERAND_TYPE_CALCULATED_FIELD: 'calculated.field'
 	, OPERAND_TYPE_INLINE_CALCULATED_FIELD: 'inline.calculated.field'
-				
+
 	// tree field types (twins java constants are defined in class ExtJsQbeTreeBuilder)
 	, NODE_TYPE_ENTITY: 'entity'
 	, NODE_TYPE_SIMPLE_FIELD: 'field'
@@ -33,7 +33,7 @@ Sbi.constants.qbe = {
 	, NODE_TYPE_INLINE_CALCULATED_FIELD: 'inLineCalculatedField'
 	, NODE_TYPE_HIERARCHY_FIELD: 'hierarchyField'
 	, NODE_TYPE_HIERARCHY_LEVEL_FIELD : 'hierarchyLevelField'
-		
+
 	, WHERE_CLAUSE_COMPARISON_FUNCTIONS: [
 	    ['NONE', LN('sbi.qbe.filtergridpanel.foperators.name.none'), LN('sbi.qbe.filtergridpanel.foperators.desc.none')],
 	    ['EQUALS TO', LN('sbi.qbe.filtergridpanel.foperators.name.eq'),  LN('sbi.qbe.filtergridpanel.foperators.desc.eq')],
@@ -87,15 +87,15 @@ Sbi.constants.qbe = {
         ['ENDS WITH', LN('sbi.qbe.filtergridpanel.foperators.name.ends'),  LN('sbi.qbe.filtergridpanel.foperators.desc.ends')],
         ['NOT ENDS WITH', LN('sbi.qbe.filtergridpanel.foperators.name.notends'),  LN('sbi.qbe.filtergridpanel.foperators.desc.notends')],
         ['CONTAINS', LN('sbi.qbe.filtergridpanel.foperators.name.contains'),  LN('sbi.qbe.filtergridpanel.foperators.desc.contains')],
-        ['NOT CONTAINS', LN('sbi.qbe.filtergridpanel.foperators.name.notcontains'),  LN('sbi.qbe.filtergridpanel.foperators.desc.notcontains')],        
+        ['NOT CONTAINS', LN('sbi.qbe.filtergridpanel.foperators.name.notcontains'),  LN('sbi.qbe.filtergridpanel.foperators.desc.notcontains')],
         ['BETWEEN', LN('sbi.qbe.filtergridpanel.foperators.name.between'),  LN('sbi.qbe.filtergridpanel.foperators.desc.between')],
         ['NOT BETWEEN', LN('sbi.qbe.filtergridpanel.foperators.name.notbetween'),  LN('sbi.qbe.filtergridpanel.foperators.desc.notbetween')],
         ['IN', LN('sbi.qbe.filtergridpanel.foperators.name.in'),  LN('sbi.qbe.filtergridpanel.foperators.desc.in')],
-        ['NOT IN', LN('sbi.qbe.filtergridpanel.foperators.name.notin'),  LN('sbi.qbe.filtergridpanel.foperators.desc.notin')],        
+        ['NOT IN', LN('sbi.qbe.filtergridpanel.foperators.name.notin'),  LN('sbi.qbe.filtergridpanel.foperators.desc.notin')],
         ['NOT NULL', LN('sbi.qbe.filtergridpanel.foperators.name.notnull'),  LN('sbi.qbe.filtergridpanel.foperators.desc.notnull')],
         ['IS NULL', LN('sbi.qbe.filtergridpanel.foperators.name.isnull'),  LN('sbi.qbe.filtergridpanel.foperators.desc.isnull')]
     ]
-	
+
 	, HAVING_CLAUSE_AGGREGATION_FUNCTION: [
         ['NONE', LN('sbi.qbe.selectgridpanel.aggfunc.name.none'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.none')],
         ['SUM', LN('sbi.qbe.selectgridpanel.aggfunc.name.sum'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.sum')],
@@ -104,7 +104,7 @@ Sbi.constants.qbe = {
         ['MIN', LN('sbi.qbe.selectgridpanel.aggfunc.name.min'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.min')],
         ['COUNT', LN('sbi.qbe.selectgridpanel.aggfunc.name.count'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.count')],
         ['COUNT_DISTINCT', LN('sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')]
-     ] 
+     ]
 
 	, SELECT_CLAUSE_AGGREGATION_FUNCTION : [
         ['NONE', LN('sbi.qbe.selectgridpanel.aggfunc.name.none'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.none')],
@@ -114,7 +114,7 @@ Sbi.constants.qbe = {
         ['MIN', LN('sbi.qbe.selectgridpanel.aggfunc.name.min'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.min')],
         ['COUNT', LN('sbi.qbe.selectgridpanel.aggfunc.name.count'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.count')],
         ['COUNT_DISTINCT', LN('sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')]
-    ] 
+    ]
 
 	, SPATIAL_FUNCTIONS : [
 	    {
@@ -145,7 +145,7 @@ Sbi.constants.qbe = {
             , value: 'distance(op1, op2, op3, \'unit=op4\')'
             , alias: 'distance(op1, op2, op3, \'unit=op4\')'
             , operands: [
-              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Dist')}, 
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Dist')},
               {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp2Dist')}
             ]
 	    	, freeOperands: [
@@ -158,7 +158,7 @@ Sbi.constants.qbe = {
             , value: 'dwithin(op1, op2, \'distance=op3,unit=op4\')'
             , alias: 'dwithin(op1, op2, \'distance=op3,unit=op4\')'
             , operands: [
-              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Distw')}, 
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Distw')},
               {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp2Distw')}
             ]
 	    	, freeOperands: [
@@ -207,7 +207,7 @@ Sbi.constants.qbe = {
             , value: 'geomunion(op1, op2)'
             , alias: 'geomunion(op1, op2)'
         	, operands: [
-              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Union')}, 
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Union')},
               {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp2Union')}
             ]
 	    }, {
@@ -257,7 +257,7 @@ Sbi.constants.qbe = {
             , value: Ext.util.Format.htmlEncode('+')
             , alias: Ext.util.Format.htmlEncode('+')
         }, {
-            text: '-' 
+            text: '-'
             , qtip: LN('sbi.qbe.selectgridpanel.func.difference.tip')
             , type: 'function'
             , value: Ext.util.Format.htmlEncode('-')
@@ -304,14 +304,14 @@ Sbi.constants.qbe = {
            , alias: Ext.util.Format.htmlEncode('SUM(op1)')
            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpSum')}]
        }, {
-    	   text: 'MIN'  
+    	   text: 'MIN'
            , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.min')
            , type: 'function'
            , value: Ext.util.Format.htmlEncode('MIN(op1)')
            , alias: Ext.util.Format.htmlEncode('MIN(op1)')
            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMin')}]
        }, {
-           text: 'MAX' 
+           text: 'MAX'
            , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.max')
            , type: 'function'
            , value: Ext.util.Format.htmlEncode('MAX(op1)')
@@ -387,7 +387,7 @@ Sbi.constants.qbe = {
            , value: Ext.util.Format.htmlEncode('AA_up_today(op1)')
            , alias: Ext.util.Format.htmlEncode('AA_up_today(op1)')
            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
-        }, {
+        }/*, {
            text: 'extract'
            , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.extract')
            , type: 'function'
@@ -402,7 +402,7 @@ Sbi.constants.qbe = {
            , value: Ext.util.Format.htmlEncode('to_timezone(op1,'+((new Date()).getTimezoneOffset()/60*(-1))+')')
            , alias: Ext.util.Format.htmlEncode('to_timezone(op1,'+((new Date()).getTimezoneOffset()/60*(-1))+')')
            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpToLocalTime')}]
-        }
+        }*/
     ]
 
 	, SCRIPT_FUNCTIONS : [
@@ -427,32 +427,32 @@ Sbi.constants.qbe = {
 	    	 , qtip: 'create a cross navigation link'
 	         , type: 'function'
 	         , value: Ext.util.Format.htmlEncode('return api.getCrossNavigationLink("${TEXT}", "${TARGET_DOCUMENT_LABEL}", "${PARAMETERS}", "${SUBOBJECT");')
-//	         Ext.util.Format.htmlEncode("String label = 'bestByRegion';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("String text= fields['salesRegion'];") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("String params = 'region=5';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("String subobject;") + '<p>' + 
-//	         Ext.util.Format.htmlEncode("String result = '';") + '<p>' + 
-//	         Ext.util.Format.htmlEncode("result +='<a href=\"#\" onclick=\"javascript:sendMessage({';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("result +='\\'label\\':\\'' + label + '\\'';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("result +=', parameters:\\'' + params + '\\'';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("result +=', windowName: this.name';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("if(subobject != null) result +=', subobject:\\'' + subobject +'\\'';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("result += '},\\'crossnavigation\\')\"';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("result += '>' + text + '</a>';") + '<p>' + 
+//	         Ext.util.Format.htmlEncode("String label = 'bestByRegion';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("String text= fields['salesRegion'];") + '<br>' +
+//	         Ext.util.Format.htmlEncode("String params = 'region=5';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("String subobject;") + '<p>' +
+//	         Ext.util.Format.htmlEncode("String result = '';") + '<p>' +
+//	         Ext.util.Format.htmlEncode("result +='<a href=\"#\" onclick=\"javascript:sendMessage({';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("result +='\\'label\\':\\'' + label + '\\'';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("result +=', parameters:\\'' + params + '\\'';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("result +=', windowName: this.name';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("if(subobject != null) result +=', subobject:\\'' + subobject +'\\'';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("result += '},\\'crossnavigation\\')\"';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("result += '>' + text + '</a>';") + '<p>' +
 //	         Ext.util.Format.htmlEncode("return result;")
 	         , alias: Ext.util.Format.htmlEncode('return api.getCrossNavigationLink("${TEXT}", "${TARGET_DOCUMENT_LABEL}", "${PARAMETERS}", "${SUBOBJECT");')
-//	         Ext.util.Format.htmlEncode("String label = 'bestByRegion';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("String text= fields['salesRegion'];") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("String params= 'region=5';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("String subobject;") + '<p>' + 
-//	         Ext.util.Format.htmlEncode("String result = '';") + '<p>' + 
-//	         Ext.util.Format.htmlEncode("result +='<a href=\"#\" onclick=\"javascript:sendMessage({';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("result +='\\'label\\':\\'' + label + '\\'';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("result +=', parameters:\\'' + params + '\\'';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("result +=', windowName: this.name';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("if(subobject != null) result +=', subobject:\\'' + subobject +'\\'';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("result += '},\\'crossnavigation\\')\"';") + '<br>' + 
-//	         Ext.util.Format.htmlEncode("result += '>' + text + '</a>';") + '<p>' + 
+//	         Ext.util.Format.htmlEncode("String label = 'bestByRegion';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("String text= fields['salesRegion'];") + '<br>' +
+//	         Ext.util.Format.htmlEncode("String params= 'region=5';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("String subobject;") + '<p>' +
+//	         Ext.util.Format.htmlEncode("String result = '';") + '<p>' +
+//	         Ext.util.Format.htmlEncode("result +='<a href=\"#\" onclick=\"javascript:sendMessage({';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("result +='\\'label\\':\\'' + label + '\\'';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("result +=', parameters:\\'' + params + '\\'';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("result +=', windowName: this.name';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("if(subobject != null) result +=', subobject:\\'' + subobject +'\\'';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("result += '},\\'crossnavigation\\')\"';") + '<br>' +
+//	         Ext.util.Format.htmlEncode("result += '>' + text + '</a>';") + '<p>' +
 //	         Ext.util.Format.htmlEncode("return result;")
 	     }
 	 ]
@@ -475,5 +475,5 @@ Sbi.constants.qbe.SLOTS_EDITOR_AGGREGATION_FUNCTIONS = Sbi.constants.qbe.AGGREGA
 Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_SCRIPT_FUNCTIONS = Sbi.constants.qbe.SCRIPT_FUNCTIONS;
 
 Sbi.constants.formviewer = {
-		
+
 };
