@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <li gridster-item="ngModel" id="w{{ngModel.id}}" ng-cloak ng-class="{'topPosition' : widExp || gridsterItem.gridster.isMobile}"  ng-mouseleave="closeWidgetActionButtons()"
 	action-button-position-handler widget-x-position=ngModel.col  action-button-class-container="widgetActionButton">
-  	
+  	 
   	<div ng-show="widgetSpinner" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
        <md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
     </div>
@@ -42,8 +42,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-toolbar>
 		</md-card-title>
 		
-		<div layout="row" class="viewModeMenu" ng-if="(!cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE) || widExp" layout-align="end center">
-		
+		<div layout="column" class="viewModeMenu" ng-if="(!cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE) || widExp" layout-align="end center">
+			
+			<md-button class="md-icon-button floatingFilter" ng-if="ngModel.type == 'table' && activeSearch && !cockpitModule_properties.EDIT_MODE" ng-click="resetSearch();$event.stopPropagation();">
+				<md-tooltip md-direction="bottom" md-delay="1000">Filtered table, click to reset search</md-tooltip>
+				<md-icon md-font-icon="fa fa-filter fa-stack-1x"></md-icon>
+				<md-icon md-font-icon="fa fa-ban fa-stack-2x ban"></md-icon>
+			</md-button>
+			
 			<md-button class="md-icon-button "  ng-click="expandWidget();$event.stopPropagation();" >
 				<md-tooltip md-direction="bottom" ng-if="!widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
 				<md-tooltip md-direction="bottom" ng-if="widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.collapse")}}</md-tooltip>
@@ -71,11 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        			 <md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable"></md-icon>
 			</md-button>
 			
-			<md-button class="md-icon-button floatingFilter" ng-if="ngModel.type == 'table' && activeSearch && !cockpitModule_properties.EDIT_MODE" ng-click="resetSearch();$event.stopPropagation();">
-				<md-tooltip md-direction="bottom" md-delay="1000">Filtered table, click to reset search</md-tooltip>
-				<md-icon md-font-icon="fa fa-filter fa-stack-1x"></md-icon>
-				<md-icon md-font-icon="fa fa-ban fa-stack-2x ban"></md-icon>
-			</md-button>
+			
 		</div>
 		
 		<md-fab-speed-dial md-open="ngModel.menuOpened" md-direction="down" class="showActionButtonHandler md-scale" ng-class="{'noMouse':ngModel.menuOpened==true}" ng-if="!widExp && !( cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE)">

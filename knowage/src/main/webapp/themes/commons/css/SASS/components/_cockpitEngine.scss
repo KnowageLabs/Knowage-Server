@@ -687,7 +687,8 @@
             	transition: background-color .3s ease;
             	position: absolute;
             	top: 0;
-            	width: 100%;
+				right:0;
+            	width: 40px;
             	z-index: 20;
             	.floatingFilter {
             		opacity: 1 !important;
@@ -715,7 +716,7 @@
             		opacity: 1 !important;
             	}
             	.viewModeMenu {	
-					background-color: rgba($secondaryColor,.6);
+					background-color: rgba(white,.6);
             		.md-button {
             			opacity: 1 !important;
             		}
