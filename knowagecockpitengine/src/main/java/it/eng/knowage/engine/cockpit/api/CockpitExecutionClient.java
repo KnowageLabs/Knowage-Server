@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 
 public class CockpitExecutionClient extends SimpleRestClient {
@@ -31,7 +32,7 @@ public class CockpitExecutionClient extends SimpleRestClient {
 	private static final String SERVICE_URL = "/restful-services/2.0/datasets";
 	static private Logger logger = Logger.getLogger(CockpitExecutionClient.class);
 
-	public String gatData(String aggregations, String label, String userId, Map<String, Object> queryParams) {
+	public String getDataFromDataset(String aggregations, String label, String userId, Map<String, Object> queryParams) {
 
 		logger.debug("IN");
 		Response clientResponse;
@@ -41,12 +42,11 @@ public class CockpitExecutionClient extends SimpleRestClient {
 			clientResponse = executePostService(queryParams, SERVICE_URL + "/" + label + "/data", userId, MediaType.APPLICATION_JSON, aggregations);
 			logger.debug("getting data as string from response");
 			jsonResponse = clientResponse.readEntity(String.class);
-			return jsonResponse;
 
 		} catch (Exception e) {
 			logger.error("Error while getting data", e);
+			throw new SpagoBIEngineRuntimeException("Error while getting data: " + e.getMessage(), e);
 		}
-		logger.debug("OUT");
 		return jsonResponse;
 	}
 

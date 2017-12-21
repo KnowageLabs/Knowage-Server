@@ -335,16 +335,16 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 				exportWebApp = jsonexportWebApp != null ? jsonexportWebApp.toString() : null;
 			}
 			cockpitExecutionClient = new CockpitExecutionClient();
-			jsonData = cockpitExecutionClient.gatData(aggregations, label, userId, queryParams);
+			jsonData = cockpitExecutionClient.getDataFromDataset(aggregations, label, userId, queryParams);
 			responseObject.put("jsonData", jsonData);
 			chartConf = getJSONChartTemplateForCockpit(jsonTemplate, exportWebApp, jsonData, servletResponse);
 			responseObject.put("chartConf", chartConf);
-			return responseObject.toString();
 
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service: JsonChartTemplateService.getDataAndConf", t);
 		}
+		return responseObject.toString();
 	}
 
 }
