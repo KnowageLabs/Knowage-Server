@@ -34,6 +34,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,15 +140,12 @@ public class Compiler {
 		result = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits).call();
 		logger.debug("Result of executed task is: " + result);
 
-		// Iterable<? extends JavaFileObject> compilationUnits2 =
-		// fileManager.getJavaFileObjects(files2);
-		// compiler.getTask(null, fileManager, null, null, null, compilationUnits2).call();
-
 		logger.debug("Checking diagnostic errors");
 
 		if (!diagnostics.getDiagnostics().isEmpty()) {
+			logger.error("Found compilation errors during metamodel generation");
 			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-				logger.debug("Found diagnostic error on " + diagnostic.getSource().toUri() + "- line " + diagnostic.getLineNumber() + "- Error: "+diagnostic.getMessage(null));
+				logger.error("Found error on " + diagnostic.getSource().toUri() + "- line " + diagnostic.getLineNumber() + "- Error: "+diagnostic.getMessage(null));
 				log.append(MessageFormat.format(diagnostic.getKind().toString()+" on line {0} in {1}\n  Detail: {2} \n", diagnostic.getLineNumber(),diagnostic.getSource().toUri(),diagnostic.getMessage(null)));
 				log.append("--------------------------------------------- \n");
 				try {
@@ -155,25 +153,9 @@ public class Compiler {
 				} catch (IOException e) {
 					log.append("Error while reading java sources.\n");
 				}
-				// System.out.format("Error on line %d in %s%n",
-				// diagnostic.getLineNumber(),
-				// diagnostic.getSource().toUri());
 			}
 		}
 		log.flush();
-
-		/*
-		logger.trace("IN");
-		String command = "\"" + srcDir + "\" -classpath \"" + getClasspath() + "\" -d \"" + binDir + "\" -source 1.5";
-		logger.info("Compile command is equal to [{}]", command);
-
-		result = org.eclipse.jdt.core.compiler.batch.BatchCompiler.compile(command, log, log, null);
-
-		logger.info("Mapping files compiled succesfully: [{}]", result);
-
-		logger.trace("OUT");
-		*/
-	
 
 		return result;
 	}
@@ -181,7 +163,7 @@ public class Compiler {
 	private String getClasspath() {
 		String classPath = ".";
 		for (File lib : libs) {
-			// Assert.assertTrue("Impossible to locate lib [" + libFile + "]", libFile.exists() && libFile.isFile());
+			Assert.assertTrue("Impossible to locate lib [" + lib + "]", lib.exists() && lib.isFile());
 			// classPath = classPath + ";" + lib;
 			classPath = classPath + java.io.File.pathSeparator + lib;
 		}
