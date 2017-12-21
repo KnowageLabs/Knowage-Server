@@ -19,11 +19,29 @@
 angular
 	.module('qbe.controller', ['configuration','directive','services'])
 	.controller('qbeController',
-		["$scope","$rootScope","entity_service","query_service","filters_service","formulaService","save_service","sbiModule_inputParams","sbiModule_translate","sbiModule_config", "sbiModule_action", "sbiModule_restServices", "sbiModule_messaging","$mdDialog", "$mdPanel","$q",qbeFunction]);
+		["$scope",
+		"$rootScope",
+		"entity_service",
+		"query_service",
+		"filters_service",
+		"formulaService",
+		"save_service",
+		"sbiModule_inputParams",
+		"sbiModule_translate",
+		"sbiModule_config", 
+		"sbiModule_action",
+		"sbiModule_action_builder",
+		"sbiModule_restServices", 
+		"sbiModule_messaging",
+		"$mdDialog", 
+		"$mdPanel",
+		"$q",
+		qbeFunction]);
 
 
-function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_restServices,sbiModule_messaging, $mdDialog ,$mdPanel,$q){
+function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, $mdDialog ,$mdPanel,$q){
 	$scope.translate = sbiModule_translate;
+	$scope.sbiModule_action_builder = sbiModule_action_builder;
 	var entityService = entity_service;
 	var inputParamService = sbiModule_inputParams;
 	$scope.queryModel = [];
@@ -615,6 +633,29 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         	$scope.output={};
         });
     };
+	$scope.saveEntityTree = function(){
+    	var saveTreeAction  = $scope.sbiModule_action_builder.getActionBuilder("GET");
+    	saveTreeAction.actionName = "SAVE_TREE_ACTION";
+    	saveTreeAction.queryParams.dragan="dragan"
+    	saveTreeAction.executeAction().then(function(response){
+			$mdDialog.show(
+	        		$mdDialog.alert()
+	        		     .clickOutsideToClose(true)
+	        		     .title($scope.translate.load("kn.generic.query.SQL"))
+	        		     .textContent(response.data.sqlFormatted)
+	        		     .ok($scope.translate.load("kn.qbe.general.ok"))
+	            );
+		}, function(response){
+			$mdDialog.show(
+	        		$mdDialog.alert()
+	        		     .clickOutsideToClose(true)
+	        		     .title($scope.translate.load("kn.generic.query.SQL"))
+	        		     .textContent(response.data.errors[0].message)
+	        		     .ok($scope.translate.load("kn.qbe.general.ok"))
+	            );
+		});
+    	
+    }
 
 
 }

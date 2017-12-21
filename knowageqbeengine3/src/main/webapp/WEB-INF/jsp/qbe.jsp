@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			colors="colors"
 			
 			>
+				<md-icon ng-click="saveEntityTree()" md-font-icon=" fa fa-floppy-o"></md-icon>
         	</qbe-expander-list>
         	
         	<qbe-expander-list 
