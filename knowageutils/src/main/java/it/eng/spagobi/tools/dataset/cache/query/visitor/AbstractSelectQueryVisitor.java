@@ -380,8 +380,12 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 			List<Sorting> sortings = query.getSortings();
 			if (groups != null && !groups.isEmpty() && sortings != null && !sortings.isEmpty()) {
 				for (Sorting sorting : sortings) {
-					queryBuilder.append(",");
-					append(sorting.getProjection(), false);
+					Projection projection = sorting.getProjection();
+					IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+					if (aggregationFunction == null || aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION)) {
+						queryBuilder.append(",");
+						append(projection, false);
+					}
 				}
 			}
 		}
@@ -431,8 +435,12 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		List<Sorting> sortings = query.getSortings();
 		if (sortings != null && !sortings.isEmpty()) {
 			for (Sorting sorting : sortings) {
-				queryBuilder.append(",");
-				append(sorting.getProjection(), false);
+				Projection projection = sorting.getProjection();
+				IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+				if (aggregationFunction == null || aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION)) {
+					queryBuilder.append(",");
+					append(projection, false);
+				}
 			}
 		}
 	}
