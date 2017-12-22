@@ -968,7 +968,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	$scope.searchValue = searchValue;
     	var columnOrderingLabel = "";
     	if($scope.columnOrdering){
-    		columnOrderingLabel = $scope.columnOrdering.label;
+    		columnOrderingLabel = $scope.columnOrdering.name;
     	}
 
     	if($scope.searchValue!=""){
@@ -1005,7 +1005,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
     			var columnOrderingLabel = "";
     	    	if($scope.columnOrdering){
-    	    		columnOrderingLabel = $scope.columnOrdering.label;
+    	    		columnOrderingLabel = $scope.columnOrdering.name;
     	    	}
     			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue,columnOrderingLabel, $scope.reverseOrdering);
     		}, function(response) {
@@ -1110,7 +1110,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 						   				sbiModule_messaging.showSuccessMessage($scope.translate.format($scope.translate.load('sbi.ds.deletedataset.success'), item.label));
 			 						   			var columnOrderingLabel = "";
 			 					    	    	if($scope.columnOrdering){
-			 					    	    		columnOrderingLabel = $scope.columnOrdering.label;
+			 					    	    		columnOrderingLabel = $scope.columnOrdering.name;
 			 					    	    	}
 				 						   			var start = 0;
 				 					    			if($scope.currentPageNumber>1){
