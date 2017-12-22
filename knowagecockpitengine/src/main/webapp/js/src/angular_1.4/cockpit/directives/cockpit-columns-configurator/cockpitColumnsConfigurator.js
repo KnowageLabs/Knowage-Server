@@ -113,6 +113,9 @@
 	    	  action : function(item,event) {
 	    		  var index=$scope.model.content.columnSelectedOfDataset.indexOf(item);
 	    		  $scope.model.content.columnSelectedOfDataset.splice(index,1);
+	    		  if($scope.model.settings.sortingColumn == item.aliasToShow){
+	    			  $scope.model.settings.sortingColumn = null;
+	    		  }
 	    	  }
 	      }];
 
