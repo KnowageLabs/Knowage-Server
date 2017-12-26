@@ -19,6 +19,7 @@
 angular
 	.module('qbe.controller', ['configuration','directive','services'])
 	.controller('qbeController',
+
 		["$scope",
 		"$rootScope",
 		"entity_service",
@@ -28,12 +29,12 @@ angular
 		"save_service",
 		"sbiModule_inputParams",
 		"sbiModule_translate",
-		"sbiModule_config", 
+		"sbiModule_config",
 		"sbiModule_action",
 		"sbiModule_action_builder",
-		"sbiModule_restServices", 
+		"sbiModule_restServices",
 		"sbiModule_messaging",
-		"$mdDialog", 
+		"$mdDialog",
 		"$mdPanel",
 		"$q",
 		qbeFunction]);
@@ -183,7 +184,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			$scope.bodySend.pars = data.pars;
 		}
 		$scope.query.fields[indexOfFieldInQuery].group = false;
-		$scope.executeQuery($scope.entityModel.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.query, $scope.bodySend, $scope.queryModel);
+		//$scope.executeQuery($scope.entityModel.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.query, $scope.bodySend, $scope.queryModel);
 	});
 
 	$rootScope.$on('applyFunctionForParams', function (event, data) {
@@ -217,6 +218,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 				$scope.editQueryObj.fields[i].funct = data.fields[i].funct;
 				$scope.editQueryObj.fields[i].visible = data.fields[i].visible;
 				$scope.editQueryObj.fields[i].distinct = data.fields[i].distinct;
+				$scope.editQueryObj.fields[i].order = data.fields[i].ordering;
 			}
 		}
 		$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, true, data.start, data.itemsPerPage);
@@ -233,6 +235,17 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	$scope.$on('showHiddenColumns', function (event, data) {
 		 for (var i = 0; i < $scope.editQueryObj.fields.length; i++) {
 			  $scope.editQueryObj.fields[i].visible = true;
+		}
+	});
+
+	$scope.$on('orderField', function (event, data) {
+		 for (var i = 0; i < $scope.editQueryObj.fields.length; i++) {
+			 if($scope.editQueryObj.fields[i].id==data.id){
+
+				 $scope.editQueryObj.fields[i].order = data.order;
+			 } else {
+				 $scope.editQueryObj.fields[i].order = "NONE";
+			 }
 		}
 	});
 
@@ -330,7 +343,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	  $scope.editQueryObj.fields[indexOfFieldInQuery].group = data.group;
 	  $scope.editQueryObj.fields[indexOfFieldInQuery].funct = "";
 	  if(query_service.smartView){
-		  $scope.executeQuery( $scope.editQueryObj, $scope.bodySend, $scope.queryModel, false);
+		  //$scope.executeQuery( $scope.editQueryObj, $scope.bodySend, $scope.queryModel, false);
 	  }
 
 	});
@@ -366,7 +379,8 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			   "funct":"",
 			   "color":field.color,
 			   "group":false,
-			   "order":"",
+
+			   "order":"NONE",
 			   "include":true,
 			   "visible":true,
 			   "iconCls":field.iconCls,
@@ -426,11 +440,6 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     }];
 
     $scope.fieldsFunctions = [{
-        "label": "ranges",
-        "icon": "fa fa-sliders",
-        "action": function(item, event) {
-        }
-    }, {
         "label": "filters",
         "icon": "fa fa-filter",
         "action": function(item, event) {
@@ -488,6 +497,40 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 
     $scope.$on('openFiltersAdvanced',function(event,field){
 		$scope.showVisualization($scope.editQueryObj.filters, $scope.advancedFilters,$scope.editQueryObj.expression);
+	})
+
+	$scope.$on('addTemporalParameter',function(event,field){
+		$scope.tmpOperandFieldId = field.id;
+		$scope.tmpOperand={};
+		for (var i = 0; i < $scope.editQueryObj.fields.length; i++) {
+			  if($scope.editQueryObj.fields[i].id == field.id){
+				  if($scope.editQueryObj.fields[i].hasOwnProperty("temporalOperandParameter") && $scope.editQueryObj.fields[i].temporalOperandParameter!=undefined) {
+					  $scope.tmpOperand.param = $scope.editQueryObj.fields[i].temporalOperandParameter;
+				  } else {
+					  $scope.tmpOperand.param = "";
+				  }
+
+			  }
+    	}
+
+		$mdDialog.show({
+            controller: function ($scope, $mdDialog) {
+
+                $scope.applyTmpOperandParam = function(){
+                	for (var i = 0; i < $scope.editQueryObj.fields.length; i++) {
+            			  if($scope.editQueryObj.fields[i].id == $scope.tmpOperandFieldId){
+            				$scope.editQueryObj.fields[i].temporalOperandParameter = $scope.tmpOperand.param;
+            			  }
+      	      		}
+                    $mdDialog.hide();
+                }
+            },
+            scope: $scope,
+            preserveScope:true,
+            templateUrl:  sbiModule_config.contextName +'/qbe/templates/temporalOperand.html',
+
+            clickOutsideToClose:true
+        })
 	})
 
     $scope.showVisualization = function (filters, advancedFilters, expression) {
@@ -654,7 +697,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	        		     .ok($scope.translate.load("kn.qbe.general.ok"))
 	            );
 		});
-    	
+
     }
 
 

@@ -126,6 +126,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		});
 	};
 
+	$scope.addTemporalParameter = function (field) {
+		$rootScope.$broadcast('addTemporalParameter', field);
+	}
+
 	$scope.group = function(id, entity, group) {
 		$rootScope.$emit('group', {
 			"fieldId" : id,
@@ -154,19 +158,22 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		});
 	};
 
-	$scope.toggleOrder = function (data, reverse) {
-		var ordered = [];
-		if($scope.orderAsc) {
-			ordered = data.sort(function(a,b) {return (a.value > b.value) ? 1 : ((b.value > a.value) ? -1 : 0);} );
-			$scope.orderAsc = !$scope.orderAsc;
-		} else {
-			ordered = data.sort(function(a,b) {return (a.value < b.value) ? 1 : ((b.value < a.value) ? -1 : 0);} );
-			$scope.orderAsc = !$scope.orderAsc;
+	$scope.toggleOrder = function (data) {
+
+		 switch(data.ordering) {
+		 	case "NONE":
+		    	data.ordering = "ASC";
+		        break;
+		    case "ASC":
+		    	data.ordering = "DESC";
+		        break;
+		    case "DESC":
+		    	data.ordering = "ASC";
+		        break;
+		    default:
+		    	data.ordering = "NONE";
 		}
-		$scope.idIndex = [];
-		for(var itemIndex in ordered) {
-			$scope.idIndex.push(ordered[itemIndex].id);
-		}
+		$rootScope.$broadcast('orderField', {"id":data.id, "order":data.ordering});
 	}
 
 	$scope.openFiltersAdvanced = function (){
@@ -287,6 +294,14 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	}
 	                        	},
 	                        	{
+	                        		"label":$scope.translate.load("kn.qbe.selectgridpanel.headers.order"),
+	                            	"name":"ordering",
+	                            	hideTooltip:true,
+	                            	transformer: function() {
+	                            		return '<md-select ng-model=row.ordering class="noMargin" ><md-option ng-repeat="col in scopeFunctions.orderingValues" value="{{col}}">{{col}}</md-option></md-select>';
+	                            	}
+	                        	},
+	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.custom.table.function"),
 	                            	"name":"function",
 	                            	hideTooltip:true,
@@ -346,6 +361,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 	$scope.basicViewScopeFunctions = {
 		aggregationFunctions: $scope.aggFunctions,
+		orderingValues: ["NONE", "ASC", "DESC"],
 		temporalFunctions: $scope.tmpFunctions,
 		deleteField : function (row) {
 			$scope.removeColumn(row);

@@ -69,7 +69,7 @@
 	   		<div class="qbeCustomTopColor" ng-style="{'background-color' : field.color}"><md-tooltip md-direction="top">{{field.entity}}</md-tooltip></div>
 	   		<md-toolbar>
 	   		<div class="md-toolbar-tools secondaryToolbar" >
-	   		<md-icon class="fa fa-sort" ng-click="toggleOrder(field.data, orderAsc)"></md-icon>
+	   		<md-icon class="fa fa-sort" ng-click="toggleOrder(field)"></md-icon>
 	   			<h2>{{field.name}}
 	   			<md-tooltip md-direction="top">{{field.name}}</md-tooltip>
 	   			</h2> 
@@ -83,8 +83,14 @@
 		      
 	       		<md-menu-item>
 	          		<md-checkbox ng-model="field.visible" ng-click="setVisible(field.id,field.entity, field.visible)" class="menuCheckbox" aria-label="show column">
-	            {{translate.load("kn.qbe.general.field")}}
+	            {{translate.load("kn.qbe.custom.table.show.field")}}
 	          </md-checkbox>
+	       		</md-menu-item>
+	       		<md-menu-item ng-show="field.iconCls=='measure'">
+	       			<md-button ng-click="addTemporalParameter(field)">
+							<md-icon class="fa fa-terminal" style="display:inline"></md-icon>
+		            		<span>{{translate.load("kn.qbe.selectgridpanel.name.temporalOperand.parameter")}}</span>
+		          		</md-button>
 	       		</md-menu-item>
 	       		<md-menu-item ng-show="field.iconCls=='measure'">
          			<md-menu>		
@@ -129,12 +135,12 @@
        				</md-menu>
 	       		</md-menu-item>
 	       		
-	       		<md-menu-item>
+	       		<md-menu-item ng-show="field.iconCls=='attribute'">
 	          		<md-checkbox ng-model="field.group" ng-click="group(field.id, field.entity, field.group)" class="menuCheckbox" aria-label="hide column">
 	            {{translate.load("kn.qbe.custom.table.group")}}
 	          </md-checkbox>
 	       		</md-menu-item>
-	       		<md-menu-item>
+	       		<md-menu-item ng-show=false>
 	         			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
 							<md-icon class="fa fa-sliders" style="display:inline"></md-icon>
 	            		<span>{{translate.load("kn.qbe.custom.table.ranges")}}</span>
@@ -219,7 +225,7 @@
 	   		</div>   		
 	    	</md-toolbar>
 	   	
-   		<div ng-repeat="row in field.data | orderedById:idIndex track by row.id" class="qbeCustomRow">{{row.value}}&nbsp;</div>
+   		<div ng-repeat="row in field.data" class="qbeCustomRow">{{row.value}}&nbsp;</div>
 	   	<div  class="qbeCustomFooter">
 	   	    <md-icon class="fa fa-info" ng-click="showFilters(field)" style="float:left"></md-icon>
 	   		<label ng-show="field.filters.length" style="font-size:.8rem; padding: 0 4px;  font-weight: bold;">{{field.filters.length}} {{translate.load("kn.qbe.filters") | uppercase}}</label>	   		
