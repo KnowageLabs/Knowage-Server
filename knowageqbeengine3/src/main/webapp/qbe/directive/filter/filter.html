@@ -115,8 +115,8 @@
 			</div>	
 		</md-card-content>
 	</md-card>
-	<md-card layout-padding style="height:300px; margin:0px" ng-if="showTable" >
-		
+	<md-card  ng-if="showTable" >
+		<md-card-content layout="column" layout-padding>
 			<angular-table layout-fill
 					  id="vauleField_id" ng-model="listOfValues"
 					columns='[
@@ -126,7 +126,7 @@
 					selected-item="value" highlights-selected-item="true"
 					multi-select="true" >
 					 </angular-table>
-		
+		</md-card-content>
 	</md-card>
 	</md-content>
 	</md-card-content>

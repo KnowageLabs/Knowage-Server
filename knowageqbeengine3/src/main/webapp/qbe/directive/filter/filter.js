@@ -264,28 +264,26 @@ function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, s
 
 	};
 	$scope.changeTarget = function (option, filter){
+		$scope.showTable = false;
 		switch (option) {
 		case "valueOfField":
 			filter.rightOperandType="Static Content";
-			$scope.filter = filter;
-			$scope.value= [];
+			$scope.currentFilter = filter;
 			$scope.disableCombo = true;
-			openTableWithValues();
+			$scope.showTable = true;
+			openTableWithValues($scope.currentFilter);
 			break;
 		case "anotherEntity":
 			filter.rightOperandType="Field Content";
 			$scope.disableCombo = false;
-			$scope.showTable = false;
 			break;
 		case "subquery":
 			filter.rightOperandType="Subquery";
 			$scope.disableCombo = false;
-			$scope.showTable = false;
 			break;
 		case "parameter":
 			filter.rightOperandType="Static Content";
 			$scope.disableCombo = false;
-			$scope.showTable = false;
 			break;
 		default:
 			filter.rightOperandType="Static Content";
@@ -294,27 +292,38 @@ function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, s
 	}
 	$scope.showTable = false;
 	$scope.listOfValues = [];
-	var openTableWithValues = function (){
+	var openTableWithValues = function (filter){
+		$scope.value.length=filter.rightOperandValue.length;
 		$scope.showTable = true;
 		filters_service.getFieldsValue($scope.ngModel.field.field.id).then(function(response){
 			$scope.listOfValues = response.data.rows;
+			
 		});
-	}
-
+		for (var i = 0; i < filter.rightOperandValue.length; i++) {
+			if(!$scope.value[i]){
+				$scope.value[i] = {
+						"column_1" : "",
+				}
+			}
+			$scope.value[i].column_1 = filter.rightOperandValue[i]
+		}
+		
+	}	
+	
 	$scope.$watch('value',function(newValue){
 		$scope.forInput = '';
 		for (var i = 0; i < newValue.length; i++) {
 			$scope.forInput += newValue[i].column_1;
 			if(i+1!=newValue.length) 	$scope.forInput += " ---- "
 		}
-		if($scope.filter) {
-			$scope.filter.rightOperandDescription = angular.copy($scope.forInput);
-			$scope.filter.rightOperandValue=[];
+		if($scope.currentFilter) {
+			$scope.currentFilter.rightOperandDescription = angular.copy($scope.forInput);
+			$scope.currentFilter.rightOperandValue=[];
 			for (var i = 0; i < newValue.length; i++) {
-				$scope.filter.rightOperandValue.push(newValue[i].column_1)
+				$scope.currentFilter.rightOperandValue.push(newValue[i].column_1)
 			}
-			$scope.filter.rightOperandType="Static Content";
-			$scope.filter.rightOperandLongDescription=$scope.filter.rightOperandDescription;
+			$scope.currentFilter.rightOperandType="Static Content";
+			$scope.currentFilter.rightOperandLongDescription=$scope.currentFilter.rightOperandDescription;
 		}
 	}, true);
 
