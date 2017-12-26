@@ -21,6 +21,7 @@ angular
 		'qbe_custom_table',
 		'qbe_expander_list',
 		'qbe_filter',
+		'qbe_having',
 		'qbe_advanced_visualization',
 		'qbe_filter_visualization',
 		'qbe_parameters',
