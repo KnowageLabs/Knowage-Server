@@ -21,7 +21,7 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 
 		return response;
 	};
-	
+
 	this.getTargetTypes = [
 		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.manual"),value:""},
 		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.field"),value:"valueOfField"},
@@ -30,6 +30,14 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.subquery"),value:"subquery"},
 	];
 	
+	this.getHavingTargetTypes = [
+		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.manual"),value:""},
+		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.anotherentity"),value:"anotherEntity"},
+		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.subquery"),value:"subquery"},
+	];
+
+	this.aggFunctions = [ "NONE", "SUM", "MIN", "MAX", "AVG", "COUNT", "COUNT_DISTINCT" ];
+
 	this.getOperators = [
 		         {name:sbiModule_translate.load("kn.qbe.filters.operators.equals.to"),value:"EQUALS TO"},
 		         {name:sbiModule_translate.load("kn.qbe.filters.operators.not.equals.to"),value:"NOT EQUALS TO"},
