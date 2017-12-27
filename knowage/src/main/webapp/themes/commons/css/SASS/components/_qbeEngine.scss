@@ -199,6 +199,9 @@
             &.temporal_dimension:before {
                 content: "\f073"
             }
+            &.geographic_dimension:before {
+                content: "\f0ac"
+            }
         }
 
         //qbecustom icons remapping
