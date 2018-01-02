@@ -34,12 +34,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("1.0/chart/template")
-public class ChartResources {
+public class ChartResources extends AbstractChartEngineResource {
 
 	static private Logger logger = Logger.getLogger(ChartResources.class);
 
@@ -48,14 +49,15 @@ public class ChartResources {
 	@Produces(MediaType.APPLICATION_XML)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
-	public String saveTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("docLabel") String docLabel, @FormParam("userId") String userId,
+	public String saveTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("docLabel") String docLabel,
 			@Context HttpServletResponse servletResponse) {
 		JSONObject newTemplate;
 		try {
+			UserProfile userProfile = this.getUserProfile();
 			JSONObject json = new JSONObject(jsonTemplate);
 			json = parseTemplate(json);
 			ChartTemplateClient ctc = new ChartTemplateClient();
-			newTemplate = ctc.saveTemplate(json, docLabel, userId);
+			newTemplate = ctc.saveTemplate(json, docLabel, (String) userProfile.getUserUniqueIdentifier());
 			return newTemplate.toString();
 		} catch (JSONException e) {
 			logger.error("Error while reading JSON of the chart template.", e);
