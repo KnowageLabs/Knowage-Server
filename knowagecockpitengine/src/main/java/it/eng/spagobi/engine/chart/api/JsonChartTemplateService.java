@@ -322,7 +322,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 		String chartConf = null;
 		JSONObject responseObject = new JSONObject();
 		CockpitExecutionClient cockpitExecutionClient;
-		String userId = (String) getUserProfile().getUserId();
+		String userId = (String) getUserProfile().getUserUniqueIdentifier();
 		Map<String, Object> queryParams = null;
 
 		try {
