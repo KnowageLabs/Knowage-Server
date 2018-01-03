@@ -34,4 +34,6 @@
 	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>
 	<MetamodelServiceProxy_URL>/services/MetamodelService</MetamodelServiceProxy_URL>
 	
+	<HMAC_JNDI_LOOKUP>java:/comp/env/hmacKey</HMAC_JNDI_LOOKUP>
+	
 </ENGINE-CONFIGURATION>

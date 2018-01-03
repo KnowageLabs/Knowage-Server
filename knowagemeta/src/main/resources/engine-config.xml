@@ -36,4 +36,6 @@
 	
 	<ChartEngineContextName>knowagemeta</ChartEngineContextName>
 	
+	<HMAC_JNDI_LOOKUP>java:/comp/env/hmacKey</HMAC_JNDI_LOOKUP>
+	
 </ENGINE-CONFIGURATION>

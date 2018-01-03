@@ -41,5 +41,6 @@
 	<CONNECTIONSTRING>jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key</CONNECTIONSTRING>
 	<MDX>SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[1], [Region].[Mexico Central])</MDX>
 	
+	<HMAC_JNDI_LOOKUP>java:/comp/env/hmacKey</HMAC_JNDI_LOOKUP>
 	
 </ENGINE-CONFIGURATION>

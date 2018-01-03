@@ -42,4 +42,6 @@
 	<MDX>SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[1], [Region].[Mexico Central])</MDX>
 	<DRIVER>oracle.jdbc.OracleDriver</DRIVER>
 	
+	<HMAC_JNDI_LOOKUP>java:/comp/env/hmacKey</HMAC_JNDI_LOOKUP>
+	
 </ENGINE-CONFIGURATION>

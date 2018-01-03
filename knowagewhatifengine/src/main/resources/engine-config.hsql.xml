@@ -40,4 +40,6 @@
 	<MDX>SELECT {[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales]</MDX>
 	<DRIVER>org.hsqldb.jdbcDriver</DRIVER>
 	
+	<HMAC_JNDI_LOOKUP>java:/comp/env/hmacKey</HMAC_JNDI_LOOKUP>
+	
 </ENGINE-CONFIGURATION>
