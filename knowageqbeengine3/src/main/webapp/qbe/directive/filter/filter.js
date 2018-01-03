@@ -220,7 +220,6 @@ function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, s
 
 	$scope.getBooleanConnectors = filters_service.getBooleanConnectors;
 	$scope.getConditionOptions = filters_service.getOperators;
-	$scope.disableCombo = true;
 	$scope.fillInput = function (filter, type, value){
 		switch (value) {
 		case "subquery":
@@ -269,21 +268,17 @@ function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, s
 		case "valueOfField":
 			filter.rightOperandType="Static Content";
 			$scope.currentFilter = filter;
-			$scope.disableCombo = true;
 			$scope.showTable = true;
 			openTableWithValues($scope.currentFilter);
 			break;
 		case "anotherEntity":
 			filter.rightOperandType="Field Content";
-			$scope.disableCombo = false;
 			break;
 		case "subquery":
 			filter.rightOperandType="Subquery";
-			$scope.disableCombo = false;
 			break;
 		case "parameter":
 			filter.rightOperandType="Static Content";
-			$scope.disableCombo = false;
 			break;
 		default:
 			filter.rightOperandType="Static Content";
@@ -305,7 +300,10 @@ function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, s
 						"column_1" : "",
 				}
 			}
-			$scope.value[i].column_1 = filter.rightOperandValue[i]
+			if(filter.rightType=="valueOfField"){
+				$scope.value[i].column_1 = filter.rightOperandValue[i]
+		
+			}
 		}
 		
 	}	
@@ -445,7 +443,7 @@ function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, s
 	                                   	"name":"name",
 	                                   	hideTooltip:true,
 	                                   	transformer: function() {
-	                                   		return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.name"></md-input-container>';
+	                                   		return '<md-input-container class="md-block" style="margin:0"><input ng-disabled=true ng-model="row.name"></md-input-container>';
 	                                   	}
 	                               	},
 

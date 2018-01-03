@@ -90,14 +90,14 @@
 	              <md-input-container flex=30 ng-if="filter.rightType=='subquery'" >
 	            	
 						<md-select ng-model="filter.rightOperandDescription" >
-	                    <md-option ng-repeat="s in subqueries" value="{{s}}" 
+	                    <md-option ng-repeat="s in subqueries" value="{{s.name}}" 
 	                    ng-click="fillInput(filter,s, 'subquery')">{{s.name}}</md-option>
 	                </md-select>  
 	            </md-input-container>
 	              <md-input-container flex=30 ng-if="filter.rightType=='parameter'">
 	         
 				<md-select ng-model="filter.rightOperandDescription" >
-	                    <md-option ng-repeat="p in pars" value="{{p}}" 
+	                    <md-option ng-repeat="p in pars" value="{{p.name}}" 
 	                    ng-click="fillInput(filter,p, 'parameter')">{{p.name}}</md-option>
 	                </md-select>   
 	            </md-input-container>
@@ -169,11 +169,11 @@
 
 	</md-card-content>
 	 <md-card-actions layout="row" layout-align="end center">
-	      <md-button ng-click="applyValueOfParameterAndContinuePreviewExecution()" class="md-raised"  md-autofocus>
-       		{{translate.load("kn.qbe.filters.apply.parameters")}}
-      </md-button>
-      <md-button ng-click="closeFilters()" class="md-raised" style="margin-right:20px;" >
-        {{translate.load("kn.qbe.general.cancel")}}
-      </md-button>
+		<md-button ng-click="closeFilters()" style="margin-right:20px;" >
+        	{{translate.load("kn.qbe.general.cancel")}}
+		</md-button>
+		<md-button ng-click="applyValueOfParameterAndContinuePreviewExecution()" md-autofocus>
+			{{translate.load("kn.qbe.filters.apply.parameters")}}
+		</md-button>
 	</md-card-actions>
 </md-card>
