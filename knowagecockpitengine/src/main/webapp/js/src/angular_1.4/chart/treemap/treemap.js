@@ -550,7 +550,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
                 fontFamily: chartConf.emptymessage.style.fontFamily,
                 fontStyle: chartConf.emptymessage.style.fontStyle ? chartConf.emptymessage.style.fontStyle : "none",
 				textDecoration: chartConf.emptymessage.style.textDecoration ? chartConf.emptymessage.style.textDecoration : "none",
-				fontWeight: chartConf.emptymessage.fontWeight ? chartConf.emptymessage.fontWeight : "none"
+				fontWeight: chartConf.emptymessage.style.fontWeight ? chartConf.emptymessage.style.fontWeight : "none"
             }, 
             position: {
             	align:  chartConf.emptymessage.style.textAlign,
@@ -867,7 +867,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
                 fontFamily: chartConf.title.style.fontFamily,
                 fontStyle: chartConf.title.style.fontStyle ? chartConf.title.style.fontStyle : "none",
 				textDecoration: chartConf.title.style.textDecoration ? chartConf.title.style.textDecoration : "none",
-				fontWeight: chartConf.title.fontWeight ? chartConf.title.fontWeight : "none"
+				fontWeight: chartConf.title.style.fontWeight ? chartConf.title.style.fontWeight : "none"
             }
 		},
 		subtitle: {
@@ -879,7 +879,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
                 fontFamily: chartConf.subtitle.style.fontFamily,
                 fontStyle: chartConf.subtitle.style.fontStyle ? chartConf.subtitle.style.fontStyle : "none",
 				textDecoration: chartConf.subtitle.style.textDecoration ? chartConf.subtitle.style.textDecoration : "none",
-				fontWeight: chartConf.subtitle.fontWeight ? chartConf.subtitle.fontWeight : "none"
+				fontWeight: chartConf.subtitle.style.fontWeight ? chartConf.subtitle.style.fontWeight : "none"
             }
 		},
 		lang: {
@@ -892,7 +892,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
                 fontFamily: chartConf.emptymessage.style.fontFamily,
                 fontStyle: chartConf.emptymessage.style.fontStyle ? chartConf.emptymessage.style.fontStyle : "none",
 				textDecoration: chartConf.emptymessage.style.textDecoration ? chartConf.emptymessage.style.textDecoration : "none",
-				fontWeight: chartConf.emptymessage.fontWeight ? chartConf.emptymessage.fontWeight : "none"
+				fontWeight: chartConf.emptymessage.style.fontWeight ? chartConf.emptymessage.style.fontWeight : "none"
             }, 
             position: {
             	align:  chartConf.emptymessage.style.textAlign,
