@@ -160,7 +160,12 @@ public class StringUtils {
 			endIndex = str.indexOf("}", beginIndex);
 			if (endIndex == -1)
 				throw new IOException("Malformed parameter: " + str.substring(beginIndex));
-			String parameter = str.substring(beginIndex + 3, endIndex).trim();
+			String parameter = "";
+			if (parameterTypeIdentifier.equals("$P")) {
+				parameter = str.substring(beginIndex + 3, endIndex).trim();
+			} else {
+				parameter = str.substring(beginIndex + 2, endIndex).trim();
+			}
 			parameters.add(parameter);
 			fromIndex = endIndex;
 		}

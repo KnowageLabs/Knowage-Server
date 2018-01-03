@@ -60,6 +60,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -76,6 +77,9 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	public static transient Logger logger = Logger.getLogger(QbeQueryResource.class);
 	public static transient Logger auditlogger = Logger.getLogger("audit.query");
+	private static final String PARAM_VALUE_NAME = "value";
+	public static final String DEFAULT_VALUE_PARAM = "defaultValue";
+	public static final String SERVICE_NAME = "SPAGOBI_SERVICE";
 	protected boolean handleTimeFilter = true;
 
 	@POST
@@ -107,12 +111,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			jsonEncodedReq = RestUtilities.readBodyAsJSONObject(req);
 
 			JSONArray pars = jsonEncodedReq.optJSONArray(DataSetConstants.PARS);
-			for (int i = 0; i < pars.length(); i++) {
-				JSONObject j = pars.getJSONObject(i);
-				if (j.optString("value") != null) {
-					getEnv().put(j.getString("name"), j.getString("value"));
-				}
-			}
+			addParameters(pars);
 
 			catalogue = jsonEncodedReq.getJSONArray("catalogue");
 			if (catalogue == null) {
@@ -206,6 +205,102 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	}
 
+	private void addParameters(JSONArray parsListJSON) {
+	try {
+			if (parsListJSON != null) {
+		
+			for (int i = 0; i < parsListJSON.length(); i++) {
+				JSONObject obj = (JSONObject) parsListJSON.get(i);
+				String name = obj.getString("name");
+				String type = null;
+				if (obj.has("type")) {
+					type = obj.getString("type");
+				}
+
+				// check if has value, if has not a valid value then use default
+				// value
+				boolean hasVal = obj.has(PARAM_VALUE_NAME) && !obj.getString(PARAM_VALUE_NAME).isEmpty();
+				String tempVal = "";
+				if (hasVal) {
+					tempVal = obj.getString(PARAM_VALUE_NAME);
+				} else {
+					boolean hasDefaultValue = obj.has(DEFAULT_VALUE_PARAM);
+					if (hasDefaultValue) {
+						tempVal = obj.getString(DEFAULT_VALUE_PARAM);
+						logger.debug("Value of param not present, use default value: " + tempVal);
+					}
+				}
+
+				boolean multivalue = false;
+				if (tempVal != null && tempVal.contains(",")) {
+					multivalue = true;
+				}
+
+				String value = "";
+				if (multivalue) {
+					value = getMultiValue(tempVal, type);
+				} else {
+					value = getSingleValue(tempVal, type);
+				}
+
+				logger.debug("name: " + name + " / value: " + value);
+				getEnv().put(name, value);
+			}
+		}
+			
+	} catch (Throwable t) {
+		if (t instanceof SpagoBIServiceException) {
+			throw (SpagoBIServiceException) t;
+		}
+		throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while deserializing dataset parameters", t);
+	}
+	}
+	private String getMultiValue(String value, String type) {
+		String toReturn = "";
+
+		String[] tempArrayValues = value.split(",");
+		for (int j = 0; j < tempArrayValues.length; j++) {
+			String tempValue = tempArrayValues[j];
+			if (j == 0) {
+				toReturn = getSingleValue(tempValue, type);
+			} else {
+				toReturn = toReturn + "," + getSingleValue(tempValue, type);
+			}
+		}
+
+		return toReturn;
+	}
+	static String getSingleValue(String value, String type) {
+		String toReturn = "";
+		value = value.trim();
+		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
+			if (!(value.startsWith("'") && value.endsWith("'"))) {
+				toReturn = "'" + value + "'";
+			} else {
+				toReturn = value;
+			}
+		} else if (type.equalsIgnoreCase(DataSetUtilities.NUMBER_TYPE)) {
+
+			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
+				toReturn = value.substring(1, value.length() - 1);
+			} else {
+				toReturn = value;
+			}
+			if (toReturn == null || toReturn.length() == 0) {
+				toReturn = "";
+			}
+		} else if (type.equalsIgnoreCase(DataSetUtilities.GENERIC_TYPE)) {
+			toReturn = value;
+		} else if (type.equalsIgnoreCase(DataSetUtilities.RAW_TYPE)) {
+			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
+				toReturn = value.substring(1, value.length() - 1);
+			} else {
+				toReturn = value;
+			}
+		}
+
+		return toReturn;
+	}
 	private void updateQueryGraphInQuery(Query filteredQuery, boolean b, Set<IModelEntity> modelEntities) {
 		boolean isTheOldQueryGraphValid = false;
 		logger.debug("IN");
