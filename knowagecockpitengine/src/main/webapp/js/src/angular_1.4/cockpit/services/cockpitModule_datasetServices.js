@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user){
+angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user){
 	var ds=this;
 
 	this.datasetList=[];
@@ -708,7 +708,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		params += "&widgetName=" + encodeURIComponent(ngModel.content.name);
 		if(ngModel.content.wtype=="chart"){
-			var body = {"aggregations":bodyString, "chartTemp":ngModel.content.chartTemplate, "exportWebData":false}
+			var chartTemplate = this.getI18NTemplate(ngModel.content.chartTemplate);
+			var body = {"aggregations":bodyString, "chartTemp":chartTemplate, "exportWebData":false}
 			sbiModule_restServices.promisePost("1.0/chart/jsonChartTemplate", encodeURIComponent(dataset.label) + "/getDataAndConf" + params, body)
 			.then(function(response){
 				if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
@@ -758,6 +759,32 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 
+	}
+
+	// returns the internationalized template
+	this.getI18NTemplate = function (chartTemplate) {
+    	var clone = angular.copy(chartTemplate);
+
+    	// looks for all "text" properties and apply I18N to them
+    	var func = function (key, object) {
+    		if (object.hasOwnProperty("text")) {
+    			object.text = sbiModule_i18n.getI18n(object.text);
+	        }
+    	}
+
+    	this.traverse(clone, func);
+    	return clone;
+
+	}
+
+	this.traverse = function(o, func) {
+	    for (var i in o) {
+	        if (o[i] !== null && typeof(o[i])=="object") {
+	        	func.apply(this, [i, o[i]]);
+	            //going one step down in the object tree!!
+    	        this.traverse(o[i], func);
+	        }
+	    }
 	}
 
 	this.getSummaryRow = function(ngModel){
