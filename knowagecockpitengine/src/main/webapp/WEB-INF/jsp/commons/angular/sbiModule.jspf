@@ -722,6 +722,37 @@ sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModu
 		});
 	};
 });
+
+
+sbiM.service('sbiModule_i18n', function(sbiModule_config, sbiModule_restServices) {
+	
+	var self = this;
+	self.i18nMap = {};
+
+    return {
+        
+    	loadI18nMap : function(locale){
+    		sbiModule_restServices.restToRootProject();
+    		var promise = sbiModule_restServices.promiseGet("2.0/i18nMessages","?currCountry="+sbiModule_config.curr_country+"&currLanguage="+sbiModule_config.curr_language).then(
+    				function(response){
+    					self.i18nMap = response.data;
+    			},function(response){
+    				alert("Errore "+response.data.errors[0].message);
+    			});
+    		return promise;
+    	},
+        
+        getI18n : function (label) { // return translation of a label if present, otherwise return the label
+    		if(self.i18nMap[label] != undefined){
+    			return self.i18nMap[label];
+    		}
+    		else return label; 
+        }
+    	
+      };
+		
+});
+
 </script>
 
 

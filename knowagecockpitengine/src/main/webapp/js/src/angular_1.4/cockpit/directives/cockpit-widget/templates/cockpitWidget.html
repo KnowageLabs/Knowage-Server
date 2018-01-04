@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-card-title ng-style="extendedStyle.title" layout="row" layout-align="start center" ng-show="extendedStyle.titles" ng-dblclick="editWidgetName();" ng-class="{'titleOnTop':editingWidgetName}">
 			<md-toolbar style="height:{{headerHeight}}px" class="widgetToolbar">
 				<div class="md-toolbar-tools" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp),'draggableToolbar':editingWidgetName!=true}" layout="row">
-					<span  class="md-headline editWidgetNameSpan " ng-style="extendedStyle.title" ng-show="editingWidgetName!=true">{{ngModel.content.name | parameter_fill}}</span>
+					<span  class="md-headline editWidgetNameSpan " ng-style="extendedStyle.title" ng-show="editingWidgetName!=true">{{ngModel.content.name | i18n | parameter_fill}}</span>
 					<div layout="row"  flex class="editWidgetNameInput" ng-show="editingWidgetName==true">
 						<md-input-container flex md-no-float class="md-block noMargin">
 				          <input ng-model="tmpWidgetContent.name" placeholder="Widget name">

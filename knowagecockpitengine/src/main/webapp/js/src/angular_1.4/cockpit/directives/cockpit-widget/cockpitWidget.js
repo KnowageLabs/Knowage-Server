@@ -126,6 +126,11 @@ angular.module('cockpitModule')
 
 	}
 })
+.filter('i18n', function(sbiModule_i18n) {
+	return function(label) {
+		return sbiModule_i18n.getI18n(label);
+	}
+})
 .directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices, cockpitModule_properties){
 	   return{
 		   templateUrl: baseScriptPath+ '/directives/cockpit-widget/templates/cockpitWidget.html',
@@ -169,7 +174,7 @@ angular.module('cockpitModule')
 	                    		}
 
 	                    		scope.refreshWidgetStyle();
-                    		
+
                         });
 
                     	scope.initializeWidgetProperty=function(directive){
@@ -203,13 +208,33 @@ angular.module('cockpitModule')
 	   }
 });
 
-function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_datasetServices,sbiModule_restServices,$q,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_widgetSelection,$timeout,cockpitModule_gridsterOptions,sbiModule_translate,sbiModule_user,$mdDialog){
+function cockpitWidgetControllerFunction(
+		$scope,
+		$rootScope,
+		cockpitModule_widgetServices,
+		cockpitModule_properties,
+		cockpitModule_template,
+		cockpitModule_analyticalDrivers,
+		cockpitModule_datasetServices,
+		sbiModule_restServices,
+		$q,
+		cockpitModule_documentServices,
+		cockpitModule_crossServices,
+		cockpitModule_widgetSelection,
+		$timeout,
+		cockpitModule_gridsterOptions,
+		sbiModule_translate,
+		sbiModule_user,
+		sbiModule_i18n,
+		$mdDialog)
+	{
 
 
 
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.translate		= sbiModule_translate;
+	$scope.i18n		= sbiModule_i18n;
 	$scope.enterpriseEdition = (sbiModule_user.functionalities.indexOf("EnableButtons")>-1)? true:false;
 	$scope.tmpWidgetContent	= {};
 	$scope.editingWidgetName= false;

@@ -29,7 +29,61 @@ cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 
-
+cockpitApp.controller("cockpitMasterControllerWrapper",
+		['$scope',
+		'$controller',
+		'sbiModule_i18n',
+		'cockpitModule_widgetServices',
+		'cockpitModule_template',
+		'cockpitModule_datasetServices',
+		'cockpitModule_documentServices',
+		'cockpitModule_crossServices',
+		'cockpitModule_nearRealtimeServices',
+		'cockpitModule_realtimeServices',
+		'cockpitModule_properties',
+		'cockpitModule_templateServices',
+		'$rootScope',
+		'$q',
+		'sbiModule_device',
+		'accessibility_preferences',
+		cockpitMasterControllerWrapper]);
+function cockpitMasterControllerWrapper(
+		$scope,
+		$controller,
+		sbiModule_i18n,
+		cockpitModule_widgetServices,
+		cockpitModule_template,
+		cockpitModule_datasetServices,
+		cockpitModule_documentServices,
+		cockpitModule_crossServices,
+		cockpitModule_nearRealtimeServices,
+		cockpitModule_realtimeServices,
+		cockpitModule_properties,
+		cockpitModule_templateServices,
+		$rootScope,
+		$q,
+		sbiModule_device,
+		accessibility_preferences){
+	// when sbiModule_i18n is initialized (i.e. i18n messages are loaded), the cockpitMasterController can start
+	sbiModule_i18n.loadI18nMap().then(function() {
+      $controller('cockpitMasterController', {
+        $scope: $scope, //passing the same scope on through
+        cockpitModule_widgetServices: cockpitModule_widgetServices,
+        cockpitModule_template: cockpitModule_template,
+		cockpitModule_datasetServices: cockpitModule_datasetServices,
+		cockpitModule_documentServices: cockpitModule_documentServices,
+		cockpitModule_crossServices: cockpitModule_crossServices,
+		cockpitModule_nearRealtimeServices: cockpitModule_nearRealtimeServices,
+		cockpitModule_realtimeServices: cockpitModule_realtimeServices,
+		cockpitModule_properties: cockpitModule_properties,
+		cockpitModule_templateServices: cockpitModule_templateServices,
+		$rootScope: $rootScope,
+		$q: $q,
+		sbiModule_device: sbiModule_device,
+		accessibility_preferences: accessibility_preferences
+      });
+    });
+}
 
 
 
