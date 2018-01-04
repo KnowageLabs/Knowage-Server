@@ -17,7 +17,18 @@
  */
 package it.eng.spagobi.engines.datamining.compute;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import au.com.bytecode.opencsv.CSVWriter;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.datamining.DataMiningEngineConfig;
@@ -31,17 +42,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
-import au.com.bytecode.opencsv.CSVWriter;
 
 public class DataMiningUtils {
 	static private Logger logger = Logger.getLogger(DataMiningUtils.class);
@@ -213,7 +213,7 @@ public class DataMiningUtils {
 
 	public static String getUserResourcesPath(IEngUserProfile profile) throws IOException {
 		logger.debug("IN");
-		String userResourcePath = UPLOADED_FILE_PATH + profile.getUserUniqueIdentifier() + "/";
+		String userResourcePath = UPLOADED_FILE_PATH + ((UserProfile) profile).getUserId() + "/";
 		logger.debug(userResourcePath);
 		File userPathFile = new File(userResourcePath);
 		logger.debug("Got userPathFile");
@@ -223,7 +223,7 @@ public class DataMiningUtils {
 
 	public static void createUserResourcesPath(IEngUserProfile profile) throws IOException {
 		logger.debug("IN");
-		String userResourcePath = UPLOADED_FILE_PATH + profile.getUserUniqueIdentifier() + "/";
+		String userResourcePath = UPLOADED_FILE_PATH + ((UserProfile) profile).getUserId() + "/";
 		logger.debug(userResourcePath);
 		File userPathFile = new File(userResourcePath);
 		// if it doesn't exist create it

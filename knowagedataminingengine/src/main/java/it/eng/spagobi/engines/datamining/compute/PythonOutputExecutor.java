@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
@@ -478,7 +479,7 @@ public class PythonOutputExecutor {
 		dataSet.setLabel(spagoBiDatasetname);
 		dataSet.setName(spagoBiDatasetname);
 		dataSet.setDescription("Dataset created from execution of document " + documentLabel + " by user " + userId);
-		dataSet.setOwner(profile.getUserUniqueIdentifier().toString());
+		dataSet.setOwner(((UserProfile) profile).getUserId().toString());
 
 		// ------------Metadata setting------------
 
@@ -577,7 +578,7 @@ public class PythonOutputExecutor {
 		dataSet.setLabel(spagoBiDatasetname);
 		dataSet.setName(spagoBiDatasetname);
 		dataSet.setDescription("Dataset created from execution of document " + documentLabel + " by user " + userId);
-		dataSet.setOwner(profile.getUserUniqueIdentifier().toString());
+		dataSet.setOwner(((UserProfile) profile).getUserId().toString());
 
 		// ------------Metadata setting------------
 

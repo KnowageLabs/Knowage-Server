@@ -17,14 +17,6 @@
  */
 package it.eng.spagobi.images.dao;
 
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
-import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.images.dao.criterion.GetImagesByName;
-import it.eng.spagobi.images.dao.criterion.SearchImages;
-import it.eng.spagobi.images.dao.util.ImageUtil;
-import it.eng.spagobi.images.metadata.SbiImages;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,6 +28,15 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.images.dao.criterion.GetImagesByName;
+import it.eng.spagobi.images.dao.criterion.SearchImages;
+import it.eng.spagobi.images.dao.util.ImageUtil;
+import it.eng.spagobi.images.metadata.SbiImages;
 
 public class ImagesDAOImpl extends AbstractHibernateDAO implements IImagesDAO {
 
@@ -109,7 +110,7 @@ public class ImagesDAOImpl extends AbstractHibernateDAO implements IImagesDAO {
 		return executeOnTransaction(new IExecuteOnTransaction<Long>() {
 			@Override
 			public Long execute(Session session) {
-				String user = getUserProfile().getUserUniqueIdentifier().toString();
+				String user = ((UserProfile) getUserProfile()).getUserId().toString();
 				Criteria c = session.createCriteria(SbiImages.class).setProjection(Projections.rowCount());
 				if (restrictByUser)
 					c.add(Restrictions.eq("commonInfo.userIn", user));

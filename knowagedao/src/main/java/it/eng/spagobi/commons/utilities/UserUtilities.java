@@ -133,7 +133,7 @@ public class UserUtilities {
 
 			userProfile = UserUtilities.getUserProfile(userId);
 
-			logger.debug("userProfile created.UserID= " + (String) userProfile.getUserUniqueIdentifier());
+			logger.debug("User profile created. User id: " + (String) ((UserProfile) userProfile).getUserId());
 			logger.debug("Attributes name of the user profile: " + userProfile.getUserAttributeNames());
 			logger.debug("Functionalities of the user profile: " + userProfile.getFunctionalities());
 			logger.debug("Roles of the user profile: " + userProfile.getRoles());
@@ -219,7 +219,7 @@ public class UserUtilities {
 
 	public static boolean isTechnicalUser(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) // for
 																							// administrators
@@ -242,7 +242,7 @@ public class UserUtilities {
 
 	public static boolean isTechDsManager(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) // for
 																							// administrators
@@ -259,7 +259,7 @@ public class UserUtilities {
 
 	public static boolean isAdministrator(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				return true;
@@ -273,7 +273,7 @@ public class UserUtilities {
 
 	public static boolean hasDeveloperRole(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
@@ -292,7 +292,7 @@ public class UserUtilities {
 
 	public static boolean hasAdministratorRole(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
@@ -311,7 +311,7 @@ public class UserUtilities {
 
 	public static boolean hasUserRole(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
@@ -330,7 +330,7 @@ public class UserUtilities {
 
 	public static boolean isTester(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST)) {
 				return true;
@@ -344,7 +344,7 @@ public class UserUtilities {
 
 	public static boolean haveRoleAndAuthorization(IEngUserProfile profile, String Role, String[] authorization) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		ArrayList<String> auth = new ArrayList<>(Arrays.asList(authorization));
 		try {
 			if (((UserProfile) profile).getIsSuperadmin()) {
@@ -1045,7 +1045,7 @@ public class UserUtilities {
 		AccessibilityPreferences preferences = null;
 
 		if (user != null) {
-			String userId = (String) user.getUserUniqueIdentifier();
+			String userId = (String) ((UserProfile) user).getUserId();
 
 			try {
 				it.eng.spagobi.profiling.dao.ISbiAccessibilityPreferencesDAO dao = DAOFactory.getSiAccessibilityPreferencesDAO();
@@ -1053,7 +1053,7 @@ public class UserUtilities {
 				if (ap != null) {
 					preferences = new AccessibilityPreferences();
 					preferences.setId(ap.getId());
-					preferences.setUser((String) user.getUserUniqueIdentifier());
+					preferences.setUser((String) ((UserProfile) user).getUserId());
 					preferences.setEnableUio(ap.isEnableUio());
 					preferences.setEnableRobobraille(ap.isEnableRobobraille());
 					preferences.setEnableGraphSonification(ap.isEnableGraphSonification());
@@ -1073,7 +1073,7 @@ public class UserUtilities {
 
 	public static List<RoleMetaModelCategory> getUserCategories(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		List<RoleMetaModelCategory> categories = new ArrayList<>();
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
@@ -1096,7 +1096,7 @@ public class UserUtilities {
 
 		ArrayList<Role> listRoles = new ArrayList<>();
 
-		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
@@ -1118,7 +1118,7 @@ public class UserUtilities {
 
 		ArrayList<String> listRoles = new ArrayList<>();
 
-		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 			Collection<String> roles = ((UserProfile) profile).getRolesForUse();

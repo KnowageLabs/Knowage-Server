@@ -17,24 +17,6 @@
  */
 package it.eng.spagobi.engines.datamining.compute;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.dao.DAOConfig;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
-import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
-import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
-import it.eng.spagobi.engines.datamining.model.Output;
-import it.eng.spagobi.engines.datamining.model.Variable;
-import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
-
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -53,6 +35,25 @@ import org.json.JSONObject;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngine;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
+import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
+import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.engines.datamining.model.Variable;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 
 public class ROutputExecutor {
 	static private Logger logger = Logger.getLogger(ROutputExecutor.class);
@@ -204,7 +205,7 @@ public class ROutputExecutor {
 			re.parseAndEval("library(RCurl)");
 
 			re.parseAndEval("HTMLStart(outdir = \"" + DataMiningUtils.getUserResourcesPath(profile).replaceAll("\\\\", "/") + "\", , filename = \""
-					+ profile.getUserUniqueIdentifier() + "\")");
+					+ ((UserProfile) profile).getUserId() + "\")");
 
 			if (function != null) {
 				if (outVal == null || outVal.equals("")) {
@@ -253,8 +254,8 @@ public class ROutputExecutor {
 		}
 
 		else if ((out.getOutputType().equalsIgnoreCase(DataMiningConstants.DATASET) || out.getOutputType().equalsIgnoreCase(DataMiningConstants.SPAGOBI_DS)
-				|| out.getOutputType().equalsIgnoreCase("SpagoBI Dataset") || out.getOutputType().equalsIgnoreCase("Dataset"))
-				&& outVal != null && out.getOutputName() != null) {
+				|| out.getOutputType().equalsIgnoreCase("SpagoBI Dataset") || out.getOutputType().equalsIgnoreCase("Dataset")) && outVal != null
+				&& out.getOutputName() != null) {
 			logger.debug("Dataset output");
 			CreateDatasetResult creationResult = null;
 			REXP rexp = null;
@@ -346,7 +347,7 @@ public class ROutputExecutor {
 
 			codeToExec = fileVar + "=file('" + strDir + fileName + "','wb')";
 			rexp = re.parseAndEval("try(" + codeToExec + ")");
-			// codeToExec = fileVar + "=  open('" + fileName + "', 'w')\n";
+			// codeToExec = fileVar + "= open('" + fileName + "', 'w')\n";
 			// PyLib.execScript(codeToExec);
 			if (rexp.inherits("try-error")) {
 				logger.debug("Script contains error(s):" + rexp.asString());
@@ -532,7 +533,7 @@ public class ROutputExecutor {
 		dataSet.setLabel(spagoBiDatasetname);
 		dataSet.setName(spagoBiDatasetname);
 		dataSet.setDescription("Dataset created from execution of document " + documentLabel + " by user " + userId);
-		dataSet.setOwner(profile.getUserUniqueIdentifier().toString());
+		dataSet.setOwner(((UserProfile) profile).getUserId().toString());
 
 		// ------------Metadata setting------------
 
@@ -626,7 +627,7 @@ public class ROutputExecutor {
 		dataSet.setLabel(spagoBiDatasetname);
 		dataSet.setName(spagoBiDatasetname);
 		dataSet.setDescription("Dataset created from execution of document " + documentLabel + " by user " + userId);
-		dataSet.setOwner(profile.getUserUniqueIdentifier().toString());
+		dataSet.setOwner(((UserProfile) profile).getUserId().toString());
 
 		// ------------Metadata setting------------
 

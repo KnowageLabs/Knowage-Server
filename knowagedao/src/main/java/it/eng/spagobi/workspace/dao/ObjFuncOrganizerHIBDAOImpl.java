@@ -17,14 +17,6 @@
  */
 package it.eng.spagobi.workspace.dao;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.workspace.bo.DocumentOrganizer;
-import it.eng.spagobi.workspace.metadata.SbiFunctionsOrganizer;
-import it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizer;
-import it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizerId;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +28,15 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.workspace.bo.DocumentOrganizer;
+import it.eng.spagobi.workspace.metadata.SbiFunctionsOrganizer;
+import it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizer;
+import it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizerId;
 
 public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements IObjFuncOrganizerDAO {
 
@@ -63,7 +64,7 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 			tx = aSession.beginTransaction();
 
 			Query hibQuery = aSession.createQuery(" from SbiObjFuncOrganizer");
-			
+
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
 
@@ -89,7 +90,7 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 			/**
 			 * Throw this specific exception so the service that called the Hibernate method can handle it and forward the information about the error towards
 			 * the client (final user).
-			 * 
+			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			throw new HibernateException(he);
@@ -145,7 +146,7 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 	public SbiObjFuncOrganizer addDocumentToOrganizer(Integer documentId) {
 		logger.debug("IN");
 		IEngUserProfile user = getUserProfile();
-		String userId = user.getUserUniqueIdentifier().toString();
+		String userId = ((UserProfile) user).getUserId().toString();
 		Session aSession = null;
 		Transaction tx = null;
 		SbiObjFuncOrganizer hibDoc = null;
@@ -185,7 +186,7 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 			/**
 			 * Throw this specific exception so the service that called the Hibernate method can handle it and forward the information about the error towards
 			 * the client (final user).
-			 * 
+			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			throw new HibernateException(he);
@@ -278,7 +279,7 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 			/**
 			 * Throw this specific exception so the service that called the Hibernate method can handle it and forward the information about the error towards
 			 * the client (final user).
-			 * 
+			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			throw new HibernateException(he);
@@ -305,10 +306,10 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 		toReturn.setDocumentDescription(sbiObj.getDescr());
 		toReturn.setDocumentType(sbiObj.getObjectTypeCode());
 		toReturn.setFunctId(hibObj.getId().getSbiFunctionsOrganizer().getFunctId());
-		
+
 		/**
-		 * Added for the tooltip for a document when searching through Organizer documents. The goal is to see from which folder the document that is hovered comes,
-		 * to see the full path.
+		 * Added for the tooltip for a document when searching through Organizer documents. The goal is to see from which folder the document that is hovered
+		 * comes, to see the full path.
 		 *
 		 * NOTE: This is not really used on the client side, since this parameter provides the path that contains the code of the document, instead of its name.
 		 * Since the name is displayed for the document, the user could not know for which folder which code corresponds. The DB table should be extended so to

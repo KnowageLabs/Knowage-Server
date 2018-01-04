@@ -17,19 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +32,20 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataSetDAO {
 
@@ -163,7 +164,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 				// OWNER OR
 
 				// take owned datasets
-				or.add(Restrictions.eq("owner", finalUserProfile.getUserUniqueIdentifier().toString()));
+				or.add(Restrictions.eq("owner", ((UserProfile) finalUserProfile).getUserId().toString()));
 
 				// get categories
 				Set<Domain> categoryList = UserUtilities.getDataSetCategoriesByUser(finalUserProfile);
