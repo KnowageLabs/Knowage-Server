@@ -22,7 +22,8 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
     angular.module('cockpitTable', [])
-        .directive('cockpitTable', ['$mdDialog', 'sbiModule_translate', function($mdDialog, sbiModule_translate) {
+        .directive('cockpitTable', ['$mdDialog', 'sbiModule_translate',function($mdDialog, sbiModule_translate) {
+
             return {
                 restrict: "E",
                 scope: {
@@ -34,7 +35,7 @@
                 },
                 templateUrl: currentScriptPath+'/templates/cockpitTable.tpl.html',
                 link: function(scope, elem, attr) {
-                	scope.translate=sbiModule_translate;
+                	scope.translate = sbiModule_translate;
                     scope.loading = true; 			//initializing directive with the loading active
                     scope.settings.page = 1; 		//initial page number
                     scope.settings.rowsCount = 0;	//initial rows count
@@ -294,6 +295,13 @@
                 }
             }
         }])
+
+        // for I18N of custom messages
+        .filter('i18n', function(sbiModule_i18n) {
+			return function(label) {
+				return sbiModule_i18n.getI18n(label);
+			}
+		})
 
     //Pagination directive
     .directive('cockpitTablePagination', ['sbiModule_translate', function(sbiModule_translate) {

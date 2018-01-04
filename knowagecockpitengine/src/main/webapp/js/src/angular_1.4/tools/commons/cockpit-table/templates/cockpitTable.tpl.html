@@ -11,8 +11,8 @@
 	    <thead>
 	        <tr ng-style="settings.style.header">
 	            <th scope="col" ng-repeat="column in columns track by $index" ng-if="!column.style.hiddenColumn" ng-style="getThStyle(styledata.th,column)" ng-click="sort(column,$event)" ng-class="{'hiddenIcon':column.aliasToShow != settings.sortingColumn,'active':column.aliasToShow == settings.sortingColumn}">
-	                <span class="thText">{{column.aliasToShow}}
-	                	<md-tooltip ng-if="!column.hideTooltip" md-direction="bottom" md-delay="500">{{column.aliasToShow}}</md-tooltip>
+	                <span class="thText">{{column.aliasToShow | i18n}}
+	                	<md-tooltip ng-if="!column.hideTooltip" md-direction="bottom" md-delay="500">{{column.aliasToShow | i18n}}</md-tooltip>
 	                </span>
 	                <span class="sortingIcon" ng-class="{'inverse':settings.sortingOrder == 'ASC'}"><i class="fa fa-arrow-down"></i></span>
 	            </th>
@@ -25,8 +25,8 @@
 	    <thead>
 	        <tr ng-style="settings.style.header">
 	            <th scope="col" ng-repeat="column in columns track by $index" ng-if="!column.style.hiddenColumn" ng-style="getThStyle(styledata.th,column)" ng-click="sort(column,$event)" ng-class="{'hiddenIcon':column.aliasToShow != settings.sortingColumn,'active':column.aliasToShow == settings.sortingColumn}">
-	                <span class="thText">{{column.aliasToShow}}
-	                	<md-tooltip ng-if="!column.hideTooltip" md-direction="bottom" md-delay="500">{{column.aliasToShow}}</md-tooltip>
+	                <span class="thText">{{column.aliasToShow | i18n}}
+	                	<md-tooltip ng-if="!column.hideTooltip" md-direction="bottom" md-delay="500">{{column.aliasToShow | i18n}}</md-tooltip>
 	                </span>
 	                <span class="sortingIcon" ng-class="{'inverse':settings.sortingOrder == 'ASC'}"><i class="fa fa-arrow-down"></i></span>
 	            </th>
