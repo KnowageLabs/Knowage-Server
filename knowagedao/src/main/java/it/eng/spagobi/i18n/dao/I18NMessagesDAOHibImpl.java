@@ -100,7 +100,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 	public Map<String, String> getAllI18NMessages(Locale locale) throws EMFUserError {
 		logger.debug("IN");
 
-		Map<String, String> toReturn = null;
+		Map<String, String> toReturn = new HashMap<String, String>();
 
 		Session aSession = null;
 		Transaction tx = null;
@@ -151,11 +151,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			query.setInteger("languageCd", domId);
 
 			List objList = query.list();
-			if (objList != null) {
-				if (objList.size() > 0) {
-					toReturn = new HashMap<String, String>();
-				}
-
+			if (objList != null && objList.size() > 0) {
 				for (Iterator iterator = objList.iterator(); iterator.hasNext();) {
 					SbiI18NMessages i18NMess = (SbiI18NMessages) iterator.next();
 					toReturn.put(i18NMess.getId().getLabel(), i18NMess.getMessage());
