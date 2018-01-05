@@ -390,6 +390,10 @@ public class SelfServiceDataSetCRUD {
 				dsNew = normalizedDataset;
 			}
 
+			// retrieve persist data
+			dsNew.setPersisted(Boolean.valueOf(persist));
+			dsNew.setPersistTableName(persistTablePrefix.toUpperCase() + persistTableName.toUpperCase());
+
 			Integer toReturnId = dsNew.getId();
 			if (dsNew.getId() == -1) {
 				// if a ds with the same label not exists on db ok else error
@@ -1908,12 +1912,11 @@ public class SelfServiceDataSetCRUD {
 				continue;
 			}
 			try {
-				//JDK 8 version
+				// JDK 8 version
 				/*
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
-				LocalDate localDate = LocalDate.parse((String) field.getValue(), formatter);
-				Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-				*/
+				 * DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat); LocalDate localDate = LocalDate.parse((String) field.getValue(),
+				 * formatter); Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+				 */
 				DateTimeFormatter formatter = DateTimeFormat.forPattern(dateFormat);
 				LocalDate localDate = LocalDate.parse((String) field.getValue(), formatter);
 				localDate.toDate();
