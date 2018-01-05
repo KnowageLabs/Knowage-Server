@@ -17,11 +17,11 @@
  */
 package it.eng.spagobi.tools.scheduler.to;
 
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 
 public class JobInfo implements Serializable {
 
@@ -30,7 +30,6 @@ public class JobInfo implements Serializable {
 	private String jobDescription = "";
 	private boolean jobMergeAllSnapshots = false;
 	private boolean jobCollateSnapshots = false;
-	private String schedulerAdminstratorIdentifier = "";
 	private List<BIObject> documents = new ArrayList<BIObject>();
 
 	/**
@@ -121,14 +120,6 @@ public class JobInfo implements Serializable {
 	 */
 	public void setJobGroupName(String jobGroupName) {
 		this.jobGroupName = jobGroupName;
-	}
-
-	public String getSchedulerAdminstratorIdentifier() {
-		return schedulerAdminstratorIdentifier;
-	}
-
-	public void setSchedulerAdminstratorIdentifier(String schedulerAdminstratorIdentifier) {
-		this.schedulerAdminstratorIdentifier = schedulerAdminstratorIdentifier;
 	}
 
 }

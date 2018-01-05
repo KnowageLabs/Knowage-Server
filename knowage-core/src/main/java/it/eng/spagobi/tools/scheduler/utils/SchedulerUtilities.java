@@ -18,6 +18,18 @@
 
 package it.eng.spagobi.tools.scheduler.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
@@ -42,18 +54,6 @@ import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
 import it.eng.spagobi.tools.scheduler.to.TriggerInfo;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 public class SchedulerUtilities {
 
@@ -248,10 +248,12 @@ public class SchedulerUtilities {
 						}
 						if (loadAtRuntimeParameters.containsKey(biobjpar.getParameterUrlName())) {
 							RuntimeLoadingParameterValuesRetriever strategy = new RuntimeLoadingParameterValuesRetriever();
-							String userRoleStr = loadAtRuntimeParameters.get(biobjpar.getParameterUrlName());
-							String[] userRole = userRoleStr.split("\\|");
-							strategy.setUserIndentifierToBeUsed(userRole[0]);
-							strategy.setRoleToBeUsed(userRole[1]);
+							String serialiedUserAndRole = loadAtRuntimeParameters.get(biobjpar.getParameterUrlName());
+							String[] splitted = serialiedUserAndRole.split("\\|");
+							String serializedUser = splitted[0];
+							UserProfile profile = SchedulerUtilitiesV2.deserializeUserProfile(serializedUser);
+							strategy.setUserProfile(profile);
+							strategy.setRoleToBeUsed(splitted[1]);
 							biobjpar.setParameterValuesRetriever(strategy);
 						} else if (useFormulaParameters.containsKey(biobjpar.getParameterUrlName())) {
 							FormulaParameterValuesRetriever strategy = new FormulaParameterValuesRetriever();
@@ -330,8 +332,8 @@ public class SchedulerUtilities {
 		for (Integer biobjId : biobjIds) {
 			index++;
 			DispatchContext dispatchContext = new DispatchContext();
-			SourceBean dispatchContextSB = (SourceBean) triggerInfoSB.getFilteredSourceBeanAttribute("JOB_PARAMETERS.JOB_PARAMETER", "name", "biobject_id_"
-					+ biobjId.toString() + "__" + index);
+			SourceBean dispatchContextSB = (SourceBean) triggerInfoSB.getFilteredSourceBeanAttribute("JOB_PARAMETERS.JOB_PARAMETER", "name",
+					"biobject_id_" + biobjId.toString() + "__" + index);
 			if (dispatchContextSB != null) {
 				String encodedDispatchContext = (String) dispatchContextSB.getAttribute("value");
 				dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);

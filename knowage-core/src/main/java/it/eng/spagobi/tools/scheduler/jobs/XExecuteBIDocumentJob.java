@@ -72,6 +72,7 @@ import it.eng.spagobi.tools.scheduler.dispatcher.UniqueMailDocumentDispatchChann
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.utils.BIObjectParametersIterator;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
+import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2;
 import it.eng.spagobi.tools.scheduler.wsEvents.SbiWsEvent;
 import it.eng.spagobi.tools.scheduler.wsEvents.dao.SbiWsEventsDao;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -712,10 +713,12 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 				if (loadAtRuntimeParametersMap.containsKey(parameter.getParameterUrlName())) {
 					logger.debug("Document parameter with url name [" + parameter.getParameterUrlName() + "] was configured to be calculated at runtime.");
 					RuntimeLoadingParameterValuesRetriever strategy = new RuntimeLoadingParameterValuesRetriever();
-					String userRoleStr = loadAtRuntimeParametersMap.get(parameter.getParameterUrlName());
-					String[] userRole = userRoleStr.split("\\|");
-					strategy.setUserIndentifierToBeUsed(userRole[0]);
-					strategy.setRoleToBeUsed(userRole[1]);
+					String serializedUserAndRole = loadAtRuntimeParametersMap.get(parameter.getParameterUrlName());
+					String[] splitted = serializedUserAndRole.split("\\|");
+					String serializedUser = splitted[0];
+					UserProfile profile = SchedulerUtilitiesV2.deserializeUserProfile(serializedUser);
+					strategy.setUserProfile(profile);
+					strategy.setRoleToBeUsed(splitted[1]);
 					parameter.setParameterValuesRetriever(strategy);
 				}
 			}

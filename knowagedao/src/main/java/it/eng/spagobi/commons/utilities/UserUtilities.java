@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.commons.utilities;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -34,6 +35,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
@@ -160,6 +163,28 @@ public class UserUtilities {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	public static String fromUserProfile2JSON(UserProfile profile) {
+		ObjectMapper mapper = new ObjectMapper();
+		String toReturn;
+		try {
+			toReturn = mapper.writeValueAsString(profile);
+		} catch (JsonProcessingException e) {
+			throw new SpagoBIRuntimeException("Error while serializing profile into json object", e);
+		}
+		return toReturn;
+	}
+
+	public static UserProfile fromJSON2UserProfile(String json) {
+		ObjectMapper mapper = new ObjectMapper();
+		UserProfile profile;
+		try {
+			profile = mapper.readValue(json, UserProfile.class);
+		} catch (IOException e) {
+			throw new SpagoBIRuntimeException("Error while deserializing profile from json object", e);
+		}
+		return profile;
 	}
 
 	public static IEngUserProfile getUserProfile(String userId) throws Exception {

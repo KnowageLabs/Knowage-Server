@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,8 +42,10 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
 import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
@@ -1232,6 +1235,26 @@ public class SchedulerUtilitiesV2 {
 		jo.put("documents", docParam);
 
 		return jo;
+	}
+
+	public static String serializeUserProfile(UserProfile profile) {
+		try {
+			String json = UserUtilities.fromUserProfile2JSON(profile);
+			String base64 = Base64.encodeBase64String(json.getBytes("UTF-8"));
+			return base64;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while serializing user profile object");
+		}
+	}
+
+	public static UserProfile deserializeUserProfile(String string) {
+		try {
+			String json = new String(Base64.decodeBase64(string.getBytes("UTF-8")), "UTF-8");
+			UserProfile profile = UserUtilities.fromJSON2UserProfile(json);
+			return profile;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while serializing user profile object");
+		}
 	}
 
 }
