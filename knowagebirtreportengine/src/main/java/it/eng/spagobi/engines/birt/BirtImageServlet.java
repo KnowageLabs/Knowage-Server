@@ -43,8 +43,6 @@ public class BirtImageServlet extends HttpServlet {
 
 	private transient Logger logger = Logger.getLogger(this.getClass());
 	private static final String CHART_LABEL = "chart_label";
-	private HttpSession session = null;
-	String userId = null;
 
 	/*
 	 * (non-Javadoc)
@@ -101,12 +99,12 @@ public class BirtImageServlet extends HttpServlet {
 
 		} else {
 			// USER PROFILE
-			session = request.getSession();
+			HttpSession session = request.getSession();
 			IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			userId = (String) profile.getUserUniqueIdentifier();
+			String userId = (String) profile.getUserUniqueIdentifier();
 			logger.debug("userId=" + userId);
 			Map allParams = request.getParameterMap();
-			fis = executeEngineChart(allParams);
+			fis = executeEngineChart(allParams, session, userId);
 			// chart is a PNG fine
 			mimeType = MimeUtils.getMimeType("chart.png");
 		}
@@ -163,12 +161,15 @@ public class BirtImageServlet extends HttpServlet {
 
 	/**
 	 * This method execute the engine chart and returns its image in byte[]
+	 * 
+	 * @param userId
+	 * @param session
 	 *
 	 * @param request
 	 *            the httpRequest
 	 * @return the chart in inputstream form
 	 */
-	private InputStream executeEngineChart(Map parametersMap) {
+	private InputStream executeEngineChart(Map parametersMap, HttpSession session, String userId) {
 		logger.debug("IN");
 		InputStream is = null;
 
@@ -202,25 +203,13 @@ public class BirtImageServlet extends HttpServlet {
 	}
 
 	/*
-	private Map getMapParameters(Map allParams){
-		Map toReturn = new HashMap();
-		String[] strArParams = (String[])allParams.get("params");
-		String strParams = strArParams[0];
-
-		try{
-			strParams = strParams.replace("{", "");
-			strParams = strParams.replace("}", "");
-			String[] arParamsImage= strParams.split(",");
-			for (int i=0; i< arParamsImage.length; i++){
-				String name = arParamsImage[i].substring(0,arParamsImage[i].indexOf("="));
-				String value =  arParamsImage[i].substring(arParamsImage[i].indexOf("=")+1);
-				if (value != null && !value.equals("")) toReturn.put(name.trim(), value.trim());
-			}
-		}catch(Exception e){
-			logger.error("Error while parsing chart's parameter map. Error: " + e );
-		}
-		return toReturn;
-	}
-	*/
+	 * private Map getMapParameters(Map allParams){ Map toReturn = new HashMap(); String[] strArParams = (String[])allParams.get("params"); String strParams =
+	 * strArParams[0];
+	 *
+	 * try{ strParams = strParams.replace("{", ""); strParams = strParams.replace("}", ""); String[] arParamsImage= strParams.split(","); for (int i=0; i<
+	 * arParamsImage.length; i++){ String name = arParamsImage[i].substring(0,arParamsImage[i].indexOf("=")); String value =
+	 * arParamsImage[i].substring(arParamsImage[i].indexOf("=")+1); if (value != null && !value.equals("")) toReturn.put(name.trim(), value.trim()); }
+	 * }catch(Exception e){ logger.error("Error while parsing chart's parameter map. Error: " + e ); } return toReturn; }
+	 */
 
 }
