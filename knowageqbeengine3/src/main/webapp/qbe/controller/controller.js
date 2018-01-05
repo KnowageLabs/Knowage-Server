@@ -730,7 +730,6 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	$scope.saveEntityTree = function(){
     	var saveTreeAction  = $scope.sbiModule_action_builder.getActionBuilder("GET");
     	saveTreeAction.actionName = "SAVE_TREE_ACTION";
-    	saveTreeAction.queryParams.dragan="dragan"
     	saveTreeAction.executeAction().then(function(response){
 			$mdDialog.show(
 	        		$mdDialog.alert()
