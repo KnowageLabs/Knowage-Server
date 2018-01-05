@@ -219,7 +219,7 @@ function cockpitChartWidgetControllerFunction(
 		$scope.refreshWidget(undefined,'init', true);
 	});
 	
-	$scope.refresh=function(element,width,height,data,nature, undefined, changedChartType,chartConf){
+	$scope.refresh=function(element,width,height,data,nature, undefined, changedChartType,dataAndChartConf){
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			if (dataset.isRealtime == true){
@@ -235,11 +235,11 @@ function cockpitChartWidgetControllerFunction(
 				} else {
 					dataToPass = $scope.realtimeDataManagement($scope.realTimeDatasetData, nature);
 				}
-				$scope.$broadcast(nature,dataToPass,dataset.isRealtime,changedChartType,chartConf);
+				$scope.$broadcast(nature,dataToPass,dataset.isRealtime,changedChartType,dataAndChartConf);
 
 			} else {
 				//Refresh for Not realtime datasets
-				$scope.$broadcast(nature,data, false, changedChartType,chartConf);
+				$scope.$broadcast(nature,data, false, changedChartType,dataAndChartConf);
 			}
 		}
 

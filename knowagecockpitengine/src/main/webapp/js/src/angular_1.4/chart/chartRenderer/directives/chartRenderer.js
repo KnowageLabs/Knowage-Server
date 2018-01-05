@@ -97,7 +97,7 @@ angular.module('chartRendererModule')
 
 				}
 
-			scope.$on('refresh',function(event,data,isRealtime){
+			scope.$on('refresh',function(event,data,isRealtime,changedChartType,chartConf){		
 				if(scope.updateble){
 					var dataForSending = isRealtime ? data : eval("(" + data + ")");
 					if(scope.chartInitializer != undefined && scope.chartInitializer.updateData){
@@ -109,7 +109,7 @@ angular.module('chartRendererModule')
 								transformedData = scope.chartInitializer.transformeData(scope.widgetData,dataForSending);
 							}
 						}
-						scope.loadChart(scope.chartTemplate,scope.datasetLabel,transformedData,isRealtime, true);
+						scope.loadChart(scope.chartTemplate,scope.datasetLabel,transformedData,isRealtime, true,chartConf);
 					}
 				}
 			})
@@ -133,17 +133,17 @@ angular.module('chartRendererModule')
 
 			})
 
-			scope.$on('filters',function(event,data){
+			scope.$on('filters',function(event,data,isRealtime,changedChartType,chartConf){
 
 
-				scope.loadChart(scope.chartTemplate,scope.datasetLabel,data);
+				scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime, true,chartConf);
 
 			})
 
-			scope.$on('selections',function(event,data){
+			scope.$on('selections',function(event,data,isRealtime,changedChartType,chartConf){
 
 
-				scope.loadChart(scope.chartTemplate,scope.datasetLabel,data);
+				scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime, true,chartConf);
 
 			})
 
