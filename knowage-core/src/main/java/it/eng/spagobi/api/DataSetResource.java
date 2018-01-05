@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -85,7 +84,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
-import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
@@ -1116,7 +1114,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		if (true) {
 			filtersJSON = filters;
 			String hsql = filterList(filtersJSON, ordering);
-			items = dsDao.loadFilteredDatasetList(hsql, start, limit, getUserProfile().getUserUniqueIdentifier().toString());
+			items = dsDao.loadFilteredDatasetList(hsql, start, limit, getUserProfile().getUserId().toString());
 		} else {// not filtered
 			items = dsDao.loadPagedDatasetList(start, limit);
 			// items =

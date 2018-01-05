@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,19 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.forecastedit.service.rest;
-
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -40,6 +32,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 /**
  * Forecast editing REST service
@@ -61,7 +62,7 @@ public class ForecastEditService {
 			if (profile == null) {
 				return "User must be logged in";
 			}
-			String userId = (String) profile.getUserUniqueIdentifier();
+			String userId = (String) ((UserProfile) profile).getUserId();
 			IBIObjectDAO sbiObjectsDAO = DAOFactory.getBIObjectDAO();
 			BIObject document = sbiObjectsDAO.loadBIObjectByLabel("EII_RPT_0013_Edit"); // TODO: to change
 			Integer documentId = document.getId();
@@ -149,8 +150,8 @@ public class ForecastEditService {
 
 	}
 
-	private void persistValues(Map.Entry<String, ForecastValue> entry, String accountName, String accountCode, String hierCode, String year,
-			String closureCode, String userId) {
+	private void persistValues(Map.Entry<String, ForecastValue> entry, String accountName, String accountCode, String hierCode, String year, String closureCode,
+			String userId) {
 
 		try {
 			ForecastValue forecastValue = entry.getValue();

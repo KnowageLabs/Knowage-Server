@@ -17,6 +17,33 @@
  */
 package it.eng.spagobi.sdk.documents.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -78,33 +105,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.file.FileUtils;
 import it.eng.spagobi.utilities.mime.MimeUtils;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 public class DocumentsServiceImpl extends AbstractSDKService implements DocumentsService {
 
@@ -716,10 +716,13 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	/**
 	 * Executes a document and return an object containing the result
-	 * 
-	 * @param: document : the document
-	 * @param: parameters: ana array of SDKDocumentParameters, already filled with values
-	 * @param: roleName : name of the role
+	 *
+	 * @param: document
+	 *             : the document
+	 * @param: parameters:
+	 *             ana array of SDKDocumentParameters, already filled with values
+	 * @param: roleName
+	 *             : name of the role
 	 */
 
 	@Override
@@ -1123,7 +1126,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	/**
 	 * search for model file inside content parameter and return byte array
-	 * 
+	 *
 	 * @param content
 	 * @param toReturn
 	 */
@@ -1352,7 +1355,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	/**
 	 * Add the schema mondrian to the catalogue and upload a template that uses it
-	 * 
+	 *
 	 * @param SDKSchema
 	 *            . The object with all informations
 	 */
@@ -1378,8 +1381,8 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				throw new SDKException("1001", "Error while uploading schema. Schema file is null.");
 				// return;
 			}
-			logger.debug("schema name = [" + schema.getSchemaName() + "] - schema description = [" + schema.getSchemaDescription()
-					+ "] - schema datasource = [" + schema.getSchemaDataSourceLbl() + "] ");
+			logger.debug("schema name = [" + schema.getSchemaName() + "] - schema description = [" + schema.getSchemaDescription() + "] - schema datasource = ["
+					+ schema.getSchemaDataSourceLbl() + "] ");
 			UserProfile userProfile = (UserProfile) this.getUserProfile();
 			try {
 				boolean isNewSchema = true;
@@ -1398,7 +1401,8 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				// checks if the artifact already exists. In this case doesn't
 				// create the new one!
 				if (artifact != null) {
-					logger.info("The schema with name " + schema.getSchemaName() + " is already been inserted in SpagoBI catalogue. Artifact will be updated! ");
+					logger.info(
+							"The schema with name " + schema.getSchemaName() + " is already been inserted in SpagoBI catalogue. Artifact will be updated! ");
 					isNewSchema = false;
 					artID = artifact.getId();
 				}
@@ -1756,7 +1760,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			}
 
 			String previousLockerUser = biObj.getLockedByUser();
-			String currentUser = (String) getUserProfile().getUserUniqueIdentifier();
+			String currentUser = (String) ((UserProfile) getUserProfile()).getUserId();
 
 			boolean isUserAdmin = getUserProfile().isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
 

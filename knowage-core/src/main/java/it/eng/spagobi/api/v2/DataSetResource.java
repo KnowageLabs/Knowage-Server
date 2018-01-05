@@ -194,7 +194,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		SbiDataSet sbiDataset = (SbiDataSet) JsonConverter.jsonToValidObject(body, SbiDataSet.class);
 
 		sbiDataset.setId(new SbiDataSetId(null, 1, getUserProfile().getOrganization()));
-		sbiDataset.setOwner((String) getUserProfile().getUserUniqueIdentifier());
+		sbiDataset.setOwner((String) getUserProfile().getUserId());
 		IDataSet dataset = DataSetFactory.toDataSet(sbiDataset);
 
 		try {

@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.AccessibilityPreferences;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.profiling.dao.ISbiAccessibilityPreferencesDAO;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +30,15 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.AccessibilityPreferences;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.profiling.dao.ISbiAccessibilityPreferencesDAO;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/2.0/preferences")
 @ManageAuthorization
@@ -54,8 +54,8 @@ public class AccessibilityPreferencesResource extends AbstractSpagoBIResource {
 			objDao = DAOFactory.getSiAccessibilityPreferencesDAO();
 			objDao.setUserProfile(getUserProfile());
 
-			objDao.saveOrUpdatePreferencesControls((String) getUserProfile().getUserUniqueIdentifier(), ap.isEnableUio(), ap.isEnableRobobraille(),
-					ap.isEnableVoice(), ap.isEnableGraphSonification());
+			objDao.saveOrUpdatePreferencesControls((String) getUserProfile().getUserId(), ap.isEnableUio(), ap.isEnableRobobraille(), ap.isEnableVoice(),
+					ap.isEnableGraphSonification());
 
 			return Response.ok().build();
 
@@ -78,7 +78,7 @@ public class AccessibilityPreferencesResource extends AbstractSpagoBIResource {
 			objDao = DAOFactory.getSiAccessibilityPreferencesDAO();
 			objDao.setUserProfile(getUserProfile());
 
-			objDao.saveOrUpdateUserPreferences((String) getUserProfile().getUserUniqueIdentifier(), jo.toString());
+			objDao.saveOrUpdateUserPreferences((String) getUserProfile().getUserId(), jo.toString());
 
 			return Response.ok().build();
 

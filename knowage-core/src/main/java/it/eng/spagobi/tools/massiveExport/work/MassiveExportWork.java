@@ -18,25 +18,6 @@
 
 package it.eng.spagobi.tools.massiveExport.work;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.ExecutionProxy;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
-import it.eng.spagobi.tools.massiveExport.utils.Utilities;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
-import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
-import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -55,6 +36,24 @@ import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import commonj.work.Work;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.ExecutionProxy;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
+import it.eng.spagobi.tools.massiveExport.utils.Utilities;
+import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
+import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
+import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
+import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 /**
  * Thread of massive export; cycle on documetns to be exported calling engine for export , meanwhile keeps updated the record of the export, finally create the
@@ -136,7 +135,7 @@ public class MassiveExportWork implements Work {
 		Thread thread = Thread.currentThread();
 		Long threadId = thread.getId();
 
-		logger.debug("Started thread Id " + threadId + " from user id: " + userProfile.getUserUniqueIdentifier());
+		logger.debug("Started thread Id " + threadId + " from user id: " + ((UserProfile) userProfile).getUserId());
 
 		Integer totalDocs = documents.size();
 		logger.debug("# of documents: " + totalDocs);
@@ -261,7 +260,7 @@ public class MassiveExportWork implements Work {
 
 	/**
 	 * Zip file placed under resource_directory/massiveExport/functionalityCd
-	 * 
+	 *
 	 * @param filesToZip
 	 * @param randomNamesToName
 	 * @return

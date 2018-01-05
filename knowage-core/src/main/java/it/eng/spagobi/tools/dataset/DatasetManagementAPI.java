@@ -167,10 +167,6 @@ public class DatasetManagementAPI {
 		return userProfile;
 	}
 
-	public String getUserId() {
-		return getUserProfile().getUserUniqueIdentifier().toString();
-	}
-
 	public void setUserProfile(UserProfile userProfile) {
 		this.userProfile = userProfile;
 		if (dataSetDao != null) {
@@ -235,7 +231,7 @@ public class DatasetManagementAPI {
 			}
 
 			if (DataSetUtilities.isExecutableByUser(dataSet, getUserProfile()) == false) {
-				throw new RuntimeException("User [" + getUserId() + "] cannot access to dataset [" + label + "]");
+				throw new RuntimeException("User [" + getUserProfile().getUserId() + "] cannot access to dataset [" + label + "]");
 			}
 			return dataSet;
 		} catch (Throwable t) {

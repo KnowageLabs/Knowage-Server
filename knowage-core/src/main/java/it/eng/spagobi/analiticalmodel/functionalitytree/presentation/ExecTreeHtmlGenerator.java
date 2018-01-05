@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,12 +11,23 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.spagobi.analiticalmodel.functionalitytree.presentation;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
@@ -37,17 +48,6 @@ import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.commons.utilities.urls.IUrlBuilder;
 import it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory;
 import it.eng.spagobi.utilities.themes.ThemesManager;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 /**
  * Contains all methods needed to generate and modify a tree object for Execution. There are methods to generate tree, configure, insert and modify elements.
@@ -82,8 +82,8 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 		htmlStream.append("			divM = document.getElementById('divmenu" + requestIdentity + "');\n");
 		htmlStream.append("			divM.innerHTML = '';\n");
 		String capExec = msgBuilder.getMessage("SBISet.devObjects.captionExecute", "messages", httpRequest);
-		htmlStream
-				.append("			if(urlExecution!='') divM.innerHTML = divM.innerHTML + '<div onmouseout=\"this.style.backgroundColor=\\'white\\'\"  onmouseover=\"this.style.backgroundColor=\\'#eaf1f9\\'\" ><a class=\"dtreemenulink\" href=\"'+urlExecution+'\">"
+		htmlStream.append(
+				"			if(urlExecution!='') divM.innerHTML = divM.innerHTML + '<div onmouseout=\"this.style.backgroundColor=\\'white\\'\"  onmouseover=\"this.style.backgroundColor=\\'#eaf1f9\\'\" ><a class=\"dtreemenulink\" href=\"'+urlExecution+'\">"
 						+ capExec + "</a></div>';\n");
 		/*
 		 * String capMetadata = msgBuilder.getMessage("SBISet.objects.captionMetadata", "messages", httpRequest); htmlStream.append(
@@ -91,25 +91,25 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 		 * +capMetadata+"</a></div>'; }\n");
 		 */
 		String capErase = msgBuilder.getMessage("SBISet.devObjects.captionErase", "messages", httpRequest);
-		htmlStream
-				.append("         if(urlEraseDoc!='') divM.innerHTML = divM.innerHTML + '<div onmouseout=\"this.style.backgroundColor=\\'white\\'\"  onmouseover=\"this.style.backgroundColor=\\'#eaf1f9\\'\" ><a class=\"dtreemenulink\" href=\"javascript:actionConfirm(\\'"
+		htmlStream.append(
+				"         if(urlEraseDoc!='') divM.innerHTML = divM.innerHTML + '<div onmouseout=\"this.style.backgroundColor=\\'white\\'\"  onmouseover=\"this.style.backgroundColor=\\'#eaf1f9\\'\" ><a class=\"dtreemenulink\" href=\"javascript:actionConfirm(\\'"
 						+ capErase + "\\', \\''+urlEraseDoc+'\\');\">" + capErase + "</a></div>';\n");
-		htmlStream
-				.append("         if(urlEraseFolder!='') divM.innerHTML = divM.innerHTML + '<div onmouseout=\"this.style.backgroundColor=\\'white\\'\"  onmouseover=\"this.style.backgroundColor=\\'#eaf1f9\\'\" ><a class=\"dtreemenulink\" href=\"javascript:actionConfirm(\\'"
+		htmlStream.append(
+				"         if(urlEraseFolder!='') divM.innerHTML = divM.innerHTML + '<div onmouseout=\"this.style.backgroundColor=\\'white\\'\"  onmouseover=\"this.style.backgroundColor=\\'#eaf1f9\\'\" ><a class=\"dtreemenulink\" href=\"javascript:actionConfirm(\\'"
 						+ capErase + "\\', \\''+urlEraseFolder+'\\');\">" + capErase + "</a></div>';\n");
 		String capMoveDown = msgBuilder.getMessage("SBISet.objects.captionMoveDownShort", "messages", httpRequest);
-		htmlStream
-				.append("         if(urlDown!='') divM.innerHTML = divM.innerHTML + '<div onmouseout=\"this.style.backgroundColor=\\'white\\'\"  onmouseover=\"this.style.backgroundColor=\\'#eaf1f9\\'\" ><a class=\"dtreemenulink\" href=\"javascript:actionConfirm(\\'"
+		htmlStream.append(
+				"         if(urlDown!='') divM.innerHTML = divM.innerHTML + '<div onmouseout=\"this.style.backgroundColor=\\'white\\'\"  onmouseover=\"this.style.backgroundColor=\\'#eaf1f9\\'\" ><a class=\"dtreemenulink\" href=\"javascript:actionConfirm(\\'"
 						+ capMoveDown + "\\', \\''+urlDown+'\\');\">" + capMoveDown + "</a></div>';\n");
 		String capMoveUp = msgBuilder.getMessage("SBISet.objects.captionMoveUpShort", "messages", httpRequest);
-		htmlStream
-				.append("         if(urlUp!='') divM.innerHTML = divM.innerHTML + '<div onmouseout=\"this.style.backgroundColor=\\'white\\'\"  onmouseover=\"this.style.backgroundColor=\\'#eaf1f9\\'\" ><a class=\"dtreemenulink\" href=\"javascript:actionConfirm(\\'"
+		htmlStream.append(
+				"         if(urlUp!='') divM.innerHTML = divM.innerHTML + '<div onmouseout=\"this.style.backgroundColor=\\'white\\'\"  onmouseover=\"this.style.backgroundColor=\\'#eaf1f9\\'\" ><a class=\"dtreemenulink\" href=\"javascript:actionConfirm(\\'"
 						+ capMoveUp + "\\', \\''+urlUp+'\\');\">" + capMoveUp + "</a></div>';\n");
 
 		htmlStream.append("				showMenu(event, divM);\n");
 		String capAddSub = "Add folder";
-		htmlStream
-				.append("			if(urlAddFolder!='') divM.innerHTML = divM.innerHTML + '<div onmouseout=\"this.style.backgroundColor=\\'white\\'\"  onmouseover=\"this.style.backgroundColor=\\'#eaf1f9\\'\" ><a class=\"dtreemenulink\" href=\"'+urlAddFolder+'\">"
+		htmlStream.append(
+				"			if(urlAddFolder!='') divM.innerHTML = divM.innerHTML + '<div onmouseout=\"this.style.backgroundColor=\\'white\\'\"  onmouseover=\"this.style.backgroundColor=\\'#eaf1f9\\'\" ><a class=\"dtreemenulink\" href=\"'+urlAddFolder+'\">"
 						+ capAddSub + "</a></div>';\n");
 
 		htmlStream.append("		}\n");
@@ -139,9 +139,9 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 		 * +"                    style: {overflow:'auto'}  \n " +"               }] \n" +"            }, \n" +"            modal: true,\n"
 		 * +"            layout:'fit',\n" +"            height:400,\n" +"            width:500,\n" +"            closeAction:'close',\n"
 		 * +"            scripts: true, \n" +"            plain: true \n"
-		 * 
+		 *
 		 * +"        });  \n" +"   win.show(); \n" );
-		 * 
+		 *
 		 * htmlStream.append("}\n");
 		 */
 
@@ -150,7 +150,7 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.presentation.ITreeHtmlGenerator#makeTree(java.util.List, javax.servlet.http.HttpServletRequest,
 	 * java.lang.String, java.lang.String)
 	 */
@@ -162,7 +162,7 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 
 	/**
 	 * Function that builds the tree: It should build more common folders and one personal folder (user's one).
-	 * 
+	 *
 	 * @param objectsList
 	 *            the objects list
 	 * @param httpReq
@@ -197,14 +197,14 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 		// get user profile
 		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		StringBuffer htmlStream = new StringBuffer();
-		htmlStream.append("<LINK rel='StyleSheet' href='" + urlBuilder.getResourceLinkByTheme(httpRequest, "/css/dtree.css", currTheme)
-				+ "' type='text/css' />");
+		htmlStream
+				.append("<LINK rel='StyleSheet' href='" + urlBuilder.getResourceLinkByTheme(httpRequest, "/css/dtree.css", currTheme) + "' type='text/css' />");
 		// makeConfigurationDtree(htmlStream);
 		String nameTree = msgBuilder.getMessage("tree.objectstree.name", "messages", httpRequest);
 		htmlStream.append("<SCRIPT language='JavaScript' src='" + urlBuilder.getResourceLinkByTheme(httpRequest, "/js/dtree.js", currTheme) + "'></SCRIPT>");
 		/* ********* start luca changes *************** */
-		htmlStream.append("<SCRIPT language='JavaScript' src='" + urlBuilder.getResourceLinkByTheme(httpRequest, "/js/contextMenu.js", currTheme)
-				+ "'></SCRIPT>");
+		htmlStream.append(
+				"<SCRIPT language='JavaScript' src='" + urlBuilder.getResourceLinkByTheme(httpRequest, "/js/contextMenu.js", currTheme) + "'></SCRIPT>");
 		htmlStream.append("<div id='divmenu" + requestIdentity + "' class='dtreemenu' onmouseout='hideMenu(event, \"divmenu" + requestIdentity + "\");' >");
 		htmlStream.append("		menu");
 		htmlStream.append("</div>");
@@ -240,7 +240,7 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 		htmlStream.append("		<td>&nbsp;</td>");
 		htmlStream.append("		<td id='treeExecObjTd" + requestIdentity + "' name='treeExecObjTd" + requestIdentity + "'>&nbsp;</td>");
 		htmlStream.append("			<script language=\"JavaScript1.2\">\n");
-		// htmlStream.append("				var nameTree = 'treeExecObj';\n");
+		// htmlStream.append(" var nameTree = 'treeExecObj';\n");
 
 		String context = httpRequest.getContextPath();
 		if (!(context.charAt(context.length() - 1) == '/')) {
@@ -295,8 +295,8 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 			htmlStream.append("	<div style=\"display:none;\">\n");
 			htmlStream.append("	<form method='POST' action='" + formUrl + "' id ='objectForm' name='objectForm'>\n");
 			htmlStream.append("		<span>" + onlyTestObjectsViewLbl + "</span>\n");
-			htmlStream.append("		<input type=\"checkbox\" name=\"view_only_test_objects\" id=\"view_only_test_objects" + requestIdentity + "\" value=\"true\" "
-					+ checked + " />\n");
+			htmlStream.append("		<input type=\"checkbox\" name=\"view_only_test_objects\" id=\"view_only_test_objects" + requestIdentity
+					+ "\" value=\"true\" " + checked + " />\n");
 			htmlStream.append("		<input type=\"image\" style=\"width:25px;height:25px\" title=\"" + updateTree + "\" alt\"" + updateTree + "\" \n");
 			htmlStream.append("			src=\"" + urlBuilder.getResourceLinkByTheme(httpRequest, "/img/updateState.png", currTheme) + "\" />\n");
 			htmlStream.append("	</form>\n");
@@ -332,8 +332,8 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 		logger.debug("Node [" + nameLabel + "] executable property is set to: " + canExec);
 		logger.debug("Node [" + nameLabel + "] testable property is set to: " + canTest);
 
-		htmlStream.append(treeName + ".add(" + idFolder + ", " + dTreeRootId + ",'" + name + "', '', '', '', '" + imgFolder + "', '" + imgFolderOp
-				+ "', 'true');\n");
+		htmlStream.append(
+				treeName + ".add(" + idFolder + ", " + dTreeRootId + ",'" + name + "', '', '', '', '" + imgFolder + "', '" + imgFolderOp + "', 'true');\n");
 
 		List objects = folder.getBiObjects();
 		logger.debug("Node [" + nameLabel + "] contains [" + objects.size() + "] document(s)");
@@ -366,18 +366,18 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 			execUrlPars.put(ObjectsTreeConstants.BIOBJECT_TREE_LIST, ObjectsTreeConstants.BIOBJECT_TREE_LIST);
 
 			if (visibleObj != null && visibleObj.intValue() == 0 && (stateObj.equalsIgnoreCase("REL") || stateObj.equalsIgnoreCase("TEST"))) {
-				logger.debug("Node [" + obj.getName() + "] is not accessible by user [" + profile.getUserUniqueIdentifier() + "]");
+				logger.debug("Node [" + obj.getName() + "] is not accessible by user [" + ((UserProfile) profile).getUserId() + "]");
 			} else {
-				logger.debug("Node [" + obj.getName() + "] is accessible by user [" + profile.getUserUniqueIdentifier() + "]");
+				logger.debug("Node [" + obj.getName() + "] is accessible by user [" + ((UserProfile) profile).getUserId() + "]");
 
 				if (canTest && (stateObj.equals("TEST"))) {
-					logger.debug("Node [" + obj.getName() + "] will be accessed by user [" + profile.getUserUniqueIdentifier() + "] in TEST mode");
+					logger.debug("Node [" + obj.getName() + "] will be accessed by user [" + ((UserProfile) profile).getUserId() + "] in TEST mode");
 					thereIsOneOrMoreObjectsInTestState = true;
 					String execUrl = urlBuilder.getUrl(httpRequest, execUrlPars);
 					htmlStream.append(treeName + ".add(" + dTreeObjects-- + ", " + idFolder + ",'<img src=\\'" + stateIcon + "\\' /> " + obj.getName() + "', '"
 							+ execUrl + "', '', '', '" + userIcon + "', '', '', '' );\n");
 				} else if (!"true".equalsIgnoreCase(onlyTestObjectsView) && (stateObj.equals("REL")) && canExec) {
-					logger.debug("Node [" + obj.getName() + "] will be accessed by user [" + profile.getUserUniqueIdentifier() + "] in EXEC mode");
+					logger.debug("Node [" + obj.getName() + "] will be accessed by user [" + ((UserProfile) profile).getUserId() + "] in EXEC mode");
 
 					boolean profileAttrsOk = ObjectsAccessVerifier.checkProfileVisibility(obj, profile);
 					if (profileAttrsOk) {
@@ -423,7 +423,7 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 		logger.debug("Node [" + nameLabel + "] testable property is set to: " + canTest);
 
 		if (canTest || canExec) {
-			logger.debug("Node [" + nameLabel + "] is accessible by user [" + profile.getUserUniqueIdentifier() + "]");
+			logger.debug("Node [" + nameLabel + "] is accessible by user [" + ((UserProfile) profile).getUserId() + "]");
 
 			htmlStream.append("	" + treeName + ".add(" + idFolder + ", " + parentId + ",'" + name + "', '', '', '', '" + imgFolder + "', '" + imgFolderOp
 					+ "', '', '');\n");
@@ -450,9 +450,9 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 				logger.debug("Node [" + obj.getName() + "] visible property is set to: " + (visibleObj.intValue() != 0));
 
 				if (visibleObj != null && visibleObj.intValue() == 0 && (stateObj.equalsIgnoreCase("REL") || stateObj.equalsIgnoreCase("TEST"))) {
-					logger.debug("Node [" + obj.getName() + "] is not accessible by user [" + profile.getUserUniqueIdentifier() + "]");
+					logger.debug("Node [" + obj.getName() + "] is not accessible by user [" + ((UserProfile) profile).getUserId() + "]");
 				} else {
-					logger.debug("Node [" + obj.getName() + "] is accessible by user [" + profile.getUserUniqueIdentifier() + "]");
+					logger.debug("Node [" + obj.getName() + "] is accessible by user [" + ((UserProfile) profile).getUserId() + "]");
 					String prog = idObj.toString();
 					if ((stateObj.equals("TEST")) && canTest && profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST)) {
 						thereIsOneOrMoreObjectsInTestState = true;
@@ -551,7 +551,7 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.presentation.ITreeHtmlGenerator#makeAccessibleTree(java.util.List,
 	 * javax.servlet.http.HttpServletRequest, java.lang.String)
 	 */

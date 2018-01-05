@@ -17,6 +17,18 @@
  */
 package it.eng.spagobi.analiticalmodel.document.utils;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -55,18 +67,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.file.FileUtils;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.log4j.Logger;
-
 public class DetBIObjModHelper {
 	static private Logger logger = Logger.getLogger(DetBIObjModHelper.class);
 
@@ -100,7 +100,7 @@ public class DetBIObjModHelper {
 
 	/**
 	 * Recover bi object details.
-	 * 
+	 *
 	 * @param mod
 	 *            the mod
 	 * @return the bI object
@@ -444,7 +444,7 @@ public class DetBIObjModHelper {
 			IDataSetDAO datasetdao = DAOFactory.getDataSetDAO();
 			datasetdao.setUserProfile(profile);
 			List dataset = datasetdao.loadDataSets();
-			List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadSbiCommunityByUser(profile.getUserUniqueIdentifier().toString());
+			List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadSbiCommunityByUser(((UserProfile) profile).getUserId().toString());
 
 			// List languages = ConfigSingleton.getInstance().getFilteredSourceBeanAttributeAsList("LANGUAGE_SUPPORTED", "LANGUAGE", "language");
 			response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_ENGINES, engines);

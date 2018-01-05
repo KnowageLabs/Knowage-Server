@@ -1,18 +1,5 @@
 package it.eng.spagobi.api;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
-import it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -32,6 +19,19 @@ import javax.ws.rs.core.Response;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
+import it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/documentviewpoint")
 @ManageAuthorization
@@ -79,7 +79,7 @@ public class DocumentExecutionViewpoint extends AbstractSpagoBIResource {
 			BIObject obj;
 			try {
 				obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(label, role);
-				logger.debug("User: [" + userProfile.getUserUniqueIdentifier() + "]");
+				logger.debug("User: [" + ((UserProfile) userProfile).getUserId() + "]");
 				logger.debug("Document Id:  [" + obj.getId() + "]");
 				viewpointOwner = (String) ((UserProfile) userProfile).getUserId();
 				Iterator it = viewpointJSON.keys();
@@ -142,7 +142,7 @@ public class DocumentExecutionViewpoint extends AbstractSpagoBIResource {
 		try {
 			obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(label, role);
 			biobjectId = obj.getId();
-			logger.debug("User: [" + userProfile.getUserUniqueIdentifier() + "]");
+			logger.debug("User: [" + ((UserProfile) userProfile).getUserId() + "]");
 			logger.debug("Document Id:  [" + biobjectId + "]");
 			try {
 				viewpointDAO = DAOFactory.getViewpointDAO();
@@ -152,7 +152,7 @@ public class DocumentExecutionViewpoint extends AbstractSpagoBIResource {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot load viewpoints for document [" + biobjectId + "]", e);
 			}
 			logger.debug("Document [" + biobjectId + "] have " + (viewpoints == null ? "0" : "" + viewpoints.size()) + " valid viewpoints for user ["
-					+ userProfile.getUserUniqueIdentifier() + "]");
+					+ ((UserProfile) userProfile).getUserId() + "]");
 			resultAsMap.put("viewpoints", viewpoints);
 		} catch (EMFUserError e1) {
 			throw new SpagoBIServiceException(SERVICE_NAME, e1.getMessage());

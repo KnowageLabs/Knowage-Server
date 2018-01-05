@@ -17,6 +17,16 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
@@ -44,16 +54,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class SaveDocumentAction extends AbstractSpagoBIAction {
 
@@ -200,7 +200,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				LowFunctionality userFunc = null;
 				try {
 					ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
-					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
+					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + ((UserProfile) profile).getUserId(), false);
 				} catch (Exception e) {
 					logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
 					throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
@@ -347,7 +347,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		}
 	}
 
-	private void insertGeoReportDocumentCreatedOnDataset(JSONObject sourceDatasetJSON, JSONObject documentJSON, JSONObject customDataJSON, JSONArray foldersJSON) {
+	private void insertGeoReportDocumentCreatedOnDataset(JSONObject sourceDatasetJSON, JSONObject documentJSON, JSONObject customDataJSON,
+			JSONArray foldersJSON) {
 
 		logger.debug("IN");
 
@@ -384,8 +385,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		} catch (SpagoBIServiceException e) {
 			throw e;
 		} catch (Throwable e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while inserting geo document created on datset [" + sourceDatasetLabel
-					+ "]", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"An unexpected error occured while inserting geo document created on datset [" + sourceDatasetLabel + "]", e);
 		} finally {
 			logger.debug("OUT");
 		}

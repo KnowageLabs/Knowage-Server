@@ -57,7 +57,7 @@ public class PublisherService extends AbstractSpagoBIResource {
 			String publisher = request.getParameter(PUBLISHER);
 
 			if (!isPublisherValid(publisher)) {
-				logger.error("The user " + getUserProfile().getUserUniqueIdentifier() + " is trying to read a secured file content using publisher");
+				logger.error("The user " + getUserProfile().getUserId() + " is trying to read a secured file content using publisher");
 				throw new IllegalAccessException("Unauthorized access to a system resource.");
 			}
 

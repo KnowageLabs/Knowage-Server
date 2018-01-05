@@ -17,6 +17,27 @@
  */
 package it.eng.spagobi.tools.dataset.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.naming.NamingException;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import commonj.work.WorkException;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
@@ -90,28 +111,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.naming.NamingException;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import commonj.work.WorkException;
 
 @SuppressWarnings("serial")
 public class ManageDatasets extends AbstractSpagoBIAction {
@@ -716,7 +715,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		if (this.requestContainsAttribute(DataSetConstants.FILTERS)) {
 			filtersJSON = getAttributeAsJSONObject(DataSetConstants.FILTERS);
 			String hsql = filterList(filtersJSON);
-			items = dsDao.loadFilteredDatasetList(hsql, start, limit, profile.getUserUniqueIdentifier().toString());
+			items = dsDao.loadFilteredDatasetList(hsql, start, limit, ((UserProfile) profile).getUserId().toString());
 		} else {// not filtered
 			items = dsDao.loadPagedDatasetList(start, limit);
 			// items =
@@ -850,8 +849,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 								for (int i = 0; i < currentMetadata.getFieldCount(); i++) {
 									String alias = currentMetadata.getFieldAlias(i);
 									if (aliases.contains(alias)) {
-										logger.error("Cannot save dataset cause preview revealed that two columns with name " + alias
-												+ " exist; change aliases");
+										logger.error(
+												"Cannot save dataset cause preview revealed that two columns with name " + alias + " exist; change aliases");
 										throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.test.error.duplication");
 									}
 									aliases.add(alias);
@@ -880,8 +879,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 										}
 										// check if dataset is used by document
 										// by querying SBI_OBJ_DATA_SET table
-										List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO().loadFederationsUsingDataset(
-												previousIdInteger);
+										List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO()
+												.loadFederationsUsingDataset(previousIdInteger);
 
 										// if (!objectsUsing.isEmpty() ||
 										// !federationsAssociated.isEmpty()) {
@@ -1258,10 +1257,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				String realName = configuration.getString("fileName");
 				if (dsLabel != null && !realName.equals(dsLabel)) {
 
-					File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files"
-							+ File.separatorChar + dsLabel + "." + configuration.getString("fileType").toLowerCase());
-					File source = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files"
-							+ File.separatorChar + realName);
+					File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar
+							+ dsLabel + "." + configuration.getString("fileType").toLowerCase());
+					File source = new File(
+							SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + realName);
 
 					if (!source.getCanonicalPath().equals(dest.getCanonicalPath())) {
 						logger.debug("Source and destination are not the same. Copying from source to dest");
@@ -2029,7 +2028,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		String hsql = " from SbiDataSet h where h.active = true ";
 		// Ad Admin can see other users' datasets
 		if (!isAdmin) {
-			hsql = hsql + " and h.owner = '" + profile.getUserUniqueIdentifier().toString() + "'";
+			hsql = hsql + " and h.owner = '" + ((UserProfile) profile).getUserId().toString() + "'";
 		}
 		if (filtersJSON != null) {
 			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);

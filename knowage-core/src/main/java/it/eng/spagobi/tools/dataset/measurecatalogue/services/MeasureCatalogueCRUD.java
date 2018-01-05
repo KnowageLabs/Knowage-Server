@@ -37,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
@@ -71,7 +72,7 @@ public class MeasureCatalogueCRUD {
 	@UserConstraint(functionalities = { SpagoBIConstants.MEASURES_CATALOGUE_MANAGEMENT })
 	public String getAllMeasures(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		String measures = MeasureCatalogueSingleton.getMeasureCatologue().toString(profile.getUserUniqueIdentifier().toString(),
+		String measures = MeasureCatalogueSingleton.getMeasureCatologue().toString(((UserProfile) profile).getUserId().toString(),
 				UserUtilities.isAdministrator(profile));
 		return measures;
 	}
@@ -98,11 +99,11 @@ public class MeasureCatalogueCRUD {
 			if (aMeasure != null) {
 				if (!aMeasure.isVisibleToUser(profile)) {
 					logger.error("The measure " + aMeasure.getAlias() + " of the dataset " + aMeasure.getDsName() + " is not visible for the user "
-							+ profile.getUserUniqueIdentifier().toString());
+							+ ((UserProfile) profile).getUserId().toString());
 					throw new MeasureCatalogueMeasureNotVisibleException(aMeasure);
 				} else {
 					logger.debug("The measure [" + aMeasure.getAlias() + "] of the dataset [" + aMeasure.getDsName() + "] whose label is equal to ["
-							+ aMeasure.getDsId() + "] is visible for the user " + profile.getUserUniqueIdentifier().toString()
+							+ aMeasure.getDsId() + "] is visible for the user " + ((UserProfile) profile).getUserId().toString()
 							+ " and so will be joined in the final dataset");
 					measures.add(aMeasure);
 				}

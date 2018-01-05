@@ -316,7 +316,7 @@ public class ContentServiceImplSupplier {
 	}
 
 	private boolean checkParametersErrors(IEngUserProfile profile, Integer biobjectId, String roleName, Map parameters) {
-		logger.debug("IN: user = [" + profile.getUserUniqueIdentifier() + "], biobjectid = [" + biobjectId + "], " + "roleName = [" + roleName
+		logger.debug("IN: user id = [" + ((UserProfile) profile).getUserId() + "], biobjectid = [" + biobjectId + "], " + "roleName = [" + roleName
 				+ "], parameters = [" + parameters + "]");
 		Monitor monitor = MonitorFactory.start("spagobi.service.ContentSupplier.checkParametersErrors");
 		try {
@@ -326,7 +326,7 @@ public class ContentServiceImplSupplier {
 			ExecutionInstance instance = new ExecutionInstance(profile, "", "", biobjectId, roleName, modality, true, true, null);
 
 			instance.refreshParametersValues(parameters, true);
-			boolean onEditMode = (parameters.get(EngineStartServletIOManager.ON_EDIT_MODE)!=null);
+			boolean onEditMode = (parameters.get(EngineStartServletIOManager.ON_EDIT_MODE) != null);
 			List errors = instance.getParametersErrors(onEditMode);
 			if (errors != null && errors.size() > 0) {
 				return false;

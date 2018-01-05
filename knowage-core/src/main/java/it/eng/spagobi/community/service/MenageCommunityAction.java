@@ -38,6 +38,7 @@ import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
@@ -81,7 +82,7 @@ public class MenageCommunityAction {
 		String result = msgBuilder.getMessage("community.save.membership.ok.1", "messages", locale) + "<b> " + userToAccept + "</b> "
 				+ msgBuilder.getMessage("community.save.membership.ok.2", "messages", locale) + "<b> " + community + "</b>";
 
-		if (profile.getUserUniqueIdentifier().equals(owner)) {
+		if (((UserProfile) profile).getUserId().equals(owner)) {
 
 			SbiCommunity sbiComm;
 			try {
@@ -121,7 +122,7 @@ public class MenageCommunityAction {
 		try {
 			commDao = DAOFactory.getCommunityDAO();
 
-			communities = commDao.loadSbiCommunityByUser((String) profile.getUserUniqueIdentifier());
+			communities = commDao.loadSbiCommunityByUser((String) ((UserProfile) profile).getUserId());
 			if (communities != null) {
 				String innerList = communityDeser(communities);
 				communitiesJSONStr = "{root:" + innerList + "}";

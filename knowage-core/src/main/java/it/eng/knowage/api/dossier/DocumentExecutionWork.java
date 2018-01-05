@@ -94,7 +94,7 @@ public class DocumentExecutionWork implements Work {
 		Thread thread = Thread.currentThread();
 		Long threadId = thread.getId();
 
-		logger.debug("Started thread Id " + threadId + " from user id: " + userProfile.getUserUniqueIdentifier());
+		logger.debug("Started thread Id " + threadId + " from user id: " + ((UserProfile) userProfile).getUserId());
 
 		Integer totalDocs = documents.size();
 		logger.debug("# of documents: " + totalDocs);

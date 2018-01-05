@@ -64,8 +64,8 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 				List<BIObjectPlaceholdersPair> documentsToExecute = getBIObjectFromTemplate(dossierTemplate);
 
 				String randomName = getRandomName();
-				ProgressThread progressThread = new ProgressThread(profile.getUserUniqueIdentifier().toString(), documentsToExecute.size(), null, null,
-						randomName, ProgressThread.TYPE_DOSSIER_EXECUTION);
+				ProgressThread progressThread = new ProgressThread(profile.getUserId().toString(), documentsToExecute.size(), null, null, randomName,
+						ProgressThread.TYPE_DOSSIER_EXECUTION);
 				IProgressThreadDAO progressThreadDAO = DAOFactory.getProgressThreadDAO();
 				progressThreadId = progressThreadDAO.insertProgressThread(progressThread);
 

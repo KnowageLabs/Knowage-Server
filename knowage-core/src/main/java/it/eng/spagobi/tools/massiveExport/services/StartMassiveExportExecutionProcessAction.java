@@ -18,23 +18,6 @@
 
 package it.eng.spagobi.tools.massiveExport.services;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
-import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.container.CoreContextManager;
-import it.eng.spagobi.tools.massiveExport.utils.Utilities;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.service.JSONSuccess;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +28,24 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.container.CoreContextManager;
+import it.eng.spagobi.tools.massiveExport.utils.Utilities;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONSuccess;
 
 public class StartMassiveExportExecutionProcessAction extends GetParametersForExecutionAction {
 
@@ -99,7 +100,7 @@ public class StartMassiveExportExecutionProcessAction extends GetParametersForEx
 
 		JSONObject responseJSON = null;
 		IEngUserProfile profile = getUserProfile();
-		logger.debug("user is " + profile.getUserUniqueIdentifier());
+		logger.debug("user is " + ((UserProfile) profile).getUserId());
 		try {
 
 			LowFunctionality funct = funcDao.loadLowFunctionalityByID(folderId, true);

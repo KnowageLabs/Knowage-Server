@@ -170,10 +170,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 
 			// 4 - User sending the feedback (from session)
 			IEngUserProfile profile = this.getUserProfile();
-			String userSendingFeedback = null;
-			if (profile.getUserUniqueIdentifier() instanceof String) {
-				userSendingFeedback = (String) profile.getUserUniqueIdentifier();
-			}
+			String userSendingFeedback = ((UserProfile) profile).getUserId().toString();
 
 			// Check if all the informations to send a mail are valorized
 			if ((emailAddressdocumentCreationUser != null) && (!emailAddressdocumentCreationUser.isEmpty())) {

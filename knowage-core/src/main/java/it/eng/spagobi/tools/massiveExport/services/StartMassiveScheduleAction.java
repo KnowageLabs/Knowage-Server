@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,31 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.massiveExport.services;
-
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.massiveExport.utils.Utilities;
-import it.eng.spagobi.tools.scheduler.bo.CronExpression;
-import it.eng.spagobi.tools.scheduler.bo.Job;
-import it.eng.spagobi.tools.scheduler.bo.Trigger;
-import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
-import it.eng.spagobi.tools.scheduler.jobs.ExecuteBIDocumentJob;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -51,6 +31,27 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.massiveExport.utils.Utilities;
+import it.eng.spagobi.tools.scheduler.bo.CronExpression;
+import it.eng.spagobi.tools.scheduler.bo.Job;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.tools.scheduler.jobs.ExecuteBIDocumentJob;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 
@@ -224,19 +225,19 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 
 	// we use the same group name for job and trigger
 	private String getGroupName(IEngUserProfile userProfile, LowFunctionality folder) {
-		String name = "private/users" + "/" + userProfile.getUserUniqueIdentifier() + "/massive/" + folder.getName();
+		String name = "private/users" + "/" + ((UserProfile) userProfile).getUserId() + "/massive/" + folder.getName();
 		return name;
 	}
 
 	// we use the same name for job and trigger
 	private String getName(IEngUserProfile userProfile, LowFunctionality folder) {
-		String name = userProfile.getUserUniqueIdentifier() + "@" + folder.getCode();
+		String name = ((UserProfile) userProfile).getUserId() + "@" + folder.getCode();
 		return name;
 	}
 
 	// we use the same name for job and trigger
 	private String getDescription(IEngUserProfile userProfile, LowFunctionality folder) {
-		String description = "Massive scheduling defined by user [" + userProfile.getUserUniqueIdentifier() + "] on folder [" + folder.getName() + "]";
+		String description = "Massive scheduling defined by user [" + ((UserProfile) userProfile).getUserId() + "] on folder [" + folder.getName() + "]";
 		return description;
 	}
 
@@ -363,11 +364,11 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 
 		parameters = new HashMap<String, String>();
 
-		File destinationFolder = Utilities.getMassiveScheduleZipFolder((String) userProfile.getUserUniqueIdentifier(), folder.getCode());
+		File destinationFolder = Utilities.getMassiveScheduleZipFolder((String) ((UserProfile) userProfile).getUserId(), folder.getCode());
 
 		name = "globalDispatcherContext";
 		value = "saveasfile=true" + "%26" + "destinationfolder=" + destinationFolder.getAbsolutePath() + "%26" + "isrelativetoresourcefolder=false" + "%26"
-				+ "functionalitytreefolderlabel=" + folder.getCode() + "%26" + "owner=" + (String) userProfile.getUserUniqueIdentifier();
+				+ "functionalitytreefolderlabel=" + folder.getCode() + "%26" + "owner=" + (String) ((UserProfile) userProfile).getUserId();
 
 		parameters.put(name, value);
 

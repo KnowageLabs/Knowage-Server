@@ -18,6 +18,13 @@
 
 package it.eng.spagobi.api;
 
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 /**
  * @author MarcoCortella (marco.cortella@eng.it)
  *
@@ -28,6 +35,7 @@ package it.eng.spagobi.api;
  */
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
@@ -35,13 +43,6 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
-
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 @Path("/1.0/modellocker")
 @ManageAuthorization
@@ -66,7 +67,7 @@ public class ModelResource extends AbstractSpagoBIResource {
 			return ExceptionUtilities.serializeException("Profile not found when executing service", null);
 
 		}
-		String userId = ((IEngUserProfile) profileO).getUserUniqueIdentifier().toString();
+		String userId = ((UserProfile) profileO).getUserId().toString();
 
 		logger.debug("User Id is " + userId);
 		logger.debug("MetaModel Id is " + metaModelId);
@@ -126,7 +127,7 @@ public class ModelResource extends AbstractSpagoBIResource {
 			return ExceptionUtilities.serializeException("Profile not found when executing service", null);
 
 		}
-		String userId = ((IEngUserProfile) profileO).getUserUniqueIdentifier().toString();
+		String userId = ((UserProfile) profileO).getUserId().toString();
 
 		logger.debug("User Id is " + userId);
 		logger.debug("MetaModel Id is " + metaModelId);

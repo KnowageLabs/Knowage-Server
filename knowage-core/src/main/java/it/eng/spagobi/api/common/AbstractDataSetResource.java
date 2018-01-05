@@ -42,6 +42,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -97,10 +98,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	// ===================================================================
 	// UTILITY METHODS
 	// ===================================================================
-
-	public String getUserId() {
-		return getUserProfile().getUserUniqueIdentifier().toString();
-	}
 
 	protected DatasetManagementAPI getDatasetManagementAPI() {
 		DatasetManagementAPI managementAPI = new DatasetManagementAPI(getUserProfile());
@@ -561,7 +558,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 			if (typeDocWizard == null) {
 				actions.put(detailAction);
-				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))) {
+				if (((UserProfile) profile).getUserId().toString().equals(datasetJSON.get("owner"))) {
 					// the delete action is able only for private dataset
 					actions.put(deleteAction);
 				}
