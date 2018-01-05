@@ -33,6 +33,7 @@ import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
@@ -593,7 +594,7 @@ public class PersistedTableManager implements IPersistedManager {
 				Object attributeValue = profile.getUserAttribute(attributeName);
 				logger.debug("Attribute " + attributeName + "  is " + attributeValue);
 				if (attributeValue == null) {
-					throw new RuntimeException("No attribute with name " + attributeName + " found for user " + profile.getUserUniqueIdentifier());
+					throw new RuntimeException("No attribute with name " + attributeName + " found for user " + ((UserProfile) profile).getUserId());
 				} else {
 					schema = attributeValue.toString();
 				}

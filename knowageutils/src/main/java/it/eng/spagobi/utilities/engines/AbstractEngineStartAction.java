@@ -17,6 +17,20 @@
  */
 package it.eng.spagobi.utilities.engines;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
@@ -45,21 +59,6 @@ import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableRecorder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import sun.misc.BASE64Decoder;
 
 /**
@@ -167,12 +166,9 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	}
 
 	public String getUserIdentifier() {
-		IEngUserProfile profile = null;
-
 		if (userUniqueIdentifier == null) {
 			userUniqueIdentifier = (String) getUserProfile().getUserUniqueIdentifier();
 		}
-
 		return userUniqueIdentifier;
 	}
 
@@ -222,8 +218,9 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 			if (documentId == null) {
 				SpagoBIEngineStartupException e = new SpagoBIEngineStartupException(getEngineName(), "Impossible to retrive document id");
 				e.setDescription("The engine is unable to retrive the id of the document to execute from request");
-				e.addHint("Check on SpagoBI Server if the analytical document you want to execute have a valid template associated. Maybe you have saved the analytical document without "
-						+ "uploading a valid template file");
+				e.addHint(
+						"Check on SpagoBI Server if the analytical document you want to execute have a valid template associated. Maybe you have saved the analytical document without "
+								+ "uploading a valid template file");
 				throw e;
 			}
 		} finally {

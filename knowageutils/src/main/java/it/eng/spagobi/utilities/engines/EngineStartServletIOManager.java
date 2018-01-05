@@ -17,23 +17,6 @@
  */
 package it.eng.spagobi.utilities.engines;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.services.content.bo.Content;
-import it.eng.spagobi.services.proxy.ContentServiceProxy;
-import it.eng.spagobi.services.proxy.DataSetServiceProxy;
-import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
-import it.eng.spagobi.services.proxy.DocumentExecuteServiceProxy;
-import it.eng.spagobi.services.proxy.EventServiceProxy;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.ParametersDecoder;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.messages.EngineMessageBundle;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -51,6 +34,22 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.services.content.bo.Content;
+import it.eng.spagobi.services.proxy.ContentServiceProxy;
+import it.eng.spagobi.services.proxy.DataSetServiceProxy;
+import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
+import it.eng.spagobi.services.proxy.DocumentExecuteServiceProxy;
+import it.eng.spagobi.services.proxy.EventServiceProxy;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.ParametersDecoder;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 import sun.misc.BASE64Decoder;
 
 /**
@@ -136,8 +135,6 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	}
 
 	public String getUserIdentifier() {
-		IEngUserProfile profile = null;
-
 		if (userUniqueIdentifier == null) {
 			userUniqueIdentifier = (String) getUserProfile().getUserUniqueIdentifier();
 		}
@@ -201,7 +198,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	/**
 	 * Gets the audit id.
-	 * 
+	 *
 	 * @return the audit id
 	 */
 	public String getAuditId() {
@@ -471,7 +468,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	/**
 	 * Copy request parameters into env.
-	 * 
+	 *
 	 * @param env
 	 *            the env
 	 * @param serviceRequest
@@ -528,7 +525,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	/**
 	 * Decode parameter value.
-	 * 
+	 *
 	 * @param parValue
 	 *            the par value
 	 * @return the string
