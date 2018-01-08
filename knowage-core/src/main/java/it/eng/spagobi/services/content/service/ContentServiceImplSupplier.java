@@ -101,7 +101,7 @@ public class ContentServiceImplSupplier {
 				}
 			}
 
-			if (checkNeeded && !UserProfile.isSchedulerUser(user) && !UserProfile.isWorkflowUser(user) && !isSubReportCall(biobj, parameters)) {
+			if (checkNeeded && !UserProfile.isSchedulerUser(user) && !isSubReportCall(biobj, parameters)) {
 				checkRequestCorrectness(user, biobj, parameters);
 			}
 
@@ -205,7 +205,7 @@ public class ContentServiceImplSupplier {
 			// only if the user is not Scheduler or Workflow system user or it
 			// is a call to retrieve a subreport,
 			// check visibility on document and parameter values
-			if (!UserProfile.isSchedulerUser(user) && !UserProfile.isWorkflowUser(user) && !isSubReportCall(biobj, parameters)) {
+			if (!UserProfile.isSchedulerUser(user) && !isSubReportCall(biobj, parameters)) {
 				checkRequestCorrectness(user, biobj, parameters);
 			}
 

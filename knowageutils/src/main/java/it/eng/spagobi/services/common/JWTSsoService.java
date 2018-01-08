@@ -106,10 +106,17 @@ public class JWTSsoService implements SsoServiceInterface {
 
 	@Override
 	public String readTicket(HttpSession session) throws IOException {
-		Calendar date = Calendar.getInstance();
-		long t = date.getTimeInMillis();
-		Date expireDate = new Date(t + 5 * 60 * 1000); // 5 minutes
-		String token = JWT.create().withIssuer("knowage").withExpiresAt(expireDate).sign(algorithm);
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MINUTE, 5); // token for services will expire in 5 minutes
+		Date expiresAt = calendar.getTime();
+		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
+		// @formatter:off
+		String token = JWT.create()
+				.withIssuer("knowage")
+				.withExpiresAt(expiresAt)
+				.sign(algorithm);
+		// @formatter:on
+		LogMF.debug(logger, "JWT token is [{0}]", token);
 		return token;
 	}
 
@@ -131,9 +138,15 @@ public class JWTSsoService implements SsoServiceInterface {
 			throw new SpagoBIRuntimeException(message);
 	}
 
-	public static String userId2jwtToken(String userId) {
+	public static String userId2jwtToken(String userId, Date expiresAt) {
 		LogMF.debug(logger, "User id in input is [{0}]", userId);
-		String token = JWT.create().withClaim(SsoServiceInterface.USER_ID, userId).sign(algorithm);
+		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
+		// @formatter:off
+		String token = JWT.create()
+				.withClaim(SsoServiceInterface.USER_ID, userId)
+				.withExpiresAt(expiresAt) // token will expire at the desired expire date
+				.sign(algorithm);
+		// @formatter:on
 		LogMF.debug(logger, "JWT token is [{0}]", token);
 		return token;
 	}

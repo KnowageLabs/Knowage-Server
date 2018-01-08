@@ -17,18 +17,6 @@
  */
 package it.eng.spagobi.utilities.filters;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.services.common.SsoServiceFactory;
-import it.eng.spagobi.services.common.SsoServiceInterface;
-import it.eng.spagobi.services.proxy.SecurityServiceProxy;
-import it.eng.spagobi.services.security.exceptions.SecurityException;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.utilities.callbacks.audit.AuditAccessUtils;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -41,6 +29,18 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.services.common.SsoServiceFactory;
+import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.services.proxy.SecurityServiceProxy;
+import it.eng.spagobi.services.security.exceptions.SecurityException;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.callbacks.audit.AuditAccessUtils;
 
 public class SpagoBIAccessFilter implements Filter {
 
@@ -121,13 +121,6 @@ public class SpagoBIAccessFilter implements Filter {
 							ioManager.setInSession(IEngUserProfile.ENG_USER_PROFILE, profile);
 							ioManager.contextManager.set(IEngUserProfile.ENG_USER_PROFILE, profile);
 							logger.info("IS a Scheduler Request ...");
-
-						} else if (userId != null && UserProfile.isWorkflowUser(userId)) {
-							profile = UserProfile.createWorkflowUserProfile(userId);
-							ioManager.setInSession(IEngUserProfile.ENG_USER_PROFILE, profile);
-							ioManager.contextManager.set(IEngUserProfile.ENG_USER_PROFILE, profile);
-							logger.info("IS a Workflow Request ...");
-
 						} else {
 							logger.info("IS a backEnd Request ...");
 						}

@@ -18,6 +18,8 @@
 package it.eng.spagobi.security;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +39,8 @@ import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupplier {
 
 	static private Logger logger = Logger.getLogger(InternalSecurityServiceSupplierImpl.class);
+
+	private static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
 
 	private SpagoBIUserProfile checkAuthentication(SbiUser user, String userId, String psw) {
 		logger.debug("IN - userId: " + userId);
@@ -62,7 +66,12 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 
 			logger.debug("Logged in with SHA pass");
 			SpagoBIUserProfile obj = new SpagoBIUserProfile();
-			String jwtToken = JWTSsoService.userId2jwtToken(userId);
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.HOUR, USER_JWT_TOKEN_EXPIRE_HOURS);
+			Date expiresAt = calendar.getTime();
+
+			String jwtToken = JWTSsoService.userId2jwtToken(userId, expiresAt);
 			obj.setUniqueIdentifier(jwtToken);
 			obj.setUserId(user.getUserId());
 			obj.setUserName(user.getFullName());
