@@ -1,14 +1,6 @@
 package it.eng.knowage.slimerjs.wrapper;
 
 import static it.eng.knowage.slimerjs.wrapper.CommandLineArgument.wrapCommandLineArgumentName;
-import it.eng.knowage.slimerjs.wrapper.beans.CustomHeaders;
-import it.eng.knowage.slimerjs.wrapper.beans.OperatingSystem;
-import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
-import it.eng.knowage.slimerjs.wrapper.beans.SlimerJSExecutionResponse;
-import it.eng.knowage.slimerjs.wrapper.beans.SlimerJSOptions;
-import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
-import it.eng.knowage.slimerjs.wrapper.enums.RenderFormat;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +21,16 @@ import org.apache.commons.exec.LogOutputStream;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import it.eng.knowage.slimerjs.wrapper.beans.CustomHeaders;
+import it.eng.knowage.slimerjs.wrapper.beans.OperatingSystem;
+import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
+import it.eng.knowage.slimerjs.wrapper.beans.SlimerJSExecutionResponse;
+import it.eng.knowage.slimerjs.wrapper.beans.SlimerJSOptions;
+import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
+import it.eng.knowage.slimerjs.wrapper.enums.RenderFormat;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 
 public class SlimerJS {
 	private final static Logger logger = Logger.getLogger(SlimerJS.class);
@@ -101,8 +103,8 @@ public class SlimerJS {
 	 *             if the render script fails for any reason
 	 */
 	public static List<InputStream> render(final SlimerJSOptions options, final URL url, final Integer sheets, final ViewportDimensions dimensions,
-			final RenderFormat renderFormat, final CustomHeaders customHeaders, final Long jsRenderingWait, final Long jsExitingWait) throws IOException,
-			RenderException {
+			final RenderFormat renderFormat, final CustomHeaders customHeaders, final Long jsRenderingWait, final Long jsExitingWait)
+			throws IOException, RenderException {
 		if (url == null || sheets == null || renderFormat == null || dimensions == null || jsRenderingWait == null || jsExitingWait == null) {
 			throw new NullPointerException("All parameters but headers are required");
 		}
@@ -112,8 +114,8 @@ public class SlimerJS {
 		}
 
 		// The render script
-		final InputStream renderScript = SlimerJS.class.getClassLoader().getResourceAsStream(
-				SlimerJSConstants.SLIMER_BINARIES_RESOURCEPATH.concat("/".concat(SlimerJSConstants.DEFAULT_RENDER_SCRIPT)));
+		final InputStream renderScript = SlimerJS.class.getClassLoader()
+				.getResourceAsStream(SlimerJSConstants.SLIMER_BINARIES_RESOURCEPATH.concat("/".concat(SlimerJSConstants.DEFAULT_RENDER_SCRIPT)));
 
 		// create the parent directories
 		Files.createDirectories(SlimerJSConstants.TEMP_SOURCE_DIR);
@@ -124,23 +126,27 @@ public class SlimerJS {
 		// the output filename template
 		Path renderPath = SlimerJSConstants.TEMP_RENDER_DIR.resolve(String.format(SlimerJSConstants.TARGET_PREFIX + "%s", renderId));
 
-		final SlimerJSExecutionResponse slimerJSExecutionResponse = exec(renderScript, options, new CommandLineArgument(renderId), new CommandLineArgument(
-				URLEncoder.encode(url.toString(), "UTF-8")), new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.CUSTOMHEADERS_TEMPLATENAME),
-				SlimerJSConstants.CUSTOMHEADERS_TEMPLATENAME, customHeaders), new CommandLineArgument(sheets.toString()),
-				new CommandLineArgument(dimensions.getWidth()), new CommandLineArgument(dimensions.getHeight()), new CommandLineArgument(OperatingSystem.get()
-						.name()), new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.RENDERPATH_TEMPLATENAME),
-						SlimerJSConstants.RENDERPATH_TEMPLATENAME, renderPath.toFile()), new CommandLineArgument(
-						wrapCommandLineArgumentName(SlimerJSConstants.JS_RENDERING_WAIT_TEMPLATENAME), SlimerJSConstants.JS_RENDERING_WAIT_TEMPLATENAME,
-						jsRenderingWait), new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.JS_EXITING_WAIT_TEMPLATENAME),
-						SlimerJSConstants.JS_EXITING_WAIT_TEMPLATENAME, jsExitingWait), new CommandLineArgument(SpagoBIUtilities.getHmacKey()));
+		final SlimerJSExecutionResponse slimerJSExecutionResponse = exec(renderScript, options, new CommandLineArgument(renderId),
+				new CommandLineArgument(URLEncoder.encode(url.toString(), "UTF-8")),
+				new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.CUSTOMHEADERS_TEMPLATENAME), SlimerJSConstants.CUSTOMHEADERS_TEMPLATENAME,
+						customHeaders),
+				new CommandLineArgument(sheets.toString()), new CommandLineArgument(dimensions.getWidth()), new CommandLineArgument(dimensions.getHeight()),
+				new CommandLineArgument(OperatingSystem.get().name()),
+				new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.RENDERPATH_TEMPLATENAME), SlimerJSConstants.RENDERPATH_TEMPLATENAME,
+						renderPath.toFile()),
+				new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.JS_RENDERING_WAIT_TEMPLATENAME),
+						SlimerJSConstants.JS_RENDERING_WAIT_TEMPLATENAME, jsRenderingWait),
+				new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.JS_EXITING_WAIT_TEMPLATENAME),
+						SlimerJSConstants.JS_EXITING_WAIT_TEMPLATENAME, jsExitingWait),
+				new CommandLineArgument(SpagoBIUtilities.getHmacKey()));
 
 		final int renderExitCode = slimerJSExecutionResponse.getExitCode();
 
 		if (renderExitCode == 0) {
 			List<InputStream> fileStreams = new ArrayList<>(sheets);
 			for (int sheetNumber = 0; sheetNumber < sheets; sheetNumber++) {
-				renderPath = SlimerJSConstants.TEMP_RENDER_DIR.resolve(String.format(SlimerJSConstants.TARGET_PREFIX + "%s_%s.%s", renderId, sheetNumber,
-						renderFormat.name().toLowerCase()));
+				renderPath = SlimerJSConstants.TEMP_RENDER_DIR
+						.resolve(String.format(SlimerJSConstants.TARGET_PREFIX + "%s_%s.%s", renderId, sheetNumber, renderFormat.name().toLowerCase()));
 				fileStreams.add(new DeleteOnCloseFileInputStream(renderPath.toFile()));
 			}
 			return fileStreams;
@@ -243,6 +249,13 @@ public class SlimerJS {
 		// then script
 		args.put("_script_path", scriptPath.toFile());
 		cmd.addArgument("${_script_path}");
+
+		// profile
+		String profileName = SlimerJSConstants.PROFILE_NAME;
+		if (StringUtilities.isNotEmpty(profileName)) {
+			cmd.addArgument("-P");
+			cmd.addArgument(profileName);
+		}
 
 		// then any additional arguments
 		if (arguments != null) {

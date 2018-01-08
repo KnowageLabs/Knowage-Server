@@ -34,4 +34,6 @@ public class SlimerJSConstants {
 	static final String JS_RENDERING_WAIT_TEMPLATENAME = "jsRenderingWait", JS_EXITING_WAIT_TEMPLATENAME = "jsExitingWait";
 
 	static final String SHUTDOWN_HOOK_THREAD_NAME = "SlimerJSSetupShutDownHook";
+
+	static final String PROFILE_NAME = System.getProperty("slimerjs.profile");
 }
