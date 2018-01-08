@@ -139,7 +139,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		$scope.selectedRole.ableToSeeViewpoints= true;
 		$scope.selectedRole.ableToSeeNotes= true;
 		$scope.selectedRole.ableToSeeSnapshots= false;
-		$scope.selectedRole.runToSeeSnapshots= false;
+		$scope.selectedRole.ableToRunSnapshots= false;
 		$scope.selectedRole.ableToDoMassiveExport= true;
 		$scope.selectedRole.ableToCreateDocuments= true;
 		$scope.selectedRole.ableToHierarchiesManagement= true;
