@@ -2028,27 +2028,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.restRequestHeaders = restRequestHeadersTemp;
 
 			// REST ADDITIONAL PARAMETERS
-			var restRequestAdditionalParametersTemp = [];
-			//var counter = 0;
-
 			if($scope.selectedDataSet.restRequestAdditionalParameters){
-				for (var key in JSON.parse($scope.selectedDataSet.restRequestAdditionalParameters)) {
-
-					var restRequestAdditionalParameterTemp = {};
-
-					  if (JSON.parse($scope.selectedDataSet.restRequestAdditionalParameters).hasOwnProperty(key)) {
-						  restRequestAdditionalParameterTemp["name"] = key;
-						  restRequestAdditionalParameterTemp["value"] = JSON.parse($scope.selectedDataSet.restRequestAdditionalParameters)[key];
-						  restRequestAdditionalParameterTemp["index"] = $scope.counterRequestAdditionalParameters;
-					  }
-
-					  $scope.counterRequestAdditionalParameters++;
-					  restRequestAdditionalParametersTemp.push(restRequestAdditionalParameterTemp);
-
-				}
+				$scope.restRequestAdditionalParameters = JSON.parse($scope.selectedDataSet.restRequestAdditionalParameters);
+			}else{
+				$scope.restRequestAdditionalParameters=[];
 			}
-
-			$scope.restRequestAdditionalParameters = restRequestAdditionalParametersTemp;
 
 			// REST JSON PATH
 			var restJsonPathAttributesTemp = [];
@@ -2283,7 +2267,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					restOffset: "",
 					restRequestBody: "",
 					restRequestHeaders: "",
-					restRequestAdditionalParameters: "",
+					restRequestAdditionalParameters: [],
 					solrType: "FACETS",
 					solrFacetQuery: "",
 					solrFacetField: "",
@@ -2331,16 +2315,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 			$scope.selectedDataSet.restRequestHeaders = angular.copy(JSON.stringify(restRequestHeadersTemp));
 
-			//----------------------
-			// REQUEST ADDITIONAL PARAMETERS
-			//----------------------
-			var restRequestAdditionalParametersTemp = {};
+			if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
+				//----------------------
+				// REQUEST ADDITIONAL PARAMETERS
+				//----------------------
+				$scope.selectedDataSet.restRequestAdditionalParameters = $scope.restRequestAdditionalParameters;
 
-			for (i=0; i<$scope.restRequestAdditionalParameters.length; i++) {
-				restRequestAdditionalParametersTemp[$scope.restRequestAdditionalParameters[i]["name"]] = $scope.restRequestAdditionalParameters[i]["value"];
 			}
-
-			$scope.selectedDataSet.restRequestAdditionalParameters = angular.copy(JSON.stringify(restRequestAdditionalParametersTemp));
 
 
 			//----------------------
@@ -2585,7 +2566,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	$scope.uploadFile= function(){
 
-    	multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedataset/fileupload",$scope.fileObj).success(
+    	multipartForm.post(sbiModule_config.contextName +"/restful-services/filedaset/fileupload",$scope.fileObj).success(
 
 				function(data,status,headers,config){
 
@@ -3010,16 +2991,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 			$scope.selectedDataSet.restRequestHeaders = angular.copy(JSON.stringify(restRequestHeadersTemp));
 
-			//----------------------
-			// REQUEST ADDITIONAL PARAMETERS
-			//----------------------
-			var restRequestAdditionalParametersTemp = {};
+			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr"){
+				//----------------------
+				// REQUEST ADDITIONAL PARAMETERS
+				//----------------------
 
-			for (i=0; i<$scope.restRequestAdditionalParameters.length; i++) {
-				restRequestAdditionalParametersTemp[$scope.restRequestAdditionalParameters[i]["name"]] = $scope.restRequestAdditionalParameters[i]["value"];
+				$scope.selectedDataSet.restRequestAdditionalParameters = $scope.restRequestAdditionalParameters;
+
 			}
-
-			$scope.selectedDataSet.restRequestAdditionalParameters = angular.copy(JSON.stringify(restRequestAdditionalParametersTemp));
 
 
 			//----------------------
