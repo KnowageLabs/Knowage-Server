@@ -273,10 +273,6 @@
 					<resource>
 						<directory>src/main/resources</directory>
 						<filtering>true</filtering>
-						<includes>
-							<include>hibernate.cfg.xml</include>
-							<include>quartz.properties</include>
-						</includes>
 					</resource>
 				</resources>
 			</build>
@@ -294,10 +290,6 @@
 					<resource>
 						<directory>src/main/resources</directory>
 						<filtering>true</filtering>
-						<includes>
-							<include>hibernate.cfg.xml</include>
-							<include>quartz.properties</include>
-						</includes>
 					</resource>
 				</resources>
 			</build>
