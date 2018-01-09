@@ -1248,14 +1248,16 @@ public class ManageDataSetsForREST {
 		for (String sa : DataSetConstants.SOLR_STRING_ATTRIBUTES) {
 			config.put(sa, json.optString(sa));
 		}
-		for (String ja : DataSetConstants.SOLR_JSON_OBJECT_ATTRIBUTES) {
+		for (String ja : DataSetConstants.SOLR_JSON_ARRAY_ATTRIBUTES) {
 			String prop = json.optString(ja);
 			if (prop != null && !prop.trim().isEmpty()) {
-				config.put(ja, new JSONObject(prop));
+				config.put(ja, new JSONArray(prop));
 			}
 		}
 
-		SolrDataSet res = new SolrDataSet(config);
+		HashMap<String, String> parametersMap = getDataSetParametersAsMap(false, json);
+
+		SolrDataSet res = new SolrDataSet(config, parametersMap);
 		return res;
 	}
 

@@ -141,7 +141,10 @@ public class SolrDataProxy extends RESTDataProxy {
 				Helper.checkNotNull(dataReader, "dataReader");
 
 				List<NameValuePair> query = getQuery();
-				Response response = RestUtilities.makeRequest(this.method, setPaginationParameters(this.address, dataReader), this.requestHeaders,
+
+				String tempAddress = this.address.replaceAll(" ", "%20");
+
+				Response response = RestUtilities.makeRequest(this.method, setPaginationParameters(tempAddress, dataReader), this.requestHeaders,
 						this.requestBody, query);
 				String responseBody = response.getResponseBody();
 				if (response.getStatusCode() != HttpStatus.SC_OK) {
@@ -154,7 +157,7 @@ public class SolrDataProxy extends RESTDataProxy {
 
 					int resultNumber = 0;
 					// add stuff to get the number of facets
-					response = RestUtilities.makeRequest(this.method, address + ("&stats=true&stats.field=" + facetField + "&stats.calcdistinct=true"),
+					response = RestUtilities.makeRequest(this.method, tempAddress + ("&stats=true&stats.field=" + facetField + "&stats.calcdistinct=true"),
 							this.requestHeaders, this.requestBody, query);
 					String responseBodyNumber = response.getResponseBody();
 					if (response.getStatusCode() != HttpStatus.SC_OK) {

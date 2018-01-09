@@ -193,8 +193,8 @@ public class DataSetConstants {
 	public static final String SOLR_ADDITIONAL_PARAMETERS = "restRequestAdditionalParameters";
 
 	public static final String[] SOLR_STRING_ATTRIBUTES = { SOLR_TYPE, SOLR_FACET_QUERY, SOLR_FACET_FIELD, SOLR_FACET_PREFIX };
-	public static final String[] SOLR_JSON_OBJECT_ATTRIBUTES = { SOLR_ADDITIONAL_PARAMETERS };
-	public static final String[] SOLR_ALL_ATTRIBUTES = new String[SOLR_STRING_ATTRIBUTES.length + SOLR_JSON_OBJECT_ATTRIBUTES.length];
+	public static final String[] SOLR_JSON_ARRAY_ATTRIBUTES = { SOLR_ADDITIONAL_PARAMETERS };
+	public static final String[] SOLR_ALL_ATTRIBUTES = new String[SOLR_STRING_ATTRIBUTES.length + SOLR_JSON_ARRAY_ATTRIBUTES.length];
 
 	public static final Map<String, String> name2Code;
 
@@ -220,7 +220,7 @@ public class DataSetConstants {
 		}
 
 		curr = 0;
-		for (String[] a : new String[][] { SOLR_STRING_ATTRIBUTES, SOLR_JSON_OBJECT_ATTRIBUTES }) {
+		for (String[] a : new String[][] { SOLR_STRING_ATTRIBUTES, SOLR_JSON_ARRAY_ATTRIBUTES }) {
 			System.arraycopy(a, 0, SOLR_ALL_ATTRIBUTES, curr, a.length);
 			curr += a.length;
 		}

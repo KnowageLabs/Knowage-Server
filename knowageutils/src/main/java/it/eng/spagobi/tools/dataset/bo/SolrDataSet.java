@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.dataset.bo;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import it.eng.spagobi.tools.dataset.common.datareader.SolrDataReader;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.notifier.fiware.OAuth2Utils;
 import it.eng.spagobi.utilities.exceptions.ConfigurationException;
+import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 
 public class SolrDataSet extends RESTDataSet {
@@ -58,9 +60,17 @@ public class SolrDataSet extends RESTDataSet {
 
 	}
 
+	public SolrDataSet(JSONObject jsonConf, HashMap<String, String> parametersMap) {
+		this();
+		this.setParamsMap(parametersMap);
+		setConfiguration(jsonConf.toString());
+		initConf(jsonConf, true);
+
+	}
+
 	@Override
 	public void initConf(JSONObject jsonConf, boolean resolveParams) {
-		String solrType = getProp(DataSetConstants.SOLR_TYPE, jsonConf, false, false);
+		String solrType = getProp(DataSetConstants.SOLR_TYPE, jsonConf, false, resolveParams);
 		isFacet = solrType == null || !solrType.equals(DataSetConstants.SOLR_TYPE_DOCUMENT);
 		initDataProxy(jsonConf, resolveParams);
 		initDataReader(jsonConf, resolveParams);
@@ -78,13 +88,13 @@ public class SolrDataSet extends RESTDataSet {
 				throw new ConfigurationException("Problems in configuration of data reader", e);
 			}
 
-			String directlyAttributes = getProp(DataSetConstants.REST_JSON_DIRECTLY_ATTRIBUTES, jsonConf, true, false);
+			String directlyAttributes = getProp(DataSetConstants.REST_JSON_DIRECTLY_ATTRIBUTES, jsonConf, true, resolveParams);
 
 			setDataReader(new SolrDataReader("$.response.docs.[*]", jsonPathAttributes, Boolean.parseBoolean(directlyAttributes)));
 
 		} else {
 			logger.debug("Reading Solr dataset facets");
-			if (getProp(DataSetConstants.SOLR_FACET_QUERY, jsonConf, true, true) != null) {
+			if (getProp(DataSetConstants.SOLR_FACET_QUERY, jsonConf, true, resolveParams) != null) {
 				setDataReader(new SolrDataReader("$.facet_counts.facet_queries", true, true));
 			} else {
 				setDataReader(new SolrDataReader("$.facet_counts.facet_fields.*.[*]", true, false));
@@ -124,13 +134,13 @@ public class SolrDataSet extends RESTDataSet {
 
 		StringBuilder addressBuilder = new StringBuilder(address);
 
-		addQueryParam(addressBuilder, jsonConf);
+		addQueryParam(addressBuilder, jsonConf, resolveParams);
 
 		addAdditionalParams(addressBuilder, jsonConf);
 
 		if (isFacet) {
-			addFacetParams(addressBuilder, jsonConf);
-			setDataProxy(new SolrDataProxy(addressBuilder.toString(), methodEnum, getProp(DataSetConstants.SOLR_FACET_FIELD, jsonConf, true, true),
+			addFacetParams(addressBuilder, jsonConf, resolveParams);
+			setDataProxy(new SolrDataProxy(addressBuilder.toString(), methodEnum, getProp(DataSetConstants.SOLR_FACET_FIELD, jsonConf, true, resolveParams),
 					requestHeaders, offset, fetchSize, maxResults, true));
 		} else {
 			setDataProxy(new SolrDataProxy(addressBuilder.toString(), methodEnum, null, requestHeaders, offset, maxResults, maxResults, false));
@@ -138,7 +148,7 @@ public class SolrDataSet extends RESTDataSet {
 
 	}
 
-	private void addFacetParams(StringBuilder address, JSONObject jsonConf) {
+	private void addFacetParams(StringBuilder address, JSONObject jsonConf, boolean resolveParams) {
 		logger.debug("Address without facet params [" + address + "]");
 		if (address.lastIndexOf("?") < 0) {
 			address.append("?");
@@ -146,9 +156,9 @@ public class SolrDataSet extends RESTDataSet {
 			address.append("&");
 		}
 		address.append("facet=on");
-		String facet = getProp(DataSetConstants.SOLR_FACET_FIELD, jsonConf, true, true);
+		String facet = getProp(DataSetConstants.SOLR_FACET_FIELD, jsonConf, true, resolveParams);
 		if (facet == null) {
-			facet = getProp(DataSetConstants.SOLR_FACET_QUERY, jsonConf, true, true);
+			facet = getProp(DataSetConstants.SOLR_FACET_QUERY, jsonConf, true, resolveParams);
 			if (facet != null) {
 				if (!facet.contains("facet.query")) {
 					address.append("&facet.query=" + facet);
@@ -167,7 +177,7 @@ public class SolrDataSet extends RESTDataSet {
 			address.append("&facet.field=" + facet);
 		}
 
-		String facetPrefix = getProp(DataSetConstants.SOLR_FACET_PREFIX, jsonConf, true, true);
+		String facetPrefix = getProp(DataSetConstants.SOLR_FACET_PREFIX, jsonConf, true, resolveParams);
 		if (facetPrefix != null) {
 			address.append("&facet.prefix=" + facetPrefix);
 		}
@@ -176,7 +186,7 @@ public class SolrDataSet extends RESTDataSet {
 
 	}
 
-	private void addQueryParam(StringBuilder address, JSONObject jsonConf) {
+	private void addQueryParam(StringBuilder address, JSONObject jsonConf, boolean resolveParams) {
 		logger.debug("Address without solr query [" + address + "]");
 		if (address.lastIndexOf("?") < 0) {
 			address.append("?");
@@ -184,7 +194,7 @@ public class SolrDataSet extends RESTDataSet {
 			address.append("&");
 		}
 		address.append("q=");
-		String query = getProp(DataSetConstants.REST_REQUEST_BODY, jsonConf, true, true);
+		String query = getProp(DataSetConstants.REST_REQUEST_BODY, jsonConf, true, resolveParams);
 		if (query == null) {
 			query = "*.*";
 		}
@@ -196,20 +206,20 @@ public class SolrDataSet extends RESTDataSet {
 	private void addAdditionalParams(StringBuilder address, JSONObject jsonConf) {
 		logger.debug("Address without additional parameters [" + address + "]");
 
-		Map<String, String> requestHeaders;
+		List<Couple<String, String>> requestHeaders;
 		try {
-			requestHeaders = getRequestHeadersPropMap(DataSetConstants.SOLR_ADDITIONAL_PARAMETERS, jsonConf, true);
+			requestHeaders = getListProp(DataSetConstants.SOLR_ADDITIONAL_PARAMETERS, jsonConf, true);
 
 		} catch (Exception e) {
 			throw new ConfigurationException("Problems in configuration of data proxy", e);
 		}
 
-		for (Iterator<String> iterator = requestHeaders.keySet().iterator(); iterator.hasNext();) {
-			String key = iterator.next();
+		for (Iterator<Couple<String, String>> iterator = requestHeaders.iterator(); iterator.hasNext();) {
+			Couple<String, String> key = iterator.next();
 			address.append("&");
-			address.append(key);
+			address.append(key.getFirst());
 			address.append("=");
-			address.append(requestHeaders.get(key));
+			address.append(key.getSecond());
 		}
 
 		logger.debug("Address with additional parameters  [" + address + "]");

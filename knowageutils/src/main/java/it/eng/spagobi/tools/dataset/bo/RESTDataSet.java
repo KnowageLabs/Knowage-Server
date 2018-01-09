@@ -47,6 +47,7 @@ import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.ConfigurationException;
+import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 
 public class RESTDataSet extends ConfigurableDataSet {
@@ -308,6 +309,33 @@ public class RESTDataSet extends ConfigurableDataSet {
 				value = parametersResolver.resolveAll(value, this);
 			}
 			res.put(key, value);
+		}
+		return res;
+	}
+
+	protected List<Couple<String, String>> getListProp(String propName, JSONObject conf, boolean resolveParams) throws JSONException {
+		if (!conf.has(propName) || conf.getString(propName).isEmpty()) {
+			// optional property
+			return Collections.emptyList();
+		}
+
+		Object c = conf.get(propName);
+		if (!(c instanceof JSONArray)) {
+			throw new ConfigurationException(String.format("%s is not another json object in configuration: %s", propName, conf.toString()));
+		}
+		Assert.assertNotNull(c, "property is null");
+		JSONArray r = (JSONArray) c;
+		List<Couple<String, String>> res = new ArrayList<Couple<String, String>>(r.length());
+
+		for (int i = 0; i < r.length(); i++) {
+			JSONObject jo = r.getJSONObject(i);
+			String key = jo.keys().next();
+			String value = jo.getString(key);
+			if (resolveParams) {
+				key = parametersResolver.resolveAll(key, this);
+				value = parametersResolver.resolveAll(value, this);
+				res.add(new Couple<String, String>(key, value));
+			}
 		}
 		return res;
 	}

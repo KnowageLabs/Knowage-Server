@@ -44,6 +44,7 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
+import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -249,7 +250,7 @@ public class DataSetFactory {
 			} else if (DataSetConstants.DS_REST_TYPE.equalsIgnoreCase(type)) {
 				ds = manageRESTDataSet(jsonConf);
 			} else if (DataSetConstants.DS_SOLR_TYPE.equalsIgnoreCase(type)) {
-				ds = manageSolrDataSet(jsonConf);
+				ds = manageSolrDataSet(jsonConf, sbiDataSet.getParametersList());
 			} else if (type.equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
 				ds = new CkanDataSet();
 				CkanDataSet cds = (CkanDataSet) ds;
@@ -822,7 +823,7 @@ public class DataSetFactory {
 				ds = manageRESTDataSet(jsonConf);
 			}
 			if (DataSetConstants.DS_SOLR_TYPE.equalsIgnoreCase(sbiDataSet.getType())) {
-				ds = manageSolrDataSet(jsonConf);
+				ds = manageSolrDataSet(jsonConf, sbiDataSet.getParametersList());
 			}
 
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
@@ -1123,8 +1124,15 @@ public class DataSetFactory {
 		return res;
 	}
 
-	private static RESTDataSet manageSolrDataSet(JSONObject jsonConf) {
-		SolrDataSet res = new SolrDataSet(jsonConf);
+	private static RESTDataSet manageSolrDataSet(JSONObject jsonConf, List<DataSetParameterItem> parameters) {
+		HashMap<String, String> parametersMap = new HashMap<String, String>();
+		if (parameters != null) {
+			for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
+				DataSetParameterItem dataSetParameterItem = (DataSetParameterItem) iterator.next();
+				parametersMap.put(dataSetParameterItem.getDefaultValue(), dataSetParameterItem.getName());
+			}
+		}
+		SolrDataSet res = new SolrDataSet(jsonConf, parametersMap);
 		res.setDsType(DataSetConstants.DS_SOLR_NAME);
 		return res;
 	}
