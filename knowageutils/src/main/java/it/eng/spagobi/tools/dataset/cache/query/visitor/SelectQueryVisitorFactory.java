@@ -45,6 +45,7 @@ public class SelectQueryVisitorFactory {
 		case HBASE:
 			return new HBaseSelectQueryVisitor();
 		case HIVE:
+		case SPARKSQL:
 			return new HiveSelectQueryVisitor();
 		case HSQL:
 			return new HsqlDbSelectQueryVisitor();

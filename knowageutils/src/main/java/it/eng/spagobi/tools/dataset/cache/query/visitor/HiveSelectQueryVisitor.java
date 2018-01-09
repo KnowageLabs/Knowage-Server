@@ -18,13 +18,21 @@
 
 package it.eng.spagobi.tools.dataset.cache.query.visitor;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
 import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
+import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 
 public class HiveSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 	public HiveSelectQueryVisitor() {
 		this.dialect = SqlDialect.HIVE;
+		this.aliasDelimiter = "";
+		this.aliasPrefix = "";
 	}
 
 	@Override
@@ -32,6 +40,24 @@ public class HiveSelectQueryVisitor extends AbstractSelectQueryVisitor {
 		if (query.isSelectDistinct() && query.getGroups().isEmpty()) {
 			queryBuilder.append("DISTINCT ");
 		}
+	}
+
+	@Override
+	public String getFormattedTimestamp(Timestamp timestamp) {
+		return "'" + timestamp.toString() + "'";
+	}
+
+	@Override
+	public String getFormattedDate(Date date) {
+		return "'" + new SimpleDateFormat(CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT).format(date) + "'";
+	}
+
+	/**
+	 * @return a fake prepared statement (prepared statements are not supported by JDBC driver)
+	 */
+	@Override
+	public PreparedStatementData getPreparedStatementData(SelectQuery selectQuery) {
+		return getPreparedStatementData(selectQuery, false);
 	}
 
 }

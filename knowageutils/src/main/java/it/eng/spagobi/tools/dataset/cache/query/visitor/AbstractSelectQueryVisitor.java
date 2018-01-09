@@ -50,11 +50,14 @@ import it.eng.spagobi.utilities.database.AbstractDataBase;
 
 public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor {
 
+	protected static final String ALIAS_PREFIX = "AS";
+
 	protected static final String DATE_TIME_FORMAT_SQL_STANDARD = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
 			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
 
 	protected boolean buildPreparedStatement;
 	protected String aliasDelimiter;
+	protected String aliasPrefix;
 	protected SqlDialect dialect;
 	protected StringBuilder queryBuilder;
 	protected List<Object> queryParameters;
@@ -62,6 +65,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 	public AbstractSelectQueryVisitor() {
 		buildPreparedStatement = false;
 		this.aliasDelimiter = AbstractDataBase.STANDARD_ALIAS_DELIMITER;
+		this.aliasPrefix = ALIAS_PREFIX;
 		this.queryBuilder = new StringBuilder();
 		this.queryParameters = new ArrayList<Object>();
 	}
@@ -282,12 +286,16 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		String alias = item.getAlias();
 		if (useAlias) {
 			if (StringUtilities.isNotEmpty(alias) && !alias.equals(name)) {
-				queryBuilder.append(" as ");
+				queryBuilder.append(" ");
+				queryBuilder.append(aliasPrefix);
+				queryBuilder.append(" ");
 				queryBuilder.append(aliasDelimiter);
 				queryBuilder.append(alias);
 				queryBuilder.append(aliasDelimiter);
 			} else if (isValidAggregationFunction) {
-				queryBuilder.append(" as ");
+				queryBuilder.append(" ");
+				queryBuilder.append(aliasPrefix);
+				queryBuilder.append(" ");
 				queryBuilder.append(aliasDelimiter);
 				queryBuilder.append(name);
 				queryBuilder.append(aliasDelimiter);
@@ -372,7 +380,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 
 			append(projections.get(0), true);
 			for (int i = 1; i < projections.size(); i++) {
-				queryBuilder.append(",");
+				queryBuilder.append(", ");
 				append(projections.get(i), true);
 			}
 
@@ -493,7 +501,15 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 
 	@Override
 	public PreparedStatementData getPreparedStatementData(SelectQuery selectQuery) {
-		buildPreparedStatement = true;
+		return getPreparedStatementData(selectQuery, true);
+	}
+
+	/**
+	 * @return descriptor for a real prepared statement if param buildPreparedStatement is true, otherwise a descriptor for a regular statement with all values
+	 *         already resolved
+	 */
+	protected PreparedStatementData getPreparedStatementData(SelectQuery selectQuery, boolean buildPreparedStatement) {
+		this.buildPreparedStatement = buildPreparedStatement;
 		visit(selectQuery);
 		return new PreparedStatementData(queryBuilder.toString(), queryParameters);
 	}
