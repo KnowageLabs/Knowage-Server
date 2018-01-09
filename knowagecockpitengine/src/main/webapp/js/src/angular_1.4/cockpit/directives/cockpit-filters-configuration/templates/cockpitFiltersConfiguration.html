@@ -11,7 +11,11 @@
 					<input type="number" ng-model="ngModelShared.limitRows.rows" ng-disabled="!ngModelShared.limitRows.enable" min="1">
 				</md-input-container>
 			</div>
-
+			
+			<div layout="row" layout-align="center center">
+				<div class="kn-info" flex=80>{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.filters.info")}}</div>
+			</div>
+			
  			<!-- Cycle on all filters -->
 			<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="filterObj in ngModelShared.filters" >     			
             	<label flex=20 class="filterLabel">
