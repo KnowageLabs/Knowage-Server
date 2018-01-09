@@ -258,5 +258,50 @@
 		</profile>
 		
 		
+		<profile>
+			<id>mysql</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
+				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.StdJDBCDelegate</quartz.job.store.driver.delegate.class>
+			</properties>
+
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<filtering>true</filtering>
+						<includes>
+							<include>hibernate.cfg.xml</include>
+							<include>quartz.properties</include>
+						</includes>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>oracle10</id>
+			<properties>
+				<hibernate.dialect>org.hibernate.dialect.Oracle10gDialect</hibernate.dialect>
+				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.oracle.OracleDelegate</quartz.job.store.driver.delegate.class>
+			</properties>
+
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<filtering>true</filtering>
+						<includes>
+							<include>hibernate.cfg.xml</include>
+							<include>quartz.properties</include>
+						</includes>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		
 	</profiles>
 </project>
