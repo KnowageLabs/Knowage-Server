@@ -1,6 +1,5 @@
-<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
-
 <div  layout="column"  layout-fill class="angularListTemplate kn-list-tree"> 
+		<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>	
 		<md-input-container ng-show="showSearchBar==true" md-no-float class="searchBarList">
 			<md-icon md-font-icon="fa fa-search"></md-icon> 
 			<input ng-if="!localSearch" ng-model="searchVal"
