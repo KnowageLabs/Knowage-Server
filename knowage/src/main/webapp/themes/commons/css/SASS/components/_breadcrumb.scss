@@ -2,7 +2,6 @@ bread-crumb {
     min-height: 30px;
     nav {
         color: #fff;
-        background-color: lighten($ternaryColor,10%);
         width: 100%;
         height: $toolbarHeight;
         line-height: $toolbarHeight;
@@ -20,7 +19,7 @@ bread-crumb {
                     md-tab-item.md-tab {
                         line-height: $toolbarHeight !important;
                         padding: 0 12px 0 0 !important;
-                        color: rgba($baseColor, 0.6) !important;
+                        color: rgba($lightTextColor, 0.6) !important;
                         max-width: 200px !important;
                         white-space: nowrap;
                         overflow: hidden;
@@ -29,7 +28,10 @@ bread-crumb {
                            font-weight: inherit !important; 
                         }
                         &:nth-last-child(2) {
-                            color: rgba($baseColor, 1) !important;
+                            span {
+                                text-transform: capitalize;
+                                color: rgba($lightTextColor, 1);
+                            }
                             max-width: 300px !important;
                             font-weight: bold;
                         }
@@ -41,14 +43,17 @@ bread-crumb {
                                 }
                             }
                         }
+                        &:hover {
+                            background-color: rgba($secondaryColor, .6);
+                        }
                         
 
                         span {
-                            text-transform: capitalize;
+                            text-transform: uppercase;
                             font-size: $baseFontSize;
                             &:before {
                                 content: '\f054';
-                                color: rgba($baseColor,0.6);
+                                color: rgba($lightTextColor,0.6);
                                 vertical-align: top;
                                 display: inline-block;
                                 font-family: 'FontAwesome';
