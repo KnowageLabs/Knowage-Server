@@ -87,22 +87,17 @@
 										</div>
 									</div>
 								</div>
-<!--							<div layout="row" flex>
+								<div flex layout="row">
 									<div flex=20 layout="row" layout-align="start center">
-										<md-checkbox ng-model="model.settings.style.showRowsSummary" class="md-block" aria-label="Show rows summary">
-											Enable rows summary
+										<md-checkbox ng-model="model.settings.noData.enabled" class="md-block" aria-label="Enable nodata message">
+											{{::translate.load('sbi.cockpit.widgets.table.nodata.label')}}
 										</md-checkbox>
 									</div>
-									<div flex layout=column >
-										<div flex layout="row" >
-											<md-input-container flex class="md-block">
-												<label>Rows summary text</label>
-												<input class="input_class" ng-disabled="!model.settings.style.showRowsSummary" ng-model="model.settings.style.rowsSummaryText" />
-											</md-input-container>
-										</div>
-									</div>
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.widgets.table.nodata.message')}}</label>
+										<input class="input_class" ng-disabled="!model.settings.noData.enabled" ng-model="model.settings.noData.message" />
+									</md-input-container>
 								</div>
--->
 							</div>
 						</cockpit-style-custom-widget-configurator>
 						
@@ -195,6 +190,7 @@
 						</cockpit-style-custom-widget-configurator>
 						
 					</cockpit-style-configurator>
+					
 				</md-tab>
 				
 				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.cross')}}">

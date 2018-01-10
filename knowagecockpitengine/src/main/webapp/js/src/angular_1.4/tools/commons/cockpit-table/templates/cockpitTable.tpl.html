@@ -20,7 +20,7 @@
 	    </thead>
 	</table>
 	</div>
-<div class="cockpitTableContainer main">
+<div class="cockpitTableContainer main" ng-if="model && model.length > 0">
 	<table ng-class="" class="cockpitTable" ng-style="settings.style.table" ng-cloak>
 	    <thead>
 	        <tr ng-style="settings.style.header">
@@ -78,5 +78,11 @@
 	    </tfoot>
 	
 	</table>
+</div>
+<div ng-if="(settings.noData && settings.noData.enabled) && (!model || model.length == 0)" layout="row" layout-align="center center" layout-fill>
+	<div class="kn-noItems" flex="60" flex-xs="100">
+		<p class="ng-binding" ng-if="settings.noData.message">{{settings.noData.message}}</p>
+		<p class="ng-binding" ng-if="!settings.noData.message">{{::translate.load('sbi.cockpit.widgets.table.nodata.default')}}</p>
+	</div>
 </div>
 <!--  cockpit-table-pagination ng-if="settings.pagination && settings.pagination.enabled && model" model="model" page="page" settings="settings"></cockpit-table-pagination-->
