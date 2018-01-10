@@ -1,17 +1,17 @@
 package it.eng.spagobi.commons.serializer;
 
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 
 public class DocumentParameterForExecutionJSONSerializer implements Serializer {
 
@@ -32,7 +32,7 @@ public class DocumentParameterForExecutionJSONSerializer implements Serializer {
 			// String label=msgBuild.getUserMessage(parameter.getLabel(),null,
 			// locale);
 			String label = parameter.getLabel();
-			label = msgBuild.getI18nMessage(locale, label);
+			// label = msgBuild.getI18nMessage(locale, label);
 
 			result.put("label", label);
 			result.put("type", parameter.getParType());
@@ -88,7 +88,7 @@ public class DocumentParameterForExecutionJSONSerializer implements Serializer {
 						visualDependencyCondition.put("operation", visualCondition.getOperation());
 						visualDependencyCondition.put("value", visualCondition.getCompareValue());
 						String viewLabel = visualCondition.getViewLabel();
-						viewLabel = msgBuild.getI18nMessage(locale, viewLabel);
+						// viewLabel = msgBuild.getI18nMessage(locale, viewLabel);
 						visualDependencyCondition.put("label", viewLabel);
 						visualDependencyConditions.put(visualDependencyCondition);
 					}

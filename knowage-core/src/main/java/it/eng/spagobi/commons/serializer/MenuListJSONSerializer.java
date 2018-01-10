@@ -192,7 +192,8 @@ public class MenuListJSONSerializer implements Serializer {
 							String text = "";
 							if (!menuElem.isAdminsMenu() || !menuElem.getName().startsWith("#"))
 
-								text = msgBuild.getI18nMessage(locale, menuElem.getName());
+								// text = msgBuild.getI18nMessage(locale, menuElem.getName());
+								text = menuElem.getName();
 							else {
 								if (menuElem.getName().startsWith("#")) {
 									String titleCode = menuElem.getName().substring(1);
@@ -604,16 +605,24 @@ public class MenuListJSONSerializer implements Serializer {
 
 		MessageBuilder msgBuild = new MessageBuilder();
 		String text = "";
-		if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#"))
-			text = msgBuild.getI18nMessage(locale, childElem.getName());
-		else {
-			if (childElem.getName().startsWith("#")) {
-				String titleCode = childElem.getName().substring(1);
-				text = msgBuild.getMessage(titleCode, locale);
-			} else {
-				text = childElem.getName();
-			}
+
+		if (childElem.getName().startsWith("#")) {
+			String titleCode = childElem.getName().substring(1);
+			text = msgBuild.getMessage(titleCode, locale);
+		} else {
+			text = childElem.getName();
 		}
+
+		// if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#"))
+		// text = msgBuild.getI18nMessage(locale, childElem.getName());
+		// else {
+		// if (childElem.getName().startsWith("#")) {
+		// String titleCode = childElem.getName().substring(1);
+		// text = msgBuild.getMessage(titleCode, locale);
+		// } else {
+		// text = childElem.getName();
+		// }
+		// }
 		/*
 		 * Cannot set a static ID as a random number!!!! See https://www.spagoworld.org/jira/browse/SPAGOBI-1268 See
 		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1269 The following line was the cause of the above issues!!
@@ -646,8 +655,7 @@ public class MenuListJSONSerializer implements Serializer {
 			} else if (childElem.getExternalApplicationUrl() != null) {
 				temp2.put(HREF,
 						"javascript:callExternalApp('" + StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()) + "', '" + path + "')");
-			}
-			else if (childElem.isAdminsMenu() && childElem.getUrl() != null) {
+			} else if (childElem.isAdminsMenu() && childElem.getUrl() != null) {
 				String url = "javascript:execDirectUrl('" + childElem.getUrl() + "'";
 				url = url.replace("${SPAGOBI_CONTEXT}", contextName);
 				url = url.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());

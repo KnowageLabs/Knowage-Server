@@ -383,7 +383,9 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 					if (profileAttrsOk) {
 						String execUrl = urlBuilder.getUrl(httpRequest, execUrlPars);
 						// String localizedName=msgBuilder.getUserMessage(obj.getName(), SpagoBIConstants.DEFAULT_USER_BUNDLE, httpRequest);
-						String localizedName = msgBuilder.getI18nMessage(obj.getName(), httpRequest);
+						String localizedName = obj.getName();
+						// msgBuilder.getI18nMessage(obj.getName(), httpRequest);
+
 						htmlStream.append(treeName + ".add(" + dTreeObjects-- + ", " + idFolder + ",'<img src=\\'" + stateIcon + "\\' /> " + localizedName
 								+ "', '" + execUrl + "', '', '', '" + userIcon + "', '', '', '' );\n");
 					} else {

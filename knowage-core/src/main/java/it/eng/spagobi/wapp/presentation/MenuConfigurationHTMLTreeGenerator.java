@@ -94,7 +94,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.presentation.ITreeHtmlGenerator#makeTree(java.util.List, javax.servlet.http.HttpServletRequest,
 	 * java.lang.String, java.lang.String)
 	 */
@@ -105,7 +105,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.presentation.ITreeHtmlGenerator#makeTree(java.util.List, javax.servlet.http.HttpServletRequest,
 	 * java.lang.String)
 	 */
@@ -199,7 +199,8 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 		String nameLabel = menu.getName();
 
 		// String name = msgBuilder.getUserMessage(nameLabel, SpagoBIConstants.DEFAULT_USER_BUNDLE, httpRequest);
-		String name = msgBuilder.getI18nMessage(nameLabel, httpRequest);
+		// String name = msgBuilder.getI18nMessage(nameLabel, httpRequest);
+		String name = nameLabel;
 
 		name = StringEscapeUtils.escapeJavaScript(name);
 		// String name = msgBuilder.getMessage(nameLabel, "messages", httpRequest);
@@ -281,7 +282,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 	 */
 	/*
 	 * private void makeConfigurationDtree(StringBuffer htmlStream) {
-	 * 
+	 *
 	 * htmlStream.append("<SCRIPT>\n"); htmlStream.append("		function dTree(objName) {\n"); htmlStream.append("			this.config = {\n");
 	 * htmlStream.append("				target			: null,\n"); htmlStream.append("				folderLinks		: true,\n");
 	 * htmlStream.append("				useSelection	: true,\n"); htmlStream.append("				useCookies		: true,\n");
@@ -306,7 +307,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 	 * htmlStream.append("			this.aIndent = [];\n"); htmlStream.append("			this.root = new Node(-1);\n");
 	 * htmlStream.append("			this.selectedNode = null;\n"); htmlStream.append("			this.selectedFound = false;\n");
 	 * htmlStream.append("			this.completed = false;\n"); htmlStream.append("		};\n"); htmlStream.append("</SCRIPT>\n");
-	 * 
+	 *
 	 * }
 	 */
 
@@ -369,7 +370,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 
 	/**
 	 * Create URL to call the create master node from the child folder selected.
-	 * 
+	 *
 	 * @param folder
 	 *            The folder to be master node
 	 * @return The URL to call the create master node functionality operation
@@ -384,7 +385,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 
 	/**
 	 * Create URL to call the move up functionality operation.
-	 * 
+	 *
 	 * @param folder
 	 *            The folder to be moved up
 	 * @return The URL to call the move up functionality operation
@@ -399,7 +400,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 
 	/**
 	 * Create URL to call the move down fuctionality operation.
-	 * 
+	 *
 	 * @param folder
 	 *            The folder to be moved down
 	 * @return The URL to call the move down functionality operation
@@ -414,7 +415,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 
 	/**
 	 * Create URL to call the add fuctionality operation.
-	 * 
+	 *
 	 * @param path
 	 *            The object tree path String
 	 * @return The URL to call the add functionality operation
@@ -432,7 +433,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 
 	/**
 	 * Create the URL to call the remove functionality operation.
-	 * 
+	 *
 	 * @param path
 	 *            The object tree path String
 	 * @return the URL to call the remove functionality operation.
@@ -448,7 +449,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 
 	/**
 	 * Create the URL to call the create functionality operation.
-	 * 
+	 *
 	 * @param path
 	 *            The object tree path String
 	 * @return the URL to call the create functionality operation
@@ -465,12 +466,12 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 	/*
 	 * public List fillDepths(List objectsList){ HashMap idsMenus=new HashMap(); ArrayList limitLeaves=new ArrayList(); if(objectsList!=null){ for (Iterator
 	 * iterator = objectsList.iterator(); iterator.hasNext();) { Menu menu = (Menu) iterator.next(); Integer id=menu.getMenuId(); idsMenus.put(id, menu); }
-	 * 
+	 *
 	 * for (Iterator iterator = objectsList.iterator(); iterator.hasNext();) { Menu menu= (Menu) iterator.next(); Integer id=menu.getMenuId(); int
 	 * depth=calculateDepth(idsMenus, menu); if(depth==3) // trace only limit leaves! limitLeaves.add(id);
-	 * 
+	 *
 	 * } } return limitLeaves;
-	 * 
+	 *
 	 * }
 	 */
 
@@ -484,7 +485,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.presentation.ITreeHtmlGenerator#makeAccessibleTree(java.util.List,
 	 * javax.servlet.http.HttpServletRequest, java.lang.String)
 	 */
@@ -495,7 +496,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 
 	/**
 	 * Create URL to call the create master node functionality operation from a child menu.
-	 * 
+	 *
 	 * @param folder
 	 *            The folder to be transformed into master folder
 	 * @return The URL to call the create master menu operation
@@ -514,7 +515,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 
 	/**
 	 * Create URL to call the move up fuctionality operation.
-	 * 
+	 *
 	 * @param folder
 	 *            The folder to be moved up
 	 * @return The URL to call the move up functionality operation
@@ -533,7 +534,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 
 	/**
 	 * Create URL to call the move down functionality operation.
-	 * 
+	 *
 	 * @param folder
 	 *            The folder to be moved down
 	 * @return The URL to call the move down functionality operation

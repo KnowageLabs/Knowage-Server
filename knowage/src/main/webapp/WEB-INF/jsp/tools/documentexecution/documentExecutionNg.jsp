@@ -212,7 +212,7 @@ if(executionRoleNames.size() > 0) {
                     </md-button>
                     <span>&nbsp;&nbsp;</span>
                     <h2 class="md-flex" ng-hide="::crossNavigationScope.isNavigationInProgress()">
-                        {{executionInstance.OBJECT_NAME}}
+                        {{i18n.getI18n(executionInstance.OBJECT_NAME)}}
                     </h2>
                     <cross-navigation cross-navigation-helper="crossNavigationScope.crossNavigationHelper" flex>
                         <cross-navigation-bread-crumb id="clonedCrossBreadcrumb"> </cross-navigation-bread-crumb>

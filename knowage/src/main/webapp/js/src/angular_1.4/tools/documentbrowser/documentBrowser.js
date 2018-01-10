@@ -3,7 +3,7 @@ app.controller('documentBrowserController',
 		[ '$mdMedia', '$scope', '$http', '$mdSidenav',
 		  '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices',
 		  'sbiModule_config', 'setFocus','$timeout', '$cookies',
-		  'sbiModule_user','$interval','$q',documentBrowserFunction]);
+		  'sbiModule_user','$interval','$q','sbiModule_i18n',documentBrowserFunction]);
 
 
 
@@ -11,9 +11,10 @@ function documentBrowserFunction(
 		$mdMedia, $scope, $http, $mdSidenav,
 		$mdDialog, sbiModule_translate, sbiModule_restServices,
 		sbiModule_config, setFocus,$timeout, $cookies,
-		sbiModule_user,$interval,$q) {
+		sbiModule_user,$interval,$q,sbiModule_i18n) {
 
 	$scope.translate=sbiModule_translate;
+	$scope.i18n=sbiModule_i18n;
 	$scope.folders = [];
 	$scope.folderDocuments = [];
 	$scope.searchDocuments = [];
@@ -88,6 +89,14 @@ function documentBrowserFunction(
 		sbiModule_restServices.promiseGet("2.0","documents","folderId=" + folderId)
 		.then(function(response) {
 			angular.copy(response.data,$scope.folderDocuments);
+
+			// i18n translate all document names
+			for(var i=0; i<$scope.folderDocuments.length; i++){
+				$scope.folderDocuments[i].name = $scope.i18n.getI18n($scope.folderDocuments[i].name);
+				$scope.folderDocuments[i].label = $scope.i18n.getI18n($scope.folderDocuments[i].label);
+				$scope.folderDocuments[i].label = $scope.i18n.getI18n($scope.folderDocuments[i].label);
+			}
+
 			$scope.hideProgressCircular=true;
 			//PUT bread crumb in cookies
 			var foldersId = [];

@@ -1,5 +1,25 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.navigation.LightNavigationManager;
@@ -27,8 +47,6 @@ import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.commons.validation.SpagoBIValidationImpl;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
@@ -38,26 +56,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.objects.Couple;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 public class DocumentUrlManager {
 
@@ -208,18 +206,18 @@ public class DocumentUrlManager {
 		while (iterParams.hasNext()) {
 			BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
 			// internalization of the label for display
-			String viewLabel = biparam.getLabel();
-			String oldViewLabel = viewLabel;
-			IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-			viewLabel = msgBuilder.getI18nMessage(locale, viewLabel);
-			logger.debug(oldViewLabel + " is internazionalized in " + viewLabel);
-			biparam.setLabel(viewLabel);
+			// String viewLabel = biparam.getLabel();
+			// String oldViewLabel = viewLabel;
+			// IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
+			// viewLabel = msgBuilder.getI18nMessage(locale, viewLabel);
+			// logger.debug(oldViewLabel + " is internazionalized in " + viewLabel);
+			// biparam.setLabel(viewLabel);
 			logger.debug("Evaluating errors for biparameter " + biparam.getLabel() + " ...");
 			List errorsOnChecks = getValidationErrorsOnChecks(biparam);
 			List values = biparam.getParameterValues();
 			if (biparam.isRequired() && (values == null || values.isEmpty() || normalizeList(values).size() == 0)) {
-				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null,
-						null, null);
+				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null, null,
+						null);
 				errorsOnChecks.add(error);
 			}
 			if (errorsOnChecks != null && errorsOnChecks.size() > 0) {

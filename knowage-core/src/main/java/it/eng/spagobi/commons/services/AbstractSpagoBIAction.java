@@ -156,8 +156,8 @@ public abstract class AbstractSpagoBIAction extends AbstractBaseHttpAction {
 		
 		msgBuilder = MessageBuilderFactory.getMessageBuilder();
 		//lnStr = msgBuilder.getUserMessage(str , SpagoBIConstants.DEFAULT_USER_BUNDLE, getLocale());	
-		lnStr =msgBuilder.getI18nMessage(getLocale(), str);
-		
+		//lnStr =msgBuilder.getI18nMessage(getLocale(), str);
+		lnStr = str;
 		return lnStr;
 	}
 	

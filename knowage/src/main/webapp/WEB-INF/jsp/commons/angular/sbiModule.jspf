@@ -623,46 +623,47 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 });
 
 
-sbiM.service('sbiModule_i18n', function(sbiModule_config, sbiModule_restServices) {
+sbiM.service('sbiModule_i18n', function(sbiModule_config, sbiModule_restServices, $q) {
 	
 	var self = this;
-	
-	self.i18nMap ={};
-	self.loaded = false;
+	self.i18nMap;
 
-	// load translation I18n map
-	//alert('country = '+sbiModule_config.curr_country+ ' --- '+' language = '+sbiModule_config.curr_language);
-	self.loadI18nMap = function(locale){			 
-		sbiModule_restServices.promiseGet("2.0/i18nMessages","?currCountry="+sbiModule_config.curr_country+"&currLanguage="+sbiModule_config.curr_language).then(
-				function(response){
-				// initialize the map
-					self.i18nMap = response.data;
-					self.loaded = true;	
-				//alert('caricato '+Object.keys(self.i18nMap).length);					
-			
-			},function(response){
-				alert("Errore "+response.data.errors[0].message);
-			});
-	};
-	
-	// return translation of a label if present, otherwise return the label
-	self.getI18n = function(label){
-		if(self.i18nMap[label] != undefined){
-			//alert(self.i18nMap[label]);
-			return self.i18nMap[label];
-		}
-		else return label; 
-	}
-	
-	self.isLoaded = function(){
-		return self.loaded;
-	}
-	
-	self.printMapSize = function(){
-		alert(Object.keys(self.i18nMap).length);
-	}
+    return {
+        
+    	loadI18nMap : function(){
+    		 return $q(function(resolve, reject) {
+    		if(self.i18nMap){
+    			resolve(self.i18nMap);
+			}else{
+    		
+    		sbiModule_restServices.promiseGet("2.0/i18nMessages","?currCountry="+sbiModule_config.curr_country+"&currLanguage="+sbiModule_config.curr_language).then(
+    				function(response){
+    					self.i18nMap = response.data;
+    					resolve(self.i18nMap);
+    			},function(response){
+    				alert("Errore "+response.data.errors[0].message);
+    			});
+			}
+    	});
+    	},
+
+        getI18n : function (label) { // return translation of a label if present, otherwise return the label
+    		if(self.i18nMap && label.startsWith('i18n_') && self.i18nMap[label] != undefined){
+    			return self.i18nMap[label];
+    		}
+    		else return label; 
+        },
+    	printMsg : function(){
+    		alert('messaggio');
+    	},
+    	isLoaded : function(){
+    		return false;
+    	}
+      };
 		
 });
+
+
 
 sbiM.factory('sbiModule_device',function($window){
 	var deviceObj = {};

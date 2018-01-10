@@ -7,7 +7,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
     $mdThemingProvider.setDefaultTheme('knowage');
 }])
 .controller('navigationController'
-		,['$scope','sbiModule_restServices','sbiModule_translate','$angularListDetail','$mdDialog','$mdToast',function($scope, sbiModule_restServices, sbiModule_translate,$angularListDetail, $mdDialog, $mdToast){
+		,['$scope','sbiModule_restServices','sbiModule_translate','$angularListDetail','$mdDialog','$mdToast', 'sbiModule_i18n',function($scope, sbiModule_restServices, sbiModule_translate,$angularListDetail, $mdDialog, $mdToast, sbiModule_i18n){
 			var ctr = this;
 			var s = $scope;
 
@@ -20,11 +20,12 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 
 
 			s.translate = sbiModule_translate;
+			s.i18n = sbiModule_i18n;
 
 			$scope.crossModes = [{label:s.translate.load("sbi.crossnavigation.modality.normal"),value:0},
 								 {label:s.translate.load("sbi.crossnavigation.modality.popup"),value:1},
 			                    ];
-			
+
 
 			ctr.list = [];
 			ctr.detail = newRecord();
@@ -51,6 +52,16 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 					.then(function(response) {
 						ctr.navigationList.loadingSpinner = false;
 						ctr.list = response.data;
+
+						$scope.i18n.loadI18nMap().then(function() {
+
+							for (var i = 0 ; i < ctr.list.length; i ++ ){
+								ctr.list[i].name = s.i18n.getI18n(ctr.list[i].name);
+							}
+
+						}); // end of load I 18n
+
+
 					},function(response){
 						ctr.navigationList.loadingSpinner = false;
 					});

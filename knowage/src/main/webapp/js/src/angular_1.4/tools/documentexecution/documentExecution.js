@@ -5,29 +5,29 @@
 	};
 
 	var documentExecutionApp = angular.module('documentExecutionModule');
-	
+
 	documentExecutionApp.config(['$mdThemingProvider', function($mdThemingProvider) {
 		$mdThemingProvider.theme('knowage')
 		$mdThemingProvider.setDefaultTheme('knowage');
 	}]);
 
-	
-	documentExecutionApp.controller( 'documentExecutionController', 
-			['$scope', '$http', '$mdSidenav', '$mdDialog', '$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_user', 
+
+	documentExecutionApp.controller( 'documentExecutionController',
+			['$scope', '$http', '$mdSidenav', '$mdDialog', '$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_user',
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices', 'docExecute_urlViewPointService', 'docExecute_paramRolePanelService', 'infoMetadataService', 'sbiModule_download', '$crossNavigationScope',
-			 'docExecute_dependencyService', '$timeout', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window','$mdMenu',
+			 'docExecute_dependencyService', '$timeout', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window','$mdMenu','sbiModule_i18n',
 			 documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav, $mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices,sbiModule_user, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine, documentExecuteServices,
 			docExecute_urlViewPointService, docExecute_paramRolePanelService, infoMetadataService, sbiModule_download, $crossNavigationScope,
-			docExecute_dependencyService, $timeout, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing,$window,$mdMenu) {
+			docExecute_dependencyService, $timeout, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing,$window,$mdMenu,sbiModule_i18n ) {
 
 		console.log("documentExecutionControllerFn IN ");
-		
-		
+
+
 		$scope.showCollaborationMenu = sbiModule_user.functionalities.indexOf("Collaboration")>-1;
 
 
@@ -35,7 +35,7 @@
 		$scope.navigatorVisibility = false;
 		$scope.toggleNavigator = function(e) {
 			$scope.navigatorStyle = {
-					"left" : (e.pageX-150)+'px'	
+					"left" : (e.pageX-150)+'px'
 			}
 			$scope.navigatorVisibility = $scope.navigatorVisibility?false:true;
 		}
@@ -44,7 +44,7 @@
 			//$window.location.href = "http://localhost:8080/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&OBJECT_LABEL=PADRE_CROSS&OBJECT_NAME=Home%20page&IS_SOURCE_DOCUMENT=true";
 			$window.location.href = "http://161.27.39.83:8080/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&OBJECT_LABEL=HOME_PAGE&OBJECT_NAME=Home%20page&IS_SOURCE_DOCUMENT=true";
 		}
-		
+
 		$scope.execProperties = execProperties;
 		$scope.cockpitEditing = cockpitEditing;
 		$scope.executionInstance = execProperties.executionInstance || {};
@@ -53,20 +53,21 @@
 		$scope.execContextId = "";
 		$scope.showSelectRoles = true;
 		$scope.translate = sbiModule_translate;
+		$scope.i18n = sbiModule_i18n;
 		$scope.documentParameters = execProperties.parametersData.documentParameters;
 		$scope.newViewpoint = JSON.parse(JSON.stringify(documentExecuteFactories.EmptyViewpoint));
 		$scope.viewpoints = [];
 		$scope.documentExecuteFactories = documentExecuteFactories;
 		$scope.documentExecuteServices = documentExecuteServices;
 		$scope.paramRolePanelService = docExecute_paramRolePanelService;
-		$scope.urlViewPointService = docExecute_urlViewPointService;		
+		$scope.urlViewPointService = docExecute_urlViewPointService;
 		$scope.currentView = execProperties.currentView;
 		$scope.parameterView = execProperties.parameterView;
 		$scope.isParameterRolePanelDisabled = execProperties.isParameterRolePanelDisabled;
 		$scope.showParametersPanel = execProperties.showParametersPanel;
 		//rank
 		$scope.rankDocumentSaved = 0;
-		$scope.requestToRating={};		
+		$scope.requestToRating={};
 		$scope.isClick = false;
 		$scope.setRank = false;
 		//note
@@ -83,8 +84,8 @@
 		$scope.download=sbiModule_download;
 		$scope.sidenavToShow = 'east';
 		$scope.sidenavCenter = null;
-		$scope.filterDropping = null; 
-		
+		$scope.filterDropping = null;
+
 		/**
 		 * Add these 'documentExecutionNg.jsp' Javascript variables to the scope of the document execution controller and use them
 		 * for managing the view part of the application (e.g. whether the "Add to my workspace" document execution menu option (or
@@ -97,14 +98,14 @@
 		$scope.isAbleToExecuteAction = isAbleToExecuteAction;
 		$scope.addToWorkspaceEnabled = (sbiModule_user.functionalities.indexOf("SaveIntoFolderFunctionality")>-1)? true:false;
 		$scope.showScheduled = (sbiModule_user.functionalities.indexOf("SchedulerManagement")>-1)? true:false;
-		
+
 		//navigation default parameters
 		$scope.navigatorEnabled 	= false;
 		$scope.navigatorVisibility 	= false;
-		
+
 		//menu Toggle override
 		$scope.closeMdMenu = function() { $mdMenu.hide(); };
-		
+
 		$scope.isOrganizerEnabled = function () {
 			if(!$scope.addToWorkspaceEnabled){
 				return false
@@ -112,30 +113,30 @@
 				return !($scope.executedFrom=='WORKSPACE_ORGANIZER'|| isAdmin || isSuperAdmin)
 			}
 		}
-		
+
 		if ($scope.executionInstance.SidenavOri === 'north'){
 			$scope.sidenavCenter = "center left";
-			$scope.filterDropping = "row"; 
+			$scope.filterDropping = "row";
 		}
-			
+
 		else{
 			$scope.sidenavCenter = "center center";
 			$scope.filterDropping = "column";
 		}
 
 		$scope.hideProgressCircular = execProperties.hideProgressCircular;
-		
+
 		$scope.getSidenavType = function(){
 			var xx = execProperties;
 			return $scope.sidenavToShow;
 		}
-		
+
 		$scope.openInfoMetadata = function() {
 			infoMetadataService.openInfoMetadata();
 		};
 
 		$scope.initSelectedRole = function() {
-			console.log("initSelectedRole IN ");  
+			console.log("initSelectedRole IN ");
 			var isRoleSelected =false;
 			if(execProperties.roles && execProperties.roles.length > 0) {
 				if(!angular.equals(execProperties.selectedRole.name,'')){
@@ -150,31 +151,31 @@
 
 						}
 				}
-				
+
 				if(execProperties.roles.length==1 || (execProperties.roles.length>1 && isRoleSelected) ) {
-					 
+
 					execProperties.selectedRole.name = isRoleSelected ? execProperties.selectedRole.name : execProperties.roles[0];
 					$crossNavigationScope.changeNavigationRole(execProperties.selectedRole);
-					$scope.showSelectRoles = false;					
+					$scope.showSelectRoles = false;
 					//loads parameters if role is selected
 					execProperties.isParameterRolePanelDisabled.status = true;
 					docExecute_urlViewPointService.getParametersForExecution(execProperties.selectedRole.name, $scope.buildCorrelation,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
-				}else{ 
+				}else{
 					docExecute_paramRolePanelService.toggleParametersPanel(true);
 				}
 				docExecute_urlViewPointService.frameLoaded=false;
 				// TODO controllare a cosa serve
 				//docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
 				$scope.firstExecutionProcessRestV1=false;
-				 
+
 			}
-			
+
 			console.log("initSelectedRole OUT ");
 		};
-				
-		
-		
-		
+
+
+
+
 		/*
 		 * DEPENDENCIES
 		 */
@@ -184,7 +185,7 @@
 		$scope.dependenciesService.dataDependenciesMap = {};
 		$scope.dependenciesService.observableLovParameterArray = [];
 		$scope.dependenciesService.lovCorrelationMap = {};
-		
+
 		/*
 		 * BUILD CORRELATION
 		 * Callback function from service getParameter for visual dependencies
@@ -199,8 +200,8 @@
 				//docExecute_dependencyService.lovCorrelationWatch(parameters[i]);
 			}
 		};
-				
-		
+
+
 		 /*
 		  * WATCH ON LOV DEPENDENCIES PARAMETER OBJECT
 		  */
@@ -214,14 +215,14 @@
 							docExecute_dependencyService.lovCorrelationWatch(newValue[i]);
 							break;
 						}
-						
+
 					}
 				}
-			},true);	
-		
-		
-		
-		
+			},true);
+
+
+
+
 	 /*
 	  * WATCH ON VISUAL DEPENDENCIES PARAMETER OBJECT
 	  */
@@ -239,7 +240,7 @@
 				}
 			}
 		},true);
-		 
+
 	     /*
 		  * WATCH ON DATA DEPENDENCIES PARAMETER OBJECT
 		  */
@@ -250,37 +251,37 @@
 		function(newValue, oldValue) {
 			if (!angular.equals(newValue, oldValue)) {
 				for(var i=0; i<newValue.length; i++){
-					
+
 					var oldValPar = oldValue[i];
 					var newValPar = newValue[i];
-					
+
 					//only new value different old value
 					if(oldValPar && (!angular.equals(newValPar, oldValPar)) ){
-						
-						var oldParValue = oldValPar.parameterValue; 
-						var newParValue = newValPar.parameterValue; 
-						
-						
-						
+
+						var oldParValue = oldValPar.parameterValue;
+						var newParValue = newValPar.parameterValue;
+
+
+
 						if(oldParValue == undefined || oldParValue == "" ||
-								(oldParValue && (!angular.equals(newParValue, oldParValue))) 
+								(oldParValue && (!angular.equals(newParValue, oldParValue)))
 								){
 							docExecute_dependencyService.dataDependenciesCorrelationWatch(newValPar);
 						}
 						break;
-						
+
 					}
 
 				}
 			}
 		},true);
-	  
+
 		//ranking document
 		$scope.rankDocument = function() {
 			var obj = {
 					'obj':$scope.executionInstance.OBJECT_ID
 			};
-			sbiModule_restServices.promisePost("documentrating", "getvote",obj).then(function(response) { 
+			sbiModule_restServices.promisePost("documentrating", "getvote",obj).then(function(response) {
 				//angular.copy(response.data,$scope.rankDocumentSaved);
 				$scope.rankDocumentSaved = response.data;
 			},function(response) {
@@ -331,7 +332,7 @@
 								},
 								function(response){
 									documentExecuteServices.showToast(response.data.errors);
-								}	
+								}
 						);
 					};
 
@@ -340,11 +341,11 @@
 					};
 				},
 
-				templateUrl : sbiModule_config.contextName 
+				templateUrl : sbiModule_config.contextName
 				+ '/js/src/angular_1.4/tools/documentexecution/templates/documentSendMail.html'
 			});
 		};
-		
+
 		//note document
 		$scope.noteDocument = function() {
 			var obj = {'id' : $scope.executionInstance.OBJECT_ID};
@@ -383,12 +384,12 @@
 		$scope.checkHelpOnline = function(){
 			return sbiModule_user.isAbleTo("Glossary");
 		}
-		
-		$scope.openHelpOnLine = function() {	
+
+		$scope.openHelpOnLine = function() {
 			sbiModule_helpOnLine.showDocumentHelpOnLine($scope.executionInstance.OBJECT_LABEL);
 		};
-		
-		$scope.execShowHelpOnLine = function(data) {	
+
+		$scope.execShowHelpOnLine = function(data) {
 			sbiModule_helpOnLine.show(data);
 		};
 
@@ -396,22 +397,22 @@
 		$scope.openNavigator = function(){
 			$scope.navigatorVisibility = $scope.navigatorVisibility ? false: true;
 		}
-					
+
 		/*
 		 * EXECUTE PARAMS
 		 * Submit param form
 		 */
 		$scope.executeParameter = function() {
 			console.log("executeParameter IN ");
-			
+
 			var action = function() {
 				docExecute_urlViewPointService.frameLoaded=false;
-				docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, 
+				docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name,
 						 documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters));
 				docExecute_paramRolePanelService.toggleParametersPanel(false);
 				$scope.cockpitEditing.documentMode="VIEW";
 			};
-			
+
 			if($scope.cockpitEditing.documentMode == "EDIT"){
 				var confirm = $mdDialog.confirm()
 						.title(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode'))
@@ -419,18 +420,18 @@
 						.ariaLabel('Leave edit mode')
 						.ok(sbiModule_translate.load("sbi.general.continue"))
 						.cancel(sbiModule_translate.load("sbi.general.cancel"));
-				
+
 				$mdDialog.show(confirm).then(function(){action.call()});
 			}else{
 				action.call();
 			}
-			
+
 			console.log("executeParameter OUT ");
 		};
-		
+
 		$scope.changeRole = function(role) {
 			console.log("changeRole IN ");
-			if(role != execProperties.selectedRole.name) {  
+			if(role != execProperties.selectedRole.name) {
 				$crossNavigationScope.changeNavigationRole(execProperties.selectedRole);
 				docExecute_urlViewPointService.getParametersForExecution(role,$scope.buildCorrelation,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
 				docExecute_urlViewPointService.frameLoaded=false;
@@ -482,12 +483,12 @@
 				frame.contentWindow.print();
 			}
 		};
-		
+
 		$scope.closeDocument = function() {
 			var action = function() {
 				$crossNavigationScope.closeDocument($scope.executionInstance.OBJECT_ID);
 			};
-			
+
 			if($scope.cockpitEditing.documentMode == "EDIT"){
 				var confirm = $mdDialog.confirm()
 						.title(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode'))
@@ -495,7 +496,7 @@
 						.ariaLabel('Leave edit mode')
 						.ok(sbiModule_translate.load("sbi.general.continue"))
 						.cancel(sbiModule_translate.load("sbi.general.cancel"));
-				
+
 				$mdDialog.show(confirm).then(function(){action.call()});
 			}else{
 				action.call();
@@ -503,7 +504,7 @@
 		};
 
 		$scope.isCloseDocumentButtonVisible=function(){
-			return $crossNavigationScope.isCloseDocumentButtonVisible();  
+			return $crossNavigationScope.isCloseDocumentButtonVisible();
 		};
 
 		$scope.iframeOnload = function(){
@@ -512,16 +513,16 @@
 				$scope.$apply();
 			}
 		};
-		
+
 		$scope.navigateTo= function(outputParameters,inputParameters,targetCrossNavigation,docLabel, staticParameters){
 			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,execProperties.parametersData.documentParameters,targetCrossNavigation,docLabel,staticParameters);
 //			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel);
 		};
-		
+
 		$scope.internalNavigateTo= function(params,targetDocLabel){
 			$crossNavigationScope.crossNavigationHelper.internalNavigateTo(params,targetDocLabel);
 		};
-		 
+
 		console.log("documentExecutionControllerFn OUT ");
 	};
 
@@ -535,7 +536,7 @@
 				element.on('load', function() {
 					// var iFrameHeight = element[0].parentElement.scrollHeight + 'px';
 					// changed to height 100% because of phantomjs rendering errors
-					element.css('height', '100%');				
+					element.css('height', '100%');
 					element.css('width', '100%');
 					if(scope.iframeOnload)
 						scope.iframeOnload();
@@ -559,7 +560,7 @@ var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, tar
 	parent.internalNavigateTo(jsonEncodedParams,doclabel);
 };
 
-var execExternalCrossNavigation=function(outputParameters,inputParameters,targetCrossNavigation,docLabel,staticParameters){ 
+var execExternalCrossNavigation=function(outputParameters,inputParameters,targetCrossNavigation,docLabel,staticParameters){
 	var parent = angular.element(frameElement).scope().$parent;
 	while(parent != undefined){
 		if(parent.navigateTo != undefined){

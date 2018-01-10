@@ -36,7 +36,7 @@ angular
 	})
 
 function documentsController($scope, sbiModule_restServices, sbiModule_translate, $window, $mdSidenav, $mdDialog,
-			sbiModule_config, $documentViewer, toastr){
+			sbiModule_config, $documentViewer, toastr, sbiModule_i18n){
 
 	$scope.selectedDocument = undefined;
 	$scope.showDocumentInfo = false;
@@ -47,6 +47,10 @@ function documentsController($scope, sbiModule_restServices, sbiModule_translate
 	$scope.breadCrumbControl;
 	$scope.documentsOfSelectedFolder=[];
 	$scope.documentsOfSelectedFolderInitial=[];
+
+	//if(!$scope.i18n.isLoaded()){
+	//	$scope.i18n.loadI18nMap();
+	//}
 
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	$scope.documentsFromAllFolders=[];
@@ -180,11 +184,19 @@ function documentsController($scope, sbiModule_restServices, sbiModule_translate
 		sbiModule_restServices.promiseGet("2.0/organizer/folders","")
 		.then(function(response) {
 			angular.copy(response.data,$scope.folders); // all folders
-			//angular.copy(response.data,$scope.foldersForTree);
-			$scope.convertTimestampToDateFolders();
-			$scope.loadFolderContent();
-			$scope.loadDocumentsForFolder($scope.selectedFolder);
-			console.info("[LOAD END]: Loading of users folders is finished.");
+
+			$scope.i18n.loadI18nMap().then(function() {
+
+				for (var i = 0 ; i < $scope.folders.length; i ++ ){
+					$scope.folders[i].name = $scope.i18n.getI18n($scope.folders[i].name);
+				}
+
+				//angular.copy(response.data,$scope.foldersForTree);
+				$scope.convertTimestampToDateFolders();
+				$scope.loadFolderContent();
+				$scope.loadDocumentsForFolder($scope.selectedFolder);
+				console.info("[LOAD END]: Loading of users folders is finished.");
+			}); // end of load I 18n
 		},function(response){
 
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)

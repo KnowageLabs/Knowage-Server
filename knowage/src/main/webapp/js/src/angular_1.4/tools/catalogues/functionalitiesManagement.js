@@ -1,5 +1,5 @@
 /**
-   @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net) 
+   @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net)
  */
 
 var app = angular.module("FunctionalitiesManagementModule", ['angular-list-detail', 'document_tree', 'sbiModule', 'angular_table' ]);
@@ -14,12 +14,12 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	// getting all functionalities
 	$scope.getFolders = function() {
 		sbiModule_restServices.promiseGet("2.0/functionalities", "").then(
-				function(response) { 
+				function(response) {
 					for(var i=0; i<response.data.length; i++){
-						response.data[i].expanded=true;	 
-							
+						response.data[i].expanded=true;
+
 					}
-					$scope.folders = angular.copy(response.data); 	
+					$scope.folders = angular.copy(response.data);
 					$scope.folders_copy = angular.copy($scope.folders);
 				},
 				function(response) {
@@ -30,7 +30,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	$scope.getRoles = function() {
 		sbiModule_restServices.promiseGet("2.0/roles/short", "").then(
 				function(response) {
-					$scope.roles = response.data; 
+					$scope.roles = response.data;
 				},
 				function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
@@ -55,11 +55,11 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 		$scope.selectedFolder ={};
 		$scope.showme = false;
 		$scope.dirtyForm=false;
-		
+
 	}
 	$scope.fake = {};
 	$scope.save = function() {
-	     if($scope.selectedFolder.hasOwnProperty("id")){ 
+	     if($scope.selectedFolder.hasOwnProperty("id")){
 	    	 // if item already exists do update PUT
 	    	 $scope.fake = {
 	    			 id : $scope.selectedFolder.id,
@@ -74,20 +74,20 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	    			 path :  $scope.selectedFolder.path,
 	    			 prog :  $scope.selectedFolder.prog,
 	    			 parentId : $scope.selectedFolder.parentId
-	    			 
+
 	    	 }
 	    		sbiModule_restServices.promisePut("2.0/functionalities",$scope.fake.id, $scope.fake)
 				.then(function(response) {
-					$scope.folders_copy = $scope.getFolders(); 
+					$scope.folders_copy = $scope.getFolders();
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
 					//$scope.selectedFolder ={};
 					$scope.showme = true;
 					$scope.dirtyForm=false;
-					
+
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
-				});		
-				
+				});
+
 		}else{
 		// post create new item
 			 $scope.fake = {
@@ -101,39 +101,39 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	    			 name :  $scope.selectedFolder.name,
 	    			 path :  $scope.path+"/"+$scope.selectedFolder.name,
 	    			 parentId : $scope.selectedFolder.parentId
-	    			 
+
 	    	 }
 			sbiModule_restServices.promisePost('2.0/functionalities','',$scope.fake)
 			.then(function(response) {
-				$scope.folders_copy = $scope.getFolders(); 
+				$scope.folders_copy = $scope.getFolders();
 				//$scope.selectedFolder ={};
 				$scope.showme = true;
-				$scope.dirtyForm=false;	
+				$scope.dirtyForm=false;
 				$scope.loadFolder (response.data);
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
-				
+
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
-				
-			});	
+
+			});
 		}
-			
+
 	}
 
 	$scope.setDirty = function() {
 		$scope.dirtyForm = true;
 	}
-	
+
 	$scope.parentID = null;
 	$scope.codType = null;
 	$scope.path = null;
-	
+
 	$scope.createFolder = function() {
 		$scope.parentID = $scope.selectedFolder.id;
 		$scope.codType = $scope.selectedFolder.codType;
 		$scope.path = $scope.selectedFolder.path;
 
-		
+
 
 		$scope.selectedFolder.code = "";
 		$scope.selectedFolder.description= "";
@@ -195,7 +195,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 			}
 
 	];
-	
+
 
 	$scope.functMenuOpt = [
 		{
@@ -203,12 +203,12 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 			icon : 'fa fa-arrow-up',
 			action : function(item) {
 				$scope.moveUp(item.id)
-				
+
 			},
 			showItem : function (item){
 				return !(item.prog== 1);
 			}
-		}, 
+		},
 		{
 			label : sbiModule_translate.load("sbi.folder.moveDown"),
 			icon : 'fa fa-arrow-down',
@@ -218,7 +218,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 			showItem : function (item){
 				return $scope.canBeMovedDown(item);
 			}
-		} , 
+		} ,
 		{
 			label :  sbiModule_translate.load("sbi.folder.delete"),
 			icon : 'fa fa-trash',
@@ -226,30 +226,30 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				$scope.confirmDelete(item,event);
 			},
 			showItem : function (item){
-				
+
 				return $scope.canBeDeleted(item);
 			}
-		} 
+		}
 	];
 	$scope.tableFunction = {
 		isChecked : function(row, criteria) {
-			
+
 			if ($scope.selectedFolder[criteria] != undefined) {
 				for (var j = 0; j < $scope.selectedFolder[criteria].length; j++) {
 					if ($scope.selectedFolder[criteria][j].name == row.name) {
 						return true;
 					}
-					
+
 				}
 			}
-			
+
 		},
-		
+
 		/*
 			method that disable choosing role that parent does not have
 		*/
 		isDisabled : function(row, criteria) {
-			
+
 			if($scope.parent!=undefined ){
 				if($scope.parent.parentId){
 					if ($scope.parent[criteria] != undefined ) {
@@ -257,14 +257,14 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 							if ($scope.parent[criteria][j].name == row.name) {
 								return true;
 							}
-							
+
 						}
-					} 
+					}
 				}
 				else return true;
-				
-			}  
-			
+
+			}
+
 		},
 		checkRole : function(item, criteria) {
 			if ($scope.selectedFolder[criteria] == null) {
@@ -303,7 +303,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	}
 
 	 ];
-	
+
 	$scope.checkAllRolesInRow = function(row) {
 		if ($scope.selectedFolder.createRoles.length == 0) {
 			$scope.selectedFolder.createRoles.push(row);
@@ -313,7 +313,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				if ($scope.selectedFolder.createRoles[j].name != row.name && $scope.selectedFolder.createRoles.indexOf(row) == -1) {
 					$scope.selectedFolder.createRoles.push(row);
 				}
-				
+
 			}
 		}
 		$scope.selectedFolder.createRoles = $scope.remove($scope.selectedFolder.createRoles,"id");
@@ -348,21 +348,21 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 			}
 		}
 		$scope.selectedFolder.testRoles = $scope.remove($scope.selectedFolder.testRoles, "id");
-		
+
 	}
-	
+
 	$scope.remove = function (arr, prop){
 		var new_arr = [];
 	    var lookup  = {};
-	    
+
 	    for (var i in arr) {
 	        lookup[arr[i][prop]] = arr[i];
 	    }
-	
+
 	    for (i in lookup) {
 	        new_arr.push(lookup[i]);
 	    }
-	
+
 	    return new_arr;
 	}
 	$scope.unCheckAllRolesInRow = function(row) {
@@ -417,23 +417,25 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	$scope.moveDown = function (id){
 		sbiModule_restServices.promiseGet("2.0/functionalities/moveDown", id).then(
 				function(response) {
-					$scope.getFolders(); 
+					$scope.getFolders();
 				},
 				function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
 				});
 	}
-	
+
 	$scope.getParent = function (id){
 		sbiModule_restServices.promiseGet("2.0/functionalities/getParent", id).then(
 				function(response) {
+					alert('uno');
 					$scope.parent = angular.copy(response.data);
 				},
 				function(response) {
+					alert('due');
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
 				});
 	}
-	
+
 	$scope.canBeMovedDown = function (item){
 		if($scope.folders_copy!= undefined){
 			for (var i=0; i < $scope.folders_copy.length-1; i++){
@@ -441,19 +443,19 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				if(item.parentId==f.parentId && item.prog < f.prog){
 					return true;
 				}
-				
-				
+
+
 			}
 			return false;
 		}
-		
+
 	}
-	
+
 	$scope.canBeDeleted = function (item){
 		if(item.parentId==null && item.codType=="LOW_FUNCT") return false
 		else return true;
 	}
-	
+
 	$scope.indexInList = function(item, list) {
 
 		for (var i = 0; i < list.length; i++) {
@@ -466,7 +468,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 		return -1;
 	}
 
-	 
+
 	$scope.confirm = $mdDialog.confirm().title(
 			sbiModule_translate.load("sbi.catalogues.generic.modify")).content(
 			sbiModule_translate.load("sbi.catalogues.generic.modify.msg"))
@@ -474,7 +476,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 					sbiModule_translate.load("sbi.general.continue")).cancel(
 					sbiModule_translate.load("sbi.general.cancel"));
 
-	
+
 	$scope.confirmDelete = function(item,ev) {
 		var confirm = $mdDialog.confirm()
 			.title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
@@ -486,19 +488,19 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 		$mdDialog.show(confirm).then(function() {
 			$scope.deleteFunct(item.id);
 	    }, function() {
-	
+
 	    });
 	};
-	  
-	$scope.loadFolder = function(item) {  
-		
+
+	$scope.loadFolder = function(item) {
+
 		for(var i=0; i<$scope.folders.length; i++){
-			$scope.folders[i].expanded=true;	 
-				
+			$scope.folders[i].expanded=true;
+
 		}
 		if ($scope.dirtyForm) {
 			$mdDialog.show($scope.confirm).then(function() {
-				$scope.selectedFolder = angular.copy(item); 
+				$scope.selectedFolder = angular.copy(item);
 				if(item.parentId!=null  ){
 					$scope.getParent(item.parentId);
 				}
@@ -516,14 +518,14 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 					$scope.getParent(item.parentId);
 				}
 				$scope.showme = true;
-				$scope.showPlusButton = true; 
+				$scope.showPlusButton = true;
 			} else {
 				$scope.selectedFolder = angular.copy(item);
 				if(item.parentId!=null){
 					$scope.getParent(item.parentId);
 				}
 				$scope.showme = false;
-				$scope.showPlusButton = true; 
+				$scope.showPlusButton = true;
 
 			}
 		}

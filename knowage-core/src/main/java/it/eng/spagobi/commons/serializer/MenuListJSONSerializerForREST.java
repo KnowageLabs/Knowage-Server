@@ -209,7 +209,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							String text = "";
 							if (!menuElem.isAdminsMenu() || !menuElem.getName().startsWith("#"))
 
-								text = msgBuild.getI18nMessage(locale, menuElem.getName());
+								// text = msgBuild.getI18nMessage(locale, menuElem.getName());
+								text = menuElem.getName();
 							else {
 								if (menuElem.getName().startsWith("#")) {
 									String titleCode = menuElem.getName().substring(1);
@@ -782,7 +783,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		MessageBuilder msgBuild = new MessageBuilder();
 		String text = "";
 		if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#"))
-			text = msgBuild.getI18nMessage(locale, childElem.getName());
+			// text = msgBuild.getI18nMessage(locale, childElem.getName());
+			text = childElem.getName();
 		else {
 			if (childElem.getName().startsWith("#")) {
 				String titleCode = childElem.getName().substring(1);
@@ -845,8 +847,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						"javascript:callExternalApp('" + StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()) + "', '" + path + "')");
 				temp2.put(LINK_TYPE, "callExternalApp");
 				temp2.put(SRC, StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()));
-			}
-			else if (childElem.isAdminsMenu() && childElem.getUrl() != null) {
+			} else if (childElem.isAdminsMenu() && childElem.getUrl() != null) {
 				String url = "javascript:execDirectUrl('" + childElem.getUrl() + "'";
 				url = url.replace("${SPAGOBI_CONTEXT}", contextName);
 				url = url.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());

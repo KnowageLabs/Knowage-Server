@@ -17,6 +17,14 @@
  */
 package it.eng.spagobi.commons.serializer;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -26,14 +34,6 @@ import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.bo.Exporters;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -91,7 +91,8 @@ public class DocumentsJSONSerializer implements Serializer {
 			MessageBuilder msgBuild = new MessageBuilder();
 			String objName = null;
 			// objName = msgBuild.getUserMessage(obj.getName(),null, locale);
-			objName = msgBuild.getI18nMessage(locale, obj.getName());
+			// objName = msgBuild.getI18nMessage(locale, obj.getName());
+			objName = obj.getName();
 			result.put(NAME, objName);
 			if (objName.length() > SHORT_NAME_CHARACTERS_LIMIT) {
 				result.put(SHORT_NAME, objName.substring(0, SHORT_NAME_CHARACTERS_LIMIT - 1) + "...");
@@ -99,9 +100,10 @@ public class DocumentsJSONSerializer implements Serializer {
 				result.put(SHORT_NAME, objName);
 			}
 
-			String description = null;
+			String description = obj.getDescription();
 			// description = msgBuild.getUserMessage( obj.getDescription() ,null, locale);
-			description = msgBuild.getI18nMessage(locale, obj.getDescription());
+			// description = msgBuild.getI18nMessage(locale, obj.getDescription());
+
 			result.put(DESCRIPTION, description);
 			result.put(TYPECODE, obj.getBiObjectTypeCode());
 			result.put(TYPEID, obj.getBiObjectTypeID());
