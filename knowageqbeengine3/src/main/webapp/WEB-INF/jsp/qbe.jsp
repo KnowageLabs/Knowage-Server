@@ -39,7 +39,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			colors="colors"
 			
 			>
-				<md-icon ng-click="saveEntityTree()" md-font-icon=" fa fa-floppy-o"></md-icon>
+				<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="saveEntityTree()">
+		      		<md-tooltip md-direction="top">{{translate.load("kn.qbe.general.save")}}</md-tooltip>
+		        	<md-icon md-menu-origin class="fa fa-floppy-o"></md-icon>
+		      	</md-button>
         	</qbe-expander-list>
         	
         	<qbe-expander-list 
@@ -50,7 +53,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			display-property-name="name"
 			children-name="fields"
 			>
-            	<md-icon ng-click="createSubquery()" md-font-icon="fa fa-plus-circle"></md-icon>
+				<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="createSubquery()">
+		      		<md-tooltip md-direction="top">{{translate.load("kn.qbe.general.add")}}</md-tooltip>
+		        	<md-icon md-menu-origin class="fa fa-plus-circle"></md-icon>
+		      	</md-button>
         	</qbe-expander-list>
 		</div>
 		<div flex layout-fill class="vertical-devider">

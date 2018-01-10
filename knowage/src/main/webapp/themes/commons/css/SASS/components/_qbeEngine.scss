@@ -94,15 +94,20 @@
             margin-bottom: 4px;
             padding: 4px;
             font-size: 1rem;
-            .chip {
-                background-color: $ternaryColor;
-                color: $baseColor;
-                display: flex;
-                padding: 0px 16px;
-                border-radius: 50px;
-                font-size: .8rem;
-                font-weight: normal;
-                line-height: 19px;
+        }
+        .chip {
+            background-color: $lightTextColor;
+            color: $baseColor;
+            display: flex;
+            padding: 0px 16px;
+            border-radius: 50px;
+            font-size: .8rem;
+            font-weight: normal;
+            line-height: 19px;
+        }
+        ng-transclude {
+            md-icon{
+                line-height: 24px;
             }
         }
         .expandableEntities,
@@ -486,6 +491,46 @@
             .hint {
                 font-size: $smallFontSize;
                 color: $smallTextColor;
+            }
+        }
+    }
+
+    .filterRow {
+        align-items: center;
+        background-color: $contentBackground;
+        &:nth-child(even) {
+            background-color: lighten($ternaryColor,15%);
+        }
+    }
+
+    .havings{
+        md-input-container {
+            margin: 18px 4px;
+        }
+    }
+
+    .filterOtherEntity, .havingOtherEntity {
+        padding: 0;
+        .md-button {
+            width: 100%;
+            margin: 0;
+            height: 48px;
+            padding-left: 14px;
+            text-align: left;
+        }
+    }
+
+    .angularTableHeaderButton {
+        position: absolute;
+        top: 20px;
+        right: 14px;
+        z-index: 9;
+    }
+
+    #basicView{
+        .md-icon-button{
+            md-icon {
+                line-height: 24px;
             }
         }
     }

@@ -350,6 +350,18 @@ a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.m
     top: 5px;
 }
 
+.kn-noItems {
+    width: 60%;
+    margin: 8px !important;
+    border: 1px solid rgba($ternaryColor,.6);
+    padding: 8px;
+    background-color: lighten($ternaryColor, 10%);
+    text-align: center;
+    position: relative;
+    text-transform: uppercase;
+    font-size: $smallFontSize;
+}
+
 .kn-list md-icon.fa {
   padding-left:0;
 }

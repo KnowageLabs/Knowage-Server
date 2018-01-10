@@ -46,30 +46,16 @@
 			</angular-table>			   									
 		</md-card>
 	</div>
-	
-	<!-- <div layout="column" ng-if="selectedVisualization=='previewData' && !smartPreview && completeResult">
-   	
-   		<md-card layout-padding style=" height:95%; margin:0px" layout-fill>
-	   		<div  >
-	   			<angular-table
-					id="basicView"
-					flex
-					ng-model="previewModel"
-					columns='completeResultsColumns'
-					scope-functions=basicViewScopeFunctions
-					no-pagination=false>
-				</angular-table>	
-	   		</div>								      								   									
-		</md-card>
- 
-	</div> -->
-   	
+
 	<div layout="row" ng-if="selectedVisualization=='previewData' && smartPreview">
 		<div ng-repeat="field in ngModel | orderBy: 'order' track by $index" ng-if="field.visible" class="qbeCustomColumn" layout-column>
 	   		<div class="qbeCustomTopColor" ng-style="{'background-color' : field.color}"><md-tooltip md-direction="top">{{field.entity}}</md-tooltip></div>
 	   		<md-toolbar>
-	   		<div class="md-toolbar-tools secondaryToolbar" >
-	   		<md-icon class="fa fa-sort" ng-click="toggleOrder(field)"></md-icon>
+	   		<div class="md-toolbar-tools" >
+	   		<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="toggleOrder(field)">
+	      		<md-tooltip md-direction="top">{{field.name}}</md-tooltip>
+	        	<md-icon md-menu-origin class="fa fa-sort"></md-icon>
+	      	</md-button>
 	   			<h2>{{field.name}}
 	   			<md-tooltip md-direction="top">{{field.name}}</md-tooltip>
 	   			</h2> 
@@ -226,12 +212,21 @@
 	    	</md-toolbar>
 	   	
    		<div ng-repeat="row in field.data" class="qbeCustomRow">{{row.value}}&nbsp;</div>
-	   	<div  class="qbeCustomFooter">
-	   	    <md-icon class="fa fa-info" ng-click="showFilters(field)" style="float:left"></md-icon>
-	   		<label ng-show="field.filters.length" style="font-size:.8rem; padding: 0 4px;  font-weight: bold;">{{field.filters.length}} {{translate.load("kn.qbe.filters") | uppercase}}</label>	   		
-        	<md-icon class="fa fa-check-square-o" ng-click="openHavings(field)" style="float:right"></md-icon>
-        	<md-icon class="fa fa-filter" ng-click="openFilters(field)" style="float:right"></md-icon>      	
-      	</div>
+	   	<md-toolbar class="secondaryToolbar">
+	   		<div class="md-toolbar-tools " >
+		   		<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="showFilters(field)">
+		        	<md-icon md-menu-origin class="fa fa-info"></md-icon>
+		      	</md-button>
+		      	<span flex></span>
+		      	<label ng-show="field.filters.length" style="font-size:.8rem; padding: 0 4px;  font-weight: bold;">{{field.filters.length}} {{translate.load("kn.qbe.filters") | uppercase}}</label>
+		      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openHavings(field)">
+		        	<md-icon md-menu-origin class="fa fa-check-square-o"></md-icon>
+		      	</md-button>
+		      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openFilters(field)">
+		        	<md-icon md-menu-origin class="fa fa-filter"></md-icon>
+		      	</md-button> 
+	      	</div>  	
+      	</md-toolbar>
      </div>  
    </div>
   <md-content>

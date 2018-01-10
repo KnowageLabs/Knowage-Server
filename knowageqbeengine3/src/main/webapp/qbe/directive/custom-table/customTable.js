@@ -325,7 +325,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"filters",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-icon class="fa fa-filter" ng-click="scopeFunctions.openFilters(row)"></md-icon>';
+	                            		return '<md-button class="md-icon-button" ng-click="scopeFunctions.openFilters(row)"><md-icon class="fa fa-filter" ></md-icon></md-button>';
 	                            	}
 	                        	},
 	                        	{
@@ -333,7 +333,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"havings",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-icon class="fa fa-check-square-o" ng-click="scopeFunctions.openHavings(row)"></md-icon>';
+	                            		return '<md-button class="md-icon-button" ng-click="scopeFunctions.openHavings(row)"><md-icon class="fa fa-check-square-o" ></md-icon></md-button>';
 	                            	}
 	                        	},
 	                        	{
@@ -341,7 +341,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"function",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-icon class="fa fa-angle-up" ng-click="scopeFunctions.moveUp(row)"></md-icon> ';
+	                            		return '<md-button class="md-icon-button" ng-click="scopeFunctions.moveUp(row)"><md-icon class="fa fa-angle-up" ></md-icon></md-button> ';
 	                            	}
 	                        	},
 	                        	{
@@ -349,7 +349,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"function",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-icon class="fa fa-angle-down" ng-click="scopeFunctions.moveDown(row)"></md-icon>';
+	                            		return '<md-button class="md-icon-button" ng-click="scopeFunctions.moveDown(row)"><md-icon class="fa fa-angle-down" ></md-icon></md-button>';
 	                            	}
 	                        	},
 	                        	{
@@ -365,7 +365,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"function",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-icon class="fa fa-remove" ng-click="scopeFunctions.deleteField(row)"></md-icon>';
+	                            		return '<md-button class="md-icon-button" ng-click="scopeFunctions.deleteField(row)"><md-icon class="fa fa-trash" ></md-icon></md-button>';
 	                            	}
 	                        	}
 	]
