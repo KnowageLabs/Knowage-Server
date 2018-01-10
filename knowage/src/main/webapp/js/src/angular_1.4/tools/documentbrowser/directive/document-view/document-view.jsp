@@ -9,7 +9,7 @@
  <div layout="column">	
  				 	<angular-table flex  ng-hide="showGridView==true || ngModel.length==0 "
 							id='documentListTable' ng-model=ngModel
-							columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Label","name":"label"}]'
+							columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Label","name":"viewLabel"}]'
 							columnsSearch='["name"]' 
 							initial-sorting=firstInitialSorting
 							show-search-bar=false

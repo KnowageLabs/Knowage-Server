@@ -17,6 +17,30 @@
  */
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -51,8 +75,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.ParameterValuesDecoder;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.commons.validation.SpagoBIValidationImpl;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
@@ -63,30 +85,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.objects.Couple;
-
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 /**
  * This class represents a document execution instance. This contains the following attributes: 1. execution flow id: it is the id of an execution flow
@@ -127,8 +125,8 @@ public class ExecutionInstance implements Serializable {
 	 *            the execution role
 	 * @throws Exception
 	 */
-	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole,
-			String executionModality, Locale locale) throws Exception {
+	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole, String executionModality,
+			Locale locale) throws Exception {
 
 		logger.debug("IN: input parameters: userProfile = [" + userProfile + "]; flowId = [" + flowId + "]; executionId = [" + executionId + "]; "
 				+ "biobjectId" + biobjectId + "]; executionRole = [" + executionRole + "]");
@@ -147,14 +145,14 @@ public class ExecutionInstance implements Serializable {
 		initBIParameters();
 	}
 
-	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole,
-			String executionModality, boolean displayToolbar, Locale locale) throws Exception {
+	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole, String executionModality,
+			boolean displayToolbar, Locale locale) throws Exception {
 		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, locale);
 		this.displayToolbar = displayToolbar;
 	}
 
-	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole,
-			String executionModality, boolean displayToolbar, boolean displaySliders, Locale locale) throws Exception {
+	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole, String executionModality,
+			boolean displayToolbar, boolean displaySliders, Locale locale) throws Exception {
 		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, displayToolbar, locale);
 		this.displaySliders = displaySliders;
 	}
@@ -603,9 +601,10 @@ public class ExecutionInstance implements Serializable {
 		logger.debug("OUT");
 	}
 
-	public List getParametersErrors() throws Exception{
+	public List getParametersErrors() throws Exception {
 		return getParametersErrors(false);
 	}
+
 	/**
 	 * Checks if is single value.
 	 *
@@ -630,19 +629,19 @@ public class ExecutionInstance implements Serializable {
 		while (iterParams.hasNext()) {
 			BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
 			// internalization of the label for display
-			String viewLabel = biparam.getLabel();
-			String oldViewLabel = viewLabel;
-			IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-			viewLabel = msgBuilder.getI18nMessage(locale, viewLabel);
-			logger.debug(oldViewLabel + " is internazionalized in " + viewLabel);
-			biparam.setLabel(viewLabel);
+			// String viewLabel = biparam.getLabel();
+			// String oldViewLabel = viewLabel;
+			// IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
+			// viewLabel = msgBuilder.getI18nMessage(locale, viewLabel);
+			// logger.debug(oldViewLabel + " is internazionalized in " + viewLabel);
+			// biparam.setLabel(viewLabel);
 			logger.debug("Evaluating errors for biparameter " + biparam.getLabel() + " ...");
 			List errorsOnChecks = getValidationErrorsOnChecks(biparam);
 
 			List values = biparam.getParameterValues();
 			if ((!onEditMode && biparam.isRequired()) && (values == null || values.isEmpty() || normalizeList(values).size() == 0)) {
-				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null,
-						null, null);
+				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null, null,
+						null);
 				errorsOnChecks.add(error);
 			}
 

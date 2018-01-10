@@ -93,8 +93,8 @@ function documentBrowserFunction(
 			// i18n translate all document names
 			for(var i=0; i<$scope.folderDocuments.length; i++){
 				$scope.folderDocuments[i].name = $scope.i18n.getI18n($scope.folderDocuments[i].name);
-				$scope.folderDocuments[i].label = $scope.i18n.getI18n($scope.folderDocuments[i].label);
-				$scope.folderDocuments[i].label = $scope.i18n.getI18n($scope.folderDocuments[i].label);
+				$scope.folderDocuments[i].description = $scope.i18n.getI18n($scope.folderDocuments[i].description);
+				$scope.folderDocuments[i].viewLabel = $scope.i18n.getI18n($scope.folderDocuments[i].label);
 			}
 
 			$scope.hideProgressCircular=true;

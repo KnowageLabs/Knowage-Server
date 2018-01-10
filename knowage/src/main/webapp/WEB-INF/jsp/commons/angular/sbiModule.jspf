@@ -641,7 +641,7 @@ sbiM.service('sbiModule_i18n', function(sbiModule_config, sbiModule_restServices
     					self.i18nMap = response.data;
     					resolve(self.i18nMap);
     			},function(response){
-    				alert("Errore "+response.data.errors[0].message);
+    				alert("Error: "+response.data.errors[0].message);
     			});
 			}
     	});
@@ -654,10 +654,7 @@ sbiM.service('sbiModule_i18n', function(sbiModule_config, sbiModule_restServices
     		else return label; 
         },
     	printMsg : function(){
-    		alert('messaggio');
-    	},
-    	isLoaded : function(){
-    		return false;
+    		alert('test message');
     	}
       };
 		
