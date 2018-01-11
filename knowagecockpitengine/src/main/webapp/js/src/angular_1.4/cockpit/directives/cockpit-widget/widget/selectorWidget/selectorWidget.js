@@ -137,40 +137,30 @@ angular.module('cockpitModule')
 			}
 			$scope.columnsToShow = [];
 			$scope.columnToshowinIndex = [];
-			$scope.datasetRecords = datasetRecords;
+			if(nature=='refresh'){
+				$scope.datasetRecords = datasetRecords;		
+			} else {
+				if(datasetRecords.rows.length ==1){
+					$scope.parameter = datasetRecords.rows[0].column_1;
+				} else {
+					$scope.parameter  = ''
+				}
+			}
 		}
 		
 		$scope.toggleCheckboxParameter = function(parVal , parameter) {
-			if (typeof parameter.parameterValue == 'undefined'){
-				parameter.parameterValue= [];
-			}
-			var idx = parameter.parameterValue.indexOf(parVal);
-	        if (idx > -1) {
-	        	// in case the element is removed recalculate description 
-	        	parameter.parameterValue.splice(idx, 1);
-	        	//recalculate descriptions
-				addParameterValueDescription(parameter);
-
-	        }
-	        else {
-	        	// in case the elemnt is addedd can add description
-	        	parameter.parameterValue.push(parVal);
-	        	if(parameter.parameterDescription == undefined) parameter.parameterDescription = ""; 
-	        	if(parameter.parameterDescription==""){
-	        		parameter.parameterDescription = parDesc;	        		
-	        	}
-	        	else{
-	        		parameter.parameterDescription += ";"+parDesc;	
-	        	}
-	        } 
+			$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,["USA","Mexico"]);	
 		};
 		
-		$scope.toggleRadioParameter = function(parVal ) {		
+		$scope.toggleRadioParameter = function(parVal ) {
+			$scope.parameter = parVal;
 			$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,parVal);
 		};
 	
-		$scope.toggleComboParameter = function(parameter) {
-			$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,parameter);		
+		$scope.toggleComboParameter = function(parVal) {
+
+			$scope.parameter = parVal;
+			$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,parVal);		
 		}
 		
 		$scope.checkboxParameterExists = function (parVal,parameter) {
@@ -178,6 +168,7 @@ angular.module('cockpitModule')
 				return false;
 			}
 	        return parameter.parameterValue.indexOf(parVal) > -1;
+			
 	      };
 	};
 	
