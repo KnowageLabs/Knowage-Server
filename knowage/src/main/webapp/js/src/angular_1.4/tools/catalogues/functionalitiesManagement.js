@@ -427,11 +427,9 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	$scope.getParent = function (id){
 		sbiModule_restServices.promiseGet("2.0/functionalities/getParent", id).then(
 				function(response) {
-					alert('uno');
 					$scope.parent = angular.copy(response.data);
 				},
 				function(response) {
-					alert('due');
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
 				});
 	}
