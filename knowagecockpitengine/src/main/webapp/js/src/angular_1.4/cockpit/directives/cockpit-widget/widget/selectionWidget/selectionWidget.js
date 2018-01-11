@@ -194,6 +194,10 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 	    } 
     ];
 	
+	$scope.$on('DELETE_SELECTION',function(event, data){
+		$scope.deleteSelection(data,true);
+	});
+	
 	$scope.deleteSelection=function(item, saveConfiguration){
 		if(item.aggregated){
 			var key = item.ds + "." + item.columnName;

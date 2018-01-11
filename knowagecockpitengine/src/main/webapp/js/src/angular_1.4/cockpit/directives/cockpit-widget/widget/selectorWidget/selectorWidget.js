@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 angular.module('cockpitModule')
-	.directive('cockpitSelectorWidget',function(cockpitModule_widgetServices,$mdDialog){
+	.directive('cockpitSelectorWidget',function(cockpitModule_widgetServices,$mdDialog,$rootScope){
 		return{
 			templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/selectorWidget/templates/selectorWidgetTemplate.html',
 			controller: cockpitSelectorWidgetControllerFunction,
@@ -56,11 +56,13 @@ angular.module('cockpitModule')
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
 			cockpitModule_properties,
-			accessibility_preferences){
+			accessibility_preferences,
+			$rootScope){
 
 		$scope.accessibilityModeEnabled = accessibility_preferences.accessibilityModeEnabled;
 		if ($scope.ngModel && $scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
 			$scope.ngModel.dataset.isRealtime = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).isRealtime;
+			$scope.ngModel.dataset.name = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).name;
 		}
 		$scope.parameter = "";
 		$scope.selectedTab = {'tab' : 0};
@@ -148,8 +150,35 @@ angular.module('cockpitModule')
 			}
 		}
 		
+		$scope.multiValue = [];
+		
 		$scope.toggleCheckboxParameter = function(parVal , parameter) {
-			$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,["USA","Mexico"]);	
+			
+			var index = $scope.multiValue.indexOf(parVal);
+			
+			if (index > -1) {
+				$scope.multiValue.splice(index, 1);
+			} else {
+				$scope.multiValue.push(parVal);
+			}
+				
+			
+			
+			
+			
+			if($scope.multiValue.length>0){
+				$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,$scope.multiValue);
+			} else {
+				
+				var item = {};
+				item.aggregated=false;
+				item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
+				item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
+				item.ds=$scope.ngModel.dataset.name;
+				item.value=$scope.parameter;
+				$rootScope.$broadcast('DELETE_SELECTION',item);
+			}
+			
 		};
 		
 		$scope.toggleRadioParameter = function(parVal ) {
@@ -160,7 +189,19 @@ angular.module('cockpitModule')
 		$scope.toggleComboParameter = function(parVal) {
 
 			$scope.parameter = parVal;
-			$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,parVal);		
+			if($scope.parameter.length>0){
+				$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,parVal);
+			} else {
+				
+				var item = {};
+				item.aggregated=false;
+				item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
+				item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
+				item.ds=$scope.ngModel.dataset.name;
+				item.value=$scope.parameter;
+				$rootScope.$broadcast('DELETE_SELECTION',item);
+			}
+					
 		}
 		
 		$scope.checkboxParameterExists = function (parVal,parameter) {
