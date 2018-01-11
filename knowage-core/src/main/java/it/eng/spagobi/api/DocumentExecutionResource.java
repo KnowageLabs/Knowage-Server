@@ -693,9 +693,13 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				parameterAsMap.put("driverDefaultValue", valueList);
 			}
 
-			if (showParameterLov) {
-				parametersArrayList.add(parameterAsMap);
+			if (!showParameterLov) {
+				parameterAsMap.put("showOnPanel", "false");
+			} else {
+				parameterAsMap.put("showOnPanel", "true");
 			}
+			parametersArrayList.add(parameterAsMap);
+
 		}
 		for (int z = 0; z < parametersArrayList.size(); z++) {
 
@@ -715,8 +719,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		if (parameters.size() > 0) {
 			resultAsMap.put("filterStatus", parametersArrayList);
+
 		} else {
 			resultAsMap.put("filterStatus", new ArrayList<>());
+
 		}
 
 		resultAsMap.put("isReadyForExecution", isReadyForExecution(parameters));

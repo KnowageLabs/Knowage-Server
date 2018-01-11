@@ -1,7 +1,7 @@
 <div flex layout-align="start" class="parametersSidenav">
 	
 	<!-- Map input -->		
-	<div ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in'" layout="column">
+	<div ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in' && parameter.showOnPanel=='true'" layout="column">
 	 	<div layout="row" layout-align="start">
 	 		<label ng-class="parameter.showMapDriver && showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{i18n.getI18n(parameter.label)}}
 					<md-tooltip ng-if="!parameter.showMapDriver"> {{sbiModule_translate.load("sbi.execution.parametersselection.message.parametersdisabled")}} </md-tooltip>
@@ -25,7 +25,7 @@
 	</div>
 	
 	<!-- lov LOOKUP single and multiple input -->
-	<div ng-if="parameter.selectionType=='LOOKUP'" layout="column" class="lookupParameter" layout-margin>
+	<div ng-if="parameter.selectionType=='LOOKUP'  && parameter.showOnPanel=='true'" layout="column" class="lookupParameter" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
@@ -48,7 +48,7 @@
 	
 
 	<!-- Tree input -->	
-	<div ng-if="parameter.selectionType=='TREE'" layout="column" class="lookupParameter" layout-margin>
+	<div ng-if="parameter.selectionType=='TREE'  && parameter.showOnPanel=='true'" layout="column" class="lookupParameter" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
@@ -70,7 +70,7 @@
 	</div>
 			
 	<!-- Date -->
-	<div ng-if="parameter.type=='DATE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" class="datePickerParameter" layout-margin>
+	<div ng-if="parameter.type=='DATE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" class="datePickerParameter" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
@@ -81,7 +81,7 @@
 	</div>		
 	
 	<!-- Date RANGE-->
-	<section ng-if="parameter.type=='DATE_RANGE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" class="datePickerParameter" layout-margin>
+	<section ng-if="parameter.type=='DATE_RANGE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" class="datePickerParameter" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
@@ -99,7 +99,7 @@
 	</section>	
 	
 	<!-- manual number input -->
-	<md-input-container class="md-block" ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" layout-margin>
+	<md-input-container class="md-block" ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
@@ -110,7 +110,7 @@
 	</md-input-container>
 	
 	<!-- manual text input -->
-	<div ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" layout-margin class="textInput">
+	<div ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" layout-margin class="textInput">
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
@@ -123,7 +123,7 @@
 	</div>
 	
 	<!-- lov list radio input -->
-	<div ng-if="parameter.selectionType=='LIST' && !parameter.multivalue" layout="column" layout-margin class="radioParameter">
+	<div ng-if="parameter.selectionType=='LIST' && !parameter.multivalue  && parameter.showOnPanel=='true'" layout="column" layout-margin class="radioParameter">
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
@@ -138,7 +138,7 @@
 	</div>
 	
 	<!-- lov list multiple input -->
-	<div ng-if="parameter.selectionType=='LIST' && parameter.multivalue" layout="column" layout-margin class="checkBoxParameter">
+	<div ng-if="parameter.selectionType=='LIST' && parameter.multivalue  && parameter.showOnPanel=='true'" layout="column" layout-margin class="checkBoxParameter">
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
@@ -155,14 +155,14 @@
 	
 	<!-- lov combobox single and multiple input -->
 	
-	<div ng-if="parameter.selectionType=='COMBOBOX'" layout="column" layout-margin class="selectParameter">
+	<div ng-if="parameter.selectionType=='COMBOBOX'  && parameter.showOnPanel=='true'" layout="column" layout-margin class="selectParameter">
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<md-icon md-font-icon="fa fa-reply" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{i18n.getI18n(parameter.label)}}</label> 
 		</div>
-		<md-input-container class="md-block" ng-if="parameter.selectionType=='COMBOBOX'">
+		<md-input-container class="md-block" ng-if="parameter.selectionType=='COMBOBOX'  && parameter.showOnPanel=='true'">
 		<!-- multiple -->
 			<md-select ng-model="parameter.parameterValue" multiple ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
 		 		ng-change="toggleComboParameter(parameter)"	ng-if="showDefaultValueAreValid(parameter) && parameter.multivalue" > 
@@ -172,7 +172,7 @@
 			</md-select>
 			<!-- single -->
 			<md-select ng-model="parameter.parameterValue" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' "
-		        ng-change="toggleComboParameter(parameter)" ng-if="showDefaultValueAreValid(parameter) && !parameter.multivalue"> 
+		        ng-change="toggleComboParameter(parameter)" ng-if="showDefaultValueAreValid(parameter) && !parameter.multivalue  && parameter.showOnPanel=='true'"> 
 				<md-option></md-option>
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
 					{{defaultParameter.label}}
