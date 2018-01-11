@@ -34,6 +34,7 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 	public OracleSelectQueryVisitor() {
 		this.dialect = SqlDialect.ORACLE;
+		this.forceUseAlias = true;
 	}
 
 	@Override
