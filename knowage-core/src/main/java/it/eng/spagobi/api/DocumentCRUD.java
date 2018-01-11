@@ -19,7 +19,6 @@ package it.eng.spagobi.api;
 
 import java.security.Security;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -314,7 +313,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 	@POST
 	@Path("/share")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String shareDocument(@Context HttpServletRequest req, @QueryParam("functs") Integer[] functs) {
+	public String shareDocument(@Context HttpServletRequest req, @QueryParam("functs") List<Integer> functs) {
 
 		logger.debug("IN");
 		String ids = req.getParameter(OBJECT_ID);
@@ -337,7 +336,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 
 			if ("true".equalsIgnoreCase(isShare)) {
 
-				JSONArray mJSONArray = new JSONArray(Arrays.asList(functs));
+				JSONArray mJSONArray = new JSONArray(functs);
 				lstFuncts = JSONUtils.asList(mJSONArray);
 			}
 			// add personal folder for default

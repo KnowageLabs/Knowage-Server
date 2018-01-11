@@ -156,7 +156,7 @@ function documentsController($scope, sbiModule_restServices, sbiModule_translate
 						.ok(sbiModule_translate.load("sbi.general.yes"))
 						.cancel(sbiModule_translate.load("sbi.general.No"));
 							$mdDialog.show(confirm).then(function() {
-								sbiModule_restServices.promiseDelete("2.0/organizer/folders",folder.functId)
+								sbiModule_restServices.promiseDelete("2.0/organizer/foldersee",folder.functId)
 								.then(function(response) {
 
 									$scope.loadAllFolders();
@@ -280,7 +280,7 @@ function documentsController($scope, sbiModule_restServices, sbiModule_translate
 			if($scope.folder.descr==null){
 				$scope.folder.descr="";
 			}
-			sbiModule_restServices.promisePost('2.0/organizer/folders','',angular.toJson($scope.folder))
+			sbiModule_restServices.promisePost('2.0/organizer/foldersee','',angular.toJson($scope.folder))
 			.then(function(response) {
 				console.log("[POST]: SUCCESS!");
 				$mdDialog.cancel();
@@ -568,7 +568,7 @@ function documentsController($scope, sbiModule_restServices, sbiModule_translate
 							sbiModule_translate.load('sbi.generic.info'), $scope.toasterConfig);
 
 				}else{
-					sbiModule_restServices.promisePut("2.0/organizer/documents/"+doc.biObjId+"/"+$scope.selectedFolder.functId,$scope.destFolder.functId)
+					sbiModule_restServices.promisePut("2.0/organizer/documentsee/"+doc.biObjId+"/"+$scope.selectedFolder.functId,$scope.destFolder.functId)
 					.then(function(response) {
 
 						// Take the toaster duration set inside the main controller of the Workspace. (danristo)

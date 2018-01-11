@@ -7,7 +7,7 @@ scorecardApp.config(['$mdThemingProvider', function($mdThemingProvider) {
 scorecardApp.service('scorecardManager_semaphoreUtility',function(){
 	this.typeColor=['RED','YELLOW','GREEN','GRAY'];
 	this.getPriorityStatus=function(a,b){
-		return this.typeColor.indexOf(a)<this.typeColor.indexOf(b) ? a : b; 
+		return this.typeColor.indexOf(a)<this.typeColor.indexOf(b) ? a : b;
 	}
 });
 
@@ -31,7 +31,7 @@ function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_
 	$scope.broadcastCall=function(type){
 		$scope.$broadcast(type);
 	}
-	
+
 	$scope.showToast=function(text,times){
 //		var mills=times | 3000;
 //		$mdToast.show(
@@ -40,14 +40,14 @@ function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_
 //			        .position("TOP")
 //			        .hideDelay(mills)
 //			    );
-		
-		
+
+
 		sbiModule_messaging.showInfoMessage(text,"");
-		
-		
+
+
 	}
-	
-	
+
+
 }
 
 function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout,$mdDialog,scorecardManager_targetUtility,scorecardManager_perspectiveUtility,$filter){
@@ -58,18 +58,18 @@ $scope.scorecardColumnsList=[
 	                            	 return $filter('date')(data, "dd/MM/yyyy")
 	                            	 }},
 	                             {label:sbiModule_translate.load("sbi.generic.author"),name:"author"}];
-	
-	
+
+
 	$scope.newScorecardFunction=function(){
 		angular.copy($scope.emptyScorecard,$scope.currentScorecard);
 		$angularListDetail.goToDetail();
 		if ($scope.editProperty.scorecard.index)
 			angular.copy({},$scope.editProperty.scorecard);
 	};
-	
+
 	$scope.scorecardClickEditFunction=function(item, index){
-		sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/loadScorecard")
-		.then(function(response){ 
+		sbiModule_restServices.promiseGet("1.0/kpiee",item.id+"/loadScorecard")
+		.then(function(response){
 //			$scope.clearGroupedAll(response.data);
 			for (var i=0;i < response.data.perspectives.length; i++)
 			{
@@ -80,17 +80,17 @@ $scope.scorecardColumnsList=[
 					delete response.data.perspectives[i].targets[j].groupedKpis;
 					delete response.data.perspectives[i].targets[j].groupedTargets;
 					delete response.data.perspectives[i].targets[j].statusSummary;
-				}	
+				}
 			}
-			
-			angular.copy($scope.parseScorecardForFrontend(response.data),$scope.currentScorecard); 
+
+			angular.copy($scope.parseScorecardForFrontend(response.data),$scope.currentScorecard);
 			angular.extend($scope.editProperty.scorecard,{editedItem:angular.extend({},$scope.currentScorecard),index:index});
 			$angularListDetail.goToDetail();
 			},function(response){
 				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.scorecard.load.error"));
 		});
 	}
-	
+
 	$scope.parseScorecardForFrontend=function(tmpScorecard){
 		for(var persp=0;persp<tmpScorecard.perspectives.length;persp++){
 			var tmpPersp=tmpScorecard.perspectives[persp];
@@ -113,11 +113,11 @@ $scope.scorecardColumnsList=[
 				tmpTarg.options=tmpOption;
 				scorecardManager_targetUtility.loadGroupedKpis(tmpTarg);
 			}
-			
+
 			//convert the target to frontend object
 			var tmpPerspOption=tmpPersp.options;
 			var tmpPerspCritPri=[];
-			if(tmpPerspOption.hasOwnProperty("criterionPriority")){		
+			if(tmpPerspOption.hasOwnProperty("criterionPriority")){
 				for(var critP=0;critP<tmpPerspOption.criterionPriority.length;critP++){
 					for(var targ=0;targ<tmpPersp.targets.length;targ++){
 						if(angular.equals(tmpPersp.targets[targ].name,tmpPerspOption.criterionPriority[critP])){
@@ -134,68 +134,68 @@ $scope.scorecardColumnsList=[
 		}
 		return tmpScorecard;
 	};
-	
-	
+
+
 	$scope.loadScorecardList=function(){
-		sbiModule_restServices.promiseGet("1.0/kpi","listScorecard")
+		sbiModule_restServices.promiseGet("1.0/kpiee","listScorecard")
 		.then(function(response){
 			angular.copy(response.data,$scope.scorecardList);
 			},function(response){
 				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.scorecard.load.error"));
 		});
 	};
-	
+
 	$scope.loadScorecardList();
-	
+
 	$scope.scorecardListAction =  [{  label :$scope.translate.load("sbi.generic.delete"),
-							        icon:'fa fa-trash' , 
+							        icon:'fa fa-trash' ,
 							        backgroundColor:'trasparent',
-							        action : function(item,event) { 
+							        action : function(item,event) {
 								 		var confirm = $mdDialog.confirm()
 								        .title($scope.translate.load("sbi.kpi.measure.delete.title"))
 								         .content($scope.translate.load("sbi.kpi.measure.delete.content"))
-								         .ariaLabel('delete scorecard') 
+								         .ariaLabel('delete scorecard')
 										.ok(sbiModule_translate.load("sbi.general.yes"))
 										.cancel(sbiModule_translate.load("sbi.general.No"));
 										  $mdDialog.show(confirm).then(function() {
-												sbiModule_restServices.promiseDelete("1.0/kpi",item.id + "/deleteScorecard")
+												sbiModule_restServices.promiseDelete("1.0/kpiee",item.id + "/deleteScorecard")
 												.then(function(response) {
 													  $scope.scorecardList.splice( $scope.scorecardList.indexOf( item ),1);
 												}, function(response) {
 													sbiModule_restServices.errorHandler(response.data.errors[0].message, 'Error');
-													});	
-										  });  
+													});
+										  });
 	         			           }}];
 }
 
 function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout,$mdDialog){
- 
+
 	$scope.criterionTypeList = [];
-	
+
 	$scope.cancelScorecardFunction=function(){
 		 if(($scope.editProperty.scorecard.editedItem!=undefined && !angular.equals($scope.editProperty.scorecard.editedItem,$scope.currentScorecard))
 				 || ($scope.editProperty.scorecard.editedItem==undefined && !angular.equals($scope.emptyScorecard,$scope.currentScorecard))){
 	 		var confirm = $mdDialog.confirm()
 	        .title(sbiModule_translate.load("sbi.layer.modify.progress"))
 	        .content(sbiModule_translate.load("sbi.layer.modify.progress.message.modify"))
-	        .ariaLabel('cancel perspective') 
+	        .ariaLabel('cancel perspective')
 			.ok(sbiModule_translate.load("sbi.general.yes"))
 			.cancel(sbiModule_translate.load("sbi.general.No"));
 			  $mdDialog.show(confirm).then(function() {
 				  $angularListDetail.goToList();
 				  angular.copy({},$scope.currentScorecard);
 				  angular.copy({},$scope.editProperty.scorecard);
-				  
+
 			  }, function() {
 			   return;
 			  });
  		}else{
  			$angularListDetail.goToList();
  			angular.copy({},$scope.currentScorecard);
- 		} 	
+ 		}
 	}
 	$scope.loadScorecardList=function(){
-		sbiModule_restServices.promiseGet("1.0/kpi","listScorecard")
+		sbiModule_restServices.promiseGet("1.0/kpiee","listScorecard")
 		.then(function(response){
 			angular.copy(response.data,$scope.scorecardList);
 			},function(response){
@@ -205,15 +205,15 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 	$scope.getNameForBar = function(){
 		return ((typeof $scope.currentScorecard.name == "undefined" || $scope.currentScorecard.name !== '' ) ? $scope.currentScorecard.name : $scope.translate.load('sbi.kpi.scorecard.scorecard.new'));
 	}
-		
+
 	$scope.saveScorecardFunction=function(){
 		if($scope.currentScorecard.name.trim()==""){
-			$scope.showToast(sbiModule_translate.load("sbi.kbi.scorecard.alert.name.missing")); 
+			$scope.showToast(sbiModule_translate.load("sbi.kbi.scorecard.alert.name.missing"));
 			 return;
 		}
-		
+
 		if($scope.currentScorecard.perspectives==undefined || $scope.currentScorecard.perspectives.length==0){
-			$scope.showToast(sbiModule_translate.load("sbi.kbi.scorecard.alert.perspective.missing")); 
+			$scope.showToast(sbiModule_translate.load("sbi.kbi.scorecard.alert.perspective.missing"));
 			 return;
 		}
 		var tmpPreSaveScorecard=$scope.parseScorecardForBackend($scope.currentScorecard);
@@ -230,10 +230,10 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 //					delete tmpPreSaveScorecard.perspectives[i].targets[j].groupedTargets;
 //					delete tmpPreSaveScorecard.perspectives[i].targets[j].statusSummary;
 //				}
-//				
+//
 //			}
 
-			sbiModule_restServices.promisePost("1.0/kpi","saveScorecard",tmpPreSaveScorecard2)
+			sbiModule_restServices.promisePost("1.0/kpiee","saveScorecard",tmpPreSaveScorecard2)
 				.then(function(response) {
 					if ($scope.editProperty.scorecard.index == undefined){
 							$scope.currentScorecard.id = response.data.id;
@@ -247,19 +247,19 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 					else{
 							angular.copy(tmpPreSaveScorecard, $scope.scorecardList[$scope.editProperty.scorecard.index]);
 							$scope.editProperty.scorecard.editedItem=$scope.currentScorecard;
-						
+
 						}
 					$scope.loadScorecardList();
-					
-					$scope.showToast(sbiModule_translate.load("sbi.glossary.success.save")); 
+
+					$scope.showToast(sbiModule_translate.load("sbi.glossary.success.save"));
 					$angularListDetail.goToList();
 				}, function(response) {
 					sbiModule_restServices.errorHandler(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.error"));
-					});	
-		
+					});
+
 	}
-	
-	
+
+
 	$scope.parseScorecardForBackend=function(scorecard){
 		debugger;
 		 var tmpScorecard={};
@@ -274,7 +274,7 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 				tmpScorecard.perspectives[i].options.criterionPriority=tmpTargetOptions;
 //				tmpScorecard.perspectives[i].options=JSON.stringify(tmpScorecard.perspectives[i].options);
 			}
-			
+
 			for(var j=0;j<tmpScorecard.perspectives[i].targets.length;j++){
 				if(!angular.isString(tmpScorecard.perspectives[i].targets[j].options)){
 					var tmpKpiOptions=[];
@@ -288,16 +288,16 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 		}
 		return tmpScorecard;
 	}
-	
+
 	sbiModule_restServices.promiseGet("2.0/domains","listByCode/KPI_SCORECARD_CRITE")
-	.then(function(response){ 
-		angular.copy(response.data,$scope.criterionTypeList); 
+	.then(function(response){
+		angular.copy(response.data,$scope.criterionTypeList);
 		$scope.emptyPerspective.criterion=$scope.criterionTypeList[0];
 		$scope.emptyTarget.criterion=$scope.criterionTypeList[0];
 	},function(response){
-		sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.generic.error")+" domains->KPI_SCORECARD_CRITE"); 
+		sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.generic.error")+" domains->KPI_SCORECARD_CRITE");
 	});
-	
+
 	$scope.itemNameInList=function(list,item){
 		for(var i=0;i<list.length;i++){
 			if(angular.equals(list[i].name,item.name)){
@@ -306,9 +306,9 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 		}
 		return -1;
 	};
-	
-	
-	
+
+
+
 	$scope.clearGroupedAll = function(scorecard){
 		for (var i=0;i < scorecard.perspectives.length; i++)
 		{
@@ -319,7 +319,7 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 				delete scorecard.perspectives[i].targets[j].groupedKpis;
 				delete scorecard.perspectives[i].targets[j].groupedTargets;
 				delete scorecard.perspectives[i].targets[j].statusSummary;
-			}	
+			}
 		}
 	};
 }

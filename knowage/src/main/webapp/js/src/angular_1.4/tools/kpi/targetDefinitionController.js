@@ -26,21 +26,21 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 		return $filter('date')(date, dateFormat);
 	};
 	$scope.translate = sbiModule_translate;
-	
+
 	$scope.compareStartValidityDates = function(row1, row2) {
 		return row1.startValidityDate.getTime() - row2.startValidityDate.getTime();
 	}
-	
+
 	$scope.compareEndValidityDates = function(row1, row2) {
 		return row1.endValidityDate.getTime() - row2.endValidityDate.getTime();
 	}
-	
+
 	$scope.targetCategories = [];
-	
+
 	$scope.target = {};
-	
+
 	$scope.targets = [];
-	
+
 	$scope.targetsColumns = [{"label":"Name","name":"name"},{"label":"Category","name":"category.valueCd"},{"label":"Start Validity Date","name":"startValidity", "comparatorFunction": $scope.compareStartValidityDates},{"label":"Data End Validation","name":"endValidity", "comparatorFunction": $scope.compareEndValidityDates}];
 
 	$scope.targetsActions = [
@@ -51,7 +51,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 				var confirm = $mdDialog.confirm()
 				.title($scope.translate.load("sbi.kpi.measure.delete.title"))
 				.content($scope.translate.load("sbi.kpi.measure.delete.content"))
-				.ariaLabel('delete kpi') 
+				.ariaLabel('delete kpi')
 				.ok($scope.translate.load("sbi.general.yes"))
 				.cancel($scope.translate.load("sbi.general.No"));
 				$mdDialog.show(confirm).then(function() {
@@ -59,7 +59,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 						if (typeof $scope.targets[i].id == 'undefined' || $scope.targets[i].id == null) continue;
 						if ($scope.targets[i].id == removedTarget.id) {
 							sbiModule_restServices
-								.delete("1.0/kpi", removedTarget.id + "/deleteTarget")
+								.delete("1.0/kpiee", removedTarget.id + "/deleteTarget")
 								.success(
 									function(data, status, headers, config) {
 										$scope.targets.splice(i, 1);
@@ -78,8 +78,8 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			};
 		}},{
 			label : sbiModule_translate.load('sbi.generic.clone'),
-			icon:'fa fa-copy' ,	 
-			backgroundColor:'transparent',	 
+			icon:'fa fa-copy' ,
+			backgroundColor:'transparent',
 			action : function(item,event) {
 				$scope.cloneTarget(item,event);
 			}
@@ -91,7 +91,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			action: function() {}
 		} */
 	];
-	
+
 	$scope.kpisActions = [
 		{
 			label: sbiModule_translate.load('sbi.generic.delete'),
@@ -112,31 +112,31 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			action: function() {}
 		} */
 	];
-	
+
 	$scope.kpi = {};
-	
+
 	$scope.kpis = [];
-	
+
 	$scope.kpisFunctions = {
 		openShowDialog: function($event) {
 			$scope.showDialog($event);
 		},
 		translate:sbiModule_translate
 	};
-	
+
 	$scope.getLabelForBar = function (){
 		return $scope.target.name == undefined ? $scope.translate.load('sbi.target.list.new') : $scope.target.name;
 	}
-	
+
 		$scope.cloneTarget = function(item,event){
 		var confirm = $mdDialog.confirm()
 		.title($scope.translate.load("sbi.generic.confirmClone"))
-		.ariaLabel('clone measure') 
+		.ariaLabel('clone measure')
 		.ok($scope.translate.load("sbi.general.yes"))
 		.cancel($scope.translate.load("sbi.general.No"));
 		$mdDialog.show(confirm).then(function() {
-			sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/loadTarget")
-			.then(function(response){ 
+			sbiModule_restServices.promiseGet("1.0/kpiee",item.id+"/loadTarget")
+			.then(function(response){
 
 				angular.copy(response.data,$scope.target);
 				$scope.target.name = "Copy of "+$scope.target.name;
@@ -144,7 +144,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 				$scope.target.startValidity= this.formatDate(response.data.startValidity),
 				$scope.target.endValidityDate= new Date(response.data.endValidity),
 				$scope.target.endValidity= this.formatDate(response.data.endValidity),
-				sbiModule_restServices.get("1.0/kpi", $scope.target.id + "/listKpiWithTarget")
+				sbiModule_restServices.get("1.0/kpiee", $scope.target.id + "/listKpiWithTarget")
 				.success(
 					function(data, status, headers, config) {
 						$scope.kpis.length = 0;
@@ -161,10 +161,10 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 						}
 						$scope.target.id = undefined;
 					}
-					
+
 				).error(
 					function(data, status, headers, config) {
-						
+
 					}
 				);
 				$angularListDetail.goToDetail();
@@ -174,7 +174,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			console.log("annulla")
 		});
 	}
-	
+
 	$scope.showDialog = function($event) {
 		var kpiIdToIdx = {};
 		for (var i = 0; i < $scope.kpis.length; i++) {
@@ -224,7 +224,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 								};
 								var newKpis = [];
 								for (var i = 0; i < data.length; i++) {
-									if (typeof(kpiIdToIdx['' + data[i].id]) == 'undefined') { 
+									if (typeof(kpiIdToIdx['' + data[i].id]) == 'undefined') {
 										newKpis[newKpis.length] = {
 											id: data[i].id,
 											version: data[i].version,
@@ -257,14 +257,14 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					? $scope.kpis.length : kpiIdToIdx['' + selectedKpis[i].id];
 				$scope.kpis[idx] = selectedKpis[i];
 			}
-			
+
 			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.target.kpiAdded"),"");
-			
+
 		}, function() { });
 	};
 
 	$scope.fetchTargets = function() {
-		sbiModule_restServices.get("1.0/kpi", "listTarget")
+		sbiModule_restServices.get("1.0/kpiee", "listTarget")
 			.success(
 				function(data, status, headers, config) {
 					$scope.targets = [];
@@ -293,7 +293,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 							author: data[i].author,
 							values: [], // Not needed yet
 							category:
-								typeof data[i].category != 'undefined' && data[i].category != null 
+								typeof data[i].category != 'undefined' && data[i].category != null
 								? data[i].category : ''
 						}
 					}
@@ -301,17 +301,17 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			).error(
 				function(data, status, headers, config) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.generic.errorLoading"),"");
-					
+
 				}
 			);
 	};
-	
+
 	$scope.cancel = function() {
 		$scope.target = {};
 		$scope.kpis = [];
 		$angularListDetail.goToList();
 	}
-	
+
 	$scope.saveTarget = function() {
 		newTarget = {
 			id: typeof $scope.target.id == 'undefined' ? null : $scope.target.id,
@@ -340,7 +340,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			return;
 		}
 		sbiModule_restServices
-			.promisePost("1.0/kpi", "saveTarget", newTarget)
+			.promisePost("1.0/kpiee", "saveTarget", newTarget)
 			.then(
 				function(response) {
 					var data = response.data;
@@ -382,9 +382,9 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					$scope.target = {};
 					$scope.kpis = [];
 					$scope.fetchTargetCategories(); // Reload target categories
-										
+
 					sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.generic.resultMsg"),"");
-					
+
 					$angularListDetail.goToList();
 				},
 				function(response) {
@@ -392,7 +392,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 				}
 			);
 	}
-	
+
 	$scope.showSaveTargetDialog = function() {
 		var deferred = $q.defer();
 		$mdDialog.show({
@@ -410,10 +410,10 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					}
 					$scope.searchTextChange=function(searchTerm){
 						if(($scope.targetCategory==undefined || $scope.targetCategory=="") && searchTerm!=""){
-							$scope.tmpSearchterm=searchTerm; 
+							$scope.tmpSearchterm=searchTerm;
 							$timeout(function(){
 								if($scope.tmpSearchterm==searchTerm){
-									$scope.targetCategory={valueCd:angular.uppercase(searchTerm)}; 
+									$scope.targetCategory={valueCd:angular.uppercase(searchTerm)};
 								}
 							},500)
 						}
@@ -456,27 +456,27 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			}
 			$scope.saveTarget();
 		}, function() {
-			
+
 		});
 	}
-	
+
 	$scope.fetchTargetCategories = function() {
 		sbiModule_restServices.promiseGet("2.0/domains","listByCode/KPI_TARGET_CATEGORY")
 			.then(
-				function(response) { 
+				function(response) {
 					angular.copy(response.data, $scope.targetCategories);
 				},
 				function(response) {
-					
+
 				}
 			);
 	}
-	
-	
+
+
 	// ==================
 	// === FETCH DATA ===
 	// ==================
-	
+
 	$scope.fetchTargetCategories();
 	$scope.fetchTargets();
 }

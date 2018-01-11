@@ -1,17 +1,17 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -46,17 +46,17 @@ geoM.factory('$map', function() {
 	return map;
 });
 
-geoM.service('geoModule_layerServices', function($http, $map, geo_interaction, 
+geoM.service('geoModule_layerServices', function($http, $map, geo_interaction,
 		sbiModule_restServices, geoModule_templateLayerData, sbiModule_logger, $q) {
 
 	var layerServ = this;
 	var sFeatures;
-	
+
 	var currentInteraction = {
 		"type" : null,
 		"obj" : null
 	};
-	
+
 	this.selectStyle = new ol.style.Style({
 		stroke : new ol.style.Stroke({
 			color : [ 0, 0, 0, 1 ],
@@ -66,9 +66,9 @@ geoM.service('geoModule_layerServices', function($http, $map, geo_interaction,
 			color : "rgba(174, 206, 230, 0.5)"
 		})
 	});
-	
+
 	layerServ.featuresCensus = {};
-	
+
 	layerServ.selectInteraction; // the selected base layer
 	layerServ.templateLayer = {};
 	layerServ.selectedFeatures = [];
@@ -78,35 +78,35 @@ geoM.service('geoModule_layerServices', function($http, $map, geo_interaction,
 		$map.addLayer(layerToAdd);
 		$map.updateSize();
 		$map.render();
-		
+
 		this.templateLayer = layerToAdd;
-		
+
 		this.selectInteraction = this.addClickEvent(multivalueFlag);
-		
+
 		layerServ.initLayerProperty = layerProperty;
 		layerServ.initSelectedPropDataAsArray = selectedPropDataAsArray;
 	};
-	
+
 	this.initializeFeatureSelection = function(select, layerProperty, selectedPropVauesAsArray, feature) {
 		var selectedFeatures = select.getFeatures(); //initially empty
-		
+
 		var featureProperties = feature.getProperties();
 		var featureProperty = featureProperties[layerProperty];
-		
+
 		for(var j = 0; j < selectedPropVauesAsArray.length;  j++) {
 			var selectedPropertyValue = selectedPropVauesAsArray[j];
-			
+
 			if(selectedPropertyValue == featureProperty) {
 				selectedFeatures.push(feature);
-				
+
 				// for keeping up the count in the left panel
 				geo_interaction.setSelectedFeatures( selectedFeatures.getArray() );
 				break;
 			}
 		}
-		
+
 	};
-	
+
 	this.addClickEvent = function(multivalueFlag) {
 		var selectStyle = this.selectStyle;
 
@@ -117,12 +117,12 @@ geoM.service('geoModule_layerServices', function($http, $map, geo_interaction,
 				        ol.events.condition.noModifierKeys(mapBrowserEvent);
 			  	}
 		;
-		
+
 		var select = new ol.interaction.Select({
 			condition : conditionFunction,
 			style : selectStyle,
 		});
-		
+
 		$map.addInteraction(select);
 		select.on('select',	function(evt) {
 			// if is a WMS i must load the
@@ -131,10 +131,10 @@ geoM.service('geoModule_layerServices', function($http, $map, geo_interaction,
 				var urlInfo = layerServ.templateLayer.getSource().getGetFeatureInfoUrl(
 						evt.mapBrowserEvent.coordinate,
 						$map.getView().getResolution(),
-						'EPSG:3857', 
+						'EPSG:3857',
 						{'INFO_FORMAT' : 'application/json'}
 				);
-				
+
 				$http.get(urlInfo).success(function(data,status,headers,config) {
 					sbiModule_logger.log("getGetFeatureInfoUrl caricati",data);
 					if (data.hasOwnProperty("errors")) {
@@ -154,14 +154,14 @@ geoM.service('geoModule_layerServices', function($http, $map, geo_interaction,
 				geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
 			}
 		});
-		
+
 		if(multivalueFlag) {
 			var sFeatures = select.getFeatures();
 			var dragBox = new ol.interaction.DragBox({
 				condition : ol.events.condition.platformModifierKeyOnly,
 				style : selectStyle
 			});
-			
+
 			currentInteraction.obj = dragBox;
 			$map.addInteraction(dragBox);
 
@@ -185,7 +185,7 @@ geoM.service('geoModule_layerServices', function($http, $map, geo_interaction,
 				sFeatures.clear();
 			});
 		}
-		
+
 		return select;
 	};
 
@@ -245,11 +245,11 @@ geoM.service('geoModule_layerServices', function($http, $map, geo_interaction,
 
 		case 'File':
 //			tmpLayer= this.getLayerFromFile(layerConf);
-			
+
 			var deferredLayer = $q.defer();
 
 //			sbiModule_restServices.post("1.0/geo", 'getFileLayer', { layerUrl:layerConf.pathFile })
-			sbiModule_restServices.post("2.0/analyticalDrivers", 'getFileLayer', { layerUrl:layerConf.pathFile })
+			sbiModule_restServices.post("2.0/analyticalDriversee", 'getFileLayer', { layerUrl:layerConf.pathFile })
 
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
@@ -266,10 +266,10 @@ geoM.service('geoModule_layerServices', function($http, $map, geo_interaction,
 					var tmpLayerVector= new ol.layer.Vector({
 						source : vectorSource,
 						style: layerServ.applyFilter
-					}); 
-					
+					});
+
 					tmpLayerVector.setZIndex(0);
-					
+
 					deferredLayer.resolve(tmpLayerVector);
 				}
 			})
@@ -314,23 +314,23 @@ geoM.service('geoModule_layerServices', function($http, $map, geo_interaction,
 
 			for(var k=0;k<valuesInsert.length;k++){
 				if(value==valuesInsert[k]){
-					//se contiene il filtro selezionato 
+					//se contiene il filtro selezionato
 					return styleTMP;
 				}
 			}
 		}
-		
+
 		//Census of all features
 		if( !layerServ.featuresCensus[feature.getId()]) {
 			layerServ.initializeFeatureSelection(
-					layerServ.selectInteraction, 
-					layerServ.initLayerProperty, 
-					layerServ.initSelectedPropDataAsArray, 
+					layerServ.selectInteraction,
+					layerServ.initLayerProperty,
+					layerServ.initSelectedPropDataAsArray,
 					feature);
-			
+
 			layerServ.featuresCensus[feature.getId()] = feature;
 		}
-		
+
 		if(applFilter){
 			return null;
 		}else{

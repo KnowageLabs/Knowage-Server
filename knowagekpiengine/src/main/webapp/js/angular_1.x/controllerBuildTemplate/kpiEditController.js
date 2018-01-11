@@ -26,15 +26,15 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.allScorecard = [];
 	$scope.showScorecards = sbiModule_user.functionalities.indexOf("ScorecardsManagement")>-1;
 
-	
+
 	$scope.tableFunction={
-			
+
 			translate:sbiModule_translate,
-					
+
 			loadListScorecard: function(item,evt){
 				var promise =$scope.loadListScorecard();
 
-				promise.then(function(result){		
+				promise.then(function(result){
 					angular.copy([result],$scope.scorecardSelected);
 
 				});
@@ -52,11 +52,11 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		}
 		return result;
 	};
-	
+
 	$scope.loadListScorecardDialog = function() {
 		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
 		sbiModule_restServices.promiseGet("1.0/kpi","listScorecard")
-		.then(function(response){ 
+		.then(function(response){
 
 			for(var i=0;i<response.data.length;i++){
 				var obj = {};
@@ -74,7 +74,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	};
 
 	$scope.loadListScorecardDialog();
-	
+
 	$scope.loadListScorecard = function(){
 		var deferred = $q.defer();
 
@@ -98,23 +98,23 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.measureMenuOption= [{
 		label : sbiModule_translate.load('sbi.generic.delete'),
 		icon:'fa fa-trash' ,
-		backgroundColor:'transparent',	
+		backgroundColor:'transparent',
 		action : function(item,event) {
 			$scope.removeScorecard();
 		}
 	}];
-	
+
 	$scope.removeScorecard = function(){
 		$scope.scorecardSelected =[];
 	};
-	
+
 	$scope.closeTemplate = function(){
 		window.history.back();
 	}
-	
+
 	$scope.saveTemplate = function(){
 		var obj = $scope.createJSONFromInfo();
-		
+
 		if(obj==null){
 			$scope.showAction(sbiModule_translate.load('sbi.kpidocumentdesigner.errorrange'));
 			return;
@@ -126,7 +126,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		console.log(JSON.stringify(obj));
 		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
 
-		sbiModule_restServices.promisePost("1.0/documents", 'saveKpiTemplate', 
+		sbiModule_restServices.promisePost("1.0/documents", 'saveKpiTemplate',
 				$httpParamSerializer({jsonTemplate:JSON.stringify(obj), docLabel:sbiModule_config.docLabel}), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(
 						function(response) {
 							console.log(response.data);
@@ -138,7 +138,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 							sbiModule_restServices.errorHandler(response.data,"");
 						});
 	};
-	
+
 	$scope.showAction = function(text) {
 		var toast = $mdToast.simple()
 		.content(text)
@@ -159,12 +159,12 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.loadAllKpis = function(){
 		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
 		sbiModule_restServices.promiseGet("1.0/kpi","listKpi")
-		.then(function(response){ 
+		.then(function(response){
 
 			for(var i=0;i<response.data.length;i++){
 				var kpiItem = response.data[i];
 				var obj = {};
-				
+
 				obj["name"]=kpiItem.name;
 				//obj["version"]=kpiItem.version;
 				if(kpiItem.category!=undefined){
@@ -189,12 +189,12 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 					+'<input required type="number" name="max" ng-model="row.rangeMaxValue" />'
 					+'</md-input-container>';
 				obj["prefixSuffixValue"] = kpiItem.prefixSuffixValue || '';
-				obj["prefixSuffixValueHTML"] = 
+				obj["prefixSuffixValueHTML"] =
 					'<md-input-container class="md-block">'
 					+ '<label>' + sbiModule_translate.load('sbi.kpiedit.prefixSuffixValue') + '</label>'
 					+ '<input type="text" name="max" ng-model="row.prefixSuffixValue" maxlength="3"/>'
 					+'</md-input-container>';
-				
+
 				obj["isSuffix"] = kpiItem.isSuffix;
 				obj["isSuffixHTML"] = '<md-input-container class="md-block">'
 					+'<label>Prefix/Suffix</label>'
@@ -203,21 +203,21 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 					+'<md-option value="true">'+ sbiModule_translate.load('sbi.kpiedit.suffix') +'</md-option>'
 					+'</md-select>'
 					+'</md-input-container>';
-				
-				
+
+
 				$scope.kpiList.push(obj);
 			}
-			
+
 			$scope.loadTemplateIfExist();
 		},function(response){
 		});
 	};
-	
+
 	$scope.loadAllKpis();
 
 	$scope.loadTemplateIfExist = function(){
 		var obj={"id": sbiModule_config.docLabel};
-		
+
 		sbiModule_restServices.promisePost("1.0/kpisTemplate", 'getKpiTemplate',obj).then(
 				function(response) {
 
@@ -243,7 +243,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		}
 		var nameScorecard = template.chart.data.scorecard.name;
 		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
-		sbiModule_restServices.promiseGet("1.0/kpi",nameScorecard+"/loadScorecardbyName")
+		sbiModule_restServices.promiseGet("1.0/kpiee",nameScorecard+"/loadScorecardbyName")
 		.then(function(response){
 			var obj = {};
 			obj["name"]=response.data.name;
@@ -258,7 +258,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		},function(response){
 		});
 	};
-	
+
 	$scope.loadKpiTemplate = function(template) {
 		$scope.typeDocument = template.chart.model;
 
@@ -271,7 +271,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		if(template.chart.style!=undefined){
 			$scope.style = template.chart.style.font;
 		}
-		
+
 		if(template.chart.options!=undefined){
 			if(template.chart.options.showtarget=="true"){
 				$scope.options.showtarget=true;
@@ -292,7 +292,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 				$scope.options.showvalue=true;
 			}else{
 				$scope.options.showvalue=false;
-			}		
+			}
 
 			//$scope.options.vieweas = template.chart.options.vieweas
 		}
@@ -305,7 +305,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		$scope.completeInfoKPI();
 	};
 
-	
+
 
 	$scope.completeInfoKPI = function() {
 		var arr= [];
@@ -313,16 +313,16 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 
 		var selectedKpis = $scope.selectedKpis;
 		var kpiList = $scope.kpiList;
-		
+
 		for(var i = 0; i < selectedKpis.length; i++){
 			var selectedKpi = selectedKpis[i];
-			
+
 			var index = $scope.indexInList(selectedKpi, kpiList);
 			if(index !=-1){
 				var kpiListItem = kpiList[index];
-				
+
 				var obj = {};
-				
+
 				obj["name"]=kpiListItem.name;
 				obj["version"]=kpiListItem.version;
 
@@ -349,14 +349,14 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 					+'</md-input-container>';
 				obj["rangeMinValue"]= parseFloat(selectedKpi.rangeMinValue);
 				obj["rangeMaxValue"]= parseFloat(selectedKpi.rangeMaxValue);
-				
+
 				obj["prefixSuffixValue"] = selectedKpi.prefixSuffixValue || '';
-				obj["prefixSuffixValueHTML"] = 
+				obj["prefixSuffixValueHTML"] =
 					'<md-input-container class="md-block">'
 					+ '<label>' + sbiModule_translate.load('sbi.kpiedit.prefixSuffixValue') + '</label>'
 					+ '<input type="text" name="max" ng-model="row.prefixSuffixValue" maxlength="3"/>'
 					+'</md-input-container>';
-				
+
 				obj["isSuffix"] = (selectedKpi.isSuffix != undefined && selectedKpi.isSuffix != '') ? selectedKpi.isSuffix : false;
 				obj["isSuffixHTML"] = '<md-input-container class="md-block">'
 					+'<label>Prefix/Suffix</label>'
@@ -365,7 +365,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 					+'<md-option value="true">'+ sbiModule_translate.load('sbi.kpiedit.suffix') +'</md-option>'
 					+'</md-select>'
 					+'</md-input-container>';
-				
+
 				arr.push(obj);
 			}
 		}
@@ -393,16 +393,16 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 			obj.chart["model"]=$scope.typeDocument;
 			var arr=[];
 			var selectedKpis = $scope.selectedKpis;
-			
+
 			for(var i=0 ; i < selectedKpis.length; i++){
 				var selectedKpi = selectedKpis[i];
-				
+
 				var kpiObject = {};
 				kpiObject["name"] = selectedKpi.name;
 				//kpiObject["version"] =  selectedKpi.version;
 				kpiObject["vieweas"] = selectedKpi.vieweAs;
-				if(selectedKpi.rangeMinValue >= selectedKpi.rangeMaxValue 
-						|| isNaN(selectedKpi.rangeMinValue) 
+				if(selectedKpi.rangeMinValue >= selectedKpi.rangeMaxValue
+						|| isNaN(selectedKpi.rangeMinValue)
 						|| isNaN(selectedKpi.rangeMaxValue)){
 					return null;
 				}
@@ -410,7 +410,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 				kpiObject["rangeMaxValue"] = selectedKpi.rangeMaxValue;
 				kpiObject["prefixSuffixValue"] = selectedKpi.prefixSuffixValue || '';
 				kpiObject["isSuffix"] = selectedKpi.isSuffix;
-				
+
 				arr.push(kpiObject);
 			}
 			obj.chart.data["kpi"]=arr;
@@ -435,7 +435,7 @@ function DialogControllerScorecard($scope,$mdDialog,items,allScorecard,scorecard
 	$scope.close = function(){
 		$mdDialog.cancel();
 	};
-	
+
 	$scope.apply = function(){
 		$mdDialog.cancel();
 		items.resolve($scope.selectedItem);

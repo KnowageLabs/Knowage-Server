@@ -54,7 +54,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.services.ChangeTheme;
 
-@Path("/selfservicedataset")
+@Path("/selfservicedatasetpreview")
 public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 
 	private static final String DATASET_VALUE_SUCCESS_REQUEST_DISPATCHER_URL = "datasetview.jsp";

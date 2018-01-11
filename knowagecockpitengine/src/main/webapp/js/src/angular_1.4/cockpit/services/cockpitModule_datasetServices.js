@@ -1105,7 +1105,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 				var payload = JSON.stringify(datasetNames);
 				sbiModule_restServices.restToRootProject();
-				sbiModule_restServices.promisePost("2.0/datasets","associations/autodetect?wait=true&aggregate=true&evaluateNumber=true&threshold=" + $scope.minSimilarity, payload)
+				sbiModule_restServices.promisePost("2.0/datasetsee","associations/autodetect?wait=true&aggregate=true&evaluateNumber=true&threshold=" + $scope.minSimilarity, payload)
 				.then(function(response){
 					// get table rows from REST service response
 					$scope.cockpitAutodetectRows = [];

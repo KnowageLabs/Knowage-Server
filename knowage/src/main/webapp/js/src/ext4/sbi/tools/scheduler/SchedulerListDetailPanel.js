@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,10 +11,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 	extend: 'Sbi.widgets.compositepannel.ListDetailPanel'
@@ -26,26 +26,26 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 	}
 
 	, constructor: function(config) {
-	
+
 		this.initConfig(config);
 
 		var isSuperadmin= config.isSuperadmin;
-					
+
 		var thisPanel = this;
-	
+
 		this.services =[];
 		this.initServices();
 		this.detailPanel = Ext.create('Sbi.tools.scheduler.SchedulerDetailPanel', {
-			services: this.services, 
-			isSuperadmin: isSuperadmin, 
+			services: this.services,
+			isSuperadmin: isSuperadmin,
 			contextName: this.contextName
 		});
-		
+
 		this.detailPanel.on("addSchedulation",this.addSchedulation,this);
 		this.detailPanel.on("addSchedulationAngular", this.addSchedulationAngular ,this);
 
 		this.columns = [
-		                {dataIndex:"jobName", header:LN('sbi.generic.label')}, 
+		                {dataIndex:"jobName", header:LN('sbi.generic.label')},
 		                {dataIndex:"jobDescription", header:LN('sbi.generic.descr')}];
 		this.fields = [
 		               "jobName",
@@ -59,46 +59,46 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 		               "triggers"
 		               ];
 
-		
+
 		this.filteredProperties = ["jobName"];
-		
+
 		//for filtering inside objects of fields (in this case triggers object)
 		this.filteredObjects = [{
         	 objectName : "triggers",
         	 filteredProperties: ["triggerStartTime","triggerEndTime","triggerChronString"]
 		}];
-		
+
 		this.buttonToolbarConfig = {
 				newButton: true
 		};
 		this.buttonColumnsConfig ={
 				deletebutton:true
 		};
-		
+
 		this.customComboToolbarConfig = {
 				data: [{
 						"name": LN('sbi.scheduler.starttime'),
-						"value": "triggerStartTime",		        
+						"value": "triggerStartTime",
 					}, {
 						"name": LN('sbi.scheduler.endtime'),
-						"value": "triggerEndTime",	
+						"value": "triggerEndTime",
 					}, {
 						"name": LN('sbi.scheduler.schedulationtype'),
-						"value": "triggerChronString",	
+						"value": "triggerChronString",
 					}, {
 						"name": LN('sbi.generic.label'),
-						"value": "jobName",	
+						"value": "jobName",
 					}
 				],
 				fields: ["name","value"],
 				displayField: "name",
 				valueField: "value"
-		
+
 		}
-		
-		
+
+
 		Ext.tip.QuickTipManager.init();
-		
+
 		//custom buttons for scheduler operations
 		Sbi.widget.grid.StaticGridDecorator.addCustomBottonColumn(
 			this.columns, 'button-detail', LN('sbi.scheduler.activity.detailactivity') ,function(grid, rowIndex, colIndex) {
@@ -108,7 +108,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			window.location.assign(thisPanel.contextName + '/servlet/AdapterHTTP?JOBGROUPNAME='
 					+ jobGroup + '&PAGE=JobManagementPage&TYPE_LIST=TYPE_LIST&MESSAGEDET=MESSAGE_GET_JOB_DETAIL&JOBNAME=' + jobName);
 		});
-		
+
 		//Schedulation List button
 		/*
 		Sbi.widget.grid.StaticGridDecorator.addCustomBottonColumn(this.columns, 'button-schedule', LN('sbi.scheduler.activity.schedulationlist'),function(grid, rowIndex, colIndex) {
@@ -119,55 +119,55 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 
 		})
 		*/
-	
+
 		this.callParent(arguments);
 	}
-	
-	
+
+
 	, initServices: function(baseParams){
-		
+
 		this.services["delete"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-			serviceName: 'scheduler/deleteJob'
+			serviceName: 'scheduleree/deleteJob'
 				, baseParams: baseParams
 		});
-		
+
 		this.services["deleteTrigger"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-			serviceName: 'scheduler/deleteTrigger'
+			serviceName: 'scheduleree/deleteTrigger'
 				, baseParams: baseParams
 		});
-		
+
 		this.services["executeTrigger"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-			serviceName: 'scheduler/executeTrigger'
+			serviceName: 'scheduleree/executeTrigger'
 				, baseParams: baseParams
 		});
-		
+
 		this.services["pauseTrigger"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: 'scheduler/pauseTrigger'
 				, baseParams: baseParams
 		});
-		
+
 		this.services["resumeTrigger"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: 'scheduler/resumeTrigger'
 				, baseParams: baseParams
 		});
-		
+
 		this.services["getTriggerInfo"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-			serviceName: 'scheduler/getTriggerInfo'
+			serviceName: 'scheduleree/getTriggerInfo'
 				, baseParams: baseParams
 		});
 
 	}
-	
-	, onDeleteRow: function(record){			
+
+	, onDeleteRow: function(record){
 		var recordToDelete = Ext.create("Sbi.tools.scheduler.SchedulerModel",record.data);
 		var values = {};
 		values.jobGroup = record.data.jobGroup ;
 		values.jobName = record.data.jobName ;
-		
+
 		if(this.selectedRecord == record) {
 			this.selectedRecord = null;
 		}
-		
+
 		Ext.MessageBox.confirm(
 				LN('sbi.generic.pleaseConfirm'),
 				LN('sbi.generic.confirmDelete'),
@@ -182,7 +182,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 									if(response.responseText!=null && response.responseText!=undefined){
 										if(response.responseText.indexOf("error.mesage.description")>=0){
 											Sbi.exception.ExceptionHandler.handleFailure(response);
-										}else{						
+										}else{
 											Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.scheduler.activity.deleted'));
 											this.grid.store.remove(record);
 											this.grid.store.commitChanges();
@@ -194,24 +194,24 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 								}
 							},
 							scope: this,
-							failure: Sbi.exception.ExceptionHandler.handleFailure      
+							failure: Sbi.exception.ExceptionHandler.handleFailure
 						})
 					}
 				},
 				this
 			);
 	}
-	
+
 	, addSchedulationAngular: function(){
 		if (this.grid.getSelectionModel().hasSelection()) {
 			var row = this.grid.getSelectionModel().getSelection()[0];
 			var jobGroup = row.get('jobGroup');
 			var jobName = row.get('jobName');
-			
-			var addSchedulationSrc = Sbi.config.contextName + '/restful-services/publish?PUBLISHER=' 
-				+ '/WEB-INF/jsp/tools/scheduler/EventDefinition.jsp?JOB_NAME=' + jobName 
+
+			var addSchedulationSrc = Sbi.config.contextName + '/restful-services/publish?PUBLISHER='
+				+ '/WEB-INF/jsp/tools/scheduler/EventDefinition.jsp?JOB_NAME=' + jobName
 				+ '&JOB_GROUP=' + jobGroup;
-			
+
 			 angularWindow = Ext.create('Ext.window.Window', {
 			    title: LN('sbi.scheduler.schedulation.detail') + ' - ' + jobName,
 			    height : '100%',
@@ -222,26 +222,26 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			    modal: true,
 			    items: []
 			});
-			
+
 			var angularWindowIFrame = new Ext.ux.IFrame({
 				border : false,
 				bodyBorder : false,
 				height : '100%',
 				src : addSchedulationSrc
 			});
-			
+
 			angularWindow.add(angularWindowIFrame);
-			
+
 			Ext.EventManager.onWindowResize(function(w, h){
 				angularWindow.doComponentLayout();
 			});
-			
-			angularWindow.on('close', function( panel, eOpts ){				
+
+			angularWindow.on('close', function( panel, eOpts ){
 				this.refreshJobAndTriggerPanels(this.selectedRecord);
 			}, this);
-						
+
 			angularWindow.show();
-			
+
 		}
 	}
 	, addSchedulation: function(){
@@ -253,23 +253,23 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 
 		}
 	}
-	
+
 	//overwrite parent method
 	, onAddNewRow: function(){
 		window.location.assign(this.contextName + '/servlet/AdapterHTTP?PAGE=JobManagementPage&TYPE_LIST=TYPE_LIST&MESSAGEDET=MESSAGE_NEW_JOB');
 	}
-	
+
 	//when selecting a row in the grid list
 	, onGridSelect: function(selectionrowmodel, record, index, eOpts){
 		this.detailPanel.show();
 		this.detailPanel.setFormState(record);
-		
+
 		this.selectedRecord = record;
 	}
-	
+
 	/**
 	 * After closing angular window for trigger definition this function is called
-	 * for refreshing Jobs and Schedulers panels. 
+	 * for refreshing Jobs and Schedulers panels.
 	 */
 	, refreshJobAndTriggerPanels: function(record){
 		// new store that calls the rest service "scheduler/listAllJobs"
@@ -278,7 +278,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			model: 'Sbi.tools.scheduler.SchedulerModel',
 			autoLoad: true
 		});
-		
+
 		// after store load event
 		updatedJobsStore.on('load', function( store, records, successful, eOpts ){
 			// "store" is referred to "updatedJobsStore"
@@ -288,27 +288,27 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 				var row = store.getAt(i);
 				var rowJobName = row.get('jobName');
 				var rowJobGroup = row.get('jobGroup');
-				
+
 				var recordJobName = record.get('jobName');
 				var recordJobGroup = record.get('jobGroup');
-				
+
 				// if it is the right job
 				if(recordJobName == rowJobName && recordJobGroup == rowJobGroup) {
-					
+
 					// forces the selection of the row in the jobs grid
 					this.grid.getSelectionModel().select(i);
-					
+
 					// updates the previous job in store with new triggers data
 					var thisGridStore = this.grid.getStore();
 					thisGridStore.getAt(i).set('triggers', row.get('triggers'));
-					
+
 					// updates the triggers detail panel
 					this.detailPanel.setFormState(row);
 					break;
 				}
 			}
 		}, this);
-		
-		
+
+
 	}
-});		
+});

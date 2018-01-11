@@ -44,7 +44,7 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 	$scope.loadSchedulations = function(){
 
 		if(!$scope.isUserAdmin && !$scope.isUserDeveloper && $scope.showScheduler){
-			sbiModule_restServices.get("scheduler","listAllJobs")
+			sbiModule_restServices.get("scheduleree","listAllJobs")
 			.then(function(response) {
 				sbiModule_logger.log("[LOAD START]: Loading of Shcedulers is started.");
 				angular.copy(response.data.root,$scope.schedulationList);
@@ -186,7 +186,7 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 			+"&triggerName="+doc.triggerName
 			+"&triggerGroup="+doc.triggerGroup;
 
-		sbiModule_restServices.promisePost("scheduler",requestString)
+		sbiModule_restServices.promisePost("scheduleree",requestString)
 		.then(function(response) {
 			$scope.processing = true;
 			$timeout(function(){$scope.triggerExecuteTimeOut(doc, merge, document)}, 10000);

@@ -85,7 +85,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	ctrl.loadFormulas();
 
 	ctrl.loadJobs = function(selectedJobName){
-		sbiModule_restServices.get("scheduler/listAllJobs", '')
+		sbiModule_restServices.get("scheduleree/listAllJobs", '')
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					console.log("unable to get jobs");
@@ -396,7 +396,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			+"&jobGroup="+ctrl.selectedJob.jobGroup
 			+"&triggerName="+ctrl.selectedTrigger.triggerName
 			+"&triggerGroup="+ctrl.selectedTrigger.triggerGroup;
-		sbiModule_restServices.post("scheduler", requestString)
+		sbiModule_restServices.post("scheduleree", requestString)
 		.success(function(data, status, headers, config) {
 			if (data.hasOwnProperty("errors")) {
 				sbiModule_logger.log("unable to execute schedulation");
@@ -422,7 +422,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			+"&jobGroup="+ctrl.selectedJob.jobGroup
 			+"&triggerName="+ctrl.selectedTrigger.triggerName
 			+"&triggerGroup="+ctrl.selectedTrigger.triggerGroup;
-		sbiModule_restServices.post("scheduler", requestString)
+		sbiModule_restServices.post("scheduleree", requestString)
 		.success(function(data, status, headers, config) {
 			if (data.hasOwnProperty("errors")) {
 				sbiModule_logger.log("unable to delete schedulation");
@@ -450,7 +450,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	}
 
 	ctrl.deleteJob = function(){
-		sbiModule_restServices.remove("scheduler", 'deleteJob', "jobGroup="+ctrl.selectedJob.jobGroup+"&jobName="+ctrl.selectedJob.jobName)
+		sbiModule_restServices.remove("scheduleree", 'deleteJob', "jobGroup="+ctrl.selectedJob.jobGroup+"&jobName="+ctrl.selectedJob.jobName)
 			.success(function(data, status, headers, config){
 				if (data.hasOwnProperty("errors")) {
 					console.log("Job deletion error");
@@ -787,7 +787,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					+"&triggerName="+ctrl.selectedTrigger.triggerName
 					+"&triggerGroup="+ctrl.selectedTrigger.triggerGroup;
 
-				sbiModule_restServices.post("scheduler", requestString)
+				sbiModule_restServices.post("scheduleree", requestString)
 					.success(function(data, status, headers, config) {
 						triggerInfoCtrl.triggerInfo = data;
 					})
@@ -951,7 +951,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				activityEventCtrl.loadJobData = function(loadTri) {
 					var parameters = 'jobName=' + activityEventCtrl.event.jobName + '&jobGroup=' + activityEventCtrl.event.jobGroup;
 
-					sbiModule_restServices.get("scheduler", "getJob", parameters)
+					sbiModule_restServices.get("scheduleree", "getJob", parameters)
 						.success(function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
 								console.error(sbiModule_translate.load("sbi.glossary.load.error"))
@@ -1016,7 +1016,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						+"&triggerGroup=" + activityEventCtrl.event.triggerGroup
 						+"&triggerName=" + activityEventCtrl.event.triggerName;
 
-					sbiModule_restServices.post("scheduler", requestString	)
+					sbiModule_restServices.post("scheduleree", requestString	)
 						.success(function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
 								console.error(sbiModule_translate.load("sbi.glossary.load.error"));
@@ -1144,7 +1144,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				activityEventCtrl.triggerEvent = function() {
 					var requestTriggerEvent = "eventName=" + activityEventCtrl.event.triggerName
 
-					sbiModule_restServices.get("scheduler", "triggerEvent", requestTriggerEvent)
+					sbiModule_restServices.get("scheduleree", "triggerEvent", requestTriggerEvent)
 						.success(function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
 								console.error(sbiModule_translate.load("sbi.glossary.load.error"))
@@ -1197,7 +1197,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						return false;
 					}
 
-					sbiModule_restServices.post("scheduler", "saveTrigger", cloneData)
+					sbiModule_restServices.post("scheduleree", "saveTrigger", cloneData)
 						.success(function(data) {
 							if (data.hasOwnProperty("errors")) {
 								console.error(sbiModule_translate.load("sbi.glossary.error.save"));

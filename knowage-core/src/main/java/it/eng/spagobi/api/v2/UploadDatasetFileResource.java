@@ -51,7 +51,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
-@Path("/selfservicedataset")
+@Path("/selfservicedatasetupload")
 public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 	private static transient Logger logger = Logger.getLogger(UploadDatasetFileResource.class);
 

@@ -44,7 +44,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-@Path("/datasources")
+@Path("/datasourcestest")
 public class TestConnection {
 
 	static private Logger logger = Logger.getLogger(TestConnection.class);

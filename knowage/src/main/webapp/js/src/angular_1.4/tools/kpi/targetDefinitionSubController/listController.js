@@ -6,7 +6,7 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 	$scope.addTarget= function() {
 		$angularListDetail.goToDetail();
 	}
-	
+
 	$scope.loadTarget = function(item) {
 		if (typeof item.id == 'undefined' || item.id == null) return; // TODO: remove after debug
 
@@ -16,7 +16,7 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 		$scope.target.startValidityDate = item.startValidityDate; //new Date(item.startValidity);
 		$scope.target.endValidityDate = item.endValidityDate; // new Date(item.endValidity);
 		var scopeDbg = $scope;
-		sbiModule_restServices.get("1.0/kpi", $scope.target.id + "/listKpiWithTarget")
+		sbiModule_restServices.get("1.0/kpiee", $scope.target.id + "/listKpiWithTarget")
 		.success(
 			function(data, status, headers, config) {
 				$scope.kpis.length = 0;
@@ -37,7 +37,7 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 				showToast("Error while loading data", 3000); // sbiModule_translate.load("...")
 			}
 		);
-		
+
 		$angularListDetail.goToDetail();
 	};
 
