@@ -392,16 +392,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		} else if(testJSON.readOnly=="0"){
 			testJSON.readOnly=false;
 		}
-<<<<<<< .mine
-
 		sbiModule_restServices.promisePost('2.0/datasourcestest/test','',testJSON)
-||||||| .r12370
-
-		sbiModule_restServices.promisePost('2.0/datasources/test','',testJSON)
-=======
-
-		sbiModule_restServices.promisePost('2.0/datasources/test','',testJSON)
->>>>>>> .r12390
 		.then(function(response) {
 			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.datasource.testing.ok"), sbiModule_translate.load("sbi.datasource.info.msg"));
 		}, function(response) {
