@@ -119,11 +119,12 @@
 	</md-content>
 
  	</md-card-content>
-	 <md-card-actions layout="row" layout-align="end center">
-	      <md-button ng-click="closeHavings()" >
+	 <md-card-actions layout="row" layout-align="start center">
+	 <span flex></span>
+	      <md-button ng-click="closeHavings()" class="md-raised">
 	      {{translate.load("kn.qbe.general.cancel")}}
 	      </md-button>
-	      <md-button ng-click="saveHavings()"  >
+	      <md-button ng-click="saveHavings()"  class="md-primary md-raised">
 			{{translate.load("kn.qbe.general.save")}}
 	      </md-button>
 	</md-card-actions>

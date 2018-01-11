@@ -103,12 +103,13 @@
 		</div>
 			
 	<div flex></div>
-        <div class="actionbar" layout="row" layout-align="end center">
-            <md-button ng-click="closeFiltersAdvanced()">
-                cancel
+        <div layout="row" layout-align="start center">
+        	<span flex></span>
+            <md-button ng-click="closeFiltersAdvanced()" class="md-raised">
+                {{translate.load("kn.qbe.general.cancel")}}
             </md-button>
-            <md-button ng-click="saveFiltersAdvanced()">
-                save
+            <md-button ng-click="saveFiltersAdvanced()" class="md-primary md-raised">
+                {{translate.load("kn.qbe.general.save")}}
             </md-button>
         </div>
 </div>

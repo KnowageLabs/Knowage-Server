@@ -112,9 +112,10 @@
 			</md-card>
 		</md-content>
 	</md-card-content>
-	<md-card-actions layout="row" layout-align="end center">
-	    <md-button ng-click="closeFilters()" >{{translate.load("kn.qbe.general.cancel")}}</md-button>
-	    <md-button ng-click="saveFilters()"  >{{translate.load("kn.qbe.general.save")}}</md-button>
+	<md-card-actions layout="row" layout-align="start center">
+		<span flex></span>
+	    <md-button ng-click="closeFilters()" class="md-raised">{{translate.load("kn.qbe.general.cancel")}}</md-button>
+	    <md-button ng-click="saveFilters()"  class="md-primary md-raised">{{translate.load("kn.qbe.general.save")}}</md-button>
 	</md-card-actions>
 </md-card>
 <md-card ng-if="params"  layout-fill layout="column" class="flexCard" style="position:absolute">
@@ -145,11 +146,12 @@
 		</md-content>
 	</md-card-content>
 	
-	 <md-card-actions layout="row" layout-align="end center">
-		<md-button ng-click="closeFilters()" style="margin-right:20px;" >
+	 <md-card-actions layout="row" layout-align="start center">
+	 	<span flex></span>
+		<md-button ng-click="closeFilters()" class="md-raised">
         	{{translate.load("kn.qbe.general.cancel")}}
 		</md-button>
-		<md-button ng-click="applyValueOfParameterAndContinuePreviewExecution()" md-autofocus>
+		<md-button ng-click="applyValueOfParameterAndContinuePreviewExecution()" md-autofocus class="md-primary md-raised">
 			{{translate.load("kn.qbe.filters.apply.parameters")}}
 		</md-button>
 	</md-card-actions>
