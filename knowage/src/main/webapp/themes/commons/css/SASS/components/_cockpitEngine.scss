@@ -581,10 +581,10 @@
 			width: calc(100% - 20px);
 		}
 		&.cockpitEditMode{
-			background-size:40px 10px;
+			background-size:30px 30px;
 			min-height: 100% !important;
 			border: $cockpitDefaultBorder;
-			background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 40px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 10px);
+			background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 30px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 30px);
 			.showActionButtonHandler {
 				opacity: .4 !important;
 			}
