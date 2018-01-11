@@ -168,8 +168,14 @@ public class UserProfile implements IEngUserProfile {
 		if (jwtToken == null) {
 			return false;
 		}
-		String userId = JWTSsoService.jwtToken2userId(jwtToken);
-		return userId.startsWith(SCHEDULER_USER_ID_PREFIX);
+		try {
+			String userId = JWTSsoService.jwtToken2userId(jwtToken);
+			return userId.startsWith(SCHEDULER_USER_ID_PREFIX);
+		} catch (Exception e) {
+			logger.debug("Error reading jwttoken for schedulatio. Are you using a sso?", e);
+			return false;
+		}
+
 	}
 
 	/*
