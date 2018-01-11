@@ -2505,7 +2505,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 							if( $scope.showDatasetScheduler){
 								if($scope.selectedDataSet.isScheduled) {
-									sbiModule_restServices.promisePost('scheduler/persistence/dataset/id',response.data.id, angular.toJson($scope.selectedDataSet))
+									sbiModule_restServices.promisePost('scheduleree/persistence/dataset/id',response.data.id, angular.toJson($scope.selectedDataSet))
 									.then(
 
 											function(responseDS) {
@@ -2520,7 +2520,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 											}
 									);
 								} else {
-									sbiModule_restServices.promiseDelete('scheduler/persistence/dataset/label', $scope.selectedDataSet.label, "/")
+									sbiModule_restServices.promiseDelete('scheduleree/persistence/dataset/label', $scope.selectedDataSet.label, "/")
 									.then(
 											function(responseDS) {
 												console.log("[DELETE]: SUCCESS!");

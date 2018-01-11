@@ -9,37 +9,37 @@ app.controller('Controller', ["sbiModule_download", "sbiModule_translate","sbiMo
 
 function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger,
 		sbiModule_config, sbiModule_dateServices, $scope, $mdDialog, $mdToast, $timeout, $location, $window,sbiModule_messaging) {
-	
+
 	sbiModule_translate.addMessageFile("component_scheduler_messages");
 	$scope.translate = sbiModule_translate;
-	
+
 	// parameters from URL
-	
+
 	var executionFromUrl = $location.search().ex ? JSON.parse($location.search().ex) : null;
 	var startDateFromUrl = $location.search().sd ? JSON.parse($location.search().sd) : null;
 	var startTimeFromUrl = $location.search().st ? JSON.parse($location.search().st) : null;
 	var endDateFromUrl = $location.search().ed ? JSON.parse($location.search().ed) : null;
 	var endTimeFromUrl = $location.search().et ? JSON.parse($location.search().et) : null;
 	var tablePageFromUrl = $location.search().pg ? JSON.parse($location.search().pg) : null;
-	
+
 	// variables
-	
+
 	$scope.tablePage = 1;
 	$scope.executions = [];
 	$scope.selectedExecution = null;
 	$scope.loadingExecutions = false;
-	
+
 	$scope.minDate = new Date();
 	$scope.minDate = new Date($scope.minDate.getFullYear(), $scope.minDate.getMonth(), $scope.minDate.getDate());
-	
+
 	$scope.startDate = $scope.minDate;
 	$scope.endDate = new Date($scope.startDate.getFullYear(), $scope.startDate.getMonth(), $scope.startDate.getDate() + 1);
-	
+
 	$scope.startDateTime = null;
 	$scope.endDateTime = null;
-	
+
 	// functions
-	
+
 	$scope.pageChanged = function(searchValue, itemsPerPage, currentPageNumber, columnsSearch, columnOrdering, reverseOrdering){
 		$scope.tablePage = currentPageNumber;
 	}
@@ -49,13 +49,13 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			$scope.startDateTime = $scope.getDateTimeString(date, time);
 		}
 	}
-	
+
 	$scope.updateEndDateTime = function(date, time){
 		if(date && time){
 			$scope.endDateTime = $scope.getDateTimeString(date, time);
 		}
 	}
-	
+
 	$scope.getDateTimeString = function(date, time){
 		var result = "";
 		if(date && time){
@@ -68,14 +68,14 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		}
 		return result;
 	}
-	
+
 	$scope.updateExecutionList = function(){
 		$scope.updateStartDateTime($scope.startDate, $scope.startTime);
 		$scope.updateEndDateTime($scope.endDate, $scope.endTime);
 		if($scope.startDateTime && $scope.endDateTime){
 			$timeout(function(){
 				$scope.loadingExecutions = true;
-				sbiModule_restServices.get("scheduler", 'nextExecutions?start='+$scope.startDateTime+'&end='+$scope.endDateTime)
+				sbiModule_restServices.get("scheduleree", 'nextExecutions?start='+$scope.startDateTime+'&end='+$scope.endDateTime)
 					.success(function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
 							$scope.executions = [];
@@ -112,11 +112,11 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 								}
 							}
 						}
-						
+
 						if(tablePageFromUrl){
 							$scope.tablePage = tablePageFromUrl;
 						}
-						
+
 						$scope.loadingExecutions = false;
 					})
 					.error(function(data, status, headers, config) {
@@ -132,10 +132,10 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			}, 400);
 		}
 	}
-	
+
 	$scope.menuExecution = [{
 		label : sbiModule_translate.load('sbi.generic.edit'),
-		icon:'fa fa-pencil',	 
+		icon:'fa fa-pencil',
 		action : function(item,event){
 			$scope.selectedExecution = item;
 			var confirm = $mdDialog.confirm()
@@ -151,7 +151,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				);
 		}
 	}];
-	
+
 	$scope.editJob = function(item){
 		var url = sbiModule_config.contextName
 				+ "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_SCHEDULER_ACTION_ANGULARJS&LIGHT_NAVIGATOR_RESET_INSERT=TRUE#/?ex="
@@ -168,7 +168,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				+ JSON.stringify($scope.tablePage);
 		$window.location.href = url;
 	}
-	
+
 	$scope.showToastError = function(message) {
 //		var toast = $mdToast.simple()
 //			.content(message)
@@ -181,21 +181,21 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 //			if ( response == 'ok' ) {
 //			}
 //		});
-		
+
 		sbiModule_messaging.showErrorMessage(message,"");
-		
+
 	};
-	
+
 	// init
-	
+
 	if(startDateFromUrl){
-		$scope.startDate = new Date(startDateFromUrl); 
+		$scope.startDate = new Date(startDateFromUrl);
 	}
 	if(startTimeFromUrl){
 		$scope.startTime = startTimeFromUrl;
 	}
 	$scope.updateStartDateTime($scope.startDate, $scope.startTime);
-	
+
 	if(endDateFromUrl){
 		$scope.endDate = new Date(endDateFromUrl);
 	}
@@ -203,7 +203,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		$scope.endTime = endTimeFromUrl;
 	}
 	$scope.updateEndDateTime($scope.endDate, $scope.endTime);
-	
+
 	if(executionFromUrl){
 		$scope.selectedExecution = executionFromUrl;
 		$scope.updateExecutionList();

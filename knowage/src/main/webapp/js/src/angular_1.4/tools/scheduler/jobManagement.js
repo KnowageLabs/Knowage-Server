@@ -207,7 +207,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	}
 
 	ctrl.saveJob = function(){
-		sbiModule_restServices.post("scheduler", "saveJob", ctrl.selectedJob)
+		sbiModule_restServices.post("scheduleree", "saveJob", ctrl.selectedJob)
 		.success(function(data, status, headers, config) {
 			if (data.hasOwnProperty("errors")) {
 				console.log("unable to save job ", data.errors);
@@ -597,7 +597,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			controller : function($mdDialog) {
 				var docCtrl = this;
 
-				sbiModule_restServices.get("scheduler/folders", "?includeDocs=true")
+				sbiModule_restServices.get("scheduleree/folders", "?includeDocs=true")
 					.success(function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
 							console.log("unable to load folders ", data.errors);
