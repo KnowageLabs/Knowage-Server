@@ -99,8 +99,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/css/FunctionsCatalog/functionsCatalog.css")%>">
-
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script>
 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/functionsCatalog/functionsCatalog.js")%>"></script>
@@ -174,10 +172,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-chips>	
 					</div>
 					
+					<div layout="row" layout-align="center center" ng-if="!functionsList || functionsList.length == 0">
+						<div class="kn-noItems" flex="60" flex-xs="100">
+							<p class="ng-binding">{{translate.load("sbi.functionscatalog.nofunctions")}}</p>
+						</div>
+					</div>
+					
 		    		<angular-table
 		    				id="functionsTable" 
 							flex=70
-							ng-show=true
+							ng-show="functionsList && functionsList.length >0"
 							ng-model="functionsList"
 							columns='[{"label":"Function Name","name":"name"},{"label":"Owner","name":"owner"}]'  
 							columns-search='["name","keywords","description","owner"]'
@@ -186,7 +190,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							speed-menu-option="acSpeedMenu"
 							click-function ="leftTableClick(item)"
 							selected-item="tableSelectedFunction"
-							no-pagination=true					
+							no-pagination=true
+							layout-padding					
 					>						
 					</angular-table>
 			</md-content>

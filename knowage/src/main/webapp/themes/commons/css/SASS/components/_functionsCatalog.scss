@@ -75,6 +75,75 @@
 			display: none;
 		}
 	}
+	.replaceDialog {
+		.md-subheader ._md-subheader-inner{
+			padding: 8px;
+			color: $baseColor;
+		}
+		md-input-container{
+			.md-errors-spacer {
+				display: none;
+			}
+		}
+		file-upload-base64{
+			md-content{
+				background-color:transparent;
+				.md-button.md-knowage-theme.md-raised {
+					height: 24px;
+					line-height:24px;
+				}
+				md-input-container{
+					margin: 0;
+				}
+			}
+		}
+		.inputContainer {
+			&> label {
+				padding-left: 8px;
+				position: relative;
+				top: 8px;
+				font-size: $smallFontSize;
+				color: $baseColor;
+			}
+			padding: 0 8px;
+		}
+		.outputList {
+			height: 70px;
+			&:nth-child(even) {
+	        	background-color: $contentBackground;
+	        }
+	        &:nth-child(odd) {
+	            background-color: $lightTextColor;
+	        }
+			&.tallerItem {
+				height: 100px;
+			}
+			md-icon{
+				text-align: center;
+			}
+			h3,h4{
+				margin: 0;
+			    font-size: $defaultSize;
+    			font-weight: 400;
+    			line-height: $largeFontSize;
+    			overflow: hidden;
+			    white-space: nowrap;
+			    text-overflow: ellipsis;
+			}
+			h3 {
+				font-size: $defaultSize;
+			}
+			h4{
+				font-size: $baseFontSize;
+			}
+			md-input-container{
+				margin: 0;
+				.md-errors-spacer {
+					display: none;
+				}
+			}
+		}
+	}
 }
 
 /* IE11 fix */

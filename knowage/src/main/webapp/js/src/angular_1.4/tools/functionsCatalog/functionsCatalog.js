@@ -186,9 +186,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	};	
 
 	$scope.showNewInputDialog = function(data, datasetList, isDemoFunction) {
-		$log.info("userId: " + $scope.userId);
-		$log.info("isAdmin: " + $scope.isAdmin);
-
 		var executionResult = $mdDialog.show({
 			controller : executeWithNewDataController,
 			templateUrl : sbiModule_config.contextName
@@ -318,12 +315,12 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			{
 				missingFieldsString=missingFieldsString + $scope.missingFields[i]+"<br/>";
 			}	
-			$mdDialog.show($mdDialog.alert().parent(
-					angular.element(document.querySelector('#popupContainer')))
-					.clickOutsideToClose(true).title(
-							)
-					.htmlContent(missingFieldsString)
-					.ariaLabel('Alert Dialog Demo').ok('OK'));
+			$mdToast.show(
+		      $mdToast.simple()
+		        .textContent(missingFieldsString)
+		        .position("top left")
+		        .hideDelay(5000)
+		    );
 		} else {
 			if ($scope.saveOrUpdateFlag == "save") {
 
@@ -347,10 +344,12 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 						{	
 							errorToDisplay=errorToDisplay.substring(3); 
 						}
-						$mdDialog.show($mdDialog.alert().parent(
-									angular.element(document.querySelector('#popupContainer'))).clickOutsideToClose(true).title(
-										errorToDisplay)
-								.ariaLabel('Alert Dialog Demo').ok('OK'));
+						$mdToast.show(
+					      $mdToast.simple()
+					        .textContent(errorToDisplay)
+					        .position("top left")
+					        .hideDelay(5000)
+					    );
 					}
 					else
 					{		
@@ -380,18 +379,20 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 						}
 						$scope.shownFunction = $scope.newFunction;
 						
-						$mdDialog.show($mdDialog.alert().parent(
-								angular.element(document.querySelector('#popupContainer')))
-								.clickOutsideToClose(true).title(
-										'Save operation successfull.')
-								.ariaLabel('Alert Dialog Demo').ok('OK')); 
+						$mdToast.show(
+					      $mdToast.simple()
+					        .textContent(sbiModule_translate.load("sbi.functionscatalog.save.success"))
+					        .position("top left")
+					        .hideDelay(5000)
+					    );
 					}
 				}).error(function(data) { 
-						$mdDialog.show($mdDialog.alert().parent(
-						angular.element(document.querySelector('#popupContainer')))
-						.clickOutsideToClose(true).title(
-								'Errors during save operation!!')
-						.ariaLabel('Alert Dialog Demo').ok('OK'));  });
+					$mdToast.show(
+						      $mdToast.simple()
+						        .textContent(sbiModule_translate.load("sbi.functionscatalog.save.error"))
+						        .position("top left")
+						        .hideDelay(5000)
+						    );  });
 			} else if ($scope.saveOrUpdateFlag == "update") {
 				$log.info("Update operation");
 				body = $scope.shownFunction;
@@ -425,18 +426,20 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 							}
 							else
 							{
-								$mdDialog.show($mdDialog.alert().parent(
-										angular.element(document.querySelector('#popupContainer')))
-										.clickOutsideToClose(true).title(
-												'Save operation successfull!!')
-										.ariaLabel('Alert Dialog Demo').ok('OK'));
+								$mdToast.show(
+									      $mdToast.simple()
+									        .textContent(sbiModule_translate.load("sbi.functionscatalog.save.success"))
+									        .position("top left")
+									        .hideDelay(5000)
+									    );
 							}	
 						}).error(function(data) { 
-							$mdDialog.show($mdDialog.alert().parent(
-									angular.element(document.querySelector('#popupContainer')))
-									.clickOutsideToClose(true).title(
-											'Errors during save operation!!')
-									.ariaLabel('Alert Dialog Demo').ok('OK'));  });
+							$mdToast.show(
+								      $mdToast.simple()
+								        .textContent(sbiModule_translate.load("sbi.functionscatalog.save.error"))
+								        .position("top left")
+								        .hideDelay(5000)
+								    );  });
 
 			}
 		}
@@ -899,6 +902,10 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				}
 			}
 		}
+		
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		};
 
 		$scope.isExecuteDisabled = function() {
 			disabled = false;
