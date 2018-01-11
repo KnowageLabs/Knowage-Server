@@ -442,11 +442,27 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if(parName.startsWith("$P{") && parName.endsWith("}")){
 					var parValue=selections[datasetLabel][parName];
 					if(parValue!=undefined){
-						var finalP=[];
+
+						var finalParams = []; // params to be overriden
+						angular.forEach(parName.match(new RegExp('\\$P\\{(.*?)\\}','g')),function(item){
+							this.push(item.substring(3, item.length - 1));
+						}, finalParams);
+
+						var finalValues = []; // all values to be replaced (flattened tuples)
 						angular.forEach(parValue,function(item){
-							this.push(item.substring(2,item.length-2))
-						},finalP)
-						param[parName.substring(3,parName.length-1)]=finalP.join(",");
+							angular.forEach(item.match(new RegExp("'(.*?)'",'g')),function(value){
+								this.push(value.substring(1, value.length - 1));
+							},finalValues);
+						}, finalValues);
+
+						for(var i=0; i<finalParams.length; i++){
+							var key = finalParams[i];
+							var values = [];
+							for(var j=i; j<finalValues.length; j += finalParams.length){
+								values.push(finalValues[j]);
+							}
+							param[key] = values.join(","); // override params
+						}
 					}
 				}
 			}
