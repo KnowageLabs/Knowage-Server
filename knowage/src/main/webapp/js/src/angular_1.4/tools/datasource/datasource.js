@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,10 +11,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 /**
  * @author Simović Nikola (nikola.simovic@mht.net)
@@ -62,9 +62,9 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 	angular.element(document).ready(function () {
         $scope.getDataSources();
-        
+
     });
-	
+
 	$scope.setDirty = function () {
 		$scope.isDirty = true;
 	}
@@ -96,8 +96,8 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	//REST
 	$scope.saveOrUpdateDataSource = function(){
 
-		
-		
+
+
 		if($scope.jdbcOrJndi.type=="JDBC") {
 			$scope.selectedDataSource.jndi = "";
 		} else if($scope.jdbcOrJndi.type=="JNDI") {
@@ -106,7 +106,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			$scope.selectedDataSource.user = "";
 			$scope.selectedDataSource.urlConnection = "";
 		}
-		
+
 		delete $scope.jdbcOrJndi.type;
 
 		if($scope.selectedDataSource.hasOwnProperty("dsId")){
@@ -116,7 +116,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 			//MODIFY DATA SOURCE
 				$scope.checkReadOnly();
-						
+
 				sbiModule_restServices.promisePut('2.0/datasources','',angular.toJson($scope.selectedDataSource))
 				.then(function(response) {
 					console.log("[PUT]: SUCCESS!");
@@ -147,11 +147,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 		}
 	};
-	
+
 	$scope.clearType = function() {
-		
+
 		if($scope.selectedDataSource.dsId == null){
-		
+
 		if ($scope.jdbcOrJndi.type == 'JDBC') {
 			$scope.selectedDataSource.jndi = "";
 		}else {
@@ -160,11 +160,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			$scope.selectedDataSource.pwd = "";
 			$scope.selectedDataSource.driver= "";
 		}
-		
+
 		}
-	
+
 	};
-	
+
 	$scope.checkReadOnly = function() {
 		if($scope.selectedDataSource.readOnly==0){
 			$scope.selectedDataSource.readOnly=false;
@@ -261,26 +261,26 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		}
 
 	};
-	
+
 
 	//LOAD SELECTED SOURCE
 	$scope.loadSelectedDataSource = function(item) {
 		console.log(item);
-		
+
 		if($scope.isSuperAdmin){
 			$scope.readOnly= false;
 		}
-		
+
 		else if( $scope.currentUser == item.userIn && item.jndi ==""){
-			
+
 			$scope.readOnly= false;
 
 		}else{
-			
+
 			sbiModule_messaging.showInfoMessage("You are not the owner of this catalog", 'Information');
 			$scope.readOnly= true;
 		}
-		
+
 		console.log(item);
 		$scope.jdbcOrJndi.type = null;
 		$scope.showMe=true;
@@ -313,7 +313,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		 if($scope.selectedDataSource.driver){
 			 $scope.jdbcOrJndi.type = "JDBC";
 		 }
-		 if($scope.selectedDataSource.jndi!="") {
+		 if($scope.selectedDataSource.jndi!=undefined && $scope.selectedDataSource.jndi!="") {
 			 $scope.jdbcOrJndi.type = "JNDI";
 		 }
 
@@ -329,20 +329,20 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	};
 
 	//CONFIRM DELETE
-	$scope.showActionDelete = function() {		
+	$scope.showActionDelete = function() {
 		sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.datasource.deleted"),"");
 	};
 
 	//CONFIRM MULTIPLE DELETE
 	$scope.showActionMultiDelete = function() {
-	
+
 		sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.datasource.deleted"),"");
 	};
 
 	//CONFIRM OK
 	$scope.showActionOK = function() {
 		sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.datasource.saved"),"");
-		
+
 	};
 
 	//CREATING PATH FOR DELETING MULTIPLE DATA SOURCES
@@ -386,13 +386,13 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		if(testJSON.hasOwnProperty("userIn")) {
 			delete testJSON.userIn;
 		}
-		
+
 		if(testJSON.readOnly=="1"){
 			testJSON.readOnly=true;
 		} else if(testJSON.readOnly=="0"){
 			testJSON.readOnly=false;
 		}
-		
+
 		sbiModule_restServices.promisePost('2.0/datasources/test','',testJSON)
 		.then(function(response) {
 			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.datasource.testing.ok"), sbiModule_translate.load("sbi.datasource.info.msg"));
@@ -405,11 +405,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 				} else {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.datasource.error.msg"));
 				}			}
-			
+
 		});
 	}
 
-	
+
 	//SPEED MENU TRASH ITEM
 	$scope.dsSpeedMenu= [
 	                     {
@@ -425,7 +425,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	                		 }
 
 	                     }
-	                    
+
 	                    ];
 
 	//INFO ABOUT THE JNDI INPUT FORM
@@ -448,8 +448,8 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					sbiModule_translate.load("sbi.general.yes")).cancel(
 							sbiModule_translate.load("sbi.general.No"));
 
-	
-	
+
+
 	 $scope.confirmDelete = function(item,ev) {
 		    var confirm = $mdDialog.confirm()
 		          .title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
@@ -461,7 +461,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		    $mdDialog.show(confirm).then(function() {
 		    	$scope.deleteItem(item);
 		    }, function() {
-		
+
 		    });
 		  };
 };
