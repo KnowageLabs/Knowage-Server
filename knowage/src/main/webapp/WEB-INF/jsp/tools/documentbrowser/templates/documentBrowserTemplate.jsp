@@ -119,7 +119,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-content>
 			</md-sidenav> 
 			<md-content flex layout="column" class="mainContent"> 
-				<bread-crumb item-name='name' ng-model="breadModel" selected-item="selectedFolder"
+				<bread-crumb item-name='name' ng-model="breadModel" selected-item="selectedFolder" class="kn-documentBrowser-comp"
 					control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)>
 				</bread-crumb>
 		

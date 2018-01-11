@@ -1,5 +1,30 @@
 bread-crumb {
     min-height: 30px;
+    &.kn-documentBrowser-comp{
+        nav {
+            background-color: $ternaryColor;
+            md-tabs {
+                md-tabs-canvas{
+                    md-pagination-wrapper {
+                        md-tab-item.md-tab{
+                            color: rgba($baseColor, 0.6) !important;
+                            &:nth-last-child(2) {
+                                span {
+                                    color: rgba($baseColor, 1);
+                                }
+                            }
+                            span {
+                                color: rgba($baseColor,0.6);
+                                 &:before {
+                                    color: rgba($baseColor,0.6);
+                                 }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     nav {
         color: #fff;
         width: 100%;
