@@ -65,7 +65,13 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
         		$scope.i18n.loadI18nMap().then(function() {
 
         			if (data.customMenu != undefined && data.customMenu != null && data.customMenu.length > 0){
-        				$scope.customs = data.customMenu[0].menu;
+
+        				if(data.customMenu[0].menu != undefined){
+        					$scope.customs = data.customMenu[0].menu;
+        				}
+        				else{
+        					$scope.customs = {};
+        				}
         			} else {
         				$scope.customs = {};
         			}

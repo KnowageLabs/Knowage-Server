@@ -63,7 +63,14 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         			$scope.userName = data.userName;
         			$scope.groups = data.userMenu;
         			if (data.customMenu != undefined && data.customMenu != null && data.customMenu.length > 0){
-        				$scope.customs = data.customMenu[0].menu;
+
+        				if(data.customMenu[0].menu != undefined){
+        					$scope.customs = data.customMenu[0].menu;
+        				}
+        				else{
+        					$scope.customs = {};
+        				}
+
         			} else {
         				$scope.customs = {};
         			}
