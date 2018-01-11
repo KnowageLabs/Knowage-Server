@@ -69,7 +69,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         			}
 
         			// i18n custom menu
-        			for (var i = 0 ; i < $scope.customs .length; i ++ ){
+        			for (var i = 0 ; i < $scope.customs.length; i ++ ){
         				$scope.customs[i].text = $scope.i18n.getI18n($scope.customs [i].text);
         			}
 
