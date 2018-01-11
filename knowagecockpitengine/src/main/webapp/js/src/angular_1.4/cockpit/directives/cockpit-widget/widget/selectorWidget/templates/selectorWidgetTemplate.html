@@ -1,0 +1,49 @@
+<div flex layout-align="start" style="overflow-y: scroll;">
+	<md-card-title>
+              <md-card-title-text layout="row">
+                    <span flex class="md-headline">{{ngModel.settings.label}}</span>
+                    <span flex></span>  
+              </md-card-title-text>
+        </md-card-title>
+	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue'" layout="column" layout-margin >
+		<md-radio-group ng-model="parameter" >
+			<md-radio-button class="md-primary" ng-repeat="record in datasetRecords.rows"  value="{{record.column_1}}" ng-click="toggleRadioParameter(record.column_1)">
+				{{record.column_1}} 
+			</md-radio-button>
+		</md-radio-group>
+	</div>
+	
+	<!-- lov list multiple input -->
+	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue'" layout="column" layout-margin class="checkBoxParameter">
+		<div ng-repeat="record in datasetRecords.rows">
+			<md-checkbox class="md-primary" value="{{record.column_1}}" 
+					ng-checked="checkboxParameterExists(record.column_1, parameter)" ng-click="toggleCheckboxParameter(record.column_1, parameter)" >
+				{{record.column_1}}
+			</md-checkbox>
+		</div>
+	</div>
+	
+	<!-- lov combobox single and multiple input -->
+	
+	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX'" layout="column" layout-margin class="selectParameter">
+		<md-input-container class="md-block" ng-if="ngModel.settings.modalityPresent=='COMBOBOX'">
+		<!-- multiple -->
+			<md-select ng-model="parameter" multiple 
+		 		ng-change="toggleComboParameter(parameter)"	ng-if="ngModel.settings.modalityValue=='multiValue'" > 
+				<md-option ng-repeat="record in datasetRecords.rows" ng-value="record.column_1" >
+					{{record.column_1}}
+				</md-option>
+			</md-select>
+			<!-- single -->
+			<md-select ng-model="parameter" 
+		        ng-change="toggleComboParameter(parameter)" ng-if="ngModel.settings.modalityValue!='multiValue'"> 
+				<md-option></md-option>
+				<md-option ng-repeat="record in datasetRecords.rows" ng-value="record.column_1" >
+					{{record.column_1}}
+				</md-option>
+			</md-select>
+		</md-input-container>
+	</div>
+	
+	
+</div>
