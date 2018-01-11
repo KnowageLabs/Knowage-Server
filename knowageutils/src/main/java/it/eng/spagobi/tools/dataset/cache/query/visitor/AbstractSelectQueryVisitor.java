@@ -56,7 +56,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
 
 	protected boolean buildPreparedStatement;
-	protected boolean forceUseAlias;
+	protected boolean useNameAsAlias;
 	protected String aliasDelimiter;
 	protected String aliasPrefix;
 	protected SqlDialect dialect;
@@ -65,7 +65,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 
 	public AbstractSelectQueryVisitor() {
 		this.buildPreparedStatement = false;
-		this.forceUseAlias = false;
+		this.useNameAsAlias = false;
 		this.aliasDelimiter = AbstractDataBase.STANDARD_ALIAS_DELIMITER;
 		this.aliasPrefix = ALIAS_PREFIX;
 		this.queryBuilder = new StringBuilder();
@@ -284,7 +284,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		}
 
 		String alias = item.getAlias();
-		if (forceUseAlias || useAlias) {
+		if (useAlias) {
 			if (StringUtilities.isNotEmpty(alias) && !alias.equals(name)) {
 				queryBuilder.append(" ");
 				queryBuilder.append(aliasPrefix);
@@ -292,7 +292,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 				queryBuilder.append(aliasDelimiter);
 				queryBuilder.append(alias);
 				queryBuilder.append(aliasDelimiter);
-			} else if (isValidAggregationFunction) {
+			} else if (useNameAsAlias || isValidAggregationFunction) {
 				queryBuilder.append(" ");
 				queryBuilder.append(aliasPrefix);
 				queryBuilder.append(" ");
