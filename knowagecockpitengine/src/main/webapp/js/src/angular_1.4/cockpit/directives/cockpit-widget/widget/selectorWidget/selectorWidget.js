@@ -142,23 +142,32 @@ angular.module('cockpitModule')
 			if(nature=='refresh'){
 				$scope.datasetRecords = datasetRecords;
 				
-			} else if ($scope.datasetRecords.rows.length == datasetRecords.rows.length && !$scope.isFromSelector) {
-				$scope.multiValue.length=0;
+			} 
+			if($scope.ngModel.settings.modalityValue=="multiValue"){
+				if ($scope.datasetRecords.rows.length == datasetRecords.rows.length && !$scope.isFromSelector) {
+					$scope.multiValue.length=0;
+				} else {
+					if(datasetRecords.rows.length ==1){
+						$scope.parameter = datasetRecords.rows[0].column_1;
+						var index = $scope.multiValue.indexOf(datasetRecords.rows[0].column_1);
+						
+						if (index == -1) {
+							$scope.multiValue.push(datasetRecords.rows[0].column_1);
+						} 
+					} else {
+						$scope.parameter  = ''
+					}
+				}
+				
+				$scope.isFromSelector = false;
 			} else {
 				if(datasetRecords.rows.length ==1){
 					$scope.parameter = datasetRecords.rows[0].column_1;
-					var index = $scope.multiValue.indexOf(datasetRecords.rows[0].column_1);
-					
-					if (index == -1) {
-						$scope.multiValue.push(datasetRecords.rows[0].column_1);
-					} 
 				} else {
 					$scope.parameter  = ''
 				}
 			}
-			
-			$scope.isFromSelector = false;
-			
+
 		}
 		
 		$scope.multiValue = [];
@@ -189,27 +198,47 @@ angular.module('cockpitModule')
 			
 		};
 		
-		$scope.toggleRadioParameter = function(parVal) {
-			$scope.parameter = parVal;
-			$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,parVal);
-		};
-	
-		$scope.toggleComboParameter = function(parVal) {
-
-			$scope.parameter = parVal;
-			if($scope.parameter.length>0){
+		$scope.toggleRadioParameter = function(parVal ) {
+			var item = {};
+			item.aggregated=false;
+			item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
+			item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
+			item.ds=$scope.ngModel.dataset.name;
+			
+			if($scope.parameter != parVal){
+				$scope.parameter = parVal;
 				$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,parVal);
 			} else {
-				
-				var item = {};
-				item.aggregated=false;
-				item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
-				item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
-				item.ds=$scope.ngModel.dataset.name;
 				item.value=$scope.parameter;
 				$rootScope.$broadcast('DELETE_SELECTION',item);
 			}
-					
+		}
+	
+		$scope.toggleComboParameter = function(parVal) {
+			var item = {};
+			item.aggregated=false;
+			item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
+			item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
+			item.ds=$scope.ngModel.dataset.name;
+		
+			if(Array.isArray($scope.parameter)){
+				$scope.parameter = parVal;
+				if($scope.parameter.length>0){
+					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,parVal);
+				} else {
+					item.value=$scope.parameter;
+					$rootScope.$broadcast('DELETE_SELECTION',item);
+				}
+			} else {
+				if($scope.parameter != parVal){
+					$scope.parameter = parVal;
+					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,parVal);
+				} else {
+					item.value=$scope.parameter;
+					$rootScope.$broadcast('DELETE_SELECTION',item);
+				}
+			}					
+
 		}
 		
 		$scope.checkboxParameterExists = function (parVal) {
