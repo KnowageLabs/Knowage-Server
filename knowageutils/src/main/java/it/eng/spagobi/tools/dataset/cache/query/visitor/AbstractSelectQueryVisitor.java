@@ -56,6 +56,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
 
 	protected boolean buildPreparedStatement;
+	protected boolean useNameAsAlias;
 	protected String aliasDelimiter;
 	protected String aliasPrefix;
 	protected SqlDialect dialect;
@@ -64,6 +65,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 
 	public AbstractSelectQueryVisitor() {
 		this.buildPreparedStatement = false;
+		this.useNameAsAlias = false;
 		this.aliasDelimiter = AbstractDataBase.STANDARD_ALIAS_DELIMITER;
 		this.aliasPrefix = ALIAS_PREFIX;
 		this.queryBuilder = new StringBuilder();
@@ -269,12 +271,22 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		}
 	}
 
-	protected void append(Projection item, boolean useAlias) {
-		IAggregationFunction aggregationFunction = item.getAggregationFunction();
+	/**
+	 * @param projection
+	 * @param useAlias
+	 *            enables the output of an alias. Column name is used as alias if related flag is true.
+	 */
+	protected void append(Projection projection, boolean useAlias) {
+		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
-		String name = item.getName();
-		String columnName = name.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
-				: aliasDelimiter + name + aliasDelimiter;
+		String name = projection.getName();
+		String columnName;
+		if (isCalculatedColumn(name)) {
+			columnName = name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter);
+		} else {
+			columnName = name.contains(" ") ? aliasDelimiter + name + aliasDelimiter : name;
+		}
+
 		boolean isValidAggregationFunction = aggregationFunction != null && !aggregationFunction.getName().equals(AggregationFunctions.NONE);
 		if (!isValidAggregationFunction) {
 			queryBuilder.append(columnName);
@@ -282,7 +294,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 			queryBuilder.append(aggregationFunction.apply(columnName));
 		}
 
-		String alias = item.getAlias();
+		String alias = projection.getAlias();
 		if (useAlias) {
 			if (StringUtilities.isNotEmpty(alias) && !alias.equals(name)) {
 				queryBuilder.append(" ");
@@ -291,7 +303,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 				queryBuilder.append(aliasDelimiter);
 				queryBuilder.append(alias);
 				queryBuilder.append(aliasDelimiter);
-			} else if (isValidAggregationFunction) {
+			} else if (useNameAsAlias || isValidAggregationFunction) {
 				queryBuilder.append(" ");
 				queryBuilder.append(aliasPrefix);
 				queryBuilder.append(" ");
@@ -300,6 +312,10 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 				queryBuilder.append(aliasDelimiter);
 			}
 		}
+	}
+
+	public boolean isCalculatedColumn(String columnName) {
+		return columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER);
 	}
 
 	protected void append(Sorting item) {

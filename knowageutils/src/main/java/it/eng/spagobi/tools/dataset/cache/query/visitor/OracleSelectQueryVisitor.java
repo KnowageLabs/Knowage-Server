@@ -34,6 +34,7 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 	public OracleSelectQueryVisitor() {
 		this.dialect = SqlDialect.ORACLE;
+		this.useNameAsAlias = true; // force the use of column name as alias for Oracle XE
 	}
 
 	@Override
