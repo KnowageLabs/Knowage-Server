@@ -549,7 +549,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			if (parameters.hasOwnProperty(parameter)){
 				for(var i in dataset.parameters){
 					if(dataset.parameters[i].name==parameter){
-						var valueCount = parameters[parameter].split(",").length;
+						var valueCount = (""+parameters[parameter]).split(",").length;
 						if(!dataset.parameters[i].multiValue && valueCount > 1){
 							var parameterError = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoapplyvaluestosinglevalueparameter")
 									.replace("{0}", "<b>" + valueCount + "</b>")
