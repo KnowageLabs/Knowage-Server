@@ -56,7 +56,6 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
 
 	protected boolean buildPreparedStatement;
-	protected boolean useNameAsAlias;
 	protected String aliasDelimiter;
 	protected String aliasPrefix;
 	protected SqlDialect dialect;
@@ -65,7 +64,6 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 
 	public AbstractSelectQueryVisitor() {
 		this.buildPreparedStatement = false;
-		this.useNameAsAlias = false;
 		this.aliasDelimiter = AbstractDataBase.STANDARD_ALIAS_DELIMITER;
 		this.aliasPrefix = ALIAS_PREFIX;
 		this.queryBuilder = new StringBuilder();
@@ -275,7 +273,8 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		IAggregationFunction aggregationFunction = item.getAggregationFunction();
 
 		String name = item.getName();
-		String columnName = name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, "");
+		String columnName = name.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
+				: aliasDelimiter + name + aliasDelimiter;
 		boolean isValidAggregationFunction = aggregationFunction != null && !aggregationFunction.getName().equals(AggregationFunctions.NONE);
 		if (!isValidAggregationFunction) {
 			queryBuilder.append(columnName);
@@ -292,7 +291,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 				queryBuilder.append(aliasDelimiter);
 				queryBuilder.append(alias);
 				queryBuilder.append(aliasDelimiter);
-			} else if (useNameAsAlias || isValidAggregationFunction) {
+			} else if (isValidAggregationFunction) {
 				queryBuilder.append(" ");
 				queryBuilder.append(aliasPrefix);
 				queryBuilder.append(" ");
