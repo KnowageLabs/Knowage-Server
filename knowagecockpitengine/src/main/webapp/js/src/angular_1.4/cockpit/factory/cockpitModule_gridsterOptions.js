@@ -1,7 +1,7 @@
 angular.module('cockpitModule').factory('cockpitModule_gridsterOptions',function($timeout,cockpitModule_widgetServices,cockpitModule_properties,$rootScope){
 	var preventClick = function (e) { e.stopPropagation(); e.preventDefault(); };
 	return{
-		columns : 50,
+		columns : 100,
 		colWidth: 30,
 		margins: [0, 0],
 		pushing : false,
