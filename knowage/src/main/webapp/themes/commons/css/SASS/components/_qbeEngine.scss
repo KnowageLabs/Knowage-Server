@@ -534,5 +534,8 @@
             }
         }
     }
+    [ng-drag].dragging {
+        position: absolute;
+    }
 	
 }

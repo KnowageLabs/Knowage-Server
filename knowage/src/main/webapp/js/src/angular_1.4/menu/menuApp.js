@@ -33,6 +33,10 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
 		}
     }]);
 
+myApp.config(function($mdThemingProvider) {
+    $mdThemingProvider.theme('knowage')
+    $mdThemingProvider.setDefaultTheme('knowage');
+});
 
 myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule_restServices', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_i18n'
   				, function(

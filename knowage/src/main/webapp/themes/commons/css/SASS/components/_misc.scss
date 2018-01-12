@@ -1,5 +1,6 @@
 html{
   height: 100%; 
+  font-size: $rootFontSize;
 }
 
 #doc, #iframeDoc {
@@ -758,11 +759,11 @@ md-tab-item {
   }
 }
 .kn-success {
-  color: $positiveColor;
+  color: $positiveColor !important;
 }
 
 .kn-danger {
-  color: $negativeColor;
+  color: $negativeColor !important;
 }
 
 .kn-inputError {

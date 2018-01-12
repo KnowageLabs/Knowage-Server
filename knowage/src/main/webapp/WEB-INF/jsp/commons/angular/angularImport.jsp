@@ -149,5 +149,7 @@ if(importAngularMaterialForExport == null) {
 <!-- angular-base64 -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-base64/angular-base64.min.js")%>"></script> 
 
+<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>">
+
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
 	
