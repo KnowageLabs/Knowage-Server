@@ -23,11 +23,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -42,9 +44,11 @@ import org.json.JSONObject;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -62,11 +66,46 @@ public class ExcelExporter {
 	private final String outputType;
 	private final String userUniqueIdentifier;
 	private final Map<String, String[]> parameterMap;
+	private Map<String, String> i18nMessages;
 
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap) {
 		this.outputType = outputType;
 		this.userUniqueIdentifier = userUniqueIdentifier;
 		this.parameterMap = parameterMap;
+
+		Locale locale = getLocale(parameterMap);
+		try {
+			i18nMessages = DAOFactory.getI18NMessageDAO().getAllI18NMessages(locale);
+			LogMF.debug(logger, "Loaded messages [{0}]", i18nMessages);
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("Error while retrieving the I18N messages", e);
+		}
+	}
+
+	private Locale getLocale(Map<String, String[]> parameterMap) {
+		try {
+			Assert.assertNotNull(parameterMap, "Empty input parameters map");
+			Assert.assertNotNull(parameterMap.get(SpagoBIConstants.SBI_LANGUAGE), "Missing language code in input parameters map");
+			Assert.assertNotNull(parameterMap.get(SpagoBIConstants.SBI_COUNTRY), "Missing country code in input parameters map");
+			Assert.assertTrue(parameterMap.get(SpagoBIConstants.SBI_LANGUAGE).length == 1, "More than one language code in input parameters map");
+			Assert.assertTrue(parameterMap.get(SpagoBIConstants.SBI_COUNTRY).length == 1, "More than one country code in input parameters map");
+
+			String language = parameterMap.get(SpagoBIConstants.SBI_LANGUAGE)[0];
+			String country = parameterMap.get(SpagoBIConstants.SBI_COUNTRY)[0];
+			Locale toReturn = new Locale(language, country);
+			return toReturn;
+		} catch (Exception e) {
+			logger.warn("Could get locale information from input parameters map", e);
+			return Locale.ENGLISH;
+		}
+
+	}
+
+	private String getI18NMessage(String code) {
+		if (!i18nMessages.containsKey(code)) {
+			return code;
+		}
+		return i18nMessages.get(code);
 	}
 
 	public String getMimeType() {
@@ -330,6 +369,7 @@ public class ExcelExporter {
 			String alias = column.getString("alias");
 			headers.add(alias);
 			String aliasToShow = column.getString("aliasToShow");
+			aliasToShow = getI18NMessage(aliasToShow);
 			sb.append(aliasToShow);
 			sb.append(CSV_DELIMITER);
 		}
