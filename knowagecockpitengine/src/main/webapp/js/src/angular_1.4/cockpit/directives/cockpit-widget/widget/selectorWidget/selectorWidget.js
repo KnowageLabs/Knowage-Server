@@ -140,19 +140,30 @@ angular.module('cockpitModule')
 			$scope.columnsToShow = [];
 			$scope.columnToshowinIndex = [];
 			if(nature=='refresh'){
-				$scope.datasetRecords = datasetRecords;		
+				$scope.datasetRecords = datasetRecords;
+				
+			} else if ($scope.datasetRecords.rows.length == datasetRecords.rows.length && !$scope.isFromSelector) {
+				$scope.multiValue.length=0;
 			} else {
 				if(datasetRecords.rows.length ==1){
 					$scope.parameter = datasetRecords.rows[0].column_1;
+					var index = $scope.multiValue.indexOf(datasetRecords.rows[0].column_1);
+					
+					if (index == -1) {
+						$scope.multiValue.push(datasetRecords.rows[0].column_1);
+					} 
 				} else {
 					$scope.parameter  = ''
 				}
 			}
+			
+			$scope.isFromSelector = false;
+			
 		}
 		
 		$scope.multiValue = [];
 		
-		$scope.toggleCheckboxParameter = function(parVal , parameter) {
+		$scope.toggleCheckboxParameter = function(parVal) {
 			
 			var index = $scope.multiValue.indexOf(parVal);
 			
@@ -160,11 +171,8 @@ angular.module('cockpitModule')
 				$scope.multiValue.splice(index, 1);
 			} else {
 				$scope.multiValue.push(parVal);
+				$scope.isFromSelector = true;
 			}
-				
-			
-			
-			
 			
 			if($scope.multiValue.length>0){
 				$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,$scope.multiValue);
@@ -181,7 +189,7 @@ angular.module('cockpitModule')
 			
 		};
 		
-		$scope.toggleRadioParameter = function(parVal ) {
+		$scope.toggleRadioParameter = function(parVal) {
 			$scope.parameter = parVal;
 			$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,parVal);
 		};
@@ -204,13 +212,11 @@ angular.module('cockpitModule')
 					
 		}
 		
-		$scope.checkboxParameterExists = function (parVal,parameter) {
-			if( parameter.parameterValue==undefined ||  parameter.parameterValue==null){
-				return false;
-			}
-	        return parameter.parameterValue.indexOf(parVal) > -1;
-			
-	      };
+		$scope.checkboxParameterExists = function (parVal) {
+			for (var i = 0; i < $scope.multiValue.length; i++) {
+				return $scope.multiValue.indexOf(parVal) > -1;
+			}			
+	    };
 	};
 	
 	function selectorWidgetEditControllerFunction(

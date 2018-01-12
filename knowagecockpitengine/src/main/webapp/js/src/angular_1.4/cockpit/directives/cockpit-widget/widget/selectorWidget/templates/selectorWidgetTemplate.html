@@ -16,7 +16,7 @@
 	<!-- lov list multiple input -->
 	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue'" layout="column" layout-margin class="checkBoxParameter">
 		<div ng-repeat="record in datasetRecords.rows">
-			<md-checkbox class="md-primary" value="{{record.column_1}}" ng-click="toggleCheckboxParameter(record.column_1, parameter)" >
+			<md-checkbox class="md-primary" ng-checked="checkboxParameterExists(record.column_1)" value="{{record.column_1}}" ng-click="toggleCheckboxParameter(record.column_1)" >
 				{{record.column_1}}
 			</md-checkbox>
 		</div>
