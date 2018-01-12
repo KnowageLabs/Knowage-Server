@@ -38,7 +38,7 @@
 					</md-select>    
 				</md-input-container>
             
-				<md-input-container  flex=40 ng-show="filterObj.type == 'java.util.Date' || filterObj.type == 'java.sql.Date' || filterObj.type == 'java.sql.Timestamp'">
+				<md-input-container  flex=40 ng-show="filterObj.type.toLowerCase().indexOf('date') > 0 || filterObj.type.toLowerCase().indexOf('timestamp') > 0">
 				     <label>Operator</label>
 				     <md-select ng-model="filterObj.filterOperator" >
 				         <md-option  ng-repeat="op in operatorsTypeDate" ng-value="op">{{op}}</md-option>
