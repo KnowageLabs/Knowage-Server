@@ -142,32 +142,48 @@ angular.module('cockpitModule')
 			if(nature=='refresh'){
 				$scope.datasetRecords = datasetRecords;
 				
-			} 
-			if($scope.ngModel.settings.modalityValue=="multiValue"){
-				if ($scope.datasetRecords.rows.length == datasetRecords.rows.length && !$scope.isFromSelector) {
-					$scope.multiValue.length=0;
+			} else {
+				
+				if($scope.ngModel.settings.modalityValue=="multiValue"){
+					
+					if($scope.ngModel.settings.modalityPresent=='COMBOBOX') {
+						if(Array.isArray($scope.parameter)){
+							$scope.parameter.length=0;
+						} else {
+							$scope.parameter = [];
+						}
+						if($scope.selector || (!$scope.selector && ($scope.datasetRecords.rows.length!=datasetRecords.rows.length))){
+							if(!$scope.empty){
+								for (var i = 0; i < datasetRecords.rows.length; i++) {
+									$scope.parameter.push(datasetRecords.rows[i].column_1);
+								}
+							} else {
+								$scope.empty=false;
+							}
+							
+						}
+					} else {
+						//multivalue list of checkboxes
+						$scope.multiValue.length=0;
+						
+						//case from other widget, but not delete from selection || case when all are checked from selector widget
+						if(($scope.datasetRecords.rows.length != datasetRecords.rows.length)||(($scope.datasetRecords.rows.length == datasetRecords.rows.length) && $scope.selector)){
+							for (var i = 0; i < datasetRecords.rows.length; i++) {
+								$scope.multiValue.push(datasetRecords.rows[i].column_1);
+							}
+						} 
+					}
+					$scope.selector=false;
 				} else {
+					//signle value
 					if(datasetRecords.rows.length ==1){
 						$scope.parameter = datasetRecords.rows[0].column_1;
-						var index = $scope.multiValue.indexOf(datasetRecords.rows[0].column_1);
-						
-						if (index == -1) {
-							$scope.multiValue.push(datasetRecords.rows[0].column_1);
-						} 
 					} else {
-						$scope.parameter  = ''
+						$scope.parameter  = '';
 					}
 				}
 				
-				$scope.isFromSelector = false;
-			} else {
-				if(datasetRecords.rows.length ==1){
-					$scope.parameter = datasetRecords.rows[0].column_1;
-				} else {
-					$scope.parameter  = ''
-				}
 			}
-
 		}
 		
 		$scope.multiValue = [];
@@ -180,13 +196,14 @@ angular.module('cockpitModule')
 				$scope.multiValue.splice(index, 1);
 			} else {
 				$scope.multiValue.push(parVal);
-				$scope.isFromSelector = true;
+				$scope.selector = true;
+				
 			}
 			
 			if($scope.multiValue.length>0){
 				$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,$scope.multiValue);
 			} else {
-				
+				$scope.empty=true;
 				var item = {};
 				item.aggregated=false;
 				item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
@@ -195,6 +212,7 @@ angular.module('cockpitModule')
 				item.value=$scope.parameter;
 				$rootScope.$broadcast('DELETE_SELECTION',item);
 			}
+			
 			
 		};
 		
@@ -221,15 +239,18 @@ angular.module('cockpitModule')
 			item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
 			item.ds=$scope.ngModel.dataset.name;
 		
-			if(Array.isArray($scope.parameter)){
+			if(Array.isArray(parVal)){
 				$scope.parameter = parVal;
 				if($scope.parameter.length>0){
 					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,parVal);
 				} else {
 					item.value=$scope.parameter;
+					$scope.empty=true;
 					$rootScope.$broadcast('DELETE_SELECTION',item);
 				}
+				$scope.selector = true;
 			} else {
+				//signle
 				if($scope.parameter != parVal){
 					$scope.parameter = parVal;
 					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,parVal);
@@ -239,6 +260,12 @@ angular.module('cockpitModule')
 				}
 			}					
 
+		}
+		
+		$scope.comboParameterExists = function (record) {
+			for (var i = 0; i < $scope.parameter.length; i++) {
+				return $scope.parameter.indexOf(record) > -1;
+			}
 		}
 		
 		$scope.checkboxParameterExists = function (parVal) {
