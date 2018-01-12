@@ -400,10 +400,19 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 			if (groups != null && !groups.isEmpty() && sortings != null && !sortings.isEmpty()) {
 				for (Sorting sorting : sortings) {
 					Projection projection = sorting.getProjection();
-					IAggregationFunction aggregationFunction = projection.getAggregationFunction();
-					if (aggregationFunction == null || aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION)) {
-						queryBuilder.append(",");
-						append(projection, false);
+					boolean projectionAlreadyDefined = false;
+					for (Projection p : projections) {
+						if (p.getDataset().equals(projection.getDataset()) && p.getName().equals(projection.getName())) {
+							projectionAlreadyDefined = true;
+							break;
+						}
+					}
+					if (!projectionAlreadyDefined) {
+						IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+						if (aggregationFunction == null || aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION)) {
+							queryBuilder.append(",");
+							append(projection, false);
+						}
 					}
 				}
 			}
@@ -455,10 +464,19 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		if (sortings != null && !sortings.isEmpty()) {
 			for (Sorting sorting : sortings) {
 				Projection projection = sorting.getProjection();
-				IAggregationFunction aggregationFunction = projection.getAggregationFunction();
-				if (aggregationFunction == null || aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION)) {
-					queryBuilder.append(",");
-					append(projection, false);
+				boolean projectionAlreadyDefined = false;
+				for (Projection g : groups) {
+					if (g.getDataset().equals(projection.getDataset()) && g.getName().equals(projection.getName())) {
+						projectionAlreadyDefined = true;
+						break;
+					}
+				}
+				if (!projectionAlreadyDefined) {
+					IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+					if (aggregationFunction == null || aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION)) {
+						queryBuilder.append(",");
+						append(projection, false);
+					}
 				}
 			}
 		}
