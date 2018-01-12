@@ -52,6 +52,8 @@ import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
  *
  */
 public class StringUtilities {
+
+	// this should be moved to ParametersUtilities.java
 	public static final String START_PARAMETER = "$P{";
 
 	public static final String START_USER_PROFILE_ATTRIBUTE = "${";

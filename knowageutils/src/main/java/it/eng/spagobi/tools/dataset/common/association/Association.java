@@ -90,6 +90,10 @@ public class Association {
 	 * A filed have a unique name withing the dataset it belongs to
 	 */
 	public static class Field {
+
+		public static String DATASET_TYPE = "dataset";
+		public static String DOCUMENT_TYPE = "document";
+
 		String dataSetLabel;
 		String name;
 		String type;
@@ -130,6 +134,14 @@ public class Association {
 			} else {
 				this.type = type;
 			}
+		}
+
+		public boolean hasDatasetType() {
+			return type.equals(DATASET_TYPE);
+		}
+
+		public boolean hasDocumentType() {
+			return type.equals(DOCUMENT_TYPE);
 		}
 
 		@Override

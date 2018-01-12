@@ -1,14 +1,13 @@
 package it.eng.spagobi.tools.dataset.associativity.strategy;
 
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.associativity.IAssociativityManager;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 
-import org.apache.log4j.Logger;
-
 public class AssociativeStrategyFactory {
 
-	public final static String INNER_STRATEGY = "INNER";
 	public final static String OUTER_STRATEGY = "OUTER";
 
 	static private Logger logger = Logger.getLogger(AssociativeStrategyFactory.class);
@@ -19,8 +18,6 @@ public class AssociativeStrategyFactory {
 		correctStrategy(config);
 
 		switch (config.getStrategy()) {
-		case INNER_STRATEGY:
-			return new InnerAssociativityManager(config, userProfile);
 		case OUTER_STRATEGY:
 			return new OuterAssociativityManager(config, userProfile);
 		default:

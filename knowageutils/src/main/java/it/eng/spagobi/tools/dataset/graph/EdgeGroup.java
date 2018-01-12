@@ -28,7 +28,7 @@ public class EdgeGroup {
 
 	private final Set<String> edgeNames;
 	private final String orderedEdgeNames;
-	private final Set<String> values = new HashSet<>();
+	private final Set<Tuple> values = new HashSet<>();
 	private boolean resolved = false;
 
 	public EdgeGroup(Set<LabeledEdge<String>> edges) {
@@ -48,15 +48,15 @@ public class EdgeGroup {
 		return orderedEdgeNames;
 	}
 
-	public Set<String> getValues() {
+	public Set<Tuple> getValues() {
 		return values;
 	}
 
-	public void addValues(Set<String> values) {
+	public void addValues(Set<Tuple> values) {
 		this.values.addAll(values);
 	}
 
-	public void addValue(String value) {
+	public void addValue(Tuple value) {
 		this.values.add(value);
 	}
 

@@ -19,11 +19,8 @@ package it.eng.spagobi.tools.dataset.graph;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import it.eng.spagobi.tools.dataset.common.association.Association;
-import it.eng.spagobi.tools.dataset.common.association.Association.Field;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -33,6 +30,11 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.Pseudograph;
 import org.junit.Before;
 import org.junit.Test;
+
+import it.eng.spagobi.tools.dataset.common.association.Association;
+import it.eng.spagobi.tools.dataset.common.association.Association.Field;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
+import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 
 public class AssociationAnalyzerTest {
 	private static final String K = "k";
@@ -159,17 +161,17 @@ public class AssociationAnalyzerTest {
 
 	@Test
 	public void testGetSelections() {
-		Set<String> valuesA1A5 = new HashSet<String>();
-		valuesA1A5.add("('744','2275')");
+		Set<Tuple> valuesA1A5 = new HashSet<>();
+		valuesA1A5.add(new Tuple(Arrays.asList(744, 2275)));
 
-		Set<String> valuesA1A5A6 = new HashSet<String>();
-		valuesA1A5A6.add("('744','2275','0')");
+		Set<Tuple> valuesA1A5A6 = new HashSet<>();
+		valuesA1A5A6.add(new Tuple(Arrays.asList(744, 2275, 0)));
 
-		Set<String> valuesA3 = new HashSet<String>();
-		valuesA3.add("('1')");
+		Set<Tuple> valuesA3 = new HashSet<>();
+		valuesA3.add(new Tuple(Arrays.asList(1)));
 
-		Set<String> valuesA4 = new HashSet<String>();
-		valuesA4.add("('11')");
+		Set<Tuple> valuesA4 = new HashSet<>();
+		valuesA4.add(new Tuple(Arrays.asList(11)));
 
 		Set<LabeledEdge<String>> edgesA1A5 = new HashSet<LabeledEdge<String>>();
 		edgesA1A5.add(new LabeledEdge<String>(X, Y, A1));
@@ -209,9 +211,9 @@ public class AssociationAnalyzerTest {
 
 		AssociationGroup associationGroup = new AssociationGroup();
 		associationGroup.addAssociations(fiveAssociationsMap.values());
-		Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroup, graph, result);
+		Map<String, Map<String, Set<Tuple>>> selections = AssociationAnalyzer.getSelections(associationGroup, graph, result);
 
-		Map<String, Set<String>> columnsToValuesMap = null;
+		Map<String, Set<Tuple>> columnsToValuesMap = null;
 		String columns = null;
 
 		assertTrue(selections.containsKey(K));

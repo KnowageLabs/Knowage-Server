@@ -2,9 +2,7 @@ package it.eng.spagobi.tools.dataset.graph.associativity.utils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,13 +10,12 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.data.Row;
 import org.jgrapht.graph.Pseudograph;
 
 import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 
@@ -32,52 +29,40 @@ public class AssociativeLogicUtils {
 		return StringUtils.join(newValues.iterator(), ",");
 	}
 
-	public static Set<String> getTupleOfValues(ResultSet rs) throws SQLException {
-		String tuple;
-		String stringDelimiter = "'";
-		Set<String> tuples = new HashSet<>();
+	public static Set<Tuple> getTupleOfValues(ResultSet rs) throws SQLException {
+		Set<Tuple> tuples = new HashSet<>();
 		while (rs.next()) {
-			tuple = "(";
-			for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-				if (i != 1) {
-					tuple += ",";
-				}
-				Object item = rs.getObject(i);
-				tuple += stringDelimiter + (item == null ? null : getProperValueString(item)) + stringDelimiter;
+			int n = rs.getMetaData().getColumnCount();
+			Tuple tuple = new Tuple(n);
+			for (int i = 1; i <= n; i++) {
+				tuple.add(rs.getObject(i));
 			}
-			tuple += ")";
 			tuples.add(tuple);
 		}
 		return tuples;
 	}
 
-	public static Set<String> getTupleOfValues(DataSet ds) {
-		String tuple;
-		String stringDelimiter = "'";
-		Set<String> tuples = new HashSet<>();
+	public static Set<Tuple> getTupleOfValues(DataSet ds) {
+		Set<Tuple> tuples = new HashSet<>();
 		while (ds.next()) {
-			tuple = "(";
-			for (int i = 0; i < ds.getSelectItems().length; i++) {
-				Row row = ds.getRow();
-				if (i > 0) {
-					tuple += ",";
-				}
-				Object item = row.getValue(i);
-				tuple += stringDelimiter + (item == null ? null : getProperValueString(item)) + stringDelimiter;
+			int n = ds.getSelectItems().length;
+			Tuple tuple = new Tuple(n);
+			for (int i = 0; i < n; i++) {
+				tuple.add(ds.getRow().getValue(i));
 			}
-			tuple += ")";
 			tuples.add(tuple);
 		}
 		return tuples;
 	}
 
-	private static String getProperValueString(Object item) {
-		if (Date.class.isAssignableFrom(item.getClass())) {
-			SimpleDateFormat formatter = new SimpleDateFormat(JSONDataWriter.CACHE_DATE_TIME_FORMAT);
-			return formatter.format(item);
-		} else {
-			return item.toString();
+	public static Set<Tuple> getTupleOfValues(String parameterValues) {
+		Set<Tuple> tuples = new HashSet<>();
+		String[] values = parameterValues.split(",");
+		for (int i = 0; i < values.length; i++) {
+			Tuple tuple = new Tuple(1);
+			tuple.add(values[i]);
 		}
+		return tuples;
 	}
 
 	public static EdgeGroup getOrCreate(Set<EdgeGroup> groups, EdgeGroup newGroup) {

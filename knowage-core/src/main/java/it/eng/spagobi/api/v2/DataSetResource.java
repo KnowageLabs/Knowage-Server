@@ -341,7 +341,7 @@ public class DataSetResource extends AbstractDataSetResource {
 					firstFilterValues = (JSONArray) filtersObject;
 					for (int i = 0; i < firstFilterValues.length(); i++) { // looking for filter embedded in array
 						JSONObject filterJsonObject = firstFilterValues.optJSONObject(i);
-						if (filterJsonObject != null) {
+						if (filterJsonObject != null && filterJsonObject.has("filterOperator")) {
 							secondFilterOperator = filterJsonObject.optString("filterOperator");
 							secondFilterValues = filterJsonObject.getJSONArray("filterVals");
 							firstFilterValues.remove(i);

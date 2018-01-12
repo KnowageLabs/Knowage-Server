@@ -18,14 +18,12 @@
 
 package it.eng.spagobi.tools.dataset.associativity;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.Pseudograph;
@@ -44,10 +42,12 @@ import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 import it.eng.spagobi.tools.dataset.graph.associativity.NearRealtimeAssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
+import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
@@ -112,11 +112,6 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 			}
 		}
 		return columnNames;
-	}
-
-	protected Set<String> getTupleOfValues(String dataSetLabel, String query, List<Object> values)
-			throws ClassNotFoundException, NamingException, SQLException {
-		return associativeDatasetContainers.get(dataSetLabel).getTupleOfValues(query, values);
 	}
 
 	protected void init(Config config, UserProfile userProfile) throws EMFUserError, SpagoBIException {
@@ -195,5 +190,31 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 	private void initCache() {
 		cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 		cache = SpagoBICacheManager.getCache();
+	}
+
+	protected void addEdgeGroup(String v1, Set<LabeledEdge<String>> edges, AssociativeDatasetContainer container) {
+		EdgeGroup group = AssociativeLogicUtils.getOrCreate(result.getEdgeGroupValues().keySet(), new EdgeGroup(edges));
+		result.getDatasetToEdgeGroup().get(v1).add(group);
+
+		if (!documentsAndExcludedDatasets.contains(v1)) {
+			container.addGroup(group);
+
+			if (!result.getEdgeGroupValues().containsKey(group)) {
+				result.getEdgeGroupValues().put(group, new HashSet<Tuple>());
+			}
+
+			if (!result.getEdgeGroupToDataset().containsKey(group)) {
+				result.getEdgeGroupToDataset().put(group, new HashSet<String>());
+				result.getEdgeGroupToDataset().get(group).add(v1);
+			} else {
+				result.getEdgeGroupToDataset().get(group).add(v1);
+			}
+		}
+	}
+
+	protected void addEdgeGroup(String v1, LabeledEdge<String> edge, AssociativeDatasetContainer container) {
+		Set<LabeledEdge<String>> edges = new HashSet<>(1);
+		edges.add(edge);
+		addEdgeGroup(v1, edges, container);
 	}
 }

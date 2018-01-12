@@ -46,7 +46,7 @@ import it.eng.spagobi.commons.utilities.UtilitiesDAOForTest;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.associativity.strategy.AssociativeStrategyFactory;
-import it.eng.spagobi.tools.dataset.associativity.strategy.InnerAssociativityManager;
+import it.eng.spagobi.tools.dataset.associativity.strategy.OuterAssociativityManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
@@ -56,6 +56,7 @@ import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.user.UserProfileManager;
@@ -173,13 +174,13 @@ public class AssociativeLogicManagerTest {
 		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
 		Set<String> documents = new HashSet<String>();
 
-		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
+		Map<EdgeGroup, Set<Tuple>> edgeGroupToValues = null;
 
-		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.INNER_STRATEGY, graph, datasetToAssociations, selections, realtimeDatasets,
+		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.OUTER_STRATEGY, graph, datasetToAssociations, selections, realtimeDatasets,
 				datasetParameters, documents);
 
 		try {
-			InnerAssociativityManager manager = new InnerAssociativityManager(config, UserProfileManager.getProfile());
+			OuterAssociativityManager manager = new OuterAssociativityManager(config, UserProfileManager.getProfile());
 			edgeGroupToValues = manager.process().getEdgeGroupValues();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -193,7 +194,7 @@ public class AssociativeLogicManagerTest {
 		EdgeGroup edgeGroup = new EdgeGroup(labeledEdges);
 		assertTrue(edgeGroupToValues.containsKey(edgeGroup));
 
-		Set<String> values = edgeGroupToValues.get(edgeGroup);
+		Set<Tuple> values = edgeGroupToValues.get(edgeGroup);
 		assertEquals(4, values.size());
 		assertTrue(values.contains("('2')"));
 		assertTrue(values.contains("('5')"));
@@ -234,13 +235,13 @@ public class AssociativeLogicManagerTest {
 		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
 		Set<String> documents = new HashSet<String>();
 
-		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
+		Map<EdgeGroup, Set<Tuple>> edgeGroupToValues = null;
 
-		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.INNER_STRATEGY, graph, datasetToAssociations, selections, realtimeDatasets,
+		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.OUTER_STRATEGY, graph, datasetToAssociations, selections, realtimeDatasets,
 				datasetParameters, documents);
 
 		try {
-			InnerAssociativityManager manager = new InnerAssociativityManager(config, UserProfileManager.getProfile());
+			OuterAssociativityManager manager = new OuterAssociativityManager(config, UserProfileManager.getProfile());
 			edgeGroupToValues = manager.process().getEdgeGroupValues();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -255,7 +256,7 @@ public class AssociativeLogicManagerTest {
 		EdgeGroup edgeGroup = new EdgeGroup(labeledEdges);
 		assertTrue(edgeGroupToValues.containsKey(edgeGroup));
 
-		Set<String> values = edgeGroupToValues.get(edgeGroup);
+		Set<Tuple> values = edgeGroupToValues.get(edgeGroup);
 		assertEquals(2, values.size());
 		assertTrue(values.contains("('41')"));
 		assertTrue(values.contains("('42')"));
@@ -302,13 +303,13 @@ public class AssociativeLogicManagerTest {
 		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
 		Set<String> documents = new HashSet<String>();
 
-		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
+		Map<EdgeGroup, Set<Tuple>> edgeGroupToValues = null;
 
-		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.INNER_STRATEGY, graph, datasetToAssociations, selections, realtimeDatasets,
+		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.OUTER_STRATEGY, graph, datasetToAssociations, selections, realtimeDatasets,
 				datasetParameters, documents);
 
 		try {
-			InnerAssociativityManager manager = new InnerAssociativityManager(config, UserProfileManager.getProfile());
+			OuterAssociativityManager manager = new OuterAssociativityManager(config, UserProfileManager.getProfile());
 			edgeGroupToValues = manager.process().getEdgeGroupValues();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -324,7 +325,7 @@ public class AssociativeLogicManagerTest {
 		EdgeGroup edgeGroup = new EdgeGroup(labeledEdges);
 		assertTrue(edgeGroupToValues.containsKey(edgeGroup));
 
-		Set<String> values = edgeGroupToValues.get(edgeGroup);
+		Set<Tuple> values = edgeGroupToValues.get(edgeGroup);
 		assertEquals(23, values.size());
 	}
 
@@ -400,13 +401,13 @@ public class AssociativeLogicManagerTest {
 		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
 		Set<String> documents = new HashSet<String>();
 
-		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
+		Map<EdgeGroup, Set<Tuple>> edgeGroupToValues = null;
 
-		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.INNER_STRATEGY, graph, datasetToAssociations, selections, realtimeDatasets,
+		Config config = AssociativeLogicUtils.buildConfig(AssociativeStrategyFactory.OUTER_STRATEGY, graph, datasetToAssociations, selections, realtimeDatasets,
 				datasetParameters, documents);
 
 		try {
-			InnerAssociativityManager manager = new InnerAssociativityManager(config, UserProfileManager.getProfile());
+			OuterAssociativityManager manager = new OuterAssociativityManager(config, UserProfileManager.getProfile());
 			edgeGroupToValues = manager.process().getEdgeGroupValues();
 		} catch (Exception e) {
 			e.printStackTrace();

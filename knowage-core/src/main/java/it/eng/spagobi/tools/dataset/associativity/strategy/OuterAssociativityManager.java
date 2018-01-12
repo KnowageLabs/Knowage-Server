@@ -25,21 +25,19 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.api.v2.DataSetResource;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.associativity.AbstractAssociativityManager;
-import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
 import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
-import it.eng.spagobi.tools.dataset.graph.associativity.NearRealtimeAssociativeDatasetContainer;
+import it.eng.spagobi.tools.dataset.graph.associativity.exceptions.IllegalEdgeGroupException;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.parameters.ParametersUtilities;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -47,7 +45,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 
 public class OuterAssociativityManager extends AbstractAssociativityManager {
-	
+
 	static protected Logger logger = Logger.getLogger(OuterAssociativityManager.class);
 
 	public OuterAssociativityManager(Config config, UserProfile userProfile) throws Exception {
@@ -63,23 +61,18 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 				for (String v2 : graph.vertexSet()) {
 					if (!v1.equals(v2)) {
 						Set<LabeledEdge<String>> edges = graph.getAllEdges(v1, v2);
+						Set<LabeledEdge<String>> edgesWithoutParameters = new HashSet<>(edges);
 						if (!edges.isEmpty()) {
-							EdgeGroup group = AssociativeLogicUtils.getOrCreate(result.getEdgeGroupValues().keySet(), new EdgeGroup(edges));
-							result.getDatasetToEdgeGroup().get(v1).add(group);
-
-							if (!documentsAndExcludedDatasets.contains(v1)) {
-								container.addGroup(group);
-
-								if (!result.getEdgeGroupValues().containsKey(group)) {
-									result.getEdgeGroupValues().put(group, new HashSet<String>());
+							for (LabeledEdge<String> edge : edges) {
+								List<String> columnNames = getColumnNames(edge.getLabel(), v1);
+								columnNames.addAll(getColumnNames(edge.getLabel(), v2));
+								if (ParametersUtilities.containsParameter(columnNames)) {
+									addEdgeGroup(v1, edge, container);
+									edgesWithoutParameters.remove(edge);
 								}
-
-								if (!result.getEdgeGroupToDataset().containsKey(group)) {
-									result.getEdgeGroupToDataset().put(group, new HashSet<String>());
-									result.getEdgeGroupToDataset().get(group).add(v1);
-								} else {
-									result.getEdgeGroupToDataset().get(group).add(v1);
-								}
+							}
+							if (!edgesWithoutParameters.isEmpty()) {
+								addEdgeGroup(v1, edgesWithoutParameters, container);
 							}
 						}
 					}
@@ -110,23 +103,20 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 			List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), dataset);
 			logger.debug("a. Calculate the distinct values for columns " + columnNames);
-			if (columnNames.size() <= 0) {
-				throw new SpagoBIException("Impossible to obtain column names for association " + group);
+			Assert.assertTrue(!columnNames.isEmpty(), "Impossible to obtain column names for association " + group);
+			if (ParametersUtilities.containsParameter(columnNames) && columnNames.size() != 1) {
+				throw new IllegalEdgeGroupException("Columns " + columnNames
+						+ " contain at least one parameter and more than one association. \nThis is a illegal state for an associative group.");
 			}
-
-			Set<String> distinctValues;
-			if (container instanceof NearRealtimeAssociativeDatasetContainer) {
-				distinctValues = container.getTupleOfValues(container.buildQuery(columnNames), null);
-			} else {
-				PreparedStatementData data = container.buildPreparedStatementData(columnNames);
-				distinctValues = container.getTupleOfValues(data.getQuery(), data.getValues());
-			}
+			Set<Tuple> distinctValues = ParametersUtilities.isParameter(columnNames.get(0)) ? container.getTupleOfValues(columnNames.get(0))
+					: container.getTupleOfValues(columnNames);
 
 			logger.debug("b. Setting distinct values " + distinctValues + " as the only compatible values for the associative group " + group);
 			group.addValues(distinctValues);
 			result.getEdgeGroupValues().get(group).addAll(distinctValues);
 
-			//logger.debug("c. Removing the previous associative group among the ones to be filtered for the primary dataset. Such group is indeed an outgoing association");
+			// logger.debug("c. Removing the previous associative group among the ones to be filtered for the primary dataset. Such group is indeed an outgoing
+			// association");
 			// container.removeGroup(group);
 			// iterator.remove();
 
@@ -137,9 +127,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 				if (!documentsAndExcludedDatasets.contains(child)) {
 					AssociativeDatasetContainer childContainer = associativeDatasetContainers.get(child);
 					List<String> columns = getColumnNames(group.getOrderedEdgeNames(), child);
-					if (!columns.isEmpty()) {
-						childContainer.addFilter(childContainer.getDataSet(), columns, distinctValues);
-					}
+					childContainer.update(columns, distinctValues);
 				}
 			}
 			totalChildren.addAll(children);
@@ -167,34 +155,30 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 					container = associativeDatasetContainers.get(childDataset);
 					if (container.isResolved()) {
 
-						logger.debug("i. Calculating distinct values for the associative group " + group + " in dataset " + childDataset); 
+						logger.debug("i. Calculating distinct values for the associative group " + group + " in dataset " + childDataset);
 						List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
-						if (!columnNames.isEmpty()) {
-							Set<String> distinctValues;
-							if (container instanceof NearRealtimeAssociativeDatasetContainer) {
-								distinctValues = container.getTupleOfValues(container.buildQuery(columnNames), null);
-							} else {
-								PreparedStatementData data = container.buildPreparedStatementData(columnNames);
-								distinctValues = container.getTupleOfValues(data.getQuery(), data.getValues());
-							}
-
-							logger.debug("ii. Adding values " + distinctValues + " among the compatible ones for the current associative group");
-							group.addValues(distinctValues);
-							result.getEdgeGroupValues().get(group).addAll(distinctValues);
+						Assert.assertTrue(!columnNames.isEmpty(), "Impossible to obtain column names for association " + group);
+						if (ParametersUtilities.containsParameter(columnNames) && columnNames.size() != 1) {
+							throw new IllegalEdgeGroupException("Columns " + columnNames
+									+ " contain at least one parameter and more than one association. \nThis is a illegal state for an associative group.");
 						}
+						Set<Tuple> distinctValues = ParametersUtilities.isParameter(columnNames.get(0)) ? container.getTupleOfValues(columnNames.get(0))
+								: container.getTupleOfValues(columnNames);
 
-						//logger.debug("iii. Removing the previous associative group among the ones to be filtered for the primary dataset. Such group is indeed an outgoing association");
+						logger.debug("ii-b. Adding values " + distinctValues + " among the compatible ones for the current associative group");
+						group.addValues(distinctValues);
+						result.getEdgeGroupValues().get(group).addAll(distinctValues);
+
+						// logger.debug("iii. Removing the previous associative group among the ones to be filtered for the primary dataset. Such group is
+						// indeed an outgoing association");
 						// container.removeGroup(group);
 					}
 				}
 				for (String childDataset : result.getEdgeGroupToDataset().get(group)) {
 					container = associativeDatasetContainers.get(childDataset);
 					if (!container.isResolved()) {
-
 						List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
-						if (!columnNames.isEmpty()) {
-							container.addFilter(DAOFactory.getDataSetDAO().loadDataSetByLabel(childDataset), columnNames, group.getValues());
-						}
+						container.update(columnNames, group.getValues());
 						totalChildren.add(childDataset);
 					}
 				}

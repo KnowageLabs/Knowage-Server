@@ -30,9 +30,9 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
@@ -44,10 +44,12 @@ import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
 import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
+import it.eng.spagobi.tools.dataset.graph.Tuple;
+import it.eng.spagobi.tools.dataset.graph.associativity.exceptions.IllegalEdgeGroupException;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.parameters.ParametersUtilities;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -67,8 +69,6 @@ public class AssociativeDatasetContainer {
 
 	protected boolean nearRealtime = false;
 	private boolean resolved = false;
-
-	private final int SQL_IN_CLAUSE_LIMIT = 999;
 
 	public AssociativeDatasetContainer(IDataSet dataSet, String tableName, IDataSource dataSource, Map<String, String> parameters) {
 		this.dataSet = dataSet;
@@ -101,8 +101,32 @@ public class AssociativeDatasetContainer {
 		return this.filters.addAll(filters);
 	}
 
-	public boolean addFilter(IDataSet dataSet, List<String> columnNames, Set<String> filterValues) {
-		return filters.add(buildInFilter(dataSet, columnNames, filterValues));
+	public boolean addFilter(List<String> columnNames, Set<Tuple> tuples) {
+		return filters.add(buildInFilter(columnNames, tuples));
+	}
+
+	public boolean update(List<String> columnNames, Set<Tuple> tuples) {
+		if (columnNames.isEmpty()) {
+			return false;
+		} else {
+			if (!ParametersUtilities.containsParameter(columnNames)) {
+				return addFilter(columnNames, tuples);
+			} else {
+				if (columnNames.size() == 1) {
+					String parameter = columnNames.get(0);
+					Set<String> values = new HashSet<>(tuples.size());
+					for (Tuple tuple : tuples) {
+						values.add(tuple.toString("", "", ""));
+					}
+					parameters.put(ParametersUtilities.getParameterName(parameter), StringUtils.join(values, ","));
+					dataSet.setParamsMap(parameters);
+					return true;
+				} else {
+					throw new IllegalEdgeGroupException("Columns " + columnNames
+							+ " contain at least one parameter and more than one association. \nThis is a illegal state for an associative group.");
+				}
+			}
+		}
 	}
 
 	public Set<EdgeGroup> getGroups() {
@@ -153,7 +177,10 @@ public class AssociativeDatasetContainer {
 		return parameters;
 	}
 
-	public Set<String> getTupleOfValues(String query, List<Object> values) throws ClassNotFoundException, NamingException, SQLException {
+	public Set<Tuple> getTupleOfValues(List<String> columnNames) throws ClassNotFoundException, NamingException, SQLException {
+		PreparedStatementData data = buildPreparedStatementData(columnNames);
+		String query = data.getQuery();
+		List<Object> values = data.getValues();
 		Connection connection = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -192,6 +219,10 @@ public class AssociativeDatasetContainer {
 		}
 	}
 
+	public Set<Tuple> getTupleOfValues(String parameter) {
+		return AssociativeLogicUtils.getTupleOfValues(parameters.get(ParametersUtilities.getParameterName(parameter)));
+	}
+
 	public String buildQuery(List<String> columnNames) {
 		return getSelectQuery(columnNames).toSql(dataSource);
 	}
@@ -212,7 +243,7 @@ public class AssociativeDatasetContainer {
 		return AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
 	}
 
-	public MultipleProjectionSimpleFilter buildInFilter(IDataSet dataSet, List<String> columnNames, Set<String> tuples) {
+	public MultipleProjectionSimpleFilter buildInFilter(List<String> columnNames, Set<Tuple> tuples) {
 		int columnCount = columnNames.size();
 		List<Projection> projections = new ArrayList<Projection>(columnCount);
 		List<IFieldMetaData> metaData = new ArrayList<IFieldMetaData>(columnCount);
@@ -222,18 +253,13 @@ public class AssociativeDatasetContainer {
 		}
 
 		List<Object> values = new ArrayList<Object>();
-		for (String tuple : tuples) {
-			String[] stringValues = StringUtilities.getSubstringsBetween(tuple, "'");
-			Assert.assertTrue(stringValues.length == columnCount,
-					"Expected tuple length is [" + columnCount + "], actual tuple length is [" + stringValues.length + "]");
-			for (int i = 0; i < stringValues.length; i++) {
-				values.add(DataSetUtilities.getValue(stringValues[i], metaData.get(i).getType()));
-			}
+		for (Tuple tuple : tuples) {
+			values.addAll(tuple.getValues());
 		}
 
 		return new InFilter(projections, values);
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
