@@ -30,7 +30,8 @@ import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 	private static final int SQL_IN_CLAUSE_LIMIT = 999;
-	private static final String TIMESTAMP_FORMAT = "YYYY-MM-DD HH24:MI:SS.FF";
+	private static final String DATE_FORMAT = "YYYY-MM-DD HH24:MI:SS";
+	private static final String TIMESTAMP_FORMAT = DATE_FORMAT + ".FF";
 
 	public OracleSelectQueryVisitor() {
 		this.dialect = SqlDialect.ORACLE;
@@ -130,7 +131,7 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 		sb.append("TO_DATE('");
 		sb.append(dateFormat.format(date));
 		sb.append("','");
-		sb.append(TIMESTAMP_FORMAT);
+		sb.append(DATE_FORMAT);
 		sb.append("')");
 
 		return sb.toString();
