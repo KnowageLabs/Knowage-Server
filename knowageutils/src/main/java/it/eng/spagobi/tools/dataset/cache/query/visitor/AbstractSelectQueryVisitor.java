@@ -280,12 +280,8 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
 		String name = projection.getName();
-		String columnName;
-		if (isCalculatedColumn(name)) {
-			columnName = name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter);
-		} else {
-			columnName = name.contains(" ") ? aliasDelimiter + name + aliasDelimiter : name;
-		}
+		String columnName = isCalculatedColumn(name) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
+				: aliasDelimiter + name + aliasDelimiter;
 
 		boolean isValidAggregationFunction = aggregationFunction != null && !aggregationFunction.getName().equals(AggregationFunctions.NONE);
 		if (!isValidAggregationFunction) {
