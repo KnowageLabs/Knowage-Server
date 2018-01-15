@@ -68,7 +68,17 @@ angular.module('cockpitModule')
 
 });
 
-function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_restServices,$compile,cockpitModule_generalOptions,$mdDialog,sbiModule_device){
+function cockpitStaticPivotTableWidgetControllerFunction(
+		$scope,
+		cockpitModule_widgetConfigurator,
+		$q,
+		$mdPanel,
+		sbiModule_restServices,
+		$compile,
+		cockpitModule_generalOptions,
+		$mdDialog,
+		sbiModule_device,
+		sbiModule_i18n){
 	$scope.bordersSize=[{
     	label:$scope.translate.load("sbi.cockpit.style.borders.solid"),
     	value:'solid',
@@ -163,11 +173,13 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		dataToSend.crosstabDefinition.measures = $scope.initializeStyleFormat(dataToSend.crosstabDefinition.measures);
 		dataToSend.crosstabDefinition.rows = $scope.initializeStyleFormat(dataToSend.crosstabDefinition.rows);
 		dataToSend.crosstabDefinition.columns = $scope.initializeStyleFormat(dataToSend.crosstabDefinition.columns);
-		
-		
+
+
 		dataToSend.crosstabDefinition.measures = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.measures, 'style', false);
 		dataToSend.crosstabDefinition.rows = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.rows, 'style', false);
 		dataToSend.crosstabDefinition.columns = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.columns, 'style', false);
+
+		$scope.applyI18N(dataToSend);
 
 		sbiModule_restServices.promisePost("1.0/crosstab","update",dataToSend).then(
 				function(response){
@@ -183,7 +195,40 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 					}
 				)
 	}
-	
+
+	// returns the internationalized crosstab definition
+	$scope.applyI18N = function(crosstabDataRequestData) {
+		// looks for all "alias" properties and apply I18N to them
+		crosstabDataRequestData.crosstabDefinition = $scope.getI18NJSON(crosstabDataRequestData.crosstabDefinition, "alias");
+		// looks for all "header" properties and apply I18N to them
+		crosstabDataRequestData.metadata = $scope.getI18NJSON(crosstabDataRequestData.metadata, "header");
+	}
+
+	$scope.getI18NJSON = function (jsonTemplate, attributeName) {
+    	var clone = angular.copy(jsonTemplate);
+
+    	// looks for all "attributeName" properties and apply I18N to them
+    	var func = function (key, object) {
+    		if (object.hasOwnProperty(attributeName)) {
+    			object[attributeName] = sbiModule_i18n.getI18n(object[attributeName]);
+	        }
+    	}
+
+    	this.traverse(clone, func);
+    	return clone;
+	};
+
+	$scope.traverse = function(o, func) {
+	    for (var i in o) {
+	        if (o[i] !== null && typeof(o[i])=="object") {
+	        	func.apply(this, [i, o[i]]);
+	            //going one step down in the object tree!!
+    	        this.traverse(o[i], func);
+	        }
+	    }
+	};
+
+
 	$scope.initializeStyleFormat = function(config){
 		//add an empty style format on the config objects if it's not found
 		if (Array.isArray(config)){
@@ -206,7 +251,7 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 			}
 			return config;
 		}
-		
+
 	}
 
 
