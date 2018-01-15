@@ -28,16 +28,34 @@
 		<md-input-container class="md-block">
 		<!-- multiple -->
 			<md-select ng-model="parameter" multiple 
-		 		ng-change="toggleComboParameter(parameter)"	ng-if="ngModel.settings.modalityValue=='multiValue'" > 
-				<md-option ng-repeat="record in datasetRecords.rows" ng-checked="comboParameterExists(record.column_1)" ng-value="record.column_1" >
+		 		ng-change="toggleComboParameter(parameter)"	ng-if="ngModel.settings.modalityValue=='multiValue'" md-on-close="clearParamSearch()"> 
+				<md-select-header>
+				        <md-input-container class="md-block">
+				          <input
+				            type="search"
+				            ng-model="searchParamText"
+				            ng-keydown="$event.stopPropagation()"
+				            placeholder="Search..">
+				          </md-input-container>  
+				        </md-select-header>
+				        <md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" ng-value="record.column_1" >
 					{{record.column_1}}
 				</md-option>
 			</md-select>
 			<!-- single -->
 			<md-select ng-model="parameter" 
-		         ng-if="ngModel.settings.modalityValue!='multiValue'"> 
-				<md-option></md-option>
-				<md-option ng-repeat="record in datasetRecords.rows" ng-value="record.column_1" ng-click="toggleComboParameter(record.column_1)">
+		         ng-if="ngModel.settings.modalityValue!='multiValue'" md-on-close="clearParamSearch()"> 
+				<md-select-header>
+				        <md-input-container class="md-block">
+				          <input
+				            type="search"
+				            ng-model="searchParamText"
+				            ng-keydown="$event.stopPropagation()"
+				            placeholder="Search..">
+				          </md-input-container>  
+				        </md-select-header>
+
+				<md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" ng-value="record.column_1" ng-click="toggleComboParameter(record.column_1)">
 					{{record.column_1}}
 				</md-option>
 			</md-select>

@@ -198,6 +198,13 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 							    	  class: "fa fa-check-square-o",
 							    	  img : "8.png",
 							    	  type : "selection"
+							      },{
+							    	  name:"Selector",
+							    	  description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.selector"),
+							    	  tags : ["selector"],
+							    	  class: "fa fa-caret-square-o-down",
+							    	  img : "9.png",
+							    	  type : "selector"
 							      }
 		    	        	];
 

@@ -231,7 +231,12 @@ angular.module('cockpitModule')
 				$rootScope.$broadcast('DELETE_SELECTION',item);
 			}
 		}
-	
+		$scope.searchParamText = "";
+	    
+	    $scope.clearParamSearch = function() {
+			
+			$scope.searchParamText = "";
+		};
 		$scope.toggleComboParameter = function(parVal) {
 			var item = {};
 			item.aggregated=false;
