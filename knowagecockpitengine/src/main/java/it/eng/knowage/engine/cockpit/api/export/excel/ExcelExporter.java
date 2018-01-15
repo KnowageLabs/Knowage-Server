@@ -366,9 +366,8 @@ public class ExcelExporter {
 		List<String> headers = new ArrayList<String>(columnCount);
 		for (int i = 0; i < columnCount; i++) {
 			JSONObject column = columns.getJSONObject(i);
-			String alias = column.getString("alias");
-			headers.add(alias);
 			String aliasToShow = column.getString("aliasToShow");
+			headers.add(aliasToShow);
 			aliasToShow = getI18NMessage(aliasToShow);
 			sb.append(aliasToShow);
 			sb.append(CSV_DELIMITER);
