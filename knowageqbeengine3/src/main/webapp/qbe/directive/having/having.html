@@ -41,20 +41,20 @@
 							<md-option ng-repeat="operator in getConditionOptions" value="{{operator.value}}">{{operator.name}}
 							</md-option>
 						</md-select>
-					</md-input-container>
-					
-					<md-input-container flex=10>
-						<label class="havingLabel">{{translate.load("kn.qbe.havings.function")}}</label>
-						<md-select ng-model="having.rightOperandAggregator">
-							<md-option ng-repeat="rightOperandAggregator in getFunctions" value="{{rightOperandAggregator}}">{{rightOperandAggregator}}
-							</md-option>
-						</md-select>
-					</md-input-container>
+					</md-input-container>				
 	
 					<md-input-container flex=10>
 						<label class="havingLabel">{{translate.load("kn.qbe.havings.target.type")}}</label>
 						<md-select ng-model="having.rightType">
 							<md-option ng-repeat="rightType in getHavingTargetTypes" value="{{rightType.value}}" ng-click="changeTarget(rightType.value, having)">{{rightType.name}}
+							</md-option>
+						</md-select>
+					</md-input-container>
+					
+					<md-input-container flex=10 ng-if="having.rightType=='anotherEntity' || having.rightType=='subquery'">
+						<label class="havingLabel">{{translate.load("kn.qbe.havings.target.function")}}</label>
+						<md-select ng-model="having.rightOperandAggregator">
+							<md-option ng-repeat="rightOperandAggregator in getFunctions" value="{{rightOperandAggregator}}">{{rightOperandAggregator}}
 							</md-option>
 						</md-select>
 					</md-input-container>
