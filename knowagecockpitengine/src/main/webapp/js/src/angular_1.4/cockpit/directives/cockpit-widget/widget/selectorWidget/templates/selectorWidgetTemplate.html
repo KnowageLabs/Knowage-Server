@@ -1,22 +1,21 @@
-<div flex layout-align="start" style="overflow-y: scroll;">
-	<md-card-title>
-              <md-card-title-text layout="row">
-                    <span flex class="md-headline">{{ngModel.settings.label}}</span>
-                    <span flex></span>  
-              </md-card-title-text>
-        </md-card-title>
-	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue'" layout="column" layout-margin >
-		<md-radio-group ng-model="parameter" >
-			<md-radio-button class="md-primary" ng-repeat="record in datasetRecords.rows"  value="{{record.column_1}}" ng-click="toggleRadioParameter(record.column_1)">
+<div flex layout-align="start" class="cockpitSelectorWidget">
+	<md-toolbar class="secondaryToolbar cSelWTitle">
+      <h2 class="md-toolbar-tools">
+        <span>{{ngModel.settings.label}}</span>
+      </h2>
+    </md-toolbar>
+	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue'" layout="column" class="cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal'}">
+		<md-radio-group ng-model="parameter">
+			<md-radio-button class="md-primary cSelWRadio" ng-repeat="record in datasetRecords.rows"  value="{{record.column_1}}" ng-click="toggleRadioParameter(record.column_1)">
 				{{record.column_1}} 
 			</md-radio-button>
 		</md-radio-group>
 	</div>
 	
 	<!-- lov list multiple input -->
-	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue'" layout="column" layout-margin class="checkBoxParameter">
-		<div ng-repeat="record in datasetRecords.rows">
-			<md-checkbox class="md-primary" ng-checked="checkboxParameterExists(record.column_1)" value="{{record.column_1}}" ng-click="toggleCheckboxParameter(record.column_1)" >
+	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue'" layout="column" class="checkBoxParameter cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal'}">
+		<div class="cSelWCheckContainer">
+			<md-checkbox class="md-primary cSelWCheck" ng-checked="checkboxParameterExists(record.column_1)" value="{{record.column_1}}" ng-click="toggleCheckboxParameter(record.column_1)" layout="row" layout-align="start center" ng-repeat="record in datasetRecords.rows">
 				{{record.column_1}}
 			</md-checkbox>
 		</div>
@@ -24,7 +23,7 @@
 	
 	<!-- lov combobox single and multiple input -->
 	
-	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX'" layout="column" layout-margin class="selectParameter">
+	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX'" layout="column"  class="selectParameter" layout-padding>
 		<md-input-container class="md-block">
 		<!-- multiple -->
 			<md-select ng-model="parameter" multiple 

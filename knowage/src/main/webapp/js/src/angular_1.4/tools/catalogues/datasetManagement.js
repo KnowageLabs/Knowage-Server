@@ -2566,7 +2566,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	$scope.uploadFile= function(){
 
-    	multipartForm.post(sbiModule_config.contextName +"/restful-services/filedaset/fileupload",$scope.fileObj).success(
+    	multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedatasetupload/fileupload",$scope.fileObj).success(
 
 				function(data,status,headers,config){
 

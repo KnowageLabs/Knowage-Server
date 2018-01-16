@@ -1564,6 +1564,9 @@
 	cockpit-sheet {
 		md-tabs-content-wrapper {
 			bottom: 0;
+			md-tab-content{
+				overflow-x: hidden;
+			}
 		}
 		md-ink-bar {
 			display: none;
@@ -1698,6 +1701,64 @@
 							font-size: $baseFontSize;
 						}
 					}
+				}
+			}
+		}
+	}
+
+	.cockpitSelectorWidget{
+		.cSelWTitle {
+			height: $toolbarHeight; 
+		}
+		.cSelWRadio,.cSelWCheck{
+			margin-bottom: 8px;
+			outline: none;
+			span {
+				font-size: $mediumFontSize;
+			}
+		}
+		.cSelWScroller {
+			&.horizontal {
+				.cSelWCheckContainer, md-radio-group{
+					display: flex;
+					flex-direction: row;
+					flex-wrap: wrap;
+					md-radio-button, md-checkbox {
+						margin-right: 8px;
+						width: 150px;
+						span {
+							overflow: hidden;
+							text-overflow: ellipsis;
+							white-space: nowrap;
+							display: block;
+							width: 120px;
+						}
+					}
+				}
+			}
+			padding-left: 8px;
+			padding-top: 4px;
+			overflow-y: auto;
+			height: calc(100% - #{$toolbarHeight});
+			@include coolScrollBars($baseColor,6px);
+		}
+	}
+
+	.cockpitSelectorWidgetSettings {
+		.alternatedInput{
+			.radioContainer {
+				margin: 0;
+				height: $biggerLineHeight;
+				md-radio-group {
+					height: 100%;
+				}
+			}
+			md-input-container{
+				&:nth-child(even) {
+					background-color: lighten($ternaryColor,15%);
+				}
+				&:last-child{
+					background-color: transparent;
 				}
 			}
 		}
