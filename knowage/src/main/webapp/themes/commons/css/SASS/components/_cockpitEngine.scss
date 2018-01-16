@@ -28,7 +28,10 @@
     }
     
     
-    
+    cockpit-grid {
+    	width: calc( #{$cockpitWidth} - #{$menuBarWidth} );
+    }
+
 	cockpit-widget{
 		&>li{
 			&.fullScreenWidget{

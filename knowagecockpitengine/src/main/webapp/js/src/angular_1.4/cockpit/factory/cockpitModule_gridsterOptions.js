@@ -1,14 +1,14 @@
 angular.module('cockpitModule').factory('cockpitModule_gridsterOptions',function($timeout,cockpitModule_widgetServices,cockpitModule_properties,$rootScope){
 	var preventClick = function (e) { e.stopPropagation(); e.preventDefault(); };
 	return{
-		columns : 100,
+		columns : 62,
 		colWidth: 30,
 		margins: [0, 0],
 		pushing : false,
 		floating : false,
-		swapping : false,
+		swapping : true,
 		rowHeight: 30,
-		width : 'auto',
+		width : 1880,
 		sparse: true,// "true" can increase performance of dragging and resizing for big grid (e.g. 20x50)
 		mobileBreakPoint : 600,
 		mobileModeEnabled : true,
