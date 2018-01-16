@@ -62,6 +62,13 @@
 			<version>6.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-functions</artifactId>
+			<version>6.1.0</version>
+			<scope>runtime</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
