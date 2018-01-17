@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<body ng-controller="qbeController" class="kn-qbe md-knowage-theme">
 	<rest-loading></rest-loading>
 	<div layout="row">
-		<div flex=30 layout-fill>
+		<div flex=30 layout-fill class="qbeList">
 			<qbe-expander-list 
 			flex drag-action="droppedFunction(data)" 
 			ng-model="entityModel" 

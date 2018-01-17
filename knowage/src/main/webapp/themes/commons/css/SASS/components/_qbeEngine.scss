@@ -1,5 +1,10 @@
 .kn-qbe {
 
+    .qbeList{
+        overflow-y: auto;
+        @include coolScrollBars($baseColor,6px);
+    }
+
 	ul {
 		&[dnd-list]{
         	margin: 0px;
@@ -536,6 +541,7 @@
     }
     [ng-drag].dragging {
         position: absolute;
+        background-color: $pageBackground;
     }
 	
 }
