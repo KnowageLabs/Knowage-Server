@@ -36,6 +36,9 @@
 		if(!$scope.model.settings.defaultValue){
 			$scope.model.settings.defaultValue="";
 		}
+		if(!$scope.model.settings.staticValue){
+			$scope.model.settings.staticValue="";
+		}
 		
 		$scope.lastId = -1;
 
@@ -54,7 +57,7 @@
 		$scope.modalityValue = [{value: "singleValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.single.value')},{value :"multiValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.multivalue')}];
 		$scope.modalityView = [{value: "vertical",name: $scope.translate.load('sbi.cockpit.widgets.selector.vertical')},{value :"horizontal",name: $scope.translate.load('sbi.cockpit.widgets.selector.horizontal')}];
 		$scope.modalityPresent = [{value: "LIST",name: $scope.translate.load('sbi.cockpit.widgets.selector.list')},{value :"COMBOBOX",name: $scope.translate.load('sbi.cockpit.widgets.selector.combobox')}];
-		$scope.defaultValues = [{value: "FIRST",name: "Main column's first item"},{value: "LAST",name: "Main columns's last item"}]
+		$scope.defaultValues = [{value: "FIRST",name: "Main column's first item"},{value: "LAST",name: "Main columns's last item"},{value: "STATIC",name: "Static"}]
 
 		$scope.resetValue = function(dsId){
 			if($scope.model.dataset && $scope.model.dataset.dsId){

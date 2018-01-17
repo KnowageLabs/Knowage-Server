@@ -1,11 +1,15 @@
 <div flex layout-align="start" class="cockpitSelectorWidget">
 	<md-toolbar class="secondaryToolbar cSelWTitle">
       <h2 class="md-toolbar-tools">
+
+
         <span>{{ngModel.settings.label}}</span>
       </h2>
+
+
     </md-toolbar>
 	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue'" layout="column" class="cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal'}">
-		<md-radio-group ng-model="parameter">
+		<md-radio-group ng-model="parameter" >
 			<md-radio-button class="md-primary cSelWRadio" ng-repeat="record in datasetRecords.rows"  value="{{record.column_1}}" ng-click="toggleRadioParameter(record.column_1)">
 				{{record.column_1}} 
 			</md-radio-button>
@@ -15,6 +19,7 @@
 	<!-- lov list multiple input -->
 	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue'" layout="column" class="checkBoxParameter cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal'}">
 		<div class="cSelWCheckContainer">
+
 			<md-checkbox class="md-primary cSelWCheck" ng-checked="checkboxParameterExists(record.column_1)" value="{{record.column_1}}" ng-click="toggleCheckboxParameter(record.column_1)" layout="row" layout-align="start center" ng-repeat="record in datasetRecords.rows">
 				{{record.column_1}}
 			</md-checkbox>
@@ -23,11 +28,13 @@
 	
 	<!-- lov combobox single and multiple input -->
 	
-	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX'" layout="column"  class="selectParameter" layout-padding>
-		<md-input-container class="md-block">
+	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX'" layout="column" class="selectParameter" layout-padding>
+	
+		<md-input-container class="md-block"  ng-if="ngModel.settings.modalityValue=='multiValue'" >
 		<!-- multiple -->
-			<md-select ng-model="parameter" multiple 
-		 		ng-change="toggleComboParameter(parameter)"	ng-if="ngModel.settings.modalityValue=='multiValue'" md-on-close="clearParamSearch()"> 
+			<md-select ng-model="parameter" multiple="{{false}}"
+
+		 		 md-on-close="clearParamSearch()"> 
 				<md-select-header>
 				        <md-input-container class="md-block">
 				          <input
@@ -37,13 +44,17 @@
 				            placeholder="Search..">
 				          </md-input-container>  
 				        </md-select-header>
-				        <md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" ng-value="record.column_1" >
+				        <md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" ng-value="record.column_1" ng-click="toggleComboParameter(record.column_1)">
 					{{record.column_1}}
 				</md-option>
 			</md-select>
-			<!-- single -->
+			
+			
+		</md-input-container>
+		<md-input-container class="md-block"  ng-if="ngModel.settings.modalityValue!='multiValue'" >
+		<!-- single -->			
 			<md-select ng-model="parameter" 
-		         ng-if="ngModel.settings.modalityValue!='multiValue'" md-on-close="clearParamSearch()"> 
+		        md-on-close="clearParamSearch()"> 
 				<md-select-header>
 				        <md-input-container class="md-block">
 				          <input

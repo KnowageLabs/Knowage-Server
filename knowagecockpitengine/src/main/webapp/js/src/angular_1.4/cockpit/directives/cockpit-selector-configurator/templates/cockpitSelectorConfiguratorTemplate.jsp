@@ -4,6 +4,9 @@
      		<dataset-selector flex ng-model=model.dataset.dsId on-change="resetValue(dsId);"></dataset-selector>  	
 		</md-card-content>
 	</md-card>
+	<md-card>
+	<form name=selectorForm >
+		
         <div layout="row" ng-show="!showCircularcolumns.value && model.content.columnSelectedOfDataset.length>0">
 	        <md-card flex= "50" >
 		        <md-card-title>
@@ -68,8 +71,22 @@
 							<md-option ng-repeat="v in defaultValues" value="{{v.value}}">{{v.name}} </md-option>
 						</md-select>
 			
+
 				    </md-input-container>
+					<md-input-container  class="md-block" ng-if="model.settings.defaultValue=='STATIC'">
+			<label>static</label>
+			<input ng-model="model.settings.staticValue">
+
+	    </md-input-container>
 			    </md-card-content>
+
+
+
+
+
 		    </md-card>
 		</div>
+</form>
+    </md-card>
+
 </md-content>
