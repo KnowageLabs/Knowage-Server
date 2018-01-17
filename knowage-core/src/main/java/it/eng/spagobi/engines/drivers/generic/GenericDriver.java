@@ -26,6 +26,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.simple.JSONArray;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
@@ -301,24 +303,40 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 		List<OutputParameter> outputParameters = biobj.getOutputParameters();
 
-		if (outputParameters != null) {
-			int i = 0;
-			for (Iterator iterator = outputParameters.iterator(); iterator.hasNext();) {
-				OutputParameter outputParameter = (OutputParameter) iterator.next();
+		try {
 
-				String parName = outputParameter.getName();
+			if (outputParameters != null) {
+				int i = 0;
+				JSONArray jsonArray = new JSONArray();
+				for (Iterator iterator = outputParameters.iterator(); iterator.hasNext();) {
+					OutputParameter outputParameter = (OutputParameter) iterator.next();
 
-				if (i == 0) {
-					outputParametersString = parName;
-				} else {
-					outputParametersString += "," + parName;
+					String parName = outputParameter.getName();
+					String type = outputParameter.getType().getValueName();
+					JSONObject obj = new JSONObject();
+					obj.put("name", parName);
+					obj.put("type", type);
+					jsonArray.add(obj);
+
+					// if (i == 0) {
+					// outputParametersString = parName;
+					// } else {
+					// outputParametersString += "," + parName;
+					// }
+					// i++;
 				}
-				i++;
+
+				pars.put(DOCUMENT_OUTPUT_PARAMETERS, jsonArray.toString());
+
+				// if (!outputParametersString.equals("")) {
+				// pars.put(DOCUMENT_OUTPUT_PARAMETERS, outputParametersString);
+				// logger.debug("Output parameters String " + outputParametersString);
+				// }
 			}
-			if (!outputParametersString.equals("")) {
-				pars.put(DOCUMENT_OUTPUT_PARAMETERS, outputParametersString);
-				logger.debug("Output parameters String " + outputParametersString);
-			}
+
+		} catch (Exception e) {
+			logger.error("Error in json serilization", e);
+			throw new SpagoBIRuntimeException(e);
 		}
 		logger.debug("OUT");
 		return pars;

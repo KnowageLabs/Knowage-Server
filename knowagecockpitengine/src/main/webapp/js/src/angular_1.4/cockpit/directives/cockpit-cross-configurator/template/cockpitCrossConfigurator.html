@@ -46,21 +46,109 @@
 		</md-card-content> 
 	</md-card>
 	
-	
-                <md-card layout-padding style="height:300px; margin:0px">
-                                <md-card-title>
+	<md-card>
+        <md-card-title>
             <md-card-title-text layout="row">
-                <span flex class="md-headline">{{translate.load("sbi.cockpit.cross.staticParameters")}}</span>
+                <span flex class="md-headline">{{translate.load("sbi.cockpit.cross.outputParameters")}}</span>
             </md-card-title-text>
-        </md-card-title>        
-        <div flex=100>
-            <md-input-container class="md-block">
-            <label>Example: parameter_1&#61;value_1&amp;parameter_2&#61;value_2</label>
-            <input ng-model="ngModel.cross.staticParameters">
-            </md-input-container>
-            </div>                                                                            
-                  
-                                                                    
-                                </md-card>
+        </md-card-title>      
+
+		<!-- Cycle on output parameters -->
+            
+          <md-card-content>
+          
+          <div
+			layout="row"
+          	class="filterRow"
+          	ng-show="ngModel.cross.outputParameter != outputParameter.name"
+          	ng-repeat="outputParameter in outputParametersList">
+           
+           <!-- enable -->
+           <md-input-container class="md-block" flex=20> 
+            	<md-checkbox ng-model="ngModel.cross.outputParametersList[outputParameter.name].enabled">
+					{{outputParameter.name}}
+				</md-checkbox>
+			</md-input-container>
+
+			<!-- type-->
+			<md-input-container class="md-block" flex=30 
+				ng-if="ngModel.cross.outputParametersList[outputParameter.name].enabled==true">
+				<label>{{translate.load("sbi.cockpit.cross.outputParameter.type")}}</label>
+				<md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].type" >
+					<md-option ng-repeat="opt in outputParametersType" ng-value="opt.value">
+						{{opt.label}}
+					</md-option>
+				</md-select>
+			</md-input-container>
+			
+			<input ng-model="ngModel.cross.outputParametersList[outputParameter.name].dataType" ng-init="ngModel.cross.outputParametersList[outputParameter.name].dataType=outputParameter.dataType" type="hidden">
+			
+			<!-- value if static -->
+			<md-input-container class="md-block" flex=25 
+				ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'static' && ngModel.cross.outputParametersList[outputParameter.name].enabled==true
+						&& (outputParameter.dataType == 'number' || outputParameter.dataType == 'text' || outputParameter.dataType == 'date')
+				">
+				<label>{{translate.load("sbi.cockpit.cross.outputParameter.value")}}</label>
+				<input ng-model="ngModel.cross.outputParametersList[outputParameter.name].value" type="{{outputParameter.dataType}}">
+			</md-input-container>
+
+<!--
+			<md-input-container class="md-block" flex=25 
+				ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'static' && ngModel.cross.outputParametersList[outputParameter.name].enabled==true
+										&& outputParameter.dataType == 'date'
+				">
+				<label>{{translate.load("sbi.cockpit.cross.outputParameter.value")}}</label>
+				<input ng-model="ngModel.cross.outputParametersList[outputParameter.name].value" type="date">
+				 <md-datepicker ng-model="ngModel.cross.outputParametersList[outputParameter.name].dataValue" md-placeholder="Enter date"></md-datepicker>
+			</md-input-container>
+  -->
+	
+			<input ng-model="ngModel.cross.outputParametersList[outputParameter.name].dateValue" ng-value="ciaoooo" type="hidden">
+	
+			<!-- column if dynamic , different if chart-->
+			<md-input-container class="md-block" flex=25
+				ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'dynamic' 
+					&& ngModel.cross.outputParametersList[outputParameter.name].enabled==true
+					&& crossTable == true
+					">
+				<label>{{translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
+				<md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].column" >
+					<md-option ng-repeat="c in localDataset.metadata.fieldsMeta" ng-value="c.name">{{c.name}}</md-option>
+				</md-select>
+			</md-input-container>
+			
+			<md-input-container  class="md-block" flex=25
+				ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'dynamic' 
+					&& ngModel.cross.outputParametersList[outputParameter.name].enabled==true
+					&& crossChart == true
+					">
+			
+				<label>{{translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
+				<md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].column" >
+					<md-option ng-repeat="c in chartProperties" ng-value="c">{{c}}</md-option>
+				</md-select>
+			</md-input-container>
+			
+			
+						
+			<!-- dataset and column if selection -->
+			<md-input-container class="md-block" flex=25
+				ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'selection' && ngModel.cross.outputParametersList[outputParameter.name].enabled==true">
+				<label>{{translate.load("sbi.cockpit.cross.outputParameter.dataset")}}</label>
+				<md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].dataset" >
+					<md-option ng-repeat="ds in datasetSelections " ng-value="ds">{{ds}}</md-option>
+				</md-select>
+			</md-input-container>
+
+			<md-input-container class="md-block" flex=25
+				ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'selection' && ngModel.cross.outputParametersList[outputParameter.name].enabled==true">
+				<label>{{translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
+				<md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].column" >
+					<md-option ng-repeat="c in columnSelections[ngModel.cross.outputParametersList[outputParameter.name].dataset]" ng-value="c">{{c}}</md-option>
+				</md-select>
+			</md-input-container> 
+		</md-card-content>	
+		</div>
+	</md-card>
 	
 </md-content>

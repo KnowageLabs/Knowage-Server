@@ -197,6 +197,7 @@ function cockpitChartWidgetControllerFunction(
 		$filter,
 		cockpitModule_widgetServices,
 		cockpitModule_properties,
+		cockpitModule_template,
 		$mdDialog){
 	$scope.property={style:{}};
 	$scope.selectedTab = {'tab' : 0};
@@ -218,7 +219,7 @@ function cockpitChartWidgetControllerFunction(
 		setAggregationsOnChartEngine($scope.ngModel.content)
 		$scope.refreshWidget(undefined,'init', true);
 	});
-	
+
 	$scope.refresh=function(element,width,height,data,nature, undefined, changedChartType,dataAndChartConf){
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
@@ -798,8 +799,60 @@ function cockpitChartWidgetControllerFunction(
 			outputParameter[model.cross.outputParameter] = crossParameters[model.cross.column];
 
 
+			// parse output parameters if enabled
+			var otherOutputParameters = [];
+			var passedOutputParametersList = model.cross.outputParametersList;
+
+			for(par in passedOutputParametersList){
+				var content = passedOutputParametersList[par];
+
+				if(content.enabled == true){
+
+					/*if(content.dataType == 'date' && content.value != undefined && content.value != ''){
+
+						content.value = content.value.toLocaleDateString('en-US');
+						content.value+= "#MM/dd/yyyy";
+					}*/
+
+					if(content.type == 'static'){
+						var objToAdd = {};
+						objToAdd[par] = content.value;
+						otherOutputParameters.push(objToAdd);
+					}
+					else if(content.type == 'dynamic'){
+						if(content.column){
+							var valToAdd = crossParameters[content.column];
+							var objToAdd = {};
+							objToAdd[par] = valToAdd;
+							otherOutputParameters.push(objToAdd);
+						}
+					}
+					else if(content.type == 'selection'){
+						var selectionsObj = cockpitModule_template.getSelections();
+						if(selectionsObj){
+							var found = false;
+							for(var i = 0; i < selectionsObj.length && found == false; i++){
+								if(selectionsObj[i].ds == content.dataset && selectionsObj[i].columnName == content.column){
+									var val = selectionsObj[i].value;
+									var objToAdd = {};
+									objToAdd[par] = val;
+									otherOutputParameters.push(objToAdd);
+									found = true;
+								}
+							}
+						}
+					}
+				}
+			}
+
+
+
+
+
+
+
 			// parse static parameters if present
-			var staticParameters = [];
+			/*var staticParameters = [];
 			if(model.cross.staticParameters && model.cross.staticParameters != ''){
 				var err=false;
 				try{
@@ -832,16 +885,16 @@ function cockpitChartWidgetControllerFunction(
 					}
 					}
 
-			}
+			}*/
 
 
 			// if destination document is specified don't ask
 			if(model.cross.crossName != undefined){
-				parent.execExternalCrossNavigation(outputParameter,{},model.cross.crossName,null,staticParameters);
+				parent.execExternalCrossNavigation(outputParameter,{},model.cross.crossName,null,otherOutputParameters);
 				return;
 			}
 			else{
-				parent.execExternalCrossNavigation(outputParameter,{},null,null,staticParameters);
+				parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
 				return;
 			}
 		}

@@ -738,7 +738,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
 			Object valueObj = requestValParams.get(key);
-			if (valueObj instanceof String) {
+			if (valueObj instanceof Number) {
 				String value = String.valueOf(valueObj);
 				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
@@ -746,8 +746,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				} else {
 					toReturn.put(key, value); // uses the original value for list and %
 				}
-			}
-			if (valueObj instanceof JSONArray) {
+			} else if (valueObj instanceof String) {
+				String value = String.valueOf(valueObj);
+				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
+				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
+					toReturn.put(key, URLDecoder.decode(value, "UTF-8"));
+				} else {
+					toReturn.put(key, value); // uses the original value for list and %
+				}
+			} else if (valueObj instanceof JSONArray) {
 				JSONArray valuesLst = (JSONArray) valueObj;
 				JSONArray ValuesLstDecoded = new JSONArray();
 				for (int v = 0; v < valuesLst.length(); v++) {

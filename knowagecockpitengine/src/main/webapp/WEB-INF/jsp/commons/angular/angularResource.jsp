@@ -2,6 +2,7 @@
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
 
+<%@page import="org.json.JSONArray"%>
 <%@page import="it.eng.spagobi.services.common.SsoServiceInterface"%>
 <%@page import="it.eng.spago.base.SourceBean"%>
 <%@page import="it.eng.spagobi.services.common.EnginConf"%>
@@ -141,6 +142,14 @@
 	String analyticalDriversParams = new JSONObject(driverParamsMap).toString().replaceAll("'", "\\\\'");
 	String analyticalDriversParamsObj = new JSONObject(driverParamsObjMap).toString().replaceAll("'", "\\\\'");
 	
+    String outputParameters = "{}"; 
+	Map<String,String> outParMap = engineInstance.getOutputParameters();
+	if(outParMap != null){
+		   outputParameters= new JSONObject(outParMap).toString().replaceAll("'", "\\\\'");
+	}
+	
+	
+	/*
 	List<String> outputParametersList  = engineInstance.getOutputParameters();
     String outputParameters = "{}";  
     if(outputParametersList != null){
@@ -153,6 +162,7 @@
 	    outputParameters= new JSONObject(outParMap).toString().replaceAll("'", "\\\\'");
         }
     }
+    */
 %>
 
 <%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>

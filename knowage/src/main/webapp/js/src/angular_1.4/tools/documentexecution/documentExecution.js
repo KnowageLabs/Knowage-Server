@@ -514,8 +514,8 @@
 			}
 		};
 
-		$scope.navigateTo= function(outputParameters,inputParameters,targetCrossNavigation,docLabel, staticParameters){
-			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,execProperties.parametersData.documentParameters,targetCrossNavigation,docLabel,staticParameters);
+		$scope.navigateTo= function(outputParameters,inputParameters,targetCrossNavigation,docLabel, otherOutputParameters){
+			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,execProperties.parametersData.documentParameters,targetCrossNavigation,docLabel,otherOutputParameters);
 //			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel);
 		};
 
@@ -560,7 +560,7 @@ var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, tar
 	parent.internalNavigateTo(jsonEncodedParams,doclabel);
 };
 
-var execExternalCrossNavigation=function(outputParameters,inputParameters,targetCrossNavigation,docLabel,staticParameters){
+var execExternalCrossNavigation=function(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters){
 	var parent = angular.element(frameElement).scope().$parent;
 	while(parent != undefined){
 		if(parent.navigateTo != undefined){
@@ -568,7 +568,7 @@ var execExternalCrossNavigation=function(outputParameters,inputParameters,target
 		}
 		parent = parent.$parent;
 	}
-	parent.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel,staticParameters);
+	parent.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters);
 };
 
 var execShowHelpOnLine=function(data){

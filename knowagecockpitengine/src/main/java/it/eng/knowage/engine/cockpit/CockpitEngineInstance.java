@@ -17,6 +17,17 @@
  */
 package it.eng.knowage.engine.cockpit;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
@@ -30,19 +41,6 @@ import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -71,9 +69,8 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 				throw new SpagoBIRuntimeException("This is an outdated and not supported cockpit.");
 			}
 
-
 			// loading from old designer
-			if(this.template.length() > 0){
+			if (this.template.length() > 0) {
 				JSONArray sheets = this.template.optJSONArray("sheets");
 				for (int i = 0; i < sheets.length(); i++) {
 					JSONObject sheet = sheets.optJSONObject(i);
@@ -81,18 +78,17 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 					for (int j = 0; j < widgets.length(); j++) {
 						JSONObject widget = widgets.optJSONObject(j);
 						String type = widget.getString("type");
-						if(type.equals("chart")){
+						if (type.equals("chart")) {
 
 							JSONObject content = widget.getJSONObject("content");
 							JSONObject oldDesigner = content.optJSONObject("chartTemplate").optJSONObject("CHART");
-							if(oldDesigner.get("style") instanceof String){
+							if (oldDesigner.get("style") instanceof String) {
 								this.template = parseTemplate(this.template);
 							}
 						}
 					}
 				}
 			}
-
 
 			this.associationManager = new AssociationManager();
 		} catch (JSONException e) {
@@ -125,8 +121,8 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 	}
 
 	public Integer getDocumentId() {
-		return (this.getEnv().get(EngineConstants.ENV_DOCUMENT_ID) == null ? null : Integer.parseInt((String) this.getEnv()
-				.get(EngineConstants.ENV_DOCUMENT_ID)));
+		return (this.getEnv().get(EngineConstants.ENV_DOCUMENT_ID) == null ? null
+				: Integer.parseInt((String) this.getEnv().get(EngineConstants.ENV_DOCUMENT_ID)));
 	}
 
 	public String getDocumentVersion() {
@@ -165,18 +161,37 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 		return (String) this.getEnv().get(EngineConstants.ENV_IS_TECHNICAL_USER);
 	}
 
-	public List<String> getOutputParameters() {
-		List<String> outParslist = new ArrayList<String>();
+	public Map<String, String> getOutputParameters() {
+		Map<String, String> outParslist = new HashMap<String, String>();
 
-		String outPars = (String) this.getEnv().get(EngineConstants.DOCUMENT_OUTPUT_PARAMETERS);
-		if (outPars != null && !outPars.equals("")) {
-			StringTokenizer st = new StringTokenizer(outPars, ",", false);
-			String parameterToken = null;
-			while (st.hasMoreTokens()) {
-				parameterToken = st.nextToken();
-				outParslist.add(parameterToken);
+		try {
+			String jsonArrayPars = (String) this.getEnv().get(EngineConstants.DOCUMENT_OUTPUT_PARAMETERS);
+
+			// passed now as JSON Array
+			if (jsonArrayPars != null && !jsonArrayPars.equals("")) {
+				JSONArray array = new JSONArray(jsonArrayPars);
+				for (int i = 0; i < array.length(); i++) {
+					JSONObject obj = (JSONObject) array.get(i);
+					String name = (String) obj.get("name");
+					String type = (String) obj.get("type");
+					outParslist.put(name, type);
+				}
+
 			}
+		} catch (Exception e) {
+			logger.error("Error in parsing output parameters ", e);
+			throw new SpagoBIRuntimeException(e);
 		}
+
+		// String outPars = (String) this.getEnv().get(EngineConstants.DOCUMENT_OUTPUT_PARAMETERS);
+		// if (outPars != null && !outPars.equals("")) {
+		// StringTokenizer st = new StringTokenizer(outPars, ",", false);
+		// String parameterToken = null;
+		// while (st.hasMoreTokens()) {
+		// parameterToken = st.nextToken();
+		// outParslist.add(parameterToken);
+		// }
+		// }
 		return outParslist;
 	}
 
@@ -253,79 +268,75 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 
 	private static JSONObject parseTemplate(JSONObject jsonObj) throws JSONException {
 
-		 Iterator keys = jsonObj.keys();
-        while (keys.hasNext()) {
-            String key= (String) keys.next();
-            Object keyValue = jsonObj.get(key);
-            if(key.equalsIgnoreCase("style")){
+		Iterator keys = jsonObj.keys();
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			Object keyValue = jsonObj.get(key);
+			if (key.equalsIgnoreCase("style")) {
 
-           	 String value = keyValue.toString();
-             	String[] result = value.split(";");
-             	JSONObject obj = new JSONObject();
-             	for (int i = 0; i < result.length; i++) {
- 					String[] temp = result[i].split(":");
- 					if(temp.length>1){
+				String value = keyValue.toString();
+				String[] result = value.split(";");
+				JSONObject obj = new JSONObject();
+				for (int i = 0; i < result.length; i++) {
+					String[] temp = result[i].split(":");
+					if (temp.length > 1) {
 
- 						if(isNumeric(temp[1])){
- 						   int num = Integer.parseInt(temp[1]);
- 							obj.put(temp[0], num);
- 						}else if(temp[1].equals("true") || temp[1].equals("false")){
- 							boolean bool = Boolean.parseBoolean(temp[1]);
- 							obj.put(temp[0], bool);
- 						}else{
- 							obj.put(temp[0],temp[1]);
- 						}
+						if (isNumeric(temp[1])) {
+							int num = Integer.parseInt(temp[1]);
+							obj.put(temp[0], num);
+						} else if (temp[1].equals("true") || temp[1].equals("false")) {
+							boolean bool = Boolean.parseBoolean(temp[1]);
+							obj.put(temp[0], bool);
+						} else {
+							obj.put(temp[0], temp[1]);
+						}
 
- 					}else{
- 						obj.put(temp[0], "");
- 					}
-
- 				}
-             	jsonObj.put(key, obj);
-
-            }
-
-            if(isNumeric(keyValue.toString())){
-           	 jsonObj.put(key, Integer.parseInt(keyValue.toString()));
-            }
-
-            if(keyValue.toString().equals("true") || keyValue.toString().equals("false")){
-           	 jsonObj.put(key, Boolean.parseBoolean(keyValue.toString()));
-            }
-
-            if(keyValue instanceof JSONArray){
-
-           	 JSONArray array = (JSONArray)keyValue;
-           	 for (int i = 0; i < array.length(); i++) {
-           		 if (array.get(i) instanceof JSONObject) {
-           			JSONObject obj = array.getJSONObject(i);
-              		 parseTemplate(obj);
-				}
+					} else {
+						obj.put(temp[0], "");
+					}
 
 				}
+				jsonObj.put(key, obj);
 
-            }
+			}
 
-            if(keyValue instanceof JSONObject){
+			if (isNumeric(keyValue.toString())) {
+				jsonObj.put(key, Integer.parseInt(keyValue.toString()));
+			}
 
-           	 parseTemplate((JSONObject)keyValue);
-            }
+			if (keyValue.toString().equals("true") || keyValue.toString().equals("false")) {
+				jsonObj.put(key, Boolean.parseBoolean(keyValue.toString()));
+			}
 
-        }
-        return jsonObj;
+			if (keyValue instanceof JSONArray) {
+
+				JSONArray array = (JSONArray) keyValue;
+				for (int i = 0; i < array.length(); i++) {
+					if (array.get(i) instanceof JSONObject) {
+						JSONObject obj = array.getJSONObject(i);
+						parseTemplate(obj);
+					}
+
+				}
+
+			}
+
+			if (keyValue instanceof JSONObject) {
+
+				parseTemplate((JSONObject) keyValue);
+			}
+
+		}
+		return jsonObj;
 	}
 
-	private static boolean isNumeric(String str)
-	{
-	  try
-	  {
-	    int num = Integer.parseInt(str);
-	  }
-	  catch(NumberFormatException nfe)
-	  {
-	    return false;
-	  }
-	  return true;
+	private static boolean isNumeric(String str) {
+		try {
+			int num = Integer.parseInt(str);
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
+		return true;
 	}
 
 	// -- unimplemented methods ----------------------------------

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @authors Giulio Gavardi (Giulio.Gavardi@eng.it)
  * v0.0.1
- * 
+ *
  */
 (function() {
 angular.module('cockpitModule').directive('cockpitCrossConfigurator',function($compile){
@@ -34,25 +34,25 @@ angular.module('cockpitModule').directive('cockpitCrossConfigurator',function($c
                     pre: function preLink(scope, element, attrs, ctrl, transclud) {
                     },
                     post: function postLink(scope, element, attrs, ctrl, transclud) {
-                    	 
+
                     	scope.ngModel = scope.$parent.$eval(attrs.ngModel);
-                    	
+
                     	if(scope.ngModel==undefined){
                     		scope.$parent.$eval(attrs.ngModel+"={}");
                     		scope.ngModel = scope.$parent.$eval(attrs.ngModel);
-                    	} 
-                    	
+                    	}
+
                     	if(attrs.widget!=undefined){
                     		scope.isWidget=true;
                     		scope.initModel();
                     	}else{
                     		scope.isWidget=false;
                     	}
-                    
+
                     	 transclude(scope, function (clone, scope) {
                              angular.element(element[0].querySelector("md-content")).prepend(clone);
                          });
-                    
+
                     }
                 };
 		   	}
@@ -72,7 +72,7 @@ angular.module('cockpitModule').directive('cockpitCrossCustomWidgetConfigurator'
                  pre: function preLink(scope, element, attrs,ctrl, transclud) {
                  },
                  post: function postLink(scope, element, attrs,ctrl, transclud) {
-                	 
+
                 	ctrl.labelWidget = scope.$parent.$eval(attrs.label);
                 	ctrl.layoutType = attrs.layout;
                 	 if(ctrl.layoutType==undefined){
@@ -97,11 +97,56 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.localDataset = {};
 	$scope.crossNavigations = cockpitModule_crossServices.getCrossList();
 	$scope.chartProperties=[];
-	
+	$scope.outputParametersType=
+		[{"value": "static", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.static")},
+		{"value": "dynamic", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.dynamic")},
+		{"value": "selection", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.selection")}
+		];
+
+	var selectionsObj = cockpitModule_template.getSelections();
+	$scope.datasetSelections = [];
+	$scope.columnSelections = {};
+	for(var i =0;i<selectionsObj.length;i++){
+		var ds = selectionsObj[i].ds;
+		var columnName = selectionsObj[i].columnName;
+		if(!$scope.datasetSelections.includes(ds)){
+			$scope.datasetSelections.push(ds);
+		}
+		if($scope.columnSelections[ds]==undefined){
+			$scope.columnSelections[ds] = [];
+		}
+		$scope.columnSelections[ds].push(columnName);
+
+	}
+
+	$scope.outputParametersList = [];
+
+	var docOutParList = cockpitModule_properties.OUTPUT_PARAMETERS;
+	if($scope.cockpitCross.outputParametersList == undefined){
+		$scope.cockpitCross.outputParametersList = [];
+	}
+
+	for(var propt in docOutParList){
+		var dataType = docOutParList[propt];
+		var typeToPut="text";
+		if(dataType.includes(".date")){
+			typeToPut = "date";
+		}
+		else if(dataType.includes(".num")){
+			typeToPut = "number";
+		}
+
+		var par = {"name" : propt, "enabled" : false, "type" : undefined, "dataset" : undefined, "column" : undefined, "dataType": typeToPut};
+		$scope.outputParametersList.push(par);
+
+	}
+
+
+
 	$scope.crossTable = $scope.model != undefined && $scope.model.type === 'table';
-	
-	$scope.crossChart = $scope.localModel != undefined && $scope.localModel.wtype === 'chart'; 
-	
+
+	$scope.crossChart = $scope.localModel != undefined && $scope.localModel.wtype === 'chart';
+
 	if($scope.crossChart){
 		var chart = $scope.localModel.chartTemplate.CHART;
 		if(!chart){
@@ -113,19 +158,20 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		   angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
 	   }else{
 		   $scope.model.dataset= {};
-		   //angular.copy([], $scope.model.dataset.metadata.fieldsMeta); 
+		   //angular.copy([], $scope.model.dataset.metadata.fieldsMeta);
 	   }
 	}
 	angular.copy(cockpitModule_template.configuration.cross,$scope.cockpitCross);
-	
+
 	$scope.initModel=function(){
 		angular.copy(angular.merge({},$scope.cockpitCross,$scope.ngModel),$scope.ngModel)
 	}
-	
+
 	$scope.resetCross=function(){
 		$scope.ngModel.cross=$scope.cockpitCross;
 		angular.copy($scope.cockpitCross,$scope.ngModel.cross);
 	}
+
 }
 
 })();
