@@ -614,10 +614,14 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			params+="&nearRealtime=true";
 		}
 
-		var filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(dataset.label));
-		if(Object.keys(filtersToSend).length == 0){
-			filtersToSend = cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
+		var filtersToSend = {};
+		if(ngModel.type!="selector"){
+			 filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(dataset.label));
+			if( Object.keys(filtersToSend).length == 0){
+				filtersToSend = cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
+			}
 		}
+		
 
 		var limitRows;
 		if(ngModel.limitRows){
