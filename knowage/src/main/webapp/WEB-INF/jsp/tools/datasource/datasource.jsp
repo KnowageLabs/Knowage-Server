@@ -96,14 +96,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<input ng-model="selectedDataSource.descr"
 												ng-change="setDirty()" ng-maxlength="160" ng-readonly="readOnly">
 										</md-input-container>
-
-
-
+										
 									<!-- DIALECT -->
 										<md-input-container  class="md-block" >
 											<label>{{translate.load("sbi.datasource.dialect")}}</label>
-											<md-select  ng-disabled="readOnly" ng-change="setDirty()"  aria-label="aria-label"	ng-model="selectedDataSource.dialectId" >
-												<md-option	required ng-repeat="d in dialects" value="{{d.VALUE_ID}}">{{d.VALUE_DS}} </md-option>
+											<md-select  required ng-disabled="readOnly" ng-change="setDirty()"  aria-label="aria-label"	ng-model="selectedDataSource.dialectId" >
+												<md-option ng-repeat="d in dialects" value="{{d.VALUE_ID}}">{{d.VALUE_DS}} </md-option>
 											</md-select>
 											<div ng-messages="dataSourceForm.dialectId.$error" ng-show="!selectedDataSource.dialectId">
 			          							<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
