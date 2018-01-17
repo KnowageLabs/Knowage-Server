@@ -28,11 +28,17 @@
             <div layout="row">
                 <md-input-container flex>
                     <label>{{translate.load("kn.qbe.calculatedfield.name")}}</label>
-                    <input name="name" type="text" ng-model="alias" required>
+                    <input name="name" type="text" ng-model="calculatedField.alias" required>
+                </md-input-container>
+                <md-input-container flex>
+                    <label>{{translate.load("kn.qbe.calculatedfield.type")}}</label>
+                    <md-select ng-model="calculatedField.type" required>
+                    	<md-option ng-repeat="type in availableTypes" value="{{type}}">{{type}}</md-option>
+                    </md-select>
                 </md-input-container>
             </div>
             <md-menu-bar>
-                <md-menu ng-repeat="type in availableTypes">
+                <md-menu ng-repeat="type in availableFormulaTypes">
                     <button ng-click="$mdOpenMenu()">{{type}}</button>
                     <md-menu-content>
                         <md-menu-item ng-repeat="formula in functions" ng-if="formula.type == type">
@@ -48,7 +54,7 @@
             </md-menu-bar>
 
             <div layout="row">
-                <textarea id="formula" ui-codemirror="editorOptions" ng-model="formula.text" ui-refresh="reloadCodemirror" flex></textarea>
+                <textarea id="formula" ui-codemirror="editorOptions" ng-model="calculatedField.expression" ui-refresh="reloadCodemirror" flex></textarea>
             </div>
 
         </md-card-content>

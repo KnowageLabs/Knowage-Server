@@ -37,8 +37,12 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
         replace: true,
         controller: function($scope, $attrs) {
         	$scope.translate = sbiModule_translate;
-            $scope.formula = { "text": "", "json": "" };
-            $scope.availableTypes = [];
+            $scope.availableFormulaTypes = [];
+            $scope.availableTypes = ['number','string'];
+            $scope.calculatedField = {
+        		"filedType":"inLineCalculatedField"
+            }
+            
 
             //fix for codemirror to refresh when opened
             $timeout(function() {
@@ -48,7 +52,7 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
             if (!$scope.selectedEntity) $scope.selectedEntity = $scope.entities[0];
 
             angular.forEach($scope.functions, function(value, key) {
-                if ($scope.availableTypes.indexOf(value.type) === -1) $scope.availableTypes.push(value.type);
+                if ($scope.availableFormulaTypes.indexOf(value.type) === -1) $scope.availableFormulaTypes.push(value.type);
             });
 
             //codemirror initializer
@@ -129,12 +133,8 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
 
             //change selected entity for the fields list
             $scope.changeSelectedEntity = function() {
-                $scope.formula.text = "";
+                $scope.calculatedField.expression = "";
             }
-
-            $scope.$watch('formula.text',function(newValue, oldValue){
-            	angular.copy(newValue,$scope.calculatedField);
-            })
 
         }
     };
