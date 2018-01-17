@@ -291,8 +291,9 @@ angular.module('metaManager').filter('filterByCategory', function(sbiModule_user
 	return function(items, categoryName) {
 		var filtered = [];
 		angular.forEach(items, function(item) {
-			if (angular.equals(item.key.split(".")[0], categoryName)) {
-				if (categoryName == "behavioural" || item.key == "structural.attribute"){
+			var key = Object.keys(item)[0];
+			if (angular.equals(key.split(".")[0], categoryName)) {
+				if (categoryName == "behavioural" || key == "structural.attribute"){
 					if (showDataProfiling == true) {
 						filtered.push(item);
 					}
@@ -310,8 +311,9 @@ angular.module('metaManager').filter('filterByProductType', function(sbiModule_c
 
 		var showSpatialDimension = sbiModule_user.functionalities.indexOf("SpatialDimension")>-1;
 		var showTemporalDimension = sbiModule_user.functionalities.indexOf("TemporalDimension")>-1;
-
-		if(angular.equals(prop.value.propertyType.name,"Type")){
+		
+		var key = Object.keys(prop)[0];
+		if(angular.equals(prop[key].propertyType.name,"Type")){
 			if(sbiModule_config.productTypes.indexOf("KnowageLI")==-1 || !showSpatialDimension){
 				//remove spatial dimension
 				var sdInd=items.indexOf("geographic dimension");
@@ -349,7 +351,8 @@ angular.module('metaManager').service("parametersBuilder", function() {
 		var propertiesCat = [];
 		for (var i = 0; i < properties.length; i++) {
 			var tmpProp = properties[i];
-			var struct = tmpProp.key.split(".");
+			var key = Object.keys(tmpProp)[0];
+			var struct = key.split(".");
 			if (propertiesCat.indexOf(struct[0]) == -1) {
 				propertiesCat.push(struct[0]);
 			}
