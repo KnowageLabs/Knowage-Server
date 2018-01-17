@@ -126,19 +126,6 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 				}
 			}
 
-			// JSONObject associationGroupObjectWithoutParams = new JSONObject(associationGroupString);
-			/*
-			 * JSONArray associationsWithoutParams = associationGroupObjectWithoutParams.optJSONArray("associations"); if (associationsWithoutParams != null) {
-			 * for (int associationIndex = associationsWithoutParams.length() - 1; associationIndex >= 0; associationIndex--) { JSONObject association =
-			 * associationsWithoutParams.getJSONObject(associationIndex); JSONArray fields = association.getJSONArray("fields"); for (int fieldIndex =
-			 * fields.length() - 1; fieldIndex >= 0; fieldIndex--) { JSONObject field = fields.getJSONObject(fieldIndex); String column =
-			 * field.getString("column"); String store = field.getString("store"); String type = field.optString("type"); if
-			 * (("document".equalsIgnoreCase(type)) || (column.startsWith("$P{") && column.endsWith("}")) || dataSetDAO.loadDataSetByLabel(store).isRealtime())
-			 * { fields.remove(fieldIndex); } } } }
-			 */
-			// AssociationGroup associationGroupWithoutParams = serializer.deserialize(associationGroupObjectWithoutParams);
-			// fixAssociationGroup(associationGroupWithoutParams);
-
 			// parse dataset parameters
 			Map<String, Map<String, String>> datasetParameters = new HashMap<>();
 			if (datasetsString != null && !datasetsString.isEmpty()) {
@@ -168,9 +155,6 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 					nearRealtimeDatasets.add(jsonArray.getString(i));
 				}
 			}
-
-			// AssociationAnalyzer analyzerWithoutParams = new AssociationAnalyzer(associationGroupWithoutParams.getAssociations());
-			// analyzerWithoutParams.process();
 
 			AssociationAnalyzer analyzer = new AssociationAnalyzer(associationGroup.getAssociations());
 			analyzer.process();

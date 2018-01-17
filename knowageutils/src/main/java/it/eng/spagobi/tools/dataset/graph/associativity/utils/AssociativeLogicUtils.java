@@ -61,6 +61,7 @@ public class AssociativeLogicUtils {
 		for (int i = 0; i < values.length; i++) {
 			Tuple tuple = new Tuple(1);
 			tuple.add(values[i]);
+			tuples.add(tuple);
 		}
 		return tuples;
 	}
