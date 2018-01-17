@@ -103,21 +103,31 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		{"value": "selection", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.selection")}
 		];
 
-	var selectionsObj = cockpitModule_template.getSelections();
-	$scope.datasetSelections = [];
-	$scope.columnSelections = {};
-	for(var i =0;i<selectionsObj.length;i++){
-		var ds = selectionsObj[i].ds;
-		var columnName = selectionsObj[i].columnName;
-		if(!$scope.datasetSelections.includes(ds)){
-			$scope.datasetSelections.push(ds);
-		}
-		if($scope.columnSelections[ds]==undefined){
-			$scope.columnSelections[ds] = [];
-		}
-		$scope.columnSelections[ds].push(columnName);
+//	var selectionsObj = cockpitModule_template.getSelections();
+//	$scope.datasetSelections = [];
+//	$scope.columnSelections = {};
+//	for(var i =0;i<selectionsObj.length;i++){
+//		var ds = selectionsObj[i].ds;
+//		var columnName = selectionsObj[i].columnName;
+//		if(!$scope.datasetSelections.includes(ds)){
+//			$scope.datasetSelections.push(ds);
+//		}
+//		if($scope.columnSelections[ds]==undefined){
+//			$scope.columnSelections[ds] = [];
+//		}
+//		$scope.columnSelections[ds].push(columnName);
+//
+//	}
 
+	//$scope.cockpitDatasets = cockpitModule_template.configuration.datasets;
+	$scope.cockpitDatasets = cockpitModule_datasetServices.datasetList;
+	if($scope.cockpitDatasets == undefined) $scope.cockpitDatasets = [];
+	$scope.allCockpitDatasetsColumns = {};
+	for(var i = 0; i < $scope.cockpitDatasets.length;i++){
+		var meta = $scope.cockpitDatasets[i].metadata.fieldsMeta;
+		$scope.allCockpitDatasetsColumns[$scope.cockpitDatasets[i].label] = meta;
 	}
+
 
 	$scope.outputParametersList = [];
 
@@ -171,6 +181,25 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		$scope.ngModel.cross=$scope.cockpitCross;
 		angular.copy($scope.cockpitCross,$scope.ngModel.cross);
 	}
+
+	$scope.resetOutputParameterCross = function(outputParameter){
+		var outputParametersList = $scope.ngModel.cross.outputParametersList;
+		var outPar = outputParametersList[outputParameter.name];
+		if(outPar != undefined){
+			outPar.column="";
+			outPar.dataset="";
+			outPar.type="";
+			outPar.value="";
+			outPar.enabled=false;
+		}
+	}
+
+//	$scope.changeCurrentDatasetColumns=function(dataset){
+//		var meta = $scope.allCockpitDatasetsColumns[dataset.ds];
+//		$scope.currentDatasetsColumns = meta;
+//	}
+
+
 
 }
 

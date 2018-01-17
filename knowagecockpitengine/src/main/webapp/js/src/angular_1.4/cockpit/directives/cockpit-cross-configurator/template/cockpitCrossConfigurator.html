@@ -4,7 +4,7 @@
 			<md-card-title-text layout="row">
 				<span flex class="md-headline"></span>
 				<md-icon md-font-icon="fa fa-eraser" 
-						ng-show="isWidget && (ngModel.cross!=cockpitCross || !angular.equals(ngModel.cross,cockpitCross))" ng-click="resetCross()"></md-icon>
+						ng-show="isWidget" ng-click="resetCross()"></md-icon>
 			</md-card-title-text>
 		</md-card-title>
 		<md-card-content layout="row" layout-align="space-around center">
@@ -63,6 +63,7 @@
           	ng-show="ngModel.cross.outputParameter != outputParameter.name"
           	ng-repeat="outputParameter in outputParametersList">
            
+
            <!-- enable -->
            <md-input-container class="md-block" flex=20> 
             	<md-checkbox ng-model="ngModel.cross.outputParametersList[outputParameter.name].enabled">
@@ -71,7 +72,7 @@
 			</md-input-container>
 
 			<!-- type-->
-			<md-input-container class="md-block" flex=30 
+			<md-input-container class="md-block" flex=25 
 				ng-if="ngModel.cross.outputParametersList[outputParameter.name].enabled==true">
 				<label>{{translate.load("sbi.cockpit.cross.outputParameter.type")}}</label>
 				<md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].type" >
@@ -136,17 +137,24 @@
 				ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'selection' && ngModel.cross.outputParametersList[outputParameter.name].enabled==true">
 				<label>{{translate.load("sbi.cockpit.cross.outputParameter.dataset")}}</label>
 				<md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].dataset" >
-					<md-option ng-repeat="ds in datasetSelections " ng-value="ds">{{ds}}</md-option>
+					<md-option ng-repeat="ds in cockpitDatasets" ng-value="ds.label" ng-selected="ds.label == ngModel.cross.outputParametersList[outputParameter.name].dataset">{{ds.label}}</md-option>
 				</md-select>
 			</md-input-container>
 
 			<md-input-container class="md-block" flex=25
 				ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'selection' && ngModel.cross.outputParametersList[outputParameter.name].enabled==true">
 				<label>{{translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
+				
 				<md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].column" >
-					<md-option ng-repeat="c in columnSelections[ngModel.cross.outputParametersList[outputParameter.name].dataset]" ng-value="c">{{c}}</md-option>
+					<md-option ng-repeat="c in allCockpitDatasetsColumns[ngModel.cross.outputParametersList[outputParameter.name].dataset]" ng-value="c.name"  ng-selected="c.name == ngModel.cross.outputParametersList[outputParameter.name].column" >{{c.name}}</md-option>
 				</md-select>
-			</md-input-container> 
+			</md-input-container>
+			  
+				<md-button  flex=5  class="md-icon-button">
+            		<md-icon md-font-icon="fa fa-eraser" ng-click="resetOutputParameterCross(outputParameter)"></md-icon>
+            		<md-tooltip md-delay="1000" >Clear Filter</md-tooltip>
+            	</md-button>      	
+			  
 		</md-card-content>	
 		</div>
 	</md-card>
