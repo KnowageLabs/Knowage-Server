@@ -587,6 +587,7 @@
 			background-size:30px 30px;
 			min-height: 100% !important;
 			border: $cockpitDefaultBorder;
+			background-color: white;
 			background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 30px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 30px);
 			.showActionButtonHandler {
 				opacity: .4 !important;
@@ -931,12 +932,14 @@
 
 	md-tabs.cockpitSheetTabs>md-tabs-wrapper{
 		margin-left: 50px;
+		width: calc(100% - 50px);
 	}
 	
 	.md-button.addSheetTabButton{
 	    bottom: 0;
     	position: absolute;
     	min-width: 40px;
+    	z-index: 9;
     	}
     	
 	.selectedImage{
@@ -1565,7 +1568,7 @@
 		md-tabs-content-wrapper {
 			bottom: 0;
 			md-tab-content{
-				overflow-x: hidden;
+				overflow-x: auto;
 			}
 		}
 		md-ink-bar {
@@ -1597,6 +1600,13 @@
 				md-tab-item {
 					display: none;
 				}
+			}
+		}
+		md-prev-button, md-next-button{
+			background-color: $baseColor;
+			border-radius: 4px;
+			md-icon {
+				color: $lightTextColor;
 			}
 		}
 	}
