@@ -297,7 +297,7 @@ angular.module('cockpitModule')
 				item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
 				item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
 				item.ds=$scope.ngModel.dataset.name;
-				item.value=angular.copy($scope.parameter);
+				item.value=angular.copy($scope.multiValue);
 				$rootScope.$broadcast('DELETE_SELECTION',item);
 			}
 			
