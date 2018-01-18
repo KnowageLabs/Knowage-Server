@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -216,10 +217,28 @@ public class SolrDataSet extends RESTDataSet {
 
 		for (Iterator<Couple<String, String>> iterator = requestHeaders.iterator(); iterator.hasNext();) {
 			Couple<String, String> key = iterator.next();
+			String values = key.getSecond();
 			address.append("&");
 			address.append(key.getFirst());
 			address.append("=");
-			address.append(key.getSecond());
+			if (values.indexOf(",") > 0) {// for multivalue parameters
+				int fieldEnd = values.indexOf(":") + 1;
+				String fqKey = values.substring(0, fieldEnd);
+				StringTokenizer stk = new StringTokenizer(values.substring(fieldEnd), ",");
+				while (stk.hasMoreTokens()) {
+					String value = stk.nextToken();
+					address.append(fqKey);
+					address.append(value);
+					address.append(" OR ");
+				}
+				if (address.length() > 3) {
+					address = address.delete(address.length() - 3, address.length());
+				}
+
+			} else {
+
+				address.append(key.getSecond());
+			}
 		}
 
 		logger.debug("Address with additional parameters  [" + address + "]");

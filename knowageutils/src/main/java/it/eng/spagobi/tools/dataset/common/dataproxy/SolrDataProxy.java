@@ -143,6 +143,7 @@ public class SolrDataProxy extends RESTDataProxy {
 				List<NameValuePair> query = getQuery();
 
 				String tempAddress = this.address.replaceAll(" ", "%20");
+				System.out.println(setPaginationParameters(tempAddress, dataReader));
 
 				Response response = RestUtilities.makeRequest(this.method, setPaginationParameters(tempAddress, dataReader), this.requestHeaders,
 						this.requestBody, query);

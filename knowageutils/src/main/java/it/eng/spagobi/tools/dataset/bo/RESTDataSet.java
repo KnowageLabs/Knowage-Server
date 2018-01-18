@@ -329,8 +329,8 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 		for (int i = 0; i < r.length(); i++) {
 			JSONObject jo = r.getJSONObject(i);
-			String key = jo.keys().next();
-			String value = jo.getString(key);
+			String key = jo.getString("name");
+			String value = jo.getString("value");
 			if (resolveParams) {
 				key = parametersResolver.resolveAll(key, this);
 				value = parametersResolver.resolveAll(value, this);
