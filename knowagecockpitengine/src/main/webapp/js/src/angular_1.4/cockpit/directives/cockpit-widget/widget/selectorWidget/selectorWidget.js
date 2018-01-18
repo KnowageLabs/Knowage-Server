@@ -260,7 +260,7 @@ angular.module('cockpitModule')
 			if(!$scope.ngModel.dataset.name){
 				$scope.ngModel.dataset.name = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).name;
 			}
-			$scope.filtersParams = angular.copy($scope.cockpitModule_widgetSelection.getCurrentFilters($scope.ngModel.dataset.name));		
+			$scope.filtersParams = angular.copy($scope.cockpitModule_widgetSelection.getCurrentSelections($scope.ngModel.dataset.name));		
 			if(Object.keys($scope.filtersParams).length == 0){
 				$scope.filtersParams = $scope.cockpitModule_widgetSelection.getCurrentFilters($scope.ngModel.dataset.name);
 			}
