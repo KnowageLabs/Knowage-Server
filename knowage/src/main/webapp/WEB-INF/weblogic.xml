@@ -1,21 +1,29 @@
 <weblogic-web-app xmlns="http://xmlns.oracle.com/weblogic/weblogic-web-app">
 	<container-descriptor>
-	
-
-	
 		<servlet-reload-check-secs>1</servlet-reload-check-secs>
 
 		<show-archived-real-path-enabled>true</show-archived-real-path-enabled>
 		<prefer-application-packages>
 			<package-name>org.hibernate.*</package-name>
 			<package-name>org.sl4j.*</package-name>
+			<package-name>org.jboss.*</package-name>
+			<package-name>javax.validation.*</package-name>
+			<package-name>javax.validation.spi.*</package-name>
+			<!--<package-name>javax.ws.rs.*</package-name>-->
 		</prefer-application-packages>
 	</container-descriptor>
+
+
+    <library-ref>
+       <library-name>jax-rs</library-name>
+       <specification-version>2.0</specification-version>
+       <exact-match>false</exact-match>
+    </library-ref>
+
 
   <jsp-descriptor>
     <page-check-seconds>1</page-check-seconds>
   </jsp-descriptor>
-
 	
 	<resource-description>  
 		<res-ref-name>resource_path</res-ref-name>  
