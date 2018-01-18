@@ -185,7 +185,7 @@ angular.module('cockpitModule')
 					break;
 				}
 				var item = {};
-				item.aggregated=false;
+				item.aggregated=$scope.aggregated;
 				item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
 				item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
 				item.ds=$scope.ngModel.dataset.name;
@@ -260,8 +260,10 @@ angular.module('cockpitModule')
 			if(!$scope.ngModel.dataset.name){
 				$scope.ngModel.dataset.name = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).name;
 			}
+			$scope.aggregated = true;
 			$scope.filtersParams = angular.copy($scope.cockpitModule_widgetSelection.getCurrentSelections($scope.ngModel.dataset.name));		
 			if(Object.keys($scope.filtersParams).length == 0){
+				$scope.aggregated = false;
 				$scope.filtersParams = $scope.cockpitModule_widgetSelection.getCurrentFilters($scope.ngModel.dataset.name);
 			}
 			if(nature == 'gridster-resized' || nature == 'fullExpand' || nature == 'resize'){
@@ -297,7 +299,7 @@ angular.module('cockpitModule')
 				$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,$scope.multiValue);
 			} else {
 				var item = {};
-				item.aggregated=false;
+				item.aggregated=$scope.aggregated;
 				item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
 				item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
 				item.ds=$scope.ngModel.dataset.name;
@@ -311,7 +313,7 @@ angular.module('cockpitModule')
 		$scope.toggleRadioParameter = function(parVal ) {
 			$scope.hasDefaultValue = false;
 			var item = {};
-			item.aggregated=false;
+			item.aggregated=$scope.aggregated;
 			item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
 			item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
 			item.ds=$scope.ngModel.dataset.name;
@@ -335,7 +337,7 @@ angular.module('cockpitModule')
 			
 			
 			var item = {};
-			item.aggregated=false;
+			item.aggregated=$scope.aggregated;
 			item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
 			item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
 			item.ds=$scope.ngModel.dataset.name;
@@ -380,6 +382,22 @@ angular.module('cockpitModule')
 				return $scope.multiValue.indexOf(parVal) > -1;
 			}			
 	    };
+	    $scope.disableSingleButton = function (record,model){
+	    	if(Array.isArray(model)){
+	    		if( $scope.multiValue.indexOf(record) ==-1 && $scope.multiValue.length > 0) return true;
+	    		
+	    	} else {
+	    		if($scope.parameter!="" && $scope.parameter!=record ) return true;
+	    	}
+	    }
+	    $scope.disableMultiButton = function (record,model){
+	    	if(Array.isArray(model)){
+	    		if( $scope.multiCombo.selected.indexOf(record) ==-1 && $scope.multiCombo.selected.length > 0) return true;
+	    		
+	    	} else {
+	    		if($scope.parameter!="" && $scope.parameter!=record ) return true;
+	    	}
+	    }
 	};
 	
 	function selectorWidgetEditControllerFunction(
