@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	angular.module('sbiModule')
 	
-	.service('sbiModule_action_builder',function(sbiModule_action){
+	.service('sbiModule_action_builder',function(sbiModule_action,$httpParamSerializer){
 		
 		return {
 				
@@ -40,50 +40,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 				}
 		
+		function GetActionBuilder(){
+			this.actionName="";
+			this.queryParams={};
+			this.conf={};
+			this.execute;
+			this.executeAction = function(){
+			return	this.execute(this.actionName,this.queryParams,this.conf);
+			}
+		}
 		
+		function PostActionBuilder(){
+			this.actionName="";
+			this.queryParams={};
+			this.formParams={};
+			this.item={},
+			this.conf={};
+			this.execute;
+			this.transformFormParams = function(){
+				
+					this.item = this.serializeParams(this.formParams);
+					this.conf.headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+					this.conf.transformRequest = function(obj) {
+				        var str = [];
+				        for(var p in obj)
+				        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+				        return str.join("&");
+				    }
+				
+			}
+			
+			this.isFormParamsEmtpy = function(){
+				return angular.equals(this.formParams, {});
+			}
+			
+			this.serializeParams = function(paramObj){
+				var obj = {}
+				angular.forEach(paramObj,function(value,key){
+					this[key] = angular.toJson(value);
+				},obj)
+				
+				return obj;
+			}
+			
+			
+			this.executeAction = function(){
+				if(!this.isFormParamsEmtpy())this.transformFormParams();
+				return	this.execute(this.actionName,this.queryParams,this.item,this.conf);
+			}
+		}
 	    
 	})
 	
-	function GetActionBuilder(){
-		this.actionName="";
-		this.queryParams={};
-		this.conf={};
-		this.execute;
-		this.executeAction = function(){
-		return	this.execute(this.actionName,this.queryParams,this.conf);
-		}
-	}
 	
-	function PostActionBuilder(){
-		this.actionName="";
-		this.queryParams={};
-		this.formParams={};
-		this.item={},
-		this.conf={};
-		this.execute;
-		this.transformFormParams = function(){
-			
-				this.item = this.formParams;
-				this.conf.headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-				this.conf.transformRequest = function(obj) {
-			        var str = [];
-			        for(var p in obj)
-			        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-			        return str.join("&");
-			    }
-			
-		}
-		
-		this.isFormParamsEmtpy = function(){
-			return angular.equals(this.formParams, {});
-		}
-		
-		
-		this.executeAction = function(){
-			if(!this.isFormParamsEmtpy())this.transformFormParams();
-			return	this.execute(this.actionName,this.queryParams,this.item,this.conf);
-		}
-	}
 	
 
 </script>
