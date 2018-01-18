@@ -317,7 +317,14 @@ angular.module('cockpitModule')
 			item.ds=$scope.ngModel.dataset.name;
 		
 			if(Array.isArray($scope.parameter)){
+				var index = $scope.parameter.indexOf(parVal);
 				
+				if (index > -1) {
+					$scope.parameter.splice(index, 1);
+				} else {
+					$scope.parameter.push(parVal);
+					
+				}
 				
 				if($scope.parameter.length>0){
 					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,angular.copy($scope.parameter));
