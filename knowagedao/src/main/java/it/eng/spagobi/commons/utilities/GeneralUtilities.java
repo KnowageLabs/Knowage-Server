@@ -17,6 +17,26 @@
  */
 package it.eng.spagobi.commons.utilities;
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
@@ -40,26 +60,6 @@ import it.eng.spagobi.tools.dataset.utils.ParamDefaultValue;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.file.FileUtils;
-
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * Contains some SpagoBI's general utilities.
@@ -316,14 +316,28 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			try {
 				logger.debug("Trying to recover SpagoBiHost from ConfigSingleton");
 				SingletonConfig spagoConfig = SingletonConfig.getInstance();
-				String sbTmp = spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_HOST_JNDI");
-				if (sbTmp != null) {
-					tmp = readJndiResource(sbTmp);
+
+				String systemHostVar = spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_HOST_SYSTEMVAR_JNDI");
+				if (systemHostVar == null || systemHostVar.length() == 0) {
+					String sbTmp = spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_HOST_JNDI");
+					if (sbTmp != null) {
+						tmp = readJndiResource(sbTmp);
+					}
+					if (tmp == null) {
+						logger.debug("SPAGOBI_HOST not set, using the default value ");
+						tmp = "http://localhost:8080";
+					}
+				} else {
+					logger.debug("load the host url from the db");
+					if (systemHostVar != null) {
+						tmp = System.getProperty(systemHostVar);
+					}
+					if (tmp == null) {
+						logger.debug("Using directly value from the db");
+						tmp = systemHostVar;
+					}
 				}
-				if (tmp == null) {
-					logger.debug("SPAGOBI_HOST not set, using the default value ");
-					tmp = "http://localhost:8080";
-				}
+
 			} catch (Exception e) {
 				logger.error("Error while recovering SpagoBI host url", e);
 				throw new SpagoBIRuntimeException("Error while recovering SpagoBI host url", e);
@@ -561,8 +575,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			if (country == null) {
 				format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + language.toUpperCase() + ".extJsFormat");
 			} else {
-				format = SingletonConfig.getInstance().getConfigValue(
-						"SPAGOBI.DATE-FORMAT-" + language.toUpperCase() + "_" + country.toUpperCase() + ".extJsFormat");
+				format = SingletonConfig.getInstance()
+						.getConfigValue("SPAGOBI.DATE-FORMAT-" + language.toUpperCase() + "_" + country.toUpperCase() + ".extJsFormat");
 			}
 		}
 		if (format == null) {
