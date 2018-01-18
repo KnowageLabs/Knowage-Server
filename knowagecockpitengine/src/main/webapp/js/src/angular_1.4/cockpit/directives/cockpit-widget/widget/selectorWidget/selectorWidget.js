@@ -147,21 +147,41 @@ angular.module('cockpitModule')
 			if($scope.selections.length==0){
 				$scope.hasDefaultValue = true;
 			}
-			
+			if( $scope.ngModel.settings.modalityValue=="multiValue"){
+				$scope.defaultValue = [];
+			} else {
+				$scope.defaultValue = "";
+			}
 			if($scope.hasDefaultValue && nature == "refresh"){
 				$scope.defaultValueString = true;
+				
 				switch($scope.ngModel.settings.defaultValue.toUpperCase()){
 				case 'FIRST':
-					$scope.defaultValue = $scope.datasetRecords.rows[0].column_1;
+					if(Array.isArray($scope.defaultValue)){
+						$scope.defaultValue.push( $scope.datasetRecords.rows[0].column_1)
+					} else {
+						$scope.defaultValue =  $scope.datasetRecords.rows[0].column_1;
+					}
+					
 					break;
 				case 'LAST':
-					$scope.defaultValue = $scope.datasetRecords.rows[$scope.datasetRecords.rows.length-1].column_1;
+					if(Array.isArray($scope.defaultValue)){
+						$scope.defaultValue.push($scope.datasetRecords.rows[$scope.datasetRecords.rows.length-1].column_1);
+					} else {
+						$scope.defaultValue =  $scope.datasetRecords.rows[$scope.datasetRecords.rows.length-1].column_1;
+					}
 					break;
 				case 'STATIC':
-					$scope.defaultValue = $scope.ngModel.settings.staticValue;
+					if(Array.isArray($scope.defaultValue)){
+						$scope.defaultValue.push($scope.ngModel.settings.staticValue)
+					} else {
+						$scope.defaultValue =  $scope.ngModel.settings.staticValue;
+					}
 					break;
 				default:
-					$scope.defaultValue = "";
+					if(!Array.isArray($scope.defaultValue)){
+						$scope.defaultValue = "";
+					} 
 					break;
 				}
 				var item = {};
