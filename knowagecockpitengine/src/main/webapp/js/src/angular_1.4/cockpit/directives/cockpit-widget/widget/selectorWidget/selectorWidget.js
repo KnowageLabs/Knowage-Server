@@ -64,7 +64,8 @@ angular.module('cockpitModule')
 			$scope.ngModel.dataset.isRealtime = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).isRealtime;
 			$scope.ngModel.dataset.name = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).name;
 		}
-		$scope.parameter = "";
+		$scope.multiCombo = {};
+		$scope.multiCombo.selected = [];
 		$scope.selectedTab = {'tab' : 0};
 		$scope.widgetIsInit=false;
 		$scope.totalCount = 0;
@@ -135,7 +136,6 @@ angular.module('cockpitModule')
 
 		$scope.selections = [];
 		var checkForSavedSelections = function (filtersParams,nature){
-
 			$scope.selections.length = 0;
 			if(filtersParams.hasOwnProperty($scope.ngModel.dataset.name)){
 				$scope.selections = filtersParams[$scope.ngModel.dataset.name][$scope.ngModel.content.selectedColumn.aliasToShow][0].split(",");
@@ -199,18 +199,17 @@ angular.module('cockpitModule')
 				$scope.defaultValue =  angular.copy($scope.selections); 
 			}
 		}
-		$scope.parameter = []
 		var checkInitialSettings = function () {
 			if($scope.ngModel.settings.modalityValue=="multiValue"){
 				
 				if($scope.ngModel.settings.modalityPresent=='COMBOBOX') {
-					if(Array.isArray($scope.parameter)){
-						$scope.parameter.length=0;
+					if(Array.isArray($scope.multiCombo.selected)){
+						$scope.multiCombo.selected.length=0;
 					
 					} else {
-						$scope.parameter = [];
+						delete $scope.multiCombo.selected ;
 					}
-					Array.prototype.push.apply($scope.parameter, $scope.defaultValue);
+					Array.prototype.push.apply($scope.multiCombo.selected, $scope.defaultValue);
 					
 				} else {
 					//multivalue list of checkboxes$scope.parameter.length=0;
@@ -232,12 +231,13 @@ angular.module('cockpitModule')
 			if($scope.ngModel.settings.modalityValue=="multiValue"){
 				
 				if($scope.ngModel.settings.modalityPresent=='COMBOBOX') {
-					if(Array.isArray($scope.parameter)){
-						$scope.parameter.length=0;
+					if(Array.isArray($scope.multiCombo.selected)){
+						$scope.multiCombo.selected.length=0;
+					
 					} else {
-						$scope.parameter = [];
+						delete $scope.multiCombo.selected ;
 					}
-					Array.prototype.push.apply($scope.parameter, $scope.defaultValue);
+					$scope.multiCombo.selected = $scope.defaultValue;
 				} else {
 					//multivalue list of checkboxes
 					$scope.multiValue.length=0;
@@ -267,7 +267,11 @@ angular.module('cockpitModule')
 			if(nature == 'gridster-resized' || nature == 'fullExpand' || nature == 'resize'){
 				return;
 			} 
-			$scope.datasetRecords = datasetRecords;
+			if(nature == "refresh"){
+				$scope.datasetRecords = datasetRecords;
+			}
+		
+			
 			checkForSavedSelections($scope.filtersParams,nature);
 			if(nature == "refresh"){
 				checkInitialSettings();
@@ -336,20 +340,20 @@ angular.module('cockpitModule')
 			item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
 			item.ds=$scope.ngModel.dataset.name;
 		
-			if(Array.isArray($scope.parameter)){
-				var index = $scope.parameter.indexOf(parVal);
+			if($scope.ngModel.settings.modalityValue=="multiValue"){
+				var index = $scope.multiCombo.selected.indexOf(parVal);
 				
 				if (index > -1) {
-					$scope.parameter.splice(index, 1);
+					$scope.multiCombo.selected.splice(index, 1);
 				} else {
-					$scope.parameter.push(parVal);
+					$scope.multiCombo.selected.push(parVal);
 					
 				}
 				
-				if($scope.parameter.length>0){
-					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,angular.copy($scope.parameter));
+				if($scope.multiCombo.selected.length>0){
+					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,angular.copy($scope.multiCombo.selected));
 				} else {
-					item.value=angular.copy($scope.parameter);
+					item.value=angular.copy($scope.multiCombo.selected);
 					$rootScope.$broadcast('DELETE_SELECTION',item);
 				}
 			} else {
