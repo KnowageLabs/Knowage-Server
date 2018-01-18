@@ -457,7 +457,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 		if($scope.selectedRole.hasOwnProperty("id")){
 
-			sbiModule_restServices.promisePut("2.0/roles", $scope.selectedRole.id , $scope.selectedRole)
+			sbiModule_restServices.promisePost("2.0/roles", $scope.selectedRole.id , $scope.selectedRole)
 			.then(function(response) {
 				$scope.rolesList = [];
 				$timeout(function(){
