@@ -99,7 +99,8 @@
 							&& getPropertyKey(prop)!='structural.attribute' 
 							&& getPropertyKey(prop)!='behavioural.notEnabledRoles'" ng-model="getPropertyAttributes(prop).value" ng-disabled="getPropertyKey(prop)=='physical.physicaltable'">
 							<!--profile attributes visibility -->
-							<md-select ng-model="getPropertyAttributes(prop).value" ng-if="getPropertyKey(prop)=='structural.attribute'" >							
+							<md-select ng-model="getPropertyAttributes(prop).value" ng-if="getPropertyKey(prop)=='structural.attribute'" >	
+								<md-option value=""></md-option>						
 								<md-option  ng-repeat="admissibleValue in sbiModule_config.profileAttributes  " value="{{admissibleValue}}" >
 									{{admissibleValue}}
 								</md-option>
@@ -109,7 +110,6 @@
 							<md-select ng-model="tmpRoleVisibility" ng-if="getPropertyKey(prop)=='behavioural.notEnabledRoles'" multiple 
 							 ng-init="tmpRoleVisibility=[];initRoleVisibility(tmpRoleVisibility,getPropertyAttributes(prop).value)"  
 							 md-on-close="buildRoleVisibility(tmpRoleVisibility,getPropertyAttributes(prop))">		
-							 
 								<md-option  ng-repeat="role in sbiModule_config.avaiableRoles track by $index" value="{{role}}" >
 									{{role}}
 								</md-option>
