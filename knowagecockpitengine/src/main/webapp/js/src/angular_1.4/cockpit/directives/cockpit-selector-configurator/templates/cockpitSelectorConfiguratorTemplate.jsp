@@ -16,18 +16,7 @@
 		              </md-card-title-text>
 		        </md-card-title>
 		        <md-card-content>
-					<md-input-container class="md-block" >
-						<label>{{translate.load("sbi.cockpit.widgets.selector.column");}}</label>
-		         		<md-select ng-model="model.content.selectedColumn" ng-model-options="{trackBy: '$value.alias'}" >
-		          			<md-option ng-repeat="column in model.content.copyColumnSelectedOfDataset" ng-value="column" >
-		               			{{column.alias}}
-		          			</md-option>
-		      			</md-select>
-		      			<div  ng-messages="selectorForm.lbl.$error" ng-show="!model.content.selectedColumn">
-							<div ng-message="required">{{translate.load("sbi.generic.reqired")}}</div>
-				 		</div>
-				    </md-input-container>
-				    <md-input-container  class="md-block" ng-required="true">
+					<md-input-container  class="md-block" ng-required="true">
 		      			<label>{{translate.load("sbi.cockpit.widgets.selector.column.label");}}</label>
 		         		<input ng-model="model.settings.label" ng-required="true">
 		         		<div  ng-messages="selectorForm.lbl.$error" ng-show="!model.settings.label">
