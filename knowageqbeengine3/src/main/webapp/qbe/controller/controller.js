@@ -34,13 +34,14 @@ angular
 		"sbiModule_action_builder",
 		"sbiModule_restServices",
 		"sbiModule_messaging",
+		"sbiModule_user",
 		"$mdDialog",
 		"$mdPanel",
 		"$q",
 		qbeFunction]);
 
 
-function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, $mdDialog ,$mdPanel,$q){
+function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, sbiModule_user, $mdDialog ,$mdPanel,$q){
 	$scope.translate = sbiModule_translate;
 	$scope.sbiModule_action_builder = sbiModule_action_builder;
 	var entityService = entity_service;
@@ -70,6 +71,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			$scope.bodySend.catalogue.push($scope.editQueryObj);
 		}
 		$scope.filters = $scope.editQueryObj.filters;
+		$scope.havings = $scope.editQueryObj.havings;
 		if(query_service.smartView){
 
 			var finalPromise = 	$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, false);
@@ -138,7 +140,8 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
          		    	"distinct":$scope.editQueryObj.distinct,
          		    	"group":query.fields[i].group,
          		    	"order":i+1,
-         		    	"filters": []
+         		    	"filters": [],
+         		    	"havings": []
          		    }
      			if(query.fields[i].temporal){
      				queryObject.temporal = query.fields[i].temporal;
@@ -440,11 +443,6 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     }];
 
     $scope.fieldsFunctions = [{
-    	 "label": "ranges",
-         "icon": "fa fa-sliders",
-         "action": function(item, event) {
-         }
-     	 }, {
          "label": "havings",
          "icon": "fa fa-check-square-o",
          "action": function(item, event) {
@@ -713,7 +711,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
             controller: function ($scope, $mdDialog) {
             	$scope.calculatedFieldOutput = new Object;
                 $scope.hide = function() {
-                	
+
                 	//parameters to add in the calculatedFieldOutput object to prepare it for the sending
                 	$scope.addedParameters = {
             			"alias":$scope.calculatedFieldOutput.alias,
@@ -722,9 +720,9 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
             			"expression":$scope.calculatedFieldOutput.expression
                 	}
                 	$scope.calculatedFieldOutput.id = $scope.addedParameters;
-                	
+
                 	$scope.calculatedFieldOutput.calculationDescriptor= $scope.addedParameters;
-                	
+
                 	$mdDialog.hide()};
                 $scope.cancel = function() {$mdDialog.cancel()};
             },
