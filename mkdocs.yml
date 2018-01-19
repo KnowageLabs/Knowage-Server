@@ -1,6 +1,7 @@
 site_name: Knowage 
 site_url: https://knowage.readthedocs.org
 repo_url: https://github.com/KnowageLabs/Knowage-Server.git
+google_analytics: ['UA-85046107-2', 'knowage.readthedocs.io']
 site_description: Knowage Documentation
 docs_dir: doc
 site_dir: html
