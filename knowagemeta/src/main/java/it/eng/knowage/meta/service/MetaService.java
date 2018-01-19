@@ -116,6 +116,7 @@ import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -1223,7 +1224,9 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	private void applyDiff(JSONObject jsonRoot, Model model) throws SpagoBIException, JsonProcessingException, IOException, JSONException {
 		if (jsonRoot.has("diff")) {
-			JsonNode patch = new ObjectMapper().readTree(jsonRoot.getString("diff"));
+			ObjectMapper mapper = new ObjectMapper();
+
+			JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
 			applyPatch(patch, model);
 		}
 	}
@@ -1370,6 +1373,26 @@ public class MetaService extends AbstractSpagoBIResource {
 	 */
 	private String cleanPath(String path) {
 		path = path.replaceAll("^/physicalModels", "/businessModels/0/tables").replaceAll("^/businessModels", "/businessModels/0/businessTables");
+		
+		/*
+		 * This regular expression will clean the path for editing properties of a model to
+		 * have something compatible with the xpath expression. I.e:
+		 * 
+		 * /businessModels/0/columns/0/properties/7/behavioural.notEnabledRoles/value
+		 * 
+		 * will be changed to:
+		 * 
+		 * /businessModels/0/columns/0/properties/7/value/value
+		 * 
+		 * So the property name is replaced by "value"
+		 *  
+		 */
+		if (path.contains("properties")) {
+			String regex = "(?<=properties\\/\\d\\/).*?(?=\\/value)";
+			Pattern pattern = Pattern.compile(regex);
+			Matcher matcher = pattern.matcher(path);
+			path = matcher.replaceAll("value");
+		}
 		Pattern p = Pattern.compile("(/)(\\d+)");
 		Matcher m = p.matcher(path);
 		StringBuffer s = new StringBuffer();

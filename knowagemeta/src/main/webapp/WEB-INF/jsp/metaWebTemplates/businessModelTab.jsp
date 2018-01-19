@@ -107,7 +107,8 @@
 							<!--profile role visibility -->
 							<md-select ng-model="tmpRoleVisibility" ng-if="getPropertyKey(prop)=='behavioural.notEnabledRoles'" multiple 
 							 ng-init="tmpRoleVisibility=[];initRoleVisibility(tmpRoleVisibility,getPropertyAttributes(prop).value)"  
-							 md-on-close="buildRoleVisibility(tmpRoleVisibility,getPropertyAttributes(prop))">				
+							 md-on-close="buildRoleVisibility(tmpRoleVisibility,getPropertyAttributes(prop))">		
+							 
 								<md-option  ng-repeat="role in sbiModule_config.avaiableRoles track by $index" value="{{role}}" >
 									{{role}}
 								</md-option>
