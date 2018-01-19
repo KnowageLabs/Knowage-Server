@@ -496,6 +496,12 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 
 	}
+	
+	this.clearAllSelections = function(){
+		angular.forEach(cockpitModule_template.configuration.filters,function(value, key){
+			delete cockpitModule_template.configuration.filters[key];
+		});
+	}
 
 
 

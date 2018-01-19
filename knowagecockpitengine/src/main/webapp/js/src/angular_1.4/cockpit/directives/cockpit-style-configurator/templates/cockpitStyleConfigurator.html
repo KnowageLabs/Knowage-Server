@@ -2,6 +2,55 @@
 	<md-card>
 		<md-card-title>
 			<md-card-title-text layout="row">
+				<span flex class="md-headline">{{translate.load("sbi.cockpit.style.titles")}}</span>
+				<md-icon md-font-icon="fa fa-eraser" ng-if="isWidget && (ngModel.titles!=cockpitStyle.titles || ngModel.headerHeight || !angular.equals(ngModel.title,cockpitStyle.title))" ng-click="resetTitlesStyle()"></md-icon>
+			</md-card-title-text>
+		</md-card-title>
+		<md-card-content layout="row" layout-align="space-around center">
+			<md-checkbox ng-model="ngModel.titles" flex=20 ng-click="toggleTitle()">
+				{{translate.load("sbi.cockpit.style.titles.show")}}
+			</md-checkbox>
+			<div flex layout="column">
+				<div layout="row">
+					<md-input-container class="md-block" flex>
+						<label>Label</label>
+						<input ng-model="ngModel.title.label" type="text" ng-disabled="!ngModel.titles">
+					</md-input-container>
+					<md-input-container class="md-block" flex>
+						<label>{{::translate.load("sbi.cockpit.style.titles.font.size")}}</label>
+						<md-select ng-model="ngModel.title['font-size']" ng-disabled="!ngModel.titles">
+							<md-option ng-repeat="fs in cockpitModule_generalOptions.fontSizeDimension" ng-value="fs.value">{{fs.label}}</md-option>
+						</md-select>
+					</md-input-container>
+					<md-input-container class="md-block" flex>
+						<label>{{::translate.load("sbi.cockpit.style.titles.font.weight")}}</label>
+						<md-select ng-model="ngModel.title['font-weight']" ng-disabled="!ngModel.titles">
+							<md-option ng-repeat="fw in cockpitModule_generalOptions.fontWeight" ng-value="fw.value">{{fw.label}}</md-option>
+						</md-select>
+					</md-input-container>
+					
+				</div>
+				<div layout="row">
+					<md-input-container class="md-block" flex>
+						<label>{{::translate.load("sbi.cockpit.style.titles.font.headerheight")}} (px)</label>
+						<input ng-model="ngModel.headerHeight" type="number" min="0" ng-disabled="!ngModel.titles">
+					</md-input-container>
+					<md-input-container class="md-block" flex>
+						<label>{{::translate.load("sbi.cockpit.style.titles.font.color")}}</label>
+						<color-picker options="colorPickerOptions" ng-model="ngModel.title['color']"></color-picker> 
+					</md-input-container>
+					<md-input-container class="md-block" flex>
+						<label>{{::translate.load("sbi.cockpit.style.titles.background.color")}}</label>
+						<color-picker options="colorPickerOptions" ng-model="ngModel.title['background-color']"></color-picker> 
+					</md-input-container>
+				</div>
+			</div>
+		</md-card-content>
+	</md-card>
+	
+	<md-card>
+		<md-card-title>
+			<md-card-title-text layout="row">
 				<span flex class="md-headline">{{translate.load("sbi.cockpit.style.borders")}}</span>
 				<md-icon md-font-icon="fa fa-eraser" ng-if="isWidget && (ngModel.borders!=cockpitStyle.borders || !angular.equals(ngModel.border,cockpitStyle.border))" ng-click="resetBordersStyle()"></md-icon>
 			</md-card-title-text>
@@ -27,51 +76,6 @@
 				<color-picker options="borderColorOptions" ng-model="ngModel.border['border-color']"></color-picker>
 			</md-input-container> 
 			
-		</md-card-content>
-	</md-card>
-
-
-	<md-card>
-		<md-card-title>
-			<md-card-title-text layout="row">
-				<span flex class="md-headline">{{translate.load("sbi.cockpit.style.titles")}}</span>
-				<md-icon md-font-icon="fa fa-eraser" ng-if="isWidget && (ngModel.titles!=cockpitStyle.titles || ngModel.headerHeight || !angular.equals(ngModel.title,cockpitStyle.title))" ng-click="resetTitlesStyle()"></md-icon>
-			</md-card-title-text>
-		</md-card-title>
-		<md-card-content layout="row" layout-align="space-around center">
-			<md-checkbox ng-model="ngModel.titles" flex=20 ng-click="toggleTitle()">
-				{{translate.load("sbi.cockpit.style.titles.show")}}
-			</md-checkbox>
-			<div flex layout="column">
-				<div layout="row">
-					<md-input-container class="md-block" flex>
-						<label>{{::translate.load("sbi.cockpit.style.titles.font.size")}}</label>
-						<md-select ng-model="ngModel.title['font-size']" ng-disabled="!ngModel.titles">
-							<md-option ng-repeat="fs in cockpitModule_generalOptions.fontSizeDimension" ng-value="fs.value">{{fs.label}}</md-option>
-						</md-select>
-					</md-input-container>
-					<md-input-container class="md-block" flex>
-						<label>{{::translate.load("sbi.cockpit.style.titles.font.weight")}}</label>
-						<md-select ng-model="ngModel.title['font-weight']" ng-disabled="!ngModel.titles">
-							<md-option ng-repeat="fw in cockpitModule_generalOptions.fontWeight" ng-value="fw.value">{{fw.label}}</md-option>
-						</md-select>
-					</md-input-container>
-					<md-input-container class="md-block" flex>
-						<label>{{::translate.load("sbi.cockpit.style.titles.font.headerheight")}} (px)</label>
-						<input ng-model="ngModel.headerHeight" type="number" min="0" ng-disabled="!ngModel.titles">
-					</md-input-container>
-				</div>
-				<div layout="row">
-					<md-input-container class="md-block" flex>
-						<label>{{::translate.load("sbi.cockpit.style.titles.font.color")}}</label>
-						<color-picker options="colorPickerOptions" ng-model="ngModel.title['color']"></color-picker> 
-					</md-input-container>
-					<md-input-container class="md-block" flex>
-						<label>{{::translate.load("sbi.cockpit.style.titles.background.color")}}</label>
-						<color-picker options="colorPickerOptions" ng-model="ngModel.title['background-color']"></color-picker> 
-					</md-input-container>
-				</div>
-			</div>
 		</md-card-content>
 	</md-card>
 

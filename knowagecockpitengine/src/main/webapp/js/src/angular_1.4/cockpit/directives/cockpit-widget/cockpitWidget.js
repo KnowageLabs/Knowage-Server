@@ -464,6 +464,12 @@ function cockpitWidgetControllerFunction(
 	$scope.deleteWidget=function(nomessage){
 		cockpitModule_widgetServices.deleteWidget(cockpitModule_properties.CURRENT_SHEET,$scope.ngModel,nomessage);
 	}
+	
+	$scope.clearAllSelectionsAndRefresh=function(){
+		cockpitModule_widgetSelection.clearAllSelections();
+		cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset($scope.getDataset().label);
+	}
+
 
 	$scope.cloneWidget = function(){
 		var newModel = angular.copy($scope.ngModel);
@@ -851,7 +857,6 @@ function cockpitWidgetControllerFunction(
 		}
 	}
 
-
 	var clearRedundantStyle=function(){
 		for(var prop in $scope.ngModel.style){
 			if(cockpitModule_template.configuration.style[prop]!=undefined){
@@ -879,24 +884,6 @@ function cockpitWidgetControllerFunction(
 		return cockpitModule_analyticalDrivers;
 	}
 
-	$scope.editWidgetName=function(){
-		if(cockpitModule_properties.EDIT_MODE){
-			$scope.editingWidgetName=true;
-			angular.copy($scope.ngModel.content,$scope.tmpWidgetContent);
-		}
-	}
-	$scope.applyEditName=function(e){
-		e.stopPropagation();
-		$scope.editingWidgetName=false;
-		$scope.ngModel.content.name=$scope.tmpWidgetContent.name;
-		$scope.tmpWidgetContent={};
-	}
-	$scope.cancelEditName=function(e){
-		e.stopPropagation();
-		$scope.editingWidgetName=false;
-		$scope.tmpWidgetContent={};
-	}
-
 	$scope.refreshWidgetStyle=function(){
 
 		// update extended style
@@ -906,22 +893,23 @@ function cockpitWidgetControllerFunction(
 		if($scope.extendedStyle.borders!=undefined && $scope.extendedStyle.borders==true){
 			angular.merge($scope.borderShadowStyle,$scope.extendedStyle.border);
 		}
+		
 		// update borders style
 		if($scope.extendedStyle.shadows!=undefined && $scope.extendedStyle.shadows==true){
 			angular.merge($scope.borderShadowStyle,$scope.extendedStyle.shadow);
 		}
 //		// update title style
-//		if($scope.extendedStyle.titles!=undefined && $scope.extendedStyle.titles==true){
-//			if($scope.extendedStyle['font-family']) $scope.titleStyle['font-family'] = $scope.extendedStyle['font-family'];
-//			angular.merge($scope.titleStyle,$scope.extendedStyle.title);
-//		}
+		if($scope.extendedStyle.titles!=undefined && $scope.extendedStyle.titles==true){
+			if($scope.ngModel.content.name && $scope.extendedStyle.title){
+				$scope.extendedStyle.title.label = $scope.extendedStyle.title.label ? $scope.extendedStyle.title.label : $scope.ngModel.content.name;
+			}
+		}
 
 		// update widgets background color
 		if($scope.extendedStyle.backgroundColor!=undefined) {
 			var tempBackGround={'background-color': $scope.extendedStyle.backgroundColor};
 			angular.merge($scope.borderShadowStyle,tempBackGround);
 		}
-
 
 		// update sheets background color
 		if($scope.extendedStyle.sheetsBackgroundColor!=undefined && $scope.cockpitModule_template.style) {
@@ -930,8 +918,6 @@ function cockpitWidgetControllerFunction(
 			$scope.cockpitModule_template.style.background=$scope.extendedStyle.sheetsBackgroundColor;
 
 		}
-
-
 
 		// update header height
 		if($scope.extendedStyle.headerHeight!=undefined){

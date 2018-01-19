@@ -68,7 +68,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 	};
 	
 	$scope.refresh=function(element,width,height){
-
+		
 	};
 	
 	$scope.filterForInitialSelection=function(obj){
@@ -93,8 +93,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 		return false;
 	}
 	
-	$scope.getSelections=function()
-	{
+	$scope.getSelections=function(){
 		$scope.selection = [];
 		$scope.tmpSelection = [];
 		angular.copy(cockpitModule_template.configuration.aggregations,$scope.tmpSelection);
@@ -127,6 +126,18 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 				}
 			}
 		}
+		
+		$scope.getRowStyle = function(even){
+			var style = {};
+        	if($scope.ngModel.style.row.height) {
+        		style.height = $scope.ngModel.style.row.height;
+        		style['min-height'] = $scope.ngModel.style.row.height;
+        	}
+        	if($scope.ngModel.style.alternateRows && $scope.ngModel.style.alternateRows.enabled){
+        		style['background-color'] = even ? $scope.ngModel.style.alternateRows.evenRowsColor : $scope.ngModel.style.alternateRows.oddRowsColor;
+        	}
+        	return style;
+		};
 
 		for(var ds in $scope.tmpFilters){
 			for(var col in $scope.tmpFilters[ds]){
@@ -165,25 +176,28 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 	
 	$scope.getSelections();
 	
-	$scope.columnTableSelection =[
-	  {
-		  label: $scope.translate.load("sbi.cockpit.dataset"),
-		  name: "ds",
-		  hideTooltip: false
-	  },
-	  {
-		  label: $scope.translate.load("sbi.cockpit.cross.column"),
-		  name: "columnAlias",
-		  hideTooltip: false
-	  },
-	  ,
-	  {
-		  label: $scope.translate.load("sbi.cockpit.core.selections.list.columnValues"),
-		  name: "value",
-		  hideTooltip: false
-	  }
+	$scope.columnTableSelection = [
+	{
+		label: $scope.translate.load("sbi.cockpit.dataset"),
+		name: "ds",
+		hideTooltip: false,
+		visible: $scope.ngModel.style.showDataset
+	},{
+		label: $scope.translate.load("sbi.cockpit.cross.column"),
+		name: "columnAlias",
+		hideTooltip: false,
+		visible: true
+  },{
+	  label: $scope.translate.load("sbi.cockpit.core.selections.list.columnValues"),
+	  name: "value",
+	  hideTooltip: false,
+	  visible: true
+  }
     ];
-
+	
+	$scope.$watch('ngModel.style',function(newValue,oldValue){
+		$scope.columnTableSelection[0].visible = newValue.showDataset;
+	})
 
 	$scope.actionsOfSelectionColumns = [
 	    {
@@ -294,7 +308,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 		var config = {
 			attachTo:  angular.element(document.body),
 			locals: {finishEdit:finishEdit,model:$scope.ngModel},
-			controller: function($scope,finishEdit,sbiModule_translate,model,mdPanelRef,$mdToast){
+			controller: function($scope,finishEdit,sbiModule_translate,model,mdPanelRef,$mdToast,parentScope){
 				$scope.translate=sbiModule_translate;
 				
 				$scope.localModel = {};
@@ -303,8 +317,10 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 				$scope.saveConfiguration=function(){
 					angular.copy($scope.localModel,model);
 					mdPanelRef.close();
-					$scope.$destroy();
+				
+					$scope.$destroy();				
 					finishEdit.resolve();
+					
 				}
 
 				$scope.cancelConfiguration=function(){
@@ -321,7 +337,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 			clickOutsideToClose: false,
 			escapeToClose: false,
 			focusOnOpen: true,
-			preserveScope: true,
+			preserveScope: true
 		};
 
 		$mdPanel.open(config);

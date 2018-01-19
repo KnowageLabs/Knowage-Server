@@ -1679,6 +1679,23 @@
 
 	.selectionWidget {
 		width: 100%;
+		md-list{
+			padding-top: 0;
+			md-list-item {
+				height: 32px;
+				max-height: 32px;
+				min-height: 32px;
+				padding-right: 0;
+				border-bottom: 1px solid #ccc;
+			}
+			.selectionSpan {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				display: block;
+				font-size: $mediumFontSize;
+			}
+		}
 		table {
 			border-collapse: collapse;
 			width: 100%;
@@ -1717,9 +1734,6 @@
 	}
 
 	.cockpitSelectorWidget{
-		.cSelWTitle {
-			height: $toolbarHeight; 
-		}
 		.cSelWRadio,.cSelWCheck{
 			margin-bottom: 8px;
 			outline: none;
@@ -1729,6 +1743,23 @@
 		}
 		.cSelWScroller {
 			&.horizontal {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				.cSelWCheckContainer, md-radio-group{
+					md-radio-button, md-checkbox {
+						margin-right: 16px;
+					}
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					._md-label{
+						white-space: nowrap;
+					}
+				}
+				
+			}
+			&.grid {
 				.cSelWCheckContainer, md-radio-group{
 					display: flex;
 					flex-direction: row;
@@ -1749,7 +1780,7 @@
 			padding-left: 8px;
 			padding-top: 4px;
 			overflow-y: auto;
-			height: calc(100% - #{$toolbarHeight});
+			height: 100%;
 			@include coolScrollBars($baseColor,6px);
 		}
 	}
@@ -1775,4 +1806,25 @@
 	}
 
 	
+}
+
+@media all and (max-width: 1879px) {
+	.kn-cockpit {
+		.md-button.addSheetTabButton {
+			bottom:15px;
+		}
+		md-tabs.cockpitSheetTabs>md-tabs-wrapper {
+			margin-bottom: 15px;
+		}
+		.cockpitSheetTabsHook {
+	    	md-tabs-canvas {
+	    		bottom:15px;
+		    }
+		}
+		.cockpitSheetTabs{
+			md-tabs-canvas {
+	    		bottom:0;
+		    }
+		}
+	}
 }

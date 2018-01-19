@@ -23,25 +23,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        <md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
     </div>
 	<md-card class="placedWidget flexCard" ng-style="borderShadowStyle" ng-class="{'shadowedBox': extendedStyle.shadows, 'editWidgetMode':cockpitModule_properties.EDIT_MODE}" layout="column" layout-fill>
-		<md-card-title ng-style="extendedStyle.title" layout="row" layout-align="start center" ng-show="extendedStyle.titles" ng-dblclick="editWidgetName();" ng-class="{'titleOnTop':editingWidgetName}">
+		<md-card-title ng-style="extendedStyle.title" layout="row" layout-align="start center" ng-show="extendedStyle.titles">
 			<md-toolbar style="height:{{headerHeight}}px" class="widgetToolbar">
 				<div class="md-toolbar-tools" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp),'draggableToolbar':editingWidgetName!=true}" layout="row">
-					<span  class="md-headline editWidgetNameSpan " ng-style="extendedStyle.title" ng-show="editingWidgetName!=true">{{ngModel.content.name | i18n | parameter_fill}}</span>
-					<div layout="row"  flex class="editWidgetNameInput" ng-show="editingWidgetName==true">
-						<md-input-container flex md-no-float class="md-block noMargin">
-				          <input ng-model="tmpWidgetContent.name" placeholder="Widget name">
-				        </md-input-container>
-				        <md-button class="md-icon-button saveEditText"  aria-label="edit"   ng-click="applyEditName($event)">
-							<md-icon md-font-icon="fa fa-check"  ></md-icon>
-						</md-button>
-						 <md-button class="md-icon-button cancelEditText"  aria-label="edit"  ng-click="cancelEditName($event)">
-							<md-icon md-font-icon="fa fa-times"  ></md-icon>
-						</md-button>
-					</div>
+					<!--  span  class="md-headline editWidgetNameSpan " ng-style="extendedStyle.title" ng-show="editingWidgetName!=true">{{ngModel.content.name | i18n | parameter_fill}}</span-->
+					<span  class="md-headline editWidgetNameSpan " ng-style="extendedStyle.title" ng-show="extendedStyle.title.label">{{extendedStyle.title.label | i18n | parameter_fill}}</span>
+					<span  class="md-headline editWidgetNameSpan " ng-style="extendedStyle.title" ng-show="!extendedStyle.title.label">New Widget</span>
 				</div>
 			</md-toolbar>
 		</md-card-title>
-		
 		<div layout="column" class="viewModeMenu" ng-if="(!cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE) || widExp" layout-align="end center">
 			
 			<md-button class="md-icon-button floatingFilter" ng-if="ngModel.type == 'table' && activeSearch && !cockpitModule_properties.EDIT_MODE" ng-click="resetSearch();$event.stopPropagation();">
@@ -49,6 +39,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-icon md-font-icon="fa fa-filter fa-stack-1x"></md-icon>
 				<md-icon md-font-icon="fa fa-ban fa-stack-2x ban"></md-icon>
 			</md-button>
+			
+			<!--md-button class="md-icon-button "  ng-if="ngModel.type == 'selection' || ngModel.type == 'selector'" ng-click="clearAllSelectionsAndRefresh();$event.stopPropagation();">
+				<md-tooltip md-direction="top" md-delay="1000">Clear selection</md-tooltip>
+				<md-icon md-font-icon="fa fa-eraser"></md-icon>
+			</md-button-->
 			
 			<md-button class="md-icon-button "  ng-click="expandWidget();$event.stopPropagation();" >
 				<md-tooltip md-direction="bottom" ng-if="!widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
@@ -77,7 +72,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        			 <md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable"></md-icon>
 			</md-button>
 			
-			
 		</div>
 		
 		<md-fab-speed-dial md-open="ngModel.menuOpened" md-direction="down" class="showActionButtonHandler md-scale" ng-class="{'noMouse':ngModel.menuOpened==true}" ng-if="!widExp && !( cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE)">
@@ -94,6 +88,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
 				<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
 			</md-button>
+			
+			<!--md-button class="md-icon-button " ng-if="cockpitModule_properties.EDIT_MODE && ngModel.type == 'selection'" ng-click="clearAllSelections();$event.stopPropagation();">
+				<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.edit")}}</md-tooltip>
+				<md-icon md-font-icon="fa fa-eraser"></md-icon>
+			</md-button-->
 			
 			<!-- SEARCH BUTTON for table widget only -->
 			<md-button class="md-icon-button " aria-label="search button" ng-if="cockpitModule_properties.EDIT_MODE && ngModel.type == 'table'" ng-click="openSearchBar($event);$event.stopPropagation();" >
@@ -163,7 +162,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-button>
 			</md-fab-actions>
 			</md-fab-speed-dial>
-		
+			
 		</div>
 		<md-card-content flex="" layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill>
 		</md-card-content>

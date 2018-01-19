@@ -1,4 +1,5 @@
 <div layout="column" ng-style="ngModel.style" class="selectionWidget"> 
+
 	<md-toolbar class="secondaryToolbar" layout="row" ng-if="showToolbar">
 		<h1 flex class="md-toolbar-tools">{{::translate.load('sbi.cockpit.selections.title')}}</h1>
 		<md-button class="md-icon-button" ng-click="clearAllSelection()" ng-if="selection.length >0">
@@ -6,31 +7,16 @@
 			<md-tooltip md-direction="bottom">{{::translate.load('sbi.cockpit.selections.clearselections')}}</md-tooltip>
 		</md-button>
 	</md-toolbar>
-
-	<table ng-show="selection.length > 0">
-		<thead>
-			<tr>
-				<th ng-repeat="column in columnTableSelection">{{column.label}}</th>
-				<th>
-					<md-icon md-font-icon="fa fa-eraser" aria-label="ClearAll" ng-click="clearAllSelection()" ng-if="selection.length >0"></md-icon>
-					<md-tooltip md-direction="bottom">{{::translate.load('sbi.cockpit.selections.clearselections')}}</md-tooltip>
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr ng-repeat="row in selection">
-				<td ng-repeat="column in columnTableSelection">
-					{{row[column.name]}}
-					<md-tooltip md-direction="bottom">{{row[column.name]}}</md-tooltip>
-				</td>
-				<td>
-					<md-icon md-font-icon="fa fa-trash" aria-label="clear selection" ng-click="deleteSelection(row, true)"></md-icon>
-					<md-tooltip md-direction="bottom">{{::translate.load('sbi.cockpit.selections.clearselection')}}</md-tooltip>
-				</td>
-			</tr>
-		</tbody>
-	</table>
 	
+	 <md-list class="md-dense" flex ng-if="selection.length > 0">
+        <md-list-item ng-repeat="row in selection" layout="row" layout-align="start center" ng-style="getRowStyle($even)">
+			<p class="selectionSpan" ng-repeat="column in columnTableSelection" ng-if="column.visible" flex>{{row[column.name]}}</p>
+           <md-button class="md-secondary md-icon-button" ng-click="deleteSelection(row, true)">
+            <md-icon md-font-icon="fa fa-trash"></md-icon>
+          </md-button>
+        </md-list-item>
+     </md-list>
+     
 	<div layout="column" flex layout-align="center center" ng-if="selection.length == 0" layout-padding>
 		<span>{{::translate.load('sbi.cockpit.selections.noselections')}}</span>
 	</div>	

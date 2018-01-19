@@ -11,7 +11,35 @@
 			<md-tabs flex md-border-bottom md-selected='selectedTab.tab'>
 		  
 			    <md-tab label="{{translate.load('sbi.cockpit.style')}}">
-			     	<cockpit-style-configurator widget ng-model="localModel.style"></cockpit-style-configurator>
+			     	<cockpit-style-configurator widget ng-model="localModel.style">
+			     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.widget.table.rows')">
+							<div flex layout="column" ng-cloak>
+								<div layout="row">
+									<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.showDataset" class="md-block" flex="20">
+										{{translate.load('sbi.cockpit.widget.selection.showdataset')}}
+									</md-checkbox>
+									<md-input-container flex class="md-block" >
+										<label>{{translate.load('sbi.cockpit.widget.selection.row.height')}}</label>
+										<input class="input_class" ng-model="localModel.style.row.height" type="number" />
+									</md-input-container>
+								</div>
+								
+								<div layout="row">
+									<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.alternateRows.enabled" class="md-block" flex="20">
+										{{translate.load('sbi.cockpit.widget.selection.row.alternate')}}
+									</md-checkbox>
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.alternate.evenrows')}}</label>
+										<color-picker options="colorPickerPropertyEvenOddRows" ng-model="localModel.style.alternateRows.evenRowsColor"/>
+									</md-input-container>
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.alternate.oddrows')}}</label>
+										<color-picker options="colorPickerPropertyEvenOddRows" ng-model="localModel.style.alternateRows.oddRowsColor"/>
+									</md-input-container>
+								</div>
+							</div>
+						</cockpit-style-custom-widget-configurator>
+			     	</cockpit-style-configurator>
 			    </md-tab>
           		
 		  </md-tabs>
