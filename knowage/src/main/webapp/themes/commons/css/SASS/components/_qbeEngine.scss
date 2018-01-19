@@ -206,6 +206,9 @@
             &.measure:before {
                 content: "\f02b"
             }
+            &.dimension:before {
+                content: "\f047"
+            }
             &.temporal_dimension:before {
                 content: "\f073"
             }
