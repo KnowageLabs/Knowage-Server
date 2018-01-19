@@ -213,12 +213,12 @@
 	   	
    		<div ng-repeat="row in field.data" class="qbeCustomRow">{{row.value}}&nbsp;</div>
 	   	<md-toolbar class="secondaryToolbar">
-	   		<div class="md-toolbar-tools " >
+	   		<div class="md-toolbar-tools">
 		   		<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="showFilters(field)">
 		        	<md-icon md-menu-origin class="fa fa-info"></md-icon>
 		      	</md-button>
 		      	<span flex></span>
-		      	<label ng-show="field.filters.length" style="font-size:.8rem; padding: 0 4px;  font-weight: bold;">{{field.filters.length}} {{translate.load("kn.qbe.filters") | uppercase}}</label>
+		      	<label ng-show="countFilters(field)" style="font-size:.8rem; padding: 0 4px;  font-weight: bold;">{{field.filters.length + field.havings.length}} {{translate.load("kn.qbe.filters") | uppercase}}</label>
 		      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openHavings(field)">
 		        	<md-icon md-menu-origin class="fa fa-check-square-o"></md-icon>
 		      	</md-button>

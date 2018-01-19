@@ -255,6 +255,27 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		}
 	}
 
+    $scope.countFilters = function (field) {
+    	var filt = 0;
+    	var hav = 0;
+    	for (var i = 0; i < field.filters.length; i++) {
+			if(field.filters[i].leftOperandDescription == field.entity+" : "+field.name){
+				filt++;
+			}
+		}
+    	for (var i = 0; i < field.havings.length; i++) {
+			if(field.havings[i].leftOperandDescription == field.entity+" : "+field.name){
+				hav++;
+			}
+		}
+    	var total = filt + hav;
+    	if(total == 0) {
+    		return "";
+    	} else {
+    		return total + " filter/s";
+    	}
+    }
+
 	$scope.openDialogForParams = function (model){
 		$rootScope.$broadcast('openDialogForParams');
 	}
@@ -415,11 +436,31 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
     	{"label": $scope.translate.load("kn.qbe.filters.target"), "name": "rightOperandDescription"}
     ]
 
+	$scope.allFilters = [];
+
 	$scope.showFilters = function(field) {
 
+		$scope.allFilters = [];
 		$scope.field = field;
+		for (var i = 0; i < field.filters.length; i++) {
+			$scope.filterObject = {
+					"operator": field.filters[i].operator,
+					"rightOperandDescription": field.filters[i].rightOperandDescription
+			}
 
-        if(field.filters.length > 0) {
+				$scope.allFilters.push($scope.filterObject);
+
+		}
+		for (var i = 0; i < field.havings.length; i++) {
+			$scope.havingObject = {
+					"operator": field.havings[i].operator,
+					"rightOperandDescription": field.havings[i].rightOperandAggregator + "(" + field.havings[i].rightOperandDescription + ")"
+			}
+
+				$scope.allFilters.push($scope.havingObject);
+
+		}
+        if($scope.allFilters.length > 0) {
 	    	$mdDialog.show({
 	            controller: function ($scope, $mdDialog) {
 
@@ -448,6 +489,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	$scope.showSQLQuery = function () {
 		$rootScope.$broadcast('showSQLQuery', true);
 	}
+
+
 
 }
 })();

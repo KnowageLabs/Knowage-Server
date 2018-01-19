@@ -44,7 +44,8 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
          		    	"ordering":query.fields[i].order,
          		    	"temporal":query.fields[i].temporal,
          		    	"iconCls":query.fields[i].iconCls,
-         		    	"filters": []
+         		    	"filters": [],
+         		    	"havings": []
          		    }
      			for (var j = 0; j < response.data.rows.length; j++) {
      				var row = {
@@ -62,6 +63,16 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
      				for(var j = 0; j < query.filters.length; j++) {
      					if(queryModel[i].id == query.filters[j].leftOperandValue) {
      						queryModel[i].filters.push(query.filters[j]);
+     					}
+     				}
+     			}
+     		}
+
+     		if(query.havings.length > 0) {
+     			for(var i = 0; i < queryModel.length; i++) {
+     				for(var j = 0; j < query.havings.length; j++) {
+     					if(queryModel[i].id == query.havings[j].leftOperandValue) {
+     						queryModel[i].havings.push(query.havings[j]);
      					}
      				}
      			}

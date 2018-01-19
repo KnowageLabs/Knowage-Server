@@ -83,19 +83,41 @@ angular.module('qbe_expander_list', ['ngDraggable'])
                     }
                 }
 
-                scope.checkDescription = function (field){
-            		var desc = 0;
-            		for (var i = 0; i < scope.$parent.filters.length; i++) {
+//                scope.checkDescription = function (field){
+//            		var desc = 0;
+//            		for (var i = 0; i < scope.$parent.filters.length; i++) {
+//            			if(scope.$parent.filters[i].leftOperandDescription == field.attributes.entity+" : "+field.text){
+//            				desc++;
+//            			}
+//            		}
+//            		if(desc == 0) {
+//            			return "No filters";
+//            		} else {
+//            			return desc + " filters";
+//            		}
+//                }
+
+                scope.countFilters = function (field) {
+                	var filt = 0;
+                	var hav = 0;
+                	for (var i = 0; i < scope.$parent.filters.length; i++) {
             			if(scope.$parent.filters[i].leftOperandDescription == field.attributes.entity+" : "+field.text){
-            				desc++;
+            				filt++;
             			}
             		}
-            		if(desc == 0) {
-            			return "No filters";
-            		} else {
-            			return desc + " filters";
+                	for (var i = 0; i < scope.$parent.havings.length; i++) {
+            			if(scope.$parent.havings[i].leftOperandDescription == field.attributes.entity+" : "+field.text){
+            				hav++;
+            			}
             		}
+                	var total = filt + hav;
+                	if(total == 0) {
+                		return "No filters";
+                	} else {
+                		return total + " filter/s";
+                	}
                 }
+
 
                 //broadcast field to root scope
                 scope.moveFieldByClick = function (item) {
