@@ -903,6 +903,27 @@ function cockpitWidgetControllerFunction(
 			if($scope.ngModel.content.name && $scope.extendedStyle.title){
 				$scope.extendedStyle.title.label = $scope.extendedStyle.title.label ? $scope.extendedStyle.title.label : $scope.ngModel.content.name;
 			}
+			if($scope.extendedStyle.title && !$scope.extendedStyle.title.font){
+				$scope.extendedStyle.title.font = {};
+				$scope.ngModel.style.title.font = {};
+				
+				if($scope.extendedStyle.title['font-weight']){
+					$scope.extendedStyle.title.font['font-weight'] = $scope.extendedStyle.title['font-weight'];
+					$scope.ngModel.style.title.font['font-weight'] = $scope.extendedStyle.title['font-weight'];
+					}
+				if($scope.extendedStyle.title['font-size']){
+					$scope.extendedStyle.title.font['font-size'] = $scope.extendedStyle.title['font-size'];
+					$scope.ngModel.style.title.font['font-size'] = $scope.extendedStyle.title['font-size'];
+					}
+				if($scope.extendedStyle.title['font-family']){
+					$scope.extendedStyle.title.font['font-family'] = $scope.extendedStyle.title['font-family'];
+					$scope.ngModel.style.title.font['font-family'] = $scope.extendedStyle.title['font-family'];
+					}
+				if($scope.extendedStyle.title.color){
+					$scope.extendedStyle.title.font.color = $scope.extendedStyle.title.color;
+					$scope.ngModel.style.title.font.color = $scope.extendedStyle.title.color;
+					}
+			}
 		}
 
 		// update widgets background color

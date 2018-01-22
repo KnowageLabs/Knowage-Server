@@ -24,11 +24,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
 	<md-card class="placedWidget flexCard" ng-style="borderShadowStyle" ng-class="{'shadowedBox': extendedStyle.shadows, 'editWidgetMode':cockpitModule_properties.EDIT_MODE}" layout="column" layout-fill>
 		<md-card-title ng-style="extendedStyle.title" layout="row" layout-align="start center" ng-show="extendedStyle.titles">
-			<md-toolbar style="height:{{headerHeight}}px" class="widgetToolbar">
+			<md-toolbar class="widgetToolbar" layout="row" layout-align="start center">
 				<div class="md-toolbar-tools" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp),'draggableToolbar':editingWidgetName!=true}" layout="row">
 					<!--  span  class="md-headline editWidgetNameSpan " ng-style="extendedStyle.title" ng-show="editingWidgetName!=true">{{ngModel.content.name | i18n | parameter_fill}}</span-->
-					<span  class="md-headline editWidgetNameSpan " ng-style="extendedStyle.title" ng-show="extendedStyle.title.label">{{extendedStyle.title.label | i18n | parameter_fill}}</span>
-					<span  class="md-headline editWidgetNameSpan " ng-style="extendedStyle.title" ng-show="!extendedStyle.title.label">New Widget</span>
+					<span  class="md-headline editWidgetNameSpan " ng-style="extendedStyle.title.font" ng-show="extendedStyle.title.label">{{extendedStyle.title.label | i18n | parameter_fill}}</span>
+					<span  class="md-headline editWidgetNameSpan " ng-style="extendedStyle.title.font" ng-show="!extendedStyle.title.label">New Widget</span>
 				</div>
 			</md-toolbar>
 		</md-card-title>

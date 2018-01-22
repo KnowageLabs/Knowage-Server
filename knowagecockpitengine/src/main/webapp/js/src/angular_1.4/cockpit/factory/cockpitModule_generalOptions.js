@@ -67,24 +67,8 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 									value:'bold'
 								},
 								{
-									label:sbiModule_translate.load("sbi.cockpit.style.fontWeight.bolder"),
-									value:'bolder'
-								},
-								{
-									label:sbiModule_translate.load("sbi.cockpit.style.fontWeight.lighter"),
-									value:'lighter'
-								},
-								{
-									label:sbiModule_translate.load("sbi.cockpit.style.fontWeight.number"),
-									value:'number'
-								},
-								{
-									label:sbiModule_translate.load("sbi.cockpit.style.fontWeight.initial"),
-									value:'initial'
-								},
-								{
-									label:sbiModule_translate.load("sbi.cockpit.style.fontWeight.inherit"),
-									value:'inherit'
+									label:sbiModule_translate.load("sbi.cockpit.style.fontWeight.light"),
+									value:'light'
 								}
 							],
 	fontType:			[

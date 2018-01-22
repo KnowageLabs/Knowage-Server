@@ -308,7 +308,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 		var config = {
 			attachTo:  angular.element(document.body),
 			locals: {finishEdit:finishEdit,model:$scope.ngModel},
-			controller: function($scope,finishEdit,sbiModule_translate,model,mdPanelRef,$mdToast,parentScope){
+			controller: function($scope,finishEdit,sbiModule_translate,model,mdPanelRef,$mdToast){
 				$scope.translate=sbiModule_translate;
 				
 				$scope.localModel = {};
