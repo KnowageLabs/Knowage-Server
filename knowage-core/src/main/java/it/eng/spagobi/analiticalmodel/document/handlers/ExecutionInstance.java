@@ -41,6 +41,7 @@ import org.safehaus.uuid.UUIDGenerator;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.LightNavigationConstants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -1279,7 +1280,7 @@ public class ExecutionInstance implements Serializable {
 			// identity string for context
 			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 			UUID uuid = uuidGen.generateRandomBasedUUID();
-			buffer.append("&" + LightNavigationManager.LIGHT_NAVIGATOR_ID + "=" + uuid.toString());
+			buffer.append("&" + LightNavigationConstants.LIGHT_NAVIGATOR_ID + "=" + uuid.toString());
 
 			List parameters = object.getBiObjectParameters();
 			if (parameters != null && parameters.size() > 0) {

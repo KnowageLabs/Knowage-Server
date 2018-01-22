@@ -20,9 +20,9 @@ import org.safehaus.uuid.UUIDGenerator;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.LightNavigationConstants;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.navigation.LightNavigationManager;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -155,7 +155,7 @@ public class DocumentUrlManager {
 			// identity string for context
 			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 			UUID uuid = uuidGen.generateRandomBasedUUID();
-			buffer.append("&" + LightNavigationManager.LIGHT_NAVIGATOR_ID + "=" + uuid.toString());
+			buffer.append("&" + LightNavigationConstants.LIGHT_NAVIGATOR_ID + "=" + uuid.toString());
 			List parameters = obj.getBiObjectParameters();
 			if (parameters != null && parameters.size() > 0) {
 				Iterator it = parameters.iterator();

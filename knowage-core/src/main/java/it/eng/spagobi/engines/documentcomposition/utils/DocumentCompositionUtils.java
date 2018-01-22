@@ -17,11 +17,26 @@
  */
 package it.eng.spagobi.engines.documentcomposition.utils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
+import it.eng.LightNavigationConstants;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.navigation.LightNavigationManager;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
@@ -46,21 +61,6 @@ import it.eng.spagobi.engines.documentcomposition.configuration.DocumentComposit
 import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration.Document;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.monitoring.dao.AuditManager;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it) Utility Class for document composition
@@ -124,11 +124,11 @@ public class DocumentCompositionUtils {
 			 * DAOFactory.getDomainDAO().loadDomainById(engine.getBiobjTypeId()); } catch (EMFUserError error) {
 			 * logger.error("Error retrieving document's engine information", error); return "1009|"; } catch (Exception error) {
 			 * logger.error("Error retrieving document's engine information", error); return "1009|"; }
-			 * 
+			 *
 			 * String compatibleBiobjTypeCd = compatibleBiobjType.getValueCd(); String biobjTypeCd = obj.getBiObjectTypeCode();
-			 * 
+			 *
 			 * // CHECK IF THE BIOBJECT IS COMPATIBLE WITH THE TYPES SUITABLE FOR THE ENGINE
-			 * 
+			 *
 			 * if (!compatibleBiobjTypeCd.equalsIgnoreCase(biobjTypeCd)) { // the engine document type and the biobject type are not compatible
 			 * logger.error("Engine cannot execute input document type: " + "the engine " + engine.getName() + " can execute '" + compatibleBiobjTypeCd +
 			 * "' type documents " + "while the input document is a '" + biobjTypeCd + "'."); Vector params = new Vector(); params.add(engine.getName());
@@ -229,7 +229,7 @@ public class DocumentCompositionUtils {
 				// identity string for context
 				UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 				UUID uuid = uuidGen.generateRandomBasedUUID();
-				urlReturn += "&" + LightNavigationManager.LIGHT_NAVIGATOR_ID + "=" + uuid.toString();
+				urlReturn += "&" + LightNavigationConstants.LIGHT_NAVIGATOR_ID + "=" + uuid.toString();
 				if (document.getSnapshot() != null && document.getSnapshot()) {
 					Snapshot snap = DAOFactory.getSnapshotDAO().getLastSnapshot(objId);
 					if (snap != null) {
@@ -394,11 +394,8 @@ public class DocumentCompositionUtils {
 							par.setParameterValues(values);
 							Parameter tmpPar = par.getParameter();
 							logger.debug("Manage parameter : " + tmpPar.getLabel() + "...");
-							if (tmpPar != null
-									&& values.size() > 1
-									&& tmpPar.getModalityValue() != null
-									&& ((!(par).isMultivalue()) || tmpPar.getModalityValue().getITypeCd()
-											.equalsIgnoreCase(SpagoBIConstants.INPUT_TYPE_MAN_IN_CODE))) {
+							if (tmpPar != null && values.size() > 1 && tmpPar.getModalityValue() != null && ((!(par).isMultivalue())
+									|| tmpPar.getModalityValue().getITypeCd().equalsIgnoreCase(SpagoBIConstants.INPUT_TYPE_MAN_IN_CODE))) {
 								logger.debug("Force the multivalue modality for parameter " + tmpPar.getLabel());
 								// force the multivalue management if the parameter has defined as MANUAL INPUT and the values is multiple.
 								tmpPar.getModalityValue().setMultivalue(true);
