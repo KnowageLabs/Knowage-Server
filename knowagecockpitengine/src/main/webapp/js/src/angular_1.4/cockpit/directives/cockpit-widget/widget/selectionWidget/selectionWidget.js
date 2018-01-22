@@ -129,11 +129,11 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 		
 		$scope.getRowStyle = function(even){
 			var style = {};
-        	if($scope.ngModel.style.row.height) {
+        	if($scope.ngModel.style && $scope.ngModel.style.row && $scope.ngModel.style.row.height) {
         		style.height = $scope.ngModel.style.row.height;
         		style['min-height'] = $scope.ngModel.style.row.height;
         	}
-        	if($scope.ngModel.style.alternateRows && $scope.ngModel.style.alternateRows.enabled){
+        	if($scope.ngModel.style && $scope.ngModel.style.alternateRows && $scope.ngModel.style.alternateRows.enabled){
         		style['background-color'] = even ? $scope.ngModel.style.alternateRows.evenRowsColor : $scope.ngModel.style.alternateRows.oddRowsColor;
         	}
         	return style;
@@ -176,6 +176,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 	
 	$scope.getSelections();
 	
+	if(!$scope.ngModel.style) $scope.ngModel.style = {};
 	$scope.columnTableSelection = [
 	{
 		label: $scope.translate.load("sbi.cockpit.dataset"),
