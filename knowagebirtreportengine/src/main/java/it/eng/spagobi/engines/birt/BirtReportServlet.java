@@ -252,8 +252,7 @@ public class BirtReportServlet extends HttpServlet {
 		logger.debug("IN");
 		String tmpDir = System.getProperty("java.io.tmpdir");
 		String imageDirectory = tmpDir.endsWith(File.separator) ? tmpDir + "birt" : tmpDir + File.separator + "birt";
-		String contextPath = servletRequest.getContextPath();
-		String imageBaseUrl = "/BirtImageServlet?imageID=";
+		String imageBaseUrl = "BirtImageServlet?imageID=";
 
 		// Register new image handler
 		HTMLRenderOption renderOption = new HTMLRenderOption();
@@ -261,7 +260,7 @@ public class BirtReportServlet extends HttpServlet {
 		HTMLServerImageHandler imageHandler = new HTMLServerImageHandler();
 		renderOption.setImageHandler(imageHandler);
 		renderOption.setImageDirectory(imageDirectory);
-		renderOption.setBaseImageURL(contextPath + imageBaseUrl);
+		renderOption.setBaseImageURL(imageBaseUrl);
 		renderOption.setEmbeddable(false);
 		this.birtReportEngine.getConfig().getEmitterConfigs().put("html", renderOption);
 		logger.debug("OUT");
