@@ -79,11 +79,16 @@ public class Argument {
 	}
 
 	public String getPlaceholder() {
+		if (placeholder == null) {
+			return "";
+		}
 		return placeholder;
+
 	}
 
 	public void setPlaceholder(String placeholder) {
 		this.placeholder = placeholder;
+
 	}
 
 }
