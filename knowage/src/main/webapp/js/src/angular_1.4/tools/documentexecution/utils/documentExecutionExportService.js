@@ -20,7 +20,7 @@
 			}
 
 			var urlService = null;
-			if(actionPath.includes('?')){
+			if(actionPath.indexOf('?') >=0 ){
 				urlService = sbiModule_config.host + actionPath+'&';
 			}
 			else{
@@ -657,7 +657,7 @@
 				break;
 			case "REPORT":
 				expObj.func = function(){
-					if(engineDriver.includes("Jasper")){
+					if(engineDriver.indexOf("Jasper")>=0){
 						dee.exportJasperReportTo(type);
 					}
 					else{
