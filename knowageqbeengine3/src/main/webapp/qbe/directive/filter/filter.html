@@ -32,8 +32,9 @@
 				   		<md-input-container flex=10 >
 				   			<label class="filterLabel">{{translate.load("kn.qbe.filters.condition")}}</label>
 				          	<md-select ng-model="filter.operator" >
-				                 <md-option ng-repeat="operator in getConditionOptions" value="{{operator.value}}" >{{operator.name}}
+				                 <md-option ng-repeat="operator in getConditionOptions()" value="{{operator.value}}" >{{operator.name}}
 				                 </md-option>
+				                 
 				             </md-select>   
 				        </md-input-container>
 				        

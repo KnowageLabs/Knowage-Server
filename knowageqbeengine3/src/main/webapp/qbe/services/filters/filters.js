@@ -29,7 +29,7 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.param"),value:"parameter"},
 		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.subquery"),value:"subquery"},
 	];
-	
+
 	this.getHavingTargetTypes = [
 		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.manual"),value:""},
 		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.anotherentity"),value:"anotherEntity"},
@@ -57,6 +57,18 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 		         {name:sbiModule_translate.load("kn.qbe.filters.operators.not.in"),value:"NOT IN"},
 		         {name:sbiModule_translate.load("kn.qbe.filters.operators.is.null"),value:"IS NULL"},
 		         {name:sbiModule_translate.load("kn.qbe.filters.operators.not.null"),value:"NOT NULL"}];
+
+	this.getSpatialOperators = [
+		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.contains"),value:"SPATIAL_CONTAINS"},
+		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.covered.by"),value:"SPATIAL_COVERED_BY"},
+		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.covers"),value:"SPATIAL_COVERS"},
+		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.disjoint"),value:"SPATIAL_DISJOINT"},
+		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.equals.to"),value:"SPATIAL_EQUALS_TO"},
+		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.filter"),value:"SPATIAL_FILTER"},
+		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.intersects"),value:"SPATIAL_INTERSECTS"},
+		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.overlaps"),value:"SPATIAL_OVERLAPS"},
+		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.touches"),value:"SPATIAL_TOUCHES"},
+		{name:sbiModule_translate.load("kn.qbe.filters.spatial.operators.inside"),value:"SPATIAL_INSIDE"}];
 
 	this.getBooleanConnectors= ["AND","OR"];
 

@@ -36,8 +36,8 @@ angular.module('qbe_filter', ['ngMaterial','angular_table' ])
 	}
 });
 
-function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, sbiModule_translate, $http, sbiModule_config,$mdPanel, $mdDialog, $httpParamSerializer, sbiModule_restServices, entity_service){
-
+function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule_inputParams, sbiModule_translate, $http, sbiModule_config,$mdPanel, $mdDialog, $httpParamSerializer, sbiModule_restServices, entity_service){
+	$scope.spatial = sbiModule_user.functionalities.indexOf("SpatialFilter")>-1;
 	$scope.filters=angular.copy($scope.ngModel.queryFilters);
 	$scope.advancedFilters=angular.copy($scope.ngModel.advancedFilters);
 	$scope.field=$scope.ngModel.field.field;
@@ -220,6 +220,15 @@ function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, s
 
 	$scope.getBooleanConnectors = filters_service.getBooleanConnectors;
 	$scope.getConditionOptions = filters_service.getOperators;
+
+	$scope.entityTypes = entity_service.getEntityTypes();
+	$scope.getConditionOptions = function() {
+		if($scope.spatial && $scope.entityTypes.includes("geographical dimension")){
+			return filters_service.getOperators.concat(filters_service.getSpatialOperators);
+		} else {
+			return filters_service.getOperators;
+		}
+	}
 	$scope.fillInput = function (filter, type, value){
 		switch (value) {
 		case "subquery":
@@ -292,7 +301,7 @@ function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, s
 		$scope.showTable = true;
 		filters_service.getFieldsValue($scope.ngModel.field.field.id).then(function(response){
 			$scope.listOfValues = response.data.rows;
-			
+
 		});
 		for (var i = 0; i < filter.rightOperandValue.length; i++) {
 			if(!$scope.value[i]){
@@ -302,12 +311,12 @@ function qbeFilter($scope,$rootScope, filters_service , sbiModule_inputParams, s
 			}
 			if(filter.rightType=="valueOfField"){
 				$scope.value[i].column_1 = filter.rightOperandValue[i]
-		
+
 			}
 		}
-		
-	}	
-	
+
+	}
+
 	$scope.$watch('value',function(newValue){
 		$scope.forInput = '';
 		for (var i = 0; i < newValue.length; i++) {

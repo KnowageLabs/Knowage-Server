@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule/sbiModuleRestLoadingDirective.jspf"%>
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule/sbiModuleRestServices.jspf"%>
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule/sbiModuleTranslate.jspf"%>
+<%@include file="/WEB-INF/jsp/commons/angular/sbiModule/sbiModuleUser.jspf"%>
 
 
 
