@@ -364,7 +364,7 @@ public class DataSetUtilities {
 		String fieldName;
 		if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
 			String[] columnNames = StringUtilities.getSubstringsBetween(columnName, AbstractDataBase.STANDARD_ALIAS_DELIMITER);
-			Assert.assertTrue(columnNames.length > 0 && columnNames.length % 2 == 0, "Column [" + columnName + "] is not a valid calculated column");
+			Assert.assertTrue(columnNames.length > 0, "Column [" + columnName + "] is not a valid calculated column");
 			fieldName = columnNames[0];
 		} else {
 			fieldName = columnName;
