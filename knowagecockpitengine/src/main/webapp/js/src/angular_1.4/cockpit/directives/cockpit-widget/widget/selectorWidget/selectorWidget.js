@@ -227,10 +227,10 @@ angular.module('cockpitModule')
 			} 
 			else{
 				$scope.defaultValueString = false; // array
-				if($scope.widgetOfType=='selector'){
+				//if($scope.widgetOfType=='selector'){
 					$scope.defaultValue =  angular.copy($scope.selections); 
 					
-				}
+				//}
 			}
 		}
 		var checkInitialSettings = function () {
