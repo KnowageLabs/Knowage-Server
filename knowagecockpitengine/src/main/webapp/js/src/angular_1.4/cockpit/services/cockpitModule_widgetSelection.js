@@ -529,6 +529,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 		return toret;
 	}
+	this.widgetOfType = "";
+	
+	this.setWidgetOfType = function (type){
+		this.widgetOfType = type;
+	}
 	this.checkIfDatasetAreLoaded = function(){
 		cockpitModule_templateServices.getDatasetNotInCache();
 

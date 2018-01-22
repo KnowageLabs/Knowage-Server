@@ -69,6 +69,7 @@ angular.module('cockpitModule')
 		$scope.multiValue = [];
 		$scope.selections = [];
 		$scope.searchParamText = "";
+		$scope.widgetOfType = "selector";
 		$scope.selectedTab = {'tab' : 0};
 		$scope.widgetIsInit=false;
 		$scope.totalCount = 0;
@@ -136,8 +137,9 @@ angular.module('cockpitModule')
 			},500);
 	
 		}
-
+		
 		$scope.refresh=function(element,width,height, datasetRecords,nature){
+			$scope.widgetOfType = cockpitModule_widgetSelection.widgetOfType;
 			if(!$scope.ngModel.dataset.name){
 				$scope.ngModel.dataset.name = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).name;
 			}
@@ -225,7 +227,10 @@ angular.module('cockpitModule')
 			} 
 			else{
 				$scope.defaultValueString = false; // array
-				$scope.defaultValue =  angular.copy($scope.selections); 
+				if($scope.widgetOfType=='selector'){
+					$scope.defaultValue =  angular.copy($scope.selections); 
+					
+				}
 			}
 		}
 		var checkInitialSettings = function () {
@@ -286,7 +291,8 @@ angular.module('cockpitModule')
 		}
 		
 		$scope.toggleCheckboxParameter = function(parVal) {
-		//	if(!$scope.disableSingleButton(parVal,$scope.multiValue)){
+			cockpitModule_widgetSelection.setWidgetOfType("selector");
+			if(!$scope.disableSingleButton(parVal,$scope.multiValue)){
 				$scope.hasDefaultValue = false;
 				var index = $scope.multiValue.indexOf(parVal);
 				
@@ -308,11 +314,12 @@ angular.module('cockpitModule')
 					item.value=angular.copy($scope.multiValue);
 					$rootScope.$broadcast('DELETE_SELECTION',item);
 				}
-		//	}
+			}
 		};
 		
 		$scope.toggleRadioParameter = function(parVal ) {
-			//if(!$scope.disableSingleButton(parVal,$scope.parameter)){
+			cockpitModule_widgetSelection.setWidgetOfType("selector");
+			if(!$scope.disableSingleButton(parVal,$scope.parameter)){
 				$scope.hasDefaultValue = false;
 				var item = {};
 				item.aggregated=$scope.aggregated;
@@ -327,7 +334,7 @@ angular.module('cockpitModule')
 					item.value=angular.copy($scope.parameter);
 					$rootScope.$broadcast('DELETE_SELECTION',item);
 				}
-			//}
+			}
 
 		}
 	    
@@ -337,7 +344,8 @@ angular.module('cockpitModule')
 		};
 
 		$scope.toggleComboParameter = function(parVal, single) {
-		//	if(!$scope.disableMultiButton(parVal,single ? $scope.parameter : $scope.multiCombo.selected)){
+			cockpitModule_widgetSelection.setWidgetOfType("selector");
+			if(!$scope.disableMultiButton(parVal,single ? $scope.parameter : $scope.multiCombo.selected)){
 				$scope.hasDefaultValue = false;
 				var item = {};
 				item.aggregated=$scope.aggregated;
@@ -371,7 +379,7 @@ angular.module('cockpitModule')
 						$rootScope.$broadcast('DELETE_SELECTION',item);
 					}
 				}	
-			//}
+			}
 		}
 		
 		$scope.comboParameterExists = function (record) {
@@ -386,20 +394,26 @@ angular.module('cockpitModule')
 			}			
 	    };
 	    $scope.disableSingleButton = function (record,model){
-	    	if(Array.isArray(model)){
-	    		if( $scope.multiValue.indexOf(record) ==-1 && $scope.multiValue.length > 0) return true;
-	    		
-	    	} else {
-	    		if($scope.parameter!="" && $scope.parameter!=record ) return true;
+	    	if($scope.widgetOfType!='selector' ){
+		    	if(Array.isArray(model)){
+		    		if( $scope.multiValue.indexOf(record) ==-1 && $scope.multiValue.length > 0) return true;
+		    		
+		    	} else {
+		    		if($scope.parameter!="" && $scope.parameter!=record ) return true;
+		    	}
 	    	}
+
 	    }
 	    $scope.disableMultiButton = function (record,model){
-	    	if(Array.isArray(model)){
-	    		if( $scope.multiCombo.selected.indexOf(record) ==-1 && $scope.multiCombo.selected.length > 0) return true;
-	    		
-	    	} else {
-	    		if($scope.parameter!="" && $scope.parameter!=record ) return true;
+	    	if($scope.widgetOfType!='selector' ){
+		    	if(Array.isArray(model)){
+		    		if( $scope.multiCombo.selected.indexOf(record) ==-1 && $scope.multiCombo.selected.length > 0) return true;
+		    		
+		    	} else {
+		    		if($scope.parameter!="" && $scope.parameter!=record ) return true;
+		    	}	
 	    	}
+
 	    }
 	};
 	

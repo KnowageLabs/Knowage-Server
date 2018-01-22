@@ -234,6 +234,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.retroCompatibilityCheckToVersion1();
 
 		$scope.selectRow=function(row,column,evt){
+			cockpitModule_widgetSelection.setWidgetOfType("table");
 			var newValue = undefined;
 
 			for(var i=0;i<$scope.ngModel.content.columnSelectedOfDataset.length;i++){
