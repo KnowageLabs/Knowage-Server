@@ -58,6 +58,7 @@ import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaDsBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaDsBcId;
+import it.eng.spagobi.metadata.metadata.SbiMetaObjDs;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -1764,6 +1765,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					List<SbiMetaDsBc> lstBcs = DAOFactory.getSbiDsBcDAO().loadBcByDsIdAndTenant(intDsId, sbiDataSet.getId().getOrganization());
 					for (SbiMetaDsBc dsBc : lstBcs) {
 						DAOFactory.getSbiDsBcDAO().deleteDsBc(dsBc);
+					}
+
+					List<SbiMetaObjDs> listObjDs = DAOFactory.getSbiObjDsDAO().loadObjByDsId(intDsId);
+					for (SbiMetaObjDs objDs : listObjDs) {
+						DAOFactory.getSbiObjDsDAO().deleteObjDs(objDs);
 					}
 
 					DataSetEventManager.getInstance().notifyDelete(toReturn);
