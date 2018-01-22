@@ -41,6 +41,7 @@ author:...
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spagobi.engines.qbe.query.formula.DAO.Impl.FormulaDAOXmlImpl"%>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="it.eng.spagobi.engines.qbe.query.formula.mapping.Formula"%>
 <%@page import="it.eng.spagobi.engines.qbe.query.formula.DAO.IFormulaDAO"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
