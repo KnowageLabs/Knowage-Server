@@ -1675,6 +1675,9 @@
 
 	.widgetToolbar {
 		height: $toolbarHeight;
+	    flex-direction: row;
+	    display: flex;
+	    align-items: center;
 	}
 
 	.selectionWidget {
@@ -1808,6 +1811,12 @@
 	
 }
 
+#cockpitDataConfig {
+	.md-fab.md-mini {
+		top:10px;
+	}	
+}
+
 @media all and (max-width: 1879px) {
 	.kn-cockpit {
 		.md-button.addSheetTabButton {
@@ -1828,3 +1837,4 @@
 		}
 	}
 }
+

@@ -11,17 +11,18 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 					    			label : 'delete',
 					    			 icon:'fa fa-trash' ,  
 					    			action : function(item,event) {
-					    					//if dataset is not used removed
+					    					// if dataset is not used removed
 					    					var listDatasetUsed = cockpitModule_datasetServices.getDatasetsUsed();
 					    					if(listDatasetUsed.indexOf(item.id.dsId)==-1){
-					    						//if it used in association o selection remove it
+					    						// if it used in association o
+												// selection remove it
 					    						var associationList=$scope.retryListOfAssociation(item.label)
 					    						var currentSelection = cockpitModule_widgetSelection.getCurrentSelections(item.label);
 
 					    						if(associationList.withAssoc.length == 0 && currentSelection[item.label] ==undefined ){
 							    					$scope.tmpAvaiableDataset.splice($scope.tmpAvaiableDataset.indexOf(item),1);
 					    						}else{
-					    							//there is an association 
+					    							// there is an association
 					    							 var confirm = $mdDialog.confirm()
 					    					          .title(sbiModule_translate.load('sbi.cockpit.dataset.warning.association'))
 					    					          .textContent(sbiModule_translate.load('sbi.cockpit.dataset.warning.association.message'))
@@ -30,14 +31,14 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 					    					          .cancel(sbiModule_translate.load('sbi.generic.cancel'));
 
 					    					    $mdDialog.show(confirm).then(function() {
-					    					    	//ok remove all.
+					    					    	// ok remove all.
 					    					    	if(associationList.withAssoc.length != 0){
 					    					    		angular.copy(associationList.withoutAssoc,$scope.tmpAssociations);
 								    					$scope.tmpAvaiableDataset.splice($scope.tmpAvaiableDataset.indexOf(item),1);
 
 					    					    	}
 					    					    	if(currentSelection[item.label] != undefined){
-					    					    		//remove selection
+					    					    		// remove selection
 					    					    		for(var i =0 ;i< cockpitModule_template.configuration.aggregations.length;i++){
 					    					    			var index = cockpitModule_template.configuration.aggregations[i].datasets.indexOf(item.label);
 					    					    			if(index !=-1){
@@ -47,7 +48,7 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 					    					    						delete cockpitModule_template.configuration.aggregations[i].selection[keys[k]];
 					    					    					}
 					    					    				}
-					    					    				//cockpitModule_template.configuration.aggregations[i].datasets.splice(index,1);
+					    					    				// cockpitModule_template.configuration.aggregations[i].datasets.splice(index,1);
 					    					    				
 					    					    			}
 					    					    			
@@ -56,7 +57,7 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 					    					    	}
 					    					    	
 					    					    }, function() {
-					    					    	//cancel nothing to do
+					    					    	// cancel nothing to do
 					    					    });
 					    						}
 					    						
@@ -98,6 +99,30 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 	 
 	 $scope.showNearRealTimeCockpit = sbiModule_user.functionalities.indexOf("NearRealTimeCockpit")>-1;
 	 
+	 $scope.cockpitDatasetColumns = [
+		 {
+			 label:"",
+			 name:"parameters",
+			 type:"expand"},
+		 {
+			 label:"Label",
+			 name:"label",
+			 type:"text"},
+		 {
+			 label:"Name",
+			 name:"name",
+			 type:"text"},
+		 {
+			 label:"Use cache",
+			 name:"usacache",
+			 type:"checkbox"
+			 }
+	 ];
+	 
+	 $scope.expandRow = function(row){
+		 row.expanded = !row.expanded;
+	 }
+	 
 	 $scope.cockpitDatasetTableColumns=[
 		{
 			label:" ",
@@ -135,11 +160,12 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 			static:true
 		}];
 	 if($scope.showNearRealTimeCockpit){
-		$scope.cockpitDatasetTableColumns.push(
+		$scope.cockpitDatasetColumns.push(
 			{
 				label:"Frequency (seconds)",
 				name:"freq",
 				static:true,
+				type: "input",
 				template:"<md-input-container style='margin:0' ng-show='!row.useCache && !row.isRealtime' md-no-float class='md-block'>"+
 						"<input type='number' min='0' ng-model='row.frequency' placeholder='Frequency'>"+
 						"</md-input-container>"
@@ -198,6 +224,10 @@ function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitMo
 	$scope.displayDocumentCard=false;
 	$timeout(function(){$scope.displayDocumentCard=true;},0);
 	
+	 $scope.expandRow = function(row){
+		 row.expanded = !row.expanded;
+	 }
+	
 	$scope.documentTableActions=[
 	                             {
 					    			label : 'delete',
@@ -205,14 +235,15 @@ function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitMo
 					    			action : function(item,event) {
 					    				var listDocumentUsed = cockpitModule_documentServices.getDocumentsUsed();
 					    				if(listDocumentUsed.indexOf(item.DOCUMENT_ID)==-1){
-					    					//if it used in association o selection remove it
+					    					// if it used in association o
+											// selection remove it
 				    						var associationList=$scope.retryListOfAssociation(item.DOCUMENT_LABEL)
 
 				    						if(associationList.withAssoc.length == 0 ){
 				    							$scope.tmpAvaiableDocument.splice($scope.tmpAvaiableDocument.indexOf(item),1);
 				    						}else{
 
-				    							//there is an association 
+				    							// there is an association
 				    							 var confirm = $mdDialog.confirm()
 				    							 .title(sbiModule_translate.load('sbi.cockpit.document.warning.association'))
 				    					         .textContent(sbiModule_translate.load('sbi.cockpit.document.warning.association.message'))
@@ -221,7 +252,7 @@ function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitMo
 					    					       .cancel(sbiModule_translate.load('sbi.generic.cancel'));
 
 				    					    $mdDialog.show(confirm).then(function() {
-				    					    	//ok remove all.
+				    					    	// ok remove all.
 				    					    	if(associationList.withAssoc.length != 0){
 				    					    		angular.copy(associationList.withoutAssoc,$scope.tmpAssociations);
 							    					$scope.tmpAvaiableDocument.splice($scope.tmpAvaiableDocument.indexOf(item),1);
@@ -261,17 +292,25 @@ function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitMo
 	 }
 	 
 	 $scope.cockpitDocumentTableColumns=[
-	                                    {
-	                                    	label:"Label",
-	                                    	name:"DOCUMENT_LABEL",
-	                                    	static:true
-	                                    },
-	                                    {
-	                                    	label:"Name",
-	                                    	name:"DOCUMENT_NAME",
-	                                    	static:true
-	                                    }
-	                                    ]
+		 {
+         	label:"",
+         	name:"parameters",
+         	type:"expand",
+         	static:true
+         },
+        {
+        	label:"Label",
+        	name:"DOCUMENT_LABEL",
+        	type: "text",
+        	static:true
+        },
+        {
+        	label:"Name",
+        	name:"DOCUMENT_NAME",
+        	type: "text",
+        	static:true
+        }
+        ]
 	 
 	  
 	 $scope.addDocument=function(){
@@ -333,11 +372,13 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    	 $scope.cockpitModule_template=cockpitModule_template;
 		    	 $scope.datasetList=cockpitModule_datasetServices.getDatasetList();
 		    	 $scope.utils = {};
-		    	  //clone de avaiable dataset to reset it if user cancel the dialog
+		    	  // clone de avaiable dataset to reset it if user cancel the
+					// dialog
 		    	  $scope.tmpAvaiableDataset=[];
 		    	  angular.copy(cockpitModule_datasetServices.getAvaiableDatasets(),$scope.tmpAvaiableDataset);
 		    	  
-		    	  //clone de avaiable document to reset it if user cancel the dialog
+		    	  // clone de avaiable document to reset it if user cancel the
+					// dialog
 		    	  $scope.tmpAvaiableDocument=[];
 		    	  angular.copy(cockpitModule_documentServices.getAvaiableDocuments(),$scope.tmpAvaiableDocument);
 
@@ -429,7 +470,8 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    	  		angular.copy($scope.tmpAssociations,cockpitModule_template.configuration.associations);
 		    		  
 		    		  if(!angular.equals($scope.tmpAggregations,cockpitModule_template.configuration.aggregations)){
-		    			  //remove from list of datasetParameterChanged the dataset present in aggregation
+		    			  // remove from list of datasetParameterChanged the
+							// dataset present in aggregation
 		    			  angular.forEach($scope.tmpAggregations,function(aggr){
 		    				  angular.forEach(aggr.datasets,function(ds){
 		    					  delete datasetParameterChanged[ds];
@@ -465,7 +507,7 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    		  }
 	    			  
 		    		  if(Object.keys(datasetParameterChanged).length>0 || Object.keys(documentParameterChanged).length>0){
-	    				  //manually update of widget
+	    				  // manually update of widget
 	    				  $rootScope.$broadcast('WIDGET_EVENT','PARAMETER_CHANGE',{dsList:datasetParameterChanged,docList:documentParameterChanged});
 	    			  }
 		    		  
@@ -483,14 +525,14 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    	  
 		    	  $scope.checkDataConfiguration=function(){
 		    		  var errors=[];
-		    		  //check errors in dataset parameter
+		    		  // check errors in dataset parameter
 		    		  if(document.querySelectorAll("#cockpit-dataset .fa-times-circle").length>0){
 		    			  errors.push(sbiModule_translate.load("sbi.cockpit.save.data.configuration.dataset.parameter.error"));
 		    		  }
-//		    		  //check errors in document parameter
-//		    		  if(document.querySelectorAll("#cockpit-document .fa-times-circle").length>0){
-//		    			  errors.push(sbiModule_translate.load("sbi.cockpit.save.data.configuration.document.parameter.error"));
-//		    		  }
+// //check errors in document parameter
+// if(document.querySelectorAll("#cockpit-document .fa-times-circle").length>0){
+// errors.push(sbiModule_translate.load("sbi.cockpit.save.data.configuration.document.parameter.error"));
+// }
 		    		  
 		    		  if(errors.length>0){
 		    			  $mdDialog.show(
@@ -518,7 +560,7 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    					for(var j=0;j<assoc.fields.length;j++){
 		    						if(assoc.fields[j].store == itemLabel){
 		    							flag = false;
-		    							//there is an association 
+		    							// there is an association
 		    							array.push(assoc);
 		    						}
 		    					}
