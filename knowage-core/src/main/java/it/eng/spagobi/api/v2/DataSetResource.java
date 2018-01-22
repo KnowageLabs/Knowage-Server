@@ -123,19 +123,19 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
 	}
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getDataSets(@QueryParam("includeDerived") String includeDerived, @QueryParam("callback") String callback, 
-			@QueryParam("asPagedList") Boolean paged, @QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr, 
+	public String getDataSets(@QueryParam("includeDerived") String includeDerived, @QueryParam("callback") String callback,
+			@QueryParam("asPagedList") Boolean paged, @QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
 			@QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical, @QueryParam("ids") String ids) {
 		logger.debug("IN");
-		
+
 		if ("no".equalsIgnoreCase(includeDerived)) {
 			return getNotDerivedDataSets(callback);
 		}
-		
+
 		if (Boolean.TRUE.equals(paged)) {
 			return getDatasetsAsPagedList(pageStr, itemPerPageStr, search, seeTechnical, ids);
 		}
@@ -166,7 +166,8 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 			return callback + "(" + jsonString + ")";
 		}
 	}
-	
+
+	@Override
 	@GET
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -174,7 +175,8 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 	public String getDataSet(@PathParam("label") String label) {
 		return super.getDataSet(label);
 	}
-	
+
+	@Override
 	@GET
 	@Path("/{label}/content")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -253,7 +255,8 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 
 		return Response.ok().build();
 	}
-	
+
+	@Override
 	@DELETE
 	@Path("/{label}")
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
@@ -268,11 +271,11 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 			IEngUserProfile profile = this.getUserProfile();
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
-	
+
 			Integer page = getNumberOrNull(pageStr);
 			Integer item_per_page = getNumberOrNull(itemPerPageStr);
 			search = search != null ? search : "";
-	
+
 			Integer[] idArray = getIdsAsIntegers(ids);
 
 			List<SbiDataSet> dataset = null;
@@ -349,10 +352,9 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 					boolean isJDBCDataSet = DatasetManagementAPI.isJDBCDataSet(dataSet);
 					String dialect = dataSource != null ? dataSource.getHibDialectName() : "";
 					boolean isBigDataDialect = SqlUtils.isBigDataDialect(dialect);
-					boolean isSqlServerDialect = dialect.contains("sqlserver");
+					boolean isSqlServerOrTeradataDialect = dialect.contains("sqlserver") || dialect.contains("teradata");
 
 					List<String> dateColumnNamesList = getDateColumnNamesListRaw(dataSet, dataSource); // with aliases aposthrophe
-					// TODO
 
 					DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isNearRealtime);
 					if (strategy == DatasetEvaluationStrategy.NEAR_REALTIME) {
@@ -396,7 +398,7 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
 						filterCriterias.add(filterCriteria);
 
-					} else if (isSqlServerDialect && filterOperator.equals("IN")) {
+					} else if (isSqlServerOrTeradataDialect && filterOperator.equals("IN")) {
 						for (int i = 0; i < columnsList.size(); i++) {
 							columnsList.set(i, AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), dataSource));
 						}
@@ -626,7 +628,12 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 			boolean isNearRealtime, boolean getAttributes) {
 		List<String> attributesOrMeasures = new ArrayList<>();
 
-		String defaultTableNameDot = isNearRealtime ? DEFAULT_TABLE_NAME_DOT : "";
+		boolean isJDBCDataSet = DatasetManagementAPI.isJDBCDataSet(dataSet);
+		boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
+
+		String defaultTableNameDot = isNearRealtime && !(isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) ? DEFAULT_TABLE_NAME_DOT
+				: "";
+
 		String datasetLabel = dataSet.getLabel();
 
 		IDataSource dataSource = getDataSource(dataSet, isNearRealtime);

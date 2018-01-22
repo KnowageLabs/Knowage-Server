@@ -1853,11 +1853,13 @@ public class DatasetManagementAPI {
 		if (filters != null) {
 			boolean isHsqlDialect = false;
 			boolean isSqlServerDialect = false;
+			boolean isTeradataDialect = false;
 			if (dataSource != null) {
 				String dialect = dataSource.getHibDialectName();
 				if (dialect != null) {
 					isHsqlDialect = dialect.contains("hsql");
 					isSqlServerDialect = dialect.contains("sqlserver");
+					isTeradataDialect = dialect.contains("teradata");
 				}
 			}
 
@@ -1867,7 +1869,7 @@ public class DatasetManagementAPI {
 				String leftOperand = null;
 				String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
 				if ("IN".equalsIgnoreCase(operator)) {
-					leftOperand = (isHsqlDialect || isSqlServerDialect) ? "(" : "(1,";
+					leftOperand = (isHsqlDialect || isSqlServerDialect || isTeradataDialect) ? "(" : "(1,";
 					String separator = "";
 					for (String value : columns) {
 						leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
@@ -1903,14 +1905,18 @@ public class DatasetManagementAPI {
 									if (i >= columns.length) { // starting from 2nd tuple of values
 										rightOperandSB.append(",");
 									}
-									rightOperandSB.append(isHsqlDialect || isSqlServerDialect ? "(" : "(1");
+									if (!isTeradataDialect) {
+										rightOperandSB.append(isHsqlDialect || isSqlServerDialect ? "(" : "(1");
+									}
 								}
-								if (i % columns.length != 0 || (!isHsqlDialect && !isSqlServerDialect)) {
+								if (i % columns.length != 0 || (!isHsqlDialect && !isSqlServerDialect && !isTeradataDialect)) {
 									rightOperandSB.append(",");
 								}
 								rightOperandSB.append(value);
 								if (i % columns.length == columns.length - 1) { // last item of tuple of values
-									rightOperandSB.append(")");
+									if (!isTeradataDialect) {
+										rightOperandSB.append(")");
+									}
 								}
 							} else {
 								rightOperandSB.append(separator);

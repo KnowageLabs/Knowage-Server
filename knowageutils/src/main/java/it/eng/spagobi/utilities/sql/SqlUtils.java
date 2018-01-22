@@ -233,4 +233,12 @@ public class SqlUtils {
 			return false;
 		}
 	}
+
+	public static boolean hasTeradataDialect(IDataSource dataSource) {
+		if (dataSource != null) {
+			return dataSource.getHibDialectName().contains("teradata");
+		} else {
+			return false;
+		}
+	}
 }

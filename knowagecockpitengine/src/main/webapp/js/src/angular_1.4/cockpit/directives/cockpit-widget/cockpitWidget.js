@@ -246,7 +246,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		$scope.ngModel.search ={"columns" : []};
 		for(var k in $scope.ngModel.content.columnSelectedOfDataset){
 			var column = $scope.ngModel.content.columnSelectedOfDataset[k];
-			if(column.fieldType == "ATTRIBUTE"){
+			if(column.fieldType == "ATTRIBUTE" && column.type == "java.lang.String"){
 				$scope.ngModel.search.columns.push(column.name);
 			}
 		}
@@ -254,7 +254,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 
 	// davverna - method to set the actual model and search parameters to refresh the widget table
 	$scope.searchColumns = function(){
-		if($scope.ngModel.search.text != ""){
+		if($scope.ngModel.search.text != "" && $scope.ngModel.search.columns.length > 0){
 			$scope.activeSearch = true;
 			$scope.refreshWidget();
 		}

@@ -33,12 +33,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      	<md-input-container class="md-block" flex flex-xs=40>
 	           	<label>{{translate.load("sbi.cockpit.widgets.table.search.columns")}}</label>
 	           <md-select ng-model="ngModel.search.columns" multiple>
-	            <md-option ng-repeat="col in ngModel.content.columnSelectedOfDataset | filter:{fieldType:'ATTRIBUTE'}" value="{{col.name}}">
+	            <md-option ng-repeat="col in ngModel.content.columnSelectedOfDataset | filter:{fieldType:'ATTRIBUTE'} | filter:{type:'java.lang.String'}" value="{{col.name}}">
 	              {{col.aliasToShow}}
 	            </md-option>
 	           </md-select>
 	         </md-input-container>
-	      	<md-button class="md-raised md-primary" ng-click="searchColumns()"  flex-xs type="submit">{{translate.load("sbi.cockpit.widgets.table.search")}}</md-button>
+	      	<md-button class="md-raised md-primary" ng-disabled="!activeSearch" ng-click="searchColumns()"  flex-xs type="submit">{{translate.load("sbi.cockpit.widgets.table.search")}}</md-button>
 	      	<md-button class="md-raised md-warn" ng-if="activeSearch" flex-xs ng-click="resetSearch()">{{translate.load("sbi.cockpit.widgets.table.search.reset")}}</md-button>
 	      	<md-button class="md-icon-button"  aria-label="close"   ng-click="openSearchBar()">
 				<md-icon md-font-icon="fa fa-times"></md-icon>

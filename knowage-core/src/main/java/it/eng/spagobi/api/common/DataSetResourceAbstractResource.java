@@ -83,9 +83,9 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
 public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(DataSetResourceAbstractResource.class);
-	
+
 	static final protected String DEFAULT_TABLE_NAME_DOT = DataStore.DEFAULT_TABLE_NAME + ".";
-	
+
 	private static final String DATE_TIME_FORMAT_MYSQL = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "%Y").replace("MM", "%m")
 			.replace("dd", "%d").replace("HH", "%H").replace("mm", "%i").replace("ss", "%s");
 	private static final String DATE_TIME_FORMAT_SQL_STANDARD = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
@@ -95,7 +95,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 	protected enum DatasetEvaluationStrategy {
 		PERSISTED, FLAT, JDBC, NEAR_REALTIME, CACHED
 	}
-	
+
 	// ===================================================================
 	// UTILITY METHODS
 	// ===================================================================
@@ -129,7 +129,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 	}
 
 	public String getDataStore(String label, String parameters, String selections, String likeSelections, int maxRowCount, String aggregations,
-			String summaryRow, int offset, int fetchSize, boolean isRealtime) {
+			String summaryRow, int offset, int fetchSize, boolean isNearRealtime) {
 		logger.debug("IN");
 
 		try {
@@ -193,8 +193,8 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			if (likeSelections != null && !likeSelections.equals("")) {
 				JSONObject likeSelectionsObject = new JSONObject(likeSelections);
 				if (likeSelectionsObject.names() != null) {
-					filterCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, false, columnAliasToName, projectionCriteria, true));
-					havingCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, false, columnAliasToName, projectionCriteria, false));
+					filterCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, isNearRealtime, columnAliasToName, projectionCriteria, true));
+					havingCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, isNearRealtime, columnAliasToName, projectionCriteria, false));
 
 					filterCriteriaForMetaModel.addAll(getLikeFilterCriteria(label, likeSelectionsObject, true, columnAliasToName, projectionCriteria, true));
 					havingCriteriaForMetaModel.addAll(getLikeFilterCriteria(label, likeSelectionsObject, true, columnAliasToName, projectionCriteria, false));
@@ -209,7 +209,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 						, havingCriteria, havingCriteriaForMetaModel, filterCriteria, projectionCriteria);
 			}
 
-			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxRowCount, isRealtime,
+			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxRowCount, isNearRealtime,
 					DataSetUtilities.getParametersMap(parameters), groupCriteria, filterCriteria, filterCriteriaForMetaModel, havingCriteria,
 					havingCriteriaForMetaModel, projectionCriteria, summaryRowProjectionCriteria);
 
@@ -355,7 +355,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		return filterCriterias;
 	}
 
-	protected List<FilterCriteria> getLikeFilterCriteria(String datasetLabel, JSONObject likeSelectionsObject, boolean isRealtime,
+	protected List<FilterCriteria> getLikeFilterCriteria(String datasetLabel, JSONObject likeSelectionsObject, boolean isNearRealtime,
 			Map<String, String> columnAliasToName, List<ProjectionCriteria> projectionCriteria, boolean getAttributes) throws JSONException {
 		List<FilterCriteria> likeFilterCriterias = new ArrayList<FilterCriteria>();
 		return likeFilterCriterias;
@@ -395,7 +395,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			}
 		}
 	}
-	
+
 	protected String serializeDataSet(IDataSet dataSet, String typeDocWizard) throws JSONException {
 		try {
 			JSONObject datasetsJSONObject = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataSet, null);
@@ -407,7 +407,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			throw new RuntimeException("An unexpected error occured while serializing results", t);
 		}
 	}
-	
+
 	/**
 	 * @param profile
 	 * @param datasetsJSONArray
@@ -511,7 +511,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		}
 		return datasetsJSONReturn;
 	}
-	
+
 	public String getDataSet(String label) {
 		logger.debug("IN");
 		try {
@@ -523,7 +523,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			logger.debug("OUT");
 		}
 	}
-	
+
 	public Response deleteDataset(String label) {
 		IDataSetDAO datasetDao = null;
 		try {
@@ -538,25 +538,25 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		try {
 			datasetDao.deleteDataSet(dataset.getId());
 			if (dataset instanceof VersionedDataSet) {
-				VersionedDataSet versioneDataSet = (VersionedDataSet)dataset;
+				VersionedDataSet versioneDataSet = (VersionedDataSet) dataset;
 				IDataSet wrappedDataset = versioneDataSet.getWrappedDataset();
 				if (wrappedDataset instanceof FileDataSet) {
-					//remove also the file from resources
+					// remove also the file from resources
 					FileDataSet fileDataSet = (FileDataSet) wrappedDataset;
-					String fileDirectory = SpagoBIUtilities.getDatasetResourcePath()+File.separatorChar+"files";
+					String fileDirectory = SpagoBIUtilities.getDatasetResourcePath() + File.separatorChar + "files";
 					String fileName = fileDataSet.getFileName();
-					File fileToDelete = new File(fileDirectory+File.separatorChar+fileName);
+					File fileToDelete = new File(fileDirectory + File.separatorChar + fileName);
 					if (fileToDelete.exists()) {
-						//delete the file
-						if(fileToDelete.delete()) {
-							//delete success
-							logger.debug("Dataset file correctly delete: "+fileName);
+						// delete the file
+						if (fileToDelete.delete()) {
+							// delete success
+							logger.debug("Dataset file correctly delete: " + fileName);
 						} else {
-							//delete failed
-							logger.error("Error deleting file dataset: "+fileName);
-							throw new SpagoBIRuntimeException("Error deleting file dataset: "+fileName);
+							// delete failed
+							logger.error("Error deleting file dataset: " + fileName);
+							throw new SpagoBIRuntimeException("Error deleting file dataset: " + fileName);
 						}
-					}					
+					}
 				}
 
 			}
@@ -575,7 +575,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 
 		return Response.ok().build();
 	}
-	
+
 	public Response execute(String label, String body) {
 		SDKDataSetParameter[] parameters = null;
 
@@ -596,7 +596,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		}
 		return Response.ok(executeDataSet(label, parameters)).build();
 	}
-	
+
 	protected String executeDataSet(String label, SDKDataSetParameter[] params) {
 		logger.debug("IN: label in input = " + label);
 
@@ -642,7 +642,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			throw new SpagoBIRuntimeException("Error while executing dataset", e);
 		}
 	}
-	
+
 	protected IDataSetDAO getDataSetDAO() {
 		IDataSetDAO dsDAO;
 		try {
@@ -666,7 +666,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		}
 		return dataSourceDAO;
 	}
-	
+
 	protected String convertDateString(String dateString, String srcFormatString, String dstFormatString) {
 		try {
 			SimpleDateFormat srcFormat = new SimpleDateFormat(srcFormatString);
@@ -679,7 +679,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			throw new SpagoBIRuntimeException(message, e);
 		}
 	}
-	
+
 	protected String getDateForQuery(String dateStringToConvert, IDataSource dataSource) {
 		String properDateString = dateStringToConvert;
 
@@ -701,7 +701,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 
 		return properDateString;
 	}
-	
+
 	protected boolean isDateColumn(String columnName, IDataSet dataSet) {
 		for (int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
 			IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
@@ -711,7 +711,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		}
 		return false;
 	}
-	
+
 	protected IDataSource getDataSource(IDataSet dataSet, boolean isNearRealTime) {
 		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isNearRealTime);
 		IDataSource dataSource = null;
@@ -731,7 +731,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 
 		return dataSource;
 	}
-	
+
 	protected DatasetEvaluationStrategy getDatasetEvaluationStrategy(IDataSet dataSet, boolean isNearRealtime) {
 		DatasetEvaluationStrategy result;
 
@@ -753,20 +753,19 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 
 		return result;
 	}
-	
+
 	protected String getFilter(IDataSet dataset, boolean isNearRealtime, String column, String values) {
 		IDataSource dataSource = getDataSource(dataset, isNearRealtime);
 		String tablePrefix = getTablePrefix(dataset, isNearRealtime);
 		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataset, isNearRealtime);
 
-		if (DatasetEvaluationStrategy.NEAR_REALTIME.equals(strategy) || SqlUtils.hasSqlServerDialect(dataSource)) {
+		if (DatasetEvaluationStrategy.NEAR_REALTIME.equals(strategy) || SqlUtils.hasSqlServerDialect(dataSource) || SqlUtils.hasTeradataDialect(dataSource)) {
 			return getOrFilterString(column, values, dataSource, tablePrefix);
 		} else {
 			return getInFilterString(column, values, dataSource, tablePrefix);
 		}
 	}
 
-	
 	private String getOrFilterString(String column, String values, IDataSource dataSource, String tablePrefix) {
 		String encapsulateColumnName = tablePrefix + AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
 		String[] singleValues = values.split(",");
