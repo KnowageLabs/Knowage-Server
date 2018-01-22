@@ -48,6 +48,10 @@
 				</md-select>
 	
 		    </md-input-container>
+		    <md-input-container  class="md-block" ng-if="model.settings.defaultValue=='STATIC'">
+				<label>static</label>
+				<input ng-model="model.settings.staticValue">
+			</md-input-container>
 	    </md-card-content>
     </md-card>
 </md-content>

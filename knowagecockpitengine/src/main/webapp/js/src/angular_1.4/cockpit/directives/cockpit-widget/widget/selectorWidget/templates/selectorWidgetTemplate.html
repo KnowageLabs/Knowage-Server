@@ -18,10 +18,10 @@
 	
 	<!-- lov combobox single and multiple input -->
 	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX'" layout="column"  class="selectParameter" layout-padding>
-		<md-input-container class="md-block">
+		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue=='multiValue'" >
 		<!-- multiple -->
-			<md-select ng-model="parameter" multiple 
-		 		ng-change="toggleComboParameter(parameter)"	ng-if="ngModel.settings.modalityValue=='multiValue'" md-on-close="clearParamSearch()"> 
+			<md-select ng-model="multiCombo.selected" multiple  md-on-close="clearParamSearch()"> 
+		 		
 				<md-select-header>
 				        <md-input-container class="md-block">
 				          <input
@@ -31,10 +31,14 @@
 				            placeholder="Search..">
 				          </md-input-container>  
 				        </md-select-header>
-				        <md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" ng-value="record.column_1" >
+				        <md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" 
+				        ng-value="record.column_1" ng-click="toggleComboParameter(record.column_1, false)">
 					{{record.column_1}}
 				</md-option>
 			</md-select>
+			
+		</md-input-container>
+		<md-input-container class="md-block"  ng-if="ngModel.settings.modalityValue!='multiValue'" >
 			<!-- single -->
 			<md-select ng-model="parameter" 
 		         ng-if="ngModel.settings.modalityValue!='multiValue'" md-on-close="clearParamSearch()"> 
@@ -48,7 +52,8 @@
 				          </md-input-container>  
 				        </md-select-header>
 
-				<md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" ng-value="record.column_1" ng-click="toggleComboParameter(record.column_1)">
+				<md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" 
+				ng-value="record.column_1" ng-click="toggleComboParameter(record.column_1,true)">
 					{{record.column_1}}
 				</md-option>
 			</md-select>
