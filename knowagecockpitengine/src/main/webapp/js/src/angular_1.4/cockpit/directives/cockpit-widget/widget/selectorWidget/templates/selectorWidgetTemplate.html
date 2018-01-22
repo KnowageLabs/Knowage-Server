@@ -39,7 +39,7 @@
 				        </md-select-header>
 				        <md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" 
 				        ng-value="record.column_1" ng-click="disableMultiButton(record.column_1,multiCombo.selected) || toggleComboParameter(record.column_1, false)"
-				        ng-disabled="widgetOfType!='selector' && disableMultiButton(record.column_1,multiCombo.selected)">
+				        ng-disabled="disableMultiButton(record.column_1,multiCombo.selected)">
 					{{record.column_1}}
 				</md-option>
 			</md-select>
@@ -60,7 +60,8 @@
 				        </md-select-header>
 
 				<md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" 
-				ng-value="record.column_1" ng-click="toggleComboParameter(record.column_1,true)">
+				ng-value="record.column_1" ng-click="toggleComboParameter(record.column_1,true)"
+				ng-disabled="disableMultiButton(record.column_1,parameter)">
 					{{record.column_1}}
 				</md-option>
 			</md-select>
