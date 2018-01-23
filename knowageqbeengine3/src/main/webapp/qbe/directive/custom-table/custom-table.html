@@ -80,7 +80,7 @@
 	       		</md-menu-item>
 	       		<md-menu-item ng-show="field.iconCls=='measure'">
          			<md-menu>		
-	         			<md-button ng-mouseenter="openMenu($mdOpenMenu, $event)">
+	         			<md-button ng-click="openMenu($mdMenu.open, $event)">
 							<md-icon class="fa fa-puzzle-piece" style="display:inline"></md-icon>
 		            		<span>{{translate.load("kn.qbe.custom.table.function.temporal")}}</span>
 		          		</md-button>
@@ -135,7 +135,7 @@
 	       		
 	       		<md-menu-item ng-show="field.iconCls=='measure'">
          			<md-menu>		
-	         			<md-button ng-mouseenter="openMenu($mdOpenMenu, $event)">
+	         			<md-button ng-click="openMenu($mdMenu.open, $event)">
 							<md-icon class="fa fa-calculator" style="display:inline"></md-icon>
 		            		<span>{{translate.load("kn.qbe.custom.table.function")}}</span>
 		          		</md-button>
