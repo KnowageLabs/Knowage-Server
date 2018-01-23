@@ -149,7 +149,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 					queryBuilder.append(getFormattedDate((Date) operand));
 				} else if (String.class.isAssignableFrom(operand.getClass())) {
 					queryBuilder.append("'");
-					queryBuilder.append(operand);
+					queryBuilder.append(((String) operand).replaceAll("'", "''"));
 					queryBuilder.append("'");
 				} else {
 					queryBuilder.append(operand);

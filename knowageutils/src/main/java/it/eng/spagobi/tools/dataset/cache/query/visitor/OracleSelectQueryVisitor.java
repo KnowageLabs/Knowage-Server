@@ -102,7 +102,7 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 					queryBuilder.append(getFormattedDate((Date) operand));
 				} else if (String.class.isAssignableFrom(operand.getClass())) {
 					queryBuilder.append("'");
-					queryBuilder.append(operand);
+					queryBuilder.append(((String) operand).replaceAll("'", "''"));
 					queryBuilder.append("'");
 				} else {
 					queryBuilder.append(operand);

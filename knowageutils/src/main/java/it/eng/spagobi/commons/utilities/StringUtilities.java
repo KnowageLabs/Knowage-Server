@@ -46,6 +46,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -945,17 +946,35 @@ public class StringUtilities {
 	}
 
 	/**
-	 * Parse values between delimiter.
+	 * Parse substrings between delimiter.
 	 */
 	public static String[] getSubstringsBetween(String values, String delimiter) {
-		ArrayList<String> arrayList = new ArrayList<>();
-		int start = values.indexOf(delimiter);
-		while (start > -1) {
-			int end = values.indexOf(delimiter, start + 1);
-			arrayList.add(values.substring(start + 1, end));
-			values = values.substring(end + 1);
-			start = values.indexOf(delimiter);
+		try {
+			ArrayList<String> arrayList = new ArrayList<>();
+			int start = values.indexOf(delimiter);
+			int delimiterLength = delimiter.length();
+			while (start > -1) {
+				int end = values.indexOf(delimiter, start + delimiterLength);
+				arrayList.add(values.substring(start + delimiterLength, end));
+				start = values.indexOf(delimiter, end + delimiterLength);
+			}
+			return arrayList.toArray(new String[0]);
+		} catch (IndexOutOfBoundsException e) {
+			throw new SpagoBIRuntimeException("Unable to tokenize string [" + values + "] with delimiter [" + delimiter + "]", e);
 		}
-		return arrayList.toArray(new String[0]);
+	}
+
+	/**
+	 * Parse substrings between prefix, delimiter and suffix.
+	 */
+	public static String[] splitBetween(String values, String prefix, String delimiter, String suffix) {
+		int prefixIndex = values.indexOf(prefix);
+		int suffixIndex = values.lastIndexOf(suffix);
+		if (prefixIndex > -1 && suffixIndex > -1) {
+			int prefixLength = prefix.length();
+			return values.substring(prefixIndex + prefixLength, suffixIndex).split("\\Q" + delimiter + "\\E");
+		} else {
+			throw new SpagoBIRuntimeException("Unable to tokenize string [" + values + "] with delimiters [" + prefix + "," + delimiter + "," + suffix + "]");
+		}
 	}
 }
