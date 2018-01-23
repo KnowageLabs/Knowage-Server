@@ -192,7 +192,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 							    	  class: "fa fa-file",
 							    	  type : "document"
 							      },{
-							    	  name:"Selection",
+							    	  name:"Active Selections",
 							    	  description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.selection"),
 							    	  tags : ["selection"],
 							    	  class: "fa fa-check-square-o",
