@@ -53,8 +53,9 @@ public class JPQLStatementFromClause extends AbstractStatementFromClause {
 		if (queryGraph != null) {
 			List<Relationship> relationships = queryGraph.getConnections();
 			Map<String, String> queryEntityAliases = (Map) entityAliasesMaps.get(query.getId());
-
-			if (queryGraph.hasJoinPaths()) {
+			// boolean hasJoinPaths = query.getQueryGraph().hasJoinPaths();
+			boolean hasJoinPaths = false;
+			if (hasJoinPaths) {
 				return this.buildClause(relationships, queryEntityAliases, entityAliasesMaps);
 			}
 		}

@@ -52,7 +52,9 @@ public class JPQLStatementWhereClause extends AbstractStatementWhereClause {
 
 	public static String injectAutoJoins(IStatement parentStatement, String whereClause, Query query, Map<String, Map<String, String>> entityAliasesMaps) {
 		if (query.getQueryGraph() != null) {
-			if (query.getQueryGraph().hasJoinPaths()) {
+			// boolean hasJoinPaths = query.getQueryGraph().hasJoinPaths();
+			boolean hasJoinPaths = false;
+			if (hasJoinPaths) {
 				return whereClause;
 			}
 
