@@ -11,6 +11,10 @@ CodeMirror.defineSimpleMode("customMode", {
             token: ["keyword", "args", "keyword"]
         },
         {
+            regex: /(\$F\{[a-zA-Z0-9\s\-\>]*\*\}){1}/,
+            token: ["error"]
+        },
+        {
             regex: /(\$F\{[a-zA-Z0-9\s\-\>]*\}){1}/,
             token: ["atom"]
         }

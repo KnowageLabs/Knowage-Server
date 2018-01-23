@@ -717,7 +717,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
             			"alias":$scope.calculatedFieldOutput.alias,
             			"type":$scope.calculatedFieldOutput.type,
             			"nature":"ATTRIBUTE",
-            			"expression":$scope.calculatedFieldOutput.expression
+            			"expression":$scope.calculatedFieldOutput.formula
                 	}
                 	$scope.calculatedFieldOutput.id = $scope.addedParameters;
 

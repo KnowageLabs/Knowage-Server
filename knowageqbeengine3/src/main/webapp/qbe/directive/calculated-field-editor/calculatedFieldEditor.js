@@ -43,7 +43,6 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
         		"filedType":"inLineCalculatedField"
             }
             
-
             //fix for codemirror to refresh when opened
             $timeout(function() {
                 $scope.reloadCodemirror = true;
@@ -82,7 +81,6 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
                 var line = $scope._editor.getLine(position.line);
                 $scope._editor.replaceRange(text, position);
             }
-
 
             //add text to the editor
             $scope.addField = function(field) {
@@ -135,6 +133,39 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
             $scope.changeSelectedEntity = function() {
                 $scope.calculatedField.expression = "";
             }
+            
+            //watch the expression values to set id instead of fields names
+            $scope.$watch('calculatedField.expression',function(newValue,oldValue){
+            	if($scope.calculatedField && newValue!=oldValue){
+            		if($scope.calculatedField.formula != "" && $scope.calculatedField.formula != newValue){
+            			$scope.calculatedField.formula = newValue;
+            			//regex to get the number of fields occurrencies
+            			var fullRegex = /(\$F\{[a-zA-Z0-9\s\-\>]*\}){1}/g;
+            			//regex to get the single field
+            			var regEx = /(\$F\{[a-zA-Z0-9\s\-\>]*\}){1}/;
+            			//regex to divide the single fields match into groups
+            			var regExGroups = /(\$F\{)([a-zA-Z0-9\s\-\>]*)(\}){1}/;
+            			if($scope.calculatedField.formula.match(fullRegex)){
+            				var fieldsNum = $scope.calculatedField.formula.match(fullRegex).length;
+            			}
+            			for(var i=0;i<fieldsNum;i++){
+            				var tempReplace = "";
+            				var match = regExGroups.exec($scope.calculatedField.formula);
+            				//get the id of the field from the label
+                			angular.forEach($scope.selectedEntity.children, function(value, key) {
+                				if(value.text==match[2]){
+                					tempReplace = value.id;
+                					return;
+                				}
+                			});
+                			$scope.calculatedField.formula = $scope.calculatedField.formula.replace(regEx,tempReplace);
+            			}
+            			
+            		}else{
+            			$scope.calculatedField.formula = "";
+            		}
+            	}
+            });
 
         }
     };
