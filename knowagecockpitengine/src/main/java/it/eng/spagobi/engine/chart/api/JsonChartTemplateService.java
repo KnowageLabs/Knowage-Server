@@ -24,12 +24,14 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -313,7 +315,9 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@SuppressWarnings("rawtypes")
 	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
-	public String getDataAndConf(@PathParam("label") String label, String body, @Context HttpServletResponse servletResponse) {
+	public String getDataAndConf(@PathParam("label") String label, String body, @Context HttpServletResponse servletResponse,
+			@DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
+			@QueryParam("nearRealtime") boolean isNearRealtime) {
 
 		String jsonTemplate = null;
 		String exportWebApp = null;
@@ -323,7 +327,10 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 		JSONObject responseObject = new JSONObject();
 		CockpitExecutionClient cockpitExecutionClient;
 		String userId = (String) getUserProfile().getUserUniqueIdentifier();
-		Map<String, Object> queryParams = null;
+		Map<String, Object> queryParams = new HashMap<String, Object>();
+		queryParams.put("offset", offset);
+		queryParams.put("size", fetchSize);
+		queryParams.put("nearRealtime", isNearRealtime);
 
 		try {
 			if (StringUtilities.isNotEmpty(body)) {
