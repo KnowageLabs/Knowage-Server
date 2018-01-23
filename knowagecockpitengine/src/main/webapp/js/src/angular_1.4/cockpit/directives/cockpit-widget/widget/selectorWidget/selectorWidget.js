@@ -293,7 +293,7 @@ angular.module('cockpitModule')
 		
 		$scope.toggleCheckboxParameter = function(parVal) {
 			cockpitModule_widgetSelection.setWidgetOfType("selector");
-			if(!$scope.disableSingleButton(parVal,$scope.multiValue)){
+			//if(!$scope.disableSingleButton(parVal,$scope.multiValue)){
 				$scope.hasDefaultValue = false;
 				var index = $scope.multiValue.indexOf(parVal);
 				
@@ -315,12 +315,12 @@ angular.module('cockpitModule')
 					item.value=angular.copy($scope.multiValue);
 					$rootScope.$broadcast('DELETE_SELECTION',item);
 				}
-			}
+			//}
 		};
 		
 		$scope.toggleRadioParameter = function(parVal ) {
 			cockpitModule_widgetSelection.setWidgetOfType("selector");
-			if(!$scope.disableSingleButton(parVal,$scope.parameter)){
+			//if(!$scope.disableSingleButton(parVal,$scope.parameter)){
 				$scope.hasDefaultValue = false;
 				var item = {};
 				item.aggregated=$scope.aggregated;
@@ -335,7 +335,7 @@ angular.module('cockpitModule')
 					item.value=angular.copy($scope.parameter);
 					$rootScope.$broadcast('DELETE_SELECTION',item);
 				}
-			}
+		//	}
 
 		}
 	    
@@ -346,7 +346,7 @@ angular.module('cockpitModule')
 
 		$scope.toggleComboParameter = function(parVal, single) {
 			cockpitModule_widgetSelection.setWidgetOfType("selector");
-			if(!$scope.disableMultiButton(parVal,single ? $scope.parameter : $scope.multiCombo.selected)){
+			//if(!$scope.disableMultiButton(parVal,single ? $scope.parameter : $scope.multiCombo.selected)){
 				$scope.hasDefaultValue = false;
 				var item = {};
 				item.aggregated=$scope.aggregated;
@@ -380,7 +380,7 @@ angular.module('cockpitModule')
 						$rootScope.$broadcast('DELETE_SELECTION',item);
 					}
 				}	
-			}
+			//}
 		}
 		
 		$scope.comboParameterExists = function (record) {
