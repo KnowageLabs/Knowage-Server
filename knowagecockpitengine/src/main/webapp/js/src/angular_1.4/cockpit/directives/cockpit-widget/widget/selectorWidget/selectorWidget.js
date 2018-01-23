@@ -184,6 +184,8 @@ angular.module('cockpitModule')
 				$scope.defaultValue = "";
 			}
 			if($scope.hasDefaultValue && nature == "refresh"){
+
+				cockpitModule_widgetSelection.setWidgetOfType("selector");
 				$scope.defaultValueString = true;
 				
 				switch($scope.ngModel.settings.defaultValue.toUpperCase()){
