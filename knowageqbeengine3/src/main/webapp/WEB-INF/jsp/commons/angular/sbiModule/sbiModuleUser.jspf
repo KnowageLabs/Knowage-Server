@@ -22,7 +22,6 @@ angular.module('sbiModule')
 .factory('sbiModule_user',function(){
 	
 	var user={};
-	debugger;
 	user.userUniqueIdentifier = '<%= StringEscapeUtils.escapeJavaScript(userUniqueIdentifier) %>';
 	user.userId = '<%= StringEscapeUtils.escapeJavaScript(userId) %>';
 	user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>'; 
