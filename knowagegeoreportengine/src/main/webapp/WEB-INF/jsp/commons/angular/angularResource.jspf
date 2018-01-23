@@ -23,6 +23,7 @@
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="org.json.JSONObject"%>
+<%@page import="org.json.JSONArray"%>
 <%@page import="it.eng.spagobi.commons.ParameterValuesDecoder"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
@@ -86,12 +87,16 @@
 	for(Object key : engineInstance.getAnalyticalDrivers().keySet()){
 		if(key instanceof String && !key.equals("widgetData")){
 			String value = request.getParameter((String)key);
-			if(value!=null){
-				driverParamsMap.put(key, pvd.decode(value));
+			if(value!=null && value != "null"){
+				if ( key.equals("DOCUMENT_OUTPUT_PARAMETERS") ) //just for output parameters manage them as a json array list and not a simple string
+					driverParamsMap.put(key, new JSONArray(value.toString()));	
+				else
+					driverParamsMap.put(key, pvd.decode(value.toString()));	
 			}
 		}
 	}
 	String driverParams = new JSONObject(driverParamsMap).toString(0);
+
 	
 	String editMode = request.getParameter("EDIT_MODE");
 	String isUserTechnical = request.getParameter("IS_TECHNICAL_USER");

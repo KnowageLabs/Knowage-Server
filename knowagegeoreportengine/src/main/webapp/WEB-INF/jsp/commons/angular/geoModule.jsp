@@ -82,7 +82,6 @@ geoM.factory('geoModule_template',function(geoReportCompatibility, sbiModule_use
 
 geoM.factory('geoModule_driverParameters',function(){
 	var driverParamsAsString = '<%=driverParams%>';
-	
 	var driverParamsToReturn = JSON.parse(driverParamsAsString);
 	
 	return driverParamsToReturn;
