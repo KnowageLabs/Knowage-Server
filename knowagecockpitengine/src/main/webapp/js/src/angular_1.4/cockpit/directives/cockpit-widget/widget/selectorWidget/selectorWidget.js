@@ -273,19 +273,37 @@ angular.module('cockpitModule')
 						delete $scope.multiCombo.selected ;
 					}
 					$scope.multiCombo.selected = $scope.defaultValue;
+					if($scope.widgetOfType!="selector"){
+						if(Array.isArray($scope.multiCombo.selected)){
+							$scope.multiCombo.selected.length=0;
+						
+						} else {
+							delete $scope.multiCombo.selected ;
+						}
+						
+					}
 				} else {
 					//multivalue list of checkboxes
 					$scope.multiValue.length=0;
-
+					
 					Array.prototype.push.apply($scope.multiValue, $scope.defaultValue);
+					if($scope.widgetOfType!="selector"){
+						$scope.multiValue.length=0;
+					}
 					//case from other widget, but not delete from selection || case when all are checked from selector widget
 					
 				}
 			} else {
 				if(Array.isArray($scope.defaultValue)){
 					$scope.parameter = $scope.defaultValue[0] ? $scope.defaultValue[0]: "";
+					if($scope.widgetOfType!="selector"){
+						$scope.parameter="";
+					}
 				} else {
 					$scope.parameter = $scope.defaultValue;
+					if($scope.widgetOfType!="selector"){
+						$scope.parameter="";
+					}
 				}
 				
 			}

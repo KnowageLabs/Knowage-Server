@@ -210,10 +210,13 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
     ];
 	
 	$scope.$on('DELETE_SELECTION',function(event, data){
-		$scope.deleteSelection(data,true);
+		$scope.deleteSelection(data, true, true);
 	});
 	
-	$scope.deleteSelection=function(item, saveConfiguration){
+	$scope.deleteSelection=function(item, saveConfiguration, isSelector){
+		if(!isSelector){
+			cockpitModule_widgetSelection.setWidgetOfType("selection");
+		}
 		if(item.aggregated){
 			var key = item.ds + "." + item.columnName;
 			
@@ -240,6 +243,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 	}
 
 	$scope.clearAllSelection = function(){
+		cockpitModule_widgetSelection.setWidgetOfType("selection");
 		if($scope.selection.length>0){
 			while($scope.selection.length>0){
 				$scope.deleteSelection($scope.selection[0], false);
