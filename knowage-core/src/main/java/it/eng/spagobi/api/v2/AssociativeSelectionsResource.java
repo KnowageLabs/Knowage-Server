@@ -207,7 +207,12 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 				if (!selection.containsKey(column)) {
 					selection.put(column, new HashSet<Tuple>());
 				}
-				selection.get(column).add(new Tuple(valueObjects));
+				Set<Tuple> tupleSet = selection.get(column);
+				for (Object value : valueObjects) {
+					Tuple tuple = new Tuple();
+					tuple.add(value);
+					tupleSet.add(tuple);
+				}
 			}
 
 			logger.debug("Filter list: " + filters);
@@ -225,7 +230,18 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 				if (!selections.containsKey(d)) {
 					selections.put(d, new HashMap<String, Set<Tuple>>());
 				}
-				selections.get(d).putAll(selectionsMap.get(d));
+				Map<String, Set<Tuple>> calcSelections = selections.get(d);
+				Map<String, Set<Tuple>> inputSelections = selectionsMap.get(d);
+				for (String selectionKey : inputSelections.keySet()) {
+					if (calcSelections.containsKey(selectionKey)) { // intersect tuples
+						Set<Tuple> oldSelectionTuples = calcSelections.get(selectionKey);
+						Set<Tuple> newSelectionTuples = inputSelections.get(selectionKey);
+						newSelectionTuples.retainAll(oldSelectionTuples);
+						calcSelections.put(selectionKey, newSelectionTuples);
+					} else { // add tuples
+						calcSelections.put(selectionKey, inputSelections.get(selectionKey));
+					}
+				}
 			}
 
 			String stringFeed = JsonConverter.objectToJson(selections, Map.class);
