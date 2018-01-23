@@ -42,6 +42,8 @@ public class CriteriaConstants {
 	public static final String NOT_BETWEEN = "NOT BETWEEN";	
 	public static final String IN = "IN";	
 	public static final String NOT_IN = "NOT IN";	
+	public static final String LIKE = "LIKE";	
+
 	
 	// spatial operators
 	public static final String SPATIAL_COVERS = "SPATIAL_COVERS";

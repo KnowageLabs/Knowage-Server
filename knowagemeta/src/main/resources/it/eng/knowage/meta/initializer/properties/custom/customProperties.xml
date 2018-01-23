@@ -127,7 +127,7 @@
       
       <type id="structural.filtercondition" name="Profile Attribute Filter Type"
       description="The type of filter to use with profile attributes"
-      category="Structural" defaultValue="EQUAL" />  
+      category="Structural" defaultValue="EQUALS TO" />  
       
       <type id="structural.datatype" name="Data Type"
       description="The data type of the given column (VARCHAR, INTEGER, DOUBLE, ...)"
@@ -184,7 +184,7 @@
       </admissibleValuesOf>
       
       <admissibleValuesOf typeId="structural.filtercondition">
-        <value>EQUAL</value>
+        <value>EQUALS TO</value>
         <value>IN</value>
         <value>LIKE</value>
       </admissibleValuesOf>      

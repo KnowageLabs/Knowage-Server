@@ -31,6 +31,8 @@ import it.eng.knowage.meta.initializer.properties.OlapModelPropertiesFromFileIni
 import it.eng.knowage.meta.initializer.utils.Pair;
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelFactory;
+import it.eng.knowage.meta.model.ModelProperty;
+import it.eng.knowage.meta.model.ModelPropertyCategory;
 import it.eng.knowage.meta.model.ModelPropertyType;
 import it.eng.knowage.meta.model.business.BusinessColumn;
 import it.eng.knowage.meta.model.business.BusinessColumnSet;
@@ -184,6 +186,8 @@ public class MetaService extends AbstractSpagoBIResource {
 			throw new SpagoBIServiceException(req.getPathInfo(), t);
 		}
 	}
+	
+
 
 	@POST
 	@Path("/checkRelationships")

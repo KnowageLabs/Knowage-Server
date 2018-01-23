@@ -41,7 +41,9 @@ public class ModelPropertiesMeta {
 			new ModelPropertyMeta("position", false, true, "" + Integer.MAX_VALUE),
 			new ModelPropertyMeta("format", false, true, null),
 			new ModelPropertyMeta("attribute", false, true, null),
-			new ModelPropertyMeta("excludedRoles", false, true, null) };
+			new ModelPropertyMeta("excludedRoles", false, true, null),
+			new ModelPropertyMeta("filtercondition", false, true, null)
+			};
 
 	static Map<String, ModelPropertyMeta> globalPropertiesMap;
 	static Map<String, ModelPropertyMeta> entityPropertiesMap;

@@ -189,11 +189,12 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			Map<String, List<String>> fieldsFilteredByRole = getFieldsFilteredByRole();
 
 			List<Filter> filtersOnProfileAttributes = getFiltersOnProfileAttributes();
+			Map<String,String> filtersConditionsOnProfileAttributes = getFiltersConditionsOnProfileAttribute();
 			if (!filtersOnProfileAttributes.isEmpty() || !fieldsFilteredByRole.isEmpty()) {
 				logger.debug(
 						"One or more profile attributes filters were found therefore profile attributes model access modality will be activated.");
 				this.setDataMartModelAccessModality(new ProfileAttributesModelAccessModality(filtersOnProfileAttributes,
-						fieldsFilteredByRole, profile));
+						fieldsFilteredByRole, profile, filtersConditionsOnProfileAttributes));
 			}
 		}
 		return dataMartModelStructure;
@@ -246,6 +247,41 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 					values.add(attributeName);
 					Filter filter = new Filter(field, values);
 					toReturn.add(filter);
+				}
+			}
+		}
+		return toReturn;
+	}
+	
+	private Map<String, String> getFiltersConditionsOnProfileAttribute() {
+		Map<String, String> toReturn = new HashMap<String, String>();
+		Iterator<String> it = dataMartModelStructure.getModelNames().iterator();
+		while (it.hasNext()) {
+			List<IModelEntity> list = dataMartModelStructure.getRootEntities(it.next());
+			Map<String,String> filterconditions = getFiltersConditionsOnProfileAttribute(list);
+			toReturn.putAll(filterconditions);
+		}
+		return toReturn;
+	}
+	
+	private Map<String, String> getFiltersConditionsOnProfileAttribute(List<IModelEntity> list) {
+		Map<String, String> toReturn = new HashMap<String, String>();
+		Iterator<IModelEntity> it = list.iterator();
+		while (it.hasNext()) {
+			IModelEntity entity = it.next();
+			List<IModelField> allFields = entity.getAllFields();
+			Iterator<IModelField> fieldsIt = allFields.iterator();
+			while (fieldsIt.hasNext()) {
+				IModelField field = fieldsIt.next();
+				String attributeName = (String) field.getProperty("attribute");
+				//add filter condition to map only if there is a value for the property attribute (profile attribute)
+				if (attributeName != null && !attributeName.trim().equals("")) {
+					String filtercondition = (String) field.getProperty("filtercondition");
+					if (filtercondition != null && !filtercondition.trim().equals("")) {
+						toReturn.put(field.getUniqueName(), filtercondition);
+						logger.debug("Found profile attribute filter on field " + field.getUniqueName()
+						+ ": profile attribute is " + attributeName +" and is filter condition is "+ filtercondition);
+					}
 				}
 			}
 		}

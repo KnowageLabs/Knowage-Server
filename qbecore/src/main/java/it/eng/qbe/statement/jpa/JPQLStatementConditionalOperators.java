@@ -98,6 +98,20 @@ public class JPQLStatementConditionalOperators {
 				return leftHandValue + " like '" + rightHandValue + "'";
 			}
 		});
+		conditionalOperators.put(CriteriaConstants.LIKE, new IConditionalOperator() {
+			public String getName() {return CriteriaConstants.LIKE;}
+			public String apply(String leftHandValue, String[] rightHandValues) {	
+				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
+				String rightHandValue = rightHandValues[0].trim();
+				if (rightHandValue.startsWith("'")) {
+					rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
+				}else{
+					// field reference
+					rightHandValue = "' || " + rightHandValue + " || '";
+				}
+				return leftHandValue + " like '" + rightHandValue + "'";
+			}
+		});
 		conditionalOperators.put(CriteriaConstants.NOT_STARTS_WITH, new IConditionalOperator() {
 			public String getName() {return CriteriaConstants.NOT_STARTS_WITH;}
 			public String apply(String leftHandValue, String[] rightHandValues) {

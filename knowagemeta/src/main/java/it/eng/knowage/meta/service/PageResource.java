@@ -18,6 +18,13 @@
 package it.eng.knowage.meta.service;
 
 import it.eng.knowage.meta.model.Model;
+import it.eng.knowage.meta.model.ModelFactory;
+import it.eng.knowage.meta.model.ModelProperty;
+import it.eng.knowage.meta.model.ModelPropertyCategory;
+import it.eng.knowage.meta.model.ModelPropertyType;
+import it.eng.knowage.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.business.BusinessTable;
+import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -153,6 +160,7 @@ public class PageResource {
 			if (is != null) {
 				EmfXmiSerializer serializer = new EmfXmiSerializer();
 				Model model = serializer.deserialize(is);
+				checkBackwardCompatibility(model);
 				request.getSession().setAttribute(MetaService.EMF_MODEL, model);
 				JSONObject translatedModel = MetaService.createJson(model);
 				ioManager.getHttpSession().setAttribute("translatedModel", translatedModel.toString());
@@ -173,6 +181,57 @@ public class PageResource {
 			e.printStackTrace();
 		} finally {
 			logger.debug("OUT");
+		}
+	}
+	
+	public void checkBackwardCompatibility(Model model) {
+		// Put here methods to guarantee the backward compatibility with old versions of the metamodel
+		addProfileFilterConditionProperty(model);
+	}
+	/**
+	 * Add the property type 'structural.filtercondition' to simple business columns if it doesn't already exists (previous to Knowage 6.2)
+	 * @param model
+	 */
+	public void addProfileFilterConditionProperty(Model model) {
+		ModelFactory FACTORY = ModelFactory.eINSTANCE;
+		BusinessModel businessModel = model.getBusinessModels().get(0);
+		ModelPropertyType propertyType = null;
+		ModelProperty property;
+		ModelPropertyCategory structuralCategory =  model.getPropertyCategory("Structural");
+		List<BusinessTable> businessTables = businessModel.getBusinessTables();
+		
+		//check if the property already exists 
+		propertyType = model.getPropertyType("structural.filtercondition");
+		if (propertyType != null) {
+			//model has already the property, we can skip the check
+			return;
+		}
+		else {
+			
+			//inject property type
+			propertyType = FACTORY.createModelPropertyType();
+			propertyType.setId("structural.filtercondition");
+			propertyType.setName("Profile Attribute Filter Type");
+			propertyType.setDescription("The type of filter to use with profile attributes");
+			propertyType.setCategory(structuralCategory);
+			propertyType.getAdmissibleValues().add("EQUALS TO");
+			propertyType.getAdmissibleValues().add("IN");
+			propertyType.getAdmissibleValues().add("LIKE");
+			propertyType.setDefaultValue("EQUALS TO");
+			
+			model.getPropertyTypes().add(propertyType);
+			
+			//apply the property to every simple business column
+			for (BusinessTable businessTable : businessTables) {
+				List<SimpleBusinessColumn> simpleBusinessColumns = businessTable.getSimpleBusinessColumns();
+				for (SimpleBusinessColumn simpleBusinessColumn: simpleBusinessColumns) {
+					
+					property = FACTORY.createModelProperty();
+					property.setPropertyType(propertyType);
+					//add property on simple business column
+					simpleBusinessColumn.getProperties().put(property.getPropertyType().getId(), property);				
+				}
+			}
 		}
 	}
 

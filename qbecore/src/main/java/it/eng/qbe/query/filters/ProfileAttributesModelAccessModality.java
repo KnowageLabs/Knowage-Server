@@ -55,14 +55,16 @@ public class ProfileAttributesModelAccessModality extends AbstractModelAccessMod
 	public static transient Logger logger = Logger.getLogger(ProfileAttributesModelAccessModality.class);
 
 	private List<Filter> filtersOnProfileAttributes = null;
+	private Map<String,String> filtersConditionsOnProfileAttributes = null;
 	private Map<String, List<String>> fieldsFilteredByRole = null;
 	private UserProfile userProfile = null;
 
 	public ProfileAttributesModelAccessModality(List<Filter> filtersOnProfileAttributes,
-			Map<String, List<String>> fieldsFilteredByRole, UserProfile profile) {
+			Map<String, List<String>> fieldsFilteredByRole, UserProfile profile, Map<String,String> filtersConditionsOnProfileAttributes) {
 		this.filtersOnProfileAttributes = filtersOnProfileAttributes;
 		this.fieldsFilteredByRole = fieldsFilteredByRole;
 		this.userProfile = profile;
+		this.filtersConditionsOnProfileAttributes = filtersConditionsOnProfileAttributes;
 	}
 
 	protected List<Filter> getFilters() {
@@ -80,7 +82,7 @@ public class ProfileAttributesModelAccessModality extends AbstractModelAccessMod
 		List<Filter> appliableFilters = this.getAppliableFilters(query, dataSource);
 		Map<String, List<String>> filtersMap = getFiltersMap(appliableFilters, userProfileAttributes);
 		try {
-			toReturn = QueryTransformer.transform(query, dataSource, null, filtersMap);
+			toReturn = QueryTransformer.transform(query, dataSource, null, filtersMap, filtersConditionsOnProfileAttributes);
 		} catch (Exception e) {
 			throw new SpagoBIEngineRuntimeException("Error while getting filtered query", e);
 		}
@@ -135,7 +137,7 @@ public class ProfileAttributesModelAccessModality extends AbstractModelAccessMod
 		try {
 			Map<String, List<String>> map = new HashMap<String, List<String>>();
 			map.put(filter.getField().getUniqueName(), filter.getValues());
-			toReturn = QueryTransformer.transform(query, dataSource, null, map);
+			toReturn = QueryTransformer.transform(query, dataSource, null, map, filtersConditionsOnProfileAttributes);
 		} catch (Exception e) {
 			throw new SpagoBIEngineRuntimeException("Error while getting filtered query", e);
 		}

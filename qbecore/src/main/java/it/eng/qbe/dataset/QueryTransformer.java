@@ -38,7 +38,7 @@ import org.json.JSONObject;
  */
 public class QueryTransformer {
 
-	public static Query transform(Query query, IDataSource dataSource, Locale locale, Map<String, List<String>> filters) throws Exception {
+	public static Query transform(Query query, IDataSource dataSource, Locale locale, Map<String, List<String>> filters, Map<String,String> filtersCondition) throws Exception {
 		String filterKey;
 		List<String> fliterValues;
 		Operand filterLeftOperand, filterRightOperand;
@@ -56,10 +56,21 @@ public class QueryTransformer {
 			filterRightOperandValues = fliterValues.toArray(new String[0]);
 			filterLeftOperand = new Operand(filterLeftOperandValues, filterKey, AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null, "");
 			filterRightOperand = new Operand(filterRightOperandValues, "values for [" + filterKey + "]", AbstractStatement.OPERAND_TYPE_STATIC, null, null, "");
-			operator = "EQUALS TO";
-			if (filterRightOperandValues.length > 1) {
-				operator = "IN";
+			//check if the condition (operator) is specified for the profile attribute
+			if (filtersCondition != null && !filtersCondition.isEmpty()) {
+				if(filtersCondition.containsKey(filterKey) ) {
+					operator = filtersCondition.get(filterKey);
+				} else {
+					operator = "EQUALS TO";
+				}
+			} else {
+				//old management for previous versions
+				operator = "EQUALS TO";
+				if (filterRightOperandValues.length > 1) {
+					operator = "IN";
+				}
 			}
+
 			WhereField wf = clonedQuery.addWhereField("DataSetFilter" + i, "DataSetFilter" + i, false, filterLeftOperand, operator, filterRightOperand, "AND");
 			updateWhereClauseStructure(clonedQuery, wf.getName(), "AND");
 		}
