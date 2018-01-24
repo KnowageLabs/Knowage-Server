@@ -19,6 +19,18 @@ function KPIDefinitionListControllerFunction($scope,$filter,sbiModule_config,sbi
 		$scope.flagActivateBrother('addEvent');
 
 	}
+	
+	$scope.normalizeRows = function(){
+		var indexes = [];
+		angular.forEach($scope.kpi.threshold.thresholdValues,function(value,key){
+			indexes.push(value.position);
+		})
+		var shift = Math.min(...indexes);
+		angular.forEach($scope.kpi.threshold.thresholdValues,function(value,key){
+			value.position = (value.position - shift);
+		})
+	}
+	
 	$scope.loadKPI=function(item){
 
 
@@ -32,6 +44,7 @@ function KPIDefinitionListControllerFunction($scope,$filter,sbiModule_config,sbi
 
 			angular.copy(response.data,$scope.kpi); 
 			$scope.flagActivateBrother('loadedEvent');
+			$scope.normalizeRows();
 
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.load.error"));

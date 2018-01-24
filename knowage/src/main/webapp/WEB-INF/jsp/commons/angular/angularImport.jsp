@@ -135,7 +135,7 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/tinycolor-min.js")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/tinygradient.min.js")%>"></script> 
 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/angularjs-color-picker.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/angularjs-color-picker.js")%>"></script>
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/angularjs-color-picker.min.css")%>">
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css")%>">
 
