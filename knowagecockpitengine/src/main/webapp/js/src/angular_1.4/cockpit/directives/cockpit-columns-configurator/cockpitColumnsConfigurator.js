@@ -142,7 +142,7 @@
 		                            	 "label":"Column",
 		                            	 "name":"alias",
 		                            	 transformer:function(item){
-		                            		 var template='<md-input-container class="md-block"> '
+		                            		 var template='<md-input-container class="md-block" ng-if="!row.isCalculated"> '
 		                            			 +'<md-select ng-model="row.alias" ng-change="scopeFunctions.changeColumn(row)">'
 		                            			 +'<md-option ng-repeat="col in scopeFunctions.columnList" ng-value="col.alias" >'
 		                            			 +'{{col.alias}}'
