@@ -1714,6 +1714,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	 // SELECT DATASET
 	 $scope.loadDataSet = function(item,index) {
+		 $scope.isSelected = true;
+		 $scope.step=1;
 //		 console.log("A8");
 //		 console.log(item);
 //		 console.log($scope.dirtyForm);
@@ -2187,6 +2189,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 
 	$scope.createNewDataSet = function() {
+		
+		$scope.step=1;
 
 		if ($scope.datasetsListTemp.length == $scope.datasetsListPersisted.length + 1) {
 
@@ -2345,6 +2349,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 		else if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="file") {
 			$scope.selectedDataSet.fileUploaded = !$scope.selectedDataSet.fileUploaded ? false : true;
+			$scope.selectedDataSet.meta = $scope.dataset.meta;
 		}
 
 		// Scheduling refactoring
@@ -3715,7 +3720,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     		break;
     	case 2:
     		console.log('step 2');
-    		if((oldStep==1 && $scope.changingFile)||(oldStep==1 && $scope.initialUpload)){
+    		if((oldStep==1 && $scope.changingFile)||(oldStep==1 && $scope.initialUpload) || (oldStep==1&&$scope.isSelected)){
     			loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_GEN_META_PROPERTY");
         		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_PROPERTY");
         		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_VALUE");
@@ -3755,7 +3760,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.dataset.id = $scope.selectedDataSet.id ? $scope.selectedDataSet.id : "";
 		$scope.dataset.label = $scope.selectedDataSet.label;
 		$scope.dataset.limitRows = $scope.selectedDataSet.limitRows;
-		$scope.dataset.meta = [];
+		$scope.dataset.meta = JSON.stringify($scope.selectedDataSet.meta);
 		$scope.dataset.name = $scope.selectedDataSet.name;
 		$scope.dataset.persist = $scope.selectedDataSet.isPersisted;
 		$scope.dataset.skipRows = $scope.selectedDataSet.skipRows;

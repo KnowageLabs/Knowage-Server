@@ -90,6 +90,7 @@ import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
+import it.eng.spagobi.tools.dataset.metadata.mapping.MetaDataMapping;
 import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
@@ -447,6 +448,7 @@ public class ManageDataSetsForREST {
 			String csvDelimiter = json.optString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER);
 			String csvQuote = json.optString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER);
 			String dateFormat = json.optString(DataSetConstants.FILE_DATE_FORMAT);
+			String csvEncoding = json.optString(DataSetConstants.CSV_FILE_ENCODING);
 
 			String skipRows = json.optString(DataSetConstants.XSL_FILE_SKIP_ROWS);
 			String limitRows = json.optString(DataSetConstants.XSL_FILE_LIMIT_ROWS);
@@ -466,6 +468,7 @@ public class ManageDataSetsForREST {
 			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, csvEncoding);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
@@ -1051,7 +1054,17 @@ public class ManageDataSetsForREST {
 
 				for (int i = 0; i < metaData.getFieldCount(); i++) {
 					IFieldMetaData ifmd = metaData.getFieldMeta(i);
+					
 					for (int j = 0; j < metadataArray.length(); j++) {
+						if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
+							ifmd.setType(MetaDataMapping.getMetaDataType(metadataArray.getJSONObject(j).getString("type")));
+							break;
+						}
+						
+					}
+					
+					for (int j = 0; j < metadataArray.length(); j++) {
+						
 						if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
 							if ("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
 								ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
@@ -1061,6 +1074,7 @@ public class ManageDataSetsForREST {
 							break;
 						}
 					}
+					
 				}
 
 				if (metadataArray.length() == 0) {

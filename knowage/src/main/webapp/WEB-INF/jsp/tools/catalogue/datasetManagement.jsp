@@ -562,8 +562,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		         		
 				         		<div layout="row" class="threeCombosLayout">
 				         			<span flex></span>
-				         			<md-button ng-click="changeStep('back')" ng-disabled="step==1" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.back")}}</md-button>
-				         			<md-button ng-click="changeStep('next')" ng-disabled="step==3" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.next")}}</md-button>	
+				         			<md-button ng-click="changeStep('back')" ng-if="step!=1" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.back")}}</md-button>
+				         			<md-button ng-click="changeStep('next')" ng-if="step!=3" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.next")}}</md-button>	
 				         		</div>
 				         		
 				         	</md-card>				       	 	
