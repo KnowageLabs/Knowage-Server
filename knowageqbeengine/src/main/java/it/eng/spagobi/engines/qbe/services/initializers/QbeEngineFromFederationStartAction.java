@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,22 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.qbe.services.initializers;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.qbe.dataset.FederationUtils;
 import it.eng.spago.base.SourceBean;
@@ -29,17 +40,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 
@@ -68,11 +68,11 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 
 	private IDataSet dataSet;
 
-
-	public boolean isFederated(){
+	@Override
+	public boolean isFederated() {
 		return true;
 	}
-	
+
 	@Override
 	public IDataSet getDataSet() {
 		logger.debug("IN");
@@ -97,8 +97,9 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 
 			if (datasource == null) {
 				// if dataset has no datasource associated take it from request
-				String dataSourceLabel = getSpagoBIRequestContainer().get(DATASOURCE_LABEL) != null ? getSpagoBIRequestContainer().get(DATASOURCE_LABEL)
-						.toString() : null;
+				String dataSourceLabel = getSpagoBIRequestContainer().get(DATASOURCE_LABEL) != null
+						? getSpagoBIRequestContainer().get(DATASOURCE_LABEL).toString()
+						: null;
 				logger.debug("passed from server datasource " + dataSourceLabel);
 				datasource = getDataSourceServiceProxy().getDataSourceByLabel(dataSourceLabel);
 			}
@@ -167,9 +168,11 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		// try {
 		// federationDefinition = fc.addFederation(federationDefinition, getUserId());
 		// } catch (Exception e) {
-		// logger.error("Error saving the federated definition automatically generated in order to manage the creation datasets on the dataset "+dataset.getLabel(),e);
+		// logger.error("Error saving the federated definition automatically generated in order to manage the creation datasets on the dataset
+		// "+dataset.getLabel(),e);
 		// throw new
-		// SpagoBIRuntimeException("Error saving the federated definition automatically generated in order to manage the creation datasets on the dataset "+dataset.getLabel(),e);
+		// SpagoBIRuntimeException("Error saving the federated definition automatically generated in order to manage the creation datasets on the dataset
+		// "+dataset.getLabel(),e);
 		// }
 		// logger.debug("Federation created");
 
@@ -178,14 +181,14 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 
 	/**
 	 * Loading the federation definition from the service
-	 * 
+	 *
 	 * @param federationId
 	 */
 	public FederationDefinition loadFederationDefinition(String federationId) {
 		logger.debug("Loading federation with id " + federationId);
 		FederationClient fc = new FederationClient();
 		try {
-			return fc.getFederation(federationId, getUserId(), getDataSetServiceProxy());
+			return fc.getFederation(federationId, getUserIdentifier(), getDataSetServiceProxy());
 		} catch (Exception e) {
 			logger.error("Error loading the federation definition");
 			throw new SpagoBIEngineRuntimeException("Error loading the federation definition", e);
@@ -247,7 +250,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 
 		JSONObject datasetPersistedLabels = null;
 		try {
-			datasetPersistedLabels = FederationUtils.createDatasetsOnCache(dsf.getDataSetRelationKeysMap(), getUserId());
+			datasetPersistedLabels = FederationUtils.createDatasetsOnCache(dsf.getDataSetRelationKeysMap(), getUserIdentifier());
 		} catch (JSONException e1) {
 			logger.error("Error loading the dataset. Please check that all the dataset linked to this federation are still working", e1);
 			throw new SpagoBIEngineRuntimeException("Error loading the dataset. Please check that all the dataset linked to this federation are still working",
@@ -296,7 +299,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 
 	/**
 	 * Gets the datasource of the cache
-	 * 
+	 *
 	 * @return
 	 */
 	private IDataSource getCacheDataSource() {
@@ -312,7 +315,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 	 * This method solves the following issue: SQLDataSet defines the SQL statement directly considering the names' of the wrapped dataset fields, but, in case
 	 * of QbeDataSet, the fields' names are "it.eng.spagobi......Entity.fieldName" and not the name of the persistence table!!! We modify the dataset's metadata
 	 * in order to fix this.
-	 * 
+	 *
 	 * @param dataset
 	 *            The persisted Qbe dataset
 	 * @param descriptor
