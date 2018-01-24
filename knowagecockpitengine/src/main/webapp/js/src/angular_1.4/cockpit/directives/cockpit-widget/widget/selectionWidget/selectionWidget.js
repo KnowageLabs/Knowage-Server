@@ -215,6 +215,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 	
 	$scope.deleteSelection=function(item, saveConfiguration, isSelector){
 		cockpitModule_widgetSelection.setWidgetOfType("selection");
+		cockpitModule_widgetSelection.setColumnName(item.columnName);
 
 		if(item.aggregated){
 			var key = item.ds + "." + item.columnName;

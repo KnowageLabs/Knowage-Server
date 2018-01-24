@@ -160,7 +160,9 @@ angular.module('cockpitModule')
 			if(nature == "refresh"){
 				checkInitialSettings();
 			} else {
-				checkRefreshSettings();
+				if(cockpitModule_widgetSelection.widgetOfType=="selector" || cockpitModule_widgetSelection.widgetOfType =="selection"){
+					checkRefreshSettings();
+				}
 			}
 		}
 
@@ -233,22 +235,34 @@ angular.module('cockpitModule')
 				}
 			} else {
 				if(	cockpitModule_widgetSelection.widgetOfType =="selection"){
-					if($scope.ngModel.settings.modalityValue=="multiValue"){
-						
-						if($scope.ngModel.settings.modalityPresent=='COMBOBOX') {
-							$scope.defaultValue = $scope.multiCombo.selected ;
+					if(cockpitModule_widgetSelection.columnName == $scope.ngModel.content.selectedColumn.aliasToShow){
+						if(Array.isArray($scope.defaultValue)){
+							$scope.defaultValue.length = 0;
 						} else {
-							$scope.defaultValue = $scope.multiValue;
-						}
-					} else {
-						var index = $scope.defaultValue.indexOf($scope.parameter);
-						
-						if (index > -1) {
-							$scope.defaultValue.splice(index, 1);
+							$scope.defaultValue="";
 						}
 						
-						
+						$scope.multiCombo.selected.length = 0
+						$scope.multiValue.length = 0
+					}else {
+						if($scope.ngModel.settings.modalityValue=="multiValue"){
+							$scope.defaultValue.length = 0
+							if($scope.ngModel.settings.modalityPresent=='COMBOBOX') {
+								Array.prototype.push.apply($scope.defaultValue, $scope.multiCombo.selected);
+							} else {
+								Array.prototype.push.apply($scope.defaultValue, $scope.multiValue);
+							}
+						} else {
+
+							if(Array.isArray($scope.defaultValue)){	
+								$scope.defaultValue.length = 0
+ 
+							} 
+							$scope.defaultValue =  $scope.parameter;
+							
+						}
 					}
+				
 					
 				}
 			}
@@ -292,7 +306,7 @@ angular.module('cockpitModule')
 					} else {
 						delete $scope.multiCombo.selected ;
 					}
-					$scope.multiCombo.selected = $scope.defaultValue;
+					Array.prototype.push.apply($scope.multiCombo.selected, $scope.defaultValue);
 				} else {
 					//multivalue list of checkboxes
 					$scope.multiValue.length=0;
