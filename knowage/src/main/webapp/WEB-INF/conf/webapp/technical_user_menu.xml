@@ -181,8 +181,8 @@
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/functionalities16.png" />
 					
 			<ITEM	title="Exporters menu"
-					functionality="DatasetManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/exportersCatalogue.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					functionality="ExportersCatalogue"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/exportersCatalogue.jsp"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/dataset/dataset16.png" />
 		<!-- OLD PAGE
 			<ITEM	title="#menu.Domain"
