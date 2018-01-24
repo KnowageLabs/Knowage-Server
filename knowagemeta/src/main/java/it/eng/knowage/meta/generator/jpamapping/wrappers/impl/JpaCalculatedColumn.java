@@ -138,21 +138,15 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 			StringTokenizer stk = new StringTokenizer(expression, "+-|*/()");
 			while (stk.hasMoreTokens()) {
 				String operand = stk.nextToken().trim();
-				System.out.println("Found Operand " + operand);
+				logger.debug("Found Operand " + operand);
 				operands.add(operand);
 			}
 		}
 
 		for (int i = 0; i < operands.size(); i++) {
-			System.out.println("Replacing " + operands.get(i) + " with " + jpaColumns.get(i).getUniqueName());
-			expression = expression.replace(operands.get(i), jpaColumns.get(i).getUniqueName());
+			logger.debug("Replacing " + operands.get(i) + " with " + jpaColumns.get(i).getUniqueName());
+			expression = expression.replace(operands.get(i), jpaColumns.get(i).getUniqueName().replaceAll("/", ":"));
 		}
-		expression = expression.replaceAll("/", ":");
-
-		/*
-		 * for (int i = 0; i<operands.size(); i++){ System.out.println("Replacing "+operands.get(i)+" with "+jpaColumns.get(i).getName()); expression =
-		 * expression.replace(operands.get(i),jpaColumns.get(i).getName()); }
-		 */
 
 		return expression;
 	}
