@@ -216,7 +216,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 			Map<String, Set<Tuple>> groupToValues = new HashMap<>(groups.size());
 			for (EdgeGroup group : groups) {
 				List<String> columns = getColumnNames(group.getOrderedEdgeNames(), dataset);
-				String columnsString = StringUtils.join(columns.toArray());
+				String columnsString = StringUtils.join(columns, ",");
 				Set<Tuple> values = result.getEdgeGroupValues().get(group);
 				groupToValues.put(columnsString, values);
 			}
