@@ -283,7 +283,7 @@ function cockpitWidgetControllerFunction(
 
 	// davverna - method to set the actual model and search parameters to refresh the widget table
 	$scope.searchColumns = function(){
-		if($scope.ngModel.search.text != ""){
+		if($scope.ngModel.search.text != "" && $scope.ngModel.search.columns.length > 0){
 			$scope.activeSearch = true;
 			$scope.refreshWidget();
 		}

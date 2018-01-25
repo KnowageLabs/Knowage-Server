@@ -1,14 +1,14 @@
 <md-dialog style="min-width:400px;">
  <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>Search in {{ngModel.content.name}}</h2>
+        <h2>{{translate.load("sbi.cockpit.widgets.table.search.prefix")}} {{ngModel.content.name}}</h2>
       </div>
     </md-toolbar>
     <form>
     <md-dialog-content layout-padding>
       <div layout="column" class="noPadding">
       	<div class="kn-info">
-      		select the values and the column to search
+      		{{translate.load("sbi.cockpit.widgets.table.search.info")}}
       	</div>
 	    	<div layout="row" layout-align="start center">
 		    	<i class="fa fa-search" layout-padding></i>
@@ -35,7 +35,7 @@
 		<span flex></span>
 		<md-button class="md-raised" ng-click="cancel()">{{::translate.load("sbi.cockpit.editor.widget.movesheet.cancel")}}</md-button>
 		<md-button class="md-raised md-warn" ng-if="activeSearch" ng-click="resetSearch()">{{translate.load("sbi.cockpit.widgets.table.search.reset")}}</md-button>
-		<md-button class="md-raised md-primary" ng-click="searchColumnsModal()" type="submit">{{translate.load("sbi.cockpit.widgets.table.search")}}</md-button>
+		<md-button class="md-raised md-primary" ng-disabled="!activeSearch" ng-click="searchColumnsModal()" type="submit">{{translate.load("sbi.cockpit.widgets.table.search")}}</md-button>
     </md-dialog-actions>
     </form>
 </md-dialog>
