@@ -15,14 +15,14 @@
 	  	</md-toolbar>
 	  	<md-dialog-content>
  		<div class="md-dialog-content">
-			<expander-box id="generalMetadata" expanded="true" title="metadataDlgCtrl.lblGeneralMeta" toolbar-class="secondaryToolbar"> 
+			<expander-box id="generalMetadata" expanded="true" title="{{::metadataDlgCtrl.lblGeneralMeta}}" toolbar-class="secondaryToolbar"> 
 				<md-list flex>
 		     		<md-list-item ng-repeat="item in metadataDlgCtrl.generalMetadata">
 		        		<span flex="20"><b>{{ ::item.name }}</b></span><span flex>{{ ::item.value }}</span>
 		        	</md-list-item>
 		     	</md-list>
 			</expander-box>
-			<expander-box id="shortMetadata" color="white" background-color="rgb(63,81,181)" expanded="false" title="metadataDlgCtrl.lblShortMeta" toolbar-class="secondaryToolbar"> 
+			<expander-box id="shortMetadata" color="white" background-color="rgb(63,81,181)" expanded="false" title="{{::metadataDlgCtrl.lblShortMeta}}" toolbar-class="secondaryToolbar"> 
 <!--				<md-list>
 					<md-list-item ng-repeat="item in metadataDlgCtrl.shortText">
 						<div flex>
@@ -41,7 +41,7 @@
 						</div>
 				</div>	        		
 			</expander-box>
-			<expander-box  id="longMetadata" color="white" background-color="rgb(63,81,181)" expanded="true" title="metadataDlgCtrl.lblLongMeta" toolbar-class="secondaryToolbar"> 
+			<expander-box  id="longMetadata" color="white" background-color="rgb(63,81,181)" expanded="true" title="{{::metadataDlgCtrl.lblLongMeta}}" toolbar-class="secondaryToolbar"> 
 				<md-tabs class="removeTransition" layout="column" md-border-bottom md-dynamic-height >
 					<md-tab flex=100  ng-repeat="item in metadataDlgCtrl.longText" label="{{::item.name}}" md-on-select="metadataDlgCtrl.setTab($index)">
 					 <md-tab-body >
@@ -56,7 +56,7 @@
 				</md-tabs>
 			</expander-box>
 			
-			<expander-box  id="attachments" color="white" background-color="rgb(63,81,181)" expanded="false" title="metadataDlgCtrl.lblAttachments" toolbar-class="secondaryToolbar"> 
+			<expander-box  id="attachments" color="white" background-color="rgb(63,81,181)" expanded="false" title="{{::metadataDlgCtrl.lblAttachments}}" toolbar-class="secondaryToolbar"> 
 				<!--   metadataDlgCtrl.file: {{metadataDlgCtrl.file}} -->
 
 				<!-- <table flex>
