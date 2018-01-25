@@ -15,7 +15,7 @@
 
 <!-- Document Grid View -->
 <div layout="row"  layout-wrap ng-hide="showGridView!=true " >
-	<div  class="workspaceCardContainer" ng-repeat="document in ngModel| orderBy:orderingDocumentCards" flex-xl=10 flex=15 flex-sm=33 flex-xs=50>
+	<div  class="workspaceCardContainer" ng-repeat="document in ngModel| orderBy:orderingDocumentCards" flex-xl=15 flex=20 flex-sm=33 flex-xs=50>
 	<md-card class="documentCard" ng-class="{'md-whiteframe-15dp' : selectedDocument==document }" ng-click="clickDocument(document);">
        
        <md-card-title>
