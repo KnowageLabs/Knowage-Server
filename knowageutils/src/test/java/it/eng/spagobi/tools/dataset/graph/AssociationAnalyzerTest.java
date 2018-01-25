@@ -211,7 +211,8 @@ public class AssociationAnalyzerTest {
 
 		AssociationGroup associationGroup = new AssociationGroup();
 		associationGroup.addAssociations(fiveAssociationsMap.values());
-		Map<String, Map<String, Set<Tuple>>> selections = AssociationAnalyzer.getSelections(associationGroup, graph, result);
+		Map<String, Map<String, Set<Tuple>>> selections = null;
+		// selections = AssociationAnalyzer.getSelections(associationGroup, graph, result); // FIXME
 
 		Map<String, Set<Tuple>> columnsToValuesMap = null;
 		String columns = null;
