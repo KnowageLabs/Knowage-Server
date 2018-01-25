@@ -2,7 +2,7 @@
 	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue'" layout="column" class="cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}">
 		<md-radio-group ng-model="parameter">
 			<md-radio-button class="md-primary cSelWRadio" ng-repeat="record in datasetRecords.rows"  
-			value="{{record.column_1}}" ng-click="toggleRadioParameter(record.column_1)"
+			value="{{record.column_1+''}}" ng-click="toggleRadioParameter(record.column_1+'')"
 			>
 				{{record.column_1}} 
 			</md-radio-button>
@@ -12,8 +12,8 @@
 	<!-- lov list multiple input -->
 	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue'" layout="column" class="checkBoxParameter cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }">
 		<div class="cSelWCheckContainer">
-			<md-checkbox class="md-primary cSelWCheck" ng-checked="checkboxParameterExists(record.column_1)" 
-			value="{{record.column_1}}" ng-click="toggleCheckboxParameter(record.column_1)" 
+			<md-checkbox class="md-primary cSelWCheck" ng-checked="checkboxParameterExists(record.column_1+'')" 
+			value="{{record.column_1+''}}" ng-click="toggleCheckboxParameter(record.column_1+'')" 
 			layout="row" layout-align="start center" ng-repeat="record in datasetRecords.rows"
 			>
 				{{record.column_1}}
@@ -38,7 +38,7 @@
 				          </md-input-container>  
 				        </md-select-header>
 				        <md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" 
-				        ng-value="record.column_1" ng-click="toggleComboParameter(record.column_1, false)"
+				        ng-value="record.column_1+''" ng-click="toggleComboParameter(record.column_1+'', false)"
 				       >
 					{{record.column_1}}
 				</md-option>
@@ -60,7 +60,7 @@
 				        </md-select-header>
 
 				<md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" 
-				ng-value="record.column_1" ng-click="toggleComboParameter(record.column_1,true)"
+				ng-value="record.column_1+''" ng-click="toggleComboParameter(record.column_1+'',true)"
 				>
 					{{record.column_1}}
 				</md-option>
