@@ -170,7 +170,7 @@ angular.module('cockpitModule')
 		var checkForSavedSelections = function (filtersParams,nature){
 			if(	cockpitModule_widgetSelection.widgetOfType =="selector"){
 				$scope.selections.length = 0;
-				if(filtersParams.hasOwnProperty($scope.ngModel.dataset.name)){
+				if(filtersParams.hasOwnProperty($scope.ngModel.dataset.name) && filtersParams[$scope.ngModel.dataset.name].hasOwnProperty($scope.ngModel.content.selectedColumn.aliasToShow) ){
 					$scope.selections = filtersParams[$scope.ngModel.dataset.name][$scope.ngModel.content.selectedColumn.aliasToShow].length > 1 ? 
 							filtersParams[$scope.ngModel.dataset.name][$scope.ngModel.content.selectedColumn.aliasToShow] : filtersParams[$scope.ngModel.dataset.name][$scope.ngModel.content.selectedColumn.aliasToShow][0].split(",");
 					for (var i = 0; i < $scope.selections.length; i++) {
