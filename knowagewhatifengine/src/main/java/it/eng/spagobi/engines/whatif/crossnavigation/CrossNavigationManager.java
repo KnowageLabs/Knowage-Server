@@ -58,7 +58,7 @@ public class CrossNavigationManager {
 					if (parameterValue != null && parameterValue.equals("")) {
 						parameterValue = "'" + StringEscapeUtils.escapeJavaScript(parameterValue) + "'";
 					} else {
-						parameterValue = "";
+						parameterValue = "''";
 					}
 					if (parameterValue != null) {
 						buffer.append(parameterName + ":" + parameterValue + ",");
