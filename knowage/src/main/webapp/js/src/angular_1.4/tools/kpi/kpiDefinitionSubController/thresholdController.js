@@ -95,7 +95,7 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 	
 	$scope.colorPickerProperty = {
 	    placeholder: 'select color',
-	    format: 'rgb'
+	    format: 'hex'
 	};
 	
 	

@@ -75,7 +75,7 @@
            				
 					    <md-checkbox ng-if="column.type == 'checkbox'" ng-model="row[column.name]"></md-checkbox>
 					    
-					    <color-picker ng-if="column.type == 'colorpicker'" options="colorPickerProperty" ng-model="row['column.name']"/>
+					    <color-picker ng-if="column.type == 'colorpicker'" options="colorPickerProperty" ng-model="row[column.name]"/>
 					</td>
 					<td class="tableAction">
 						<md-button ng-repeat="action in thresholdTableActionButton" class="md-icon-button" ng-click="action.action(row,$event)">
