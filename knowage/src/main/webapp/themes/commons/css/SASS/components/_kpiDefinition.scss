@@ -9,9 +9,6 @@
 		}
 	}
 	expander-box {
-		md-toolbar {
-			border-bottom: 1px solid white;
-		}
 		md-icon {
 			line-height: 24px !important;
 		}
@@ -19,15 +16,20 @@
 	md-radio-button.md-knowage-theme .md-on {
 		background-color: $baseColor;
 	}
-	.colorpickerInput {
-		display: block !important;
-		color-picker {
-			width: 100%;
-			input {
+	color-picker{
+		.color-picker-wrapper {
+			.input-group {
 				width: 100%;
+				.input-group-addon:first-child {
+					width: 25px;
+				}
 			}
 		}
+		.color-picker-panel {
+			position: absolute;
+		}
 	}
+	
 }
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {

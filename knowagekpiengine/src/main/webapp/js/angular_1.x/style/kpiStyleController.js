@@ -1,3 +1,19 @@
+/* Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 (function () {
 	var scripts = document.getElementsByTagName("script");
 	var currentScriptPath = scripts[scripts.length - 1].src;
@@ -6,7 +22,6 @@
 	angular.module('kpi-style', ['ngMaterial','sbiModule','color.picker'])
 	.directive('kpiStyle', function() {
 		return {
-//			templateUrl: '/knowagekpiengine/js/angular_1.x/style/template/kpiStyle.html',
 			templateUrl: currentScriptPath + 'template/kpiStyle.html',
 			controller: kpiStyleController,
 			scope: {
@@ -18,21 +33,15 @@
 		};
 	});
 	
-	function kpiStyleController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_restServices,sbiModule_translate,sbiModule_config){
+	function kpiStyleController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_restServices,sbiModule_translate,sbiModule_config,knModule_selections){
 		$scope.translate=sbiModule_translate;
-		
-		$scope.measure = ["4px","6px","8px","10px","12px","14px","16px","20px","24px","28px","34px"];
-		$scope.fontFamily = ['Roboto','Times New Roman','Georgia', 'Serif','Verdana'];
-		$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
-		if($scope.ngModel.fontWeight==undefined){
-			$scope.ngModel.fontWeight ='normal';
-		}
-		if($scope.ngModel.size==undefined){
-			$scope.ngModel.size ="10px";
-		}
-		if($scope.ngModel.fontFamily==undefined){
-			$scope.ngModel.fontFamily ='Times New Roman';
-		}
+		$scope.colorPickerOptions = {
+				pos: 'top left',
+				format: 'rgb'
+		};
+		$scope.measure = knModule_selections['font-size'];
+		$scope.fontFamily = knModule_selections['font-family'];
+		$scope.fontWeight = knModule_selections['font-weight'];
 	};
 
 })();

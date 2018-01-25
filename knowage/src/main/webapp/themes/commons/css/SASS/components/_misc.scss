@@ -367,6 +367,15 @@ a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.m
   padding-left:0;
 }
 
+.zindexback{
+  z-index:0 !important;
+}
+.overflowVisible {
+  md-content {
+    overflow: visible;
+  }
+}
+
 .kn-checkInput {
   md-input-container {
     margin: 8px 0;

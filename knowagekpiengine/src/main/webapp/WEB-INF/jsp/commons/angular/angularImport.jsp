@@ -21,9 +21,9 @@
 
 <!-- angular-material-->
 <link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
+<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
 
 
 <!-- context menu -->
@@ -47,7 +47,6 @@
 
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
 <link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/angularjs-color-picker.min.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
 
 <!--  r-linear-gauge  -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/gaugeNgDirective/rLinearGauge/rLinearGauge.js"></script>
@@ -58,4 +57,5 @@
 
 <!-- sbiModule_dateServices -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/sbiModule_services/sbiModule_dateServices.js"></script>
-	
+<!-- sbiModule_dateServices -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/src/angular_1.4/tools/commons/sbiModule_services/knModule_selections.js"></script>	

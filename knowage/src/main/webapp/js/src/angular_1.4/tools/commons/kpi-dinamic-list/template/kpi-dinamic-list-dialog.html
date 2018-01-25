@@ -1,17 +1,8 @@
 <md-dialog aria-label="Select Function"  ng-cloak>
-  <form>
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h1>KPI List</h1>
-        <span flex></span>
-		<md-button class="md-primary" ng-click="addKPIToCheck()">
-          	Save
-        </md-button>
-		<md-button class="md-primary" ng-click="close()">
-			Close    
-        </md-button>
+        <h2>KPI List</h2>
       </div>
-	
     </md-toolbar>
     <md-dialog-content layout="column" style ="height: 80%;">
      <div class="md-dialog-content" layout="column" flex>
@@ -24,5 +15,12 @@
 		> </angular-table>
 		</div>
    	 </md-dialog-content>
-  </form>
+   	 <md-dialog-actions>
+   	 	<md-button class="md-raised md-primary" ng-click="addKPIToCheck()">
+          	{{translate.load('sbi.general.save')}}
+        </md-button>
+		<md-button class="md-raised" ng-click="close()">
+			Close    
+        </md-button>
+   	 </md-dialog-actions>
 </md-dialog>

@@ -1,31 +1,31 @@
- <md-card> 
-	 <md-card-content layout="row" layout-wrap>
-		<md-input-container class="md-block" flex=50>
-			<label>Font-size</label>
-			<md-select ng-model="ngModel.size">
-				<md-option ng-repeat="px in measure" value="{{px}}">{{px}}</md-option>
-			</md-select>
-		</md-input-container>
-		
-		<md-input-container class="md-block" flex=50>
-			<label>{{translate.load("sbi.kpistyle.fontf")}}</label>
-			<md-select ng-model="ngModel.fontFamily">
-				<md-option ng-repeat="font in fontFamily" value="{{font}}">{{font}}</md-option>
-			</md-select>
-		</md-input-container>
-		
-		<md-input-container class="md-block" flex=50>
-			<label>{{translate.load("sbi.kpistyle.fontw")}}</label>
-			<md-select ng-model="ngModel.fontWeight">
-				<md-option ng-repeat="fontW in fontWeight" value="{{fontW}}">{{fontW}}</md-option>
-			</md-select>
-		</md-input-container>
-		
-		<md-input-container class="md-block colorpickerInput" flex=50 style="display:block !important;">
-			<label>{{translate.load("sbi.kpistyle.color")}}</label>
-			<color-picker color-picker-swatch="true" color-picker-format="'rgb'" ng-model="ngModel.color" width="100%"></color-picker>
-		</md-input-container>
-		
-	 </md-card-content>
- </md-card>
+ <div layout="row" layout-wrap>
+	<md-input-container class="md-block" flex=50>
+		<label>Font-size</label>
+		<md-select ng-model="ngModel.size">
+			<md-option value=""></md-option>
+			<md-option ng-repeat="px in measure" value="{{px.value}}" ng-style="{'font-size':px.value}">{{px.label}}</md-option>
+		</md-select>
+	</md-input-container>
+	
+	<md-input-container class="md-block" flex=50>
+		<label>{{translate.load("sbi.kpistyle.fontf")}}</label>
+		<md-select ng-model="ngModel.fontFamily">
+			<md-option value=""></md-option>
+			<md-option ng-repeat="font in fontFamily" value="{{font.value}}" ng-style="{'font-family':font.value}">{{font.label}}</md-option>
+		</md-select>
+	</md-input-container>
+	
+	<md-input-container class="md-block" flex=50>
+		<label>{{translate.load("sbi.kpistyle.fontw")}}</label>
+		<md-select ng-model="ngModel.fontWeight">
+			<md-option value=""></md-option>
+			<md-option ng-repeat="fontW in fontWeight" value="{{fontW.value}}" ng-style="{'font-weight':fontW.value}">{{fontW.label}}</md-option>
+		</md-select>
+	</md-input-container>
+	
+	<md-input-container class="md-block colorpickerInput" flex=50>
+		<label>{{translate.load("sbi.kpistyle.color")}}</label>
+		<color-picker options="colorPickerOptions" ng-model="ngModel.color"></color-picker>
+	</md-input-container>
+ </div>
  

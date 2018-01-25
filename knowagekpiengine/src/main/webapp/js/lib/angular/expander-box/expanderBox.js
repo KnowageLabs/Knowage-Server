@@ -7,14 +7,14 @@ angular.module('expander-box', [ 'ngMaterial'])
 .directive('expanderBox',function() {
 	return {
 		transclude : true,
-		template: '<md-toolbar ng-click="toggle($event)">'+
+		template: '<md-toolbar ng-click="toggle($event)" ng-class="toolbarClass">'+
 						'<div class="md-toolbar-tools"><h2>{{expanderTitle}}</h2><span flex></span>'+
 							'<md-button class="md-icon-button" aria-label="More">'+
 								'<md-icon class="fa fa-chevron-{{expanded?\'up\':\'down\'}}"></md-icon>'+
 							'</md-button>'+
 						'</div>'+
 					'</md-toolbar>'+
-					'<md-content class="animate-accordion" layout-padding  ng-show="expanded">'+
+					'<md-content class="animate-accordion" layout-padding  ng-show="expanded" ng-style="{\'background-color\':backgroundColor}">'+
 						'<div ng-transclude></div>'+
 					'</md-content>',
 							
@@ -34,21 +34,11 @@ angular.module('expander-box', [ 'ngMaterial'])
 				scope.color="white"
 			}
 			
-			if(!attrs.backgroundColor){
-				scope.backgroundColor="#DFDFDF";
-			}
-			
-			if(attrs.toolbarClass){
-				angular.element(element[0].querySelector("md-toolbar")).addClass(attrs.toolbarClass);
-			}
-			
 			if(!attrs.expanded){
 				scope.expanded=false;
 			}
 
-			angular.element(element[0].querySelector("md-toolbar")).css("background-color",scope.backgroundColor);
 			angular.element(element[0].querySelector("md-toolbar")).css("color",scope.color);
-			angular.element(element[0].querySelector("md-content")).css("border","1px solid "+scope.backgroundColor);
 			element.addClass("md-whiteframe-2dp");
 			
 		}

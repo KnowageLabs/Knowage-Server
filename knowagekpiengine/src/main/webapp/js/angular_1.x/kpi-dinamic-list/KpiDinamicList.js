@@ -6,7 +6,6 @@
 angular.module('dinamic-list', ['ngMaterial','sbiModule'])
 .directive('dinamicList', function() {
 	return {
-//		templateUrl: '/knowagekpiengine/js/angular_1.x/kpi-dinamic-list/template/kpi-dinamic-list.html',
 		templateUrl: currentScriptPath + 'template/kpi-dinamic-list.html',
 		controller: dinamicListController,
 		scope: {
@@ -43,22 +42,22 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 		                     {"label": sbiModule_translate.load('sbi.kpiedit.isSuffix'),"name":"isSuffixHTML"}
 		                  ];
 	s.typeOfVisualization = s.typeChart;
+	s.loadListKPItoTable= function(){
+		
+		var promise = s.loadListKPI();
+		promise.then(function(result){
+			if(s.multiSelect==false){
+				angular.copy([result],s.ngModel);
+				
+			}else{
+				angular.copy(result,s.ngModel);
+			}
+			
+		});
+	}
 	s.tableFunction={
 			translate:sbiModule_translate,
-			
-			loadListKPI: function(item,evt){
-			
-				var promise = s.loadListKPI();
-				promise.then(function(result){
-					if(s.multiSelect==false){
-						angular.copy([result],s.ngModel);
-						
-					}else{
-						angular.copy(result,s.ngModel);
-					}
-					
-				});
-			},
+
 			checkValue: function(item){
 				if(isNaN(item.rangeMinValue) || isNaN(item.rangeMaxValue)){
 					return true;
@@ -191,17 +190,14 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 		angular.copy(s.ngModel,s.selectedItem);
 		$mdDialog.show({
 			controller: DialogControllerKPI,
-//			templateUrl: '/knowagekpiengine/js/angular_1.x/kpi-dinamic-list/template/kpi-dinamic-list-dialog.html',
 			templateUrl: sbiModule_config.contextName + '/js/angular_1.x/kpi-dinamic-list/template/kpi-dinamic-list-dialog.html',
 			clickOutsideToClose:true,
 			preserveScope:true,
-			locals: {items: deferred,kpi:s.kpi,kpiAllList:s.kpiAllList, kpiSelected: s.selectedItem,multiSelect:s.multiSelect}
+			locals: {items: deferred,kpi:s.kpi,kpiAllList:s.kpiAllList, kpiSelected: s.selectedItem,multiSelect:s.multiSelect,translate:s.translate}
 		})
 		.then(function(answer) {
-			s.status = 'You said the information was "' + answer + '".';
 			return deferred.promise;
 		}, function() {
-			s.status = 'You cancelled the dialog.';
 		});
 		return deferred.promise;
 	};
@@ -226,7 +222,7 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 }
 
 
-function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,kpiSelected,multiSelect){
+function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,kpiSelected,multiSelect,translate){
 	//controller mdDialog to select kpi 
 	var s = $scope;
 	s.tableFunction={
@@ -235,6 +231,7 @@ function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,kpiSelected,m
 			}
 
 	}
+	s.translate = translate;
 	s.multiSelect = multiSelect;
 	s.kpi=kpi;
 	s.kpiAllList = kpiAllList;
