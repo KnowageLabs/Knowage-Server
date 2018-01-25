@@ -1,6 +1,7 @@
 package it.eng.spagobi.tools.dataset.metadata.mapping;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,8 +12,10 @@ public class MetaDataMapping {
 	static	{
 		metaDataTypes = new HashMap<>();
 		metaDataTypes.put("Double", BigDecimal.class);
+		metaDataTypes.put("Date", Date.class);
 		metaDataTypes.put("String", String.class);
 		metaDataTypes.put("Integer", Integer.class);
+		
 	}
 	
 	public static Class getMetaDataType(String value) {
