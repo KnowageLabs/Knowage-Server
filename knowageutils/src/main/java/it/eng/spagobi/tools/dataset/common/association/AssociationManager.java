@@ -84,7 +84,7 @@ public class AssociationManager {
 		Set<String> datasets = new HashSet<String>();
 		for (Association association : associations) {
 			for (Association.Field field : association.getFields()) {
-				datasets.add(field.getDataSetLabel());
+				datasets.add(field.getLabel());
 			}
 		}
 		return datasets;
@@ -104,10 +104,10 @@ public class AssociationManager {
 
 		for (Association association : associations) {
 			List<Association.Field> fields = association.getFields();
-			String previousDataset = fields.get(0).getDataSetLabel();
+			String previousDataset = fields.get(0).getLabel();
 
 			for (int i = 1; i < fields.size(); i++) {
-				String dataset = fields.get(i).getDataSetLabel();
+				String dataset = fields.get(i).getLabel();
 				g.addEdge(previousDataset, dataset);
 				previousDataset = dataset;
 			}

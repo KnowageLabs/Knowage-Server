@@ -328,9 +328,9 @@ public class ChartEngineUtil {
 				if (association != null) {
 
 					for (Field field : association.getFields()) {
-						if (field.getDataSetLabel().equals(dataset)) {
+						if (field.getLabel().equals(dataset)) {
 							datasetColumn = field.getFieldName();
-							datasetLabel = field.getDataSetLabel();
+							datasetLabel = field.getLabel();
 						}
 					}
 				}

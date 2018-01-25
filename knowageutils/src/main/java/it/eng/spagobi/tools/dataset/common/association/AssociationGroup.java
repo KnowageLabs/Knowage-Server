@@ -60,7 +60,7 @@ public class AssociationGroup {
 		Collection<Association> values = associations.values();
 		for (Association asssociation : values) {
 			for (Association.Field field : asssociation.getFields()) {
-				dataSetLabels.add(field.getDataSetLabel());
+				dataSetLabels.add(field.getLabel());
 			}
 		}
 		return dataSetLabels;
@@ -70,7 +70,7 @@ public class AssociationGroup {
 		Collection<Association> values = associations.values();
 		for (Association asssociation : values) {
 			for (Association.Field field : asssociation.getFields()) {
-				if (field.getDataSetLabel().equals(dataSetLabel))
+				if (field.getLabel().equals(dataSetLabel))
 					return true;
 			}
 		}

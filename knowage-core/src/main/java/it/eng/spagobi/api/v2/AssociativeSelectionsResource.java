@@ -265,7 +265,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 				for (Field field : association.getFields()) {
 					String fieldName = field.getFieldName();
 					if (fieldName.contains(":")) {
-						String dataSetLabel = field.getDataSetLabel();
+						String dataSetLabel = field.getLabel();
 
 						IMetaData metadata = null;
 						if (dataSetLabelToMedaData.containsKey(dataSetLabel)) {

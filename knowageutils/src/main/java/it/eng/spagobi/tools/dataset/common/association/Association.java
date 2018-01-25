@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An association is a collection of fields belonging to different datasets that refer to the same thing. The association represent a one to one relationship
- * between these datasets. The fields defined in an association can be used to join together the datasets.
+ * An association is a collection of fields belonging to different datasets/documents that refer to the same thing. The association represent a one to one
+ * relationship between these datasets/documents. The fields defined in an association can be used to join together the datasets/documents.
  *
  * NOTE: It's not possible to define an association that use more than one field per dataset.
  *
@@ -68,7 +68,7 @@ public class Association {
 
 	public Field getField(String dataset) {
 		for (Field field : fields) {
-			if (field.getDataSetLabel().equals(dataset))
+			if (field.getLabel().equals(dataset))
 				return field;
 		}
 		return null;
@@ -87,33 +87,33 @@ public class Association {
 	}
 
 	/**
-	 * A filed have a unique name withing the dataset it belongs to
+	 * A filed have a unique name withing the dataset/document it belongs to
 	 */
 	public static class Field {
 
 		public static String DATASET_TYPE = "dataset";
 		public static String DOCUMENT_TYPE = "document";
 
-		String dataSetLabel;
+		String label;
 		String name;
 		String type;
 
-		public Field(String dataSetLabel, String name, String type) {
-			setDataSetLabel(dataSetLabel);
+		public Field(String label, String name, String type) {
+			setLabel(label);
 			setFieldName(name);
 			setType(type);
 		}
 
-		public Field(String dataSetLabel, String name) {
-			this(dataSetLabel, name, "");
+		public Field(String label, String name) {
+			this(label, name, "");
 		}
 
-		public String getDataSetLabel() {
-			return dataSetLabel;
+		public String getLabel() {
+			return label;
 		}
 
-		public void setDataSetLabel(String dataSetLabel) {
-			this.dataSetLabel = dataSetLabel;
+		public void setLabel(String label) {
+			this.label = label;
 		}
 
 		public String getFieldName() {
@@ -148,7 +148,7 @@ public class Association {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((dataSetLabel == null) ? 0 : dataSetLabel.hashCode());
+			result = prime * result + ((label == null) ? 0 : label.hashCode());
 			result = prime * result + ((name == null) ? 0 : name.hashCode());
 			result = prime * result + ((type == null) ? 0 : type.hashCode());
 			return result;
@@ -163,10 +163,10 @@ public class Association {
 			if (getClass() != obj.getClass())
 				return false;
 			Field other = (Field) obj;
-			if (dataSetLabel == null) {
-				if (other.dataSetLabel != null)
+			if (label == null) {
+				if (other.label != null)
 					return false;
-			} else if (!dataSetLabel.equals(other.dataSetLabel))
+			} else if (!label.equals(other.label))
 				return false;
 			if (name == null) {
 				if (other.name != null)

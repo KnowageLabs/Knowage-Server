@@ -83,7 +83,7 @@ public class AssociationJSONSerializer {
 		for (Association.Field field : fields) {
 			JSONObject o = new JSONObject();
 			o.put("column", field.getFieldName());
-			o.put("store", field.getDataSetLabel());
+			o.put("store", field.getLabel());
 			o.put("type", field.getType());
 			a.put(o);
 		}

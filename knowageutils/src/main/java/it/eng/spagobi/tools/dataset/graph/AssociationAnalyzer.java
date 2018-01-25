@@ -53,39 +53,34 @@ public class AssociationAnalyzer {
 			List<Field> associationFields = association.getFields();
 
 			for (Field field : associationFields) {
-				if (field.hasDatasetType()) {
-					String datasetLabel = field.getDataSetLabel();
+				String datasetLabel = field.getLabel();
 
-					// add vertex to the graph
-					if (!graph.containsVertex(datasetLabel)) {
-						graph.addVertex(datasetLabel);
-					}
-
-					// add column of association to the map
-					Map<String, String> associationToColumnMap = null;
-					if (datasetToAssociationToColumnMap.containsKey(datasetLabel)) {
-						associationToColumnMap = datasetToAssociationToColumnMap.get(datasetLabel);
-					} else {
-						associationToColumnMap = new HashMap<String, String>();
-						datasetToAssociationToColumnMap.put(datasetLabel, associationToColumnMap);
-					}
-					associationToColumnMap.put(associationId, field.getFieldName());
+				// add vertex to the graph
+				if (!graph.containsVertex(datasetLabel)) {
+					graph.addVertex(datasetLabel);
 				}
+
+				// add column of association to the map
+				Map<String, String> associationToColumnMap = null;
+				if (datasetToAssociationToColumnMap.containsKey(datasetLabel)) {
+					associationToColumnMap = datasetToAssociationToColumnMap.get(datasetLabel);
+				} else {
+					associationToColumnMap = new HashMap<String, String>();
+					datasetToAssociationToColumnMap.put(datasetLabel, associationToColumnMap);
+				}
+				associationToColumnMap.put(associationId, field.getFieldName());
 			}
 
 			// add edges to the graph
 			for (int i = 0; i < associationFields.size() - 1; i++) {
 				Field sourceField = associationFields.get(i);
-				if (sourceField.hasDatasetType()) {
-					String source = sourceField.getDataSetLabel();
-					for (int j = i + 1; j < associationFields.size(); j++) {
-						Field targetField = associationFields.get(j);
-						if (targetField.hasDatasetType()) {
-							String target = targetField.getDataSetLabel();
-							LabeledEdge<String> labeledEdge = new LabeledEdge<String>(source, target, associationId);
-							graph.addEdge(source, target, labeledEdge);
-						}
-					}
+				String source = sourceField.getLabel();
+				for (int j = i + 1; j < associationFields.size(); j++) {
+					Field targetField = associationFields.get(j);
+
+					String target = targetField.getLabel();
+					LabeledEdge<String> labeledEdge = new LabeledEdge<String>(source, target, associationId);
+					graph.addEdge(source, target, labeledEdge);
 				}
 			}
 		}
