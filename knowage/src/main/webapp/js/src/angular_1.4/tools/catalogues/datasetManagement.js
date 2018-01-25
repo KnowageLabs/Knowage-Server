@@ -1726,10 +1726,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 //console.log("a2");
 			 $scope.setFormNotDirty();
 			 selectDataset(item,index);
-
-			 if(item.dsTypeCd.toLowerCase()=="file" && item.csvEncoding=="") {
-				 $scope.selectedDataSet.csvEncoding="UTF-8";
-			 }
 		 }
 		 // Moving from selected new DS to existing DS
 		 else if (!$scope.selectedDataSet.id) {
@@ -3752,6 +3748,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.dataset = {};
 		$scope.dataset.catTypeId = $scope.selectedDataSet.catTypeId;
 		$scope.dataset.catTypeVn = $scope.selectedDataSet.catTypeVn;
+		if($scope.selectedDataSet.csvEncoding=="" || $scope.selectedDataSet.csvEncoding==undefined) {
+			$scope.selectedDataSet.csvEncoding = "UTF-8";
+		}
 		$scope.dataset.csvEncoding = $scope.selectedDataSet.csvEncoding;
 		$scope.dataset.csvDelimiter = $scope.selectedDataSet.csvDelimiter;
 		$scope.dataset.csvQuote = $scope.selectedDataSet.csvQuote;
