@@ -41,7 +41,7 @@
 			id="tableSchedulers_{{d.name}}" ng-model="schedulers" 
 			columns='schedulatinColumns'
 			columns-search='["name","description","time"]'
-			initial-sorting="'dateCreation'"
+			initial-sorting="'time'"
 			initial-sorting-asc="true"
 			highlights-selected-item = "true"
 			show-search-bar="true"
