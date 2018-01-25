@@ -55,7 +55,7 @@ public class CrossNavigationManager {
 				if (!aParameter.isAbsolute()) {// absolute will be managed from external cross navigation
 					String parameterName = aParameter.name;
 					String parameterValue = getParameterValue(aParameter, ei, cellWrapper);
-					if (parameterValue != null && parameterValue.equals("")) {
+					if (parameterValue != null && !parameterValue.equals("")) {
 						parameterValue = "'" + StringEscapeUtils.escapeJavaScript(parameterValue) + "'";
 					} else {
 						parameterValue = "''";
