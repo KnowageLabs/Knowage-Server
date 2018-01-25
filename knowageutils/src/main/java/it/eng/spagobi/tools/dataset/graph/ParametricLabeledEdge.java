@@ -16,25 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.spagobi.tools.dataset.associativity;
+package it.eng.spagobi.tools.dataset.graph;
 
-import java.util.Map;
-import java.util.Set;
+public class ParametricLabeledEdge<V> extends LabeledEdge<V> {
 
-import it.eng.spagobi.tools.dataset.graph.Tuple;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
+	public ParametricLabeledEdge(V source, V target, String label) {
+		super(source, target, label);
+	}
 
-/**
- * @author Alessandro Portosa (alessandro.portosa@eng.it)
- *
- */
+	public ParametricLabeledEdge(LabeledEdge<V> edge) {
+		super(edge.getSource(), edge.getTarget(), edge.getLabel());
+	}
 
-public interface IAssociativityManager {
-
-	public void process() throws Exception;
-
-	public AssociativeLogicResult getResult();
-
-	public Map<String, Map<String, Set<Tuple>>> getSelections();
+	@Override
+	public boolean isParametric() {
+		return true;
+	}
 
 }

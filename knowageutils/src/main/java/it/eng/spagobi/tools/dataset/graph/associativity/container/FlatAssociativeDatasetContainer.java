@@ -16,25 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.spagobi.tools.dataset.associativity;
+package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
 import java.util.Map;
-import java.util.Set;
 
-import it.eng.spagobi.tools.dataset.graph.Tuple;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
-/**
- * @author Alessandro Portosa (alessandro.portosa@eng.it)
- *
- */
+public class FlatAssociativeDatasetContainer extends JDBCAssociativeDatasetContainer {
 
-public interface IAssociativityManager {
+	public FlatAssociativeDatasetContainer(IDataSet dataSet, Map<String, String> parameters) {
+		super(dataSet, parameters);
+	}
 
-	public void process() throws Exception;
-
-	public AssociativeLogicResult getResult();
-
-	public Map<String, Map<String, Set<Tuple>>> getSelections();
+	@Override
+	public String getTableName() {
+		return dataSet.getFlatTableName();
+	}
 
 }

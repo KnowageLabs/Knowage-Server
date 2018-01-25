@@ -1,3 +1,21 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package it.eng.spagobi.tools.dataset.graph.associativity.utils;
 
 import java.sql.ResultSet;
@@ -16,8 +34,8 @@ import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
-import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
+import it.eng.spagobi.tools.dataset.graph.associativity.container.IAssociativeDatasetContainer;
 
 public class AssociativeLogicUtils {
 
@@ -77,8 +95,8 @@ public class AssociativeLogicUtils {
 		return newGroup;
 	}
 
-	public static void unresolveDatasetContainers(Collection<AssociativeDatasetContainer> containers) {
-		for (AssociativeDatasetContainer container : containers) {
+	public static void unresolveDatasetContainers(Collection<IAssociativeDatasetContainer> containers) {
+		for (IAssociativeDatasetContainer container : containers) {
 			container.unresolve();
 			container.unresolveGroups();
 		}

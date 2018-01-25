@@ -25,32 +25,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.Pseudograph;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
-import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
-import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
-import it.eng.spagobi.tools.dataset.graph.associativity.NearRealtimeAssociativeDatasetContainer;
+import it.eng.spagobi.tools.dataset.graph.associativity.container.AssociativeDatasetContainerFactory;
+import it.eng.spagobi.tools.dataset.graph.associativity.container.IAssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
 /**
@@ -66,7 +64,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 	protected ICache cache;
 	protected Map<String, Map<String, String>> datasetToAssociations;
 	protected Pseudograph<String, LabeledEdge<String>> graph;
-	protected Map<String, AssociativeDatasetContainer> associativeDatasetContainers = new HashMap<>();
+	protected Map<String, IAssociativeDatasetContainer> associativeDatasetContainers = new HashMap<>();
 	protected Set<String> documentsAndExcludedDatasets;
 	protected List<SimpleFilter> selections;
 
@@ -79,7 +77,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 	protected abstract void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, SimpleFilter filter) throws Exception;
 
 	@Override
-	public AssociativeLogicResult process() throws Exception {
+	public void process() throws Exception {
 		if (cacheDataSource == null) {
 			throw new SpagoBIException("Unable to get cache datasource, the value of [dataSource] is [null]");
 		}
@@ -96,7 +94,9 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 				calculateDatasets(selection.getDataset().getLabel(), null, selection);
 			}
 		}
-		return result;
+
+		// (2) correct result data structure based on actual filters for each dataset
+		endProcess();
 	}
 
 	protected List<String> getColumnNames(String associationNamesString, String datasetName) {
@@ -150,32 +150,8 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 					boolean isNearRealtime = config.getNearRealtimeDatasets().contains(v1);
 					DatasetEvaluationStrategy evaluationStrategy = dataSet.getEvaluationStrategy(isNearRealtime);
 
-					AssociativeDatasetContainer container;
-					if (DatasetEvaluationStrategy.PERSISTED.equals(evaluationStrategy)) {
-						container = new AssociativeDatasetContainer(dataSet, dataSet.getPersistTableName(), dataSet.getDataSourceForWriting(),
-								parametersValues);
-					} else if (DatasetEvaluationStrategy.FLAT.equals(evaluationStrategy)) {
-						container = new AssociativeDatasetContainer(dataSet, dataSet.getFlatTableName(), dataSet.getDataSource(), parametersValues);
-					} else if (DatasetEvaluationStrategy.INLINE_VIEW.equals(evaluationStrategy)) {
-						QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
-						String tableName = "(" + querableBehaviour.getStatement() + ") T";
-						container = new AssociativeDatasetContainer(dataSet, tableName, dataSet.getDataSource(), parametersValues);
-					} else if (DatasetEvaluationStrategy.NEAR_REALTIME.equals(evaluationStrategy)) {
-						dataSet.loadData();
-						container = new NearRealtimeAssociativeDatasetContainer(dataSet, dataSet.getDataStore(), parametersValues);
-					} else {
-						String signature = dataSet.getSignature();
-						CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
-						if (cacheItem == null) {
-							logger.debug("Unable to find dataset [" + v1 + "] in cache. This can be due to changes on dataset parameters");
-							new DatasetManagementAPI(userProfile).putDataSetInCache(dataSet, cache);
-							cacheItem = cache.getMetadata().getCacheItem(signature);
-							if (cacheItem == null) {
-								throw new SpagoBIException("Unable to find dataset [" + v1 + "] in cache.");
-							}
-						}
-						container = new AssociativeDatasetContainer(dataSet, cacheItem.getTable(), cacheDataSource, parametersValues);
-					}
+					IAssociativeDatasetContainer container = AssociativeDatasetContainerFactory.getContainer(evaluationStrategy, dataSet, parametersValues,
+							userProfile);
 					associativeDatasetContainers.put(v1, container);
 				}
 			}
@@ -192,16 +168,12 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 		cache = SpagoBICacheManager.getCache();
 	}
 
-	protected void addEdgeGroup(String v1, Set<LabeledEdge<String>> edges, AssociativeDatasetContainer container) {
-		EdgeGroup group = AssociativeLogicUtils.getOrCreate(result.getEdgeGroupValues().keySet(), new EdgeGroup(edges));
+	protected void addEdgeGroup(String v1, Set<LabeledEdge<String>> edges, IAssociativeDatasetContainer container) {
+		EdgeGroup group = AssociativeLogicUtils.getOrCreate(result.getEdgeGroupToDataset().keySet(), new EdgeGroup(edges));
 		result.getDatasetToEdgeGroup().get(v1).add(group);
 
 		if (!documentsAndExcludedDatasets.contains(v1)) {
 			container.addGroup(group);
-
-			if (!result.getEdgeGroupValues().containsKey(group)) {
-				result.getEdgeGroupValues().put(group, new HashSet<Tuple>());
-			}
 
 			if (!result.getEdgeGroupToDataset().containsKey(group)) {
 				result.getEdgeGroupToDataset().put(group, new HashSet<String>());
@@ -212,9 +184,44 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 		}
 	}
 
-	protected void addEdgeGroup(String v1, LabeledEdge<String> edge, AssociativeDatasetContainer container) {
+	protected void addEdgeGroup(String v1, LabeledEdge<String> edge, IAssociativeDatasetContainer container) {
 		Set<LabeledEdge<String>> edges = new HashSet<>(1);
 		edges.add(edge);
 		addEdgeGroup(v1, edges, container);
+	}
+
+	public void endProcess() {
+		for (String label : associativeDatasetContainers.keySet()) {
+			IAssociativeDatasetContainer container = associativeDatasetContainers.get(label);
+			result.getDatasetToEdgeGroup().get(label).retainAll(container.getUsedGroups());
+
+			for (EdgeGroup group : result.getEdgeGroupToDataset().keySet()) {
+				if (!container.getUsedGroups().contains(group)) {
+					result.getEdgeGroupToDataset().get(group).remove(label);
+				}
+			}
+		}
+	}
+
+	@Override
+	public AssociativeLogicResult getResult() {
+		return result;
+	}
+
+	@Override
+	public Map<String, Map<String, Set<Tuple>>> getSelections() {
+		Map<String, Map<String, Set<Tuple>>> selections = new HashMap<>();
+		for (String dataset : result.getDatasetToEdgeGroup().keySet()) {
+			Set<EdgeGroup> groups = result.getDatasetToEdgeGroup().get(dataset);
+			Map<String, Set<Tuple>> groupToValues = new HashMap<>(groups.size());
+			for (EdgeGroup group : groups) {
+				List<String> columns = getColumnNames(group.getOrderedEdgeNames(), dataset);
+				String columnsString = StringUtils.join(columns.toArray());
+				Set<Tuple> values = result.getEdgeGroupValues().get(group);
+				groupToValues.put(columnsString, values);
+			}
+			selections.put(dataset, groupToValues);
+		}
+		return selections;
 	}
 }

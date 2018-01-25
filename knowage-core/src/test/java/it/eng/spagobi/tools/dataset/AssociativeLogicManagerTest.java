@@ -181,7 +181,8 @@ public class AssociativeLogicManagerTest {
 
 		try {
 			OuterAssociativityManager manager = new OuterAssociativityManager(config, UserProfileManager.getProfile());
-			edgeGroupToValues = manager.process().getEdgeGroupValues();
+			manager.process();
+			manager.getResult().getEdgeGroupValues();
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.toString());
@@ -242,7 +243,9 @@ public class AssociativeLogicManagerTest {
 
 		try {
 			OuterAssociativityManager manager = new OuterAssociativityManager(config, UserProfileManager.getProfile());
-			edgeGroupToValues = manager.process().getEdgeGroupValues();
+			manager.process();
+			manager.getResult().getEdgeGroupValues();
+			;
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.toString());
@@ -310,7 +313,8 @@ public class AssociativeLogicManagerTest {
 
 		try {
 			OuterAssociativityManager manager = new OuterAssociativityManager(config, UserProfileManager.getProfile());
-			edgeGroupToValues = manager.process().getEdgeGroupValues();
+			manager.process();
+			manager.getResult().getEdgeGroupValues();
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.toString());
@@ -408,7 +412,8 @@ public class AssociativeLogicManagerTest {
 
 		try {
 			OuterAssociativityManager manager = new OuterAssociativityManager(config, UserProfileManager.getProfile());
-			edgeGroupToValues = manager.process().getEdgeGroupValues();
+			manager.process();
+			manager.getResult().getEdgeGroupValues();
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.toString());

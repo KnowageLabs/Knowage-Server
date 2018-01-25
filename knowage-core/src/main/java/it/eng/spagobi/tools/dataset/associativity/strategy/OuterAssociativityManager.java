@@ -30,9 +30,10 @@ import it.eng.spagobi.tools.dataset.associativity.AbstractAssociativityManager;
 import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+import it.eng.spagobi.tools.dataset.graph.ParametricLabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
-import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
+import it.eng.spagobi.tools.dataset.graph.associativity.container.IAssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.exceptions.IllegalEdgeGroupException;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -56,7 +57,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 	protected void initProcess() {
 		try {
 			for (String v1 : graph.vertexSet()) {
-				AssociativeDatasetContainer container = associativeDatasetContainers.get(v1);
+				IAssociativeDatasetContainer container = associativeDatasetContainers.get(v1);
 				result.getDatasetToEdgeGroup().put(v1, new HashSet<EdgeGroup>());
 				for (String v2 : graph.vertexSet()) {
 					if (!v1.equals(v2)) {
@@ -67,7 +68,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 								List<String> columnNames = getColumnNames(edge.getLabel(), v1);
 								columnNames.addAll(getColumnNames(edge.getLabel(), v2));
 								if (ParametersUtilities.containsParameter(columnNames)) {
-									addEdgeGroup(v1, edge, container);
+									addEdgeGroup(v1, new ParametricLabeledEdge<String>(edge), container);
 									edgesWithoutParameters.remove(edge);
 								}
 							}
@@ -89,11 +90,10 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 		logger.debug("Clean containers and groups -> set to unresolved");
 		AssociativeLogicUtils.unresolveDatasetContainers(associativeDatasetContainers.values());
-		resetValues();
 
 		Set<String> totalChildren = new HashSet<>();
 
-		AssociativeDatasetContainer container = associativeDatasetContainers.get(dataset);
+		IAssociativeDatasetContainer container = associativeDatasetContainers.get(dataset);
 		container.addFilter(filter);
 
 		logger.debug("1. For each associative group of the primary dataset " + container.getDataSet().getLabel() + "do the following:");
@@ -108,33 +108,32 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 				throw new IllegalEdgeGroupException("Columns " + columnNames
 						+ " contain at least one parameter and more than one association. \nThis is a illegal state for an associative group.");
 			}
-			Set<Tuple> distinctValues = ParametersUtilities.isParameter(columnNames.get(0)) ? container.getTupleOfValues(columnNames.get(0))
-					: container.getTupleOfValues(columnNames);
+			if (!ParametersUtilities.isParameter(columnNames.get(0))) {
+				// clear non parameters previously computed values
+				result.clearValues(group);
 
-			logger.debug("b. Setting distinct values " + distinctValues + " as the only compatible values for the associative group " + group);
-			group.addValues(distinctValues);
-			result.getEdgeGroupValues().get(group).addAll(distinctValues);
+				Set<Tuple> distinctValues = container.getTupleOfValues(columnNames);
 
-			// logger.debug("c. Removing the previous associative group among the ones to be filtered for the primary dataset. Such group is indeed an outgoing
-			// association");
-			// container.removeGroup(group);
-			// iterator.remove();
+				logger.debug("b. Setting distinct values " + distinctValues + " as the only compatible values for the associative group " + group);
+				group.addValues(distinctValues);
+				result.addValues(group, distinctValues);
 
-			logger.debug("d. For each dataset involved in the current associative group, inserting it among the ones to be filtered");
-			Set<String> children = result.getEdgeGroupToDataset().get(group);
-			// children.remove(dataset); // Do I need to keep the primary dataset?
-			for (String child : children) {
-				if (!documentsAndExcludedDatasets.contains(child)) {
-					AssociativeDatasetContainer childContainer = associativeDatasetContainers.get(child);
-					List<String> columns = getColumnNames(group.getOrderedEdgeNames(), child);
-					childContainer.update(columns, distinctValues);
+				logger.debug("d. For each dataset involved in the current associative group, inserting it among the ones to be filtered");
+				Set<String> children = result.getEdgeGroupToDataset().get(group);
+
+				for (String child : children) {
+					if (!documentsAndExcludedDatasets.contains(child)) {
+						IAssociativeDatasetContainer childContainer = associativeDatasetContainers.get(child);
+						List<String> columns = getColumnNames(group.getOrderedEdgeNames(), child);
+						childContainer.update(group, columns, distinctValues);
+					}
 				}
-			}
-			totalChildren.addAll(children);
+				totalChildren.addAll(children);
 
-			logger.debug("e. Setting all the children dataset as processed");
-			logger.debug("f. Declaring the dataset as resolved");
-			resolveDatasets(children);
+				logger.debug("e. Setting all the children dataset as processed");
+				logger.debug("f. Declaring the dataset as resolved");
+				resolveDatasets(children);
+			}
 
 			logger.debug("f. Declaring the associative group as resolved");
 			group.resolve();
@@ -151,7 +150,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 			while (iterator.hasNext()) {
 				EdgeGroup group = iterator.next();
 
-				for (String childDataset : result.getEdgeGroupToDataset().get(group)) {
+				for (String childDataset : result.getDatasets(group)) {
 					container = associativeDatasetContainers.get(childDataset);
 					if (container.isResolved()) {
 
@@ -162,23 +161,21 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 							throw new IllegalEdgeGroupException("Columns " + columnNames
 									+ " contain at least one parameter and more than one association. \nThis is a illegal state for an associative group.");
 						}
-						Set<Tuple> distinctValues = ParametersUtilities.isParameter(columnNames.get(0)) ? container.getTupleOfValues(columnNames.get(0))
-								: container.getTupleOfValues(columnNames);
 
-						logger.debug("ii-b. Adding values " + distinctValues + " among the compatible ones for the current associative group");
-						group.addValues(distinctValues);
-						result.getEdgeGroupValues().get(group).addAll(distinctValues);
+						if (!ParametersUtilities.isParameter(columnNames.get(0))) {
+							Set<Tuple> distinctValues = container.getTupleOfValues(columnNames);
 
-						// logger.debug("iii. Removing the previous associative group among the ones to be filtered for the primary dataset. Such group is
-						// indeed an outgoing association");
-						// container.removeGroup(group);
+							logger.debug("ii-b. Adding values " + distinctValues + " among the compatible ones for the current associative group");
+							group.addValues(distinctValues);
+							result.addValues(group, distinctValues);
+						}
 					}
 				}
-				for (String childDataset : result.getEdgeGroupToDataset().get(group)) {
+				for (String childDataset : result.getDatasets(group)) {
 					container = associativeDatasetContainers.get(childDataset);
 					if (!container.isResolved()) {
 						List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
-						container.update(columnNames, group.getValues());
+						container.update(group, columnNames, group.getValues());
 						totalChildren.add(childDataset);
 					}
 				}
@@ -210,11 +207,5 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 	private void resolve(String dataset) {
 		associativeDatasetContainers.get(dataset).resolve();
-	}
-
-	private void resetValues() {
-		for (EdgeGroup group : result.getEdgeGroupValues().keySet()) {
-			result.getEdgeGroupValues().get(group).clear();
-		}
 	}
 }

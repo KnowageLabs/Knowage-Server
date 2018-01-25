@@ -96,8 +96,8 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
  *
  */
-@Path("/2.0/datasets")
 
+@Path("/2.0/datasets")
 @ManageAuthorization
 public class DataSetResource extends AbstractDataSetResource {
 

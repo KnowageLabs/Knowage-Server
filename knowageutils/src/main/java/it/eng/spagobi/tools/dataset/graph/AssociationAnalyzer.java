@@ -18,22 +18,16 @@
 
 package it.eng.spagobi.tools.dataset.graph;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.jgrapht.graph.ClassBasedEdgeFactory;
 import org.jgrapht.graph.Pseudograph;
 
 import it.eng.spagobi.tools.dataset.common.association.Association;
 import it.eng.spagobi.tools.dataset.common.association.Association.Field;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)
@@ -103,87 +97,5 @@ public class AssociationAnalyzer {
 
 	public Pseudograph<String, LabeledEdge<String>> getGraph() {
 		return graph;
-	}
-
-	public static Map<String, Map<String, Set<Tuple>>> getSelections(AssociationGroup associationGroup, Pseudograph<String, LabeledEdge<String>> graph,
-			AssociativeLogicResult result) {
-
-		Map<Set<String>, Set<Tuple>> associationsToValuesMap = new HashMap<>();
-		for (EdgeGroup edgeGroup : result.getEdgeGroupValues().keySet()) {
-			Set<String> associations = new TreeSet<String>();
-			String associationString = edgeGroup.getOrderedEdgeNames();
-			associations.addAll(Arrays.asList(associationString.split(",")));
-			Set<Tuple> values = result.getEdgeGroupValues().get(edgeGroup);
-			associationsToValuesMap.put(associations, values);
-		}
-
-		Map<String, Set<String>> datasetToAssociationsMap = new HashMap<String, Set<String>>();
-		for (String dataset : graph.vertexSet()) {
-			Set<String> associations = new TreeSet<String>();
-			for (LabeledEdge<String> labeledEdge : graph.edgesOf(dataset)) {
-				associations.add(labeledEdge.getLabel());
-			}
-			datasetToAssociationsMap.put(dataset, associations);
-		}
-
-		Map<String, Map<Set<String>, Set<Tuple>>> datasetToAssociationsToValuesMap = new HashMap<>();
-		for (String dataset : datasetToAssociationsMap.keySet()) {
-			Map<Set<String>, Set<Tuple>> currentAssociationsToValuesMap = null;
-			if (datasetToAssociationsToValuesMap.containsKey(dataset)) {
-				currentAssociationsToValuesMap = datasetToAssociationsToValuesMap.get(dataset);
-			} else {
-				currentAssociationsToValuesMap = new HashMap<>();
-				datasetToAssociationsToValuesMap.put(dataset, currentAssociationsToValuesMap);
-			}
-
-			Set<String> graphAssociations = datasetToAssociationsMap.get(dataset);
-			for (Set<String> newAssociations : associationsToValuesMap.keySet()) {
-				if (graphAssociations.containsAll(newAssociations)) {
-					Set<Tuple> values = associationsToValuesMap.get(newAssociations);
-					if (currentAssociationsToValuesMap.isEmpty()) {
-						currentAssociationsToValuesMap.put(newAssociations, values);
-					} else {
-						boolean insert = true;
-						for (Iterator<Set<String>> it = currentAssociationsToValuesMap.keySet().iterator(); it.hasNext();) {
-							Set<String> currentAssociations = it.next();
-							if (newAssociations.containsAll(currentAssociations)) {
-								it.remove();
-							} else if (currentAssociations.containsAll(newAssociations)) {
-								insert = false;
-								break;
-							}
-						}
-						if (insert) {
-							currentAssociationsToValuesMap.put(newAssociations, values);
-						}
-					}
-				}
-			}
-		}
-
-		// transform associations to columns
-		Map<String, Map<String, Set<Tuple>>> selections = new HashMap<>();
-		for (String dataset : datasetToAssociationsToValuesMap.keySet()) {
-			Map<Set<String>, Set<Tuple>> datasetAssociationsToValuesMap = datasetToAssociationsToValuesMap.get(dataset);
-			Map<String, Set<Tuple>> columnsToValuesMap = new HashMap<>();
-
-			for (Set<String> associations : datasetAssociationsToValuesMap.keySet()) {
-				String columns = "";
-				for (String associationId : associations) {
-					Association association = associationGroup.getAssociation(associationId);
-					String column = association.getField(dataset).getFieldName();
-					if (columns.isEmpty()) {
-						columns = column;
-					} else {
-						columns += "," + column;
-					}
-				}
-				Set<Tuple> values = datasetAssociationsToValuesMap.get(associations);
-				columnsToValuesMap.put(columns, values);
-			}
-			selections.put(dataset, columnsToValuesMap);
-		}
-
-		return selections;
 	}
 }

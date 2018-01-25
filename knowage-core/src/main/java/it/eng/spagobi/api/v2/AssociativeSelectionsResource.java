@@ -62,7 +62,6 @@ import it.eng.spagobi.tools.dataset.graph.AssociationAnalyzer;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -222,9 +221,10 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 					datasetParameters, documents);
 
 			IAssociativityManager manager = AssociativeStrategyFactory.createStrategyInstance(config, getUserProfile());
-			AssociativeLogicResult result = manager.process();
+			manager.process();
 
-			Map<String, Map<String, Set<Tuple>>> selections = AssociationAnalyzer.getSelections(associationGroup, graph, result);
+			// Map<String, Map<String, Set<Tuple>>> selections = AssociationAnalyzer.getSelections(associationGroup, graph, result);
+			Map<String, Map<String, Set<Tuple>>> selections = manager.getSelections();
 
 			for (String d : selectionsMap.keySet()) {
 				if (!selections.containsKey(d)) {

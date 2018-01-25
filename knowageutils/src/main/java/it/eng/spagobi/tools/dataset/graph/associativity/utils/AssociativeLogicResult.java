@@ -34,7 +34,7 @@ public class AssociativeLogicResult {
 
 	private final Map<String, Set<EdgeGroup>> datasetToEdgeGroup = new HashMap<>();
 	private final Map<EdgeGroup, Set<String>> edgeGroupToDataset = new HashMap<>();
-	private final HashMap<EdgeGroup, Set<Tuple>> edgeGroupValues = new HashMap<>();
+	private final Map<EdgeGroup, Set<Tuple>> edgeGroupValues = new HashMap<>();
 
 	public Map<String, Set<EdgeGroup>> getDatasetToEdgeGroup() {
 		return datasetToEdgeGroup;
@@ -44,8 +44,25 @@ public class AssociativeLogicResult {
 		return edgeGroupToDataset;
 	}
 
-	public HashMap<EdgeGroup, Set<Tuple>> getEdgeGroupValues() {
+	public Map<EdgeGroup, Set<Tuple>> getEdgeGroupValues() {
 		return edgeGroupValues;
 	}
 
+	public void clearValues(EdgeGroup group) {
+		if (edgeGroupValues.containsKey(group)) {
+			edgeGroupValues.get(group).clear();
+		}
+	}
+
+	public void addValues(EdgeGroup group, Set<Tuple> values) {
+		if (!edgeGroupValues.containsKey(group)) {
+			edgeGroupValues.put(group, values);
+		} else {
+			edgeGroupValues.get(group).addAll(values);
+		}
+	}
+
+	public Set<String> getDatasets(EdgeGroup group) {
+		return edgeGroupToDataset.get(group);
+	}
 }
