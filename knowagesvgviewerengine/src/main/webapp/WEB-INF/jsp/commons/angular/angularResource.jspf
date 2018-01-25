@@ -22,6 +22,7 @@
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="org.json.JSONObject"%>
+<%@page import="org.json.JSONArray"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -94,7 +95,10 @@
 		if(key instanceof String && !key.equals("widgetData")){
 			String value = request.getParameter((String)key);
 			if(value!=null){
-				driverParamsMap.put(key, value);
+				if ( key.equals("DOCUMENT_OUTPUT_PARAMETERS") ) //just for output parameters manage them as a json array list and not a simple string
+					driverParamsMap.put(key, new JSONArray(value.toString()));	
+				else
+					driverParamsMap.put(key, value);
 			}
 		}
 	}

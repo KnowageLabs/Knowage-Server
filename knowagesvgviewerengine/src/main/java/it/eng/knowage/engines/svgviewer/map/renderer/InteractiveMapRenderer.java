@@ -1515,6 +1515,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			jsonOEnv = JSONUtils.getJsonFromMap(this.getEnv());
 			jsonOEnv.remove("ENV_USER_PROFILE"); // clean profile info for correct url
 			jsonOEnv.remove("level");
+			jsonOEnv.remove("DOCUMENT_OUTPUT_PARAMETERS");
 			strEnv = "&" + JSONUtils.getQueryString(jsonOEnv);
 			// strEnv = SpagoBIUtilities.encode(strEnv.substring(0, strEnv.length() - 1)); //2017-29-30 commented because changes the parameter values
 		} catch (JSONException je) {

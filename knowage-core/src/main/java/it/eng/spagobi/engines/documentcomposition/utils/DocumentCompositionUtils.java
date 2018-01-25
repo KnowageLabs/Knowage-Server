@@ -68,6 +68,7 @@ import it.eng.spagobi.monitoring.dao.AuditManager;
 
 public class DocumentCompositionUtils {
 	private static transient Logger logger = Logger.getLogger(DocumentCompositionUtils.class);
+	public static final String DOCUMENT_OUTPUT_PARAMETERS = "DOCUMENT_OUTPUT_PARAMETERS";
 	public static final String messageBundle = "component_spagobidocumentcompositionIE_messages";
 
 	/**
@@ -218,7 +219,12 @@ public class DocumentCompositionUtils {
 					}
 					String parkey = parKeysIter.next().toString();
 					String parvalue = mapPars.get(parkey).toString();
-					urlReturn = (new StringBuilder()).append(urlReturn).append("&").append(parkey).append("=").append(parvalue).toString();
+
+					// retrocompatibility management: output parameter are skipped
+					if (parkey.equalsIgnoreCase(DOCUMENT_OUTPUT_PARAMETERS)) {
+						logger.debug("Output paramters aren't added to request url. They will be recovered directly by the target document!");
+					} else
+						urlReturn = (new StringBuilder()).append(urlReturn).append("&").append(parkey).append("=").append(parvalue).toString();
 				} while (true);
 
 			} else {

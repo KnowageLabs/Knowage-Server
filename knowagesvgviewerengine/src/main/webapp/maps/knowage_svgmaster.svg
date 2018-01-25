@@ -561,6 +561,7 @@ onload="init(evt);">
 			
 			myMapApp.colArray = measure.colours;
 			myMapApp.labelArray = measure.descriptions;
+			//debugger;
 			myMapApp.threshArray = measure.thresholds;
 			myMapApp.curLabel = label;
 			myMapApp.curDescription = measure.description;
@@ -809,17 +810,16 @@ onload="init(evt);">
         if (targetNode.nodeName != "#text" && targetNode.nodeName != "#comment") {
 					var kpiAttrib = parseFloat(targetNode.getAttributeNS(attribNS,myMapApp.curKpi));
 			
-			
 					var targetColor = "#666666";
 					
 					var selectedMeasure = sbi.geo.conf.measures[getCurrentKpiIndex()];
-					
+					//debugger;
 					if(targetNode.getAttributeNS(attribNS,myMapApp.curKpi) == null || targetNode.getAttributeNS(attribNS,myMapApp.curKpi) == "") {
-						targetColor = selectedMeasure.no_value_color;
+						targetColor = selectedMeasure.no_value_color || selectedMeasure.no_value_colour;
 					} else if(kpiAttrib < selectedMeasure.lower_bound) {
-						targetColor = selectedMeasure.lower_bound_color;
+						targetColor = selectedMeasure.lower_bound_color || selectedMeasure.lower_bound_colour;
 					} else if(kpiAttrib > selectedMeasure.upper_bound) {
-						targetColor = selectedMeasure.upper_bound_color;
+						targetColor = selectedMeasure.upper_bound_color || selectedMeasure.upper_bound_colour;
 					} else if(kpiAttrib == selectedMeasure.upper_bound) {
 						targetColor = myMapApp.colArray[myMapApp.threshArray.length-2];
 					} else  {
