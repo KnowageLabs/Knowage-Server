@@ -89,7 +89,7 @@ function recentViewControllerFunction($scope,sbiModule_translate, sbiModule_conf
 	$scope.buttonMenu=[
 		{
 		label : sbiModule_translate.load('sbi.workspace.schedulations.view'),
-		icon:'fa fa-eye fa-2x' ,
+		icon:'fa fa-eye' ,
 		action : function(item,event) {
 			$scope.previewDocumentAction({doc:item});
 		}
