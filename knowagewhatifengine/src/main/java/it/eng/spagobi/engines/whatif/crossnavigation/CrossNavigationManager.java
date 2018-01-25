@@ -52,10 +52,14 @@ public class CrossNavigationManager {
 		if (!parameters.isEmpty()) {
 			for (int i = 0; i < parameters.size(); i++) {
 				TargetParameter aParameter = parameters.get(i);
-				if(!aParameter.isAbsolute()){//absolute will be managed from external cross navigation
+				if (!aParameter.isAbsolute()) {// absolute will be managed from external cross navigation
 					String parameterName = aParameter.name;
 					String parameterValue = getParameterValue(aParameter, ei, cellWrapper);
-					parameterValue = "'"+StringEscapeUtils.escapeJavaScript(parameterValue)+"'";
+					if (parameterValue != null && parameterValue.equals("")) {
+						parameterValue = "'" + StringEscapeUtils.escapeJavaScript(parameterValue) + "'";
+					} else {
+						parameterValue = "";
+					}
 					if (parameterValue != null) {
 						buffer.append(parameterName + ":" + parameterValue + ",");
 					}
@@ -63,12 +67,9 @@ public class CrossNavigationManager {
 			}
 		}
 
-
 		if (buffer.charAt(buffer.length() - 1) == ',') {
 			buffer.deleteCharAt(buffer.length() - 1);
 		}
-
-
 
 		buffer.append("});");
 		String toReturn = buffer.toString();
@@ -86,7 +87,8 @@ public class CrossNavigationManager {
 		String hierarchyName = parameter.getHierarchy();
 		String levelName = parameter.getLevel();
 		String propertyName = parameter.getProperty();
-		logger.debug("Looking for dimension " + dimensionName + ", hierarchy " + hierarchyName + ", level " + levelName + ", property " + propertyName + " ...");
+		logger.debug(
+				"Looking for dimension " + dimensionName + ", hierarchy " + hierarchyName + ", level " + levelName + ", property " + propertyName + " ...");
 		Hierarchy hierarchy = getHierarchy(ei.getSpagoBIPivotModel().getCube(), ei.getModelConfig(), dimensionName, hierarchyName);
 		Member member = cell.getContextMember(hierarchy);
 		logger.debug("Considering context member " + member.getUniqueName());
@@ -140,7 +142,6 @@ public class CrossNavigationManager {
 		return toReturn;
 	}
 
-
 	public static Hierarchy getHierarchy(Cube cube, ModelConfig modelConfig, String dimensionName, String hierarchyName) {
 		List<Dimension> dimensions = cube.getDimensions();
 		Dimension result = null;
@@ -152,8 +153,8 @@ public class CrossNavigationManager {
 			}
 		}
 		if (result == null) {
-			logger.error("Could not find dimension"+dimensionName);
-			throw new SpagoBIEngineRuntimeException("Could not find dimension" +dimensionName);
+			logger.error("Could not find dimension" + dimensionName);
+			throw new SpagoBIEngineRuntimeException("Could not find dimension" + dimensionName);
 		}
 		logger.debug("Found dimension " + result.getUniqueName());
 
@@ -161,16 +162,15 @@ public class CrossNavigationManager {
 		NamedList<Hierarchy> hierarchies = result.getHierarchies();
 		for (Iterator iterator = hierarchies.iterator(); iterator.hasNext();) {
 			Hierarchy aHierarchy = (Hierarchy) iterator.next();
-			if(aHierarchy.getUniqueName().equals(hierarchyName)){
+			if (aHierarchy.getUniqueName().equals(hierarchyName)) {
 				return aHierarchy;
 			}
 		}
 
-		logger.error("Could not find hierarchy"+hierarchyName+" in dimension "+dimensionName);
-		throw new SpagoBIEngineRuntimeException("Could not find hierarchy"+hierarchyName+" in dimension "+dimensionName);
+		logger.error("Could not find hierarchy" + hierarchyName + " in dimension " + dimensionName);
+		throw new SpagoBIEngineRuntimeException("Could not find hierarchy" + hierarchyName + " in dimension " + dimensionName);
 
 	}
-
 
 	public static String buildClickableUrl(Member member, List<TargetClickable> targetsClickable) {
 		logger.debug("IN");
@@ -178,7 +178,7 @@ public class CrossNavigationManager {
 		String url = new String();
 		for (TargetClickable tc : targetsClickable) {
 			if (tc.getUniqueName().equalsIgnoreCase(level.getUniqueName())) {
-				StringBuffer targetDocumentParameters =new StringBuffer();
+				StringBuffer targetDocumentParameters = new StringBuffer();
 				for (Map.Entry<String, String> entry : tc.getParametersList().entrySet()) {
 					String key = entry.getKey();
 					String value = entry.getValue();
@@ -188,23 +188,21 @@ public class CrossNavigationManager {
 					targetDocumentParameters.append(",");
 				}
 
-				if(targetDocumentParameters.length()>0){
+				if (targetDocumentParameters.length() > 0) {
 					int index = targetDocumentParameters.lastIndexOf(",");
 					targetDocumentParameters.setLength(index);
 				}
 
-
 				String documentParametersUnformatted = (targetDocumentParameters.toString());
 
-				logger.debug("Composing cross nav url. Parameters unformatted = "+documentParametersUnformatted);
+				logger.debug("Composing cross nav url. Parameters unformatted = " + documentParametersUnformatted);
 				String newName = getLevelValue(member, tc.getUniqueName());
-				newName = "'"+StringEscapeUtils.escapeJavaScript(newName)+"'";
+				newName = "'" + StringEscapeUtils.escapeJavaScript(newName) + "'";
 				Object[] args = new Object[] { newName };
 				url = MessageFormat.format(documentParametersUnformatted, args);
-				logger.debug("Composing cross nav url. Parameters formatted = "+url);
+				logger.debug("Composing cross nav url. Parameters formatted = " + url);
 
-				url = "parent.execExternalCrossNavigation({"+(url)+"});";
-
+				url = "parent.execExternalCrossNavigation({" + (url) + "});";
 
 				return url;
 			} else {
