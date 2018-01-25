@@ -1726,6 +1726,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 //console.log("a2");
 			 $scope.setFormNotDirty();
 			 selectDataset(item,index);
+
+			 if(item.dsTypeCd.toLowerCase()=="file" && item.csvEncoding=="") {
+				 $scope.selectedDataSet.csvEncoding="UTF-8";
+			 }
 		 }
 		 // Moving from selected new DS to existing DS
 		 else if (!$scope.selectedDataSet.id) {
@@ -3811,7 +3815,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					
 					
 				} else {
-					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
+					console.info("[ERROR]: ",$scope.translate.load(response.data.errors[0].message));
 					// Reset the meta after first unsuccessful try to go to Step 2 
 					$scope.dataset.meta = [];
 					
