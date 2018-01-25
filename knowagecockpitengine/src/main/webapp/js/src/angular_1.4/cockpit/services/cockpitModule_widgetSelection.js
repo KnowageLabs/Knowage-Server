@@ -539,6 +539,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 	this.setColumnName = function (columnName){
 		this.columnName = columnName;
 	}
+	this.widgetID= "";
+	
+	this.setWidgetID= function (widgetID){
+		this.widgetID = widgetID;
+	}
 	this.checkIfDatasetAreLoaded = function(){
 		cockpitModule_templateServices.getDatasetNotInCache();
 

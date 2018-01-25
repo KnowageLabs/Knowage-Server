@@ -168,7 +168,8 @@ angular.module('cockpitModule')
 
 		
 		var checkForSavedSelections = function (filtersParams,nature){
-			if(	cockpitModule_widgetSelection.widgetOfType =="selector"){
+			if(	cockpitModule_widgetSelection.widgetOfType =="selector" && 
+					cockpitModule_widgetSelection.widgetID == $scope.ngModel.id){
 				$scope.selections.length = 0;
 				if(filtersParams.hasOwnProperty($scope.ngModel.dataset.name) && filtersParams[$scope.ngModel.dataset.name].hasOwnProperty($scope.ngModel.content.selectedColumn.aliasToShow) ){
 					$scope.selections = filtersParams[$scope.ngModel.dataset.name][$scope.ngModel.content.selectedColumn.aliasToShow].length > 1 ? 
@@ -327,6 +328,7 @@ angular.module('cockpitModule')
 		
 		$scope.toggleCheckboxParameter = function(parVal) {
 			cockpitModule_widgetSelection.setWidgetOfType("selector");
+			cockpitModule_widgetSelection.setWidgetID($scope.ngModel.id);
 		//	if(!$scope.disableSingleButton(parVal,$scope.multiValue)){
 				$scope.hasDefaultValue = false;
 				var index = $scope.multiValue.indexOf(parVal);
@@ -354,6 +356,7 @@ angular.module('cockpitModule')
 		
 		$scope.toggleRadioParameter = function(parVal ) {
 			cockpitModule_widgetSelection.setWidgetOfType("selector");
+			cockpitModule_widgetSelection.setWidgetID($scope.ngModel.id);
 			//if(!$scope.disableSingleButton(parVal,$scope.parameter)){
 				$scope.hasDefaultValue = false;
 				var item = {};
@@ -380,6 +383,7 @@ angular.module('cockpitModule')
 
 		$scope.toggleComboParameter = function(parVal, single) {
 			cockpitModule_widgetSelection.setWidgetOfType("selector");
+			cockpitModule_widgetSelection.setWidgetID($scope.ngModel.id);
 			//if(!$scope.disableMultiButton(parVal,single ? $scope.parameter : $scope.multiCombo.selected)){
 				$scope.hasDefaultValue = false;
 				var item = {};
