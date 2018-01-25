@@ -272,13 +272,17 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	private String getColumnName(JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
-		if (jsonObject.isNull("columnName")) {
+		if (jsonObject.isNull("id") && jsonObject.isNull("columnName")) {
 			return getColumnAlias(jsonObject, columnAliasToName);
 		} else {
+			String id = jsonObject.getString("id");
+			boolean isIdMatching = columnAliasToName.containsKey(id) || columnAliasToName.containsValue(id);
+
 			String columnName = jsonObject.getString("columnName");
-			Assert.assertTrue(columnAliasToName.containsKey(columnName) || columnAliasToName.containsValue(columnName),
-					"Column name [" + columnName + "] not found in dataset metadata");
-			return columnName;
+			boolean isColumnNameMatching = columnAliasToName.containsKey(columnName) || columnAliasToName.containsValue(columnName);
+
+			Assert.assertTrue(isIdMatching || isColumnNameMatching, "Column name [" + columnName + "] not found in dataset metadata");
+			return isColumnNameMatching ? columnName : id;
 		}
 	}
 
@@ -486,9 +490,16 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject category = jsonArray.getJSONObject(i);
 			String alias = category.optString("alias");
-			String columnName = category.optString("columnName");
-			if (alias != null && !alias.isEmpty() && columnName != null && !columnName.isEmpty()) {
-				columnAliasToName.put(alias, columnName);
+			if (alias != null && !alias.isEmpty()) {
+				String id = category.optString("id");
+				if (id != null && !id.isEmpty()) {
+					columnAliasToName.put(alias, id);
+				}
+
+				String columnName = category.optString("columnName");
+				if (columnName != null && !columnName.isEmpty()) {
+					columnAliasToName.put(alias, columnName);
+				}
 			}
 		}
 	}
