@@ -51,7 +51,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	$scope.meta = [];
 	$scope.editQueryObj = new Query("");
 	$scope.advancedFilters = [];
-	$scope.entityModel;
+	$scope.entityModel = {};
 	$scope.subqueriesModel = {};
 	$scope.formulas = formulaService.getFormulas();
 
@@ -85,12 +85,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		}
 		window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
 	},true)
-
-	entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
-		 $scope.entityModel = response.data;
-
-	});
-
+	
 	$scope.executeQuery = function ( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage) {
 		if(query.fields.length>0){
 			return query_service.executeQuery( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage);
@@ -373,9 +368,9 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		}
 
 		var newField  = {
-			   "id":field.id,
+			   "id":field.attributes.type === "inLineCalculatedField" ? field.attributes.formState : field.id,
 			   "alias":field.attributes.field,
-			   "type":"datamartField",
+			   "type":field.attributes.type === "inLineCalculatedField" ? "inline.calculated.field" : "datamartField",
 			   "fieldType":field.attributes.iconCls,
 			   "entity":field.attributes.entity,
 			   "field":field.attributes.field,
@@ -720,7 +715,8 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
             			"expression":$scope.calculatedFieldOutput.formula
                 	}
                 	$scope.calculatedFieldOutput.id = $scope.addedParameters;
-
+                	$scope.calculatedFieldOutput.alias = $scope.calculatedFieldOutput.alias;
+                	$scope.calculatedFieldOutput.expression = $scope.calculatedFieldOutput.formula;
                 	$scope.calculatedFieldOutput.calculationDescriptor= $scope.addedParameters;
 
                 	$mdDialog.hide()};
@@ -734,12 +730,73 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         })
         .then(function() {
         	console.log($scope.calculatedFieldOutput);
-        	//TODO add here the calculated field saving having it inside $scope.calculatedFieldOutput.
+        	
+        	$scope.saveCC($scope.cfSelectedEntity.id,$scope.calculatedFieldOutput);
+        	var addCalclatedFieldAction  = $scope.sbiModule_action_builder.getActionBuilder("POST");
+        	
+        	addCalclatedFieldAction.actionName = "ADD_CALCULATED_FIELD_ACTION";
+        	addCalclatedFieldAction.queryParams.datamartName = inputParamService.modelName;
+        	addCalclatedFieldAction.formParams.field = $scope.calculatedFieldOutput;
+        	addCalclatedFieldAction.formParams.editingMode = "create";
+        	addCalclatedFieldAction.formParams.fieldId = "";
+        	addCalclatedFieldAction.formParams.entityId = $scope.cfSelectedEntity.id;
+        	
+        	addCalclatedFieldAction.executeAction().then(function(){
+        		entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
+        			 $scope.entityModel = response.data;
+
+        		});
+        	},
+        	function(){
+        		
+        	})
         },
     		function() {
         	$scope.calculatedFieldOutput={};
         });
     };
+    
+    $scope.getEntityTree = function(){
+    	entityService.getEntitiyTree(inputParamService.modelName)
+    	.then(function(response){
+    		
+   		 $scope.entityModel = response.data;
+
+   	}, function(response){
+		$mdDialog.show(
+        		$mdDialog.alert()
+        		     .clickOutsideToClose(true)
+        		     .title($scope.translate.load("kn.generic.query.SQL"))
+        		     .textContent(response.data.errors[0].message)
+        		     .ok($scope.translate.load("kn.qbe.general.ok"))
+            );
+	});
+
+    }
+    
+    $scope.saveCC = function(selectedEntity,cc){
+    	var addCalclatedFieldAction  = $scope.sbiModule_action_builder.getActionBuilder("POST");
+    	
+    	addCalclatedFieldAction.actionName = "ADD_CALCULATED_FIELD_ACTION";
+    	addCalclatedFieldAction.queryParams.datamartName = inputParamService.modelName;
+    	addCalclatedFieldAction.formParams.field = cc;
+    	addCalclatedFieldAction.formParams.editingMode = "create";
+    	addCalclatedFieldAction.formParams.fieldId = "";
+    	addCalclatedFieldAction.formParams.entityId = selectedEntity;
+    	
+    	addCalclatedFieldAction.executeAction().then(function(){
+    		 $scope.getEntityTree();
+    	},
+    	 function(response){
+			$mdDialog.show(
+	        		$mdDialog.alert()
+	        		     .clickOutsideToClose(true)
+	        		     .title($scope.translate.load("kn.generic.query.SQL"))
+	        		     .textContent(response.data.errors[0].message)
+	        		     .ok($scope.translate.load("kn.qbe.general.ok"))
+	            );
+		})
+    }
 	$scope.saveEntityTree = function(){
     	var saveTreeAction  = $scope.sbiModule_action_builder.getActionBuilder("GET");
     	saveTreeAction.actionName = "SAVE_TREE_ACTION";
@@ -764,4 +821,5 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     }
 
 
+	 $scope.getEntityTree();
 }

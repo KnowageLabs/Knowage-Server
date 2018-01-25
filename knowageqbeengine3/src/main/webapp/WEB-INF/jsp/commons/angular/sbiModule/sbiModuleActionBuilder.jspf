@@ -77,7 +77,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			this.serializeParams = function(paramObj){
 				var obj = {}
 				angular.forEach(paramObj,function(value,key){
-					this[key] = angular.toJson(value);
+					if(angular.isObject(value)){
+						this[key] = angular.toJson(value);
+					}else{
+						this[key] = value;
+					}
+					
 				},obj)
 				
 				return obj;

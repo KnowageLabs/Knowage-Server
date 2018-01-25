@@ -38,7 +38,7 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
         controller: function($scope, $attrs) {
         	$scope.translate = sbiModule_translate;
             $scope.availableFormulaTypes = [];
-            $scope.availableTypes = ['number','string'];
+            $scope.availableTypes = ['NUMBER','STRING'];
             $scope.calculatedField = {
         		"filedType":"inLineCalculatedField"
             }
