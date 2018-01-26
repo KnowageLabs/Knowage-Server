@@ -1055,12 +1055,15 @@ public class ManageDataSetsForREST {
 				for (int i = 0; i < metaData.getFieldCount(); i++) {
 					IFieldMetaData ifmd = metaData.getFieldMeta(i);
 					
-					for (int j = 0; j < metadataArray.length(); j++) {
-						if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
-							ifmd.setType(MetaDataMapping.getMetaDataType(metadataArray.getJSONObject(j).getString("type")));
-							break;
+					//check if file data set, apply metadata values passed from frontend
+					if(dataSet.getDsType().equalsIgnoreCase("file")) {
+						for (int j = 0; j < metadataArray.length(); j++) {
+							if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
+								ifmd.setType(MetaDataMapping.getMetaDataType(metadataArray.getJSONObject(j).getString("type")));
+								break;
+							}
+							
 						}
-						
 					}
 					
 					for (int j = 0; j < metadataArray.length(); j++) {
