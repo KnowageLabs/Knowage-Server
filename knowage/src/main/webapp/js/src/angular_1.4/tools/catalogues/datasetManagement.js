@@ -2349,7 +2349,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 		else if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="file") {
 			$scope.selectedDataSet.fileUploaded = !$scope.selectedDataSet.fileUploaded ? false : true;
-			$scope.selectedDataSet.meta = $scope.dataset.meta;
+			if($scope.dataset!=undefined && $scope.dataset.hasOwnProperty("meta")){
+				$scope.selectedDataSet.meta = $scope.dataset.meta;
+			}			
 		}
 
 		// Scheduling refactoring
