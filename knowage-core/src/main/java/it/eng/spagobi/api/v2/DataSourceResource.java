@@ -350,20 +350,13 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		return tableContent.toString();
 	}
 
-	private static ConcurrentMap<String, JSONObject> metadataCache = new ConcurrentHashMap<>();
 
 	private JSONObject getTableMetadata(Connection conn) throws HibernateException, JSONException, SQLException {
-		String metadataCacheKey = null;
 		JSONObject tableContent = new JSONObject();
 		ResultSet rs = null;
 		try {
 			DatabaseMetaData meta = conn.getMetaData();
-			String userName = meta.getUserName();
-			String url = meta.getURL();
-			metadataCacheKey = url + "|" + userName;
-			if (metadataCache.get(metadataCacheKey) != null) {
-				return metadataCache.get(metadataCacheKey);
-			}
+
 
 				if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("oracle")) {
 					// String q =
@@ -403,7 +396,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 					conn.close();
 				}
 			}
-		metadataCache.put(metadataCacheKey, tableContent);
 		return tableContent;
 	}
 
