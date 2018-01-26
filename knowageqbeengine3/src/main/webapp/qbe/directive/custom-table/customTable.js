@@ -28,7 +28,8 @@ angular.module('qbe_custom_table', ['ngDraggable'])
         scope: {
             ngModel: '=',
         	expression: '=',
-            filters: '='
+            filters: '=',
+            isTemporal: '='
         },
         templateUrl: currentScriptPath + 'custom-table.html',
         replace: true,
