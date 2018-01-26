@@ -12,15 +12,15 @@
 	   	</div>
 	</md-toolbar>
 	<md-content flex layout="column">
-		<div layout="row" layout-align="center center" ng-if="!havings || havings.length == 0">
+		<div layout="row" layout-align="center center" ng-if="(havings | filter : field.id).length == 0">
 			<div class="kn-noItems" flex="60" flex-xs="100">
 				<p class="ng-binding">{{translate.load("kn.qbe.havings.nohavings")}}</p>
 			</div>
 		</div>
-		<md-card ng-if="havings && havings.length > 0">
+		<md-card ng-if="(havings | filter : field.id).length > 0">
 			<md-card-content layout="column" layout-padding>
 
-				<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="having in havings" >    			
+				<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="having in havings | filter : field.id" >    			
 	            	
 	      			<md-input-container flex=20>
 	      				<label class="havingLabel">{{translate.load("kn.qbe.havings.field")}}</label>
@@ -119,7 +119,7 @@
 	</md-content>
 
  	</md-card-content>
-	 <md-card-actions layout="row" layout-align="start center">
+	 <md-card-actions layout="row" layout-align="start center" ng-if="(havings | filter : field.id).length > 0">
 	 <span flex></span>
 	      <md-button ng-click="closeHavings()" class="md-raised">
 	      {{translate.load("kn.qbe.general.cancel")}}
