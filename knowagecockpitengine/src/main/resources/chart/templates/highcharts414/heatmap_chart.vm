@@ -48,7 +48,13 @@
 
 #set($firstCategory='')
 
+#set($isDateTime=$chart.dateTime)
+
+#if($isDateTime==true)
 #set($isFirstDate=$datasettransformer.isFirstCategoryDate($firstresult,$columnsNeeded[0]))
+#else
+#set($isFirstDate=false)
+#end
 
 #if($isFirstDate==true)
 #set($firstCategory = $datasettransformer.getDateResult($firstresult,$columnsNeeded[0]))

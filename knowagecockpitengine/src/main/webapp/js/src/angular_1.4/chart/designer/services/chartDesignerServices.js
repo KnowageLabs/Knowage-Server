@@ -740,6 +740,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					}]
 				},
 				"type": "HEATMAP",
+				"dateTime":false,
 				"AXES_LIST": {
 					"AXIS": [{
 						"alias": "Y",
@@ -2345,6 +2346,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			case "categoriesDateTime": templatesURLs = sbiModule_config.contextName + 
 			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/categories_DateTime.html"; break;
 			
+			case "categoriesDateTimeHeatMap": templatesURLs = sbiModule_config.contextName + 
+			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/categories_DateTime.html"; break;
+			
 			case "additionalParameters": templatesURLs = sbiModule_config.contextName + 
 			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/additional_parameters.html"; break;
 			
@@ -2385,6 +2389,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			case "categoriesAxisDetails": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.axis.configuration.toolbar.title"); break;
 			case "categoriesAxisTitleDetails": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.axis.title.toolbar.title"); break;
 			case "categoriesOrdering": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.title"); break;
+			case "categoriesDateTimeHeatMap": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.dateTime"); break;
 			case "categoriesDateTime": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.dateTimeAndGrouping"); break;
 			case "serieTitle": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.serie.serieTitle"); break;
 			default : detailsNameToReturn = translate.load("Gauge axis additional options"); break;

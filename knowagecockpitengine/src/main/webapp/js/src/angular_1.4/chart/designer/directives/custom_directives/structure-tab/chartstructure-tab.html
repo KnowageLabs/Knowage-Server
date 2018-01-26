@@ -185,6 +185,12 @@
 						          			<md-icon class="fa fa-object-group " style="display:inline"></md-icon>
 						            		<span>Datetime and grouping</span>
 						          		</md-button>
+						        	</md-menu-item>
+						        	<md-menu-item ng-if="(selectedChartType.toLowerCase()=='heatmap') && disableHtmlElementForChartJs() ">
+						          		<md-button ng-click="showStructureDetails('categoriesDateTimeHeatMap',categoriesAxis.alias)">
+						          			<md-icon class="fa fa-object-group " style="display:inline"></md-icon>
+						            		<span>Datetime</span>
+						          		</md-button>
 						        	</md-menu-item>				        
 							      </md-menu-content>
 							      

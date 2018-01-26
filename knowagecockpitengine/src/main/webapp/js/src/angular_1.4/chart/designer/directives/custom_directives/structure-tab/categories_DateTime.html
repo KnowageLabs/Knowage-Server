@@ -1,4 +1,12 @@
-<md-card  ng-form name="structure-orderingColumnForm" flex>
+<div ng-form name="structure-orderingColumnForm" flex ng-if="selectedChartType.toLowerCase()=='heatmap'">
+	<div layout="row"  flex=100 layout-margin>
+		<label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.categoriesDateTime")}}</label>
+		<md-input-container class="small counter"> <md-checkbox 
+			ng-model="chartTemplate.dateTime" style="margin:0 8px" aria-label="dateTime" name="generic_dateTime" ></md-checkbox>
+		</md-input-container>
+	</div>
+</div>
+<md-card  ng-form name="structure-orderingColumnForm" flex ng-if="selectedChartType.toLowerCase()!='heatmap'">
 	<md-toolbar>
 		<div class="md-toolbar-tools">
 			<md-menu>
