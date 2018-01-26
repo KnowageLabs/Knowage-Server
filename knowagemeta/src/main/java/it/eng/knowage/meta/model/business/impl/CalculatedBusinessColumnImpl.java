@@ -72,7 +72,7 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 
 		// retrieve columns objects from string v
 		String[] splittedExpr = expression
-				.split("(\\+|\\-|\\*|\\(|\\)|\\|\\||\\/|GG_between_dates|MM_between_dates|AA_between_dates|GG_up_today|MM_up_today|AA_up_today)");
+				.split("(\\+|\\-|\\*|\\(|\\)|\\|\\||\\/|GG_between_dates|MM_between_dates|AA_between_dates|GG_up_today|MM_up_today|AA_up_today|current_date|current_time|length|substring|concat|year|month|mod|bit_length|upper|lower|trim|current_timestamp|hour|minute|second|day)");
 		for (String operand : splittedExpr) {
 			operand = operand.trim();
 
@@ -83,8 +83,8 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 			List<SimpleBusinessColumn> businessColumns = businessColumnSet.getSimpleBusinessColumnsByName(operand);
 			if (businessColumns.isEmpty()) {
 				// throws exception
-				throw new KnowageMetaException("No columns using the name [" + operand + "] are found in the expression of Calculated Field [" + this.getName()
-						+ "]");
+				//throw new KnowageMetaException("No columns using the name [" + operand + "] are found in the expression of Calculated Field [" + this.getName()
+				//		+ "]");
 			} else {
 				if (businessColumns.size() > 1) {
 					logger.warn("More columns using the name [" + operand + "] are found in the expression of Calculated Field [" + this.getName() + "]");
@@ -92,10 +92,13 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 			}
 
 			// always get first SimpleBusinessColumn found with that name (operand)
-			SimpleBusinessColumn simpleBusinessColumn = businessColumns.get(0);
-			if (simpleBusinessColumn != null) {
-				columnsReferenced.add(simpleBusinessColumn);
+			if (!businessColumns.isEmpty()) {
+				SimpleBusinessColumn simpleBusinessColumn = businessColumns.get(0);
+				if (simpleBusinessColumn != null) {
+					columnsReferenced.add(simpleBusinessColumn);
+				}
 			}
+			
 		}
 		return columnsReferenced;
 	}

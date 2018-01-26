@@ -316,7 +316,7 @@ public class BusinessModelInitializer {
 			// set column type
 			calculatedBusinessColumn.setProperty("structural.columntype", "attribute");
 			try {
-				calculatedBusinessColumn.getReferencedColumns();
+				//calculatedBusinessColumn.getReferencedColumns();
 			} catch (KnowageMetaException t) {
 				calculatedBusinessColumn.setTable(null);
 				throw new KnowageMetaException(t.getMessage());

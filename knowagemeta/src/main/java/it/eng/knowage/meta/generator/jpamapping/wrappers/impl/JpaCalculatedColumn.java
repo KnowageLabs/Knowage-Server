@@ -26,6 +26,7 @@ import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
 import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -135,12 +136,15 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 
 		if (!jpaColumns.isEmpty()) {
 			// retrieve operands from string
-			StringTokenizer stk = new StringTokenizer(expression, "+-|*/()");
-			while (stk.hasMoreTokens()) {
-				String operand = stk.nextToken().trim();
+			//StringTokenizer stk = new StringTokenizer(expression, "+-|*/()");
+			String[] splittedExpr = expression
+					.split("(\\+|\\-|\\*|\\(|\\)|\\|\\||\\/|GG_between_dates|MM_between_dates|AA_between_dates|GG_up_today|MM_up_today|AA_up_today|current_date|current_time|length|substring|concat|year|month|mod|bit_length|upper|lower|trim|current_timestamp|hour|minute|second|day)");
+			for (String operand : splittedExpr) {
+				operand = operand.trim();
 				logger.debug("Found Operand " + operand);
 				operands.add(operand);
 			}
+			operands.removeAll(Arrays.asList("", null));
 		}
 
 		for (int i = 0; i < operands.size(); i++) {

@@ -82,35 +82,124 @@ function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiM
 		                  {
 		                	  label:"< GG <",
 		                	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.GG_between_dates"),
-		                	  value:"GG_between_dates"
+		                	  value:"GG_between_dates()"
 		                  },
 		                  {
 		                	  label:"< MM <",
 		                	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.MM_between_dates"),
-		                	  value:"MM_between_dates"
+		                	  value:"MM_between_dates()"
 		                  },
 		                  {
 		                	  label:"< AA <",
 		                	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.AA_between_dates"),
-		                	  value:"AA_between_dates"
+		                	  value:"AA_between_dates()"
 		                  },
 		                  {
 		                	  label:"GG++",
 		                	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.GG_up_today"),
-		                	  value:"GG_up_today"
+		                	  value:"GG_up_today()"
 		                  },
 		                  {
 		                	  label:"MM++",
 		                	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.MM_up_today"),
-		                	  value:"MM_up_today"
+		                	  value:"MM_up_today()"
 		                  },
 		                  {
 		                	  label:"AA++",
 		                	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.AA_up_today"),
-		                	  value:"AA_up_today"
+		                	  value:"AA_up_today()"
 		                  }
 	                  ];
-
+	$scope.commonDateFunctions = [
+				        {
+				      	  	  label:"curr. time",
+				      	  	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.current_time"),
+				      	  	  value:"current_time()"
+				        },		
+				        {
+					      	  label:"curr. date",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.current_date"),
+					      	  value:"current_date()"
+					    },	
+				        {
+					      	  label:"curr. timestamp",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.current_timestamp"),
+					      	  value:"current_timestamp()"
+					    },		
+				        {
+					      	  label:"year",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.year"),
+					      	  value:"year()"
+					    },
+				        {
+					      	  label:"month",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.month"),
+					      	  value:"month()"
+					    },		
+				        {
+					      	  label:"day",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.day"),
+					      	  value:"day()"
+					    },
+				        {
+					      	  label:"hour",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.hour"),
+					      	  value:"hour()"
+					    },
+				        {
+					      	  label:"minute",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.minute"),
+					      	  value:"minute()"
+					    },
+				        {
+					      	  label:"second",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.second"),
+					      	  value:"second()"
+					    }
+				          
+	];
+	$scope.stringFunctions = [
+					  {
+					      	  label:"trim",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.trim"),
+					      	  value:"trim()"
+					  },
+				      {
+					      	  label:"upper",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.upper"),
+					      	  value:"upper()"
+					  },
+				      {
+					      	  label:"lower",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.lower"),
+					      	  value:"lower()"
+					  },
+				      {
+					      	  label:"length",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.length"),
+					      	  value:"length()"
+					  },
+				      {
+					      	  label:"concat",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.concat"),
+					      	  value:"concat()"
+					  },
+				      {
+					      	  label:"substring",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.substring"),
+					      	  value:"substring()"
+					  },
+				      {
+					      	  label:"mod",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.mod"),
+					      	  value:"mod()"
+					  },
+				      {
+					      	  label:"bit length",
+					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.bit_length"),
+					      	  value:"bit_length()"
+					  }					  		
+	]
 
 	$scope.addCol=function(col){
 		$scope.calcField.expression+=col.name;
