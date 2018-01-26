@@ -15,6 +15,12 @@ public class MetaDataMapping {
 		metaDataTypes.put("Date", Date.class);
 		metaDataTypes.put("String", String.class);
 		metaDataTypes.put("Integer", Integer.class);
+		metaDataTypes.put("java.lang.Integer", Integer.class);
+		metaDataTypes.put("java.util.Date", Date.class);
+		metaDataTypes.put("java.lang.Long", Long.class);
+		metaDataTypes.put("java.lang.String", String.class);
+		metaDataTypes.put("java.sql.Date", java.sql.Date.class);
+		metaDataTypes.put("java.lang.Double", Double.class);
 		
 	}
 	
