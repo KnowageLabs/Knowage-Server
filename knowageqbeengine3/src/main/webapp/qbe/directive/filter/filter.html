@@ -15,15 +15,15 @@
 		   	</div>
 		</md-toolbar>
 		<md-content flex layout="column" >
-			<div layout="row" layout-align="center center" ng-if="!filters || filters.length == 0">
+			<div layout="row" layout-align="center center" ng-if="(filters | filter : field.id).length==0">
 				<div class="kn-noItems" flex="60" flex-xs="100">
 					<p class="ng-binding">{{translate.load("kn.qbe.filters.nofilters")}}</p>
 				</div>
 			</div>
-			<md-card ng-if="filters && filters.length > 0">
+			<md-card ng-if="(filters | filter : field.id).length > 0">
 				<md-card-content layout="column" layout-padding>
 
-					<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="filter in filters | filter: fieldFilter" >     			
+					<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="filter in filters | filter: field.id" >     			
 						<md-input-container flex=30  >
 							<label class="filterLabel">{{translate.load("kn.qbe.general.field")}}</label>
 				      		<input name="leftOperand" ng-model="filter.leftOperandDescription" readonly>
@@ -113,7 +113,7 @@
 			</md-card>
 		</md-content>
 	</md-card-content>
-	<md-card-actions layout="row" layout-align="start center">
+	<md-card-actions layout="row" layout-align="start center"  ng-if="(filters | filter : field.id).length > 0">
 		<span flex></span>
 	    <md-button ng-click="closeFilters()" class="md-raised">{{translate.load("kn.qbe.general.cancel")}}</md-button>
 	    <md-button ng-click="saveFilters()"  class="md-primary md-raised">{{translate.load("kn.qbe.general.save")}}</md-button>
