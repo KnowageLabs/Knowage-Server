@@ -38,13 +38,14 @@ angular.module('qbe_expander_list', ['ngDraggable'])
             templateUrl: currentScriptPath + 'expander-list.html',
             replace: true,
             link: function link(scope, element, attrs) {
-                scope.usedColorIndex = 0;
+                
                 scope.dragEnabled = scope.dragAction ? true : false;
                 scope.childrenName = (scope.childrenName == undefined) ? "children" : scope.childrenName;
                 scope.displayPropertyName = (scope.displayPropertyName == undefined) ? "text" : scope.displayPropertyName;
                 scope.translate = sbiModule_translate;
                 //optional colorizing function to create the colored squares on the view. If no colors are given the blocks disappear.
                 scope.colorize = function() {
+                	scope.usedColorIndex = 0;
                     for (var k in scope.ngModel) {
                         if (scope.ngModel.hasOwnProperty(k)) {
                             for (var j in scope.ngModel[k]) {
