@@ -47,6 +47,12 @@
 			<artifactId>org.eclipse.birt.runtime</artifactId>
 			<version>4.4.2</version>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.eclipse.birt.runtime.3_7_1</groupId>
+					<artifactId>org.apache.commons.codec</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 		<dependency>
