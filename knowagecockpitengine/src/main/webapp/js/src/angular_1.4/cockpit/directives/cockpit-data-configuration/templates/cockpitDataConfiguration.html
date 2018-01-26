@@ -46,7 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							        </md-button>
 								  </div>
 								</md-toolbar>
-							<md-card-content layout="column" ng-if="displayDatasetCard==true;">
+							<md-card-content layout="column" ng-if="displayDatasetCard==true;" style="overflow:auto;">
 									<div layout="row" layout-align="center" ng-if="tmpAvaiableDataset.length == 0">
 										<div class="kn-noItems">
 											{{translate.load("sbi.cockpit.mainpanel.nodataset")}}
@@ -89,10 +89,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 														</md-toolbar>
 														<md-card-content flex layout="column" >
 															<div  layout-wrap layout="row" >
-																<md-input-container class="md-icon-right" ng-repeat="par in row.parameters" flex="33" >
+																<md-input-container class="md-icon-right" ng-repeat="par in row.parameters" flex="30" style="margin:8px;">
 														          <label>{{par.name}}</label>
 														          <input  ng-model="par.value" ng-init="par.value=par.value==undefined ? par.defaultValue : par.value" required>
-														          <md-icon ng-if="scopeFunctions.haveAnaliticalDriver" md-font-icon="fa fa-search datasetParameterChoices{{$parent.$parent.$index}}{{$index}}" ng-click="scopeFunctions.selectParameterFromPanel(par,'datasetParameterChoices'+$parent.$parent.$index+''+$index)"></md-icon>
+														          <md-icon ng-if="haveAnaliticalDriver()" md-font-icon="fa fa-search dsChoices{{row.label}}-{{$index}}" ng-click="selectParameterFromPanel(par,'dsChoices'+row.label+'-'+$index)"></md-icon>
+														         
 														        </md-input-container>
 													        </div>
 														</md-card-content>
@@ -120,7 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						        </md-button>
 							  </div>
 							</md-toolbar>
-							<md-card-content flex layout="column" ng-if="displayDocumentCard==true;" >
+							<md-card-content flex layout="column" ng-if="displayDocumentCard==true;" style="overflow:auto;">
 							<div layout="row" layout-align="center" ng-if="tmpAvaiableDocument.length == 0">
 								<div class="kn-noItems">
 									{{translate.load("sbi.cockpit.mainpanel.nodocument")}}
@@ -160,10 +161,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 														</md-toolbar>
 														<md-card-content flex layout="column" >
 															<div  layout-wrap layout="row" >
-																<md-input-container class="md-icon-right" ng-repeat="par in row.objParameter" flex="33" >
+																<md-input-container class="md-icon-right" ng-repeat="par in row.objParameter" flex="30" style="margin:8px;">
 														          <label>{{par.label}}</label>
 														          <input  ng-model="par.value" ng-init="par.value=par.value==undefined ? par.defaultValue : par.value" required>
-														          <md-icon ng-if="scopeFunctions.haveAnaliticalDriver" md-font-icon="fa fa-search datasetParameterChoices{{$parent.$parent.$index}}{{$index}}" ng-click="scopeFunctions.selectParameterFromPanel(par,'datasetParameterChoices'+$parent.$parent.$index+''+$index)"></md-icon>
+														          <md-icon ng-if="haveAnaliticalDriver()" md-font-icon="fa fa-search docChoices{{row.DOCUMENT_ID}}-{{$index}}" ng-click="selectParameterFromPanel(par,'docChoices'+row.DOCUMENT_ID+'-'+$index)"></md-icon>
 														        </md-input-container>
 													        </div>
 														</md-card-content>

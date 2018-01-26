@@ -6,76 +6,80 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 	$scope.displayDatasetCard=false;
 	$timeout(function(){$scope.displayDatasetCard=true;},0);
 	
+	$scope.haveAnaliticalDriver=function(){
+		 return Object.keys(cockpitModule_analyticalDrivers).length>0;
+	 }
+	
 	$scope.datasetTableActions=[
-	                             {
-					    			label : 'delete',
-					    			 icon:'fa fa-trash' ,  
-					    			action : function(item,event) {
-					    					// if dataset is not used removed
-					    					var listDatasetUsed = cockpitModule_datasetServices.getDatasetsUsed();
-					    					if(listDatasetUsed.indexOf(item.id.dsId)==-1){
-					    						// if it used in association o
-												// selection remove it
-					    						var associationList=$scope.retryListOfAssociation(item.label)
-					    						var currentSelection = cockpitModule_widgetSelection.getCurrentSelections(item.label);
-
-					    						if(associationList.withAssoc.length == 0 && currentSelection[item.label] ==undefined ){
-							    					$scope.tmpAvaiableDataset.splice($scope.tmpAvaiableDataset.indexOf(item),1);
-					    						}else{
-					    							// there is an association
-					    							 var confirm = $mdDialog.confirm()
-					    					          .title(sbiModule_translate.load('sbi.cockpit.dataset.warning.association'))
-					    					          .textContent(sbiModule_translate.load('sbi.cockpit.dataset.warning.association.message'))
-					    					          .ariaLabel('delete')
-					    					          .ok(sbiModule_translate.load('sbi.generic.ok'))
-					    					          .cancel(sbiModule_translate.load('sbi.generic.cancel'));
-
-					    					    $mdDialog.show(confirm).then(function() {
-					    					    	// ok remove all.
-					    					    	if(associationList.withAssoc.length != 0){
-					    					    		angular.copy(associationList.withoutAssoc,$scope.tmpAssociations);
-								    					$scope.tmpAvaiableDataset.splice($scope.tmpAvaiableDataset.indexOf(item),1);
-
-					    					    	}
-					    					    	if(currentSelection[item.label] != undefined){
-					    					    		// remove selection
-					    					    		for(var i =0 ;i< cockpitModule_template.configuration.aggregations.length;i++){
-					    					    			var index = cockpitModule_template.configuration.aggregations[i].datasets.indexOf(item.label);
-					    					    			if(index !=-1){
-					    					    				var keys = Object.keys(cockpitModule_template.configuration.aggregations[i].selection);
-					    					    				for(var k in keys){
-					    					    					if(keys[k].startsWith(item.label)){
-					    					    						delete cockpitModule_template.configuration.aggregations[i].selection[keys[k]];
-					    					    					}
-					    					    				}
-					    					    				// cockpitModule_template.configuration.aggregations[i].datasets.splice(index,1);
-					    					    				
-					    					    			}
-					    					    			
-					    					    		}
-					    					    		
-					    					    	}
-					    					    	
-					    					    }, function() {
-					    					    	// cancel nothing to do
-					    					    });
-					    						}
-					    						
-
-					    					}else{
-					    						 $mdDialog.show(
-					    							      $mdDialog.alert()
-					    							        .parent(angular.element(document.querySelector('#body')))
-					    							        .clickOutsideToClose(true)
-					    							        .title(sbiModule_translate.load('sbi.cockpit.dataset.impossibledelete'))
-					    							        .textContent(sbiModule_translate.load('sbi.cockpit.dataset.impossibledeletecontent'))
-					    							        .ariaLabel('Alert Dialog Demo')
-					    							        .ok(sbiModule_translate.load('sbi.generic.ok'))
-					    							        );
+	     {
+			label : 'delete',
+			 icon:'fa fa-trash' ,  
+			action : function(item,event) {
+					// if dataset is not used removed
+					var listDatasetUsed = cockpitModule_datasetServices.getDatasetsUsed();
+					if(listDatasetUsed.indexOf(item.id.dsId)==-1){
+						// if it used in association o
+						// selection remove it
+						var associationList=$scope.retryListOfAssociation(item.label)
+						var currentSelection = cockpitModule_widgetSelection.getCurrentSelections(item.label);
+	
+						if(associationList.withAssoc.length == 0 && currentSelection[item.label] ==undefined ){
+	    					$scope.tmpAvaiableDataset.splice($scope.tmpAvaiableDataset.indexOf(item),1);
+						}else{
+							// there is an association
+							 var confirm = $mdDialog.confirm()
+					          .title(sbiModule_translate.load('sbi.cockpit.dataset.warning.association'))
+					          .textContent(sbiModule_translate.load('sbi.cockpit.dataset.warning.association.message'))
+					          .ariaLabel('delete')
+					          .ok(sbiModule_translate.load('sbi.generic.ok'))
+					          .cancel(sbiModule_translate.load('sbi.generic.cancel'));
+	
+					    $mdDialog.show(confirm).then(function() {
+					    	// ok remove all.
+					    	if(associationList.withAssoc.length != 0){
+					    		angular.copy(associationList.withoutAssoc,$scope.tmpAssociations);
+		    					$scope.tmpAvaiableDataset.splice($scope.tmpAvaiableDataset.indexOf(item),1);
+	
+					    	}
+					    	if(currentSelection[item.label] != undefined){
+					    		// remove selection
+					    		for(var i =0 ;i< cockpitModule_template.configuration.aggregations.length;i++){
+					    			var index = cockpitModule_template.configuration.aggregations[i].datasets.indexOf(item.label);
+					    			if(index !=-1){
+					    				var keys = Object.keys(cockpitModule_template.configuration.aggregations[i].selection);
+					    				for(var k in keys){
+					    					if(keys[k].startsWith(item.label)){
+					    						delete cockpitModule_template.configuration.aggregations[i].selection[keys[k]];
 					    					}
-					    			 }
-	                             }
-	                            ];
+					    				}
+					    				// cockpitModule_template.configuration.aggregations[i].datasets.splice(index,1);
+					    				
+					    			}
+					    			
+					    		}
+					    		
+					    	}
+					    	
+					    }, function() {
+					    	// cancel nothing to do
+					    });
+						}
+						
+	
+					}else{
+						 $mdDialog.show(
+							      $mdDialog.alert()
+							        .parent(angular.element(document.querySelector('#body')))
+							        .clickOutsideToClose(true)
+							        .title(sbiModule_translate.load('sbi.cockpit.dataset.impossibledelete'))
+							        .textContent(sbiModule_translate.load('sbi.cockpit.dataset.impossibledeletecontent'))
+							        .ariaLabel('Alert Dialog Demo')
+							        .ok(sbiModule_translate.load('sbi.generic.ok'))
+							        );
+					}
+			 }
+	     }
+	    ];
 	 
 
 	 $scope.datasetFunctions={
@@ -287,8 +291,9 @@ function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitMo
 			 },
 			 haveAnaliticalDriver:(Object.keys(cockpitModule_analyticalDrivers).length>0)
 	 };
-	 $scope.documentHaveParameter=function(doc){
-		 return doc.objParameter.length>0
+	 
+	 $scope.haveAnaliticalDriver=function(){
+		 return Object.keys(cockpitModule_analyticalDrivers).length>0;
 	 }
 	 
 	 $scope.cockpitDocumentTableColumns=[
@@ -366,6 +371,10 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 	$scope.showSmartDetection = (sbiModule_user.functionalities.indexOf("DatasetAssociationSmartDetection")>-1)? true:false;
 	
 	$scope.showNearRealTimeCockpit = sbiModule_user.functionalities.indexOf("NearRealTimeCockpit")>-1;
+	
+	$scope.documentHaveParameter=function(doc){
+		 return doc.objParameter.length>0
+	 }
 
 	$scope.translate=sbiModule_translate;
 		    	 $scope.baseScriptPath=baseScriptPath;
