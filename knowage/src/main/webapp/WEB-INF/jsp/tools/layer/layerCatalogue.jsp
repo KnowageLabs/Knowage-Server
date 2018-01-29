@@ -231,11 +231,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<md-card-content class="noPadding">
 										<div layout="row" layout-align="center" ng-if="!filter || filter.length==0">
 											<div class="kn-noItems">
-												No filter available
+												{{translate.load("sbi.layerfilters");}}
 											</div>
 										</div>
 										<md-input-container class="md-icon-float md-block" style="margin-left:8px; margin-right:8px;" ng-show="filter.length>0">
-											<label>Search</label>
+											<label>{{translate.load("sbi.general.search")}}</label>
 											<md-icon md-font-icon="fa fa-search"></md-icon>
 											<input ng-model="filterSearch" type="text">
 									    </md-input-container>
@@ -258,11 +258,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<md-card-content class="noPadding">
 										<div layout="row" layout-align="center" ng-if="!filter_set || filter_set.length==0">
 											<div class="kn-noItems">
-												No filter selected, click on an item to add them
+												{{translate.load("sbi.layerfilteradded");}}
 											</div>
 										</div>
 										<md-input-container ng-show="filter_set.length>0" class="md-icon-float md-block" style="margin-left:8px; margin-right:8px;">
-											<label>Search</label>
+											<label>{{translate.load("sbi.general.search")}}</label>
 											<md-icon md-font-icon="fa fa-search"></md-icon>
 											<input ng-model="filterFsSearch" type="text">
 									    </md-input-container>
