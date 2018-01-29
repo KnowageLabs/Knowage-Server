@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js")%>"></script>
 
 <script type="text/javascript"
-	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/glossary/businessuser/glossary.js"></script>
+	src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/glossary/businessuser/glossary.js")%>"></script>
 <link rel="stylesheet" type="text/css"
 	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 <link rel="stylesheet" type="text/css"
