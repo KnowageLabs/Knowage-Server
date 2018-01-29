@@ -1,0 +1,16 @@
+.kn-custom-list {
+	md-list-item {
+		height: $biggerListHeight;
+		min-height: $biggerListHeight;
+		._md-list-item-inner{
+			height: $biggerListHeight;
+			min-height: $biggerListHeight;
+			font-size: $mediumFontSize;
+		}
+		.md-button {
+			min-height: $biggerListHeight;
+			height: $biggerListHeight;
+			line-height: $biggerListHeight;
+		}
+	}
+}
