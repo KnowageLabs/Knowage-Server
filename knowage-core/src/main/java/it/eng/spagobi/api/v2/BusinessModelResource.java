@@ -97,13 +97,15 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			} else {
 				IRoleDAO roleDao = DAOFactory.getRoleDAO();
 				roleDao.setUserProfile(getUserProfile());
-				List<Integer> categories = roleDao.getMetaModelCategoriesForRoles(getUserProfile().getRoles());
+
+				List<String> roleNames = UserUtilities.getCurrentRoleNames(getUserProfile());
+				List<Integer> categories = roleDao.getMetaModelCategoriesForRoles(roleNames);
 				logger.debug("Found the following categories [" + categories + "].");
 				if (categories != null && !categories.isEmpty()) {
 					businessModelList = businessModelsDAO.loadMetaModelByCategories(categories);
 				}
 			}
-			
+
 			List<MetaModel> filteredBusinessModels = new ArrayList<MetaModel>();
 			if (fileExtension != null) {
 				for (MetaModel bm : businessModelList) {
@@ -125,7 +127,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		}
 
 	}
-	
+
 	@GET
 	@Path("/bmCategories")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -164,8 +166,6 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		}
 
 	}
-
-
 
 	/**
 	 * Get all versions of business model with specified id

@@ -305,8 +305,7 @@ public class UserUtilities {
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
 				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_DEV)
-						|| roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_TEST)) {
+				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_DEV) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_TEST)) {
 					return true;
 				}
 			}
@@ -325,8 +324,7 @@ public class UserUtilities {
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
 				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE)
-						|| roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
+				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
 					return true;
 				}
 			}
@@ -457,18 +455,14 @@ public class UserUtilities {
 	}
 
 	/**
-	 * Load the user personal folder as a LowFunctionality object. If the
-	 * personal folder exists, it is returned; if it does not exist and create
-	 * is false, null is returned, otherwise the personal folder is created and
-	 * then returned.
+	 * Load the user personal folder as a LowFunctionality object. If the personal folder exists, it is returned; if it does not exist and create is false, null
+	 * is returned, otherwise the personal folder is created and then returned.
 	 *
 	 * @param userProfile
 	 *            UserProfile the user profile object
 	 * @param createIfNotExisting
-	 *            Boolean that specifies if the personal folder must be created
-	 *            if it doesn't exist
-	 * @return the personal folder as a LowFunctionality object, or null in case
-	 *         the personal folder does not exist and create is false
+	 *            Boolean that specifies if the personal folder must be created if it doesn't exist
+	 * @return the personal folder as a LowFunctionality object, or null in case the personal folder does not exist and create is false
 	 */
 	public static LowFunctionality loadUserFunctionalityRoot(UserProfile userProfile, boolean createIfNotExisting) {
 		Assert.assertNotNull(userProfile, "User profile in input is null");
@@ -477,8 +471,7 @@ public class UserUtilities {
 			try {
 				createUserFunctionalityRoot(userProfile);
 			} catch (Exception e) {
-				throw new SpagoBIRuntimeException(
-						"Cannot create personal functionality for user with id [" + userId + "]", e);
+				throw new SpagoBIRuntimeException("Cannot create personal functionality for user with id [" + userId + "]", e);
 			}
 		}
 		LowFunctionality lf = null;
@@ -755,8 +748,7 @@ public class UserUtilities {
 		List<String> licenseFunctionalities = new ArrayList<>();
 		try {
 			Class<?> licenseManager = Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
-			Method readFunctionalitiesMethod = licenseManager.getMethod("readFunctionalityByLicense",
-					SpagoBIUserProfile.class);
+			Method readFunctionalitiesMethod = licenseManager.getMethod("readFunctionalityByLicense", SpagoBIUserProfile.class);
 			Set<String> functionalities = (Set<String>) readFunctionalitiesMethod.invoke(null, user);
 			if (functionalities != null) {
 				licenseFunctionalities.addAll(functionalities);
@@ -962,8 +954,8 @@ public class UserUtilities {
 				throw new SpagoBIRuntimeException("No tenants found on database");
 			}
 			if (tenants.size() > 1) {
-				throw new SpagoBIRuntimeException("Tenants are more than one, cannot associate input user profile ["
-						+ profile.getUserId() + "] to a single tenant!!!");
+				throw new SpagoBIRuntimeException(
+						"Tenants are more than one, cannot associate input user profile [" + profile.getUserId() + "] to a single tenant!!!");
 			}
 			SbiTenant tenant = tenants.get(0);
 			logger.warn("Associating user profile [" + profile.getUserId() + "] to tenant [" + tenant.getName() + "]");
@@ -985,16 +977,13 @@ public class UserUtilities {
 
 		try {
 			SingletonConfig configSingleton = SingletonConfig.getInstance();
-			engUserProfileFactoryClass = configSingleton
-					.getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
+			engUserProfileFactoryClass = configSingleton.getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
 			if (engUserProfileFactoryClass != null) {
 				engUserProfileFactoryClass = engUserProfileFactoryClass.trim();
 				try {
-					securityServiceSupplier = (ISecurityServiceSupplier) Class.forName(engUserProfileFactoryClass)
-							.newInstance();
+					securityServiceSupplier = (ISecurityServiceSupplier) Class.forName(engUserProfileFactoryClass).newInstance();
 				} catch (Throwable t) {
-					throw new DAORuntimeException(
-							"Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
+					throw new DAORuntimeException("Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
 				}
 			} else {
 				throw new DAORuntimeException(
@@ -1004,27 +993,23 @@ public class UserUtilities {
 			if (t instanceof DAORuntimeException)
 				throw (DAORuntimeException) t;
 			else
-				throw new DAORuntimeException(
-						"Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
+				throw new DAORuntimeException("Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
 		}
 
 		return securityServiceSupplier;
 	}
 
 	/**
-	 * Clones the input profile object. We don't implement the
-	 * SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by
-	 * Axis tools, and therefore, when generating the class we may lost that
-	 * method.
+	 * Clones the input profile object. We don't implement the SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by Axis tools, and
+	 * therefore, when generating the class we may lost that method.
 	 *
 	 * @param profile
 	 *            The input SpagoBIUserProfile object
 	 * @return a clone of the input SpagoBIUserProfile object
 	 */
 	public static SpagoBIUserProfile clone(SpagoBIUserProfile profile) {
-		SpagoBIUserProfile clone = new SpagoBIUserProfile((HashMap) profile.getAttributes().clone(),
-				profile.getFunctions().clone(), profile.getIsSuperadmin(), profile.getOrganization(),
-				profile.getRoles().clone(), profile.getUniqueIdentifier(), profile.getUserId(), profile.getUserName());
+		SpagoBIUserProfile clone = new SpagoBIUserProfile((HashMap) profile.getAttributes().clone(), profile.getFunctions().clone(), profile.getIsSuperadmin(),
+				profile.getOrganization(), profile.getRoles().clone(), profile.getUniqueIdentifier(), profile.getUserId(), profile.getUserName());
 		return clone;
 	}
 
@@ -1053,11 +1038,30 @@ public class UserUtilities {
 
 	}
 
+	public static List<String> getCurrentRoleNames(IEngUserProfile profile) throws EMFInternalError {
+		logger.debug("IN");
+		List<String> roleNames = new ArrayList<String>();
+		String defaultRole = null;
+		if (profile instanceof UserProfile) {
+			defaultRole = ((UserProfile) profile).getDefaultRole();
+		}
+		if (defaultRole != null) {
+			roleNames.add(defaultRole);
+		} else {
+			roleNames = (List<String>) profile.getRoles();
+		}
+		logger.debug("OUT");
+		return roleNames;
+	}
+
 	public static Set<Domain> getDataSetCategoriesByUser(IEngUserProfile profile) {
+		logger.debug("IN");
 		IRoleDAO rolesDao = null;
 		Set<Domain> categories = new HashSet<>();
 		try {
-			List<String> roleNames = (List<String>) profile.getRoles();
+			// to get Roles Names check first if a default role is set, otherwise get all
+			List<String> roleNames = getCurrentRoleNames(profile);
+
 			if (!roleNames.isEmpty()) {
 				rolesDao = DAOFactory.getRoleDAO();
 				rolesDao.setUserProfile(profile);
@@ -1075,11 +1079,11 @@ public class UserUtilities {
 					}
 				}
 			}
+			logger.debug("OUT");
 			return categories;
 		} catch (Exception e) {
 			logger.error("Impossible to get role dataset categories for user [" + profile + "]", e);
-			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]",
-					e);
+			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]", e);
 		}
 	}
 
@@ -1090,8 +1094,7 @@ public class UserUtilities {
 			String userId = (String) ((UserProfile) user).getUserId();
 
 			try {
-				it.eng.spagobi.profiling.dao.ISbiAccessibilityPreferencesDAO dao = DAOFactory
-						.getSiAccessibilityPreferencesDAO();
+				it.eng.spagobi.profiling.dao.ISbiAccessibilityPreferencesDAO dao = DAOFactory.getSiAccessibilityPreferencesDAO();
 				SbiAccessibilityPreferences ap = dao.readUserAccessibilityPreferences(userId);
 				if (ap != null) {
 					preferences = new AccessibilityPreferences();
@@ -1146,8 +1149,7 @@ public class UserUtilities {
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
 				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE)
-						|| roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
+				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
 					listRoles.add(r);
 				}
 			}
@@ -1169,8 +1171,7 @@ public class UserUtilities {
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
 				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE)
-						|| roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
+				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
 					listRoles.add(r.getName());
 				}
 			}
