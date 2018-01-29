@@ -7,7 +7,7 @@
    	</md-button>	
 </div>
 <div class="cockpitTableContainer fake">
-<table ng-class="" class="cockpitTable" ng-style="settings.style.table" ng-cloak fixed-header>
+<table ng-class="" class="cockpitTable" ng-style="settings.style.table" ng-cloak fixed-header id="table-{{tableId}}">
 	    <thead>
 	        <tr ng-style="settings.style.header">
 	            <th scope="col" ng-repeat="column in columns track by $index" ng-if="!column.style.hiddenColumn" ng-style="getThStyle(styledata.th,column)" ng-click="sort(column,$event)" ng-class="{'hiddenIcon':column.aliasToShow != settings.sortingColumn,'active':column.aliasToShow == settings.sortingColumn}">
@@ -20,8 +20,8 @@
 	    </thead>
 	</table>
 	</div>
-<div class="cockpitTableContainer main" ng-if="model && model.length > 0">
-	<table ng-class="" class="cockpitTable" ng-style="settings.style.table" ng-cloak>
+<div class="cockpitTableContainer main" ng-if="model && model.length > 0" on-scroll="table-{{tableId}}">
+	<table ng-class="" class="cockpitTable" ng-style="settings.style.table" ng-cloak >
 	    <thead>
 	        <tr ng-style="settings.style.header">
 	            <th scope="col" ng-repeat="column in columns track by $index" ng-if="!column.style.hiddenColumn" ng-style="getThStyle(styledata.th,column)" ng-click="sort(column,$event)" ng-class="{'hiddenIcon':column.aliasToShow != settings.sortingColumn,'active':column.aliasToShow == settings.sortingColumn}">
