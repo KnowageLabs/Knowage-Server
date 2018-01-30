@@ -63,6 +63,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 		UserProfile profile = null;
 
 		logger.trace("IN");
+		logger.error("authenticate Security Server Interceptor");
 
 		try {
 			/*
@@ -76,6 +77,8 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 					byte[] decodedBytes = Base64.decode(encodedUser);
 					String user = new String(decodedBytes, "UTF-8");
 					profile = (UserProfile) UserUtilities.getUserProfile(user);
+					logger.error("profile 1" + profile);
+
 				} else {
 					String encodedUserPassword = auto.replaceFirst("Basic ", "");
 					String credentials = null;
@@ -92,6 +95,8 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 					if (spagoBIUserProfile != null) {
 						profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
 					}
+					logger.error("profile 2" + profile);
+
 				}
 			} else {
 				// if request header is
@@ -103,6 +108,8 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 				if (spagoBIUserProfile != null) {
 					profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
 				}
+				logger.error("profile 3" + profile);
+
 				servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
 
 			}
@@ -131,12 +138,16 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 			if (userId != null && userId.equals(engProfile.getUserUniqueIdentifier().toString()) == false) {
 				logger.debug("User is authenticated but the profile store in session need to be updated");
 				engProfile = this.getUserProfileFromUserId();
+				logger.error("profile 4" + engProfile);
+
 			} else {
 				logger.debug("User is authenticated and his profile is already stored in session");
 			}
 
 		} else {
 			engProfile = this.getUserProfileFromUserId();
+			logger.error("profile 5 " + engProfile);
+
 			if (engProfile != null) {
 				logger.debug("User is authenticated but his profile is not already stored in session");
 			} else {

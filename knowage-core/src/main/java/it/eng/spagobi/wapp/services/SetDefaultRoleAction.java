@@ -17,6 +17,13 @@
  */
 package it.eng.spagobi.wapp.services;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
@@ -26,13 +33,6 @@ import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
 
 public class SetDefaultRoleAction extends AbstractSpagoBIAction {
 
@@ -55,8 +55,12 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction {
 
 			IEngUserProfile profile = this.getUserProfile();
 
+			logger.error("Print profile taken: " + profile);
+
 			String defaultRole = this.getAttributeAsString(SELECTED_ROLE);
 			logger.debug("Selected role " + defaultRole);
+
+			logger.error("Change default role to  " + defaultRole);
 
 			// check if selected role is part of the user ones
 			ArrayList<String> roles = (ArrayList<String>) profile.getRoles();
@@ -100,6 +104,7 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction {
 			}
 			logger.debug("Filtered functionalities for selected role " + defaultRole);
 
+			logger.error("Print profile taken at the end of the action: " + profile);
 			try {
 				writeBackToClient(new JSONAcknowledge());
 			} catch (IOException e) {
