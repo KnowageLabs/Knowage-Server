@@ -231,7 +231,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<md-card-content class="noPadding">
 										<div layout="row" layout-align="center" ng-if="!filter || filter.length==0">
 											<div class="kn-noItems">
-												{{translate.load("sbi.layerfilters");}}
+												{{translate.load("kn.tools.layer.nofilters");}}
 											</div>
 										</div>
 										<md-input-container class="md-icon-float md-block" style="margin-left:8px; margin-right:8px;" ng-show="filter.length>0">
@@ -258,7 +258,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<md-card-content class="noPadding">
 										<div layout="row" layout-align="center" ng-if="!filter_set || filter_set.length==0">
 											<div class="kn-noItems">
-												{{translate.load("sbi.layerfilteradded");}}
+												{{translate.load("kn.tools.layer.nofiltersadded");}}
 											</div>
 										</div>
 										<md-input-container ng-show="filter_set.length>0" class="md-icon-float md-block" style="margin-left:8px; margin-right:8px;">
