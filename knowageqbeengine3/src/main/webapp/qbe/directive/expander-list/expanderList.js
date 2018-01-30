@@ -38,7 +38,7 @@ angular.module('qbe_expander_list', ['ngDraggable'])
             templateUrl: currentScriptPath + 'expander-list.html',
             replace: true,
             link: function link(scope, element, attrs) {
-                
+
                 scope.dragEnabled = scope.dragAction ? true : false;
                 scope.childrenName = (scope.childrenName == undefined) ? "children" : scope.childrenName;
                 scope.displayPropertyName = (scope.displayPropertyName == undefined) ? "text" : scope.displayPropertyName;
@@ -100,24 +100,41 @@ angular.module('qbe_expander_list', ['ngDraggable'])
 
                 scope.countFilters = function (field) {
                 	var filt = 0;
-                	var hav = 0;
                 	for (var i = 0; i < scope.$parent.filters.length; i++) {
             			if(scope.$parent.filters[i].leftOperandDescription == field.attributes.entity+" : "+field.text){
             				filt++;
             			}
             		}
+                	return filt;
+                }
+
+                scope.countHavings = function (field) {
+                	var hav = 0;
                 	for (var i = 0; i < scope.$parent.havings.length; i++) {
             			if(scope.$parent.havings[i].leftOperandDescription == field.attributes.entity+" : "+field.text){
             				hav++;
             			}
             		}
-                	var total = filt + hav;
-                	if(total == 0) {
-                		return "No filters";
-                	} else {
-                		return total + " filter/s";
-                	}
+                	return hav;
                 }
+
+                scope.countAll = function (field) {
+                	var filt = scope.countFilters(field);
+                	var hav = scope.countHavings(field);
+                	var total = filt + hav;
+                	return total;
+                }
+
+                scope.isThereAFilter = function (entity) {
+                	for (var i = 0; i < entity.children.length; i++) {
+                		if(scope.countFilters(entity.children[i])>0){
+            				return true;
+            			} else {
+            				return false;
+            			}
+            		}
+                }
+
 
 
                 //broadcast field to root scope

@@ -138,11 +138,15 @@
                     width: .8rem;
                     display: block;
                 }
+                &.filterEntityColor {        		
+                	background-color: lighten($fabPrimaryColor, 20%);            	
+        		}
                 span {
                     margin-left: 5px;
                 }
                 &.expanded {}
             }
+            
             .second-lvl-padding {
             	padding-left:40px;
             }
@@ -192,9 +196,11 @@
                 }
             }
             .md-button.md-icon-button {
-                margin: 0;
+                margin: 0;                
             }
         }
+        
+        
         //fontAwesome icons remapping
         .fa {
             &.cube:before {
@@ -401,7 +407,16 @@
 	
 	.temporal-filter-avaliable {
 		color:#990000;
-	}		
+		
+	}
+			
+	.filterColor {  		
+        color: $fabPrimaryColor;            	
+    }   
+     		
+	.havingColor {  		
+        color: $fabPrimaryColor;            	
+    }
 
     @mixin setHeight($height) {
         height: $height;
