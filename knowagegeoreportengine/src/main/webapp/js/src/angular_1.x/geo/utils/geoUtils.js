@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,15 +11,15 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 var geoM=angular.module('geoModule');
 
 /**
- * Allows user to load old templates: in a property 
+ * Allows user to load old templates: in a property
  * with the new name is not found we look for the old name.
  */
 geoM.service('geoReportCompatibility',function($map){
@@ -28,8 +28,8 @@ geoM.service('geoReportCompatibility',function($map){
 		if(!angular.isArray(geoModule_template.targetLayerConf)){
 			geoModule_template.targetLayerConf=[geoModule_template.targetLayerConf];
 		}
-		
-		
+
+
 		//     transform indicators in array of json if they arent
 		if(geoModule_template.hasOwnProperty('indicators') && geoModule_template.indicators.length>0){
 			var tmp=[];
@@ -44,12 +44,12 @@ geoM.service('geoReportCompatibility',function($map){
 		if(geoModule_template.hasOwnProperty("geoId")){
 			geoModule_template.layerJoinColumns=geoModule_template.geoId;
 			delete geoModule_template.geoId;
-		} 
+		}
 
 		if(geoModule_template.hasOwnProperty("businessId")){
 			geoModule_template.datasetJoinColumns=geoModule_template.businessId;
 			delete geoModule_template.businessId;
-		} 
+		}
 
 
 
@@ -60,22 +60,22 @@ geoM.service('geoReportCompatibility',function($map){
 				if(geoModule_template.baseLayersConf[i].hasOwnProperty("name")){
 					geoModule_template.baseLayersConf[i].label=geoModule_template.baseLayersConf[i].name;
 					delete geoModule_template.baseLayersConf[i].name;
-				} 
+				}
 
 				if(geoModule_template.baseLayersConf[i].hasOwnProperty("options")){
 					geoModule_template.baseLayersConf[i].layerOptions=geoModule_template.baseLayersConf[i].options;
 					delete geoModule_template.baseLayersConf[i].options;
-				} 
+				}
 
 				if(geoModule_template.baseLayersConf[i].hasOwnProperty("url")){
 					geoModule_template.baseLayersConf[i].layerURL=geoModule_template.baseLayersConf[i].url;
 					delete geoModule_template.baseLayersConf[i].url;
-				} 
+				}
 
 				if(geoModule_template.baseLayersConf[i].hasOwnProperty("isBaseLayer")){
 					geoModule_template.baseLayersConf[i].baseLayer=geoModule_template.baseLayersConf[i].isBaseLayer;
 					delete geoModule_template.baseLayersConf[i].isBaseLayer;
-				} 
+				}
 			}
 		}
 
@@ -83,8 +83,8 @@ geoM.service('geoReportCompatibility',function($map){
 });
 
 /**
- * Set of method to manage 
- * 
+ * Set of method to manage
+ *
  * */
 geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$map,sbiModule_config,sbiModule_restServices,$q,sbiModule_logger,geoModule_template,geoModule_indicators,geoModule_filters,geoModule_dataset,geModule_datasetJoinColumnsItem,geoModule_layerServices, sbiModule_translate){
 	var gru=this;
@@ -112,7 +112,7 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 				var fields=geoModule_dataset.metaData.fields;
 				for( var i=0;i<fields.length;i++){
 					if(fields[i].hasOwnProperty("header") && fields[i].header==geoModule_template.datasetJoinColumns){
-						storeIdFiledName = fields[i].name; 
+						storeIdFiledName = fields[i].name;
 						break;
 					}
 				}
@@ -140,7 +140,7 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 		for(var i=0;i<geoModule_template.targetLayerConf.length;i++){
 			data.items.push(geoModule_template.targetLayerConf[i].label);
 		}
-		
+
 		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
 		sbiModule_restServices.promisePost("layers", 'getLayerFromList',data).then(
 				function(response, status, headers, config) {
@@ -151,13 +151,13 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 								var data=response.data.root[i];
 								if(data.type=='WMS'){
 									//if is a WMS
-									geoModule_layerServices.setTemplateLayer(data); 
+									geoModule_layerServices.setTemplateLayer(data);
 								}else{
-									//if is a WFS or file 
+									//if is a WFS or file
 									gru.getGEOJsonFromFileOrWfs(data);
 								}
 							}
-							
+
 						}
 
 				},function(response, status, headers, config) {
@@ -179,34 +179,34 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 		sbiModule_restServices.promisePost("1.0/geo", 'getTargetLayer',params)
 		.then(
 			function(response, status, headers, config) {
-				
+
 				//add the label on the response.data
-				response.data.layerName=dataLayer.name; 
-				response.data.properties=dataLayer.properties; 
-				 geoModule_layerServices.setTemplateLayer(response.data); 
-				 
+				response.data.layerName=dataLayer.name;
+				response.data.properties=dataLayer.properties;
+				 geoModule_layerServices.setTemplateLayer(response.data);
+
 			},function(response, status, headers, config) {
-			sbiModule_restServices.errorHandler(response.data,"Error while attempt to load targetlayer")
+			sbiModule_restServices.errorHandler(response.data.errors,"Error while attempt to load targetlayer")
 		});
 	}
- 
+
 	/**
 	 * Loads the dataset using a REST service
 	 * */
 	this.getTargetDataset=function(){
 		sbiModule_restServices.promiseGet("1.0/geo", 'getTargetDataset').then(
 				function(response, status, headers, config) {
-					  
-				angular.copy(response.data,geoModule_dataset); 
-				gru.initRigthMenuVariable(); 
+
+				angular.copy(response.data,geoModule_dataset);
+				gru.initRigthMenuVariable();
 				gru.GetTargetLayer();
-						 
+
 				},function(response, status, headers, config) {
 					sbiModule_restServices.errorHandler(response,"No dataset")
 				});
 	};
-	
-	 
+
+
 	/**
 	 * Initialization for Indicators and Filters
 	 **/
@@ -248,7 +248,7 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 								if(expFields.label==undefined){
 									expFields.label=expFields.header;
 								}
-								
+
 								geoModule_indicators.push(expFields);
 							}
 
@@ -265,7 +265,7 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 							//if this measure is the datasetJoinColumns load the variable
 							if(fields[i].header==geoModule_template.datasetJoinColumns){
 								angular.copy(fields[i],geModule_datasetJoinColumnsItem)
-//								Object.assign(geModule_datasetJoinColumnsItem, fields[i]); 
+//								Object.assign(geModule_datasetJoinColumnsItem, fields[i]);
 							}
 						}else{
 							sbiModule_restServices.errorHandler("dataset->metaData->fields->role="+fields[i].role+"not managed ","") ;
@@ -279,19 +279,19 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 				}
 
 			}else{
-				sbiModule_restServices.errorHandler("fields property in metaData property of dataset not present",""); 
+				sbiModule_restServices.errorHandler("fields property in metaData property of dataset not present","");
 			}
 
 		}else{
 			sbiModule_restServices.errorHandler("metaData property non present in dataset","");
 		}
 
-	}	
+	}
 });
 
 /**
  * Used for TODO
- * 
+ *
  * */
 geoM.filter('unique', function () {
 
@@ -342,7 +342,7 @@ geoM.factory('geo_interaction',function(){
 			selectedFilterType: 'intersect',
 			selectedFeatures: [],
 			selectedFeaturesCallbackFunctions: [],
-			
+
 	};
 
 	interact.setSelectedFeatures = function(newSelectedFeatures) {
@@ -359,7 +359,7 @@ geoM.factory('geo_interaction',function(){
 	interact.addSelectedFeaturesCallbackFunction = function(callbackFunction) {
 		interact.selectedFeaturesCallbackFunctions.push(callbackFunction);
 	};
-	
+
 	interact.clearSelectedFeaturesCallbackFunction = function() {
 		while (interact.selectedFeaturesCallbackFunctions.length > 0) {
 			delete interact.selectedFeaturesCallbackFunctions[0];
@@ -371,19 +371,19 @@ geoM.factory('geo_interaction',function(){
 
 geoM.factory('geo_intersectFunctions', function() {
 	var toReturn = {};
-	
+
 	toReturn.getFeaturesExtraction = function(newSet, oldSet) {
 		var includedFeatures = [];
 		var excludedFeatures = [];
-		
+
 		for(var oldSetIndex = 0; oldSetIndex < oldSet.length; oldSetIndex++) {
 			var oldItem = oldSet[oldSetIndex];
-			
-			var hasToBeIncluded = false; 
-			
+
+			var hasToBeIncluded = false;
+
 			for(var newSetIndex = 0; newSetIndex < newSet.length && !hasToBeIncluded; newSetIndex++) {
 				var newItem = newSet[newSetIndex];
-				
+
 				if(newItem.getId() == oldItem.getId()) {
 					hasToBeIncluded = true;
 				}
@@ -394,19 +394,19 @@ geoM.factory('geo_intersectFunctions', function() {
 				excludedFeatures.push(oldItem);
 			}
 		}
-		
+
 		return {
 			'includedFeatures': includedFeatures,
 			'excludedFeatures': excludedFeatures
 		}
 	};
-	
+
 	return toReturn;
 });
 
-geoM.service('crossNavigation', function(geoModule_template, geoModule_driverParameters, sbiModule_translate) {	
+geoM.service('crossNavigation', function(geoModule_template, geoModule_driverParameters, sbiModule_translate) {
 	this.navigateTo = function(selectedElements){
-		 
+
 		if(geoModule_template.crossNavigation==true){
 			var crossData=[];
 			if(Array.isArray(selectedElements)){
@@ -421,12 +421,12 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 	}
 });
 
-//geoM.service('crossNavigation', function(geoModule_template, geoModule_driverParameters, sbiModule_translate) {	
+//geoM.service('crossNavigation', function(geoModule_template, geoModule_driverParameters, sbiModule_translate) {
 //	this.navigateTo = function(selectedElements){
 //
 //		var crossnav = geoModule_template.crossnav;
 //
-//		var multiSelect = crossnav && crossnav.multiSelect? 
+//		var multiSelect = crossnav && crossnav.multiSelect?
 //				crossnav.multiSelect : null;
 //
 //		if(!crossnav ) {
@@ -437,7 +437,7 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 //			var parametersAsString = '';
 //
 //			// Cross Navigation Static parameters
-//			if(crossnav.staticParams 
+//			if(crossnav.staticParams
 //					&& (typeof (crossnav.staticParams) == 'object')) {
 //
 //				var staticParams = crossnav.staticParams;
@@ -490,7 +490,7 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 //						if(!geoModule_driverParameters[paramInputName]) {
 //							continue;
 //						} else {
-//							parametersAsString += 
+//							parametersAsString +=
 //								(paramOutputName ? paramOutputName : paramInputName)
 //								+ '=' + geoModule_driverParameters[paramInputName] + '&';
 //						}

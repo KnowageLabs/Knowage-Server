@@ -948,8 +948,7 @@ geoM.service(
 			this.getLayerFromFile=function(layerConf){
 				var deferredLayer = $q.defer();
 				sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
-//				sbiModule_restServices.promisePost("1.0/geo", 'getFileLayer',{layerUrl:layerConf.pathFile})
-				sbiModule_restServices.post("2.0/analyticalDrivers", 'getFileLayer', { layerUrl:layerConf.pathFile })
+				sbiModule_restServices.post("2.0/analyticalDriversee", 'getFileLayer', { layerUrl:layerConf.pathFile })
 				.then(
 						function(response, status, headers, config) {
 

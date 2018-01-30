@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,10 +11,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 var sbiM=angular.module('sbiModule',['toastr','ngSanitize']);
 sbiM.config(function($mdThemingProvider) {
@@ -57,30 +57,79 @@ sbiM.service('sbiModule_translate', function() {
 
 sbiM.service('sbiModule_messaging',function(toastr){
 	this.showErrorMessage = function(msg,title){
-		
-		toastr.error(msg,title, {
-			  closeButton: true
-		});
+
+//		toastr.error(msg,title, {
+//			  closeButton: true
+//		});
+		sbiModule_restServices.errorHandler(msg,title);
 	};
-	this.showWarningMessage = function(msg,title){
-		
-		toastr.warning(msg,title, {
-			  closeButton: true
-		});
+	this.showWarningMessage = function(msg,title,hideTimeout){
+
+//		toastr.warning(msg,title, {
+//			  closeButton: true
+//		});
+		var timeout = 3000;
+
+		if (hideTimeout && typeof hideTimeout == "number") {
+			timeout = hideTimeout;
+		}
+
+		return	$mdToast.show(
+					$mdToast
+					.simple()
+					.content(msg)
+					.position('top')
+					.action('OK')
+					.highlightAction(false)
+					.hideDelay(timeout)
+				);
 	};
-	this.showInfoMessage = function(msg,title){
-		
-		toastr.info(msg,title, {
-			  closeButton: true
-		});
+	this.showInfoMessage = function(msg,title,hideTimeout){
+
+//		toastr.info(msg,title, {
+//			  closeButton: true
+//		});
+
+		var timeout = 3000;
+
+		if (hideTimeout && typeof hideTimeout == "number") {
+			timeout = hideTimeout;
+		}
+
+		return	$mdToast.show(
+					$mdToast
+					.simple()
+					.content(msg)
+					.position('top')
+					.action('OK')
+					.highlightAction(false)
+					.hideDelay(timeout)
+				);
+
 	};
-	this.showSuccessMessage = function(msg,title){
-		
-		toastr.success(msg,title, {
-			  closeButton: true
-			});
+
+	this.showSuccessMessage = function(msg,title,hideTimeout){
+
+//		toastr.success(msg,title, {
+//			  closeButton: true
+//			});
+		var timeout = 3000;
+
+		if (hideTimeout && typeof hideTimeout == "number") {
+			timeout = hideTimeout;
+		}
+
+		return	$mdToast.show(
+					$mdToast
+					.simple()
+					.content(msg)
+					.position('top')
+					.action('OK')
+					.highlightAction(false)
+					.hideDelay(timeout) // changed by: danristo (previous value: 60000)
+				);
 	};
-	
+
 });
 
 
@@ -92,7 +141,7 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 	}
 
 	function getBaseUrl(endP_path) {
-		var burl= alteredContextPath==null? sbiModule_config.contextName +'/api/'+ endP_path+"/"  : alteredContextPath+ "" + endP_path+"/" 
+		var burl= alteredContextPath==null? sbiModule_config.contextName +'/api/'+ endP_path+"/"  : alteredContextPath+ "" + endP_path+"/"
 				alteredContextPath=null;
 		return burl ;
 	};
@@ -124,60 +173,60 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 		sbiModule_logger.trace("PUT: "+endP_path+"/"+req_Path,item,conf);
 		return $http.put(getBaseUrl(endP_path) + "" + req_Path, item, conf);
 	};
-	
+
 	/*
 	NEW METHODS
 	*/
-	
+
 	var genericErrorHandling = function(data, status, headers, config, deferred) {
   		deferred.reject(data, status, headers, config);
 	};
-	
+
 	var handleResponse = function(data, status, headers, config, deferred) {
 		if(data.data != null){
 			if ( data.data.hasOwnProperty("errors")) {
-				
+
 				genericErrorHandling(data, status, headers, config, deferred);
 			} else {
 				deferred.resolve(data, status, headers, config);
-			}	
+			}
 		}else{
 			if ( data.status == 201) {
 				deferred.resolve(data, status, headers, config);
-				
+
 			} else {
 				genericErrorHandling(data, status, headers, config, deferred);
-			}	
-			
+			}
+
 		}
-		
+
 	};
 
 	// SAMPLE METHOD, this will be the implementation
 	this.promiseGet = function(endP_path, req_Path, item, conf) {
 		var deferred = $q.defer();
-		
+
 		// Required for passing JSON on a GET request
 		if (item == undefined || item==null) {
 			item = "";
 		}else {
-			item = "?" + 
+			item = "?" +
 				encodeURIComponent(item)
 				.replace(/'/g,"%27")
 				.replace(/"/g,"%22")
 				.replace(/%3D/g,"=")
 				.replace(/%26/g,"&");
 		}
-		
+
 		sbiModule_logger.trace("GET: " +endP_path+"/"+ req_Path + "" + item, conf);
-		
+
 		deferred.notify('About to call async function');
 
 		$http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item, conf)
 			.then(
 					function successCallback(data, status, headers, config) {
 						handleResponse(data, status, headers, config, deferred);
-				  	}, 
+				  	},
 				  	function errorCallback(data, status, headers, config) {
 				  		genericErrorHandling(data, status, headers, config, deferred);
 				  	}
@@ -185,19 +234,19 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 
 		return deferred.promise;
 	};
-	
+
 	this.promisePost = function(endP_path, req_Path, item, conf) {
 		var deferred = $q.defer();
-		
+
 		sbiModule_logger.trace("POST: " +endP_path+"/"+ req_Path + "" + item, conf);
-		
+
 		deferred.notify('About to call async function');
 
 		$http.post(getBaseUrl(endP_path) + "" + req_Path , item, conf)
 			.then(
 					function successCallback(data, status, headers, config) {
 						handleResponse(data, status, headers, config, deferred);
-				  	}, 
+				  	},
 				  	function errorCallback(data, status, headers, config) {
 				  		genericErrorHandling(data, status, headers, config, deferred);
 				  	}
@@ -205,19 +254,19 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 
 		return deferred.promise;
 	};
-	
+
 	this.promisePut = function(endP_path, req_Path, item, conf) {
 		var deferred = $q.defer();
-		
+
 		sbiModule_logger.trace("PUT: " +endP_path+"/"+ req_Path + "" + item, conf);
-		
+
 		deferred.notify('About to call async function');
 
 		$http.put(getBaseUrl(endP_path) + "" + req_Path , item, conf)
 			.then(
 					function successCallback(data, status, headers, config) {
 						handleResponse(data, status, headers, config, deferred);
-				  	}, 
+				  	},
 				  	function errorCallback(data, status, headers, config) {
 				  		genericErrorHandling(data, status, headers, config, deferred);
 				  	}
@@ -225,20 +274,20 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 
 		return deferred.promise;
 	};
-	
+
 	this.promiseDelete = function(endP_path, req_Path, item, conf) {
 		var deferred = $q.defer();
-		
+
 		sbiModule_logger.trace("DELETE: " +endP_path+"/"+ req_Path + "" + item, conf);
-		
+
 		deferred.notify('About to call async function');
 		(item == undefined || item==null) ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
-		
+
 		$http.delete(getBaseUrl(endP_path) + "" + req_Path+""+item, conf)
 			.then(
 					function successCallback(data, status, headers, config) {
 						handleResponse(data, status, headers, config, deferred);
-				  	}, 
+				  	},
 				  	function errorCallback(data, status, headers, config) {
 				  		genericErrorHandling(data, status, headers, config, deferred);
 				  	}
@@ -246,8 +295,8 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 
 		return deferred.promise;
 	};
-	
-	
+
+
 	this.errorHandler=function(text,title){
 		var titleFin=sbiModule_translate.load(title) || "";
 		var textFin=text;
@@ -265,15 +314,15 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 		}else{
 			textFin=sbiModule_translate.load(text);
 		}
-		
+
 		var alert = $mdDialog.alert()
 		.title(titleFin)
 		.htmlContent(textFin)
-		.ariaLabel('error') 
-		.ok('OK') 
+		.ariaLabel('error')
+		.ok('OK')
 		return $mdDialog.show(alert); //can use the finally function
 	}
-	
+
 
 });
 

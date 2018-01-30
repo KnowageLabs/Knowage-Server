@@ -55,7 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <md-whiteframe class="md-whiteframe-2dp relative" layout-fill flex  >
 <!-- CHOSE DATA SET FOR FINAL USER -->
 <div layout="row" flex ng-if="!tecnicalUser">
-	<label flex=20>{{datasetLabel}}</label>
+	<label flex=20>{{::translate.load("gisengine.desiner.dataset")}} {{datasetLabel}}</label>
   	<md-button class="md-fab md-mini md-primary" ng-if="!isDatasetChosen && !disableChooseDs" ng-click="choseDataset()" aria-label="Add dataset">
           <md-icon class="fa fa-plus-circle fa-2x"></md-icon>
     </md-button>

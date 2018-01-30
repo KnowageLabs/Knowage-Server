@@ -220,7 +220,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</form>
 						</md-tab>
 						
-						<md-tab label="Filter" md-on-select="setTab('Filter')" ng-if="showFilters" md-active="isSelectedTab('Filter')" ng-click="loadFilter();">
+						<md-tab label="Filter" md-on-select="setTab('Filter')" ng-if="showFilters" md-active="isSelectedTab('Filter')">
 							<div layout="row">
 								<md-card flex>	
 									<md-toolbar class="secondaryToolbar">

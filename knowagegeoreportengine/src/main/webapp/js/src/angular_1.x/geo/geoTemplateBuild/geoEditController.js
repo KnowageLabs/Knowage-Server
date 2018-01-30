@@ -31,7 +31,7 @@
 
 	function geoTemplateBuildControllerFunction($scope, sbiModule_translate,
 			sbiModule_restServices, sbiModule_config, $mdDialog, sbiModule_messaging,$documentViewer,$http, $window) {
-		//console.log(sbiModule_config);
+
 		$scope.tecnicalUser= isTechnicalUser==="true";
 		$scope.template=angular.fromJson(docTemplate);
 		$scope.docLabel=documentLabel;
@@ -42,10 +42,7 @@
 		$scope.selectedFilters = [];
 		$scope.allFilters = [];
 
-
 		$scope.layerProperties=[];
-
-
 
 		$scope.allDriverParamteres=[];
 		$scope.selectedDriverParamteres = [];
@@ -84,6 +81,7 @@
 		$scope.crossOption={crossNavigationMultiselect:true};
 
 
+
 		//indicator section metadata (transformed for the required manual input)
 		$scope.indicatorColumns=[
 			{"label":"Measure",
@@ -120,35 +118,35 @@
 		$scope.editDisabled = $scope.template.targetLayerConf == undefined;
 
 		$scope.loadTemplate= function(){
-			if(!$scope.tecnicalUser && $scope.docLabel != ''){
-				sbiModule_restServices
-				.alterContextPath(sbiModule_config.externalBasePath);
-	         	sbiModule_restServices.promiseGet("restful-services/1.0/documents",
-				$scope.docLabel+"/usertemplate")
-				.then(
-						function(response) {
-							console.log(response.data);
-							$scope.template=angular.fromJson(response.data);
-							$scope.editDisabled = $scope.template.targetLayerConf == undefined;
-							if($scope.template.targetLayerConf != undefined){
-								$scope.disableChooseDs= true;
-							}
-							initializeFromTemplate();
+			if(!$scope.tecnicalUser){
+				if ( $scope.docLabel != ''){
 
-						},
-						function(response) {
-							sbiModule_messaging.showErrorMessage(response.data,"error loading layers");
-							//sbiModule_restServices.errorHandler(
-							//		response.data, "error loading layers");
-						});
+					sbiModule_restServices
+					.alterContextPath(sbiModule_config.externalBasePath);
+		         	sbiModule_restServices.promiseGet("restful-services/1.0/documents",	$scope.docLabel+"/usertemplate")
+					.then(
+							function(response) {
+								$scope.template=angular.fromJson(response.data);
+								$scope.editDisabled = $scope.template.targetLayerConf == undefined;
+								if($scope.template.targetLayerConf != undefined){
+									$scope.disableChooseDs= true;
+								}
+								initializeFromTemplate();
+								$scope.loadLayers();
+							},
+							function(response) {
+								sbiModule_messaging.showErrorMessage(response.data,"error loading layers");
+								//sbiModule_restServices.errorHandler(
+								//		response.data, "error loading layers");
+							});
 
+				}else{
+					$scope.loadLayers();
+				}
 			}
 		}
 
-		$scope.loadTemplate();
-
 		$scope.choseDataset= function(){
-			console.log("IN CHOOSE DATASET")
 			sbiModule_restServices
 			.alterContextPath(sbiModule_config.externalBasePath);
 			sbiModule_restServices.promiseGet("restful-services/1.0/datasets", "mydatanoparams")
@@ -159,7 +157,6 @@
 						$mdDialog
 						.show({
 							controller : DialogControllerDataset,
-//							templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateDatasetList.html',
 							templateUrl : sbiModule_config.contextName + '/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateDatasetList.html',
 							clickOutsideToClose : false,
 							preserveScope : true,
@@ -197,14 +194,11 @@
 		}
 
 		$scope.loadLayers = function() {
-			sbiModule_restServices
-					.alterContextPath(sbiModule_config.externalBasePath);
+			sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath);
 			sbiModule_restServices.promiseGet("restful-services/layers", "")
 					.then(
 							function(response) {
-								console.log(response.data.root);
-								angular.copy(response.data.root,
-										$scope.layerCatalogs);
+								angular.copy(response.data.root, $scope.layerCatalogs);
 								initializeSelectedLayer();
 							},
 							function(response) {
@@ -213,8 +207,6 @@
 								//		response.data, "error loading layers");
 							});
 		}
-
-		$scope.loadLayers();
 
 		$scope.editMap = function() {
 			sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath+"restful-services/");
@@ -229,7 +221,6 @@
 				$scope.docLabel+"/usertemplate")
 				.then(
 						function(response) {
-							//console.log(response.data);
 							$scope.template=angular.fromJson(response.data);
 						},
 						function(response) {
@@ -247,9 +238,7 @@
 		}
 
 		$scope.saveTemplate = function() {
-			console.log("IN save template");
 			var template = $scope.buildTemplate();
-			console.log(template);
 			if (template.error) {
 
 				sbiModule_messaging.showWarningMessage(template.error,sbiModule_translate.load('gisengine.designer.tempate.error'));
@@ -299,7 +288,6 @@
 			$scope.docLabel+"/parameters")
 			.then(
 					function(response) {
-						//console.log(response.data.results);
 						angular.copy(response.data.results,$scope.allDriverParamteres);
 						initializeLayerFilters();
 					},
@@ -377,8 +365,7 @@
 		}
 
 		loadLayerFilters = function(layerId) {
-			sbiModule_restServices
-					.alterContextPath(sbiModule_config.externalBasePath);
+			sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath);
 			sbiModule_restServices.promiseGet("restful-services/layers",
 					"getFilter", "id=" + layerId).then(
 					function(response) {
@@ -412,7 +399,6 @@
 				$mdDialog
 						.show({
 							controller : DialogControllerFilter,
-//							templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateFilterList.html',
 							templateUrl : sbiModule_config.contextName + '/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateFilterList.html',
 							clickOutsideToClose : false,
 							preserveScope : true,
@@ -431,16 +417,6 @@
 		} ];
 
 		$scope.removeFilterFromSelected = function(item) {
-//			var index = null;
-//			for (var i = 0; i < $scope.selectedFilters.length; i++) {
-//
-//				if (item.property == $scope.selectedFilters[i].property)
-//					index = i;
-//			}
-//			if (index != null) {
-//				$scope.selectedFilters.splice(index, 1);
-//			}
-
 			var index= $scope.selectedDriverParamteres.indexOf(item);
 			if(index > -1){
 
@@ -454,7 +430,6 @@
 			sbiModule_restServices.promiseGet("restful-services/1.0/datasets",
 					label + "/fields").then(
 					function(response) {
-						//console.log(response.data);
 						angular.copy(response.data.results,
 								$scope.datasetFields);
 						$scope.loadMeasures();
@@ -495,8 +470,7 @@
 			 var layerId= $scope.selectedLayer[0].layerId;
 			sbiModule_restServices
 			.alterContextPath(sbiModule_config.externalBasePath);
-	       sbiModule_restServices.promiseGet("restful-services/layers",
-			"getFilter", "id="+layerId).then(
+	       sbiModule_restServices.promiseGet("restful-services/layers",	"getFilter", "id="+layerId).then(
 			function(response) {
 
 				$scope.layerProperties= response.data;
@@ -549,7 +523,6 @@
 		};
 
 		$scope.tableFunctionIndicator.addIndicator = function() {
-			//console.log($scope.tableFunctionIndicator.datasetMeasuresStore);
 			var newRow = {
 				indicatorName : '',
 				indicatorLabel : '',
@@ -584,7 +557,6 @@
 			};
 
 		$scope.tableFunctionDatasetFilters.addDatasetFilter = function() {
-			//console.log($scope.tableFunctionIndicator.datasetMeasuresStore);
 			var newRow = {
 				dsFilterName : '',
 				dsFilterLabel : '',
@@ -615,19 +587,10 @@
 			var template ={};
 			angular.copy($scope.template,template);
 
-//			if ($scope.mapName == undefined || $scope.mapName == '') {
-//				template.error = sbiModule_translate
-//						.load('gisengine.designer.tempate.noMapName');
-//				return template;
-//			} else {
-//				template.mapName = $scope.mapName;
-//			}
-
 			if ($scope.isDatasetChosen) {
 				// template building when dataset is selected
 				if ($scope.selectedLayer.length == 0) {
-					template.error = sbiModule_translate
-							.load('gisengine.designer.tempate.nolayer');
+					template.error = sbiModule_translate.load('gisengine.designer.tempate.nolayer');
 					return template;
 				} else {
 					// from interface no more than one layer can be selected
@@ -657,9 +620,8 @@
 							template.error = sbiModule_translate
 							.load('gisengine.designer.tempate.noJoinColumns');
 							return template;
-							}
 						}
-
+					}
 				}
 
 				if($scope.datasetIndicators.length==0){
@@ -727,7 +689,6 @@
 			}
 			template.visibilityControls= $scope.visibility;
 			template.crossNavigationMultiselect= $scope.crossOption.crossNavigationMultiselect;
-			console.log(template.visibilityControls);
 
 			return template;
 		}
@@ -737,7 +698,6 @@
 			if($scope.template.mapName){
 				$scope.mapName=$scope.template.mapName;
 			}
-			//initializeDatasetJoinColumns();
 			initializeIndicators();
 			initilizeDatasetFilters();
 			if(!$scope.tecnicalUser){
@@ -755,11 +715,11 @@
 		function initializeSelectedLayer(){
 	    	if($scope.isDatasetChosen){
 				if($scope.template.targetLayerConf){
-				for (var i = 0; i < $scope.layerCatalogs.length; i++) {
-					if($scope.layerCatalogs[i].name === $scope.template.targetLayerConf[0].label){
-						$scope.selectedLayer.push($scope.layerCatalogs[i]);
+					for (var i = 0; i < $scope.layerCatalogs.length; i++) {
+						if($scope.layerCatalogs[i].name === $scope.template.targetLayerConf[0].label){
+							$scope.selectedLayer.push($scope.layerCatalogs[i]);
+						}
 					}
-				}
 				}
 				initializeDatasetJoinColumns();
 
@@ -768,25 +728,25 @@
 					for (var i = 0; i < $scope.layerCatalogs.length; i++) {
 						for (var j = 0; j < $scope.template.targetLayerConf.length; j++) {
 
-
-						if($scope.layerCatalogs[i].name === $scope.template.targetLayerConf[j].label){
-							$scope.selectedLayer.push($scope.layerCatalogs[i]);
-						}
+							if($scope.layerCatalogs[i].name === $scope.template.targetLayerConf[j].label){
+								$scope.selectedLayer.push($scope.layerCatalogs[i]);
+							}
 						}
 					}
 					}
 			}
 	    }
+
 		function initializeDatasetJoinColumns(){
+
 			if($scope.template.datasetJoinColumns && $scope.template.layerJoinColumns ){
 				var dsJoinCols= $scope.template.datasetJoinColumns.split(',');
 				var layerJoinCols= $scope.template.layerJoinColumns.split(',');
 
-				 var layerId= $scope.selectedLayer[0].layerId;
-				sbiModule_restServices
-				.alterContextPath(sbiModule_config.externalBasePath);
-		       sbiModule_restServices.promiseGet("restful-services/layers",
-				"getFilter", "id="+layerId).then(
+                var layerId= $scope.selectedLayer[0].layerId;
+
+				sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath);
+		        sbiModule_restServices.promiseGet("restful-services/layers","getFilter", "id="+layerId).then(
 				function(response) {
 
 					$scope.layerProperties= response.data;
@@ -862,9 +822,6 @@
 		}
 
 
-
-		initializeFromTemplate();
-
 		$scope.cancelBuildTemplateAdmin=function(){
 			 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+sbiModule_config.adapterPath;
 			 url+= "?PAGE=detailBIObjectPage&MESSAGEDET=DETAIL_SELECT&LIGHT_NAVIGATOR_BACK_TO=1";
@@ -880,7 +837,15 @@
 
 
 		}
-	}
+
+		//loads sections...
+		if ($scope.tecnicalUser){
+			initializeFromTemplate()
+			$scope.loadLayers();
+		}else{
+			$scope.loadTemplate();
+		}
+	} //end of geoTemplateBuildController function
 
 
 
@@ -958,7 +923,6 @@
 				}
 			}
 
-			//console.log($scope.selectedDriverParamteres);
 			$mdDialog.cancel();
 		}
 
@@ -999,7 +963,6 @@
 		}
 
         $scope.saveNewMapDoc=function(){
-        	console.log("SAVE");
         	var d = new Date();
     		var docLabel = 'geomap_' + d.getTime()%10000000;
         	var template = $scope.buildTemplate();

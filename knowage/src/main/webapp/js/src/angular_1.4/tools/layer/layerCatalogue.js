@@ -12,7 +12,7 @@ var EmptyLayer = {
 		baseLayer : false,
 		layerLabel: "",
 		layerName: "",
-		layerId2: "",	
+		layerId2: "",
 		icon:"",
 		roles:[],
 
@@ -45,7 +45,7 @@ app.directive("fileread", [function () {
 
 function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_user,sbiModule_config) {
 	//variables
-	$scope.showFilters = sbiModule_user.functionalities.indexOf("SpatialFilter")>-1; 
+	$scope.showFilters = sbiModule_user.functionalities.indexOf("SpatialFilter")>-1;
 	$scope.showme=false;
 	$scope.pathFileCheck = false;
 	$scope.isRequired=true;
@@ -62,9 +62,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.forms = {};
 	$scope.selectedTab = 0;
 	$scope.typeWFS='geojson';
-//	$scope.fileMaxSize=20;
 	$scope.fileMaxSize=sbiModule_config.layerFileMaxSize;
-	 
+
 	$scope.tableFunction={
 
 			download: function(item,evt){
@@ -77,27 +76,18 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.loadLayer = function(){
 		$scope.flagtype=true;
 		$scope.selectedTab = 0;
-		sbiModule_restServices.get("layers", '').success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						console.log("layer non Ottenuti");
+		sbiModule_restServices.get("layers", '').then(
+				function(result) {
+					if (result.data.hasOwnProperty("errors")) {
+						console.log("Error loading layer");
+						$scope.showActionError(result.data.errors);
 					} else {
-						$scope.layerList = data.root;
-//						for(var i=0; i<$scope.layerList.length;i++){
-//							if($scope.layerList[i].type == "WFS" || $scope.layerList[i].type == "File" ){
-//								$scope.layerList[i].icon = '<md-button class="md-icon-button" ng-click="scopeFunctions.download(row,$event)" > <md-icon md-font-icon="fa fa-download" style=" margin-top: 6px ; color: #153E7E;"></md-icon> </md-button>';
-//							} else{
-//								$scope.layerList[i].icon = '';
-//							}
-//						}
-
+						$scope.layerList = result.data.root;
 					}
 
-				}).error(function(data, status, headers, config) {
-					console.log("layer non Ottenuti " + status);
-
+				},function(result) {
+					$scope.showActionError(result.data.errors);
 				})
-
 	}
 
 
@@ -120,24 +110,20 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.saveLayer = function(){
 
 		$scope.selectedLayer.roles = $scope.rolesItem;
-		/*if($scope.filter_set.length==0){
-			//load filter_set
-			$scope.loadFilterAdded();
-		}*/
 		$scope.selectedLayer.properties = $scope.filter_set;
-		
-		
+
+
 		if($scope.flag){
 
 			//case: modify layer
 			if($scope.selectedLayer.layerFile == undefined || $scope.selectedLayer.layerFile.file == null || $scope.selectedLayer.layerFile.file == undefined){ //.file added
 				//modify layer without upload file
-				sbiModule_restServices.put("layers", '', $scope.selectedLayer).success(
+				sbiModule_restServices.put("layers", '', $scope.selectedLayer).then(
 
-						function(data, status, headers, config) {
+						function(result) {
 
-							if (data.hasOwnProperty("errors")) {
-								$scope.showActionError();
+							if (result.data.hasOwnProperty("errors")) {
+								$scope.showActionError(result.data.errors);
 								$scope.closeForm();
 
 							} else {
@@ -145,13 +131,12 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 								$scope.loadLayer();
 								$scope.closeForm();
 								$scope.showActionOK();
-
 							}
 
-						}).error(function(data, status, headers, config) {
-							console.log("layer non Ottenuti " + status);
+						},function (result) {
+							console.log("Error on saving layer " + result.status);
 							$scope.loadLayer();
-							$scope.showActionError();
+							$scope.showActionError(result.data.errors);
 							$scope.closeForm();
 						})
 
@@ -161,12 +146,12 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				fd.append('data', angular.toJson($scope.selectedLayer));
 				fd.append('layerFile', $scope.selectedLayer.layerFile.file);
 
-				sbiModule_restServices.put("layers", 'updateData', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}}).success(
+				sbiModule_restServices.put("layers", 'updateData', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}}).then(
 
-						function(data, status, headers, config) {
-							if (data.hasOwnProperty("errors")) {
-								console.log("layer non Ottenuti");
-								$scope.showActionError();
+						function(result) {
+							if (result.data.hasOwnProperty("errors")) {
+								console.log("Error on saving layer " );
+								$scope.showActionError(result.data.errors);
 								$scope.closeForm();
 
 							} else {
@@ -177,9 +162,9 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 							}
 
-						}).error(function(data, status, headers, config) {
-							$scope.showActionError();
-							console.log("layer non Ottenuti " + status);
+						}, function(result) {
+							$scope.showActionError(result.data.errors);
+							console.log("Error on saving layer " + result.status);
 							$scope.loadLayer();
 							$scope.closeForm();
 
@@ -190,13 +175,12 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 			if($scope.selectedLayer.layerFile == undefined || $scope.selectedLayer.layerFile.file == null || $scope.selectedLayer.layerFile.file == undefined){
 				//add layer without upload file
-				sbiModule_restServices.post("layers",'',$scope.selectedLayer).success(
-						function(data, status, headers, config) {
+				sbiModule_restServices.post("layers",'',$scope.selectedLayer).then(
+						function(result) {
 
-							if (data.hasOwnProperty("errors")) {
-								console.log("layer non Ottenuti");
-								$scope.showActionError();
-
+							if (result.data.hasOwnProperty("errors")) {
+								console.log("Error on saving layer");
+								$scope.showActionError(result.data.errors);
 								$scope.closeForm();
 
 							} else {
@@ -207,9 +191,9 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 							}
 
-						}).error(function(data, status, headers, config) {
-							$scope.showActionError();
-							console.log("layer non Ottenuti " + status);
+						}, function(result) {
+							$scope.showActionError(result.data.errors);
+							console.log("Error on saving layer " + result.status);
 							$scope.loadLayer();
 							$scope.closeForm();
 						})
@@ -220,12 +204,12 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				fd.append('data', angular.toJson($scope.selectedLayer));
 				fd.append('layerFile', $scope.selectedLayer.layerFile.file); //file added
 				//add Layer with file
-				sbiModule_restServices.post("layers", 'addData', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}}).success(
+				sbiModule_restServices.post("layers", 'addData', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}}).then(
 
-						function(data, status, headers, config) {
-							if (data.hasOwnProperty("errors")) {
-								console.log("layer non Ottenuti");
-								$scope.showActionError();
+						function(result) {
+							if (result.data.hasOwnProperty("errors")) {
+								console.log("Error while adding layer");
+								$scope.showActionError(result.data.errors);
 								$scope.closeForm();
 
 							} else {
@@ -235,9 +219,9 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 								$scope.showActionOK();
 							}
 
-						}).error(function(data, status, headers, config) {
-							$scope.showActionError();
-							console.log("layer non Ottenuti " + status);
+						},function(result) {
+							$scope.showActionError(result.data.errors);
+							console.log("lError while adding layer " + result.status);
 							$scope.loadLayer();
 							$scope.closeForm();
 						})
@@ -248,7 +232,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	}
 
 	$scope.loadLayerList = function(item){
-		//function calls when you clic on the list of layers
+		//function calls when you click on the list of layers
 		$scope.showme=true;
 		$scope.setTab('Layer');
 		if(item==null){
@@ -261,7 +245,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		}
 
 		$scope.object_temp = angular.copy(item);
-		if(item!= null){		
+		if(item!= null){
 
 			$scope.flagtype=false;
 
@@ -287,7 +271,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 					$scope.flag=true;
 					$scope.loadRolesItem(item);
 					$scope.selectedLayer = angular.copy(item);
-
 
 					$scope.object_temp = angular.copy(item);
 
@@ -319,12 +302,12 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				.content(
 						sbiModule_translate
 						.load("sbi.layer.modify.progress.message.modify"))
-						.ariaLabel('Lucky day').ok(
+						.ariaLabel('Layer modify progress').ok(
 								sbiModule_translate.load("sbi.general.continue")).cancel(
 										sbiModule_translate.load("sbi.general.cancel"));
 
 				$mdDialog.show(confirm).then(function() {
-					$scope.cancel(true);		
+					$scope.cancel(true);
 
 				}, function() {
 
@@ -343,29 +326,28 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		//load filters for each layer
 		$scope.loadFilterAdded();
 
-		sbiModule_restServices.get("layers", 'getFilter',"id="+$scope.selectedLayer.layerId).success(
-				function(data, status, headers, config) {
+		sbiModule_restServices.get("layers", 'getFilter',"id="+$scope.selectedLayer.layerId).then(
+				function(result) {
 
-					if (data.hasOwnProperty("errors")) {
-						console.log("layer non Ottenuti");
+					if (result.data.hasOwnProperty("errors")) {
+						console.log("Filters don't loaded ");
+						$scope.showActionError(result.data.errors);
+						$scope.closeForm();
 					} else {
-						$scope.filter = data;
+						$scope.filter = result.data;
 
 						for(var i=0;i<$scope.filter_set.length;i++){
-							//if filer is selected 
+							//if filer is selected
 							var index = $scope.filterInList($scope.filter_set[i],$scope.filter);
 							//remove it from the list of all filters
 							if(index > -1){
 								$scope.filter.splice(index,1);
 							}
-
-
 						}
-
 					}
-
-				}).error(function(data, status, headers, config) {
-					console.log("layer non Ottenuti " + status);
+				},
+				function(result) {
+					console.log("Filters don't loaded " + status);
 
 				})
 	}
@@ -402,13 +384,14 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				})
 
 	}
+
 	$scope.cancel = function(notHide){
 		$scope.setTab('Layer');
 
 		if($scope.flag==true){
 			//there is a layer loaded in the form
 			$scope.isRequired=false;
-		
+
 			$scope.rolesItem=$scope.loadRolesItem($scope.selectedLayer);
 			$scope.filter_set = [];
 			if($scope.selectedLayer.properties!=null){
@@ -416,7 +399,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				var prop = $scope.selectedLayer.properties[i];
 				var obj={"property":prop};
 				$scope.filter_set.push(obj );
-			
+
 			}}
 			$scope.selectedLayer = angular.copy({});
 
@@ -436,7 +419,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		if(notHide!=true){
 			$scope.showme=false;
 		}
-		
+
 	}
 
 	$scope.menuLayer= [{
@@ -447,7 +430,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		}
 	},{
 		label : sbiModule_translate.load('sbi.generic.delete'),
-		 icon:'fa fa-trash' ,	 
+		 icon:'fa fa-trash' ,
 
 		action : function(item,event) {
 			$scope.selectedLayer = item;
@@ -458,12 +441,12 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			.content(
 					sbiModule_translate
 					.load("sbi.layer.modify.progress.message.modify"))
-					.ariaLabel('Lucky day').ok(
+					.ariaLabel('Layer modify').ok(
 							sbiModule_translate.load("sbi.general.continue")).cancel(
 									sbiModule_translate.load("sbi.general.cancel"));
 
 			$mdDialog.show(confirm).then(function() {
-				$scope.deleteLayer();	
+				$scope.deleteLayer();
 
 			}, function() {
 				console.log('Annulla');
@@ -471,25 +454,33 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 
 		}
-	}];	
+	}];
 
 	$scope.deleteLayer = function(){
 
-		sbiModule_restServices.remove("layers", 'deleteLayer',"id="+$scope.selectedLayer.layerId).success(
+		sbiModule_restServices.remove("layers", 'deleteLayer',"id="+$scope.selectedLayer.layerId).then(
 
-				function(data, status, headers, config) {
+				function(result) {
+					if (result.data.hasOwnProperty("errors")) {
+						if(result.data.errors!=undefined)
+						{
+							$scope.showActionError(result.data.errors);
+						}
 
-					if (data.hasOwnProperty("errors")) {
-						console.log("layer non Ottenuti");
 					} else {
 						$scope.loadLayer();
 						$scope.closeForm();
 						$scope.showActionDelete();
 					}
 
-				}).error(function(data, status, headers, config) {
-					console.log("layer non Ottenuti " + status);
+				}, function(result) {
+					if (result.data.hasOwnProperty("errors")) {
+						if(result.data.errors!=undefined)
+						{
+							$scope.showActionError(data.errors);
+						}
 
+					}
 				})
 				$scope.cancel();
 
@@ -553,9 +544,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	};
 
 	$scope.exists = function (item, list) {
-if(list==undefined)return false;
-		return  $scope.indexInList(item, list)>-1;
-
+		if(list==undefined)return false;
+			return  $scope.indexInList(item, list)>-1;
 	};
 
 	$scope.indexInList=function(item, list) {
@@ -569,6 +559,7 @@ if(list==undefined)return false;
 
 		return -1;
 	};
+
 	$scope.filterInList=function(item, list) {
 
 		for (var i = 0; i < list.length; i++) {
@@ -582,59 +573,37 @@ if(list==undefined)return false;
 	};
 
 
-	$scope.showActionOK = function() {
-//		var toast = $mdToast.simple()
-//		.content(sbiModule_translate.load("sbi.layercatalogue.save"))
-//		.action('OK')
-//		.highlightAction(false)
-//		.hideDelay(3000)
-//		.position('top')
-//
-//		$mdToast.show(toast).then(function(response) {
-//			if ( response == 'ok' ) {
-//			}
-//		});
-		
-		sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.layercatalogue.save"),"");
-		
-		
+	$scope.showActionOK = function(msg) {
+		if (msg === undefined || msg === "") msg = sbiModule_translate.load("sbi.layercatalogue.save");
+		sbiModule_messaging.showInfoMessage(msg,"");
 	};
 
-	$scope.showActionError = function() {
-//		var toast = $mdToast.simple()
-//		.content(sbiModule_translate.load("sbi.layercatalogue.problem"))
-//		.action('OK')
-//		.highlightAction(false)
-//		.hideDelay(3000)
-//		.position('top')
-//
-//		$mdToast.show(toast).then(function(response) {
-//			if ( response == 'ok' ) {
-//			}
-//		});
-		
-		
-		sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.layercatalogue.problem"),"");
-		
-		
+	$scope.showActionError = function(val) {
+
+		var msg = sbiModule_translate.load("sbi.layercatalogue.problem");
+		if (val !== undefined) {
+			if (typeof val === 'string' && val !== ""){
+				msg = val;
+			}else{
+				msg = "";
+				for(var i=0;i < val.length;i++)
+				{
+					msg = msg + " , " + val[i].message;
+				}
+				if(msg.length>=3){
+					msg=msg.substring(3);
+				}
+			}
+		}
+		//shows the final message
+		sbiModule_messaging.showErrorMessage(msg,"");
 	};
 
-	$scope.showActionDelete = function() {
-//		var toast = $mdToast.simple()
-//		.content('Layer Deleted')
-//		.action('OK')
-//		.highlightAction(false)
-//		.hideDelay(3000)
-//		.position('top')
-//
-//		$mdToast.show(toast).then(function(response) {
-//			if ( response == 'ok' ) {
-//			}
-//		});
-		
-		sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.layer.deleted"),"");
-		
-		
+	$scope.showActionDelete = function(msg) {
+		if (msg === undefined || msg === "") msg = sbiModule_translate.load("sbi.layer.deleted");
+		sbiModule_messaging.showInfoMessage(msg,"");
+
+
 	};
 	$scope.demo = {
 			showTooltip : false,
@@ -660,47 +629,37 @@ if(list==undefined)return false;
 	}
 	$scope.getDownload=function(item){
 
-		sbiModule_restServices.get("layers","getDownload","id="+item.layerId+",typeWFS="+$scope.typeWFS).success(
-				function(data, status, headers, config) {
-					if (data == null) {
+		sbiModule_restServices.get("layers","getDownload","id="+item.layerId+",typeWFS="+$scope.typeWFS).then(
+				function(result) {
+					if (result.data == null) {
 						$scope.showAction($scope.translate.load("sbi.layercatalogue.errorretrylayer"));
-						console.log("layer non Ottenuti");
+						console.log($scope.translate.load("sbi.layercatalogue.errorretrylayer"));
 					} else {
-						var text ;						
+						var text ;
 
 						if($scope.typeWFS == 'geojson'){
-							$scope.download.getPlain(JSON.stringify(data), item.label, 'text/json', 'json');
+							$scope.download.getPlain(JSON.stringify(result.data), item.label, 'text/json', 'json');
 						} else if($scope.typeWFS == 'kml' || $scope.typeWFS == 'shp'){
 							$scope.download.getLink(data.url);
 						}
 						$scope.closeFilter();
 					}
-				}).error(function(data, status, headers, config) {
-					console.log("layer non Ottenuti " + status);
+				}, function(result) {
+					console.log($scope.translate.load("sbi.layercatalogue.errorretrylayer") + result.status);
 					$scope.showAction($scope.translate.load("sbi.layercatalogue.errorretrylayer"));
 				});
 
 
 	}
 	$scope.showAction = function(text) {
-//		var toast = $mdToast.simple()
-//		.content(text)
-//		.action('OK')
-//		.highlightAction(false)
-//		.hideDelay(5000)
-//		.position('top')
-//
-//		$mdToast.show(toast).then(function(response) {
-//			if ( response == 'ok' ) {
-//			}
-//		});
 		sbiModule_messaging.showInfoMessage(text,"");
 	}
+
 	$scope.showDetails = function(item){
-		$scope.selectedLayer=item;	
+		$scope.selectedLayer=item;
 
 		if(item.type=='WFS'){
-			$scope.isWFS=true; 
+			$scope.isWFS=true;
 		} else{
 			$scope.isWFS=false;
 			$scope.typeWFS='geojson';
@@ -770,7 +729,11 @@ if(list==undefined)return false;
 
 	$scope.setTab = function(Tab){
 		$scope.selectedTab = Tab;
+		if(Tab == 'Filter'){
+			$scope.loadFilter();
+		}
 	}
+
 	$scope.isSelectedTab = function(Tab){
 		return (Tab == $scope.selectedTab) ;
 	}

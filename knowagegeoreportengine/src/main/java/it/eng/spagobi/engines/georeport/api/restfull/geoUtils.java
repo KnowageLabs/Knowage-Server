@@ -17,17 +17,6 @@
  */
 package it.eng.spagobi.engines.georeport.api.restfull;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.engines.georeport.utils.LayerCache;
-import it.eng.spagobi.engines.georeport.utils.Monitor;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
-import it.eng.spagobi.user.UserProfileManager;
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,6 +34,17 @@ import org.json.JSONObject;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.engines.georeport.utils.LayerCache;
+import it.eng.spagobi.engines.georeport.utils.Monitor;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 public class geoUtils {
 	public static final String COLUMNLIST = "COLUMNLIST";
@@ -103,14 +103,43 @@ public class geoUtils {
 
 			if (outputFeatureCollection == null) {
 				logger.debug("Layer [" + FEATURE_SOURCE_TYPE + "] is not in cache");
+				GeoLayer geoLayer = null;
 				try {
-					Monitor.start("GetTargetLayerAction.getFeature");
 					// load layer from catalogue
+					Monitor.start("GetTargetLayerAction.getLayer");
+
 					ISbiGeoLayersDAO geoLayersDAO = DAOFactory.getSbiGeoLayerDao();
 					geoLayersDAO.setUserProfile(UserProfileManager.getProfile());
-					GeoLayer geoLayer = geoLayersDAO.loadLayerByLabel(layerName);
-					// TODO check if geolayer is not null
+					geoLayer = geoLayersDAO.loadLayerByLabel(layerName);
+					logger.debug("GetTargetLayerAction.getLayer " + Monitor.elapsed("GetTargetLayerAction.getLayer"));
+				} catch (Throwable t) {
+					logger.error("Impossible to load layer [" + layerName + "] from catalogue ", t);
 
+					Throwable root = t;
+					while (root.getCause() != null)
+						root = root.getCause();
+
+					String message = "Impossible to load layer [" + layerName + "] from catalogue " + root.getMessage();
+
+					JSONObject resObj = new JSONObject();
+					resObj.put("status", "non ok");
+					resObj.put("errors", message);
+					return resObj.toString();
+				}
+				if (geoLayer == null) {
+					logger.error("Layer [" + layerName + "] not found into the catalogue ");
+
+					String message = "Layer [" + layerName + "] not found into the catalogue";
+
+					JSONObject resObj = new JSONObject();
+					resObj.put("status", "non ok");
+					resObj.put("errors", message);
+					return resObj.toString();
+				}
+
+				try {
+					// load targetLayer features with geoTools
+					Monitor.start("GetTargetLayerAction.getFeatures");
 					JSONObject layerDef = new JSONObject(new String(geoLayer.getLayerDef()));
 					String source = geoLayer.getType().equals("File") ? geoLayer.getPathFile() : layerDef.getString("layer_url");
 
@@ -120,29 +149,28 @@ public class geoUtils {
 						outputFeatureCollection = DAOFactory.getFeaturesProviderWFSDAO().getAllFeatures(source);
 					}
 					Assert.assertNotNull(outputFeatureCollection, "The feature source returned a null object");
-					logger.debug("GetTargetLayerAction.getFeature " + Monitor.elapsed("GetTargetLayerAction.getFeature"));
+					logger.debug("GetTargetLayerAction.getFeature " + Monitor.elapsed("GetTargetLayerAction.getFeatures"));
 
 					LayerCache.cache.put(layerName, outputFeatureCollection);
 				} catch (Throwable t2) {
-					logger.error("Impossible to load layer [" + layerName + "] " + "from source of type [] " + "whose endpoint is [ ]", t2);
+					logger.error("Impossible to load features from layer [" + layerName + "]. Check the file syntax.", t2);
 
 					Throwable root = t2;
 					while (root.getCause() != null)
 						root = root.getCause();
 
-					String message = "Impossible to load layer [" + layerName + "] " + "from source of type [ ] " + "whose endpoint is [ ]: "
-							+ root.getMessage();
+					String message = "Impossible to load features from layer [" + layerName + "].  Check the file syntax. ";
 
-					// servletIOManager.writeBackToClient(500, message,
-					// true ,"service-response", "text/plain");
 					JSONObject resObj = new JSONObject();
 					resObj.put("status", "non ok");
 					resObj.put("errors", message);
 					return resObj.toString();
 				}
+
 			} else {
 				logger.debug("Layer [" + FEATURE_SOURCE_TYPE + "] is in cache");
 			}
+
 			List<SimpleFeature> list = new ArrayList<SimpleFeature>();
 			if (noDataset) {
 				FeatureIterator it = outputFeatureCollection.features();

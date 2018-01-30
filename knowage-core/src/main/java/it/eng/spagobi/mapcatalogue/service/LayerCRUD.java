@@ -18,20 +18,6 @@
 
 package it.eng.spagobi.mapcatalogue.service;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
-import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONDeserializer;
-import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONSerializer;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -61,6 +47,20 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
+import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONDeserializer;
+import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONSerializer;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @ManageAuthorization
 @Path("/layers")
@@ -123,9 +123,15 @@ public class LayerCRUD {
 		}
 
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
-		ArrayList<String> properties = dao.getProperties(layerId);
+		ArrayList<String> properties = null;
+		try {
+			properties = dao.getProperties(layerId);
+		} catch (Exception e2) {
+			logger.error("Error loading the properties for the layer with id " + id, e2);
+			throw new SpagoBIRuntimeException(
+					"Error loading the properties for the layer with id [" + id + "]. Please check the layer configuration or the file content.", e2);
+		}
 		ArrayList<JSONObject> prop = new ArrayList<>();
-
 		for (int i = 0; i < properties.size(); i++) {
 			JSONObject obj = new JSONObject();
 			obj.put("property", properties.get(i));
@@ -304,7 +310,7 @@ public class LayerCRUD {
 			dao.eraseLayer(layerId);
 		} catch (EMFUserError e) {
 			logger.error("Error delationg the ayer with id " + id, e);
-			throw new SpagoBIRuntimeException("Error delationg the ayer with id " + id, e);
+			throw new SpagoBIRuntimeException("Error delationg the layer with id " + id, e);
 		}
 		return "{}";
 	}
@@ -352,11 +358,8 @@ public class LayerCRUD {
 
 		try {
 
-
 			String dataJSON = input.getTextParameterValues("data")[0];
 			requestBodyJSON = new JSONObject(dataJSON);
-
-
 
 			GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
 			ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
@@ -376,7 +379,6 @@ public class LayerCRUD {
 			logger.error("Error reading the body from the request", e);
 			throw new SpagoBIRuntimeException("Error reading the body from the request", e);
 		}
-
 
 	}
 
@@ -417,15 +419,11 @@ public class LayerCRUD {
 
 		try {
 
-
 			String dataJSON = input.getTextParameterValues("data")[0];
 			requestBodyJSON = new JSONObject(dataJSON);
 
-
-
 			GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
 			ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
-
 
 			final FormFile file = input.getFormFileParameterValues("layerFile")[0];
 			byte[] data = file.getContent();
@@ -439,13 +437,10 @@ public class LayerCRUD {
 			logger.debug("Layer saved: layer label " + aLayer.getLabel());
 			return "{}";
 
-
 		} catch (EMFUserError | IOException | JSONException e) {
 			logger.error("Error reading the body from the request", e);
 			throw new SpagoBIRuntimeException("Error reading the body from the request", e);
 		}
-
-
 
 	}
 
@@ -547,8 +542,8 @@ public class LayerCRUD {
 	@POST
 	@Path("/getLayerFromList")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getLayerFromList(@Context HttpServletRequest req) throws JSONException, EMFUserError, JsonGenerationException, JsonMappingException,
-			IOException {
+	public String getLayerFromList(@Context HttpServletRequest req)
+			throws JSONException, EMFUserError, JsonGenerationException, JsonMappingException, IOException {
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		// TODO check if profile is null
