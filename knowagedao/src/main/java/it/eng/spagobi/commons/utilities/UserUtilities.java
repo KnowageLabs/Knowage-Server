@@ -217,6 +217,7 @@ public class UserUtilities {
 					user.setFunctions(readFunctionality(user));
 
 					profile = new UserProfile(user);
+
 				}
 
 				if (profile != null) {
@@ -228,6 +229,7 @@ public class UserUtilities {
 					// put profile in cache
 					cache.put(userId, profile);
 				}
+				logger.error("profile from get profile" + profile);
 
 				return profile;
 
