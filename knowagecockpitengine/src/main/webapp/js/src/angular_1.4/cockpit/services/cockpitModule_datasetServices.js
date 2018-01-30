@@ -821,7 +821,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					obj["id"] = col.name;
 					obj["alias"] = ngModel.type == "table" ? col.aliasToShow : col.alias;
 					obj["funct"] = col.funcSummary == undefined? "" : col.funcSummary;
-					obj["columnName"] = ngModel.type == "table" ? col.aliasToShow : col.alias;
+					obj["columnName"] = ngModel.type == "table" ? col.name : col.alias;
 
 					measures.push(obj);
 				}
