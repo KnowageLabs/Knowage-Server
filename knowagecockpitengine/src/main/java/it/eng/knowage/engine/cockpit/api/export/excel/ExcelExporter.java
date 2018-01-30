@@ -48,6 +48,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.utils.ParamDefaultValue;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -191,7 +192,7 @@ public class ExcelExporter {
 
 			JSONObject parameters = datasetObj.getJSONObject("parameters");
 			logger.debug("parameters = " + parameters);
-			body.put("parameters", parameters);
+			body.put("parameters", getReplacedParameters(parameters, datasetId));
 
 			JSONObject aggregations = getAggregationsFromDataset(dataset);
 			logger.debug("aggregations = " + aggregations);
@@ -475,31 +476,56 @@ public class ExcelExporter {
 		JSONObject dataset = getDatasetFromWidget(widget, configuration);
 		JSONObject parameters = dataset.getJSONObject("parameters");
 
-		Iterator<String> keys = parameters.keys();
+		Integer datasetId = dataset.getInt("dsId");
+		return getReplacedParameters(parameters, datasetId);
+	}
+
+	private JSONObject getReplacedParameters(JSONObject parameters, Integer datasetId) throws JSONException {
+		JSONObject newParameters = new JSONObject(parameters.toString());
+		Iterator<String> keys = newParameters.keys();
 		while (keys.hasNext()) {
 			String parameter = keys.next();
-			String value = parameters.getString(parameter);
-			String parameterRegex = "\\$P\\{" + parameter + "\\}";
-			if (value.matches(parameterRegex)) {
-				String[] parameterArray = parameterMap.get(parameter);
+			String value = newParameters.getString(parameter);
+			String parameterRegex = "\\$P\\{(.*)\\}";
+			Matcher parameterMatcher = Pattern.compile(parameterRegex).matcher(value);
+			if (parameterMatcher.matches()) {
+				String newValue = "";
+				String parameterName = parameterMatcher.group(1);
+				String[] parameterArray = parameterMap.get(parameterName);
 				if (parameterArray != null && parameterArray.length > 0) {
 					String parameterValue = parameterArray[0];
 					String multiValueRegex = "\\{;\\{(.*)\\}(.*)\\}";
-					Pattern pattern = Pattern.compile(multiValueRegex);
-					Matcher matcher = pattern.matcher(parameterValue);
-					if (matcher.matches()) {
-						String[] split = matcher.group(1).split(";");
+					Matcher multiValueMatcher = Pattern.compile(multiValueRegex).matcher(parameterValue);
+					if (multiValueMatcher.matches()) {
+						String[] split = multiValueMatcher.group(1).split(";");
 						parameterValue = "'" + StringUtils.join(split, "','") + "'";
 					}
-					value = value.replaceAll(parameterRegex, parameterValue);
-					parameters.put(parameter, value);
+					newValue = value.replaceAll(parameterRegex, parameterValue);
 				} else {
-					parameters.put(parameter, "");
+					if (datasetId != null) {
+						newValue = getParameterDefaultValue(datasetId, parameter);
+					}
 				}
+				newParameters.put(parameter, newValue);
 			}
 		}
+		return newParameters;
+	}
 
-		return parameters;
+	private String getParameterDefaultValue(int datasetId, String parameter) {
+		String newValue = null;
+		try {
+			IDataSet iDataSet = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
+			if (iDataSet != null) {
+				ParamDefaultValue paramDefaultValue = (ParamDefaultValue) iDataSet.getDefaultValues().get(parameter);
+				if (paramDefaultValue != null) {
+					newValue = paramDefaultValue.getDefaultValue();
+				}
+			}
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("Error while retrieving dataset with id [" + datasetId + "]", e);
+		}
+		return newValue;
 	}
 
 	private JSONObject getSummaryRowFromTableWidget(JSONObject widget) throws JSONException {
