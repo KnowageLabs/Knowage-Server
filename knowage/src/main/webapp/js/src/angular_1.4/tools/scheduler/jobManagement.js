@@ -975,7 +975,8 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							labelId: docs[i].id + "__" + (i+1),
 							id: docs[i].id,
 							label: docs[i].name,
-							parameters: docs[i].parameters
+							parameters: docs[i].parameters,
+							engine: docs[i].engine
 						};
 						activityEventCtrl.JobDocuments.push(doc);
 					}
@@ -1003,6 +1004,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						tmp.parameters = doc.parameters;
 						tmp.labelId = doc.labelId;
 						tmp.id = doc.id;
+						tmp.engine = doc.engine;
 						emptyEvent.documents.push(tmp);
 					}
 
@@ -1180,19 +1182,20 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						}
 					}
 
-					var atLeastOneAction = false;
+					var definedActionCount = 0;
 					for(var i in cloneData.documents){
 						var doc = cloneData.documents[i];
-						if(doc.saveassnapshot
-								|| doc.saveasfile
-								|| doc.saveasdocument
-								|| doc.sendtojavaclass
-								|| doc.sendmail){
-							atLeastOneAction = true;
-							break;
+						if(doc.engine == "knowagetalendengine"){
+							definedActionCount++;
+						}else if(doc.saveassnapshot
+									|| doc.saveasfile
+									|| doc.saveasdocument
+									|| doc.sendtojavaclass
+									|| doc.sendmail){
+							definedActionCount++;
 						}
 					}
-					if(!atLeastOneAction){
+					if(definedActionCount < cloneData.documents.length){
 						ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.documents.atLeastAnAction", "component_scheduler_messages"));
 						return false;
 					}

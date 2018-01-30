@@ -1221,6 +1221,9 @@ public class SchedulerUtilitiesV2 {
 			docum.put("label", b.getLabel());
 			docum.put("name", b.getName());
 			docum.put("description", b.getDescription());
+			if (b.getEngine() != null) {
+				docum.put("engine", b.getEngine().getLabel());
+			}
 
 			List<BIObjectParameter> param = b.getBiObjectParameters();
 			JSONArray pararr = new JSONArray();
