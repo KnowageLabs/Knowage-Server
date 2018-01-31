@@ -118,7 +118,7 @@
 								<!-- physical column name -->
 							</md-input-container>
 						<!-- edit temporal hierarchy button -->
-							<md-button class="md-icon-button" ng-if="getPropertyAttributes(prop).value=='temporal dimension' || getPropertyAttributes(prop).value=='temporal dimension'" ng-click="editTemporalHierarchy()">
+							<md-button class="md-icon-button" ng-if="getPropertyAttributes(prop).value=='temporal dimension' || getPropertyAttributes(prop).value=='time dimension'" ng-click="editTemporalHierarchy()">
 								<md-tooltip>{{translate.load('sbi.meta.manage.temporal.hierarchy')}}</md-tooltip>
 								<md-icon md-font-icon=" fa fa-sitemap" ></md-icon>
 							</md-button>
