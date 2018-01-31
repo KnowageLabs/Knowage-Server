@@ -29,7 +29,8 @@
     
     
     cockpit-grid {
-    	width: calc( #{$cockpitWidth} - #{$menuBarWidth} );
+    	//width: calc( #{$cockpitWidth} - 20px - #{$menuBarWidth} );
+    	//margin: 0 auto;
     }
 
 	cockpit-widget{
@@ -379,17 +380,15 @@
 	}
 	
     .openSheetMenuIconButton{
-    	position: absolute;
 	    color: black;
 	    margin: 0;
 	    padding: 0;
-	    top: 8px;
 	    width: 24px;
 	    height: 24px;
 	    min-height: 24px;
     	&:hover{
     	    background-color: rgba(158,158,158,0.2)!important;
-    		}
+		}
     }
     
     .overlayGray {
@@ -582,17 +581,21 @@
         transition: 0.9s linear all;
         opacity: 1;
     }
+    cockpit-grid {
+    	overflow-y: auto;
+    	overflow-y: overlay;
+    }
 
     .gridster {
 		&.gridster-mobile{
 			width: calc(100% - 20px);
 		}
 		&.cockpitEditMode{
-			background-size:30px 30px;
+			background-size:100% 30px;
 			min-height: 100% !important;
-			border: $cockpitDefaultBorder;
+			background-position: 0 0;
 			background-color: white;
-			background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 30px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 30px);
+			background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 30px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 2%);
 			.showActionButtonHandler {
 				opacity: .4 !important;
 			}
@@ -936,11 +939,11 @@
 
 	md-tabs.cockpitSheetTabs>md-tabs-wrapper{
 		margin-left: 50px;
-		width: calc(100% - 50px);
 	}
 	
 	.md-button.addSheetTabButton{
 	    bottom: 0;
+	    margin-bottom: 1px;
     	position: absolute;
     	min-width: 40px;
     	z-index: 9;
@@ -1572,7 +1575,7 @@
 		md-tabs-content-wrapper {
 			bottom: 0;
 			md-tab-content{
-				overflow-x: auto;
+				overflow:hidden;
 			}
 		}
 		md-ink-bar {
@@ -1582,12 +1585,25 @@
 			background-color: #f0f0f0;
 		} 
 		md-tabs {
+			&:not(.cockpitSheetTabs) {
+				md-pagination-wrapper {
+					margin-left: 8px;
+				}
+			}
 			background-color: transparent;
 			md-tab-item {
-				background-color: #f0f0f0;
-			    border-radius: 4px;
-			    padding: 8px 30px 8px 15px;
-			    top: 4px;
+				.md-menu {
+					padding: 0;
+				}
+			    display: inline-flex;
+			    min-width: 100px;
+			    justify-content: space-around;
+			    align-items: center;
+				background-color: $lightTextColor;
+				border: 1px solid $ternaryColor;
+			    border-radius: 2px;
+			    padding: 4px 8px;
+			    top: 12px;
 			    overflow: hidden;
 			    &.md-active {
 			    	background-color: $baseColor;
@@ -1819,26 +1835,5 @@
 	.md-fab.md-mini {
 		top:10px;
 	}	
-}
-
-@media all and (max-width: 1879px) {
-	.kn-cockpit {
-		.md-button.addSheetTabButton {
-			bottom:15px;
-		}
-		md-tabs.cockpitSheetTabs>md-tabs-wrapper {
-			margin-bottom: 15px;
-		}
-		.cockpitSheetTabsHook {
-	    	md-tabs-canvas {
-	    		bottom:15px;
-		    }
-		}
-		.cockpitSheetTabs{
-			md-tabs-canvas {
-	    		bottom:0;
-		    }
-		}
-	}
 }
 

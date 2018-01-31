@@ -1,9 +1,4 @@
 .kn-functionsCatalog {
-	md-input-container.md-knowage-theme {
-		.md-errors-spacer {
-			min-height: 24px;
-		}
-	}
 	.customLabel {
 	    font-size: $smallFontSize;
     	color: $secondaryColor;
@@ -18,13 +13,9 @@
 	    transition: -webkit-transform cubic-bezier(.25,.8,.25,1) .4s,width cubic-bezier(.25,.8,.25,1) .4s !important;
 	    transition: transform cubic-bezier(.25,.8,.25,1) .4s,width cubic-bezier(.25,.8,.25,1) .4s !important;
 	}
-	.functionsChipsContainer {
-		min-height: 40px;
-		.functionsChips {
-			border-bottom: none;
-			md-chips-wrap {
-				box-shadow: none;
-			}
+	md-chips {
+		md-chips-wrap {
+			margin-bottom: 20px;
 		}
 	}
 	.kn-detail-content {

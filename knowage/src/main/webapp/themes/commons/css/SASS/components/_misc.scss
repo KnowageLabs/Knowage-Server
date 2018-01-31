@@ -82,6 +82,16 @@ md-toolbar.ternaryToolbar.md-knowage-theme {
 }
 
 md-input-container.md-knowage-theme {
+  .hint {
+    position: absolute;
+    left: 2px;
+    right: auto;
+    bottom: 7px;
+    font-size: $smallFontSize;
+    line-height: $headerFontSize;
+    transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+    color: $smallTextColor;
+  }
   +label {
       padding: 0;
       line-height: $inputHeight;
@@ -143,9 +153,6 @@ md-toolbar.md-knowage-theme .md-toolbar-tools .md-button:not[disabled] {
 md-input-container.md-knowage-theme {
   &.noMarginBottom{
     margin-bottom: 0;
-  }
-  .md-errors-spacer {
-    min-height: 0;
   }
   &:not(.md-input-invalid) {
     &.md-input-focused {
