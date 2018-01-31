@@ -52,14 +52,14 @@
 				</div>
 			</expander-box>
 			
-			<expander-box layout="column" id="categoryLayer" color="black"    toolbar-class="ternaryToolbar"  border-color="rgb(204, 204, 204)" expanded='true' title='CatKey'  ng-repeat="(CatKey,CatVal) in layers">
+			<expander-box layout="column" id="categoryLayer" color="black"    toolbar-class="ternaryToolbar"  border-color="rgb(204, 204, 204)" expanded='true' title='{{CatKey}}'  ng-repeat="(CatKey,CatVal) in layers">
 				<div  layout="row" ng-repeat="(key,val) in CatVal" layout-align="start center">
 					<md-checkbox ng-checked="geoModule_layerServices.layerIsLoaded(val)" ng-click="toggleLayer(val)" class="md-primary" >
 						{{val.label}}
 					</md-checkbox>
 					<div flex></div>
-					<md-button class="md-icon-button" style="margin-top:-5px" ng-click="selectFilters($event,val)" ng-switch on="filterOFF(val)">
-						<md-icon md-font-icon="fa fa-filter"  ng-switch-when="false" aria-label="Close dialog"></md-icon>
+					<md-button class="md-icon-button" style="margin-top:-5px" ng-click="selectFilters($event,val)" ng-switch on="filterOFF(val)" ng-if="val.properties.length>0">
+						<md-icon md-font-icon="fa fa-filter" ng-switch-when="false" aria-label="Close dialog"></md-icon>
 						<md-icon md-font-icon="fa fa-filter" ng-switch-when="true" style="color:red"  aria-label="Close dialog"></md-icon>
 					</md-button>
 				</div>
@@ -69,7 +69,7 @@
 		<expander-box id="baseLayer" layout="column" ng-show="visibility.showBaseLayer" local-scope="layerLocalScope"  expanded='true' title='{{::translate.load("gisengine.geoLayer.catalogue.tableColumn.baseLayer")}}'> 
 			
 			<md-radio-group ng-model="geoModule_layerServices.selectedBaseLayerOBJ">
-				<expander-box id="catBaseLayer" layout="column" color="black" toolbar-class="ternaryToolbar" border-color="rgb(204, 204, 204)"  expanded='true' title='CatKey'  ng-repeat="(CatKey,CatVal) in baseLayers">
+				<expander-box id="catBaseLayer" layout="column" color="black" toolbar-class="ternaryToolbar" border-color="rgb(204, 204, 204)"  expanded='true' title='{{CatKey}}'  ng-repeat="(CatKey,CatVal) in baseLayers">
 					<md-radio-button ng-repeat="(key,val) in CatVal"   ng-click="showBaseLayer(val)"  class="md-primary" ng-value="val"  >
 		     	 		{{val.label}}
 		         	</md-radio-button>

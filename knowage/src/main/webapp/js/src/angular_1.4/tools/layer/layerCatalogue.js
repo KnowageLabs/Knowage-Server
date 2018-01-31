@@ -221,7 +221,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 						},function(result) {
 							$scope.showActionError(result.data.errors);
-							console.log("lError while adding layer " + result.status);
+							console.log("Error while adding layer " + result.status);
 							$scope.loadLayer();
 							$scope.closeForm();
 						})
@@ -257,7 +257,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				.content(
 						sbiModule_translate
 						.load("sbi.layer.modify.progress.message.modify"))
-						.ariaLabel('Lucky day').ok(
+						.ariaLabel('Modify message').ok(
 								sbiModule_translate.load("sbi.general.continue")).cancel(
 										sbiModule_translate.load("sbi.general.cancel"));
 

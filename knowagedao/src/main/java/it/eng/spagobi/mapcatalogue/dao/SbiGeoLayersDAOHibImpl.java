@@ -17,20 +17,6 @@
  */
 package it.eng.spagobi.mapcatalogue.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.ICriterion;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -66,6 +52,20 @@ import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.ICriterion;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
 
@@ -523,6 +523,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	@Override
 	public ArrayList<String> getProperties(int layerId) {
 		Session tmpSession = null;
+		InputStream inputstream = null;
 		ArrayList<String> keys = new ArrayList<String>();
 		try {
 			tmpSession = getSession();
@@ -543,7 +544,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				}
 				File doc = new File(aLayer.getPathFile());
 				URL path = doc.toURI().toURL();
-				InputStream inputstream = path.openStream();
+				inputstream = path.openStream();
 				BufferedReader br = new BufferedReader(new InputStreamReader(inputstream));
 				String c;
 				JSONArray content = new JSONArray();
@@ -558,12 +559,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 							Iterator<String> it = obj.keys();
 							while (it.hasNext()) {
 								String key = it.next();
-								// if (obj.get(key).getClass().equals(key.getClass())) {
 								if (!keys.contains(key)) {
 									keys.add(key);
 								}
 							}
-							// }
 						}
 					}
 
@@ -615,21 +614,12 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					// Install the all-trusting host verifier
 					HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
 				} catch (Exception e) {
+					throw new IllegalArgumentException("Error during loading properties : " + e.getLocalizedMessage(), e);
 				}
 
 				// Now you can access an https URL without having the certificate in the truststore
 				URL url = new URL(urlDescribeFeature);
 				URLConnection connection = url.openConnection();
-				//
-				// connection.setRequestMethod("GET");
-				// connection.setDoOutput(true);
-				// connection.setDoInput(true);
-				// connection.setRequestProperty("CetRequestProperty(ontent-Type", "application/json");
-				// connection.setRequestProperty("Accept", "application/json");
-				// connection.connect();
-				//
-				// int HttpResult = connection.getResponseCode();
-				// if (HttpResult == HttpURLConnection.HTTP_OK) {
 
 				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
 				String inputLine;
@@ -649,17 +639,22 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					}
 				}
 				br.close();
-				// connection.disconnect();
-				// } else {
-				// System.out.println(connection.getResponseMessage());
-				// }
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new IllegalArgumentException("Error during loading properties : " + e.getLocalizedMessage(), e);
 		} finally {
 			if (tmpSession != null) {
 				if (tmpSession.isOpen())
 					tmpSession.close();
+			}
+			if (inputstream != null) {
+				try {
+					inputstream.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new SpagoBIRuntimeException("Cannot close file input stream", e);
+				}
 			}
 		}
 		return keys;
@@ -701,11 +696,12 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				String resourcePath = SpagoBIUtilities.getResourcePath();
 				File doc = new File(resourcePath + File.separator + "Layer" + File.separator + aLayer.getLabel());
 				if (doc.exists()) {
-					boolean success = doc.delete();
-
-					// Se si è verificato un errore...
-					if (!success)
-						throw new IllegalArgumentException("Cancellazione fallita");
+					try {
+						Files.delete(doc.toPath());
+					} catch (IOException x) {
+						// File permission problems are caught here.
+						throw new IllegalArgumentException("Delete failed : " + x.getLocalizedMessage(), x);
+					}
 				}
 			}
 			tmpSession.delete(hibLayer);
