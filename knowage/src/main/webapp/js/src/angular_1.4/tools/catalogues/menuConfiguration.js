@@ -383,8 +383,8 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 						}
 					}
 					else return true;
-
 				}
+				else return true;
 
 			},
 			checkRole : function(item) {
@@ -655,7 +655,8 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 					$scope.getParent(item.parentId);
 				}
 				else {
-					$scope.parent = $scope.selectedMenu;
+					//$scope.parent = $scope.selectedMenu;
+					$scope.parent = null;
 				}
 				if ($scope.selectedMenu.menuId == null || item.menuId==null) {
 					$scope.showme = false;
