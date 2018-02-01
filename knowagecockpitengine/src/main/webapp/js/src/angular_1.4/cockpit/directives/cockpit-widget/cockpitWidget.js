@@ -275,7 +275,7 @@ function cockpitWidgetControllerFunction(
 		$scope.ngModel.search ={"columns" : []};
 		for(var k in $scope.ngModel.content.columnSelectedOfDataset){
 			var column = $scope.ngModel.content.columnSelectedOfDataset[k];
-			if(column.fieldType == "ATTRIBUTE"){
+			if(column.fieldType == "ATTRIBUTE" && column.type == "java.lang.String"){
 				$scope.ngModel.search.columns.push(column.name);
 			}
 		}
@@ -464,7 +464,7 @@ function cockpitWidgetControllerFunction(
 	$scope.deleteWidget=function(nomessage){
 		cockpitModule_widgetServices.deleteWidget(cockpitModule_properties.CURRENT_SHEET,$scope.ngModel,nomessage);
 	}
-	
+
 	$scope.clearAllSelectionsAndRefresh=function(){
 		cockpitModule_widgetSelection.clearAllSelections();
 		cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset($scope.getDataset().label);
@@ -893,7 +893,7 @@ function cockpitWidgetControllerFunction(
 		if($scope.extendedStyle.borders!=undefined && $scope.extendedStyle.borders==true){
 			angular.merge($scope.borderShadowStyle,$scope.extendedStyle.border);
 		}
-		
+
 		// update borders style
 		if($scope.extendedStyle.shadows!=undefined && $scope.extendedStyle.shadows==true){
 			angular.merge($scope.borderShadowStyle,$scope.extendedStyle.shadow);
@@ -906,7 +906,7 @@ function cockpitWidgetControllerFunction(
 			if($scope.extendedStyle.title && !$scope.extendedStyle.title.font){
 				$scope.extendedStyle.title.font = {};
 				$scope.ngModel.style.title.font = {};
-				
+
 				if($scope.extendedStyle.title['font-weight']){
 					$scope.extendedStyle.title.font['font-weight'] = $scope.extendedStyle.title['font-weight'];
 					$scope.ngModel.style.title.font['font-weight'] = $scope.extendedStyle.title['font-weight'];
