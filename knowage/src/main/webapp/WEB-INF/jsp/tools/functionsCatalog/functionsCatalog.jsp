@@ -64,7 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     boolean isAdmin=UserUtilities.hasAdministratorRole(profile);
     UserUtilities.isAdministrator(profile);
     String admin=isAdmin+"";
-    String userNameOwner=(String)myUserProfile.getUserUniqueIdentifier();
+    String userNameOwner=(String)myUserProfile.getUserId();
 	
     boolean isDev=UserUtilities.hasDeveloperRole(profile);
     boolean isUser=UserUtilities.hasUserRole(profile);
