@@ -63,6 +63,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.codeMirror = null;
 	$scope.isSomething = false;
 	$scope.step=1;
+	$scope.validated = false;
 	$scope.dsMetaValue = [];
 
 	$scope.dataSetListColumns = [
@@ -3713,7 +3714,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	var tempStep = angular.copy($scope.step);
     	if(way=='back' && way!=undefined) {
     		tempStep = tempStep-1;
-    	} else {
+    	} else if(way=='next') {
     		tempStep = tempStep+1;
     	}
     	switch(tempStep) {
@@ -3722,18 +3723,19 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     		break;
     	case 2:
     		console.log('step 2');
-    		if((oldStep==1 && $scope.changingFile)||(oldStep==1 && $scope.initialUpload) || (oldStep==1&&$scope.isSelected)){
-    			loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_GEN_META_PROPERTY");
-        		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_PROPERTY");
-        		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_VALUE");
-        		$scope.toStep2();
+    		if(way=='validate') {
+    			$scope.toStep3();
     		} else {
-    			$scope.step=2;
-    		}   		
-    		break;
-    	case 3:
-    		console.log("step 3");
-    		$scope.toStep3();
+    			if((oldStep==1 && $scope.changingFile)||(oldStep==1 && $scope.initialUpload) || (oldStep==1&&$scope.isSelected)){
+        			loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_GEN_META_PROPERTY");
+            		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_PROPERTY");
+            		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_VALUE");
+            		$scope.toStep2();
+        		} else {
+        			$scope.step=2;
+        		}
+    		}
+    		   		
     		break;
     	default:
     		break;
@@ -3979,7 +3981,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				
 				if (!response.data.validationErrors) {
 					
-					$scope.step=3;
+					//$scope.step=3;
+					$scope.validated = true;
+					
+					sbiModule_messaging.showSuccessMessage($scope.translate.load('sbi.workspace.dataset.wizard.metadata.validation.success.msg'));
 
 					$scope.resultMetaDataStep2 = [];
 					$scope.resultRowsStep2 = [];
@@ -4307,6 +4312,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	}
     	
     }
+	
+	$scope.goToFirstStep = function () {
+		$scope.step=1;
+		$scope.validated = false;
+	}
     
     $scope.metaScopeFunctions.dsGenMetaProperty = $scope.dsGenMetaProperty;
 

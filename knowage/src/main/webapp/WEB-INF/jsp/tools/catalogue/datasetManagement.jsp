@@ -525,7 +525,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</div>
 							
 							<!-- STEP 2 -->
-							<div ng-if="step==2">
+							<div ng-if="step==2 || step==3">
 								<md-card layout-padding  style="margin-top:0" class="kn-workspace">
 									<angular-table
 										id="columnsMeta"
@@ -540,7 +540,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</div>
 							
 							<!-- STEP 3 -->
-							<div ng-if="step==3">
+							<div ng-if="false">
 								<md-card layout-padding  style="margin-top:0">
 									<angular-table 
 										flex
@@ -563,7 +563,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				         		<div layout="row" class="threeCombosLayout">
 				         			<span flex></span>
 				         			<md-button ng-click="changeStep('back')" ng-if="step!=1" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.back")}}</md-button>
-				         			<md-button ng-click="changeStep('next')" ng-if="step!=3" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.next")}}</md-button>	
+				         			<md-button ng-click="changeStep('next')" ng-disabled="!selectedDataSet.hasOwnProperty('fileName')" ng-if="step==1" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.next")}}</md-button>
+				         			<md-button ng-click="changeStep('validate')" ng-if="step==2" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.ds.file.validate")}}</md-button>
+				         			<md-button ng-click="goToFirstStep()" ng-if="validated" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.browser.mexport.massiveExportWizard.button.finish")}}</md-button>		
 				         		</div>
 				         		
 				         	</md-card>				       	 	
