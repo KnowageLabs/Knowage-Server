@@ -36,13 +36,6 @@ public class HiveSelectQueryVisitor extends AbstractSelectQueryVisitor {
 	}
 
 	@Override
-	protected void appendSelectDistinct(SelectQuery query) {
-		if (query.isSelectDistinct() && query.getGroups().isEmpty()) {
-			queryBuilder.append("DISTINCT ");
-		}
-	}
-
-	@Override
 	public String getFormattedTimestamp(Timestamp timestamp) {
 		return "'" + timestamp.toString() + "'";
 	}

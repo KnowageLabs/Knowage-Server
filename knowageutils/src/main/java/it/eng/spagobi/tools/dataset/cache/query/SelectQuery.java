@@ -29,6 +29,7 @@ import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
 import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.cache.query.visitor.ISelectQueryVisitor;
 import it.eng.spagobi.tools.dataset.cache.query.visitor.SelectQueryVisitorFactory;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
@@ -235,5 +236,17 @@ public class SelectQuery {
 	public PreparedStatementData getPreparedStatementData(IDataSource dataSource) {
 		ISelectQueryVisitor visitor = SelectQueryVisitorFactory.getVisitor(dataSource);
 		return visitor.getPreparedStatementData(this);
+	}
+
+	public boolean hasAggregationFunction() {
+		boolean hasAggregationFunction = false;
+		for (Projection projection : projections) {
+			IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+			if (aggregationFunction != null && !AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+				hasAggregationFunction = true;
+				break;
+			}
+		}
+		return hasAggregationFunction;
 	}
 }

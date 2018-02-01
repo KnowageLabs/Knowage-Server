@@ -420,7 +420,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 	}
 
 	protected void appendSelectDistinct(SelectQuery query) {
-		if (query.isSelectDistinct()) {
+		if (query.isSelectDistinct() && query.getGroups().isEmpty() && !query.hasAggregationFunction()) {
 			queryBuilder.append("DISTINCT ");
 		}
 	}
