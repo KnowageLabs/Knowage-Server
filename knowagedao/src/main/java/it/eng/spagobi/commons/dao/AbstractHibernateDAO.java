@@ -52,7 +52,7 @@ public class AbstractHibernateDAO {
 	private String tenant = null;
 
 	public static final String TENANT_FILTER_NAME = "tenantFilter";
-	private static final String TENANT_DEFAULT = "SPAGOBI";
+	private static final String TENANT_DEFAULT = "DEFAULT_TENANT";
 
 	public void setUserID(String user) {
 		userID = user;
