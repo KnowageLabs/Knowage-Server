@@ -15,7 +15,7 @@ The sub-products of the suite are:
 Knowage supports a modern vision of the data analytics, providing new self-service capabilities that give autonomy to the end-user, now able to build his own analysis and explore his own data space, also combining data that come from different sources. 
 
 Knowage is available on two versions:
-* the community edition, with the whole set of analytical capabilities, it is part of the software stack managed by OW2 as SpagoBI always did;
+* the community edition, with the whole set of analytical capabilities, it is part of the software stack managed by [OW2](https://www.ow2.org/) and the reference implementation of the Data Visualization GE in [FIWARE](https://www.fiware.org/), as SpagoBI was;
 * the enterprise edition, provided and guaranteed directly from Engineering Group - the leading Italian software and services company - with a commercial offering and some facilities for the administrator.
 
 This repository contains the source code of the Community Edition. 
