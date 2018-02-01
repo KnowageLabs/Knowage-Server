@@ -143,31 +143,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		%>
 
 		<list label="Functions"  new-function="<%=addFunction%>" layout-column> 
-			<md-content layout="column" >
+			<md-content>
 				<div layout-gt-xs="row" layout="column" class="functionsCardContainer">
 				
-					<md-card  class="functionsCard"  ng-class="{'active':selectedType == functionType.valueCd}" ng-repeat="functionType in functionTypesList" ng-click="functionsList=filterByType(functionType)" ng-style="{'background-image':functionType.valueDescription}" flex>
-						<md-card-content>
-		          				<span class="md-headline ng-binding" flex="">{{functionType.valueCd}}</span>
-                                <span class="md-subhead ng-binding smallGrey" flex="">{{functionType.domainName}}</span>
+					<md-card layout="column" layout-align="center center" class="functionsCard"  ng-class="{'active':selectedType == functionType.valueCd}" ng-repeat="functionType in functionTypesList" ng-click="functionsList=filterByType(functionType)" ng-style="{'background-image':functionType.valueDescription}" flex>
+						<md-card-content layout="column" layout-align="center center" class="noPadding" flex>
+		          				<span class="md-headline ng-binding">{{functionType.valueCd}}</span>
+                                <span class="md-subhead ng-binding smallGrey">{{functionType.domainName}}</span>
 						</md-card-content>
 					
 		      		</md-card>
 		      		
-					<md-card  class="functionsCard image_all" ng-class="{'active':selectedType == 'All'}" ng-click="functionsList=filterByType({valueCd:'All'})" flex> 
-						<md-card-content>
-		            			<span class="md-headline ng-binding" flex="">{{translate.load("sbi.functionscatalog.all")}}</span>
-		            			<span class="md-subhead ng-binding smallGrey" flex="">{{translate.load("sbi.functionscatalog.allmessage")}}</span>
+					<md-card  class="functionsCard image_all" ng-class="{'active':selectedType == 'All'}" ng-click="functionsList=filterByType({valueCd:'All'})" flex layout="column" layout-align="center center"> 
+						<md-card-content layout="column" layout-align="center center" class="noPadding" flex>
+		            			<span class="md-headline ng-binding" >{{translate.load("sbi.functionscatalog.all")}}</span>
+		            			<span class="md-subhead ng-binding smallGrey">{{translate.load("sbi.functionscatalog.allmessage")}}</span>
 						</md-card-content>
 
 		      		</md-card>
 				</div>	
-					<div class="md-block functionsChipsContainer" layout="row" layout-align="center center" >
-						<md-chips ng-model="searchKeywords" readonly=true class="functionsChips"> 
-							<md-chip-template ng-click="chipFilter($chip)" >
-							{{$chip}}
-							</md-chip-template>
-						</md-chips>	
+					<div class="functionsChipsContainer" layout="row" layout-align="center" layout-wrap>
+						<div class="functionsChips" ng-repeat="chip in searchKeywords" ng-click="chipFilter(chip)" ng-class="{'chipSelected':selectedChip==chip}">
+							{{chip}}
+						</div>
 					</div>
 					
 					<div layout="row" layout-align="center center" ng-if="!functionsList || functionsList.length == 0">
@@ -175,23 +173,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<p class="ng-binding">{{translate.load("sbi.functionscatalog.nofunctions")}}</p>
 						</div>
 					</div>
-					
-		    		<angular-table
-		    				id="functionsTable" 
-							flex=70
-							ng-show="functionsList && functionsList.length >0"
-							ng-model="functionsList"
-							columns='[{"label":"Function Name","name":"name"},{"label":"Owner","name":"owner"}]'  
-							columns-search='["name","keywords","description","owner"]'
-							show-search-bar=true
-							highlights-selected-item=true
-							speed-menu-option="acSpeedMenu"
-							click-function ="leftTableClick(item)"
-							selected-item="tableSelectedFunction"
-							no-pagination=true
-							layout-padding					
-					>						
-					</angular-table>
+			    		<angular-table
+			    				id="functionsTable" 
+								ng-show="functionsList && functionsList.length >0"
+								ng-model="functionsList"
+								columns='[{"label":"Function Name","name":"name"},{"label":"Owner","name":"owner"}]'  
+								columns-search='["name","keywords","description","owner"]'
+								show-search-bar=true
+								highlights-selected-item=true
+								speed-menu-option="acSpeedMenu"
+								click-function ="leftTableClick(item)"
+								selected-item="tableSelectedFunction"
+								no-pagination=true
+								layout-padding					
+						>						
+						</angular-table>
 			</md-content>
     	</list>
     	
