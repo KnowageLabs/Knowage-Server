@@ -26,7 +26,7 @@
 		display: block;
 	}
 	.functionsCardContainer {
-		height: 80px;
+		min-height: 80px;
 		.functionsCard {
 			height: 60px;
 			transition: background-color .6s;
