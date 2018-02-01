@@ -162,9 +162,9 @@ public class Signup {
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			SbiUser user = userDao.loadSbiUserByUserId((String) profile.getUserId());
 
-			CommunityManager cm = new CommunityManager();
-			cm.mngUserCommunityAfterDelete(user);
-			logger.debug("User-community membership deleted");
+			//CommunityManager cm = new CommunityManager();
+			//cm.mngUserCommunityAfterDelete(user);
+			//logger.debug("User-community membership deleted");
 
 			userDao.deleteSbiUserById(user.getId());
 
@@ -227,15 +227,25 @@ public class Signup {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String update(@Context HttpServletRequest req) {
 		logger.debug("IN");
-		String name = GeneralUtilities.trim(req.getParameter("name"));
-		String surname = GeneralUtilities.trim(req.getParameter("surname"));
-		String password = GeneralUtilities.trim(req.getParameter("password"));
-		String email = GeneralUtilities.trim(req.getParameter("email"));
-		String birthDate = GeneralUtilities.trim(req.getParameter("birthDate"));
-		String address = GeneralUtilities.trim(req.getParameter("address"));
-		String enterprise = GeneralUtilities.trim(req.getParameter("enterprise"));
-		String biography = GeneralUtilities.trim(req.getParameter("biography"));
-		String language = GeneralUtilities.trim(req.getParameter("language"));
+		
+		MessageBuilder msgBuilder = new MessageBuilder();
+		Locale locale = msgBuilder.getLocale(req);
+
+		JSONObject requestJSON = null;
+		try {
+			requestJSON = RestUtilities.readBodyAsJSONObject(req);
+		} catch (Throwable t) {
+			logger.error("Error during body read", t);
+			throw new SpagoBIServiceException(msgBuilder.getMessage("signup.check.error", "messages", locale), t);
+		}
+		String name = GeneralUtilities.trim(requestJSON.optString("name"));
+		String surname = GeneralUtilities.trim(requestJSON.optString("surname"));
+		String password = GeneralUtilities.trim(requestJSON.optString("password"));
+		String email = GeneralUtilities.trim(requestJSON.optString("email"));
+		String birthDate = GeneralUtilities.trim(requestJSON.optString("birthDate"));
+		String address = GeneralUtilities.trim(requestJSON.optString("address"));
+		//String biography = GeneralUtilities.trim(requestJSON.optString("biography"));
+		//String language = GeneralUtilities.trim(requestJSON.optString("language"));
 
 		try {
 
@@ -251,30 +261,21 @@ public class Signup {
 				user.setPassword(Password.encriptPassword(password));
 			userDao.updateSbiUser(user, userId);
 
-			// get precedent community
-			SbiUserAttributes oldCommAttribute = attrDao.loadSbiAttributesByUserAndId(userId, attrDao.loadSbiAttributeByName("community").getAttributeId());
 
 			updAttribute(userDao, attrDao, email, user.getUserId(), userId, attrDao.loadSbiAttributeByName("email").getAttributeId());
 			updAttribute(userDao, attrDao, birthDate, user.getUserId(), userId, attrDao.loadSbiAttributeByName("birth_date").getAttributeId());
-			updAttribute(userDao, attrDao, address, user.getUserId(), userId, attrDao.loadSbiAttributeByName("location").getAttributeId());
-			updAttribute(userDao, attrDao, enterprise, user.getUserId(), userId, attrDao.loadSbiAttributeByName("community").getAttributeId());
-			updAttribute(userDao, attrDao, biography, user.getUserId(), userId, attrDao.loadSbiAttributeByName("short_bio").getAttributeId());
-			updAttribute(userDao, attrDao, language, user.getUserId(), userId, attrDao.loadSbiAttributeByName("language").getAttributeId());
+			updAttribute(userDao, attrDao, address, user.getUserId(), userId, attrDao.loadSbiAttributeByName("address").getAttributeId());
+			//updAttribute(userDao, attrDao, biography, user.getUserId(), userId, attrDao.loadSbiAttributeByName("short_bio").getAttributeId());
+			//updAttribute(userDao, attrDao, language, user.getUserId(), userId, attrDao.loadSbiAttributeByName("language").getAttributeId());
 
 			profile.setAttributeValue("name", name);
 			profile.setAttributeValue("surname", surname);
-			profile.setAttributeValue("language", language);
-			profile.setAttributeValue("short_bio", biography);
-			profile.setAttributeValue("community", enterprise);
-			profile.setAttributeValue("location", address);
 			profile.setAttributeValue("birth_date", birthDate);
 			profile.setAttributeValue("email", email);
+			//profile.setAttributeValue("language", language);
+			//profile.setAttributeValue("short_bio", biography);
+			profile.setAttributeValue("location", address);
 
-			CommunityManager cm = new CommunityManager();
-			if (enterprise != null && !enterprise.equals("") && (oldCommAttribute == null || !enterprise.equals(oldCommAttribute.getAttributeValue()))) {
-				SbiCommunity community = DAOFactory.getCommunityDAO().loadSbiCommunityByName(enterprise);
-				cm.saveCommunity(community, enterprise, user.getUserId(), req);
-			}
 
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while executing the subscribe action", t);
@@ -385,67 +386,6 @@ public class Signup {
 		}
 	}
 
-	// @GET
-	// @Path("/prepareActive")
-	// public void prepareActive(@Context HttpServletRequest req) {
-	//
-	// try {
-	// String theme_name = (String) req.getAttribute(ChangeTheme.THEME_NAME);
-	// logger.debug("theme selected: " + theme_name);
-	//
-	// String currTheme = (String) req.getAttribute("currTheme");
-	// if (currTheme == null)
-	// currTheme = ThemesManager.getDefaultTheme();
-	// logger.debug("currTheme: " + currTheme);
-	//
-	// String url = "/themes/" + currTheme + "/jsp/signup/active.jsp";
-	// logger.debug("url for active: " + url);
-	// req.setAttribute("currTheme", currTheme);
-	// req.getRequestDispatcher(url).forward(req, servletResponse);
-	// } catch (ServletException e) {
-	// logger.error("Error dispatching request");
-	// } catch (IOException e) {
-	// logger.error("Error writing content");
-	// }
-	// }
-	//
-	// @POST
-	// @Path("/active")
-	// public String active(@Context HttpServletRequest req) {
-	//
-	// IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-	// String id = req.getParameter("accountId");
-	// String strLocale = GeneralUtilities.trim(req.getParameter("locale"));
-	// Locale locale = new Locale(strLocale.substring(0, strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_") + 1));
-	// String expired_time = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.expired_time");
-	//
-	// try {
-	// ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
-	// SbiUser user = null;
-	// try {
-	// user = userDao.loadSbiUserById(Integer.parseInt(id));
-	// } catch (EMFUserError emferr) {
-	// }
-	// if (user == null) {
-	// return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.unknownUser", "messages", locale) + "'}").toString();
-	//
-	// }
-	//
-	// if (!user.getFlgPwdBlocked())
-	// return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.userActive", "messages", locale) + "'}").toString();
-	//
-	// long now = System.currentTimeMillis();
-	// if (now > user.getCommonInfo().getTimeIn().getTime() + Long.parseLong(expired_time) * 24 * 60 * 60 * 1000)
-	// return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.userActivationExpired", "messages", locale) + "'}").toString();
-	//
-	// user.setFlgPwdBlocked(false);
-	// userDao.updateSbiUser(user, null);
-	//
-	// return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.userActivationOK", "messages", locale) + "'}").toString();
-	// } catch (Throwable t) {
-	// throw new SpagoBIServiceException("An unexpected error occured while executing the subscribe action", t);
-	// }
-	// }
 
 	private JSONObject buildErrorMessage(MessageBuilder msgBuilder, Locale locale, String errorString) {
 		logger.debug("IN");
