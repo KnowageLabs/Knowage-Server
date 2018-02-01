@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            </md-option>
 	           </md-select>
 	         </md-input-container>
-	      	<md-button class="md-raised md-primary" ng-disabled="!activeSearch" ng-click="searchColumns()"  flex-xs type="submit">{{translate.load("sbi.cockpit.widgets.table.search")}}</md-button>
+	      	<md-button class="md-raised md-primary" ng-disabled="ngModel.search.text == undefined || ngModel.search.text == '' || ngModel.search.columns.length < 1" ng-click="searchColumns()"  flex-xs type="submit">{{translate.load("sbi.cockpit.widgets.table.search")}}</md-button>
 	      	<md-button class="md-raised md-warn" ng-if="activeSearch" flex-xs ng-click="resetSearch()">{{translate.load("sbi.cockpit.widgets.table.search.reset")}}</md-button>
 	      	<md-button class="md-icon-button"  aria-label="close"   ng-click="openSearchBar()">
 				<md-icon md-font-icon="fa fa-times"></md-icon>

@@ -71,7 +71,7 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
 public class AssociativeSelectionsResource extends DataSetResourceAbstractResource {
 
 	static protected Logger logger = Logger.getLogger(AssociativeSelectionsResource.class);
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
@@ -237,7 +237,7 @@ public class AssociativeSelectionsResource extends DataSetResourceAbstractResour
 					}
 				}
 
-				filters.add(new Selection(datasetLabel, getFilter(dataset, isNearRealtime, column, valuesForQuery)));
+				filters.add(new Selection(datasetLabel, getFilter(dataset, isNearRealtime, column, isDateColumn, valuesForQuery)));
 
 				if (!selectionsMap.containsKey(datasetLabel)) {
 					selectionsMap.put(datasetLabel, new HashMap<String, Set<String>>());
@@ -277,7 +277,7 @@ public class AssociativeSelectionsResource extends DataSetResourceAbstractResour
 			logger.debug("OUT");
 		}
 	}
-	
+
 	private void fixAssociationGroup(AssociationGroup associationGroup) {
 		IDataSetDAO dataSetDAO = getDataSetDAO();
 
@@ -311,5 +311,5 @@ public class AssociativeSelectionsResource extends DataSetResourceAbstractResour
 			}
 		}
 	}
-	
+
 }

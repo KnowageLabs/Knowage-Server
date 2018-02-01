@@ -352,9 +352,12 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 					boolean isJDBCDataSet = DatasetManagementAPI.isJDBCDataSet(dataSet);
 					String dialect = dataSource != null ? dataSource.getHibDialectName() : "";
 					boolean isBigDataDialect = SqlUtils.isBigDataDialect(dialect);
-					boolean isSqlServerOrTeradataDialect = dialect.contains("sqlserver") || dialect.contains("teradata");
+					boolean isTeradataDialect = dialect.contains("teradata");
+					boolean isSqlServerOrTeradataDialect = dialect.contains("sqlserver") || isTeradataDialect;
 
 					List<String> dateColumnNamesList = getDateColumnNamesListRaw(dataSet, dataSource); // with aliases aposthrophe
+
+					filterOperator = isTeradataDialect && filterOperator.equals("!=") ? "<>" : filterOperator;
 
 					DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isNearRealtime);
 					if (strategy == DatasetEvaluationStrategy.NEAR_REALTIME) {

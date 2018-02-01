@@ -181,7 +181,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 				// in same case object is empty '{}'
 				if (selectionsObject.names() != null) {
 
-					filterCriteria = getFilterCriteria(label, selectionsObject, false, columnAliasToName);
+					filterCriteria = getFilterCriteria(label, selectionsObject, isNearRealtime, columnAliasToName);
 					filterCriteriaForMetaModel = getFilterCriteria(label, selectionsObject, true, columnAliasToName);
 
 				}
@@ -328,7 +328,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		return groupCriterias;
 	}
 
-	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject, boolean isRealtime, Map<String, String> columnAliasToName)
+	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject, boolean isNearRealtime, Map<String, String> columnAliasToName)
 			throws JSONException {
 		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
 
@@ -754,21 +754,21 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		return result;
 	}
 
-	protected String getFilter(IDataSet dataset, boolean isNearRealtime, String column, String values) {
+	protected String getFilter(IDataSet dataset, boolean isNearRealtime, String column, boolean isDateColumn, String values) {
 		IDataSource dataSource = getDataSource(dataset, isNearRealtime);
 		String tablePrefix = getTablePrefix(dataset, isNearRealtime);
 		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataset, isNearRealtime);
 
 		if (DatasetEvaluationStrategy.NEAR_REALTIME.equals(strategy) || SqlUtils.hasSqlServerDialect(dataSource) || SqlUtils.hasTeradataDialect(dataSource)) {
-			return getOrFilterString(column, values, dataSource, tablePrefix);
+			return getOrFilterString(column, isDateColumn, values, dataSource, tablePrefix);
 		} else {
 			return getInFilterString(column, values, dataSource, tablePrefix);
 		}
 	}
 
-	private String getOrFilterString(String column, String values, IDataSource dataSource, String tablePrefix) {
+	private String getOrFilterString(String column, boolean isDateColumn, String values, IDataSource dataSource, String tablePrefix) {
 		String encapsulateColumnName = tablePrefix + AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
-		String[] singleValues = values.split(",");
+		String[] singleValues = isDateColumn ? new String[] { values } : values.split(",");
 		StringBuilder sb = new StringBuilder();
 
 		for (int i = 0; i < singleValues.length; i++) {
