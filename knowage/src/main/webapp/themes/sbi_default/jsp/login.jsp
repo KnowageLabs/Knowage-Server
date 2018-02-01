@@ -249,11 +249,11 @@
 				%>
 				
 				
-				<% 
+                <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit"><%=msgBuilder.getMessage("login")%></button>
+                <% 
 				if (activeSignup){ %>
                 <button class="btn btn-lg btn-primary btn-block btn-signup" onclick="signup();" ><%=msgBuilder.getMessage("signup")%></button>
 				<%} %> 
-                <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit"><%=msgBuilder.getMessage("login")%></button>
                 
 		<div>
 		<div class="row">
