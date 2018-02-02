@@ -443,7 +443,7 @@ var renderPage = function (page) {
     slimer.exit(3);
   }
 
-  setTimeout(exit, jsExitingWait, 0);
+  setTimeout(exit, jsExitingWait * sheets, 0);
 };
 
 var applySettingOnPage = function applySettingOnPage(page, sheet, url) {
