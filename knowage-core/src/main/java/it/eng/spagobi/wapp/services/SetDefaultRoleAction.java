@@ -104,8 +104,6 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction {
 			}
 			logger.debug("Filtered functionalities for selected role " + defaultRole);
 
-			getSessionContainer().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
-
 			logger.error("Print profile taken at the end of the action: " + profile);
 			try {
 				writeBackToClient(new JSONAcknowledge());
