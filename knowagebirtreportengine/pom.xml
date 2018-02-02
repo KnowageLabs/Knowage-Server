@@ -13,6 +13,18 @@
 	<packaging>war</packaging>
 	<name>knowagebirtreportengine</name>
 
+	<build>
+	    <plugins>
+	        <plugin>
+	            <artifactId>maven-war-plugin</artifactId>
+	            <configuration>
+	                <attachClasses>true</attachClasses>
+	                <classesClassifier>classes</classesClassifier>
+	            </configuration>
+	        </plugin>
+	    </plugins>
+	</build>
+	
 	<dependencies>
 		
 		<dependency>
