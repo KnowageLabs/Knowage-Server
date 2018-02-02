@@ -1,8 +1,5 @@
 package it.eng.knowage.slimerjs.wrapper;
 
-import it.eng.knowage.slimerjs.wrapper.beans.OperatingSystem;
-import it.eng.spagobi.commons.utilities.ZipUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +12,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.slimerjs.wrapper.beans.OperatingSystem;
+import it.eng.spagobi.commons.utilities.ZipUtils;
+
 class SlimerJSSetup {
 
 	private static Logger logger = Logger.getLogger(SlimerJSSetup.class);
@@ -23,18 +23,25 @@ class SlimerJSSetup {
 	private static final File SLIMER_JS_BINARY = initializeBinaries();
 
 	// get a reference to the executable binary and store it in SLIMER_JS_BINARY
-	private static File initializeBinaries() throws IllegalStateException {
-		final String resourcePath = getZipPath(SlimerJSConstants.SLIMER_BINARIES_RESOURCEPATH.concat("/".concat(SlimerJSConstants.SLIMER_BINARIES_PACKAGENAME)));
+	private static File initializeBinaries() {
+		File result = null;
+		try {
+			final String resourcePath = getZipPath(
+					SlimerJSConstants.SLIMER_BINARIES_RESOURCEPATH.concat("/".concat(SlimerJSConstants.SLIMER_BINARIES_PACKAGENAME)));
 
-		logger.info("Initializing SlimerJS with resource path: " + resourcePath);
+			logger.info("Initializing SlimerJS with resource path: " + resourcePath);
 
-		// As long as we have a resource path, and that the binaries have not already been initialized, initialize them
-		if (null != resourcePath && null == SLIMER_JS_BINARY) {
-			initializeShutDownHook();
-			return unzipSlimerJSbin(SlimerJSConstants.TEMP_DIR, resourcePath);
-		} else {
-			throw new IllegalStateException("Instantiation mechanism was unable to determine platform type for SlimerJS extraction.");
+			// As long as we have a resource path, and that the binaries have not already been initialized, initialize them
+			if (null != resourcePath && null == SLIMER_JS_BINARY) {
+				initializeShutDownHook();
+				result = unzipSlimerJSbin(SlimerJSConstants.TEMP_DIR, resourcePath);
+			} else {
+				logger.error("Instantiation mechanism was unable to determine platform type for SlimerJS extraction.");
+			}
+		} catch (Exception e) {
+			logger.error("Unable to initialize binaries", e);
 		}
+		return result;
 	}
 
 	static boolean isInitialized() {
@@ -96,11 +103,10 @@ class SlimerJSSetup {
 	 *            name of the java resource
 	 */
 	private static File unzipSlimerJSbin(final Path destination, final String resourceName) throws IllegalStateException {
-		final Path absoluteResource = Paths.get(destination.toString().concat(
-				File.separator.concat(getZipPath(SlimerJSConstants.SLIMER_BINARIES_PACKAGENAME).replace(SlimerJSConstants.ZIP_EXTENSION, "")
-						.concat(File.separator).concat(getSlimerJSBinName()))));
-		final Path xulRunnerResource = Paths.get(destination.toString().concat(
-				File.separator.concat(getZipPath(SlimerJSConstants.SLIMER_BINARIES_PACKAGENAME).replace(SlimerJSConstants.ZIP_EXTENSION, "")
+		final Path absoluteResource = Paths.get(destination.toString().concat(File.separator.concat(getZipPath(SlimerJSConstants.SLIMER_BINARIES_PACKAGENAME)
+				.replace(SlimerJSConstants.ZIP_EXTENSION, "").concat(File.separator).concat(getSlimerJSBinName()))));
+		final Path xulRunnerResource = Paths.get(destination.toString()
+				.concat(File.separator.concat(getZipPath(SlimerJSConstants.SLIMER_BINARIES_PACKAGENAME).replace(SlimerJSConstants.ZIP_EXTENSION, "")
 						.concat(File.separator).concat(getXulRunnerDirName()).concat(File.separator).concat(getXulRunnerBinName()))));
 
 		logger.info("Verifying existence of SlimerJS executable at: " + absoluteResource.toString());
