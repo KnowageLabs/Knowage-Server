@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.service;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -83,15 +81,8 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 			XSSFWorkbook wb = null;
 			InputStream fileInputStream = Thread.currentThread().getContextClassLoader()
 					.getResourceAsStream("it/eng/spagobi/tools/dataset/service/export_dataset_template.xlsm");
-			InputStream fileInputStream2 = Thread.currentThread().getContextClassLoader().getResourceAsStream("it/eng/spagobi/tools/dataset/service/ciao.xlsm");
-
-			File file = new File(
-					"D:/progetti/Workspace/SVN_Knowage_trunk_MAVEN/knowage/src/main/resources/it/eng/spagobi/tools/dataset/service/export_dataset_template.xlsm");
-
 			try {
-				InputStream targetStream = new FileInputStream(file);
-				wb = new XSSFWorkbook(targetStream);
-				// wb = new XSSFWorkbook(fileInputStream);
+				wb = new XSSFWorkbook(fileInputStream);
 			} catch (IOException e) {
 				logger.error("Input Output Exception " + e.getMessage());
 				throw new SpagoBIServiceException(this.getActionName(), "Impossible to get xlsm export template file ", e);
