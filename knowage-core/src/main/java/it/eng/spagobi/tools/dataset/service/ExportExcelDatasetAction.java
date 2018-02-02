@@ -17,16 +17,8 @@
  */
 package it.eng.spagobi.tools.dataset.service;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,6 +29,16 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 
@@ -81,8 +83,15 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 			XSSFWorkbook wb = null;
 			InputStream fileInputStream = Thread.currentThread().getContextClassLoader()
 					.getResourceAsStream("it/eng/spagobi/tools/dataset/service/export_dataset_template.xlsm");
+			InputStream fileInputStream2 = Thread.currentThread().getContextClassLoader().getResourceAsStream("it/eng/spagobi/tools/dataset/service/ciao.xlsm");
+
+			File file = new File(
+					"D:/progetti/Workspace/SVN_Knowage_trunk_MAVEN/knowage/src/main/resources/it/eng/spagobi/tools/dataset/service/export_dataset_template.xlsm");
+
 			try {
-				wb = new XSSFWorkbook(fileInputStream);
+				InputStream targetStream = new FileInputStream(file);
+				wb = new XSSFWorkbook(targetStream);
+				// wb = new XSSFWorkbook(fileInputStream);
 			} catch (IOException e) {
 				logger.error("Input Output Exception " + e.getMessage());
 				throw new SpagoBIServiceException(this.getActionName(), "Impossible to get xlsm export template file ", e);
@@ -132,12 +141,12 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 					XSSFRow row1 = sheet.getRow(2);
 					XSSFCell urlCell = row1.getCell(2);
 					urlCell.setCellValue(url);
-				}else{
+				} else {
 					MessageBuilder msgBuild = new MessageBuilder();
 
 					XSSFRow header = sheet.createRow((short) 3);// quarta riga
 					XSSFCell cell = header.createCell(1);
-					cell.setCellValue(msgBuild.getMessage( "exporter.dataset.excel",getLocale()));
+					cell.setCellValue(msgBuild.getMessage("exporter.dataset.excel", getLocale()));
 					cell.setCellStyle(borderStyleHeader);
 				}
 
