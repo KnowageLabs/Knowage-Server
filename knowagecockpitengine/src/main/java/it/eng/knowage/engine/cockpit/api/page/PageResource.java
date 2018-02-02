@@ -48,6 +48,10 @@ import it.eng.knowage.slimerjs.wrapper.beans.CustomHeaders;
 import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
 import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
 import it.eng.knowage.slimerjs.wrapper.enums.RenderFormat;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -245,7 +249,11 @@ public class PageResource extends AbstractCockpitEngineResource {
 	}
 
 	private String getRequestUrlForPdfExport(HttpServletRequest request) {
-		StringBuilder sb = new StringBuilder(request.getRequestURL().toString());
+		String requestURL = request.getRequestURL().toString();
+		String hostURL = GeneralUtilities.getSpagoBiHost();
+		String serviceURL = getServiceHostUrl();
+
+		StringBuilder sb = new StringBuilder(requestURL.replace(hostURL, serviceURL));
 		String sep = "?";
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		for (String parameter : parameterMap.keySet()) {
@@ -255,13 +263,23 @@ public class PageResource extends AbstractCockpitEngineResource {
 					sb.append(sep);
 					sb.append(parameter);
 					sb.append("=");
-					sb.append(values[0]);
+					if (parameter.equals(SpagoBIConstants.SBI_HOST)) {
+						sb.append(getServiceHostUrl());
+					} else {
+						sb.append(values[0]);
+					}
 					sep = "&";
 				}
 			}
 		}
 		sb.append("&export=true");
 		return sb.toString();
+	}
+
+	public String getServiceHostUrl() {
+		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
+		return serviceURL;
 	}
 
 	@GET
