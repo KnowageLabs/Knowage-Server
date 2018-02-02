@@ -2620,6 +2620,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						$scope.selectedDataSet.fileUploaded=true;
 						$scope.changingFile = false;
 						$scope.initialUpload = true;
+						
+						if($scope.selectedDataSet.fileType=="XLS"){
+							$scope.selectedDataSet.limitRows = "";
+							$scope.selectedDataSet.csvDelimiter = "";
+							$scope.selectedDataSet.dateFormat = "";
+							$scope.selectedDataSet.csvQuote = "";
+						}
 
 					}
 				}).error(function(data, status, headers, config) {
