@@ -17,37 +17,10 @@
  */
 package it.eng.spagobi.api;
 
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
-import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.json.Xml;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,7 +33,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -70,15 +42,32 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.json.Xml;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -89,44 +78,26 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 public class DocumentResource extends AbstractDocumentResource {
 	static protected Logger logger = Logger.getLogger(DocumentResource.class);
 
-/*	@GET
-	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON )
-	public Response getDocuments(@QueryParam("inputType") String inputType) {
-		logger.debug("IN");
-		IBIObjectDAO documentsDao = null;
-		List<BIObject> allObjects = null;
-		List<BIObject> objects = null;
-
-		try {
-			documentsDao = DAOFactory.getBIObjectDAO();
-			allObjects = documentsDao.loadAllBIObjects();
-
-			UserProfile profile = getUserProfile();
-			objects = new ArrayList<BIObject>();
-
-			if (inputType != null && !inputType.isEmpty()) {
-				for (BIObject obj : allObjects) {
-					if (obj.getBiObjectTypeCode().equals(inputType) && ObjectsAccessVerifier.canSee(obj, profile))
-						objects.add(obj);
-				}
-			} else {
-				for (BIObject obj : allObjects) {
-					if (ObjectsAccessVerifier.canSee(obj, profile))
-						objects.add(obj);
-				}
-			}
-			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
-
-			return Response.ok(toBeReturned).build();
-		} catch (Exception e) {
-			logger.error("Error while getting the list of documents", e);
-			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-*/
+	/*
+	 * @GET
+	 *
+	 * @Path("/")
+	 *
+	 * @Produces(MediaType.APPLICATION_JSON ) public Response getDocuments(@QueryParam("inputType") String inputType) { logger.debug("IN"); IBIObjectDAO
+	 * documentsDao = null; List<BIObject> allObjects = null; List<BIObject> objects = null;
+	 *
+	 * try { documentsDao = DAOFactory.getBIObjectDAO(); allObjects = documentsDao.loadAllBIObjects();
+	 *
+	 * UserProfile profile = getUserProfile(); objects = new ArrayList<BIObject>();
+	 *
+	 * if (inputType != null && !inputType.isEmpty()) { for (BIObject obj : allObjects) { if (obj.getBiObjectTypeCode().equals(inputType) &&
+	 * ObjectsAccessVerifier.canSee(obj, profile)) objects.add(obj); } } else { for (BIObject obj : allObjects) { if (ObjectsAccessVerifier.canSee(obj,
+	 * profile)) objects.add(obj); } } String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
+	 *
+	 * return Response.ok(toBeReturned).build(); } catch (Exception e) { logger.error("Error while getting the list of documents", e); throw new
+	 * SpagoBIRuntimeException("Error while getting the list of documents", e); } finally { logger.debug("OUT"); } }
+	 */
+	@Override
 	@POST
 	@Path("/")
 	@Consumes("application/json")
@@ -142,19 +113,22 @@ public class DocumentResource extends AbstractDocumentResource {
 		return super.getDocumentDetails(documentIdentifier);
 	}
 
+	@Override
 	@PUT
 	@Path("/{label}")
-	@Produces(MediaType.APPLICATION_JSON )
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateDocument(@PathParam("label") String label, String body) {
 		return super.updateDocument(label, body);
 	}
 
+	@Override
 	@DELETE
 	@Path("/{label}")
 	public Response deleteDocument(@PathParam("label") String label) {
 		return super.deleteDocument(label);
 	}
 
+	@Override
 	@GET
 	@Path("/{label}/template")
 	public Response getDocumentTemplate(@PathParam("label") String label) {
@@ -173,8 +147,8 @@ public class DocumentResource extends AbstractDocumentResource {
 
 		if (!document.getTenant().equals(getUserProfile().getOrganization())
 				|| (!UserUtilities.isAdministrator(getUserProfile()) && !document.getCreationUser().equals(getUserProfile().getUserId()))) {
-			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label
-					+ "]");
+			throw new SpagoBIRuntimeException(
+					"User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label + "]");
 		}
 
 		ResponseBuilder rb;
@@ -194,6 +168,7 @@ public class DocumentResource extends AbstractDocumentResource {
 		return rb.build();
 	}
 
+	@Override
 	@POST
 	@Path("/{label}/template")
 	public Response addDocumentTemplate(@PathParam("label") String label, MultiPartBody input) {
@@ -202,7 +177,7 @@ public class DocumentResource extends AbstractDocumentResource {
 
 	@GET
 	@Path("/{label}/meta")
-	@Produces(MediaType.APPLICATION_JSON )
+	@Produces(MediaType.APPLICATION_JSON)
 	public String getDocumentMeta(@PathParam("label") String label) {
 		// TODO
 		return null;
@@ -210,7 +185,7 @@ public class DocumentResource extends AbstractDocumentResource {
 
 	@GET
 	@Path("/{label}/parameters")
-	@Produces(MediaType.APPLICATION_JSON )
+	@Produces(MediaType.APPLICATION_JSON)
 	public String getDocumentParameters(@PathParam("label") String label) {
 		logger.debug("IN");
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
@@ -229,7 +204,7 @@ public class DocumentResource extends AbstractDocumentResource {
 
 	@GET
 	@Path("/{label}/analyticalDrivers")
-	@Produces(MediaType.APPLICATION_JSON )
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDocumentAD(@PathParam("label") String label) {
 		logger.debug("IN");
 
@@ -251,7 +226,7 @@ public class DocumentResource extends AbstractDocumentResource {
 
 	@GET
 	@Path("/{label}/lovs")
-	@Produces(MediaType.APPLICATION_JSON )
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDocumentLovs(@PathParam("label") String label) {
 		logger.debug("IN");
 
@@ -319,6 +294,13 @@ public class DocumentResource extends AbstractDocumentResource {
 			BIObject document;
 			biObjectDao = DAOFactory.getBIObjectDAO();
 			document = biObjectDao.loadBIObjectByLabel(layerLabel);
+			// load datasetId for update documet reference (if it's changed by final user)
+			if (!jsonData.isNull("DATASET_LABEL") && !jsonData.getString("DATASET_LABEL").equals("")) {
+				String datasetLabel = jsonData.getString("DATASET_LABEL");
+				IDataSet ds = DAOFactory.getDataSetDAO().loadDataSetByLabel(datasetLabel);
+				Integer dsId = ds.getId();
+				document.setDataSetId(dsId);
+			}
 			documentManager.saveDocument(document, template);
 		} catch (EMFUserError e) {
 			logger.error("Error saving JSON Template ...", e);
@@ -330,13 +312,13 @@ public class DocumentResource extends AbstractDocumentResource {
 	@POST
 	@Path("/saveChartTemplate")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String saveTemplatePrivate(	@Context HttpServletRequest req) {
+	public String saveTemplatePrivate(@Context HttpServletRequest req) {
 		String xml = null;
 		String docLabel = "";
 		try {
-			
+
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
-			
+
 			JSONObject json = new JSONObject(requestBodyJSON.getString("jsonTemplate"));
 			docLabel = requestBodyJSON.getString("docLabel");
 			xml = JSONTemplateUtilities.convertJsonToXML(json);

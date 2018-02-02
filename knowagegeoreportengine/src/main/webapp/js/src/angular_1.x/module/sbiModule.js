@@ -55,7 +55,7 @@ sbiM.service('sbiModule_translate', function() {
 	};
 });
 
-sbiM.service('sbiModule_messaging',function(toastr, $mdToast){
+sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,$mdToast){
 	this.showErrorMessage = function(msg,title){
 
 //		toastr.error(msg,title, {

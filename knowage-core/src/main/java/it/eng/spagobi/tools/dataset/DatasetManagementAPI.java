@@ -63,6 +63,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -231,6 +232,21 @@ public class DatasetManagementAPI {
 			}
 
 			if (DataSetUtilities.isExecutableByUser(dataSet, getUserProfile()) == false) {
+				Integer dsCategoryId = dataSet.getCategoryId();
+				// check categories of dataset
+				Set<Domain> categoryList = UserUtilities.getDataSetCategoriesByUser(getUserProfile());
+				if (categoryList != null && categoryList.size() > 0) {
+
+					SbiDomains[] categoryArray = new SbiDomains[categoryList.size()];
+					int i = 0;
+					for (Iterator iterator = categoryList.iterator(); iterator.hasNext();) {
+						Domain domain = (Domain) iterator.next();
+						Integer domainId = domain.getValueId();
+						if (dsCategoryId.equals(domainId))
+							return dataSet;
+					}
+				}
+				// just if dataset hasn't a category available for the user gives an error
 				throw new RuntimeException("User [" + getUserProfile().getUserId() + "] cannot access to dataset [" + label + "]");
 			}
 			return dataSet;

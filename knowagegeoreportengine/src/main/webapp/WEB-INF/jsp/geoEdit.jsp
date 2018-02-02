@@ -54,25 +54,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </md-toolbar>
 <md-whiteframe class="md-whiteframe-2dp relative" layout-fill flex  >
 <!-- CHOSE DATA SET FOR FINAL USER -->
-<div layout="row" flex ng-if="!tecnicalUser">
-	<label flex=20>{{::translate.load("gisengine.desiner.dataset")}} {{datasetLabel}}</label>
-  	<md-button class="md-fab md-mini md-primary" ng-if="!isDatasetChosen && !disableChooseDs" ng-click="choseDataset()" aria-label="Add dataset">
-          <md-icon class="fa fa-plus-circle fa-2x"></md-icon>
-    </md-button>
-    <md-button class="md-fab md-mini md-primary" ng-if="isDatasetChosen && !disableChooseDs" ng-click="clearDataset()" aria-label="Clear dataset">
-          <md-icon class="fa fa-minus-circle fa-2x"></md-icon>
-    </md-button>      
-</div>
-<!-- SINGLE SELECT FROM LAYER CATALOG  WHEN DATASET IS CHOSEN-->
-	<expander-box id="layersList" color="white" background-color="#a9c3db" ng-if="isDatasetChosen" expanded="true" title="{{::translate.load('gisengine.designer.layer.select')}}">
+	<expander-box id="datasetList" ng-if="!tecnicalUser" color="white" background-color="#a9c3db"  expanded="isOpenedDataset" title="{{::translate.load('gisengine.designer.dataset.select')}}">
 		<div flex  class="innerExpander" layout-column> 
-		<!-- 
-		<div layout="row" layout-align="center">
-			<div class="kn-info">
-				{{::translate.load('gisengine.designer.layer.detail')}}
-			</div>
-		</div>
-		 -->
+	 		<angular-table class="datasetLayer"
+			id='table' ng-model="selectedDataset"
+			columns='[{"label":"ID","name":"label"},{"label":"Name","name":"name"},{"label":"Description","name":"descr"},{"label":"Type","name":"dsTypeCd"}]'
+			columns-search='["name"]' show-search-bar=false
+			no-pagination="true"
+			scope-functions='tableFunctionDataset'  speed-menu-option='datasetSpeedMenu'
+			items-per-page="1"
+			>
+				<queue-table>
+					<div layout="row"> 
+						<span flex></span>
+						<md-button ng-if="!$parent.isDatasetChosen" ng-click="scopeFunctions.choseDataset(true)">{{::scopeFunctions.translate.load('gisengine.designer.dataset.add')}}</md-button>
+						<md-button ng-if="$parent.isDatasetChosen" ng-click="scopeFunctions.choseDataset(false)">{{::scopeFunctions.translate.load('gisengine.designer.dataset.change')}}</md-button>
+						<!-- <md-button ng-if="!$parent.isDatasetChosen && !$parent.disableChooseDs" ng-click="scopeFunctions.choseDataset(true)">{{::scopeFunctions.translate.load('gisengine.designer.dataset.add')}}</md-button>
+						<md-button ng-if="$parent.isDatasetChosen && !$parent.disableChooseDs" ng-click="scopeFunctions.choseDataset(false)">{{::scopeFunctions.translate.load('gisengine.designer.dataset.change')}}</md-button>-->
+					</div>
+				</queue-table> 
+			</angular-table>	
+   		</div>       
+	</expander-box>
+
+<!-- SINGLE SELECT FROM LAYER CATALOG  WHEN DATASET IS CHOSEN-->
+	<expander-box id="layersList" color="white" background-color="#a9c3db" ng-if="isDatasetChosen" expanded="isOpenedLayer" title="{{::translate.load('gisengine.designer.layer.select')}}">
+		<div flex  class="innerExpander" layout-column> 
 	 		<angular-table class="datasetLayer"
 			id='table' ng-model="selectedLayer"
 			columns='[{"label":"ID","name":"layerId"},{"label":"Name","name":"name"},{"label":"Description","name":"descr"},{"label":"Type","name":"type"}]'
@@ -90,7 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    		</div>       
 	</expander-box>
 	<!-- MULTI SELECT LAYER  -->
-	<expander-box id="layersListMultiSelect" color="white" background-color="#a9c3db" ng-if="!isDatasetChosen" expanded="true" title="{{::translate.load('gisengine.designer.layer.select')}}">
+	<expander-box id="layersListMultiSelect" color="white" background-color="#a9c3db" ng-if="!isDatasetChosen" expanded="isOpenedLayer" title="{{::translate.load('gisengine.designer.layer.select')}}">
 		<div class="innerExpander" layout-column>  
 	 		<angular-table 
 			id='tableLayerMultiSelect' ng-model="selectedLayer"
