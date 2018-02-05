@@ -1153,6 +1153,9 @@ public class DataSetResource extends AbstractDataSetResource {
 		if (ordering != null) {
 			boolean reverseOrdering = ordering.optBoolean("reverseOrdering");
 			String columnOrdering = ordering.optString("columnOrdering");
+			if(columnOrdering.equalsIgnoreCase("dsTypeCd")) {
+				columnOrdering = "type";
+			}
 			if (columnOrdering != null && !columnOrdering.isEmpty()) {
 				if (reverseOrdering) {
 					hsql += "order by h." + columnOrdering.toLowerCase() + " desc";
