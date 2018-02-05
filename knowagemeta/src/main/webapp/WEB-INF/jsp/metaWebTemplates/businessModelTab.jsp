@@ -99,6 +99,7 @@
 							
 							<!--profile attributes visibility -->
 							<md-select ng-model="prop.value.value" ng-if="prop.key=='structural.attribute'" >
+								<md-option value=""></md-option>
 								<md-option  ng-repeat="admissibleValue in sbiModule_config.profileAttributes  " value="{{admissibleValue}}" >
 									{{admissibleValue}}
 								</md-option>
