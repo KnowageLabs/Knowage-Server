@@ -158,7 +158,7 @@
 		                            	 "label":"Title",
 		                            	 "name":"aliasToShow",
 		                            	 transformer:function(item){
-		                            		 var template = "<md-input-container flex class=\"md-block\"> "
+		                            		 var template = "<md-input-container flex class=\"md-block noMdError\"> "
 		                            			 +"<label>Text</label>"
 		                            			 +"<input class=\"input_class\" ng-model=row.aliasToShow />"
 		                            			 +"</md-input-container>";

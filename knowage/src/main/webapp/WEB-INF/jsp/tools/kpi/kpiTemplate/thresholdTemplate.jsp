@@ -58,11 +58,11 @@
        				</td>
 					<td ng-repeat="column in thresholdColumn" ng-class="{'colorPickerTd':column.type=='colorpicker'}">
 						
-						<md-input-container ng-if="column.type == 'inputtext'">
+						<md-input-container ng-if="column.type == 'inputtext'" class="noMdError">
 					        <input type="text" ng-model="row[column.name]">
 					    </md-input-container>
 					    
-					    <md-input-container ng-if="column.type == 'inputnumber'">
+					    <md-input-container ng-if="column.type == 'inputnumber'" class="noMdError">
 					        <input type="number" ng-model="row[column.name]">
 					    </md-input-container>
 					    
