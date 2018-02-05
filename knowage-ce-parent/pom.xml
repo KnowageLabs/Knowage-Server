@@ -296,6 +296,13 @@
 				<resources>
 					<resource>
 						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.*</include>
+						</includes>
+						<excludes>
+							<exclude>**/*.pdf</exclude>
+							<exclude>**/*.zip</exclude>
+						</excludes>
 						<filtering>true</filtering>
 					</resource>
 				</resources>
