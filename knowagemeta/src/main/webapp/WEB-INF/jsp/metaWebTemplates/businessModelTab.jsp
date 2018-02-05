@@ -112,6 +112,12 @@
 									{{role}}
 								</md-option>
 							</md-select>
+							<!-- physical column name -->
+							<md-input-container ng-if="(selectedBusinessModel['physicalColumn']!=undefined) && (catProp=='physical')">
+								<label >{{translate.load("sbi.meta.column.physical")}}</label>
+							 	<input ng-if="(selectedBusinessModel['physicalColumn']!=undefined) && (catProp=='physical')" ng-model="selectedBusinessModel['physicalColumn'].name" disabled>
+							</md-input-container>
+							
 							
 							<!-- edit temporal hierarchy button -->
 							<md-icon ng-if="prop.value.value=='temporal dimension'" ng-click="editTemporalHierarchy()" md-font-icon=" fa fa-sitemap" ></md-icon>
