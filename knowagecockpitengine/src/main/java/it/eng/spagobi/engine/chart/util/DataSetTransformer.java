@@ -40,10 +40,10 @@ public class DataSetTransformer {
 
 	public void print(Object object) {
 
-		/*System.out.println("-----------------------");
+		System.out.println("-----------------------");
 		System.out.println(object);
 		System.out.println(object.getClass().toString());
-		System.out.println("-----------------------");*/
+		System.out.println("-----------------------");
 
 	}
 
@@ -911,7 +911,7 @@ public class DataSetTransformer {
 
 			if (!al.contains(series.get(i))) {
 
-				al.add(series.get(i) + "_" + groupings.get(i));
+				al.add(series.get(i) + "_" + groupings.get(i).toLowerCase());
 				JSONObject jo = new JSONObject();
 				jo.put((new Integer(j).toString()), series.get(i));
 				jo.put("prefix", prefix.get(i));
@@ -1008,7 +1008,7 @@ public class DataSetTransformer {
 
 		for (int i = 0; i < series.size(); i++) {
 
-			Object serie = series.get(i) + "_" + groupings.get(i);
+			Object serie = series.get(i) + "_" + groupings.get(i).toLowerCase();
 
 			listColumns.add(mapper.get(serie));
 
@@ -1272,6 +1272,26 @@ public class DataSetTransformer {
 
 	public String getStringOrNull(Object item) {
 		return item != null ? item.toString() : null;
+	}
+
+	String[] arrayOfGroupingFunction = { "NONE", "SUM", "MIN", "MAX", "AVG", "COUNT_DISTINCT", "COUNT" };
+
+	public String setGroupingFunctionToLowerCase(String value) {
+		String returnedValue = "";
+		for (int i = 0; i < arrayOfGroupingFunction.length; i++) {
+			if (value.contains("_" + arrayOfGroupingFunction[i])) {
+				returnedValue = value;
+				break;
+			}
+
+		}
+		if (returnedValue != "")
+			return returnedValue.toLowerCase();
+		else
+			return value;
+		/*
+		 * if (value.contains("_SUM")) return value.toLowerCase(); else return value;
+		 */
 	}
 
 }
