@@ -99,7 +99,7 @@ angular.module('chartRendererModule')
 
 			scope.$on('refresh',function(event,data,isRealtime,changedChartType,chartConf){		
 				if(scope.updateble){
-					var dataForSending = isRealtime ? data : eval("(" + data + ")");
+					var dataForSending = isRealtime ? data : eval("(" + data.jsonData + ")");
 					if(scope.chartInitializer != undefined && scope.chartInitializer.updateData){
 						scope.updateChart(scope.widgetData,dataForSending);
 					}else{

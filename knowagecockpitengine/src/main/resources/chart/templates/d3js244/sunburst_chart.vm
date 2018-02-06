@@ -4,10 +4,9 @@
 #set($dataFields = $data.metaData.fields) ## columns of data table
 #set($dataColumnsMapper = {})
 #foreach ($dataField in $dataFields) ## conversion column name to internal column name
-
-
 	#if($dataField.class.name == 'java.util.LinkedHashMap')
-		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header, $dataField.name))
+		#set($dataFieldHeader = $datasettransformer.setGroupingFunctionToLowerCase($dataField.header))
+    	#set($workAroundNoPrint = $dataColumnsMapper.put($dataFieldHeader , $dataField.name))
 	#end
 #end
 
@@ -315,7 +314,7 @@
 	
 	data:
 	[
-	 	$datasettransformer.toTree($columnsNeeded,$serieName,$dataColumnsMapper,$dataRows,$groupingFunction)
+	 	$datasettransformer.toTree($columnsNeeded,$serieName,$dataColumnsMapper,$dataRows,$groupingFunction.toLowerCase())
 	 	
 	]
 }

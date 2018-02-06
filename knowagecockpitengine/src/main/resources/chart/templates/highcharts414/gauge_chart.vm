@@ -3,7 +3,8 @@
 
 #foreach ($dataField in $dataFields) ## conversion column name to internal column name
 	#if($dataField.class.name == 'java.util.LinkedHashMap')
-		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header , $dataField.name))
+		#set($dataFieldHeader = $datasettransformer.setGroupingFunctionToLowerCase($dataField.header))
+    	#set($workAroundNoPrint = $dataColumnsMapper.put($dataFieldHeader , $dataField.name))
 	#end
 #end
 
@@ -562,7 +563,7 @@
 		    	#set($counterYAxis = $counterYAxis + 1)	    	
 		    		    	
 		        data: [
-		    	    #set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
+		    	    #set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 		    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
 					
 					#foreach($row in $rows)
