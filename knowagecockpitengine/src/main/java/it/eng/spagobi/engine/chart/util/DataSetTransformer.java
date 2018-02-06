@@ -1280,13 +1280,13 @@ public class DataSetTransformer {
 		String returnedValue = "";
 		for (int i = 0; i < arrayOfGroupingFunction.length; i++) {
 			if (value.contains("_" + arrayOfGroupingFunction[i])) {
-				returnedValue = value;
+				returnedValue = value.replace("_" + arrayOfGroupingFunction[i], "_" + arrayOfGroupingFunction[i].toLowerCase());
 				break;
 			}
 
 		}
 		if (returnedValue != "")
-			return returnedValue.toLowerCase();
+			return returnedValue;
 		else
 			return value;
 		/*

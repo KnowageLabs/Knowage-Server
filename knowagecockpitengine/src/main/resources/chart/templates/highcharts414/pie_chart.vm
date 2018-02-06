@@ -468,7 +468,6 @@
     },
    
      #set($i = 1)
-     $datasettransformer.print($chart.outcomingEventsEnabled)
     series: [
 	    #set ($counter = 1)
     	#foreach($valueKey in $seriesMap.keySet())
