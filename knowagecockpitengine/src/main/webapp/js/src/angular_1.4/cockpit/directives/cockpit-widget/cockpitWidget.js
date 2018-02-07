@@ -603,6 +603,18 @@ function cockpitWidgetControllerFunction(
 				var otherOutputParameters = [];
 				var passedOutputParametersList = model.cross.cross.outputParametersList;
 
+				// get Aliases for column
+				var columnAliasesMap = {};
+				for(var i = 0; i<model.content.columnSelectedOfDataset.length; i++){
+					var colDataset = model.content.columnSelectedOfDataset[i];
+					if(colDataset.aliasToShow && colDataset.aliasToShow != ""){
+						if(colDataset.alias){
+							columnAliasesMap[colDataset.alias] = colDataset.aliasToShow;
+						}
+					}
+				}
+
+
 				for(par in passedOutputParametersList){
 					var content = passedOutputParametersList[par];
 
@@ -621,7 +633,8 @@ function cockpitWidgetControllerFunction(
 						}
 						else if(content.type == 'dynamic'){
 							if(content.column){
-								var valToAdd = row[content.column];
+								var columnNameToSearch = columnAliasesMap[content.column] ?  columnAliasesMap[content.column] : content.column;
+								var valToAdd = row[columnNameToSearch];
 								var objToAdd = {};
 								objToAdd[par] = valToAdd;
 								otherOutputParameters.push(objToAdd);
