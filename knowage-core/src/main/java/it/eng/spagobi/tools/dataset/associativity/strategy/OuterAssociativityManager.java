@@ -173,7 +173,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 				}
 				for (String childDataset : result.getDatasets(group)) {
 					container = associativeDatasetContainers.get(childDataset);
-					if (!container.isResolved()) {
+					if (!container.isResolved() && result.getEdgeGroupValues().keySet().contains(group)) {
 						List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
 						container.update(group, columnNames, group.getValues());
 						totalChildren.add(childDataset);

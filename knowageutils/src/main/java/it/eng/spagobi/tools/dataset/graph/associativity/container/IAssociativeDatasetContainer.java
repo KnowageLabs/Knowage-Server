@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -54,6 +55,8 @@ public interface IAssociativeDatasetContainer {
 	public void unresolve();
 
 	public void unresolveGroups();
+
+	public Map<String, String> getParameters();
 
 	public abstract Set<Tuple> getTupleOfValues(List<String> columnNames) throws ClassNotFoundException, NamingException, SQLException;
 

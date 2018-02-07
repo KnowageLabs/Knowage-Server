@@ -50,6 +50,7 @@ import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUt
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.parameters.ParametersUtilities;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -215,10 +216,26 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 			Set<EdgeGroup> groups = result.getDatasetToEdgeGroup().get(dataset);
 			Map<String, Set<Tuple>> groupToValues = new HashMap<>(groups.size());
 			for (EdgeGroup group : groups) {
-				List<String> columns = getColumnNames(group.getOrderedEdgeNames(), dataset);
-				String columnsString = StringUtils.join(columns, ",");
 				Set<Tuple> values = result.getEdgeGroupValues().get(group);
-				groupToValues.put(columnsString, values);
+				if (values != null) {
+					List<String> columns = getColumnNames(group.getOrderedEdgeNames(), dataset);
+					String columnsString = StringUtils.join(columns, ",");
+					groupToValues.put(columnsString, values);
+				}
+			}
+			for (String edgeName : datasetToAssociations.get(dataset).keySet()) {
+				for (EdgeGroup edgeGroup : groups) {
+					if (!edgeGroup.getEdgeNames().contains(edgeName)) {
+						String missingColumn = datasetToAssociations.get(dataset).get(edgeName);
+						if (ParametersUtilities.isParameter(missingColumn)) {
+							String missingParameter = ParametersUtilities.getParameterName(missingColumn);
+							String value = associativeDatasetContainers.get(dataset).getParameters().get(missingParameter);
+							HashSet<Tuple> tuples = new HashSet<Tuple>();
+							tuples.add(new Tuple(value));
+							groupToValues.put(missingColumn, tuples);
+						}
+					}
+				}
 			}
 			selections.put(dataset, groupToValues);
 		}

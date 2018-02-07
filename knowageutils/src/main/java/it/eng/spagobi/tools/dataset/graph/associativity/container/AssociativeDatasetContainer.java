@@ -167,7 +167,8 @@ abstract class AssociativeDatasetContainer implements IAssociativeDatasetContain
 		}
 	}
 
-	protected Map<String, String> getParameters() {
+	@Override
+	public Map<String, String> getParameters() {
 		return parameters;
 	}
 
