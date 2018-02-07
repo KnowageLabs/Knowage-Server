@@ -22,7 +22,7 @@ public final class VersionInfo {
 
 	public static final int MAJOR = 6;
 	public static final int MINOR = 1;
-	public static final int PATCH = 3;
+	public static final int PATCH = 4;
 	public static final String VERSION_SEPARATOR = ".";
 	// this can be "-RC" (release candidate) or "-S" (snapshot)
 	public static final String OPTIONAL = "";
