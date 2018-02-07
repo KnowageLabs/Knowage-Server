@@ -729,6 +729,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		params += "&widgetName=" + encodeURIComponent(ngModel.content.name);
 		if(ngModel.content.wtype=="chart"){
 			var chartTemplate = this.getI18NTemplate(ngModel.content.chartTemplate);
+			chartTemplate.CHART.outcomingEventsEnabled = true;
 			var body = {"aggregations":bodyString, "chartTemp":chartTemplate, "exportWebData":false}
 			sbiModule_restServices.promisePost("1.0/chart/jsonChartTemplate", encodeURIComponent(dataset.label) + "/getDataAndConf" + params, body)
 			.then(function(response){
