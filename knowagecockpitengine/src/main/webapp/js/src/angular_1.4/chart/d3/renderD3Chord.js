@@ -207,9 +207,9 @@ function renderChordChart(jsonData,panel,handleCockpitSelection,locale,handleCro
 				var chartHeight = jsonData.chart.height ? Number(jsonData.chart.height) : panel.offsetHeight;
 				var chartWidth = jsonData.chart.width ? Number(jsonData.chart.width) : panel.offsetWidth;
 				
-				positionTheTooltip(chartHeight,chartWidth,ttText);	
+				positionTheTooltip(d3.event.layerX,d3.event.layerY,ttText);	
 				
-//				.style("left", (d3.event.pageX) + "px")     
+//			.style("left", (d3.event.pageX) + "px")     
 //				.style("top", (d3.event.pageY- 25) + "px");
 				
 			}

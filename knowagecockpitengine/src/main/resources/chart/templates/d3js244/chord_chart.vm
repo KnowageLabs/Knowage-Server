@@ -376,6 +376,6 @@
 	
 	data:
 	[
-		$datasettransformer.toMatrix($results,$columnsNeeded,$serieName,$dataColumnsMapper,$groupingFunction..toLowerCase())
+		$datasettransformer.toMatrix($results,$columnsNeeded,$serieName,$dataColumnsMapper,$groupingFunction.toLowerCase())
 	]
 } 

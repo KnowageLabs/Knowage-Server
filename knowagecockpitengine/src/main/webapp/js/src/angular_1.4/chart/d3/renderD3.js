@@ -77,14 +77,14 @@ function removePixelsFromFontSize(fontSize)
  * 
  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
-function positionTheTooltip(chartHeight,chartWidth,ttText)
+function positionTheTooltip(posX,posY,ttText)
 {
-	var windowHeight = window.innerHeight;
-	var windowWidth = window.innerWidth;
+	//var windowHeight = window.innerHeight;
+	//var windowWidth = window.innerWidth;
 	
 	ttText
-		.style("left", (d3.event.layerX) + "px")
-		.style("top", (d3.event.layerY) + "px");
+		.style("left", (posX) + "px")
+		.style("top", (posY ) + "px");
 	
 	/**
 	 * Old implementation that included vertical centering

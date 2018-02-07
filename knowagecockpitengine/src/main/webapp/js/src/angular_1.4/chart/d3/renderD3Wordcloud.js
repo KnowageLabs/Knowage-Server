@@ -949,7 +949,7 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 				var chartHeight = Number(heightNormalized);
 				var chartWidth = Number(widthNormalized-widthCorrection);
 				
-				positionTheTooltip(chartHeight,chartWidth,ttText);							
+				positionTheTooltip(d3.event.layerX,d3.event.layerY,ttText);							
 				
 //					.style("left", (d3.event.pageX) + "px")     
 //					.style("top", (d3.event.pageY - 25) + "px");

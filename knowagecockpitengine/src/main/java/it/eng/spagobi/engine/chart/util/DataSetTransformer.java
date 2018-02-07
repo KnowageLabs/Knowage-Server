@@ -323,7 +323,7 @@ public class DataSetTransformer {
 
 				} else {
 
-					String serieValueForXOfRowAndColumn = (String) (record.get(columnsMapper.get(serie + "_" + aggregationType)));
+					String serieValueForXOfRowAndColumn = (record.get(columnsMapper.get(serie + "_" + aggregationType))).toString();
 					submapWithNewColumn.put(currentColumn, Float.parseFloat(serieValueForXOfRowAndColumn));
 				}
 
@@ -338,7 +338,7 @@ public class DataSetTransformer {
 
 				} else {
 
-					String serieValueForXOfRowAndColumn = (String) record.get(columnsMapper.get(serie + "_" + aggregationType));
+					String serieValueForXOfRowAndColumn = (record.get(columnsMapper.get(serie + "_" + aggregationType))).toString();
 					availableDataMapOfMaps.get(currentRow).put(currentColumn, Float.parseFloat(serieValueForXOfRowAndColumn));
 
 				}
