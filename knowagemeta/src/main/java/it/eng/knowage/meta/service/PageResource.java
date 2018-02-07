@@ -73,6 +73,8 @@ public class PageResource {
 		urls = new HashMap<String, String>();
 		urls.put("edit", "/WEB-INF/jsp/metaWeb.jsp");
 		urls.put("test", "/WEB-INF/jsp/test.jsp");
+		urls.put("error", "/WEB-INF/jsp/error.jsp");
+
 	}
 
 	@Context
@@ -135,6 +137,7 @@ public class PageResource {
 			InputStream is = null;
 			if (lastFileModelContent != null) {
 				byte[] sbiModel = lastFileModelContent.getFileModel();
+				boolean modelFound = false;
 				if (sbiModel != null) {
 					is = new ByteArrayInputStream(sbiModel);
 				} else {
@@ -143,15 +146,21 @@ public class PageResource {
 					if (jar != null) {
 						// open the jar and find the sbimodel file
 						byte[] jarSbiModel = MetaService.extractSbiModelFromJar(lastFileModelContent);
-						jarSbiModel = EmfXmiSerializer.checkCompatibility(jarSbiModel);
 
 						if (jarSbiModel != null) {
+							jarSbiModel = EmfXmiSerializer.checkCompatibility(jarSbiModel);
 							is = new ByteArrayInputStream(jarSbiModel);
+							modelFound = true;
 						} else {
 							// SbiModel not found inside jar
+							logger.error("Business model file not found inside jar");
 						}
 					} else {
 						// SbiModel not found
+						logger.error("Business model file not found");
+					}
+					if (!modelFound) {
+						request.getRequestDispatcher(urls.get("error")).forward(request, response);
 					}
 
 				}
@@ -177,8 +186,7 @@ public class PageResource {
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 
 		} catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
+			logger.error("Error during Metamodel initialization: "+e);
 		} finally {
 			logger.debug("OUT");
 		}
