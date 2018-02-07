@@ -75,7 +75,7 @@
             <column name="doc_state" length="20" not-null="true" />
         </property>
         <property name="documentParameters" type="string">
-            <column name="doc_parameters" not-null="false" />
+            <column name="doc_parameters" length="4000" not-null="false" />
         </property>
         <many-to-one name="sbiSubObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiSubObjects">
             <column name="subobj_ref" not-null="false" />
