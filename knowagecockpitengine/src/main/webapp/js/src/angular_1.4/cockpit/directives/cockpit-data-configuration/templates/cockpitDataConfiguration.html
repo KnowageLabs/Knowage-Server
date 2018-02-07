@@ -16,17 +16,14 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-
-
 <md-card class="flexCard" style="position:absolute;" layout-fill id="cockpitDataConfig">
  <md-card-content flex layout="column" class="noPadding">
-	<md-toolbar>
+	<md-toolbar class="secondaryToolbar">
 		<div class="md-toolbar-tools">
 			<h2> Data {{translate.load("sbi.cockpit.settings")}}</h2>
 		</div>
 	</md-toolbar>
 	<md-content flex layout="column">
-	
 	
 		<md-tabs  flex md-border-bottom layout-column>
 		
@@ -89,12 +86,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 														</md-toolbar>
 														<md-card-content flex layout="column" >
 															<div  layout-wrap layout="row" >
-																<md-input-container class="md-icon-right" ng-repeat="par in row.parameters" flex="30" style="margin:8px;">
-														          <label>{{par.name}}</label>
-														          <input  ng-model="par.value" ng-init="par.value=par.value==undefined ? par.defaultValue : par.value" required>
-														          <md-icon ng-if="haveAnaliticalDriver()" md-font-icon="fa fa-search dsChoices{{row.label}}-{{$index}}" ng-click="selectParameterFromPanel(par,'dsChoices'+row.label+'-'+$index)"></md-icon>
-														         
-														        </md-input-container>
+																<div layout="row" flex="30" style="margin:8px;" ng-repeat="par in row.parameters" >
+																	<md-input-container>
+															          <label>{{par.name}}</label>
+															          <input  ng-model="par.value" ng-init="par.value=par.value==undefined ? par.defaultValue : par.value" required>
+															        </md-input-container>
+															        <md-menu class="noPadding" ng-if="haveAnaliticalDriver()">
+																	      <md-button aria-label="Open parameters panel" class="md-icon-button" ng-click="$mdOpenMenu()">
+																	        <md-icon md-menu-origin md-font-icon="fa fa-search"></md-icon>
+																	      </md-button>
+																	      <md-menu-content width="3">
+																	        <md-menu-item ng-repeat="driver in cockpitModule_analyticalDriversUrls">
+																	          <md-button ng-click="addParameter(par,driver.url)">{{driver.url}}</md-button>
+																	        </md-menu-item>
+																        </md-menu-content>
+															        </md-menu>
+														        </div>
 													        </div>
 														</md-card-content>
 													</md-card>
@@ -103,7 +110,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										</tbody>
 									</table>
 
-								
 							</md-card-content>
 						</md-card>
 		         		
@@ -161,11 +167,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 														</md-toolbar>
 														<md-card-content flex layout="column" >
 															<div  layout-wrap layout="row" >
-																<md-input-container class="md-icon-right" ng-repeat="par in row.objParameter" flex="30" style="margin:8px;">
-														          <label>{{par.label}}</label>
-														          <input  ng-model="par.value" ng-init="par.value=par.value==undefined ? par.defaultValue : par.value" required>
-														          <md-icon ng-if="haveAnaliticalDriver()" md-font-icon="fa fa-search docChoices{{row.DOCUMENT_ID}}-{{$index}}" ng-click="selectParameterFromPanel(par,'docChoices'+row.DOCUMENT_ID+'-'+$index)"></md-icon>
-														        </md-input-container>
+																<div layout="row" flex="30" style="margin:8px;" ng-repeat="par in row.objParameter" >
+																	<md-input-container class="" >
+															          <label>{{par.label}}</label>
+															          <input  ng-model="par.value" ng-init="par.value=par.value==undefined ? par.defaultValue : par.value" required>
+															          
+															          <!-- md-icon ng-if="haveAnaliticalDriver()" md-font-icon="fa fa-search docChoices{{row.DOCUMENT_ID}}-{{$index}}" ng-click="selectParameterFromPanel(par,'docChoices'+row.DOCUMENT_ID+'-'+$index)"></md-icon-->
+														        	</md-input-container>
+														        	<md-menu class="noPadding" ng-if="haveAnaliticalDriver()">
+																	      <md-button aria-label="Open parameters panel" class="md-icon-button" ng-click="$mdOpenMenu()">
+																	        <md-icon md-menu-origin md-font-icon="fa fa-search"></md-icon>
+																	      </md-button>
+																	      <md-menu-content width="3">
+																	        <md-menu-item ng-repeat="driver in cockpitModule_analyticalDriversUrls">
+																	          <md-button ng-click="addParameter(par,driver.url)">{{driver.url}}</md-button>
+																	        </md-menu-item>
+																        </md-menu-content>
+															        </md-menu>
+																</div>
 													        </div>
 														</md-card-content>
 													</md-card>
@@ -184,7 +203,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        <md-content  layout-fill layout="row" ng-controller="dataAssociationController"> 
 		          <div layout="column" layout-fill ng-if="displayAssociationsContent==true">
 		          	<div flex="50" layout="row" style="overflow: auto;">
-<!-- 		          	Dataset card -->
 						<md-card class=" associationCard flexCard"  ng-repeat="avDataset in tmpAvaiableDataset" layout="column"> 
 							<md-card-content flex="" layout="column" class="noPadding">
 								<md-toolbar class="secondaryToolbar" >
@@ -217,7 +235,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</md-content>
 							</md-card-content>
 						</md-card>
-<!-- 						Document card -->
 						<md-card class=" associationCard flexCard"  ng-repeat="avDocument in tmpAvaiableDocument" layout="column" ng-if="avDocument.objParameter.length>0"> 
 							<md-card-content flex="" layout="column" class="noPadding">
 								<md-toolbar class="documentAssociationToolbar" >
@@ -251,7 +268,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-toolbar>
 						<md-content flex  >
 							<div  class="associationBox editingAssociation" layout="row"   >
-								<div layout="row" layout-wrap flex>
+								<div layout="row" layout-wrap flex layout-align="center center">
 									<span layout="row" ng-repeat="item in utils.currentAss.fields">
 										<span>{{item.store}}.{{item.column}}</span>
 										<i class="fa fa-arrows-h associationsArrow" aria-hidden="true" ng-if="!$last"></i>
@@ -266,10 +283,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								      </md-button>
 								</div>
 							</div>
-<!-- 							saved associations -->
-
 							<div  class="associationBox " layout="row"   ng-repeat="ass in tmpAssociations" >
-								<div layout="row" layout-wrap flex>
+								<div layout="row" layout-wrap flex layout-align="center center">
 									<span layout="row" ng-repeat="item in ass.fields">
 										<span>{{item.store}}.{{item.column}}</span>
 										<i class="fa fa-arrows-h associationsArrow" aria-hidden="true" ng-if="!$last"></i>
@@ -297,8 +312,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        </md-content>
 		 	</md-tab>
 		 	<md-tab label="template">
-		        <md-content    >
-		        <pre>{{cockpitModule_template | json}}</pre>
+		        <md-content ng-controller="dataAssociationController">
+		        	<md-card>
+		        		<md-toolbar class="ternaryToolbar" >
+							<div class="md-toolbar-tools" layout="row">
+								<md-switch ng-model="showIndented">smart json visualization</md-switch>
+							</div>
+						</md-toolbar>
+		        		<md-card-content>
+		        			<json-formatter ng-show="showIndented" json="cockpitModule_template" open="3"></json-formatter>
+		        			<pre ng-show="!showIndented">{{cockpitModule_template | json:4}}</pre>
+		        		</md-card-content>
+		        	</md-card>
+		        
 		        </md-content>
 		 	</md-tab>
 		</md-tabs>

@@ -3,6 +3,7 @@
     .qbeList{
         overflow-y: auto;
         @include coolScrollBars($baseColor,6px);
+        border: 1px solid $bordersColor;
     }
 
 	ul {

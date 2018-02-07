@@ -22,7 +22,22 @@ baseScriptPath =baseScriptPath .substring(0, baseScriptPath .lastIndexOf('/'));
 
 (function() {
 
-var cockpitApp= angular.module("cockpitModule",['ngMaterial','cometd','sbiModule','gridster','file_upload','ngWYSIWYG','angular_table','cockpit_angular_table','color.picker','dndLists','chartRendererModule','accessible_angular_table','cockpitTable']);
+var cockpitApp= angular.module("cockpitModule",[
+	'ngMaterial',
+	'cometd',
+	'sbiModule',
+	'gridster',
+	'file_upload',
+	'ngWYSIWYG',
+	'angular_table',
+	'cockpit_angular_table',
+	'color.picker',
+	'dndLists',
+	'chartRendererModule',
+	'accessible_angular_table',
+	'cockpitTable',
+	'jsonFormatter'
+	]);
 cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');

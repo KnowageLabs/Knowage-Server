@@ -1,6 +1,25 @@
-angular.module('cockpitModule').controller("datasetManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_datasetServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_template","cockpitModule_analyticalDrivers","cockpitModule_analyticalDriversUrls","$timeout","sbiModule_user",datasetManagerController]);
-angular.module('cockpitModule').controller("documentManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_documentServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_analyticalDrivers","$timeout",documentManagerController]);
-angular.module('cockpitModule').controller("associationGroupController",["$scope","sbiModule_translate","cockpitModule_nearRealtimeServices", associationGroupController]);
+/*
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+angular
+	.module('cockpitModule')
+	.controller("datasetManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_datasetServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_template","cockpitModule_analyticalDrivers","cockpitModule_analyticalDriversUrls","$timeout","sbiModule_user",datasetManagerController])
+	.controller("documentManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_documentServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_analyticalDrivers","cockpitModule_analyticalDriversUrls","$timeout",documentManagerController])
+	.controller("associationGroupController",["$scope","sbiModule_translate","cockpitModule_nearRealtimeServices", associationGroupController]);
 
 function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_datasetServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_analyticalDriversUrls,$timeout,sbiModule_user){
 	$scope.displayDatasetCard=false;
@@ -10,8 +29,9 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 		 return Object.keys(cockpitModule_analyticalDrivers).length>0;
 	 }
 	
-	$scope.datasetTableActions=[
-	     {
+	$scope.cockpitModule_analyticalDriversUrls = cockpitModule_analyticalDriversUrls;
+	
+	$scope.datasetTableActions=[{
 			label : 'delete',
 			 icon:'fa fa-trash' ,  
 			action : function(item,event) {
@@ -34,54 +54,46 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 					          .ok(sbiModule_translate.load('sbi.generic.ok'))
 					          .cancel(sbiModule_translate.load('sbi.generic.cancel'));
 	
-					    $mdDialog.show(confirm).then(function() {
-					    	// ok remove all.
-					    	if(associationList.withAssoc.length != 0){
-					    		angular.copy(associationList.withoutAssoc,$scope.tmpAssociations);
-		    					$scope.tmpAvaiableDataset.splice($scope.tmpAvaiableDataset.indexOf(item),1);
-	
-					    	}
-					    	if(currentSelection[item.label] != undefined){
-					    		// remove selection
-					    		for(var i =0 ;i< cockpitModule_template.configuration.aggregations.length;i++){
-					    			var index = cockpitModule_template.configuration.aggregations[i].datasets.indexOf(item.label);
-					    			if(index !=-1){
-					    				var keys = Object.keys(cockpitModule_template.configuration.aggregations[i].selection);
-					    				for(var k in keys){
-					    					if(keys[k].startsWith(item.label)){
-					    						delete cockpitModule_template.configuration.aggregations[i].selection[keys[k]];
-					    					}
-					    				}
-					    				// cockpitModule_template.configuration.aggregations[i].datasets.splice(index,1);
-					    				
-					    			}
-					    			
-					    		}
-					    		
-					    	}
-					    	
-					    }, function() {
-					    	// cancel nothing to do
-					    });
+						    $mdDialog.show(confirm).then(function() {
+						    	// ok remove all.
+						    	if(associationList.withAssoc.length != 0){
+						    		angular.copy(associationList.withoutAssoc,$scope.tmpAssociations);
+			    					$scope.tmpAvaiableDataset.splice($scope.tmpAvaiableDataset.indexOf(item),1);
+		
+						    	}
+						    	if(currentSelection[item.label] != undefined){
+						    		// remove selection
+						    		for(var i =0 ;i< cockpitModule_template.configuration.aggregations.length;i++){
+						    			var index = cockpitModule_template.configuration.aggregations[i].datasets.indexOf(item.label);
+						    			if(index !=-1){
+						    				var keys = Object.keys(cockpitModule_template.configuration.aggregations[i].selection);
+						    				for(var k in keys){
+						    					if(keys[k].startsWith(item.label)){
+						    						delete cockpitModule_template.configuration.aggregations[i].selection[keys[k]];
+						    					}
+						    				}
+						    				// cockpitModule_template.configuration.aggregations[i].datasets.splice(index,1);
+						    			}
+						    		}
+						    	}
+						    }, function() {
+						    	// cancel nothing to do
+						    });
 						}
-						
-	
 					}else{
 						 $mdDialog.show(
-							      $mdDialog.alert()
-							        .parent(angular.element(document.querySelector('#body')))
-							        .clickOutsideToClose(true)
-							        .title(sbiModule_translate.load('sbi.cockpit.dataset.impossibledelete'))
-							        .textContent(sbiModule_translate.load('sbi.cockpit.dataset.impossibledeletecontent'))
-							        .ariaLabel('Alert Dialog Demo')
-							        .ok(sbiModule_translate.load('sbi.generic.ok'))
-							        );
+					      $mdDialog.alert()
+					        .parent(angular.element(document.querySelector('#body')))
+					        .clickOutsideToClose(true)
+					        .title(sbiModule_translate.load('sbi.cockpit.dataset.impossibledelete'))
+					        .textContent(sbiModule_translate.load('sbi.cockpit.dataset.impossibledeletecontent'))
+					        .ariaLabel('Alert Dialog Demo')
+					        .ok(sbiModule_translate.load('sbi.generic.ok'))
+					        );
 					}
 			 }
-	     }
-	    ];
+	     }];
 	 
-
 	 $scope.datasetFunctions={
 			 translate:sbiModule_translate,
 			 addDataset : function(ev){
@@ -179,6 +191,10 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 	 $scope.addDataset=function(){ 
 		 cockpitModule_datasetServices.addDataset("cockpitDataConfig",$scope.tmpAvaiableDataset,true);
 	 }
+	 
+	 $scope.addParameter=function(par,panelPar){
+		 par.value = "$P{"+panelPar+"}"
+	 }
 	
 	$scope.selectParameterFromPanel=function(par,classItem){
 		var position = $mdPanel.newPanelPosition()
@@ -224,73 +240,64 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 	}	
 }
 
-function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_documentServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_analyticalDrivers,$timeout ){
+function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_documentServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_analyticalDrivers,cockpitModule_analyticalDriversUrls,$timeout){
 	$scope.displayDocumentCard=false;
 	$timeout(function(){$scope.displayDocumentCard=true;},0);
 	
 	 $scope.expandRow = function(row){
 		 row.expanded = !row.expanded;
 	 }
-	
+
+	$scope.cockpitModule_analyticalDriversUrls = cockpitModule_analyticalDriversUrls;
 	$scope.documentTableActions=[
-	                             {
-					    			label : 'delete',
-					    			 icon:'fa fa-trash' ,  
-					    			action : function(item,event) {
-					    				var listDocumentUsed = cockpitModule_documentServices.getDocumentsUsed();
-					    				if(listDocumentUsed.indexOf(item.DOCUMENT_ID)==-1){
-					    					// if it used in association o
-											// selection remove it
-				    						var associationList=$scope.retryListOfAssociation(item.DOCUMENT_LABEL)
+         {
+			label : 'delete',
+			 icon:'fa fa-trash' ,  
+			action : function(item,event) {
+				var listDocumentUsed = cockpitModule_documentServices.getDocumentsUsed();
+				if(listDocumentUsed.indexOf(item.DOCUMENT_ID)==-1){
+					// if it used in association o
+					// selection remove it
+					var associationList=$scope.retryListOfAssociation(item.DOCUMENT_LABEL)
 
-				    						if(associationList.withAssoc.length == 0 ){
-				    							$scope.tmpAvaiableDocument.splice($scope.tmpAvaiableDocument.indexOf(item),1);
-				    						}else{
+					if(associationList.withAssoc.length == 0 ){
+						$scope.tmpAvaiableDocument.splice($scope.tmpAvaiableDocument.indexOf(item),1);
+					}else{
 
-				    							// there is an association
-				    							 var confirm = $mdDialog.confirm()
-				    							 .title(sbiModule_translate.load('sbi.cockpit.document.warning.association'))
-				    					         .textContent(sbiModule_translate.load('sbi.cockpit.document.warning.association.message'))
-				    					          .ariaLabel('delete')
-				    					          .ok(sbiModule_translate.load('sbi.generic.ok'))
-					    					       .cancel(sbiModule_translate.load('sbi.generic.cancel'));
+						// there is an association
+						 var confirm = $mdDialog.confirm()
+						 .title(sbiModule_translate.load('sbi.cockpit.document.warning.association'))
+				         .textContent(sbiModule_translate.load('sbi.cockpit.document.warning.association.message'))
+				          .ariaLabel('delete')
+				          .ok(sbiModule_translate.load('sbi.generic.ok'))
+					       .cancel(sbiModule_translate.load('sbi.generic.cancel'));
 
-				    					    $mdDialog.show(confirm).then(function() {
-				    					    	// ok remove all.
-				    					    	if(associationList.withAssoc.length != 0){
-				    					    		angular.copy(associationList.withoutAssoc,$scope.tmpAssociations);
-							    					$scope.tmpAvaiableDocument.splice($scope.tmpAvaiableDocument.indexOf(item),1);
-				    					    	}
-				    					    });
-				    						
-				    						}
-					    				}else{
+				    $mdDialog.show(confirm).then(function() {
+				    	// ok remove all.
+				    	if(associationList.withAssoc.length != 0){
+				    		angular.copy(associationList.withoutAssoc,$scope.tmpAssociations);
+	    					$scope.tmpAvaiableDocument.splice($scope.tmpAvaiableDocument.indexOf(item),1);
+				    	}
+				    });
+					
+					}
+				}else{
 
-				    						 $mdDialog.show(
-				    							      $mdDialog.alert()
-				    							        .parent(angular.element(document.querySelector('#body')))
-				    							        .clickOutsideToClose(true)
-				    							        .title(sbiModule_translate.load('sbi.cockpit.document.impossibledelete'))
-				    							        .textContent(sbiModule_translate.load('sbi.cockpit.document.impossibledeletecontent'))
-				    							        .ariaLabel('Alert Dialog Demo')
-				    							        .ok(sbiModule_translate.load('sbi.generic.ok'))
-				    							        );
-				    					
-					    				}
-					    				
-					    			 }
-	                             }
-	                            ];
-	 $scope.documentFunctions={
-			 translate:sbiModule_translate,
-			 addDocument : function(ev){
-				 $scope.addDocument();
-			 },
-			 selectParameterFromPanel:function(par,classItem){
-				 $scope.selectParameterFromPanel(par,classItem);
-			 },
-			 haveAnaliticalDriver:(Object.keys(cockpitModule_analyticalDrivers).length>0)
-	 };
+					 $mdDialog.show(
+						      $mdDialog.alert()
+						        .parent(angular.element(document.querySelector('#body')))
+						        .clickOutsideToClose(true)
+						        .title(sbiModule_translate.load('sbi.cockpit.document.impossibledelete'))
+						        .textContent(sbiModule_translate.load('sbi.cockpit.document.impossibledeletecontent'))
+						        .ariaLabel('Alert Dialog Demo')
+						        .ok(sbiModule_translate.load('sbi.generic.ok'))
+						        );
+				
+				}
+				
+			 }
+         }
+	  ];
 	 
 	 $scope.haveAnaliticalDriver=function(){
 		 return Object.keys(cockpitModule_analyticalDrivers).length>0;
@@ -321,35 +328,8 @@ function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitMo
 	 $scope.addDocument=function(){
 		 cockpitModule_documentServices.addDocument("cockpitDataConfig",$scope.tmpAvaiableDocument,true);
 	 }
-	
-	 $scope.selectParameterFromPanel=function(par,classItem){
-		 var position = $mdPanel.newPanelPosition()
-	      .relativeTo('.'+classItem)
-	      .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.ALIGN_BOTTOMS);
- 
-		 var config = {
-				    attachTo: angular.element(document.getElementById("cockpitDataConfig")) ,
-				    controller: function($scope,parameter,cockpitModule_analyticalDrivers,mdPanelRef){
-				    	$scope.cockpitModule_analyticalDrivers=cockpitModule_analyticalDrivers;
-				    	$scope.addParameter=function(par){
-				    		parameter.value="$P{"+par+"}"
-				    		mdPanelRef.close();
-							$scope.$destroy();
-				    	}
-				    	
-				    },
-				    template:
-				    	'<md-content style="max-height: 300px;overflow-y: auto;"><md-list><md-list-item ng-repeat="(key,val) in cockpitModule_analyticalDrivers" ng-click="addParameter(key)">{{key}}</md-list-item></md-list></md-content>',
-				    position: position,
-				    locals: {parameter:par },
-				    clickOutsideToClose: true,
-				    escapeToClose: true,
-				    focusOnOpen: false,
-				    panelClass: 'sheetMenuPanel',
-				    zIndex: 150
-				  };
-
-				  $mdPanel.open(config);
+	 $scope.addParameter=function(par,panelPar){
+		 par.value = "$P{"+panelPar+"}"
 	 }
 }
 
@@ -584,4 +564,3 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    		$scope.$broadcast("refreshFrequencyNearRTData")
 		    	}
 };
-

@@ -63,14 +63,64 @@
      		<div layout="row" ng-if="showCircularcolumns.value" layout-sm="column" layout-align="space-around">
       			<md-progress-circular md-mode="indeterminate"></md-progress-circular>
    			 </div>
-	  		<angular-table flex
+   			 
+   			 <table class="kn-table">
+   			 	<thead>
+   			 		<tr>
+   			 			<th></th>
+   			 			<th ng-repeat="col in metadataTableColumns">{{col.label}}</th>
+   			 			<th></th>
+   			 		</tr>
+   			 	</thead>
+   			 	<tbody>
+   			 		<tr ng-repeat="row in model.content.columnSelectedOfDataset track by $index">
+   			 			<td class="multiTableAction">
+							<div layout="row" layout-align="center"> 
+			                	<md-button ng-click="functionsCockpitColumn.moveUp($event,$index)" class="md-icon-button" aria-label="up" ng-show="$index!=0"> 
+		               				<md-icon md-font-icon="fa fa-arrow-up"></md-icon>
+		          				</md-button>
+		          				<md-button ng-click="functionsCockpitColumn.moveDown($event,$index)" class="md-icon-button" aria-label="down" ng-show="!$last">
+		          					<md-icon md-font-icon="fa fa-arrow-down"></md-icon>
+		          				</md-button>
+	          				</div>
+       					</td>
+   			 			<td ng-repeat="col in metadataTableColumns" ng-style="{'width':col.width}">
+							<md-input-container ng-if="col.type == 'inputtext'" class="noMdError">
+						        <input type="text" ng-model="row[col.name]" aria-label="text-input">
+						    </md-input-container>
+
+						    <md-select ng-if="col.type == 'select'" ng-model="row[col.name]" ng-if="col.if" aria-label="select-input">
+		           				<md-option value=""></md-option>
+		           				<md-option ng-repeat="opt in col.values track by $index" value="{{opt.value}}">
+		           					{{opt.label}}
+		           				</md-option> 
+	           				</md-select>
+	           				
+	           				<md-button class="md-icon-button" ng-click="functionsCockpitColumn.draw(row,col,index)" ng-style="{'background-color':row.style['background-color']}" ng-if="col.type == 'style'">
+								<md-tooltip>Column style</md-tooltip>
+								<md-icon md-font-icon="fa fa-paint-brush" ng-style="{'color':row.style.color}">
+							</md-button>
+						</td>
+						<td class="tableAction">
+							<div layout="row" layout-align="center">
+								<md-button ng-repeat="action in actionsOfCockpitColumns" class="md-icon-button" ng-click="action.action(row,$event)">
+									<md-tooltip>{{action.label}}</md-tooltip>
+									<md-icon md-font-icon="{{action.icon}}">
+								</md-button>
+							</div>
+						</td>
+   			 		</tr>
+   			 	</tbody>
+   			 </table>
+   			 
+	  		<!--  angular-table flex
 		  		ng-show="model.content.columnSelectedOfDataset.length>0 && !showCircularcolumns.value"
 				id='metadataTable' ng-model="model.content.columnSelectedOfDataset"
 				columns='metadataTableColumns'
 				columns-search='["name"]' show-search-bar=true
 				no-pagination=true  scope-functions="functionsCockpitColumn"
 				speed-menu-option= actionsOfCockpitColumns>
-			</angular-table> 
+			</angular-table--> 
 			 
 			
 	    	

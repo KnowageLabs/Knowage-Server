@@ -20,6 +20,12 @@ function dataAssociationControllerFunction($scope,cockpitModule_template,cockpit
 	$scope.utils.currentAss=angular.copy(emptyAss);
 	$scope.jsonCurrentAss={};	//this is used to have direct response of data
 	$scope.tmpEditCurrAss={};
+	$scope.showIndented = true;
+	
+	$scope.toggleJsonIndented = function() {
+		$scope.showIndented = !$scope.showIndented;
+	};
+	
 	
 	$scope.toggleAssociation=function(objLabel,fieldName,type){
 		var finded=false;

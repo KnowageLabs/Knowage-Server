@@ -39,6 +39,7 @@
     "angular-ui-codemirror": "0.3.0",
     "codemirror": "5.32.0",
     "font-awesome": "^4.7.0",
+    "jsonformatter": "^0.6.0",
     "ngdraggable": "^0.1.10"
   },
   "author": "knowage labs <knowage@eng.it>",

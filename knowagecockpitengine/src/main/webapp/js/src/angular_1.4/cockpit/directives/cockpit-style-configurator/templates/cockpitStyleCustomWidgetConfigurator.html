@@ -1,9 +1,10 @@
 <md-card>
-	<md-card-title>
-		<md-card-title-text layout="row">
-			<span flex class="md-headline">{{cscwc_controller.labelWidget}}</span>
-		</md-card-title-text>
-	</md-card-title>
+	<md-toolbar class="ternaryToolbar" >
+		<div class="md-toolbar-tools" layout="row">
+			<h2 ng-if="!cscwc_controller.switch">{{cscwc_controller.labelWidget}}</h2>
+			<span flex></span>
+		</div>
+	</md-toolbar>
 	<md-card-content layout={{cscwc_controller.layoutType}} >
 	</md-card-content>
 </md-card>

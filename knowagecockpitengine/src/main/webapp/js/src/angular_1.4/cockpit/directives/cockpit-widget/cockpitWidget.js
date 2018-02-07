@@ -231,7 +231,9 @@ function cockpitWidgetControllerFunction(
 		$mdDialog)
 	{
 
-
+	$scope.openMenu = function($mdMenu, ev) {
+	      $mdMenu.open(ev);
+	    };
 
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;

@@ -75,7 +75,6 @@ angular.module('cockpitModule').directive('cockpitStyleCustomWidgetConfigurator'
                  pre: function preLink(scope, element, attrs,ctrl, transclud) {
                  },
                  post: function postLink(scope, element, attrs,ctrl, transclud) {
-
                 	ctrl.labelWidget = scope.$parent.$eval(attrs.label);
                 	ctrl.layoutType = attrs.layout;
                 	 if(ctrl.layoutType==undefined){
@@ -111,6 +110,10 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 		$scope.ngModel.headerHeight=0;
 		angular.copy($scope.cockpitStyle.title,$scope.ngModel.title);
 	}
+	$scope.resetBackgroundStyle=function(){
+		$scope.ngModel.backgroundColor=$scope.cockpitStyle.backgroundColor;
+		angular.copy($scope.cockpitStyle.backgroundColor,$scope.ngModel.backgroundColor);
+	}
 
 	$scope.colorPickerOptions = {
 			placeholder:$scope.translate.load('sbi.cockpit.color.select'),
@@ -119,6 +122,7 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 		}
 
 	$scope.toggleTitle = function(){
+		$scope.ngModel.titles = !$scope.ngModel.titles;
 		$scope.colorPickerOptions.disabled = $scope.ngModel.titles;
 	}
 	$scope.resetShadowsStyle=function(){

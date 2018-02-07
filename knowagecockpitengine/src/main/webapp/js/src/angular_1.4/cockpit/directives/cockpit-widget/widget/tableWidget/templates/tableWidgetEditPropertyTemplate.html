@@ -17,7 +17,7 @@
 				
 				<md-tab label="{{::translate.load('sbi.cockpit.style')}}" ng-cloak>
 					<cockpit-style-configurator ng-if="selectedTab.tab ==1" widget ng-cloak ng-model="model.style">
-						<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.widget.table.summary')">
+						<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.widget.table.summary')" switch="true" clear="true" ng-model="model.settings.summary.enabled">
 							<div flex layout="column" ng-cloak>
 								<div layout="row" flex>
 									<div flex=20 layout="row" layout-align="start center">
