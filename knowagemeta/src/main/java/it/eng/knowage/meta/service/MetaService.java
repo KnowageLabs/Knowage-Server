@@ -17,6 +17,56 @@
  */
 package it.eng.knowage.meta.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.Pointer;
+import org.apache.log4j.Logger;
+import org.eclipse.emf.common.util.EList;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import com.flipkart.zjsonpatch.JsonDiff;
+
 import it.eng.knowage.meta.exception.KnowageMetaException;
 import it.eng.knowage.meta.generator.GenerationException;
 import it.eng.knowage.meta.generator.jpamapping.JpaMappingJarGenerator;
@@ -72,56 +122,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.jxpath.JXPathContext;
-import org.apache.commons.jxpath.Pointer;
-import org.apache.log4j.Logger;
-import org.eclipse.emf.common.util.EList;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.flipkart.zjsonpatch.JsonDiff;
 
 @ManageAuthorization
 @Path("/1.0/metaWeb")
@@ -912,8 +912,8 @@ public class MetaService extends AbstractSpagoBIResource {
 	@POST
 	@Path("/updatePhysicalModel")
 	@SuppressWarnings("unchecked")
-	public Response applyUpdatePhysicalModel(@Context HttpServletRequest req) throws ClassNotFoundException, NamingException, SQLException, JSONException,
-			IOException {
+	public Response applyUpdatePhysicalModel(@Context HttpServletRequest req)
+			throws ClassNotFoundException, NamingException, SQLException, JSONException, IOException {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		JSONObject oldJsonModel = createJson(model);
 
@@ -928,7 +928,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		}
 		currTables.addAll(tables);
 
-		PhysicalModel phyMod = physicalModelInitializer.initializeLigth(originalPM.getConnection(), currTables);
+		PhysicalModel phyMod = physicalModelInitializer.initializeLigth(originalPM, currTables);
 		physicalModelInitializer.updateModel(originalPM, phyMod, tables);
 
 		JSONObject jsonModel = createJson(model);

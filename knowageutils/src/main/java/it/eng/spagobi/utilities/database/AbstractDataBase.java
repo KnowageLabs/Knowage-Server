@@ -17,14 +17,16 @@
  */
 package it.eng.spagobi.utilities.database;
 
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-
-import java.math.BigDecimal;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -54,7 +56,7 @@ public abstract class AbstractDataBase implements IDataBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.utilities.database.IDataBase#getUsedMemory(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -98,23 +100,15 @@ public abstract class AbstractDataBase implements IDataBase {
 		}
 	}
 
-	// public BigDecimal approximateUsedMemorySize() {
-	// BigDecimal totalSize = new BigDecimal();
-	// Iterator it = cacheRegistry.entrySet().iterator();
-	// while (it.hasNext()) {
-	// BigDecimal size = null;
-	// Map.Entry<String,String> entry = (Map.Entry<String,String>)it.next();
-	// String signature = entry.getValue();
-	// String query = " select * from " + signature;
-	// IDataStore dataStore = dataSource.executeStatement(query, 0, 0);
-	// DataStore ds = (DataStore) dataStore;
-	// BigDecimal rowWeight = getRowWeight(ds.getRecordAt(0), ds.getMetaData());
-	// size = rowWeight.multiply(new BigDecimal(ds.getRecordsCount())) ;
-	// logger.debug("Dimension stimated for cached object "+ signature +" [rowWeight*rows]: " + size + " ["+rowWeight+" * "+ds.getRecordsCount()+"]");
-	// totalSize = totalSize.add(size);
-	// }
-	// return totalSize;
-	// }
-
 	public abstract String getUsedMemorySizeQuery(String schema, String tableNamePrefix);
+
+	@Override
+	public String getSchema(Connection conn) throws SQLException {
+		return conn.getSchema();
+	}
+
+	@Override
+	public String getCatalog(Connection conn) throws SQLException {
+		return conn.getCatalog();
+	}
 }

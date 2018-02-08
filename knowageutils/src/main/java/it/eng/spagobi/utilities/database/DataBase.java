@@ -35,6 +35,8 @@ public class DataBase {
 	public static final String DIALECT_INGRES = "Ingres";
 	public static final String DIALECT_TERADATA = "Teradata";
 	public static final String DIALECT_VOLTDB = "VoltDB";
+	public static final String DIALECT_HIVE = "hive";
+	public static final String DIALECT_CASSANDRA = "cassandra";
 
 	public static IDataBase getDataBase(IDataSource dataSource) {
 		IDataBase dataBase = null;
@@ -53,6 +55,12 @@ public class DataBase {
 					dataBase = new SQLServerDataBase(dataSource);
 				} else if (dialect.contains(DIALECT_VOLTDB)) {
 					dataBase = new VoltDBDataBase(dataSource);
+				} else if (dialect.contains(DIALECT_TERADATA)) {
+					dataBase = new TeradataDataBase(dataSource);
+				} else if (dialect.contains(DIALECT_HIVE)) {
+					dataBase = new HiveDataBase(dataSource);
+				} else if (dialect.contains(DIALECT_CASSANDRA)) {
+					dataBase = new HiveDataBase(dataSource);
 				}
 			}
 		}
