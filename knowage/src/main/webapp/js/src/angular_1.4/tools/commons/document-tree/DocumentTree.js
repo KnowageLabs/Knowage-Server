@@ -32,6 +32,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 			, enableClone:"=?"
 			, showEmptyPlaceholder :"=?"
 			, noDropEnabled:"=?"
+			, translate:"@?"
 		},
 	    controller: DocumentTreeControllerFunction,
 	    controllerAs: 'ctrl',
@@ -98,10 +99,18 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 
 
 			    	scope.initializeFolders = function (folders, parent){
+
 			    		if(folders){
-			    			this.i18n.loadI18nMap().then(function() {
+			    			if(scope.translate == true || scope.translate == "true" || scope.translate == undefined){
+			    				this.i18n.loadI18nMap().then(function() {
+			    					scope.initializeFoldersRec(folders,parent);
+			    				}); // end of load I 18n
+			    			}
+			    			else{
 			    				scope.initializeFoldersRec(folders,parent);
-			    			}); // end of load I 18n
+			    			}
+
+
 			    		}
 			    	}
 
@@ -113,7 +122,9 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 
 			    			for (var i = 0 ; i < folders.length; i ++ ){
 
-			    				folders[i].name = myScope.i18n.getI18n(folders[i].name);
+			    				if(scope.translate == true || scope.translate == "true" || scope.translate == undefined){
+			    					folders[i].name = myScope.i18n.getI18n(folders[i].name);
+			    				}
 
 			    				folders[i].checked = folders[i].checked === undefined ? false : folders[i].checked;
 			    				folders[i].expanded = folders[i].expanded === undefined ? false : (scope.multiSelectLeafes ? false : folders[i].expanded);

@@ -53,7 +53,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<document-tree ng-model="folders"
 				highlights-selected-item="true" create-tree="true"
 				click-function="loadFolder(item)"
-				menu-option="functMenuOpt">
+				menu-option="functMenuOpt"
+				translate="false"
+				>
 			</document-tree> 
 		</md-content> 
 	
