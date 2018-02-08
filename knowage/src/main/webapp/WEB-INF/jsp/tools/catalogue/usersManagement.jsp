@@ -63,6 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						         {"label":"User ID","name":"userId"},
 						         {"label":"Full Name","name":"fullName"}
 						         ]'
+			columns-search='["userId","fullName"]'
 			show-search-bar=true highlights-selected-item=true
 			speed-menu-option="umSpeedMenu" click-function="loadUser(item)">
 		</angular-table> 

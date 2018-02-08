@@ -78,6 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									id="catalog" 
 									ng-model="itemList"
 									columns='[{"label":"NAME","name":"name"},{"label":"DESCRIPTION","name":"description"}]'
+									columns-search='["name","description"]'
 									show-search-bar=true
 									highlights-selected-item=true
 									speed-menu-option ="catalogueSpeedOptions"

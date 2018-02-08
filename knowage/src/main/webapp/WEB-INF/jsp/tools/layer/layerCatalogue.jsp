@@ -86,7 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					id='layerlist' 
 					ng-model=layerList
 					columns='[{"label":"Name","name":"name"},{"label":"Type","name":"type","size":"60px"},{"label":" ","name":"icon","size":"30px"}]'
-					columns-search='["name","type", "layerURL"]' 
+					columns-search='["name","type"]' 
 					show-search-bar=true
 					highlights-selected-item=true 
 					click-function="loadLayerList(item);"

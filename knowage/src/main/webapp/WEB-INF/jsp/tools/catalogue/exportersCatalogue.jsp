@@ -53,6 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  						id="exportersList"
  						ng-model="myExporters" 
  						columns='exportersListColumns'
+ 						columns-search='["engineLabel","domainLabel"]'
  						highlights-selected-item=true
  						show-search-bar=true
  						speed-menu-option='exporterSpeedMenu'

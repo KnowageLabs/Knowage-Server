@@ -59,6 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							{"label":"NAME","name":"name"},
 							{"label":"CHECK TYPE","name":"valueTypeCd",}
 							 ]'
+						columns-search='["label","name","valueTypeCd"]'
 						show-search-bar=true
 						highlights-selected-item=true
 						click-function="loadConstraints(item)"
@@ -79,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							{"label":"NAME","name":"name"},
 							{"label":"CHECK TYPE","name":"valueTypeCd"}
 							 ]'
-							 
+							
 						show-search-bar = false
 						highlights-selected-item=true
 						click-function="loadPredefined(item)">										

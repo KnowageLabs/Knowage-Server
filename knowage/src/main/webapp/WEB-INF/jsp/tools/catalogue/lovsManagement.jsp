@@ -83,6 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					  {"label":"Description","name":"description"},
 					  {"label":"Type","name":"itypeCd"}
 					]'
+			columns-search='["label","description","itypeCd"]'
 			show-search-bar=true
 			highlights-selected-item=true
 			speed-menu-option="lovsManagementSpeedMenu"

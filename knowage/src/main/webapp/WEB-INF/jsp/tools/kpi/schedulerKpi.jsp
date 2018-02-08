@@ -129,7 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<angular-table flex
 		id='targetListTable' ng-model=engines
 		columns='tableColumn'
-		columns-search='["name"]' show-search-bar=true
+		columns-search='["name","kpiNames","author","jobStatus"]' show-search-bar=true
 		scope-functions=tableFunction 
 		click-function="loadEngine(item);"
 		speed-menu-option=engineMenuOptionList 

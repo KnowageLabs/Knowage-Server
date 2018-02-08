@@ -111,7 +111,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<angular-table flex 
 			id='kpiListTable' ng-model=kpiList
 			columns='[{"label":"Name","name":"name"},{"label":"DateCreation","name":"datacreation"},{"label":"Category","name":"valueCd"},{"label":"Author","name":"author"}]'
-			columns-search='["name"]' show-search-bar=true
+			columns-search='["name","valueCd","author"]' show-search-bar=true
 			speed-menu-option=measureMenuOption 
 			scope-functions=tableFunction 
 			click-function="loadKPI(item);"> </angular-table>

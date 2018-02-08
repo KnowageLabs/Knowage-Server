@@ -51,10 +51,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body class="kn-scorecardKpiDefinition" ng-cloak>
 
 	<angular-list-detail ng-controller="scorecardMasterController"  full-screen="true">
-		
 		<list label="translate.load('sbi.kpi.scorecard.scorecard.list')" ng-controller="scorecardListController" new-function="newScorecardFunction" layout-column>
 		 	<angular-table flex id='scorecardListTable' ng-model=scorecardList
 				columns='scorecardColumnsList'
+				columns-search='["name","author"]'
 			 	 show-search-bar=true
 			 	 speed-menu-option = scorecardListAction
 				 click-function="scorecardClickEditFunction(item, index);" > </angular-table>

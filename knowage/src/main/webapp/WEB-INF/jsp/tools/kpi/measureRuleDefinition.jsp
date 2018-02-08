@@ -60,6 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<list label="translate.load('sbi.kpi.measure.list')" ng-controller="measureListController" new-function="newMeasureFunction" layout-column>
 	 	<angular-table flex id='measureListTable' ng-model=measureRuleList
 				columns='measureRuleColumnsList'
+				columns-search='["alias","rule","categoryName","author"]'
 			 	 show-search-bar=true
 			 	 speed-menu-option=measureMenuOption
 				 click-function="measureClickFunction(item);" > </angular-table>

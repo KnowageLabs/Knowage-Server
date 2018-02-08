@@ -65,6 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						         {"label":"Name","name":"name"},
 						         {"label":"Description","name":"description"}
 						         ]'
+			columns-search='["name","description"]'
 			show-search-bar=true highlights-selected-item=true
 			speed-menu-option="rmSpeedMenu" click-function="loadRole(item)">
 		</angular-table> 

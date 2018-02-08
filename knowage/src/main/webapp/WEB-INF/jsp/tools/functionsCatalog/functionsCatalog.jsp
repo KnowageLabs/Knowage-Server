@@ -177,8 +177,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			    				id="functionsTable" 
 								ng-show="functionsList && functionsList.length >0"
 								ng-model="functionsList"
-								columns='[{"label":"Function Name","name":"name"},{"label":"Owner","name":"owner"}]'  
-								columns-search='["name","keywords","description","owner"]'
+								columns='[{"label":"Function Name","name":"name","size":300},{"label":"Description","name":"description"},{"label":"Owner","name":"owner","size":100}]'  
+								columns-search='["name","description","owner"]'
 								show-search-bar=true
 								highlights-selected-item=true
 								speed-menu-option="acSpeedMenu"

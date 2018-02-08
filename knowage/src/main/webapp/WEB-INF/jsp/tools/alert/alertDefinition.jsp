@@ -74,6 +74,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<list label="translate.load('sbi.alert.list')" ng-controller="alertDefinitionListController" new-function="newAlertFunction" layout-column>
 		 	<angular-table flex id='alertListTable' ng-model=listAlert
 				columns='alertColumnsList'
+				columns-search='["name","jobStatus"]'
 			 	 show-search-bar=true
 			 	 speed-menu-option = alertListAction 
 				 click-function="alertClickEditFunction(item, index);" > </angular-table>
