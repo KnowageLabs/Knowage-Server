@@ -97,48 +97,45 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 			    	}
 
 
-			    	scope.initSingleFolder = function (folder, folders, parent, myScope){
-			    		folder.name = myScope.i18n.getI18n(folder.name);
-
-			    		folder.checked = folder.checked === undefined ? false : folder.checked;
-			    		folder.expanded = folder.expanded === undefined ? false : (scope.multiSelectLeafes ? false : folder.expanded);
-			    		folder.type = folder.type === undefined ? "folder" : folder.type;
-			    		folder.visible = folder.visible === undefined ? true : folder.visible;
-			    		folder.$parent = parent;
-
-			    		if (folders[subfoldersId] !== undefined && folders[i][subfoldersId].length > 0){
-			    			scope.initializeFolders(folders[i][subfoldersId], folders[i]);
-			    			if (attrs.orderBy){
-			    				folder.sortDirection = folder.sortDirection === undefined ? "desc" : folder.sortDirection;
-			    			}
-			    		}
-			    		for (var j = 0; folder.biObjects !==undefined && j < folder.biObjects.length ; j++){
-			    			folder.biObjects[j].type = folder.biObjects[j].type == undefined ?  "biObject" : folder.biObjects[j].type;
-			    			folder.biObjects[j].checked = folder.biObjects[j].checked == undefined ? false : folder.biObjects[j].checked;
-			    			folder.biObjects[j].visible = folder.biObjects[j].visible == undefined ?  true : folder.biObjects[j].visible;
-			    		}
-
-			    	}
-
 			    	scope.initializeFolders = function (folders, parent){
 			    		if(folders){
-
-
-			    			if(folders.length>0){
-			    				var myScope = this;
-
-			    				// first one is functionality
-			    				scope.initSingleFolder(folders[0], folders, parent, myScope);
-			    				this.i18n.loadI18nMap().then(function() {
-			    					if(folders.length>1){
-			    						for (var i = 1 ; i < folders.length; i ++ ){
-			    							scope.initSingleFolder(folders[i], folders, parent, myScope);
-			    						}
-			    					}
-			    				}); // end of load I 18n
-
-			    			}
+			    			this.i18n.loadI18nMap().then(function() {
+			    				scope.initializeFoldersRec(folders,parent);
+			    			}); // end of load I 18n
 			    		}
+			    	}
+
+
+			    	scope.initializeFoldersRec = function (folders, parent){
+
+			    		if(folders.length>0){
+			    			var myScope = this;
+
+			    			for (var i = 0 ; i < folders.length; i ++ ){
+
+			    				folders[i].name = myScope.i18n.getI18n(folders[i].name);
+
+			    				folders[i].checked = folders[i].checked === undefined ? false : folders[i].checked;
+			    				folders[i].expanded = folders[i].expanded === undefined ? false : (scope.multiSelectLeafes ? false : folders[i].expanded);
+			    				folders[i].type = folders[i].type === undefined ? "folder" : folders[i].type;
+			    				folders[i].visible = folders[i].visible === undefined ? true : folders[i].visible;
+			    				folders[i].$parent = parent;
+
+			    				if (folders[i][subfoldersId] !== undefined && folders[i][subfoldersId].length > 0){
+			    					scope.initializeFoldersRec(folders[i][subfoldersId], folders[i]);
+			    					if (attrs.orderBy){
+			    						folders[i].sortDirection = folders[i].sortDirection === undefined ? "desc" : folders[i].sortDirection;
+			    					}
+			    				}
+			    				for (var j = 0; folders[i].biObjects !==undefined && j < folders[i].biObjects.length ; j++){
+			    					folders[i].biObjects[j].type = folders[i].biObjects[j].type == undefined ?  "biObject" : folders[i].biObjects[j].type;
+			    					folders[i].biObjects[j].checked = folders[i].biObjects[j].checked == undefined ? false : folders[i].biObjects[j].checked;
+			    					folders[i].biObjects[j].visible = folders[i].biObjects[j].visible == undefined ?  true : folders[i].biObjects[j].visible;
+			    				}
+			    			}
+
+			    		}
+
 			    	}
 
 			    	scope.ngModel = scope.initializeFoldersAndCreateTreeStructure(scope.ngModel, null);
