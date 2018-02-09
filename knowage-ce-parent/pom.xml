@@ -278,6 +278,7 @@
 						<excludes>
 							<exclude>**/*.pdf</exclude>
 							<exclude>**/*.zip</exclude>
+							<exclude>**/*.xlsm</exclude>							
 						</excludes>
 						<filtering>true</filtering>
 					</resource>
@@ -302,6 +303,7 @@
 						<excludes>
 							<exclude>**/*.pdf</exclude>
 							<exclude>**/*.zip</exclude>
+							<exclude>**/*.xlsm</exclude>							
 						</excludes>
 						<filtering>true</filtering>
 					</resource>
