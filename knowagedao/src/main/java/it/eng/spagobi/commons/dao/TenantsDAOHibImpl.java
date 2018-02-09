@@ -551,6 +551,9 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			Query hibQuery = aSession.createQuery("from SbiOrganizationDatasource ds where ds.sbiOrganizations.id = :idTenant");
 			hibQuery.setInteger("idTenant", aTenant.getId());
 			ArrayList<SbiOrganizationDatasource> existingDsAssociated = (ArrayList<SbiOrganizationDatasource>) hibQuery.list();
+
+			boolean deletedSomedsOrgAss = false;
+			List<Integer> idsDeleted = new ArrayList<Integer>();
 			if (existingDsAssociated != null) {
 				Iterator it = existingDsAssociated.iterator();
 				while (it.hasNext()) {
@@ -582,15 +585,22 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 								throw new Exception("datasource:" + assDS.getSbiDataSource().getLabel());
 
 							} else {
-
+								idsDeleted.add(assDS.getSbiDataSource().getDsId());
 								aSession.delete(assDS);
 								aSession.flush();
+								deletedSomedsOrgAss = true;
 							}
 						}
 
 					}
 
 				}
+
+				// check if a datasource among the one whose association was deleted remained without any tenant and delete it
+				if (deletedSomedsOrgAss) {
+					deleteUnusedDataSource(aSession, idsDeleted);
+				}
+
 			}
 			// insert filtered datasources ds list
 			for (Integer idDsToAss : datasourceToBeInsert) {
@@ -962,6 +972,37 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				logger.debug("deleteTenant OUT");
 			}
 		}
+	}
+
+	/**
+	 * When modifying a tenant if a datasource remains with no tenant delete it
+	 * 
+	 * @param aSession
+	 * @param ids:
+	 *            id of <tenant,dataource> modified
+	 * @throws EMFUserError
+	 */
+
+	public void deleteUnusedDataSource(Session aSession, List<Integer> ids) throws EMFUserError {
+		logger.debug("IN");
+		Query hibQuery = aSession.createQuery("from SbiDataSource ds");
+		ArrayList<SbiDataSource> datasourceList = (ArrayList<SbiDataSource>) hibQuery.list();
+		for (Iterator iterator = datasourceList.iterator(); iterator.hasNext();) {
+			SbiDataSource sbiDataSource = (SbiDataSource) iterator.next();
+			Integer dsId = sbiDataSource.getDsId();
+			// check only datasource whose link to tenant has been modified
+			if (ids.contains(dsId)) {
+				Query hibQuery2 = aSession.createQuery("from SbiOrganizationDatasource ds where ds.id.datasourceId = :dsId");
+				hibQuery2.setInteger("dsId", dsId);
+				ArrayList<SbiOrganizationDatasource> dsOrganizations = (ArrayList<SbiOrganizationDatasource>) hibQuery2.list();
+				if (dsOrganizations.isEmpty()) {
+					logger.debug("delete datasource " + sbiDataSource.getLabel());
+					aSession.delete(sbiDataSource);
+					aSession.flush();
+				}
+			}
+		}
+		logger.debug("OUT");
 	}
 
 }
