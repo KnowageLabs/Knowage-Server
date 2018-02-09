@@ -44,6 +44,15 @@ datasetModule
 
 function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer){
 
+	$scope.csvEncodingDefault = "UTF-8";
+	$scope.csvDelimiterDefault = ",";
+	$scope.csvQuoteDefault = "\"";
+	$scope.skipRowsDefault = 0;
+	$scope.limitRowsDefault = null;
+	$scope.xslSheetNumberDefault = 1;
+	$scope.dateFormatDefault = "dd/MM/yyyy";
+	
+	
 	$scope.$watch("selectedDataSet.restNGSI",function(newValue,oldValue){
 		if(newValue && (newValue===true || newValue==="true")){
 			$scope.selectedDataSet.restNGSI = true;
@@ -2608,9 +2617,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						$scope.selectedDataSet.csvDelimiter = $scope.csvDelimiterDefault;
 						$scope.selectedDataSet.dateFormat = $scope.dateFormatDefault;
 						$scope.selectedDataSet.csvQuote = $scope.csvQuoteDefault;
-						$scope.selectedDataSet.skipRows = $scope.skipRowsDefault ? $scope.skipRowsDefault : null;
-						$scope.selectedDataSet.limitRows = $scope.limitRowsDefault ? $scope.limitRowsDefault : null;
-						$scope.selectedDataSet.xslSheetNumber = $scope.xslSheetNumberDefault ? $scope.limitRowsDefault : null;
+						$scope.selectedDataSet.skipRows = ($scope.skipRowsDefault != null) ? $scope.skipRowsDefault : null;
+						$scope.selectedDataSet.limitRows = ($scope.limitRowsDefault !=null) ? $scope.limitRowsDefault : null;
+						$scope.selectedDataSet.xslSheetNumber = ($scope.xslSheetNumberDefault != null) ? $scope.xslSheetNumberDefault : null;
 
 						/**
 						 * Whenever we upload a file, keep the track of its name, in order to indicate when the new one is browsed but not uploaded.
