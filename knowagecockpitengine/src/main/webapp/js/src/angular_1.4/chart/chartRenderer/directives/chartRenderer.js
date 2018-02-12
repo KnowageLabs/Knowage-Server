@@ -64,6 +64,10 @@ angular.module('chartRendererModule')
 					var locale = sbiModule_config.curr_language + "-" + sbiModule_config.curr_country;
 					if(scope.chartConf){
 						scope.chartInitializer.initChartLibrary(element[0],	'drillup', sbiModule_config.dec, sbiModule_config.thous);
+						if(scope.chartTemplate.CHART.COLORPALETTE.COLORCopy){
+							scope.chartTemplate.CHART.COLORPALETTE.COLOR = angular.copy(scope.chartTemplate.CHART.COLORPALETTE.COLORCopy)
+							delete scope.chartTemplate.CHART.COLORPALETTE.COLORCopy
+						}
 						scope.chartInitializer.renderChart(scope.chartConf,element[0],handleCockpitSelection,locale,scope.widgetData);
 					}
 				}

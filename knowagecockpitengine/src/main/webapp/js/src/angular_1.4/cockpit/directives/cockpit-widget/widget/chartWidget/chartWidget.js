@@ -776,6 +776,8 @@ function cockpitChartWidgetControllerFunction(
 		var event= item.select != undefined ? item.select : item;
 		var crossParameters= createCrossParameters(item);
 		var chartType = $scope.ngModel.content.chartTemplate.CHART.type;
+		$scope.ngModel.content.chartTemplate.CHART.COLORPALETTE.COLORCopy = angular.copy($scope.ngModel.content.chartTemplate.CHART.COLORPALETTE.COLOR)
+		$scope.ngModel.content.chartTemplate.CHART.COLORPALETTE.COLOR[0].value = item.point.color;
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
