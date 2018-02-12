@@ -22,7 +22,7 @@ Requirements
 -   a relational Database for storing Knowage Metadata (MySQL, Oracle, Postgres, Ingres or HSQLDB);
 -   a set of external libreries (commons-logging, commons-logging-api, oswego-concurrent, geronimo-commonj, foo-commonj)
 -   the specific JDBC library for the relational Database which we were referring before (e.g. mysql-connector-java)
--   R (http://cran.r-project.org/) needed only for advanced data-mining and social analysis.
+-   R (http://cran.r-project.org/) and Python (https://www.python.org/) needed only for advanced data-mining and social analysis (optional).
 
 Data to be analyzed with Knowage can be stored both on SQL datasources and NoSQL datasources.
 
