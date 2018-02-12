@@ -244,9 +244,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			if(newItem.selection==undefined){
 				newItem.selection={};
 			}
-			if(newItem.originalSelection==undefined){
-				newItem.originalSelection={};
-			}
 			if(newItem.frequency==undefined){
 				var minFreq={value:-1};
 				angular.forEach(newItem.datasets,function(ds){
@@ -454,7 +451,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			if(cockpitModule_template.configuration.aggregations[i].datasets.indexOf(dsLabel)!=-1){
 				var copyOfValue = angular.copy(value);
 				cockpitModule_template.configuration.aggregations[i].selection[key] = copyOfValue;
-				cockpitModule_template.configuration.aggregations[i].originalSelection[originalKey] = copyOfValue;
 			}
 		}
 
@@ -496,7 +492,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 
 	}
-	
+
 	this.clearAllSelections = function(){
 		angular.forEach(cockpitModule_template.configuration.filters,function(value, key){
 			delete cockpitModule_template.configuration.filters[key];
@@ -530,17 +526,17 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		return toret;
 	}
 	this.widgetOfType = "";
-	
+
 	this.setWidgetOfType = function (type){
 		this.widgetOfType = type;
 	}
 	this.columnName = "";
-	
+
 	this.setColumnName = function (columnName){
 		this.columnName = columnName;
 	}
 	this.widgetID= "";
-	
+
 	this.setWidgetID= function (widgetID){
 		this.widgetID = widgetID;
 	}
@@ -560,11 +556,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			return;
 		}
 
-		var dsSel=ws.getOriginalSelection(ass.datasets);
-		if(Object.keys(dsSel).length == 0){
-			dsSel=ws.getSelection(ass.datasets);
-		}
-
+		var dsSel=ws.getUnaliasedSelection(ass.datasets);
 		if(Object.keys(dsSel).length>0){
 			var selection = encodeURIComponent(JSON.stringify(dsSel))
 			.replace(/'/g,"%27")
@@ -635,13 +627,56 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		return {};
 	}
 
-	this.getOriginalSelection = function(associations){
-		for(var i = 0;i<cockpitModule_template.configuration.aggregations.length;i++){
-			if(angular.equals(cockpitModule_template.configuration.aggregations[i].datasets, associations)){
-				return cockpitModule_template.configuration.aggregations[i].originalSelection;
+	this.getUnaliasedSelection = function(datasets){
+		for(var aggregationIndex in cockpitModule_template.configuration.aggregations){
+			var aggregation = cockpitModule_template.configuration.aggregations[aggregationIndex];
+			if(angular.equals(cockpitModule_template.configuration.aggregations[aggregationIndex].datasets, datasets)){
+				var selections = angular.copy(aggregation.selection);
+				ws.resolveAliasesOnSelections(selections);
+				return selections;
 			}
 		}
 		return {};
+	}
+
+	this.resolveAliasesOnSelections = function(selections){
+		var datasetMap = {};
+		for(var datasetIndex in cockpitModule_template.configuration.datasets){
+			var dataset = cockpitModule_template.configuration.datasets[datasetIndex];
+			datasetMap["" + dataset.dsId] = dataset.dsLabel;
+		}
+
+		var aliasMap = {};
+		var columnSet = new Set();
+
+		for(var sheetIndex in cockpitModule_template.sheets){
+			var sheet = cockpitModule_template.sheets[sheetIndex];
+			for(var widgetIndex in sheet.widgets){
+				var widget = sheet.widgets[widgetIndex];
+				if(widget.dataset && widget.dataset.dsId){
+					var datasetLabel = datasetMap[""+widget.dataset.dsId];
+					if(datasetLabel != undefined){
+						for(var widgetColumnIndex in widget.content.columnSelectedOfDataset){
+							var widgetColumn = widget.content.columnSelectedOfDataset[widgetColumnIndex];
+							if(widgetColumn.name == widgetColumn.aliasToShow){
+								columnSet.add(datasetLabel + "." + widgetColumn.name);
+							}else{
+								aliasMap[datasetLabel + "." + widgetColumn.aliasToShow] = datasetLabel + "." + widgetColumn.name;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		for(var selection in selections){
+			var alias = aliasMap[selection];
+			if(alias!=undefined && !columnSet.has(selection)){
+				var value = selections[selection];
+				delete selections[selection];
+				selections[alias] = value;
+			}
+		}
 	}
 
 	this.getDatasetAssociation=function(dsLabel){
