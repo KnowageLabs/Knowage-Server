@@ -17,6 +17,27 @@
  */
 package it.eng.spagobi.tools.datasource.dao;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
@@ -40,27 +61,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * Defines the Hibernate implementations for all DAO methods, for a data source.
  */
@@ -69,7 +69,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Load data source by id.
-	 * 
+	 *
 	 * @param dsID
 	 *            the ds id
 	 * @return the data source
@@ -112,7 +112,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Load data source by label.
-	 * 
+	 *
 	 * @param label
 	 *            the label
 	 * @return the data source
@@ -132,8 +132,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			Query hibQuery = null;
 
-			hibQuery = tmpSession
-					.createQuery("select ds.sbiDataSource from SbiOrganizationDatasource ds where ds.sbiOrganizations.name = :tenantName and ds.sbiDataSource.label = :dsLabel");
+			hibQuery = tmpSession.createQuery(
+					"select ds.sbiDataSource from SbiOrganizationDatasource ds where ds.sbiOrganizations.name = :tenantName and ds.sbiDataSource.label = :dsLabel");
 			hibQuery.setString("tenantName", getTenant());
 			hibQuery.setString("dsLabel", label);
 
@@ -206,7 +206,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Load all data sources.
-	 * 
+	 *
 	 * @return the list
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -294,7 +294,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Load dialect by id.
-	 * 
+	 *
 	 * @param dialectId
 	 *            the dialect id
 	 * @return the dialect
@@ -326,7 +326,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Modify data source.
-	 * 
+	 *
 	 * @param aDataSource
 	 *            the a data source
 	 * @throws EMFUserError
@@ -525,7 +525,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Insert data source.
-	 * 
+	 *
 	 * @param aDataSource
 	 *            the a data source
 	 * @throws EMFUserError
@@ -614,7 +614,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Erase data source.
-	 * 
+	 *
 	 * @param aDataSource
 	 *            the a data source
 	 * @throws EMFUserError
@@ -629,6 +629,17 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
+
+			// delete first all associations with tenants
+			Query hibQuery2 = aSession.createQuery("from SbiOrganizationDatasource ds where ds.id.datasourceId = :dsId");
+			hibQuery2.setInteger("dsId", aDataSource.getDsId());
+			ArrayList<SbiOrganizationDatasource> dsOrganizations = (ArrayList<SbiOrganizationDatasource>) hibQuery2.list();
+			for (Iterator iterator = dsOrganizations.iterator(); iterator.hasNext();) {
+				SbiOrganizationDatasource sbiOrganizationDatasource = (SbiOrganizationDatasource) iterator.next();
+				aSession.delete(sbiOrganizationDatasource);
+				aSession.flush();
+			}
+
 			SbiDataSource hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, new Integer(aDataSource.getDsId()));
 			aSession.delete(hibDataSource);
 			tx.commit();
@@ -638,7 +649,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			if (tx != null)
 				tx.rollback();
 
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 8007);
 
 		} finally {
 			if (aSession != null) {
@@ -652,7 +663,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * From the hibernate DataSource at input, gives the corrispondent <code>DataSource</code> object.
-	 * 
+	 *
 	 * @param hibDataSource
 	 *            The hybernate data source
 	 * @return The corrispondent <code>DataSource</code> object
@@ -683,7 +694,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Checks for bi obj associated.
-	 * 
+	 *
 	 * @param dsId
 	 *            the ds id
 	 * @return true, if checks for bi obj associated
