@@ -398,7 +398,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 			hql.append("		a.sbiObject.objectTypeCode, ");
 			hql.append("		a.subObjId, ");
 			hql.append("		a.subObjName, ");
-			hql.append("		to_char(a.documentParameters), ");
+			hql.append("		str(a.documentParameters), ");
 			hql.append("		a.sbiEngine.name, ");
 			hql.append("		a.sbiObject.previewFile ");
 			hql.append("from ");
@@ -416,7 +416,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 			hql.append("			a.sbiObject.objectTypeCode, ");
 			hql.append("			a.subObjId, ");
 			hql.append("			a.subObjName, ");
-			hql.append("			to_char(a.documentParameters), ");
+			hql.append("			str(a.documentParameters), ");
 			hql.append("			a.sbiEngine.name, ");
 			hql.append("		a.sbiObject.previewFile ");
 			hql.append("order by max(a.requestTime) desc ");
