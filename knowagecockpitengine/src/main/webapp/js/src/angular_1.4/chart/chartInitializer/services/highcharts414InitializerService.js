@@ -24,7 +24,13 @@ angular.module('chartInitializer')
 	this.chart = null;
 	var chartConfConf = null;
 
-	this.renderChart = function(chartConf,element,handleCockpitSelection,exportWebApp,widgetData){
+	this.renderChart = function(renderObj){
+		var chartConf = renderObj.chartConf;
+		var element = renderObj.element;
+		var handleCockpitSelection = renderObj.handleCockpitSelection;
+		var exportWebApp = renderObj.exportWebApp;
+		var widgetData = renderObj.widgetData;
+		
 		chartConfConf = chartConf;
 		if(!exportWebApp) {
 			adjustChartSize(element,chartConf);

@@ -30,7 +30,11 @@ angular.module('chartInitializer')
 
 
 
-	this.renderChart = function(chartConf,panel,handleCockpitSelection){
+	this.renderChart = function(renderObj){
+		
+		var chartConf = renderObj.chartConf;
+		var panel = renderObj.element;
+		var handleCockpitSelection = renderObj.handleCockpitSelection;
 
 		chartConfConf = chartConf;
 		// Catch the Title (or Empty message), Subtitle, the Canvas (the rendered chart container) and the Main panel from the DOM. (danristo)

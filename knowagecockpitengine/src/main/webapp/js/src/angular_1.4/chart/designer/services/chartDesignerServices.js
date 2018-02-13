@@ -2518,13 +2518,20 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			if(d3Types.indexOf(chartType.toLowerCase())>=0 || highSpec.indexOf(chartType.toLowerCase())>=0){
 				var chartInitializer = chartInitializerRetriver.getChartInitializer(lib);
 				if(lib=="highcharts414"){
-
-					chartConf = chartInitializer.renderChart(chartConf,null, null, true);	
+					var renderObj = {};
+					renderObj.chartConf = chartConf;
+					renderObj.exportWebApp = true;
+					
+					chartConf = chartInitializer.renderChart(renderObj);	
 					prepareDataForRequest();	
 				} else {
 					document.getElementById("forSVGPreview").style.height = "500px";
 					document.getElementById("forSVGPreview").style.width = "500px";
-					chartInitializer.renderChart(chartConf,document.getElementById('forSVGPreview'), null, null, true);	
+					var renderObj = {};
+					renderObj.chartConf = chartConf;
+					renderObj.element = document.getElementById('forSVGPreview');
+					renderObj.exportWebApp = true;
+					chartInitializer.renderChart(renderObj);	
 
 					document.getElementById("forSVGPreview").style.height = "0px";
 					document.getElementById("forSVGPreview").style.width = "0px";

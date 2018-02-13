@@ -26,7 +26,14 @@ angular.module('chartInitializer')
 		d3.select(panel).selectAll("*").remove();
 	}
 	
-	this.renderChart = function(chartConf,panel,handleCockpitSelection,locale,exportWebApp){
+	this.renderChart = function(renderObj){
+		
+		var chartConf = renderObj.chartConf;
+		var panel = renderObj.element;
+		var handleCockpitSelection = renderObj.handleCockpitSelection;
+		var exportWebApp = renderObj.exportWebApp;
+		var locale = renderObj.locale;
+		
 		if(!exportWebApp){
 			if(!locale){
 				locale = window.navigator.userLanguage || window.navigator.language;

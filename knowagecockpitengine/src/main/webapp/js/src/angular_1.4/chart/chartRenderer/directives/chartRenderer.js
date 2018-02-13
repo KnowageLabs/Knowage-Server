@@ -68,7 +68,14 @@ angular.module('chartRendererModule')
 							scope.chartTemplate.CHART.COLORPALETTE.COLOR = angular.copy(scope.chartTemplate.CHART.COLORPALETTE.COLORCopy)
 							delete scope.chartTemplate.CHART.COLORPALETTE.COLORCopy
 						}
-						scope.chartInitializer.renderChart(scope.chartConf,element[0],handleCockpitSelection,locale,scope.widgetData);
+						var renderObject = {};
+						renderObject.chartConf = scope.chartConf;
+						renderObject.element = element[0];
+						renderObject.handleCockpitSelection = handleCockpitSelection;
+						renderObject.locale = locale;
+						renderObject.widgetData = scope.widgetData;
+						
+						scope.chartInitializer.renderChart(renderObject);
 					}
 				}
 
