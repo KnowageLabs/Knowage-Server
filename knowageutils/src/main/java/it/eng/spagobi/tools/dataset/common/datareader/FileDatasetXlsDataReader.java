@@ -153,8 +153,8 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				// MODIFIED CODE (danristo)
 				rowsLimit = initialRow + Integer.parseInt(limitRows);
 
-				// if the calculated limit exceed the physical number of rows, just read all the rows
-				if (rowsLimit > sheet.getPhysicalNumberOfRows()) {
+				// if the calculated limit exceed the physical number of rows or is equal to zero, just read all the rows
+				if ((rowsLimit > sheet.getPhysicalNumberOfRows()) || rowsLimit == 0) {
 					rowsLimit = sheet.getPhysicalNumberOfRows();
 				}
 			} else {
