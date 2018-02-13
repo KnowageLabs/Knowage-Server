@@ -1197,9 +1197,8 @@ public class DatasetManagementAPI {
 			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
 		logger.debug("IN");
 
-		String query = new SelectQuery(dataSet).selectDistinct().select(projections).from(tableName).where(filter).groupBy(groups).orderBy(sortings)
-				.toSql(dataSource);
-		IDataStore pagedDataStore = dataSource.executeStatement(query, offset, fetchSize, maxRowCount);
+		SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(projections).from(tableName).where(filter).groupBy(groups).orderBy(sortings);
+		IDataStore pagedDataStore = dataSource.executeStatement(selectQuery, offset, fetchSize, maxRowCount);
 
 		if (summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
 			String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter).toSql(dataSource);

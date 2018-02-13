@@ -19,7 +19,6 @@ package it.eng.spagobi.tools.datasource.bo;
 
 import java.io.Serializable;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Set;
 
@@ -40,6 +39,7 @@ import it.eng.spagobi.services.validation.Xss;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
+import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.DataSourceManager;
 
@@ -499,8 +499,19 @@ public class DataSource implements Serializable, IDataSource {
 
 	@Override
 	public IDataStore executeStatement(String statement, Integer start, Integer limit, Integer maxRowCount) {
-		logger.debug("IN: Statement is [" + statement + "], start = [" + start + "], limit = [" + limit + "], maxResults = [" + maxRowCount + "]");
 		IDataSet dataSet = JDBCDatasetFactory.getJDBCDataSet(this);
+		return executeStatement(dataSet, statement, start, limit, maxRowCount);
+	}
+
+	@Override
+	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount) {
+		IDataSet dataSet = JDBCDatasetFactory.getJDBCDataSet(this);
+		((AbstractJDBCDataset) dataSet).setSelectQuery(selectQuery);
+		return executeStatement(dataSet, selectQuery.toSql(this), start, limit, maxRowCount);
+	}
+
+	private IDataStore executeStatement(IDataSet dataSet, String statement, Integer start, Integer limit, Integer maxRowCount) {
+		logger.debug("IN: Statement is [" + statement + "], start = [" + start + "], limit = [" + limit + "], maxResults = [" + maxRowCount + "]");
 		dataSet.setDataSource(this);
 		((AbstractJDBCDataset) dataSet).setQuery(statement); // all datasets retrieved by the factory extend AbstractJDBCDataset
 		if (start == null && limit == null && maxRowCount == null) {

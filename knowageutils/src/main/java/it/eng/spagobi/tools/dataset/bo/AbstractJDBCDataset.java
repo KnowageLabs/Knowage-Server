@@ -18,8 +18,21 @@
 
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+import java.util.Map;
+
+import javax.naming.NamingException;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCDataProxy;
@@ -39,21 +52,12 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.Map;
-
-import javax.naming.NamingException;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
 public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 
 	public static String DS_TYPE = "SbiQueryDataSet";
+
+	protected SelectQuery selectQuery;
+
 	private static final String QUERY = "query";
 	private static final String QUERY_SCRIPT = "queryScript";
 	private static final String QUERY_SCRIPT_LANGUAGE = "queryScriptLanguage";
@@ -254,7 +258,7 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 		logger.debug("OUT");
 		return columnName;
 	}
-	
+
 	@Override
 	public DataIterator iterator() {
 		logger.debug("IN");
@@ -282,5 +286,13 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 	@Override
 	public boolean isIterable() {
 		return true;
+	}
+
+	public SelectQuery getSelectQuery() {
+		return selectQuery;
+	}
+
+	public void setSelectQuery(SelectQuery selectQuery) {
+		this.selectQuery = selectQuery;
 	}
 }

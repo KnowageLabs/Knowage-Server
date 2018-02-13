@@ -17,14 +17,15 @@
  */
 package it.eng.spagobi.tools.datasource.bo;
 
-import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Set;
 
 import javax.naming.NamingException;
+
+import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
+import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 public interface IDataSource {
 
@@ -230,5 +231,7 @@ public interface IDataSource {
 	public IDataStore executeStatement(String statement, Integer start, Integer limit);
 
 	public IDataStore executeStatement(String statement, Integer start, Integer limit, Integer maxRowCount);
+
+	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount);
 
 }
