@@ -699,6 +699,9 @@ public class DataStore implements IDataStore {
 		if (function != null) {
 			fieldType = FieldType.MEASURE;
 			name = function.toString() + "(" + name + ")";
+			if (FunctionType.AVG.equals(function)) {
+				type = Double.class;
+			}
 		} else {
 			fieldType = fieldTypes.get(name);
 		}

@@ -79,7 +79,6 @@ import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
-import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -175,8 +174,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 				if (summaryRow != null && !summaryRow.isEmpty()) {
 					JSONObject summaryRowObject = new JSONObject(summaryRow);
-					JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
-					fixSummaryRowMeasures(summaryRowMeasuresObject, measuresObject);
+					JSONArray summaryRowMeasuresObject = getSummaryRowMeasures(measuresObject);
 					summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
 				}
 			}
@@ -226,21 +224,15 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private void fixSummaryRowMeasures(JSONArray summaryRowMeasures, JSONArray measures) throws JSONException {
+	private JSONArray getSummaryRowMeasures(JSONArray measures) throws JSONException {
+		JSONArray summaryRowMeasures = new JSONArray(measures.toString());
 		for (int i = 0; i < summaryRowMeasures.length(); i++) {
-			JSONObject summaryRowMeasure = summaryRowMeasures.getJSONObject(i);
-			String summaryRowAlias = summaryRowMeasure.getString("alias");
-			for (int j = 0; j < measures.length(); j++) {
-				JSONObject measure = measures.getJSONObject(j);
-				if (measure.getString("alias").equals(summaryRowAlias)) {
-					String columnName = measure.getString("columnName");
-					if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
-						summaryRowMeasure.put("columnName", columnName);
-					}
-					break;
-				}
+			JSONObject summaryRowMeasure = (JSONObject) summaryRowMeasures.get(i);
+			if (summaryRowMeasure.has("funct") && summaryRowMeasure.getString("funct").equals("NONE")) {
+				summaryRowMeasure.put("funct", "SUM");
 			}
 		}
+		return summaryRowMeasures;
 	}
 
 	protected List<Projection> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
