@@ -533,7 +533,7 @@ function renderParallelChart(data,panel,handleCockpitSelection,chartEngineSettin
 							var chartHeight = Number(heightNormalized-heightCorrection);
 							var chartWidth = Number(widthNormalized-widthCorrection);
 							
-							positionTheTooltip(d3.event.pageX,d3.event.pageY,ttText);	
+							positionTheTooltip(d3.event.pageX + 10,d3.event.pageY +10 ,ttText);	
 							
 //							.style("left", (d3.event.pageX) + "px")     
 //							.style("top", (d3.event.pageY - 25) + "px");
@@ -558,7 +558,7 @@ function renderParallelChart(data,panel,handleCockpitSelection,chartEngineSettin
 					var chartHeight = Number(heightNormalized-heightCorrection);
 					var chartWidth = Number(widthNormalized-widthCorrection);
 					
-					positionTheTooltip(d3.event.pageX,d3.event.pageY,ttText);	
+					positionTheTooltip(d3.event.pageX +10 ,d3.event.pageY+ 10,ttText);	
 				}
 
 			})

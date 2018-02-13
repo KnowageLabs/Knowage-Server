@@ -216,7 +216,7 @@ public class JSONDataWriter implements IDataWriter {
 		String result = "";
 
 		Object value = field.getValue();
-		if (value != null) {
+		if (value != null && !value.toString().isEmpty()) {
 			if (Timestamp.class.isAssignableFrom(fieldMetaData.getType())) {
 				result = TIMESTAMP_FORMATTER.format(value);
 			} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
