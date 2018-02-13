@@ -2004,10 +2004,14 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibQuery.setProjection(Property.forName("biobjId"));
 			hibQuery.addOrder(Order.asc("label"));
 
-			if (page != null && item_count != null) {
+			if (page != null && page > 1) {
 				hibQuery.setFirstResult((page - 1) * item_count);
+			}
+
+			if (item_count != null) {
 				hibQuery.setMaxResults(item_count);
 			}
+
 			List ids = hibQuery.list();
 			if (!ids.isEmpty()) {
 				Criteria mainC = aSession.createCriteria(SbiObjects.class);
