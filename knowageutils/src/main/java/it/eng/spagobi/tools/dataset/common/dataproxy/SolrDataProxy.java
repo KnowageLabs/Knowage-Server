@@ -135,6 +135,7 @@ public class SolrDataProxy extends RESTDataProxy {
 	@Override
 	public IDataStore load(IDataReader dataReader) {
 		if (!facets) {
+			logger.debug("SOLR QUERY TO EXECUTE [" + setPaginationParameters(address, dataReader) + "]");
 			return super.load(dataReader);
 		} else {
 			try {
@@ -143,7 +144,7 @@ public class SolrDataProxy extends RESTDataProxy {
 				List<NameValuePair> query = getQuery();
 
 				String tempAddress = this.address.replaceAll(" ", "%20");
-				System.out.println(setPaginationParameters(tempAddress, dataReader));
+				logger.debug("SOLR QUERY TO EXECUTE [" + setPaginationParameters(tempAddress, dataReader) + "]");
 
 				Response response = RestUtilities.makeRequest(this.method, setPaginationParameters(tempAddress, dataReader), this.requestHeaders,
 						this.requestBody, query);
@@ -155,15 +156,22 @@ public class SolrDataProxy extends RESTDataProxy {
 				Assert.assertNotNull(responseBody, "responseBody is null");
 
 				if (calculateResultNumberOnLoad && facetField != null) {
-
+					boolean resultNumberNotAvailable = true;
 					int resultNumber = 0;
 					// add stuff to get the number of facets
 					response = RestUtilities.makeRequest(this.method, tempAddress + ("&stats=true&stats.field=" + facetField + "&stats.calcdistinct=true"),
 							this.requestHeaders, this.requestBody, query);
 					String responseBodyNumber = response.getResponseBody();
-					if (response.getStatusCode() != HttpStatus.SC_OK) {
+
+					try {
+						Object parsed = JsonPath.read(responseBodyNumber, "$.stats.stats_fields.*.countDistinct");
+						resultNumberNotAvailable = parsed == null;
+					} catch (Exception e) {
+						resultNumberNotAvailable = true;
+					}
+					if (response.getStatusCode() != HttpStatus.SC_OK || resultNumberNotAvailable) {
 						logger.debug("Can not resolve the resolutNumber of the query" + responseBodyNumber);
-						response = RestUtilities.makeRequest(this.method, address, this.requestHeaders, this.requestBody, query);
+						response = RestUtilities.makeRequest(this.method, tempAddress, this.requestHeaders, this.requestBody, query);
 						responseBodyNumber = response.getResponseBody();
 						Object parsed = JsonPath.read(responseBodyNumber, "$.facet_counts.facet_fields.*.[*]");
 						List<Object> parsedData;

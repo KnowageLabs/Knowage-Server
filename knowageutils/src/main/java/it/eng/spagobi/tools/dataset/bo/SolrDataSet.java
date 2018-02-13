@@ -139,6 +139,9 @@ public class SolrDataSet extends RESTDataSet {
 
 		addAdditionalParams(addressBuilder, jsonConf);
 
+		// add json writer
+		addressBuilder.append("&wt=json");
+
 		if (isFacet) {
 			addFacetParams(addressBuilder, jsonConf, resolveParams);
 			setDataProxy(new SolrDataProxy(addressBuilder.toString(), methodEnum, getProp(DataSetConstants.SOLR_FACET_FIELD, jsonConf, true, resolveParams),
