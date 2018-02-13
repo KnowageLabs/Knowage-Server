@@ -1782,7 +1782,7 @@ public class SelfServiceDataSetCRUD {
 
 				String guessedType = guessColumnType(dataStore, i);
 				boolean isDate = false;
-				if (!guessedType.equalsIgnoreCase("Double")) {
+				if (!guessedType.equalsIgnoreCase("Double") && !guessedType.equalsIgnoreCase("Integer") ) {
 					isDate = isADate(dataSet, dataStore, i);
 				}
 				// Setting mandatory property to defaults, if specified they
@@ -1791,7 +1791,11 @@ public class SelfServiceDataSetCRUD {
 					ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
 					Class type = Class.forName("java.util.Date");
 					ifmd.setType(type);
-				} else if ("Double".equalsIgnoreCase(guessedType)) {
+				} else if ("Integer".equalsIgnoreCase(guessedType)) {
+					ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+					Class type = Class.forName("java.lang.Integer");
+					ifmd.setType(type);
+				} 	else if ("Double".equalsIgnoreCase(guessedType)) {
 					ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 					Class type = Class.forName("java.lang.Double");
 					ifmd.setType(type);
@@ -1816,7 +1820,7 @@ public class SelfServiceDataSetCRUD {
 							} else if (propertyValue.equalsIgnoreCase("ATTRIBUTE")) {
 								ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
 							} else {
-								if ("Double".equalsIgnoreCase(guessedType)) {
+								if ("Double".equalsIgnoreCase(guessedType) || "Integer".equalsIgnoreCase(guessedType)) {
 									ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 								} else {
 									ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
@@ -1848,6 +1852,9 @@ public class SelfServiceDataSetCRUD {
 								if ("Double".equalsIgnoreCase(guessedType)) {
 									Class type = Class.forName("java.lang.Double");
 									ifmd.setType(type);
+								} else if ("Integer".equalsIgnoreCase(guessedType)) {
+									Class type = Class.forName("java.lang.Integer");
+									ifmd.setType(type);
 								} else {
 									Class type = Class.forName("java.lang.String");
 									ifmd.setType(type);
@@ -1878,25 +1885,50 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	/**
-	 * @param dataStore
-	 * @param i
-	 * @return
+	 * This is an heuristic to guess the column type of a column in a datastore
+	 * created with a file dataset. The method analyses just a portion of the entire datastore
+	 * so the result is not guaranteed at 100%.
+	 * @param dataStore the datastore to scan
+	 * @param columnIndex the index of the column to check
+	 * @return the guessed type of the column
 	 */
 	private String guessColumnType(IDataStore dataStore, int columnIndex) {
-		boolean isNumeric = true;
-		for (int i = 0; i < Math.min(10, dataStore.getRecordsCount()); i++) {
+		///boolean isNumeric = true;
+		boolean foundDouble = false;
+		boolean foundInteger = false;
+		int lastIndex;
+		for (int i = 0; i < Math.min(200, dataStore.getRecordsCount()); i++) {
 			IRecord record = dataStore.getRecordAt(i);
 			IField field = record.getFieldAt(columnIndex);
 			Object value = field.getValue();
-			try {
-				Double.parseDouble(value.toString());
-			} catch (Throwable t) {
-				isNumeric = false;
-				break;
+			if ((value == null) || (value.toString().isEmpty())) {
+				continue;
 			}
+			try {
+				//found an integer, so the column COULD be a integer
+		        Integer.parseInt(value.toString());
+		        foundInteger = true;
+			} catch (NumberFormatException e) {
+				try {
+					//found a double, so the column COULD be a double
+		            Double.parseDouble(value.toString());
+		            foundDouble = true;
+		        } catch (NumberFormatException e2) {
+		           //found a string, so the entire column MUST be a string we can stop the search
+		           return "String";
+		        }
+			}
+			lastIndex = i;
+		}
+		//Double has priority to Integer
+		if (foundDouble) {
+			return "Double";
+		} else if (foundInteger) {
+			return "Integer";
+		} else {
+			return "String";
 		}
 
-		return isNumeric ? "Double" : "String";
 	}
 
 	private boolean isADate(IDataSet dataSet, IDataStore dataStore, int columnIndex) throws JSONException {
@@ -1922,7 +1954,7 @@ public class SelfServiceDataSetCRUD {
 				localDate.toDate();
 
 			} catch (Exception ex) {
-				logger.debug((String) field.getValue() + " is not a date");
+				logger.debug(field.getValue() + " is not a date");
 				return false;
 			}
 		}

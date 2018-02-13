@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.dataset.persist;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -176,6 +177,7 @@ public class PersistedTableManager implements IPersistedManager {
 				// Apply DataSet FieldType to DataStore FieldType
 				IFieldMetaData dataStoreFieldMetaData = dataStoreMetaData.getFieldMeta(i);
 				dataStoreFieldMetaData.setFieldType(dataSetMetaData.getFieldMeta(i).getFieldType());
+				dataStoreFieldMetaData.setType(dataSetMetaData.getFieldMeta(i).getType());
 
 			}
 
@@ -189,7 +191,13 @@ public class PersistedTableManager implements IPersistedManager {
 					// change content type
 					if (fmd.getType().toString().contains("Integer")) {
 						try {
-							Integer intValue = Integer.valueOf((String) field.getValue());
+							Integer intValue;
+							Object rawField = field.getValue();
+							if (rawField instanceof BigDecimal) {
+								intValue = ((BigDecimal)rawField).intValueExact();
+							} else {
+								intValue = Integer.valueOf((String) rawField);
+							}
 							field.setValue(intValue);
 						} catch (Throwable t) {
 							logger.error("Error trying to convert value [" + field.getValue() + "] into an Integer value. Considering it as null...");
@@ -197,10 +205,25 @@ public class PersistedTableManager implements IPersistedManager {
 						}
 					} else if (fmd.getType().toString().contains("Double")) {
 						try {
-							Double doubleValue = Double.valueOf((String) field.getValue());
+							Double doubleValue;
+							Object rawField = field.getValue();
+							if (rawField instanceof BigDecimal) {
+								doubleValue = ((BigDecimal)rawField).doubleValue();
+							} else {
+								doubleValue = Double.valueOf((String) rawField);
+							}
 							field.setValue(doubleValue);
+
 						} catch (Throwable t) {
 							logger.error("Error trying to convert value [" + field.getValue() + "] into a Double value. Considering it as null...");
+							field.setValue(null);
+						}
+					} else if (fmd.getType().toString().contains("String")) {
+						try {
+							String stringValue = field.getValue().toString();
+							field.setValue(stringValue);
+						} catch (Throwable t) {
+							logger.error("Error trying to convert value [" + field.getValue() + "] into a String value. Considering it as null...");
 							field.setValue(null);
 						}
 					}

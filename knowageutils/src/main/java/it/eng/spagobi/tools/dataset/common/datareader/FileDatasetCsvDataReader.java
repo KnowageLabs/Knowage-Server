@@ -195,7 +195,7 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 						logger.debug(header[i] + " = " + contentsMap.get(header[i]));
 						IField field = null;
 						if (contentsMap.get(header[i]) == null) {
-							field = new Field("");
+							field = new Field();
 						} else {
 							field = new Field(contentsMap.get(header[i]));
 							// update metadata type in order with the real value's type (default was string)
