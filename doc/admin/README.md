@@ -28,7 +28,7 @@ Data to be analyzed with Knowage can be stored both on SQL datasources and NoSQL
 
 Installation from installer
 ----------------------------------
-You can install Knowage from the released installer [here] (https://forge.ow2.org/project/showfiles.php?group_id=442). Please check also the related documentation  
+You can install Knowage from the released installer [here](https://forge.ow2.org/project/showfiles.php?group_id=442). Please check also the related documentation  
 [here](http://download.forge.ow2.org/knowage/Knowage-CE-Installer-GettingStarted.pdf).
 
 Installation from released package
