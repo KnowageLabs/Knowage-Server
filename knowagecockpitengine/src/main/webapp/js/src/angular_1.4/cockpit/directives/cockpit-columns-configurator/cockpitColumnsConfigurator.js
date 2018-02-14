@@ -119,101 +119,99 @@
 	    	  }
 	      }];
 
-	
-		
-		
-//		$scope.metadataTableColumns=[
-//		                             {
-//		                            	 label:"  ",
-//		                            	 name:"move",
-//		                            	 size:"100px",
-//		                            	 transformer:function(item){
-//		                            		 var template = "<div layout=\"row\"> "
-//		                            			 +"<md-button ng-click=\"scopeFunctions.moveUp($event,$parent.$parent.$parent.$index)\" ng-disabled=\"$parent.$parent.$parent.$parent.$parent.$index==0\" class=\"md-icon-button h20 \" aria-label=\"up\">"
-//		                            			 +"  <md-icon md-font-icon=\"fa fa-arrow-up\"></md-icon>"
-//		                            			 +" </md-button>"
-//		                            			 +" <md-button ng-click=\"scopeFunctions.moveDown($event,$parent.$parent.$parent.$index)\" ng-disabled=\"$parent.$parent.$parent.$parent.$parent.$last\" class=\"md-icon-button h20\" aria-label=\"down\">"
-//		                            			 +" <md-icon md-font-icon=\"fa fa-arrow-down\"></md-icon>"
-//		                            			 +"</md-button>"
-//		                            			 +"</div>";
-//		                            		 return template;
-//		                            	 },
-//		                            	 hideTooltip:true
-//		                             },
-//		                             {
-//		                            	 "label":"Column",
-//		                            	 "name":"alias",
-//		                            	 transformer:function(item){
-//		                            		 var template='<md-input-container class="md-block" ng-if="!row.isCalculated"> '
-//		                            			 +'<md-select ng-model="row.alias" ng-change="scopeFunctions.changeColumn(row)">'
-//		                            			 +'<md-option ng-repeat="col in scopeFunctions.columnList" ng-value="col.alias" >'
-//		                            			 +'{{col.alias}}'
-//		                            			 +'</md-option>'
-//		                            			 +'</md-select></md-input-container>';
-//
-//		                            		 return template;
-//		                            	 },
-//		                            	 hideTooltip:true
-//
-//		                             },
-//		                             {
-//		                            	 "label":"Title",
-//		                            	 "name":"aliasToShow",
-//		                            	 transformer:function(item){
-//		                            		 var template = "<md-input-container flex class=\"md-block\"> "
-//		                            			 +"<label>Text</label>"
-//		                            			 +"<input class=\"input_class\" ng-model=row.aliasToShow />"
-//		                            			 +"</md-input-container>";
-//		                            		 return template;
-//		                            	 },
-//		                            	 hideTooltip:true
-//
-//		                             },
-//
-//		                             {
-//		                            	 "label":"Aggregation",
-//		                            	 "name":"aggregation",
-//		                            	 transformer:function(a,b,c){
-//		                            		 var template='<md-input-container class="md-block"> '
-//		                            			 +'<md-select  ng-show="scopeFunctions.canSee(row)" ng-if="scopeFunctions.AggregationFunctions != undefined" ng-model="row.aggregationSelected" aria-label="aria-label" >'
-//		                            			 +'<md-option ng-repeat="agF in scopeFunctions.AggregationFunctions" ng-value="agF.value">'
-//		                            			 +'{{agF.label}}'
-//		                            			 +'</md-option>'
-//		                            			 +'</md-select></md-input-container>';
-//
-//		                            		 return template;
-//		                            	 },
-//		                            	 hideTooltip:true
-//		                             },
-//		                             {
-//		                            	 "label":"Type",
-//		                            	 "name":"typeList",
-//		                            	 transformer:function(){
-//
-//		                            		 var temp = '<md-input-container class="md-block"> '
-//		                            			 +'<md-select aria-label="aria-label" ng-model="row.fieldType" ng-change="scopeFunctions.fieldTypeChanged()">'
-//		                            			 +'<md-option value=""></md-option>'
-//		                            			 +'<md-option value="ATTRIBUTE">String</md-option>'
-//		                            			 +'<md-option value="MEASURE">Number</md-option>'
-//		                            			 +'</md-select> </md-input-container>'
-//		                            			 return temp;
-//		                            	 },
-//		                            	 hideTooltip:true
-//		                             },{
-//		                            	 "label":" ",
-//		                            	 "name":" ",
-//		                            	 transformer:function(row,column,index){
-//
-//		                            		 var temp = '<md-button class="md-icon-button" style="background:{{row.style[\'background-color\']}}" ng-click="scopeFunctions.draw(row,column,index)">'
-//		                            			 +'<md-icon style="color:{{row.style.color}}" md-font-icon="fa fa-paint-brush" aria-label="Paintbruh"></md-icon>'
-//		                            			 +'</md-button>'
-//
-//		                            			 return temp;
-//		                            	 },
-//		                            	 size : "40px",
-//		                            	 hideTooltip:true
-//		                             }
-//		                             ];
+
+		$scope.metadataTableColumns=[
+		                             {
+		                            	 label:"  ",
+		                            	 name:"move",
+		                            	 size:"100px",
+		                            	 transformer:function(item){
+		                            		 var template = "<div layout=\"row\"> "
+		                            			 +"<md-button ng-click=\"scopeFunctions.moveUp($event,$parent.$parent.$parent.$index)\" ng-disabled=\"$parent.$parent.$parent.$parent.$parent.$index==0\" class=\"md-icon-button h20 \" aria-label=\"up\">"
+		                            			 +"  <md-icon md-font-icon=\"fa fa-arrow-up\"></md-icon>"
+		                            			 +" </md-button>"
+		                            			 +" <md-button ng-click=\"scopeFunctions.moveDown($event,$parent.$parent.$parent.$index)\" ng-disabled=\"$parent.$parent.$parent.$parent.$parent.$last\" class=\"md-icon-button h20\" aria-label=\"down\">"
+		                            			 +" <md-icon md-font-icon=\"fa fa-arrow-down\"></md-icon>"
+		                            			 +"</md-button>"
+		                            			 +"</div>";
+		                            		 return template;
+		                            	 },
+		                            	 hideTooltip:true
+		                             },
+		                             {
+		                            	 "label":"Column",
+		                            	 "name":"alias",
+		                            	 transformer:function(item){
+		                            		 var template='<md-input-container class="md-block" ng-if="!row.isCalculated"> '
+		                            			 +'<md-select ng-model="row.alias" ng-change="scopeFunctions.changeColumn(row)">'
+		                            			 +'<md-option ng-repeat="col in scopeFunctions.columnList" ng-value="col.alias" >'
+		                            			 +'{{col.alias}}'
+		                            			 +'</md-option>'
+		                            			 +'</md-select></md-input-container>';
+
+		                            		 return template;
+		                            	 },
+		                            	 hideTooltip:true
+
+		                             },
+		                             {
+		                            	 "label":"Title",
+		                            	 "name":"aliasToShow",
+		                            	 transformer:function(item){
+		                            		 var template = "<md-input-container flex class=\"md-block noMdError\"> "
+		                            			 +"<label>Text</label>"
+		                            			 +"<input class=\"input_class\" ng-model=row.aliasToShow />"
+		                            			 +"</md-input-container>";
+		                            		 return template;
+		                            	 },
+		                            	 hideTooltip:true
+
+		                             },
+
+		                             {
+		                            	 "label":"Aggregation",
+		                            	 "name":"aggregation",
+		                            	 transformer:function(a,b,c){
+		                            		 var template='<md-input-container class="md-block"> '
+		                            			 +'<md-select  ng-show="scopeFunctions.canSee(row)" ng-if="scopeFunctions.AggregationFunctions != undefined" ng-model="row.aggregationSelected" aria-label="aria-label" >'
+		                            			 +'<md-option ng-repeat="agF in scopeFunctions.AggregationFunctions" ng-value="agF.value">'
+		                            			 +'{{agF.label}}'
+		                            			 +'</md-option>'
+		                            			 +'</md-select></md-input-container>';
+
+		                            		 return template;
+		                            	 },
+		                            	 hideTooltip:true
+		                             },
+		                             {
+		                            	 "label":"Type",
+		                            	 "name":"typeList",
+		                            	 transformer:function(){
+
+		                            		 var temp = '<md-input-container class="md-block"> '
+		                            			 +'<md-select aria-label="aria-label" ng-model="row.fieldType" ng-change="scopeFunctions.fieldTypeChanged()">'
+		                            			 +'<md-option value=""></md-option>'
+		                            			 +'<md-option value="ATTRIBUTE">String</md-option>'
+		                            			 +'<md-option value="MEASURE">Number</md-option>'
+		                            			 +'</md-select> </md-input-container>'
+		                            			 return temp;
+		                            	 },
+		                            	 hideTooltip:true
+		                             },{
+		                            	 "label":" ",
+		                            	 "name":" ",
+		                            	 transformer:function(row,column,index){
+
+		                            		 var temp = '<md-button class="md-icon-button" style="background:{{row.style[\'background-color\']}}" ng-click="scopeFunctions.draw(row,column,index)">'
+		                            			 +'<md-icon style="color:{{row.style.color}}" md-font-icon="fa fa-paint-brush" aria-label="Paintbruh"></md-icon>'
+		                            			 +'</md-button>'
+
+		                            			 return temp;
+		                            	 },
+		                            	 size : "40px",
+		                            	 hideTooltip:true
+		                             }
+		                             ];
 
 
 		$scope.$watch('local',function(newValue,oldValue){
@@ -221,15 +219,6 @@
 				angular.copy(newValue.metadata.fieldsMeta,$scope.functionsCockpitColumn.columnList);
 			}
 		})
-		
-		$scope.columnList = [];
-		if($scope.local && $scope.local.metadata){
-			angular.forEach($scope.local.metadata.fieldsMeta,function(value,key){
-				var tempCol = {label:value.alias,value:value.name};
-				$scope.columnList.push(tempCol);
-			})
-		}
-		
 		$scope.functionsCockpitColumn = {
 			translate:sbiModule_translate,
 			moveUp: function(evt,index){
@@ -290,43 +279,6 @@
 				}
 			}
 		}
-		
-		$scope.types = [{
-			label:"String",
-			value: "ATTRIBUTE"
-		},{
-			label:"Number",
-			value: "MEASURE"
-		}];
-		
-		$scope.metadataTableColumns=[{
-			"label":"Column",
-       	 	"name":"alias",
-	       	 type:"select",
-	       	 if: true,
-	       	 values: $scope.columnList
-		},{
-			"label":"Title",
-       	 	"name":"aliasToShow",
-       	 	type:"inputtext"
-		},{
-			"label":"Aggregation",
-			"name":"aggregationSelected",
-			type:"select",
-			if: $scope.functionsCockpitColumn.AggregationFunctions != undefined,
-			values: $scope.functionsCockpitColumn.AggregationFunctions
-        },{
-       	 	"label":"Type",
-       	 	"name":"fieldType",
-       	 	type:"select",
-       	 	if: true,
-			values: $scope.types	
-        },{
-       	 	"label":"Style",
-       	 	"name":"",
-       	 	type:"style",
-       	 	width: "50px"
-        }];
 
 		$scope.openListColumn = function(){
 			if($scope.model.dataset == undefined || $scope.model.dataset.dsId == undefined){
