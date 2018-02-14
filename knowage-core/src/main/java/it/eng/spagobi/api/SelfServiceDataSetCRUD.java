@@ -130,6 +130,7 @@ public class SelfServiceDataSetCRUD {
 
 	static private String previewRowsConfigLabel = "SPAGOBI.DATASET.PREVIEW_ROWS";
 
+	static private int ROWS_LIMIT_GUESS_TYPE_HEURISTIC = 10000;
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
@@ -1896,8 +1897,7 @@ public class SelfServiceDataSetCRUD {
 		///boolean isNumeric = true;
 		boolean foundDouble = false;
 		boolean foundInteger = false;
-		int lastIndex;
-		for (int i = 0; i < Math.min(200, dataStore.getRecordsCount()); i++) {
+		for (int i = 0; i < Math.min(ROWS_LIMIT_GUESS_TYPE_HEURISTIC, dataStore.getRecordsCount()); i++) {
 			IRecord record = dataStore.getRecordAt(i);
 			IField field = record.getFieldAt(columnIndex);
 			Object value = field.getValue();
@@ -1918,7 +1918,6 @@ public class SelfServiceDataSetCRUD {
 		           return "String";
 		        }
 			}
-			lastIndex = i;
 		}
 		//Double has priority to Integer
 		if (foundDouble) {
