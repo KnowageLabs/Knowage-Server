@@ -658,10 +658,17 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					if(datasetLabel != undefined){
 						for(var widgetColumnIndex in widget.content.columnSelectedOfDataset){
 							var widgetColumn = widget.content.columnSelectedOfDataset[widgetColumnIndex];
-							if(widgetColumn.name == widgetColumn.aliasToShow){
-								columnSet.add(datasetLabel + "." + widgetColumn.name);
+
+							var columnName = widgetColumn.name;
+							var colonIndex = columnName.indexOf(":");
+							if(colonIndex > -1){
+								columnName = columnName.substr(colonIndex + 1);
+							}
+
+							if(columnName == widgetColumn.aliasToShow){
+								columnSet.add(datasetLabel + "." + columnName);
 							}else{
-								aliasMap[datasetLabel + "." + widgetColumn.aliasToShow] = datasetLabel + "." + widgetColumn.name;
+								aliasMap[datasetLabel + "." + widgetColumn.aliasToShow] = datasetLabel + "." + columnName;
 							}
 						}
 					}
