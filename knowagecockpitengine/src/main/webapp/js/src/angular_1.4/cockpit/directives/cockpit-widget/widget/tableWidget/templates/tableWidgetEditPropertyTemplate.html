@@ -192,8 +192,7 @@
 					</cockpit-style-configurator>
 					
 				</md-tab>
-				
-				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.cross')}}">
+				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.cross')}}" ng-if="user.isTechnicalUser == 'true'">
 					<cockpit-cross-configurator ng-if="selectedTab.tab ==2" widget ng-cloak ng-model="model.cross">
 				</md-tab>
 

@@ -48,6 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$mdPanel,
 			$q,
 			$filter,
+			sbiModule_user,
 			sbiModule_translate,
 			sbiModule_restServices,
 			cockpitModule_datasetServices,
@@ -66,6 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.widgetIsInit=false;
 		$scope.totalCount = 0;
 		$scope.translate = sbiModule_translate;
+		$scope.user = sbiModule_user;
 		$scope.datasetRecords = {};
 
 		var scope = $scope;
@@ -745,7 +747,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		});
 	};
 
-	function tableWidgetEditControllerFunction($scope,finishEdit,sbiModule_translate,$mdDialog,originalModel,mdPanelRef,getMetadata,scopeFather,$mdToast){
+	function tableWidgetEditControllerFunction($scope,finishEdit,sbiModule_translate,$mdDialog,originalModel,mdPanelRef,getMetadata,scopeFather,$mdToast, sbiModule_user){
 		$scope.translate=sbiModule_translate;
 
 		$scope.fontFamily = ["Inherit","Roboto","Arial","Times New Roman","Tahoma","Verdana","Impact","Calibri","Cambria","Georgia","Gungsuh"],
@@ -755,6 +757,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.textAlign = ['left','right','center'];
 
 		$scope.getMetadata = getMetadata;
+
+		$scope.user = sbiModule_user;
 
 		$scope.model = {};
 		angular.copy(originalModel,$scope.model);

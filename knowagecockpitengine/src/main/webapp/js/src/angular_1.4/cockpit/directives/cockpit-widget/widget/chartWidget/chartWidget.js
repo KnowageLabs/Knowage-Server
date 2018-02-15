@@ -194,6 +194,7 @@ function cockpitChartWidgetControllerFunction(
 		$mdToast,
 		sbiModule_messaging,
 		sbiModule_translate,
+		sbiModule_user,
 		$filter,
 		cockpitModule_widgetServices,
 		cockpitModule_properties,
@@ -214,6 +215,8 @@ function cockpitChartWidgetControllerFunction(
 		$scope.refreshWidget({type:"chart",chartInit:true},'init');
 	};
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
+
+	$scope.user = sbiModule_user;
 
 	$scope.$on('changeChartType', function (event, data) {
 		setAggregationsOnChartEngine($scope.ngModel.content)
@@ -488,13 +491,14 @@ function cockpitChartWidgetControllerFunction(
 		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
-				controller: function($scope,sbiModule_translate,model,mdPanelRef,doRefresh){
+				controller: function($scope,sbiModule_translate,model,mdPanelRef,doRefresh,sbiModule_user){
 					  $scope.translate=sbiModule_translate;
 					  $scope.confSpinner=false;
 					  $scope.somethingChanged=false;
 					  $scope.localStyle=angular.copy(model.style);
 					  $scope.localModel = angular.copy(model.content);
 					  $scope.localModel.cross= angular.copy(model.content.cross);
+					  $scope.user = sbiModule_user;
 
 					  $scope.model= angular.copy(model);
 

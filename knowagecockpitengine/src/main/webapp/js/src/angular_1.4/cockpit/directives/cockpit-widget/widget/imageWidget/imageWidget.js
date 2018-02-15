@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  * v0.0.1
- * 
+ *
  */
 (function() {
 angular.module('cockpitModule')
@@ -43,26 +43,28 @@ angular.module('cockpitModule')
 	   };
 });
 
-function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_translate,$q,$mdPanel,$timeout){
+function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_translate,$q,$mdPanel,$timeout, sbiModule_user){
 	$scope.property={
 		style:{}
 	};
-	
+
 	if($scope.ngModel.cross==undefined){
 		$scope.ngModel.cross={};
-	};	
-	
+	};
+
+	$scope.user = sbiModule_user;
+
 	$scope.init=function(element,width,height){
 		var imgObj = element.find("img");
 		$scope.safeApply();
-		
+
 		$timeout( function(){
 			//imgObj.one("load",function(){
 				$scope.refreshWidget();
 			//});
 		},500);
 	};
-	
+
 	$scope.refresh=function(element,width,height){
 
 		if($scope.ngModel.style == undefined){
@@ -80,11 +82,11 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 		$scope.safeApply();
 
 	};
-	
+
 	$scope.getUrl=function(){
 		return sbiModule_config.externalBasePath + "/restful-services/1.0/images/getImage?IMAGES_ID=" + $scope.ngModel.content.imgId;
 	};
-	
+
 	$scope.editWidget=function(index){
 		var finishEdit=$q.defer();
 		var config = {
@@ -107,7 +109,7 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
         }, function(){
             $scope.refresh();
         });
-		
+
 		finishEdit.promise.then(function(){
 			$scope.refresh();
 		});
@@ -116,7 +118,7 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 	};
 };
 
-function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbiModule_config,sbiModule_restServices,model,mdPanelRef){
+function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbiModule_config,sbiModule_restServices,model,mdPanelRef, sbiModule_user){
 	$scope.model = {};
 	$scope.listImages=[];
 	$scope.valigns=['center','top','bottom'];
@@ -125,6 +127,8 @@ function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbi
 	$scope.translate=sbiModule_translate;
 	$scope.test=$scope.translate.load("sbi.generic.name");
 	$scope.uploadImg = {};
+	$scope.user = sbiModule_user;
+
 	$scope.saveConfiguration=function(){
 		if($scope.model.content.imgId == undefined){
 			$scope.showAction($scope.translate.load('sbi.cockpit.widget.image.missingimg'));
@@ -160,16 +164,16 @@ function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbi
 				}
 			});
 		};
-		
+
 		$scope.erase= function(ev){
-			var imgId =	$scope.model.content.imgId;	
+			var imgId =	$scope.model.content.imgId;
 			sbiModule_restServices.restToRootProject();
 			if(imgId == undefined){
 				$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.cockpit.widgets.image.missingselectedfile')).position('top').action(
 				'OK').highlightAction(false).hideDelay(5000));
 			}
 			else{
-				var imageId = 'imageId='+imgId; 
+				var imageId = 'imageId='+imgId;
 				sbiModule_restServices.get("1.0/images", 'deleteImage', imageId)
 				.success(function(data, status, headers, config) {
 					if(data.success){
@@ -189,7 +193,7 @@ function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbi
 				});
 			}
 	}
-	
+
 	$scope.upload = function(ev){
 		if($scope.uploadImg.fileName == "" || $scope.uploadImg.fileName == undefined){
 			$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.cockpit.widgets.image.missinguploadfile')).position('top').action(
@@ -213,12 +217,12 @@ function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbi
 			.error(function(data, status, headers, config) {
 				$mdToast.show($mdToast.simple().content(data.ERROR).position('top').action(
 				'OK').highlightAction(false).hideDelay(5000));
-				
+
 			});
 		}
 	};
 	function refreshImagesList(){
-		
+
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.get("1.0/images", 'listImages').success(
 				function(data, status, headers, config) {
