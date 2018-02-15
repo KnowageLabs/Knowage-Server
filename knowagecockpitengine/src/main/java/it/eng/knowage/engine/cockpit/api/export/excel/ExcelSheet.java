@@ -22,8 +22,16 @@ public class ExcelSheet {
 	private String csv;
 
 	public ExcelSheet(String label, String csv) {
-		this.label = label;
+		setLabel(label);
 		this.csv = csv;
+	}
+
+	private void setLabel(String label) {
+		String labelWithoutQuotes = label.trim().replaceAll("\"", "").replaceAll("'", "");
+		if (labelWithoutQuotes.length() > 31) {
+			labelWithoutQuotes = labelWithoutQuotes.substring(0, 31);
+		}
+		this.label = labelWithoutQuotes;
 	}
 
 	public String getLabel() {

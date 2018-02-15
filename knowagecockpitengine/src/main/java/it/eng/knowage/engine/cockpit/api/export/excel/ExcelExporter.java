@@ -253,11 +253,10 @@ public class ExcelExporter {
 			int sheetIndex = sheet.getInt("index");
 
 			JSONArray widgets = sheet.getJSONArray("widgets");
+			int tableWidgetCounter = 0;
 			for (int j = 0; j < widgets.length(); j++) {
 				JSONObject widget = widgets.getJSONObject(j);
 				String widgetType = widget.getString("type");
-				JSONObject content = widget.getJSONObject("content");
-				String widgetName = content.getString("name");
 
 				if ("table".equals(widgetType)) {
 					JSONObject datasetObj = widget.getJSONObject("dataset");
@@ -306,7 +305,8 @@ public class ExcelExporter {
 
 					JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
 					String csv = datastoreObj != null ? getCsvSheet(datastoreObj, widget) : "";
-					excelSheets.add(new ExcelSheet("Sheet" + sheetIndex + " Widget" + j + " " + widgetName, csv));
+					String sheetName = getI18NMessage("Table") + " " + (sheetIndex + 1) + "." + (++tableWidgetCounter);
+					excelSheets.add(new ExcelSheet(sheetName, csv));
 				}
 			}
 		}
@@ -362,6 +362,11 @@ public class ExcelExporter {
 		StringBuilder sb = new StringBuilder();
 
 		JSONObject content = widget.getJSONObject("content");
+
+		String widgetName = content.getString("name");
+		sb.append(widgetName);
+		sb.append(CSV_LINE_FEED);
+
 		JSONArray columns = content.getJSONArray("columnSelectedOfDataset");
 		int columnCount = columns.length();
 		List<String> headers = new ArrayList<String>(columnCount);
