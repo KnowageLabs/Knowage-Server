@@ -661,14 +661,12 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 							var columnName = widgetColumn.name;
 							var colonIndex = columnName.indexOf(":");
-							if(colonIndex > -1){
-								columnName = columnName.substr(colonIndex + 1);
-							}
-
-							if(columnName == widgetColumn.aliasToShow){
-								columnSet.add(datasetLabel + "." + columnName);
-							}else{
-								aliasMap[datasetLabel + "." + widgetColumn.aliasToShow] = datasetLabel + "." + columnName;
+							if(colonIndex == -1){
+								if(columnName == widgetColumn.aliasToShow){
+									columnSet.add(datasetLabel + "." + columnName);
+								}else{
+									aliasMap[datasetLabel + "." + widgetColumn.aliasToShow] = datasetLabel + "." + columnName;
+								}
 							}
 						}
 					}
