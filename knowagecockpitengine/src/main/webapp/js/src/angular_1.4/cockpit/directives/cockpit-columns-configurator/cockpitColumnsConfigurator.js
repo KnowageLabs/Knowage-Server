@@ -202,8 +202,8 @@
 		                            	 "name":" ",
 		                            	 transformer:function(row,column,index){
 
-		                            		 var temp = '<md-button class="md-icon-button" style="background:{{row.style[\'background-color\']}}" ng-click="scopeFunctions.draw(row,column,index)">'
-		                            			 +'<md-icon style="color:{{row.style.color}}" md-font-icon="fa fa-paint-brush" aria-label="Paintbruh"></md-icon>'
+		                            		 var temp = '<md-button class="md-icon-button noMargin" ng-style="{\'background\':row.style[\'background-color\']}" ng-click="scopeFunctions.draw(row,column,index)">'
+		                            			 +'<md-icon style="color:{{row.style.color}}" md-font-icon="fa fa-paint-brush" aria-label="Paint brush"></md-icon>'
 		                            			 +'</md-button>'
 
 		                            			 return temp;
