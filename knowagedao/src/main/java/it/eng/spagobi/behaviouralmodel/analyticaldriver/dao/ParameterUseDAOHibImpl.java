@@ -17,6 +17,18 @@
  */
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.dao;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
@@ -36,18 +48,6 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a parameter use mode.
@@ -119,7 +119,7 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 
 			SbiParuse hibParuse = (SbiParuse) aSession.load(SbiParuse.class, useID);
 
-			toReturn = toParameterUse(hibParuse);
+			toReturn = toParameterUse(hibParuse, true);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -183,7 +183,7 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 				return null;
 			}
 
-			toReturn = toParameterUse(hibParuse);
+			toReturn = toParameterUse(hibParuse, false);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -223,7 +223,7 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 
 			SbiParuse hibParuse = (SbiParuse) aSession.load(SbiParuse.class, useID);
 
-			fillParameterUse(aParameterUse, hibParuse);
+			fillParameterUse(aParameterUse, hibParuse, true);
 
 			tx.commit();
 
@@ -266,7 +266,7 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 
 			SbiParuse hibParuse = (SbiParuse) aSession.load(SbiParuse.class, useID);
 
-			fillParameterUse(aParameterUse, hibParuse);
+			fillParameterUse(aParameterUse, hibParuse, true);
 
 			tx.commit();
 
@@ -633,7 +633,7 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 
 			Iterator it = result.iterator();
 			while (it.hasNext()) {
-				realResult.add(toParameterUse((SbiParuse) it.next()));
+				realResult.add(toParameterUse((SbiParuse) it.next(), true));
 			}
 
 			tx.commit();
@@ -664,14 +664,16 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	/**
 	 * From the hibernate Parameter Use mode at input, gives the corrispondent <code>ParameterUse</code> object.
 	 *
+	 * TODO: code refactoring to remove the loadRoles input!!!
+	 *
 	 * @param hibParUse
 	 *            The hybernate parameter use mode
 	 *
 	 * @return The corrispondent <code>ParameterUse</code> object
 	 */
-	public ParameterUse toParameterUse(SbiParuse hibParUse) {
+	public ParameterUse toParameterUse(SbiParuse hibParUse, boolean loadRoles) {
 		ParameterUse aParameterUse = new ParameterUse();
-		fillParameterUse(aParameterUse, hibParUse);
+		fillParameterUse(aParameterUse, hibParUse, loadRoles);
 		return aParameterUse;
 	}
 
@@ -683,7 +685,7 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 	 * @param hibParUse
 	 *            the source SbiParuse object
 	 */
-	public void fillParameterUse(ParameterUse aParameterUse, SbiParuse hibParUse) {
+	public void fillParameterUse(ParameterUse aParameterUse, SbiParuse hibParUse, boolean loadRoles) {
 		aParameterUse.setUseID(hibParUse.getUseId());
 		aParameterUse.setDescription(hibParUse.getDescr());
 		aParameterUse.setId(hibParUse.getSbiParameters().getParId());
@@ -715,8 +717,11 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 
 		List checkList = getAssociatedChecks(hibParUse);
 		aParameterUse.setAssociatedChecks(checkList);
-		List roleList = getAssociatedRoles(hibParUse);
-		aParameterUse.setAssociatedRoles(roleList);
+		if (loadRoles) {
+			List roleList = getAssociatedRoles(hibParUse);
+			aParameterUse.setAssociatedRoles(roleList);
+		}
+
 	}
 
 	public List getAssociatedChecks(SbiParuse hibParUse) {
@@ -808,7 +813,7 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 
 			Iterator it = result.iterator();
 			while (it.hasNext()) {
-				realResult.add(toParameterUse((SbiParuse) it.next()));
+				realResult.add(toParameterUse((SbiParuse) it.next(), true));
 			}
 
 			tx.commit();
