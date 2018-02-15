@@ -46,6 +46,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Users Management</title>
+
+<% 
+Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
+%>
+
 </head>
 <body class="bodyStyle kn-usersManagement"
 	ng-controller="UsersManagementController as ctrl">
@@ -111,23 +116,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<div flex=100>
 					<md-input-container class="md-block"> <label>{{translate.load("sbi.users.pwd")}}</label>
 					<input data-ng-model="selectedUser.password" type="password"
-						name="password" required ng-maxlength="100" ng-change="setDirty()">
+						name="password" 
+						<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %> required <%}%>
+						ng-maxlength="100" ng-change="setDirty()">
+
+					<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %>
 					<div ng-messages="attributeForm.password.$error"
 						ng-show="selectedUser.password== null">
 						<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 					</div>
+					<%}%>
 					</md-input-container>
 				</div>
 
 				<div flex=100>
 					<md-input-container class="md-block"> <label>{{translate.load("sbi.users.confPwd")}}</label>
 					<input ng-model="selectedUser.confirm" type="password"
-						name="confirm_password" required ng-maxlength="100" ng-change="setDirty()"
+						name="confirm_password" 
+						<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %> required <%}%>
+						ng-maxlength="100" ng-change="setDirty()"
 						nx-equal-ex="selectedUser.password">
-					<div ng-messages="attributeForm.confirm_password.$error"
-						ng-show="selectedUser.confirm== null">
-						<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-					</div>	
+					
+					<%if(isSSOEnabledH == null || isSSOEnabledH == false){ %>
+						<div ng-messages="attributeForm.confirm_password.$error"
+							ng-show="selectedUser.confirm== null">
+							<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+						</div>	
+					<%}%>
+					
 					<div ng-messages="attributeForm.confirm_password.$error"
 						ng-show="attributeForm.confirm_password.$error.nxEqualEx">
 						<div ng-message="required">{{translate.load("sbi.users.pwdNotMatching");}}</div>
