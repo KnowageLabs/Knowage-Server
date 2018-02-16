@@ -59,9 +59,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class ExcelExporter {
 
-	static final String CSV_DELIMITER = ";";
-	static final String CSV_LINE_FEED = "\n";
-
 	static private Logger logger = Logger.getLogger(ExcelExporter.class);
 
 	private final String outputType;
@@ -206,8 +203,8 @@ public class ExcelExporter {
 			}
 
 			JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
-			String csv = datastoreObj != null ? getCsvSheet(datastoreObj) : "";
-			excelSheets.add(new ExcelSheet(datasetLabel, csv));
+			List<String[]> table = getTable(datastoreObj);
+			excelSheets.add(new ExcelSheet(datasetLabel, table));
 		}
 
 		logger.debug("OUT");
@@ -304,9 +301,9 @@ public class ExcelExporter {
 					}
 
 					JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
-					String csv = datastoreObj != null ? getCsvSheet(datastoreObj, widget) : "";
+					List<String[]> table = getTable(datastoreObj, widget);
 					String sheetName = getI18NMessage("Table") + " " + (sheetIndex + 1) + "." + (++tableWidgetCounter);
-					excelSheets.add(new ExcelSheet(sheetName, csv));
+					excelSheets.add(new ExcelSheet(sheetName, table));
 				}
 			}
 		}
@@ -326,62 +323,62 @@ public class ExcelExporter {
 		}
 	}
 
-	private String getCsvSheet(JSONObject datastore) throws JSONException {
-		StringBuilder sb = new StringBuilder();
+	private List<String[]> getTable(JSONObject datastore) throws JSONException {
+		List<String[]> table = new ArrayList<>();
 
 		JSONObject metaData = datastore.getJSONObject("metaData");
 		JSONArray fields = metaData.getJSONArray("fields");
 		String[] columnMap = new String[fields.length() - 1];
+		String[] headerRow = new String[fields.length() - 1];
 		for (int i = 1; i < fields.length(); i++) {
 			JSONObject field = fields.getJSONObject(i);
 			String name = field.getString("name");
 			String header = field.getString("header");
 			columnMap[i - 1] = name;
-			sb.append(header);
-			sb.append(CSV_DELIMITER);
+			headerRow[i - 1] = header;
 		}
-		sb.append(CSV_LINE_FEED);
+		table.add(headerRow);
 
 		JSONArray rows = datastore.getJSONArray("rows");
 		for (int i = 0; i < rows.length(); i++) {
+			String[] tableRow = new String[columnMap.length];
 			JSONObject row = rows.getJSONObject(i);
-			for (String column : columnMap) {
+			for (int j = 0; j < columnMap.length; j++) {
+				String column = columnMap[j];
 				String value = row.optString(column);
 				if (value != null) {
-					sb.append(value);
+					tableRow[j] = value;
 				}
-				sb.append(CSV_DELIMITER);
 			}
-			sb.append(CSV_LINE_FEED);
+			table.add(tableRow);
 		}
 
-		return sb.toString();
+		return table;
 	}
 
-	private String getCsvSheet(JSONObject datastore, JSONObject widget) throws JSONException {
-		StringBuilder sb = new StringBuilder();
+	private List<String[]> getTable(JSONObject datastore, JSONObject widget) throws JSONException {
+		List<String[]> table = new ArrayList<>();
 
 		JSONObject content = widget.getJSONObject("content");
-
 		String widgetName = content.getString("name");
-		sb.append(widgetName);
-		sb.append(CSV_LINE_FEED);
+		String[] titleRow = { widgetName };
+		table.add(titleRow);
 
 		JSONArray columns = content.getJSONArray("columnSelectedOfDataset");
 		int columnCount = columns.length();
 		List<String> headers = new ArrayList<String>(columnCount);
+
+		String[] headerRow = new String[columnCount];
 		for (int i = 0; i < columnCount; i++) {
 			JSONObject column = columns.getJSONObject(i);
 			String aliasToShow = column.getString("aliasToShow");
 			headers.add(aliasToShow);
 			aliasToShow = getI18NMessage(aliasToShow);
-			sb.append(aliasToShow);
-			sb.append(CSV_DELIMITER);
+			headerRow[i] = aliasToShow;
 		}
-		sb.append(CSV_LINE_FEED);
+		table.add(headerRow);
 
 		String[] columnMap = new String[columnCount];
-
 		JSONObject metaData = datastore.getJSONObject("metaData");
 		JSONArray fields = metaData.getJSONArray("fields");
 		for (int i = 1; i < fields.length(); i++) {
@@ -397,17 +394,18 @@ public class ExcelExporter {
 		JSONArray rows = datastore.getJSONArray("rows");
 		for (int i = 0; i < rows.length(); i++) {
 			JSONObject row = rows.getJSONObject(i);
-			for (String column : columnMap) {
+			String[] tableRow = new String[columnMap.length];
+			for (int j = 0; j < columnMap.length; j++) {
+				String column = columnMap[j];
 				String value = row.optString(column);
 				if (value != null) {
-					sb.append(value);
+					tableRow[j] = value;
 				}
-				sb.append(CSV_DELIMITER);
 			}
-			sb.append(CSV_LINE_FEED);
+			table.add(tableRow);
 		}
 
-		return sb.toString();
+		return table;
 	}
 
 	private JSONObject getAggregationsFromTableWidget(JSONObject widget, JSONObject configuration) throws JSONException {
@@ -679,11 +677,10 @@ public class ExcelExporter {
 
 			Sheet sheet = wb.createSheet(excelSheet.getLabel());
 
-			String data = excelSheet.getCsv();
-			String[] rows = data.split(CSV_LINE_FEED);
-			for (int rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+			List<String[]> table = excelSheet.getTable();
+			for (int rowIndex = 0; rowIndex < table.size(); rowIndex++) {
 				Row row = sheet.createRow(rowIndex);
-				String[] columns = rows[rowIndex].split(CSV_DELIMITER);
+				String[] columns = table.get(rowIndex);
 				for (int columnIndex = 0; columnIndex < columns.length; columnIndex++) {
 					Cell cell = row.createCell(columnIndex);
 					cell.setCellValue(columns[columnIndex]);

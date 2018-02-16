@@ -17,13 +17,15 @@
  */
 package it.eng.knowage.engine.cockpit.api.export.excel;
 
+import java.util.List;
+
 public class ExcelSheet {
 	private String label;
-	private String csv;
+	private List<String[]> table;
 
-	public ExcelSheet(String label, String csv) {
+	public ExcelSheet(String label, List<String[]> table) {
 		setLabel(label);
-		this.csv = csv;
+		this.table = table;
 	}
 
 	private void setLabel(String label) {
@@ -38,8 +40,8 @@ public class ExcelSheet {
 		return label;
 	}
 
-	public String getCsv() {
-		return csv;
+	public List<String[]> getTable() {
+		return table;
 	}
 
 }
