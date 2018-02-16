@@ -33,8 +33,11 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.dao.IOutputParameterDAO;
+import it.eng.spagobi.analiticalmodel.document.dao.OutputParameterDAOImpl;
 import it.eng.spagobi.analiticalmodel.document.dao.SubObjectDAOHibImpl;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
@@ -75,6 +78,7 @@ public class AnalyticalModelDocumentManagementAPI {
 	private IObjMetadataDAO metadataPropertyDAO;
 	private IObjMetacontentDAO metadataContentDAO;
 	private SubObjectDAOHibImpl subObjectDAO;
+	private IOutputParameterDAO outuputParameterDAO;
 
 	// default for document parameters
 	public static final Integer REQUIRED = 0;
@@ -110,6 +114,9 @@ public class AnalyticalModelDocumentManagementAPI {
 
 			subObjectDAO = new SubObjectDAOHibImpl();
 			subObjectDAO.setUserProfile(userProfile);
+
+			outuputParameterDAO = new OutputParameterDAOImpl();
+			outuputParameterDAO.setUserProfile(userProfile);
 
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Impossible to instatiate BIObjectDAO", t);
@@ -460,6 +467,8 @@ public class AnalyticalModelDocumentManagementAPI {
 				// //subobjects
 				// copySubobjects(document, clonedDocument);
 
+				// output Parameters
+				copyOutputParameters(document, clonedDocument);
 				// metadata
 				logger.debug("Coping metadata");
 				copyMetadata(document, clonedDocument);
@@ -771,6 +780,28 @@ public class AnalyticalModelDocumentManagementAPI {
 			throw new SpagoBIRuntimeException("An unexpected error occured while copying subobjects from document [" + sourceDocumentLabel + "] to document ["
 					+ destinationDocumentLabel + "]", e);
 		}
+	}
+
+	/**
+	 * Copy the output parameters
+	 */
+	private void copyOutputParameters(BIObject sourceDocument, BIObject destinationDocument) {
+		logger.debug("IN");
+
+		List<OutputParameter> outputParameters = sourceDocument.getOutputParameters();
+
+		for (Iterator iterator = outputParameters.iterator(); iterator.hasNext();) {
+			OutputParameter outputParameter = (OutputParameter) iterator.next();
+			OutputParameter newOutPar = new OutputParameter();
+			newOutPar.setBiObjectId(destinationDocument.getId());
+			newOutPar.setFormatCode(outputParameter.getFormatCode());
+			newOutPar.setFormatValue(outputParameter.getFormatValue());
+			newOutPar.setIsUserDefined(outputParameter.getIsUserDefined());
+			newOutPar.setName(outputParameter.getName());
+			newOutPar.setType(outputParameter.getType());
+			outuputParameterDAO.saveParameter(newOutPar);
+		}
+		logger.debug("OUT");
 	}
 
 	/**
