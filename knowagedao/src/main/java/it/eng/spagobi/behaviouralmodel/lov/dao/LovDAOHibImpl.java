@@ -35,8 +35,7 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 
 /**
- * Defines the Hibernate implementations for all DAO methods, for a list of
- * values.
+ * Defines the Hibernate implementations for all DAO methods, for a list of values.
  *
  * @author sulis
  */
@@ -155,8 +154,7 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 			hibLov.setName(aModalitiesValue.getName());
 			hibLov.setLabel(aModalitiesValue.getLabel());
 			hibLov.setDescr(aModalitiesValue.getDescription());
-			SbiDomains inpType = (SbiDomains) aSession.load(SbiDomains.class,
-					new Integer(aModalitiesValue.getITypeId()));
+			SbiDomains inpType = (SbiDomains) aSession.load(SbiDomains.class, new Integer(aModalitiesValue.getITypeId()));
 			hibLov.setInputType(inpType);
 			hibLov.setInputTypeCd(aModalitiesValue.getITypeCd());
 			hibLov.setLovProvider(aModalitiesValue.getLovProvider());
@@ -191,10 +189,11 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	 * @see it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO#insertModalitiesValue(it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue)
 	 */
 	@Override
-	public void insertModalitiesValue(ModalitiesValue aModalitiesValue) throws EMFUserError {
+	public Integer insertModalitiesValue(ModalitiesValue aModalitiesValue) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
+		Integer id = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -202,14 +201,14 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 			hibLov.setName(aModalitiesValue.getName());
 			hibLov.setLabel(aModalitiesValue.getLabel());
 			hibLov.setDescr(aModalitiesValue.getDescription());
-			SbiDomains inpType = (SbiDomains) aSession.load(SbiDomains.class,
-					new Integer(aModalitiesValue.getITypeId()));
+			SbiDomains inpType = (SbiDomains) aSession.load(SbiDomains.class, new Integer(aModalitiesValue.getITypeId()));
 			hibLov.setInputType(inpType);
 			hibLov.setInputTypeCd(aModalitiesValue.getITypeCd());
 			hibLov.setLovProvider(aModalitiesValue.getLovProvider());
 			updateSbiCommonInfo4Insert(hibLov);
-			aSession.save(hibLov);
+			id = (Integer) aSession.save(hibLov);
 			tx.commit();
+			return id;
 		} catch (HibernateException he) {
 			logger.error("HibernateException", he);
 
@@ -321,9 +320,8 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Query hibQuery = aSession
-					.createQuery("select lov from SbiParameters as param " + "inner join param.sbiParuses as paruses "
-							+ "inner join paruses.sbiLov as lov " + "where  param.parId = " + idParameter);
+			Query hibQuery = aSession.createQuery("select lov from SbiParameters as param " + "inner join param.sbiParuses as paruses "
+					+ "inner join paruses.sbiLov as lov " + "where  param.parId = " + idParameter);
 			;
 			List hibList = hibQuery.list();
 
@@ -363,9 +361,8 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			Query hibQuery = aSession
-					.createQuery("select lov from SbiObjects as obj " + "inner join obj.sbiObjPars as objPars "
-							+ "inner join objPars.sbiParameter as param " + "inner join param.sbiParuses as paruses "
-							+ "inner join paruses.sbiLov as lov " + "where  obj.label = '" + label + "'");
+					.createQuery("select lov from SbiObjects as obj " + "inner join obj.sbiObjPars as objPars " + "inner join objPars.sbiParameter as param "
+							+ "inner join param.sbiParuses as paruses " + "inner join paruses.sbiLov as lov " + "where  obj.label = '" + label + "'");
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
 			while (it.hasNext()) {
@@ -498,8 +495,7 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	}
 
 	/**
-	 * From the hibernate LOV at input, gives the corrispondent
-	 * <code>ModalitiesValue</code> object.
+	 * From the hibernate LOV at input, gives the corrispondent <code>ModalitiesValue</code> object.
 	 *
 	 * @param hiObjPar
 	 *            The hybernate LOV

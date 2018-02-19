@@ -355,6 +355,7 @@ public class LovResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
 	public Response post(@javax.ws.rs.core.Context HttpServletRequest req) {
 		IModalitiesValueDAO modalitiesValueDAO;
+		Integer id = null;
 		try {
 
 			String unsafe = RestUtilities.readBodyXSSUnsafe(req);
@@ -366,14 +367,14 @@ public class LovResource extends AbstractSpagoBIResource {
 				logger.error("LOV with same label already exists");
 				throw new SpagoBIRestServiceException("", getLocale(), "LOV with same label already exists");
 			}
-			modalitiesValueDAO.insertModalitiesValue(modVal);
+			id = modalitiesValueDAO.insertModalitiesValue(modVal);
 
 			logger.debug("OUT: Posting the LOV - done successfully");
 
 			// int newID =
 			// modalitiesValueDAO.loadModalitiesValueByLabel(modValue.getLabel()).getId();
 
-			return Response.ok().build();
+			return Response.ok(id).build();
 
 		} catch (Exception exception) {
 
@@ -768,32 +769,23 @@ public class LovResource extends AbstractSpagoBIResource {
 
 	public String convertSpecialChars(String provider) {
 		/*
-		 * String converted = ""; String script = ""; String query = ""; int
-		 * startInd = 0; int endId = 0; if (provider.indexOf("<SCRIPT>") != -1)
-		 * { startInd = provider.indexOf("<SCRIPT>"); endId =
-		 * provider.indexOf("</SCRIPT>"); startInd = startInd +8; script =
-		 * provider.substring(startInd, endId); script = script.trim(); }
+		 * String converted = ""; String script = ""; String query = ""; int startInd = 0; int endId = 0; if (provider.indexOf("<SCRIPT>") != -1) { startInd =
+		 * provider.indexOf("<SCRIPT>"); endId = provider.indexOf("</SCRIPT>"); startInd = startInd +8; script = provider.substring(startInd, endId); script =
+		 * script.trim(); }
 		 *
-		 * if (provider.indexOf("<STMT>") != -1) { startInd =
-		 * provider.indexOf("<STMT>"); endId = provider.indexOf("</STMT>");
-		 * startInd = startInd +6; query = provider.substring(startInd, endId);
-		 * query = query.trim();
+		 * if (provider.indexOf("<STMT>") != -1) { startInd = provider.indexOf("<STMT>"); endId = provider.indexOf("</STMT>"); startInd = startInd +6; query =
+		 * provider.substring(startInd, endId); query = query.trim();
 		 *
 		 * }
 		 *
-		 * if (!script.isEmpty()) { converted = script; } else { converted =
-		 * query; }
+		 * if (!script.isEmpty()) { converted = script; } else { converted = query; }
 		 *
-		 * if (converted.contains("'")) { converted = converted.replaceAll("'",
-		 * "&#x27;"); } if (converted.contains("<")) { converted =
-		 * converted.replaceAll("<", "&lt;"); } if (converted.contains(">")) {
-		 * converted = converted.replaceAll(">", "&gt;"); }
+		 * if (converted.contains("'")) { converted = converted.replaceAll("'", "&#x27;"); } if (converted.contains("<")) { converted =
+		 * converted.replaceAll("<", "&lt;"); } if (converted.contains(">")) { converted = converted.replaceAll(">", "&gt;"); }
 		 *
-		 * if (converted.contains("&")) { converted = converted.replaceAll("&",
-		 * "&amp;"); }
+		 * if (converted.contains("&")) { converted = converted.replaceAll("&", "&amp;"); }
 		 *
-		 * if (!converted.isEmpty()) { provider =
-		 * provider.replace(provider.substring(startInd, endId), converted);
+		 * if (!converted.isEmpty()) { provider = provider.replace(provider.substring(startInd, endId), converted);
 		 *
 		 * }
 		 */
