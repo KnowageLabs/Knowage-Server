@@ -246,6 +246,8 @@ public class UserResource extends AbstractSpagoBIResource {
 				logger.error("Impossible to encrypt Password", e);
 				throw new SpagoBIServiceException("SPAGOBI_SERVICE", "Impossible to encrypt Password", e);
 			}
+		} else {
+			sbiUser.setPassword(null);
 		}
 
 		try {

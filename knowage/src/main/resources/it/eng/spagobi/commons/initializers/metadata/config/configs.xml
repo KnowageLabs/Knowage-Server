@@ -352,7 +352,7 @@
 		description="" isActive="true" valueCheck="465" valueType="STRING"
 		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.scheduler.from" name="Scheduler From"
-		description="" isActive="true" valueCheck="spagobi@spagobidomain.com"
+		description="" isActive="true" valueCheck="knowage@knowagedomain.com"
 		valueType="STRING" category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.scheduler.user" name="Scheduler User"
 		description="" isActive="true" valueCheck="" valueType="STRING"
@@ -371,7 +371,7 @@
 		description="" isActive="true" valueCheck="465" valueType="STRING"
 		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.user.from" name="Scheduler From"
-		description="" isActive="true" valueCheck="spagobi@spagobidomain.com"
+		description="" isActive="true" valueCheck="knowage@knowagedomain.com"
 		valueType="STRING" category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.user.user" name="Scheduler User"
 		description="" isActive="true" valueCheck="" valueType="STRING"
@@ -391,7 +391,7 @@
 		description="" isActive="true" valueCheck="465" valueType="STRING"
 		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.kpi_alarm.from" name="Scheduler From"
-		description="" isActive="true" valueCheck="spagobi@spagobidomain.com"
+		description="" isActive="true" valueCheck="knowage@knowagedomain.com"
 		valueType="STRING" category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.kpi_alarm.user" name="Scheduler User"
 		description="" isActive="true" valueCheck="" valueType="STRING"
@@ -456,6 +456,10 @@
 	<CONFIG label="SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP" name="Default user role name"
 		description="Default user role on signup" isActive="true" valueCheck="user"
 		valueType="STRING" category="SECURITY" />
+	<CONFIG label="SPAGOBI.SECURITY.DEFAULT_TENANT_ON_SIGNUP" name="Default tenant on signup"
+		description="Default tenant on signup" isActive="true" valueCheck="DEFAULT_TENANT"
+		valueType="STRING" category="SECURITY" />
+		
 	<CONFIG label="SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY"
 		name="SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY" description="Enables the signup functionality for the final user"
 		isActive="false" valueCheck="false" valueType="STRING" category="SECURITY" />

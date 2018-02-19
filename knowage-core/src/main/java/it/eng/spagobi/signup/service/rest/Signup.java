@@ -62,6 +62,7 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -162,9 +163,9 @@ public class Signup {
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			SbiUser user = userDao.loadSbiUserByUserId((String) profile.getUserId());
 
-			//CommunityManager cm = new CommunityManager();
-			//cm.mngUserCommunityAfterDelete(user);
-			//logger.debug("User-community membership deleted");
+			// CommunityManager cm = new CommunityManager();
+			// cm.mngUserCommunityAfterDelete(user);
+			// logger.debug("User-community membership deleted");
 
 			userDao.deleteSbiUserById(user.getId());
 
@@ -227,7 +228,7 @@ public class Signup {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String update(@Context HttpServletRequest req) {
 		logger.debug("IN");
-		
+
 		MessageBuilder msgBuilder = new MessageBuilder();
 		Locale locale = msgBuilder.getLocale(req);
 
@@ -244,8 +245,8 @@ public class Signup {
 		String email = GeneralUtilities.trim(requestJSON.optString("email"));
 		String birthDate = GeneralUtilities.trim(requestJSON.optString("birthDate"));
 		String address = GeneralUtilities.trim(requestJSON.optString("address"));
-		//String biography = GeneralUtilities.trim(requestJSON.optString("biography"));
-		//String language = GeneralUtilities.trim(requestJSON.optString("language"));
+		// String biography = GeneralUtilities.trim(requestJSON.optString("biography"));
+		// String language = GeneralUtilities.trim(requestJSON.optString("language"));
 
 		try {
 
@@ -261,21 +262,19 @@ public class Signup {
 				user.setPassword(Password.encriptPassword(password));
 			userDao.updateSbiUser(user, userId);
 
-
 			updAttribute(userDao, attrDao, email, user.getUserId(), userId, attrDao.loadSbiAttributeByName("email").getAttributeId());
 			updAttribute(userDao, attrDao, birthDate, user.getUserId(), userId, attrDao.loadSbiAttributeByName("birth_date").getAttributeId());
 			updAttribute(userDao, attrDao, address, user.getUserId(), userId, attrDao.loadSbiAttributeByName("address").getAttributeId());
-			//updAttribute(userDao, attrDao, biography, user.getUserId(), userId, attrDao.loadSbiAttributeByName("short_bio").getAttributeId());
-			//updAttribute(userDao, attrDao, language, user.getUserId(), userId, attrDao.loadSbiAttributeByName("language").getAttributeId());
+			// updAttribute(userDao, attrDao, biography, user.getUserId(), userId, attrDao.loadSbiAttributeByName("short_bio").getAttributeId());
+			// updAttribute(userDao, attrDao, language, user.getUserId(), userId, attrDao.loadSbiAttributeByName("language").getAttributeId());
 
 			profile.setAttributeValue("name", name);
 			profile.setAttributeValue("surname", surname);
 			profile.setAttributeValue("birth_date", birthDate);
 			profile.setAttributeValue("email", email);
-			//profile.setAttributeValue("language", language);
-			//profile.setAttributeValue("short_bio", biography);
+			// profile.setAttributeValue("language", language);
+			// profile.setAttributeValue("short_bio", biography);
 			profile.setAttributeValue("location", address);
-
 
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while executing the subscribe action", t);
@@ -386,7 +385,6 @@ public class Signup {
 		}
 	}
 
-
 	private JSONObject buildErrorMessage(MessageBuilder msgBuilder, Locale locale, String errorString) {
 		logger.debug("IN");
 		JSONObject errorMsg = new JSONObject();
@@ -486,10 +484,19 @@ public class Signup {
 			user.getCommonInfo().setUserIn(username);
 			user.setFlgPwdBlocked(true);
 
+			String defaultTenant = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.DEFAULT_TENANT_ON_SIGNUP");
+			// if config is not defined, because it is a new configurationm do not therow error and put a default value
+			if (defaultTenant == null) {
+				defaultTenant = "DEFAULT_TENANT";
+			}
+
 			Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>();
 			SbiExtRoles r = new SbiExtRoles();
 			String defaultRole = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP");
-			Role signupRole = DAOFactory.getRoleDAO().loadByName(defaultRole);
+
+			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+			roleDAO.setTenant(defaultTenant);
+			Role signupRole = roleDAO.loadByName(defaultRole);
 			if (signupRole == null) {
 				logger.error("Invalid role " + defaultRole + " for the new user. "
 						+ " Check the attibute SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP configuration and set a valid role name ! ");
