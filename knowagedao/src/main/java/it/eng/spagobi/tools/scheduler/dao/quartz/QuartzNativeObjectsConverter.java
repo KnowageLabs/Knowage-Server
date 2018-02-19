@@ -325,11 +325,11 @@ public class QuartzNativeObjectsConverter {
 				String monthcron = "";
 				if (params.has("numRepetition")) {
 					String numRep = params.optString("numRepetition");
-					monthcron = (month + 1) + "/" + numRep;
+					monthcron = "1/" + numRep;
 				} else {
 					JSONArray jaMonths = params.optJSONArray("months");
 					String selmonths = "";
-					if (jaMonths.length() == 0) {
+					if (jaMonths == null || jaMonths.length() == 0) {
 						selmonths = "*";
 					} else {
 						for (int i = 0; i < jaMonths.length(); i++) {
@@ -351,7 +351,7 @@ public class QuartzNativeObjectsConverter {
 					String weeks = params.optString("weeks");
 					JSONArray jsDays = params.optJSONArray("days");
 
-					if (jsDays.length() == 0) {
+					if (jsDays == null || jsDays.length() == 0) {
 						dayinweekcron = "*";
 					} else {
 						String days = "";
