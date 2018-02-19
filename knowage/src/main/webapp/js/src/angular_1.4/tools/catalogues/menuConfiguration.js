@@ -578,7 +578,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 					searchValue = '';
 				}
 				var item = "Page=" + currentPageNumber + "&ItemPerPage="
-						+ itemsPerPage + "&label=" + searchValue;
+						+ itemsPerPage + "&label=" + searchValue+ "&name=" + searchValue;
 				$scope.loadListDocuments(item);
 			};
 			$scope.clickOnSelectedDoc = clickOnSelectedDoc;
