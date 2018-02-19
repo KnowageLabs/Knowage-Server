@@ -37,23 +37,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.Enumeration"%>
 <%@page import="java.util.Locale"%>
+<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>	
 
  <%
-    // RequestContainer requestContainer = RequestContainer.getRequestContainer();
-    String currTheme = (String)request.getAttribute("currTheme");
-   	if (currTheme == null)
-  		currTheme = ThemesManager.getDefaultTheme();
- 	
- 	String sbiMode = "WEB";
- 	IUrlBuilder urlBuilder = null;
- 	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
- 	
- 	String strLocale = request.getParameter("locale"); 	
- 	Locale locale=new Locale(strLocale.substring(0,strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_")+1), "");
- 	
-
-	IMessageBuilder msgBuilder = MessageBuilderFactory
-			.getMessageBuilder();
+ String strLocale = request.getParameter("locale"); 	
    	
 %>
 

@@ -6,6 +6,8 @@
          import="it.eng.spago.base.*,
                  it.eng.spagobi.commons.constants.SpagoBIConstants"
 %>
+<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>	
+
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
@@ -29,16 +31,8 @@
 
 <% 
 
-String sbiMode = "WEB";
-IUrlBuilder urlBuilder = null;
-urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
 
 String strLocale = request.getParameter("locale"); 	
-Locale locale=new Locale(strLocale.substring(0,strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_")+1), "");
-String accountId = request.getParameter("accountId"); 
-	
-IMessageBuilder msgBuilder = MessageBuilderFactory
-		.getMessageBuilder();
 %>
 
 
