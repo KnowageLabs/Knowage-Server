@@ -75,6 +75,10 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 	public Response getSnapshotsForSchedulationAndDocument(@QueryParam("id") Integer biobjectId, @QueryParam("scheduler") String scheduler,
 			@Context HttpServletRequest req) {
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+
+		// workaround , should pass an Id or a label cause name cannot contain spaces otherwise
+		scheduler = scheduler.replaceAll("%2520", " ");
+
 		List<Snapshot> snapshotsList = null;
 		try {
 			snapshotsList = DAOFactory.getSnapshotDAO().getSnapshotsForSchedulationAndDocument(biobjectId, scheduler, false);
