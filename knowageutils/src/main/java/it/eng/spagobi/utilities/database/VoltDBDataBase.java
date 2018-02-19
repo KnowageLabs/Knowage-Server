@@ -64,10 +64,12 @@ public class VoltDBDataBase extends AbstractDataBase {
 			toReturn = " TIMESTAMP ";
 		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
 			toReturn = " VARBINARY ";
-		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB") || javaTypeName.contains("JSON")) {
+		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB") || javaTypeName.contains("JSON") || javaTypeName.contains("JSON")
+				|| javaTypeName.contains("Map") || javaTypeName.contains("List")) {
 			toReturn = " TEXT ";
 		} else {
-			logger.debug("Cannot map java type [" + javaTypeName + "] to a valid database type ");
+			toReturn = " TEXT ";
+			logger.error("Cannot map java type [" + javaTypeName + "] to a valid database type. Set TEXT by default ");
 		}
 
 		return toReturn;
@@ -90,6 +92,7 @@ public class VoltDBDataBase extends AbstractDataBase {
 	 */
 	@Override
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		throw new UnsupportedOperationException("Cannot find this information in VoltDB using standard query. Need to call @Statistics(Memory) stored procedure.");
+		throw new UnsupportedOperationException(
+				"Cannot find this information in VoltDB using standard query. Need to call @Statistics(Memory) stored procedure.");
 	}
 }

@@ -304,6 +304,11 @@ public class JSONPathDataReader extends AbstractDataReader {
 				continue;
 			}
 
+			// if (key == null || key.trim().isEmpty()) {
+			// logger.error("Found an empy key in the json");
+			// throw new SpagoBIRuntimeException("knowage.rest.empty.field");
+			// }
+
 			// not found
 			Object value = jsonObject.get(key);
 			value = normalizeNumber(value);

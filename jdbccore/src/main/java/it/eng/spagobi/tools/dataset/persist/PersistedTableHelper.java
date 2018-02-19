@@ -22,13 +22,11 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Time;
 import java.sql.Timestamp;
-
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.Instant;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)
@@ -92,14 +90,13 @@ public class PersistedTableHelper {
 					insertStatement.setDate(fieldIndex + 1, (Date) fieldValue);
 				} else {
 					java.util.Date date = (java.util.Date) fieldValue;
-					//JDK 8 version
+					// JDK 8 version
 					/*
-					Instant instant = date.toInstant();
-					ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
-					LocalDate localDate = zdt.toLocalDate();
-					*/
-					DateTime dateTime = new DateTime( date, DateTimeZone.getDefault());
-					java.sql.Date sqlDate = new java.sql.Date( dateTime.getMillis() );
+					 * Instant instant = date.toInstant(); ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault()); LocalDate localDate =
+					 * zdt.toLocalDate();
+					 */
+					DateTime dateTime = new DateTime(date, DateTimeZone.getDefault());
+					java.sql.Date sqlDate = new java.sql.Date(dateTime.getMillis());
 					insertStatement.setDate(fieldIndex + 1, sqlDate);
 				}
 			} else if (fieldMetaTypeName.toLowerCase().contains("timestamp")) {
@@ -202,11 +199,12 @@ public class PersistedTableHelper {
 				} else {
 					logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 				}
-			} else if (fieldMetaTypeName.contains("JSONArray") || fieldMetaTypeName.contains("JSONObject")) { // JSONObject and JSONArray
+			} else if (fieldMetaTypeName.contains("JSONArray") || fieldMetaTypeName.contains("JSONObject") || fieldMetaTypeName.contains("Map")
+					|| fieldMetaTypeName.contains("List")) { // JSONObject and JSONArray
 				insertStatement.setString(fieldIndex + 1, fieldValue.toString());
 			} else {
 				logger.error("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
-				insertStatement.setObject(fieldIndex + 1, null);
+				insertStatement.setObject(fieldIndex + 1, fieldValue.toString());
 			}
 		} catch (Throwable t) {
 			logger.error("FieldValue [" + fieldValue + "] has class name [" + fieldValue.getClass().getName() + "]");

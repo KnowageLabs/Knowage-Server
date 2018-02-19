@@ -29,11 +29,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 
 public class ImpalaDataBase extends AbstractDataBase {
-	
+
 	private static transient Logger logger = Logger.getLogger(ImpalaDataBase.class);
 
 	public static final String ALIAS_DELIMITER = "`";
-	
+
 	private static int MAX_CHARSET_RATIO = 4; // utf8mb4
 	private static int MAX_VARCHAR_BYTE_VALUE = 65535;
 	private static int MAX_VARCHAR_VALUE = MAX_VARCHAR_BYTE_VALUE / MAX_CHARSET_RATIO;
@@ -41,7 +41,7 @@ public class ImpalaDataBase extends AbstractDataBase {
 	public ImpalaDataBase(IDataSource dataSource) {
 		super(dataSource);
 	}
-	
+
 	@Override
 	public String getDataBaseType(Class javaType) {
 		String toReturn = null;
@@ -64,15 +64,17 @@ public class ImpalaDataBase extends AbstractDataBase {
 			toReturn = " FLOAT ";
 		} else if (javaTypeName.contains("java.lang.Boolean")) {
 			toReturn = " BOOLEAN ";
-		} else if (javaTypeName.contains("java.sql.Date") || javaTypeName.contains("java.util.Date") || javaTypeName.toLowerCase().contains("timestamp") || javaTypeName.contains("java.sql.Time")) {
+		} else if (javaTypeName.contains("java.sql.Date") || javaTypeName.contains("java.util.Date") || javaTypeName.toLowerCase().contains("timestamp")
+				|| javaTypeName.contains("java.sql.Time")) {
 			toReturn = " TIMESTAMP ";
 		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
 			throw new SpagoBIRuntimeException("Binary large objects such as BLOB, RAW BINARY, and VARBINARY do not currently have an equivalent in Impala.");
 		} else if ((javaTypeName.contains("java.lang.String") && getVarcharLength() > MAX_VARCHAR_VALUE) || javaTypeName.contains("[C")
-				|| javaTypeName.contains("CLOB")) {
+				|| javaTypeName.contains("CLOB") || javaTypeName.contains("JSON") || javaTypeName.contains("Map") || javaTypeName.contains("List")) {
 			toReturn = " STRING ";
 		} else {
-			throw new SpagoBIRuntimeException("Cannot map java type [" + javaTypeName + "] to a valid database type ");
+			toReturn = " STRING ";
+			logger.error("Cannot map java type [" + javaTypeName + "] to a valid database type. Set STRING by default ");
 		}
 
 		return toReturn;
@@ -85,7 +87,8 @@ public class ImpalaDataBase extends AbstractDataBase {
 
 	@Override
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		throw new UnsupportedOperationException("Cannot find this information in Impala using standard query. Need to call @Statistics(Memory) stored procedure.");
+		throw new UnsupportedOperationException(
+				"Cannot find this information in Impala using standard query. Need to call @Statistics(Memory) stored procedure.");
 	}
 
 }

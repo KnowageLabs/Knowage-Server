@@ -65,10 +65,11 @@ public class OracleDataBase extends AbstractDataBase {
 			toReturn = " TIMESTAMP ";
 		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB") || javaTypeName.contains("JSON")) {
 			toReturn = " BLOB ";
-		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB")) {
+		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB") || javaTypeName.contains("Map") || javaTypeName.contains("List")) {
 			toReturn = " CLOB ";
 		} else {
-			logger.debug("Cannot map java type [" + javaTypeName + "] to a valid database type ");
+			toReturn = " CLOB ";
+			logger.error("Cannot map java type [" + javaTypeName + "] to a valid database type. Set CLOB by default ");
 		}
 
 		return toReturn;
