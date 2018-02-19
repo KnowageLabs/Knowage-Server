@@ -37,12 +37,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -988,28 +990,32 @@ public class CrossTab {
 												// SUM(col_0_0_) (see how
 												// crosstab datastore query is
 												// created)
+		String aggregationFunction = null;
+		if (measure.getAggregationFunction() != null) {
+			aggregationFunction = measure.getAggregationFunction().getName();
+		}
 
 		if (Number.class.isAssignableFrom(clazz)) {
 
 			// BigInteger, Integer, Long, Short, Byte
 			if (Integer.class.isAssignableFrom(clazz) || BigInteger.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)
 					|| Short.class.isAssignableFrom(clazz) || Byte.class.isAssignableFrom(clazz)) {
-				return new MeasureInfo(fieldName, measure.getEntityId(), "int", null);
+				return new MeasureInfo(fieldName, measure.getEntityId(), "int", null,aggregationFunction);
 			} else {
 				String decimalPrecision = (String) fieldMeta.getProperty(IFieldMetaData.DECIMALPRECISION);
 				if (decimalPrecision != null) {
-					return new MeasureInfo(fieldName, measure.getEntityId(), "float", "{decimalPrecision:" + decimalPrecision + "}");
+					return new MeasureInfo(fieldName, measure.getEntityId(), "float", "{decimalPrecision:" + decimalPrecision + "}",aggregationFunction);
 				} else {
-					return new MeasureInfo(fieldName, measure.getEntityId(), "float", null);
+					return new MeasureInfo(fieldName, measure.getEntityId(), "float", null,aggregationFunction);
 				}
 			}
 
 		} else if (Timestamp.class.isAssignableFrom(clazz)) {
-			return new MeasureInfo(fieldName, measure.getEntityId(), "timestamp", "d/m/Y H:i:s");
+			return new MeasureInfo(fieldName, measure.getEntityId(), "timestamp", "d/m/Y H:i:s",aggregationFunction);
 		} else if (Date.class.isAssignableFrom(clazz)) {
-			return new MeasureInfo(fieldName, measure.getEntityId(), "date", "d/m/Y");
+			return new MeasureInfo(fieldName, measure.getEntityId(), "date", "d/m/Y",aggregationFunction);
 		} else {
-			return new MeasureInfo(fieldName, measure.getEntityId(), "string", null);
+			return new MeasureInfo(fieldName, measure.getEntityId(), "string", null,aggregationFunction);
 		}
 	}
 
@@ -1045,12 +1051,14 @@ public class CrossTab {
 		String format;
 		String id;
 		String scaleFactor;
+		String aggregationFunction;
 
-		public MeasureInfo(String name, String id, String type, String format) {
+		public MeasureInfo(String name, String id, String type, String format, String aggregationFunction) {
 			this.name = name;
 			this.type = type;
 			this.format = format;
 			this.id = id;
+			this.aggregationFunction = aggregationFunction;
 		}
 
 		public String getName() {
@@ -1075,6 +1083,10 @@ public class CrossTab {
 
 		public String getId() {
 			return id;
+		}
+		
+		public String getAggregationFunction() {
+			return aggregationFunction;
 		}
 
 	}
@@ -1484,7 +1496,7 @@ public class CrossTab {
 	 * @param measuresOnRow
 	 */
 	private List<String[]> getTotalsOnRows(boolean measuresOnRow) {
-		List<String[]> sum = new ArrayList<String[]>();
+		List<String[]> result = new ArrayList<String[]>();
 		double[] st;
 		int measures = 1;
 		if (!measuresOnRow) {
@@ -1492,25 +1504,79 @@ public class CrossTab {
 		}
 		int iteration = dataMatrix[0].length / measures;
 		for (int measureId = 0; measureId < measures; measureId++) {
+			MeasureInfo measureInfo = this.measures.get(measureId);
+			String aggregationFunction = measureInfo.getAggregationFunction();
 			st = new double[dataMatrix.length];
 			for (int i = 0; i < dataMatrix.length; i++) {
+				if (measuresOnRow) {
+					int measureIndex =  i % this.measures.size();
+					measureInfo = this.measures.get(measureIndex);
+					aggregationFunction = measureInfo.getAggregationFunction();
+				}
+				List<Double> values = new ArrayList<Double>();
 				for (int j = 0; j < iteration; j++) {
 					try {
 						if (getCellType(i, j * measures + measureId).equals(CellType.DATA) || getCellType(i, j * measures + measureId).equals(CellType.TOTAL)) {
 							String value = dataMatrix[i][j * measures + measureId];
 							if (!value.equals(DATA_MATRIX_NA)) {
-								st[i] = st[i] + new Double(value);
+								values.add(new Double(value));
 							}
 						}
 					} catch (Exception e) {
 						logger.debug("Cant format the number " + (dataMatrix[i][j * measures + measureId]));
 					}
 				}
+				if (aggregationFunction.equalsIgnoreCase("MAX")) {
+					st[i] = getMax(values);
+				} else if (aggregationFunction.equalsIgnoreCase("MIN")) {
+					st[i] = getMin(values);
+				} else if (aggregationFunction.equalsIgnoreCase("SUM")) {
+					st[i] = getSum(values);
+				} else if (aggregationFunction.equalsIgnoreCase("COUNT")) {
+					st[i] = getCount(values);
+				} else if (aggregationFunction.equalsIgnoreCase("AVG")) {
+					st[i] = getAvg(values);
+				} else if (aggregationFunction.equalsIgnoreCase("COUNT_DISTINCT")) {
+					st[i] = getCountDistinct(values);
+				}
 			}
-			sum.add(toStringArray(st));
+			result.add(toStringArray(st));
 		}
+		return result;
+	}
+	
+	private double getMax(List<Double> values) {
+		return Collections.max(values);
+	}
+	
+	private double getMin(List<Double> values) {
+		return Collections.min(values);
+	}	
+	
+	private double getCount(List<Double> values) {
+		return new Double(values.size());
+	}	
+	
+	private double getSum(List<Double> values) {
+		double sum = 0;
+		for(Double value : values)
+		    sum += value;
 		return sum;
 	}
+	
+	private double getAvg(List<Double> values) {
+		double sum = getSum(values);
+		double count = getCount(values);
+		double avg = sum / count;
+		return avg;
+	}	
+	
+	private double getCountDistinct(List<Double> values) {
+		Set<Double> distinctValues = new HashSet<Double>(values); 
+		return distinctValues.size();
+	}
+	
+
 
 	private String[] getTotalsOfRows(int start, int length) {
 		double[] st = new double[dataMatrix[0].length];
@@ -1548,7 +1614,7 @@ public class CrossTab {
 	 * @return
 	 */
 	private List<String[]> getTotalsOnColumns(boolean measuresOnRow) {
-		List<String[]> sum = new ArrayList<String[]>();
+		List<String[]> result = new ArrayList<String[]>();
 		double[] st;
 		int measures = 1;
 		if (measuresOnRow) {
@@ -1557,13 +1623,20 @@ public class CrossTab {
 		int iteration = dataMatrix.length / measures;
 		for (int measureId = 0; measureId < measures; measureId++) {
 			st = new double[dataMatrix[0].length];
+			Map<Integer,List<Double>> valuesMap = new HashMap<Integer,List<Double>>();
 			for (int i = 0; i < iteration; i++) {
 				for (int j = 0; j < dataMatrix[0].length; j++) {
 					try {
 						if (getCellType(i * measures + measureId, j).equals(CellType.DATA) || getCellType(i * measures + measureId, j).equals(CellType.TOTAL)) {
 							String value = dataMatrix[i * measures + measureId][j];
 							if (!value.equals(DATA_MATRIX_NA)) {
-								st[j] = st[j] + new Double(value);
+								if (valuesMap.containsKey(j)) {
+									valuesMap.get(j).add( new Double(value));
+								} else {
+									List<Double> list = new ArrayList<Double>();
+									list.add(new Double(value));
+									valuesMap.put(j,list );
+								}						
 							}
 						}
 					} catch (Exception e) {
@@ -1571,9 +1644,38 @@ public class CrossTab {
 					}
 				}
 			}
-			sum.add(toStringArray(st));
+			
+			Iterator<Map.Entry<Integer,List<Double>>> it = valuesMap.entrySet().iterator();
+		    while (it.hasNext()) {
+		        Map.Entry<Integer,List<Double>> pair = (Map.Entry<Integer,List<Double>>)it.next();
+		        List<Double> values = pair.getValue();
+		        Integer index = pair.getKey();
+		        int measureIndex;
+		        if (measuresOnRow) {
+			        measureIndex = measureId;	        	
+		        } else {
+			        measureIndex = index % this.measures.size();		        	
+		        }
+				MeasureInfo measureInfo = this.measures.get(measureIndex);
+				String aggregationFunction = measureInfo.getAggregationFunction();
+		        if (aggregationFunction.equalsIgnoreCase("MAX")) {
+					st[index] = getMax(values);
+				} else if (aggregationFunction.equalsIgnoreCase("MIN")) {
+					st[index] = getMin(values);
+				} else if (aggregationFunction.equalsIgnoreCase("SUM")) {
+					st[index] = getSum(values);
+				} else if (aggregationFunction.equalsIgnoreCase("COUNT")) {
+					st[index] = getCount(values);
+				} else if (aggregationFunction.equalsIgnoreCase("AVG")) {
+					st[index] = getAvg(values);
+				} else if (aggregationFunction.equalsIgnoreCase("COUNT_DISTINCT")) {
+					st[index] = getCountDistinct(values);
+				}		        
+		    }
+			
+			result.add(toStringArray(st));
 		}
-		return sum;
+		return result;
 	}
 
 	private String[] getTotalsOfColumns(int start, int length) {
@@ -1668,16 +1770,34 @@ public class CrossTab {
 	private String[] getSuperTotal(int measuresNumber) {
 
 		double[] st = new double[measuresNumber];
+		
+		String[] aggregationFunctions = new String[measuresNumber];
+		List<Integer> notDisplayedSuperTotal = new ArrayList<Integer>();
+
+		
+		for(int i=0; i < measuresNumber; i++) {
+			MeasureInfo measureInfo = this.measures.get(i);
+			String aggregationFunction = measureInfo.getAggregationFunction();
+			aggregationFunctions[i] = aggregationFunction;
+		}
+		
 
 		if (measuresOnRow) {
 			for (int i = 0; i < measuresNumber; i++) {
 				for (int y = 0; y < columnsSum.get(0).length; y++) {
-					if (celltypeOfColumns.get(y).equals(CellType.DATA)) {
-						String value = columnsSum.get(i)[y];
-						if (!value.equals(DATA_MATRIX_NA)) {
-							st[i] = st[i] + new Double(value);
+					if (aggregationFunctions[i].equalsIgnoreCase("SUM")) {
+						if (celltypeOfColumns.get(y).equals(CellType.DATA)) {
+							String value = columnsSum.get(i)[y];
+							if (!value.equals(DATA_MATRIX_NA)) {
+								st[i] = st[i] + new Double(value);
+							}
 						}
+					} else {
+						//we don't display a total in other cases
+						//save indexes of elements not displayed
+						notDisplayedSuperTotal.add(i);
 					}
+
 				}
 			}
 		} else {
@@ -1685,15 +1805,29 @@ public class CrossTab {
 			for (int y = 0; y < columnsSum.get(0).length; y++) {
 				if (celltypeOfColumns.get(y).equals(CellType.DATA)) {
 					String value = columnsSum.get(0)[y];
+					
 					if (!value.equals(DATA_MATRIX_NA)) {
-						st[measureIteration % measuresNumber] = st[measureIteration % measuresNumber] + new Double(value);
+						int index = measureIteration % measuresNumber;
+						
+						 if (aggregationFunctions[index].equalsIgnoreCase("SUM")) {
+							 st[index] = st[index] + new Double(value);
+							} else {
+								//we don't display a total in other cases
+								//save indexes of elements not displayed
+								notDisplayedSuperTotal.add(index);
+							}
 					}
 					measureIteration++;
 				}
 			}
+
 		}
 
-		return toStringArray(st);
+		String[] toReturn = toStringArray(st);
+		for(Integer index : notDisplayedSuperTotal) {
+			toReturn[index] = "";
+		}
+		return toReturn;
 	}
 
 	/**
@@ -1819,99 +1953,7 @@ public class CrossTab {
 			}
 		}
 
-		// addSubtotalsToTheNodeFirstLevel(columnsRoot, true, 0);
-		// addSubtotalsToTheTree(columnsRoot, true, 0);
-		// if(rowsTotals!=null && rowsTotals.equals("on")){
-		// List<Node> childOfRoot = columnsRoot.getChilds();
-		// for(int i=0; i<childOfRoot.size(); i++){
-		// addSubtotalsToTheNodeFirstLevel(childOfRoot.get(i), true, 2,
-		// measuresOnRow);
-		// }
-		// }
-
-		// if(columnsTotals!=null && columnsTotals.equals("on")){
-		// List<Node> childOfRoot = rowsRoot.getChilds();
-		// for(int i=0; i<childOfRoot.size(); i++){
-		// addSubtotalsToTheNodeFirstLevel(childOfRoot.get(i), false, 2,
-		// measuresOnRow);
-		// }
-		// }
 	}
-
-	// /**
-	// * Prepare and execute a CF for the subtotals
-	// * @param n
-	// * @param horizontal
-	// * @param level
-	// * @param measuresOnRow
-	// */
-	// public void addSubtotalsToTheNode(Node n, boolean horizontal, int level,
-	// boolean measuresOnRow){
-	// List<Node> childs = n.getChilds();
-	// if(measuresOnRow){
-	// if((!horizontal && level<2) || //if level == 1 the subtotals are equals
-	// to the total
-	// (childs.size()>0 && childs.get(0).getChilds().size()==0 ) ){ //don't
-	// calculate the subtotals between neasures
-	// return;
-	// }
-	// }else{
-	// if(horizontal && level<2 || (childs.size()>0 &&
-	// childs.get(0).getChilds().size()==0 )){
-	// return;
-	// }
-	// }
-	// if(n.getCellType()!=CellType.CF && childs.size()>0 && n.getValue()!=TOTAL
-	// && n.getValue()!=SUBTOTAL ){
-	// //build the calcuated field for the sum
-	// StringBuilder sb = new StringBuilder(" ");
-	// for(int i=0; i<childs.size(); i++){
-	// if(childs.get(i).getCellType()!=CellType.CF &&
-	// childs.get(i).getValue()!=TOTAL && childs.get(i).getValue()!=SUBTOTAL ){
-	// sb.append("field[");
-	// sb.append(childs.get(i).getValue());
-	// sb.append("] +");
-	// }
-	// }
-	// sb.delete(sb.length()-1, sb.length());
-	// calculateCF(sb.toString(), n, horizontal, level, SUBTOTAL,
-	// CellType.SUBTOTAL);
-	// for(int i=0; i<childs.size(); i++){
-	// addSubtotalsToTheNode(childs.get(i), horizontal, level-1, measuresOnRow);
-	// }
-	// }
-	// }
-
-	// /**
-	// * Prepare and execute a CF for the subtotals
-	// * @param n
-	// * @param horizontal
-	// * @param level
-	// * @param measuresOnRow
-	// */
-	// public void addSubtotalsToTheNodeFirstLevel(Node n, boolean horizontal,
-	// int level, boolean measuresOnRow){
-	// List<Node> childs = n.getChilds();
-	//
-	//
-	//
-	// if(n.getCellType()!=CellType.CF && childs.size()>0 && n.getValue()!=TOTAL
-	// && n.getValue()!=SUBTOTAL ){
-	// //build the calcuated field for the sum
-	// StringBuilder sb = new StringBuilder(" ");
-	// for(int i=0; i<childs.size(); i++){
-	// if(childs.get(i).getCellType()!=CellType.CF &&
-	// childs.get(i).getValue()!=TOTAL && childs.get(i).getValue()!=SUBTOTAL ){
-	// sb.append("field[");
-	// sb.append(childs.get(i).getValue());
-	// sb.append("] +");
-	// }
-	// }
-	// sb.delete(sb.length()-1, sb.length());
-	// calculateCF(sb.toString(), n, horizontal, level, SUBTOTAL,
-	// CellType.SUBTOTAL);
-	// }
-	// }
 
 	public int addSubtotalsToTheTreeNoMeasure(Node node, boolean horizontal, int startingPosition) {
 		int start = startingPosition;

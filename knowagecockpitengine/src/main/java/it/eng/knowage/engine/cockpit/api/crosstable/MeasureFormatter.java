@@ -53,7 +53,7 @@ public class MeasureFormatter {
 			measuresInfo = new ArrayList<MeasureInfo>();
 			for (int i = 0; i < measuresJSON.length(); i++) {
 				JSONObject obj = (JSONObject) measuresJSON.get(i);
-				MeasureInfo mi = new MeasureInfo(obj.getString("name"), "", obj.getString("type"), obj.getString("format"));
+				MeasureInfo mi = new MeasureInfo(obj.getString("name"), "", obj.getString("type"), obj.getString("format"),obj.getString("format"));
 				measuresInfo.add(mi);
 			}
 		}
