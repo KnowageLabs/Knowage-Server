@@ -41,11 +41,12 @@ app.controller
 	 	"sbiModule_user",
 	 	"base64",
 	 	"sbiModule_device",
+	 	"$filter",
 	 	lovsManagementFunction
 	 ]
 );
 
-function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_config,$timeout,sbiModule_user,base64,sbiModule_device)
+function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_config,$timeout,sbiModule_user,base64,sbiModule_device,$filter)
 {
 	/**
 	 * =====================
@@ -542,9 +543,12 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			
 			sbiModule_restServices.promisePost("2.0/lovs/save","",$scope.selectedLov)
 			.then(function(response) {
+				var id = response.data;
 				$scope.listOfLovs = [];
 				$timeout(function(){								
-					$scope.getAllLovs();
+					$scope.getAllLovs().then(function(response){
+						$scope.itemOnClick($filter('filter')($scope.listOfLovs,{"id":id},true)[0]);
+					});
 				}, 1000);
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 				//$scope.selectedLov={};
@@ -840,8 +844,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
 		$scope.getAllLovs = function(){ // service that gets list of drivers @GET
-			sbiModule_restServices.promiseGet("2.0", "lovs/get/all")
-			.then(function(response) {
+			var promise = sbiModule_restServices.promiseGet("2.0", "lovs/get/all");
+			promise.then(function(response) {
 				console.log(response);
 				$scope.listOfLovs = response.data;
 			}, function(response) {
@@ -849,6 +853,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.toastr.title.error"));
 				
 			});
+			
+			return promise;
 		}
 		
 		/**
