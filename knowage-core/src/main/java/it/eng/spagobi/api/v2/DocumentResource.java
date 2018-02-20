@@ -73,7 +73,6 @@ import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagement
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IOutputParameterDAO;
 import it.eng.spagobi.api.AbstractDocumentResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -112,7 +111,6 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -143,13 +141,14 @@ public class DocumentResource extends AbstractDocumentResource {
 		return JsonConverter.objectToJson(parameters, parameters.getClass());
 	}
 
+	@Override
 	@POST
 	@Path("/")
 	@Consumes("application/json")
 	public Response insertDocument(String body) {
 		return super.insertDocument(body);
 	}
-	
+
 	@GET
 	@Path("/{labelOrId}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -158,13 +157,15 @@ public class DocumentResource extends AbstractDocumentResource {
 		return super.getDocumentDetails(documentIdentifier);
 	}
 
+	@Override
 	@PUT
 	@Path("/{label}")
-	@Produces(MediaType.APPLICATION_JSON )
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateDocument(@PathParam("label") String label, String body) {
 		return super.updateDocument(label, body);
 	}
-	
+
+	@Override
 	@DELETE
 	@Path("/{label}")
 	public Response deleteDocument(@PathParam("label") String label) {
@@ -449,6 +450,8 @@ public class DocumentResource extends AbstractDocumentResource {
 		List<CriteriaParameter> disjunctions = new ArrayList<CriteriaParameter>();
 		if (label != null && !label.isEmpty()) {
 			disjunctions.add(new CriteriaParameter("label", label, Match.ILIKE));
+			disjunctions.add(new CriteriaParameter("name", label, Match.ILIKE));
+			disjunctions.add(new CriteriaParameter("descr", label, Match.ILIKE));
 		}
 		if (name != null && !name.isEmpty()) {
 			disjunctions.add(new CriteriaParameter("name", name, Match.ILIKE));
@@ -619,7 +622,7 @@ public class DocumentResource extends AbstractDocumentResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getDocumentsV2(@QueryParam("type") String type, @QueryParam("folderId") String folderIdStr, @QueryParam("date") String date, 
+	public Response getDocumentsV2(@QueryParam("type") String type, @QueryParam("folderId") String folderIdStr, @QueryParam("date") String date,
 			@QueryParam("searchKey") String searchKey, @QueryParam("searchAttributes") String attributes, @QueryParam("searchSimilar") Boolean similar) {
 		logger.debug("IN");
 		IBIObjectDAO documentsDao = null;
@@ -635,7 +638,7 @@ public class DocumentResource extends AbstractDocumentResource {
 
 		try {
 			documentsDao = DAOFactory.getBIObjectDAO();
-			// NOTICE: at the time being, filter on date, folder and search key are mutually exclusive, i.e. the service cannot filter on date and folder and 
+			// NOTICE: at the time being, filter on date, folder and search key are mutually exclusive, i.e. the service cannot filter on date and folder and
 			// search for a specified key at the same time
 			if (isDateFilterValid) {
 				logger.debug("Date input parameter found: [" + date + "]. Loading documents before that date...");
@@ -650,7 +653,7 @@ public class DocumentResource extends AbstractDocumentResource {
 				logger.debug("Neither filter on date nor on folder nor a search key was found, loading all documents...");
 				allObjects = documentsDao.loadAllBIObjects();
 			}
-			
+
 			UserProfile profile = getUserProfile();
 			objects = new ArrayList<BIObject>();
 
@@ -893,32 +896,35 @@ public class DocumentResource extends AbstractDocumentResource {
 		}
 
 	}
-	
+
+	@Override
 	@GET
 	@Path("/{label}/template")
 	public Response getDocumentTemplate(@PathParam("label") String label) {
 		return super.getDocumentTemplate(label);
 	}
-	
+
+	@Override
 	@POST
 	@Path("/{label}/template")
 	public Response addDocumentTemplate(@PathParam("label") String label, MultiPartBody input) {
 		return super.addDocumentTemplate(label, input);
 	}
 
+	@Override
 	@DELETE
 	@Path("/{label}/template")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response deleteCurrentTemplate(@PathParam("label") String label) {
 		return super.deleteCurrentTemplate(label);
 	}
-	
+
+	@Override
 	@DELETE
 	@Path("/{label}/template/{id}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response deleteTemplateById(@PathParam("label") String label, @PathParam("id") Integer templateId) {
 		return super.deleteTemplateById(label, templateId);
 	}
-	
 
 }
