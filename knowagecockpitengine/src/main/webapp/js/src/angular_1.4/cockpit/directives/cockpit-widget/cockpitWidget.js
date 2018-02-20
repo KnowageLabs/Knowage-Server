@@ -605,15 +605,16 @@ function cockpitWidgetControllerFunction(
 
 				// get Aliases for column
 				var columnAliasesMap = {};
-				for(var i = 0; i<model.content.columnSelectedOfDataset.length; i++){
-					var colDataset = model.content.columnSelectedOfDataset[i];
-					if(colDataset.aliasToShow && colDataset.aliasToShow != ""){
-						if(colDataset.alias){
-							columnAliasesMap[colDataset.alias] = colDataset.aliasToShow;
+				if(model.content.columnSelectedOfDataset){
+					for(var i = 0; i<model.content.columnSelectedOfDataset.length; i++){
+						var colDataset = model.content.columnSelectedOfDataset[i];
+						if(colDataset.aliasToShow && colDataset.aliasToShow != ""){
+							if(colDataset.alias){
+								columnAliasesMap[colDataset.alias] = colDataset.aliasToShow;
+							}
 						}
 					}
 				}
-
 
 				for(par in passedOutputParametersList){
 					var content = passedOutputParametersList[par];
