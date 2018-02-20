@@ -75,6 +75,8 @@ public class DimensionService {
 				// String name = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
 				String label = sbRow.getAttribute(HierarchyConstants.LABEL) != null ? sbRow.getAttribute(HierarchyConstants.LABEL).toString() : null;
 				dimension.put("DIMENSION_NM", label);
+				String prefix = sbRow.getAttribute(HierarchyConstants.PREFIX) != null ? sbRow.getAttribute(HierarchyConstants.PREFIX).toString() : null;
+				dimension.put("DIMENSION_PREFIX", prefix);
 				String datasource = sbRow.getAttribute(HierarchyConstants.DATASOURCE) != null ? sbRow.getAttribute(HierarchyConstants.DATASOURCE).toString()
 						: null;
 				dimension.put("DIMENSION_DS", datasource);

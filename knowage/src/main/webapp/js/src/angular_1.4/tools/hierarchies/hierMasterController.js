@@ -13,7 +13,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	$scope.orderByFields = [ 'name', 'id' ];
 	$scope.doBackup = true;
 	$scope.showLoading = false;
-	$scope.fakeNode = { 
+	$scope.fakeNode = {
 		fake : true,
 		name : $scope.translate.load("sbi.hierarchies.new.empty"),
 		id : '',
@@ -41,10 +41,10 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	$scope.treeMasterDirty = false;
 	$scope.masterIsNew = false;
 	$scope.treeDirty = false;
-	
+
 	$scope.relationsMT = []; //array used to store the relations among Master and Technical, used for propagation.
 	$scope.hierMasterNew = {};
-	
+
 	/* details button in the table (left side) */
 	$scope.dimSpeedMenu = [ {
 		label : $scope.translate.load('sbi.generic.details'),
@@ -56,7 +56,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	} ];
 
 	$scope.treeOptions = {
-		//accept is used to force clone object in order to not delete the row in the table moving it to tree 
+		//accept is used to force clone object in order to not delete the row in the table moving it to tree
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
 			if (sourceNodeScope.$treeScope.cloneEnabled == false) {
 				sourceNodeScope.$treeScope.cloneEnabled = true;
@@ -92,7 +92,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			if (sourceNodeScope.$treeScope.cloneEnabled == false) {
 				sourceNodeScope.$treeScope.cloneEnabled = true;
 			}
-			
+
 			return true;
 		},
 		beforeDrop : function(e) {
@@ -104,10 +104,10 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 					var parameters="dimension="+$scope.dim.DIMENSION_NM+"&hierSourceCode="+$scope.hierMaster.HIER_CD+"&hierSourceName="+$scope.hierMaster.HIER_NM+"&nodeSourceCode="+dest.$modelValue[dest.$modelValue.aliasId];
 					var getListHierarchiesPromise = $scope.restService.get("hierarchies","getRelationsMasterTechnical",parameters);
 					$scope.toggleLoading('tree',true);
-					getListHierarchiesPromise   
+					getListHierarchiesPromise
 						.success(function(data){
 							if (data.errors === undefined){
-								if (data.root.length == 0 ){								
+								if (data.root.length == 0 ){
 									//if no relations are found copy the node
 									$scope.showAlert($scope.translate.load("sbi.generic.info"),$scope.translate.load("sbi.hierarchies.info.drag.listhierarchies"));
 									$scope.copyNodeTableToTree(e,[]);
@@ -129,7 +129,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 							var message = $scope.translate.load("sbi.hierarchies.error.drag.listhierarchies");
 							$scope.showAlert($scope.translate.load("sbi.generic.error"), message);
 						});
-					
+
 				}else{
 					//if is not Master copy the node
 					$scope.copyNodeTableToTree(e);
@@ -138,7 +138,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			return false;
 		}
 	};
-	
+
 	/* Copy the node from table to tree adding the metadata of dest node and the mandatory field
 	 * Moreover copy the relations between master and technical if they exist */
 	$scope.copyNodeTableToTree = function(e,list){
@@ -148,8 +148,9 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		var source = e.source.cloneModel;
 		var dest = e.dest.nodesScope.$nodeScope.$modelValue;
 		var dimName = $scope.dim.DIMENSION_NM;
-		var keyName = dimName + '_NM';
-		var keyId = dimName + '_CD';
+		var dimPrefix = $scope.dim.DIMENSION_PREFIX;
+		var keyName = dimPrefix + '_NM';
+		var keyId = dimPrefix + '_CD';
 		source.name = source[keyName];
 		source.id = source[keyId];
 		source.LEAF_PARENT_NM = dest[dest.aliasName];
@@ -201,7 +202,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			}
 		}
 	}
-	
+
 	/*remove elements dropped by ui-tree that are wrong. These elements are dropped though you cancel the confirm dialog [showListHierarchies]*/
 	$scope.removeFakeAndCorupt = function(array) {
 		for (var i = 0; i < array.length; i++) {
@@ -223,12 +224,12 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				$scope.showAlert($scope.translate.load("sbi.generic.error"), message);
 
 		});
-	
-	/* When selected a dimension, get the JSON to create the table 
+
+	/* When selected a dimension, get the JSON to create the table
 	 * filterHierarchy is the checkbox boolean value of 'show missing elements'
 	 * remove filter is a boolean value used to reset all the filter applied
 	 * reset tree is boolean value used to remove the tree and the combo values of the right side
-	 * option filter is a boolean value used to understand if use also the filter in the rest service 
+	 * option filter is a boolean value used to understand if use also the filter in the rest service
 	 * */
 	$scope.getDimensionsTable = function(filterHierarchy, removeFilter, resetTree, optionalFilter) {
 		if (removeFilter == true){
@@ -375,7 +376,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			}
 		}
 	}
-	
+
 	/* Get the filters dynamically, because each dimension can have different filters */
 	$scope.getFilters = function(){
 		if ($scope.dim){
@@ -400,8 +401,8 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			}
 		}
 	};
-	
-	/* Get the tree when selected data, dimension, type hierarchy and hierarchy 
+
+	/* Get the tree when selected data, dimension, type hierarchy and hierarchy
 	 * forceDownload is set to true when is necessary to refresh the tree, instead to use the cache
 	 * */
 	$scope.getTree = function(dateFilter, seeElement, forceDownload) {
@@ -430,7 +431,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				//In show missing element filter are passed the date of the table
 				config.params.optionDate =  $scope.formatDate($scope.dateDim);
 				keyMap = keyMap + '_' + seeElement;
-			} 
+			}
 			if (!$scope.hierTreeCache[keyMap] || forceDownload ) {
 				$scope.toggleLoading('tree',true);
 				$scope.restService.get("hierarchies", "getHierarchyTree", null, config)
@@ -462,7 +463,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			}
 		}
 	}
-	
+
 	/* Function used in Backup controller. When is called it reset all the tree of one hierarchy, include the ones with all filters combination */
 	$scope.resetCache = function(dim,type,hier){
 		var key = type + '_' + dim.DIMENSION_NM + '_' + hier.HIER_NM;
@@ -521,8 +522,10 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 					for (key in newItem) {
 						tmpItem[key] = newItem[key];
 					}
-					var keyName = tmpItem.aliasName !== undefined ? tmpItem.aliasName: $scope.dim.DIMENSION_NM + "_NM_LEV";
-					var keyId = tmpItem.aliasId !== undefined ? tmpItem.aliasId : $scope.dim.DIMENSION_NM + "_CD_LEV";
+//					var keyName = tmpItem.aliasName !== undefined ? tmpItem.aliasName: $scope.dim.DIMENSION_NM + "_NM_LEV";
+//					var keyId = tmpItem.aliasId !== undefined ? tmpItem.aliasId : $scope.dim.DIMENSION_NM + "_CD_LEV";
+					var keyName = tmpItem.aliasName !== undefined ? tmpItem.aliasName: $scope.dim.DIMENSION_PREFIX + "_NM_LEV";
+					var keyId = tmpItem.aliasId !== undefined ? tmpItem.aliasId : $scope.dim.DIMENSION_PREFIX + "_CD_LEV";
 					tmpItem.name = tmpItem[keyName];
 					tmpItem.id = tmpItem[keyId];
 					tmpItem.$parent = item;
@@ -544,15 +547,17 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		promise.then(
 			function(newItem) {
 				if (newItem !== null && newItem !== undefined) {
-					var keyName = newItem.aliasName !== undefined ? newItem.aliasName: $scope.dim.DIMENSION_NM + "_NM_LEV";
-					var keyId = newItem.aliasId !== undefined ? newItem.aliasId : $scope.dim.DIMENSION_NM + "_CD_LEV";
+//					var keyName = newItem.aliasName !== undefined ? newItem.aliasName: $scope.dim.DIMENSION_NM + "_NM_LEV";
+//					var keyId = newItem.aliasId !== undefined ? newItem.aliasId : $scope.dim.DIMENSION_NM + "_CD_LEV";
+					var keyName = newItem.aliasName !== undefined ? newItem.aliasName: $scope.dim.DIMENSION_PREFIX + "_NM_LEV";
+					var keyId = newItem.aliasId !== undefined ? newItem.aliasId : $scope.dim.DIMENSION_PREFIX + "_CD_LEV";
 					newItem.name = newItem[keyName] !== undefined ? newItem[keyName] : item.name;
 					newItem.id = newItem[keyId] !== undefined ? newItem[keyId] : item.name;
 					newItem.$parent=item.$parent;
 					if (parent && parent.children) {
 						var idx = $scope.indexOf(parent.children,item, "id");
 						if (idx > -1) {
-							parent.children.splice(idx,1);						
+							parent.children.splice(idx,1);
 							parent.children.splice(idx,0,newItem);
 						}
 					} else {
@@ -658,11 +663,11 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			// nothing to do, response is 'cancel'
 		});
 	}
-	
+
 	/* Show the details dialog. Used in tree inline menu */
 	$scope.showDetailsNode =  function(item,parent,event){
 		var parentEl = angular.element(document.body);
-		var dimName = $scope.dim !== undefined ? $scope.dim.DIMENSION_NM : ''; 
+		var dimName = $scope.dim !== undefined ? $scope.dim.DIMENSION_NM : '';
 		var metTmp =  $scope.metadataTreeMap[dimName];
 		if (metTmp === undefined){
 			$scope.showAlert($scope.translate.load("sbi.generic.error"),'No metadata found for dimension '+ dimName );
@@ -680,9 +685,9 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			         },
 				preserveScope : true,
 				clickOutsideToClose:false,
-				controller: showDetailsDialogController 
+				controller: showDetailsDialogController
 			});
-	 
+
 		function showDetailsDialogController($scope, $mdDialog, translate, hier, metadata) {
 	 		$scope.translate = translate;
 			$scope.hier = angular.copy(hier);
@@ -698,7 +703,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			for (var i = 0 ; i <$scope.metadata.length; i++){
 				$scope.metadata[i].EDITABLE = false;
 			}
-			
+
 	        $scope.closeDialog = function() {
 	        	$mdDialog.cancel();
 	        }
@@ -707,7 +712,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	        }
 	 	}
 	}
-	
+
 	/* Inline Menu of Tree. Based on the node type each node menu shows different button.
 	 * The menu is never visibile for fake node */
 	$scope.menuOptionTree = [
@@ -750,9 +755,9 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 					},
 				action : $scope.showDetailsNode
 			} ];
-	
+
 	/* Remove all fake childs, format the date and check the correct LEVEL of each element.
-	 * Check also if the tree contains empty nodes [missimgPlaceholder = true] 
+	 * Check also if the tree contains empty nodes [missimgPlaceholder = true]
 	 * Return the tree cleaned and the missimgPlaceholder flag */
 	$scope.cleanTree = function(tree) {
 		var treeCleaned = angular.copy(tree);
@@ -783,7 +788,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				missimgPlaceholder = true;
 			}
 		} while (elements.length > 0);
-		
+
 		return {
 			treeCleaned : treeCleaned,
 			missimgPlaceholder : missimgPlaceholder
@@ -819,9 +824,9 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			}else{
 				$scope.callSaveTree(root);
 			}
-		}	
+		}
 	}
-	
+
 	/* The real POST request to save the cleaned tree.
 	 * In case forceDownload is true, refresh the tree and deleting the cache */
 	$scope.callSaveTree = function(root,forceDownload){
@@ -837,7 +842,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 						if ($scope.dateFilterTree) {
 							keyMap = keyMap+ '_'+ $scope.formatDate($scope.dateFilterTree);
 						}
-						
+
 						if ($scope.seeHideLeafTree) {
 							keyMap = keyMap + '_'+ $scope.seeHideLeafTree;
 						}
@@ -880,7 +885,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 						validityDate : dateFormatted,
 						optionalFilters : $scope.convertFiltersDim($scope.dimFilters)
 					};
-					
+
 					if (filterDate !== undefined && filterDate !== null) {
 						item.filterDate = $scope.formatDate(filterDate);
 					}
@@ -922,7 +927,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			});
 		}
 	}
-	
+
 	/* Function called when Synchronize button is clicked. The synchronization move the element from Table to selected Tree */
 	$scope.synchronizeMaster = function(){
 		var type = $scope.hierType;
@@ -939,15 +944,15 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				    validityTreeDate: $scope.formatDate($scope.dateTree),
 				    filterHierarchy: hier.HIER_NM,
 				    filterHierType: hier.HIER_TP,
-				    optionalFilters : $scope.convertFiltersDim($scope.dimFilters)				   
+				    optionalFilters : $scope.convertFiltersDim($scope.dimFilters)
 			};
-		    
+
 			if ($scope.seeHideLeafDim == true){
 					item.optionDate = $scope.formatDate($scope.dimDate);
 					item.optionHierarchy = $scope.hierMaster ? $scope.hierMaster.HIER_NM : undefined;
 					item.optionHierType = $scope.hierMaster ? $scope.hierMaster.HIER_TP : undefined;
 			}
-			
+
 			$scope.restService.post("hierarchiesMaster","syncronizeHierarchyMaster",item)
 				.success(function(data){
 					if (data.errors === undefined) {
@@ -956,7 +961,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 						$scope.showAlert($scope.translate.load("sbi.generic.error"), data.errors[0].message);
 					}
 					$scope.getTree(undefined, undefined, true);
-					$scope.toggleLoading("master", false);					
+					$scope.toggleLoading("master", false);
 				})
 				.error(function(data,status){
 					$scope.showAlert($scope.translate.load("sbi.generic.error"),$scope.translate.load("sbi.hierarchies.synchronization.error"));
@@ -988,7 +993,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 					});
 		}
 	}
-	
+
 	/* Dialog to show the info dimension when clicked the info icon in the table */
 	$scope.showDetails = function(item) {
 		return $mdDialog
@@ -1042,7 +1047,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		$scope.filterByTreeTrigger = angular.copy($scope.filterByTree);
 		$scope.orderByTreeTrigger = angular.copy($scope.orderByTree);
 	}
-	
+
 	/* Remove the applied filters when the remove filter button (fa-trash) is clicked */
 	$scope.removeFilter = function(choose) {
 		$scope.filterByTreeTrigger = "";
@@ -1100,7 +1105,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				$scope.listHierarchies[i].checked = checked;
 			}
 		}
-		
+
 		$scope.closeDialog = function() {
 			var list = [];
 			for (var i = 0 ; i< $scope.listHierarchies.length ; i++){
@@ -1206,7 +1211,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 
 		//move max two element from left to right
 		$scope.toRight = function(source, dest, itemsSource) {
-			//you can move to right if 1 or 2 elements are selcted. If only 1 item is selected, use it as 2° item and set flag hasCopy = true 
+			//you can move to right if 1 or 2 elements are selcted. If only 1 item is selected, use it as 2° item and set flag hasCopy = true
 			if (itemsSource.length == 2 || itemsSource.length == 1) {
 				var newLevel = {};
 				newLevel.code = itemsSource[0];
@@ -1260,7 +1265,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			}
 		}
 
-		// move element up of one position in the right list box. 
+		// move element up of one position in the right list box.
 		$scope.moveUp = function(item) {
 			var array = $scope.metadataDimExport;
 			var i = $scope.indexOf(array, item);
@@ -1391,7 +1396,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				 }
 				 var el = angular.copy(filtersArray[k]);
 				 if (el.TYPE.toUpperCase()=='DATE'){
-					 el.VALUE = $scope.formatDate(el.VALUE); 
+					 el.VALUE = $scope.formatDate(el.VALUE);
 				 }
 				 optionalFilter.push(el);
 			 }
@@ -1399,30 +1404,30 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		}
 		return undefined;
 	}
-	
-	//check if at least one of the optional Date filters is setted 
+
+	//check if at least one of the optional Date filters is setted
 	$scope.checkDateFilterDim = function(filtersArray){
 		if (filtersArray && filtersArray.length > 0){
 			 for (var k=0; k<filtersArray.length;k++){
 				 if (filtersArray[k].TYPE.toUpperCase()=='DATE'){
 					 if ($scope.formatDate(filtersArray[k].VALUE) != undefined) {
 						 return true;
-					 } 
+					 }
 				 }
 			 }
 			 return false;
 		}
 		return false;
 	}
-	
+
 	$scope.removeFilters = function(filtersArray){
 		if (filtersArray && filtersArray.length > 0){
 			 for (var k=0; k<filtersArray.length;k++){
 				filtersArray[k].VALUE = undefined;
-			} 
+			}
 		}
 	}
-	
+
 	$scope.formatDate = function(date) {
 		if (date){
 			var mm = (date.getMonth()+1) < 10 ? '0' + (date.getMonth() + 1) : ''+ (date.getMonth() + 1);
@@ -1443,7 +1448,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		}
 		return -1;
 	};
-	
+
 	$scope.toggleLoading = function(choose, forceValue){
 		var loading;
 		if (forceValue !== undefined){
@@ -1461,5 +1466,5 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			},100,true);
 		}
 	}
-	
+
 }

@@ -166,6 +166,7 @@
 						no-drop-enabled='false' 
 						enable-clone='true' 
 						show-empty-placeholder='true'
+						translate="false"
 						options-drag-drop = "treeOptions"
 						>
 					</document-tree>

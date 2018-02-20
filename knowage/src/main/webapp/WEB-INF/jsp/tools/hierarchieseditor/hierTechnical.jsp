@@ -81,7 +81,8 @@
 						enable-drag='true' 
 						no-drop-enabled='true'
 						enable-clone=true
-						show-empty-placeholder="true" o
+						show-empty-placeholder="true" 
+						translate="false"
 						options-drag-drop="treeSrcOptions" >
 					</document-tree>
 				</md-content>
@@ -165,7 +166,8 @@
 						enable-drag='true' 
 						no-drop-enabled='false' 
 						enable-clone='true'
-						show-empty-placeholder="true" 	
+						show-empty-placeholder="true" 
+						translate="false"	
 						options-drag-drop="treeTargetOptions" 
 					></document-tree>
 				</md-content>
