@@ -1,0 +1,109 @@
+<div ng-controller="RegistryController as rc">
+    <md-toolbar class="secondaryToolbar">
+        <div class="md-toolbar-tools" layout="row">
+            <h2>{{rc.configuration.title}}</h2>
+        </div>
+    </md-toolbar>
+    <md-content flex ng-cloak>
+        <div ng-if="rc.configuration.filters" class="registryFilters">
+            <div layout="row" layout-align="start center">
+                <md-icon md-font-icon="fa fa-filter fa-2x" style="margin-left:10px;margin-right:5px;"></md-icon>
+
+                <md-input-container class="md-icon-float registryFilter" ng-repeat="filter in rc.configuration.filters">
+                    <label>{{filter.label}}</label>
+                    <input ng-model="filter.value" ng-if="filter.type == 'text' || filter.type == 'number'" type="{{filter.type}}" ng-keyup="rc.addToFilters(filter)">
+                    <md-select ng-model="filter.value" ng-if="filter.type == 'select'" ng-change="rc.addToFilters(filter)">
+                        <md-option value=""></md-option>
+                        <md-option ng-repeat="opt in filter.options track by $index" ng-value="opt.value">{{opt.label}}</md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+        </div>
+        <div>
+            <table class="kn-table alternatedRows">
+                <thead>
+                    <tr>
+                        <th ng-repeat="col in rc.columns | orderBy: 'position'">
+                            <div layout="row" layout-align="start center">
+                                <span>{{col.label}}</span>
+                                <span flex></span>
+                                <md-menu>
+                                    <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdMenu.open()">
+                                        <md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
+                                    </md-button>
+                                    <md-menu-content width="3">
+                                        <md-menu-item ng-if="!$first">
+                                            <md-button ng-click="rc.move(col.position,'left')">
+                                                <md-icon md-font-icon="fa fa-outdent"></md-icon>
+                                                Move Left
+                                            </md-button>
+                                        </md-menu-item>
+                                        <md-menu-item ng-if="!$last">
+                                            <md-button ng-click="rc.move(col.position,'right')">
+                                                <md-icon md-font-icon="fa fa-indent"></md-icon>
+                                                Move Right
+                                            </md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                            </div>
+                        </th>
+                        <th class="tableAction">
+                            <md-button class="" ng-click="rc.addRow()" ng-if="rc.configuration.enableAdd">
+                                Add row
+                            </md-button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="row in rc.data | filter: rc.filters | limitTo: rc.configuration.itemsPerPage">
+                        <td ng-repeat="col in rc.columns | orderBy: 'position'">
+                            <div ng-if="!rc.isArray(row[col.label])">
+                                <span ng-if="!col.editable">{{row[col.label]}}</span>
+                                <md-menu ng-if="col.editable">
+                                    <div layout="row" class="clickable" ng-click="$mdMenu.open()">
+                                        <span>{{row[col.label]}}</span>
+                                    </div>
+                                    <md-menu-content width="5" class="customContentMenu">
+                                        <md-menu-item layout="row" layout-align="start center">
+                                            <md-input-container class="md-icon-float md-block">
+                                                <input ng-model="row[col.label]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change" ng-if="col.type=='text'">
+                                                <md-select ng-model="row[col.label]" aria-label="data change" ng-if="col.type=='select'">
+                                                    <md-option ng-repeat="opt in col.options" value="{{opt}}">{{opt}}</md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                            </div>
+                            <table class='innerTable' ng-if="rc.isArray(row[col.label])">
+                                <tr ng-repeat="pivotRow in row[col.label]">
+                                    <td>{{pivotRow}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td style="text-align:center" class="">
+                            <md-icon md-font-icon="fa fa-trash" ng-click="rc.deleteRow(row.$$hashKey)"></md-icon>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation" class="pagination" layout="row" layout-align="start center">
+                <span flex></span>
+                <label>Page</label>
+                <md-input-container class="noMargin">
+                    <md-select aria-label="Page navigation" ng-model="rc.page" ng-change="goToPage()">
+                        <md-option ng-repeat="pages in rc.getTotalPages() track by $index" value="{{$index+1}}">{{$index+1}}</md-option>
+                    </md-select>
+                </md-input-container>
+                <div class="label page-position">{{rc.min()}} - {{rc.max()}} of {{rc.data.length}}</div>
+                <md-button class="md-icon-button prev" aria-label="Previous" ng-click="rc.previous()" ng-disabled="!rc.hasPrevious()">
+                    <i class="fa fa-angle-left"></i>
+                </md-button>
+                <md-button class="md-icon-button next" aria-label="Next" ng-click="rc.next()" ng-disabled="!rc.hasNext()">
+                    <i class="fa fa-angle-right"></i>
+                </md-button>
+            </nav>
+        </div>
+    </md-content>
+</div>
