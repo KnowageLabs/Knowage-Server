@@ -282,6 +282,15 @@
 						</excludes>
 						<filtering>true</filtering>
 					</resource>
+					<resource>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.pdf</include>
+							<include>**/*.zip</include>
+							<include>**/*.xlsm</include>
+						</includes>
+						<filtering>false</filtering>
+					</resource>
 				</resources>
 			</build>
 		</profile>
@@ -306,6 +315,15 @@
 							<exclude>**/*.xlsm</exclude>							
 						</excludes>
 						<filtering>true</filtering>
+					</resource>
+					<resource>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.pdf</include>
+							<include>**/*.zip</include>
+							<include>**/*.xlsm</include>
+						</includes>
+						<filtering>false</filtering>
 					</resource>
 				</resources>
 			</build>
