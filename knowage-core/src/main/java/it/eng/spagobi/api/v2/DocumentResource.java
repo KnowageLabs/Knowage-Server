@@ -450,8 +450,6 @@ public class DocumentResource extends AbstractDocumentResource {
 		List<CriteriaParameter> disjunctions = new ArrayList<CriteriaParameter>();
 		if (label != null && !label.isEmpty()) {
 			disjunctions.add(new CriteriaParameter("label", label, Match.ILIKE));
-			disjunctions.add(new CriteriaParameter("name", label, Match.ILIKE));
-			disjunctions.add(new CriteriaParameter("descr", label, Match.ILIKE));
 		}
 		if (name != null && !name.isEmpty()) {
 			disjunctions.add(new CriteriaParameter("name", name, Match.ILIKE));
