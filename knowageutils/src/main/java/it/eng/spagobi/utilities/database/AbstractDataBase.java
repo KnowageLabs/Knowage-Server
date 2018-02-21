@@ -17,14 +17,16 @@
  */
 package it.eng.spagobi.utilities.database;
 
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-
-import java.math.BigDecimal;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -99,4 +101,14 @@ public abstract class AbstractDataBase implements IDataBase {
 	}
 
 	public abstract String getUsedMemorySizeQuery(String schema, String tableNamePrefix);
+
+	@Override
+	public String getSchema(Connection conn) throws SQLException {
+		return conn.getSchema();
+	}
+
+	@Override
+	public String getCatalog(Connection conn) throws SQLException {
+		return conn.getCatalog();
+	}
 }

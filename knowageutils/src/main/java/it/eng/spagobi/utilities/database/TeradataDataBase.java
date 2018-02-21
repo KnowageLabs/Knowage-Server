@@ -1,0 +1,65 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package it.eng.spagobi.utilities.database;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+
+public class TeradataDataBase extends AbstractDataBase {
+
+	public TeradataDataBase(IDataSource dataSource) {
+		super(dataSource);
+	}
+
+	@Override
+	public String getDataBaseType(Class javaType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getAliasDelimiter() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
+		throw new UnsupportedOperationException();
+	}
+
+	// https://community.teradata.com/t5/Blog/How-to-determine-or-switch-the-current-database-using-the/ba-p/66995
+	@Override
+	public String getSchema(Connection conn) throws SQLException {
+		Statement stmt = conn.createStatement();
+		try {
+			ResultSet rs = stmt.executeQuery("help session");
+			try {
+				rs.next();
+				return rs.getString(5);
+			} finally {
+				rs.close();
+			}
+		} finally {
+			stmt.close();
+		}
+	}
+}

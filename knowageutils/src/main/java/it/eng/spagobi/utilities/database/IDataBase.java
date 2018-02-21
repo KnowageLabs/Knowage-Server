@@ -18,8 +18,8 @@
 package it.eng.spagobi.utilities.database;
 
 import java.math.BigDecimal;
-
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -54,4 +54,20 @@ public interface IDataBase {
 	
 	
 	BigDecimal getUsedMemorySize(String schema, String tablePrefix);
+
+	/**
+	 * @param conn
+	 *            The connection to the datasource
+	 *
+	 * @return The current schema
+	 */
+	String getSchema(Connection conn) throws SQLException;
+
+	/**
+	 * @param conn
+	 *            The connection to the datasource
+	 *
+	 * @return The current catalog
+	 */
+	String getCatalog(Connection conn) throws SQLException;
 }
