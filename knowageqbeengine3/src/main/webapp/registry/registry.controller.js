@@ -19,15 +19,28 @@
     'use strict';
 
     angular
-        .module('BlankApp', ['ngMaterial'])
+        .module('BlankApp', ['ngMaterial', 'registryConfig', 'sbiModule'])
         .config(['$mdThemingProvider', function($mdThemingProvider) {
             $mdThemingProvider.theme('knowage')
             $mdThemingProvider.setDefaultTheme('knowage');
         }])
         .controller('RegistryController', RegistryController)
 
-    function RegistryController() {
+    function RegistryController(registryConfigService, registryCRUDService) {
         var self = this;
+        var registryConfigurationService = registryConfigService;
+        var registryCRUD = registryCRUDService;
+        var registryConfiguration = registryConfigurationService.getRegistryConfig();
+     
+        console.log(registryConfiguration);
+        
+        registryCRUD.read().then(function (response) {
+        	 self.data = response.data.rows;
+        	
+        });
+        console.log(registryCRUD.create());
+        console.log(registryCRUD.update());
+        console.log(registryCRUD.delete()); 
         self.filters = {};
         self.page = 1;
 
@@ -115,7 +128,8 @@
         }
 
 
-
+      //  self.columns = registryConfiguration.columns;
+        
         //array object to define columns
         //editable makes the column editable in view
         //position manages the position in the columns array
@@ -136,7 +150,7 @@
         ];
 
         //array object to define data
-        self.data = [{ "id": 1, "first_name": "Kirsti", "last_name": "Michiel", "email": "kmichiel0@ask.com", "gender": "Female", "ip_address": "134.68.23.46" },
+      /*  self.data = [{ "id": 1, "first_name": "Kirsti", "last_name": "Michiel", "email": "kmichiel0@ask.com", "gender": "Female", "ip_address": "134.68.23.46" },
             { "id": 2, "first_name": ["Terenzio", "Roberto", "Marco"], "last_name": "Ashpital", "email": "hashpital1@typepad.com", "gender": "Male", "ip_address": "185.147.156.173" },
             { "id": 3, "first_name": "Debi", "last_name": "Willingam", "email": "dwillingam2@list-manage.com", "gender": "Female", "ip_address": "90.227.251.249" },
             { "id": 4, "first_name": "Teresita", "last_name": "Giannazzo", "email": "tgiannazzo3@irs.gov", "gender": "Female", "ip_address": "172.254.81.159" },
@@ -237,6 +251,6 @@
             { "id": 99, "first_name": "Shep", "last_name": "Seifert", "email": "sseifert2q@businesswire.com", "gender": "Male", "ip_address": "226.17.52.222" },
             { "id": 100, "first_name": "Bessy", "last_name": "Winsiowiecki", "email": "bwinsiowiecki2r@google.cn", "gender": "Female", "ip_address": "238.16.200.165" }
 
-        ];
+        ]; */
     }
 })();
