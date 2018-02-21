@@ -1,5 +1,22 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -30,23 +47,6 @@ import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class DocumentParameters {
 	private static Logger logger = Logger.getLogger(DocumentParameters.class);
@@ -214,11 +214,11 @@ public class DocumentParameters {
 		try {
 			analyticalDriverExecModality = ANALYTICAL_DRIVER_USE_MODALITY_DAO.loadByParameterIdandRole(analyticalDocumentParameter.getParID(), executionRole);
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to find any valid execution modality for parameter [" + id + "] and role ["
-					+ executionRole + "]", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Impossible to find any valid execution modality for parameter [" + id + "] and role [" + executionRole + "]", e);
 		}
-		Assert.assertNotNull(analyticalDriverExecModality, "Impossible to find any valid execution modality for parameter [" + id + "] and role ["
-				+ executionRole + "]");
+		Assert.assertNotNull(analyticalDriverExecModality,
+				"Impossible to find any valid execution modality for parameter [" + id + "] and role [" + executionRole + "]");
 		parameterUseId = analyticalDriverExecModality.getUseID();
 		enableMaximizer = analyticalDriverExecModality.isMaximizerEnabled();
 	}
@@ -287,8 +287,8 @@ public class DocumentParameters {
 				lovParameters = lovDetail.getParameterNames();
 				if (lovParameters != null && !lovParameters.isEmpty()) {
 					logger.debug("Found one or more parameters inside the LOV");
-					List<BIObjectParameter> objParameters = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadBIObjectParametersById(analyticalDocumentParameter
-							.getBiObjectID());
+					List<BIObjectParameter> objParameters = ANALYTICAL_DOCUMENT_PARAMETER_DAO
+							.loadBIObjectParametersById(analyticalDocumentParameter.getBiObjectID());
 					LovDependency lovDependency = new LovDependency();
 					lovDependencies = new ArrayList<>();
 					for (BIObjectParameter objParameter : objParameters) {
@@ -425,7 +425,7 @@ public class DocumentParameters {
 								&& !analyticalDocumentParameter.getParameter().getModalityValue().getSelectionType().equals("LOOKUP")) {
 
 							for (HashMap<String, Object> defVal : admissibleValues) {
-								if (defVal.get("value").equals(item.get("value")) && !item.isNull("label")) {
+								if (defVal.get("value") != null && defVal.get("value").equals(item.get("value")) && !item.isNull("label")) {
 									if (defVal.get("label").equals(item.get("label")) && defVal.get("description") != null && item.opt("description") != null
 											&& defVal.get("description").equals(item.get("description"))) {
 										defaultParameterAlreadyExist = true;
@@ -468,8 +468,9 @@ public class DocumentParameters {
 								Map map = (Map) iterator2.next();
 								String valueD = map.get("value") != null && map.get("value") instanceof String ? map.get("value").toString() : null;
 								if (valueD != null && valueD.equals(value)) {
-									String description = map.get("description") != null && map.get("description") instanceof String ? map.get("description")
-											.toString() : null;
+									String description = map.get("description") != null && map.get("description") instanceof String
+											? map.get("description").toString()
+											: null;
 									if (description != null) {
 										logger.debug("Description found for cross navigation parameter: " + description);
 										descriptions.add(description);
@@ -515,8 +516,8 @@ public class DocumentParameters {
 			}
 		}
 
-		itemAsMap.put("value", item.get("value"));
-		itemAsMap.put("label", item.has("label") ? item.get("label") : item.get("value"));
+		itemAsMap.put("value", item.opt("value"));
+		itemAsMap.put("label", item.has("label") ? item.get("label") : item.opt("value"));
 		if (item.has("id")) {
 			itemAsMap.put("id", item.get("id"));
 		}
@@ -525,7 +526,7 @@ public class DocumentParameters {
 		}
 		// System.out.println(item.get("value") + " - " + item.get("description"));
 		if (item.opt("description") == null) {
-			itemAsMap.put("description", item.get("value"));
+			itemAsMap.put("description", item.opt("value"));
 		} else {
 			itemAsMap.put("description", item.get("description"));
 		}
