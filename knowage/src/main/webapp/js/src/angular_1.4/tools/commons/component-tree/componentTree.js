@@ -1,7 +1,7 @@
 /**
  * @authors Alessio Conese (alessio.conese@eng.it)
  * @authors Benedetto Milazzo (benedetto.milazzo@eng.it)
- * 
+ *
  * N.B. Component in WIP
  */
 
@@ -11,7 +11,7 @@
 	componentTreePath = componentTreePath.substring(0, componentTreePath.lastIndexOf('/') + 1);
 
 //	debugger;
-	
+
 	angular.module('componentTreeModule', [ 'ngMaterial', 'ui.tree'])
 	.directive('componentTree', function($compile) {
 		return {
@@ -30,7 +30,7 @@
 				, fieldsSearch : '=?' //array of the fields on which apply the filter // TODO
 				, orderBy : '=?' //field on which order the array // TODO
 				, menuOption : '=?' //menu to show on hover // TODO
-				, keys : '=?' //object of the keys 
+				, keys : '=?' //object of the keys
 				, enableDrag: '=?' // TODO
 				, optionsDragDrop: '=?' // TODO
 				, enableClone: '=?' // TODO
@@ -55,6 +55,7 @@
 				, expandOnClick :"=?"
 				, removeEmptyFolder :  '='
 				, serverLoading : "=?"
+					, isInternalSelectionAllowed:"=?"
 			},
 			controller: componentTreeControllerFunction,
 			controllerAs: 'ctrl',
@@ -66,13 +67,13 @@
 					post: function (scope, element, attrs, ctrl, transclud) {
 //						debugger;
 
-						//Customize the keys to use different JSON 
+						//Customize the keys to use different JSON
 						var elementId = scope.keys !== undefined && scope.keys.id !==undefined && scope.keys.id.length > 0 ? scope.keys.id : 'id' ;
 						var parentId = scope.keys !== undefined && scope.keys.parentId !==undefined && scope.keys.parentId.length > 0 ? scope.keys.parentId : 'parentId' ;
 						var subfoldersId = (attrs.subnodeKey &&  attrs.subnodeKey.trim() != '')? attrs.subnodeKey.trim() : 'subfolders' ;
 						var leafKey = (attrs.leafKey &&  attrs.leafKey.trim() != '')? attrs.leafKey.trim() : 'biObjects' ;
 						var label = (attrs.textToShowKey &&  attrs.textToShowKey.trim() != '')? attrs.textToShowKey.trim() : 'name' ;
-						
+
 						var leafIconCls = (attrs.leafIconCls &&  attrs.leafIconCls != '')? attrs.leafIconCls : 'fa fa-file';
 
 						scope.label = label;
@@ -80,9 +81,9 @@
 						scope.leafKey = leafKey;
 
 //						scope.iconFolder = 'fa fa-folder';
-//						scope.iconFolderOpen = 'fa fa-folder-open';	
+//						scope.iconFolderOpen = 'fa fa-folder-open';
 						scope.iconFolder = 'fa fa-folder-o';
-						scope.iconFolderOpen = 'fa fa-folder-open-o';	
+						scope.iconFolderOpen = 'fa fa-folder-open-o';
 				    	scope.multiFolders= 'fa fa-folder';
 				    	scope.multiFoldersOpen= 'fa fa-folder-open';
 //						scope.iconLeaf = iconLeafCls;
@@ -93,11 +94,11 @@
 						scope.createTreeStructure = function (folders) {
 							if (attrs.createTree !== undefined  && (attrs.createTree == true || attrs.createTree == 'true')) {
 								if (folders !== undefined && folders.length > 0 && folders[0][subfoldersId] === undefined) {
-									var mapFolder = {};	
+									var mapFolder = {};
 
 									for (var i = 0 ; i < folders.length; i ++ ) {
 										folders[i][subfoldersId] = [];
-										mapFolder[folders[i][elementId]] = folders[i]; 
+										mapFolder[folders[i][elementId]] = folders[i];
 									}
 
 									var treeFolders = [];
@@ -112,7 +113,7 @@
 										}
 										//update linear structure with tree structure
 									}
-									folders = treeFolders; 
+									folders = treeFolders;
 								}
 							}
 							return folders;
@@ -192,7 +193,7 @@
 						if (scope.optionsDragDrop) {
 							//treeElement.attr('ui-tree','optionsDragDrop');
 						}
-						
+
 						if(scope.multiSelect && (scope.multiSelect == true || scope.multiSelect == 'true')) {
 							if (!attrs.selecteditem) {
 								scope.selectedItem = [];
@@ -203,13 +204,13 @@
 							if(scope.isFolderFn && (typeof scope.isFolderFn == 'function')) {
 								return scope.isFolderFn({node : node, item : node});
 							} else {
-								
+
 								var isFolder = (!node.expanded && node[subfoldersId] !== undefined);
-								
+
 								return isFolder;
 							}
 						};
-						
+
 						scope.isOpenFolder = function(node) {
 							if(scope.isOpenFolderFn && (typeof scope.isOpenFolderFn == 'function')) {
 								return scope.isOpenFolderFn({node : node, item : node});
@@ -229,58 +230,58 @@
 								var isLeaf = (
 										node.type !== 'folder' &&
 										(
-											(node[scope.subfoldersId] === undefined) 
+											(node[scope.subfoldersId] === undefined)
 											|| (
 												(Array.isArray(node[scope.subfoldersId])
 													&& node[scope.subfoldersId].length == 0 )
-//													|| (node.biObjects != undefined 
+//													|| (node.biObjects != undefined
 //															&& node.biObjects.length == 0)
-												|| (node[scope.leafKey] != undefined 
+												|| (node[scope.leafKey] != undefined
 													&& node[scope.leafKey].length == 0)
 											)
 										)
 								);
-								
+
 //								debugger;
-								
+
 								return isLeaf;
 							}
 						};
-						
+
 						scope.folderIcon = function(node) {
 							if(scope.folderIconFn && (typeof scope.folderIconFn == 'function')) {
 								return scope.folderIconFn({node : node, item : node});
 							} else {
-								var folderIcon = 
+								var folderIcon =
 									(node[scope.subfoldersId] && node[scope.subfoldersId].length != 0)?
 											scope.multiFolders : scope.iconFolder;
-								
+
 								return folderIcon;
 							}
 						};
-						
+
 						scope.openFolderIcon = function(node) {
 							if(scope.openFolderIconFn && (typeof scope.openFolderIconFn == 'function')) {
 								return scope.openFolderIconFn({node : node, item : node});
 							} else {
-								var openFolderIcon = 
-									(node[scope.subfoldersId] && node[scope.subfoldersId].length != 0) ? 
+								var openFolderIcon =
+									(node[scope.subfoldersId] && node[scope.subfoldersId].length != 0) ?
 											scope.multiFoldersOpen : scope.iconFolder;
-								
+
 								return openFolderIcon;
 							}
 						};
-						
+
 						scope.getLeafIcon = function(node) {
 							if(scope.leafIconFn && (typeof scope.leafIconFn == 'function')) {
 								return scope.leafIconFn({node : node, item : node});
 							} else {
 								var leafIcon = scope.leafIcon
-								
+
 								return leafIcon;
 							}
 						};
-						
+
 						scope.showNodeCheckbox = function(node) {
 							if(scope.showNodeCheckboxFn && (typeof scope.showNodeCheckboxFn == 'function')) {
 								return scope.showNodeCheckboxFn({node : node, item : node});
@@ -288,11 +289,11 @@
 								return scope.multiSelect;
 							}
 						};
-						
+
 						scope.showLeafSubNodes = function(node) {
-							var showLeafNode = 
-//								((scope.showFiles && scope != false) 
-//										&& $parent.folder.biObjects !== undefined 
+							var showLeafNode =
+//								((scope.showFiles && scope != false)
+//										&& $parent.folder.biObjects !== undefined
 //										&& $parent.folder.biObjects.length > 0);
 								(scope.showFiles
 									&& scope.showFiles != false
@@ -300,13 +301,13 @@
 									&& !node[scope.subfoldersId]
 //									&& node[scope.subfoldersId].length > 0
 									);
-		
+
 							return showLeafNode;
 						};
-						
-						
+
+
 						scope.seeTree = true;
-						
+
 						if(scope.interceptor!=undefined){
 							scope.interceptor.refreshTree=function(){
 								scope.refreshTree();
@@ -320,16 +321,16 @@
 
 	function componentTreeControllerFunction($scope,$timeout,$mdDialog) {
 //		debugger;
-		
+
 		$scope.toogleSelected = function(element, parent) {
 			if (element !== undefined && $scope.multiSelect) {
 				//check the element as the parent. If not the parent doesn't exist, toggle the element check
-//				element.checked = parent === undefined ? !element.checked : parent.checked; 
+//				element.checked = parent === undefined ? !element.checked : parent.checked;
 				if(parent !== undefined) {
-					element.checked = parent.checked; 
-				} 
-				
-				//different insertion if the multi-selection is allowed 
+					element.checked = parent.checked;
+				}
+
+				//different insertion if the multi-selection is allowed
 				if ( element.checked ) { //if the element is just checked, insert into selectedItem, else remove it
 					$scope.selectedItem.push(element);
 				}else{
@@ -355,23 +356,25 @@
 			if(($scope.expandOnClick!=false && $scope.expandOnClick!='false') || doClickAction==false ){
 				node.expanded = !node.expanded;
 			}
-			
-			if(doClickAction || $scope.serverLoading){
+
+			if((doClickAction || $scope.serverLoading)){
 				$scope.setSelected(node);
 			}
-			
+
 		};
 
 		$scope.setSelected = function (item) {
-			if (!$scope.multiSelect) {
+			var selectableNodes = ($scope.isInternalSelectionAllowed || item.leaf);
+			if (!$scope.multiSelect && selectableNodes) {
 				$scope.selectedItem = item;
 			}
 
 			//if present a click function, use it
 			if (typeof $scope.clickFunction == 'function') {
+				item.selectableNodes = selectableNodes;
 				$scope.clickFunction({node : item, item : item});
 			}
-			
+
 //			console.log("clicked item: ", item);
 		};
 
@@ -416,15 +419,15 @@
 				}
 			};
 		});
-		
-		
-		$scope.dynamicTree = 
-			($scope.dynamicTree != undefined 
-			&& ($scope.dynamicTree == true 
-				|| $scope.dynamicTree.trim() == "" 
+
+
+		$scope.dynamicTree =
+			($scope.dynamicTree != undefined
+			&& ($scope.dynamicTree == true
+				|| $scope.dynamicTree.trim() == ""
 				|| $scope.dynamicTree.toLowerCase() != 'false'));
-		
-		
+
+
 		var checkIgnoreDeepObjectChange = function(newValue, oldValue) {
 			var flagToReturn = false;
 
@@ -435,35 +438,35 @@
 					for(var i = 0; i < newValue.length; i++) {
 						var newValueArrayItem = newValue[i];
 						var oldValueArrayItem = oldValue[i];
-						
+
 						if((newValueArrayItem.checked != oldValueArrayItem.checked)
 								|| (newValueArrayItem.expanded != oldValueArrayItem.expanded)) {
-							
+
 							flagToReturn = true;
 						}
-						
+
 						if(!flagToReturn) {
 							var newValueArrayItemChildren = newValueArrayItem[$scope.subfoldersId];
 							var oldValueArrayItemChildren = oldValueArrayItem[$scope.subfoldersId];
-							
-							if(newValueArrayItemChildren 
+
+							if(newValueArrayItemChildren
 									&& newValueArrayItemChildren.length > 0
-									&& oldValueArrayItemChildren 
+									&& oldValueArrayItemChildren
 									&& oldValueArrayItemChildren.length > 0
 									&& newValueArrayItemChildren.length == oldValueArrayItemChildren.length) {
-								
+
 								flagToReturn = flagToReturn || checkIgnoreDeepObjectChange(newValueArrayItemChildren, oldValueArrayItemChildren);
-							} 
+							}
 						}
 					}
 				}
 			}
-			
+
 			return flagToReturn;
 		};
-		
+
 		var watchedNgModel = function() { return $scope.ngModel;};
-		
+
 		var updateWatchedItemFn = function(newValue, oldValue) {
 			if(checkIgnoreDeepObjectChange(newValue, oldValue)) {
 				return;
@@ -471,14 +474,14 @@
 				$scope.refreshTree();
 			}
 		};
-		
+
 		$scope.refreshTree=function(){
 			$scope.seeTree = false;
-			
+
 			$scope.initializeFolders($scope.ngModel, null);
 			$scope.ngModel = $scope.createTreeStructure($scope.ngModel);
 			$scope.folders = $scope.ngModel;
-			
+
 			$timeout(function() {
 				$scope.seeTree = true;
 			},400,true);
@@ -491,7 +494,7 @@
 				$scope.$watchCollection( watchedNgModel, updateWatchedItemFn, true);
 			}
 		}
-			
+
 		$scope.resetVisible = function(element) {
 			element.visible = true;
 			if (element[$scope.subfoldersId] !== undefined) {
@@ -510,7 +513,7 @@
 			var visible = true;
 			if ($scope.textSearch && $scope.fieldsSearch) {
 				//if the filters is empty, visible = true, else start with visible = false
-				visible = $scope.fieldsSearch.length == 0 || $scope.textSearch.length == 0; 
+				visible = $scope.fieldsSearch.length == 0 || $scope.textSearch.length == 0;
 				//search the text filter in each fields specify in filterBy object, until visible == false
 				for (var i =0; visible == false && i < $scope.fieldsSearch.length;i++) {
 					visible = element[$scope.fieldsSearch[i]].toUpperCase().indexOf($scope.textSearch.toUpperCase()) > -1;
@@ -541,9 +544,9 @@
 		$scope.detectBrowser = function() {
 			var userAgent = window.navigator.userAgent;
 			var browsers = {
-					chrome: /chrome/i, 
-					safari: /safari/i, 
-					firefox: /firefox/i, 
+					chrome: /chrome/i,
+					safari: /safari/i,
+					firefox: /firefox/i,
 					ie: /internet explorer/i
 			};
 

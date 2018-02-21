@@ -27,6 +27,7 @@
 				folder-icon-fn="paramDialogCtrl.getFolderIconClass(node)"
 				open-folder-icon-fn="paramDialogCtrl.getOpenFolderIconClass(node)"
 				show-node-checkbox-fn="paramDialogCtrl.showNodeCheckBoxFn(node)"
+				is-internal-selection-allowed="paramDialogCtrl.allowInternalNodeSelection"
 				dynamic-tree
 				/>
 	</md-dialog-content>

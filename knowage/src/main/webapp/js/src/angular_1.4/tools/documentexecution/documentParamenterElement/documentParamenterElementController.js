@@ -370,7 +370,7 @@
 					paramDialogCtrl.dialogSaveLabel = sbiModule_translate.load("sbi.browser.defaultRole.save");
 
 					paramDialogCtrl.setTreeParameterValue = function(node) {
-						if(!paramDialogCtrl.tempParameter.multivalue) {
+						if(!paramDialogCtrl.tempParameter.multivalue && node.selectableNodes) {
 //							paramDialogCtrl.tempParameter.parameterValue = node;
 							paramDialogCtrl.tempParameter.parameterValue = node.value;
 							paramDialogCtrl.tempParameter.parameterDescription = {};
@@ -464,6 +464,8 @@
 
 						return isDocument;
 					};
+
+					paramDialogCtrl.allowInternalNodeSelection = paramDialogCtrl.initialParameterState.allowInternalNodeSelection;
 
 					paramDialogCtrl.showNodeCheckBoxFn = function(node) {
 						var param = paramDialogCtrl.initialParameterState;
