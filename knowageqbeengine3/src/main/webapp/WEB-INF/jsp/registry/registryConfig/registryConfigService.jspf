@@ -1,0 +1,42 @@
+<%-- Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--%>
+
+  <%--------- Java Imports  --------%>
+  <%@page import="it.eng.spago.base.SourceBean"%>
+  <%@page import="it.eng.spagobi.engines.qbe.services.initializers.RegistryEngineStartAction"%>
+  <%@page import="org.json.JSONObject"%>
+
+ <%--------- Declarations  --------%>
+  <%
+  	SourceBean serviceResponse;
+  	JSONObject registryConfiguration;
+  	serviceResponse = ResponseContainerAccess.getResponseContainer(request).getServiceResponse();
+  	registryConfiguration = (JSONObject) serviceResponse.getAttribute(RegistryEngineStartAction.REGISTRY_CONFIGURATION);
+  %>
+
+<script>
+(function () {
+    angular.module('registryConfig')
+    	   .factory('registryConfigService', function(){        	   
+				return {
+					getRegistryConfig: function() {
+						return <%= registryConfiguration.toString() %>
+					}
+				}
+         	});
+})();
+</script>
