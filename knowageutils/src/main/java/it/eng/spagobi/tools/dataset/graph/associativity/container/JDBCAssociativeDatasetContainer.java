@@ -75,7 +75,14 @@ public class JDBCAssociativeDatasetContainer extends AssociativeDatasetContainer
 			connection = getDataSource().getConnection();
 			stmt = connection.prepareStatement(query);
 			for (int i = 0; i < values.size(); i++) {
-				stmt.setObject(i + 1, values.get(i));
+				int parameterIndex = i + 1;
+				Object value = values.get(i);
+				if (java.util.Date.class.isAssignableFrom(value.getClass())) {
+					java.util.Date date = (java.util.Date) value;
+					stmt.setDate(parameterIndex, new java.sql.Date(date.getTime()));
+				} else {
+					stmt.setObject(parameterIndex, value);
+				}
 			}
 			stmt.execute();
 			rs = stmt.getResultSet();
