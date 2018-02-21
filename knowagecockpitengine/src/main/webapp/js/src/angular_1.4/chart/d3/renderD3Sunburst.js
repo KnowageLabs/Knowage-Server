@@ -765,7 +765,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 			finalValueToDisplay = calculateAbsoluteValue(finalValueToDisplay,d);						
 			finalValueToDisplay += (seriesItemSuffix!="" ? " " : "") + seriesItemSuffix;
 		}
-		else if (percAbsolSliceValue=="relative") {
+		else if (percAbsolSliceValue=="percentage") {
 			finalValueToDisplay += percentage + "%" + (seriesItemSuffix!="" ? " " : "") + seriesItemSuffix;
 		}
 		// If the user picked a combination of those two (absolute + percentage). (danristo)
