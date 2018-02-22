@@ -218,11 +218,15 @@ function cockpitChartWidgetControllerFunction(
 
 	$scope.user = sbiModule_user;
 
-	$scope.$on('changeChartType', function (event, data) {
+	$scope.$on('changeChart', function (event, data) {
 		setAggregationsOnChartEngine($scope.ngModel.content)
-		$scope.refreshWidget(undefined,'init', true);
+		$scope.$broadcast("changeChartType");
 	});
 
+	$scope.$on('changedChartType', function (event, data){
+		$scope.ngModel.content.chartTemplate.CHART = data.CHART
+		$scope.refreshWidget(undefined,'init', true);
+	});
 	$scope.refresh=function(element,width,height,data,nature, undefined, changedChartType,dataAndChartConf){
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);

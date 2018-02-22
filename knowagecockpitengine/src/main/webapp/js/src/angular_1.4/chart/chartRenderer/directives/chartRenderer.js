@@ -125,18 +125,23 @@ angular.module('chartRendererModule')
 					}
 				}
 			})
-
+			
+			scope.$on('changeChartType',function(){
+				scope.chartTemplate =  ChartUpdateService.getTemplate( scope.chartTemplate);
+				scope.$emit('changedChartType',scope.chartTemplate);
+			})
+			
 			scope.$on('init',function(event,data, isRealtime,changedChartType,chartConf){
 
 				var lib = getChartExecutionLib(scope.chartTemplate);
 				if(lib){
 					scope.noLib = false;
 					scope.chartInitializer = chartInitializerRetriver.getChartInitializer(lib);
-					var template = scope.chartTemplate;
+					/*var template = scope.chartTemplate;
 					if(changedChartType){
 						template = ChartUpdateService.getTemplate(template);
-					}
-					scope.loadChart(template,scope.datasetLabel,data,isRealtime,false,chartConf);
+					}*/
+					scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime,false,chartConf);
 
 				}else{
 					element[0].innerHTML = "no library implementation";

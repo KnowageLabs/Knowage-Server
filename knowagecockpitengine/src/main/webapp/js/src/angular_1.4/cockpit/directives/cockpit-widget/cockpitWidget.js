@@ -1092,7 +1092,7 @@ function cockpitWidgetControllerFunction(
 					$scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY = cockpitModule_widgetServices.compatibleCategories(type, categories, maxcateg);
 					if(minMaxCategoriesSeries.serie.max[type]) $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length = minMaxCategoriesSeries.serie.max[type];
 					$scope.ngModel.content.chartTemplate.CHART.type = type.toUpperCase();
-					$scope.$broadcast("changeChartType",{ "type": type});
+					$scope.$broadcast("changeChart",{ "type": type});
 					$mdDialog.hide();
 				}
 				$scope.cancel = function(){

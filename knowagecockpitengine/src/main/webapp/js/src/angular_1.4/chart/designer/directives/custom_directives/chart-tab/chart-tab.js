@@ -327,8 +327,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 					for (var attrname in chartSpecificStyle) { 
 						genericStyle[attrname] = chartSpecificStyle[attrname]; 
 					}
-					genericStyle.VALUES.SERIE = [];
-					genericStyle.VALUES.CATEGORY = {};
+				
 					$scope.getObjectProperties($scope.chartTemplate, genericStyle);
 
 				}
@@ -364,8 +363,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 		for (var attrname in chartSpecificStyle) { 
 			genericStyle[attrname] = chartSpecificStyle[attrname]; 
 		}
-		genericStyle.VALUES.SERIE = [];
-		genericStyle.VALUES.CATEGORY = {};
+
 
 		$scope.getObjectProperties($scope.chartTemplate, genericStyle);
 	}
