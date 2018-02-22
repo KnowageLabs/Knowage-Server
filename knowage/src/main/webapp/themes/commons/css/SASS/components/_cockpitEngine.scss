@@ -10,6 +10,11 @@
     height: 100%;
     background-color: rgba(240,240,240,1);
     background-image: #fff;
+
+    cockpit-html-widget {
+    	overflow: auto;
+
+    }
     
     cockpit-image-widget {
     	&.fadeOut {
@@ -443,6 +448,17 @@
             color: rgb(66,66,66);
         }
     }
+
+	.htmlWidgetConfiguration {
+		position: absolute;
+   		width: 90%;
+   		height: 90%;
+   		margin: 2% 5%;
+		.CodeMirror {
+			width: 100%;
+		}
+	}    
+
 	.customTableWidgetConfiguration {
 	    position: absolute;
    		width: 90%;

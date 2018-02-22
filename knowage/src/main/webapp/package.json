@@ -40,7 +40,8 @@
     "codemirror": "5.32.0",
     "font-awesome": "^4.7.0",
     "jsonformatter": "^0.6.0",
-    "ngdraggable": "^0.1.10"
+    "ngdraggable": "^0.1.10",
+    "ol": "^4.6.4"
   },
   "author": "knowage labs <knowage@eng.it>",
   "license": "AGPL-3.0",
