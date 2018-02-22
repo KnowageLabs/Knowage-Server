@@ -505,6 +505,7 @@ function cockpitWidgetControllerFunction(
 	    	if($scope.targetSheet.index!=cockpitModule_properties.CURRENT_SHEET){
 		    	cockpitModule_widgetServices.moveWidget($scope.targetSheet.index,angular.copy($scope.ngModel));
 				cockpitModule_widgetServices.deleteWidget(cockpitModule_properties.CURRENT_SHEET,$scope.ngModel,true);
+				$scope.refreshWidget(undefined,'filters');
 	    	}
 	    });
 	}
