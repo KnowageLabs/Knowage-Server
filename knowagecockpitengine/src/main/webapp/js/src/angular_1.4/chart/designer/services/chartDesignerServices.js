@@ -1619,7 +1619,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"color":"#000000",
 						"width":10
 					},
-					"text": "input explanation here"
+					"text": ""
 				},
 				"SUBTITLE": {
 					"style":{
