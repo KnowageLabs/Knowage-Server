@@ -1526,18 +1526,20 @@ public class CrossTab {
 						logger.debug("Cant format the number " + (dataMatrix[i][j * measures + measureId]));
 					}
 				}
-				if (aggregationFunction.equalsIgnoreCase("MAX")) {
-					st[i] = getMax(values);
-				} else if (aggregationFunction.equalsIgnoreCase("MIN")) {
-					st[i] = getMin(values);
-				} else if (aggregationFunction.equalsIgnoreCase("SUM")) {
-					st[i] = getSum(values);
-				} else if (aggregationFunction.equalsIgnoreCase("COUNT")) {
-					st[i] = getCount(values);
-				} else if (aggregationFunction.equalsIgnoreCase("AVG")) {
-					st[i] = getAvg(values);
-				} else if (aggregationFunction.equalsIgnoreCase("COUNT_DISTINCT")) {
-					st[i] = getCountDistinct(values);
+				if (!values.isEmpty()) {
+					if (aggregationFunction.equalsIgnoreCase("MAX")) {
+						st[i] = getMax(values);
+					} else if (aggregationFunction.equalsIgnoreCase("MIN")) {
+						st[i] = getMin(values);
+					} else if (aggregationFunction.equalsIgnoreCase("SUM")) {
+						st[i] = getSum(values);
+					} else if (aggregationFunction.equalsIgnoreCase("COUNT")) {
+						st[i] = getCount(values);
+					} else if (aggregationFunction.equalsIgnoreCase("AVG")) {
+						st[i] = getAvg(values);
+					} else if (aggregationFunction.equalsIgnoreCase("COUNT_DISTINCT")) {
+						st[i] = getCountDistinct(values);
+					}
 				}
 			}
 			result.add(toStringArray(st));
@@ -1658,19 +1660,22 @@ public class CrossTab {
 		        }
 				MeasureInfo measureInfo = this.measures.get(measureIndex);
 				String aggregationFunction = measureInfo.getAggregationFunction();
-		        if (aggregationFunction.equalsIgnoreCase("MAX")) {
-					st[index] = getMax(values);
-				} else if (aggregationFunction.equalsIgnoreCase("MIN")) {
-					st[index] = getMin(values);
-				} else if (aggregationFunction.equalsIgnoreCase("SUM")) {
-					st[index] = getSum(values);
-				} else if (aggregationFunction.equalsIgnoreCase("COUNT")) {
-					st[index] = getCount(values);
-				} else if (aggregationFunction.equalsIgnoreCase("AVG")) {
-					st[index] = getAvg(values);
-				} else if (aggregationFunction.equalsIgnoreCase("COUNT_DISTINCT")) {
-					st[index] = getCountDistinct(values);
-				}		        
+				if (!values.isEmpty()) {
+			        if (aggregationFunction.equalsIgnoreCase("MAX")) {
+						st[index] = getMax(values);
+					} else if (aggregationFunction.equalsIgnoreCase("MIN")) {
+						st[index] = getMin(values);
+					} else if (aggregationFunction.equalsIgnoreCase("SUM")) {
+						st[index] = getSum(values);
+					} else if (aggregationFunction.equalsIgnoreCase("COUNT")) {
+						st[index] = getCount(values);
+					} else if (aggregationFunction.equalsIgnoreCase("AVG")) {
+						st[index] = getAvg(values);
+					} else if (aggregationFunction.equalsIgnoreCase("COUNT_DISTINCT")) {
+						st[index] = getCountDistinct(values);
+					}	
+				}
+	        
 		    }
 			
 			result.add(toStringArray(st));
