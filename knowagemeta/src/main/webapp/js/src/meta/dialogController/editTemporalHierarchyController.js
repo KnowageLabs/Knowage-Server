@@ -3,6 +3,7 @@ function editTemporalHierarchyController($scope,sbiModule_translate,sbiModule_re
 	var olapModels=angular.copy(originalOlapModels);
 
 	$scope.hierarchyList=[];
+	debugger;
 	//load the hierarchy of the selected model if present
 	if(olapModels.length>0){
 
@@ -17,14 +18,14 @@ function editTemporalHierarchyController($scope,sbiModule_translate,sbiModule_re
 					for(var p=0;p<currH.properties.length;p++){
 						var currProp=currH.properties[p];
 						var key = Object.keys(currProp)[0];
-						var val=currProp.value || currProp.propertyType.defaultValue;
+						var val=currProp[key].value || currProp[key].propertyType.defaultValue;
 						if(angular.equals(val,"true")){
 							val=true;
 						}
 						if(angular.equals(val,"false")){
 							val=false;
 						}
-						tmpH.properties[currProp.propertyType.id.split(".")[1]]=val;
+						tmpH.properties[currProp[key].propertyType.id.split(".")[1]]=val;
 					}
 
 					tmpH.levels=[];
