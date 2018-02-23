@@ -906,14 +906,24 @@ function cockpitWidgetControllerFunction(
 		// update extended style
 		angular.copy(angular.merge({},cockpitModule_template.configuration.style,$scope.ngModel.style),$scope.extendedStyle);
 
-		// update shadow style
-		if($scope.extendedStyle.borders!=undefined && $scope.extendedStyle.borders==true){
-			angular.merge($scope.borderShadowStyle,$scope.extendedStyle.border);
+		// update border style
+		if($scope.extendedStyle.borders!=undefined){
+			if($scope.extendedStyle.borders){
+				angular.merge($scope.borderShadowStyle,$scope.extendedStyle.border);
+			}else{
+				delete $scope.borderShadowStyle['border-color'];
+				delete $scope.borderShadowStyle['border-width'];
+				delete $scope.borderShadowStyle['border-style'];
+			}
 		}
 
-		// update borders style
-		if($scope.extendedStyle.shadows!=undefined && $scope.extendedStyle.shadows==true){
-			angular.merge($scope.borderShadowStyle,$scope.extendedStyle.shadow);
+		// update shadow style
+		if($scope.extendedStyle.shadows!=undefined){
+			if($scope.extendedStyle.shadows){
+				angular.merge($scope.borderShadowStyle,$scope.extendedStyle.shadow);
+			}else{
+				delete $scope.borderShadowStyle['box-shadow'];
+			}
 		}
 //		// update title style
 		if($scope.extendedStyle.titles!=undefined && $scope.extendedStyle.titles==true){

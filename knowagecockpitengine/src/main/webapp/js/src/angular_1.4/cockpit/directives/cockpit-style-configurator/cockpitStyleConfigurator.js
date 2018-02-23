@@ -50,8 +50,6 @@ angular.module('cockpitModule').directive('cockpitStyleConfigurator',function($c
                     		scope.isWidget=false;
                     	}
 
-                    	scope.borderColorOptions.disabled=!scope.ngModel.borders;
-
                     	 transclude(scope, function (clone, scope) {
                              angular.element(element[0].querySelector("md-content")).prepend(clone);
                          });
@@ -131,6 +129,12 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 	}
 
 	$scope.borderColorOptions={format:'rgb',disabled:false};
+	
+	$scope.$watch('ngModel.borders',function(newValue,oldValue){
+		$scope.borderColorOptions.disabled = !newValue;
+	})
+	
+	
 
 	$scope.toggleBorderVisibility=function(){
 		$scope.borderColorOptions.disabled=!$scope.ngModel.borders
