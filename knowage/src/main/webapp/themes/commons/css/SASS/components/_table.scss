@@ -10,6 +10,9 @@
 			th{
 				border-bottom: 1px solid $ternaryColor;
 				text-align: left;
+				&.multiTableAction{
+					width: 100px;
+				}
 			}
 		}
 	}
@@ -55,6 +58,34 @@
 							    }
 							}
 						}
+					}
+				}
+				&.inner-space {
+					padding:0 0 10px 0;
+				}
+			}
+		}
+	}
+	&.kn-inner-table {
+		background-color: $listBackground;
+		thead {
+			background-color: $secondaryColor;
+			font-size: $mediumFontSize;
+			tr {
+				height: $defaultSize;
+			}
+		}
+		tbody {
+			tr {
+				td {
+					font-size: $mediumFontSize;
+					&.tableAction{
+						width: 50px;
+					}
+					md-icon {
+						text-align: center;
+						cursor: pointer;
+						font-size: $baseFontSize;
 					}
 				}
 			}

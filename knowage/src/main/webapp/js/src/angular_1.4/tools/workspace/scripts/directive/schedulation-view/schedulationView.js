@@ -67,6 +67,25 @@ function recentViewControllerFunction($scope,sbiModule_translate, sbiModule_conf
 	    {"label":$scope.translate.load("sbi.schedulation.jobName"),"name":"jobName"},
 	    {"label":$scope.translate.load("sbi.schedulation.jobDesc"), "name":"jobDescription"}
     ];
+	
+	$scope.selectedTriggers = [];
+	
+	$scope.toggleTriggerRun = function(trigger){
+		var index = $scope.selectedTriggers.indexOf(trigger);
+		if(index==-1){
+			$scope.selectedTriggers.push(trigger);
+		}else{
+			$scope.selectedTriggers.splice(index,1);
+		}
+	};
+	
+	$scope.runTriggers = function(trigger){
+		if(trigger == 'all'){
+			//TODO RUN ALL FROM $scope.selectedTriggers
+		}else{
+			//TODO RUN single trigger from trigger attribute
+		}
+	}
 
 	$scope.onlySnapshots = function (item) {
 		var schedulationTypes = {snapshot:"saveassnapshot", file:"saveasfile",document:"saveasdocument", mail:"sendmail", jclass:"saveasclass"};
@@ -84,15 +103,38 @@ function recentViewControllerFunction($scope,sbiModule_translate, sbiModule_conf
 			return item;
 		}
 	}
+	
+	$scope.runMenu = {
+		label : "Run",
+		icon:'fa fa-play-circle' ,
+		action : function(item,event) {
+			$scope.previewDocumentAction({doc:item});
+		}
+	}
+	
+	$scope.getSchedulations = {
+			label : sbiModule_translate.load('sbi.workspace.schedulations.view'),
+			icon:'fa fa-eye' ,
+			action : function(item,event) {
+				$scope.previewDocumentAction({doc:item});
+			}
+	}
 
 
 	$scope.buttonMenu=[
 		{
-		label : sbiModule_translate.load('sbi.workspace.schedulations.view'),
-		icon:'fa fa-eye' ,
-		action : function(item,event) {
-			$scope.previewDocumentAction({doc:item});
-		}
+			label : "Run",
+			icon:'fa fa-play-circle' ,
+			action : function(item,event) {
+				$scope.previewDocumentAction({doc:item});
+			}
+		},
+		{
+			label : sbiModule_translate.load('sbi.workspace.schedulations.view'),
+			icon:'fa fa-eye' ,
+			action : function(item,event) {
+				$scope.previewDocumentAction({doc:item});
+			}
 	} ];
 
 
