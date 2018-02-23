@@ -23,6 +23,7 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -35,6 +36,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 public abstract class AbstractDataBase implements IDataBase {
 
 	IDataSource dataSource;
+	protected SqlDialect sqlDialect;
 	int varcharLength = 255;
 	public static final String STANDARD_ALIAS_DELIMITER = "\"";
 
@@ -42,6 +44,7 @@ public abstract class AbstractDataBase implements IDataBase {
 
 	public AbstractDataBase(IDataSource dataSource) {
 		this.dataSource = dataSource;
+		this.sqlDialect = SqlDialect.get(dataSource.getHibDialectClass());
 	}
 
 	@Override
@@ -56,7 +59,27 @@ public abstract class AbstractDataBase implements IDataBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
+	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
+	 */
+	@Override
+	public String getAliasDelimiter() {
+		return STANDARD_ALIAS_DELIMITER;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.spagobi.utilities.database.IDataBase#getSqlDialect()
+	 */
+	@Override
+	public SqlDialect getSqlDialect() {
+		return sqlDialect;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.utilities.database.IDataBase#getUsedMemory(java.lang.String, java.lang.String)
 	 */
 	@Override

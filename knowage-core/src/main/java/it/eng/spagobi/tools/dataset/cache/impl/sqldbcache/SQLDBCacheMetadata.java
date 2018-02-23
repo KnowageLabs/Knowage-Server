@@ -26,7 +26,7 @@ import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.cache.CacheItem;
-import it.eng.spagobi.utilities.database.DataBase;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 
@@ -124,7 +124,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	@Override
 	public BigDecimal getUsedMemory() {
-		IDataBase dataBase = DataBase.getDataBase(cacheConfiguration.getCacheDataSource());
+		IDataBase dataBase = DataBaseFactory.getDataBase(cacheConfiguration.getCacheDataSource());
 		BigDecimal usedMemory = dataBase.getUsedMemorySize(cacheConfiguration.getSchema(), cacheConfiguration.getTableNamePrefix());
 		logger.debug("Used memory is equal to [" + usedMemory + "]");
 		return usedMemory;

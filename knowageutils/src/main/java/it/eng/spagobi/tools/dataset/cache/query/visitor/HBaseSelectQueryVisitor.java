@@ -18,12 +18,12 @@
 
 package it.eng.spagobi.tools.dataset.cache.query.visitor;
 
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
+import it.eng.spagobi.utilities.database.IDataBase;
 
 public class HBaseSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
-	public HBaseSelectQueryVisitor() {
-		this.dialect = SqlDialect.HBASE;
+	public HBaseSelectQueryVisitor(IDataBase database) {
+		super(database);
 	}
 
 }

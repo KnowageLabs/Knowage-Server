@@ -18,57 +18,44 @@
 
 package it.eng.spagobi.tools.dataset.cache.query.visitor;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.database.IDataBase;
 
 public class SelectQueryVisitorFactory {
 
-	private static Map<String, SqlDialect> map;
-	static {
-		SqlDialect[] values = SqlDialect.values();
-		map = new HashMap<String, SqlDialect>(values.length);
-		for (SqlDialect dialect : values) {
-			map.put(dialect.getValue(), dialect);
-		}
-	}
-
 	public static ISelectQueryVisitor getVisitor(IDataSource dataSource) {
-		if (dataSource == null) {
-			return new MetaModelSelectQueryVisitor();
-		}
-		String hibDialectClass = dataSource.getHibDialectClass();
-		SqlDialect dialect = map.get(hibDialectClass);
-		switch (dialect) {
+		IDataBase database = DataBaseFactory.getDataBase(dataSource);
+		switch (database.getSqlDialect()) {
 		case HBASE:
-			return new HBaseSelectQueryVisitor();
+			return new HBaseSelectQueryVisitor(database);
 		case HIVE:
 		case SPARKSQL:
-			return new HiveSelectQueryVisitor();
+			return new HiveSelectQueryVisitor(database);
 		case HSQL:
-			return new HsqlDbSelectQueryVisitor();
+			return new HsqlDbSelectQueryVisitor(database);
 		case IMPALA:
-			return new ImpalaSelectQueryVisitor();
+			return new ImpalaSelectQueryVisitor(database);
 		case INGRES:
-			return new IngresSelectQueryVisitor();
+			return new IngresSelectQueryVisitor(database);
 		case MYSQL:
-			return new MySqlSelectQueryVisitor();
+			return new MySqlSelectQueryVisitor(database);
 		case ORACLE:
 		case ORACLE_9I10G:
 		case ORACLE_SPATIAL:
-			return new OracleSelectQueryVisitor();
+			return new OracleSelectQueryVisitor(database);
 		case POSTGRESQL:
-			return new PostgreSqlSelectQueryVisitor();
+			return new PostgreSqlSelectQueryVisitor(database);
 		case SQLSERVER:
-			return new SqlServerSelectQueryVisitor();
+			return new SqlServerSelectQueryVisitor(database);
 		case ORIENT:
-			return new OrientDbSelectQueryVisitor();
+			return new OrientDbSelectQueryVisitor(database);
 		case VOLTDB:
-			return new VoltDbSelectQueryVisitor();
+			return new VoltDbSelectQueryVisitor(database);
+		case TERADATA:
+			return new TeradataSelectQueryVisitor(database);
 		default:
-			throw new IllegalArgumentException("Dialect [" + hibDialectClass + "] not supported");
+			throw new IllegalArgumentException("Dialect [" + dataSource.getHibDialectClass() + "] not supported");
 		}
 	}
 }

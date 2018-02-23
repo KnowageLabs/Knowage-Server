@@ -22,19 +22,17 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
-import it.eng.spagobi.utilities.database.ImpalaDataBase;
+import it.eng.spagobi.utilities.database.IDataBase;
 
 public class ImpalaSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
+	public ImpalaSelectQueryVisitor(IDataBase database) {
+		super(database);
+	}
+
 	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	private static final String TIMESTAMP_FORMAT = DATE_FORMAT + ".sss";
-
-	public ImpalaSelectQueryVisitor() {
-		this.aliasDelimiter = ImpalaDataBase.ALIAS_DELIMITER;
-		this.dialect = SqlDialect.IMPALA;
-	}
 
 	@Override
 	public String getFormattedTimestamp(Timestamp timestamp) {

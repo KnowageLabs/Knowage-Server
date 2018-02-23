@@ -22,20 +22,23 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilterOperator;
+import it.eng.spagobi.tools.dataset.cache.query.item.UnaryFilter;
 import it.eng.spagobi.utilities.database.IDataBase;
 
-public class SqlServerSelectQueryVisitor extends AbstractSelectQueryVisitor {
+public class TeradataSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
-	private static final String DATE_TIME_FORMAT_SQLSERVER = "yyyyMMdd HH:mm:ss";
-	private static final String TIMESTAMP_FORMAT_SQLSERVER = DATE_TIME_FORMAT_SQLSERVER + ".SSS";
+	private static final String DATE_TIME_FORMAT_TERADATA = "YYYY-MM-DD";
+	private static final String TIMESTAMP_FORMAT_TERADATA = DATE_TIME_FORMAT_TERADATA + ".SSS";
+	private static final String DIFFERENT_FROM_OPERATOR = "<>";
 
-	public SqlServerSelectQueryVisitor(IDataBase database) {
+	public TeradataSelectQueryVisitor(IDataBase database) {
 		super(database);
 	}
 
 	@Override
 	public String getFormattedTimestamp(Timestamp timestamp) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(TIMESTAMP_FORMAT_SQLSERVER);
+		SimpleDateFormat dateFormat = new SimpleDateFormat(TIMESTAMP_FORMAT_TERADATA);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("'");
@@ -47,7 +50,7 @@ public class SqlServerSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 	@Override
 	public String getFormattedDate(Date date) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT_SQLSERVER);
+		SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT_TERADATA);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("'");
@@ -57,4 +60,13 @@ public class SqlServerSelectQueryVisitor extends AbstractSelectQueryVisitor {
 		return sb.toString();
 	}
 
+	@Override
+	public void visit(UnaryFilter item) {
+		append(item.getProjection(), false);
+		queryBuilder.append(" ");
+		String operator = item.getOperator().equals(SimpleFilterOperator.DIFFERENT_FROM) ? DIFFERENT_FROM_OPERATOR.toString() : item.getOperator().toString();
+		queryBuilder.append(operator);
+		queryBuilder.append(" ");
+		append(item.getOperand());
+	}
 }

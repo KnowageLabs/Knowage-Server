@@ -18,13 +18,12 @@
 
 package it.eng.spagobi.tools.dataset.cache.query.visitor;
 
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
-import it.eng.spagobi.utilities.database.VoltDBDataBase;
+import it.eng.spagobi.utilities.database.IDataBase;
 
 public class VoltDbSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
-	public VoltDbSelectQueryVisitor() {
-		this.aliasDelimiter = VoltDBDataBase.ALIAS_DELIMITER;
-		this.dialect = SqlDialect.VOLTDB;
+	public VoltDbSelectQueryVisitor(IDataBase database) {
+		super(database);
 	}
+
 }

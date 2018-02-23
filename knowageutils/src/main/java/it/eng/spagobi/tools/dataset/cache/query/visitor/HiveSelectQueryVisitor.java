@@ -24,14 +24,13 @@ import java.util.Date;
 
 import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
 import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
+import it.eng.spagobi.utilities.database.IDataBase;
 
 public class HiveSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
-	public HiveSelectQueryVisitor() {
-		this.dialect = SqlDialect.HIVE;
-		this.aliasDelimiter = "";
+	public HiveSelectQueryVisitor(IDataBase database) {
+		super(database);
 		this.aliasPrefix = "";
 	}
 

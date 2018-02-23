@@ -18,12 +18,12 @@
 
 package it.eng.spagobi.tools.dataset.cache.query.visitor;
 
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
+import it.eng.spagobi.utilities.database.IDataBase;
 
 public class OrientDbSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
-	public OrientDbSelectQueryVisitor() {
-		this.dialect = SqlDialect.ORIENT;
+	public OrientDbSelectQueryVisitor(IDataBase database) {
+		super(database);
 	}
 
 }

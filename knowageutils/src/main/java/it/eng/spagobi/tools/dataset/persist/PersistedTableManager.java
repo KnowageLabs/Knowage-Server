@@ -48,7 +48,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.StringUtils;
-import it.eng.spagobi.utilities.database.DataBase;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -308,7 +308,7 @@ public class PersistedTableManager implements IPersistedManager {
 		String separator = "";
 
 		if (this.isRowCountColumIncluded()) {
-			IDataBase dataBase = DataBase.getDataBase(datasource);
+			IDataBase dataBase = DataBaseFactory.getDataBase(datasource);
 			insertQuery += separator + AbstractJDBCDataset.encapsulateColumnName(getRowCountColumnName(), datasource);
 			createQuery += separator + AbstractJDBCDataset.encapsulateColumnName(getRowCountColumnName(), datasource) + dataBase.getDataBaseType(Long.class);
 			values += separator + "?";
@@ -460,7 +460,7 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	private String getDBFieldType(IDataSource dataSource, IFieldMetaData fieldMetaData) {
-		IDataBase dataBase = DataBase.getDataBase(dataSource);
+		IDataBase dataBase = DataBaseFactory.getDataBase(dataSource);
 		if (getColumnSize().get(fieldMetaData.getName()) != null) {
 			dataBase.setVarcharLength(getColumnSize().get(fieldMetaData.getName()));
 		}
@@ -581,7 +581,7 @@ public class PersistedTableManager implements IPersistedManager {
 			toReturn = "create table " + tableName + " (";
 
 			if (this.isRowCountColumIncluded()) {
-				IDataBase dataBase = DataBase.getDataBase(dataSource);
+				IDataBase dataBase = DataBaseFactory.getDataBase(dataSource);
 				toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(PersistedTableManager.getRowCountColumnName(), dataSource) + " "
 						+ dataBase.getDataBaseType(Long.class) + " , ";
 			}

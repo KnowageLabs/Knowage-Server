@@ -19,15 +19,15 @@
 package it.eng.spagobi.tools.dataset.cache.query.visitor;
 
 import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
 import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.utilities.database.IDataBase;
 
 public class HsqlDbSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
-	public HsqlDbSelectQueryVisitor() {
-		this.dialect = SqlDialect.HSQL;
+	public HsqlDbSelectQueryVisitor(IDataBase database) {
+		super(database);
 	}
 
 	@Override

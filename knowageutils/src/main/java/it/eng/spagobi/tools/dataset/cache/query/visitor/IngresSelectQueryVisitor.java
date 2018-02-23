@@ -21,15 +21,15 @@ package it.eng.spagobi.tools.dataset.cache.query.visitor;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
+import it.eng.spagobi.utilities.database.IDataBase;
 
 public class IngresSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 	private static final String DATE_TIME_FORMAT_INGRES = "dd-MMM-yyyy" + CockpitJSONDataWriter.TIME_FORMAT;
 
-	public IngresSelectQueryVisitor() {
-		this.dialect = SqlDialect.INGRES;
+	public IngresSelectQueryVisitor(IDataBase database) {
+		super(database);
 	}
 
 	@Override
