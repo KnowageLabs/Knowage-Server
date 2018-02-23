@@ -32,7 +32,7 @@
         var registryCRUD = registryCRUDService;
         var registryConfiguration = registryConfigurationService.getRegistryConfig();
         var regGetData = regFilterGetData;
-        var filterOptions = {};
+
         self.filterOptions = [];
         console.log('registriConfiguration objekat');
         console.log(registryConfiguration);
@@ -40,25 +40,12 @@
         self.loadData = function(param){
        	 registryCRUD.read(param).then(function (response) {
            	 self.data = response.data.rows;
-           	console.log('response objekat');
-           	console.log(response);
+
+         // console.log(response);
          });
         };
-        $timeout(function(){
-        regGetData.getData().then(function(response){
-			self.filterOptions = response.data.rows;
 
-  });
-        },5000);
-/*
-        	   regGetData.getData().then(function(response){
-        			 filterOptions =  response.data.rows;
 
-           });
-         console.log(filterOptions);
-        };
-
-*/
         self.loadData();
         console.log(registryCRUD.create());
         console.log(registryCRUD.update());
@@ -67,55 +54,24 @@
         self.page = 1;
 
 
-
-   /*     var changedFilters=[];
-
-$timeout(function(){
-	 regGetData.getData().then(function(response){
-		 filterOptions =  response.data.rows;
+        self.getFilters = function (filterField){
+	 regGetData.getData(filterField).then(function(response){
+		 self.filterOptions =  response.data.rows;
+		return addOptions(filterField);
 	  });
-	  console.log(filterOptions);*/
-
-var getFilters = function (param){
 
 
-}
-   var newFilters = [];
-	  for(var i = 0 ; i < registryConfiguration.filters ; i++){
-		  var filter={};
-      	if (registryConfiguration.filters[i].presentation == 'COMBO'){
-      		filter = registryConfiguration.filters[i];
-      		filter.options = self.filterOptions;
-      	}else{
-      		filter = registryConfiguration.filters[i];
-      	}
-      	newFilters.push(filter);
-	  }
+      }
 
+        var addOptions = function(filterField){
+       	   for(var i = 0 ; i < registryConfiguration.filters.length ; i++){
+       	       	if (registryConfiguration.filters[i].field == filterField ){
+       	       	 registryConfiguration.filters[i].options = self.filterOptions;
+       	       	}
+       	  	 }
+       	   return registryConfiguration.filters;
+        }
 
-
-
-
-   /*  for(var i = 0 ; i < registryConfiguration.filters ; i++){
-        	if (registryConfiguration.filters[i].presentation == 'COMBO'){
-
-        	//	registryConfiguration.filters[i].options = 	filterOptions								//regGetData.getData() wraped in promise and if it succes it is equal response.data.rows
-        		// var columnName = registryConfiguration.filters[i].field;  					//When I need to get value and is not matter what is document !!!
-        	}
-     }*/
-
-        /*	For FormQuerry Parameters parts  Extracting !!!
-
-        	 var ENTITY_ID and ORDER_ENTITY = entity + :: + SubEntity + ( + foreginKey + ) + : + variable columnName extracted in line 73  USE APPENDER!!!
-          var entity = registryConfiguration.entity;
-            var SubEntity='';
-            var foreignKey='';
-
-        	 for( var i = 0 ; i < registryConfiguration.columns.length ; i++ ){
-        	if(registryConfiguration.columns[i].field == 'product_subcategory'){		//	Here should be variable columnName instead product_subcategory!!!
-        		SubEntity = registryConfiguration.columns[i].subEntity;
-        		foreignKey= registryConfiguration.columns[i].foreignKey;
-        	}*/
 
 
         // array object to define the registry configuration
@@ -123,7 +79,7 @@ var getFilters = function (param){
             title: "Registry Document",
             itemsPerPage: 15,
             enableAdd: true,
-            filters: registryConfiguration.filters  /*
+            filters: registryConfiguration.filters /*
 													 * [ { "label":
 													 * "first_name", "type":
 													 * "text" }, { "label":
@@ -196,7 +152,8 @@ var getFilters = function (param){
 	 * self.max = function() { return self.hasNext() ? (self.page *
 	 * self.configuration.itemsPerPage) : self.data.length; };
 	 *
-	 * self.next = function() { self.hasNext() && self.page++; }
+	 * self.next = function() { self.hasNext() && self.page++; var obj = {};
+	 * obj.start =self.hasNext(); obj.limit = self.conf.perpage; loadData(obj) }
 	 *
 	 * self.previous = function() { self.hasPrevious() && self.page--; }
 	 */
@@ -452,8 +409,7 @@ var getFilters = function (param){
 		 * "Seifert", "email": "sseifert2q@businesswire.com", "gender": "Male",
 		 * "ip_address": "226.17.52.222" }, { "id": 100, "first_name": "Bessy",
 		 * "last_name": "Winsiowiecki", "email": "bwinsiowiecki2r@google.cn",
-		 * "gender": "Female", "ip_address": "238.16.200.165" }
-		 *  ];
+		 * "gender": "Female", "ip_address": "238.16.200.165" } ];
 		 */
     }
 })();
