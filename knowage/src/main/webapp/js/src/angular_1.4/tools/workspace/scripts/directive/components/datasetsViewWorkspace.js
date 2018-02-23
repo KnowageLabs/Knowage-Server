@@ -547,7 +547,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	config={};
     	config.params=params;
 
-    	sbiModule_restServices.promisePost("selfservicedatasetcrud/share","","",config)
+    	sbiModule_restServices.promisePost("selfservicedataset/share","","",config)
 		.then(function(response) {
 			 dataset.catTypeId=response.data.catTypeId;
 			 dataset.catTypeCd=response.data.catTypeCd;
