@@ -96,6 +96,7 @@
 		<module>../knowagedao</module>
 		<module>../knowage-core</module>
 		<module>../knowageoauth2securityprovider</module>
+		<module>../knowageldapsecurityprovider</module>
 		<module>../knowage</module>
 		<module>../knowagejasperreportengine</module>
 		<module>../spagobi.birt.oda</module>

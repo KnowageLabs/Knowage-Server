@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,24 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.utilities.database.temporarytable;
-
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
-import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.StringUtils;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.database.DataBase;
-import it.eng.spagobi.utilities.database.IDataBase;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.sql.JDBCTypeMapper;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -41,6 +28,19 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.database.IDataBase;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.sql.JDBCTypeMapper;
+
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it) DATE CONTRIBUTOR/DEVELOPER NOTE 24-06-2013 Zerbetto Davide/Andrea Fantappiè Tablespace management on Oracle
  *         and DB2
@@ -52,16 +52,6 @@ public class TemporaryTableManager {
 
 	private static String DEFAULT_TABLE_NAME_PREFIX = "TMPSBIQBE_";
 
-	// public static final String DIALECT_MYSQL = "MySQL";
-	// public static final String DIALECT_POSTGRES = "PostgreSQL";
-	// public static final String DIALECT_ORACLE = "OracleDialect";
-	// public static final String DIALECT_HSQL = "HSQL";
-	// public static final String DIALECT_ORACLE9i10g = "Oracle9Dialect";
-	// public static final String DIALECT_SQLSERVER = "SQLServer";
-	// public static final String DIALECT_DB2 = "DB2";
-	// public static final String DIALECT_INGRES = "Ingres";
-	// public static final String DIALECT_TERADATA = "Teradata";
-
 	/**
 	 * Contains the definition of the existing temporary tables. The key is created by a fixed prefix and a suffix that depends on user profile (1 temporary
 	 * table for each user). The value relevant to a key is the SQL statement that defines the temporary table.
@@ -72,62 +62,6 @@ public class TemporaryTableManager {
 	 * Contains the descriptors of the existing temporary tables.
 	 */
 	private static Map<String, IDataSetTableDescriptor> tableDescriptors = new HashMap<String, IDataSetTableDescriptor>();
-
-	// public static boolean isEnabled() {
-	// logger.debug("IN");
-	// boolean toReturn = true;
-	// String enabled = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE_TEMPORARY_TABLE.enabled");
-	// logger.debug("Configured temporary table strategy enabled: " + enabled);
-	// if ( enabled == null) {
-	// logger.warn("Missing temporary table strategy configuration!!! Configure it into qbe.xml, example: <QBE_TEMPORARY_TABLE enabled=\"true\" />");
-	// logger.debug("Default value is true");
-	// enabled = "true";
-	// }
-	// toReturn = Boolean.parseBoolean(enabled);
-	// logger.debug("OUT: returning " + toReturn);
-	// return toReturn;
-	// }
-
-	// public static DataStore queryTemporaryTable(UserProfile userProfile, String sqlStatement, String baseQuery, IDataSource dataSource, Integer start,
-	// Integer limit)
-	// throws Exception {
-	// logger.debug("IN");
-	// Assert.assertNotNull(sqlStatement, "SQL statement cannot be null");
-	// Assert.assertNotNull(userProfile, "User profile cannot be null");
-	// Assert.assertNotNull(baseQuery, "SQL base statement cannot be null");
-	// Assert.assertNotNull(dataSource, "Data source cannot be null");
-	// String tableName = getTableName(userProfile);
-	// logger.debug("Table name is [" + tableName + "]");
-	//
-	// // drop table if not suitable according to tables map variable
-	// if (tables.containsKey(tableName) && !baseQuery.equals(tables.get(tableName))) {
-	// dropTableIfExists(tableName, dataSource);
-	// tables.remove(tableName);
-	// }
-	//
-	// // create table if it does not exist in tables map variable
-	// if (!tables.containsKey(tableName)) {
-	// dropTableIfExists(tableName, dataSource);
-	// logger.debug("Table [" + tableName + "] must be created");
-	// createTable(baseQuery, tableName, dataSource);
-	// logger.debug("Table [" + tableName + "] created successfully");
-	// tables.put(tableName, baseQuery);
-	// }
-	//
-	// // may be the table has been dropped in the meanwhile (while the application is still alive),
-	// // without restarting the application server,
-	// // so we check if it exists and in this case we re-create it...
-	// if (!checkTableExistence(tableName, dataSource)) {
-	// logger.debug("Table [" + tableName + "] must be created");
-	// createTable(baseQuery, tableName, dataSource);
-	// logger.debug("Table [" + tableName + "] created successfully");
-	// }
-	//
-	// DataStore dataStore = queryTemporaryTable(sqlStatement, tableName, dataSource, start, limit);
-	//
-	// logger.debug("OUT");
-	// return dataStore;
-	// }
 
 	public static IDataSetTableDescriptor createTable(List<String> fields, String sqlStatement, String tableName, IDataSource dataSource) throws Exception {
 		return createTable(fields, sqlStatement, tableName, dataSource, -1); // queryTimeout = -1 -> NO TIMEOUT
@@ -192,7 +126,7 @@ public class TemporaryTableManager {
 
 				/*
 				 * If table are on other schema must set catalog name as schema name otherwise it look for table [schema].[name] on datasource db
-				 * 
+				 *
 				 * Andrea Fantappiè
 				 */
 				if (driverName.contains("MySQL"))
@@ -288,8 +222,8 @@ public class TemporaryTableManager {
 		return toReturn;
 	}
 
-	private static void readColumns(ResultSet resultSet, List<String> fields, DataSetTableDescriptor tableDescriptor, DatabaseMetaData dbMetadata, String schema)
-			throws SQLException {
+	private static void readColumns(ResultSet resultSet, List<String> fields, DataSetTableDescriptor tableDescriptor, DatabaseMetaData dbMetadata,
+			String schema) throws SQLException {
 		int index = 0;
 		do {
 			// For oracle we have to check if the table exists in the right schema
@@ -433,7 +367,7 @@ public class TemporaryTableManager {
 
 	/**
 	 * Add tablespace to sql statement Only for DB2 and Oracle
-	 * 
+	 *
 	 * @param dialect
 	 * @param sql
 	 * @return SQL statement with tablespace information
@@ -468,8 +402,9 @@ public class TemporaryTableManager {
 			}
 		} else if (dialect.toUpperCase().contains("SQLSERVER")) { // SQLServer has a different command
 			// see http://www.webdevblog.info/database/drop-table-if-exists-in-oracle-nd-sql-server/
-			executeStatement("IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " + " WHERE TABLE_NAME = '" + tableName + "') " + " DROP TABLE "
-					+ tableName, dataSource);
+			executeStatement(
+					"IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " + " WHERE TABLE_NAME = '" + tableName + "') " + " DROP TABLE " + tableName,
+					dataSource);
 		} else if (dialect.contains("Teradata")) { // Teradata does not support DROP TABLE IF EXISTS command
 			try {
 				executeStatement("DROP TABLE " + tableName, dataSource);
@@ -651,38 +586,11 @@ public class TemporaryTableManager {
 
 	public static String getAliasDelimiter(IDataSource dataSource) {
 		String delimiter = "";
-		IDataBase dataBase = DataBase.getDataBase(dataSource);
+		IDataBase dataBase = DataBaseFactory.getDataBase(dataSource);
 		if (dataBase != null) {
 			delimiter = dataBase.getAliasDelimiter();
 		}
 		return delimiter;
-
-		// String dialect = dataSource.getHibDialectClass();
-		// if(dialect ==null){
-		// dialect = dataSource.getHibDialectName();
-		// }
-		// if(dialect != null){
-		// if (dialect.contains(DIALECT_MYSQL)) {
-		// return "`";
-		// } else if (dialect.contains(DIALECT_HSQL)) {
-		// return "\"";
-		// } else if (dialect.contains(DIALECT_INGRES)) {
-		// return "\""; // TODO check it!!!!
-		// } else if (dialect.contains(DIALECT_ORACLE)) {
-		// return "\"";
-		// } else if (dialect.contains(DIALECT_ORACLE9i10g)) {
-		// return "\"";
-		// } else if (dialect.contains(DIALECT_POSTGRES)) {
-		// return "\"";
-		// } else if (dialect.contains(DIALECT_SQLSERVER)) {
-		// return "\""; // TODO not tested yet!!!!
-		// } else if (dialect.contains(DIALECT_DB2)) {
-		// return "\"";
-		// } else if (dialect.contains(DIALECT_TERADATA)) {
-		// return "\"";
-		// }
-		// }
-		// return "";
 	}
 
 }

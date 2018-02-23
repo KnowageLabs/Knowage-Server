@@ -25,9 +25,9 @@ import java.sql.Statement;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-public class TeradataDataBase extends AbstractDataBase {
+public class HiveDataBase extends AbstractDataBase {
 
-	public TeradataDataBase(IDataSource dataSource) {
+	public HiveDataBase(IDataSource dataSource) {
 		super(dataSource);
 	}
 
@@ -37,19 +37,23 @@ public class TeradataDataBase extends AbstractDataBase {
 	}
 
 	@Override
+	public String getAliasDelimiter() {
+		return "";
+	}
+
+	@Override
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
 		throw new UnsupportedOperationException();
 	}
 
-	// https://community.teradata.com/t5/Blog/How-to-determine-or-switch-the-current-database-using-the/ba-p/66995
 	@Override
 	public String getSchema(Connection conn) throws SQLException {
 		Statement stmt = conn.createStatement();
 		try {
-			ResultSet rs = stmt.executeQuery("help session");
+			ResultSet rs = stmt.executeQuery("SELECT current_database()");
 			try {
 				rs.next();
-				return rs.getString(5);
+				return rs.getString(1);
 			} finally {
 				rs.close();
 			}

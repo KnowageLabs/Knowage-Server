@@ -32,7 +32,7 @@ public class ImpalaDataBase extends AbstractDataBase {
 
 	private static transient Logger logger = Logger.getLogger(ImpalaDataBase.class);
 
-	public static final String ALIAS_DELIMITER = "`";
+	private static final String ALIAS_DELIMITER = "`";
 
 	private static int MAX_CHARSET_RATIO = 4; // utf8mb4
 	private static int MAX_VARCHAR_BYTE_VALUE = 65535;

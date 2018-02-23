@@ -18,16 +18,11 @@
 
 package it.eng.spagobi.utilities.database;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-public class TeradataDataBase extends AbstractDataBase {
+public class HBaseDataBase extends AbstractDataBase {
 
-	public TeradataDataBase(IDataSource dataSource) {
+	public HBaseDataBase(IDataSource dataSource) {
 		super(dataSource);
 	}
 
@@ -39,22 +34,5 @@ public class TeradataDataBase extends AbstractDataBase {
 	@Override
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
 		throw new UnsupportedOperationException();
-	}
-
-	// https://community.teradata.com/t5/Blog/How-to-determine-or-switch-the-current-database-using-the/ba-p/66995
-	@Override
-	public String getSchema(Connection conn) throws SQLException {
-		Statement stmt = conn.createStatement();
-		try {
-			ResultSet rs = stmt.executeQuery("help session");
-			try {
-				rs.next();
-				return rs.getString(5);
-			} finally {
-				rs.close();
-			}
-		} finally {
-			stmt.close();
-		}
 	}
 }

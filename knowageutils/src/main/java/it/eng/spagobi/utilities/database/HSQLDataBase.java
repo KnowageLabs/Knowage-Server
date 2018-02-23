@@ -75,16 +75,6 @@ public class HSQLDataBase extends AbstractDataBase {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
-	 */
-	@Override
-	public String getAliasDelimiter() {
-		return "\"";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
 	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
 	 */
 	@Override
