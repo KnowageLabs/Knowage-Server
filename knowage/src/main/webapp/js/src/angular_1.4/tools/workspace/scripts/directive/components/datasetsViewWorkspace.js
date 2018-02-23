@@ -361,7 +361,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
 				$scope.reloadMyDataFn();
 				$scope.selectDataset(undefined);
-
+				$scope.idsOfFederationDefinitionsUsediNFederatedDatasets = [];
+				$scope.getFederatedDatasets(); //suppose the deleted dataste is in a federation we need to refresh the federation in order to refresh the dataste linked to federations
 				/**
 				 * If some dataset is removed from the filtered set of datasets, clear the search input, since all datasets are refreshed.
 				 *  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
