@@ -18,6 +18,7 @@
 package it.eng.knowage.engine.cockpit.api.page;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -250,7 +251,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		return renderOptions;
 	}
 
-	private String getRequestUrlForPdfExport(HttpServletRequest request) {
+	private String getRequestUrlForPdfExport(HttpServletRequest request) throws UnsupportedEncodingException {
 		String requestURL = request.getRequestURL().toString();
 		String hostURL = GeneralUtilities.getSpagoBiHost();
 		String serviceURL = getServiceHostUrl();
@@ -263,12 +264,12 @@ public class PageResource extends AbstractCockpitEngineResource {
 				String[] values = parameterMap.get(parameter);
 				if (values != null && values.length > 0) {
 					sb.append(sep);
-					sb.append(parameter);
+					sb.append(URLEncoder.encode(parameter, "UTF-8"));
 					sb.append("=");
 					if (parameter.equals(SpagoBIConstants.SBI_HOST)) {
-						sb.append(getServiceHostUrl());
+						sb.append(URLEncoder.encode(getServiceHostUrl(), "UTF-8"));
 					} else {
-						sb.append(values[0]);
+						sb.append(URLEncoder.encode(values[0], "UTF-8"));
 					}
 					sep = "&";
 				}
