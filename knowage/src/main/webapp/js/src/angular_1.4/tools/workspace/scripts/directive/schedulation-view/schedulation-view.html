@@ -45,7 +45,7 @@
 								<md-checkbox ng-model="trigger.runnable" ng-change="toggleTriggerRun(trigger)"></md-checkbox>
 							</td>
 							<td class="tableAction">							
-								<md-icon md-font-icon="fa fa-play-circle" ng-click="runTriggers(trigger)" >
+								<md-icon md-font-icon="fa fa-play-circle" ng-click="runTriggers(trigger, row)" >
 								<md-tooltip>{{translate.load('kn.schedulation.triggers.run')}}</md-tooltip></md-icon>
 							</td>
 						</tr>
