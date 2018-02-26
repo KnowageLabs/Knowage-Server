@@ -81,11 +81,13 @@ public class PdfExporter {
 
 		BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
 		int sheetCount = getSheetCount(document);
+		int sheetHeight = getSheetHeight(document);
+		RenderOptions renderOptionsWithFixedHeight = renderOptions.withDimensions(renderOptions.getDimensions().withHeight(sheetHeight));
 		URL url = new URL(requestUrl);
 		Map<String, String> authenticationHeaders = new HashMap<>(1);
 		String encodedUserId = Base64.encodeBase64String(userId.getBytes("UTF-8"));
 		authenticationHeaders.put("Authorization", "Direct " + encodedUserId);
-		List<InputStream> images = SlimerJS.render(url, sheetCount, renderOptions);
+		List<InputStream> images = SlimerJS.render(url, sheetCount, renderOptionsWithFixedHeight);
 		PDFCreator.createPDF(images, output, pdfFrontPage, pdfBackPage);
 
 		PageNumbering pageNumbering = new PageNumbering(!pdfFrontPage, true, !pdfBackPage);
@@ -98,16 +100,16 @@ public class PdfExporter {
 
 	private int getSheetCount(BIObject document) {
 		try {
-			ObjTemplate objTemplate = document.getActiveTemplate();
-			if (objTemplate == null) {
-				throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
-			}
 			int numOfPages = 0;
 			switch (document.getEngineLabel()) {
 			case "knowagechartengine":
 				numOfPages = 1;
 				return numOfPages;
 			case "knowagecockpitengine":
+				ObjTemplate objTemplate = document.getActiveTemplate();
+				if (objTemplate == null) {
+					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
+				}
 				String templateString = new String(objTemplate.getContent());
 				JSONObject template = new JSONObject(templateString);
 				JSONArray sheets = template.getJSONArray("sheets");
@@ -118,6 +120,42 @@ public class PdfExporter {
 				return numOfPages;
 			}
 
+		} catch (EMFAbstractError e) {
+			throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
+		} catch (JSONException e) {
+			throw new SpagoBIRuntimeException("Invalid template for document with id [" + documentId + "]", e);
+		}
+	}
+
+	private int getSheetHeight(BIObject document) {
+		try {
+			int sheetHeight = 0;
+			switch (document.getEngineLabel()) {
+			case "knowagechartengine":
+				sheetHeight = Integer.valueOf(renderOptions.getDimensions().getHeight());
+			case "knowagecockpitengine":
+				ObjTemplate objTemplate = document.getActiveTemplate();
+				if (objTemplate == null) {
+					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
+				}
+				String templateString = new String(objTemplate.getContent());
+				JSONObject template = new JSONObject(templateString);
+				JSONArray sheets = template.getJSONArray("sheets");
+				for (int sheetIndex = 0; sheetIndex < sheets.length(); sheetIndex++) {
+					JSONObject sheet = (JSONObject) sheets.get(sheetIndex);
+					if (sheet.has("widgets")) {
+						JSONArray widgets = sheet.getJSONArray("widgets");
+						for (int widgetIndex = 0; widgetIndex < widgets.length(); widgetIndex++) {
+							JSONObject widget = (JSONObject) widgets.get(widgetIndex);
+							int row = widget.getInt("row");
+							int sizeY = widget.getInt("sizeY");
+							int widgetHeight = (row + sizeY) * 30; // scaling by cockpitModule_gridsterOptions.rowHeight
+							sheetHeight = Math.max(sheetHeight, widgetHeight);
+						}
+					}
+				}
+			}
+			return sheetHeight;
 		} catch (EMFAbstractError e) {
 			throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
 		} catch (JSONException e) {

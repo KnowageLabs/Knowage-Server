@@ -66,12 +66,12 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	private static final String OUTPUT_TYPE = "outputType";
 	private static final String PDF_PAGE_ORIENTATION = "pdfPageOrientation";
-	private static final String PDF_ZOOM = "pdfZoom";
+	private static final String PDF_ZOOM_FACTOR = "pdfZoomFactor";
 	private static final String PDF_WIDTH = "pdfWidth";
 	private static final String PDF_HEIGHT = "pdfHeight";
 	private static final String PDF_WAIT_TIME = "pdfWaitTime";
 	static private final List<String> PDF_PARAMETERS = Arrays
-			.asList(new String[] { OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME, PDF_ZOOM, PDF_PAGE_ORIENTATION });
+			.asList(new String[] { OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME, PDF_ZOOM_FACTOR, PDF_PAGE_ORIENTATION });
 	static private final List<String> JPG_PARAMETERS = Arrays.asList(new String[] { OUTPUT_TYPE });
 
 	static private Map<String, JSONObject> pages;
@@ -243,8 +243,10 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 		long pdfRenderingWaitTime = 1000 * Long.valueOf(request.getParameter(PDF_WAIT_TIME));
 
+		Double pdfZoomFactor = Double.valueOf(request.getParameter(PDF_ZOOM_FACTOR));
+
 		RenderOptions renderOptions = RenderOptions.DEFAULT.withCustomHeaders(customHeaders).withDimensions(dimensions)
-				.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
+				.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L).withZoomFactor(pdfZoomFactor);
 		return renderOptions;
 	}
 

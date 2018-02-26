@@ -17,7 +17,7 @@
 		<md-content flex layout-padding layout-align="space-around center" layout="column">
 			
 			<div layout="row">
-				<md-input-container>
+<!--				<md-input-container>
 					<label>{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.width')}} (px)</label>
 					<input ng-model="parameters.pdfWidth" type="number" step="1">
 				</md-input-container>
@@ -26,7 +26,7 @@
 					<label>{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.height')}} (px)</label>
 					<input ng-model="parameters.pdfHeight" type="number" step="1">
 				</md-input-container>
-				<div flex=10></div>
+				<div flex=10></div> -->
 				<md-input-container>
 					<label>{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.waittime')}} (s)</label>
 					<input ng-model="parameters.pdfWaitTime" type="number" step="1">
@@ -62,7 +62,7 @@
 	</md-card-content>
 	<md-card-actions layout="row" layout-align="end center">
 		<md-button ng-click="closeDialog()">{{translate.load('sbi.generic.cancel')}}</md-button>
-		<md-button ng-click="saveDataset()">{{translate.load('sbi.generic.save')}}</md-button>
+		<md-button ng-click="exportPdf()">{{translate.load('sbi.generic.save')}}</md-button>
 	</md-card-actions>
 </md-card>
 <!-- 

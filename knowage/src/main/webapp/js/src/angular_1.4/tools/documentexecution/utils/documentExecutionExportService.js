@@ -313,11 +313,17 @@
 					controller: function($scope,mdPanelRef,sbiModule_translate,deferred,$mdDialog){
 						$scope.translate = sbiModule_translate;
 
+						var iframe = document.getElementById('documentFrame');
+						var gridsterContainer = iframe.contentDocument.getElementById('gridsterContainer');
+						var width = gridsterContainer.scrollWidth;
+						var height = gridsterContainer.scrollHeight;
+						var zoomFactor = 2.0;
+
 						$scope.parameters = {
-							pdfWidth: 1600,
-							pdfHeight: 1200,
-							pdfWaitTime: 60,
-							pdfZoom: 75, // scale it to [0; 1] interval while saving
+							pdfWidth: width,
+							pdfHeight: height,
+							pdfWaitTime: 30,
+							pdfZoomFactor: zoomFactor,
 							pdfPageOrientation: 'landscape',
 							pdfFrontPage: true,
 							pdfBackPage: true
@@ -329,10 +335,9 @@
 							deferred.reject();
 						}
 
-						$scope.saveDataset=function(){
+						$scope.exportPdf=function(){
 							var parameters = {};
 							angular.copy($scope.parameters, parameters);
-							parameters.pdfZoom = parameters.pdfZoom / 100;
 							deferred.resolve(parameters);
 							mdPanelRef.close();
 							$scope.$destroy();
