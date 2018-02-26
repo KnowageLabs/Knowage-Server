@@ -5,15 +5,6 @@
 
     		   var registryConfiguration = registryConfigService.getRegistryConfig();
 
-    	/*	   var foreignColumn = '';
-
-    		   for(var i = 0 ; i < registryConfiguration.filters.length ; i++){
-    	        	if (registryConfiguration.filters[i].presentation == 'COMBO'){
-    	        		foreignColumn=registryConfiguration.filters[i].field;
-    	        	}
-    		   }*/
-
-
     		   var data = {};
     		   data.action = sbiModule_action_builder;
     		   data.getData = function(filterField){
