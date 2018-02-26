@@ -26,8 +26,6 @@
     			   var loadRegistryAction = this.action.getActionBuilder('POST');
     			   loadRegistryAction.actionName = 'LOAD_REGISTRY_ACTION';
     			   loadRegistryAction.formParams = params;
-
-
     			   var promise =  loadRegistryAction.executeAction();
     			   return promise;
     		   };

@@ -26,7 +26,7 @@
                     <tr>
                         <th ng-repeat="col in rc.columns | orderBy: 'position'">
                             <div layout="row" layout-align="start center">
-                                <span>{{col.label}}</span>
+                                <span>{{col.title}}</span>
                                 <span flex></span>
                                 <md-menu>
                                     <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdMenu.open()">
@@ -59,26 +59,26 @@
                 <tbody>
                     <tr ng-repeat="row in rc.data | limitTo: rc.configuration.itemsPerPage">  <!-- | filter: rc.filters  -->
                         <td ng-repeat="col in rc.columns | orderBy: 'position'">
-                            <div ng-if="!rc.isArray(row[col.label])">
-                                <span ng-if="!col.editable">{{row[col.label]}}</span>
+                            <div ng-if="!rc.isArray(row[col.field])">
+                                <span ng-if="!col.editable">{{row[col.field]}}</span>
                                 <md-menu ng-if="col.editable">
                                     <div layout="row" class="clickable" ng-click="$mdMenu.open()">
-                                        <span>{{row[col.label]}}</span>
+                                        <span>{{row[col.field]}}</span>
                                     </div>
                                     <md-menu-content width="5" class="customContentMenu">
                                         <md-menu-item layout="row" layout-align="start center">
                                             <md-input-container class="md-icon-float md-block">
-                                                <input ng-model="row[col.label]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change" ng-if="col.type=='text'">
-                                                <md-select ng-model="row[col.label]" aria-label="data change" ng-if="col.type=='select'">
-                                                    <md-option ng-repeat="opt in col.options" value="{{opt}}">{{opt}}</md-option>
+                                                <input ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change" ng-if="col.editor=='TEXT'">
+                                                <md-select ng-click="rc.getOptions(col.field)" ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'">
+                                                    <md-option ng-repeat="opt in rc.columns.options" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
                                                 </md-select>
                                             </md-input-container>
                                         </md-menu-item>
                                     </md-menu-content>
                                 </md-menu>
                             </div>
-                            <table class='innerTable' ng-if="rc.isArray(row[col.label])">
-                                <tr ng-repeat="pivotRow in row[col.label]">
+                            <table class='innerTable' ng-if="rc.isArray(row[col.field])">
+                                <tr ng-repeat="pivotRow in row[col.field]">
                                     <td>{{pivotRow}}</td>
                                 </tr>
                             </table>
@@ -101,7 +101,7 @@
                 <md-button class="md-icon-button prev" aria-label="Previous" ng-click="rc.previous()" ng-disabled="!rc.hasPrevious()">
                     <i class="fa fa-angle-left"></i>
                 </md-button>
-                <md-button class="md-icon-button next" aria-label="Next" ng-click="rc.next()" ng-disabled="!rc.hasNext()">
+                <md-button class="md-icon-button next" aria-label="Next" ng-click="rc.next(rc.pagesInfo)" ng-disabled="!rc.hasNext()">
                     <i class="fa fa-angle-right"></i>
                 </md-button>
             </nav>
