@@ -55,12 +55,8 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction {
 
 			IEngUserProfile profile = this.getUserProfile();
 
-			logger.error("Print profile taken: " + profile);
-
 			String defaultRole = this.getAttributeAsString(SELECTED_ROLE);
 			logger.debug("Selected role " + defaultRole);
-
-			logger.error("Change default role to  " + defaultRole);
 
 			// check if selected role is part of the user ones
 			ArrayList<String> roles = (ArrayList<String>) profile.getRoles();
@@ -98,13 +94,12 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction {
 				// there is a default role selected so filter only its functionalities
 				logger.debug("Selected role is not null, put right functionality");
 				Collection functionalities = this.getFunctionalitiesForDefaultRole(profile, defaultRole);
-				LogMF.error(logger, "User functionalities considering default role [{0}]: {1}", new String[] { defaultRole, functionalities.toString() });
+				LogMF.debug(logger, "User functionalities considering default role [{0}]: {1}", new String[] { defaultRole, functionalities.toString() });
 				((UserProfile) profile).setFunctionalities(functionalities);
 				logger.debug("set functionalities for default role");
 			}
 			logger.debug("Filtered functionalities for selected role " + defaultRole);
 
-			logger.error("Print profile taken at the end of the action: " + profile);
 			try {
 				writeBackToClient(new JSONAcknowledge());
 			} catch (IOException e) {
@@ -136,7 +131,7 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction {
 			throw ex;
 		} finally {
 			if (toReturn != null) {
-				LogMF.error(logger, "Returning: {0}", new String[] { toReturn.toString() });
+				LogMF.debug(logger, "Returning: {0}", new String[] { toReturn.toString() });
 			}
 		}
 		return toReturn;
