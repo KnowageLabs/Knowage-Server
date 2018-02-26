@@ -64,6 +64,7 @@ END-PRODUCTION -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
+	
 
 <!-- 
 	Specifying all Angular services that we are eventually going to use (inject into the controller that is created for the 

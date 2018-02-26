@@ -192,6 +192,13 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 							    	  class: "fa fa-file",
 							    	  type : "document"
 							      },{
+                                      name:"Map",
+                                      description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.map"),
+                                      tags : ["map"],
+                                      img : "7.png",
+                                      class: "fa fa-map",
+                                      type : "map"
+                                  },{
 							    	  name:"Active Selections",
 							    	  description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.selection"),
 							    	  tags : ["selection"],

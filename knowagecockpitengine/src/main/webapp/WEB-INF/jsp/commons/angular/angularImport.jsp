@@ -109,6 +109,10 @@ END-PRODUCTION -->
 <link rel="stylesheet" 	href="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.css">
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.js"></script>
 
+<!-- Open Layers -->
+<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol.css">
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/4.6.4/ol.js"></script>	
+
 <%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>
 
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
