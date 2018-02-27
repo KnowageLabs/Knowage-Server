@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		.directive('cockpitMapWidget',function(){
 			return{
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/mapWidget/templates/mapWidgetTemplate.html',
-				controller: cockpitHtmlWidgetControllerFunction,
+				controller: cockpitMapWidgetControllerFunction,
 				compile: function (tElement, tAttrs, transclude) {
 					return {
 						pre: function preLink(scope, element, attrs, ctrl, transclud) {},
@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		})
 
-	function cockpitHtmlWidgetControllerFunction(
+	function cockpitMapWidgetControllerFunction(
 			$scope,
 			$mdDialog,
 			$mdToast,
@@ -73,11 +73,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					attachTo:  angular.element(document.body),
 					controller: mapWidgetEditControllerFunction,
 					disableParentScroll: true,
-					templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/htmlWidget/templates/mapWidgetEditPropertyTemplate.html',
+					templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/mapWidget/templates/mapWidgetEditPropertyTemplate.html',
 					position: $mdPanel.newPanelPosition().absolute().center(),
 					fullscreen :true,
 					hasBackdrop: true,
-					clickOutsideToClose: false,
+					clickOutsideToClose: true,
 					escapeToClose: false,
 					focusOnOpen: true,
 					preserveScope: false,
@@ -93,7 +93,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.translate=sbiModule_translate;
 		$scope.newModel = angular.copy(model);
 
-        
+		$scope.saveConfiguration=function(){
+			 mdPanelRef.close();
+			 angular.copy($scope.newModel,model);
+			 finishEdit.resolve();
+ 	  	}
+
+		$scope.cancelConfiguration=function(){
+ 	  		mdPanelRef.close();
+ 	  		finishEdit.reject();
+ 	  	}
 		
 	}
 
