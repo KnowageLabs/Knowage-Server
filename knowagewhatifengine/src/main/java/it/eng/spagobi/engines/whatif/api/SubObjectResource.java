@@ -25,7 +25,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.apache.log4j.Logger;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,7 +41,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 public class SubObjectResource extends AbstractWhatIfEngineService {
 
-	public static transient Logger logger = Logger.getLogger(AnalysisResource.class);
+	public static transient Logger logger = Logger.getLogger(SubObjectResource.class);
 
 	@POST
 	@Path("/")
@@ -93,7 +92,7 @@ public class SubObjectResource extends AbstractWhatIfEngineService {
 		}
 		if (!result.trim().toLowerCase().startsWith("ok")) {
 			logger.error("Error saving the subobject " + result);
-			throw new SpagoBIRestServiceException("sbi.olap.subobject.save.error", getLocale(), "Error saving the subobject");
+			throw new SpagoBIRestServiceException("sbi.olap.subobject.save.error", getLocale(), "Error saving the subobject" + result);
 		}
 
 		// return getJsonSuccess();
