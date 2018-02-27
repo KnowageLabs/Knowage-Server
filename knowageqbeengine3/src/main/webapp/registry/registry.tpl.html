@@ -18,8 +18,13 @@
                         <md-option ng-repeat="opt in filter.options track by $index" ng-value="opt.column_1">{{opt.column_1}}</md-option>
                     </md-select>
                 </md-input-container>
+               
+                <div ng-if="rc.configuration.enableButtons">
+                        <md-icon ng-click="rc.updateColumn()" md-font-icon="fa fa-save fa-2x" style="margin-left:10px;margin-right:5px;"></md-icon>
+                </div>
             </div>
         </div>
+      
         <div>
             <table class="kn-table alternatedRows">
                 <thead>
@@ -50,17 +55,19 @@
                             </div>
                         </th>
                         <th class="tableAction">
-                            <md-button class="" ng-click="rc.addRow()" ng-if="rc.configuration.enableAdd">
+                    <!--        <md-button class="" ng-click="rc.addRow()" ng-if="rc.configuration.enableAdd">
                                 Add row
-                            </md-button>
+                            </md-button>  --> 
                         </th>
                     </tr>
                 </thead>
+                
                 <tbody>
+                
                     <tr ng-repeat="row in rc.data | limitTo: rc.configuration.itemsPerPage">  <!-- | filter: rc.filters  -->
-                        <td ng-repeat="col in rc.columns | orderBy: 'position'">
+                          <td style="text-align:center" ng-repeat="col in rc.columns | orderBy: 'position'" ng-click="rc.setSelected(row)"> 
                             <div ng-if="!rc.isArray(row[col.field])">
-                                <span ng-if="!col.editable">{{row[col.field]}}</span>
+                                <span style="text-align:center" ng-if="!col.editable">{{row[col.field]}}</span>
                                 <md-menu ng-if="col.editable">
                                     <div layout="row" class="clickable" ng-click="$mdMenu.open()">
                                         <span>{{row[col.field]}}</span>
@@ -79,14 +86,15 @@
                             </div>
                             <table class='innerTable' ng-if="rc.isArray(row[col.field])">
                                 <tr ng-repeat="pivotRow in row[col.field]">
-                                    <td>{{pivotRow}}</td>
+                                    <td >{{pivotRow}}</td>
                                 </tr>
                             </table>
                         </td>
-                        <td style="text-align:center" class="">
-                            <md-icon md-font-icon="fa fa-trash" ng-click="rc.deleteRow(row.$$hashKey)"></md-icon>
+                         <td style="text-align:center" class="" >
+                            <md-icon md-font-icon="fa fa-trash" ng-click="rc.deleteColumn(row)"></md-icon>
                         </td>
                     </tr>
+                   
                 </tbody>
             </table>
             <nav aria-label="Page navigation" class="pagination" layout="row" layout-align="start center">

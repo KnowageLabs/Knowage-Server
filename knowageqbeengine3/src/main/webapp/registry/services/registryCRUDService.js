@@ -30,16 +30,31 @@
     			   return promise;
     		   };
 
-    		   crud.update = function() {
-    			   return "Update data";
+    		   crud.update = function(record) {
+    			   delete record.id;
+    			   var records = [];
+    			   var loadRegistryAction = this.action.getActionBuilder('POST');
+    			   loadRegistryAction.actionName = 'UPDATE_RECORDS_ACTION';
+    			    loadRegistryAction.formParams.records = records;
+    			    loadRegistryAction.formParams.records.push(record);
+    			   var promise =  loadRegistryAction.executeAction();
+    			   return promise;
     		   };
 
     		   crud.create = function() {
-    			   return "Insert data";
+
+
     		   };
 
-    		   crud.delete = function() {
-    			   return "Delete data";
+    		   crud.delete = function(record) {
+    			   delete record.id;
+    			   var records = [];
+    			   var loadRegistryAction = this.action.getActionBuilder('POST');
+    			   loadRegistryAction.actionName = 'DELETE_RECORDS_ACTION';
+    			    loadRegistryAction.formParams.records = records;
+    			    loadRegistryAction.formParams.records.push(record);
+    			   var promise =  loadRegistryAction.executeAction();
+    			   return promise;
     		   };
 
     		   return crud;

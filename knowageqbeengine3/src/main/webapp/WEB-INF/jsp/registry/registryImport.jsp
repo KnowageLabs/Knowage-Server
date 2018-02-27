@@ -19,5 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/registry/services/registryCRUDService.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/registry/services/registryConfigurationAdapter.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/registry/services/registryFilterGetData.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/registry/services/interceptors/httpInterceptor.js"></script>
 
 <%@include file="/WEB-INF/jsp/registry/registryConfig/registryConfigModule.jspf"%>
