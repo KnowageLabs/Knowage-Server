@@ -194,7 +194,7 @@ public class PersistedTableManager implements IPersistedManager {
 							Integer intValue;
 							Object rawField = field.getValue();
 							if (rawField instanceof BigDecimal) {
-								intValue = ((BigDecimal)rawField).intValueExact();
+								intValue = ((BigDecimal) rawField).intValueExact();
 							} else {
 								intValue = Integer.valueOf((String) rawField);
 							}
@@ -208,7 +208,7 @@ public class PersistedTableManager implements IPersistedManager {
 							Double doubleValue;
 							Object rawField = field.getValue();
 							if (rawField instanceof BigDecimal) {
-								doubleValue = ((BigDecimal)rawField).doubleValue();
+								doubleValue = ((BigDecimal) rawField).doubleValue();
 							} else {
 								doubleValue = Double.valueOf((String) rawField);
 							}
@@ -942,7 +942,10 @@ public class PersistedTableManager implements IPersistedManager {
 				throw new SpagoBIEngineRuntimeException("Error while creating construnctor for dynamically instancing class type. Table name:" + tableName, e);
 			}
 			try {
-				field.setValue(cons.newInstance(String.valueOf(field.getValue())));
+				Object value = field.getValue();
+				if (value != null) {
+					field.setValue(cons.newInstance(String.valueOf(value)));
+				}
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				logger.error("Error while changing field value to different type that is comming from data set wizard", e);
 				throw new SpagoBIEngineRuntimeException(
