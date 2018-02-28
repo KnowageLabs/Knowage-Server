@@ -7,7 +7,7 @@
     <md-content flex ng-cloak>
         <div ng-if="rc.configuration.filters" class="registryFilters">
             <div layout="row" layout-align="start center">
-                <md-icon ng-click="rc.loadData(rc.filters)" md-font-icon="fa fa-filter fa-2x" style="margin-left:10px;margin-right:5px;"></md-icon>
+                <md-icon ng-click="rc.loadFilteredData(rc.filters)" md-font-icon="fa fa-filter fa-2x" style="margin-left:10px;margin-right:5px;"></md-icon>
 
                 <md-input-container class="md-icon-float registryFilter" ng-repeat="filter in rc.configuration.filters">
                     <label>{{filter.title}}</label>
@@ -55,15 +55,14 @@
                             </div>
                         </th>
                         <th class="tableAction">
-                    <!--        <md-button class="" ng-click="rc.addRow()" ng-if="rc.configuration.enableAdd">
-                                Add row
-                            </md-button>  --> 
+                          <md-button class="" ng-click="rc.addRow()" ng-if="rc.configuration.enableAdd">
+                               Add row
+                          </md-button>  
                         </th>
                     </tr>
                 </thead>
                 
-                <tbody>
-                
+                <tbody>                
                     <tr ng-repeat="row in rc.data | limitTo: rc.configuration.itemsPerPage">  <!-- | filter: rc.filters  -->
                           <td style="text-align:center" ng-repeat="col in rc.columns | orderBy: 'position'" ng-click="rc.setSelected(row)"> 
                             <div ng-if="!rc.isArray(row[col.field])">
@@ -93,23 +92,22 @@
                          <td style="text-align:center" class="" >
                             <md-icon md-font-icon="fa fa-trash" ng-click="rc.deleteColumn(row)"></md-icon>
                         </td>
-                    </tr>
-                   
+                    </tr>                   
                 </tbody>
             </table>
             <nav aria-label="Page navigation" class="pagination" layout="row" layout-align="start center">
                 <span flex></span>
                 <label>Page</label>
                 <md-input-container class="noMargin">
-                    <md-select aria-label="Page navigation" ng-model="rc.page" ng-change="goToPage()">
+                    <md-select aria-label="Page navigation" ng-model="rc.page" ng-change="rc.goToPage()">
                         <md-option ng-repeat="pages in rc.getTotalPages() track by $index" value="{{$index+1}}">{{$index+1}}</md-option>
                     </md-select>
                 </md-input-container>
-                <div class="label page-position">{{rc.min()}} - {{rc.max()}} of {{rc.data.length}}</div>
+                <div class="label page-position">{{rc.min()}} - {{rc.max()}} of {{rc.results}}</div>
                 <md-button class="md-icon-button prev" aria-label="Previous" ng-click="rc.previous()" ng-disabled="!rc.hasPrevious()">
                     <i class="fa fa-angle-left"></i>
                 </md-button>
-                <md-button class="md-icon-button next" aria-label="Next" ng-click="rc.next(rc.pagesInfo)" ng-disabled="!rc.hasNext()">
+                <md-button class="md-icon-button next" aria-label="Next" ng-click="rc.next()" ng-disabled="!rc.hasNext()">
                     <i class="fa fa-angle-right"></i>
                 </md-button>
             </nav>
