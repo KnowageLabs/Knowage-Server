@@ -742,9 +742,9 @@ public class DataSetTransformer {
 				secCat = "column_2";
 				seria = "column_3";
 			} else {
-				primCat = "column_2";
+				primCat = "column_3";
 				secCat = "column_1";
-				seria = "column_3";
+				seria = "column_2";
 			}
 
 		} else {
@@ -755,9 +755,9 @@ public class DataSetTransformer {
 
 			} else {
 
-				primCat = "column_1";
+				primCat = "column_2";
 				secCat = "column_3";
-				seria = "column_2";
+				seria = "column_1";
 
 			}
 		}

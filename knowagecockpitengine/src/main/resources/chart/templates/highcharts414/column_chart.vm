@@ -851,15 +851,7 @@
 		#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
 		#end
 		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine, $chart.groupSeries, $chart.groupSeriesCateg))
-            categories: [
-            	 #foreach($valueKey in $map.keySet())
-				 #if($valueKey!="null")
-					#foreach($el in  $map.get($valueKey))
-						'$el.name',
-					#end
-				#end
-				#end
-            ]
+     
 		#end
 		
 	},
