@@ -1,0 +1,28 @@
+{
+  "name": "knowage-e2e-testing",
+  "version": "6.2.0",
+  "description": "bla bla",
+  "main":"./protractor/pageObjects/knowageLoginPage.js",
+  
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  
+  "keywords": [],
+  
+  
+  "dependencies": {
+    "angular": "^1.5.1",
+	"protractor":"5.2.2",
+	"protractor-beautiful-reporter":"1.1.0",
+	"grunt":"1.0.1",
+	"grunt-cli":"1.2.0",
+	"grunt-contrib-clean":"v1.1.0",
+	"grunt-contrib-copy":"1.0.0",
+	"grunt-protractor-runner":"5.0.0",
+	"jasmine-reporters":"^2.0.0"
+  },
+  "author": "dragan",
+  "license": "AGPL-3.0"
+  
+}
