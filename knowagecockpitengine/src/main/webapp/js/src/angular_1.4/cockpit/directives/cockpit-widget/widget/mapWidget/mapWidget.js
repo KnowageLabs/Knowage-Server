@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						post: function postLink(scope, element, attrs, ctrl, transclud) {
 							element.ready(function () {
 								scope.initWidget();
+								scope.createMap();
 							});
 						}
 					};
@@ -83,7 +84,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			});
 		}
 	      
-	    $scope.getFeatures = function(){	    	
+	    $scope.getLayers = function(){	    	
 	    	for (l in $scope.targetLayers){
 	    		var layerDef  = $scope.targetLayers[l];
 	    		if (layerDef.type === 'DATASET'){
@@ -94,6 +95,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    			
 	    		}
 	    	}
+	    	 
 	    }
 	    
 	    $scope.getDatasetFeatures = function(layerDef){
@@ -135,33 +137,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.datasetId+"] ");
 				$scope.showAction($scope.translate.load('sbi.cockpit.map.dsError')); //error during the execution of data
-			}); 	
+			}
+			); 
+	    	
     	}
     	
 
 	    $scope.createMap = function (){
     		//create the map with base layer
-		    var olTarget = $scope.mapId;
 		    
-		    var layer = new ol.layer.Tile({
-		      source: new ol.source.OSM()
-		    });
+            var baseLayer = cockpitModule_mapServices.getBaseLayer($scope.baseLayer[0]);
+            debugger;
 
     		$scope.map = new ol.Map({
 				//	   target: olTarget,
-				//     target: '\'' + $scope.mapId + '\'',
-				     target: 'map',
-				     layers: [layer],
+				     target:  $scope.mapId,
+//				     target: 'map',
+				     layers: [baseLayer],
 				     view: new ol.View({
-				       center: ol.proj.fromLonLat([-122.2585837, 37.76930310]), //TODO: recuperare coordinate di default
-				       zoom: 4
+				       center: ol.proj.fromLonLat($scope.currentView.center), 
+				       zoom: $scope.currentView.zoom || 4
 				     })
     		});
     	}
 	    
 	    //functions calls
-	    $scope.createMap();
-		$scope.getFeatures();
+//	    $scope.createMap();
+		$scope.getLayers();
+		
 
 		
 		$scope.editWidget=function(index){

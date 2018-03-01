@@ -1,1 +1,22 @@
-<div id="map" class="map"></div>  
+ <div layout="row" layout-fill>
+ 	<div id="{{mapId}}" class="map" style="width:100%"></div>
+    <md-sidenav class="md-sidenav-right"
+        md-component-id="right"
+        md-is-locked-open="$mdMedia('gt-md')">
+
+      <md-toolbar class="md-theme-light">
+        <h1 class="md-toolbar-tools">Sidenav Right</h1>
+      </md-toolbar>
+      <md-content layout-padding>
+          <md-input-container>
+            <label for="testInput">Test input</label>
+            <input type="text" id="testInput"
+                   ng-model="data" md-autofocus>
+          </md-input-container>
+        <md-button ng-click="close()" class="md-primary">
+          Close Sidenav Right
+        </md-button>
+      </md-content>
+
+    </md-sidenav>
+</div>
