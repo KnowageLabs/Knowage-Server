@@ -24,7 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				controller: cockpitMapWidgetControllerFunction,
 				compile: function (tElement, tAttrs, transclude) {
 					return {
-						pre: function preLink(scope, element, attrs, ctrl, transclud) {},
+						pre: function preLink(scope, element, attrs, ctrl, transclud) {
+						},
 						post: function postLink(scope, element, attrs, ctrl, transclud) {
 							element.ready(function () {
 								scope.initWidget();
@@ -46,25 +47,121 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$filter,
 			sbiModule_translate,
 			sbiModule_restServices,
+			cockpitModule_mapServices,
 			cockpitModule_datasetServices,
 			cockpitModule_widgetConfigurator,
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
 			cockpitModule_properties){
 		
+		//ol objects 
+		$scope.layers = [];  //layers with features
+		
+		//get config portions
+		$scope.targetLayers= $scope.ngModel.content.targetLayersConf || [];
+		$scope.baseLayer = $scope.ngModel.content.baseLayersConf || [];
+		$scope.currentView = $scope.ngModel.content.currentView || {};
+		delete $scope.ngModel.content;
+		
+		//map id reference definition	
+		$scope.mapId = 'map-' + Math.ceil(Math.random()*1000).toString();
+	  	console.log("$scope.mapId: ", $scope.mapId);
+	  	
+	  	$scope.showAction = function(text) {
+			var toast = $mdToast.simple()
+			.content(text)
+			.action('OK')
+			.highlightAction(false)
+			.hideDelay(3000)
+			.position('top')
 
-		   var map = new ol.Map({
-		        target: 'map',
-		        layers: [
-		          new ol.layer.Tile({
-		            source: new ol.source.OSM()
-		          })
-		        ],
-		        view: new ol.View({
-		          center: ol.proj.fromLonLat([37.41, 8.82]),
-		          zoom: 4
-		        })
-		      });
+			$mdToast.show(toast).then(function(response) {
+
+				if ( response == 'ok' ) {
+			
+				}
+			});
+		}
+	      
+	    $scope.getFeatures = function(){	    	
+	    	for (l in $scope.targetLayers){
+	    		var layerDef  = $scope.targetLayers[l];
+	    		if (layerDef.type === 'DATASET'){
+	    			$scope.getDatasetFeatures(layerDef);
+	    		}else if (layerDef.type === 'CATALOG'){
+	    			//TODO implementare recuopero layer da catalogo
+	    		}else{
+	    			
+	    		}
+	    	}
+	    }
+	    
+	    $scope.getDatasetFeatures = function(layerDef){
+    		//prepare object with metadata for desiderata dataset columns 
+    		var meta = [];
+    		var geoColumn = null;
+    		for (a in layerDef.attributes){
+    			var att = {};
+    			att.name = layerDef.attributes[a].name;
+    			att.alias = layerDef.attributes[a].label;
+    			att.aliasToShow = layerDef.attributes[a].label;
+    			att.fieldType = 'ATTRIBUTE';
+    			meta.push(att);
+    			if (layerDef.attributes[a].isGeoReference)
+    				geoColumn = layerDef.attributes[a].name;
+    		}
+    		var measures = [];
+    		for (m in layerDef.indicators){
+    			var measure = {};
+    			measure.name = layerDef.indicators[m].name;
+    			measure.alias = layerDef.indicators[m].label;
+    			measure.aliasToShow = layerDef.indicators[m].label;
+    			measure.aggregationSelected = layerDef.indicators[m].funct || 'SUM';
+    			measure.funcSummary = layerDef.indicators[m].funct || 'SUM';
+    			measure.fieldType = 'MEASURE';
+    			meta.push(measure);
+    		}
+    		var model = {content: {columnSelectedOfDataset: meta }};
+    		var features = [];
+    		//get the dataset columns values
+	    	cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.datasetId, undefined, undefined, undefined, undefined, model).then(
+	    		function(allDatasetRecords){
+					var layer = cockpitModule_mapServices.getFeaturesDetails(geoColumn, allDatasetRecords);
+					if (layer == null){
+						$scope.showAction($scope.translate.load('sbi.cockpit.map.nogeomcorrectform')); //dataset geometry column value isn't correct. It should be a couble of numbers [-12 12] or [-12, 12]
+						return;
+					}
+					$scope.map.addLayer(layer);
+			},function(error){
+				console.log("Error loading dataset with id [ "+layerDef.datasetId+"] ");
+				$scope.showAction($scope.translate.load('sbi.cockpit.map.dsError')); //error during the execution of data
+			}); 	
+    	}
+    	
+
+	    $scope.createMap = function (){
+    		//create the map with base layer
+		    var olTarget = $scope.mapId;
+		    
+		    var layer = new ol.layer.Tile({
+		      source: new ol.source.OSM()
+		    });
+
+    		$scope.map = new ol.Map({
+				//	   target: olTarget,
+				//     target: '\'' + $scope.mapId + '\'',
+				     target: 'map',
+				     layers: [layer],
+				     view: new ol.View({
+				       center: ol.proj.fromLonLat([-122.2585837, 37.76930310]), //TODO: recuperare coordinate di default
+				       zoom: 4
+				     })
+    		});
+    	}
+	    
+	    //functions calls
+	    $scope.createMap();
+		$scope.getFeatures();
 
 		
 		$scope.editWidget=function(index){
