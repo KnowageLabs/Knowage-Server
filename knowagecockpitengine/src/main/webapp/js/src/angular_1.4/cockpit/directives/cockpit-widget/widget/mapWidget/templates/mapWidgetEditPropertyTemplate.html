@@ -1,0 +1,47 @@
+<md-card   class="flexCard customTableWidgetConfiguration mapWidget" >
+	<md-card-content flex layout="column" class="noPadding">
+	    <md-toolbar> 
+	      <div class="md-toolbar-tools">
+	        <h2>Map widget configuration</h2>
+	        <span flex></span>
+	      </div>
+	    </md-toolbar>
+	    <md-content flex layout="column">
+			<md-tabs flex md-border-bottom>
+		      
+				<md-tab label="Layers">
+					<md-content class="noPadding" layout="row" layout-fill>
+						<ng-include src="getTemplateUrl('mapWidgetLayers')" flex></ng-include>
+				    </md-content>
+		        </md-tab>
+		        <md-tab label="Markers" ng-disabled="!newModel.content.targetLayersConf || newModel.content.targetLayersConf.length > 0">
+					<md-content class="noPadding" layout="row" >
+				    </md-content>
+		        </md-tab>
+		        <md-tab label="Legend" ng-disabled="!newModel.content.targetLayersConf || newModel.content.targetLayersConf.length > 0">
+					<md-content class="noPadding" layout="row" >
+				    </md-content>
+		        </md-tab>
+		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
+		        	<cockpit-style-configurator widget ng-model="newModel.style">
+		        		<cockpit-style-custom-widget-configurator label="'Padding'">
+				           <div layout="row" flex ng-cloak layout-wrap>
+	
+				          
+				           </div>
+				        </cockpit-style-custom-widget-configurator>
+		        	</cockpit-style-configurator>
+		        </md-tab>
+		        
+	      	</md-tabs>
+	    </md-content>
+    </md-card-content>
+    <md-card-actions layout="row"  layout-align="end center">
+	    <md-button ng-click="cancelConfiguration()" >
+	     {{translate.load('sbi.generic.cancel')}}
+	    </md-button>
+	    <md-button ng-click="saveConfiguration()"  >
+	     {{translate.load('sbi.generic.save')}}
+	    </md-button>
+    </md-card-actions>
+</md-card>

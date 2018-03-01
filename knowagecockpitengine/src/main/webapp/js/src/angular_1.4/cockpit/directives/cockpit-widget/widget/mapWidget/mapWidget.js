@@ -46,6 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$q,
 			$sce,
 			$filter,
+			$location,
 			sbiModule_translate,
 			sbiModule_restServices,
 			cockpitModule_mapServices,
@@ -62,11 +63,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.targetLayers= $scope.ngModel.content.targetLayersConf || [];
 		$scope.baseLayer = $scope.ngModel.content.baseLayersConf || [];
 		$scope.currentView = $scope.ngModel.content.currentView || {};
-		delete $scope.ngModel.content;
 		
 		//map id reference definition	
 		$scope.mapId = 'map-' + Math.ceil(Math.random()*1000).toString();
 	  	console.log("$scope.mapId: ", $scope.mapId);
+	  	
+	  	
 	  	
 	  	$scope.showAction = function(text) {
 			var toast = $mdToast.simple()
@@ -94,8 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		}else{
 	    			
 	    		}
-	    	}
-	    	 
+	    	}	 
 	    }
 	    
 	    $scope.getDatasetFeatures = function(layerDef){
@@ -147,7 +148,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		//create the map with base layer
 		    
             var baseLayer = cockpitModule_mapServices.getBaseLayer($scope.baseLayer[0]);
-            debugger;
 
     		$scope.map = new ol.Map({
 				//	   target: olTarget,
@@ -189,10 +189,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 	}
 	
-	function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,$timeout){
+	function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,$timeout,$location){
 		$scope.translate=sbiModule_translate;
 		$scope.newModel = angular.copy(model);
+		
+		//get templates location
+	  	$scope.basePath = $location.$$absUrl.substring(0,$location.$$absUrl.indexOf('api/'));
+	  	$scope.templatesUrl = 'js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/mapWidget/templates/';
+	  	$scope.getTemplateUrl = function(template){
+	  		return $scope.basePath + $scope.templatesUrl + template +'.html';
+	  	}
+	  	
+	  	$scope.addLayer = function(ev) {
+	  		$mdDialog.show({
+				controller: function ($scope,$mdDialog) {
+					
+					$scope.add = function(){
+						$mdDialog.hide();
+					}
+					$scope.cancel = function(){
+						$mdDialog.cancel();
+					}
+				},
+				scope: $scope,
+				preserveScope:true,
+		      templateUrl: $scope.getTemplateUrl('mapWidgetAddLayerDialog'),
+		      targetEvent: ev,
+		      clickOutsideToClose:true,
+		      locals: {  }
+		    })
+		    .then(function() {
 
+		    });
+	  	}
 		$scope.saveConfiguration=function(){
 			 mdPanelRef.close();
 			 angular.copy($scope.newModel,model);
@@ -203,7 +232,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  	  		mdPanelRef.close();
  	  		finishEdit.reject();
  	  	}
-		
 	}
 
 	// this function register the widget in the cockpitModule_widgetConfigurator factory

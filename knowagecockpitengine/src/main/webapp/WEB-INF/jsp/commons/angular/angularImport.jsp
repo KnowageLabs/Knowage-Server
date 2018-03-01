@@ -104,6 +104,14 @@ END-PRODUCTION -->
 <link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/jsonformatter/dist/json-formatter.min.css">
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/jsonformatter/dist/json-formatter.min.js"></script>	
 
+<!-- UI.Codemirror  -->
+<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/lib/codemirror.css">
+<link type="text/css" rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/theme/eclipse.css">
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/lib/codemirror.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/addon/mode/simple.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/mode/xml/xml.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/mode/css/css.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-ui-codemirror/src/ui-codemirror.js"></script>
 
 <!-- angular json tree -->
 <link rel="stylesheet" 	href="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.css">
