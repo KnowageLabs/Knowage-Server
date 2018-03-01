@@ -88,6 +88,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					}
 				}else{
 					//it is measure
+					obj["orderColumn"] = col.name;
 					if (col.aggregationSelected)
 						obj["funct"] = col.aggregationSelected.toUpperCase();
 					else
