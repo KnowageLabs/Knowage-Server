@@ -51,7 +51,7 @@
 		self.formParams = {};
 		self.filters = {};
 		self.page = 1;
-		
+
 		// array object to define the registry configuration
 		self.configuration = {
 			title: "Registry Document",
@@ -59,38 +59,40 @@
 			enableButtons: registryConfiguration.configurations[0].value == "true",
 			filters: registryConfiguration.filters
 		};
-		
+
 		//Initializing formParams for first-time data loading
 		self.initialFormParams = {
     		start: 0,
-    		limit: self.configuration.itemsPerPage    		
+    		limit: self.configuration.itemsPerPage
         };
-		
+
 		//Getting initial data from server
-        self.loadInitialData = function(param){          
+        self.loadInitialData = function(param){
         	readData(param);
         };
-		
+
         var readData = function(data) {
         	registryCRUD.read(data).then(function (response) {
 	           	 self.data = response.data.rows;
 	           	 self.results = response.data.results;
 	         });
         };
-        
+
         self.loadInitialData(self.initialFormParams);
-        
+
 		self.setSelected = function(selectedColumn) {
-			self.selectedColumn.push(selectedColumn);
+			if((self.selectedColumn).indexOf(selectedColumn) === -1){
+				self.selectedColumn.push(selectedColumn);
+				}
 		};
-				
+
 		// Filling columns
 		columnsInfo.forEach(function(column) {
 			column.position = columnsInfo.indexOf(column);
 			self.columns.push(column);
 		});
 
-							
+
 		//Filters handling
 		self.getFilters = function(filterField) {
 			if(self.filterOptions[filterField] == undefined) {
@@ -108,15 +110,15 @@
 			}
 		};
 
-		var addOptions = function(filterField) {			
+		var addOptions = function(filterField) {
 			for (var i = 0; i < registryConfiguration.filters.length; i++) {
 				if (registryConfiguration.filters[i].field == filterField) {
 					registryConfiguration.filters[i].options = self.filterOptions[filterField];
 				}
 			}
-			return registryConfiguration.filters;			
+			return registryConfiguration.filters;
 		};
-		
+
 		var addColumnOptions = function(field) {
 			self.columns.forEach(function(column) {
 				if (column.field == field) {
@@ -124,15 +126,24 @@
 				}
 			});
 		};
-				
+
 		self.loadFilteredData = function(params) {
         	self.formParams = Object.assign({}, params);
         	self.formParams.start = 0;
         	self.page = 1;
      	   	readData(self.formParams);
         };
-	
-        
+
+        self.clearFilterValues = function(){
+			self.filters = {};
+			self.formParams = {};
+			for(var i = 0 ; i<(self.configuration.filters).length ; i++){
+            	self.configuration.filters[i].value = null;
+			}
+			 self.loadInitialData(self.initialFormParams);
+
+		};
+
         self.updateRow = function() {
 			for (var i = 0; i < self.selectedColumn.length; i++) {
 				registryCRUD.update(self.selectedColumn[i]).then(function(response) {});
@@ -144,22 +155,22 @@
 			self.selectedColumn = [];
 		};
 
-		self.deleteRowFromDB = function(row, event) {			
+		self.deleteRowFromDB = function(row, event) {
 			var confirm = $mdDialog.confirm()
 				.title('Delete Row!')
 				.textContent('Are you sure you want to delete row?')
 				.targetEvent(event)
 				.ok('Yes')
 				.cancel('No');
-			
+
 			$mdDialog.show(confirm).then(function() {
 					registryCRUD.delete(row).then(function(response) {
 						sbiMessaging.showInfoMessage('You have succesufly deleted row!', 'Success!!!');
 						self.deleteRow(row.$$hashKey);
 					});
-				});					
+				});
 		};
-        
+
 		self.isArray = angular.isArray;
 
 		self.deleteRow = function(hash) {
@@ -228,42 +239,42 @@
             return self.hasNext() ? (self.page * self.configuration.itemsPerPage) : self.results;
         };
 
-	                 
+
         self.next = function() {
         	self.page++;
         	self.formParams.start = (self.page - 1) * self.configuration.itemsPerPage;
         	self.formParams.limit = self.configuration.itemsPerPage;
         	var filterFields = Object.keys(self.filters);
         	var filterValues = Object.values(self.filters);
-        	
+
         	for(var i = 0; i < filterFields.length; i++) {
         		self.formParams[filterFields[i]] = filterValues[i];
-        	}                 
-            readData(self.formParams);                                             
+        	}
+            readData(self.formParams);
         };
-        
+
         self.previous = function() {
         	self.page--;
         	self.formParams.start = (self.page - 1) * self.configuration.itemsPerPage;
         	self.formParams.limit = self.configuration.itemsPerPage;
         	var filterFields = Object.keys(self.filters);
         	var filterValues = Object.values(self.filters);
-        	
+
         	for(var i = 0; i < filterFields.length; i++) {
         		self.formParams[filterFields[i]] = filterValues[i];
-        	}       	                       	
-            readData(self.formParams);             
+        	}
+            readData(self.formParams);
         };
-        
+
         self.goToPage = function() {
         	self.formParams.start = (self.page - 1) * self.configuration.itemsPerPage;
         	self.formParams.limit = self.configuration.itemsPerPage;
         	var filterFields = Object.keys(self.filters);
         	var filterValues = Object.values(self.filters);
-        	
+
         	for(var i = 0; i < filterFields.length; i++) {
         		self.formParams[filterFields[i]] = filterValues[i];
-        	}          	 
+        	}
             readData(self.formParams);
         };
 

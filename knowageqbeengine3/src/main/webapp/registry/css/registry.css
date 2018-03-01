@@ -9,7 +9,7 @@
 }
 
 .kn-registry md-backdrop {
-    z-index: 89;
+    z-index: 10;
 }
 
 .kn-registry .registryFilters {
