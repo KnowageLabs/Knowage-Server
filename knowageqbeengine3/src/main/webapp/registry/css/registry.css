@@ -1,0 +1,54 @@
+.kn-registry .clickable {
+   cursor: pointer;
+   min-width: 100px;
+   min-height: 20px;
+}
+
+.kn-registry .md-open-menu-container {
+    z-index: 90;
+}
+
+.kn-registry md-backdrop {
+    z-index: 89;
+}
+
+.kn-registry .registryFilters {
+    background: white;
+    box-shadow: 0px 2px 5px #ccc;
+    z-index: 9;
+    position: relative;
+    margin: 5px;
+    border: 4px solid #A9C3DB;
+}
+
+.kn-registry .registryFilters .registryFilter {
+    min-width: 200px;
+    margin-bottom: 4px;
+}
+
+.kn-table.alternatedRows tbody tr:nth-child(odd) {
+    background-color: #f0f0f0;
+}
+
+.kn-table tbody tr md-icon {
+    line-height: 20px;
+    height: 20px;
+    min-height: 20px;
+    max-height: 20px;
+}
+
+.kn-table thead th.tableAction {
+    width: 50px;
+}
+
+.kn-table .innerTable {
+    width: 100%;
+}
+
+.kn-table .innerTable tr {
+    background-color: transparent !important;
+}
+
+.customContentMenu .check {
+    width: 46px;
+}
