@@ -75,7 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													</md-button>
 												</td>
 											</tr>
-											<tr ng-repeat-end ng-if="row.parameters && row.parameters.length > 0 && row.expanded">
+											<tr ng-repeat-end ng-show="row.parameters && row.parameters.length > 0 && row.expanded">
 												<td colspan="100">
 													<md-card layout="column" class="datasetParameterDetail">
 														<md-toolbar class="ternaryToolbar">
@@ -156,7 +156,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													</md-button>
 												</td>
 											</tr>
-											<tr ng-repeat-end ng-if="row.objParameter && row.objParameter.length > 0 && row.expanded">
+											<tr ng-repeat-end ng-show="row.objParameter && row.objParameter.length > 0 && row.expanded">
 												<td colspan="100">
 													<md-card layout="column" class="datasetParameterDetail">
 														<md-toolbar class="ternaryToolbar">

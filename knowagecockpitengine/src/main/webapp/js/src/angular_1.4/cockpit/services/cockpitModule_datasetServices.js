@@ -385,6 +385,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			if(dsIl!=undefined){
 				dsIl.useCache = (dataset.useCache == undefined && !dsIl.isRealtime) ? true : dataset.useCache;
 				dsIl.frequency = (dataset.frequency == undefined) ? 0 : dataset.frequency;
+				dsIl.expanded = true;
 				if(dataset.parameters!=undefined){
 					angular.forEach(dsIl.parameters,function(item){
 						item.value=dataset.parameters[item.name];
@@ -888,6 +889,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					$scope.saveDataset=function(){
 						if(multiple){
 							for(var i=0;i<$scope.tmpCurrentAvaiableDataset.length;i++){
+								$scope.tmpCurrentAvaiableDataset[i].expanded = true;
 								if(autoAdd){
 									ds.addAvaiableDataset($scope.tmpCurrentAvaiableDataset[i])
 								}else{
@@ -923,6 +925,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 								    })
 								    .then(function(data) {
 								    	angular.copy(data,$scope.tmpCurrentAvaiableDataset.parameters)
+								    	$scope.tmpCurrentAvaiableDataset.expanded = true;
 								    	if(autoAdd){
 											ds.addAvaiableDataset($scope.tmpCurrentAvaiableDataset)
 										}else{
@@ -938,6 +941,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 
 							}else{
+								$scope.tmpCurrentAvaiableDataset.expanded = true;
 								if(autoAdd){
 									ds.addAvaiableDataset($scope.tmpCurrentAvaiableDataset)
 								}else{
