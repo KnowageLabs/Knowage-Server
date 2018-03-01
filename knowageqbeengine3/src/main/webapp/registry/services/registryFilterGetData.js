@@ -1,14 +1,13 @@
 (function () {
     angular.module('BlankApp')
-    	   .factory('regFilterGetData', function(sbiModule_action_builder,registryConfigService, $filter ) {
-
+    	   .factory('regFilterGetData', ['sbiModule_action_builder', 'registryConfigService', '$filter', 
+    			   function(sbiModule_action_builder, registryConfigService, $filter) {
 
     		   var registryConfiguration = registryConfigService.getRegistryConfig();
 
     		   var data = {};
     		   data.action = sbiModule_action_builder;
     		   data.getData = function(filterField){
-
 
        		   	var entity = registryConfiguration.entity;
    	            var SubEntity='';
@@ -28,5 +27,5 @@
     		   };
 
     		   return data;
-    	   });
+    	   }]);
 })();

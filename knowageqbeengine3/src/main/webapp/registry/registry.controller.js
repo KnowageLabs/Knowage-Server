@@ -29,11 +29,12 @@
 								$httpProvider.interceptors
 										.push('httpInterceptor');
 
-							} ]).controller('RegistryController',
-					RegistryController)
+							} ]).controller('RegistryController', ['registryConfigService', 'registryCRUDService',
+								'regFilterGetData', 'sbiModule_messaging', '$mdDialog',
+					RegistryController])
 
 	function RegistryController(registryConfigService, registryCRUDService,
-			regFilterGetData, sbiModule_messaging) {
+			regFilterGetData, sbiModule_messaging, $mdDialog) {
 		var self = this;
 		var registryConfigurationService = registryConfigService;
 		var registryCRUD = registryCRUDService;
@@ -44,9 +45,8 @@
 		var sbiMessaging = sbiModule_messaging;
 		self.data = [];
 		self.results = 0;
-		self.filterOptions = [];
+		self.filterOptions = {};
 		self.columns = [];
-		self.options = [];
 		self.selectedColumn = [];
 		self.formParams = {};
 		self.filters = {};
@@ -82,10 +82,58 @@
         
 		self.setSelected = function(selectedColumn) {
 			self.selectedColumn.push(selectedColumn);
-			//console.log(self.selectedColumn);
+		};
+				
+		// Filling columns
+		columnsInfo.forEach(function(column) {
+			column.position = columnsInfo.indexOf(column);
+			self.columns.push(column);
+		});
+
+							
+		//Filters handling
+		self.getFilters = function(filterField) {
+			if(self.filterOptions[filterField] == undefined) {
+				self.filterOptions[filterField] = new Array();
+			}
+			if(self.filterOptions[filterField].length == 0) {
+				regGetData.getData(filterField).then(function(response) {
+					self.filterOptions[filterField] = response.data.rows;
+					addOptions(filterField);
+					addColumnOptions(filterField);
+				});
+			} else {
+				addOptions(filterField);
+				addColumnOptions(filterField);
+			}
+		};
+
+		var addOptions = function(filterField) {			
+			for (var i = 0; i < registryConfiguration.filters.length; i++) {
+				if (registryConfiguration.filters[i].field == filterField) {
+					registryConfiguration.filters[i].options = self.filterOptions[filterField];
+				}
+			}
+			return registryConfiguration.filters;			
 		};
 		
-		self.updateColumn = function() {
+		var addColumnOptions = function(field) {
+			self.columns.forEach(function(column) {
+				if (column.field == field) {
+					self.columns.options = self.filterOptions[field];
+				}
+			});
+		};
+				
+		self.loadFilteredData = function(params) {
+        	self.formParams = Object.assign({}, params);
+        	self.formParams.start = 0;
+        	self.page = 1;
+     	   	readData(self.formParams);
+        };
+	
+        
+        self.updateRow = function() {
 			for (var i = 0; i < self.selectedColumn.length; i++) {
 				registryCRUD.update(self.selectedColumn[i]).then(function(response) {});
 				if (i == (self.selectedColumn.length - 1)) {
@@ -96,58 +144,22 @@
 			self.selectedColumn = [];
 		};
 
-		self.deleteColumn = function(row) {
-				registryCRUD.delete(row).then(function(response) {
-						sbiMessaging.showInfoMessage('You have succesufly deleted column!', 'Success!!!');
+		self.deleteRowFromDB = function(row, event) {			
+			var confirm = $mdDialog.confirm()
+				.title('Delete Row!')
+				.textContent('Are you sure you want to delete row?')
+				.targetEvent(event)
+				.ok('Yes')
+				.cancel('No');
+			
+			$mdDialog.show(confirm).then(function() {
+					registryCRUD.delete(row).then(function(response) {
+						sbiMessaging.showInfoMessage('You have succesufly deleted row!', 'Success!!!');
 						self.deleteRow(row.$$hashKey);
-				});
+					});
+				});					
 		};
-
-		// Filling columns
-		columnsInfo.forEach(function(column) {
-			column.position = columnsInfo.indexOf(column);
-			self.columns.push(column);
-		});
-
-		self.getOptions = function(column) {
-			regGetData.getData(column).then(function(response) {
-				self.options = response.data.rows;
-				return addColumnOptions(column);
-			});
-		};
-
-		var addColumnOptions = function(field) {
-			self.columns.forEach(function(column) {
-				if (column.field == field) {
-					self.columns.options = self.options;
-				}
-			});
-		};				
-		
-		//Filters handling
-		self.getFilters = function(filterField) {
-			regGetData.getData(filterField).then(function(response) {
-				self.filterOptions = response.data.rows;
-				return addOptions(filterField);
-			});
-		};
-
-		var addOptions = function(filterField) {
-			for (var i = 0; i < registryConfiguration.filters.length; i++) {
-				if (registryConfiguration.filters[i].field == filterField) {
-					registryConfiguration.filters[i].options = self.filterOptions;
-				}
-			}
-			return registryConfiguration.filters;
-		};
-		
-		self.loadFilteredData = function(params) {
-        	self.formParams = Object.assign({}, params);
-        	self.formParams.start = 0;
-        	self.page = 1;
-     	   	readData(self.formParams);
-        };
-	
+        
 		self.isArray = angular.isArray;
 
 		self.deleteRow = function(hash) {
@@ -156,17 +168,16 @@
 					self.data.splice(key, 1);
 					return;
 				}
-			})
-		}
+			});
+		};
 
 		self.addRow = function() {
 			var tmpRow = angular.copy(self.data[0], {});
 			for ( var i in tmpRow) {
 				tmpRow[i] = "";
-			}
-			;
+			};
 			self.data.unshift(tmpRow);
-		}
+		};
 
 		// reordering columns function
 		self.move = function(position, direction) {

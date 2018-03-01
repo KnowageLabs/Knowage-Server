@@ -20,7 +20,7 @@
                 </md-input-container>
                
                 <div ng-if="rc.configuration.enableButtons">
-                        <md-icon ng-click="rc.updateColumn()" md-font-icon="fa fa-save fa-2x" style="margin-left:10px;margin-right:5px;"></md-icon>
+                        <md-icon ng-click="rc.updateRow()" md-font-icon="fa fa-save fa-2x" style="margin-left:10px;margin-right:5px;"></md-icon>
                 </div>
             </div>
         </div>
@@ -75,8 +75,8 @@
                                         <md-menu-item layout="row" layout-align="start center">
                                             <md-input-container class="md-icon-float md-block">
                                                 <input ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change" ng-if="col.editor=='TEXT'">
-                                                <md-select ng-click="rc.getOptions(col.field)" ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'">
-                                                    <md-option ng-repeat="opt in rc.columns.options" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
+                                                <md-select ng-click="rc.getFilters(col.field)" ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'">
+                                                    <md-option ng-repeat="opt in rc.columns.options" ng-model="opt.id" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
                                                 </md-select>
                                             </md-input-container>
                                         </md-menu-item>
@@ -90,7 +90,7 @@
                             </table>
                         </td>
                          <td style="text-align:center" class="" >
-                            <md-icon md-font-icon="fa fa-trash" ng-click="rc.deleteColumn(row)"></md-icon>
+                            <md-icon md-font-icon="fa fa-trash" ng-click="rc.deleteRowFromDB(row, $event)"></md-icon>
                         </td>
                     </tr>                   
                 </tbody>

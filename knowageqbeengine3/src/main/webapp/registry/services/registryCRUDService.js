@@ -18,7 +18,7 @@
 
 (function () {
     angular.module('BlankApp')
-    	   .factory('registryCRUDService', function(sbiModule_action_builder) {
+    	   .factory('registryCRUDService', ['sbiModule_action_builder', function(sbiModule_action_builder) {
 
     		   var crud = {};
     		   crud.action = sbiModule_action_builder;
@@ -58,5 +58,5 @@
     		   };
 
     		   return crud;
-    	   });
+    	   }]);
 })();
