@@ -1,21 +1,21 @@
 module.exports = function(grunt){
 	
 	grunt.initConfig({
-		pkg:grunt.file.readJSON('package.json'),
+		pkg:grunt.file.readJSON('./package.json'),
 		
 		clean:{
-			test:['e2e/protractor/testresults','node_modules/pageObjects']
+			test:['./e2e/protractor/testresults','./node_modules/pageObjects']
 	
 		},
 		copy:{
 			pageObjects:{
-				files:[{expand:true,cwd:'e2e/protractor/',src:['pageObjects/**'],dest:'node_modules/'}]
+				files:[{expand:true,cwd:'./e2e/protractor/',src:['pageObjects/**'],dest:'./node_modules/'}]
 			}
 		},
 		protractor: {
 		    options: {
-		    	nodeBin:'node/node',
-		      configFile: "protractor/conf.js", // Default config file 
+		    	nodeBin:'./node/node',
+		      configFile: "./e2e/protractor/conf.js", // Default config file 
 		      keepAlive: false, // If false, the grunt process stops when the test fails. 
 		      noColor: false, // If true, protractor will not use colors in its output. 
 		      webdriverManagerUpdate:true,
@@ -25,7 +25,7 @@ module.exports = function(grunt){
 		    },
 		    basic: {   // Grunt requires at least one target to run so you can simply put 'all: {}' here too. 
 		      options: {
-		        configFile: "e2e/protractor/conf.js", // Target-specific config file 
+		        configFile: "./e2e/protractor/conf.js", // Target-specific config file 
 		        args: {} // Target-specific arguments
 		      }
 		    },
