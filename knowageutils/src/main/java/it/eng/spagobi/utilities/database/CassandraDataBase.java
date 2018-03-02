@@ -32,6 +32,11 @@ public class CassandraDataBase extends AbstractDataBase {
 	}
 
 	@Override
+	public String getAliasDelimiter() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
 		throw new UnsupportedOperationException();
 	}

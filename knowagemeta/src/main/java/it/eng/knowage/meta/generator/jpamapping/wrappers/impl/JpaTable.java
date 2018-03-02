@@ -17,6 +17,12 @@
  */
 package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaCalculatedColumn;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaColumn;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaRelationship;
@@ -34,21 +40,14 @@ import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * This class wrap a business table and provide all the utility methods used by the template engine in order to generate the java class mapping
- * 
+ *
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class JpaTable extends AbstractJpaTable {
 
 	BusinessTable businessTable;
-	String quoteString;
 	List<IJpaSubEntity> allSubEntities = new ArrayList<IJpaSubEntity>();
 	List<BusinessColumnSet> parents;
 	List<IJpaCalculatedColumn> jpaCalculatedColumns;
@@ -92,45 +91,6 @@ public class JpaTable extends AbstractJpaTable {
 	}
 
 	@Override
-	public String getCatalog() {
-		String useCatalog = getUseCatalog();
-		if ((useCatalog != null) && (useCatalog.equalsIgnoreCase("true"))) {
-			logger.debug("Catalog is: " + getModel().getPhysicalModel().getCatalog());
-			String catalog = getModel().getPhysicalModel().getCatalog();
-			if (catalog != null) {
-				if (!quoteString.equals(" ")) {
-					catalog = "`" + catalog + "`";
-				}
-			}
-
-			// if(catalog!=null && !catalog.equals("") && getModel().getPhysicalModel().getDatabaseName().contains("PostgreSQL")){
-			// catalog = "\\\""+catalog+"\\\"";
-			// }
-			return catalog;
-		} else {
-			return null;
-		}
-
-	}
-
-	@Override
-	public String getSchema() {
-		String useSchema = getUseSchema();
-		if ((useSchema != null) && (useSchema.equalsIgnoreCase("true"))) {
-			logger.debug("Schema is: " + getModel().getPhysicalModel().getSchema());
-			String schema = getModel().getPhysicalModel().getSchema();
-			if (schema != null && !schema.equals("")) {
-				if (!quoteString.equals(" ")) {
-					schema = quoteString + schema + quoteString;
-				}
-			}
-			return schema;
-		} else {
-			return null;
-		}
-	}
-
-	@Override
 	public PhysicalTable getPhysicalTable() {
 		return businessTable.getPhysicalTable();
 	}
@@ -168,7 +128,7 @@ public class JpaTable extends AbstractJpaTable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable#hasFakePrimaryKey()
 	 */
 	@Override
@@ -178,7 +138,7 @@ public class JpaTable extends AbstractJpaTable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable#hasCompositeKey()
 	 */
 	@Override

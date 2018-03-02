@@ -17,23 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -44,8 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.naming.AuthenticationException;
 import javax.naming.Context;
@@ -75,12 +56,15 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -252,13 +236,12 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 						} else {
 							message += ", " + objName;
 						}
-						if(i == objNames.get(key).size()-1){
+						if (i == objNames.get(key).size() - 1) {
 							message += ") ";
 						}
 						i++;
 					}
-					
-					
+
 					message += "\n";
 				}
 			}
@@ -350,51 +333,53 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		return tableContent.toString();
 	}
 
-
 	private JSONObject getTableMetadata(Connection conn) throws HibernateException, JSONException, SQLException {
 		JSONObject tableContent = new JSONObject();
 		ResultSet rs = null;
 		try {
 			DatabaseMetaData meta = conn.getMetaData();
 
-				if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("oracle")) {
-					// String q =
-					// "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM ALL_TAB_COLUMNS WHERE OWNER = '"
-					// + userName + "'";
-					String q = "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM USER_TAB_COLUMNS";
-					Statement stmt = conn.createStatement();
-					rs = stmt.executeQuery(q);
-					while (rs.next()) {
-						if (!tableContent.has(rs.getString(1))) {
-							tableContent.put(rs.getString(1), new JSONObject());
-						}
-						tableContent.getJSONObject(rs.getString(1)).put(rs.getString(2), rs.getString(3));
+			if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("oracle")) {
+				// String q =
+				// "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM ALL_TAB_COLUMNS WHERE OWNER = '"
+				// + userName + "'";
+				String q = "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM USER_TAB_COLUMNS";
+				Statement stmt = conn.createStatement();
+				rs = stmt.executeQuery(q);
+				while (rs.next()) {
+					if (!tableContent.has(rs.getString(1))) {
+						tableContent.put(rs.getString(1), new JSONObject());
 					}
-				} else {
-					final String[] TYPES = { "TABLE", "VIEW" };
-					final String tableNamePattern = "%";
-					final String catalog = null;
-					rs = meta.getTables(catalog, null, tableNamePattern, TYPES);
-					while (rs.next()) {
-						String tableName = rs.getString(3);
+					tableContent.getJSONObject(rs.getString(1)).put(rs.getString(2), rs.getString(3));
+				}
+			} else {
+				final String[] TYPES = { "TABLE", "VIEW" };
+				final String tableNamePattern = "%";
+				final IDataBase database = DataBaseFactory.getDataBase(dataSource);
+				final String catalog = database.getCatalog(conn);
+				final String schema = database.getSchema(conn);
+				logger.debug("This connection has been configured with the catalog [" + catalog + "] and schema [" + schema + "]");
+				rs = meta.getTables(catalog, schema, tableNamePattern, TYPES);
+				while (rs.next()) {
+					String tableName = rs.getString(3);
 
-						JSONObject column = new JSONObject();
-						ResultSet tabCol = meta.getColumns(rs.getString(1), rs.getString(2), tableName, "%");
-						while (tabCol.next()) {
-							column.put(tabCol.getString(4), "null");
-						}
-						tabCol.close();
-						tableContent.put(tableName, column);
+					JSONObject column = new JSONObject();
+					ResultSet tabCol = meta.getColumns(rs.getString(1), rs.getString(2), tableName, "%");
+					while (tabCol.next()) {
+						column.put(tabCol.getString(4), "null");
 					}
-				}
-			} finally {
-				if (rs != null) {
-					rs.close();
-				}
-				if (!conn.isClosed()) {
-					conn.close();
+					tabCol.close();
+					tableContent.put(tableName, column);
 				}
 			}
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (!conn.isClosed()) {
+				conn.close();
+			}
+		}
 		return tableContent;
 	}
 
@@ -417,6 +402,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		String schema = (String) profile.getUserAttribute(schemaAttr);
 		logger.debug("schema:" + schema);
+		Connection connection = null;
 
 		if (jndi != null && jndi.length() > 0) {
 			String jndiName = schema == null ? jndi : jndi + schema;
@@ -425,9 +411,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				logger.debug("Lookup JNDI name:" + jndiName);
 				Context ctx = new InitialContext();
 				javax.sql.DataSource ds = (javax.sql.DataSource) ctx.lookup(jndiName);
-				try (Connection connection = ds.getConnection()) {
-					logger.debug("Connection performed successfully");
-				}
+				connection = ds.getConnection();
 			} catch (AuthenticationException e) {
 				logger.error("Error while attempting to reacquire the authentication information on provided JNDI name", e);
 				throw new SpagoBIServiceException(SERVICE_NAME, e);
@@ -474,9 +458,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 					throw new SpagoBIRestServiceException("Driver not found: " + driver, buildLocaleFromSession(), e);
 				}
 
-				try  (Connection connection = DriverManager.getConnection(url, user, pwd)) {
-					logger.debug("Connection performed successfully");
-				}
+				connection = DriverManager.getConnection(url, user, pwd);
 
 			}
 
