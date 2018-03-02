@@ -280,7 +280,7 @@
 			dee.getBackendRequestParams(exportType, mimeType).then(function(parameters){
 				dee.buildBackendRequestConf(exportType, mimeType, parameters)
 				.then(function(requestConf){
-					var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("Sbi.browser.ProgressPanel.exporting"), 'Success!', 0);
+					var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.execution.executionpage.toolbar.export.exporting"), 'Success!', 0);
 					$http(requestConf)
 					.then(function successCallback(response) {
 						var mimeType = response.headers("Content-type");
