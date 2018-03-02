@@ -37,7 +37,6 @@ import org.json.JSONObject;
 import it.eng.knowage.export.pdf.ExportDetails;
 import it.eng.knowage.export.pdf.FrontpageDetails;
 import it.eng.knowage.export.pdf.PDFCreator;
-import it.eng.knowage.export.pdf.PageNumbering;
 import it.eng.knowage.slimerjs.wrapper.DeleteOnCloseFileInputStream;
 import it.eng.knowage.slimerjs.wrapper.SlimerJS;
 import it.eng.knowage.slimerjs.wrapper.SlimerJSConstants;
@@ -90,8 +89,8 @@ public class PdfExporter {
 		List<InputStream> images = SlimerJS.render(url, sheetCount, renderOptionsWithFixedHeight);
 		PDFCreator.createPDF(images, output, pdfFrontPage, pdfBackPage);
 
-		PageNumbering pageNumbering = new PageNumbering(!pdfFrontPage, true, !pdfBackPage);
-		ExportDetails details = new ExportDetails(getFrontpageDetails(pdfFrontPage, document), pageNumbering);
+		// PageNumbering pageNumbering = new PageNumbering(!pdfFrontPage, true, !pdfBackPage);
+		ExportDetails details = new ExportDetails(getFrontpageDetails(pdfFrontPage, document), null);
 		PDFCreator.addInformation(output, details);
 		try (InputStream is = new DeleteOnCloseFileInputStream(output.toFile())) {
 			return IOUtils.toByteArray(is);

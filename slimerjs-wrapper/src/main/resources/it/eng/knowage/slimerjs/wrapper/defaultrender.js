@@ -408,8 +408,9 @@ log("hmacKey = " + hmacKey);
 
 var	zoomFactor = system.args[ 12 ];
 log("zoomFactor = " + zoomFactor);
-viewportWidth = viewportWidth * zoomFactor + 1;
-viewportHeight = viewportHeight * zoomFactor + 1;
+viewportWidth = viewportWidth * zoomFactor;
+viewportHeight = viewportHeight * zoomFactor;
+zoomFactor = zoomFactor * 0.99;
 
 // this sets a zoom on the page because of the dpi differences between windows and unix
 var setZoom = function (page) {

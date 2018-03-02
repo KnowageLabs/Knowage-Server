@@ -236,18 +236,41 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
 		Map<String, String> headers = new HashMap<String, String>(1);
 		headers.put("Authorization", "Direct " + encodedUserId);
+
+		RenderOptions renderOptions = RenderOptions.DEFAULT;
+
 		CustomHeaders customHeaders = new CustomHeaders(headers);
+		renderOptions = renderOptions.withCustomHeaders(customHeaders);
 
-		int pdfWidth = Integer.valueOf(request.getParameter(PDF_WIDTH));
-		int pdfHeight = Integer.valueOf(request.getParameter(PDF_HEIGHT));
-		ViewportDimensions dimensions = new ViewportDimensions(pdfWidth, pdfHeight);
+		ViewportDimensions dimensions = renderOptions.getDimensions();
 
-		long pdfRenderingWaitTime = 1000 * Long.valueOf(request.getParameter(PDF_WAIT_TIME));
+		int pdfWidth = Integer.valueOf(dimensions.getWidth());
+		String parPdfWidth = request.getParameter(PDF_WIDTH);
+		if (parPdfWidth != null) {
+			pdfWidth = Integer.valueOf(parPdfWidth);
+		}
 
-		Double pdfZoomFactor = Double.valueOf(request.getParameter(PDF_ZOOM_FACTOR));
+		int pdfHeight = Integer.valueOf(dimensions.getHeight());
+		String parPdfHeight = request.getParameter(PDF_HEIGHT);
+		if (parPdfHeight != null) {
+			pdfHeight = Integer.valueOf(parPdfHeight);
+		}
 
-		RenderOptions renderOptions = RenderOptions.DEFAULT.withCustomHeaders(customHeaders).withDimensions(dimensions)
-				.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L).withZoomFactor(pdfZoomFactor);
+		dimensions = new ViewportDimensions(pdfWidth, pdfHeight);
+		renderOptions = renderOptions.withDimensions(dimensions);
+
+		String parPdfRenderingWaitTime = request.getParameter(PDF_WAIT_TIME);
+		if (parPdfRenderingWaitTime != null) {
+			long pdfRenderingWaitTime = 1000 * Long.valueOf(parPdfRenderingWaitTime);
+			renderOptions.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
+		}
+
+		String parPdfZoomFactor = request.getParameter(PDF_ZOOM_FACTOR);
+		if (parPdfZoomFactor != null) {
+			Double pdfZoomFactor = Double.valueOf(parPdfZoomFactor);
+			renderOptions.withZoomFactor(pdfZoomFactor);
+		}
+
 		return renderOptions;
 	}
 
