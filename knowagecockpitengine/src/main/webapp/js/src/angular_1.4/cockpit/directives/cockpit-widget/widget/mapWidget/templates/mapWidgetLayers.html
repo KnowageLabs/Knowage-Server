@@ -1,0 +1,34 @@
+<md-card>
+ 	<md-toolbar class="secondaryToolbar"> 
+      <div class="md-toolbar-tools">
+        <h2>Layers</h2>
+        <span flex></span>
+        <md-button class="" ng-click="addLayer($event)">
+			Add layer
+		</md-button>
+      </div>
+    </md-toolbar>
+	<md-card-content>
+		<div layout="row" layout-align="center center">
+			<div class="kn-noItems" ng-if="!newModel.content.targetLayersConf || newModel.content.targetLayersConf.length == 0">
+				No Layers present, add one or more to continue
+			</div>
+		</div>
+		
+		<table class="kn-table" ng-if="newModel.content.targetLayersConf.length > 0">
+			<thead>
+				<tr>
+					<th>Order</th><th>Type</th><th>Label</th><th>Target</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="layer in newModel.content.targetLayersConf">
+					<td>{{layer.order}}</td>
+					<td>{{layer.type}}</td>
+					<td>{{layer.label}}</td>
+					<td><md-radio ng-model="layer.isTarget"></md-radio></td>
+				</tr>
+			</tbody>
+		</table>
+	</md-card-content>
+</md-card>
