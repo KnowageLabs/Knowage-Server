@@ -57,4 +57,9 @@ public class TeradataDataBase extends AbstractDataBase {
 			stmt.close();
 		}
 	}
+	
+	@Override
+    public String getCatalog(Connection conn) throws SQLException {
+        return null;   
+    }
 }
