@@ -199,10 +199,10 @@
 		}
 		
 		//get templates location
-		gs.basePath = $location.$$absUrl.substring(0,$location.$$absUrl.indexOf('api/'));
-		gs.templatesUrl = 'js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/mapWidget/templates/';
-		gs.getTemplateUrl = function(template){
-	  		return gs.basePath + gs.templatesUrl + template +'.html';
+		gs.getTemplateUrl = function(widget,template){
+			var basePath = $location.$$absUrl.substring(0,$location.$$absUrl.indexOf('api/'));
+			var templatesUrl = 'js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/'+widget+'/templates/';
+	  		return basePath + templatesUrl + template +'.html';
 	  	}
 	};
 })();

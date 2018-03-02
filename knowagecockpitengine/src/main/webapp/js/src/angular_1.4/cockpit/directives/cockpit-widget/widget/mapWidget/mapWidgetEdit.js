@@ -20,48 +20,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		.module('cockpitModule')
 		.controller('mapWidgetEditControllerFunction', MapWidgetEditControllerFunction)
 
-	function MapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,$timeout,$location){
-			$scope.translate=sbiModule_translate;
-			$scope.newModel = angular.copy(model);
+	function MapWidgetEditControllerFunction(
+			$scope,
+			finishEdit,
+			model,
+			sbiModule_translate,
+			$mdDialog,
+			mdPanelRef,
+			$mdToast,
+			$timeout,
+			cockpitModule_generalServices){
 			
-			//get templates location
-		  	$scope.basePath = $location.$$absUrl.substring(0,$location.$$absUrl.indexOf('api/'));
-		  	$scope.templatesUrl = 'js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/mapWidget/templates/';
-		  	$scope.getTemplateUrl = function(template){
-		  		return $scope.basePath + $scope.templatesUrl + template +'.html';
-		  	}
-		  	
-		  	$scope.addLayer = function(ev) {
-		  		$mdDialog.show({
-					controller: function ($scope,$mdDialog) {
-						
-						$scope.add = function(){
-							$mdDialog.hide();
-						}
-						$scope.cancel = function(){
-							$mdDialog.cancel();
-						}
-					},
-					scope: $scope,
-					preserveScope:true,
-			      templateUrl: $scope.getTemplateUrl('mapWidgetAddLayerDialog'),
-			      targetEvent: ev,
-			      clickOutsideToClose:true,
-			      locals: {  }
-			    })
-			    .then(function() {
-	
-			    });
-		  	}
-			$scope.saveConfiguration=function(){
-				 mdPanelRef.close();
-				 angular.copy($scope.newModel,model);
-				 finishEdit.resolve();
-	 	  	}
-	
-			$scope.cancelConfiguration=function(){
-	 	  		mdPanelRef.close();
-	 	  		finishEdit.reject();
-	 	  	}
-		}
-	})();
+		$scope.translate=sbiModule_translate;
+		$scope.newModel = angular.copy(model);
+			
+		//get templates location
+	  	$scope.getTemplateUrl = function(template){
+	  		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
+	  	}
+	  	
+	  	$scope.addLayer = function(ev) {
+	  		$mdDialog.show({
+				controller: function ($scope,$mdDialog) {
+					
+					$scope.add = function(){
+						$mdDialog.hide();
+					}
+					$scope.cancel = function(){
+						$mdDialog.cancel();
+					}
+				},
+				scope: $scope,
+				preserveScope:true,
+		      templateUrl: $scope.getTemplateUrl('mapWidgetAddLayerDialog'),
+		      targetEvent: ev,
+		      clickOutsideToClose:true,
+		      locals: {  }
+		    })
+		    .then(function() {});
+	  	}
+		$scope.saveConfiguration=function(){
+			 mdPanelRef.close();
+			 angular.copy($scope.newModel,model);
+			 finishEdit.resolve();
+ 	  	}
+
+		$scope.cancelConfiguration=function(){
+ 	  		mdPanelRef.close();
+ 	  		finishEdit.reject();
+ 	  	}
+	}
+})();
