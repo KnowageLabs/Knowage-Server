@@ -72,6 +72,8 @@ public abstract class DataBaseFactory {
 					break;
 				}
 			}
+		} else {
+			return new MetaModelDataBase(dataSource);
 		}
 		return dataBase;
 	}

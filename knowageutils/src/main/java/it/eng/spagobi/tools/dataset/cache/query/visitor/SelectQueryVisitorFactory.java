@@ -26,6 +26,11 @@ public class SelectQueryVisitorFactory {
 
 	public static ISelectQueryVisitor getVisitor(IDataSource dataSource) {
 		IDataBase database = DataBaseFactory.getDataBase(dataSource);
+
+		if (dataSource == null) {
+			return new MetaModelSelectQueryVisitor(database);
+		}
+
 		switch (database.getSqlDialect()) {
 		case HBASE:
 			return new HBaseSelectQueryVisitor(database);

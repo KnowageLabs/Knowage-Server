@@ -44,7 +44,7 @@ public abstract class AbstractDataBase implements IDataBase {
 
 	public AbstractDataBase(IDataSource dataSource) {
 		this.dataSource = dataSource;
-		this.sqlDialect = SqlDialect.get(dataSource.getHibDialectClass());
+		this.sqlDialect = (dataSource != null) ? SqlDialect.get(dataSource.getHibDialectClass()) : null;
 	}
 
 	@Override
