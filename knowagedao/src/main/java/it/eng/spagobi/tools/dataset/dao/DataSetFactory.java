@@ -49,7 +49,6 @@ import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCHBaseDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
@@ -58,7 +57,6 @@ import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -142,10 +140,6 @@ public class DataSetFactory {
 			}
 
 			toReturn.setDsType(QBE_DS_TYPE);
-		}
-
-		if (dataSet instanceof WebServiceDataSet) {
-			toReturn.setDsType(WS_DS_TYPE);
 		}
 
 		if (dataSet instanceof ScriptDataSet) {
@@ -302,8 +296,6 @@ public class DataSetFactory {
 
 				if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
 					ds = new MongoDataSet();
-				} else if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("hbase")) {
-					ds = new JDBCHBaseDataSet();
 				} else if (dataSource != null && SqlUtils.isHiveLikeDialect(dataSource.getHibDialectClass().toLowerCase())) {
 					ds = new JDBCHiveDataSet();
 				} else if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("orient")) {
@@ -329,13 +321,6 @@ public class DataSetFactory {
 					logger.error("Could not retrieve datasource with label " + jsonConf.getString(DataSetConstants.DATA_SOURCE) + " for dataset "
 							+ sbiDataSet.getLabel());
 				}
-
-			} else if (type.equalsIgnoreCase(DataSetConstants.DS_WS)) {
-				ds = new WebServiceDataSet();
-				ds.setConfiguration(sbiDataSet.getConfiguration());
-				((WebServiceDataSet) ds).setAddress(jsonConf.getString(DataSetConstants.WS_ADDRESS));
-				((WebServiceDataSet) ds).setOperation(jsonConf.getString(DataSetConstants.WS_OPERATION));
-				ds.setDsType(WS_DS_TYPE);
 			} else if (type.equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {
 				ds = new ScriptDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
@@ -604,8 +589,6 @@ public class DataSetFactory {
 
 				if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
 					ds = new MongoDataSet();
-				} else if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("hbase")) {
-					ds = new JDBCHBaseDataSet();
 				} else if (dataSource != null && SqlUtils.isHiveLikeDialect(dataSource.getHibDialectClass().toLowerCase())) {
 					ds = new JDBCHiveDataSet();
 				} else if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("orient")) {
@@ -632,14 +615,6 @@ public class DataSetFactory {
 							+ sbiDataSet.getLabel());
 				}
 
-			}
-
-			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_WS)) {
-				ds = new WebServiceDataSet();
-				ds.setConfiguration(sbiDataSet.getConfiguration());
-				((WebServiceDataSet) ds).setAddress(jsonConf.getString(DataSetConstants.WS_ADDRESS));
-				((WebServiceDataSet) ds).setOperation(jsonConf.getString(DataSetConstants.WS_OPERATION));
-				ds.setDsType(WS_DS_TYPE);
 			}
 
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {
@@ -879,8 +854,6 @@ public class DataSetFactory {
 
 				if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
 					ds = new MongoDataSet();
-				} else if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("hbase")) {
-					ds = new JDBCHBaseDataSet();
 				} else if (dataSource != null && SqlUtils.isHiveLikeDialect(dataSource.getHibDialectClass().toLowerCase())) {
 					ds = new JDBCHiveDataSet();
 				} else if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("orient")) {
@@ -907,14 +880,6 @@ public class DataSetFactory {
 							+ sbiDataSet.getLabel());
 				}
 
-			}
-
-			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_WS)) {
-				ds = new WebServiceDataSet();
-				ds.setConfiguration(sbiDataSet.getConfiguration());
-				((WebServiceDataSet) ds).setAddress(jsonConf.getString(DataSetConstants.WS_ADDRESS));
-				((WebServiceDataSet) ds).setOperation(jsonConf.getString(DataSetConstants.WS_OPERATION));
-				ds.setDsType(DataSetConstants.DS_WS);
 			}
 
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {

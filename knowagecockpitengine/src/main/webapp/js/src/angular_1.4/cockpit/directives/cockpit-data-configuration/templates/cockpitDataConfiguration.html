@@ -63,7 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 														<md-icon md-font-icon="fa" ng-class="{'fa-chevron-up':row.expanded, 'fa-chevron-down':!row.expanded}">
 													</md-button>
 													<span ng-if="column.type == 'text'">{{row[column.name]}}</span>
-													<md-checkbox ng-if="column.type == 'checkbox'" ng-model="row.useCache"></md-checkbox>
+													<md-checkbox ng-if="column.type == 'checkbox'" ng-disabled="(row.isCachingSupported && !row.isNearRealtimeSupported) || (!row.isCachingSupported && row.isNearRealtimeSupported)" ng-model="row.useCache"></md-checkbox>
 													<md-input-container ng-if="column.type == 'input'">
 												        <input type="number" ng-model="row.frequency" ng-disabled="row.useCache">
 												    </md-input-container>

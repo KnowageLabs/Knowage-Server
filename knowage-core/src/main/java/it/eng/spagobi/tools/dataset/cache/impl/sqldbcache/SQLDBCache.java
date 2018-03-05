@@ -79,6 +79,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
+import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
@@ -304,7 +305,7 @@ public class SQLDBCache implements ICache {
 	}
 
 	public IDataStore getInternal(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
 		logger.debug("IN");
 
 		try {
@@ -433,7 +434,8 @@ public class SQLDBCache implements ICache {
 
 	@SuppressWarnings("unchecked")
 	private IDataStore queryStandardCachedDataset(IDataSet dataSet, String resultsetSignature, List<Projection> projections, Filter filter,
-			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
+			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount)
+			throws DataBaseException {
 
 		DataStore toReturn = null;
 
@@ -445,7 +447,7 @@ public class SQLDBCache implements ICache {
 			timing = MonitorFactory.start("Knowage.SQLDBCache.queryStandardCachedDataset:gettingLock[" + hashedSignature + "]");
 			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
 				timing.stop();
-				
+
 				try {
 					timing = MonitorFactory.start("Knowage.SQLDBCache.queryStandardCachedDataset:usingLock[" + hashedSignature + "]");
 					if (getMetadata().containsCacheItem(resultsetSignature)) {
@@ -774,12 +776,12 @@ public class SQLDBCache implements ICache {
 
 	@Override
 	@Deprecated
-	public long put(IDataSet dataSet, IDataStore dataStore) {
+	public long put(IDataSet dataSet, IDataStore dataStore) throws DataBaseException {
 		return put(dataSet, dataStore, false);
 	}
 
 	@Deprecated
-	public long put(IDataSet dataSet, IDataStore dataStore, boolean forceUpdate) {
+	public long put(IDataSet dataSet, IDataStore dataStore, boolean forceUpdate) throws DataBaseException {
 		logger.trace("IN");
 
 		if (dataStore.getMetaData().getFieldCount() == 0) {
@@ -1164,7 +1166,7 @@ public class SQLDBCache implements ICache {
 		int x = ran.nextInt(100);
 		String tableName = "SbiTest" + x;
 		persistedTableManager.setTableName(tableName);
-		
+
 		try {
 			persistedTableManager.persistDataset(dataStore, dataSource);
 

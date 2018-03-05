@@ -49,6 +49,7 @@ import it.eng.spagobi.tools.dataset.graph.associativity.exceptions.IllegalEdgeGr
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.parameters.ParametersUtilities;
 
 /**
@@ -177,7 +178,7 @@ public class AssociativeDatasetContainer {
 		return parameters;
 	}
 
-	public Set<Tuple> getTupleOfValues(List<String> columnNames) throws ClassNotFoundException, NamingException, SQLException {
+	public Set<Tuple> getTupleOfValues(List<String> columnNames) throws ClassNotFoundException, NamingException, SQLException, DataBaseException {
 		PreparedStatementData data = buildPreparedStatementData(columnNames);
 		String query = data.getQuery();
 		List<Object> values = data.getValues();
@@ -223,11 +224,11 @@ public class AssociativeDatasetContainer {
 		return AssociativeLogicUtils.getTupleOfValues(parameters.get(ParametersUtilities.getParameterName(parameter)));
 	}
 
-	public String buildQuery(List<String> columnNames) {
+	public String buildQuery(List<String> columnNames) throws DataBaseException {
 		return getSelectQuery(columnNames).toSql(dataSource);
 	}
 
-	public PreparedStatementData buildPreparedStatementData(List<String> columnNames) {
+	public PreparedStatementData buildPreparedStatementData(List<String> columnNames) throws DataBaseException {
 		return getSelectQuery(columnNames).getPreparedStatementData(dataSource);
 	}
 

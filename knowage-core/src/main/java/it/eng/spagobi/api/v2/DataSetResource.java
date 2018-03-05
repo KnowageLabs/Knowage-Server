@@ -49,7 +49,6 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -61,6 +60,8 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
@@ -88,6 +89,9 @@ import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -271,9 +275,9 @@ public class DataSetResource extends AbstractDataSetResource {
 
 		try {
 			ISbiDataSetDAO dao = DAOFactory.getSbiDataSetDAO();
-			IEngUserProfile profile = this.getUserProfile();
-			// TODO check if profile is null
-			dao.setUserProfile(profile);
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			dao.setUserProfile(getUserProfile());
+			dataSourceDAO.setUserProfile(getUserProfile());
 
 			Integer page = getNumberOrNull(pageStr);
 			Integer item_per_page = getNumberOrNull(itemPerPageStr);
@@ -291,12 +295,22 @@ public class DataSetResource extends AbstractDataSetResource {
 			JSONObject jo = new JSONObject();
 			JSONArray ja = new JSONArray();
 			for (SbiDataSet ds : dataset) {
-				IDataSet iDataSet = DataSetFactory.toDataSet(ds);
-				JSONObject jsonIDataSet = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(iDataSet, null);
+				IDataSet dataSet = DataSetFactory.toDataSet(ds);
+				JSONObject jsonIDataSet = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataSet, null);
 
 				JSONObject jsonSbiDataSet = new JSONObject(JsonConverter.objectToJson(ds, SbiDataSet.class));
-				jsonSbiDataSet.put("isRealtime", iDataSet.isRealtime());
+				boolean isNearRealtimeSupported = false;
+				jsonSbiDataSet.put("isRealtime", dataSet.isRealtime());
+				jsonSbiDataSet.put("isCachingSupported", dataSet.isCachingSupported());
 				jsonSbiDataSet.put("parameters", jsonIDataSet.getJSONArray("pars"));
+				dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
+				if (dataSet instanceof AbstractJDBCDataset) {
+					IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
+					isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
+				} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted()) {
+					isNearRealtimeSupported = true;
+				}
+				jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);
 
 				ja.put(jsonSbiDataSet);
 			}
@@ -305,8 +319,8 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			return jo.toString();
 		} catch (Exception e) {
-			logger.error("Error while getting the list of documents", e);
-			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
+			logger.error("Error while getting the list of datasets", e);
+			throw new SpagoBIRuntimeException("Error while getting the list of datasets", e);
 		} finally {
 			logger.debug("OUT");
 		}

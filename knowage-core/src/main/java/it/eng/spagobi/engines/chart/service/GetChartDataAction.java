@@ -55,7 +55,6 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
@@ -471,14 +470,6 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 			}
 		}
 
-		if (dsType.equalsIgnoreCase(DataSetConstants.DS_WS)) {
-			ds = new WebServiceDataSet();
-			String wsAddress = getAttributeAsString(DataSetConstants.WS_ADDRESS);
-			String wsOperation = getAttributeAsString(DataSetConstants.WS_OPERATION);
-			((WebServiceDataSet) ds).setAddress(wsAddress);
-			((WebServiceDataSet) ds).setOperation(wsOperation);
-		}
-
 		if (dsType.equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {
 			ds = new ScriptDataSet();
 			String script = getAttributeAsString(DataSetConstants.SCRIPT);
@@ -758,16 +749,6 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 					e.printStackTrace();
 				}
 			}
-		}
-
-		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_WS)) {
-			dataSet = new WebServiceDataSet();
-			String wsAddress = getAttributeAsString(DataSetConstants.WS_ADDRESS);
-			String wsOperation = getAttributeAsString(DataSetConstants.WS_OPERATION);
-			jsonDsConfig.put(DataSetConstants.WS_ADDRESS, wsAddress);
-			jsonDsConfig.put(DataSetConstants.WS_OPERATION, wsOperation);
-			((WebServiceDataSet) dataSet).setAddress(wsAddress);
-			((WebServiceDataSet) dataSet).setOperation(wsOperation);
 		}
 
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {

@@ -100,10 +100,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<!-- DIALECT -->
 										<md-input-container  class="md-block" >
 											<label>{{translate.load("sbi.datasource.dialect")}}</label>
-											<md-select  required ng-disabled="readOnly" ng-change="setDirty()"  aria-label="aria-label"	ng-model="selectedDataSource.dialectId" >
-												<md-option ng-repeat="d in dialects" value="{{d.VALUE_ID}}">{{d.VALUE_DS}} </md-option>
+											<md-select  required ng-disabled="readOnly" ng-change="setDirty(); selectDatabase(selectedDataSource.dialectName)"  aria-label="aria-label"	ng-model="selectedDataSource.dialectName" >
+												<md-option ng-repeat="d in databases" value="{{d.databaseDialect.value}}">{{d.name}} </md-option>
 											</md-select>
-											<div ng-messages="dataSourceForm.dialectId.$error" ng-show="!selectedDataSource.dialectId">
+											<div ng-messages="dataSourceForm.dialectName.$error" ng-show="!selectedDataSource.dialectName">
 			          							<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
 			        						</div>
 										</md-input-container>
@@ -120,15 +120,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												ng-maxlength="45" ng-disabled="readOnly"> </md-input-container>
 
 									<!-- READ ONLY -->
-										<md-radio-group ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.readOnly"> Read only:
-					      					<md-radio-button  value="1" ng-disabled="selectedDataSource.writeDefault">Read only</md-radio-button>
-					      					<md-radio-button  value="0"> Read and write </md-radio-button>
+										<md-radio-group ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.readOnly"> {{translate.load("sbi.datasource.readonly")}}
+					      					<md-radio-button  value="1" ng-disabled="selectedDataSource.writeDefault">{{translate.load("sbi.datasource.readonly")}}</md-radio-button>
+					      					<md-radio-button  value="0" ng-disabled="!selectedDatabase.cacheSupported">{{translate.load("sbi.datasource.readwrite")}}</md-radio-button>
 					    				</md-radio-group>
 
 									<!-- WRITE DEFAULT -->
 										<md-input-container class="md-block" ng-show="isSuperAdminFunction()">
-											<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"
-												ng-model="selectedDataSource.writeDefault" ng-disabled="(selectedDataSource.readOnly == 1) || !isSuperAdminFunction()" aria-label="Write Default">
+											<md-checkbox ng-change="setDirty()"	ng-model="selectedDataSource.writeDefault"
+											 ng-disabled="(readOnly || !selectedDatabase.cacheSupported || selectedDataSource.readOnly == 1) || !isSuperAdminFunction()" 
+											 aria-label="Write Default">
 												{{translate.load("sbi.datasource.writedefault")}}
 											</md-checkbox>
 										</md-input-container>

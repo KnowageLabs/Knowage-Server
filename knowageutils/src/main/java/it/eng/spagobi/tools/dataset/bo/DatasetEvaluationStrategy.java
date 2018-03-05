@@ -18,5 +18,5 @@
 package it.eng.spagobi.tools.dataset.bo;
 
 public enum DatasetEvaluationStrategy {
-	PERSISTED, FLAT, INLINE_VIEW, NEAR_REALTIME, CACHED, REALTIME
+	PERSISTED, FLAT, INLINE_VIEW, CACHED, REALTIME
 }

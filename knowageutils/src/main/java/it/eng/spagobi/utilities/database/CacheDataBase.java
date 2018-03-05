@@ -15,15 +15,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package it.eng.spagobi.utilities.database;
 
-package it.eng.spagobi.tools.dataset.cache.query.visitor;
+/**
+ * @author Alessandro Portosa (alessandro.portosa@eng.it)
+ *
+ */
+public interface CacheDataBase {
 
-import it.eng.spagobi.utilities.database.IDataBase;
+	public abstract String getDataBaseType(Class javaType);
 
-public class VoltDbSelectQueryVisitor extends AbstractSelectQueryVisitor {
+	public abstract String getUsedMemorySizeQuery(String schema, String tableNamePrefix);
 
-	public VoltDbSelectQueryVisitor(IDataBase database) {
-		super(database);
-	}
+	public abstract int getVarcharLength();
 
+	/**
+	 *
+	 * @param varcharLength
+	 *            the length used for varchart database type
+	 */
+	void setVarcharLength(int varcharLength);
 }

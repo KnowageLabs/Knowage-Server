@@ -55,8 +55,7 @@ import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.utilities.json.JSONUtils;
@@ -78,9 +77,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#loadDataSourceByID(java.lang.Integer)
 	 */
 	@Override
-	public DataSource loadDataSourceByID(Integer dsID) throws EMFUserError {
+	public IDataSource loadDataSourceByID(Integer dsID) throws EMFUserError {
 		logger.debug("IN");
-		DataSource toReturn = null;
+		IDataSource toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
 
@@ -213,11 +212,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#loadAllDataSources()
 	 */
 	@Override
-	public List loadAllDataSources() throws EMFUserError {
+	public List<IDataSource> loadAllDataSources() throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		List realResult = new ArrayList();
+		List<IDataSource> realResult = new ArrayList<>();
 		try {
 
 			aSession = getSession();
@@ -331,7 +330,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	 *            the a data source
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#modifyDataSource(it.eng.spagobi.tools.datasource.bo.DataSource)
+	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#modifyDataSource(it.eng.spagobi.tools.datasource.bo.IDataSource)
 	 */
 	@Override
 	public void modifyDataSource(IDataSource aDataSource) throws EMFUserError {
@@ -342,14 +341,14 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Criterion aCriterion = Expression.eq("valueId", aDataSource.getDialectId());
+			Criterion aCriterion = Expression.and(Expression.eq("domainCd", "DIALECT_HIB"), Expression.eq("valueCd", aDataSource.getDialectName()));
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(aCriterion);
 
 			SbiDomains dialect = (SbiDomains) criteria.uniqueResult();
 
 			if (dialect == null) {
-				logger.error("The Domain with value_id= " + aDataSource.getDialectId() + " does not exist.");
+				logger.error("The Domain with value_cd= " + aDataSource.getDialectName() + " does not exist.");
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
 			}
 
@@ -530,7 +529,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	 *            the a data source
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#insertDataSource(it.eng.spagobi.tools.datasource.bo.DataSource)
+	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#insertDataSource(it.eng.spagobi.tools.datasource.bo.IDataSource)
 	 */
 	@Override
 	public Integer insertDataSource(IDataSource aDataSource, String organization) throws EMFUserError {
@@ -542,14 +541,14 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Criterion aCriterion = Expression.eq("valueId", aDataSource.getDialectId());
+			Criterion aCriterion = Expression.and(Expression.eq("domainCd", "DIALECT_HIB"), Expression.eq("valueCd", aDataSource.getDialectName()));
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(aCriterion);
 
 			SbiDomains dialect = (SbiDomains) criteria.uniqueResult();
 
 			if (dialect == null) {
-				logger.error("The Domain with value_id=" + aDataSource.getDialectId() + " does not exist.");
+				logger.error("The Domain with value_cd=" + aDataSource.getDialectName() + " does not exist.");
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
 			}
 			SbiDataSource hibDataSource = new SbiDataSource();
@@ -668,8 +667,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	 *            The hybernate data source
 	 * @return The corrispondent <code>DataSource</code> object
 	 */
-	public static DataSourceModel toDataSource(SbiDataSource hibDataSource) {
-		DataSourceModel ds = new DataSourceModel();
+	public static IDataSource toDataSource(SbiDataSource hibDataSource) {
+		IDataSource ds = DataSourceFactory.getDataSource();
 
 		ds.setDsId(hibDataSource.getDsId());
 		ds.setLabel(hibDataSource.getLabel());
@@ -679,16 +678,14 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		ds.setUser(hibDataSource.getUser());
 		ds.setPwd(hibDataSource.getPwd());
 		ds.setDriver(hibDataSource.getDriver());
-		ds.setDialectId(hibDataSource.getDialect().getValueId());
+		ds.setDialectName(hibDataSource.getDialect().getValueCd());
+		ds.setHibDialectClass(hibDataSource.getDialect().getValueCd());
 		ds.setEngines(hibDataSource.getSbiEngineses());
 		ds.setObjects(hibDataSource.getSbiObjectses());
 		ds.setSchemaAttribute(hibDataSource.getSchemaAttribute());
 		ds.setMultiSchema(hibDataSource.getMultiSchema());
-		ds.setHibDialectClass(hibDataSource.getDialect().getValueCd());
-		ds.setHibDialectName(hibDataSource.getDialect().getValueNm());
 		ds.setReadOnly(hibDataSource.getReadOnly());
 		ds.setWriteDefault(hibDataSource.getWriteDefault());
-		ds.setUserIn(hibDataSource.getCommonInfo().getUserIn());
 		return ds;
 	}
 
@@ -991,58 +988,4 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		prov = firstPart + statement + secondPart;
 		return prov;
 	}
-
-	// /**
-	// * Checks for bi engine associated.
-	// *
-	// * @param dsId the ds id
-	// *
-	// * @return true, if checks for bi engine associated
-	// *
-	// * @throws EMFUserError the EMF user error
-	// *
-	// * @see
-	// it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#hasEngineAssociated(java.lang.String)
-	// */
-	// public boolean hasBIEngineAssociated (String dsId) throws EMFUserError{
-	// logger.debug("IN");
-	// boolean bool = false;
-	//
-	//
-	// Session aSession = null;
-	// Transaction tx = null;
-	// try {
-	// aSession = getSession();
-	// tx = aSession.beginTransaction();
-	// Integer dsIdInt = Integer.valueOf(dsId);
-	//
-	// //String hql = " from SbiEngines s where s.dataSource.dsId = "+ dsIdInt;
-	// String hql = " from SbiEngines s where s.dataSource.dsId = ?";
-	// Query aQuery = aSession.createQuery(hql);
-	// aQuery.setInteger(0, dsIdInt.intValue());
-	// List biObjectsAssocitedWithEngine = aQuery.list();
-	// if (biObjectsAssocitedWithEngine.size() > 0)
-	// bool = true;
-	// else
-	// bool = false;
-	// tx.commit();
-	// } catch (HibernateException he) {
-	// logger.error("Error while getting the engines associated with the data source with id "
-	// + dsId, he);
-	//
-	// if (tx != null)
-	// tx.rollback();
-	//
-	// throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-	//
-	// } finally {
-	// if (aSession!=null){
-	// if (aSession.isOpen()) aSession.close();
-	// }
-	// }
-	// logger.debug("OUT");
-	// return bool;
-	//
-	// }
-
 }

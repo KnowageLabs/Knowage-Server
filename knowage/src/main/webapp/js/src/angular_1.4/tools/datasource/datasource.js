@@ -31,9 +31,7 @@ var emptyDataSource = {
 	user: "",
 	pwd: "",
 	driver: "",
-	dialectId: "",
-	hibDialectClass: "",
-	hibDialectName: "",
+	dialectName: "",
 	schemaSttribute: "",
 	multiSchema: false,
 	readOnly: false,
@@ -46,7 +44,8 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.showMe=false;
 	$scope.translate = sbiModule_translate;
 	$scope.dataSourceList = [];
-	$scope.dialects = [];
+	$scope.databases = [];
+	$scope.selectedDatabase = []
 	$scope.selectedDataSource = {};
 	$scope.selectedDataSourceItems = [];
 	$scope.isDirty = false;
@@ -81,11 +80,10 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 		});
 
-		//GET DIALECT TYPES
-
-		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=DIALECT_HIB")
+		//GET DATABASE TYPES
+		sbiModule_restServices.promiseGet("2.0/databases", "")
 		.then(function(response) {
-			$scope.dialects = response.data;
+			$scope.databases = response.data;
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 
@@ -94,10 +92,20 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	};
 
 	//REST
+	$scope.selectDatabase = function(dialectName){
+		for (i = 0; i < $scope.databases.length; i++) {
+		    if($scope.databases[i].databaseDialect.value == dialectName) {
+		    	$scope.selectedDatabase = $scope.databases[i];
+		    	if(!$scope.selectedDatabase.cacheSupported) {
+		    		$scope.selectedDataSource.readOnly = 1;
+		    		$scope.selectedDataSource.writeDefault = false;
+		    	}
+		    }
+		}
+	};
+
+	//REST
 	$scope.saveOrUpdateDataSource = function(){
-
-
-
 		if($scope.jdbcOrJndi.type=="JDBC") {
 			$scope.selectedDataSource.jndi = "";
 		} else if($scope.jdbcOrJndi.type=="JNDI") {
@@ -110,7 +118,6 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		delete $scope.jdbcOrJndi.type;
 
 		if($scope.selectedDataSource.hasOwnProperty("dsId")){
-
 
 			var errorU = "Error updating the datasource!"
 
@@ -223,7 +230,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			$scope.selectedDataSource = {
 					label : "",
 					descr : "",
-					dialectId: "",
+					dialectName: "",
 					multiSchema: false,
 					schemaAttribute: "",
 					readOnly: false,
@@ -242,7 +249,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 				$scope.selectedDataSource = {
 						label : "",
 						descr : "",
-						dialectId: "",
+						dialectName: "",
 						multiSchema: false,
 						readOnly: false,
 						writeDefault: false,
@@ -285,27 +292,20 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		$scope.jdbcOrJndi.type = null;
 		$scope.showMe=true;
 
-			if($scope.isDirty==false) {
-
+		if($scope.isDirty==false) {
+			$scope.selectedDataSource = angular.copy(item);
+			$scope.selectDatabase($scope.selectedDataSource.dialectName);
+		} else {
+			$mdDialog.show($scope.confirm).then(function() {
 				$scope.selectedDataSource = angular.copy(item);
+				$scope.selectDatabase($scope.selectedDataSource.dialectName);
+				$scope.isDirty = false;
+			}, function() {
+				$scope.showMe = true;
+			});
+		}
 
-			} else {
-
-
-
-				$mdDialog.show($scope.confirm).then(function() {
-
-
-					$scope.selectedDataSource = angular.copy(item);
-					$scope.isDirty = false;
-
-
-				}, function() {
-					$scope.showMe = true;
-				});
-			}
-
-			$scope.connectionType();
+		$scope.connectionType();
 	};
 
 	$scope.connectionType = function () {
@@ -383,10 +383,6 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			delete testJSON.dsId;
 		}
 
-		if(testJSON.hasOwnProperty("userIn")) {
-			delete testJSON.userIn;
-		}
-
 		if(testJSON.readOnly=="1"){
 			testJSON.readOnly=true;
 		} else if(testJSON.readOnly=="0"){
@@ -403,8 +399,8 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.ds.error.testing.datasource"), sbiModule_translate.load("sbi.datasource.error.msg"));
 				} else {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.datasource.error.msg"));
-				}			}
-
+				}
+			}
 		});
 	}
 

@@ -36,6 +36,7 @@ import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -584,7 +585,7 @@ public class TemporaryTableManager {
 		return tableDescriptors.get(tableName);
 	}
 
-	public static String getAliasDelimiter(IDataSource dataSource) {
+	public static String getAliasDelimiter(IDataSource dataSource) throws DataBaseException {
 		String delimiter = "";
 		IDataBase dataBase = DataBaseFactory.getDataBase(dataSource);
 		if (dataBase != null) {

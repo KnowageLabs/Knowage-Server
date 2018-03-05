@@ -25,14 +25,4 @@ public class DB2DataBase extends AbstractDataBase {
 	public DB2DataBase(IDataSource dataSource) {
 		super(dataSource);
 	}
-
-	@Override
-	public String getDataBaseType(Class javaType) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		throw new UnsupportedOperationException();
-	}
 }

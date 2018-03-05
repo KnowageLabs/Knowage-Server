@@ -25,19 +25,4 @@ public class CassandraDataBase extends AbstractDataBase {
 	public CassandraDataBase(IDataSource dataSource) {
 		super(dataSource);
 	}
-
-	@Override
-	public String getDataBaseType(Class javaType) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getAliasDelimiter() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		throw new UnsupportedOperationException();
-	}
 }

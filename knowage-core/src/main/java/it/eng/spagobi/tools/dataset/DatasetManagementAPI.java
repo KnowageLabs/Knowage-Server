@@ -115,6 +115,7 @@ import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
+import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.groovy.GroovySandbox;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
@@ -398,10 +399,9 @@ public class DatasetManagementAPI {
 					dataStore = queryJDBCDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 					timing.stop();
 					dataStore.setCacheDate(new Date());
-				} else if (DatasetEvaluationStrategy.NEAR_REALTIME.equals(evaluationStrategy)
-						|| DatasetEvaluationStrategy.REALTIME.equals(evaluationStrategy)) {
+				} else if (DatasetEvaluationStrategy.REALTIME.equals(evaluationStrategy)) {
 					logger.debug("Querying near realtime dataset");
-					dataStore = queryNearRealtimeDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
+					dataStore = queryRealtimeDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
 				} else {
 					logger.debug("Querying dataset in cache");
@@ -461,7 +461,7 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	public void putDataSetInCache(IDataSet dataSet, ICache cache) {
+	public void putDataSetInCache(IDataSet dataSet, ICache cache) throws DataBaseException {
 		if (dataSet.isCachingSupported()) {
 			if (dataSet instanceof AbstractJDBCDataset && !dataSet.hasDataStoreTransformer()) {
 				logger.debug("Copying JDBC dataset in cache using its iterator");
@@ -925,29 +925,29 @@ public class DatasetManagementAPI {
 	}
 
 	private IDataStore queryPersistedDataset(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
 		IDataSource dataSource = dataSet.getDataSourceForWriting();
 		String tableName = dataSet.getPersistTableName();
 		return queryDataset(dataSet, dataSource, projections, tableName, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 	}
 
 	private IDataStore queryFlatDataset(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
 		IDataSource dataSource = dataSet.getDataSource();
 		String tableName = dataSet.getFlatTableName();
 		return queryDataset(dataSet, dataSource, projections, tableName, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 	}
 
 	private IDataStore queryJDBCDataset(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
 		IDataSource dataSource = dataSet.getDataSource();
 		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 		String tableName = "(" + querableBehaviour.getStatement() + ") T";
 		return queryDataset(dataSet, dataSource, projections, tableName, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 	}
 
-	private IDataStore queryNearRealtimeDataset(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
+	private IDataStore queryRealtimeDataset(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
 		dataSet.loadData();
 		IDataStore dataStore = dataSet.getDataStore();
 		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
@@ -1194,7 +1194,8 @@ public class DatasetManagementAPI {
 	}
 
 	private IDataStore queryDataset(IDataSet dataSet, IDataSource dataSource, List<Projection> projections, String tableName, Filter filter,
-			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
+			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount)
+			throws DataBaseException {
 		logger.debug("IN");
 
 		SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(projections).from(tableName).where(filter).groupBy(groups).orderBy(sortings);

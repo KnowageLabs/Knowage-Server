@@ -53,7 +53,7 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -80,7 +80,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 	public String getAllDataSources(@Context HttpServletRequest req) {
 		IDataSourceDAO dataSourceDao = null;
 		IDomainDAO domaindao = null;
-		List<DataSource> dataSources;
+		List<IDataSource> dataSources;
 		List<Domain> dialects = null;
 		UserProfile profile = getUserProfile();
 		JSONObject datasorcesJSON = new JSONObject();
@@ -178,7 +178,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 				dao.setUserProfile(profile);
 			}
 
-			DataSource dsNew = recoverDataSourceDetails(requestBodyJSON);
+			IDataSource dsNew = recoverDataSourceDetails(requestBodyJSON);
 
 			HashMap<String, String> logParam = new HashMap();
 			logParam.put("JNDI", dsNew.getJndi());
@@ -254,7 +254,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 		}
 	}
 
-	private JSONObject serializeDatasources(List<DataSource> dataSources, List<Domain> dialects) throws SerializationException, JSONException {
+	private JSONObject serializeDatasources(List<IDataSource> dataSources, List<Domain> dialects) throws SerializationException, JSONException {
 
 		JSONObject dataSourcesJSON = new JSONObject();
 		// JSONObject aDataSourcesJSON = new JSONObject();
@@ -273,52 +273,28 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 		return dataSourcesJSON;
 	}
 
-	private DataSource recoverDataSourceDetails(JSONObject requestBodyJSON) throws EMFUserError, SourceBeanException, IOException {
-		DataSource ds = new DataSource();
+	private IDataSource recoverDataSourceDetails(JSONObject requestBodyJSON) throws EMFUserError, SourceBeanException, IOException {
+		IDataSource ds = DataSourceFactory.getDataSource();
 		Integer id = -1;
 		String idStr = (String) requestBodyJSON.opt("DATASOURCE_ID");
 		if (idStr != null && !idStr.equals("")) {
 			id = new Integer(idStr);
 		}
-		Integer dialectId = (Integer) requestBodyJSON.opt("DIALECT_ID");
+		String dialectName = requestBodyJSON.optString("DIALECT_NAME");
 
-		String description = (String) requestBodyJSON.opt("DESCRIPTION");
-		String label = (String) requestBodyJSON.opt("DATASOURCE_LABEL");
-		String jndi = (String) requestBodyJSON.opt("JNDI_URL");
-		String url = (String) requestBodyJSON.opt("CONNECTION_URL");
-		String user = (String) requestBodyJSON.opt("USER");
-		String pwd = (String) requestBodyJSON.opt("PASSWORD");
-		String driver = (String) requestBodyJSON.opt("DRIVER");
-		String schemaAttr = (String) requestBodyJSON.opt("SCHEMA");
-		String multiSchema = (String) requestBodyJSON.opt("MULTISCHEMA");
+		String description = requestBodyJSON.optString("DESCRIPTION");
+		String label = requestBodyJSON.optString("DATASOURCE_LABEL");
+		String jndi = requestBodyJSON.optString("JNDI_URL");
+		String url = requestBodyJSON.optString("CONNECTION_URL");
+		String user = requestBodyJSON.optString("USER");
+		String pwd = requestBodyJSON.optString("PASSWORD");
+		String driver = requestBodyJSON.optString("DRIVER");
+		String schemaAttr = requestBodyJSON.optString("SCHEMA");
+		String multiSchema = requestBodyJSON.optString("MULTISCHEMA");
 
-		Boolean readOnly = (Boolean) requestBodyJSON.opt("READ_ONLY");
+		Boolean readOnly = requestBodyJSON.optBoolean("READ_ONLY");
 
-		Boolean writeDefault = (Boolean) requestBodyJSON.opt("WRITE_DEFAULT");
-
-		/*
-		 * Object dialect = requestBodyJSON.opt("DIALECT_ID");
-		 *
-		 * Integer dialectId; if (dialect != null && dialect instanceof String) { dialectId = new Integer((String) dialect); } else { dialectId = (Integer)
-		 * dialect; }
-		 */
-
-		/*
-		 * Object ms = requestBodyJSON.opt("MULTISCHEMA");
-		 *
-		 * Boolean multiSchema; if (ms != null && ms instanceof String) { multiSchema = new Boolean((String) ms); } else { multiSchema = (Boolean) ms; }
-		 */
-
-		/*
-		 * Object ro = requestBodyJSON.opt("READ_ONLY");
-		 *
-		 * Boolean readOnly; if (ro != null && ro instanceof String) { readOnly = new Boolean((String) ro); } else { readOnly = (Boolean) ro; }
-		 */
-
-		/*
-		 * Object wd = requestBodyJSON.opt("WRITE_DEFAULT"); Boolean writeDefault; if (wd != null && ms instanceof String) { writeDefault = new Boolean((String)
-		 * wd); } else { writeDefault = (Boolean) wd; }
-		 */
+		Boolean writeDefault = requestBodyJSON.optBoolean("WRITE_DEFAULT");
 
 		Boolean isMultiSchema = false;
 		if (multiSchema != null && (multiSchema.equals("on") || multiSchema.equals("true"))) {
@@ -326,7 +302,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 		}
 
 		ds.setDsId(id.intValue());
-		ds.setDialectId(dialectId);
+		ds.setDialectName(dialectName);
 		ds.setLabel(label);
 		ds.setDescr(description);
 		ds.setJndi(jndi);
@@ -341,9 +317,4 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 
 		return ds;
 	}
-
-	private String serializeException(Exception e) throws JSONException {
-		return ExceptionUtilities.serializeException(e.getMessage(), null);
-	}
-
 }

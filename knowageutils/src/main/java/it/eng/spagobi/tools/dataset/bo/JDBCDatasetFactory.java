@@ -32,9 +32,7 @@ public class JDBCDatasetFactory {
 			throw new IllegalArgumentException("datasource parameter cannot be null");
 		}
 		String dialect = dataSource.getHibDialectClass();
-		if (dialect.contains("hbase")) {
-			dataSet = new JDBCHBaseDataSet();
-		} else if (dialect.contains("hive")) {
+		if (dialect.contains("hive")) {
 			dataSet = new JDBCHiveDataSet();
 		} else if (dialect.contains("orient")) {
 			dataSet = new JDBCOrientDbDataSet();

@@ -16,14 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.spagobi.tools.dataset.cache.query.visitor;
+package it.eng.spagobi.utilities.database;
 
-import it.eng.spagobi.utilities.database.IDataBase;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-public class HBaseSelectQueryVisitor extends AbstractSelectQueryVisitor {
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-	public HBaseSelectQueryVisitor(IDataBase database) {
-		super(database);
+public class VerticaDataBase extends AbstractDataBase implements MetaDataBase {
+
+	public VerticaDataBase(IDataSource dataSource) {
+		super(dataSource);
 	}
 
+	@Override
+	public String getSchema(Connection conn) throws SQLException {
+		return conn.getSchema();
+	}
+
+	@Override
+	public String getCatalog(Connection conn) throws SQLException {
+		return conn.getCatalog();
+	}
 }

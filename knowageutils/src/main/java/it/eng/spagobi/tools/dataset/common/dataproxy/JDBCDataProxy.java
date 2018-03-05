@@ -17,19 +17,20 @@
  */
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.sql.SqlUtils;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -95,9 +96,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection", t);
 			}
 			String dialect = dataSource.getHibDialectClass();
-			if (dialect == null) {
-				dialect = dataSource.getHibDialectName();
-			}
+			Assert.assertNotNull(dialect, "Dialect cannot be null");
 			try {
 				// ATTENTION: For the most db sets the stmt as a scrollable
 				// stmt, only for the compatibility with Ingres sets
@@ -196,7 +195,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		String statement = this.getStatement();
 		// if db is SQL server the query nees to be modified in case it contains ORDER BY clause
 
-		String dialect = dataSource.getHibDialectName();
+		String dialect = dataSource.getHibDialectClass();
 		logger.debug("Dialect is " + dialect);
 
 		if (dialect.toUpperCase().contains("SQLSERVER") && statement.toUpperCase().contains("ORDER BY")) {

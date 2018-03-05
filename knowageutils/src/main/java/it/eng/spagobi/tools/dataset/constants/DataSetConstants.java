@@ -99,7 +99,6 @@ public class DataSetConstants {
 
 	public static final String RECALCULATE_METADATA = "recalculateMetadata";
 
-	public static final String DS_WS = "SbiWSDataSet";
 	public static final String DS_FILE = "SbiFileDataSet";
 	public static final String DS_CKAN = "SbiCkanDataSet";
 	public static final String DS_JCLASS = "SbiJClassDataSet";
@@ -200,7 +199,6 @@ public class DataSetConstants {
 
 	static {
 		name2Code = new HashMap<String, String>();
-		name2Code.put("Web Service", DataSetConstants.DS_WS);
 		name2Code.put("File", DataSetConstants.DS_FILE);
 		name2Code.put("Ckan", DataSetConstants.DS_CKAN);
 		name2Code.put("Java Class", DataSetConstants.DS_JCLASS);
@@ -231,7 +229,6 @@ public class DataSetConstants {
 
 	static {
 		code2name = new HashMap<String, String>();
-		code2name.put(DataSetConstants.DS_WS, "Web Service");
 		code2name.put(DataSetConstants.DS_FILE, "File");
 		code2name.put(DataSetConstants.DS_CKAN, "Ckan");
 		code2name.put(DataSetConstants.DS_JCLASS, "Java Class");

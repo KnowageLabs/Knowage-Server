@@ -44,6 +44,7 @@ import it.eng.spagobi.tools.dataset.graph.associativity.exceptions.IllegalEdgeGr
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.parameters.ParametersUtilities;
 
 /**
@@ -173,14 +174,14 @@ abstract class AssociativeDatasetContainer implements IAssociativeDatasetContain
 	}
 
 	@Override
-	public abstract Set<Tuple> getTupleOfValues(List<String> columnNames) throws ClassNotFoundException, NamingException, SQLException;
+	public abstract Set<Tuple> getTupleOfValues(List<String> columnNames) throws ClassNotFoundException, NamingException, SQLException, DataBaseException;
 
 	@Override
 	public Set<Tuple> getTupleOfValues(String parameter) {
 		return AssociativeLogicUtils.getTupleOfValues(parameters.get(ParametersUtilities.getParameterName(parameter)));
 	}
 
-	protected String buildQuery(List<String> columnNames) {
+	protected String buildQuery(List<String> columnNames) throws DataBaseException {
 		return getSelectQuery(columnNames).toSql(getDataSource());
 	}
 

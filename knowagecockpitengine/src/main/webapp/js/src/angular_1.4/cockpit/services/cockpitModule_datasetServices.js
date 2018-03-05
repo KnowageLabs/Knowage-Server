@@ -98,7 +98,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		for(var i=0; i < datasets.length; i++){
 			var dataset = datasets[i];
 			if(dataset.useCache == undefined){
-				dataset.useCache = true;
+				dataset.useCache = !(dataset.isNearRealtimeSupported || dataset.isRealtime);
 			}
 			if(dataset.frequency == undefined){
 				dataset.frequency = 0;
@@ -383,7 +383,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			var dataset = cockpitModule_template.configuration.datasets[i];
 			var dsIl=ds.getDatasetById(dataset.dsId);
 			if(dsIl!=undefined){
-				dsIl.useCache = (dataset.useCache == undefined && !dsIl.isRealtime) ? true : dataset.useCache;
 				dsIl.frequency = (dataset.frequency == undefined) ? 0 : dataset.frequency;
 				dsIl.expanded = true;
 				if(dataset.parameters!=undefined){

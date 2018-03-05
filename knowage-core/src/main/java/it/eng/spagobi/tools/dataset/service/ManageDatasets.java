@@ -81,7 +81,6 @@ import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
@@ -1427,16 +1426,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				}
 			}
 
-		}
-
-		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_WS)) {
-			dataSet = new WebServiceDataSet();
-			String wsAddress = getAttributeAsString(DataSetConstants.WS_ADDRESS);
-			String wsOperation = getAttributeAsString(DataSetConstants.WS_OPERATION);
-			jsonDsConfig.put(DataSetConstants.WS_ADDRESS, wsAddress);
-			jsonDsConfig.put(DataSetConstants.WS_OPERATION, wsOperation);
-			((WebServiceDataSet) dataSet).setAddress(wsAddress);
-			((WebServiceDataSet) dataSet).setOperation(wsOperation);
 		}
 
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {

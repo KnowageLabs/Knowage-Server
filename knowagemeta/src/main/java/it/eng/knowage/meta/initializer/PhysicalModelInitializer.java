@@ -56,6 +56,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
+import it.eng.spagobi.utilities.database.MetaDataBase;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -86,7 +87,7 @@ public class PhysicalModelInitializer {
 		}
 
 		try {
-			IDataBase database = DataBaseFactory.getDataBase(dataSource);
+			MetaDataBase database = DataBaseFactory.getMetaDataBase(dataSource);
 			Connection conn = originalPM.getConnection();
 			dbMeta = conn.getMetaData();
 
@@ -118,7 +119,7 @@ public class PhysicalModelInitializer {
 		try {
 			IDataSourceDAO datasourceDao = DAOFactory.getDataSourceDAO();
 			IDataSource ds = datasourceDao.loadDataSourceByID(datasourceId);
-			IDataBase database = DataBaseFactory.getDataBase(ds);
+			MetaDataBase database = DataBaseFactory.getMetaDataBase(ds);
 			logger.debug("Dataset is: " + ds.getLabel());
 			Connection conn = ds.getConnection();
 			logger.debug("Retrieve Connection: " + conn);
@@ -201,7 +202,7 @@ public class PhysicalModelInitializer {
 			// Quote string identification
 			String quote;
 			try {
-				quote = database.getAliasDelimiter();
+				quote = ((IDataBase) database).getAliasDelimiter();
 				if (quote == null) {
 					quote = dbMeta.getIdentifierQuoteString();
 				}
@@ -220,30 +221,6 @@ public class PhysicalModelInitializer {
 			logger.debug("PhysicalModel Property: Connection databasequotestring is [{}] "
 					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING).getValue());
 
-			/*
-			 * model.getPropertyType("connection.name").setDefaultValue(connectionName); logger.debug("PhysicalModel Property: Connection name is [{}]",
-			 * model.getPropertyType("connection.name").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.driver").setDefaultValue(connectionDriver); logger.debug("PhysicalModel Property: Connection driver is [{}]",
-			 * model.getPropertyType("connection.driver").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.url").setDefaultValue(connectionUrl); logger.debug("PhysicalModel Property: Connection url is [{}]",
-			 * model.getPropertyType("connection.url").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.username").setDefaultValue(connectionUsername);
-			 * logger.debug("PhysicalModel Property: Connection username is [{}]", model.getPropertyType("connection.username").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.password").setDefaultValue(connectionPassword);
-			 * logger.debug("PhysicalModel Property: Connection password is [{}]", model.getPropertyType("connection.password").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.databasename").setDefaultValue(connectionDatabaseName);
-			 * logger.debug("PhysicalModel Property: Connection databasename is [{}]", model.getPropertyType("connection.databasename").getDefaultValue());
-			 *
-			 * // Quote string identification String quote = dbMeta.getIdentifierQuoteString(); // check if escaping is needed if (quote.equals("\"")) { quote =
-			 * "\\\""; } model.getPropertyType("connection.databasequotestring").setDefaultValue(quote);
-			 * logger.debug("PhysicalModel Property: Connection databasequotestring is [{}]", model.getPropertyType("connection.databasequotestring")
-			 * .getDefaultValue());
-			 */
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to initialize physical model", t);
 		}
@@ -269,12 +246,11 @@ public class PhysicalModelInitializer {
 		Iterator<String> it;
 
 		try {
-
 			if (catalog == null) {
 				dbMeta = conn.getMetaData();
 
 				rs = dbMeta.getCatalogs();
-				catalogs = new ArrayList();
+				catalogs = new ArrayList<>();
 				while (rs.next()) {
 					String catalogName = rs.getString(1);
 					if (catalogName != null) {
@@ -320,7 +296,7 @@ public class PhysicalModelInitializer {
 
 		try {
 			rs = dbMeta.getSchemas();
-			schemas = new ArrayList();
+			schemas = new ArrayList<>();
 			while (rs.next()) {
 				String schemaName = rs.getString(1);
 				if (schemaName != null) {

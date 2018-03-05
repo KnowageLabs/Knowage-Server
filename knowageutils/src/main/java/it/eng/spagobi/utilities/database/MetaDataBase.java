@@ -17,35 +17,28 @@
  */
 package it.eng.spagobi.utilities.database;
 
-import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
- * @author Andrea Gioia (andrea.gioia@eng.it)
+ * @author Alessandro Portosa (alessandro.portosa@eng.it)
  *
  */
-public interface IDataBase extends Comparable<IDataBase> {
+public interface MetaDataBase {
 
 	/**
-	 * @return The database name
-	 */
-	String getName();
-
-	/**
+	 * @param conn
+	 *            The connection to the datasource
 	 *
-	 * @return the database dialect
+	 * @return The current schema
 	 */
-	DatabaseDialect getDatabaseDialect();
-
-	public abstract boolean isCacheSupported();
+	String getSchema(Connection conn) throws SQLException;
 
 	/**
+	 * @param conn
+	 *            The connection to the datasource
 	 *
-	 * @return the alias delimiter
+	 * @return The current catalog
 	 */
-	String getAliasDelimiter();
-
-	public abstract IDataSource getDataSource();
-
-	public abstract boolean isMetaSupported();
+	String getCatalog(Connection conn) throws SQLException;
 }

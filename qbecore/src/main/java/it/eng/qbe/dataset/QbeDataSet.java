@@ -500,8 +500,6 @@ public class QbeDataSet extends ConfigurableDataSet {
 
 		if (isPersisted()) {
 			strategy = DatasetEvaluationStrategy.PERSISTED;
-		} else if (isNearRealtime) {
-			strategy = DatasetEvaluationStrategy.NEAR_REALTIME;
 		} else {
 			strategy = DatasetEvaluationStrategy.CACHED;
 		}

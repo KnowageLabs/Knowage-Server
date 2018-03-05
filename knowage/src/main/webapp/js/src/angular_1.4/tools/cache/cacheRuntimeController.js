@@ -236,7 +236,7 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 
 
 
-	sbiModule_restServices.get("2.0/datasources","")
+	sbiModule_restServices.get("2.0/datasources","", "type=cache")
 	.success(function(result)
 		{
 			$log.infoObtained=result;
@@ -245,8 +245,6 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 
 			var datasourceWriteDefaultNumber=0;
 			self.filteredDataSources=new Array();
-			//self.selectedDataSource=result[0];
-			//self.variableSelectedDataSource=result[0];
 			i=0;
 			for(o in result)
 			{

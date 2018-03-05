@@ -32,6 +32,7 @@ import it.eng.spagobi.tools.dataset.cache.query.visitor.SelectQueryVisitorFactor
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.DataBaseException;
 
 public class SelectQuery {
 	private IDataSet dataSet;
@@ -228,12 +229,12 @@ public class SelectQuery {
 		return this;
 	}
 
-	public String toSql(IDataSource dataSource) {
+	public String toSql(IDataSource dataSource) throws DataBaseException {
 		ISelectQueryVisitor visitor = SelectQueryVisitorFactory.getVisitor(dataSource);
 		return visitor.toSql(this);
 	}
 
-	public PreparedStatementData getPreparedStatementData(IDataSource dataSource) {
+	public PreparedStatementData getPreparedStatementData(IDataSource dataSource) throws DataBaseException {
 		ISelectQueryVisitor visitor = SelectQueryVisitorFactory.getVisitor(dataSource);
 		return visitor.getPreparedStatementData(this);
 	}

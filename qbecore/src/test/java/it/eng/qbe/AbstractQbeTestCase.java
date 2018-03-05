@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,23 +11,22 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.qbe;
 
-import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
+
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
+import junit.framework.TestCase;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -53,7 +52,7 @@ public abstract class AbstractQbeTestCase extends TestCase {
 
 		classLoader = Thread.currentThread().getContextClassLoader();
 
-		connection = new DataSource();
+		connection = DataSourceFactory.getDataSource();
 		connection.setLabel("foodmart");
 		connection.setHibDialectClass(CONNECTION_DIALECT);
 		connection.setDriver(CONNECTION_DRIVER);

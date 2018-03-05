@@ -29,6 +29,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
+import it.eng.spagobi.utilities.database.DataBaseException;
 
 public interface IAssociativeDatasetContainer {
 
@@ -58,7 +59,7 @@ public interface IAssociativeDatasetContainer {
 
 	public Map<String, String> getParameters();
 
-	public abstract Set<Tuple> getTupleOfValues(List<String> columnNames) throws ClassNotFoundException, NamingException, SQLException;
+	public abstract Set<Tuple> getTupleOfValues(List<String> columnNames) throws ClassNotFoundException, NamingException, SQLException, DataBaseException;
 
 	public Set<Tuple> getTupleOfValues(String parameter);
 }

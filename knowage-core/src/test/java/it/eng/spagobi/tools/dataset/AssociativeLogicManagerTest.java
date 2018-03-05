@@ -60,6 +60,7 @@ import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 
 public class AssociativeLogicManagerTest {
@@ -112,14 +113,14 @@ public class AssociativeLogicManagerTest {
 			setHazelcastDefaultConfig();
 			cache = SpagoBICacheManager.getCache();
 			dataSetDAO = DAOFactory.getDataSetDAO();
+
+			loadDataSetInCache(STORE);
+			loadDataSetInCache(SALES);
+			loadDataSetInCache(PRODUCT);
+			loadDataSetInCache(CUSTOMER);
 		} catch (Exception e) {
 			fail(e.toString());
 		}
-
-		loadDataSetInCache(STORE);
-		loadDataSetInCache(SALES);
-		loadDataSetInCache(PRODUCT);
-		loadDataSetInCache(CUSTOMER);
 		// loadDataSetInCache(K);
 		// loadDataSetInCache(W);
 		// loadDataSetInCache(X);
@@ -441,7 +442,7 @@ public class AssociativeLogicManagerTest {
 		// deleteDataSetFromCache(Z);
 	}
 
-	private static void loadDataSetInCache(String dataSetLabel) {
+	private static void loadDataSetInCache(String dataSetLabel) throws DataBaseException {
 		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(dataSetLabel);
 		if (!cache.contains(dataSet)) {
 			dataSet.loadData();

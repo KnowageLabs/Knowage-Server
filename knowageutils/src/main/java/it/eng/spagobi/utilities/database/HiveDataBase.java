@@ -25,25 +25,15 @@ import java.sql.Statement;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-public class HiveDataBase extends AbstractDataBase {
+public class HiveDataBase extends AbstractDataBase implements MetaDataBase {
 
 	public HiveDataBase(IDataSource dataSource) {
 		super(dataSource);
 	}
 
 	@Override
-	public String getDataBaseType(Class javaType) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public String getAliasDelimiter() {
 		return "";
-	}
-
-	@Override
-	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -60,5 +50,10 @@ public class HiveDataBase extends AbstractDataBase {
 		} finally {
 			stmt.close();
 		}
+	}
+
+	@Override
+	public String getCatalog(Connection conn) throws SQLException {
+		return conn.getCatalog();
 	}
 }

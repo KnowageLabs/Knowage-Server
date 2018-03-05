@@ -177,6 +177,9 @@
 	<DOMAIN valueCd="org.hibernate.dialect.TeradataDialect"
 		valueNm="sbidomains.nm.teradata" domainCd="DIALECT_HIB"
 		domainNm="sbidomains.nm.teradata" valueDs="sbidomains.ds.teradata" />
+	<DOMAIN valueCd="org.hibernate.dialect.VerticaDialect"
+		valueNm="sbidomains.nm.vertica" domainCd="DIALECT_HIB"
+		domainNm="sbidomains.nm.vertica" valueDs="sbidomains.ds.vertica" />
 	<DOMAIN valueCd="RANGE" valueNm="sbidomains.nm.range" domainCd="THRESHOLD_TYPE"
 		domainNm="Threshold Type" valueDs="sbidomains.ds.range" />
 	<!-- 

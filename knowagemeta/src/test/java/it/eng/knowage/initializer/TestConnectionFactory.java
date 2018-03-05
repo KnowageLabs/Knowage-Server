@@ -18,14 +18,14 @@
 
 package it.eng.knowage.initializer;
 
-import it.eng.knowage.common.TestConstants;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 import org.junit.Assert;
- 
+
+import it.eng.knowage.common.TestConstants;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -72,7 +72,7 @@ public class TestConnectionFactory {
 
 	public static Connection createConnection(TestConstants.DatabaseType type) {
 		Connection connection;
-		DataSource ds = null;
+		IDataSource ds = null;
 		try {
 			connection = null;
 			switch (type) {

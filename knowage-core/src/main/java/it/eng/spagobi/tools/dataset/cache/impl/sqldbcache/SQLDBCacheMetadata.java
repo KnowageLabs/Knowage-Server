@@ -17,19 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
-import it.eng.spagobi.cache.dao.ICacheDAO;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.dataset.cache.CacheException;
-import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.utilities.Helper;
-import it.eng.spagobi.utilities.cache.CacheItem;
-import it.eng.spagobi.utilities.database.DataBaseFactory;
-import it.eng.spagobi.utilities.database.IDataBase;
-import it.eng.spagobi.utilities.locks.DistributedLockFactory;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -41,6 +28,21 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.hazelcast.core.IMap;
+
+import it.eng.spagobi.cache.dao.ICacheDAO;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.dataset.cache.CacheException;
+import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.cache.CacheItem;
+import it.eng.spagobi.utilities.database.CacheDataBase;
+import it.eng.spagobi.utilities.database.DataBaseException;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.database.DatabaseUtilities;
+import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -54,18 +56,11 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	SQLDBCacheConfiguration cacheConfiguration;
 
 	private BigDecimal totalMemory;
-	// private BigDecimal availableMemory ;
 
 	private boolean isActiveCleanAction = false;
 	private Integer cachePercentageToClean;
 	private Integer cacheDsLastAccessTtl;
 	private Integer cachePercentageToStore;
-
-	private final Map<String, Integer> columnSize = new HashMap<String, Integer>();
-
-	private enum FieldType {
-		ATTRIBUTE, MEASURE
-	}
 
 	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
@@ -120,22 +115,26 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	/**
 	 * Returns the number of bytes used by the table already cached (approximate)
+	 * 
+	 * @throws DataBaseException
 	 */
 
 	@Override
-	public BigDecimal getUsedMemory() {
-		IDataBase dataBase = DataBaseFactory.getDataBase(cacheConfiguration.getCacheDataSource());
-		BigDecimal usedMemory = dataBase.getUsedMemorySize(cacheConfiguration.getSchema(), cacheConfiguration.getTableNamePrefix());
+	public BigDecimal getUsedMemory() throws DataBaseException {
+		CacheDataBase dataBase = DataBaseFactory.getCacheDataBase(cacheConfiguration.getCacheDataSource());
+		BigDecimal usedMemory = DatabaseUtilities.getUsedMemorySize(dataBase, cacheConfiguration.getSchema(), cacheConfiguration.getTableNamePrefix());
 		logger.debug("Used memory is equal to [" + usedMemory + "]");
 		return usedMemory;
 	}
 
 	/**
 	 * Returns the number of bytes available in the cache (approximate)
+	 * 
+	 * @throws DataBaseException
 	 */
 
 	@Override
-	public BigDecimal getAvailableMemory() {
+	public BigDecimal getAvailableMemory() throws DataBaseException {
 		BigDecimal availableMemory = getTotalMemory();
 		BigDecimal usedMemory = getUsedMemory();
 		if (usedMemory != null)
@@ -154,7 +153,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 	@Override
-	public Integer getAvailableMemoryAsPercentage() {
+	public Integer getAvailableMemoryAsPercentage() throws DataBaseException {
 		Integer toReturn = 0;
 		BigDecimal spaceAvailable = getAvailableMemory();
 		toReturn = Integer.valueOf(((spaceAvailable.multiply(new BigDecimal(100)).divide(getTotalMemory(), RoundingMode.HALF_UP)).intValue()));
@@ -185,7 +184,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 	@Override
-	public boolean isAvailableMemoryGreaterThen(BigDecimal requiredMemory) {
+	public boolean isAvailableMemoryGreaterThen(BigDecimal requiredMemory) throws DataBaseException {
 		BigDecimal availableMemory = getAvailableMemory();
 		if (availableMemory.compareTo(requiredMemory) <= 0) {
 			return false;
@@ -195,7 +194,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 	@Override
-	public boolean hasEnoughMemoryForStore(IDataStore store) {
+	public boolean hasEnoughMemoryForStore(IDataStore store) throws DataBaseException {
 		BigDecimal availableMemory = getAvailableMemory();
 		BigDecimal requiredMemory = getRequiredMemory(store);
 		if (availableMemory.compareTo(requiredMemory) <= 0) {
@@ -203,10 +202,6 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		} else {
 			return true;
 		}
-	}
-
-	private Map<String, Integer> getColumnSize() {
-		return columnSize;
 	}
 
 	public List<CacheItem> getCacheItems() {
@@ -289,8 +284,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	public void removeCacheItem(String signature, boolean isHash) {
 		if (isHash) {
-			IMap mapLocks = DistributedLockFactory
-					.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+			IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
+					SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 			mapLocks.lock(signature); // it is possible to use also the method tryLock(...) with timeout parameter
 			try {
 				if (containsCacheItem(signature, true)) {
@@ -340,8 +335,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public CacheItem getCacheItem(String signature, boolean isHash) {
 		if (isHash) {
 			CacheItem cacheItem = null;
-			IMap mapLocks = DistributedLockFactory
-					.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+			IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
+					SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 			mapLocks.lock(signature); // it is possible to use also the method tryLock(...) with timeout parameter
 			try {
 				cacheItem = cacheDao.loadCacheItemBySignature(signature);

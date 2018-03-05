@@ -117,7 +117,6 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.JSError;
@@ -901,7 +900,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 
 		PhysicalModel phyMod = model.getPhysicalModels().get(0);
-		DataSource dataSource = phyMod.getDataSource();
+		IDataSource dataSource = phyMod.getDataSource();
 		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
 		List<String> missingColumns = physicalModelInitializer.getMissingColumnsNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
 		List<String> removingItems = physicalModelInitializer.getRemovedTablesAndColumnsNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
@@ -919,6 +918,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			throws ClassNotFoundException, NamingException, SQLException, JSONException, IOException, EMFUserError {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		JSONObject oldJsonModel = createJson(model);
+
 		String modelName = model.getName();
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
@@ -1238,7 +1238,9 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	private void applyDiff(JSONObject jsonRoot, Model model) throws SpagoBIException, JsonProcessingException, IOException, JSONException {
 		if (jsonRoot.has("diff")) {
-			JsonNode patch = new ObjectMapper().readTree(jsonRoot.getString("diff"));
+			ObjectMapper mapper = new ObjectMapper();
+
+			JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
 			applyPatch(patch, model);
 		}
 	}
@@ -1385,6 +1387,25 @@ public class MetaService extends AbstractSpagoBIResource {
 	 */
 	private String cleanPath(String path) {
 		path = path.replaceAll("^/physicalModels", "/businessModels/0/tables").replaceAll("^/businessModels", "/businessModels/0/businessTables");
+
+		/*
+		 * This regular expression will clean the path for editing properties of a model to have something compatible with the xpath expression. I.e:
+		 *
+		 * /businessModels/0/columns/0/properties/7/behavioural.notEnabledRoles/value
+		 *
+		 * will be changed to:
+		 *
+		 * /businessModels/0/columns/0/properties/7/value/value
+		 *
+		 * So the property name is replaced by "value"
+		 *
+		 */
+		if (path.contains("properties")) {
+			String regex = "(?<=properties\\/\\d\\/).*?(?=\\/value)";
+			Pattern pattern = Pattern.compile(regex);
+			Matcher matcher = pattern.matcher(path);
+			path = matcher.replaceAll("value");
+		}
 		Pattern p = Pattern.compile("(/)(\\d+)");
 		Matcher m = p.matcher(path);
 		StringBuffer s = new StringBuffer();

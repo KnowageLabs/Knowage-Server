@@ -33,6 +33,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -60,7 +61,7 @@ public class NearRealtimeAssociativeDatasetContainer extends AssociativeDatasetC
 	}
 
 	@Override
-	public Set<Tuple> getTupleOfValues(List<String> columnNames) throws ClassNotFoundException, NamingException, SQLException {
+	public Set<Tuple> getTupleOfValues(List<String> columnNames) throws ClassNotFoundException, NamingException, SQLException, DataBaseException {
 		String query = buildQuery(columnNames);
 		if (dataStore != null) {
 			logger.debug("Executing query with MetaModel: " + query);

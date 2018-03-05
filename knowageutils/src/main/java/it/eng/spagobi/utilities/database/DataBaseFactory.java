@@ -17,8 +17,9 @@
  */
 package it.eng.spagobi.utilities.database;
 
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
+import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -26,17 +27,24 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
  */
 public abstract class DataBaseFactory {
 
-	public static IDataBase getDataBase(IDataSource dataSource) {
+	/**
+	 * @param dataSource
+	 * @return null if @param dataSource is null
+	 * @throws DataBaseException
+	 */
+	public static IDataBase getDataBase(IDataSource dataSource) throws DataBaseException {
 		IDataBase dataBase = null;
 		if (dataSource != null) {
 			String dialect = dataSource.getHibDialectClass();
+			Assert.assertNotNull(dialect, "Impossible to find a database implementation for datasource [" + dataSource + "]");
 			if (dialect != null) {
-				switch (SqlDialect.get(dialect)) {
-				case HBASE:
-					return new HBaseDataBase(dataSource);
+				DatabaseDialect sqlDialect = DatabaseDialect.get(dialect);
+				Assert.assertNotNull(sqlDialect, "Impossible to find a database implementation for dialect [" + dialect + "]");
+				switch (sqlDialect) {
 				case HIVE:
-				case SPARKSQL:
 					return new HiveDataBase(dataSource);
+				case SPARKSQL:
+					return new SparkSqlDataBase(dataSource);
 				case HSQL:
 					return new HSQLDataBase(dataSource);
 				case IMPALA:
@@ -57,24 +65,51 @@ public abstract class DataBaseFactory {
 					return new SQLServerDataBase(dataSource);
 				case ORIENT:
 					return new OrientDataBase(dataSource);
-				case VOLTDB:
-					return new VoltDBDataBase(dataSource);
 				case TERADATA:
 					return new TeradataDataBase(dataSource);
 				case CASSANDRA:
 					return new CassandraDataBase(dataSource);
 				case DB2:
 					return new DB2DataBase(dataSource);
-				case DRILL:
 				case MONGO:
+					return new MongoDataBase(dataSource);
 				case NEO4J:
+					return new Neo4jDataBase(dataSource);
+				case VERTICA:
+					return new VerticaDataBase(dataSource);
 				default:
-					break;
+					throw new DataBaseException("Impossible to find a database implementation for [" + sqlDialect.toString() + "]");
 				}
 			}
-		} else {
-			return new MetaModelDataBase(dataSource);
 		}
 		return dataBase;
+	}
+
+	/**
+	 * @param dataSource
+	 * @return null if @param dataSource is null
+	 * @throws DataBaseException
+	 */
+	public static CacheDataBase getCacheDataBase(IDataSource dataSource) throws DataBaseException {
+		IDataBase dataBase = getDataBase(dataSource);
+		if (dataBase.isCacheSupported()) {
+			return (CacheDataBase) dataBase;
+		} else {
+			throw new DataBaseException("The database " + dataBase.getName() + " cannot be used as cache");
+		}
+	}
+
+	/**
+	 * @param dataSource
+	 * @return null if @param dataSource is null
+	 * @throws DataBaseException
+	 */
+	public static MetaDataBase getMetaDataBase(IDataSource dataSource) throws DataBaseException {
+		IDataBase dataBase = getDataBase(dataSource);
+		if (dataBase.isMetaSupported()) {
+			return (MetaDataBase) dataBase;
+		} else {
+			throw new DataBaseException("The database " + dataBase.getName() + " cannot be used with meta");
+		}
 	}
 }

@@ -19,21 +19,15 @@
 package it.eng.spagobi.tools.dataset.cache.query.visitor;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
 
 public class SelectQueryVisitorFactory {
 
-	public static ISelectQueryVisitor getVisitor(IDataSource dataSource) {
+	public static ISelectQueryVisitor getVisitor(IDataSource dataSource) throws DataBaseException {
 		IDataBase database = DataBaseFactory.getDataBase(dataSource);
-
-		if (dataSource == null) {
-			return new MetaModelSelectQueryVisitor(database);
-		}
-
-		switch (database.getSqlDialect()) {
-		case HBASE:
-			return new HBaseSelectQueryVisitor(database);
+		switch (database.getDatabaseDialect()) {
 		case HIVE:
 		case SPARKSQL:
 			return new HiveSelectQueryVisitor(database);
@@ -55,8 +49,6 @@ public class SelectQueryVisitorFactory {
 			return new SqlServerSelectQueryVisitor(database);
 		case ORIENT:
 			return new OrientDbSelectQueryVisitor(database);
-		case VOLTDB:
-			return new VoltDbSelectQueryVisitor(database);
 		case TERADATA:
 			return new TeradataSelectQueryVisitor(database);
 		default:

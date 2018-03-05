@@ -30,7 +30,7 @@ import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
 import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -112,6 +112,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(WhatIfXMLTemplateParser.class);
 
+	@Override
 	public WhatIfTemplate parse(Object template) {
 		Assert.assertNotNull(template, "Input parameter [template] cannot be null");
 		Assert.assertTrue(template instanceof SourceBean, "Input parameter [template] cannot be of type [" + template.getClass().getName() + "]");
@@ -184,7 +185,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 
 			// init stand alone configuration
 			initStandAlone(template, toReturn);
-			
+
 			// init stand alone configuration
 			initPagination(template, toReturn);
 
@@ -222,11 +223,11 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	private static void initPagination(SourceBean template, WhatIfTemplate toReturn) {
 		logger.debug("IN. loading the configuration for a stand alone execution");
 		boolean paginationSB = false;
-		SourceBean attribute =(SourceBean) template.getAttribute(TAG_PAGINATION);
-		if(attribute!=null){
-			paginationSB = Boolean.parseBoolean(attribute.getCharacters()) ;
+		SourceBean attribute = (SourceBean) template.getAttribute(TAG_PAGINATION);
+		if (attribute != null) {
+			paginationSB = Boolean.parseBoolean(attribute.getCharacters());
 		}
-		
+
 		toReturn.setPagination(paginationSB);
 	}
 
@@ -326,8 +327,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 						clicked = (String) value.getAttribute(TAG_CLICKED);
 						if (visible != null && visible.equalsIgnoreCase(TRUE)) {
 							/*
-							 * if (menu != null && menu.equalsIgnoreCase(TRUE))
-							 * { toolbarMenuButtons.add(name); } else {
+							 * if (menu != null && menu.equalsIgnoreCase(TRUE)) { toolbarMenuButtons.add(name); } else {
 							 */
 							toolbarVisibleButtons.add(name);
 							// }
@@ -407,8 +407,6 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			writeBackConfig.setEditableMeasures(editableMeasures);
 			logger.debug(TAG_SCENARIO + ":the editable measures are " + editableMeasures);
 		}
-
-
 
 		writeBackConfig.setEditCubeName(editCube);
 		logger.debug(TAG_SCENARIO + ":the edit cube is " + editCube);
@@ -491,7 +489,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		if (standAloneSB != null) {
 			logger.debug("This is a stand alone execution");
 			logger.debug(TAG_STAND_ALONE + ": " + standAloneSB);
-			IDataSource ds = new DataSource();
+			IDataSource ds = DataSourceFactory.getDataSource();
 			ds.setLabel(STAD_ALONE_DS_LABEL);
 			SourceBean connectionProperties = (SourceBean) standAloneSB.getAttribute(TAG_CONNECTION);
 			String jndiName = getBeanValue(TAG_JNDI_NAME, connectionProperties);

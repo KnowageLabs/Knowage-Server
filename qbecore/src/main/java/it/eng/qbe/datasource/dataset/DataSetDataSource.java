@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.qbe.datasource.dataset;
 
-import it.eng.qbe.dataset.FederationUtils;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.IPersistenceManager;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
@@ -39,42 +43,35 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+public class DataSetDataSource extends AbstractDataSource implements ISQLDataSource {
 
-import org.apache.log4j.Logger;
-
-public class DataSetDataSource  extends AbstractDataSource implements ISQLDataSource{
-	
-	
 	private List<IDataSet> datasets;
 	public static final String EMPTY_MODEL_NAME = "";
 	public static final String DATASETS = "DATASETS";
 	public Class statementType = SQLStatement.class;
-	
+
 	private static transient Logger logger = Logger.getLogger(JPADataSource.class);
 
 	protected DataSetDataSource(String dataSourceName, IDataSourceConfiguration configuration) {
 		logger.debug("Creating a new DataSetDataSource");
-		setName( dataSourceName );
+		setName(dataSourceName);
 		dataMartModelAccessModality = new AbstractModelAccessModality();
 		this.configuration = configuration;
-		datasets= new ArrayList<IDataSet>();
-		
-		
+		datasets = new ArrayList<IDataSet>();
+
 		Assert.assertNotNull(configuration.loadDataSourceProperties(), "The properties of the datasource can not be empty");
-		
-//		// validate and set configuration
-		if(configuration instanceof DataSetDataSourceConfiguration){
+
+		// // validate and set configuration
+		if (configuration instanceof DataSetDataSourceConfiguration) {
 			datasets.add(((DataSetDataSourceConfiguration) configuration).getDataset());
-		} else if(configuration instanceof CompositeDataSourceConfiguration){
-			List<IDataSourceConfiguration> subConfigurations = ((CompositeDataSourceConfiguration)configuration).getSubConfigurations();
-			
-			for(int i=0; i<subConfigurations.size(); i++){
-				IDataSourceConfiguration subConf = ((CompositeDataSourceConfiguration)configuration).getSubConfigurations().get(i);
-				if(subConf instanceof DataSetDataSourceConfiguration){
-						datasets.add(((DataSetDataSourceConfiguration)subConf).getDataset());
-					
+		} else if (configuration instanceof CompositeDataSourceConfiguration) {
+			List<IDataSourceConfiguration> subConfigurations = ((CompositeDataSourceConfiguration) configuration).getSubConfigurations();
+
+			for (int i = 0; i < subConfigurations.size(); i++) {
+				IDataSourceConfiguration subConf = ((CompositeDataSourceConfiguration) configuration).getSubConfigurations().get(i);
+				if (subConf instanceof DataSetDataSourceConfiguration) {
+					datasets.add(((DataSetDataSourceConfiguration) subConf).getDataset());
+
 				} else {
 					Assert.assertUnreachable("Not suitable configuration to create a JPADataSource");
 				}
@@ -86,9 +83,7 @@ public class DataSetDataSource  extends AbstractDataSource implements ISQLDataSo
 		logger.debug("Created a new JPADataSource");
 		initStatementType();
 	}
-	
-	 
-	
+
 	public DataSetDataSourceConfiguration getDataSetDataSourceConfiguration() {
 		return (DataSetDataSourceConfiguration) configuration;
 	}
@@ -96,65 +91,68 @@ public class DataSetDataSource  extends AbstractDataSource implements ISQLDataSo
 	public List<IDataSet> getDatasets() {
 		return datasets;
 	}
-	
 
+	@Override
 	public void open() {
 
 	}
-	
+
+	@Override
 	public boolean isOpen() {
 		return true;
 	}
-	
+
+	@Override
 	public void close() {
 
 	}
-	
+
+	@Override
 	public IDataSource getToolsDataSource() {
 		return getDataSourceForReading();
 	}
-	
-	
 
+	@Override
 	public IModelStructure getModelStructure() {
 		IModelStructureBuilder structureBuilder;
-		if(dataMartModelStructure == null) {			
+		if (dataMartModelStructure == null) {
 			structureBuilder = new DataSetModelStructureBuilder(this);
 			dataMartModelStructure = structureBuilder.build();
 		}
-		
+
 		return dataMartModelStructure;
 	}
-	
 
-	public ITransaction getTransaction(){
+	@Override
+	public ITransaction getTransaction() {
 		return new DataSetTransaction(this);
 	}
 
-	//TO-DO
+	// TO-DO
+	@Override
 	public IPersistenceManager getPersistenceManager() {
 		return null;
 	}
 
-	public List<IDataSet> getRootEntities(){
+	public List<IDataSet> getRootEntities() {
 		return datasets;
 	}
 
-	public Class getStatementType(){
+	public Class getStatementType() {
 		return statementType;
 	}
 
-	private void initStatementType(){
+	private void initStatementType() {
 		IDataSource datasourceForReading = this.getDataSourceForReading();
 		if (datasourceForReading != null) {
-			if (SqlUtils.isHiveLikeDialect(datasourceForReading.getHibDialectName())) {
+			if (SqlUtils.isHiveLikeDialect(datasourceForReading.getHibDialectClass())) {
 				statementType = HiveQLStatement.class;
 			}
 		}
 
 	}
-	
-	public IDataSource getDataSourceForReading(){
-		return ((IDataSet)datasets.get(0)).getDataSourceForReading();
+
+	public IDataSource getDataSourceForReading() {
+		return datasets.get(0).getDataSourceForReading();
 	}
 }

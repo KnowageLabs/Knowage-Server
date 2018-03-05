@@ -25,8 +25,8 @@ import java.util.Set;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.log4j.Logger;
 
@@ -42,6 +42,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.DataSourceManager;
+import it.eng.spagobi.utilities.database.DataBaseException;
 
 /**
  * Defines an <code>DataSource</code> object
@@ -53,48 +54,46 @@ public class DataSource implements Serializable, IDataSource {
 	private static transient Logger logger = Logger.getLogger(DataSource.class);
 
 	@NotNull
-	@Max(11)
 	private int dsId;
 
 	@Xss
-	@Max(160)
+	@Size(max = 160)
 	private String descr;
 
 	@NotNull
 	@Xss
-	@Max(50)
+	@Size(max = 50)
 	private String label;
 
 	@Xss
-	@Max(50)
+	@Size(max = 50)
 	private String jndi;
 
 	@Xss
-	@Max(500)
+	@Size(max = 500)
 	private String urlConnection;
 
 	@Xss
-	@Max(50)
+	@Size(max = 50)
 	private String user;
 
 	@Xss
-	@Max(50)
+	@Size(max = 50)
 	private String pwd;
 
 	@Xss
-	@Max(160)
+	@Size(max = 160)
 	private String driver;
 
 	@NotNull
-	@Max(11)
-	private Integer dialectId;
+	@Size(max = 50)
+	private String dialectName;
 
 	private String hibDialectClass;
-	private String hibDialectName;
 	private Set engines = null;
 	private Set objects = null;
 
-	@Max(45)
+	@Size(max = 45)
 	private String schemaAttribute = null;
 
 	@NotNull
@@ -142,14 +141,12 @@ public class DataSource implements Serializable, IDataSource {
 		sbd.setId(dsId);
 		sbd.setDriver(driver);
 		sbd.setHibDialectClass("");
-		sbd.setHibDialectName("");
 		sbd.setJndiName(jndi);
 		sbd.setLabel(label);
 		sbd.setPassword(pwd);
 		sbd.setUrl(urlConnection);
 		sbd.setUser(user);
 		sbd.setHibDialectClass(hibDialectClass);
-		sbd.setHibDialectName(hibDialectName);
 		sbd.setMultiSchema(multiSchema);
 		sbd.setSchemaAttribute(schemaAttribute);
 		sbd.setReadOnly(readOnly);
@@ -389,21 +386,21 @@ public class DataSource implements Serializable, IDataSource {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDialectId()
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDialectName()
 	 */
 	@Override
-	public Integer getDialectId() {
-		return dialectId;
+	public String getDialectName() {
+		return dialectName;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDialectId(java.lang .Integer)
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDialectName(java.lang.String)
 	 */
 	@Override
-	public void setDialectId(Integer dialectId) {
-		this.dialectId = dialectId;
+	public void setDialectName(String dialectName) {
+		this.dialectName = dialectName;
 	}
 
 	/*
@@ -459,16 +456,6 @@ public class DataSource implements Serializable, IDataSource {
 	}
 
 	@Override
-	public String getHibDialectName() {
-		return hibDialectName;
-	}
-
-	@Override
-	public void setHibDialectName(String hibDialectName) {
-		this.hibDialectName = hibDialectName;
-	}
-
-	@Override
 	public void setReadOnly(Boolean readOnly) {
 		this.readOnly = readOnly;
 	}
@@ -504,7 +491,7 @@ public class DataSource implements Serializable, IDataSource {
 	}
 
 	@Override
-	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount) {
+	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount) throws DataBaseException {
 		IDataSet dataSet = JDBCDatasetFactory.getJDBCDataSet(this);
 		((AbstractJDBCDataset) dataSet).setSelectQuery(selectQuery);
 		return executeStatement(dataSet, selectQuery.toSql(this), start, limit, maxRowCount);
@@ -530,12 +517,11 @@ public class DataSource implements Serializable, IDataSource {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((descr == null) ? 0 : descr.hashCode());
-		result = prime * result + ((dialectId == null) ? 0 : dialectId.hashCode());
+		result = prime * result + ((dialectName == null) ? 0 : dialectName.hashCode());
 		result = prime * result + ((driver == null) ? 0 : driver.hashCode());
 		result = prime * result + dsId;
 		result = prime * result + ((engines == null) ? 0 : engines.hashCode());
 		result = prime * result + ((hibDialectClass == null) ? 0 : hibDialectClass.hashCode());
-		result = prime * result + ((hibDialectName == null) ? 0 : hibDialectName.hashCode());
 		result = prime * result + ((jndi == null) ? 0 : jndi.hashCode());
 		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		result = prime * result + ((multiSchema == null) ? 0 : multiSchema.hashCode());
@@ -563,10 +549,10 @@ public class DataSource implements Serializable, IDataSource {
 				return false;
 		} else if (!descr.equals(other.descr))
 			return false;
-		if (dialectId == null) {
-			if (other.dialectId != null)
+		if (dialectName == null) {
+			if (other.dialectName != null)
 				return false;
-		} else if (!dialectId.equals(other.dialectId))
+		} else if (!dialectName.equals(other.dialectName))
 			return false;
 		if (driver == null) {
 			if (other.driver != null)
@@ -579,11 +565,6 @@ public class DataSource implements Serializable, IDataSource {
 			if (other.hibDialectClass != null)
 				return false;
 		} else if (!hibDialectClass.equals(other.hibDialectClass))
-			return false;
-		if (hibDialectName == null) {
-			if (other.hibDialectName != null)
-				return false;
-		} else if (!hibDialectName.equals(other.hibDialectName))
 			return false;
 		if (jndi == null) {
 			if (other.jndi != null)

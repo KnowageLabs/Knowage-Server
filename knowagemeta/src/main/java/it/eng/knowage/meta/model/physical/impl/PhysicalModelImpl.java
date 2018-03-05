@@ -17,19 +17,6 @@
  */
 package it.eng.knowage.meta.model.physical.impl;
 
-import it.eng.knowage.meta.initializer.properties.PhysicalModelPropertiesFromFileInitializer;
-import it.eng.knowage.meta.model.Model;
-import it.eng.knowage.meta.model.ModelPackage;
-import it.eng.knowage.meta.model.ModelProperty;
-import it.eng.knowage.meta.model.ModelPropertyType;
-import it.eng.knowage.meta.model.impl.ModelObjectImpl;
-import it.eng.knowage.meta.model.physical.PhysicalForeignKey;
-import it.eng.knowage.meta.model.physical.PhysicalModel;
-import it.eng.knowage.meta.model.physical.PhysicalModelPackage;
-import it.eng.knowage.meta.model.physical.PhysicalPrimaryKey;
-import it.eng.knowage.meta.model.physical.PhysicalTable;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -50,6 +37,20 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import it.eng.knowage.meta.initializer.properties.PhysicalModelPropertiesFromFileInitializer;
+import it.eng.knowage.meta.model.Model;
+import it.eng.knowage.meta.model.ModelPackage;
+import it.eng.knowage.meta.model.ModelProperty;
+import it.eng.knowage.meta.model.ModelPropertyType;
+import it.eng.knowage.meta.model.impl.ModelObjectImpl;
+import it.eng.knowage.meta.model.physical.PhysicalForeignKey;
+import it.eng.knowage.meta.model.physical.PhysicalModel;
+import it.eng.knowage.meta.model.physical.PhysicalModelPackage;
+import it.eng.knowage.meta.model.physical.PhysicalPrimaryKey;
+import it.eng.knowage.meta.model.physical.PhysicalTable;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
  * <!-- begin-user-doc --> An implementation of the model object '<em><b>Physical Model</b></em>'. <!-- end-user-doc -->
@@ -612,9 +613,9 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 	}
 
 	@Override
-	public DataSource getDataSource() throws ClassNotFoundException, NamingException, SQLException {
+	public IDataSource getDataSource() throws ClassNotFoundException, NamingException, SQLException {
 
-		DataSource dataSource = new DataSource();
+		IDataSource dataSource = DataSourceFactory.getDataSource();
 		dataSource.setLabel(getPropertyValueOrNull(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME));
 		dataSource.setJndi(getPropertyValueOrNull(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JNDI_NAME));
 		dataSource.setUrlConnection(getPropertyValueOrNull(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL));
@@ -622,7 +623,6 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 		dataSource.setUser(getPropertyValueOrNull(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME));
 		dataSource.setPwd(getPropertyValueOrNull(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD));
 		dataSource.setHibDialectClass("");
-		dataSource.setHibDialectName("");
 		return dataSource;
 	}
 

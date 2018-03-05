@@ -198,6 +198,18 @@
  EXO -->
 
 	<!-- START SERVLET DEFINITIONS -->
+	
+	<!-- 
+	<servlet>
+		<servlet-name>RESTEasy WADL</servlet-name>
+		<servlet-class>org.jboss.resteasy.wadl.ResteasyWadlServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>RESTEasy WADL</servlet-name>
+		<url-pattern>/application.xml</url-pattern>
+	</servlet-mapping>
+	 -->
 
 	<!-- START-LIFERAY
    <servlet>
@@ -222,7 +234,7 @@ END-LIFERAY -->
 		 
 		<init-param>
 			<param-name>notifyUrl</param-name>
-			<param-value>http://localhost:8080/knowage/datasetNotifier</param-value>
+			<param-value>http://192.168.28.183:8080/knowage/datasetNotifier</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
@@ -271,7 +283,6 @@ END-LIFERAY -->
 		</init-param>
 		<load-on-startup>1</load-on-startup>	     
 	</servlet>
-
 
 	<servlet>
 		<servlet-name>ConfigServlet</servlet-name>

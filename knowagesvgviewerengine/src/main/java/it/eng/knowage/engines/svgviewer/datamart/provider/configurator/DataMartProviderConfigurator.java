@@ -17,6 +17,8 @@
  */
 package it.eng.knowage.engines.svgviewer.datamart.provider.configurator;
 
+import org.apache.log4j.Logger;
+
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.datamart.provider.DataMartProvider;
@@ -25,11 +27,10 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
-
-import org.apache.log4j.Logger;
 
 /**
  * The Class SQLDatasetProviderConfigurator.
@@ -97,8 +98,8 @@ public class DataMartProviderConfigurator {
 	 * @throws GeoEngineException
 	 *             the geo engine exception
 	 */
-	public static DataSource getDataSource(SourceBean confSB) throws SvgViewerEngineException {
-		DataSource dataSource = null;
+	public static IDataSource getDataSource(SourceBean confSB) throws SvgViewerEngineException {
+		IDataSource dataSource = null;
 
 		SourceBean datasourceSB = (SourceBean) confSB.getAttribute(SvgViewerEngineConstants.DATASOURCE_TAG);
 		if (datasourceSB == null) {
@@ -107,7 +108,7 @@ public class DataMartProviderConfigurator {
 			return null;
 		}
 
-		dataSource = new DataSource();
+		dataSource = DataSourceFactory.getDataSource();
 
 		String type = (String) datasourceSB.getAttribute(SvgViewerEngineConstants.DATASET_TYPE_ATTRIBUTE);
 		if ("connection".equalsIgnoreCase(type)) {

@@ -17,12 +17,13 @@
  */
 package it.eng.spagobi.tools.dataset.cache;
 
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.utilities.cache.CacheItem;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.cache.CacheItem;
+import it.eng.spagobi.utilities.database.DataBaseException;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it) Antonella Giachino (antonella.giachino@eng.it)
@@ -37,18 +38,21 @@ public interface ICacheMetadata {
 
 	/**
 	 * @return used cache memory in bytes
+	 * @throws DataBaseException
 	 */
-	BigDecimal getUsedMemory();
+	BigDecimal getUsedMemory() throws DataBaseException;
 
 	/**
 	 * @return available cache memory in bytes
+	 * @throws DataBaseException
 	 */
-	BigDecimal getAvailableMemory();
+	BigDecimal getAvailableMemory() throws DataBaseException;
 
 	/**
 	 * @return the percentage of the available cache memory on the total memory
+	 * @throws DataBaseException
 	 */
-	Integer getAvailableMemoryAsPercentage();
+	Integer getAvailableMemoryAsPercentage() throws DataBaseException;
 
 	/**
 	 * @return the required memory in bytes to store the input resultSet in cache
@@ -57,13 +61,15 @@ public interface ICacheMetadata {
 
 	/**
 	 * @return true if the cache space can contains the store
+	 * @throws DataBaseException
 	 */
-	boolean hasEnoughMemoryForStore(IDataStore store);
+	boolean hasEnoughMemoryForStore(IDataStore store) throws DataBaseException;
 
 	/**
 	 * @return true if the cache space is greater the requiredMemory
+	 * @throws DataBaseException
 	 */
-	boolean isAvailableMemoryGreaterThen(BigDecimal requiredMemory);
+	boolean isAvailableMemoryGreaterThen(BigDecimal requiredMemory) throws DataBaseException;
 
 	/**
 	 * @return true if the configuration about the clean action are correctly defined

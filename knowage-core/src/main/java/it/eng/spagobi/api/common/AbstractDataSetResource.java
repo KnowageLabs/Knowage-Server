@@ -62,9 +62,7 @@ import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
 import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.cache.query.item.UnsatisfiedFilter;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
@@ -85,14 +83,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(AbstractDataSetResource.class);
-
-	static final protected String DEFAULT_TABLE_NAME_DOT = DataStore.DEFAULT_TABLE_NAME + ".";
-
-	private static final String DATE_TIME_FORMAT_MYSQL = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "%Y").replace("MM", "%m")
-			.replace("dd", "%d").replace("HH", "%H").replace("mm", "%i").replace("ss", "%s");
-	private static final String DATE_TIME_FORMAT_SQL_STANDARD = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
-			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
-	private static final String DATE_TIME_FORMAT_SQLSERVER = "yyyyMMdd HH:mm:ss";
 
 	// ===================================================================
 	// UTILITY METHODS
@@ -742,8 +732,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				dataSource = dataSet.getDataSource();
 			} catch (UnreachableCodeException e) {
 			}
-		} else if (strategy == DatasetEvaluationStrategy.NEAR_REALTIME) {
-			dataSource = null;
 		} else {
 			dataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 		}
