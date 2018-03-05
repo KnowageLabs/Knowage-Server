@@ -49,8 +49,8 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
@@ -132,7 +132,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSets(@QueryParam("includeDerived") String includeDerived, @QueryParam("callback") String callback,
 			@QueryParam("asPagedList") Boolean paged, @QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
-			@QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical, @QueryParam("ids") String ids) {
+			@QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical, @QueryParam("ids") String ids,
+			@QueryParam("spatialOnly") boolean spatialOnly) {
 		logger.debug("IN");
 
 		if ("no".equalsIgnoreCase(includeDerived)) {
@@ -140,7 +141,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		}
 
 		if (Boolean.TRUE.equals(paged)) {
-			return getDatasetsAsPagedList(pageStr, itemPerPageStr, search, seeTechnical, ids);
+			return getDatasetsAsPagedList(pageStr, itemPerPageStr, search, seeTechnical, ids, spatialOnly);
 		}
 
 		ISbiDataSetDAO dsDAO;
@@ -267,13 +268,14 @@ public class DataSetResource extends AbstractDataSetResource {
 		return super.deleteDataset(label);
 	}
 
-	public String getDatasetsAsPagedList(String pageStr, String itemPerPageStr, String search, Boolean seeTechnical, String ids) {
+	public String getDatasetsAsPagedList(String pageStr, String itemPerPageStr, String search, Boolean seeTechnical, String ids, boolean spatialOnly) {
 
 		try {
 			ISbiDataSetDAO dao = DAOFactory.getSbiDataSetDAO();
-			IEngUserProfile profile = this.getUserProfile();
-			// TODO check if profile is null
-			dao.setUserProfile(profile);
+			UserProfile profile = this.getUserProfile();
+			if (profile != null) {
+				dao.setUserProfile(profile);
+			}
 
 			Integer page = getNumberOrNull(pageStr);
 			Integer item_per_page = getNumberOrNull(itemPerPageStr);
@@ -283,9 +285,9 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			List<SbiDataSet> dataset = null;
 			if (UserUtilities.isAdministrator(getUserProfile())) {
-				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, null, null, idArray);
+				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, null, null, idArray, spatialOnly);
 			} else {
-				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, getUserProfile(), seeTechnical, idArray);
+				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, getUserProfile(), seeTechnical, idArray, spatialOnly);
 			}
 
 			JSONObject jo = new JSONObject();

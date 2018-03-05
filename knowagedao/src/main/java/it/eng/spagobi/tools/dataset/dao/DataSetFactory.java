@@ -231,12 +231,6 @@ public class DataSetFactory {
 			if (type.equalsIgnoreCase(DataSetConstants.DS_FILE)) {
 				ds = new FileDataSet();
 				FileDataSet fds = (FileDataSet) ds;
-
-				// String resourcePath = jsonConf.optString("resourcePath");
-				// if (StringUtilities.isEmpty(resourcePath)) {
-				// resourcePath = DAOConfig.getResourcePath();
-				// jsonConf.put("resourcePath", resourcePath);
-				// }
 				String resourcePath = DAOConfig.getResourcePath();
 				fds.setResourcePath(resourcePath);
 
@@ -516,7 +510,7 @@ public class DataSetFactory {
 					ds.setDataSourceForReading(dataSourceForReading);
 				}
 			} catch (Exception e) {
-				logger.error("Error in copying dataset definition ", e);
+				throw new SpagoBIRuntimeException("Error while defining dataset configuration.", e);
 			}
 
 		}

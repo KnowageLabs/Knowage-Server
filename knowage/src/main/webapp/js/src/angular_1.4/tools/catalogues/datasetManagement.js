@@ -51,8 +51,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.limitRowsDefault = null;
 	$scope.xslSheetNumberDefault = 1;
 	$scope.dateFormatDefault = "dd/MM/yyyy";
-	
-	
+
+
 	$scope.$watch("selectedDataSet.restNGSI",function(newValue,oldValue){
 		if(newValue && (newValue===true || newValue==="true")){
 			$scope.selectedDataSet.restNGSI = true;
@@ -172,6 +172,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
       },
 
       {
+    	  name: "SPATIAL ATTRIBUTE",
+    	  value: "SPATIAL_ATTRIBUTE"
+      },
+
+      {
     	  name: "MEASURE",
     	  value: "MEASURE"
       }
@@ -201,7 +206,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			hideTooltip: true,
 
 			transformer: function() {
-				return '<md-select ng-model=row.fieldType class="noMargin" ng-change="scopeFunctions.setFormDirty()"><md-option ng-repeat="col in scopeFunctions.fieldsMetadataTypes" value="{{col.name}}">{{col.name}}</md-option></md-select>';
+				return '<md-select ng-model=row.fieldType class="noMargin" ng-change="scopeFunctions.setFormDirty()"><md-option ng-repeat="col in scopeFunctions.fieldsMetadataTypes" value="{{col.value}}">{{col.name}}</md-option></md-select>';
 			}
 		}
 	];
@@ -2199,7 +2204,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 
 	$scope.createNewDataSet = function() {
-		
+
 		$scope.step=1;
 
 		if ($scope.datasetsListTemp.length == $scope.datasetsListPersisted.length + 1) {
@@ -2361,7 +2366,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.fileUploaded = !$scope.selectedDataSet.fileUploaded ? false : true;
 			if($scope.dataset!=undefined && $scope.dataset.hasOwnProperty("meta")){
 				$scope.selectedDataSet.meta = $scope.dataset.meta;
-			}			
+			}
 		}
 
 		// Scheduling refactoring
@@ -2629,7 +2634,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						$scope.selectedDataSet.fileUploaded=true;
 						$scope.changingFile = false;
 						$scope.initialUpload = true;
-						
+
 						if($scope.selectedDataSet.fileType=="XLS"){
 							$scope.selectedDataSet.limitRows = "";
 							$scope.selectedDataSet.csvDelimiter = "";
@@ -2653,7 +2658,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		console.info("CHANGE FILE [IN]");
 
 		$scope.changingFile = true;
-		
+
 		$scope.initialUpload = true;
 
 		/**
@@ -3724,7 +3729,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				}
 			);
     }
-    
+
     $scope.changeStep = function(way) {
     	var oldStep = $scope.step;
     	var tempStep = angular.copy($scope.step);
@@ -3751,20 +3756,20 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         			$scope.step=2;
         		}
     		}
-    		   		
+
     		break;
     	default:
     		break;
     	}
     }
-    
+
     $scope.toStep2 = function () {
     	var params = {};
 		params.showDerivedDataset=false;
 		params.SBI_EXECUTION_ID = -1;
 		params.isTech = false;
 		params.showOnlyOwner=true;
-		
+
 		$scope.dataset = {};
 		$scope.dataset.catTypeId = $scope.selectedDataSet.catTypeId;
 		$scope.dataset.catTypeVn = $scope.selectedDataSet.catTypeVn;
@@ -3790,7 +3795,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.dataset.tableName = $scope.selectedDataSet.persistTableName;
 		$scope.dataset.type = $scope.selectedDataSet.dsTypeCd;
 		$scope.dataset.xslSheetNumber = $scope.selectedDataSet.xslSheetNumber;
-		
+
     	$http
 		(
 			{
@@ -3799,27 +3804,27 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				data: $scope.dataset,
 				params: params,
 				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-				
+
 				transformRequest: function(obj) {
-					
+
 					var str = [];
-					
+
 					for(var p in obj)
 						str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-					
+
 					return str.join("&");
-					
+
 				},
 			}
 		)
 		.then
 		(
 			function successCallback(response) {
-				
+
 				if (!response.data.errors) {
-					
+
 					$scope.step = 2;
-					
+
 					$scope.dataset.meta = {};
 					$scope.dataset.meta = angular.copy(response.data.meta);
 					angular.copy(response.data.datasetColumns,$scope.datasetColumns);
@@ -3827,48 +3832,48 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					$scope.validationPassed = false;
 					$scope.prepareMetaForView();
 					$scope.prepareDatasetForView();
-					
+
 					if($scope.initialUpload){
 						$scope.initialUpload = false;
 					}
-					
-					
+
+
 				} else {
 					console.info("[ERROR]: ",$scope.translate.load(response.data.errors[0].message));
-					// Reset the meta after first unsuccessful try to go to Step 2 
+					// Reset the meta after first unsuccessful try to go to Step 2
 					$scope.dataset.meta = [];
-					
+
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 				}
-				
-			},				
+
+			},
 			function errorCallback(response) {
-				
+
 			});
     }
-    
-    $scope.tableColumns = 
+
+    $scope.tableColumns =
         [
     	     {
-    	      name:"columnView", 
+    	      name:"columnView",
     	      label:"Column",
     	      hideTooltip:true
     	     },
-    	     
+
     	     {
     	         name:"pnameView",
     	         label:"Attribute",
     	         hideTooltip:true
     	     },
-    	     
+
     	     {
     	         name:"pvalueView",
     	         label:"Value",
     	         hideTooltip:true
     	     },
-    	     
+
     	     /**
-    	      * A new column on the Step 2 of the Dataset wizard. It contains a graphic description of a validation state 
+    	      * A new column on the Step 2 of the Dataset wizard. It contains a graphic description of a validation state
     	      * for all metadata column separately.
     	      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	      */
@@ -3878,9 +3883,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	    	 hideTooltip: true
     	     }
          ];
-    
-    $scope.metaScopeFunctions={    		    		
-        	translate: sbiModule_translate,	
+
+    $scope.metaScopeFunctions={
+        	translate: sbiModule_translate,
         	datasetColumns:$scope.datasetColumns,
         	dsMetaProperty:$scope.dsMetaProperty,
         	dsMetaValue   :$scope.dsMetaValue,
@@ -3894,25 +3899,25 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="integer".toLowerCase()||
         			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="date".toLowerCase())
         				 row.dsMetaValue.push(this.dsMetaValue[i]);
-        			
+
         			}
-        			
+
         		}else if(value.toLowerCase()==="fieldType".toLowerCase()){
         			for(i=0;i<this.dsMetaValue.length;i++){
-           			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="attribute".toLowerCase()||
+           			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="attribute".toLowerCase()|| this.dsMetaValue[i].VALUE_CD.toLowerCase()==="spatial_attribute".toLowerCase()||
            			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="measure".toLowerCase())
            				 row.dsMetaValue.push(this.dsMetaValue[i]);
-           			
+
            			}
-        			
+
         		}else{
-        			
+
         			angular.copy(this.dsMetaValue,row.dsMetaValue);
         		}
-        		
+
         	}
         };
-    
+
 	loadDatasetValues = function(a,b) {
 
 		sbiModule_restServices.promiseGet(a,b)
@@ -3926,15 +3931,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				angular.copy(response.data,$scope.dsMetaValue)
 			}
 		},function(response){
-			
+
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			
+
 		});
 	}
-	
+
     $scope.toStep3 = function () {
-    	
-    	
+
+
     	$scope.dataset.isPublicDS = false;
 		$scope.dataset.datasetMetadata={};
 		$scope.dataset.datasetMetadata.version=1;
@@ -3966,10 +3971,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.dataset.start = "";
 		$scope.dataset.page = 10;
 
-    	
+
     	var params = {};
 		params.SBI_EXECUTION_ID = -1;
-		
+
 		$http
 		(
 			{
@@ -3978,38 +3983,38 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				data: $scope.dataset,
 				params: params,
 				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-				
+
 				transformRequest: function(obj) {
-					
+
 					var str = [];
-					
+
 					for(var p in obj)
 						str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-					
+
 					return str.join("&");
-					
+
 				},
 			}
 		)
 		.then
 		(
 			function successCallback(response) {
-				
+
 				if (!response.data.validationErrors) {
-					
+
 					//$scope.step=3;
 					$scope.validated = true;
-					
+
 					sbiModule_messaging.showSuccessMessage($scope.translate.load('sbi.workspace.dataset.wizard.metadata.validation.success.msg'));
 
 					$scope.resultMetaDataStep2 = [];
 					$scope.resultRowsStep2 = [];
 					angular.copy(response.data.metaData.fields,$scope.resultMetaDataStep2);
-										
+
 					// Take all results (pure data) for rows of the Angular table
 					angular.copy(response.data.rows,$scope.resultRowsStep2);
 					$scope.collectHeadersForStep3Preview();
-					
+
 					//validation properties when validation is successful
 					$scope.step2ValidationErrors = null;
 					$scope.validationStatus = true;
@@ -4017,11 +4022,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					$scope.validationPassed = true;
 					$scope.csvConfChanged = false;
 					$scope.validationError = false;
-					
+
 					$scope.prepareMetaForView();
-					
+
 				} else if(response.data.validationErrors) {
-					
+
 					console.warn("[VALIDATION ERRORS]: Validation failed!");
 
 					$scope.validationStatus = false;
@@ -4047,44 +4052,44 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					// "Refresh" the Step 2 table, in order to where the validation error appears.
 					$scope.prepareMetaForView();
 					$scope.prepareDatasetForView();
-					
+
 				} else {
 					console.info("[ERROR]: ",response.data.errors[0].message);
-					// Reset the meta after first unsuccessful try to go to Step 2 
+					// Reset the meta after first unsuccessful try to go to Step 2
 					//$scope.dataset.meta = [];
-					
+
 					//sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 				}
-				
-			},				
+
+			},
 			function errorCallback(response) {
-				
+
 			});
     }
-    
-    $scope.collectHeadersForStep3Preview = function() {			
-		
+
+    $scope.collectHeadersForStep3Preview = function() {
+
 		$scope.allHeadersForStep3Preview = [];
-		
+
 		for (i=0; i<$scope.resultMetaDataStep2.length; i++) {
-			
+
 			var temp = {};
-			
+
 			temp['label'] = $scope.resultMetaDataStep2[i].header;
 			temp['name'] = 'column_' + (i+1);
-			
+
 			$scope.allHeadersForStep3Preview.push(temp);
-			
+
 		}
-	
+
 	}
-    
+
 	$scope.prepareMetaForView = function(item,index){
 
 		/**
 		 * If the user just opens the Dataset wizard dialog and goes to the Step 2, the grid will be initialized with the saved (when updating/editing) or with the
 		 * default (when creating a new File dataset) data. In that situation, the 'item' and 'index' will be undefined. These two values are defined only when user
-		 * clicks on the Value column comboboxes for Field type of the particular column. They tell us the type of the Field type (ATTRIBUTE or MEASURE). So, this
+		 * clicks on the Value column comboboxes for Field type of the particular column. They tell us the type of the Field type (ATTRIBUTE, SPATIAL ATTRIBUTE or MEASURE). So, this
 		 * variable will be true only when just opening (entering) the Step 2.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
@@ -4110,7 +4115,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 			/**
 			 * If initializing (entering) the Step 2, the expression (pname=="type") will indicate that we are dealing with the Type type of the Attribute column
-			 * (possible values of these combo boxes: String, Integer, Double). In that case, inspect the subsequent Field type type (ATTRIBUTE or MEASURE) and in
+			 * (possible values of these combo boxes: String, Integer, Double). In that case, inspect the subsequent Field type type (ATTRIBUTE, SPATIAL ATTRIBUTE or MEASURE) and in
 			 * the case it is a MEASURE, remove the String item from the current Type combobox, since the MEASURE can be only Integer/Double. Otherwise, if the
 			 * Attribute column value is the Field type, just proceed with the filtering of metadata.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -4218,7 +4223,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 
 	}
-	
+
 	$scope.prepareMetaValue=function(values){
 
 		for(i=0;i<values.length;i++){
@@ -4232,7 +4237,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			}
 		}
 	}
-	
+
 	/**
 	 * Local function that is used for filtering rows (metadata) for all columns available in the file dataset.
 	 * It will pass only the 'type' and 'fieldType' rows, whilst others will be ignored (filtered).
@@ -4260,7 +4265,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		return finalFilteredRows;
 
 	}
-	
+
 	$scope.filterMetaValue = function(pname,item,i,index,myFieldType){
 
 		var filteredMetaValues = [];
@@ -4305,7 +4310,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		}else if(pname.toLowerCase()==="fieldType".toLowerCase()){
 			for(j=0;j<$scope.dsMetaValue.length;j++){
-   			 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="attribute".toLowerCase()||
+   			 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="attribute".toLowerCase()|| $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="spatial_attribute".toLowerCase()||
    			    $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="measure".toLowerCase()){
    				filteredMetaValues.push($scope.dsMetaValue[j]);
    			 }
@@ -4319,21 +4324,21 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		return filteredMetaValues;
 	}
-	
-	
+
+
 	$scope.metaScopeFunctions.valueChanged = function(item,index) {
-    	
-    	if (item.VALUE_CD=="MEASURE" || item.VALUE_CD=="ATTRIBUTE") {
+
+    	if (item.VALUE_CD=="MEASURE" || item.VALUE_CD=="ATTRIBUTE" || item.VALUE_CD=="SPATIAL_ATTRIBUTE") {
     		$scope.prepareMetaForView(item.VALUE_CD,index);
     	}
-    	
+
     }
-	
+
 	$scope.goToFirstStep = function () {
 		$scope.step=1;
 		$scope.validated = false;
 	}
-    
+
     $scope.metaScopeFunctions.dsGenMetaProperty = $scope.dsGenMetaProperty;
 
 };

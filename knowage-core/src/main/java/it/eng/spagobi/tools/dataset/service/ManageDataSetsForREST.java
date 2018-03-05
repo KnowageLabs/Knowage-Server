@@ -1054,37 +1054,39 @@ public class ManageDataSetsForREST {
 
 				for (int i = 0; i < metaData.getFieldCount(); i++) {
 					IFieldMetaData ifmd = metaData.getFieldMeta(i);
-					
-					//check if file data set, apply metadata values passed from frontend
-					if(dataSet instanceof FileDataSet) {
+
+					// check if file data set, apply metadata values passed from frontend
+					if (dataSet instanceof FileDataSet) {
 						for (int j = 0; j < metadataArray.length(); j++) {
 							if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
 								ifmd.setType(MetaDataMapping.getMetaDataType(metadataArray.getJSONObject(j).getString("type")));
 								break;
 							}
-							
+
 						}
 					}
-					
+
 					for (int j = 0; j < metadataArray.length(); j++) {
-						
+
 						if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
-							if ("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+							if (IFieldMetaData.FieldType.MEASURE.toString().equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
 								ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+							} else if (IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE.toString().equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+								ifmd.setFieldType(IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE);
 							} else {
 								ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
 							}
 							break;
 						}
 					}
-					
+
 				}
 
 				if (metadataArray.length() == 0) {
 					setNumericValuesAsMeasures(dataStore.getMetaData());
 				}
 			} catch (ClassCastException e) {
-				logger.debug("Recieving an object instead of array for metadata", e);
+				logger.error("Recieving an object instead of array for metadata", e);
 			}
 
 			// dsMetadata = dsp.metadataToXML(dataStore.getMetaData());

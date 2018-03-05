@@ -834,6 +834,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		// field's meta
 		JSONArray fieldsMetaDataJSON = new JSONArray();
 
+		List<JSONObject> spatialAttributesList = new ArrayList<JSONObject>();
 		List<JSONObject> attributesList = new ArrayList<JSONObject>();
 		List<JSONObject> measuresList = new ArrayList<JSONObject>();
 
@@ -870,6 +871,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			fieldMetaDataJSON.put("colType", fieldColumnType);
 			FieldType type = fieldMetaData.getFieldType();
 			logger.debug("The field type is " + type.name());
+
 			switch (type) {
 			case ATTRIBUTE:
 				Object isSegmentAttributeObj = fieldMetaData.getProperty(PROPERTY_IS_SEGMENT_ATTRIBUTE);
@@ -881,6 +883,8 @@ public class DataSetResource extends AbstractDataSetResource {
 				fieldMetaDataJSON.put("nature", attributeNature);
 				fieldMetaDataJSON.put("funct", AggregationFunctions.NONE);
 				fieldMetaDataJSON.put("iconCls", attributeNature);
+
+				attributesList.add(fieldMetaDataJSON);
 				break;
 			case MEASURE:
 				Object isMandatoryMeasureObj = fieldMetaData.getProperty(PROPERTY_IS_MANDATORY_MEASURE);
@@ -899,13 +903,25 @@ public class DataSetResource extends AbstractDataSetResource {
 				} else {
 					fieldMetaDataJSON.put("precision", "2");
 				}
-				break;
-			}
 
-			if (type.equals(it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType.MEASURE)) {
 				measuresList.add(fieldMetaDataJSON);
-			} else {
-				attributesList.add(fieldMetaDataJSON);
+				break;
+			case SPATIAL_ATTRIBUTE:
+				Object isSegmentSpatialAttributeObj = fieldMetaData.getProperty(PROPERTY_IS_SEGMENT_ATTRIBUTE);
+				logger.debug("Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
+				String spatialAttributeNature = (isSegmentSpatialAttributeObj != null && Boolean.parseBoolean(isSegmentSpatialAttributeObj.toString()))
+						? "segment_attribute"
+						: "attribute";
+
+				logger.debug("The nature of the attribute is recognized as " + spatialAttributeNature);
+				fieldMetaDataJSON.put("nature", spatialAttributeNature);
+				fieldMetaDataJSON.put("funct", AggregationFunctions.NONE);
+				fieldMetaDataJSON.put("iconCls", spatialAttributeNature);
+
+				spatialAttributesList.add(fieldMetaDataJSON);
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -917,6 +933,11 @@ public class DataSetResource extends AbstractDataSetResource {
 		}
 
 		for (Iterator iterator = attributesList.iterator(); iterator.hasNext();) {
+			JSONObject jsonObject = (JSONObject) iterator.next();
+			fieldsMetaDataJSON.put(jsonObject);
+		}
+
+		for (Iterator iterator = spatialAttributesList.iterator(); iterator.hasNext();) {
 			JSONObject jsonObject = (JSONObject) iterator.next();
 			fieldsMetaDataJSON.put(jsonObject);
 		}
@@ -1153,7 +1174,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		if (ordering != null) {
 			boolean reverseOrdering = ordering.optBoolean("reverseOrdering");
 			String columnOrdering = ordering.optString("columnOrdering");
-			if(columnOrdering.equalsIgnoreCase("dsTypeCd")) {
+			if (columnOrdering.equalsIgnoreCase("dsTypeCd")) {
 				columnOrdering = "type";
 			}
 			if (columnOrdering != null && !columnOrdering.isEmpty()) {

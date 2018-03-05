@@ -346,6 +346,7 @@ public class ChartEngineDataUtil {
 		// field's meta
 		JSONArray fieldsMetaDataJSON = new JSONArray();
 
+		List<JSONObject> spatialAttributesList = new ArrayList<JSONObject>();
 		List<JSONObject> attributesList = new ArrayList<JSONObject>();
 		List<JSONObject> measuresList = new ArrayList<JSONObject>();
 
@@ -394,6 +395,8 @@ public class ChartEngineDataUtil {
 				fieldMetaDataJSON.put("nature", attributeNature);
 				fieldMetaDataJSON.put("funct", AggregationFunctions.NONE);
 				fieldMetaDataJSON.put("iconCls", attributeNature);
+
+				attributesList.add(fieldMetaDataJSON);
 				break;
 			case MEASURE:
 				Object isMandatoryMeasureObj = fieldMetaData.getProperty(PROPERTY_IS_MANDATORY_MEASURE);
@@ -412,13 +415,24 @@ public class ChartEngineDataUtil {
 				} else {
 					fieldMetaDataJSON.put("precision", "2");
 				}
-				break;
-			}
 
-			if (type.equals(it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType.MEASURE)) {
 				measuresList.add(fieldMetaDataJSON);
-			} else {
-				attributesList.add(fieldMetaDataJSON);
+				break;
+			case SPATIAL_ATTRIBUTE:
+				Object isSegmentSpatialAttributeObj = fieldMetaData.getProperty(PROPERTY_IS_SEGMENT_ATTRIBUTE);
+				logger.debug("Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
+				String spatialAttributeNature = (isSegmentSpatialAttributeObj != null
+						&& (Boolean.parseBoolean(isSegmentSpatialAttributeObj.toString()) == true)) ? "segment_attribute" : "attribute";
+
+				logger.debug("The nature of the attribute is recognized as " + spatialAttributeNature);
+				fieldMetaDataJSON.put("nature", spatialAttributeNature);
+				fieldMetaDataJSON.put("funct", AggregationFunctions.NONE);
+				fieldMetaDataJSON.put("iconCls", spatialAttributeNature);
+
+				spatialAttributesList.add(fieldMetaDataJSON);
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -430,6 +444,11 @@ public class ChartEngineDataUtil {
 		}
 
 		for (Iterator<JSONObject> iterator = attributesList.iterator(); iterator.hasNext();) {
+			JSONObject jsonObject = iterator.next();
+			fieldsMetaDataJSON.put(jsonObject);
+		}
+
+		for (Iterator<JSONObject> iterator = spatialAttributesList.iterator(); iterator.hasNext();) {
 			JSONObject jsonObject = iterator.next();
 			fieldsMetaDataJSON.put(jsonObject);
 		}
