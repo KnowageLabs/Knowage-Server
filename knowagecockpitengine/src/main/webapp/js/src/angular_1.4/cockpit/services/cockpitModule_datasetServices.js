@@ -426,12 +426,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	}
 
 	this.getDatasetParameters=function(dsId){
-		var param={};
+		var params={};
 		for(var i=0;i<cockpitModule_template.configuration.datasets.length;i++){
 			if(angular.equals(cockpitModule_template.configuration.datasets[i].dsId,dsId)){
 				angular.forEach(cockpitModule_template.configuration.datasets[i].parameters,function(item,key){
-						this[key]=cockpitModule_utilstServices.getParameterValue(item);
-				},param)
+						this[key]=[cockpitModule_utilstServices.getParameterValue(item)];
+				},params)
 			}
 		}
 
@@ -461,13 +461,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							for(var j=i; j<finalValues.length; j += finalParams.length){
 								values.push(finalValues[j]);
 							}
-							param[key] = values.join(","); // override params
+							params[key] = values;
 						}
 					}
 				}
 			}
 		}
-		return param;
+		return params;
 	}
 
 	//TODO missing maxRows
@@ -549,7 +549,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			if (parameters.hasOwnProperty(parameter)){
 				for(var i in dataset.parameters){
 					if(dataset.parameters[i].name==parameter){
-						var valueCount = (""+parameters[parameter]).split(",").length;
+						var valueCount = parameters[parameter].length;
 						if(!dataset.parameters[i].multiValue && valueCount > 1){
 							var parameterError = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoapplyvaluestosinglevalueparameter")
 									.replace("{0}", "<b>" + valueCount + "</b>")
@@ -568,7 +568,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			deferred.reject('Error');
 		}
 
-		var parametersString = JSON.stringify(parameters);
+		var parametersString = JSON.stringify(parameters).replace("[","").replace("]","").replace("\",\"",",");
 		for (var parameter in parameters) {
 			if (parameters.hasOwnProperty(parameter) && (parameters[parameter] == null || parameters[parameter] == undefined)) {
 				parametersString = parametersString.replace("}" , ", \"" + parameter + "\":null}");
@@ -982,7 +982,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				var params ={};
 				params.datasetLabel = dataset.label;
 				params.aggregation = cockpitModule_widgetSelection.getAggregation(undefined,dataset,undefined, undefined);
-				params.parameters = ds.getDatasetParameters(dataset.id.dsId);
+				params.parameters = JSON.stringify(ds.getDatasetParameters(dataset.id.dsId)).replace("[","").replace("]","").replace("\",\"",",");
 				if(dataset.useCache==false){
 					params.nearRealtime = true;
 				}
