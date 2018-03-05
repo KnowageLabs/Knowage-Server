@@ -18,16 +18,97 @@
 		<table class="kn-table" ng-if="newModel.content.targetLayersConf.length > 0">
 			<thead>
 				<tr>
-					<th>Order</th><th>Type</th><th>Label</th><th>Target</th>
+					<th>Order</th>
+					<th>Type</th>
+					<th>Name</th>
+					<th>Label</th>
+					<th>Target</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="layer in newModel.content.targetLayersConf">
-					<td>{{layer.order}}</td>
+				<tr ng-repeat-start="layer in newModel.content.targetLayersConf">
+					
+					<td class="multiTableAction">
+							<div layout="row" layout-align="center"> 
+			                	<md-button ng-click="functionsCockpitColumn.moveUp($event,$index)" class="md-icon-button" aria-label="up" ng-show="!$first"> 
+		               				<md-icon md-font-icon="fa fa-arrow-up"></md-icon>
+		          				</md-button>
+		          				<md-button ng-click="functionsCockpitColumn.moveDown($event,$index)" class="md-icon-button" aria-label="down" ng-show="!$last">
+		          					<md-icon md-font-icon="fa fa-arrow-down"></md-icon>
+		          				</md-button>
+	          				</div>
+       					</td>
 					<td>{{layer.type}}</td>
-					<td>{{layer.label}}</td>
-					<td><md-radio ng-model="layer.isTarget"></md-radio></td>
+					<td>{{layer.name}}</td>
+					<td>
+						<md-input-container class="md-block">
+				            <input ng-model="layer.label">
+		          		</md-input-container></td>
+					<td>
+						<md-switch ng-model="layer.targetDefault" aria-label="Switch 2">
+					  </md-switch>
+					</td>
+					<td class="colorPickerTd" style="text-align:right;">
+						<md-button class="md-icon-button" ng-click="expandRow(layer,'metadata')">
+							<md-tooltip>Metadata</md-tooltip>
+							<md-icon md-font-icon="fa fa-tags"></md-icon>
+						</md-button>
+						
+						<md-button class="md-icon-button" ng-click="expandRow(layer,'markers')">
+							<md-tooltip>Markers</md-tooltip>
+							<md-icon md-font-icon="fa fa-map-marker"></md-icon>
+						</md-button>
+						
+						<md-button class="md-icon-button">
+							<md-tooltip>Delete</md-tooltip>
+							<md-icon md-font-icon="fa fa-trash"></md-icon>
+						</md-button>
+					</td>
+				    
 				</tr>
+				<tr ng-repeat-end ng-if="layer.expanded">
+					<td colspan="100">
+						<md-card layout="column">
+							<md-toolbar class="ternaryToolbar">
+							  <div class="md-toolbar-tools">
+							    <h2>{{layer.expanded}}</h2>
+							    <span flex></span>
+							  </div>
+							</md-toolbar>
+							<md-card-content flex layout="column" >
+								<table class="kn-table" ng-if="newModel.content.targetLayersConf.length > 0">
+									<thead>
+										<tr>
+											<th>Column</th>
+											<th>Type</th>
+											<th>Show on map</th>
+											<th>Show on detail</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="column in layer.attributes" ng-class="{'highlight':column.isGeoReference}">
+											
+											<td><md-icon ng-if="column.isGeoReference" md-font-icon="fa fa-globe"></md-icon> {{column.name}}</td>
+											<td>{{column.type}}</td>
+											<td>
+												<md-checkbox ng-model="column.showMap" aria-label="Checkbox 2" ng-disabled="column.isGeoReference"/>
+											</td>
+											<td>
+												<md-checkbox ng-model="column.showDetails" aria-label="Checkbox 2" ng-disabled="column.isGeoReference"/>
+											</td>
+											<td class="tableAction">
+												<md-icon md-font-icon="fa fa-paint-brush" ng-if="!column.isGeoReference"><md-tooltip>Customize style</md-tooltip></md-icon>
+											</td>
+										</tr>	
+									</tbody>
+								</table>		
+							</md-card-content>
+						</md-card>
+					</td>
+				</tr>
+							
 			</tbody>
 		</table>
 	</md-card-content>
