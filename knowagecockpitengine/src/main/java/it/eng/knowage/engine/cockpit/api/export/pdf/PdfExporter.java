@@ -128,10 +128,10 @@ public class PdfExporter {
 
 	private int getSheetHeight(BIObject document) {
 		try {
-			int sheetHeight = 0;
+			int sheetHeight = Integer.valueOf(renderOptions.getDimensions().getHeight());
 			switch (document.getEngineLabel()) {
 			case "knowagechartengine":
-				sheetHeight = Integer.valueOf(renderOptions.getDimensions().getHeight());
+				break;
 			case "knowagecockpitengine":
 				ObjTemplate objTemplate = document.getActiveTemplate();
 				if (objTemplate == null) {
@@ -140,6 +140,7 @@ public class PdfExporter {
 				String templateString = new String(objTemplate.getContent());
 				JSONObject template = new JSONObject(templateString);
 				JSONArray sheets = template.getJSONArray("sheets");
+				int sheetLabelHeigth = (sheets.length() > 0) ? 48 : 0;
 				for (int sheetIndex = 0; sheetIndex < sheets.length(); sheetIndex++) {
 					JSONObject sheet = (JSONObject) sheets.get(sheetIndex);
 					if (sheet.has("widgets")) {
@@ -148,11 +149,12 @@ public class PdfExporter {
 							JSONObject widget = (JSONObject) widgets.get(widgetIndex);
 							int row = widget.getInt("row");
 							int sizeY = widget.getInt("sizeY");
-							int widgetHeight = (row + sizeY) * 30; // scaling by cockpitModule_gridsterOptions.rowHeight
+							int widgetHeight = (row + sizeY) * 30 + sheetLabelHeigth; // scaling by cockpitModule_gridsterOptions.rowHeight
 							sheetHeight = Math.max(sheetHeight, widgetHeight);
 						}
 					}
 				}
+				break;
 			}
 			return sheetHeight;
 		} catch (EMFAbstractError e) {
