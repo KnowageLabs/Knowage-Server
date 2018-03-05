@@ -55,14 +55,14 @@ public abstract class AssociativeDatasetContainerFactory {
 			ICache cache = SpagoBICacheManager.getCache();
 			String signature = dataSet.getSignature();
 			CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
-			cacheDataSetIfMissing(dataSet, cache, cacheItem, userProfile);
+			cacheItem = cacheDataSetIfMissing(dataSet, cache, cacheItem, userProfile);
 			return new CachedAssociativeDatasetContainer(dataSet, cacheItem.getTable(), cacheDataSource, parametersValues);
 		default:
 			throw new IllegalArgumentException("Dataset evaluation strategy [" + evaluationStrategy + "] not supported");
 		}
 	}
 
-	private static void cacheDataSetIfMissing(IDataSet dataSet, ICache cache, CacheItem cacheItem, UserProfile userProfile) throws DataBaseException {
+	private static CacheItem cacheDataSetIfMissing(IDataSet dataSet, ICache cache, CacheItem cacheItem, UserProfile userProfile) throws DataBaseException {
 		if (cacheItem == null) {
 			logger.debug("Unable to find dataset [" + dataSet.getLabel() + "] in cache. This can be due to changes on dataset parameters");
 			new DatasetManagementAPI(userProfile).putDataSetInCache(dataSet, cache);
@@ -71,7 +71,7 @@ public abstract class AssociativeDatasetContainerFactory {
 				throw new CacheException("Unable to find dataset [" + dataSet.getLabel() + "] in cache.");
 			}
 		}
-
+		return cacheItem;
 	}
 
 }
