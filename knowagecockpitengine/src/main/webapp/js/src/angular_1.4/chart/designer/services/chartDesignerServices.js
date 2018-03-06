@@ -741,6 +741,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				},
 				"type": "HEATMAP",
 				"dateTime":false,
+				"dateFormat":"day",
 				"AXES_LIST": {
 					"AXIS": [{
 						"alias": "Y",
@@ -2273,8 +2274,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		 	{name: translate.load('sbi.chartengine.structure.categoryStyleConfig.minus'), value:'minus'},
 		 	{name: translate.load('sbi.chartengine.structure.categoryStyleConfig.slash'), value:'slash'},
 		 	{name: translate.load('sbi.chartengine.structure.categoryStyleConfig.year'), value:'year'},
-	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.month'), value:'month'}, 
-	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.week'), value:'week'}, 
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.month'), value:'month'},
 	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.day'), value:'day'}, 
 	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.hour'), value:'hour'}, 
 	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.minute'), value:'minute'}, 

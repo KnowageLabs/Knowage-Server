@@ -106,6 +106,9 @@
  	chart: 
  	{
  		type: '$chartType',
+ 		dateF: '$chart.dateFormat',
+ 		dateT: '$chart.dateTime',
+ 		
  		
  		#*
     		The zoom in option for HEATMAP chart. User will be able to zoom in on either of those two chart types

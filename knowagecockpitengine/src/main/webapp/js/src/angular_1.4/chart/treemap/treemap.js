@@ -746,7 +746,41 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
     var xAxisObject={};
     var serieColSize=0;
     var tooltipObject={};
+    var checkDateFormat = function (dateFormat) {
+    	var format = "%d-%m-%Y";
+    	switch (dateFormat) {
+		case "minus":
+			format = "%d-%m-%Y";
+			break;
+		case "slash":
+			format = "%d/%m/%Y";
+			break;
+		case "year":
+			format = "%Y";
+			break;
+		case "month":
+			format = "%B %Y";
+			break;
+		case "day":
+			format = "%A, %b %e, %Y";
+			break;
+		case "hour":
+			format = "%A, %b %e, %H";
+			break;
+		case "minute":
+			format = "%A, %b %e, %H:%M";
+			break;
+		case "second":
+			format = "%A, %b %e, %H:%M:%S";
+			break;
+		default:
+			format = "%d-%m-%Y";
+		break;
+		}
+    	return format;
+    }
     if(chartConf.chart.xAxisDate){
+    	var dateF = checkDateFormat(chartConf.chart.dateF);
     	xAxisObject={
                 type: 'datetime', // the numbers are given in milliseconds
                 min: Date.UTC(startDate.getUTCFullYear(),startDate.getUTCMonth(),startDate.getUTCDate()),  // gets range from variables 
@@ -770,7 +804,9 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
                 labels: {
                     x: 5,
                     y: 15,
-                    format: '{value:%B %Y}',// long month
+                    formatter: function() {
+                        return '' + Highcharts.dateFormat(dateF, this.value);
+                    },  
                     rotation: (chartConf.xaxis.labels.rotation!=undefined && chartConf.xaxis.labels.rotation!="") ? chartConf.xaxis.labels.rotation : '',	
                     align: (chartConf.xaxis.labels.align!=undefined && chartConf.xaxis.labels.align!="") ? chartConf.xaxis.labels.align : undefined,	
                     style:{
@@ -781,7 +817,6 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
                         fontFamily: (chartConf.xaxis.labels.style.fontFamily!=undefined && chartConf.xaxis.labels.style.fontFamily!="") ? chartConf.xaxis.labels.style.fontFamily : '',
                	}	
                 },
-                tickInterval:30*24*3600*1000,
                 showLastLabel: true,
                 tickLength: 16
             };
@@ -791,7 +826,9 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
           tooltipObject={
         		
               	headerFormat: '<b>'+chartConf.additionalData.serie.value+'</b><br/>',
-                pointFormat: '{point.x:%e %b, %Y} | {point.label}: <b>{point.value}</b>',
+                pointFormat: '{point.x:'+dateF+'} | {point.label}: <b>{point.value}</b>',
+                
+              //  result += '<span>' + Highcharts.dateFormat('$dateFormat', this.key) + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
                   style:{ 
                   	 color: chartConf.tooltip.style.fontColor,
                        fontSize: chartConf.tooltip.style.fontSize,
