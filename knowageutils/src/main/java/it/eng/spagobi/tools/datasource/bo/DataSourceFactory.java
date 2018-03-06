@@ -49,6 +49,7 @@ public abstract class DataSourceFactory {
 		dataSource.setSchemaAttribute(dataSourceConfig.getSchemaAttribute());
 		dataSource.setReadOnly(dataSourceConfig.getReadOnly());
 		dataSource.setWriteDefault(dataSourceConfig.getWriteDefault());
+		dataSource.setHibDialectClass(dataSourceConfig.getHibDialectClass());
 		return dataSource;
 	}
 
