@@ -101,7 +101,7 @@
 			var textValue =  props[ms.activeInd] || "";
 			return new ol.style.Style({
 				image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-					stroke: new ol.style.Stroke({
+					stroke: new ol.style.Stroke({ //border doesn't work
 						color: 'red',
 						width: 3
 					}),

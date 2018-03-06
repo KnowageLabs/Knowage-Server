@@ -266,12 +266,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		
     		// change mouse cursor when over marker
     	      $scope.map.on('pointermove', function(e) {
-    	        if (e.dragging) {
-//    	          $(element).popover('destroy');
-    	          return;
-    	        }
-    	        var pixel =$scope.map.getEventPixel(e.originalEvent);
-    	        var hit = $scope.map.hasFeatureAtPixel(pixel);
+    	    	  var pixel = $scope.map.getEventPixel(e.originalEvent);
+    	    	  var hit = $scope.map.hasFeatureAtPixel(pixel);
+    	    	  $scope.map.getViewport().style.cursor = hit ? 'pointer' : '';
+//    	        if (e.dragging) {
+////    	          $(element).popover('destroy');
+//    	          return;
+//    	        }
+//    	        var pixel =$scope.map.getEventPixel(e.originalEvent);
+//    	        var hit = $scope.map.hasFeatureAtPixel(pixel);
 //    	        $scope.map.style.cursor = hit ? 'pointer' : '';
     	      });
     		
