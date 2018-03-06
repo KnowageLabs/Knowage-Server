@@ -158,6 +158,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 					layer.targetDefault = layerDef.targetDefault || false;
 					layer.name = layerDef.name;
+					layer.setZIndex(layerDef.order*1000);
 					$scope.map.addLayer(layer); 			//add layer to ol.Map
 					$scope.addLayer(layerDef.name, layer);	//add layer to internal object
 					$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
@@ -170,11 +171,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			); 
 	    	
     	}
-    	
 
-	    $scope.createMap = function (){
-	    	//Elements that make up the popup.
+	    $scope.createMap = function (){      
 	    	var popupContainer = document.getElementById('popup');
+    		//create the map with first base layer
+            var baseLayer = cockpitModule_mapServices.getBaseLayer($scope.baseLayer[0]);
+            
+            //create overlayers (popup..)           
+            var overlay = new ol.Overlay({
+              element: popupContainer,
+              autoPan: true,
+              autoPanAnimation: {
+                duration: 250
+              }
+            });
+            
+            var view = new ol.View({
+            	center: ol.proj.fromLonLat($scope.currentView.center), 
+			    zoom: $scope.currentView.zoom || 3
+//                minZoom: 3,
+//                maxZoom: 6
+              });
+            
+
+    		$scope.map = new ol.Map({
+				     target:  $scope.mapId,
+				     layers: [baseLayer],
+				     overlays: [overlay],
+				     view: view
+    		});
+    		
+    		$scope.addViewEvents();
+    		$scope.addMapEvents(overlay);
+    	}
+	    
+	
+	    $scope.addViewEvents = function(){
+	    	//view events
+	    	var view = $scope.map.getView();
+            view.on("change:resolution", function(e) {
+            	//zoom action
+        	    if (Number.isInteger(e.target.getZoom())) {
+        	      console.log(e.target.getCenter());
+        	    }
+            });
+	    }
+	    
+	    $scope.addMapEvents = function (overlay){
+	    	//Elements that make up the popup.
             var popupContent = document.getElementById('popup-content');
             var closer = document.getElementById('popup-closer');
             
@@ -188,29 +232,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               return false;
             };
             
-            
-    		//create the map with first base layer
-            var baseLayer = cockpitModule_mapServices.getBaseLayer($scope.baseLayer[0]);
-            
-            //create overlayers (popup..)           
-            var overlay = new ol.Overlay({
-              element: popupContainer,
-              autoPan: true,
-              autoPanAnimation: {
-                duration: 250
-              }
-            });
-
-    		$scope.map = new ol.Map({
-				     target:  $scope.mapId,
-				     layers: [baseLayer],
-				     overlays: [overlay],
-				     view: new ol.View({
-				       center: ol.proj.fromLonLat($scope.currentView.center), 
-				       zoom: $scope.currentView.zoom || 4
-				     })
-    		});
-    		
     		//map events
     		$scope.map.on('singleclick', function(evt) {
     			//popup detail
@@ -242,7 +263,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		        overlay.setPosition(coordinate);
     	        }
              });
-    	}
+    		
+    		// change mouse cursor when over marker
+    	      $scope.map.on('pointermove', function(e) {
+    	        if (e.dragging) {
+//    	          $(element).popover('destroy');
+    	          return;
+    	        }
+    	        var pixel =$scope.map.getEventPixel(e.originalEvent);
+    	        var hit = $scope.map.hasFeatureAtPixel(pixel);
+//    	        $scope.map.style.cursor = hit ? 'pointer' : '';
+    	      });
+    		
+    		$scope.map.on('moveend', function(evt){
+    			//check active point: pay attention that the event 'moveend' is called on each feature creation
+//    			var view = $scope.map.getView();
+//    			var mapExtent = view.calculateExtent($scope.map.getSize());
+//    			
+//    			for (l in $scope.layers){
+//    				var source = $scope.layers[l].layer.getSource();
+//    				source.forEachFeature(function(feature){
+//    					//features iteration
+//					  var coord = feature.getGeometry().getCoordinates();
+//					  var isIntoExtent = ol.extent.containsCoordinate(mapExtent,coord);
+//					  if (isIntoExtent){
+////    		    				 var att = feature.getProperties();
+//		    				console.log("*feature with coordinate [" + coord + "] is shown in view! " );
+//    		    		}
+//    				});
+//    			}
+    		});
+	    }
+	
 	    
 	    //control panel events
 	    $scope.toggleLayer = function(n){

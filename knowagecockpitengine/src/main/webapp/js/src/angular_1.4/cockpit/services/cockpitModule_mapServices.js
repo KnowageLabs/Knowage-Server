@@ -22,25 +22,29 @@
 		ms.featureStyle = function(feature, resolution){
 //	          var size = feature.get('features').length;
 			var props  = feature.getProperties();
-			var config = ms.activeConf.analysisConf || {};
-			var configType = config.defaultAnalysis || 'proportionalSymbol';
-			var textValue =  props[ms.activeInd] || "";
+			var configThematizer = ms.activeConf.analysisConf || {};
+			var configMarker = ms.activeConf.markerConf || {};
 	      	var value =  props[ms.activeInd] || 0;
 			var style;
 			
-			switch (configType) {
+			//active point management (TEST)
+			var coordinate = feature.getGeometry().getCoordinates();
+
+			switch (configThematizer.defaultAnalysis) {
 			case 'choropleth':
-				style = ms.getChoroplethStyles(value, textValue, config.choropleth);
+				style = ms.getChoroplethStyles(value, props, configThematizer.choropleth, configMarker);
 				break;
 			case 'proportionalSymbol':
-				style = ms.getProportionalSymbolStyles(value, textValue, config.proportionalSymbol);
+				style = ms.getProportionalSymbolStyles(value, props, configThematizer.proportionalSymbol, configMarker);
 				break;
+			default:
+				style = ms.getOnlyMarkerStyles(props, configMarker);
 			}
-					
 	      	return style;	
 	    }
 		
-		ms.getProportionalSymbolStyles = function(value, textValue, config){
+		ms.getProportionalSymbolStyles = function(value, props, config){
+			var textValue =  props[ms.activeInd] || "";
 			return new ol.style.Style({
 		          fill: new ol.style.Fill({
 		                color :  config.color
@@ -66,8 +70,9 @@
 		            });
 		}
 		
-		ms.getChoroplethStyles = function(value, textValue, config){
-			
+		ms.getChoroplethStyles = function(value, props, config){
+//			var textValue =  props[ms.activeInd] || "";
+//			
 //			return  [new ol.style.Style({
 //				stroke: new ol.style.Stroke({
 //					color: borderColor,
@@ -90,6 +95,25 @@
 //			
 			return new ol.style.Style({
 			});
+		}
+		
+		ms.getOnlyMarkerStyles = function (props, config){
+			var textValue =  props[ms.activeInd] || "";
+			return new ol.style.Style({
+				image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+					stroke: new ol.style.Stroke({
+						color: 'red',
+						width: 3
+					}),
+				    opacity: 1,
+				    crossOrigin: 'anonymous',
+				    color: config.color || 'blue',
+//				    src: 'data/icon.png'
+//				    src: 'https://www.mapz.com/map/marker/svg/M_marker_heart_150910.svg'
+//				    src: 'https://s3.amazonaws.com/com.cartodb.users-assets.production/maki-icons/embassy-18.svg',
+				    src: config.icon || 'https://openlayers.org/en/v4.6.4/examples/data/dot.png'
+					}))
+		          });
 		}
 		
 		ms.getFeaturesDetails = function(geoColumn, selectedMeasure, config, values){
@@ -141,7 +165,8 @@
 					}
 			
 					return new ol.layer.Vector({
-					      source: featuresSource
+//						 updateWhileInteracting: true,
+					     source: featuresSource
 					});
 					
 				
