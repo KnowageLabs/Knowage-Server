@@ -641,57 +641,68 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 		if(filters){
 			for(var i=0;i<filters.length;i++){
+
 				var filterElement=filters[i];
-				var colName=filterElement.colName;
-				var type=filterElement.type;
 
-				var filterOperator;
-				if(filterElement.filterOperator != undefined){
-					filterOperator=filterElement.filterOperator;
-				}
-				else {
-					if(filterElement.filterVals && filterElement.filterVals.length>0){
-						filterOperator = "=";
-					}
-					else{
-						filterOperator = "";
-					}
-
+				// if filter.dataset is not defined means filter coming from old interface and then set it to current dataset
+				if(filterElement.dataset == undefined){
+					filterElement.dataset = dataset.label;
 				}
 
-				// if type is undefined get it from metadata
-				if(type == undefined){
-					var found = false;
-					for(var j=0; j<dataset.metadata.fieldsMeta.length && !found; j++){
-						var metaElement=dataset.metadata.fieldsMeta[j];
-						if(metaElement.name == colName){
-							filterElement.type = metaElement.type;
-							found = true;
+				// if filter.dataset is defined check dataset is current one
+				if(filterElement.dataset != undefined && filterElement.dataset == dataset.label){
+
+					var colName=filterElement.colName;
+					var type=filterElement.type;
+
+					var filterOperator;
+					if(filterElement.filterOperator != undefined){
+						filterOperator=filterElement.filterOperator;
+					}
+					else {
+						if(filterElement.filterVals && filterElement.filterVals.length>0){
+							filterOperator = "=";
+						}
+						else{
+							filterOperator = "";
+						}
+
+					}
+
+					// if type is undefined get it from metadata
+					if(type == undefined){
+						var found = false;
+						for(var j=0; j<dataset.metadata.fieldsMeta.length && !found; j++){
+							var metaElement=dataset.metadata.fieldsMeta[j];
+							if(metaElement.name == colName){
+								filterElement.type = metaElement.type;
+								found = true;
+							}
 						}
 					}
-				}
 
-				var filterVals=filterElement.filterVals;
-				if(filterOperator != ""){
-					var values=[];
-					// if filterOperator is IN and filterVals has "," then filterVals must be splitted
-					if(filterOperator == "IN" && filterVals[0] && filterVals[0].includes(",") ){
-						filterVals = filterVals[0].split(",");
-					}
-					angular.forEach(filterVals, function(item){
-						this.push("('" + item + "')");
-					}, values);
+					var filterVals=filterElement.filterVals;
+					if(filterOperator != ""){
+						var values=[];
+						// if filterOperator is IN and filterVals has "," then filterVals must be splitted
+						if(filterOperator == "IN" && filterVals[0] && filterVals[0].includes(",") ){
+							filterVals = filterVals[0].split(",");
+						}
+						angular.forEach(filterVals, function(item){
+							this.push("('" + item + "')");
+						}, values);
 
-					var filter = { filterOperator: filterOperator, filterVals: values};
+						var filter = { filterOperator: filterOperator, filterVals: values};
 
-					if(!filtersToSend[dataset.label]){
-						filtersToSend[dataset.label] = {};
-					}
+						if(!filtersToSend[dataset.label]){
+							filtersToSend[dataset.label] = {};
+						}
 
- 					if(!filtersToSend[dataset.label][colName]){
-						filtersToSend[dataset.label][colName] = filter;
-					}else{
-						filtersToSend[dataset.label][colName].push(filter);
+						if(!filtersToSend[dataset.label][colName]){
+							filtersToSend[dataset.label][colName] = filter;
+						}else{
+							filtersToSend[dataset.label][colName].push(filter);
+						}
 					}
 				}
 			}
@@ -1243,18 +1254,19 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	 					var colAlias =  columnsToshowIndex[col].substring(0,  columnsToshowIndex[col].indexOf('|'));
 	 					var colIdx = columnsToshowIndex[col].substring( columnsToshowIndex[col].indexOf('|')+1);
 	 					var colValue = row[colIdx];
+	 					if(colValue == undefined) colValue ='';
 	 					//at first check for aggregation functions , than for simple values
 	 					var reg = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)(\\(\\$F{'+colAlias+'}\\))','g');
 	 					var matches = text.match(reg);
-	            		if (matches){
-	            			text = text.replace(reg, colValue);
-	            		}else{
-	            			var reg = new RegExp('\\$F\\{('+colAlias+')\\}','g');
-	            			matches = text.match(reg);
-	            			if (matches){
-		            			text = text.replace(reg, colValue);
-	            			}
-	            		}
+	 					if (matches){
+	 						text = text.replace(reg, colValue);
+	 					}else{
+	 						var reg = new RegExp('\\$F\\{('+colAlias+')\\}','g');
+	 						matches = text.match(reg);
+	 						if (matches){
+	 							text = text.replace(reg, colValue);
+	 						}
+	 					}
 	 				}
 	 				deferred.resolve(text);
 	 			},function(error){
