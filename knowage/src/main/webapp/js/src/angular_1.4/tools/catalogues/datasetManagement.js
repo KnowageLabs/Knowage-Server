@@ -1687,6 +1687,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		console.log(datasetFieldsMetadata);
 		console.log($scope.datasetMetaWithFieldsMetaIndexes);
 
+		var numberOfSpatialAttribute = 0;
+		for (i=0; i<$scope.fieldsMetadata.length; i++) {
+			if($scope.fieldsMetadata[i].fieldType == "SPATIAL_ATTRIBUTE"){
+				numberOfSpatialAttribute++;
+				if(numberOfSpatialAttribute > 1) {
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.ds.field.metadata.duplicateSpatialAttribute"), sbiModule_translate.load('sbi.generic.error'));
+					return;
+				}
+			}
+		}
+
 		for (i=0; i<$scope.fieldsMetadata.length; i++) {
 			//var index = $scope.datasetMetaWithFieldsMetaIndexes[i];
 			//$scope.selectedDataSet.meta.columns[index].pvalue = $scope.fieldsMetadata[i].fieldType;
@@ -1699,6 +1710,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		console.log("posle: ",$scope.selectedDataSet.meta.columns);
 
+		$scope.closeScript();
 	}
 
 	 /**
