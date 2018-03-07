@@ -1,6 +1,20 @@
 .kn-table{
 	width: 100%;
 	border-collapse: collapse;
+	md-icon {
+		text-align: center;
+	}
+	md-checkbox {
+		._md-container {
+			&:after{
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+			}
+		}
+	}
+	
 	thead {
 		color: $baseColor;
 		background-color: $tableHeaderColor;
@@ -39,6 +53,17 @@
 				}
 				md-switch {
 					margin: 0;
+				}
+				.md-button {
+					&.expanded {
+						background-color: $secondaryColor;
+						&:hover {
+							background-color: darken($secondaryColor,15%) !important;
+						}
+						md-icon {
+							color: $lightTextColor;
+						}
+					}
 				}
 				color-picker{
 					width: 195px;

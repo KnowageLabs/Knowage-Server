@@ -19,32 +19,69 @@ angular
 	.module('cockpitModule')
 	.controller('mapWidgetEditControllerFunction',mapWidgetEditControllerFunction)
 
-function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,sbiModule_restServices,cockpitModule_datasetServices,$mdDialog,mdPanelRef,$location){
+function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,sbiModule_restServices,cockpitModule_datasetServices,cockpitModule_generalServices,$mdDialog,mdPanelRef,$location){
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	
-	//get templates location
-  	$scope.basePath = $location.$$absUrl.substring(0,$location.$$absUrl.indexOf('api/'));
-  	$scope.templatesUrl = 'js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/mapWidget/templates/';
   	$scope.getTemplateUrl = function(template){
-  		return $scope.basePath + $scope.templatesUrl + template +'.html';
+  		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
+  	}
+
+  	$scope.setTargetLayer = function(layer){
+  		for(var t in $scope.newModel.content.targetLayersConf){
+  			if($scope.newModel.content.targetLayersConf[t].targetDefault && $scope.newModel.content.targetLayersConf[t].datasetId != layer.datasetId){
+  				$scope.newModel.content.targetLayersConf[t].targetDefault = false;
+  			}
+  		}
   	}
   	
   	$scope.expandRow = function(layer,content){
-  		if(layer.expanded && layer.expanded==content){
-  			delete layer.expanded;
-  		}else{
-  			layer.expanded = content;
+  		for(var t in $scope.newModel.content.targetLayersConf){
+  			if($scope.newModel.content.targetLayersConf[t].expanded != content || $scope.newModel.content.targetLayersConf[t].datasetId != layer.datasetId){
+  				delete $scope.newModel.content.targetLayersConf[t].expanded;
+  			}
+  			if($scope.newModel.content.targetLayersConf[t].datasetId==layer.datasetId && $scope.newModel.content.targetLayersConf[t].expanded != content){
+  				$scope.newModel.content.targetLayersConf[t].expanded = content;
+	  		}else {
+	  			if($scope.newModel.content.targetLayersConf[t].datasetId==layer.datasetId && $scope.newModel.content.targetLayersConf[t].expanded == content){
+	  				delete $scope.newModel.content.targetLayersConf[t].expanded;
+		  		}
+	  		}
+  			
   		}
   	}
   	
   	$scope.deleteLayer = function(layer){
-  		$scope.newModel.content.targetLayersConf.splice($scope.newModel.content.targetLayersConf.indexOf(layer),1);
+  		var index=$scope.newModel.content.targetLayersConf.indexOf(layer);
+		var tempPos = layer.order;
+		$scope.newModel.content.targetLayersConf.splice(index,1);
+		var nextItem=$scope.newModel.content.targetLayersConf[index];
+		if(nextItem!=undefined){
+			nextItem.order=tempPos;
+		}
   	}
   	
-  	$scope.moveOrder = function(layer, direction){
-  		
-  	}
+  	$scope.move = function(e,row,direction){
+		var lower, current, upper;
+		for(var o in $scope.newModel.content.targetLayersConf){
+			if($scope.newModel.content.targetLayersConf[o].order == row.order){
+				current = o;
+			}else if($scope.newModel.content.targetLayersConf[o].order == row.order-1){
+				upper = o;
+			}else if($scope.newModel.content.targetLayersConf[o].order == row.order+1){
+				lower = o;
+			}
+			
+		}
+		if(direction=='up'){
+			$scope.newModel.content.targetLayersConf[upper].order = row.order;
+			$scope.newModel.content.targetLayersConf[current].order = row.order-1;
+		}else{
+			$scope.newModel.content.targetLayersConf[lower].order = row.order;
+			$scope.newModel.content.targetLayersConf[current].order = row.order+1;
+		}
+		
+	};
   	
   	$scope.addLayer = function(ev) {
   		$scope.myLayersId = [];
@@ -106,9 +143,6 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 	      clickOutsideToClose:true,
 	      locals: {  }
 	    })
-	    .then(function() {
-
-	    });
   	}
 	$scope.saveConfiguration=function(){
 		 mdPanelRef.close();

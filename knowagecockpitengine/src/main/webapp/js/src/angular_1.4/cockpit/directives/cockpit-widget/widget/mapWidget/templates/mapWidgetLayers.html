@@ -19,7 +19,7 @@
 		<table class="kn-table" ng-if="newModel.content.targetLayersConf.length > 0">
 			<thead>
 				<tr>
-					<th ng-if="newModel.content.targetLayersConf.length > 1">Order</th>
+					<th ng-if="newModel.content.targetLayersConf.length > 1"></th>
 					<th>Type</th>
 					<th>Name</th>
 					<th>Label</th>
@@ -28,18 +28,18 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat-start="layer in newModel.content.targetLayersConf">
+				<tr ng-repeat-start="layer in newModel.content.targetLayersConf | orderBy:'order' ">
 					
 					<td class="multiTableAction" ng-if="newModel.content.targetLayersConf.length > 1">
-							<div layout="row" layout-align="center"> 
-			                	<md-button ng-click="functionsCockpitColumn.moveUp($event,$index)" class="md-icon-button" aria-label="up" ng-show="!$first"> 
-		               				<md-icon md-font-icon="fa fa-arrow-up"></md-icon>
-		          				</md-button>
-		          				<md-button ng-click="functionsCockpitColumn.moveDown($event,$index)" class="md-icon-button" aria-label="down" ng-show="!$last">
-		          					<md-icon md-font-icon="fa fa-arrow-down"></md-icon>
-		          				</md-button>
-	          				</div>
-       					</td>
+						<div layout="row" layout-align="center"> 
+		                	<md-button ng-click="move($event,layer,'up')" class="md-icon-button" aria-label="up" ng-show="!$first"> 
+	               				<md-icon md-font-icon="fa fa-arrow-up"></md-icon>
+	          				</md-button>
+	          				<md-button ng-click="move($event,layer,'down')" class="md-icon-button" aria-label="down" ng-show="!$last">
+	          					<md-icon md-font-icon="fa fa-arrow-down"></md-icon>
+	          				</md-button>
+          				</div>
+  					</td>
 					<td>{{layer.type}}</td>
 					<td>{{layer.name}}</td>
 					<td>
@@ -47,16 +47,16 @@
 				            <input ng-model="layer.label">
 		          		</md-input-container></td>
 					<td>
-						<md-switch ng-model="layer.targetDefault" aria-label="Switch 2">
+						<md-switch ng-model="layer.targetDefault" aria-label="target layer" ng-change="setTargetLayer(layer)">
 					  </md-switch>
 					</td>
 					<td class="colorPickerTd" style="text-align:right;">
-						<md-button class="md-icon-button" ng-click="expandRow(layer,'metadata')">
+						<md-button class="md-icon-button" ng-click="expandRow(layer,'metadata')" ng-class="{'expanded':layer.expanded=='metadata'}">
 							<md-tooltip>Metadata</md-tooltip>
 							<md-icon md-font-icon="fa fa-tags"></md-icon>
 						</md-button>
 						
-						<md-button class="md-icon-button" ng-click="expandRow(layer,'markers')">
+						<md-button class="md-icon-button" ng-click="expandRow(layer,'markers')" ng-class="{'expanded':layer.expanded=='markers'}">
 							<md-tooltip>Markers</md-tooltip>
 							<md-icon md-font-icon="fa fa-map-marker"></md-icon>
 						</md-button>
@@ -85,22 +85,27 @@
 											<th>Type</th>
 											<th>Show on map</th>
 											<th>Show on detail</th>
-											<th></th>
 										</tr>
 									</thead>
 									<tbody>
 										<tr ng-repeat="column in layer.attributes" ng-class="{'highlight':column.isGeoReference}">
 											
 											<td><md-icon ng-if="column.isGeoReference" md-font-icon="fa fa-globe"></md-icon> {{column.name}}</td>
-											<td>{{column.type}}</td>
-											<td>
-												<md-checkbox ng-model="column.showMap" aria-label="Checkbox 2" ng-disabled="column.isGeoReference"/>
-											</td>
+											<td>ATTRIBUTE</td>
+											<td></td>
 											<td>
 												<md-checkbox ng-model="column.showDetails" aria-label="Checkbox 2" ng-disabled="column.isGeoReference"/>
 											</td>
-											<td class="tableAction">
-												<md-icon md-font-icon="fa fa-paint-brush" ng-if="!column.isGeoReference"><md-tooltip>Customize style</md-tooltip></md-icon>
+										</tr>
+										<tr ng-repeat="indicator in layer.indicators">
+											
+											<td><md-icon ng-if="indicator.isGeoReference" md-font-icon="fa fa-globe"></md-icon> {{indicator.name}}</td>
+											<td>MEASURE</td>
+											<td>
+												<md-checkbox ng-model="indicator.showMap" aria-label="Checkbox 2"/>
+											</td>
+											<td>
+												<md-checkbox ng-model="indicator.showDetails" aria-label="Checkbox 2"/>
 											</td>
 										</tr>	
 									</tbody>
