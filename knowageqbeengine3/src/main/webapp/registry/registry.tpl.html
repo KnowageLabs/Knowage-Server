@@ -12,8 +12,8 @@
                 <md-input-container class="md-icon-float registryFilter" ng-repeat="filter in rc.configuration.filters">
                     <label>{{filter.title}}</label>
                     <input  ng-model="filter.value" ng-if="filter.presentation == 'MANUAL' 
-                    			|| filter.presentation == 'DRIVER'" type="{{filter.presentation}}" ng-keyup="rc.addToFilters(filter)">
-                    <md-select md-on-open="rc.getFilters(filter.field)" ng-model="filter.value" ng-if="filter.presentation == 'COMBO'" ng-change="rc.addToFilters(filter)">
+                    			|| filter.presentation == 'DRIVER'" type="{{filter.presentation}}" ng-keyup="rc.addToFilters(filter)"  ng-keydown="$event.keyCode === 13 && rc.loadFilteredData(rc.filters)">
+                    <md-select md-on-open="rc.addFilterOptions(filter.field)" ng-model="filter.value" ng-if="filter.presentation == 'COMBO'" ng-change="rc.addToFilters(filter)">
                         <md-option value=""></md-option>
                         <md-option ng-repeat="opt in filter.options track by $index" ng-value="opt.column_1">{{opt.column_1}}</md-option>
                     </md-select>
@@ -79,8 +79,8 @@
                                         <md-menu-item layout="row" layout-align="start center">
                                             <md-input-container class="md-icon-float md-block">
                                                 <input ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change" ng-if="col.editor=='TEXT'">
-                                                <md-select md-on-open="rc.getFilters(col.field)" ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'">
-                                                    <md-option ng-repeat="opt in rc.filterOptions[col.field]" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
+                                                <md-select md-on-open="rc.addColumnOptions(col.field,row.id)" ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'">
+                                                    <md-option ng-repeat="opt in rc.filterOptions[col.field][row.id]" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
                                                 </md-select>
                                             </md-input-container>
                                         </md-menu-item>

@@ -30,11 +30,11 @@
 										.push('httpInterceptor');
 
 							} ]).controller('RegistryController', ['registryConfigService', 'registryCRUDService',
-								'regFilterGetData', 'sbiModule_messaging', '$mdDialog',
+								'regFilterGetData', 'sbiModule_messaging', '$mdDialog', '$filter',
 					RegistryController])
 
 	function RegistryController(registryConfigService, registryCRUDService,
-			regFilterGetData, sbiModule_messaging, $mdDialog) {
+			regFilterGetData, sbiModule_messaging, $mdDialog , $filter) {
 		var self = this;
 		var registryConfigurationService = registryConfigService;
 		var registryCRUD = registryCRUDService;
@@ -55,12 +55,12 @@
 		// array object to define the registry configuration
 		self.configuration = {
 			title: "Registry Document",
-			itemsPerPage: 15,
+
 			enableButtons: registryConfiguration.configurations[0].value == "true",
 			filters: registryConfiguration.filters,
 			pagination: registryConfiguration.pagination
 		};
-
+console.log(registryConfiguration);
 		//Getting initial data from server
         var loadInitialData = function(param){
         	if(self.configuration.pagination == 'true') {
@@ -80,7 +80,7 @@
         };
 
         loadInitialData(self.formParams);
-        
+
 		self.setSelected = function(selectedColumn) {
 			if((self.selectedColumn).indexOf(selectedColumn) === -1){
 				self.selectedColumn.push(selectedColumn);
@@ -94,34 +94,40 @@
 		});
 
 		self.filterOptions = {};
-//		self.columnOptions = {};
-		
+
+
 		//Filters handling
-		self.getFilters = function(filterField) {					
+		self.addColumnOptions = function(filterField , rowId) {
+
+			if(self.filterOptions[filterField]){
+				var h = self.filterOptions[filterField][Object.keys(self.filterOptions[filterField])[0]];
+				self.filterOptions[filterField][rowId] = h;
+
+			}else{
+				var promise = regGetData.getData(filterField);
+				promise.then(function(response) {
+					self.filterOptions[filterField]={};
+					self.filterOptions[filterField][rowId] = response;
+				});
+		}
+				return promise;
+
+		};
+
+		self.addFilterOptions = function(filterField){
 			var promise = regGetData.getData(filterField);
 			promise.then(function(response) {
-				self.filterOptions[filterField] = response;
-				addOptions(filterField);
+				addOptions(filterField,response);
 			});
-			return promise;  								
+		}
+
+		var addOptions = function(filterField,options) {
+
+			var filter =  $filter('filter')(registryConfiguration.filters,{field:filterField}, true)[0];
+			filter.options = options;
+
 		};
 
-		var addOptions = function(filterField) {
-			for (var i = 0; i < registryConfiguration.filters.length; i++) {
-				if (registryConfiguration.filters[i].field == filterField) {
-					registryConfiguration.filters[i].options = self.filterOptions[filterField];
-				}
-			}			
-			return registryConfiguration.filters;
-		};
-
-//		var addColumnOptions = function(field) {
-//			self.columns.forEach(function(column) {
-//				if (column.field == field) {
-//					self.columns.options = self.filterOptions[field];
-//				}
-//			});
-//		};
 
 		self.loadFilteredData = function(params) {
         	self.formParams = Object.assign({}, params);
