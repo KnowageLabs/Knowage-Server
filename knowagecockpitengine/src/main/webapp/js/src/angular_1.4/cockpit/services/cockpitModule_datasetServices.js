@@ -388,6 +388,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			var dataset = cockpitModule_template.configuration.datasets[i];
 			var dsIl=ds.getDatasetById(dataset.dsId);
 			if(dsIl!=undefined){
+				dsIl.useCache = (dataset.useCache == undefined) ? !(dsIl.isNearRealtimeSupported || dsIl.isRealtime) : dataset.useCache;
 				dsIl.frequency = (dataset.frequency == undefined) ? 0 : dataset.frequency;
 				dsIl.expanded = true;
 				if(dataset.parameters!=undefined){
