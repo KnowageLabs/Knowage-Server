@@ -25,8 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <head></head>
 <body ng-app="BlankApp" ng-controller="RegistryController" class="kn-registry">
 
-
-      <ng-include src="'${pageContext.request.contextPath}/registry/registry.tpl.html'"></ng-include> 
+	<rest-loading></rest-loading>
+    <ng-include src="'${pageContext.request.contextPath}/registry/registry.tpl.html'"></ng-include> 
 	
 </body>
 
