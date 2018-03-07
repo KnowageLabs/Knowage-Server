@@ -81,6 +81,8 @@ public abstract class DataBaseFactory {
 					throw new DataBaseException("Impossible to find a database implementation for [" + sqlDialect.toString() + "]");
 				}
 			}
+		} else {
+			return new MetaModelDataBase(dataSource);
 		}
 		return dataBase;
 	}

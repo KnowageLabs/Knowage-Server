@@ -400,7 +400,7 @@ public class DatasetManagementAPI {
 					timing.stop();
 					dataStore.setCacheDate(new Date());
 				} else if (DatasetEvaluationStrategy.REALTIME.equals(evaluationStrategy)) {
-					logger.debug("Querying near realtime dataset");
+					logger.debug("Querying realtime dataset");
 					dataStore = queryRealtimeDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
 				} else {

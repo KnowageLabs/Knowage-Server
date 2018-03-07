@@ -48,4 +48,6 @@ public interface IDataBase extends Comparable<IDataBase> {
 	public abstract IDataSource getDataSource();
 
 	public abstract boolean isMetaSupported();
+
+	public abstract boolean isInternal();
 }

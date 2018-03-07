@@ -27,6 +27,9 @@ public class SelectQueryVisitorFactory {
 
 	public static ISelectQueryVisitor getVisitor(IDataSource dataSource) throws DataBaseException {
 		IDataBase database = DataBaseFactory.getDataBase(dataSource);
+		if (dataSource == null) {
+			return new MetaModelSelectQueryVisitor(database);
+		}
 		switch (database.getDatabaseDialect()) {
 		case HIVE:
 		case SPARKSQL:

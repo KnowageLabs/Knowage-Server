@@ -41,8 +41,9 @@ public enum DatabaseDialect {
 															true), ORACLE_SPATIAL("Oracle Database Spatial",
 																	"org.hibernatespatial.oracle.CustomOracleSpatialDialect", true, true, true,
 																	true), ORIENT("OrientDB", "orient", true, true, false, true), TERADATA("Teradata",
-																			"org.hibernate.dialect.TeradataDialect", true, true, false, true), VERTICA(
-																					"Vertica", "org.hibernate.dialect.VerticaDialect", true, true, true, true);
+																			"org.hibernate.dialect.TeradataDialect", true, true, false,
+																			true), VERTICA("Vertica", "org.hibernate.dialect.VerticaDialect", true, true, true,
+																					true), METAMODEL("MetaModelDialect", "metamodel", true, false, false, true);
 	;
 
 	private final static HashMap<String, DatabaseDialect> dialects = new HashMap<>(DatabaseDialect.values().length);

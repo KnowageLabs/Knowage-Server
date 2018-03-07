@@ -80,6 +80,11 @@ public abstract class AbstractDataBase implements IDataBase {
 	}
 
 	@Override
+	public boolean isInternal() {
+		return false;
+	}
+
+	@Override
 	public int compareTo(IDataBase o) {
 		return getName().compareToIgnoreCase(o.getName());
 	}
