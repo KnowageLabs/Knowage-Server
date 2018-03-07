@@ -13,7 +13,7 @@
                     <label>{{filter.title}}</label>
                     <input  ng-model="filter.value" ng-if="filter.presentation == 'MANUAL' 
                     			|| filter.presentation == 'DRIVER'" type="{{filter.presentation}}" ng-keyup="rc.addToFilters(filter)">
-                    <md-select ng-click=rc.getFilters(filter.field) ng-model="filter.value" ng-if="filter.presentation == 'COMBO'" ng-change="rc.addToFilters(filter)">
+                    <md-select md-on-open="rc.getFilters(filter.field)" ng-model="filter.value" ng-if="filter.presentation == 'COMBO'" ng-change="rc.addToFilters(filter)">
                         <md-option value=""></md-option>
                         <md-option ng-repeat="opt in filter.options track by $index" ng-value="opt.column_1">{{opt.column_1}}</md-option>
                     </md-select>
@@ -31,8 +31,9 @@
             <table class="kn-table alternatedRows">
                 <thead>
                     <tr>
+                    	<th><span flex>&nbsp;</span></th>
                         <th ng-repeat="col in rc.columns | orderBy: 'position'">
-                            <div layout="row" layout-align="start center">
+                            <div layout="row" layout-align="start center">                            
                                 <span>{{col.title}}</span>
                                 <span flex></span>
                                 <md-menu>
@@ -65,20 +66,21 @@
                 </thead>
                 
                 <tbody>                
-                    <tr ng-repeat="row in rc.data | limitTo: rc.configuration.itemsPerPage">  <!-- | filter: rc.filters  -->
-                          <td style="text-align:center" ng-repeat="col in rc.columns | orderBy: 'position'" ng-click="rc.setSelected(row)"> 
-                            <div ng-if="!rc.isArray(row[col.field])">
+                    <tr ng-repeat="row in rc.data">  <!-- | filter: rc.filters  -->
+                    	<td> <span ng-if="!col.editable">{{row.id}}</span> </td>
+                          <td ng-repeat="col in rc.columns | orderBy: 'position'" ng-click="rc.setSelected(row)">                             
+                            <div ng-if="!rc.isArray(row[col.field])">                            	                                                          
                                 <span style="text-align:center" ng-if="!col.editable">{{row[col.field]}}</span>
-                                <md-menu ng-if="col.editable">
-                                    <div layout="row" class="clickable" ng-click="$mdMenu.open()">
+                                <md-menu ng-if="col.editable">                                
+                                    <div layout="row" class="clickable" ng-click="$mdMenu.open()">                                    	
                                         <span>{{row[col.field]}}</span>
                                     </div>
                                     <md-menu-content width="5" class="customContentMenu">
                                         <md-menu-item layout="row" layout-align="start center">
                                             <md-input-container class="md-icon-float md-block">
                                                 <input ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change" ng-if="col.editor=='TEXT'">
-                                                <md-select ng-click="rc.getFilters(col.field)" ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'">
-                                                    <md-option ng-repeat="opt in rc.columns.options" ng-model="opt.id" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
+                                                <md-select md-on-open="rc.getFilters(col.field)" ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'">
+                                                    <md-option ng-repeat="opt in rc.filterOptions[col.field]" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
                                                 </md-select>
                                             </md-input-container>
                                         </md-menu-item>
@@ -97,7 +99,7 @@
                     </tr>                   
                 </tbody>
             </table>
-            <nav aria-label="Page navigation" class="pagination" layout="row" layout-align="start center">
+            <nav ng-if="rc.configuration.pagination == 'true'" aria-label="Page navigation" class="pagination" layout="row" layout-align="start center">
                 <span flex></span>
                 <label>Page</label>
                 <md-input-container class="noMargin">

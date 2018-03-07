@@ -45,7 +45,7 @@
 		var sbiMessaging = sbiModule_messaging;
 		self.data = [];
 		self.results = 0;
-		self.filterOptions = {};
+//		self.filterOptions = {};
 		self.columns = [];
 		self.selectedColumn = [];
 		self.formParams = {};
@@ -57,29 +57,30 @@
 			title: "Registry Document",
 			itemsPerPage: 15,
 			enableButtons: registryConfiguration.configurations[0].value == "true",
-			filters: registryConfiguration.filters
+			filters: registryConfiguration.filters,
+			pagination: registryConfiguration.pagination
 		};
 
-		//Initializing formParams for first-time data loading
-		self.initialFormParams = {
-    		start: 0,
-    		limit: self.configuration.itemsPerPage
-        };
-
 		//Getting initial data from server
-        self.loadInitialData = function(param){
+        var loadInitialData = function(param){
+        	if(self.configuration.pagination == 'true') {
+        		self.formParams.start = 0;
+        		self.formParams.limit = self.configuration.itemsPerPage;
+        	} else {
+        		self.formParams.start = 0;
+        	}
         	readData(param);
         };
 
         var readData = function(data) {
-        	registryCRUD.read(data).then(function (response) {
+        	registryCRUD.read(data).then(function(response) {
 	           	 self.data = response.data.rows;
 	           	 self.results = response.data.results;
 	         });
         };
 
-        self.loadInitialData(self.initialFormParams);
-
+        loadInitialData(self.formParams);
+        
 		self.setSelected = function(selectedColumn) {
 			if((self.selectedColumn).indexOf(selectedColumn) === -1){
 				self.selectedColumn.push(selectedColumn);
@@ -92,22 +93,17 @@
 			self.columns.push(column);
 		});
 
-
+		self.filterOptions = {};
+//		self.columnOptions = {};
+		
 		//Filters handling
-		self.getFilters = function(filterField) {
-			if(self.filterOptions[filterField] == undefined) {
-				self.filterOptions[filterField] = new Array();
-			}
-			if(self.filterOptions[filterField].length == 0) {
-				regGetData.getData(filterField).then(function(response) {
-					self.filterOptions[filterField] = response.data.rows;
-					addOptions(filterField);
-					addColumnOptions(filterField);
-				});
-			} else {
+		self.getFilters = function(filterField) {					
+			var promise = regGetData.getData(filterField);
+			promise.then(function(response) {
+				self.filterOptions[filterField] = response;
 				addOptions(filterField);
-				addColumnOptions(filterField);
-			}
+			});
+			return promise;  								
 		};
 
 		var addOptions = function(filterField) {
@@ -115,33 +111,38 @@
 				if (registryConfiguration.filters[i].field == filterField) {
 					registryConfiguration.filters[i].options = self.filterOptions[filterField];
 				}
-			}
+			}			
 			return registryConfiguration.filters;
 		};
 
-		var addColumnOptions = function(field) {
-			self.columns.forEach(function(column) {
-				if (column.field == field) {
-					self.columns.options = self.filterOptions[field];
-				}
-			});
-		};
+//		var addColumnOptions = function(field) {
+//			self.columns.forEach(function(column) {
+//				if (column.field == field) {
+//					self.columns.options = self.filterOptions[field];
+//				}
+//			});
+//		};
 
 		self.loadFilteredData = function(params) {
         	self.formParams = Object.assign({}, params);
-        	self.formParams.start = 0;
-        	self.page = 1;
+        	if(self.configuration.pagination == 'true') {
+        		self.formParams.start = 0;
+        		self.formParams.limit = self.configuration.itemsPerPage;
+            	self.page = 1;
+        	} else {
+        		self.formParams.start = 0;
+        	}
      	   	readData(self.formParams);
         };
 
         self.clearFilterValues = function(){
 			self.filters = {};
 			self.formParams = {};
-			for(var i = 0 ; i<(self.configuration.filters).length ; i++){
+			self.page = 1;
+			for(var i = 0 ; i<(self.configuration.filters).length; i++){
             	self.configuration.filters[i].value = null;
 			}
-			 self.loadInitialData(self.initialFormParams);
-
+			loadInitialData(self.formParams);
 		};
 
         self.updateRow = function() {
