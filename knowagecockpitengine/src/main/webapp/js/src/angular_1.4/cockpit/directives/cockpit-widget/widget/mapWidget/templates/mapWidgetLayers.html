@@ -9,6 +9,7 @@
       </div>
     </md-toolbar>
 	<md-card-content>
+	
 		<div layout="row" layout-align="center center">
 			<div class="kn-noItems" ng-if="!newModel.content.targetLayersConf || newModel.content.targetLayersConf.length == 0">
 				No Layers present, add one or more to continue
@@ -18,7 +19,7 @@
 		<table class="kn-table" ng-if="newModel.content.targetLayersConf.length > 0">
 			<thead>
 				<tr>
-					<th>Order</th>
+					<th ng-if="newModel.content.targetLayersConf.length > 1">Order</th>
 					<th>Type</th>
 					<th>Name</th>
 					<th>Label</th>
@@ -29,7 +30,7 @@
 			<tbody>
 				<tr ng-repeat-start="layer in newModel.content.targetLayersConf">
 					
-					<td class="multiTableAction">
+					<td class="multiTableAction" ng-if="newModel.content.targetLayersConf.length > 1">
 							<div layout="row" layout-align="center"> 
 			                	<md-button ng-click="functionsCockpitColumn.moveUp($event,$index)" class="md-icon-button" aria-label="up" ng-show="!$first"> 
 		               				<md-icon md-font-icon="fa fa-arrow-up"></md-icon>
@@ -60,7 +61,7 @@
 							<md-icon md-font-icon="fa fa-map-marker"></md-icon>
 						</md-button>
 						
-						<md-button class="md-icon-button">
+						<md-button class="md-icon-button" ng-click="deleteLayer(layer)">
 							<md-tooltip>Delete</md-tooltip>
 							<md-icon md-font-icon="fa fa-trash"></md-icon>
 						</md-button>

@@ -19,7 +19,7 @@ angular
 	.module('cockpitModule')
 	.controller('mapWidgetEditControllerFunction',mapWidgetEditControllerFunction)
 
-function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,$mdDialog,mdPanelRef,$location){
+function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,sbiModule_restServices,cockpitModule_datasetServices,$mdDialog,mdPanelRef,$location){
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	
@@ -38,13 +38,63 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
   		}
   	}
   	
+  	$scope.deleteLayer = function(layer){
+  		$scope.newModel.content.targetLayersConf.splice($scope.newModel.content.targetLayersConf.indexOf(layer),1);
+  	}
+  	
+  	$scope.moveOrder = function(layer, direction){
+  		
+  	}
+  	
   	$scope.addLayer = function(ev) {
+  		$scope.myLayersId = [];
+  		for(var m in $scope.newModel.content.targetLayersConf){
+			$scope.myLayersId.push($scope.newModel.content.targetLayersConf[m].datasetId);
+		}
   		$mdDialog.show({
 			controller: function ($scope,$mdDialog) {
 				
+				sbiModule_restServices.restToRootProject();
+				sbiModule_restServices.promiseGet("2.0/datasets", "","asPagedList=true&seeTechnical=TRUE&ids=&spatialOnly=true").then(
+						function(result){
+							$scope.availableSpatialLayers = [];
+							for(var l in result.data.item){
+								if($scope.myLayersId.indexOf(result.data.item[l].id.dsId)==-1){
+									$scope.availableSpatialLayers.push(result.data.item[l]);
+								}
+							}
+						},
+						function(error){
+							// TODO MANAGE ERROR
+						})
+				
+			    //Add the layers to the newModel
 				$scope.add = function(){
+					for(var k in $scope.availableSpatialLayers){
+						if($scope.availableSpatialLayers[k].selected){
+							var tempLayer = $scope.availableSpatialLayers[k];
+							var newLayer =  {
+								"type": "DATASET",
+								"datasetId": tempLayer.id.dsId,
+								"label": tempLayer.label,
+								"name": tempLayer.name,
+								"order": $scope.newModel.content.targetLayersConf.length,
+								"attributes": [],
+								"indicators": []
+							}
+							for(var i in tempLayer.metadata.fieldsMeta){
+								if(tempLayer.metadata.fieldsMeta[i].fieldType === 'ATTRIBUTE') newLayer.attributes.push({"name":tempLayer.metadata.fieldsMeta[i].name, "label":tempLayer.metadata.fieldsMeta[i].alias});
+								if(tempLayer.metadata.fieldsMeta[i].fieldType === 'MEASURE') newLayer.indicators.push({"name":tempLayer.metadata.fieldsMeta[i].name, "label":tempLayer.metadata.fieldsMeta[i].alias});
+								if(tempLayer.metadata.fieldsMeta[i].fieldType === 'SPATIAL_ATTRIBUTE') newLayer.attributes.push({"name":tempLayer.metadata.fieldsMeta[i].name, "label":tempLayer.metadata.fieldsMeta[i].alias,"isGeoReference":true});
+							}
+							$scope.newModel.content.targetLayersConf.push(newLayer);
+							cockpitModule_datasetServices.addAvaiableDataset(tempLayer);
+						}
+					}
 					$mdDialog.hide();
 				}
+				
+				//Exit the dialog without adding
 				$scope.cancel = function(){
 					$mdDialog.cancel();
 				}
