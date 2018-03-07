@@ -144,8 +144,9 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 
 			    	  // trick to have drawn the text again when going into edit (could be altyered dataset, filters)
 			    	  //otherwiser watch on renderer does not start
-
-			    	  $scope.localModel.content.text+=' ';
+			    	  if($scope.localModel.content.text != undefined){
+			    		  $scope.localModel.content.text+=' ';
+			    	  }
 
 			    	  $scope.editorConfig = {
 			    	            sanitize: false,

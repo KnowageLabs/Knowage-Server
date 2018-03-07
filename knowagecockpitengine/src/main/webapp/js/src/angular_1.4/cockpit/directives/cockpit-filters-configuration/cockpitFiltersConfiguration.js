@@ -44,6 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	function cockpitFiltersControllerFunction($scope,cockpitModule_widgetServices,
 			cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,
+			sbiModule_messaging,
 			cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,
 			cockpitModule_generalServices,cockpitModule_widgetSelection,cockpitModule_datasetServices,$rootScope){
 
@@ -76,7 +77,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.filtersTableColumns=[
 			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.dataset"),"name":"dataset"},
-			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.column"),"name":"colName"},
+			//{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.column"),"name":"colName"},
+			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.column"),"name":"colAlias"},
 			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.column"),"name":"filterOperator"},
 			{"label":$scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.val"),"name":"filterVal1"},
 			{"label":$scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.val"),"name":"filterVal2"}
@@ -141,6 +143,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						f.filterVal1 = f.filterVals[0];
 						f.filterVal2 = f.filterVals[1];
 					}
+					if(f.column != undefined){
+						f.colName = f.column;
+						f.colAlias = f.column;
+					}
 				}
 			}
 			for(var i = indexToDelete.length-1; i>=0 ;i--){
@@ -187,11 +193,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				valid = false;
 			}
 			if( $scope.twoOperandsOperators.indexOf($scope.newFilter.filterOperator)>-1
-					&& ($scope.newFilter.filterVal1 == undefined || $scope.newFilter.filterVal2 == undefined)){
+					&& ($scope.newFilter.filterVal1 == undefined || $scope.newFilter.filterVal2 == undefined
+							|| $scope.newFilter.filterVal1 == '' || $scope.newFilter.filterVal2 == ''
+					)){
 				valid = false;
 			}
 			else if( $scope.oneOperandOperators.indexOf($scope.newFilter.filterOperator)>-1
-					&& ($scope.newFilter.filterVal1 == undefined )){
+					&& ($scope.newFilter.filterVal1 == undefined || $scope.newFilter.filterVal1 == '')){
 				valid = false;
 			}
 			return valid;
@@ -208,12 +216,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			if(valid) {
 
+				// depending on oeprator type could be necessary to delete some previous values
+				if($scope.zeroOperandOperators.indexOf($scope.newFilter.filterOperator) >=0 ){
+					$scope.newFilter.filterVal1 = '';
+					$scope.newFilter.filterVal2 = '';
+				}
+				else if($scope.oneOperandOperators.indexOf($scope.newFilter.filterOperator) >=0 ){
+					$scope.newFilter.filterVal2 = '';
+				}
+
+
 				// fill filterVals array
 				$scope.newFilter.filterVals = [];
-				if($scope.newFilter.filterVal1 != undefined){
+				if($scope.newFilter.filterVal1 != undefined && $scope.newFilter.filterVal1 != ''){
 					$scope.newFilter.filterVals[0]=$scope.newFilter.filterVal1;
 				}
-				if($scope.newFilter.filterVal2 != undefined){
+				if($scope.newFilter.filterVal2 != undefined && $scope.newFilter.filterVal2 != ''){
 					$scope.newFilter.filterVals[1]=$scope.newFilter.filterVal2;
 				}
 
@@ -222,14 +240,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					// filter is identified by dataset and column
 					for(var i = 0; i<$scope.ngModelShared.filters.length; i++){
 						var fil = $scope.ngModelShared.filters[i];
-						if(fil.dataset == $scope.newFilter.dataset && fil.column == $scope.newFilter.column){
+
+						//fil.colName = $scope.cleanSingleQbeColumn(fil.colName);
+
+						if(fil.dataset == $scope.newFilter.dataset
+								&& fil.colName == $scope.newFilter.colName
+						){
 							$scope.ngModelShared.filters[i] = $scope.newFilter;
 						}
 					}
 
 				}
 				else{
-					$scope.ngModelShared.filters.push($scope.newFilter);
+
+					// if insert mode check filter is noty already present
+					var found = false;
+					for(var i = 0; i<$scope.ngModelShared.filters.length; i++){
+						var fil = $scope.ngModelShared.filters[i];
+						if(fil.dataset == $scope.newFilter.dataset && fil.colName == $scope.newFilter.colName){
+							found = true;
+						}
+					}
+					if(found == true){
+						sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.cockpit.widgets.filtersConfiguration.filterAlreadyPresent"));
+						return;
+					}
+					else {
+						$scope.ngModelShared.filters.push($scope.newFilter);
+					}
 				}
 
 				$scope.newFilter = {};
@@ -262,14 +300,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.selectRowFilter=function(row){
 			var dataset = row.dataset;
 			var colName = row.colName;
+			var colAlias = row.colAlias;
 			var filterOperator = row.filterOperator;
 			var filterVal1 = row.filterVal1;
 			var filterVal2 = row.filterVal2;
 			var type = row.type;
 
+			//colName = $scope.cleanSingleQbeColumn(colName);
+
 			$scope.newFilter = {};
 			$scope.newFilter['dataset'] = dataset;
 			$scope.newFilter['colName'] = colName;
+			$scope.newFilter['colAlias'] = colAlias;
 			$scope.newFilter['filterOperator'] = filterOperator;
 			$scope.newFilter['type'] = type;
 			$scope.newFilter['filterVal1'] = filterVal1;
@@ -296,6 +338,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				else{
 					$scope.refreshSingleDatasetCase(newValue, 'chart');
 				}
+				//$scope.cleanQbeColumns();
 			}
 		});
 
@@ -303,6 +346,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.$watch("ngModelShared.dataset.dsId", function(newValue, oldValue) {
 			if(newValue != undefined){
 				$scope.refreshSingleDatasetCase(newValue, oldValue, 'table');
+				$scope.cleanQbeColumns();
 			}
 		});
 
@@ -399,13 +443,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 * change type depending on column selected in coumnbs combo, this affects filter operators available
 		 */
 		$scope.newFilterChangeColumnUpdateType=function(){
+
+			// if column changed erase filterOperator, filterVal1, filterVal2
+			$scope.newFilter.filterOperator = undefined;
+			$scope.newFilter.filterVal1 = undefined;
+			$scope.newFilter.filterVal2 = undefined;
+			$scope.newFilter.filterVals = undefined;
+
 			var colLabel = $scope.newFilter.colName;
+			var colAlias = $scope.newFilter.colAlias;
 			var ds = $scope.newFilterCurrenteSelectedDS;
 			for(var i=0;i<ds.metadata.fieldsMeta.length;i++){
 				var col = ds.metadata.fieldsMeta[i];
 				if(col.name == colLabel){
 					var type = ds.metadata.fieldsMeta[i].type;
-					$scope.newFilter.colName = colLabel;
+					$scope.newFilter.colName = col.name;
+					$scope.newFilter.colAlias = col.alias;
+
 					$scope.newFilter.type = type;
 				}
 			}
@@ -424,7 +478,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-
+		$scope.cleanSingleQbeColumn = function(columnName){
+			var colonIndex = columnName.indexOf(":");
+			if(colonIndex > -1){
+				columnName = columnName.substr(colonIndex + 1);
+			}
+			return columnName;
+		}
 
 		// clean column name in case of QBE dataset
 		$scope.cleanQbeColumns=function(){
