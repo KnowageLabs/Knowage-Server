@@ -100,7 +100,7 @@ public class DataSetFactory {
 		Constructor c = null;
 		Object object = null;
 		if (className.endsWith("JDBCDataSet")) {
-			String dialect = dataSetConfig.getDataSource().getHibDialectName();
+			String dialect = dataSetConfig.getDataSource().getHibDialectClass();
 			if (SqlUtils.isHiveLikeDialect(dialect)) {
 				className = JDBCHiveDataSet.class.getName();
 			} else if (dialect.contains("orient")) {

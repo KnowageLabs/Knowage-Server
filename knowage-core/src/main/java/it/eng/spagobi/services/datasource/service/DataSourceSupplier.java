@@ -173,7 +173,6 @@ public class DataSourceSupplier {
 		IDomainDAO domaindao = DAOFactory.getDomainDAO();
 		Domain doDialect = domaindao.loadDomainByCodeAndValue("DIALECT_HIB", ds.getDialectName());
 		sbds.setHibDialectClass(doDialect.getValueCd());
-		sbds.setHibDialectName(doDialect.getValueName());
 		sbds.setReadOnly(ds.checkIsReadOnly());
 		sbds.setWriteDefault(ds.checkIsWriteDefault());
 		return sbds;
