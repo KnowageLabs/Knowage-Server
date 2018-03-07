@@ -12,32 +12,37 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	this.loadDatasetsFromTemplate=function(){
 		var def=$q.defer();
 		if(!ds.isDatasetFromTemplateLoaded){
-			var dsIds = [];
-			angular.forEach(cockpitModule_template.configuration.datasets, function(item){
-				this.push(item.dsId);
-			}, dsIds);
-
-			sbiModule_restServices.restToRootProject();
-			sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + (sbiModule_user.isTechnicalUser ? "TRUE" : "FALSE") + "&ids=" + dsIds.join())
-			.then(function(response){
-				for(var i in response.data.item){
-					var dataset = response.data.item[i];
-					ds.datasetList.push(dataset);
-					ds.datasetMapById[dataset.id.dsId] = dataset;
-					ds.datasetMapByLabel[dataset.label] = dataset;
-				}
-
-				ds.initNearRealTimeValues(ds.datasetList);
-				ds.checkForDSChange();
-				cockpitModule_widgetSelection.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS,undefined,def);
-
+			if(cockpitModule_template.configuration.datasets.length == 0){
 				ds.isDatasetFromTemplateLoaded = true;
 				def.resolve();
+			}else{
+				var dsIds = [];
+				angular.forEach(cockpitModule_template.configuration.datasets, function(item){
+					this.push(item.dsId);
+				}, dsIds);
 
-			},function(response){
-				sbiModule_restServices.errorHandler(response.data,"");
-				def.reject();
-			});
+				sbiModule_restServices.restToRootProject();
+				sbiModule_restServices.promiseGet("2.0/datasets", "", "asPagedList=true&seeTechnical=" + (sbiModule_user.isTechnicalUser ? "TRUE" : "FALSE") + "&ids=" + dsIds.join())
+				.then(function(response){
+					for(var i in response.data.item){
+						var dataset = response.data.item[i];
+						ds.datasetList.push(dataset);
+						ds.datasetMapById[dataset.id.dsId] = dataset;
+						ds.datasetMapByLabel[dataset.label] = dataset;
+					}
+
+					ds.initNearRealTimeValues(ds.datasetList);
+					ds.checkForDSChange();
+					cockpitModule_widgetSelection.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS,undefined,def);
+
+					ds.isDatasetFromTemplateLoaded = true;
+					def.resolve();
+
+				},function(response){
+					sbiModule_restServices.errorHandler(response.data,"");
+					def.reject();
+				});
+			}
 		}else{
 			def.resolve();
 		}
@@ -568,12 +573,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			deferred.reject('Error');
 		}
 
-		var parametersString = JSON.stringify(parameters).replace("[","").replace("]","").replace("\",\"",",");
-		for (var parameter in parameters) {
-			if (parameters.hasOwnProperty(parameter) && (parameters[parameter] == null || parameters[parameter] == undefined)) {
-				parametersString = parametersString.replace("}" , ", \"" + parameter + "\":null}");
-			}
-		}
+		var parametersString = ds.getParametersAsString(parameters);
 
 		// if cross navigation referes to a non present column (and widget is a table ) avoid sending aggregation because all columns are needed
 		if(ngModel.type === 'table'){
@@ -793,6 +793,24 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 	}
 
+	this.getParametersAsString = function(parameters){
+		var delim = "";
+		var output = "{";
+		for (var parameter in parameters) {
+			if (parameters.hasOwnProperty(parameter)){
+				if (parameters[parameter] == null || parameters[parameter] == undefined) {
+					output += delim + "\"" + parameter + "\":null";
+				}else{
+					output += delim + "\"" + parameter + "\":" + JSON.stringify(parameters[parameter]).replace("[","").replace("]","").replace("\",\"",",");
+				}
+			}
+			delim = ",";
+		}
+		output += "}";
+
+		return output;
+	}
+
 	// returns the internationalized template
 	this.getI18NTemplate = function (chartTemplate) {
     	var clone = angular.copy(chartTemplate);
@@ -993,7 +1011,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				var params ={};
 				params.datasetLabel = dataset.label;
 				params.aggregation = cockpitModule_widgetSelection.getAggregation(undefined,dataset,undefined, undefined);
-				params.parameters = JSON.stringify(ds.getDatasetParameters(dataset.id.dsId)).replace("[","").replace("]","").replace("\",\"",",");
+				params.parameters = this.getParametersAsString(ds.getDatasetParameters(dataset.id.dsId));
 				if(dataset.useCache==false){
 					params.nearRealtime = true;
 				}
