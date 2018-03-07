@@ -8,9 +8,7 @@
     		   var serviceObj = {};
     		   serviceObj.action = sbiModule_action_builder;
     		   serviceObj.filterOptions = {};
-    		   serviceObj.options = [];
-    		   
-    		   
+    		       		   
     		   serviceObj.getData = function(filterField){    			       			   
     			   var deferred = $q.defer();
     			   
@@ -46,7 +44,11 @@
     			   var loadRegistryAction = serviceObj.action.getActionBuilder('POST');
     			   loadRegistryAction.actionName = 'GET_FILTER_VALUES_ACTION';
     			   loadRegistryAction.formParams.ENTITY_ID = ENTITY_ID;
+    			   loadRegistryAction.formParams.QUERY_TYPE = 'standard';    			   
     			   loadRegistryAction.formParams.ORDER_ENTITY = ENTITY_ID;
+    			   loadRegistryAction.formParams.ORDER_TYPE = 'asc';
+    			   loadRegistryAction.formParams.QUERY_ROOT_ENTITY = true;
+    			   loadRegistryAction.formParams.query = '';
     			   
     			   var promise = loadRegistryAction.executeAction();
 

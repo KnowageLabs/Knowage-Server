@@ -45,7 +45,7 @@
 		var sbiMessaging = sbiModule_messaging;
 		self.data = [];
 		self.results = 0;
-//		self.filterOptions = {};
+		self.filterOptions = {};
 		self.columns = [];
 		self.selectedColumn = [];
 		self.formParams = {};
@@ -60,7 +60,7 @@
 			filters: registryConfiguration.filters,
 			pagination: registryConfiguration.pagination
 		};
-console.log(registryConfiguration);
+
 		//Getting initial data from server
         var loadInitialData = function(param){
         	if(self.configuration.pagination == 'true') {
@@ -93,25 +93,20 @@ console.log(registryConfiguration);
 			self.columns.push(column);
 		});
 
-		self.filterOptions = {};
-
 
 		//Filters handling
 		self.addColumnOptions = function(filterField , rowId) {
 
 			if(self.filterOptions[filterField]){
-				var h = self.filterOptions[filterField][Object.keys(self.filterOptions[filterField])[0]];
-				self.filterOptions[filterField][rowId] = h;
-
-			}else{
+				self.filterOptions[filterField][rowId] = self.filterOptions[filterField][Object.keys(self.filterOptions[filterField])[0]];
+			} else {
 				var promise = regGetData.getData(filterField);
 				promise.then(function(response) {
 					self.filterOptions[filterField]={};
 					self.filterOptions[filterField][rowId] = response;
 				});
-		}
-				return promise;
-
+			}
+			return promise;
 		};
 
 		self.addFilterOptions = function(filterField){
@@ -122,10 +117,8 @@ console.log(registryConfiguration);
 		}
 
 		var addOptions = function(filterField,options) {
-
 			var filter =  $filter('filter')(registryConfiguration.filters,{field:filterField}, true)[0];
 			filter.options = options;
-
 		};
 
 
