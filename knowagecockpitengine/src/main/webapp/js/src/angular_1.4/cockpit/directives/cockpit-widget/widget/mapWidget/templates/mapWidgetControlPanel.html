@@ -1,0 +1,23 @@
+<!-- control panel -->
+<md-sidenav class="md-sidenav-right" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')">
+
+    <md-toolbar class="md-theme-light">
+      	<h1 class="md-toolbar-tools">LOCATION INTELLIGENCE</h1>
+    </md-toolbar>
+  	
+  	<!-- TODO: creare slider panel e partire solo con il layer target aperto 
+  	<expander-box  layout="column"  expanded="getLayerProperty('targetDefault')" title='{{::translate.load("gisengine.filter.analitical")}}' >-->
+  	<expander-box  layout="column"  expanded="false" title='{{::translate.load("gisengine.filter.analitical")}}' >
+ 		<md-input-container layout="column" layout-wrap ng-repeat="ind in indicators">
+	 		<md-checkbox ng-checked="getLayerVisibility(ind.name)" ng-click="toggleLayer(ind.name)" class="md-primary" >
+					{{ind.name}} 
+			</md-checkbox>
+	 	  <!--   <md-radio-group  ng-model="dettInd.selectedIndicator"> -->
+	 	    <md-radio-group  ng-model="ind.defaultIndicator">
+	 	   		<md-radio-button ng-repeat="dettInd in ind.indicators" ng-click="thematizeMeasure(ind.name, dettInd.value)"  class="md-primary" ng-value="dettInd.value"  >
+		 	   		{{dettInd.value}}
+		 	   	</md-radio-button>
+		    </md-radio-group>
+		</md-input-container>
+	</expander-box>
+</md-sidenav>
