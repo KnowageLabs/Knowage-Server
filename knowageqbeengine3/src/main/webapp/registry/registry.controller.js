@@ -55,7 +55,7 @@
 		// array object to define the registry configuration
 		self.configuration = {
 			title: "Registry Document",
-
+			itemsPerPage: 15,
 			enableButtons: registryConfiguration.configurations[0].value == "true",
 			filters: registryConfiguration.filters,
 			pagination: registryConfiguration.pagination
