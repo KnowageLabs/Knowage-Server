@@ -4,6 +4,10 @@
    min-height: 20px;
 }
 
+.md-scroll-mask {
+	z-index: 1 !important;
+}
+
 .kn-registry .md-open-menu-container {
     z-index: 90;
 }
