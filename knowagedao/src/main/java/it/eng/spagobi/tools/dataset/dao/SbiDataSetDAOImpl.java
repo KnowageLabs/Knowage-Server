@@ -78,7 +78,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			hibQuery.setBoolean(0, true);
 			hibQuery.setString(1, label);
 			SbiDataSet sbiDataSet = (SbiDataSet) hibQuery.uniqueResult();
-			Hibernate.initialize(sbiDataSet);
+			initialize(sbiDataSet);
 
 			transaction.commit();
 
@@ -116,7 +116,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			c.add(Restrictions.eq("active", true));
 
 			sbiDataSet = (SbiDataSet) c.uniqueResult();
-			Hibernate.initialize(sbiDataSet);
+			initialize(sbiDataSet);
 
 		} catch (Exception e) {
 			throw new SpagoBIDAOException("An unexpected error occured while loading datasets", e);
@@ -213,10 +213,8 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			}
 
 			list = c.list();
+			initialize(list);
 
-			for (SbiDataSet dataset : list) {
-				Hibernate.initialize(dataset.getCategory());
-			}
 		} catch (Exception e) {
 			throw new SpagoBIDAOException("An unexpected error occured while loading datasets", e);
 		} finally {
@@ -271,7 +269,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 				query.setString(paramIndex++, implementation);
 
 			List<SbiDataSet> datasets = executeQuery(query, session);
-			Hibernate.initialize(datasets);
+			initialize(datasets);
 			return datasets;
 		} catch (Exception e) {
 			throw new SpagoBIDAOException("An unexpected error occured while loading dataset whose owner is equal to [" + owner + "]", e);
@@ -291,7 +289,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 		transaction = null;
 		try {
-			transaction = beginTransaction(session);
+			transaction = session.beginTransaction();
 			sbiDataSetList = query.list();
 
 			transaction.commit();
@@ -305,19 +303,6 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 		}
 
 		return sbiDataSetList;
-	}
-
-	private Transaction beginTransaction(Session session) {
-		Transaction transaction = null;
-		try {
-			Assert.assertNotNull(session, "session cannot be null");
-			transaction = session.beginTransaction();
-			Assert.assertNotNull(transaction, "transaction cannot be null");
-		} catch (Throwable t) {
-			throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
-		}
-
-		return transaction;
 	}
 
 	@Override
@@ -371,6 +356,20 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			result = sb.toString();
 		}
 		return result;
+	}
+
+	private static void initialize(SbiDataSet dataset) {
+		Hibernate.initialize(dataset.getId());
+		Hibernate.initialize(dataset.getCategory());
+		Hibernate.initialize(dataset.getTransformer());
+		Hibernate.initialize(dataset.getScope());
+		Hibernate.initialize(dataset.getFederation());
+	}
+
+	private static void initialize(List<SbiDataSet> datasets) {
+		for (SbiDataSet dataset : datasets) {
+			initialize(dataset);
+		}
 	}
 
 }
