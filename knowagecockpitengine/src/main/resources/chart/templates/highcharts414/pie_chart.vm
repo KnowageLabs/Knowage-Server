@@ -557,13 +557,29 @@
 			                    	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
 			                    	is included into the formatting of the number that is going to be displayed, as well as precision.
 			                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	                     		*/ 
+	                     		*/
+	                     		
+	                     		#set ($postfixValueAsString = '')
+		                     
+			                    #if ($relatedSerie.postfixChar != '')
+				                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
+								#end
+								
+			                    #set ($prefixValueAsString = '')
+			                    
+			                    #if ($relatedSerie.prefixChar != '')
+				                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
+								#end
+	                     		 
 			                    formatter: function() {
 			                     
 				                    var value = this.y;	
 				                    var newValue = "";	                  
 				                    
 			                      	var scaleFactor = '${relatedSerie.scaleFactor}';
+			                      	
+			                      	var prefixValue = '${prefixValueAsString}';
+		                      		var sufixValue = '${postfixValueAsString}';
 			                      	
 			                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
 			                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
@@ -605,7 +621,7 @@
 			                      	
 			                      	}						
 		                        		                       
-		                          	return newValue;
+		                          	return prefixValue + ' ' + newValue + ' '+ sufixValue;
 				            	}
 		               }
 			                
@@ -625,6 +641,18 @@
 			                    enabled: true,
 			                    
 			                    #set ($precisionValueAsString = ':,.' + $precision + 'f')
+			                    
+			                    #set ($postfixValueAsString = '')
+		                     
+			                    #if ($relatedSerie.postfixChar != '')
+				                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
+								#end
+								
+			                    #set ($prefixValueAsString = '')
+			                    
+			                    #if ($relatedSerie.prefixChar != '')
+				                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
+								#end
 			                   	
 			                   	/* 
 			                    	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
@@ -640,6 +668,9 @@
 				                    
 			                      	var scaleFactor = '${relatedSerie.scaleFactor}';
 			                      	
+			                      	var prefixValue = '${prefixValueAsString}';
+		                      		var sufixValue = '${postfixValueAsString}';
+			                      	
 			                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
 			                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
 			                      	
@@ -648,6 +679,7 @@
 			                      	var catName = "<b>" + this.point.name + "</b>: ";
 			                      	
 	                      	        newValue = catName;        	
+			                      	newValue += prefixValue;
 			                      	
 			                      	switch(scaleFactor.toUpperCase()) {
 			                      	
@@ -681,6 +713,7 @@
 			                      	
 			                      	}						
 		                        		 
+		                            newValue += ' '+ sufixValue;
 		                        	newValue += " (" + Highcharts.numberFormat(pointPercentage,precision,decimalPoints,thousandsSep) + "%)"; 
 		                        		                       
 		                          	return newValue;
@@ -702,6 +735,18 @@
 			                    enabled: true,
 			                    
 			                    #set ($precisionValueAsString = ':,.' + $precision + 'f')
+			                    
+			                    #set ($postfixValueAsString = '')
+		                     
+			                    #if ($relatedSerie.postfixChar != '')
+				                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
+								#end
+								
+			                    #set ($prefixValueAsString = '')
+			                    
+			                    #if ($relatedSerie.prefixChar != '')
+				                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
+								#end
 			                   	
 			                   	/* 
 			                    	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
@@ -716,6 +761,9 @@
 				                    var newValue = "";	                  
 				                    
 			                      	var scaleFactor = '${relatedSerie.scaleFactor}';
+			                      	
+			                      	var prefixValue = '${prefixValueAsString}';
+		                      		var sufixValue = '${postfixValueAsString}';
 			                      	
 			                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
 			                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
@@ -758,6 +806,7 @@
 			                      	
 			                      	}						
 		                        		 
+		                            newValue = prefixValue + ' ' + newValue + ' '+ sufixValue;
 		                        	newValue += " (" + Highcharts.numberFormat(pointPercentage,precision,decimalPoints,thousandsSep) + "%)"; 
 		                        		                       
 		                          	return newValue;
@@ -770,6 +819,18 @@
 			                    enabled: true,
 			                    
 			                    #set ($precisionValueAsString = ':,.' + $precision + 'f')
+			                    
+			                    #set ($postfixValueAsString = '')
+		                     
+			                    #if ($relatedSerie.postfixChar != '')
+				                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
+								#end
+								
+			                    #set ($prefixValueAsString = '')
+			                    
+			                    #if ($relatedSerie.prefixChar != '')
+				                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
+								#end
 			                   	
 			                   	/* 
 			                    	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
@@ -785,6 +846,9 @@
 				                    
 			                      	var scaleFactor = '${relatedSerie.scaleFactor}';
 			                      	
+			                      	var prefixValue = '${prefixValueAsString}';
+		                      		var sufixValue = '${postfixValueAsString}';
+			                      	
 			                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
 			                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
 			                      	
@@ -793,7 +857,7 @@
 			                      	var catName = "<b>" + this.point.name + "</b>: ";
 			                      	
 	                      	        newValue = catName;        	
-			                      	
+			                      	newValue += prefixValue;
 			                      	switch(scaleFactor.toUpperCase()) {
 			                      	
 			                      		case "EMPTY":
@@ -827,7 +891,7 @@
 			                      	}						
 		                        		 
 		                        		                       
-		                          	return newValue;
+		                          	return newValue + ' ' + sufixValue;
 				            	}
 			                }  #elseif($relatedSerieShowAbsValue == false && $relatedSerieShowPercentage == true && $relatedSerieCategoryValue == true )
 		               	

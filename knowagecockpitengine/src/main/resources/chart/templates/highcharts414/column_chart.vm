@@ -1183,19 +1183,19 @@
 						dataLabels: 
 						{
 		                    enabled: $relatedSerieShowValue,
-		                    
+		                   
 		                    #set ($postfixValueAsString = '')
-		                    
+		                     
 		                    #if ($relatedSerie.postfixChar != '')
 			                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
 							#end
-		                    
+							
 		                    #set ($prefixValueAsString = '')
 		                    
 		                    #if ($relatedSerie.prefixChar != '')
 			                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
 							#end
-		                    
+		                   
 		                    #set ($precisionValueAsString = '')
 		                    
 		                    #if ($relatedSerie.precision != '')
@@ -1219,6 +1219,10 @@
 			                    var newValue = "";		                    
 			                    
 		                      	var scaleFactor = '${relatedSerie.scaleFactor}';
+		                      	
+		                      	var prefixValue = '${prefixValueAsString}';
+		                      	var sufixValue = '${postfixValueAsString}';
+		                      	
 		                      	
 		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
 		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
@@ -1257,7 +1261,7 @@
 		                      	
 		                      	}						
 	                        		                       
-	                          	return newValue;
+	                          	return prefixValue + ' ' + newValue + ' ' + sufixValue;
 			            	},
 		                      
 	                    
@@ -1267,7 +1271,7 @@
 			#if($seriePrefix != '')
 				valuePrefix: '$seriePrefix',
 			#end
-				
+				 
 			#set($seriePostfix = $relatedSerie.postfixChar)
 			#if($seriePostfix != '')
 				valueSuffix: '$seriePostfix',
@@ -1370,6 +1374,9 @@
 			                    
 		                      	var scaleFactor = '${relatedSerie.scaleFactor}';
 		                      	
+		                      	var prefixValue = '${prefixValueAsString}';
+		                      	var sufixValue = '${postfixValueAsString}';
+		                      	
 		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
 		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
 		                      	
@@ -1407,7 +1414,7 @@
 		                      	
 		                      	}						
 	                        		                       
-	                          	return newValue;
+	                          	return prefixValue + ' ' + newValue + ' ' + sufixValue;
 			            	},
 		                      
 	                    
