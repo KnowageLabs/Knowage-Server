@@ -82,7 +82,7 @@ public abstract class DataBaseFactory {
 				}
 			}
 		} else {
-			return new MetaModelDataBase(dataSource);
+			return new MetaModelDataBase();
 		}
 		return dataBase;
 	}

@@ -23,8 +23,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 public class MetaModelDataBase extends AbstractDataBase {
 
-	public MetaModelDataBase(IDataSource dataSource) {
-		super(dataSource);
+	public MetaModelDataBase() {
 		this.databaseDialect = DatabaseDialect.METAMODEL;
 
 	}
