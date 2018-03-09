@@ -281,7 +281,9 @@
 	        			#set($labelAlign=$axisStyle)
 	        		#elseif($styleName == 'rotate' && $axisStyle)
 	        			#set($rotation=$axisStyle)
-	        			rotation: $rotation,		        			
+	        			#if($rotation!="")
+						rotation: $rotation,
+						#end		        			
 					#else		        			
 	        			$styleName: '$axisStyle',
 	        		#end
