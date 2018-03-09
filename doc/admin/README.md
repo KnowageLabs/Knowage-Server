@@ -88,6 +88,118 @@ which installs a clean Knowage running on MySQL.
 
 Then you can access Knowage on `http://<ip of machine>:8080/knowage`.
 
+Integration with R environment
+----------------------------------
+
+It is required the installation of the following components for the correct operation of the data mining engine:
+
+-   R
+-   R Studio
+-   rJava
+
+The first two components, needed for the functionality of the Knowage data mining
+engine, has to be installed through the rpm comand, and, the third, through the RStudio GUI.
+Once retrieved the RPM file, open the folder and launch the comands:
+```bash
+rpm -Uvh ./R-3.2.2-1.el6.x86_64.rpm
+yum install --nogpgcheck rstudio-server-rhel-0.99.486-x86_64.rpm
+cp ./RStudio/rJava_0.9-8.tar.gz $TOMCAT_HOME
+chown tomcat $TOMCAT_HOME/rJava_0.98.tar.gz
+chown -R tomcat.root /usr/lib64/R/library && chmod -R 775 /usr/lib64/R/library
+chown -R tomcat.root /usr/share/doc/R-3.2.2 && chmod -R 775 /usr/share/doc/R-3.2.2
+```
+
+Typing the address `http://<ip of machine>:8787/` in the browser, the user gets
+on login page. Log in with the user credentials used for the Tomcat 7 installation: `tomcat / <tomcat_user_password>`.
+The following figures show the steps that must be performed:
+
+![](media/Inst_img_021.png "Inst_img_021.png")
+![](media/Inst_img_022.png "Inst_img_022.png")
+![](media/Inst_img_023.png "Inst_img_023.png")
+
+Meanwhile the package is installed, remember to answer NO when asked to create a personal library in the user home (that can be found under `$HOME/RStudio/log`). This way, rJava will be installed in the directory `/usr/lib64/R/library/rJava`.
+
+Finally, edit the `TOMCAT_HOME/bin/setenv.sh` adding the following:
+```bash
+export R_HOME=/usr/lib64/R
+export LD_LIBRARY_PATH=/usr/lib64/R/library/rJava/jri
+```
+
+Integration with Python environment
+----------------------------------
+
+The engine uses a Java/Python interface, which allows to submit scripts and get result from a Python environment already installed on the machine where the Datamining Engine runs. For this reason, Python environment need to be installed on the same machine of Knowage server. This implies that, in order to run this engine, you have to install Python properly (depending on the OS) on the same machine where Knowage is installed. You can find all information about Python installation at `https://www.python.org`. Datamining engine only support Python 3 (the product has been tested with Python 3.4.0, but other 3.x releases are supported).
+
+###  JPY installation
+JPY is a connector that make possible a bidirectional communication between Python and Java and its components must be installed on both sides (Datamining engine and Python environment). Datamining engine is shipped with `jpy.jar` that allows the communication, but this is not sufficient, because JPY must be installed on your Python environment. To do this you have to download the JPY source files and build them by yourself on your machine (unfortunately pre-built packages are not made available yet by JPY creators). All the detailed instructions to build and install JPY on your Python environment are described on the page `http://jpy.readthedocs.org/en/stable/install.html`. During the testing phase Python
+3.4 and JPY 0.8 (stable version) have been used; here the version-specific installation steps are described.
+
+You will need:
+-  Python 3.3 or higher (3.2 may work as well but is not tested)
+-  Oracle JDK 7 or higher (JDK 6 may work as well)
+-  Maven 3 or higher
+-  Microsoft Windows SDK 7.1 or higher If you build for a 32-bit Python, make sure to also install a 32-bit JDK. Accordingly, for a 64-bit Python, you will need a 64-bit JDK.
+
+The Python setup tools (`distutils`) can make use of the command-line C/C++ compilers of the free Microsoft Windows SDK. These will by used by `distutils` if the `DISTUTILS_USE_SDK` environment variable is set. The compilers are made accessible via the command-line by using the `setenv` tool of the Windows SDK. In order to install the Windows SDK execute the following steps:
+
+-  If you already use Microsoft Visual C\+\+ 2010, make sure to uninstall the x86 and amd64 compiler redistributables first. Otherwise the installation of the Windows SDK will definitely fail. This may also be applied to higher versions of Visual C\+\+.
+-  Download and install Windows SDK 7.1.
+-  Download and install Windows SDK 7.1 SP1. Open the command-line and execute:
+   1.  `"C:\Program Files\ Microsoft SDKs\ Windows\ v7.1\ bin\ setenv" /x64 /release`
+to prepare a build of the 64-bit version of jpy.
+   2.  `"C:Program Files\ Microsoft SDKs\ Windows\ v7.1\ bin\ setenv" /x86
+/release` to prepare a build of the 32-bit version of jpy. Now set other environment
+variables:
+```bash
+SET DISTUTILS_USE_SDK=1
+SET JAVA_HOME=%JDK_HOME%
+SET PATH=%JDK_HOME%\jre\bin\server;%PATH%
+```
+
+Then, to actually build and test the jpy Python module use the following command: `python setup.py install`.
+To use JPY you need to replace the `jpyconfig.properties` file on your project, with the one generated by the build process that is present in your JPY built folder
+`jpy-master\build\lib.<SO-CPU-PYTHON_versions>`. Properties file to replace is located in `knowagedataminingengine\src\`.
+Datamining engine supports the use of all Python libraries: before import a library in yourscript install it on your native Python environment (for example using `pip`). To use Python you need to install the following libraries: 
+-  `matplotlib`
+-  `pandas`
+-  `numpy`
+-  `scipy`
+
+You can install them using `pip` typing the following commands on your native Python console:
+```bash
+pip install pandas
+pip install numpy
+pip install scipy
+pip install matplotlib
+```
+
+###  Example of Python document template
+```xml
+Example of Python Template
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<DATA_MINING>
+	<LANGUAGE name="Python"/>
+	<DATASETS>
+		<DATASET name="df" readType="csv" type="file" label="HairEyeColor" canUpload="true">
+        	<![CDATA[sep=',']]>
+        </DATASET>
+	</DATASETS>
+	<SCRIPTS>
+		<SCRIPT name="test01" mode="auto" datasets="df" label="HairEyeColor" libraries="csv,os,pandas,numpy">
+			<![CDATA[print(df.ix[0,0]) y=df.ix[0,0]]]>
+		</SCRIPT>
+	</SCRIPTS>
+	<COMMANDS>
+		<COMMAND name="testcommand" scriptName="test01" label="test01" mode="auto">
+			<OUTPUTS>
+				<OUTPUT type="text" name="first_element" value="y" function=""
+mode="manual" label="first_element"/>
+			</OUTPUTS>
+		</COMMAND>
+	</COMMANDS>
+</DATA_MINING>
+```
+Note that the `LANGUAGE` tag is used to specify the language to use: `name=Python` and `name=R` are supported. If the `LANGUAGE` tag is not present or name is not specified correctly, the default language is set to R.
 
 How to start and stop Knowage Server
 ------------------------------------
