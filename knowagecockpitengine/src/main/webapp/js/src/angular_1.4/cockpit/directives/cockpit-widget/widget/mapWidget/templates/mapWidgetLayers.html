@@ -108,14 +108,18 @@
 							</md-card-content>
 							
 							<md-card-content flex layout="column" class="markersExpander" ng-if="layer.expanded=='markers'">
+								<div class="buttonBar">
+									<md-button class="md-raised" ng-click="setIconType(layer,'icon')" ng-class="{'selected':layer.markerConf.type == 'icon'}">Icon</md-button>
+									<md-button class="md-raised" ng-click="setIconType(layer,'img')" ng-class="{'selected':layer.markerConf.type == 'img'}">Image</md-button>
+									<md-button class="md-raised" ng-click="setIconType(layer,'url')" ng-class="{'selected':layer.markerConf.type == 'url'}">Url</md-button>
+								</div>
 								<div layout="row" layout-align="start center">
 										<md-input-container class="md-block flex">
 									        <label>Icon</label>
 									        <input ng-model="layer.markerConf.icon">
-									        <div class="hint">Select an icon or set the image url address</div>
 								      	</md-input-container>
-								      	<md-button class="md-icon-button md-fab" ng-click="chooseIcon($event, layer)"><md-icon md-font-icon="fa fa-th"></md-icon></md-button>
-								      	<md-button class="md-icon-button md-fab"><md-icon md-font-icon="fa fa-upload"></md-icon></md-button>
+								      	<md-button class="md-icon-button md-fab" ng-click="chooseIcon($event, layer)" ng-if="layer.markerConf.type == 'icon'"><md-icon md-font-icon="fa fa-th"></md-icon></md-button>
+								      	<md-button class="md-icon-button md-fab" ng-click="" ng-if="layer.markerConf.type == 'img'"><md-icon md-font-icon="fa fa-upload"></md-icon></md-button>
 								      	
 								 	<div style="margin-left:20px;"></div>
 							      	<md-input-container class="md-block flex">
@@ -125,9 +129,9 @@
 									<div flex></div>
 									<div class="preview" >
 										<label>Preview</label>
-										<img src="http://via.placeholder.com/48x48" ng-if="!layer.markerConf.icon" />
-										<i class="fa fa-3x" ng-class="[layer.markerConf.font, layer.markerConf.icon]" ng-style="{'color':layer.markerConf.color}" ng-if="layer.markerConf.font && layer.markerConf.icon"></i>
-										<img src="{{layer.markerConf.icon}}" ng-if="!layer.markerConf.font && layer.markerConf.icon" />
+										<img src="http://via.placeholder.com/48x48" ng-if="!layer.markerConf.icon || layer.markerConf.icon==''" />
+										<i class="fa fa-3x" ng-class="[layer.markerConf.font, layer.markerConf.icon]" ng-style="{'color':layer.markerConf.color}" ng-if="layer.markerConf.type == 'icon'"></i>
+										<img src="{{layer.markerConf.icon}}" ng-if="layer.markerConf.icon && (layer.markerConf.type == 'url' || layer.markerConf.type == 'img')" />
 									</div>
 								</div>
 							</md-card-content>

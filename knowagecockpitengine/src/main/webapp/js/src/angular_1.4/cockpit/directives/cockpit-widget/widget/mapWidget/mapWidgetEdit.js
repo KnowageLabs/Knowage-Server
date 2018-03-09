@@ -148,6 +148,11 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 	    })
   	}
   	
+  	$scope.setIconType = function(layer,type) {
+  		delete layer.markerConf.icon;
+  		layer.markerConf.type = type;
+  	}
+  	
   	$scope.chooseIcon = function(ev, layer) {
   		
   		$mdDialog.show({
