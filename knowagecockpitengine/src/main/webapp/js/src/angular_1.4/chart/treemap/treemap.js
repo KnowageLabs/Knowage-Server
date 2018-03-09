@@ -876,8 +876,14 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
             };
     	serieColSize=1;
     	tooltipFormatter= function () {
-            return '<b>'+chartConf.additionalData.serie.value+'</b><br>' + this.series.xAxis.categories[this.point.x] + ': <b>' +
-            this.point.value + '</b> | ' + this.series.yAxis.categories[this.point.y] + '';
+    		var val = this.point.value;
+    		var prefix = chartConf.additionalData.prefixChar ? chartConf.additionalData.prefixChar : "";
+    		var postfix = chartConf.additionalData.postfixChar ?  chartConf.additionalData.postfixChar : "";
+    		var precision = chartConf.additionalData.precision ?  chartConf.additionalData.precision : "";
+    		
+    		val = Highcharts.numberFormat(val,precision );		
+            return '<b>'+chartConf.additionalData.serie.value+'</b><br>' + this.series.xAxis.categories[this.point.x] + ': <b>' + " " +
+            prefix + " " +val + " " + postfix + ' </b> | ' + this.series.yAxis.categories[this.point.y] + '';
     };
     
     tooltipObject={
