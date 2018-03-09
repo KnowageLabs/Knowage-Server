@@ -1228,24 +1228,44 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 //            			//aggregation function management (ie: COUNT($F{xxx}) )
             			var regAgg = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)(\\(\\$F{'+dataset.label+'.'+header+'}\\))','g');
             			var matchAgg = text.match(regAgg);
-    					if (matchAgg && dsObject.fieldType == 'MEASURE'){
+    					if (matchAgg){
     						//get the optional function
-                    		var regFunc = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)','g');
-                    		var matchFunc = matchAgg[0].match(regFunc);
-                    		if (matchFunc){
-	    						dsObject.aggregationSelected = matchFunc[0];
-//	    						dsObject.funcSummary = matchFunc[0];
-	    						//set configuration for ask summary values
-//	    						if (!model.style) model.style={};
-//	    						model.style.showSummary=true;
-//                    		}else{
-//                    			dsObject.aggregationSelected = 'NONE';
-//	    						dsObject.funcSummary = 'NONE';
+                    		var regFunc;
+                    		if(dsObject.fieldType == 'MEASURE'){
+                    			regFunc = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)','g');
+                    		}
+                    		else{
+                    			regFunc = new RegExp('(MIN|MAX|COUNT|DISTINCT COUNT)','g');
+                    		}
+
+                    		dsObject.aggregationSelected = [];
+                    		for(var i = 0; i < matchAgg.length; i++)
+                    		{
+                    			var matchFunc = matchAgg[i].match(regFunc);
+                    			if (matchFunc){
+                    				dsObject.aggregationSelected.push(matchFunc[0]);
+//                  				dsObject.funcSummary = matchFunc[0];
+                    				//set configuration for ask summary values
+//                  				if (!model.style) model.style={};
+//                  				model.style.showSummary=true;
+//                  				}else{
+//                  				dsObject.aggregationSelected = 'NONE';
+//                  				dsObject.funcSummary = 'NONE';
+                    			}
+
                     		}
 
     					}
     					//column is required
-            			columnsToshow.push(dataset.label+'.'+header);
+    					if(dsObject.aggregationSelected != undefined){
+    						for(var i = 0; i<dsObject.aggregationSelected.length; i++){
+    							var agg = dsObject.aggregationSelected[i];
+    							columnsToshow.push(dataset.label+'.'+header+':'+agg);
+    						}
+    					}
+    					else{
+                			columnsToshow.push(dataset.label+'.'+header);
+    					}
             			columnsToshowMeta.push(dsObject);
             		}
 				}
@@ -1255,27 +1275,90 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				this.loadDatasetRecordsById(datasetId, undefined, undefined, undefined, undefined, model).then(function(allDatasetRecords){
 
 	 				//get columnsSelected dataIndex
+
+					var fieldCounterInserted = {};
+					var alreadyInserted = [];
+					var currentCounter = 0;
+					var fieldCounter;
+
 	 				for (var col in columnsToshow){
-	 					var headerToSearch = columnsToshow[col].substring(columnsToshow[col].indexOf('.')+1);
-	                	for (var field in allDatasetRecords.metaData.fields){
-	                		if (allDatasetRecords.metaData.fields[field] && allDatasetRecords.metaData.fields[field].header){
-	                			var header = allDatasetRecords.metaData.fields[field].header;
-	                			if (header == headerToSearch){
-	                				columnsToshowIndex.push(columnsToshow[col] + '|' +allDatasetRecords.metaData.fields[field].dataIndex);
-	                				break;
-	                			}
+	 					var headerToSearchTmp = columnsToshow[col].substring(columnsToshow[col].indexOf('.')+1);
+	 					var headerToSearch;
+	 					if(headerToSearchTmp.indexOf(':')>=0){
+	 						headerToSearch = headerToSearchTmp.substring(0, headerToSearchTmp.indexOf(':'));
+	 					}
+	 					else{
+	 						headerToSearch = headerToSearchTmp;
+	 					}
+
+        				if(fieldCounterInserted[headerToSearch] == undefined) fieldCounterInserted[headerToSearch]=0;
+        				fieldCounter = fieldCounterInserted[headerToSearch];
+        				currentCounter = 0;
+
+        				for (var field in allDatasetRecords.metaData.fields){
+        					if (allDatasetRecords.metaData.fields[field] && allDatasetRecords.metaData.fields[field].header){
+        						var header = allDatasetRecords.metaData.fields[field].header;
+        						if (header == headerToSearch){
+
+        							if(alreadyInserted.indexOf(headerToSearchTmp) >= 0){
+        								// this means that field with aggregation was already inserted
+        								break;
+        							}
+        							else{
+        								if(currentCounter >= fieldCounter){
+
+        									// if fieldCounter > 0 means there are more occurrences of that field with different aggregation, than jump to next
+        									columnsToshowIndex.push(columnsToshow[col] + '|' +allDatasetRecords.metaData.fields[field].dataIndex);
+
+        									var counter = fieldCounterInserted[headerToSearch];
+        									var counter = counter+1;
+        									fieldCounterInserted[headerToSearch] = counter;
+
+        									alreadyInserted.push(headerToSearchTmp);
+
+        									break;
+        								}
+        							}
+            						currentCounter++;
+        						}
 	                		}
 	                	}
 	 				}
 	 				//get columnsSelected values and replace placeholders
 	 				var row = allDatasetRecords.rows[0] || []; //get the first row
 	 				for (var col in columnsToshowIndex){
-	 					var colAlias =  columnsToshowIndex[col].substring(0,  columnsToshowIndex[col].indexOf('|'));
+	 					var colAliasTmp =  columnsToshowIndex[col].substring(0,  columnsToshowIndex[col].indexOf('|'));
+	 					var colAlias;
+	 					if(colAliasTmp.indexOf(':')>=0){
+	 						colAlias =  colAliasTmp.substring(0,  colAliasTmp.indexOf(':'));
+	 					}
+	 					else{
+	 						colAlias =  colAliasTmp;
+	 					}
+
+	 					var aggregation = '';
+	 					if(colAliasTmp.indexOf(':')>=0){
+	 						aggregation= colAliasTmp.substring(colAliasTmp.indexOf(':')+1);
+	 					}
+	 					aggregation = aggregation.toUpperCase();
+
 	 					var colIdx = columnsToshowIndex[col].substring( columnsToshowIndex[col].indexOf('|')+1);
 	 					var colValue = row[colIdx];
 	 					if(colValue == undefined) colValue ='';
+
+	 					// if aggregation is specified search for right match and not for a generic one
+
+	 					var reg;
+	 					if(aggregation != ''){
+	 						reg = new RegExp(aggregation+'(\\(\\$F{'+colAlias+'}\\))','g');
+	 					}
+	 					else{
+	 						reg = new RegExp('\\$F{'+colAlias+'}','g');
+	 					}
+
+
 	 					//at first check for aggregation functions , than for simple values
-	 					var reg = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)(\\(\\$F{'+colAlias+'}\\))','g');
+	 					//var reg = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)(\\(\\$F{'+colAlias+'}\\))','g');
 	 					var matches = text.match(reg);
 	 					if (matches){
 	 						text = text.replace(reg, colValue);

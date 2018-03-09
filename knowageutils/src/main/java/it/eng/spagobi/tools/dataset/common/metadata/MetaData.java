@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -30,12 +30,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  */
 public class MetaData implements IMetaData, Cloneable {
-	
+
 	int idFieldIndex;
-	
+
 	List<IFieldMetaData> fieldsMeta;
 	Map<String, Object> properties;
-	
+
 	// @deprecated this map is used only by deprecated method getFieldIndex. Once this method will be removed
 	// remove also this map and all the references to it made within this class
 	Map<String, Integer> name2IndexMap;
@@ -49,33 +49,62 @@ public class MetaData implements IMetaData, Cloneable {
 		properties = new HashMap<String, Object>();
 	}
 
+	@Override
 	@JsonIgnore
 	public int getFieldCount() {
 		return fieldsMeta.size();
 	}
 
+	@Override
 	@JsonIgnore
 	public int getIdFieldIndex() {
 		return idFieldIndex;
 	}
-	
+
+	@Override
 	public void setIdField(int fieldIndex) {
 		this.idFieldIndex = fieldIndex;
 	}
-	
+
+	@Override
 	public int getFieldIndex(String fieldName) {
 		Integer columnIndex = null;
-		columnIndex = (Integer)alias2IndexMap.get(fieldName.toUpperCase());
-		if(columnIndex == null || columnIndex<0){
-			columnIndex = (Integer)name2IndexMap.get(fieldName.toUpperCase());
+		columnIndex = alias2IndexMap.get(fieldName.toUpperCase());
+		if (columnIndex == null || columnIndex < 0) {
+			columnIndex = name2IndexMap.get(fieldName.toUpperCase());
 		}
-		return columnIndex == null? -1: columnIndex.intValue();
+		return columnIndex == null ? -1 : columnIndex.intValue();
 	}
-	
+
+	@Override
 	public int getFieldIndex(IFieldMetaData fieldMeta) {
 		return fieldsMeta.indexOf(fieldMeta);
 	}
 
+	@Override
+	public int getFieldIndex(IFieldMetaData fieldMeta, Integer fromIndex) {
+
+		int currentIndex = 0;
+		int toReturn = -1;
+
+		for (Iterator iterator = fieldsMeta.iterator(); iterator.hasNext() && toReturn == -1;) {
+			IFieldMetaData cycleMeta = (IFieldMetaData) iterator.next();
+			if (currentIndex < fromIndex) {
+				currentIndex++;
+			} else {
+
+				if (cycleMeta.equals(fieldMeta)) {
+					toReturn = currentIndex;
+				}
+				currentIndex++;
+			}
+		}
+
+		return toReturn;
+
+	}
+
+	@Override
 	public IFieldMetaData getFieldMeta(int fieldIndex) {
 		IFieldMetaData fieldMeta = null;
 
@@ -83,81 +112,84 @@ public class MetaData implements IMetaData, Cloneable {
 
 		return fieldMeta;
 	}
-	
+
+	@Override
 	public List findFieldMeta(String propertyName, Object propertyValue) {
 		List results;
 		Iterator it;
-		
+
 		results = new ArrayList();
 		it = fieldsMeta.iterator();
-		while(it.hasNext()) {
-			IFieldMetaData fieldMeta = (IFieldMetaData)it.next();
-			if(fieldMeta.getProperty(propertyName) != null 
-					&& fieldMeta.getProperty(propertyName).equals(propertyValue)) {
+		while (it.hasNext()) {
+			IFieldMetaData fieldMeta = (IFieldMetaData) it.next();
+			if (fieldMeta.getProperty(propertyName) != null && fieldMeta.getProperty(propertyName).equals(propertyValue)) {
 				results.add(fieldMeta);
 			}
 		}
-		
+
 		return results;
 	}
-	
+
+	@Override
 	public String getFieldAlias(int fieldIndex) {
 		String fieldAlias = null;
 		IFieldMetaData fieldMeta;
-		
-		fieldMeta = getFieldMeta(fieldIndex);		
-		if(fieldMeta != null) {
+
+		fieldMeta = getFieldMeta(fieldIndex);
+		if (fieldMeta != null) {
 			String alias = fieldMeta.getAlias();
-			if(alias!=null && !alias.equals("")){
+			if (alias != null && !alias.equals("")) {
 				fieldAlias = alias;
-			}else{
+			} else {
 				fieldAlias = fieldMeta.getName();
 			}
 		}
-		
+
 		return fieldAlias;
 	}
-	
-	
+
+	@Override
 	public String getFieldName(int fieldIndex) {
 		String fieldName = null;
 		IFieldMetaData fieldMeta;
-		
-		fieldMeta = getFieldMeta(fieldIndex);		
-		if(fieldMeta != null) {
-				fieldName = fieldMeta.getName();
+
+		fieldMeta = getFieldMeta(fieldIndex);
+		if (fieldMeta != null) {
+			fieldName = fieldMeta.getName();
 		}
 		return fieldName;
 	}
-	
 
+	@Override
 	public Class getFieldType(int fieldIndex) {
 		Class fieldType = null;
 		IFieldMetaData fieldMeta;
-		
-		fieldMeta = getFieldMeta(fieldIndex);		
-		if(fieldMeta != null) {
+
+		fieldMeta = getFieldMeta(fieldIndex);
+		if (fieldMeta != null) {
 			fieldType = fieldMeta.getType();
 		}
-		
+
 		return fieldType;
 	}
 
-	
+	@Override
 	public Object getProperty(String propertyName) {
 		return properties.get(propertyName);
 	}
 
+	@Override
 	public void setProperty(String propertyName, Object proprtyValue) {
 		properties.put(propertyName, proprtyValue);
-		
+
 	}
-	
+
+	@Override
 	public void addFiedMeta(IFieldMetaData fieldMetaData) {
 		Integer fieldIndex = new Integer(fieldsMeta.size());
 		fieldsMeta.add(fieldMetaData);
 		String fieldName = fieldMetaData.getName();
-		if(fieldMetaData.getAlias()!=null){
+		if (fieldMetaData.getAlias() != null) {
 			String fieldAlias = fieldMetaData.getAlias();
 			alias2IndexMap.put(fieldAlias.toUpperCase(), fieldIndex);
 		}
@@ -169,19 +201,21 @@ public class MetaData implements IMetaData, Cloneable {
 		return fieldsMeta.toString();
 	}
 
+	@Override
 	public void deleteFieldMetaDataAt(int pivotFieldIndex) {
-		name2IndexMap.remove( getFieldMeta(pivotFieldIndex) );
-		fieldsMeta.remove( pivotFieldIndex );	
+		name2IndexMap.remove(getFieldMeta(pivotFieldIndex));
+		fieldsMeta.remove(pivotFieldIndex);
 	}
 
+	@Override
 	public Map<String, Object> getProperties() {
 		return properties;
 	}
-	
+
 	public void setProperties(Map<String, Object> properties) {
 		this.properties = properties;
 	}
-	
+
 	public List getFieldsMeta() {
 		return fieldsMeta;
 	}
@@ -194,6 +228,7 @@ public class MetaData implements IMetaData, Cloneable {
 		}
 	}
 
+	@Override
 	public void changeFieldAlias(int fieldIndex, String newAlias) {
 		IFieldMetaData m = this.getFieldMeta(fieldIndex);
 		m.setAlias(newAlias);
@@ -201,18 +236,17 @@ public class MetaData implements IMetaData, Cloneable {
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-//		MetaData toReturn = new MetaData();
-//		toReturn.setProperties(this.getProperties());
-//		
-//		int fields = this.getFieldCount();
-//		for (int i = 0; i < fields; i++) {
-//			IFieldMetaData fieldMetadata = this.getFieldMeta(i);
-//			IFieldMetaData clone = fieldMetadata.clone();
-//			toReturn.addFiedMeta(clone);
-//		}
-		
+		// MetaData toReturn = new MetaData();
+		// toReturn.setProperties(this.getProperties());
+		//
+		// int fields = this.getFieldCount();
+		// for (int i = 0; i < fields; i++) {
+		// IFieldMetaData fieldMetadata = this.getFieldMeta(i);
+		// IFieldMetaData clone = fieldMetadata.clone();
+		// toReturn.addFiedMeta(clone);
+		// }
+
 		return super.clone();
 	}
-
 
 }

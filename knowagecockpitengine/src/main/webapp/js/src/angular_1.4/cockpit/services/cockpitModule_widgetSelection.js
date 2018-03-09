@@ -77,6 +77,32 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					}
 				}
 
+				// SUM is default but for attribute is meaningless
+
+				if(col.fieldType=="ATTRIBUTE" && col.aggregationSelected && col.aggregationSelected === 'SUM'){
+					obj["funct"] = 'NONE';
+				}
+				else{
+
+					// add aggregation for measures and attributes
+					if (col.aggregationSelected){
+						if(col.aggregationSelected instanceof Array){
+							for(var z = 0; z<col.aggregationSelected.length;z++){
+								col.aggregationSelected[z] = col.aggregationSelected[z].toUpperCase();
+							}
+							obj["funct"] = col.aggregationSelected;
+						}
+						else{
+							obj["funct"] = col.aggregationSelected.toUpperCase();
+						}
+					}
+
+					else {
+						obj["funct"] = 'NONE';
+					}
+				}
+
+
 				if(col.fieldType=="ATTRIBUTE"){
 					if(newCategArray.length >0 ){
 						for (var m = 0; m < newCategArray.length; m++) {
@@ -89,10 +115,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}else{
 					//it is measure
 					obj["orderColumn"] = col.name;
-					if (col.aggregationSelected)
-						obj["funct"] = col.aggregationSelected.toUpperCase();
-					else
-						obj["funct"] = 'NONE';
 					measures.push(obj);
 				}
 			}

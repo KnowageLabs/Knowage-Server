@@ -225,30 +225,58 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return summaryRowMeasures;
 	}
 
+	private void addProjection(IDataSet dataSet, ArrayList<Projection> projections, JSONObject catOrMeasure, Map<String, String> columnAliasToName)
+			throws JSONException {
+
+		String functionObj = catOrMeasure.optString("funct");
+		// check if it is an array
+		if (functionObj.startsWith("[")) {
+			// call for each aggregation function
+			JSONArray functs = new JSONArray(functionObj);
+			for (int j = 0; j < functs.length(); j++) {
+				String functName = functs.getString(j);
+				Projection projection = getProjectionWithFunct(dataSet, catOrMeasure, columnAliasToName, functName);
+				projections.add(projection);
+			}
+		} else {
+			// function Objetc contains only one aggregation
+			Projection projection = getProjection(dataSet, catOrMeasure, columnAliasToName);
+			projections.add(projection);
+		}
+
+	}
+
 	protected List<Projection> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
 			throws JSONException {
 		ArrayList<Projection> projections = new ArrayList<Projection>(categories.length() + measures.length());
 
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject category = categories.getJSONObject(i);
-			Projection projection = getProjection(dataSet, category, columnAliasToName);
-			projections.add(projection);
+			addProjection(dataSet, projections, category, columnAliasToName);
 		}
 
 		for (int i = 0; i < measures.length(); i++) {
 			JSONObject measure = measures.getJSONObject(i);
-			Projection projection = getProjection(dataSet, measure, columnAliasToName);
-			projections.add(projection);
+			addProjection(dataSet, projections, measure, columnAliasToName);
+
 		}
 
 		return projections;
+	}
+
+	private Projection getProjectionWithFunct(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName, String functName)
+			throws JSONException {
+		String columnName = getColumnName(jsonObject, columnAliasToName);
+		String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
+		IAggregationFunction function = AggregationFunctions.get(functName);
+		Projection projection = new Projection(function, dataSet, columnName, columnAlias);
+		return projection;
 	}
 
 	private Projection getProjection(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
 		String columnName = getColumnName(jsonObject, columnAliasToName);
 		String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
 		IAggregationFunction function = AggregationFunctions.get(jsonObject.optString("funct"));
-
 		Projection projection = new Projection(function, dataSet, columnName, columnAlias);
 		return projection;
 	}

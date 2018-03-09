@@ -21,6 +21,7 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -284,6 +285,8 @@ public class JSONDataWriter implements IDataWriter {
 					recordSize = record.getFields().size();
 				}
 
+				Map<IFieldMetaData, Integer> alreadyInserted = new HashMap<IFieldMetaData, Integer>();
+
 				for (int i = 0, j = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
 					IFieldMetaData fieldMetaData = dataStore.getMetaData().getFieldMeta(i);
 
@@ -297,9 +300,19 @@ public class JSONDataWriter implements IDataWriter {
 						continue;
 					}
 
-					int fieldPosition = dataStore.getMetaData().getFieldIndex(fieldMetaData);
+					// the same metadata could be put in more places (for example with different aggregation
+					// keep track of already searched fieldMeta and search for next occurrences
+					Integer fromIndex = alreadyInserted.get(fieldMetaData);
+					if (fromIndex == null) {
+						fromIndex = 0;
+					} else {
+						fromIndex++;
+					}
+
+					int fieldPosition = dataStore.getMetaData().getFieldIndex(fieldMetaData, fromIndex);
 					if (recordSize < 0 || fieldPosition < recordSize) {
 						field = record.getFieldAt(fieldPosition);
+						alreadyInserted.put(fieldMetaData, fieldPosition);
 					} else {
 						field = new Field("");
 					}

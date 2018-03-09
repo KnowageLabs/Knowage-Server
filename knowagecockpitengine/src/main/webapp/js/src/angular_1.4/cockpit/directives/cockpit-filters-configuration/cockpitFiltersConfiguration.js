@@ -170,7 +170,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //			// set by default a dataset, user can then change
 //			if($scope.newFilterAllWidgetDS.length>0){
 //				var ds = $scope.newFilterAllWidgetDS[$scope.newFilterAllWidgetDS.length-1];
-//				$scope.newFilter.dataset = ds.label;
+//				$scope.cdataset = ds.label;
 //				$scope.newFilterChangeDatasetUpdateColumns();
 //			}
 
@@ -451,7 +451,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.newFilter.filterVals = undefined;
 
 			var colLabel = $scope.newFilter.colName;
-			var colAlias = $scope.newFilter.colAlias;
 			var ds = $scope.newFilterCurrenteSelectedDS;
 			for(var i=0;i<ds.metadata.fieldsMeta.length;i++){
 				var col = ds.metadata.fieldsMeta[i];
