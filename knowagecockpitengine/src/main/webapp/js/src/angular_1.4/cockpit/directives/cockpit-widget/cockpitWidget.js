@@ -851,7 +851,6 @@ function cockpitWidgetControllerFunction(
 	}
 
 	$scope.doEditWidget=function(initOnFinish){
-
 		var deferred;
 		if(initOnFinish){
 			deferred=$q.defer();
@@ -860,6 +859,9 @@ function cockpitWidgetControllerFunction(
 				function(){
 					clearRedundantStyle();
 					$scope.refreshWidgetStyle();
+					if($scope.ngModel.type=='map'){
+                        $scope.reinit();
+                    }
 					if(initOnFinish){
 						deferred.resolve();
 					}

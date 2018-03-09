@@ -17,6 +17,7 @@
 		var activeInd;
 		var activeConf;
 		var cacheProportionalSymbolMinMax;
+		var arStyles;
 		
 
 		ms.featureStyle = function(feature, resolution){
@@ -26,9 +27,19 @@
 			var configMarker = ms.activeConf.markerConf || {};
 	      	var value =  props[ms.activeInd] || 0;
 			var style;
+//			console.log("feature.get('parentLayer') " + feature.get('parentLayer')  + " - ms.activeConf.name: " + ms.activeConf.name );
+//			console.log("ms.activeConf: " , ms.activeConf);
 			
-			//active point management (TEST)
-			var coordinate = feature.getGeometry().getCoordinates();
+//			var tmpLayer = feature.get('parentLayer');
+//			var tmpValue = ms.activeConf.name;
+			
+//			if (!feature.getStyleFunction() || feature.get('parentLayer') === ms.activeConf.name) {
+//			if (!tmpValue || tmpLayer == tmpValue) {
+//				console.log("feaure with parentLayer ["+ tmpLayer  +"] and value [" +tmpValue+ "] managed with conf ", ms.activeConf);
+//			}else{
+//				console.log("feaure with parentLayer ["+ tmpLayer  +"] skipped");
+//				return feature.getStyleFunction();
+//			}
 
 			switch (configThematizer.defaultAnalysis) {
 			case 'choropleth':
@@ -147,6 +158,8 @@
 						//get config for thematize
 						ms.activeInd = selectedMeasure;
 						ms.activeConf = config;
+//						if (!ms.activeConf) ms.activeConf =[];
+//						ms.activeConf[config.name] = config;
 						if (!ms.cacheProportionalSymbolMinMax) ms.cacheProportionalSymbolMinMax = {}; //just at beginning
 						if (!ms.cacheProportionalSymbolMinMax.hasOwnProperty(name)){
 							ms.loadIndicatorMaxMinVal(selectedMeasure, values);
@@ -159,14 +172,18 @@
 				        var coordinate = transform([parseFloat(lonlat[0].trim()), parseFloat(lonlat[1].trim())]);
 				        var geometry = new ol.geom.Point(coordinate);
 				        feature.setGeometry(geometry);
-				        feature.setStyle(ms.featureStyle);
+//				        feature.setStyle(ms.featureStyle);
 				        ms.addDsPropertiesToFeature(feature, row, values.metaData.fields);
+				      //at least add the layer owner//at least add the layer owner
+				        feature.set("parentLayer",config.name);
 				        featuresSource.addFeature(feature);
 					}
 			
 					return new ol.layer.Vector({
-//						 updateWhileInteracting: true,
-					     source: featuresSource
+//						 updateWhileInteracting: false,
+//						strategy: ol.loadingstrategy.bbox,
+						source: featuresSource,
+					    style: ms.featureStyle
 					});
 					
 				
@@ -287,14 +304,13 @@
 		
 		//thematizer functions
 		ms.refreshStyle = function (layer, measure, config, values, geoColumn){
-			//prepare object for temathization
+			//prepare object for thematization
 			ms.loadIndicatorMaxMinVal(measure, values);
+			ms.activeConf = config;
 			var newSource = ms.getFeaturesDetails(geoColumn, measure, config, values);
 			var newStyle = newSource.getStyle();
 			layer.setStyle(newStyle);
-			//changed() and refresh don't work on 4.6.4 ol version
-//			layer.getSource().changed();
-//			layer.getSource().refresh({force:true});
+
 		}
 		
 		ms.getProportionalSymbolSize = function(val, name, config){
@@ -368,8 +384,11 @@
 				
 			return toReturn;
 		}
-	}
-	
-	
+		
+		
+		ms.setActiveConf = function (conf){
+			ms.activeConf = conf;
+		}
+	}	
 
 })();

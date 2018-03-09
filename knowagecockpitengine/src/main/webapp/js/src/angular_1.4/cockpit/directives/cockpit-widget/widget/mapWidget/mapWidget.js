@@ -75,8 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		//map id reference definition	
 		$scope.mapId = 'map-' + Math.ceil(Math.random()*1000).toString();
-
-	  	
+		
 	  	$scope.showAction = function(text) {
 			var toast = $mdToast.simple()
 			.content(text)
@@ -92,8 +91,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			});
 		}
-	      
-	    $scope.getAllLayers = function(){	    	
+	     
+
+	    $scope.getAllLayers = function(){	
 	    	for (l in $scope.targetLayers){
 	    		var layerDef  = $scope.targetLayers[l];
 	    		$scope.setConfigLayer(layerDef.name, layerDef);
@@ -105,6 +105,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    			
 	    		}
 	    	}	 
+	    }
+	    
+	    $scope.reinit = function(){
+            $scope.getAllLayers();
+            $scope.createMap();
+        }
+	    
+	    $scope.refresh = function(element,width,height, data,nature,associativeSelection) {
+
 	    }
 	    
 	    $scope.getDatasetFeatures = function(layerDef){
@@ -138,17 +147,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    			measure.funcSummary = layerDef.indicators[m].funct || 'SUM';
 	    			measure.fieldType = 'MEASURE';
 	    			meta.push(measure);
-	    			if (measure.selectedIndicator) selectedMeasure = measure.alias;
+	    			if (layerDef.targetDefault && measure.selectedIndicator) selectedMeasure = measure.alias;
+//	    			if (measure.selectedIndicator) selectedMeasure = measure.alias;
     				measures.push({"name": measure.name, "value": measure.alias, "selectedIndicator": measure.selectedIndicator});
     			}
     		}
     		
-    		$scope.addIndicatorsToLayer(layerDef.name, measures);
+    		$scope.addIndicatorsToLayer(layerDef.name, selectedMeasure, measures);
     		
     		var model = {content: {columnSelectedOfDataset: meta }};
     		var features = [];
+    		
     		//get the dataset columns values
 	    	cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.datasetId, undefined, undefined, undefined, undefined, model).then(
+	    			
 	    		function(allDatasetRecords){
 					var layer = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, allDatasetRecords);
 					if (layer == null){
@@ -163,13 +175,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.addLayer(layerDef.name, layer);	//add layer to internal object
 					$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
 					$scope.setValuesLayer(layerDef.name, allDatasetRecords); //add values to internal object
+					//at least simulates the click action for the target layer and hides the others	
+					var nLayerDefault;
+					if (!layer.targetDefault){
+						$scope.toggleLayer(layer.name); //hide layers not target
+					}
+	
+					cockpitModule_mapServices.setActiveConf($scope.getNumberLayerDefault());
 					
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.datasetId+"] ");
 				$scope.showAction($scope.translate.load('sbi.cockpit.map.dsError')); //error during the execution of data
-			}
-			); 
-	    	
+			}); 
     	}
 
 	    $scope.createMap = function (){      
@@ -186,14 +203,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               }
             });
             
+//           if (!$scope.currentView.center)  $scope.currentView.center = [0,0];
+           if (!$scope.currentView.center)  $scope.currentView.center =  [-122.2585837, 37.76930310];
             var view = new ol.View({
+//            	projection: 'EPSG:4326',
             	center: ol.proj.fromLonLat($scope.currentView.center), 
+//            	center: ol.proj.transform($scope.currentView.center, 'EPSG:3857', 'EPSG:4326'),
 			    zoom: $scope.currentView.zoom || 3
-//                minZoom: 3,
-//                maxZoom: 6
               });
             
-
     		$scope.map = new ol.Map({
 				     target:  $scope.mapId,
 				     layers: [baseLayer],
@@ -214,7 +232,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         	    if (Number.isInteger(e.target.getZoom())) {
         	      console.log(e.target.getCenter());
         	    }
+//              $scope.map.render();
+//              $scope.refreshLayers();
+//              map.getView().setCenter(ol.proj.transform([lat, long], 'EPSG:4326', 'EPSG:3857'));
+        	    $scope.ngModel.content.zoom = e.target.getZoom();
+//              $scope.currentView.center = e.target.getCenter();
+              $scope.ngModel.content.currentView.center  = [-122.2585837, 37.76930310]; //temporaneo
             });
+
 	    }
 	    
 	    $scope.addMapEvents = function (overlay){
@@ -256,8 +281,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	            	if ($scope.isDisplayableProp(p, config.config))
     	            	text += '<b>' + p + ":</b> " + props[p] + '<br>';
     	            }
-    		        var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
-    		            coordinate, 'EPSG:3857', 'EPSG:4326'));
 
     		        popupContent.innerHTML = '<p><i>Details</i></p><code>' + text + '</code>';
     		        overlay.setPosition(coordinate);
@@ -269,13 +292,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	    	  var pixel = $scope.map.getEventPixel(e.originalEvent);
     	    	  var hit = $scope.map.hasFeatureAtPixel(pixel);
     	    	  $scope.map.getViewport().style.cursor = hit ? 'pointer' : '';
-//    	        if (e.dragging) {
-////    	          $(element).popover('destroy');
-//    	          return;
-//    	        }
-//    	        var pixel =$scope.map.getEventPixel(e.originalEvent);
-//    	        var hit = $scope.map.hasFeatureAtPixel(pixel);
-//    	        $scope.map.style.cursor = hit ? 'pointer' : '';
     	      });
     		
     		$scope.map.on('moveend', function(evt){
@@ -295,11 +311,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //    		    		}
 //    				});
 //    			}
+    			var view = $scope.map.getView();
+    			if (!$scope.ngModel.content.currentView) $scope.ngModel.content.currentView = {};
+//    			$scope.ngModel.content.currentView.center  = ol.proj.transform(view.getCenter(), 'EPSG:4326', 'EPSG:3857');
+    			$scope.ngModel.content.currentView.center  = [-122.2585837, 37.76930310]; //temporaneo
+    			$scope.ngModel.content.currentView.zoom = view.getZoom();
+//    			$scope.ngModel.content.currentView.center = view.getCenter();
     		});
 	    }
 	
 	    
-	    //control panel events
+	    //control panel events    
 	    $scope.toggleLayer = function(n){
 	    	var l = $scope.getLayerByName(n);
 	    	if (!l) return; //do nothing
@@ -324,8 +346,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    			break;
 	    		}
 	    	}
-	    	
 	    	cockpitModule_mapServices.refreshStyle(layer, m, layerConfig, layerValues, layerKeyColumn);
+	    }
+	    
+	    $scope.refreshLayers = function (){
+	    	var m;
+	    	for (l in $scope.getLayers()){
+	    		var tmpLayer = $scope.getLayers()[l].name;
+	    		m = $scope.getSelectedIndicator(tmpLayer);
+	    		if (m)
+	    			$scope.thematizeMeasure(tmpLayer, m);
+	    	}
 	    }
 	    
 	    //getter and setter of internal objects
@@ -370,16 +401,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	return $scope.indicators;
 	    }
 	    
+	    $scope.getSelectedIndicator = function (n){
+	    	for (l in $scope.indicators){
+	    		if ($scope.indicators[l].name === n){
+	    			var inds = $scope.indicators[l];
+	    			return inds.defaultIndicator;
+	    		}
+	    	}
+	    		
+	    	return null;
+	    }
+	    
 	    $scope.setIndicators = function(i){
 	    	$scope.indicators = i;
 	    }
 	    
-	    $scope.addIndicatorsToLayer = function(n,i){
-	    	$scope.indicators.push({"name": n,"indicators":i});
+	    $scope.addIndicatorsToLayer = function(n,d,i){
+	    	$scope.indicators.push({"name": n, "defaultIndicator": d, "indicators":i});
 	    }
 	    
 	    $scope.addIndicator = function(n,v){
-	    	$scope.indicators.push({"name": n,"value":v});
+	    	$scope.indicators.push({"name": n, "value":v});
 	    }
 	    
 	    $scope.getValuesLayer = function (n){
@@ -423,6 +465,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	return false;
 	    }
 	    
+	    $scope.getNumberLayerDefault = function (){
+	    	for (l in $scope.targetLayers){
+	    		if ($scope.targetLayers[l].targetDefault)
+	    			return l;
+	    	}
+	    	return 0; //if no layer is defined as default returns the first
+	    }
+	    
 	    //functions calls
 		$scope.getAllLayers();
 		
@@ -447,7 +497,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$mdPanel.open(config);
 			return finishEdit.promise;
 		}
-		
+
 	}
 
 	// this function register the widget in the cockpitModule_widgetConfigurator factory
