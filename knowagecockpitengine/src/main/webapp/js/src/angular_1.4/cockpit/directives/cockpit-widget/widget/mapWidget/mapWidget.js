@@ -294,7 +294,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	            	text += '<b>' + p + ":</b> " + props[p] + '<br>';
     	            }
 
-    		        popupContent.innerHTML = '<p><i>Details</i></p><code>' + text + '</code>';
+    		        popupContent.innerHTML = '<h2>Details</h2><code>' + text + '</code>';
     		        overlay.setPosition(coordinate);
     	        }
              });
