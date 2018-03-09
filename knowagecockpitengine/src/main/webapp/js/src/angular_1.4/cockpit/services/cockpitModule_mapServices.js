@@ -175,7 +175,7 @@
 //				        feature.setStyle(ms.featureStyle);
 				        ms.addDsPropertiesToFeature(feature, row, values.metaData.fields);
 				      //at least add the layer owner//at least add the layer owner
-				        feature.set("parentLayer",config.name);
+//				        feature.set("parentLayer",config.name);
 				        featuresSource.addFeature(feature);
 					}
 			

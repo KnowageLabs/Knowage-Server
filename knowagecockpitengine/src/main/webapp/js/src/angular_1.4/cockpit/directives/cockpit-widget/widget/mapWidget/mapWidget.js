@@ -123,7 +123,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		var geoColumn = null;
     		var selectedMeasure = null;
     		for (a in layerDef.attributes){
-    			if (layerDef.attributes[a].isGeoReference || layerDef.attributes[a].showDetail){
+    			if (layerDef.attributes[a].isGeoReference || layerDef.attributes[a].showDetails){
 	    			var att = {};
 	    			att.name = layerDef.attributes[a].name;
 	    			att.alias = layerDef.attributes[a].label;
@@ -452,13 +452,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	   
 	    $scope.isDisplayableProp = function (p, config){
 	    	for (a in config.attributes){
-    			if (p === config.attributes[a].label && config.attributes[a].showDetail){
+    			if (p === config.attributes[a].label && config.attributes[a].showDetails){
 	    			return true;
     			}
 	    	}
 	    	
 	    	for (i in config.indicators){
-    			if (p === config.indicators[i].label && config.indicators[i].showDetail){
+    			if (p === config.indicators[i].label && config.indicators[i].showDetails){
 	    			return true;
     			}
 	    	}
