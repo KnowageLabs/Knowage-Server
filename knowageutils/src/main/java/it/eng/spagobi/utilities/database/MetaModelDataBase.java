@@ -19,23 +19,15 @@
 package it.eng.spagobi.utilities.database;
 
 import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 public class MetaModelDataBase extends AbstractDataBase {
 
 	public MetaModelDataBase() {
 		this.databaseDialect = DatabaseDialect.METAMODEL;
-
 	}
 
 	@Override
 	public String getAliasDelimiter() {
 		return "";
 	}
-
-	@Override
-	public boolean isInternal() {
-		return true;
-	}
-
 }

@@ -33,10 +33,10 @@ public abstract class AbstractDataBase implements IDataBase {
 	public static final String STANDARD_ALIAS_DELIMITER = "\"";
 
 	private static transient Logger logger = Logger.getLogger(AbstractDataBase.class);
-	
+
 	protected AbstractDataBase() {
 
-    }
+	}
 
 	public AbstractDataBase(IDataSource dataSource) {
 		this.dataSource = dataSource;
@@ -81,11 +81,6 @@ public abstract class AbstractDataBase implements IDataBase {
 	@Override
 	public IDataSource getDataSource() {
 		return dataSource;
-	}
-
-	@Override
-	public boolean isInternal() {
-		return false;
 	}
 
 	@Override

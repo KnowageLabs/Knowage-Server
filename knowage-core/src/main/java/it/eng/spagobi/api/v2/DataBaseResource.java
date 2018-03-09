@@ -62,10 +62,10 @@ public class DataBaseResource extends AbstractSpagoBIResource {
 		try {
 			List<IDataBase> databases = new ArrayList<>();
 			for (DatabaseDialect sqlDialect : DatabaseDialect.values()) {
-				IDataSource datasource = DataSourceFactory.getDataSource();
-				datasource.setHibDialectClass(sqlDialect.getValue());
-				IDataBase database = DataBaseFactory.getDataBase(datasource);
-				if (!database.isInternal()) {
+				if (!sqlDialect.equals(DatabaseDialect.METAMODEL)) {
+					IDataSource datasource = DataSourceFactory.getDataSource();
+					datasource.setHibDialectClass(sqlDialect.getValue());
+					IDataBase database = DataBaseFactory.getDataBase(datasource);
 					databases.add(database);
 				}
 			}
