@@ -1,4 +1,4 @@
-<md-dialog style="min-width:60%">
+<md-dialog style="min-width:60%; ">
     <md-toolbar>
       <div class="md-toolbar-tools">
         <h2>Add Layer</h2>
@@ -6,8 +6,8 @@
       </div>
     </md-toolbar>
 
-    <md-dialog-content layout-padding>
-    	<div layout="row" layout-align="center center">
+    <md-dialog-content layout-padding style="min-height:400px">
+    	<div layout="row" layout-align="center center" style="min-height:400px">
 			<div class="kn-noItems" ng-if="!availableSpatialLayers || availableSpatialLayers.length == 0">
 				No Layers available, add some from the datasets list
 			</div>

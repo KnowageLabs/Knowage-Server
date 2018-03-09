@@ -26,6 +26,7 @@ var cockpitApp= angular.module("cockpitModule",[
 	'ngMaterial',
 	'cometd',
 	'sbiModule',
+	'knModule',
 	'gridster',
 	'file_upload',
 	'ngWYSIWYG',
