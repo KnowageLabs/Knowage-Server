@@ -58,25 +58,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_widgetSelection,
 			cockpitModule_properties,
 			cockpitModule_generalServices){
-		
+
 		$scope.getTemplateUrl = function(template){
 	  		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
 	  	}
-		
-		//ol objects 
+
+		//ol objects
 		$scope.layers = [];  //layers with features
 		$scope.indicators = [];  //layers with indicators
 		$scope.values = [];  //layers with values
 		$scope.configs = [];  //layers with configuration
-		
+
 		//get config portions
 		$scope.targetLayers= $scope.ngModel.content.targetLayersConf || [];
 		$scope.baseLayer = $scope.ngModel.content.baseLayersConf || [];
 		$scope.currentView = $scope.ngModel.content.currentView || {};
-		
-		//map id reference definition	
+
+		//map id reference definition
 		$scope.mapId = 'map-' + Math.ceil(Math.random()*1000).toString();
-		
+
 		$scope.optionsSidenavOpened = false;
 		$scope.toggleSidenav = function(){
 			$scope.optionsSidenavOpened = !$scope.optionsSidenavOpened;
@@ -93,13 +93,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$mdToast.show(toast).then(function(response) {
 
 				if ( response == 'ok' ) {
-			
+
 				}
 			});
 		}
-	     
 
-	    $scope.getAllLayers = function(){	
+
+	    $scope.getAllLayers = function(){
 	    	for (l in $scope.targetLayers){
 	    		var layerDef  = $scope.targetLayers[l];
 	    		$scope.setConfigLayer(layerDef.name, layerDef);
@@ -108,23 +108,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		}else if (layerDef.type === 'CATALOG'){
 	    			//TODO implementare recuspero layer da catalogo
 	    		}else{
-	    			
+
 	    		}
-	    	}	 
+	    	}
 	    }
-	    
+
 	    $scope.reinit = function(){
             $scope.getAllLayers();
             $scope.createMap();
         }
-	    
-	    $scope.refresh = function(element,width,height, data,nature,associativeSelection) {
 
+	    $scope.refresh = function(element,width,height, data,nature,associativeSelection) {
+	    	$scope.reinit();
 	    }
-	    
+
+	    $scope.getOptions =function(){
+			var obj = {};
+			obj["type"] = $scope.ngModel.type;
+			return obj;
+		}
+
 	    $scope.getDatasetFeatures = function(layerDef){
-    		//prepare object with metadata for desiderata dataset columns 
-	    	
+    		//prepare object with metadata for desiderata dataset columns
+
     		var meta = [];
     		var geoColumn = null;
     		var selectedMeasure = null;
@@ -134,7 +140,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    			att.name = layerDef.attributes[a].name;
 	    			att.alias = layerDef.attributes[a].label;
 	    			att.aliasToShow = layerDef.attributes[a].label;
-	    			att.fieldType = 'ATTRIBUTE';	
+	    			att.fieldType = 'ATTRIBUTE';
 	    			meta.push(att);
     			}
     			if (layerDef.attributes[a].isGeoReference)
@@ -158,22 +164,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     				measures.push({"name": measure.name, "value": measure.alias, "selectedIndicator": measure.selectedIndicator});
     			}
     		}
-    		
+
     		$scope.addIndicatorsToLayer(layerDef.name, selectedMeasure, measures);
-    		
+
     		var model = {content: {columnSelectedOfDataset: meta }};
     		var features = [];
-    		
+
     		//get the dataset columns values
 	    	cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.datasetId, undefined, undefined, undefined, undefined, model).then(
-	    			
+
 	    		function(allDatasetRecords){
 					var layer = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, allDatasetRecords);
 					if (layer == null){
 						$scope.showAction($scope.translate.load('sbi.cockpit.map.nogeomcorrectform')); //dataset geometry column value isn't correct. It should be a couble of numbers [-12 12] or [-12, 12]
 						return;
 					}
-					
+
 					layer.targetDefault = layerDef.targetDefault || false;
 					layer.name = layerDef.name;
 					layer.setZIndex(layerDef.order*1000);
@@ -181,26 +187,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.addLayer(layerDef.name, layer);	//add layer to internal object
 					$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
 					$scope.setValuesLayer(layerDef.name, allDatasetRecords); //add values to internal object
-					//at least simulates the click action for the target layer and hides the others	
+					//at least simulates the click action for the target layer and hides the others
 					var nLayerDefault;
 					if (!layer.targetDefault){
 						$scope.toggleLayer(layer.name); //hide layers not target
 					}
-	
+
 					cockpitModule_mapServices.setActiveConf($scope.getNumberLayerDefault());
-					
+
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.datasetId+"] ");
 				$scope.showAction($scope.translate.load('sbi.cockpit.map.dsError')); //error during the execution of data
-			}); 
+			});
     	}
 
-	    $scope.createMap = function (){      
+	    $scope.createMap = function (){
 	    	var popupContainer = document.getElementById('popup');
     		//create the map with first base layer
             var baseLayer = cockpitModule_mapServices.getBaseLayer($scope.baseLayer[0]);
-            
-            //create overlayers (popup..)           
+
+            //create overlayers (popup..)
             var overlay = new ol.Overlay({
               element: popupContainer,
               autoPan: true,
@@ -208,28 +214,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 duration: 250
               }
             });
-            
+
 //           if (!$scope.currentView.center)  $scope.currentView.center = [0,0];
            if (!$scope.currentView.center)  $scope.currentView.center =  [-122.2585837, 37.76930310];
             var view = new ol.View({
 //            	projection: 'EPSG:4326',
-            	center: ol.proj.fromLonLat($scope.currentView.center), 
+            	center: ol.proj.fromLonLat($scope.currentView.center),
 //            	center: ol.proj.transform($scope.currentView.center, 'EPSG:3857', 'EPSG:4326'),
 			    zoom: $scope.currentView.zoom || 3
               });
-            
+
     		$scope.map = new ol.Map({
 				     target:  $scope.mapId,
 				     layers: [baseLayer],
 				     overlays: [overlay],
 				     view: view
     		});
-    		
+
     		$scope.addViewEvents();
     		$scope.addMapEvents(overlay);
     	}
-	    
-	
+
+
 	    $scope.addViewEvents = function(){
 	    	//view events
 	    	var view = $scope.map.getView();
@@ -247,12 +253,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             });
 
 	    }
-	    
+
 	    $scope.addMapEvents = function (overlay){
 	    	//Elements that make up the popup.
             var popupContent = document.getElementById('popup-content');
             var closer = document.getElementById('popup-closer');
-            
+
             /**
              * Add a click handler to hide the popup.
              * @return {boolean} Don't follow the href.
@@ -262,7 +268,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               closer.blur();
               return false;
             };
-            
+
     		//map events
     		$scope.map.on('singleclick', function(evt) {
     			//popup detail
@@ -273,10 +279,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             	            });
             	var layer = $scope.map.forEachFeatureAtPixel(evt.pixel,
         	            function(feature, layer) {
-        	                
+
         	                return layer;
         	            });
-            	
+
     	        if (feature) {
     	            var geometry = feature.getGeometry();
     	            var props = feature.getProperties();
@@ -292,19 +298,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		        overlay.setPosition(coordinate);
     	        }
              });
-    		
+
     		// change mouse cursor when over marker
     	      $scope.map.on('pointermove', function(e) {
     	    	  var pixel = $scope.map.getEventPixel(e.originalEvent);
     	    	  var hit = $scope.map.hasFeatureAtPixel(pixel);
     	    	  $scope.map.getViewport().style.cursor = hit ? 'pointer' : '';
     	      });
-    		
+
     		$scope.map.on('moveend', function(evt){
     			//check active point: pay attention that the event 'moveend' is called on each feature creation
 //    			var view = $scope.map.getView();
 //    			var mapExtent = view.calculateExtent($scope.map.getSize());
-//    			
+//
 //    			for (l in $scope.layers){
 //    				var source = $scope.layers[l].layer.getSource();
 //    				source.forEachFeature(function(feature){
@@ -325,22 +331,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //    			$scope.ngModel.content.currentView.center = view.getCenter();
     		});
 	    }
-	
-	    
-	    //control panel events    
+
+
+	    //control panel events
 	    $scope.toggleLayer = function(n){
 	    	var l = $scope.getLayerByName(n);
 	    	if (!l) return; //do nothing
 	    	var toggle = !l.getVisible();
 	    	l.setVisible(!l.getVisible());
 	    }
-	    
+
 	    $scope.getLayerVisibility = function(n){
 	    	var l = $scope.getLayerByName(n);
 	    	if (!l) return; //do nothing
 	    	return l.getVisible();
 	    }
-	    
+
 	    $scope.thematizeMeasure = function (l, m){
 	    	var layer = $scope.getLayerByName(l);
 	    	var layerValues = $scope.getValuesLayer(l).values;
@@ -354,7 +360,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
 	    	cockpitModule_mapServices.refreshStyle(layer, m, layerConfig, layerValues, layerKeyColumn);
 	    }
-	    
+
 	    $scope.refreshLayers = function (){
 	    	var m;
 	    	for (l in $scope.getLayers()){
@@ -364,49 +370,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    			$scope.thematizeMeasure(tmpLayer, m);
 	    	}
 	    }
-	    
+
 	    //getter and setter of internal objects
 	    $scope.getLayers = function(){
 	    	return $scope.layers;
 	    }
-	    
+
 	    $scope.getLayerByName = function(n){
 	    	for (l in $scope.layers){
 	    		if ($scope.layers[l].name === n)
 	    			return $scope.layers[l].layer;
 	    	}
-	    		
+
 	    	return null;
 	    }
-	    
+
 	    $scope.setLayers = function(l){
 	    	$scope.layers = l;
 	    }
-	    
+
 	    $scope.addLayer = function(n,l){
 	    	$scope.layers.push({"name": n,"layer":l});
 	    }
-	    
+
 	    $scope.getLayerProperty = function(l, p){
 	    	for (o in $scope.layers){
 	    		if ($scope.layers[o].name === l)
 	    			return $scope.layers[o][p] || null;
 	    	}
-	    	
+
 	    }
-	    
+
 	    $scope.setLayerProperty = function(l, p, v){
 	    	for (o in $scope.layers){
 	    		if ($scope.layers[o].name === l)
 	    			$scope.layers[o][p] = v;
 	    	}
-	    	
+
 	    }
-	    
+
 	    $scope.getIndicators = function(){
 	    	return $scope.indicators;
 	    }
-	    
+
 	    $scope.getSelectedIndicator = function (n){
 	    	for (l in $scope.indicators){
 	    		if ($scope.indicators[l].name === n){
@@ -414,55 +420,55 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    			return inds.defaultIndicator;
 	    		}
 	    	}
-	    		
+
 	    	return null;
 	    }
-	    
+
 	    $scope.setIndicators = function(i){
 	    	$scope.indicators = i;
 	    }
-	    
+
 	    $scope.addIndicatorsToLayer = function(n,d,i){
 	    	$scope.indicators.push({"name": n, "defaultIndicator": d, "indicators":i});
 	    }
-	    
+
 	    $scope.addIndicator = function(n,v){
 	    	$scope.indicators.push({"name": n, "value":v});
 	    }
-	    
+
 	    $scope.getValuesLayer = function (n){
 	    	for (l in $scope.values){
 	    		if ($scope.values[l].name === n)
 	    			return $scope.values[l];
 	    	}
-	    		
+
 	    	return null;
 	    }
-	    
+
 	    $scope.setValuesLayer = function (n,v){
 	    	$scope.values.push({"name":n, "values":v});
 	    }
-	    
+
 	    $scope.setConfigLayer = function(n,c){
 	    	$scope.configs.push({"name": n,"config":c});
 	    }
-	    
+
 	    $scope.getConfigLayer = function(n){
 	    	for (l in $scope.configs){
 	    		if ($scope.configs[l].name === n)
 	    			return $scope.configs[l];
 	    	}
-	    		
+
 	    	return null;
 	    }
-	   
+
 	    $scope.isDisplayableProp = function (p, config){
 	    	for (a in config.attributes){
     			if (p === config.attributes[a].label && config.attributes[a].showDetails){
 	    			return true;
     			}
 	    	}
-	    	
+
 	    	for (i in config.indicators){
     			if (p === config.indicators[i].label && config.indicators[i].showDetails){
 	    			return true;
@@ -470,7 +476,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
 	    	return false;
 	    }
-	    
+
 	    $scope.getNumberLayerDefault = function (){
 	    	for (l in $scope.targetLayers){
 	    		if ($scope.targetLayers[l].targetDefault)
@@ -478,12 +484,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
 	    	return 0; //if no layer is defined as default returns the first
 	    }
-	    
+
 	    //functions calls
 		$scope.getAllLayers();
-		
 
-		
+
+
 		$scope.editWidget=function(index){
 			var finishEdit=$q.defer();
 			var config = {
