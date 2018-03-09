@@ -172,7 +172,7 @@
 				        var coordinate = transform([parseFloat(lonlat[0].trim()), parseFloat(lonlat[1].trim())]);
 				        var geometry = new ol.geom.Point(coordinate);
 				        feature.setGeometry(geometry);
-//				        feature.setStyle(ms.featureStyle);
+				        feature.setStyle(ms.featureStyle);
 				        ms.addDsPropertiesToFeature(feature, row, values.metaData.fields);
 				      //at least add the layer owner//at least add the layer owner
 //				        feature.set("parentLayer",config.name);
@@ -182,8 +182,8 @@
 					return new ol.layer.Vector({
 //						 updateWhileInteracting: false,
 //						strategy: ol.loadingstrategy.bbox,
-						source: featuresSource,
-					    style: ms.featureStyle
+						source: featuresSource
+//					    style: ms.featureStyle
 					});
 					
 				

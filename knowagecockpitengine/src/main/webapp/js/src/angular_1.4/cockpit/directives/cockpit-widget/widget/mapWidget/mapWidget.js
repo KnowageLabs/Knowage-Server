@@ -193,7 +193,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.toggleLayer(layer.name); //hide layers not target
 					}
 
-					cockpitModule_mapServices.setActiveConf($scope.getNumberLayerDefault());
+//					cockpitModule_mapServices.setActiveConf($scope.getNumberLayerDefault());
 
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.datasetId+"] ");
