@@ -192,8 +192,7 @@ Example of Python Template
 	<COMMANDS>
 		<COMMAND name="testcommand" scriptName="test01" label="test01" mode="auto">
 			<OUTPUTS>
-				<OUTPUT type="text" name="first_element" value="y" function=""
-mode="manual" label="first_element"/>
+				<OUTPUT type="text" name="first_element" value="y" function="" mode="manual" label="first_element"/>
 			</OUTPUTS>
 		</COMMAND>
 	</COMMANDS>
