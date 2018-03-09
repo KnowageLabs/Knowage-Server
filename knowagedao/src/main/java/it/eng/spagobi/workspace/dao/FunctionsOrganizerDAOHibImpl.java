@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.workspace.dao;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.workspace.bo.FunctionsOrganizer;
-import it.eng.spagobi.workspace.metadata.SbiFunctionsOrganizer;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +28,13 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.workspace.bo.FunctionsOrganizer;
+import it.eng.spagobi.workspace.metadata.SbiFunctionsOrganizer;
 
 public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implements IFunctionsOrganizerDAO {
 
@@ -53,7 +53,7 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 			String userId = ((UserProfile) user).getUserId().toString();
 			tx = aSession.beginTransaction();
 
-			Criteria criteria = getSession().createCriteria(SbiFunctionsOrganizer.class);
+			Criteria criteria = aSession.createCriteria(SbiFunctionsOrganizer.class);
 			Criterion rest1 = Restrictions.eq("code", userId);
 			Criterion rest2 = Restrictions.eq("commonInfo.userIn", userId);
 			criteria.add(Restrictions.or(rest1, rest2));
@@ -109,9 +109,8 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 				tx.rollback();
 
 			/**
-			 * Throw this specific exception so the service that called the
-			 * Hibernate method can handle it and forward the information about
-			 * the error towards the client (final user).
+			 * Throw this specific exception so the service that called the Hibernate method can handle it and forward the information about the error towards
+			 * the client (final user).
 			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */

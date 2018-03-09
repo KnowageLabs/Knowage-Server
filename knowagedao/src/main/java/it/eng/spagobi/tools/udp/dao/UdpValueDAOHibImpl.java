@@ -192,7 +192,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 	@SuppressWarnings("unchecked")
 	public List findByReferenceId(Integer kpiId, String family) {
 		logger.debug("IN");
-		Session aSession = getSession();
+		Session aSession = null;
 		Transaction tx = null;
 		List<UdpValue> toReturn = null;
 

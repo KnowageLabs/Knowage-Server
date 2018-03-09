@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,17 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.events.dao;
-
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.events.bo.Event;
-import it.eng.spagobi.events.metadata.SbiEvents;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,28 +26,37 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.events.bo.Event;
+import it.eng.spagobi.events.metadata.SbiEvents;
+
 /**
  * @author Gioia
  *
  */
-public class EventDAOHibImpl extends AbstractHibernateDAO implements IEventDAO{
-	
-	/* (non-Javadoc)
+public class EventDAOHibImpl extends AbstractHibernateDAO implements IEventDAO {
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.events.dao.IEventDAO#loadEvent(java.lang.Integer, java.lang.String)
 	 */
+	@Override
 	public Event loadEvent(Integer eventId, String user) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 		Event realResult = null;
 		String hql = null;
 		Query hqlQuery = null;
-		
+
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-		
-			SbiEvents hibEvent = (SbiEvents)aSession.load(SbiEvents.class, eventId);
-			
+
+			SbiEvents hibEvent = (SbiEvents) aSession.load(SbiEvents.class, eventId);
+
 			realResult = toEvent(hibEvent);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -65,37 +68,41 @@ public class EventDAOHibImpl extends AbstractHibernateDAO implements IEventDAO{
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
 		return realResult;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.events.dao.IEventDAO#loadEvents(java.lang.String)
 	 */
+	@Override
 	public List loadEvents(String user) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 		List realResult = new ArrayList();
 		String hql = null;
 		Query hqlQuery = null;
-		
+
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			/*hql = "from SbiEvents as event " + 
-	         "where event.user = '" + user + "'";*/
-			
-			hql = "from SbiEvents as event " + 
-	         "where event.user = ?" ;
-			
+			/*
+			 * hql = "from SbiEvents as event " + "where event.user = '" + user + "'";
+			 */
+
+			hql = "from SbiEvents as event where event.user = ?";
+
 			hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setString(0, user);
 			List hibList = hqlQuery.list();
-			
+
 			Iterator it = hibList.iterator();
 
 			while (it.hasNext()) {
@@ -111,43 +118,64 @@ public class EventDAOHibImpl extends AbstractHibernateDAO implements IEventDAO{
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
 		return realResult;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.events.dao.IEventDAO#registerEvent(java.lang.String)
 	 */
+	@Override
 	public Integer registerEvent(String user) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
-		aSession = getSession();
-		
-		tx = aSession.beginTransaction();
-		SbiEvents hibEvent = new SbiEvents();
-		hibEvent.setUser(user);
-		updateSbiCommonInfo4Insert(hibEvent);
-		aSession.save(hibEvent);	
-		tx.commit();
-		return hibEvent.getId();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			SbiEvents hibEvent = new SbiEvents();
+			hibEvent.setUser(user);
+			updateSbiCommonInfo4Insert(hibEvent);
+			aSession.save(hibEvent);
+			tx.commit();
+			return hibEvent.getId();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.events.dao.IEventDAO#unregisterEvent(java.lang.Integer, java.lang.String)
 	 */
+	@Override
 	public void unregisterEvent(Integer id, String user) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 		String hql = null;
 		Query hqlQuery = null;
-		
+
 		try {
 			aSession = getSession();
-			tx = aSession.beginTransaction();			
-			SbiEvents hibEvent = new SbiEvents(id, user);			
+			tx = aSession.beginTransaction();
+			SbiEvents hibEvent = new SbiEvents(id, user);
 			aSession.delete(hibEvent);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -159,24 +187,31 @@ public class EventDAOHibImpl extends AbstractHibernateDAO implements IEventDAO{
 			logException(ex);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100); 
-		}	finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.events.dao.IEventDAO#unregisterEvent(it.eng.spagobi.events.bo.Event)
 	 */
+	@Override
 	public void unregisterEvent(Event event) throws EMFUserError {
-		unregisterEvent(event.getId(), event.getUser());		
+		unregisterEvent(event.getId(), event.getUser());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.events.dao.IEventDAO#unregisterEvents(java.lang.String)
 	 */
+	@Override
 	public void unregisterEvents(String user) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
@@ -186,21 +221,21 @@ public class EventDAOHibImpl extends AbstractHibernateDAO implements IEventDAO{
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
-			/*hql = "from SbiEvents as event " + 
-	         "where event.user = '" + user + "'";*/
-			
-			hql = "from SbiEvents as event " + 
-	         "where event.user = ?" ;
-			
+
+			/*
+			 * hql = "from SbiEvents as event " + "where event.user = '" + user + "'";
+			 */
+
+			hql = "from SbiEvents as event where event.user = ?";
+
 			hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setString(0, user);
 			events = hqlQuery.list();
-			
+
 			Iterator it = events.iterator();
 			while (it.hasNext()) {
-				aSession.delete((SbiEvents) it.next());
-			}			
+				aSession.delete(it.next());
+			}
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -211,13 +246,14 @@ public class EventDAOHibImpl extends AbstractHibernateDAO implements IEventDAO{
 			logException(ex);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100); 
-		}	finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
-		}		
-	}	
+		}
+	}
 
 	private Event toEvent(SbiEvents hibEvent) {
 		Event event = new Event();
@@ -225,6 +261,5 @@ public class EventDAOHibImpl extends AbstractHibernateDAO implements IEventDAO{
 		event.setUser(hibEvent.getUser());
 		return event;
 	}
-	
 
 }
