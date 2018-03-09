@@ -7,8 +7,8 @@
     </md-toolbar>
 
     <md-dialog-content layout-padding style="min-height:400px">
-    	<div layout="row" layout-align="center center" style="min-height:400px">
-			<div class="kn-noItems" ng-if="!availableSpatialLayers || availableSpatialLayers.length == 0">
+    	<div layout="row" layout-align="center center" style="min-height:400px" ng-if="!availableSpatialLayers || availableSpatialLayers.length == 0">
+			<div class="kn-noItems" >
 				No Layers available, add some from the datasets list
 			</div>
 		</div>
