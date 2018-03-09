@@ -147,7 +147,7 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 	      locals: {  }
 	    })
   	}
-  	
+  	$scope.colorPickerOptions = {format:'hex'};
   	$scope.setIconType = function(layer,type) {
   		delete layer.markerConf.icon;
   		layer.markerConf.type = type;
