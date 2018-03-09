@@ -156,6 +156,7 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 				angular.copy(layer,$scope.activeLayer);
 				
 				$scope.setIcon = function(family,icon){
+					if(!$scope.activeLayer.markerConf) $scope.activeLayer.markerConf = {};
 					$scope.activeLayer.markerConf.icon = icon;
 					$scope.activeLayer.markerConf.font = family.className;
 				}

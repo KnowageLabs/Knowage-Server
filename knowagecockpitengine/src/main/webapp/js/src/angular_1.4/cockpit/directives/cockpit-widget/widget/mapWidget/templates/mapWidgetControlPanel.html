@@ -1,23 +1,25 @@
 <!-- control panel -->
-<md-sidenav class="md-sidenav-right" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')">
-
-    <md-toolbar class="md-theme-light">
-      	<h1 class="md-toolbar-tools">LOCATION INTELLIGENCE</h1>
+<md-sidenav class="md-sidenav-right mapOptionsSidenav" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')">
+	
+    <md-toolbar layout="row" class="secondaryToolbar" layout-align="start center">
+      	<h2 class="md-toolbar-tools">OPTIONS</h2>
+      	<span flex></span>
+      	<md-button>Close</md-button>
     </md-toolbar>
   	
-  	<!-- TODO: creare slider panel e partire solo con il layer target aperto 
-  	<expander-box  layout="column"  expanded="getLayerProperty('targetDefault')" title='{{::translate.load("gisengine.filter.analitical")}}' >-->
-  	<expander-box  layout="column"  expanded="false" title='{{::translate.load("gisengine.filter.analitical")}}' >
- 		<md-input-container layout="column" layout-wrap ng-repeat="ind in indicators">
-	 		<md-checkbox ng-checked="getLayerVisibility(ind.name)" ng-click="toggleLayer(ind.name)" class="md-primary" >
-					{{ind.name}} 
-			</md-checkbox>
-	 	  <!--   <md-radio-group  ng-model="dettInd.selectedIndicator"> -->
-	 	    <md-radio-group  ng-model="ind.defaultIndicator">
-	 	   		<md-radio-button ng-repeat="dettInd in ind.indicators" ng-click="thematizeMeasure(ind.name, dettInd.value)"  class="md-primary" ng-value="dettInd.value"  >
-		 	   		{{dettInd.value}}
-		 	   	</md-radio-button>
-		    </md-radio-group>
-		</md-input-container>
-	</expander-box>
+  	<!-- TODO: creare slider panel e partire solo con il layer target aperto -->
+ 		<div layout="column" ng-repeat="ind in indicators">
+ 			<div class="indicatorOptions" layout="column">
+ 				<div class="indicatorLabel" ng-click="toggleLayer(ind.name)" layout="row" layout-align="start center" style="padding:8px;cursor:pointer;background-color: #f1f1f1;font-size:.8rem;">
+ 					<md-icon md-font-icon="fa fa-eye" ng-if="getLayerVisibility(ind.name)"></md-icon>
+				    <md-icon md-font-icon="fa fa-eye-slash" ng-if="!getLayerVisibility(ind.name)"></md-icon>
+				    <span flex>{{ind.name}}</span>
+ 				</div>
+ 				<md-radio-group  ng-model="ind.defaultIndicator" style="padding:8px;" ng-if="getLayerVisibility(ind.name)">
+		 	   		<md-radio-button ng-repeat="dettInd in ind.indicators" ng-click="thematizeMeasure(ind.name, dettInd.value)"  class="md-primary" ng-value="dettInd.value" style="font-size:.7rem;" >
+			 	   		{{dettInd.value}}
+			 	   	</md-radio-button>
+		    	</md-radio-group>
+ 			</div>
+		</div>
 </md-sidenav>
