@@ -94,7 +94,6 @@ angular.module('chartInitializer')
 						+ '/highcharts-export-web/'
 			},
 			lang : {
-				drillUpText : drillUpText,
 				decimalPoint : decimalPoint,
 				thousandsSep : thousandsSep
 			},
@@ -320,8 +319,11 @@ angular.module('chartInitializer')
 					.then(function(series){
 
 						if(chart.options.drilledCategories.length==0){
-				        	   chart.options.drilledCategories.push(chart.xAxis[0].axisTitle.textStr);
-
+							if(chart.options.chart.type!="pie"){
+								chart.options.drilledCategories.push(chart.xAxis[0].axisTitle.textStr);
+							} else {
+								chart.options.drilledCategories.push(chart.xAxis[0].userOptions.title.text)
+							}
 				           }
 
 				           chart.options.drilledCategories.push(series.category);
@@ -334,7 +336,7 @@ angular.module('chartInitializer')
 				            if(chart.xAxis[0].userOptions.title.customTitle==false){
 				            chart.xAxis[0].setTitle(xAxisTitle);
 				            }
-				            if(chart.yAxis[0].userOptions.title.custom==false){
+				            if(chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
 				            chart.yAxis[0].setTitle(yAxisTitle);
 				            }
 
@@ -376,7 +378,7 @@ angular.module('chartInitializer')
 		};
 
 
-       if(chart.drilldownLevels.length==0 && chart.yAxis[0].userOptions.title.custom==false){
+       if(chart.drilldownLevels.length==0 && chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
     	   chart.yAxis[0].setTitle(yAxisTitle);
        }
 

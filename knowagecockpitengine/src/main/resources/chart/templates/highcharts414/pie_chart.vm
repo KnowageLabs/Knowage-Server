@@ -26,7 +26,22 @@
 #set($crossNavigation = '')
 #set($crossNavigation = $chart.DRILL)
 #set($axis = $chart.AXES_LIST.AXIS[0])
+
+#set($enableDrilldown = false) 
+#if($categorieColumns.groupby != '')
+	#set($enableDrilldown = true)
+
+#end
 {
+	#set($drilldownEnabledFlag = false)
+	
+	#if($enableDrilldown || $crossNavigation != '')
+		#set($drilldownEnabledFlag = true)
+	#end
+	
+	meta: {
+		drilldownEnabled: $drilldownEnabledFlag,
+	},
     chart: {
    		type: 'pie',
    		
@@ -106,6 +121,14 @@
         		#end
         	#end
         },
+        #if($drilldownEnabledFlag && $exportWebApp==false)
+	    	#if($enableDrilldown)
+		    events: {
+				drilldown: scope.chartInitializer.handleDrilldown,
+				drillup: scope.chartInitializer.handleDrillup
+		    },
+		    #end
+	    #end
         
         #*
         	Setting for removing (hiding of) the charts border when it is
@@ -421,7 +444,15 @@
 		},
 	    
     #end
-    
+      xAxis:
+	{	
+		type: 'category',
+	 	title: {
+	 		text: "$categorieColumns.name",
+			customTitle: false,
+	 	}
+	 },
+
     plotOptions: {
         pie: {
             #if($chart.show3D)
@@ -430,7 +461,7 @@
     		#if(!$chart.show3D)
 				depth:  0,
 		   	#end
-            allowPointSelect: true,
+
             cursor: 'pointer',
             
             dataLabels: {
@@ -478,10 +509,12 @@
 	    		#if(!$exportWebApp)   		
 		    	point:
 		    	{
-		            #if($chart.isCockpitEngine=="false")
+		            #if($chart.isCockpitEngine=="false" ) 
 		              	events:{
-		                	click: scope.chartInitializer.handleCrossNavigationTo,
-		                	
+							#if(!$enableDrilldown) 
+		                		click: scope.chartInitializer.handleCrossNavigationTo,
+		                	#end
+
 		                	legendItemClick: function(e) {
 				            	var series = this.series.chart.series,
 								name = this.name,
@@ -857,6 +890,7 @@
 			                      	var catName = "<b>" + this.point.name + "</b>: ";
 			                      	
 	                      	        newValue = catName;        	
+
 			                      	newValue += prefixValue;
 			                      	switch(scaleFactor.toUpperCase()) {
 			                      	
@@ -973,6 +1007,7 @@
 					#set( $serieName = $serieName.replace("""", "\""") )
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					{
+						drilldown: $drilldownEnabledFlag,
 						name: "$serieName",
 						y: $serieValue,
 					},
@@ -1130,7 +1165,95 @@
     		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
     		
         	thisValue = valuePrefix + thisValue + valueSuffix;
+        	var format = "";
+        	var drilling = false;
+        	if (this.series.chart.drilldownLevels && this.series.chart.drilldownLevels.length > 0)
+        	{        		
+        		/*
+        			All main (root) items (categories) that we had on the initial
+        			(first, zeroth) level of the chart.
+        		*/
+        		var allMainCategories = this.series.chart.drilldownLevels[0].seriesOptions.data;
+        		        		
+        		/*
+        			The name of the root item from which we started drilling.
+        		*/
+        		var root = undefined;
+        		
+        		if (this.series.chart.drilldownLevels.length == 1 || this.series.chart.drilldownLevels.length == 2)
+    			{
+    				root = this.series.chart.drilldownLevels[0].lowerSeriesOptions.name;    	
+    			}
+    			else if (this.series.chart.drilldownLevels.length > 2)
+    			{
+    				root = this.series.chart.drilldownLevels[1].seriesOptions.name;
+    			}
+    			
+    			var ttCustomPlaceholder = this.series.chart.drilldownLevels[0].series.tooltip;
+    			
+    			ttCustomPlaceholder.ttColor ? 
+								(ttColor = ttCustomPlaceholder.ttColor) : null;
+    				
+				ttCustomPlaceholder.ttBackColor ? 
+								(ttBackColor = ttCustomPlaceholder.ttBackColor) : null;
+    				
+				ttCustomPlaceholder.ttAlign ? 
+								(ttAlign = ttCustomPlaceholder.ttAlign) : null;
+								
+				ttCustomPlaceholder.ttFont ? 
+								(ttFont = ttCustomPlaceholder.ttFont) : null;
+								
+				ttCustomPlaceholder.ttFontSize ? 
+								(ttFontSize = ttCustomPlaceholder.ttFontSize) : null;
+								
+				ttCustomPlaceholder.ttFontWeight ? 
+								(ttFontWeight = ttCustomPlaceholder.ttFontWeight) : null; 
+        		
+        		#*
+        			Find the object that contains property "name" with the value
+        			of the "root" variable, so we can extract "dataLabels" property
+        			that contains the "format" property.        			
+        		*#        		
+        		var resultY = allMainCategories.filter
+        		(
+        			function(obj) 
+        			{
+ 						 return obj.name == root;
+				 	}
+				 );
+        		
+        		if (resultY)
+        		{
+        			drilling = true;
+        		}
+        	}    
+        	var prefix = "";
+        	var postfix = "";
         	
+        	if (drilling)
+        	{
+        		var formatIntro = "{y:";
+	        	var formatOutro = "f}";
+	        	
+	        	var yValueOnlyIndexStart = format.indexOf(formatIntro);
+	        	var yValueOnlyIndexEnd = format.indexOf(formatOutro);
+	        	
+	        	prefix = format.substring(0,yValueOnlyIndexStart) + " ";
+	        	
+	        	var separatorOfThousands = format.substring(yValueOnlyIndexStart + formatIntro.length, 
+	        											yValueOnlyIndexStart + formatIntro.length + 1);
+	        	
+	        	var decimalPoint = format.substring(yValueOnlyIndexStart + formatIntro.length + 1, 
+	        											yValueOnlyIndexStart + formatIntro.length + 2);	
+	        											
+	        	var precision = format.substring(yValueOnlyIndexStart + formatIntro.length + 2, 
+	        											yValueOnlyIndexEnd);
+	        				
+	        	postfix = " " + format.substring(yValueOnlyIndexEnd + formatOutro.length + 1,
+	        											format.length);
+	        	
+	        	thisValue = Highcharts.numberFormat(this.y, precision, decimalPoint, separatorOfThousands);
+        	}
             #*
         		Separate font elements (family, size and weight (style)) so the tooltip
         		font characteristics can be separately (independently) specified by the user.
