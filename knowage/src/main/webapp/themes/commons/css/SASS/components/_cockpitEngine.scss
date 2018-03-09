@@ -12,6 +12,70 @@
     background-image: #fff;
 
     .cockpit-map-widget {
+		.ol-popup {
+		    position: absolute;
+		    background-color: white;
+		    -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+		    filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+		    padding: 5px;
+		    border-radius: 10px;
+		    border: 1px solid #cccccc;
+		    bottom: 12px;
+		    left: -50px;
+		    min-width: 200px;
+		    &:after, &:before {
+		        top: 100%;
+		        border: solid transparent;
+		        content: " ";
+		        height: 0;
+		        width: 0;
+		        position: absolute;
+		        pointer-events: none;
+	      	}
+	      	&:after {
+	      		border-top-color: white;
+		        border-width: 10px;
+		        left: 48px;
+		        margin-left: -10px;
+	      	}
+	      	&:before {
+	      		border-top-color: #cccccc;
+		        border-width: 11px;
+		        left: 48px;
+		        margin-left: -11px;
+	      	}
+		}
+		.ol-popup-closer {
+			text-decoration: none;
+			position: absolute;
+			top: 2px;
+			right: 8px;
+			&:after {
+	        	content: "âœ–";
+	      	}     
+		}
+
+		md-sidenav { 
+			transition: 0.2s linear all 
+		}
+    	.map {
+    		position: relative;
+    		.optionsController {
+			    position: absolute;
+			    right: 7px;
+			    top: 40px;
+			    padding: 5px;
+			    background-color: #6690B9;
+			    border: 3px solid rgba(white,.7);
+			    color: white;
+			    border-radius:2px;
+			    z-index: 99;
+			    &:hover {
+			    	background-color: darken(#6690B9,15%);
+			    }
+	    	}
+    	}
+    	
     	.markersExpander {
     		.preview {
     			position: relative;
@@ -663,6 +727,7 @@
 		//min-height: calc(100% - 20px);
 
         .gridster-item{
+        	overflow: hidden;
 			 md-card.md-knowage-theme md-card-title {
 				padding: 0;
 				margin: 0;

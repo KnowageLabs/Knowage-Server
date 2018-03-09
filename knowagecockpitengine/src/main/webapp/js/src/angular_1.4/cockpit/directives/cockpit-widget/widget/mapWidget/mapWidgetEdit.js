@@ -35,6 +35,9 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
   		}
   	}
   	
+  	
+    
+  	
   	$scope.expandRow = function(layer,content){
   		for(var t in $scope.newModel.content.targetLayersConf){
   			if($scope.newModel.content.targetLayersConf[t].expanded != content || $scope.newModel.content.targetLayersConf[t].datasetId != layer.datasetId){

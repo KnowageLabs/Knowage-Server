@@ -43,6 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$mdToast,
 			$timeout,
 			$mdPanel,
+			$mdSidenav,
 			$q,
 			$sce,
 			$filter,
@@ -75,6 +76,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		//map id reference definition	
 		$scope.mapId = 'map-' + Math.ceil(Math.random()*1000).toString();
+		
+		$scope.optionsSidenavOpened = false;
+		$scope.toggleSidenav = function(){
+			$scope.optionsSidenavOpened = !$scope.optionsSidenavOpened;
+	  	}
 		
 	  	$scope.showAction = function(text) {
 			var toast = $mdToast.simple()
