@@ -262,13 +262,13 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String parPdfRenderingWaitTime = request.getParameter(PDF_WAIT_TIME);
 		if (parPdfRenderingWaitTime != null) {
 			long pdfRenderingWaitTime = 1000 * Long.valueOf(parPdfRenderingWaitTime);
-			renderOptions.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
+			renderOptions = renderOptions.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
 		}
 
 		String parPdfZoomFactor = request.getParameter(PDF_ZOOM_FACTOR);
 		if (parPdfZoomFactor != null) {
 			Double pdfZoomFactor = Double.valueOf(parPdfZoomFactor);
-			renderOptions.withZoomFactor(pdfZoomFactor);
+			renderOptions = renderOptions.withZoomFactor(pdfZoomFactor);
 		}
 
 		return renderOptions;
