@@ -56,7 +56,18 @@
 		}
 
 		md-sidenav { 
-			transition: 0.2s linear all 
+			transition: 0.2s linear all;
+			md-radio-button {
+				._md-container {
+					width: 15px;
+					height: 15px;
+					._md-off, ._md-on {
+						width: 15px;
+						height: 15px;
+					}
+				}
+				
+			}
 		}
     	.map {
     		position: relative;

@@ -118,15 +118,15 @@
 								      	<md-button class="md-icon-button md-fab"><md-icon md-font-icon="fa fa-upload"></md-icon></md-button>
 								      	
 								 	<div style="margin-left:20px;"></div>
-							      	<md-input-container class="md-block flex" ng-if="layer.markerConf.font && layer.markerConf.icon">
+							      	<md-input-container class="md-block flex">
 								        <label>Color</label>
-								        <color-picker options="colorPickerOptions" ng-model="layer.markerConf.style.color"></color-picker> 
+								        <color-picker options="colorPickerOptions" ng-model="layer.markerConf.color"></color-picker> 
 							      	</md-input-container>
 									<div flex></div>
 									<div class="preview" >
 										<label>Preview</label>
 										<img src="http://via.placeholder.com/48x48" ng-if="!layer.markerConf.icon" />
-										<i class="fa fa-3x" ng-class="[layer.markerConf.font, layer.markerConf.icon]" ng-style="{'color':layer.markerConf.style.color}" ng-if="layer.markerConf.font && layer.markerConf.icon"></i>
+										<i class="fa fa-3x" ng-class="[layer.markerConf.font, layer.markerConf.icon]" ng-style="{'color':layer.markerConf.color}" ng-if="layer.markerConf.font && layer.markerConf.icon"></i>
 										<img src="{{layer.markerConf.icon}}" ng-if="!layer.markerConf.font && layer.markerConf.icon" />
 									</div>
 								</div>
