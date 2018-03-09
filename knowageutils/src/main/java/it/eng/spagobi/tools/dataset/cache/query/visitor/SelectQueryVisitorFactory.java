@@ -32,8 +32,9 @@ public class SelectQueryVisitorFactory {
 		}
 		switch (database.getDatabaseDialect()) {
 		case HIVE:
-		case SPARKSQL:
 			return new HiveSelectQueryVisitor(database);
+		case SPARKSQL:
+			return new SparkSqlSelectQueryVisitor(database);
 		case HSQL:
 			return new HsqlDbSelectQueryVisitor(database);
 		case IMPALA:

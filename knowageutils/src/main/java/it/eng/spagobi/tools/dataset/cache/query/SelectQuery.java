@@ -115,8 +115,16 @@ public class SelectQuery {
 		return limit;
 	}
 
+	public boolean hasLimit() {
+		return limit > -1;
+	}
+
 	public long getOffset() {
 		return offset;
+	}
+
+	public boolean hasOffset() {
+		return offset > -1;
 	}
 
 	public SelectQuery selectAll() {

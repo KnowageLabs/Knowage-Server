@@ -376,6 +376,8 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 
 		String tableName = query.getTableName();
 		Assert.assertTrue(StringUtilities.isNotEmpty(tableName), "Missing table definition");
+
+		Assert.assertTrue(query.hasLimit() || !query.hasOffset(), "Invalid offset definition (missing limit)");
 	}
 
 	protected void buildSelect(SelectQuery query) {
