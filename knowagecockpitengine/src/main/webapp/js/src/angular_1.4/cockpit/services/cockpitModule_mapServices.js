@@ -15,44 +15,7 @@
 	
 		var ms = this; //mapServices
 		var activeInd;
-		var activeConf;
 		var cacheProportionalSymbolMinMax;
-		var arStyles;
-		
-
-		ms.featureStyle = function(feature, resolution){
-//	          var size = feature.get('features').length;
-			var props  = feature.getProperties();
-			var configThematizer = ms.activeConf.analysisConf || {};
-			var configMarker = ms.activeConf.markerConf || {};
-	      	var value =  props[ms.activeInd] || 0;
-			var style;
-//			console.log("feature.get('parentLayer') " + feature.get('parentLayer')  + " - ms.activeConf.name: " + ms.activeConf.name );
-//			console.log("ms.activeConf: " , ms.activeConf);
-			
-//			var tmpLayer = feature.get('parentLayer');
-//			var tmpValue = ms.activeConf.name;
-			
-//			if (!feature.getStyleFunction() || feature.get('parentLayer') === ms.activeConf.name) {
-//			if (!tmpValue || tmpLayer == tmpValue) {
-//				console.log("feaure with parentLayer ["+ tmpLayer  +"] and value [" +tmpValue+ "] managed with conf ", ms.activeConf);
-//			}else{
-//				console.log("feaure with parentLayer ["+ tmpLayer  +"] skipped");
-//				return feature.getStyleFunction();
-//			}
-
-			switch (configThematizer.defaultAnalysis) {
-			case 'choropleth':
-				style = ms.getChoroplethStyles(value, props, configThematizer.choropleth, configMarker);
-				break;
-			case 'proportionalSymbol':
-				style = ms.getProportionalSymbolStyles(value, props, configThematizer.proportionalSymbol, configMarker);
-				break;
-			default:
-				style = ms.getOnlyMarkerStyles(props, configMarker);
-			}
-	      	return style;	
-	    }
 		
 		ms.getProportionalSymbolStyles = function(value, props, config){
 			var textValue =  props[ms.activeInd] || "";
@@ -82,28 +45,28 @@
 		}
 		
 		ms.getChoroplethStyles = function(value, props, config){
-//			var textValue =  props[ms.activeInd] || "";
-//			
-//			return  [new ol.style.Style({
-//				stroke: new ol.style.Stroke({
-//					color: borderColor,
-//					width: 1
-//				}),
-//				fill: new ol.style.Fill({
-//					color: getChoroplethColor(dsValue,layerCol).color
-//				}),
-//				image: new ol.style.Circle({
-//		  			radius: 5,
-//		  			stroke: new ol.style.Stroke({
-//						color: borderColor,
-//						width: 1
-//					}),
-//		  			fill: new ol.style.Fill({
-//		  				color: getChoroplethColor(dsValue,layerCol).color
-//		  			})
-//		  		})
-//			})];
-//			
+			var textValue =  props[ms.activeInd] || "";
+			
+			return  [new ol.style.Style({
+				stroke: new ol.style.Stroke({
+					color: borderColor,
+					width: 1
+				}),
+				fill: new ol.style.Fill({
+					color: getChoroplethColor(dsValue,layerCol).color
+				}),
+				image: new ol.style.Circle({
+		  			radius: 5,
+		  			stroke: new ol.style.Stroke({
+						color: borderColor,
+						width: 1
+					}),
+		  			fill: new ol.style.Fill({
+		  				color: getChoroplethColor(dsValue,layerCol).color
+		  			})
+		  		})
+			})];
+			
 			return new ol.style.Style({
 			});
 		}
@@ -126,133 +89,7 @@
 					}))
 		          });
 		}
-		
-		ms.getFeaturesDetails = function(geoColumn, selectedMeasure, config, values){
-			if (values != undefined){
-				var geoFieldName;
-				var geoFieldValue;
-				var featuresSource = new ol.source.Vector();
 	
-				
-				for(var k=0; k < values.metaData.fields.length; k++){
-					var field = values.metaData.fields[k];
-					if (field.header === geoColumn){
-						geoFieldName = field.name;
-						break;
-					}
-				}
-				if (geoFieldName){
-					for(var r=0; r < values.rows.length; r++){
-						//get coordinates
-						var lonlat;
-						var row = values.rows[r];
-						geoFieldValue = row[geoFieldName].trim();
-						if (geoFieldValue.indexOf(" ")){
-							lonlat = geoFieldValue.split(" ");
-						}else if (geoFieldValue.indexOf(",")){
-							lonlat = geoFieldValue.split(",");
-						}else{
-							console.log("Error getting longitude and latitude from column value ["+ geoFieldValue +"]");
-							return null;
-						}
-						//get config for thematize
-						ms.activeInd = selectedMeasure;
-						ms.activeConf = config;
-//						if (!ms.activeConf) ms.activeConf =[];
-//						ms.activeConf[config.name] = config;
-						if (!ms.cacheProportionalSymbolMinMax) ms.cacheProportionalSymbolMinMax = {}; //just at beginning
-						if (!ms.cacheProportionalSymbolMinMax.hasOwnProperty(name)){
-							ms.loadIndicatorMaxMinVal(selectedMeasure, values);
-						}
-						
-						
-						//set ol objects
-						var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
-						var feature = new ol.Feature();  
-				        var coordinate = transform([parseFloat(lonlat[0].trim()), parseFloat(lonlat[1].trim())]);
-				        var geometry = new ol.geom.Point(coordinate);
-				        feature.setGeometry(geometry);
-				        feature.setStyle(ms.featureStyle);
-				        ms.addDsPropertiesToFeature(feature, row, values.metaData.fields);
-				      //at least add the layer owner//at least add the layer owner
-//				        feature.set("parentLayer",config.name);
-				        featuresSource.addFeature(feature);
-					}
-			
-					return new ol.layer.Vector({
-//						 updateWhileInteracting: false,
-//						strategy: ol.loadingstrategy.bbox,
-						source: featuresSource
-//					    style: ms.featureStyle
-					});
-					
-				
-					
-	/* test for cluster
-					 var clusterSource = new ol.source.Cluster({
-					        distance: 10,
-					        source: featuresSource
-					      });
-	
-				    var styleCache = {};
-					return new ol.layer.Vector({
-					        source: clusterSource,
-					        style: function(feature) {
-					          var size = feature.get('features').length;
-					          var textValue = "";
-					          for (var f=0; f<size; f++){
-					        	  var tmpFeature = feature.get('features')[f];
-					        	  var props  = tmpFeature.getProperties();
-					        	  textValue =  props["name"];
-					          }	         
-					          var style = styleCache[size];
-					          if (!style) {
-					            style = new ol.style.Style({
-					              image: new ol.style.Circle({
-					                radius: 10,
-					                stroke: new ol.style.Stroke({
-					                  color: '#fff'
-					                }),
-					                fill: new ol.style.Fill({
-					                  color: '#3399CC'
-					                })
-					              }),
-					              text: new ol.style.Text({
-	//				                text: size.toString(),
-					                text: textValue.toString(),
-					                fill: new ol.style.Fill({
-					                  color: '#fff'
-					                })
-					              })
-					            });
-					            styleCache[size] = style;
-					          }
-					          return style;
-					        }
-					      });
-	*/
-				}
-			}
-			return new ol.layer.Vector();
-		} 
-		
-		ms.addDsPropertiesToFeature = function (f, row, meta){
-			//add columns value like properties
-			for (c in row){
-				f.set(ms.getHeaderByColumnName(c, meta), row[c]);
-			}
-		}
-		ms.getHeaderByColumnName = function(cn, fields) {
-			var toReturn = cn;
-			
-			for (n in fields){
-				if (fields[n] && fields[n].name === cn){
-					return fields[n].header;
-				}
-			}
-			return toReturn;
-		}
-		
 		ms.getBaseLayer = function (conf){
 			
 			var toReturn;
@@ -301,19 +138,9 @@
 			
 		}	
 		
-		
-		//thematizer functions
-		ms.refreshStyle = function (layer, measure, config, values, geoColumn){
-			//prepare object for thematization
-			ms.loadIndicatorMaxMinVal(measure, values);
-			ms.activeConf = config;
-			var newSource = ms.getFeaturesDetails(geoColumn, measure, config, values);
-			var newStyle = newSource.getStyle();
-			layer.setStyle(newStyle);
-
-		}
-		
 		ms.getProportionalSymbolSize = function(val, name, config){
+			if (!name) return 0;
+			
 			var minValue = ms.cacheProportionalSymbolMinMax[name].minValue;
 			var maxValue = ms.cacheProportionalSymbolMinMax[name].maxValue;
 			var size;
@@ -328,6 +155,22 @@
 				(maxRadiusSize - minRadiusSize) + minRadiusSize + Math.random();
 			}
 			return size;
+		}
+		
+		ms.getCacheProportionalSymbolMinMax=function(){
+			return ms.cacheProportionalSymbolMinMax;
+		}
+		
+		ms.setCacheProportionalSymbolMinMax=function(c){
+			ms.cacheProportionalSymbolMinMax = c;
+		}
+		
+		ms.getActiveIndicator=function(){
+			return ms.activeInd;
+		}
+		
+		ms.setActiveIndicator=function(i){
+			ms.activeInd = i;
 		}
 		
 		ms.loadIndicatorMaxMinVal=function(key, values){
@@ -383,11 +226,6 @@
 			}
 				
 			return toReturn;
-		}
-		
-		
-		ms.setActiveConf = function (conf){
-			ms.activeConf = conf;
 		}
 	}	
 
