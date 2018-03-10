@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.common.datastore;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -561,6 +562,10 @@ public class DataStore implements IDataStore {
 				columnTypes[i] = ColumnType.INTEGER;
 			} else if (type == Double.class) {
 				columnTypes[i] = ColumnType.DOUBLE;
+			} else if (type == Date.class || type == java.sql.Date.class) {
+				columnTypes[i] = ColumnType.BIGINT;
+			} else if (type == Timestamp.class) {
+				columnTypes[i] = ColumnType.BIGINT;
 			} else {
 				columnTypes[i] = ColumnType.STRING;
 			}
@@ -570,7 +575,18 @@ public class DataStore implements IDataStore {
 			IRecord record = (IRecord) r;
 			Object[] row = new Object[fieldCount];
 			for (int i = 0; i < fieldCount; i++) {
-				row[i] = record.getFieldAt(i).getValue();
+				Object obj = record.getFieldAt(i).getValue();
+				if (obj instanceof Date) {
+					// SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
+					// obj = formatter.format((Date) obj);
+					obj = ((Date) obj).getTime() - 3600000;
+				} else if (obj instanceof java.sql.Date) {
+					// SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
+
+					// obj = formatter.format((java.sql.Date) obj);
+					obj = ((Date) obj).getTime() - 3600000;
+				}
+				row[i] = obj;
 			}
 			arrays.add(row);
 		}

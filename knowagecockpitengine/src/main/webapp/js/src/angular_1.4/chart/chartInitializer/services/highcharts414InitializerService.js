@@ -24,13 +24,13 @@ angular.module('chartInitializer')
 	this.chart = null;
 	var chartConfConf = null;
 
-	this.renderChart = function(renderObj){
+	this.renderChart = function(renderObj, jsonData){
 		var chartConf = renderObj.chartConf;
 		var element = renderObj.element;
 		var handleCockpitSelection = renderObj.handleCockpitSelection;
 		var exportWebApp = renderObj.exportWebApp;
 		var widgetData = renderObj.widgetData;
-		
+
 		chartConfConf = chartConf;
 		if(!exportWebApp) {
 			adjustChartSize(element,chartConf);
@@ -59,6 +59,10 @@ angular.module('chartInitializer')
 			if (chartType == 'scatter') delete this.updateData;
 			this.chart =  new Highcharts.Chart(chartConf);
 			this.chart.widgetData = widgetData;
+			if(jsonData){
+				this.chart.jsonData = JSON.parse(jsonData.jsonData);
+			}
+
 			//return chart;
 
 		}
@@ -309,12 +313,58 @@ angular.module('chartInitializer')
 
 				chart.showLoading('Loading...');
 
-
-				highchartsDrilldownHelper.drilldown(e.point.name, e.point.series.name);
-				
 					var params = {};
-					params.breadcrumb = JSON.stringify(highchartsDrilldownHelper.breadcrumb); 
+
 					params.widgetData = chart.widgetData;
+					if(chart.jsonData ){
+						params.jsonMetaData = chart.jsonData.metaData;
+					}
+
+					var drillValue = e.point.name;
+					var params = {};
+
+					params.widgetData = chart.widgetData;
+					var column = chart.widgetData.chartTemplate.CHART.VALUES.CATEGORY.column;
+
+					var highchartsDrilldownHelperDone = false;
+					if(chart.jsonData ){
+						params.jsonMetaData = chart.jsonData.metaData;
+						try {
+							var fields = chart.jsonData.metaData.fields;
+							for(var i=0; i<fields.length;i++){
+								var aField = fields[i];
+								if(aField.header && aField.header==column && aField.type=="date"){
+									if(aField.dateFormat=="d/m/Y"){
+										var dp = drillValue.indexOf("/");
+										var d = drillValue.substring(0,dp);
+										var mp = (drillValue.substring(dp+1)).indexOf("/");
+
+										var m= drillValue.substring(dp+1,mp+dp+1);
+										drillValue = new Date(m+"/"+d+drillValue.substring(mp+dp+1)).getTime();
+										highchartsDrilldownHelper.drilldown(drillValue, e.point.series.name);
+										highchartsDrilldownHelperDone = true;
+									}else{
+										drillValue = new Date(drillValue).getTime();
+										highchartsDrilldownHelper.drilldown(drillValue, e.point.series.name);
+										highchartsDrilldownHelperDone = true;
+									}
+
+								}
+							}
+						}catch(e){
+							console.log(e);
+						}
+					}
+
+					if(!highchartsDrilldownHelperDone){
+						highchartsDrilldownHelper.drilldown(e.point.name, e.point.series.name);
+					}
+
+					params.breadcrumb = JSON.stringify(highchartsDrilldownHelper.breadcrumb);
+
+
+
+
 					jsonChartTemplate.drilldownHighchart(params)
 					.then(function(series){
 
