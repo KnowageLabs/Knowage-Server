@@ -57,7 +57,7 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.dispatching.service.ServiceIFace#service(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
 	@Override
@@ -84,11 +84,24 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 
 		byte[] content = (byte[]) contentMap.get("content");
 		String contentType = (String) contentMap.get("contentType");
+		String exportType = "";
 
+		if (contentType.contains("excel")) {
+			exportType = ".xls";
+		} else if (contentType.contains("openxmlformats-officedocument")) {
+			exportType = ".xlsx";
+		} else if (contentType.contains("pdf")) {
+			exportType = ".pdf";
+		}
+
+		logger.debug("Type of export" + exportType);
+		logger.debug("Content-Disposition " + "filename=\"export" + exportType + "\";");
+		httpResp.setHeader("Content-Disposition", "filename=\"export" + exportType + "\";");
 		httpResp.setContentType(contentType);
 		httpResp.setContentLength(content.length);
 		httpResp.getOutputStream().write(content);
 		httpResp.setStatus(SUCCESS);
+
 		httpResp.getOutputStream().flush();
 		logger.debug("OUT");
 	}
