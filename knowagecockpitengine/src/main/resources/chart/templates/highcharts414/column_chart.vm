@@ -1330,7 +1330,9 @@
 			data: [
 				#foreach($el in  $map.get($valueKey))	
 				{
-					y: $el.y,
+					#if($el.y!="")
+						y: $el.y,
+					#end
 					name: '$el.name'},
 				#end	
 			], 
