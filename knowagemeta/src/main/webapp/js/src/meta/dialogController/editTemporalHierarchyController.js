@@ -16,14 +16,15 @@ function editTemporalHierarchyController($scope,sbiModule_translate,sbiModule_re
 					tmpH.properties={};
 					for(var p=0;p<currH.properties.length;p++){
 						var currProp=currH.properties[p];
-						var val=currProp.value.value || currProp.value.propertyType.defaultValue;
+						var key = Object.keys(currProp)[0];
+						var val=currProp.value || currProp.propertyType.defaultValue;
 						if(angular.equals(val,"true")){
 							val=true;
 						}
 						if(angular.equals(val,"false")){
 							val=false;
 						}
-						tmpH.properties[currProp.value.propertyType.id.split(".")[1]]=val;
+						tmpH.properties[currProp.propertyType.id.split(".")[1]]=val;
 					}
 
 					tmpH.levels=[];
@@ -32,8 +33,9 @@ function editTemporalHierarchyController($scope,sbiModule_translate,sbiModule_re
 
 						//load the current levels levelType from the properties
 						for(var pro=0;pro<currL.properties.length;pro++){
-							if(angular.equals(currL.properties[pro].key.split(".")[1],"leveltype")){
-								currL.leveltype=currL.properties[pro].value.value;
+							var key = Object.keys(currL.properties[pro])[0];
+							if(angular.equals(key.split(".")[1],"leveltype")){
+								currL.leveltype=currL.properties[pro][key].value;
 							}
 						}
 

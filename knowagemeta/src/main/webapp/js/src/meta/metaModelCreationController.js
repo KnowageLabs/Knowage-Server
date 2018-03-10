@@ -131,6 +131,11 @@ function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate
 		                    	   }
 		                       }
 	                       ]
+	
+	
+	$scope.getPropertyAttributes = function(prop){
+		return prop[Object.keys(prop)[0]];
+	}
 }
 
 function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,metaModelServices,$mdPanel,sbiModule_config,sbiModule_user){
@@ -168,8 +173,9 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 	$scope.getBusinessModelType=function(bm){
 		var prop=bm.properties;
 		for(var i=0;i<prop.length;i++){
-			if(angular.equals(prop[i].key,"structural.tabletype")){
-				return prop[i].value.value;
+			var key = Object.keys(prop[i])[0];
+			if(angular.equals(key,"structural.tabletype")){
+				return prop[i][key].value;
 			}
 		}
 		return "generic";
@@ -178,8 +184,9 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 	$scope.getBusinessModelColumnsType=function(bm){
 		var prop=bm.properties;
 		for(var i=0;i<prop.length;i++){
-			if(angular.equals(prop[i].key,"structural.columntype")){
-				return prop[i].value.value;
+			var key = Object.keys(prop[i])[0];
+			if(angular.equals(key,"structural.columntype")){
+				return prop[i][key].value;
 			}
 		}
 	};
@@ -292,6 +299,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 }
 
 function businessModelPropertyControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout){
+	
 	$scope.businessModelMiscInfo = [ {
 		name : "name",
 		label : sbiModule_translate.load("name")
@@ -309,6 +317,14 @@ function businessModelPropertyControllerFunction($scope, sbiModule_translate,sbi
 	}
 	$scope.buildRoleVisibility=function(rv,val){
 		val.value=rv.join(";");
+	}
+	
+	$scope.getPropertyAttributes = function(prop){
+		return prop[Object.keys(prop)[0]];
+	}
+	
+	$scope.getPropertyKey = function(prop){
+		return Object.keys(prop)[0];
 	}
 }
 

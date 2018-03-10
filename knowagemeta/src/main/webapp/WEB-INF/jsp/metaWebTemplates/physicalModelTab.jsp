@@ -49,9 +49,9 @@
 				
 					<expander-box layout="column" layout-margin expanded="true" label="catProp" background-color="transparent" color="black" ng-repeat="catProp in currentPhysicalModelParameterCategories">
 						<md-input-container ng-repeat="prop in selectedPhysicalModel.properties | filterByCategory:catProp"
-						ng-init="prop.value.value= (prop.value.value==undefined || prop.value.value==null) ? prop.value.propertyType.defaultValue : prop.value.value">
-							<label>{{prop.value.propertyType.name}}</label>
-							<input ng-model="prop.value.value"  disabled>
+						ng-init="getPropertyAttributes(prop).value= (getPropertyAttributes(prop).value==undefined || getPropertyAttributes(prop).value==null) ? getPropertyAttributes(prop).propertyType.defaultValue : getPropertyAttributes(prop).value">
+							<label>{{getPropertyAttributes(prop).propertyType.name}}</label>
+							<input ng-model="getPropertyAttributes(prop).value"  disabled>
 						</md-input-container>
 					</expander-box>
 				</md-content>

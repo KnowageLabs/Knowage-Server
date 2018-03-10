@@ -84,45 +84,39 @@
 				
 					<expander-box layout-margin layout="column" expanded="true" label="catProp" background-color="transparent" color="black" ng-repeat="catProp in currentBusinessModelParameterCategories | filterByMainCategory">
 						<md-input-container ng-repeat="prop in selectedBusinessModel.properties | filterByCategory:catProp"
-						ng-class=" {'md-icon-right' : (prop.value.value=='temporal dimension' || prop.value.value=='time dimension')  }"
-						ng-init="prop.value.value= (prop.value.value==undefined || prop.value.value==null) ? prop.value.propertyType.defaultValue : prop.value.value">
-							<label>{{prop.value.propertyType.name}}</label>
-							<md-select ng-model="prop.value.value" ng-if="prop.value.propertyType.admissibleValues.length!=0">
-								<md-option ng-repeat="admissibleValue in prop.value.propertyType.admissibleValues | filterByProductType:prop " value="{{admissibleValue}}" >
+						ng-class=" {'md-icon-right' : (getPropertyAttributes(prop).value=='temporal dimension' || getPropertyAttributes(prop).value=='time dimension')  }"
+						ng-init="getPropertyAttributes(prop).value= (getPropertyAttributes(prop).value==undefined || getPropertyAttributes(prop).value==null) ? getPropertyAttributes(prop).propertyType.defaultValue : getPropertyAttributes(prop).value">
+							<label>{{getPropertyAttributes(prop).propertyType.name}}</label>
+							<md-select ng-model="getPropertyAttributes(prop).value" ng-if="getPropertyAttributes(prop).propertyType.admissibleValues.length!=0">
+								<md-option ng-repeat="admissibleValue in getPropertyAttributes(prop).propertyType.admissibleValues | filterByProductType:prop " value="{{admissibleValue}}" >
 									{{admissibleValue}}
 								</md-option>
 							</md-select>
 							
-							<input ng-if="prop.value.propertyType.admissibleValues.length==0 
-							&& prop.key!='structural.attribute' 
-							&& prop.key!='behavioural.notEnabledRoles'" ng-model="prop.value.value">
+							<input ng-if="getPropertyAttributes(prop).propertyType.admissibleValues.length==0 
+							&& getPropertyKey(prop)!='structural.attribute' 
+							&& getPropertyKey(prop)!='behavioural.notEnabledRoles'" ng-model="getPropertyAttributes(prop).value">
 							
 							<!--profile attributes visibility -->
-							<md-select ng-model="prop.value.value" ng-if="prop.key=='structural.attribute'" >
-								<md-option value=""></md-option>
+							<md-select ng-model="getPropertyAttributes(prop).value" ng-if="getPropertyKey(prop)=='structural.attribute'" >							
 								<md-option  ng-repeat="admissibleValue in sbiModule_config.profileAttributes  " value="{{admissibleValue}}" >
 									{{admissibleValue}}
 								</md-option>
 							</md-select>
 							
 							<!--profile role visibility -->
-						 
-							<md-select ng-model="tmpRoleVisibility" ng-if="prop.key=='behavioural.notEnabledRoles'" multiple 
-							ng-init="tmpRoleVisibility=[];initRoleVisibility(tmpRoleVisibility,prop.value.value)" md-on-close="buildRoleVisibility(tmpRoleVisibility,prop.value)">
-								<md-option  ng-repeat="role in sbiModule_config.avaiableRoles" value="{{role}}" >
+							<md-select ng-model="tmpRoleVisibility" ng-if="getPropertyKey(prop)=='behavioural.notEnabledRoles'" multiple 
+							 ng-init="tmpRoleVisibility=[];initRoleVisibility(tmpRoleVisibility,getPropertyAttributes(prop).value)"  
+							 md-on-close="buildRoleVisibility(tmpRoleVisibility,getPropertyAttributes(prop))">		
+							 
+								<md-option  ng-repeat="role in sbiModule_config.avaiableRoles track by $index" value="{{role}}" >
 									{{role}}
 								</md-option>
 							</md-select>
-							<!-- physical column name -->
-							<md-input-container ng-if="(selectedBusinessModel['physicalColumn']!=undefined) && (catProp=='physical')">
-								<label >{{translate.load("sbi.meta.column.physical")}}</label>
-							 	<input ng-if="(selectedBusinessModel['physicalColumn']!=undefined) && (catProp=='physical')" ng-model="selectedBusinessModel['physicalColumn'].name" disabled>
-							</md-input-container>
-							
 							
 							<!-- edit temporal hierarchy button -->
-							<md-icon ng-if="prop.value.value=='temporal dimension'" ng-click="editTemporalHierarchy()" md-font-icon=" fa fa-sitemap" ></md-icon>
-							<md-icon ng-if="prop.value.value=='time dimension'" ng-click="editTemporalHierarchy()" md-font-icon=" fa fa-sitemap" ></md-icon>
+							<md-icon ng-if="getPropertyAttributes(prop).value=='temporal dimension'" ng-click="editTemporalHierarchy()" md-font-icon=" fa fa-sitemap" ></md-icon>
+							<md-icon ng-if="getPropertyAttributes(prop).value=='time dimension'" ng-click="editTemporalHierarchy()" md-font-icon=" fa fa-sitemap" ></md-icon>
 						</md-input-container>
 					</expander-box>
 				</md-content>

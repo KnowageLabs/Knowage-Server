@@ -20,11 +20,12 @@ function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiM
 		$scope.calcField.name=currentCF.name
 
 		for(var i=0;i<currentCF.properties.length;i++){
-			if(angular.equals(currentCF.properties[i].key,"structural.datatype")){
-				$scope.calcField.dataType=currentCF.properties[i].value.value
+			var key = Object.keys(currentCF.properties[i])[0];
+			if(angular.equals(key,"structural.datatype")){
+				$scope.calcField.dataType=currentCF.properties[i][key].value
 			}
-			if(angular.equals(currentCF.properties[i].key,"structural.expression")){
-				$scope.calcField.expression=currentCF.properties[i].value.value
+			if(angular.equals(key,"structural.expression")){
+				$scope.calcField.expression=currentCF.properties[i][key].value
 			}
 		}
 	}
