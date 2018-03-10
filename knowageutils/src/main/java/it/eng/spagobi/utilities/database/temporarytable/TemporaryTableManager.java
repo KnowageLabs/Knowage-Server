@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,22 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.utilities.database.temporarytable;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -29,17 +40,6 @@ import it.eng.spagobi.utilities.database.DataBase;
 import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.sql.JDBCTypeMapper;
-
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it) DATE CONTRIBUTOR/DEVELOPER NOTE 24-06-2013 Zerbetto Davide/Andrea Fantappiè Tablespace management on Oracle
@@ -192,7 +192,7 @@ public class TemporaryTableManager {
 
 				/*
 				 * If table are on other schema must set catalog name as schema name otherwise it look for table [schema].[name] on datasource db
-				 * 
+				 *
 				 * Andrea Fantappiè
 				 */
 				if (driverName.contains("MySQL"))
@@ -288,8 +288,8 @@ public class TemporaryTableManager {
 		return toReturn;
 	}
 
-	private static void readColumns(ResultSet resultSet, List<String> fields, DataSetTableDescriptor tableDescriptor, DatabaseMetaData dbMetadata, String schema)
-			throws SQLException {
+	private static void readColumns(ResultSet resultSet, List<String> fields, DataSetTableDescriptor tableDescriptor, DatabaseMetaData dbMetadata,
+			String schema) throws SQLException {
 		int index = 0;
 		do {
 			// For oracle we have to check if the table exists in the right schema
@@ -433,7 +433,7 @@ public class TemporaryTableManager {
 
 	/**
 	 * Add tablespace to sql statement Only for DB2 and Oracle
-	 * 
+	 *
 	 * @param dialect
 	 * @param sql
 	 * @return SQL statement with tablespace information
@@ -468,8 +468,9 @@ public class TemporaryTableManager {
 			}
 		} else if (dialect.toUpperCase().contains("SQLSERVER")) { // SQLServer has a different command
 			// see http://www.webdevblog.info/database/drop-table-if-exists-in-oracle-nd-sql-server/
-			executeStatement("IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " + " WHERE TABLE_NAME = '" + tableName + "') " + " DROP TABLE "
-					+ tableName, dataSource);
+			executeStatement(
+					"IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " + " WHERE TABLE_NAME = '" + tableName + "') " + " DROP TABLE " + tableName,
+					dataSource);
 		} else if (dialect.contains("Teradata")) { // Teradata does not support DROP TABLE IF EXISTS command
 			try {
 				executeStatement("DROP TABLE " + tableName, dataSource);
@@ -656,33 +657,6 @@ public class TemporaryTableManager {
 			delimiter = dataBase.getAliasDelimiter();
 		}
 		return delimiter;
-
-		// String dialect = dataSource.getHibDialectClass();
-		// if(dialect ==null){
-		// dialect = dataSource.getHibDialectName();
-		// }
-		// if(dialect != null){
-		// if (dialect.contains(DIALECT_MYSQL)) {
-		// return "`";
-		// } else if (dialect.contains(DIALECT_HSQL)) {
-		// return "\"";
-		// } else if (dialect.contains(DIALECT_INGRES)) {
-		// return "\""; // TODO check it!!!!
-		// } else if (dialect.contains(DIALECT_ORACLE)) {
-		// return "\"";
-		// } else if (dialect.contains(DIALECT_ORACLE9i10g)) {
-		// return "\"";
-		// } else if (dialect.contains(DIALECT_POSTGRES)) {
-		// return "\"";
-		// } else if (dialect.contains(DIALECT_SQLSERVER)) {
-		// return "\""; // TODO not tested yet!!!!
-		// } else if (dialect.contains(DIALECT_DB2)) {
-		// return "\"";
-		// } else if (dialect.contains(DIALECT_TERADATA)) {
-		// return "\"";
-		// }
-		// }
-		// return "";
 	}
 
 }
