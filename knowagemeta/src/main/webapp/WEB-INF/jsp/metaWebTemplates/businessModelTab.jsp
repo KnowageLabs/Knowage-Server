@@ -79,8 +79,10 @@
 						<md-input-container ng-if="selectedBusinessModel.physicalTable!=undefined" >
 							<label>{{translate.load("sbi.meta.table.physical")}}</label>
 							 <input ng-model="meta.physicalModels[selectedBusinessModel.physicalTable.physicalTableIndex].name" disabled>
+							 
 						</md-input-container>
 					</expander-box>	
+					
 				
 					<expander-box layout-margin layout="column" expanded="true" label="catProp" background-color="transparent" color="black" ng-repeat="catProp in currentBusinessModelParameterCategories | filterByMainCategory">
 						<md-input-container ng-repeat="prop in selectedBusinessModel.properties | filterByCategory:catProp"
@@ -95,10 +97,10 @@
 							
 							<input ng-if="getPropertyAttributes(prop).propertyType.admissibleValues.length==0 
 							&& getPropertyKey(prop)!='structural.attribute' 
-							&& getPropertyKey(prop)!='behavioural.notEnabledRoles'" ng-model="getPropertyAttributes(prop).value">
-							
+							&& getPropertyKey(prop)!='behavioural.notEnabledRoles'" ng-model="getPropertyAttributes(prop).value" ng-disabled="getPropertyKey(prop)=='physical.physicaltable'">
 							<!--profile attributes visibility -->
-							<md-select ng-model="getPropertyAttributes(prop).value" ng-if="getPropertyKey(prop)=='structural.attribute'" >							
+							<md-select ng-model="getPropertyAttributes(prop).value" ng-if="getPropertyKey(prop)=='structural.attribute'" >	
+								<md-option value=""></md-option>						
 								<md-option  ng-repeat="admissibleValue in sbiModule_config.profileAttributes  " value="{{admissibleValue}}" >
 									{{admissibleValue}}
 								</md-option>
@@ -108,11 +110,15 @@
 							<md-select ng-model="tmpRoleVisibility" ng-if="getPropertyKey(prop)=='behavioural.notEnabledRoles'" multiple 
 							 ng-init="tmpRoleVisibility=[];initRoleVisibility(tmpRoleVisibility,getPropertyAttributes(prop).value)"  
 							 md-on-close="buildRoleVisibility(tmpRoleVisibility,getPropertyAttributes(prop))">		
-							 
 								<md-option  ng-repeat="role in sbiModule_config.avaiableRoles track by $index" value="{{role}}" >
 									{{role}}
 								</md-option>
 							</md-select>
+							<!-- physical column name -->
+							<md-input-container ng-if="(selectedBusinessModel['physicalColumn']!=undefined) && (catProp=='physical')">
+								<label >{{translate.load("sbi.meta.column.physical")}}</label>
+							 	<input ng-if="(selectedBusinessModel['physicalColumn']!=undefined) && (catProp=='physical')" ng-model="selectedBusinessModel['physicalColumn'].name" disabled>
+							</md-input-container>
 							
 							<!-- edit temporal hierarchy button -->
 							<md-icon ng-if="getPropertyAttributes(prop).value=='temporal dimension'" ng-click="editTemporalHierarchy()" md-font-icon=" fa fa-sitemap" ></md-icon>
