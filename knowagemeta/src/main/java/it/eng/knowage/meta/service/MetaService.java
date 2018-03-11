@@ -929,7 +929,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		}
 		currTables.addAll(tables);
 
-		PhysicalModel phyMod = physicalModelInitializer.initializeLigth(originalPM.getConnection(), currTables);
+		PhysicalModel phyMod = physicalModelInitializer.initializeLigth(originalPM, currTables);
 		physicalModelInitializer.updateModel(originalPM, phyMod, tables);
 
 		JSONObject jsonModel = createJson(model);
