@@ -19,7 +19,7 @@
 		<table class="kn-table" ng-if="newModel.content.targetLayersConf.length > 0">
 			<thead>
 				<tr>
-					<th ng-if="newModel.content.targetLayersConf.length > 1"></th><th>Type</th><th>Name</th><th>Label</th><th>Target</th><th></th>
+					<th ng-if="newModel.content.targetLayersConf.length > 1"></th><th>Type</th><th>Name</th><th>Label</th><th>Target</th><th>Marker Color</th><th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -46,15 +46,20 @@
 					  </md-switch>
 					</td>
 					<td class="colorPickerTd" style="text-align:right;">
+						<md-input-container class="md-block flex">
+					        <color-picker options="colorPickerOptions" ng-model="layer.markerConf.color"></color-picker> 
+				      	</md-input-container>
+			      	</td>
+					<td class="colorPickerTd" style="text-align:right;">
 						<md-button class="md-icon-button" ng-click="expandRow(layer,'metadata')" ng-class="{'expanded':layer.expanded=='metadata'}">
 							<md-tooltip>Metadata</md-tooltip>
 							<md-icon md-font-icon="fa fa-tags"></md-icon>
 						</md-button>
 						
-						<md-button class="md-icon-button" ng-click="expandRow(layer,'markers')" ng-class="{'expanded':layer.expanded=='markers'}">
+						<!--  md-button class="md-icon-button" ng-click="expandRow(layer,'markers')" ng-class="{'expanded':layer.expanded=='markers'}">
 							<md-tooltip>Markers</md-tooltip>
 							<md-icon md-font-icon="fa fa-map-marker"></md-icon>
-						</md-button>
+						</md-button-->
 						
 						<md-button class="md-icon-button" ng-click="deleteLayer(layer)">
 							<md-tooltip>Delete</md-tooltip>
