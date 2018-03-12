@@ -90,7 +90,7 @@ public class DataSetConstants {
 	public static final String FLAT = "Flat";
 	public static final String DS_REST_NAME = "REST";
 	public static final String DS_SOLR_NAME = "Solr";
-	public static final String SPARQL = "SparQL";
+	public static final String SPARQL = "SPARQL";
 
 	public static final String TRASFORMER_TYPE_CD = "trasfTypeCd";
 	public static final String PIVOT_COL_NAME = "pivotColName";
@@ -111,7 +111,7 @@ public class DataSetConstants {
 	public static final String DS_FLAT = "SbiFlatDataSet";
 	public static final String DS_REST_TYPE = RESTDataSet.DATASET_TYPE;
 	public static final String DS_SOLR_TYPE = SolrDataSet.DATASET_TYPE;
-	public static final String DS_SPARQL = "SbiSparQLDataSet";
+	public static final String DS_SPARQL = "SbiSPARQLDataSet";
 
 	public static final String QBE_DATA_SOURCE = "qbeDataSource";
 	public static final String QBE_DATAMARTS = "qbeDatamarts";
@@ -214,7 +214,7 @@ public class DataSetConstants {
 		name2Code.put("Flat", DataSetConstants.DS_FLAT);
 		name2Code.put("Federated", DataSetConstants.DS_FEDERATED);
 		name2Code.put(DS_REST_NAME, DS_REST_TYPE);
-		name2Code.put("SparQL", DataSetConstants.DS_SPARQL);
+		name2Code.put("SPARQL", DataSetConstants.DS_SPARQL);
 
 		// add all REST attributes
 		int curr = 0;
@@ -246,7 +246,7 @@ public class DataSetConstants {
 		code2name.put(DataSetConstants.DS_FLAT, "Flat");
 		code2name.put(DataSetConstants.DS_FEDERATED, "Federated");
 		code2name.put(DS_REST_TYPE, DS_REST_NAME);
-		code2name.put(DataSetConstants.DS_SPARQL, "SparQL");
+		code2name.put(DataSetConstants.DS_SPARQL, "SPARQL");
 	}
 
 }
