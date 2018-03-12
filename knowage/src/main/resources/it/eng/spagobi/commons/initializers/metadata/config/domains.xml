@@ -343,6 +343,10 @@
 		domainNm="Data Set Type" valueDs="SbiCkanDataSet" />
 	<DOMAIN valueCd="Federated" valueNm="SbiFederatedDataSet" domainCd="DATA_SET_TYPE"
 		domainNm="Data Set Type" valueDs="SbiFederatedDataSet" />
+		
+	<DOMAIN valueCd="SparQL" valueNm="SbiSparQLDataSet" domainCd="DATA_SET_TYPE"
+		domainNm="Data Set Type" valueDs="SbiSparQLDataSet" />
+		
 	<DOMAIN valueCd="Default Dataset Category" valueNm="Default Dataset Category" domainCd="CATEGORY_TYPE"
 		domainNm="Category Type" valueDs="Default Dataset Category" />
 	<DOMAIN valueCd="DEVELOPMENT" valueNm="sbidomains.permissiononfolder.nm.dev"
