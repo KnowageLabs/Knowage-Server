@@ -102,6 +102,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	$scope.reinit();
 	    }
 	    
+	    $scope.getOptions =function(){
+			var obj = {};
+			obj["type"] = $scope.ngModel.type;
+			return obj;
+		}
+	    
 	    $scope.editWidget=function(index){
 			var finishEdit=$q.defer();
 			var config = {
@@ -128,7 +134,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             view.on("change:resolution", function(e) {
             	//zoom action
         	    if (Number.isInteger(e.target.getZoom())) {
-        	      console.log(e.target.getCenter());
+//        	      console.log(e.target.getCenter());
         	    }
         	    $scope.ngModel.content.zoom = e.target.getZoom();
             });
@@ -160,7 +166,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     				
             	var feature = $scope.map.forEachFeatureAtPixel(evt.pixel,
             	            function(feature, layer) {
-            	                console.log("feature on click: ",feature);
+//            	                console.log("feature on click: ",feature);
             	                return feature;
             	            });
             	var layer = $scope.map.forEachFeatureAtPixel(evt.pixel,
@@ -225,7 +231,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	
 	    	if (!$scope.ngModel.content.mapId){
 	    		$scope.ngModel.content.mapId = 'map-' + Math.ceil(Math.random()*1000).toString();
-	    		console.log('new mapId: ', $scope.ngModel.content.mapId);
+//	    		console.log('new mapId: ', $scope.ngModel.content.mapId);
 	    	}
 	    	//set default indicator (first one) for each layer
 	    	for (i in $scope.ngModel.content.targetLayersConf){
@@ -418,7 +424,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
 					$scope.setValuesLayer(layerDef.name, allDatasetRecords); //add values to internal object
 					$scope.updateCoordinatesAndZoom(layer, true);
-					console.log("Added layer with label ["+layerDef.name+"] and coordinates ["+$scope.map.getView().getCenter()+"]");
+//					console.log("Added layer with label ["+layerDef.name+"] and coordinates ["+$scope.map.getView().getCenter()+"]");
 
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.datasetId+"] ");
@@ -486,7 +492,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		    zoom:  $scope.ngModel.content.currentView.zoom || 3
     		  })
     		});
-    		console.log("$scope.map.getView().getCenter(): ", $scope.map.getView().getCenter());
+//    		console.log("$scope.map.getView().getCenter(): ", $scope.map.getView().getCenter());
     		
     		//add events methods
     		$scope.addViewEvents();
