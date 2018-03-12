@@ -18,6 +18,8 @@
 
 package it.eng.spagobi.tools.dataset.cache.query.visitor;
 
+import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
+import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 
 public class MetaModelSelectQueryVisitor extends AbstractSelectQueryVisitor {
@@ -25,6 +27,14 @@ public class MetaModelSelectQueryVisitor extends AbstractSelectQueryVisitor {
 	public MetaModelSelectQueryVisitor() {
 		this.aliasDelimiter = "";
 		this.dialect = SqlDialect.METAMODEL;
+	}
+
+	/**
+	 * @return a fake prepared statement (prepared statements are not supported by MetaModel lib)
+	 */
+	@Override
+	public PreparedStatementData getPreparedStatementData(SelectQuery selectQuery) {
+		return getPreparedStatementData(selectQuery, false);
 	}
 
 }
