@@ -23,9 +23,9 @@ angular.module('chartInitializer')
 	
 	return {
 		
-		breadcrumb: [],
 		
-		drilldown: function(selectedName, selectedSerie){
+		
+		drilldown: function(selectedName, selectedSerie, breadcrumb){
 			
 			var drill = {
 					selectedName: selectedName,
@@ -41,12 +41,12 @@ angular.module('chartInitializer')
 			 * 
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
-			var i = this.breadcrumb.length;
+			var i = breadcrumb.length;
 			var indicator = null;
 		   
 			while (i--) 
 		    {
-		       if (JSON.stringify(this.breadcrumb[i]) === JSON.stringify(drill)) 
+		       if (JSON.stringify(breadcrumb[i]) === JSON.stringify(drill)) 
 		       {
 		    	   
 		    	   indicator = true;
@@ -57,11 +57,11 @@ angular.module('chartInitializer')
 		    	indicator = false;
 			
 		    if (!indicator)
-			this.breadcrumb.push(drill);
+			breadcrumb.push(drill);
 		},
 		
-		drillup: function(){
-			this.breadcrumb.pop();
+		drillup: function(breadcrumb){
+			breadcrumb.pop();
 		}
 	}
 	

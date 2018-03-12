@@ -61,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-icon md-font-icon="fa fa-bar-chart"></md-icon>
 			</md-button>
 			
-			<md-button class="md-icon-button" aria-label="unselectable button" ng-if="enterpriseEdition && cliccable==true && ngModel.type=='chart' && (ngModel.content.chartTemplate.CHART.type.toLowerCase()=='treemap' || ngModel.content.chartTemplate.CHART.type.toLowerCase()=='line' || ngModel.content.chartTemplate.CHART.type.toLowerCase()=='bar')" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
+			<md-button class="md-icon-button" aria-label="unselectable button" ng-if="enterpriseEdition && cliccable==true && ngModel.type=='chart' && (ngModel.content.chartTemplate.CHART.type.toLowerCase()=='treemap' || ngModel.content.chartTemplate.CHART.type.toLowerCase()=='line' || ngModel.content.chartTemplate.CHART.type.toLowerCase()=='bar' || ngModel.content.chartTemplate.CHART.type.toLowerCase()=='pie')" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
 				<md-tooltip md-direction="top" md-delay="1000" ng-show="ngModel.cliccable">
           			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.cliccable")}}
        			 </md-tooltip>
@@ -140,7 +140,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-button>
 			
 			<!-- clickable BUTTON -->
-			<md-button class="md-icon-button stackedIcons" aria-label="unselectable button" ng-if="cliccable==true && cockpitModule_properties.EDIT_MODE && (ngModel.content.chartTemplate.CHART.type.toLowerCase()!='treemap' && ngModel.content.chartTemplate.CHART.type.toLowerCase()!='line' && ngModel.content.chartTemplate.CHART.type.toLowerCase()!='bar')" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
+			<md-button class="md-icon-button stackedIcons" aria-label="unselectable button" ng-if="cliccable==true && cockpitModule_properties.EDIT_MODE && (ngModel.content.chartTemplate.CHART.type.toLowerCase()!='treemap' && ngModel.content.chartTemplate.CHART.type.toLowerCase()!='line' && ngModel.content.chartTemplate.CHART.type.toLowerCase()!='bar' && ngModel.content.chartTemplate.CHART.type.toLowerCase()!='pie')" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
 				<md-tooltip md-direction="top" md-delay="1000">
 		          {{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}}
 		        </md-tooltip>
@@ -150,7 +150,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</span>
 			</md-button>
 			
-			<md-button class="md-icon-button" aria-label="unselectable button" ng-if="cliccable==true && ngModel.type=='chart' && (ngModel.content.chartTemplate.CHART.type.toLowerCase()=='treemap' || ngModel.content.chartTemplate.CHART.type.toLowerCase()=='line' || ngModel.content.chartTemplate.CHART.type.toLowerCase()=='bar')" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
+			<md-button class="md-icon-button" aria-label="unselectable button" ng-if="cliccable==true && ngModel.type=='chart' && (ngModel.content.chartTemplate.CHART.type.toLowerCase()=='treemap' || ngModel.content.chartTemplate.CHART.type.toLowerCase()=='line' || ngModel.content.chartTemplate.CHART.type.toLowerCase()=='bar' || ngModel.content.chartTemplate.CHART.type.toLowerCase()=='pie')" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
 				<md-tooltip md-direction="top" md-delay="1000" ng-show="ngModel.cliccable">
           			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.cliccable")}}
        			 </md-tooltip>

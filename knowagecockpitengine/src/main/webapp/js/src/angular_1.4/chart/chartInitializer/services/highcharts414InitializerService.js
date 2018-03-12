@@ -293,6 +293,7 @@ angular.module('chartInitializer')
 
 	this.handleDrilldown = function(e){
 		var chart = this;
+		if(!chart.breadcrumb)chart.breadcrumb=[];
 
 		if (!e.seriesOptions)
 		{
@@ -341,11 +342,11 @@ angular.module('chartInitializer')
 
 										var m= drillValue.substring(dp+1,mp+dp+1);
 										drillValue = new Date(m+"/"+d+drillValue.substring(mp+dp+1)).getTime();
-										highchartsDrilldownHelper.drilldown(drillValue, e.point.series.name);
+										highchartsDrilldownHelper.drilldown(drillValue, e.point.series.name, chart.breadcrumb);
 										highchartsDrilldownHelperDone = true;
 									}else{
 										drillValue = new Date(drillValue).getTime();
-										highchartsDrilldownHelper.drilldown(drillValue, e.point.series.name);
+										highchartsDrilldownHelper.drilldown(drillValue, e.point.series.name, chart.breadcrumb);
 										highchartsDrilldownHelperDone = true;
 									}
 
@@ -357,10 +358,10 @@ angular.module('chartInitializer')
 					}
 
 					if(!highchartsDrilldownHelperDone){
-						highchartsDrilldownHelper.drilldown(e.point.name, e.point.series.name);
+						highchartsDrilldownHelper.drilldown(e.point.name, e.point.series.name, chart.breadcrumb);
 					}
 
-					params.breadcrumb = JSON.stringify(highchartsDrilldownHelper.breadcrumb);
+					params.breadcrumb = JSON.stringify(chart.breadcrumb);
 
 
 
@@ -434,7 +435,7 @@ angular.module('chartInitializer')
 
     	// TODO: commented by: danristo (EXT -> ANGULAR)
 		//Sbi.chart.viewer.HighchartsDrilldownHelper.drillup();
-       highchartsDrilldownHelper.drillup();
+       highchartsDrilldownHelper.drillup(chart.breadcrumb);
 
 	}
 
