@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,12 +25,14 @@ public class SimpleParameter implements Serializable {
 
 	private static final long serialVersionUID = 5806561890901779736L;
 	/**
-	 * 
+	 *
 	 */
 	private Integer id;
 	private String name;
 	private Integer type;
 	private String fixedValue;
+	private String parType;
+
 	private List<SimpleParameter> links = new ArrayList<>();
 
 	public SimpleParameter() {
@@ -119,7 +121,7 @@ public class SimpleParameter implements Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -130,9 +132,17 @@ public class SimpleParameter implements Serializable {
 		return result;
 	}
 
+	public String getParType() {
+		return parType;
+	}
+
+	public void setParType(String parType) {
+		this.parType = parType;
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
