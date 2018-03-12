@@ -256,7 +256,7 @@ sbiM.service('sbiModule_messaging',function(sbiModule_restServices,$mdToast){
 
 		var timeout = 3000;
 
-		if (hideTimeout && typeof hideTimeout == "number") {
+		if (hideTimeout != undefined && typeof hideTimeout == "number") {
 			timeout = hideTimeout;
 		}
 
@@ -274,7 +274,7 @@ sbiM.service('sbiModule_messaging',function(sbiModule_restServices,$mdToast){
 	this.showInfoMessage = function(msg,title,hideTimeout){
 		var timeout = 3000;
 
-		if (hideTimeout && typeof hideTimeout == "number") {
+		if (hideTimeout != undefined && typeof hideTimeout == "number") {
 			timeout = hideTimeout;
 		}
 
@@ -293,7 +293,7 @@ sbiM.service('sbiModule_messaging',function(sbiModule_restServices,$mdToast){
 	this.showSuccessMessage = function(msg,title,hideTimeout){
 		var timeout = 3000;
 
-		if (hideTimeout && typeof hideTimeout == "number") {
+		if (hideTimeout != undefined && typeof hideTimeout == "number") {
 			timeout = hideTimeout;
 		}
 

@@ -49,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$filter,
 			$location,
 			sbiModule_translate,
+			sbiModule_messaging,
 			sbiModule_restServices,
 			cockpitModule_mapServices,
 			cockpitModule_datasetServices,
@@ -127,7 +128,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$mdPanel.open(config);
 			return finishEdit.promise;
 		}
-
+	    
+//############################################## SPECIFIC MAP WIDGET METHODS #########################################################################
+	    $scope.initializeTemplate = function (){
+	    	if (!$scope.ngModel.content.currentView)  $scope.ngModel.content.currentView = {};
+			if (!$scope.ngModel.content.analysisConf) $scope.ngModel.content.analysisConf ={};
+			if (!$scope.ngModel.content.markerConf) $scope.ngModel.content.markerConf ={};
+			if (!$scope.ngModel.content.targetLayersConf) $scope.ngModel.content.targetLayersConf = [];
+			if (!$scope.ngModel.content.baseLayersConf) $scope.ngModel.content.baseLayersConf = [];
+	    	if (!$scope.ngModel.content.currentView.center) $scope.ngModel.content.currentView.center = [0,0]; 
+	    	
+	    	if (!$scope.ngModel.content.mapId){
+	    		$scope.ngModel.content.mapId = 'map-' + Math.ceil(Math.random()*1000).toString();
+	    	}
+	    	//set default indicator (first one) for each layer
+	    	for (i in $scope.ngModel.content.targetLayersConf){
+	    		for (di in $scope.ngModel.content.targetLayersConf[i].indicators){
+	    			if ($scope.ngModel.content.targetLayersConf[i].indicators[di].showMap){
+	    				$scope.ngModel.content.targetLayersConf[i].defaultIndicator = $scope.ngModel.content.targetLayersConf[i].indicators[di].name;	
+	    				break;
+	    			}
+	    		}
+	    	}	    		
+	    }
+	    
+	    
 	    $scope.addViewEvents = function(){
 	    	//view events
 	    	var view = $scope.map.getView();
@@ -155,8 +180,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             }else
             	console.log("<div> with identifier 'popup-closer' doesn't found !!! It isn't impossible set the popup detail content ");
 
-
-    		//map events
     		$scope.map.on('singleclick', function(evt) {
     			//popup detail
     			if (!popupContent){
@@ -221,29 +244,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	return false;
 	    }
 
-	    $scope.initializeTemplate = function (){
-	    	//initializing
-	    	if (!$scope.ngModel.content.currentView)  $scope.ngModel.content.currentView = {};
-			if (!$scope.ngModel.content.analysisConf) $scope.ngModel.content.analysisConf ={};
-			if (!$scope.ngModel.content.markerConf) $scope.ngModel.content.markerConf ={};
-			if (!$scope.ngModel.content.targetLayersConf) $scope.ngModel.content.targetLayersConf = [];
-			if (!$scope.ngModel.content.baseLayersConf) $scope.ngModel.content.baseLayersConf = [];
-	    	if (!$scope.ngModel.content.currentView.center) $scope.ngModel.content.currentView.center = [0,0]; 
-	    	
-	    	if (!$scope.ngModel.content.mapId){
-	    		$scope.ngModel.content.mapId = 'map-' + Math.ceil(Math.random()*1000).toString();
-	    	}
-	    	//set default indicator (first one) for each layer
-	    	for (i in $scope.ngModel.content.targetLayersConf){
-	    		for (di in $scope.ngModel.content.targetLayersConf[i].indicators){
-	    			if ($scope.ngModel.content.targetLayersConf[i].indicators[di].showMap){
-	    				$scope.ngModel.content.targetLayersConf[i].defaultIndicator = $scope.ngModel.content.targetLayersConf[i].indicators[di].name;	
-	    				break;
-	    			}
-	    		}
-	    	}	    		
-	    }
-	    
+	  
 	    $scope.getLayers = function () {
 		    for (l in $scope.ngModel.content.targetLayersConf){
 	    		var layerDef  = $scope.ngModel.content.targetLayersConf[l];
@@ -253,7 +254,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		}else if (layerDef.type === 'CATALOG'){
 	    			//TODO implementare recupero layer da catalogo
 	    		}else{
-	    			console.log("Layer type ["+layerDef.type+"] not managed! ");
+	    			sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.typeLayerNotManaged'), 'Title', 3000);
+	    			console.log("Layer with type ["+layerDef.type+"] not managed! ");
 	    		}
 	    	}
 	    }
@@ -311,7 +313,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}else if (geoFieldValue.indexOf(",")){
 							lonlat = geoFieldValue.split(",");
 						}else{
-							console.log("Error getting longitude and latitude from column value ["+ geoFieldValue +"]");
+							sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.lonLatError').replace("{0}",geoColumn).replace("{1}",geoFieldValue), 'Title', 0);
+							console.log("Error getting longitude and latitude from column value ["+ geoColumn +"]. Check the dataset and its metadata.");
+							return null;
+						}
+						if (lonlat.length != 2){
+							sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.lonLatError').replace("{0}",geoColumn).replace("{1}",geoFieldValue), 'Title', 0);
+							console.log("Error getting longitude and latitude from column value ["+ geoColumn +"]. Check the dataset and its metadata.");
 							return null;
 						}
 						//get config for thematize
@@ -323,7 +331,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							}
 						}
 						
-						
 						//set ol objects
 						var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
 						var feature = new ol.Feature();  
@@ -332,7 +339,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				        feature.setGeometry(geometry);
 //				        feature.setStyle($scope.layesrStyle);
 				        $scope.addDsPropertiesToFeature(feature, row, values.metaData.fields);
-				      //at least add the layer owner//at least add the layer owner
+				       //at least add the layer owner
 				        feature.set("parentLayer",config.name);
 				        featuresSource.addFeature(feature);
 					}
@@ -405,15 +412,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    		function(allDatasetRecords){
 					var featuresSource = $scope.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, allDatasetRecords);
-					if (featuresSource == null){
-						$scope.showAction($scope.translate.load('sbi.cockpit.map.nogeomcorrectform')); //dataset geometry column value isn't correct. It should be a couple of numbers [-12 12] or [-12, 12]
+					if (featuresSource == null){ 
 						return;
 					}
 
 			    	var layer = new ol.layer.Vector({source: featuresSource,
 			    									 style: $scope.layerStyle});
-					
-
 
 					//add decoration to layer element
 					layer.targetDefault = layerDef.targetDefault || false;
@@ -426,15 +430,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.updateCoordinatesAndZoom(layer, true);
 
 			},function(error){
-				console.log("Error loading dataset with id [ "+layerDef.datasetId+"] ");
-				$scope.showAction($scope.translate.load('sbi.cockpit.map.dsError')); //error during the execution of data
-			});
-	    	
-
+				console.log("Error loading dataset with id [ "+layerDef.datasetId+"] "); 
+				sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.datasetLoadingError').replace("{0}",layerDef.datasetId), 'Title', 3000);
+			});	
     	}
 	      
 	    $scope.updateCoordinatesAndZoom = function(l, setValues){
-	    	
 	    	var coord;
 	    	var zoom;
 	    	
@@ -449,7 +450,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}else{
 					zoom = 5;
 				}
-	    	 
 	    	
 		    	//update coordinates and zoom within the template
 		    	$scope.ngModel.content.currentView.center = coord;
