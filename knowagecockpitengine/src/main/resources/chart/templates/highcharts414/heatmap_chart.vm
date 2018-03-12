@@ -36,8 +36,10 @@
 *#
 #if ($chart.VALUES.SERIE.class.name == 'java.util.LinkedHashMap')
 	#set($serie = $chart.VALUES.SERIE.name)
+	#set($serieObj = $chart.VALUES.SERIE)
 	#set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)	
 #elseif ($chart.VALUES.SERIE.class.name == 'java.util.ArrayList')
+	#set($serieObj = $chart.VALUES.SERIE[0])
 	#set($serie = $chart.VALUES.SERIE[0].name)
 	#set($groupingFunction = $chart.VALUES.SERIE[0].groupingFunction)
 #end
@@ -106,6 +108,9 @@
  	chart: 
  	{
  		type: '$chartType',
+ 		dateF: '$chart.dateFormat',
+ 		dateT: '$chart.dateTime',
+ 		
  		
  		#*
     		The zoom in option for HEATMAP chart. User will be able to zoom in on either of those two chart types
@@ -549,6 +554,21 @@
 		firstCategory: $firstCategory,
   		storeresult: $storeresult,
   		serie: $serieName,
+  		#if($serieObj.precision)
+  		precision: "$serieObj.precision",
+  		#else
+  		precision: "",
+  		#end
+  		#if($serieObj.prefixChar)
+  		prefixChar: "$serieObj.prefixChar",
+  		#else
+  		postfixChar: "",
+  		#end
+  		#if($serieObj.postfixChar)
+  		postfixChar: "$serieObj.postfixChar",
+  		#else
+  		postfixChar: "",
+  		#end
   		columns: $columnNames
 	},
 	

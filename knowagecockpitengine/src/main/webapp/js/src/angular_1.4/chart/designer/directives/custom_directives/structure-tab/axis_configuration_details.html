@@ -1,10 +1,15 @@
 <!-- The original name of the series item (not an alias) -->
 <div ng-form name="structure-axisConfigurationDetailsForm" layout="column" flex>
 
-<md-subheader class="md-primary">
+<md-subheader class="md-primary" ng-if="selectedChartType == 'parallel'">
+	Series label name:
+</md-subheader>
+
+<md-subheader class="md-primary" ng-if="selectedChartType != 'parallel'">
 	Series container alias: <strong>{{axisForDisplay.alias}}</strong>
 </md-subheader>
 
+<div layout="column">
 <div  layout="row" layout-margin ng-if="selectedChartType == 'radar'">
 
 	<label>{{translate.load("sbi.chartengine.designer.radar.showMeasures")}}</label>
@@ -61,10 +66,47 @@
 	 <label>{{translate.load("sbi.chartengine.axisstylepopup.fontsize")}}</label>
 		 <md-select ng-model="axisForDisplay.style.fontSize" name="axis_fsize"> <md-option
 		ng-repeat="option in fontSize" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+
+</div>
+</div>
+
+<md-subheader class="md-primary" ng-if="selectedChartType =='parallel'">
+	Series value:
+</md-subheader>
+
+<div layout="column" layout-padding ng-if="selectedChartType =='parallel'">
+
+<md-input-container class="md-block" ng-if="selectedChartType !='radar'">
+	 <label>{{translate.load("sbi.chartengine.axisstylepopup.axis.align")}}</label>
+		 <md-select ng-model="axisForDisplay.styleValue.align" name="categoriesAxis_aligment"> <md-option
+		ng-repeat="option in textAlignment" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+<md-input-container class="md-block colorInputContainer">
+	<label>{{translate.load("sbi.chartengine.axisstylepopup.color")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="axisForDisplay.styleValue.color" name="categoriesAxis_color"></color-picker> </md-input-container>
+	
+<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
+		 <md-select ng-model="axisForDisplay.styleValue.fontFamily" name="categoriesAxis_ffamily"> <md-option
+		ng-repeat="option in fontFamily" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+	
+<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.axisstylepopup.fontweight")}}</label>
+		 <md-select ng-model="axisForDisplay.styleValue.fontWeight" name="categoriesAxis_fweight"> <md-option
+		ng-repeat="option in fontStyle" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.axisstylepopup.fontsize")}}</label>
+		 <md-select ng-model="axisForDisplay.styleValue.fontSize" name="categoriesAxis_fsize"> <md-option
+		ng-repeat="option in fontSize" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>		
-
-
-
 
 </div>
 

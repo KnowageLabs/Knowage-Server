@@ -1,7 +1,7 @@
 angular.module("cockpitModule").service("cockpitModule_documentServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, $q,$mdPanel,sbiModule_messaging){
 	var ds=this;
-	
-	
+
+
 	//return a COPY of document with specific id or null
 	this.getDocumentById=function(docId){
 		for(var i=0;i<cockpitModule_template.configuration.documents.length;i++){
@@ -23,19 +23,26 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 			}
 		}
 	}
-	
+
 	//return a list of avaiable document
 	this.getAvaiableDocuments=function(){
+		for(var i=0; i<cockpitModule_template.configuration.documents; i++){
+			cockpitModule_template.configuration.documents[i].expanded = true;
+		}
 		return cockpitModule_template.configuration.documents;
 	}
-	
+
 	this.setAvaiableDocument=function(avDoc){
-		angular.copy(avDoc,cockpitModule_template.configuration.documents);	
+		angular.copy(avDoc,cockpitModule_template.configuration.documents);
+		for(var i=0; i<cockpitModule_template.configuration.documents; i++){
+			cockpitModule_template.configuration.documents[i].expanded = true;
+		}
 	}
 	this.addAvaiableDocument=function(avDoc){
+		avDoc.expanded = true;
 		cockpitModule_template.configuration.documents.push(avDoc);
 	}
-	
+
 	this.getDocumentsUsed = function(){
 		var array = [];
 		var result = {};
@@ -51,10 +58,10 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 		return array;
 
 	}
-	
+
 	this.loadDocumentList=function(searchValue, itemsPerPage, currentPageNumber, columnsSearch, columnOrdering, reverseOrdering, excludeItem, enableCheckForChanges){
 		var deferred = $q.defer();
-		
+
 		if(searchValue==undefined || searchValue.trim().lenght==0 ){
 			searchValue='';
 		}
@@ -68,7 +75,7 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 		if(excludeItem!=undefined && excludeItem.length>0){
 			item += "&objLabelNotIn="+excludeItem.join(",");
 		}
-		
+
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.promiseGet("2.0/documents", "listDocument",item).then(
 				function(response){
@@ -77,16 +84,16 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 					}
 					deferred.resolve({items:response.data.item,count:response.data.itemCount});
 				},
-					
+
 				function(response){
 						sbiModule_restServices.errorHandler(response.data,"")
 						deferred.reject();
 					}
-				) 
-	
+				)
+
 		return deferred.promise;
 	}
-	
+
 	this.addDocument=function(attachToElementWithId,container,multiple,autoAdd){
 		var deferred = $q.defer();
 		var eleToAtt=document.body;
@@ -117,9 +124,9 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 										angular.copy(data.items,$scope.documentList);
 										$scope.totalCount=data.count
 									});
-				    		
+
 				    	}
-				    	
+
 				    	$scope.closeDialog=function(){
 				    		mdPanelRef.close();
 				    		$scope.$destroy();
@@ -128,6 +135,7 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 				    	$scope.saveDocuments=function(){
 				    		if(multiple){
 				    			for(var i=0;i<$scope.tmpCurrentAvaiableDocument.length;i++){
+				    				$scope.tmpCurrentAvaiableDocument[i].expanded = true;
 				    				if(autoAdd){
 					    				ds.addAvaiableDocument($scope.tmpCurrentAvaiableDocument[i])
 					    			}else{
@@ -135,6 +143,7 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 					    			}
 				    			}
 				    		}else{
+				    			$scope.tmpCurrentAvaiableDocument.expanded = true;
 				    			if(autoAdd){
 				    				ds.addAvaiableDocument($scope.tmpCurrentAvaiableDocument)
 				    			}else{
@@ -142,7 +151,7 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 				    			}
 				    		}
 				    		deferred.resolve(angular.copy($scope.tmpCurrentAvaiableDocument));
-				    		
+
 				    		mdPanelRef.close();
 				    		$scope.$destroy();
 				    	}
@@ -159,15 +168,15 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 				    onRemoving :function(){
 				    }
 				  };
-		  
+
 		  $mdPanel.open(config);
 		  return deferred.promise;
 	}
-	
+
 	this.checkForChanges = function(docs){
 		var changed=[];
 		var removedDocumentParams=[];
-		
+
 		angular.forEach(cockpitModule_template.configuration.documents,function(item){
 			var actualDoc;
 			for(var i=0; i<docs.length;i++){
@@ -183,14 +192,14 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 			}else{
 				var addedParams=[];
 				var removedParams=[];
-				
+
 				//check if label changed
 				if(!angular.equals(actualDoc.DOCUMENT_LABEL,item.DOCUMENT_LABEL)){
 					var oldLabel=angular.copy(item.DOCUMENT_LABEL);
 					//update the label of document
 					this.push(sbiModule_translate.load("sbi.generic.label")+": "+item.DOCUMENT_LABEL+" -> "+actualDoc.DOCUMENT_LABEL)
 					item.DOCUMENT_LABEL=actualDs.DOCUMENT_LABEL;
-					
+
 					//update the dataset label in the associations
 					for(var i=0;i<cockpitModule_template.configuration.associations.length;i++){
 						var ass=cockpitModule_template.configuration.associations[i];
@@ -204,27 +213,27 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 							}
 						}
 					}
-									
+
 					//update the document in the filters
 					if(cockpitModule_template.configuration.filters.hasOwnProperty(oldLabel)){
 						cockpitModule_template.configuration.filters[item.DOCUMENT_LABEL] = cockpitModule_template.configuration.filters[oldLabel];
 						delete cockpitModule_template.configuration.filters[oldLabel];
 					}
 				}
-	
+
 				//check if name changed
 				if(!angular.equals(actualDoc.DOCUMENT_NAME,item.DOCUMENT_NAME)){
 					//update the name of document
 					this.push(sbiModule_translate.load("sbi.generic.name")+": "+item.DOCUMENT_NAME+" -> "+actualDoc.DOCUMENT_NAME)
 					item.DOCUMENT_NAME=actualDoc.DOCUMENT_NAME;
 				}
-				
+
 				//check if parameters changed
 				removedDocumentParams[item.DOCUMENT_LABEL] = [];
 				if(actualDoc.objParameter!=undefined && item.objParameter!=undefined){
 					var actualParameters = []; // create a copy of actual parameters that can be modified
 					angular.copy(actualDoc.objParameter, actualParameters);
-					
+
 					//check removed params, removing matching ones
 					for(var i=0; i<item.objParameter.length; i++){
 						var param = item.objParameter[i];
@@ -243,7 +252,7 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 				    				.replace("{0}", "<b>" + item.DOCUMENT_LABEL + ".$P{" + param.label + "}</b>"));
 				    	}
 					}
-					
+
 					for(var i=0; i<actualParameters.length; i++){
 						var actualParameter = actualParameters[i];
 						addedParams.push(actualParameter);
@@ -251,7 +260,7 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 								.replace("{0}", "<b>" + item.DOCUMENT_LABEL + ".$P{" + actualParameter.label + "}</b>"));
 					}
 				}
-				
+
 				//fix template parameters
 				for(var i=0; i<addedParams.length; i++){
 					var addedParam = addedParams[i];
@@ -267,12 +276,12 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 				}
 			}
 		},changed)
-		
+
 		var modifiedAssociations = 0;
 		angular.forEach(cockpitModule_template.configuration.associations,function(item){
 			//fix fields & description
 			var modifiedAssociation = 0;
-			
+
 			for(var i=item.fields.length-1; i>=0; i--){
 				var field = item.fields[i];
 				var paramName = (field.column.startsWith("$P{") && field.column.endsWith("}")) ? field.column.substring(3, field.column.length - 1) : field.column;
@@ -285,16 +294,16 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 					}else{
 						item.description = item.description.replace("==", "=");
 					}
-					
+
 					item.fields.splice(i, 1);
-					
+
 					modifiedAssociation = 1;
 				}
 			}
-			
+
 			modifiedAssociations += modifiedAssociation;
 		},changed)
-		
+
 		//remove degenerated associations
 		var removedAssociations = 0;
 		for(var i=cockpitModule_template.configuration.associations.length-1; i>=0; i--){
@@ -305,17 +314,17 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 				modifiedAssociations--;
 			}
 		}
-		
+
 		if(modifiedAssociations > 0){
 			changed.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.modifiedAssociations")
 					.replace("{0}", "" + modifiedAssociations));
 		}
-		
+
 		if(removedAssociations > 0){
 			changed.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.removedAssociations")
 					.replace("{0}", "" + removedAssociations));
 		}
-		
+
 		if(changed.length>0){
 			changed.push(sbiModule_translate.load("sbi.cockpit.load.documentsInformation.checkconfigandsave"));
 			sbiModule_messaging.showErrorMessage(changed.join("<br>"), sbiModule_translate.load("sbi.cockpit.load.documentsInformation.title"));

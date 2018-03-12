@@ -40,22 +40,34 @@ angular.module('cockpitModule')
 	                	elems.push(dsLabel);
 	                }
 
-                	function checkPlaceholders (counter){
-                		if (counter < elems.length){
-		                	cockpitModule_datasetServices.substitutePlaceholderValues(html, elems[counter], model).then(function(htmlReturned){
-		         				html = htmlReturned;
-		         				ele.html(html);
-		         				$compile(ele.contents())(scope);
-		         				counter++;
-		         				checkPlaceholders(counter);
-		         			},function(error){
-		         			});
-                		}else{
-                			 scope.ngModel.isReady=true; //view the content replaced
-                		}
-                	}
+	                scope.checkPlaceholders= function(counter, refreshBool){
 
-                	checkPlaceholders(0);
+	                	if(counter == 0 && refreshBool != undefined && refreshBool == true){
+	                		html = scope.ngModel.content.text;
+	                	}
+
+	                	if (counter < elems.length){
+	                		// call this only if reference is really contained
+	                		if(html.indexOf(elems[counter])>=0){
+	                			cockpitModule_datasetServices.substitutePlaceholderValues(html, elems[counter], model).then(function(htmlReturned){
+	                				html = htmlReturned;
+	                				ele.html(html);
+	                				$compile(ele.contents())(scope);
+	                				counter++;
+	                				scope.checkPlaceholders(counter);
+	                			},function(error){
+	                			});
+	                		}
+	                		else{
+	                			counter++;
+	                			scope.checkPlaceholders(counter);
+	                		}
+	                	}else{
+	                		scope.ngModel.isReady=true; //view the content replaced
+	                	}
+	                }
+
+	                scope.checkPlaceholders(0);
                 }else{
                 	 ele.html(html);
                      $compile(ele.contents())(scope);
@@ -97,7 +109,7 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 	};
 
 	$scope.refresh=function(element,width,height){
-		/*
+
 		var fontSize = 0;
 		var textLength = 0;
 		var c = document.createElement('canvas');
@@ -112,7 +124,9 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 
 		$scope.property.style["font-size"]= fontSize+"px";
 		$scope.property.style["line-height"]= fontSize+"px";
-		*/
+
+		$scope.checkPlaceholders(0, true);
+
 	};
 
 	$scope.editWidget=function(index){
@@ -122,8 +136,17 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 				attachTo:  angular.element(document.body),
 				controller: function($scope,finishEdit,sbiModule_translate,model,mdPanelRef,$mdToast){
 			    	  $scope.localModel = {};
+
+
+
 			    	  angular.copy(model,$scope.localModel);
 			    	  $scope.translate=sbiModule_translate;
+
+			    	  // trick to have drawn the text again when going into edit (could be altyered dataset, filters)
+			    	  //otherwiser watch on renderer does not start
+			    	  if($scope.localModel.content.text != undefined){
+			    		  $scope.localModel.content.text+=' ';
+			    	  }
 
 			    	  $scope.editorConfig = {
 			    	            sanitize: false,
@@ -142,14 +165,22 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 						  }
 					  }
 
-			    	  var changeDatasetFunction=function(dsId){
-			    		  var ds = cockpitModule_datasetServices.getDatasetById(dsId);
-			    		  if(ds){
-		    				$scope.localModel.datasets[ds.label] = ds.metadata.fieldsMeta;
-		    				$scope.localModel.viewDatasetsDett = {};
-		    				$scope.localModel.viewDatasetsDett[ds.label] = false;
-		    				$scope.localModel.functions=['SUM', 'AVG', 'MIN', 'MAX','COUNT'];
-		    				$scope.localModel.viewDatasets = true;
+			    	  var changeDatasetFunction=function(dsIdArray){
+			    		  if(dsIdArray != undefined){
+			    			  // clean datasets
+			    			  $scope.localModel.datasets = {};
+
+			    			  for(var i = 0; i< dsIdArray.length; i++){
+			    				  var dsId = dsIdArray[i];
+			    				  var ds = cockpitModule_datasetServices.getDatasetById(dsId);
+			    				  if(ds){
+			    					  $scope.localModel.datasets[ds.label] = ds.metadata.fieldsMeta;
+			    					  $scope.localModel.viewDatasetsDett = {};
+			    					  $scope.localModel.viewDatasetsDett[ds.label] = false;
+			    					  $scope.localModel.functions=['SUM', 'AVG', 'MIN', 'MAX','COUNT'];
+			    					  $scope.localModel.viewDatasets = true;
+			    				  }
+			    			  }
 			    		  }
 			    	  }
 
@@ -201,6 +232,28 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 
 
 	}
+
+
+	$scope.getOptions =function(){
+		var obj = {};
+
+//		if(!$scope.ngModel.settings.pagination.enabled || $scope.ngModel.settings.pagination.frontEnd){
+//			obj["page"] = -1;
+//			obj["itemPerPage"] = -1;
+//		}else{
+//			obj["page"] = $scope.ngModel.settings.page ? $scope.ngModel.settings.page - 1 : 0;
+//			obj["itemPerPage"] = $scope.ngModel.settings.pagination ? $scope.ngModel.settings.pagination.itemsNumber : -1;
+//		}
+//
+//		obj["columnOrdering"] = { name: $scope.ngModel.settings.sortingColumn };
+//		obj["reverseOrdering"] = ($scope.ngModel.settings.sortingOrder == 'ASC');
+
+		obj["type"] = $scope.ngModel.type;
+
+		return obj;
+
+	}
+
 
 };
 

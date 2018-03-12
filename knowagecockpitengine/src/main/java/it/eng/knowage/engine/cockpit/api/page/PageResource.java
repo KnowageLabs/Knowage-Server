@@ -18,6 +18,7 @@
 package it.eng.knowage.engine.cockpit.api.page;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -66,12 +67,12 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	private static final String OUTPUT_TYPE = "outputType";
 	private static final String PDF_PAGE_ORIENTATION = "pdfPageOrientation";
-	private static final String PDF_ZOOM = "pdfZoom";
+	private static final String PDF_ZOOM_FACTOR = "pdfZoomFactor";
 	private static final String PDF_WIDTH = "pdfWidth";
 	private static final String PDF_HEIGHT = "pdfHeight";
 	private static final String PDF_WAIT_TIME = "pdfWaitTime";
 	static private final List<String> PDF_PARAMETERS = Arrays
-			.asList(new String[] { OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME, PDF_ZOOM, PDF_PAGE_ORIENTATION });
+			.asList(new String[] { OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME, PDF_ZOOM_FACTOR, PDF_PAGE_ORIENTATION });
 	static private final List<String> JPG_PARAMETERS = Arrays.asList(new String[] { OUTPUT_TYPE });
 
 	static private Map<String, JSONObject> pages;
@@ -235,20 +236,45 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
 		Map<String, String> headers = new HashMap<String, String>(1);
 		headers.put("Authorization", "Direct " + encodedUserId);
+
+		RenderOptions renderOptions = RenderOptions.DEFAULT;
+
 		CustomHeaders customHeaders = new CustomHeaders(headers);
+		renderOptions = renderOptions.withCustomHeaders(customHeaders);
 
-		int pdfWidth = Integer.valueOf(request.getParameter(PDF_WIDTH));
-		int pdfHeight = Integer.valueOf(request.getParameter(PDF_HEIGHT));
-		ViewportDimensions dimensions = new ViewportDimensions(pdfWidth, pdfHeight);
+		ViewportDimensions dimensions = renderOptions.getDimensions();
 
-		long pdfRenderingWaitTime = 1000 * Long.valueOf(request.getParameter(PDF_WAIT_TIME));
+		int pdfWidth = Integer.valueOf(dimensions.getWidth());
+		String parPdfWidth = request.getParameter(PDF_WIDTH);
+		if (parPdfWidth != null) {
+			pdfWidth = Integer.valueOf(parPdfWidth);
+		}
 
-		RenderOptions renderOptions = RenderOptions.DEFAULT.withCustomHeaders(customHeaders).withDimensions(dimensions)
-				.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
+		int pdfHeight = Integer.valueOf(dimensions.getHeight());
+		String parPdfHeight = request.getParameter(PDF_HEIGHT);
+		if (parPdfHeight != null) {
+			pdfHeight = Integer.valueOf(parPdfHeight);
+		}
+
+		dimensions = new ViewportDimensions(pdfWidth, pdfHeight);
+		renderOptions = renderOptions.withDimensions(dimensions);
+
+		String parPdfRenderingWaitTime = request.getParameter(PDF_WAIT_TIME);
+		if (parPdfRenderingWaitTime != null) {
+			long pdfRenderingWaitTime = 1000 * Long.valueOf(parPdfRenderingWaitTime);
+			renderOptions = renderOptions.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
+		}
+
+		String parPdfZoomFactor = request.getParameter(PDF_ZOOM_FACTOR);
+		if (parPdfZoomFactor != null) {
+			Double pdfZoomFactor = Double.valueOf(parPdfZoomFactor);
+			renderOptions = renderOptions.withZoomFactor(pdfZoomFactor);
+		}
+
 		return renderOptions;
 	}
 
-	private String getRequestUrlForPdfExport(HttpServletRequest request) {
+	private String getRequestUrlForPdfExport(HttpServletRequest request) throws UnsupportedEncodingException {
 		String requestURL = request.getRequestURL().toString();
 		String hostURL = GeneralUtilities.getSpagoBiHost();
 		String serviceURL = getServiceHostUrl();
@@ -261,12 +287,12 @@ public class PageResource extends AbstractCockpitEngineResource {
 				String[] values = parameterMap.get(parameter);
 				if (values != null && values.length > 0) {
 					sb.append(sep);
-					sb.append(parameter);
+					sb.append(URLEncoder.encode(parameter, "UTF-8"));
 					sb.append("=");
 					if (parameter.equals(SpagoBIConstants.SBI_HOST)) {
-						sb.append(getServiceHostUrl());
+						sb.append(URLEncoder.encode(getServiceHostUrl(), "UTF-8"));
 					} else {
-						sb.append(values[0]);
+						sb.append(URLEncoder.encode(values[0], "UTF-8"));
 					}
 					sep = "&";
 				}

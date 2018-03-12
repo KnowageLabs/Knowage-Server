@@ -16,73 +16,121 @@
 				<div class="kn-info" flex=80>{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.filters.info")}}</div>
 			</div>
 			
- 			<!-- Cycle on all filters -->
-			<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="filterObj in ngModelShared.filters" >     			
-            	<label flex=20 class="filterLabel">
-            		<md-tooltip md-delay="1000">{{filterObj.columnName}}</md-tooltip>
-            		{{filterObj.columnName}}
-            	</label>
+			
+			<div layout="row" layout-align="left center">
+			    <label>{{translate.load("sbi.cockpit.widgets.filtersConfiguration.addButtonLabel")}}</label>
+			   	<md-button  class="md-icon-button">
+            		<md-icon md-font-icon="fa fa-plus" ng-click="addNewFilter()" ng-show="newFilterAddMode == false && newFilterEditMode == false"></md-icon>
+            		<!--  <md-tooltip md-delay="1000" >Add Filter</md-tooltip> -->
+            	</md-button>
+			</div>			
+			
+			<!-- New Filter definition Row -->
+			<div layout="row" layout-align="left center" ng-show="newFilterAddMode == true || newFilterEditMode == true">
+			
+	      		<md-input-container flex=15 >
+	                <label>{{translate.load("sbi.cockpit.dataset")}}</label>
 
-	 			<!-- Operator on combo basing on filter type: String, Number, Date-->
-	      		<md-input-container flex=40 ng-show="filterObj.type == 'java.lang.String'">
-	                <label>Operator</label>
-	             	<md-select ng-model="filterObj.filterOperator" >
+	             	<md-select ng-model="newFilter.dataset" ng-change=newFilterChangeDatasetUpdateColumns() ng-disabled="newFilterAddMode == false" >
+	                    <md-option ng-repeat="ds in newFilterAllWidgetDS" ng-value="ds.label">{{ds.label}}</md-option>
+	                </md-select>   
+
+	            </md-input-container>
+	            
+				<md-input-container flex=20>
+	                <label>{{translate.load("sbi.cockpit.widgets.selector.column")}}</label>
+	             	<md-select ng-model="newFilter.colName" ng-disabled="newFilterAddMode == false" ng-change=newFilterChangeColumnUpdateType(col)>
+	                    <md-option ng-repeat="col in newFilterColumnDS" ng-value="col.name">{{col.alias}}</md-option>
+	                </md-select>   
+	            </md-input-container>	
+	            
+	            
+			<!-- Operator on combo basing on filter type: String, Number, Date-->
+	      		<md-input-container flex=15 ng-show="newFilter.type == 'java.lang.String'">
+	                <label>{{translate.load("sbi.cockpit.widgets.filtersConfiguration.operator")}}</label>
+	             	<md-select ng-model="newFilter.filterOperator" ng-disabled="newFilterAddMode == false && newFilterEditMode == false" >
 	                    <md-option ng-repeat="op in operatorsTypeString" ng-value="op">{{op}}</md-option>
 	                </md-select>   
 	            </md-input-container>
             
-				<md-input-container flex=40  ng-show="filterObj.type == 'java.lang.Integer' || filterObj.type == 'java.lang.Double' || filterObj.type == 'java.lang.Float' || filterObj.type == 'java.math.BigDecimal' || filterObj.type == 'java.lang.Long' || filterObj.type == 'java.lang.BigInteger' || filterObj.type == 'java.lang.Byte' || filterObj.type == 'java.lang.Short'">
-					<label>Operator</label>
-					<md-select ng-model="filterObj.filterOperator" >
+				<md-input-container flex=15  ng-show="newFilter.type == 'java.lang.Integer' || newFilter.type == 'java.lang.Double' || newFilter.type == 'java.lang.Float' || newFilter.type == 'java.math.BigDecimal' || newFilter.type == 'java.lang.Long' || newFilter.type == 'java.lang.BigInteger' || newFilter.type == 'java.lang.Byte' || newFilter.type == 'java.lang.Short'">
+					<label>{{translate.load("sbi.cockpit.widgets.filtersConfiguration.operator")}}</label>
+					<md-select ng-model="newFilter.filterOperator" ng-disabled="newFilterAddMode == false && newFilterEditMode == false">
 					    <md-option  ng-repeat="op in operatorsTypeNumber" ng-value="op">{{op}}</md-option>
 					</md-select>    
 				</md-input-container>
             
-				<md-input-container  flex=40 ng-show="filterObj.type.toLowerCase().indexOf('date') > -1 || filterObj.type.toLowerCase().indexOf('timestamp') > -1">
-				     <label>Operator</label>
-				     <md-select ng-model="filterObj.filterOperator" >
+				<md-input-container  flex=15 ng-show="newFilter.type.toLowerCase().indexOf('date') > -1 || newFilter.type.toLowerCase().indexOf('timestamp') > -1">
+				     <label>{{translate.load("sbi.cockpit.widgets.filtersConfiguration.operator")}}</label>
+				     <md-select ng-model="newFilter.filterOperator" ng-disabled="newFilterAddMode == false && newFilterEditMode == false">
 				         <md-option  ng-repeat="op in operatorsTypeDate" ng-value="op">{{op}}</md-option>
 				     </md-select>    
 				</md-input-container>
- 
- 				<!-- Optional 0, 1 or 2 operands basing on chosen operator -->           
-	            <md-input-container flex=35 ng-show="filterObj.filterOperator == '=' 
-                			|| filterObj.filterOperator == '!=' 
-                			|| filterObj.filterOperator == '>' 
-                			|| filterObj.filterOperator == '<'
-                			|| filterObj.filterOperator == '<='
-                			|| filterObj.filterOperator == '>='
-                			|| filterObj.filterOperator == 'like'
-                			|| filterObj.filterOperator == 'IN'
+	            
+
+				<!-- Optional 0, 1 or 2 operands basing on chosen operator -->           
+	            <md-input-container flex=35 ng-show="
+	            			newFilter.filterOperator == '=' 
+                			|| newFilter.filterOperator == '!=' 
+                			|| newFilter.filterOperator == '>' 
+                			|| newFilter.filterOperator == '<'
+                			|| newFilter.filterOperator == '<='
+                			|| newFilter.filterOperator == '>='
+                			|| newFilter.filterOperator == 'like'
+                			|| newFilter.filterOperator == 'IN'
                 			"> 
-	                <label ng-show="filterObj.type.toLowerCase().indexOf('date') == -1 && filterObj.type.toLowerCase().indexOf('timestamp') == -1">{{translate.load("Value")}}</label>
-	                <label ng-show="filterObj.type.toLowerCase().indexOf('date') > -1">{{translate.load("Value")}}: yyyy-MM-dd hh:mm:ss</label>
-	                <label ng-show="filterObj.type.toLowerCase().indexOf('timestamp') > -1">{{translate.load("Value")}}: yyyy-MM-dd hh:mm:ss.SSS</label>	
-	                <input   maxlength="100" type="text" ng-model="filterObj.filterVals[0]"> 
+	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') == -1 && newFilter.type.toLowerCase().indexOf('timestamp') == -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.value")}}</label>
+	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.value")}}: yyyy-MM-dd hh:mm:ss</label>
+	                <label ng-show="newFilter.type.toLowerCase().indexOf('timestamp') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.value")}}: yyyy-MM-dd hh:mm:ss.SSS</label>	
+	                <input   maxlength="100" type="text" ng-model="newFilter.filterVal1" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
 	      		</md-input-container>
       		
-				<md-input-container flex=35 ng-show="filterObj.filterOperator == 'range'"> 
-					<label ng-show="filterObj.type.toLowerCase().indexOf('date') == -1 && filterObj.type.toLowerCase().indexOf('timestamp') == -1">{{translate.load("From")}}</label>
-	                <label ng-show="filterObj.type.toLowerCase().indexOf('date') > -1">{{translate.load("From")}}: yyyy-MM-dd hh:mm:ss</label>
-	                <label ng-show="filterObj.type.toLowerCase().indexOf('timestamp') > -1">{{translate.load("From")}}: yyyy-MM-dd hh:mm:ss.SSS</label>
-					<input maxlength="100" type="text" ng-model="filterObj.filterVals[0]"> 
+				<md-input-container flex=35 ng-show="newFilter.filterOperator == 'range'"> 
+					<label ng-show="newFilter.type.toLowerCase().indexOf('date') == -1 && newFilter.type.toLowerCase().indexOf('timestamp') == -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.from")}}</label>
+	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.from")}}: yyyy-MM-dd hh:mm:ss</label>
+	                <label ng-show="newFilter.type.toLowerCase().indexOf('timestamp') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.from")}}: yyyy-MM-dd hh:mm:ss.SSS</label>
+					<input maxlength="100" type="text" ng-model="newFilter.filterVal1" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
 				</md-input-container>
 				
-                <md-input-container  flex=35 ng-show="filterObj.filterOperator == 'range'"> 
-					<label ng-show="filterObj.type.toLowerCase().indexOf('date') == -1 && filterObj.type.toLowerCase().indexOf('timestamp') == -1">{{translate.load("To")}}</label>
-	                <label ng-show="filterObj.type.toLowerCase().indexOf('date') > -1">{{translate.load("To")}}: yyyy-MM-dd hh:mm:ss</label>
-	                <label ng-show="filterObj.type.toLowerCase().indexOf('timestamp') > -1">{{translate.load("To")}}: yyyy-MM-dd hh:mm:ss.SSS</label>
-	                <input maxlength="100" type="text" ng-model="filterObj.filterVals[1]"> 
+                <md-input-container  flex=35 ng-show="newFilter.filterOperator == 'range'"> 
+					<label ng-show="newFilter.type.toLowerCase().indexOf('date') == -1 && newFilter.type.toLowerCase().indexOf('timestamp') == -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.to")}}</label>
+	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.to")}}: yyyy-MM-dd hh:mm:ss</label>
+	                <label ng-show="newFilter.type.toLowerCase().indexOf('timestamp') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.to")}}: yyyy-MM-dd hh:mm:ss.SSS</label>
+	                <input maxlength="100" type="text" ng-model="newFilter.filterVal2" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
             	</md-input-container>
             	
             	<div flex></div>
             	
             	<md-button  class="md-icon-button">
-            		<md-icon md-font-icon="fa fa-eraser" ng-click="eraseFilter(filterObj.colName)"></md-icon>
-            		<md-tooltip md-delay="1000" >Clear Filter</md-tooltip>
-            	</md-button>      		
-      			
-			</div>	
+            		<md-icon md-font-icon="fa fa-save" ng-click="saveNewFilter()" ng-show="newFilterAddMode == true || newFilterEditMode == true"></md-icon>
+            		<md-tooltip md-delay="1000" >{{translate.load("sbi.cockpit.widgets.filtersConfiguration.saveNewFilter")}}</md-tooltip>
+            	</md-button>
+            	
+            	<md-button  class="md-icon-button">
+            		<md-icon md-font-icon="fa fa-eraser" ng-click="eraseNewFilter()"></md-icon>
+            		<md-tooltip md-delay="1000" >{{translate.load("sbi.cockpit.widgets.filtersConfiguration.clearNewFilter")}}</md-tooltip>
+            	</md-button> 
+
+		            
+	            	
+			</div> 
+			
+			<div layout="row" layout-align="left center">
+			      <angular-table flex 
+			      			id='cockpitFilters' 
+			      			ng-model="ngModelShared.filters"
+							columns='filtersTableColumns'
+							show-search-bar=false
+							no-pagination=true 
+							multi-select= false 
+							selected-item="columnSelected"
+							highlights-selected-item=true 
+							click-function = "selectRowFilter(row,column,listId,index,evt,columnName)"
+							speed-menu-option= actionsOnSelectionFilters
+		/> 
+		
+		</div>
+
 		</md-card-content>
 	</md-card>
 	

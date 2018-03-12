@@ -238,7 +238,6 @@
  	
  	## Axises selection
     #set($axisList = $chart.AXES_LIST.AXIS)
-
     #set($xAxisList = {}) ## X Axises list container
     #set($yAxisList = {}) ## Y Axises list container
     #set($xAxisPositions = {}) ## X Axises integer positions list, for series references
@@ -255,44 +254,13 @@
 	 	#end
 	 	
 	 	#if($axis.type == 'Serie')
+	 	
 	 		#set($workAroundNoPrint = $yAxisList.put($axis.alias , $axis))
 	 		#set($workAroundNoPrint = $yAxisPositions.put($axis.alias , $yAxisCounter))
  		
 	 		#set($yAxisCounter = $yAxisCounter + 1)
 	 	#end
 	#end
-	
-	xAxis:
-	 #foreach($xAxisKey in $xAxisList.keySet())
-	 #set ($xAxis = $xAxisList[$xAxisKey])
-	 {
-		labels:{
-				 
-			 #if( $xAxis.style != '' ) 
-        		        		
-        		style:{
-	        	#foreach($styleName in $xAxis.style.keySet())
-	        		#set ($axisStyle = $xAxis.style[$styleName])
-	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
-	        			fontStyle: '$axisStyle',
-					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
-	        			textDecoration: 'underline',
-					#elseif($styleName == 'align')
-	        			#set($labelAlign=$axisStyle)
-	        		#elseif($styleName == 'rotate')
-	        			#set($rotation=$axisStyle)		        			
-					#else		        			
-	        			$styleName: '$axisStyle',
-	        		#end
-	        	#end
-        		},  
-        		
-        	#end
-		 },	 
-			    
-		 type: 'category',
-	 },
-	 #end
 	
 	yAxis: 
     ## START Serie add
@@ -311,8 +279,11 @@
 	        			textDecoration: 'underline',
 					#elseif($styleName == 'align')
 	        			#set($labelAlign=$axisStyle)
-	        		#elseif($styleName == 'rotate')
-	        			#set($rotation=$axisStyle)		        			
+	        		#elseif($styleName == 'rotate' && $axisStyle)
+	        			#set($rotation=$axisStyle)
+	        			#if($rotation!="")
+						rotation: $rotation,
+						#end		        			
 					#else		        			
 	        			$styleName: '$axisStyle',
 	        		#end
@@ -321,7 +292,28 @@
         	#end
         	
 	 	},
-	 	
+	 	#if( $yAxis.STYLEVALUE )     
+	 	labelValues:{
+    				 
+			#if( $yAxis.STYLEVALUE != '' )         		
+        		style:{
+	        	#foreach($styleName in $yAxis.STYLEVALUE.keySet())
+	        		#set ($axisStyle = $yAxis.STYLEVALUE[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)	        		       			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		}
+        	#end
+        	
+	 	},
+	 	#end
 	 	type: 'serie'
     },
 	#end

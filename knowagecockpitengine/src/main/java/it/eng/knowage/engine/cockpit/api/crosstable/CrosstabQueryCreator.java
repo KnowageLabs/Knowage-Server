@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,13 +33,14 @@ import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Creates the crosstab query
- * 
+ *
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- * 
+ *
  */
 public class CrosstabQueryCreator {
 
@@ -50,8 +51,8 @@ public class CrosstabQueryCreator {
 
 	public static final String DEFAULT_ORDER_TYPE = "ASC";
 
-	public static String getCrosstabQuery(CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor,
-			List<WhereField> whereFields, IDataSource dataSource) {
+	public static String getCrosstabQuery(CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor, List<WhereField> whereFields,
+			IDataSource dataSource) {
 		logger.debug("IN");
 		StringBuffer buffer = new StringBuffer();
 
@@ -74,8 +75,8 @@ public class CrosstabQueryCreator {
 		buffer.append(" FROM " + descriptor.getTableName() + " ");
 	}
 
-	private static void putSelectClause(StringBuffer toReturn, CrosstabDefinition crosstabDefinition,
-			IDataSetTableDescriptor descriptor, IDataSource dataSource) {
+	private static void putSelectClause(StringBuffer toReturn, CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor,
+			IDataSource dataSource) {
 		logger.debug("IN");
 		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
 		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
@@ -116,8 +117,7 @@ public class CrosstabQueryCreator {
 					toReturn.append(AggregationFunctions.COUNT_FUNCTION.apply("*"));
 				} else {
 					logger.error("Entity id " + aMeasure.getEntityId() + " not found on the base query!!!!");
-					throw new RuntimeException(
-							"Entity id " + aMeasure.getEntityId() + " not found on the base query!!!!");
+					throw new RuntimeException("Entity id " + aMeasure.getEntityId() + " not found on the base query!!!!");
 				}
 			} else {
 				if (function != AggregationFunctions.NONE_FUNCTION) {
@@ -135,8 +135,8 @@ public class CrosstabQueryCreator {
 		logger.debug("OUT");
 	}
 
-	private static void putGroupByClause(StringBuffer toReturn, CrosstabDefinition crosstabDefinition,
-			IDataSetTableDescriptor descriptor, IDataSource dataSource) {
+	private static void putGroupByClause(StringBuffer toReturn, CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor,
+			IDataSource dataSource) {
 		logger.debug("IN");
 		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
 		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
@@ -174,8 +174,8 @@ public class CrosstabQueryCreator {
 
 	}
 
-	private static void putOrderByClause(StringBuffer toReturn, CrosstabDefinition crosstabDefinition,
-			IDataSetTableDescriptor descriptor, IDataSource dataSource) {
+	private static void putOrderByClause(StringBuffer toReturn, CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor,
+			IDataSource dataSource) {
 		logger.debug("IN");
 		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
 		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
@@ -239,8 +239,7 @@ public class CrosstabQueryCreator {
 	// return toReturn;
 	// }
 
-	private static void putWhereClause(StringBuffer toReturn, List<WhereField> whereFields,
-			IDataSetTableDescriptor descriptor, IDataSource dataSource) {
+	private static void putWhereClause(StringBuffer toReturn, List<WhereField> whereFields, IDataSetTableDescriptor descriptor, IDataSource dataSource) {
 		String boundedValue, leftValue, columnName;
 		String[] rightValues;
 
@@ -262,8 +261,7 @@ public class CrosstabQueryCreator {
 							boundedValue = "0";
 						}
 					}
-					toReturn.append(
-							AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource) + " = " + boundedValue);
+					toReturn.append(AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource) + " = " + boundedValue);
 				} else {
 					toReturn.append(AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource) + " IN (");
 					for (int j = 0; j < rightValues.length; j++) {
@@ -308,17 +306,15 @@ public class CrosstabQueryCreator {
 			}
 			operandValueToBoundDate = new Date(time);
 			String dialect = dataSource.getHibDialectClass();
-			if (dialect == null) {
-				dialect = dataSource.getHibDialectName();
-			}
+			Assert.assertNotNull(dialect, "Dialect cannot be null");
 			boundedValue = composeStringToDt(dialect, operandValueToBoundDate);
 		}
 
 		return boundedValue;
 	}
 
-	public static String getTableQuery(List<String> fieldsName, boolean distinct, IDataSetTableDescriptor descriptor,
-			List<WhereField> whereFields, String orderBy, List<String> orderByFieldsName) {
+	public static String getTableQuery(List<String> fieldsName, boolean distinct, IDataSetTableDescriptor descriptor, List<WhereField> whereFields,
+			String orderBy, List<String> orderByFieldsName) {
 		logger.debug("IN");
 
 		String query = getTableQuery(fieldsName, distinct, descriptor, whereFields, descriptor.getDataSource());
@@ -330,8 +326,8 @@ public class CrosstabQueryCreator {
 		return toReturn;
 	}
 
-	public static String getTableQuery(List<String> fieldsName, boolean distinct, IDataSetTableDescriptor descriptor,
-			List<WhereField> whereFields, IDataSource dataSource) {
+	public static String getTableQuery(List<String> fieldsName, boolean distinct, IDataSetTableDescriptor descriptor, List<WhereField> whereFields,
+			IDataSource dataSource) {
 		logger.debug("IN");
 		StringBuffer buffer = new StringBuffer();
 
@@ -346,8 +342,8 @@ public class CrosstabQueryCreator {
 		return toReturn;
 	}
 
-	private static void putSelectClause(StringBuffer buffer, List<String> fieldsName, boolean distinct,
-			IDataSetTableDescriptor descriptor, IDataSource dataSource) {
+	private static void putSelectClause(StringBuffer buffer, List<String> fieldsName, boolean distinct, IDataSetTableDescriptor descriptor,
+			IDataSource dataSource) {
 
 		logger.debug("IN");
 
@@ -372,8 +368,8 @@ public class CrosstabQueryCreator {
 
 	}
 
-	private static void putOrderByClause(StringBuffer buffer, List<String> fieldsName, String orderBy,
-			IDataSetTableDescriptor descriptor, IDataSource dataSource) {
+	private static void putOrderByClause(StringBuffer buffer, List<String> fieldsName, String orderBy, IDataSetTableDescriptor descriptor,
+			IDataSource dataSource) {
 
 		logger.debug("IN");
 
@@ -455,11 +451,9 @@ public class CrosstabQueryCreator {
 				}
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
 				/*
-				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS
-				 * DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + "
-				 * (Date,Format 'dd/mm/yyyy')) As Date) because Hibernate does
-				 * not recognize (and validate) those SQL functions. Therefore
-				 * we must use a predefined date format (yyyy-MM-dd).
+				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy'))
+				 * As Date) because Hibernate does not recognize (and validate) those SQL functions. Therefore we must use a predefined date format
+				 * (yyyy-MM-dd).
 				 */
 				try {
 					DateFormat dateFormat;

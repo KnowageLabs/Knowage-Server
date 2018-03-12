@@ -847,18 +847,11 @@
 		
 		#set($enableValues = $chart.VALUES.SERIE.showValue)
 		#if($chart.VALUES.SERIE.get(0))
+		#set($relatedSerie = $chart.VALUES.SERIE.get(0))
 		#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
 		#end
 		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine, $chart.groupSeries, $chart.groupSeriesCateg))
-            categories: [
-            	 #foreach($valueKey in $map.keySet())
-				 #if($valueKey!="null")
-					#foreach($el in  $map.get($valueKey))
-						'$el.name',
-					#end
-				#end
-				#end
-            ]
+     
 		#end
 		
 	},
@@ -1121,8 +1114,6 @@
 	    	
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
-	    		$datasettransformer.print($relatedSerieColName)
-	    			$datasettransformer.print($dataColumnsMapper)
 	    	  	#if($chart.isCockpitEngine != 'true')
 	    	  	#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 	    	  	#end
@@ -1192,19 +1183,19 @@
 						dataLabels: 
 						{
 		                    enabled: $relatedSerieShowValue,
-		                    
+		                   
 		                    #set ($postfixValueAsString = '')
-		                    
+		                     
 		                    #if ($relatedSerie.postfixChar != '')
 			                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
 							#end
-		                    
+							
 		                    #set ($prefixValueAsString = '')
 		                    
 		                    #if ($relatedSerie.prefixChar != '')
 			                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
 							#end
-		                    
+		                   
 		                    #set ($precisionValueAsString = '')
 		                    
 		                    #if ($relatedSerie.precision != '')
@@ -1228,6 +1219,10 @@
 			                    var newValue = "";		                    
 			                    
 		                      	var scaleFactor = '${relatedSerie.scaleFactor}';
+		                      	
+		                      	var prefixValue = '${prefixValueAsString}';
+		                      	var sufixValue = '${postfixValueAsString}';
+		                      	
 		                      	
 		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
 		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
@@ -1266,7 +1261,7 @@
 		                      	
 		                      	}						
 	                        		                       
-	                          	return newValue;
+	                          	return prefixValue + ' ' + newValue + ' ' + sufixValue;
 			            	},
 		                      
 	                    
@@ -1276,7 +1271,7 @@
 			#if($seriePrefix != '')
 				valuePrefix: '$seriePrefix',
 			#end
-				
+				 
 			#set($seriePostfix = $relatedSerie.postfixChar)
 			#if($seriePostfix != '')
 				valueSuffix: '$seriePostfix',
@@ -1335,14 +1330,97 @@
 			data: [
 				#foreach($el in  $map.get($valueKey))	
 				{
-					y: $el.y,
+					#if($el.y!="")
+						y: $el.y,
+					#end
 					name: '$el.name'},
 				#end	
 			], 
-				dataLabels: 
+						dataLabels: 
 						{
 		                    enabled: $enableValues,
-		                    },
+		                    
+		                    #set ($postfixValueAsString = '')
+		                    
+		                    #if ($relatedSerie.postfixChar != '')
+			                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
+							#end
+		                    
+		                    #set ($prefixValueAsString = '')
+		                    
+		                    #if ($relatedSerie.prefixChar != '')
+			                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
+							#end
+		                    
+		                    #set ($precisionValueAsString = '')
+		                    
+		                    #if ($relatedSerie.precision != '')
+			                    #set ($precisionValueAsString = ':,.' + $relatedSerie.precision + 'f')
+		                   	#else
+		                   		#set ($precisionValueAsString = ':,.0f')
+							#end
+		                   
+		                   labelFormat: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}',			                  
+                            		             
+                           	/* 
+		                    	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+		                    	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+		                    	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
+		                    	is included into the formatting of the number that is going to be displayed, as well as precision.
+		                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+                     		*/                		                    
+			               	formatter: function() {
+			                     
+			                    var value = this.y;	
+			                    var newValue = "";		                    
+			                    
+		                      	var scaleFactor = '${relatedSerie.scaleFactor}';
+		                      	
+		                      	var prefixValue = '${prefixValueAsString}';
+		                      	var sufixValue = '${postfixValueAsString}';
+		                      	
+		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+		                      	
+		                      	var precision = '${relatedSerie.precision}';
+		                      	
+		                      	switch(scaleFactor.toUpperCase()) {
+		                      	
+		                      		case "EMPTY":
+		                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
+		                      			newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
+		                      			break;
+		                      		case "K":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";	
+		                      			break;
+		                      		case "M":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";	
+		                      			break;
+		                      		case "G":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+		                      			break;
+	                      			case "T":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+		                      			break;
+		                      		case "P":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+		                      			break;
+	                      			case "E":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+		                      			break;
+	                      			default:
+	                      				/* The same as for the case when user picked "no selection" - in case when the chart 
+	                      				template does not contain the scale factor for current serie */
+	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
+		                      			break;
+		                      	
+		                      	}						
+	                        		                       
+	                          	return prefixValue + ' ' + newValue + ' ' + sufixValue;
+			            	},
+		                      
+	                    
+	                	},
 		},
 		#end
 	#end

@@ -60,7 +60,7 @@ angular.module('chartRendererModule')
 				scope.chartTemplate;
 				scope.chartInitializer;
 
-				scope.renderChart = function(chartConf){
+				scope.renderChart = function(chartConf, jsonData){
 					var locale = sbiModule_config.curr_language + "-" + sbiModule_config.curr_country;
 					if(scope.chartConf){
 						scope.chartInitializer.initChartLibrary(element[0],	'drillup', sbiModule_config.dec, sbiModule_config.thous);
@@ -74,8 +74,8 @@ angular.module('chartRendererModule')
 						renderObject.handleCockpitSelection = handleCockpitSelection;
 						renderObject.locale = locale;
 						renderObject.widgetData = scope.widgetData;
-						
-						scope.chartInitializer.renderChart(renderObject);
+
+						scope.chartInitializer.renderChart(renderObject, jsonData);
 					}
 				}
 
@@ -85,19 +85,19 @@ angular.module('chartRendererModule')
 								jsonChartTemplate.readChartTemplateForCockpit(chartTemplate,false,jsonData)
 								.then(function(data){
 									scope.chartConf = eval("(" + data + ")");
-									scope.renderChart(scope.chartConf);
+									scope.renderChart(scope.chartConf, jsonData);
 								})
 							}
 							else {
 								scope.chartConf = eval("(" + dataAndChartConf.chartConf + ")");
-								scope.renderChart(scope.chartConf);
+								scope.renderChart(scope.chartConf, jsonData);
 							}
 
 						}else{
 							jsonChartTemplate.readChartTemplate(chartTemplate,false,datesetLabel,jsonData)
 							.then(function(data){
 								scope.chartConf = eval("(" + data + ")");
-								scope.renderChart(scope.chartConf);
+								scope.renderChart(scope.chartConf, jsonData);
 							});
 						}
 				}
@@ -109,7 +109,7 @@ angular.module('chartRendererModule')
 
 				}
 
-			scope.$on('refresh',function(event,data,isRealtime,changedChartType,chartConf){		
+			scope.$on('refresh',function(event,data,isRealtime,changedChartType,chartConf){
 				if(scope.updateble){
 					var dataForSending = isRealtime ? data : eval("(" + data.jsonData + ")");
 					if(scope.chartInitializer != undefined && scope.chartInitializer.updateData){
@@ -125,12 +125,12 @@ angular.module('chartRendererModule')
 					}
 				}
 			})
-			
+
 			scope.$on('changeChartType',function(){
 				scope.chartTemplate =  ChartUpdateService.getTemplate( scope.chartTemplate);
 				scope.$emit('changedChartType',scope.chartTemplate);
 			})
-			
+
 			scope.$on('init',function(event,data, isRealtime,changedChartType,chartConf){
 
 				var lib = getChartExecutionLib(scope.chartTemplate);

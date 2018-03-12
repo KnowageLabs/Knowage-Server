@@ -1083,12 +1083,18 @@ function cockpitWidgetControllerFunction(
 	}
 	$scope.chartTypes = [];
 	$scope.showChartTypes = function(ev,widgetName){
+		if(!$scope.ngModel.content.chartTemplateOriginal){
+			$scope.ngModel.content.chartTemplateOriginal = angular.copy($scope.ngModel.content.chartTemplate);
+			
+		}else{
+			$scope.ngModel.content.chartTemplate = angular.copy($scope.ngModel.content.chartTemplateOriginal);
+		}
 		$scope.chartTypes.length = 0;
 		var serie = $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE;
 		var numOfCateg = cockpitModule_widgetServices.checkNumOfCategory($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY);
 		var minMaxCategoriesSeries = cockpitModule_widgetServices.createCompatibleCharts();
 		for (var attrname in minMaxCategoriesSeries.serie.min) {
-			if((minMaxCategoriesSeries.serie.min[attrname] <= serie.length) && (minMaxCategoriesSeries.categ.min[attrname] <= numOfCateg) && attrname!=$scope.ngModel.content.chartTemplate.CHART.type.toLowerCase()){
+			if((minMaxCategoriesSeries.serie.min[attrname] <= serie.length) && (minMaxCategoriesSeries.categ.min[attrname] <= numOfCateg) ){
 				$scope.chartTypes.push(attrname)
 			}
 		}

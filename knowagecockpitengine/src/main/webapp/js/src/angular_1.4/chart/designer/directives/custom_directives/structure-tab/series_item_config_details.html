@@ -116,7 +116,7 @@ ng-if="(selectedChartType != 'chord' && selectedChartType != 'heatmap' && select
 
 <!-- Precision of the displayed series value -->
 <div layout="row" flex layout-margin
-ng-if="selectedChartType != 'heatmap' && selectedChartType != 'treemap'">
+ng-if="selectedChartType != 'treemap'">
 	<md-input-container class="md-block" flex>
 		<label>{{translate.load('sbi.chartengine.designer.precision')}}</label>
 		<input type="number" name="height" ng-model="detailsForSeriesItem.precision" min="0"/> 
@@ -125,7 +125,7 @@ ng-if="selectedChartType != 'heatmap' && selectedChartType != 'treemap'">
 
 <!-- Prefix for the series item tooltip  -->
 <div layout="row" flex layout-margin
-ng-if="(selectedChartType != 'heatmap' && selectedChartType != 'treemap') && disableHtmlElementForChartJs()">
+ng-if="(selectedChartType != 'treemap') && disableHtmlElementForChartJs()">
 	<md-input-container class="md-block" flex>
 		<label>{{translate.load('sbi.chartengine.designer.prefixtext')}}</label>
 		<input name="prefix" ng-model="detailsForSeriesItem.prefixChar" /> 
@@ -134,7 +134,7 @@ ng-if="(selectedChartType != 'heatmap' && selectedChartType != 'treemap') && dis
 
 <!-- Suffix for the series item tooltip  -->
 <div layout="row" flex layout-margin
-ng-if="(selectedChartType != 'heatmap' && selectedChartType != 'treemap') && disableHtmlElementForChartJs()">
+ng-if="(selectedChartType != 'treemap') && disableHtmlElementForChartJs()">
 	<md-input-container class="md-block" flex>
 		<label>{{translate.load('sbi.chartengine.designer.postfixtext')}}</label>
 		<input name="suffix" ng-model="detailsForSeriesItem.postfixChar"/> 

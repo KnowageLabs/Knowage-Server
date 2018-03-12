@@ -1,0 +1,16 @@
+<div layout="row" layout-align="start center">
+	<md-input-container class="md-block" flex>
+		<label>{{translate.load('sbi.cockpit.dataset')}}</label>
+		<md-select ng-model="ngModel" multiple ng-change="onChange({dsIdArray:ngModel});" md-on-close="searchTerm =''" data-md-container-class="selectdemoSelectHeader">
+			<md-select-header class="demo-select-header">
+				<input ng-model="searchTerm" type="search" ng-keydown="$event.stopPropagation()" placeholder="Search for a dataset.." class="demo-header-searchbox _md-text">
+			</md-select-header>
+			<md-optgroup label="dataset">
+				<md-option ng-value="item.id.dsId" ng-repeat="item in availableDatasets | filter:searchTerm">{{item.name}} ({{item.label}})</md-option>
+			</md-optgroup>
+		</md-select>
+	</md-input-container>	
+	<md-button class="md-icon-button" ng-click="addNewDataset()">
+		<md-icon md-font-icon="fa fa-plus"></md-icon>
+	</md-button>
+</div>

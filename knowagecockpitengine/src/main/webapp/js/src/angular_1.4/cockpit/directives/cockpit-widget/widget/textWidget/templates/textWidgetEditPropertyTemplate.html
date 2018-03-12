@@ -12,7 +12,7 @@
 				<md-tab label="{{translate.load('sbi.cockpit.widget.text.editor')}}">
 					<md-content class="noPadding" layout="row" >
 						<!-- <wysiwyg-edit content="localModel.content.text" config="editorConfig" ng-content="editorCss.css" flex="66"></wysiwyg-edit>--> 
-						<wysiwyg-edit content="localModel.content.text" config="editorConfig" ng-content="editorCss.css" flex></wysiwyg-edit> 
+						<wysiwyg-edit content="localModel.content.text" config="editorConfig" ng-content="editorCss.css" flex></wysiwyg-edit>
 						<cockpit-text-configuration editor-text="localModel.content.text" ng-model-shared="localModel">
 				    </md-content>
 		        </md-tab>
@@ -44,8 +44,14 @@
 		        </md-tab>
 		        
 		        <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
-		   			<dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsId)"></dataset-selector>  	
+		   			<multi-dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsIdArray)"></dataset-selector>  	
 		     	</md-tab>
+		     	
+				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}">
+					<cockpit-filters-configuration ng-model-shared="localModel">
+				</md-tab>
+
+
 	      	</md-tabs>
 	    </md-content>
     </md-card-content>

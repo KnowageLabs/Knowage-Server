@@ -63,9 +63,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 														<md-icon md-font-icon="fa" ng-class="{'fa-chevron-up':row.expanded, 'fa-chevron-down':!row.expanded}">
 													</md-button>
 													<span ng-if="column.type == 'text'">{{row[column.name]}}</span>
-													<md-checkbox ng-if="column.type == 'checkbox'" ng-model="row.useCache"></md-checkbox>
+													<md-checkbox ng-if="column.type == 'checkbox'" ng-disabled="(row.isCachingSupported && !row.isNearRealtimeSupported) || (!row.isCachingSupported && row.isNearRealtimeSupported)" ng-show='showNearRealTimeCockpit && !row.isRealtime' ng-model="row.useCache"></md-checkbox>
 													<md-input-container ng-if="column.type == 'input'">
-												        <input type="number" ng-model="row.frequency" ng-disabled="row.useCache">
+												        <input type="number" ng-model="row.frequency" ng-disabled="row.useCache" ng-show='showNearRealTimeCockpit && !row.useCache && !row.isRealtime'>
 												    </md-input-container>
 												</td>
 												<td class="tableAction">
@@ -75,7 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													</md-button>
 												</td>
 											</tr>
-											<tr ng-repeat-end ng-if="row.parameters && row.parameters.length > 0 && row.expanded">
+											<tr ng-repeat-end ng-show="row.parameters && row.parameters.length > 0 && row.expanded">
 												<td colspan="100">
 													<md-card layout="column" class="datasetParameterDetail">
 														<md-toolbar class="ternaryToolbar">
@@ -156,7 +156,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													</md-button>
 												</td>
 											</tr>
-											<tr ng-repeat-end ng-if="row.objParameter && row.objParameter.length > 0 && row.expanded">
+											<tr ng-repeat-end ng-show="row.objParameter && row.objParameter.length > 0 && row.expanded">
 												<td colspan="100">
 													<md-card layout="column" class="datasetParameterDetail">
 														<md-toolbar class="ternaryToolbar">

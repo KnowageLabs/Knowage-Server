@@ -40,10 +40,10 @@ public class DataSetTransformer {
 
 	public void print(Object object) {
 
-		System.out.println("-----------------------");
-		System.out.println(object);
-		System.out.println(object.getClass().toString());
-		System.out.println("-----------------------");
+		/*
+		 * System.out.println("-----------------------"); System.out.println(object); System.out.println(object.getClass().toString());
+		 * System.out.println("-----------------------");
+		 */
 
 	}
 
@@ -731,7 +731,8 @@ public class DataSetTransformer {
 			String groupSeriesCateg) throws JSONException {
 		boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
 		boolean groupSeriesBool = Boolean.parseBoolean(groupSeries);
-		boolean groupSeriesCategBool = Boolean.parseBoolean(groupSeriesCateg);
+		Set<String> categories = new HashSet<String>();
+
 		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
 		String primCat;
 		String secCat;
@@ -742,9 +743,9 @@ public class DataSetTransformer {
 				secCat = "column_2";
 				seria = "column_3";
 			} else {
-				primCat = "column_2";
+				primCat = "column_3";
 				secCat = "column_1";
-				seria = "column_3";
+				seria = "column_2";
 			}
 
 		} else {
@@ -755,30 +756,38 @@ public class DataSetTransformer {
 
 			} else {
 
-				primCat = "column_1";
+				primCat = "column_2";
 				secCat = "column_3";
-				seria = "column_2";
+				seria = "column_1";
 
 			}
 		}
+
 		for (Object singleObject : dataRows) {
-			if (!map.containsKey(((Map) singleObject).get(seria))) {
-				ArrayList<JSONObject> newListOfOrderColumnItems = new ArrayList<JSONObject>();
-				JSONObject jo = new JSONObject();
-				jo.put("y", ((Map) singleObject).get(secCat));
-				jo.put("name", ((Map) singleObject).get(primCat));
+			categories.add((String) ((Map) singleObject).get(primCat));
+		}
+		String[] categoriesList = categories.toArray(new String[categories.size()]);
+		Map<String, Integer> categoriesListIndexMap = new HashMap<String, Integer>();
+		for (int i = 0; i < categoriesList.length; i++) {
+			categoriesListIndexMap.put(categoriesList[i], i);
+		}
 
-				newListOfOrderColumnItems.add(jo);
+		for (Object singleObject : dataRows) {
+			ArrayList<JSONObject> newListOfOrderColumnItems = map.get(((Map) singleObject).get(seria));
+			if (newListOfOrderColumnItems == null) {
+				newListOfOrderColumnItems = new ArrayList<JSONObject>();
+				for (int i = 0; i < categoriesList.length; i++) {
+					String category = categoriesList[i];
+					JSONObject jo = new JSONObject();
+					jo.put("name", category);
+					jo.put("y", "");
+					newListOfOrderColumnItems.add(jo);
+				}
 				map.put((String) ((Map) singleObject).get(seria), newListOfOrderColumnItems);
-			} else {
-				ArrayList oldArrayList = map.get(((Map) singleObject).get(seria));
-
-				JSONObject jo = new JSONObject();
-				jo.put("y", ((Map) singleObject).get(secCat));
-				jo.put("name", ((Map) singleObject).get(primCat));
-				oldArrayList.add(jo);
-				map.put((String) ((Map) singleObject).get(seria), oldArrayList);
 			}
+
+			JSONObject jo = newListOfOrderColumnItems.get(categoriesListIndexMap.get(((Map) singleObject).get(primCat)));
+			jo.put("y", ((Map) singleObject).get(secCat));
 		}
 
 		return map;

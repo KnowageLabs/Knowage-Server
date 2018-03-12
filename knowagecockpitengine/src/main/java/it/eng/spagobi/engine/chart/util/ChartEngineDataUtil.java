@@ -115,14 +115,14 @@ public class ChartEngineDataUtil {
 			Map<String, Object> drilldownParams = new LinkedHashMap<>();
 			String drilldownCategory = category.getString("column");
 			String drilldownCategoryName = category.getString("name");
-			String selectedCategory = "";
+			Object selectedCategory = null;
 			String[] gbys = groupBys.split(", ");
 			String[] gbyNames = (groupByNames != null && !groupByNames.isEmpty()) ? groupByNames.split(",") : gbys;
 			int i;
 			for (i = 0; i < jaBreadcrumb.length(); i++) {
 				JSONObject drilldown = (JSONObject) jaBreadcrumb.get(i);
 
-				String selectedName = drilldown.getString("selectedName");
+				Object selectedName = drilldown.getString("selectedName");
 				String selectedSerie = drilldown.getString("selectedSerie");
 				String gby = gbys[i];
 				String gbyName = (gbyNames.length > i) ? gbyNames[i] : gbys[i];
