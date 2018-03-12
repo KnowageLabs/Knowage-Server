@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
@@ -47,6 +48,7 @@ public interface IDataSource {
 
 	public void setMultiSchema(Boolean multiSchema);
 
+	@JsonIgnore
 	public Connection getConnection() throws NamingException, SQLException, ClassNotFoundException;
 
 	public Connection getConnection(String schema) throws NamingException, SQLException, ClassNotFoundException;
