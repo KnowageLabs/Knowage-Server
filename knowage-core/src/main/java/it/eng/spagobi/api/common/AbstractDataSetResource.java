@@ -361,10 +361,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 			Projection projection;
 			if (orderColumn != null && !orderColumn.isEmpty() && !orderType.isEmpty()) {
-				projection = new Projection(function, dataSet, orderColumn);
+				String alias = jsonObject.optString("alias");
+				projection = new Projection(function, dataSet, orderColumn, alias);
 			} else {
 				String columnName = getColumnName(jsonObject, columnAliasToName);
-				projection = new Projection(function, dataSet, columnName);
+				projection = new Projection(function, dataSet, columnName, orderColumn);
 			}
 
 			boolean isAscending = "ASC".equalsIgnoreCase(orderType);
