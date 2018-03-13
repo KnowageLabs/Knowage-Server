@@ -71,6 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		
 	    $scope.reinit = function(){
+	    	console.log("*** reinit() called! ");
 	    	var isNew = ($scope.layers.length == 0);
 	    	for (l in $scope.ngModel.content.targetLayersConf){
 	    		//remove old layers 
@@ -81,6 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	$scope.getLayers();
 	    	
 	    	if (isNew) $scope.createMap();
+//	    	$scope.createMap();
 	    	
 	    	if (!$scope.map.getSize()){
     			$scope.map.setSize([cockpitModule_widgetConfigurator.map.initialDimension.width, 
@@ -232,7 +234,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    $scope.isDisplayableProp = function (p, config){
 	    	var tmpProp = p.split('|');
-        	console.log('prop: ' , tmpProp);
 	    	for (a in config.attributes){
     			if (p === config.attributes[a].label && config.attributes[a].showDetails){
 	    			return true;

@@ -149,6 +149,7 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
   	}
   	$scope.colorPickerOptions = {format:'hex'};
   	$scope.setIconType = function(layer,type) {
+  	if (!layer.markerConf) layer.markerConf={}; //test anto
   		delete layer.markerConf.icon;
   		layer.markerConf.type = type;
   	}
@@ -186,17 +187,19 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
   	}
   	
   	$scope.addColumnSelectedOfDataset = function(newModel){
-  		if(!newModel.columnSelectedOfDataset){
-  			newModel.columnSelectedOfDataset = [];
+  		if(!newModel.content.columnSelectedOfDataset){
+  			newModel.content.columnSelectedOfDataset = [];
   			for(var a in newModel.content.targetLayersConf){
   				if(newModel.content.targetLayersConf[a].targetDefault) newModel.dataset = {"dsId":newModel.content.targetLayersConf[a].datasetId};
   				for(var c in newModel.content.targetLayersConf[a].attributes){
   	  				var targetAttr = newModel.content.targetLayersConf[a].attributes[c];
-  	  				newModel.columnSelectedOfDataset.push({"name":targetAttr.name, "alias":targetAttr.label,"aliasToShow":targetAttr.label, "fieldType":'ATTRIBUTE'})
+//  	  				newModel.columnSelectedOfDataset.push({"name":targetAttr.name, "alias":targetAttr.label,"aliasToShow":targetAttr.label, "fieldType":'ATTRIBUTE'})
+  	  				newModel.content.columnSelectedOfDataset.push({"name":targetAttr.name, "alias":targetAttr.label,"aliasToShow":targetAttr.label, "fieldType":'ATTRIBUTE'})
   	  			}
   	  			for(var d in newModel.content.targetLayersConf[a].indicators){
   	  				var targetInd = newModel.content.targetLayersConf[a].attributes[d];
-  	  				newModel.columnSelectedOfDataset.push({"name":targetInd.name, "alias":targetInd.label,"aliasToShow":targetInd.label, "fieldType":'MEASURE'})
+//  	  				newModel.columnSelectedOfDataset.push({"name":targetInd.name, "alias":targetInd.label,"aliasToShow":targetInd.label, "fieldType":'MEASURE'})
+  	  				newModel.content.columnSelectedOfDataset.push({"name":targetInd.name, "alias":targetInd.label,"aliasToShow":targetInd.label, "fieldType":'MEASURE'})
   	  			}
   			}	
   		}
