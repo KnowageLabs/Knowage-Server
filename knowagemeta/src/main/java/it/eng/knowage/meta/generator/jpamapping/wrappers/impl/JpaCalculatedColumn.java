@@ -28,7 +28,7 @@ import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,7 +137,11 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 			// retrieve operands from string
 			StringTokenizer stk = new StringTokenizer(expression, "+-|*/()");
 			while (stk.hasMoreTokens()) {
-				String operand = stk.nextToken().trim();
+				String operand = stk.nextToken().trim();							
+				if (NumberUtils.isNumber(operand)) {
+					continue;
+				}
+
 				System.out.println("Found Operand " + operand);
 				operands.add(operand);
 			}
