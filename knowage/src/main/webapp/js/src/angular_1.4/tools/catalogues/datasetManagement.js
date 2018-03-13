@@ -2287,7 +2287,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					solrType: "FACETS",
 					solrFacetQuery: "",
 					solrFacetField: "",
-					solrFacetPrefix: ""
+					solrFacetPrefix: "",
+					sparqlUrl: "",
+					sparqlGraphIRI: "",
+					sparqlQuery: "",
+					sparqlTimeout: 30000
 
 			}
 
@@ -2715,14 +2719,24 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     ];
 
 	 $scope.codemirrorOptions = {
-		 mode: 'text/x-sql',
-		 lineWrapping : true,
+	   mode: 'text/x-sql',
+	   lineWrapping : true,
 	   indentWithTabs: true,
 	   smartIndent: true,
 	   matchBrackets : true,
 	   theme:"eclipse",
 	   lineNumbers: true
 	 };
+	 
+	 $scope.codemirrorSparqlOptions = {
+		   mode: 'application/sparql-query',
+		   lineWrapping : true,
+		   indentWithTabs: true,
+		   smartIndent: true,
+		   matchBrackets : true,
+		   theme:"eclipse",
+		   lineNumbers: true
+		 };
 
 
 	 $scope.getScriptTypes = function() {
