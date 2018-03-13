@@ -62,6 +62,7 @@ public class QueryTransformer {
 			}
 			WhereField wf = clonedQuery.addWhereField("DataSetFilter" + i, "DataSetFilter" + i, false, filterLeftOperand, operator, filterRightOperand, "AND");
 			updateWhereClauseStructure(clonedQuery, wf.getName(), "AND");
+			i++;
 		}
 
 		return clonedQuery;
