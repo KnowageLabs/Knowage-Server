@@ -199,7 +199,7 @@ public class DataSource implements Serializable, IDataSource {
 		Context ctx;
 		String jndiName;
 
-		jndiName = (checkIsMultiSchema() && schema != null) ? getJndi() + schema : getJndi();
+		jndiName = (checkIsMultiSchema() && schema != null && getJndi().endsWith("/")) ? getJndi() + schema : getJndi();
 
 		ctx = new InitialContext();
 		javax.sql.DataSource ds = (javax.sql.DataSource) ctx.lookup(jndiName);
