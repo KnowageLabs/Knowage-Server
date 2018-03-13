@@ -55,6 +55,7 @@ import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
 import it.eng.knowage.meta.model.serializer.ModelPropertyFactory;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -67,6 +68,8 @@ import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
@@ -914,9 +917,22 @@ public class MetaService extends AbstractSpagoBIResource {
 	@Path("/updatePhysicalModel")
 	@SuppressWarnings("unchecked")
 	public Response applyUpdatePhysicalModel(@Context HttpServletRequest req) throws ClassNotFoundException, NamingException, SQLException, JSONException,
-			IOException {
+			IOException, EMFUserError {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		JSONObject oldJsonModel = createJson(model);
+		String modelName = model.getName();
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+		businessModelsDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		if (profile != null) {
+			UserProfile userProfile = (UserProfile) profile;
+			TenantManager.setTenant(new Tenant(userProfile.getOrganization()));
+		}
+		MetaModel metamodel = businessModelsDAO.loadMetaModelByName(modelName);
+		String dataSourceLabel = metamodel.getDataSourceLabel();
+		IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+		IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceLabel);
+
 
 		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
 		List<String> tables = (List<String>) JsonConverter.jsonToObject(json.getString("tables"), List.class);
@@ -929,7 +945,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		}
 		currTables.addAll(tables);
 
-		PhysicalModel phyMod = physicalModelInitializer.initializeLigth(originalPM, currTables);
+		PhysicalModel phyMod = physicalModelInitializer.initializeLigth(originalPM, currTables, dataSource);
 		physicalModelInitializer.updateModel(originalPM, phyMod, tables);
 
 		JSONObject jsonModel = createJson(model);

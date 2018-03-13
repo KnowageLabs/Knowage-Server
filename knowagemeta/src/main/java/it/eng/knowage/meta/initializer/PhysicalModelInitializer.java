@@ -76,7 +76,7 @@ public class PhysicalModelInitializer {
 
 	}
 
-	public PhysicalModel initializeLigth(PhysicalModel originalPM, List<String> selectedTables) {
+	public PhysicalModel initializeLigth(PhysicalModel originalPM, List<String> selectedTables,IDataSource dataSource) {
 		PhysicalModel model;
 		DatabaseMetaData dbMeta;
 		model = FACTORY.createPhysicalModel();
@@ -86,7 +86,7 @@ public class PhysicalModelInitializer {
 		}
 
 		try {
-			IDataBase database = DataBase.getDataBase(originalPM.getDataSource());
+			IDataBase database = DataBase.getDataBase(dataSource);
 			Connection conn = originalPM.getConnection();
 			dbMeta = conn.getMetaData();
 
