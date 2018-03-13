@@ -145,7 +145,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	for (i in $scope.ngModel.content.targetLayersConf){
 	    		for (di in $scope.ngModel.content.targetLayersConf[i].indicators){
 	    			if ($scope.ngModel.content.targetLayersConf[i].indicators[di].showMap){
-	    				$scope.ngModel.content.targetLayersConf[i].defaultIndicator = $scope.ngModel.content.targetLayersConf[i].indicators[di].name;	
+//	    				$scope.ngModel.content.targetLayersConf[i].defaultIndicator = $scope.ngModel.content.targetLayersConf[i].indicators[di].name;	
+	    				$scope.ngModel.content.targetLayersConf[i].defaultIndicator = $scope.ngModel.content.targetLayersConf[i].indicators[di].label;	
 	    				break;
 	    			}
 	    		}
@@ -230,6 +231,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 	    $scope.isDisplayableProp = function (p, config){
+	    	var tmpProp = p.split('|');
+        	console.log('prop: ' , tmpProp);
 	    	for (a in config.attributes){
     			if (p === config.attributes[a].label && config.attributes[a].showDetails){
 	    			return true;
@@ -268,8 +271,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var configThematizer = $scope.getConfigLayer(parentLayer).analysisConf || {};
 			var configMarker = $scope.getConfigLayer(parentLayer).markerConf || {};
 	      	var value =  props[cockpitModule_mapServices.getActiveIndicator()] || 0;
-	      	
 			var style;
+			var useCache = false; //cache isn't use for analysis, just with fixed marker
 			
 			switch (configThematizer.defaultAnalysis) {
 			case 'choropleth':
@@ -280,13 +283,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				break;
 			default:
 				style = cockpitModule_mapServices.getOnlyMarkerStyles(props, configMarker);
+				useCache = true;
 			}
 			
-			if (!styleCache[parentLayer]) {
+			if (useCache && !styleCache[parentLayer]) {
 		          styleCache[parentLayer] = style;
+		          return styleCache[parentLayer] ;
+			} else {
+				return style;
 			}
-			
-			return styleCache[parentLayer] ;
 	    }
 	    
 		$scope.getFeaturesDetails = function(geoColumn, selectedMeasure, config, values){
@@ -308,7 +313,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						var lonlat;
 						var row = values.rows[r];
 						geoFieldValue = row[geoFieldName].trim();
-						if (geoFieldValue.indexOf(" ")){
+						if (geoFieldValue.indexOf(" ") > 0){
 							lonlat = geoFieldValue.split(" ");
 						}else if (geoFieldValue.indexOf(",")){
 							lonlat = geoFieldValue.split(",");
@@ -322,12 +327,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							console.log("Error getting longitude and latitude from column value ["+ geoColumn +"]. Check the dataset and its metadata.");
 							return null;
 						}
-						//get config for thematize
-						cockpitModule_mapServices.setActiveIndicator(selectedMeasure);
-						if (selectedMeasure){
-							if (!cockpitModule_mapServices.getCacheProportionalSymbolMinMax()) cockpitModule_mapServices.setCacheProportionalSymbolMinMax({}); //just at beginning
-							if (!cockpitModule_mapServices.getCacheProportionalSymbolMinMax().hasOwnProperty(selectedMeasure)){
-								cockpitModule_mapServices.loadIndicatorMaxMinVal(selectedMeasure, values);
+						if (config.analysisConf && config.analysisConf.defaultAnalysis == 'proportionalSymbol'){							
+							//get config for thematize
+							if (!selectedMeasure) selectedMeasure = config.defaultIndicator;
+							cockpitModule_mapServices.setActiveIndicator(selectedMeasure);
+							if (selectedMeasure){
+								if (!cockpitModule_mapServices.getCacheProportionalSymbolMinMax()) cockpitModule_mapServices.setCacheProportionalSymbolMinMax({}); //just at beginning
+								if (!cockpitModule_mapServices.getCacheProportionalSymbolMinMax().hasOwnProperty(selectedMeasure)){
+									cockpitModule_mapServices.loadIndicatorMaxMinVal(selectedMeasure, values);
+								}
 							}
 						}
 						
@@ -520,7 +528,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	for (lpos in  $scope.ngModel.content.targetLayersConf){
 	    		if ( $scope.ngModel.content.targetLayersConf[lpos].name == l)
 		    	for (var i in $scope.ngModel.content.targetLayersConf[lpos].indicators){
-		    		if ($scope.ngModel.content.targetLayersConf[lpos].indicators[i].name == n){
+//		    		if ($scope.ngModel.content.targetLayersConf[lpos].indicators[i].name == n){
+		    		if ($scope.ngModel.content.targetLayersConf[lpos].indicators[i].label == n){
 		    			return $scope.ngModel.content.targetLayersConf[lpos].indicators[i].showMap || false;
 		    		}
 		    	}
@@ -548,11 +557,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			//prepare object for thematization
 	    	cockpitModule_mapServices.loadIndicatorMaxMinVal(measure, values);
 			var newSource = $scope.getFeaturesDetails(geoColumn, measure, config, values);
-			var tmpLayer = new ol.layer.Vector({source: newSource,
-				 						        style: $scope.layerStyle});
-//			layer.setSource(newSource);
-			var newStyle = tmpLayer.getStyle();
-			layer.setStyle(newStyle);
+			layer.setSource(newSource);
+			layer.getSource().refresh({force:true});
 		}
 
 	   
