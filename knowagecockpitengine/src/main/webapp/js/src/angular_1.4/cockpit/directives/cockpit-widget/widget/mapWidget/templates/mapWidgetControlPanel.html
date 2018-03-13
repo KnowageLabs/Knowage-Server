@@ -30,7 +30,7 @@
 			    <span flex>{{ind.name}}</span>
 			</div>
 			<md-radio-group   ng-model="ind.defaultIndicator" style="padding:8px;" ng-if="getLayerVisibility(ind.name)">
- 	   		<md-radio-button ng-repeat="dettInd in ind.indicators"  ng-if="getIndicatorVisibility(ind.name,dettInd.name)" ng-click="thematizeMeasure(ind.name, dettInd.label)"  class="md-primary" ng-value="dettInd.name" style="font-size:.7rem;" >
+ 	   		<md-radio-button ng-repeat="dettInd in ind.indicators"  ng-if="getIndicatorVisibility(ind.name,dettInd.label)" ng-click="thematizeMeasure(ind.name, dettInd.label)"  class="md-primary" ng-value="dettInd.label" style="font-size:.7rem;" >
 	 	   		{{dettInd.label}}
 	 	   	</md-radio-button>
     	</md-radio-group>
