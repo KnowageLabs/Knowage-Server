@@ -25,13 +25,13 @@ angular.module('chartInitializer')
 		
 		
 		
-		drilldown: function(selectedName, selectedSerie, breadcrumb){
+		drilldown: function(selectedName, selectedSerie, breadcrumb, dateFormatJava){
 			
 			var drill = {
 					selectedName: selectedName,
 					selectedSerie: selectedSerie
 			};
-			
+			if(dateFormatJava) drill.dateFormatJava = dateFormatJava;
 			console.info("IN: HighchartsDrilldownHelper (handling the clicking on the value label of the charts item)");
 			
 			/**

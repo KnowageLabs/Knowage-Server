@@ -958,7 +958,7 @@ public class DatasetManagementAPI {
 					.orderBy(sortings).getPreparedStatementData(null);
 			boolean hasSortingOnCalculatedColumns = checkSortingOnCalculatedColumns(orderColumns);
 
-			IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(data.getQuery(), data.getValues(), -1, -1, maxRowCount);
+			IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(data.getQuery(), data.getValues(), -1, -1, maxRowCount, null);
 			if (hasSortingOnCalculatedColumns) {
 				appendCalculatedColumnsToDataStore(projections, originalDataStore);
 				sortColumnsOnDataStore(orderColumns, originalDataStore);
@@ -973,7 +973,7 @@ public class DatasetManagementAPI {
 				PreparedStatementData summaryRowData = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter)
 						.orderBy(sortings).getPreparedStatementData(null);
 				IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowData.getQuery(), summaryRowData.getValues(), -1, -1,
-						maxRowCount);
+						maxRowCount, null);
 				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 			}
 

@@ -58,12 +58,13 @@ public class ChartEngineDataUtil {
 	@SuppressWarnings({ "rawtypes" })
 	public static String loadJsonData(String jsonTemplate, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) throws Throwable {
 		IQuery query = extractAggregatedQueryFromTemplate(jsonTemplate);
-		return loadJsonData(query, dataSet, analyticalDrivers, userProfile, locale);
+		return loadJsonData(query, dataSet, analyticalDrivers, userProfile, locale, null);
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	private static String loadJsonData(IQuery query, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) throws Throwable {
-		IDataStore dataStore = loadDatastore(query, dataSet, analyticalDrivers, userProfile, locale);
+	private static String loadJsonData(IQuery query, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale, String dateFormatJava)
+			throws Throwable {
+		IDataStore dataStore = loadDatastore(query, dataSet, analyticalDrivers, userProfile, locale, dateFormatJava);
 
 		JSONObject dataSetJSON = new JSONObject();
 		try {
@@ -81,7 +82,8 @@ public class ChartEngineDataUtil {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static IDataStore loadDatastore(IQuery query, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) throws JSONException {
+	private static IDataStore loadDatastore(IQuery query, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale, String dateFormatJava)
+			throws JSONException {
 
 		analyticalDrivers.put("LOCALE", locale);
 		dataSet.setParamsMap(analyticalDrivers);
@@ -94,7 +96,7 @@ public class ChartEngineDataUtil {
 
 		monitorLD.stop();
 
-		IDataStore dataStore = dataSet.getDataStore().aggregateAndFilterRecords(query);
+		IDataStore dataStore = dataSet.getDataStore().aggregateAndFilterRecords(query, dateFormatJava);
 		return dataStore;
 	}
 
@@ -112,6 +114,7 @@ public class ChartEngineDataUtil {
 		JSONArray jaBreadcrumb = new JSONArray(breadcrumb);
 		if (groupBys != null) {
 			String drilldownSerie = "";
+			String dateFormatJava = "";
 			Map<String, Object> drilldownParams = new LinkedHashMap<>();
 			String drilldownCategory = category.getString("column");
 			String drilldownCategoryName = category.getString("name");
@@ -124,6 +127,7 @@ public class ChartEngineDataUtil {
 
 				Object selectedName = drilldown.getString("selectedName");
 				String selectedSerie = drilldown.getString("selectedSerie");
+				String dateFormat = drilldown.optString("dateFormatJava");
 				String gby = gbys[i];
 				String gbyName = (gbyNames.length > i) ? gbyNames[i] : gbys[i];
 
@@ -135,11 +139,13 @@ public class ChartEngineDataUtil {
 				drilldownCategory = gby;
 				drilldownCategoryName = gbyName;
 				selectedCategory = selectedName;
+				if (dateFormatJava != null)
+					dateFormatJava = dateFormat;
 			}
 
 			IQuery q = extractAggregatedQueryFromTemplate(jsonTemplate, true, drilldownSerie, drilldownCategory, drilldownParams);
 
-			String jsonData = loadJsonData(q, dataSet, analyticalDrivers, userProfile, locale);
+			String jsonData = loadJsonData(q, dataSet, analyticalDrivers, userProfile, locale, dateFormatJava);
 			boolean enableNextDrilldown = i < gbys.length;
 
 			/**
