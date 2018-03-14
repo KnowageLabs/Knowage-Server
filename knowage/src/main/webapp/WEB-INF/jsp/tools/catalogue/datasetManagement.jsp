@@ -662,7 +662,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								
 								<div flex=100>
 									<md-input-container class="md-block">
-									    <label>{{translate.load("sbi.ds.sparql.timeout")}</label>
+									    <label>{{translate.load("sbi.ds.sparql.timeout")}}</label>
 										<input ng-model="selectedDataSet.sparqlTimeout" ng-change="setFormDirty()" type="number" >
 										
 									</md-input-container>
