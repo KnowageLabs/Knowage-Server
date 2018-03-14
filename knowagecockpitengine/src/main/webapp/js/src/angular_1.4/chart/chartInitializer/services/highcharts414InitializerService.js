@@ -310,22 +310,19 @@ angular.module('chartInitializer')
 			*/
 			if (isNaN(e.category))
 			{
-
-
 				chart.showLoading('Loading...');
 
 					var params = {};
-
-					params.widgetData = chart.widgetData;
+					
 					if(chart.jsonData ){
 						params.jsonMetaData = chart.jsonData.metaData;
 					}
+					if(chart.widgetData ){
+						params.widgetData = chart.widgetData;
+						var column = chart.widgetData.chartTemplate.CHART.VALUES.CATEGORY.column;
+					}
 
 					var drillValue = e.point.name;
-					var params = {};
-
-					params.widgetData = chart.widgetData;
-					var column = chart.widgetData.chartTemplate.CHART.VALUES.CATEGORY.column;
 
 					var highchartsDrilldownHelperDone = false;
 					if(chart.jsonData ){						
@@ -351,9 +348,6 @@ angular.module('chartInitializer')
 					}
 
 					params.breadcrumb = JSON.stringify(chart.breadcrumb);
-
-
-
 
 					jsonChartTemplate.drilldownHighchart(params)
 					.then(function(series){
@@ -387,9 +381,7 @@ angular.module('chartInitializer')
 				            chart.drillUpButton.textSetter(backText);
 
 							chart.hideLoading();
-
 					});
-
 			}
 		}
 	}
