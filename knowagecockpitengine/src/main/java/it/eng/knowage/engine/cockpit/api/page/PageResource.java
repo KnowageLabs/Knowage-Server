@@ -19,6 +19,7 @@ package it.eng.knowage.engine.cockpit.api.page;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -122,6 +123,15 @@ public class PageResource extends AbstractCockpitEngineResource {
 		CockpitEngineInstance engineInstance;
 		String dispatchUrl = null;
 
+		if (logger.isDebugEnabled()) {
+			Enumeration<String> parameterNames = request.getParameterNames();
+			while (parameterNames.hasMoreElements()) {
+				String name = parameterNames.nextElement();
+				String[] parameterValues = request.getParameterValues(name);
+				logger.debug(name + " = " + Arrays.asList(parameterValues));
+			}
+		}
+
 		try {
 			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
 			// HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
@@ -182,16 +192,6 @@ public class PageResource extends AbstractCockpitEngineResource {
 				// error
 				dispatchUrl = "/WEB-INF/jsp/error.jsp";
 			}
-
-			/**
-			 * Setting the encoding type to the response object, so the Cockpit engine when calling the rendering of the chart (chart.jsp) can display the real
-			 * content of the chart template. If this is not set, specific Italian letters, such as ù and à are going to be displayed as black squared question
-			 * marks - they will not be displayed as they are specified by the user.
-			 *
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			response.setContentType("text/html");
-			response.setCharacterEncoding("UTF-8");
 
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 		} catch (Exception e) {
