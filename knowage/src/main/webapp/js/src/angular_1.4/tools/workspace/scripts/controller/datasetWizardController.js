@@ -1041,7 +1041,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 
 		}else if(pname.toLowerCase()==="fieldType".toLowerCase()){
 			for(j=0;j<$scope.dsMetaValue.length;j++){
-   			 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="attribute".toLowerCase()||
+   			 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="attribute".toLowerCase() || $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="spatial_attribute".toLowerCase() ||
    			    $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="measure".toLowerCase()){
    				filteredMetaValues.push($scope.dsMetaValue[j]);
    			 }

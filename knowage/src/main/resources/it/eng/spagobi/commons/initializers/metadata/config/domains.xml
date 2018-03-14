@@ -367,7 +367,7 @@
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
 	<DOMAIN valueCd="ATTRIBUTE" valueNm="ATTRIBUTE" domainCd="DS_META_VALUE"
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
-	<DOMAIN valueCd="SPATIAL ATTRIBUTE" valueNm="SPATIAL ATTRIBUTE" domainCd="DS_META_VALUE"
+	<DOMAIN valueCd="SPATIAL_ATTRIBUTE" valueNm="SPATIAL ATTRIBUTE" domainCd="DS_META_VALUE"
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
 	<DOMAIN valueCd="String" valueNm="String" domainCd="DS_META_VALUE"
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
