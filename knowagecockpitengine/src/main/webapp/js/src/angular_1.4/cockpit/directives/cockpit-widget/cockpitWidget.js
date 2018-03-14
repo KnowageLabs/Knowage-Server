@@ -263,6 +263,8 @@ function cockpitWidgetControllerFunction(
 			$scope.widgetActionButtonsVisible=false;
 		}
 	}
+	
+	$scope.widgetClass = 'cockpit-widget-card-' + $scope.ngModel.type;
 
 	//disable cliccable for real time dataset
 	if ($scope.ngModel.dataset){

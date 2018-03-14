@@ -12,6 +12,7 @@
     background-image: #fff;
 
     .cockpit-map-widget {
+    	overflow: hidden;
 		.ol-popup {
 		    position: absolute;
 		    background-color: white;
@@ -745,7 +746,6 @@
 		//min-height: calc(100% - 20px);
 
         .gridster-item{
-        	overflow: hidden;
 			 md-card.md-knowage-theme md-card-title {
 				padding: 0;
 				margin: 0;
@@ -762,6 +762,10 @@
 			
 			&.leftPosition .showActionButtonHandler {
 				left: 0;
+			}
+
+			.cockpit-widget-card-selection .showActionButtonHandler{
+				left: 0 !important;
 			}
 			 
 			
