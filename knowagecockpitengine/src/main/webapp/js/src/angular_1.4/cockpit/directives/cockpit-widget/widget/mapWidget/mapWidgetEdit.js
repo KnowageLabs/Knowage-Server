@@ -22,7 +22,6 @@ angular
 function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,sbiModule_restServices,cockpitModule_datasetServices,cockpitModule_generalServices,$mdDialog,mdPanelRef,$location, knModule_fontIconsService){
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
-	
   	$scope.getTemplateUrl = function(template){
   		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
   	}
@@ -34,9 +33,6 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
   			}
   		}
   	}
-  	
-  	
-    
   	
   	$scope.expandRow = function(layer,content){
   		for(var t in $scope.newModel.content.targetLayersConf){
@@ -128,7 +124,16 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 								if(tempLayer.metadata.fieldsMeta[i].fieldType === 'SPATIAL_ATTRIBUTE') newLayer.attributes.push({"name":tempLayer.metadata.fieldsMeta[i].name, "label":tempLayer.metadata.fieldsMeta[i].alias,"isGeoReference":true});
 							}
 							$scope.newModel.content.targetLayersConf.push(newLayer);
-							cockpitModule_datasetServices.addAvaiableDataset(tempLayer);
+							var availableDatasets = cockpitModule_datasetServices.getAvaiableDatasets();
+							var exists = false;
+							for(var i in availableDatasets){
+								if(availableDatasets[i].id.dsId == tempLayer.id.dsId) {
+									exists = true;
+									break;
+								};
+							}
+							if(!exists) cockpitModule_datasetServices.addAvaiableDataset(tempLayer);
+							
 						}
 					}
 					$mdDialog.hide();
@@ -193,12 +198,10 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
   				if(newModel.content.targetLayersConf[a].targetDefault) newModel.dataset = {"dsId":newModel.content.targetLayersConf[a].datasetId};
   				for(var c in newModel.content.targetLayersConf[a].attributes){
   	  				var targetAttr = newModel.content.targetLayersConf[a].attributes[c];
-//  	  				newModel.columnSelectedOfDataset.push({"name":targetAttr.name, "alias":targetAttr.label,"aliasToShow":targetAttr.label, "fieldType":'ATTRIBUTE'})
   	  				newModel.content.columnSelectedOfDataset.push({"name":targetAttr.name, "alias":targetAttr.label,"aliasToShow":targetAttr.label, "fieldType":'ATTRIBUTE'})
   	  			}
   	  			for(var d in newModel.content.targetLayersConf[a].indicators){
   	  				var targetInd = newModel.content.targetLayersConf[a].attributes[d];
-//  	  				newModel.columnSelectedOfDataset.push({"name":targetInd.name, "alias":targetInd.label,"aliasToShow":targetInd.label, "fieldType":'MEASURE'})
   	  				newModel.content.columnSelectedOfDataset.push({"name":targetInd.name, "alias":targetInd.label,"aliasToShow":targetInd.label, "fieldType":'MEASURE'})
   	  			}
   			}	
