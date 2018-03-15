@@ -17,6 +17,20 @@
  */
 package it.eng.qbe.statement;
 
+import java.io.InputStream;
+import java.sql.Clob;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import javax.script.ScriptEngineManager;
+
+import org.apache.log4j.Logger;
+
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.CalculatedSelectField;
@@ -48,20 +62,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.groovy.GroovySandbox;
-
-import java.io.InputStream;
-import java.sql.Clob;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-
-import javax.script.ScriptEngineManager;
-
-import org.apache.log4j.Logger;
 
 public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
@@ -189,6 +189,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		dataStore.setMetaData(dataStoreMeta);
 
 		Iterator it = result.iterator();
+		int r = 0;
 		while (it.hasNext()) {
 			Object o = it.next();
 
@@ -198,7 +199,12 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			} else {
 				row = (Object[]) o;
 			}
-
+			logger.debug("-------------RECORD " + r + "---------------");
+			r++;
+			String rowS = "";
+			for (int i = 0; i < row.length; i++) {
+				rowS = rowS + " [" + row[i] + "]";
+			}
 			IRecord record = new Record(dataStore);
 			for (int i = 0, j = 0; i < dataStoreMeta.getFieldCount(); i++) {
 				IFieldMetaData fieldMeta = dataStoreMeta.getFieldMeta(i);
