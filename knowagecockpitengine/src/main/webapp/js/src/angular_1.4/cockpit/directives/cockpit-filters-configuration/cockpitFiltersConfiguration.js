@@ -346,7 +346,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 				}
 				else{
-					$scope.refreshSingleDatasetCase(newValue, 'chart');
+					$scope.refreshSingleDatasetCase(newValue, oldValue, 'chart');
 				}
 				//$scope.cleanQbeColumns();
 			}
