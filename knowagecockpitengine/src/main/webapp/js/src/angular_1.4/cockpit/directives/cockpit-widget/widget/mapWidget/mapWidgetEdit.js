@@ -93,11 +93,22 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 				sbiModule_restServices.promiseGet("2.0/datasets", "","asPagedList=true&seeTechnical=TRUE&ids=&spatialOnly=true").then(
 						function(result){
 							$scope.availableSpatialLayers = [];
+							var datasetMapById = [];
+							var datasetMapByLabel = [];
+							var datasetList = [];
 							for(var l in result.data.item){
+								//update internal service datasets structures
+								var ds = result.data.item[l];
+								datasetList.push(ds);
+								datasetMapById[ds.id.dsId] = ds;
+								datasetMapByLabel[ds.label] = ds;
 								if($scope.myLayersId.indexOf(result.data.item[l].id.dsId)==-1){
 									$scope.availableSpatialLayers.push(result.data.item[l]);
 								}
 							}
+							cockpitModule_datasetServices.setDatasetList(datasetList);
+							cockpitModule_datasetServices.setDatasetById(datasetMapById);
+							cockpitModule_datasetServices.setDatasetByLabel(datasetMapByLabel);
 						},
 						function(error){
 							// TODO MANAGE ERROR

@@ -306,17 +306,28 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	this.getDatasetList=function(){
 		return angular.copy(ds.datasetList);
 	}
+	
+	this.setDatasetList=function(dsList){
+		return ds.datasetList = dsList;
+	}
 
 	//return a COPY of dataset with specific id or null
 	this.getDatasetById=function(dsId){
 		return angular.copy(ds.datasetMapById[dsId]);
 	}
-
+	
+	this.setDatasetById=function(dsIds){
+		ds.datasetMapById = dsIds;
+	}
+	
 	//return a COPY of dataset with specific label or null
 	this.getDatasetByLabel=function(dsLabel){
 		return angular.copy(ds.datasetMapByLabel[dsLabel]);
 	}
 
+	this.setDatasetByLabel=function(dsLabels){
+		ds.datasetMapByLabel = dsLabels;
+	}
 
 	//return a COPY of avaiable dataset with specific id or null
 	this.getAvaiableDatasetById=function(dsId){
