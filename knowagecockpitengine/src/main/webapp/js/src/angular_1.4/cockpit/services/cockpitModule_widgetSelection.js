@@ -71,8 +71,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 							}
 						}
 						else {
-							obj["orderType"] = category.orderType;
 							obj["orderColumn"] = category.orderColumn;
+							obj["orderType"] = category.orderColumn!="" && category.orderType=="" ? "ASC" : category.orderType;
 						}
 					}
 				}

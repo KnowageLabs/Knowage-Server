@@ -687,7 +687,9 @@
 	
 		#if($chart.dateTime=="true")
 			type: 'datetime',
-			 
+			#if($categorieColumns.orderType=="desc")
+				reversed: true,
+			#end	 
 		#else 
 			type: 'category',
 		#end
