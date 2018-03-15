@@ -47,6 +47,7 @@ import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
+import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -217,36 +218,23 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 
 	public static String encapsulateColumnName(String columnName, IDataSource dataSource) {
 		logger.debug("IN");
-		String toReturn = columnName;
-		if (columnName != null) {
-			String aliasDelimiter = TemporaryTableManager.getAliasDelimiter(dataSource);
-			logger.debug("Alias delimiter is [" + aliasDelimiter + "]");
-			if (!columnName.startsWith(aliasDelimiter) || !columnName.endsWith(aliasDelimiter)) {
-				toReturn = aliasDelimiter + columnName + aliasDelimiter;
+		try {
+			String toReturn = columnName;
+			if (columnName != null) {
+				String aliasDelimiter = TemporaryTableManager.getAliasDelimiter(dataSource);
+				logger.debug("Alias delimiter is [" + aliasDelimiter + "]");
+				if (!columnName.startsWith(aliasDelimiter) || !columnName.endsWith(aliasDelimiter)) {
+					toReturn = aliasDelimiter + columnName + aliasDelimiter;
+				}
 			}
+			logger.debug("OUT: returning " + toReturn);
+			return toReturn;
+		} catch (DataBaseException e) {
+			throw new SpagoBIRuntimeException(e);
 		}
-		logger.debug("OUT: returning " + toReturn);
-		return toReturn;
 	}
 
-	/**
-	 * @param string
-	 * @param dataSource
-	 * @return
-	 */
-	public static String encapsulateColumnAlaias(String columnAlias, IDataSource dataSource) {
-		logger.debug("IN");
-		String toReturn = null;
-		if (columnAlias != null) {
-			String aliasDelimiter = TemporaryTableManager.getAliasDelimiter(dataSource);
-			logger.debug("Alias delimiter is [" + aliasDelimiter + "]");
-			toReturn = aliasDelimiter + columnAlias + aliasDelimiter;
-		}
-		logger.debug("OUT: returning " + toReturn);
-		return toReturn;
-	}
-
-	public static String substituteStandardWithDatasourceDelimiter(String columnName, IDataSource dataSource) {
+	public static String substituteStandardWithDatasourceDelimiter(String columnName, IDataSource dataSource) throws DataBaseException {
 		logger.debug("IN");
 		if (columnName != null) {
 			logger.debug("Column name is [" + columnName + "]");

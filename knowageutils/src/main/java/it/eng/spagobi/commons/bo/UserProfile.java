@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons.bo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -449,8 +450,25 @@ public class UserProfile implements IEngUserProfile {
 		UserProfile toReturn = new UserProfile(userUniqueIdentifier, SCHEDULER_USER_NAME, SCHEDULER_USER_NAME, organization);
 		toReturn.setRoles(new ArrayList());
 		toReturn.setAttributes(new HashMap());
+		toReturn.setFunctionalities(getSchedulerUserFunctionalities());
 		logger.debug("OUT");
 		return toReturn;
+	}
+
+	private static Collection getSchedulerUserFunctionalities() {
+		String[] functionalities = { "AlertManagement", "AnalyticalWidget", "ArtifactCatalogueManagement", "ChartWidget", "CkanIntegrationFunctionality",
+				"ConstraintManagement", "ConstraintView", "CreateChartFunctionality", "CreateCockpitFunctionality", "CreateDatasetsAsFinalUser",
+				"DatasetManagement", "DataSourceBigData", "DataSourceManagement", "DataSourceRead", "DistributionListManagement", "DistributionListUser",
+				"DocumentAdministration", "DocumentAdminManagement", "DocumentDeleteManagement", "DocumentDetailManagement", "DocumentDevManagement",
+				"DocumentManagement", "DocumentMetadataManagement", "DocumentMoveDownState", "DocumentMoveUpState", "DocumentStateManagement",
+				"DocumentTestManagement", "DocumentUserManagement", "DomainWrite", "EventsManagement", "ExecuteCrossNavigation", "FederationDefinition",
+				"FunctionalitiesManagement", "FunctionsCatalogManagement", "GeoLayersManagement", "GisWebDesigner", "HotLinkManagement", "ImagesManagement",
+				"KpiManagement", "KpiSchedulation", "LovsManagement", "LovsView", "ManageCrossNavigation", "MapCatalogueManagement", "MenuManagement",
+				"MetaModelLifecycleManagement", "MetaModelsCatalogueManagement", "ModifyRefresh", "MultisheetCockpit", "NotifyContextBrokerAction",
+				"ParameterManagement", "ParameterView", "ProfileAttributeManagement", "ProfileManagement", "ReadEnginesManagement", "RegistryDataEntry",
+				"SelfServiceDatasetManagement", "SelfServiceMetaModelManagement", "SharedDevelopment", "StaticWidget", "SyncronizeRolesManagement",
+				"UserSaveDocumentFunctionality", "ViewMyFolderAdmin", "WorklistManagement", "WorkspaceManagement" };
+		return Arrays.asList(functionalities);
 	}
 
 	@Override

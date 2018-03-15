@@ -17,20 +17,6 @@
  */
 package it.eng.knowage.meta.model.impl;
 
-import it.eng.knowage.meta.model.Model;
-import it.eng.knowage.meta.model.ModelPackage;
-import it.eng.knowage.meta.model.ModelPropertyCategory;
-import it.eng.knowage.meta.model.ModelPropertyType;
-import it.eng.knowage.meta.model.business.BusinessColumnSet;
-import it.eng.knowage.meta.model.business.BusinessModel;
-import it.eng.knowage.meta.model.business.BusinessModelPackage;
-import it.eng.knowage.meta.model.business.BusinessView;
-import it.eng.knowage.meta.model.olap.OlapModel;
-import it.eng.knowage.meta.model.olap.OlapModelPackage;
-import it.eng.knowage.meta.model.physical.PhysicalModel;
-import it.eng.knowage.meta.model.physical.PhysicalModelPackage;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +30,21 @@ import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import it.eng.knowage.meta.model.Model;
+import it.eng.knowage.meta.model.ModelPackage;
+import it.eng.knowage.meta.model.ModelPropertyCategory;
+import it.eng.knowage.meta.model.ModelPropertyType;
+import it.eng.knowage.meta.model.business.BusinessColumnSet;
+import it.eng.knowage.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.business.BusinessModelPackage;
+import it.eng.knowage.meta.model.business.BusinessView;
+import it.eng.knowage.meta.model.olap.OlapModel;
+import it.eng.knowage.meta.model.olap.OlapModelPackage;
+import it.eng.knowage.meta.model.physical.PhysicalModel;
+import it.eng.knowage.meta.model.physical.PhysicalModelPackage;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
  * <!-- begin-user-doc --> An implementation of the model object '<em><b>Model</b></em>'. <!-- end-user-doc -->
@@ -353,15 +354,14 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 	}
 
 	@Override
-	public DataSource getDataSource() {
-		DataSource dataSource = new DataSource();
+	public IDataSource getDataSource() {
+		IDataSource dataSource = DataSourceFactory.getDataSource();
 		dataSource.setLabel(getPropertyType("connection.name").getDefaultValue());
 		dataSource.setUrlConnection(getPropertyType("connection.url").getDefaultValue());
 		dataSource.setDriver(getPropertyType("connection.driver").getDefaultValue());
 		dataSource.setUser(getPropertyType("connection.username").getDefaultValue());
 		dataSource.setPwd(getPropertyType("connection.password").getDefaultValue());
 		dataSource.setHibDialectClass("");
-		dataSource.setHibDialectName("");
 		return dataSource;
 	}
 

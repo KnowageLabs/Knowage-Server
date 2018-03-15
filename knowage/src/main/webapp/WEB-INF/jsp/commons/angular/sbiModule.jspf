@@ -8,7 +8,7 @@ var sbiM=angular.module('sbiModule',["toastr","ngSanitize"]);
 // sbiM.config(function($mdThemingProvider) {
 // 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
 // });
-<%
+<%	
 String contextNameForEngineComposition = GeneralUtilities.getSpagoBiContext().replaceAll("^/", "");
 %>
 sbiM.factory('sbiModule_config',function(){ 
@@ -260,7 +260,7 @@ sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,$mdToa
 
 		var timeout = 3000;
 
-		if (hideTimeout && typeof hideTimeout == "number") {
+		if (hideTimeout != undefined && typeof hideTimeout == "number") {
 			timeout = hideTimeout;
 		}
 
@@ -282,7 +282,7 @@ sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,$mdToa
 
 		var timeout = 3000;
 
-		if (hideTimeout && typeof hideTimeout == "number") {
+		if (hideTimeout != undefined && typeof hideTimeout == "number") {
 			timeout = hideTimeout;
 		}
 
@@ -306,7 +306,7 @@ sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,$mdToa
 		
 		var timeout = 3000;
 
-		if (hideTimeout && typeof hideTimeout == "number") {
+		if (hideTimeout != undefined && typeof hideTimeout == "number") {
 			timeout = hideTimeout;
 		}
 

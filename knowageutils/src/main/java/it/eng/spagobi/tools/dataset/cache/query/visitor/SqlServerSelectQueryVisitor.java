@@ -22,15 +22,15 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
+import it.eng.spagobi.utilities.database.IDataBase;
 
 public class SqlServerSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 	private static final String DATE_TIME_FORMAT_SQLSERVER = "yyyyMMdd HH:mm:ss";
 	private static final String TIMESTAMP_FORMAT_SQLSERVER = DATE_TIME_FORMAT_SQLSERVER + ".SSS";
 
-	public SqlServerSelectQueryVisitor() {
-		this.dialect = SqlDialect.SQLSERVER;
+	public SqlServerSelectQueryVisitor(IDataBase database) {
+		super(database);
 	}
 
 	@Override

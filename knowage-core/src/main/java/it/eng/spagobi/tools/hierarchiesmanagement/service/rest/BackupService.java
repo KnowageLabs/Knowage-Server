@@ -17,22 +17,6 @@
  */
 package it.eng.spagobi.tools.hierarchiesmanagement.service.rest;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
-import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
-import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
-import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
-import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
-import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyUtils;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -54,6 +38,22 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
+import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
+import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
+import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyUtils;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /*
  * This class contains all REST services about the backup feature

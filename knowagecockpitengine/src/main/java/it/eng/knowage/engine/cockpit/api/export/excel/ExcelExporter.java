@@ -198,8 +198,8 @@ public class ExcelExporter {
 			Map<String, Object> map = new java.util.HashMap<String, Object>();
 
 			if (getRealtimeFromTableWidget(datasetId, configuration)) {
-				logger.debug("realtime = true");
-				map.put("realtime", true);
+				logger.debug("nearRealtime = true");
+				map.put("nearRealtime", true);
 			}
 
 			JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
@@ -318,8 +318,9 @@ public class ExcelExporter {
 			JSONObject datastore = client.getDataStore(map, datasetLabel, userUniqueIdentifier, selections);
 			return datastore;
 		} catch (Exception e) {
-			logger.error("Unable to get data", e);
-			return null;
+			String message = "Unable to get data";
+			logger.error(message, e);
+			throw new SpagoBIRuntimeException(message);
 		}
 	}
 

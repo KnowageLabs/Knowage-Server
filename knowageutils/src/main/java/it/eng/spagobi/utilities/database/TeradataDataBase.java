@@ -25,25 +25,10 @@ import java.sql.Statement;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-public class TeradataDataBase extends AbstractDataBase {
+public class TeradataDataBase extends AbstractDataBase implements MetaDataBase {
 
 	public TeradataDataBase(IDataSource dataSource) {
 		super(dataSource);
-	}
-
-	@Override
-	public String getDataBaseType(Class javaType) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getAliasDelimiter() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		throw new UnsupportedOperationException();
 	}
 
 	// https://community.teradata.com/t5/Blog/How-to-determine-or-switch-the-current-database-using-the/ba-p/66995
@@ -61,5 +46,14 @@ public class TeradataDataBase extends AbstractDataBase {
 		} finally {
 			stmt.close();
 		}
+	}
+
+	/*
+	 * https://developer.teradata.com/doc/connectivity/jdbc/reference/current/jdbcug_chapter_2.html Retrieves a description of the given attribute of the given
+	 * type for a UDT that is available in the given schema and catalog (catalog should be null because *no catalog is supported in Teradata*.
+	 */
+	@Override
+	public String getCatalog(Connection conn) throws SQLException {
+		return null;
 	}
 }

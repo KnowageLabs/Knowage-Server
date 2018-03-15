@@ -17,12 +17,6 @@
  */
 package it.eng.spagobi.dataset.cache.test;
 
-import it.eng.spagobi.dataset.cache.impl.sqldbcache.DataType;
-import it.eng.spagobi.json.Xml;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -33,6 +27,11 @@ import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.DataType;
+import it.eng.spagobi.json.Xml;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)
@@ -47,7 +46,7 @@ public class TestXmlFactory {
 		return jsonObject;
 	}
 
-	public static List<DataSource> createDataSources(String xmlFileAbsolutePath, boolean isWritingDatasource) throws Exception {
+	public static List<IDataSource> createDataSources(String xmlFileAbsolutePath, boolean isWritingDatasource) throws Exception {
 		String dataset;
 		boolean isReadOnly;
 		boolean isWriteDefault;
@@ -63,8 +62,8 @@ public class TestXmlFactory {
 
 		JSONObject jsonObject = getJsonObjectFromXml(xmlFileAbsolutePath);
 		JSONArray jsonDatasets = jsonObject.getJSONObject("test").getJSONArray(dataset);
-		ArrayList<DataSource> dataSourceList = new ArrayList<DataSource>();
-		for(int i=0; i<jsonDatasets.length(); i++){
+		List<IDataSource> dataSourceList = new ArrayList<IDataSource>();
+		for (int i = 0; i < jsonDatasets.length(); i++) {
 			JSONObject jsonDataset = jsonDatasets.getJSONObject(i);
 			String label = jsonDataset.getString("text");
 			String url = jsonDataset.getString("url");
@@ -73,15 +72,14 @@ public class TestXmlFactory {
 			String driver = jsonDataset.getString("driver");
 			String hibDialectClass = jsonDataset.getString("hibDialectClass");
 			String hibDialectName = jsonDataset.getString("hibDialectName");
-			dataSourceList.add(TestDataSourceFactory.createDataSource(label, url, user, password, driver, hibDialectClass, hibDialectName, isReadOnly, isWriteDefault));
+			dataSourceList.add(
+					TestDataSourceFactory.createDataSource(label, url, user, password, driver, hibDialectClass, hibDialectName, isReadOnly, isWriteDefault));
 		}
-		
-
 
 		return dataSourceList;
 	}
 
-	public static DataSource createDataSource(String xmlFileAbsolutePath, boolean isWritingDatasource) throws Exception {
+	public static IDataSource createDataSource(String xmlFileAbsolutePath, boolean isWritingDatasource) throws Exception {
 		String dataset;
 		boolean isReadOnly;
 		boolean isWriteDefault;
@@ -107,7 +105,7 @@ public class TestXmlFactory {
 
 		return TestDataSourceFactory.createDataSource(label, url, user, password, driver, hibDialectClass, hibDialectName, isReadOnly, isWriteDefault);
 	}
-	
+
 	public static SQLDBCacheConfiguration createCacheConfiguration(String xmlFileAbsolutePath, IDataSource dataSourceWriting) throws Exception {
 		JSONObject jsonObject = getJsonObjectFromXml(xmlFileAbsolutePath);
 		JSONObject jsonCacheConfiguration = jsonObject.getJSONObject("test").getJSONObject("cacheConfiguration");
@@ -122,7 +120,7 @@ public class TestXmlFactory {
 		cacheConfiguration.setCacheSpaceAvailable(size);
 		cacheConfiguration.setCachePercentageToClean(percentageToClean);
 		cacheConfiguration.setCachePercentageToStore(percentageToStore);
-		if(schemaName!=null)
+		if (schemaName != null)
 			cacheConfiguration.setSchema(schemaName);
 		cacheConfiguration.setCacheDataSource(dataSourceWriting);
 		cacheConfiguration.setObjectsTypeDimension(new DataType().getProps());

@@ -50,7 +50,7 @@ angular.module('schedulation_view', ['ngMaterial'])
 	}
 });
 
-function recentViewControllerFunction($scope,sbiModule_translate, sbiModule_config, sbiModule_user){
+function recentViewControllerFunction($scope,sbiModule_translate, sbiModule_config, sbiModule_user, $mdDialog, sbiModule_restServices, sbiModule_logger){
 
 	$scope.sbiModule_config = sbiModule_config;
 	$scope.clickDocument=function(item){
@@ -67,6 +67,62 @@ function recentViewControllerFunction($scope,sbiModule_translate, sbiModule_conf
 	    {"label":$scope.translate.load("sbi.schedulation.jobName"),"name":"jobName"},
 	    {"label":$scope.translate.load("sbi.schedulation.jobDesc"), "name":"jobDescription"}
     ];
+
+	$scope.selectedTriggers = [];
+
+	$scope.toggleTriggerRun = function(trigger){
+		var index = $scope.selectedTriggers.indexOf(trigger);
+		if(index==-1){
+			$scope.selectedTriggers.push(trigger);
+		}else{
+			$scope.selectedTriggers.splice(index,1);
+		}
+	};
+
+	$scope.runTriggers = function(trigger){
+
+		var requestString ="executeMultipleTrigger";
+
+		var itemsList = new Array();
+
+		if(trigger == 'all'){
+			for(var i=0; i<$scope.selectedTriggers.length; i++){
+				var item = {};
+				var doc = $scope.selectedTriggers[i];
+				item.jobName = doc.jobName;
+				item.jobGroup = doc.jobGroup;
+				item.triggerName = doc.triggerName;
+				item.triggerGroup = doc.triggerGroup;
+				itemsList.push(item);
+			}
+
+		}else{
+			var item = {};
+			item.jobName = trigger.jobName;
+			item.jobGroup = trigger.jobGroup;
+			item.triggerName = trigger.triggerName;
+			item.triggerGroup = trigger.triggerGroup;
+			itemsList.push(item);
+		}
+
+		sbiModule_restServices.promisePost("scheduleree",requestString,JSON.stringify(itemsList))
+		.then(function(response) {
+			$mdDialog.show(
+					$mdDialog.alert()
+				        .clickOutsideToClose(false)
+				        .title(sbiModule_translate.load("sbi.generic.ok"))
+				        .content(sbiModule_translate.load("sbi.scheduler.schedulation.executed"))
+				        .ok(sbiModule_translate.load("sbi.general.ok"))
+				);
+			sbiModule_logger.log("[LOAD END]: Execution of schedulation is finished.");
+		},function(response){
+
+			toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
+
+		});
+
+
+	}
 
 	$scope.onlySnapshots = function (item) {
 		var schedulationTypes = {snapshot:"saveassnapshot", file:"saveasfile",document:"saveasdocument", mail:"sendmail", jclass:"saveasclass"};
@@ -85,14 +141,37 @@ function recentViewControllerFunction($scope,sbiModule_translate, sbiModule_conf
 		}
 	}
 
-
-	$scope.buttonMenu=[
-		{
-		label : sbiModule_translate.load('sbi.workspace.schedulations.view'),
-		icon:'fa fa-eye' ,
+	$scope.runMenu = {
+		label : "Run",
+		icon:'fa fa-play-circle' ,
 		action : function(item,event) {
 			$scope.previewDocumentAction({doc:item});
 		}
+	}
+
+	$scope.getSchedulations = {
+			label : sbiModule_translate.load('sbi.workspace.schedulations.view'),
+			icon:'fa fa-eye' ,
+			action : function(item,event) {
+				$scope.previewDocumentAction({doc:item});
+			}
+	}
+
+
+	$scope.buttonMenu=[
+		{
+			label : "Run",
+			icon:'fa fa-play-circle' ,
+			action : function(item,event) {
+				$scope.previewDocumentAction({doc:item});
+			}
+		},
+		{
+			label : sbiModule_translate.load('sbi.workspace.schedulations.view'),
+			icon:'fa fa-eye' ,
+			action : function(item,event) {
+				$scope.previewDocumentAction({doc:item});
+			}
 	} ];
 
 

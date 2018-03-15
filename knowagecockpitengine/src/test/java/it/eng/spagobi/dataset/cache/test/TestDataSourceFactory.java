@@ -19,7 +19,7 @@ package it.eng.spagobi.dataset.cache.test;
 
 import java.util.Random;
 
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
@@ -85,7 +85,7 @@ public class TestDataSourceFactory {
 
 	public static IDataSource createDataSource(String label, String url, String user, String password, String driver, String hibDialectClass,
 			String hibDialectName, boolean isReadOnly, boolean isWriteDefault) {
-		IDataSource dataSource = new DataSource();
+		IDataSource dataSource = DataSourceFactory.getDataSource();
 		Random rand = new Random();
 
 		int id = rand.nextInt(999999) + 1;
@@ -100,7 +100,6 @@ public class TestDataSourceFactory {
 		dataSource.setSchemaAttribute("");
 		dataSource.setMultiSchema(false);
 		dataSource.setHibDialectClass(hibDialectClass);
-		dataSource.setHibDialectName(hibDialectName);
 		dataSource.setReadOnly(isReadOnly);
 		dataSource.setWriteDefault(isWriteDefault);
 

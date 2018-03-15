@@ -17,6 +17,11 @@
  */
 package it.eng.spagobi.dataset.cache.impl.sqldbcache.test;
 
+import java.math.BigDecimal;
+import java.util.Random;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.DataType;
 import it.eng.spagobi.dataset.cache.test.TestConstants;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
@@ -35,11 +40,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.utilities.cache.CacheItem;
-
-import java.math.BigDecimal;
-import java.util.Random;
-
-import org.apache.log4j.Logger;
+import it.eng.spagobi.utilities.database.DataBaseException;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -104,14 +105,14 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 	}
 
-	public void testCacheDimension() {
+	public void testCacheDimension() throws DataBaseException {
 		assertTrue(cache.getMetadata().getAvailableMemory().compareTo(TestConstants.CACHE_CONFIG_CACHE_DIMENSION) == 0);
 		assertEquals(new Integer(100), cache.getMetadata().getAvailableMemoryAsPercentage());
 		assertEquals(new Integer(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN), cache.getMetadata().getCleaningQuota());
 		assertEquals(new Integer(0), cache.getMetadata().getNumberOfObjects());
 	}
 
-	public void testCachePutJDBCDataSet() {
+	public void testCachePutJDBCDataSet() throws DataBaseException {
 		IDataStore resultset;
 
 		sqlDataset.loadData();
@@ -121,7 +122,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		logger.debug("JDBCDataset inserted inside cache");
 	}
 
-	public void testCachePutFileDataSet() {
+	public void testCachePutFileDataSet() throws DataBaseException {
 		IDataStore resultset;
 
 		fileDataset.loadData();
@@ -131,7 +132,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		logger.debug("FileDataSet inserted inside cache");
 	}
 
-	public void testCachePutQbeDataSet() {
+	public void testCachePutQbeDataSet() throws DataBaseException {
 		IDataStore resultset;
 
 		qbeDataset.loadData();
@@ -142,7 +143,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 	}
 
-	public void testCachePutFlatDataSet() {
+	public void testCachePutFlatDataSet() throws DataBaseException {
 		IDataStore resultset;
 
 		flatDataset.loadData();
@@ -153,7 +154,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 	}
 
-	public void testCachePutScriptDataSet() {
+	public void testCachePutScriptDataSet() throws DataBaseException {
 		IDataStore resultset;
 
 		scriptDataset.loadData();
@@ -164,7 +165,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 	}
 
-	public void testCacheGetJDBCDataSet() {
+	public void testCacheGetJDBCDataSet() throws DataBaseException {
 		String signature = sqlDataset.getSignature();
 		IDataStore dataStore = cache.get(signature);
 		assertNull(dataStore);
@@ -177,7 +178,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		assertNotNull(dataStore);
 	}
 
-	public void testCacheGetFileDataSet() {
+	public void testCacheGetFileDataSet() throws DataBaseException {
 		String signature = fileDataset.getSignature();
 		IDataStore dataStore = cache.get(signature);
 		assertNull(dataStore);
@@ -190,7 +191,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		assertNotNull(dataStore);
 	}
 
-	public void testCacheGetQbeDataSet() {
+	public void testCacheGetQbeDataSet() throws DataBaseException {
 		String signature = qbeDataset.getSignature();
 		IDataStore dataStore = cache.get(signature);
 		assertNull(dataStore);
@@ -203,7 +204,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		assertNotNull(dataStore);
 	}
 
-	public void testCacheGetFlatDataSet() {
+	public void testCacheGetFlatDataSet() throws DataBaseException {
 		String signature = flatDataset.getSignature();
 		IDataStore dataStore = cache.get(signature);
 		assertNull(dataStore);
@@ -216,7 +217,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		assertNotNull(dataStore);
 	}
 
-	public void testCacheGetScriptDataSet() {
+	public void testCacheGetScriptDataSet() throws DataBaseException {
 		String signature = scriptDataset.getSignature();
 		IDataStore dataStore = cache.get(signature);
 		assertNull(dataStore);
@@ -229,7 +230,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		assertNotNull(dataStore);
 	}
 
-	public void testCacheDeleteCachedDataset() {
+	public void testCacheDeleteCachedDataset() throws DataBaseException {
 		IDataStore resultset;
 
 		fileDataset.loadData();
@@ -265,7 +266,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 	}
 
-	public void testCacheDeleteAll() {
+	public void testCacheDeleteAll() throws DataBaseException {
 		testCachePutJDBCDataSet();
 		testCachePutFileDataSet();
 		cache.deleteAll();
@@ -279,7 +280,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		assertTrue("The cache wasn't cleaned correctly", cacheCleaned);
 	}
 
-	public void testCacheDatasetDimension() {
+	public void testCacheDatasetDimension() throws DataBaseException {
 		ICacheMetadata cacheMetadata = cache.getMetadata();
 		BigDecimal cacheSpaceAvaiable = cacheMetadata.getAvailableMemory();
 
@@ -311,7 +312,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 	}
 
-	public void testCacheHasSpaceForDataset() {
+	public void testCacheHasSpaceForDataset() throws DataBaseException {
 		IDataStore resultset;
 
 		fileDataset.loadData();
@@ -339,8 +340,8 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		try {
 			cacheZero.put(sqlDataset, resultset);
 
-		} catch (CacheException ex) {
-			logger.error("Dataset cannot be cached");
+		} catch (CacheException | DataBaseException ex) {
+			logger.error("Dataset cannot be cached", ex);
 			exception = true;
 		} finally {
 			assertTrue("Wrong behavior: Exception expected but not catched", exception);
@@ -350,7 +351,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 	}
 
-	public void testGetDimensionSpaceAvailable() {
+	public void testGetDimensionSpaceAvailable() throws DataBaseException {
 		ICacheMetadata cacheMetadata = cache.getMetadata();
 		BigDecimal cacheSpaceAvaiable = cacheMetadata.getAvailableMemory();
 		assertNotNull("Error calculating avaiable cache space", cacheSpaceAvaiable);
@@ -369,7 +370,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		logger.debug(" >> Estimated dataset dimension: " + estimatedDatasetDimension + " byte");
 	}
 
-	public void testCountNumberOfObjects() {
+	public void testCountNumberOfObjects() throws DataBaseException {
 		testCachePutJDBCDataSet();
 		testCachePutFileDataSet();
 		testCachePutQbeDataSet();
@@ -403,7 +404,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 	 * cacheCustom.deleteAll(); } }
 	 */
 
-	public void testSchemaName() {
+	public void testSchemaName() throws DataBaseException {
 
 		String schemaName = getDefaultCacheConfiguration().getSchema();
 

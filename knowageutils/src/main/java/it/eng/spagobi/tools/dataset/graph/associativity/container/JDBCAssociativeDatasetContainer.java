@@ -35,6 +35,7 @@ import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.DataBaseException;
 
 public class JDBCAssociativeDatasetContainer extends AssociativeDatasetContainer {
 
@@ -58,12 +59,12 @@ public class JDBCAssociativeDatasetContainer extends AssociativeDatasetContainer
 		return AbstractJDBCDataset.encapsulateColumnName(columnName, getDataSource());
 	}
 
-	private PreparedStatementData buildPreparedStatementData(List<String> columnNames) {
+	private PreparedStatementData buildPreparedStatementData(List<String> columnNames) throws DataBaseException {
 		return getSelectQuery(columnNames).getPreparedStatementData(getDataSource());
 	}
 
 	@Override
-	public Set<Tuple> getTupleOfValues(List<String> columnNames) throws ClassNotFoundException, NamingException, SQLException {
+	public Set<Tuple> getTupleOfValues(List<String> columnNames) throws ClassNotFoundException, NamingException, SQLException, DataBaseException {
 		PreparedStatementData data = buildPreparedStatementData(columnNames);
 		String query = data.getQuery();
 		List<Object> values = data.getValues();

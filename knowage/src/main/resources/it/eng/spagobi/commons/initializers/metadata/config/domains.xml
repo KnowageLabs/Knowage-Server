@@ -174,6 +174,12 @@
 		domainNm="HQL Hive dialect" valueDs="sbidomains.ds.hive" />
 	<DOMAIN valueCd="orient" valueNm="sbidomains.nm.orient"
 		domainCd="DIALECT_HIB" domainNm="OrientDB dialect" valueDs="sbidomains.ds.orient" />
+	<DOMAIN valueCd="org.hibernate.dialect.TeradataDialect"
+		valueNm="sbidomains.nm.teradata" domainCd="DIALECT_HIB"
+		domainNm="sbidomains.nm.teradata" valueDs="sbidomains.ds.teradata" />
+	<DOMAIN valueCd="org.hibernate.dialect.VerticaDialect"
+		valueNm="sbidomains.nm.vertica" domainCd="DIALECT_HIB"
+		domainNm="sbidomains.nm.vertica" valueDs="sbidomains.ds.vertica" />
 	<DOMAIN valueCd="RANGE" valueNm="sbidomains.nm.range" domainCd="THRESHOLD_TYPE"
 		domainNm="Threshold Type" valueDs="sbidomains.ds.range" />
 	<!-- 
@@ -337,6 +343,10 @@
 		domainNm="Data Set Type" valueDs="SbiCkanDataSet" />
 	<DOMAIN valueCd="Federated" valueNm="SbiFederatedDataSet" domainCd="DATA_SET_TYPE"
 		domainNm="Data Set Type" valueDs="SbiFederatedDataSet" />
+		
+	<DOMAIN valueCd="SPARQL" valueNm="SbiSPARQLDataSet" domainCd="DATA_SET_TYPE"
+		domainNm="Data Set Type" valueDs="SbiSPARQLDataSet" />
+		
 	<DOMAIN valueCd="Default Dataset Category" valueNm="Default Dataset Category" domainCd="CATEGORY_TYPE"
 		domainNm="Category Type" valueDs="Default Dataset Category" />
 	<DOMAIN valueCd="DEVELOPMENT" valueNm="sbidomains.permissiononfolder.nm.dev"

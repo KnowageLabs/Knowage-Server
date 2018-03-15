@@ -93,6 +93,10 @@
 					<groupId>xerces</groupId>
 					<artifactId>xercesImpl</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>commons-dbcp</groupId>
+					<artifactId>commons-dbcp</artifactId>
+				</exclusion>
 			</exclusions>
 			<scope>compile</scope>
 		</dependency>
@@ -384,6 +388,12 @@
 			<version>3.1.2.Final</version>
 			<scope>compile</scope>
         </dependency>
+        
+        <dependency>
+		    <groupId>org.jboss.resteasy</groupId>
+		    <artifactId>resteasy-wadl</artifactId>
+		    <version>3.1.2.Final</version>
+		</dependency>
 		
 		<!--
 		<dependency>
@@ -597,6 +607,12 @@
 			<artifactId>java-jwt</artifactId>
 			<version>3.3.0</version>
 		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-dbcp2</artifactId>
+		    <version>2.2.0</version>
+		</dependency>		
 		
 	</dependencies>
 	

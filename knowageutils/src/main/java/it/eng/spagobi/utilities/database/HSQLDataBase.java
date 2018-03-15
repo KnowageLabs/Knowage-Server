@@ -17,6 +17,9 @@
  */
 package it.eng.spagobi.utilities.database;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -25,12 +28,24 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class HSQLDataBase extends AbstractDataBase {
+public class HSQLDataBase extends AbstractDataBase implements CacheDataBase, MetaDataBase {
 
-	private static transient Logger logger = Logger.getLogger(MySQLDataBase.class);
+	private static transient Logger logger = Logger.getLogger(HSQLDataBase.class);
+
+	private int varcharLength = 255;
 
 	public HSQLDataBase(IDataSource dataSource) {
 		super(dataSource);
+	}
+
+	@Override
+	public int getVarcharLength() {
+		return varcharLength;
+	}
+
+	@Override
+	public void setVarcharLength(int varcharLength) {
+		this.varcharLength = varcharLength;
 	}
 
 	@Override
@@ -75,22 +90,20 @@ public class HSQLDataBase extends AbstractDataBase {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
-	 */
-	@Override
-	public String getAliasDelimiter() {
-		return "\"";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
 	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		// TODO: temporary work-around
-		String query = "SELECT 0 FROM INFORMATION_SCHEMA.SYSTEM_USERS";
-		return query;
+		return "SELECT 0 FROM INFORMATION_SCHEMA.SYSTEM_USERS";
+	}
+
+	@Override
+	public String getSchema(Connection conn) throws SQLException {
+		return conn.getSchema();
+	}
+
+	@Override
+	public String getCatalog(Connection conn) throws SQLException {
+		return conn.getCatalog();
 	}
 }

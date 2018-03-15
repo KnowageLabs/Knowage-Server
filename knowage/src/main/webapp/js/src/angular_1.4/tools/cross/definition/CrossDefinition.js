@@ -7,7 +7,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
     $mdThemingProvider.setDefaultTheme('knowage');
 }])
 .controller('navigationController'
-		,['$scope','sbiModule_restServices','sbiModule_translate','$angularListDetail','$mdDialog','$mdToast', 'sbiModule_i18n',function($scope, sbiModule_restServices, sbiModule_translate,$angularListDetail, $mdDialog, $mdToast, sbiModule_i18n){
+		,['$scope','sbiModule_restServices','sbiModule_translate','$angularListDetail','$mdDialog','$mdToast', 'sbiModule_i18n', 'sbiModule_messaging',function($scope, sbiModule_restServices, sbiModule_translate,$angularListDetail, $mdDialog, $mdToast, sbiModule_i18n, sbiModule_messaging){
 			var ctr = this;
 			var s = $scope;
 
@@ -103,7 +103,11 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 				$angularListDetail.goToDetail();
 
 			};
+
+
+
 			ctr.saveFunc = function(){
+
 				ctr.detail.simpleNavigation.type = ctr.crossmodality.value;
 				sbiModule_restServices.promisePost('1.0/crossNavigation/save', "", ctr.detail)
 				.then(function(response){
@@ -128,7 +132,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 					var data = response.data;
 					var parameters = [];
 					for(var i=0;i<data.results.length;i++){
-						parameters.push({'id':data.results[i].id,'name':data.results[i].label,'type':1});
+						parameters.push({'id':data.results[i].id,'name':data.results[i].label,'type':1, 'parType':data.results[i].parType});
 					}
 					callbackFunction(parameters);
 				},function(response){});
@@ -140,7 +144,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 					var data = response.data;
 					var parameters = [];
 					for(var i=0;i<data.length;i++){
-						parameters.push({'id':data[i].id,'name':data[i].name,'type':0});
+						parameters.push({'id':data[i].id,'name':data[i].name,'type':0, 'parType':data[i].type.valueCd});
 					}
 					callbackFunction(parameters);
 				},function(response){});
@@ -217,17 +221,27 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			};
 
 			ctr.treeOptions = {
-				beforeDrop: function(event) {
-					if(ctr.selectedItem >= 0){
-						//if(ctr.selectedItem != ""){
-							ctr.detail.toPars[ctr.selectedItem].links = [event.source.cloneModel];
-						//}
+					beforeDrop: function(event) {
+						if(ctr.selectedItem >= 0){
+							//if(ctr.selectedItem != ""){
+							var fromType =  event.source.cloneModel.parType;
+							var fromName = event.source.cloneModel.name;
+							var toType = ctr.detail.toPars[ctr.selectedItem].parType;
+							var toName = ctr.detail.toPars[ctr.selectedItem].name;
+
+							if(fromType && toType && fromType == 'NUM' && toType == 'STRING'){
+								sbiModule_messaging.showErrorMessage(fromName +' '+ sbiModule_translate.load("sbi.crossnavigation.crossparameters.typeProblem") + ' ' +toName);
+							}
+							else{
+								ctr.detail.toPars[ctr.selectedItem].links = [event.source.cloneModel];
+							}
+							//}
+						}
+						return false;
+					},
+					dragStop: function(){
+						ctr.unselectAll();
 					}
-					return false;
-				},
-				dragStop: function(){
-					ctr.unselectAll();
-				}
 			};
 
 			ctr.treeOptions2 = {

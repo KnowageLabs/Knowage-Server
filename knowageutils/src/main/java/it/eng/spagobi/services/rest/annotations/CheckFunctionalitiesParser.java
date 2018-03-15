@@ -57,7 +57,7 @@ public class CheckFunctionalitiesParser {
 			String[] funcsAnnotated = checkFuncs.functionalities();
 
 			for (int i = 0; i < funcsAnnotated.length; i++) {
-				if (functionalities.contains(funcsAnnotated[i])) {
+				if (functionalities != null && functionalities.contains(funcsAnnotated[i])) {
 					authorized = true;
 					logger.debug("Method checkFunctionalitiesByAnnotation: Functionality found");
 					break;

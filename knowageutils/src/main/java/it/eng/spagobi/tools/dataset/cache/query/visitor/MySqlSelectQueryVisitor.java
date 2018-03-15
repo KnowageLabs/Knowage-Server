@@ -21,18 +21,16 @@ package it.eng.spagobi.tools.dataset.cache.query.visitor;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
-import it.eng.spagobi.utilities.database.MySQLDataBase;
+import it.eng.spagobi.utilities.database.IDataBase;
 
 public class MySqlSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 	private static final String DATE_TIME_FORMAT_MYSQL = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "%Y").replace("MM", "%m")
 			.replace("dd", "%d").replace("HH", "%H").replace("mm", "%i").replace("ss", "%s");
 
-	public MySqlSelectQueryVisitor() {
-		this.aliasDelimiter = MySQLDataBase.ALIAS_DELIMITER;
-		this.dialect = SqlDialect.MYSQL;
+	public MySqlSelectQueryVisitor(IDataBase database) {
+		super(database);
 	}
 
 	@Override

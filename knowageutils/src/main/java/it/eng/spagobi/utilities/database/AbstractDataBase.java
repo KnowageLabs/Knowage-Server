@@ -17,15 +17,9 @@
  */
 package it.eng.spagobi.utilities.database;
 
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
@@ -35,80 +29,62 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 public abstract class AbstractDataBase implements IDataBase {
 
 	IDataSource dataSource;
-	int varcharLength = 255;
+	protected DatabaseDialect databaseDialect;
 	public static final String STANDARD_ALIAS_DELIMITER = "\"";
 
 	private static transient Logger logger = Logger.getLogger(AbstractDataBase.class);
 
+	protected AbstractDataBase() {
+
+	}
+
 	public AbstractDataBase(IDataSource dataSource) {
 		this.dataSource = dataSource;
+		this.databaseDialect = DatabaseDialect.get(dataSource.getHibDialectClass());
 	}
 
 	@Override
-	public int getVarcharLength() {
-		return varcharLength;
-	}
-
-	@Override
-	public void setVarcharLength(int varcharLength) {
-		this.varcharLength = varcharLength;
+	public String getName() {
+		return databaseDialect.getName();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see it.eng.spagobi.utilities.database.IDataBase#getUsedMemory(java.lang.String, java.lang.String)
+	 *
+	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
 	 */
 	@Override
-	public BigDecimal getUsedMemorySize(String schema, String tableNamePrefix) {
-		logger.trace("IN");
-		try {
-			String query = getUsedMemorySizeQuery(schema, tableNamePrefix);
-			if (query == null) {
-				throw new DataBaseException("Impossible to build the query to get used memory size for the target database");
-			}
-			IDataStore dataStore = dataSource.executeStatement(query, 0, 0);
-			if (dataStore.getRecordsCount() == 0) {
-				throw new DataBaseException("The execution of the query used to get used memory size returned no result [" + query + "]");
-			}
-
-			BigDecimal size = null;
-			IRecord record = dataStore.getRecordAt(0);
-			for (int i = 0, l = record.getFields().size(); i < l; i++) {
-				IField field = record.getFieldAt(i);
-				if (field.getValue() instanceof Long) {
-					size = BigDecimal.valueOf((Long) field.getValue());
-				} else if (field.getValue() instanceof Integer) {
-					Integer num = (Integer) field.getValue();
-					size = new BigDecimal(num);
-				} else {
-					size = (BigDecimal) field.getValue();
-				}
-			}
-
-			if (size == null) {
-				size = new BigDecimal(0);
-			}
-			return size;
-		} catch (Throwable t) {
-			if (t instanceof DataBaseException)
-				throw (DataBaseException) t;
-			else
-				throw new DataBaseException("An unexpected error occured while executing query to get used memory size", t);
-		} finally {
-			logger.trace("OUT");
-		}
+	public String getAliasDelimiter() {
+		return STANDARD_ALIAS_DELIMITER;
 	}
 
-	public abstract String getUsedMemorySizeQuery(String schema, String tableNamePrefix);
-
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.spagobi.utilities.database.IDataBase#getSqlDialect()
+	 */
 	@Override
-	public String getSchema(Connection conn) throws SQLException {
-		return conn.getSchema();
+	public DatabaseDialect getDatabaseDialect() {
+		return databaseDialect;
 	}
 
 	@Override
-	public String getCatalog(Connection conn) throws SQLException {
-		return conn.getCatalog();
+	public boolean isCacheSupported() {
+		return this instanceof CacheDataBase;
+	}
+
+	@Override
+	public boolean isMetaSupported() {
+		return this instanceof MetaDataBase;
+	}
+
+	@Override
+	public IDataSource getDataSource() {
+		return dataSource;
+	}
+
+	@Override
+	public int compareTo(IDataBase o) {
+		return getName().compareToIgnoreCase(o.getName());
 	}
 }

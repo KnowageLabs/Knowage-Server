@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,21 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.adhocreporting.services;
-
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.service.JSONSuccess;
-import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -36,53 +26,61 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONSuccess;
+import it.eng.spagobi.utilities.sql.SqlUtils;
+
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
- * 
- *         This action is intended for final users; it doesn't use standard
- *         serializer for datasources, since no sensitive information (URL, JDBC
- *         user and pwd) should be sent to final users. It filters HBase or Hive
- *         datasource, since they cannot be used, at the moment, as datasources
- *         for dataset persistence.
- * 
+ *
+ *         This action is intended for final users; it doesn't use standard serializer for datasources, since no sensitive information (URL, JDBC user and pwd)
+ *         should be sent to final users. It filters HBase or Hive datasource, since they cannot be used, at the moment, as datasources for dataset persistence.
+ *
  */
 public class GetDatasourcesListUserAction extends AbstractSpagoBIAction {
 
 	public static final String SERVICE_NAME = "GET_DATASOURCES_LIST_ACTION";
-	
+
 	public static final String ID = "id";
 	public static final String LABEL = "label";
 	public static final String DESCRIPTION = "description";
-	
+
 	// logger component
 	private static Logger logger = Logger.getLogger(GetDatasourcesListUserAction.class);
 
+	@Override
 	public void doService() {
 		logger.debug("IN");
 		try {
-			
+
 			IDataSourceDAO dao;
 			IEngUserProfile profile = getUserProfile();
 			try {
 				dao = DAOFactory.getDataSourceDAO();
 				dao.setUserProfile(profile);
-			} catch (EMFUserError e) {				
+			} catch (EMFUserError e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
 			}
-			
-			List<DataSource> items = null;
+
+			List<IDataSource> items = null;
 			try {
 				items = dao.loadAllDataSources();
 			} catch (Exception e) {
 				throw new SpagoBIServiceException("Error while getting datasources' list", e);
 			}
-			
+
 			JSONObject responseJSON = null;
 			try {
 				JSONArray itemsJSON = new JSONArray();
-				Iterator<DataSource> it = items.iterator();
+				Iterator<IDataSource> it = items.iterator();
 				while (it.hasNext()) {
-					DataSource datasource = it.next();
+					IDataSource datasource = it.next();
 					String dialect = datasource.getHibDialectClass();
 					// HBase and Hive cannot be selected in order to persist a dataset, therefore we exclude them.
 					// TODO When implementing dataset persistence on those system, remove this filter.
@@ -97,23 +95,21 @@ public class GetDatasourcesListUserAction extends AbstractSpagoBIAction {
 				}
 				responseJSON = createJSONResponse(itemsJSON, itemsJSON.length());
 			} catch (Exception e) {
-				throw new SpagoBIServiceException(
-						"Error while serializing data", e);
+				throw new SpagoBIServiceException("Error while serializing data", e);
 			}
-			
+
 			try {
-				writeBackToClient( new JSONSuccess( responseJSON ) );
+				writeBackToClient(new JSONSuccess(responseJSON));
 			} catch (IOException e) {
 				throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
 			}
-			
+
 		} finally {
 			logger.debug("OUT");
 		}
 	}
 
-	protected JSONObject createJSONResponse(JSONArray rows,
-			Integer totalResNumber) throws JSONException {
+	protected JSONObject createJSONResponse(JSONArray rows, Integer totalResNumber) throws JSONException {
 		JSONObject results;
 		results = new JSONObject();
 		results.put("total", totalResNumber);
@@ -121,5 +117,5 @@ public class GetDatasourcesListUserAction extends AbstractSpagoBIAction {
 		results.put("rows", rows);
 		return results;
 	}
-	
+
 }

@@ -27,7 +27,6 @@ import java.util.List;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
 import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.dataset.cache.query.item.AndFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.BetweenFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.CompoundFilter;
@@ -47,6 +46,7 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
+import it.eng.spagobi.utilities.database.IDataBase;
 
 public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor {
 
@@ -57,16 +57,17 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 
 	protected boolean buildPreparedStatement;
 	protected boolean useNameAsAlias;
-	protected String aliasDelimiter;
+	protected IDataBase database;
 	protected String aliasPrefix;
-	protected SqlDialect dialect;
+	protected String aliasDelimiter;
 	protected StringBuilder queryBuilder;
 	protected List<Object> queryParameters;
 
-	public AbstractSelectQueryVisitor() {
+	public AbstractSelectQueryVisitor(IDataBase database) {
 		this.buildPreparedStatement = false;
 		this.useNameAsAlias = false;
-		this.aliasDelimiter = AbstractDataBase.STANDARD_ALIAS_DELIMITER;
+		this.database = database;
+		this.aliasDelimiter = database.getAliasDelimiter();
 		this.aliasPrefix = ALIAS_PREFIX;
 		this.queryBuilder = new StringBuilder();
 		this.queryParameters = new ArrayList<Object>();
@@ -188,7 +189,8 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 
 	@Override
 	public void visit(InFilter item) {
-		if (!dialect.isSingleColumnInOperatorSupported() || (item.getProjections().size() > 1 && !dialect.isMultiColumnInOperatorSupported())) {
+		if (!database.getDatabaseDialect().isSingleColumnInOperatorSupported()
+				|| (item.getProjections().size() > 1 && !database.getDatabaseDialect().isMultiColumnInOperatorSupported())) {
 			queryBuilder.append("(");
 			visit(transformToAndOrFilters(item));
 			queryBuilder.append(")");
@@ -277,6 +279,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 	 *            enables the output of an alias. Column name is used as alias if related flag is true.
 	 */
 	protected void append(Projection projection, boolean useAlias) {
+		String aliasDelimiter = database.getAliasDelimiter();
 		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
 		String name = projection.getName();
@@ -315,6 +318,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 	}
 
 	protected void append(Sorting item) {
+		String aliasDelimiter = database.getAliasDelimiter();
 		Projection projection = item.getProjection();
 		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
@@ -372,6 +376,8 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 
 		String tableName = query.getTableName();
 		Assert.assertTrue(StringUtilities.isNotEmpty(tableName), "Missing table definition");
+
+		Assert.assertTrue(query.hasLimit() || !query.hasOffset(), "Invalid offset definition (missing limit)");
 	}
 
 	protected void buildSelect(SelectQuery query) {

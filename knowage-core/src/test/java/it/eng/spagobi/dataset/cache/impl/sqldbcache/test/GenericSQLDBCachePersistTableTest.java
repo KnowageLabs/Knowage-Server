@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.dataset.cache.impl.sqldbcache.test;
 
-import it.eng.spagobi.dataset.cache.test.TestXmlFactory;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.cache.CacheFactory;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
@@ -37,6 +28,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import it.eng.spagobi.dataset.cache.test.TestXmlFactory;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.DataBaseException;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)
@@ -106,7 +107,7 @@ public class GenericSQLDBCachePersistTableTest extends AbstractCacheTest {
 	@Override
 	protected SQLDBCacheConfiguration getDefaultCacheConfiguration() {
 		try {
-			DataSource dataSourceCache = TestXmlFactory.createDataSource(xmlFileAbsolutePath, true);
+			IDataSource dataSourceCache = TestXmlFactory.createDataSource(xmlFileAbsolutePath, true);
 			return TestXmlFactory.createCacheConfiguration(xmlFileAbsolutePath, dataSourceCache);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -116,7 +117,7 @@ public class GenericSQLDBCachePersistTableTest extends AbstractCacheTest {
 	}
 
 	@Test
-	public void testJDBCDataSetFieldTypes() {
+	public void testJDBCDataSetFieldTypes() throws DataBaseException {
 		Map<String, String> writingTypes;
 		try {
 			writingTypes = TestXmlFactory.getWritingTypes(xmlFileAbsolutePath);

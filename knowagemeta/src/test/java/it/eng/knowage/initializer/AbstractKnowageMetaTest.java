@@ -17,22 +17,22 @@
  */
 package it.eng.knowage.initializer;
 
+import org.apache.log4j.Logger;
+import org.junit.Assert;
+
 import it.eng.knowage.common.TestConstants;
 import it.eng.knowage.meta.generator.IGenerator;
 import it.eng.knowage.meta.initializer.PhysicalModelInitializer;
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.business.BusinessModel;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import junit.framework.TestCase;
-
-import org.apache.log4j.Logger;
-import org.junit.Assert;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  *
- */ 
+ */
 public abstract class AbstractKnowageMetaTest extends TestCase {
 
 	protected static BusinessModelInitializer businessModelInitializer;
@@ -40,7 +40,7 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 
 	protected static IGenerator generator = null;
 
-	protected static DataSource dataSourceReading;
+	protected static IDataSource dataSourceReading;
 	protected static TestConstants.DatabaseType dbType;
 
 	protected static Model rootModel;
@@ -60,7 +60,7 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
@@ -85,7 +85,7 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	@Override

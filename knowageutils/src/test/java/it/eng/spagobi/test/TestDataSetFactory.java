@@ -28,7 +28,6 @@ public class TestDataSetFactory {
 		SpagoBiDataSource dataSourceConfig = new SpagoBiDataSource();
 		dataSourceConfig.setDriver(TestCaseConstants.CONNECTION_DRIVER);
 		dataSourceConfig.setHibDialectClass(TestCaseConstants.CONNECTION_DIALECT);
-		dataSourceConfig.setHibDialectName(TestCaseConstants.CONNECTION_DIALECT);
 		dataSourceConfig.setMultiSchema(false);
 		dataSourceConfig.setUser(TestCaseConstants.CONNECTION_USER);
 		dataSourceConfig.setPassword(TestCaseConstants.CONNECTION_PWD);

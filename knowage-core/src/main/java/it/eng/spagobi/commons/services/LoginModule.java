@@ -212,9 +212,9 @@ public class LoginModule extends AbstractHttpModule {
 			userId = userProxy.readUserIdentifier(servletRequest);
 			logger.debug("OUT,userId:" + userId);
 			// if we are in SSO and user has a previous profile keep it!
-			if (previousProfile != null 
-					//&& previousProfile.getUserUniqueIdentifier().equals(userId)   REMOVE
-					) {
+			if (previousProfile != null
+			// && previousProfile.getUserUniqueIdentifier().equals(userId) REMOVE
+			) {
 				if (previousProfile != null) {
 					profile = previousProfile;
 					// user is authenticated, nothing to do
@@ -401,13 +401,6 @@ public class LoginModule extends AbstractHttpModule {
 		TenantManager.setTenant(tenant);
 
 		try {
-
-			if (!UserUtilities.userFunctionalityRootExists(username)) {
-				logger.debug("funcitonality root not yet exists for " + username);
-				// UserUtilities.createUserFunctionalityRoot(profile);
-			} else {
-				logger.debug("funcitonality root already exists for " + username);
-			}
 
 			// Start writing log in the DB
 			Session aSession = null;

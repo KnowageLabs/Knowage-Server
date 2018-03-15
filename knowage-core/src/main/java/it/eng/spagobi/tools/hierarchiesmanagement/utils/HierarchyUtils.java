@@ -17,25 +17,6 @@
  */
 package it.eng.spagobi.tools.hierarchiesmanagement.utils;
 
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.container.ObjectUtils;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
-import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
-import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNodeData;
-import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
-import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Filter;
-import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
@@ -56,6 +37,25 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
+import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
+import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNodeData;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Filter;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class HierarchyUtils {
 
@@ -272,6 +272,7 @@ public class HierarchyUtils {
 	 * @param primaryKey
 	 *            of the table, name of the table, connection to the db
 	 * @return -1 if it finds a result, >= 0 otherwise
+	 *
 	 * @throws SQLException
 	 */
 	public static int getCountId(String primaryKey, String hierTableName, Connection dbConnection, IDataSource dataSource) {
@@ -336,7 +337,8 @@ public class HierarchyUtils {
 			convertedDate = "STR_TO_DATE('" + dateToConvert + "','" + format + "')";
 		} else if (HierarchyConstants.DIALECT_POSTGRES.equalsIgnoreCase(actualDialect)) {
 			convertedDate = "TO_DATE('" + dateToConvert + "','" + format + "')";
-		} else if (HierarchyConstants.DIALECT_ORACLE.equalsIgnoreCase(actualDialect) || HierarchyConstants.DIALECT_ORACLE9i10g.equalsIgnoreCase(actualDialect)) {
+		} else if (HierarchyConstants.DIALECT_ORACLE.equalsIgnoreCase(actualDialect)
+				|| HierarchyConstants.DIALECT_ORACLE9i10g.equalsIgnoreCase(actualDialect)) {
 			convertedDate = "TO_DATE('" + dateToConvert + "','" + format + "')";
 		} else if (HierarchyConstants.DIALECT_HSQL.equalsIgnoreCase(actualDialect)) {
 			convertedDate = "TO_DATE('" + dateToConvert + "','" + format + "')";
@@ -433,8 +435,8 @@ public class HierarchyUtils {
 
 	}
 
-	public static String createInHierarchyCondition(IDataSource dataSource, String hierarchyTable, String hierNameCol, String hierarchyName,
-			String hierTypeCol, String hierarchyType, String dimFilterFieldCol, String selectFilterField, String vFilterDateWhereClause, boolean exludeHierLeaf) {
+	public static String createInHierarchyCondition(IDataSource dataSource, String hierarchyTable, String hierNameCol, String hierarchyName, String hierTypeCol,
+			String hierarchyType, String dimFilterFieldCol, String selectFilterField, String vFilterDateWhereClause, boolean exludeHierLeaf) {
 
 		logger.debug("Filter Hierarchy [" + hierarchyName + "]");
 
@@ -484,7 +486,8 @@ public class HierarchyUtils {
 	}
 
 	public static IDataStore getDimensionDataStore(IDataSource dataSource, String dimensionName, List<Field> metadataFields, String validityDate,
-			String optionalFilter, String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String prefix, boolean exludeHierLeaf) {
+			String optionalFilter, String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String prefix,
+			boolean exludeHierLeaf) {
 
 		String dimFilterField = prefix + HierarchyConstants.DIM_FILTER_FIELD;
 		String hierFilterField = prefix + HierarchyConstants.SELECT_HIER_FILTER_FIELD;
@@ -500,7 +503,8 @@ public class HierarchyUtils {
 	}
 
 	public static IDataStore getDimensionFromHierDataStore(IDataSource dataSource, String dimensionName, List<Field> metadataFields, String validityDate,
-			String optionalFilter, String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String prefix, boolean exludeHierLeaf) {
+			String optionalFilter, String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String prefix,
+			boolean exludeHierLeaf) {
 
 		String dimFilterField = prefix + HierarchyConstants.DIM_FILTER_FIELD;
 		String hierFilterField = prefix + HierarchyConstants.SELECT_HIER_FILTER_FIELD;
@@ -961,6 +965,7 @@ public class HierarchyUtils {
 	 * @param optionHierType
 	 *            : optional hierarchy type (ref. to optionHierarchy)
 	 * @return String the query to extract the hierarchy (all nodes and leaves)
+	 *
 	 */
 	private static String createHierarchyDataQuery(IDataSource dataSource, String dimension, String hierarchyType, String hierarchyName, String hierarchyDate,
 			String filterDate, String filterDimension, String optionDate, String optionHierarchy, String optionHierType, boolean exludeHierLeaf) {
@@ -1097,6 +1102,7 @@ public class HierarchyUtils {
 	 * @param dataSource
 	 * @param databaseConnection
 	 * @param paramsMap
+	 *
 	 */
 	public static String updateHierarchyForBackup(IDataSource dataSource, Connection databaseConnection, HashMap paramsMap, boolean isSyncronize) {
 		logger.debug("START");
@@ -1174,8 +1180,8 @@ public class HierarchyUtils {
 			// if a primary key is present replace the column name with the a counter of the column [E.g. "MT_ID" becomes ? and is set to {countId} ]
 			// relValuesColumns = relValuesColumns.replace(primaryKeyColumn, "MAX(" + primaryKeyColumn + ") + 1"); // MAX(REL_MASTER_TECH_TABLE_NAME_ID)
 
-			String selectRelQuery = "select  " + relValuesColumns + " from  " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " where "
-					+ hierNameTargetColumn + "= ? and " + bkpColumn + "= ?";
+			String selectRelQuery = "select  " + relValuesColumns + " from  " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " where " + hierNameTargetColumn
+					+ "= ? and " + bkpColumn + "= ?";
 			logger.debug("The relations insert original query is [" + selectRelQuery + "]");
 
 			try (PreparedStatement preparedRelStatement = databaseConnection.prepareStatement(updateRelQuery);
@@ -1348,6 +1354,7 @@ public class HierarchyUtils {
 	 * @param dataSource
 	 *            the datasource
 	 * @return String the columns list
+	 *
 	 */
 	public static String getRelationalColumns(IDataSource dataSource) {
 
@@ -1397,6 +1404,7 @@ public class HierarchyUtils {
 	 * @param dataSource
 	 *            the datasource
 	 * @return String the columns list
+	 *
 	 */
 	private static String getRelationalValuesColumns(IDataSource dataSource, HashMap fixedFields) {
 
@@ -1405,65 +1413,65 @@ public class HierarchyUtils {
 		StringBuffer sbColumns = new StringBuffer();
 		String column = null;
 
-		column = (fixedFields.get(HierarchyConstants.DIMENSION) != null) ? "'" + fixedFields.get(HierarchyConstants.DIMENSION) + "'" : AbstractJDBCDataset
-				.encapsulateColumnName(HierarchyConstants.DIMENSION, dataSource);
+		column = (fixedFields.get(HierarchyConstants.DIMENSION) != null) ? "'" + fixedFields.get(HierarchyConstants.DIMENSION) + "'"
+				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.DIMENSION, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.DIMENSION, dataSource) + ",");
 
-		column = (fixedFields.get(HierarchyConstants.HIER_CD_T) != null) ? "'" + fixedFields.get(HierarchyConstants.HIER_CD_T) + "'" : AbstractJDBCDataset
-				.encapsulateColumnName(HierarchyConstants.HIER_CD_T, dataSource);
+		column = (fixedFields.get(HierarchyConstants.HIER_CD_T) != null) ? "'" + fixedFields.get(HierarchyConstants.HIER_CD_T) + "'"
+				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD_T, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD_T, dataSource) + ",");
 
-		column = (fixedFields.get(HierarchyConstants.HIER_NM_T) != null) ? "'" + fixedFields.get(HierarchyConstants.HIER_NM_T) + "'" : AbstractJDBCDataset
-				.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource);
+		column = (fixedFields.get(HierarchyConstants.HIER_NM_T) != null) ? "'" + fixedFields.get(HierarchyConstants.HIER_NM_T) + "'"
+				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource) + ",");
 
-		column = (fixedFields.get(HierarchyConstants.NODE_CD_T) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_CD_T) + "'" : AbstractJDBCDataset
-				.encapsulateColumnName(HierarchyConstants.NODE_CD_T, dataSource);
+		column = (fixedFields.get(HierarchyConstants.NODE_CD_T) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_CD_T) + "'"
+				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_CD_T, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_CD_T, dataSource) + ",");
 
-		column = (fixedFields.get(HierarchyConstants.NODE_NM_T) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_NM_T) + "'" : AbstractJDBCDataset
-				.encapsulateColumnName(HierarchyConstants.NODE_NM_T, dataSource);
+		column = (fixedFields.get(HierarchyConstants.NODE_NM_T) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_NM_T) + "'"
+				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_NM_T, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_NM_T, dataSource) + ",");
 
-		column = (fixedFields.get(HierarchyConstants.NODE_LEV_T) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_LEV_T) + "'" : AbstractJDBCDataset
-				.encapsulateColumnName(HierarchyConstants.NODE_LEV_T, dataSource);
+		column = (fixedFields.get(HierarchyConstants.NODE_LEV_T) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_LEV_T) + "'"
+				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_LEV_T, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_LEV_T, dataSource) + ",");
 
-		column = (fixedFields.get(HierarchyConstants.PATH_CD_T) != null) ? "'" + fixedFields.get(HierarchyConstants.PATH_CD_T) + "'" : AbstractJDBCDataset
-				.encapsulateColumnName(HierarchyConstants.PATH_CD_T, dataSource);
+		column = (fixedFields.get(HierarchyConstants.PATH_CD_T) != null) ? "'" + fixedFields.get(HierarchyConstants.PATH_CD_T) + "'"
+				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.PATH_CD_T, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.PATH_CD_T, dataSource) + ",");
 
-		column = (fixedFields.get(HierarchyConstants.PATH_NM_T) != null) ? "'" + fixedFields.get(HierarchyConstants.PATH_NM_T) + "'" : AbstractJDBCDataset
-				.encapsulateColumnName(HierarchyConstants.PATH_NM_T, dataSource);
+		column = (fixedFields.get(HierarchyConstants.PATH_NM_T) != null) ? "'" + fixedFields.get(HierarchyConstants.PATH_NM_T) + "'"
+				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.PATH_NM_T, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.PATH_NM_T, dataSource) + ",");
 
-		column = (fixedFields.get(HierarchyConstants.HIER_CD_M) != null) ? "'" + fixedFields.get(HierarchyConstants.HIER_CD_M) + "'" : AbstractJDBCDataset
-				.encapsulateColumnName(HierarchyConstants.HIER_CD_M, dataSource);
+		column = (fixedFields.get(HierarchyConstants.HIER_CD_M) != null) ? "'" + fixedFields.get(HierarchyConstants.HIER_CD_M) + "'"
+				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD_M, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD_M, dataSource) + ",");
 
-		column = (fixedFields.get(HierarchyConstants.HIER_NM_M) != null) ? "'" + fixedFields.get(HierarchyConstants.HIER_NM_M) + "'" : AbstractJDBCDataset
-				.encapsulateColumnName(HierarchyConstants.HIER_NM_M, dataSource);
+		column = (fixedFields.get(HierarchyConstants.HIER_NM_M) != null) ? "'" + fixedFields.get(HierarchyConstants.HIER_NM_M) + "'"
+				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_M, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_M, dataSource) + ",");
 
-		column = (fixedFields.get(HierarchyConstants.NODE_CD_M) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_CD_M) + "'" : AbstractJDBCDataset
-				.encapsulateColumnName(HierarchyConstants.NODE_CD_M, dataSource);
+		column = (fixedFields.get(HierarchyConstants.NODE_CD_M) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_CD_M) + "'"
+				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_CD_M, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_CD_M, dataSource) + ",");
 
-		column = (fixedFields.get(HierarchyConstants.NODE_NM_M) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_NM_M) + "'" : AbstractJDBCDataset
-				.encapsulateColumnName(HierarchyConstants.NODE_NM_M, dataSource);
+		column = (fixedFields.get(HierarchyConstants.NODE_NM_M) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_NM_M) + "'"
+				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_NM_M, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_NM_M, dataSource) + ",");
 
-		column = (fixedFields.get(HierarchyConstants.NODE_LEV_M) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_LEV_M) + "'" : AbstractJDBCDataset
-				.encapsulateColumnName(HierarchyConstants.NODE_LEV_M, dataSource);
+		column = (fixedFields.get(HierarchyConstants.NODE_LEV_M) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_LEV_M) + "'"
+				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_LEV_M, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_LEV_M, dataSource) + ",");
 
 		column = (fixedFields.get(HierarchyConstants.GENERAL_INFO_T) != null) ? "'" + fixedFields.get(HierarchyConstants.GENERAL_INFO_T) + "'"
 				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.GENERAL_INFO_T, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.GENERAL_INFO_T, dataSource) + ",");
 
-		column = (fixedFields.get(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID) != null) ? "'"
-				+ fixedFields.get(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID) + "'" : AbstractJDBCDataset.encapsulateColumnName(
-				HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID, dataSource);
+		column = (fixedFields.get(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID) != null)
+				? "'" + fixedFields.get(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID) + "'"
+				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID, dataSource);
 		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID, dataSource));
 
 		toReturn = sbColumns.toString();
@@ -1512,8 +1520,8 @@ public class HierarchyUtils {
 				}
 				logger.error(errMsg, t);
 			}
-			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure: ", t.getMessage() + " - " + t.getCause()
-					+ " - " + errMsg);
+			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure: ",
+					t.getMessage() + " - " + t.getCause() + " - " + errMsg);
 		}
 
 		return toReturn;

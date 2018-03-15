@@ -310,46 +310,32 @@ angular.module('chartInitializer')
 			*/
 			if (isNaN(e.category))
 			{
-
-
 				chart.showLoading('Loading...');
 
 					var params = {};
-
-					params.widgetData = chart.widgetData;
+					
 					if(chart.jsonData ){
 						params.jsonMetaData = chart.jsonData.metaData;
 					}
+					if(chart.widgetData ){
+						params.widgetData = chart.widgetData;
+						var column = chart.widgetData.chartTemplate.CHART.VALUES.CATEGORY.column;
+					}
 
 					var drillValue = e.point.name;
-					var params = {};
-
-					params.widgetData = chart.widgetData;
-					var column = chart.widgetData.chartTemplate.CHART.VALUES.CATEGORY.column;
 
 					var highchartsDrilldownHelperDone = false;
-					if(chart.jsonData ){
+					if(chart.jsonData ){						
 						params.jsonMetaData = chart.jsonData.metaData;
 						try {
 							var fields = chart.jsonData.metaData.fields;
 							for(var i=0; i<fields.length;i++){
 								var aField = fields[i];
-								if(aField.header && aField.header==column && aField.type=="date"){
-									if(aField.dateFormat=="d/m/Y"){
-										var dp = drillValue.indexOf("/");
-										var d = drillValue.substring(0,dp);
-										var mp = (drillValue.substring(dp+1)).indexOf("/");
-
-										var m= drillValue.substring(dp+1,mp+dp+1);
-										drillValue = new Date(m+"/"+d+drillValue.substring(mp+dp+1)).getTime();
-										highchartsDrilldownHelper.drilldown(drillValue, e.point.series.name, chart.breadcrumb);
-										highchartsDrilldownHelperDone = true;
-									}else{
-										drillValue = new Date(drillValue).getTime();
-										highchartsDrilldownHelper.drilldown(drillValue, e.point.series.name, chart.breadcrumb);
+								if(aField.header && aField.header==column){
+									if(aField.type=="date"){
+										highchartsDrilldownHelper.drilldown(drillValue, e.point.series.name, chart.breadcrumb, aField.dateFormatJava);
 										highchartsDrilldownHelperDone = true;
 									}
-
 								}
 							}
 						}catch(e){
@@ -362,9 +348,6 @@ angular.module('chartInitializer')
 					}
 
 					params.breadcrumb = JSON.stringify(chart.breadcrumb);
-
-
-
 
 					jsonChartTemplate.drilldownHighchart(params)
 					.then(function(series){
@@ -398,9 +381,7 @@ angular.module('chartInitializer')
 				            chart.drillUpButton.textSetter(backText);
 
 							chart.hideLoading();
-
 					});
-
 			}
 		}
 	}

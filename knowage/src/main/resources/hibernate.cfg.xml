@@ -9,7 +9,7 @@
 		<property name="hibernate.connection.datasource">java:/comp/env/jdbc/knowage</property>
 
 
-       	<property name="hibernate.dialect">${hibernate.dialect}</property>
+       	<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
                   
                <!-- 
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>

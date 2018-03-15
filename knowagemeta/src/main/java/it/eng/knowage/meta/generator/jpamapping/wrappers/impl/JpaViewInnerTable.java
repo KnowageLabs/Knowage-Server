@@ -17,6 +17,13 @@
  */
 package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaCalculatedColumn;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaColumn;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaRelationship;
@@ -35,13 +42,6 @@ import it.eng.knowage.meta.model.physical.PhysicalColumn;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  *
  * This class wrap a physical table used within a business view and provide all the utility methods used by the template engine in order to generate the java
@@ -54,7 +54,6 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 	private BusinessView businessView;
 	private List<IJpaCalculatedColumn> jpaCalculatedColumns;
 	private List<BusinessColumn> businessColumnOfInnerTable;
-	String quoteString;
 
 	private static Logger logger = LoggerFactory.getLogger(JpaViewInnerTable.class);
 
@@ -299,36 +298,6 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 	}
 
 	@Override
-	public String getCatalog() {
-		String useCatalog = getUseCatalog();
-		if ((useCatalog != null) && (useCatalog.equalsIgnoreCase("true"))) {
-			String catalog = getModel().getPhysicalModel().getCatalog();
-			if (catalog != null && !catalog.equals("")) {
-				catalog = "`" + catalog + "`";
-			}
-			return catalog;
-		} else {
-			return null;
-		}
-
-	}
-
-	@Override
-	public String getSchema() {
-		String useSchema = getUseSchema();
-		if ((useSchema != null) && (useSchema.equalsIgnoreCase("true"))) {
-			String schema = getModel().getPhysicalModel().getSchema();
-			if (schema != null && !schema.equals("")) {
-				schema = "`" + schema + "`";
-			}
-			return schema;
-		} else {
-			return null;
-		}
-
-	}
-
-	@Override
 	public String getName() {
 		return businessView.getName() + " > " + StringUtils.initUpper(physicalTable.getName().replace("_", " "));
 	}
@@ -341,12 +310,6 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 	@Override
 	public String getSqlName() {
 		return physicalTable.getName();
-	}
-
-	@Override
-	public String getQuotedMappingTableName() {
-		String name = physicalTable.getName();
-		return "`" + name + "`";
 	}
 
 	@Override
@@ -387,6 +350,15 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 		BusinessModel businessModel = businessView.getModel();
 		ModelProperty property = businessModel.getProperties().get("structural.mapping.useCatalog");
 		return property != null ? property.getValue() : "";
+	}
+
+	@Override
+	public String getQuotedMappingTableName() {
+		String name = physicalTable.getName();
+		if (!quoteString.equals(" ")) {
+			name = quoteString + name + quoteString;
+		}
+		return name;
 	}
 
 }

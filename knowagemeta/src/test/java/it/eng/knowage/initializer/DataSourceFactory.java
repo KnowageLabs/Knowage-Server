@@ -17,21 +17,19 @@
  */
 package it.eng.knowage.initializer;
 
-import it.eng.knowage.common.TestConstants;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-
 import java.util.Random;
- 
+
+import it.eng.knowage.common.TestConstants;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  *
  */
 public class DataSourceFactory {
 
-	public static DataSource createDataSource(TestConstants.DatabaseType type) {
-		DataSource dataSource;
-
-		dataSource = null;
+	public static IDataSource createDataSource(TestConstants.DatabaseType type) {
+		IDataSource dataSource = null;
 
 		switch (type) {
 		case MYSQL:
@@ -47,18 +45,17 @@ public class DataSourceFactory {
 					TestConstants.ORACLE_DRIVER, TestConstants.ORACLE_DIALECT_CLASS, TestConstants.ORACLE_DIALECT_NAME, true, false);
 			break;
 		case SQLSERVER:
-			dataSource = createDataSource(TestConstants.SQLSERVER_LABEL, TestConstants.SQLSERVER_URL, TestConstants.SQLSERVER_USER,
-					TestConstants.SQLSERVER_PWD, TestConstants.SQLSERVER_DRIVER, TestConstants.SQLSERVER_DIALECT_CLASS, TestConstants.SQLSERVER_DIALECT_NAME,
-					true, false);
+			dataSource = createDataSource(TestConstants.SQLSERVER_LABEL, TestConstants.SQLSERVER_URL, TestConstants.SQLSERVER_USER, TestConstants.SQLSERVER_PWD,
+					TestConstants.SQLSERVER_DRIVER, TestConstants.SQLSERVER_DIALECT_CLASS, TestConstants.SQLSERVER_DIALECT_NAME, true, false);
 			break;
 		}
 
 		return dataSource;
 	}
 
-	public static DataSource createDataSource(String label, String url, String user, String password, String driver, String hibDialectClass,
+	public static IDataSource createDataSource(String label, String url, String user, String password, String driver, String hibDialectClass,
 			String hibDialectName, boolean isReadOnly, boolean isWriteDefault) {
-		DataSource dataSource = new DataSource();
+		IDataSource dataSource = it.eng.spagobi.tools.datasource.bo.DataSourceFactory.getDataSource();
 		Random rand = new Random();
 
 		int id = rand.nextInt(999999) + 1;
@@ -73,7 +70,6 @@ public class DataSourceFactory {
 		dataSource.setSchemaAttribute("");
 		dataSource.setMultiSchema(false);
 		dataSource.setHibDialectClass(hibDialectClass);
-		dataSource.setHibDialectName(hibDialectName);
 		dataSource.setReadOnly(isReadOnly);
 		dataSource.setWriteDefault(isWriteDefault);
 

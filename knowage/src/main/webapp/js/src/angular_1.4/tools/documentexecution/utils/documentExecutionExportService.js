@@ -2,7 +2,7 @@
 	var documentExecutionModule = angular.module('documentExecutionModule');
 
 	documentExecutionModule.service('docExecute_exportService', function(sbiModule_translate,sbiModule_config,
-			execProperties,sbiModule_user,sbiModule_restServices,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download, $q, $rootScope, sbiModule_messaging,multipartForm,$sce,$mdPanel) {
+			execProperties,sbiModule_user,sbiModule_restServices,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download, $q, $rootScope, sbiModule_messaging,multipartForm,$sce,$mdPanel,$mdToast) {
 
 		var dee = this;
 
@@ -278,18 +278,22 @@
 			dee.exporting = true;
 
 			dee.getBackendRequestParams(exportType, mimeType).then(function(parameters){
-				dee.buildBackendRequestConf(exportType, mimeType, parameters).then(function(requestConf){
+				dee.buildBackendRequestConf(exportType, mimeType, parameters)
+				.then(function(requestConf){
+					var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.execution.executionpage.toolbar.export.exporting"), 'Success!', 0);
 					$http(requestConf)
 					.then(function successCallback(response) {
 						var mimeType = response.headers("Content-type");
 						var fileAndExtension = response.headers("Content-Disposition")
+						$mdToast.hide(exportingToast);
+						dee.exporting = false;
 						sbiModule_download.getBlob(
 								response.data,
 								execProperties.executionInstance.OBJECT_LABEL,
 								mimeType,
 								exportType, mimeType,fileAndExtension);
-						dee.exporting = false;
 					}, function errorCallback(response) {
+						$mdToast.cancel(exportingToast);
 						dee.exporting = false;
 						sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
 					});
@@ -313,11 +317,17 @@
 					controller: function($scope,mdPanelRef,sbiModule_translate,deferred,$mdDialog){
 						$scope.translate = sbiModule_translate;
 
+						var iframe = document.getElementById('documentFrame');
+						var gridsterContainer = iframe.contentDocument.getElementById('gridsterContainer');
+						var width = gridsterContainer.parentNode.scrollWidth;
+						var height = gridsterContainer.parentNode.scrollHeight;
+						var zoomFactor = 2.0;
+
 						$scope.parameters = {
-							pdfWidth: 1600,
-							pdfHeight: 1200,
-							pdfWaitTime: 60,
-							pdfZoom: 75, // scale it to [0; 1] interval while saving
+							pdfWidth: width,
+							pdfHeight: height,
+							pdfWaitTime: 30,
+							pdfZoomFactor: zoomFactor,
 							pdfPageOrientation: 'landscape',
 							pdfFrontPage: true,
 							pdfBackPage: true
@@ -329,10 +339,9 @@
 							deferred.reject();
 						}
 
-						$scope.saveDataset=function(){
+						$scope.exportPdf=function(){
 							var parameters = {};
 							angular.copy($scope.parameters, parameters);
-							parameters.pdfZoom = parameters.pdfZoom / 100;
 							deferred.resolve(parameters);
 							mdPanelRef.close();
 							$scope.$destroy();

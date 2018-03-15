@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,6 +142,11 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 					.split("(\\+|\\-|\\*|\\(|\\)|\\|\\||\\/|GG_between_dates|MM_between_dates|AA_between_dates|GG_up_today|MM_up_today|AA_up_today|current_date|current_time|length|substring|concat|year|month|mod|bit_length|upper|lower|trim|current_timestamp|hour|minute|second|day)");
 			for (String operand : splittedExpr) {
 				operand = operand.trim();
+				
+				if (NumberUtils.isNumber(operand)) {
+					continue;
+				}
+
 				logger.debug("Found Operand " + operand);
 				operands.add(operand);
 			}

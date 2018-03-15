@@ -223,7 +223,6 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 			IAssociativityManager manager = AssociativeStrategyFactory.createStrategyInstance(config, getUserProfile());
 			manager.process();
 
-			// Map<String, Map<String, Set<Tuple>>> selections = AssociationAnalyzer.getSelections(associationGroup, graph, result);
 			Map<String, Map<String, Set<Tuple>>> selections = manager.getSelections();
 
 			for (String d : selectionsMap.keySet()) {

@@ -77,7 +77,6 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
-import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -599,16 +598,6 @@ public class SDKObjectsConverter {
 				}
 				if (script != null && !script.equals("")) {
 					((ScriptDataSet) ds).setScript(script);
-				}
-			} else if (dataset.getType().equalsIgnoreCase(DataSetConstants.DS_WS)) {
-				ds = new WebServiceDataSet();
-				String wsAddress = jsonConf.getString(DataSetConstants.WS_ADDRESS);
-				String wsOperation = jsonConf.getString(DataSetConstants.WS_OPERATION);
-				if (wsOperation != null && !wsOperation.equals("")) {
-					((WebServiceDataSet) ds).setOperation(wsOperation);
-				}
-				if (wsAddress != null && !wsAddress.equals("")) {
-					((WebServiceDataSet) ds).setAddress(wsAddress);
 				}
 			} else if (dataset.getType().equalsIgnoreCase(DataSetConstants.DS_CUSTOM)) {
 				ds = new CustomDataSet();

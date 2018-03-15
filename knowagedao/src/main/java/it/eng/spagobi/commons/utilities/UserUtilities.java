@@ -229,7 +229,7 @@ public class UserUtilities {
 					// put profile in cache
 					cache.put(userId, profile);
 				}
-				logger.error("profile from get profile" + profile);
+				logger.debug("profile from get profile" + profile);
 
 				return profile;
 

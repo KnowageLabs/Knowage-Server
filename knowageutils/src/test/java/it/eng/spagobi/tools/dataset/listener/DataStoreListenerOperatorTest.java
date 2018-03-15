@@ -722,7 +722,7 @@ public class DataStoreListenerOperatorTest extends TestCase {
 
 		@Override
 		public DatasetEvaluationStrategy getEvaluationStrategy(boolean isNearRealtime) {
-			return DatasetEvaluationStrategy.NEAR_REALTIME;
+			return DatasetEvaluationStrategy.REALTIME;
 		}
 
 	}

@@ -62,9 +62,7 @@ import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
 import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.cache.query.item.UnsatisfiedFilter;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
@@ -85,14 +83,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(AbstractDataSetResource.class);
-
-	static final protected String DEFAULT_TABLE_NAME_DOT = DataStore.DEFAULT_TABLE_NAME + ".";
-
-	private static final String DATE_TIME_FORMAT_MYSQL = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "%Y").replace("MM", "%m")
-			.replace("dd", "%d").replace("HH", "%H").replace("mm", "%i").replace("ss", "%s");
-	private static final String DATE_TIME_FORMAT_SQL_STANDARD = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
-			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
-	private static final String DATE_TIME_FORMAT_SQLSERVER = "yyyyMMdd HH:mm:ss";
 
 	// ===================================================================
 	// UTILITY METHODS
@@ -235,30 +225,58 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return summaryRowMeasures;
 	}
 
+	private void addProjection(IDataSet dataSet, ArrayList<Projection> projections, JSONObject catOrMeasure, Map<String, String> columnAliasToName)
+			throws JSONException {
+
+		String functionObj = catOrMeasure.optString("funct");
+		// check if it is an array
+		if (functionObj.startsWith("[")) {
+			// call for each aggregation function
+			JSONArray functs = new JSONArray(functionObj);
+			for (int j = 0; j < functs.length(); j++) {
+				String functName = functs.getString(j);
+				Projection projection = getProjectionWithFunct(dataSet, catOrMeasure, columnAliasToName, functName);
+				projections.add(projection);
+			}
+		} else {
+			// function Objetc contains only one aggregation
+			Projection projection = getProjection(dataSet, catOrMeasure, columnAliasToName);
+			projections.add(projection);
+		}
+
+	}
+
 	protected List<Projection> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
 			throws JSONException {
 		ArrayList<Projection> projections = new ArrayList<Projection>(categories.length() + measures.length());
 
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject category = categories.getJSONObject(i);
-			Projection projection = getProjection(dataSet, category, columnAliasToName);
-			projections.add(projection);
+			addProjection(dataSet, projections, category, columnAliasToName);
 		}
 
 		for (int i = 0; i < measures.length(); i++) {
 			JSONObject measure = measures.getJSONObject(i);
-			Projection projection = getProjection(dataSet, measure, columnAliasToName);
-			projections.add(projection);
+			addProjection(dataSet, projections, measure, columnAliasToName);
+
 		}
 
 		return projections;
+	}
+
+	private Projection getProjectionWithFunct(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName, String functName)
+			throws JSONException {
+		String columnName = getColumnName(jsonObject, columnAliasToName);
+		String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
+		IAggregationFunction function = AggregationFunctions.get(functName);
+		Projection projection = new Projection(function, dataSet, columnName, columnAlias);
+		return projection;
 	}
 
 	private Projection getProjection(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
 		String columnName = getColumnName(jsonObject, columnAliasToName);
 		String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
 		IAggregationFunction function = AggregationFunctions.get(jsonObject.optString("funct"));
-
 		Projection projection = new Projection(function, dataSet, columnName, columnAlias);
 		return projection;
 	}
@@ -343,10 +361,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 			Projection projection;
 			if (orderColumn != null && !orderColumn.isEmpty() && !orderType.isEmpty()) {
-				projection = new Projection(function, dataSet, orderColumn);
+				String alias = jsonObject.optString("alias");
+				projection = new Projection(function, dataSet, orderColumn, alias);
 			} else {
 				String columnName = getColumnName(jsonObject, columnAliasToName);
-				projection = new Projection(function, dataSet, columnName);
+				projection = new Projection(function, dataSet, columnName, orderColumn);
 			}
 
 			boolean isAscending = "ASC".equalsIgnoreCase(orderType);
@@ -742,8 +761,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				dataSource = dataSet.getDataSource();
 			} catch (UnreachableCodeException e) {
 			}
-		} else if (strategy == DatasetEvaluationStrategy.NEAR_REALTIME) {
-			dataSource = null;
 		} else {
 			dataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 		}

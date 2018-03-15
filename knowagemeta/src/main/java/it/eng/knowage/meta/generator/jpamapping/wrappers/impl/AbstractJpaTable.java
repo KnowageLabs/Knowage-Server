@@ -17,6 +17,15 @@
  */
 package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
+import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaColumn;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaRelationship;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
@@ -29,23 +38,15 @@ import it.eng.knowage.meta.model.business.BusinessRelationship;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.util.JDBCTypeMapper;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
-import org.junit.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Abstract class extended by <code>JpaTable</code> and <code>JpaViewInnerTable</code>
- * 
+ *
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public abstract class AbstractJpaTable implements IJpaTable {
 
 	PhysicalTable physicalTable;
+	protected String quoteString;
 
 	// cache
 	List<IJpaColumn> jpaColumns;
@@ -107,7 +108,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable#getRelationships()
 	 */
 	@Override
@@ -133,7 +134,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 
 	/**
 	 * TODO .. da implementare
-	 * 
+	 *
 	 * @return
 	 */
 	@Override
@@ -149,7 +150,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable#getPackage()
 	 */
 	@Override
@@ -175,7 +176,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable#getCompositeKeyClassName()
 	 */
 	@Override
@@ -190,7 +191,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable#getQualifiedClassName()
 	 */
 	@Override
@@ -209,7 +210,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable#getSimpleColumns(boolean, boolean, boolean)
 	 */
 	@Override
@@ -264,7 +265,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable#getSimpleColumns()
 	 */
 	@Override
@@ -274,7 +275,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable#getImportStatements()
 	 */
 	@Override
@@ -309,7 +310,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 
 	/**
 	 * @return the composite key property name
-	 * 
+	 *
 	 *         * TODO .... da implementare
 	 */
 	@Override
@@ -334,7 +335,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable#getPrimaryKeyColumns()
 	 */
 	@Override
@@ -383,7 +384,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the expresion that compute the hash code for a given primary key
 	 */
 	public String getPrimaryKeyHashCodeClause() {
@@ -413,4 +414,38 @@ public abstract class AbstractJpaTable implements IJpaTable {
 		return null;
 	}
 
+	@Override
+	public String getCatalog() {
+		String useCatalog = getUseCatalog();
+		if ((useCatalog != null) && (useCatalog.equalsIgnoreCase("true"))) {
+			logger.debug("Catalog is: " + getModel().getPhysicalModel().getCatalog());
+			String catalog = getModel().getPhysicalModel().getCatalog();
+			if (catalog != null) {
+				if (!quoteString.equals(" ")) {
+					catalog = quoteString + catalog + quoteString;
+				}
+			}
+			return catalog;
+		} else {
+			return null;
+		}
+
+	}
+
+	@Override
+	public String getSchema() {
+		String useSchema = getUseSchema();
+		if ((useSchema != null) && (useSchema.equalsIgnoreCase("true"))) {
+			logger.debug("Schema is: " + getModel().getPhysicalModel().getSchema());
+			String schema = getModel().getPhysicalModel().getSchema();
+			if (schema != null && !schema.equals("")) {
+				if (!quoteString.equals(" ")) {
+					schema = quoteString + schema + quoteString;
+				}
+			}
+			return schema;
+		} else {
+			return null;
+		}
+	}
 }

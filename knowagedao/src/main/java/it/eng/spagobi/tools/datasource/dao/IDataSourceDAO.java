@@ -17,16 +17,15 @@
  */
 package it.eng.spagobi.tools.datasource.dao;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-
 import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Session;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting an engine.
@@ -36,18 +35,18 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	/**
 	 * Loads all detail information for a data source identified by its <code>dsID</code>. All these information, achived by a query to the DB, are stored into
 	 * a <code>datasource</code> object, which is returned.
-	 * 
+	 *
 	 * @param dsID
 	 *            The id for the datasource to load
 	 * @return A <code>datasource</code> object containing all loaded information
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public DataSource loadDataSourceByID(Integer dsID) throws EMFUserError;
+	public IDataSource loadDataSourceByID(Integer dsID) throws EMFUserError;
 
 	/**
 	 * Loads all detail information for data source whose label is equal to <code>label</code>.
-	 * 
+	 *
 	 * @param label
 	 *            The label for the data source to load
 	 * @return An <code>datasource</code> object containing all loaded information
@@ -59,16 +58,16 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	/**
 	 * Loads all detail information for all data sources. For each of them, detail information is stored into a <code>datasource</code> object. After that, all
 	 * data sources are stored into a <code>List</code>, which is returned.
-	 * 
+	 *
 	 * @return A list containing all datasource objects
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public List loadAllDataSources() throws EMFUserError;
+	public List<IDataSource> loadAllDataSources() throws EMFUserError;
 
 	/**
 	 * Load dialect by id.
-	 * 
+	 *
 	 * @param dialectId
 	 *            the dialect id
 	 * @return the dialect
@@ -79,7 +78,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 
 	/**
 	 * Implements the query to modify a data source. All information needed is stored into the input <code>datasource</code> object.
-	 * 
+	 *
 	 * @param aDataSource
 	 *            The object containing all modify information
 	 * @throws EMFUserError
@@ -90,7 +89,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 
 	/**
 	 * Implements the query to insert a data source. All information needed is stored into the input <code>datasource</code> object.
-	 * 
+	 *
 	 * @param aDataSource
 	 *            The object containing all insert information
 	 * @return the datasource id
@@ -101,7 +100,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 
 	/**
 	 * Implements the query to erase a data source. All information needed is stored into the input <code>datasource</code> object.
-	 * 
+	 *
 	 * @param aDataSource
 	 *            The object containing all delete information
 	 * @throws EMFUserError
@@ -111,7 +110,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 
 	/**
 	 * Tells if a data source is associated to any BI Object. It is useful because a data source cannot be deleted if it is used by one or more BI Objects.
-	 * 
+	 *
 	 * @param dsId
 	 *            The datasource identifier
 	 * @return True if the datasource is used by one or more objects, else false
@@ -122,7 +121,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 
 	/**
 	 * Return the data source thatr is marked wityh write default
-	 * 
+	 *
 	 * @return
 	 * @throws EMFUserError
 	 */
@@ -133,7 +132,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 
 	/**
 	 * Method called by superadmin to associate a datasource to a tenant
-	 * 
+	 *
 	 * @param tenantId
 	 * @param datasourceId
 	 * @throws EMFUserError
@@ -143,7 +142,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	/**
 	 * Method called by superadmin to load all data sources. For each of them, detail information is stored into a <code>datasource</code> object. After that,
 	 * all data sources are stored into a <code>List</code>, which is returned.
-	 * 
+	 *
 	 * @return A list containing all datasource objects
 	 * @throws EMFUserError
 	 *             If an Exception occurred
@@ -153,7 +152,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 
 	/**
 	 * Method to return name of BiObjects associated to datasource
-	 * 
+	 *
 	 * @param dsId
 	 * @return
 	 * @throws EMFUserError

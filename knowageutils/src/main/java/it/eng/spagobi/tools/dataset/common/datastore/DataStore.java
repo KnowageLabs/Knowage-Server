@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.tools.dataset.common.datastore;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -525,17 +527,17 @@ public class DataStore implements IDataStore {
 	}
 
 	@Override
-	public IDataStore aggregateAndFilterRecords(IQuery query) {
-		return aggregateAndFilterRecords(query.toSql(DEFAULT_SCHEMA_NAME, DEFAULT_TABLE_NAME), -1, -1, -1);
+	public IDataStore aggregateAndFilterRecords(IQuery query, String dateFormatJava) {
+		return aggregateAndFilterRecords(query.toSql(DEFAULT_SCHEMA_NAME, DEFAULT_TABLE_NAME), -1, -1, -1, dateFormatJava);
 	}
 
 	@Override
-	public IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize) {
-		return aggregateAndFilterRecords(sqlQuery, offset, fetchSize, -1);
+	public IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, String dateFormatJava) {
+		return aggregateAndFilterRecords(sqlQuery, offset, fetchSize, -1, dateFormatJava);
 	}
 
 	@Override
-	public IDataStore aggregateAndFilterRecords(String sqlQuery, List<Object> values, int offset, int fetchSize, int maxRowCount) {
+	public IDataStore aggregateAndFilterRecords(String sqlQuery, List<Object> values, int offset, int fetchSize, int maxRowCount, String dateFormatJava) {
 
 		// **************************************************************************************************************
 		// ***** This part build data structures used to convert a SpagoBI DataStore into an MetaModel DataContext ******
@@ -561,6 +563,10 @@ public class DataStore implements IDataStore {
 				columnTypes[i] = ColumnType.INTEGER;
 			} else if (type == Double.class) {
 				columnTypes[i] = ColumnType.DOUBLE;
+			} else if (type == Date.class || type == java.sql.Date.class) {
+				columnTypes[i] = ColumnType.BIGINT;
+			} else if (type == Timestamp.class) {
+				columnTypes[i] = ColumnType.BIGINT;
 			} else {
 				columnTypes[i] = ColumnType.STRING;
 			}
@@ -570,7 +576,17 @@ public class DataStore implements IDataStore {
 			IRecord record = (IRecord) r;
 			Object[] row = new Object[fieldCount];
 			for (int i = 0; i < fieldCount; i++) {
-				row[i] = record.getFieldAt(i).getValue();
+				Object obj = record.getFieldAt(i).getValue();
+				if (obj instanceof Date) {
+					SimpleDateFormat formatter = new SimpleDateFormat(dateFormatJava != null ? dateFormatJava : "dd-MM-yyyy");
+					if (!formatter.format((Date) obj).equals("")) {
+						obj = formatter.format((Date) obj);
+					}
+				} else if (obj instanceof java.sql.Date) {
+					SimpleDateFormat formatter = new SimpleDateFormat(dateFormatJava != null ? dateFormatJava : "dd-MM-yyyy HH:mm:ss.SSS");
+					obj = formatter.format((java.sql.Date) obj);
+				}
+				row[i] = obj;
 			}
 			arrays.add(row);
 		}
@@ -762,8 +778,8 @@ public class DataStore implements IDataStore {
 	}
 
 	@Override
-	public IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, int maxRowCount) {
-		return aggregateAndFilterRecords(sqlQuery, new ArrayList<Object>(0), offset, fetchSize, maxRowCount);
+	public IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, int maxRowCount, String dateFormatJava) {
+		return aggregateAndFilterRecords(sqlQuery, new ArrayList<Object>(0), offset, fetchSize, maxRowCount, dateFormatJava);
 	}
 
 }

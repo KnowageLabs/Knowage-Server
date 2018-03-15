@@ -18,6 +18,27 @@
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.naming.NamingException;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.validator.GenericValidator;
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dbaccess.Utils;
@@ -49,31 +70,10 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.objects.Couple;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.NamingException;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.validator.GenericValidator;
-import org.apache.log4j.Logger;
-
 //import it.eng.spagobi.commons.utilities.DataSourceUtilities;
 
 /**
- * Defines the <code>QueryDetail</code> objects. This object is used to store
- * Query Wizard detail information.
+ * Defines the <code>QueryDetail</code> objects. This object is used to store Query Wizard detail information.
  */
 public class QueryDetail extends AbstractLOV implements ILovDetail {
 	private static transient Logger logger = Logger.getLogger(QueryDetail.class);
@@ -255,7 +255,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 							this.setValueColumnName(aValueColumn);
 							SourceBean descriptionSourceBean = (SourceBean) source.getAttribute("DESCRIPTION-COLUMN");
 							String description = (descriptionSourceBean != null && descriptionSourceBean.getCharacters() != null)
-									? descriptionSourceBean.getCharacters() : aValueColumn;
+									? descriptionSourceBean.getCharacters()
+									: aValueColumn;
 							this.setDescriptionColumnName(description);
 						}
 
@@ -348,9 +349,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	}
 
 	/**
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(
-	 *      IEngUserProfile profile, List<ObjParuse> dependencies,
-	 *      ExecutionInstance executionInstance) throws Exception;
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult( IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance
+	 *      executionInstance) throws Exception;
 	 */
 	@Override
 	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> bIObjectParameters, Locale locale)
@@ -375,20 +375,15 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	}
 
 	/**
-	 * This methods builds the in-line view that filters the original lov using
-	 * the dependencies. For example, suppose the lov definition is SELECT
-	 * country, state_province, city FROM REGION and there is a dependency that
-	 * set country to be "USA", this method returns SELECT * FROM (SELECT
-	 * country, state_province, city FROM REGION) T WHERE ( country = 'USA' )
+	 * This methods builds the in-line view that filters the original lov using the dependencies. For example, suppose the lov definition is SELECT country,
+	 * state_province, city FROM REGION and there is a dependency that set country to be "USA", this method returns SELECT * FROM (SELECT country,
+	 * state_province, city FROM REGION) T WHERE ( country = 'USA' )
 	 *
 	 * @param dependencies
-	 *            The dependencies' configuration to be considered into the
-	 *            query
+	 *            The dependencies' configuration to be considered into the query
 	 * @param executionInstance
-	 *            The execution instance (useful to retrieve dependencies
-	 *            values)
-	 * @return the in-line view that filters the original lov using the
-	 *         dependencies.
+	 *            The execution instance (useful to retrieve dependencies values)
+	 * @return the in-line view that filters the original lov using the dependencies.
 	 */
 	public String getWrappedStatement(List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters) {
 		logger.debug("IN");
@@ -408,9 +403,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	}
 
 	/**
-	 * This method builds the WHERE clause for the wrapped statement (the
-	 * statement that adds filters for correlations/dependencies) See
-	 * getWrappedStatement method.
+	 * This method builds the WHERE clause for the wrapped statement (the statement that adds filters for correlations/dependencies) See getWrappedStatement
+	 * method.
 	 *
 	 * @param buffer
 	 *            The String buffer that contains query definition
@@ -451,8 +445,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	}
 
 	/**
-	 * This methods adds a single filter based on the input dependency's
-	 * configuration. See buildWhereClause and getWrappedStatement methods.
+	 * This methods adds a single filter based on the input dependency's configuration. See buildWhereClause and getWrappedStatement methods.
 	 *
 	 * @param buffer
 	 *            The String buffer that contains query definition
@@ -649,10 +642,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	}
 
 	/**
-	 * Finds the suitable SQL value for the input value. A number is not
-	 * changed. A String is surrounded by single-quotes. A date is put inside a
-	 * database-dependent function. The date must respect the format returned by
-	 * GeneralUtilities.getServerDateFormat() Input values are validated.
+	 * Finds the suitable SQL value for the input value. A number is not changed. A String is surrounded by single-quotes. A date is put inside a
+	 * database-dependent function. The date must respect the format returned by GeneralUtilities.getServerDateFormat() Input values are validated.
 	 *
 	 * @param biparam
 	 *            The BIObjectParameter in the dependency
@@ -913,16 +904,13 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	}
 
 	/**
-	 * This methods find out if the input parameters' values are admissible for
-	 * this QueryDetail instance, i.e. if the values are contained in the query
-	 * result.
+	 * This methods find out if the input parameters' values are admissible for this QueryDetail instance, i.e. if the values are contained in the query result.
 	 *
 	 * @param profile
 	 *            The user profile
 	 * @param biparam
 	 *            The BIObjectParameter with the values that must be validated
-	 * @return a list of errors: it is empty if all values are admissible,
-	 *         otherwise it will contain a EMFUserError for each wrong value
+	 * @return a list of errors: it is empty if all values are admissible, otherwise it will contain a EMFUserError for each wrong value
 	 * @throws Exception
 	 */
 	public List validateValues(IEngUserProfile profile, BIObjectParameter biparam) throws Exception {
@@ -1082,8 +1070,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * Checks if the lov requires one or more profile attributes.
 	 *
-	 * @return true if the lov require one or more profile attributes, false
-	 *         otherwise
+	 * @return true if the lov require one or more profile attributes, false otherwise
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -1114,9 +1101,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	}
 
 	/**
-	 * Splits an XML string by using some <code>SourceBean</code> object methods
-	 * in order to obtain the source <code>QueryDetail</code> objects whom XML
-	 * has been built.
+	 * Splits an XML string by using some <code>SourceBean</code> object methods in order to obtain the source <code>QueryDetail</code> objects whom XML has
+	 * been built.
 	 *
 	 * @param dataDefinition
 	 *            The XML input String
@@ -1170,8 +1156,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#
-	 * getDescriptionColumnName ()
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail# getDescriptionColumnName ()
 	 */
 	@Override
 	public String getDescriptionColumnName() {
@@ -1181,8 +1166,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#
-	 * setDescriptionColumnName (java.lang.String)
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail# setDescriptionColumnName (java.lang.String)
 	 */
 	@Override
 	public void setDescriptionColumnName(String descriptionColumnName) {
@@ -1192,9 +1176,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames
-	 * ()
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames ()
 	 */
 	@Override
 	public List getInvisibleColumnNames() {
@@ -1204,9 +1186,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames
-	 * (java.util.List)
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames (java.util.List)
 	 */
 	@Override
 	public void setInvisibleColumnNames(List invisibleColumnNames) {
@@ -1216,8 +1196,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
 	public String getValueColumnName() {
@@ -1227,9 +1206,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(
-	 * java.lang.String)
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName( java.lang.String)
 	 */
 	@Override
 	public void setValueColumnName(String valueColumnName) {
@@ -1239,8 +1216,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
 	public List getVisibleColumnNames() {
@@ -1250,9 +1226,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames
-	 * (java.util.List)
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames (java.util.List)
 	 */
 	@Override
 	public void setVisibleColumnNames(List visibleColumnNames) {
@@ -1348,9 +1322,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		sbds.setSchemaAttribute(ds.getSchemaAttribute());
 		// gets dialect informations
 		IDomainDAO domaindao = DAOFactory.getDomainDAO();
-		Domain doDialect = domaindao.loadDomainById(ds.getDialectId());
+		Domain doDialect = domaindao.loadDomainByCodeAndValue("DIALECT_HIB", ds.getDialectName());
 		sbds.setHibDialectClass(doDialect.getValueCd());
-		sbds.setHibDialectName(doDialect.getValueName());
 		sbds.setReadOnly(ds.checkIsReadOnly());
 		sbds.setWriteDefault(ds.checkIsWriteDefault());
 		return sbds;
@@ -1361,8 +1334,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 */
 
 	/**
-	 * use this method in service implementation. If RequestContainer isn't
-	 * correct.
+	 * use this method in service implementation. If RequestContainer isn't correct.
 	 *
 	 * @param profile
 	 * @param dsLabel

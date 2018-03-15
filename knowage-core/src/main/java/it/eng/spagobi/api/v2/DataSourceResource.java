@@ -23,6 +23,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -59,10 +60,13 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.database.DataBaseException;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.database.IDataBase;
+import it.eng.spagobi.utilities.database.MetaDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -73,37 +77,55 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(DataSourceResource.class);
 
-	IDataSourceDAO dataSourceDAO;
-	DataSource dataSource;
-	List<DataSource> dataSourceList;
-
-	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
-	public List<DataSource> getAllDataSources() {
-
+	public List<IDataSource> getDataSources(@QueryParam("type") String type) {
 		logger.debug("IN");
-
 		try {
+			IDataSourceDAO dataSourceDAO;
+			List<IDataSource> dataSources;
 
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
-			dataSourceList = dataSourceDAO.loadAllDataSources();
+			dataSources = dataSourceDAO.loadAllDataSources();
 
-			return dataSourceList;
-
+			if ("cache".equals(type)) {
+				return getCacheDataSources(dataSources);
+			} else if ("meta".equals(type)) {
+				return getMetaDataSources(dataSources);
+			} else {
+				return dataSources;
+			}
 		} catch (Exception exception) {
-
 			logger.error("Error while getting the list of DS", exception);
 			throw new SpagoBIRestServiceException("Error while getting the list of DS", buildLocaleFromSession(), exception);
-
 		} finally {
-
 			logger.debug("OUT");
-
 		}
+	}
+
+	private List<IDataSource> getMetaDataSources(List<IDataSource> datasources) throws EMFUserError, DataBaseException {
+		List<IDataSource> metaDataSources = new ArrayList<>();
+		for (IDataSource dataSource : datasources) {
+			IDataBase database = DataBaseFactory.getDataBase(dataSource);
+			if (database.isMetaSupported()) {
+				metaDataSources.add(dataSource);
+			}
+		}
+		return metaDataSources;
+	}
+
+	private List<IDataSource> getCacheDataSources(List<IDataSource> datasources) throws EMFUserError, DataBaseException {
+		List<IDataSource> cacheDataSources = new ArrayList<>();
+		for (IDataSource dataSource : datasources) {
+			IDataBase database = DataBaseFactory.getDataBase(dataSource);
+			if (database.isCacheSupported()) {
+				cacheDataSources.add(dataSource);
+			}
+		}
+		return cacheDataSources;
 	}
 
 	@GET
@@ -111,26 +133,21 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
 	public String getDataSourceById(@PathParam("dsId") Integer dsId) {
-
 		logger.debug("IN");
-
 		try {
+			IDataSourceDAO dataSourceDAO;
+			IDataSource dataSource;
 
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
 			dataSource = dataSourceDAO.loadDataSourceByID(dsId);
 
 			return JsonConverter.objectToJson(dataSource, null);
-
 		} catch (Exception e) {
-
 			logger.error("Error while loading a single data source", e);
 			throw new SpagoBIRestServiceException("Error while loading a single data source", buildLocaleFromSession(), e);
-
 		} finally {
-
 			logger.debug("OUT");
-
 		}
 	}
 
@@ -138,31 +155,25 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public String postDataSource(DataSource dataSource) {
-
+	public String postDataSource(IDataSource dataSource) {
 		logger.debug("IN");
-
 		try {
-			logger.debug(dataSource.toString());
+			IDataSourceDAO dataSourceDAO;
+
 			logger.debug(dataSource);
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
 			dataSourceDAO.insertDataSource(dataSource, getUserProfile().getOrganization());
 
-			DataSource newLabel = (DataSource) dataSourceDAO.loadDataSourceByLabel(dataSource.getLabel());
+			IDataSource newLabel = dataSourceDAO.loadDataSourceByLabel(dataSource.getLabel());
 			int newId = newLabel.getDsId();
 
 			return Integer.toString(newId);
-
 		} catch (Exception exception) {
-
 			logger.error("Error while posting DS", exception);
 			throw new SpagoBIRestServiceException("Error while posting DS", buildLocaleFromSession(), exception);
-
 		} finally {
-
 			logger.debug("OUT");
-
 		}
 	}
 
@@ -170,18 +181,16 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public List<DataSource> putDataSource(DataSourceModel dataSource) {
-
+	public List<IDataSource> putDataSource(IDataSource dataSource) {
 		logger.debug("IN");
-
 		try {
-
+			IDataSourceDAO dataSourceDAO;
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
 
 			dataSourceDAO.setUserProfile(getUserProfile());
 			IDataSource oldDataSource = dataSourceDAO.loadDataSourceWriteDefault();
 
-			if (oldDataSource != null && dataSource.getWriteDefault() && oldDataSource.getDsId() != dataSource.getDsId()) {
+			if (oldDataSource != null && dataSource.checkIsWriteDefault() && oldDataSource.getDsId() != dataSource.getDsId()) {
 				// unset the cache
 				// SpagoBICacheManager.removeCache();
 				oldDataSource.setWriteDefault(false);
@@ -189,23 +198,18 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			}
 			dataSourceDAO.modifyDataSource(dataSource);
 			return DAOFactory.getDataSourceDAO().loadAllDataSources();
-
 		} catch (Exception e) {
-
 			logger.error("Error while updating data source", e);
 			throw new SpagoBIRestServiceException("Error while updating data source", buildLocaleFromSession(), e);
-
 		} finally {
-
 			logger.debug("OUT");
-
 		}
 	}
 
 	@DELETE
 	@Path("/{dsId}")
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public List<DataSource> deleteDataSourceById(@PathParam("dsId") Integer dsId) throws EMFUserError {
+	public List<IDataSource> deleteDataSourceById(@PathParam("dsId") Integer dsId) throws EMFUserError {
 
 		logger.debug("IN");
 
@@ -248,9 +252,9 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		}
 
 		try {
-			DataSource dataSource = new DataSource();
+			IDataSource dataSource = DataSourceFactory.getDataSource();
 			dataSource.setDsId(dsId);
-			dataSourceDAO = DAOFactory.getDataSourceDAO();
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
 			dataSourceDAO.eraseDataSource(dataSource);
 
@@ -271,17 +275,17 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public List<DataSource> deleteMultiple(@QueryParam("id") List<Integer> ids) {
+	public List<IDataSource> deleteMultiple(@QueryParam("id") List<Integer> ids) {
 
 		logger.debug("IN");
 
 		try {
 
-			dataSourceDAO = DAOFactory.getDataSourceDAO();
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
 
 			for (int i = 0; i < ids.size(); i++) {
-				DataSource ds = new DataSource();
+				IDataSource ds = DataSourceFactory.getDataSource();
 				ds.setDsId(ids.get(i));
 				dataSourceDAO.eraseDataSource(ds);
 			}
@@ -310,15 +314,13 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		JSONObject tableContent = new JSONObject();
 		try {
 
-			dataSourceDAO = DAOFactory.getDataSourceDAO();
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
-			dataSource = dataSourceDAO.loadDataSourceByID(dsId);
-			Connection conn = dataSource.getConnection();
+			IDataSource dataSource = dataSourceDAO.loadDataSourceByID(dsId);
 
-			tableContent = getTableMetadata(conn);
+			tableContent = getTableMetadata(dataSource);
 
 		} catch (Exception e) {
-
 			logger.error("Error while getting structure of data source by id", e);
 			throw new SpagoBIRestServiceException("Error while getting structure of data source by id", buildLocaleFromSession(), e);
 
@@ -331,10 +333,13 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		return tableContent.toString();
 	}
 
-	private JSONObject getTableMetadata(Connection conn) throws HibernateException, JSONException, SQLException {
+	private JSONObject getTableMetadata(IDataSource dataSource)
+			throws HibernateException, JSONException, SQLException, ClassNotFoundException, NamingException, DataBaseException {
 		JSONObject tableContent = new JSONObject();
+		Connection conn = null;
 		ResultSet rs = null;
 		try {
+			conn = dataSource.getConnection();
 			DatabaseMetaData meta = conn.getMetaData();
 
 			if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("oracle")) {
@@ -353,8 +358,11 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			} else {
 				final String[] TYPES = { "TABLE", "VIEW" };
 				final String tableNamePattern = "%";
-				final String catalog = null;
-				rs = meta.getTables(catalog, null, tableNamePattern, TYPES);
+				final MetaDataBase database = DataBaseFactory.getMetaDataBase(dataSource);
+				final String catalog = database.getCatalog(conn);
+				final String schema = database.getSchema(conn);
+				logger.debug("This connection has been configured with the catalog [" + catalog + "] and schema [" + schema + "]");
+				rs = meta.getTables(catalog, schema, tableNamePattern, TYPES);
 				while (rs.next()) {
 					String tableName = rs.getString(3);
 
@@ -382,7 +390,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/test")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public String testDataSource(DataSource dataSource) throws Exception {
+	public String testDataSource(IDataSource dataSource) throws Exception {
 
 		logger.debug("IN");
 

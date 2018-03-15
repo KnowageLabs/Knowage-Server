@@ -17,6 +17,9 @@
  */
 package it.eng.spagobi.utilities.database;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -25,12 +28,24 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class SQLServerDataBase extends AbstractDataBase {
+public class SQLServerDataBase extends AbstractDataBase implements CacheDataBase, MetaDataBase {
 
 	private static transient Logger logger = Logger.getLogger(SQLServerDataBase.class);
 
+	private int varcharLength = 255;
+
 	public SQLServerDataBase(IDataSource dataSource) {
 		super(dataSource);
+	}
+
+	@Override
+	public int getVarcharLength() {
+		return varcharLength;
+	}
+
+	@Override
+	public void setVarcharLength(int varcharLength) {
+		this.varcharLength = varcharLength;
 	}
 
 	@Override
@@ -103,5 +118,15 @@ public class SQLServerDataBase extends AbstractDataBase {
 		query = query + "UNION " + "select 0 ) as dati ";
 
 		return query;
+	}
+
+	@Override
+	public String getSchema(Connection conn) throws SQLException {
+		return conn.getSchema();
+	}
+
+	@Override
+	public String getCatalog(Connection conn) throws SQLException {
+		return conn.getCatalog();
 	}
 }

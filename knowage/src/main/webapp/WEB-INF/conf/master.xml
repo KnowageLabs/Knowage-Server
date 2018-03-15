@@ -207,7 +207,6 @@
 <CONFIGURATOR path="/WEB-INF/conf/webapp/actions.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/business_map.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/validation.xml" />
-<CONFIGURATOR path="/WEB-INF/conf/webapp/ldap_authorizations.xml" />
 
 	<CONFIGURATOR path="/WEB-INF/conf/config/security_liferay_config.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/internal_profiling.xml" />

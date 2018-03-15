@@ -33,13 +33,14 @@ import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
+import it.eng.spagobi.utilities.database.DataBaseException;
 
 public abstract class AssociativeDatasetContainerFactory {
 
 	static protected Logger logger = Logger.getLogger(AssociativeDatasetContainerFactory.class);
 
 	public static IAssociativeDatasetContainer getContainer(DatasetEvaluationStrategy evaluationStrategy, IDataSet dataSet,
-			Map<String, String> parametersValues, UserProfile userProfile) {
+			Map<String, String> parametersValues, UserProfile userProfile) throws DataBaseException {
 		Assert.assertNotNull(evaluationStrategy, "Dataset evaluation strategy cannot be null");
 
 		switch (evaluationStrategy) {
@@ -49,21 +50,19 @@ public abstract class AssociativeDatasetContainerFactory {
 			return new FlatAssociativeDatasetContainer(dataSet, parametersValues);
 		case INLINE_VIEW:
 			return new JDBCAssociativeDatasetContainer(dataSet, parametersValues);
-		case NEAR_REALTIME:
-			return new NearRealtimeAssociativeDatasetContainer(dataSet, parametersValues);
 		case CACHED:
 			IDataSource cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 			ICache cache = SpagoBICacheManager.getCache();
 			String signature = dataSet.getSignature();
 			CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
-			cacheDataSetIfMissing(dataSet, cache, cacheItem, userProfile);
+			cacheItem = cacheDataSetIfMissing(dataSet, cache, cacheItem, userProfile);
 			return new CachedAssociativeDatasetContainer(dataSet, cacheItem.getTable(), cacheDataSource, parametersValues);
 		default:
 			throw new IllegalArgumentException("Dataset evaluation strategy [" + evaluationStrategy + "] not supported");
 		}
 	}
 
-	private static void cacheDataSetIfMissing(IDataSet dataSet, ICache cache, CacheItem cacheItem, UserProfile userProfile) {
+	private static CacheItem cacheDataSetIfMissing(IDataSet dataSet, ICache cache, CacheItem cacheItem, UserProfile userProfile) throws DataBaseException {
 		if (cacheItem == null) {
 			logger.debug("Unable to find dataset [" + dataSet.getLabel() + "] in cache. This can be due to changes on dataset parameters");
 			new DatasetManagementAPI(userProfile).putDataSetInCache(dataSet, cache);
@@ -72,7 +71,7 @@ public abstract class AssociativeDatasetContainerFactory {
 				throw new CacheException("Unable to find dataset [" + dataSet.getLabel() + "] in cache.");
 			}
 		}
-
+		return cacheItem;
 	}
 
 }

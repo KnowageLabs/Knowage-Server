@@ -24,6 +24,7 @@ import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
 import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
 import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.database.DataBaseException;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -180,9 +181,10 @@ public interface ICache {
 	 *            the dataSet from which derives the resultSet
 	 * @param dataStore
 	 *            the resultSet to cache
+	 * @throws DataBaseException
 	 */
 	@Deprecated
-	long put(IDataSet dataSet, IDataStore dataStore);
+	long put(IDataSet dataSet, IDataStore dataStore) throws DataBaseException;
 
 	/**
 	 * Insert a resultSet inside the cache

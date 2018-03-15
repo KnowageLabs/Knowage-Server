@@ -17,64 +17,6 @@
  */
 package it.eng.knowage.meta.service;
 
-import it.eng.knowage.meta.exception.KnowageMetaException;
-import it.eng.knowage.meta.generator.GenerationException;
-import it.eng.knowage.meta.generator.jpamapping.JpaMappingJarGenerator;
-import it.eng.knowage.meta.initializer.BusinessModelInitializer;
-import it.eng.knowage.meta.initializer.OlapModelInitializer;
-import it.eng.knowage.meta.initializer.PhysicalModelInitializer;
-import it.eng.knowage.meta.initializer.descriptor.BusinessViewInnerJoinRelationshipDescriptor;
-import it.eng.knowage.meta.initializer.descriptor.CalculatedFieldDescriptor;
-import it.eng.knowage.meta.initializer.descriptor.HierarchyDescriptor;
-import it.eng.knowage.meta.initializer.descriptor.HierarchyLevelDescriptor;
-import it.eng.knowage.meta.initializer.properties.OlapModelPropertiesFromFileInitializer;
-import it.eng.knowage.meta.initializer.utils.Pair;
-import it.eng.knowage.meta.model.Model;
-import it.eng.knowage.meta.model.ModelFactory;
-import it.eng.knowage.meta.model.ModelProperty;
-import it.eng.knowage.meta.model.ModelPropertyCategory;
-import it.eng.knowage.meta.model.ModelPropertyType;
-import it.eng.knowage.meta.model.business.BusinessColumn;
-import it.eng.knowage.meta.model.business.BusinessColumnSet;
-import it.eng.knowage.meta.model.business.BusinessModel;
-import it.eng.knowage.meta.model.business.BusinessModelFactory;
-import it.eng.knowage.meta.model.business.BusinessRelationship;
-import it.eng.knowage.meta.model.business.BusinessTable;
-import it.eng.knowage.meta.model.business.BusinessView;
-import it.eng.knowage.meta.model.business.BusinessViewInnerJoinRelationship;
-import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
-import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
-import it.eng.knowage.meta.model.business.impl.BusinessRelationshipImpl;
-import it.eng.knowage.meta.model.business.impl.SimpleBusinessColumnImpl;
-import it.eng.knowage.meta.model.filter.PhysicalTableFilter;
-import it.eng.knowage.meta.model.olap.Dimension;
-import it.eng.knowage.meta.model.olap.Hierarchy;
-import it.eng.knowage.meta.model.olap.Level;
-import it.eng.knowage.meta.model.olap.OlapModel;
-import it.eng.knowage.meta.model.physical.PhysicalColumn;
-import it.eng.knowage.meta.model.physical.PhysicalForeignKey;
-import it.eng.knowage.meta.model.physical.PhysicalModel;
-import it.eng.knowage.meta.model.physical.PhysicalTable;
-import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
-import it.eng.knowage.meta.model.serializer.ModelPropertyFactory;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.tools.catalogue.bo.Content;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.utilities.JSError;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -118,13 +60,70 @@ import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.flipkart.zjsonpatch.JsonDiff;
+
+import it.eng.knowage.meta.exception.KnowageMetaException;
+import it.eng.knowage.meta.generator.GenerationException;
+import it.eng.knowage.meta.generator.jpamapping.JpaMappingJarGenerator;
+import it.eng.knowage.meta.initializer.BusinessModelInitializer;
+import it.eng.knowage.meta.initializer.OlapModelInitializer;
+import it.eng.knowage.meta.initializer.PhysicalModelInitializer;
+import it.eng.knowage.meta.initializer.descriptor.BusinessViewInnerJoinRelationshipDescriptor;
+import it.eng.knowage.meta.initializer.descriptor.CalculatedFieldDescriptor;
+import it.eng.knowage.meta.initializer.descriptor.HierarchyDescriptor;
+import it.eng.knowage.meta.initializer.descriptor.HierarchyLevelDescriptor;
+import it.eng.knowage.meta.initializer.properties.OlapModelPropertiesFromFileInitializer;
+import it.eng.knowage.meta.initializer.utils.Pair;
+import it.eng.knowage.meta.model.Model;
+import it.eng.knowage.meta.model.ModelFactory;
+import it.eng.knowage.meta.model.ModelPropertyType;
+import it.eng.knowage.meta.model.business.BusinessColumn;
+import it.eng.knowage.meta.model.business.BusinessColumnSet;
+import it.eng.knowage.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.business.BusinessModelFactory;
+import it.eng.knowage.meta.model.business.BusinessRelationship;
+import it.eng.knowage.meta.model.business.BusinessTable;
+import it.eng.knowage.meta.model.business.BusinessView;
+import it.eng.knowage.meta.model.business.BusinessViewInnerJoinRelationship;
+import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
+import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
+import it.eng.knowage.meta.model.business.impl.BusinessRelationshipImpl;
+import it.eng.knowage.meta.model.business.impl.SimpleBusinessColumnImpl;
+import it.eng.knowage.meta.model.filter.PhysicalTableFilter;
+import it.eng.knowage.meta.model.olap.Dimension;
+import it.eng.knowage.meta.model.olap.Hierarchy;
+import it.eng.knowage.meta.model.olap.Level;
+import it.eng.knowage.meta.model.olap.OlapModel;
+import it.eng.knowage.meta.model.physical.PhysicalColumn;
+import it.eng.knowage.meta.model.physical.PhysicalForeignKey;
+import it.eng.knowage.meta.model.physical.PhysicalModel;
+import it.eng.knowage.meta.model.physical.PhysicalTable;
+import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
+import it.eng.knowage.meta.model.serializer.ModelPropertyFactory;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.JSError;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @ManageAuthorization
 @Path("/1.0/metaWeb")
@@ -186,8 +185,6 @@ public class MetaService extends AbstractSpagoBIResource {
 			throw new SpagoBIServiceException(req.getPathInfo(), t);
 		}
 	}
-	
-
 
 	@POST
 	@Path("/checkRelationships")
@@ -903,7 +900,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 
 		PhysicalModel phyMod = model.getPhysicalModels().get(0);
-		DataSource dataSource = phyMod.getDataSource();
+		IDataSource dataSource = phyMod.getDataSource();
 		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
 		List<String> missingColumns = physicalModelInitializer.getMissingColumnsNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
 		List<String> removingItems = physicalModelInitializer.getRemovedTablesAndColumnsNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
@@ -917,10 +914,23 @@ public class MetaService extends AbstractSpagoBIResource {
 	@POST
 	@Path("/updatePhysicalModel")
 	@SuppressWarnings("unchecked")
-	public Response applyUpdatePhysicalModel(@Context HttpServletRequest req) throws ClassNotFoundException, NamingException, SQLException, JSONException,
-			IOException {
+	public Response applyUpdatePhysicalModel(@Context HttpServletRequest req)
+			throws ClassNotFoundException, NamingException, SQLException, JSONException, IOException, EMFUserError {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		JSONObject oldJsonModel = createJson(model);
+
+		String modelName = model.getName();
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+		businessModelsDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		if (profile != null) {
+			UserProfile userProfile = (UserProfile) profile;
+			TenantManager.setTenant(new Tenant(userProfile.getOrganization()));
+		}
+		MetaModel metamodel = businessModelsDAO.loadMetaModelByName(modelName);
+		String dataSourceLabel = metamodel.getDataSourceLabel();
+		IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+		IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceLabel);
 
 		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
 		List<String> tables = (List<String>) JsonConverter.jsonToObject(json.getString("tables"), List.class);
@@ -933,7 +943,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		}
 		currTables.addAll(tables);
 
-		PhysicalModel phyMod = physicalModelInitializer.initializeLigth(originalPM.getConnection(), currTables);
+		PhysicalModel phyMod = physicalModelInitializer.initializeLigth(originalPM, currTables, dataSource);
 		physicalModelInitializer.updateModel(originalPM, phyMod, tables);
 
 		JSONObject jsonModel = createJson(model);
@@ -1377,19 +1387,18 @@ public class MetaService extends AbstractSpagoBIResource {
 	 */
 	private String cleanPath(String path) {
 		path = path.replaceAll("^/physicalModels", "/businessModels/0/tables").replaceAll("^/businessModels", "/businessModels/0/businessTables");
-		
+
 		/*
-		 * This regular expression will clean the path for editing properties of a model to
-		 * have something compatible with the xpath expression. I.e:
-		 * 
+		 * This regular expression will clean the path for editing properties of a model to have something compatible with the xpath expression. I.e:
+		 *
 		 * /businessModels/0/columns/0/properties/7/behavioural.notEnabledRoles/value
-		 * 
+		 *
 		 * will be changed to:
-		 * 
+		 *
 		 * /businessModels/0/columns/0/properties/7/value/value
-		 * 
+		 *
 		 * So the property name is replaced by "value"
-		 *  
+		 *
 		 */
 		if (path.contains("properties")) {
 			String regex = "(?<=properties\\/\\d\\/).*?(?=\\/value)";

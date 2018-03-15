@@ -957,7 +957,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				try {
 					is.close();
 				} catch (IOException e) {
-					logger.error(e);
+					logger.error("Error closing stream", e);
 				}
 			try {
 				if (jdbcConnection != null && !jdbcConnection.isClosed()) {
@@ -976,7 +976,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 
 	/**
 	 * When modifying a tenant if a datasource remains with no tenant delete it
-	 * 
+	 *
 	 * @param aSession
 	 * @param ids:
 	 *            id of <tenant,dataource> modified

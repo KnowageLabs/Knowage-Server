@@ -17,24 +17,6 @@
  */
 package it.eng.knowage.meta.initializer;
 
-import it.eng.knowage.meta.initializer.properties.IPropertiesInitializer;
-import it.eng.knowage.meta.initializer.properties.PhysicalModelPropertiesFromFileInitializer;
-import it.eng.knowage.meta.model.Model;
-import it.eng.knowage.meta.model.ModelObject;
-import it.eng.knowage.meta.model.ModelProperty;
-import it.eng.knowage.meta.model.business.BusinessIdentifier;
-import it.eng.knowage.meta.model.business.BusinessRelationship;
-import it.eng.knowage.meta.model.physical.PhysicalColumn;
-import it.eng.knowage.meta.model.physical.PhysicalForeignKey;
-import it.eng.knowage.meta.model.physical.PhysicalModel;
-import it.eng.knowage.meta.model.physical.PhysicalModelFactory;
-import it.eng.knowage.meta.model.physical.PhysicalPrimaryKey;
-import it.eng.knowage.meta.model.physical.PhysicalTable;
-import it.eng.knowage.meta.model.util.JDBCTypeMapper;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -55,6 +37,27 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
 
+import it.eng.knowage.meta.initializer.properties.IPropertiesInitializer;
+import it.eng.knowage.meta.initializer.properties.PhysicalModelPropertiesFromFileInitializer;
+import it.eng.knowage.meta.model.Model;
+import it.eng.knowage.meta.model.ModelObject;
+import it.eng.knowage.meta.model.ModelProperty;
+import it.eng.knowage.meta.model.business.BusinessIdentifier;
+import it.eng.knowage.meta.model.business.BusinessRelationship;
+import it.eng.knowage.meta.model.physical.PhysicalColumn;
+import it.eng.knowage.meta.model.physical.PhysicalForeignKey;
+import it.eng.knowage.meta.model.physical.PhysicalModel;
+import it.eng.knowage.meta.model.physical.PhysicalModelFactory;
+import it.eng.knowage.meta.model.physical.PhysicalPrimaryKey;
+import it.eng.knowage.meta.model.physical.PhysicalTable;
+import it.eng.knowage.meta.model.util.JDBCTypeMapper;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.database.IDataBase;
+import it.eng.spagobi.utilities.database.MetaDataBase;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -74,7 +77,7 @@ public class PhysicalModelInitializer {
 
 	}
 
-	public PhysicalModel initializeLigth(Connection conn, List<String> selectedTables) {
+	public PhysicalModel initializeLigth(PhysicalModel originalPM, List<String> selectedTables, IDataSource dataSource) {
 		PhysicalModel model;
 		DatabaseMetaData dbMeta;
 		model = FACTORY.createPhysicalModel();
@@ -84,11 +87,13 @@ public class PhysicalModelInitializer {
 		}
 
 		try {
+			MetaDataBase database = DataBaseFactory.getMetaDataBase(dataSource);
+			Connection conn = originalPM.getConnection();
 			dbMeta = conn.getMetaData();
 
 			addDatabase(dbMeta, model);
-			addCatalog(conn, model, conn.getCatalog());
-			// addSchema(dbMeta, model, conn.getSchema());
+			addCatalog(conn, model, database.getCatalog(conn));
+			addSchema(dbMeta, model, database.getSchema(conn));
 
 			addTables(dbMeta, model, selectedTables);
 
@@ -113,7 +118,8 @@ public class PhysicalModelInitializer {
 
 		try {
 			IDataSourceDAO datasourceDao = DAOFactory.getDataSourceDAO();
-			DataSource ds = datasourceDao.loadDataSourceByID(datasourceId);
+			IDataSource ds = datasourceDao.loadDataSourceByID(datasourceId);
+			MetaDataBase database = DataBaseFactory.getMetaDataBase(ds);
 			logger.debug("Dataset is: " + ds.getLabel());
 			Connection conn = ds.getConnection();
 			logger.debug("Retrieve Connection: " + conn);
@@ -130,11 +136,12 @@ public class PhysicalModelInitializer {
 			logger.debug("Connection label is: " + connectionName);
 
 			addDatabase(dbMeta, model);
-			addCatalog(conn, model, conn.getCatalog());
-			logger.debug("Catalog name is: " + conn.getCatalog());
+			String catalog = database.getCatalog(conn);
+			addCatalog(conn, model, catalog);
+			logger.debug("Catalog name is: " + catalog);
 
 			try {
-				String schemaName = conn.getSchema();
+				String schemaName = database.getSchema(conn);
 				logger.debug("Schema name is: " + schemaName);
 				addSchema(dbMeta, model, schemaName);
 			} catch (AbstractMethodError e) {
@@ -193,7 +200,15 @@ public class PhysicalModelInitializer {
 					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME).getValue());
 
 			// Quote string identification
-			String quote = dbMeta.getIdentifierQuoteString();
+			String quote;
+			try {
+				quote = ((IDataBase) database).getAliasDelimiter();
+				if (quote == null) {
+					quote = dbMeta.getIdentifierQuoteString();
+				}
+			} catch (UnsupportedOperationException e) {
+				quote = dbMeta.getIdentifierQuoteString();
+			}
 			// check if escaping is needed
 			if (quote.equals("\"")) {
 				quote = "\\\"";
@@ -206,30 +221,6 @@ public class PhysicalModelInitializer {
 			logger.debug("PhysicalModel Property: Connection databasequotestring is [{}] "
 					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING).getValue());
 
-			/*
-			 * model.getPropertyType("connection.name").setDefaultValue(connectionName); logger.debug("PhysicalModel Property: Connection name is [{}]",
-			 * model.getPropertyType("connection.name").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.driver").setDefaultValue(connectionDriver); logger.debug("PhysicalModel Property: Connection driver is [{}]",
-			 * model.getPropertyType("connection.driver").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.url").setDefaultValue(connectionUrl); logger.debug("PhysicalModel Property: Connection url is [{}]",
-			 * model.getPropertyType("connection.url").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.username").setDefaultValue(connectionUsername);
-			 * logger.debug("PhysicalModel Property: Connection username is [{}]", model.getPropertyType("connection.username").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.password").setDefaultValue(connectionPassword);
-			 * logger.debug("PhysicalModel Property: Connection password is [{}]", model.getPropertyType("connection.password").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.databasename").setDefaultValue(connectionDatabaseName);
-			 * logger.debug("PhysicalModel Property: Connection databasename is [{}]", model.getPropertyType("connection.databasename").getDefaultValue());
-			 *
-			 * // Quote string identification String quote = dbMeta.getIdentifierQuoteString(); // check if escaping is needed if (quote.equals("\"")) { quote =
-			 * "\\\""; } model.getPropertyType("connection.databasequotestring").setDefaultValue(quote);
-			 * logger.debug("PhysicalModel Property: Connection databasequotestring is [{}]", model.getPropertyType("connection.databasequotestring")
-			 * .getDefaultValue());
-			 */
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to initialize physical model", t);
 		}
@@ -248,22 +239,18 @@ public class PhysicalModelInitializer {
 	}
 
 	private void addCatalog(Connection conn, PhysicalModel model, String defaultCatalog) {
-		String catalog;
+		String catalog = defaultCatalog;
 		List<String> catalogs;
 		DatabaseMetaData dbMeta;
 		ResultSet rs;
 		Iterator<String> it;
 
-		catalog = null;
-
 		try {
-
-			catalog = conn.getCatalog();
 			if (catalog == null) {
 				dbMeta = conn.getMetaData();
 
 				rs = dbMeta.getCatalogs();
-				catalogs = new ArrayList();
+				catalogs = new ArrayList<>();
 				while (rs.next()) {
 					String catalogName = rs.getString(1);
 					if (catalogName != null) {
@@ -309,7 +296,7 @@ public class PhysicalModelInitializer {
 
 		try {
 			rs = dbMeta.getSchemas();
-			schemas = new ArrayList();
+			schemas = new ArrayList<>();
 			while (rs.next()) {
 				String schemaName = rs.getString(1);
 				if (schemaName != null) {

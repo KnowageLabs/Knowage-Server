@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
@@ -224,13 +223,5 @@ public class SqlUtils {
 			}
 		}
 		return false;
-	}
-
-	public static boolean hasSqlServerDialect(IDataSource dataSource) {
-		if (dataSource != null) {
-			return dataSource.getHibDialectName().contains("sqlserver");
-		} else {
-			return false;
-		}
 	}
 }

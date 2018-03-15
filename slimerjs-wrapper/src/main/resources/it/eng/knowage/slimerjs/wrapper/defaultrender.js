@@ -406,6 +406,12 @@ log("jsExitingWait = " + jsExitingWait);
 var	hmacKey = +system.args[ 11 ];
 log("hmacKey = " + hmacKey);
 
+var	zoomFactor = system.args[ 12 ];
+log("zoomFactor = " + zoomFactor);
+viewportWidth = viewportWidth * zoomFactor;
+viewportHeight = viewportHeight * zoomFactor;
+zoomFactor = zoomFactor * 0.99;
+
 // this sets a zoom on the page because of the dpi differences between windows and unix
 var setZoom = function (page) {
 	log("[SETZOOM] IN");
@@ -430,14 +436,16 @@ var exit = function(code) {
 // this function renders the page
 var renderPage = function (page) {
 	log("[RENDERPAGE] IN");
-  setZoom(page);
+  page.zoomFactor = zoomFactor;
 
   // render the page
   try {
     log('Rendering PNG to target folder: ' + targetPath);
     var targetFile = targetPath + "_" + page.sheet + ".png";
     log("Rendering PNG as target file: " + targetFile);
-    page.render(targetFile);
+    window.setTimeout(function () {
+    	page.render(targetFile);
+    },500);
   } catch (error) {
     err('Failed to render PNG: ' + error);
     slimer.exit(3);

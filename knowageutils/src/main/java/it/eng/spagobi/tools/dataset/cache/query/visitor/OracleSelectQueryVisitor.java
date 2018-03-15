@@ -22,10 +22,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
 import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
+import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.utilities.database.IDataBase;
 
 public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
@@ -33,9 +35,8 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 	private static final String DATE_FORMAT = "YYYY-MM-DD HH24:MI:SS";
 	private static final String TIMESTAMP_FORMAT = DATE_FORMAT + ".FF";
 
-	public OracleSelectQueryVisitor() {
-		this.dialect = SqlDialect.ORACLE;
-		this.useNameAsAlias = true; // force the use of column name as alias for Oracle XE
+	public OracleSelectQueryVisitor(IDataBase database) {
+		super(database);
 	}
 
 	@Override
@@ -135,6 +136,27 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 		sb.append("')");
 
 		return sb.toString();
+	}
+
+	@Override
+	protected void append(Sorting item) {
+		String aliasDelimiter = database.getAliasDelimiter();
+		Projection projection = item.getProjection();
+		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+
+		String name = aliasDelimiter + projection.getName() + aliasDelimiter;
+		if (aggregationFunction == null) {
+			queryBuilder.append(name);
+		} else {
+			String alias = projection.getAlias();
+			if (alias != null) {
+				queryBuilder.append(alias);
+			} else {
+				queryBuilder.append(aggregationFunction.apply(name));
+			}
+		}
+
+		queryBuilder.append(item.isAscending() ? " ASC" : " DESC");
 	}
 
 }

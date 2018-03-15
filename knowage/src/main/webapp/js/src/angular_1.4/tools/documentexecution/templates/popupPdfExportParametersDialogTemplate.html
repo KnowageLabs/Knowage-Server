@@ -14,45 +14,29 @@
 				{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.parameters')}}
 			</div>
 		</md-toolbar>
-		<md-content flex layout-padding layout-align="space-around center" layout="column">
+		<md-content flex layout-padding layout-align="space-around center" layout="row">
 			
-			<div layout="row">
-				<md-input-container>
-					<label>{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.width')}} (px)</label>
-					<input ng-model="parameters.pdfWidth" type="number" step="1">
-				</md-input-container>
-				<div flex=10></div>
-				<md-input-container>
-					<label>{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.height')}} (px)</label>
-					<input ng-model="parameters.pdfHeight" type="number" step="1">
-				</md-input-container>
-				<div flex=10></div>
+			<div layout="column">
 				<md-input-container>
 					<label>{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.waittime')}} (s)</label>
-					<input ng-model="parameters.pdfWaitTime" type="number" step="1">
+					<input ng-model="parameters.pdfWaitTime" type="number" step="1" min="10" max="300">
+				</md-input-container>
+				
+				<md-input-container>
+					<label>{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.quality')}}</label>
+					<md-select ng-model="parameters.pdfZoomFactor" aria-label="zoom">
+						<md-option ng-value="2">{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.quality.good')}} (2x)</md-option>
+						<md-option ng-value="3">{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.quality.verygood')}} (3x)</md-option>
+						<md-option ng-value="4">{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.quality.excellent')}} (4x)</md-option>
+					</md-select>
 				</md-input-container>
 			</div>
-			
-<!-- 		<div layout="row">
-				<md-input-container flex=30>
-					<label>{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.zoom')}} (%)</label>
-					<input min="1" max="100" type="number" ng-model="parameters.pdfZoom" aria-label="zoom">
-				</md-input-container>
-				<md-slider-container flex>
-					<md-slider min="1" max="100" ng-model="parameters.pdfZoom" aria-label="zoom">
-					</md-slider>				
-				</md-slider-container>
-			</div> -->
-			
-<!-- 		<md-radio-group layout="row" ng-model="parameters.pdfPageOrientation">
-				<md-radio-button value="landscape">{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.landscape')}}</md-radio-button>
-				<md-radio-button value="portrait">{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.portrait')}}</md-radio-button>
-			</md-radio-group> -->
-			
-			<div layout="row">
+				
+			<div layout="column">
 				<md-checkbox ng-model="parameters.pdfFrontPage" aria-label="Front page">
 					{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.frontpage')}}
 				</md-checkbox>
+				
 				<md-checkbox ng-model="parameters.pdfBackPage" aria-label="Back page">
 					{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.backpage')}}
 				</md-checkbox>
@@ -62,7 +46,7 @@
 	</md-card-content>
 	<md-card-actions layout="row" layout-align="end center">
 		<md-button ng-click="closeDialog()">{{translate.load('sbi.generic.cancel')}}</md-button>
-		<md-button ng-click="saveDataset()">{{translate.load('sbi.generic.save')}}</md-button>
+		<md-button ng-click="exportPdf()">{{translate.load('sbi.generic.save')}}</md-button>
 	</md-card-actions>
 </md-card>
 <!-- 

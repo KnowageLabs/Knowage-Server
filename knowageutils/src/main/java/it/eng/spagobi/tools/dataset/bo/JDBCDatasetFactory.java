@@ -19,28 +19,40 @@ package it.eng.spagobi.tools.dataset.bo;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.DataBaseException;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class JDBCDatasetFactory {
 	private static transient Logger logger = Logger.getLogger(JDBCDatasetFactory.class);
 
 	public static IDataSet getJDBCDataSet(IDataSource dataSource) {
-		IDataSet dataSet = null;
-
 		if (dataSource == null) {
-
 			throw new IllegalArgumentException("datasource parameter cannot be null");
 		}
-		String dialect = dataSource.getHibDialectClass();
-		if (dialect.contains("hbase")) {
-			dataSet = new JDBCHBaseDataSet();
-		} else if (dialect.contains("hive")) {
+
+		DatabaseDialect databaseDialect;
+		try {
+			databaseDialect = DataBaseFactory.getDataBase(dataSource).getDatabaseDialect();
+		} catch (DataBaseException e) {
+			throw new SpagoBIRuntimeException("Unable to get dataset by datasource");
+		}
+
+		IDataSet dataSet = null;
+		switch (databaseDialect) {
+		case HIVE:
+		case SPARKSQL:
 			dataSet = new JDBCHiveDataSet();
-		} else if (dialect.contains("orient")) {
+			break;
+		case ORIENT:
 			dataSet = new JDBCOrientDbDataSet();
-		} else if (dialect.contains("impala")) {
+			break;
+		case IMPALA:
 			dataSet = new JDBCImpalaDataSet();
-		} else {
+			break;
+		default:
 			dataSet = new JDBCDataSet();
 		}
 

@@ -193,6 +193,7 @@ public class AnalyticalModelDocumentManagementAPI {
 					paramJSON.put("id", param.getId());
 					paramJSON.put("label", param.getLabel());
 					paramJSON.put("url", param.getParameterUrlName());
+					paramJSON.put("parType", param.getParameter().getType());
 					parametersList.add(paramJSON);
 				}
 			} catch (Throwable t) {

@@ -17,6 +17,14 @@
  */
 package it.eng.spagobi.commons.serializer;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+
+import org.json.JSONArray;
+
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
@@ -47,30 +55,19 @@ import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCHBaseDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-
-import org.json.JSONArray;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -83,7 +80,6 @@ public class JSONSerializer implements Serializer {
 		mappings = new HashMap();
 
 		mappings.put(DataSource.class, new DataSourceJSONSerializer());
-		mappings.put(DataSourceModel.class, new DataSourceJSONSerializer());
 		mappings.put(Domain.class, new DomainJSONSerializer());
 		mappings.put(Config.class, new ConfigJSONSerializer());
 		mappings.put(Engine.class, new EngineJSONSerializer());
@@ -105,10 +101,8 @@ public class JSONSerializer implements Serializer {
 		mappings.put(VersionedDataSet.class, new DataSetJSONSerializer());
 		mappings.put(CustomDataSet.class, new DataSetJSONSerializer());
 		mappings.put(JDBCDataSet.class, new DataSetJSONSerializer());
-		mappings.put(JDBCHBaseDataSet.class, new DataSetJSONSerializer());
 		mappings.put(JDBCHiveDataSet.class, new DataSetJSONSerializer());
 		mappings.put(ScriptDataSet.class, new DataSetJSONSerializer());
-		mappings.put(WebServiceDataSet.class, new DataSetJSONSerializer());
 		mappings.put(FileDataSet.class, new DataSetJSONSerializer());
 		mappings.put(CkanDataSet.class, new DataSetJSONSerializer());
 		mappings.put(FederatedDataSet.class, new DataSetJSONSerializer());

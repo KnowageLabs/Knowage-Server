@@ -17,6 +17,9 @@
  */
 package it.eng.spagobi.utilities.database;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -25,15 +28,17 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class MySQLDataBase extends AbstractDataBase {
-
-	public static final String ALIAS_DELIMITER = "`";
+public class MySQLDataBase extends AbstractDataBase implements CacheDataBase, MetaDataBase {
 
 	private static transient Logger logger = Logger.getLogger(MySQLDataBase.class);
+
+	public static final String ALIAS_DELIMITER = "`";
 
 	private static int MAX_CHARSET_RATIO = 4; // utf8mb4
 	private static int MAX_VARCHAR_BYTE_VALUE = 65535;
 	private static int MAX_VARCHAR_VALUE = MAX_VARCHAR_BYTE_VALUE / MAX_CHARSET_RATIO;
+
+	private int varcharLength = 255;
 
 	public MySQLDataBase(IDataSource dataSource) {
 		super(dataSource);
@@ -103,5 +108,26 @@ public class MySQLDataBase extends AbstractDataBase {
 			query = query + " and table_schema = '" + schema + "'";
 		}
 		return query;
+	}
+
+	@Override
+	public int getVarcharLength() {
+		return varcharLength;
+	}
+
+	@Override
+	public void setVarcharLength(int varcharLength) {
+		this.varcharLength = varcharLength;
+
+	}
+
+	@Override
+	public String getSchema(Connection conn) throws SQLException {
+		return conn.getSchema();
+	}
+
+	@Override
+	public String getCatalog(Connection conn) throws SQLException {
+		return conn.getCatalog();
 	}
 }

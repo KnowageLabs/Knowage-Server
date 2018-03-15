@@ -56,7 +56,7 @@ public class SlimerJS {
 	 */
 	public static List<InputStream> render(final URL url, final Integer sheets, final RenderOptions options) throws IOException, RenderException {
 		return render(options.getOptions(), url, sheets, options.getDimensions(), options.getRenderFormat(), options.getCustomHeaders(),
-				options.getJsRenderingWait(), options.getJsExitingWait());
+				options.getJsRenderingWait(), options.getJsExitingWait(), options.getZoomFactor());
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class SlimerJS {
 	 */
 	public static List<InputStream> render(final URL url, final RenderOptions options) throws IOException, RenderException {
 		return render(options.getOptions(), url, 1, options.getDimensions(), options.getRenderFormat(), options.getCustomHeaders(),
-				options.getJsRenderingWait(), options.getJsExitingWait());
+				options.getJsRenderingWait(), options.getJsExitingWait(), options.getZoomFactor());
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class SlimerJS {
 	 *             if the render script fails for any reason
 	 */
 	public static List<InputStream> render(final SlimerJSOptions options, final URL url, final Integer sheets, final ViewportDimensions dimensions,
-			final RenderFormat renderFormat, final CustomHeaders customHeaders, final Long jsRenderingWait, final Long jsExitingWait)
+			final RenderFormat renderFormat, final CustomHeaders customHeaders, final Long jsRenderingWait, final Long jsExitingWait, final Double zoomFactor)
 			throws IOException, RenderException {
 		if (url == null || sheets == null || renderFormat == null || dimensions == null || jsRenderingWait == null || jsExitingWait == null) {
 			throw new NullPointerException("All parameters but headers are required");
@@ -138,7 +138,7 @@ public class SlimerJS {
 						SlimerJSConstants.JS_RENDERING_WAIT_TEMPLATENAME, jsRenderingWait),
 				new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.JS_EXITING_WAIT_TEMPLATENAME),
 						SlimerJSConstants.JS_EXITING_WAIT_TEMPLATENAME, jsExitingWait),
-				new CommandLineArgument(SpagoBIUtilities.getHmacKey()));
+				new CommandLineArgument(SpagoBIUtilities.getHmacKey()), new CommandLineArgument(String.valueOf(zoomFactor)));
 
 		final int renderExitCode = slimerJSExecutionResponse.getExitCode();
 
@@ -196,8 +196,9 @@ public class SlimerJS {
 	 *             if the render script fails for any reason
 	 */
 	public static List<InputStream> render(final SlimerJSOptions options, final URL url, final ViewportDimensions dimensions, final RenderFormat renderFormat,
-			final CustomHeaders customHeaders, final Long jsRenderingWait, final Long jsExitingWait) throws IOException, RenderException {
-		return render(options, url, 1, dimensions, renderFormat, customHeaders, jsRenderingWait, jsExitingWait);
+			final CustomHeaders customHeaders, final Long jsRenderingWait, final Long jsExitingWait, final Double zoomFactor)
+			throws IOException, RenderException {
+		return render(options, url, 1, dimensions, renderFormat, customHeaders, jsRenderingWait, jsExitingWait, zoomFactor);
 	}
 
 	public static SlimerJSExecutionResponse exec(InputStream script, CommandLineArgument... arguments) throws IOException {

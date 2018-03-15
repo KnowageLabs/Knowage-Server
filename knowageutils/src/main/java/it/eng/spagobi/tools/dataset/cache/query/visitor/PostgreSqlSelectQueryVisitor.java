@@ -18,11 +18,12 @@
 
 package it.eng.spagobi.tools.dataset.cache.query.visitor;
 
-import it.eng.spagobi.tools.dataset.cache.query.SqlDialect;
+import it.eng.spagobi.utilities.database.IDataBase;
 
 public class PostgreSqlSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
-	public PostgreSqlSelectQueryVisitor() {
-		this.dialect = SqlDialect.POSTGRESQL;
+	public PostgreSqlSelectQueryVisitor(IDataBase database) {
+		super(database);
 	}
+
 }

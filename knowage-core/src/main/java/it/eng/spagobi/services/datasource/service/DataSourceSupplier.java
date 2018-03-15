@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,17 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.services.datasource.service;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.bo.Domain;
@@ -27,15 +33,8 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
 public class DataSourceSupplier {
 	static private Logger logger = Logger.getLogger(DataSourceSupplier.class);
-
 
 	/**
 	 * Gets the data source.
@@ -54,11 +53,9 @@ public class DataSourceSupplier {
 
 		// gets data source data from database
 		try {
-			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(
-					Integer.valueOf(documentId));
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(Integer.valueOf(documentId));
 			if (obj == null) {
-				logger.error("The object with id " + documentId
-						+ " is not found on the database.");
+				logger.error("The object with id " + documentId + " is not found on the database.");
 				return null;
 			}
 			Integer dsId = null;
@@ -87,11 +84,9 @@ public class DataSourceSupplier {
 					return null;
 				}
 			} else {
-				IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(
-						dsId);
+				IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(dsId);
 				if (ds == null) {
-					logger.error("The data source with id " + obj.getDataSourceId()
-							+ " is not found on the database.");
+					logger.error("The data source with id " + obj.getDataSourceId() + " is not found on the database.");
 					return null;
 				}
 
@@ -121,11 +116,9 @@ public class DataSourceSupplier {
 
 		// gets data source data from database
 		try {
-			IDataSource ds = DAOFactory.getDataSourceDAO()
-					.loadDataSourceByLabel(dsLabel);
+			IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dsLabel);
 			if (ds == null) {
-				logger.warn("The data source with label " + dsLabel
-						+ " is not found on the database.");
+				logger.warn("The data source with label " + dsLabel + " is not found on the database.");
 				return null;
 			}
 			sbds = toSpagoBiDataSource(ds);
@@ -151,11 +144,9 @@ public class DataSourceSupplier {
 
 		// gets data source data from database
 		try {
-			IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(
-					id);
+			IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(id);
 			if (ds == null) {
-				logger.warn("The data source with id " + id
-						+ " is not found on the database.");
+				logger.warn("The data source with id " + id + " is not found on the database.");
 				return null;
 			}
 
@@ -168,8 +159,7 @@ public class DataSourceSupplier {
 		return sbds;
 	}
 
-	private SpagoBiDataSource toSpagoBiDataSource(IDataSource ds)
-			throws Exception {
+	private SpagoBiDataSource toSpagoBiDataSource(IDataSource ds) throws Exception {
 		SpagoBiDataSource sbds = new SpagoBiDataSource();
 		sbds.setLabel(ds.getLabel());
 		sbds.setJndiName(ds.getJndi());
@@ -181,9 +171,8 @@ public class DataSourceSupplier {
 		sbds.setSchemaAttribute(ds.getSchemaAttribute());
 		// gets dialect informations
 		IDomainDAO domaindao = DAOFactory.getDomainDAO();
-		Domain doDialect = domaindao.loadDomainById(ds.getDialectId());
+		Domain doDialect = domaindao.loadDomainByCodeAndValue("DIALECT_HIB", ds.getDialectName());
 		sbds.setHibDialectClass(doDialect.getValueCd());
-		sbds.setHibDialectName(doDialect.getValueName());
 		sbds.setReadOnly(ds.checkIsReadOnly());
 		sbds.setWriteDefault(ds.checkIsWriteDefault());
 		return sbds;

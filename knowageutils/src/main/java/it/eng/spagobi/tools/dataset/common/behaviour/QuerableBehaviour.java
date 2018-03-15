@@ -24,6 +24,7 @@ import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.common.query.IQueryTransformer;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
@@ -162,7 +163,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 			} catch (Throwable e) {
 				throw new ProfileAttributeDsException("An error occurred while excuting query [" + newStatement + "]", e);
 			}
-		} else if (getTargetDataSet() instanceof JDBCDataSet) {
+		} else if (getTargetDataSet() instanceof JDBCDataSet || getTargetDataSet() instanceof JDBCHiveDataSet) {
 			try {
 				newStatement = StringUtilities.substituteParametersInString(newStatement, userProfileAttributes);
 			} catch (Exception e) {

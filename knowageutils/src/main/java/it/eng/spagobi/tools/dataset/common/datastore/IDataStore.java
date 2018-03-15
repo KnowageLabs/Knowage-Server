@@ -79,13 +79,13 @@ public interface IDataStore {
 
 	void insertRecord(int recordIndex, IRecord record);
 
-	IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize);
+	IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, String dateFormatJava);
 
-	IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, int maxRowCount);
+	IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, int maxRowCount, String dateFormatJava);
 
-	IDataStore aggregateAndFilterRecords(String sqlQuery, List<Object> values, int offset, int fetchSize, int maxRowCount);
+	IDataStore aggregateAndFilterRecords(String sqlQuery, List<Object> values, int offset, int fetchSize, int maxRowCount, String dateFormatJava);
 
-	IDataStore aggregateAndFilterRecords(IQuery query);
+	IDataStore aggregateAndFilterRecords(IQuery query, String dateFormatJava);
 
 	org.apache.metamodel.data.DataSet getMetaModelResultSet(String sqlQuery);
 

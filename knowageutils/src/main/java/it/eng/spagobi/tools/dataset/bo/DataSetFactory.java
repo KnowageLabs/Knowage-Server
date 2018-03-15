@@ -17,17 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.services.common.EnginConf.MissingClassException;
-import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
-import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.sql.SqlUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -38,6 +27,17 @@ import java.util.Properties;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.services.common.EnginConf.MissingClassException;
+import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -82,7 +82,7 @@ public class DataSetFactory {
 		if (className.equals(JDBCDataSet.class.getName())) {
 			try {
 				IDataSource ds = DataSourceFactory.getDataSource(dataSetConfig.getDataSource());
-				if (SqlUtils.isHiveLikeDialect(ds.getHibDialectName().toLowerCase())) {
+				if (SqlUtils.isHiveLikeDialect(ds.getHibDialectClass().toLowerCase())) {
 					className = JDBCHiveDataSet.class.getName();
 				} else if ((ds.getHibDialectClass()).toLowerCase().contains("mongo")) {
 					className = MongoDataSet.class.getName();
@@ -100,10 +100,8 @@ public class DataSetFactory {
 		Constructor c = null;
 		Object object = null;
 		if (className.endsWith("JDBCDataSet")) {
-			String dialect = dataSetConfig.getDataSource().getHibDialectName();
-			if (dialect.contains("hbase")) {
-				className = JDBCHBaseDataSet.class.getName();
-			} else if (SqlUtils.isHiveLikeDialect(dialect)) {
+			String dialect = dataSetConfig.getDataSource().getHibDialectClass();
+			if (SqlUtils.isHiveLikeDialect(dialect)) {
 				className = JDBCHiveDataSet.class.getName();
 			} else if (dialect.contains("orient")) {
 				className = JDBCOrientDbDataSet.class.getName();

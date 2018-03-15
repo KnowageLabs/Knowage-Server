@@ -783,8 +783,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
 	var prefix = chartConf.additionalData.prefixChar ? chartConf.additionalData.prefixChar : "";
 	var postfix = chartConf.additionalData.postfixChar ?  chartConf.additionalData.postfixChar : "";
 	var precision = chartConf.additionalData.precision ?  chartConf.additionalData.precision : "";    
-	var val = this.point.value;   		
-	val = Highcharts.numberFormat(val,precision );	
+	
     if(chartConf.chart.xAxisDate){
     	var dateF = checkDateFormat(chartConf.chart.dateF);
     	xAxisObject={
@@ -826,12 +825,16 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
             showLastLabel: true,
             tickLength: 16
         };
-    	
     	serieColSize=24 * 36e5;
-    	
-    	tooltipObject={	
-          	headerFormat: '<b>'+chartConf.additionalData.serie.value+'</b><br/>',
-            pointFormat: '{point.x:'+dateF+'} | {point.label}: <b> '+prefix + ' ' +val + ' ' + postfix + '</b>',
+    	tooltipFormatter= function () {
+    		var val = this.point.value;   		
+    		val = Highcharts.numberFormat(val,precision );	
+    		var pointDate = Highcharts.dateFormat(dateF, this.point.x)
+            return '<b>'+chartConf.additionalData.serie.value+'</b><br>' + pointDate + '| ' + this.series.yAxis.categories[this.point.y] + ': <b>' +
+            prefix + " " +val + " " + postfix + ' </b> ';
+    	};
+    	tooltipObject={
+    		formatter:tooltipFormatter,
             style:{ 
             	color: chartConf.tooltip.style.fontColor,
             	fontSize: chartConf.tooltip.style.fontSize,
@@ -879,9 +882,10 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
     	};
     	serieColSize=1;
     	tooltipFormatter= function () {
-    		
-            return '<b>'+chartConf.additionalData.serie.value+'</b><br>' + this.series.xAxis.categories[this.point.x] + ': <b>' + " " +
-            prefix + " " +val + " " + postfix + ' </b> | ' + this.series.yAxis.categories[this.point.y] + '';
+    		var val = this.point.value;   		
+    		val = Highcharts.numberFormat(val,precision );	
+            return '<b>'+chartConf.additionalData.serie.value+'</b><br>' + this.series.xAxis.categories[this.point.x] + ' | ' + this.series.yAxis.categories[this.point.y] + ': <b>'
+            prefix + " " +val + " " + postfix + ' </b>';
     	};
     
     	tooltipObject={

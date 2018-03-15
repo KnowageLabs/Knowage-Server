@@ -341,12 +341,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			String implementation, Boolean showDerivedDatasets) {
 
 		List<IDataSet> results;
-		Session session = getSession();
+		Session session = null;
 
 		logger.debug("IN");
 
 		results = new ArrayList<IDataSet>();
-		session = null;
 		try {
 			// open session
 			session = getSession();
@@ -608,7 +607,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			t.printStackTrace();
 			throw new SpagoBIDAOException("An unexpected error occured while inserting dataset", t);
 		} finally {
 			if (keepPreviousSession == false && session != null && session.isOpen()) {

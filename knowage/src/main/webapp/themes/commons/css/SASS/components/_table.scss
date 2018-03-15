@@ -24,6 +24,9 @@
 			th{
 				border-bottom: 1px solid $ternaryColor;
 				text-align: left;
+				&.multiTableAction{
+					width: 100px;
+				}
 			}
 		}
 	}
@@ -88,30 +91,33 @@
 						}
 					}
 				}
-			}
-		}
-	}
-	&.kn-table-medium-rows {
-		tbody {
-			tr {
-				height: 42px;
-			}
-		}
-	}
-	&.kn-table-alternated-rows {
-		&>tbody {
-			tr {
-				&:nth-child(odd) {
-					background-color: lighten($ternaryColor,15% );
+				&.inner-space {
+					padding:0 0 10px 0;
 				}
 			}
 		}
 	}
-	&.kn-table-row-highlight {
-		&>tbody {
+	&.kn-inner-table {
+		background-color: $listBackground;
+		thead {
+			background-color: $secondaryColor;
+			font-size: $mediumFontSize;
 			tr {
-				&:hover{
-					background-color: lighten($ternaryColor,10%);
+				height: $defaultSize;
+			}
+		}
+		tbody {
+			tr {
+				td {
+					font-size: $mediumFontSize;
+					&.tableAction{
+						width: 50px;
+					}
+					md-icon {
+						text-align: center;
+						cursor: pointer;
+						font-size: $baseFontSize;
+					}
 				}
 			}
 		}

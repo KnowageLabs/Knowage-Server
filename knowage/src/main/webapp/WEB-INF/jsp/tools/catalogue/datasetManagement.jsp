@@ -63,6 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/javascript/javascript.js")%>"></script>
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/groovy/groovy.js")%>"></script>
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/sql/sql.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/sparql/sparql.js")%>"></script>
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js")%>"></script>
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/display/autorefresh.js")%>"></script>
 		
@@ -619,6 +620,58 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-card>
 							
 						</md-content>
+						
+						
+						<!-- SPARQL DATASET -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='SPARQL'">
+						
+							<md-card layout-padding style="margin-top:0">
+							
+								<div flex=100>
+									<md-input-container class="md-block">
+									    <label>{{translate.load("sbi.ds.sparql.url")}}</label>
+										<input ng-model="selectedDataSet.sparqlUrl" ng-required = "selectedDataSet.dsTypeCd=='SPARQL'" ng-change="setFormDirty()" type="text">
+										
+										<div ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='SPARQL' && !selectedDataSet.sparqlUrl">
+				       						 <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+			       						</div>
+									</md-input-container>
+								</div>
+								
+								<div flex=100>
+									<md-input-container class="md-block">
+									    <label>{{translate.load("sbi.ds.sparql.graphiri")}}</label>
+										<input ng-model="selectedDataSet.sparqlGraphIRI" ng-change="setFormDirty()" type="text">
+										
+									</md-input-container>
+								</div>
+							
+								<label>{{translate.load("sbi.ds.query")}}</label>
+								<div flex=100>								
+									<md-input-container class="md-block">									
+										<textarea ng-required="selectedDataSet.dsTypeCd=='SPARQL'" ng-model="selectedDataSet.sparqlQuery" ui-codemirror="{ onLoad : codemirrorLoaded }"
+										ui-codemirror-opts="codemirrorSparqlOptions" rows="8" md-select-on-focus
+												ng-change="setFormDirty()">
+										</textarea>
+										
+										<div ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='SPARQL' && !selectedDataSet.sparqlQuery">
+				       						 <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+			       						</div>
+									</md-input-container>									
+								</div>
+								
+								<div flex=100>
+									<md-input-container class="md-block">
+									    <label>{{translate.load("sbi.ds.sparql.timeout")}}</label>
+										<input ng-model="selectedDataSet.sparqlTimeout" ng-change="setFormDirty()" type="number" >
+										
+									</md-input-container>
+								</div>
+									
+							</md-card>
+							
+						</md-content>
+							
 							
 						<!-- JAVA CLASS DATASET -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Java Class'">

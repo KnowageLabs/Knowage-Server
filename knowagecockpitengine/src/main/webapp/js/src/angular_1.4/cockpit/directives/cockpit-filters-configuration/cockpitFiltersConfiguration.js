@@ -270,6 +270,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 
+				$scope.newFilterColumnDS = [];
 				$scope.newFilter = {};
 				$scope.newFilterEditMode = false;
 				$scope.newFilterAddMode = false;
@@ -306,10 +307,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var filterVal2 = row.filterVal2;
 			var type = row.type;
 
-			//colName = $scope.cleanSingleQbeColumn(colName);
+			// if clicked on already selected don't do anything
+			if($scope.newFilter && $scope.newFilter.dataset == row.dataset &&  $scope.newFilter.colName == row.colName ){
+				return;
+			}
 
 			$scope.newFilter = {};
 			$scope.newFilter['dataset'] = dataset;
+
+			// fill the combo of columns with current dataset
+			$scope.newFilterColumnDS = [{"name":colName, "alias":colAlias}];
+			//$scope.newFilterColumnDS.push({"name":colName, "alias":colAlias});
+
+
 			$scope.newFilter['colName'] = colName;
 			$scope.newFilter['colAlias'] = colAlias;
 			$scope.newFilter['filterOperator'] = filterOperator;
@@ -427,7 +437,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 */
 		$scope.newFilterChangeDatasetUpdateColumns=function(){
 			$scope.newFilterColumnDS = [];
-			$scope.newFilterColumnDS.push("");
+			//$scope.newFilterColumnDS.push("");
 
 			var dsLabel = $scope.newFilter.dataset;
 			var ds = cockpitModule_datasetServices.getDatasetByLabel(dsLabel);
