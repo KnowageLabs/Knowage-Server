@@ -21,6 +21,7 @@ package it.eng.spagobi.tools.dataset.cache.query.visitor;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
 import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.database.IDataBase;
 
@@ -38,7 +39,7 @@ public class HsqlDbSelectQueryVisitor extends AbstractSelectQueryVisitor {
 		String name = projection.getName();
 		String alias = projection.getAlias();
 		String delimitedName = StringUtilities.isEmpty(alias) ? aliasDelimiter + name + aliasDelimiter : aliasDelimiter + alias + aliasDelimiter;
-		if (aggregationFunction == null) {
+		if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 			queryBuilder.append(delimitedName);
 		} else {
 			queryBuilder.append(aggregationFunction.apply(delimitedName));

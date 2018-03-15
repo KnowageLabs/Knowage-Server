@@ -323,7 +323,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
 		String name = aliasDelimiter + projection.getName() + aliasDelimiter;
-		if (aggregationFunction == null) {
+		if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 			queryBuilder.append(name);
 		} else {
 			queryBuilder.append(aggregationFunction.apply(name));
@@ -415,7 +415,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 					}
 					if (!projectionAlreadyDefined) {
 						IAggregationFunction aggregationFunction = projection.getAggregationFunction();
-						if (aggregationFunction == null || aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION)) {
+						if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 							queryBuilder.append(",");
 							append(projection, false);
 						}
@@ -479,7 +479,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 				}
 				if (!projectionAlreadyDefined) {
 					IAggregationFunction aggregationFunction = projection.getAggregationFunction();
-					if (aggregationFunction == null || aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION)) {
+					if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 						queryBuilder.append(",");
 						append(projection, false);
 					}

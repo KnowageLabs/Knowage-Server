@@ -26,6 +26,7 @@ import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
 import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.database.IDataBase;
 
@@ -145,12 +146,12 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
 		String name = aliasDelimiter + projection.getName() + aliasDelimiter;
-		if (aggregationFunction == null) {
+		if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 			queryBuilder.append(name);
 		} else {
 			String alias = projection.getAlias();
-			if (alias != null) {
-				queryBuilder.append(alias);
+			if (alias != null && name.equals(aliasDelimiter + alias + aliasDelimiter)) {
+				queryBuilder.append(aliasDelimiter + alias + aliasDelimiter);
 			} else {
 				queryBuilder.append(aggregationFunction.apply(name));
 			}
