@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -398,16 +399,17 @@ public class LovResource extends AbstractSpagoBIResource {
 			boolean hasPar = DAOFactory.getModalitiesValueDAO().hasParameters(id.toString());
 			if (hasPar) {
 				logger.error("Lov cant be deleted it has parameters associated");
-				throw new SpagoBIRestServiceException("", getLocale(), "Lov cant be deleted it has parameters associated");
+				throw new SpagoBIRuntimeException("Lov cannot be deleted it has parameters associated");
 			}
 			modalitiesValueDAO.eraseModalitiesValue(modVal);
 
-			return Response.ok().build();
+			String encodedLov = URLEncoder.encode("" + modVal.getId(), "UTF-8");
+			return Response.ok().entity(encodedLov).build();
 
 		} catch (Exception exception) {
 
 			logger.error("Error while deleting LOV", exception);
-			throw new SpagoBIServiceException("Error while deleting LOV", exception);
+			throw new SpagoBIRestServiceException(exception.getLocalizedMessage(), buildLocaleFromSession(), exception);
 
 		}
 	}
