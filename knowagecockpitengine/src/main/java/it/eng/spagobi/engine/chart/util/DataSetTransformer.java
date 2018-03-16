@@ -743,9 +743,9 @@ public class DataSetTransformer {
 				secCat = "column_2";
 				seria = "column_3";
 			} else {
-				primCat = "column_3";
+				primCat = "column_2";
 				secCat = "column_1";
-				seria = "column_2";
+				seria = "column_3";
 			}
 
 		} else {
@@ -756,15 +756,15 @@ public class DataSetTransformer {
 
 			} else {
 
-				primCat = "column_2";
+				primCat = "column_1";
 				secCat = "column_3";
-				seria = "column_1";
+				seria = "column_2";
 
 			}
 		}
 
 		for (Object singleObject : dataRows) {
-			categories.add((String) ((Map) singleObject).get(primCat));
+			categories.add(((Map) singleObject).get(primCat).toString());
 		}
 		String[] categoriesList = categories.toArray(new String[categories.size()]);
 		Map<String, Integer> categoriesListIndexMap = new HashMap<String, Integer>();
@@ -783,10 +783,10 @@ public class DataSetTransformer {
 					jo.put("y", "");
 					newListOfOrderColumnItems.add(jo);
 				}
-				map.put((String) ((Map) singleObject).get(seria), newListOfOrderColumnItems);
+				map.put(((Map) singleObject).get(seria).toString(), newListOfOrderColumnItems);
 			}
 
-			JSONObject jo = newListOfOrderColumnItems.get(categoriesListIndexMap.get(((Map) singleObject).get(primCat)));
+			JSONObject jo = newListOfOrderColumnItems.get(categoriesListIndexMap.get(((Map) singleObject).get(primCat).toString()));
 			jo.put("y", ((Map) singleObject).get(secCat));
 		}
 
