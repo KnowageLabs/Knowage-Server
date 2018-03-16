@@ -7,7 +7,10 @@
     <md-content flex ng-cloak>
         <div ng-if="rc.configuration.filters" class="registryFilters">
             <div layout="row" layout-align="start center">
-                <md-icon ng-click="rc.loadFilteredData(rc.filters)" md-font-icon="fa fa-filter fa-2x" style="margin-left:10px;margin-right:5px;"></md-icon>
+             <div >
+               		  	<md-icon ng-click="rc.clearFilterValues()" md-font-icon="fa fa-recycle fa-2x"</md-icon>
+               </div>
+               
 
                 <md-input-container class="md-icon-float registryFilter" ng-repeat="filter in rc.configuration.filters">
                     <label>{{filter.title}}</label>
@@ -18,9 +21,9 @@
                         <md-option ng-repeat="opt in filter.options track by $index" ng-value="opt.column_1">{{opt.column_1}}</md-option>
                     </md-select>
                 </md-input-container>
-               <div flex>
-               		  	<md-icon ng-click="rc.clearFilterValues()" md-font-icon="fa fa-recycle fa-2x"</md-icon>
-               </div>
+              <div flex>
+               <md-icon ng-click="rc.loadFilteredData(rc.filters)" md-font-icon="fa fa-filter fa-2x" style="margin-left:10px;margin-right:5px;"></md-icon>
+              </div>
                 <div flex="5" ng-if="rc.configuration.enableButtons">
                       <md-icon  ng-click="rc.updateRow()" md-font-icon="fa fa-save fa-2x" style="margin-left:10px;margin-right:5px;"></md-icon>
                 </div>
