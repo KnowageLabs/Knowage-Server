@@ -9,7 +9,6 @@
       </div>
     </md-toolbar>
 	<md-card-content>
-		{{newModel.content.columnSelectedOfDataset}}
 		<div layout="row" layout-align="center center">
 			<div class="kn-noItems" ng-if="!newModel.content.layers || newModel.content.layers.length == 0">
 				No Layers present, add one or more to continue
@@ -88,26 +87,17 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr ng-repeat="column in layer.attributes" ng-class="{'highlight':column.isGeoReference}">
+										<tr ng-repeat="column in newModel.content.columnSelectedOfDataset[layer.dsId] | orderBy:'fieldType':true " ng-class="{'highlight':column.fieldType=='SPATIAL_ATTRIBUTE'}">
 											
-											<td><md-icon ng-if="column.isGeoReference" md-font-icon="fa fa-globe"></md-icon> {{column.name}}</td>
-											<td>ATTRIBUTE</td>
-											<td></td>
+											<td><md-icon ng-if="column.fieldType=='SPATIAL_ATTRIBUTE'" md-font-icon="fa fa-globe"></md-icon> {{column.name}}</td>
+											<td>{{column.fieldType}}</td>
 											<td>
-												<md-checkbox ng-model="column.showDetails" aria-label="Checkbox 2" ng-disabled="column.isGeoReference"/>
+												<md-checkbox ng-model="column.showMap" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE'"/>
+											</td>
+											<td>
+												<md-checkbox ng-model="column.showDetails" aria-label="Checkbox 2" ng-disabled="column.fieldType=='SPATIAL_ATTRIBUTE'"/>
 											</td>
 										</tr>
-										<tr ng-repeat="indicator in layer.indicators">
-											
-											<td><md-icon ng-if="indicator.isGeoReference" md-font-icon="fa fa-globe"></md-icon> {{indicator.name}}</td>
-											<td>MEASURE</td>
-											<td>
-												<md-checkbox ng-model="indicator.showMap" aria-label="Checkbox 2"/>
-											</td>
-											<td>
-												<md-checkbox ng-model="indicator.showDetails" aria-label="Checkbox 2"/>
-											</td>
-										</tr>	
 									</tbody>
 								</table>		
 							</md-card-content>
