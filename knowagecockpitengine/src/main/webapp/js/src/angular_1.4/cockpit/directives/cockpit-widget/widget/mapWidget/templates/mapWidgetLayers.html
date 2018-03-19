@@ -9,23 +9,23 @@
       </div>
     </md-toolbar>
 	<md-card-content>
-	
+		{{newModel.content.columnSelectedOfDataset}}
 		<div layout="row" layout-align="center center">
-			<div class="kn-noItems" ng-if="!newModel.content.targetLayersConf || newModel.content.targetLayersConf.length == 0">
+			<div class="kn-noItems" ng-if="!newModel.content.layers || newModel.content.layers.length == 0">
 				No Layers present, add one or more to continue
 			</div>
 		</div>
 		
-		<table class="kn-table" ng-if="newModel.content.targetLayersConf.length > 0">
+		<table class="kn-table" ng-if="newModel.content.layers.length > 0">
 			<thead>
 				<tr>
-					<th ng-if="newModel.content.targetLayersConf.length > 1"></th><th>Type</th><th>Name</th><th>Label</th><th>Target</th><th>Marker Color</th><th></th>
+					<th ng-if="newModel.content.layers.length > 1"></th><th>Type</th><th>Name</th><th>Label</th><th>Target</th><th>Marker Color</th><th></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat-start="layer in newModel.content.targetLayersConf | orderBy:'order' ">
+				<tr ng-repeat-start="layer in newModel.content.layers | orderBy:'order' ">
 					
-					<td class="multiTableAction" ng-if="newModel.content.targetLayersConf.length > 1">
+					<td class="multiTableAction" ng-if="newModel.content.layers.length > 1">
 						<div layout="row" layout-align="center"> 
 		                	<md-button ng-click="move($event,layer,'up')" class="md-icon-button" aria-label="up" ng-show="!$first"> 
 	               				<md-icon md-font-icon="fa fa-arrow-up"></md-icon>
@@ -78,7 +78,7 @@
 							  </div>
 							</md-toolbar>
 							<md-card-content flex layout="column" ng-if="layer.expanded=='metadata'">
-								<table class="kn-table kn-table-row-highlight kn-table-alternated-rows" ng-if="newModel.content.targetLayersConf.length > 0">
+								<table class="kn-table kn-table-row-highlight kn-table-alternated-rows" ng-if="newModel.content.layers.length > 0">
 									<thead>
 										<tr>
 											<th>Column</th>

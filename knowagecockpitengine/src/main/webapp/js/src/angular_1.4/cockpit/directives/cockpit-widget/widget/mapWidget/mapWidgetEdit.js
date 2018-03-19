@@ -27,63 +27,64 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
   	}
 
   	$scope.setTargetLayer = function(layer){
-  		for(var t in $scope.newModel.content.targetLayersConf){
-  			if($scope.newModel.content.targetLayersConf[t].targetDefault && $scope.newModel.content.targetLayersConf[t].datasetId != layer.datasetId){
-  				$scope.newModel.content.targetLayersConf[t].targetDefault = false;
+  		for(var t in $scope.newModel.content.layers){
+  			if($scope.newModel.content.layers[t].targetDefault && $scope.newModel.content.layers[t].datasetId != layer.datasetId){
+  				$scope.newModel.content.layers[t].targetDefault = false;
   			}
   		}
   	}
   	
   	$scope.expandRow = function(layer,content){
-  		for(var t in $scope.newModel.content.targetLayersConf){
-  			if($scope.newModel.content.targetLayersConf[t].expanded != content || $scope.newModel.content.targetLayersConf[t].datasetId != layer.datasetId){
-  				delete $scope.newModel.content.targetLayersConf[t].expanded;
+  		for(var t in $scope.newModel.content.layers){
+  			if($scope.newModel.content.layers[t].expanded != content || $scope.newModel.content.layers[t].datasetId != layer.datasetId){
+  				delete $scope.newModel.content.layers[t].expanded;
   			}
-  			if($scope.newModel.content.targetLayersConf[t].datasetId==layer.datasetId && $scope.newModel.content.targetLayersConf[t].expanded != content){
-  				$scope.newModel.content.targetLayersConf[t].expanded = content;
+  			if($scope.newModel.content.layers[t].datasetId==layer.datasetId && $scope.newModel.content.layers[t].expanded != content){
+  				$scope.newModel.content.layers[t].expanded = content;
 	  		}else {
-	  			if($scope.newModel.content.targetLayersConf[t].datasetId==layer.datasetId && $scope.newModel.content.targetLayersConf[t].expanded == content){
-	  				delete $scope.newModel.content.targetLayersConf[t].expanded;
+	  			if($scope.newModel.content.layers[t].datasetId==layer.datasetId && $scope.newModel.content.layers[t].expanded == content){
+	  				delete $scope.newModel.content.layers[t].expanded;
 		  		}
 	  		}
   		}
   	}
   	
   	$scope.deleteLayer = function(layer){
-  		var index=$scope.newModel.content.targetLayersConf.indexOf(layer);
+  		var index=$scope.newModel.content.layers.indexOf(layer);
 		var tempPos = layer.order;
-		$scope.newModel.content.targetLayersConf.splice(index,1);
-		var nextItem=$scope.newModel.content.targetLayersConf[index];
+		$scope.newModel.content.layers.splice(index,1);
+		var nextItem=$scope.newModel.content.layers[index];
 		if(nextItem!=undefined){
 			nextItem.order=tempPos;
 		}
+		delete $scope.newModel.content.columnSelectedOfDataset[layer.datasetId];
   	}
   	
   	$scope.move = function(e,row,direction){
 		var lower, current, upper;
-		for(var o in $scope.newModel.content.targetLayersConf){
-			if($scope.newModel.content.targetLayersConf[o].order == row.order){
+		for(var o in $scope.newModel.content.layers){
+			if($scope.newModel.content.layers[o].order == row.order){
 				current = o;
-			}else if($scope.newModel.content.targetLayersConf[o].order == row.order-1){
+			}else if($scope.newModel.content.layers[o].order == row.order-1){
 				upper = o;
-			}else if($scope.newModel.content.targetLayersConf[o].order == row.order+1){
+			}else if($scope.newModel.content.layers[o].order == row.order+1){
 				lower = o;
 			}
 		}
 		if(direction=='up'){
-			$scope.newModel.content.targetLayersConf[upper].order = row.order;
-			$scope.newModel.content.targetLayersConf[current].order = row.order-1;
+			$scope.newModel.content.layers[upper].order = row.order;
+			$scope.newModel.content.layers[current].order = row.order-1;
 		}else{
-			$scope.newModel.content.targetLayersConf[lower].order = row.order;
-			$scope.newModel.content.targetLayersConf[current].order = row.order+1;
+			$scope.newModel.content.layers[lower].order = row.order;
+			$scope.newModel.content.layers[current].order = row.order+1;
 		}
 		
 	};
   	
   	$scope.addLayer = function(ev) {
   		$scope.myLayersId = [];
-  		for(var m in $scope.newModel.content.targetLayersConf){
-			$scope.myLayersId.push($scope.newModel.content.targetLayersConf[m].datasetId);
+  		for(var m in $scope.newModel.content.layers){
+			$scope.myLayersId.push($scope.newModel.content.layers[m].datasetId);
 		}
   		$mdDialog.show({
 			controller: function ($scope,$mdDialog) {
@@ -116,16 +117,17 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 				
 			    //Add the layers to the newModel
 				$scope.add = function(){
-					if (!$scope.newModel.content.targetLayersConf) $scope.newModel.content.targetLayersConf = [];
+					if (!$scope.newModel.content.layers) $scope.newModel.content.layers = [];
 					for(var k in $scope.availableSpatialLayers){
 						if($scope.availableSpatialLayers[k].selected){
 							var tempLayer = $scope.availableSpatialLayers[k];
+							var columnSelected = [];
 							var newLayer =  {
 								"type": "DATASET",
 								"datasetId": tempLayer.id.dsId,
 								"label": tempLayer.label,
 								"name": tempLayer.name,
-								"order": $scope.newModel.content.targetLayersConf ? $scope.newModel.content.targetLayersConf.length : 0,
+								"order": $scope.newModel.content.layers ? $scope.newModel.content.layers.length : 0,
 								"attributes": [],
 								"indicators": []
 							}
@@ -133,8 +135,10 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 								if(tempLayer.metadata.fieldsMeta[i].fieldType === 'ATTRIBUTE') newLayer.attributes.push({"name":tempLayer.metadata.fieldsMeta[i].name, "label":tempLayer.metadata.fieldsMeta[i].alias});
 								if(tempLayer.metadata.fieldsMeta[i].fieldType === 'MEASURE') newLayer.indicators.push({"name":tempLayer.metadata.fieldsMeta[i].name, "label":tempLayer.metadata.fieldsMeta[i].alias});
 								if(tempLayer.metadata.fieldsMeta[i].fieldType === 'SPATIAL_ATTRIBUTE') newLayer.attributes.push({"name":tempLayer.metadata.fieldsMeta[i].name, "label":tempLayer.metadata.fieldsMeta[i].alias,"isGeoReference":true});
+								tempLayer.metadata.fieldsMeta[i].aliasToShow = tempLayer.metadata.fieldsMeta[i].alias;
+								columnSelected.push(tempLayer.metadata.fieldsMeta[i]);
 							}
-							$scope.newModel.content.targetLayersConf.push(newLayer);
+							$scope.newModel.content.layers.push(newLayer);
 							var availableDatasets = cockpitModule_datasetServices.getAvaiableDatasets();
 							var exists = false;
 							for(var i in availableDatasets){
@@ -144,7 +148,8 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 								};
 							}
 							if(!exists) cockpitModule_datasetServices.addAvaiableDataset(tempLayer);
-							
+							if(!$scope.newModel.content.columnSelectedOfDataset) $scope.newModel.content.columnSelectedOfDataset = {};
+							$scope.newModel.content.columnSelectedOfDataset[tempLayer.id.dsId] = columnSelected;
 						}
 					}
 					$mdDialog.hide();
@@ -205,14 +210,14 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
   	$scope.addColumnSelectedOfDataset = function(newModel){
   		if(!newModel.content.columnSelectedOfDataset){
   			newModel.content.columnSelectedOfDataset = [];
-  			for(var a in newModel.content.targetLayersConf){
-  				if(newModel.content.targetLayersConf[a].targetDefault) newModel.dataset = {"dsId":newModel.content.targetLayersConf[a].datasetId};
-  				for(var c in newModel.content.targetLayersConf[a].attributes){
-  	  				var targetAttr = newModel.content.targetLayersConf[a].attributes[c];
+  			for(var a in newModel.content.layers){
+  				if(newModel.content.layers[a].targetDefault) newModel.dataset = {"dsId":newModel.content.layers[a].datasetId};
+  				for(var c in newModel.content.layers[a].attributes){
+  	  				var targetAttr = newModel.content.layers[a].attributes[c];
   	  				newModel.content.columnSelectedOfDataset.push({"name":targetAttr.name, "alias":targetAttr.label,"aliasToShow":targetAttr.label, "fieldType":'ATTRIBUTE'})
   	  			}
-  	  			for(var d in newModel.content.targetLayersConf[a].indicators){
-  	  				var targetInd = newModel.content.targetLayersConf[a].attributes[d];
+  	  			for(var d in newModel.content.layers[a].indicators){
+  	  				var targetInd = newModel.content.layers[a].attributes[d];
   	  				newModel.content.columnSelectedOfDataset.push({"name":targetInd.name, "alias":targetInd.label,"aliasToShow":targetInd.label, "fieldType":'MEASURE'})
   	  			}
   			}	
@@ -221,11 +226,11 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
   	
   	//MAIN DIALOG BUTTONS
 	$scope.saveConfiguration=function(){
-		for(var c in $scope.newModel.content.targetLayersConf){
-			if($scope.newModel.content.targetLayersConf[c].expanded) delete $scope.newModel.content.targetLayersConf[c].expanded;
+		for(var c in $scope.newModel.content.layers){
+			if($scope.newModel.content.layers[c].expanded) delete $scope.newModel.content.layers[c].expanded;
 		}
 		 mdPanelRef.close();
-		 $scope.addColumnSelectedOfDataset($scope.newModel);
+		 //$scope.addColumnSelectedOfDataset($scope.newModel);
 		 angular.copy($scope.newModel,model);
 		 finishEdit.resolve();
   	}
