@@ -102,7 +102,6 @@
 		.cockpitTablePagination {
 		        height: 36px;
 		        min-height: 36px;
-		        background-color:white;
 		        position: relative;
 		        font-size: $baseFontSize;
 		        display: flex;
@@ -1773,6 +1772,12 @@
 	}
 
 	.cockpitSelectorWidget{
+		.cockpitSelectorWidgetCombobox {
+			padding-top: 0;
+			md-input-container {
+				margin: 8px 0;
+			}
+		}
 		.cSelWRadio,.cSelWCheck{
 			margin-bottom: 8px;
 			outline: none;
