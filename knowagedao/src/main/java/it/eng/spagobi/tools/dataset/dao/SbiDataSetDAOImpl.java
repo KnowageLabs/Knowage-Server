@@ -221,11 +221,10 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 	public List<SbiDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, String category,
 			String implementation, Boolean showDerivedDatasets) {
 
-		Session session = getSession();
+		Session session = null;
 
 		logger.debug("IN");
 
-		session = null;
 		try {
 			// open session
 			session = getSession();

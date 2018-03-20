@@ -764,101 +764,69 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 					SbiObjects sbiObj = (SbiObjects) iterator.next();
 					objectNamesAssociatedWithDS.add(sbiObj.getName() != null ? sbiObj.getName() : sbiObj.getLabel());
 				}
-				tx.commit();
-			} catch (HibernateException he) {
-				logger.error("Error while getting the objects associated with the data source with id " + dsId, he);
-				if (tx != null)
-					tx.rollback();
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-			}
 
-			if (objectNamesAssociatedWithDS.size() > 0) {
-				mapToReturn.put("sbi.datasource.usedby.biobject", objectNamesAssociatedWithDS);
-				logger.debug("there are objects using datasource, return them");
-			}
+				if (objectNamesAssociatedWithDS.size() > 0) {
+					mapToReturn.put("sbi.datasource.usedby.biobject", objectNamesAssociatedWithDS);
+					logger.debug("there are objects using datasource, return them");
+				}
 
-			logger.debug("Check for Meta Model associated to datasource");
-			List<String> metaModelNamesAssociatedWithDS = new ArrayList<>();
-			try {
-				aSession = getSession();
-				tx = aSession.beginTransaction();
-				String hql = " from SbiMetaModel s where s.dataSource.dsId = ?";
-				Query aQuery = aSession.createQuery(hql);
+				logger.debug("Check for Meta Model associated to datasource");
+				List<String> metaModelNamesAssociatedWithDS = new ArrayList<>();
+				hql = " from SbiMetaModel s where s.dataSource.dsId = ?";
+				aQuery = aSession.createQuery(hql);
 				aQuery.setInteger(0, dsId.intValue());
 				List metaModelsAssocitedWithDs = aQuery.list();
 				for (Iterator iterator = metaModelsAssocitedWithDs.iterator(); iterator.hasNext();) {
 					SbiMetaModel sbiMetaModel = (SbiMetaModel) iterator.next();
 					metaModelNamesAssociatedWithDS.add(sbiMetaModel.getName());
 				}
-				tx.commit();
-			} catch (HibernateException he) {
-				logger.error("Error while getting the meta models associated with the data source with id " + dsId, he);
-				if (tx != null)
-					tx.rollback();
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
-			}
-			if (metaModelNamesAssociatedWithDS.size() > 0) {
-				mapToReturn.put("sbi.datasource.usedby.metamodel", metaModelNamesAssociatedWithDS);
-				logger.debug("there are meta models using datasource, return them");
-			}
+				if (metaModelNamesAssociatedWithDS.size() > 0) {
+					mapToReturn.put("sbi.datasource.usedby.metamodel", metaModelNamesAssociatedWithDS);
+					logger.debug("there are meta models using datasource, return them");
+				}
 
-			logger.debug("Check for DataSet associated to datasource");
-			String dataSourceLabel = null;
+				logger.debug("Check for DataSet associated to datasource");
+				String dataSourceLabel = null;
 
-			List<String> dataSetNamesAssociatedWithDS = new ArrayList<>();
-
-			try {
-				aSession = getSession();
-				tx = aSession.beginTransaction();
+				List<String> dataSetNamesAssociatedWithDS = new ArrayList<>();
 
 				SbiDataSource dSource = (SbiDataSource) aSession.load(SbiDataSource.class, dsId);
 				dataSourceLabel = dSource.getLabel();
 
-				String hql = " from SbiDataSet s where s.active = ? AND s.type IN " + " ('" + DataSetConstants.DS_QUERY + "','" + DataSetConstants.DS_QBE
-						+ "')";
-				Query aQuery = aSession.createQuery(hql);
+				hql = " from SbiDataSet s where s.active = ? AND s.type IN " + " ('" + DataSetConstants.DS_QUERY + "','" + DataSetConstants.DS_QBE + "')";
+				aQuery = aSession.createQuery(hql);
 				aQuery.setBoolean(0, true);
-
-				List dataSetAssocitedWithDs = aQuery.list();
-				for (Iterator iterator = dataSetAssocitedWithDs.iterator(); iterator.hasNext();) {
-					SbiDataSet sbiDataSet = (SbiDataSet) iterator.next();
-					String configuration = sbiDataSet.getConfiguration();
-					JSONObject configurationJSON = new JSONObject(configuration);
-					String ds = configurationJSON.optString("dataSource");
-					if (ds == null || ds.equals(""))
-						ds = configurationJSON.optString("qbeDataSource");
-					if (ds != null && ds.equals(dataSourceLabel)) {
-						dataSetNamesAssociatedWithDS.add(sbiDataSet.getName() != null ? sbiDataSet.getName() : sbiDataSet.getLabel());
+				try {
+					List dataSetAssocitedWithDs = aQuery.list();
+					for (Iterator iterator = dataSetAssocitedWithDs.iterator(); iterator.hasNext();) {
+						SbiDataSet sbiDataSet = (SbiDataSet) iterator.next();
+						String configuration = sbiDataSet.getConfiguration();
+						JSONObject configurationJSON = new JSONObject(configuration);
+						String ds = configurationJSON.optString("dataSource");
+						if (ds == null || ds.equals(""))
+							ds = configurationJSON.optString("qbeDataSource");
+						if (ds != null && ds.equals(dataSourceLabel)) {
+							dataSetNamesAssociatedWithDS.add(sbiDataSet.getName() != null ? sbiDataSet.getName() : sbiDataSet.getLabel());
+						}
 					}
+				} catch (JSONException he) {
+					logger.error("Error while converting dataset configuration to JSON: dataset id = " + dsId, he);
+					if (tx != null)
+						tx.rollback();
+					throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 				}
-				tx.commit();
-			} catch (JSONException he) {
-				logger.error("Error while converting dataset configuration to JSON: dataset id = " + dsId, he);
-				if (tx != null)
-					tx.rollback();
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-			} catch (HibernateException he) {
-				logger.error("Error while getting the objects associated with the data source with id " + dsId, he);
-				if (tx != null)
-					tx.rollback();
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-			}
 
-			if (dataSetNamesAssociatedWithDS.size() > 0) {
-				mapToReturn.put("sbi.datasource.usedby.dataset", dataSetNamesAssociatedWithDS);
-				logger.debug("there are datasets using datasource, return them");
-			}
+				if (dataSetNamesAssociatedWithDS.size() > 0) {
+					mapToReturn.put("sbi.datasource.usedby.dataset", dataSetNamesAssociatedWithDS);
+					logger.debug("there are datasets using datasource, return them");
+				}
 
-			List<String> lovNamesAssociatedWithDS = new ArrayList<>();
-			logger.debug("Check for Lov associated to datasource");
+				List<String> lovNamesAssociatedWithDS = new ArrayList<>();
+				logger.debug("Check for Lov associated to datasource");
 
-			try {
-				aSession = getSession();
-				tx = aSession.beginTransaction();
-
-				String hql = " from SbiLov s where inputTypeCd = ?";
-				Query aQuery = aSession.createQuery(hql);
+				hql = " from SbiLov s where inputTypeCd = ?";
+				aQuery = aSession.createQuery(hql);
 				aQuery.setString(0, "QUERY");
 
 				List lovAssocitedWithDs = aQuery.list();
@@ -895,6 +863,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 						throw new SpagoBIDAOException(e);
 					}
 				}
+
+				tx.rollback();
 
 			} catch (HibernateException he) {
 				logger.error("Error while getting the entities associated with the data source with id " + dsId, he);
