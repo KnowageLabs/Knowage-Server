@@ -884,7 +884,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
     	tooltipFormatter= function () {
     		var val = this.point.value;   		
     		val = Highcharts.numberFormat(val,precision );	
-            return '<b>'+chartConf.additionalData.serie.value+'</b><br>' + this.series.xAxis.categories[this.point.x] + ' | ' + this.series.yAxis.categories[this.point.y] + ': <b>'
+            return '<b>'+chartConf.additionalData.serie.value+'</b><br>' + this.series.xAxis.categories[this.point.x] + ' | ' + this.series.yAxis.categories[this.point.y] + ': <b>' +
             prefix + " " +val + " " + postfix + ' </b>';
     	};
     
