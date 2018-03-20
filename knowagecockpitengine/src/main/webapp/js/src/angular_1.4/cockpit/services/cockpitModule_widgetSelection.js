@@ -62,17 +62,16 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 							for (var j = 0; j < category.length; j++) {
 								if(category[j].column == col.name){
-									obj["orderType"] = category[j].orderType;
-									obj["orderColumn"] = category[j].orderColumn;
+									obj["orderType"] = col.orderType;
+									obj["orderColumn"] = col.orderColumn;
 									newCategArray.push(obj)
 								}
-
-
 							}
 						}
 						else {
-							obj["orderColumn"] = category.orderColumn;
-							obj["orderType"] = category.orderColumn!="" && category.orderType=="" ? "ASC" : category.orderType;
+
+							obj["orderColumn"] = col.orderColumn;
+							obj["orderType"] = col.orderColumn!="" && col.orderType=="" ? "ASC" : col.orderType;
 						}
 					}
 				}

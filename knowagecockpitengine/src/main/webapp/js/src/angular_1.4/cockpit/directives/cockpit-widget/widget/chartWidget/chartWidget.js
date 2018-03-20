@@ -1108,6 +1108,8 @@ function setAggregationsOnChartEngine(wconf){
 				obj['alias'] = chartSeries[i].name + '_' + obj.aggregationSelected;
 				obj['aliasToShow'] = obj['alias'];
 				obj['fieldType'] = "MEASURE";
+				obj['orderType'] = chartSeries[i].orderType;
+				obj['orderColumn'] = chartSeries[i].column;
 				aggregations.push(obj);
 			}
 
@@ -1127,6 +1129,8 @@ function setAggregationsOnChartEngine(wconf){
 					obj['alias'] = chartCategory[i].name;
 					obj['aliasToShow'] = obj['alias'];
 					obj['fieldType'] = "ATTRIBUTE";
+					obj['orderType'] = chartCategory[i].orderType;
+					obj['orderColumn'] = chartCategory[i].orderColumn;
 					aggregations.push(obj);
 				}
 			} else {
@@ -1134,6 +1138,8 @@ function setAggregationsOnChartEngine(wconf){
 				obj['name'] = chartCategory.column;
 				obj['alias'] = chartCategory.name;
 				obj['aliasToShow'] = chartCategory.alias;
+				obj['orderType'] = chartCategory.orderType;
+				obj['orderColumn'] = chartCategory.orderColumn;
 				obj['fieldType'] = "ATTRIBUTE";
 
 				aggregations.push(obj);
@@ -1152,6 +1158,8 @@ function setAggregationsOnChartEngine(wconf){
 					groupby['alias'] = subs;
 					groupby['aliasToShow'] = subs;
 					groupby['fieldType'] = "ATTRIBUTE";
+					obj['orderType'] = chartCategory[i].orderType;
+					obj['orderColumn'] = chartCategory[i].orderColumn;
 					aggregations.push(groupby);
 				}
 			};
