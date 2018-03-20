@@ -25,10 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
@@ -43,6 +42,7 @@ import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.ConfigurationConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.associativity.IAssociativityManager;
@@ -74,16 +74,35 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 	static protected Logger logger = Logger.getLogger(AssociativeSelectionsResource.class);
 
-	@GET
+	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getAssociativeSelections(@QueryParam("associationGroup") String associationGroupString, @QueryParam("selections") String selectionsString,
-			@QueryParam("datasets") String datasetsString, @QueryParam("nearRealtime") String nearRealtimeDatasetsString) {
+	public String getAssociativeSelections(String body) {
 		logger.debug("IN");
 
 		Monitor start = MonitorFactory.start("Knowage.AssociativeSelectionsResource.getAssociativeSelections:total");
 
+		String associationGroupString = null;
+		String selectionsString = null;
+		String datasetsString = null;
+		String nearRealtimeDatasetsString = null;
 		try {
+			if (StringUtilities.isNotEmpty(body)) {
+				JSONObject jsonBody = new JSONObject(body);
+
+				JSONObject jsonAssociationGroup = jsonBody.optJSONObject("associationGroup");
+				associationGroupString = jsonAssociationGroup != null ? jsonAssociationGroup.toString() : null;
+
+				JSONObject jsonSelections = jsonBody.optJSONObject("selections");
+				selectionsString = jsonSelections != null ? jsonSelections.toString() : null;
+
+				JSONObject jsonDatasets = jsonBody.optJSONObject("datasets");
+				datasetsString = jsonDatasets != null ? jsonDatasets.toString() : null;
+
+				JSONObject jsonNearRealtime = jsonBody.optJSONObject("nearRealtime");
+				nearRealtimeDatasetsString = jsonNearRealtime != null ? jsonNearRealtime.toString() : null;
+			}
+
 			IDataSetDAO dataSetDAO = getDataSetDAO();
 			dataSetDAO.setUserProfile(getUserProfile());
 
