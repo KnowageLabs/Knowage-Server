@@ -518,8 +518,7 @@
    		#if($chart.dateTime!="true")    
    	
             
-        min: 0.6, 
-        max: $counter.size()-1.5,
+
             
 		#end 
 		labels:{
