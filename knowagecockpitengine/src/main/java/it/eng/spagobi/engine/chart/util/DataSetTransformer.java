@@ -808,18 +808,22 @@ public class DataSetTransformer {
 	 *
 	 */
 
-	public LinkedHashMap<String, Set<ArrayList<String>>> prepareDataForScater(List<Object> dataRows, String columnCategorie, String isCockpitEngine,
+	public LinkedHashMap<String, Set<ArrayList<Object>>> prepareDataForScater(List<Object> dataRows, String columnCategorie, String isCockpitEngine,
 			String columnSerie) throws JSONException {
-		LinkedHashMap<String, Set<ArrayList<String>>> map = new LinkedHashMap<>();
+		LinkedHashMap<String, Set<ArrayList<Object>>> map = new LinkedHashMap<>();
 		boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
 		Map<String, Integer> mapOfIndex = new HashMap<>();
 		String columnX = !isCockpit ? "column_1" : "column_2";
 		for (Object singleObject : dataRows) {
 			Map mapObject = (Map) singleObject;
 			if (!map.containsKey(mapObject.get(columnCategorie))) {
-				Set<ArrayList<String>> a = new HashSet<>();
-				ArrayList<String> t = new ArrayList<>();
-				t.add(map.entrySet().size() + "");
+				Set<ArrayList<Object>> a = new HashSet<>();
+				ArrayList<Object> t = new ArrayList<>();
+				if (Number.class.isAssignableFrom(mapObject.get(columnCategorie).getClass())) {
+					t.add(mapObject.get(columnCategorie));
+				} else {
+					t.add("'" + mapObject.get(columnCategorie) + "'");
+				}
 				if (columnSerie == null) {
 					t.add(getStringOrNull(mapObject.get(columnX)));
 				} else {
@@ -831,15 +835,19 @@ public class DataSetTransformer {
 				map.put(getStringOrNull(mapObject.get(columnCategorie)), a);
 			} else {
 				if (mapOfIndex.containsKey(mapObject.get(columnCategorie))) {
-					ArrayList<String> a = new ArrayList<>();
-					a.add(mapOfIndex.get(mapObject.get(columnCategorie)) + "");
+					ArrayList<Object> a = new ArrayList<>();
+					if (Number.class.isAssignableFrom(mapObject.get(columnCategorie).getClass())) {
+						a.add(mapOfIndex.get(mapObject.get(columnCategorie)));
+					} else {
+						a.add(mapOfIndex.get("'" + mapObject.get(columnCategorie) + "'"));
+					}
 					if (columnSerie == null) {
 						a.add(getStringOrNull(mapObject.get(columnX)));
 					} else {
 						a.add(getStringOrNull(mapObject.get(columnSerie)));
 					}
 
-					Set<ArrayList<String>> valueOfMap = map.get(mapObject.get(columnCategorie));
+					Set<ArrayList<Object>> valueOfMap = map.get(mapObject.get(columnCategorie));
 					valueOfMap.add(a);
 				}
 			}
