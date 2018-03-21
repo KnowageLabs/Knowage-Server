@@ -64,12 +64,12 @@ public class OracleDataBase extends AbstractDataBase implements CacheDataBase, M
 			toReturn = " INTEGER ";
 		} else if (javaTypeName.contains("java.lang.Long")) {
 			toReturn = " NUMBER ";
-		} else if (javaTypeName.contains("java.lang.BigDecimal") || javaTypeName.contains("java.math.BigDecimal")) {
+		} else if (javaTypeName.contains("java.math.BigDecimal")) {
 			toReturn = " NUMBER ";
 		} else if (javaTypeName.contains("java.lang.Double")) {
-			toReturn = " NUMBER ";
+			toReturn = " FLOAT ";
 		} else if (javaTypeName.contains("java.lang.Float")) {
-			toReturn = " NUMBER ";
+			toReturn = " REAL ";
 		} else if (javaTypeName.contains("java.lang.Boolean")) {
 			toReturn = " SMALLINT ";
 		} else if (javaTypeName.contains("java.sql.Date") || javaTypeName.contains("java.util.Date")) {
