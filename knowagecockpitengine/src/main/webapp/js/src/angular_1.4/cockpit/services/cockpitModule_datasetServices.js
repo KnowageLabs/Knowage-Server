@@ -279,7 +279,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			angular.forEach(sheet.widgets,function(widget){
 				if(widget.dataset && widget.dataset.dsId){
 					var actualDs=ds.getDatasetById(widget.dataset.dsId);
-					angular.forEach(widget.content.columnSelectedOfDataset,function(widgetColumn){
+					var selectedColumnsDs = (typeof widget.content.columnSelectedOfDataset == 'object') ? widget.content.columnSelectedOfDataset[widget.dataset.dsId] : widget.content.columnSelectedOfDataset;
+//					angular.forEach(widget.content.columnSelectedOfDataset,function(widgetColumn){
+					angular.forEach(selectedColumnsDs,function(widgetColumn){
 						var isWidgetColumnMatching = false;
 						for(var i = 0; i < actualDs.metadata.fieldsMeta.length; i++){
 							if(actualDs.metadata.fieldsMeta[i].name == widgetColumn.name || actualDs.metadata.fieldsMeta[i].alias == widgetColumn.name || widgetColumn.formula){
@@ -495,7 +497,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		var params="?";
 		var bodyString = "{";
-
+		
+		ngModel.content.columnSelectedOfDataset = (Array.isArray(ngModel.content.columnSelectedOfDataset) ) ? ngModel.content.columnSelectedOfDataset : ngModel.content.columnSelectedOfDataset[dsId] ;
 		var aggregations = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
 
 		// apply sorting column & order

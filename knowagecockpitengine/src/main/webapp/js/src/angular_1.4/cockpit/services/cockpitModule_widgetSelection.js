@@ -79,7 +79,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 				// SUM is default but for attribute is meaningless
 
-				if(col.fieldType=="ATTRIBUTE" && col.aggregationSelected && col.aggregationSelected === 'SUM'){
+				if((col.fieldType=="ATTRIBUTE" || col.fieldType=="SPATIAL_ATTRIBUTE") && col.aggregationSelected && col.aggregationSelected === 'SUM'){
 					obj["funct"] = 'NONE';
 				}
 				else{
@@ -103,7 +103,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}
 
 
-				if(col.fieldType=="ATTRIBUTE"){
+				if(col.fieldType=="ATTRIBUTE" || col.fieldType=="SPATIAL_ATTRIBUTE"){
 					if(newCategArray.length >0 ){
 						for (var m = 0; m < newCategArray.length; m++) {
 							categories.push(newCategArray[m])
@@ -112,7 +112,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					else {
 						categories.push(obj)
 					}
-				}else{
+				}else if (col.fieldType=="MEASURE"){
 					//it is measure
 					obj["orderColumn"] = col.name;
 					measures.push(obj);

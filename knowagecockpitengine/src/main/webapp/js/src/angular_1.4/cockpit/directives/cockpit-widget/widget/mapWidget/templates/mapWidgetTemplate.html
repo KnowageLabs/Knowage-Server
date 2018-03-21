@@ -1,5 +1,5 @@
 <div layout="row" class="cockpit-map-widget" layout-fill style="position: relative;">
- 	<!--div id="{{ngModel.content.mapId}}" class="map" style="width:100%">
+ 	<div id="{{ngModel.content.mapId}}" class="map" style="width:100%">
 	 	<div class="optionsController" ng-click="toggleSidenav()">
 	 		<md-tooltip>Toggle Map Options</md-tooltip>
 	 		<i class="fa fa-cog"></i>
@@ -13,7 +13,6 @@
  	</div>
  	
     
-		<ng-include src="getTemplateUrl('mapWidgetControlPanel')"></ng-include-->
-		{{ngModel}}
+	<ng-include src="getTemplateUrl('mapWidgetControlPanel')"></ng-include>
     
 </div>

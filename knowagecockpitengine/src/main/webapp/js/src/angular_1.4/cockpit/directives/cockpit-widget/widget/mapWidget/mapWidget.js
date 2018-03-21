@@ -71,19 +71,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		
 	    $scope.reinit = function(){
-	    	console.log("*** reinit() called! ");
+	    	console.log("reinit called! ");
 	    	var isNew = ($scope.layers.length == 0);
-	    	for (l in $scope.ngModel.content.targetLayersConf){
+	    	for (l in $scope.ngModel.content.layers){
 	    		//remove old layers 
-	    		var previousLayer = $scope.getLayerByName($scope.ngModel.content.targetLayersConf[l].name);
-	    		$scope.map.removeLayer(previousLayer); //ol obj
+	    		var previousLayer = $scope.getLayerByName($scope.ngModel.content.layers[l].name);
+	    		if (previousLayer) $scope.map.removeLayer(previousLayer); //ol obj
 	    	}
 	    	$scope.removeLayers(); //clean internal obj
 	    	$scope.getLayers();
 	    	
 	    	if (isNew) $scope.createMap();
-//	    	$scope.createMap();
-	    	
+
 	    	if (!$scope.map.getSize()){
     			$scope.map.setSize([cockpitModule_widgetConfigurator.map.initialDimension.width, 
     							    cockpitModule_widgetConfigurator.map.initialDimension.height]);
@@ -132,29 +131,58 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	    
 //############################################## SPECIFIC MAP WIDGET METHODS #########################################################################
+	    
+	    $scope.getLayers = function () {
+		    for (l in $scope.ngModel.content.layers){
+		    	var layerDef =  $scope.ngModel.content.layers[l];
+		    	var dsId = layerDef.dsId; // || layerDef.datasetId;
+		    	layerDef.columnSelectedOfDataset = $scope.getColumnSelectedOfDataset(dsId) || [];
+	    		$scope.setConfigLayer(layerDef.name, layerDef);
+	    		if (layerDef.type === 'DATASET'){
+	    			$scope.getFeaturesFromDataset(layerDef);
+	    		}else if (layerDef.type === 'CATALOG'){
+	    			//TODO implementare recupero layer da catalogo
+	    		}else{
+	    			sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.typeLayerNotManaged'), 'Title', 3000);
+	    			console.log("Layer with type ["+layerDef.type+"] not managed! ");
+	    		}
+	    	}
+	    }
+
 	    $scope.initializeTemplate = function (){
 	    	if (!$scope.ngModel.content.currentView)  $scope.ngModel.content.currentView = {};
-			if (!$scope.ngModel.content.analysisConf) $scope.ngModel.content.analysisConf ={};
-			if (!$scope.ngModel.content.markerConf) $scope.ngModel.content.markerConf ={};
-			if (!$scope.ngModel.content.targetLayersConf) $scope.ngModel.content.targetLayersConf = [];
-			if (!$scope.ngModel.content.baseLayersConf) $scope.ngModel.content.baseLayersConf = [];
+	    	if (!$scope.ngModel.content.layers) $scope.ngModel.content.layers = [];
+	    	if (!$scope.ngModel.content.baseLayersConf) $scope.ngModel.content.baseLayersConf = [];
+	    	if (!$scope.ngModel.content.columnSelectedOfDataset) $scope.ngModel.content.columnSelectedOfDataset = {} ;
+
 	    	if (!$scope.ngModel.content.currentView.center) $scope.ngModel.content.currentView.center = [0,0]; 
 	    	
 	    	if (!$scope.ngModel.content.mapId){
 	    		$scope.ngModel.content.mapId = 'map-' + Math.ceil(Math.random()*1000).toString();
+	    		console.log("*** New mapId:" ,$scope.ngModel.content.mapId );
 	    	}
+	    	
+	    	
 	    	//set default indicator (first one) for each layer
-	    	for (i in $scope.ngModel.content.targetLayersConf){
-	    		for (di in $scope.ngModel.content.targetLayersConf[i].indicators){
-	    			if ($scope.ngModel.content.targetLayersConf[i].indicators[di].showMap){
-//	    				$scope.ngModel.content.targetLayersConf[i].defaultIndicator = $scope.ngModel.content.targetLayersConf[i].indicators[di].name;	
-	    				$scope.ngModel.content.targetLayersConf[i].defaultIndicator = $scope.ngModel.content.targetLayersConf[i].indicators[di].label;	
+	    	for (l in $scope.ngModel.content.layers){
+	    		for ( p in $scope.ngModel.content.layers[l].columnSelectedOfDataset){
+	    			var layerId = $scope.ngModel.content.layers[l].dsId; // || $scope.ngModel.content.layers[l].datasetId;
+	    			if ($scope.ngModel.content.layers[l].columnSelectedOfDataset[p].properties.showMap){
+	    				$scope.ngModel.content.layers[l].columnSelectedOfDataset[p].properties.defaultIndicator = $scope.ngModel.content.layers[l].columnSelectedOfDataset[p].aliasToShow;	
 	    				break;
 	    			}
 	    		}
 	    	}	    		
 	    }
 	    
+	    $scope.getColumnSelectedOfDataset = function(dsId) {
+	    	for (di in $scope.ngModel.content.columnSelectedOfDataset){
+	    		if (di == dsId){
+	    			return $scope.ngModel.content.columnSelectedOfDataset[di];
+	    		}
+	    	}
+	    	return null;
+	    }
 	    
 	    $scope.addViewEvents = function(){
 	    	//view events
@@ -233,37 +261,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 	    $scope.isDisplayableProp = function (p, config){
-	    	var tmpProp = p.split('|');
-	    	for (a in config.attributes){
-    			if (p === config.attributes[a].label && config.attributes[a].showDetails){
+	    	for (c in config.columnSelectedOfDataset){
+	    		if (p == config.columnSelectedOfDataset[c].aliasToShow && config.columnSelectedOfDataset[c].properties.showDetails){
 	    			return true;
-    			}
-	    	}
-
-	    	for (i in config.indicators){
-    			if (p === config.indicators[i].label && config.indicators[i].showDetails){
-	    			return true;
-    			}
+	    		}
 	    	}
 	    	return false;
 	    }
 
 	  
-	    $scope.getLayers = function () {
-		    for (l in $scope.ngModel.content.targetLayersConf){
-	    		var layerDef  = $scope.ngModel.content.targetLayersConf[l];
-	    		$scope.setConfigLayer(layerDef.name, layerDef);
-	    		if (layerDef.type === 'DATASET'){
-	    			$scope.getFeaturesFromDataset(layerDef);
-	    		}else if (layerDef.type === 'CATALOG'){
-	    			//TODO implementare recupero layer da catalogo
-	    		}else{
-	    			sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.typeLayerNotManaged'), 'Title', 3000);
-	    			console.log("Layer with type ["+layerDef.type+"] not managed! ");
-	    		}
-	    	}
-	    }
-
+	   
 	    var styleCache = {};
 	    $scope.layerStyle = function(feature, resolution){
 //	          var size = feature.get('features').length;
@@ -379,45 +386,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 	    $scope.getFeaturesFromDataset = function(layerDef){
     		//prepare object with metadata for desiderata dataset columns
-
-    		var meta = [];
-    		var geoColumn = null;
+	    	var geoColumn = null;
     		var selectedMeasure = null;
-    		for (a in layerDef.attributes){
-    			if (layerDef.attributes[a].isGeoReference || layerDef.attributes[a].showDetails){
-	    			var att = {};
-	    			att.name = layerDef.attributes[a].name;
-	    			att.alias = layerDef.attributes[a].label;
-	    			att.aliasToShow = layerDef.attributes[a].label;
-	    			att.fieldType = 'ATTRIBUTE';
-	    			meta.push(att);
-    			}
-    			if (layerDef.attributes[a].isGeoReference)
-        			geoColumn = layerDef.attributes[a].name;
-    		}
-    		var measures = [];
-    		var selectedMeasure;
-    		for (m in layerDef.indicators){
-    			if (layerDef.indicators[m].showMap){
-	    			var measure = {};
-	    			measure.selectedIndicator = layerDef.indicators[m].selectedIndicator;
-	    			measure.name = layerDef.indicators[m].name;
-	    			measure.alias = layerDef.indicators[m].label;
-	    			measure.aliasToShow = layerDef.indicators[m].label;
-	    			measure.aggregationSelected = layerDef.indicators[m].funct || 'SUM';
-	    			measure.funcSummary = layerDef.indicators[m].funct || 'SUM';
-	    			measure.fieldType = 'MEASURE';
-	    			meta.push(measure);
-	    			if (layerDef.targetDefault && measure.selectedIndicator) selectedMeasure = measure.alias;
-    				measures.push({"name": measure.name, "value": measure.alias, "selectedIndicator": measure.selectedIndicator});
-    			}
-    		}
-    		var model = {content: {columnSelectedOfDataset: meta }};
+    		var columnsForData = [];
+    		
+    		for (f in layerDef.columnSelectedOfDataset){
+    			var tmpField = layerDef.columnSelectedOfDataset[f];
+    			if (tmpField.fieldType == "SPATIAL_ATTRIBUTE")
+    				geoColumn = tmpField.name;
+    			else if (tmpField.properties.defaultIndicator && tmpField.properties.showMap) 
+    				selectedMeasure = tmpField.aliasToShow;
+    			else if (!tmpField.properties.showDetails && !tmpField.properties.showMap)
+    				continue;
+    			
+    			columnsForData.push(tmpField);
+    		}    	
+    		
+    		var model = {content: {columnSelectedOfDataset: columnsForData }};
     		var features = [];
     		var layer =  new ol.layer.Vector();
 
     		//get the dataset columns values
-	    	cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.datasetId, undefined, undefined, undefined, undefined, model).then(
+    		var dsId = layerDef.dsId; // || layerDef.datasetId;
+	    	cockpitModule_datasetServices.loadDatasetRecordsById(dsId, undefined, undefined, undefined, undefined, model).then(
 
 	    		function(allDatasetRecords){
 					var featuresSource = $scope.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, allDatasetRecords);
@@ -439,8 +430,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.updateCoordinatesAndZoom(layer, true);
 
 			},function(error){
-				console.log("Error loading dataset with id [ "+layerDef.datasetId+"] "); 
-				sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.datasetLoadingError').replace("{0}",layerDef.datasetId), 'Title', 3000);
+				console.log("Error loading dataset with id [ "+layerDef.dsId+"] "); 
+				sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.datasetLoadingError').replace("{0}",layerDef.dsId), 'Title', 3000);
 			});	
     	}
 	      
@@ -508,6 +499,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		//add events methods
     		$scope.addViewEvents();
     		$scope.addMapEvents(overlay);
+    		
+    		//just for refresh
+    		if (!$scope.map.getSize()){
+    			$scope.map.setSize([cockpitModule_widgetConfigurator.map.initialDimension.width, 
+    							    cockpitModule_widgetConfigurator.map.initialDimension.height]);
+    		}else{
+    			$scope.map.setSize($scope.map.getSize());
+    		}
+			$scope.map.renderSync();
 	    }
 	    
 	    
@@ -526,12 +526,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 	    
 	    $scope.getIndicatorVisibility = function(l,n){
-	    	for (lpos in  $scope.ngModel.content.targetLayersConf){
-	    		if ( $scope.ngModel.content.targetLayersConf[lpos].name == l)
-		    	for (var i in $scope.ngModel.content.targetLayersConf[lpos].indicators){
+	    	for (lpos in  $scope.ngModel.content.layers){
+	    		if ( $scope.ngModel.content.layers[lpos].name == l)
+		    	for (var i in $scope.ngModel.content.layers[lpos].indicators){
 //		    		if ($scope.ngModel.content.targetLayersConf[lpos].indicators[i].name == n){
-		    		if ($scope.ngModel.content.targetLayersConf[lpos].indicators[i].label == n){
-		    			return $scope.ngModel.content.targetLayersConf[lpos].indicators[i].showMap || false;
+		    		if ($scope.ngModel.content.layers[lpos].indicators[i].label == n){
+		    			return $scope.ngModel.content.layers[lpos].indicators[i].showMap || false;
 		    		}
 		    	}
 	    	}
@@ -544,9 +544,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	var layerValues = $scope.getValuesLayer(l).values;
 	    	var layerKeyColumn =  $scope.getLayerProperty(l, 'geoColumn');
 	    	var layerConfig;
-	    	for (var c=0; c<$scope.ngModel.content.targetLayersConf.length;c++){
-	    		if ($scope.ngModel.content.targetLayersConf[c].name === l){
-	    			layerConfig =$scope.ngModel.content.targetLayersConf[c];
+	    	for (var c=0; c<$scope.ngModel.content.layers.length;c++){
+	    		if ($scope.ngModel.content.layers[c].name === l){
+	    			layerConfig =$scope.ngModel.content.layers[c];
 	    			break;
 	    		}
 	    	}
