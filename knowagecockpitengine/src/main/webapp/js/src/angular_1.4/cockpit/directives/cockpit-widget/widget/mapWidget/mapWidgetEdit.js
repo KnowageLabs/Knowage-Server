@@ -78,7 +78,6 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 			$scope.newModel.content.layers[lower].order = row.order;
 			$scope.newModel.content.layers[current].order = row.order+1;
 		}
-		
 	};
   	
   	$scope.addLayer = function(ev) {
@@ -176,7 +175,6 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 			controller: function ($scope,$mdDialog) {
 				$scope.availableIcons = knModule_fontIconsService.icons;
 
-
 				$scope.activeLayer = {};
 				angular.copy(layer,$scope.activeLayer);
 				
@@ -202,22 +200,6 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 	    })
   	}
   	
-  	$scope.addColumnSelectedOfDataset = function(newModel){
-  		if(!newModel.content.columnSelectedOfDataset){
-  			newModel.content.columnSelectedOfDataset = [];
-  			for(var a in newModel.content.layers){
-  				if(newModel.content.layers[a].targetDefault) newModel.dataset = {"dsId":newModel.content.layers[a].dsId};
-  				for(var c in newModel.content.layers[a].attributes){
-  	  				var targetAttr = newModel.content.layers[a].attributes[c];
-  	  				newModel.content.columnSelectedOfDataset.push({"name":targetAttr.name, "alias":targetAttr.label,"aliasToShow":targetAttr.label, "fieldType":'ATTRIBUTE'})
-  	  			}
-  	  			for(var d in newModel.content.layers[a].indicators){
-  	  				var targetInd = newModel.content.layers[a].attributes[d];
-  	  				newModel.content.columnSelectedOfDataset.push({"name":targetInd.name, "alias":targetInd.label,"aliasToShow":targetInd.label, "fieldType":'MEASURE'})
-  	  			}
-  			}	
-  		}
-  	}
   	
   	//MAIN DIALOG BUTTONS
 	$scope.saveConfiguration=function(){
@@ -225,7 +207,6 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 			if($scope.newModel.content.layers[c].expanded) delete $scope.newModel.content.layers[c].expanded;
 		}
 		 mdPanelRef.close();
-		 //$scope.addColumnSelectedOfDataset($scope.newModel);
 		 angular.copy($scope.newModel,model);
 		 finishEdit.resolve();
   	}

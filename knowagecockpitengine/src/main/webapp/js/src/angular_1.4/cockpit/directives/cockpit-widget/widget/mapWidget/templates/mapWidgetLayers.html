@@ -38,7 +38,7 @@
 					<td>{{layer.name}}</td>
 					<td>
 						<md-input-container class="md-block">
-				            <input ng-model="layer.label">
+				            <input ng-model="layer.aliasToShow">
 		          		</md-input-container></td>
 					<td>
 						<md-switch ng-model="layer.targetDefault" aria-label="target layer" ng-change="setTargetLayer(layer)">
@@ -92,10 +92,10 @@
 											<td><md-icon ng-if="column.fieldType=='SPATIAL_ATTRIBUTE'" md-font-icon="fa fa-globe"></md-icon> {{column.name}}</td>
 											<td>{{column.fieldType}}</td>
 											<td>
-												<md-checkbox ng-model="column.showMap" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE'"/>
+												<md-checkbox ng-model="column.properties.showMap" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE'"/>
 											</td>
 											<td>
-												<md-checkbox ng-model="column.showDetails" aria-label="Checkbox 2" ng-disabled="column.fieldType=='SPATIAL_ATTRIBUTE'"/>
+												<md-checkbox ng-model="column.properties.showDetails" aria-label="Checkbox 2" ng-disabled="column.fieldType=='SPATIAL_ATTRIBUTE'"/>
 											</td>
 										</tr>
 									</tbody>
