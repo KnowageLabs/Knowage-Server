@@ -34,13 +34,12 @@
 					RegistryController])
 
 	function RegistryController(registryConfigService, registryCRUDService,
-			regFilterGetData, sbiModule_messaging,sbiModule_translate, $mdDialog , $filter) {
+			regFilterGetData, sbiModule_messaging,sbiModule_translate, $mdDialog, $filter) {
 		var self = this;
 		var registryConfigurationService = registryConfigService;
 		var registryCRUD = registryCRUDService;
 		var registryConfiguration = registryConfigurationService
 				.getRegistryConfig();
-		var regFilterGetData = regFilterGetData;
 		var columnsInfo = registryConfiguration.columns;
 		var sbiMessaging = sbiModule_messaging;
 		 self.sbiTranslate =sbiModule_translate;
@@ -54,9 +53,6 @@
 		self.filters = {};
 		self.page = 1;
 
-
-
-
 		// array object to define the registry configuration
 		self.configuration = {
 			title: "Registry Document",
@@ -66,7 +62,6 @@
 			pagination: registryConfiguration.pagination,
 			pivot: false
 		};
-
 
 		//Getting initial data from server
         var loadInitialData = function(){
@@ -129,7 +124,7 @@
             }else if(colIndex>0 && columns[colIndex-1].type != 'merge'){
             	return counter++;
             }
-                for(var j = index ; j<rows.length;j++){
+                for(var j = index; j<rows.length; j++){
 
                     // Defining variables
                         var columnField=columns[colIndex].field;
@@ -173,7 +168,7 @@
 	            	return true;
 	            }
 
-	        for(var j = index ; j<rows.length;j++){
+	        for(var j = index; j<rows.length; j++){
 
 	            // Defining variables
 	            var row = rows[j];
@@ -191,7 +186,7 @@
 	            var previousFieldValue = row[previousColumnField];
 	            var previousRowFieldValue = previousRow[columnField];
 	            var previousRowPreviousFieldValue = previousRow[previousColumnField];
-	            var mergeCounter = 0 ;
+	            var mergeCounter = 0;
 
 	            //Counting how many column pairs are same in comparing rows
 	            for(var i = 0 ; i <= colIndex;i++){
@@ -235,13 +230,14 @@
             row.selected = true;
 
             if(columnEditor === 'COMBO' && !self.comboColumnOptions[columnField]) {
-                var promise = regGetData.getData(columnField);
+                var promise = regFilterGetData.getData(columnField);
                 promise.then(function(response) {
                     self.comboColumnOptions[columnField] = response;
                 });
                 return promise;
             }
         };
+        
 		//Filters handling
 		self.addFilterOptions = function(filterField){
 			var promise = regFilterGetData.getData(filterField);
@@ -412,6 +408,7 @@
         	}
             readData(self.formParams);
         };
+        
         self.checkIfSelected = function(row) {
 
         	if((self.selectedRow).indexOf(row) !== -1 ){
