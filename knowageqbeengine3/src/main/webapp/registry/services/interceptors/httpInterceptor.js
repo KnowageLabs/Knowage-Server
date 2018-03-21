@@ -20,7 +20,7 @@
 //interceptor for error messages
 
 (function() {
-	 angular.module('BlankApp')
+	 angular.module('RegistryDocument')
     .factory('httpInterceptor', ['$q', '$injector', function($q, $injector) {
 
     	return {
