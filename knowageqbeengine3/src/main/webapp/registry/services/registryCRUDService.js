@@ -17,7 +17,7 @@
  */
 
 (function () {
-    angular.module('BlankApp')
+    angular.module('RegistryDocument')
     	   .factory('registryCRUDService', ['sbiModule_action_builder', function(sbiModule_action_builder) {
 
     		   var crud = {};
@@ -26,24 +26,20 @@
     			   var loadRegistryAction = this.action.getActionBuilder('POST');
     			   loadRegistryAction.actionName = 'LOAD_REGISTRY_ACTION';
     			   loadRegistryAction.formParams = params;
-    			   var promise =  loadRegistryAction.executeAction();
+    			   var promise = loadRegistryAction.executeAction();
     			   return promise;
     		   };
 
     		   crud.update = function(record) {
     			   delete record.id;
+    			   delete record.selected;
     			   var records = [];
     			   var loadRegistryAction = this.action.getActionBuilder('POST');
     			   loadRegistryAction.actionName = 'UPDATE_RECORDS_ACTION';
-    			    loadRegistryAction.formParams.records = records;
-    			    loadRegistryAction.formParams.records.push(record);
-    			   var promise =  loadRegistryAction.executeAction();
+    			   loadRegistryAction.formParams.records = records;
+    			   loadRegistryAction.formParams.records.push(record);
+    			   var promise = loadRegistryAction.executeAction();
     			   return promise;
-    		   };
-
-    		   crud.create = function() {
-
-
     		   };
 
     		   crud.delete = function(record) {
@@ -51,9 +47,9 @@
     			   var records = [];
     			   var loadRegistryAction = this.action.getActionBuilder('POST');
     			   loadRegistryAction.actionName = 'DELETE_RECORDS_ACTION';
-    			    loadRegistryAction.formParams.records = records;
-    			    loadRegistryAction.formParams.records.push(record);
-    			   var promise =  loadRegistryAction.executeAction();
+    			   loadRegistryAction.formParams.records = records;
+    			   loadRegistryAction.formParams.records.push(record);
+    			   var promise = loadRegistryAction.executeAction();
     			   return promise;
     		   };
 
