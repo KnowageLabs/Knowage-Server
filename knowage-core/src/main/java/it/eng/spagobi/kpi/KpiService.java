@@ -54,7 +54,6 @@ import org.quartz.JobExecutionException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.util.JSON;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -354,8 +353,8 @@ public class KpiService {
 		List<Alias> unavaliases = dao.listAliasInMeasure(ruleId, ruleVersion);
 
 		JSONObject resp = new JSONObject();
-		resp.put("available", JSON.parse(JsonConverter.objectToJson(aliases, aliases.getClass())));
-		resp.put("notAvailable", JSON.parse(JsonConverter.objectToJson(unavaliases, unavaliases.getClass())));
+		resp.put("available", new JSONArray(JsonConverter.objectToJson(aliases, aliases.getClass())));
+		resp.put("notAvailable", new JSONArray(JsonConverter.objectToJson(unavaliases, unavaliases.getClass())));
 		out = Response.ok(resp.toString()).build();
 		logger.debug("OUT");
 		return out;
