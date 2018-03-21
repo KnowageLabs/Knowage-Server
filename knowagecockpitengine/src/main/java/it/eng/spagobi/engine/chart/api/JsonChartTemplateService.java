@@ -42,6 +42,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.knowage.engine.cockpit.api.CockpitExecutionClient;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -318,7 +321,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	public String getDataAndConf(@PathParam("label") String label, String body, @Context HttpServletResponse servletResponse,
 			@DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
 			@QueryParam("nearRealtime") boolean isNearRealtime) {
-
+		Monitor getDataAndChartConfMonitor = MonitorFactory.start("Knowage.Cockpit.Chart.Get.Data.And.Chartconf");
 		String jsonTemplate = null;
 		String exportWebApp = null;
 		String jsonData = null;
@@ -342,15 +345,20 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 				exportWebApp = jsonexportWebApp != null ? jsonexportWebApp.toString() : null;
 			}
 			cockpitExecutionClient = new CockpitExecutionClient();
+			Monitor getData = MonitorFactory.start("Knowage.Cockpit.Chart.Get.Data");
 			jsonData = cockpitExecutionClient.getDataFromDataset(aggregations, label, userId, queryParams);
+			getData.stop();
 			responseObject.put("jsonData", jsonData);
+			Monitor getChartConf = MonitorFactory.start("Knowage.Cockpit.Chart.Get.Chartconf");
 			chartConf = getJSONChartTemplateForCockpit(jsonTemplate, exportWebApp, jsonData, servletResponse);
+			getChartConf.stop();
 			responseObject.put("chartConf", chartConf);
 
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service: JsonChartTemplateService.getDataAndConf", t);
 		}
+		getDataAndChartConfMonitor.stop();
 		return responseObject.toString();
 	}
 
