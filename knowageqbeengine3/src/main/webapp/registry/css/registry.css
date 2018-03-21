@@ -7,9 +7,7 @@
 .md-scroll-mask {
 	z-index: 1 !important;
 }
-  .kn-table{
-	width : auto;
-}  
+
 .kn-registry .md-open-menu-container {
     z-index: 90;
 }
@@ -32,6 +30,10 @@
     margin-bottom: 4px;
 }
 
+.kn-table {
+	width: auto;
+}
+
 .kn-table.alternatedRows tbody tr:nth-child(odd) {
     background-color: #f0f0f0;
 }
@@ -41,6 +43,10 @@
     height: 20px;
     min-height: 20px;
     max-height: 20px;
+}
+
+#recNo {
+	width: 50px;
 }
 
 .kn-table thead th.tableAction {
@@ -58,9 +64,11 @@
 .customContentMenu .check {
     width: 46px;
 }
+
 .blue{
-	background-color: 	#A9C3DB !important;
+	background-color: #A9C3DB !important;
 }
+
 .pivot-table th, .pivot-table tr, .pivot-table td {
 	border: 3px solid #A9C3DB;
 }
@@ -72,6 +80,20 @@
 .pagination {
 	margin-top: 20px;
 }
-#recNo {
-	width: 50px;
+
+md-select {
+	margin: 0;
+}
+
+.filter-btns, .delete-row {
+	cursor: pointer;
+}
+
+.filter-clear, .filter {
+	margin: 0 10px;
+}
+
+.save-btn {
+    position: absolute;
+    right: 20px;
 }
