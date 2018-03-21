@@ -1155,41 +1155,43 @@ public class DatasetManagementAPI {
 
 	public void appendSummaryRowToPagedDataStore(List<Projection> projections, List<Projection> summaryRowProjections, IDataStore pagedDataStore,
 			IDataStore summaryRowDataStore) {
-		// calc a map for summaryRowProjections -> projections
-		Map<Integer, Integer> projectionToSummaryRowProjection = new HashMap<>();
-		for (int i = 0; i < summaryRowProjections.size(); i++) {
-			Projection summaryRowProjection = summaryRowProjections.get(i);
-			for (int j = 0; j < projections.size(); j++) {
-				Projection projection = projections.get(j);
-				String projectionAlias = projection.getAlias();
-				if (summaryRowProjection.getAlias().equals(projectionAlias) || summaryRowProjection.getName().equals(projectionAlias)) {
-					projectionToSummaryRowProjection.put(j, i);
-					break;
-				}
-			}
-		}
-
 		IMetaData pagedMetaData = pagedDataStore.getMetaData();
 		IMetaData summaryRowMetaData = summaryRowDataStore.getMetaData();
 
-		// append summary row
-		IRecord summaryRowRecord = summaryRowDataStore.getRecordAt(0);
-		Record newRecord = new Record();
-		for (int projectionIndex = 0; projectionIndex < pagedMetaData.getFieldCount(); projectionIndex++) {
-			Field field = new Field(null);
-			if (projectionToSummaryRowProjection.containsKey(projectionIndex)) {
-				Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
-				Object value = summaryRowRecord.getFieldAt(summaryRowIndex).getValue();
-				field.setValue(value);
+		if (pagedMetaData.getFieldCount() >= summaryRowMetaData.getFieldCount()) {
+			// calc a map for summaryRowProjections -> projections
+			Map<Integer, Integer> projectionToSummaryRowProjection = new HashMap<>();
+			for (int i = 0; i < summaryRowProjections.size(); i++) {
+				Projection summaryRowProjection = summaryRowProjections.get(i);
+				for (int j = 0; j < projections.size(); j++) {
+					Projection projection = projections.get(j);
+					String projectionAlias = projection.getAlias();
+					if (summaryRowProjection.getAlias().equals(projectionAlias) || summaryRowProjection.getName().equals(projectionAlias)) {
+						projectionToSummaryRowProjection.put(j, i);
+						break;
+					}
+				}
 			}
-			newRecord.appendField(field);
-		}
-		pagedDataStore.appendRecord(newRecord);
 
-		// copy metadata from summary row
-		for (Integer projectionIndex : projectionToSummaryRowProjection.keySet()) {
-			Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
-			pagedMetaData.getFieldMeta(projectionIndex).setType(summaryRowMetaData.getFieldType(summaryRowIndex));
+			// append summary row
+			IRecord summaryRowRecord = summaryRowDataStore.getRecordAt(0);
+			Record newRecord = new Record();
+			for (int projectionIndex = 0; projectionIndex < pagedMetaData.getFieldCount(); projectionIndex++) {
+				Field field = new Field(null);
+				if (projectionToSummaryRowProjection.containsKey(projectionIndex)) {
+					Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
+					Object value = summaryRowRecord.getFieldAt(summaryRowIndex).getValue();
+					field.setValue(value);
+				}
+				newRecord.appendField(field);
+			}
+			pagedDataStore.appendRecord(newRecord);
+
+			// copy metadata from summary row
+			for (Integer projectionIndex : projectionToSummaryRowProjection.keySet()) {
+				Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
+				pagedMetaData.getFieldMeta(projectionIndex).setType(summaryRowMetaData.getFieldType(summaryRowIndex));
+			}
 		}
 	}
 
