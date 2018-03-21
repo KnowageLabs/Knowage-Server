@@ -16,7 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 (function () {
-    angular.module('BlankApp')
+    angular.module('RegistryDocument')
     	   .factory('regFilterGetData', ['sbiModule_action_builder', 'registryConfigService', '$filter', '$q',
     			   function(sbiModule_action_builder, registryConfigService, $filter, $q) {
     		   
