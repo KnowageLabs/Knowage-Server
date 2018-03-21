@@ -7,7 +7,9 @@
 .md-scroll-mask {
 	z-index: 1 !important;
 }
-
+  .kn-table{
+	width : auto;
+}  
 .kn-registry .md-open-menu-container {
     z-index: 90;
 }
@@ -55,4 +57,21 @@
 
 .customContentMenu .check {
     width: 46px;
+}
+.blue{
+	background-color: 	#A9C3DB !important;
+}
+.pivot-table th, .pivot-table tr, .pivot-table td {
+	border: 3px solid #A9C3DB;
+}
+
+.pivot-table thead {
+	border: 3px solid #81a7ca;
+}
+
+.pagination {
+	margin-top: 20px;
+}
+#recNo {
+	width: 50px;
 }

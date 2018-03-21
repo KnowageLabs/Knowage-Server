@@ -18,7 +18,7 @@
 (function() {
 	'use strict';
 
-	angular.module('BlankApp', [ 'ngMaterial', 'registryConfig', 'sbiModule' ])
+	angular.module('RegistryDocument', [ 'ngMaterial', 'registryConfig', 'sbiModule' ])
 			.config(
 					[
 							'$mdThemingProvider',
@@ -30,27 +30,32 @@
 										.push('httpInterceptor');
 
 							} ]).controller('RegistryController', ['registryConfigService', 'registryCRUDService',
-								'regFilterGetData', 'sbiModule_messaging', '$mdDialog', '$filter',
+								'regFilterGetData', 'sbiModule_messaging','sbiModule_translate', '$mdDialog', '$filter',
 					RegistryController])
 
 	function RegistryController(registryConfigService, registryCRUDService,
-			regFilterGetData, sbiModule_messaging, $mdDialog , $filter) {
+			regFilterGetData, sbiModule_messaging,sbiModule_translate, $mdDialog , $filter) {
 		var self = this;
 		var registryConfigurationService = registryConfigService;
 		var registryCRUD = registryCRUDService;
 		var registryConfiguration = registryConfigurationService
 				.getRegistryConfig();
-		var regGetData = regFilterGetData;
+		var regFilterGetData = regFilterGetData;
 		var columnsInfo = registryConfiguration.columns;
 		var sbiMessaging = sbiModule_messaging;
+		 self.sbiTranslate =sbiModule_translate;
 		self.data = [];
-		self.results = 0;
-		self.filterOptions = {};
+		self.resultsNumber = 0;
+		self.comboColumnOptions = {};
 		self.columns = [];
-		self.selectedColumn = [];
+		self.columnSizeInfo = [];
+		self.selectedRow = [];
 		self.formParams = {};
 		self.filters = {};
 		self.page = 1;
+
+
+
 
 		// array object to define the registry configuration
 		self.configuration = {
@@ -58,59 +63,188 @@
 			itemsPerPage: 15,
 			enableButtons: registryConfiguration.configurations[0].value == "true",
 			filters: registryConfiguration.filters,
-			pagination: registryConfiguration.pagination
+			pagination: registryConfiguration.pagination,
+			pivot: false
 		};
 
+
 		//Getting initial data from server
-        var loadInitialData = function(param){
+        var loadInitialData = function(){
         	if(self.configuration.pagination == 'true') {
         		self.formParams.start = 0;
         		self.formParams.limit = self.configuration.itemsPerPage;
         	} else {
         		self.formParams.start = 0;
         	}
-        	readData(param);
+        	readData(self.formParams);
         };
 
-        var readData = function(data) {
-        	registryCRUD.read(data).then(function(response) {
+        var readData = function(formParameters) {
+        	registryCRUD.read(formParameters).then(function(response) {
 	           	 self.data = response.data.rows;
-	           	 self.results = response.data.results;
+	           	 self.resultsNumber = response.data.results;
+
+	           	 if(self.columnSizeInfo.length == 0) {
+	           		self.columnSizeInfo = response.data.metaData.columnsInfos;
+	           		addColumnsInfo();
+	           	 }
 	         });
         };
 
-        loadInitialData(self.formParams);
+        loadInitialData();
 
-		self.setSelected = function(selectedColumn) {
-			if((self.selectedColumn).indexOf(selectedColumn) === -1){
-				self.selectedColumn.push(selectedColumn);
-				}
+		self.setSelected = function(selectedRow) {
+			if((self.selectedRow).indexOf(selectedRow) === -1){
+				self.selectedRow.push(selectedRow);
+			}
+
 		};
 
 		// Filling columns
-		columnsInfo.forEach(function(column) {
-			column.position = columnsInfo.indexOf(column);
-			self.columns.push(column);
-		});
-
-
-		//Filters handling
-		self.addColumnOptions = function(filterField , rowId) {
-
-			if(self.filterOptions[filterField]){
-				self.filterOptions[filterField][rowId] = self.filterOptions[filterField][Object.keys(self.filterOptions[filterField])[0]];
-			} else {
-				var promise = regGetData.getData(filterField);
-				promise.then(function(response) {
-					self.filterOptions[filterField]={};
-					self.filterOptions[filterField][rowId] = response;
+		var addColumnsInfo = function() {
+			columnsInfo.forEach(function(column) {
+				self.columnSizeInfo.forEach(function(columnSize) {
+					if(columnSize.sizeColumn === column.field) {
+						column.size = columnSize.size;
+					}
 				});
-			}
-			return promise;
+				if(column.type && column.type === 'merge') {
+					self.configuration.pivot = true;
+
+				}
+				if(column.visible == true) {
+					column.position = columnsInfo.indexOf(column);
+					self.columns.push(column);
+				}
+			});
 		};
 
+		/* Pivot Table */
+		self.setRowspan = function(rows,index,colIndex,columns){
+
+            // count columns to be merged
+            var counter = 0;
+            if(columns[colIndex].type && columns[colIndex].type != 'merge'){
+            	return counter;
+            }else if(colIndex>0 && columns[colIndex-1].type != 'merge'){
+            	return counter++;
+            }
+                for(var j = index ; j<rows.length;j++){
+
+                    // Defining variables
+                        var columnField=columns[colIndex].field;
+                        var row = rows[j];
+                        var previousColumnField = columns[0].field;
+
+                        if(rows.length >j+1){
+                            var nextRow = rows[j+1];
+                        }else{
+                            counter++;
+                            return counter;
+                        }
+                        var field = row[columnField];
+                        var previousField = row[previousColumnField];
+                        var NextRowField = nextRow[columnField];
+                        var NextRowPreviousField = nextRow[previousColumnField];
+                        var mergeCounter = 0 ;
+
+                        //Counting how many column pairs are same in comparing rows
+                            for(var i = 0 ; i <= colIndex;i++){
+                                if(row[columns[i].field] == nextRow[columns[i].field]){
+                                    mergeCounter++;
+                                }
+                            }
+
+                            //Checking are all column pairs same in compared rows if yes compare next row , else return counter as a rowspan
+                             if(mergeCounter == colIndex+1 ){
+                                counter++;
+                             } else{
+                                counter++;
+                                return counter;
+                             }
+                }
+        };
+
+	    self.checkColumnBefore = function(rows,index,colIndex,columns){
+
+	    	 if(columns[colIndex].type && columns[colIndex].type != 'merge'){
+	            	return true;
+	            }else if(colIndex>0 && columns[colIndex-1].type != 'merge'){
+	            	return true;
+	            }
+
+	        for(var j = index ; j<rows.length;j++){
+
+	            // Defining variables
+	            var row = rows[j];
+	            var previousRow ;
+	            var columnField=columns[colIndex].field;
+	            var previousColumnField = columns[0].field;
+
+	            if(0 < j){
+	                 previousRow = rows[j-1];
+	            }else{
+	                return true;
+	            }
+
+	            var fieldValue = row[columnField];
+	            var previousFieldValue = row[previousColumnField];
+	            var previousRowFieldValue = previousRow[columnField];
+	            var previousRowPreviousFieldValue = previousRow[previousColumnField];
+	            var mergeCounter = 0 ;
+
+	            //Counting how many column pairs are same in comparing rows
+	            for(var i = 0 ; i <= colIndex;i++){
+	                if(row[columns[i].field] == previousRow[columns[i].field]){
+	                    mergeCounter++;
+	                }
+	            }
+
+	            //Checking are the conditions for printing column value fulfilled
+
+	            //if it is first column and values are same with comparing field do not print because it is already merged
+	            if(colIndex==0 && fieldValue == previousRowFieldValue){
+	                return false;
+
+	                //For columns that are not first
+	            }else if (colIndex>0){
+	            	//mergeCounter represent number of column pairs of two comparing rows that have the same value
+	            	//if all column pairs of comparing values are same it means that row before has rowspan and we should not show field value
+	                if(mergeCounter == colIndex +1 ){
+	                    return false;
+
+	                    //if previous column is not merged ,also this one shoudn't be , so we show the value of the field
+	                }else if(fieldValue != previousRowFieldValue && previousFieldValue == previousRowPreviousFieldValue ){
+	                    return true;
+	                    //if some previous column is not merged ,and this one have the same value with comparing column,also this one shoudn't be , so we show the value of the field
+	                }else if(fieldValue == previousRowFieldValue && mergeCounter != colIndex +1 ){
+	                    return true;
+	                }else if(fieldValue != previousRowFieldValue){
+	                    return true;
+	                }
+	            }else{
+	                return true;
+	            }
+
+	        }
+	    };
+
+	  //Adding options to combo columns
+        self.addColumnOptions = function(columnField, columnEditor, row, $mdOpenMenu) {
+            $mdOpenMenu();
+            row.selected = true;
+
+            if(columnEditor === 'COMBO' && !self.comboColumnOptions[columnField]) {
+                var promise = regGetData.getData(columnField);
+                promise.then(function(response) {
+                    self.comboColumnOptions[columnField] = response;
+                });
+                return promise;
+            }
+        };
+		//Filters handling
 		self.addFilterOptions = function(filterField){
-			var promise = regGetData.getData(filterField);
+			var promise = regFilterGetData.getData(filterField);
 			promise.then(function(response) {
 				addOptions(filterField,response);
 			});
@@ -145,27 +279,27 @@
 		};
 
         self.updateRow = function() {
-			for (var i = 0; i < self.selectedColumn.length; i++) {
-				registryCRUD.update(self.selectedColumn[i]).then(function(response) {});
-				if (i == (self.selectedColumn.length - 1)) {
-					sbiMessaging.showInfoMessage('You have succesufly updated '
-							+ (i + 1) + ' field/s ', 'Success!!!');
+			for (var i = 0; i < self.selectedRow.length; i++) {
+				registryCRUD.update(self.selectedRow[i]).then(function(response) {});
+				if (i == (self.selectedRow.length - 1)) {
+					sbiMessaging.showInfoMessage( self.sbiTranslate.load("kn.registry.registryDocument.update.success")
+							+' '+ (i + 1) + ' ' + self.sbiTranslate.load("kn.registry.registryDocument.row"), self.sbiTranslate.load("kn.registry.registryDocument.success"));
 				}
 			}
-			self.selectedColumn = [];
+			self.selectedRow = [];
 		};
 
 		self.deleteRowFromDB = function(row, event) {
 			var confirm = $mdDialog.confirm()
-				.title('Delete Row!')
-				.textContent('Are you sure you want to delete row?')
-				.targetEvent(event)
-				.ok('Yes')
-				.cancel('No');
+            .title(sbiModule_translate.load('kn.registry.document.delete.row'))
+            .textContent(sbiModule_translate.load('kn.registry.document.delete.confirm.message'))
+            .targetEvent(event)
+            .ok(sbiModule_translate.load('kn.qbe.general.yes'))
+            .cancel(sbiModule_translate.load('kn.qbe.general.no'));
 
 			$mdDialog.show(confirm).then(function() {
 					registryCRUD.delete(row).then(function(response) {
-						sbiMessaging.showInfoMessage('You have succesufly deleted row!', 'Success!!!');
+						sbiMessaging.showInfoMessage(self.sbiTranslate.load("kn.registry.registryDocument.delete.success"), self.sbiTranslate.load("kn.registry.registryDocument.success"));
 						self.deleteRow(row.$$hashKey);
 					});
 				});
@@ -219,12 +353,13 @@
 			self.filters[filter.field] = filter.value;
 		}
 
+		//Pagination
 		self.getTotalPages = function() {
-            return new Array(Math.ceil(self.results / self.configuration.itemsPerPage));
+            return new Array(Math.ceil(self.resultsNumber / self.configuration.itemsPerPage));
         };
 
         self.hasNext = function() {
-            return self.page * self.configuration.itemsPerPage < self.results;
+            return self.page * self.configuration.itemsPerPage < self.resultsNumber;
         };
 
         self.hasPrevious = function() {
@@ -232,11 +367,11 @@
         };
 
         self.min = function() {
-            return self.results > 0 ? (self.page - 1) * self.configuration.itemsPerPage + 1 : 0;
+            return self.resultsNumber > 0 ? (self.page - 1) * self.configuration.itemsPerPage + 1 : 0;
         };
 
         self.max = function() {
-            return self.hasNext() ? (self.page * self.configuration.itemsPerPage) : self.results;
+            return self.hasNext() ? (self.page * self.configuration.itemsPerPage) : self.resultsNumber;
         };
 
 
@@ -277,6 +412,12 @@
         	}
             readData(self.formParams);
         };
+        self.checkIfSelected = function(row) {
 
+        	if((self.selectedRow).indexOf(row) !== -1 ){
+        		return 'blue';
+        	}
+
+        }
 	}
 })();
