@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -486,6 +487,7 @@ public class ExcelExporter {
 
 	private JSONObject getReplacedParameters(JSONObject parameters, Integer datasetId) throws JSONException {
 		JSONObject newParameters = new JSONObject(parameters.toString());
+		Map<String, String> newValues = new HashMap<>();
 		Iterator<String> keys = newParameters.keys();
 		while (keys.hasNext()) {
 			String parameter = keys.next();
@@ -510,7 +512,15 @@ public class ExcelExporter {
 						newValue = getParameterDefaultValue(datasetId, parameter);
 					}
 				}
-				newParameters.put(parameter, newValue);
+				newValues.put(parameter, newValue);
+			}
+		}
+		for (String parameter : newValues.keySet()) {
+			String value = newValues.get(parameter);
+			if (value != null) {
+				newParameters.put(parameter, value);
+			} else {
+				newParameters.put(parameter, JSONObject.NULL);
 			}
 		}
 		return newParameters;
