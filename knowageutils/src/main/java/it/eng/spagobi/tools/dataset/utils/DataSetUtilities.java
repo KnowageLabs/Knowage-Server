@@ -293,7 +293,8 @@ public class DataSetUtilities {
 			try {
 				while (keys.hasNext()) {
 					String key = keys.next();
-					String value = jsonParameters.getString(key);
+					Object obj = jsonParameters.opt(key);
+					String value = (obj.equals(JSONObject.NULL)) ? "" : jsonParameters.getString(key);
 					toReturn.put(key, value);
 				}
 			} catch (Throwable t) {
