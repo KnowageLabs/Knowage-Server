@@ -276,11 +276,8 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public List<IDataSource> deleteMultiple(@QueryParam("id") List<Integer> ids) {
-
 		logger.debug("IN");
-
 		try {
-
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
 
@@ -289,18 +286,12 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				ds.setDsId(ids.get(i));
 				dataSourceDAO.eraseDataSource(ds);
 			}
-
 			return dataSourceDAO.loadAllDataSources();
-
 		} catch (Exception e) {
-
 			logger.error("Error while deleting multiple data sources", e);
 			throw new SpagoBIRestServiceException("Error while deleting multiple data sources", buildLocaleFromSession(), e);
-
 		} finally {
-
 			logger.debug("OUT");
-
 		}
 	}
 
@@ -323,13 +314,9 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			logger.error("Error while getting structure of data source by id", e);
 			throw new SpagoBIRestServiceException("Error while getting structure of data source by id", buildLocaleFromSession(), e);
-
 		} finally {
-
 			logger.debug("OUT");
-
 		}
-
 		return tableContent.toString();
 	}
 

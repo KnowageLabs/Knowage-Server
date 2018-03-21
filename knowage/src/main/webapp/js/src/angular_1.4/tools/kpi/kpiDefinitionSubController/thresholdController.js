@@ -23,38 +23,38 @@ app.controller('kpiDefinitionThresholdController', ['$scope','sbiModule_translat
 function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdSidenav,$mdDialog,$timeout){
 	$scope.thresholdList=[];
 	$scope.translate = sbiModule_translate;
-	
+
 	$scope.loadThresholdList=function(){
  		sbiModule_restServices.promiseGet("1.0/kpi","listThreshold")
-		.then(function(response){ 
+		.then(function(response){
 			angular.copy(response.data,$scope.thresholdList);
 		},function(response){
 			$scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.threshold.error"));
 		});
  	};
  	$scope.loadThresholdList();
- 	
+
  	$scope.loadThresholdTypeList=function(){
  		sbiModule_restServices.promiseGet("2.0/domains","listByCode/THRESHOLD_TYPE")
- 		.then(function(response){ 
- 			angular.copy(response.data,$scope.thresholdTypeList); 
- 			
+ 		.then(function(response){
+ 			angular.copy(response.data,$scope.thresholdTypeList);
+
  		},function(response){
- 			 $scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.generic.error")+" domains->THRESHOLD_TYPE"); 
+ 			 $scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.generic.error")+" domains->THRESHOLD_TYPE");
  		});
  		};
  	$scope.loadThresholdTypeList();
- 	
+
 	$scope.addNewThreshold=function(){
 		var emptyThreshold={"position":$scope.kpi.threshold.thresholdValues.length,"label":"","color":"#00FFFF","includeMin":false,"includeMax":false,"minValue":"","maxValue":""}
 		$scope.kpi.threshold.thresholdValues.push(emptyThreshold);
 		$scope.loadThreshold();
 		$scope.checkIfIsUsedByAnotherKpi();
 	};
-	
+
 	$scope.thresholdTableActionButton=[
-      	 {icon:'fa fa-trash' ,   
-     		action : function(item,event) {	                             			
+      	 {icon:'fa fa-trash' ,
+     		action : function(item,event) {
      			 var confirm = $mdDialog.confirm()
      	         .title($scope.translate.load("sbi.kpi.measure.delete.title"))
      			.content($scope.translate.load("sbi.kpi.measure.delete.content"))
@@ -74,31 +74,31 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
      			  //do nothing
      			   });
      		 }
-     	} 
+     	}
      ];
 
-	
-		
+
+
 	$scope.openThresholdSidenav=function(){
 		 $mdSidenav("thresholdTab").toggle();
 	}
-	
+
 	$scope.severityType = [];
-	
+
 	sbiModule_restServices.promiseGet("2.0/domains","listByCode/SEVERITY")
-		.then(function(response){ 
+		.then(function(response){
 			angular.copy(response.data, $scope.severityType);
 		},function(response){
-			$scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.generic.error")+" domains->SEVERITY"); 
+			$scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.generic.error")+" domains->SEVERITY");
 		}
 	);
-	
+
 	$scope.colorPickerProperty = {
 	    placeholder: 'select color',
 	    format: 'hex'
 	};
-	
-	
+
+
 	$scope.thresholdColumn = [
         {
         	label:sbiModule_translate.load("sbi.browser.searchpanel.attributes.label"),
@@ -122,7 +122,7 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
         },
         {
         	label:sbiModule_translate.load("sbi.thresholds.includemax"),
-        	name:"includeMaxCheck",
+        	name:"includeMax",
         	type:"checkbox"
         },
         {
@@ -135,9 +135,9 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
         	label:sbiModule_translate.load("sbi.thresholds.color"),
         	name:"color",
         	type:"colorpicker"
-        },         
+        },
     ];
-	
+
 	$scope.move = function(e,row,direction){
 		var lower, current, upper;
 		angular.forEach($scope.kpi.threshold.thresholdValues,function(value,key){
@@ -156,15 +156,15 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 			$scope.kpi.threshold.thresholdValues[lower].position = row.position;
 			$scope.kpi.threshold.thresholdValues[current].position = row.position+1;
 		}
-		
+
 	};
 
-	$scope.loadSelectedThreshold=function(item,listId){ 
-		
+	$scope.loadSelectedThreshold=function(item,listId){
+
 		if($scope.kpi.threshold.thresholdValues.length==0 ||  angular.equals($scope.emptyKpi.threshold,$scope.kpi.threshold)){
 			loadSelThresh(item)
 		}else{
-		
+
 		 var confirm = $mdDialog.confirm()
          .title($scope.translate.load("sbi.thresholds.already.present"))
          .content($scope.translate.load("sbi.thresholds.confirm.override"))
@@ -177,10 +177,10 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 		  //do nothing
 		   });
 		}
-		
-		
+
+
 	}
-	
+
 	$scope.normalizeRows = function(){
 		var indexes = [];
 		angular.forEach($scope.kpi.threshold.thresholdValues,function(value,key){
@@ -191,40 +191,40 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 			value.position = (value.position - shift);
 		})
 	}
-	
+
 	$scope.cloneThreshold=function(){
 		$scope.kpi.threshold.name+= " ("+$scope.translate.load("sbi.generic.clone")+")"
-		$scope.kpi.threshold.id=undefined;	
+		$scope.kpi.threshold.id=undefined;
 		$scope.isUsedByAnotherKpi.value=false;
 	}
-	 
-	
+
+
 	function loadSelThresh(item){
 	 var currKpiId="";
 			if($scope.kpi.id!=undefined){
 				currKpiId="?kpiId="+$scope.kpi.id;
 			}
 		sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/loadThreshold"+currKpiId)
-		.then(function(response){  
-			
+		.then(function(response){
+
 			if(response.data.usedByKpi==true){
-				
+
 				$mdDialog.show({
-			          clickOutsideToClose: false, 
-			          preserveScope: true,  
+			          clickOutsideToClose: false,
+			          preserveScope: true,
 			          locals: {translate:sbiModule_translate},
 			          template: '<md-dialog>' +
 			          			'<md-toolbar>  <div class="md-toolbar-tools"> <h2>{{ translate.load("sbi.kpi.threshold.load.reused.title")}}</h2></div></md-toolbar>'+
-			                    '  <md-dialog-content layout-margin layout="column"> ' + 
+			                    '  <md-dialog-content layout-margin layout="column"> ' +
 			                    '  <p> {{ translate.load("sbi.kpi.threshold.load.reused.message")}} </p> ' +
 				                 '   <div layout="row"> ' +
-							      '  <md-button class="md-raised" ng-click="cancelDialog()" flex> {{translate.load("sbi.generic.cancel")}} </md-button>' + 
+							      '  <md-button class="md-raised" ng-click="cancelDialog()" flex> {{translate.load("sbi.generic.cancel")}} </md-button>' +
 				                  '  <md-button class="md-raised" ng-click="successDialog()" flex>  {{translate.load("sbi.generic.use.it")}} </md-button> '+
 				                 '   <md-button class="md-raised"  ng-click="successDialog(true)"  flex>  {{translate.load("sbi.generic.clone")}} </md-button> '+
 				                 ' </div>'+
 				                ' </md-dialog-content>' +
 			                    '</md-dialog>',
-			          controller: function DialogController($scope, $mdDialog,translate) { 
+			          controller: function DialogController($scope, $mdDialog,translate) {
 			        	  $scope.translate=translate;
 			            $scope.cancelDialog = function() {
 			            	$mdDialog.cancel();
@@ -236,20 +236,20 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 			       }).then(function(clone) {
 			    	    if(clone){
 			    	    	 response.data.name+= " ("+$scope.translate.load("sbi.generic.clone")+")"
-							 response.data.id=undefined;	
-			    	    } 
+							 response.data.id=undefined;
+			    	    }
 			    	    angular.copy(response.data,$scope.kpi.threshold);
 			    	    $scope.normalizeRows();
 						$scope.loadThreshold();
 						 $mdSidenav('thresholdTab').close()
 			       }) ;
-				 
+
 			}else{
 				angular.copy(response.data,$scope.kpi.threshold);
 				$scope.loadThreshold();
 				 $mdSidenav('thresholdTab').close()
 			}
-			
+
 		},function(response){
 			$scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.threshold.error"));
 		});
