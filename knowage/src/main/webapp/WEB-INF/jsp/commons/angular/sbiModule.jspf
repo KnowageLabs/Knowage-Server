@@ -242,13 +242,25 @@ sbiM.service('sbiModule_logger',function(){
 	
 });
 
-sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,$mdToast){
+sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,sbiModule_translate,$mdToast,$mdDialog){
 	
 	this.showErrorMessage = function(msg,title){
 // 		toastr.error(msg,title, {
 // 			  closeButton: true
 // 		});
 		sbiModule_restServices.errorHandler(msg,title);
+	};
+	
+	this.showAlertMessage = function(title,msg){
+		$mdDialog.show(
+			      $mdDialog.alert()
+			        .parent(angular.element(document.querySelector('body')))
+			        .clickOutsideToClose(true)
+			        .title(title)
+			        .htmlContent(msg)
+			        .ariaLabel('Alert Dialog')
+			        .ok(sbiModule_translate.load('sbi.general.hide'))
+			    );
 	};
 	
 	

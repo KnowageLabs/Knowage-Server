@@ -1137,7 +1137,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/execute/sample/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String executeSampleCatalogFunctionById(@PathParam("id") int id) {
 		logger.debug("IN");
 		logger.debug("Received request for executing function with id [" + id + "]");
@@ -1204,7 +1204,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/execute/sample")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String executeSampleCatalogFunctionByLabel(@QueryParam("label") String label) {
 		logger.debug("IN");
 		logger.debug("Received request for executing function with label [" + label + "]");
@@ -1320,7 +1320,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/execute/new/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String executeCatalogFunctionById(String body, @PathParam("id") int id) {
 		logger.debug("IN");
 		logger.debug("Received request for executing function with id [" + id + "]");
@@ -1405,7 +1405,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/execute/new")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String executeCatalogFunctionByLabel(String body, @QueryParam("label") String label) {
 		logger.debug("IN");
 		logger.debug("Received request for executing function with label [" + label + "]");

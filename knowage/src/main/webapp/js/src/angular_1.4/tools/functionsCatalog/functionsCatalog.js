@@ -278,13 +278,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		var body = {};
 
 		if (!$scope.checkCorrectArguments()) {
-			var missingFieldsString = '<h2>Some fields are not filled<br/></h2>';
-			for (var i = 0; i < $scope.missingFields.length; i++) {
-				missingFieldsString = missingFieldsString
-						+ $scope.missingFields[i] + "<br/>";
-			}
-			$mdToast.show($mdToast.simple().textContent(missingFieldsString)
-					.position("top left").hideDelay(5000));
+			sbiModule_messaging.showAlertMessage(sbiModule_translate.load("sbi.functionscatalog.save.missingfield"), $scope.missingFields.join('<br>'));
 		} else {
 			if ($scope.saveOrUpdateFlag == "save") {
 				body = $scope.shownFunction;
@@ -613,7 +607,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	}
 
 	$scope.datasetPreview = function(datasetLabel) {
-		sbiModule_restServices.post("1.0/datasets", datasetLabel + "/content").then(function(dataset) {
+		sbiModule_restServices.get("1.0/datasets", datasetLabel + "/content").then(function(dataset) {
 			$scope.showDatasetPreviewDialog(dataset.data, datasetLabel);
 		});
 	}
@@ -656,9 +650,9 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			return $scope.functionsList_bck;
 		}
 	}
-	
+
 	// A REST service to obtain the functions already filtered by type is present in functionsCatalogResources.java
-	$scope.chipFilter = function(keyword) { 
+	$scope.chipFilter = function(keyword) {
 		$scope.functionsToDisplay = [];
 		for (var i = 0; i < $scope.functionsList_bck.length; i++) {
 			if ($scope.selectedType == 'All') {
