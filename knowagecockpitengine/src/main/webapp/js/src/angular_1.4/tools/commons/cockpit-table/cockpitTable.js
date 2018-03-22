@@ -47,7 +47,7 @@
 	            	 	 "center":"center",
 	            	  	"flex-end":"right"
                 	};
-                    
+
                     scope.tableId = Math.ceil(Math.random()*1000).toString();
 
                     //returning the column name for the sorting
@@ -358,7 +358,7 @@
             			scope.maxPageCount = 1;
             		}
 
-            		scope.settings.page = scope.settings.page > scope.maxPageCount ? scope.maxPageCount : scope.settings.page;
+            		scope.settings.page = scope.settings.page > scope.maxPageCount ? 1 : scope.settings.page;
                 }
 
                 scope.getTotalPages = function() {
@@ -395,14 +395,14 @@
             }
         };
     }])
-    
+
     .directive("onScroll", function ($window) {
 	    return {
 	    	restrict: "A",
             link: function(scope, elem, attr) {
 		        elem.bind("scroll", function() {
 		        	scope.unit = "px";
-		        	angular.element(document.querySelector( '#'+attr.onScroll ))[0].style.left = -(this.scrollLeft)+scope.unit; 
+		        	angular.element(document.querySelector( '#'+attr.onScroll ))[0].style.left = -(this.scrollLeft)+scope.unit;
 		        });
             }
 	    }
