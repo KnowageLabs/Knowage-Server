@@ -123,6 +123,13 @@ public class PersistedTableHelper {
 						logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 					}
 				}
+			} else if (fieldMetaTypeName.contains("BigInteger")) {
+				// only for primitive type is necessary to use setNull method if value is null
+				if (fieldValue == null || fieldValue.toString().isEmpty()) {
+					insertStatement.setNull(fieldIndex + 1, java.sql.Types.BIGINT);
+				} else {
+					insertStatement.setLong(fieldIndex + 1, Long.valueOf(fieldValue.toString()));
+				}
 			} else if (fieldMetaTypeName.contains("Integer")) {
 				// only for primitive type is necessary to use setNull method if value is null
 				if (fieldValue == null || fieldValue.toString().isEmpty()) {

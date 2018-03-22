@@ -6,7 +6,7 @@ measureRuleApp.config(['$mdThemingProvider', function($mdThemingProvider) {
 
 measureRuleApp.controller('measureRuleMasterController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_config','sbiModule_restServices','$q','$angularListDetail','$timeout',measureRuleMasterControllerFunction ]);
 measureRuleApp.controller('measureListController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_restServices','$angularListDetail','$timeout','$mdToast' ,'sbiModule_messaging',measureListControllerFunction ]);
-measureRuleApp.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'$mdDialog' ,'sbiModule_restServices','sbiModule_config','$q','$angularListDetail',measureDetailControllerFunction ]); 
+measureRuleApp.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'$mdDialog' ,'sbiModule_restServices','sbiModule_config','$q','$angularListDetail',measureDetailControllerFunction ]);
 
 function measureRuleMasterControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_config,sbiModule_restServices,$q,$angularListDetail,$timeout){
 	$scope.translate=sbiModule_translate;
@@ -75,7 +75,7 @@ function DialogSaveController($scope, $mdDialog,$mdToast,currentRule,originalRul
 	$scope.reusedAlias.sort();
 	$scope.newAlias.sort();
 	$scope.reusedPlaceholder.sort();
-	$scope.newPlaceholder.sort(); 
+	$scope.newPlaceholder.sort();
 
 	$scope.hide = function() {
 		$mdDialog.hide();
@@ -85,7 +85,7 @@ function DialogSaveController($scope, $mdDialog,$mdToast,currentRule,originalRul
 	};
 	$scope.save = function() {
 		sbiModule_restServices.promisePost("1.0/kpi","saveRule",currentRule)
-		.then(function(response){ 
+		.then(function(response){
 			$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.kpi.rule.save.success")).position('top').action($scope.translate.load("sbi.general.yes")).highlightAction(false).hideDelay(2000))
 			.then(function(){
 				$mdDialog.hide();
@@ -114,7 +114,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 		$scope.loadPlaceholder();
 		var postData={
 				rule:$scope.currentRule
-		} 
+		}
 		sbiModule_restServices.promisePost("1.0/kpi","queryPreview",postData)
 		.then(function(response){
 
@@ -130,7 +130,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 			deferred.reject();
 		});
 
-		return deferred.promise; 
+		return deferred.promise;
 	}
 
 	$scope.loadPreview=function(checkPlaceholder){
@@ -184,7 +184,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 	$scope.aliasList=[];
 	$scope.notAvailableAliasList=[];
 	$scope.placeholderList=[];
-	$scope.tipologiesType=[]; 
+	$scope.tipologiesType=[];
 
 
 	$scope.clearPreviewAndMetadata=function(prev,metdt){
@@ -202,7 +202,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 			var confirm = $mdDialog.confirm()
 			.title(sbiModule_translate.load("sbi.layer.modify.progress"))
 			.content(sbiModule_translate.load("sbi.layer.modify.progress.message.modify"))
-			.ariaLabel('cancel metadata') 
+			.ariaLabel('cancel metadata')
 			.ok(sbiModule_translate.load("sbi.general.yes"))
 			.cancel(sbiModule_translate.load("sbi.general.No"));
 			$mdDialog.show(confirm).then(function() {
@@ -212,16 +212,16 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 			});
 		}else{
 			$angularListDetail.goToList();
-		} 
+		}
 	};
 
 
-	$scope.saveMeasureFunction=function(){ 
+	$scope.saveMeasureFunction=function(){
 //		$scope.showCircular = true;
 		$scope.checkValiditymeasureRule().then(function(){
 			$mdDialog.show({
 				controller: DialogSaveController,
-				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/kpi/measureRuleSubController/saveDialogTemplate.jsp',  
+				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/kpi/measureRuleSubController/saveDialogTemplate.jsp',
 				clickOutsideToClose:true,
 				fullscreen: true,
 				locals:{
@@ -242,13 +242,13 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 		},function(response){
 //			$scope.showCircular = false;
 			if(response.hasOwnProperty("data")){
-				sbiModule_restServices.errorHandler(response.data); 
+				sbiModule_restServices.errorHandler(response.data);
 			}else if(response.hasOwnProperty("text") || response.hasOwnProperty("title")){
-				sbiModule_restServices.errorHandler(response.text,response.title); 
+				sbiModule_restServices.errorHandler(response.text,response.title);
 			}
 			return;
 		})
-	} 
+	}
 
 	$scope.preSaveControl=function(deferred){
 		sbiModule_restServices.promisePost("1.0/kpi","preSaveRule",$scope.currentRule)
@@ -258,7 +258,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 			if($scope.currentRule.ruleOutputs.length==0){
 				deferred.reject({text:sbiModule_translate.load("sbi.kpi.rule.presave.metadata.missing.text"),title:sbiModule_translate.load("sbi.kpi.rule.presave.metadata.missing")})
 			}
-			
+
 			//check if temporal attributes have value
 			for(var key in $scope.currentRule.ruleOutputs){
 				if($scope.currentRule.ruleOutputs[key].type.valueCd=="TEMPORAL_ATTRIBUTE" && $scope.currentRule.ruleOutputs[key].hierarchy==null){
@@ -281,7 +281,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 			if(response.data.warnings){
 				deferred.reject({text:response.data,title:"sbi.generic.warning"});
 			}
-			
+
 			deferred.resolve();
 		},function(response){
 			deferred.reject(response)
@@ -293,7 +293,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 			var confirm = $mdDialog.confirm()
 			.title($scope.translate.load("sbi.kpi.rule.presave.metadata.changed.title"))
 			.textContent($scope.translate.load("sbi.kpi.rule.presave.metadata.changed.text"))
-			.ariaLabel('Continue with saving') 
+			.ariaLabel('Continue with saving')
 			.ok($scope.translate.load("sbi.general.yes"))
 			.cancel($scope.translate.load("sbi.general.No"));
 			$mdDialog.show(confirm).then(function() {
@@ -302,12 +302,12 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 						$scope.preSaveControl(deferred);
 					},function(){
 						deferred.reject()
-					});   
+					});
 			});
 		}else{
 			$scope.preSaveControl(deferred);
 		}
-		return deferred.promise; 
+		return deferred.promise;
 	}
 
 	$scope.loadAliasList=function(ruleId,ruleVersion,deferred){
@@ -315,11 +315,11 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 		if(ruleId){
  			dataGet+="ruleId="+ruleId;
  			dataGet+="&ruleVersion="+ruleVersion;
- 		 
+
  		}
 
 		sbiModule_restServices.promiseGet("1.0/kpi","listAvailableAlias",dataGet)
-		.then(function(response){ 
+		.then(function(response){
 			angular.copy(response.data.available,$scope.aliasList);
 			angular.copy(response.data.notAvailable,$scope.notAvailableAliasList);
 			if(deferred){
@@ -340,7 +340,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 
 	$scope.loadPlaceholderList=function(){
 		sbiModule_restServices.promiseGet("1.0/kpi","listPlaceholder")
-		.then(function(response){ 
+		.then(function(response){
 			angular.copy(response.data,$scope.placeholderList);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data, "sbi.kpi.rule.load.placeholder.error");
@@ -351,7 +351,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 
 	$scope.ruleOutputsIndexOfColumName=function(cname){
 		for(var i=0;i<$scope.currentRule.ruleOutputs.length;i++){
-			if($scope.currentRule.ruleOutputs[i].alias==cname){
+			if($scope.currentRule.ruleOutputs[i].alias.toUpperCase()==cname.toUpperCase()){
 				return i;
 			}
 		}
@@ -360,7 +360,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 
 	$scope.placeholderIndexOfValue=function(cname){
 		for(var i=0;i<$scope.currentRule.placeholders.length;i++){
-			if($scope.currentRule.placeholders[i].name==cname){
+			if($scope.currentRule.placeholders[i].name.toUpperCase()==cname.toUpperCase()){
 				return i;
 			}
 		}
@@ -372,7 +372,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 
 		//add new Metadata
 		for(var index in  columns){
-			tmpMeas.push( columns[index].label);
+			tmpMeas.push(columns[index].label.toUpperCase());
 			if($scope.ruleOutputsIndexOfColumName(columns[index].label)==-1){
 				var isBlocked=false;
 				var type=$scope.tipologiesType[1];
@@ -387,12 +387,12 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 		}
 
 		//remove unused metadata
-		for(var index=0; index<$scope.currentRule.ruleOutputs.length;index++){ 
-			if(tmpMeas.indexOf($scope.currentRule.ruleOutputs[index].alias)==-1){
+		for(var index=0; index<$scope.currentRule.ruleOutputs.length;index++){
+			if(tmpMeas.indexOf($scope.currentRule.ruleOutputs[index].alias.toUpperCase())==-1){
 				$scope.currentRule.ruleOutputs.splice(index,1);
 				index--;
 			}
-		} 
+		}
 	};
 
 	$scope.aliasExtist=function(aliasName){
@@ -401,7 +401,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 				return true;
 			}
 		}
-		return false; 
+		return false;
 	}
  	$scope.aliasUsedByMeasure=function(aliasName){
  		for(var i=0;i<$scope.notAvailableAliasList.length;i++){
@@ -409,7 +409,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
  				return true;
  			}
  		}
- 		return false; 
+ 		return false;
  	}
 
 	$scope.getPlaceholder=function(plcName){
@@ -438,7 +438,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 						$scope.currentRule.placeholders.push(tmpPlcNew)
 					}else{
 						$scope.currentRule.placeholders.push(plcObject)
-					} 
+					}
 				}
 			}
 
@@ -461,7 +461,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 	$scope.translate=sbiModule_translate;
 
 	$scope.newMeasureFunction=function(){
-//		$scope.showCircularMetadata = true;	
+//		$scope.showCircularMetadata = true;
 		angular.copy($scope.emptyRule,$scope.currentRule);
 		angular.copy($scope.emptyRule,$scope.originalRule);
 		angular.copy($scope.emptyProperty,$scope.detailProperty);
@@ -473,25 +473,25 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 		$scope.loadRuleById(args.ruleId,args.ruleVersion);
 	});
 
-	$scope.loadRuleById=function(ruleId,ruleVersion,clone){ 
-		var rid; 
+	$scope.loadRuleById=function(ruleId,ruleVersion,clone){
+		var rid;
 		if(clone!=true){
 			rid=ruleId;
 		}
 		$scope.broadcastLoadAliasList(rid,ruleVersion,ruleVersion).then(
 				function(){
 					sbiModule_restServices.promiseGet("1.0/kpi",ruleId+"/"+ruleVersion+"/loadRule")
-					.then(function(response){ 
+					.then(function(response){
 						if(clone==true){
 							response.data.id=undefined;
-							response.data.name= sbiModule_translate.load("sbi.generic.copyof")+" "+response.data.name; 
+							response.data.name= sbiModule_translate.load("sbi.generic.copyof")+" "+response.data.name;
 						}
 						angular.copy(response.data,$scope.currentRule);
 						angular.copy(response.data,$scope.originalRule);
 						angular.copy($scope.emptyProperty,$scope.detailProperty);
 						$scope.detailProperty.dataSourcesIsSelected=true;
-						$scope.detailProperty.queryChanged=false;  
-						$scope.broadcastAlterDatasource(response.data.dataSourceId); 
+						$scope.detailProperty.queryChanged=false;
+						$scope.broadcastAlterDatasource(response.data.dataSourceId);
 						$angularListDetail.goToDetail();
 						$timeout(function(){
 							$scope.selectedTab.tab=0;
@@ -499,12 +499,12 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 						},0)
 					},function(response){
 						sbiModule_restServices.errorHandler(response.data, "sbi.kpi.rule.load.rule.error");
-					});  
+					});
 				});
 	};
 
 	$scope.measureClickFunction=function(item){
-//		$scope.showCircularMetadata = true;	
+//		$scope.showCircularMetadata = true;
 		$scope.loadRuleById(item.ruleId,item.ruleVersion,false);
 	};
 
@@ -512,8 +512,8 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 	$scope.measureRuleColumnsList=[
 	                               {"label":$scope.translate.load("sbi.kpi.measureName"),"name":"alias"},
 	                               {"label":$scope.translate.load("sbi.kpi.rulesName"),"name":"rule"},
-	                               {"label":$scope.translate.load("sbi.generic.category"),"name":"categoryName"},                           
-//	                               {"label":$scope.translate.load("sbi.generic.category"),"name":"category.translatedValueName"},                           
+	                               {"label":$scope.translate.load("sbi.generic.category"),"name":"categoryName"},
+//	                               {"label":$scope.translate.load("sbi.generic.category"),"name":"category.translatedValueName"},
 	                               {"label":$scope.translate.load("sbi.generic.author"),"name":"author"},
 	                               ];
 
@@ -543,10 +543,10 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 		var confirm = $mdDialog.confirm()
 		.title($scope.translate.load("sbi.kpi.measure.delete.title"))
 		.content($scope.translate.load("sbi.kpi.measure.delete.content"))
-		.ariaLabel('delete measure') 
+		.ariaLabel('delete measure')
 		.ok($scope.translate.load("sbi.general.yes"))
 		.cancel($scope.translate.load("sbi.general.No"));
-		$mdDialog.show(confirm).then(function() { 
+		$mdDialog.show(confirm).then(function() {
 			sbiModule_restServices.promiseDelete("1.0/kpi", item.ruleId + "/" + item.ruleVersion + "/deleteRule").then(
 					function(response){
 //						$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.catalogues.toast.deleted")).position('top').action(
@@ -555,7 +555,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 						$scope.loadmeasureRuleList();
 					},
 					function(response){
-						sbiModule_restServices.errorHandler(response.data, "sbi.kpi.rule.remove.ko"); 
+						sbiModule_restServices.errorHandler(response.data, "sbi.kpi.rule.remove.ko");
 					}); }, function() {
 						console.log("annulla")
 					});
@@ -564,11 +564,11 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 	$scope.cloneMeasure=function(item,event){
 		var confirm = $mdDialog.confirm()
 		.title($scope.translate.load("sbi.generic.confirmClone"))
-		.ariaLabel('clone measure') 
+		.ariaLabel('clone measure')
 		.ok($scope.translate.load("sbi.general.yes"))
 		.cancel($scope.translate.load("sbi.general.No"));
 		$mdDialog.show(confirm).then(function() {
-			$scope.loadRuleById(item.ruleId,item.ruleVersion,true);    
+			$scope.loadRuleById(item.ruleId,item.ruleVersion,true);
 		}, function() {
 			console.log("annulla")
 		});
@@ -585,7 +585,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 	},
 	{
 		label : sbiModule_translate.load('sbi.generic.clone'),
-		icon:'fa fa-copy' ,	 
+		icon:'fa fa-copy' ,
 		backgroundColor:'transparent',
 		action : function(item,event) {
 			$scope.cloneMeasure(item,event);

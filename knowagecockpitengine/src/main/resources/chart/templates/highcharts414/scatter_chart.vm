@@ -516,17 +516,9 @@
 		 },
 		#set ($counter = $datasettransformer.prepareDataForScater($rows,$columnMap,$isCockpitEngine,null).entrySet())
    		#if($chart.dateTime!="true")    
-   		categories:  [
-            #foreach($element in $counter)
-            	#set( $elementKey = $element.key )
-            	#set( $elementKey = $elementKey.replace("""", "\""") )
-            	"$elementKey",
-             
-    		#end
-        ],
+   	
             
-        min: 0.6, 
-        max: $counter.size()-1.5,
+
             
 		#end 
 		labels:{

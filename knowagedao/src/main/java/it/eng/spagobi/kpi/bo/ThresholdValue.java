@@ -19,6 +19,9 @@ package it.eng.spagobi.kpi.bo;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ThresholdValue implements Serializable {
 
 	private static final long serialVersionUID = 427614913244316316L;

@@ -62,17 +62,16 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 							for (var j = 0; j < category.length; j++) {
 								if(category[j].column == col.name){
-									obj["orderType"] = category[j].orderType;
-									obj["orderColumn"] = category[j].orderColumn;
+									obj["orderType"] = col.orderType;
+									obj["orderColumn"] = col.orderColumn;
 									newCategArray.push(obj)
 								}
-
-
+								}
 							}
-						}
 						else {
-							obj["orderType"] = category.orderType;
-							obj["orderColumn"] = category.orderColumn;
+
+							obj["orderColumn"] = col.orderColumn;
+							obj["orderType"] = col.orderColumn!="" && col.orderType=="" ? "ASC" : col.orderType;
 						}
 					}
 				}
@@ -581,23 +580,14 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 		var dsSel=ws.getUnaliasedSelection(ass.datasets);
 		if(Object.keys(dsSel).length>0){
-			var selection = encodeURIComponent(JSON.stringify(dsSel))
-			.replace(/'/g,"%27")
-			.replace(/"/g,"%22");
-			var associationsEncoded=encodeURIComponent(JSON.stringify(ass))
-			.replace(/'/g,"%27")
-			.replace(/"/g,"%22");
-			var datasets = encodeURIComponent(JSON.stringify(ws.getParameterFromDataset(ass.datasets)))
-			.replace(/'/g,"%27")
-			.replace(/"/g,"%22");
-			var nearRealTimeDs=encodeURIComponent(JSON.stringify(cockpitModule_nearRealtimeServices.getNearRealTimeDatasetFromList(ass.datasets)))
-			.replace(/'/g,"%27")
-			.replace(/"/g,"%22");
-
-			var param = "?associationGroup="+associationsEncoded+"&selections="+selection+"&datasets="+datasets+"&nearRealtime="+nearRealTimeDs;
+			var body = {};
+			body["associationGroup"] = ass;
+			body["selections"] = dsSel;
+			body["datasets"] = ws.getParameterFromDataset(ass.datasets);
+			body["nearRealtime"] = cockpitModule_nearRealtimeServices.getNearRealTimeDatasetFromList(ass.datasets);
 
 			sbiModule_restServices.restToRootProject();
-			sbiModule_restServices.promiseGet("2.0", "associativeSelections" + param)
+			sbiModule_restServices.promisePost("2.0/associativeSelections","",body)
 			.then(function(response){
 				var index = ws.currentSelectionContainsAss(response.data);
 				if(index==-1){
