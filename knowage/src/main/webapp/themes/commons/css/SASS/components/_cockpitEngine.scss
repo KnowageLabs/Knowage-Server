@@ -453,8 +453,16 @@
    		width: 90%;
    		height: 90%;
    		margin: 2% 5%;
+   		.htmlEditor {
+   			.CodeMirror {
+				height: 500px;
+			}
+   		}
 		.CodeMirror {
 			width: 100%;
+		}
+		.widgetId {
+			text-transform: none;
 		}
 	}    
 
@@ -1848,7 +1856,11 @@
 			}
 		}
 	}
-
+	button md-icon{
+		display: flex !important;
+		align-items: center;
+		justify-content: center;
+	}
 	
 }
 
@@ -1858,3 +1870,8 @@
 	}	
 }
 
+.hasCrossNavigation {
+	cockpit-image-widget {
+		cursor: pointer;
+	}
+}
