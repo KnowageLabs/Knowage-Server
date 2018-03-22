@@ -71,7 +71,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		
 	    $scope.reinit = function(){
-	    	console.log("reinit called! ");
 	    	var isNew = ($scope.layers.length == 0);
 	    	for (l in $scope.ngModel.content.layers){
 	    		//remove old layers 
@@ -135,8 +134,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    $scope.getLayers = function () {
 		    for (l in $scope.ngModel.content.layers){
 		    	var layerDef =  $scope.ngModel.content.layers[l];
-		    	var dsId = layerDef.dsId; // || layerDef.datasetId;
-		    	layerDef.columnSelectedOfDataset = $scope.getColumnSelectedOfDataset(dsId) || [];
 	    		$scope.setConfigLayer(layerDef.name, layerDef);
 	    		if (layerDef.type === 'DATASET'){
 	    			$scope.getFeaturesFromDataset(layerDef);
@@ -160,19 +157,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	if (!$scope.ngModel.content.mapId){
 	    		$scope.ngModel.content.mapId = 'map-' + Math.ceil(Math.random()*1000).toString();
 	    		console.log("*** New mapId:" ,$scope.ngModel.content.mapId );
-	    	}
-	    	
+	    	}	    	
 	    	
 	    	//set default indicator (first one) for each layer
 	    	for (l in $scope.ngModel.content.layers){
-	    		for ( p in $scope.ngModel.content.layers[l].columnSelectedOfDataset){
-	    			var layerId = $scope.ngModel.content.layers[l].dsId; // || $scope.ngModel.content.layers[l].datasetId;
-	    			if ($scope.ngModel.content.layers[l].columnSelectedOfDataset[p].properties.showMap){
-	    				$scope.ngModel.content.layers[l].columnSelectedOfDataset[p].properties.defaultIndicator = $scope.ngModel.content.layers[l].columnSelectedOfDataset[p].aliasToShow;	
+	    		var columns = $scope.getColumnSelectedOfDataset($scope.ngModel.content.layers[l].dsId);
+	    		for ( c in columns){
+	    			if (columns[c].properties.showMap){
+	    				$scope.ngModel.content.layers[l].defaultIndicator = columns[c].aliasToShow;	
 	    				break;
 	    			}
 	    		}
-	    	}	    		
+	    	}	
 	    }
 	    
 	    $scope.getColumnSelectedOfDataset = function(dsId) {
@@ -191,8 +187,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             	//zoom action
 //        	    if (Number.isInteger(e.target.getZoom())) {
 //        	    }
-        	    $scope.ngModel.content.zoom = e.target.getZoom();
-        	    $scope.ngModel.content.center = e.target.getCenter();
+        	    $scope.ngModel.content.currentView.zoom = e.target.getZoom();
+        	    $scope.ngModel.content.currentView.center = e.target.getCenter();
             });
 
 	    }
@@ -233,7 +229,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	            var geometry = feature.getGeometry();
     	            var props = feature.getProperties();
     	            var coordinate = geometry.getCoordinates();
-    	            var config = $scope.getConfigLayer(layer.name);
+    	            var config = $scope.getColumnSelectedOfDataset(layer.dsId);
     	            var text = "";
     	            for (var p in props){
     	            	if ($scope.isDisplayableProp(p, config))
@@ -261,15 +257,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 	    $scope.isDisplayableProp = function (p, config){
-	    	for (c in config.columnSelectedOfDataset){
-	    		if (p == config.columnSelectedOfDataset[c].aliasToShow && config.columnSelectedOfDataset[c].properties.showDetails){
+	    	for (c in config){
+	    		if (p == config[c].aliasToShow && config[c].properties.showDetails){
 	    			return true;
 	    		}
 	    	}
 	    	return false;
 	    }
-
-	  
 	   
 	    var styleCache = {};
 	    $scope.layerStyle = function(feature, resolution){
@@ -390,16 +384,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		var selectedMeasure = null;
     		var columnsForData = [];
     		
-    		for (f in layerDef.columnSelectedOfDataset){
-    			var tmpField = layerDef.columnSelectedOfDataset[f];
+    		var columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
+	    	
+    		for (f in columnsForData){
+    			var tmpField = columnsForData[f];
     			if (tmpField.fieldType == "SPATIAL_ATTRIBUTE")
     				geoColumn = tmpField.name;
     			else if (tmpField.properties.defaultIndicator && tmpField.properties.showMap) 
     				selectedMeasure = tmpField.aliasToShow;
-    			else if (!tmpField.properties.showDetails && !tmpField.properties.showMap)
-    				continue;
-    			
-    			columnsForData.push(tmpField);
+//    			else if (!tmpField.properties.showDetails && !tmpField.properties.showMap)
+//    				continue;
+//    			
+//    			columnsForData.push(tmpField);
     		}    	
     		
     		var model = {content: {columnSelectedOfDataset: columnsForData }};
@@ -422,6 +418,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					//add decoration to layer element
 					layer.targetDefault = layerDef.targetDefault || false;
 					layer.name = layerDef.name;
+					layer.dsId = layerDef.dsId;
 					layer.setZIndex(layerDef.order*1000);
 					$scope.map.addLayer(layer); 			//add layer to ol.Map
 					$scope.addLayer(layerDef.name, layer);	//add layer to internal object
