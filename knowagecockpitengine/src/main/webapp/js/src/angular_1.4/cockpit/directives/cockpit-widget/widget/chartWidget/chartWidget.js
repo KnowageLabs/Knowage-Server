@@ -1158,8 +1158,8 @@ function setAggregationsOnChartEngine(wconf){
 					groupby['alias'] = subs;
 					groupby['aliasToShow'] = subs;
 					groupby['fieldType'] = "ATTRIBUTE";
-					obj['orderType'] = chartCategory[i].orderType;
-					obj['orderColumn'] = chartCategory[i].orderColumn;
+					obj['orderType'] = chartCategory.orderType;
+					obj['orderColumn'] = chartCategory.orderColumn;
 					aggregations.push(groupby);
 				}
 			};
