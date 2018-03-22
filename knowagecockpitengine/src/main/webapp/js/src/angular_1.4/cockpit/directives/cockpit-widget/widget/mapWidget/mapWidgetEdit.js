@@ -202,7 +202,7 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
   	
   	$scope.addToDatasets = function() {
   		$scope.newModel.dataset = {};
-  		if ($scope.newModel.content.layers.length >= 1) {
+  		if ($scope.newModel.content.layers.length > 1) {
   			$scope.newModel.dataset.dsId = [];
   			for (var k in $scope.newModel.content.layers){
   				$scope.newModel.dataset.dsId.push($scope.newModel.content.layers[k].dsId);
