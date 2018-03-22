@@ -200,12 +200,25 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 	    })
   	}
   	
+  	$scope.addToDatasets = function() {
+  		$scope.newModel.dataset = {};
+  		if ($scope.newModel.content.layers.length >= 1) {
+  			$scope.newModel.dataset.dsId = [];
+  			for (var k in $scope.newModel.content.layers){
+  				$scope.newModel.dataset.dsId.push($scope.newModel.content.layers[k].dsId);
+  			}
+  		} else {
+  			$scope.newModel.dataset.dsId = $scope.newModel.content.layers[0].dsId;
+  		}
+  	}
+  	
   	
   	//MAIN DIALOG BUTTONS
 	$scope.saveConfiguration=function(){
 		for(var c in $scope.newModel.content.layers){
 			if($scope.newModel.content.layers[c].expanded) delete $scope.newModel.content.layers[c].expanded;
 		}
+		$scope.addToDatasets();
 		 mdPanelRef.close();
 		 angular.copy($scope.newModel,model);
 		 finishEdit.resolve();
