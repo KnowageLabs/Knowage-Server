@@ -22,18 +22,21 @@
 		</div>
 	</div> -->
 
- 	<div layout="column" ng-repeat="ind in ngModel.content.targetLayersConf">
+
+	<div ng-repeat="layer in ngModel.content.layers">
 		<div class="indicatorOptions" layout="column">
-			<div class="indicatorLabel" ng-click="toggleLayer(ind.name)" layout="row" layout-align="start center" style="padding:8px;cursor:pointer;background-color: #f1f1f1;font-size:.8rem;">
-				<md-icon md-font-icon="fa fa-eye" ng-if="getLayerVisibility(ind.name)"></md-icon>
-			    <md-icon md-font-icon="fa fa-eye-slash" ng-if="!getLayerVisibility(ind.name)"></md-icon>
-			    <span flex>{{ind.name}}</span>
+			<div class="indicatorLabel"  layout="row" layout-align="start center" ng-click="toggleLayerExpanse(layer)">
+				<md-icon md-font-icon="fa fa-eye" ng-if="getLayerVisibility(layer.name)" ng-click="toggleLayer($event,layer.name)"></md-icon>
+			    <md-icon md-font-icon="fa fa-eye-slash" ng-if="!getLayerVisibility(layer.name)" ng-click="toggleLayer($event,layer.name)"></md-icon>
+			    <span flex>{{layer.alias}}</span>
+			    <md-icon md-font-icon="fa fa-chevron-down" ng-if="!layer.expanded"></md-icon>
+			    <md-icon md-font-icon="fa fa-chevron-up" ng-if="layer.expanded"></md-icon>
 			</div>
-			<md-radio-group   ng-model="ind.defaultIndicator" style="padding:8px;" ng-if="getLayerVisibility(ind.name)">
- 	   		<md-radio-button ng-repeat="dettInd in ind.indicators"  ng-if="getIndicatorVisibility(ind.name,dettInd.label)" ng-click="thematizeMeasure(ind.name, dettInd.label)"  class="md-primary" ng-value="dettInd.label" style="font-size:.7rem;" >
-	 	   		{{dettInd.label}}
-	 	   	</md-radio-button>
-    	</md-radio-group>
+			<md-radio-group style="padding:8px;" ng-model="layer.defaultIndicator" ng-if="layer.expanded">
+	 	   		<md-radio-button ng-repeat="ind in ngModel.content.columnSelectedOfDataset[layer.dsId]" ng-if="ind.properties.showMap" ng-click="thematizeMeasure(layer.name, ind.label)"  class="md-primary" ng-value="ind.name" style="font-size:.7rem;" >
+		 	   		{{ind.aliasToShow}}
+		 	   	</md-radio-button>
+	    	</md-radio-group>
 		</div>
 	</div>
 </md-sidenav>

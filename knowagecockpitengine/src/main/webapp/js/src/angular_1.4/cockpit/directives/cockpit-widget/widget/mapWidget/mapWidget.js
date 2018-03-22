@@ -512,12 +512,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    
 	    
 	    //control panel events
-	    $scope.toggleLayer = function(n){
+	    $scope.toggleLayer = function(e,n){
+	    	e.stopPropagation();
 	    	var l = $scope.getLayerByName(n);
 	    	if (!l) return; //do nothing
 	    	var toggle = !l.getVisible();
 	    	l.setVisible(!l.getVisible());
 	    }
+	    
+	    $scope.toggleLayerExpanse = function(layer){
+	    	layer.expanded = !layer.expanded;
+	    }	
 
 	    $scope.getLayerVisibility = function(n){
 	    	var l = $scope.getLayerByName(n);

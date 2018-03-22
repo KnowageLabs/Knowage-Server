@@ -5,6 +5,9 @@
     transition-duration: $duration;
 }
 .kn-cockpit {
+	md-icon {
+		text-align: center;
+	}
     margin: 0;
     padding: 0;
     height: 100%;
@@ -133,6 +136,19 @@
     		}
     		&:hover {
     			background-color: darken($secondaryColor,15%);
+    		}
+    	}
+    }
+
+    .mapOptionsSidenav {
+    	.indicatorOptions {
+    		.indicatorLabel {
+    			padding:8px;
+    			outline: none;
+	    		cursor:pointer;
+	    		background-color: #f1f1f1;
+	    		font-size: $baseFontSize;
+	    		border-bottom: 1px solid #ccc;
     		}
     	}
     }
