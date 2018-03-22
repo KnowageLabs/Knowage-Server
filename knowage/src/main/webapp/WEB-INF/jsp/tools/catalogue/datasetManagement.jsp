@@ -629,10 +629,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 								<div flex=100>
 									<md-input-container class="md-block">
-									    <label>{{translate.load("sbi.ds.sparql.url")}}</label>
-										<input ng-model="selectedDataSet.sparqlUrl" ng-required = "selectedDataSet.dsTypeCd=='SPARQL'" ng-change="setFormDirty()" type="text">
+									    <label>{{translate.load("sbi.ds.sparql.endpoint")}}</label>
+										<input ng-model="selectedDataSet.sparqlEndpoint" ng-required = "selectedDataSet.dsTypeCd=='SPARQL'" ng-change="setFormDirty()" type="text">
 										
-										<div ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='SPARQL' && !selectedDataSet.sparqlUrl">
+										<div ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='SPARQL' && !selectedDataSet.sparqlEndpoint">
 				       						 <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 			       						</div>
 									</md-input-container>
@@ -646,7 +646,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									</md-input-container>
 								</div>
 							
-								<label>{{translate.load("sbi.ds.query")}}</label>
+								<label>{{translate.load("sbi.ds.sparql.query")}}</label>
 								<div flex=100>								
 									<md-input-container class="md-block">									
 										<textarea ng-required="selectedDataSet.dsTypeCd=='SPARQL'" ng-model="selectedDataSet.sparqlQuery" ui-codemirror="{ onLoad : codemirrorLoaded }"
