@@ -156,7 +156,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	
 	    	if (!$scope.ngModel.content.mapId){
 	    		$scope.ngModel.content.mapId = 'map-' + Math.ceil(Math.random()*1000).toString();
-	    		console.log("*** New mapId:" ,$scope.ngModel.content.mapId );
 	    	}	    	
 	    	
 	    	//set default indicator (first one) for each layer
@@ -264,119 +263,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
 	    	return false;
 	    }
-	   
-	    var styleCache = {};
-	    $scope.layerStyle = function(feature, resolution){
-//	          var size = feature.get('features').length;
-			var props  = feature.getProperties();
-			var parentLayer = feature.get('parentLayer') 
-			var configThematizer = $scope.getConfigLayer(parentLayer).analysisConf || {};
-			var configMarker = $scope.getConfigLayer(parentLayer).markerConf || {};
-	      	var value =  props[cockpitModule_mapServices.getActiveIndicator()] || 0;
-			var style;
-			var useCache = false; //cache isn't use for analysis, just with fixed marker
-			
-			switch (configThematizer.defaultAnalysis) {
-			case 'choropleth':
-				style = cockpitModule_mapServices.getChoroplethStyles(value, props, configThematizer.choropleth, configMarker);
-				break;
-			case 'proportionalSymbol':
-				style = cockpitModule_mapServices.getProportionalSymbolStyles(value, props, configThematizer.proportionalSymbol, configMarker);
-				break;
-			default:
-				style = cockpitModule_mapServices.getOnlyMarkerStyles(props, configMarker);
-				useCache = true;
-			}
-			
-			if (useCache && !styleCache[parentLayer]) {
-		          styleCache[parentLayer] = style;
-		          return styleCache[parentLayer] ;
-			} else {
-				return style;
-			}
-	    }
-	    
-		$scope.getFeaturesDetails = function(geoColumn, selectedMeasure, config, values){
-			if (values != undefined){
-				var geoFieldName;
-				var geoFieldValue;
-				var featuresSource = new ol.source.Vector();
-	
-				for(var k=0; k < values.metaData.fields.length; k++){
-					var field = values.metaData.fields[k];
-					if (field.header === geoColumn){
-						geoFieldName = field.name;
-						break;
-					}
-				}
-				if (geoFieldName){
-					for(var r=0; r < values.rows.length; r++){
-						//get coordinates
-						var lonlat;
-						var row = values.rows[r];
-						geoFieldValue = row[geoFieldName].trim();
-						if (geoFieldValue.indexOf(" ") > 0){
-							lonlat = geoFieldValue.split(" ");
-						}else if (geoFieldValue.indexOf(",")){
-							lonlat = geoFieldValue.split(",");
-						}else{
-							sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.lonLatError').replace("{0}",geoColumn).replace("{1}",geoFieldValue), 'Title', 0);
-							console.log("Error getting longitude and latitude from column value ["+ geoColumn +"]. Check the dataset and its metadata.");
-							return null;
-						}
-						if (lonlat.length != 2){
-							sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.lonLatError').replace("{0}",geoColumn).replace("{1}",geoFieldValue), 'Title', 0);
-							console.log("Error getting longitude and latitude from column value ["+ geoColumn +"]. Check the dataset and its metadata.");
-							return null;
-						}
-						if (config.analysisConf && config.analysisConf.defaultAnalysis == 'proportionalSymbol'){							
-							//get config for thematize
-							if (!selectedMeasure) selectedMeasure = config.defaultIndicator;
-							cockpitModule_mapServices.setActiveIndicator(selectedMeasure);
-							if (selectedMeasure){
-								if (!cockpitModule_mapServices.getCacheProportionalSymbolMinMax()) cockpitModule_mapServices.setCacheProportionalSymbolMinMax({}); //just at beginning
-								if (!cockpitModule_mapServices.getCacheProportionalSymbolMinMax().hasOwnProperty(selectedMeasure)){
-									cockpitModule_mapServices.loadIndicatorMaxMinVal(selectedMeasure, values);
-								}
-							}
-						}
-						
-						//set ol objects
-						var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
-						var feature = new ol.Feature();  
-				        var coordinate = transform([parseFloat(lonlat[0].trim()), parseFloat(lonlat[1].trim())]);
-				        var geometry = new ol.geom.Point(coordinate);
-				        feature.setGeometry(geometry);
-//				        feature.setStyle($scope.layesrStyle);
-				        $scope.addDsPropertiesToFeature(feature, row, values.metaData.fields);
-				       //at least add the layer owner
-				        feature.set("parentLayer",config.name);
-				        featuresSource.addFeature(feature);
-					}
-					
-					return featuresSource;
-				}
-			}
-			return new ol.source.Vector();
-		}
-	    
-		$scope.addDsPropertiesToFeature = function (f, row, meta){
-			//add columns value like properties
-			for (c in row){
-				f.set($scope.getHeaderByColumnName(c, meta), row[c]);
-			}
-		}
-		
-		$scope.getHeaderByColumnName = function(cn, fields) {
-			var toReturn = cn;
-			
-			for (n in fields){
-				if (fields[n] && fields[n].name === cn){
-					return fields[n].header;
-				}
-			}
-			return toReturn;
-		}
 		
 	    $scope.getFeaturesFromDataset = function(layerDef){
     		//prepare object with metadata for desiderata dataset columns
@@ -392,10 +278,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     				geoColumn = tmpField.name;
     			else if (tmpField.properties.defaultIndicator && tmpField.properties.showMap) 
     				selectedMeasure = tmpField.aliasToShow;
-//    			else if (!tmpField.properties.showDetails && !tmpField.properties.showMap)
-//    				continue;
-//    			
-//    			columnsForData.push(tmpField);
     		}    	
     		
     		var model = {content: {columnSelectedOfDataset: columnsForData }};
@@ -403,17 +285,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		var layer =  new ol.layer.Vector();
 
     		//get the dataset columns values
-    		var dsId = layerDef.dsId; // || layerDef.datasetId;
-	    	cockpitModule_datasetServices.loadDatasetRecordsById(dsId, undefined, undefined, undefined, undefined, model).then(
+	    	cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.dsId, undefined, undefined, undefined, undefined, model).then(
 
 	    		function(allDatasetRecords){
-					var featuresSource = $scope.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, allDatasetRecords);
+					var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, allDatasetRecords);
 					if (featuresSource == null){ 
 						return;
 					}
-
+					cockpitModule_mapServices.setActiveConf(layerDef.name, layerDef);
 			    	var layer = new ol.layer.Vector({source: featuresSource,
-			    									 style: $scope.layerStyle});
+			    									 style: cockpitModule_mapServices.layerStyle});
 
 					//add decoration to layer element
 					layer.targetDefault = layerDef.targetDefault || false;
@@ -424,41 +305,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.addLayer(layerDef.name, layer);	//add layer to internal object
 					$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
 					$scope.setValuesLayer(layerDef.name, allDatasetRecords); //add values to internal object
-					$scope.updateCoordinatesAndZoom(layer, true);
+					cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, layer, true);
 
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.dsId+"] "); 
 				sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.datasetLoadingError').replace("{0}",layerDef.dsId), 'Title', 3000);
 			});	
     	}
-	      
-	    $scope.updateCoordinatesAndZoom = function(l, setValues){
-	    	var coord;
-	    	var zoom;
-	    	
-	    	if ($scope.ngModel.content.currentView.center[0] == 0 && $scope.ngModel.content.currentView.center[1] == 0){
-		    	if (l.getSource().getFeatures().length>0 && l.getSource().getFeatures()[0].getGeometry().getType() == 'Point')
-		    		coord = l.getSource().getFeatures()[0].getGeometry().getCoordinates();
-				else
-					coord = l.getSource().getFeatures()[0].getGeometry().getCoordinates()[0][0][0];
-		    	
-		    	if(l.getSource().getFeatures().length>35){
-	    			zoom = 4;
-				}else{
-					zoom = 5;
-				}
-	    	
-		    	//update coordinates and zoom within the template
-		    	$scope.ngModel.content.currentView.center = coord;
-		    	$scope.ngModel.content.currentView.zoom = zoom;
-		    	
-		    	if (setValues){
-		    		$scope.map.getView().setCenter(coord);
-		    		$scope.map.getView().setZoom(zoom);
-		    	} 		
-	    	}
-	    }
-	    
+
 	    $scope.createMap = function (){
 	    	$scope.initializeTemplate();
 	    	
@@ -468,7 +322,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	//setting coordinates (from the first layer if they aren't setted into the template)
             if ($scope.ngModel.content.currentView.center[0] == 0 && $scope.ngModel.content.currentView.center[1] == 0 && $scope.layers.length > 0){
 	    		var tmpLayer = $scope.layers[0].layer;
-	    		$scope.updateCoordinatesAndZoom(tmpLayer, false);
+	    		cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, tmpLayer, false);
 
 	    		$scope.addViewEvents();
 	    		$scope.addMapEvents(overlay);
