@@ -71,7 +71,8 @@
 		        </md-tab>
 		        
 		        <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
-		   			<multi-dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsIdArray)"></dataset-selector>  	
+		   			<multi-dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsIdArray)">  	
+		   			</multi-dataset-selector>
 		     	</md-tab>
 		     	
 				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}">
@@ -83,10 +84,10 @@
 	    </md-content>
     </md-card-content>
     <md-card-actions layout="row"  layout-align="end center">
-	    <md-button ng-click="cancelConfiguration()" >
+	    <md-button class="md-raised" ng-click="cancelConfiguration()" >
 	     {{translate.load('sbi.generic.cancel')}}
 	    </md-button>
-	    <md-button ng-click="saveConfiguration()"  >
+	    <md-button class="md-raised md-primary" ng-click="saveConfiguration()"  >
 	     {{translate.load('sbi.generic.save')}}
 	    </md-button>
     </md-card-actions>

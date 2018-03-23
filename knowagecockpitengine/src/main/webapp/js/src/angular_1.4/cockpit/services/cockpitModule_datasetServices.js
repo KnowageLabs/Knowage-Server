@@ -1416,7 +1416,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	    		break;
 	    	}
 		}
-		
     	return (numbersModel.prefix||'') + output + (numbersModel.suffix||'');
 	}
 
