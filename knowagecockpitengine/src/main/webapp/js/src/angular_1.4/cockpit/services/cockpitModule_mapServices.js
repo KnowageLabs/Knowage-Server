@@ -21,9 +21,9 @@
 		ms.getFeaturesDetails = function(geoColumn, selectedMeasure, config, values){
 			if (values != undefined){
 				var geoFieldName;
-				var geoFieldValue;
-				var featuresSource = new ol.source.Vector();
-	
+				var geoFieldValue;			
+				var	featuresSource = new ol.source.Vector();
+				 
 				for(var k=0; k < values.metaData.fields.length; k++){
 					var field = values.metaData.fields[k];
 					if (field.header === geoColumn){
@@ -100,6 +100,7 @@
 		}
 		
 	    var styleCache = {};
+	    var currentResolution;
 	    ms.layerStyle = function(feature, resolution){
 //	          var size = feature.get('features').length;
 			var props  = feature.getProperties();
@@ -111,6 +112,11 @@
 			var style;
 			var useCache = false; //cache isn't use for analysis, just with fixed marker
 			
+			 if (resolution != currentResolution) {
+		          ms.calculateClusterInfo(resolution);
+		          currentResolution = resolution;
+		     }
+			 
 			switch (configThematizer.defaultAnalysis) {
 			case 'choropleth':
 				style = ms.getChoroplethStyles(value, props, configThematizer.choropleth, configMarker);
@@ -129,6 +135,26 @@
 			} else {
 				return style;
 			}
+	    }
+	    
+	    var maxFeatureCount, vector;
+	    ms.calculateClusterInfo = function (resolution) {
+//	        maxFeatureCount = 0;
+//	        var features = vector.getSource().getFeatures();
+//	        var feature, radius;
+//	        for (var i = features.length - 1; i >= 0; --i) {
+//	          feature = features[i];
+//	          var originalFeatures = feature.get('features');
+//	          var extent = ol.extent.createEmpty();
+//	          var j, jj;
+//	          for (j = 0, jj = originalFeatures.length; j < jj; ++j) {
+//	            ol.extent.extend(extent, originalFeatures[j].getGeometry().getExtent());
+//	          }
+//	          maxFeatureCount = Math.max(maxFeatureCount, jj);
+//	          radius = 0.25 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent)) /
+//	              resolution;
+//	          feature.set('radius', radius);
+//	        }
 	    }
 		
 		ms.getProportionalSymbolStyles = function(value, props, config){

@@ -124,18 +124,42 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 	};
 
-	this.loadDatasetRecords = function(ngModel, page, itemPerPage,columnOrdering, reverseOrdering){
+//	this.loadDatasetRecords = function(ngModel, page, itemPerPage,columnOrdering, reverseOrdering){
+	this.loadDatasetRecords = function(ngModel, options){
+		if (!options) options = {};
+		var page = options.page;
+		var itemPerPage = options.itemPerPage;
+		var columnOrdering = options.columnOrdering;
+		var reverseOrdering = options.reverseOrdering;
+		var dsLabel = options.label;
+		var dsId;
+		
 		if(ngModel.dataset!=undefined && ngModel.dataset.dsId!=undefined){
-			var dataset = cockpitModule_datasetServices.getDatasetById(ngModel.dataset.dsId);
+//			var dataset = cockpitModule_datasetServices.getDatasetById(ngModel.dataset.dsId);
+			var dataset;
+			if (!Array.isArray(ngModel.dataset.dsId)){
+				dataset = cockpitModule_datasetServices.getDatasetById(ngModel.dataset.dsId);
+			}else{
+				for (ds in ngModel.dataset.dsId){
+					var tmpDS = cockpitModule_datasetServices.getDatasetById(ngModel.dataset.dsId[ds]);
+					if (tmpDS.label == dsLabel) {
+						dataset = tmpDS;
+						break;
+					}
+				}
+			}
+			dsId = dataset.id.dsId;
 
 			//if it's a realtime dataset don't use backend filter on charts
 			if (dataset.isRealtime && ngModel.content && ngModel.content.filters) {
 				var ngModelCopy = {};
 				angular.copy(ngModel, ngModelCopy);
 				ngModelCopy.content.filters = [];
-				return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy);
+//				return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy);
+				return cockpitModule_datasetServices.loadDatasetRecordsById(dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy);
 			}
-			return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModel);
+//			return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModel);
+			return cockpitModule_datasetServices.loadDatasetRecordsById(dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModel);
 		}
 		return null ;
 	}
@@ -219,7 +243,20 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:null,nature:nature});
 			}else{
 				if (config && config.dataset && config.dataset.dsId){
-					var dataset = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId);
+					
+//					var dataset = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId);
+					var dataset;
+					if (!Array.isArray(config.dataset.dsId)){
+						dataset = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId);
+					}else{
+						for (ds in config.dataset.dsId){
+							var tmpDS = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId[ds]);
+							if (tmpDS.label == options.label) {
+								dataset = tmpDS;
+								break;
+							}
+						}
+					}
 					//for realtime dataset the associative selections are managed client side
 					if (dataset.isRealtime && nature == 'selections'){
 						var selections = cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
@@ -235,7 +272,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					}
 				}
 
-				var dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering);
+//				var dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering);
+				var dsRecords = this.loadDatasetRecords(config,options);
 				if(dsRecords == null){
 					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
 				}else{
@@ -253,7 +291,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 					dsRecords.then(function(data){
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
-						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,changedChartType:changedChartType, "chartConf":data});
+						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,changedChartType:changedChartType, "chartConf":data, options:options});
 					}, function(){
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
 						console.log("Error retry data");

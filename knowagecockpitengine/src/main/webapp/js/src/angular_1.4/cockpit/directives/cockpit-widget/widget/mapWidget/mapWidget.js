@@ -64,12 +64,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.values = [];  //layers with values
 		$scope.configs = []; //layers with configuration
 
-
 		$scope.getTemplateUrl = function(template){
 	  		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
 	  	}
 
-		
 	    $scope.reinit = function(){
 	    	var isNew = ($scope.layers.length == 0);
 	    	for (l in $scope.ngModel.content.layers){
@@ -99,8 +97,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}, 500);
 		}
 
-	    $scope.refresh = function(element,width,height, data,nature,associativeSelection) {
-	    	$scope.reinit();
+	    $scope.refresh = function(element,width,height, data, nature, associativeSelection, changedChartType, chartConf, options) {
+    		var dsLabel = (Array.isArray(options.label)) ? options.label[0] : options.label; //on delete of selections options is an array !!!
+    		$scope.createLayerWithData(dsLabel, data);
 	    }
 	    
 	    $scope.getOptions =function(){
@@ -169,6 +168,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		}
 	    	}	
 	    }
+	    
+	    $scope.createLayerWithData = function(label, data){
+	    	//prepare object with metadata for desiderata dataset columns
+	    	var geoColumn = null;
+    		var selectedMeasure = null;
+    		var columnsForData = [];
+    		var layerDef =  $scope.getConfigLayer(label);
+    		var columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
+    		
+    		//remove old layer
+    		var previousLayer = $scope.getLayerByName(label);
+    		if (previousLayer) $scope.map.removeLayer(previousLayer); //ol obj
+    		$scope.removeLayer(label);
+    		
+    		for (f in columnsForData){
+    			var tmpField = columnsForData[f];
+    			if (tmpField.fieldType == "SPATIAL_ATTRIBUTE")
+    				geoColumn = tmpField.name;
+    			else if (tmpField.properties.defaultIndicator && tmpField.properties.showMap) 
+    				selectedMeasure = tmpField.aliasToShow;
+    		}  
+    		
+    		var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, data);
+			if (featuresSource == null){ 
+				return;
+			}
+			cockpitModule_mapServices.setActiveConf(layerDef.name, layerDef);
+			var layer;
+			var cluster = false; //recuperarlo da config
+			if (cluster){
+				var clusterSource = new ol.source.Cluster({source: featuresSource,	
+														   distance: 40 //dinamicizzare
+														  });
+				layer =  new ol.layer.Vector({source: clusterSource,
+										  	  style: cockpitModule_mapServices.layerStyle
+											});
+			}else{
+				layer = new ol.layer.Vector({source: featuresSource,
+	    									 style: cockpitModule_mapServices.layerStyle
+	    									});
+			}
+
+			//add decoration to layer element			
+			layer.name = layerDef.name;
+			layer.dsId = layerDef.dsId;
+			layer.setZIndex(layerDef.order*1000);
+			$scope.map.addLayer(layer); 			//add layer to ol.Map
+			$scope.addLayer(layerDef.name, layer);	//add layer to internal object
+			$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
+			$scope.setValuesLayer(layerDef.name, data); //add values to internal object
+			cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, layer, true);	
+	    }
+	    
 	    
 	    $scope.getColumnSelectedOfDataset = function(dsId) {
 	    	for (di in $scope.ngModel.content.columnSelectedOfDataset){
@@ -286,27 +338,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     		//get the dataset columns values
 	    	cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.dsId, undefined, undefined, undefined, undefined, model).then(
-
 	    		function(allDatasetRecords){
-					var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, allDatasetRecords);
-					if (featuresSource == null){ 
-						return;
-					}
-					cockpitModule_mapServices.setActiveConf(layerDef.name, layerDef);
-			    	var layer = new ol.layer.Vector({source: featuresSource,
-			    									 style: cockpitModule_mapServices.layerStyle});
-
-					//add decoration to layer element
-					layer.targetDefault = layerDef.targetDefault || false;
-					layer.name = layerDef.name;
-					layer.dsId = layerDef.dsId;
-					layer.setZIndex(layerDef.order*1000);
-					$scope.map.addLayer(layer); 			//add layer to ol.Map
-					$scope.addLayer(layerDef.name, layer);	//add layer to internal object
-					$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
-					$scope.setValuesLayer(layerDef.name, allDatasetRecords); //add values to internal object
-					cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, layer, true);
-
+	    			$scope.createLayerWithData(layerDef.name, allDatasetRecords);
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.dsId+"] "); 
 				sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.datasetLoadingError').replace("{0}",layerDef.dsId), 'Title', 3000);
@@ -361,7 +394,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.map.renderSync();
 	    }
 	    
-	    
 	    //control panel events
 	    $scope.toggleLayer = function(e,n){
 	    	e.stopPropagation();
@@ -385,7 +417,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	for (lpos in  $scope.ngModel.content.layers){
 	    		if ( $scope.ngModel.content.layers[lpos].name == l)
 		    	for (var i in $scope.ngModel.content.layers[lpos].indicators){
-//		    		if ($scope.ngModel.content.targetLayersConf[lpos].indicators[i].name == n){
 		    		if ($scope.ngModel.content.layers[lpos].indicators[i].label == n){
 		    			return $scope.ngModel.content.layers[lpos].indicators[i].showMap || false;
 		    		}
@@ -430,6 +461,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    
 	    $scope.addLayer = function(n,l){
 	    	$scope.layers.push({"name": n,"layer":l});
+	    }
+	    
+	    $scope.removeLayer = function(n){
+	    	for (l in $scope.layers){
+	    		if ($scope.layers[l].name == n)
+	    			$scope.layers.splice(l,1);
+	    	}
 	    }
 	    
 	    $scope.removeLayers = function(){

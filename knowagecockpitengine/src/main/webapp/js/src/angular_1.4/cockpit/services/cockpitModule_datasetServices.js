@@ -497,9 +497,19 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		var params="?";
 		var bodyString = "{";
+
+//		ngModel.content.columnSelectedOfDataset = (Array.isArray(ngModel.content.columnSelectedOfDataset) ) ? ngModel.content.columnSelectedOfDataset : ngModel.content.columnSelectedOfDataset[dsId] ;
+		var newModel = angular.copy(ngModel);
+		if (Array.isArray(ngModel.content.columnSelectedOfDataset)){
+			//converts the columns array in a jsonObject of arrays
+			var newcolumnSelectedOfDataset = {};
+			newcolumnSelectedOfDataset[dsId] = newModel.content.columnSelectedOfDataset;
+			delete newModel.content.columnSelectedOfDataset;
+			newModel.content.columnSelectedOfDataset = newcolumnSelectedOfDataset;
+		}
 		
-		ngModel.content.columnSelectedOfDataset = (Array.isArray(ngModel.content.columnSelectedOfDataset) ) ? ngModel.content.columnSelectedOfDataset : ngModel.content.columnSelectedOfDataset[dsId] ;
-		var aggregations = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
+//		var aggregations = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
+		var aggregations = cockpitModule_widgetSelection.getAggregation(newModel,dataset,columnOrdering, reverseOrdering);
 
 		// apply sorting column & order
 		if(ngModel.settings && ngModel.settings.sortingColumn && ngModel.settings.sortingColumn!=""){

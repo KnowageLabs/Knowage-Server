@@ -356,7 +356,8 @@ function cockpitWidgetControllerFunction(
 					$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 				},1000);
 			}else{
-				$scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection, config.changedChartType,config.chartConf);
+//				$scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection, config.changedChartType,config.chartConf);
+				$scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection, config.changedChartType,config.chartConf,config.options);
 			}
 			break;
 		case "INIT" :
@@ -439,7 +440,9 @@ function cockpitWidgetControllerFunction(
 	}
 
 	$scope.updateFromDatasetFilter=function(label){
-		var dataset= $scope.getDataset();
+//		var dataset= $scope.getDataset();
+		var dataset = $scope.getDataset(label);
+		
 		if($scope.ngModel.updateble==false){
 			if(dataset && $scope.cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 				$scope.cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
@@ -454,7 +457,10 @@ function cockpitWidgetControllerFunction(
 				(angular.isString(label) && angular.equals(label,dataset.label))
 			)
 		){
-			$scope.refreshWidget(undefined,'filters');
+			var options = {};
+			options.label = label;
+//			$scope.refreshWidget(undefined,'filters');
+			$scope.refreshWidget(options,'filters');
 
 		}
 	}
@@ -985,6 +991,22 @@ function cockpitWidgetControllerFunction(
 			return undefined;
 		}
 	}
+	
+	$scope.getDataset = function(label){
+		if($scope.ngModel.dataset!=undefined && $scope.ngModel.dataset.dsId != undefined){
+			if (!Array.isArray($scope.ngModel.dataset.dsId)){
+				 return cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
+			}
+			for (ds in $scope.ngModel.dataset.dsId){
+				var tmpDS = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId[ds]);
+				if (tmpDS.label == label) 
+					return tmpDS;
+			}
+		} else{
+			return undefined;
+		}
+	}
+	
 	$scope.getDocument = function(){
 		if($scope.ngModel.document!=undefined && $scope.ngModel.document.docId != undefined){
 			return cockpitModule_documentServices.getDocumentById( $scope.ngModel.document.docId);
