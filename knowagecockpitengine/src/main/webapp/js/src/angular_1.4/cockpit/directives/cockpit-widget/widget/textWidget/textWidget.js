@@ -157,13 +157,14 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 			    	            { name: 'styling', items: ['font', 'size', 'format'] }
 			    	            ]
 			    	  };
-
-
+			    	
 			    	  $scope.handleEvent=function(event, arg1){
 			    		  if(event=='datasetChanged'){
 							  changeDatasetFunction(arg1);
 						  }
 					  }
+			    	  
+			    	  $scope.formatPattern = ['#.###','#,###','#.###,##','#,###.##'];
 
 			    	  var changeDatasetFunction=function(dsIdArray){
 			    		  if(dsIdArray != undefined){

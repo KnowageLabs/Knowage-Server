@@ -474,14 +474,17 @@
 		&.textWidget{
 			wysiwyg-edit{
 				.tinyeditor {
-					height: 100%;
+					height: 500px;
 					padding: 0;
 					border: 0;
 					.sizer{
-						height: calc( 100% - 20px);
+						height: calc( 100% - 33px);
 						.resizer{
 							display:none;
 						}
+					}
+					.tinyeditor-header {
+						background: $secondaryColor !important;
 					}
 					.tinyeditor-footer{
 						display:none;
@@ -1702,7 +1705,7 @@
 			}
 				min-height: $smallLineHeight;
 				height: $smallLineHeight;
-				.md-button.md-icon-button {
+				.md-button, .md-button.md-icon-button {
 					min-height: $smallLineHeight;
 					height: $smallLineHeight;
 					line-height: $smallLineHeight;
