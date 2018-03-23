@@ -49,21 +49,21 @@
 	      		<md-input-container flex=15 ng-show="newFilter.type == 'java.lang.String'">
 	                <label>{{translate.load("sbi.cockpit.widgets.filtersConfiguration.operator")}}</label>
 	             	<md-select ng-model="newFilter.filterOperator" ng-disabled="newFilterAddMode == false && newFilterEditMode == false" >
-	                    <md-option ng-repeat="op in operatorsTypeString" ng-value="op">{{op}}</md-option>
+	                    <md-option ng-repeat="op in operatorsTypeString | filterDatasetOperator : datasetIsRealTime" ng-value="op">{{op}}</md-option>
 	                </md-select>   
 	            </md-input-container>
             
 				<md-input-container flex=15  ng-show="newFilter.type == 'java.lang.Integer' || newFilter.type == 'java.lang.Double' || newFilter.type == 'java.lang.Float' || newFilter.type == 'java.math.BigDecimal' || newFilter.type == 'java.lang.Long' || newFilter.type == 'java.lang.BigInteger' || newFilter.type == 'java.lang.Byte' || newFilter.type == 'java.lang.Short'">
 					<label>{{translate.load("sbi.cockpit.widgets.filtersConfiguration.operator")}}</label>
 					<md-select ng-model="newFilter.filterOperator" ng-disabled="newFilterAddMode == false && newFilterEditMode == false">
-					    <md-option  ng-repeat="op in operatorsTypeNumber" ng-value="op">{{op}}</md-option>
+					    <md-option  ng-repeat="op in operatorsTypeNumber | filterDatasetOperator : datasetIsRealTime" ng-value="op">{{op}}</md-option>
 					</md-select>    
 				</md-input-container>
             
 				<md-input-container  flex=15 ng-show="newFilter.type.toLowerCase().indexOf('date') > -1 || newFilter.type.toLowerCase().indexOf('timestamp') > -1">
 				     <label>{{translate.load("sbi.cockpit.widgets.filtersConfiguration.operator")}}</label>
 				     <md-select ng-model="newFilter.filterOperator" ng-disabled="newFilterAddMode == false && newFilterEditMode == false">
-				         <md-option  ng-repeat="op in operatorsTypeDate" ng-value="op">{{op}}</md-option>
+				         <md-option  ng-repeat="op in operatorsTypeDate | filterDatasetOperator : datasetIsRealTime" ng-value="op">{{op}}</md-option>
 				     </md-select>    
 				</md-input-container>
 	            
