@@ -455,7 +455,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		// adds the calculated fields before rendering the model
 		model.applyCal();
-
+		render.setPropertyCollector(new NonInternalPropertyCollector());
 		render.render(model, exporter);
 
 		// restore the query without calculated fields
