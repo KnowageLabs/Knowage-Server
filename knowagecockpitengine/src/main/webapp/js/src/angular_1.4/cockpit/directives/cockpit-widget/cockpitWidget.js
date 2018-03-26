@@ -539,6 +539,13 @@ function cockpitWidgetControllerFunction(
 			console.log("widget is not cliccable")
 			return;
 		}
+		//check if is a realtime dataset to disable selection
+		if ($scope.ngModel.dataset.dsId != undefined){
+    		var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
+    		if (dataset.isRealtime){
+    			return;
+    		}
+		}
 
 		// check if cross navigation was enable don this widget
 		var model = $scope.ngModel;
