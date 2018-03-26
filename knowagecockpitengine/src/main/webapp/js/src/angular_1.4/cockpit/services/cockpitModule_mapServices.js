@@ -18,7 +18,7 @@
 		var activeConf;
 		var cacheProportionalSymbolMinMax;
 		
-		ms.getFeaturesDetails = function(geoColumn, selectedMeasure, config, values){
+		ms.getFeaturesDetails = function(geoColumn, selectedMeasure, config, configColumns, values){
 			if (values != undefined){
 				var geoFieldName;
 				var geoFieldValue;			
@@ -51,14 +51,14 @@
 							console.log("Error getting longitude and latitude from column value ["+ geoColumn +"]. Check the dataset and its metadata.");
 							return null;
 						}
+						if (!selectedMeasure) selectedMeasure = config.defaultIndicator;
+						ms.setActiveIndicator(selectedMeasure);
 						if (config.analysisConf && config.analysisConf.defaultAnalysis == 'proportionalSymbol'){							
 							//get config for thematize
-							if (!selectedMeasure) selectedMeasure = config.defaultIndicator;
-							cockpitModule_mapServices.setActiveIndicator(selectedMeasure);
 							if (selectedMeasure){
-								if (!cockpitModule_mapServices.getCacheProportionalSymbolMinMax()) cockpitModule_mapServices.setCacheProportionalSymbolMinMax({}); //just at beginning
-								if (!cockpitModule_mapServices.getCacheProportionalSymbolMinMax().hasOwnProperty(selectedMeasure)){
-									cockpitModule_mapServices.loadIndicatorMaxMinVal(selectedMeasure, values);
+								if (!ms.getCacheProportionalSymbolMinMax()) ms.setCacheProportionalSymbolMinMax({}); //just at beginning
+								if (!ms.getCacheProportionalSymbolMinMax().hasOwnProperty(selectedMeasure)){
+									ms.loadIndicatorMaxMinVal(selectedMeasure, values);
 								}
 							}
 						}
@@ -69,7 +69,7 @@
 				        var coordinate = transform([parseFloat(lonlat[0].trim()), parseFloat(lonlat[1].trim())]);
 				        var geometry = new ol.geom.Point(coordinate);
 				        feature.setGeometry(geometry);
-				        ms.addDsPropertiesToFeature(feature, row, values.metaData.fields);
+				        ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
 				       //at least add the layer owner
 				        feature.set("parentLayer",config.name);
 				        featuresSource.addFeature(feature);
@@ -81,10 +81,20 @@
 			return new ol.source.Vector();
 		}
 	    
-		ms.addDsPropertiesToFeature = function (f, row, meta){
+		ms.addDsPropertiesToFeature = function (f, row, cols, meta){
 			//add columns value like properties
 			for (c in row){
-				f.set(ms.getHeaderByColumnName(c, meta), row[c]);
+				var header = ms.getHeaderByColumnName(c, meta);
+				var prop = {};
+				prop.value = row[c];
+				for (p in cols){
+					if (cols[p].alias == header){
+						prop.type = cols[p].fieldType;
+						prop.aggregationSelected = ( cols[p].properties && cols[p].properties.aggregationSelected) ? cols[p].properties.aggregationSelected : '';
+						break;
+					}
+				}
+				f.set(header, prop);
 			}
 		}
 		
@@ -99,32 +109,48 @@
 			return toReturn;
 		}
 		
+	
+		
 	    var styleCache = {};
-	    var currentResolution;
 	    ms.layerStyle = function(feature, resolution){
-//	          var size = feature.get('features').length;
-			var props  = feature.getProperties();
-			var parentLayer = feature.get('parentLayer')
+	    	
+	    	var localFeature;
+			if (Array.isArray(feature.get('features')))
+				localFeature = feature.get('features')[0];
+	    	else
+	    		localFeature = feature;
+	    	
+	    	
+			var props  = localFeature.getProperties();
+			var parentLayer = localFeature.get('parentLayer');
 			var config = ms.getActiveConf(parentLayer);
 			var configThematizer = config.analysisConf || {};
 			var configMarker = config.markerConf || {};
-	      	var value =  props[ms.getActiveIndicator()] || 0;
-			var style;
 			var useCache = false; //cache isn't use for analysis, just with fixed marker
+			var isCluster = (config.markerConf && config.markerConf.type == 'cluster') ? true : false;
+			var value;
+			var style;
 			
-			 if (resolution != currentResolution) {
-		          ms.calculateClusterInfo(resolution);
-		          currentResolution = resolution;
-		     }
-			 
-			switch (configThematizer.defaultAnalysis) {
-			case 'choropleth':
+			if (isCluster){
+				value = ms.getClusteredValue(feature, config.markerConf);
+			}else{
+				value =  props[ms.getActiveIndicator()] || 0;
+			}
+			
+			var thematized = false;
+			if (configThematizer.defaultAnalysis == 'choropleth') {
 				style = ms.getChoroplethStyles(value, props, configThematizer.choropleth, configMarker);
-				break;
-			case 'proportionalSymbol':
-				style = ms.getProportionalSymbolStyles(value, props, configThematizer.proportionalSymbol, configMarker);
-				break;
-			default:
+				thematized = true;
+			}else if (configThematizer.defaultAnalysis == 'proportionalSymbol') {
+				style = ms.getProportionalSymbolStyles(value, props, configThematizer.proportionalSymbol);
+				thematized = true;
+			}
+			
+			if (!thematized && isCluster){
+				style = ms.getClusterStyles(value, props, configMarker);
+				useCache = false;
+			}
+			else{
 				style = ms.getOnlyMarkerStyles(props, configMarker);
 				useCache = true;
 			}
@@ -137,24 +163,70 @@
 			}
 	    }
 	    
-	    var maxFeatureCount, vector;
-	    ms.calculateClusterInfo = function (resolution) {
-//	        maxFeatureCount = 0;
-//	        var features = vector.getSource().getFeatures();
-//	        var feature, radius;
-//	        for (var i = features.length - 1; i >= 0; --i) {
-//	          feature = features[i];
-//	          var originalFeatures = feature.get('features');
-//	          var extent = ol.extent.createEmpty();
-//	          var j, jj;
-//	          for (j = 0, jj = originalFeatures.length; j < jj; ++j) {
-//	            ol.extent.extend(extent, originalFeatures[j].getGeometry().getExtent());
-//	          }
-//	          maxFeatureCount = Math.max(maxFeatureCount, jj);
-//	          radius = 0.25 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent)) /
-//	              resolution;
-//	          feature.set('radius', radius);
-//	        }
+	    ms.getClusteredValue = function (feature, configCluster) { 
+	    	var toReturn = 0;
+	    	var total = 0;
+	    	var values = [];
+	    	var aggregationFunc = "";
+	    	
+	    	if (Array.isArray(feature.get('features'))){
+	    		for (var i=0; i<feature.get('features').length; i++){
+					var tmpValue = (feature.get('features')[i].get(ms.activeInd)) ? feature.get('features')[i].get(ms.activeInd).value : 0;
+					console.log("tmpValue: " , tmpValue);
+					aggregationFunc = (feature.get('features')[i].get(ms.activeInd)) ? feature.get('features')[i].get(ms.activeInd).aggregationSelected : "SUM";
+					values.push(tmpValue);
+					total += tmpValue;
+				}
+				
+	    		switch(aggregationFunc) {
+				    case "MIN": 
+				    	toReturn = Math.min.apply(null, values);
+				        break;
+				    case "MAX":
+				    	toReturn = Math.max.apply(null, values);
+				    	break;
+				    case "SUM": 
+				    	toReturn = total;
+				    	break;
+				    case  "AVG":
+				    	if (total > 0)
+				    		toReturn = (total/feature.get('features').length);
+				    		break;
+				    case "COUNT":
+				    	toReturn = feature.get('features').length;
+				    	break;
+				    default: //SUM
+				    	toReturn = total;
+	    		}			
+				
+				
+	    	}
+	    	else{
+	    		toReturn += feature.get(ms.activeInd);
+	    	}
+//	    	console.log("fucnt: ["+ configCluster.aggregationSelected +"] - toReturn ", toReturn);
+			return toReturn;
+	    }
+	    
+	    ms.getClusterStyles = function (value, props, config){
+	      return new ol.style.Style({
+	              image: new ol.style.Circle({
+	                radius: config.radiusSize || 20,
+	                stroke: new ol.style.Stroke({
+	                  color: '#fff'
+	                }),
+	                fill: new ol.style.Fill({
+	                  color: (config.style && config.style['background-color']) ? config.style['background-color'] : 'blue'
+	                })
+	              }),
+	              text: new ol.style.Text({
+	            	font: (config.style && config.style['font-size']) ? config.style['font-size'] : '12px',
+	                text: value.toString(),
+	                fill: new ol.style.Fill({
+	                  color: (config.style && config.style['color']) ? config.style['color'] : '#fff'
+	                })
+	              })
+	            });
 	    }
 		
 		ms.getProportionalSymbolStyles = function(value, props, config){
@@ -169,17 +241,19 @@
 		              }),
 		              image: new ol.style.Circle({
 		                radius: ms.getProportionalSymbolSize(value, ms.activeInd, config),
+//		            	radius: 20,
 		                fill: new ol.style.Fill({
-		                 color :  config.color
+		                 color : config.style['color'] || 'blue',
 		                })
 		              }),
 		              text: new ol.style.Text({
-		                  font: '12px Calibri,sans-serif',
+		                  font: config['font-size'] || '12px Calibri,sans-serif',
 		                  fill: new ol.style.Fill({ color: '#000' }),
 		                  stroke: new ol.style.Stroke({
 		                    color: '#fff', width: 2
 		                  }),
-		                  text: textValue.toString()
+//		                  text: textValue.toString()
+		                  text: value.toString()
 		                })
 		            });
 		}
@@ -221,7 +295,7 @@
 					}),
 				    opacity: 1,
 				    crossOrigin: 'anonymous',
-				    color: config.color || 'blue',
+				    color: (config.style && config.style.color) ? config.style.color : (config.color) ? config.color : 'blue',
 //				    src: 'data/icon.png'
 //				    src: 'https://www.mapz.com/map/marker/svg/M_marker_heart_150910.svg'
 //				    src: 'https://s3.amazonaws.com/com.cartodb.users-assets.production/maki-icons/embassy-18.svg',
@@ -287,14 +361,14 @@
 			
 			var maxRadiusSize = config.maxRadiusSize;
 			var minRadiusSize = config.minRadiusSize;
-			
+
 			if(minValue == maxValue) { // we have only one point in the distribution
-				size = (maxRadiusSize + minRadiusSize)/2 + Math.random();
+				size = (maxRadiusSize + minRadiusSize)/2;
 			} else {
-				size = ( parseInt(val) - minValue) / ( maxValue - minValue) *
-				(maxRadiusSize - minRadiusSize) + minRadiusSize + Math.random();
+				size = ( parseInt(val) - minValue) / ( maxValue - minValue) * (maxRadiusSize - minRadiusSize) + minRadiusSize;
 			}
-			return size;
+//			console.log("propSymbSize ["+ size +"] for ["+name+"]");
+			return (size < 0 ) ? 0 : size;
 		}
 		
 		 ms.updateCoordinatesAndZoom = function(model, map, l, setValues){
@@ -342,15 +416,19 @@
 		
 		ms.getActiveConf=function(l){
 			for (c in ms.activeConf){
-				if (ms.activeConf[c].layer == l)
+				if (ms.activeConf[c].layer === l)
 					return ms.activeConf[c].config;
 			}
-			return {};
+			return null;
 		}
 		
 		ms.setActiveConf=function(l, c){
 			if (!ms.activeConf)
 				ms.activeConf = [];
+			
+			if (ms.getActiveConf(l) != null){
+				ms.activeConf.splice(l,1);
+			} 
 			ms.activeConf.push({"layer": l, "config":c});
 		}
 		
@@ -396,8 +474,6 @@
 			}
 			return {color:color,alpha:alpha};
 		}
-		
-
 
 		ms.getColumnName = function(key, values){
 			var toReturn = key;
@@ -407,6 +483,13 @@
 			}
 				
 			return toReturn;
+		}
+		
+		ms.isCluster = function(feature) {
+		  if (!feature || !feature.get('features')) { 
+		        return false; 
+		  }
+		  return feature.get('features').length > 1;
 		}
 	}	
 

@@ -78,13 +78,13 @@ public class OracleDataBase extends AbstractDataBase implements CacheDataBase, M
 			toReturn = " TIMESTAMP ";
 		} else if (javaTypeName.contains("java.sql.Time")) {
 			toReturn = " TIMESTAMP ";
-		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB") || javaTypeName.contains("JSON")) {
+		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
 			toReturn = " BLOB ";
 		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB") || javaTypeName.contains("Map") || javaTypeName.contains("List")) {
 			toReturn = " CLOB ";
 		} else {
-			toReturn = " CLOB ";
-			logger.error("Cannot map java type [" + javaTypeName + "] to a valid database type. Set CLOB by default ");
+			toReturn = " VARCHAR(4000) ";
+			logger.error("Cannot map java type [" + javaTypeName + "] to a valid database type. Set VARCHAR(4000) by default ");
 		}
 
 		return toReturn;

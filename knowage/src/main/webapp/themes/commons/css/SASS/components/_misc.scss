@@ -85,8 +85,8 @@ md-input-container.md-knowage-theme {
   .hint {
     position: absolute;
     left: 2px;
+    bottom: -$headerFontSize;
     right: auto;
-    top: 35px;
     font-size: $smallFontSize;
     line-height: $headerFontSize;
     transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);

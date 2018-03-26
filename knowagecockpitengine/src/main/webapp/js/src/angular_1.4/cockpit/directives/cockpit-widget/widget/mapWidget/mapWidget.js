@@ -63,6 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.layers = [];  //layers with features
 		$scope.values = [];  //layers with values
 		$scope.configs = []; //layers with configuration
+		
 
 		$scope.getTemplateUrl = function(template){
 	  		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
@@ -73,7 +74,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	for (l in $scope.ngModel.content.layers){
 	    		//remove old layers 
 	    		var previousLayer = $scope.getLayerByName($scope.ngModel.content.layers[l].name);
-	    		if (previousLayer) $scope.map.removeLayer(previousLayer); //ol obj
+	    		if (previousLayer) $scope.map.removeLayer(previousLayer); //ol obj  		
 	    	}
 	    	$scope.removeLayers(); //clean internal obj
 	    	$scope.getLayers();
@@ -172,7 +173,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    $scope.createLayerWithData = function(label, data){
 	    	//prepare object with metadata for desiderata dataset columns
 	    	var geoColumn = null;
-    		var selectedMeasure = null;
+	    	var selectedMeasure = null;
     		var columnsForData = [];
     		var layerDef =  $scope.getConfigLayer(label);
     		var columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
@@ -186,20 +187,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     			var tmpField = columnsForData[f];
     			if (tmpField.fieldType == "SPATIAL_ATTRIBUTE")
     				geoColumn = tmpField.name;
-    			else if (tmpField.properties.defaultIndicator && tmpField.properties.showMap) 
+    			else if (tmpField.properties.showMap) //first measure
     				selectedMeasure = tmpField.aliasToShow;
     		}  
     		
-    		var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, data);
+    		var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, columnsForData, data);
 			if (featuresSource == null){ 
 				return;
 			}
 			cockpitModule_mapServices.setActiveConf(layerDef.name, layerDef);
 			var layer;
-			var cluster = false; //recuperarlo da config
-			if (cluster){
-				var clusterSource = new ol.source.Cluster({source: featuresSource,	
-														   distance: 40 //dinamicizzare
+			
+			if (layerDef.markerConf && layerDef.markerConf.type == 'cluster'){
+				var clusterSource = new ol.source.Cluster({source: featuresSource	
 														  });
 				layer =  new ol.layer.Vector({source: clusterSource,
 										  	  style: cockpitModule_mapServices.layerStyle
@@ -284,7 +284,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	            var text = "";
     	            for (var p in props){
     	            	if ($scope.isDisplayableProp(p, config))
-    	            	text += '<b>' + p + ":</b> " + props[p] + '<br>';
+    	            	text += '<b>' + p + ":</b> " + props[p].value + '<br>';
     	            }
 
     		        popupContent.innerHTML = '<h2>Details</h2><code>' + text + '</code>';
@@ -328,7 +328,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     			var tmpField = columnsForData[f];
     			if (tmpField.fieldType == "SPATIAL_ATTRIBUTE")
     				geoColumn = tmpField.name;
-    			else if (tmpField.properties.defaultIndicator && tmpField.properties.showMap) 
+    			else if (tmpField.properties.showMap) 	//first measure
     				selectedMeasure = tmpField.aliasToShow;
     		}    	
     		
@@ -437,15 +437,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    			break;
 	    		}
 	    	}
-	    	$scope.refreshStyle(layer, m, layerConfig, layerValues, layerKeyColumn);
+	    	var layerColumnConfig = $scope.getColumnSelectedOfDataset(layerConfig.dsId) || []; 
+	    	$scope.refreshStyle(layer, m, layerConfig, layerColumnConfig, layerValues, layerKeyColumn);
 	    }
 	    
 	  //thematizer functions
-	    $scope.refreshStyle = function (layer, measure, config, values, geoColumn){
+	    $scope.refreshStyle = function (layer, measure, config, configColumns, values, geoColumn){
 			//prepare object for thematization
 	    	cockpitModule_mapServices.loadIndicatorMaxMinVal(measure, values);
-			var newSource = $scope.getFeaturesDetails(geoColumn, measure, config, values);
-			layer.setSource(newSource);
+			var newSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, measure, config, configColumns,  values);
+			if (config.markerConf && config.markerConf.type == 'cluster'){
+				var clusterSource = new ol.source.Cluster({ source: newSource });
+				layer.setSource(clusterSource);
+			}else{
+				layer.setSource(newSource);
+			}
+			
 			layer.getSource().refresh({force:true});
 		}
 

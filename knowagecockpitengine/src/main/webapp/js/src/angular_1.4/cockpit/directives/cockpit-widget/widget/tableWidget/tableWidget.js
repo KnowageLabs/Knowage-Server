@@ -454,7 +454,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					var aliasToShow = columnObject.aliasToShow;
 					filters[aliasToShow] = {
 						"type":columnObject.fieldType,
-						"values":$scope.ngModel.filters[f].filterVals
+						"values":$scope.ngModel.filters[f].filterVals,
+						"operator":$scope.ngModel.filters[f].filterOperator
 					};
 				}
 			}
@@ -478,7 +479,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						var filterValue = filters[f].values.map(function (x) {
 						    return Number(x);
 						});
-						if (filterValue.indexOf(columnValue)==-1){
+						//check operator
+						var operator = String(filters[f].operator);
+						if (operator == "="){
+							operator = "==";
+						}
+						var leftOperand = String(columnValue);
+						var rightOperand = String(filterValue[0]);
+						var expression =  leftOperand + operator + rightOperand;
+						
+						
+						//if (filterValue.indexOf(columnValue)==-1){
+						if (eval(expression) == false){
 							dataset.splice(d,1);
 						}
 					}
