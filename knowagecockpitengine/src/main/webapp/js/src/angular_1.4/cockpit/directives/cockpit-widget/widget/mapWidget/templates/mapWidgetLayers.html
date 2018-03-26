@@ -1,4 +1,4 @@
-<md-card class="cockpit-map-widget">
+<md-card class="cockpit-map-widget-edit">
  	<md-toolbar class="secondaryToolbar"> 
       <div class="md-toolbar-tools">
         <h2>Layers</h2>
@@ -18,7 +18,7 @@
 		<table class="kn-table" ng-if="newModel.content.layers.length > 0">
 			<thead>
 				<tr>
-					<th ng-if="newModel.content.layers.length > 1"></th><th>Type</th><th>Name</th><th>Label</th><th>Target</th><th>Marker Color</th><th></th>
+					<th ng-if="newModel.content.layers.length > 1"></th><th>Type</th><th>Name</th><th>Label</th><th>Target</th><th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -44,21 +44,21 @@
 						<md-switch ng-model="layer.targetDefault" aria-label="target layer" ng-change="setTargetLayer(layer)">
 					  </md-switch>
 					</td>
-					<td class="colorPickerTd" style="text-align:right;">
+					<!--  td class="colorPickerTd" style="text-align:right;">
 						<md-input-container class="md-block flex">
 					        <color-picker options="colorPickerOptions" ng-model="layer.markerConf.color"></color-picker> 
 				      	</md-input-container>
-			      	</td>
+			      	</td-->
 					<td class="colorPickerTd" style="text-align:right;">
 						<md-button class="md-icon-button" ng-click="expandRow(layer,'metadata')" ng-class="{'expanded':layer.expanded=='metadata'}">
 							<md-tooltip>Metadata</md-tooltip>
 							<md-icon md-font-icon="fa fa-tags"></md-icon>
 						</md-button>
 						
-						<!--  md-button class="md-icon-button" ng-click="expandRow(layer,'markers')" ng-class="{'expanded':layer.expanded=='markers'}">
+						<md-button class="md-icon-button" ng-click="expandRow(layer,'markers')" ng-class="{'expanded':layer.expanded=='markers'}">
 							<md-tooltip>Markers</md-tooltip>
 							<md-icon md-font-icon="fa fa-map-marker"></md-icon>
-						</md-button-->
+						</md-button>
 						
 						<md-button class="md-icon-button" ng-click="deleteLayer(layer)">
 							<md-tooltip>Delete</md-tooltip>
@@ -81,7 +81,9 @@
 									<thead>
 										<tr>
 											<th>Column</th>
+											<th>Alias</th>
 											<th>Type</th>
+											<th>Aggregation function</th>
 											<th>Show on map</th>
 											<th>Show on detail</th>
 										</tr>
@@ -90,7 +92,19 @@
 										<tr ng-repeat="column in newModel.content.columnSelectedOfDataset[layer.dsId] | orderBy:'fieldType':true " ng-class="{'highlight':column.fieldType=='SPATIAL_ATTRIBUTE'}">
 											
 											<td><md-icon ng-if="column.fieldType=='SPATIAL_ATTRIBUTE'" md-font-icon="fa fa-globe"></md-icon> {{column.name}}</td>
+											<td>
+												<md-input-container>
+													<input ng-model="column.aliasToShow" type="text">
+												</md-input-container>
+											</td>
 											<td>{{column.fieldType}}</td>
+											<td>
+												<md-input-container ng-if="column.fieldType === 'MEASURE'">
+													<md-select ng-model="column.properties.aggregationSelected">
+														<md-option ng-repeat="func in availableAggregationFunctions" ng-calue="func">{{func}}</md-option>
+													</md-select>
+												</md-input-container>
+											</td>
 											<td>
 												<md-checkbox ng-model="column.properties.showMap" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE'"/>
 											</td>

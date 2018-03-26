@@ -97,8 +97,13 @@
 			    }
 	    	}
     	}
-    	
+    }
+
+    .cockpit-map-widget-edit {
     	.markersExpander {
+    		.color-picker-wrapper {
+    			z-index: 9;
+    		}
     		.preview {
     			position: relative;
     			padding: 20px;
@@ -122,6 +127,7 @@
     		}
     	}
     }
+
 
     .iconSelector {
     	h3 {

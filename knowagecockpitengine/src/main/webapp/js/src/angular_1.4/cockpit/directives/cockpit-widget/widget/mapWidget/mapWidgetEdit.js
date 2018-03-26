@@ -22,6 +22,7 @@ angular
 function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,sbiModule_restServices,cockpitModule_datasetServices,cockpitModule_generalServices,$mdDialog,mdPanelRef,$location, knModule_fontIconsService){
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
+	$scope.availableAggregationFunctions = ['SUM','AVG','MIN','MAX','COUNT'];
   	$scope.getTemplateUrl = function(template){
   		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
   	}
