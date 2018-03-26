@@ -165,7 +165,7 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
   	}
   	$scope.colorPickerOptions = {format:'hex'};
   	$scope.setIconType = function(layer,type) {
-  	if (!layer.markerConf) layer.markerConf={}; //test anto
+  		if (!layer.markerConf) layer.markerConf={};
   		delete layer.markerConf.icon;
   		layer.markerConf.type = type;
   	}
