@@ -27,6 +27,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.log4j.Logger;
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
@@ -46,6 +47,7 @@ public class MDXFormulaHandler {
 	private static SpagoBIPivotModel model;
 	private static ModelConfig modelConfig;
 	private static ClassLoader classLoader = MDXFormulaHandler.class.getClassLoader();
+	private static Logger logger = Logger.getLogger(MDXFormulaHandler.class);
 
 	public static void main(String[] args) throws JAXBException, InstantiationException, IllegalAccessException {
 		loadFile();
@@ -71,8 +73,12 @@ public class MDXFormulaHandler {
 	private static boolean loadFile() {
 
 		xmlFile = new File(xmlPath);
-		if (!xmlFile.exists()) {
-			xmlFile = new File(classLoader.getResource(File.separatorChar + "calculated_fields_formulas" + File.separatorChar + "formulas.xml").getPath());
+		try {
+			if (!xmlFile.exists()) {
+				xmlFile = new File(classLoader.getResource(File.separatorChar + "calculated_fields_formulas" + File.separatorChar + "formulas.xml").getPath());
+			}
+		} catch (Exception e) {
+			logger.error("Can not load MDX formulas", e);
 		}
 
 		return xmlFile.exists();
