@@ -172,7 +172,7 @@
 	    	if (Array.isArray(feature.get('features'))){
 	    		for (var i=0; i<feature.get('features').length; i++){
 					var tmpValue = (feature.get('features')[i].get(ms.activeInd)) ? feature.get('features')[i].get(ms.activeInd).value : 0;
-					console.log("tmpValue: " , tmpValue);
+//					console.log("tmpValue: " , tmpValue);
 					aggregationFunc = (feature.get('features')[i].get(ms.activeInd)) ? feature.get('features')[i].get(ms.activeInd).aggregationSelected : "SUM";
 					values.push(tmpValue);
 					total += tmpValue;
