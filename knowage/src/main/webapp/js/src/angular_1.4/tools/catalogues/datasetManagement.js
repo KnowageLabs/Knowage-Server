@@ -2289,9 +2289,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					solrFacetField: "",
 					solrFacetPrefix: "",
 					sparqlEndpoint: "",
-					sparqlGraphIRI: "",
+					sparqlDefaultGraphIri: "",
 					sparqlQuery: "",
-					sparqlTimeout: 30000
+					sparqlExecutionTimeout: 30
 
 			}
 
