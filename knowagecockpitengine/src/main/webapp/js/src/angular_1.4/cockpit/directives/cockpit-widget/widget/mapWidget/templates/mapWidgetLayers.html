@@ -117,7 +117,7 @@
 							</md-card-content>
 							
 							<md-card-content flex layout="column" class="markersExpander" ng-if="layer.expanded=='markers'">
-								<div class="buttonBar">
+								<div class="buttonBar" ng-init="layer.markerConf.type=layer.markerConf.type||'icon'">
 									<md-button class="md-raised" ng-click="setIconType(layer,'icon')" ng-class="{'selected':layer.markerConf.type == 'icon'}">Icon</md-button>
 									<md-button class="md-raised" ng-click="setIconType(layer,'img')" ng-class="{'selected':layer.markerConf.type == 'img'}">Image</md-button>
 									<md-button class="md-raised" ng-click="setIconType(layer,'url')" ng-class="{'selected':layer.markerConf.type == 'url'}">Url</md-button>
@@ -125,13 +125,30 @@
 								</div>
 								<div layout="row" layout-align="start center">
 								
-										<md-input-container class="md-block flex" ng-if="layer.markerConf.type != 'cluster'">
+										<md-input-container class="md-block flex" ng-if="layer.markerConf.type != 'cluster' && layer.markerConf.type != 'img'">
 									        <label>Icon</label>
 									        <input ng-model="layer.markerConf.icon">
 								      	</md-input-container>
 								      	
 								      	<md-button class="md-icon-button md-fab" ng-click="chooseIcon($event, layer)" ng-if="layer.markerConf.type == 'icon'"><md-icon md-font-icon="fa fa-th"></md-icon></md-button>
-								      	<md-button class="md-icon-button md-fab" ng-click="" ng-if="layer.markerConf.type == 'img'"><md-icon md-font-icon="fa fa-upload"></md-icon></md-button>
+								      	
+								      	<md-input-container class="md-block flex" ng-if="layer.markerConf.type == 'img' && layer.markerConf.icon">
+									        <label>Icon</label>
+									        <input ng-model="layer.markerConf.icon" disabled>
+								      	</md-input-container>
+								      	
+								      	<div layout="row" ng-if="layer.markerConf.type == 'img'">
+											<file-upload flex id="ImageUpload" ng-model="uploadImg" ng-if="!layer.markerConf.icon"></file-upload>
+											<md-button ng-click="upload($event,layer)" aria-label="upload Menu" ng-if="!layer.markerConf.icon"
+													class="md-fab md-mini">
+												<md-icon md-font-icon="fa fa-upload"/>
+											</md-button>
+											<md-button ng-click="erase($event, layer)" ng-if="layer.markerConf.icon" aria-label="upload Menu"
+													class="md-fab md-mini">
+												<md-icon md-font-icon="fa fa-eraser"/>
+											</md-button>
+										</div>
+										
 								      	
 							      	<md-input-container class="md-block flex" style="margin-left:20px;" ng-if="layer.markerConf.type != 'cluster'">
 								        <label>Color</label>

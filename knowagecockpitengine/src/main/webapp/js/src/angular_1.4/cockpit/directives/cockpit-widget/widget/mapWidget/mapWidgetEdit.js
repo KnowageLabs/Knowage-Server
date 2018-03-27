@@ -19,10 +19,11 @@ angular
 	.module('cockpitModule')
 	.controller('mapWidgetEditControllerFunction',mapWidgetEditControllerFunction)
 
-function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,sbiModule_restServices,cockpitModule_datasetServices,cockpitModule_generalServices,$mdDialog,mdPanelRef,$location, knModule_fontIconsService){
+function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,sbiModule_restServices,sbiModule_config ,cockpitModule_datasetServices,cockpitModule_generalServices,$mdDialog,mdPanelRef,$location, knModule_fontIconsService, $mdToast){
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.availableAggregationFunctions = ['SUM','AVG','MIN','MAX','COUNT'];
+	$scope.uploadImg = {};
   	$scope.getTemplateUrl = function(template){
   		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
   	}
@@ -200,6 +201,58 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 	      locals: {  }
 	    })
   	}
+  	
+  	$scope.upload = function(ev,layer){
+		if($scope.uploadImg.fileName == "" || $scope.uploadImg.fileName == undefined){
+			$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.cockpit.widgets.image.missinguploadfile')).position('top').action(
+			'OK').highlightAction(false).hideDelay(5000));
+		}else{
+			var fd = new FormData();
+			fd.append('uploadedImage', $scope.uploadImg.file);
+			sbiModule_restServices.restToRootProject();
+			sbiModule_restServices.post("1.0/images", 'addImage', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
+			.then(function(response) {
+				if(response.data.success){
+					sbiModule_restServices.restToRootProject();
+					sbiModule_restServices.get("1.0/images", 'listImages').then(
+							function(listResponse) {
+								for(var k in listResponse.data.data){
+									if(listResponse.data.data[k].name == response.data.fileName ){
+										layer.markerConf.imgId = listResponse.data.data[k].imgId;
+										layer.markerConf.icon = sbiModule_config.externalBasePath + "/restful-services/1.0/images/getImage?IMAGES_ID=" + listResponse.data.data[k].imgId;
+									}
+								}
+							})
+				}else if (response.data.hasOwnProperty("msg")){
+						$mdToast.show($mdToast.simple().content(sbiModule_translate.load(response.data.msg)).position('top').action(
+						'OK').highlightAction(false).hideDelay(5000));
+				}else{
+					$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.genericError')).position('top').action(
+					'OK').highlightAction(false).hideDelay(5000));
+				}
+			},function(error) {
+				$mdToast.show($mdToast.simple().content(error.data.ERROR).position('top').action(
+				'OK').highlightAction(false).hideDelay(5000));
+
+			});
+		}
+	};
+	
+	$scope.erase = function(ev,layer){
+		debugger;
+		sbiModule_restServices.restToRootProject();
+			var imageId = 'imageId='+layer.markerConf.imgId;
+			sbiModule_restServices.get("1.0/images", 'deleteImage', imageId)
+			.then(function(response) {
+					$mdToast.show($mdToast.simple().content(sbiModule_translate.load(response.data.msg)).position('top').action(
+					'OK').highlightAction(false).hideDelay(5000));
+					if(response.data.success){
+						delete layer.markerConf.imgId;
+						delete layer.markerConf.icon;
+						$scope.uploadImg = {};
+					}
+			});
+	};
   	
   	$scope.addToDatasets = function() {
   		$scope.newModel.dataset = {};
