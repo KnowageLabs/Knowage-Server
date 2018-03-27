@@ -109,7 +109,7 @@
 												<md-checkbox ng-model="column.properties.showMap" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE'"/>
 											</td>
 											<td>
-												<md-checkbox ng-model="column.properties.showDetails" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE'"/>
+												<md-checkbox ng-model="column.properties.showDetails" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE' || column.fieldType=='ATTRIBUTE'"/>
 											</td>
 										</tr>
 									</tbody>
