@@ -57,6 +57,7 @@ import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
+import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -107,6 +108,7 @@ public class JSONSerializer implements Serializer {
 		mappings.put(CkanDataSet.class, new DataSetJSONSerializer());
 		mappings.put(FederatedDataSet.class, new DataSetJSONSerializer());
 		mappings.put(RESTDataSet.class, new DataSetJSONSerializer());
+		mappings.put(SPARQLDataSet.class, new DataSetJSONSerializer());
 
 		mappings.put(RoleMetaModelCategory.class, new RoleMetaModelCategoryJSONSerializer());
 

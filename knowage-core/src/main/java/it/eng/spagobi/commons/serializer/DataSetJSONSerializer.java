@@ -394,6 +394,8 @@ public class DataSetJSONSerializer implements Serializer {
 					manageRESTDataSet(jsonConf, result);
 				} else if (DataSetConstants.DS_SOLR_NAME.equalsIgnoreCase(type)) {
 					manageSolrDataSet(jsonConf, result);
+				} else if (type.equalsIgnoreCase(DataSetConstants.SPARQL)) {
+					manageSPARQLDataSet(jsonConf, result);
 				}
 			} catch (Exception e) {
 				logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
@@ -426,6 +428,18 @@ public class DataSetJSONSerializer implements Serializer {
 
 		}
 		return result;
+	}
+
+	private void manageSPARQLDataSet(JSONObject conf, JSONObject result) throws JSONException {
+		for (String attr : DataSetConstants.SPARQL_ATTRIBUTES) {
+			if(!conf.has(attr)) {
+				continue;
+			}
+			Object value = conf.get(attr);
+			Assert.assertNotNull(value, "json value");
+			result.put(attr,  value.toString());
+		}
+
 	}
 
 	private static void manageRESTDataSet(JSONObject conf, JSONObject result) throws JSONException {

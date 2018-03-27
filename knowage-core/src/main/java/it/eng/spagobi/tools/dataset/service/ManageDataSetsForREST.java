@@ -75,6 +75,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
+import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -645,6 +646,10 @@ public class ManageDataSetsForREST {
 			toReturn = manageRESTDataSet(savingDataset, jsonDsConfig, json);
 		}
 
+		else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SPARQL)) {
+			toReturn = manageSPARQLDataSet(savingDataset, jsonDsConfig, json);
+		}
+
 		else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SOLR_TYPE)) {
 			toReturn = manageSolrDataSet(savingDataset, jsonDsConfig, json);
 		}
@@ -1054,7 +1059,7 @@ public class ManageDataSetsForREST {
 
 				for (int i = 0; i < metaData.getFieldCount(); i++) {
 					IFieldMetaData ifmd = metaData.getFieldMeta(i);
-					
+
 					//check if file data set, apply metadata values passed from frontend
 					if(dataSet instanceof FileDataSet) {
 						for (int j = 0; j < metadataArray.length(); j++) {
@@ -1062,12 +1067,12 @@ public class ManageDataSetsForREST {
 								ifmd.setType(MetaDataMapping.getMetaDataType(metadataArray.getJSONObject(j).getString("type")));
 								break;
 							}
-							
+
 						}
 					}
-					
+
 					for (int j = 0; j < metadataArray.length(); j++) {
-						
+
 						if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
 							if ("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
 								ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
@@ -1077,7 +1082,7 @@ public class ManageDataSetsForREST {
 							break;
 						}
 					}
-					
+
 				}
 
 				if (metadataArray.length() == 0) {
@@ -1243,6 +1248,14 @@ public class ManageDataSetsForREST {
 			config.put(ja, new JSONArray(json.getString(ja)));
 		}
 		RESTDataSet res = new RESTDataSet(config);
+		return res;
+	}
+
+	private SPARQLDataSet manageSPARQLDataSet(boolean savingDataset, JSONObject config, JSONObject json) throws JSONException {
+		for(String sa : DataSetConstants.SPARQL_ATTRIBUTES) {
+			config.put(sa, json.optString(sa));
+		}
+		SPARQLDataSet res = new SPARQLDataSet(config);
 		return res;
 	}
 

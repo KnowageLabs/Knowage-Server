@@ -79,6 +79,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
+import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
@@ -1392,6 +1393,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			dataSet = manageRESTDataSet(savingDataset, jsonDsConfig);
 		}
 
+		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SPARQL)) {
+			dataSet = manageSPARQLDataSet(savingDataset, jsonDsConfig);
+		}
+
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
 			String query = getAttributeAsString(DataSetConstants.QUERY);
 			String queryScript = getAttributeAsString(DataSetConstants.QUERY_SCRIPT);
@@ -1548,6 +1553,14 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 		dataSet.setConfiguration(jsonDsConfig.toString());
 		return dataSet;
+	}
+
+	private SPARQLDataSet manageSPARQLDataSet(boolean savingDataset, JSONObject config) throws JSONException {
+		for (String sa : DataSetConstants.SPARQL_ATTRIBUTES) {
+			config.put(sa, getAttributeAsString(sa));
+		}
+		SPARQLDataSet res = new SPARQLDataSet(config);
+		return res;
 	}
 
 	private RESTDataSet manageRESTDataSet(boolean savingDataset, JSONObject config) throws JSONException {
