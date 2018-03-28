@@ -477,7 +477,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	}
 
 	//TODO missing maxRows
-	this.loadDatasetRecordsById = function(dsId, page, itemPerPage,columnOrdering, reverseOrdering, ngModel){
+	this.loadDatasetRecordsById = function(dsId, page, itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues = false){
 		//after retry LabelDataset by Id call service for data
 		var dataset = this.getAvaiableDatasetById(dsId);
 		var deferred = $q.defer();
@@ -616,13 +616,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		var filtersToSend = {};
-		if(ngModel.type!="selector"){
+		if(loadDomainValues == false){
 			 filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(dataset.label));
 			if( Object.keys(filtersToSend).length == 0){
 				filtersToSend = cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 			}
 		}
-
 
 		var limitRows;
 		if(ngModel.limitRows){
@@ -790,8 +789,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 			return deferred.promise;
 		}
-
-
 	}
 
 	this.getParametersAsString = function(parameters){
@@ -1345,12 +1342,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	 					var colIdx = columnsToshowIndex[col].substring( columnsToshowIndex[col].indexOf('|')+1);
 	 					var colValue = row[colIdx];
 	 					if(colValue == undefined) colValue ='';
-	 					
+
 	 					if(allDatasetRecords.metaData.fields[1].type == 'float' && model.numbers){
 	 						colValue = ds.formatValue(colValue,model.numbers);
 	 					}
-	 					
-	 					
+
+
 
 	 					// if aggregation is specified search for right match and not for a generic one
 
@@ -1387,7 +1384,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 	}
-	
+
 	//conditional value formatting
     ds.formatValue = function (value, numbersModel){
 		var output = value;

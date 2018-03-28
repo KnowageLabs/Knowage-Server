@@ -124,7 +124,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 	};
 
-	this.loadDatasetRecords = function(ngModel, page, itemPerPage,columnOrdering, reverseOrdering){
+	this.loadDatasetRecords = function(ngModel, page, itemPerPage,columnOrdering, reverseOrdering, loadDomainValues = false){
 		if(ngModel.dataset!=undefined && ngModel.dataset.dsId!=undefined){
 			var dataset = cockpitModule_datasetServices.getDatasetById(ngModel.dataset.dsId);
 
@@ -133,9 +133,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				var ngModelCopy = {};
 				angular.copy(ngModel, ngModelCopy);
 				ngModelCopy.content.filters = [];
-				return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy);
+				return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy, loadDomainValues);
 			}
-			return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModel);
+			return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues);
 		}
 		return null ;
 	}
@@ -235,7 +235,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					}
 				}
 
-				var dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering);
+				var dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, config.type == "selector");
 				if(dsRecords == null){
 					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
 				}else{
@@ -252,6 +252,24 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					}
 
 					dsRecords.then(function(data){
+						if(config.type == "selector"){
+							var lastSelection = cockpitModule_widgetSelection.getLastCurrentSelection();
+							if(!lastSelection || !lastSelection[config.dataset.name] || !lastSelection[config.dataset.name][config.content.selectedColumn.name]){
+								var activeValues = wi.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, false);
+								activeValues.then(function(values){
+									var activeValues = [];
+									for(var i in values.rows){
+										activeValues.push(values.rows[i].column_1);
+									}
+									config.activeValues = activeValues;
+								}, function(){
+									console.log("Error retry data");
+								});
+							}else{
+								config.activeValues = null;
+							}
+						}
+
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,changedChartType:changedChartType, "chartConf":data});
 					}, function(){

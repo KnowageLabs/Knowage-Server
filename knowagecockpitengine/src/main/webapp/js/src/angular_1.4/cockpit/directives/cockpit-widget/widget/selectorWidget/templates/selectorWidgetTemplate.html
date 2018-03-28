@@ -1,8 +1,9 @@
 <div flex layout-align="start" class="cockpitSelectorWidget">
 	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue'" layout="column" class="cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}">
 		<md-radio-group ng-model="parameter">
-			<md-radio-button class="md-primary cSelWRadio" ng-repeat="record in datasetRecords.rows"  
-			value="{{record.column_1+''}}" ng-click="toggleRadioParameter(record.column_1+'')"
+			<md-radio-button class="md-primary cSelWRadio" ng-repeat="record in datasetRecords.rows"
+			value="{{record.column_1+''}}" ng-click="!ngModel.activeValues || ngModel.activeValues.indexOf(record.column_1) > -1 ? toggleRadioParameter(record.column_1+'') : null"
+			ng-disabled="ngModel.activeValues && ngModel.activeValues.indexOf(record.column_1) == -1"
 			>
 				{{record.column_1}} 
 			</md-radio-button>
@@ -13,8 +14,9 @@
 	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue'" layout="column" class="checkBoxParameter cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }">
 		<div class="cSelWCheckContainer">
 			<md-checkbox class="md-primary cSelWCheck" ng-checked="checkboxParameterExists(record.column_1+'')" 
-			value="{{record.column_1+''}}" ng-click="toggleCheckboxParameter(record.column_1+'')" 
+			value="{{record.column_1+''}}" ng-click="!ngModel.activeValues || ngModel.activeValues.indexOf(record.column_1) > -1 ? toggleCheckboxParameter(record.column_1+'') : null" 
 			layout="row" layout-align="start center" ng-repeat="record in datasetRecords.rows"
+			ng-disabled="ngModel.activeValues && ngModel.activeValues.indexOf(record.column_1) == -1"
 			>
 				{{record.column_1}}
 			</md-checkbox>
@@ -23,45 +25,45 @@
 	</div>
 	
 	<!-- lov combobox single and multiple input -->
-	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX'" layout="column"  class="selectParameter cockpitSelectorWidgetCombobox" layout-padding>
-		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue=='multiValue'" >
+	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX'" layout="column" class="selectParameter cockpitSelectorWidgetCombobox" layout-padding>
+	
 		<!-- multiple -->
-			<md-select ng-model="multiCombo.selected" multiple  md-on-close="clearParamSearch()"> 
-		 		
+		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue=='multiValue'" >
+			<md-select ng-model="multiCombo.selected" multiple md-on-close="clearParamSearch()"> 
 				<md-select-header>
-				        <md-input-container class="md-block">
-				          <input
-				            type="search"
-				            ng-model="searchParamText"
-				            ng-keydown="$event.stopPropagation()"
-				            placeholder="Search..">
-				          </md-input-container>  
-				        </md-select-header>
-				        <md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" 
-				        ng-value="record.column_1+''" ng-click="toggleComboParameter(record.column_1+'', false)"
-				       >
+					<md-input-container class="md-block">
+						<input
+								type="search"
+								ng-model="searchParamText"
+								ng-keydown="$event.stopPropagation()"
+								placeholder="{{::translate.load('sbi.cockpit.widgets.table.search')}}...">
+					</md-input-container>
+				</md-select-header>
+				
+				<md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" 
+						ng-value="record.column_1+''" ng-click="!ngModel.activeValues || ngModel.activeValues.indexOf(record.column_1) > -1 ? toggleComboParameter(record.column_1+'', false) : null"
+						ng-disabled="ngModel.activeValues && ngModel.activeValues.indexOf(record.column_1) == -1">
 					{{record.column_1}}
 				</md-option>
 			</md-select>
-			
 		</md-input-container>
-		<md-input-container class="md-block"  ng-if="ngModel.settings.modalityValue!='multiValue'" >
-			<!-- single -->
-			<md-select ng-model="parameter" 
-		         ng-if="ngModel.settings.modalityValue!='multiValue'" md-on-close="clearParamSearch()"> 
+		
+		<!-- single -->
+		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue!='multiValue'" >
+			<md-select ng-model="parameter" md-on-close="clearParamSearch()">
 				<md-select-header>
-				        <md-input-container class="md-block">
-				          <input
-				            type="search"
-				            ng-model="searchParamText"
-				            ng-keydown="$event.stopPropagation()"
-				            placeholder="Search..">
-				          </md-input-container>  
-				        </md-select-header>
+					<md-input-container class="md-block">
+						<input
+								type="search"
+								ng-model="searchParamText"
+								ng-keydown="$event.stopPropagation()"
+								placeholder="{{::translate.load('sbi.cockpit.widgets.table.search')}}...">
+					</md-input-container>
+				</md-select-header>
 
 				<md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" 
-				ng-value="record.column_1+''" ng-click="toggleComboParameter(record.column_1+'',true)"
-				>
+						ng-value="record.column_1+''" ng-click="!ngModel.activeValues || ngModel.activeValues.indexOf(record.column_1) > -1 ? toggleComboParameter(record.column_1+'', true) : null"
+						ng-disabled="ngModel.activeValues && ngModel.activeValues.indexOf(record.column_1) == -1">
 					{{record.column_1}}
 				</md-option>
 			</md-select>

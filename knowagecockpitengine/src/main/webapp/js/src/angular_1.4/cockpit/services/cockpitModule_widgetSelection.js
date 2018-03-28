@@ -472,10 +472,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		for(var i=0;i<cockpitModule_template.configuration.aggregations.length ; i++){
 			if(cockpitModule_template.configuration.aggregations[i].datasets.indexOf(dsLabel)!=-1){
 				var copyOfValue = angular.copy(value);
-				cockpitModule_template.configuration.aggregations[i].selection[key] = copyOfValue;
+				var selection = cockpitModule_template.configuration.aggregations[i].selection;
+				if(selection.hasOwnProperty(key)){
+					delete selection[key]; // force creation of new key in order to get it as last key during iteration
+				}
+				selection[key] = copyOfValue;
 			}
 		}
-
 	}
 
 	this.refreshAllWidgetWhithSameDataset=function(dsLabel){
@@ -498,7 +501,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					ws.refreshAllAssociatedWidget(isInit);
 				}
 			})
-			})
+		})
 	}
 
 	this.refreshAllAssociations = function(){
@@ -705,5 +708,24 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 	}
 
+	this.getLastCurrentSelection = function(){
+		var tmpSelection = [];
+		angular.copy(cockpitModule_template.configuration.aggregations,tmpSelection);
+		for(var i=0;i<tmpSelection.length;i++){
+			var selections = tmpSelection[i].selection;
+			var selectionKeys = Object.keys(selections);
+			if(selectionKeys.length > 0){
+				var lastSelectionKey = selectionKeys[selectionKeys.length - 1];
+				var lastSelectionValue = selections[lastSelectionKey];
 
+				var result = {}
+				var keySplit = lastSelectionKey.split(".");
+				result[keySplit[0]]={};
+				result[keySplit[0]][keySplit[1]] = lastSelectionValue;
+				return result;
+			}
+		}
+
+		return null;
+	}
 })
