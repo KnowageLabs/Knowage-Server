@@ -5,23 +5,6 @@
       	<h2 class="md-toolbar-tools">OPTIONS</h2>
       	<span flex></span>
     </md-toolbar>
-  	
-  	<!-- ORIG
-	<div layout="column" ng-repeat="ind in indicators">
-		<div class="indicatorOptions" layout="column">
-			<div class="indicatorLabel" ng-click="toggleLayer(ind.name)" layout="row" layout-align="start center" style="padding:8px;cursor:pointer;background-color: #f1f1f1;font-size:.8rem;">
-				<md-icon md-font-icon="fa fa-eye" ng-if="getLayerVisibility(ind.name)"></md-icon>
-			    <md-icon md-font-icon="fa fa-eye-slash" ng-if="!getLayerVisibility(ind.name)"></md-icon>
-			    <span flex>{{ind.name}}</span>
-				</div>
-				<md-radio-group  ng-model="ind.defaultIndicator" style="padding:8px;" ng-if="getLayerVisibility(ind.name)">
-	 	   		<md-radio-button ng-repeat="dettInd in ind.indicators" ng-click="thematizeMeasure(ind.name, dettInd.value)"  class="md-primary" ng-value="dettInd.value" style="font-size:.7rem;" >
-		 	   		{{dettInd.value}}
-		 	   	</md-radio-button>
-    	</md-radio-group>
-		</div>
-	</div> -->
-
 
 	<div ng-repeat="layer in ngModel.content.layers">
 		<div class="indicatorOptions" layout="column">
@@ -34,7 +17,7 @@
 			</div>
 			<md-radio-group style="padding:8px;" ng-model="layer.defaultIndicator" ng-if="layer.expandedNav">
 	 	   		<md-radio-button ng-repeat="ind in ngModel.content.columnSelectedOfDataset[layer.dsId]" ng-if="ind.properties.showMap" ng-click="thematizeMeasure(layer.name, ind.aliasToShow)"  class="md-primary" ng-value="ind.name" style="font-size:.7rem;" >
-		 	   		{{ind.aliasToShow}}
+		 	   		{{ind.aliasToShow}} ({{ind.properties.aggregationSelected}})
 		 	   	</md-radio-button>
 	    	</md-radio-group>
 		</div>

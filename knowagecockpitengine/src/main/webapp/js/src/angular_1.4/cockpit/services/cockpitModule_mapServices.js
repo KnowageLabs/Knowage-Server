@@ -52,16 +52,15 @@
 							return null;
 						}
 						if (!selectedMeasure) selectedMeasure = config.defaultIndicator;
-						ms.setActiveIndicator(selectedMeasure);
-						if (config.analysisConf && config.analysisConf.defaultAnalysis == 'proportionalSymbol'){							
+//						if (config.analysisConf && config.analysisConf.defaultAnalysis == 'proportionalSymbol'){							
 							//get config for thematize
 							if (selectedMeasure){
 								if (!ms.getCacheProportionalSymbolMinMax()) ms.setCacheProportionalSymbolMinMax({}); //just at beginning
-								if (!ms.getCacheProportionalSymbolMinMax().hasOwnProperty(selectedMeasure)){
-									ms.loadIndicatorMaxMinVal(selectedMeasure, values);
+								if (!ms.getCacheProportionalSymbolMinMax().hasOwnProperty(config.name+"|"+selectedMeasure)){
+									ms.loadIndicatorMaxMinVal(config.name+"|"+ selectedMeasure, values);
 								}
 							}
-						}
+//						}
 						
 						//set ol objects
 						var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
@@ -72,6 +71,7 @@
 				        ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
 				       //at least add the layer owner
 				        feature.set("parentLayer",config.name);
+				        feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
 				        featuresSource.addFeature(feature);
 					}
 					
@@ -109,8 +109,6 @@
 			return toReturn;
 		}
 		
-	
-		
 	    var styleCache = {};
 	    ms.layerStyle = function(feature, resolution){
 	    	
@@ -119,18 +117,19 @@
 				localFeature = feature.get('features')[0];
 	    	else
 	    		localFeature = feature;
-	    	
-	    	
+	    	    	
 			var props  = localFeature.getProperties();
 			var parentLayer = localFeature.get('parentLayer');
-			var config = ms.getActiveConf(parentLayer);
+			var config = ms.getActiveConf(parentLayer) || {};
 			var configThematizer = config.analysisConf || {};
 			var configMarker = config.markerConf || {};
 			var useCache = false; //cache isn't use for analysis, just with fixed marker
-			var isCluster = (config.markerConf && config.markerConf.type == 'cluster') ? true : false;
+			var isCluster = (Array.isArray(feature.get('features'))) ? true : false;
 			var value;
 			var style;
 			
+			ms.setActiveIndicator(config.defaultIndicator);
+
 			if (isCluster){
 				value = ms.getClusteredValue(feature, config.markerConf);
 			}else{
@@ -145,8 +144,7 @@
 				style = ms.getProportionalSymbolStyles(value, props, configThematizer.proportionalSymbol);
 				thematized = true;
 			}
-			
-			if (!thematized && isCluster){
+			if (!thematized && isCluster ){
 				style = ms.getClusterStyles(value, props, configMarker);
 				useCache = false;
 			}
@@ -170,12 +168,12 @@
 	    	var aggregationFunc = "";
 	    	
 	    	if (Array.isArray(feature.get('features'))){
+	    		total = 0;
 	    		for (var i=0; i<feature.get('features').length; i++){
-					var tmpValue = (feature.get('features')[i].get(ms.activeInd)) ? feature.get('features')[i].get(ms.activeInd).value : 0;
-//					console.log("tmpValue: " , tmpValue);
-					aggregationFunc = (feature.get('features')[i].get(ms.activeInd)) ? feature.get('features')[i].get(ms.activeInd).aggregationSelected : "SUM";
+					var tmpValue = Number((feature.get('features')[i].get(ms.getActiveIndicator())) ? feature.get('features')[i].get(ms.getActiveIndicator()).value : 0);
+					aggregationFunc = (feature.get('features')[i].get(ms.getActiveIndicator())) ? feature.get('features')[i].get(ms.getActiveIndicator()).aggregationSelected : "SUM";
 					values.push(tmpValue);
-					total += tmpValue;
+					total = total + tmpValue;
 				}
 				
 	    		switch(aggregationFunc) {
@@ -202,9 +200,9 @@
 				
 	    	}
 	    	else{
-	    		toReturn += feature.get(ms.activeInd);
+	    		toReturn += feature.get(ms.getActiveIndicator());
 	    	}
-//	    	console.log("fucnt: ["+ configCluster.aggregationSelected +"] - toReturn ", toReturn);
+//	    	console.log("fucnt: ["+ aggregationFunc +"] - toReturn ", toReturn);
 			return toReturn;
 	    }
 	    
@@ -224,13 +222,14 @@
 	                text: value.toString(),
 	                fill: new ol.style.Fill({
 	                  color: (config.style && config.style['color']) ? config.style['color'] : '#fff'
+//	                color : "#fff"
 	                })
 	              })
 	            });
 	    }
 		
 		ms.getProportionalSymbolStyles = function(value, props, config){
-			var textValue =  props[ms.activeInd] || "";
+			var textValue =  props[ms.getActiveIndicator()] || "";
 			return new ol.style.Style({
 		          fill: new ol.style.Fill({
 		                color :  config.color
@@ -240,7 +239,7 @@
 		                width: 2
 		              }),
 		              image: new ol.style.Circle({
-		                radius: ms.getProportionalSymbolSize(value, ms.activeInd, config),
+		                radius: ms.getProportionalSymbolSize(value, ms.getActiveIndicator(), config),
 //		            	radius: 20,
 		                fill: new ol.style.Fill({
 		                 color : config.style['color'] || 'blue',
@@ -259,7 +258,7 @@
 		}
 		
 		ms.getChoroplethStyles = function(value, props, config){
-			var textValue =  props[ms.activeInd] || "";
+			var textValue =  props[ms.getActiveIndicator()] || "";
 			
 			return  [new ol.style.Style({
 				stroke: new ol.style.Stroke({
@@ -286,8 +285,14 @@
 		}
 		
 		ms.getOnlyMarkerStyles = function (props, config){
-			var textValue =  props[ms.activeInd] || "";
-			return new ol.style.Style({
+			var tmpConfig = angular.copy(config);
+			
+			if (tmpConfig.style && tmpConfig.style['background-color']){
+				//force cluster background-color to final marker (color property)
+				tmpConfig.style['color'] = config.style['background-color'];
+			}
+			var textValue =  props[ms.getActiveIndicator()] || "";
+			var style =  new ol.style.Style({
 				image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
 					stroke: new ol.style.Stroke({ //border doesn't work
 						color: 'red',
@@ -295,13 +300,15 @@
 					}),
 				    opacity: 1,
 				    crossOrigin: 'anonymous',
-				    color: (config.style && config.style.color) ? config.style.color : (config.color) ? config.color : 'blue',
+				    color: (tmpConfig.style && tmpConfig.style.color) ? tmpConfig.style.color : (tmpConfig.color) ? tmpConfig.color : 'blue',
 //				    src: 'data/icon.png'
 //				    src: 'https://www.mapz.com/map/marker/svg/M_marker_heart_150910.svg'
 //				    src: 'https://s3.amazonaws.com/com.cartodb.users-assets.production/maki-icons/embassy-18.svg',
 				    src: config.icon || 'https://openlayers.org/en/v4.6.4/examples/data/dot.png'
 					}))
 		          });
+			
+			return style;
 		}
 	
 		ms.getBaseLayer = function (conf){
@@ -355,8 +362,8 @@
 		ms.getProportionalSymbolSize = function(val, name, config){
 			if (!name) return 0;
 			
-			var minValue = ms.cacheProportionalSymbolMinMax[name].minValue;
-			var maxValue = ms.cacheProportionalSymbolMinMax[name].maxValue;
+			var minValue = ms.cacheProportionalSymbolMinMax[config.name+'|'+name].minValue;
+			var maxValue = ms.cacheProportionalSymbolMinMax[config.name+'|'+name].maxValue;
 			var size;
 			
 			var maxRadiusSize = config.maxRadiusSize;
@@ -419,6 +426,15 @@
 				if (ms.activeConf[c].layer === l)
 					return ms.activeConf[c].config;
 			}
+			console.log("Active configuration for layer ["+l+"] not found.");
+			return null;
+		}
+		
+		ms.getActiveConfIdx=function(l){
+			for (var i=0; i<ms.activeConf; i++){
+				if (ms.activeConf[i].layer === l)
+					return i;
+			}
 			return null;
 		}
 		
@@ -426,8 +442,9 @@
 			if (!ms.activeConf)
 				ms.activeConf = [];
 			
-			if (ms.getActiveConf(l) != null){
-				ms.activeConf.splice(l,1);
+			var idx = ms.getActiveConfIdx(l);
+			if (idx != null){
+				ms.activeConf.splice(idx,1);
 			} 
 			ms.activeConf.push({"layer": l, "config":c});
 		}
@@ -476,9 +493,9 @@
 		}
 
 		ms.getColumnName = function(key, values){
-			var toReturn = key;
+			var toReturn = key.substring(key.indexOf('|')+1);;
 			for (var v=0; v<values.length; v++){
-				if (values[v].header === key)
+				if (values[v].header === toReturn)
 					return values[v].name;
 			}
 				

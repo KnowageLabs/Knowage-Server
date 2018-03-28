@@ -100,7 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    $scope.refresh = function(element,width,height, data, nature, associativeSelection, changedChartType, chartConf, options) {
     		var dsLabel = (Array.isArray(options.label)) ? options.label[0] : options.label; //on delete of selections options is an array !!!
-    		$scope.createLayerWithData(dsLabel, data);
+    		$scope.createLayerWithData(dsLabel, data, false); //test cluster case
 	    }
 	    
 	    $scope.getOptions =function(){
@@ -163,14 +163,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		var columns = $scope.getColumnSelectedOfDataset($scope.ngModel.content.layers[l].dsId);
 	    		for ( c in columns){
 	    			if (columns[c].properties.showMap){
-	    				$scope.ngModel.content.layers[l].defaultIndicator = columns[c].aliasToShow;	
+	    				$scope.ngModel.content.layers[l].defaultIndicator = columns[c].name;	
 	    				break;
 	    			}
 	    		}
 	    	}	
 	    }
 	    
-	    $scope.createLayerWithData = function(label, data){
+	    $scope.createLayerWithData = function(label, data, isCluster){
 	    	//prepare object with metadata for desiderata dataset columns
 	    	var geoColumn = null;
 	    	var selectedMeasure = null;
@@ -187,8 +187,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     			var tmpField = columnsForData[f];
     			if (tmpField.fieldType == "SPATIAL_ATTRIBUTE")
     				geoColumn = tmpField.name;
-    			else if (tmpField.properties.showMap) //first measure
-    				selectedMeasure = tmpField.aliasToShow;
+//    			else if (tmpField.properties.showMap) //first measure
+//    				selectedMeasure = tmpField.aliasToShow;
     		}  
     		
     		var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, columnsForData, data);
@@ -197,13 +197,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			cockpitModule_mapServices.setActiveConf(layerDef.name, layerDef);
 			var layer;
-			
-			if (layerDef.markerConf && layerDef.markerConf.type == 'cluster'){
+			if (isCluster){
 				var clusterSource = new ol.source.Cluster({source: featuresSource	
 														  });
-				layer =  new ol.layer.Vector({source: clusterSource,
+				layer =   new ol.layer.Vector({source: clusterSource,
 										  	  style: cockpitModule_mapServices.layerStyle
-											});
+										});
 			}else{
 				layer = new ol.layer.Vector({source: featuresSource,
 	    									 style: cockpitModule_mapServices.layerStyle
@@ -236,8 +235,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	var view = $scope.map.getView();
             view.on("change:resolution", function(e) {
             	//zoom action
-//        	    if (Number.isInteger(e.target.getZoom())) {
-//        	    }
+        	    if (Number.isInteger(e.target.getZoom())) {
+	            	var previousZoom = $scope.ngModel.content.currentView.zoom;
+	            	var newZoom =  e.target.getZoom();
+	            	if (previousZoom > newZoom ){
+	            		for (l in $scope.ngModel.content.layers){
+		    		    	var layerDef =  $scope.ngModel.content.layers[l];
+		    		    	var isCluster = (layerDef.markerConf && layerDef.markerConf.type == 'cluster') ? true : false;
+			    			if (isCluster){
+			    				var data = $scope.getValuesLayer(layerDef.name);
+				        		$scope.createLayerWithData(layerDef.name, data.values, true); //return to cluster view
+			    			}
+	            		}
+	            	}
+        	    }
+            	
         	    $scope.ngModel.content.currentView.zoom = e.target.getZoom();
         	    $scope.ngModel.content.currentView.center = e.target.getCenter();
             });
@@ -275,23 +287,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         	                return layer;
         	            });
-
-    	        if (feature) {
+            	//popup isn't shown with cluster
+    	        if (feature && !Array.isArray(feature)) {
     	            var geometry = feature.getGeometry();
     	            var props = feature.getProperties();
     	            var coordinate = geometry.getCoordinates();
     	            var config = $scope.getColumnSelectedOfDataset(layer.dsId);
     	            var text = "";
     	            for (var p in props){
-    	            	if ($scope.isDisplayableProp(p, config))
-    	            	text += '<b>' + p + ":</b> " + props[p].value + '<br>';
+    	            	var pDett = ($scope.isDisplayableProp(p, config));
+    	            	if (pDett != null)
+    	            		text += '<b>' + pDett.aliasToShow + ":</b> " + props[p].value + '<br>';
     	            }
-
-    		        popupContent.innerHTML = '<h2>Details</h2><code>' + text + '</code>';
-    		        overlay.setPosition(coordinate);
+    	            if (text != ""){
+	    		        popupContent.innerHTML = '<h2>Details</h2><code>' + text + '</code>';
+	    		        overlay.setPosition(coordinate);
+    	            }
     	        }
              });
+    		
 
+    		$scope.map.on('dblclick', function(evt) {
+    			for (l in $scope.ngModel.content.layers){
+    		    	var layerDef =  $scope.ngModel.content.layers[l];
+    		    	var isCluster = (layerDef.markerConf && layerDef.markerConf.type == 'cluster') ? true : false;
+	    			if (isCluster){
+	    				var data = $scope.getValuesLayer(layerDef.name);
+		        		$scope.createLayerWithData(layerDef.name, data.values, false);
+	    			}
+    			}
+    		});
+
+    		$scope.map.on('ol-zoom-out', function(evt) {
+    			alert("zoom out!!");
+    			for (l in $scope.ngModel.content.layers){
+    		    	var layerDef =  $scope.ngModel.content.layers[l];
+    		    	var isCluster = (layerDef.markerConf && layerDef.markerConf.type == 'cluster') ? true : false;
+	    			if (isCluster){
+	    				var data = $scope.getValuesLayer(layerDef.name);
+		        		$scope.createLayerWithData(layerDef.name, data.values, false);
+	    			}
+    			}
+    		});
+    		
     		// change mouse cursor when over marker
     	      $scope.map.on('pointermove', function(e) {
     	    	  var pixel = $scope.map.getEventPixel(e.originalEvent);
@@ -309,11 +347,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    $scope.isDisplayableProp = function (p, config){
 	    	for (c in config){
-	    		if (p == config[c].aliasToShow && config[c].properties.showDetails){
-	    			return true;
+	    		if (p == config[c].name && config[c].properties.showDetails){
+	    			return config[c];
 	    		}
 	    	}
-	    	return false;
+	    	return null;
 	    }
 		
 	    $scope.getFeaturesFromDataset = function(layerDef){
@@ -321,6 +359,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	var geoColumn = null;
     		var selectedMeasure = null;
     		var columnsForData = [];
+    		var isCluster = (layerDef.markerConf && layerDef.markerConf.type == 'cluster') ? true : false; 
     		
     		var columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
 	    	
@@ -339,7 +378,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		//get the dataset columns values
 	    	cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.dsId, undefined, undefined, undefined, undefined, model).then(
 	    		function(allDatasetRecords){
-	    			$scope.createLayerWithData(layerDef.name, allDatasetRecords);
+	    			$scope.createLayerWithData(layerDef.name, allDatasetRecords, isCluster);
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.dsId+"] "); 
 				sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.datasetLoadingError').replace("{0}",layerDef.dsId), 'Title', 3000);
@@ -404,7 +443,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 	    
 	    $scope.toggleLayerExpanse = function(layer){
-	    	layer.expanded = !layer.expanded;
+	    	layer.expandedNav = !layer.expandedNav;
 	    }	
 
 	    $scope.getLayerVisibility = function(n){
@@ -444,7 +483,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  //thematizer functions
 	    $scope.refreshStyle = function (layer, measure, config, configColumns, values, geoColumn){
 			//prepare object for thematization
-	    	cockpitModule_mapServices.loadIndicatorMaxMinVal(measure, values);
+	    	cockpitModule_mapServices.loadIndicatorMaxMinVal(config.name+'|'+measure, values);
 			var newSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, measure, config, configColumns,  values);
 			if (config.markerConf && config.markerConf.type == 'cluster'){
 				var clusterSource = new ol.source.Cluster({ source: newSource });
