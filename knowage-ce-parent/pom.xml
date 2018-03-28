@@ -100,8 +100,8 @@
 		<module>../knowage</module>
 		<module>../slimerjs-wrapper</module>
 		<module>../knowagecockpitengine</module>
-		<!--<module>../knowagegeoreportengine</module>
 		 <module>../knowagekpiengine</module>
+		<!--<module>../knowagegeoreportengine</module>
 		<module>../knowagemeta</module>
 		<module>../knowagenetworkengine</module>
 		<module>../knowageqbeengine</module>

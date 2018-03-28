@@ -130,7 +130,7 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 	}
 
 	$scope.goBackFromDesigner = function() {
-		 var url= sbiModule_config.host+""+sbiModule_config.externalBasePath;
+		 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+""+sbiModule_config.externalBasePath;
 		 url+= "/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID="+docId;
 		 window.parent.location.href=url;
 	}

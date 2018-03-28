@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.bo;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
@@ -72,7 +73,8 @@ public class FileDataSet extends ConfigurableDataSet {
 			this.setFileName((jsonConf.get(FILE_NAME) != null) ? jsonConf.get(FILE_NAME).toString() : "");
 			logger.info("File name: " + fileName);
 
-			this.setResourcePath(StringUtilities.isNotEmpty(jsonConf.optString(RESOURCE_PATH)) ? jsonConf.optString(RESOURCE_PATH) : "");
+			this.setResourcePath(StringUtilities.isNotEmpty(jsonConf.optString(RESOURCE_PATH)) ? jsonConf.optString(RESOURCE_PATH)
+					: (SpagoBIUtilities.getResourcePath() == null ? "" : SpagoBIUtilities.getResourcePath()));
 			logger.info("Resource path: " + this.getResourcePath());
 			if (this.dataProxy != null)
 				dataProxy.setResPath(this.getResourcePath());

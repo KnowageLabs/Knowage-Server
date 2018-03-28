@@ -640,8 +640,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								
 								<div flex=100>
 									<md-input-container class="md-block">
-									    <label>{{translate.load("sbi.ds.sparql.graphiri")}}</label>
-										<input ng-model="selectedDataSet.sparqlGraphIRI" ng-change="setFormDirty()" type="text">
+									    <label>{{translate.load("sbi.ds.sparql.graph.iri")}}</label>
+										<input ng-model="selectedDataSet.sparqlDefaultGraphIri" ng-change="setFormDirty()" type="text">
 										
 									</md-input-container>
 								</div>
@@ -662,8 +662,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								
 								<div flex=100>
 									<md-input-container class="md-block">
-									    <label>{{translate.load("sbi.ds.sparql.timeout")}}</label>
-										<input ng-model="selectedDataSet.sparqlTimeout" ng-change="setFormDirty()" type="number" >
+									    <label>{{translate.load("sbi.ds.sparql.execution.timeout")}}</label>
+										<input ng-model="selectedDataSet.sparqlExecutionTimeout" ng-change="setFormDirty()" type="number" >
 										
 									</md-input-container>
 								</div>

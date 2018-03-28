@@ -194,6 +194,13 @@ public class DataSetConstants {
 	public static final String SOLR_FACET_PREFIX = "solrFacetPrefix";
 	public static final String SOLR_ADDITIONAL_PARAMETERS = "restRequestAdditionalParameters";
 
+	// SPARQL dataset constants
+	public static final String SPARQL_ENDPOINT = "sparqlEndpoint";
+	public static final String SPARQL_QUERY = "sparqlQuery";
+	public static final String SPARQL_DEFAULT_GRAPH_IRI = "sparqlDefaultGraphIri";
+	public static final String SPARQL_EXECUTION_TIMEOUT = "sparqlExecutionTimeout";
+	public static final String[] SPARQL_ATTRIBUTES = { SPARQL_ENDPOINT, SPARQL_QUERY, SPARQL_DEFAULT_GRAPH_IRI, SPARQL_EXECUTION_TIMEOUT};
+
 	public static final String[] SOLR_STRING_ATTRIBUTES = { SOLR_TYPE, SOLR_FACET_QUERY, SOLR_FACET_FIELD,
 			SOLR_FACET_PREFIX };
 	public static final String[] SOLR_JSON_ARRAY_ATTRIBUTES = { SOLR_ADDITIONAL_PARAMETERS };

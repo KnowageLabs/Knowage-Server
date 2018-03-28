@@ -10,14 +10,41 @@
 			<md-tabs flex md-border-bottom>
 		      
 				<md-tab label="{{translate.load('sbi.cockpit.widget.text.editor')}}">
-					<md-content class="noPadding" layout="row" >
-						<!-- <wysiwyg-edit content="localModel.content.text" config="editorConfig" ng-content="editorCss.css" flex="66"></wysiwyg-edit>--> 
-						<wysiwyg-edit content="localModel.content.text" config="editorConfig" ng-content="editorCss.css" flex></wysiwyg-edit>
+					<div class="noPadding" layout="row" >
+						<md-card  flex>
+							<md-card-content class="noPadding">
+								<wysiwyg-edit content="localModel.content.text" config="editorConfig" ng-content="editorCss.css" flex></wysiwyg-edit>
+							</md-card-content>
+						</md-card>
 						<cockpit-text-configuration editor-text="localModel.content.text" ng-model-shared="localModel">
-				    </md-content>
+				    </div>
 		        </md-tab>
 		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
 		        	<cockpit-style-configurator widget ng-model="localModel.style">
+			        	<cockpit-style-custom-widget-configurator label="'Measures Formatting'">
+				           <div layout="row" flex ng-cloak layout-wrap>
+	
+						           	<md-input-container flex=25 class="md-block"> 
+										<label>Prefix</label>
+										<input class="input_class" ng-model="localModel.numbers.prefix" /> 
+									</md-input-container>
+									<md-input-container flex=25 class="md-block"> 
+										<label>Suffix</label>
+										<input class="input_class" ng-model="localModel.numbers.suffix" />
+									</md-input-container>
+						           	<md-input-container flex=25 class="md-block"> 
+										<label>Precision</label>
+										<input class="input_class" type="number" ng-model="localModel.numbers.precision" />
+									</md-input-container>
+									<md-input-container flex=25 class="md-block" >  
+										<label>{{translate.load('sbi.cockpit.style.format')}}</label>
+										<md-select aria-label="aria-label" ng-model="localModel.numbers.format">
+											<md-option ng-repeat="f in formatPattern" value="{{f}}">{{f}}</md-option>
+										</md-select>
+									</md-input-container> 
+				          
+				           </div>
+				        </cockpit-style-custom-widget-configurator>
 		        		<cockpit-style-custom-widget-configurator label="'Padding'">
 			           <div layout="row" flex ng-cloak layout-wrap>
 
@@ -44,7 +71,8 @@
 		        </md-tab>
 		        
 		        <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
-		   			<multi-dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsIdArray)"></dataset-selector>  	
+		   			<multi-dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsIdArray)">  	
+		   			</multi-dataset-selector>
 		     	</md-tab>
 		     	
 				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}">
@@ -56,10 +84,10 @@
 	    </md-content>
     </md-card-content>
     <md-card-actions layout="row"  layout-align="end center">
-	    <md-button ng-click="cancelConfiguration()" >
+	    <md-button class="md-raised" ng-click="cancelConfiguration()" >
 	     {{translate.load('sbi.generic.cancel')}}
 	    </md-button>
-	    <md-button ng-click="saveConfiguration()"  >
+	    <md-button class="md-raised md-primary" ng-click="saveConfiguration()"  >
 	     {{translate.load('sbi.generic.save')}}
 	    </md-button>
     </md-card-actions>

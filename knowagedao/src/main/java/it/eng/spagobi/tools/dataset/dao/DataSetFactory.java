@@ -54,6 +54,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
+import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -85,6 +86,7 @@ public class DataSetFactory {
 	public static final String CUSTOM_DS_TYPE = "Custom";
 	public static final String FEDERATED_DS_TYPE = "Federated";
 	public static final String FLAT_DS_TYPE = "Flat";
+	public static final String SPARQL_DS_TYPE = "SPARQL";
 
 	static private Logger logger = Logger.getLogger(DataSetFactory.class);
 
@@ -127,6 +129,10 @@ public class DataSetFactory {
 
 		if (dataSet instanceof JDBCDataSet) {
 			toReturn.setDsType(JDBC_DS_TYPE);
+		}
+
+		if (dataSet instanceof SPARQLDataSet) {
+			toReturn.setDsType(SPARQL_DS_TYPE);
 		}
 
 		if (dataSet instanceof QbeDataSet) {
@@ -237,6 +243,8 @@ public class DataSetFactory {
 				fds.setDsType(FILE_DS_TYPE);
 			} else if (DataSetConstants.DS_REST_TYPE.equalsIgnoreCase(type)) {
 				ds = manageRESTDataSet(jsonConf);
+			} else if (DataSetConstants.DS_SPARQL.equalsIgnoreCase(type)) {
+				ds = manageSPARQLDataSet(jsonConf);
 			} else if (DataSetConstants.DS_SOLR_TYPE.equalsIgnoreCase(type)) {
 				ds = manageSolrDataSet(jsonConf, sbiDataSet.getParametersList());
 			} else if (type.equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
@@ -791,6 +799,11 @@ public class DataSetFactory {
 			if (DataSetConstants.DS_REST_TYPE.equalsIgnoreCase(sbiDataSet.getType())) {
 				ds = manageRESTDataSet(jsonConf);
 			}
+
+			if (DataSetConstants.DS_SPARQL.equalsIgnoreCase(sbiDataSet.getType())) {
+				ds = manageSPARQLDataSet(jsonConf);
+			}
+
 			if (DataSetConstants.DS_SOLR_TYPE.equalsIgnoreCase(sbiDataSet.getType())) {
 				ds = manageSolrDataSet(jsonConf, sbiDataSet.getParametersList());
 			}
@@ -1080,6 +1093,12 @@ public class DataSetFactory {
 	private static RESTDataSet manageRESTDataSet(JSONObject jsonConf) {
 		RESTDataSet res = new RESTDataSet(jsonConf);
 		res.setDsType(DataSetConstants.DS_REST_NAME);
+		return res;
+	}
+
+	private static SPARQLDataSet manageSPARQLDataSet(JSONObject jsonConf) {
+		SPARQLDataSet res = new SPARQLDataSet(jsonConf);
+		res.setDsType(DataSetConstants.SPARQL);
 		return res;
 	}
 

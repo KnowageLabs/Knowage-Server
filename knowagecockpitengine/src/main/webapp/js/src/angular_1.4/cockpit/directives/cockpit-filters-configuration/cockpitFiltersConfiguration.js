@@ -41,6 +41,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			   	}
 		   }
 	});
+	
+	//filter operators if dataset is realtime or not
+	angular.module('cockpitModule').filter('filterDatasetOperator', function() {
+		  return function (items, datasetIsRealTime) {
+			    var filtered = [];
+			    for (var i = 0; i < items.length; i++) {
+		    		var item = items[i]
+			    	if (datasetIsRealTime != undefined && datasetIsRealTime == true){
+			    		if (item != "=" && item != "<" && item != ">" && item != "<=" && item != ">=" && item != "!="){
+			    			continue;
+			    		} else {
+			    			filtered.push(item);
+			    		}
+					} else  {
+						filtered.push(item)
+					}
+			    }
+			    return filtered;
+			  };
+
+	});
 
 	function cockpitFiltersControllerFunction($scope,cockpitModule_widgetServices,
 			cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,
@@ -441,6 +462,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			var dsLabel = $scope.newFilter.dataset;
 			var ds = cockpitModule_datasetServices.getDatasetByLabel(dsLabel);
+			$scope.datasetIsRealTime = ds.isRealtime;
 			$scope.newFilterCurrenteSelectedDS = ds;
 			// now dataset is only one localDSforFilters
 			for(var i=0;i<ds.metadata.fieldsMeta.length;i++){
