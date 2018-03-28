@@ -128,10 +128,6 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				$scope.minMaxCategories.min = 2; 
 				$scope.minMaxSeries.max = 1;
 				$scope.minMaxSeries.min = 1;
-			} else if (newValue.dateTime){
-				$scope.minMaxCategories.max = 1; 
-				$scope.minMaxCategories.min = 1;
-				$scope.minMaxSeries.min = 1;
 			}else {
 				$scope.minMaxCategories.min = 1;
 				$scope.minMaxSeries.min = 1;

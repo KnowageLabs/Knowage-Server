@@ -21,7 +21,17 @@
 #if($chart.isCockpitEngine!="true")
 #set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
 #end
-
+#set($isDateTime = false)
+#if($chart.dateTime && $chart.dateTime=="true")
+	#if($chart.categoryDate)
+		#if($chart.categoryDate==$categorieColumns.name)
+			#set($isDateTime = true)
+		#end
+	#else
+		#set($isDateTime = true)
+	#end
+#end 
+#set($xAxisMap = $datasettransformer.getXAxisMap($categorieColumns, $chart.categoryDate))
 #set($enableDrilldown = false) 
 #if($chart.groupCategories)
 	#if($categorieColumns.groupby != ''  && $chart.groupCategories =='false')
@@ -679,26 +689,25 @@
 	 	#end
 	#end
 	
-    xAxis:
-	 #foreach($xAxisKey in $xAxisList.keySet())
+    xAxis:[
+    #foreach($a in $xAxisMap)
+    	#foreach($xAxisKey in $xAxisList.keySet())
 	 	#set ($xAxis = $xAxisList[$xAxisKey])
 	
 	{
 	
-		#if($chart.dateTime=="true")
-			type: 'datetime',
+		
+			type: "$a.type",
+			id: $a.id,
 			#if($categorieColumns.orderType=="desc")
 				reversed: true,
-			#end	 
-		#else 
-			type: 'category',
-		#end
+			#end
 	 	title: {
 	 	    #if($xAxis.TITLE.text != '')
 				text: "$xAxis.TITLE.text",
 				customTitle: true,
 			#elseif($categorieColumns.name != '')
-				text: "$categorieColumns.name",
+				text: "$a.name",
 				customTitle: false,
 			#end
 			#if($chart.hideAxisTitleCategory)
@@ -806,9 +815,10 @@
 				
 			#else
 				#set($dateFormat = "%A, %b %e, %H:%M:%S.%L")
-			#end 
-			#if($chart.dateTime=="true")
+			#end
+			#if($a.type == "datetime")
             formatter: function() {
+            
                 return '' + Highcharts.dateFormat('$dateFormat', this.value);
             },  
             #end
@@ -830,7 +840,7 @@
 		
 		## author: rselakov, radmila.selakovic@mht.net
 		## Calling the method for reconfiguring the original data about the ordering column and its category values		
-		#if($chart.groupCategories && $chart.groupCategories =='true')
+		#if($chart.groupCategories && $chart.groupCategories =='true' && $isDateTime==false)
 		#set($map = $datasettransformer.prepareDataForGroupingForBar($rows,$chart.isCockpitEngine,$categorieColumnsMapped))
             categories: [
             	#foreach($element in $map.entrySet())
@@ -858,6 +868,9 @@
 		
 	},
 	#end
+    #end
+    ],
+	 
     
     
     yAxis: [
@@ -1127,44 +1140,33 @@
 						#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 						#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
 						#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
-					#if($chart.dateTime!="true")
-					#if($serieValue!="")
-					{
-						##drilldown: $enableDrilldown,
-						drilldown: $drilldownEnabledFlag,
-						#if($relatedSerieType == 'arearange')
-							#if($chart.isCockpitEngine != 'false')
-								low: $row.get($serieColumnsMappedLow),
-								high: $row.get($serieColumnsMappedhigh),
+					
+						#if($serieValue!="")
+						{
+							##drilldown: $enableDrilldown,
+							drilldown: $drilldownEnabledFlag,
+							#if($relatedSerieType == 'arearange')
+								#if($chart.isCockpitEngine != 'false')
+									low: $row.get($serieColumnsMappedLow),
+									high: $row.get($serieColumnsMappedhigh),
+								#end
+								#if($chart.isCockpitEngine == 'false')
+									low: $row.get($serieColumnsMappedLow),
+									high: $row.get($serieColumnsMappedhigh),
+								#end 
+							#end	
+							#if($relatedSerieType != 'arearange')
+								y: $serieValue,
 							#end
-							#if($chart.isCockpitEngine == 'false')
-								low: $row.get($serieColumnsMappedLow),
-								high: $row.get($serieColumnsMappedhigh),
-							#end 
-						#end	
-						#if($relatedSerieType != 'arearange')
-							y: $serieValue,
+							name: "$serieCategoryName",
+							#if($isDateTime==true)
+								x: Date.parse("$serieCategoryName"),
+							#end
+							
+							
+						},
 						#end
-						name: "$serieCategoryName",
-						
-					},
-					#end
-					#else
-						#if($chart.isCockpitEngine=="true")
-						#set($date = $serieCategoryName.substring(0,10).split("/"))
-						#set($day = $date.get(0))
-						#set($month = $Integer.parseInt($date.get(1)))
-						#set($month = $month - 1 )
-						#set($year= $date.get(2))
-						#else
-						#set($date = $serieCategoryName.substring(0,10).split("-"))
-						#set($day = $date.get(2))
-						#set($month = $Integer.parseInt($date.get(1)))
-						#set($month =$month - 1 )
-						#set($year= $date.get(0))
-						#end
-						[Date.UTC($year, $month, $day), $serieValue],
-					#end  
+					 
 					#end
 				#end
 	    	],
@@ -1332,10 +1334,16 @@
 			data: [
 				#foreach($el in  $map.get($valueKey))	
 				{
+				
 					#if($el.y!="")
 						y: $el.y,
 					#end
-					name: '$el.name'},
+					name: '$el.name',
+					#if($isDateTime==true)
+						x: Date.parse("$el.name"),
+					#end
+				},	
+					
 				#end	
 			], 
 						dataLabels: 
@@ -1626,8 +1634,8 @@
         		@modifiedBy: danristo (danilo.ristovski@mht.net)
         	*/ 	
         	
-            #if($chart.dateTime=="true")
-             result += '<span>' + Highcharts.dateFormat('$dateFormat', this.key) + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+            #if($isDateTime==true)
+             result += '<span>' + Highcharts.dateFormat('$dateFormat', this.x) + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
             #else
              result += '<span>' + this.key + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
            
@@ -1828,7 +1836,7 @@
             #end
             dataLabels: {
                    allowOverlap: true,
-                   y:-10
+                   
             },
             
             #* 

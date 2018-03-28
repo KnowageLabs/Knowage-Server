@@ -35,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.emory.mathcs.backport.java.util.Collections;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class DataSetTransformer {
 
@@ -856,6 +857,45 @@ public class DataSetTransformer {
 
 		return map;
 
+	}
+
+	public ArrayList<JSONObject> getXAxisMap(LinkedHashMap<String, String> category, String categoryDate) {
+		ArrayList<JSONObject> xAxisMap = new ArrayList<>();
+		String groupBys = category.get("groupby");
+		String[] gbys = groupBys.split(", ");
+
+		try {
+			int id = 0;
+			JSONObject xAxis = new JSONObject();
+			xAxis.put("id", id);
+			if (category.get("name").equals(categoryDate)) {
+				xAxis.put("type", "datetime");
+				id++;
+			} else {
+				xAxis.put("type", "category");
+				id++;
+			}
+			xAxis.put("name", category.get("name").replaceAll("\\s", ""));
+			xAxisMap.add(xAxis);
+			for (int i = 0; i < gbys.length; i++) {
+
+				JSONObject xAxis1 = new JSONObject();
+				xAxis1.put("id", id);
+				if (gbys[i].equals(categoryDate)) {
+					xAxis1.put("type", "datetime");
+					id++;
+				} else {
+					xAxis1.put("type", "category");
+					id++;
+				}
+				xAxis1.put("name", gbys[i].replaceAll("\\s", ""));
+				xAxisMap.add(xAxis1);
+			}
+		} catch (JSONException e) {
+			throw new SpagoBIServiceException("Error while creating xaxis map", e.getMessage(), e);
+		}
+
+		return xAxisMap;
 	}
 
 	public LinkedHashMap<String, LinkedHashMap> seriesMapTransformedMethod(LinkedHashMap<String, LinkedHashMap> serieMap) throws JSONException {

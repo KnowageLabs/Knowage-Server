@@ -361,26 +361,26 @@ angular.module('chartInitializer')
 				           }
 
 				           chart.options.drilledCategories.push(series.category);
-				            var xAxisTitle={
-				            	text:series.category
-				            };
-				            var yAxisTitle={
-				            		text:series.serieName
-				            };
-				            if(chart.xAxis[0].userOptions.title.customTitle==false){
-				            chart.xAxis[0].setTitle(xAxisTitle);
-				            }
-				            if(chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
-				            chart.yAxis[0].setTitle(yAxisTitle);
-				            }
+			                var xAxisTitle={
+			                	text:series.category
+			            };
+			            var yAxisTitle={
+			            		text:series.serieName
+			            };
+			            if(chart.xAxis[0].userOptions.title.customTitle==false){
+			            chart.xAxis[0].setTitle(xAxisTitle);
+			            }
+			            if(chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
+			            chart.yAxis[0].setTitle(yAxisTitle);
+			            }
 
-				            chart.addSeriesAsDrilldown(e.point, series);
+			            chart.addSeriesAsDrilldown(e.point, series);
 
-				            var backText="Back to: <b>"+chart.options.drilledCategories[chart.options.drilledCategories.length-2]+"</b>";
+			            var backText="Back to: <b>"+chart.options.drilledCategories[chart.options.drilledCategories.length-2]+"</b>";
 
-				            chart.drillUpButton.textSetter(backText);
+			            chart.drillUpButton.textSetter(backText);
 
-							chart.hideLoading();
+						chart.hideLoading();
 					});
 			}
 		}
@@ -390,12 +390,9 @@ angular.module('chartInitializer')
 	this.handleDrillup = function(){
 
 		var chart=this;
-
-		// sets the title on x axis
-
 		chart.options.drilledCategories.pop();
-		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-1];
-		var backText=chart.options.drilledCategories[chart.options.drilledCategories.length-2];
+		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-2] ? chart.options.drilledCategories[chart.options.drilledCategories.length-2] : chart.options.drilledCategories[0];
+		var backText=titleText;
 		chart.drillUpButton.textSetter("Back to: <b>"+backText+"</b>");
         //  chart.redraw();
 		var xAxisTitle={
