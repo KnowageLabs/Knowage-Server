@@ -422,12 +422,7 @@ public class DatasetManagementAPI {
 						if (dataSet.getDataStore() != null && dataSet.getDataStore().getMetaData().getFieldCount() == 0) {
 							// update only datasource's metadata from dataset if for some strange cause it hasn't got fields
 							logger.debug("Update datastore's metadata with dataset's metadata for nodata found...");
-							dataStore = new DataStore();
-							IMetaData metadata = dataSet.getMetadata();
-							metadata.setProperty("resultNumber", 0);
-							dataStore.setMetaData(metadata);
-							adjustMetadata((DataStore) dataStore, dataSet, null);
-							return dataStore;
+							return getEmptyDataStore(dataSet);
 						}
 
 						timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:getFromCache");
@@ -461,6 +456,16 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	private IDataStore getEmptyDataStore(IDataSet dataSet) {
+		IDataStore dataStore;
+		dataStore = new DataStore();
+		IMetaData metadata = dataSet.getMetadata();
+		metadata.setProperty("resultNumber", 0);
+		dataStore.setMetaData(metadata);
+		adjustMetadata((DataStore) dataStore, dataSet, null);
+		return dataStore;
+	}
+
 	public void putDataSetInCache(IDataSet dataSet, ICache cache) throws DataBaseException {
 		if (dataSet.isCachingSupported()) {
 			if (dataSet instanceof AbstractJDBCDataset && !dataSet.hasDataStoreTransformer()) {
@@ -471,6 +476,8 @@ public class DatasetManagementAPI {
 				dataSet.loadData();
 				if (dataSet.getDataStore().getMetaData().getFieldCount() > 0) {
 					cache.put(dataSet, dataSet.getDataStore());
+				} else {
+					cache.put(dataSet, getEmptyDataStore(dataSet));
 				}
 			}
 		}
