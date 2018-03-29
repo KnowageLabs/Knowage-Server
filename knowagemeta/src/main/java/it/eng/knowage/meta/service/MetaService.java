@@ -54,6 +54,11 @@ import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.Pointer;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -131,6 +136,9 @@ public class MetaService extends AbstractSpagoBIResource {
 	private static Logger logger = Logger.getLogger(MetaService.class);
 	private static final String DEFAULT_MODEL_NAME = "modelName";
 	public static final String EMF_MODEL = "EMF_MODEL";
+	public static final String  EMF_MODEL_CROSS_REFERENCE = "EMF_MODEL_CROSS_REFERENCE";
+	public static final String KNOWAGE_MODEL_URI = "it.eng.knowage";
+
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
@@ -167,6 +175,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	@GET
 	@Path("/loadSbiModel/{bmId}")
 	public Response loadSbiModel(@PathParam("bmId") Integer bmId, @Context HttpServletRequest req) {
+
 		try {
 			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 			businessModelsDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
@@ -175,6 +184,17 @@ public class MetaService extends AbstractSpagoBIResource {
 			Content lastFileModelContent = businessModelsDAO.lastFileModelMeta(bmId);
 			InputStream is = new ByteArrayInputStream(lastFileModelContent.getFileModel());
 			Model model = serializer.deserialize(is);
+			
+			//Create ResourceSet and add CrossReferenceAdapter
+			ResourceSet resourceSet = new ResourceSetImpl();
+			URI uri = URI.createURI(KNOWAGE_MODEL_URI+model.getName());
+			Resource resource = resourceSet.createResource(uri);
+			resource.getContents().add(model);
+			ECrossReferenceAdapter crossReferenceAdapter = new ECrossReferenceAdapter();
+			resource.getResourceSet().eAdapters().add(crossReferenceAdapter);
+			req.getSession().setAttribute(EMF_MODEL_CROSS_REFERENCE, crossReferenceAdapter);
+
+
 			req.getSession().setAttribute(EMF_MODEL, model);
 
 			JSONObject translatedModel = createJson(model);
@@ -898,7 +918,9 @@ public class MetaService extends AbstractSpagoBIResource {
 	public Response updatePhysicalModel(@Context HttpServletRequest req) throws ClassNotFoundException, NamingException, SQLException, JSONException {
 		PhysicalModelInitializer physicalModelInitializer = new PhysicalModelInitializer();
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
-
+		ECrossReferenceAdapter crossReferenceAdapter = (ECrossReferenceAdapter) req.getSession().getAttribute(EMF_MODEL_CROSS_REFERENCE);
+		physicalModelInitializer.setCrossReferenceAdapter(crossReferenceAdapter);
+		
 		PhysicalModel phyMod = model.getPhysicalModels().get(0);
 		IDataSource dataSource = phyMod.getDataSource();
 		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
@@ -917,6 +939,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	public Response applyUpdatePhysicalModel(@Context HttpServletRequest req)
 			throws ClassNotFoundException, NamingException, SQLException, JSONException, IOException, EMFUserError {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		
 		JSONObject oldJsonModel = createJson(model);
 
 		String modelName = model.getName();
@@ -935,6 +958,8 @@ public class MetaService extends AbstractSpagoBIResource {
 		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
 		List<String> tables = (List<String>) JsonConverter.jsonToObject(json.getString("tables"), List.class);
 		PhysicalModelInitializer physicalModelInitializer = new PhysicalModelInitializer();
+		ECrossReferenceAdapter crossReferenceAdapter = (ECrossReferenceAdapter) req.getSession().getAttribute(EMF_MODEL_CROSS_REFERENCE);
+		physicalModelInitializer.setCrossReferenceAdapter(crossReferenceAdapter);
 		physicalModelInitializer.setRootModel(model);
 		PhysicalModel originalPM = model.getPhysicalModels().get(0);
 		List<String> currTables = new ArrayList<String>();
@@ -1095,17 +1120,21 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	private void setSchemaName(BusinessModel businessModel, String schemaName) {
+		PhysicalModel physicalModel = businessModel.getPhysicalModel();
 		if ((schemaName != null) && (schemaName.length() > 0)) {
-			PhysicalModel physicalModel = businessModel.getPhysicalModel();
 			physicalModel.setSchema(schemaName);
+		} else {
+			physicalModel.setSchema(null);
 		}
 
 	}
 
 	private void setCatalogName(BusinessModel businessModel, String catalogName) {
+		PhysicalModel physicalModel = businessModel.getPhysicalModel();
 		if ((catalogName != null) && (catalogName.length() > 0)) {
-			PhysicalModel physicalModel = businessModel.getPhysicalModel();
 			physicalModel.setCatalog(catalogName);
+		} else {
+			physicalModel.setCatalog(null);
 		}
 	}
 
