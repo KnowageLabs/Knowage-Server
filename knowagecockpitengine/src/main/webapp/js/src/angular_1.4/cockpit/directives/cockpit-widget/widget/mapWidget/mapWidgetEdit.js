@@ -170,6 +170,11 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
   		layer.markerConf.type = type;
   	}
   	
+  	$scope.getDimensionFromRadius = function(radius){
+  		debugger;
+  		return (radius * 2) + 'px';
+  	}
+  	
   	$scope.chooseIcon = function(ev, layer) {
   		
   		$mdDialog.show({

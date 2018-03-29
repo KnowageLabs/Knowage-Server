@@ -212,7 +212,8 @@
 							      	</md-input-container>
 							      	<div class="preview" >
 										<label>Preview</label>
-										<div class="clusterExample" ng-style="layer.clusterConf.style" >10</div>
+										<div class="clusterExample" 
+											ng-style="{'width':(layer.clusterConf.radiusSize * 2) + 'px', 'height':(layer.clusterConf.radiusSize * 2) + 'px','font-size':layer.clusterConf.style['font-size'],'background-color':layer.clusterConf.style['background-color'],'color':layer.clusterConf.style.color}" >10</div>
 									</div>
 								</div>
 							</md-card-content>
