@@ -41,7 +41,7 @@
 		}
 		$scope.goBackHome = function(){
 			$crossNavigationScope.crossNavigationHelper.crossNavigationSteps.stepControl.resetBreadCrumb();
-			//$window.location.href = "http://localhost:8080/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&OBJECT_LABEL=PADRE_CROSS&OBJECT_NAME=Home%20page&IS_SOURCE_DOCUMENT=true";
+			//$window.location.href = "http://localhost:8080/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&SBI_ENVIRONMENT=DOCBROWSER&OBJECT_LABEL=PADRE_CROSS&OBJECT_NAME=Home%20page&IS_SOURCE_DOCUMENT=true";
 			$window.location.href = "http://161.27.39.83:8080/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&OBJECT_LABEL=HOME_PAGE&OBJECT_NAME=Home%20page&IS_SOURCE_DOCUMENT=true";
 		}
 
@@ -305,6 +305,112 @@
 			});
 		};
 
+		$scope.urlEncode = function(o){
+		    if(!o){
+		        return "";
+		    }
+		    var buf = [];
+		    for(var key in o){
+		        var ov = o[key], k = encodeURIComponent(key);
+		        var type = typeof ov;
+		        if(type == 'undefined'){
+		            buf.push(k, "=&");
+		        }else if(type != "function" && type != "object"){
+		            buf.push(k, "=", encodeURIComponent(ov), "&");
+		        }else if(ov instanceof Array){
+		            if (ov.length) {
+		                for(var i = 0, len = ov.length; i < len; i++) {
+		                    buf.push(k, "=", encodeURIComponent(ov[i] === undefined ? '' : ov[i]), "&");
+		                }
+		            } else {
+		                buf.push(k, "=&");
+		            }
+		        }
+		    }
+		    buf.pop();
+		    return buf.join("");
+		},
+
+		//mail
+		$scope.copyLinkHTML = function(embedHTML){
+			var config = sbiModule_config;
+			var host = sbiModule_config.host;
+			var context = sbiModule_config.contextName;
+			var adapter = sbiModule_config.adapterPathNoContext;
+			var tenant = sbiModule_user.tenant;
+			var label = $scope.executionInstance.OBJECT_LABEL;
+
+			var parametersO = documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+			//var parameters = encodeURIComponent(JSON.stringify(parametersO)).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
+			var parameters = $scope.urlEncode(parametersO);
+
+			var passToService = {};
+			passToService.label = label;
+
+			sbiModule_restServices.promisePost("1.0/documentexecution", "canHavePublicExecutionUrl", passToService)
+			.then(function(response, status, headers, config) {
+				console.log('getParametersForExecution response OK -> ', response);
+
+				var canExec = response.data.isPublic;
+				var noPublicRoleError = response.data.noPublicRoleError;
+
+				if(noPublicRoleError == true){
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.execution.noPublicRole"), sbiModule_translate.load('sbi.generic.error'));
+					return;
+				}
+
+				var publicStr = canExec == true ? "/public" : "";
+
+				var url = host
+				+ context
+				+ publicStr
+				+ adapter
+				+ "?"
+				+ "ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION"
+				+  "&OBJECT_LABEL="+label
+				+ "&TOOLBAR_VISIBLE=true"
+				+ "&ORGANIZATION="+tenant
+				+ "&PARAMETERS="+parameters;
+
+				var urlToSend;
+
+				if(embedHTML == true){
+					urlToSend = "<iframe width=\"600\" height=\"600\" ";
+					urlToSend += "\n";
+					urlToSend += "     src="+url;
+					urlToSend += "\n";
+					urlToSend +="      frameborder=\"0\">";
+					urlToSend += "\n";
+					urlToSend += "</iframe>";
+				}
+				else{
+					urlToSend = url;
+				}
+
+				$mdDialog.show({
+					locals: {publicUrl: urlToSend, embedHTML: embedHTML, isPublic: canExec},
+					//flex: 80,
+					templateUrl: sbiModule_config.contextName+"/js/src/angular_1.4/tools/documentexecution/templates/publicExecutionUrl.html",
+					parent: angular.element(document.body),
+					clickOutsideToClose:true,
+					escapeToClose :true,
+					preserveScope: true,
+					fullscreen: true,
+					controller: publicExecutionUrlControllerFunction
+				});
+
+//				else {
+//					sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.execution.publicUrlExecutionEnable"), sbiModule_translate.load('sbi.generic.warning'));
+//				}
+
+			},function(response, status, headers, config) {
+				sbiModule_restServices.errorHandler(response.data,"error while checking if public url can be delivered")
+			});
+
+		}
+
+
+
 		//mail
 		$scope.sendMail = function(){
 			$mdDialog.show({
@@ -544,6 +650,17 @@
 			}
 		};
 	}]);
+
+
+
+
+
+
+
+
+
+
+
 })();
 
 //from executed document, call this function to exec old cross navigation method

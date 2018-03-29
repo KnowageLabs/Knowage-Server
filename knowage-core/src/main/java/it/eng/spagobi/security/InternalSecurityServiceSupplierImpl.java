@@ -30,6 +30,8 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.profiling.PublicProfile;
+import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.services.common.JWTSsoService;
@@ -129,6 +131,14 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 		logger.debug("userId: " + userId);
 		SpagoBIUserProfile profile = null;
 		try {
+
+			// check if user is public then create public profile
+			if (PublicProfile.isPublicUser(jwtToken)) {
+				profile = PublicProfile.createPublicUserProfile(userId);
+				logger.debug("Built public profile");
+				return profile;
+			}
+
 			SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
 
 			if (user == null) {

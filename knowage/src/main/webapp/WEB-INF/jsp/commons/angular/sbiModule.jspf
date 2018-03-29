@@ -1,5 +1,6 @@
 
 
+<%@page import="it.eng.spagobi.tenant.TenantManager"%>
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <script>
@@ -162,6 +163,7 @@ sbiM.factory('sbiModule_user',function(){
 	user.isSuperAdmin = '<%= userProfile != null && ((UserProfile)userProfile).getIsSuperadmin() %>';
 	user.isTechnicalUser = '<%= userProfile != null && UserUtilities.isTechnicalUser((UserProfile)userProfile)%>'
 	user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>';
+	user.tenant = '<%= ((UserProfile)userProfile).getOrganization() != null ? ((UserProfile)userProfile).getOrganization() : TenantManager.getTenant().getName() %>';
 	// 	set roles
 	user.roles =[];
 	<% for(Object rol : userRoles) { 	%>
@@ -367,7 +369,7 @@ sbiM.service('sbiModule_translate', function() {
 
 
 
-sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, sbiModule_config, sbiModule_logger, $mdDialog, $sanitize,$mdPanel) {
+sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, sbiModule_config, sbiModule_logger, $mdDialog, $sanitize,$mdPanel, sbiModule_user) {
 	
 	var loginUrl = '<%= GeneralUtilities.getSpagoBiContext() %>'; // login url, used when session is expired
 	
@@ -378,7 +380,14 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 	}
 
 	function getBaseUrl(endP_path) {
-		var burl= alteredContextPath==null? sbiModule_config.contextName +'/restful-services/'+ endP_path+"/"  : alteredContextPath+ "/restful-services/" + endP_path+"/" 
+
+		var burl;
+		if(sbiModule_user.userId == ('public-'+sbiModule_user.tenant)){
+			burl= alteredContextPath==null? sbiModule_config.contextName +'/public/restful-services/'+ endP_path+"/"  : alteredContextPath+ "/public/restful-services/" + endP_path+"/";
+		}
+		else{
+			burl= alteredContextPath==null? sbiModule_config.contextName +'/restful-services/'+ endP_path+"/"  : alteredContextPath+ "/restful-services/" + endP_path+"/"; 
+		} 
 		alteredContextPath=null;
 		return burl ;
 	};

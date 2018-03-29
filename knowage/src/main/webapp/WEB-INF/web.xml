@@ -18,6 +18,7 @@
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 
 	<filter>
@@ -105,7 +106,9 @@
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<url-pattern>/restful-services/publish</url-pattern>		
+		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/restful-services/publish</url-pattern>
+		<url-pattern>/public/restful-services/publish</url-pattern>			
 	</filter-mapping>
 
 	<!-- START-CAS ${enable.cas.end}
@@ -153,6 +156,8 @@
 		<filter-name>ProfileFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
+		<url-pattern>/public/restful-services/publish</url-pattern>
+		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
@@ -188,6 +193,9 @@
 	<listener>
 		<listener-class>it.eng.spagobi.utilities.locks.listeners.HazelcastContextListener</listener-class>
 	</listener>
+
+
+
 
 	<!-- EXO
 
@@ -366,6 +374,16 @@ EXO -->
 		</init-param>
 
 	</servlet>
+	
+
+
+
+   
+
+   
+
+
+   
 
 	<!-- START SERVLET MAPPINGS -->
 
@@ -393,6 +411,7 @@ END-LIFERAY -->
 	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
@@ -415,6 +434,8 @@ END-LIFERAY -->
 		<url-pattern>/servlet/AdminServlet</url-pattern>
 	</servlet-mapping>
 	<!-- end axis servlet -->
+
+
 
 
 	<!-- END SERVLET MAPPINGS --> 

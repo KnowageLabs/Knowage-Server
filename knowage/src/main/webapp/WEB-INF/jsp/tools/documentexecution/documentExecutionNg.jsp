@@ -389,6 +389,24 @@ if(executionRoleNames.size() > 0) {
                                 </div> 
                                 
                                 <!-- SHORTCUTS: end -->
+
+                                 <md-menu-item class="md-indent">
+                                    <md-icon class="fa fa-share"></md-icon>
+                                    <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" 
+                                    		   class="toolbar-button-custom"
+                                               ng-click="copyLinkHTML(false)">{{translate.load('sbi.execution.executionpage.toolbar.copyLink')}}
+                                    </md-button>
+                                </md-menu-item>
+                                
+                                                                
+                                 <md-menu-item class="md-indent">
+                                    <md-icon class="fa fa-share"></md-icon>
+                                    <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" 
+                                    		   class="toolbar-button-custom"
+                                               ng-click="copyLinkHTML(true)">{{translate.load('sbi.execution.executionpage.toolbar.embedHTML')}}
+                                    </md-button>
+                                </md-menu-item>
+
                                 
                             </md-menu-content>
                         </md-menu>
@@ -626,6 +644,8 @@ if(executionRoleNames.size() > 0) {
                 src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecutionNote.js")%>"></script>
         <script type="text/javascript" 
                 src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecutionRank.js")%>"></script>
+        <script type="text/javascript" 
+                src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/publicExecutionUrl/publicExecutionUrl.js")%>"></script>
         
         
     </body>

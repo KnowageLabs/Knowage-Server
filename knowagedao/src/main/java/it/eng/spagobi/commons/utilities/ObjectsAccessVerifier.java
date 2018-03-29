@@ -831,6 +831,43 @@ public class ObjectsAccessVerifier {
 
 	}
 
+	private static boolean isFunctionalityPublic(LowFunctionality funct) {
+		boolean isPublic = false;
+		Role[] execRoles = funct.getExecRoles();
+		for (int i = 0; i < execRoles.length && !isPublic; i++) {
+			Role role = execRoles[i];
+			if (role.getIsPublic() == true) {
+				isPublic = true;
+			}
+		}
+		return isPublic;
+	}
+
+	private static boolean isObjectPublic(BIObject obj) {
+		// check if is a public folder
+		boolean isPublic = false;
+		try {
+			ILowFunctionalityDAO foldersDAO = DAOFactory.getLowFunctionalityDAO();
+			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+
+			List foldersId = obj.getFunctionalities();
+
+			if (foldersId == null || foldersId.size() == 0) {
+				logger.error("BIObject does not belong to any functionality!!" + "[" + obj.getLabel() + "]");
+				return false;
+			}
+			for (Iterator iterator = foldersId.iterator(); iterator.hasNext() && !isPublic;) {
+				Integer folderId = (Integer) iterator.next();
+				LowFunctionality funct = foldersDAO.loadLowFunctionalityByID(folderId, false);
+				Assert.assertNotNull(funct, "Folder with id [" + folderId + "] not found");
+				isPublic = isFunctionalityPublic(funct);
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while checking if object is public", e);
+		}
+		return isPublic;
+	}
+
 	/**
 	 * Controls if the current user can see the document: - if the document is in DEV state the user must have the development permission in a folder containing
 	 * it; - if the document is in TEST state the user must have the test permission in a folder containing it; - if the document is in REL state the user must
@@ -854,9 +891,16 @@ public class ObjectsAccessVerifier {
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "BIObject in input is null!!");
 		}
 		if (profile == null) {
-			logger.warn("User profile in input is null!!");
-			monitor.stop();
-			throw new EMFInternalError(EMFErrorSeverity.ERROR, "User profile in input is null!!");
+			logger.debug("check if object is in public folder");
+			boolean isPublic = isObjectPublic(obj);
+			if (!isPublic) {
+				logger.warn("User profile in input is null!!");
+				monitor.stop();
+				throw new EMFInternalError(EMFErrorSeverity.ERROR, "User profile in input is null!!");
+			} else {
+				// profile = UserProfile.createSchedulerUserProfile("publicUser");
+				// profile = new UserProfile("publicUser", "scheduler", "scheduler", "DEFAULT_TENANT");
+			}
 		}
 
 		// if user is ADMIN can always see documents

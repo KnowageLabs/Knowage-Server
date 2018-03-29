@@ -378,6 +378,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 		hibRole.setCode(aRole.getCode());
 		hibRole.setDescr(aRole.getDescription());
+		hibRole.setIsPublic(aRole.getIsPublic());
 
 		hibRole.setName(aRole.getName());
 
@@ -464,6 +465,19 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		}
 	}
 
+	@Override
+	public void unsetOtherPublicRole(Session aSession) {
+		Criterion aCriterion = Expression.eq("isPublic", true);
+		Criteria aCriteria = aSession.createCriteria(SbiExtRoles.class);
+		aCriteria.add(aCriterion);
+		SbiExtRoles hibRole = (SbiExtRoles) aCriteria.uniqueResult();
+		if (hibRole != null) {
+			hibRole.setIsPublic(false);
+			aSession.update(hibRole);
+		}
+
+	}
+
 	/**
 	 * Modify role.
 	 *
@@ -481,6 +495,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
+			// if new role is public check there are no other public otherwise unset them
+			if (aRole.getIsPublic() != null && aRole.getIsPublic() == true) {
+				unsetOtherPublicRole(aSession);
+			}
+
 			SbiExtRoles hibRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, aRole.getId());
 
 			hibRole.setCode(aRole.getCode());
@@ -497,6 +516,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 			SbiDomains roleType = (SbiDomains) aSession.load(SbiDomains.class, aRole.getRoleTypeID());
 			hibRole.setRoleType(roleType);
+
+			hibRole.setIsPublic(aRole.getIsPublic());
 
 			hibRole.setRoleTypeCode(aRole.getRoleTypeCD());
 			updateSbiCommonInfo4Update(hibRole);
@@ -758,6 +779,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		role.setDescription(hibRole.getDescr());
 		role.setId(hibRole.getExtRoleId());
 		role.setName(hibRole.getName());
+		role.setIsPublic(hibRole.getIsPublic());
 
 		Set<SbiAuthorizationsRoles> authorizations = hibRole.getSbiAuthorizationsRoleses();
 		Iterator it = authorizations.iterator();
@@ -973,11 +995,18 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
+			// if new role is public check there are no other public otherwise unset them
+			if (role.getIsPublic() != null && role.getIsPublic() == true) {
+				unsetOtherPublicRole(aSession);
+			}
+
 			SbiExtRoles hibRole = new SbiExtRoles();
 
 			hibRole.setCode(role.getCode());
 			hibRole.setDescr(role.getDescription());
 			hibRole.setName(role.getName());
+			hibRole.setIsPublic(role.getIsPublic());
+
 			SbiDomains roleType = (SbiDomains) aSession.load(SbiDomains.class, role.getRoleTypeID());
 			hibRole.setRoleType(roleType);
 
@@ -1803,6 +1832,44 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		}
 		logger.debug("OUT");
 		return role;
+	}
+
+	@Override
+	public Role loadPublicRole() throws EMFUserError {
+		Role toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Criterion aCriterion = Expression.eq("isPublic", true);
+			Criteria aCriteria = aSession.createCriteria(SbiExtRoles.class);
+			aCriteria.add(aCriterion);
+
+			SbiExtRoles hibRole = (SbiExtRoles) aCriteria.uniqueResult();
+
+			if (hibRole == null)
+				return null;
+
+			toReturn = toRole(hibRole);
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return toReturn;
 	}
 
 	private void putIntoCache(String key, Role role) {

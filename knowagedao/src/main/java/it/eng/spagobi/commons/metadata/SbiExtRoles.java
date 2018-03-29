@@ -34,6 +34,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	private String code;
 	private String name;
 	private String descr;
+	private Boolean isPublic;
 
 	private Set sbiFuncRoles;
 	private Set sbiParuseDets;
@@ -249,6 +250,14 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	public void setSbiAuthorizationsRoleses(Set sbiAuthorizationsRoleses) {
 		this.sbiAuthorizationsRoleses = sbiAuthorizationsRoleses;
+	}
+
+	public Boolean getIsPublic() {
+		return isPublic;
+	}
+
+	public void setIsPublic(Boolean isPublic) {
+		this.isPublic = isPublic;
 	}
 
 	/*

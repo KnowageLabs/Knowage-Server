@@ -2,45 +2,45 @@ angular.module('documentExecutionMasterModule',  [ 'ngMaterial', 'sbiModule','cr
 .factory('$documentNavigationScope', function($window, sbiModule_logger) {
 
 	try {
-	
+
 		var angularTmp = null;
 		var isFromCockpit = false;
-		
+
 		if($window.parent.angular) {
 			angularTmp = $window.parent.angular;
 		} else if ($window.parent.parent.angular){
 			angularTmp = $window.parent.parent.angular;
 			isFromCockpit = true;
 		}
-		
+
 		var docNavFrameScope = null;
 		if(isFromCockpit) {
 			docNavFrameScope = angularTmp.element($window.parent.frameElement).scope();
 		} else{
 			docNavFrameScope = angularTmp.element($window.frameElement).scope();
 		}
-		
-	    return (docNavFrameScope == undefined || docNavFrameScope == null) ? 
+
+	    return (docNavFrameScope == undefined || docNavFrameScope == null) ?
 	    		{} : docNavFrameScope.$parent;
-	
+
 	} catch (err) {
 		sbiModule_logger.trace(err);
 		return {};
 	}
 
 })
-.controller('docExMasterController',function($scope,sbiModule_translate,$timeout,sourceDocumentExecProperties,sbiModule_config,$crossNavigationHelper,$documentNavigationScope,$mdDialog){
+.controller('docExMasterController',function($scope,sbiModule_translate,$timeout,sourceDocumentExecProperties,sbiModule_config,$crossNavigationHelper,$documentNavigationScope,$mdDialog, sbiModule_user){
 	$scope.crossNavigationHelper=$crossNavigationHelper;
 	$scope.documentNavigationScope=$documentNavigationScope;
 //	$scope.sourceDocumentUrl="";
-$scope.executeSourceDocument = function() { 
+	$scope.executeSourceDocument = function() {
 		var menuParams = {};
 		var err=false;
 		try{
 			var menuParameters = sourceDocumentExecProperties.MENU_PARAMETERS.replace(/&$/g, ''); //removes last '&' char
-			
+
 			var splittedMenuParams = menuParameters=='null' || menuParameters==''? [] : menuParameters.split("&");
-			
+
 			for(var i=0;i<splittedMenuParams.length;i++){
 				var splittedItem=splittedMenuParams[i].split("=");
 				if(splittedItem[1]==undefined){err=true;}
@@ -50,7 +50,7 @@ $scope.executeSourceDocument = function() {
 			err=true
 			console.error(e);
 		}finally{
-			if(err){ 
+			if(err){
 			 $mdDialog.show(
 				      $mdDialog.alert()
 				        .clickOutsideToClose(true)
@@ -61,7 +61,13 @@ $scope.executeSourceDocument = function() {
 				    );
 			}
 		}
-		var url = sbiModule_config.contextName 
+
+		var isPublic="";
+		if(sbiModule_user.userId == ('public-'+sbiModule_user.tenant)){
+			isPublic = "/public";
+		}
+
+		var url = sbiModule_config.contextName + isPublic
 			+ '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp'
 			+ '&OBJECT_ID=' + sourceDocumentExecProperties.OBJECT_ID
 			+ '&OBJECT_LABEL=' + sourceDocumentExecProperties.OBJECT_LABEL
@@ -80,12 +86,12 @@ $scope.executeSourceDocument = function() {
 			 * be used for other starting points, as well.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
-			+ '&EXEC_FROM=' + sourceDocumentExecProperties.EXEC_FROM; 
+			+ '&EXEC_FROM=' + sourceDocumentExecProperties.EXEC_FROM;
 		if(sourceDocumentExecProperties.SELECTED_ROLE != undefined){
 			url = url+ '&SELECTED_ROLE='  + sourceDocumentExecProperties.SELECTED_ROLE
 
 		}
-		
+
 		//add the cockpit parameter inside the cross-Parameter Variable
 		if(sourceDocumentExecProperties.COCKPIT_PARAMETER!=undefined){
 			url+='&CROSS_PARAMETER='+encodeURIComponent(sourceDocumentExecProperties.COCKPIT_PARAMETER)
@@ -97,7 +103,7 @@ $scope.executeSourceDocument = function() {
 		if(sourceDocumentExecProperties.IS_FROM_DOCUMENT_WIDGET && sourceDocumentExecProperties.IS_FROM_DOCUMENT_WIDGET!='null'){
 			url+="&IS_FROM_DOCUMENT_WIDGET="+sourceDocumentExecProperties.IS_FROM_DOCUMENT_WIDGET;
 		}
-		
+
 		var laodSourceDocToCross=function(){
 			$timeout(function(){
 				if($crossNavigationHelper.crossNavigationSteps.stepControl.insertBread){
@@ -105,31 +111,31 @@ $scope.executeSourceDocument = function() {
 				}else{
 					laodSourceDocToCross();
 				}
-				
+
 				},500);
 		};
 		laodSourceDocToCross();
-		
-//		$scope.sourceDocumentUrl=url;  
+
+//		$scope.sourceDocumentUrl=url;
 	};
 	$scope.executeSourceDocument();
-	
-	
+
+
 	$scope.isCloseDocumentButtonVisible=function(){
 		var visible=false;
 		//if document is open from dodument browser
 		if($scope.documentNavigationScope.closeDocument!=undefined){
 			visible=true;
 		}
-		
+
 		//if document is open from documentViewer directive
 		var docViewScope=window.parent.angular.element(window.frameElement).scope();
 		 if(docViewScope!=undefined && docViewScope.closeDocument!=undefined){
 			 visible=true
-		 } 
+		 }
 		return visible;
 	}
-	
+
 	function closeDoc(id){
 		if($scope.documentNavigationScope.closeDocument!=undefined){
 			$documentNavigationScope.closeDocument(id);
@@ -140,9 +146,9 @@ $scope.executeSourceDocument = function() {
 			sbiModule_restServices.errorHandler("","Unable to close document")
 		}
 	}
-	
+
 	$scope.closeDocument=function(docId){
-		
+
 		if($scope.isNavigationInProgress()){
 			var confirm = $mdDialog.confirm()
 	         .title(sbiModule_translate.format(sbiModule_translate.load('sbi.browser.close.document.message'), $crossNavigationHelper.crossNavigationSteps.stepItem.length))
@@ -159,14 +165,14 @@ $scope.executeSourceDocument = function() {
 		}else{
 			closeDoc(docId);
 		}
-		
-		 
+
+
 	}
-	
+
 	$scope.changeNavigationRole=function(newRole){
 		$scope.crossNavigationHelper.changeNavigationRole(newRole);
 	}
-	
+
 	$scope.isNavigationInProgress=function(){
 		return $crossNavigationHelper.crossNavigationSteps.stepItem.length>1;
 	}

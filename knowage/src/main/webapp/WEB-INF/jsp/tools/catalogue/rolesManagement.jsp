@@ -129,6 +129,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				      </div>   
 				        </md-input-container>
 				   </div>
+				<div layout="row" flex="100" class="kn-checkInput">
+					<label flex="15">{{translate.load("sbi.roles.isPublicRole")}}</label>
+					<md-input-container> 
+			        	<md-checkbox flex="85" 
+			         		ng-change="setDirty()"  
+			         		ng-model="selectedRole.isPublic" aria-label="check" name ="isPublic">
+			        	</md-checkbox> 
+			    	</md-input-container>  
+				</div>
 			</md-card>
 			</md-content>
 			 </md-tab> 
