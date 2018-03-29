@@ -123,6 +123,7 @@
 			var config = ms.getActiveConf(parentLayer) || {};
 			var configThematizer = config.analysisConf || {};
 			var configMarker = config.markerConf || {};
+			var configCluster = config.clusterConf || {};
 			var useCache = false; //cache isn't use for analysis, just with fixed marker
 			var isCluster = (Array.isArray(feature.get('features'))) ? true : false;
 			var value;
@@ -131,7 +132,7 @@
 			ms.setActiveIndicator(config.defaultIndicator);
 
 			if (isCluster){
-				value = ms.getClusteredValue(feature, config.markerConf);
+				value = ms.getClusteredValue(feature);
 			}else{
 				value =  props[ms.getActiveIndicator()] || 0;
 			}
@@ -144,8 +145,8 @@
 				style = ms.getProportionalSymbolStyles(value, props, configThematizer.proportionalSymbol);
 				thematized = true;
 			}
-			if (!thematized && isCluster ){
-				style = ms.getClusterStyles(value, props, configMarker);
+			if (!thematized && isCluster && feature.get('features').length > 1 ){
+				style = ms.getClusterStyles(value, props, configCluster);
 				useCache = false;
 			}
 			else{
@@ -161,7 +162,7 @@
 			}
 	    }
 	    
-	    ms.getClusteredValue = function (feature, configCluster) { 
+	    ms.getClusteredValue = function (feature) { 
 	    	var toReturn = 0;
 	    	var total = 0;
 	    	var values = [];
@@ -222,7 +223,6 @@
 	                text: value.toString(),
 	                fill: new ol.style.Fill({
 	                  color: (config.style && config.style['color']) ? config.style['color'] : '#fff'
-//	                color : "#fff"
 	                })
 	              })
 	            });
@@ -285,29 +285,85 @@
 		}
 		
 		ms.getOnlyMarkerStyles = function (props, config){
-			var tmpConfig = angular.copy(config);
-			
-			if (tmpConfig.style && tmpConfig.style['background-color']){
-				//force cluster background-color to final marker (color property)
-				tmpConfig.style['color'] = config.style['background-color'];
-			}
+			var style;
 			var textValue =  props[ms.getActiveIndicator()] || "";
-			var style =  new ol.style.Style({
-				image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-					stroke: new ol.style.Stroke({ //border doesn't work
+			
+			switch(config.type) {
+			
+			case "icon":
+				//font-awesome
+				style = new ol.style.Style({
+					  text: new ol.style.Text({
+						  	text: config.icon.unicode, 
+						    font: 'normal ' + (config.size || '14') + "px " + config.icon.family,
+						    fill: new ol.style.Fill({
+						    	 color: (config.style && config.style.color) ? config.style.color : 'blue'
+						    })
+						  })
+					});
+				break;
+				
+			case "url":
+				
+				var width = (config.style && config.style.width) ? parseInt(config.style.width) : 40;
+				var height = (config.style && config.style.height) ? parseInt(config.style.height) : 40;
+				
+				style =  new ol.style.Style({
+				image: new ol.style.Icon(
+						/** @type {olx.style.IconOptions} */
+					({
+						stroke: new ol.style.Stroke({ //border doesn't work
+						color: 'red',
+						width: 10
+					}),
+					size: [width, height],
+				    opacity: 1,
+				    crossOrigin: 'anonymous',
+				    src: config.url
+					}))
+		          });
+				break;
+				
+			case "img":	//upload case
+				var width = (config.style && config.style.width) ? parseInt(config.style.width) : 40;
+				var height = (config.style && config.style.height) ? parseInt(config.style.height) : 40; 
+				
+				style =  new ol.style.Style({
+					image: new ol.style.Icon(
+							/** @type {olx.style.IconOptions} */
+						({
+							stroke: new ol.style.Stroke({ //border doesn't work
+							color: 'red',
+							width: 10
+						}),
+//					    scale: 2/(config.size/2), //.5,
+						scale: .5,
+						size: [width, height],
+					    opacity: 1,
+					    crossOrigin: 'anonymous',
+					    src: config.src
+						}))
+			          });
+				 break;
+				
+			default:
+				style =  new ol.style.Style({
+				image: new ol.style.Icon(
+						/** @type {olx.style.IconOptions} */
+					({
+						stroke: new ol.style.Stroke({ //border doesn't work
 						color: 'red',
 						width: 3
 					}),
 				    opacity: 1,
 				    crossOrigin: 'anonymous',
-				    color: (tmpConfig.style && tmpConfig.style.color) ? tmpConfig.style.color : (tmpConfig.color) ? tmpConfig.color : 'blue',
-//				    src: 'data/icon.png'
-//				    src: 'https://www.mapz.com/map/marker/svg/M_marker_heart_150910.svg'
-//				    src: 'https://s3.amazonaws.com/com.cartodb.users-assets.production/maki-icons/embassy-18.svg',
-				    src: config.icon || 'https://openlayers.org/en/v4.6.4/examples/data/dot.png'
+				    color: (config.style && config.style.color) ? config.style.color : 'blue',
+				    src:  'https://openlayers.org/en/v4.6.4/examples/data/dot.png'
 					}))
 		          });
-			
+				break;
+				
+			}
 			return style;
 		}
 	
@@ -431,7 +487,7 @@
 		}
 		
 		ms.getActiveConfIdx=function(l){
-			for (var i=0; i<ms.activeConf; i++){
+			for (var i=0; i<ms.activeConf.length; i++){
 				if (ms.activeConf[i].layer === l)
 					return i;
 			}

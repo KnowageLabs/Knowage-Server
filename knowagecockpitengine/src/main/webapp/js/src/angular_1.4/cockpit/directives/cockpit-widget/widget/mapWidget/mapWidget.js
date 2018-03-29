@@ -100,7 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    $scope.refresh = function(element,width,height, data, nature, associativeSelection, changedChartType, chartConf, options) {
     		var dsLabel = (Array.isArray(options.label)) ? options.label[0] : options.label; //on delete of selections options is an array !!!
-    		$scope.createLayerWithData(dsLabel, data, false); //test cluster case
+    		$scope.createLayerWithData(dsLabel, data, false); 
 	    }
 	    
 	    $scope.getOptions =function(){
@@ -177,6 +177,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		var columnsForData = [];
     		var layerDef =  $scope.getConfigLayer(label);
     		var columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
+    		var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
     		
     		//remove old layer
     		var previousLayer = $scope.getLayerByName(label);
@@ -187,8 +188,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     			var tmpField = columnsForData[f];
     			if (tmpField.fieldType == "SPATIAL_ATTRIBUTE")
     				geoColumn = tmpField.name;
-//    			else if (tmpField.properties.showMap) //first measure
-//    				selectedMeasure = tmpField.aliasToShow;
     		}  
     		
     		var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, columnsForData, data);
@@ -197,13 +196,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			cockpitModule_mapServices.setActiveConf(layerDef.name, layerDef);
 			var layer;
-			if (isCluster){
+			if (isCluster) {
 				var clusterSource = new ol.source.Cluster({source: featuresSource	
 														  });
 				layer =   new ol.layer.Vector({source: clusterSource,
 										  	  style: cockpitModule_mapServices.layerStyle
 										});
-			}else{
+			} else if (isHeatmap) {
+				layer = new ol.layer.Heatmap({source: featuresSource,
+										      blur: layerDef.blur,
+										      radius: layerDef.radius,
+										      weight: ".9"
+										      
+										     });
+			} else {
 				layer = new ol.layer.Vector({source: featuresSource,
 	    									 style: cockpitModule_mapServices.layerStyle
 	    									});
@@ -241,7 +247,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            	if (previousZoom > newZoom ){
 	            		for (l in $scope.ngModel.content.layers){
 		    		    	var layerDef =  $scope.ngModel.content.layers[l];
-		    		    	var isCluster = (layerDef.markerConf && layerDef.markerConf.type == 'cluster') ? true : false;
+		    		    	var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
 			    			if (isCluster){
 			    				var data = $scope.getValuesLayer(layerDef.name);
 				        		$scope.createLayerWithData(layerDef.name, data.values, true); //return to cluster view
@@ -288,9 +294,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         	                return layer;
         	            });
             	//popup isn't shown with cluster
-    	        if (feature && !Array.isArray(feature)) {
-    	            var geometry = feature.getGeometry();
-    	            var props = feature.getProperties();
+    	        if (feature) {
+    	        	var tempFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
+    	        	
+    	            var geometry = tempFeature.getGeometry();
+    	            var props = tempFeature.getProperties();
     	            var coordinate = geometry.getCoordinates();
     	            var config = $scope.getColumnSelectedOfDataset(layer.dsId);
     	            var text = "";
@@ -310,7 +318,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		$scope.map.on('dblclick', function(evt) {
     			for (l in $scope.ngModel.content.layers){
     		    	var layerDef =  $scope.ngModel.content.layers[l];
-    		    	var isCluster = (layerDef.markerConf && layerDef.markerConf.type == 'cluster') ? true : false;
+    		    	var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
 	    			if (isCluster){
 	    				var data = $scope.getValuesLayer(layerDef.name);
 		        		$scope.createLayerWithData(layerDef.name, data.values, false);
@@ -318,18 +326,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     			}
     		});
 
-    		$scope.map.on('ol-zoom-out', function(evt) {
-    			alert("zoom out!!");
-    			for (l in $scope.ngModel.content.layers){
-    		    	var layerDef =  $scope.ngModel.content.layers[l];
-    		    	var isCluster = (layerDef.markerConf && layerDef.markerConf.type == 'cluster') ? true : false;
-	    			if (isCluster){
-	    				var data = $scope.getValuesLayer(layerDef.name);
-		        		$scope.createLayerWithData(layerDef.name, data.values, false);
-	    			}
-    			}
-    		});
-    		
+
     		// change mouse cursor when over marker
     	      $scope.map.on('pointermove', function(e) {
     	    	  var pixel = $scope.map.getEventPixel(e.originalEvent);
@@ -359,7 +356,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	var geoColumn = null;
     		var selectedMeasure = null;
     		var columnsForData = [];
-    		var isCluster = (layerDef.markerConf && layerDef.markerConf.type == 'cluster') ? true : false; 
+    		var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
     		
     		var columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
 	    	
@@ -485,7 +482,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			//prepare object for thematization
 	    	cockpitModule_mapServices.loadIndicatorMaxMinVal(config.name+'|'+measure, values);
 			var newSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, measure, config, configColumns,  values);
-			if (config.markerConf && config.markerConf.type == 'cluster'){
+			if (config.clusterConf && config.clusterConf.enabled){
 				var clusterSource = new ol.source.Cluster({ source: newSource });
 				layer.setSource(clusterSource);
 			}else{
