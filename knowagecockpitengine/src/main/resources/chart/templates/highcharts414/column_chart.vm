@@ -33,6 +33,18 @@
 		#set($isDateTime = true)
 	#end
 #end 
+#set($datetype = "string")
+#foreach ($dataField in $dataFields)
+	#if($dataField.class.name == 'java.util.LinkedHashMap')
+		#if($dataField.header==$categoryDate && $dataField.type == "date")
+			#if($dataField.subtype)
+				#set($datetype = "timestamp")
+			#else
+				#set($datetype = "simpledate")
+			#end	
+		#end
+	#end
+#end
 #set($xAxisMap = $datasettransformer.getXAxisMap($categorieColumns, $categoryDate))
 #set($enableDrilldown = false) 
 #if($chart.groupCategories)
@@ -91,6 +103,8 @@
 			
 		additionalData:
 		{
+			dateTime: $isDateTime,
+			datetype: '$datetype',
 			categoryColumn: '$categorieColumns.column',
 			categoryGroupBy: '$categorieColumns.groupby',
 			categoryGroupByNamens: '$categorieColumns.groupbyNames',
@@ -1161,10 +1175,10 @@
 								y: $serieValue,
 							#end
 							name: "$serieCategoryName",
-							#if($isDateTime==true)
-								x: Date.parse("$serieCategoryName"),
+							datetype:"$datetype",
+							#if($datetype=="string")
+							x: Date.parse("$serieCategoryName"),
 							#end
-							
 							
 						},
 						#end
@@ -1341,9 +1355,11 @@
 						y: $el.y,
 					#end
 					name: '$el.name',
-					#if($isDateTime==true)
-						x: Date.parse("$el.name"),
+					datetype:"$datetype",
+					#if($datetype=="string")
+					x: Date.parse("$el.name"),
 					#end
+					
 				},	
 					
 				#end	

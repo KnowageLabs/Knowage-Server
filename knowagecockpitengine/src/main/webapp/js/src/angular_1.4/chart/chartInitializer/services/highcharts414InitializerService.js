@@ -25,7 +25,24 @@ angular.module('chartInitializer')
 	var chartConfConf = null;
 
 	this.renderChart = function(renderObj, jsonData){
+		
 		var chartConf = renderObj.chartConf;
+		if(chartConf.chart.additionalData.dateTime && chartConf.chart.additionalData.datetype!="string"){
+			for (var i = 0; i < chartConf.series.length; i++) {
+				var seria = chartConf.series[i];
+				for (var j = 0; j < seria.data.length; j++) {
+					var dat = seria.data[j];
+					if(dat.datetype!="simpledate"){
+						var dateSplit = dat.name.replace('/', ":").replace('/', ":").replace(' ', ":").replace('.', ":").split(":");
+						dat.x = (new Date(dateSplit[2], dateSplit[1]-1, dateSplit[0], dateSplit[3], dateSplit[4], dateSplit[5])).getTime();
+					} else {
+						var dateSplit = dat.name.replace('/', ":").replace('/', ":").split(":");
+						dat.x = (new Date(dateSplit[2], dateSplit[1]-1, dateSplit[0])).getTime();
+					}
+				}
+			}	
+		}
+		
 		var element = renderObj.element;
 		var handleCockpitSelection = renderObj.handleCockpitSelection;
 		var exportWebApp = renderObj.exportWebApp;
