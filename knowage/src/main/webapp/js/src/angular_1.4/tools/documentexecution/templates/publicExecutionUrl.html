@@ -1,0 +1,34 @@
+<md-dialog aria-label="Accessibility dialog" style="min-width:900px;max-width:1500px;"> 
+	<md-toolbar>
+	  <div class="md-toolbar-tools">
+	    <h2>{{translate.load('sbi.execution.linkToDocument')}}</h2>
+	  </div>
+	</md-toolbar>
+	
+	<!--  <md-icon ng-click="showCopyLinkInfo()" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>-->
+	<md-dialog-content>
+		<div class="md-dialog-content">	
+			<div ng-show="isPublic==false">
+			    <md-icon  class="alertIconMissingAlias"  md-font-icon="fa fa-exclamation-triangle" > 
+       			</md-icon>
+				<label>{{translate.load("sbi.execution.publicUrlExecutionEnable");}}</label>
+			</div>
+			<div>
+				<label>{{translate.load("sbi.execution.linkToDocumentDescription");}} ({{translate.load("sbi.execution.linkToDocumentInfo");}})</label>
+			</div>
+			<md-input-container class="md-block" ng-show="embedHTML==false"> 
+				<input type="text" ng-model="publicUrl" id="myTextInput" onblur="this.select()" autofocus onclick="this.select()"/>
+			</md-input-container>
+			<md-input-container class="md-block" ng-show="embedHTML==true">
+				<textarea type="text" ng-model="publicUrl" id="myTextInputArea" onblur="this.select()" autofocus  rows="3" onclick="this.select()"></textarea>
+			</md-input-container>
+		</div>
+	</md-dialog-content>
+	
+	<md-dialog-actions layout="row">
+		<md-button ng-click="closeDialog()" class="md-primary">
+			{{translate.load('sbi.accessibility.settings.close')}}
+  	    </md-button>
+
+	</md-dialog-actions>
+</md-dialog>                                         
