@@ -341,18 +341,27 @@ angular.module('cockpitModule')
 
 			var selections = cockpitModule_widgetSelection.getCurrentSelections(datasetName);
 			if(selections && selections[datasetName] && selections[datasetName][columnName]){
-				var values = angular.copy(selections[datasetName][columnName]);
-				for(var i in values){
-					values[i] = (values[i]+'').slice(2,values[i].length-2);
+				updateValues(selections[datasetName][columnName]);
+			}else{
+				selections = cockpitModule_widgetSelection.getCurrentFilters(datasetName);
+				if(selections && selections[datasetName] && selections[datasetName][columnName]){
+					updateValues(selections[datasetName][columnName]);
 				}
-				if($scope.ngModel.settings.modalityValue != 'multiValue'){
-					$scope.parameter = (values.length == 1) ? values[0] : "";
+			}
+		}
+
+		var updateValues = function(structuredValues){
+			var values = [];
+			for(var i in structuredValues){
+				values = values.concat(structuredValues[i].slice(2,structuredValues[i].length-2).split("','"));
+			}
+			if($scope.ngModel.settings.modalityValue != 'multiValue'){
+				$scope.parameter = (values.length == 1) ? values[0] : "";
+			} else {
+				if($scope.ngModel.settings.modalityPresent == 'LIST'){
+					$scope.multiValue = values;
 				} else {
-					if($scope.ngModel.settings.modalityPresent == 'LIST'){
-						$scope.multiValue = values;
-					} else {
-						$scope.multiCombo.selected = values;
-					}
+					$scope.multiCombo.selected = values;
 				}
 			}
 		}

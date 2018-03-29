@@ -23,7 +23,7 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 
 		  $mdPanel.open(config);
 	}
-	
+
 	this.openDataConfiguration=function(){
 		var position = $mdPanel.newPanelPosition().absolute().center();
 
@@ -45,7 +45,7 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 		  };
 		  $mdPanel.open(config);
 	}
-	
+
 	var doSaveCockpit=function(){
 		var dataToSend={};
 		dataToSend.action=cockpitModule_properties.DOCUMENT_ID==null ? "DOC_SAVE" : "MODIFY_COCKPIT";
@@ -57,7 +57,7 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 		dataToSend.folders=[];
 		dataToSend.customData={};
 		dataToSend.customData.templateContent=angular.copy(cockpitModule_template);
-		
+
 		// reset table widgets volatile data
 		if(dataToSend.customData.templateContent.sheets){
 			angular.forEach(dataToSend.customData.templateContent.sheets,function(sheet){
@@ -68,12 +68,12 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 								delete widget.settings.backendTotalRows;
 								delete widget.settings.page;
 								delete widget.settings.rowsCount;
-								
+
 								if(widget.settings.summary){
 									delete widget.settings.summary.forceDisabled;
 									delete widget.settings.summary.row;
 								}
-								
+
 								if(widget.settings){
 									if(widget.style.tr){
 										delete widget.style.tr["background-color"];
@@ -84,12 +84,14 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 							if(widget.dataset){
 								widget.dataset.isRealtime = undefined;
 							}
+						} else if(widget.type == "selector"){
+							delete widget.activeValues;
 						}
 					});
 				}
 			});
 		}
-		
+
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.promisePost("2.0/saveDocument","",dataToSend)
 		.then(
@@ -107,10 +109,10 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 						cockpitModule_properties.DOCUMENT_NAME = "";
 					}
 				})
-	
-	
+
+
 	};
-	
+
 	this.saveCockpit=function(){
 		//check cockpit label
 		if(angular.equals(cockpitModule_properties.DOCUMENT_NAME.trim(),"")){
@@ -132,14 +134,14 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 		    	}
 		    }, function() {
 		    });
-			
-			
-			
+
+
+
 		}else{
 			doSaveCockpit();
 		}
 	}
-	
+
 
 	this.cleanCache = function(){
 		var requestBody = {};
@@ -167,11 +169,11 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 				function(response){
 					sbiModule_restServices.errorHandler(response.data,"Error*")
 				});
-				
+
 		//reset the variable
 		angular.copy([],cockpitModule_properties.DS_IN_CACHE);
 	}
-	
+
 	this.closeNewCockpit=function(){
 		window.parent.angular.element(window.frameElement).scope().closeConfirm(true,true);
 	}

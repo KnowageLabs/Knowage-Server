@@ -709,10 +709,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 	}
 
 	this.getLastCurrentSelection = function(){
-		var tmpSelection = [];
-		angular.copy(cockpitModule_template.configuration.aggregations,tmpSelection);
-		for(var i=0;i<tmpSelection.length;i++){
-			var selections = tmpSelection[i].selection;
+		var tmpSelections = [];
+		angular.copy(cockpitModule_template.configuration.aggregations,tmpSelections);
+		for(var i=0;i<tmpSelections.length;i++){
+			var selections = tmpSelections[i].selection;
 			var selectionKeys = Object.keys(selections);
 			if(selectionKeys.length > 0){
 				var lastSelectionKey = selectionKeys[selectionKeys.length - 1];
@@ -724,6 +724,20 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				result[keySplit[0]][keySplit[1]] = lastSelectionValue;
 				return result;
 			}
+		}
+
+		angular.copy(cockpitModule_template.configuration.filters,selections);
+		var selectionKeys = Object.keys(selections);
+		if(selectionKeys.length > 0){
+			var lastDataset = selectionKeys[selectionKeys.length - 1];
+			var lastColumns = selections[lastDataset];
+			var lastColumnKeys = Object.keys(lastColumns);
+			var lastColumn = lastColumnKeys[lastColumnKeys.length - 1];
+
+			var result = {}
+			result[lastDataset] = {};
+			result[lastDataset][lastColumn] = selections[lastDataset][lastColumn];
+			return result;
 		}
 
 		return null;

@@ -827,14 +827,26 @@ function cockpitWidgetControllerFunction(
 				}else{
 					if(!cockpitModule_template.configuration.filters.hasOwnProperty(dsLabel)){
 						cockpitModule_template.configuration.filters[dsLabel]={};
+					} else{
+						if(Object.keys(cockpitModule_template.configuration.filters).length > 1){
+							var temp = cockpitModule_template.configuration.filters[dsLabel];
+							delete cockpitModule_template.configuration.filters[dsLabel];
+							cockpitModule_template.configuration.filters[dsLabel] = temp;
+						}
 					}
 					if (Array.isArray(originalColumnName)){
 						for (var o=0; o < originalColumnName.length; o++){
 							var singleOriginalColumnValue = originalColumnName[o];
+							if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(singleOriginalColumnValue)){
+								delete cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue];
+							}
 							cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue]=columnValue[o];
 							cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':singleOriginalColumnValue,'alias':columnName[o]});
 						}
 					}else{
+							if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(originalColumnName)){
+								delete cockpitModule_template.configuration.filters[dsLabel][originalColumnName];
+							}
 							// 02/02/17 - davverna
 							// if columnvalue is an array, usually from a bulk selection, I use a copy to avoid the direct object binding.
 							// With the double click there is not the same issue because the binding is on a primitive value (string).
@@ -1090,7 +1102,7 @@ function cockpitWidgetControllerFunction(
 	$scope.showChartTypes = function(ev,widgetName){
 		if(!$scope.ngModel.content.chartTemplateOriginal){
 			$scope.ngModel.content.chartTemplateOriginal = angular.copy($scope.ngModel.content.chartTemplate);
-			
+
 		}else{
 			$scope.ngModel.content.chartTemplate = angular.copy($scope.ngModel.content.chartTemplateOriginal);
 		}
