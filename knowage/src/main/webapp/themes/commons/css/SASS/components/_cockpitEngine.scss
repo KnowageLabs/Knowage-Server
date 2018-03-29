@@ -102,19 +102,24 @@
     .cockpit-map-widget-edit {
     	.markersExpander {
     		.color-picker-wrapper {
-    			z-index: 9;
+    			z-index: 11;
+    			width: 100%;
     		}
     		.preview {
     			position: relative;
-    			padding: 20px;
+    			width: 76px;
+    			height: 76px;
+    			display: flex;
+    			align-items: center;
+    			justify-content: center;
+    			padding: 8px;
     			margin-top: 1rem;
+    			margin-left: 10px;
     			border: 1px solid #ccc;
     			box-shadow: 0px 3px 3px #ccc;
+    			overflow: hidden;
     			img, .clusterExample {
-    				max-width: 48px;
-    				max-height: 48px;
-    				height: 48px;
-    				width: 48px;
+    				position: absolute;
     			}
     			label {
     				position: absolute;

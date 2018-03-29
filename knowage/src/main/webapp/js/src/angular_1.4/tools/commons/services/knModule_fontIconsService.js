@@ -23,21 +23,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function knModule_fontIconsService(){
 			var self=this;
 			self.icons=[
-				{"name":"font-awesome","className":"fa",
-					"list":[
-						"fa-adjust","fa-anchor","fa-archive","fa-area-chart","fa-arrows","fa-arrows-h","fa-arrows-v","fa-asterisk","fa-at","fa-automobile","fa-balance-scale","fa-ban","fa-bank" ,
-						"fa-bar-chart","fa-bar-chart-o","fa-barcode","fa-bars","fa-battery-empty","fa-battery-full","fa-battery-half","fa-battery-quarter","fa-battery-three-quarters","fa-bed",
-						"fa-beer","fa-bell","fa-bell-o","fa-bell-slash","fa-bell-slash-o","fa-bicycle","fa-binoculars","fa-birthday-cake","fa-bolt","fa-bomb","fa-book","fa-bookmark","fa-bookmark-o","fa-briefcase",
-						"fa-bug","fa-building","fa-building-o","fa-bullhorn","fa-bullseye","fa-bus","fa-calculator","fa-calendar","fa-calendar-check-o","fa-calendar-minus-o","fa-calendar-o","fa-calendar-plus-o",
-						"fa-calendar-times-o","fa-camera","fa-camera-retro","fa-car","fa-caret-square-o-down","fa-caret-square-o-left","fa-caret-square-o-right","fa-caret-square-o-up","fa-cart-arrow-down",
-						"fa-cart-plus","fa-cc","fa-certificate","fa-check","fa-check-circle","fa-check-circle-o","fa-check-square","fa-check-square-o","fa-child","fa-circle","fa-circle-o","fa-circle-o-notch"
-						]
-				},
-				/*
-				 * JUST ADD FONT ICONS FAMILIES LIKE THAT
-				 {"name":"otherFamily","className":"fa",
-					"list":['fa-th','fa-cell', 'fa-dot', 'fa-times']
-				}*/
+				{"name":"fontawesome","className":"fa",
+					"icons":[
+						{"label":"adjust","className":"fa fa-adjust","unicode":"\uf042"},{"label":"anchor","className":"fa fa-anchor","unicode":"\uf13d"},{"label":"archive","className":"fa fa-archive","unicode":"\uf187"},
+						{"label":"area chart","className":"fa fa-area-chart","unicode":"\uf1fe"},{"label":"bidirectional arrows","className":"fa fa-arrows","unicode":"\uf047"},{"label":"horizontal arrows","className":"fa fa-arrows-h","unicode":"\uf07e"},
+						{"label":"vertical arrows","className":"fa fa-arrows-v","unicode":"\uf07d"},{"label":"asterisk","className":"fa fa-asterisk","unicode":"\uf069"},{"label":"address at","className":"fa fa-at","unicode":"\uf1fa"}]
+				}
 			];
 		}
+	
+	/*					"fa fa-at","fa fa-automobile","fa fa-balance-scale","fa fa-ban","fa fa-bank" ,
+						"fa fa-bar-chart","fa fa-bar-chart-o","fa fa-barcode","fa fa-bars","fa fa-battery-empty","fa fa-battery-full","fa fa-battery-half","fa fa-battery-quarter","fa fa-battery-three-quarters","fa fa-bed",
+						"fa fa-beer","fa fa-bell","fa fa-bell-o","fa fa-bell-slash","fa fa-bell-slash-o","fa fa-bicycle","fa fa-binoculars","fa fa-birthday-cake","fa fa-bolt","fa fa-bomb","fa fa-book","fa fa-bookmark","fa fa-bookmark-o","fa fa-briefcase",
+						"fa fa-bug","fa fa-building","fa fa-building-o","fa fa-bullhorn","fa fa-bullseye","fa fa-bus","fa fa-calculator","fa fa-calendar","fa fa-calendar-check-o","fa fa-calendar-minus-o","fa fa-calendar-o","fa fa-calendar-plus-o",
+						"fa fa-calendar-times-o","fa fa-camera","fa fa-camera-retro","fa fa-car","fa fa-caret-square-o-down","fa fa-caret-square-o-left","fa fa-caret-square-o-right","fa fa-caret-square-o-up","fa fa-cart-arrow-down",
+						"fa fa-cart-plus","fa fa-cc","fa fa-certificate","fa fa-check","fa fa-check-circle","fa fa-check-circle-o","fa fa-check-square","fa fa-check-square-o","fa fa-child","fa fa-circle","fa fa-circle-o","fa fa-circle-o-notch"*/
 }());

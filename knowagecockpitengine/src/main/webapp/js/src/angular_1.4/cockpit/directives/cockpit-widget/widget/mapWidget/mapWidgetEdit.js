@@ -167,7 +167,6 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
   	$scope.colorPickerOptions = {format:'hex'};
   	$scope.setIconType = function(layer,type) {
   		if (!layer.markerConf) layer.markerConf={};
-  		delete layer.markerConf.icon;
   		layer.markerConf.type = type;
   	}
   	
@@ -183,7 +182,7 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 				$scope.setIcon = function(family,icon){
 					if(!$scope.activeLayer.markerConf) $scope.activeLayer.markerConf = {};
 					$scope.activeLayer.markerConf.icon = icon;
-					$scope.activeLayer.markerConf.font = family.className;
+					$scope.activeLayer.markerConf.icon.family = family.name;
 				}
 				$scope.choose = function(){
 					angular.copy($scope.activeLayer,layer);
@@ -219,7 +218,7 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 								for(var k in listResponse.data.data){
 									if(listResponse.data.data[k].name == response.data.fileName ){
 										layer.markerConf.imgId = listResponse.data.data[k].imgId;
-										layer.markerConf.icon = sbiModule_config.externalBasePath + "/restful-services/1.0/images/getImage?IMAGES_ID=" + listResponse.data.data[k].imgId;
+										layer.markerConf.src = sbiModule_config.externalBasePath + "/restful-services/1.0/images/getImage?IMAGES_ID=" + listResponse.data.data[k].imgId;
 									}
 								}
 							})
@@ -239,7 +238,6 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 	};
 	
 	$scope.erase = function(ev,layer){
-		debugger;
 		sbiModule_restServices.restToRootProject();
 			var imageId = 'imageId='+layer.markerConf.imgId;
 			sbiModule_restServices.get("1.0/images", 'deleteImage', imageId)
@@ -248,7 +246,7 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 					'OK').highlightAction(false).hideDelay(5000));
 					if(response.data.success){
 						delete layer.markerConf.imgId;
-						delete layer.markerConf.icon;
+						delete layer.markerConf.src;
 						$scope.uploadImg = {};
 					}
 			});
