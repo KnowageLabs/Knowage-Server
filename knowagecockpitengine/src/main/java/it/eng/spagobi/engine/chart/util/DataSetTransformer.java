@@ -732,7 +732,7 @@ public class DataSetTransformer {
 			String groupSeriesCateg) throws JSONException {
 		boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
 		boolean groupSeriesBool = Boolean.parseBoolean(groupSeries);
-		Set<String> categories = new HashSet<String>();
+		Set<Object> categories = new HashSet<Object>();
 
 		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
 		String primCat;
@@ -765,10 +765,10 @@ public class DataSetTransformer {
 		}
 
 		for (Object singleObject : dataRows) {
-			categories.add(((Map) singleObject).get(primCat).toString());
+			categories.add(((Map) singleObject).get(primCat));
 		}
-		String[] categoriesList = categories.toArray(new String[categories.size()]);
-		Map<String, Integer> categoriesListIndexMap = new HashMap<String, Integer>();
+		Object[] categoriesList = categories.toArray(new Object[categories.size()]);
+		Map<Object, Integer> categoriesListIndexMap = new HashMap<Object, Integer>();
 		for (int i = 0; i < categoriesList.length; i++) {
 			categoriesListIndexMap.put(categoriesList[i], i);
 		}
@@ -778,7 +778,7 @@ public class DataSetTransformer {
 			if (newListOfOrderColumnItems == null) {
 				newListOfOrderColumnItems = new ArrayList<JSONObject>();
 				for (int i = 0; i < categoriesList.length; i++) {
-					String category = categoriesList[i];
+					Object category = categoriesList[i];
 					JSONObject jo = new JSONObject();
 					jo.put("name", category);
 					jo.put("y", "");
@@ -787,7 +787,7 @@ public class DataSetTransformer {
 				map.put(((Map) singleObject).get(seria).toString(), newListOfOrderColumnItems);
 			}
 
-			JSONObject jo = newListOfOrderColumnItems.get(categoriesListIndexMap.get(((Map) singleObject).get(primCat).toString()));
+			JSONObject jo = newListOfOrderColumnItems.get(categoriesListIndexMap.get(((Map) singleObject).get(primCat)));
 			jo.put("y", ((Map) singleObject).get(secCat));
 		}
 
