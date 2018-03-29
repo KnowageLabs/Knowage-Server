@@ -24,14 +24,16 @@
 #set($isDateTime = false)
 #if($chart.dateTime && $chart.dateTime=="true")
 	#if($chart.categoryDate)
+		#set($categoryDate = $chart.categoryDate)
 		#if($chart.categoryDate==$categorieColumns.name)
 			#set($isDateTime = true)
 		#end
 	#else
+		#set($categoryDate = $categorieColumns.name)
 		#set($isDateTime = true)
 	#end
 #end 
-#set($xAxisMap = $datasettransformer.getXAxisMap($categorieColumns, $chart.categoryDate))
+#set($xAxisMap = $datasettransformer.getXAxisMap($categorieColumns, $categoryDate))
 #set($enableDrilldown = false) 
 #if($chart.groupCategories)
 	#if($categorieColumns.groupby != ''  && $chart.groupCategories =='false')
