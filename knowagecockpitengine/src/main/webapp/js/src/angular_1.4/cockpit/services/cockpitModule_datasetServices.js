@@ -1009,7 +1009,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				var params ={};
 				params.datasetLabel = dataset.label;
 				params.aggregation = cockpitModule_widgetSelection.getAggregation(undefined,dataset,undefined, undefined);
-				params.parameters = this.getParametersAsString(ds.getDatasetParameters(dataset.id.dsId));
+				params.parameters = ds.getParametersAsString(ds.getDatasetParameters(dataset.id.dsId));
 				if(dataset.useCache==false){
 					params.nearRealtime = true;
 				}
