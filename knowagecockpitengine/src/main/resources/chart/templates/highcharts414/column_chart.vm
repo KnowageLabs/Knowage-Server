@@ -834,7 +834,6 @@
 			#end
 			#if($a.type == "datetime")
             formatter: function() {
-            
                 return '' + Highcharts.dateFormat('$dateFormat', this.value);
             },  
             #end
@@ -1176,10 +1175,11 @@
 							#end
 							name: "$serieCategoryName",
 							datetype:"$datetype",
+							#if($isDateTime==true)
 							#if($datetype=="string")
 							x: Date.parse("$serieCategoryName"),
 							#end
-							
+							#end
 						},
 						#end
 					 
@@ -1356,8 +1356,10 @@
 					#end
 					name: '$el.name',
 					datetype:"$datetype",
+					#if($isDateTime==true)
 					#if($datetype=="string")
 					x: Date.parse("$el.name"),
+					#end
 					#end
 					
 				},	
