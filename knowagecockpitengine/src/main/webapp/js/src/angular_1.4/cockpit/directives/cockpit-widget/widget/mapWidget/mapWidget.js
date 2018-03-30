@@ -285,7 +285,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     				
             	var feature = $scope.map.forEachFeatureAtPixel(evt.pixel,
             	            function(feature, layer) {
-//            	                console.log("feature on click: ",feature);
             	                return feature;
             	            });
             	var layer = $scope.map.forEachFeatureAtPixel(evt.pixel,
@@ -325,7 +324,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    			}
     			}
     		});
-
 
     		// change mouse cursor when over marker
     	      $scope.map.on('pointermove', function(e) {

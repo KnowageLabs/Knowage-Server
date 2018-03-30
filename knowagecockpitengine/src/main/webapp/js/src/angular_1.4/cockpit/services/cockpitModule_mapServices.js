@@ -11,7 +11,8 @@
 				cockpitModule_widgetSelection,
 				cockpitModule_properties,
 				cockpitModule_utilstServices, 
-				$rootScope){
+				$rootScope,
+				$location){
 	
 		var ms = this; //mapServices
 		var activeInd;
@@ -197,13 +198,10 @@
 				    default: //SUM
 				    	toReturn = total;
 	    		}			
-				
-				
 	    	}
 	    	else{
 	    		toReturn += feature.get(ms.getActiveIndicator());
 	    	}
-//	    	console.log("fucnt: ["+ aggregationFunc +"] - toReturn ", toReturn);
 			return toReturn;
 	    }
 	    
@@ -229,7 +227,6 @@
 	    }
 		
 		ms.getProportionalSymbolStyles = function(value, props, config){
-			var textValue =  props[ms.getActiveIndicator()] || "";
 			return new ol.style.Style({
 		          fill: new ol.style.Fill({
 		                color :  config.color
@@ -240,7 +237,6 @@
 		              }),
 		              image: new ol.style.Circle({
 		                radius: ms.getProportionalSymbolSize(value, ms.getActiveIndicator(), config),
-//		            	radius: 20,
 		                fill: new ol.style.Fill({
 		                 color : config.style['color'] || 'blue',
 		                })
@@ -251,7 +247,6 @@
 		                  stroke: new ol.style.Stroke({
 		                    color: '#fff', width: 2
 		                  }),
-//		                  text: textValue.toString()
 		                  text: value.toString()
 		                })
 		            });
@@ -295,7 +290,7 @@
 				style = new ol.style.Style({
 					  text: new ol.style.Text({
 						  	text: config.icon.unicode, 
-						    font: 'normal ' + (config.size || '14') + "px " + config.icon.family,
+						    font: 'normal ' + (config.size || '100%') + config.icon.family,
 						    fill: new ol.style.Fill({
 						    	 color: (config.style && config.style.color) ? config.style.color : 'blue'
 						    })
@@ -303,11 +298,8 @@
 					});
 				break;
 				
-			case "url":
-				
-				var width = (config.style && config.style.width) ? parseInt(config.style.width) : 40;
-				var height = (config.style && config.style.height) ? parseInt(config.style.height) : 40;
-				
+			case "url": case 'img': 
+				//img (upload)
 				style =  new ol.style.Style({
 				image: new ol.style.Icon(
 						/** @type {olx.style.IconOptions} */
@@ -316,35 +308,13 @@
 						color: 'red',
 						width: 10
 					}),
-					size: [width, height],
+					scale: (config.scale) ? (config.scale/100) : 1,
 				    opacity: 1,
 				    crossOrigin: 'anonymous',
-				    src: config.url
+				    src: config[config.type]
 					}))
 		          });
 				break;
-				
-			case "img":	//upload case
-				var width = (config.style && config.style.width) ? parseInt(config.style.width) : 40;
-				var height = (config.style && config.style.height) ? parseInt(config.style.height) : 40; 
-				
-				style =  new ol.style.Style({
-					image: new ol.style.Icon(
-							/** @type {olx.style.IconOptions} */
-						({
-							stroke: new ol.style.Stroke({ //border doesn't work
-							color: 'red',
-							width: 10
-						}),
-//					    scale: 2/(config.size/2), //.5,
-						scale: .5,
-						size: [width, height],
-					    opacity: 1,
-					    crossOrigin: 'anonymous',
-					    src: config.src
-						}))
-			          });
-				 break;
 				
 			default:
 				style =  new ol.style.Style({
@@ -358,7 +328,7 @@
 				    opacity: 1,
 				    crossOrigin: 'anonymous',
 				    color: (config.style && config.style.color) ? config.style.color : 'blue',
-				    src:  'https://openlayers.org/en/v4.6.4/examples/data/dot.png'
+				    src:  $location.$$absUrl.substring(0,$location.$$absUrl.indexOf('api/')) + '/img/dot.png'
 					}))
 		          });
 				break;
@@ -430,7 +400,6 @@
 			} else {
 				size = ( parseInt(val) - minValue) / ( maxValue - minValue) * (maxRadiusSize - minRadiusSize) + minRadiusSize;
 			}
-//			console.log("propSymbSize ["+ size +"] for ["+name+"]");
 			return (size < 0 ) ? 0 : size;
 		}
 		
