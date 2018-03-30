@@ -934,11 +934,12 @@ function cockpitChartWidgetControllerFunction(
 				}
 			}else{
 				var columnValue  = {};
-				if($scope.ngModel.content.chartTemplate.CHART.dateTime){
+				/*if($scope.ngModel.content.chartTemplate.CHART.dateTime){
 					columnValue = date_format;
 				}else {
 					columnValue = event.point.name;
-				}
+				}*/
+				columnValue = event.point.name;
 			}
 
 
