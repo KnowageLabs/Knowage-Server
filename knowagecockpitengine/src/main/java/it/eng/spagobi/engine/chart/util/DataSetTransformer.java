@@ -21,12 +21,12 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -733,7 +733,7 @@ public class DataSetTransformer {
 			String groupSeriesCateg) throws JSONException {
 		boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
 		boolean groupSeriesBool = Boolean.parseBoolean(groupSeries);
-		Set<Object> categories = new HashSet<Object>();
+		ArrayList<Object> categories = new ArrayList<>();
 
 		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
 		String primCat;
@@ -762,17 +762,13 @@ public class DataSetTransformer {
 
 			}
 		}
-		int num = 0;
+
 		for (Object singleObject : dataRows) {
-			if (Number.class.isAssignableFrom(((Map) singleObject).get(primCat).getClass())) {
-				num++;
-			}
 			categories.add(((Map) singleObject).get(primCat));
 		}
-		Object[] categoriesList = categories.toArray(new Object[categories.size()]);
-		if (num == dataRows.size()) {
-			Arrays.sort(categoriesList);
-		}
+
+		Set<Object> categoriesSet = new LinkedHashSet<>(categories);
+		Object[] categoriesList = categoriesSet.toArray(new Object[categoriesSet.size()]);
 
 		Map<Object, Integer> categoriesListIndexMap = new HashMap<Object, Integer>();
 		for (int i = 0; i < categoriesList.length; i++) {
