@@ -715,7 +715,7 @@
 		
 			type: "$a.type",
 			id: $a.id,
-			#if($categorieColumns.orderType=="desc")
+			#if($categorieColumns.orderType=="desc" && $isDateTime)
 				reversed: true,
 			#end
 	 	title: {
@@ -1655,6 +1655,7 @@
         	*/ 	
         	
             #if($isDateTime==true)
+            
              result += '<span>' + Highcharts.dateFormat('$dateFormat', this.x) + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
             #else
              result += '<span>' + this.key + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
