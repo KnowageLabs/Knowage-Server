@@ -41,10 +41,10 @@ public class DataSetTransformer {
 
 	public void print(Object object) {
 
-		/*
-		 * System.out.println("-----------------------"); System.out.println(object); System.out.println(object.getClass().toString());
-		 * System.out.println("-----------------------");
-		 */
+		System.out.println("-----------------------");
+		System.out.println(object);
+		System.out.println(object.getClass().toString());
+		System.out.println("-----------------------");
 
 	}
 
@@ -748,7 +748,6 @@ public class DataSetTransformer {
 				secCat = "column_1";
 				seria = "column_3";
 			}
-
 		} else {
 			if (groupSeriesBool) {
 				primCat = "column_2";
@@ -756,7 +755,6 @@ public class DataSetTransformer {
 				seria = "column_1";
 
 			} else {
-
 				primCat = "column_1";
 				secCat = "column_3";
 				seria = "column_2";
