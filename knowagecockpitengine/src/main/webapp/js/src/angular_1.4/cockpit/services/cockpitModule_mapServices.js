@@ -110,6 +110,21 @@
 			return toReturn;
 		}
 		
+		ms.setHeatmapWeight= function(feature){
+			var parentLayer = feature.get('parentLayer');
+			var config = ms.getActiveConf(parentLayer) || {};
+			
+			var minmaxLabel = parentLayer + '|' + config.defaultIndicator;
+			var minmax = ms.getCacheProportionalSymbolMinMax()[minmaxLabel];
+			var props  = feature.getProperties();
+
+		    var p = feature.get(config.defaultIndicator);
+		    // perform some calculation to get weight between 0 - 1
+		    // apply formule: w = w-min/max-min (http://www.statisticshowto.com/normalized/)
+		    weight = (p.value - minmax.minValue)/(minmax.maxValue-minmax.minValue);
+		    return weight;
+		}
+		
 	    var styleCache = {};
 	    ms.layerStyle = function(feature, resolution){
 	    	
@@ -290,7 +305,7 @@
 				style = new ol.style.Style({
 					  text: new ol.style.Text({
 						  	text: config.icon.unicode, 
-						    font: 'normal ' + (config.size || '100%') + config.icon.family,
+						    font: 'normal ' + (config.size + '%' || '100%') + config.icon.family,
 						    fill: new ol.style.Fill({
 						    	 color: (config.style && config.style.color) ? config.style.color : 'blue'
 						    })
