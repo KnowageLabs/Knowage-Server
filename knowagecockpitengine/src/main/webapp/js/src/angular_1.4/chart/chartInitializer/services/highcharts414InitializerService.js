@@ -27,7 +27,7 @@ angular.module('chartInitializer')
 	this.renderChart = function(renderObj, jsonData){
 		
 		var chartConf = renderObj.chartConf;
-		if(chartConf.chart.additionalData.dateTime && chartConf.chart.additionalData.datetype!="string"){
+		if(chartConf.chart.additionalData && chartConf.chart.additionalData.dateTime && chartConf.chart.additionalData.datetype!="string"){
 			for (var i = 0; i < chartConf.series.length; i++) {
 				var seria = chartConf.series[i];
 				for (var j = 0; j < seria.data.length; j++) {
