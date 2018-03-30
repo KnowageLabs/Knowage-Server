@@ -171,7 +171,6 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
   	}
   	
   	$scope.getDimensionFromRadius = function(radius){
-  		debugger;
   		return (radius * 2) + 'px';
   	}
   	
@@ -223,7 +222,7 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 								for(var k in listResponse.data.data){
 									if(listResponse.data.data[k].name == response.data.fileName ){
 										layer.markerConf.imgId = listResponse.data.data[k].imgId;
-										layer.markerConf.src = sbiModule_config.externalBasePath + "/restful-services/1.0/images/getImage?IMAGES_ID=" + listResponse.data.data[k].imgId;
+										layer.markerConf.img = sbiModule_config.externalBasePath + "/restful-services/1.0/images/getImage?IMAGES_ID=" + listResponse.data.data[k].imgId;
 									}
 								}
 							})
