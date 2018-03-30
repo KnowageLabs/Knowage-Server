@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -761,11 +762,18 @@ public class DataSetTransformer {
 
 			}
 		}
-
+		int num = 0;
 		for (Object singleObject : dataRows) {
+			if (Number.class.isAssignableFrom(((Map) singleObject).get(primCat).getClass())) {
+				num++;
+			}
 			categories.add(((Map) singleObject).get(primCat));
 		}
 		Object[] categoriesList = categories.toArray(new Object[categories.size()]);
+		if (num == dataRows.size()) {
+			Arrays.sort(categoriesList);
+		}
+
 		Map<Object, Integer> categoriesListIndexMap = new HashMap<Object, Integer>();
 		for (int i = 0; i < categoriesList.length; i++) {
 			categoriesListIndexMap.put(categoriesList[i], i);
