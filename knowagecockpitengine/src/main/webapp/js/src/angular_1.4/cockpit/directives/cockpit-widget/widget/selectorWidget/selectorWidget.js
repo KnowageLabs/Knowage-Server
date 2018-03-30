@@ -494,6 +494,19 @@ angular.module('cockpitModule')
 	    	}
 
 	    }*/
+
+	    $scope.getOptions =function(){
+	    	var isSortinEnabled = $scope.ngModel.content.sortingOrder && $scope.ngModel.content.sortingOrder!='';
+
+			var obj = {};
+			obj["page"] = -1;
+			obj["itemPerPage"] = -1;
+			obj["columnOrdering"] = isSortinEnabled ? { name: $scope.ngModel.content.selectedColumn.name } : undefined;
+			obj["reverseOrdering"] = isSortinEnabled ? $scope.ngModel.content.sortingOrder == 'ASC' : undefined;
+			obj["type"] = $scope.ngModel.type;
+
+			return obj;
+		}
 	};
 
 	function selectorWidgetEditControllerFunction(
@@ -518,6 +531,12 @@ angular.module('cockpitModule')
 				$scope.showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
 				return;
 			}
+
+			if($scope.model.content.selectedColumn == undefined || $scope.model.content.selectedColumn.length==0){
+				$scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
+				return;
+			}
+
 			if($scope.model.content.columnSelectedOfDataset == undefined || $scope.model.content.columnSelectedOfDataset.length==0){
 				$scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
 				return;
@@ -530,10 +549,8 @@ angular.module('cockpitModule')
 			if(!scopeFather.ngModel.isNew){
 				scopeFather.refreshWidget();
 			}
+
 			$scope.$destroy();
-			if($scope.model.content.columnSelectedOfDataset == undefined || $scope.model.content.columnSelectedOfDataset.length==0){
-				$scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
-			}
 			finishEdit.resolve();
 		}
 
@@ -542,6 +559,17 @@ angular.module('cockpitModule')
 			mdPanelRef.destroy();
 			$scope.$destroy();
 			finishEdit.reject();
+		}
+
+		$scope.showAction = function(text) {
+			var toast = $mdToast.simple()
+					.content(text)
+					.action('OK')
+					.highlightAction(false)
+					.hideDelay(3000)
+					.position('top')
+
+			$mdToast.show(toast);
 		}
 	};
 

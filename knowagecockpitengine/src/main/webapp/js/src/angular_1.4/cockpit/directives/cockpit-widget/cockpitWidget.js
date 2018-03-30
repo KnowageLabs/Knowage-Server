@@ -828,7 +828,7 @@ function cockpitWidgetControllerFunction(
 					if(!cockpitModule_template.configuration.filters.hasOwnProperty(dsLabel)){
 						cockpitModule_template.configuration.filters[dsLabel]={};
 					} else{
-						if(Object.keys(cockpitModule_template.configuration.filters).length > 1){
+						if(Object.keys(cockpitModule_template.configuration.filters).length > 1){ // sort keys
 							var temp = cockpitModule_template.configuration.filters[dsLabel];
 							delete cockpitModule_template.configuration.filters[dsLabel];
 							cockpitModule_template.configuration.filters[dsLabel] = temp;
@@ -837,14 +837,14 @@ function cockpitWidgetControllerFunction(
 					if (Array.isArray(originalColumnName)){
 						for (var o=0; o < originalColumnName.length; o++){
 							var singleOriginalColumnValue = originalColumnName[o];
-							if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(singleOriginalColumnValue)){
+							if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(singleOriginalColumnValue)){ // sort keys
 								delete cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue];
 							}
 							cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue]=columnValue[o];
 							cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':singleOriginalColumnValue,'alias':columnName[o]});
 						}
 					}else{
-							if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(originalColumnName)){
+							if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(originalColumnName)){ // sort keys
 								delete cockpitModule_template.configuration.filters[dsLabel][originalColumnName];
 							}
 							// 02/02/17 - davverna
