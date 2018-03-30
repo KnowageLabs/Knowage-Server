@@ -19,7 +19,21 @@ angular
 	.module('cockpitModule')
 	.controller('mapWidgetEditControllerFunction',mapWidgetEditControllerFunction)
 
-function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,sbiModule_restServices,sbiModule_config ,cockpitModule_datasetServices,cockpitModule_generalServices,$mdDialog,mdPanelRef,$location, knModule_fontIconsService, $mdToast){
+function mapWidgetEditControllerFunction(
+		$scope,
+		finishEdit,
+		model,
+		sbiModule_translate,
+		sbiModule_restServices,
+		sbiModule_config,
+		cockpitModule_datasetServices,
+		cockpitModule_generalServices,
+		$mdDialog,
+		mdPanelRef,
+		$location, 
+		knModule_fontIconsService, 
+		$mdToast
+		){
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.availableAggregationFunctions = ['SUM','AVG','MIN','MAX','COUNT'];
@@ -233,10 +247,6 @@ function mapWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_trans
 					$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.genericError')).position('top').action(
 					'OK').highlightAction(false).hideDelay(5000));
 				}
-			},function(error) {
-				$mdToast.show($mdToast.simple().content(error.data.ERROR).position('top').action(
-				'OK').highlightAction(false).hideDelay(5000));
-
 			});
 		}
 	};

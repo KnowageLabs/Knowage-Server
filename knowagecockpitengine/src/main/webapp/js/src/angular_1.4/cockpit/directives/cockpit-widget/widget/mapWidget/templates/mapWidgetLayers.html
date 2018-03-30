@@ -163,21 +163,21 @@
 								        <color-picker options="colorPickerOptions" ng-model="layer.markerConf.style.color"></color-picker> 
 							      	</md-input-container>
 							      	
-							      	<md-input-container class="md-block flex" ng-if="layer.markerConf.type == 'img' || layer.markerConf.type == 'url'">
-								        <label>Width</label>
-								        <input ng-model="layer.markerConf.style.width" >
+									<md-input-container class="md-block flex" ng-if="layer.markerConf.type == 'img' || layer.markerConf.type == 'url'">
+								        <label>Scale (%)</label>
+								        <input ng-model="layer.markerConf.scale" type="number" min="0" max="500">
 							      	</md-input-container>
 							      	
-							      	<md-input-container class="md-block flex" ng-if="layer.markerConf.type == 'img' || layer.markerConf.type == 'url'">
-								        <label>Height</label>
-								        <input ng-model="layer.markerConf.style.height" >
+							      	<md-input-container class="md-block flex" ng-if="layer.markerConf.type == 'icon'">
+								        <label>Size (%)</label>
+								        <input ng-model="layer.markerConf.size" type="number" min="0" max="500">
 							      	</md-input-container>
 							      	
 									<div flex></div>
 									<div class="preview" >
 										<label>Preview</label>
 										<img src="https://openlayers.org/en/v4.6.4/examples/data/dot.png" ng-if="!layer.markerConf[layer.markerConf.type]" />
-										<i class="fa fa-3x" ng-class="layer.markerConf.icon.className" ng-style="{'color':layer.markerConf.style.color}" ng-if="layer.markerConf.type == 'icon' && layer.markerConf[layer.markerConf.type]"></i>
+										<i class="fa" ng-class="layer.markerConf.icon.className" ng-style="{'color':layer.markerConf.style.color, 'font-size':layer.markerConf.size + '%'}" ng-if="layer.markerConf.type == 'icon' && layer.markerConf[layer.markerConf.type]"></i>
 										<img ng-if="layer.markerConf.type == 'img' && layer.markerConf[layer.markerConf.type]" ng-style="layer.markerConf.style" src="{{layer.markerConf.img}}"/>
 										<img ng-if="layer.markerConf.type == 'url' && layer.markerConf[layer.markerConf.type]" ng-style="layer.markerConf.style" src="{{layer.markerConf.url}}"/>
 									</div>
