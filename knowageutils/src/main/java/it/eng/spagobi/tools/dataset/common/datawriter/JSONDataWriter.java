@@ -17,11 +17,11 @@
  */
 package it.eng.spagobi.tools.dataset.common.datawriter;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -65,6 +65,7 @@ public class JSONDataWriter implements IDataWriter {
 	private JSONArray fieldsOptions;
 	private Locale locale;
 	private boolean useIdProperty;
+	private boolean preserveOriginalDataTypes = false;
 
 	public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
 	public static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(TIMESTAMP_FORMAT);
@@ -214,20 +215,31 @@ public class JSONDataWriter implements IDataWriter {
 	}
 
 	protected Object getFieldValue(IField field, IFieldMetaData fieldMetaData) {
-		String result = "";
 
-		Object value = field.getValue();
-		if (value != null && !value.toString().isEmpty()) {
-			if (Timestamp.class.isAssignableFrom(fieldMetaData.getType())) {
-				result = TIMESTAMP_FORMATTER.format(value);
-			} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
-				result = DATE_FORMATTER.format(value);
+		if (preserveOriginalDataTypes) {
+			Object toReturn;
+			if (BigDecimal.class.isAssignableFrom(fieldMetaData.getType())) {
+				toReturn = Float.parseFloat(field.getValue().toString());
 			} else {
-				result = value.toString();
+				toReturn = field.getValue();
 			}
+			return toReturn;
+
+		} else {
+			String result = "";
+			if (field.getValue() != null) {
+				if (Timestamp.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = TIMESTAMP_FORMATTER.format(field.getValue());
+				} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = DATE_FORMATTER.format(field.getValue());
+				} else {
+					result = field.getValue().toString();
+				}
+			}
+			return result;
+
 		}
 
-		return result;
 	}
 
 	public Object writeDataAndMeta(IDataStore dataStore) throws RuntimeException {
@@ -285,8 +297,6 @@ public class JSONDataWriter implements IDataWriter {
 					recordSize = record.getFields().size();
 				}
 
-				Map<IFieldMetaData, Integer> alreadyInserted = new HashMap<IFieldMetaData, Integer>();
-
 				for (int i = 0, j = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
 					IFieldMetaData fieldMetaData = dataStore.getMetaData().getFieldMeta(i);
 
@@ -300,25 +310,14 @@ public class JSONDataWriter implements IDataWriter {
 						continue;
 					}
 
-					// the same metadata could be put in more places (for example with different aggregation
-					// keep track of already searched fieldMeta and search for next occurrences
-					Integer fromIndex = alreadyInserted.get(fieldMetaData);
-					if (fromIndex == null) {
-						fromIndex = 0;
-					} else {
-						fromIndex++;
-					}
-
-					int fieldPosition = dataStore.getMetaData().getFieldIndex(fieldMetaData, fromIndex);
+					int fieldPosition = dataStore.getMetaData().getFieldIndex(fieldMetaData);
 					if (recordSize < 0 || fieldPosition < recordSize) {
 						field = record.getFieldAt(fieldPosition);
-						alreadyInserted.put(fieldMetaData, fieldPosition);
 					} else {
 						field = new Field("");
 					}
 
 					String fieldName = adjust ? fieldMetaData.getName() : getFieldName(fieldMetaData, j++);
-
 					Object fieldValue = getFieldValue(field, fieldMetaData);
 					if (fieldValue == null) {
 						recordJSON.put(fieldName, "");
@@ -435,12 +434,10 @@ public class JSONDataWriter implements IDataWriter {
 					fieldMetaDataJSON.put("type", "date");
 					fieldMetaDataJSON.put("subtype", "timestamp");
 					fieldMetaDataJSON.put("dateFormat", "d/m/Y H:i:s.uuu");
-					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyy HH:mm:ss.SSS");
 				} else if (Date.class.isAssignableFrom(clazz)) {
 					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "DATE" + "]");
 					fieldMetaDataJSON.put("type", "date");
 					fieldMetaDataJSON.put("dateFormat", "d/m/Y");
-					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyy");
 				} else if (Boolean.class.isAssignableFrom(clazz)) {
 					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "BOOLEAN" + "]");
 					fieldMetaDataJSON.put("type", "boolean");
@@ -540,4 +537,7 @@ public class JSONDataWriter implements IDataWriter {
 		this.useIdProperty = useIdProperty;
 	}
 
+	public void setPreserveOriginalDataTypes(boolean preserveOriginalDataTypes) {
+		this.preserveOriginalDataTypes = preserveOriginalDataTypes;
+	}
 }
