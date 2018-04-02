@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,17 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.qbe.datasource.jpa;
-
-import it.eng.qbe.datasource.IPersistenceManager;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -51,6 +45,12 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.qbe.datasource.IPersistenceManager;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 public class JPAPersistenceManager implements IPersistenceManager {
 
 	private JPADataSource dataSource;
@@ -70,6 +70,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		this.dataSource = dataSource;
 	}
 
+	@Override
 	public String getKeyColumn(JSONObject aRecord, RegistryConfiguration registryConf) {
 		String toReturn = null;
 
@@ -605,15 +606,20 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		} else if (Timestamp.class.isAssignableFrom(clazz)) {
 			Date date;
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+			SimpleDateFormat sdfISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 			// SimpleDateFormat sdf = new
 			// SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
 			if (!value.equals("") && !value.contains(":")) {
 				value += " 00:00:00";
 			}
 			try {
-				date = sdf.parse(value);
-				toReturn = new Timestamp(date.getTime());
-
+				if (value.contains("Z")) {
+					date = sdfISO.parse(value.replaceAll("Z$", "+0000"));
+					toReturn = new Timestamp(date.getTime());
+				} else {
+					date = sdf.parse(value);
+					toReturn = new Timestamp(date.getTime());
+				}
 			} catch (ParseException e) {
 				logger.error("Unparsable timestamp", e);
 			}
@@ -701,4 +707,5 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		}
 		return toReturn;
 	}
+
 }
