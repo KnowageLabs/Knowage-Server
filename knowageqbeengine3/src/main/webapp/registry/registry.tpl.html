@@ -37,8 +37,8 @@
                     	<th class="recNo"><span>&nbsp;</span></th>
                         <th  ng-repeat="col in rc.columns | orderBy: 'position'" ng-if="col.visible" width="{{col.size}}">
                             <div layout="row" layout-align="start center" ng-click="rc.sortBy(col.field)">                            
-                                <span class="sortorder" ng-class="{reverse: rc.reverse}">{{col.title}}</span>
-                                
+                                <span class="sortorder" ng-class="{reverse: rc.reverse}" ng-if="rc.configuration.pagination != 'true'">{{col.title}}</span>
+                                <span ng-if="rc.configuration.pagination == 'true'">{{col.title}}</span>
                                 <md-menu>
                                     <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdMenu.open()">
                                         <md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>

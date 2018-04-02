@@ -84,9 +84,12 @@
         	registryCRUD.read(formParameters).then(function(response) {
         		console.log(response);
 	           	 self.data = response.data.rows;
+	           	 if(self.configuration.pagination != 'true'){
 	           	 self.data = orderBy(self.data,self.propertyName,self.reverse);
+	           	 }
 	           	dateColumns = dateColumnsFilter(response.data.metaData.fields);
 	           	self.data = dateRowsFilter(dateColumns,response.data.rows);
+
 	           	 self.resultsNumber = response.data.results;
 	           	self.initalizePagination();
 	           	 if(self.columnSizeInfo.length == 0) {
@@ -128,7 +131,7 @@
 
 		//Sorting Columns
 		self.sortBy = function(propertyName){
-			if(!self.configuration.pagination){
+			if(self.configuration.pagination != 'true'){
 			self.reverse = (propertyName !== null && self.propertyName === propertyName) ? !self.reverse : false;
 			self.propertyName = propertyName;
 		 	self.data = orderBy(self.data,self.propertyName,self.reverse);
