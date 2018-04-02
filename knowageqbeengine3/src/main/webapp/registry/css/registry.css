@@ -97,3 +97,9 @@ md-select {
     position: absolute;
     right: 20px;
 }
+.sortorder:hover:after {
+  content: '\25b2';   // BLACK UP-POINTING TRIANGLE
+}
+.sortorder.reverse:hover:after {
+  content: '\25bc';   // BLACK DOWN-POINTING TRIANGLE
+}
