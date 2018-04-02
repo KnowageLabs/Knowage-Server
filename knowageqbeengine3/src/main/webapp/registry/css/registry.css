@@ -45,8 +45,9 @@
     max-height: 20px;
 }
 
-#recNo {
+.recNo {
 	width: 50px;
+	border-right: 2px solid #e6e6e6;
 }
 
 .kn-table thead th.tableAction {
@@ -98,8 +99,8 @@ md-select {
     right: 20px;
 }
 .sortorder:hover:after {
-  content: '\25b2';   // BLACK UP-POINTING TRIANGLE
+  content: '\25b2';   /* BLACK UP-POINTING TRIANGLE */
 }
 .sortorder.reverse:hover:after {
-  content: '\25bc';   // BLACK DOWN-POINTING TRIANGLE
+  content: '\25bc';   /* BLACK DOWN-POINTING TRIANGLE */
 }
