@@ -9,9 +9,9 @@
             <div layout="row" layout-align="start center">              
  			   <div class="filter-btns filter-clear">
  			   		<md-tooltip>Clear</md-tooltip>
-               		<md-icon ng-click="rc.clearFilterValues()" md-font-icon="fa fa-recycle fa-2x"</md-icon>
+               		<md-icon ng-click="rc.deleteFilterValues()" md-font-icon="fa fa-recycle fa-2x"</md-icon>
                </div>
-                <md-input-container class="md-icon-float registryFilter" ng-repeat="filter in rc.configuration.filters">
+                <md-input-container class="md-icon-float registryFilter" ng-repeat="filter in rc.checkIfFilterColumnExists()">
                     <label>{{filter.title}}</label>
                     <input  ng-model="filter.value" ng-if="filter.presentation == 'MANUAL' 
                     			|| filter.presentation == 'DRIVER'" type="{{filter.presentation}}" ng-keyup="rc.addToFilters(filter)"  ng-keydown="$event.keyCode === 13 && rc.loadFilteredData(rc.filters)">
@@ -22,8 +22,9 @@
                 </md-input-container>
                <div class="filter-btns filter">
                <md-tooltip>Filter</md-tooltip>
-               		<md-icon ng-click="rc.loadFilteredData(rc.filters)" md-font-icon="fa fa-filter fa-2x"></md-icon>
+               		<md-icon ng-click="rc.getFilteredData(rc.filters)" md-font-icon="fa fa-filter fa-2x"></md-icon>
                </div>
+               
                 <div ng-if="rc.configuration.enableButtons" class="filter-btns save-btn">
                 	<md-tooltip>Save</md-tooltip>
                       <md-icon  ng-click="rc.updateRow()" md-font-icon="fa fa-save fa-2x"></md-icon>
@@ -36,10 +37,10 @@
                 <thead>
                     <tr>
                     	<th id="recNo"><span>&nbsp;</span></th>
-                        <th ng-repeat="col in rc.columns | orderBy: 'position'" ng-if="col.visible" width="{{col.size}}">
-                            <div layout="row" layout-align="start center">                            
-                                <span>{{col.title}}</span>
-                                <span flex></span>
+                        <th  ng-repeat="col in rc.columns | orderBy: 'position'" ng-if="col.visible" width="{{col.size}}">
+                            <div layout="row" layout-align="start center" ng-click="rc.sortBy(col.field)">                            
+                                <span class="sortorder" ng-class="{reverse: rc.reverse}">{{col.title}}</span>
+                                
                                 <md-menu>
                                     <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdMenu.open()">
                                         <md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
@@ -73,15 +74,26 @@
                     	<td> <span ng-if="!col.editable">{{row.id}}</span> </td>
                           <td ng-repeat="col in rc.columns | orderBy: 'position'" ng-if="col.visible"  ng-class='rc.checkIfSelected(row)'>                           
                             <div>                     	                                                          
-                                <span style="text-align:center" ng-if="!col.editable">{{row[col.field]}}</span>
-                                <md-menu ng-if="col.editable">                                
-                                    <div layout="row" class="clickable" ng-click="rc.addColumnOptions(col.field, col.editor, row, $mdOpenMenu)">                                    	
-                                        <span>{{row[col.field]}}</span>
+                                <span ng-if="!col.editable && col.dataType !== 'boolean'">{{row[col.field] }}</span>                               
+                                <input type="checkbox" ng-model="row[col.field]" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (!col.editable)" ng-checked="{{row[col.field]}}" disabled ng-click="rc.setSelected(row)" >
+                                <input type="checkbox" ng-model="row[col.field]" aria-label="data change" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (col.editable)" ng-checked="{{row[col.field]}}" ng-click="rc.setSelected(row)">                                                            
+                                <md-menu ng-if="col.editable && col.dataType !== 'boolean' ">                                
+                                    <div layout="row" class="clickable" ng-click="rc.addColumnOptions(col.field, col.editor, row, $mdOpenMenu)">  
+                                     <span ng-if="col.dataType === 'int'">{{row[col.field] | number}}</span>  
+                                     		<span ng-if="col.dataType === 'date'">  {{row[col.field] | date:"MM/dd/yyyy"}}  </span>                                  	
+                                          <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'int'">{{row[col.field]}}</span>
+                                        <span ng-if="col.dataType === 'float'">   {{row[col.field] |  decimal:col.format}}  </span> 
+                                        
+                                                                                                                   
                                     </div>
                                     <md-menu-content width="5" class="customContentMenu" ng-click="rc.setSelected(row)">
                                         <md-menu-item layout="row" layout-align="start center">
-                                            <md-input-container class="md-icon-float md-block">
-                                                <input  ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change" ng-if="col.editor=='TEXT'">
+                                            <md-input-container class="md-icon-float md-block">                                               
+                                               	 <input type="{{rc.setDataType(col.dataType)}}" step="{{rc.getStep(col.dataType)}}" name="textField" ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"
+                                                   ng-if="col.editor=='TEXT' && col.dataType !== 'boolean'">                                              	                                                	  
+                                                	<div ng-messages="textField.$error">
+                                                		<div ng-show="textField.$dirty">Invalid data for the field</div>
+                                                	</div>                                                	                                                  	                                                                                                                                                                                                                                      
                                                 <div ng-if="row.selected">
                                                 	<md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'">                                                 
                                                     	<md-option ng-repeat="opt in rc.comboColumnOptions[col.field]" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
@@ -112,21 +124,33 @@
             		</tr>
             	</thead>
             	<tbody>
-            		<tr ng-repeat="(indexF, row) in rc.data">
-            			 <td ng-repeat="col in rc.columns" rowspan="{{rc.setRowspan(rc.data,indexF,$index,rc.columns)}}"  ng-if="rc.checkColumnBefore(rc.data,indexF,$index,rc.columns)" ng-class="rc.checkIfSelected(row)">    
+            		<tr ng-repeat="(indexF, row) in rc.data" ng-class="rc.setSummaryRowColor(rc.data,indexF,rc.columns)">
+            			 <td ng-repeat="col in rc.columns" rowspan="{{rc.setRowspan(rc.data,indexF,$index,rc.columns)}}"  ng-if="rc.compareRowsForRowspanPrint(rc.data,indexF,$index,rc.columns)" ng-class="rc.checkIfSelected(row)">    
                                <div>                     	                                                          
-                                <span style="text-align:center" ng-if="!col.editable">{{row[col.field]}}</span>
-                                <md-menu ng-if="col.editable" ng-click="rc.setSelected(row)">                                
+                                 	<span ng-if="!col.editable && col.dataType !== 'boolean' ">{{row[col.field] }}</span>  
+                                          <span ng-if= "rc.isItSummaryRow(rc.data,indexF,$index,rc.columns)">{{row[col.field] | number:rc.getDecimalPlaces(col.field) }}</span>                   
+                                <input type="checkbox" ng-model="row[col.field]" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean' ) && (!col.editable) && row[col.field] !== '      '" ng-checked="{{row[col.field]}}" disabled >
+                                <input type="checkbox" ng-model="row[col.field]" aria-label="data change" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (col.editable) && row[col.field] !== '      '" ng-checked="{{row[col.field]}}" ng-click="rc.setSelected(row)">                                                            
+                                <md-menu ng-if="col.editable && col.dataType !== 'boolean' && row[col.field] !== '      ' && !rc.isItSummaryRow(rc.data,indexF,$index,rc.columns)">                                
                                     <div layout="row" class="clickable" ng-click="rc.addColumnOptions(col.field, col.editor, row, $mdOpenMenu)">                                    	
-                                        <span>{{row[col.field]}}</span>
+                                     <span ng-if="col.dataType === 'int'">{{row[col.field] | number}}</span>  
+                                     		<span ng-if="col.dataType === 'date'">  {{row[col.field] | date:"MM/dd/yyyy"}}  </span>                                  	
+                                          <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'int'">{{row[col.field]}}</span>
+                                        <span ng-if="col.dataType === 'float'">   {{row[col.field] |  decimal:col.format}}  </span>                                                                        
                                     </div>
                                     <md-menu-content width="5" class="customContentMenu" ng-click="rc.setSelected(row)">
                                         <md-menu-item layout="row" layout-align="start center">
-                                            <md-input-container class="md-icon-float md-block">
-                                                <input ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change" ng-if="col.editor=='TEXT'">
-                                                <md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'">
-                                                    <md-option ng-repeat="opt in rc.comboColumnOptions[col.field]" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
-                                                </md-select>
+                                            <md-input-container class="md-icon-float md-block">                                               
+                                               	 <input type="{{rc.setDataType(col.dataType)}}" step="{{rc.getStep(col.dataType)}}" name="textField" ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"
+                                                   ng-if="col.editor=='TEXT' && col.dataType !== 'boolean'">                                                	                                                	  
+                                                	<div ng-messages="textField.$error">
+                                                		<div ng-show="textField.$dirty">Invalid data for the field</div>
+                                                	</div>                                                	                                                  	                                                                                                                                                                                                                                      
+                                                <div ng-if="row.selected">
+                                                	<md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'">                                                 
+                                                    	<md-option ng-repeat="opt in rc.comboColumnOptions[col.field]" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
+                                                	</md-select>
+                                                </div>                                                
                                             </md-input-container>
                                         </md-menu-item>
                                     </md-menu-content>
@@ -141,14 +165,14 @@
                 <label>Page</label>
                 <md-input-container class="noMargin">
                     <md-select aria-label="Page navigation" ng-model="rc.page" ng-change="rc.goToPage()">
-                        <md-option ng-repeat="pages in rc.getTotalPages() track by $index" value="{{$index+1}}">{{$index+1}}</md-option>
+                        <md-option ng-repeat="pages in rc.getTotalPages track by $index" value="{{$index+1}}">{{$index+1}}</md-option>
                     </md-select>
                 </md-input-container>
-                <div class="label page-position">{{rc.min()}} - {{rc.max()}} of {{rc.resultsNumber}}</div>
-                <md-button class="md-icon-button prev" aria-label="Previous" ng-click="rc.previous()" ng-disabled="!rc.hasPrevious()">
+                <div class="label page-position">{{rc.min}} - {{rc.max}} of {{rc.resultsNumber}}</div>
+                <md-button class="md-icon-button prev" aria-label="Previous" ng-click="rc.previous()" ng-disabled="!rc.hasPrevious">
                     <i class="fa fa-angle-left"></i>
                 </md-button>
-                <md-button class="md-icon-button next" aria-label="Next" ng-click="rc.next()" ng-disabled="!rc.hasNext()">
+                <md-button class="md-icon-button next" aria-label="Next" ng-click="rc.next()" ng-disabled="!rc.hasNext">
                     <i class="fa fa-angle-right"></i>
                 </md-button>
             </nav>
