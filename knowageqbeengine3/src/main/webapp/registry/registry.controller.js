@@ -468,16 +468,16 @@ console.log(selectedRow);
 			self.max = pagination.max(self.page,self.configuration.itemsPerPage,self.resultsNumber);
 			self.next = function() {
 				 self.page++;
-				 pagination.next(self.page,self.formParams,self.configuration.itemsPerPage,self.filters);
+				 self.formParams = pagination.next(self.page,self.formParams,self.configuration.itemsPerPage,self.filters);
 				 readData(self.formParams);
 			};
 			self.previous = function() {
 				 self.page--;
-				 pagination.previous(self.page,self.formParams,self.configuration.itemsPerPage,self.filters);
+				 self.formParams = pagination.previous(self.page,self.formParams,self.configuration.itemsPerPage,self.filters);
 				 readData(self.formParams);
 			};
 			self.goToPage = function() {
-				 pagination.goToPage(self.page,self.formParams,self.configuration.itemsPerPage,self.filters);
+				self.formParams = pagination.goToPage(self.page,self.formParams,self.configuration.itemsPerPage,self.filters);
 				 readData(self.formParams);
 			}
 		};

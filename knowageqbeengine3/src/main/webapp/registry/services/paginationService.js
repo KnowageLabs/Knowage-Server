@@ -46,7 +46,7 @@
 
 
     	        pagination.next = function(page,formParams,itemsPerPage,filters) {
-    	        	page++;
+
     	        	formParams.start = (page - 1) * itemsPerPage;
     	        	formParams.limit = itemsPerPage;
     	        	var filterFields = Object.keys(filters);
@@ -59,7 +59,7 @@
     	        };
 
     	        pagination.previous = function(page,formParams,itemsPerPage,filters) {
-    	        	page--;
+
     	        	formParams.start = (page - 1) * itemsPerPage;
     	        	formParams.limit = itemsPerPage;
     	        	var filterFields = Object.keys(filters);
