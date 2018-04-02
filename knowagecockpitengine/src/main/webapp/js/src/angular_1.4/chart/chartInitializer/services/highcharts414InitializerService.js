@@ -34,7 +34,7 @@ angular.module('chartInitializer')
 					var dat = seria.data[j];
 					if(dat.datetype!="simpledate"){
 						var dateSplit = dat.name.replace('/', ":").replace('/', ":").replace(' ', ":").replace('.', ":").split(":");
-						dat.x = (new Date(dateSplit[2], dateSplit[1]-1, dateSplit[0], dateSplit[3], dateSplit[4], dateSplit[5])).getTime();
+						dat.x = (new Date(dateSplit[2], dateSplit[1]-1, dateSplit[0], dateSplit[3], dateSplit[4], dateSplit[5], dateSplit[6])).getTime();
 					} else {
 						var dateSplit = dat.name.replace('/', ":").replace('/', ":").split(":");
 						dat.x = (new Date(dateSplit[2], dateSplit[1]-1, dateSplit[0])).getTime();
@@ -301,7 +301,7 @@ angular.module('chartInitializer')
          			GROUPING_VALUE:groupingCategoryValue,
          			stringParameters:null
 				};
-				parent.execExternalCrossNavigation(navData,JSON.parse(driverParams), null, currentDocumentLabel )
+				parent.execExternalCrossNavigation(navData,null, null, currentDocumentLabel )
 			}
 
 		}

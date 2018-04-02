@@ -880,18 +880,20 @@ public class DataSetTransformer {
 			xAxis.put("name", category.get("name").replaceAll("\\s", ""));
 			xAxisMap.add(xAxis);
 			for (int i = 0; i < gbys.length; i++) {
-
-				JSONObject xAxis1 = new JSONObject();
-				xAxis1.put("id", id);
-				if (gbys[i].equals(categoryDate)) {
-					xAxis1.put("type", "datetime");
-					id++;
-				} else {
-					xAxis1.put("type", "category");
-					id++;
+				if (!gbys[i].equals("")) {
+					JSONObject xAxis1 = new JSONObject();
+					xAxis1.put("id", id);
+					if (gbys[i].equals(categoryDate)) {
+						xAxis1.put("type", "datetime");
+						id++;
+					} else {
+						xAxis1.put("type", "category");
+						id++;
+					}
+					xAxis1.put("name", gbys[i].replaceAll("\\s", ""));
+					xAxisMap.add(xAxis1);
 				}
-				xAxis1.put("name", gbys[i].replaceAll("\\s", ""));
-				xAxisMap.add(xAxis1);
+
 			}
 		} catch (JSONException e) {
 			throw new SpagoBIServiceException("Error while creating xaxis map", e.getMessage(), e);
