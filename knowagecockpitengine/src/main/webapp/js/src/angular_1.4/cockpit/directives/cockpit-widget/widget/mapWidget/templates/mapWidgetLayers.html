@@ -128,35 +128,18 @@
 									<md-switch ng-model="layer.clusterConf.enabled" aria-label="cluster enabler">Use cluster</md-switch>
 								</div>
 								<div layout="row" layout-align="start center">
-								
-										<md-input-container class="md-block flex" ng-if="layer.markerConf.type == 'icon'">
-									        <label>Icon</label>
-									        <input ng-model="layer.markerConf.icon.className" disabled>
-								      	</md-input-container>
 								      	
 								      	<md-button class="md-icon-button md-fab" ng-click="chooseIcon($event, layer)" ng-if="layer.markerConf.type == 'icon'"><md-icon md-font-icon="fa fa-th"></md-icon></md-button>
 								      	
 								      	<md-input-container class="md-block flex" ng-if="layer.markerConf.type == 'url'">
 									        <label>Icon Url</label>
 									        <input ng-model="layer.markerConf.url">
-								      	</md-input-container>
-								      	
-										<md-input-container class="md-block flex" ng-if="layer.markerConf.type == 'img'">
-									        <label>Image</label>
-									        <input ng-model="layer.markerConf.img" disabled>
-								      	</md-input-container>
+								      	</md-input-container>			      	
 
-								      	<div layout="row" ng-if="layer.markerConf.type == 'img'">
-											<file-upload flex id="ImageUpload" ng-model="uploadImg" ng-if="!layer.markerConf.img"></file-upload>
-											<md-button ng-click="upload($event,layer)" aria-label="upload Menu" ng-if="!layer.markerConf.img"
-													class="md-fab md-mini">
-												<md-icon md-font-icon="fa fa-upload"/>
-											</md-button>
-											<md-button ng-click="erase($event, layer)" ng-if="layer.markerConf.img" aria-label="upload Menu"
-													class="md-fab md-mini">
-												<md-icon md-font-icon="fa fa-eraser"/>
-											</md-button>
-										</div>
+										<md-button ng-click="chooseImg($event, layer)" aria-label="upload Menu" ng-if="layer.markerConf.type == 'img'"
+												class="md-fab md-mini">
+											<md-icon md-font-icon="fa fa-th"/>
+										</md-button>
 										
 							      	<md-input-container class="md-block flex" style="margin-left:20px;" ng-if="layer.markerConf.type != 'img' && layer.markerConf.type != 'url'">
 								        <label>Color</label>
@@ -178,8 +161,8 @@
 										<label>Preview</label>
 										<img src="https://openlayers.org/en/v4.6.4/examples/data/dot.png" ng-if="!layer.markerConf[layer.markerConf.type]" />
 										<i class="fa" ng-class="layer.markerConf.icon.className" ng-style="{'color':layer.markerConf.style.color, 'font-size':layer.markerConf.size + '%'}" ng-if="layer.markerConf.type == 'icon' && layer.markerConf[layer.markerConf.type]"></i>
-										<img ng-if="layer.markerConf.type == 'img' && layer.markerConf[layer.markerConf.type]" ng-style="layer.markerConf.style" src="{{layer.markerConf.img}}"/>
-										<img ng-if="layer.markerConf.type == 'url' && layer.markerConf[layer.markerConf.type]" ng-style="layer.markerConf.style" src="{{layer.markerConf.url}}"/>
+										<img ng-if="layer.markerConf.type == 'img' && layer.markerConf[layer.markerConf.type]" ng-style="{'width':layer.markerConf.scale + '%','height':layer.markerConf.scale + '%'}" src="{{layer.markerConf.img}}"/>
+										<img ng-if="layer.markerConf.type == 'url' && layer.markerConf[layer.markerConf.type]" ng-style="{'width':layer.markerConf.scale + '%','height':layer.markerConf.scale + '%'}" src="{{layer.markerConf.url}}"/>
 									</div>
 								</div>
 								

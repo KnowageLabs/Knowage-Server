@@ -219,59 +219,101 @@ function mapWidgetEditControllerFunction(
 	    })
   	}
   	
-  	$scope.upload = function(ev,layer){
-		if($scope.uploadImg.fileName == "" || $scope.uploadImg.fileName == undefined){
-			$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.cockpit.widgets.image.missinguploadfile')).position('top').action(
-			'OK').highlightAction(false).hideDelay(5000));
-		}else{
-			var fd = new FormData();
-			fd.append('uploadedImage', $scope.uploadImg.file);
-			sbiModule_restServices.restToRootProject();
-			sbiModule_restServices.post("1.0/images", 'addImage', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
-			.then(function(response) {
-				if(response.data.success){
+  	$scope.chooseImg = function(ev, layer) {
+  		
+  		$mdDialog.show({
+			controller: function ($scope,$mdDialog) {
+
+				$scope.imagesList = [];
+				$scope.selectedImg = '';
+				
+				$scope.activeLayer = {};
+				angular.copy(layer,$scope.activeLayer);
+				
+				$scope.getImagesList = function (){
 					sbiModule_restServices.restToRootProject();
 					sbiModule_restServices.get("1.0/images", 'listImages').then(
-							function(listResponse) {
-								for(var k in listResponse.data.data){
-									if(listResponse.data.data[k].name == response.data.fileName ){
-										layer.markerConf.imgId = listResponse.data.data[k].imgId;
-										layer.markerConf.img = sbiModule_config.externalBasePath + "/restful-services/1.0/images/getImage?IMAGES_ID=" + listResponse.data.data[k].imgId;
-									}
-								}
-							})
-				}else if (response.data.hasOwnProperty("msg")){
-						$mdToast.show($mdToast.simple().content(sbiModule_translate.load(response.data.msg)).position('top').action(
-						'OK').highlightAction(false).hideDelay(5000));
-				}else{
-					$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.genericError')).position('top').action(
-					'OK').highlightAction(false).hideDelay(5000));
+						function(result){
+							$scope.imagesList = result.data.data;
+						});
 				}
-			});
-		}
-	};
-	
-	$scope.erase = function(ev,layer){
-		sbiModule_restServices.restToRootProject();
-			var imageId = 'imageId='+layer.markerConf.imgId;
-			sbiModule_restServices.get("1.0/images", 'deleteImage', imageId)
-			.then(function(response) {
-					$mdToast.show($mdToast.simple().content(sbiModule_translate.load(response.data.msg)).position('top').action(
-					'OK').highlightAction(false).hideDelay(5000));
-					if(response.data.success){
-						delete layer.markerConf.imgId;
-						delete layer.markerConf.src;
-						$scope.uploadImg = {};
+				$scope.getImagesList();
+				
+				$scope.getImageUrl = function(img){
+					return sbiModule_config.externalBasePath + "/restful-services/1.0/images/getImage?IMAGES_ID=" + img.imgId;
+				}
+				
+				$scope.selectImg = function(img){
+					$scope.selectedImg = img;
+					$scope.activeLayer.markerConf.img = $scope.getImageUrl(img);
+				}
+				
+				$scope.setIcon = function(family,icon){
+					if(!$scope.activeLayer.markerConf) $scope.activeLayer.markerConf = {};
+					$scope.activeLayer.markerConf.icon = icon;
+					$scope.activeLayer.markerConf.icon.family = family.name;
+				}
+				
+				$scope.upload = function(ev,layer){
+					if($scope.uploadImg.fileName == "" || $scope.uploadImg.fileName == undefined){
+						$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.cockpit.widgets.image.missinguploadfile')).position('top').action(
+						'OK').highlightAction(false).hideDelay(5000));
+					}else{
+						var fd = new FormData();
+						fd.append('uploadedImage', $scope.uploadImg.file);
+						sbiModule_restServices.restToRootProject();
+						sbiModule_restServices.post("1.0/images", 'addImage', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
+						.then(function(response) {
+							if(response.data.success){
+								$scope.getImagesList();
+							}else{
+								$mdToast.show($mdToast.simple().content(sbiModule_translate.load(response.data.msg)).position('top').action(
+								'OK').highlightAction(false).hideDelay(5000));
+							}
+						});
 					}
-			});
-	};
+				};
+				
+				$scope.erase = function(ev,img){
+					sbiModule_restServices.restToRootProject();
+						var imageId = 'imageId='+img.imgId;
+						sbiModule_restServices.get("1.0/images", 'deleteImage', imageId)
+						.then(function(response) {
+							$mdToast.show($mdToast.simple().content(sbiModule_translate.load(response.data.msg)).position('top').action(
+							'OK').highlightAction(false).hideDelay(5000));
+							if(response.data.success){
+								$scope.getImagesList();
+							}
+						});
+				};
+				
+				$scope.choose = function(){
+					angular.copy($scope.activeLayer,layer);
+					$mdDialog.hide();
+				}
+				$scope.cancel = function(){
+					$mdDialog.cancel();
+				}
+			},
+			scope: $scope,
+			preserveScope:true,
+	      templateUrl: $scope.getTemplateUrl('mapWidgetImagesLibrary'),
+	      targetEvent: ev,
+	      clickOutsideToClose:true,
+	      locals: {  }
+	    })
+  	}
+  	
   	
   	$scope.addToDatasets = function() {
   		$scope.newModel.dataset = {};
   		if ($scope.newModel.content.layers.length > 1) {
-  			$scope.newModel.dataset.dsId = [];
+  			// $scope.newModel.dataset.dsId = [];
   			for (var k in $scope.newModel.content.layers){
-  				$scope.newModel.dataset.dsId.push($scope.newModel.content.layers[k].dsId);
+  				// $scope.newModel.dataset.dsId.push($scope.newModel.content.layers[k].dsId);
+  				if($scope.newModel.content.layers[k].targetDefault){
+  					$scope.newModel.dataset.dsId = $scope.newModel.content.layers[k].dsId;
+  				}
   			}
   		} else {
   			$scope.newModel.dataset.dsId = $scope.newModel.content.layers[0].dsId;
