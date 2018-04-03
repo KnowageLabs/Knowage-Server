@@ -99,7 +99,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 				JSONObject jsonDatasets = jsonBody.optJSONObject("datasets");
 				datasetsString = jsonDatasets != null ? jsonDatasets.toString() : null;
 
-				JSONObject jsonNearRealtime = jsonBody.optJSONObject("nearRealtime");
+				JSONArray jsonNearRealtime = jsonBody.optJSONArray("nearRealtime");
 				nearRealtimeDatasetsString = jsonNearRealtime != null ? jsonNearRealtime.toString() : null;
 			}
 
