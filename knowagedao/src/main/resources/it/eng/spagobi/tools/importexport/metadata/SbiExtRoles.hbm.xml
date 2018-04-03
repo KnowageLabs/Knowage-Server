@@ -32,6 +32,9 @@
 		<property name="descr" type="string">
 			<column name="DESCR" length="160" />
 		</property>
+		<property name="isPublic" type="boolean">
+            <column name="IS_PUBLIC" />
+        </property> 
 
 		<set name="sbiFuncRoles" inverse="true">
 			<key>

@@ -103,6 +103,8 @@
 								if(widget.dataset){
 									widget.dataset.isRealtime = undefined;
 								}
+						} else if(widget.type == "selector"){
+							delete widget.activeValues;
 							}
 						});
 					}

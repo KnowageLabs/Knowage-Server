@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.emory.mathcs.backport.java.util.Collections;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class DataSetTransformer {
 
@@ -731,7 +733,7 @@ public class DataSetTransformer {
 			String groupSeriesCateg) throws JSONException {
 		boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
 		boolean groupSeriesBool = Boolean.parseBoolean(groupSeries);
-		Set<String> categories = new HashSet<String>();
+		ArrayList<Object> categories = new ArrayList<>();
 
 		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
 		String primCat;
@@ -747,7 +749,6 @@ public class DataSetTransformer {
 				secCat = "column_1";
 				seria = "column_3";
 			}
-
 		} else {
 			if (groupSeriesBool) {
 				primCat = "column_2";
@@ -755,7 +756,6 @@ public class DataSetTransformer {
 				seria = "column_1";
 
 			} else {
-
 				primCat = "column_1";
 				secCat = "column_3";
 				seria = "column_2";
@@ -764,10 +764,13 @@ public class DataSetTransformer {
 		}
 
 		for (Object singleObject : dataRows) {
-			categories.add(((Map) singleObject).get(primCat).toString());
+			categories.add(((Map) singleObject).get(primCat));
 		}
-		String[] categoriesList = categories.toArray(new String[categories.size()]);
-		Map<String, Integer> categoriesListIndexMap = new HashMap<String, Integer>();
+
+		Set<Object> categoriesSet = new LinkedHashSet<>(categories);
+		Object[] categoriesList = categoriesSet.toArray(new Object[categoriesSet.size()]);
+
+		Map<Object, Integer> categoriesListIndexMap = new HashMap<Object, Integer>();
 		for (int i = 0; i < categoriesList.length; i++) {
 			categoriesListIndexMap.put(categoriesList[i], i);
 		}
@@ -777,7 +780,7 @@ public class DataSetTransformer {
 			if (newListOfOrderColumnItems == null) {
 				newListOfOrderColumnItems = new ArrayList<JSONObject>();
 				for (int i = 0; i < categoriesList.length; i++) {
-					String category = categoriesList[i];
+					Object category = categoriesList[i];
 					JSONObject jo = new JSONObject();
 					jo.put("name", category);
 					jo.put("y", "");
@@ -786,7 +789,7 @@ public class DataSetTransformer {
 				map.put(((Map) singleObject).get(seria).toString(), newListOfOrderColumnItems);
 			}
 
-			JSONObject jo = newListOfOrderColumnItems.get(categoriesListIndexMap.get(((Map) singleObject).get(primCat).toString()));
+			JSONObject jo = newListOfOrderColumnItems.get(categoriesListIndexMap.get(((Map) singleObject).get(primCat)));
 			jo.put("y", ((Map) singleObject).get(secCat));
 		}
 
@@ -856,6 +859,47 @@ public class DataSetTransformer {
 
 		return map;
 
+	}
+
+	public ArrayList<JSONObject> getXAxisMap(LinkedHashMap<String, String> category, String categoryDate) {
+		ArrayList<JSONObject> xAxisMap = new ArrayList<>();
+		String groupBys = category.get("groupby");
+		String[] gbys = groupBys.split(", ");
+
+		try {
+			int id = 0;
+			JSONObject xAxis = new JSONObject();
+			xAxis.put("id", id);
+			if (category.get("name").equals(categoryDate)) {
+				xAxis.put("type", "datetime");
+				id++;
+			} else {
+				xAxis.put("type", "category");
+				id++;
+			}
+			xAxis.put("name", category.get("name").replaceAll("\\s", ""));
+			xAxisMap.add(xAxis);
+			for (int i = 0; i < gbys.length; i++) {
+				if (!gbys[i].equals("")) {
+					JSONObject xAxis1 = new JSONObject();
+					xAxis1.put("id", id);
+					if (gbys[i].equals(categoryDate)) {
+						xAxis1.put("type", "datetime");
+						id++;
+					} else {
+						xAxis1.put("type", "category");
+						id++;
+					}
+					xAxis1.put("name", gbys[i].replaceAll("\\s", ""));
+					xAxisMap.add(xAxis1);
+				}
+
+			}
+		} catch (JSONException e) {
+			throw new SpagoBIServiceException("Error while creating xaxis map", e.getMessage(), e);
+		}
+
+		return xAxisMap;
 	}
 
 	public LinkedHashMap<String, LinkedHashMap> seriesMapTransformedMethod(LinkedHashMap<String, LinkedHashMap> serieMap) throws JSONException {

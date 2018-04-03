@@ -45,6 +45,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -97,6 +98,12 @@ public class ProfileFilter implements Filter {
 				SessionContainer sessionContainer = requestContainer.getSessionContainer();
 				SessionContainer permanentSession = sessionContainer.getPermanentContainer();
 				IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+
+				UserProfile publicProfile = PublicProfile.evaluatePublicCase(httpRequest, session, permanentSession);
+
+				if (publicProfile != null)
+					profile = publicProfile;
+
 				if (profile == null) {
 					// in case the profile does not exist, creates a new one
 					logger.debug("User profile not found in session, creating a new one and putting in session....");
@@ -146,7 +153,7 @@ public class ProfileFilter implements Filter {
 			}
 		} catch (Exception e) {
 			logger.error("Error while service execution", e);
-			((HttpServletResponse)response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			return;
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after
@@ -256,7 +263,7 @@ public class ProfileFilter implements Filter {
 	 * @throws Exception
 	 *             in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
 	 */
-	private String getUserIdWithSSO(HttpServletRequest request){
+	private String getUserIdWithSSO(HttpServletRequest request) {
 		logger.debug("IN");
 		String userId = null;
 		try {

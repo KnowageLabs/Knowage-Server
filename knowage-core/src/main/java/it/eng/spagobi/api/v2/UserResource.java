@@ -45,6 +45,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.dao.QueryFilters;
+import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
@@ -136,6 +137,12 @@ public class UserResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
 		}
 
+		String userId = user.getUserId();
+		if (userId.startsWith(PublicProfile.PUBLIC_USER_PREFIX)) {
+			logger.error("public is reserved prefix for user id");
+			throw new SpagoBIServiceException("SPAGOBI_SERVICE", "public_ is a reserved prefix for user name", null);
+		}
+
 		SbiUser sbiUser = new SbiUser();
 		sbiUser.setUserId(user.getUserId());
 		sbiUser.setFullName(user.getFullName());
@@ -204,6 +211,12 @@ public class UserResource extends AbstractSpagoBIResource {
 		} catch (Exception e1) {
 			logger.error(e1);
 			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
+		}
+
+		String userId = user.getUserId();
+		if (userId.startsWith(PublicProfile.PUBLIC_USER_PREFIX)) {
+			logger.error("public is reserved prefix for user id");
+			throw new SpagoBIServiceException("SPAGOBI_SERVICE", "public_ is a reserved prefix for user name", null);
 		}
 
 		SbiUser sbiUser = new SbiUser();

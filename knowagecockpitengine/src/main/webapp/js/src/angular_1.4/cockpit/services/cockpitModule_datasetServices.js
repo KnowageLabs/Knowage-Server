@@ -490,7 +490,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	}
 
 	//TODO missing maxRows
-	this.loadDatasetRecordsById = function(dsId, page, itemPerPage,columnOrdering, reverseOrdering, ngModel){
+	this.loadDatasetRecordsById = function(dsId, page, itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues = false){
 		//after retry LabelDataset by Id call service for data
 		var dataset = this.getAvaiableDatasetById(dsId);
 		var deferred = $q.defer();
@@ -640,13 +640,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		var filtersToSend = {};
-		if(ngModel.type!="selector"){
+		if(loadDomainValues == false){
 			 filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(dataset.label));
 			if( Object.keys(filtersToSend).length == 0){
 				filtersToSend = cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 			}
 		}
-
 
 		var limitRows;
 		if(ngModel.limitRows){
@@ -814,8 +813,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 			return deferred.promise;
 		}
-
-
 	}
 
 	this.getParametersAsString = function(parameters){
@@ -1036,7 +1033,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				var params ={};
 				params.datasetLabel = dataset.label;
 				params.aggregation = cockpitModule_widgetSelection.getAggregation(undefined,dataset,undefined, undefined);
-				params.parameters = this.getParametersAsString(ds.getDatasetParameters(dataset.id.dsId));
+				params.parameters = ds.getParametersAsString(ds.getDatasetParameters(dataset.id.dsId));
 				if(dataset.useCache==false){
 					params.nearRealtime = true;
 				}

@@ -24,6 +24,8 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.profiling.PublicProfile;
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
@@ -104,15 +106,21 @@ public abstract class AbstractServiceImpl {
 		TenantManager.unset();
 	}
 
-	protected IEngUserProfile setTenantByUserId(String userId) {
+	protected IEngUserProfile setTenantByUserId(String jwtToken) {
 		logger.debug("IN");
 		try {
-			if (UserProfile.isSchedulerUser(userId)) {
-				UserProfile scheduler = UserProfile.createSchedulerUserProfile(userId);
+			if (UserProfile.isSchedulerUser(jwtToken)) {
+				UserProfile scheduler = UserProfile.createSchedulerUserProfile(jwtToken);
 				this.setTenantByUserProfile(scheduler);
 				return scheduler;
+			} else if (PublicProfile.isPublicUser(jwtToken)) {
+				String userId = JWTSsoService.jwtToken2userId(jwtToken);
+				SpagoBIUserProfile pub = PublicProfile.createPublicUserProfile(userId);
+				UserProfile publicProfile = new UserProfile(pub);
+				this.setTenantByUserProfile(publicProfile);
+				return publicProfile;
 			}
-			IEngUserProfile profile = UserUtilities.getUserProfile(userId);
+			IEngUserProfile profile = UserUtilities.getUserProfile(jwtToken);
 			this.setTenantByUserProfile(profile);
 			return profile;
 		} catch (Exception e) {

@@ -25,7 +25,24 @@ angular.module('chartInitializer')
 	var chartConfConf = null;
 
 	this.renderChart = function(renderObj, jsonData){
+		
 		var chartConf = renderObj.chartConf;
+		if(chartConf.chart.additionalData && chartConf.chart.additionalData.dateTime && chartConf.chart.additionalData.datetype!="string"){
+			for (var i = 0; i < chartConf.series.length; i++) {
+				var seria = chartConf.series[i];
+				for (var j = 0; j < seria.data.length; j++) {
+					var dat = seria.data[j];
+					if(dat.datetype!="simpledate"){
+						var dateSplit = dat.name.replace('/', ":").replace('/', ":").replace(' ', ":").replace('.', ":").split(":");
+						dat.x = (new Date(dateSplit[2], dateSplit[1]-1, dateSplit[0], dateSplit[3], dateSplit[4], dateSplit[5], dateSplit[6])).getTime();
+					} else {
+						var dateSplit = dat.name.replace('/', ":").replace('/', ":").split(":");
+						dat.x = (new Date(dateSplit[2], dateSplit[1]-1, dateSplit[0])).getTime();
+					}
+				}
+			}	
+		}
+		
 		var element = renderObj.element;
 		var handleCockpitSelection = renderObj.handleCockpitSelection;
 		var exportWebApp = renderObj.exportWebApp;
@@ -284,7 +301,7 @@ angular.module('chartInitializer')
          			GROUPING_VALUE:groupingCategoryValue,
          			stringParameters:null
 				};
-				parent.execExternalCrossNavigation(navData,JSON.parse(driverParams), null, currentDocumentLabel )
+				parent.execExternalCrossNavigation(navData,null, null, currentDocumentLabel )
 			}
 
 		}
@@ -361,26 +378,26 @@ angular.module('chartInitializer')
 				           }
 
 				           chart.options.drilledCategories.push(series.category);
-				            var xAxisTitle={
-				            	text:series.category
-				            };
-				            var yAxisTitle={
-				            		text:series.serieName
-				            };
-				            if(chart.xAxis[0].userOptions.title.customTitle==false){
-				            chart.xAxis[0].setTitle(xAxisTitle);
-				            }
-				            if(chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
-				            chart.yAxis[0].setTitle(yAxisTitle);
-				            }
+			                var xAxisTitle={
+			                	text:series.category
+			            };
+			            var yAxisTitle={
+			            		text:series.serieName
+			            };
+			            if(chart.xAxis[0].userOptions.title.customTitle==false){
+			            chart.xAxis[0].setTitle(xAxisTitle);
+			            }
+			            if(chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
+			            chart.yAxis[0].setTitle(yAxisTitle);
+			            }
 
-				            chart.addSeriesAsDrilldown(e.point, series);
+			            chart.addSeriesAsDrilldown(e.point, series);
 
-				            var backText="Back to: <b>"+chart.options.drilledCategories[chart.options.drilledCategories.length-2]+"</b>";
+			            var backText="Back to: <b>"+chart.options.drilledCategories[chart.options.drilledCategories.length-2]+"</b>";
 
-				            chart.drillUpButton.textSetter(backText);
+			            chart.drillUpButton.textSetter(backText);
 
-							chart.hideLoading();
+						chart.hideLoading();
 					});
 			}
 		}
@@ -390,12 +407,9 @@ angular.module('chartInitializer')
 	this.handleDrillup = function(){
 
 		var chart=this;
-
-		// sets the title on x axis
-
 		chart.options.drilledCategories.pop();
-		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-1];
-		var backText=chart.options.drilledCategories[chart.options.drilledCategories.length-2];
+		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-2] ? chart.options.drilledCategories[chart.options.drilledCategories.length-2] : chart.options.drilledCategories[0];
+		var backText=titleText;
 		chart.drillUpButton.textSetter("Back to: <b>"+backText+"</b>");
         //  chart.redraw();
 		var xAxisTitle={

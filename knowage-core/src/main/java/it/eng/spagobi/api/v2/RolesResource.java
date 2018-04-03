@@ -349,7 +349,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		role.setDescription(bo.getDescription());
 		role.setRoleTypeCD(bo.getRoleTypeCD());
 		role.setRoleTypeID(bo.getRoleTypeID());
-
+		role.setIsPublic(bo.getIsPublic());
 		role.setIsAbleToSaveIntoPersonalFolder(bo.isAbleToSaveIntoPersonalFolder());
 		role.setIsAbleToEnableDatasetPersistence(bo.isAbleToEnableDatasetPersistence());
 		role.setIsAbleToEnableFederatedDataset(bo.isAbleToEnableFederatedDataset());

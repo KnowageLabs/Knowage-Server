@@ -4055,3 +4055,8 @@ UPDATE hibernate_sequences SET next_val = (SELECT MAX(VALUE_ID) + 1 FROM SBI_DOM
 
 INSERT INTO .SBI_CONFIG (ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, VALUE_TYPE_ID, USER_IN, USER_UP, TIME_IN, TIME_UP, SBI_VERSION_IN, SBI_VERSION_UP, ORGANIZATION, CATEGORY) VALUES ('160', 'SPAGOBI.SECURITY.DEFAULT_TENANT_ON_SIGNUP', 'Default tenant on signup', 'Default tenant on signup', '1', 'DEFAULT_TENANT', '29', 'server', 'biadmin', current_timestamp, current_timestamp, '6.1', '6.1', 'DEFAULT_TENANT', 'SECURITY');
 
+-- 13.03.2018 Giulio Gavardi
+-- new column for roles , is_public
+
+ALTER TABLE SBI_EXT_ROLES ADD COLUMN IS_PUBLIC BOOLEAN NULL;
+

@@ -23,6 +23,8 @@ import java.util.List;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import it.eng.spagobi.services.validation.Xss;
 
 /**
@@ -63,6 +65,8 @@ public class RoleBO implements Serializable {
 	@Xss
 	@Max(value = 20)
 	private String organization;
+
+	private Boolean isPublic;
 
 	private boolean ableToSaveSubobjects;
 	private boolean ableToSeeSubobjects;
@@ -539,6 +543,18 @@ public class RoleBO implements Serializable {
 
 	public void setAbleToUseFunctionsCatalog(boolean ableToUseFunctionsCatalog) {
 		this.ableToUseFunctionsCatalog = ableToUseFunctionsCatalog;
+	}
+
+	public Boolean getIsPublic() {
+		return isPublic;
+	}
+
+	@JsonProperty(value = "isPublic")
+	public void setIsPublic(Boolean isPublic) {
+		if (isPublic == null)
+			this.isPublic = false;
+		else
+			this.isPublic = isPublic;
 	}
 
 }

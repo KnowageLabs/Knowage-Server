@@ -18,7 +18,7 @@
 	<div layout="row"  flex=100 layout-margin>
 	
 		<label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.categoriesDateTime")}}</label>
-		<md-input-container class="small counter"> <md-checkbox ng-disabled="chartTemplate.groupSeries || chartTemplate.groupSeriesCateg || chartTemplate.groupCategories"
+		<md-input-container class="small counter"> <md-checkbox ng-disabled="chartTemplate.groupSeries || chartTemplate.groupCategories"
 			ng-model="chartTemplate.dateTime" style="margin:0 8px" aria-label="dateTime" name="generic_dateTime" ></md-checkbox>
 		</md-input-container>
 	</div>
@@ -29,6 +29,14 @@
 			 <md-select ng-model="chartTemplate.dateFormat" name="categories_ordering_type"> <md-option
 			ng-repeat="option in listDateFormats" value="{{option.value}}">{{option.name}}</md-option>
 		</md-select> </md-input-container>
+		
+	</div>
+	<div ng-show="chartTemplate.dateTime && selectedChartType.toLowerCase()=='bar'" layout="column" layout-padding>
+	<md-input-container class="md-block">
+	 <label >{{translate.load("sbi.chartengine.structure.categoryStyleConfig.categoryDate")}}</label>
+		 <md-select ng-model="chartTemplate.categoryDate" name="categoryDate"  ng-required="chartTemplate.dateTime"> <md-option
+		ng-repeat="option in categories" value="{{option.name}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
 		
 	</div>	
 	<div layout="row"
@@ -57,7 +65,7 @@
 			  flex=100 layout-margin>
 		
 			<label>{{translate.load("sbi.chartengine.designer.tab.configuration.groupSeriesCateg")}}</label>
-			<md-input-container class="small counter"> <md-checkbox  ng-disabled="chartTemplate.groupCategories || chartTemplate.dateTime  || chartTemplate.groupSeries"
+			<md-input-container class="small counter"> <md-checkbox  ng-disabled="chartTemplate.groupCategories  || chartTemplate.groupSeries"
 				ng-model="chartTemplate.groupSeriesCateg" style="margin:0 8px" aria-label="groupSeriesCateg" name="generic_groupSeriesCateg" ></md-checkbox>
 			</md-input-container>
 		</div>	 

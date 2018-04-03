@@ -2,13 +2,21 @@
     <md-card>
      	<md-card-content layout="row" layout-align="space-around center">
      		<dataset-selector flex ng-model=model.dataset.dsId on-change="resetValue(dsId);"></dataset-selector>  	
-     		<md-input-container class="md-block" ng-if="model.dataset.dsId" flex>
+     		<md-input-container class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.widgets.selector.column");}}</label>
-         		<md-select ng-model="model.content.selectedColumn" ng-model-options="{trackBy: '$value.alias'}" >
+         		<md-select ng-model="model.content.selectedColumn" ng-model-options="{trackBy: '$value.alias'}" ng-disabled="!model.dataset.dsId">
           			<md-option ng-repeat="column in model.content.copyColumnSelectedOfDataset" ng-value="column" >
                			{{column.alias}}
           			</md-option>
       			</md-select>
+		    </md-input-container>
+		    <md-input-container flex="20" class="md-block">
+       			<label>{{translate.load("sbi.cockpit.widgets.table.sorting.order");}}</label>
+          		<md-select ng-model="model.content.sortingOrder" ng-disabled="!model.dataset.dsId || !model.content.selectedColumn">
+          			<md-option></md-option>
+           			<md-option value="ASC">{{translate.load("sbi.cockpit.widgets.table.sorting.asc");}}</md-option>
+          			<md-option value="DESC">{{translate.load("sbi.cockpit.widgets.table.sorting.desc");}}</md-option>
+       			</md-select>
 		    </md-input-container>
 		</md-card-content>
 	</md-card>

@@ -67,6 +67,7 @@ public class PhysicalModelInitializer {
 	IPropertiesInitializer propertiesInitializer;
 	Model rootModel;
 	private static Logger logger = Logger.getLogger(PhysicalModelInitializer.class);
+	private ECrossReferenceAdapter crossReferenceAdapter;
 
 	static public PhysicalModelFactory FACTORY = PhysicalModelFactory.eINSTANCE;
 	static public String ORACLE_SPATIAL_GEOMETRY = "SDO_GEOMETRY";
@@ -76,6 +77,23 @@ public class PhysicalModelInitializer {
 		setPropertiesInitializer(new PhysicalModelPropertiesFromFileInitializer());
 
 	}
+	
+
+	/**
+	 * @return the crossReferenceAdapter
+	 */
+	public ECrossReferenceAdapter getCrossReferenceAdapter() {
+		return crossReferenceAdapter;
+	}
+
+
+	/**
+	 * @param crossReferenceAdapter the crossReferenceAdapter to set
+	 */
+	public void setCrossReferenceAdapter(ECrossReferenceAdapter crossReferenceAdapter) {
+		this.crossReferenceAdapter = crossReferenceAdapter;
+	}
+
 
 	public PhysicalModel initializeLigth(PhysicalModel originalPM, List<String> selectedTables, IDataSource dataSource) {
 		PhysicalModel model;
@@ -1246,8 +1264,8 @@ public class PhysicalModelInitializer {
 					PhysicalModel physicalModel = originalPhysicalColumn.getTable().getModel();
 					physicalModel.getPrimaryKeys().remove(primaryKey);
 					// remove inverse reference (if any)
-					ModelSingleton modelSingleton = ModelSingleton.getInstance();
-					ECrossReferenceAdapter adapter = modelSingleton.getCrossReferenceAdapter();
+					//ModelSingleton modelSingleton = ModelSingleton.getInstance();
+					ECrossReferenceAdapter adapter = getCrossReferenceAdapter();
 					Collection<Setting> settings = adapter.getInverseReferences(primaryKey, true);
 					for (Setting setting : settings) {
 						EObject eobject = setting.getEObject();
@@ -1307,8 +1325,8 @@ public class PhysicalModelInitializer {
 		physicalModel.getForeignKeys().remove(physicalForeignKey);
 
 		// remove inverse references (if any)
-		ModelSingleton modelSingleton = ModelSingleton.getInstance();
-		ECrossReferenceAdapter adapter = modelSingleton.getCrossReferenceAdapter();
+		//ModelSingleton modelSingleton = ModelSingleton.getInstance();
+		ECrossReferenceAdapter adapter = getCrossReferenceAdapter();
 		Collection<Setting> settings = adapter.getInverseReferences(physicalForeignKey, true);
 		for (Setting setting : settings) {
 			EObject eobject = setting.getEObject();

@@ -17,7 +17,7 @@
 		var ms = this; //mapServices
 		var activeInd;
 		var activeConf;
-		var cacheProportionalSymbolMinMax;
+		var cacheSymbolMinMax;
 		
 		ms.getFeaturesDetails = function(geoColumn, selectedMeasure, config, configColumns, values){
 			if (values != undefined){
@@ -52,16 +52,13 @@
 							console.log("Error getting longitude and latitude from column value ["+ geoColumn +"]. Check the dataset and its metadata.");
 							return null;
 						}
-						if (!selectedMeasure) selectedMeasure = config.defaultIndicator;
-//						if (config.analysisConf && config.analysisConf.defaultAnalysis == 'proportionalSymbol'){							
-							//get config for thematize
-							if (selectedMeasure){
-//								if (!ms.getCacheProportionalSymbolMinMax()) ms.setCacheProportionalSymbolMinMax({}); //just at beginning
-								if (!ms.getCacheProportionalSymbolMinMax().hasOwnProperty(config.name+"|"+selectedMeasure)){
-									ms.loadIndicatorMaxMinVal(config.name+"|"+ selectedMeasure, values);
-								}
+						if (!selectedMeasure) selectedMeasure = config.defaultIndicator;					
+						//get config for thematize
+						if (selectedMeasure){
+							if (!ms.getCacheSymbolMinMax().hasOwnProperty(config.name+"|"+selectedMeasure)){
+								ms.loadIndicatorMaxMinVal(config.name+"|"+ selectedMeasure, values);
 							}
-//						}
+						}
 						
 						//set ol objects
 						var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
@@ -115,7 +112,7 @@
 			var config = ms.getActiveConf(parentLayer) || {};
 			
 			var minmaxLabel = parentLayer + '|' + config.defaultIndicator;
-			var minmax = ms.getCacheProportionalSymbolMinMax()[minmaxLabel];
+			var minmax = ms.getCacheSymbolMinMax()[minmaxLabel];
 			if (!minmax) return 0;
 			
 			var props  = feature.getProperties();
@@ -405,8 +402,8 @@
 		ms.getProportionalSymbolSize = function(val, name, config){
 			if (!name) return 0;
 			
-			var minValue = ms.cacheProportionalSymbolMinMax[config.name+'|'+name].minValue;
-			var maxValue = ms.cacheProportionalSymbolMinMax[config.name+'|'+name].maxValue;
+			var minValue = ms.cacheSymbolMinMax[config.name+'|'+name].minValue;
+			var maxValue = ms.cacheSymbolMinMax[config.name+'|'+name].maxValue;
 			var size;
 			
 			var maxRadiusSize = config.maxRadiusSize;
@@ -447,13 +444,13 @@
 		    	}
 		    }
 		
-		ms.getCacheProportionalSymbolMinMax=function(){
-			return ms.cacheProportionalSymbolMinMax || {};
+		ms.getCacheSymbolMinMax=function(){
+			return ms.cacheSymbolMinMax || {};
 		}
 		
-		ms.setCacheProportionalSymbolMinMax=function(n, c){
-			if (!ms.cacheProportionalSymbolMinMax) ms.cacheProportionalSymbolMinMax = {};
-			ms.cacheProportionalSymbolMinMax[n] = c;
+		ms.setCacheSymbolMinMax=function(n, c){
+			if (!ms.cacheSymbolMinMax) ms.cacheSymbolMinMax = {};
+			ms.cacheSymbolMinMax[n] = c;
 		}
 		
 		ms.getActiveIndicator=function(){
@@ -506,8 +503,7 @@
 
 				}
 			}
-//			ms.getCacheProportionalSymbolMinMax()[key]={minValue:minV, maxValue:maxV};
-			ms.setCacheProportionalSymbolMinMax(key, {minValue:minV, maxValue:maxV});
+			ms.setCacheSymbolMinMax(key, {minValue:minV, maxValue:maxV});
 		}
 		
 		function getChoroplethColor(val,layerCol){

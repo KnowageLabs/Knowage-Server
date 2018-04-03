@@ -137,8 +137,8 @@
 <!--       description="The preferred alignment type for the give column (LEFT, CENTER, RIGHT, JUSTIFIED)" -->
 <!--       category="Style" defaultValue="LEFT" /> -->
       
-      <type id="behavioural.notEnabledRoles" name="Roles NOT enabled"
-      description="Roles NOT enabled to view this column"
+      <type id="behavioural.notEnabledRoles" name="Roles enabled"
+      description="Roles enabled to view this column"
       category="Behavioural" defaultValue="" />
       
       

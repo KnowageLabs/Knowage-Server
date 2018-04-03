@@ -37,6 +37,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.wapp.bo.Menu;
@@ -746,7 +747,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		tempMenuList.put(info);
 
-		if (userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID)) {
+		if (PublicProfile.isPublicUser(userProfile.getUserUniqueIdentifier().toString())
+				|| userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID)) {
 			JSONObject login = createMenuItem("input", HREF_LOGIN, messageBuilder.getMessage("menu.login", locale), false, null);
 			tempMenuList.put(login);
 		} else {

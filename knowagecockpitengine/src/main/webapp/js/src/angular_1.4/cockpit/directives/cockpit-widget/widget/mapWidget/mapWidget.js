@@ -106,7 +106,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    
 	    $scope.getOptions =function(){
 			var obj = {};
+			var targetLayer = $scope.getTargetDataset();
 			obj["type"] = $scope.ngModel.type;
+			obj["label"] = (targetLayer) ? targetLayer.name : "";
 			return obj;
 		}
 	    
@@ -231,6 +233,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	for (di in $scope.ngModel.content.columnSelectedOfDataset){
 	    		if (di == dsId){
 	    			return $scope.ngModel.content.columnSelectedOfDataset[di];
+	    		}
+	    	}
+	    	return null;
+	    }
+	    
+	    $scope.getTargetDataset = function() {
+	    	for (l in $scope.ngModel.content.layers){
+	    		if ($scope.ngModel.content.layers[l].targetDefault == true){
+	    			return $scope.ngModel.content.layers[l];
 	    		}
 	    	}
 	    	return null;

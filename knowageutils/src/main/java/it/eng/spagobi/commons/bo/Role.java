@@ -39,6 +39,8 @@ public class Role implements Serializable {
 	private String code = null;
 	private Integer roleTypeID;
 	private String organization = null;
+	private Boolean isPublic;
+
 	private boolean isAbleToSaveSubobjects;
 	private boolean isAbleToSeeSubobjects;
 	private boolean isAbleToSeeViewpoints;
@@ -702,6 +704,14 @@ public class Role implements Serializable {
 
 	public void setIsAbleToEnableFederatedDataset(boolean isAbleToEnableFederatedDataset) {
 		this.isAbleToEnableFederatedDataset = isAbleToEnableFederatedDataset;
+	}
+
+	public Boolean getIsPublic() {
+		return isPublic;
+	}
+
+	public void setIsPublic(Boolean isPublic) {
+		this.isPublic = isPublic;
 	}
 
 }
