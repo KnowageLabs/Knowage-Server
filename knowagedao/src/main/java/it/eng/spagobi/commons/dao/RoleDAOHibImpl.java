@@ -1844,14 +1844,17 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Criterion aCriterion = Expression.eq("isPublic", true);
-			Criteria aCriteria = aSession.createCriteria(SbiExtRoles.class);
-			aCriteria.add(aCriterion);
+			String hql = "from SbiExtRoles extRole where extRole.isPublic=?";
 
-			SbiExtRoles hibRole = (SbiExtRoles) aCriteria.uniqueResult();
+			Query query = aSession.createQuery(hql);
+			query.setBoolean(0, true);
 
-			if (hibRole == null)
+			Object hibRoleO = query.uniqueResult();
+
+			if (hibRoleO == null)
 				return null;
+
+			SbiExtRoles hibRole = (SbiExtRoles) hibRoleO;
 
 			toReturn = toRole(hibRole);
 			tx.commit();
