@@ -301,10 +301,11 @@
 			
 			case "icon":
 				//font-awesome
+				var size = config.size || 100;
 				style = new ol.style.Style({
 					  text: new ol.style.Text({
 						  	text: config.icon.unicode, 
-						    font: 'normal ' + (config.size + '%' || '100%') + config.icon.family,
+						    font: 'normal ' + ((2*size) + '% ') + config.icon.family,
 						    fill: new ol.style.Fill({
 						    	 color: (config.style && config.style.color) ? config.style.color : 'blue'
 						    })
