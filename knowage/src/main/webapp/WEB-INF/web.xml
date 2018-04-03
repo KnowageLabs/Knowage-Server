@@ -444,6 +444,10 @@ END-LIFERAY -->
 	<!-- OTHER CONFIGURATIONS -->
 	<session-config>
 		<session-timeout>30</session-timeout>
+		<session-config>
+			<http-only>true</http-only>
+			<secure>true</secure>
+		</session-config>
 	</session-config>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
