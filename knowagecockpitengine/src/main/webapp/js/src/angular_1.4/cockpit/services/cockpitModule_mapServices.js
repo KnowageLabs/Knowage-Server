@@ -56,7 +56,7 @@
 //						if (config.analysisConf && config.analysisConf.defaultAnalysis == 'proportionalSymbol'){							
 							//get config for thematize
 							if (selectedMeasure){
-								if (!ms.getCacheProportionalSymbolMinMax()) ms.setCacheProportionalSymbolMinMax({}); //just at beginning
+//								if (!ms.getCacheProportionalSymbolMinMax()) ms.setCacheProportionalSymbolMinMax({}); //just at beginning
 								if (!ms.getCacheProportionalSymbolMinMax().hasOwnProperty(config.name+"|"+selectedMeasure)){
 									ms.loadIndicatorMaxMinVal(config.name+"|"+ selectedMeasure, values);
 								}
@@ -116,10 +116,12 @@
 			
 			var minmaxLabel = parentLayer + '|' + config.defaultIndicator;
 			var minmax = ms.getCacheProportionalSymbolMinMax()[minmaxLabel];
+			if (!minmax) return 0;
+			
 			var props  = feature.getProperties();
 
 		    var p = feature.get(config.defaultIndicator);
-		    // perform some calculation to get weight between 0 - 1
+		    // perform calculation to get weight between 0 - 1
 		    // apply formule: w = w-min/max-min (http://www.statisticshowto.com/normalized/)
 		    weight = (p.value - minmax.minValue)/(minmax.maxValue-minmax.minValue);
 		    return weight;
@@ -446,11 +448,12 @@
 		    }
 		
 		ms.getCacheProportionalSymbolMinMax=function(){
-			return ms.cacheProportionalSymbolMinMax;
+			return ms.cacheProportionalSymbolMinMax || {};
 		}
 		
-		ms.setCacheProportionalSymbolMinMax=function(c){
-			ms.cacheProportionalSymbolMinMax = c;
+		ms.setCacheProportionalSymbolMinMax=function(n, c){
+			if (!ms.cacheProportionalSymbolMinMax) ms.cacheProportionalSymbolMinMax = {};
+			ms.cacheProportionalSymbolMinMax[n] = c;
 		}
 		
 		ms.getActiveIndicator=function(){
@@ -503,7 +506,8 @@
 
 				}
 			}
-			ms.cacheProportionalSymbolMinMax[key]={minValue:minV, maxValue:maxV};
+//			ms.getCacheProportionalSymbolMinMax()[key]={minValue:minV, maxValue:maxV};
+			ms.setCacheProportionalSymbolMinMax(key, {minValue:minV, maxValue:maxV});
 		}
 		
 		function getChoroplethColor(val,layerCol){
