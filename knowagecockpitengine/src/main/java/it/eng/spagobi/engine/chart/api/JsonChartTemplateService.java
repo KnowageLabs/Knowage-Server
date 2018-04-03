@@ -91,6 +91,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	public String getJSONChartTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("exportWebApp") String exportWebApp,
 			@FormParam("datasetLabel") String datasetLabel, @FormParam("driverParams") String driverParams, @FormParam("jsonData") String jsonData,
 			@Context HttpServletResponse servletResponse) {
+		logger.debug("IN");
 		try {
 			ChartEngineInstance engineInstance = getEngineInstance();
 			IDataSet dataSet = engineInstance.getDataSet();
@@ -113,21 +114,24 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			if (StringUtilities.isEmpty(jsonData)) {
 				jsonData = ChartEngineDataUtil.loadJsonData(jsonTemplate, dataSet, analyticalDrivers, profileAttributes, getLocale());
 			}
-
+			logger.debug("jsonData :" + jsonData);
 			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData, Boolean.parseBoolean(exportWebApp),
 					engineInstance.getDocumentLabel(), getEngineInstance().getUserProfile());
 			String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
 			Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType), "UTF-8");
 			String jsonChartTemplate = ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);
 			jsonChartTemplate = ChartEngineUtil.replaceParameters(jsonChartTemplate, analyticalDrivers);
-			logger.debug(jsonChartTemplate);
-			logger.debug(jsonChartTemplate.trim());
+			logger.debug("jsonChartTemplate " + jsonChartTemplate);
+			logger.debug("jsonChartTemplate " + jsonChartTemplate.trim());
 			// @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			return jsonChartTemplate.trim();
 
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service: JsonChartTemplateService.getJSONChartTemplate", t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service: JsonChartTemplateService.getJSONChartTemplate", t);
+		} finally {
+			logger.debug("OUT");
 		}
 	}
 
@@ -139,7 +143,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getJSONChartTemplateForCockpit(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("exportWebApp") String exportWebApp,
 			@FormParam("jsonData") String jsonData, @Context HttpServletResponse servletResponse) {
-
+		logger.debug("IN");
 		IDataSet dataSet = null;
 		Map analyticalDrivers = new HashMap<>();
 		Map profileAttributes = new HashMap<>();
@@ -153,6 +157,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			if (StringUtilities.isEmpty(jsonData)) {
 				jsonData = ChartEngineDataUtil.loadJsonData(jsonTemplate, dataSet, analyticalDrivers, profileAttributes, null);
 			}
+			logger.debug("jsonData :" + jsonData);
 			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData, Boolean.parseBoolean(exportWebApp), null,
 					getIOManager().getUserProfile());
 			String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
@@ -164,8 +169,11 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			return jsonChartTemplate.trim();
 
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service: JsonChartTemplateService.getJSONChartTemplateForCockpit", t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
-					"An unexpected error occured while executing service: JsonChartTemplateService.getJSONChartTemplate", t);
+					"An unexpected error occured while executing service: JsonChartTemplateService.getJSONChartTemplateForCockpit", t);
+		} finally {
+			logger.debug("OUT");
 		}
 	}
 
@@ -191,16 +199,22 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@SuppressWarnings("rawtypes")
 	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String drilldownHighchart(@FormParam("breadcrumb") String breadcrumb) {
+		logger.debug("IN");
 		try {
+
 			IDataSet dataSet = getEngineInstance().getDataSet();
 			Map analyticalDrivers = getEngineInstance().getAnalyticalDrivers();
 			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 			String jsonTemplate = getEngineInstance().getTemplate().toString();
+			logger.debug("jsonTemplate " + jsonTemplate);
 			return ChartEngineDataUtil.drilldown(jsonTemplate, breadcrumb, dataSet, analyticalDrivers, profileAttributes, getLocale(),
 					getEngineInstance().getDocumentLabel(), getEngineInstance().getUserProfile());
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service: JsonChartTemplateService.drilldownHighchart", t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service: JsonChartTemplateService.drilldownHighchart", t);
+		} finally {
+			logger.debug("OUT");
 		}
 	}
 
@@ -262,8 +276,17 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getDatasetMetadata() {
-		IDataSet dataSet = getEngineInstance().getDataSet();
-		return ChartEngineDataUtil.loadMetaData(dataSet);
+		logger.debug("IN");
+		try {
+			IDataSet dataSet = getEngineInstance().getDataSet();
+			return ChartEngineDataUtil.loadMetaData(dataSet);
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service: JsonChartTemplateService.getDatasetMetadata", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: JsonChartTemplateService.getDatasetMetadata", t);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 	@GET
@@ -271,18 +294,31 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getDatasetMetadataForCockpit(@PathParam("datasetId") String datasetId) {
+		logger.debug("IN");
 		IDataSet dataSet = null;
-		if (dataSet == null && datasetId != null) {
-			IDataSetDAO dataSetDao;
-			try {
+		IDataSetDAO dataSetDao = null;
+		try {
+			if (datasetId != null) {
 				dataSetDao = DAOFactory.getDataSetDAO();
-			} catch (Throwable t) {
-				throw new SpagoBIServiceException(this.request.getPathInfo(),
-						"An unexpected error occured while executing service: JsonChartTemplateService.fieldsMetadataforCockpit", t);
+				dataSet = dataSetDao.loadDataSetById(Integer.parseInt(datasetId));
+				return ChartEngineDataUtil.loadMetaData(dataSet);
+			} else {
+				logger.error("JsonChartTemplateService.fieldsMetadataforCockpit : datasetID is null");
+				throw new SpagoBIServiceException(this.request.getPathInfo(), "JsonChartTemplateService.fieldsMetadataforCockpit : datasetID is null");
 			}
-			dataSet = dataSetDao.loadDataSetById(Integer.parseInt(datasetId));
+
+		} catch (EMFUserError e) {
+			logger.error("Error while creating dataset dao");
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: Error while creating dataset dao", e);
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service: JsonChartTemplateService.fieldsMetadataforCockpit", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: JsonChartTemplateService.fieldsMetadataforCockpit", t);
+		} finally {
+			logger.debug("OUT");
 		}
-		return ChartEngineDataUtil.loadMetaData(dataSet);
+
 	}
 
 	@GET
@@ -290,8 +326,17 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String isDatasetRealTime() {
-		IDataSet dataSet = getEngineInstance().getDataSet();
-		return String.valueOf(dataSet.isRealtime());
+		logger.debug("IN");
+		try {
+			IDataSet dataSet = getEngineInstance().getDataSet();
+			return String.valueOf(dataSet.isRealtime());
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service: JsonChartTemplateService.isDatasetRealTime", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: JsonChartTemplateService.isDatasetRealTime", t);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 	@GET
@@ -299,18 +344,29 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String isDatasetForCockpitRealTime(@PathParam("datasetId") String datasetId) {
+		logger.debug("IN");
 		IDataSet dataSet = null;
-		if (dataSet == null && datasetId != null) {
-			IDataSetDAO dataSetDao;
-			try {
+		IDataSetDAO dataSetDao = null;
+		try {
+			if (datasetId != null) {
 				dataSetDao = DAOFactory.getDataSetDAO();
-			} catch (Throwable t) {
-				throw new SpagoBIServiceException(this.request.getPathInfo(),
-						"An unexpected error occured while executing service: JsonChartTemplateService.isDatasetForCockpitRealTime", t);
+				dataSet = dataSetDao.loadDataSetById(Integer.parseInt(datasetId));
+				return String.valueOf(dataSet.isRealtime());
+			} else {
+				logger.error("JsonChartTemplateService.isDatasetForCockpitRealTime : datasetID is null");
+				throw new SpagoBIServiceException(this.request.getPathInfo(), "JsonChartTemplateService.isDatasetForCockpitRealTime : datasetID is null");
 			}
-			dataSet = dataSetDao.loadDataSetById(Integer.parseInt(datasetId));
+		} catch (EMFUserError e) {
+			logger.error("Error while creating dataset dao");
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: Error while creating dataset dao", e);
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service: JsonChartTemplateService.isDatasetForCockpitRealTime", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: JsonChartTemplateService.isDatasetForCockpitRealTime", t);
+		} finally {
+			logger.debug("OUT");
 		}
-		return String.valueOf(dataSet.isRealtime());
 	}
 
 	@POST
@@ -321,6 +377,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	public String getDataAndConf(@PathParam("label") String label, String body, @Context HttpServletResponse servletResponse,
 			@DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
 			@QueryParam("nearRealtime") boolean isNearRealtime) {
+		logger.debug("IN");
 		Monitor getDataAndChartConfMonitor = MonitorFactory.start("Knowage.Cockpit.Chart.Get.Data.And.Chartconf");
 		String jsonTemplate = null;
 		String exportWebApp = null;
@@ -355,8 +412,11 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			responseObject.put("chartConf", chartConf);
 
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service: JsonChartTemplateService.getDataAndConf", t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service: JsonChartTemplateService.getDataAndConf", t);
+		} finally {
+			logger.debug("OUT");
 		}
 		getDataAndChartConfMonitor.stop();
 		return responseObject.toString();
