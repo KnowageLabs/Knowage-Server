@@ -68,13 +68,29 @@ angular.module('chartRendererModule')
 							scope.chartTemplate.CHART.COLORPALETTE.COLOR = angular.copy(scope.chartTemplate.CHART.COLORPALETTE.COLORCopy)
 							delete scope.chartTemplate.CHART.COLORPALETTE.COLORCopy
 						}
+					if( scope.chartTemplate.CHART.groupSeriesCateg){
+							if(scope.colorMap){
+								if(scope.colorMap.hasOwnProperty(scope.chartConf.series[0].name)) {
+									scope.chartConf.colors[0]=scope.colorMap[chartConf.series[0].name];
+								}
+								delete scope.colorMap;
+							} else {
+								scope.colorMap = {};
+								for (var i = 0; i < scope.chartConf.series.length; i++) {
+									scope.colorMap[scope.chartConf.series[i].name] = scope.chartConf.colors[i];
+								}
+							}
+							
+						}
+						
 						var renderObject = {};
 						renderObject.chartConf = scope.chartConf;
 						renderObject.element = element[0];
 						renderObject.handleCockpitSelection = handleCockpitSelection;
 						renderObject.locale = locale;
 						renderObject.widgetData = scope.widgetData;
-
+						renderObject.chartTemplate = scope.chartTemplate.CHART;
+						
 						scope.chartInitializer.renderChart(renderObject, jsonData);
 					}
 				}
