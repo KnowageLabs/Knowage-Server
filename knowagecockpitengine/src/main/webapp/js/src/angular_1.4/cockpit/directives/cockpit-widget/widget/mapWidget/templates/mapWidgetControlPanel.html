@@ -17,7 +17,7 @@
 			</div>
 			<md-radio-group style="padding:8px;" ng-model="layer.defaultIndicator" ng-if="layer.expandedNav">
 	 	   		<md-radio-button ng-repeat="ind in ngModel.content.columnSelectedOfDataset[layer.dsId]" ng-if="ind.properties.showMap" ng-click="thematizeMeasure(layer.name, ind.aliasToShow)"  class="md-primary" ng-value="ind.name" style="font-size:.7rem;" >
-		 	   		{{ind.aliasToShow}} ({{ind.properties.aggregationSelected}})
+		 	   		{{ind.aliasToShow}} <!-- ({{ind.properties.aggregationSelected}})  -->
 		 	   	</md-radio-button>
 	    	</md-radio-group>
 		</div>

@@ -25,9 +25,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			self.icons=[
 				{"name":"fontawesome","className":"fa",
 					"icons":[
-						{"label":"adjust","className":"fa fa-adjust","unicode":"\uf042"},{"label":"anchor","className":"fa fa-anchor","unicode":"\uf13d"},{"label":"archive","className":"fa fa-archive","unicode":"\uf187"},
-						{"label":"area chart","className":"fa fa-area-chart","unicode":"\uf1fe"},{"label":"bidirectional arrows","className":"fa fa-arrows","unicode":"\uf047"},{"label":"horizontal arrows","className":"fa fa-arrows-h","unicode":"\uf07e"},
-						{"label":"vertical arrows","className":"fa fa-arrows-v","unicode":"\uf07d"},{"label":"asterisk","className":"fa fa-asterisk","unicode":"\uf069"},{"label":"address at","className":"fa fa-at","unicode":"\uf1fa"}]
+						{"label":"map marker","className":"fa fa-map-marker","unicode":"\uf041"},{"label":"map pin","className":"fa fa-map-pin","unicode":"\uf276"},{"label":"map","className":"fa fa-map","unicode":"\uf279"},
+						{"label":"street view","className":"fa fa-street-view","unicode":"\uf21d"},{"label":"map 2","className":"fa fa-map-o","unicode":"\uf278"},{"label":"location arrow","className":"fa fa-location-arrow","unicode":"\uf124"},
+						{"label":"map signs","className":"fa fa-map-signs","unicode":"\uf277"},{"label":"globe","className":"fa fa-globe","unicode":"\uf0ac"},
+						{"label":"motorcycle","className":"fa fa-motorcycle","unicode":"\uf21c"},{"label":"car","className":"fa fa-car","unicode":"\uf1b9"},{"label":"bus","className":"fa fa-bus","unicode":"\uf207"},
+						{"label":"shopping cart","className":"fa fa-shopping-cart","unicode":"\uf07a"},{"label":"adjust","className":"fa fa-adjust","unicode":"\uf042"},{"label":"anchor","className":"fa fa-anchor","unicode":"\uf13d"},
+						{"label":"archive","className":"fa fa-archive","unicode":"\uf187"},{"label":"area chart","className":"fa fa-area-chart","unicode":"\uf1fe"},{"label":"bidirectional arrows","className":"fa fa-arrows","unicode":"\uf047"},
+						{"label":"horizontal arrows","className":"fa fa-arrows-h","unicode":"\uf07e"},{"label":"vertical arrows","className":"fa fa-arrows-v","unicode":"\uf07d"},{"label":"asterisk","className":"fa fa-asterisk","unicode":"\uf069"},
+						{"label":"address at","className":"fa fa-at","unicode":"\uf1fa"},{"label":"bolt","className":"fa fa-bolt","unicode":"\uf0e7"},{"label":"circle","className":"fa fa-plus-circle","unicode":"\uf055"},
+						{"label":"breafcase","className":"fa fa-briefcase","unicode":"\uf0b1"}]
 				}
 			];
 		}
