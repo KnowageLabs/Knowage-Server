@@ -324,12 +324,12 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 		}	
 	}
 	
-	var delitelj = sumaForMax / colors.length; 
+	var divider = sumaForMax / colors.length; 
 	tickPositions1.push(0);
 	var next = 0
 	for (var i = 0; i < colors.length; i++) {
 		
-		next = next + delitelj;
+		next = next + divider;
 		tickPositions1.push(next);
 	}
 
@@ -339,7 +339,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 				scaleObject[property][i].scale = scale
 			}
 		}
-		scale = scale+delitelj;
+		scale = scale+divider;
 		tickPositions.push(scale)
 	}
 	for (property in scaleObject) {
@@ -447,7 +447,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 	                    align: drillUpButtonSettings.position.align,
 //	                    x: drillUpButtonSettings.position.x,
 	                    verticalAlign: drillUpButtonSettings.position.verticalAlign,
-	                    y: drillUpButtonSettings.position.y
+//	                    y: drillUpButtonSettings.position.y
 	                },
 	                
 	                theme: 
@@ -489,8 +489,8 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 			}],
 			data: points.map(function (point) {
                 if (point.colorValue ) { 
-                    if(point.colorValue >= point.scale+ delitelj){
-                    	point.colorValue = point.scale+ delitelj  - 10
+                    if(point.colorValue >= point.scale+ divider){
+                    	point.colorValue = point.scale+ divider  - 10
                     }
                 }
               
