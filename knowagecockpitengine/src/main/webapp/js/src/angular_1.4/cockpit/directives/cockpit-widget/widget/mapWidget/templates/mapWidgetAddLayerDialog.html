@@ -12,7 +12,7 @@
 				No Layers available, add some from the datasets list
 			</div>
 		</div>
-      <table class="kn-table kn-table-medium-rows" ng-if="availableSpatialLayers.length > 0">
+      <table class="kn-table kn-table-medium-rows kn-table-clickable-rows" ng-if="availableSpatialLayers.length > 0">
       	<thead>
       		<tr>
 	      		<th></th>
@@ -21,7 +21,7 @@
       		</tr>
       	</thead>
       	<tbody>
-      		<tr ng-repeat="layer in availableSpatialLayers">
+      		<tr ng-repeat="layer in availableSpatialLayers" ng-click="layer.selected = !layer.selected">
       			<td class="tableAction"><md-checkbox ng-model="layer.selected" /></td>
 	      		<td>{{layer.name}}</td>
 	      		<td>{{layer.description}}</td

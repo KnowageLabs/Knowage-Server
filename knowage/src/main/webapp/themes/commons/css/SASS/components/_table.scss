@@ -127,4 +127,19 @@
 			background: $pageBackground;
 		}
 	}
+	&.kn-table-medium-rows {
+		tr {
+			height: 2rem;
+		}
+	}
+	&.kn-table-clickable-rows {
+		tbody{
+			tr {
+				cursor: pointer;
+				&:hover {
+					background-color: $pageBackground;
+				}
+			}
+		}
+	}
 }

@@ -42,7 +42,12 @@
 			        <label>Range value</label>
 					<input type="number" ng-model="threshold.val1" />
 	      		</md-input-container>
+	      		<md-button class="md-icon-button" ng-class="{'warning': threshold.warning}" ng-click="threshold.warning = !threshold.warning">
+	      			<md-tooltip>Selecting this option the threshold will be notified inside the detail</md-tooltip>
+	      			<md-icon md-font-icon="fa fa-warning"></md-icon>
+	      		</md-button>
 	      		<md-button class="md-icon-button" ng-click="deleteThreshold(threshold)">
+	      			<md-tooltip>Delete</md-tooltip>
 	      			<md-icon md-font-icon="fa fa-trash"></md-icon>
 	      		</md-button>
     		</div>
