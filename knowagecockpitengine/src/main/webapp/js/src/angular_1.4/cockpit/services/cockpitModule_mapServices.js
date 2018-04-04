@@ -220,6 +220,8 @@
 	    }
 	    
 	    ms.getClusterStyles = function (value, props, config){
+	      var tmpSize =  (config.style && config.style['font-size']) ? config.style['font-size'] : '12px';
+	      var tmpFont = "normal " + tmpSize + " Roboto";
 	      return new ol.style.Style({
 	              image: new ol.style.Circle({
 	                radius: config.radiusSize || 20,
@@ -231,7 +233,7 @@
 	                })
 	              }),
 	              text: new ol.style.Text({
-	            	font: (config.style && config.style['font-size']) ? config.style['font-size'] : '12px',
+	            	font: tmpFont,
 	                text: value.toString(),
 	                fill: new ol.style.Fill({
 	                  color: (config.style && config.style['color']) ? config.style['color'] : '#fff'
@@ -241,6 +243,8 @@
 	    }
 		
 		ms.getProportionalSymbolStyles = function(value, props, config){
+			var tmpSize =  (config.style && config.style['font-size']) ? config.style['font-size'] : '12px';
+		    var tmpFont = "normal " + tmpSize + " Roboto";
 			return new ol.style.Style({
 		          fill: new ol.style.Fill({
 		                color :  config.color
@@ -256,7 +260,7 @@
 		                })
 		              }),
 		              text: new ol.style.Text({
-		                  font: config['font-size'] || '12px Calibri,sans-serif',
+		                  font: tmpFont,
 		                  fill: new ol.style.Fill({ color: '#000' }),
 		                  stroke: new ol.style.Stroke({
 		                    color: '#fff', width: 2
