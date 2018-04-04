@@ -2643,7 +2643,11 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				if(!(typeof baseTemplate[attrname] == 'object')){
 					baseTemplate[attrname] = originalTemplate[attrname];
 				} else {
-					getObjectProperties(baseTemplate[attrname], originalTemplate[attrname]);
+					if(Array.isArray(baseTemplate[attrname])){
+						baseTemplate[attrname] = originalTemplate[attrname];
+					} else {
+						getObjectProperties(baseTemplate[attrname], originalTemplate[attrname]);		
+					}
 				}
 			}
 
