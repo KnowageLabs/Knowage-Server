@@ -37,6 +37,7 @@ function mapWidgetEditControllerFunction(
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.availableAggregationFunctions = ['SUM','AVG','MIN','MAX','COUNT'];
+	$scope.visualizationTypes = [{"name":"markers","enabled":true,"class":"markers"},{"name":"clusters","enabled":true,"class":"clusters"},{"name":"heatmap","enabled":true,"class":"heatmap"},];
 	$scope.uploadImg = {};
   	$scope.getTemplateUrl = function(template){
   		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
@@ -244,6 +245,7 @@ function mapWidgetEditControllerFunction(
 				}
 				
 				$scope.selectImg = function(img){
+					debugger;
 					$scope.selectedImg = img;
 					$scope.activeLayer.markerConf.img = $scope.getImageUrl(img);
 				}

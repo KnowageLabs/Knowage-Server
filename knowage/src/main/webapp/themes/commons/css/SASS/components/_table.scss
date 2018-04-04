@@ -122,4 +122,9 @@
 			}
 		}
 	}
+	&.kn-table-alternated-rows {
+		tr:nth-child(odd) {
+			background: $pageBackground;
+		}
+	}
 }

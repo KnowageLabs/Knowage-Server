@@ -155,6 +155,81 @@
 		
 	}
     .cockpit-map-widget-edit {
+    	.md-subheader {
+    		._md-subheader-inner {
+    			padding: 8px;
+    		}
+    	}
+    	.visTypes {
+    		.outerIcon {
+    			padding: 0 8px;
+    			border: 1px solid $ternaryColor;
+    			cursor: pointer;
+    			margin-right: 8px;
+    			&.selected {
+    				background-color: $secondaryColor;
+	    		}
+	    		&:hover {
+	    			background-color: darken($secondaryColor,15%);
+	    		}
+    		}
+    		.visTypeIcon {
+    			width: 100px;
+    			height: 60px;
+    			background-repeat: no-repeat;
+    			background-size: cover;
+    			background-position: 0 0;
+    			background-color: $baseColor;
+    			&.clusters {
+    				mask-image: url('../img/cockpit/mapWidget/clusters.svg');
+    				mask-size: cover;
+    				mask-repeat: no-repeat;
+    				mask-position: 0 0;
+    				-webkit-mask-image: url('../img/cockpit/mapWidget/clusters.svg');
+    				-webkit-mask-size: cover;
+    				-webkit-mask-repeat: no-repeat;
+    				-webkit-mask-position: 0 0;
+    			}
+    			&.markers {
+    				mask-image: url('../img/cockpit/mapWidget/markers.svg');
+    				mask-size: cover;
+    				mask-repeat: no-repeat;
+    				mask-position: 0 0;
+    				-webkit-mask-image: url('../img/cockpit/mapWidget/markers.svg');
+    				-webkit-mask-size: cover;
+    				-webkit-mask-repeat: no-repeat;
+    				-webkit-mask-position: 0 0;
+    			}
+    			&.heatmap {
+    				mask-image: url('../img/cockpit/mapWidget/heatmap.svg');
+    				mask-size: cover;
+    				mask-repeat: no-repeat;
+    				mask-position: 0 0;
+    				-webkit-mask-image: url('../img/cockpit/mapWidget/heatmap.svg');
+    				-webkit-mask-size: cover;
+    				-webkit-mask-repeat: no-repeat;
+    				-webkit-mask-position: 0 0;
+    			}
+    		}
+    	}
+
+    	.buttonBarSquared {
+    		.markerTypeIcon {
+    			border: 1px solid $ternaryColor;
+    			padding: 8px;
+    			cursor: pointer;
+    			margin-right: 4px;
+    			md-icon {
+    				color: $baseColor;
+    			}
+    			&.selected {
+    				background-color: $secondaryColor;
+	    		}
+	    		&:hover {
+	    			background-color: darken($secondaryColor,15%);
+	    		}
+    		}
+    	}
 
     	.markersExpander {
     		.color-picker-wrapper {
@@ -179,6 +254,9 @@
     			border: 1px solid #ccc;
     			box-shadow: 0px 3px 3px #ccc;
     			overflow: hidden;
+    			.defaultIcon {
+    				font-size: 1.5rem;
+    			}
     			img, .clusterExample {
     				position: absolute;
     			}
