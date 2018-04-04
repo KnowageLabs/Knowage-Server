@@ -361,15 +361,26 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				logger.debug("This connection has been configured with the catalog [" + catalog + "] and schema [" + schema + "]");
 				rs = meta.getTables(catalog, schema, tableNamePattern, TYPES);
 				while (rs.next()) {
+					ResultSet tabCol = null;
 					String tableName = rs.getString(3);
-
-					JSONObject column = new JSONObject();
-					ResultSet tabCol = meta.getColumns(rs.getString(1), rs.getString(2), tableName, "%");
-					while (tabCol.next()) {
-						column.put(tabCol.getString(4), "null");
+					try {
+						JSONObject column = new JSONObject();
+						tabCol = meta.getColumns(rs.getString(1), rs.getString(2), tableName, "%");
+						while (tabCol.next()) {
+							column.put(tabCol.getString(4), "null");
+						}
+						tableContent.put(tableName, column);
+					} catch (Exception e) {
+						logger.error(
+								"Impossible to obtain metadata for catalog " + rs.getString(1) + ", schema " + rs.getString(2) + ", table/view " + tableName,
+								e);
+						logger.error("Continue with the other tables/views");
+						continue;
+					} finally {
+						if (tabCol != null) {
+							tabCol.close();
+						}
 					}
-					tabCol.close();
-					tableContent.put(tableName, column);
 				}
 			}
 		} finally {
