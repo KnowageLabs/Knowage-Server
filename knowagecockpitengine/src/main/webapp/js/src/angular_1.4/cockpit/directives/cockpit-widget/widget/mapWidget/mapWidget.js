@@ -312,13 +312,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	            var coordinate = geometry.getCoordinates();
     	            var config = $scope.getColumnSelectedOfDataset(layer.dsId);
     	            var text = "";
+    	            var tooltip = " ";
+	            	var warning = " ";
     	            for (var p in props){
     	            	var pDett = ($scope.isDisplayableProp(p, config));
     	            	if (pDett != null)
     	            		text += '<b>' + pDett.aliasToShow + ":</b> " + props[p].value + '<br>';
+//    	            	if (props[p].showWarning) warning = "<i class='fa fa-warning' title='Attention! The feature value is within the Alarm range!'></i>";
+    	            	if (props[p].showWarning) {
+    	            		warning = "<i class='fa fa-warning'><br></i>" +
+    	            				  "<i>   Attention! <br>The [<b>"+ pDett.aliasToShow + "</b>] value is within the Alarm range!</i><br><br>";
+    	            		popupContent.className = "warning";
+    	            	}	
     	            }
     	            if (text != ""){
-	    		        popupContent.innerHTML = '<h2>Details</h2><code>' + text + '</code>';
+	    		        popupContent.innerHTML = "<h3>DETAILS</h3> " + warning + text + "";
 	    		        overlay.setPosition(coordinate);
     	            }
     	        }

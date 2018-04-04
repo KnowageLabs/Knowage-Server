@@ -302,9 +302,8 @@
 		ms.getOnlyMarkerStyles = function (value, props, config){
 			var style;
 			var color;
-			var thresholdsConfig = props[ms.getActiveIndicator()].thresholdsConfig;
 			 
-			if (thresholdsConfig) color = ms.getColorByThresholds(value, thresholdsConfig);
+			if (props[ms.getActiveIndicator()].thresholdsConfig) color = ms.getColorByThresholds(value, props);
 			if (!color) color =  (config.style && config.style.color) ? config.style.color : 'blue';
 			
 			switch(config.type) {
@@ -362,7 +361,8 @@
 			return style;
 		}
 	
-		ms.getColorByThresholds = function(value, config){
+		ms.getColorByThresholds = function(value, props){
+			var config = props[ms.getActiveIndicator()].thresholdsConfig;
 			var toReturn = null;
 			var isEqualOp = false;
 			
@@ -374,9 +374,11 @@
 					if (typeof(value) == 'number' && typeof(thr['operator'+idx]) != 'undefined' && typeof(thr['val'+idx]) != 'undefined'){
 						if (evalText != "") evalText += " && ";
 						evalText += "(" + value + " " + thr['operator'+idx] + " " + thr['val'+idx] + " )";
-						if (thr['operator'+idx] == '==' && eval(evalText)) {
+						if (thr['operator'+idx] == '==' && eval(evalText)) {							
 							toReturn = thr['color']; 
 							isEqualOp = true; //the equal operator has the priority
+							if (thr['warning'])
+								 props[ms.getActiveIndicator()]['showWarning'] = true;
 							break;
 						}
 					}else
@@ -385,7 +387,10 @@
 				}
 				if (!isEqualOp && eval(evalText) == true) { //get the last color definition
 					toReturn = thr['color']; 
+					if (thr['warning'])
+						 props[ms.getActiveIndicator()]['showWarning'] = true;
 				}
+
 			}
 			return toReturn;
 		}
