@@ -37,6 +37,7 @@ function mapWidgetEditControllerFunction(
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.availableAggregationFunctions = ['SUM','AVG','MIN','MAX','COUNT'];
+	$scope.availableOperators = [{'label':'==','value':'=='},{'label':'!=','value':'!='},{'label':'<','value':'<','range':true},{'label':'>','value':'>','range':true},{'label':'<=','value':'<=','range':true},{'label':'>=','value':'>=','range':true}];
 	$scope.visualizationTypes = [{"name":"markers","enabled":true,"class":"markers"},{"name":"clusters","enabled":true,"class":"clusters"},{"name":"heatmap","enabled":true,"class":"heatmap"},];
 	$scope.uploadImg = {};
   	$scope.getTemplateUrl = function(template){
@@ -333,6 +334,44 @@ function mapWidgetEditControllerFunction(
   		} else {
   			$scope.newModel.dataset.dsId = $scope.newModel.content.layers[0].dsId;
   		}
+  	}
+  	
+  	
+  	$scope.getThresholds = function(ev, measure) {
+  		
+  		$mdDialog.show({
+			controller: function ($scope,$mdDialog) {
+
+				$scope.activeMeasure = {};
+				
+				angular.copy(measure,$scope.activeMeasure);
+				
+				$scope.addThreshold = function() {
+					if(!$scope.activeMeasure.properties.thresholds){
+						$scope.activeMeasure.properties.thresholds = [];
+					}
+					$scope.activeMeasure.properties.thresholds.push({});
+				}
+				
+				$scope.deleteThreshold = function(threshold){
+					$scope.activeMeasure.properties.thresholds.splice($scope.activeMeasure.properties.thresholds.indexOf(threshold),1);
+				}
+				
+				$scope.set = function(){
+					angular.copy($scope.activeMeasure,layer);
+					$mdDialog.hide();
+				}
+				$scope.cancel = function(){
+					$mdDialog.cancel();
+				}
+			},
+			scope: $scope,
+			preserveScope:true,
+	      templateUrl: $scope.getTemplateUrl('mapWidgetMeasureThresholds'),
+	      targetEvent: ev,
+	      clickOutsideToClose:true,
+	      locals: {  }
+	    })
   	}
   	
   	
