@@ -89,6 +89,7 @@
 					if (cols[p].alias == header){
 						prop.type = cols[p].fieldType;
 						prop.aggregationSelected = ( cols[p].properties && cols[p].properties.aggregationSelected) ? cols[p].properties.aggregationSelected : '';
+						prop.thresholdsConfig =  ( cols[p].properties && cols[p].properties.thresholds) ? cols[p].properties.thresholds : null;
 						break;
 					}
 				}
@@ -149,7 +150,7 @@
 			if (isCluster){
 				value = ms.getClusteredValue(feature);
 			}else{
-				value =  props[ms.getActiveIndicator()] || 0;
+				value =  props[ms.getActiveIndicator()].value;
 			}
 			
 			var thematized = false;
@@ -165,8 +166,9 @@
 				useCache = false;
 			}
 			else{
-				style = ms.getOnlyMarkerStyles(props, configMarker);
+				style = ms.getOnlyMarkerStyles(value, props, configMarker);
 				useCache = true;
+//			useCache = false;
 			}
 			
 			if (useCache && !styleCache[parentLayer]) {
@@ -297,9 +299,13 @@
 			});
 		}
 		
-		ms.getOnlyMarkerStyles = function (props, config){
+		ms.getOnlyMarkerStyles = function (value, props, config){
 			var style;
-			var textValue =  props[ms.getActiveIndicator()] || "";
+			var color;
+			var thresholdsConfig = props[ms.getActiveIndicator()].thresholdsConfig;
+			 
+			if (thresholdsConfig) color = ms.getColorByThresholds(value, thresholdsConfig);
+			if (!color) color =  (config.style && config.style.color) ? config.style.color : 'blue';
 			
 			switch(config.type) {
 			
@@ -311,7 +317,7 @@
 						  	text: config.icon.unicode, 
 						    font: 'normal ' + ((2*size) + '% ') + config.icon.family,
 						    fill: new ol.style.Fill({
-						    	 color: (config.style && config.style.color) ? config.style.color : 'blue'
+						    	 color: color
 						    })
 						  })
 					});
@@ -346,7 +352,7 @@
 					}),
 				    opacity: 1,
 				    crossOrigin: 'anonymous',
-				    color: (config.style && config.style.color) ? config.style.color : 'blue',
+				    color: color,
 				    src:  $location.$$absUrl.substring(0,$location.$$absUrl.indexOf('api/')) + '/img/dot.png'
 					}))
 		          });
@@ -356,6 +362,35 @@
 			return style;
 		}
 	
+		ms.getColorByThresholds = function(value, config){
+			var toReturn = null;
+			var isEqualOp = false;
+			
+			for (c in config){
+				var evalText = "";
+				var thr = config[c];
+				var idx = 0;
+				for (t in thr){
+					if (typeof(value) == 'number' && typeof(thr['operator'+idx]) != 'undefined' && typeof(thr['val'+idx]) != 'undefined'){
+						if (evalText != "") evalText += " && ";
+						evalText += "(" + value + " " + thr['operator'+idx] + " " + thr['val'+idx] + " )";
+						if (thr['operator'+idx] == '==' && eval(evalText)) {
+							toReturn = thr['color']; 
+							isEqualOp = true; //the equal operator has the priority
+							break;
+						}
+					}else
+						break;
+					idx++;
+				}
+				if (!isEqualOp && eval(evalText) == true) { //get the last color definition
+					toReturn = thr['color']; 
+				}
+			}
+			return toReturn;
+		}
+		
+		
 		ms.getBaseLayer = function (conf){
 			
 			var toReturn;
