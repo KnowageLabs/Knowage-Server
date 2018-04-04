@@ -1,13 +1,14 @@
 package it.eng.spagobi.tools.dataset.common.datawriter;
 
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
+
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 
 public class CockpitJSONDataWriter extends JSONDataWriter {
 
@@ -26,6 +27,8 @@ public class CockpitJSONDataWriter extends JSONDataWriter {
 		if (value != null) {
 			if (Timestamp.class.isAssignableFrom(fieldMetaData.getType())) {
 				result = TIMESTAMP_FORMATTER.format(value);
+			} else if (Time.class.isAssignableFrom(fieldMetaData.getType())) {
+				result = CACHE_TIMEONLY_FORMATTER.format(value);
 			} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
 				result = DATE_FORMATTER.format(value);
 			} else if (Boolean.class.isAssignableFrom(fieldMetaData.getType())) {
