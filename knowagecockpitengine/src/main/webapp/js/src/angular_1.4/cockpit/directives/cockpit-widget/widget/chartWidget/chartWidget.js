@@ -784,7 +784,7 @@ function cockpitChartWidgetControllerFunction(
 		var event= item.select != undefined ? item.select : item;
 		var crossParameters= createCrossParameters(item);
 		var chartType = $scope.ngModel.content.chartTemplate.CHART.type;
-		if(chartType.toLowerCase()=="pie"){
+		if($scope.ngModel.updateble && chartType.toLowerCase()=="pie"){
 			$scope.ngModel.content.chartTemplate.CHART.COLORPALETTE.COLORCopy = angular.copy($scope.ngModel.content.chartTemplate.CHART.COLORPALETTE.COLOR)
 			if($scope.ngModel.content.chartTemplate.CHART.COLORPALETTE.COLOR[0]){
 				$scope.ngModel.content.chartTemplate.CHART.COLORPALETTE.COLOR[0].value = item.point.color;
