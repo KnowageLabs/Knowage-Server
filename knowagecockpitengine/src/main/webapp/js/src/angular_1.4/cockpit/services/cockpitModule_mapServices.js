@@ -150,7 +150,7 @@
 			if (isCluster){
 				value = ms.getClusteredValue(feature);
 			}else{
-				value =  props[ms.getActiveIndicator()].value;
+				value =  (props[ms.getActiveIndicator()])  ? props[ms.getActiveIndicator()].value : undefined;
 			}
 			
 			var thematized = false;
@@ -303,7 +303,7 @@
 			var style;
 			var color;
 			 
-			if (props[ms.getActiveIndicator()].thresholdsConfig) color = ms.getColorByThresholds(value, props);
+			if (props[ms.getActiveIndicator()] && props[ms.getActiveIndicator()].thresholdsConfig) color = ms.getColorByThresholds(value, props);
 			if (!color) color =  (config.style && config.style.color) ? config.style.color : 'blue';
 			
 			switch(config.type) {
