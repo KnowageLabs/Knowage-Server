@@ -358,7 +358,7 @@ function mapWidgetEditControllerFunction(
 				}
 				
 				$scope.set = function(){
-					angular.copy($scope.activeMeasure,layer);
+					angular.copy($scope.activeMeasure,measure);
 					$mdDialog.hide();
 				}
 				$scope.cancel = function(){
