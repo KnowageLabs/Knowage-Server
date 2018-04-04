@@ -38,7 +38,7 @@ public class TeradataDataBase extends AbstractDataBase {
 
 	@Override
 	public String getAliasDelimiter() {
-		throw new UnsupportedOperationException();
+		return "\"";
 	}
 
 	@Override
@@ -61,5 +61,10 @@ public class TeradataDataBase extends AbstractDataBase {
 		} finally {
 			stmt.close();
 		}
+	}
+
+	@Override
+	public String getCatalog(Connection conn) throws SQLException {
+		return null;
 	}
 }
