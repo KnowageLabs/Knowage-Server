@@ -465,14 +465,20 @@
 		 ms.updateCoordinatesAndZoom = function(model, map, l, setValues){
 		    	var coord;
 		    	var zoom;
+		    	var source;
 		    	
 		    	if (model.content.currentView.center[0] == 0 && model.content.currentView.center[1] == 0){
-			    	if (l.getSource().getFeatures().length>0 && l.getSource().getFeatures()[0].getGeometry().getType() == 'Point')
-			    		coord = l.getSource().getFeatures()[0].getGeometry().getCoordinates();
+		    		if (l.getSource() && l.getSource().getSource)
+		    			source = l.getSource().getSource(); //cluster case
+		    		else
+		    			source = l.getSource();
+		    		
+		    		if (source.getFeatures().length>0 && source.getFeatures()[0].getGeometry().getType() == 'Point')
+			    		coord = source.getFeatures()[0].getGeometry().getCoordinates();
 					else
-						coord = l.getSource().getFeatures()[0].getGeometry().getCoordinates()[0][0][0];
+						coord = source.getFeatures()[0].getGeometry().getCoordinates()[0][0][0];
 			    	
-			    	if(l.getSource().getFeatures().length>35){
+			    	if(source.getFeatures().length>35){
 		    			zoom = 4;
 					}else{
 						zoom = 5;
