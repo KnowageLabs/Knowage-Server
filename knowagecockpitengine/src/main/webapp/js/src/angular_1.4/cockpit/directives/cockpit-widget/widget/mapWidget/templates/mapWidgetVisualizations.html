@@ -1,0 +1,158 @@
+<!--  included in mapWidgetLayers.html -->
+<md-card layout="column">
+	<md-toolbar class="ternaryToolbar">
+	  <div class="md-toolbar-tools">
+	    <h2>Visualization types</h2>
+	    <span flex></span>
+	  </div>
+	</md-toolbar>
+	<md-card-content flex layout="column" class="markersExpander noPadding" ng-if="layer.expanded=='style'">
+		<div layout="row" class="visTypes" style="padding:8px;">
+			<div class="outerIcon" ng-repeat="visType in visualizationTypes" ng-click="layer.visualizationType=visType.name" ng-class="{'selected':layer.visualizationType==visType.name}" ng-init="layer.visualizationType=layer.visualizationType?layer.visualizationType:'markers'">
+				<div class="visTypeIcon" ng-class="visType.class" ng-disabled="!visType.enabled" >
+					<md-tooltip>{{visType.name}}</md-tooltip>
+				</div>
+			</div>
+		</div>
+		<md-subheader ng-if="layer.visualizationType == 'clusters'">Clusters</md-subheader>
+		<div style="padding:8px;" ng-if="layer.visualizationType == 'clusters'">
+			
+			<div layout="row" layout-align="start center">
+				<md-input-container class="md-block flex">
+			        <label>Radius Size</label>
+			        <input ng-model="layer.clusterConf.radiusSize" type="number" ng-init="layer.clusterConf.radiusSize=layer.clusterConf.radiusSize||10">
+		      	</md-input-container>
+		      	<md-input-container class="md-block flex" >
+			        <label>Font size</label>
+			        <input ng-model="layer.clusterConf.style['font-size']" type="text" ng-init="layer.clusterConf.style['font-size']=layer.clusterConf.style['font-size']||'12px'">
+		      	</md-input-container>
+		      	<md-input-container class="md-block flex" >
+			        <label>Font color</label>
+			         <color-picker options="colorPickerOptions" ng-model="layer.clusterConf.style['color']"></color-picker> 
+		      	</md-input-container>
+		      	<md-input-container class="md-block flex">
+			        <label>Background color</label>
+			         <color-picker options="colorPickerOptions" ng-model="layer.clusterConf.style['background-color']"></color-picker> 
+		      	</md-input-container>
+		      	<div class="preview" >
+					<label>Preview</label>
+					<div class="clusterExample" 
+						ng-style="{'width':(layer.clusterConf.radiusSize * 2) + 'px', 'height':(layer.clusterConf.radiusSize * 2) + 'px','font-size':layer.clusterConf.style['font-size'],'background-color':layer.clusterConf.style['background-color'],'color':layer.clusterConf.style.color}" >10</div>
+				</div>
+			</div>
+		</div>
+		<md-subheader ng-if="layer.visualizationType == 'clusters' || layer.visualizationType == 'markers'">Markers</md-subheader>
+		<div style="padding:8px;" ng-if="layer.visualizationType == 'clusters' || layer.visualizationType == 'markers'">
+	 
+		<div class="buttonBarSquared" layout="row" ng-init="layer.markerConf.type=layer.markerConf.type||'default'" >
+			<div class="markerTypeIcon" ng-click="setIconType(layer,'default')" ng-class="{'selected':layer.markerConf.type == 'default'}">
+				<md-tooltip>Default marker</md-tooltip>
+				<md-icon md-font-icon="fa fa-circle"></md-icon>
+			</div>
+			<div class="markerTypeIcon" ng-click="setIconType(layer,'icon')" ng-class="{'selected':layer.markerConf.type == 'icon'}">
+				<md-tooltip>Icon marker</md-tooltip>
+				<md-icon md-font-icon="fa fa-map-marker"></md-icon>
+			</div>
+			<div class="markerTypeIcon" ng-click="setIconType(layer,'img')" ng-class="{'selected':layer.markerConf.type == 'img'}">
+				<md-tooltip>Image Marker</md-tooltip>
+				<md-icon md-font-icon="fa fa-picture-o"></md-icon>
+			</div>
+			<div class="markerTypeIcon" ng-click="setIconType(layer,'url')" ng-class="{'selected':layer.markerConf.type == 'url'}">
+				<md-tooltip>Image from web marker</md-tooltip>
+				<md-icon md-font-icon="fa fa-globe"></md-icon>
+			</div>
+		</div>
+		<div layout="row" layout-align="start center">
+		      	
+	      	<md-button class="md-icon-button md-fab" ng-click="chooseIcon($event, layer)" ng-if="layer.markerConf.type == 'icon'">
+	      		<md-icon md-font-icon="fa fa-th"></md-icon>
+	      	</md-button>
+	      	
+	      	<md-input-container class="md-block flex" ng-if="layer.markerConf.type == 'url'">
+		        <label>Icon Url</label>
+		        <input ng-model="layer.markerConf.url">
+	      	</md-input-container>			      	
+
+			<md-button ng-click="chooseImg($event, layer)" aria-label="upload Menu" ng-if="layer.markerConf.type == 'img'"
+					class="md-fab md-mini">
+				<md-icon md-font-icon="fa fa-th"/>
+			</md-button>
+				
+	      	<md-input-container class="md-block flex" ng-if="layer.markerConf.type != 'img' && layer.markerConf.type != 'url'">
+		        <label>Color</label>
+		        <color-picker options="colorPickerOptions" ng-model="layer.markerConf.style.color"></color-picker> 
+	      	</md-input-container>
+	      	
+			<md-input-container class="md-block flex" ng-if="layer.markerConf.type == 'img' || layer.markerConf.type == 'url'">
+		        <label>Scale (%)</label>
+		        <input ng-model="layer.markerConf.scale" type="number" min="0" max="500">
+	      	</md-input-container>
+	      	
+	      	<md-input-container class="md-block flex" ng-if="layer.markerConf.type == 'icon'">
+		        <label>Size (%)</label>
+		        <input ng-model="layer.markerConf.size" type="number" min="0" max="500">
+	      	</md-input-container>
+	      	
+			<div flex></div>
+			<div class="preview" >
+				<label>Preview</label>
+				<i class="fa fa-circle defaultIcon" ng-style="{'color':layer.markerConf.style.color}" ng-if="!layer.markerConf[layer.markerConf.type] || layer.markerConf.type == 'default'"></i>
+				<i class="fa" ng-class="layer.markerConf.icon.className" ng-style="{'color':layer.markerConf.style.color, 'font-size':layer.markerConf.size + '%'}" ng-if="layer.markerConf.type == 'icon' && layer.markerConf[layer.markerConf.type]"></i>
+				<img ng-if="layer.markerConf.type == 'img' && layer.markerConf[layer.markerConf.type]" ng-style="{'width':layer.markerConf.scale + '%','height':layer.markerConf.scale + '%'}" ng-src="{{ layer.markerConf.img || '//:0' }}"/>
+				<img ng-if="layer.markerConf.type == 'url' && layer.markerConf[layer.markerConf.type]" ng-style="{'width':layer.markerConf.scale + '%','height':layer.markerConf.scale + '%'}" ng-src="{{ layer.markerConf.url || '//:0' }}"/>
+			</div>
+		</div>
+		
+	</div>
+	
+	<md-subheader ng-if="layer.visualizationType == 'heatmap'">Heatmap settings</md-subheader>
+		<div style="padding:16px;" ng-if="layer.visualizationType == 'heatmap'">
+			
+			<div layout="row" layout-align="start center">
+				<md-input-container class="md-block flex">
+			        <label>Radius</label>
+			        <input ng-model="layer.heatMapConf.radius" type="number" ng-init="layer.heatMapConf.radius=layer.heatMapConf.radius||8">
+		      	</md-input-container>
+		      	<md-input-container class="md-block flex" >
+			        <label>Blur</label>
+			        <input ng-model="layer.heatMapConf.blur" type="number" ng-init="layer.heatMapConf.blur=layer.heatMapConf.blur||15">
+		      	</md-input-container>
+			</div>
+		</div>
+	
+	</md-card-content>
+</md-card>
+
+<md-card layout="column" ng-if="layer.expanded=='style' && layer.clusterConf.enabled">
+	<md-toolbar class="ternaryToolbar">
+	  <div class="md-toolbar-tools">
+	    <h2>Cluster</h2>
+	    <span flex></span>
+	  </div>
+	</md-toolbar>
+	<md-card-content flex layout="column" class="markersExpander">
+			<div layout="row" ng-if="layer.clusterConf.enabled" layout-align="start center">
+			<md-input-container class="md-block flex" ng-if="layer.clusterConf.enabled">
+		        <label>Radius Size</label>
+		        <input ng-model="layer.clusterConf.radiusSize" type="number" ng-init="layer.clusterConf.radiusSize=layer.clusterConf.radiusSize||10">
+	      	</md-input-container>
+	      	<md-input-container class="md-block flex" ng-if="layer.clusterConf.enabled">
+		        <label>Font size</label>
+		        <input ng-model="layer.clusterConf.style['font-size']" type="text" ng-init="layer.clusterConf.style['font-size']=layer.clusterConf.style['font-size']||'12px'">
+	      	</md-input-container>
+	      	<md-input-container class="md-block flex" ng-if="layer.clusterConf.enabled">
+		        <label>Font color</label>
+		         <color-picker options="colorPickerOptions" ng-model="layer.clusterConf.style['color']"></color-picker> 
+	      	</md-input-container>
+	      	<md-input-container class="md-block flex" ng-if="layer.clusterConf.enabled">
+		        <label>Background color</label>
+		         <color-picker options="colorPickerOptions" ng-model="layer.clusterConf.style['background-color']"></color-picker> 
+	      	</md-input-container>
+	      	<div class="preview" >
+				<label>Preview</label>
+				<div class="clusterExample" 
+					ng-style="{'width':(layer.clusterConf.radiusSize * 2) + 'px', 'height':(layer.clusterConf.radiusSize * 2) + 'px','font-size':layer.clusterConf.style['font-size'],'background-color':layer.clusterConf.style['background-color'],'color':layer.clusterConf.style.color}" >10</div>
+			</div>
+		</div>
+	</md-card-content>
+</md-card>
