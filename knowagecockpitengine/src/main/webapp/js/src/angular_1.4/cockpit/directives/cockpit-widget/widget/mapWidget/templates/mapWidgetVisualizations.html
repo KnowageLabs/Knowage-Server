@@ -8,7 +8,7 @@
 	</md-toolbar>
 	<md-card-content flex layout="column" class="markersExpander noPadding" ng-if="layer.expanded=='style'">
 		<div layout="row" class="visTypes" style="padding:8px;">
-			<div class="outerIcon" ng-repeat="visType in visualizationTypes" ng-click="layer.visualizationType=visType.name" ng-class="{'selected':layer.visualizationType==visType.name}" ng-init="layer.visualizationType=layer.visualizationType?layer.visualizationType:'markers'">
+			<div class="outerIcon" ng-repeat="visType in visualizationTypes" ng-click="setMarkersVisualizationType(layer,visType.name)" ng-class="{'selected':layer.visualizationType==visType.name}" ng-init="layer.visualizationType=layer.visualizationType?layer.visualizationType:'markers'">
 				<div class="visTypeIcon" ng-class="visType.class" ng-disabled="!visType.enabled" >
 					<md-tooltip>{{visType.name}}</md-tooltip>
 				</div>

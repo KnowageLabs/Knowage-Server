@@ -51,6 +51,20 @@ function mapWidgetEditControllerFunction(
   		}
   	}
   	
+  	$scope.setMarkersVisualizationType = function(layer,type){
+  		layer.visualizationType = type;
+  		if(layer.clusterConf && layer.clusterConf.enabled) layer.clusterConf.enabled = false; 
+  		if(layer.heatmapConf && layer.heatmapConf.enabled) layer.heatmapConf.enabled = false; 
+  		if(type == 'clusters'){
+  			layer.clusterConf = layer.clusterConf || {};
+  			layer.clusterConf.enabled = true;
+  		}
+  		if(type == 'heatmap'){
+  			layer.heatmapConf = layer.heatmapConf || {};
+  			layer.heatmapConf.enabled = true;
+  		}
+  	}
+  	
   	$scope.expandRow = function(layer,content){
   		for(var t in $scope.newModel.content.layers){
   			if($scope.newModel.content.layers[t].expanded != content || $scope.newModel.content.layers[t].dsId != layer.dsId){
@@ -245,7 +259,6 @@ function mapWidgetEditControllerFunction(
 				}
 				
 				$scope.selectImg = function(img){
-					debugger;
 					$scope.selectedImg = img;
 					$scope.activeLayer.markerConf.img = $scope.getImageUrl(img);
 				}
