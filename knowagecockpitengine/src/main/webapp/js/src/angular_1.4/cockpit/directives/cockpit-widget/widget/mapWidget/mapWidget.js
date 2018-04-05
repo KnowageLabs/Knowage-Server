@@ -401,7 +401,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    		//$scope.addMapEvents(overlay);
 	    		}
 	    		
-	            
 	    		$scope.map = new ol.Map({
 	    		  target:  $scope.ngModel.content.mapId,
 	    		  layers: [ $scope.baseLayer ],
@@ -411,8 +410,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		    zoom:  $scope.ngModel.content.currentView.zoom || 3
 	    		  })
 	    		});
-	    		
-	    		
 	    		
 	    		//just for refresh
 	    		if (!$scope.map.getSize()){

@@ -55,6 +55,21 @@
     				font-family: 'Roboto';
     				font-weight: 100;
 				}
+				ul {
+					list-style: none;
+					padding: 0;
+					p {
+						margin: 0;
+						span {
+							padding-left: 10px;
+						}
+						&.warningMessage{
+							color: $negativeColor;
+							font-size: $smallFontSize;
+							padding-bottom: 5px;
+						}
+					}
+				}
 			}
 		}
 		.ol-popup-closer {
