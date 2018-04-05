@@ -72,7 +72,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private static final String DEFAULT_TIME_PATTERN = "HH:mm:ss";
 
-	private static final String DEFAULT_TIMESTAMP_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+	private static final String DEFAULT_TIMESTAMP_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
 	private static final String ATTRIBUTES_DIRECTLY = "attributesDirectly";
 
