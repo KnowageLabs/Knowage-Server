@@ -7,14 +7,14 @@
  	</div>
  	
  	<div id="popup" class="ol-popup" >
- 		 <a href="#" id="popup-closer" class="ol-popup-closer">
+ 		 <a href="#" id="popup-closer" class="ol-popup-closer" ng-click="closePopup()">
  		 	<i class="fa fa-times"></i>
  		 </a>
- 		 <div id="popup-content">
+ 		 <div id="popup-content" >
  		 	<h2>DETAILS</h2>
     	    <ul>
-    	    	<li ng-repeat="prop in props" ng-if="prop.detail">
-    	    		<p><strong>{{prop.detail.aliasToShow}}:</strong>{{prop.value}}</p>
+    	    	<li ng-repeat="prop in layerConfig track by $index" ng-if="prop.properties.showDetails">
+    	    		<p><strong>{{prop.aliasToShow}}:</strong><span ng-cloak>{{props[prop.name].value}}</span></p>
     	    		<p ng-if="prop.showWarning"><i class='fa fa-warning'></i> The value is within the Alarm range!</p>
     	    	</li>
     	    </ul>

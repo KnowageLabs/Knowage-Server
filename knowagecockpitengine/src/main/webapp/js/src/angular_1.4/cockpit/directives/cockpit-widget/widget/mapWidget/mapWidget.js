@@ -150,27 +150,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 	    $scope.initializeTemplate = function (){
-	    	if (!$scope.ngModel.content.currentView)  $scope.ngModel.content.currentView = {};
-	    	if (!$scope.ngModel.content.layers) $scope.ngModel.content.layers = [];
-	    	if (!$scope.ngModel.content.baseLayersConf) $scope.ngModel.content.baseLayersConf = [];
-	    	if (!$scope.ngModel.content.columnSelectedOfDataset) $scope.ngModel.content.columnSelectedOfDataset = {} ;
+	    	 return $q(function(resolve, reject) {
+	    		 if (!$scope.ngModel.content.currentView)  $scope.ngModel.content.currentView = {};
+	 	    	if (!$scope.ngModel.content.layers) $scope.ngModel.content.layers = [];
+	 	    	if (!$scope.ngModel.content.baseLayersConf) $scope.ngModel.content.baseLayersConf = [];
+	 	    	if (!$scope.ngModel.content.columnSelectedOfDataset) $scope.ngModel.content.columnSelectedOfDataset = {} ;
 
-	    	if (!$scope.ngModel.content.currentView.center) $scope.ngModel.content.currentView.center = [0,0]; 
+	 	    	if (!$scope.ngModel.content.currentView.center) $scope.ngModel.content.currentView.center = [0,0]; 
+	 	    	
+	 	    	if (!$scope.ngModel.content.mapId){
+	 	    		$scope.ngModel.content.mapId = 'map-' + Math.ceil(Math.random()*1000).toString();
+	 	    	}	    	
+	 	    	
+	 	    	//set default indicator (first one) for each layer
+	 	    	for (l in $scope.ngModel.content.layers){
+	 	    		var columns = $scope.getColumnSelectedOfDataset($scope.ngModel.content.layers[l].dsId);
+	 	    		for ( c in columns){
+	 	    			if (columns[c].properties.showMap){
+	 	    				$scope.ngModel.content.layers[l].defaultIndicator = columns[c].name;	
+	 	    				break;
+	 	    			}
+	 	    		}
+	 	    	}	
+	 	    	resolve('initialized');
+	    	 })
 	    	
-	    	if (!$scope.ngModel.content.mapId){
-	    		$scope.ngModel.content.mapId = 'map-' + Math.ceil(Math.random()*1000).toString();
-	    	}	    	
-	    	
-	    	//set default indicator (first one) for each layer
-	    	for (l in $scope.ngModel.content.layers){
-	    		var columns = $scope.getColumnSelectedOfDataset($scope.ngModel.content.layers[l].dsId);
-	    		for ( c in columns){
-	    			if (columns[c].properties.showMap){
-	    				$scope.ngModel.content.layers[l].defaultIndicator = columns[c].name;	
-	    				break;
-	    			}
-	    		}
-	    	}	
 	    }
 	    
 	    $scope.createLayerWithData = function(label, data, isCluster){
@@ -274,46 +278,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 	    $scope.addMapEvents = function (overlay){
-	    	//Elements that make up the popup.
-            var popupContent = document.getElementById('popup-content');
-            var closer = document.getElementById('popup-closer');
-            
-            if (closer){
-	            closer.onclick = function() {
-	              overlay.setPosition(undefined);
+	    	
+            $scope.closePopup = function(){
+            	overlay.setPosition(undefined);
 	              closer.blur();
 	              return false;
-	            };
-            }else
-            	console.log("<div> with identifier 'popup-closer' doesn't found !!! It isn't impossible set the popup detail content ");
+            }
 
     		$scope.map.on('singleclick', function(evt) {
-    			//popup detail
-    			if (!popupContent){
-    				console.log("<div> with identifier 'popup-content' doesn't found !!! It isn't impossible set the popup detail content ");
-    				return;
-    			}
+    			$scope.props = {}
     				
-            	var feature = $scope.map.forEachFeatureAtPixel(evt.pixel,
-            	            function(feature, layer) {
-            	                return feature;
-            	            });
-            	var layer = $scope.map.forEachFeatureAtPixel(evt.pixel,
-        	            function(feature, layer) {
-
-        	                return layer;
-        	            });
+            	$scope.map.forEachFeatureAtPixel(evt.pixel,
+		            function(feature, layer) {
+						$scope.selectedLayer = layer;
+		                $scope.selectedFeature = feature;
+	            });
+            	
             	//popup isn't shown with cluster
-    	        if (feature) {
-    	        	$scope.tempFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
+    	        if ($scope.selectedFeature) {
+    	        	$scope.tempFeature = (Array.isArray($scope.selectedFeature.get('features')) && $scope.selectedFeature.get('features').length == 1) ? $scope.selectedFeature.get('features')[0] : $scope.selectedFeature;
+    	        	
+	        		$scope.props = $scope.tempFeature.getProperties();
+	        		$scope.$apply()
+	        		
+    	        	if(!$scope.layerConfig){
+    	        		$scope.layerConfig = $scope.getColumnSelectedOfDataset($scope.selectedLayer.dsId);
+    	        	}
     	        	
     	            var geometry = $scope.tempFeature.getGeometry();
-    	            $scope.props = $scope.tempFeature.getProperties();
     	            var coordinate = geometry.getCoordinates();
-    	            var config = $scope.getColumnSelectedOfDataset(layer.dsId);
-    	            for (var p in $scope.props){
-    	            	$scope.props[p].detail = ($scope.isDisplayableProp(p, config));
-    	            }
     	            overlay.setPosition(coordinate);
     	        }
              });
@@ -386,51 +379,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	}
 
 	    $scope.createMap = function (){
-	    	$scope.initializeTemplate();
-	    	
-	    	//create the base layer
-            $scope.baseLayer = cockpitModule_mapServices.getBaseLayer($scope.ngModel.content.baseLayersConf[0]);
-
-	    	//setting coordinates (from the first layer if they aren't setted into the template)
-            if ($scope.ngModel.content.currentView.center[0] == 0 && $scope.ngModel.content.currentView.center[1] == 0 && $scope.layers.length > 0){
-	    		var tmpLayer = $scope.layers[0].layer;
-	    		cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, tmpLayer, false);
-
+	    	$scope.initializeTemplate().then(function(){
+	    		//create the base layer
+	            $scope.baseLayer = cockpitModule_mapServices.getBaseLayer($scope.ngModel.content.baseLayersConf[0]);
+	            var popupContainer = document.getElementById('popup');
+	            //create overlayers (popup..)
+	            var overlay = new ol.Overlay({
+		              element: popupContainer,
+		              autoPan: true,
+		              autoPanAnimation: {
+		                duration: 250
+		              }
+	            });
+	
+		    	//setting coordinates (from the first layer if they aren't set into the template)
+	            if ($scope.ngModel.content.currentView.center[0] == 0 && $scope.ngModel.content.currentView.center[1] == 0 && $scope.layers.length > 0){
+		    		var tmpLayer = $scope.layers[0].layer;
+		    		cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, tmpLayer, false);
+		    		
+		    		//$scope.addViewEvents();
+		    		//$scope.addMapEvents(overlay);
+	    		}
+	    		
+	            
+	    		$scope.map = new ol.Map({
+	    		  target:  $scope.ngModel.content.mapId,
+	    		  layers: [ $scope.baseLayer ],
+	    		  overlays: [overlay],
+	    		  view: new ol.View({
+	    		    center: $scope.ngModel.content.currentView.center,
+	    		    zoom:  $scope.ngModel.content.currentView.zoom || 3
+	    		  })
+	    		});
+	    		
+	    		
+	    		
+	    		//just for refresh
+	    		if (!$scope.map.getSize()){
+	    			$scope.map.setSize([cockpitModule_widgetConfigurator.map.initialDimension.width, 
+	    							    cockpitModule_widgetConfigurator.map.initialDimension.height]);
+	    		}else{
+	    			$scope.map.setSize($scope.map.getSize());
+	    		}
+	    		
+				$scope.map.renderSync();
+				
+				//add events methods
 	    		$scope.addViewEvents();
-	    		$scope.addMapEvents(overlay);
-    		}
-    		
-            var popupContainer = document.getElementById('popup');
-            //create overlayers (popup..)
-            var overlay = new ol.Overlay({
-	              element: popupContainer,
-	              autoPan: true,
-	              autoPanAnimation: {
-	                duration: 250
-	              }
-            });
-    		$scope.map = new ol.Map({
-    		  target:  $scope.ngModel.content.mapId,
-    		  layers: [ $scope.baseLayer ],
-    		  overlays: [overlay],
-    		  view: new ol.View({
-    		    center: $scope.ngModel.content.currentView.center,
-    		    zoom:  $scope.ngModel.content.currentView.zoom || 3
-    		  })
-    		});
-    		
-    		//add events methods
-    		$scope.addViewEvents();
-    		$scope.addMapEvents(overlay);
-    		
-    		//just for refresh
-    		if (!$scope.map.getSize()){
-    			$scope.map.setSize([cockpitModule_widgetConfigurator.map.initialDimension.width, 
-    							    cockpitModule_widgetConfigurator.map.initialDimension.height]);
-    		}else{
-    			$scope.map.setSize($scope.map.getSize());
-    		}
-			$scope.map.renderSync();
+	    		$scope.addMapEvents(overlay);	
+	    		}
+	    	);
 	    }
 	    
 	    //control panel events
