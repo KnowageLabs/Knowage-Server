@@ -80,7 +80,14 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
+			<version>3.1.0</version> <!-- WebLogic uses 3.1.0, Tomcat 7 uses 3.0 -->
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.portlet</groupId>
+			<artifactId>portlet-api</artifactId>
+			<version>2.0</version>
 			<scope>provided</scope>
 		</dependency>
 		
