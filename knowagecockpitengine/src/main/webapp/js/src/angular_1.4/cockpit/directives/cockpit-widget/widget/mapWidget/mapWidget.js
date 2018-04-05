@@ -305,30 +305,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         	            });
             	//popup isn't shown with cluster
     	        if (feature) {
-    	        	var tempFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
+    	        	$scope.tempFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
     	        	
-    	            var geometry = tempFeature.getGeometry();
-    	            var props = tempFeature.getProperties();
+    	            var geometry = $scope.tempFeature.getGeometry();
+    	            $scope.props = $scope.tempFeature.getProperties();
     	            var coordinate = geometry.getCoordinates();
     	            var config = $scope.getColumnSelectedOfDataset(layer.dsId);
-    	            var text = "";
-    	            var tooltip = " ";
-	            	var warning = " ";
-    	            for (var p in props){
-    	            	var pDett = ($scope.isDisplayableProp(p, config));
-    	            	if (pDett != null)
-    	            		text += '<b>' + pDett.aliasToShow + ":</b> " + props[p].value + '<br>';
-//    	            	if (props[p].showWarning) warning = "<i class='fa fa-warning' title='Attention! The feature value is within the Alarm range!'></i>";
-    	            	if (props[p].showWarning) {
-    	            		warning = "<i class='fa fa-warning'><br></i>" +
-    	            				  "<i>   Attention! <br>The [<b>"+ pDett.aliasToShow + "</b>] value is within the Alarm range!</i><br><br>";
-    	            		popupContent.className = "warning";
-    	            	}	
+    	            for (var p in $scope.props){
+    	            	$scope.props[p].detail = ($scope.isDisplayableProp(p, config));
     	            }
-    	            if (text != ""){
-	    		        popupContent.innerHTML = "<h3>DETAILS</h3> " + warning + text + "";
-	    		        overlay.setPosition(coordinate);
-    	            }
+    	            overlay.setPosition(coordinate);
     	        }
              });
     		

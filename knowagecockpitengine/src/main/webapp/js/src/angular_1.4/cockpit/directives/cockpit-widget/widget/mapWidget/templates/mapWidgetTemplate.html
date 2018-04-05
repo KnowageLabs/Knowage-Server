@@ -10,7 +10,15 @@
  		 <a href="#" id="popup-closer" class="ol-popup-closer">
  		 	<i class="fa fa-times"></i>
  		 </a>
- 		 <div id="popup-content"></div>
+ 		 <div id="popup-content">
+ 		 	<h2>DETAILS</h2>
+    	    <ul>
+    	    	<li ng-repeat="prop in props" ng-if="prop.detail">
+    	    		<p><strong>{{prop.detail.aliasToShow}}:</strong>{{prop.value}}</p>
+    	    		<p ng-if="prop.showWarning"><i class='fa fa-warning'></i> The value is within the Alarm range!</p>
+    	    	</li>
+    	    </ul>
+ 		 </div>
  	</div>
  	
     
