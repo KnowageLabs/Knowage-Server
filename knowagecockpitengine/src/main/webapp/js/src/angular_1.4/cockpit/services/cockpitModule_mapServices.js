@@ -5,6 +5,7 @@
 		function CockpitModuleMapServiceController(
 				sbiModule_translate,
 				sbiModule_restServices,
+				sbiModule_messaging,
 				cockpitModule_template,
 				$q, 
 				$mdPanel,
@@ -22,8 +23,17 @@
 		ms.getFeaturesDetails = function(geoColumn, selectedMeasure, config, configColumns, values){
 			if (values != undefined){
 				var geoFieldName;
-				var geoFieldValue;			
+				var geoFieldValue;	
+				var geoFieldConfig;
 				var	featuresSource = new ol.source.Vector();
+				
+				for(var c=0; c < configColumns.length; c++){
+					var conf = configColumns[c];
+					if (conf.name === geoColumn){
+						geoFieldConfig = conf;
+						break;
+					}
+				}
 				 
 				for(var k=0; k < values.metaData.fields.length; k++){
 					var field = values.metaData.fields[k];
@@ -32,40 +42,79 @@
 						break;
 					}
 				}
+				
 				if (geoFieldName){
+					var lon;
+					var lat;
+					
 					for(var r=0; r < values.rows.length; r++){
 						//get coordinates
-						var lonlat;
+						var coord;
 						var row = values.rows[r];
 						geoFieldValue = row[geoFieldName].trim();
+						if (!geoFieldConfig.properties.coordType){
+							//retrocompatibility management
+							geoFieldConfig.properties.coordType = 'string';
+							geoFieldConfig.properties.coordFormat = 'lon lat';
+						}
+						
+						if (geoFieldConfig.properties.coordType == 'json'){
+							var jsonConf = JSON.parse(geoFieldValue);
+							
+							if (geoFieldConfig.properties.jsonFeatureType != 'Point'){ //for the moment just Point are managed
+								sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.jsonCoordTypeInvalid').replace("{0}",geoFieldConfig.properties.jsonFeatureType), 'Title', 0);
+								console.log("Json feature of type ["+ geoFieldConfig.properties.jsonFeatureType +"] is not managed. Only [Point] are permit.");
+								return null;
+							}
+							geoFieldValue = jsonConf.coordinates[0] + " " + jsonConf.coordinates[1];
+						}
+						
 						if (geoFieldValue.indexOf(" ") > 0){
-							lonlat = geoFieldValue.split(" ");
+							coord = geoFieldValue.split(" ");
 						}else if (geoFieldValue.indexOf(",")){
-							lonlat = geoFieldValue.split(",");
+							coord = geoFieldValue.split(",");
 						}else{
 							sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.lonLatError').replace("{0}",geoColumn).replace("{1}",geoFieldValue), 'Title', 0);
 							console.log("Error getting longitude and latitude from column value ["+ geoColumn +"]. Check the dataset and its metadata.");
 							return null;
 						}
-						if (lonlat.length != 2){
+						if (coord.length != 2){
 							sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.lonLatError').replace("{0}",geoColumn).replace("{1}",geoFieldValue), 'Title', 0);
 							console.log("Error getting longitude and latitude from column value ["+ geoColumn +"]. Check the dataset and its metadata.");
 							return null;
 						}
+						
+						//setting lon, lat values with correct order (LON, LAT)
+						switch(geoFieldConfig.properties.coordFormat) {
+					    case "lon lat": 
+					    	lon = parseFloat(coord[0].trim());
+					    	lat = parseFloat(coord[1].trim());
+					        break;
+					    case "lat lon":
+					    	lon = parseFloat(coord[1].trim());
+					    	lat = parseFloat(coord[0].trim());
+					    	break;
+					    default: 
+					    	lon = parseFloat(coord[0].trim());
+				    		lat = parseFloat(coord[1].trim());
+		    		}
+						
+						
+						//set ol objects
+						var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
+						var feature = new ol.Feature();  
+
+				        var coordinate = transform([lon, lat]); 
+				        var geometry = new ol.geom.Point(coordinate);
+				        feature.setGeometry(geometry);
+
 						if (!selectedMeasure) selectedMeasure = config.defaultIndicator;					
 						//get config for thematize
 						if (selectedMeasure){
 							if (!ms.getCacheSymbolMinMax().hasOwnProperty(config.name+"|"+selectedMeasure)){
 								ms.loadIndicatorMaxMinVal(config.name+"|"+ selectedMeasure, values);
 							}
-						}
-						
-						//set ol objects
-						var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
-						var feature = new ol.Feature();  
-				        var coordinate = transform([parseFloat(lonlat[0].trim()), parseFloat(lonlat[1].trim())]);
-				        var geometry = new ol.geom.Point(coordinate);
-				        feature.setGeometry(geometry);
+						}	
 				        ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
 				       //at least add the layer owner
 				        feature.set("parentLayer",config.name);
@@ -416,7 +465,7 @@
 						});
 			        break;
 			    case "Stamen":
-			    	//toner-hybrid, toner, toner-background, toner-hybrid, toner-labels, toner-lines, toner-lite,terrain, terrain-background, terrain-labels, terrain-lines
+			    	//layer: watercolor, toner-hybrid, toner, toner-background, toner-hybrid, toner-labels, toner-lines, toner-lite,terrain, terrain-background, terrain-labels, terrain-lines
 			    	toReturn = new ol.layer.Tile({
 			   	    	visible: true,
 			   	    	source: new ol.source.Stamen({
