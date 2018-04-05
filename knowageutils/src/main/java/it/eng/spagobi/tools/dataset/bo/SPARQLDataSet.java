@@ -1,3 +1,20 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.spagobi.tools.dataset.bo;
 
 import org.apache.log4j.Logger;
@@ -19,8 +36,6 @@ public class SPARQLDataSet extends ConfigurableDataSet {
 	private static final Logger logger = Logger.getLogger(SPARQLDataSet.class);
 
 	public static final String DATASET_TYPE = "SbiSPARQLDataSet";
-
-	private static final String SPARQL_QUERY = "sparqlQuery";
 
 	private final ParametersResolver parametersResolver = new ParametersResolver();
 
@@ -51,7 +66,7 @@ public class SPARQLDataSet extends ConfigurableDataSet {
 
 	public void initConf(JSONObject jsonConf, boolean resolveParams) {
 		initDataProxy(jsonConf, resolveParams);
-		initDataReader(jsonConf, resolveParams);
+		initDataReader();
 	}
 
 	protected String getProp(String propName, JSONObject conf, boolean optional, boolean resolveParams) {
@@ -92,7 +107,7 @@ public class SPARQLDataSet extends ConfigurableDataSet {
 		}
 	}
 
-	private void initDataReader(JSONObject jsonConf, boolean resolveParams) {
+	private void initDataReader() {
 
 		setDataReader(new SPARQLDataReader());
 
@@ -114,11 +129,19 @@ public class SPARQLDataSet extends ConfigurableDataSet {
 
 	@Override
 	public IDataSource getDataSource() {
+		logger.debug("This data set doesn't have dataSource.");
 		return null;
 	}
 
 	@Override
 	public void setDataSource(IDataSource dataSource) {
-		throw new IllegalStateException(RESTDataSet.class.getSimpleName() + " doesn't need the dataSource");
+		throw new IllegalStateException(SPARQLDataSet.class.getSimpleName() + " doesn't need the dataSource");
+	}
+
+	@Override
+	public SpagoBiDataSet toSpagoBiDataSet() {
+		SpagoBiDataSet sbd = super.toSpagoBiDataSet();
+		sbd.setType(DATASET_TYPE);
+		return sbd;
 	}
 }

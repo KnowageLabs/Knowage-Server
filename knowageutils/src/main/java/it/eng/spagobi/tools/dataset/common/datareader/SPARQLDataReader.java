@@ -1,7 +1,22 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +31,6 @@ import org.apache.log4j.Logger;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
@@ -28,6 +42,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SPARQLDataReader extends AbstractDataReader {
 
+	private static final int ROWS_LIMIT_GUESS_TYPE_HEURISTIC = 10000;
 	private static transient Logger logger = Logger.getLogger(SPARQLDataReader.class);
 
 	public SPARQLDataReader() {
@@ -51,29 +66,13 @@ public class SPARQLDataReader extends AbstractDataReader {
 					"This SPARQLDataReader is able to get the data only from " + ResultSet.class + ". Input object is an instance of " + data.getClass());
 			resultSet = (ResultSet) data;
 
-			IField field = null;
 			List<String> columnNames = resultSet.getResultVars();
 			logger.debug("Retrieved columns: " + columnNames);
 
-			for (int i = 0; i < columnNames.size(); i++) {
-				FieldMetadata fieldMeta = new FieldMetadata();
-				fieldMeta.setName(columnNames.get(i));
-				dataStoreMeta.addFiedMeta(fieldMeta);
+			FieldMetadata[] fieldsMetadata = initializeFieldsMetadata(columnNames);
+			dataStoreMeta.setFieldsMeta(fieldsMetadata);
 
-			}
-
-			for (; resultSet.hasNext();) {
-				QuerySolution row = resultSet.nextSolution();
-				IRecord record = new Record(dataStore);
-				for (int i = 0; i < columnNames.size(); i++) {
-
-					IFieldMetaData fieldMeta = dataStoreMeta.getFieldMeta(i);
-					String columnName = columnNames.get(i);
-					RDFNode rdfNode = row.get(columnName);
-					isLiteralOrResource(rdfNode, fieldMeta, field, record);
-				}
-				dataStore.appendRecord(record);
-			}
+			parseResultSet(dataStore, dataStoreMeta, resultSet);
 
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Exception reading data", e);
@@ -84,67 +83,76 @@ public class SPARQLDataReader extends AbstractDataReader {
 		return dataStore;
 	}
 
-	private void isLiteralOrResource(RDFNode rdfNode, IFieldMetaData fieldMeta, IField field, IRecord record) {
+	private void parseResultSet(DataStore dataStore, MetaData dataStoreMeta, ResultSet resultSet) {
+		List<String> columnNames = resultSet.getResultVars();
+		for (; resultSet.hasNext();) {
+			QuerySolution row = resultSet.nextSolution();
+			IRecord record = new Record(dataStore);
+			for (int i = 0; i < columnNames.size(); i++) {
+				IFieldMetaData fieldMeta = dataStoreMeta.getFieldMeta(i);
+
+				String columnName = columnNames.get(i);
+				RDFNode rdfNode = row.get(columnName);
+				getValue(rdfNode, record);
+				getMetaData(rdfNode, fieldMeta);
+			}
+			dataStore.appendRecord(record);
+		}
+	}
+
+	private FieldMetadata[] initializeFieldsMetadata(List<String> columnNames) {
+		FieldMetadata[] toReturn = new FieldMetadata[columnNames.size()];
+		for (int i = 0; i < columnNames.size(); i++) {
+			FieldMetadata fieldMeta = new FieldMetadata();
+			fieldMeta.setName(columnNames.get(i));
+			toReturn[i] = fieldMeta;
+		}
+		return toReturn;
+	}
+
+	private void getValue(RDFNode rdfNode, IRecord record) {
 		if (rdfNode.isLiteral()) {
 			Literal literal = (Literal) rdfNode;
 			Object value = literal.getValue();
-			setClassAndFieldType(literal, fieldMeta);
-			field = new Field(value);
+			Field field = new Field(value);
 			record.appendField(field);
 		} else if (rdfNode.isResource()) {
 			Resource resource = (Resource) rdfNode;
 			Object value = resource.getURI();
-			fieldMeta.setType(String.class);
-			fieldMeta.setFieldType(FieldType.ATTRIBUTE);
-			field = new Field(value);
+			Field field = new Field(value);
 			record.appendField(field);
 		}
 	}
 
-	// metadata - field and class type
-	private void setClassAndFieldType(Literal literal, IFieldMetaData fieldMeta) {
-
-		if (literal.getValue().getClass().equals(String.class)) {
+	private void getMetaData(RDFNode rdfNode, IFieldMetaData fieldMeta) {
+		if (rdfNode.isLiteral()) {
+			Literal literal = (Literal) rdfNode;
+			Class classType = getClassType(literal);
+			fieldMeta.setType(classType);
+			FieldType type = getDefaultFieldType(literal);
+			fieldMeta.setFieldType(type);
+		} else if (rdfNode.isResource()) {
 			fieldMeta.setType(String.class);
 			fieldMeta.setFieldType(FieldType.ATTRIBUTE);
-		} else if (literal.getValue().getClass().equals(Character.class)) {
-			fieldMeta.setType(Character.class);
-			fieldMeta.setFieldType(FieldType.ATTRIBUTE);
-		} else if (literal.getValue().getClass().equals(Integer.class)) {
-			fieldMeta.setType(Integer.class);
-			fieldMeta.setFieldType(FieldType.MEASURE);
-		} else if (literal.getValue().getClass().equals(Double.class)) {
-			fieldMeta.setType(Double.class);
-			fieldMeta.setFieldType(FieldType.MEASURE);
-		} else if (literal.getValue().getClass().equals(Float.class)) {
-			fieldMeta.setType(Float.class);
-			fieldMeta.setFieldType(FieldType.MEASURE);
-		} else if (literal.getValue().getClass().equals(Boolean.class)) {
-			fieldMeta.setType(Boolean.class);
-			fieldMeta.setFieldType(FieldType.ATTRIBUTE);
-		} else if (literal.getValue().getClass().equals(Byte.class)) {
-			fieldMeta.setType(Byte.class);
-			fieldMeta.setFieldType(FieldType.ATTRIBUTE);
-		} else if (literal.getValue().getClass().equals(Short.class)) {
-			fieldMeta.setType(Short.class);
-			fieldMeta.setFieldType(FieldType.MEASURE);
-		} else if (literal.getValue().getClass().equals(BigInteger.class)) {
-			fieldMeta.setType(BigInteger.class);
-			fieldMeta.setFieldType(FieldType.MEASURE);
-		} else if (literal.getValue().getClass().equals(BigDecimal.class)) {
-			fieldMeta.setType(BigDecimal.class);
-			fieldMeta.setFieldType(FieldType.MEASURE);
-		} else if (literal.getValue().getClass().equals(Long.class)) {
-			fieldMeta.setType(Long.class);
-			fieldMeta.setFieldType(FieldType.MEASURE);
-		} else if (literal.getValue().getClass().equals(Date.class)) {
-			fieldMeta.setType(Date.class);
-			fieldMeta.setFieldType(FieldType.ATTRIBUTE);
-		} else if (literal.getValue().getClass().equals(Timestamp.class)) {
-			fieldMeta.setType(Timestamp.class);
-			fieldMeta.setFieldType(FieldType.ATTRIBUTE);
 		}
+	}
 
+	private Class getClassType(Literal literal) {
+		return literal.getValue().getClass();
+	}
+
+	private FieldType getDefaultFieldType(Literal literal) {
+		if (literal.getValue().getClass().equals(Character.class) ||
+				literal.getValue().getClass().equals(Boolean.class) ||
+				literal.getValue().getClass().equals(Date.class) ||
+				literal.getValue().getClass().equals(Timestamp.class) ||
+				literal.getValue().getClass().equals(Byte.class) ||
+				literal.getValue().getClass().equals(String.class)
+				) {
+			return FieldType.ATTRIBUTE;
+		} else {
+			return FieldType.MEASURE;
+		}
 	}
 
 }
