@@ -97,16 +97,16 @@
 												</td>
 												<td>
 													<md-input-container >
-														<md-select ng-model="column.properties.coordFormat">
-															<md-option value="lat long">lat long</md-option>
-															<md-option value="long lat">long lat</md-option>
+														<md-select ng-model="column.properties.coordFormat" ng-init="column.properties.coordFormat = column.properties.coordFormat || 'lon lat'">
+															<md-option value="lon lat">lon lat</md-option>
+															<md-option value="lat lon">lat lon</md-option>
 														</md-select>
 													</md-input-container>
 												</td>
 												<td>
 													<md-input-container ng-if="column.properties.coordType == 'json'">
-														<md-select ng-model="column.properties.jsonFeatureType">
-															<md-option value="string">Point</md-option>
+														<md-select ng-model="column.properties.jsonFeatureType" ng-init="column.properties.jsonFeatureType = column.properties.jsonFeatureType || 'Point'">
+															<md-option value="Point">Point</md-option>
 														</md-select>
 													</md-input-container>
 												</td>
