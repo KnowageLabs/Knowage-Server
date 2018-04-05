@@ -4053,7 +4053,22 @@ UPDATE hibernate_sequences SET next_val = (SELECT MAX(VALUE_ID) + 1 FROM SBI_DOM
 -- 19.02.2018 Giulio Gavardi
 -- new signup default tenant configuration
 
-INSERT INTO .SBI_CONFIG (ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, VALUE_TYPE_ID, USER_IN, USER_UP, TIME_IN, TIME_UP, SBI_VERSION_IN, SBI_VERSION_UP, ORGANIZATION, CATEGORY) VALUES ('160', 'SPAGOBI.SECURITY.DEFAULT_TENANT_ON_SIGNUP', 'Default tenant on signup', 'Default tenant on signup', '1', 'DEFAULT_TENANT', '29', 'server', 'biadmin', current_timestamp, current_timestamp, '6.1', '6.1', 'DEFAULT_TENANT', 'SECURITY');
+INSERT INTO SBI_CONFIG (ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, VALUE_TYPE_ID, USER_IN, USER_UP, TIME_IN, TIME_UP, SBI_VERSION_IN, SBI_VERSION_UP, ORGANIZATION, CATEGORY) 
+VALUES 
+(
+(select next_val +1 from hibernate_sequences where sequence_name = 'SBI_CONFIG'), 
+'SPAGOBI.SECURITY.DEFAULT_TENANT_ON_SIGNUP', 
+'Default tenant on signup', 
+'Default tenant on signup', 
+'1', 
+'DEFAULT_TENANT', 
+(select VALUE_ID from SBI_DOMAINS where VALUE_CD = 'STRING' AND DOMAIN_CD = 'PAR_TYPE'), 
+'server', 'biadmin', current_timestamp, current_timestamp, '6.1', '6.1', 'DEFAULT_TENANT', 'SECURITY');
+
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
+commit
+
+
 
 -- 13.03.2018 Giulio Gavardi
 -- new column for roles , is_public
