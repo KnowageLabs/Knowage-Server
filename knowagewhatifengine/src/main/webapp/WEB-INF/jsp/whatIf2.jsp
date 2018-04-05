@@ -32,26 +32,26 @@
 	
 </script>
 </head>
-<body ng-controller="olapController" >
+<body layout="row" ng-controller="olapController" >
 
 <rest-loading></rest-loading>
 
  
-	<div layout="row">
+	
 		
-		<div layout="column" flex=100>
+		<div layout="column" flex>
 		
 			<main-toolbar ng-hide="true"></main-toolbar>
 		
 			<filter-panel></filter-panel>
 
-			<olap-panel></olap-panel>
+			<olap-panel></olap-panel >
 			
 		</div>
 
 		<div style="width:2px"></div>
 		
 		<sbi-side-nav></sbi-side-nav>
-	</div>
+	
 </body>
 </html>

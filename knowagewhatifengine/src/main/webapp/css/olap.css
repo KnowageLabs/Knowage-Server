@@ -75,7 +75,8 @@
 
 /*changed by @aghedin*/
 .top-alignment-auto-height{
-	height:auto;
+	min-height:85px;
+	max-height:85px
 }
 
 /*added by @nsimovic*/
@@ -85,14 +86,7 @@
      max-width: calc(100% - 52px);
   }  
 
-/*added by @nsimovic*/
- @-moz-document url-prefix() { 
-  .table-alignment {
-     position:absolute;
-     top:20px;
-     max-width: calc(100% - 52px);
-  }  
-}
+
 
 .groupX {
     font-size: 12px;
@@ -322,20 +316,13 @@ md-tabs .md-tab.md-active{
 }
 
 .central-panel{
-    height:calc(100% - 120px);
-    width:100%;
-    position:absolute;
-    bottom:10px;
+/*     height:calc(100% - 120px); */
+/*     width:100%; */
+/*     position:absolute; */
+/*     bottom:10px; */
 }
 
-@-moz-document url-prefix() { 
-	.central-panel{
-	    height:calc(100% - 100px);
-	    width:100%;
-	    position:absolute;
-	    bottom:10px;
-	}
-}
+
 
 .dialog-style{
     padding: 10px;
@@ -692,18 +679,10 @@ md-dialog.fullscreen-dialog {
 }
 
 .top-axis{
-		position: absolute;
-		width: 100%;
-		bottom: calc(100% - 110px);
+	min-height: 32px;
 	}
 
-@-moz-document url-prefix() { 
-	.top-axis{
-		position: absolute;
-		width: 100%;
-		bottom: calc(100% - 110px);
-	}
-}
+
 md-option[selected], md-select-menu md-option[selected]{
 	color:#3b678c!important;
 }
@@ -851,7 +830,7 @@ md-option[selected], md-select-menu md-option[selected]{
 }
 
 .filter-panel{
-	width:100%;
+/* 	width:100%; */
 }
 
 .multi-hier-dialog{

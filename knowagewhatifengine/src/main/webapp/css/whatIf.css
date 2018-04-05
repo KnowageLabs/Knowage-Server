@@ -24,6 +24,7 @@
 
 .pivot-table{
 	/*border-collapse: collapse;*/
+	position:absolute;
 	text-align:left;
 	table-layout: fixed;
 	color: rgba(0,0,0,0.54);
