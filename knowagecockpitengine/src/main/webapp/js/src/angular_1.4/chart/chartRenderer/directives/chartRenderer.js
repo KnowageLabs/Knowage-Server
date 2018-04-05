@@ -69,7 +69,7 @@ angular.module('chartRendererModule')
 							delete scope.chartTemplate.CHART.COLORPALETTE.COLORCopy
 						}
 						
-						if(scope.chartTemplate.CHART.groupSeriesCateg){
+						if(scope.chartTemplate.CHART.groupSeriesCateg && scope.chartConf.series.length > 0){
 							scope.chartConf.colorsCopy = angular.copy(scope.chartConf.colors);
 							if(scope.colorMap){
 								if(Object.keys(scope.colorMap).length<=scope.chartConf.series.length){
