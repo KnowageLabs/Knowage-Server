@@ -1,8 +1,28 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
+import it.eng.LightNavigationConstants;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.navigation.LightNavigationManager;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -38,26 +58,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.objects.Couple;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 public class DocumentUrlManager {
 
@@ -157,7 +157,7 @@ public class DocumentUrlManager {
 			// identity string for context
 			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 			UUID uuid = uuidGen.generateRandomBasedUUID();
-			buffer.append("&" + LightNavigationManager.LIGHT_NAVIGATOR_ID + "=" + uuid.toString());
+			buffer.append("&" + LightNavigationConstants.LIGHT_NAVIGATOR_ID + "=" + uuid.toString());
 			List parameters = obj.getBiObjectParameters();
 			if (parameters != null && parameters.size() > 0) {
 				Iterator it = parameters.iterator();
@@ -218,8 +218,8 @@ public class DocumentUrlManager {
 			List errorsOnChecks = getValidationErrorsOnChecks(biparam);
 			List values = biparam.getParameterValues();
 			if (biparam.isRequired() && (values == null || values.isEmpty() || normalizeList(values).size() == 0)) {
-				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null,
-						null, null);
+				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null, null,
+						null);
 				errorsOnChecks.add(error);
 			}
 			if (errorsOnChecks != null && errorsOnChecks.size() > 0) {
