@@ -129,7 +129,6 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 	    $mdDialog.show(confirm)
 	    .then(function(result) {
 	    	 sheet.label=result;
-	    	 refreshToolbar();
 	    }, function() {});
 	}
 };

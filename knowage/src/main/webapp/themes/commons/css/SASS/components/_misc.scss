@@ -902,9 +902,19 @@ color-picker {
 }
 
 .warning {
-  &>md-icon {
+  &>md-icon, &>i {
     color: $negativeColor;
   }
+}
+
+.text-center {
+  text-align: center;
+}
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
 }
 
 /* IE11 fix */

@@ -1,7 +1,8 @@
 <md-tabs id="sheetTabs" ng-class="{'cockpitSheetTabs':cockpitModule_properties.EDIT_MODE && cockpitModule_template.sheets.length<maxSheetsNumber, 'highlander':cockpitModule_template.sheets.length==1}" class="cockpitSheetTabsHook" md-align-tabs="bottom" flex md-selected="cockpitModule_properties.CURRENT_SHEET" md-autoselect >
 	<md-tab ng-repeat="sheet in cockpitModule_template.sheets | orderObjectBy : 'index' | limitTo: maxSheetsNumber">
 		<md-tab-label >
-			<span ng-if="hide!=true" class="sheetPageButton-{{$index}}" >{{sheet.label}}</span>
+			<span ng-if="cockpitModule_properties.EDIT_MODE" class="sheetPageButton-{{$index}}" ng-dblclick="renameSheet(sheet,$event)">{{sheet.label}}</span>
+			<span ng-if="!cockpitModule_properties.EDIT_MODE" class="sheetPageButton-{{$index}}" >{{sheet.label}}</span>
 			<md-menu ng-show="cockpitModule_properties.EDIT_MODE">
          		<md-button class="md-icon-button openSheetMenuIconButton" ng-click="$mdOpenMenu();$event.stopPropagation()">
            			<md-icon md-font-icon="fa fa-caret-down" ></md-icon>

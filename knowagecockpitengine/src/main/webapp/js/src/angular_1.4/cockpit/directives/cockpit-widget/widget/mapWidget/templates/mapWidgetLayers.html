@@ -71,48 +71,93 @@
 							    <span flex></span>
 							  </div>
 							</md-toolbar>
-							<md-card-content flex layout="column" >
-								<table class="kn-table kn-table-row-highlight kn-table-alternated-rows" ng-if="newModel.content.layers.length > 0">
-									<thead>
-										<tr>
-											<th>Column</th>
-											<th>Alias</th>
-											<th>Type</th>
-											<th>Aggregation function</th>
-											<th>Show on detail</th>
-											<th>Show on map</th>
-											<th></th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-repeat="column in newModel.content.columnSelectedOfDataset[layer.dsId] | orderBy:'fieldType':true " ng-class="{'highlight':column.fieldType=='SPATIAL_ATTRIBUTE'}">
-											
-											<td><md-icon ng-if="column.fieldType=='SPATIAL_ATTRIBUTE'" md-font-icon="fa fa-globe"></md-icon> {{column.name}}</td>
-											<td>
-												<md-input-container>
-													<input ng-model="column.aliasToShow" type="text">
-												</md-input-container>
-											</td>
-											<td>{{column.fieldType}}</td>
-											<td>
-												<md-input-container ng-if="column.fieldType === 'MEASURE'">
-													<md-select ng-model="column.properties.aggregationSelected" ng-init="column.properties.aggregationSelected=column.properties.aggregationSelected||availableAggregationFunctions[0]">
-														<md-option ng-repeat="func in availableAggregationFunctions" ng-value="func">{{func}}</md-option>
-													</md-select>
-												</md-input-container>
-											</td>
-											<td>
-												<md-checkbox ng-model="column.properties.showDetails" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE' || column.fieldType=='ATTRIBUTE'"/>
-											</td>
-											<td>
-												<md-checkbox ng-model="column.properties.showMap" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE'"/>
-											</td>
-											<td class="tableAction">
-												<md-icon style="cursor: pointer" md-font-icon="fa fa-sliders" ng-if="column.fieldType === 'MEASURE'" ng-click="getThresholds($event,column)"></md-icon>
-											</td>
-										</tr>
-									</tbody>
-								</table>		
+							<md-card-content flex layout="column" class="noPadding">
+								<md-subheader>Spatial Attribute</md-subheader>
+								<div layout-padding>
+									<table class="kn-table kn-table-row-highlight" ng-if="newModel.content.layers.length > 0" >
+										<thead>
+											<tr>
+												<th>Column</th>
+												<th>Coordinates Type</th>
+												<th>Coordinates Format</th>
+												<th>Json Feature Type</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="column in newModel.content.columnSelectedOfDataset[layer.dsId] | filter:{'fieldType':'SPATIAL_ATTRIBUTE'}" >
+												
+												<td> {{column.name}}</td>
+												<td>
+													<md-input-container >
+														<md-select ng-model="column.properties.coordType">
+															<md-option value="string">string</md-option>
+															<md-option value="json">JSON</md-option>
+														</md-select>
+													</md-input-container>
+												</td>
+												<td>
+													<md-input-container >
+														<md-select ng-model="column.properties.coordFormat">
+															<md-option value="lat long">lat long</md-option>
+															<md-option value="long lat">long lat</md-option>
+														</md-select>
+													</md-input-container>
+												</td>
+												<td>
+													<md-input-container ng-if="column.properties.coordType == 'json'">
+														<md-select ng-model="column.properties.jsonFeatureType">
+															<md-option value="string">Point</md-option>
+														</md-select>
+													</md-input-container>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>	
+								<md-subheader>Fields</md-subheader>	
+								<div layout-padding>
+									<table class="kn-table kn-table-row-highlight kn-table-alternated-rows" ng-if="newModel.content.layers.length > 0" layout-padding>
+										<thead>
+											<tr>
+												<th>Column</th>
+												<th>Alias</th>
+												<th>Type</th>
+												<th>Aggregation function</th>
+												<th>Show on detail</th>
+												<th>Show on map</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="column in newModel.content.columnSelectedOfDataset[layer.dsId] | orderBy:'fieldType':true " ng-if="column.fieldType != 'SPATIAL_ATTRIBUTE'">
+												
+												<td> {{column.name}}</td>
+												<td>
+													<md-input-container>
+														<input ng-model="column.aliasToShow" type="text">
+													</md-input-container>
+												</td>
+												<td>{{column.fieldType}}</td>
+												<td>
+													<md-input-container ng-if="column.fieldType === 'MEASURE'">
+														<md-select ng-model="column.properties.aggregationSelected" ng-init="column.properties.aggregationSelected=column.properties.aggregationSelected||availableAggregationFunctions[0]">
+															<md-option ng-repeat="func in availableAggregationFunctions" ng-value="func">{{func}}</md-option>
+														</md-select>
+													</md-input-container>
+												</td>
+												<td>
+													<md-checkbox ng-model="column.properties.showDetails" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE' || column.fieldType=='ATTRIBUTE'"/>
+												</td>
+												<td>
+													<md-checkbox ng-model="column.properties.showMap" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE'"/>
+												</td>
+												<td class="tableAction">
+													<md-icon style="cursor: pointer" md-font-icon="fa fa-sliders" ng-if="column.fieldType === 'MEASURE'" ng-click="getThresholds($event,column)"></md-icon>
+												</td>
+											</tr>
+										</tbody>
+									</table>	
+								</div>	
 							</md-card-content>
 						</md-card>
 						

@@ -123,8 +123,10 @@
 		}
 	}
 	&.kn-table-alternated-rows {
-		tr:nth-child(odd) {
-			background: $pageBackground;
+		tbody{
+			tr:nth-child(odd) {
+				background: $pageBackground;
+			}
 		}
 	}
 	&.kn-table-medium-rows {
