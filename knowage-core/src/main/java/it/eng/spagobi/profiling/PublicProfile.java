@@ -117,7 +117,7 @@ public class PublicProfile {
 			profile.setIsSuperadmin(false);
 
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
-			roleDAO.setTenant("DEFAULT_TENANT");
+			roleDAO.setTenant(organization);
 			Role publicRole = roleDAO.loadPublicRole();
 
 			List roles = new ArrayList();
