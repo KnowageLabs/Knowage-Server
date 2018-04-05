@@ -67,6 +67,7 @@ public class ServerPWCallback implements CallbackHandler {
 					String password = pc.getPassword();
 					// Now pass them to your authentication mechanism
 					SpagoBIUserProfile profile = authenticate(userId, password); // throws WSSecurityException.FAILED_AUTHENTICATION on failure
+					logger.debug("New userId is " + profile.getUniqueIdentifier());
 					userId = profile.getUniqueIdentifier();
 				} else {
 					logger.error("WSPasswordCallback usage [" + pc.getUsage() + "] not treated.");
@@ -74,6 +75,7 @@ public class ServerPWCallback implements CallbackHandler {
 				}
 				// Put userId into MessageContext (for services that depend on profiling)
 				MessageContext mc = MessageContext.getCurrentContext();
+				logger.debug("Setting userId to " + userId);
 				mc.setProperty(WSHandlerConstants.USER, userId);
 			} else {
 				logger.error("Unrecognized Callback");
