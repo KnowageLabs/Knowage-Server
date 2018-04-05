@@ -17,6 +17,21 @@
  */
 package it.eng.spagobi.tools.dataset.notifier.fiware;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.NameValuePair;
+import org.joda.time.DurationFieldType;
+import org.joda.time.MutableDateTime;
+import org.json.JSONException;
+
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
@@ -37,21 +52,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 import it.eng.spagobi.utilities.rest.RestUtilities.Response;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.NameValuePair;
-import org.joda.time.DurationFieldType;
-import org.joda.time.MutableDateTime;
-import org.json.JSONException;
 
 public class OrionContextSubscriber {
 
@@ -236,7 +236,7 @@ public class OrionContextSubscriber {
 		}
 
 		Subscription subscription = new Subscription();
-		subscription.setDescription("A subscription Knowage app. Requested by the user [ " + user + " ] for the dataset [ " + label);
+		subscription.setDescription("A subscription Knowage app. Requested by user [" + user + "] for dataset [" + label + "]");
 
 		Subject subject = new Subject();
 		Entity entity = new Entity();
@@ -251,8 +251,10 @@ public class OrionContextSubscriber {
 			}
 		}
 
-		if (!((entity.getId() != null) ^ (entity.getIdPattern() != null))) {
-			throw new NGSISubscribingException("One and only one param between id and idPattern can be submitted.");
+		if (entity.getId() != null && entity.getIdPattern() != null) {
+			throw new NGSISubscribingException("Only one param between id and idPattern can be submitted.");
+		} else if (entity.getId() == null && entity.getIdPattern() == null) {
+			entity.setIdPattern(".*");
 		}
 
 		List<Entity> entities = new ArrayList<>();
