@@ -1060,8 +1060,8 @@ public class ManageDataSetsForREST {
 				for (int i = 0; i < metaData.getFieldCount(); i++) {
 					IFieldMetaData ifmd = metaData.getFieldMeta(i);
 
-					//check if file data set, apply metadata values passed from frontend
-					if(dataSet instanceof FileDataSet) {
+					// check if file data set, apply metadata values passed from frontend
+					if (dataSet instanceof FileDataSet) {
 						for (int j = 0; j < metadataArray.length(); j++) {
 							if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
 								ifmd.setType(MetaDataMapping.getMetaDataType(metadataArray.getJSONObject(j).getString("type")));
@@ -1248,11 +1248,12 @@ public class ManageDataSetsForREST {
 			config.put(ja, new JSONArray(json.getString(ja)));
 		}
 		RESTDataSet res = new RESTDataSet(config);
+		res.setLabel(json.optString(DataSetConstants.LABEL));
 		return res;
 	}
 
 	private SPARQLDataSet manageSPARQLDataSet(boolean savingDataset, JSONObject config, JSONObject json) throws JSONException {
-		for(String sa : DataSetConstants.SPARQL_ATTRIBUTES) {
+		for (String sa : DataSetConstants.SPARQL_ATTRIBUTES) {
 			config.put(sa, json.optString(sa));
 		}
 		SPARQLDataSet res = new SPARQLDataSet(config);
