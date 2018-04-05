@@ -72,6 +72,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private static final String DEFAULT_TIME_PATTERN = "HH:mm:ss";
 
+	private static final String DEFAULT_TIMESTAMP_PATTERN_UNQUOTED = "yyyy-MM-ddTHH:mm:ss.SSSZ";
+
 	private static final String DEFAULT_TIMESTAMP_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
 	private static final String ATTRIBUTES_DIRECTLY = "attributesDirectly";
@@ -540,14 +542,17 @@ public class JSONPathDataReader extends AbstractDataReader {
 			while (typeString.charAt(index) == ' ') {
 				++index;
 			}
-			String res = typeString.substring(index).trim();
-			if (!res.isEmpty()) {
-				try {
-					new SimpleDateFormat(res); // try the pattern
-				} catch (IllegalArgumentException e) {
-					throw new JSONPathDataReaderException("Invalid pattern: " + res, e);
+			String format = typeString.substring(index).trim();
+			if (!format.isEmpty()) {
+				if (DEFAULT_TIMESTAMP_PATTERN_UNQUOTED.equals(format)) {
+					format = DEFAULT_TIMESTAMP_PATTERN;
 				}
-				return res;
+				try {
+					new SimpleDateFormat(format); // try the pattern
+				} catch (IllegalArgumentException e) {
+					throw new JSONPathDataReaderException("Invalid pattern: " + format, e);
+				}
+				return format;
 			}
 		}
 		if (typeString.toLowerCase().startsWith("datetime") || typeString.toLowerCase().startsWith("timestamp")) {
@@ -597,6 +602,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 		} else if (jsonPathType.toLowerCase().startsWith("date")) {
 			return Date.class;
 		} else if (jsonPathType.toLowerCase().startsWith("timestamp")) {
+			return Date.class;
+		} else if (jsonPathType.toLowerCase().startsWith("iso8601")) {
 			return Date.class;
 		} else if (jsonPathType.toLowerCase().startsWith("time")) {
 			return Date.class;
