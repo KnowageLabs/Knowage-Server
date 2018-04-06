@@ -18,16 +18,22 @@
 
 package it.eng.spagobi.utilities.rest.client;
 
+
+import java.util.concurrent.TimeUnit;
+
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 
 import org.apache.log4j.Logger;
-//import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
-//import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-//import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 public final class ProxyClientUtilities {
 
 	private static transient Logger logger = Logger.getLogger(ProxyClientUtilities.class);
+
+
 
 	public static WebTarget getTarget(String url) {
 
@@ -40,29 +46,29 @@ public final class ProxyClientUtilities {
 
 		logger.debug("Setting REST client");
 
-		// ResteasyWebTarget target = null;
-		//
-		//
-		// if (proxyHost != null && proxyPortInt > 0) {
-		// if (proxyUsername != null && proxyPassword != null) {
-		// logger.debug("Setting proxy with authentication");
-		// Client client = new ResteasyClientBuilder().defaultProxy(proxyHost, proxyPortInt).establishConnectionTimeout(10, TimeUnit.SECONDS).build();
-		// target = (ResteasyWebTarget)client.register(new BasicAuthentication(proxyUsername, proxyPassword)).target(url);
-		// logger.debug("Proxy with authentication set");
-		// } else {
-		// // Username and/or password not acceptable. Trying to set proxy without credentials
-		// logger.debug("Setting proxy without authentication");
-		// Client client = new ResteasyClientBuilder().establishConnectionTimeout(10, TimeUnit.SECONDS).build();
-		// target = (ResteasyWebTarget)client.target(url);
-		// logger.debug("Proxy without authentication set");
-		// }
-		// } else {
-		// logger.debug("No proxy configuration found");
-		// }
-		// logger.debug("REST client set");
-		//
-		// return target;
-		return null;
+
+		ResteasyWebTarget target = null;
+
+
+		if (proxyHost != null && proxyPortInt > 0) {
+			if (proxyUsername != null && proxyPassword != null) {
+				logger.debug("Setting proxy with authentication");
+				Client client = new ResteasyClientBuilder().defaultProxy(proxyHost, proxyPortInt).establishConnectionTimeout(10, TimeUnit.SECONDS).build();
+				target = (ResteasyWebTarget)client.register(new BasicAuthentication(proxyUsername, proxyPassword)).target(url);
+				logger.debug("Proxy with authentication set");
+			} else {
+				// Username and/or password not acceptable. Trying to set proxy without credentials
+				logger.debug("Setting proxy without authentication");
+				Client client = new ResteasyClientBuilder().establishConnectionTimeout(10, TimeUnit.SECONDS).build();
+				target = (ResteasyWebTarget)client.target(url);
+				logger.debug("Proxy without authentication set");
+			}
+		} else {
+			logger.debug("No proxy configuration found");
+		}
+		logger.debug("REST client set");
+
+		return target;
 	}
 
 	private static Integer portAsInteger(String input) {
