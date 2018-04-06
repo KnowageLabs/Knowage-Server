@@ -1852,6 +1852,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 								.add(org.hibernate.criterion.Property.forName("label").as("label"))
 								.add(org.hibernate.criterion.Property.forName("state").as("state"))
 								.add(org.hibernate.criterion.Property.forName("visible").as("visible"))
+								.add(org.hibernate.criterion.Property.forName("profiledVisibility").as("profiledVisibility"))
 								.add(org.hibernate.criterion.Property.forName("previewFile").as("previewFile")))
 						.setResultTransformer(Transformers.aliasToBean(SbiObjects.class)).list();
 
