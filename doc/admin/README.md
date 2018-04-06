@@ -494,9 +494,8 @@ Once set the public role administrator is responsible to assign permissions to f
 
 Two menu button in document execution toolbar are available
 
-- copy link
-
-- embed in HTML
+-   copy link
+-   embed in HTML
 
 By clciking on it the document execution url is showned and user can copy it.
 
@@ -508,3 +507,24 @@ invoke the URL and see the document execution.
 ###  The anonymous user
 
 Everyone who receives a shared public URL can execute the document even if not authenticated by knowage; only if the documetn is stille executable by public role, otherwise system gives error,
+
+
+Copy Link to share analysis
+----------------------------
+By setting to true the config variable SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY the signup functionality is activated, it appears as a "register" button in login page
+
+### The registration procedure
+
+By clicking on REGISTER button user can acceed to registration page and provide following data:
+-   name and surname
+-   userId, password and password confirmation
+-   email
+-   a security captcha
+
+after filling all informations and clicking on REGISTER button the user is inserted into database (unless userId is already present, in which case a warning is given), but in a "Not active" state.
+
+An e-mail is sent to provided address containing a link for validation (it contains a validation timestamp so has a limited validity).
+
+After clicking on this link the registration is completed and user can login.
+
+### configurations for signup
