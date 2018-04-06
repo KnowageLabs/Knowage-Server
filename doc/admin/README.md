@@ -483,29 +483,27 @@ With Knowage 6.2 version it has been introduced possibility for a user, after ex
 ###  Public role
 The first step is the definition of a public role.
 
-The public role is defined by administrator, with a checkbox on role definition. There can be only one public role for each tenant and knowage check no more than one role for tenant is marked as public.
+The public role is defined by administrator, with a checkbox on role definition. There can be only one public role for each tenant and knowage checks no more than one role for tenant is marked as public.
 
 Once set the public role administrator is responsible to assign permissions to folders and drivers and decide which documents can be shared to anonymous users.
 
 
 ###  Copy Link and Emebed in HTML menu buttons
-Two menu button in document execution toolbar are available
+Two menu buttons in document execution toolbar are available
 
 -   copy link
 -   embed in HTML
 
-By clciking on it the document execution url is showned and user can copy it.
+By clicking on it the document execution url is showned and user can copy it.
 
-If the current document is executable by public role the url shown will have the form public/servlet/Adapter, this means that anybody even if not authenticated on knowage can
-
-invoke the URL and see the document execution.
+If the current document is executable by public role the url shown will have the form public/servlet/Adapter, this means that anybody even if not authenticated on knowage can invoke the URL and see the document execution.
 
 
 ###  The anonymous user
-Everyone who receives a shared public URL can execute the document even if not authenticated by knowage; only if the documetn is stille executable by public role, otherwise system gives error,
+Everyone who receives a shared public URL can execute the document even if not authenticated by knowage; this applies only if the document is stille executable by public role, otherwise system gives error.
 
 
-Copy Link to share analysis
+Signup functionality
 ----------------------------
 By setting to true the config variable SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY the signup functionality is activated, it appears as a "register" button in login page
 
@@ -523,7 +521,7 @@ An e-mail is sent to provided address containing a link for validation (it conta
 After clicking on this link the registration is completed and user can login.
 
 ### Configurations for signup
-On configurations page can be set some configurations for signup functionality (to find them open "Configuration management" from administration menu and write "signup" on search bar".
+On configurations page can be set some configurations for signup functionality (to find them open "Configuration management" from administration menu and write "signup" on search bar).
 They include:
 -   expiring time for validity link
 -   subject and text for the validation mail
@@ -532,6 +530,6 @@ They include:
 -   as wrote before, the activation flag for the whole signup function
 
 ### If you do not receive a confirmation mail
-If after clicking "register" after having filled registering form a error message is shown or you are not automaticcaly redirected to login page it is likely that your e-mail configurations are not correctly set.
+If after clicking "register" from registration form a error message is shown or you are not automaticcaly redirected to login page it is likely that your e-mail configurations are not correctly set.
 
 Take a look at configurations regarding mail and make sure you correctly set port (MAIL.PROFILES.user.smtpport), user and password of a proxy if present (MAIL.PROFILES.user.user and MAIL.PROFILES.user.password).
