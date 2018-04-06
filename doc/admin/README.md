@@ -478,20 +478,17 @@ Pay attention to the fact that, if a new tenant is added (in FIWARE IdM as organ
 Copy Link to share analysis
 ----------------------------
 
-With Knowage 6.2 versionit has been introduced possibility for a user after executing a document to share execution of document also to non authenticated users
-
+With Knowage 6.2 version it has been introduced possibility for a user, after executing a document, to share execution of document also to non authenticated users
 
 ###  Public role
-
 The first step is the definition of a public role.
 
- The public role is defined by administrator, with a checkbox on role definition. There can be only one public role for each tenant and knowage check no more than one role for tenant is marked as public.
+The public role is defined by administrator, with a checkbox on role definition. There can be only one public role for each tenant and knowage check no more than one role for tenant is marked as public.
 
 Once set the public role administrator is responsible to assign permissions to folders and drivers and decide which documents can be shared to anonymous users.
 
 
 ###  Copy Link and Emebed in HTML menu buttons
-
 Two menu button in document execution toolbar are available
 
 -   copy link
@@ -505,7 +502,6 @@ invoke the URL and see the document execution.
 
 
 ###  The anonymous user
-
 Everyone who receives a shared public URL can execute the document even if not authenticated by knowage; only if the documetn is stille executable by public role, otherwise system gives error,
 
 
@@ -514,7 +510,6 @@ Copy Link to share analysis
 By setting to true the config variable SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY the signup functionality is activated, it appears as a "register" button in login page
 
 ### The registration procedure
-
 By clicking on REGISTER button user can acceed to registration page and provide following data:
 -   name and surname
 -   userId, password and password confirmation
