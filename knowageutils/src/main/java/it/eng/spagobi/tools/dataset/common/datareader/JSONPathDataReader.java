@@ -19,6 +19,8 @@ package it.eng.spagobi.tools.dataset.common.datareader;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
+import org.joda.time.Instant;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -229,7 +232,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 						Assert.assertNotNull(typeString, "type of jsonpath type");
 						type = getType(typeString);
 						fm.setType(type);
-						if (type.equals(Date.class)) {
+						if (type.equals(Date.class) || type.equals(Timestamp.class)) {
 							setDateTypeFormat(fm, typeString);
 						}
 					}
@@ -429,7 +432,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 				Assert.assertNotNull(type, "type");
 				// type statically defined
 				fm.setType(type);
-				if (type.equals(Date.class)) {
+				if (type.equals(Date.class) || type.equals(Timestamp.class)) {
 					setDateTypeFormat(fm, jpa.jsonPathType);
 				}
 
@@ -515,6 +518,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 			String dateFormat = (String) fmd.getProperty(DATE_FORMAT_FIELD_METADATA_PROPERTY);
 			Assert.assertNotNull(dateFormat != null, "dateFormat != null");
 			return getSimpleDateFormat(dateFormat).parse(value);
+		} else if (fieldType.equals(Timestamp.class)) {
+			return new Timestamp(Instant.parse(value).getMillis());
 		} else if (fieldType.equals(Boolean.class)) {
 			return Boolean.valueOf(value);
 		} else if (fieldType.equals(Long.class)) {
@@ -599,16 +604,16 @@ public class JSONPathDataReader extends AbstractDataReader {
 			return BigDecimal.class;
 		} else if (jsonPathType.equalsIgnoreCase("float") || jsonPathType.equalsIgnoreCase("double")) {
 			return Double.class;
+		} else if (jsonPathType.toLowerCase().startsWith("datetime")) {
+			return Timestamp.class;
 		} else if (jsonPathType.toLowerCase().startsWith("date")) {
 			return Date.class;
 		} else if (jsonPathType.toLowerCase().startsWith("timestamp")) {
-			return Date.class;
+			return Timestamp.class;
 		} else if (jsonPathType.toLowerCase().startsWith("iso8601")) {
-			return Date.class;
+			return Timestamp.class;
 		} else if (jsonPathType.toLowerCase().startsWith("time")) {
-			return Date.class;
-		} else if (jsonPathType.toLowerCase().startsWith("datetime")) {
-			return Date.class;
+			return Time.class;
 		} else if (jsonPathType.equalsIgnoreCase("boolean")) {
 			return Boolean.class;
 		}
