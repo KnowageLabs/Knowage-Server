@@ -15,7 +15,7 @@
     	    <ul>
     	    	<li ng-repeat="prop in layerConfig track by $index" ng-if="prop.properties.showDetails">
     	    		<p><strong>{{prop.aliasToShow}}:</strong><span ng-cloak>{{props[prop.name].value}}</span></p>
-    	    		<p class="warningMessage"><i class='fa fa-warning'></i> The value is within the Alarm range!</p>
+    	    		<p ng-if="props[prop.name].showWarning" class="warningMessage"><i class='fa fa-warning'></i> The value is within the Alarm range!</p>
     	    	</li>
     	    </ul>
  		 </div>
