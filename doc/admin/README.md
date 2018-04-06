@@ -527,4 +527,16 @@ An e-mail is sent to provided address containing a link for validation (it conta
 
 After clicking on this link the registration is completed and user can login.
 
-### configurations for signup
+### Configurations for signup
+On configurations page can be set some configurations for signup functionality (to find them open "Configuration management" from administration menu and write "signup" on search bar".
+They include:
+-   expiring time for validity link
+-   subject and text for the validation mail
+-   the default role given to newly registered user (usually a user role)
+-   the default tenant given to newly registered user
+-   as wrote before, the activation flag for the whole signup function
+
+### If you do not receive a confirmation mail
+If after clicking "register" after having filled registering form a error message is shown or you are not automaticcaly redirected to login page it is likely that your e-mail configurations are not correctly set.
+
+Take a look at configurations regarding mail and make sure you correctly set port (MAIL.PROFILES.user.smtpport), user and password of a proxy if present (MAIL.PROFILES.user.user and MAIL.PROFILES.user.password).
