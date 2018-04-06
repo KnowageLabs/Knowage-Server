@@ -481,7 +481,7 @@ Copy Link to share analysis
 With Knowage 6.2 versionit has been introduced possibility for a user after executing a document to share execution of document also to non authenticated users
 
 
-Public role
+###  Public role
 
 The first step is the definition of a public role.
 
@@ -490,7 +490,7 @@ The first step is the definition of a public role.
 Once set the public role administrator is responsible to assign permissions to folders and drivers and decide which documents can be shared to anonymous users.
 
 
-Copy Link and Emebed in HTML menu buttons
+###  Copy Link and Emebed in HTML menu buttons
 
 Two menu button in document execution toolbar are available
 
@@ -505,6 +505,6 @@ If the current document is executable by public role the url shown will have the
 invoke the URL and see the document execution.
 
 
-The anonymous user
+###  The anonymous user
 
 Everyone who receives a shared public URL can execute the document even if not authenticated by knowage; only if the documetn is stille executable by public role, otherwise system gives error,
