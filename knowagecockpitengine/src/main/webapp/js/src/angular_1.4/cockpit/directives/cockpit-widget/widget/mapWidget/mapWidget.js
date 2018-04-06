@@ -280,8 +280,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    $scope.addMapEvents = function (overlay){
 	    	
             $scope.closePopup = function(){
+            	var closer = document.getElementById('popup-closer');
             	overlay.setPosition(undefined);
-	              closer.blur();
+	              if (closer) closer.blur();
 	              return false;
             }
 
@@ -299,6 +300,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	        	$scope.tempFeature = (Array.isArray($scope.selectedFeature.get('features')) && $scope.selectedFeature.get('features').length == 1) ? $scope.selectedFeature.get('features')[0] : $scope.selectedFeature;
     	        	
 	        		$scope.props = $scope.tempFeature.getProperties();
+	        		if ($scope.props.features && Array.isArray($scope.props.features)) return;
 	        		$scope.$apply()
 	        		
     	        	if(!$scope.layerConfig){
@@ -424,8 +426,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				//add events methods
 	    		$scope.addViewEvents();
 	    		$scope.addMapEvents(overlay);	
-	    		}
-	    	);
+	    	});
 	    }
 	    
 	    //control panel events
