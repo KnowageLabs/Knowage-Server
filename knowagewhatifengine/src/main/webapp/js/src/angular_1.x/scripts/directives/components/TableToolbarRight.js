@@ -525,7 +525,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 
 	  flushCache = function(){
 		  sbiModule_restServices.promisePost
-			("1.0",'/cacheee/?SBI_EXECUTION_ID='+ JSsbiExecutionID)
+			("1.0",'/cache/?SBI_EXECUTION_ID='+ JSsbiExecutionID)
 			.then(function(response) {
 						$scope.handleResponse(response);
 		  },function(response){
