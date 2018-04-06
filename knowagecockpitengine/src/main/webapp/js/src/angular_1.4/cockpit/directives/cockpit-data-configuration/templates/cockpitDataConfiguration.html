@@ -52,13 +52,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<table class="kn-table" ng-if="tmpAvaiableDataset.length > 0">
 										<thead>
 											<tr>
-												<th ng-repeat="column in cockpitDatasetColumns">{{column.label}}</th>
+												<th ng-repeat="column in cockpitDatasetColumns" ng-class="{'tableAction':column.type=='expand'}">{{column.label}}</th>
 												<th></th>
 											</tr>
 										</thead>
 										<tbody>
 											<tr ng-repeat-start="row in tmpAvaiableDataset">
-												<td ng-repeat="column in cockpitDatasetColumns" ng-class="{'tableAction':column.type=='expand' && row.parameters && row.parameters.length > 0}">
+												<td ng-repeat="column in cockpitDatasetColumns" ng-class="{'tableAction':column.type=='expand'}">
 													<md-button class="md-icon-button" ng-click="expandRow(row)" ng-if="column.type=='expand' && row.parameters && row.parameters.length > 0">
 														<md-icon md-font-icon="fa" ng-class="{'fa-chevron-up':row.expanded, 'fa-chevron-down':!row.expanded}">
 													</md-button>

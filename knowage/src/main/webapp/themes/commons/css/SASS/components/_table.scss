@@ -10,6 +10,9 @@
 			th{
 				border-bottom: 1px solid $ternaryColor;
 				text-align: left;
+				&.tableAction{
+					width: 50px;
+				}
 				&.multiTableAction{
 					width: 100px;
 				}
