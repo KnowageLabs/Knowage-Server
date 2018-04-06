@@ -473,3 +473,38 @@ In this case, the application administrator can add roles to that user (the user
 The application administrator can always change roles of the users (the ones who belong to "DEFAULT" tenant) within the IdM. Organization owners can always change roles of members (and these members will belong to a tenant with the same name of the organization).
 
 Pay attention to the fact that, if a new tenant is added (in FIWARE IdM as organization), Knowage Server doesn't recognize it automatically unless you restart it.
+
+
+Copy Link to share analysis
+----------------------------
+
+With Knowage 6.2 versionit has been introduced possibility for a user after executing a document to share execution of document also to non authenticated users
+
+
+Public role
+
+The first step is the definition of a public role.
+
+ The public role is defined by administrator, with a checkbox on role definition. There can be only one public role for each tenant and knowage check no more than one role for tenant is marked as public.
+
+Once set the public role administrator is responsible to assign permissions to folders and drivers and decide which documents can be shared to anonymous users.
+
+
+Copy Link and Emebed in HTML menu buttons
+
+Two menu button in document execution toolbar are available
+
+- copy link
+
+- embed in HTML
+
+By clciking on it the document execution url is showned and user can copy it.
+
+If the current document is executable by public role the url shown will have the form public/servlet/Adapter, this means that anybody even if not authenticated on knowage can
+
+invoke the URL and see the document execution.
+
+
+The anonymous user
+
+Everyone who receives a shared public URL can execute the document even if not authenticated by knowage; only if the documetn is stille executable by public role, otherwise system gives error,
