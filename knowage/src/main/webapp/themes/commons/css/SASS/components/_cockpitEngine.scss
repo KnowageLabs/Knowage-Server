@@ -944,15 +944,17 @@
 
         .gridster-item{
 			 md-card.md-knowage-theme md-card-title {
+			 	height:32px;
+			 	min-height: 32px;
 				padding: 0;
 				margin: 0;
-				min-height: 40px;
 				md-toolbar.md-knowage-theme {
 					background-color: transparent !important;
 					color: $baseColor !important;
-					min-height: 32px;
+					min-height: 0;
+					height: 100%;
 					.md-toolbar-tools {
-					   height: 32px; 
+						height: 100%;
 					}
 				}
 			}

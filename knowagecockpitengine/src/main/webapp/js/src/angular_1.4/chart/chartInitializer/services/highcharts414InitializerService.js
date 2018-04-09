@@ -370,16 +370,12 @@ angular.module('chartInitializer')
 					.then(function(series){
 
 						if(chart.options.drilledCategories.length==0){
-							if(chart.options.chart.type!="pie"){
-								chart.options.drilledCategories.push(chart.xAxis[0].axisTitle.textStr);
-							} else {
-								chart.options.drilledCategories.push(chart.xAxis[0].userOptions.title.text)
-							}
-				           }
+							chart.options.drilledCategories.push(chart.xAxis[0].userOptions.title.text);
+						}
 
-				           chart.options.drilledCategories.push(series.category);
-			                var xAxisTitle={
-			                	text:series.category
+						chart.options.drilledCategories.push(series.category);
+						var xAxisTitle={
+							text:series.category
 			            };
 			            var yAxisTitle={
 			            		text:series.serieName

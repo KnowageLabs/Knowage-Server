@@ -121,7 +121,7 @@ angular.module('knScrollPagination',[]);
 		
 		function link(scope,element,attrs){
 			scope.$watchGroup(['height','width'],function(){
-				 element.css('height', scope.height + 'px');
+				 element.css('min-height', (scope.height + 10) +'px');
 				 element.css('width', scope.width + 'px');
 			})
 		}

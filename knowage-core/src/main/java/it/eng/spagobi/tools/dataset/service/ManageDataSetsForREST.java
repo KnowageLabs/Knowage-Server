@@ -1250,6 +1250,7 @@ public class ManageDataSetsForREST {
 			config.put(ja, new JSONArray(json.getString(ja)));
 		}
 		RESTDataSet res = new RESTDataSet(config);
+		res.setLabel(json.optString(DataSetConstants.LABEL));
 		return res;
 	}
 

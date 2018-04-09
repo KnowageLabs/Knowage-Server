@@ -416,7 +416,7 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 	}
 }
 
-function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,selectedColumn,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions ){
+function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,selectedColumn,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions,sbiModule_messaging){
 	$scope.translate=sbiModule_translate;
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.selectedColumn = angular.copy(selectedColumn);
@@ -508,20 +508,33 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 		}
 	}
 
-
 	$scope.cleanStyleColumn = function(){
 		$scope.selectedColumn.style = undefined;
 	}
-	$scope.saveColumnStyleConfiguration = function(){
-		angular.copy($scope.selectedColumn,selectedColumn)
 
+	$scope.checkPrecision = function(){
+		if($scope.selectedColumn.style!=undefined && $scope.selectedColumn.style.format!=undefined && $scope.selectedColumn.style.precision!=undefined && !$scope.isPrecisionEnabled()){
+			$scope.selectedColumn.style.precision = null;
+		}
+	}
+
+	$scope.isPrecisionEnabled = function(){
+		return $scope.selectedColumn.style && $scope.selectedColumn.style.format != $scope.formatPattern[0] && $scope.selectedColumn.style.format != $scope.formatPattern[1];
+	}
+
+	$scope.saveColumnStyleConfiguration = function(){
+		if($scope.selectedColumn.style!=undefined && $scope.selectedColumn.style.precision!=undefined && $scope.selectedColumn.style.format==undefined){
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.chartengine.structure.serieStyleConfig.dataLabels.format.emptyText'), sbiModule_translate.load('sbi.generic.error'));
+			return;
+		}
+		$scope.checkPrecision();
+		angular.copy($scope.selectedColumn,selectedColumn);
 		$mdDialog.cancel();
 	}
 
 	$scope.cancelcolumnStyleConfiguration = function(){
 		$mdDialog.cancel();
 	}
-
 
 	$scope.checkIfDisable = function(){
 		return false;
@@ -540,6 +553,7 @@ function controllerCockpitSummaryInfo($scope,sbiModule_translate,$mdDialog,items
 		items.resolve($scope.row);
 		$mdDialog.hide();
 	}
+
 	$scope.cancelConfiguration=function(){
 		$mdDialog.cancel();
 	}

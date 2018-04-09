@@ -68,12 +68,20 @@ angular.module('chartRendererModule')
 							scope.chartTemplate.CHART.COLORPALETTE.COLOR = angular.copy(scope.chartTemplate.CHART.COLORPALETTE.COLORCopy)
 							delete scope.chartTemplate.CHART.COLORPALETTE.COLORCopy
 						}
-					if( scope.chartTemplate.CHART.groupSeriesCateg){
+						
+						if(scope.chartTemplate.CHART.groupSeriesCateg && scope.chartConf.series.length > 0){
+							scope.chartConf.colorsCopy = angular.copy(scope.chartConf.colors);
 							if(scope.colorMap){
+								if(Object.keys(scope.colorMap).length<=scope.chartConf.series.length){
+									scope.colorMap = {};
+									for (var i = 0; i < scope.chartConf.series.length; i++) {
+										scope.colorMap[scope.chartConf.series[i].name] = scope.chartConf.colors[i];
+									}
+								}
+								scope.chartConf.colors = angular.copy(scope.chartConf.colorsCopy);
 								if(scope.colorMap.hasOwnProperty(scope.chartConf.series[0].name)) {
 									scope.chartConf.colors[0]=scope.colorMap[chartConf.series[0].name];
 								}
-								delete scope.colorMap;
 							} else {
 								scope.colorMap = {};
 								for (var i = 0; i < scope.chartConf.series.length; i++) {

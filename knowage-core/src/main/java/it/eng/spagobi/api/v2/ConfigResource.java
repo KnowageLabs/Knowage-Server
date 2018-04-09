@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IConfigDAO;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -47,6 +38,15 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/2.0/configs")
 @ManageAuthorization
@@ -125,7 +125,10 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
 			dm = configsDao.loadConfigParametersByLabel(label);
-			if (dm.getLabel().equals(label)) {
+			if (dm == null) {
+				logger.error("Config with label " + label + " not present in current tenant");
+				return null;
+			} else if (dm.getLabel().equals(label)) {
 				return dm;
 			}
 		} catch (Exception e) {

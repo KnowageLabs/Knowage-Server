@@ -48,7 +48,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 	private static final int MAX_RESULT_NOT_DEFINED = -1;
 
 	protected final String requestBody;
-	protected final String address;
+	protected String address;
 	protected final Map<String, String> requestHeaders;
 	protected final HttpMethod method;
 

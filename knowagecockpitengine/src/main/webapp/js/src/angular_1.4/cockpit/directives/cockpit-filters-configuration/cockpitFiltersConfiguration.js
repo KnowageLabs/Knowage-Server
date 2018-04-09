@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			   	}
 		   }
 	});
-	
+
 	//filter operators if dataset is realtime or not
 	angular.module('cockpitModule').filter('filterDatasetOperator', function() {
 		  return function (items, datasetIsRealTime) {
@@ -116,7 +116,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.operatorsTypeString = ['=','!=','IN','like','is null','is not null','min','max'];
 		$scope.operatorsTypeNumber = ['=','<','>','<=','>=','IN','is null','is not null','!=','min','max','range'];
-		$scope.operatorsTypeDate = ['=','IN','is null','is not null','min','max','range'];
+		$scope.operatorsTypeDate = ['=','!=','IN','is null','is not null','min','max','range'];
 
 		$scope.zeroOperandOperators = ['is null', 'is not null', 'min', 'max'];
 		$scope.oneOperandOperators = ['=', '!=', 'like', '<','>','<=','>=','IN'];

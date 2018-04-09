@@ -60,6 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/tableWidget/tableWidget.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/mapWidget/mapWidgetEdit.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/mapWidget/mapWidget.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/htmlWidget/htmlWidget.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/selectorWidget/selectorWidget.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/documentWidget/documentWidget.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/staticPivotTableWidget/staticPivotTableWidget.js"></script>

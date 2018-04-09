@@ -1044,7 +1044,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<div flex=100 ng-if="selectedDataSet.dsTypeCd=='REST'">
 									<md-input-container class="md-block">
 										<label>Request body</label>
-								    	<textarea 	ng-model="selectedDataSet.restRequestBody" md-maxlength="150" rows="3" 
+								    	<textarea 	ng-model="selectedDataSet.restRequestBody" md-maxlength="2000" rows="3" 
 								    				md-select-on-focus ng-change="setFormDirty()"></textarea>
 									</md-input-container>
 								</div>
@@ -1052,7 +1052,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<div flex=100 ng-if="selectedDataSet.dsTypeCd=='Solr'">
 									<md-input-container class="md-block">
 										<label>Query</label>
-								    	<textarea 	ng-model="selectedDataSet.restRequestBody" md-maxlength="150" rows="3" 
+								    	<textarea 	ng-model="selectedDataSet.restRequestBody" md-maxlength="2000" rows="3" 
 								    				md-select-on-focus ng-change="setFormDirty()"></textarea>
 									</md-input-container>
 								</div>

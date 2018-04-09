@@ -246,6 +246,7 @@ function cockpitWidgetControllerFunction(
 
 	$scope.borderShadowStyle= {};
 	$scope.titleStyle		= {};
+	
 	$scope.widgetSpinner	= false;
 	$scope.widgetSearchBar 	= false; // default searchBar unactive
 	$scope.activeSearch 	= false; // default search unactive
@@ -980,6 +981,9 @@ function cockpitWidgetControllerFunction(
 					$scope.ngModel.style.title.font.color = $scope.extendedStyle.title.color;
 					}
 			}
+			if($scope.extendedStyle.title && $scope.extendedStyle.title.height){
+				$scope.extendedStyle.title['min-height'] = $scope.extendedStyle.title.height;
+		}
 		}
 
 		// update widgets background color

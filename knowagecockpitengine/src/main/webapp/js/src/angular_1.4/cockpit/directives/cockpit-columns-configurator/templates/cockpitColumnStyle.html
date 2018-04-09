@@ -142,16 +142,16 @@
 						<label>{{translate.load('sbi.cockpit.style.suffix')}}</label>
 						<input class="input_class"  ng-model="selectedColumn.style.suffix"> 
 					</md-input-container>
+					<md-input-container flex class="md-block"  class="small counter">  
+						<label>{{translate.load('sbi.cockpit.style.format')}}</label>
+						<md-select aria-label="aria-label" ng-model="selectedColumn.style.format">
+							<md-option ng-repeat="f in formatPattern" value="{{f}}">{{f}}</md-option>
+						</md-select>
+					</md-input-container>
 					<md-input-container flex class="md-block" class="small counter">
 						<label>{{translate.load('sbi.cockpit.style.precision')}}</label>
-						<input class="input_class" type="number" ng-model="selectedColumn.style.precision"> 
+						<input class="input_class" type="number" ng-model="selectedColumn.style.precision" min="0" ng-disabled="!isPrecisionEnabled()"> 
 					</md-input-container>
-					 <md-input-container flex class="md-block"  class="small counter">  
-							<label>{{translate.load('sbi.cockpit.style.format')}}</label>
-							<md-select aria-label="aria-label" ng-model="selectedColumn.style.format">
-									<md-option ng-repeat="f in formatPattern" value="{{f}}">{{f}}</md-option>
-							</md-select>
-					</md-input-container> 
 		       </div>	
 		       <div flex layout="row">
 					<md-input-container flex=50 class="md-block"> 

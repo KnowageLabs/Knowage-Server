@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.common.datastore;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -564,9 +565,11 @@ public class DataStore implements IDataStore {
 			} else if (type == Double.class) {
 				columnTypes[i] = ColumnType.DOUBLE;
 			} else if (type == Date.class || type == java.sql.Date.class) {
-				columnTypes[i] = ColumnType.BIGINT;
+				columnTypes[i] = ColumnType.DATE;
 			} else if (type == Timestamp.class) {
-				columnTypes[i] = ColumnType.BIGINT;
+				columnTypes[i] = ColumnType.TIMESTAMP;
+			} else if (type == Time.class) {
+				columnTypes[i] = ColumnType.TIME;
 			} else {
 				columnTypes[i] = ColumnType.STRING;
 			}
@@ -577,14 +580,17 @@ public class DataStore implements IDataStore {
 			Object[] row = new Object[fieldCount];
 			for (int i = 0; i < fieldCount; i++) {
 				Object obj = record.getFieldAt(i).getValue();
-				if (obj instanceof Date) {
+				if (obj instanceof java.sql.Date) {
+					SimpleDateFormat formatter = new SimpleDateFormat(dateFormatJava != null ? dateFormatJava : "dd-MM-yyyy HH:mm:ss.SSS");
+					obj = formatter.format((java.sql.Date) obj);
+				} else if (obj instanceof java.sql.Timestamp) {
+					SimpleDateFormat formatter = new SimpleDateFormat(dateFormatJava != null ? dateFormatJava : "dd-MM-yyyy HH:mm:ss.SSS");
+					obj = formatter.format((java.sql.Timestamp) obj);
+				} else if (obj instanceof Date) {
 					SimpleDateFormat formatter = new SimpleDateFormat(dateFormatJava != null ? dateFormatJava : "dd-MM-yyyy");
 					if (!formatter.format((Date) obj).equals("")) {
 						obj = formatter.format((Date) obj);
 					}
-				} else if (obj instanceof java.sql.Date) {
-					SimpleDateFormat formatter = new SimpleDateFormat(dateFormatJava != null ? dateFormatJava : "dd-MM-yyyy HH:mm:ss.SSS");
-					obj = formatter.format((java.sql.Date) obj);
 				}
 				row[i] = obj;
 			}

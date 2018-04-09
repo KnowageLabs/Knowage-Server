@@ -1,0 +1,63 @@
+<md-card   class="flexCard htmlWidgetConfiguration" >
+	<md-card-content flex layout="column" class="noPadding">
+	    <md-toolbar> 
+	      <div class="md-toolbar-tools">
+	        <h2>Edit html widget</h2>
+	        <span flex></span>
+	      </div>
+	    </md-toolbar>
+	    <md-content flex layout="column">
+			<md-tabs flex md-border-bottom>
+				<md-tab label="Editor Html">
+					<md-content class="noPadding" layout="column" layout-fill>
+						<md-card>
+							<md-toolbar class="ternaryToolbar"> 
+						      <div class="md-toolbar-tools">
+						        <h2>Css</h2>
+						        <span flex></span>
+						        <md-button class="md-icon-button" ng-click="toggleCss()">
+						        	<md-icon ng-class="{'fa':true,'fa-chevron-down':!newModel.cssOpened,'fa-chevron-up':newModel.cssOpened}"></md-icon>
+						        </md-button>
+						      </div>
+						    </md-toolbar>
+							<md-card-content class="noPadding" ng-if="newModel.cssOpened">
+							<div layout="row" layout-align="center center">
+								<div class="kn-info" flex=80>To target only this widget with your modifications use <span class="widgetId">#w{{newModel.id}}</span> as a prefix</div>
+							</div>
+							<textarea id="css" ui-codemirror="editorOptionsCss" ng-model="newModel.cssToRender" ui-refresh="reloadCodemirror" flex></textarea>
+							</md-card-content>
+						</md-card>
+					
+						<md-card class="htmlEditor">
+							<md-toolbar class="ternaryToolbar"> 
+						      <div class="md-toolbar-tools">
+						        <h2>Html</h2>
+						        <span flex></span>
+						      </div>
+						    </md-toolbar>
+							<md-card-content class="noPadding">
+							<textarea id="html" ui-codemirror="editorOptionsHtml" ng-model="newModel.htmlToRender" ui-refresh="reloadCodemirror" flex></textarea>
+							</md-card-content>
+						</md-card>
+				    </md-content>
+		        </md-tab>
+		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
+		        	<cockpit-style-configurator widget ng-model="newModel.style">
+		        	</cockpit-style-configurator>
+		        </md-tab>
+		        
+		        <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
+		   			<dataset-selector ng-model="newModel.datasetId" on-change="handleEvent('datasetChanged',dsId)"></dataset-selector>  	
+		     	</md-tab>
+	      	</md-tabs>
+	    </md-content>
+    </md-card-content>
+    <md-card-actions layout="row"  layout-align="end center">
+	    <md-button class="md-raised" ng-click="cancelConfiguration()" >
+	     {{translate.load('sbi.generic.cancel')}}
+	    </md-button>
+	    <md-button class="md-raised md-primary" ng-click="saveConfiguration()"  >
+	     {{translate.load('sbi.generic.save')}}
+	    </md-button>
+    </md-card-actions>
+</md-card>

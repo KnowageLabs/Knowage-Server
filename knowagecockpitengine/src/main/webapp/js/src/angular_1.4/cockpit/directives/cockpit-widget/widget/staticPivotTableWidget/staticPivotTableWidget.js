@@ -702,7 +702,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 	}
 
 
-	function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,selectedColumn,cockpitModule_datasetServices,cockpitModule_generalOptions,$mdToast){
+	function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,selectedColumn,cockpitModule_datasetServices,cockpitModule_generalOptions,$mdToast,sbiModule_messaging){
 		$scope.translate=sbiModule_translate;
 		$scope.selectedColumn = angular.copy(selectedColumn);
 		$scope.selectedColumn.fieldType = selectedColumn.nature.toUpperCase();
@@ -802,7 +802,23 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$scope.cleanStyleColumn = function(){
 			$scope.selectedColumn.style = undefined;
 		}
+
+		$scope.checkPrecision = function(){
+			if($scope.selectedColumn.style!=undefined && $scope.selectedColumn.style.format!=undefined && $scope.selectedColumn.style.precision!=undefined && !$scope.isPrecisionEnabled()){
+				$scope.selectedColumn.style.precision = null;
+			}
+		}
+
+		$scope.isPrecisionEnabled = function(){
+			return $scope.selectedColumn.style && $scope.selectedColumn.style.format != $scope.formatPattern[0] && $scope.selectedColumn.style.format != $scope.formatPattern[1];
+		}
+
 		$scope.saveColumnStyleConfiguration = function(){
+			if($scope.selectedColumn.style!=undefined && $scope.selectedColumn.style.precision!=undefined && $scope.selectedColumn.style.format==undefined){
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.chartengine.structure.serieStyleConfig.dataLabels.format.emptyText'), sbiModule_translate.load('sbi.generic.error'));
+				return;
+			}
+			$scope.checkPrecision();
 			$scope.selectedColumn = $scope.cleanObjectConfiguration($scope.selectedColumn, 'style', false);
 			angular.copy($scope.selectedColumn,selectedColumn);
 

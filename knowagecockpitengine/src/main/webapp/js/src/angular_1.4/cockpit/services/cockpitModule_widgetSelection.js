@@ -315,7 +315,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 	this.haveSelection=function(){
 		for(var i=0;i<cockpitModule_template.configuration.aggregations.length;i++){
-			if(Object.keys(cockpitModule_template.configuration.aggregations[i].selection).length>0){
+			if(cockpitModule_template.configuration.aggregations[i].selection!=undefined && Object.keys(cockpitModule_template.configuration.aggregations[i].selection).length>0){
 				return true;
 			}
 		}
@@ -323,7 +323,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 	}
 
 	this.haveFilters=function(){
-		return Object.keys(cockpitModule_template.configuration.filters).length>0;
+		return (cockpitModule_template.configuration.filters!=undefined && Object.keys(cockpitModule_template.configuration.filters).length>0);
 	}
 
 	cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=(this.haveSelection() || this.haveFilters());
@@ -583,7 +583,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 
 		var dsSel=ws.getUnaliasedSelection(ass.datasets);
-		if(Object.keys(dsSel).length>0){
+		if(dsSel!=undefined && Object.keys(dsSel).length>0){
 			var body = {};
 			body["associationGroup"] = ass;
 			body["selections"] = dsSel;
@@ -715,6 +715,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		angular.copy(cockpitModule_template.configuration.aggregations,tmpSelections);
 		for(var i=0;i<tmpSelections.length;i++){
 			var selections = tmpSelections[i].selection;
+			if(selections!=undefined){
 			var selectionKeys = Object.keys(selections);
 			if(selectionKeys.length > 0){
 				var lastSelectionKey = selectionKeys[selectionKeys.length - 1];
@@ -727,8 +728,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				return result;
 			}
 		}
+		}
 
 		angular.copy(cockpitModule_template.configuration.filters,selections);
+		if(selections!=undefined){
 		var selectionKeys = Object.keys(selections);
 		if(selectionKeys.length > 0){
 			var lastDataset = selectionKeys[selectionKeys.length - 1];
@@ -740,6 +743,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			result[lastDataset] = {};
 			result[lastDataset][lastColumn] = selections[lastDataset][lastColumn];
 			return result;
+		}
 		}
 
 		return null;

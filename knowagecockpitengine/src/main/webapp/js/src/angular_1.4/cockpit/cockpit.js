@@ -24,6 +24,7 @@ baseScriptPath =baseScriptPath .substring(0, baseScriptPath .lastIndexOf('/'));
 
 var cockpitApp= angular.module("cockpitModule",[
 	'ngMaterial',
+	'ngSanitize',
 	'cometd',
 	'sbiModule',
 	'knModule',
@@ -37,7 +38,8 @@ var cockpitApp= angular.module("cockpitModule",[
 	'chartRendererModule',
 	'accessible_angular_table',
 	'cockpitTable',
-	'jsonFormatter'
+	'jsonFormatter',
+	'ui.codemirror'
 	]);
 cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')

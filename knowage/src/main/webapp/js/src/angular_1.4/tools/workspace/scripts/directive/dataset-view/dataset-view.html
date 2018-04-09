@@ -61,7 +61,7 @@
 	            	</md-tooltip>
 	         	</md-button>
 	         	
-	         	<md-button class="md-icon-button" aria-label="showDatasetQbe"  ng-click="editQbeDatasetAction({ds:dataset});" ng-show="(dataset.dsTypeCd == 'Federated' || dataset.dsTypeCd == 'Qbe') && sbiUser.userUniqueIdentifier==dataset.owner">
+	         	<md-button class="md-icon-button" aria-label="showDatasetQbe"  ng-click="editQbeDatasetAction({ds:dataset});" ng-show="(dataset.dsTypeCd == 'Federated' || dataset.dsTypeCd == 'Qbe') && sbiUser.userName==dataset.owner">
 	           		<md-icon md-font-icon="fa fa-pencil-square-o fa-2x"></md-icon>
 	           		<md-tooltip md-delay="1000">
 	              		{{translate.load('sbi.workspace.dataset.qbe.edit')}}

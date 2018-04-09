@@ -46,6 +46,7 @@ public class SelectQueryVisitorFactory {
 		case ORACLE:
 		case ORACLE_9I10G:
 		case ORACLE_SPATIAL:
+		case VERTICA:
 			return new OracleSelectQueryVisitor(database);
 		case POSTGRESQL:
 			return new PostgreSqlSelectQueryVisitor(database);

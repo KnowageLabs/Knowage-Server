@@ -188,7 +188,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		setFormDirty: $scope.setFormDirty
 	};
 
-	$scope.jsonPathTypes = ["string", "int", "double", "date yyy-MM-dd", "timestamp yyyy-MM-dd HH:mm:ss", "time HH:mm:ss", "boolean"];
+	$scope.jsonPathTypes = ["string", "int", "double", "date yyy-MM-dd", "timestamp yyyy-MM-dd HH:mm:ss", "ISO8601 yyyy-MM-ddTHH:mm:ss.SSSZ", "time HH:mm:ss", "boolean"];
 
 	$scope.fieldsMetadataColumns = [
 		{
