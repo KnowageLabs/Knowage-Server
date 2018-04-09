@@ -17,6 +17,18 @@
  */
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.MessageDigest;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.log4j.Logger;
+
 /* @author Alessandro Portosa (alessandro.portosa@eng.it)
  *
  */
@@ -27,19 +39,9 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 import it.eng.spagobi.utilities.rest.client.ProxyClientUtilities;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.MessageDigest;
-import java.util.Map;
-
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.log4j.Logger;
-
 import sun.misc.BASE64Encoder;
 
 public class CkanDataProxy extends AbstractDataProxy {
@@ -67,14 +69,12 @@ public class CkanDataProxy extends AbstractDataProxy {
 		try {
 			Map profileAttributes = this.getProfile();
 			Assert.assertNotNull(profileAttributes, "User profile attributes not found!!");
-			// the ckan api key is the user unique identifier: see it.eng.spagobi.security.OAuth2SecurityServiceSupplier
-			// String ckanApiKey = (String) profileAttributes.get("userUniqueIdentifier");
-			// Assert.assertNotNull(ckanApiKey, "User unique identifier not found!!");
-			String ckanApiKey = null;
 
 			// recover the file from resources!
-			String filePath = this.resPath;
-			inputStream = getInputStreamFromURL(filePath, ckanApiKey);
+			String url = this.resPath;
+			Map<String, String> headers = new HashMap<>();
+
+			inputStream = RestUtilities.makeRequestGetStream(HttpMethod.Get, url, headers, "", null, false);
 			Assert.assertNotNull(inputStream, "Impossible to get http stream for web resource");
 			dataReader.setMaxResults(this.getMaxResultsReader());
 			dataReader.setCalculateResultNumberEnabled(calculateResultNumberOnLoad);
