@@ -412,22 +412,6 @@ viewportWidth = viewportWidth * zoomFactor;
 viewportHeight = viewportHeight * zoomFactor;
 zoomFactor = zoomFactor * 0.99;
 
-// this sets a zoom on the page because of the dpi differences between windows and unix
-var setZoom = function (page) {
-	log("[SETZOOM] IN");
-  if (operatingSystem !== "WINDOWS") {
-    try {
-      log('Setting zoom on HTML to 0.75');
-      page.evaluate(function () {
-        document.body.style.zoom = 0.75;
-      });
-    } catch (error) {
-      err('Failed to set zoom on HTML file: ', error);
-      slimer.exit(1);
-    }
-  }
-};
-
 var exit = function(code) {
 	log("Exit from SlimerJS with code: " + code)
 	slimer.exit(code);

@@ -76,24 +76,33 @@ public class PdfExporter {
 	}
 
 	public byte[] getBinaryData() throws Exception {
-		Path output = Paths.get(SlimerJSConstants.TEMP_RENDER_DIR.toString(), UUID.randomUUID().toString() + ".pdf");
+		List<InputStream> images = null;
+		try {
+			Path output = Paths.get(SlimerJSConstants.TEMP_RENDER_DIR.toString(), UUID.randomUUID().toString() + ".pdf");
 
-		BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
-		int sheetCount = getSheetCount(document);
-		int sheetHeight = getSheetHeight(document);
-		RenderOptions renderOptionsWithFixedHeight = renderOptions.withDimensions(renderOptions.getDimensions().withHeight(sheetHeight));
-		URL url = new URL(requestUrl);
-		Map<String, String> authenticationHeaders = new HashMap<>(1);
-		String encodedUserId = Base64.encodeBase64String(userId.getBytes("UTF-8"));
-		authenticationHeaders.put("Authorization", "Direct " + encodedUserId);
-		List<InputStream> images = SlimerJS.render(url, sheetCount, renderOptionsWithFixedHeight);
-		PDFCreator.createPDF(images, output, pdfFrontPage, pdfBackPage);
+			BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
+			int sheetCount = getSheetCount(document);
+			int sheetHeight = getSheetHeight(document);
+			RenderOptions renderOptionsWithFixedHeight = renderOptions.withDimensions(renderOptions.getDimensions().withHeight(sheetHeight));
+			URL url = new URL(requestUrl);
+			Map<String, String> authenticationHeaders = new HashMap<>(1);
+			String encodedUserId = Base64.encodeBase64String(userId.getBytes("UTF-8"));
+			authenticationHeaders.put("Authorization", "Direct " + encodedUserId);
+			images = SlimerJS.render(url, sheetCount, renderOptionsWithFixedHeight);
+			PDFCreator.createPDF(images, output, pdfFrontPage, pdfBackPage);
 
-		// PageNumbering pageNumbering = new PageNumbering(!pdfFrontPage, true, !pdfBackPage);
-		ExportDetails details = new ExportDetails(getFrontpageDetails(pdfFrontPage, document), null);
-		PDFCreator.addInformation(output, details);
-		try (InputStream is = new DeleteOnCloseFileInputStream(output.toFile())) {
-			return IOUtils.toByteArray(is);
+			// PageNumbering pageNumbering = new PageNumbering(!pdfFrontPage, true, !pdfBackPage);
+			ExportDetails details = new ExportDetails(getFrontpageDetails(pdfFrontPage, document), null);
+			PDFCreator.addInformation(output, details);
+			try (InputStream is = new DeleteOnCloseFileInputStream(output.toFile())) {
+				return IOUtils.toByteArray(is);
+			}
+		} finally {
+			if (images != null) {
+				for (InputStream is : images) {
+					IOUtils.closeQuietly(is);
+				}
+			}
 		}
 	}
 
