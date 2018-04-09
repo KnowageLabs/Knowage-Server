@@ -133,7 +133,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		var reverseOrdering = options.reverseOrdering;
 		var dsLabel = options.label;
 		var dsId;
-		
+
 		if(ngModel.dataset!=undefined && ngModel.dataset.dsId!=undefined){
 //			var dataset = cockpitModule_datasetServices.getDatasetById(ngModel.dataset.dsId);
 			var dataset;
@@ -242,7 +242,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:null,nature:nature});
 			}else{
 				if (config && config.dataset && config.dataset.dsId){
-					
+
 //					var dataset = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId);
 					var dataset;
 					if (!Array.isArray(config.dataset.dsId)){
@@ -316,7 +316,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				}
 			}
 		}else {
-			$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
+			$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,options:options});
 		}
 	};
 
