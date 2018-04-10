@@ -1595,6 +1595,7 @@ public class SelfServiceDataSetCRUD {
 			String ckanId = req.getParameter("ckanId");
 			String ckanUrl = req.getParameter("ckanUrl");
 			String scopeCd = DataSetConstants.DS_SCOPE_USER;
+			String dateFormat = req.getParameter("dateFormat");
 
 			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
 			if (savingDataset) {
@@ -1607,6 +1608,7 @@ public class SelfServiceDataSetCRUD {
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, csvEncoding);
+			jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
@@ -1783,7 +1785,7 @@ public class SelfServiceDataSetCRUD {
 
 				String guessedType = guessColumnType(dataStore, i);
 				boolean isDate = false;
-				if (!guessedType.equalsIgnoreCase("Double") && !guessedType.equalsIgnoreCase("Integer") ) {
+				if (!guessedType.equalsIgnoreCase("Double") && !guessedType.equalsIgnoreCase("Integer")) {
 					isDate = isADate(dataSet, dataStore, i);
 				}
 				// Setting mandatory property to defaults, if specified they
@@ -1796,7 +1798,7 @@ public class SelfServiceDataSetCRUD {
 					ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 					Class type = Class.forName("java.lang.Integer");
 					ifmd.setType(type);
-				} 	else if ("Double".equalsIgnoreCase(guessedType)) {
+				} else if ("Double".equalsIgnoreCase(guessedType)) {
 					ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 					Class type = Class.forName("java.lang.Double");
 					ifmd.setType(type);
@@ -1886,15 +1888,17 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	/**
-	 * This is an heuristic to guess the column type of a column in a datastore
-	 * created with a file dataset. The method analyses just a portion of the entire datastore
-	 * so the result is not guaranteed at 100%.
-	 * @param dataStore the datastore to scan
-	 * @param columnIndex the index of the column to check
+	 * This is an heuristic to guess the column type of a column in a datastore created with a file dataset. The method analyses just a portion of the entire
+	 * datastore so the result is not guaranteed at 100%.
+	 * 
+	 * @param dataStore
+	 *            the datastore to scan
+	 * @param columnIndex
+	 *            the index of the column to check
 	 * @return the guessed type of the column
 	 */
 	private String guessColumnType(IDataStore dataStore, int columnIndex) {
-		///boolean isNumeric = true;
+		/// boolean isNumeric = true;
 		boolean foundDouble = false;
 		boolean foundInteger = false;
 		for (int i = 0; i < Math.min(ROWS_LIMIT_GUESS_TYPE_HEURISTIC, dataStore.getRecordsCount()); i++) {
@@ -1905,21 +1909,21 @@ public class SelfServiceDataSetCRUD {
 				continue;
 			}
 			try {
-				//found an integer, so the column COULD be a integer
-		        Integer.parseInt(value.toString());
-		        foundInteger = true;
+				// found an integer, so the column COULD be a integer
+				Integer.parseInt(value.toString());
+				foundInteger = true;
 			} catch (NumberFormatException e) {
 				try {
-					//found a double, so the column COULD be a double
-		            Double.parseDouble(value.toString());
-		            foundDouble = true;
-		        } catch (NumberFormatException e2) {
-		           //found a string, so the entire column MUST be a string we can stop the search
-		           return "String";
-		        }
+					// found a double, so the column COULD be a double
+					Double.parseDouble(value.toString());
+					foundDouble = true;
+				} catch (NumberFormatException e2) {
+					// found a string, so the entire column MUST be a string we can stop the search
+					return "String";
+				}
 			}
 		}
-		//Double has priority to Integer
+		// Double has priority to Integer
 		if (foundDouble) {
 			return "Double";
 		} else if (foundInteger) {

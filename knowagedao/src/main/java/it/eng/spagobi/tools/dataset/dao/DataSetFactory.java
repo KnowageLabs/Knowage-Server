@@ -271,6 +271,9 @@ public class DataSetFactory {
 				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_QUOTE_CHARACTER)) {
 					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER));
 				}
+				if (!jsonConf.isNull(DataSetConstants.FILE_DATE_FORMAT)) {
+					jsonConf.put(DataSetConstants.CKAN_CSV_DATE_FORMAT, jsonConf.getString(DataSetConstants.FILE_DATE_FORMAT));
+				}
 				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_ENCODING)) {
 					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_ENCODING, jsonConf.getString(DataSetConstants.CSV_FILE_ENCODING));
 				}
