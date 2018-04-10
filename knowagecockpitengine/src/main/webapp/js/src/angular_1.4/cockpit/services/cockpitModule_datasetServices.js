@@ -32,6 +32,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					}
 
 					ds.initNearRealTimeValues(ds.datasetList);
+					ds.initSpatialAttributesFlag(ds.datasetList);
 					ds.checkForDSChange();
 					cockpitModule_widgetSelection.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS,undefined,def);
 
@@ -78,6 +79,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				}, newDatasets);
 
 				ds.initNearRealTimeValues(newDatasets);
+				ds.initSpatialAttributesFlag(newDatasets);
 
 				for(var i in newDatasets){
 					var dataset = newDatasets[i];
@@ -108,6 +110,22 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			if(dataset.frequency == undefined){
 				dataset.frequency = 0;
 			}
+		}
+	}
+
+	this.initSpatialAttributesFlag=function(datasets){
+		for(var i in datasets){
+			var dataset = datasets[i];
+			var hasSpatialAttributes = false;
+			if(dataset.metadata && dataset.metadata.fieldsMeta){
+				for(var j in dataset.metadata.fieldsMeta){
+					if(dataset.metadata.fieldsMeta[j].fieldType == "SPATIAL_ATTRIBUTE"){
+						hasSpatialAttributes = true;
+						break;
+					}
+				}
+			}
+			dataset.hasSpatialAttributes = hasSpatialAttributes;
 		}
 	}
 
@@ -308,7 +326,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	this.getDatasetList=function(){
 		return angular.copy(ds.datasetList);
 	}
-	
+
 	this.setDatasetList=function(dsList){
 		return ds.datasetList = dsList;
 	}
@@ -317,11 +335,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	this.getDatasetById=function(dsId){
 		return angular.copy(ds.datasetMapById[dsId]);
 	}
-	
+
 	this.setDatasetById=function(dsIds){
 		ds.datasetMapById = dsIds;
 	}
-	
+
 	//return a COPY of dataset with specific label or null
 	this.getDatasetByLabel=function(dsLabel){
 		return angular.copy(ds.datasetMapByLabel[dsLabel]);
@@ -507,7 +525,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			delete newModel.content.columnSelectedOfDataset;
 			newModel.content.columnSelectedOfDataset = newcolumnSelectedOfDataset;
 		}
-		
+
 //		var aggregations = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
 		var aggregations = cockpitModule_widgetSelection.getAggregation(newModel,dataset,columnOrdering, reverseOrdering);
 
@@ -1370,8 +1388,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	 					if(allDatasetRecords.metaData.fields[1].type == 'float' && model.numbers){
 	 						colValue = ds.formatValue(colValue,model.numbers);
 	 					}
-	 					
-	 					
+
+
 
 	 					// if aggregation is specified search for right match and not for a generic one
 

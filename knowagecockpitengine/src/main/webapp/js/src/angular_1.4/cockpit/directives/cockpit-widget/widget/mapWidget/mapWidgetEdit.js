@@ -30,8 +30,8 @@ function mapWidgetEditControllerFunction(
 		cockpitModule_generalServices,
 		$mdDialog,
 		mdPanelRef,
-		$location, 
-		knModule_fontIconsService, 
+		$location,
+		knModule_fontIconsService,
 		$mdToast
 		){
 	$scope.translate=sbiModule_translate;
@@ -51,11 +51,11 @@ function mapWidgetEditControllerFunction(
   			}
   		}
   	}
-  	
+
   	$scope.setMarkersVisualizationType = function(layer,type){
   		layer.visualizationType = type;
-  		if(layer.clusterConf && layer.clusterConf.enabled) layer.clusterConf.enabled = false; 
-  		if(layer.heatmapConf && layer.heatmapConf.enabled) layer.heatmapConf.enabled = false; 
+  		if(layer.clusterConf && layer.clusterConf.enabled) layer.clusterConf.enabled = false;
+  		if(layer.heatmapConf && layer.heatmapConf.enabled) layer.heatmapConf.enabled = false;
   		if(type == 'clusters'){
   			layer.clusterConf = layer.clusterConf || {};
   			layer.clusterConf.enabled = true;
@@ -65,7 +65,7 @@ function mapWidgetEditControllerFunction(
   			layer.heatmapConf.enabled = true;
   		}
   	}
-  	
+
   	$scope.expandRow = function(layer,content){
   		for(var t in $scope.newModel.content.layers){
   			if($scope.newModel.content.layers[t].expanded != content || $scope.newModel.content.layers[t].dsId != layer.dsId){
@@ -80,7 +80,7 @@ function mapWidgetEditControllerFunction(
 	  		}
   		}
   	}
-  	
+
   	$scope.deleteLayer = function(layer){
   		var index=$scope.newModel.content.layers.indexOf(layer);
 		var tempPos = layer.order;
@@ -91,7 +91,7 @@ function mapWidgetEditControllerFunction(
 		}
 		delete $scope.newModel.content.columnSelectedOfDataset[layer.dsId];
   	}
-  	
+
   	$scope.move = function(e,row,direction){
 		var lower, current, upper;
 		for(var o in $scope.newModel.content.layers){
@@ -111,7 +111,7 @@ function mapWidgetEditControllerFunction(
 			$scope.newModel.content.layers[current].order = row.order+1;
 		}
 	};
-  	
+
   	$scope.addLayer = function(ev) {
   		$scope.myLayersId = [];
   		for(var m in $scope.newModel.content.layers){
@@ -119,33 +119,20 @@ function mapWidgetEditControllerFunction(
 		}
   		$mdDialog.show({
 			controller: function ($scope,$mdDialog) {
-				
-				//Get list of spatial layers
-				sbiModule_restServices.restToRootProject();
-				sbiModule_restServices.promiseGet("2.0/datasets", "","asPagedList=true&seeTechnical=TRUE&ids=&spatialOnly=true").then(
-						function(result){
-							$scope.availableSpatialLayers = [];
-							var datasetMapById = [];
-							var datasetMapByLabel = [];
-							var datasetList = [];
-							for(var l in result.data.item){
-								//update internal service datasets structures
-								var ds = result.data.item[l];
-								datasetList.push(ds);
-								datasetMapById[ds.id.dsId] = ds;
-								datasetMapByLabel[ds.label] = ds;
-								if($scope.myLayersId.indexOf(result.data.item[l].id.dsId)==-1){
-									$scope.availableSpatialLayers.push(result.data.item[l]);
-								}
-							}
-							cockpitModule_datasetServices.setDatasetList(datasetList);
-							cockpitModule_datasetServices.setDatasetById(datasetMapById);
-							cockpitModule_datasetServices.setDatasetByLabel(datasetMapByLabel);
-						},
-						function(error){
-							// TODO MANAGE ERROR
-						})
-				
+
+				$scope.availableSpatialLayers = [];
+				cockpitModule_datasetServices.loadDatasetList().then(function(response){
+					var datasetList = cockpitModule_datasetServices.getDatasetList();
+					for(var i in datasetList){
+						var dataset = datasetList[i];
+						if(dataset.hasSpatialAttributes && $scope.myLayersId.indexOf(dataset.id.dsId)==-1){
+							$scope.availableSpatialLayers.push(dataset);
+						}
+					}
+				},function(response){
+					sbiModule_restServices.errorHandler(response.data,"");
+				});
+
 			    //Add the layers to the newModel
 				$scope.add = function(){
 					if (!$scope.newModel.content.layers) $scope.newModel.content.layers = [];
@@ -180,7 +167,7 @@ function mapWidgetEditControllerFunction(
 					}
 					$mdDialog.hide();
 				}
-				
+
 				//Exit the dialog without adding
 				$scope.cancel = function(){
 					$mdDialog.cancel();
@@ -199,20 +186,20 @@ function mapWidgetEditControllerFunction(
   		if (!layer.markerConf) layer.markerConf={};
   		layer.markerConf.type = type;
   	}
-  	
+
   	$scope.getDimensionFromRadius = function(radius){
   		return (radius * 2) + 'px';
   	}
-  	
+
   	$scope.chooseIcon = function(ev, layer) {
-  		
+
   		$mdDialog.show({
 			controller: function ($scope,$mdDialog) {
 				$scope.availableIcons = knModule_fontIconsService.icons;
 
 				$scope.activeLayer = {};
 				angular.copy(layer,$scope.activeLayer);
-				
+
 				$scope.setIcon = function(family,icon){
 					if(!$scope.activeLayer.markerConf) $scope.activeLayer.markerConf = {};
 					$scope.activeLayer.markerConf.icon = icon;
@@ -234,18 +221,18 @@ function mapWidgetEditControllerFunction(
 	      locals: {  }
 	    })
   	}
-  	
+
   	$scope.chooseImg = function(ev, layer) {
-  		
+
   		$mdDialog.show({
 			controller: function ($scope,$mdDialog) {
 
 				$scope.imagesList = [];
 				$scope.selectedImg = '';
-				
+
 				$scope.activeLayer = {};
 				angular.copy(layer,$scope.activeLayer);
-				
+
 				$scope.getImagesList = function (){
 					sbiModule_restServices.restToRootProject();
 					sbiModule_restServices.get("1.0/images", 'listImages').then(
@@ -254,22 +241,22 @@ function mapWidgetEditControllerFunction(
 						});
 				}
 				$scope.getImagesList();
-				
+
 				$scope.getImageUrl = function(img){
 					return sbiModule_config.externalBasePath + "/restful-services/1.0/images/getImage?IMAGES_ID=" + img.imgId;
 				}
-				
+
 				$scope.selectImg = function(img){
 					$scope.selectedImg = img;
 					$scope.activeLayer.markerConf.img = $scope.getImageUrl(img);
 				}
-				
+
 				$scope.setIcon = function(family,icon){
 					if(!$scope.activeLayer.markerConf) $scope.activeLayer.markerConf = {};
 					$scope.activeLayer.markerConf.icon = icon;
 					$scope.activeLayer.markerConf.icon.family = family.name;
 				}
-				
+
 				$scope.upload = function(ev,layer){
 					if($scope.uploadImg.fileName == "" || $scope.uploadImg.fileName == undefined){
 						$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.cockpit.widgets.image.missinguploadfile')).position('top').action(
@@ -289,7 +276,7 @@ function mapWidgetEditControllerFunction(
 						});
 					}
 				};
-				
+
 				$scope.erase = function(ev,img){
 					sbiModule_restServices.restToRootProject();
 						var imageId = 'imageId='+img.imgId;
@@ -302,7 +289,7 @@ function mapWidgetEditControllerFunction(
 							}
 						});
 				};
-				
+
 				$scope.choose = function(){
 					angular.copy($scope.activeLayer,layer);
 					$mdDialog.hide();
@@ -319,8 +306,8 @@ function mapWidgetEditControllerFunction(
 	      locals: {  }
 	    })
   	}
-  	
-  	
+
+
   	$scope.addToDatasets = function() {
   		$scope.newModel.dataset = {};
   		if ($scope.newModel.content.layers.length > 1) {
@@ -335,28 +322,28 @@ function mapWidgetEditControllerFunction(
   			$scope.newModel.dataset.dsId = $scope.newModel.content.layers[0].dsId;
   		}
   	}
-  	
-  	
+
+
   	$scope.getThresholds = function(ev, measure) {
-  		
+
   		$mdDialog.show({
 			controller: function ($scope,$mdDialog) {
 
 				$scope.activeMeasure = {};
-				
+
 				angular.copy(measure,$scope.activeMeasure);
-				
+
 				$scope.addThreshold = function() {
 					if(!$scope.activeMeasure.properties.thresholds){
 						$scope.activeMeasure.properties.thresholds = [];
 					}
 					$scope.activeMeasure.properties.thresholds.push({});
 				}
-				
+
 				$scope.deleteThreshold = function(threshold){
 					$scope.activeMeasure.properties.thresholds.splice($scope.activeMeasure.properties.thresholds.indexOf(threshold),1);
 				}
-				
+
 				$scope.set = function(){
 					angular.copy($scope.activeMeasure,measure);
 					$mdDialog.hide();
@@ -373,8 +360,8 @@ function mapWidgetEditControllerFunction(
 	      locals: {  }
 	    })
   	}
-  	
-  	
+
+
   	//MAIN DIALOG BUTTONS
 	$scope.saveConfiguration=function(){
 		for(var c in $scope.newModel.content.layers){
