@@ -65,6 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.values = {};  //layers with values
 		$scope.savedValues = {};
 		$scope.configs = []; //layers with configuration
+		$scope.columnsConfig = {} //layers with just columns definition
 
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
 		//set a watcher on a variable that can contains the associative selections for realtime dataset
@@ -212,6 +213,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 	    $scope.refresh = function(element,width,height, data, nature, associativeSelection, changedChartType, chartConf, options) {
+	    	if (!options) options = {};
     		var dsLabel = (Array.isArray(options.label)) ? options.label[0] : options.label; //on delete of selections options is an array !!!
     		$scope.createLayerWithData(dsLabel, data, false);
 	    }
@@ -415,8 +417,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        		if ($scope.props.features && Array.isArray($scope.props.features)) return;
 	        		$scope.$apply()
 
-    	        	if(!$scope.layerConfig){
+	        		if (!$scope.columnsConfig[$scope.selectedLayer.name]){
     	        		$scope.layerConfig = $scope.getColumnSelectedOfDataset($scope.selectedLayer.dsId);
+	        			$scope.columnsConfig[$scope.selectedLayer.name] =  $scope.layerConfig;
+    	        	}else{
+    	        		$scope.layerConfig = $scope.columnsConfig[$scope.selectedLayer.name];
     	        	}
 
     	            var geometry = $scope.tempFeature.getGeometry();
@@ -432,7 +437,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		    	var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
 	    			if (isCluster){
 	    				var values = $scope.values[layerDef.name];
-		        		$scope.createLayerWithData(layerDef.name, data, false);
+	    				$scope.createLayerWithData(layerDef.name, values, false);
 	    			}
     			}
     		});

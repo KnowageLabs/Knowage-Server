@@ -89,7 +89,7 @@
 												<td> {{column.name}}</td>
 												<td>
 													<md-input-container >
-														<md-select ng-model="column.properties.coordType">
+														<md-select ng-model="column.properties.coordType" ng-init="column.properties.coordType = column.properties.coordType || 'string'">
 															<md-option value="string">string</md-option>
 															<md-option value="json">JSON</md-option>
 														</md-select>

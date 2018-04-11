@@ -122,37 +122,3 @@
 	
 	</md-card-content>
 </md-card>
-
-<md-card layout="column" ng-if="layer.expanded=='style' && layer.clusterConf.enabled">
-	<md-toolbar class="ternaryToolbar">
-	  <div class="md-toolbar-tools">
-	    <h2>Cluster</h2>
-	    <span flex></span>
-	  </div>
-	</md-toolbar>
-	<md-card-content flex layout="column" class="markersExpander">
-			<div layout="row" ng-if="layer.clusterConf.enabled" layout-align="start center">
-			<md-input-container class="md-block flex" ng-if="layer.clusterConf.enabled">
-		        <label>Radius Size</label>
-		        <input ng-model="layer.clusterConf.radiusSize" type="number" ng-init="layer.clusterConf.radiusSize=layer.clusterConf.radiusSize||10">
-	      	</md-input-container>
-	      	<md-input-container class="md-block flex" ng-if="layer.clusterConf.enabled">
-		        <label>Font size</label>
-		        <input ng-model="layer.clusterConf.style['font-size']" type="text" ng-init="layer.clusterConf.style['font-size']=layer.clusterConf.style['font-size']||'12px'">
-	      	</md-input-container>
-	      	<md-input-container class="md-block flex" ng-if="layer.clusterConf.enabled">
-		        <label>Font color</label>
-		         <color-picker options="colorPickerOptions" ng-model="layer.clusterConf.style['color']"></color-picker> 
-	      	</md-input-container>
-	      	<md-input-container class="md-block flex" ng-if="layer.clusterConf.enabled">
-		        <label>Background color</label>
-		         <color-picker options="colorPickerOptions" ng-model="layer.clusterConf.style['background-color']"></color-picker> 
-	      	</md-input-container>
-	      	<div class="preview" >
-				<label>Preview</label>
-				<div class="clusterExample" 
-					ng-style="{'width':(layer.clusterConf.radiusSize * 2) + 'px', 'height':(layer.clusterConf.radiusSize * 2) + 'px','font-size':layer.clusterConf.style['font-size'],'background-color':layer.clusterConf.style['background-color'],'color':layer.clusterConf.style.color}" >10</div>
-			</div>
-		</div>
-	</md-card-content>
-</md-card>

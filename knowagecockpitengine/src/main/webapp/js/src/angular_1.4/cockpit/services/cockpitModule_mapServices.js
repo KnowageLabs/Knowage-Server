@@ -487,6 +487,22 @@
 				    		visible: true,
 				      	    source: new ol.source.OSM()
 				      	});
+//			    default: //carto temporaneo fino a rilascio ufficiale
+//			    	toReturn = new ol.layer.Tile({ 
+//				      	   visible: true,
+//				      	   source: new ol.source.XYZ({
+//				      	     url: 'https://cartocdn_a.global.ssl.fastly.net/base-light/{z}/{x}/{y}.png',
+//				      	     	attributions: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy;<a href="https://carto.com/attribution">CARTO</a>',
+//				      	   })
+//			      	});
+//			    default:
+//			    	 toReturn = new ol.layer.Tile({
+//			             visible: true,
+//			             source: new ol.source.Stamen({
+//			                layer: 'watercolor' //'watercolor', 'toner-hybrid',toner, toner-background, toner-labels, toner-lines, toner-lite,terrain, terrain-background, terrain-labels, terrain-lines
+//			             })
+//			          });
+			      
 			}
 	      
 			return toReturn;
