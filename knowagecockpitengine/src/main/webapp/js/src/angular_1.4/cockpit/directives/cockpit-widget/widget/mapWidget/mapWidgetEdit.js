@@ -367,10 +367,15 @@ function mapWidgetEditControllerFunction(
 		for(var c in $scope.newModel.content.layers){
 			if($scope.newModel.content.layers[c].expanded) delete $scope.newModel.content.layers[c].expanded;
 		}
+
+		if($scope.newModel.content.layers.length == 1){ // force target if only one layer is defined
+			$scope.newModel.content.layers[0].targetDefault = true;
+		}
+
 		$scope.addToDatasets();
-		 mdPanelRef.close();
-		 angular.copy($scope.newModel,model);
-		 finishEdit.resolve();
+		mdPanelRef.close();
+		angular.copy($scope.newModel,model);
+		finishEdit.resolve();
   	}
 
 	$scope.cancelConfiguration=function(){
