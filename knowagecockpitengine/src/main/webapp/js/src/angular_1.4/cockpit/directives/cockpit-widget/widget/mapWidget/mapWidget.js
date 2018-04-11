@@ -70,25 +70,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
 		//set a watcher on a variable that can contains the associative selections for realtime dataset
 		var realtimeSelectionsWatcher = $scope.$watchCollection('realTimeSelections',function(newValue,oldValue,scope){
-			if(scope.ngModel && scope.ngModel.dataset && scope.ngModel.dataset.dsId){
-				var dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId);
-				if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
-	                cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
-	            }
-				if(newValue != oldValue){
+			if(newValue != oldValue){
+				if(scope.ngModel && scope.ngModel.dataset && scope.ngModel.dataset.dsId){
+					var dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId);
+					if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
+		                cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
+		            }
+
+					var layer = $scope.getLayerByName(dataset.label);
+
 					if(newValue.length > 0){
-						var layer = $scope.getLayerByName(dataset.label);
-						$scope.savedValues[layer.name] = {};
-						angular.copy($scope.values[layer.name], $scope.savedValues[layer.name]);
-						var values = scope.filterDataset(scope.values[layer.name],scope.reformatSelections(newValue));
-						$scope.createLayerWithData(layer.name, values, false);
+						// save unfiltered data if not already saved
+						if(!$scope.savedValues[layer.name]){
+							$scope.savedValues[layer.name] = {};
+							angular.copy($scope.values[layer.name], $scope.savedValues[layer.name]);
+						}
+
+						// calc filtered data
+						scope.filterDataset(scope.values[layer.name],scope.reformatSelections(newValue));
+
+						// apply filtered data
+						$scope.createLayerWithData(layer.name, scope.values[layer.name], false);
 					}else{
-						angular.copy(scope.savedValues, scope.values);
-						for (l in $scope.ngModel.content.layers){
-		    		    	var layer =  $scope.ngModel.content.layers[l];
-		    				var values = $scope.values[layer.name];
-			        		$scope.createLayerWithData(layer.name, values, false);
-		    			}
+						// restore unfiltered data
+						angular.copy(scope.savedValues[layer.name], scope.values[layer.name]);
+						delete scope.savedValues[layer.name];
+
+						// apply unfiltered data
+						$scope.createLayerWithData(layer.name, scope.values[layer.name], false);
 					}
 				}
 			}
@@ -213,9 +222,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 	    $scope.refresh = function(element,width,height, data, nature, associativeSelection, changedChartType, chartConf, options) {
-	    	if (!options) options = {};
-    		var dsLabel = (Array.isArray(options.label)) ? options.label[0] : options.label; //on delete of selections options is an array !!!
-    		$scope.createLayerWithData(dsLabel, data, false);
+			if (!options) options = {};
+			var layerName = (Array.isArray(options.label)) ? options.label[0] : options.label; //on delete of selections options is an array !!!
+
+    		// save unfiltered data
+    		$scope.values[layerName] = data;
+
+    		if($scope.realTimeSelections.length > 0){
+    			// save unfiltered data
+    			$scope.savedValues[layerName] = {};
+    			angular.copy(data, $scope.savedValues[layerName]);
+
+    			// calc & save filtered data
+    			$scope.filterDataset($scope.values[layerName], $scope.reformatSelections($scope.realTimeSelections));
+    		}
+
+    		// apply (filtered) data
+    		$scope.createLayerWithData(layerName, $scope.values[layerName], false);
 	    }
 
 	    $scope.getOptions =function(){
@@ -437,7 +460,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		    	var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
 	    			if (isCluster){
 	    				var values = $scope.values[layerDef.name];
-	    				$scope.createLayerWithData(layerDef.name, values, false);
+		        		$scope.createLayerWithData(layerDef.name, values, false);
 	    			}
     			}
     		});
