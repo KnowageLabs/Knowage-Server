@@ -728,6 +728,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			}
 		}
 
+		var selections = {};
 		angular.copy(cockpitModule_template.configuration.filters,selections);
 		if(selections!=undefined){
 			var selectionKeys = Object.keys(selections);
