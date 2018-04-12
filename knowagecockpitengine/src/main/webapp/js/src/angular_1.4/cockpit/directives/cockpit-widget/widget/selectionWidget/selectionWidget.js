@@ -223,15 +223,20 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 			for(var i=0;i<$scope.tmpSelection.length;i++){
 				if($scope.tmpSelection[i].datasets.indexOf(item.ds) !=-1){
 					var selection = $scope.tmpSelection[i].selection;
-					delete selection[key];
+					if(selection){
+						delete selection[key];
+					}
 				}
 			}
 		}else{
-			if($scope.tmpFilters[item.ds]){
-				delete $scope.tmpFilters[item.ds][item.columnName];
-			}
-			if(Object.keys($scope.tmpFilters[item.ds]).length==0){
-				delete $scope.tmpFilters[item.ds];
+			if($scope.tmpFilters){
+				if($scope.tmpFilters[item.ds]){
+					delete $scope.tmpFilters[item.ds][item.columnName];
+
+					if(Object.keys($scope.tmpFilters[item.ds]).length==0){
+						delete $scope.tmpFilters[item.ds];
+					}
+				}
 			}
 		}
 
