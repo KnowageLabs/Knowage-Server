@@ -267,12 +267,12 @@
 	    	else{
 	    		toReturn += feature.get(ms.getActiveIndicator());
 	    	}
-			return toReturn;
+			return Math.round(toReturn*100)/100; //max 2 decimals
 	    }
 	    
 	    ms.getClusterStyles = function (value, props, config){
 	      var tmpSize =  (config.style && config.style['font-size']) ? config.style['font-size'] : '12px';
-	      var tmpFont = "normal " + tmpSize + " Roboto";
+	      var tmpFont = "bold " + tmpSize + " Roboto";
 	      return new ol.style.Style({
 	              image: new ol.style.Circle({
 	                radius: config.radiusSize || 20,
