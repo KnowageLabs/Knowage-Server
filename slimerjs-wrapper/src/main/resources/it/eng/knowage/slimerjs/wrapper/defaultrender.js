@@ -429,7 +429,7 @@ var renderPage = function (page) {
     log("Rendering PNG as target file: " + targetFile);
     window.setTimeout(function () {
     	page.render(targetFile);
-    },500);
+    }, (jsExitingWait / 2) );
   } catch (error) {
     err('Failed to render PNG: ' + error);
     slimer.exit(3);
@@ -438,7 +438,7 @@ var renderPage = function (page) {
   setTimeout(exit, jsExitingWait * sheets, 0);
 };
 
-var applySettingOnPage = function applySettingOnPage(page, sheet, url) {
+var applySettingOnPage = function(page, sheet, url) {
 	log("[APPLYSETTINGONPAGE] IN");
 	page.sheet = sheet;
 	page.viewportSize = { width: viewportWidth, height: viewportHeight };
