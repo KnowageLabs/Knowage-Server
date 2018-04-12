@@ -61,6 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_properties){
 
 		//ol objects
+		$scope.popupContainer; //popup detail
 		$scope.layers = [];  //layers with features
 		$scope.values = {};  //layers with values
 		$scope.savedValues = {};
@@ -422,11 +423,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	              if (closer) closer.blur();
 	              return false;
             }
+            
+            $scope.map.on('singleclick', function(evt) {
+    			$scope.props = {};
 
-    		$scope.map.on('singleclick', function(evt) {
-    			$scope.props = {}
-
-            	$scope.map.forEachFeatureAtPixel(evt.pixel,
+//            	$scope.map.forEachFeatureAtPixel(evt.pixel,
+            	evt.map.forEachFeatureAtPixel(evt.pixel,
 		            function(feature, layer) {
 						$scope.selectedLayer = layer;
 		                $scope.selectedFeature = feature;
@@ -524,10 +526,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	$scope.initializeTemplate().then(function(){
 	    		//create the base layer
 	            $scope.baseLayer = cockpitModule_mapServices.getBaseLayer($scope.ngModel.content.baseLayersConf[0]);
-	            var popupContainer = document.getElementById('popup');
+	            
+	            if (!$scope.popupContainer){
+	            	$scope.popupContainer = document.getElementById('popup');
+	            }
 	            //create overlayers (popup..)
 	            var overlay = new ol.Overlay({
-		              element: popupContainer,
+		              element: $scope.popupContainer,
 		              autoPan: true,
 		              autoPanAnimation: {
 		                duration: 250
@@ -538,9 +543,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            if ($scope.ngModel.content.currentView.center[0] == 0 && $scope.ngModel.content.currentView.center[1] == 0 && $scope.layers.length > 0){
 		    		var tmpLayer = $scope.layers[0].layer;
 		    		cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, tmpLayer, false);
-
-		    		//$scope.addViewEvents();
-		    		//$scope.addMapEvents(overlay);
 	    		}
 
 	    		$scope.map = new ol.Map({
