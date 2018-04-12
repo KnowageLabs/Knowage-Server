@@ -86,7 +86,7 @@
 										<tbody>
 											<tr ng-repeat="column in newModel.content.columnSelectedOfDataset[layer.dsId] | filter:{'fieldType':'SPATIAL_ATTRIBUTE'}" >
 												
-												<td> {{column.name}}</td>
+												<td>  {{column.name}}</td>
 												<td>
 													<md-input-container >
 														<md-select ng-model="column.properties.coordType" ng-init="column.properties.coordType = column.properties.coordType || 'string'">
@@ -116,6 +116,12 @@
 								</div>	
 								<md-subheader>Fields</md-subheader>	
 								<div layout-padding>
+									<div layout="row" layout-align="center center">
+										<div class="kn-info" flex="60">
+											Some fields in the template has been changed. You can reassign them of add the new ones.
+											<md-button ng-if="confrontationDs.metadata.fieldsMeta.length > 0">Add field</md-button>
+										</div>
+									</div>
 									<table class="kn-table kn-table-row-highlight kn-table-alternated-rows" ng-if="newModel.content.layers.length > 0" layout-padding>
 										<thead>
 											<tr>
@@ -131,16 +137,26 @@
 										<tbody>
 											<tr ng-repeat="column in newModel.content.columnSelectedOfDataset[layer.dsId] | orderBy:'fieldType':true " ng-if="column.fieldType != 'SPATIAL_ATTRIBUTE'">
 												
-												<td> {{column.name}}</td>
+												<td>
+													<md-input-container ng-if="!checkDs(column)" layout="row" layout-align="start center">
+														<i class="fa fa-warning"><md-tooltip>The column name has changed, select a field from the existing ones</md-tooltip></i> 
+														<md-select ng-model="column.name" aria-label="column name">
+															<md-option ng-repeat="col in confrontationDs.metadata.fieldsMeta" ng-value="col.name">{{col.name}}</md-option>
+														</md-select>
+													</md-input-container>
+													
+													<span ng-if="checkDs(column)">{{column.name}}</span>
+													
+												</td>
 												<td>
 													<md-input-container>
-														<input ng-model="column.aliasToShow" type="text">
+														<input ng-model="column.aliasToShow" type="text" aria-label="column alias">
 													</md-input-container>
 												</td>
 												<td>{{column.fieldType}}</td>
 												<td>
 													<md-input-container ng-if="column.fieldType === 'MEASURE'">
-														<md-select ng-model="column.properties.aggregationSelected" ng-init="column.properties.aggregationSelected=column.properties.aggregationSelected||availableAggregationFunctions[0]">
+														<md-select ng-model="column.properties.aggregationSelected" ng-init="column.properties.aggregationSelected=column.properties.aggregationSelected||availableAggregationFunctions[0]" aria-label="column aggregation">
 															<md-option ng-repeat="func in availableAggregationFunctions" ng-value="func">{{func}}</md-option>
 														</md-select>
 													</md-input-container>
@@ -151,8 +167,9 @@
 												<td>
 													<md-checkbox ng-model="column.properties.showMap" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE'"/>
 												</td>
-												<td class="tableAction">
+												<td class="multiTableAction">
 													<md-icon style="cursor: pointer" md-font-icon="fa fa-sliders" ng-if="column.fieldType === 'MEASURE'" ng-click="getThresholds($event,column)"></md-icon>
+													<md-icon style="cursor: pointer" md-font-icon="fa fa-trash" ng-click="getThresholds($event,column)" ng-if="!checkDs(column)"></md-icon>
 												</td>
 											</tr>
 										</tbody>

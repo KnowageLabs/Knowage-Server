@@ -67,6 +67,9 @@ function mapWidgetEditControllerFunction(
   	}
 
   	$scope.expandRow = function(layer,content){
+  		if(content == 'metadata'){
+  			$scope.confrontationDs = cockpitModule_datasetServices.getDatasetById(layer.dsId);
+  		}
   		for(var t in $scope.newModel.content.layers){
   			if($scope.newModel.content.layers[t].expanded != content || $scope.newModel.content.layers[t].dsId != layer.dsId){
   				delete $scope.newModel.content.layers[t].expanded;
@@ -79,6 +82,16 @@ function mapWidgetEditControllerFunction(
 		  		}
 	  		}
   		}
+  	}
+  	
+  	$scope.checkDs = function(column){
+  		for(var i in $scope.confrontationDs.metadata.fieldsMeta){
+  			if($scope.confrontationDs.metadata.fieldsMeta[i].name == column.name){
+  				//$scope.confrontationDs.metadata.fieldsMeta.splice(i,1);
+  				return true
+  			}
+  		}
+  		return false;
   	}
 
   	$scope.deleteLayer = function(layer){
