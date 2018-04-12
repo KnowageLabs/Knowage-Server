@@ -17,15 +17,18 @@
  */
 package it.eng.spagobi.commons.bo;
 
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-
 import java.io.Serializable;
 import java.util.Locale;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 
 /**
  * Defines a Domain object.
@@ -34,13 +37,32 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class Domain implements Serializable {
 
 	private static final long serialVersionUID = 3795397248242537831L;
-	
+
 	private Integer valueId;
-	@NotNull
+
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 100)
 	private String valueCd = "";
+
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 40)
 	private String valueName = "";
+
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 160)
 	private String valueDescription = "";
+
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 20)
 	private String domainCode = "";
+
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 40)
 	private String domainName = "";
 
 	/**

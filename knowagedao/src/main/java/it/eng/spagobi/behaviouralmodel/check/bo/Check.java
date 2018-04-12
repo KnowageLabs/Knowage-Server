@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,9 +19,11 @@ package it.eng.spagobi.behaviouralmodel.check.bo;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 import it.eng.spagobi.services.validation.Xss;
 
 /**
@@ -37,34 +39,35 @@ public class Check implements Serializable {
 	 */
 	private static final long serialVersionUID = -6563783224257501426L;
 
-	@Xss
-	@NotNull
-	@Max(value = 11)
 	private Integer checkId;
-	@Xss
-	@NotNull
-	@Max(value = 11)
+
 	private Integer valueTypeId;
-	@Xss
-	@NotNull
-	@Max(value = 40)
-	private String Name;
-	@Xss
-	@NotNull
-	@Max(value = 11)
+
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 40)
+	private String name;
+
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 20)
 	private String label;
-	@Xss
-	@Max(value = 160)
-	private String Description;
-	@Xss
-	@NotNull
-	@Max(value = 20)
+
+	@ExtendedAlphanumeric
+	@Size(max = 160)
+	private String description;
+
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 20)
 	private String valueTypeCd;
+
 	@Xss
-	@Max(value = 400)
+	@Size(max = 400)
 	private String firstValue;
+
 	@Xss
-	@Max(value = 400)
+	@Size(max = 400)
 	private String secondValue;
 
 	/**
@@ -73,7 +76,7 @@ public class Check implements Serializable {
 	 * @return Returns the description.
 	 */
 	public String getDescription() {
-		return Description;
+		return description;
 	}
 
 	/**
@@ -83,7 +86,7 @@ public class Check implements Serializable {
 	 *            The description to set.
 	 */
 	public void setDescription(String description) {
-		Description = description;
+		this.description = description;
 	}
 
 	/**
@@ -111,7 +114,7 @@ public class Check implements Serializable {
 	 * @return Returns the name.
 	 */
 	public String getName() {
-		return Name;
+		return name;
 	}
 
 	/**
@@ -121,7 +124,7 @@ public class Check implements Serializable {
 	 *            The name to set.
 	 */
 	public void setName(String name) {
-		Name = name;
+		this.name = name;
 	}
 
 	/**
@@ -163,20 +166,15 @@ public class Check implements Serializable {
 	}
 
 	/*
-	 * public static Check load(SourceBean sb) throws EMFUserError {
-	 * CheckDAOImpl repChecksDAO = new CheckDAOImpl(); return
-	 * (Check)repChecksDAO.load(sb);
+	 * public static Check load(SourceBean sb) throws EMFUserError { CheckDAOImpl repChecksDAO = new CheckDAOImpl(); return (Check)repChecksDAO.load(sb);
 	 *
 	 * }
 	 *
-	 * public void modify() throws EMFUserError { CheckDAOImpl repChecksDAO =
-	 * new CheckDAOImpl(); repChecksDAO.modify(this); }
+	 * public void modify() throws EMFUserError { CheckDAOImpl repChecksDAO = new CheckDAOImpl(); repChecksDAO.modify(this); }
 	 *
-	 * public void erase() throws EMFUserError { CheckDAOImpl repChecksDAO = new
-	 * CheckDAOImpl(); repChecksDAO.erase(this); }
+	 * public void erase() throws EMFUserError { CheckDAOImpl repChecksDAO = new CheckDAOImpl(); repChecksDAO.erase(this); }
 	 *
-	 * public void insert() throws EMFUserError { CheckDAOImpl repChecksDAO =
-	 * new CheckDAOImpl(); repChecksDAO.insert(this); }
+	 * public void insert() throws EMFUserError { CheckDAOImpl repChecksDAO = new CheckDAOImpl(); repChecksDAO.insert(this); }
 	 */
 	/**
 	 * Gets the check id.
