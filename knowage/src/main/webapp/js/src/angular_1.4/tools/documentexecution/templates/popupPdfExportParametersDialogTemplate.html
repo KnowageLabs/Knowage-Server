@@ -19,7 +19,7 @@
 			<div layout="column">
 				<md-input-container>
 					<label>{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.waittime')}} (s)</label>
-					<input ng-model="parameters.pdfWaitTime" type="number" step="1" min="10" max="300">
+					<input ng-model="parameters.pdfWaitTime" type="number" step="1" min="10" max="300"></input>
 				</md-input-container>
 				
 				<md-input-container>
@@ -46,7 +46,7 @@
 	</md-card-content>
 	<md-card-actions layout="row" layout-align="end center">
 		<md-button ng-click="closeDialog()">{{translate.load('sbi.generic.cancel')}}</md-button>
-		<md-button ng-click="exportPdf()">{{translate.load('sbi.generic.save')}}</md-button>
+		<md-button ng-disabled="!parameters.pdfWaitTime" ng-click="exportPdf()">{{translate.load('sbi.generic.save')}}</md-button>
 	</md-card-actions>
 </md-card>
 <!-- 
