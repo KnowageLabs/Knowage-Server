@@ -124,7 +124,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 	};
 
-	this.loadDatasetRecords = function(ngModel, page, itemPerPage,columnOrdering, reverseOrdering, loadDomainValues = false){
+	this.loadDatasetRecords = function(ngModel, page, itemPerPage,columnOrdering, reverseOrdering, loadDomainValues){
+		if(loadDomainValues == undefined){
+			loadDomainValues = false;
+		}
+
 		if(ngModel.dataset!=undefined && ngModel.dataset.dsId!=undefined){
 			var dataset = cockpitModule_datasetServices.getDatasetById(ngModel.dataset.dsId);
 
