@@ -29,11 +29,11 @@ import it.eng.qbe.utility.ProfileDialectThreadLocal;
 import it.eng.qbe.utility.bo.CustomizedFunction;
 import it.eng.spagobi.commons.bo.UserProfile;
 
-public class ExtendedSQLServerDialect extends Oracle10gDialect {
+public class ExtendedOracle10Dialect extends Oracle10gDialect {
 
-	static protected Logger logger = Logger.getLogger(ExtendedSQLServerDialect.class);
+	static protected Logger logger = Logger.getLogger(ExtendedOracle10Dialect.class);
 
-	public ExtendedSQLServerDialect() {
+	public ExtendedOracle10Dialect() {
 		super();
 		logger.debug("IN");
 		try {
@@ -43,7 +43,7 @@ public class ExtendedSQLServerDialect extends Oracle10gDialect {
 				logger.error("no profile could be get from singleton; stop adding custom functions");
 			}
 
-			List<CustomizedFunction> customizedFunctions = new CustomizedFunctionsReader("sqlserver").getCustomDefinedFunctionList(userProfile);
+			List<CustomizedFunction> customizedFunctions = new CustomizedFunctionsReader("oracle").getCustomDefinedFunctionList(userProfile);
 
 			if (customizedFunctions != null) {
 				logger.debug("converting custom functions");
