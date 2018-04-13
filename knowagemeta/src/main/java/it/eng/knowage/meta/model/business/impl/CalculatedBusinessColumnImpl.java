@@ -31,6 +31,7 @@ import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
 import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.qbe.utility.CustomizedFunctionsReader;
 import it.eng.qbe.utility.ProfileDialectThreadLocal;
+import it.eng.qbe.utility.TemporalRecord;
 import it.eng.spagobi.commons.bo.UserProfile;
 
 /**
@@ -68,6 +69,8 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 	public List<SimpleBusinessColumn> getReferencedColumns() throws KnowageMetaException {
 		List<SimpleBusinessColumn> columnsReferenced = new ArrayList<SimpleBusinessColumn>();
 		BusinessColumnSet businessColumnSet = this.getTable();
+
+		TemporalRecord ciao = null;
 
 		// get Expression String
 		String id = this.getPropertyType(CALCULATED_COLUMN_EXPRESSION).getId();
