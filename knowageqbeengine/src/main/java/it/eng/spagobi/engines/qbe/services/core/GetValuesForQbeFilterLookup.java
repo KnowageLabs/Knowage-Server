@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,27 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.qbe.services.core;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import org.apache.log4j.Logger;
+import org.jgrapht.Graph;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
@@ -44,22 +60,6 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import org.apache.log4j.Logger;
-import org.jgrapht.Graph;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 
@@ -126,15 +126,15 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 				}
 			}
 
-			Assert.assertTrue(simpleCalculatedDescriptorJSON != null || inlineCalculatedDescriptorJSON != null, "One between request parameters [" + ENTITY_ID
-					+ "] and [" + INLINE_CALCULATED_FIELD_DESCRIPTOR + "] must be not null");
+			Assert.assertTrue(simpleCalculatedDescriptorJSON != null || inlineCalculatedDescriptorJSON != null,
+					"One between request parameters [" + ENTITY_ID + "] and [" + INLINE_CALCULATED_FIELD_DESCRIPTOR + "] must be not null");
 
 			if (this.requestContainsAttribute(FILTERS)) {
 				try {
 					filtersJSON = getAttributeAsJSONObject(FILTERS);
 				} catch (Throwable t) {
-					throw new RuntimeException("Value [" + getAttributeAsString(FILTERS) + "] of request parameter [" + FILTERS
-							+ "] is not a well formed JSON string", t);
+					throw new RuntimeException(
+							"Value [" + getAttributeAsString(FILTERS) + "] of request parameter [" + FILTERS + "] is not a well formed JSON string", t);
 				}
 			}
 
@@ -220,8 +220,8 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 			logger.debug("Query executed succesfully");
 
 			resultNumber = (Integer) dataStore.getMetaData().getProperty("resultNumber");
-			Assert.assertNotNull(resultNumber, "property [resultNumber] of the dataStore returned by loadData method of the class ["
-					+ dataSet.getClass().getName() + "] cannot be null");
+			Assert.assertNotNull(resultNumber,
+					"property [resultNumber] of the dataStore returned by loadData method of the class [" + dataSet.getClass().getName() + "] cannot be null");
 			logger.debug("Total records: " + resultNumber);
 
 			// serializer = new DataStoreJSONSerializer();
@@ -271,6 +271,11 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 
 		if (type.equals(ISelectField.IN_LINE_CALCULATED_FIELD)) {
 
+			String entity = null;
+			if (fieldDescriptor.has("entity")) {
+				entity = fieldDescriptor.getString("entity");
+			}
+
 			String slots = null;
 			if (fieldDescriptor.has("slots")) {
 				slots = fieldDescriptor.getString("slots");
@@ -286,7 +291,7 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 				cftype = fieldDescriptor.getString("type");
 			}
 
-			query.addInLineCalculatedFiled("Valori", fieldDescriptor.getString("expression"), slots, cftype, nature, true, true, false, "asc", "NONE");
+			query.addInLineCalculatedFiled("Valori", fieldDescriptor.getString("expression"), slots, cftype, nature, true, true, false, "asc", "NONE", entity);
 			value = fieldDescriptor.getString("expression");
 		} else {
 			query.addSelectFiled(fieldDescriptor.getString("entity"), "NONE", "Valori", true, true, false, "asc", null);
