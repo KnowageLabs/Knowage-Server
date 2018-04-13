@@ -116,10 +116,10 @@
 								</div>	
 								<md-subheader>Fields</md-subheader>	
 								<div layout-padding>
-									<div layout="row" layout-align="center center">
+									<div layout="row" layout-align="center center" ng-if="confrontationDsList.length > 0">
 										<div class="kn-info" flex="60">
-											Some fields in the template has been changed. You can reassign them of add the new ones.
-											<md-button ng-if="confrontationDs.metadata.fieldsMeta.length > 0">Add field</md-button>
+											Some fields in the template has been changed. You can reassign them or add the new ones.
+											<md-button ng-click="addField(newModel.content.columnSelectedOfDataset[layer.dsId])">Add field</md-button>
 										</div>
 									</div>
 									<table class="kn-table kn-table-row-highlight kn-table-alternated-rows" ng-if="newModel.content.layers.length > 0" layout-padding>
@@ -135,13 +135,13 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr ng-repeat="column in newModel.content.columnSelectedOfDataset[layer.dsId] | orderBy:'fieldType':true " ng-if="column.fieldType != 'SPATIAL_ATTRIBUTE'">
+											<tr ng-repeat="column in newModel.content.columnSelectedOfDataset[layer.dsId] | orderBy:'fieldType':true track by $index" ng-if="column.fieldType != 'SPATIAL_ATTRIBUTE'">
 												
 												<td>
 													<md-input-container ng-if="!checkDs(column)" layout="row" layout-align="start center">
-														<i class="fa fa-warning"><md-tooltip>The column name has changed, select a field from the existing ones</md-tooltip></i> 
-														<md-select ng-model="column.name" aria-label="column name">
-															<md-option ng-repeat="col in confrontationDs.metadata.fieldsMeta" ng-value="col.name">{{col.name}}</md-option>
+														<i class="fa fa-warning"><md-tooltip>The column name have changed, select a field from the existing ones</md-tooltip></i> 
+														<md-select ng-model="column.name" aria-label="column name" ng-change="checkDs(column,true)">
+															<md-option ng-repeat="col in confrontationDsList" ng-value="col.name" ng-if="col.fieldType != 'SPATIAL_ATTRIBUTE'">{{col.name}}</md-option>
 														</md-select>
 													</md-input-container>
 													
@@ -169,7 +169,7 @@
 												</td>
 												<td class="multiTableAction">
 													<md-icon style="cursor: pointer" md-font-icon="fa fa-sliders" ng-if="column.fieldType === 'MEASURE'" ng-click="getThresholds($event,column)"></md-icon>
-													<md-icon style="cursor: pointer" md-font-icon="fa fa-trash" ng-click="getThresholds($event,column)" ng-if="!checkDs(column)"></md-icon>
+													<md-icon style="cursor: pointer" md-font-icon="fa fa-trash" ng-click="deleteColumn(newModel.content.columnSelectedOfDataset[layer.dsId],column)" ng-if="!checkDs(column)"></md-icon>
 												</td>
 											</tr>
 										</tbody>

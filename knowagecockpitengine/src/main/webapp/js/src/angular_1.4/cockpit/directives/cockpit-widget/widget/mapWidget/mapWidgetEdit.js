@@ -69,6 +69,12 @@ function mapWidgetEditControllerFunction(
   	$scope.expandRow = function(layer,content){
   		if(content == 'metadata'){
   			$scope.confrontationDs = cockpitModule_datasetServices.getDatasetById(layer.dsId);
+  			$scope.confrontationDsList = angular.copy($scope.confrontationDs.metadata.fieldsMeta);
+  			for(var i in $scope.confrontationDsList){
+  				if($scope.confrontationDsList[i].fieldType == 'SPATIAL_ATTRIBUTE'){
+  					$scope.confrontationDsList.splice(i,1);
+  				}
+  			}
   		}
   		for(var t in $scope.newModel.content.layers){
   			if($scope.newModel.content.layers[t].expanded != content || $scope.newModel.content.layers[t].dsId != layer.dsId){
@@ -84,14 +90,30 @@ function mapWidgetEditControllerFunction(
   		}
   	}
   	
-  	$scope.checkDs = function(column){
+  	$scope.addField = function(columns){
+  		columns.unshift({});
+  	}
+  	
+  	$scope.checkDs = function(column, isNew){
   		for(var i in $scope.confrontationDs.metadata.fieldsMeta){
   			if($scope.confrontationDs.metadata.fieldsMeta[i].name == column.name){
-  				//$scope.confrontationDs.metadata.fieldsMeta.splice(i,1);
+  				for(var k in $scope.confrontationDsList){
+  					if($scope.confrontationDsList[k].name == column.name){
+  						$scope.confrontationDsList.splice(k,1);
+  						if(isNew){
+  							column.fieldType = $scope.confrontationDs.metadata.fieldsMeta[i].fieldType;
+  						}
+  						break;
+  					}
+  				}
   				return true
   			}
   		}
   		return false;
+  	}
+  	
+  	$scope.deleteColumn = function(layer,column){
+  		layer.splice(layer.indexOf(column),1);
   	}
 
   	$scope.deleteLayer = function(layer){
