@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -48,6 +48,7 @@ import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.jpa.JPAModelStructureBuilder;
 import it.eng.qbe.query.Filter;
 import it.eng.qbe.query.filters.ProfileAttributesModelAccessModality;
+import it.eng.qbe.utility.ProfileDialectThreadLocal;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -74,8 +75,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		if (configuration instanceof FileDataSourceConfiguration) {
 			this.configuration = configuration;
 		} else if (configuration instanceof CompositeDataSourceConfiguration) {
-			IDataSourceConfiguration subConf = ((CompositeDataSourceConfiguration) configuration).getSubConfigurations()
-					.get(0);
+			IDataSourceConfiguration subConf = ((CompositeDataSourceConfiguration) configuration).getSubConfigurations().get(0);
 			if (subConf instanceof FileDataSourceConfiguration) {
 				this.configuration = subConf;
 				this.configuration.loadDataSourceProperties().putAll(configuration.loadDataSourceProperties());
@@ -99,9 +99,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang
-	 * .String)
+	 * @see it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang .String)
 	 */
 	@Override
 	public EntityManagerFactory getEntityManagerFactory(String dmName) {
@@ -169,8 +167,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		IDataSource dataSource = (IDataSource) configuration.loadDataSourceProperties().get("datasource");
 		// FOR SPAGOBIMETA
 		if (dataSource == null) {
-			ConnectionDescriptor connectionDescriptor = (ConnectionDescriptor) configuration.loadDataSourceProperties()
-					.get("connection");
+			ConnectionDescriptor connectionDescriptor = (ConnectionDescriptor) configuration.loadDataSourceProperties().get("connection");
 			if (connectionDescriptor != null) {
 				dataSource = connectionDescriptor.getDataSource();
 			}
@@ -189,12 +186,11 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			Map<String, List<String>> fieldsFilteredByRole = getFieldsFilteredByRole();
 
 			List<Filter> filtersOnProfileAttributes = getFiltersOnProfileAttributes();
-			Map<String,String> filtersConditionsOnProfileAttributes = getFiltersConditionsOnProfileAttribute();
+			Map<String, String> filtersConditionsOnProfileAttributes = getFiltersConditionsOnProfileAttribute();
 			if (!filtersOnProfileAttributes.isEmpty() || !fieldsFilteredByRole.isEmpty()) {
-				logger.debug(
-						"One or more profile attributes filters were found therefore profile attributes model access modality will be activated.");
-				this.setDataMartModelAccessModality(new ProfileAttributesModelAccessModality(filtersOnProfileAttributes,
-						fieldsFilteredByRole, profile, filtersConditionsOnProfileAttributes));
+				logger.debug("One or more profile attributes filters were found therefore profile attributes model access modality will be activated.");
+				this.setDataMartModelAccessModality(new ProfileAttributesModelAccessModality(filtersOnProfileAttributes, fieldsFilteredByRole, profile,
+						filtersConditionsOnProfileAttributes));
 			}
 		}
 		return dataMartModelStructure;
@@ -237,8 +233,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 				IModelField field = fieldsIt.next();
 				String attributeName = (String) field.getProperty("attribute");
 				if (attributeName != null && !attributeName.trim().equals("")) {
-					logger.debug("Found profile attribute filter on field " + field.getUniqueName()
-							+ ": profile attribute is " + attributeName);
+					logger.debug("Found profile attribute filter on field " + field.getUniqueName() + ": profile attribute is " + attributeName);
 					// Filter filter = new Filter(entity.getUniqueName(), "F{" +
 					// field.getName() + "} = {" + attributeName + "}");
 					List<String> values = new ArrayList<String>();
@@ -252,18 +247,18 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		}
 		return toReturn;
 	}
-	
+
 	private Map<String, String> getFiltersConditionsOnProfileAttribute() {
 		Map<String, String> toReturn = new HashMap<String, String>();
 		Iterator<String> it = dataMartModelStructure.getModelNames().iterator();
 		while (it.hasNext()) {
 			List<IModelEntity> list = dataMartModelStructure.getRootEntities(it.next());
-			Map<String,String> filterconditions = getFiltersConditionsOnProfileAttribute(list);
+			Map<String, String> filterconditions = getFiltersConditionsOnProfileAttribute(list);
 			toReturn.putAll(filterconditions);
 		}
 		return toReturn;
 	}
-	
+
 	private Map<String, String> getFiltersConditionsOnProfileAttribute(List<IModelEntity> list) {
 		Map<String, String> toReturn = new HashMap<String, String>();
 		Iterator<IModelEntity> it = list.iterator();
@@ -274,13 +269,13 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			while (fieldsIt.hasNext()) {
 				IModelField field = fieldsIt.next();
 				String attributeName = (String) field.getProperty("attribute");
-				//add filter condition to map only if there is a value for the property attribute (profile attribute)
+				// add filter condition to map only if there is a value for the property attribute (profile attribute)
 				if (attributeName != null && !attributeName.trim().equals("")) {
 					String filtercondition = (String) field.getProperty("filtercondition");
 					if (filtercondition != null && !filtercondition.trim().equals("")) {
 						toReturn.put(field.getUniqueName(), filtercondition);
-						logger.debug("Found profile attribute filter on field " + field.getUniqueName()
-						+ ": profile attribute is " + attributeName +" and is filter condition is "+ filtercondition);
+						logger.debug("Found profile attribute filter on field " + field.getUniqueName() + ": profile attribute is " + attributeName
+								+ " and is filter condition is " + filtercondition);
 					}
 				}
 			}
@@ -324,6 +319,14 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		// to solve http://spagoworld.org/jira/browse/SPAGOBI-1934
 		if (dialect != null && dialect.contains("SQLServerDialect")) {
 			dialect = "org.hibernate.dialect.ExtendedSQLServerDialect";
+		} else if (dialect != null && dialect.contains("MySQL")) {
+			dialect = "org.hibernate.dialect.ExtendedMySQLDialect";
+			ProfileDialectThreadLocal.setDialect(dialect);
+			ProfileDialectThreadLocal.setUserProfile(userProfile);
+		} else if (dialect != null && dialect.contains("oracle")) {
+			dialect = "org.hibernate.dialect.ExtendedOracle10Dialect";
+			ProfileDialectThreadLocal.setUserProfile(userProfile);
+			ProfileDialectThreadLocal.setDialect(dialect);
 		}
 
 		// at the moment (04/2015) hibernate doesn't provide a dialect for hive

@@ -17,6 +17,14 @@
  */
 package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.eng.knowage.meta.exception.KnowageMetaException;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaCalculatedColumn;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaColumn;
@@ -24,15 +32,9 @@ import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
 import it.eng.knowage.meta.model.ModelProperty;
 import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
 import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
-
-import org.apache.commons.lang.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import it.eng.qbe.utility.CustomizedFunctionsReader;
+import it.eng.qbe.utility.ProfileDialectThreadLocal;
+import it.eng.spagobi.commons.bo.UserProfile;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -137,12 +139,33 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 
 		if (!jpaColumns.isEmpty()) {
 			// retrieve operands from string
-			//StringTokenizer stk = new StringTokenizer(expression, "+-|*/()");
-			String[] splittedExpr = expression
-					.split("(\\+|\\-|\\*|\\(|\\)|\\|\\||\\/|GG_between_dates|MM_between_dates|AA_between_dates|GG_up_today|MM_up_today|AA_up_today|current_date|current_time|length|substring|concat|year|month|mod|bit_length|upper|lower|trim|current_timestamp|hour|minute|second|day)");
+			// StringTokenizer stk = new StringTokenizer(expression, "+-|*/()");
+
+			String regularExpression = "(\\,|\\+|\\-|\\*|\\(|\\)|\\|\\||\\/|GG_between_dates|MM_between_dates|AA_between_dates|GG_up_today|MM_up_today|AA_up_today|current_date|current_time|length|substring|concat|year|month|mod|bit_length|upper|lower|trim|current_timestamp|hour|minute|second|day";
+
+			// add custom functions
+			UserProfile profile = ProfileDialectThreadLocal.getUserProfile();
+			if (profile == null) {
+				logger.error("Profile not found");
+				throw new RuntimeException("Profile could not be found in current Thread Locale, check stack of calls");
+			}
+
+			String dialect = ProfileDialectThreadLocal.getDialect();
+			if (dialect == null) {
+				logger.error("Dialect or db information not found");
+				throw new RuntimeException("Dialect or db information could not be found in current Thread Locale, check stack of calls");
+			}
+
+			String customs = (new CustomizedFunctionsReader(dialect)).getCustomDefinedFunctionString(profile);
+			logger.debug("Customs functions definition " + customs);
+			regularExpression += customs;
+
+			regularExpression += ")";
+
+			String[] splittedExpr = expression.split(regularExpression);
 			for (String operand : splittedExpr) {
 				operand = operand.trim();
-				
+
 				if (NumberUtils.isNumber(operand)) {
 					continue;
 				}

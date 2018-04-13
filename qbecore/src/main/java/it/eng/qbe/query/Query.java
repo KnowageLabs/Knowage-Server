@@ -266,8 +266,8 @@ public class Query implements IQuery {
 	@Override
 	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible, boolean groupByField,
 			String orderType, String pattern, String orderColumn) {
-		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, null, null,
-				orderColumn));
+		selectFields
+				.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, null, null, orderColumn));
 	}
 
 	/**
@@ -291,8 +291,9 @@ public class Query implements IQuery {
 	}
 
 	public void addInLineCalculatedFiled(String fieldAlias, String expression, String slots, String type, String nature, boolean included, boolean visible,
-			boolean groupByField, String orderType, String funct) {
-		selectFields.add(new InLineCalculatedSelectField(fieldAlias, expression, slots, type, nature, included, visible, groupByField, orderType, funct));
+			boolean groupByField, String orderType, String funct, String entity) {
+		selectFields
+				.add(new InLineCalculatedSelectField(fieldAlias, expression, slots, type, nature, included, visible, groupByField, orderType, funct, entity));
 	}
 
 	public WhereField addWhereField(String name, String description, boolean promptable, it.eng.qbe.query.WhereField.Operand leftOperand, String operator,
@@ -315,8 +316,8 @@ public class Query implements IQuery {
 			String leftOperatorType, String[] leftOperatorDefaulttValues, String[] leftOperatorLastValues, String leftOperatorAlias, String operator,
 			String[] rightOperatorValues, String rightOperatorDescription, String rightOperatorType, String[] rightOperatorDefaulttValues,
 			String[] rightOperatorLastValues, String rightOperatorAlias, String booleanConnector) {
-		it.eng.qbe.query.WhereField.Operand leftOperand = new it.eng.qbe.query.WhereField.Operand(leftOperatorValues, leftOperatorDescription,
-				leftOperatorType, leftOperatorDefaulttValues, leftOperatorLastValues, leftOperatorAlias);
+		it.eng.qbe.query.WhereField.Operand leftOperand = new it.eng.qbe.query.WhereField.Operand(leftOperatorValues, leftOperatorDescription, leftOperatorType,
+				leftOperatorDefaulttValues, leftOperatorLastValues, leftOperatorAlias);
 		it.eng.qbe.query.WhereField.Operand rightOperand = new it.eng.qbe.query.WhereField.Operand(rightOperatorValues, rightOperatorDescription,
 				rightOperatorType, rightOperatorDefaulttValues, rightOperatorLastValues, rightOperatorAlias);
 		WhereField whereField = new WhereField(name, description, promptable, leftOperand, operator, rightOperand, booleanConnector);
@@ -395,8 +396,8 @@ public class Query implements IQuery {
 	}
 
 	public void removeSelectField(int fieldIndex) {
-		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < selectFields.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - "
-				+ selectFields.size() + ")");
+		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < selectFields.size(),
+				"Index [" + fieldIndex + "] out of bound for select fields list (0 - " + selectFields.size() + ")");
 		selectFields.remove(fieldIndex);
 	}
 
@@ -410,20 +411,20 @@ public class Query implements IQuery {
 	}
 
 	public void removeWhereField(int fieldIndex) {
-		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < whereClause.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - "
-				+ whereClause.size() + ")");
+		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < whereClause.size(),
+				"Index [" + fieldIndex + "] out of bound for select fields list (0 - " + whereClause.size() + ")");
 		whereClause.remove(fieldIndex);
 	}
 
 	public void removeHavingField(int fieldIndex) {
-		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < havingClause.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - "
-				+ havingClause.size() + ")");
+		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < havingClause.size(),
+				"Index [" + fieldIndex + "] out of bound for select fields list (0 - " + havingClause.size() + ")");
 		havingClause.remove(fieldIndex);
 	}
 
 	public ISelectField getSelectFieldByIndex(int fieldIndex) {
-		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < selectFields.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - "
-				+ selectFields.size() + ")");
+		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < selectFields.size(),
+				"Index [" + fieldIndex + "] out of bound for select fields list (0 - " + selectFields.size() + ")");
 		return selectFields.get(fieldIndex);
 	}
 
@@ -714,7 +715,8 @@ public class Query implements IQuery {
 		return true;
 	}
 
-	private void replaceFieldsIncalculatedFields(InLineCalculatedSelectField cf, Map<IModelField, Set<IQueryField>> modelFieldsInvolved, IDataSource dataSource) {
+	private void replaceFieldsIncalculatedFields(InLineCalculatedSelectField cf, Map<IModelField, Set<IQueryField>> modelFieldsInvolved,
+			IDataSource dataSource) {
 		IModelField modelField;
 
 		try {

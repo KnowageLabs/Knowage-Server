@@ -110,6 +110,7 @@ import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
 import it.eng.knowage.meta.model.serializer.ModelPropertyFactory;
+import it.eng.qbe.utility.ProfileDialectThreadLocal;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -136,9 +137,8 @@ public class MetaService extends AbstractSpagoBIResource {
 	private static Logger logger = Logger.getLogger(MetaService.class);
 	private static final String DEFAULT_MODEL_NAME = "modelName";
 	public static final String EMF_MODEL = "EMF_MODEL";
-	public static final String  EMF_MODEL_CROSS_REFERENCE = "EMF_MODEL_CROSS_REFERENCE";
+	public static final String EMF_MODEL_CROSS_REFERENCE = "EMF_MODEL_CROSS_REFERENCE";
 	public static final String KNOWAGE_MODEL_URI = "it.eng.knowage";
-
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
@@ -184,16 +184,15 @@ public class MetaService extends AbstractSpagoBIResource {
 			Content lastFileModelContent = businessModelsDAO.lastFileModelMeta(bmId);
 			InputStream is = new ByteArrayInputStream(lastFileModelContent.getFileModel());
 			Model model = serializer.deserialize(is);
-			
-			//Create ResourceSet and add CrossReferenceAdapter
+
+			// Create ResourceSet and add CrossReferenceAdapter
 			ResourceSet resourceSet = new ResourceSetImpl();
-			URI uri = URI.createURI(KNOWAGE_MODEL_URI+model.getName());
+			URI uri = URI.createURI(KNOWAGE_MODEL_URI + model.getName());
 			Resource resource = resourceSet.createResource(uri);
 			resource.getContents().add(model);
 			ECrossReferenceAdapter crossReferenceAdapter = new ECrossReferenceAdapter();
 			resource.getResourceSet().eAdapters().add(crossReferenceAdapter);
 			req.getSession().setAttribute(EMF_MODEL_CROSS_REFERENCE, crossReferenceAdapter);
-
 
 			req.getSession().setAttribute(EMF_MODEL, model);
 
@@ -368,6 +367,9 @@ public class MetaService extends AbstractSpagoBIResource {
 		try {
 			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+
+			setProfileDialectThreadLocal(model);
+
 			JSONObject oldJsonModel = createJson(model);
 			applyDiff(jsonRoot, model);
 			JSONObject jsonModel = createJson(model);
@@ -379,6 +381,10 @@ public class MetaService extends AbstractSpagoBIResource {
 			logger.error(e);
 		} catch (SpagoBIException e) {
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} finally {
+			ProfileDialectThreadLocal.unset();
 		}
 		return Response.serverError().build();
 	}
@@ -649,95 +655,102 @@ public class MetaService extends AbstractSpagoBIResource {
 		dao.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
 		logger.debug("Loading metamodel...");
 
-		MetaModel metaModel = dao.loadMetaModelById(modelid);
-		logger.debug("Loading Model entity of metamodel...");
-
-		Model model = getModelWeb(metaModel.getName(), req);
-		// meta model version (content)
-		String modelName = req.getParameter("model");
-		String schemaName = req.getParameter("schema");
-		String catalogName = req.getParameter("catalog");
-		String isForRegistry = req.getParameter("registry");
-		String includeSourcesValue = req.getParameter("includeSources");
-
-		logger.debug("Loading Business Model entity of metamodel...");
-		BusinessModel businessModel = model.getBusinessModels().get(0);
-
-		logger.debug("setting model name [" + modelName + "]");
-		// set specified model name
-		setModelName(businessModel, modelName);
-
-		logger.debug("setting schema name [" + schemaName + "]");
-		// set specified schema name for generation
-		setSchemaName(businessModel, schemaName);
-
-		logger.debug("setting catalog name [" + catalogName + "]");
-		// set specified catalog name for generation
-		setCatalogName(businessModel, catalogName);
-
-		boolean isUpdatable = Boolean.parseBoolean(isForRegistry);
-		// include sources or not with the generated datamart
-		boolean includeSources = Boolean.parseBoolean(includeSourcesValue);
-
-		logger.debug("Getting Jar Generator...");
-
-		JpaMappingJarGenerator jpaMappingJarGenerator = new JpaMappingJarGenerator();
-
-		logger.debug("Base Library directory: " + req.getServletContext().getRealPath(File.separator));
-
-		String libDir = req.getServletContext().getRealPath("") + File.separator + "WEB-INF" + File.separator + "lib" + File.separator;
-		logger.debug("Library directory: " + libDir);
-
-		String filename = metaModel.getName() + ".jar";
-		logger.debug("Jar file name that will be generated: " + filename);
-		jpaMappingJarGenerator.setJarFileName(filename);
-		ByteArrayOutputStream errorLog = new ByteArrayOutputStream();
-		logger.debug("Setting error log");
-		jpaMappingJarGenerator.setErrorLog(new PrintWriter(errorLog));
-		Content content = dao.lastFileModelMeta(modelid);
-		JSError errors = new JSError();
+		JSError errors = null;
 		try {
-			java.nio.file.Path outDir = Files.createTempDirectory("model_");
-			logger.debug("Output directory: " + outDir);
+			MetaModel metaModel = dao.loadMetaModelById(modelid);
+			logger.debug("Loading Model entity of metamodel...");
 
+			Model model = getModelWeb(metaModel.getName(), req);
+			// meta model version (content)
+			String modelName = req.getParameter("model");
+			String schemaName = req.getParameter("schema");
+			String catalogName = req.getParameter("catalog");
+			String isForRegistry = req.getParameter("registry");
+			String includeSourcesValue = req.getParameter("includeSources");
+
+			setProfileDialectThreadLocal(model);
+
+			logger.debug("Loading Business Model entity of metamodel...");
+			BusinessModel businessModel = model.getBusinessModels().get(0);
+
+			logger.debug("setting model name [" + modelName + "]");
+			// set specified model name
+			setModelName(businessModel, modelName);
+
+			logger.debug("setting schema name [" + schemaName + "]");
+			// set specified schema name for generation
+			setSchemaName(businessModel, schemaName);
+
+			logger.debug("setting catalog name [" + catalogName + "]");
+			// set specified catalog name for generation
+			setCatalogName(businessModel, catalogName);
+
+			boolean isUpdatable = Boolean.parseBoolean(isForRegistry);
+			// include sources or not with the generated datamart
+			boolean includeSources = Boolean.parseBoolean(includeSourcesValue);
+
+			logger.debug("Getting Jar Generator...");
+
+			JpaMappingJarGenerator jpaMappingJarGenerator = new JpaMappingJarGenerator();
+
+			logger.debug("Base Library directory: " + req.getServletContext().getRealPath(File.separator));
+
+			String libDir = req.getServletContext().getRealPath("") + File.separator + "WEB-INF" + File.separator + "lib" + File.separator;
+			logger.debug("Library directory: " + libDir);
+
+			String filename = metaModel.getName() + ".jar";
+			logger.debug("Jar file name that will be generated: " + filename);
+			jpaMappingJarGenerator.setJarFileName(filename);
+			ByteArrayOutputStream errorLog = new ByteArrayOutputStream();
+			logger.debug("Setting error log");
+			jpaMappingJarGenerator.setErrorLog(new PrintWriter(errorLog));
+			Content content = dao.lastFileModelMeta(modelid);
+			errors = new JSError();
 			try {
-				jpaMappingJarGenerator.generate(businessModel, outDir.toString(), isUpdatable, includeSources, new File(libDir), content.getFileModel());
-			} catch (GenerationException e) {
-				logger.error(e);
-				errors.addErrorKey("metaWeb.generation.generic.error");
+				java.nio.file.Path outDir = Files.createTempDirectory("model_");
+				logger.debug("Output directory: " + outDir);
+
+				try {
+					jpaMappingJarGenerator.generate(businessModel, outDir.toString(), isUpdatable, includeSources, new File(libDir), content.getFileModel());
+				} catch (GenerationException e) {
+					logger.error(e);
+					errors.addErrorKey("metaWeb.generation.generic.error");
+				}
+				logger.debug("Setting generic info on content");
+				dao.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+				content.setCreationDate(new Date());
+				content.setCreationUser(getUserProfile().getUserName().toString());
+				if (!errors.hasErrors()) {
+					logger.debug("Datamart compilation of model classes is OK");
+					String tmpDirJarFile = outDir + File.separator + model.getBusinessModels().get(0).getName() + File.separator + "dist";
+					logger.debug("Temporary directory jar file: " + tmpDirJarFile);
+					InputStream inputStream = new FileInputStream(tmpDirJarFile + File.separator + filename);
+					byte[] bytes = IOUtils.toByteArray(inputStream);
+
+					content.setContent(bytes);
+					content.setFileName(filename);
+
+					dao.modifyMetaModelContent(modelid, content, content.getId());
+				} else if (errorLog.size() > 0) {
+					logger.debug("Datamart generation has errors");
+					content.setContent(errorLog.toByteArray());
+					content.setFileName(metaModel.getName() + ".log");
+					dao.modifyMetaModelContent(modelid, content, content.getId());
+					errors.addErrorKey("metaWeb.generation.error.log");
+				}
+
+			} catch (IOException e) {
+				logger.error("Error during metamodel generation - IOException: " + e);
+				errors.addErrorKey("metaWeb.generation.io.error", e.getMessage());
+			} catch (AssertionError e) {
+				logger.error("Error during metamodel generation - AssertionError: " + e);
+				errors.addError(e.getMessage());
+			} catch (Throwable t) {
+				logger.error("Error during metamodel generation : " + t);
+				errors.addErrorKey("common.generic.error");
 			}
-			logger.debug("Setting generic info on content");
-			dao.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
-			content.setCreationDate(new Date());
-			content.setCreationUser(getUserProfile().getUserName().toString());
-			if (!errors.hasErrors()) {
-				logger.debug("Datamart compilation of model classes is OK");
-				String tmpDirJarFile = outDir + File.separator + model.getBusinessModels().get(0).getName() + File.separator + "dist";
-				logger.debug("Temporary directory jar file: " + tmpDirJarFile);
-				InputStream inputStream = new FileInputStream(tmpDirJarFile + File.separator + filename);
-				byte[] bytes = IOUtils.toByteArray(inputStream);
-
-				content.setContent(bytes);
-				content.setFileName(filename);
-
-				dao.modifyMetaModelContent(modelid, content, content.getId());
-			} else if (errorLog.size() > 0) {
-				logger.debug("Datamart generation has errors");
-				content.setContent(errorLog.toByteArray());
-				content.setFileName(metaModel.getName() + ".log");
-				dao.modifyMetaModelContent(modelid, content, content.getId());
-				errors.addErrorKey("metaWeb.generation.error.log");
-			}
-
-		} catch (IOException e) {
-			logger.error("Error during metamodel generation - IOException: " + e);
-			errors.addErrorKey("metaWeb.generation.io.error", e.getMessage());
-		} catch (AssertionError e) {
-			logger.error("Error during metamodel generation - AssertionError: " + e);
-			errors.addError(e.getMessage());
-		} catch (Throwable t) {
-			logger.error("Error during metamodel generation : " + t);
-			errors.addErrorKey("common.generic.error");
+		} finally {
+			ProfileDialectThreadLocal.unset();
 		}
 		return Response.ok(errors.toString()).build();
 	}
@@ -745,44 +758,51 @@ public class MetaService extends AbstractSpagoBIResource {
 	@POST
 	@Path("/setCalculatedField")
 	public Response setCalculatedBM(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
-
-		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
-
-		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
-		JSONObject oldJsonModel = createJson(model);
-
-		applyDiff(jsonRoot, model);
-
-		JSONObject jsonData = jsonRoot.getJSONObject("data");
-		String name = jsonData.getString("name");
-		String expression = jsonData.getString("expression");
-		String dataType = jsonData.getString("dataType");
-		String sourceTableName = jsonData.getString("sourceTableName");
-		Boolean editMode = jsonData.getBoolean("editMode");
-
-		BusinessModel bm = model.getBusinessModels().get(0);
-		BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
-		if (sourceBcs == null) {
-			// Business view
-			sourceBcs = bm.getBusinessViewByUniqueName(sourceTableName);
-		}
+		JsonNode patch = null;
 		try {
-			CalculatedFieldDescriptor cfd = new CalculatedFieldDescriptor(name, expression, dataType, sourceBcs);
-			BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
-			if (editMode) {
-				String uniquename = jsonData.getString("uniquename");
-				businessModelInitializer.editCalculatedColumn(sourceBcs.getCalculatedBusinessColumn(uniquename), cfd);
-			} else {
-				businessModelInitializer.addCalculatedColumn(cfd);
+			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+
+			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+
+			setProfileDialectThreadLocal(model);
+
+			JSONObject oldJsonModel = createJson(model);
+
+			applyDiff(jsonRoot, model);
+
+			JSONObject jsonData = jsonRoot.getJSONObject("data");
+			String name = jsonData.getString("name");
+			String expression = jsonData.getString("expression");
+			String dataType = jsonData.getString("dataType");
+			String sourceTableName = jsonData.getString("sourceTableName");
+			Boolean editMode = jsonData.getBoolean("editMode");
+
+			BusinessModel bm = model.getBusinessModels().get(0);
+			BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
+			if (sourceBcs == null) {
+				// Business view
+				sourceBcs = bm.getBusinessViewByUniqueName(sourceTableName);
+			}
+			try {
+				CalculatedFieldDescriptor cfd = new CalculatedFieldDescriptor(name, expression, dataType, sourceBcs);
+				BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
+				if (editMode) {
+					String uniquename = jsonData.getString("uniquename");
+					businessModelInitializer.editCalculatedColumn(sourceBcs.getCalculatedBusinessColumn(uniquename), cfd);
+				} else {
+					businessModelInitializer.addCalculatedColumn(cfd);
+				}
+
+			} catch (KnowageMetaException t) {
+				return Response.ok(new JSError().addError(t.getMessage()).toString()).build();
 			}
 
-		} catch (KnowageMetaException t) {
-			return Response.ok(new JSError().addError(t.getMessage()).toString()).build();
+			JSONObject jsonModel = createJson(model);
+			ObjectMapper mapper = new ObjectMapper();
+			patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+		} finally {
+			ProfileDialectThreadLocal.unset();
 		}
-
-		JSONObject jsonModel = createJson(model);
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 		return Response.ok(patch.toString()).build();
 
 	}
@@ -790,38 +810,47 @@ public class MetaService extends AbstractSpagoBIResource {
 	@POST
 	@Path("/deleteCalculatedField")
 	public Response deleteCalculatedField(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
+		JsonNode patch = null;
+		try {
+			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 
-		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
-		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
-		JSONObject oldJsonModel = createJson(model);
+			setProfileDialectThreadLocal(model);
 
-		applyDiff(jsonRoot, model);
+			JSONObject oldJsonModel = createJson(model);
 
-		JSONObject json = jsonRoot.getJSONObject("data");
-		String name = json.getString("name");
-		String sourceTableName = json.getString("sourceTableName");
+			applyDiff(jsonRoot, model);
 
-		BusinessModel bm = model.getBusinessModels().get(0);
-		BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
-		if (sourceBcs == null) {
-			// Business View
-			sourceBcs = bm.getBusinessViewByUniqueName(sourceTableName);
-		}
+			JSONObject json = jsonRoot.getJSONObject("data");
+			String name = json.getString("name");
+			String sourceTableName = json.getString("sourceTableName");
 
-		List<BusinessColumn> cbcList = sourceBcs.getColumns();
-		Iterator<BusinessColumn> i = cbcList.iterator();
-		while (i.hasNext()) {
-			BusinessColumn column = i.next();
-			if (column instanceof CalculatedBusinessColumn) {
-				if (column.getName().equals(name)) {
-					i.remove();
+			BusinessModel bm = model.getBusinessModels().get(0);
+			BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
+			if (sourceBcs == null) {
+				// Business View
+				sourceBcs = bm.getBusinessViewByUniqueName(sourceTableName);
+			}
+
+			List<BusinessColumn> cbcList = sourceBcs.getColumns();
+			Iterator<BusinessColumn> i = cbcList.iterator();
+			while (i.hasNext()) {
+				BusinessColumn column = i.next();
+				if (column instanceof CalculatedBusinessColumn) {
+					if (column.getName().equals(name)) {
+						i.remove();
+					}
 				}
 			}
+
+			JSONObject jsonModel = createJson(model);
+			ObjectMapper mapper = new ObjectMapper();
+
+			patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+		} finally {
+			ProfileDialectThreadLocal.unset();
 		}
 
-		JSONObject jsonModel = createJson(model);
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 		return Response.ok(patch.toString()).build();
 
 	}
@@ -920,7 +949,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		ECrossReferenceAdapter crossReferenceAdapter = (ECrossReferenceAdapter) req.getSession().getAttribute(EMF_MODEL_CROSS_REFERENCE);
 		physicalModelInitializer.setCrossReferenceAdapter(crossReferenceAdapter);
-		
+
 		PhysicalModel phyMod = model.getPhysicalModels().get(0);
 		IDataSource dataSource = phyMod.getDataSource();
 		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
@@ -939,7 +968,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	public Response applyUpdatePhysicalModel(@Context HttpServletRequest req)
 			throws ClassNotFoundException, NamingException, SQLException, JSONException, IOException, EMFUserError {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
-		
+
 		JSONObject oldJsonModel = createJson(model);
 
 		String modelName = model.getName();
@@ -1594,6 +1623,12 @@ public class MetaService extends AbstractSpagoBIResource {
 		logger.error("the model file could not be taken by datamart.jar");
 		return null;
 
+	}
+
+	private void setProfileDialectThreadLocal(Model model) {
+		ProfileDialectThreadLocal.setUserProfile(getUserProfile());
+		String name = model.getPhysicalModels().get(0).getDatabaseName();
+		ProfileDialectThreadLocal.setDialect(name);
 	}
 
 }
