@@ -17,10 +17,6 @@
  */
 package it.eng.spagobi.commons.initializers.metadata;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +24,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -103,33 +102,27 @@ public class DomainsInitializer extends SpagoBIInitializer {
 		Iterator it = domainsList.iterator();
 		while (it.hasNext()) {
 			SourceBean aDomainSB = (SourceBean) it.next();
-			if(!alreadyExamined.contains(aDomainSB)){
-				
-			String domainCd = (String) aDomainSB.getAttribute("domainCd");
-			if (domainCd == null || domainCd.equals("")) {
-				logger.error("No predefined domains code found!!!");
-				throw new Exception("No predefined domains code found!!!");
-			}
-			//Retrieving all the domains in the DB with the specified domain Code
-			logger.debug("Retrieving all the domains in the DB with the specified domain Code");
-			String hql = "from SbiDomains where domainCd = '"+domainCd+"'";
-			Query hqlQuery = aSession.createQuery(hql);
-			List result = hqlQuery.list();
-			
-			logger.debug("Retrieving all the domains in the XML file with the specified domain Code");
-			//Retrieving all the domains in the XML file with the specified domain Code
-			List domainsXmlList = domainsSB.getFilteredSourceBeanAttributeAsList("DOMAIN", "domainCd", domainCd);
-			
-			logger.debug("Retrieving all the domains in the XML file with the specified domain Code");
-			//Checking if the domains in the DB are less than the ones in the xml file
-			if(result.size() < domainsXmlList.size()){
-				//Less domains in the DB than in the XML file, will add new ones
-				logger.debug("Less domains in the DB than in the XML file, will add new ones");
-				addMissingDomains(aSession,result,domainsXmlList);
-			}
-			//Removing form the list of XML domains the ones already checked
-			logger.debug("Adding to the list of XML domains already checked");
-			alreadyExamined.addAll(domainsXmlList);
+			if (!alreadyExamined.contains(aDomainSB)) {
+
+				String domainCd = (String) aDomainSB.getAttribute("domainCd");
+				if (domainCd == null || domainCd.equals("")) {
+					logger.error("No predefined domains code found!!!");
+					throw new Exception("No predefined domains code found!!!");
+				}
+				// Retrieving all the domains in the DB with the specified domain Code
+				logger.debug("Retrieving all the domains in the DB with the specified domain Code");
+				String hql = "from SbiDomains where domainCd = '" + domainCd + "'";
+				Query hqlQuery = aSession.createQuery(hql);
+				List result = hqlQuery.list();
+
+				logger.debug("Retrieving all the domains in the XML file with the specified domain Code");
+				// Retrieving all the domains in the XML file with the specified domain Code
+				List domainsXmlList = domainsSB.getFilteredSourceBeanAttributeAsList("DOMAIN", "domainCd", domainCd);
+
+				addMissingDomains(aSession, result, domainsXmlList);
+				// Removing form the list of XML domains the ones already checked
+				logger.debug("Adding to the list of XML domains already checked");
+				alreadyExamined.addAll(domainsXmlList);
 			}
 		}
 		logger.debug("OUT");
