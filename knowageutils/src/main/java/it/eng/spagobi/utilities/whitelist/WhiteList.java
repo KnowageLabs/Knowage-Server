@@ -21,7 +21,7 @@ public enum WhiteList {
 	private static transient Logger logger = Logger.getLogger(XSSRequestWrapper.class);
 	private final String WHITELIST_FILE = "services-whitelist.xml";
 
-	public List<String> getServices() {
+	private List<String> getProperties(String property) {
 		logger.debug("IN");
 		List<String> services = new ArrayList<String>();
 		FileInputStream stream = null;
@@ -38,8 +38,11 @@ public enum WhiteList {
 				Iterator iterator = servicesSourceBeans.iterator();
 
 				while (iterator.hasNext()) {
-					String baseUrl = ((SourceBean) iterator.next()).getAttribute("baseurl").toString();
-					services.add(baseUrl);
+					SourceBean servicebean = (SourceBean) iterator.next();
+					if (servicebean.containsAttribute(property)) {
+						String baseUrl = servicebean.getAttribute(property).toString();
+						services.add(baseUrl);
+					}
 				}
 				stream.close();
 			}
@@ -57,6 +60,14 @@ public enum WhiteList {
 
 		logger.debug("OUT");
 		return services;
+	}
+
+	public List<String> getRelativePaths() {
+		return getProperties("relativepath");
+	}
+
+	public List<String> getExternalServices() {
+		return getProperties("baseurl");
 	}
 
 }
