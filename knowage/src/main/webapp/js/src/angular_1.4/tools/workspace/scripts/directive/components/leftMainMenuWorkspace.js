@@ -128,7 +128,7 @@ function leftMenuController($scope, sbiModule_translate, sbiModule_user){
   	 		"name": "Analysis",
   	 		"label":sbiModule_translate.load('sbi.workspace.menu.analysis'),
   	 		"icon": "fa fa-calculator",
-  	 		"visible":!$scope.isUserAdmin && $scope.showAnalysis ,
+  	 		"visible": $scope.showAnalysis ,
   	 		"active":false,
   	 		"selected":false
  		},
