@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 
 /**
- * Defines a Domain object.
+ * Defines a Config object.
  */
 
 @JsonInclude(Include.NON_NULL)

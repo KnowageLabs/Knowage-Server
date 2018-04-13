@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.commons.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.metadata.SbiConfig;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +30,13 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.metadata.SbiConfig;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+
 /**
  * Defines the Hibernate implementations for all DAO methods, for a domain.
  *
@@ -48,21 +48,19 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IUserFunctionalityDAO#loadAllConfigParameters()
 	 */
 	@Override
-	public List loadAllConfigParameters() throws Exception {
+	public List<Config> loadAllConfigParameters() throws Exception {
 		logger.debug("IN");
 
-		ArrayList toReturn = new ArrayList();
+		ArrayList<Config> toReturn = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-
-			List roleTypes = new ArrayList();
 
 			Query hibQuery = aSession.createQuery(" from SbiConfig");
 			List hibList = hibQuery.list();
@@ -108,7 +106,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 	 * @see it.eng.spagobi.common.bo.dao.ISbiConfigDAO#loadConfigParametersById(integer)
 	 */
 	@Override
-	public Config loadConfigParametersById(String id) throws Exception {
+	public Config loadConfigParametersById(int id) throws Exception {
 		logger.debug("IN");
 		Config toReturn = null;
 		Session tmpSession = null;
@@ -201,15 +199,15 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 	 * @see it.eng.spagobi.common.bo.dao.ISbiConfigDAO#loadConfigParametersByProperties(string)
 	 */
 	@Override
-	public List loadConfigParametersByProperties(String prop) throws Exception {
+	public List<Config> loadConfigParametersByProperties(String prop) throws Exception {
 		logger.debug("IN");
 
-		ArrayList toReturn = new ArrayList();
-		List allConfig = loadAllConfigParameters();
+		ArrayList<Config> toReturn = new ArrayList<>();
+		List<Config> allConfig = loadAllConfigParameters();
 		// filter with the 'prop' parameter
-		Iterator it = allConfig.iterator();
+		Iterator<Config> it = allConfig.iterator();
 		while (it.hasNext()) {
-			Config tmpConf = (Config) it.next();
+			Config tmpConf = it.next();
 			if (tmpConf.isActive() && tmpConf.getLabel().startsWith(prop))
 				toReturn.add(tmpConf);
 		}
@@ -305,15 +303,15 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 
 	/**
 	 * Delete config by id.
-	 * 
+	 *
 	 * @param id
 	 *            the id
-	 * 
+	 *
 	 * @return void
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 */
 	@Override
 	public void delete(Integer idConfig) throws EMFUserError {
