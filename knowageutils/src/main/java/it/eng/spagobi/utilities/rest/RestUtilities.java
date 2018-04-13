@@ -17,15 +17,8 @@
  */
 package it.eng.spagobi.utilities.rest;
 
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
-import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.filters.XSSRequestWrapper;
-import it.eng.spagobi.utilities.json.JSONUtils;
-
 import java.io.BufferedReader;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,6 +42,7 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.DeleteMethod;
@@ -58,10 +52,19 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.util.ParameterParser;
 import org.apache.commons.httpclient.util.URIUtil;
+import org.apache.http.util.Asserts;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
+import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.filters.XSSRequestWrapper;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 public class RestUtilities {
 
@@ -249,8 +252,8 @@ public class RestUtilities {
 
 	}
 
-	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody) throws HttpException,
-			IOException, HMACSecurityException {
+	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody)
+			throws HttpException, IOException, HMACSecurityException {
 		return makeRequest(httpMethod, address, requestHeaders, requestBody, null);
 	}
 
@@ -302,6 +305,59 @@ public class RestUtilities {
 		} finally {
 			method.releaseConnection();
 		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public static InputStream makeRequestGetStream(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody,
+			List<NameValuePair> queryParams, boolean authenticate) throws HttpException, IOException, HMACSecurityException {
+		final HttpMethodBase method = getMethod(httpMethod, address);
+		if (requestHeaders != null) {
+			for (Entry<String, String> entry : requestHeaders.entrySet()) {
+				method.addRequestHeader(entry.getKey(), entry.getValue());
+			}
+		}
+		if (queryParams != null) {
+			// add uri query params to provided query params present in query
+			List<NameValuePair> addressPairs = getAddressPairs(address);
+			List<NameValuePair> totalPairs = new ArrayList<NameValuePair>(addressPairs);
+			totalPairs.addAll(queryParams);
+			method.setQueryString(totalPairs.toArray(new NameValuePair[queryParams.size()]));
+		}
+		if (method instanceof EntityEnclosingMethod) {
+			EntityEnclosingMethod eem = (EntityEnclosingMethod) method;
+			// charset of request currently not used
+			eem.setRequestBody(requestBody);
+		}
+
+		if (authenticate) {
+			String hmacKey = SpagoBIUtilities.getHmacKey();
+			if (hmacKey != null && !hmacKey.isEmpty()) {
+				logger.debug("HMAC key found with value [" + hmacKey + "]. Requests will be authenticated.");
+				HMACFilterAuthenticationProvider authenticationProvider = new HMACFilterAuthenticationProvider(hmacKey);
+				authenticationProvider.provideAuthentication(method, requestBody);
+			} else {
+				throw new SpagoBIRuntimeException("The request need to be authenticated, but hmacKey wasn't found.");
+			}
+		}
+
+		HttpClient client = new HttpClient();
+		setHttpClientProxy(client, address);
+		int statusCode = client.executeMethod(method);
+		logger.debug("Status code " + statusCode);
+		Header[] headers = method.getResponseHeaders();
+		logger.debug("Response header " + headers);
+		Asserts.check(statusCode == HttpStatus.SC_OK, "Response not OK.\nStatus code: " + statusCode);
+
+		return new FilterInputStream(method.getResponseBodyAsStream()) {
+			@Override
+			public void close() throws IOException {
+				try {
+					super.close();
+				} finally {
+					method.releaseConnection();
+				}
+			}
+		};
 	}
 
 	private static void setHttpClientProxy(HttpClient client, String address) {

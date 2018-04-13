@@ -155,6 +155,7 @@ public class DataSetConstants {
 	public static final String CKAN_CSV_FILE_DELIMITER_CHARACTER = "ckanCsvDelimiter";
 	public static final String CKAN_CSV_FILE_QUOTE_CHARACTER = "ckanCsvQuote";
 	public static final String CKAN_CSV_FILE_ENCODING = "ckanCsvEncoding";
+	public static final String CKAN_CSV_DATE_FORMAT = "ckanDateFormat";
 
 	public static final String CKAN_XSL_FILE_SKIP_ROWS = "ckanSkipRows";
 	public static final String CKAN_XSL_FILE_LIMIT_ROWS = "ckanLimitRows";

@@ -32,25 +32,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                  frameborder='0' >
 </iframe>  
 
-<iframe id='invalidSessionJPivot'
-                 name='invalidSessionJPivot'
-                 src='<%=GeneralUtilities.getSpagoBiHost()%><%=GeneralUtilities.getSpagoBiContext()%>jpivotengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
 </iframe>  
 
 <iframe id='invalidSessionQbe'
                  name='invalidSessionQbe'
                  src='<%=GeneralUtilities.getSpagoBiHost()%><%=GeneralUtilities.getSpagoBiContext()%>qbeengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe>  
-
-<iframe id='invalidSessionGeo'
-                 name='invalidSessionGeo'
-                 src='<%=GeneralUtilities.getSpagoBiHost()%><%=GeneralUtilities.getSpagoBiContext()%>geoengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -96,14 +82,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                  frameborder='0' >
 </iframe> 
 
-<iframe id='invalidSessionSocialAnalysis'
-                 name='invalidSessionSocialAnalysis'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>socialanalysis/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe>
-
 <iframe id='invalidSessionGis'
                  name='invalidSessionGis'
                  src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>georeportengine/invalidateSession.jsp'
@@ -123,6 +101,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <iframe id='invalidSessionMeta'
                  name='invalidSessionMeta'
                  src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>meta/invalidateSession.jsp'
+                 height='0'
+                 width='0'
+                 frameborder='0' >
+</iframe> 
+
+<iframe id='invalidSessionSvg'
+                 name='invalidSessionSvg'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>svgengine/invalidateSession.jsp'
+                 height='0'
+                 width='0'
+                 frameborder='0' >
+</iframe> 
+
+<iframe id='invalidSessionCommonj'
+                 name='invalidSessionCommonj'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>commonjengine/invalidateSession.jsp'
+                 height='0'
+                 width='0'
+                 frameborder='0' >
+</iframe>
+
+<iframe id='invalidSessionNetwork'
+                 name='invalidSessionNetwork'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>networkengine/invalidateSession.jsp'
+                 height='0'
+                 width='0'
+                 frameborder='0' >
+</iframe> 
+
+<iframe id='invalidSessionDataMining'
+                 name='invalidSessionDataMining'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>dataminingengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >

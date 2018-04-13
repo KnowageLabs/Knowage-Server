@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,9 +20,14 @@ package it.eng.spagobi.commons.bo;
 import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 
 /**
  * Defines a Domain object.
@@ -33,22 +38,32 @@ public class Config implements Serializable {
 
 	private Integer id;
 
-	@NotNull
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 100)
 	private String label;
 
-	@NotNull
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 100)
 	private String name;
 
+	@ExtendedAlphanumeric
+	@Size(max = 500)
 	private String description;
 
 	@NotNull
 	private boolean isActive;
 
+	@ExtendedAlphanumeric
+	@Size(max = 1000)
 	private String valueCheck;
 
 	private Integer valueTypeId;
 
-	@NotNull
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 100)
 	private String category;
 
 	public Config() {

@@ -36,7 +36,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -81,10 +80,9 @@ public abstract class PDFCreator {
 				document.addPage(page);
 
 				PDImageXObject img = LosslessFactory.createFromImage(document, bimg);
-				PDPageContentStream contentStream = new PDPageContentStream(document, page);
-				contentStream.drawImage(img, 0, 0);
-				contentStream.close();
-				is.close();
+				try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+					contentStream.drawImage(img, 0, 0);
+				}
 			}
 			document.save(output.toFile());
 		} finally {
@@ -93,52 +91,52 @@ public abstract class PDFCreator {
 	}
 
 	public static void createPDF(List<InputStream> inputImages, Path output, boolean front, boolean back) throws IOException {
-		if (front && back) {
-			createPDF(inputImages, output, getFrontpage(), getBackpage());
-		} else {
-			if (front) {
-				createPDF(inputImages, output, getFrontpage(), null);
-			} else {
-				if (back) {
-					createPDF(inputImages, output, null, getBackpage());
+		try (final InputStream frontpage = getFrontpage()) {
+			try (final InputStream backapage = getBackpage()) {
+				if (front && back) {
+					createPDF(inputImages, output, frontpage, backapage);
 				} else {
-					createPDF(inputImages, output);
+					if (front) {
+						createPDF(inputImages, output, frontpage, null);
+					} else {
+						if (back) {
+							createPDF(inputImages, output, null, backapage);
+						} else {
+							createPDF(inputImages, output);
+						}
+					}
 				}
 			}
 		}
 	}
 
-	private static void createPDF(List<InputStream> inputImages, Path output, InputStream front, InputStream back) throws IOException {
-		String path = output.toString();
-		Path tempOutput = Paths.get(FilenameUtils.removeExtension(path) + TEMP_SUFFIX);
+	private static void createPDF(List<InputStream> inputImages, Path output, final InputStream front, final InputStream back) throws IOException {
+		final String path = output.toString();
+		final Path tempOutput = Paths.get(FilenameUtils.removeExtension(path) + TEMP_SUFFIX);
 		createPDF(inputImages, tempOutput);
-		mergePDF(new FileOutputStream(output.toFile()), front, new FileInputStream(tempOutput.toFile()), back);
-		Files.deleteIfExists(tempOutput);
+		try (final FileOutputStream fos = new FileOutputStream(output.toFile())) {
+			try (final FileInputStream fis = new FileInputStream(tempOutput.toFile())) {
+				mergePDF(fos, front, fis, back);
+			}
+			Files.deleteIfExists(tempOutput);
+		}
 	}
 
 	private static void mergePDF(OutputStream output, InputStream... contents) throws IOException {
-		try {
-			// Instantiating PDFMergerUtility class
-			PDFMergerUtility merger = new PDFMergerUtility();
+		// Instantiating PDFMergerUtility class
+		PDFMergerUtility merger = new PDFMergerUtility();
 
-			// Setting the destination file
-			merger.setDestinationStream(output);
+		// Setting the destination file
+		merger.setDestinationStream(output);
 
-			for (int i = 0; i < contents.length; i++) {
-				// adding the source files
-				if (contents[i] != null) {
-					merger.addSource(contents[i]);
-				}
-			}
-			// Merging the documents
-			merger.mergeDocuments(null);
-			logger.debug("Documents merged");
-		} finally {
-			IOUtils.closeQuietly(output);
-			for (int i = 0; i < contents.length; i++) {
-				IOUtils.closeQuietly(contents[i]);
+		for (int i = 0; i < contents.length; i++) {
+			// adding the source files
+			if (contents[i] != null) {
+				merger.addSource(contents[i]);
 			}
 		}
+		// Merging the documents
+		merger.mergeDocuments(null);
 	}
 
 	/**

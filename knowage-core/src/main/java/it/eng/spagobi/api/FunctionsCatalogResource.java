@@ -1424,7 +1424,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	private Map<String, String> getHeadersToForward(HttpServletRequest request) throws UnsupportedEncodingException {
 		Map<String, String> headers = RestUtilities.toHeaders(request);
-		String userId = (String) getUserProfile().getUserId();
+		String userId = (String) getUserProfile().getUserUniqueIdentifier();
 		logger.debug("Adding auth for user " + userId);
 		String encodedBytes = Base64.encode(userId.getBytes("UTF-8"));
 		headers.put("Authorization", "Direct " + encodedBytes);

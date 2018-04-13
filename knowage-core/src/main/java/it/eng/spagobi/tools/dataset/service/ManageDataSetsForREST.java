@@ -561,6 +561,7 @@ public class ManageDataSetsForREST {
 
 			String csvDelimiter = json.optString(DataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
 			String csvQuote = json.optString(DataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
+			String dateFormat = json.optString(DataSetConstants.CKAN_CSV_DATE_FORMAT);
 
 			String skipRows = json.optString(DataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
 			String limitRows = json.optString(DataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
@@ -581,6 +582,7 @@ public class ManageDataSetsForREST {
 			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
+			jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, ckanEncodig);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);

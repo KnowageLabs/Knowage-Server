@@ -412,22 +412,6 @@ viewportWidth = viewportWidth * zoomFactor;
 viewportHeight = viewportHeight * zoomFactor;
 zoomFactor = zoomFactor * 0.99;
 
-// this sets a zoom on the page because of the dpi differences between windows and unix
-var setZoom = function (page) {
-	log("[SETZOOM] IN");
-  if (operatingSystem !== "WINDOWS") {
-    try {
-      log('Setting zoom on HTML to 0.75');
-      page.evaluate(function () {
-        document.body.style.zoom = 0.75;
-      });
-    } catch (error) {
-      err('Failed to set zoom on HTML file: ', error);
-      slimer.exit(1);
-    }
-  }
-};
-
 var exit = function(code) {
 	log("Exit from SlimerJS with code: " + code)
 	slimer.exit(code);
@@ -445,7 +429,7 @@ var renderPage = function (page) {
     log("Rendering PNG as target file: " + targetFile);
     window.setTimeout(function () {
     	page.render(targetFile);
-    },500);
+    }, (jsExitingWait / 2) );
   } catch (error) {
     err('Failed to render PNG: ' + error);
     slimer.exit(3);
@@ -454,7 +438,7 @@ var renderPage = function (page) {
   setTimeout(exit, jsExitingWait * sheets, 0);
 };
 
-var applySettingOnPage = function applySettingOnPage(page, sheet, url) {
+var applySettingOnPage = function(page, sheet, url) {
 	log("[APPLYSETTINGONPAGE] IN");
 	page.sheet = sheet;
 	page.viewportSize = { width: viewportWidth, height: viewportHeight };

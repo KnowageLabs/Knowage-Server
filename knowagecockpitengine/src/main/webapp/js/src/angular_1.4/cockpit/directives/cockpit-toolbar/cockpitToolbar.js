@@ -169,6 +169,14 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 		    	        			img : "4.png",
 		    	        			class: "fa fa-bar-chart",
 		    	        			type : "chart"
+		    	        		},
+		    	        		{
+		    	        			name:"Html",
+		    	        			description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.html"),
+		    	        			tags : ["html"],
+		    	        			img : "4.png",
+		    	        			class: "fa fa-code",
+		    	        			type : "html"
 		    	        		},{
 		    	        			name:"Table",
 		    	        			description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.table"),

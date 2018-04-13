@@ -113,10 +113,6 @@ public class SlimerJS {
 			throw new IllegalArgumentException("Invalid jsRenderingWait or jsExitingWait values provided");
 		}
 
-		// The render script
-		final InputStream renderScript = SlimerJS.class.getClassLoader()
-				.getResourceAsStream(SlimerJSConstants.SLIMER_BINARIES_RESOURCEPATH.concat("/".concat(SlimerJSConstants.DEFAULT_RENDER_SCRIPT)));
-
 		// create the parent directories
 		Files.createDirectories(SlimerJSConstants.TEMP_SOURCE_DIR);
 		Files.createDirectories(SlimerJSConstants.TEMP_RENDER_DIR);
@@ -126,21 +122,28 @@ public class SlimerJS {
 		// the output filename template
 		Path renderPath = SlimerJSConstants.TEMP_RENDER_DIR.resolve(String.format(SlimerJSConstants.TARGET_PREFIX + "%s", renderId));
 
-		final SlimerJSExecutionResponse slimerJSExecutionResponse = exec(renderScript, options, new CommandLineArgument(renderId),
-				new CommandLineArgument(URLEncoder.encode(url.toString(), "UTF-8")),
-				new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.CUSTOMHEADERS_TEMPLATENAME), SlimerJSConstants.CUSTOMHEADERS_TEMPLATENAME,
-						customHeaders),
-				new CommandLineArgument(sheets.toString()), new CommandLineArgument(dimensions.getWidth()), new CommandLineArgument(dimensions.getHeight()),
-				new CommandLineArgument(OperatingSystem.get().name()),
-				new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.RENDERPATH_TEMPLATENAME), SlimerJSConstants.RENDERPATH_TEMPLATENAME,
-						renderPath.toFile()),
-				new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.JS_RENDERING_WAIT_TEMPLATENAME),
-						SlimerJSConstants.JS_RENDERING_WAIT_TEMPLATENAME, jsRenderingWait),
-				new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.JS_EXITING_WAIT_TEMPLATENAME),
-						SlimerJSConstants.JS_EXITING_WAIT_TEMPLATENAME, jsExitingWait),
-				new CommandLineArgument(SpagoBIUtilities.getHmacKey()), new CommandLineArgument(String.valueOf(zoomFactor)));
+		int renderExitCode = -1;
 
-		final int renderExitCode = slimerJSExecutionResponse.getExitCode();
+		// The render script
+		try (final InputStream renderScript = SlimerJS.class.getClassLoader()
+				.getResourceAsStream(SlimerJSConstants.SLIMER_BINARIES_RESOURCEPATH.concat("/".concat(SlimerJSConstants.DEFAULT_RENDER_SCRIPT)))) {
+
+			final SlimerJSExecutionResponse slimerJSExecutionResponse = exec(renderScript, options, new CommandLineArgument(renderId),
+					new CommandLineArgument(URLEncoder.encode(url.toString(), "UTF-8")),
+					new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.CUSTOMHEADERS_TEMPLATENAME),
+							SlimerJSConstants.CUSTOMHEADERS_TEMPLATENAME, customHeaders),
+					new CommandLineArgument(sheets.toString()), new CommandLineArgument(dimensions.getWidth()), new CommandLineArgument(dimensions.getHeight()),
+					new CommandLineArgument(OperatingSystem.get().name()),
+					new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.RENDERPATH_TEMPLATENAME), SlimerJSConstants.RENDERPATH_TEMPLATENAME,
+							renderPath.toFile()),
+					new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.JS_RENDERING_WAIT_TEMPLATENAME),
+							SlimerJSConstants.JS_RENDERING_WAIT_TEMPLATENAME, jsRenderingWait),
+					new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.JS_EXITING_WAIT_TEMPLATENAME),
+							SlimerJSConstants.JS_EXITING_WAIT_TEMPLATENAME, jsExitingWait),
+					new CommandLineArgument(SpagoBIUtilities.getHmacKey()), new CommandLineArgument(String.valueOf(zoomFactor)));
+
+			renderExitCode = slimerJSExecutionResponse.getExitCode();
+		}
 
 		if (renderExitCode == 0) {
 			List<InputStream> fileStreams = new ArrayList<>(sheets);

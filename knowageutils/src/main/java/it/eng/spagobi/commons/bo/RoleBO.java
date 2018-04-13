@@ -20,12 +20,13 @@ package it.eng.spagobi.commons.bo;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import it.eng.spagobi.services.validation.Xss;
+import it.eng.spagobi.services.validation.Alphanumeric;
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 
 /**
  * Defines a <code>Role</code> object.
@@ -40,30 +41,30 @@ public class RoleBO implements Serializable {
 	 */
 	private static final long serialVersionUID = 6593919640188023895L;
 
-	@Xss
-	@NotNull
-	@Max(value = 11)
 	private Integer id;
-	@Xss
+
+	@ExtendedAlphanumeric
 	@NotNull
-	@Max(value = 100)
+	@Size(max = 100)
 	private String name;
-	@Xss
-	@Max(value = 160)
+
+	@ExtendedAlphanumeric
+	@Size(max = 160)
 	private String description;
-	@Xss
+
 	@NotNull
-	@Max(value = 20)
+	@Alphanumeric
+	@Size(max = 20)
 	private String roleTypeCD;
-	@Xss
-	@Max(value = 20)
+
+	@Alphanumeric
+	@Size(max = 20)
 	private String code;
-	@Xss
+
 	@NotNull
-	@Max(value = 11)
 	private Integer roleTypeID;
-	@Xss
-	@Max(value = 20)
+
+	@Size(max = 20)
 	private String organization;
 
 	private Boolean isPublic;

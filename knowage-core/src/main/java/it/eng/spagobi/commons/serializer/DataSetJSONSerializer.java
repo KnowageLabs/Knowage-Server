@@ -119,6 +119,7 @@ public class DataSetJSONSerializer implements Serializer {
 	public static final String CKAN_CSV_FILE_QUOTE_CHARACTER = "ckanCsvQuote";
 	public static final String CKAN_CSV_FILE_ENCODING = "ckanCsvEncoding";
 	public static final String CKAN_FILE_TYPE = "ckanFileType";
+	public static final String CKAN_CSV_DATE_FORMAT = "ckanDateFormat";
 
 	public static final String CKAN_XSL_FILE_SKIP_ROWS = "ckanSkipRows";
 	public static final String CKAN_XSL_FILE_LIMIT_ROWS = "ckanLimitRows";
@@ -313,6 +314,14 @@ public class DataSetJSONSerializer implements Serializer {
 							result.put(CKAN_CSV_FILE_ENCODING, "");
 						}
 
+						if (jsonConf.has(DataSetConstants.CKAN_CSV_DATE_FORMAT)) {
+							String dateFormat = jsonConf.getString(DataSetConstants.CKAN_CSV_DATE_FORMAT);
+							if (dateFormat != null) {
+								result.put(CKAN_CSV_DATE_FORMAT, dateFormat);
+							}
+						} else {
+							result.put(CKAN_CSV_DATE_FORMAT, "");
+						}
 						String ckanSkipRows = jsonConf.getString(DataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
 						if (ckanSkipRows != null) {
 							result.put(CKAN_XSL_FILE_SKIP_ROWS, ckanSkipRows);

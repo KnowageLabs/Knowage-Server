@@ -49,7 +49,7 @@ function leftMenuController($scope, sbiModule_translate, sbiModule_user){
 	$scope.showMyWorkspace = (sbiModule_user.functionalities.indexOf("SeeMyWorkspace")>-1)? true:false;
 	$scope.showAnalysis= (sbiModule_user.functionalities.indexOf("CreateDocument")>-1)? true:false;
     $scope.showOrganizer= (sbiModule_user.functionalities.indexOf("SaveIntoFolderFunctionality")>-1)? true:false;
-    $scope.showSnapshots= (sbiModule_user.functionalities.indexOf("SeeSnapshotsFunctionality")>-1)? true:false;
+    $scope.showSnapshots= (sbiModule_user.functionalities.indexOf("SeeSnapshotsFunctionality")>-1 && sbiModule_user.functionalities.indexOf("ViewScheduledWorkspace")>-1)? true:false;
     $scope.runSnapshots= (sbiModule_user.functionalities.indexOf("RunSnapshotsFunctionality")>-1)? true:false;
 
     $scope.showScheduler= $scope.showSnapshots ? true : false;  // previously used variable

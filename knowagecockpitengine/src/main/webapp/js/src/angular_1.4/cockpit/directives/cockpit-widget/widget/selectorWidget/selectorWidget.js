@@ -56,6 +56,7 @@ angular.module('cockpitModule')
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
 			cockpitModule_properties,
+			cockpitModule_template,
 			accessibility_preferences,
 			$rootScope){
 
@@ -390,6 +391,7 @@ angular.module('cockpitModule')
 					item.ds=$scope.ngModel.dataset.name;
 					item.value=angular.copy($scope.multiValue);
 					$rootScope.$broadcast('DELETE_SELECTION',item);
+					$scope.deleteSelections(item);
 				}
 			//}
 		};
@@ -411,6 +413,7 @@ angular.module('cockpitModule')
 				} else {
 					item.value=angular.copy($scope.parameter);
 					$rootScope.$broadcast('DELETE_SELECTION',item);
+					$scope.deleteSelections(item);
 				}
 			//}
 
@@ -447,6 +450,7 @@ angular.module('cockpitModule')
 					} else {
 						item.value=angular.copy($scope.multiCombo.selected);
 						$rootScope.$broadcast('DELETE_SELECTION',item);
+						$scope.deleteSelections(item);
 					}
 				} else {
 					//signle
@@ -456,6 +460,7 @@ angular.module('cockpitModule')
 					} else {
 						item.value=angular.copy($scope.parameter);
 						$rootScope.$broadcast('DELETE_SELECTION',item);
+						$scope.deleteSelections(item);
 					}
 				}
 			//}
@@ -507,6 +512,57 @@ angular.module('cockpitModule')
 
 			return obj;
 		}
+
+	    $scope.deleteSelections = function(item){
+	    	var reloadAss=false;
+	    	var reloadFilt=[];
+
+	    	if(item.aggregated){
+				var key = item.ds + "." + item.columnName;
+
+				for(var i=0; i<cockpitModule_template.configuration.aggregations.length; i++){
+					if(cockpitModule_template.configuration.aggregations[i].datasets.indexOf(item.ds) !=-1){
+						var selection = cockpitModule_template.configuration.aggregations[i].selection;
+						if(selection){
+							delete selection[key];
+							reloadAss=true;
+						}
+					}
+				}
+			}else{
+				if(cockpitModule_template.configuration.filters){
+					if(cockpitModule_template.configuration.filters[item.ds]){
+						delete cockpitModule_template.configuration.filters[item.ds][item.columnName];
+
+						if(Object.keys(cockpitModule_template.configuration.filters[item.ds]).length==0){
+							delete cockpitModule_template.configuration.filters[item.ds];
+						}
+
+						reloadFilt.push(item.ds);
+					}
+				}
+			}
+
+			if(reloadAss){
+				cockpitModule_widgetSelection.getAssociations(true);
+			}
+
+			if(!reloadAss && reloadFilt.length!=0){
+				cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(reloadFilt);
+			}
+
+			var hs=false;
+			for(var i=0; i<cockpitModule_template.configuration.aggregations.length; i++){
+				if(Object.keys(cockpitModule_template.configuration.aggregations[i].selection).length>0){
+					hs= true;
+					break;
+				}
+			}
+
+			if(hs==false && Object.keys(cockpitModule_template.configuration.filters).length==0){
+				cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=false;
+			}
+	    }
 	};
 
 	function selectorWidgetEditControllerFunction(

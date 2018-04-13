@@ -14,7 +14,7 @@
 		diskPersistent="false" diskExpiryThreadIntervalSeconds="120" />
 		
 	<cache name="user_profile" maxElementsInMemory="20" eternal="false"
-		overflowToDisk="true" timeToIdleSeconds="3" timeToLiveSeconds="3"
+		overflowToDisk="true" timeToIdleSeconds="600" timeToLiveSeconds="600"
 		diskPersistent="false" diskExpiryThreadIntervalSeconds="3" />		
 
 </ehcache>

@@ -962,10 +962,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                          						{{csvEncodingItem.name}}
 					                     						</md-option>
 						                        		</md-select>
+						                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Ckan' && !selectedDataSet.ckanCsvEncoding">
+							       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+						       						 	</div>
 						                        		
 							                     	</md-input-container>
 							                  	</div>
 											</div>
+											<div layout="row" layout-wrap flex=30>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block" style="margin:0">
+						                        		
+						                        		<label>{{translate.load("sbi.workspace.dataset.wizard.file.dateFormat")}}</label> 
+						                        		
+						                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.ckanDateFormat"
+						                        					ng-change="setFormDirty()">
+						                           			<md-option 	ng-repeat="dateFormatItem in dateFormatTypes" 
+						                           						value="{{dateFormatItem.value}}">
+				                          						{{dateFormatItem.name}}
+				                     						</md-option>
+						                        		</md-select>
+						                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Ckan' && !selectedDataSet.ckanDateFormat">
+							       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+						       						 	</div>
+							                     	</md-input-container>
+							                  	</div>
+											</div>	
 												
 										</div>					
 																	
