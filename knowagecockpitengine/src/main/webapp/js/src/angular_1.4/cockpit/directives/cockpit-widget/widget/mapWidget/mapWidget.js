@@ -223,6 +223,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 	    $scope.refresh = function(element,width,height, data, nature, associativeSelection, changedChartType, chartConf, options) {
+	    	if (nature == 'fullExpand'){
+	    		$timeout(function() {
+					$scope.map.updateSize();
+				}, 200);
+	    		return;
+	    	}
+	    	
 			if (!options) options = {};
 			var layerName = (Array.isArray(options.label)) ? options.label[0] : options.label; //on delete of selections options is an array !!!
 
@@ -317,12 +324,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    $scope.createLayerWithData = function(label, data, isCluster){
 	    	//prepare object with metadata for desiderata dataset columns
-	    	var geoColumn = null;
-	    	var selectedMeasure = null;
-    		var columnsForData = [];
+	    	var geoColumn, selectedMeasure = null;
+    		var columnsForData, isHeatmap;
     		var layerDef =  $scope.getConfigLayer(label);
-    		var columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
-    		var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
+    		
+    		if (!layerDef) return;
+    		
+    		columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
+    		isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
 
     		//remove old layer
     		var previousLayer = $scope.getLayerByName(label);
