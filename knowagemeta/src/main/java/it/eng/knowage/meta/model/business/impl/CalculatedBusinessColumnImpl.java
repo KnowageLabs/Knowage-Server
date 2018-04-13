@@ -29,7 +29,7 @@ import it.eng.knowage.meta.model.business.BusinessColumnSet;
 import it.eng.knowage.meta.model.business.BusinessModelPackage;
 import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
 import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
-port it.eng.qbe.utility.CustomizedFunctionsReader;
+import it.eng.qbe.utility.CustomizedFunctionsReader;
 import it.eng.qbe.utility.ProfileDialectThreadLocal;
 import it.eng.spagobi.commons.bo.UserProfile;
 
