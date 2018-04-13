@@ -19,9 +19,9 @@
 			
 			<div layout="row" layout-align="left center">
 			    <label>{{translate.load("sbi.cockpit.widgets.filtersConfiguration.addButtonLabel")}}</label>
-			   	<md-button  class="md-icon-button">
-            		<md-icon md-font-icon="fa fa-plus" ng-click="addNewFilter()" ng-show="newFilterAddMode == false && newFilterEditMode == false"></md-icon>
-            		<!--  <md-tooltip md-delay="1000" >Add Filter</md-tooltip> -->
+			   	<md-button  class="md-icon-button" ng-click="addNewFilter()" ng-show="newFilterAddMode == false && newFilterEditMode == false">
+            		<md-icon md-font-icon="fa fa-plus">
+            		</md-icon>
             	</md-button>
 			</div>			
 			
@@ -101,13 +101,13 @@
             	
             	<div flex></div>
             	
-            	<md-button  class="md-icon-button">
-            		<md-icon md-font-icon="fa fa-save" ng-click="saveNewFilter()" ng-show="newFilterAddMode == true || newFilterEditMode == true"></md-icon>
+            	<md-button  class="md-icon-button" ng-click="saveNewFilter()" ng-show="newFilterAddMode == true || newFilterEditMode == true">
+            		<md-icon md-font-icon="fa fa-save"></md-icon>
             		<md-tooltip md-delay="1000" >{{translate.load("sbi.cockpit.widgets.filtersConfiguration.saveNewFilter")}}</md-tooltip>
             	</md-button>
             	
-            	<md-button  class="md-icon-button">
-            		<md-icon md-font-icon="fa fa-eraser" ng-click="eraseNewFilter()"></md-icon>
+            	<md-button  class="md-icon-button" ng-click="eraseNewFilter()">
+            		<md-icon md-font-icon="fa fa-eraser"></md-icon>
             		<md-tooltip md-delay="1000" >{{translate.load("sbi.cockpit.widgets.filtersConfiguration.clearNewFilter")}}</md-tooltip>
             	</md-button> 
 
