@@ -130,7 +130,7 @@
     
     
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Knowage</title>
+    <title>Select For Cities</title>
   
   
   <script type="text/javascript">
@@ -182,7 +182,7 @@
   		    <div class="container">
         <div class="card card-container">
 
-            <img id="profile-img" class="logoHeader" src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logo.png", currTheme)%>' />
+            <img id="profile-img" class="logoHeader" src='<%=urlBuilder.getResourceLinkByTheme(request, "/s4c/images/logo_alpha_270x.png", currTheme)%>' />
             <p id="profile-name" class="profile-name-card"></p>
             <form class="form-signin"  id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
                 <input type="hidden" id="isInternalSecurity" name="isInternalSecurity" value="<%=isInternalSecurity %>" />        	

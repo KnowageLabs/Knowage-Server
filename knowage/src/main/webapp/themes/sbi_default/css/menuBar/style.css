@@ -329,7 +329,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
     font-size: 14px;
     font-weight: 300;
     font-family: 'Roboto', 'Helvetica Neue, Helvetica, Arial', sans-serif;
-    background: #3B668C;
+    background: #F79646;
     padding: 4px;
     width: 90%;
   
@@ -365,7 +365,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
 }
 
 #contieniLinkAdmin li a:hover{
-  color: #44619d;
+  color: #F79646;
 }
 
 #contieniLinkAdmin.open {
@@ -475,13 +475,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
 }
 .sidebar .sidebar-header {
   position: relative;
-  height: 110px;
+  /*height: 110px;*/
+  height: 155px;
   -webkit-transition: all 0.2s ease-in-out;
   -o-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
 }
 .sidebar .sidebar-header.header-cover {
-  background-image: url('logoCover.png');
+  background-image: url('../../s4c/images/s4c_logo.png');
+  /*background-image: url('logoCover.png');*/
   background-repeat: no-repeat;
   background-position: center 20%;
   -webkit-background-size: contain;
@@ -797,10 +799,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
   background-color: #e0e0e0;
 }
 .sidebar-inverse {
-  background-color: #3b668c;
+  background-color: #1B4754;
 }
 .sidebar-inverse .sidebar-header {
-  background-color: #eceff1;
+  /*background-color: #eceff1;*/
+  background-color: #fff;
 }
 .sidebar-inverse .sidebar-toggle {
   color: #BDBDBD;
@@ -1273,3 +1276,32 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
 md-list-item.license-item::before{
 	min-height: 0px !important;
 }
+
+
+.poweredFooter {
+    transform: rotate(-90deg);
+    width: 260px;
+    bottom: 140px;
+    position: absolute;
+    /* flex-flow: column; */
+    /* line-height: 30px; */
+    /* margin: 0; */
+    color: rgba(0,0,0,0.54);
+    /* padding: 0px; */
+    /* height: auto; */
+    display: inline-flex;
+    flex-direction: row;
+}
+
+.poweredFooter .verticalAlign {
+    background-image: url(../../css/menuBar/logo_knowage.png);
+    background-repeat: no-repeat;
+    background-size: auto 12px;
+    width: 100px;
+    height: 14px;
+    display: inline;
+    margin: 1px 6px;
+}
+
+
+

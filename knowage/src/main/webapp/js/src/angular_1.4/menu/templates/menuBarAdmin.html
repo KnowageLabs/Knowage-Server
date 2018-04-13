@@ -13,8 +13,8 @@
 	  </ul>  
       <div class="container-fluid">
       <!-- User Menu -->
-	      <ul class="row iconBarAdmin" >
-	         <li class="col-xs-6" data-ng-repeat="link in links"><a href="#" title="{{link.tooltip}}" data-ng-click="menuCall(link.firstUrl,link.linkType)"> <i aria-hidden="true" class="navbar-icon material-icons-row md-32">{{link.iconCls}}</i></a> </li>
+	      <ul class="row iconBarAdmin">
+	         <li class="col-xs-6" data-ng-repeat="link in links"><md-button href="#" title="{{link.tooltip}}" data-ng-click="menuCall(link.firstUrl,link.linkType)"> <i aria-hidden="true" class="navbar-icon material-icons-row md-32">{{link.iconCls}}</i></md-button> </li>
 	      </ul>
       <!-- End User Menu -->   
       <!-- Custom Menu -->

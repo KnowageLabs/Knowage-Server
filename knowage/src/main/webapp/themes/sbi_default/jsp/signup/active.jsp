@@ -193,7 +193,7 @@ a:hover{
 	}
 	</script>
 	<link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "img/favicon.ico")%>" />
-    <title>Knowage</title>
+    <title>Select For Cities</title>
     <style>
       body {
 	       padding: 0;
