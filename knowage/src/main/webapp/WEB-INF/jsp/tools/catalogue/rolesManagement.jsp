@@ -448,7 +448,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('createDocument')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToCreateDocuments" aria-label="check" ng-disabled="disable" name="createDocument">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToCreateDocuments" aria-label="check" name="createDocument">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div >
