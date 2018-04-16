@@ -41,23 +41,24 @@ public class ExtendedMySQLDialect extends MySQLInnoDBDialect {
 			UserProfile userProfile = ProfileDialectThreadLocal.getUserProfile();
 			if (userProfile == null) {
 				logger.error("no profile could be get from singleton; stop adding custom functions");
-			}
-
-			List<CustomizedFunction> customizedFunctions = new CustomizedFunctionsReader("mysql").getCustomDefinedFunctionList(userProfile);
-
-			if (customizedFunctions != null) {
-				logger.debug("converting custom functions");
-				for (Iterator<CustomizedFunction> iterator = customizedFunctions.iterator(); iterator.hasNext();) {
-					CustomizedFunction customizedFunction = iterator.next();
-					logger.debug("register function " + customizedFunction);
-
-					registerFunction(customizedFunction.getFunction(), new VarArgsSQLFunction(customizedFunction.getFunction() + "(", ",", ")"));
-
-					// registerFunction(customizedFunction.getFunction(), new StandardSQLFunction(customizedFunction.getFunction()));
-
-				}
 			} else {
-				logger.debug("no custom functions defined for current db type");
+
+				List<CustomizedFunction> customizedFunctions = new CustomizedFunctionsReader("mysql").getCustomDefinedFunctionList(userProfile);
+
+				if (customizedFunctions != null) {
+					logger.debug("converting custom functions");
+					for (Iterator<CustomizedFunction> iterator = customizedFunctions.iterator(); iterator.hasNext();) {
+						CustomizedFunction customizedFunction = iterator.next();
+						logger.debug("register function " + customizedFunction);
+
+						registerFunction(customizedFunction.getFunction(), new VarArgsSQLFunction(customizedFunction.getFunction() + "(", ",", ")"));
+
+						// registerFunction(customizedFunction.getFunction(), new StandardSQLFunction(customizedFunction.getFunction()));
+
+					}
+				} else {
+					logger.debug("no custom functions defined for current db type");
+				}
 			}
 		} finally {
 			ProfileDialectThreadLocal.unset();
