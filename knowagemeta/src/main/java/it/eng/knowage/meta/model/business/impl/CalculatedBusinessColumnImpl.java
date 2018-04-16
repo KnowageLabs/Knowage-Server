@@ -17,18 +17,21 @@
  */
 package it.eng.knowage.meta.model.business.impl;
 
-import it.eng.knowage.meta.exception.KnowageMetaException;
-import it.eng.knowage.meta.model.business.BusinessColumnSet;
-import it.eng.knowage.meta.model.business.BusinessModelPackage;
-import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
-import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
+
+import it.eng.knowage.meta.exception.KnowageMetaException;
+import it.eng.knowage.meta.model.business.BusinessColumnSet;
+import it.eng.knowage.meta.model.business.BusinessModelPackage;
+import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
+import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
+import it.eng.qbe.utility.CustomizedFunctionsReader;
+import it.eng.qbe.utility.ProfileDialectThreadLocal;
+import it.eng.spagobi.commons.bo.UserProfile;
 
 /**
  * <!-- begin-user-doc --> An implementation of the model object '<em><b>Calculated Business Column</b></em>'. <!-- end-user-doc -->
@@ -70,9 +73,30 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 		String id = this.getPropertyType(CALCULATED_COLUMN_EXPRESSION).getId();
 		String expression = this.getProperties().get(id).getValue();
 
+		String regularExpression = "(\\,|\\+|\\-|\\*|\\(|\\)|\\|\\||\\/|GG_between_dates|MM_between_dates|AA_between_dates|GG_up_today|MM_up_today|AA_up_today|current_date|current_time|length|substring|concat|year|month|mod|bit_length|upper|lower|trim|current_timestamp|hour|minute|second|day";
+
+		// add custom functions
+
+		UserProfile profile = ProfileDialectThreadLocal.getUserProfile();
+		String dialect = ProfileDialectThreadLocal.getDialect();
+
+		if (profile == null) {
+			logger.error("Profile not found");
+			throw new RuntimeException("Profile could not be found in current Thread Locale, check stack of calls");
+		}
+
+		if (dialect == null) {
+			logger.error("Dialect or db information not found");
+			throw new RuntimeException("Dialect or db information could not be found in current Thread Locale, check stack of calls");
+		}
+
+		String customs = (new CustomizedFunctionsReader(dialect)).getCustomDefinedFunctionString(profile);
+		regularExpression += customs;
+
+		regularExpression += ")";
+
 		// retrieve columns objects from string v
-		String[] splittedExpr = expression
-				.split("(\\+|\\-|\\*|\\(|\\)|\\|\\||\\/|GG_between_dates|MM_between_dates|AA_between_dates|GG_up_today|MM_up_today|AA_up_today|current_date|current_time|length|substring|concat|year|month|mod|bit_length|upper|lower|trim|current_timestamp|hour|minute|second|day)");
+		String[] splittedExpr = expression.split(regularExpression);
 		for (String operand : splittedExpr) {
 			operand = operand.trim();
 
@@ -83,8 +107,9 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 			List<SimpleBusinessColumn> businessColumns = businessColumnSet.getSimpleBusinessColumnsByName(operand);
 			if (businessColumns.isEmpty()) {
 				// throws exception
-				//throw new KnowageMetaException("No columns using the name [" + operand + "] are found in the expression of Calculated Field [" + this.getName()
-				//		+ "]");
+				// throw new KnowageMetaException("No columns using the name [" + operand + "] are found in the expression of Calculated Field [" +
+				// this.getName()
+				// + "]");
 			} else {
 				if (businessColumns.size() > 1) {
 					logger.warn("More columns using the name [" + operand + "] are found in the expression of Calculated Field [" + this.getName() + "]");
@@ -98,7 +123,7 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 					columnsReferenced.add(simpleBusinessColumn);
 				}
 			}
-			
+
 		}
 		return columnsReferenced;
 	}
