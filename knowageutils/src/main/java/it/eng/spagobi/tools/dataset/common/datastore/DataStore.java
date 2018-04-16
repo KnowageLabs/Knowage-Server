@@ -581,13 +581,14 @@ public class DataStore implements IDataStore {
 			for (int i = 0; i < fieldCount; i++) {
 				Object obj = record.getFieldAt(i).getValue();
 				if (obj instanceof java.sql.Date) {
-					SimpleDateFormat formatter = new SimpleDateFormat(dateFormatJava != null ? dateFormatJava : "dd-MM-yyyy HH:mm:ss.SSS");
+					SimpleDateFormat formatter = new SimpleDateFormat(dateFormatJava != null && !dateFormatJava.equals("") ? dateFormatJava : "dd-MM-yyyy");
 					obj = formatter.format((java.sql.Date) obj);
 				} else if (obj instanceof java.sql.Timestamp) {
-					SimpleDateFormat formatter = new SimpleDateFormat(dateFormatJava != null ? dateFormatJava : "dd-MM-yyyy HH:mm:ss.SSS");
+					SimpleDateFormat formatter = new SimpleDateFormat(
+							dateFormatJava != null && !dateFormatJava.equals("") ? dateFormatJava : "dd-MM-yyyy HH:mm:ss.SSS");
 					obj = formatter.format((java.sql.Timestamp) obj);
 				} else if (obj instanceof Date) {
-					SimpleDateFormat formatter = new SimpleDateFormat(dateFormatJava != null ? dateFormatJava : "dd-MM-yyyy");
+					SimpleDateFormat formatter = new SimpleDateFormat(dateFormatJava != null && !dateFormatJava.equals("") ? dateFormatJava : "dd-MM-yyyy");
 					if (!formatter.format((Date) obj).equals("")) {
 						obj = formatter.format((Date) obj);
 					}

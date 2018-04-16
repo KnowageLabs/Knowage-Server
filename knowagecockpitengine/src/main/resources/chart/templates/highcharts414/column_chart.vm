@@ -715,7 +715,7 @@
 		
 			type: "$a.type",
 			id: $a.id,
-			#if($categorieColumns.orderType=="desc" && $isDateTime)
+			#if($a.name == $categorieColumns.name && $categorieColumns.orderType=="desc" && $isDateTime)
 				reversed: true,
 			#end
 	 	title: {
@@ -1653,12 +1653,17 @@
         		element on it. HTML tag <strong> is removed.
         		@modifiedBy: danristo (danilo.ristovski@mht.net)
         	*/ 	
-        	
             #if($isDateTime==true)
             
-             result += '<span>' + Highcharts.dateFormat('$dateFormat', this.x) + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+             result += '<span>' + Highcharts.dateFormat('$dateFormat', (this.x)) + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
             #else
+           if  (this.series.userOptions.category && this.series.userOptions.category =='$categoryDate'){
+             result += '<span>' + Highcharts.dateFormat('$dateFormat', this.x) + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+          
+           }
+           else {
              result += '<span>' + this.key + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+             }
            
             #end
             return result;
