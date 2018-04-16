@@ -140,6 +140,36 @@ public class ConfigResource extends AbstractSpagoBIResource {
 		return null;
 	}
 
+	/*
+	 * added as separated service because it is public
+	 */
+	@GET
+	@Path("/label/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Config getKnowageCalculatedFunctionConfig() {
+		logger.debug("IN");
+		IConfigDAO configsDao = null;
+		// List<Config> allObjects = null;
+		Config dm = null;
+		try {
+			configsDao = DAOFactory.getSbiConfigDAO();
+			configsDao.setUserProfile(getUserProfile());
+			dm = configsDao.loadConfigParametersByLabel("KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS");
+			if (dm == null) {
+				logger.error("Config with label KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS not present in current tenant");
+				return null;
+			} else if (dm.getLabel().equals("KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS")) {
+				return dm;
+			}
+		} catch (Exception e) {
+			logger.error("Error while getting config KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS", e);
+			throw new SpagoBIRuntimeException("Error while getting config KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS", e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return null;
+	}
+
 	@POST
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
