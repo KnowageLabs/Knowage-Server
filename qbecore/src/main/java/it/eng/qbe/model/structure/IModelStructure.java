@@ -174,6 +174,16 @@ public interface IModelStructure extends IModelObject {
 	 */
 	public IModelEntity getEntity(String entityUniqueName);
 
+	/**
+	 * Gets the entity not by the unique name.
+	 *
+	 * @param Name
+	 *            the entity name
+	 *
+	 * @return the entity
+	 */
+	public IModelEntity getEntityByName(String notUniqueName);
+
 	// ----------------------------------
 	// Fields
 	// ----------------------------------

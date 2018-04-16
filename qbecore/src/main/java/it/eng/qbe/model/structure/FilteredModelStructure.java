@@ -339,4 +339,11 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 		return wrappedModelStructure.getRootEntityDirectConnections(entity);
 	}
 
+	@Override
+	public IModelEntity getEntityByName(String notUniqueName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 }

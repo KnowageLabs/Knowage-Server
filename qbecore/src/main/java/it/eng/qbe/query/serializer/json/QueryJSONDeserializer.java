@@ -161,6 +161,7 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 		String nature;
 		String expression;
 		String slots;
+		String entity;
 
 		boolean visible;
 		boolean included;
@@ -263,11 +264,13 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 						}
 						expression = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_EXPRESSION);
 						slots = fieldClaculationDescriptor.optString(QuerySerializationConstants.FIELD_SLOTS);
+						entity = fieldJSON.optString(QuerySerializationConstants.FIELD_ENTITY);
 						group = fieldJSON.getString(QuerySerializationConstants.FIELD_GROUP);
 						order = fieldJSON.getString(QuerySerializationConstants.FIELD_ORDER);
 						funct = fieldJSON.getString(QuerySerializationConstants.FIELD_AGGREGATION_FUNCTION);
 
-						query.addInLineCalculatedFiled(alias, expression, slots, type, nature, included, visible, group.equalsIgnoreCase("true"), order, funct);
+						query.addInLineCalculatedFiled(alias, expression, slots, type, nature, included, visible, group.equalsIgnoreCase("true"), order, funct,
+								entity);
 					} else {
 						Assert.assertUnreachable("Type [" + fieldType + "] of field [" + alias + "] is not valid");
 					}
