@@ -710,6 +710,7 @@
         &.placedWidget {
             box-shadow: none;
 			position:relative;
+			overflow: hidden;
             border-radius: 0;
 			&.editWidgetMode{
 				border: 1px dashed $bordersColor;
