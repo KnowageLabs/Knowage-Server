@@ -21,10 +21,10 @@
       		</tr>
       	</thead>
       	<tbody>
-      		<tr ng-repeat="layer in availableSpatialLayers" ng-click="layer.selected = !layer.selected">
-      			<td class="tableAction"><md-checkbox ng-model="layer.selected" /></td>
-	      		<td>{{layer.name}}</td>
-	      		<td>{{layer.description}}</td
+      		<tr ng-repeat="layer in availableSpatialLayers">
+      			<td class="tableAction"><md-checkbox ng-model="layer.selected"></md-checkbox></td>
+	      		<td ng-click="selectLayer(layer,$event)">{{layer.name}}</td>
+	      		<td ng-click="selectLayer(layer,$event)">{{layer.description}}</td
 			<tr>
       	</tbody>
       </table>

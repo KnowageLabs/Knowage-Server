@@ -62,10 +62,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		//ol objects
 		$scope.popupContainer; //popup detail
+		$scope.closer; //popup detail closer icon
 		$scope.layers = [];  //layers with features
 		$scope.values = {};  //layers with values
 		$scope.savedValues = {};
-		$scope.configs = []; //layers with configuration
+		$scope.configs = {}; //layers with configuration
 		$scope.columnsConfig = {} //layers with just columns definition
 
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
@@ -282,7 +283,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    $scope.getLayers = function () {
 		    for (l in $scope.ngModel.content.layers){
 		    	var layerDef =  $scope.ngModel.content.layers[l];
-	    		$scope.setConfigLayer(layerDef.name, layerDef);
+		    	$scope.configs[layerDef.name] = layerDef;
 	    		if (layerDef.type === 'DATASET'){
 	    			$scope.getFeaturesFromDataset(layerDef);
 	    		}else if (layerDef.type === 'CATALOG'){
@@ -326,7 +327,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	//prepare object with metadata for desiderata dataset columns
 	    	var geoColumn, selectedMeasure = null;
     		var columnsForData, isHeatmap;
-    		var layerDef =  $scope.getConfigLayer(label);
+    		var layerDef =  $scope.configs[label];
     		
     		if (!layerDef) return;
     		
@@ -425,9 +426,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 	    $scope.addMapEvents = function (overlay){
-
-            $scope.closePopup = function(){
-            	var closer = document.getElementById('popup-closer');
+//            $scope.closer = document.getElementById('popup-closer');
+            $scope.closer.onclick = function(){
             	overlay.setPosition(undefined);
 	              if (closer) closer.blur();
 	              return false;
@@ -538,6 +538,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            
 	            if (!$scope.popupContainer){
 	            	$scope.popupContainer = document.getElementById('popup');
+	            	$scope.closer = document.getElementById('popup-closer');
 	            }
 	            //create overlayers (popup..)
 	            var overlay = new ol.Overlay({
@@ -674,7 +675,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	$scope.layers = [];
 	    	$scope.values = {};
 	    	$scope.savedValues = {};
-			$scope.configs = [];
+			$scope.configs = {};
 	    }
 
 	    $scope.setLayerProperty = function(l, p, v){
@@ -682,19 +683,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		if ($scope.layers[o].name === l)
 	    			$scope.layers[o][p] = v;
 	    	}
-	    }
-
-	    $scope.setConfigLayer = function(n,c){
-	    	$scope.configs.push({"name": n,"config":c});
-	    }
-
-	    $scope.getConfigLayer = function(n){
-	    	for (l in $scope.configs){
-	    		if ($scope.configs[l].name === n)
-	    			return $scope.configs[l].config;
-	    	}
-
-	    	return null;
 	    }
 
 	    $scope.getLayerProperty = function(l, p){

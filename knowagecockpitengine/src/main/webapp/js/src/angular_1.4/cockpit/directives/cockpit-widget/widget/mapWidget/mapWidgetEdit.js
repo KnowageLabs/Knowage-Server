@@ -202,6 +202,12 @@ function mapWidgetEditControllerFunction(
 					}
 					$mdDialog.hide();
 				}
+				
+				$scope.selectLayer = function(layer, e){
+					e.preventDefault();
+					e.stopImmediatePropagation();
+					layer.selected = !layer.selected;
+				}
 
 				//Exit the dialog without adding
 				$scope.cancel = function(){
