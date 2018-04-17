@@ -4,12 +4,12 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller("RolesManagementController", ["sbiModule_translate", "sbiModule_restServices", "sbiModule_regex", "$scope", "$mdDialog", "$mdToast", "$timeout","sbiModule_messaging","sbiModule_user", RolesManagementFunction]);
+app.controller("RolesManagementController", ["sbiModule_translate", "sbiModule_restServices", "kn_regex", "$scope", "$mdDialog", "$mdToast", "$timeout","sbiModule_messaging","sbiModule_user", RolesManagementFunction]);
 
-function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, sbiModule_regex, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging,sbiModule_user) {
+function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn_regex, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging,sbiModule_user) {
 
 	// VARIABLES
-	$scope.regex = sbiModule_regex;
+	$scope.regex = kn_regex;
 	$scope.showme = false; // flag for showing right side
 	$scope.dirtyForm = false; // flag to check for modification
 	$scope.disable = false; // flag that disable some role options

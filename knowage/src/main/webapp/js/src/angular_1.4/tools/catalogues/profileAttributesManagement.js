@@ -6,11 +6,11 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
-app.controller('profileAttributesManagementController',["sbiModule_translate","sbiModule_restServices", "sbiModule_regex", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging",profileAttributesManagementFunction]);
+app.controller('profileAttributesManagementController',["sbiModule_translate","sbiModule_restServices", "kn_regex", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging",profileAttributesManagementFunction]);
 
-function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restServices,sbiModule_regex,$scope,$mdDialog,$mdToast,$timeout,sbiModule_messaging){
+function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restServices,kn_regex,$scope,$mdDialog,$mdToast,$timeout,sbiModule_messaging){
 
-	$scope.regex = sbiModule_regex;
+	$scope.regex = kn_regex;
 	$scope.translate=sbiModule_translate;
 	$scope.showMe=false;
 	$scope.dirtyForm=false;

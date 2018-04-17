@@ -5,10 +5,10 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging', 'sbiModule_translate','sbiModule_restServices', 'sbiModule_regex', '$scope', '$q', '$log', '$mdDialog',"sbiModule_config", manageDomainFucntion ]);
+app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging', 'sbiModule_translate','sbiModule_restServices', 'kn_regex', '$scope', '$q', '$log', '$mdDialog',"sbiModule_config", manageDomainFucntion ]);
 
 
-function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_translate, sbiModule_restServices, sbiModule_regex, $scope, $q, $log,  $mdDialog,sbiModule_config) {
+function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_translate, sbiModule_restServices, kn_regex, $scope, $q, $log,  $mdDialog,sbiModule_config) {
 
 	$scope.path = "2.0/domains";
 	var headers = {
@@ -18,7 +18,7 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	$scope.message = sbiModule_messaging;
 	$scope.data=[]
 	$scope.itemSelected= {};
-	$scope.regex = sbiModule_regex;
+	$scope.regex = kn_regex;
 
 	var rowDefault = {
 		valueId : "",

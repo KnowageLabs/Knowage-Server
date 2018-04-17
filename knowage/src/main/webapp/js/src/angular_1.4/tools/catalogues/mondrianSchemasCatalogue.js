@@ -8,11 +8,11 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
 
-app.controller('mondrianSchemasCatalogueController',["sbiModule_translate","sbiModule_restServices", "sbiModule_regex", "$scope","$mdDialog","$mdToast","$timeout","$filter","multipartForm","sbiModule_messaging","sbiModule_download","sbiModule_user",mondrianSchemasCatalogueFunction]);
+app.controller('mondrianSchemasCatalogueController',["sbiModule_translate","sbiModule_restServices", "kn_regex", "$scope","$mdDialog","$mdToast","$timeout","$filter","multipartForm","sbiModule_messaging","sbiModule_download","sbiModule_user",mondrianSchemasCatalogueFunction]);
 
-function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restServices,sbiModule_regex, $scope, $mdDialog, $mdToast,$timeout,$filter,multipartForm,sbiModule_messaging,sbiModule_download,sbiModule_user){
+function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restServices,kn_regex, $scope, $mdDialog, $mdToast,$timeout,$filter,multipartForm,sbiModule_messaging,sbiModule_download,sbiModule_user){
 
-	$scope.regex = sbiModule_regex;
+	$scope.regex = kn_regex;
 	$scope.translate = sbiModule_translate;
 	$scope.showMe = false;
 	$scope.catalogLoadingShow = false;

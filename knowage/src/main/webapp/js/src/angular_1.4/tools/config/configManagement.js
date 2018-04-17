@@ -1,14 +1,14 @@
 
 var app = angular.module('configManagementApp',  ['angular_table','ngMaterial', 'ngMessages', 'ui.tree', 'angularUtils.directives.dirPagination', 'angular_list', 'angular-list-detail', 'sbiModule']);
 
-app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging','sbiModule_translate','sbiModule_restServices', 'sbiModule_regex', '$scope', '$q', '$log', '$mdDialog','sbiModule_config', manageConfigFucntion ])
+app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging','sbiModule_translate','sbiModule_restServices', 'kn_regex', '$scope', '$q', '$log', '$mdDialog','sbiModule_config', manageConfigFucntion ])
 
 sbiM.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
 
-function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_translate, sbiModule_restServices, sbiModule_regex, $scope, $q, $log,  $mdDialog,sbiModule_config) {
+function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_translate, sbiModule_restServices, kn_regex, $scope, $q, $log,  $mdDialog,sbiModule_config) {
 
 	var path = "2.0/configs";
 	var headers = {
@@ -20,7 +20,7 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	$scope.itemSelected= {};
 	$scope.filterCategory=[];
 	$scope.hashCategory={};
-	$scope.regex = sbiModule_regex;
+	$scope.regex = kn_regex;
 
 	var rowDefault = {
 		id : "",

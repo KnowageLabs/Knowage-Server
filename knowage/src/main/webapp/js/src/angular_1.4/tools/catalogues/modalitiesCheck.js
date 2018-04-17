@@ -5,8 +5,8 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
 app.controller("ModalitiesCheckController",ModalitiesCheckFunction);
-ModalitiesCheckFunction.$inject = ["sbiModule_translate","sbiModule_restServices", "sbiModule_regex", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging"];
-function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, sbiModule_regex, $scope, $mdDialog, $mdToast,$timeout,sbiModule_messaging){
+ModalitiesCheckFunction.$inject = ["sbiModule_translate","sbiModule_restServices", "kn_regex", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging"];
+function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, kn_regex, $scope, $mdDialog, $mdToast,$timeout,sbiModule_messaging){
 
 	//VARIABLES
 
@@ -21,7 +21,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, sb
 	$scope.label = "";
 	$scope.ItemList = []; // array that hold custom list
 	$scope.listType = []; // array that hold dropdown list from domain
-	$scope.regex = sbiModule_regex;
+	$scope.regex = kn_regex;
 
 		 $scope.ccSpeedMenu= [
 		                         {
