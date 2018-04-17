@@ -28,9 +28,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.services.validation.Xss;
 
 /**
- * Defines a Domain object.
+ * Defines a Config object.
  */
 
 @JsonInclude(Include.NON_NULL)
@@ -55,7 +56,7 @@ public class Config implements Serializable {
 	@NotNull
 	private boolean isActive;
 
-	@ExtendedAlphanumeric
+	@Xss
 	@Size(max = 1000)
 	private String valueCheck;
 

@@ -385,7 +385,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 
 		appendSelectDistinct(query);
 
-		if (query.hasSelectAll()) {
+		if (query.hasSelectAll() || query.getProjections().isEmpty()) {
 			queryBuilder.append("* ");
 		} else if (query.hasSelectCount()) {
 			queryBuilder.append("COUNT(*) ");

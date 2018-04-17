@@ -315,6 +315,23 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		return entity;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.qbe.model.structure.IModelStructure#getEntity(String entityUniqueName)
+	 */
+	@Override
+	public IModelEntity getEntityByName(String notUniqueName) {
+		IModelEntity toReturn = null;
+		for (Iterator iterator = entities.keySet().iterator(); iterator.hasNext() && toReturn == null;) {
+			String uniqueName = (String) iterator.next();
+			if (uniqueName.endsWith("::" + notUniqueName)) {
+				toReturn = entities.get(uniqueName);
+			}
+		}
+		return toReturn;
+	}
+
 	// Fields -----------------------------------------------------------
 
 	/*

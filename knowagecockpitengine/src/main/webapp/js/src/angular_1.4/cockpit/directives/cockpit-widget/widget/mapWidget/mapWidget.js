@@ -227,7 +227,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	if (nature == 'fullExpand'){
 	    		$timeout(function() {
 					$scope.map.updateSize();
-				}, 200);
+				}, 500);
 	    		return;
 	    	}
 	    	
@@ -426,10 +426,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 	    $scope.addMapEvents = function (overlay){
-//            $scope.closer = document.getElementById('popup-closer');
             $scope.closer.onclick = function(){
             	overlay.setPosition(undefined);
-	              if (closer) closer.blur();
+	              if ($scope.closer) $scope.closer.blur();
 	              return false;
             }
             

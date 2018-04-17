@@ -125,7 +125,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	};
 
 //	this.loadDatasetRecords = function(ngModel, page, itemPerPage,columnOrdering, reverseOrdering){
-	this.loadDatasetRecords = function(ngModel, options, loadDomainValues = false){
+	this.loadDatasetRecords = function(ngModel, options, loadDomainValues){
+		if(loadDomainValues == undefined){
+			loadDomainValues = false;
+		}
+		
 		if (!options) options = {};
 		var page = options.page;
 		var itemPerPage = options.itemPerPage;

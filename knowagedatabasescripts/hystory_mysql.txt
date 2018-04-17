@@ -4075,3 +4075,45 @@ commit
 
 ALTER TABLE SBI_EXT_ROLES ADD COLUMN IS_PUBLIC BOOLEAN NULL;
 
+
+-- 05.04.2018 Giulio Gavardi
+-- COnfig to store custom database functions definition
+
+
+insert into SBI_CONFIG (
+			ID, 
+            LABEL, 
+            NAME, 
+            DESCRIPTION, 
+            IS_ACTIVE, 
+            VALUE_CHECK, 
+            VALUE_TYPE_ID, 
+            USER_IN, 
+            USER_UP, 
+            TIME_IN, 
+            TIME_UP, 
+            SBI_VERSION_IN, 
+            SBI_VERSION_UP, 
+            ORGANIZATION, 
+            CATEGORY)
+values (
+(select next_val +1 from hibernate_sequences where sequence_name = 'SBI_CONFIG'), 
+'KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS',
+'Customized database functions',
+'List of customized functions for DB',
+'1',
+'{ "mysql":[ { "function":"TEST", "code":"TEST_CODE", "parameters":[ { "name":"TEST_PAR", "type":"String" } ] } ] }',
+(select VALUE_ID from SBI_DOMAINS where VALUE_CD = 'STRING' AND DOMAIN_CD = 'PAR_TYPE'), 
+'biadmin',	
+'biadmin',		
+current_timestamp,	
+current_timestamp,
+'6.2.0',	
+'6.2.0',			
+'DEFAULT_TENANT',
+'GENERIC_CONFIGURATION'
+);     
+   
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
+commit
+

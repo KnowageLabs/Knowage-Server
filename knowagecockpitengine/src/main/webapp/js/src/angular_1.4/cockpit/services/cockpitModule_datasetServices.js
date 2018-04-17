@@ -508,7 +508,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	}
 
 	//TODO missing maxRows
-	this.loadDatasetRecordsById = function(dsId, page, itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues = false){
+	this.loadDatasetRecordsById = function(dsId, page, itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues){
+
+		if(loadDomainValues == undefined){
+			loadDomainValues = false;
+		}
+
 		//after retry LabelDataset by Id call service for data
 		var dataset = this.getAvaiableDatasetById(dsId);
 		var deferred = $q.defer();
