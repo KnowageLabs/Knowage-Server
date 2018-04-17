@@ -535,6 +535,11 @@
 		description="The name of the system variable that contains the RESOURCE PATH"
 		isActive="true" valueCheck="KNOWAGE_RESOURCE_PATH_SYSTEMVAR"
 		valueType="STRING" category="GENERIC_CONFIGURATION" />
+		
+	<CONFIG label="KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS" name="Customized database functions"
+		description="List of customized functions for DB"
+		isActive="true" valueCheck="" valueType="STRING"
+		category="GENERIC_CONFIGURATION" />
 
 </CONFIGS>
 

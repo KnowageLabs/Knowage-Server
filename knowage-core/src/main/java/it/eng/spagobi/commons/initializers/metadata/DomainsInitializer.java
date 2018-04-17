@@ -42,6 +42,7 @@ public class DomainsInitializer extends SpagoBIInitializer {
 		configurationFileName = "it/eng/spagobi/commons/initializers/metadata/config/domains.xml";
 	}
 	
+	@Override
 	public void init(SourceBean config, Session hibernateSession) {
 		logger.debug("IN");
 		try {
@@ -81,7 +82,8 @@ public class DomainsInitializer extends SpagoBIInitializer {
 			aDomain.setValueCd((String) aDomainSB.getAttribute("valueCd"));
 			aDomain.setValueNm((String) aDomainSB.getAttribute("valueNm"));
 			aDomain.setValueDs((String) aDomainSB.getAttribute("valueDs"));
-			logger.debug("Inserting Domain with valueCd = [" + aDomainSB.getAttribute("valueCd") + "], domainCd = [" + aDomainSB.getAttribute("domainCd") + "] ...");
+			logger.debug(
+					"Inserting Domain with valueCd = [" + aDomainSB.getAttribute("valueCd") + "], domainCd = [" + aDomainSB.getAttribute("domainCd") + "] ...");
 			aSession.save(aDomain);
 		}
 		logger.debug("OUT");
@@ -159,7 +161,8 @@ public class DomainsInitializer extends SpagoBIInitializer {
 				aDomain.setValueNm((String) aDomainSB.getAttribute("valueNm"));
 				aDomain.setValueDs((String) aDomainSB.getAttribute("valueDs"));
 				logger.debug("New Domain ready to be iserted in the DB");
-				logger.debug("Inserting Domain with valueCd = [" + aDomainSB.getAttribute("valueCd") + "], domainCd = [" + aDomainSB.getAttribute("domainCd") + "] ...");
+				logger.debug("Inserting Domain with valueCd = [" + aDomainSB.getAttribute("valueCd") + "], domainCd = [" + aDomainSB.getAttribute("domainCd")
+						+ "] ...");
 				aSession.save(aDomain);
 				logger.debug("New Domain iserted in the DB");
 			}

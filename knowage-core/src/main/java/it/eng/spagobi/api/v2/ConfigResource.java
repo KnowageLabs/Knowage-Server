@@ -19,7 +19,6 @@ package it.eng.spagobi.api.v2;
 
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -52,7 +51,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @ManageAuthorization
 public class ConfigResource extends AbstractSpagoBIResource {
 
-	// logger component-
 	private static Logger logger = Logger.getLogger(ConfigResource.class);
 
 	@GET
@@ -61,25 +59,17 @@ public class ConfigResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Config> getConfigs() {
 		logger.debug("IN");
-		IConfigDAO configsDao = null;
-		List<Config> allObjects = null;
-
 		try {
-			configsDao = DAOFactory.getSbiConfigDAO();
+			IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
-			allObjects = configsDao.loadAllConfigParameters();
+			return configsDao.loadAllConfigParameters();
 
-			if (allObjects != null && !allObjects.isEmpty()) {
-				return allObjects;
-			}
 		} catch (Exception e) {
 			logger.error("Error while getting the list of configs", e);
 			throw new SpagoBIRuntimeException("Error while getting the list of configs", e);
 		} finally {
 			logger.debug("OUT");
 		}
-
-		return new ArrayList<Config>();
 	}
 
 	@GET
@@ -88,28 +78,20 @@ public class ConfigResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Config getSingleConfig(@PathParam("id") Integer id) {
 		logger.debug("IN");
-		IConfigDAO configsDao = null;
-		List<Config> allObjects = null;
-
 		try {
-			configsDao = DAOFactory.getSbiConfigDAO();
+			IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
-			allObjects = configsDao.loadAllConfigParameters();
-
-			if (allObjects != null && !allObjects.isEmpty()) {
-				for (Config dm : allObjects) {
-					if (dm.getId().equals(id)) {
-						return dm;
-					}
-				}
+			Config config = configsDao.loadConfigParametersById(id);
+			if (config == null) {
+				logger.error("Config with id " + id + " not present in current tenant");
 			}
+			return config;
 		} catch (Exception e) {
 			logger.error("Error while getting config " + id, e);
 			throw new SpagoBIRuntimeException("Error while getting config " + id, e);
 		} finally {
 			logger.debug("OUT");
 		}
-		return null;
 	}
 
 	@GET
@@ -118,22 +100,46 @@ public class ConfigResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Config getSingleConfigByLabel(@PathParam("label") String label) {
 		logger.debug("IN");
+		try {
+			IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+			configsDao.setUserProfile(getUserProfile());
+			Config config = configsDao.loadConfigParametersByLabel(label);
+			if (config == null) {
+				logger.error("Config with label " + label + " not present in current tenant");
+			}
+			return config;
+		} catch (Exception e) {
+			logger.error("Error while getting config " + label, e);
+			throw new SpagoBIRuntimeException("Error while getting config " + label, e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	/*
+	 * added as separated service because it is public
+	 */
+	@GET
+	@Path("/label/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Config getKnowageCalculatedFunctionConfig() {
+		logger.debug("IN");
 		IConfigDAO configsDao = null;
 		// List<Config> allObjects = null;
 		Config dm = null;
 		try {
 			configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
-			dm = configsDao.loadConfigParametersByLabel(label);
+			dm = configsDao.loadConfigParametersByLabel("KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS");
 			if (dm == null) {
-				logger.error("Config with label " + label + " not present in current tenant");
+				logger.error("Config with label KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS not present in current tenant");
 				return null;
-			} else if (dm.getLabel().equals(label)) {
+			} else if (dm.getLabel().equals("KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS")) {
 				return dm;
 			}
 		} catch (Exception e) {
-			logger.error("Error while getting config " + label, e);
-			throw new SpagoBIRuntimeException("Error while getting config " + label, e);
+			logger.error("Error while getting config KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS", e);
+			throw new SpagoBIRuntimeException("Error while getting config KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -159,7 +165,6 @@ public class ConfigResource extends AbstractSpagoBIResource {
 		try {
 			configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
-			List<Config> configsList = configsDao.loadAllConfigParameters();
 			configsDao.saveConfig(config);
 			String encodedConfig = URLEncoder.encode("" + config.getId(), "UTF-8");
 			return Response.created(new URI("1.0/configs/" + encodedConfig)).entity(encodedConfig).build();
@@ -190,7 +195,6 @@ public class ConfigResource extends AbstractSpagoBIResource {
 		try {
 			configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
-			List<Config> configsList = configsDao.loadAllConfigParameters();
 			configsDao.saveConfig(config);
 			String encodedConfig = URLEncoder.encode("" + config.getId(), "UTF-8");
 			return Response.created(new URI("1.0/configs/" + encodedConfig)).entity(encodedConfig).build();
@@ -252,11 +256,8 @@ public class ConfigResource extends AbstractSpagoBIResource {
 	@Path("/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
 	public Response deleteConfig(@PathParam("id") Integer id) {
-
-		IConfigDAO configsDao = null;
-
 		try {
-			configsDao = DAOFactory.getSbiConfigDAO();
+			IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
 			configsDao.delete(id);
 			return Response.ok().build();

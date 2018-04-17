@@ -56,23 +56,13 @@ public class RestExceptionMapper implements ExceptionMapper<RuntimeException> {
 
 	@Override
 	public Response toResponse(RuntimeException t) {
-
-		Response response = null;
-
-		logger.trace("IN");
-
-		response = toResponseFromGenericException(t);
-
-		logger.trace("OUT");
-
-		return response;
+		logger.error("Catched service error: ", t);
+		return toResponseFromGenericException(t);
 	}
 
 	private Response toResponseFromGenericException(RuntimeException t) {
 		JSONObject serializedMessages = serializeException(t);
-		logger.error("Catched service error: ", t);
-		Response response = Response.status(200).entity(serializedMessages.toString()).build();
-		return response;
+		return Response.status(200).entity(serializedMessages.toString()).build();
 	}
 
 	private JSONObject serializeException(RuntimeException t) {
