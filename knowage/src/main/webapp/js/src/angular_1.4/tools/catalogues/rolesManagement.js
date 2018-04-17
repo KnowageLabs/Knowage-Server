@@ -1,15 +1,15 @@
-var app = angular.module("RolesManagementModule", ["ngMaterial", "angular_list", "angular_table", "sbiModule", "angular_2_col","angular-list-detail"]);
+var app = angular.module("RolesManagementModule", ["ngMaterial", 'ngMessages', "angular_list", "angular_table", "sbiModule", "angular_2_col","angular-list-detail"]);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
 	$mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller("RolesManagementController", ["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", "$timeout","sbiModule_messaging","sbiModule_user", RolesManagementFunction]);
+app.controller("RolesManagementController", ["sbiModule_translate", "sbiModule_restServices", "sbiModule_regex", "$scope", "$mdDialog", "$mdToast", "$timeout","sbiModule_messaging","sbiModule_user", RolesManagementFunction]);
 
-function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging,sbiModule_user) {
+function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, sbiModule_regex, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging,sbiModule_user) {
 
 	// VARIABLES
-
+	$scope.regex = sbiModule_regex;
 	$scope.showme = false; // flag for showing right side
 	$scope.dirtyForm = false; // flag to check for modification
 	$scope.disable = false; // flag that disable some role options

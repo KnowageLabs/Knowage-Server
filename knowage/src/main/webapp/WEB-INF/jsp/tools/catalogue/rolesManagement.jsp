@@ -89,46 +89,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 				<div flex=100>
 					<md-input-container class="md-block"> <label>{{translate.load("sbi.roles.headerName")}}</label>
-					<input name="name" ng-model="selectedRole.name" ng-required="true"
-						ng-maxlength="100" ng-change="setDirty()">
-
-					<div ng-messages="attributeForm.name.$error"
-						ng-show="selectedRole.name== null">
-						<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-					</div>
+						<input name="name" ng-model="selectedRole.name" ng-required="true" ng-maxlength="100" ng-change="setDirty()" ng-pattern="regex.extendedAlphanumeric">
+						<div ng-messages="attributeForm.name.$error" role="alert" ng-messages-multiple>
+							<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+							<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 100</div>
+  						</div>	
 					</md-input-container>
 				</div>
 				<div flex=100>
 					<md-input-container class="md-block"> <label>{{translate.load("sbi.roles.headerCode")}}</label>
-					<input name="code" ng-model="selectedRole.code"
-					 ng-maxlength="255" ng-change="setDirty()">
-
+						<input name="code" ng-model="selectedRole.code" ng-maxlength="20" ng-change="setDirty()"  ng-pattern="regex.alphanumeric">
+						<div ng-messages="attributeForm.code.$error" role="alert" ng-messages-multiple>
+							<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+							<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 20</div>
+  						</div>
 					</md-input-container>
 				</div>
 				<div flex=100>
 					<md-input-container class="md-block"> <label>{{translate.load("sbi.roles.headerDescr")}}</label>
-					<input name="code" ng-model="selectedRole.description"
-					 ng-maxlength="255" ng-change="setDirty()">
-
+						<input name="description" ng-model="selectedRole.description" ng-maxlength="255" ng-change="setDirty()"  ng-pattern="regex.extendedAlphanumeric">
+						<div ng-messages="attributeForm.description.$error" role="alert" ng-messages-multiple>
+							<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+							<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 160</div>
+  						</div>
 					</md-input-container>
 				</div>
-      				<div flex=100>
-				       <md-input-container class="md-block" > 
-				       <label>{{translate.load("sbi.roles.headerRoleType")}}</label>
-				       <md-select  aria-label="dropdown" placeholder ="Role Type"
-				       	name ="dropdown" 
-				        ng-required = "true"
-				        ng-model="selectedRole.roleTypeCD"
-				        ng-change="changeType(selectedRole.roleTypeCD)">    
-				        <md-option 
-				        ng-repeat="l in listType track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_TR}}
-				        </md-option>
-				       </md-select>
-				       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedRole.roleTypeCD== null">
-				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-				      </div>   
-				        </md-input-container>
-				   </div>
+      			<div flex=100>
+					<md-input-container class="md-block" > 
+				    	<label>{{translate.load("sbi.roles.headerRoleType")}}</label>
+				       	<md-select  aria-label="dropdown" placeholder ="Role Type" name ="dropdown" required ng-model="selectedRole.roleTypeCD" ng-change="changeType(selectedRole.roleTypeCD)">    
+				        	<md-option ng-repeat="l in listType track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_TR}}</md-option>
+				    	</md-select>   
+					</md-input-container>
+				</div>
 				<div layout="row" flex="100" class="kn-checkInput">
 					<label flex="15">{{translate.load("sbi.roles.isPublicRole")}}</label>
 					<md-input-container> 

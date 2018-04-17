@@ -2,7 +2,7 @@
  *
  */
 
-var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload','angular-list-detail']);
+var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'ngMessages', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload','angular-list-detail']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
@@ -14,6 +14,7 @@ app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiMo
 function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog,
 		$mdToast,multipartForm,sbiModule_download,sbiModule_messaging,sbiModule_config,sbiModule_user,sbiModule_messaging){
 
+	$scope.extendedAlphanumericRegex = "^([\\w\\s\\-\\_\\(\\)\\[\\]\\;\\:\\!\\?\\,\\.\\'\\\"\\x2F\\x5F])*$";
 	//variables
 	///////////////////////////////////////////////////////////
 	$scope.isDirty = false;

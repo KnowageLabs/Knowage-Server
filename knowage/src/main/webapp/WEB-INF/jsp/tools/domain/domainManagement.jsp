@@ -61,27 +61,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 								<md-input-container flex="100" class="md-block"> 
 									<label>{{translate.load("sbi.domain.managedomains.fields.valuecd")}}</label> 
-									<input ng-model="domain.valueCd" required type="text"> 
+									<input name="valueCd" ng-model="domain.valueCd" required type="text" ng-maxlength="100" ng-pattern="regex.extendedAlphanumeric">
+									<div ng-messages="domainForm.valueCd.$error" role="alert" ng-messages-multiple>
+									    <div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+									    <div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 100</div>
+  									</div>
 								</md-input-container>
 								
 								<md-input-container flex="100" class="md-block"> 
 									<label>{{translate.load("sbi.domain.managedomains.fields.valuenm")}}</label> 
-									<input	ng-model="domain.valueName" required type="text"> 
+									<input name="valueNm" ng-model="domain.valueName" required type="text" ng-maxlength="40" ng-pattern="regex.extendedAlphanumeric">
+									<div ng-messages="domainForm.valueNm.$error" role="alert" ng-messages-multiple>
+									    <div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+									    <div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 40</div>
+  									</div>
 								</md-input-container>
 								
 								<md-input-container flex="100" class="md-block"> 
 									<label>{{translate.load("sbi.domain.managedomains.fields.domaincd")}}</label> 
-									<input ng-model="domain.domainCode" required type="text"> 
+									<input name="domainCd" ng-model="domain.domainCode" required type="text" ng-maxlength="20" ng-pattern="regex.extendedAlphanumeric">
+									<div ng-messages="domainForm.domainCd.$error" role="alert" ng-messages-multiple>
+									    <div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+									    <div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 20</div>
+  									</div>
 								</md-input-container>
 							
 								<md-input-container flex="100" class="md-block"> 
 									<label>{{translate.load("sbi.domain.managedomains.fields.domainnm")}}</label> 
-									<input ng-model="domain.domainName" required type="text"> 
+									<input name="domainNm" ng-model="domain.domainName" required type="text" ng-maxlength="40" ng-pattern="regex.extendedAlphanumeric">
+									<div ng-messages="domainForm.domainNm.$error" role="alert" ng-messages-multiple>
+									    <div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+									    <div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 40</div>
+  									</div>
 								</md-input-container>
 							
 								<md-input-container flex="100" class="md-block"> 
 									<label>{{translate.load("sbi.domain.managedomains.fields.valueds")}}</label> 
-									<input ng-model="domain.valueDescription" required type="text"> 
+									<input name="valueDs" ng-model="domain.valueDescription" required type="text" ng-maxlength="160" ng-pattern="regex.extendedAlphanumeric">
+									<div ng-messages="domainForm.valueDs.$error" role="alert" ng-messages-multiple>
+									    <div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+									    <div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 160</div>
+  									</div>
 								</md-input-container>
 							
 							</md-card-content>

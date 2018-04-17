@@ -1,15 +1,15 @@
 
-var app = angular.module('domainManagementApp', ['angular_table','ngMaterial', 'ui.tree', 'angularUtils.directives.dirPagination', 'angular_list', 'angular-list-detail', 'sbiModule']);
+var app = angular.module('domainManagementApp', ['angular_table','ngMaterial', 'ngMessages', 'ui.tree', 'angularUtils.directives.dirPagination', 'angular_list', 'angular-list-detail', 'sbiModule']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging', 'sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog',"sbiModule_config", manageDomainFucntion ]);
+app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging', 'sbiModule_translate','sbiModule_restServices', 'sbiModule_regex', '$scope', '$q', '$log', '$mdDialog',"sbiModule_config", manageDomainFucntion ]);
 
 
-function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog,sbiModule_config) {
-	
+function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_translate, sbiModule_restServices, sbiModule_regex, $scope, $q, $log,  $mdDialog,sbiModule_config) {
+
 	$scope.path = "2.0/domains";
 	var headers = {
 			'Content-Type': 'application/json'
@@ -18,8 +18,8 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	$scope.message = sbiModule_messaging;
 	$scope.data=[]
 	$scope.itemSelected= {};
-	 
-	
+	$scope.regex = sbiModule_regex;
+
 	var rowDefault = {
 		valueId : "",
 		valueCd : "",
@@ -28,7 +28,7 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 		domainName : "Domain Name",
 		valueDescription : "Description Default"
 	};
-	
+
 	$scope.domainSpeedMenu = [{
     	label: $scope.translate.load('sbi.generic.edit'),
     	icon:'fa fa-pencil',
@@ -45,7 +45,7 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
     	}
 	}];
 
-	
+
 	sbiModule_restServices.promiseGet($scope.path, "", null)
 		.then(function(response) {
 				if (response.data.errors != undefined){
@@ -56,23 +56,23 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 			}, function(data, status, headers, config){
 				$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + data);
 		});
-	
+
 	$scope.addDomain = function(){
 		$scope.domain = {};
 		$angularListDetail.goToDetail();
 	}
-	
+
 	$scope.closeDetail = function(){
 		$angularListDetail.goToList();
 		$scope.domainForm.$setPristine();
 		$scope.domainForm.$setUntouched();
 	}
-	
+
 	$scope.editRow = function(item) {
 		$scope.domain = angular.copy(item);
 		$angularListDetail.goToDetail();
 	}
-	
+
 	$scope.saveRow = function(){
 		var rowSelected = angular.copy($scope.domain);
 		if (rowSelected.valueId !== undefined) {
@@ -83,7 +83,7 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 		$scope.domainForm.$setPristine();
 		$scope.domainForm.$setUntouched();
 	};
-	
+
 	$scope.saveModifiedRow = function(item){
 		var idx = $scope.indexOf($scope.data, item);
 		sbiModule_restServices
@@ -101,8 +101,8 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 					$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
 				});
 	}
-	
-	
+
+
 	$scope.saveNewRow = function(item){
 		sbiModule_restServices
 		.post($scope.path,"",item,headers)
@@ -126,18 +126,18 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 		function errorCallback(response) {
 			item.valueId = "";
 			$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
-		});	
+		});
 	}
-	
+
 	$scope.deleteRow = function(item) {
 		var confirm = $mdDialog.confirm()
 				        .title($scope.translate.load('sbi.generic.delete'))
 				        .content($scope.translate.load('sbi.generic.confirmDelete'))
 				        .ok($scope.translate.load('sbi.general.yes'))
 				        .cancel($scope.translate.load('sbi.general.No'));
-  	  	
+
         $mdDialog
-	  	  	.show(confirm)		      
+	  	  	.show(confirm)
 	  	  	.then(function(){
   	  			var rowsSelected = item;
   	  			if (rowsSelected.valueId !== undefined) {
@@ -158,7 +158,7 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
   	  			}
   	  		},function(){});
 	};
-	
+
 	$scope.labelDetailFunction = function(){
 		if ($scope.domain){
 			if ($scope.domain.valueId == undefined){
@@ -169,7 +169,7 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 		}
 		return '';
 	}
-	
+
 	//search function for data array
 	$scope.indexOf = function(myArray, myElement) {
 		for (var i = 0; i < myArray.length; i++) {

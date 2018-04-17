@@ -1,15 +1,15 @@
 
-var app = angular.module('configManagementApp',  ['angular_table','ngMaterial', 'ui.tree', 'angularUtils.directives.dirPagination', 'angular_list', 'angular-list-detail', 'sbiModule']);
+var app = angular.module('configManagementApp',  ['angular_table','ngMaterial', 'ngMessages', 'ui.tree', 'angularUtils.directives.dirPagination', 'angular_list', 'angular-list-detail', 'sbiModule']);
 
-app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog','sbiModule_config', manageConfigFucntion ])
+app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging','sbiModule_translate','sbiModule_restServices', 'sbiModule_regex', '$scope', '$q', '$log', '$mdDialog','sbiModule_config', manageConfigFucntion ])
 
 sbiM.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
 
-function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog,sbiModule_config) {
-	
+function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_translate, sbiModule_restServices, sbiModule_regex, $scope, $q, $log,  $mdDialog,sbiModule_config) {
+
 	var path = "2.0/configs";
 	var headers = {
 			'Content-Type': 'application/json'
@@ -20,7 +20,8 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	$scope.itemSelected= {};
 	$scope.filterCategory=[];
 	$scope.hashCategory={};
-	
+	$scope.regex = sbiModule_regex;
+
 	var rowDefault = {
 		id : "",
 		label : "Label",
@@ -30,7 +31,11 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 		category : "",
 		active : "false"
 	};
-	
+
+	$scope.isObjectEmpty = function(obj){
+		return Object.keys(obj).length === 0;
+	}
+
 	$scope.configSpeedMenu = [{
     	label: $scope.translate.load('sbi.generic.edit'),
     	icon:'fa fa-pencil',
@@ -69,24 +74,24 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	},function(data, status, headers, config){
 		$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + data);
 	});
-	
+
 	$scope.addConfig = function(){
 		$scope.config = {};
 		$angularListDetail.goToDetail();
 	}
-	
+
 	$scope.closeDetail = function(){
 		$angularListDetail.goToList();
 		$scope.configForm.$setPristine();
 		$scope.configForm.$setUntouched();
 	}
-	
+
 	$scope.editRow = function(item) {
 		$scope.config = angular.copy(item);
-		$scope.config.valueTypeId = item.valueTypeId == 'NUM' ? 407 : 408; 
+		$scope.config.valueTypeId = item.valueTypeId == 'NUM' ? 407 : 408;
 		$angularListDetail.goToDetail();
 	}
-	
+
 	$scope.saveRow = function(){
 		var rowSelected = angular.copy($scope.config);
 		if (rowSelected.id !== undefined) {
@@ -97,7 +102,7 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 		$scope.configForm.$setPristine();
 		$scope.configForm.$setUntouched();
 	};
-	
+
 	$scope.saveModifiedRow = function(item){
 		var idx = $scope.indexOf($scope.data, item);
 		sbiModule_restServices
@@ -116,7 +121,7 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 					$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
 				});
 	}
-	
+
 	$scope.saveNewRow = function(item){
 		sbiModule_restServices
 			.promisePost(path,"",angular.toJson(item),headers)
@@ -141,10 +146,10 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 			function errorCallback(response) {
 				item.id = "";
 				$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
-			});	
+			});
 	}
-	
-	
+
+
 	$scope.deleteRow = function(item) {
 	  var confirm = $mdDialog.confirm()
 			        .title($scope.translate.load('sbi.generic.delete'))
@@ -152,7 +157,7 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 			        .ok($scope.translate.load('sbi.general.yes'))
 			        .cancel($scope.translate.load('sbi.general.No'));
 	  $mdDialog
-	  	.show(confirm)		      
+	  	.show(confirm)
 	  	.then(function(){
 	  			var rowsSelected = item;
 	  			if (rowsSelected.id !== undefined) {
@@ -173,7 +178,7 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	  			}
 	  		},function(){});
 	};
-	
+
 	$scope.labelDetailFunction = function(){
 		if ($scope.config){
 			if ($scope.config.id == undefined){
