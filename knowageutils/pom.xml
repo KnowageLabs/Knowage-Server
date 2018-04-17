@@ -184,10 +184,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-client-core</artifactId>
-			<version>3.1.6</version>
-			<scope>compile</scope>
+		    <groupId>org.jasig.cas.client</groupId>
+		    <artifactId>cas-client-core</artifactId>
+		    <version>3.5.0</version>
 		</dependency>
 
 		<dependency>
