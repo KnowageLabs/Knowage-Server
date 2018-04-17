@@ -79,6 +79,16 @@ angular.module('chartInitializer')
 			if(jsonData){
 				this.chart.jsonData = JSON.parse(jsonData.jsonData);
 			}
+			if(this.chart.xAxis[0]){
+				for (var i = 0; i < this.chart.xAxis.length; i++) {
+					this.chart.xAxis[i].titleOriginal = this.chart.xAxis[i].axisTitle.textStr;
+					if(i>0){
+						this.chart.xAxis[i].setTitle({
+							text:""
+			            });
+					}
+				}
+			}
 
 			//return chart;
 
@@ -380,11 +390,24 @@ angular.module('chartInitializer')
 			            var yAxisTitle={
 			            		text:series.serieName
 			            };
-			            if(chart.xAxis[0].userOptions.title.customTitle==false){
-			            chart.xAxis[0].setTitle(xAxisTitle);
-			            }
+			            
+			            if(chart.xAxis[0]){
+							for (var i = 0; i < chart.xAxis.length; i++) {
+								
+								if(chart.xAxis[i].titleOriginal == series.category){
+									chart.xAxis[i].setTitle(xAxisTitle);
+								} else {
+									chart.xAxis[i].setTitle({
+										text:""
+						            });
+								}
+							}
+						}
+			            
+			           
+			            
 			            if(chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
-			            chart.yAxis[0].setTitle(yAxisTitle);
+			            	chart.yAxis[0].setTitle(yAxisTitle);
 			            }
 
 			            chart.addSeriesAsDrilldown(e.point, series);
@@ -403,18 +426,27 @@ angular.module('chartInitializer')
 	this.handleDrillup = function(){
 
 		var chart=this;
+		var axisTitle = chart.options.drilledCategories[chart.options.drilledCategories.length-2] 
 		chart.options.drilledCategories.pop();
 		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-2] ? chart.options.drilledCategories[chart.options.drilledCategories.length-2] : chart.options.drilledCategories[0];
 		var backText=titleText;
 		chart.drillUpButton.textSetter("Back to: <b>"+backText+"</b>");
         //  chart.redraw();
 		var xAxisTitle={
-            	text:titleText
+            	text:axisTitle
             };
-		    if(chart.xAxis[0].userOptions.title.customTitle==false){
-            chart.xAxis[0].setTitle(xAxisTitle);
-		    }
 
+		if(chart.xAxis[0]){
+			for (var i = 0; i < chart.xAxis.length; i++) {
+				if(chart.xAxis[i].titleOriginal == titleText){
+					chart.xAxis[i].setTitle(xAxisTitle);
+				} else {
+					chart.xAxis[i].setTitle({
+						text:""
+					});
+				}
+			}
+		}
 		var yAxisTitle={
 				text: ' '
 		};
