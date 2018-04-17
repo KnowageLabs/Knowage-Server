@@ -61,7 +61,7 @@
 						if (geoFieldConfig.properties.coordType == 'json'){
 							var jsonConf = JSON.parse(geoFieldValue);
 							
-							if (geoFieldConfig.properties.jsonFeatureType != 'Point'){ //for the moment just Point are managed
+							if (geoFieldConfig.properties.jsonFeatureType && geoFieldConfig.properties.jsonFeatureType.toUpperCase() != 'POINT'){ //for the moment just Point are managed
 								sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.jsonCoordTypeInvalid').replace("{0}",geoFieldConfig.properties.jsonFeatureType), 'Title', 0);
 								console.log("Json feature of type ["+ geoFieldConfig.properties.jsonFeatureType +"] is not managed. Only [Point] are permit.");
 								return null;
