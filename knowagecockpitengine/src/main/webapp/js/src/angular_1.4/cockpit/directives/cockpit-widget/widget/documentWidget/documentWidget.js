@@ -174,6 +174,6 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 
 
 //this function register the widget in the cockpitModule_widgetConfigurator factory
-addWidgetFunctionality("document",{'initialDimension':{'width':20, 'height':20},'updateble':true,'cliccable':false});
+addWidgetFunctionality("document",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':false});
 
 })();

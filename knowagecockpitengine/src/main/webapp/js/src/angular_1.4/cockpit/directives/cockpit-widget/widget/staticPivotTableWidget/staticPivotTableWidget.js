@@ -958,6 +958,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 
 //this function register the widget in the cockpitModule_widgetConfigurator factory
-addWidgetFunctionality("static-pivot-table",{'initialDimension':{'width':20, 'height':20},'updateble':true,'cliccable':true});
+addWidgetFunctionality("static-pivot-table",{'initialDimension':{'width':10, 'height':10},'updateble':true,'cliccable':true});
 
 })();
