@@ -172,27 +172,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<md-tab label="Manage"> 
 		<md-card flex>
 
-			<md-toolbar class="md-knowage-theme"> <div class="md-toolbar-tools">{{ctrl.translate.load("cache.manager.addRemoveDataset")}}<div flex></div><md-button ng-click="ctrl.deleteFunction()" ng-disabled="ctrl.itemSelected.length<=0">{{ctrl.translate.load("cache.manager.delete")}}</md-button> <md-button ng-click="ctrl.cleanAllFunction()">{{ctrl.translate.load("cache.manager.cleanAll")}}</md-button></div></md-toolbar>
-			<div layout-align="center center" layout-padding layout-margin flex>			
+			<md-toolbar class="md-knowage-theme"> <div class="md-toolbar-tools">{{ctrl.translate.load("cache.manager.addRemoveDataset")}}<div flex></div> <md-button ng-click="ctrl.cleanAllFunction()">{{ctrl.translate.load("cache.manager.cleanAll")}}</md-button></div></md-toolbar>
+			<md-card-content>			
 					
-					<div ng-if="ctrl.metadata != undefined && ctrl.metadata.length > 0">  <!-- METADATA TABLE -->
-						
-					<angular-table 	id="manageTable" 	ng-model=ctrl.metadata 
-											columns=ctrl.tableColumns
-											highlights-selected-item = "true"
-											show-search-bar="true"
-											columns-search='["name"]'
-											no-pagination="false"
-											multi-select = "true"
-											selected-item="ctrl.itemSelected"
-					></angular-table>
+					<table class="kn-table kn-table-fixed" ng-if="ctrl.metadata != undefined && ctrl.metadata.length > 0">
+						<thead>
+							<tr>
+								<th ng-repeat="col in ctrl.tableColumns" width="{{col.size}}">{{col.label}}</th>
+								<th class="tableAction"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="row in ctrl.metadata">
+								<td ng-repeat="col in ctrl.tableColumns">
+									<md-tooltip md-delay="1000">{{row[col.name]}}</md-tooltip>
+									<span class="truncated">{{row[col.name]}}</span>
+								</td>
+								<td class="tableAction">
+									<md-button class="md-icon-button" ng-click="ctrl.deleteFunction(row)">
+										<md-tooltip>{{ctrl.translate.load("cache.manager.delete")}}</md-tooltip>
+										<md-icon md-font-icon="fa fa-trash"></md-icon>
+									</md-button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
 					
-				</div>	
 				<div ng-if="ctrl.metadata == undefined || ctrl.metadata.length == 0">  <!--  METADATA TABLE -->
 					{{ctrl.translate.load("cache.manager.metadataUnavailable")}}
 				</div>	
 	
-			</div>
+			</md-card-content>
 				
 		</md-card>
 

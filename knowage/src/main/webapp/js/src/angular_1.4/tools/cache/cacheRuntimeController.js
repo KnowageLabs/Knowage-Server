@@ -17,7 +17,7 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 	self.metadata=[];
 	self.itemSelected=[];
 	self.translate=sbiModule_translate;
-	self.tableColumns=[{label:self.translate.load("cache.manager.name"),name:"name"},{label:self.translate.load("cache.manager.signature"),name:"signature"},{label:self.translate.load("cache.manager.table"),name:"table"},{label:self.translate.load("cache.manager.dimension"),name:"dimension"}];
+	self.tableColumns=[{label:self.translate.load("cache.manager.name"),name:"name",size:"40%"},{label:self.translate.load("cache.manager.signature"),name:"signature",size:"30%"},{label:self.translate.load("cache.manager.table"),name:"table",size:"20%"},{label:self.translate.load("cache.manager.dimension"),name:"dimension",size:"100px"}];
 	//self.noWriteDefaultDataSourceMess="";
 
 //-------------------------Utility functions definition--------------------------
@@ -444,19 +444,12 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 	}
 
 
-	self.deleteFunction=function ()
+	self.deleteFunction=function (row)
 	{
 		namesToDelete=[];
-		for(i=0;i<self.itemSelected.length;i++)
-		{
-			namesToDelete.push(self.itemSelected[i].name);
-
-		}
+		namesToDelete.push(row.name);
 		var body={};
 		body.namesArray=namesToDelete;
-		$log.info("Names to delete ",body.namesArray);
-		$log.info("Sending ",body);
-
 
 		sbiModule_restServices.put("1.0/cacheee","deleteItems",body)
 		.success(function()

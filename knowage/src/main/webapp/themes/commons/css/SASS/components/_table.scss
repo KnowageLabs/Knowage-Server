@@ -40,6 +40,12 @@
 				md-checkbox {
 					margin-bottom: 0;
 				}
+				.truncated {
+					white-space: nowrap;
+				    text-overflow: ellipsis;
+				    overflow: hidden;
+				    display: block;
+				}
 				color-picker{
 					width: 195px;
 					.color-picker-wrapper{
@@ -93,5 +99,9 @@
 				}
 			}
 		}
+	}
+
+	&.kn-table-fixed {
+		table-layout: fixed;
 	}
 }
