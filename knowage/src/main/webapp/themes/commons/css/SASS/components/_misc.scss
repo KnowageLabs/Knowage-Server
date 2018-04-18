@@ -883,6 +883,10 @@ color-picker {
   }
 }
 
+.text-overline {
+  text-decoration: overline !important;
+}
+
 /* fix to have the selected color-picker always on top */
 .md-input-focused {
   color-picker {
