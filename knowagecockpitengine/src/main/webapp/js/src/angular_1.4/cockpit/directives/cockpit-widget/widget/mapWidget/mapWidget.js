@@ -53,6 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			sbiModule_messaging,
 			sbiModule_restServices,
 			cockpitModule_mapServices,
+			cockpitModule_mapThematizerServices,
 			cockpitModule_datasetServices,
 			cockpitModule_generalServices,
 			cockpitModule_widgetConfigurator,
@@ -329,6 +330,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		var columnsForData, isHeatmap;
     		var layerDef =  $scope.configs[label];
     		
+    		
     		if (!layerDef) return;
     		
     		columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
@@ -349,23 +351,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if (featuresSource == null){
 				return;
 			}
-			cockpitModule_mapServices.setActiveConf(layerDef.name, layerDef);
+			cockpitModule_mapThematizerServices.setActiveConf(layerDef.name, layerDef);
+			cockpitModule_mapThematizerServices.updateLegend(layerDef.name);
 			var layer;
 			if (isCluster) {
 				var clusterSource = new ol.source.Cluster({source: featuresSource
 														  });
 				layer =   new ol.layer.Vector({source: clusterSource,
-										  	  style: cockpitModule_mapServices.layerStyle
+										  	  style: cockpitModule_mapThematizerServices.layerStyle
 										});
 			} else if (isHeatmap) {
 				layer = new ol.layer.Heatmap({source: featuresSource,
 										      blur: layerDef.heatmapConf.blur,
 										      radius: layerDef.heatmapConf.radius,
-										      weight: cockpitModule_mapServices.setHeatmapWeight
+										      weight: cockpitModule_mapThematizerServices.setHeatmapWeight
 										     });
 			} else {
 				layer = new ol.layer.Vector({source: featuresSource,
-	    									 style: cockpitModule_mapServices.layerStyle
+	    									 style: cockpitModule_mapThematizerServices.layerStyle
 	    									});
 			}
 
@@ -435,7 +438,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             $scope.map.on('singleclick', function(evt) {
     			$scope.props = {};
 
-//            	$scope.map.forEachFeatureAtPixel(evt.pixel,
             	evt.map.forEachFeatureAtPixel(evt.pixel,
 		            function(feature, layer) {
 						$scope.selectedLayer = layer;
@@ -630,7 +632,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  //thematizer functions
 	    $scope.refreshStyle = function (layer, measure, config, configColumns, values, geoColumn){
 			//prepare object for thematization
-	    	cockpitModule_mapServices.loadIndicatorMaxMinVal(config.name+'|'+measure, values);
+	    	cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name+'|'+measure, values);
 			var newSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, measure, config, configColumns,  values);
 			if (config.clusterConf && config.clusterConf.enabled){
 				var clusterSource = new ol.source.Cluster({ source: newSource });
