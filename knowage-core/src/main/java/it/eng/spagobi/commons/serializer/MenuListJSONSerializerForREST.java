@@ -838,6 +838,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				} else {
 					temp2.put(HREF, "javascript:execDirectUrl('')");
 					temp2.put(LINK_TYPE, "execDirectUrl");
+					temp2.put(SRC, "noExecutableDoc");
 				}
 			} else if (childElem.getStaticPage() != null && !childElem.getStaticPage().equals("")) {
 				temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId()
