@@ -65,7 +65,7 @@
           </div>
           <div layout="row" layout-xs="column" >
 
-            <md-card flex flex-gt-sm="33" md-whiteframe="{{height_a}}" ng-init="height_a = 3" ng-mouseenter="height_a = 10" ng-mouseleave="height_a = 3">
+            <md-card flex flex-gt-sm="33" >
               <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/dashboard_management.png" class="md-card-image" alt="Dashboard Management">
               <md-card-title>
                 <md-card-title-text >
@@ -76,13 +76,13 @@
                   <span class="md-subhead">Create interactive visualizations and manage your dashboard</span>
               </md-card-content>
               <md-card-actions layout="row" layout-align="end center">
-                  <md-button class="md-primary" aria-label="New" ng-click="showLevel2A()">
+                  <md-button class="md-accent" aria-label="New" ng-click="showLevel2A()">
                     Manage
                   </md-button>
               </md-card-actions>
             </md-card>
 
-            <md-card flex flex-gt-sm="33"  md-whiteframe="{{height_b}}" ng-init="height_b = 3" ng-mouseenter="height_b = 10" ng-mouseleave="height_b = 3">
+            <md-card flex flex-gt-sm="33" >
               <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/kpi_management.png" class="md-card-image" alt="KPI Management">
               <md-card-title>
                 <md-card-title-text >
@@ -93,13 +93,13 @@
                   <span class="md-subhead">Develop metrics witch allow city manager to take a snapshot on key aspects of their city</span>
               </md-card-content>
               <md-card-actions layout="row" layout-align="end center">
-                  <md-button class="md-primary" aria-label="New" ng-click="showLevel2B()">
+                  <md-button class="md-accent" aria-label="New" ng-click="showLevel2B()">
                     Manage
                   </md-button>
               </md-card-actions>
             </md-card>
 
-            <md-card flex flex-gt-sm="33"  md-whiteframe="{{height_c}}" ng-init="height_c = 3" ng-mouseenter="height_c = 10" ng-mouseleave="height_c = 3">
+            <md-card flex flex-gt-sm="33" >
               <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/dataset_management.png" class="md-card-image" alt="Dataset Management">
               <md-card-title>
                 <md-card-title-text >
@@ -110,7 +110,7 @@
                   <span class="md-subhead">Define and manage datasets among a wide range of types</span>
               </md-card-content>
               <md-card-actions layout="row" layout-align="end center">
-                  <md-button class="md-primary" aria-label="New" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/datasetManagement.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE">
+                  <md-button class="md-accent" aria-label="New" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/datasetManagement.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE">
                     Manage
                   </md-button>
               </md-card-actions>
@@ -129,24 +129,24 @@
           </div>
           <div layout="row" layout-xs="column">
 
-            <md-card flex flex-gt-sm="33" flex-gt-xs="33" flex-offset-gt-sm="17" flex-offset-gt-xs="17" md-whiteframe="{{height_a}}" ng-init="height_a = 3" ng-mouseenter="height_a = 10" ng-mouseleave="height_a = 3">
-              <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/new.png" class="md-card-image" alt="Dashboard projects">
-              <md-card-title>
+            <md-card class="underConstruction" flex flex-gt-sm="33" flex-gt-xs="33" flex-offset-gt-sm="17" flex-offset-gt-xs="17" >
+              <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/new.png" class="md-card-image disabled" alt="Dashboard projects">
+              <md-card-title class="disabled">
                 <md-card-title-text >
                   <span class="md-headline">Create Dashboard</span>
                 </md-card-title-text>
               </md-card-title>
-              <md-card-content>
+              <md-card-content class="disabled">
                   <span class="md-subhead">Create nice visualizations and understand the data of your city</span>
               </md-card-content>
               <md-card-actions layout="row" layout-align="end center">
-                  <md-button class="md-primary" aria-label="New" ng-click="showLevel3A()">
+                  <md-button class="md-accent" aria-label="New" ng-click="showLevel3A()">
                     Create
                   </md-button>
               </md-card-actions>
             </md-card>
 
-            <md-card flex flex-gt-sm="33" flex-gt-xs="33" md-whiteframe="{{height_b}}" ng-init="height_b = 3" ng-mouseenter="height_b = 10" ng-mouseleave="height_b = 3">
+            <md-card flex flex-gt-sm="33" flex-gt-xs="33" >
               <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/view.png" class="md-card-image" alt="My Dashbords">
               <md-card-title>
                 <md-card-title-text >
@@ -157,13 +157,21 @@
                   <span class="md-subhead">Visualize and edit your dashboard</span>
               </md-card-content>
               <md-card-actions layout="row" layout-align="end center">
-                  <md-button class="md-primary" aria-label="New" ng-href="/knowage/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION">
+                  <md-button class="md-accent" aria-label="New" ng-href="/knowage/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_WORKSPACE">
                     View
                   </md-button>
               </md-card-actions>
             </md-card>
 
           </div>
+          <br>
+          <md-content class="advice " layout="column" layout-sm="column" layout-align="center center" layout-wrap layout-padding>
+              <md-subheader class="md-warn" layout="column" layout-align="center center">
+                  <h4 class="md-title">NOTE</h4><br>
+                  ONLY FOR THIS ITERATION: To create a new dashboard, go to "My dashboards"  and click to the red button at up-right corner.
+                  <img src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/add_btn.png" title="Red button example image" style="margin-top: -40px;"/>
+              </md-subheader>
+          </md-content>
           <!--<div class="footer-button" layout="row" layout-sm="column" layout-align="center center" layout-wrap>
             <md-button class="md-raised md-primary" ng-click="showLevel1()">Back</md-button>
             <md-button class="md-raised md-primary">Advanced configuration</md-button>
@@ -176,7 +184,7 @@
           </div>
           <div layout="row" layout-xs="column">
 
-            <md-card flex flex-gt-sm="33" flex-gt-xs="33" flex-offset-gt-sm="17" flex-offset-gt-xs="17" md-whiteframe="{{height_a}}" ng-init="height_a = 3" ng-mouseenter="height_a = 10" ng-mouseleave="height_a = 3">
+            <md-card class="underConstruction disabled" flex flex-gt-sm="33" flex-gt-xs="33" flex-offset-gt-sm="17" flex-offset-gt-xs="17" >
               <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/empty.png" class="md-card-image" alt="image caption">
               <md-card-title>
                 <md-card-title-text>
@@ -188,13 +196,13 @@
                 Create a new empty dashboard
               </md-card-content>
               <md-card-actions layout="row" layout-align="end center">
-                  <md-button class="md-primary" aria-label="Create" ng-href="/knowage/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_WORKSPACE">
+                  <md-button class="md-accent" aria-label="Create" ng-href="" disabled>
                     create
                   </md-button>
               </md-card-actions>
             </md-card>
 
-            <md-card flex flex-gt-sm="33" flex-gt-xs="33" class="disabled"  md-whiteframe="{{height_b}}" ng-init="height_b = 3" ng-mouseenter="height_b = 10" ng-mouseleave="height_b = 3">
+            <md-card flex flex-gt-sm="33" flex-gt-xs="33" class="disabled"  >
               <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/template-1.png" class="md-card-image" alt="image caption">
               <md-card-title>
                 <md-card-title-text>
@@ -206,11 +214,19 @@
                 Create a simple Mobility dashboard template
               </md-card-content>
               <md-card-actions layout="row" layout-align="end center">
-                <md-button class="md-primary" disabled>Use</md-button>
+                <md-button class="md-accent" disabled>Use</md-button>
               </md-card-actions>
             </md-card>
 
           </div>
+          <br>
+          <md-content class="advice " layout="column" layout-sm="column" layout-align="center center" layout-wrap layout-padding>
+              <md-subheader class="md-warn" layout="column" layout-align="center center">
+                  <h4 class="md-title">NOTE</h4><br>
+                  ONLY FOR THIS ITERATION: To create a new dashboard, go to "My dashboards"  and click to the red button at up-right corner.
+                  <img class="img_note" src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/add_btn.png" title="Red button example image"/>
+              </md-subheader>
+          </md-content>
       <!--<div class="footer-button" layout="row" layout-sm="column" layout-align="center center" layout-wrap>
         <md-button class="md-raised md-primary" ng-click="showLevel2A()">Back</md-button>
       </div>-->
@@ -222,7 +238,7 @@
           </div>
               <div layout="row" layout-xs="column">
 
-                <md-card flex flex-gt-sm="33" md-whiteframe="{{height_a}}" ng-init="height_a = 3" ng-mouseenter="height_a = 10" ng-mouseleave="height_a = 3">
+                <md-card flex flex-gt-sm="33"  >
                   <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/kpi_definition.svg" class="md-card-image" alt="KPI Definition">
                   <md-card-title>
                     <md-card-title-text layout-align="center center"> 
@@ -232,13 +248,13 @@
                   <md-card-content>
                   </md-card-content>
                   <md-card-actions layout="row" layout-align="end center">
-                    <md-button class="md-primary" aria-label="KPI Definition" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/kpiDefinition.jsp">
+                    <md-button class="md-accent" aria-label="KPI Definition" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/kpiDefinition.jsp">
                         Open
                     </md-button>
                   </md-card-actions>
                 </md-card>
 
-                <md-card flex flex-gt-sm="33" md-whiteframe="{{height_b}}" ng-init="height_b = 3" ng-mouseenter="height_b = 10" ng-mouseleave="height_b = 3">
+                <md-card flex flex-gt-sm="33" >
                   <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/kpi_measure.svg" class="md-card-image" alt="Measure/Rule Definition">
                   <md-card-title>
                     <md-card-title-text layout-align="center center">
@@ -248,13 +264,13 @@
                   <md-card-content>
                   </md-card-content>
                   <md-card-actions layout="row" layout-align="end center">
-                    <md-button class="md-primary" aria-label="Measure/Rule Definition" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/measureRuleDefinition.jsp" >
+                    <md-button class="md-accent" aria-label="Measure/Rule Definition" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/measureRuleDefinition.jsp" >
                         Open
                     </md-button>
                   </md-card-actions>
                 </md-card>
 
-                <md-card flex flex-gt-sm="33" md-whiteframe="{{height_c}}" ng-init="height_c = 3" ng-mouseenter="height_c = 10" ng-mouseleave="height_c = 3">
+                <md-card flex flex-gt-sm="33" >
                   <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/kpi_target.svg" class="md-card-image" alt="Target Definition">
 
                   <md-card-title>
@@ -265,7 +281,7 @@
                   <md-card-content>
                   </md-card-content>
                   <md-card-actions layout="row" layout-align="end center">
-                    <md-button class="md-primary" aria-label="Target definition" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/targetDefinition.jsp">
+                    <md-button class="md-accent" aria-label="Target definition" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/targetDefinition.jsp">
                     Open
                     </md-button>
                   </md-card-actions>
@@ -274,7 +290,7 @@
               </div>
               <div layout="row" layout-xs="column">
 
-                <md-card flex flex-gt-sm="33" flex-gt-xs="33" flex-offset-gt-sm="17" flex-offset-gt-xs="17" md-whiteframe="{{height_d}}" ng-init="height_d = 3" ng-mouseenter="height_d = 10" ng-mouseleave="height_d = 3">
+                <md-card flex flex-gt-sm="33" flex-gt-xs="33" flex-offset-gt-sm="17" flex-offset-gt-xs="17" >
                   <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/kpi_scheduler.svg" class="md-card-image" alt="KPI Scheduler">
                   <md-card-title>
                     <md-card-title-text layout-align="center center">
@@ -284,13 +300,13 @@
                   <md-card-content>
                   </md-card-content>
                   <md-card-actions layout="row" layout-align="end center">
-                    <md-button class="md-primary" aria-label="KPI Scheduler" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/schedulerKpi.jsp">
+                    <md-button class="md-accent" aria-label="KPI Scheduler" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/schedulerKpi.jsp">
                     Open
                     </md-button>
                   </md-card-actions>
                 </md-card>
 
-                <md-card flex flex-gt-sm="33" flex-gt-xs="33" md-whiteframe="{{height_e}}" ng-init="height_e = 3" ng-mouseenter="height_e = 10" ng-mouseleave="height_e = 3">
+                <md-card flex flex-gt-sm="33" flex-gt-xs="33">
                   <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/s4c/images/kpi_scorecard.svg" class="md-card-image" alt="Scorecard">
                   <md-card-title>
                     <md-card-title-text layout-align="center center">
@@ -300,7 +316,7 @@
                   <md-card-content>
                   </md-card-content>
                   <md-card-actions layout="row" layout-align="end center">
-                    <md-button class="md-primary" aria-label="Scorecard" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/scorecardKpi.jsp">
+                    <md-button class="md-accent" aria-label="Scorecard" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/scorecardKpi.jsp">
                     Open
                     </md-button>
                   </md-card-actions>
@@ -415,6 +431,7 @@
                 .accentPalette('s4c-orange', {
                   'default': '500' // use shade 200 for default, and keep all other shades the same
                 })
+                .warnPalette('red')
                 .backgroundPalette('neonWhite')
         
         var whiteMap = $mdThemingProvider.extendPalette('grey', {
