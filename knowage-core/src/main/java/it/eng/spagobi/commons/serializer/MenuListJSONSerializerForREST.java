@@ -830,10 +830,15 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			String src = childElem.getUrl();
 
 			if (childElem.getObjId() != null) {
-				temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="
-						+ childElem.getMenuId() + "', '" + path + "' )");
-				temp2.put(LINK_TYPE, "execDirectUrl");
-				temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=" + childElem.getMenuId());
+				if (childElem.isClickable() == true) {
+					temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="
+							+ childElem.getMenuId() + "', '" + path + "' )");
+					temp2.put(LINK_TYPE, "execDirectUrl");
+					temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=" + childElem.getMenuId());
+				} else {
+					temp2.put(HREF, "javascript:execDirectUrl('')");
+					temp2.put(LINK_TYPE, "execDirectUrl");
+				}
 			} else if (childElem.getStaticPage() != null && !childElem.getStaticPage().equals("")) {
 				temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId()
 						+ "', '" + path + "' )");

@@ -17,10 +17,10 @@
  */
 package it.eng.spagobi.wapp.bo;
 
-import it.eng.spagobi.commons.bo.Role;
-
 import java.io.Serializable;
 import java.util.List;
+
+import it.eng.spagobi.commons.bo.Role;
 
 /**
  * Defines a <code>Menu</code> object.
@@ -45,6 +45,7 @@ public class Menu implements Serializable {
 	private Integer depth;
 	private Integer prog;
 	private boolean hasChildren;
+	private boolean isClickable = true;
 	private List lstChildren;
 	private Role[] roles = null;
 	private boolean viewIcons = false;
@@ -419,6 +420,14 @@ public class Menu implements Serializable {
 
 	public void setLinkType(String linkType) {
 		this.linkType = linkType;
+	}
+
+	public boolean isClickable() {
+		return isClickable;
+	}
+
+	public void setClickable(boolean isClickable) {
+		this.isClickable = isClickable;
 	}
 
 }

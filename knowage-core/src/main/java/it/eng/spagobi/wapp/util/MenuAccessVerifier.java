@@ -36,6 +36,29 @@ public class MenuAccessVerifier {
 
 	public static transient Logger logger = Logger.getLogger(MenuAccessVerifier.class);
 
+	// if menu contains a document that is not visible to user do not click menu
+	// called for a single menu
+	public static boolean checkClickable(Menu menu, IEngUserProfile profile) {
+		logger.debug("IN");
+		boolean isClickable = true;
+
+		Integer objId = menu.getObjId();
+		if (objId != null) {
+			try {
+				IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
+				dao.setUserProfile(profile);
+				BIObject obj = dao.loadBIObjectById(objId);
+				if (obj != null)
+					isClickable = ObjectsAccessVerifier.canSee(obj, profile);
+			} catch (Exception e) {
+				logger.error("error in evaluating menu visibility by Object contained", e);
+				return false;
+			}
+		}
+		logger.debug("OUT");
+		return isClickable;
+	}
+
 	public static boolean canView(Menu menu, IEngUserProfile profile) {
 		logger.debug("IN");
 		Role[] menuRoles = menu.getRoles();
@@ -59,25 +82,6 @@ public class MenuAccessVerifier {
 				}
 			}
 
-		}
-		if (found == true) {
-			// if menu contains a document that is not visible to user do not show menu
-			Integer objId = menu.getObjId();
-			if (objId != null) {
-				try {
-					IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
-					dao.setUserProfile(profile);
-					BIObject obj = dao.loadBIObjectById(objId);
-					if (obj == null)
-						found = false;
-					else
-						found = ObjectsAccessVerifier.canSee(obj, profile);
-				} catch (Exception e) {
-					logger.error("error in evaluating menu visibility by Object contained", e);
-					return false;
-				}
-
-			}
 		}
 		logger.debug("OUT");
 
