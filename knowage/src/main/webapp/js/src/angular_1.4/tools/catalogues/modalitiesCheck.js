@@ -1,5 +1,5 @@
 
-var app = angular.module("ModalitiesCheckModule",["ngMaterial", 'ngMessages', "angular_list","angular_table","sbiModule","angular_2_col","angular-list-detail"])
+var app = angular.module("ModalitiesCheckModule",["ngMaterial", 'ngMessages', "angular_list","angular_table","sbiModule","angular_2_col","angular-list-detail", 'angularXRegExp'])
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');

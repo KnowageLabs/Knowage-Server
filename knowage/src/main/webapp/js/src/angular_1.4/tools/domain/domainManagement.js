@@ -1,11 +1,11 @@
 
-var app = angular.module('domainManagementApp', ['angular_table','ngMaterial', 'ngMessages', 'ui.tree', 'angularUtils.directives.dirPagination', 'angular_list', 'angular-list-detail', 'sbiModule']);
+var app = angular.module('domainManagementApp', ['angular_table','ngMaterial', 'ngMessages', 'ui.tree', 'angularUtils.directives.dirPagination', 'angular_list', 'angular-list-detail', 'sbiModule', 'angularXRegExp']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging', 'sbiModule_translate','sbiModule_restServices', 'kn_regex', '$scope', '$q', '$log', '$mdDialog',"sbiModule_config", manageDomainFucntion ]);
+app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging', 'sbiModule_translate','sbiModule_restServices', 'kn_regex', '$scope', '$q', '$log', '$mdDialog', 'sbiModule_config', manageDomainFucntion ]);
 
 
 function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_translate, sbiModule_restServices, kn_regex, $scope, $q, $log,  $mdDialog,sbiModule_config) {
