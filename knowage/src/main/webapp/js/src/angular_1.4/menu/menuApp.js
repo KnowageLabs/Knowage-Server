@@ -360,12 +360,12 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
 			$scope.menuCall = function menuCall(url,type){
 				if (type == 'execDirectUrl'){
 					// this is the case linked document would not be executable
-					if(url == 'noExecutableDoc'){
-						sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.execution.menu.noclickable"), sbiModule_translate.load('sbi.generic.genericWarning'));
-						}
-					else{
+//					if(url == 'noExecutableDoc'){
+//						sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.execution.menu.noclickable"), sbiModule_translate.load('sbi.generic.genericWarning'));
+//						}
+//					else{
 						$scope.redirectIframe(url);
-					}
+//					}
 				} else if (type == 'roleSelection'){
 					$scope.roleSelection();
 				} else if (type =="execUrl"){
