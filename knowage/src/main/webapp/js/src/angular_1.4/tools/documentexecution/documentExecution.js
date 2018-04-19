@@ -361,16 +361,23 @@
 
 				var publicStr = canExec == true ? "/public" : "";
 
+				if(host.endsWith("/")){
+					host = host.substring(0, host.length - 1);
+				}
+
 				var url = host
 				+ context
 				+ publicStr
 				+ adapter
 				+ "?"
-				+ "ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION"
+				+ "ACTION_NAME=EXECUTE_DOCUMENT_ACTION"
 				+  "&OBJECT_LABEL="+label
 				+ "&TOOLBAR_VISIBLE=true"
-				+ "&ORGANIZATION="+tenant
-				+ "&PARAMETERS="+parameters;
+				+ "&ORGANIZATION="+tenant;
+
+				if(parameters != undefined && parameters != ''){
+					url += "&PARAMETERS="+parameters;
+				}
 
 				var urlToSend;
 
