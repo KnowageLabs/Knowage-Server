@@ -464,6 +464,11 @@
 		.widgetId {
 			text-transform: none;
 		}
+		.availableFunctions {
+			.description {
+				font-size: $mediumFontSize;
+			}
+		}
 	}    
 
 	.customTableWidgetConfiguration {

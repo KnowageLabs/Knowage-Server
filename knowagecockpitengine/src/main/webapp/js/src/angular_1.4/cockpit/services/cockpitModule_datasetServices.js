@@ -110,6 +110,14 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			}
 		}
 	}
+	
+	this.getDatasetLabelById=function(dsId){
+		if(ds.datasetMapById[dsId]){
+			return ds.datasetMapById[dsId].label;
+		}else{
+			return null;
+		}
+	}
 
 	this.checkForDSChange=function(){
 		var changed=[];

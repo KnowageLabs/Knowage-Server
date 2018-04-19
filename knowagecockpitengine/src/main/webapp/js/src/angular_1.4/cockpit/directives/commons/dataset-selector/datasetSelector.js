@@ -30,6 +30,7 @@ angular.module('cockpitModule').directive('datasetSelector',function($compile){
 		   replace: true,		  
 		   scope:{
 			   ngModel:"=",
+			   extended:"=?",
 			   onChange:"&",
 		   },
 		   compile: function (tElement, tAttrs, transclude) {
@@ -46,7 +47,7 @@ angular.module('cockpitModule').directive('datasetSelector',function($compile){
 	   }
 });
 
-function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,sbiModule_translate){
+function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,sbiModule_translate,sbiModule_restServices){
 	$scope.translate=sbiModule_translate;
 	$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
 	$scope.addNewDataset=function(){
@@ -57,6 +58,24 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 			 $scope.onChange({dsId:data.id.dsId});
 		 });
 	}
+	$scope.getMetaData = function(id){
+		sbiModule_restServices.restToRootProject();
+		sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(cockpitModule_datasetServices.getDatasetLabelById(id)) + "/data")
+			.then(function(data){
+				$scope.dataset = data.data;
+			})
+	}
+	if($scope.extended){
+		$scope.getMetaData($scope.ngModel);
+	}
+	
+	var metaDataWatcher = $scope.$watch('ngModel',function(newValue,oldValue){
+		if($scope.extended && newValue!=oldValue){
+			$scope.getMetaData(newValue);
+		}
+	})
+	
+	
 };
 
 })();

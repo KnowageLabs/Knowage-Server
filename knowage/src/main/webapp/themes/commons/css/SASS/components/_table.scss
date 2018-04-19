@@ -104,4 +104,26 @@
 	&.kn-table-fixed {
 		table-layout: fixed;
 	}
+	&.kn-table-alternated-rows {
+		tbody{
+			tr:nth-child(odd) {
+				background: $pageBackground;
+			}
+		}
+	}
+	&.kn-table-medium-rows {
+		tr {
+			height: 2rem;
+		}
+	}
+	&.kn-table-clickable-rows {
+		tbody{
+			tr {
+				cursor: pointer;
+				&:hover {
+					background-color: $pageBackground;
+				}
+			}
+		}
+	}
 }
