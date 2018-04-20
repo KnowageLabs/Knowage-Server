@@ -1,0 +1,22 @@
+<md-dialog class="customDialog" aria-lael="Warning">	
+	<md-dialog-content>
+		<div>
+			<h2>Warning</h2>
+		</div>
+		<div>
+			<p>
+				Column/s <strong><span>{{dependentColumns.join(', ')}}</span></strong> depend/s from this value. Please check them and set correct values!
+			</p>
+		</div>
+		<br/>
+		<div>
+			<md-checkbox ng-model="dontShowAgain" aria-label="Dont\'t Warn Me Again">
+				Dont't Warn Me Again
+			</md-checkbox>
+		</div>
+		<br/></br>
+		<md-dialog-actions layout="row">
+			<button class="button" ng-click="closeDialog()">OK</button>
+		</md-dialog-actions>
+	</md-dialog-content>
+</md-dialog>
