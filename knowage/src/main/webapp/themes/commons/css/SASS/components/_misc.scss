@@ -887,6 +887,14 @@ color-picker {
   text-decoration: line-through  !important;
 }
 
+.rotate-transition {
+  transition: transform .3s ease-out, display 0s linear;
+}
+
+.rotate-180 {
+  transform: rotate(-180deg);
+}
+
 /* fix to have the selected color-picker always on top */
 .md-input-focused {
   color-picker {
@@ -907,8 +915,6 @@ color-picker {
     min-height: 100px;
   }
   md-checkbox.md-knowage-theme.md-checked ._md-icon:after {
-/*    transform: rotate(135deg);
-    top:10px;*/
     padding-top: 11px;
   }
   

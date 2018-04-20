@@ -105,16 +105,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 </head>
-<body class="kn-kpi-definition">
+<body class="kn-kpi-definition" ng-cloak>
 	<angular-list-detail ng-controller="kpiDefinitionMasterController" full-screen=true>
 		<list label="translate.load('sbi.kpi.list')" ng-controller="listController" new-function="addKpi" >
-			<angular-table flex 
+			<div layout-padding>
+				<div layout="row" class="noPadding" layout-align="start end">
+					<md-icon md-font-icon="fa fa-search" aria-hidden="true"></md-icon> 
+					<md-input-container class="md-icon-float md-block" flex>
+						<input ng-model="searchVal" type="text" placeholder="search" aria-label="search text" aria-hidden="false" aria-invalid="false">
+					</md-input-container>
+				</div>
+				<table class="kn-table kn-table-clickable-rows kn-table-fixed">
+					<thead>
+						<tr>
+							<th ng-repeat='col in columns' ng-click="toggleOrder(col)">{{col.label}} <i ng-if="col.name == listOrder" ng-class="{'rotate-180':listDirection && col.name == listOrder}" class="rotate-transition fa fa-arrow-down"></i></th>
+							<th class="multiTableAction"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="row in kpiList | orderBy : listOrder : listDirection | filter:searchVal" ng-click="loadKPI(row)">
+							<td ng-repeat='col in columns'>{{row[col.name]}}</td>
+							<td class="multiTableAction">
+								<md-button class="md-icon-button" ng-click="cloneKpi(row,$event)">
+									<md-tooltip md-delay="500">{{translate.load('sbi.generic.clone')}}</md-tooltip>
+									<md-icon md-font-icon="fa fa-copy"></md-icon>
+								</md-button>
+								<md-button class="md-icon-button" ng-click="deleteMeasure(row,$event)">
+									<md-tooltip md-delay="500">{{translate.load('sbi.generic.delete')}}</md-tooltip>
+									<md-icon md-font-icon="fa fa-trash"></md-icon>
+								</md-button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<!--  angular-table flex 
 			id='kpiListTable' ng-model=kpiList
 			columns='[{"label":"Name","name":"name"},{"label":"DateCreation","name":"datacreation"},{"label":"Category","name":"valueCd"},{"label":"Author","name":"author"}]'
 			columns-search='["name","valueCd","author"]' show-search-bar=true
 			speed-menu-option=measureMenuOption 
 			scope-functions=tableFunction 
-			click-function="loadKPI(item);"> </angular-table>
+			click-function="loadKPI(item);"> </angular-table -->
 		</list>
 		<extra-button>
 			  <md-button class="md-flat" ng-click="showAliasTab=!showAliasTab;" >{{translate.load("sbi.kpi.alias")}}</md-button>
@@ -134,14 +165,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         			<%@include	file="./kpiTemplate/cardinalityTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
-				<!-- 
-				<md-tab id="tab3"  md-on-select="setFilters()" style="padding-right: 20px; padding-left: 20px;">
-       				<md-tab-label>{{translate.load("sbi.kpi.filters")}}</md-tab-label>
-        			<md-tab-body>
-        			include	file="./kpiTemplate/filtersTemplate.jsp
-					</md-tab-body>
-				</md-tab>
-				 -->
 				<md-tab id="tab4" md-on-select="loadThreshold()" >
        				<md-tab-label>{{translate.load("sbi.kpis.threshold")}}</md-tab-label>
         			<md-tab-body>
@@ -152,10 +175,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 			
 		<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="aliasTab" md-is-locked-open="showAliasTab">
-	      <md-toolbar>
+	      <md-toolbar class="secondaryToolbar">
 	        <h1 class="md-toolbar-tools">{{translate.load("sbi.kpi.alias")}}</h1>
 	      </md-toolbar>
-	     	<md-content layout-margin flex class="relative" >
+	     	<md-content layout-margin flex class="relative">
 	        <angular-list layout-fill class="absolute" id="aliasListANGL"
                 		ng-model=measures
                 		item-name='alias' 

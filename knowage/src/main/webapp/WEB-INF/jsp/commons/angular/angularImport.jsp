@@ -90,7 +90,6 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-tree/angular-ui-tree.js")%>"></script> 
 
 <!-- angular list -->
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/glossary/css/angular-list.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/AngularList.js")%>"></script> 		
 
 <!-- context menu -->

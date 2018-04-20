@@ -18,32 +18,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <md-content layout-fill layout="column" ng-controller="kpiDefinitionCardinalityController">
-<md-card >
-<div class="toolbarFormula" layout-padding>
-	<div class="formula " id="formulaId"></div>
-</div>
-</md-card>
-<table class="cardinalityTable ">
-	<thead>
-		<tr>
-			<th></th>
-		    <th ng-mouseover="blinkMeasure($event,'',$index)" ng-mouseleave="removeblinkMeasure()" ng-repeat="measure in kpi.cardinality.measureList" >{{measure.measureName}}</th>
-	    </tr>
-	  </thead>
-	  <tbody>
-		<tr class="attributeRow" ng-repeat="attr in attributesList">
-		<td class="attribute truncate hasTooltip" ng-class ="{classBold:currentCell.row==attr}">{{attr}}</td>
-			<td ng-mouseover="blinkMeasure($event,attr,$index)" ng-mouseleave="removeblinkMeasure()" 
-			ng-repeat="measure in kpi.cardinality.measureList" >
-			<div class="measureCell" ng-if="measureHaveAttribute(attr,measure)"
-			 ng-click="toggleCell(attr,measure)"  >
-			<i ng-if="!isEnabled(attr,measure)" class="fa fa-ban invalidCell"></i>
-			<i ng-if="measure.attributes[attr]" class="fa fa-check selectedCell"></i>
-			<i ng-if="(measure.attributes[attr] && !canDisable(attr,measure))" class="fa fa-lock selectedCell"></i>
-			<i ng-if="!measure.attributes[attr] && isEnabled(attr,measure)" class="fa fa-check selectableCell"></i>
-			</div>
-			</td>
-		</tr>
-		</tbody>
-	  </table>
+	<md-card >
+	<div class="toolbarFormula" layout-padding>
+		<div class="formula " id="formulaId"></div>
+	</div>
+	</md-card>
+	<md-card>
+		<md-card-content>
+			<table class="cardinalityTable ">
+				<thead>
+					<tr>
+						<th></th>
+					    <th ng-mouseover="blinkMeasure($event,'',$index)" ng-mouseleave="removeblinkMeasure()" ng-repeat="measure in kpi.cardinality.measureList" >{{measure.measureName}}</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+					<tr class="attributeRow" ng-repeat="attr in attributesList">
+					<td class="attribute truncate hasTooltip" ng-class ="{classBold:currentCell.row==attr}">{{attr}}</td>
+						<td ng-mouseover="blinkMeasure($event,attr,$index)" ng-mouseleave="removeblinkMeasure()" 
+						ng-repeat="measure in kpi.cardinality.measureList" >
+						<div class="measureCell" ng-if="measureHaveAttribute(attr,measure)"
+						 ng-click="toggleCell(attr,measure)"  >
+						<i ng-if="!isEnabled(attr,measure)" class="fa fa-ban invalidCell"></i>
+						<i ng-if="measure.attributes[attr]" class="fa fa-check selectedCell"></i>
+						<i ng-if="(measure.attributes[attr] && !canDisable(attr,measure))" class="fa fa-lock selectedCell"></i>
+						<i ng-if="!measure.attributes[attr] && isEnabled(attr,measure)" class="fa fa-check selectableCell"></i>
+						</div>
+						</td>
+					</tr>
+				</tbody>
+	  	</table>
+	</md-card-content>
+  </md-card>
 </md-content>
