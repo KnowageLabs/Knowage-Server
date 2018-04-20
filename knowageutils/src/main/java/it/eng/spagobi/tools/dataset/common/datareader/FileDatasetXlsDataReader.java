@@ -29,7 +29,9 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -194,7 +196,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				if (r > initialRow || r == 0) {
 
 					HSSFRow row = sheet.getRow(r);
-					if (row == null) {
+					if (checkIfRowIsEmpty(row)) {
 						continue;
 					}
 
@@ -247,6 +249,22 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		}
 
 		return dataStore;
+	}
+	
+	private boolean checkIfRowIsEmpty(Row row) {
+	    if (row == null) {
+	        return true;
+	    }
+	    if (row.getLastCellNum() <= 0) {
+	        return true;
+	    }
+	    for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
+	        Cell cell = row.getCell(cellNum);
+	        if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK && org.apache.commons.lang.StringUtils.isNotBlank(cell.toString())) {
+	            return false;
+	        }
+	    }
+	    return true;
 	}
 
 	private HSSFSheet getSheet(HSSFWorkbook workbook) {
