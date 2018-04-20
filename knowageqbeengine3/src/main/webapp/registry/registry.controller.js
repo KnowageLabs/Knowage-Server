@@ -30,11 +30,11 @@
 										.push('httpInterceptor');
 
 							} ]).controller('RegistryController', ['registryConfigService', 'registryCRUDService',
-								'regFilterGetData', 'sbiModule_messaging','sbiModule_translate', '$mdDialog', '$filter', 'orderByFilter','registryPaginationService',
+								'regFilterGetData', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_config', '$mdDialog', '$filter', 'orderByFilter','registryPaginationService',
 					RegistryController])
 
 	function RegistryController(registryConfigService, registryCRUDService,
-			regFilterGetData, sbiModule_messaging,sbiModule_translate, $mdDialog, $filter, orderBy,registryPaginationService) {
+			regFilterGetData, sbiModule_messaging, sbiModule_translate, sbiModule_config, $mdDialog, $filter, orderBy, registryPaginationService) {
 		var self = this;
 		var registryConfigurationService = registryConfigService;
 		var registryCRUD = registryCRUDService;
@@ -44,7 +44,7 @@
 		var sbiMessaging = sbiModule_messaging;
 		var pagination = registryPaginationService;
 		var dateColumns=[];
-		 self.sbiTranslate = sbiModule_translate;
+		self.sbiTranslate = sbiModule_translate;
 		self.data = [];
 		self.resultsNumber = 0;
 		self.comboColumnOptions = {};
@@ -58,6 +58,7 @@
 		self.propertyName = '';
 		self.reverse = false;
 		self.dateFormat='MM/dd/yyyy';
+		
 		// array object to define the registry configuration
 		self.configuration = {
 			title: "Registry Document",
@@ -81,8 +82,7 @@
 
         var readData = function(formParameters) {
         	 self.formatNumber= 0;
-        	registryCRUD.read(formParameters).then(function(response) {
-        		console.log(response);
+        	registryCRUD.read(formParameters).then(function(response) {        	
 	           	 self.data = response.data.rows;
 	           	 if(self.configuration.pagination != 'true'){
 	           	 self.data = orderBy(self.data,self.propertyName,self.reverse);
@@ -128,7 +128,7 @@
 				}
 			});
 		};
-
+		
 		//Sorting Columns
 		self.sortBy = function(propertyName){
 			if(self.configuration.pagination != 'true'){
@@ -179,6 +179,7 @@
                 return 'any';
             }
         };
+        
 		/* Pivot Table */
 		self.setRowspan = function(rows,rowIndex,columnIndex,columns){
 
@@ -205,13 +206,13 @@
 	                var NextRowField = nextRow[columnField];
 	                var NextRowPreviousField = nextRow[previousColumnField];
 	                var mergedCounter = 0 ;
-	                   //Counting how many column pairs are same in comparing rows
+	               //Counting how many column pairs are same in comparing rows
 	             for(var i = 0 ; i <= columnIndex;i++){
 	                   if(row[columns[i].field] == nextRow[columns[i].field]){
 	                       mergedCounter++;
 	                   }
 	             }
-                            //Checking are all column pairs same in compared rows if yes compare next row , else return counter as a rowspan
+                  //Checking are all column pairs same in compared rows if yes compare next row , else return counter as a rowspan
 	             if(mergedCounter == columnIndex+1 ){
 	            	 rowsToMergeCounter++;
 	             } else{
@@ -295,6 +296,7 @@
 			}
                 return;
         };
+        
         self.isItSummaryRow = function(rows,indexF,index,columns){
         		var row = rows[indexF];
         		var columnField = columns[index].field;
@@ -309,18 +311,114 @@
         		return  (previousFieldValue === '      ' && fieldValue !== '      ' );
         };
 
+              
 	  //Adding options to combo columns
-        self.addColumnOptions = function(columnField, columnEditor, row, $mdOpenMenu) {
+        var clicked = 0;
+        self.dependentColumns = [];
+        
+        self.addColumnOptions = function(column, row, $mdOpenMenu) {
             $mdOpenMenu();
             row.selected = true;
-
-            if(columnEditor === 'COMBO' && !self.comboColumnOptions[columnField]) {
-                var promise = regFilterGetData.getData(columnField);
-                promise.then(function(response) {
-                    self.comboColumnOptions[columnField] = response;
-                });
-                return promise;
+            
+            //regular independent combo columns
+            if(column.editor === 'COMBO' && !self.isDependentColumn(column)) {           	
+            	if(!self.comboColumnOptions[column.field]) {
+            		self.comboColumnOptions[column.field] = {};
+            		var promise = regFilterGetData.getData(column.field);
+                    promise.then(function(response) {
+                        self.comboColumnOptions[column.field] = response;
+                    });
+                    return promise;
+            	}            
+            } 
+            
+            //dependent combo columns
+            if(column.editor === 'COMBO' && self.isDependentColumn(column)) {            	            	
+            	if(!self.comboColumnOptions[column.field]) {
+            		self.comboColumnOptions[column.field] = {};
+            		            		
+            		var dependencesPromise = regFilterGetData.getDependeceOptions(column.field, column.dependsFrom, row[column.dependsFrom])
+                	dependencesPromise.then(function(response) {	                		
+                		self.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;                		
+                	});
+                	return dependencesPromise;            		               	
+            	} else {
+            		if(!self.comboColumnOptions[column.field].hasOwnProperty(row[column.dependsFrom])) {
+            			var dependencesPromise = regFilterGetData.getDependeceOptions(column.field, column.dependsFrom, row[column.dependsFrom])
+                    	dependencesPromise.then(function(response) {	                		
+                    		self.comboColumnOptions[column.field][row[column.dependsFrom]] = response.data.rows;                    		
+                    	});
+                    	return dependencesPromise;
+            		}
+            	}            	            	
             }
+        };
+                
+        self.stopShow = false;
+                
+        self.notifyAboutDependency = function(column, event) {
+        	clicked++;
+        	if(clicked == 1) {
+        		fillDependencyColumns(column);
+        		createDialog(self.dependentColumns);
+        	}        	        	
+          	        	
+        	if(self.dependentColumns.length != 0 && !self.stopShow) {
+        		
+        		$mdDialog.show(self.confirm)
+        				.then(function(result){
+						 self.stopShow = result;
+					 }, function(result){
+						 self.stopShow = result;
+					 }); 
+        	}        	
+        };
+                 
+        var fillDependencyColumns = function(column) {
+        	for(var i = 0; i < self.columns.length; i++) {
+        		var col = self.columns[i];
+        		if(col.dependsFrom === column.field) {        			
+        			var dependent = col.title;
+        			self.dependentColumns.push(dependent);            			
+        		}
+        	}
+        };
+        
+        var createDialog = function(dependentColumns) {
+        	self.confirm = $mdDialog.prompt(
+        			{
+    					controller: DialogController,
+    					parent: angular.element(document.body),
+    					templateUrl: sbiModule_config.contextName + '/registry/dependentColumnsDialog.tpl.html',
+    					locals: {    						
+    						dontShowAgain: self.stopShow,
+    						columns: self.dependentColumns
+    					},
+    					targetEvent: event,
+    				    clickOutsideToClose: false,
+    				    preserveScope: true,
+    				    fullscreen: true
+        			}
+        	);
+        };
+        
+        function DialogController($scope, $mdDialog, dontShowAgain, columns) {
+        	 $scope.dontShowAgain = dontShowAgain;
+        	 $scope.dependentColumns = columns;
+        	 
+        	 $scope.closeDialog = function() {
+         		 dontShowAgain = $scope.dontShowAgain;
+        		 $mdDialog.hide(dontShowAgain);        		 
+             }; 
+             
+        };
+                      
+        self.isDependentColumn = function(column) {
+        	if(column.hasOwnProperty('dependsFrom') && column.hasOwnProperty('dependsFromEntity')) {
+        		return true;
+        	} else {
+        		return false;
+        	}
         };
 
 		//Filters handling
@@ -337,7 +435,7 @@
 				var filter = registryConfiguration.filters[i];
 				for (var j = 0; j < registryConfiguration.columns.length; j++) {
 					var column = registryConfiguration.columns[j];
-					if(filter.field == column.field){
+					if(filter.presentation != 'DRIVER' && filter.field == column.field){
 						filters.push(filter);
 					}
 				}
@@ -378,7 +476,6 @@
 
 			if((self.selectedRow).indexOf(selectedRow) === -1){
 				self.selectedRow.push(selectedRow);
-console.log(selectedRow);
 			}
 
 		};
@@ -460,8 +557,6 @@ console.log(selectedRow);
 		}
 
 		//Pagination
-
-
 		self.initalizePagination=function(){
 
 			self.getTotalPages = pagination.getTotalPages(self.resultsNumber,self.configuration.itemsPerPage);
@@ -484,7 +579,6 @@ console.log(selectedRow);
 				 readData(self.formParams);
 			}
 		};
-
 
 
         self.checkIfSelected = function(row) {

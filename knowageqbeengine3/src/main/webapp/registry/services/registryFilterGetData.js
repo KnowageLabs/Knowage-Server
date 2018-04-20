@@ -40,8 +40,33 @@
      			   }		      			   
     			    return deferred.promise;
 			   };
+			   
+			   serviceObj.getDependeceOptions = function(columnField, dependsFrom, value) {
+				   var entity = registryConfiguration.entity;
+    			   var ENTITY_ID = createEntityId(entity, columnField);
+    			   var DEPENDENCES = createDependences(entity, dependsFrom, value);
+    			   var getFilterValuesAction = serviceObj.action.getActionBuilder('POST');
+    			   getFilterValuesAction.actionName = 'GET_FILTER_VALUES_ACTION';
+    			   getFilterValuesAction.formParams.QUERY_TYPE = 'standard';
+    			   getFilterValuesAction.formParams.ENTITY_ID = ENTITY_ID;    			       			   
+    			   getFilterValuesAction.formParams.ORDER_ENTITY = ENTITY_ID;
+    			   getFilterValuesAction.formParams.ORDER_TYPE = 'asc';
+    			   getFilterValuesAction.formParams.QUERY_ROOT_ENTITY = true;
+    			   getFilterValuesAction.formParams.query = '';
+    			   getFilterValuesAction.formParams.DEPENDENCES = DEPENDENCES;
+    			   
+    			   var promise = getFilterValuesAction.executeAction();
+
+    			   return promise;
+			   }; 		   
     		   
-    		   
+			   var createDependences = function(entity, dependsFrom, value) {
+				   var column = getColumn(dependsFrom);
+    			   var SubEntity = column.subEntity;
+    			   var foreignKey = column.foreignKey;
+    			   return entity + '::' + SubEntity + '(' + foreignKey + ')' + ':' + dependsFrom + '=' + value;
+			   };
+			   
     		   var getColumn = function(filterField) {
     			   return $filter('filter')(registryConfiguration.columns,{field:filterField}, true)[0];
     		   };

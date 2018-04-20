@@ -9,7 +9,7 @@
 }
 
 .kn-registry .md-open-menu-container {
-    z-index: 90;
+    z-index: 80;
 }
 
 .kn-registry md-backdrop {
@@ -103,4 +103,17 @@ md-select {
 }
 .sortorder.reverse:hover:after {
   content: '\25bc';   /* BLACK DOWN-POINTING TRIANGLE */
+}
+
+.customDialog {
+	padding: 20px;
+    max-width: 600px;
+}
+
+.customDialog .button {
+	padding: 8px 28px;
+    background-color: #A9C3DB;
+    font-weight: bold;
+    border: none;
+    float: right;
 }
