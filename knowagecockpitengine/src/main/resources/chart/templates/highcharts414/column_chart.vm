@@ -892,7 +892,6 @@
         ## Serie add
         #foreach($yAxisKey in $yAxisList.keySet())
         	#set ($yAxis = $yAxisList[$yAxisKey] )
-          
         {
         	
         	#*
@@ -975,6 +974,57 @@
         	},
         	
         	labels: {
+        		
+        		formatter: function () {
+			                    var value = this.value;	
+			                    var newValue = "";	
+		                      	var scaleFactor =  '${yAxis.LABELS.scaleFactor}';	                    
+			                    if(scaleFactor.indexOf("yAxis")!==-1){
+		                      		scaleFactor = "empty"
+		                      	}
+		                      	var prefixValue = '';
+		                      	var sufixValue = '';
+		                      	
+		                      	
+		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+		                      	
+		                      	var precision = '0';
+		                      	
+		                      	switch(scaleFactor.toUpperCase()) {
+		                      	
+		                      		case "EMPTY":
+		                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
+		                      			newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
+		                      			break;
+		                      		case "K":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";	
+		                      			break;
+		                      		case "M":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";	
+		                      			break;
+		                      		case "G":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+		                      			break;
+	                      			case "T":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+		                      			break;
+		                      		case "P":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+		                      			break;
+	                      			case "E":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+		                      			break;
+	                      			default:
+	                      				/* The same as for the case when user picked "no selection" - in case when the chart 
+	                      				template does not contain the scale factor for current serie */
+	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
+		                      			break;
+		                      	
+		                      	}						
+	                        		                       
+	                          	return  newValue ;
+			            	}	,
         		
         		## If this parameter is not commented Y-axes labels will be glued to each other when there are no axis titles
         		##x:0,
@@ -1068,6 +1118,7 @@
     
     #foreach($valueKey in $seriesMap.keySet())
 	    #set($relatedSerie = $seriesMap.get($valueKey))
+	    
 	    #set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 	   	#if($chart.isCockpitEngine != 'true')
 	      	#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
@@ -1098,7 +1149,15 @@
 	#if($chart.groupSeries !='true' && $chart.groupSeriesCateg !='true')
 	#foreach($valueKey in $seriesMap.keySet())
 	    #set($relatedSerie = $seriesMap.get($valueKey))
-	    	
+	      #foreach($yAxisKey in $yAxisList.keySet())
+        	#set ($yAxis = $yAxisList[$yAxisKey] )
+			#if($yAxis.LABELS)
+				#if($relatedSerie.axis == $yAxis.alias)
+				#set ($relatedSerie.scaleFactor = $yAxis.LABELS.scaleFactor)
+				#end
+			#end
+          #end
+	
 	    {	
 			#set($relatedSerieColor = false)
 			#set($relatedSerieColor = $relatedSerie.color)

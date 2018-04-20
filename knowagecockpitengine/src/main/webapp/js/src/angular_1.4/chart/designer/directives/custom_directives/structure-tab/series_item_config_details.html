@@ -103,6 +103,17 @@ ng-if="(selectedChartType != 'chord' && selectedChartType != 'heatmap' && select
 </div>
 </div>
 
+<!-- Scale factor for series values (if it is going to be shown as a raw value or in kilos, megas) -->
+<div layout="row" flex layout-margin
+ng-if="selectedChartType == 'pie' && disableHtmlElementForChartJs()">
+	<md-input-container class="md-block" flex> 
+		<label>{{translate.load('sbi.chartengine.designer.scalefactor.label')}}</label>
+		<md-select ng-model="detailsForSeriesItem.scaleFactor" > 
+			<md-option ng-repeat="option in scaleFactorsFixed" value="{{option.value}}">{{option.name}}</md-option>
+		</md-select> 
+	</md-input-container>
+</div>
+
 <!-- Precision of the displayed series value -->
 <div layout="row" flex layout-margin
 ng-if="selectedChartType != 'treemap'">
