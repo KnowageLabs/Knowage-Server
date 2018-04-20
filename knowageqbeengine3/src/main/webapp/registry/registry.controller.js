@@ -402,9 +402,10 @@
         	);
         };
         
-        function DialogController($scope, $mdDialog, dontShowAgain, columns) {
+        function DialogController($scope, $mdDialog, dontShowAgain, columns, sbiModule_translate) {
         	 $scope.dontShowAgain = dontShowAgain;
         	 $scope.dependentColumns = columns;
+        	 $scope.translate = sbiModule_translate;
         	 
         	 $scope.closeDialog = function() {
          		 dontShowAgain = $scope.dontShowAgain;

@@ -26,7 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body ng-app="RegistryDocument" class="kn-registry">
 
 	<rest-loading></rest-loading>
-    <ng-include src="'${pageContext.request.contextPath}/registry/registry.tpl.html'"></ng-include> 
+    <ng-include src="'${pageContext.request.contextPath}/registry/registry.tpl.html'"></ng-include>
+    
 	
 </body>
 

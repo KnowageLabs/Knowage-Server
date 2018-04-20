@@ -1,22 +1,24 @@
 <md-dialog class="customDialog" aria-lael="Warning">	
 	<md-dialog-content>
 		<div>
-			<h2>Warning</h2>
+			<h2>{{translate.load("kn.registry.registryDocument.warning.title")}}</h2>
 		</div>
 		<div>
 			<p>
-				Column/s <strong><span>{{dependentColumns.join(', ')}}</span></strong> depend/s from this value. Please check them and set correct values!
+				{{translate.load("kn.registry.registryDocument.column")}}
+				<strong><span>{{dependentColumns.join(', ')}}</span></strong> 
+				{{translate.load("kn.registry.registryDocument.warningDependences")}}
 			</p>
 		</div>
 		<br/>
 		<div>
 			<md-checkbox ng-model="dontShowAgain" aria-label="Dont\'t Warn Me Again">
-				Dont't Warn Me Again
+				{{translate.load("kn.registry.registryDocument.dontWarn")}}
 			</md-checkbox>
 		</div>
 		<br/></br>
 		<md-dialog-actions layout="row">
-			<button class="button" ng-click="closeDialog()">OK</button>
+			<button class="button" ng-click="closeDialog()">{{translate.load("sbi.general.ok")}}</button>
 		</md-dialog-actions>
 	</md-dialog-content>
 </md-dialog>
