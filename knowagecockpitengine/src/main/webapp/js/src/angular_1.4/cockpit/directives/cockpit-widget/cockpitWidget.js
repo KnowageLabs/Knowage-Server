@@ -878,6 +878,9 @@ function cockpitWidgetControllerFunction(
 		}
 		$scope.editWidget().then(
 				function(){
+					if(typeof $scope.reinit !== "undefined"){
+						$scope.reinit();
+					}
 					clearRedundantStyle();
 					$scope.refreshWidgetStyle();
 					if(initOnFinish){

@@ -85,6 +85,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				},function(error){
 					
 				});
+			}else {
+				$scope.trustedCss = $sce.trustAsHtml('<style>'+$scope.ngModel.cssToRender+'</style>');
+				$scope.trustedHtml = $sce.trustAsHtml($scope.ngModel.htmlToRender);
 			}
 		}
 		
