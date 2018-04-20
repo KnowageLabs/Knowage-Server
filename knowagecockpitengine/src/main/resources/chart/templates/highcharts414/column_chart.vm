@@ -769,7 +769,7 @@
 			step: $xAxis.step,
 			#end
 		#end
-		#if( $chart.groupSeries =='true')
+		#if($chart.groupSeries =='true')
 		formatter: function () {
 			                    var value = this.value;	
 			                    var newValue = "";	
