@@ -69,7 +69,9 @@
 	</md-select> </md-input-container>
 
 <md-input-container class="md-block" flex 
-ng-if="(selectedChartType != 'chord' && selectedChartType != 'heatmap' && selectedChartType != 'treemap') && disableHtmlElementForChartJs()"> 
+ng-if="(selectedChartType == 'bar' && 
+selectedChartType == 'line' && 
+selectedChartType == 'radar' && selectedChartType == 'scatter') && disableHtmlElementForChartJs()"> 
 		<label>{{translate.load('sbi.chartengine.designer.scalefactor.label')}}</label>
 		<md-select ng-model="axisForDisplay.labels.scaleFactor" > 
 			<md-option ng-repeat="option in scaleFactorsFixed" value="{{option.value}}">{{option.name}}</md-option>

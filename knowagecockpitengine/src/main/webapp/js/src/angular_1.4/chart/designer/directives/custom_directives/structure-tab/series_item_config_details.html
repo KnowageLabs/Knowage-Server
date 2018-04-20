@@ -105,7 +105,11 @@ ng-if="(selectedChartType != 'chord' && selectedChartType != 'heatmap' && select
 
 <!-- Scale factor for series values (if it is going to be shown as a raw value or in kilos, megas) -->
 <div layout="row" flex layout-margin
-ng-if="selectedChartType == 'pie' && disableHtmlElementForChartJs()">
+ng-if="(selectedChartType != 'chord' && selectedChartType != 'heatmap' && 
+selectedChartType != 'treemap' && 
+selectedChartType != 'bar' && 
+selectedChartType != 'line' && 
+selectedChartType != 'radar' && selectedChartType != 'scatter') && disableHtmlElementForChartJs()">
 	<md-input-container class="md-block" flex> 
 		<label>{{translate.load('sbi.chartengine.designer.scalefactor.label')}}</label>
 		<md-select ng-model="detailsForSeriesItem.scaleFactor" > 
