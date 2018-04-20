@@ -629,10 +629,11 @@
 			background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 30px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 2%);
 			.showActionButtonHandler {
 				opacity: .4 !important;
+				&:hover {
+					opacity: 1 !important;
+				}
 			}
-		}
-        
-		//min-height: calc(100% - 20px);
+		}        
 
         .gridster-item{
 			 md-card.md-knowage-theme md-card-title {
@@ -650,43 +651,44 @@
 					}
 				}
 			}
+			&.expandedWidget {
+				background-color: $lightTextColor;
+			}
+			.showActionButtonHandler{
+			    position: absolute;
+			    right: 0;
+			    opacity: 0;
+				width: 60px;
+				height: 40px;
+				z-index: 9990;
+				&.md-is-open {
+					.menuOnTopButton {
+						background-color: rgba($fabPrimaryColor, .8);
+						md-icon {
+							color: $lightTextColor;
+						}
+						&:hover {
+							background-color: rgba($fabPrimaryColor, 0.5);
+						}
+					}
+				}
+				button:hover {
+					background-color: rgba($ternaryColor, 0.5);
+				}
+				.md-button:not(.menuOnTopButton) {
+					background-color: rgba($baseColor, .6);
+					md-icon:not(.fa-stack-2x){
+						color: $lightTextColor;
+					}
+					box-shadow: 0px 2px 3px $shadowsColor;
+				}
+				.stackedIcons {
+					padding: 4px;
+				}
+			}
 			
 			&.leftPosition .showActionButtonHandler {
 				left: 0;
-			}
-			 
-			
-			&.leftPosition .widgetActionButton{
-					border-right:0px !important;
-				    box-shadow: none!important;
-					left: -54px;
-					-ms-flex-direction: column;
-					flex-direction: column;
-					box-sizing: border-box;
-					display: -ms-flexbox;
-					display: flex;
-				}
-			&.rightPosition .widgetActionButton{
-				border-left:0px !important;
-				box-shadow: none!important;
-				right: -54px;
-				-ms-flex-direction: column;
-				flex-direction: column;
-				box-sizing: border-box;
-				display: -ms-flexbox;
-				display: flex;
-			}
-			&.topPosition .widgetActionButton{
-				border-left: 0px !important;
-				border-bottom: 0px !important;
-				box-shadow: none!important;
-				right: 0px;
-				left: inherit;
-				-ms-flex-direction: row;
-				flex-direction: row;
-				box-sizing: border-box;
-				display: -ms-flexbox;
-				display: flex!important;
 			}
         }
 
@@ -757,9 +759,6 @@
             	}
             }
             &:hover {
-            	.showActionButtonHandler, .floatingSearch {
-            		opacity: 1 !important;
-            	}
             	.viewModeMenu {	
 					background-color: rgba(white,.6);
             		.md-button {
@@ -801,51 +800,7 @@
             .noMouse {
             	pointer-events: none;
             }
-			.showActionButtonHandler{
-			    position: absolute;
-			    right: 0;
-			    opacity: 0;
-				width: 60px;
-				height: 40px;
-				z-index: 9990;
-				&.md-is-open {
-					.menuOnTopButton {
-						background-color: rgba($fabPrimaryColor, .8);
-						md-icon {
-							color: $lightTextColor;
-						}
-						&:hover {
-							background-color: rgba($fabPrimaryColor, 0.5);
-						}
-					}
-				}
-				button:hover {
-					background-color: rgba($ternaryColor, 0.5);
-				}
-				.md-button:not(.menuOnTopButton) {
-					background-color: rgba($baseColor, .6);
-					md-icon:not(.fa-stack-2x){
-						color: $lightTextColor;
-					}
-					box-shadow: 0px 2px 3px $shadowsColor;
-				}
-				.stackedIcons {
-					padding: 4px;
-				}
-			}
 			
-			.widgetActionButton{
-				position:absolute;
-				background-color: white;
-				top: -1px;
-				border: $cockpitDefaultBorder;
-				
-			}    	
-			.widgetActionButton>.md-button{
-				z-index: 10;
-			}
-    
-
             md-toolbar.md-knowage-theme {
                 background-color: transparent;
                 color: $baseColor;
