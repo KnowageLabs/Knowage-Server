@@ -132,6 +132,7 @@ public class ChartEngineDataUtil {
 				String gbyName = (gbyNames.length > i) ? gbyNames[i] : gbys[i];
 
 				drilldownParams.put(drilldownCategory, selectedName);
+				analyticalDrivers.put(drilldownCategory, selectedName);
 
 				// Exiting the form we'll have last values
 				if (i == 0)
