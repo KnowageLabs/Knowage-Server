@@ -44,7 +44,7 @@ import it.eng.knowage.meta.model.business.BusinessModel;
 import it.eng.knowage.meta.model.business.BusinessTable;
 import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
-import it.eng.qbe.utility.ProfileDialectThreadLocal;
+import it.eng.qbe.utility.DialectThreadLocal;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -174,16 +174,14 @@ public class PageResource {
 				checkBackwardCompatibility(model);
 				request.getSession().setAttribute(MetaService.EMF_MODEL, model);
 
-				ProfileDialectThreadLocal.setUserProfile(userProfile);
 				String datasourceId = request.getParameter("datasourceId");
 				if (datasourceId != null && !datasourceId.equals("")) {
 					IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(Integer.valueOf(datasourceId));
 					if (ds != null) {
 						String dialect = ds.getDialectName();
-						ProfileDialectThreadLocal.setDialect(dialect);
+						DialectThreadLocal.setDialect(dialect);
 					}
 				}
-
 				JSONObject translatedModel = MetaService.createJson(model);
 				ioManager.getHttpSession().setAttribute("translatedModel", translatedModel.toString());
 			} else {
@@ -201,7 +199,7 @@ public class PageResource {
 		} catch (Exception e) {
 			logger.error("Error during Metamodel initialization: " + e);
 		} finally {
-			ProfileDialectThreadLocal.unset();
+			DialectThreadLocal.unset();
 			logger.debug("OUT");
 		}
 	}

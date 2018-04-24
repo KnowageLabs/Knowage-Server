@@ -18,23 +18,12 @@
 
 package it.eng.qbe.utility;
 
-import it.eng.spagobi.commons.bo.UserProfile;
-
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class ProfileDialectThreadLocal {
+public class DialectThreadLocal {
 
-	private static final ThreadLocal<UserProfile> _userProfile = new ThreadLocal<UserProfile>();
 	private static final ThreadLocal<String> _dialect = new ThreadLocal<String>();
-
-	public static void setUserProfile(UserProfile userProfile) {
-		_userProfile.set(userProfile);
-	}
-
-	public static UserProfile getUserProfile() {
-		return _userProfile.get();
-	}
 
 	public static void setDialect(String dialect) {
 		_dialect.set(dialect);
@@ -45,7 +34,6 @@ public class ProfileDialectThreadLocal {
 	}
 
 	public static void unset() {
-		_userProfile.remove();
 		_dialect.remove();
 
 	}

@@ -110,7 +110,9 @@ import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
 import it.eng.knowage.meta.model.serializer.ModelPropertyFactory;
-import it.eng.qbe.utility.ProfileDialectThreadLocal;
+import it.eng.qbe.utility.CustomFunctionsSingleton;
+import it.eng.qbe.utility.CustomizedFunctionsReader;
+import it.eng.qbe.utility.DialectThreadLocal;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -384,7 +386,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		} finally {
-			ProfileDialectThreadLocal.unset();
+			DialectThreadLocal.unset();
 		}
 		return Response.serverError().build();
 	}
@@ -750,7 +752,7 @@ public class MetaService extends AbstractSpagoBIResource {
 				errors.addErrorKey("common.generic.error");
 			}
 		} finally {
-			ProfileDialectThreadLocal.unset();
+			DialectThreadLocal.unset();
 		}
 		return Response.ok(errors.toString()).build();
 	}
@@ -801,7 +803,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			ObjectMapper mapper = new ObjectMapper();
 			patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 		} finally {
-			ProfileDialectThreadLocal.unset();
+			DialectThreadLocal.unset();
 		}
 		return Response.ok(patch.toString()).build();
 
@@ -848,7 +850,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 		} finally {
-			ProfileDialectThreadLocal.unset();
+			DialectThreadLocal.unset();
 		}
 
 		return Response.ok(patch.toString()).build();
@@ -1626,9 +1628,10 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	private void setProfileDialectThreadLocal(Model model) {
-		ProfileDialectThreadLocal.setUserProfile(getUserProfile());
 		String name = model.getPhysicalModels().get(0).getDatabaseName();
-		ProfileDialectThreadLocal.setDialect(name);
-	}
+		DialectThreadLocal.setDialect(name);
 
+		JSONObject jsonObjVariable = new CustomizedFunctionsReader().getJSONCustomFunctionsVariable(getUserProfile());
+		CustomFunctionsSingleton.getInstance().setCustomizedFunctionsJSON(jsonObjVariable);
+	}
 }

@@ -46,4 +46,18 @@ public class DatabaseUtilities {
 		return userMemory;
 	}
 
+	public static String getDBVendorNameFromDialect(String dialect) {
+		String databaseName = null;
+		String upperCaseDialect = dialect.toUpperCase();
+		if (upperCaseDialect.contains("MYSQL")) {
+			databaseName = "mysql";
+		} else if (upperCaseDialect.contains("ORACLE")) {
+			databaseName = "oracle";
+		} else if (upperCaseDialect.contains("POSTGRES")) {
+			databaseName = "postgres";
+		} else if (upperCaseDialect.contains("SQLSERVER")) {
+			databaseName = "sqlserver";
+		}
+		return databaseName;
+	}
 }
