@@ -352,7 +352,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				return;
 			}
 			cockpitModule_mapThematizerServices.setActiveConf(layerDef.name, layerDef);
-			cockpitModule_mapThematizerServices.updateLegend(layerDef.name);
+			cockpitModule_mapThematizerServices.updateLegend(layerDef.name, data);
 			var layer;
 			if (isCluster) {
 				var clusterSource = new ol.source.Cluster({source: featuresSource
@@ -632,7 +632,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  //thematizer functions
 	    $scope.refreshStyle = function (layer, measure, config, configColumns, values, geoColumn){
 			//prepare object for thematization
-	    	cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name+'|'+measure, values);
+	    	var elem = cockpitModule_mapServices.getColumnConfigByProp(configColumns, 'aliasToShow', measure);
+	    	if (elem){
+		    	cockpitModule_mapThematizerServices.setActiveIndicator(elem.name);
+		    	config.defaultIndicator = elem.name;
+	    	
+		    	cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name +'|'+ elem.name, values);
+		    	cockpitModule_mapThematizerServices.updateLegend(config.name, values);
+	    	}
 			var newSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, measure, config, configColumns,  values);
 			if (config.clusterConf && config.clusterConf.enabled){
 				var clusterSource = new ol.source.Cluster({ source: newSource });

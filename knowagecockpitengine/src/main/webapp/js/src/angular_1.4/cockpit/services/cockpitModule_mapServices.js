@@ -121,6 +121,17 @@
 			}
 			return new ol.source.Vector();
 		}
+		
+		ms.getColumnConfigByProp = function(configColumns, propName, propValue){
+			for(var c=0; c < configColumns.length; c++){
+				var conf = configColumns[c];
+				if (conf[propName] === propValue){
+					return conf;
+				}
+			}
+			
+			return null;
+		}
 	    
 		ms.addDsPropertiesToFeature = function (f, row, cols, meta){
 			//add columns value like properties

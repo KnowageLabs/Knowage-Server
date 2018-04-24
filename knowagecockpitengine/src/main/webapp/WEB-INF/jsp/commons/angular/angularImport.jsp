@@ -127,6 +127,8 @@ END-PRODUCTION -->
 <link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/3.x.x/ol.css">
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/3.x.x/ol.js"></script>	 
 -->
+<!-- mathjs for quantil thematization -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/mathjs/4.0.1/math.min.js"></script>
 
 <%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>
 

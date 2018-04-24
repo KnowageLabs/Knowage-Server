@@ -47,12 +47,21 @@
 			
 			var thematized = false;
 			if (configThematizer.defaultAnalysis == 'choropleth') {
-				style = mts.getChoroplethStyles(value, props, configThematizer.choropleth, configMarker);
+				if (!mts.cacheDatasetValue) mts.cacheDatasetValue = {};
+//				mts.checkForDatasetValueOfIndicator();
+				
+//				var dsItem = mts.cacheDatasetValue[parentLayer][mts.getActiveIndicator()];
+//				console.log("dsItem: ", dsItem);
+				configThematizer.choropleth.parentLayer = parentLayer;
+				configMarker.style.color = mts.getChoroplethColor(value, parentLayer).color;
+//				style = mts.getChoroplethStyles(value, props, configMarker, configThematizer.choropleth);
 				thematized = true;
 			}else if (configThematizer.defaultAnalysis == 'proportionalSymbol') {
 				style = mts.getProportionalSymbolStyles(value, props, configThematizer.proportionalSymbol);
 				thematized = true;
 			}
+			
+			
 			if (!thematized && isCluster && feature.get('features').length > 1 ){
 				style = mts.getClusterStyles(value, props, configCluster);
 				useCache = false;
@@ -62,6 +71,7 @@
 				useCache = true;
 //			useCache = false;
 			}
+			
 			
 			if (useCache && !styleCache[parentLayer]) {
 		          styleCache[parentLayer] = style;
@@ -164,7 +174,8 @@
 		            });
 		}
 		
-		mts.getChoroplethStyles = function(value, props, config){
+		mts.getChoroplethStyles = function(value, props, configMarker, configChoroplet){
+			var borderColor="#AAAAAA"
 			var textValue =  props[mts.getActiveIndicator()] || "";
 			
 			return  [new ol.style.Style({
@@ -173,7 +184,7 @@
 					width: 1
 				}),
 				fill: new ol.style.Fill({
-					color: getChoroplethColor(dsValue,layerCol).color
+					color: mts.getChoroplethColor(value, config.parentLayer).color
 				}),
 				image: new ol.style.Circle({
 		  			radius: 5,
@@ -182,7 +193,7 @@
 						width: 1
 					}),
 		  			fill: new ol.style.Fill({
-		  				color: getChoroplethColor(dsValue,layerCol).color
+		  				color: mts.getChoroplethColor(value, config.parentLayer).color
 		  			})
 		  		})
 			})];
@@ -191,12 +202,12 @@
 			});
 		}
 		
-		mts.getOnlyMarkerStyles = function (value, props, config){
+		mts.getOnlyMarkerStyles = function (value, props, config, isThematized){
 			var style;
 			var color;
 			 
 			if (props[mts.getActiveIndicator()] && props[mts.getActiveIndicator()].thresholdsConfig) color = mts.getColorByThresholds(value, props);
-			if (!color) color =  (config.style && config.style.color) ? config.style.color : 'blue';
+			if (!color)	color =  (config.style && config.style.color) ? config.style.color : 'blue';
 			
 			switch(config.type) {
 			
@@ -289,34 +300,94 @@
 		}
 
 
-		mts.updateLegend = function(layerName){
+		mts.updateLegend = function(layerName, data){
 			var config = mts.getActiveConf(layerName) || {};
+			if (!config.analysisConf) {
+				console.log("Thematization isn't required");
+				return;
+			}
+					
+			if (!mts.activeLegend) mts.activeLegend = {};
+//			if (!mts.getActiveIndicator()) mts.setActiveIndicator(config.defaultIndicator);
+			mts.setActiveIndicator(config.defaultIndicator);
+			console.log("mts.getActiveIndicator(): ",mts.getActiveIndicator());
+			console.log("config.defaultIndicator: ",config.defaultIndicator);
+			
+			
+			if (config.analysisConf && config.analysisConf.defaultAnalysis == 'choropleth'){
+				if (!mts.activeLegend[layerName]){
+					mts.activeLegend[layerName] = {choroplet:[]};
+				}
+
+				if(config.analysisConf.choropleth.method == "CLASSIFY_BY_EQUAL_INTERVALS"){
+					mts.updateChoroplethLegendGradient(layerName, config.analysisConf.choropleth, config.analysisConf.choropleth.classes);
+
+					var minValue = mts.cacheSymbolMinMax[layerName + '|' + mts.getActiveIndicator()].minValue;
+					var maxValue = mts.cacheSymbolMinMax[layerName + '|' + mts.getActiveIndicator()].maxValue;
+					var split = (maxValue-minValue)/(config.analysisConf.choropleth.classes);
+					for(var i=0; i<config.analysisConf.choropleth.classes; i++){
+						mts.activeLegend[layerName].choroplet[i].from=(minValue+(split*i)).toFixed(2);
+						mts.activeLegend[layerName].choroplet[i].to=(minValue+(split*(i+1))).toFixed(2);
+					}
+					console.log("Regular intervals legends: ", mts.activeLegend[layerName].choroplet);
+				}else if (config.analysisConf.choropleth.method == "CLASSIFY_BY_QUANTILS"){
+					//classify by quantils
+					var values=[];
+					var columnName =  mts.getColumnName(mts.getActiveIndicator(), data.metaData.fields);
+					for(var key in data.rows){
+						if(values.indexOf(Number(data.rows[key][columnName]))==-1){
+							values.push(Number(data.rows[key][columnName]));
+						}
+					}
+					var intervals = Number(values.length < config.analysisConf.choropleth.classes ? values.length : config.analysisConf.choropleth.classes );
+					mts.updateChoroplethLegendGradient(layerName, config.analysisConf.choropleth, intervals);
+					var quantils = math.quantileSeq(values, intervals);   
+					console.log("quantils limits: ", quantils);
+					
+					var binSize = Math.floor(values.length  / intervals);
+					var k=0;
+					for(var i=0;i<values.length;i+=binSize){
+						if(k>=intervals){
+							mts.activeLegend[layerName].choroplet[intervals-1].to=values[i+binSize]||values[values.length-1];
+						}else{
+							mts.activeLegend[layerName].choroplet[k].from = values[i];
+							mts.activeLegend[layerName].choroplet[k].to = values[i+binSize] || values[values.length-1];
+							k++;
+						}
+					}
+					console.log("Quantils legends: ", mts.activeLegend[layerName].choroplet);
+				}else {
+					console.log("Temathization method [" + config.analysisConf.choropleth.method + "] not supported");
+				}
+			}
 		}
 		
-//		mts.checkForDatasetValueOfIndicator = function(){
-//			//if the values of the selected indicator are not present in the cache , load them
-//			var listIndicator=[];
-//			if(geoModule_template.analysisType=="chart"){
-//				listIndicator=geoModule_template.selectedMultiIndicator;
-//			}else{
-//				listIndicator.push(geoModule_template.selectedIndicator);
-//			}
-//
-//
-//			for(var indic=0;indic<listIndicator.length;indic++){
-//				var indicator=listIndicator[indic].name;
-//				if(!mts.cacheDatasetValue.hasOwnProperty(indicator)){
-//					mts.cacheDatasetValue[indicator]={};
-//					for(var i=0;i<geoModule_dataset.rows.length;i++){
-//						if(!mts.cacheDatasetValue[indicator].hasOwnProperty(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name])){
-//							mts.cacheDatasetValue[indicator][geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]]={value:geoModule_dataset.rows[i][indicator],row:i};
-//						}else{
-//							console.info("Multi item for dataset join column ",geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name],geModule_datasetJoinColumnsItem.header,geoModule_dataset.rows[i][indicator]);
-//						}
-//					}
+		mts.updateChoroplethLegendGradient = function(layerName, chorConfig, numberGradient){
+			var grad = tinygradient([chorConfig.fromColor, chorConfig.toColor]);
+			var gradienti= grad.rgb(numberGradient == 1 ? 2 : numberGradient); // ternary operator required to handle single line dataset
+			mts.activeLegend[layerName].choroplet.length=0;
+			
+			for(var i=0; i < gradienti.length; i++){
+				var  tmpGrad={};
+				tmpGrad.color = gradienti[i].toRgbString();
+				tmpGrad.item = 0; //number of features in this range
+				tmpGrad.itemFeatures = []; //features in this range
+				mts.activeLegend[layerName].choroplet.push(tmpGrad);
+			}
+		}
+		
+//		mts.checkForDatasetValueOfIndicator = function(layerName, data){
+//			var indicator = mts.getActiveIndicator();
+//			var columnName =  mts.getColumnName(indicator, data.metaData.fields);
+//			
+//			if (!mts.cacheDatasetValue) mts.cacheDatasetValue = {};
+//			
+//			if(!mts.cacheDatasetValue.hasOwnProperty(indicator)){
+//				mts.cacheDatasetValue[indicator]={};
+//				for(var i=0; i < data.rows.length; i++){
+//					mts.cacheDatasetValue[layerName][indicator]={value: data.rows[i][indicator], row: i};
 //				}
 //			}
-//
 //
 //		}
 		
@@ -333,7 +404,7 @@
 			if(minValue == maxValue) { // we have only one point in the distribution
 				size = (maxRadiusSize + minRadiusSize)/2;
 			} else {
-				size = ( parseInt(val) - minValue) / ( maxValue - minValue) * (maxRadiusSize - minRadiusSize) + minRadiusSize;
+				size = ( Number(val) - minValue) / ( maxValue - minValue) * (maxRadiusSize - minRadiusSize) + minRadiusSize;
 			}
 			return (size < 0 ) ? 0 : size;
 		}
@@ -363,7 +434,7 @@
 			var maxV;
 			for(var i=0;i<values.rows.length;i++){
 				var colName = mts.getColumnName(key, values.metaData.fields);
-				var tmpV= parseInt(values.rows[i][colName]);
+				var tmpV= Number(values.rows[i][colName]);
 				if(minV==undefined || tmpV<minV){
 					minV=tmpV;
 				}
@@ -375,27 +446,26 @@
 			mts.setCacheSymbolMinMax(key, {minValue:minV, maxValue:maxV});
 		}
 		
-		mts.getChoroplethColor = function(val,layerCol){
+		mts.getChoroplethColor = function(val,layerName){
 			var color;
 			var alpha;
-			for(var i=0;i<tmtz.legendItem.choroplet.length;i++){
-				if(parseInt(val)>=parseInt(tmtz.legendItem.choroplet[i].from) && parseInt(val)<parseInt(tmtz.legendItem.choroplet[i].to)){
-					color=tmtz.legendItem.choroplet[i].color;
-					alpha=tmtz.legendItem.choroplet[i].alpha;
-					if(tmtz.legendItem.choroplet[i].itemFeatures.indexOf(layerCol)==-1){
-						tmtz.legendItem.choroplet[i].itemFeatures.push(layerCol);
-						tmtz.legendItem.choroplet[i].item++;
+			for(var i=0; i < mts.activeLegend[layerName].choroplet.length; i++){
+				if(Number(val) >= Number( mts.activeLegend[layerName].choroplet[i].from) && Number(val) < Number( mts.activeLegend[layerName].choroplet[i].to)){
+					color = mts.activeLegend[layerName].choroplet[i].color;
+					alpha =  mts.activeLegend[layerName].choroplet[i].alpha;
+					if( mts.activeLegend[layerName].choroplet[i].itemFeatures.indexOf(mts.getActiveIndicator())==-1){
+						 mts.activeLegend[layerName].choroplet[i].itemFeatures.push(mts.getActiveIndicator());
+						 mts.activeLegend[layerName].choroplet[i].item++;
 					}
-
 					break;
 				}
 			}
 			if(color==undefined){
-				color=tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].color;
-				alpha=tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].alpha;
-				if(tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].itemFeatures.indexOf(layerCol)==-1){
-					tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].itemFeatures.push(layerCol);
-					tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].item++;
+				color= mts.activeLegend[layerName].choroplet[ mts.activeLegend[layerName].choroplet.length-1].color;
+				alpha= mts.activeLegend[layerName].choroplet[ mts.activeLegend[layerName].choroplet.length-1].alpha;
+				if( mts.activeLegend[layerName].choroplet[ mts.activeLegend[layerName].choroplet.length-1].itemFeatures.indexOf(mts.getActiveIndicator())==-1){
+					 mts.activeLegend[layerName].choroplet[ mts.activeLegend[layerName].choroplet.length-1].itemFeatures.push(mts.getActiveIndicator());
+					 mts.activeLegend[layerName].choroplet[ mts.activeLegend[layerName].choroplet.length-1].item++;
 				}
 			}
 			return {color:color,alpha:alpha};
