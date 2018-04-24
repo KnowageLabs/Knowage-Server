@@ -38,7 +38,7 @@ function mapWidgetEditControllerFunction(
 	$scope.newModel = angular.copy(model);
 	$scope.availableAggregationFunctions = ['SUM','AVG','MIN','MAX','COUNT'];
 	$scope.availableOperators = [{'label':'==','value':'=='},{'label':'!=','value':'!='},{'label':'<','value':'<','range':true},{'label':'>','value':'>','range':true},{'label':'<=','value':'<=','range':true},{'label':'>=','value':'>=','range':true}];
-	$scope.visualizationTypes = [{"name":"markers","enabled":true,"class":"markers"},{"name":"clusters","enabled":true,"class":"clusters"},{"name":"heatmap","enabled":true,"class":"heatmap"},];
+	$scope.visualizationTypes = [{"name":"markers","enabled":true,"class":"markers"},{"name":"clusters","enabled":true,"class":"clusters"},{"name":"heatmap","enabled":true,"class":"heatmap"},{"name":"analysisR","enabled":true,"class":"analysis"}];
 	$scope.uploadImg = {};
   	$scope.getTemplateUrl = function(template){
   		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
@@ -94,15 +94,13 @@ function mapWidgetEditControllerFunction(
   		columns.unshift({});
   	}
   	
-  	$scope.checkDs = function(column, isNew){
+  	$scope.checkDs = function(column){
   		for(var i in $scope.confrontationDs.metadata.fieldsMeta){
-  			if($scope.confrontationDs.metadata.fieldsMeta[i].name == column.name){
+  			var confrontField = $scope.confrontationDs.metadata.fieldsMeta[i];
+  			if(confrontField.name == column.name && confrontField.alias == column.alias && confrontField.fieldType == column.fieldType){
   				for(var k in $scope.confrontationDsList){
   					if($scope.confrontationDsList[k].name == column.name){
   						$scope.confrontationDsList.splice(k,1);
-  						if(isNew){
-  							column.fieldType = $scope.confrontationDs.metadata.fieldsMeta[i].fieldType;
-  						}
   						break;
   					}
   				}
@@ -110,6 +108,29 @@ function mapWidgetEditControllerFunction(
   			}
   		}
   		return false;
+  	}
+  	
+  	$scope.updateDsList = function(column, dsId){
+  		for(var j in $scope.newModel.content.columnSelectedOfDataset[dsId]){
+  			if($scope.newModel.content.columnSelectedOfDataset[dsId][j].name == column.name){
+  				for(var k in $scope.confrontationDsList){
+  					if($scope.confrontationDsList[k].name == column.name){
+  						$scope.confrontationDsList.splice(k,1);
+  						break;
+  					}
+  				}
+  		  		for(var i in $scope.confrontationDs.metadata.fieldsMeta){
+  		  			if(column.name == $scope.confrontationDs.metadata.fieldsMeta[i].name){
+  		  				angular.merge($scope.newModel.content.columnSelectedOfDataset[dsId][j],$scope.confrontationDs.metadata.fieldsMeta[i]);
+  		  				if(!$scope.newModel.content.columnSelectedOfDataset[dsId][j].aliasToShow){
+  		  					$scope.newModel.content.columnSelectedOfDataset[dsId][j].aliasToShow = $scope.newModel.content.columnSelectedOfDataset[dsId][j].alias;
+  		  				}
+  		  				break;
+  		  			}
+  		  		}
+  		  		break;
+  			}
+  		}
   	}
   	
   	$scope.deleteColumn = function(layer,column){
