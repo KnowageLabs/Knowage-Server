@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,25 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.qbe.tree;
+
+import java.io.CharArrayWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.properties.IModelProperties;
@@ -40,20 +54,6 @@ import it.eng.spagobi.engines.qbe.serializer.json.QbeSerializationConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.messages.EngineMessageBundle;
-
-import java.io.CharArrayWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * The Class ExtJsQbeTreeBuilder.
@@ -285,9 +285,9 @@ public class ExtJsQbeTreeBuilder {
 		Iterator<IModelField> normalFieldIterator = normalFields.iterator();
 		while (normalFieldIterator.hasNext()) {
 			IModelField field = normalFieldIterator.next();
-			Boolean isARelation = (Boolean)field.getProperties().get("relation");
+			Boolean isARelation = (Boolean) field.getProperties().get("relation");
 			JSONObject jsObject = getFieldNode(entity, field);
-			if (jsObject != null && (isARelation==null || !isARelation)) {
+			if (jsObject != null && (isARelation == null || !isARelation)) {
 				children.put(jsObject);
 			}
 		}
@@ -445,6 +445,7 @@ public class ExtJsQbeTreeBuilder {
 
 			JSONObject nodeAttributes = new JSONObject();
 			nodeAttributes.put("iconCls", "calculation");
+
 			if (field.isInLine()) {
 				nodeAttributes.put("type", NODE_TYPE_INLINE_CALCULATED_FIELD);
 			} else {
@@ -453,6 +454,9 @@ public class ExtJsQbeTreeBuilder {
 
 			nodeAttributes.put("entity", entityLabel);
 			nodeAttributes.put("field", fieldLabel);
+
+			// nodes added in backend for tree are not editable
+			nodeAttributes.put("editable", false);
 
 			JSONObject formState = new JSONObject();
 			formState.put("alias", field.getName());
