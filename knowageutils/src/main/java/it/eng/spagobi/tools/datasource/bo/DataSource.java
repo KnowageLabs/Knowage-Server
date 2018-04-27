@@ -102,6 +102,9 @@ public class DataSource implements Serializable, IDataSource {
 	private Boolean readOnly;
 	private Boolean writeDefault;
 
+	// Advanced Optoins - JDBCPoolConfiguration
+	private JDBCDataSourcePoolConfiguration jdbcPoolConfiguration;
+
 	public Boolean getReadOnly() {
 		return readOnly;
 	}
@@ -602,5 +605,15 @@ public class DataSource implements Serializable, IDataSource {
 		} else if (!user.equals(other.user))
 			return false;
 		return true;
+	}
+
+	@Override
+	public JDBCDataSourcePoolConfiguration getJdbcPoolConfiguration() {
+		return jdbcPoolConfiguration;
+	}
+
+	@Override
+	public void setJdbcPoolConfiguration(JDBCDataSourcePoolConfiguration jdbcPoolConfiguration) {
+		this.jdbcPoolConfiguration = jdbcPoolConfiguration;
 	}
 }

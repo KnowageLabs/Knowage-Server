@@ -82,7 +82,10 @@
         </property>
         <property name="writeDefault" type="boolean">
             <column name="WRITE_DEFAULT" />
-        </property>        
+        </property>    
+        <property name="jdbcPoolConfiguration" type="string">
+            <column name="JDBC_ADVANCED_CONFIGURATION" />
+        </property>    
         <set name="sbiOrganizationDatasources" inverse="true">
             <key>
                 <column name="DATASOURCE_ID" not-null="true" />
