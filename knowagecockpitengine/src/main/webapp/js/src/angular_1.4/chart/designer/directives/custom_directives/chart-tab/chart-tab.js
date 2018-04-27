@@ -82,7 +82,6 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			break;
 		case 'radar':
 			$scope.minMaxCategories.min = 1;
-			$scope.minMaxCategories.max = 1;
 			$scope.minMaxSeries.min = 1;
 			break;
 		case 'bar':
@@ -367,7 +366,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 		
 		var ifNeededTrimDownCategoriesToSizeNeededByChartType = function () {
 			var categoriesLimit = 0;
-			if(chart == "pie" || chart == "radar" || chart == "sunburst" || chart == "wordcloud" || chart == "scatter") {
+			if(chart == "pie" || chart == "sunburst" || chart == "wordcloud" || chart == "scatter") {
 				categoriesLimit = 1;
 			} else if (chart == "chord" || chart == "heatmap" || chart == "parallel") {
 				categoriesLimit = 2;

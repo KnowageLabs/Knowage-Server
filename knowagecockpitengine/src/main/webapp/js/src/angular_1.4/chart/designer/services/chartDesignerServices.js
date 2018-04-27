@@ -1129,7 +1129,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"postfixChar": "",
 						"precision": 0,
 						"prefixChar": "",
-						"showValue": "",
+						"showValue": true,
 						"showAbsValue": false,
 						"showPercentage": false,
 						"scaleFactor": "empty",

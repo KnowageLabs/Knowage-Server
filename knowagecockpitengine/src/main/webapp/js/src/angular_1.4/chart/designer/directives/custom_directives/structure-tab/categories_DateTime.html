@@ -15,7 +15,7 @@
 	      	</md-menu>
 		</div>	
 	</md-toolbar> 
-	<div layout="row"  flex=100 layout-margin>
+	<div layout="row"  flex=100 layout-margin ng-if="selectedChartType.toLowerCase()!='radar'">
 	
 		<label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.categoriesDateTime")}}</label>
 		<md-input-container class="small counter"> <md-checkbox ng-disabled="chartTemplate.groupSeries || chartTemplate.groupCategories"
@@ -23,7 +23,7 @@
 		</md-input-container>
 	</div>
 
-	<div ng-show="chartTemplate.dateTime" layout="column" layout-padding>
+	<div ng-show="chartTemplate.dateTime" layout="column" layout-padding ng-if="selectedChartType.toLowerCase()!='radar'">
 	<md-input-container class="md-block">
 		 <label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.dateFormat")}}</label>
 			 <md-select ng-model="chartTemplate.dateFormat" name="categories_ordering_type"> <md-option
@@ -40,7 +40,7 @@
 		
 	</div>	
 	<div layout="row"
-		   flex=100 layout-margin ng-if="selectedChartType.toLowerCase()!='scatter' && selectedChartType.toLowerCase()!='heatmap'"">
+		   flex=100 layout-margin ng-if="selectedChartType.toLowerCase()!='scatter' && selectedChartType.toLowerCase()!='heatmap' && selectedChartType.toLowerCase()!='radar'">
 		
 			<label>{{translate.load("sbi.chartengine.designer.tab.configuration.groupCategories")}}</label>
 			<md-input-container class="small counter"> <md-checkbox  ng-disabled="chartTemplate.groupSeries || chartTemplate.dateTime  || chartTemplate.groupSeriesCateg" 
@@ -54,7 +54,7 @@
 	
 	<div layout="row" ng-if="selectedChartType.toLowerCase()!='scatter' && selectedChartType.toLowerCase()!='heatmap'">
 	 <div layout="column"
-			  flex=100 layout-margin>
+			  flex=100 layout-margin ng-if="selectedChartType.toLowerCase()!='radar'">
 		
 			<label>{{translate.load("sbi.chartengine.designer.tab.configuration.groupSeries")}}</label>
 			<md-input-container class="small counter"> <md-checkbox  ng-disabled="chartTemplate.groupCategories || chartTemplate.dateTime  || chartTemplate.groupSeriesCateg"

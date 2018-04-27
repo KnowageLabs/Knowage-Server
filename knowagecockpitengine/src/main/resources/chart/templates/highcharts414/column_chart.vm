@@ -45,6 +45,7 @@
 		#end
 	#end
 #end
+
 #set($xAxisMap = $datasettransformer.getXAxisMap($categorieColumns, $categoryDate))
 #set($enableDrilldown = false) 
 #if($chart.groupCategories)
@@ -240,7 +241,7 @@
     		
     		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	*#
-    	#if($drilldownEnabledFlag && $exportWebApp==false)
+    	#if($chart.type.toUpperCase() != 'RADAR' && $drilldownEnabledFlag && $exportWebApp==false)
 	    	#if($enableDrilldown)
 		    events: {
 				drilldown: scope.chartInitializer.handleDrilldown,
@@ -925,6 +926,10 @@
 		#set($enableValues = $chart.VALUES.SERIE.showValue)
 		#if($chart.VALUES.SERIE.get(0))
 		#set($relatedSerie = $chart.VALUES.SERIE.get(0))
+		#if($chart.type.toUpperCase() == 'RADAR' && $chart.groupSeriesCateg && $chart.groupSeriesCateg =='true')
+		#set($relatedSerieTypes = $chart.VALUES.SERIE.get(0).serieTypeRadar.split(", "))
+		#set($count = $chart.VALUES.SERIE.get(0).serieTypeRadar.length() - $chart.VALUES.SERIE.get(0).serieTypeRadar.replace(",", "").length())
+		#end
 		#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
 		#end
 		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine, $chart.groupSeries, $chart.groupSeriesCateg))
@@ -1194,7 +1199,8 @@
            	 #break
     	#end
     #end
-
+  	#set ($counter = 0)
+	#set ($count = $count+1)
 	series: [
 	#if($chart.groupSeries !='true' && $chart.groupSeriesCateg !='true')
 	#foreach($valueKey in $seriesMap.keySet())
@@ -1451,11 +1457,16 @@
 	    }, 
 	#end
 	#end
+	
 	#if(($chart.groupSeries && $chart.groupSeries =='true') || ($chart.groupSeriesCateg && $chart.groupSeriesCateg =='true'))	
 		#foreach($valueKey in $map.keySet())
 		#if($valueKey!="null")
 		{
 			name: '$valueKey',
+			#if($relatedSerieTypes && $count!=$counter && $relatedSerieTypes[$counter])
+		    	type: '$relatedSerieTypes[$counter]',
+		    	 #set ($counter = $counter+1)
+		    #end
 			data: [
 				#foreach($el in  $map.get($valueKey))	
 				{
