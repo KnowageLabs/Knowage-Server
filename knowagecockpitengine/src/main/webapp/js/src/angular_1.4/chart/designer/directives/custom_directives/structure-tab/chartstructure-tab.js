@@ -54,7 +54,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	},true)
 	
 	$scope.$watch('chartTemplate.dateTime',function(newValue,oldValue){
-		if(!newValue) $scope.chartTemplate.categoryDate = "";
+		if(!newValue && $scope.chartTemplate) $scope.chartTemplate.categoryDate = "";
 	},true)
 
 
