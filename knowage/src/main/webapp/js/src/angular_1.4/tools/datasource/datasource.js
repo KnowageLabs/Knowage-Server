@@ -24,6 +24,14 @@ var app = angular.module('dataSourceModule', ['ngMaterial', 'angular_list', 'ang
 app.controller('dataSourceController', ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast",
                                         "$timeout","sbiModule_messaging","sbiModule_user","sbiModule_messaging", dataSourceFunction]);
 
+app.filter('fromMillitoSeconds', function(){
+	return function(input){
+		var milisecond = 1000;
+		var seconds = input / milisecond;
+		return seconds;
+	}
+}); 
+
 var emptyDataSource = {
 	label : "",
 	descr : "",
@@ -80,6 +88,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		//GET DATA SOURCES
 		sbiModule_restServices.promiseGet("2.0/datasources", "")
 		.then(function(response) {
+			convertMilliToSeconds(response.data);
 			$scope.dataSourceList = response.data;
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -96,7 +105,18 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		});
 
 	};
-
+	
+	//Function for conversion from milliseconds to seconds for JDBC Advanced Options
+	var convertMilliToSeconds = function(dataSourceArr) {
+		dataSourceArr.forEach(function(dataSource){
+			if(dataSource.hasOwnProperty('jdbcPoolConfiguration')) {
+				dataSource.jdbcPoolConfiguration.maxWait = dataSource.jdbcPoolConfiguration.maxWait / 1000;
+				dataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns = dataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns / 1000;
+			}
+		});
+		return dataSourceArr;
+	};
+	
 	//REST
 	$scope.selectDatabase = function(dialectName){
 		for (i = 0; i < $scope.databases.length; i++) {
@@ -317,7 +337,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 	//LOAD SELECTED SOURCE
 	$scope.loadSelectedDataSource = function(item) {
-
+		
 		if ($scope.isSuperAdmin){
 			$scope.readOnly= false;
 		} else if( $scope.currentUser == item.userIn && item.jndi ==""){
@@ -326,13 +346,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			sbiModule_messaging.showInfoMessage("You are not the owner of this catalog", 'Information');
 			$scope.readOnly= true;
 		}
-		
-		if(item.hasOwnProperty('jdbcPoolConfiguration')) {
-			//Convert milliseconds into seconds
-			item.jdbcPoolConfiguration.maxWait = item.jdbcPoolConfiguration.maxWait / 1000;
-			item.jdbcPoolConfiguration.timeBetweenEvictionRuns = item.jdbcPoolConfiguration.timeBetweenEvictionRuns / 1000;
-		}
-				
+							
 		$scope.jdbcOrJndi.type = null;
 		$scope.showMe=true;
 
