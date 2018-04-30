@@ -17,6 +17,13 @@
  */
 package it.eng.knowage.meta.initializer;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.eclipse.emf.common.util.EList;
+
 import it.eng.knowage.meta.exception.KnowageMetaException;
 import it.eng.knowage.meta.initializer.descriptor.BusinessRelationshipDescriptor;
 import it.eng.knowage.meta.initializer.descriptor.BusinessViewInnerJoinRelationshipDescriptor;
@@ -42,13 +49,6 @@ import it.eng.knowage.meta.model.physical.PhysicalForeignKey;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalPrimaryKey;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.eclipse.emf.common.util.EList;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -285,8 +285,10 @@ public class BusinessModelInitializer {
 
 			getPropertiesInitializer().addProperties(businessColumn);
 			businessColumn.setProperty(BusinessModelPropertiesFromFileInitializer.COLUMN_DATATYPE, physicalColumn.getDataType());
-			businessColumn.setProperty(BusinessModelPropertiesFromFileInitializer.COLUMN_PHYSICAL_TABLE, businessColumn.getPhysicalColumn().getTable()
-					.getName());
+			businessColumn.setProperty(BusinessModelPropertiesFromFileInitializer.COLUMN_PHYSICAL_TABLE,
+					businessColumn.getPhysicalColumn().getTable().getName());
+			businessColumn.setProperty(BusinessModelPropertiesFromFileInitializer.COLUMN_CUSTOM_FUNCTION, "");
+
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to initialize business column from physical column [" + physicalColumn.getName() + "]", t);
 		}
@@ -316,7 +318,7 @@ public class BusinessModelInitializer {
 			// set column type
 			calculatedBusinessColumn.setProperty("structural.columntype", "attribute");
 			try {
-				//calculatedBusinessColumn.getReferencedColumns();
+				// calculatedBusinessColumn.getReferencedColumns();
 			} catch (KnowageMetaException t) {
 				calculatedBusinessColumn.setTable(null);
 				throw new KnowageMetaException(t.getMessage());
@@ -494,7 +496,8 @@ public class BusinessModelInitializer {
 		return businessRelationship;
 	}
 
-	public BusinessRelationship addRelationship(BusinessTable sourceBusinessTable, BusinessTable destinationBusinessTable, PhysicalForeignKey physicalForeignKey) {
+	public BusinessRelationship addRelationship(BusinessTable sourceBusinessTable, BusinessTable destinationBusinessTable,
+			PhysicalForeignKey physicalForeignKey) {
 		BusinessRelationship businessRelationship;
 		BusinessColumn businessColumn;
 
@@ -537,8 +540,8 @@ public class BusinessModelInitializer {
 					businessModel.getRelationships().add(businessRelationship);
 					getPropertiesInitializer().addProperties(businessRelationship);
 					// set the destinationRole property
-					businessRelationship.setProperty(BusinessModelPropertiesFromFileInitializer.ROLE_DESTINATION, businessRelationship.getDestinationTable()
-							.getName());
+					businessRelationship.setProperty(BusinessModelPropertiesFromFileInitializer.ROLE_DESTINATION,
+							businessRelationship.getDestinationTable().getName());
 				} else {
 					businessRelationship = null;
 				}
@@ -561,10 +564,10 @@ public class BusinessModelInitializer {
 			businessRelationship = FACTORY.createBusinessRelationship();
 
 			if (descriptor.getRelationshipName() == null) {
-				businessRelationship.setName("Business Relationship " + descriptor.getSourceTable().getName() + "_"
-						+ descriptor.getDestinationTable().getName());
-				businessRelationship.setUniqueName("Business Relationship " + descriptor.getSourceTable().getName() + "_"
-						+ descriptor.getDestinationTable().getName());
+				businessRelationship
+						.setName("Business Relationship " + descriptor.getSourceTable().getName() + "_" + descriptor.getDestinationTable().getName());
+				businessRelationship
+						.setUniqueName("Business Relationship " + descriptor.getSourceTable().getName() + "_" + descriptor.getDestinationTable().getName());
 			} else {
 				businessRelationship.setName(descriptor.getRelationshipName());
 				businessRelationship.setUniqueName(descriptor.getRelationshipName());

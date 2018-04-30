@@ -51,7 +51,7 @@ public class ExtendedOracle10Dialect extends MySQLInnoDBDialect {
 				CustomizedFunction customizedFunction = iterator.next();
 				logger.debug("register function " + customizedFunction);
 
-				registerFunction(customizedFunction.getFunction(), new VarArgsSQLFunction(customizedFunction.getFunction() + "(", ",", ")"));
+				registerFunction(customizedFunction.getName(), new VarArgsSQLFunction(customizedFunction.getName() + "(", ",", ")"));
 
 				// registerFunction(customizedFunction.getFunction(), new StandardSQLFunction(customizedFunction.getFunction()));
 

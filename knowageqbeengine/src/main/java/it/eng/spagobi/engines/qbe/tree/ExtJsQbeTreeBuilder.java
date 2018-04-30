@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,6 +78,7 @@ public class ExtJsQbeTreeBuilder {
 	public static final String NODE_TYPE_HIERARCHY_LEVEL_FIELD = "hierarchyLevelField";
 	public static final String NODE_TYPE_INLINE_CALCULATED_FIELD = "inLineCalculatedField";
 	public static final String NODE_TYPE_RELATION_FIELD = "relation";
+	public static transient Logger logger = Logger.getLogger(ExtJsQbeTreeBuilder.class);
 
 	/**
 	 * Instantiates a new ext js qbe tree builder.
@@ -285,8 +287,28 @@ public class ExtJsQbeTreeBuilder {
 		Iterator<IModelField> normalFieldIterator = normalFields.iterator();
 		while (normalFieldIterator.hasNext()) {
 			IModelField field = normalFieldIterator.next();
-			Boolean isARelation = (Boolean) field.getProperties().get("relation");
 			JSONObject jsObject = getFieldNode(entity, field);
+
+			// // add custom function if present
+			// try {
+			// if (field.getProperties().get("customFunction") != null && !field.getProperties().get("customFunction").equals("")) {
+			// // String uniqueName = field.getUniqueName();
+			// // String customFunctionS = field.getProperties().get("customFunction").toString();
+			// // CustomFunction customFunction = new CustomFunction(customFunctionS);
+			// // String nameFieldApplied = customFunction.apply(uniqueName);
+			// // JSONObject attObj = jsObject.getJSONObject("attributes");
+			// // attObj.put("field", nameFieldApplied);
+			// //
+			// // field.setName(nameFieldApplied);
+			// // jsObject.put("customFunction", customFunction);
+			// String customFunction = field.getProperties().get("customFunction").toString();
+			// jsObject.put("customFunction", customFunction);
+			// }
+			// } catch (JSONException e) {
+			// logger.error("Error in writing custon function", e);
+			// }
+
+			Boolean isARelation = (Boolean) field.getProperties().get("relation");
 			if (jsObject != null && (isARelation == null || !isARelation)) {
 				children.put(jsObject);
 			}

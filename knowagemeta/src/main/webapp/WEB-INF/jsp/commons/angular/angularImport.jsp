@@ -75,8 +75,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- deprecated angular 2 col -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-list-detail/angular2Col.js"></script>
 
-	
-
 <!-- colorpicker -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinycolor-min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinygradient.min.js"></script>

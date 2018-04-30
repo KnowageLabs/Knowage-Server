@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.dialect.function.VarArgsSQLFunction;
 import org.json.JSONObject;
 
@@ -51,9 +52,13 @@ public class ExtendedMySQLDialect extends MySQLInnoDBDialect {
 				CustomizedFunction customizedFunction = iterator.next();
 				logger.debug("register function " + customizedFunction);
 
-				registerFunction(customizedFunction.getFunction(), new VarArgsSQLFunction(customizedFunction.getFunction() + "(", ",", ")"));
-
-				// registerFunction(customizedFunction.getFunction(), new StandardSQLFunction(customizedFunction.getFunction()));
+				if (!customizedFunction.getParameters().isEmpty()) {
+					VarArgsSQLFunction sqlFunction = new VarArgsSQLFunction(customizedFunction.getName() + "(", ",", ")");
+					registerFunction(customizedFunction.getName(), sqlFunction);
+				} else {
+					StandardSQLFunction sqlFunction = new StandardSQLFunction(customizedFunction.getName());
+					registerFunction(customizedFunction.getName(), sqlFunction);
+				}
 
 			}
 		} else {

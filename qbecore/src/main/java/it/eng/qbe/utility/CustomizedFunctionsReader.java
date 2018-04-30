@@ -27,7 +27,6 @@ import org.json.JSONObject;
 
 import it.eng.qbe.utility.bo.CustomizedFunction;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.utilities.database.DatabaseUtilities;
 
 public class CustomizedFunctionsReader {
 
@@ -57,21 +56,34 @@ public class CustomizedFunctionsReader {
 
 	}
 
-	public List<CustomizedFunction> getCustomDefinedFunctionListFromJSON(JSONObject jsonObj, String dialect) {
+	public List<CustomizedFunction> getCustomDefinedFunctionListFromJSON(JSONObject jsonObj, String dbName) {
 		logger.debug("IN");
 		List<CustomizedFunction> toReturn = new ArrayList<CustomizedFunction>();
 
-		String dbName = DatabaseUtilities.getDBVendorNameFromDialect(dialect);
-
 		if (jsonObj != null) {
-			JSONArray funcArray = jsonObj.optJSONArray(dbName);
+			// search for a key contained in current dbName (could be more than one for example (MySQL/MAria/DB)
 
-			if (funcArray != null) {
-				for (int i = 0; i < funcArray.length(); i++) {
-					JSONObject func = funcArray.optJSONObject(i);
-					CustomizedFunction cust = new CustomizedFunction(func);
-					toReturn.add(cust);
+			String keyToSearch = null;
+			for (Iterator<String> iterator = jsonObj.keys(); iterator.hasNext();) {
+				String key = iterator.next();
+				if (dbName.toLowerCase().contains(key.toLowerCase())) {
+					keyToSearch = key;
 				}
+			}
+
+			if (keyToSearch != null) {
+
+				JSONArray funcArray = jsonObj.optJSONArray(keyToSearch);
+
+				if (funcArray != null) {
+					for (int i = 0; i < funcArray.length(); i++) {
+						JSONObject func = funcArray.optJSONObject(i);
+						CustomizedFunction cust = new CustomizedFunction(func);
+						toReturn.add(cust);
+					}
+				}
+			} else {
+				logger.error("problems in finding custom functions for " + dbName);
 			}
 		}
 
@@ -79,14 +91,14 @@ public class CustomizedFunctionsReader {
 		return toReturn;
 	}
 
-	public List<CustomizedFunction> getCustomDefinedFunctionList(String dialect, UserProfile userProfile) {
+	public List<CustomizedFunction> getCustomDefinedFunctionList(String dbName, UserProfile userProfile) {
 		logger.debug("IN");
 
 		List<CustomizedFunction> toReturn = new ArrayList<CustomizedFunction>();
 
 		JSONObject jsonObj = getJSONCustomFunctionsVariable(userProfile);
 
-		toReturn = getCustomDefinedFunctionListFromJSON(jsonObj, dialect);
+		toReturn = getCustomDefinedFunctionListFromJSON(jsonObj, dbName);
 
 		logger.debug("OUT");
 
@@ -99,7 +111,7 @@ public class CustomizedFunctionsReader {
 
 		for (Iterator iterator = returned.iterator(); iterator.hasNext();) {
 			CustomizedFunction customizedFunction = (CustomizedFunction) iterator.next();
-			toReturn += "|" + customizedFunction.getFunction();
+			toReturn += "|" + customizedFunction.getName();
 		}
 		logger.debug("String returned " + toReturn);
 		logger.debug("OUT");

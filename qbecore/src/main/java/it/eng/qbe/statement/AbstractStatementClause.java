@@ -43,6 +43,7 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.hive.HiveQLStatement;
+import it.eng.spagobi.tools.dataset.common.query.CustomFunction;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -545,6 +546,15 @@ public abstract class AbstractStatementClause implements IStatementClause {
 			return rootEntityAlias;
 		}
 
+	}
+
+	protected CustomFunction getCustomFunction(IModelField datamartField) {
+		CustomFunction toReturn = null;
+		Object obj = datamartField.getProperties().get("customFunction");
+		if (obj != null) {
+			toReturn = new CustomFunction(obj.toString());
+		}
+		return toReturn;
 	}
 
 }

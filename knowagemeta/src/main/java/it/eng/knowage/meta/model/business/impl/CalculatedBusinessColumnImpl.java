@@ -32,7 +32,7 @@ import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
 import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.qbe.utility.CustomFunctionsSingleton;
 import it.eng.qbe.utility.CustomizedFunctionsReader;
-import it.eng.qbe.utility.DialectThreadLocal;
+import it.eng.qbe.utility.DbTypeThreadLocal;
 import it.eng.qbe.utility.bo.CustomizedFunction;
 
 /**
@@ -82,13 +82,13 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 		JSONObject json = CustomFunctionsSingleton.getInstance().getCustomizedFunctionsJSON();
 		// check there really are some custom functions
 		if (json != null && json.toString() != "{}") {
-			String dialect = DialectThreadLocal.getDialect();
-			if (dialect == null) {
-				logger.error("Dialect not found");
-				throw new RuntimeException("Dialect name could not be found in current Thread Locale, check stack of calls");
+			String dbType = DbTypeThreadLocal.getDbType();
+			if (dbType == null) {
+				logger.error("DbType not found");
+				throw new RuntimeException("DbType could not be found in current Thread Locale, check stack of calls");
 			}
 			CustomizedFunctionsReader reader = new CustomizedFunctionsReader();
-			List<CustomizedFunction> list = reader.getCustomDefinedFunctionListFromJSON(json, dialect);
+			List<CustomizedFunction> list = reader.getCustomDefinedFunctionListFromJSON(json, dbType);
 			if (list != null && list.size() > 0) {
 				customs = reader.getStringFromList(list);
 				logger.debug("String to add to regular exression " + customs);

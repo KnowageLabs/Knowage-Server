@@ -19,6 +19,7 @@ package it.eng.spagobi.api.v2;
 
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -47,8 +48,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.database.DataBaseException;
@@ -129,13 +128,18 @@ public class ConfigResource extends AbstractSpagoBIResource {
 	 * added as separated service because it is public
 	 */
 	@GET
-	@Path("/label/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/{modelName}")
+	@Path("/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/{dataSourceId}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public JSONArray getKnowageCalculatedFunctionConfig(@PathParam("modelName") String modelName) {
+	public String getKnowageCalculatedFunctionConfig(@PathParam("dataSourceId") Integer dataSourceId) throws JSONException {
 		logger.debug("IN");
 		IConfigDAO configsDao = null;
-		JSONArray toReturn = new JSONArray();
+		JSONArray array = new JSONArray();
 		JSONObject configJSON = new JSONObject();
+
+		if (dataSourceId == null) {
+			logger.error("dataSourceId not passed the service, check service invocation");
+			throw new SpagoBIRuntimeException("dataSourceId not passed the service, check service invocation");
+		}
 
 		Config dm = null;
 		try {
@@ -160,18 +164,13 @@ public class ConfigResource extends AbstractSpagoBIResource {
 						+ " to JSON, correct the KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS variable, meanwhile ignore custom functions", e);
 			}
 
-			if (toReturn != null) {
+			if (array != null) {
 				logger.debug("get the db type and extract wanted information from config varaible");
 
 				try {
 
-					IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
-					businessModelsDAO.setUserProfile(getUserProfile());
-					MetaModel metamodel = businessModelsDAO.loadMetaModelByName(modelName);
-
-					String dataSourceLabel = metamodel.getDataSourceLabel();
 					IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
-					IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceLabel);
+					IDataSource dataSource = dataSourceDAO.loadDataSourceByID(dataSourceId);
 
 					IDataBase db = DataBaseFactory.getDataBase(dataSource);
 					String dbType = db.getName();
@@ -179,7 +178,19 @@ public class ConfigResource extends AbstractSpagoBIResource {
 					logger.debug("DB type is " + dbType);
 
 					if (dbType != null) {
-						toReturn = configJSON.optJSONArray(dbType);
+						// serach for a key contained in dbType (it could be more than one name like MySQL/Maria
+						String keyToSearch = null;
+						for (Iterator iterator = configJSON.keys(); iterator.hasNext();) {
+							String key = (String) iterator.next();
+							if (dbType.toLowerCase().contains(key.toLowerCase())) {
+								keyToSearch = key;
+							}
+						}
+						if (keyToSearch != null) {
+							array = configJSON.optJSONArray(keyToSearch);
+						} else {
+							logger.error("Problem in finding custom functions voice for dbType " + dbType);
+						}
 					}
 				} catch (DataBaseException e) {
 					logger.error("Error in recovering dialect DB", e);
@@ -189,13 +200,18 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			}
 
 		}
-		if (toReturn != null) {
+		if (array != null) {
 			logger.debug("found custom functions for current DB");
 		} else {
-			toReturn = new JSONArray();
+			array = new JSONArray();
 		}
+
+		JSONObject toReturn = new JSONObject();
+		toReturn.put("data", array);
+
 		logger.debug("OUT");
-		return toReturn;
+
+		return toReturn.toString();
 	}
 
 	@POST

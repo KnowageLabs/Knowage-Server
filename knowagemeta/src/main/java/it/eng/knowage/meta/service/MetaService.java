@@ -112,7 +112,7 @@ import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
 import it.eng.knowage.meta.model.serializer.ModelPropertyFactory;
 import it.eng.qbe.utility.CustomFunctionsSingleton;
 import it.eng.qbe.utility.CustomizedFunctionsReader;
-import it.eng.qbe.utility.DialectThreadLocal;
+import it.eng.qbe.utility.DbTypeThreadLocal;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -386,7 +386,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		} finally {
-			DialectThreadLocal.unset();
+			DbTypeThreadLocal.unset();
 		}
 		return Response.serverError().build();
 	}
@@ -752,7 +752,7 @@ public class MetaService extends AbstractSpagoBIResource {
 				errors.addErrorKey("common.generic.error");
 			}
 		} finally {
-			DialectThreadLocal.unset();
+			DbTypeThreadLocal.unset();
 		}
 		return Response.ok(errors.toString()).build();
 	}
@@ -803,7 +803,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			ObjectMapper mapper = new ObjectMapper();
 			patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 		} finally {
-			DialectThreadLocal.unset();
+			DbTypeThreadLocal.unset();
 		}
 		return Response.ok(patch.toString()).build();
 
@@ -850,7 +850,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 		} finally {
-			DialectThreadLocal.unset();
+			DbTypeThreadLocal.unset();
 		}
 
 		return Response.ok(patch.toString()).build();
@@ -1628,8 +1628,15 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	private void setProfileDialectThreadLocal(Model model) {
-		String name = model.getPhysicalModels().get(0).getDatabaseName();
-		DialectThreadLocal.setDialect(name);
+		try {
+			// String name = model.getPhysicalModels().get(0).getDatabaseName();
+			// IDataSource dataSource = model.getPhysicalModels().get(0).getDatabaseName();
+			// IDataBase db = DataBaseFactory.getDataBase(dataSource);
+			String dbType = model.getPhysicalModels().get(0).getDatabaseName();
+			DbTypeThreadLocal.setDbType(dbType);
+		} catch (Exception e) {
+			logger.error("Error in recovering db type name and setting thread local");
+		}
 
 		JSONObject jsonObjVariable = new CustomizedFunctionsReader().getJSONCustomFunctionsVariable(getUserProfile());
 		CustomFunctionsSingleton.getInstance().setCustomizedFunctionsJSON(jsonObjVariable);
