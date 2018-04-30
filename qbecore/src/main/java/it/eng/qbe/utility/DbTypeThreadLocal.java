@@ -19,22 +19,22 @@
 package it.eng.qbe.utility;
 
 /**
- * @author Davide Zerbetto (davide.zerbetto@eng.it)
+ * @author Giulio Gavardi (giulio.gavardi@eng.it)
  */
-public class DialectThreadLocal {
+public class DbTypeThreadLocal {
 
-	private static final ThreadLocal<String> _dialect = new ThreadLocal<String>();
+	private static final ThreadLocal<String> _dbType = new ThreadLocal<String>();
 
-	public static void setDialect(String dialect) {
-		_dialect.set(dialect);
+	public static void setDbType(String dbType) {
+		_dbType.set(dbType);
 	}
 
-	public static String getDialect() {
-		return _dialect.get();
+	public static String getDbType() {
+		return _dbType.get();
 	}
 
 	public static void unset() {
-		_dialect.remove();
+		_dbType.remove();
 
 	}
 
