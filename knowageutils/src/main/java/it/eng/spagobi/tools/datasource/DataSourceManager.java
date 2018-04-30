@@ -52,15 +52,28 @@ public abstract class DataSourceManager {
 		pool.setUrl(dataSource.getUrlConnection());
 		pool.setUsername(dataSource.getUser());
 		pool.setPassword(dataSource.getPwd());
-		pool.setMaxWaitMillis(dataSource.getJdbcPoolConfiguration().getMaxWait());
-		pool.setRemoveAbandonedOnBorrow(dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnBorrow());
-		pool.setRemoveAbandonedOnMaintenance(dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnMaintenance());
-		pool.setRemoveAbandonedTimeout(dataSource.getJdbcPoolConfiguration().getAbandonedTimeout());
-		pool.setLogAbandoned(dataSource.getJdbcPoolConfiguration().getLogAbandoned());
-		pool.setTestOnReturn(dataSource.getJdbcPoolConfiguration().getTestOnReturn());
-		pool.setTestWhileIdle(dataSource.getJdbcPoolConfiguration().getTestWhileIdle());
-		pool.setTimeBetweenEvictionRunsMillis(dataSource.getJdbcPoolConfiguration().getTimeBetweenEvictionRuns());
-		pool.setValidationQuery(dataSource.getJdbcPoolConfiguration().getValidationQuery());
+
+		if (dataSource.getJdbcPoolConfiguration() != null) {
+			pool.setMaxWaitMillis(dataSource.getJdbcPoolConfiguration().getMaxWait());
+			pool.setRemoveAbandonedOnBorrow(dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnBorrow());
+			pool.setRemoveAbandonedOnMaintenance(dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnMaintenance());
+			pool.setRemoveAbandonedTimeout(dataSource.getJdbcPoolConfiguration().getAbandonedTimeout());
+			pool.setLogAbandoned(dataSource.getJdbcPoolConfiguration().getLogAbandoned());
+			pool.setTestOnReturn(dataSource.getJdbcPoolConfiguration().getTestOnReturn());
+			pool.setTestWhileIdle(dataSource.getJdbcPoolConfiguration().getTestWhileIdle());
+			pool.setTimeBetweenEvictionRunsMillis(dataSource.getJdbcPoolConfiguration().getTimeBetweenEvictionRuns());
+			pool.setValidationQuery(dataSource.getJdbcPoolConfiguration().getValidationQuery());
+		} else {
+			pool.setMaxWaitMillis(60000);
+			pool.setRemoveAbandonedOnBorrow(true);
+			pool.setRemoveAbandonedOnMaintenance(true);
+			pool.setRemoveAbandonedTimeout(60);
+			pool.setLogAbandoned(true);
+			pool.setTestOnReturn(true);
+			pool.setTestWhileIdle(true);
+			pool.setTimeBetweenEvictionRunsMillis(10000);
+		}
+
 		dataSources.putIfAbsent(dataSource, pool);
 	}
 }
