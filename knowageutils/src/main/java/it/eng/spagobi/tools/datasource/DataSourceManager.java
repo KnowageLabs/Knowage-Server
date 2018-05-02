@@ -60,7 +60,8 @@ public abstract class DataSourceManager {
 				pool.setRemoveAbandonedOnBorrow(dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnBorrow());
 			if (dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnMaintenance() != null)
 				pool.setRemoveAbandonedOnMaintenance(dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnMaintenance());
-			pool.setRemoveAbandonedTimeout(dataSource.getJdbcPoolConfiguration().getAbandonedTimeout());
+			if (dataSource.getJdbcPoolConfiguration().getAbandonedTimeout() != null)
+				pool.setRemoveAbandonedTimeout(dataSource.getJdbcPoolConfiguration().getAbandonedTimeout());
 			if (dataSource.getJdbcPoolConfiguration().getLogAbandoned() != null)
 				pool.setLogAbandoned(dataSource.getJdbcPoolConfiguration().getLogAbandoned());
 			if (dataSource.getJdbcPoolConfiguration().getTestOnReturn() != null)
@@ -81,6 +82,6 @@ public abstract class DataSourceManager {
 			pool.setTimeBetweenEvictionRunsMillis(10000);
 		}
 
-		dataSources.putIfAbsent(dataSource, pool);
+		dataSources.put(dataSource, pool);
 	}
 }
