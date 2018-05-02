@@ -54,14 +54,21 @@ public abstract class DataSourceManager {
 		pool.setPassword(dataSource.getPwd());
 
 		if (dataSource.getJdbcPoolConfiguration() != null) {
-			pool.setMaxWaitMillis(dataSource.getJdbcPoolConfiguration().getMaxWait());
-			pool.setRemoveAbandonedOnBorrow(dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnBorrow());
-			pool.setRemoveAbandonedOnMaintenance(dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnMaintenance());
+			if (dataSource.getJdbcPoolConfiguration().getMaxWait() != null)
+				pool.setMaxWaitMillis(dataSource.getJdbcPoolConfiguration().getMaxWait());
+			if (dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnBorrow() != null)
+				pool.setRemoveAbandonedOnBorrow(dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnBorrow());
+			if (dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnMaintenance() != null)
+				pool.setRemoveAbandonedOnMaintenance(dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnMaintenance());
 			pool.setRemoveAbandonedTimeout(dataSource.getJdbcPoolConfiguration().getAbandonedTimeout());
-			pool.setLogAbandoned(dataSource.getJdbcPoolConfiguration().getLogAbandoned());
-			pool.setTestOnReturn(dataSource.getJdbcPoolConfiguration().getTestOnReturn());
-			pool.setTestWhileIdle(dataSource.getJdbcPoolConfiguration().getTestWhileIdle());
-			pool.setTimeBetweenEvictionRunsMillis(dataSource.getJdbcPoolConfiguration().getTimeBetweenEvictionRuns());
+			if (dataSource.getJdbcPoolConfiguration().getLogAbandoned() != null)
+				pool.setLogAbandoned(dataSource.getJdbcPoolConfiguration().getLogAbandoned());
+			if (dataSource.getJdbcPoolConfiguration().getTestOnReturn() != null)
+				pool.setTestOnReturn(dataSource.getJdbcPoolConfiguration().getTestOnReturn());
+			if (dataSource.getJdbcPoolConfiguration().getTestWhileIdle() != null)
+				pool.setTestWhileIdle(dataSource.getJdbcPoolConfiguration().getTestWhileIdle());
+			if (dataSource.getJdbcPoolConfiguration().getTimeBetweenEvictionRuns() != null)
+				pool.setTimeBetweenEvictionRunsMillis(dataSource.getJdbcPoolConfiguration().getTimeBetweenEvictionRuns());
 			pool.setValidationQuery(dataSource.getJdbcPoolConfiguration().getValidationQuery());
 		} else {
 			pool.setMaxWaitMillis(60000);

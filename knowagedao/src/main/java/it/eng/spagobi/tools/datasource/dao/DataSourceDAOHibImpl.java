@@ -680,9 +680,13 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		IDataSource ds = DataSourceFactory.getDataSource();
 
 		try {
-			if (jdbcAdvancedOptions != null) {
-				JDBCDataSourcePoolConfiguration jdbcPoolConfig = mapper.readValue(jdbcAdvancedOptions, JDBCDataSourcePoolConfiguration.class);
-				ds.setJdbcPoolConfiguration(jdbcPoolConfig);
+			if (!ds.checkIsJndi()) {
+				if (jdbcAdvancedOptions != null) {
+					JDBCDataSourcePoolConfiguration jdbcPoolConfig = mapper.readValue(jdbcAdvancedOptions, JDBCDataSourcePoolConfiguration.class);
+					ds.setJdbcPoolConfiguration(jdbcPoolConfig);
+				} else {
+					ds.setJdbcPoolConfiguration(new JDBCDataSourcePoolConfiguration());
+				}
 			}
 			ds.setDsId(hibDataSource.getDsId());
 			ds.setLabel(hibDataSource.getLabel());

@@ -55,7 +55,14 @@ public class JDBCDataSourcePoolConfiguration implements Serializable {
 	private Boolean testWhileIdle;
 
 	public JDBCDataSourcePoolConfiguration() {
-
+		this.maxWait = 60000L;
+		this.abandonedTimeout = 60;
+		this.timeBetweenEvictionRuns = 10000L;
+		this.removeAbandonedOnBorrow = true;
+		this.removeAbandonedOnMaintenance = true;
+		this.logAbandoned = true;
+		this.testOnReturn = true;
+		this.testWhileIdle = true;
 	}
 
 	public JDBCDataSourcePoolConfiguration(Long maxWait, Integer abandonedTimeout, Long timeBetweenEvictionRuns, String validationQuery,
