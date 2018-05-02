@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.dialect.function.VarArgsSQLFunction;
 import org.json.JSONObject;
 
@@ -29,11 +30,11 @@ import it.eng.qbe.utility.CustomFunctionsSingleton;
 import it.eng.qbe.utility.CustomizedFunctionsReader;
 import it.eng.qbe.utility.bo.CustomizedFunction;
 
-public class ExtendedOracle10Dialect extends MySQLInnoDBDialect {
+public class ExtendedOracleDialect extends OracleDialect {
 
 	static protected Logger logger = Logger.getLogger(ExtendedMySQLDialect.class);
 
-	public ExtendedOracle10Dialect() {
+	public ExtendedOracleDialect() {
 		super();
 		logger.debug("IN");
 		// try {
@@ -51,9 +52,13 @@ public class ExtendedOracle10Dialect extends MySQLInnoDBDialect {
 				CustomizedFunction customizedFunction = iterator.next();
 				logger.debug("register function " + customizedFunction);
 
-				registerFunction(customizedFunction.getName(), new VarArgsSQLFunction(customizedFunction.getName() + "(", ",", ")"));
-
-				// registerFunction(customizedFunction.getFunction(), new StandardSQLFunction(customizedFunction.getFunction()));
+				if (!customizedFunction.getParameters().isEmpty()) {
+					VarArgsSQLFunction sqlFunction = new VarArgsSQLFunction(customizedFunction.getName() + "(", ",", ")");
+					registerFunction(customizedFunction.getName(), sqlFunction);
+				} else {
+					StandardSQLFunction sqlFunction = new StandardSQLFunction(customizedFunction.getName());
+					registerFunction(customizedFunction.getName(), sqlFunction);
+				}
 
 			}
 		} else {
