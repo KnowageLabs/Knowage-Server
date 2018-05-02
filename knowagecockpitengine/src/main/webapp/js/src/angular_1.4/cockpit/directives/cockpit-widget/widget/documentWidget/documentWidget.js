@@ -73,26 +73,28 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 			pathUrl+="&SELECTED_ROLE="+cockpitModule_properties.SELECTED_ROLE
 			
 			//load document parameter
-			var docPa={};
-			angular.forEach(doc.objParameter,function(param){
-				this[param.urlName]=cockpitModule_utilstServices.getParameterValue(param.value);
-			},docPa)
-			var assSel=cockpitModule_widgetSelection.getCurrentSelections(doc.DOCUMENT_LABEL)
-			if(assSel!=undefined && assSel.hasOwnProperty(doc.DOCUMENT_LABEL)){
-				for(var parName in assSel[doc.DOCUMENT_LABEL]){
-					var parV=assSel[doc.DOCUMENT_LABEL][parName];
-					if(parV!=undefined){
-						var finalP=[];
-						angular.forEach(parV,function(item){
-							this.push(item.substring(2,item.length-2))
-						},finalP)
-						docPa[parName.substring(3,parName.length-1)]=finalP.join(",");
+			if (doc.objParameter && doc.objParameter.length > 0){
+				var docPa={};
+				angular.forEach(doc.objParameter,function(param){
+					this[param.urlName]=cockpitModule_utilstServices.getParameterValue(param.value);
+				},docPa)
+				var assSel=cockpitModule_widgetSelection.getCurrentSelections(doc.DOCUMENT_LABEL)
+				if(assSel!=undefined && assSel.hasOwnProperty(doc.DOCUMENT_LABEL)){
+					for(var parName in assSel[doc.DOCUMENT_LABEL]){
+						var parV=assSel[doc.DOCUMENT_LABEL][parName];
+						if(parV!=undefined){
+							var finalP=[];
+							angular.forEach(parV,function(item){
+								this.push(item.substring(2,item.length-2))
+							},finalP)
+							docPa[parName.substring(3,parName.length-1)]=finalP.join(",");
+						}
+							
 					}
-						
 				}
+				
+				pathUrl+="&COCKPIT_PARAMETER="+JSON.stringify(docPa)
 			}
-			
-			pathUrl+="&COCKPIT_PARAMETER="+JSON.stringify(docPa)
 			pathUrl+="&IS_FROM_DOCUMENT_WIDGET=true";
 			
 			var tmpUrl = sbiModule_config.externalBasePath+'/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&IS_SOURCE_DOCUMENT=true&SBI_EXECUTION_ID=null'+pathUrl;
