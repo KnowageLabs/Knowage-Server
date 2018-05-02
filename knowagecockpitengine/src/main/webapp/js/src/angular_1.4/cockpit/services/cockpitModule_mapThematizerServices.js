@@ -298,14 +298,23 @@
 			}
 			return toReturn;
 		}
+		
+		mts.getLegend = function (){
+			var toReturn = [];
+			for (l in mts.activeLegend){
+				var config = mts.getActiveConf(l);
+				toReturn.push({"layer": l, "config": mts.activeLegend[l]});
+			}
+			return toReturn;
+		}
 
 
 		mts.updateLegend = function(layerName, data){
 			var config = mts.getActiveConf(layerName) || {};
-			if (!config.analysisConf) {
-				console.log("Thematization isn't required");
-				return;
-			}
+//			if (!config.analysisConf) {
+//				console.log("Thematization isn't required");
+//				return;
+//			}
 					
 			if (!mts.activeLegend) mts.activeLegend = {};
 //			if (!mts.getActiveIndicator()) mts.setActiveIndicator(config.defaultIndicator);

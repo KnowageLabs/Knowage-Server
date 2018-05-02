@@ -1,0 +1,16 @@
+<!-- legend panel -->
+<!-- <div class="mapWidgetLegend" style="position:absolute;display:block;width:300px;height:100px;"> -->
+<div >
+	<md-toolbar layout="row" class="secondaryToolbar" layout-align="start center">
+	   	<h2 class="md-toolbar-tools">LEGEND</h2>
+	   	<span flex></span>
+	</md-toolbar>
+	
+	<div ng-repeat="legendElem in legend" >
+		<div class="legend" layout="column" >
+			    <span flex>{{legendElem.layer}}</span>
+			    <div style="background: linear-gradient(to right, {{legendElem.config.choroplet[0].color}} 0%, {{legendElem.config.choroplet[legendElem.config.choroplet.length-1].color}} 100%);height:10px;width:100px;display:block;"></div> 
+		</div>
+	</div>
+</div>	
+

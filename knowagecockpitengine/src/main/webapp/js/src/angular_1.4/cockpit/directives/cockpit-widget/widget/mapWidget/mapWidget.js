@@ -69,6 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.savedValues = {};
 		$scope.configs = {}; //layers with configuration
 		$scope.columnsConfig = {} //layers with just columns definition
+		$scope.legends = []; //layers with legends configuration
 
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
 		//set a watcher on a variable that can contains the associative selections for realtime dataset
@@ -281,6 +282,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //############################################## SPECIFIC MAP WIDGET METHODS #########################################################################
 
+	    $scope.getLegend = function(){
+	    	$scope.legend = cockpitModule_mapThematizerServices.getLegend();
+	    }
+	    
+	    
 	    $scope.getLayers = function () {
 		    for (l in $scope.ngModel.content.layers){
 		    	var layerDef =  $scope.ngModel.content.layers[l];
@@ -353,6 +359,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			cockpitModule_mapThematizerServices.setActiveConf(layerDef.name, layerDef);
 			cockpitModule_mapThematizerServices.updateLegend(layerDef.name, data);
+			$scope.getLegend();
 			var layer;
 			if (isCluster) {
 				var clusterSource = new ol.source.Cluster({source: featuresSource
