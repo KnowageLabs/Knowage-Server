@@ -17,6 +17,14 @@
  */
 package it.eng.spagobi.services.proxy;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+import javax.xml.rpc.ServiceException;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.dataset.stub.DataSetServiceServiceLocator;
@@ -25,14 +33,6 @@ import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.utils.datamart.DefaultEngineDatamartRetriever;
 import it.eng.spagobi.tools.dataset.utils.datamart.IQbeDataSetDatamartRetriever;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-import javax.xml.rpc.ServiceException;
-
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -61,12 +61,10 @@ public final class DataSetServiceProxy extends AbstractServiceProxy {
 		super();
 	}
 
-	public DataSetServiceProxy(String user, String secureAttributes, String serviceUrlStr, String spagoBiServerURL, String token, String pass) {
-		super(user, secureAttributes, serviceUrlStr, spagoBiServerURL, token, pass);
+	public DataSetServiceProxy(String user, String secureAttributes, String serviceUrlStr, String spagoBiServerURL, String token) {
+		super(user, secureAttributes, serviceUrlStr, spagoBiServerURL, token);
 		if (user == null)
 			logger.error("User ID IS NULL....");
-		if (pass == null)
-			logger.error("pass IS NULL....");
 		if (secureAttributes == null)
 			logger.error("secureAttributes IS NULL....");
 		if (serviceUrlStr == null)
@@ -77,16 +75,16 @@ public final class DataSetServiceProxy extends AbstractServiceProxy {
 			logger.error("token IS NULL....");
 	}
 
-	public DataSetServiceProxy(String user, String secureAttributes, String serviceUrlStr, String spagoBiServerURL, String token, String pass,
+	public DataSetServiceProxy(String user, String secureAttributes, String serviceUrlStr, String spagoBiServerURL, String token,
 			MetamodelServiceProxy metamodelServiceProxy) {
-		this(user, secureAttributes, serviceUrlStr, spagoBiServerURL, token, pass);
+		this(user, secureAttributes, serviceUrlStr, spagoBiServerURL, token);
 		this.metamodelServiceProxy = metamodelServiceProxy;
 
 	}
 
-	public DataSetServiceProxy(String user, String secureAttributes, String serviceUrlStr, String spagoBiServerURL, String token, String pass,
+	public DataSetServiceProxy(String user, String secureAttributes, String serviceUrlStr, String spagoBiServerURL, String token,
 			MetamodelServiceProxy metamodelServiceProxy, HttpSession session) {
-		this(user, secureAttributes, serviceUrlStr, spagoBiServerURL, token, pass, metamodelServiceProxy);
+		this(user, secureAttributes, serviceUrlStr, spagoBiServerURL, token, metamodelServiceProxy);
 		this.session = session;
 	}
 

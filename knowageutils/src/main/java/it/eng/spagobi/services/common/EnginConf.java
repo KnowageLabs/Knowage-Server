@@ -91,17 +91,6 @@ public class EnginConf {
 	}
 
 	/**
-	 * Gets the pass.
-	 *
-	 * @return the pass
-	 */
-	public String getPass() {
-		SourceBean passSB = (SourceBean) config.getAttribute("PASS");
-		String pass = passSB.getCharacters();
-		return pass;
-	}
-
-	/**
 	 * @return the resourcePath from config
 	 */
 	private void setResourcePath() {

@@ -17,7 +17,6 @@
 	<!--  SSO settings  -->
 	<INTEGRATION_CLASS_JNDI>java://comp/env/sso_class</INTEGRATION_CLASS_JNDI>
 	<FILTER_RECEIPT>/proxyCallback</FILTER_RECEIPT>	
-	<PASS>PASS</PASS>	
 	
 	<!--  SPAGOBI_SERVER_URL Address for invoking WebService, if empty use the request parameters -->
 	<SPAGOBI_SERVER_URL></SPAGOBI_SERVER_URL>

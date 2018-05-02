@@ -22,10 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 package spagobi.birt.oda.impl.server;
 
-import it.eng.spagobi.services.proxy.DataSetServiceProxy;
-import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -42,6 +38,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ibm.icu.util.ULocale;
+
+import it.eng.spagobi.services.proxy.DataSetServiceProxy;
+import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 
 /**
  * Implementation class of IConnection for an ODA runtime driver.
@@ -66,7 +66,6 @@ public class Connection implements IConnection {
 	public static String SBI_BIRT_RUNTIME_SERVICE_URL = "SBI_BIRT_RUNTIME_SERVICE_URL";
 	public static String SBI_BIRT_RUNTIME_SERVER_URL = "SBI_BIRT_RUNTIME_SERVER_URL";
 	public static String SBI_BIRT_RUNTIME_TOKEN = "SBI_BIRT_RUNTIME_TOKEN";
-	public static String SBI_BIRT_RUNTIME_PASS = "SBI_BIRT_RUNTIME_PASS";
 	public static String SBI_BIRT_RUNTIME_PARS_MAP = "SBI_BIRT_RUNTIME_PARS_MAP";
 	public static String SBI_BIRT_RUNTIME_PROFILE_USER_ATTRS = "SBI_BIRT_RUNTIME_PROFILE_USER_ATTRS";
 
@@ -119,7 +118,6 @@ public class Connection implements IConnection {
 			String metamodelServiceUrlStr = getMetamodelServiceUrl();
 			String spagoBiServerURL = getSpagoBIServerUrl();
 			String token = getToken();
-			String pass = getPass();
 			resourcePath = getResPath();
 			pars = getParsMap();
 			userProfAttrs = getUserProfileMap();
@@ -127,8 +125,8 @@ public class Connection implements IConnection {
 			jsFileName = getJsFileName();
 			HttpSession session = getSession();
 
-			MetamodelServiceProxy metamodelproxy = new MetamodelServiceProxy(userId, secureAttributes, metamodelServiceUrlStr, spagoBiServerURL, token, pass);
-			proxy = new DataSetServiceProxy(userId, secureAttributes, serviceUrlStr, spagoBiServerURL, token, pass, metamodelproxy, session);
+			MetamodelServiceProxy metamodelproxy = new MetamodelServiceProxy(userId, secureAttributes, metamodelServiceUrlStr, spagoBiServerURL, token);
+			proxy = new DataSetServiceProxy(userId, secureAttributes, serviceUrlStr, spagoBiServerURL, token, metamodelproxy, session);
 
 		} catch (Exception e) {
 			throw new RuntimeException("Error while getting DataSetServiceProxy from Birt runtime context", e);
@@ -242,16 +240,6 @@ public class Connection implements IConnection {
 			HashMap map = (HashMap) context;
 			String token = (String) map.get(SBI_BIRT_RUNTIME_TOKEN);
 			return token;
-		} catch (Exception e) {
-			throw new RuntimeException("Error while getting user id from Birt runtime context", e);
-		}
-	}
-
-	private String getPass() {
-		try {
-			HashMap map = (HashMap) context;
-			String pass = (String) map.get(SBI_BIRT_RUNTIME_PASS);
-			return pass;
 		} catch (Exception e) {
 			throw new RuntimeException("Error while getting user id from Birt runtime context", e);
 		}
