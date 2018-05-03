@@ -83,7 +83,7 @@ angular.module('chartInitializer')
 			if(selectionsAndParams){
 				this.chart.selectionsAndParams = selectionsAndParams;
 			}
-			if(this.chart.xAxis[0]){
+			if(this.chart.xAxis[0] && this.chart.xAxis[0].axisTitle){
 				for (var i = 0; i < this.chart.xAxis.length; i++) {
 					this.chart.xAxis[i].titleOriginal = this.chart.xAxis[i].axisTitle.textStr;
 					if(i>0){
