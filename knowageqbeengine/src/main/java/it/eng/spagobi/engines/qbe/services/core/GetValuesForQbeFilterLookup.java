@@ -291,7 +291,13 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 				cftype = fieldDescriptor.getString("type");
 			}
 
-			query.addInLineCalculatedFiled("Valori", fieldDescriptor.getString("expression"), slots, cftype, nature, true, true, false, "asc", "NONE", entity);
+			boolean editable = true;
+			if (fieldDescriptor.has("editable") && fieldDescriptor.get("editable").toString().equalsIgnoreCase("false")) {
+				editable = false;
+			}
+
+			query.addInLineCalculatedFiled("Valori", fieldDescriptor.getString("expression"), slots, cftype, nature, true, true, false, "asc", "NONE", entity,
+					editable);
 			value = fieldDescriptor.getString("expression");
 		} else {
 			query.addSelectFiled(fieldDescriptor.getString("entity"), "NONE", "Valori", true, true, false, "asc", null);
