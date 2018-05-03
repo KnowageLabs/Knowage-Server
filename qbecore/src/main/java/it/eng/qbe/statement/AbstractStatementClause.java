@@ -129,9 +129,15 @@ public abstract class AbstractStatementClause implements IStatementClause {
 
 					fieldName = parentStatement.getFieldAliasNoRoles(modelField, entityAliases, entityAliasesMaps);
 
+					if (modelField.getProperties().get("customFunction") != null && !modelField.getProperties().get("customFunction").equals("")) {
+						String function = modelField.getProperties().get("customFunction").toString();
+						CustomFunction cfunc = new CustomFunction(function);
+						fieldName = cfunc.apply(fieldName);
+					}
+
 					logger.debug("Expression token [" + token + "] query name is equal to [" + fieldName + "]");
 
-					fieldQueryNames.add(fieldName);
+					fieldQueryNames.add(fieldName); // search if function has to be applied to token!
 					fieldExpressionNames.add(token);
 				} else {
 					logger.debug("Expression token [" + token + "] does not references any model field");
