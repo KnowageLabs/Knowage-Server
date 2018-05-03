@@ -208,7 +208,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			String jsonTemplate = getEngineInstance().getTemplate().toString();
 			logger.debug("jsonTemplate " + jsonTemplate);
 			return ChartEngineDataUtil.drilldown(jsonTemplate, breadcrumb, dataSet, analyticalDrivers, profileAttributes, getLocale(),
-					getEngineInstance().getDocumentLabel(), getEngineInstance().getUserProfile());
+					getEngineInstance().getDocumentLabel(), getEngineInstance().getUserProfile(), "", "", "", null);
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while executing service: JsonChartTemplateService.drilldownHighchart", t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
@@ -224,11 +224,17 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@SuppressWarnings("rawtypes")
 	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
-	public String drilldownHighchartForCockpit(@FormParam("breadcrumb") String breadcrumb, @FormParam("widgetData") String widgetData) {
+	public String drilldownHighchartForCockpit(@FormParam("breadcrumb") String breadcrumb, @FormParam("widgetData") String widgetData,
+			@FormParam("selections") String selections, @FormParam("parameters") String parameters, @FormParam("aggregations") String aggregations,
+			@DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
+			@QueryParam("nearRealtime") boolean isNearRealtime) {
 		logger.debug("IN");
 		logger.debug("Breadcrumb parameter value: " + breadcrumb);
 		logger.debug("WidgetData parameter value: " + widgetData);
-
+		Map<String, Object> queryParams = new HashMap<String, Object>();
+		queryParams.put("offset", offset);
+		queryParams.put("size", fetchSize);
+		queryParams.put("nearRealtime", isNearRealtime);
 		JSONObject widgetDataJson = null;
 		String jsonTemplate = null;
 		UserProfile userProfile = getIOManager().getUserProfile();
@@ -237,7 +243,6 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 		String datasetLabel = null;
 		Map analyticalDrivers = new HashMap<>();
 		Map profileAttributes = new HashMap<>();
-
 		try {
 			widgetDataJson = new JSONObject(widgetData);
 
@@ -251,7 +256,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			jsonTemplate = widgetDataJson.getString("chartTemplate");
 			logger.debug("Property chartTemplate of object widgetDataJson is: " + jsonTemplate);
 			return ChartEngineDataUtil.drilldown(jsonTemplate, breadcrumb, dataSet, analyticalDrivers, profileAttributes, getIOManager().getLocale(), null,
-					userProfile);
+					userProfile, selections, aggregations, parameters, queryParams);
 
 		} catch (JSONException e) {
 			logger.error("Error creating json object from query param widgetData");

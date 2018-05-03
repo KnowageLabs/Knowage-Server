@@ -47,6 +47,7 @@ angular.module('chartInitializer')
 		var handleCockpitSelection = renderObj.handleCockpitSelection;
 		var exportWebApp = renderObj.exportWebApp;
 		var widgetData = renderObj.widgetData;
+		var selectionsAndParams = renderObj.selectionsAndParams;
 
 		chartConfConf = chartConf;
 		if(!exportWebApp) {
@@ -78,6 +79,9 @@ angular.module('chartInitializer')
 			this.chart.widgetData = widgetData;
 			if(jsonData){
 				this.chart.jsonData = JSON.parse(jsonData.jsonData);
+			}
+			if(selectionsAndParams){
+				this.chart.selectionsAndParams = selectionsAndParams;
 			}
 			if(this.chart.xAxis[0]){
 				for (var i = 0; i < this.chart.xAxis.length; i++) {
@@ -375,8 +379,22 @@ angular.module('chartInitializer')
 					}
 
 					params.breadcrumb = JSON.stringify(chart.breadcrumb);
-
-					jsonChartTemplate.drilldownHighchart(params)
+					var forQueryParam= "";
+					if(chart.selectionsAndParams && chart.selectionsAndParams.parameters){
+						params.parameters = getParametersAsString(chart.selectionsAndParams.parameters);
+					}
+					if(chart.selectionsAndParams && chart.selectionsAndParams.selections){
+						params.selections = chart.selectionsAndParams.selections;
+					}
+					if(chart.selectionsAndParams && chart.selectionsAndParams.aggregations){
+						params.aggregations = chart.selectionsAndParams.aggregations;
+					}
+					if(chart.selectionsAndParams && chart.selectionsAndParams.par){
+						forQueryParam = chart.selectionsAndParams.par;
+					}
+					
+					
+					jsonChartTemplate.drilldownHighchart(params,forQueryParam)
 					.then(function(series){
 
 						if(chart.options.drilledCategories.length==0){
@@ -601,7 +619,23 @@ angular.module('chartInitializer')
 			chartConf.chart.width = container.clientWidth*(chartConf.chart.width/100);
 		}
 	}
+ var getParametersAsString = function(parameters){
+		var delim = "";
+		var output = "{";
+		for (var parameter in parameters) {
+			if (parameters.hasOwnProperty(parameter)){
+				if (parameters[parameter] == null || parameters[parameter] == undefined) {
+					output += delim + "\"" + parameter + "\":null";
+				}else{
+					output += delim + "\"" + parameter + "\":" + JSON.stringify(parameters[parameter]).replace("[","").replace("]","").replace("\",\"",",");
+				}
+			}
+			delim = ",";
+		}
+		output += "}";
 
+		return output;
+	}
 
 
 

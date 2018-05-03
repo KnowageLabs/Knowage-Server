@@ -13,12 +13,14 @@
 #foreach($serie in $chart.CHART.VALUES.SERIE)
 	#if($serie.get($name) == $drilldownSerie)
 	#set($mainSerieName =$serie.get($col))
+	#set($groupingFunction=$serie.get("groupingFunction"))
 	#end
 #end
 #elseif($chart.CHART.VALUES.SERIE.class.name == 'java.util.LinkedHashMap')
 	#if($chart.CHART.VALUES.SERIE.name == $drilldownSerie)
 		#set($mainSerie = $chart.CHART.VALUES.SERIE)
 		#set($mainSerieName = $mainSerie.column)
+	#set($groupingFunction=$mainSerie.groupingFunction)
 	#end
 #else
 #set($mainSerieName = $drilldownSerie)
@@ -46,7 +48,15 @@
 #set($indexAxis = $a.id)
 #end
 #end
-#set($serieColumnsMapped=$dataColumnsMapper.get($mainSerieName.toLowerCase()))
+
+#set($underScore = "_")
+#if($chart.CHART.isCockpitEngine=="true")
+	#set($serieWithAgg = "$mainSerieName.toLowerCase()$underScore$groupingFunction.toLowerCase()")
+#else
+	#set($serieWithAgg=$mainSerieName.toLowerCase())
+#end
+
+#set($serieColumnsMapped=$dataColumnsMapper.get($serieWithAgg))
 
 {
 	name:	'$selectedCategory',
@@ -62,7 +72,6 @@
      pointRange: 1,
 	data: [
 #foreach($row in $rows)
-
 #set ($serieValue=$row.get($serieColumnsMapped))
 #set ($serieName= $row.get($categorieColumnsMapped))
 		{
