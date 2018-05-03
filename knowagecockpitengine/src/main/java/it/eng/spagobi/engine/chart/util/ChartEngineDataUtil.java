@@ -164,10 +164,14 @@ public class ChartEngineDataUtil {
 				for (String drillParam : drilldownParams.keySet()) {
 					key = drillParam;
 					value = (String) drilldownParams.get(drillParam);
-					JSONObject dataset = (JSONObject) selectionsJson.get(aggregationsJson.getString("dataset"));
 					String aggValue = "('" + value + "')";
 					JSONArray aggArray = new JSONArray();
 					aggArray.put(aggValue);
+					if (selectionsJson.length() == 0) {
+						selectionsJson.put(aggregationsJson.getString("dataset"), new JSONObject());
+					}
+					JSONObject dataset = (JSONObject) selectionsJson.get(aggregationsJson.getString("dataset"));
+
 					dataset.put(key, aggArray);
 				}
 
