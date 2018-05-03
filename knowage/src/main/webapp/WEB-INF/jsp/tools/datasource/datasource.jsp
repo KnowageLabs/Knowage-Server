@@ -201,7 +201,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										  			<div layout="row">
 										  				<md-input-container flex="90" class="md-block">
 															<label>{{translate.load("sbi.datasource.type.jdbc.maxWait")}}</label>
-															<input type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.maxWait"
+															<input required type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.maxWait"
 																ng-maxlength="30" ng-readonly="readOnly">
 															<div ng-messages="forms.dataSourceForm.driver.$error" ng-show="!selectedDataSource.jdbcPoolConfiguration.maxWait">
 				          										<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
@@ -213,7 +213,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										  			<div layout="row">
 										  				<md-input-container flex="90" class="md-block">
 															<label>{{translate.load("sbi.datasource.type.jdbc.abandonedTimeout")}}</label>
-															<input type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.abandonedTimeout"
+															<input required type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.abandonedTimeout"
 																ng-maxlength="20" ng-readonly="readOnly">
 															<div ng-messages="forms.dataSourceForm.driver.$error" ng-show="!selectedDataSource.jdbcPoolConfiguration.abandonedTimeout">
 				          										<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
@@ -225,7 +225,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									  				<div layout="row">
 										  				<md-input-container flex="90" class="md-block">
 															<label>{{translate.load("sbi.datasource.type.jdbc.timeBetweenEvictionRuns")}}</label>
-															<input type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns"
+															<input required  type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns"
 																ng-maxlength="30" ng-readonly="readOnly">
 															<div ng-messages="forms.dataSourceForm.driver.$error" ng-show="!selectedDataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns">
 				          										<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
