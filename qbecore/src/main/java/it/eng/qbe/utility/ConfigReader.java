@@ -50,8 +50,6 @@ public class ConfigReader extends SimpleRestClient {
 		String toReturn = null;
 		logger.debug("Call persist service in post");
 		String serviceUrlToCall = serviceUrl + "/" + CONFIG_LABEL;
-		logger.error("Test: userProfile " + userProfile + " userId " + userProfile.getUserId());
-		logger.error("Test: ServiceUrlToCall " + serviceUrlToCall);
 
 		Response resp = executeGetService(null, serviceUrlToCall, userProfile.getUserUniqueIdentifier().toString());
 
