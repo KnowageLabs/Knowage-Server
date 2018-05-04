@@ -133,13 +133,13 @@ public class ConfigResource extends AbstractSpagoBIResource {
 	public String getKnowageCalculatedFunctionConfig(@PathParam("dataSourceId") Integer dataSourceId) throws JSONException {
 		logger.debug("IN");
 		IConfigDAO configsDao = null;
-		JSONArray array = new JSONArray();
+		JSONObject toReturn = new JSONObject();
 		JSONObject configJSON = new JSONObject();
 
-		if (dataSourceId == null) {
-			logger.error("dataSourceId not passed the service, check service invocation");
-			throw new SpagoBIRuntimeException("dataSourceId not passed the service, check service invocation");
-		}
+		// if (dataSourceId == null) {
+		// logger.error("dataSourceId not passed the service, check service invocation");
+		// throw new SpagoBIRuntimeException("dataSourceId not passed the service, check service invocation");
+		// }
 
 		Config dm = null;
 		try {
@@ -164,8 +164,9 @@ public class ConfigResource extends AbstractSpagoBIResource {
 						+ " to JSON, correct the KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS variable, meanwhile ignore custom functions", e);
 			}
 
-			if (array != null) {
+			if (dataSourceId != null && dataSourceId != -1) {
 				logger.debug("get the db type and extract wanted information from config varaible");
+				JSONArray array = new JSONArray();
 
 				try {
 
@@ -191,23 +192,19 @@ public class ConfigResource extends AbstractSpagoBIResource {
 						} else {
 							logger.error("Problem in finding custom functions voice for dbType " + dbType);
 						}
+						toReturn.put("data", array);
 					}
 				} catch (DataBaseException e) {
 					logger.error("Error in recovering dialect DB", e);
 				} catch (EMFUserError e) {
 					logger.error("Error in recovering dialect DB", e);
 				}
+			} else {
+				logger.debug("get for all DB");
+				toReturn.put("data", configJSON);
 			}
 
 		}
-		if (array != null) {
-			logger.debug("found custom functions for current DB");
-		} else {
-			array = new JSONArray();
-		}
-
-		JSONObject toReturn = new JSONObject();
-		toReturn.put("data", array);
 
 		logger.debug("OUT");
 
