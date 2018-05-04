@@ -17,19 +17,19 @@
  */
 package it.eng.knowage.engines.svgviewer.map.provider.configurator;
 
+import org.apache.log4j.Logger;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.knowage.engines.svgviewer.map.provider.SOMapProvider;
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.callbacks.mapcatalogue.MapCatalogueAccessUtils;
-
-import org.apache.log4j.Logger;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 /**
  * The Class SOMapProviderConfigurator.
@@ -54,8 +54,8 @@ public class SOMapProviderConfigurator {
 	public static void configure(SOMapProvider soMapProvider, Object conf) throws SvgViewerEngineException {
 		Monitor mapCatalogueServiceProxyMonitor = MonitorFactory.start("GeoEngine.SOMapProviderConfigurator.configure.mapCatalogueServiceProxy");
 
-		MapCatalogueAccessUtils mapCatalogueServiceProxy = (MapCatalogueAccessUtils) soMapProvider.getEnv().get(
-				SvgViewerEngineConstants.ENV_MAPCATALOGUE_SERVICE_PROXY);
+		MapCatalogueAccessUtils mapCatalogueServiceProxy = (MapCatalogueAccessUtils) soMapProvider.getEnv()
+				.get(SvgViewerEngineConstants.ENV_MAPCATALOGUE_SERVICE_PROXY);
 
 		soMapProvider.setMapCatalogueServiceProxy(mapCatalogueServiceProxy);
 
@@ -87,7 +87,7 @@ public class SOMapProviderConfigurator {
 			return null;
 		}
 
-		dataSource = new DataSource();
+		dataSource = DataSourceFactory.getDataSource();
 
 		String type = (String) datasourceSB.getAttribute(SvgViewerEngineConstants.DATASET_TYPE_ATTRIBUTE);
 		if ("connection".equalsIgnoreCase(type)) {

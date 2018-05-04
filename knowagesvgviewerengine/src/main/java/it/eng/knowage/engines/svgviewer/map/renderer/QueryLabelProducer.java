@@ -17,11 +17,6 @@
  */
 package it.eng.knowage.engines.svgviewer.map.renderer;
 
-import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,6 +24,11 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
  * The Class QueryLabelProducer.
@@ -50,14 +50,14 @@ public class QueryLabelProducer extends AbstractLabelProducer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.renderer.LabelProducer#init(it.eng.spago.base.SourceBean)
 	 */
 	@Override
 	public void init(SourceBean conf) {
 		super.init(conf);
 		SourceBean dataSourceSB = (SourceBean) conf.getAttribute("DATASOURCE");
-		dataSource = new DataSource();
+		dataSource = DataSourceFactory.getDataSource();
 
 		String type = (String) dataSourceSB.getAttribute(SvgViewerEngineConstants.DATASET_TYPE_ATTRIBUTE);
 		if ("connection".equalsIgnoreCase(type)) {
@@ -86,7 +86,7 @@ public class QueryLabelProducer extends AbstractLabelProducer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.renderer.LabelProducer#getLabel()
 	 */
 	@Override
