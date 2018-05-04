@@ -202,6 +202,7 @@ function cockpitChartWidgetControllerFunction(
 		$mdDialog){
 	$scope.property={style:{}};
 	$scope.selectedTab = {'tab' : 0};
+	$scope.cockpitModule_widgetSelection = cockpitModule_widgetSelection;
 	//variable that contains last data of realtime dataset
 	$scope.realTimeDatasetData;
 	//variable that contains last data of realtime dataset not filtered by selections
@@ -230,6 +231,32 @@ function cockpitChartWidgetControllerFunction(
 	$scope.refresh=function(element,width,height,data,nature, undefined, changedChartType,dataAndChartConf){
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
+			var aggregations = cockpitModule_widgetSelection.getAggregation($scope.ngModel,dataset);
+			
+			var filtersParams = $scope.cockpitModule_widgetSelection.getCurrentSelections(dataset.name);
+			if(Object.keys(filtersParams).length == 0){
+				var filtersParams = $scope.cockpitModule_widgetSelection.getCurrentFilters(dataset.name);
+			}
+			
+			var params = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
+			var objForDrill = {};
+			objForDrill.aggregations = aggregations;
+			objForDrill.selections = filtersParams;
+			objForDrill.parameters = params;
+			objForDrill.par = "?offset=-1&size=-1";
+			if(!dataset.useCache){
+				objForDrill.par+="&nearRealtime=true";
+			}
+			var limitRows;
+			if($scope.ngModel.limitRows){
+				limitRows = $scope.ngModel.limitRows;
+			}else if($scope.ngModel.content && $scope.ngModel.content.limitRows){
+				limitRows = $scope.ngModel.content.limitRows;
+			}
+			if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
+				objForDrill.par += "&limit=" + limitRows.rows;
+			}
+			objForDrill.par += "&widgetName=" + encodeURIComponent($scope.ngModel.content.name);
 			if (dataset.isRealtime == true){
 				//Refresh for Realtime datasets
 				var dataToPass = data;
@@ -243,11 +270,11 @@ function cockpitChartWidgetControllerFunction(
 				} else {
 					dataToPass = $scope.realtimeDataManagement($scope.realTimeDatasetData, nature);
 				}
-				$scope.$broadcast(nature,dataToPass,dataset.isRealtime,changedChartType,dataAndChartConf);
+				$scope.$broadcast(nature,dataToPass,dataset.isRealtime,changedChartType,dataAndChartConf,objForDrill);
 
 			} else {
 				//Refresh for Not realtime datasets
-				$scope.$broadcast(nature,data, false, changedChartType,dataAndChartConf);
+				$scope.$broadcast(nature,data, false, changedChartType,dataAndChartConf,objForDrill);
 			}
 		}
 

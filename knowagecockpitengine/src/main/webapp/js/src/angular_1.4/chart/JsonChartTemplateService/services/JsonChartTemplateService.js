@@ -118,16 +118,16 @@ angular.module('JsonChartTemplateServiceModule')
 			 return deferred.promise
 		},
 
-		drilldownHighchart:function(params){
+		drilldownHighchart:function(params, forQueryParam){
 
 			var string = ""
 			if(params.widgetData){
-				string = "ForCockpit"
+				string = "ForCockpit";
 			}
 
 			 var deferred = $q.defer();
 			sbiModule_restServices
-    		.promisePost('1.0/chart/jsonChartTemplate/drilldownHighchart'+string, "", $httpParamSerializer(params),config)
+    		.promisePost('1.0/chart/jsonChartTemplate/drilldownHighchart'+string, forQueryParam, $httpParamSerializer(params),config)
 
         	.then
         	(

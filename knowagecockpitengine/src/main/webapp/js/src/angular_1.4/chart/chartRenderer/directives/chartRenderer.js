@@ -60,7 +60,7 @@ angular.module('chartRendererModule')
 				scope.chartTemplate;
 				scope.chartInitializer;
 
-				scope.renderChart = function(chartConf, jsonData){
+				scope.renderChart = function(chartConf, jsonData,selectionsAndParams){
 					var locale = sbiModule_config.curr_language + "-" + sbiModule_config.curr_country;
 					if(scope.chartConf){
 						scope.chartInitializer.initChartLibrary(element[0],	'drillup', sbiModule_config.dec, sbiModule_config.thous);
@@ -98,23 +98,26 @@ angular.module('chartRendererModule')
 						renderObject.locale = locale;
 						renderObject.widgetData = scope.widgetData;
 						renderObject.chartTemplate = scope.chartTemplate.CHART;
+						if(selectionsAndParams){
+							renderObject.selectionsAndParams = selectionsAndParams;								
+						}
 						
 						scope.chartInitializer.renderChart(renderObject, jsonData);
 					}
 				}
 
-				scope.loadChart = function(chartTemplate,datesetLabel,jsonData,isRealtime,nature,dataAndChartConf){
+				scope.loadChart = function(chartTemplate,datesetLabel,jsonData,isRealtime,nature,dataAndChartConf,selectionsAndParams){
 						if(scope.widgetData){
 							if(isRealtime && nature){
 								jsonChartTemplate.readChartTemplateForCockpit(chartTemplate,false,jsonData)
 								.then(function(data){
 									scope.chartConf = eval("(" + data + ")");
-									scope.renderChart(scope.chartConf, jsonData);
+									scope.renderChart(scope.chartConf, jsonData,selectionsAndParams);
 								})
 							}
 							else {
 								scope.chartConf = eval("(" + dataAndChartConf.chartConf + ")");
-								scope.renderChart(scope.chartConf, jsonData);
+								scope.renderChart(scope.chartConf, jsonData,selectionsAndParams);
 							}
 
 						}else{
@@ -133,7 +136,7 @@ angular.module('chartRendererModule')
 
 				}
 
-			scope.$on('refresh',function(event,data,isRealtime,changedChartType,chartConf){
+			scope.$on('refresh',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
 				if(scope.updateble){
 					var dataForSending = isRealtime ? data : eval("(" + data.jsonData + ")");
 					if(scope.chartInitializer != undefined && scope.chartInitializer.updateData){
@@ -145,7 +148,7 @@ angular.module('chartRendererModule')
 								transformedData = scope.chartInitializer.transformeData(scope.widgetData,dataForSending);
 							}
 						}
-						scope.loadChart(scope.chartTemplate,scope.datasetLabel,transformedData,isRealtime, true,chartConf);
+						scope.loadChart(scope.chartTemplate,scope.datasetLabel,transformedData,isRealtime, true,chartConf,selectionsAndParams);
 					}
 				}
 			})
@@ -155,7 +158,7 @@ angular.module('chartRendererModule')
 				scope.$emit('changedChartType',scope.chartTemplate);
 			})
 
-			scope.$on('init',function(event,data, isRealtime,changedChartType,chartConf){
+			scope.$on('init',function(event,data, isRealtime,changedChartType,chartConf,selectionsAndParams){
 
 				var lib = getChartExecutionLib(scope.chartTemplate);
 				if(lib){
@@ -165,7 +168,7 @@ angular.module('chartRendererModule')
 					if(changedChartType){
 						template = ChartUpdateService.getTemplate(template);
 					}*/
-					scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime,false,chartConf);
+					scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime,false,chartConf,selectionsAndParams);
 
 				}else{
 					element[0].innerHTML = "no library implementation";
@@ -174,17 +177,17 @@ angular.module('chartRendererModule')
 
 			})
 
-			scope.$on('filters',function(event,data,isRealtime,changedChartType,chartConf){
+			scope.$on('filters',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
 
 
-				scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime, true,chartConf);
+				scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime, true,chartConf,selectionsAndParams);
 
 			})
 
-			scope.$on('selections',function(event,data,isRealtime,changedChartType,chartConf){
+			scope.$on('selections',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
 
 
-				scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime, true,chartConf);
+				scope.loadChart(scope.chartTemplate,scope.datasetLabel,data,isRealtime, true,chartConf,selectionsAndParams);
 
 			})
 

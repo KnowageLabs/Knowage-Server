@@ -47,6 +47,7 @@ angular.module('chartInitializer')
 		var handleCockpitSelection = renderObj.handleCockpitSelection;
 		var exportWebApp = renderObj.exportWebApp;
 		var widgetData = renderObj.widgetData;
+		var selectionsAndParams = renderObj.selectionsAndParams;
 
 		chartConfConf = chartConf;
 		if(!exportWebApp) {
@@ -79,15 +80,8 @@ angular.module('chartInitializer')
 			if(jsonData){
 				this.chart.jsonData = JSON.parse(jsonData.jsonData);
 			}
-			if(this.chart.xAxis[0]){
-				for (var i = 0; i < this.chart.xAxis.length; i++) {
-					this.chart.xAxis[i].titleOriginal = this.chart.xAxis[i].axisTitle.textStr;
-					if(i>0){
-						this.chart.xAxis[i].setTitle({
-							text:""
-			            });
-					}
-				}
+			if(selectionsAndParams){
+				this.chart.selectionsAndParams = selectionsAndParams;
 			}
 
 			//return chart;
@@ -375,8 +369,22 @@ angular.module('chartInitializer')
 					}
 
 					params.breadcrumb = JSON.stringify(chart.breadcrumb);
-
-					jsonChartTemplate.drilldownHighchart(params)
+					var forQueryParam= "";
+					if(chart.selectionsAndParams && chart.selectionsAndParams.parameters){
+						params.parameters = getParametersAsString(chart.selectionsAndParams.parameters);
+					}
+					if(chart.selectionsAndParams && chart.selectionsAndParams.selections){
+						params.selections = chart.selectionsAndParams.selections;
+					}
+					if(chart.selectionsAndParams && chart.selectionsAndParams.aggregations){
+						params.aggregations = chart.selectionsAndParams.aggregations;
+					}
+					if(chart.selectionsAndParams && chart.selectionsAndParams.par){
+						forQueryParam = chart.selectionsAndParams.par;
+					}
+					
+					
+					jsonChartTemplate.drilldownHighchart(params,forQueryParam)
 					.then(function(series){
 
 						if(chart.options.drilledCategories.length==0){
@@ -391,20 +399,10 @@ angular.module('chartInitializer')
 			            		text:series.serieName
 			            };
 			            
-			            if(chart.xAxis[0]){
-							for (var i = 0; i < chart.xAxis.length; i++) {
-								
-								if(chart.xAxis[i].titleOriginal == series.category){
-									chart.xAxis[i].setTitle(xAxisTitle);
-								} else {
-									chart.xAxis[i].setTitle({
-										text:""
-						            });
-								}
-							}
-						}
-			            
-			           
+			            if(chart.xAxis[0].userOptions.title.customTitle==false){
+			            	chart.xAxis[0].setTitle(xAxisTitle);
+			            }
+			            			           
 			            
 			            if(chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
 			            	chart.yAxis[0].setTitle(yAxisTitle);
@@ -426,26 +424,18 @@ angular.module('chartInitializer')
 	this.handleDrillup = function(){
 
 		var chart=this;
-		var axisTitle = chart.options.drilledCategories[chart.options.drilledCategories.length-2] 
+		//var axisTitle = chart.options.drilledCategories[chart.options.drilledCategories.length-2] 
 		chart.options.drilledCategories.pop();
 		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-2] ? chart.options.drilledCategories[chart.options.drilledCategories.length-2] : chart.options.drilledCategories[0];
 		var backText=titleText;
 		chart.drillUpButton.textSetter("Back to: <b>"+backText+"</b>");
         //  chart.redraw();
 		var xAxisTitle={
-            	text:axisTitle
-            };
-
-		if(chart.xAxis[0]){
-			for (var i = 0; i < chart.xAxis.length; i++) {
-				if(chart.xAxis[i].titleOriginal == titleText){
-					chart.xAxis[i].setTitle(xAxisTitle);
-				} else {
-					chart.xAxis[i].setTitle({
-						text:""
-					});
-				}
-			}
+            	text:titleText
+		};
+		
+		if(chart.xAxis[0].userOptions.title.customTitle==false){
+        	chart.xAxis[0].setTitle(xAxisTitle);
 		}
 		var yAxisTitle={
 				text: ' '
@@ -601,7 +591,23 @@ angular.module('chartInitializer')
 			chartConf.chart.width = container.clientWidth*(chartConf.chart.width/100);
 		}
 	}
+	var getParametersAsString = function(parameters){
+		var delim = "";
+		var output = "{";
+		for (var parameter in parameters) {
+			if (parameters.hasOwnProperty(parameter)){
+				if (parameters[parameter] == null || parameters[parameter] == undefined) {
+					output += delim + "\"" + parameter + "\":null";
+				}else{
+					output += delim + "\"" + parameter + "\":" + JSON.stringify(parameters[parameter]).replace("[","").replace("]","").replace("\",\"",",");
+				}
+			}
+			delim = ",";
+		}
+		output += "}";
 
+		return output;
+	}
 
 
 
