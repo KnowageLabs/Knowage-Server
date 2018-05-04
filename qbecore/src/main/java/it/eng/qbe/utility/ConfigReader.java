@@ -32,7 +32,7 @@ import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 
 public class ConfigReader extends SimpleRestClient {
 
-	private String serviceUrl = "/restful-services/2.0/configs/label";
+	private String serviceUrl = "/restful-services/2.0/configs/";
 
 	private static final String CONFIG_LABEL = "KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS";
 
@@ -50,6 +50,9 @@ public class ConfigReader extends SimpleRestClient {
 		String toReturn = null;
 		logger.debug("Call persist service in post");
 		String serviceUrlToCall = serviceUrl + "/" + CONFIG_LABEL;
+		logger.error("Test: userProfile " + userProfile + " userId " + userProfile.getUserId());
+		logger.error("Test: ServiceUrlToCall " + serviceUrlToCall);
+
 		Response resp = executeGetService(null, serviceUrlToCall, userProfile.getUserUniqueIdentifier().toString());
 
 		String respString = resp.readEntity(String.class);
