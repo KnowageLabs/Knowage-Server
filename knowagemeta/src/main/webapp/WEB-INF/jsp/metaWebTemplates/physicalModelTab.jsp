@@ -9,7 +9,7 @@
 			   			<span class="businessListName"><md-icon md-font-icon="{{::physicalModel_getlevelIcon(pm)}}"></md-icon> {{pm.name}}</span>
 				   		<span flex></span>
 				     	<span class="businessListProperties">{{pm.columns.length}} properties</span>
-				     	<md-button class="md-icon-button md-icon-button-32" ng-click="pm.opened = !pm.opened">
+				     	<md-button class="md-icon-button md-icon-button-32" ng-click="openBusinessModel(pm,$event)">
 				     		<md-icon md-font-icon="fa fa-chevron-down"></md-icon>
 				     	</md-button>
 			   		</div>

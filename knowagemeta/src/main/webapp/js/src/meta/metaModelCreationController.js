@@ -23,6 +23,12 @@ function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate
 				.extractCategories($scope.selectedPhysicalModel.properties),
 				$scope.currentPhysicalModelParameterCategories);
 	}
+	
+	$scope.openBusinessModel = function(model,e){
+		e.stopPropagation();
+		model.opened = !model.opened;
+	}
+	
 	$scope.physicalModel_getlevelIcon = function(node) {
 		if (node.hasOwnProperty("columns")) {
 			// is business model node
@@ -169,6 +175,11 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 		angular.copy(parametersBuilder.extractCategories($scope.selectedBusinessModel.properties),
 				$scope.currentBusinessModelParameterCategories);
 	};
+	
+	$scope.openBusinessModel = function(model,e){
+		e.stopPropagation();
+		model.opened = !model.opened;
+	}
 
 	$scope.getBusinessModelType=function(bm){
 		var prop=bm.properties;

@@ -10,7 +10,7 @@
 			   			<span class="businessListName"><md-icon md-font-icon="{{::businesslModel_getlevelIcon(bm)}}"></md-icon> {{bm.name}}</span>
 				   		<span flex></span>
 				     	<span class="businessListProperties">{{bm.columns.length}} properties</span>
-				     	<md-button class="md-icon-button md-icon-button-32" ng-click="bm.opened = !bm.opened">
+				     	<md-button class="md-icon-button md-icon-button-32" ng-click="openBusinessModel(bm,$event)">
 				     		<md-icon md-font-icon="fa fa-chevron-down"></md-icon>
 				     	</md-button>
 			   		</div>
@@ -40,7 +40,7 @@
 		      		<span class="businessListName"><md-icon md-font-icon="{{::businesslModel_getlevelIcon(bv)}}"></md-icon> {{bv.name}}</span>
 		      		<span flex></span>
 		        	<span class="businessListProperties">{{bv.columns.length}} properties</span>
-		        	<md-button class="md-icon-button md-icon-button-32" ng-click="bv.opened = !bv.opened; stopImmediatePropagation()">
+		        	<md-button class="md-icon-button md-icon-button-32" ng-click="openBusinessModel(bv,$event)">
 		        		<md-icon md-font-icon="fa fa-chevron-down"></md-icon>
 		        	</md-button>
 		      	</div>
