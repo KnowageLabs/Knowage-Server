@@ -144,7 +144,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 	$scope.sbiModule_user=sbiModule_user;
 	$scope.currentBusinessModelParameterCategories = [];
 
-	var pendingRefresh=0;
+	/*var pendingRefresh=0;
 	$scope.$watch(function() {
 		return $scope.selectedBusinessModel;
 	}, function(newValue, oldValue) {
@@ -161,7 +161,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 				}
 			},500);
 		}
-	}, true);
+	}, true);*/
 
 	$scope.selectBusinessModel = function(node) {
 		$scope.tabResource.selectedBusinessTab="propertiestab";

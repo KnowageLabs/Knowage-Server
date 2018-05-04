@@ -904,6 +904,28 @@ color-picker {
   }
 }
 
+.md-icon-button {
+  &.md-icon-button-32 {
+    margin: 0;
+    height: 32px;
+    min-width: 0;
+    line-height: 32px;
+    min-height: 32px;
+    padding: 0;
+    width: 32px;
+    border-radius: 50%;
+  }
+}
+
+.selectable {
+  cursor: pointer;
+  &:hover {
+    background-color: lighten($tableSelectedElementColor,5%);
+  }
+  &.selected {
+    background-color: $tableSelectedElementColor;
+  }
+}
 
 /* IE11 fix */
 
