@@ -18,6 +18,8 @@
 package it.eng.qbe.utility;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -105,14 +107,36 @@ public class CustomizedFunctionsReader {
 		return toReturn;
 	}
 
-	public String getStringFromList(List<CustomizedFunction> returned) {
+	public String getStringFromOrderedList(List<CustomizedFunction> returned) {
 		logger.debug("IN");
 		String toReturn = "";
 
+		// must order in decreasing lenght to avoid problem in regular expression
+
+		String[] names = new String[returned.size()];
+		int i = 0;
 		for (Iterator iterator = returned.iterator(); iterator.hasNext();) {
 			CustomizedFunction customizedFunction = (CustomizedFunction) iterator.next();
-			toReturn += "|" + customizedFunction.getName();
+			names[i] = customizedFunction.getName();
+			i++;
 		}
+
+		Arrays.sort(names, new Comparator<String>() {
+			@Override
+			public int compare(String a, String b) {
+				return Integer.compare(a.length(), b.length());// specifying compare type that is compare with length
+			}
+		});
+
+		for (int j = names.length - 1; j >= 0; j--) {
+			toReturn += "|" + names[j];
+		}
+
+		// for (Iterator iterator = returned.iterator(); iterator.hasNext();) {
+		// CustomizedFunction customizedFunction = (CustomizedFunction) iterator.next();
+		// toReturn += "|" + customizedFunction.getName();
+		// }
+
 		logger.debug("String returned " + toReturn);
 		logger.debug("OUT");
 		return toReturn;
@@ -127,7 +151,7 @@ public class CustomizedFunctionsReader {
 
 		List<CustomizedFunction> customFunctionsList = getCustomDefinedFunctionListFromJSON(jsonObj, dialect);
 
-		toReturn = getStringFromList(customFunctionsList);
+		toReturn = getStringFromOrderedList(customFunctionsList);
 
 		logger.debug("OUT");
 

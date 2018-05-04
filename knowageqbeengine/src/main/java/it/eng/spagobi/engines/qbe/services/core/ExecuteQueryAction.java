@@ -116,9 +116,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				limit = getAttributeAsInteger(LIMIT);
 			}
 
-
-			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName()
-					+ " service before having properly created an instance of EngineInstance class");
+			Assert.assertNotNull(getEngineInstance(),
+					"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 
 			// retrieving query specified by id on request
 			query = getQuery();
@@ -134,20 +133,19 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			Map<String, Map<String, String>> inlineFilteredSelectFields = query.getInlineFilteredSelectFields();
 
 			boolean thereAreInlineTemporalFilters = inlineFilteredSelectFields != null && inlineFilteredSelectFields.size() > 0;
-			if(thereAreInlineTemporalFilters) {
+			if (thereAreInlineTemporalFilters) {
 				limit = 0;
 			}
 
 			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
 			dataStore = executeQuery(start, limit);
-			if(thereAreInlineTemporalFilters) {
+			if (thereAreInlineTemporalFilters) {
 				dataStore = new TimeAggregationHandler(getDataSource()).handleTimeAggregations(query, dataStore);
 			}
 
 			resultNumber = (Integer) dataStore.getMetaData().getProperty("resultNumber");
 
 			logger.debug("Total records: " + resultNumber);
-
 
 			boolean overflow = maxSize != null && resultNumber >= maxSize;
 			if (overflow) {
@@ -175,7 +173,6 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		}
 
 	}
-
 
 	public static List<ModelFieldPaths> deserializeList(String serialized, Collection<Relationship> relationShips, IModelStructure modelStructure, Query query)
 			throws SerializationException {
