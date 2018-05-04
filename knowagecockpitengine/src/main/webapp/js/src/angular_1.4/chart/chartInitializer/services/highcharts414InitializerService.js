@@ -83,16 +83,6 @@ angular.module('chartInitializer')
 			if(selectionsAndParams){
 				this.chart.selectionsAndParams = selectionsAndParams;
 			}
-			if(this.chart.xAxis[0] && this.chart.xAxis[0].axisTitle){
-				for (var i = 0; i < this.chart.xAxis.length; i++) {
-					this.chart.xAxis[i].titleOriginal = this.chart.xAxis[i].axisTitle.textStr;
-					if(i>0){
-						this.chart.xAxis[i].setTitle({
-							text:""
-			            });
-					}
-				}
-			}
 
 			//return chart;
 
@@ -409,20 +399,10 @@ angular.module('chartInitializer')
 			            		text:series.serieName
 			            };
 			            
-			            if(chart.xAxis[0]){
-							for (var i = 0; i < chart.xAxis.length; i++) {
-								
-								if(chart.xAxis[i].titleOriginal == series.category){
-									chart.xAxis[i].setTitle(xAxisTitle);
-								} else {
-									chart.xAxis[i].setTitle({
-										text:""
-						            });
-								}
-							}
-						}
-			            
-			           
+			            if(chart.xAxis[0].userOptions.title.customTitle==false){
+			            	chart.xAxis[0].setTitle(xAxisTitle);
+			            }
+			            			           
 			            
 			            if(chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
 			            	chart.yAxis[0].setTitle(yAxisTitle);
@@ -444,26 +424,18 @@ angular.module('chartInitializer')
 	this.handleDrillup = function(){
 
 		var chart=this;
-		var axisTitle = chart.options.drilledCategories[chart.options.drilledCategories.length-2] 
+		//var axisTitle = chart.options.drilledCategories[chart.options.drilledCategories.length-2] 
 		chart.options.drilledCategories.pop();
 		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-2] ? chart.options.drilledCategories[chart.options.drilledCategories.length-2] : chart.options.drilledCategories[0];
 		var backText=titleText;
 		chart.drillUpButton.textSetter("Back to: <b>"+backText+"</b>");
         //  chart.redraw();
 		var xAxisTitle={
-            	text:axisTitle
-            };
-
-		if(chart.xAxis[0]){
-			for (var i = 0; i < chart.xAxis.length; i++) {
-				if(chart.xAxis[i].titleOriginal == titleText){
-					chart.xAxis[i].setTitle(xAxisTitle);
-				} else {
-					chart.xAxis[i].setTitle({
-						text:""
-					});
-				}
-			}
+            	text:titleText
+		};
+		
+		if(chart.xAxis[0].userOptions.title.customTitle==false){
+        	chart.xAxis[0].setTitle(xAxisTitle);
 		}
 		var yAxisTitle={
 				text: ' '
@@ -619,7 +591,7 @@ angular.module('chartInitializer')
 			chartConf.chart.width = container.clientWidth*(chartConf.chart.width/100);
 		}
 	}
- var getParametersAsString = function(parameters){
+	var getParametersAsString = function(parameters){
 		var delim = "";
 		var output = "{";
 		for (var parameter in parameters) {
