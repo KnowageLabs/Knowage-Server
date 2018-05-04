@@ -8114,6 +8114,42 @@ angular-time-picker .md-button.spinButton {
     border-bottom: 1px solid #ccc
 }
 
+.kn-cockpit .mapWidgetLegend{
+		position:absolute;
+		display:block;
+		min-width:240px;
+		width:auto;
+		height:auto;
+		bottom:0;
+		z-index:999;
+		background-color:white;
+		opacity:0.9;
+		border-radius:5px;
+}
+
+.kn-cockpit .mapWidgetLegend .legendLayerLabel{
+			font-size:.7rem;
+			font-weight:bold;
+}
+		
+.kn-cockpit .mapWidgetLegend .legendStartLimit{
+			left:0%;
+			position:relative;
+			font-size:.7rem;
+			width:50px;
+			text-align: right;
+}
+		
+.kn-cockpit .mapWidgetLegend .legendEndLimit{
+			right:0%;
+			position:relative;
+			font-size:.7rem;
+			width:50px;
+			text-align: left;
+}
+	
+
+
 .kn-cockpit cockpit-html-widget {
     overflow: auto
 }

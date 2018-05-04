@@ -646,6 +646,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	
 		    	cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name +'|'+ elem.name, values);
 		    	cockpitModule_mapThematizerServices.updateLegend(config.name, values);
+		    	$scope.getLegend();
 	    	}
 			var newSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, measure, config, configColumns,  values);
 			if (config.clusterConf && config.clusterConf.enabled){

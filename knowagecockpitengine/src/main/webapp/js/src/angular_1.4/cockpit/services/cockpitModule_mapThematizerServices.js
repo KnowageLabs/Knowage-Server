@@ -302,8 +302,17 @@
 		mts.getLegend = function (){
 			var toReturn = [];
 			for (l in mts.activeLegend){
-				var config = mts.getActiveConf(l);
-				toReturn.push({"layer": l, "config": mts.activeLegend[l]});
+				var colors = "";
+				var limits = [];
+				if (mts.activeLegend[l] && mts.activeLegend[l].choroplet){
+					for (c in mts.activeLegend[l].choroplet){
+						var tmpConf = mts.activeLegend[l].choroplet[c];
+						if (tmpConf.color) colors += ", " + tmpConf.color;
+						if (limits.length == 0) limits.push(tmpConf.from);
+						if (limits.length >= 1) limits.splice(1, 1, tmpConf.to);
+					}	
+				}
+				toReturn.push({"layer": l, "colors": colors, "limits": limits});
 			}
 			return toReturn;
 		}
@@ -311,19 +320,15 @@
 
 		mts.updateLegend = function(layerName, data){
 			var config = mts.getActiveConf(layerName) || {};
-//			if (!config.analysisConf) {
-//				console.log("Thematization isn't required");
-//				return;
-//			}
-					
-			if (!mts.activeLegend) mts.activeLegend = {};
-//			if (!mts.getActiveIndicator()) mts.setActiveIndicator(config.defaultIndicator);
-			mts.setActiveIndicator(config.defaultIndicator);
-			console.log("mts.getActiveIndicator(): ",mts.getActiveIndicator());
-			console.log("config.defaultIndicator: ",config.defaultIndicator);
-			
 			
 			if (config.analysisConf && config.analysisConf.defaultAnalysis == 'choropleth'){
+						
+				if (!mts.activeLegend) mts.activeLegend = {};
+				mts.setActiveIndicator(config.defaultIndicator);
+//				console.log("mts.getActiveIndicator(): ",mts.getActiveIndicator());
+//				console.log("config.defaultIndicator: ",config.defaultIndicator);
+				
+				
 				if (!mts.activeLegend[layerName]){
 					mts.activeLegend[layerName] = {choroplet:[]};
 				}
@@ -338,7 +343,7 @@
 						mts.activeLegend[layerName].choroplet[i].from=(minValue+(split*i)).toFixed(2);
 						mts.activeLegend[layerName].choroplet[i].to=(minValue+(split*(i+1))).toFixed(2);
 					}
-					console.log("Regular intervals legends: ", mts.activeLegend[layerName].choroplet);
+//					console.log("Regular intervals legends: ", mts.activeLegend[layerName].choroplet);
 				}else if (config.analysisConf.choropleth.method == "CLASSIFY_BY_QUANTILS"){
 					//classify by quantils
 					var values=[];
@@ -348,23 +353,26 @@
 							values.push(Number(data.rows[key][columnName]));
 						}
 					}
+					values.sort(function sortNumber(a,b) {
+						return a - b;
+					});
 					var intervals = Number(values.length < config.analysisConf.choropleth.classes ? values.length : config.analysisConf.choropleth.classes );
 					mts.updateChoroplethLegendGradient(layerName, config.analysisConf.choropleth, intervals);
 					var quantils = math.quantileSeq(values, intervals);   
-					console.log("quantils limits: ", quantils);
+//					console.log("quantils limits: ", quantils);
 					
 					var binSize = Math.floor(values.length  / intervals);
 					var k=0;
 					for(var i=0;i<values.length;i+=binSize){
 						if(k>=intervals){
-							mts.activeLegend[layerName].choroplet[intervals-1].to=values[i+binSize]||values[values.length-1];
+							mts.activeLegend[layerName].choroplet[intervals-1].to = values[i+binSize] || values[values.length-1];
 						}else{
 							mts.activeLegend[layerName].choroplet[k].from = values[i];
 							mts.activeLegend[layerName].choroplet[k].to = values[i+binSize] || values[values.length-1];
 							k++;
 						}
 					}
-					console.log("Quantils legends: ", mts.activeLegend[layerName].choroplet);
+//					console.log("Quantils legends: ", mts.activeLegend[layerName].choroplet);
 				}else {
 					console.log("Temathization method [" + config.analysisConf.choropleth.method + "] not supported");
 				}
@@ -458,6 +466,7 @@
 		mts.getChoroplethColor = function(val,layerName){
 			var color;
 			var alpha;
+			var value = Number(val);
 			for(var i=0; i < mts.activeLegend[layerName].choroplet.length; i++){
 				if(Number(val) >= Number( mts.activeLegend[layerName].choroplet[i].from) && Number(val) < Number( mts.activeLegend[layerName].choroplet[i].to)){
 					color = mts.activeLegend[layerName].choroplet[i].color;
