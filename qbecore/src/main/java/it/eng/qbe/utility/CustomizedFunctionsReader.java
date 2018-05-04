@@ -46,8 +46,13 @@ public class CustomizedFunctionsReader {
 			if (propertyValue == null) {
 				logger.error("Config property KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS no defined");
 			} else {
-				logger.debug("found KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS property with value: " + propertyValue);
-				jsonObj = new JSONObject(propertyValue);
+				if (propertyValue.equals("{}") || propertyValue.equals("[]")) {
+					logger.debug("found KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS with empty value");
+					jsonObj = new JSONObject();
+				} else {
+					logger.debug("found KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS property with value: " + propertyValue);
+					jsonObj = new JSONObject(propertyValue);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("Error in reading KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS config value and transforming it into custom functions", e);

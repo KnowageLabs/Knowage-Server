@@ -149,7 +149,7 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 			String customs = "";
 			JSONObject json = CustomFunctionsSingleton.getInstance().getCustomizedFunctionsJSON();
 			// check there really are some custom functions
-			if (json != null && json.toString() != "{}") {
+			if (json != null && !json.toString().equals("{}")) {
 				String dbType = DbTypeThreadLocal.getDbType();
 				if (dbType == null) {
 					logger.error("Db Type not found");
