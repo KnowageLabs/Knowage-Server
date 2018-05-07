@@ -664,7 +664,7 @@
         	},
         	
         	labels:{
-				 labels: {
+				 
         		
         		formatter: function () {
 			                    var value = this.value;	
