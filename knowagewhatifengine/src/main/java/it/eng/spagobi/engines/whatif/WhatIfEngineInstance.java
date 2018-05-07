@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.engines.whatif;
 
+import java.io.Serializable;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.olap4j.OlapConnection;
+import org.olap4j.OlapDataSource;
+import org.pivot4j.PivotModel;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -35,6 +46,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.AuditServiceProxy;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.ExtendedAbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
@@ -43,17 +55,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeExcept
 import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 import it.eng.spagobi.writeback4j.WriteBackManager;
 import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
-
-import java.io.Serializable;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.olap4j.OlapConnection;
-import org.olap4j.OlapDataSource;
-import org.pivot4j.PivotModel;
 
 public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance implements Serializable {
 
@@ -72,10 +73,8 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 	private IDataSource dataSourceForWriting;
 	private String algorithmInUse = null;// the allocation algorithm used
 	private boolean whatif = false; // are in what if context?
-	
-	// to spread the edited value
 
-	
+	// to spread the edited value
 
 	protected WhatIfEngineInstance(Object template, boolean whatif, Map env) {
 		this(WhatIfTemplateParser.getInstance() != null ? WhatIfTemplateParser.getInstance().parse(template) : null, whatif, env);
@@ -297,8 +296,6 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		}
 
 		standalone = template.isStandAlone();
-		
-		
 
 		logger.debug("OUT");
 	}
@@ -307,8 +304,8 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		String query = null;
 
 		logger.debug("IN");
-		String mode = (String) env.get("mode");
-		if (mode != null && mode.equals("edit")) {
+
+		if (env.containsKey(EngineStartServletIOManager.ON_EDIT_MODE)) {
 
 			query = template.getMondrianMdxQuery();
 
@@ -472,6 +469,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		return (EventServiceProxy) this.getEnv().get(EngineConstants.ENV_EVENT_SERVICE_PROXY);
 	}
 
+	@Override
 	public void setAnalysisState(IEngineAnalysisState analysisState) {
 		((WhatIfEngineAnalysisState) analysisState).getAnalysisState(this);
 	}
@@ -479,6 +477,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 	// -- unimplemented methods
 	// ------------------------------------------------------------
 
+	@Override
 	public IEngineAnalysisState getAnalysisState() {
 		WhatIfEngineAnalysisState analysisState = null;
 		analysisState = new WhatIfEngineAnalysisState();
@@ -486,6 +485,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		return analysisState;
 	}
 
+	@Override
 	public void validate() throws SpagoBIEngineException {
 		throw new WhatIfEngineRuntimeException("Unsupported method [validate]");
 	}
@@ -530,7 +530,5 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 	public void setAlgorithmInUse(String algorithmInUse) {
 		this.algorithmInUse = algorithmInUse;
 	}
-	
-	
 
 }

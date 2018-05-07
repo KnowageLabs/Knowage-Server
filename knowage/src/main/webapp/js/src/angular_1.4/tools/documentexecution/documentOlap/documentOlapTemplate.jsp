@@ -28,7 +28,7 @@
 <angular-table    flex
 	id="tableOlaps" ng-model="urlViewPointService.olapList" 
 	columns='column'
-	columns-search='["name","description","scope"]'
+	columns-search='["name","description","isPublic"]'
 	highlights-selected-item = "true"
 	show-search-bar="true"
 	speed-menu-option=gvpCtrlOlapMenuOpt	>

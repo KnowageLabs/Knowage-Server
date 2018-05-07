@@ -36,7 +36,7 @@
 		$scope.column = [
                         {label:sbiModule_translate.load("sbi.generic.name"),name:"name"},
                         {label:sbiModule_translate.load("sbi.generic.descr"),name:"description"},
-                        {label:sbiModule_translate.load("sbi.generic.scope"),name:"isPublic"}];
+                        {label:sbiModule_translate.load("sbi.generic.scope.public"),name:"isPublic"}];
 
 		$scope.closeFilter = function(){
 			$mdDialog.cancel();
