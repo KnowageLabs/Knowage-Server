@@ -51,6 +51,7 @@ import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class WhatIfDriver extends GenericDriver {
@@ -135,7 +136,7 @@ public class WhatIfDriver extends GenericDriver {
 		parameters.put("document", documentId);
 		parameters.put("DOCUMENT_LABEL", documentLabel);
 		parameters.put("ENGINE", engineName);
-		parameters.put("mode", "edit");
+		parameters.put(EngineStartServletIOManager.ON_EDIT_MODE, "");
 		parameters.put("template", json);
 		// CREATE EXECUTION ID
 		String sbiExecutionId = null;
