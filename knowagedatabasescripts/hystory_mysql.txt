@@ -4117,3 +4117,9 @@ current_timestamp,
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
 commit
 
+
+-- 27.04.2018. Predrag Josipovic
+-- Added new column into knowage.SBI_DATA_SOURCE table for Advanced JDBC Pool Configuration
+
+ALTER TABLE SBI_DATA_SOURCE ADD COLUMN JDBC_ADVANCED_CONFIGURATION VARCHAR(4000) AFTER WRITE_DEFAULT;
+

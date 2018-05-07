@@ -3782,3 +3782,9 @@ UPDATE hibernate_sequences SET next_val = (SELECT MAX(VALUE_ID) + 1 FROM SBI_DOM
 -- new column for roles , is_public
 
 ALTER TABLE SBI_EXT_ROLES ADD COLUMN IS_PUBLIC BOOLEAN NULL;
+
+
+-- 27.04.2018. Predrag Josipovic
+-- Added new column into knowage.SBI_DATA_SOURCE table for Advanced JDBC Pool Configuration
+
+ALTER TABLE SBI_DATA_SOURCE ADD COLUMN JDBC_ADVANCED_CONFIGURATION VARCHAR(4000);
