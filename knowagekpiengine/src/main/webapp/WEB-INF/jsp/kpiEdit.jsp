@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<div class="md-toolbar-tools">
 			<h2>{{translate.load("sbi.kpidocumentdesigner")}}</h2>
 			<span flex></span>
-			<md-button ng-click="saveTemplate()">{{translate.load("sbi.general.save")}}</md-button>
+			<md-button ng-disabled="selectedKpis.length == 0 && scorecardSelected.length == 0" ng-click="saveTemplate()">{{translate.load("sbi.general.save")}}</md-button>
 			<md-button ng-click="closeTemplate()">{{translate.load("sbi.general.close")}}</md-button>
 		</div>
 	</md-toolbar>

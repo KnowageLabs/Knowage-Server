@@ -2,24 +2,21 @@
 	<md-input-container class="md-block" flex=50>
 		<label>Font-size</label>
 		<md-select ng-model="ngModel.size">
-			<md-option value=""></md-option>
-			<md-option ng-repeat="px in measure" value="{{px.value}}" ng-style="{'font-size':px.value}">{{px.label}}</md-option>
+			<md-option ng-repeat="px in measure" value="{{px.value}}" ng-style="{'font-size':px.value}" ng-selected="$first">{{px.label}}</md-option>
 		</md-select>
 	</md-input-container>
 	
 	<md-input-container class="md-block" flex=50>
 		<label>{{translate.load("sbi.kpistyle.fontf")}}</label>
 		<md-select ng-model="ngModel.fontFamily">
-			<md-option value=""></md-option>
-			<md-option ng-repeat="font in fontFamily" value="{{font.value}}" ng-style="{'font-family':font.value}">{{font.label}}</md-option>
+			<md-option ng-repeat="font in fontFamily" value="{{font.value}}" ng-style="{'font-family':font.value}" ng-selected="$first">{{font.label}}</md-option>
 		</md-select>
 	</md-input-container>
 	
 	<md-input-container class="md-block" flex=50>
 		<label>{{translate.load("sbi.kpistyle.fontw")}}</label>
 		<md-select ng-model="ngModel.fontWeight">
-			<md-option value=""></md-option>
-			<md-option ng-repeat="fontW in fontWeight" value="{{fontW.value}}" ng-style="{'font-weight':fontW.value}">{{fontW.label}}</md-option>
+			<md-option ng-repeat="fontW in fontWeight" value="{{fontW.value}}" ng-style="{'font-weight':fontW.value}" ng-selected="$first">{{fontW.label}}</md-option>
 		</md-select>
 	</md-input-container>
 	
