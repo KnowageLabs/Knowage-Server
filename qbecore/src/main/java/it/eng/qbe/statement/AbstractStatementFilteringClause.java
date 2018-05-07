@@ -65,14 +65,20 @@ public abstract class AbstractStatementFilteringClause extends AbstractStatement
 				alias = "";
 			}
 
+			boolean editable = true;
+			if (leftOperandJSON.get("editable") != null && leftOperandJSON.get("editable").toString().equalsIgnoreCase("false")) {
+				editable = false;
+			}
+
 			String slots = null;
 			String s = leftOperandJSON.optString("slots");
 			if (s != null && s.trim().length() > 0) {
 				slots = leftOperandJSON.getString("slots");
 			}
 
-			expression = parseInLinecalculatedField(new InLineCalculatedSelectField(alias, expression, slots, type, nature, true, true, false, "", "", null),
-					slots, query, entityAliasesMaps);
+			expression = parseInLinecalculatedField(
+					new InLineCalculatedSelectField(alias, expression, slots, type, nature, true, true, false, "", "", null, editable), slots, query,
+					entityAliasesMaps);
 
 			if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) && isPromptable) {
 				// get last value first (the last value edited by the user)

@@ -34,11 +34,13 @@ public class InLineCalculatedSelectField extends AbstractSelectField {
 	private IAggregationFunction function;
 	private String orderType;
 	private String entity;
+	private boolean editable;
+
 	// private int resetType;
 	// private int incrementType;
 
 	public InLineCalculatedSelectField(String alias, String expression, String slots, String type, String nature, boolean included, boolean visible,
-			boolean groupByField, String orderType, String function, String entity) {
+			boolean groupByField, String orderType, String function, String entity, boolean editable) {
 		super(alias, ISelectField.CALCULATED_FIELD, included, visible);
 		this.expression = expression;
 		this.slots = slots;
@@ -46,6 +48,7 @@ public class InLineCalculatedSelectField extends AbstractSelectField {
 		this.nature = nature;
 		this.groupByField = groupByField;
 		this.entity = entity;
+		this.editable = editable;
 		setOrderType(orderType);
 		setFunction(AggregationFunctions.get(function));
 	}
@@ -150,6 +153,14 @@ public class InLineCalculatedSelectField extends AbstractSelectField {
 
 	public void setEntity(String entity) {
 		this.entity = entity;
+	}
+
+	public boolean isEditable() {
+		return editable;
+	}
+
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 
 }

@@ -4110,7 +4110,7 @@ current_timestamp,
 current_timestamp,
 '6.2.0',	
 '6.2.0',			
-'DEFAULT_TENANT',
+null,
 'GENERIC_CONFIGURATION'
 );     
    

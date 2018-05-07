@@ -306,6 +306,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 						fieldJSON.put(QuerySerializationConstants.FIELD_ID, fieldCalculationDescriptor);
 						fieldJSON.put(QuerySerializationConstants.FIELD_LONG_DESCRIPTION, calculatedSelectField.getExpression());
 						fieldJSON.put(QuerySerializationConstants.FIELD_ENTITY, calculatedSelectField.getEntity());
+						fieldJSON.put(QuerySerializationConstants.FIELD_EDITABLE, calculatedSelectField.isEditable());
 
 						if (calculatedSelectField.isGroupByField()) {
 							fieldJSON.put(QuerySerializationConstants.FIELD_GROUP, "true");

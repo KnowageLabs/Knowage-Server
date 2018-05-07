@@ -291,7 +291,13 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 				cftype = fieldDescriptor.getString("type");
 			}
 
-			query.addInLineCalculatedFiled("Valori", fieldDescriptor.getString("expression"), slots, cftype, nature, true, true, false, "asc", "NONE", entity);
+			boolean editable = true;
+			if (fieldDescriptor.has("editable") && fieldDescriptor.get("editable").toString().equalsIgnoreCase("false")) {
+				editable = false;
+			}
+
+			query.addInLineCalculatedFiled("Valori", fieldDescriptor.getString("expression"), slots, cftype, nature, true, true, false, "asc", "NONE", entity,
+					editable);
 			value = fieldDescriptor.getString("expression");
 		} else {
 			query.addSelectFiled(fieldDescriptor.getString("entity"), "NONE", "Valori", true, true, false, "asc", null);
@@ -309,7 +315,7 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 			WhereField.Operand leftOperand = new WhereField.Operand(new String[] { value }, "", AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null, "");
 			valuefilter = typeValueFilter.equalsIgnoreCase("NUMBER") ? valuefilter : "" + valuefilter + "";
 			WhereField.Operand rightOperand = new WhereField.Operand(new String[] { valuefilter }, "", AbstractStatement.OPERAND_TYPE_STATIC, null, null, "");
-			query.addWhereField("Filter1", "", false, leftOperand, typeFilter, rightOperand, "AND");
+			query.addWhereField("Filter1", "", false, leftOperand, typeFilter, rightOperand, "AND", null);
 
 		}
 		logger.debug("OUT");

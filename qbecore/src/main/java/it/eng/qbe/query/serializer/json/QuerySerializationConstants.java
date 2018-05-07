@@ -49,6 +49,7 @@ public class QuerySerializationConstants {
 	public static final String FIELD_NATURE_SEGMENT_ATTRIBUTE = "segment_attribute";
 	public static final String FIELD_NATURE_POST_LINE_CALCULATED = "postLineCalculated";
 	public static final String FIELD_ICON_CLS = "iconCls";
+	public static final String FIELD_EDITABLE = "editable";
 
 	public static final String DISTINCT = "distinct";
 	public static final String IS_NESTED_EXPRESSION = "isNestedExpression";

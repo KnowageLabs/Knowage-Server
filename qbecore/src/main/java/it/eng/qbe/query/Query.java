@@ -291,9 +291,9 @@ public class Query implements IQuery {
 	}
 
 	public void addInLineCalculatedFiled(String fieldAlias, String expression, String slots, String type, String nature, boolean included, boolean visible,
-			boolean groupByField, String orderType, String funct, String entity) {
-		selectFields
-				.add(new InLineCalculatedSelectField(fieldAlias, expression, slots, type, nature, included, visible, groupByField, orderType, funct, entity));
+			boolean groupByField, String orderType, String funct, String entity, boolean editable) {
+		selectFields.add(new InLineCalculatedSelectField(fieldAlias, expression, slots, type, nature, included, visible, groupByField, orderType, funct, entity,
+				editable));
 	}
 
 	public WhereField addWhereField(String name, String description, boolean promptable, it.eng.qbe.query.WhereField.Operand leftOperand, String operator,

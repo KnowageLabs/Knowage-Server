@@ -81,7 +81,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			}
 			SbiCatalogFunction hibMap = toSbiFunctionCatalog(catalogFunction);
 			updateSbiCommonInfo4Insert(hibMap);
-			catalogFunctionId = (int) session.save(hibMap);
+			catalogFunctionId = (Integer) session.save(hibMap);
 
 			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.load(SbiCatalogFunction.class, catalogFunctionId);
 

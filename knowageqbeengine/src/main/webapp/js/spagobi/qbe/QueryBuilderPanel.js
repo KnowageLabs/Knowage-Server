@@ -570,7 +570,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 
 	var toolbar = [this.selectGridButton, this.filterGridButton, this.havingGridButton, '->', this.getAmbiguousFieldsButton];
 
-	if(this.queryWidowTabs && this.queryWidowTabs.length>0){
+	if(this.queryWidowTabs && this.queryWidowTabs.length>0 && this.enableViewQueryButton == true){
 		this.getQueryButton = new Ext.Button({
 			text: LN('sbi.qbe.queryeditor.centerregion.buttons.getquery')
 		});

@@ -90,7 +90,7 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 			CustomizedFunctionsReader reader = new CustomizedFunctionsReader();
 			List<CustomizedFunction> list = reader.getCustomDefinedFunctionListFromJSON(json, dbType);
 			if (list != null && list.size() > 0) {
-				customs = reader.getStringFromList(list);
+				customs = reader.getStringFromOrderedList(list);
 				logger.debug("String to add to regular exression " + customs);
 			}
 		}
