@@ -108,6 +108,10 @@
 					<groupId>javax.servlet</groupId>
 					<artifactId>jsp-api</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>javacup</groupId>
+					<artifactId>javacup</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		

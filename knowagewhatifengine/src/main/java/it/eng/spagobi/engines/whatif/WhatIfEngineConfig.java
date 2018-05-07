@@ -18,18 +18,6 @@
 
 package it.eng.spagobi.engines.whatif;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.engines.whatif.export.ExportConfig;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
-import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -46,11 +34,22 @@ import org.apache.log4j.Logger;
 import org.olap4j.OlapDataSource;
 import org.pivot4j.datasource.SimpleOlapDataSource;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.engines.whatif.export.ExportConfig;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
+import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import sun.misc.BASE64Encoder;
 
 /**
- * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin
- *         (alberto.ghedin@eng.it)
+ * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
  */
 public class WhatIfEngineConfig {
 
@@ -220,7 +219,7 @@ public class WhatIfEngineConfig {
 	}
 
 	private void defineSchemaProcessorProperties(Properties connectionProps, WhatIfTemplate template, IEngUserProfile profile, Map env) {
-		List<String> userProfileAttributes = template.getProfilingUserAttributes();
+		Map userProfileAttributes = UserProfileUtils.getProfileAttributes(profile);
 		// SpagoBIFilterDynamicSchemaProcessor extends
 		// LocalizingDynamicSchemaProcessor, that is responsible for i18n,
 		// therefore we put it
@@ -229,7 +228,7 @@ public class WhatIfEngineConfig {
 		if (!userProfileAttributes.isEmpty()) {
 			// adds profile attributes values
 			logger.debug("Template contains data access restriction based on user's attributes");
-			Iterator<String> it = userProfileAttributes.iterator();
+			Iterator<String> it = userProfileAttributes.keySet().iterator();
 			while (it.hasNext()) {
 				String attributeName = it.next();
 				String value = this.getUserProfileEncodedValue(attributeName, profile);
