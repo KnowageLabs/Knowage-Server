@@ -100,29 +100,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div flex=100>
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.label")}}</label>
-							<input name="lbl" ng-model="SelectedConstraint.label" ng-required="true"
-							ng-maxlength="20" ng-change="setDirty()">
-							
-							<div  ng-messages="attributeForm.lbl.$error" ng-show="SelectedConstraint.label== null">
-				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-				      </div>
-							
-							 </md-input-container>
+							<input name="lbl" ng-model="SelectedConstraint.label" required ng-maxlength="20" ng-change="setDirty()" ng-pattern="regex.extendedAlphanumeric">
+							<div ng-messages="attributeForm.lbl.$error" role="alert" ng-messages-multiple>
+								<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+								<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 20</div>
+  							</div>											
+							</md-input-container>
 						</div>
 					</div>
 					
 					<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="md-block">
-							<label>{{translate.load("sbi.ds.name")}}</label>
-							<input name="name" ng-model="SelectedConstraint.name"  ng-required = "true"
-						    ng-maxlength="40" ng-change="setDirty()">
-						    
-						    <div  ng-messages="attributeForm.name.$error" ng-show="SelectedConstraint.name== null">
-				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-				      </div>
-						    
-						    
+								<label>{{translate.load("sbi.ds.name")}}</label>
+								<input name="name" ng-model="SelectedConstraint.name" required ng-maxlength="40" ng-change="setDirty()" ng-pattern="regex.extendedAlphanumeric">   
+						    	<div ng-messages="attributeForm.name.$error" role="alert" ng-messages-multiple>
+									<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+									<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 40</div>
+  								</div>
 						     </md-input-container>
 						</div>
 					</div>
@@ -130,45 +125,53 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="md-block">
-							<label>{{translate.load("sbi.ds.description")}}</label>
-							<input ng-model="SelectedConstraint.description"
-					        ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
+								<label>{{translate.load("sbi.ds.description")}}</label>
+								<input name="description" ng-model="SelectedConstraint.description" ng-maxlength="160" ng-change="setDirty()" ng-pattern="regex.extendedAlphanumeric">
+								<div ng-messages="attributeForm.description.$error" role="alert" ng-messages-multiple>
+									<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+									<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 160</div>
+  								</div>
+							</md-input-container>
 						</div>
 					</div>
 				
 				<div layout="row" layout-wrap>
       				<div flex=100>
 				       <md-input-container class="md-block" > 
-				       <label>{{translate.load("sbi.modalities.check.details.check_type")}}</label>
-				       <md-select  aria-label="dropdown" placeholder ="Check Type"
-				       	name ="dropdown" 
-				        ng-required = "true"
-				        ng-model="SelectedConstraint.valueTypeCd"
-				        ng-change="changeType(SelectedConstraint.valueTypeCd)"
-				        > <md-option 
-				        ng-repeat="l in listType track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
-				       </md-select>
-				       <div  ng-messages="attributeForm.dropdown.$error" ng-show="SelectedConstraint.valueTypeCd== null">
-				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-				      </div>   
+					       <label>{{translate.load("sbi.modalities.check.details.check_type")}}</label>
+					       <md-select aria-label="dropdown" placeholder="Check Type" name="dropdown" required ng-model="SelectedConstraint.valueTypeCd" ng-change="changeType(SelectedConstraint.valueTypeCd)" ng-maxlength="20" ng-pattern="regex.extendedAlphanumeric">
+					       		<md-option ng-repeat="l in listType track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_NM}}</md-option>
+					       </md-select>
+					       <div ng-messages="attributeForm.dropdown.$error" role="alert" ng-messages-multiple>
+								<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+								<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 20</div>
+  							</div>   
 				        </md-input-container>
 				   </div>
 			</div>
      			<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="md-block">
-							<label>{{label}}</label>
-							<input ng-model="SelectedConstraint.firstValue" 
-						    ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
+								<label>{{label}}</label>
+								<input name="firstValue" ng-model="SelectedConstraint.firstValue" ng-maxlength="160" ng-change="setDirty()" ng-maxlength="400" ng-pattern="regex.xss">
+								<div ng-messages="attributeForm.firstValue.$error" role="alert" ng-messages-multiple>
+									<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.xssRegex")}}</div>
+									<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 400</div>
+  								</div>
+							</md-input-container>
 						</div>
 					</div>
 					
 				<div layout="row" layout-wrap ng-show ="additionalField">
 						<div flex=100>
 							<md-input-container class="md-block">
-							<label>{{translate.load("sbi.modalities.check.details.rangeMax")}}</label>
-							<input ng-model="SelectedConstraint.secondValue" 
-						    ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
+								<label>{{translate.load("sbi.modalities.check.details.rangeMax")}}</label>
+								<input name="secondValue" ng-model="SelectedConstraint.secondValue" ng-maxlength="400" ng-change="setDirty()" ng-maxlength="400" ng-pattern="regex.xss">
+								<div ng-messages="attributeForm.secondValue.$error" role="alert" ng-messages-multiple>
+									<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.xssRegex")}}</div>
+									<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 400</div>
+  								</div> 
+							</md-input-container>
 						</div>
 					</div>	
 				</md-card>

@@ -56,19 +56,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div layout="row">
 							<md-input-container flex> 
 								<label>{{translate.load("sbi.config.manageconfig.fields.label")}}</label> 
-								<input ng-model="config.label" required type="text"> 
+								<input name="label" ng-model="config.label" required type="text" ng-maxlength="100" ng-pattern="regex.extendedAlphanumeric">
+								<div ng-messages="configForm.label.$error" role="alert" ng-messages-multiple>
+								    <div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+								    <div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 100</div>
+  								</div>
 							</md-input-container>
 						</div>
 						<div layout="row">
-							<md-input-container flex> 
+							<md-input-container flex>
 								<label>{{translate.load("sbi.config.manageconfig.fields.name")}}</label> 
-								<input ng-model="config.name" required type="text"> 
+								<input name="name" ng-model="config.name" required type="text" ng-maxlength="100" ng-pattern="regex.extendedAlphanumeric"> 
+								<div ng-messages="configForm.name.$error" role="alert">
+								    <div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+								    <div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 100</div>
+  								</div>
 							</md-input-container>
 						</div>
 						<div layout="row">
 							<md-input-container flex> 
 								<label>{{translate.load("sbi.config.manageconfig.fields.description")}}</label> 
-								<input ng-model="config.description" type="text"> 
+								<input name="description"  ng-model="config.description" type="text" ng-maxlength="500" ng-pattern="regex.extendedAlphanumeric">
+								<div ng-messages="configForm.description.$error" role="alert"  ng-messages-multiple>
+								    <div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+								    <div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 500</div>
+  								</div>
 							</md-input-container>
 						</div>
 						<div layout="row">
@@ -83,13 +95,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div layout="row">
 							<md-input-container flex>
 								<label>{{translate.load("sbi.config.manageconfig.fields.valuecheck")}}</label> 
-								<input ng-model="config.valueCheck" type="text"> 
+								<input name="valuecheck" ng-model="config.valueCheck" type="text" ng-maxlength="1000" ng-pattern="regex.xss">
+								<div ng-messages="configForm.valuecheck.$error" role="alert"  ng-messages-multiple>
+								    <div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.xssRegex")}}</div>
+								    <div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 1000</div>
+  								</div>
 							</md-input-container>
 						</div>
 						<div layout="row">
 						<md-input-container flex>
 							<label>{{translate.load('sbi.config.manageconfig.fields.valuetype')}}</label>
-							<md-select placeholder="{{translate.load('sbi.config.manageconfig.fields.valuetype')}}" ng-model="config.valueTypeId"> 
+							<md-select placeholder="{{translate.load('sbi.config.manageconfig.fields.valuetype')}}" ng-model="config.valueTypeId" required> 
 								<md-option value="407">NUM</md-option> 
 								<md-option value="408">STRING</md-option>
 							</md-select> 

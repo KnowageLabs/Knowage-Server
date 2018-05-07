@@ -90,7 +90,6 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-tree/angular-ui-tree.js")%>"></script> 
 
 <!-- angular list -->
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/glossary/css/angular-list.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/AngularList.js")%>"></script> 		
 
 <!-- context menu -->
@@ -148,6 +147,10 @@ if(importAngularMaterialForExport == null) {
 
 <!-- angular-base64 -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-base64/angular-base64.min.js")%>"></script> 
+
+<!-- angular-xregexp -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/xregexp/xregexp-all.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-xregexp/angular-xregexp.js")%>"></script> 
 
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>">
 

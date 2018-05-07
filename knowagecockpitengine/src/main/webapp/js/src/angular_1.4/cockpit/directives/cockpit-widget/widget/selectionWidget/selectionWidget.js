@@ -358,6 +358,6 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 
 
 //this function register the widget in the cockpitModule_widgetConfigurator factory
-addWidgetFunctionality("selection",{'initialDimension':{'width':20, 'height':20},'updateble':true,'cliccable':true});
+addWidgetFunctionality("selection",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':true});
 
 })();

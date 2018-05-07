@@ -9,6 +9,7 @@
 	    <md-content flex layout="column">
 			<md-tabs flex md-border-bottom>
 				<md-tab label="Editor Html">
+					<section layout="row">
 					<md-content class="noPadding" layout="column" layout-fill>
 						<md-card>
 							<md-toolbar class="ternaryToolbar"> 
@@ -30,7 +31,7 @@
 					
 						<md-card class="htmlEditor">
 							<md-toolbar class="ternaryToolbar"> 
-						      <div class="md-toolbar-tools">
+						      <div class="md-toolbar-tools"> 
 						        <h2>Html</h2>
 						        <span flex></span>
 						      </div>
@@ -39,12 +40,58 @@
 							<textarea id="html" ui-codemirror="editorOptionsHtml" ng-model="newModel.htmlToRender" ui-refresh="reloadCodemirror" flex></textarea>
 							</md-card-content>
 						</md-card>
+						
 				    </md-content>
+				    <md-sidenav
+					        class="md-sidenav-right availableFunctions"
+					        md-component-id="right"
+					        md-is-locked-open="$mdMedia('gt-md')"
+					        md-whiteframe="1" style="width:100%">
+					
+					      <md-toolbar class="secondaryToolbar">
+					        <h1 class="md-toolbar-tools">Available tags</h1>
+					      </md-toolbar>
+					      <md-content>
+					      	<div class="availableFunction" ng-repeat="function in availableFunctions">
+					      		<md-subheader>{{function.code}}</md-subheader>
+						        <p layout-padding class="description">
+						          {{function.description}}
+						        </p>
+					      	</div>
+					      	<md-subheader>[kn-column="column_name" <i><small>(row="5")</small></i>]</md-subheader>
+					        <p layout-padding class="description">
+					          This tag is used to show a field value from the selected dataset column.
+					          The optional attribute <b>row</b> make the tag show the field value of the specified row for that column.
+					          If a row is not specified the tag will show the first occurrence for the column.
+					        </p>
+					        <md-divider></md-divider>
+					      	<md-subheader>[kn-repeat]...[/kn-repeat]</md-subheader>
+					        <p layout-padding class="description">
+					          This tag is used to repeat the html section delimited by the tag ending for every row in the dataset.
+					          Dynamic fields from dataset will take the value of the repeated row.
+					        </p>
+					        <md-divider></md-divider>
+					        <md-subheader>[kn-repeat-index]</md-subheader>
+					        <p layout-padding class="description">
+					          This tag is used inside a [kn-repeat] to get the current row value of the repeater..
+					          Dynamic fields from dataset will take the value of the repeated row.
+					        </p>
+					      </md-content>
+					
+					    </md-sidenav>
+					    </section>
 		        </md-tab>
 		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
 		        	<cockpit-style-configurator widget ng-model="newModel.style">
 		        	</cockpit-style-configurator>
 		        </md-tab>
+		        <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
+		        	<md-card>
+		        		<md-card-content>
+		   					<dataset-selector ng-model="newModel.datasetId" on-change="handleEvent('datasetChanged',dsId)" extended="true"></dataset-selector>  
+		   				</md-card-content>
+		   			</md-card>	
+		     	</md-tab>
 		        
 	      	</md-tabs>
 	    </md-content>

@@ -1,4 +1,11 @@
 .kn-kpi-definition {
+	.formulaController {
+		.CodeMirror {
+			min-height: 400px;
+    		max-height: 500px;
+			height: auto !important;
+		}
+	}
 	md-card .thresholdDefinitionWarning {
 		background-color: $warningColor;
 		margin-bottom: 30px;

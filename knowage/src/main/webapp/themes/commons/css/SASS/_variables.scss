@@ -20,7 +20,7 @@ $listBackground:	 		$pageBackground;
 $detailBackground: 			#f6f6f6;
 $tabBackground: 			white;
 $tableLineSeparator: 		#c3d4df;
-$tableSelectedElementColor: $secondaryColor;
+$tableSelectedElementColor: lighten($secondaryColor,5%);
 $federatedDatasetBackground: $pageBackground;
 $raisedButtonTextColor: 	white;
 $inputInvalidLineColor: 	#c70751;

@@ -23,15 +23,17 @@ import java.util.List;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
+import org.json.JSONObject;
 
 import it.eng.knowage.meta.exception.KnowageMetaException;
 import it.eng.knowage.meta.model.business.BusinessColumnSet;
 import it.eng.knowage.meta.model.business.BusinessModelPackage;
 import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
 import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
+import it.eng.qbe.utility.CustomFunctionsSingleton;
 import it.eng.qbe.utility.CustomizedFunctionsReader;
-import it.eng.qbe.utility.ProfileDialectThreadLocal;
-import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.qbe.utility.DbTypeThreadLocal;
+import it.eng.qbe.utility.bo.CustomizedFunction;
 
 /**
  * <!-- begin-user-doc --> An implementation of the model object '<em><b>Calculated Business Column</b></em>'. <!-- end-user-doc -->
@@ -75,22 +77,25 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 
 		String regularExpression = "(\\,|\\+|\\-|\\*|\\(|\\)|\\|\\||\\/|GG_between_dates|MM_between_dates|AA_between_dates|GG_up_today|MM_up_today|AA_up_today|current_date|current_time|length|substring|concat|year|month|mod|bit_length|upper|lower|trim|current_timestamp|hour|minute|second|day";
 
-		// add custom functions
-
-		UserProfile profile = ProfileDialectThreadLocal.getUserProfile();
-		String dialect = ProfileDialectThreadLocal.getDialect();
-
-		if (profile == null) {
-			logger.error("Profile not found");
-			throw new RuntimeException("Profile could not be found in current Thread Locale, check stack of calls");
+		// add custom functions if present
+		String customs = "";
+		JSONObject json = CustomFunctionsSingleton.getInstance().getCustomizedFunctionsJSON();
+		// check there really are some custom functions
+		if (json != null && json.toString() != "{}") {
+			String dbType = DbTypeThreadLocal.getDbType();
+			if (dbType == null) {
+				logger.error("DbType not found");
+				throw new RuntimeException("DbType could not be found in current Thread Locale, check stack of calls");
+			}
+			CustomizedFunctionsReader reader = new CustomizedFunctionsReader();
+			List<CustomizedFunction> list = reader.getCustomDefinedFunctionListFromJSON(json, dbType);
+			if (list != null && list.size() > 0) {
+				customs = reader.getStringFromList(list);
+				logger.debug("String to add to regular exression " + customs);
+			}
 		}
 
-		if (dialect == null) {
-			logger.error("Dialect or db information not found");
-			throw new RuntimeException("Dialect or db information could not be found in current Thread Locale, check stack of calls");
-		}
-
-		String customs = (new CustomizedFunctionsReader(dialect)).getCustomDefinedFunctionString(profile);
+		logger.debug("Customs functions definition " + customs);
 		regularExpression += customs;
 
 		regularExpression += ")";

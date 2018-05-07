@@ -7903,6 +7903,41 @@ angular-time-picker .md-button.spinButton {
     background-color: #426a90
 }
 
+.kn-cockpit .cockpit-map-widget .mapWidgetLegend{
+		position:absolute;
+		display:block;
+		min-width:240px;
+		width:auto;
+		height:auto;
+		bottom:0;
+		z-index:999;
+		background-color:white;
+		opacity:0.9;
+		border-radius:5px;
+}
+
+.kn-cockpit .cockpit-map-widget .mapWidgetLegend .legendLayerLabel{
+			font-size:.7rem;
+			font-weight:bold;
+}
+		
+.kn-cockpit .cockpit-map-widget .mapWidgetLegend .legendStartLimit{
+			left:0%;
+			position:relative;
+			font-size:.7rem;
+			width:50px;
+			text-align: right;
+}
+		
+.kn-cockpit .cockpit-map-widget .mapWidgetLegend .legendEndLimit{
+			right:0%;
+			position:relative;
+			font-size:.7rem;
+			width:50px;
+			text-align: left;
+}
+
+
 .kn-cockpit .imagesLibrary file-upload md-content {
     background-color: transparent
 }
@@ -8113,42 +8148,6 @@ angular-time-picker .md-button.spinButton {
     font-size: .8rem;
     border-bottom: 1px solid #ccc
 }
-
-.kn-cockpit .mapWidgetLegend{
-		position:absolute;
-		display:block;
-		min-width:240px;
-		width:auto;
-		height:auto;
-		bottom:0;
-		z-index:999;
-		background-color:white;
-		opacity:0.9;
-		border-radius:5px;
-}
-
-.kn-cockpit .mapWidgetLegend .legendLayerLabel{
-			font-size:.7rem;
-			font-weight:bold;
-}
-		
-.kn-cockpit .mapWidgetLegend .legendStartLimit{
-			left:0%;
-			position:relative;
-			font-size:.7rem;
-			width:50px;
-			text-align: right;
-}
-		
-.kn-cockpit .mapWidgetLegend .legendEndLimit{
-			right:0%;
-			position:relative;
-			font-size:.7rem;
-			width:50px;
-			text-align: left;
-}
-	
-
 
 .kn-cockpit cockpit-html-widget {
     overflow: auto

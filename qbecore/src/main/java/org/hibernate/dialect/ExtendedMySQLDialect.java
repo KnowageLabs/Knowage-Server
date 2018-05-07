@@ -22,12 +22,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.dialect.function.VarArgsSQLFunction;
+import org.json.JSONObject;
 
+import it.eng.qbe.utility.CustomFunctionsSingleton;
 import it.eng.qbe.utility.CustomizedFunctionsReader;
-import it.eng.qbe.utility.ProfileDialectThreadLocal;
 import it.eng.qbe.utility.bo.CustomizedFunction;
-import it.eng.spagobi.commons.bo.UserProfile;
 
 public class ExtendedMySQLDialect extends MySQLInnoDBDialect {
 
@@ -36,32 +37,32 @@ public class ExtendedMySQLDialect extends MySQLInnoDBDialect {
 	public ExtendedMySQLDialect() {
 		super();
 		logger.debug("IN");
-		try {
-			// UserProfile userProfile = ProfileSingleton.getInstance().getUserProfile();
-			UserProfile userProfile = ProfileDialectThreadLocal.getUserProfile();
-			if (userProfile == null) {
-				logger.error("no profile could be get from singleton; stop adding custom functions");
-			} else {
+		// try {
 
-				List<CustomizedFunction> customizedFunctions = new CustomizedFunctionsReader("mysql").getCustomDefinedFunctionList(userProfile);
+		// UserProfile userProfile = ProfileSingleton.getInstance().getUserProfile();
 
-				if (customizedFunctions != null) {
-					logger.debug("converting custom functions");
-					for (Iterator<CustomizedFunction> iterator = customizedFunctions.iterator(); iterator.hasNext();) {
-						CustomizedFunction customizedFunction = iterator.next();
-						logger.debug("register function " + customizedFunction);
+		// List<CustomizedFunction> customizedFunctions = new CustomizedFunctionsReader("mysql").getCustomDefinedFunctionList(userProfile);
 
-						registerFunction(customizedFunction.getFunction(), new VarArgsSQLFunction(customizedFunction.getFunction() + "(", ",", ")"));
+		JSONObject jsonObject = CustomFunctionsSingleton.getInstance().getCustomizedFunctionsJSON();
+		List<CustomizedFunction> customizedFunctions = new CustomizedFunctionsReader().getCustomDefinedFunctionListFromJSON(jsonObject, "mysql");
 
-						// registerFunction(customizedFunction.getFunction(), new StandardSQLFunction(customizedFunction.getFunction()));
+		if (customizedFunctions != null) {
+			logger.debug("converting custom functions");
+			for (Iterator<CustomizedFunction> iterator = customizedFunctions.iterator(); iterator.hasNext();) {
+				CustomizedFunction customizedFunction = iterator.next();
+				logger.debug("register function " + customizedFunction);
 
-					}
+				if (!customizedFunction.getParameters().isEmpty()) {
+					VarArgsSQLFunction sqlFunction = new VarArgsSQLFunction(customizedFunction.getName() + "(", ",", ")");
+					registerFunction(customizedFunction.getName(), sqlFunction);
 				} else {
-					logger.debug("no custom functions defined for current db type");
+					StandardSQLFunction sqlFunction = new StandardSQLFunction(customizedFunction.getName());
+					registerFunction(customizedFunction.getName(), sqlFunction);
 				}
+
 			}
-		} finally {
-			ProfileDialectThreadLocal.unset();
+		} else {
+			logger.debug("no custom functions defined for current db type");
 		}
 
 		logger.debug("OUT");

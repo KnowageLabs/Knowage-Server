@@ -52,14 +52,36 @@ public abstract class DataSourceManager {
 		pool.setUrl(dataSource.getUrlConnection());
 		pool.setUsername(dataSource.getUser());
 		pool.setPassword(dataSource.getPwd());
-		pool.setMaxWaitMillis(60000);
-		pool.setRemoveAbandonedOnBorrow(true);
-		pool.setRemoveAbandonedOnMaintenance(true);
-		pool.setRemoveAbandonedTimeout(60);
-		pool.setLogAbandoned(true);
-		pool.setTestOnReturn(true);
-		pool.setTestWhileIdle(true);
-		pool.setTimeBetweenEvictionRunsMillis(10000);
-		dataSources.putIfAbsent(dataSource, pool);
+
+		if (dataSource.getJdbcPoolConfiguration() != null) {
+			if (dataSource.getJdbcPoolConfiguration().getMaxWait() != null)
+				pool.setMaxWaitMillis(dataSource.getJdbcPoolConfiguration().getMaxWait());
+			if (dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnBorrow() != null)
+				pool.setRemoveAbandonedOnBorrow(dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnBorrow());
+			if (dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnMaintenance() != null)
+				pool.setRemoveAbandonedOnMaintenance(dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnMaintenance());
+			if (dataSource.getJdbcPoolConfiguration().getAbandonedTimeout() != null)
+				pool.setRemoveAbandonedTimeout(dataSource.getJdbcPoolConfiguration().getAbandonedTimeout());
+			if (dataSource.getJdbcPoolConfiguration().getLogAbandoned() != null)
+				pool.setLogAbandoned(dataSource.getJdbcPoolConfiguration().getLogAbandoned());
+			if (dataSource.getJdbcPoolConfiguration().getTestOnReturn() != null)
+				pool.setTestOnReturn(dataSource.getJdbcPoolConfiguration().getTestOnReturn());
+			if (dataSource.getJdbcPoolConfiguration().getTestWhileIdle() != null)
+				pool.setTestWhileIdle(dataSource.getJdbcPoolConfiguration().getTestWhileIdle());
+			if (dataSource.getJdbcPoolConfiguration().getTimeBetweenEvictionRuns() != null)
+				pool.setTimeBetweenEvictionRunsMillis(dataSource.getJdbcPoolConfiguration().getTimeBetweenEvictionRuns());
+			pool.setValidationQuery(dataSource.getJdbcPoolConfiguration().getValidationQuery());
+		} else {
+			pool.setMaxWaitMillis(60000);
+			pool.setRemoveAbandonedOnBorrow(true);
+			pool.setRemoveAbandonedOnMaintenance(true);
+			pool.setRemoveAbandonedTimeout(60);
+			pool.setLogAbandoned(true);
+			pool.setTestOnReturn(true);
+			pool.setTestWhileIdle(true);
+			pool.setTimeBetweenEvictionRunsMillis(10000);
+		}
+
+		dataSources.put(dataSource, pool);
 	}
 }

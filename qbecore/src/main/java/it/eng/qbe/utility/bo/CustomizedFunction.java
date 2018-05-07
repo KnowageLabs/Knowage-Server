@@ -26,8 +26,14 @@ import org.json.JSONObject;
 
 public class CustomizedFunction {
 
-	String function;
-	String code;
+	String name;
+	String label;
+	String value;
+
+	final static String NAME = "name";
+	final static String LABEL = "label";
+	final static String VALUE = "value";
+	final static String PARAMETERS = "parameters";
 
 	static protected Logger logger = Logger.getLogger(CustomizedFunction.class);
 
@@ -35,12 +41,13 @@ public class CustomizedFunction {
 
 	public CustomizedFunction(JSONObject json) {
 		logger.debug("IN");
-		function = json.optString("function");
-		code = json.optString("code");
+		name = json.optString(NAME);
+		label = json.optString(LABEL);
+		value = json.optString(VALUE);
 
-		logger.debug("function " + function + " with code " + code);
+		logger.debug("function " + name);
 
-		JSONArray parametersJson = json.optJSONArray("parameters");
+		JSONArray parametersJson = json.optJSONArray(PARAMETERS);
 
 		if (parametersJson != null) {
 			for (int i = 0; i < parametersJson.length(); i++) {
@@ -52,20 +59,28 @@ public class CustomizedFunction {
 		logger.debug("OUT");
 	}
 
-	public String getFunction() {
-		return function;
+	public String getName() {
+		return name;
 	}
 
-	public void setFunction(String _function) {
-		this.function = _function;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getCode() {
-		return code;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 	public List<CustomizedFunctionParameter> getParameters() {

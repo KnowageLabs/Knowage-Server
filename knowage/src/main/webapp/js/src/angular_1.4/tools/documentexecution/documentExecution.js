@@ -16,20 +16,19 @@
 			['$scope', '$http', '$mdSidenav', '$mdDialog', '$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_user',
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices', 'docExecute_urlViewPointService', 'docExecute_paramRolePanelService', 'infoMetadataService', 'sbiModule_download', '$crossNavigationScope',
-			 'docExecute_dependencyService', '$timeout', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window','$mdMenu','sbiModule_i18n',
+			 'docExecute_dependencyService', '$timeout', '$interval', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window','$mdMenu','sbiModule_i18n',
 			 documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav, $mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices,sbiModule_user, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine, documentExecuteServices,
 			docExecute_urlViewPointService, docExecute_paramRolePanelService, infoMetadataService, sbiModule_download, $crossNavigationScope,
-			docExecute_dependencyService, $timeout, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing,$window,$mdMenu,sbiModule_i18n ) {
+			docExecute_dependencyService, $timeout, $interval, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing,$window,$mdMenu,sbiModule_i18n ) {
 
 		console.log("documentExecutionControllerFn IN ");
 
 
 		$scope.showCollaborationMenu = sbiModule_user.functionalities.indexOf("Collaboration")>-1;
-
 
 		//NAVIGATOR WHEEL
 		$scope.navigatorVisibility = false;
@@ -361,16 +360,23 @@
 
 				var publicStr = canExec == true ? "/public" : "";
 
+				if(host.endsWith("/")){
+					host = host.substring(0, host.length - 1);
+				}
+
 				var url = host
 				+ context
 				+ publicStr
 				+ adapter
 				+ "?"
-				+ "ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION"
+				+ "ACTION_NAME=EXECUTE_DOCUMENT_ACTION"
 				+  "&OBJECT_LABEL="+label
 				+ "&TOOLBAR_VISIBLE=true"
-				+ "&ORGANIZATION="+tenant
-				+ "&PARAMETERS="+parameters;
+				+ "&ORGANIZATION="+tenant;
+
+				if(parameters != undefined && parameters != ''){
+					url += "&PARAMETERS="+parameters;
+				}
 
 				var urlToSend;
 
@@ -534,6 +540,13 @@
 
 			console.log("executeParameter OUT ");
 		};
+
+		/* This will set the refresh rate for the current document, based on the refresh seconds field set by user */
+		if($scope.executionInstance.REFRESH_SECONDS != undefined && $scope.executionInstance.REFRESH_SECONDS > 0)
+		$interval(function(){
+			console.log("reload");
+			$scope.executeParameter();
+			},$scope.executionInstance.REFRESH_SECONDS*1000);
 
 		$scope.changeRole = function(role) {
 			console.log("changeRole IN ");

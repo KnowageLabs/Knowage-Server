@@ -644,8 +644,14 @@ public class MenuListJSONSerializer implements Serializer {
 			temp2.put(ICON_CLS, "bullet");
 
 			if (childElem.getObjId() != null) {
-				temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="
-						+ childElem.getMenuId() + "', '" + path + "' )");
+				if (childElem.isClickable() == true) {
+					temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="
+							+ childElem.getMenuId() + "', '" + path + "' )");
+				} else {
+					// temp2.put(HREF, "javascript:execDirectUrl('')");
+					temp2.put("isClickable", "false");
+
+				}
 			} else if (childElem.getStaticPage() != null && !childElem.getStaticPage().equals("")) {
 				temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId()
 						+ "', '" + path + "' )");

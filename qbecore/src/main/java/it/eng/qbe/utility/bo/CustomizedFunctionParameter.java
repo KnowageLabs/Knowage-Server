@@ -7,12 +7,15 @@ public class CustomizedFunctionParameter {
 
 	String name;
 	String type;
+	final static String NAME = "name";
+	final static String TYPE = "type";
+
 	static protected Logger logger = Logger.getLogger(CustomizedFunctionParameter.class);
 
 	public CustomizedFunctionParameter(JSONObject json) {
 		logger.debug("IN");
-		name = json.optString("name");
-		type = json.optString("type");
+		name = json.optString(NAME);
+		type = json.optString(TYPE);
 		logger.debug("function parameter" + name + " with code " + type);
 		logger.debug("OUT");
 	}

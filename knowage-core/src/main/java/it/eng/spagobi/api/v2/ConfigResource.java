@@ -19,6 +19,7 @@ package it.eng.spagobi.api.v2;
 
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -36,8 +37,10 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -45,6 +48,11 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.database.DataBaseException;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/2.0/configs")
@@ -120,30 +128,87 @@ public class ConfigResource extends AbstractSpagoBIResource {
 	 * added as separated service because it is public
 	 */
 	@GET
-	@Path("/label/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS")
+	@Path("/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/{dataSourceId}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Config getKnowageCalculatedFunctionConfig() {
+	public String getKnowageCalculatedFunctionConfig(@PathParam("dataSourceId") Integer dataSourceId) throws JSONException {
 		logger.debug("IN");
 		IConfigDAO configsDao = null;
-		// List<Config> allObjects = null;
+		JSONObject toReturn = new JSONObject();
+		JSONObject configJSON = new JSONObject();
+
+		// if (dataSourceId == null) {
+		// logger.error("dataSourceId not passed the service, check service invocation");
+		// throw new SpagoBIRuntimeException("dataSourceId not passed the service, check service invocation");
+		// }
+
 		Config dm = null;
 		try {
 			configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
 			dm = configsDao.loadConfigParametersByLabel("KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS");
 			if (dm == null) {
-				logger.error("Config with label KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS not present in current tenant");
-				return null;
-			} else if (dm.getLabel().equals("KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS")) {
-				return dm;
+				logger.warn("Config with label KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS not present in current tenant");
 			}
 		} catch (Exception e) {
 			logger.error("Error while getting config KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS", e);
 			throw new SpagoBIRuntimeException("Error while getting config KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS", e);
-		} finally {
-			logger.debug("OUT");
 		}
-		return null;
+
+		if (dm != null) {
+			String valueCheck = dm.getValueCheck();
+			logger.debug("content of KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS variable to be cponverted in JSON");
+			try {
+				configJSON = new JSONObject(valueCheck);
+			} catch (JSONException e) {
+				logger.error("Error in converting " + valueCheck
+						+ " to JSON, correct the KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS variable, meanwhile ignore custom functions", e);
+			}
+
+			if (dataSourceId != null && dataSourceId != -1) {
+				logger.debug("get the db type and extract wanted information from config varaible");
+				JSONArray array = new JSONArray();
+
+				try {
+
+					IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+					IDataSource dataSource = dataSourceDAO.loadDataSourceByID(dataSourceId);
+
+					IDataBase db = DataBaseFactory.getDataBase(dataSource);
+					String dbType = db.getName();
+
+					logger.debug("DB type is " + dbType);
+
+					if (dbType != null) {
+						// serach for a key contained in dbType (it could be more than one name like MySQL/Maria
+						String keyToSearch = null;
+						for (Iterator iterator = configJSON.keys(); iterator.hasNext();) {
+							String key = (String) iterator.next();
+							if (dbType.toLowerCase().contains(key.toLowerCase())) {
+								keyToSearch = key;
+							}
+						}
+						if (keyToSearch != null) {
+							array = configJSON.optJSONArray(keyToSearch);
+						} else {
+							logger.error("Problem in finding custom functions voice for dbType " + dbType);
+						}
+						toReturn.put("data", array);
+					}
+				} catch (DataBaseException e) {
+					logger.error("Error in recovering dialect DB", e);
+				} catch (EMFUserError e) {
+					logger.error("Error in recovering dialect DB", e);
+				}
+			} else {
+				logger.debug("get for all DB");
+				toReturn.put("data", configJSON);
+			}
+
+		}
+
+		logger.debug("OUT");
+
+		return toReturn.toString();
 	}
 
 	@POST

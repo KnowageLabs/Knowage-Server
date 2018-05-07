@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -36,6 +36,7 @@ public class QuerySerializationConstants {
 	public static final String FIELD_GROUP = "group";
 	public static final String FIELD_ORDER = "order";
 	public static final String FIELD_AGGREGATION_FUNCTION = "funct";
+	public static final String FIELD_CUSTOM_FUNCTION = "customFunct";
 	public static final String FIELD_VISIBLE = "visible";
 	public static final String FIELD_INCLUDE = "include";
 	public static final String FIELD_INITIAL_VALUE = "initialValue";
@@ -48,6 +49,7 @@ public class QuerySerializationConstants {
 	public static final String FIELD_NATURE_SEGMENT_ATTRIBUTE = "segment_attribute";
 	public static final String FIELD_NATURE_POST_LINE_CALCULATED = "postLineCalculated";
 	public static final String FIELD_ICON_CLS = "iconCls";
+	public static final String FIELD_EDITABLE = "editable";
 
 	public static final String DISTINCT = "distinct";
 	public static final String IS_NESTED_EXPRESSION = "isNestedExpression";

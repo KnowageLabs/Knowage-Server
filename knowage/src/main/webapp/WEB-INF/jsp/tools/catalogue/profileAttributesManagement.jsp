@@ -75,26 +75,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<div layout-fill class="containerDiv">
 			<form name="attributeForm" ng-submit="attributeForm.$valid && saveProfileAttribute()" class="detailBody mozSize">
 				<md-card layout-padding>
-						
       						<div flex=100>
        							<md-input-container class="md-block">
        								<label>{{translate.load("sbi.attributes.headerName")}}</label>
-       								<input ng-model="selectedAttribute.attributeName" required
-        							ng-change="setDirty()"  ng-maxlength="100">
-        							
-        							<div ng-messages="attributeForm.Name.$error" ng-show="!selectedAttribute.attributeName">
-          <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
-        </div>
-        							 </md-input-container>
-    					</div>
+       								<input 	ng-model="selectedAttribute.attributeName" 
+       										required
+       										name="name"
+        									ng-change="setDirty()"  
+        									ng-maxlength="255"
+        									ng-pattern="regex.alphanumeric">		
+        							<div ng-messages="attributeForm.name.$error" role="alert" ng-messages-multiple>
+										<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.alphanumericRegex")}}</div>
+										<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 255</div>
+	  								</div>
+        						</md-input-container>
+    						</div>
       						<div flex=100>
        							<md-input-container class="md-block">
        								<label>{{translate.load("sbi.attributes.headerDescr")}}</label>
-       								<input ng-model="selectedAttribute.attributeDescription"
-        							ng-change="setDirty()"  ng-maxlength="100"> </md-input-container>
+       								<input 	ng-model="selectedAttribute.attributeDescription"
+       										required
+       										name="description"
+        									ng-change="setDirty()"
+        									ng-maxlength="500"
+        									ng-pattern="regex.extendedAlphanumeric">
+        							<div ng-messages="attributeForm.description.$error" role="alert" ng-messages-multiple>
+										<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+										<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 500</div>
+	  								</div>
+        						</md-input-container>
       						</div>
-    							
-				
 				</md-card>
 			</form>
 		</div>	

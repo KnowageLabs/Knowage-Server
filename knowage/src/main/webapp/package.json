@@ -37,10 +37,12 @@
     "angular-messages": "^1.5.1",
     "angular-sanitize": "^1.5.1",
     "angular-ui-codemirror": "0.3.0",
+    "angular-xregexp": "^1.0.0",
     "codemirror": "5.32.0",
     "font-awesome": "^4.7.0",
     "jsonformatter": "^0.6.0",
-    "ngdraggable": "^0.1.10"
+    "ngdraggable": "^0.1.10",
+    "xregexp": "^4.1.1"
   },
   "author": "knowage labs <knowage@eng.it>",
   "license": "AGPL-3.0",

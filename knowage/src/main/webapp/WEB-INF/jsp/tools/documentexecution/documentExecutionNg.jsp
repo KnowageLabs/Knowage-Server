@@ -485,6 +485,7 @@ if(executionRoleNames.size() > 0) {
                         'OBJECT_LABEL' : '<%= request.getParameter("OBJECT_LABEL") %>',
                         'EDIT_MODE' : '<%= request.getParameter("EDIT_MODE") %>',
                         'OBJECT_NAME' : '<%= obj.getName() %>',
+                        'REFRESH_SECONDS' : <%= obj.getRefreshSeconds().intValue() %>,
                         'OBJECT_TYPE_CODE' : '',
                         'isFromCross' : <%=isFromCross%>,
                         'isPossibleToComeBackToRolePage' : false,

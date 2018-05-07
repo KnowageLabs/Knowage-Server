@@ -54,13 +54,12 @@
 		          		<span ng-if="license.expiration_date">- {{license.expiration_date}}</span>
 	          		</p>
 	         	</div>
-	         	<!-- Place for other license informations 
-	         	<div class="md-list-item-text">
-	         		{{license.hostname}}
-	         	</div-->
 	         	<md-button class="md-secondary md-icon-button" ng-click="dowloadFile(license, host.hostName)" >
 		        	<md-icon md-font-set="fa" md-font-icon="fa fa-download"></md-icon>
 		        </md-button>
+		        <!--  uncomment this to add the license delete md-button class="md-secondary md-icon-button" ng-click="deleteFile(license, host.hostName)" >
+		        	<md-icon md-font-set="fa" md-font-icon="fa fa-trash"></md-icon>
+		        </md-button -->
 	         	<md-divider></md-divider>
 	       </md-list-item>
         </md-list>

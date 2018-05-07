@@ -18,6 +18,16 @@
 
 package it.eng.spagobi.wapp.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -31,16 +41,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.wapp.bo.Menu;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Vector;
-
-import org.apache.log4j.Logger;
 
 public class MenuUtilities {
 
@@ -90,6 +90,21 @@ public class MenuUtilities {
 		}
 	}
 
+	public static void checkAndSetNotClickableMenus(Menu menu, IEngUserProfile userProfile) {
+		if (menu.getObjId() != null) {
+			boolean clickable = MenuAccessVerifier.checkClickable(menu, userProfile);
+			if (clickable == false) {
+				menu.setClickable(false);
+			}
+		}
+		if (menu.getHasChildren()) {
+			for (Iterator iterator = menu.getLstChildren().iterator(); iterator.hasNext();) {
+				Menu chldMenu = (Menu) iterator.next();
+				checkAndSetNotClickableMenus(chldMenu, userProfile);
+			}
+		}
+	}
+
 	public static List filterListForUser(List menuList, IEngUserProfile userProfile) {
 		List filteredMenuList = new ArrayList();
 		if (menuList != null && !menuList.isEmpty()) {
@@ -106,6 +121,13 @@ public class MenuUtilities {
 				}
 			}
 		}
+
+		for (Iterator iterator = filteredMenuList.iterator(); iterator.hasNext();) {
+			Menu menu = (Menu) iterator.next();
+			// call recursively for menu to set clickable also for children
+			checkAndSetNotClickableMenus(menu, userProfile);
+		}
+
 		return filteredMenuList;
 	}
 

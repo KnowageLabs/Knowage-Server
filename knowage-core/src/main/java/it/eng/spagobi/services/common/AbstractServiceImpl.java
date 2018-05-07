@@ -21,7 +21,6 @@ import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.profiling.PublicProfile;
@@ -39,10 +38,6 @@ public abstract class AbstractServiceImpl {
 
 	static private Logger logger = Logger.getLogger(AbstractServiceImpl.class);
 
-	private String pass = null;
-
-	private String userId = null;
-
 	/**
 	 * Instantiates a new abstract service impl.
 	 */
@@ -51,9 +46,6 @@ public abstract class AbstractServiceImpl {
 	}
 
 	private void init() {
-		logger.debug("IN");
-		pass = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.PASS");
-
 	}
 
 	/**
@@ -66,20 +58,12 @@ public abstract class AbstractServiceImpl {
 	 */
 	protected void validateTicket(String ticket, String userId) throws SecurityException {
 		logger.debug("IN");
-		if (ticket == null) {
-			logger.warn("Ticket is NULL");
-			throw new SecurityException("Ticket is NULL");
-		}
-		if (userId == null) {
-			logger.warn("UserID is NULL");
-			throw new SecurityException("Ticket is NULL");
-		}
-		if (ticket.equals(pass)) {
-			logger.debug("JUMP che ticket validation");
-		} else {
-			SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
-			proxyService.validateTicket(ticket, userId);
-		}
+
+		Assert.assertNotNull(ticket, "Ticket is null!");
+		Assert.assertNotNull(userId, "User id is null!");
+
+		SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
+		proxyService.validateTicket(ticket, userId);
 
 		logger.debug("OUT");
 

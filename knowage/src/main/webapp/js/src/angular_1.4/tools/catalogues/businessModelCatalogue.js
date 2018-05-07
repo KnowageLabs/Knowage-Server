@@ -2,18 +2,19 @@
  *
  */
 
-var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload','angular-list-detail']);
+var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'ngMessages', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload','angular-list-detail', 'angularXRegExp']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
-app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices",
+app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "kn_regex",
                                                    "$scope", "$mdDialog", "$mdToast","multipartForm", "sbiModule_download",
                                                    "sbiModule_messaging","sbiModule_config","sbiModule_user","sbiModule_messaging",businessModelCatalogueFunction]);
 
-function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog,
+function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, kn_regex, $scope, $mdDialog,
 		$mdToast,multipartForm,sbiModule_download,sbiModule_messaging,sbiModule_config,sbiModule_user,sbiModule_messaging){
 
+	$scope.regex = kn_regex;
 	//variables
 	///////////////////////////////////////////////////////////
 	$scope.isDirty = false;

@@ -370,6 +370,24 @@ a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.m
     font-size: $smallFontSize;
 }
 
+.kn-codeExample {
+    margin: 8px !important;
+    border: 1px solid rgba($baseColor,.1);
+    padding: 8px;
+    background-color: lighten($baseColor, 55%);
+    text-align: left;
+    position: relative;
+    font-size: $smallFontSize;
+    font-family:'courier';
+    textarea {
+      width: 100%;
+      background-color: transparent;
+      border: none;
+      resize: none;
+    }
+}
+
+
 .kn-list md-icon.fa {
   padding-left:0;
 }
@@ -865,6 +883,18 @@ color-picker {
   }
 }
 
+.text-line-through {
+  text-decoration: line-through  !important;
+}
+
+.rotate-transition {
+  transition: transform .3s ease-out, display 0s linear;
+}
+
+.rotate-180 {
+  transform: rotate(-180deg);
+}
+
 /* fix to have the selected color-picker always on top */
 .md-input-focused {
   color-picker {
@@ -927,8 +957,6 @@ color-picker {
     min-height: 100px;
   }
   md-checkbox.md-knowage-theme.md-checked ._md-icon:after {
-/*    transform: rotate(135deg);
-    top:10px;*/
     padding-top: 11px;
   }
   

@@ -42,6 +42,9 @@
         <property name="writeDefault" type="boolean">
             <column name="WRITE_DEFAULT" />
         </property>
+         <property name="jdbcPoolConfiguration" type="string">
+            <column name="JDBC_ADVANCED_CONFIGURATION" />
+        </property>
         <set name="sbiObjectses" inverse="true">
             <key>
                 <column name="DATA_SOURCE_ID" />

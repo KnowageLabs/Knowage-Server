@@ -13,12 +13,14 @@
 #foreach($serie in $chart.CHART.VALUES.SERIE)
 	#if($serie.get($name) == $drilldownSerie)
 	#set($mainSerieName =$serie.get($col))
+	#set($groupingFunction=$serie.get("groupingFunction"))
 	#end
 #end
 #elseif($chart.CHART.VALUES.SERIE.class.name == 'java.util.LinkedHashMap')
 	#if($chart.CHART.VALUES.SERIE.name == $drilldownSerie)
 		#set($mainSerie = $chart.CHART.VALUES.SERIE)
 		#set($mainSerieName = $mainSerie.column)
+	#set($groupingFunction=$mainSerie.groupingFunction)
 	#end
 #else
 #set($mainSerieName = $drilldownSerie)
@@ -33,6 +35,7 @@
 #set($isDateTime = false)
 #if($chart.CHART.dateTime && $chart.CHART.dateTime=="true")
 	#if($chart.CHART.categoryDate)
+		#set($categoryDate = $chart.CHART.categoryDate)
 		#if($chart.CHART.categoryDate==$drilldownCategoryName)
 			#set($isDateTime = true)
 		#end
@@ -45,27 +48,64 @@
 #set($indexAxis = $a.id)
 #end
 #end
-#set($serieColumnsMapped=$dataColumnsMapper.get($mainSerieName.toLowerCase()))
+
+#set($underScore = "_")
+#if($chart.CHART.isCockpitEngine=="true")
+	#set($serieWithAgg = "$mainSerieName.toLowerCase()$underScore$groupingFunction.toLowerCase()")
+#else
+	#set($serieWithAgg=$mainSerieName.toLowerCase())
+#end
+
+#set($serieColumnsMapped=$dataColumnsMapper.get($serieWithAgg))
 
 {
 	name:	'$selectedCategory',
 	xAxis: $indexAxis,
 	#if($drilldownCategoryName != '')
-	category: '$drilldownCategoryName.replaceAll(" ","")',
+	#set ($category=$drilldownCategoryName.replaceAll(" ",""))
 	#else
-	category: '$drilldownCategory',
+	#set ($category=$drilldownCategory)
 	#end
+	category: '$category',
+	
 	serieName:'$drilldownSerie',
-
+     pointRange: 1,
 	data: [
 #foreach($row in $rows)
-
 #set ($serieValue=$row.get($serieColumnsMapped))
 #set ($serieName= $row.get($categorieColumnsMapped))
 		{
 			drilldown: $enableNextDrilldown,
 			y: $serieValue,
 			name: '$serieName',
+			#if($category == $categoryDate)
+				#if($serieName.length()>10)
+				#set($date = $serieName.replace(" " , "-").replace(":" , "-").replace(":" , "-").replace("." , "-").split("-"))
+				#set($hour= $date.get(3))
+				#set($min= $date.get(4))
+				#set($sec= $date.get(5))
+				#set($milisec= $date.get(6))
+				#else
+				#set($date = $serieName.split("-"))
+				#end
+			
+				#if($date.get(0).length()>2)
+				#set($day = $date.get(2))
+				#set($year= $date.get(0))
+				#else
+				#set($day = $date.get(0))
+				#set($year= $date.get(2))
+				#end
+				#set($month = $Integer.parseInt($date.get(1)))
+				#set($month = $month - 1)
+		
+			#if($serieName.length()>10)
+			x:	Date.UTC($year, $month, $day, $hour, $min, $sec, $milisec),	
+			#else 
+			x:	Date.UTC($year, $month, $day),	
+			
+			#end
+			#end
 		
 		},
 #end

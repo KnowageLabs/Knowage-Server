@@ -51,13 +51,103 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
 			cockpitModule_properties){
+
+		$scope.refresh = function(element,width,height, datasetRecords,nature) {
+			
+		}
 		
-		$scope.$watch('ngModel.cssToRender',function(newValue,oldValue){
-			$scope.trustedCss = $sce.trustAsHtml('<style>'+newValue+'</style>');
-		})
-		$scope.$watch('ngModel.htmlToRender',function(newValue,oldValue){
-			$scope.trustedHtml = $sce.trustAsHtml(newValue);
-		})
+		/**
+		 * Function to initialize the rendered html at the loading and after editing.
+		 * If there is a selected dataset the function calls the data rest service.
+		 */
+		$scope.reinit = function(){
+			if($scope.ngModel.datasetId){
+				sbiModule_restServices.restToRootProject();
+				sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(cockpitModule_datasetServices.getDatasetLabelById($scope.ngModel.datasetId)) + "/data").then(function(data){
+					$scope.htmlDataset = data.data;
+					if($scope.ngModel.cssToRender){
+						$scope.checkPlaceholders($scope.ngModel.cssToRender).then(
+								function(placeholderResultCss){
+									$scope.trustedCss = $sce.trustAsHtml('<style>'+placeholderResultCss+'</style>');
+								}
+							)
+					}		
+					$scope.checkCustomFunctions($scope.ngModel.htmlToRender).then(
+						function(resultHtml){
+							$scope.checkPlaceholders(resultHtml).then(
+								function(placeholderResultHtml){
+									$scope.trustedHtml = $sce.trustAsHtml(placeholderResultHtml);
+								}
+							)
+						}
+					)
+					
+				},function(error){
+					
+				});
+			}else {
+				$scope.trustedCss = $sce.trustAsHtml('<style>'+$scope.ngModel.cssToRender+'</style>');
+				$scope.trustedHtml = $sce.trustAsHtml($scope.ngModel.htmlToRender);
+			}
+		}
+		
+		/**
+		 * Get the dataset column name from the readable name. ie: 'column_1' for the name 'id'
+		 */
+		$scope.getColumnFromName = function(name){
+			for(var i in $scope.htmlDataset.metaData.fields){
+				if($scope.htmlDataset.metaData.fields[i].header && $scope.htmlDataset.metaData.fields[i].header == name){
+					return $scope.htmlDataset.metaData.fields[i].name;
+				}
+			}
+		}
+		
+		/**
+		 * Regular Expressions used in the placeholder functions
+		 */
+		$scope.columnRegex = /(?:\[kn-column=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}(?:\s+row=[\'\"]{1}(\d*)[\'\"]{1})?\])/g;
+		$scope.functionsRegex = /(?:(?:\[kn-((?!column)[a-zA-Z0-9]+)\s*([\w\=\'\""\s]+)?\]([\s\S]*)(?:\[\/kn-[a-zA-Z0-9]+\])))/g;
+		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
+		
+		/**
+		 * Check the existence of placeholder inside the raw html.
+		 * If there is a match the placeholder is replaced with the dataset value for that column.
+		 * If the row is not specified the first one is returned.
+		 */
+		$scope.checkPlaceholders = function(rawHtml){
+			return $q(function(resolve, reject) {
+				function replacer(match, p1, p2) {
+					p1=$scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)]
+					return p1;
+				}
+				var resultHtml = rawHtml.replace($scope.columnRegex, replacer);
+				resolve(resultHtml);
+			})
+		}
+		
+		/**
+		 * Check the existence of custom functions inside the raw html.
+		 * If there is a match the placeholder changes the html using the function selected.
+		 */
+		$scope.checkCustomFunctions = function(rawHtml){
+			return $q(function(resolve, reject) {
+				function replacer(match, functionType, attrs, html) {
+					var str = '';
+					if(functionType=='repeat'){
+						for(var r in $scope.htmlDataset.rows){
+							str += html.replace($scope.columnRegex, function(match,c1,c2){
+								return '[kn-column="'+c1+'" row="'+(c2||r)+'"]';
+							});
+							str = str.replace($scope.repeatIndexRegex, r);
+						}
+					}
+					return str;
+				}
+				var resultHtml = rawHtml.replace($scope.functionsRegex, replacer);
+				resolve(resultHtml);
+			})
+		}
+		
 		
 		$scope.editWidget=function(index){
 			var finishEdit=$q.defer();
@@ -79,6 +169,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return finishEdit.promise;
 		}
 		
+		$scope.reinit();
+		
 	}
 	
 	function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,$timeout){
@@ -90,7 +182,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.toggleCss = function() {
 			$scope.newModel.cssOpened = !$scope.newModel.cssOpened;
 		}
-
+		
         //codemirror initializer
         $scope.codemirrorLoaded = function(_editor) {
             $scope._doc = _editor.getDoc();
@@ -129,7 +221,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 	}
 
-	// this function register the widget in the cockpitModule_widgetConfigurator factory
-	addWidgetFunctionality("html",{'initialDimension':{'width':20, 'height':20},'updateble':true,'cliccable':true});
+	/**
+	 * register the widget in the cockpitModule_widgetConfigurator factory
+	 */
+	addWidgetFunctionality("html",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':true});
 
 })();

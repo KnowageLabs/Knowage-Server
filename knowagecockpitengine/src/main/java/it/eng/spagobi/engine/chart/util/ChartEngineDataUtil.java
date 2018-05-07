@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.knowage.engine.cockpit.api.CockpitExecutionClient;
 import it.eng.qbe.query.Query;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -102,10 +103,18 @@ public class ChartEngineDataUtil {
 
 	@SuppressWarnings("rawtypes")
 	public static String drilldown(String jsonTemplate, String breadcrumb, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale,
-			String documentLabel, IEngUserProfile profile) throws Throwable {
+			String documentLabel, IEngUserProfile profile, String selections, String aggregations, String parameters, Map<String, Object> queryParams)
+			throws Throwable {
 
+		JSONObject parametersJson = null;
+		JSONObject aggregationsJson = null;
+		JSONObject selectionsJson = null;
 		String result = "";
-
+		if (!aggregations.equals("")) {
+			parametersJson = new JSONObject(parameters);
+			aggregationsJson = new JSONObject(aggregations);
+			selectionsJson = new JSONObject(selections);
+		}
 		JSONObject jo = new JSONObject(jsonTemplate);
 		JSONObject category = jo.getJSONObject("CHART").getJSONObject("VALUES").getJSONObject("CATEGORY");
 		String groupBys = category.optString("groupby");
@@ -142,10 +151,42 @@ public class ChartEngineDataUtil {
 				if (dateFormatJava != null)
 					dateFormatJava = dateFormat;
 			}
+			String jsonData = "";
+			if (!aggregations.equals("")) {
+				JSONArray categories = (JSONArray) aggregationsJson.get("categories");
+				JSONObject categ = (JSONObject) categories.get(0);
+				categ.put("id", drilldownCategory);
+				categ.put("columnName", drilldownCategory);
+				categ.put("alias", drilldownCategory);
+				String key = "";
+				String value = "";
 
+				for (String drillParam : drilldownParams.keySet()) {
+					key = drillParam;
+					value = (String) drilldownParams.get(drillParam);
+					String aggValue = "('" + value + "')";
+					JSONArray aggArray = new JSONArray();
+					aggArray.put(aggValue);
+					if (selectionsJson.length() == 0) {
+						selectionsJson.put(aggregationsJson.getString("dataset"), new JSONObject());
+					}
+					JSONObject dataset = (JSONObject) selectionsJson.get(aggregationsJson.getString("dataset"));
+
+					dataset.put(key, aggArray);
+				}
+
+				String aggregationsToSend = "{aggregations:" + aggregationsJson.toString() + ",parameters:" + parametersJson.toString() + ",selections:"
+						+ selectionsJson.toString() + "}";
+				CockpitExecutionClient cockpitExecutionClient;
+				cockpitExecutionClient = new CockpitExecutionClient();
+				String userId = (String) profile.getUserUniqueIdentifier();
+				jsonData = cockpitExecutionClient.getDataFromDataset(aggregationsToSend, aggregationsJson.getString("dataset"), userId, queryParams);
+
+			} else {
 			IQuery q = extractAggregatedQueryFromTemplate(jsonTemplate, true, drilldownSerie, drilldownCategory, drilldownParams);
+				jsonData = loadJsonData(q, dataSet, analyticalDrivers, userProfile, locale, dateFormatJava);
+			}
 
-			String jsonData = loadJsonData(q, dataSet, analyticalDrivers, userProfile, locale, dateFormatJava);
 			boolean enableNextDrilldown = i < gbys.length;
 
 			/**

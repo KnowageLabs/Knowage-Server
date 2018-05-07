@@ -780,7 +780,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$scope.replacingDatasetOutLabels = {};
 		$scope.replacingTextOutLabels = {};
 		$scope.replacingImageOutLabels = {};
-		$scope.replacingFileList = {};
 		$scope.translate = translate;
 
 		$scope.getDatasetNameByLabel = function(label, datasetList) {

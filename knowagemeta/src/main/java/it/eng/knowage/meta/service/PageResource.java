@@ -44,7 +44,7 @@ import it.eng.knowage.meta.model.business.BusinessModel;
 import it.eng.knowage.meta.model.business.BusinessTable;
 import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
-import it.eng.qbe.utility.ProfileDialectThreadLocal;
+import it.eng.qbe.utility.DbTypeThreadLocal;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -57,6 +57,8 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 
 /**
@@ -174,16 +176,15 @@ public class PageResource {
 				checkBackwardCompatibility(model);
 				request.getSession().setAttribute(MetaService.EMF_MODEL, model);
 
-				ProfileDialectThreadLocal.setUserProfile(userProfile);
 				String datasourceId = request.getParameter("datasourceId");
 				if (datasourceId != null && !datasourceId.equals("")) {
 					IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(Integer.valueOf(datasourceId));
 					if (ds != null) {
-						String dialect = ds.getDialectName();
-						ProfileDialectThreadLocal.setDialect(dialect);
+						IDataBase db = DataBaseFactory.getDataBase(ds);
+						String dbType = db.getName();
+						DbTypeThreadLocal.setDbType(dbType);
 					}
 				}
-
 				JSONObject translatedModel = MetaService.createJson(model);
 				ioManager.getHttpSession().setAttribute("translatedModel", translatedModel.toString());
 			} else {
@@ -201,7 +202,7 @@ public class PageResource {
 		} catch (Exception e) {
 			logger.error("Error during Metamodel initialization: " + e);
 		} finally {
-			ProfileDialectThreadLocal.unset();
+			DbTypeThreadLocal.unset();
 			logger.debug("OUT");
 		}
 	}
@@ -209,6 +210,8 @@ public class PageResource {
 	public void checkBackwardCompatibility(Model model) {
 		// Put here methods to guarantee the backward compatibility with old versions of the metamodel
 		addProfileFilterConditionProperty(model);
+		addCustomFunctionProperty(model);
+
 	}
 
 	/**
@@ -241,6 +244,49 @@ public class PageResource {
 			propertyType.getAdmissibleValues().add("IN");
 			propertyType.getAdmissibleValues().add("LIKE");
 			propertyType.setDefaultValue("EQUALS TO");
+
+			model.getPropertyTypes().add(propertyType);
+
+			// apply the property to every simple business column
+			for (BusinessTable businessTable : businessTables) {
+				List<SimpleBusinessColumn> simpleBusinessColumns = businessTable.getSimpleBusinessColumns();
+				for (SimpleBusinessColumn simpleBusinessColumn : simpleBusinessColumns) {
+
+					property = FACTORY.createModelProperty();
+					property.setPropertyType(propertyType);
+					// add property on simple business column
+					simpleBusinessColumn.getProperties().put(property.getPropertyType().getId(), property);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Add the property type 'structural.customFunction' to simple business columns if it doesn't already exists (previous to Knowage 6.2)
+	 *
+	 * @param model
+	 */
+	public void addCustomFunctionProperty(Model model) {
+		ModelFactory FACTORY = ModelFactory.eINSTANCE;
+		BusinessModel businessModel = model.getBusinessModels().get(0);
+		ModelPropertyType propertyType = null;
+		ModelProperty property;
+		ModelPropertyCategory structuralCategory = model.getPropertyCategory("Structural");
+		List<BusinessTable> businessTables = businessModel.getBusinessTables();
+
+		// check if the property already exists
+		propertyType = model.getPropertyType("structural.customFunction");
+		if (propertyType != null) {
+			// model has already the property, we can skip the check
+			return;
+		} else {
+
+			// inject property type
+			propertyType = FACTORY.createModelPropertyType();
+			propertyType.setId("structural.customFunction");
+			propertyType.setName("Custom function");
+			propertyType.setDescription("Custom DB function to apply to column");
+			propertyType.setCategory(structuralCategory);
 
 			model.getPropertyTypes().add(propertyType);
 

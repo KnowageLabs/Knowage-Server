@@ -218,6 +218,10 @@ public interface IDataSource {
 	 */
 	public abstract void setObjects(Set objects);
 
+	public abstract JDBCDataSourcePoolConfiguration getJdbcPoolConfiguration();
+
+	public abstract void setJdbcPoolConfiguration(JDBCDataSourcePoolConfiguration jDBCPoolConfiguration);
+
 	public String getHibDialectClass();
 
 	public void setHibDialectClass(String hibDialectClass);

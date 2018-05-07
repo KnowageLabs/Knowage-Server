@@ -54,7 +54,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	},true)
 	
 	$scope.$watch('chartTemplate.dateTime',function(newValue,oldValue){
-		if(!newValue) $scope.chartTemplate.categoryDate = "";
+		if(!newValue && $scope.chartTemplate) $scope.chartTemplate.categoryDate = "";
 	},true)
 
 
@@ -228,7 +228,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			var chartType = $scope.chartTemplate.type;
 			var index = findInArray($scope.categories,'column',item.alias);
 
-			if (chartType.toUpperCase() == "RADAR" ||
+			if (
 					chartType.toUpperCase() == "SCATTER" || chartType.toUpperCase() == "WORDCLOUD") {
 				if($scope.categories.length>=1){
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.max.categories"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
@@ -261,7 +261,8 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 				}
 			} else if(chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "SUNBURST" ||
 						chartType.toUpperCase() == "BAR" || chartType.toUpperCase() == "LINE"  ||
-							chartType.toUpperCase() == "PIE" ) {
+							chartType.toUpperCase() == "PIE" ||
+							chartType.toUpperCase() == "RADAR" ) {
 				if(index<0){
 					  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
 				  }

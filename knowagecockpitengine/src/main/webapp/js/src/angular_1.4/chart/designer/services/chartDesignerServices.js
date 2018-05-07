@@ -340,8 +340,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					      },
 					      "type":"BAR",
 					      "AXES_LIST":{
-					         "AXIS":[
-					            {
+					    	  "AXIS":[
+					    		  {
 					               "id":"Y",
 					               "alias":"Y",
 					               "type":"Serie",
@@ -355,6 +355,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					            	   "fontFamily":"",
 					            	   "fontSize":"",
 					            	   "fontWeight":""
+					               },
+					               "labels":{
+										"scaleFactor": "empty",
 					               },
 					               "MAJORGRID":{
 					                  "interval":"",
@@ -1126,7 +1129,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"postfixChar": "",
 						"precision": 0,
 						"prefixChar": "",
-						"showValue": "",
+						"showValue": true,
 						"showAbsValue": false,
 						"showPercentage": false,
 						"scaleFactor": "empty",
@@ -1340,37 +1343,40 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"type": "Serie",
 						"position": "",
 						"style":{
-			            	   "rotate":"",
-			            	   "align":"",
-			            	   "color":"",
-			            	   "fontFamily":"",
-			            	   "fontSize":"",
-			            	   "fontWeight":""
-			               },
-			               "MAJORGRID":{
-			                  "interval":"",
-			                  "style":{
-			                	  "typeLine":"",
-			                	  "color":""
-			                  }
-			               },
-			               "MINORGRID":{
-			            	  "interval":"",
-			                  "style":{
-			                	  "typeLine":"",
-			                	  "color":""
-			                  }
-			               },
-			               "TITLE":{
-				                  "text":"",
-				                  "style":{
-				                	  "align":"",
-				                	  "color":"",
-				                	  "fontFamily":"",
-				                	  "fontWeight":"",
-				                	  "fontSize":""
-				                  }
-				               }
+							"rotate":"",
+			            	"align":"",
+			            	"color":"",
+			            	"fontFamily":"",
+			            	"fontSize":"",
+			            	"fontWeight":""
+						},
+						"labels":{
+							"scaleFactor": "empty",
+						},
+						"MAJORGRID":{
+							"interval":"",
+							"style":{
+								"typeLine":"",
+								"color":""
+							}
+						},
+						"MINORGRID":{
+							"interval":"",
+							"style":{
+								"typeLine":"",
+								"color":""
+							}
+						},
+						"TITLE":{
+							"text":"",
+							"style":{
+								"align":"",
+								"color":"",
+								"fontFamily":"",
+								"fontWeight":"",
+								"fontSize":""
+							}
+						}
 					},
 					{
 						"alias": "X",

@@ -112,7 +112,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			}
 		}
 	}
-
 	this.initSpatialAttributesFlag=function(datasets){
 		for(var i in datasets){
 			var dataset = datasets[i];
@@ -126,6 +125,14 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				}
 			}
 			dataset.hasSpatialAttributes = hasSpatialAttributes;
+		}
+	}
+
+	this.getDatasetLabelById=function(dsId){
+		if(ds.datasetMapById[dsId]){
+			return ds.datasetMapById[dsId].label;
+		}else{
+			return null;
 		}
 	}
 

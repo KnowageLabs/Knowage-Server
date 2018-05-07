@@ -231,9 +231,6 @@
 	<CONFIG label="SPAGOBI_SSO.ACTIVE" name="ACTIVE SSO FLAG"
 		description="ACTIVE SSO FLAG" isActive="true" valueCheck="false"
 		valueType="STRING" category="SECURITY" />
-	<CONFIG label="SPAGOBI_SSO.PASS" name="PASS String"
-		description="Some proxy element use this string to do some security check"
-		isActive="true" valueCheck="PASS" valueType="STRING" category="SECURITY" />
 	<CONFIG label="SPAGOBI_SSO.SECURITY_LOGOUT_URL" name="SECURITY LOGOUT URL"
 		description="" isActive="true"
 		valueCheck="https://athos.engilab.ewebpd.eng.it:1447/cas/logout"

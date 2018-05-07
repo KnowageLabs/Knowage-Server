@@ -104,131 +104,116 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-tab label='{{translate.load("sbi.generic.details");}}'>
 		<md-content>	
 		<form name="attributeForm" ng-submit="attributeForm.$valid">
-			
-		<md-card>
-	     <md-card-content>			
-					
-		
-			
-				
-				
-				
-<!-- /////////////// INPUT FIELD NAME \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->			
-      					<div flex="100">
-		
-				 			<md-input-container class="small counter"> 
-				 
-								<label>{{translate.load("sbi.ds.name");}}</label>
-								<input 	ng-model="selectedMondrianSchema.name" 
-										required
-										ng-maxlength="100" 
-										ng-disabled = "selectedMondrianSchema.modelLocker"
-										ng-change = "changeApplied()"
-										> 
-							</md-input-container> 
-						</div>
-     			
-				
-				
-<!-- /////////////// INPUT FIELD DESCRIPTION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
-
-      				<div flex="100">				
-							<md-input-container class="small counter"> 
-				
-								<label>{{translate.load("sbi.ds.description");}}</label>
-					
-								<input 	ng-model="selectedMondrianSchema.description" 
-										ng-maxlength="100" 
-										ng-disabled = "selectedMondrianSchema.modelLocker"
-										ng-change = "changeApplied()"
-										> 
-							
-								</md-input-container>
-				</div>
-
-     				
-<!-- /////////////// INPUT FILE UPLOAD \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
-
-				
-							
-						<div layout="row" layout-wrap  layout-align="start center">
-							
-							<label  flex class="buttonLabel">{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.fileUpload")}}:</label>
-      						<file-upload  flex ng-model="file" id="myId" ng-disabled = "selectedMondrianSchema.modelLocker" ng-change = "changeApplied()" flex></file-upload>
-							
-						</div>
-       					
-      	</md-card-content>
-	      </md-card>	
-      				
-     	<md-card>
-     	<!-- /////////////// SAVED VERSION TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
-				
-				<md-toolbar class="secondaryToolbar">
-		      <div class="md-toolbar-tools">
-		        <h2>
-		          <span>{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}</span>
-		        </h2>
-		   
-		      </div>
-		    </md-toolbar>
-	     <md-card-content>					
-					 		
-     					
-	
-
-				
-<!-- /////////////// SCROLL FOR SAVED FILES TABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->						
-			
-			
-			
-			
-				<div layout-align="space-around" layout="row" style="height:100%" ng-show="versionLoadingShow" >
-					
-						<md-progress-circular 
-							
-					 	 	class=" md-hue-4"
-					 		md-mode="indeterminate" 
-					 		md-diameter="70"
-					 	
-					 		style="height:100%;">
-						</md-progress-circular>
-					
+			<md-card>
+		    	<md-card-content>					
+	      			<div flex="100">
+	      				<md-input-container class="small counter"> 
+							<label>{{translate.load("sbi.ds.name");}}</label>
+							<input 	ng-model="selectedMondrianSchema.name" 
+									required 
+									name="name"
+									ng-maxlength="100"
+									ng-disabled = "selectedMondrianSchema.modelLocker" 
+									ng-change = "changeApplied()" 
+									ng-pattern="regex.extendedAlphanumeric">
+							<div ng-messages="attributeForm.name.$error" role="alert" ng-messages-multiple>
+								<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+								<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 100</div>
+	  						</div>
+						</md-input-container> 
 					</div>
-			
-<!-- /////////////// SAVED FILES TABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
-					<md-radio-group ng-model="selectedMondrianSchema.currentContentId" >
-						<angular-table 	
-						                layout-fill
-						                
-										id="versions" 
-										ng-model="fileList"
-										no-pagination=false
-										
-										columns='[
-										{"label":"ACTIVE","name":"actives","size":"50px"},
-										{"label":"FILE NAME","name":"fileName"},
-										{"label":"CREATOR","name":"creationUser"},
-										{"label":"CREATION DATE","name":"creationDate"},
-										
-										
-										]'
-										highlights-selected-item=true
-										show-search-bar=true
-										speed-menu-option ="versionsSpeedOptions"
-										click-function = "versionClickFunction(item)"
-										ng-show="showVersions"
-										> 
-										
-						</angular-table>
-			
-			
-				</md-radio-group>
-			
+					
+	      			<div flex="100">				
+						<md-input-container class="small counter"> 
+							<label>{{translate.load("sbi.ds.description");}}</label>
+							<input 	ng-model="selectedMondrianSchema.description" 
+									ng-maxlength="500"
+									name = "description" 
+									ng-disabled = "selectedMondrianSchema.modelLocker"
+									ng-change = "changeApplied()"
+									ng-pattern="regex.extendedAlphanumeric"> 
+							<div ng-messages="attributeForm.description.$error" role="alert" ng-messages-multiple>
+								<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+								<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 500</div>
+	  						</div>
+						</md-input-container>
+					</div>
+	
+					<div layout="row" layout-wrap  layout-align="start center">
+						<label  flex class="buttonLabel">{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.fileUpload")}}:</label>
+	      				<file-upload  flex ng-model="file" id="myId" ng-disabled = "selectedMondrianSchema.modelLocker" ng-change = "changeApplied()" flex></file-upload>
+					</div>				
+	      		</md-card-content>
+		    </md-card>	
+	      				
+	     	<md-card>
+	     	<!-- /////////////// SAVED VERSION TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
+					
+					<md-toolbar class="secondaryToolbar">
+			      <div class="md-toolbar-tools">
+			        <h2>
+			          <span>{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}</span>
+			        </h2>
+			   
+			      </div>
+			    </md-toolbar>
+		     <md-card-content>					
+						 		
+	     					
+		
+	
+					
+	<!-- /////////////// SCROLL FOR SAVED FILES TABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->						
 				
 				
-			</md-card-content>
-	      </md-card>
+				
+				
+					<div layout-align="space-around" layout="row" style="height:100%" ng-show="versionLoadingShow" >
+						
+							<md-progress-circular 
+								
+						 	 	class=" md-hue-4"
+						 		md-mode="indeterminate" 
+						 		md-diameter="70"
+						 	
+						 		style="height:100%;">
+							</md-progress-circular>
+						
+						</div>
+				
+	<!-- /////////////// SAVED FILES TABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
+						<md-radio-group ng-model="selectedMondrianSchema.currentContentId" >
+							<angular-table 	
+							                layout-fill
+							                
+											id="versions" 
+											ng-model="fileList"
+											no-pagination=false
+											
+											columns='[
+											{"label":"ACTIVE","name":"actives","size":"50px"},
+											{"label":"FILE NAME","name":"fileName"},
+											{"label":"CREATOR","name":"creationUser"},
+											{"label":"CREATION DATE","name":"creationDate"},
+											
+											
+											]'
+											highlights-selected-item=true
+											show-search-bar=true
+											speed-menu-option ="versionsSpeedOptions"
+											click-function = "versionClickFunction(item)"
+											ng-show="showVersions"
+											> 
+											
+							</angular-table>
+				
+				
+					</md-radio-group>
+				
+					
+					
+				</md-card-content>
+		      </md-card>
 
 			</form>
 			</md-content>

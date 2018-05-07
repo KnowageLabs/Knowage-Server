@@ -15,6 +15,8 @@ app.service("metaModelServices",function(sbiModule_jsonServices){
 	this.originalMetaModelObserver; //the observer on the original object
 	this.observerObject;
 	this.cleanedObserverObject={};
+	this.dataSourceId;
+
 
 	this.cleanObserverObject=function(){
 		var data={};
@@ -38,6 +40,10 @@ app.service("metaModelServices",function(sbiModule_jsonServices){
 		bms.cleanObserverObject();
 		bms.metaModelObserve=sbiModule_jsonServices.observe(bms.cleanedObserverObject);
 	};
+
+	this.getDataSourceId=function(){
+		return this.dataSourceId;
+	}
 
 	this.generateDiff=function(){
 		bms.cleanObserverObject();
@@ -137,6 +143,7 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 	$scope.physicalModels = []; // array of table to transform in physical model
 	$scope.businessModels = []; // array of table to transform in business model
 
+	metaModelServices.dataSourceId =datasourceId;
 
 	$scope.loadSbiModel=function(translatedModel){
 		angular.copy(translatedModel,$scope.meta);
@@ -316,7 +323,7 @@ angular.module('metaManager').filter('filterByProductType', function(sbiModule_c
 		var showTemporalDimension = sbiModule_user.functionalities.indexOf("TemporalDimension")>-1;
 		var toReturn = [];
 		angular.copy(items,toReturn);
-		
+
 		var key = Object.keys(prop)[0];
 		if(angular.equals(prop[key].propertyType.name,"Type")){
 			if(sbiModule_config.productTypes.indexOf("KnowageLI")==-1 || !showSpatialDimension){

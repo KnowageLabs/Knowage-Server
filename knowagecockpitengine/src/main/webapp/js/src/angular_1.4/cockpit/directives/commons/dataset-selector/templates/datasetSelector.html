@@ -1,4 +1,5 @@
-<div layout="row" layout-align="start center">
+<div layout="column">
+	<div layout="row" layout-align="start center">
 	<md-input-container class="md-block" flex>
 		<label>{{translate.load('sbi.cockpit.dataset')}}</label>
 		<md-select ng-model="ngModel" ng-change="onChange({dsId:ngModel});" md-on-close="searchTerm =''" data-md-container-class="selectdemoSelectHeader">
@@ -13,4 +14,19 @@
 	<md-button class="md-icon-button" ng-click="addNewDataset()">
 		<md-icon md-font-icon="fa fa-plus"></md-icon>
 	</md-button>
+	</div>
+	<div ng-if="extended && dataset.metaData.fields.length > 0">
+		<table class="kn-table kn-table-alternated-rows kn-table-medium-rows">
+			<thead>
+				<tr>
+					<th>Column Name</th><th>Column Type</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="col in dataset.metaData.fields" ng-if="col.name">
+					<td>{{col.header}}</td><td>{{col.type}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div>

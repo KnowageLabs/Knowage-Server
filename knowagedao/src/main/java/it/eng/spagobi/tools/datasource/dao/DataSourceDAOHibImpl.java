@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.datasource.dao;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,6 +39,11 @@ import org.hibernate.criterion.Expression;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
@@ -57,6 +63,7 @@ import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.bo.JDBCDataSourcePoolConfiguration;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
@@ -464,6 +471,12 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			hibDataSource.setPwd(aDataSource.getPwd());
 			hibDataSource.setDriver(aDataSource.getDriver());
 			hibDataSource.setMultiSchema(aDataSource.getMultiSchema());
+
+			if (aDataSource.getJdbcPoolConfiguration() != null) {
+				String modifiedJdbcPoolConfig = modifySbiDataSourceJdbcPoolConfig(aDataSource);
+				hibDataSource.setJdbcPoolConfiguration(modifiedJdbcPoolConfig);
+			}
+
 			hibDataSource.setReadOnly(aDataSource.checkIsReadOnly());
 
 			disableOtherWriteDefault(aDataSource, hibDataSource, aSession);
@@ -551,18 +564,10 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				logger.error("The Domain with value_cd=" + aDataSource.getDialectName() + " does not exist.");
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
 			}
-			SbiDataSource hibDataSource = new SbiDataSource();
+
+			SbiDataSource hibDataSource = toSbiDataSource(aDataSource);
 			hibDataSource.setDialect(dialect);
 			hibDataSource.setDialectDescr(dialect.getValueNm());
-			hibDataSource.setLabel(aDataSource.getLabel());
-			hibDataSource.setDescr(aDataSource.getDescr());
-			hibDataSource.setJndi(aDataSource.getJndi());
-			hibDataSource.setUrl_connection(aDataSource.getUrlConnection());
-			hibDataSource.setUser(aDataSource.getUser());
-			hibDataSource.setPwd(aDataSource.getPwd());
-			hibDataSource.setDriver(aDataSource.getDriver());
-			hibDataSource.setMultiSchema(aDataSource.getMultiSchema());
-			hibDataSource.setSchemaAttribute(aDataSource.getSchemaAttribute());
 			hibDataSource.setReadOnly(aDataSource.checkIsReadOnly());
 
 			disableOtherWriteDefault(aDataSource, hibDataSource, aSession);
@@ -607,8 +612,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 					aSession.close();
 				logger.debug("OUT");
 			}
-			return id;
+
 		}
+		return id;
 	}
 
 	/**
@@ -668,25 +674,94 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	 * @return The corrispondent <code>DataSource</code> object
 	 */
 	public static IDataSource toDataSource(SbiDataSource hibDataSource) {
+		logger.debug("IN");
+		ObjectMapper mapper = new ObjectMapper();
+		String jdbcAdvancedOptions = hibDataSource.getJdbcPoolConfiguration();
 		IDataSource ds = DataSourceFactory.getDataSource();
 
-		ds.setDsId(hibDataSource.getDsId());
-		ds.setLabel(hibDataSource.getLabel());
-		ds.setDescr(hibDataSource.getDescr());
-		ds.setJndi(hibDataSource.getJndi());
-		ds.setUrlConnection(hibDataSource.getUrl_connection());
-		ds.setUser(hibDataSource.getUser());
-		ds.setPwd(hibDataSource.getPwd());
-		ds.setDriver(hibDataSource.getDriver());
-		ds.setDialectName(hibDataSource.getDialect().getValueCd());
-		ds.setHibDialectClass(hibDataSource.getDialect().getValueCd());
-		ds.setEngines(hibDataSource.getSbiEngineses());
-		ds.setObjects(hibDataSource.getSbiObjectses());
-		ds.setSchemaAttribute(hibDataSource.getSchemaAttribute());
-		ds.setMultiSchema(hibDataSource.getMultiSchema());
-		ds.setReadOnly(hibDataSource.getReadOnly());
-		ds.setWriteDefault(hibDataSource.getWriteDefault());
+		try {
+			if (hibDataSource.getJndi() == null || hibDataSource.getJndi().equals("")) {
+				if (jdbcAdvancedOptions != null) {
+					JDBCDataSourcePoolConfiguration jdbcPoolConfig = mapper.readValue(jdbcAdvancedOptions, JDBCDataSourcePoolConfiguration.class);
+					ds.setJdbcPoolConfiguration(jdbcPoolConfig);
+				} else {
+					ds.setJdbcPoolConfiguration(new JDBCDataSourcePoolConfiguration());
+				}
+			}
+			ds.setDsId(hibDataSource.getDsId());
+			ds.setLabel(hibDataSource.getLabel());
+			ds.setDescr(hibDataSource.getDescr());
+			ds.setJndi(hibDataSource.getJndi());
+			ds.setUrlConnection(hibDataSource.getUrl_connection());
+			ds.setUser(hibDataSource.getUser());
+			ds.setPwd(hibDataSource.getPwd());
+			ds.setDriver(hibDataSource.getDriver());
+			ds.setDialectName(hibDataSource.getDialect().getValueCd());
+			ds.setHibDialectClass(hibDataSource.getDialect().getValueCd());
+			ds.setEngines(hibDataSource.getSbiEngineses());
+			ds.setObjects(hibDataSource.getSbiObjectses());
+			ds.setSchemaAttribute(hibDataSource.getSchemaAttribute());
+			ds.setMultiSchema(hibDataSource.getMultiSchema());
+			ds.setReadOnly(hibDataSource.getReadOnly());
+			ds.setWriteDefault(hibDataSource.getWriteDefault());
+
+		} catch (JsonParseException e) {
+			logger.error("Error with parsing JSON String to Object", e);
+		} catch (JsonMappingException e) {
+			logger.error("Error with mapping JSON object", e);
+		} catch (IOException e) {
+			logger.error("Error with mapping JSON object", e);
+		}
+		logger.debug("OUT");
 		return ds;
+	}
+
+	public static SbiDataSource toSbiDataSource(IDataSource dataSource) {
+		logger.debug("IN");
+		ObjectMapper mapper = new ObjectMapper();
+		JDBCDataSourcePoolConfiguration jdbcAdvancedOptionsObj = dataSource.getJdbcPoolConfiguration();
+
+		SbiDataSource sbiDataSource = new SbiDataSource();
+
+		try {
+			if (jdbcAdvancedOptionsObj != null) {
+				String jdbcPoolConfiguration = mapper.writeValueAsString(jdbcAdvancedOptionsObj);
+				sbiDataSource.setJdbcPoolConfiguration(jdbcPoolConfiguration);
+			}
+			sbiDataSource.setDsId(dataSource.getDsId());
+			sbiDataSource.setLabel(dataSource.getLabel());
+			sbiDataSource.setDescr(dataSource.getDescr());
+			sbiDataSource.setJndi(dataSource.getJndi());
+			sbiDataSource.setUrl_connection(dataSource.getUrlConnection());
+			sbiDataSource.setUser(dataSource.getUser());
+			sbiDataSource.setPwd(dataSource.getPwd());
+			sbiDataSource.setDriver(dataSource.getDriver());
+			sbiDataSource.setDialectDescr(dataSource.getDialectName());
+			sbiDataSource.setSbiEngineses(dataSource.getEngines());
+			sbiDataSource.setSbiObjectses(dataSource.getObjects());
+			sbiDataSource.setSchemaAttribute(dataSource.getSchemaAttribute());
+			sbiDataSource.setMultiSchema(dataSource.getMultiSchema());
+
+		} catch (JsonProcessingException e) {
+			logger.error("Error with converting Object to JSON String", e);
+		}
+		logger.debug("OUT");
+		return sbiDataSource;
+	}
+
+	public static String modifySbiDataSourceJdbcPoolConfig(IDataSource dataSource) {
+		logger.debug("IN");
+		ObjectMapper mapper = new ObjectMapper();
+		JDBCDataSourcePoolConfiguration jdbcAdvancedOptionsObj = dataSource.getJdbcPoolConfiguration();
+		String jdbcPoolConfiguration = null;
+		try {
+			jdbcPoolConfiguration = mapper.writeValueAsString(jdbcAdvancedOptionsObj);
+		} catch (JsonProcessingException e) {
+			logger.error("Error with converting Object to JSON String", e);
+		}
+
+		logger.debug("OUT");
+		return jdbcPoolConfiguration;
 	}
 
 	/**

@@ -32,41 +32,10 @@ public class CustomizedFunctionsReader {
 
 	static protected Logger logger = Logger.getLogger(CustomizedFunctionsReader.class);
 
-	String databaseName;
-
-	public CustomizedFunctionsReader(String dialect) {
-
-		String upperCaseDialect = dialect.toUpperCase();
-		if (upperCaseDialect.contains("MYSQL")) {
-			databaseName = "mysql";
-		} else if (upperCaseDialect.contains("ORACLE")) {
-			databaseName = "oracle";
-		} else if (upperCaseDialect.contains("POSTGRES")) {
-			databaseName = "postgres";
-		} else if (upperCaseDialect.contains("SQLSERVER")) {
-			databaseName = "sqlserver";
-		}
-	}
-
-	public String getCustomDefinedFunctionString(UserProfile userProfile) {
-		logger.debug("IN");
-		String toReturn = "";
-		List<CustomizedFunction> returned = getCustomDefinedFunctionList(userProfile);
-
-		for (Iterator iterator = returned.iterator(); iterator.hasNext();) {
-			CustomizedFunction customizedFunction = (CustomizedFunction) iterator.next();
-			toReturn += "|" + customizedFunction.getFunction();
-		}
-		logger.debug("String returned " + toReturn);
-		logger.debug("OUT");
-		return toReturn;
-	}
-
-	public List<CustomizedFunction> getCustomDefinedFunctionList(UserProfile userProfile) {
+	public JSONObject getJSONCustomFunctionsVariable(UserProfile userProfile) {
 		logger.debug("IN");
 
-		List<CustomizedFunction> toReturn = new ArrayList<CustomizedFunction>();
-
+		JSONObject jsonObj = null;
 		try {
 
 			ConfigReader configReader = new ConfigReader(userProfile);
@@ -74,24 +43,91 @@ public class CustomizedFunctionsReader {
 
 			if (propertyValue == null) {
 				logger.error("Config property KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS no defined");
-				return null;
 			} else {
 				logger.debug("found KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS property with value: " + propertyValue);
-			}
-
-			JSONObject jsonObj = new JSONObject(propertyValue);
-			JSONArray funcArray = jsonObj.optJSONArray(databaseName);
-
-			if (funcArray != null) {
-				for (int i = 0; i < funcArray.length(); i++) {
-					JSONObject func = funcArray.optJSONObject(i);
-					CustomizedFunction cust = new CustomizedFunction(func);
-					toReturn.add(cust);
-				}
+				jsonObj = new JSONObject(propertyValue);
 			}
 		} catch (Exception e) {
 			logger.error("Error in reading KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS config value and transforming it into custom functions", e);
 		}
+
+		logger.debug("OUT");
+		return jsonObj;
+
+	}
+
+	public List<CustomizedFunction> getCustomDefinedFunctionListFromJSON(JSONObject jsonObj, String dbName) {
+		logger.debug("IN");
+		List<CustomizedFunction> toReturn = new ArrayList<CustomizedFunction>();
+
+		if (jsonObj != null) {
+			// search for a key contained in current dbName (could be more than one for example (MySQL/MAria/DB)
+
+			String keyToSearch = null;
+			for (Iterator<String> iterator = jsonObj.keys(); iterator.hasNext();) {
+				String key = iterator.next();
+				if (dbName.toLowerCase().contains(key.toLowerCase())) {
+					keyToSearch = key;
+				}
+			}
+
+			if (keyToSearch != null) {
+
+				JSONArray funcArray = jsonObj.optJSONArray(keyToSearch);
+
+				if (funcArray != null) {
+					for (int i = 0; i < funcArray.length(); i++) {
+						JSONObject func = funcArray.optJSONObject(i);
+						CustomizedFunction cust = new CustomizedFunction(func);
+						toReturn.add(cust);
+					}
+				}
+			} else {
+				logger.error("problems in finding custom functions for " + dbName);
+			}
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	public List<CustomizedFunction> getCustomDefinedFunctionList(String dbName, UserProfile userProfile) {
+		logger.debug("IN");
+
+		List<CustomizedFunction> toReturn = new ArrayList<CustomizedFunction>();
+
+		JSONObject jsonObj = getJSONCustomFunctionsVariable(userProfile);
+
+		toReturn = getCustomDefinedFunctionListFromJSON(jsonObj, dbName);
+
+		logger.debug("OUT");
+
+		return toReturn;
+	}
+
+	public String getStringFromList(List<CustomizedFunction> returned) {
+		logger.debug("IN");
+		String toReturn = "";
+
+		for (Iterator iterator = returned.iterator(); iterator.hasNext();) {
+			CustomizedFunction customizedFunction = (CustomizedFunction) iterator.next();
+			toReturn += "|" + customizedFunction.getName();
+		}
+		logger.debug("String returned " + toReturn);
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	public String getCustomFunctionsString(String dialect, UserProfile userProfile) {
+		logger.debug("IN");
+
+		String toReturn = null;
+
+		JSONObject jsonObj = getJSONCustomFunctionsVariable(userProfile);
+
+		List<CustomizedFunction> customFunctionsList = getCustomDefinedFunctionListFromJSON(jsonObj, dialect);
+
+		toReturn = getStringFromList(customFunctionsList);
 
 		logger.debug("OUT");
 

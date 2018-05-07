@@ -184,6 +184,97 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				        							</div>
 												</md-input-container>
 											</div>
+											
+										  <!-- ADVANCED OPTIONS -->
+										  <div layout="row">
+										  	<md-card layout="column" style="width:100%; margin:0;">
+										  		<md-toolbar class="ternaryToolbar">
+										  			  <div class="md-toolbar-tools">
+												        <h2>{{translate.load("sbi.datasource.type.jdbc.advancedOptions")}}</h2>
+												        <span flex></span>
+												        <md-button aria-label="Toogle" class="md-icon-button" ng-click="showAdvancedOptions()">
+												        	<md-icon ng-class="{'fa':true,'fa-chevron-down':!JDBCAdvancedOptionsShow,'fa-chevron-up':JDBCAdvancedOptionsShow}"></md-icon>
+												        </md-button>
+												      </div>									  			
+										  		</md-toolbar>
+										  		<md-card-content ng-if="JDBCAdvancedOptionsShow">
+										  			<div layout="row">
+										  				<md-input-container flex="90" class="md-block">
+															<label>{{translate.load("sbi.datasource.type.jdbc.maxWait")}}</label>
+															<input required type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.maxWait"
+																ng-maxlength="30" ng-readonly="readOnly">
+															<div ng-messages="forms.dataSourceForm.driver.$error" ng-show="!selectedDataSource.jdbcPoolConfiguration.maxWait">
+				          										<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+				        									</div>
+														</md-input-container>
+														<md-icon ng-click="showMaxWaitInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
+										  			</div>
+										  			
+										  			<div layout="row">
+										  				<md-input-container flex="90" class="md-block">
+															<label>{{translate.load("sbi.datasource.type.jdbc.abandonedTimeout")}}</label>
+															<input required type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.abandonedTimeout"
+																ng-maxlength="20" ng-readonly="readOnly">
+															<div ng-messages="forms.dataSourceForm.driver.$error" ng-show="!selectedDataSource.jdbcPoolConfiguration.abandonedTimeout">
+				          										<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+				        									</div>
+														</md-input-container>
+														<md-icon ng-click="showAbandonedTimeoutInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
+										  			</div>
+										  			
+									  				<div layout="row">
+										  				<md-input-container flex="90" class="md-block">
+															<label>{{translate.load("sbi.datasource.type.jdbc.timeBetweenEvictionRuns")}}</label>
+															<input required  type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns"
+																ng-maxlength="30" ng-readonly="readOnly">
+															<div ng-messages="forms.dataSourceForm.driver.$error" ng-show="!selectedDataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns">
+				          										<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+				        									</div>
+														</md-input-container>
+														<md-icon ng-click="showTimeBetweenEvictionRunsInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
+										  			</div>
+										  			
+										  			<div layout="row">
+										  				<md-input-container flex="90" class="md-block">
+															<label>{{translate.load("sbi.datasource.type.jdbc.validationQuery")}}</label>
+															<input type="text" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.validationQuery"
+																ng-maxlength="200" ng-readonly="readOnly">														
+														</md-input-container>
+														<md-icon ng-click="showValidationQueryInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
+										  			</div>
+										  			
+										  			<div layout="row">
+										  				<md-input-container class="md-block">
+															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.removeAbandonedOnBorrow" aria-label="Remove Abandoned On Borrow">{{translate.load("sbi.datasource.removeAbandonedOnBorrow")}}</md-checkbox>
+														</md-input-container>
+										  			</div>
+										  			
+										  			<div layout="row">
+										  				<md-input-container class="md-block">
+															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.removeAbandonedOnMaintenance" aria-label="Remove Abandoned On Maintenance">{{translate.load("sbi.datasource.removeAbandonedOnMaintenance")}}</md-checkbox>
+														</md-input-container>
+										  			</div>
+										  			
+										  			<div layout="row">
+										  				<md-input-container class="md-block">
+															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.logAbandoned" aria-label="Log Abandoned">{{translate.load("sbi.datasource.logAbandoned")}}</md-checkbox>
+														</md-input-container>
+										  			</div>
+										  			
+										  			<div layout="row">
+										  				<md-input-container class="md-block">
+															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.testOnReturn" aria-label="Test On Return">{{translate.load("sbi.datasource.testOnReturn")}}</md-checkbox>
+														</md-input-container>
+										  			</div>
+										  			
+										  			<div layout="row">
+										  				<md-input-container class="md-block">
+															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.testWhileIdle" aria-label="Test While Idle">{{translate.load("sbi.datasource.testWhileIdle")}}</md-checkbox>
+														</md-input-container>
+										  			</div>
+										  		</md-card-content>
+										  </md-card>
+										  </div>										  
 										</div>
 
 									

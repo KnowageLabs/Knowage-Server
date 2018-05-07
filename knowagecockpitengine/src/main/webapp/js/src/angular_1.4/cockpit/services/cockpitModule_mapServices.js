@@ -75,7 +75,7 @@
 						if (coord.length != 2){
 							sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.lonLatError').replace("{0}",geoColumn).replace("{1}",geoFieldValue), 'Title', 0);
 							console.log("Error getting longitude and latitude from column value ["+ geoColumn +"]. Check the dataset and its metadata.");
-							return null;
+							return null; 
 						}
 						
 						//setting lon, lat values with correct order (LON, LAT)

@@ -17,7 +17,10 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.AttributeCategoryList=[];
 	$scope.showGUI=false;
 	$scope.formulaModified={"value":false};
+	$scope.columns = [{"label":"Name","name":"name"},{"label":"DateCreation","name":"datacreation"},{"label":"Category","name":"valueCd"},{"label":"Author","name":"author"}];
 	$scope.kpiList=[];
+	$scope.listOrder = '';
+	$scope.listDirection = false;
 	$scope.kpiListOriginal=[];
 	$scope.selectedTab={'tab':0};
 	$scope.thresholdTypeList=[];
@@ -66,7 +69,16 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.flagActivateBrother= function(event){
 		$scope.$broadcast (event);
 	}
-
+	
+	$scope.toggleOrder = function(col){
+		if($scope.listOrder == col.name){
+			$scope.listDirection = !$scope.listDirection ? true : false;
+		}else {
+			$scope.listOrder = col.name;
+			$scope.listDirection = false;
+		}
+		
+	}
 
 	$scope.cancelMeasureFunction=function(){
 		if(!angular.equals($scope.originalRule,$scope.currentRule)){
@@ -273,6 +285,8 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	}];
 
 	$scope.deleteMeasure=function(item,event){
+		event.preventDefault();
+		event.stopImmediatePropagation();
 		var confirm = $mdDialog.confirm()
 		.title($scope.translate.load("sbi.kpi.measure.delete.title"))
 		.content($scope.translate.load("sbi.kpi.measure.delete.content"))
@@ -294,6 +308,8 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	}
 
 	$scope.cloneKpi = function(item,event){
+		event.preventDefault();
+		event.stopImmediatePropagation();
 		var confirm = $mdDialog.confirm()
 		.title($scope.translate.load("sbi.generic.confirmClone"))
 		.ariaLabel('clone measure') 

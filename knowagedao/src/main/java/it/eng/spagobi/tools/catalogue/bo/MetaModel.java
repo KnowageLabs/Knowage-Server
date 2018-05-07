@@ -38,6 +38,7 @@ public class MetaModel {
 
 	private Integer category;
 
+	@NotEmpty
 	@ExtendedAlphanumeric
 	private String dataSourceLabel;
 

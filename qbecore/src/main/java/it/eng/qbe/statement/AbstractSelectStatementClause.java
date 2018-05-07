@@ -37,6 +37,7 @@ import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.serializer.SerializationManager;
+import it.eng.spagobi.tools.dataset.common.query.CustomFunction;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.objects.Couple;
 
@@ -256,6 +257,12 @@ public class AbstractSelectStatementClause extends AbstractStatementClause {
 
 		selectClauseElement = parentStatement.getFieldAliasWithRoles(datamartField, entityAliases, entityAliasesMaps, selectField);
 		logger.debug("select clause element before aggregation [" + selectClauseElement + "]");
+
+		CustomFunction customFunction = getCustomFunction(datamartField);
+		if (customFunction != null) {
+			selectClauseElement = customFunction.apply(selectClauseElement);
+			logger.debug("select clause after custom function applciation[" + selectClauseElement + "]");
+		}
 
 		selectClauseElement = selectField.getFunction().apply(selectClauseElement);
 		logger.debug("select clause element after aggregation [" + selectClauseElement + "]");

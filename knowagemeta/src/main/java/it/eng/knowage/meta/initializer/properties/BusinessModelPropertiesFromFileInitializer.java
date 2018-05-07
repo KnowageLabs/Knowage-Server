@@ -17,21 +17,6 @@
  */
 package it.eng.knowage.meta.initializer.properties;
 
-import it.eng.knowage.meta.initializer.InitializationException;
-import it.eng.knowage.meta.model.Model;
-import it.eng.knowage.meta.model.ModelFactory;
-import it.eng.knowage.meta.model.ModelObject;
-import it.eng.knowage.meta.model.ModelProperty;
-import it.eng.knowage.meta.model.ModelPropertyCategory;
-import it.eng.knowage.meta.model.ModelPropertyType;
-import it.eng.knowage.meta.model.business.BusinessIdentifier;
-import it.eng.knowage.meta.model.business.BusinessModel;
-import it.eng.knowage.meta.model.business.BusinessRelationship;
-import it.eng.knowage.meta.model.business.BusinessTable;
-import it.eng.knowage.meta.model.business.BusinessView;
-import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
-import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
-
 import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -48,6 +33,21 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import it.eng.knowage.meta.initializer.InitializationException;
+import it.eng.knowage.meta.model.Model;
+import it.eng.knowage.meta.model.ModelFactory;
+import it.eng.knowage.meta.model.ModelObject;
+import it.eng.knowage.meta.model.ModelProperty;
+import it.eng.knowage.meta.model.ModelPropertyCategory;
+import it.eng.knowage.meta.model.ModelPropertyType;
+import it.eng.knowage.meta.model.business.BusinessIdentifier;
+import it.eng.knowage.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.business.BusinessRelationship;
+import it.eng.knowage.meta.model.business.BusinessTable;
+import it.eng.knowage.meta.model.business.BusinessView;
+import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
+import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 
 /**
  * @author cortella
@@ -69,6 +69,8 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 	public static final String COLUMN_DATATYPE = "structural.datatype";
 	public static final String FORCE_SUBENTITY_VISIBILITY = "structural.forceVisibilityAsSubentity";
 	public static final String COLUMN_ROLES_NOT_ENABLED = "behavioural.notEnabledRoles";
+	public static final String COLUMN_CUSTOM_FUNCTION = "structural.customFunction";
+
 	public static final String TABLE_TYPE = "structural.tabletype";
 
 	static public ModelFactory FACTORY = ModelFactory.eINSTANCE;

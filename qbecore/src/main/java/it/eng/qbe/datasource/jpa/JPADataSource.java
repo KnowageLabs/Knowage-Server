@@ -30,6 +30,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.ConnectionDescriptor;
@@ -48,7 +49,8 @@ import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.jpa.JPAModelStructureBuilder;
 import it.eng.qbe.query.Filter;
 import it.eng.qbe.query.filters.ProfileAttributesModelAccessModality;
-import it.eng.qbe.utility.ProfileDialectThreadLocal;
+import it.eng.qbe.utility.CustomFunctionsSingleton;
+import it.eng.qbe.utility.CustomizedFunctionsReader;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -180,6 +182,11 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		userProfile = profile;
 		IModelStructureBuilder structureBuilder;
 		if (dataMartModelStructure == null) {
+			IDataSource dsSource = getToolsDataSource();
+			String dialect = dsSource.getHibDialectClass();
+			JSONObject jsonObj = new CustomizedFunctionsReader().getJSONCustomFunctionsVariable(profile);
+			CustomFunctionsSingleton.getInstance().setCustomizedFunctionsJSON(jsonObj);
+
 			structureBuilder = new JPAModelStructureBuilder(this);
 			dataMartModelStructure = structureBuilder.build();
 
@@ -321,12 +328,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			dialect = "org.hibernate.dialect.ExtendedSQLServerDialect";
 		} else if (dialect != null && dialect.contains("MySQL")) {
 			dialect = "org.hibernate.dialect.ExtendedMySQLDialect";
-			ProfileDialectThreadLocal.setDialect(dialect);
-			ProfileDialectThreadLocal.setUserProfile(userProfile);
-		} else if (dialect != null && dialect.contains("oracle")) {
-			dialect = "org.hibernate.dialect.ExtendedOracle10Dialect";
-			ProfileDialectThreadLocal.setUserProfile(userProfile);
-			ProfileDialectThreadLocal.setDialect(dialect);
+		} else if (dialect != null && dialect.contains("Oracle")) {
+			dialect = "org.hibernate.dialect.ExtendedOracleDialect";
 		}
 
 		// at the moment (04/2015) hibernate doesn't provide a dialect for hive

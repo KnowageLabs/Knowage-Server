@@ -1,4 +1,4 @@
-function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiModule_restServices, selectedBusinessModel,metaModelServices,editMode,currentCF){
+function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiModule_restServices, selectedBusinessModel,metaModelServices,editMode,currentCF,sbiModule_config){
 	//synchronize model before creating the calculated field
 	var send = metaModelServices.createRequestRest();
 	sbiModule_restServices.promisePost("1.0/metaWeb","updateModel",send)
@@ -50,6 +50,8 @@ function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiM
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.meta.business.calculatedField.create.error"))
 		})
 	}
+
+
 
 	$scope.functions=[
 		                  {
@@ -115,17 +117,17 @@ function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiM
 				      	  	  label:"curr. time",
 				      	  	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.current_time"),
 				      	  	  value:"current_time()"
-				        },		
+				        },
 				        {
 					      	  label:"curr. date",
 					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.current_date"),
 					      	  value:"current_date()"
-					    },	
+					    },
 				        {
 					      	  label:"curr. timestamp",
 					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.current_timestamp"),
 					      	  value:"current_timestamp()"
-					    },		
+					    },
 				        {
 					      	  label:"year",
 					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.year"),
@@ -135,7 +137,7 @@ function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiM
 					      	  label:"month",
 					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.month"),
 					      	  value:"month()"
-					    },		
+					    },
 				        {
 					      	  label:"day",
 					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.day"),
@@ -156,7 +158,7 @@ function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiM
 					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.second"),
 					      	  value:"second()"
 					    }
-				          
+
 	];
 	$scope.stringFunctions = [
 					  {
@@ -198,7 +200,7 @@ function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiM
 					      	  label:"bit length",
 					      	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.bit_length"),
 					      	  value:"bit_length()"
-					  }					  		
+					  }
 	]
 
 	$scope.addCol=function(col){
@@ -207,4 +209,16 @@ function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiM
 	$scope.addFunc=function(func){
 		$scope.calcField.expression+=func.value;
 	}
+
+
+	var dataSourceId = metaModelServices.getDataSourceId();
+	//$scope.customFunctions= functionRepository.getDBCustomFunctions(dataSourceId);
+	sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath);
+	sbiModule_restServices.get("2.0/configs","KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/"+dataSourceId)
+	.success(function(response) {
+		//return response.data;
+		$scope.customFunctions= response.data;
+	});
+
+
 }

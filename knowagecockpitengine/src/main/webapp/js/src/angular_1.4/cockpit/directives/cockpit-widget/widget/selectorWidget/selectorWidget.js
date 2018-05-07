@@ -629,6 +629,6 @@ angular.module('cockpitModule')
 		}
 	};
 
-	addWidgetFunctionality("selector",{'initialDimension':{'width':20, 'height':20},'updateble':true,'cliccable':true});
+	addWidgetFunctionality("selector",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':true});
 
 })();

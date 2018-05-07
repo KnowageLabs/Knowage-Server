@@ -133,6 +133,11 @@
       description="The data type of the given column (VARCHAR, INTEGER, DOUBLE, ...)"
       category="Structural" defaultValue="VARCHAR" />
       
+      
+      <type id="structural.customFunction" name="Custom function"
+      description="Custom DB function to apply to column"
+      category="Structural" defaultValue="" />  
+      
 <!-- 	  <type id="style.alignment" name="Alignment Type" -->
 <!--       description="The preferred alignment type for the give column (LEFT, CENTER, RIGHT, JUSTIFIED)" -->
 <!--       category="Style" defaultValue="LEFT" /> -->
@@ -140,7 +145,7 @@
       <type id="behavioural.notEnabledRoles" name="Roles enabled"
       description="Roles enabled to view this column"
       category="Behavioural" defaultValue="" />
-      
+    
       
     </types>
     

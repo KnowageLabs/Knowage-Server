@@ -24,6 +24,9 @@
 			th{
 				border-bottom: 1px solid $ternaryColor;
 				text-align: left;
+				&:first-child {
+					padding-left: 10px;
+				}
 				&.tableAction{
 					width: 50px;
 				}
@@ -41,6 +44,9 @@
 			}
 			td {
 				font-size: $baseFontSize;
+				&:first-child {
+					padding-left: 10px;
+				}
 				&.tableAction{
 					width: 50px;
 				}
@@ -57,19 +63,18 @@
 				md-checkbox {
 					margin-bottom: 0;
 				}
-				md-switch {
+				.md-icon-button {
 					margin: 0;
+					padding: 0;
+					height: 32px;
+					min-height: 32px;
+					width: 32px;
 				}
-				.md-button {
-					&.expanded {
-						background-color: $secondaryColor;
-						&:hover {
-							background-color: darken($secondaryColor,15%) !important;
-						}
-						md-icon {
-							color: $lightTextColor;
-						}
-					}
+				.truncated {
+					white-space: nowrap;
+				    text-overflow: ellipsis;
+				    overflow: hidden;
+				    display: block;
 				}
 				color-picker{
 					width: 195px;
@@ -125,6 +130,10 @@
 			}
 		}
 	}
+
+	&.kn-table-fixed {
+		table-layout: fixed;
+			}
 	&.kn-table-alternated-rows {
 		tbody{
 			tr:nth-child(odd) {
@@ -135,6 +144,13 @@
 	&.kn-table-medium-rows {
 		tr {
 			height: 2rem;
+			td {
+				.md-icon-button {
+					margin: 0;
+					height: 40px;
+					width: 40px;
+				}
+			}
 		}
 	}
 	&.kn-table-clickable-rows {
@@ -142,7 +158,7 @@
 			tr {
 				cursor: pointer;
 				&:hover {
-					background-color: $pageBackground;
+					background-color: $tableSelectedElementColor;
 				}
 			}
 		}

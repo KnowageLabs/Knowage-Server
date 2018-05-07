@@ -71,26 +71,43 @@
 				</md-button>
 			</div>
 		</md-toolbar>
-		<md-card-content layout="row" layout-align="space-around center">
-			<!--  md-checkbox ng-model="ngModel.borders" flex ng-change=toggleBorderVisibility()>
-				{{translate.load("sbi.cockpit.style.borders.show")}}
-			</md-checkbox-->
-			<md-input-container class="md-block" flex >
-				<label>{{translate.load("sbi.cockpit.style.borders.style")}}</label>
-				<md-select ng-model="ngModel.border['border-style']" ng-disabled="!ngModel.borders">
-					<md-option ng-repeat=" bsize in bordersSize" ng-value="bsize.value">{{bsize.label}} <span ng-class="bsize.exampleClass"></span></md-option>
-				</md-select>
-			</md-input-container>
-			<md-input-container class="md-block" flex>
-				<label>{{translate.load("sbi.cockpit.style.borders.thickness")}}</label>
-				<md-select ng-model="ngModel.border['border-width']" ng-disabled="!ngModel.borders">
-					<md-option ng-repeat="bwidth in bordersWidth" ng-value="bwidth.value">{{bwidth.label}}</md-option>
-				</md-select>	
-			</md-input-container>
-			<md-input-container flex class="md-block"> 
-				<label>{{translate.load('sbi.cockpit.style.borders.color')}}</label>
-				<color-picker options="borderColorOptions" ng-model="ngModel.border['border-color']"></color-picker>
-			</md-input-container> 
+		<md-card-content layout="column">
+			<div layout="row">
+				<md-input-container class="md-block" flex >
+					<label>{{translate.load("sbi.cockpit.style.borders.style")}}</label>
+					<md-select ng-model="ngModel.border['border-style']" ng-disabled="!ngModel.borders">
+						<md-option ng-repeat=" bsize in bordersSize" ng-value="bsize.value">{{bsize.label}} <span ng-class="bsize.exampleClass"></span></md-option>
+					</md-select>
+				</md-input-container>
+				<md-input-container class="md-block" flex>
+					<label>{{translate.load("sbi.cockpit.style.borders.thickness")}}</label>
+					<md-select ng-model="ngModel.border['border-width']" ng-disabled="!ngModel.borders">
+						<md-option ng-repeat="bwidth in bordersWidth" ng-value="bwidth.value">{{bwidth.label}}</md-option>
+					</md-select>	
+				</md-input-container>
+				<md-input-container flex class="md-block"> 
+					<label>{{translate.load('sbi.cockpit.style.borders.color')}}</label>
+					<color-picker options="borderColorOptions" ng-model="ngModel.border['border-color']"></color-picker>
+				</md-input-container> 
+			</div>
+			<div layout="row">
+				<md-input-container class="md-block" flex >
+					<label>Border radius top left</label>
+					<input ng-model="ngModel.border['border-top-left-radius']" type="text" ng-disabled="!ngModel.borders"/>
+				</md-input-container>
+				<md-input-container class="md-block" flex >
+					<label>Border radius top right</label>
+					<input ng-model="ngModel.border['border-top-right-radius']" type="text" ng-disabled="!ngModel.borders"/>
+				</md-input-container>
+				<md-input-container class="md-block" flex >
+					<label>Border radius bottom left</label>
+					<input ng-model="ngModel.border['border-bottom-left-radius']" type="text" ng-disabled="!ngModel.borders"/>
+				</md-input-container>
+				<md-input-container class="md-block" flex >
+					<label>Border radius bottom right</label>
+					<input ng-model="ngModel.border['border-bottom-right-radius']" type="text" ng-disabled="!ngModel.borders"/>
+				</md-input-container>
+			</div>
 			
 		</md-card-content>
 	</md-card>

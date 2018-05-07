@@ -45,6 +45,7 @@
 		#end
 	#end
 #end
+
 #set($xAxisMap = $datasettransformer.getXAxisMap($categorieColumns, $categoryDate))
 #set($enableDrilldown = false) 
 #if($chart.groupCategories)
@@ -240,7 +241,7 @@
     		
     		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	*#
-    	#if($drilldownEnabledFlag && $exportWebApp==false)
+    	#if($chart.type.toUpperCase() != 'RADAR' && $drilldownEnabledFlag && $exportWebApp==false)
 	    	#if($enableDrilldown)
 		    events: {
 				drilldown: scope.chartInitializer.handleDrilldown,
@@ -686,7 +687,7 @@
     #set($yAxisPositions = {}) ## Y Axises integer positions list, for series references
     #set($xAxisCounter = 0) 
     #set($yAxisCounter = 0) 
-    
+    #set($axisFactorScale = $axisList.get(0).scaleFactor)
     #foreach($axis in $axisList)
 	 	#if($axis.type == 'Category')
 	 		#set($workAroundNoPrint = $xAxisList.put($axis.alias , $axis))
@@ -715,7 +716,7 @@
 		
 			type: "$a.type",
 			id: $a.id,
-			#if($categorieColumns.orderType=="desc" && $isDateTime)
+			#if($a.name == $categorieColumns.name && $categorieColumns.orderType=="desc" && $isDateTime)
 				reversed: true,
 			#end
 	 	title: {
@@ -768,6 +769,56 @@
 			#if($xAxis.step!="")
 			step: $xAxis.step,
 			#end
+		#end
+		#if($chart.groupSeries =='true')
+		formatter: function () {
+			                    var value = this.value;	
+			                    var newValue = "";	
+		                      	var scaleFactor =  '${axisFactorScale}';	                    
+			                  
+		                      	var prefixValue = '';
+		                      	var sufixValue = '';
+		                      	
+		                      	
+		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+		                      	
+		                      	var precision = '0';
+		                      	
+		                      	switch(scaleFactor.toUpperCase()) {
+		                      	
+		                      		case "EMPTY":
+		                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
+		                      			newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
+		                      			break;
+		                      		case "K":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";	
+		                      			break;
+		                      		case "M":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";	
+		                      			break;
+		                      		case "G":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+		                      			break;
+	                      			case "T":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+		                      			break;
+		                      		case "P":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+		                      			break;
+	                      			case "E":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+		                      			break;
+	                      			default:
+	                      				/* The same as for the case when user picked "no selection" - in case when the chart 
+	                      				template does not contain the scale factor for current serie */
+	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
+		                      			break;
+		                      	
+		                      	}						
+	                        		                       
+	                          	return  newValue ;
+			            	}	,	
 		#end
 		#if( $xAxis.style != '' )
         	style:{
@@ -875,6 +926,10 @@
 		#set($enableValues = $chart.VALUES.SERIE.showValue)
 		#if($chart.VALUES.SERIE.get(0))
 		#set($relatedSerie = $chart.VALUES.SERIE.get(0))
+		#if($chart.type.toUpperCase() == 'RADAR' && $chart.groupSeriesCateg && $chart.groupSeriesCateg =='true')
+		#set($relatedSerieTypes = $chart.VALUES.SERIE.get(0).serieTypeRadar.split(", "))
+		#set($count = $chart.VALUES.SERIE.get(0).serieTypeRadar.length() - $chart.VALUES.SERIE.get(0).serieTypeRadar.replace(",", "").length())
+		#end
 		#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
 		#end
 		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine, $chart.groupSeries, $chart.groupSeriesCateg))
@@ -892,7 +947,6 @@
         ## Serie add
         #foreach($yAxisKey in $yAxisList.keySet())
         	#set ($yAxis = $yAxisList[$yAxisKey] )
-          
         {
         	
         	#*
@@ -975,6 +1029,57 @@
         	},
         	
         	labels: {
+        		
+        		formatter: function () {
+			                    var value = this.value;	
+			                    var newValue = "";	
+		                      	var scaleFactor =  '${yAxis.LABELS.scaleFactor}';	                    
+			                    if(scaleFactor.indexOf("yAxis")!==-1){
+		                      		scaleFactor = "empty"
+		                      	}
+		                      	var prefixValue = '';
+		                      	var sufixValue = '';
+		                      	
+		                      	
+		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+		                      	
+		                      	var precision = '0';
+		                      	
+		                      	switch(scaleFactor.toUpperCase()) {
+		                      	
+		                      		case "EMPTY":
+		                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
+		                      			newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
+		                      			break;
+		                      		case "K":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";	
+		                      			break;
+		                      		case "M":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";	
+		                      			break;
+		                      		case "G":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+		                      			break;
+	                      			case "T":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+		                      			break;
+		                      		case "P":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+		                      			break;
+	                      			case "E":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+		                      			break;
+	                      			default:
+	                      				/* The same as for the case when user picked "no selection" - in case when the chart 
+	                      				template does not contain the scale factor for current serie */
+	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
+		                      			break;
+		                      	
+		                      	}						
+	                        		                       
+	                          	return  newValue ;
+			            	}	,
         		
         		## If this parameter is not commented Y-axes labels will be glued to each other when there are no axis titles
         		##x:0,
@@ -1068,6 +1173,7 @@
     
     #foreach($valueKey in $seriesMap.keySet())
 	    #set($relatedSerie = $seriesMap.get($valueKey))
+	    
 	    #set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 	   	#if($chart.isCockpitEngine != 'true')
 	      	#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
@@ -1093,12 +1199,21 @@
            	 #break
     	#end
     #end
-
+  	#set ($counter = 0)
+	#set ($count = $count+1)
 	series: [
 	#if($chart.groupSeries !='true' && $chart.groupSeriesCateg !='true')
 	#foreach($valueKey in $seriesMap.keySet())
 	    #set($relatedSerie = $seriesMap.get($valueKey))
-	    	
+	      #foreach($yAxisKey in $yAxisList.keySet())
+        	#set ($yAxis = $yAxisList[$yAxisKey] )
+			#if($yAxis.LABELS)
+				#if($relatedSerie.axis == $yAxis.alias)
+				#set ($relatedSerie.scaleFactor = $yAxis.LABELS.scaleFactor)
+				#end
+			#end
+          #end
+	
 	    {	
 			#set($relatedSerieColor = false)
 			#set($relatedSerieColor = $relatedSerie.color)
@@ -1342,11 +1457,16 @@
 	    }, 
 	#end
 	#end
+	
 	#if(($chart.groupSeries && $chart.groupSeries =='true') || ($chart.groupSeriesCateg && $chart.groupSeriesCateg =='true'))	
 		#foreach($valueKey in $map.keySet())
 		#if($valueKey!="null")
 		{
 			name: '$valueKey',
+			#if($relatedSerieTypes && $count!=$counter && $relatedSerieTypes[$counter])
+		    	type: '$relatedSerieTypes[$counter]',
+		    	 #set ($counter = $counter+1)
+		    #end
 			data: [
 				#foreach($el in  $map.get($valueKey))	
 				{
@@ -1653,12 +1773,17 @@
         		element on it. HTML tag <strong> is removed.
         		@modifiedBy: danristo (danilo.ristovski@mht.net)
         	*/ 	
-        	
             #if($isDateTime==true)
             
-             result += '<span>' + Highcharts.dateFormat('$dateFormat', this.x) + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+             result += '<span>' + Highcharts.dateFormat('$dateFormat', (this.x+86400000 )) + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
             #else
+           if  (this.series.userOptions.category && this.series.userOptions.category =='$categoryDate'){
+             result += '<span>' + Highcharts.dateFormat('$dateFormat', this.x) + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+          
+           }
+           else {
              result += '<span>' + this.key + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+             }
            
             #end
             return result;

@@ -29,6 +29,7 @@ import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Operand;
 import it.eng.qbe.query.Query;
+import it.eng.spagobi.tools.dataset.common.query.CustomFunction;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -64,14 +65,20 @@ public abstract class AbstractStatementFilteringClause extends AbstractStatement
 				alias = "";
 			}
 
+			boolean editable = true;
+			if (leftOperandJSON.get("editable") != null && leftOperandJSON.get("editable").toString().equalsIgnoreCase("false")) {
+				editable = false;
+			}
+
 			String slots = null;
 			String s = leftOperandJSON.optString("slots");
 			if (s != null && s.trim().length() > 0) {
 				slots = leftOperandJSON.getString("slots");
 			}
 
-			expression = parseInLinecalculatedField(new InLineCalculatedSelectField(alias, expression, slots, type, nature, true, true, false, "", "", null),
-					slots, query, entityAliasesMaps);
+			expression = parseInLinecalculatedField(
+					new InLineCalculatedSelectField(alias, expression, slots, type, nature, true, true, false, "", "", null, editable), slots, query,
+					entityAliasesMaps);
 
 			if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) && isPromptable) {
 				// get last value first (the last value edited by the user)
@@ -193,6 +200,13 @@ public abstract class AbstractStatementFilteringClause extends AbstractStatement
 			} else {
 				operandElement = fieldName;
 			}
+
+			CustomFunction customFunction = getCustomFunction(datamartField);
+			if (customFunction != null) {
+				operandElement = customFunction.apply(operandElement);
+				logger.debug("operandElement clause after custom function applciation[" + operandElement + "]");
+			}
+
 			logger.debug("where element operand value [" + operandElement + "]");
 		} finally {
 			logger.debug("OUT");
