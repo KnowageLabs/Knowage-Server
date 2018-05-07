@@ -346,7 +346,12 @@
 			    #end
 			    
 		        shadow: true,
-		        
+		        #if($chart.LEGEND.style.disabledColor)
+		        itemHiddenStyle:
+		        {
+		        	color: '$chart.LEGEND.style.disabledColor', 
+		        },
+		        #end
 		        itemStyle: 
 		        { 
 		        	color: '$chart.LEGEND.style.color', 

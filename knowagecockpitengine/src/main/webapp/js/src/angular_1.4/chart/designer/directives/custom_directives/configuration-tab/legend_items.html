@@ -44,6 +44,12 @@
 	 <color-picker
 		options="colorPickerOptionsCockpit"
 		ng-model="chartTemplate.LEGEND.style.color" name="legenditems_color"></color-picker> </md-input-container>
+	
+	<md-input-container class="md-block colorInputContainer" >
+	<label>{{translate.load("sbi.chartengine.designer.disabled.item.color")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="chartTemplate.LEGEND.style.disabledColor" name="legenddisableditems_color"></color-picker> </md-input-container>
 
 	<md-input-container class="md-block colorInputContainer" >
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.bgcolor")}}</label>
