@@ -890,9 +890,6 @@ function cockpitWidgetControllerFunction(
 					}
 					clearRedundantStyle();
 					$scope.refreshWidgetStyle();
-					if($scope.ngModel.type=='map'){
-                        $scope.reinit();
-                    }
 					if(initOnFinish){
 						deferred.resolve();
 					}
