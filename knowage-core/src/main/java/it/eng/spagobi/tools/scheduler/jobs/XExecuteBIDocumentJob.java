@@ -281,18 +281,17 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 					continue;
 				}
 				String encodedDispatchContext = jobDataMap.getString("biobject_id_" + document.getId() + "__" + (documentIndex + 1));
-
-				DispatchContext dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);
-
-				boolean is = dispatchContext.isUniqueMail();
-				if (is) {
-					uniqueMailForAll = true;
-					UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-					UUID uuid_local = uuidGen.generateTimeBasedUUID();
-					String folderName = uuid_local.toString();
-					tempFolderName = folderName.replaceAll("-", "");
-					logger.debug("found unique mail case");
-					break;
+				if (StringUtilities.isNotEmpty(encodedGlobalDispatchContext)) {
+					DispatchContext dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);
+					if (dispatchContext.isUniqueMail()) {
+						uniqueMailForAll = true;
+						UUIDGenerator uuidGen = UUIDGenerator.getInstance();
+						UUID uuid_local = uuidGen.generateTimeBasedUUID();
+						String folderName = uuid_local.toString();
+						tempFolderName = folderName.replaceAll("-", "");
+						logger.debug("found unique mail case");
+						break;
+					}
 				}
 			}
 
