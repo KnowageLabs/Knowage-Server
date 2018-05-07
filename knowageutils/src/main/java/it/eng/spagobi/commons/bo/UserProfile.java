@@ -67,6 +67,9 @@ public class UserProfile implements IEngUserProfile {
 	@JsonIgnore
 	private SpagoBIUserProfile spagoBIUserProfile = null;
 
+	public UserProfile() {
+	}
+
 	/**
 	 * The Constructor.
 	 *
@@ -246,6 +249,7 @@ public class UserProfile implements IEngUserProfile {
 	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserAttributeNames()
 	 */
+	@JsonIgnore
 	@Override
 	public Collection getUserAttributeNames() {
 		return userAttributes.keySet();

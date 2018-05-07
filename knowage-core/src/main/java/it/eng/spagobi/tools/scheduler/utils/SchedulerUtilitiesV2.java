@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,6 +57,8 @@ import it.eng.spagobi.tools.scheduler.to.JobTrigger;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SchedulerUtilitiesV2 {
+
+	private static transient Logger logger = Logger.getLogger(SchedulerUtilitiesV2.class);
 
 	public static JSONObject isValidJobTrigger(JobTrigger jobt) throws JSONException {
 
@@ -1246,7 +1249,9 @@ public class SchedulerUtilitiesV2 {
 			String base64 = Base64.encodeBase64String(json.getBytes("UTF-8"));
 			return base64;
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while serializing user profile object");
+			String message = "Error while serializing user profile object";
+			logger.error(message);
+			throw new SpagoBIRuntimeException(message, e);
 		}
 	}
 
@@ -1256,7 +1261,9 @@ public class SchedulerUtilitiesV2 {
 			UserProfile profile = UserUtilities.fromJSON2UserProfile(json);
 			return profile;
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while serializing user profile object");
+			String message = "Error while deserializing user profile object";
+			logger.error(message);
+			throw new SpagoBIRuntimeException(message, e);
 		}
 	}
 
