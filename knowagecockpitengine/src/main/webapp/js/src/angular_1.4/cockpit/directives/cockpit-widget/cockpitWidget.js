@@ -365,7 +365,7 @@ function cockpitWidgetControllerFunction(
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 			break;
 		case "RESIZE" :
-			if($scope.ngModel.type=="chart") {
+			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map") {
 				$scope.refreshWidget(undefined, 'resize');
 			}
 			break;

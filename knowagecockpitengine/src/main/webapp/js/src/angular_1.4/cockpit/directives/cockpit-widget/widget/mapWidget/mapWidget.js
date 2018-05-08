@@ -226,7 +226,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 	    $scope.refresh = function(element,width,height, data, nature, associativeSelection, changedChartType, chartConf, options) {
-	    	if (nature == 'fullExpand'){
+	    	if (nature == 'fullExpand' || nature == 'resize'){
 	    		$timeout(function() {
 					$scope.map.updateSize();
 				}, 500);
