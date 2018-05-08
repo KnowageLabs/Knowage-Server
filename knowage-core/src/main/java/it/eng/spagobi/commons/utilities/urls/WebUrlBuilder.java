@@ -49,7 +49,7 @@ public class WebUrlBuilder implements IUrlBuilder {
 		logger.debug("IN");
 		baseResourceURL = GeneralUtilities.getSpagoBiContext() + "/";
 		logger.debug("baseResourceURL" + baseResourceURL);
-		baseURL = baseResourceURL + "/servlet/AdapterHTTP";
+		baseURL = baseResourceURL + "servlet/AdapterHTTP";
 		logger.debug("OUT.baseURL=" + baseURL);
 	}
 
