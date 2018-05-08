@@ -579,6 +579,14 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						}
 						if(parameter.type == "fixed"){
 							ctrl.loadParameterValues(parameter);
+						}else if(parameter.type == "loadAtRuntime"){
+							for(i in ctrl.selectedDocumentRoles){
+								var role = ctrl.selectedDocumentRoles[i];
+								if(parameter.value.endsWith(role.role)){
+									parameter.value = role.userAndRole;
+									break;
+								}
+							}
 						}
 					}
 				}
