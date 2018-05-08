@@ -514,7 +514,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		OutputStream out = null;
 
-		URL resourceLocation = Thread.currentThread().getContextClassLoader().getResource("it/eng/spagobi/engines/whatif/model/export_dataset_template.xlsm");
+		URL resourceLocation = Thread.currentThread().getContextClassLoader().getResource("export_dataset_template.xlsm");
 		FileInputStream fileInputStream1 = new FileInputStream(new File(resourceLocation.toURI().getPath()));
 		FileInputStream fileInputStream2 = new FileInputStream(result);
 

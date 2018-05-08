@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,26 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.qbe.tree;
+
+import java.io.CharArrayWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.properties.IModelProperties;
@@ -41,20 +56,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 
-import java.io.CharArrayWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * The Class ExtJsQbeTreeBuilder.
  *
@@ -77,6 +78,7 @@ public class ExtJsQbeTreeBuilder {
 	public static final String NODE_TYPE_HIERARCHY_LEVEL_FIELD = "hierarchyLevelField";
 	public static final String NODE_TYPE_INLINE_CALCULATED_FIELD = "inLineCalculatedField";
 	public static final String NODE_TYPE_RELATION_FIELD = "relation";
+	public static transient Logger logger = Logger.getLogger(ExtJsQbeTreeBuilder.class);
 
 	/**
 	 * Instantiates a new ext js qbe tree builder.
@@ -285,9 +287,29 @@ public class ExtJsQbeTreeBuilder {
 		Iterator<IModelField> normalFieldIterator = normalFields.iterator();
 		while (normalFieldIterator.hasNext()) {
 			IModelField field = normalFieldIterator.next();
-			Boolean isARelation = (Boolean)field.getProperties().get("relation");
 			JSONObject jsObject = getFieldNode(entity, field);
-			if (jsObject != null && (isARelation==null || !isARelation)) {
+
+			// // add custom function if present
+			// try {
+			// if (field.getProperties().get("customFunction") != null && !field.getProperties().get("customFunction").equals("")) {
+			// // String uniqueName = field.getUniqueName();
+			// // String customFunctionS = field.getProperties().get("customFunction").toString();
+			// // CustomFunction customFunction = new CustomFunction(customFunctionS);
+			// // String nameFieldApplied = customFunction.apply(uniqueName);
+			// // JSONObject attObj = jsObject.getJSONObject("attributes");
+			// // attObj.put("field", nameFieldApplied);
+			// //
+			// // field.setName(nameFieldApplied);
+			// // jsObject.put("customFunction", customFunction);
+			// String customFunction = field.getProperties().get("customFunction").toString();
+			// jsObject.put("customFunction", customFunction);
+			// }
+			// } catch (JSONException e) {
+			// logger.error("Error in writing custon function", e);
+			// }
+
+			Boolean isARelation = (Boolean) field.getProperties().get("relation");
+			if (jsObject != null && (isARelation == null || !isARelation)) {
 				children.put(jsObject);
 			}
 		}
@@ -445,6 +467,7 @@ public class ExtJsQbeTreeBuilder {
 
 			JSONObject nodeAttributes = new JSONObject();
 			nodeAttributes.put("iconCls", "calculation");
+
 			if (field.isInLine()) {
 				nodeAttributes.put("type", NODE_TYPE_INLINE_CALCULATED_FIELD);
 			} else {
@@ -453,6 +476,9 @@ public class ExtJsQbeTreeBuilder {
 
 			nodeAttributes.put("entity", entityLabel);
 			nodeAttributes.put("field", fieldLabel);
+
+			// nodes added in backend for tree are not editable
+			nodeAttributes.put("editable", false);
 
 			JSONObject formState = new JSONObject();
 			formState.put("alias", field.getName());

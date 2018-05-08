@@ -1,7 +1,7 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 
@@ -11,27 +11,27 @@
 
 
 /**
- * Object name 
- * 
+ * Object name
+ *
  * [description]
- * 
- * 
+ *
+ *
  * Public Properties
- * 
+ *
  * [list]
- * 
- * 
+ *
+ *
  * Public Methods
- * 
+ *
  *  [list]
- * 
- * 
+ *
+ *
  * Public Events
- * 
+ *
  *  [list]
- * 
+ *
  * Authors
- * 
+ *
  * - Andrea Gioia (adrea.gioia@eng.it)
  */
 
@@ -56,12 +56,12 @@ Sbi.qbe.DataMartStructurePanel = function(config) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.qbe.dataMartStructurePanel);
 	}
 
-	var c = Ext.apply(defaultSettings, config || {});	
+	var c = Ext.apply(defaultSettings, config || {});
 	Ext.apply(this, c);
 
 	var params = c.title !== undefined ? {'datamartName': c.title} : {};
 
-	this.services = this.services || new Array();	
+	this.services = this.services || new Array();
 	this.services['loadTree'] = this.services['loadTree'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'GET_TREE_ACTION'
 			, baseParams: params
@@ -97,7 +97,7 @@ Sbi.qbe.DataMartStructurePanel = function(config) {
 			, baseParams: params
 	});
 
-	
+
 
 	this.addEvents('load', 'nodeclick','selectCalendar');
 
@@ -106,7 +106,7 @@ Sbi.qbe.DataMartStructurePanel = function(config) {
 	Ext.apply(c, {
 		layout: 'fit'
 			, items: [this.tree]
-	});	
+	});
 
 	// constructor
 	Sbi.qbe.DataMartStructurePanel.superclass.constructor.call(this, c);
@@ -158,7 +158,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 
 
 	//edit slot forbidden
-	if(fieldNode.attributes.attributes.formState.slots !== undefined 
+	if(fieldNode.attributes.attributes.formState !== undefined &&
+			fieldNode.attributes.attributes.formState.slots !== undefined
 			&& fieldNode.attributes.attributes.formState.slots !== null
 			&& fieldNode.attributes.attributes.formState.slots.length > 0){
 
@@ -186,11 +187,11 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				var field = {
 						uniqueName: child.id,
 						alias: child.text,
-						text: child.attributes.field, 
-						qtip: child.attributes.entity + ' : ' + child.attributes.field, 
-						type: 'field', 
+						text: child.attributes.field,
+						qtip: child.attributes.entity + ' : ' + child.attributes.field,
+						type: 'field',
 						value: 'dmFields[\'' + child.id + '\']'
-				};	
+				};
 				fields.push(field);
 			}
 		}
@@ -200,11 +201,17 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 
 		this.calculatedFieldWizard.setTargetNode(fieldNode);
 		this.calculatedFieldWizard.show();
-	} else 	if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
+	} else 	if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD
+					&&
+					(
+							fieldNode.attributes.attributes.editable == undefined ||
+							fieldNode.attributes.attributes.editable == true
+					)
+					) {
 
 		if(this.calculatedFieldWizard === null || this.inLineCalculatedFieldWizard === null) {
-			this.initWizards(); 
-		}			
+			this.initWizards();
+		}
 
 		var parentEtityNode = fieldNode.parentNode;
 		var fields = new Array();
@@ -217,11 +224,11 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				var field = {
 						uniqueName: child.id,
 						alias: child.text,
-						text: child.attributes.field, 
-						qtip: child.attributes.entity + ' : ' + child.attributes.field, 
-						type: 'field', 
+						text: child.attributes.field,
+						qtip: child.attributes.entity + ' : ' + child.attributes.field,
+						type: 'field',
 						value: 'dmFields[\'' + child.id + '\']'
-				};	
+				};
 				fields.push(field);
 			}
 		}
@@ -234,7 +241,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	} else{
 		Ext.Msg.show({
 			title:LN('sbi.qbe.bands.wizard.invalid.operation'),
-			msg: LN('sbi.qbe.bands.wizard.invalid.operation.edit.msg'),
+			msg: LN('sbi.qbe.bands.wizard.invalid.operation.notEditable.msg'),
 			buttons: Ext.Msg.OK,
 			icon: Ext.MessageBox.ERROR
 		});
@@ -263,21 +270,21 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				var field = {
 						uniqueName: child.id,
 						alias: child.text,
-						text: child.attributes.field, 
-						qtip: child.attributes.entity + ' : ' + child.attributes.field, 
-						type: 'field', 
+						text: child.attributes.field,
+						qtip: child.attributes.entity + ' : ' + child.attributes.field,
+						type: 'field',
 						value: 'dmFields[\'' + child.attributes.field + '\']'
-				};	
+				};
 				fields.push(field);
 			}
 		}
 		//creates a window
-		this.slotWizard = new Sbi.qbe.SlotWizard( { 
+		this.slotWizard = new Sbi.qbe.SlotWizard( {
 			title: LN('sbi.qbe.bands.title'),
 			startFromFirstPage: true,
 			expItemGroups: [
-			                {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}, 
-			                {name:'arithmeticFunctions', text: LN('sbi.qbe.calculatedFields.functions.arithmentic')},  		    
+			                {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')},
+			                {name:'arithmeticFunctions', text: LN('sbi.qbe.calculatedFields.functions.arithmentic')},
 			                {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
 			                ],
 			                fields: new Array(),
@@ -310,7 +317,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 
 	} else if(type === Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD){
 		//creates a window
-		this.slotWizard = new Sbi.qbe.SlotWizard( { 
+		this.slotWizard = new Sbi.qbe.SlotWizard( {
 			title: LN('sbi.qbe.bands.title'),
 			fieldForSlot: entityNode,
 			startFromFirstPage: false
@@ -324,8 +331,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			msg: LN('sbi.qbe.bands.wizard.invalid.definition.msg'),
 			buttons: Ext.Msg.OK,
 			icon: Ext.MessageBox.ERROR
-		});		
-	}	
+		});
+	}
 
 	this.slotWizard.on('apply', this.onApplySlotNew, this);
 }
@@ -349,7 +356,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			msg:  LN('sbi.qbe.bands.wizard.invalid.node'),
 			buttons: Ext.Msg.OK,
 			icon: Ext.MessageBox.ERROR
-		});		
+		});
 	} else if(type === Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD){
 
 		var fields = new Array();
@@ -361,24 +368,24 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				var field = {
 						uniqueName: child.id,
 						alias: child.text,
-						text: child.attributes.attributes.field, 
-						qtip: child.attributes.attributes.entity + ' : ' + child.attributes.attributes.field, 
-						type: 'field', 
+						text: child.attributes.attributes.field,
+						qtip: child.attributes.attributes.entity + ' : ' + child.attributes.attributes.field,
+						type: 'field',
 						value: 'dmFields[\'' + child.attributes.attributes.field + '\']'
-				};	
+				};
 				fields.push(field);
 			}
 		}
 
 		//creates a window
-		this.slotWizard = new Sbi.qbe.SlotWizard( { 
+		this.slotWizard = new Sbi.qbe.SlotWizard( {
 			title: LN('sbi.qbe.bands.title'),
 			fieldForSlot: entityNode,
 			modality: 'edit',
 			startFromFirstPage: false,
 			expItemGroups: [
-			                {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}, 
-			                {name:'arithmeticFunctions', text: LN('sbi.qbe.calculatedFields.functions.arithmentic')},  		    
+			                {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')},
+			                {name:'arithmeticFunctions', text: LN('sbi.qbe.calculatedFields.functions.arithmentic')},
 			                {name:'dateFunctions', text: LN('sbi.qbe.calculatedFields.datefunctions')}
 			                ],
 			                fields: new Array(),
@@ -402,7 +409,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		this.slotWizard.on('apply', this.onApplySlotEdit, this);
 
 		if(this.slotWizard.mainPanel.validationService !== undefined){
-			this.slotWizard.mainPanel.validationService.params = {fields: Ext.util.JSON.encode(fields)}; 		
+			this.slotWizard.mainPanel.validationService.params = {fields: Ext.util.JSON.encode(fields)};
 		}
 		this.slotWizard.setExpItems('fields', fields);
 
@@ -425,7 +432,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 // private methods
 // --------------------------------------------------------------------------------
 
-, createRootNode: function() {		
+, createRootNode: function() {
 	var node = new Ext.tree.AsyncTreeNode({
 		text		: this.rootNodeText,
 		iconCls		: 'database',
@@ -454,7 +461,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		dropConfig: {
 			isValidDropPoint : function(n, pt, dd, e, data){
 				return false;
-			}      
+			}
 		},
 
 		animCollapse     : true,
@@ -469,7 +476,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		preloadTree		 : this.preloadTree,
 		root 			 : this.rootNode,
 		rootVisible		 : false
-	});	
+	});
 
 	this.tree.type = this.type;
 
@@ -493,7 +500,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 }
 
 
-, initInLineCalculatedFieldWizard: function() {	
+, initInLineCalculatedFieldWizard: function() {
 	var fields = new Array();
 	this.inLineCalculatedFieldWizard = new Sbi.qbe.CalculatedFieldWizard({
 		title: LN('sbi.qbe.inlineCalculatedFields.title'),
@@ -592,7 +599,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	this.inLineCalculatedFieldWizard.show();
 	this.calculatedFieldWizard.hide();
 	this.showInLineCalculatedFieldWizard(this.pressedNode);
-	this.inLineCalculatedFieldWizard.mainPanel.setCFAlias(alias);	
+	this.inLineCalculatedFieldWizard.mainPanel.setCFAlias(alias);
 }
 
 , showCalculatedFieldWizard: function(entityNode) {
@@ -620,11 +627,11 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				var field = {
 						uniqueName: child.id,
 						alias: child.text,
-						text: child.attributes.field, 
-						qtip: child.attributes.entity + ' : ' + child.attributes.field, 
-						type: 'field', 
+						text: child.attributes.field,
+						qtip: child.attributes.entity + ' : ' + child.attributes.field,
+						type: 'field',
 						value: 'dmFields[\'' + child.id + '\']'
-				};	
+				};
 				fields.push(field);
 			}
 		}
@@ -669,11 +676,11 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				var field = {
 						uniqueName: child.id,
 						alias: child.text,
-						text: child.attributes.field, 
-						qtip: child.attributes.entity + ' : ' + child.attributes.field, 
-						type: 'field', 
+						text: child.attributes.field,
+						qtip: child.attributes.entity + ' : ' + child.attributes.field,
+						type: 'field',
 						value: 'dmFields[\'' + child.attributes.field + '\']'
-				};	
+				};
 				fields.push(field);
 			}
 		}
@@ -690,15 +697,15 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			msg: LN('sbi.qbe.calculatedFields.add.error'),
 			buttons: Ext.Msg.OK,
 			icon: Ext.MessageBox.ERROR
-		});		
-	}	
+		});
+	}
 
 }
 
 
 , setHierarchyDefault: function(hierarchyNode) {
 
-	if(hierarchyNode.attributes.attributes.type 
+	if(hierarchyNode.attributes.attributes.type
 			!= Sbi.constants.qbe.NODE_TYPE_HIERARCHY_FIELD){
 
 		Ext.Msg.show({
@@ -739,9 +746,9 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			});
 		},
 		scope: this,
-		failure: Sbi.exception.ExceptionHandler.handleFailure,	
+		failure: Sbi.exception.ExceptionHandler.handleFailure,
 		params: params
-	}); 
+	});
 }
 
 
@@ -758,7 +765,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
 		entityId = targetNode.parentNode.id;
 		editingMode = 'modify';
-		fieldId = targetNode.attributes.attributes.formState.alias; 
+		fieldId = targetNode.attributes.attributes.formState.alias;
 	} else if(Sbi.constants.qbe.NODE_TYPE_ENTITY) {
 		entityId = targetNode.id;
 		editingMode = 'create';
@@ -768,7 +775,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			msg: 'Input parameter [targetNode] of function [onApplyInlineCalculatedField] cannot be of type [' + nodeType + ']',
 			buttons: Ext.Msg.OK,
 			icon: Ext.MessageBox.ERROR
-		});		
+		});
 	}
 
 	var f = {
@@ -797,9 +804,9 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 //			});
 		},
 		scope: this,
-		failure: Sbi.exception.ExceptionHandler.handleFailure,	
+		failure: Sbi.exception.ExceptionHandler.handleFailure,
 		params: params
-	}); 
+	});
 
 
 	if(editingMode === 'modify') {
@@ -811,17 +818,18 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		var node = new Ext.tree.TreeNode({
 			text: formState.alias,
 			leaf: true,
-			type: fieldType, 
+			type: fieldType,
 			longDescription: formState.expression,
-			formState: formState, 
+			formState: formState,
 			iconCls: 'calculation',
 			attributes:{
 				text: formState.alias,
 				leaf: true,
-				type: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD, 
+				type: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD,
 				longDescription: formState.expression,
-				formState: formState, 
-				iconCls: 'calculation'}
+				formState: formState,
+				iconCls: 'calculation',
+				editable: true}
 
 		});
 
@@ -831,7 +839,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		} else {
 			targetNode.appendChild( node );
 		}
-	} 
+	}
 }
 
 , onApplyCalculatedField : function(win, formState, targetNode, fieldType){
@@ -857,7 +865,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			msg: 'Input parameter [targetNode] of function [onApplyInlineCalculatedField] cannot be of type [' + nodeType + ']',
 			buttons: Ext.Msg.OK,
 			icon: Ext.MessageBox.ERROR
-		});		
+		});
 	}
 
 
@@ -887,9 +895,9 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 //			});
 		},
 		scope: this,
-		failure: Sbi.exception.ExceptionHandler.handleFailure,	
+		failure: Sbi.exception.ExceptionHandler.handleFailure,
 		params: params
-	}); 
+	});
 
 
 	if(nodeType == Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) {
@@ -900,16 +908,16 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		var node = new Ext.tree.TreeNode({
 			text: formState.alias,
 			leaf: true,
-			type: fieldType, 
+			type: fieldType,
 			longDescription: formState.expression,
-			formState: formState, 
+			formState: formState,
 			iconCls: 'calculation',
 			attributes:{
 				text: formState.alias,
 				leaf: true,
-				type: Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD, 
+				type: Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD,
 				longDescription: formState.expression,
-				formState: formState, 
+				formState: formState,
 				iconCls: 'calculation'}
 		});
 
@@ -960,9 +968,9 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 //			});
 		},
 		scope: this,
-//		failure: Sbi.exception.ExceptionHandler.handleFailure,	
+//		failure: Sbi.exception.ExceptionHandler.handleFailure,
 		params: params
-	}); 
+	});
 
 
 	if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
@@ -972,16 +980,16 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		var node = new Ext.tree.TreeNode({
 			text: formState.alias,
 			leaf: true,
-			type: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD, 
+			type: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD,
 			longDescription: formState.expression,
-			formState: formState, 
+			formState: formState,
 			iconCls: 'calculation',
 			attributes:{
 				text: formState.alias,
 				leaf: true,
-				type: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD, 
+				type: Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD,
 				longDescription: formState.expression,
-				formState: formState, 
+				formState: formState,
 				iconCls: 'calculation'}
 
 		});
@@ -1035,9 +1043,9 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 //			});
 		},
 		scope: this,
-		failure: Sbi.exception.ExceptionHandler.handleFailure,	
+		failure: Sbi.exception.ExceptionHandler.handleFailure,
 		params: params
-	}); 
+	});
 
 	if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
 		targetNode.setText(formState.alias);
@@ -1054,7 +1062,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 }
 
 , initMenu: function() {
-	
+
 	this.menu = new Ext.menu.Menu({
 		id:'feeds-ctx',
 		items: [
@@ -1080,7 +1088,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		        	text:LN('sbi.qbe.calculatedFields.add'),
 		        	iconCls:'add',
 		        	handler:function(){
-		        		this.showInLineCalculatedFieldWizard(this.ctxNode);	         	 	
+		        		this.showInLineCalculatedFieldWizard(this.ctxNode);
 		        	},
 		        	scope: this
 		        },{
@@ -1094,14 +1102,14 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		        	text: LN('sbi.qbe.menu.bands.add'),
 		        	iconCls:'slot',
 		        	handler:function(){
-		        		this.addSlot(this.ctxNode);	
+		        		this.addSlot(this.ctxNode);
 		        	},
 		        	scope: this
 		        },{
 		        	text: LN('sbi.qbe.menu.bands.edit'),
 		        	iconCls:'slot',
 		        	handler:function(){
-		        		this.editSlot(this.ctxNode);	
+		        		this.editSlot(this.ctxNode);
 		        	},
 		        	scope: this
 		        },{
@@ -1117,15 +1125,15 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		        	text:LN('sbi.qbe.hierarchies.setdefault'),
 		        	iconCls:'hierarchy',
 		        	handler:function(){
-		        		this.setHierarchyDefault(this.ctxNode);	         	 	
+		        		this.setHierarchyDefault(this.ctxNode);
 		        	},
 		        	scope: this,
-		        	hidden: (this.ctxNode.attributes.attributes.type 
+		        	hidden: (this.ctxNode.attributes.attributes.type
 		        			!= Sbi.constants.qbe.NODE_TYPE_HIERARCHY_FIELD
 		        			|| this.ctxNode.attributes.attributes.isdefault)
 		        }]
 	});
-	
+
 	for(var i = 0; i < this.actions.length; i++) {
 
 		var item = new Ext.menu.Item({
@@ -1183,7 +1191,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 
 	for(var n in this.rootNode.childNodes){
 		if(this.rootNode.childNodes[n].attributes){
-			var iconCls = this.rootNode.childNodes[n].attributes.iconCls; 
+			var iconCls = this.rootNode.childNodes[n].attributes.iconCls;
 			if(iconCls=='temporal_dimension'){
 				this.temporalEntity=true;
 			}else if(iconCls=='geographic_dimension'){

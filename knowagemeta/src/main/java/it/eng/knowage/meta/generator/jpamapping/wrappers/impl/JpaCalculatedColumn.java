@@ -149,7 +149,7 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 			String customs = "";
 			JSONObject json = CustomFunctionsSingleton.getInstance().getCustomizedFunctionsJSON();
 			// check there really are some custom functions
-			if (json != null && json.toString() != "{}") {
+			if (json != null && !json.toString().equals("{}")) {
 				String dbType = DbTypeThreadLocal.getDbType();
 				if (dbType == null) {
 					logger.error("Db Type not found");
@@ -158,7 +158,7 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 				CustomizedFunctionsReader reader = new CustomizedFunctionsReader();
 				List<CustomizedFunction> list = reader.getCustomDefinedFunctionListFromJSON(json, dbType);
 				if (list != null && list.size() > 0) {
-					customs = reader.getStringFromList(list);
+					customs = reader.getStringFromOrderedList(list);
 				}
 			}
 
@@ -182,8 +182,12 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 		}
 
 		for (int i = 0; i < operands.size(); i++) {
-			logger.debug("Replacing " + operands.get(i) + " with " + jpaColumns.get(i).getUniqueName());
-			expression = expression.replace(operands.get(i), jpaColumns.get(i).getUniqueName().replaceAll("/", ":"));
+			if (jpaColumns.size() > i) {
+				logger.debug("Replacing " + operands.get(i) + " with " + jpaColumns.get(i).getUniqueName());
+				if (jpaColumns.get(i) != null) {
+					expression = expression.replace(operands.get(i), jpaColumns.get(i).getUniqueName().replaceAll("/", ":"));
+				}
+			}
 		}
 
 		return expression;

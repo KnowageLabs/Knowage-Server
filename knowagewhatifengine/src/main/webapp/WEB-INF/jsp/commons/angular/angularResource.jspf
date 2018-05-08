@@ -44,6 +44,8 @@ author:...
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
+<%@page import="it.eng.spagobi.utilities.engines.EngineStartServletIOManager"%>
+
 
 
 
@@ -127,10 +129,11 @@ author:...
 	   if(request.getParameter("mode") != null){
           mode = request.getParameter("mode");
           
-          
-	}else{
+	   }else if(request.getParameter(EngineStartServletIOManager.ON_EDIT_MODE) != null){
+		   mode = "edit";
+		}else{
 		 mode = "full" ;
-	} 
+		} 
 	   if(request.getParameter("schemaID") != null){
 		   schemaID = request.getParameter("schemaID");
 		}else{

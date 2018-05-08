@@ -1,7 +1,7 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 
@@ -11,27 +11,27 @@
 
 
 /**
- * Object name 
- * 
+ * Object name
+ *
  * [description]
- * 
- * 
+ *
+ *
  * Public Properties
- * 
+ *
  * [list]
- * 
- * 
+ *
+ *
  * Public Methods
- * 
+ *
  *  [list]
- * 
- * 
+ *
+ *
  * Public Events
- * 
+ *
  *  [list]
- * 
+ *
  * Authors
- * 
+ *
  * - Andrea Gioia (andrea.gioia@eng.it)
  * - Davide Zerbetto (davide.zerbetto@eng.it)
  */
@@ -42,7 +42,7 @@ Sbi.qbe.QueryBuilderPanel = function(config) {
 
 	var defaultSettings = {
 			//title: LN('sbi.qbe.queryeditor.title'),
-			frame: false, 
+			frame: false,
 			border: false,
 			collapseQueryCataloguePanel: true,
 			enableTreeContextMenu: true,
@@ -68,7 +68,7 @@ Sbi.qbe.QueryBuilderPanel = function(config) {
 	Ext.apply(this, c);
 
 
-	this.services = this.services || new Array();	
+	this.services = this.services || new Array();
 	this.services['saveQuery'] = this.services['saveQuery'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'SAVE_QUERY_ACTION'
 			, baseParams: new Object()
@@ -111,7 +111,7 @@ Sbi.qbe.QueryBuilderPanel = function(config) {
 	this.initEastRegionPanel(c.eastConfig || {});
 
 	c = Ext.apply(c, {
-		layout: 'border',  
+		layout: 'border',
 		/*
 		 * work-around: when executing the following operations:
 		 * 1. executing a QBE document inside SpagoBI server
@@ -169,12 +169,12 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		this.filterGridPanel.setFilters(query.filters);
 
 		this.selectedCalendar= query.calendar || {};
-		
+
 		this.filterGridPanel.setFiltersExpression(query.expression);
 		if(query.isNestedExpression && query.isNestedExpression === true) {
-			this.filterGridPanel.setWizardExpression(true);		
+			this.filterGridPanel.setWizardExpression(true);
 		} else {
-			this.filterGridPanel.setWizardExpression(false);	
+			this.filterGridPanel.setWizardExpression(false);
 		}
 
 		this.havingGridPanel.setFilters(query.havings);
@@ -199,7 +199,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		query.expression = this.filterGridPanel.getFiltersExpression();
 		query.isNestedExpression = this.filterGridPanel.isWizardExpression();
 		query.havings = this.havingGridPanel.getFilters();
-	} else {		
+	} else {
 		//alert("get query as string is deprecated");
 		query.fileds =  this.selectGridPanel.getRowsAsJSONParams();
 		query.distinct = this.selectGridPanel.distinctCheckBox.getValue();
@@ -216,7 +216,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 
 
 /**
- * apply all performed changes to the selected query 
+ * apply all performed changes to the selected query
  */
 , applyChanges: function() {
 	var query = this.queryCataloguePanel.getSelectedQuery();
@@ -226,7 +226,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 }
 
 /**
- * undo all performed changes reverting to the previous status of the selected query 
+ * undo all performed changes reverting to the previous status of the selected query
  */
 , resetChanges: function() {
 	var query = this.queryCataloguePanel.getSelectedQuery();
@@ -247,30 +247,30 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 
 		});
 
-		//getting meta informations 
+		//getting meta informations
 		Ext.Ajax.request({
 			url:  this.services['getMeta'],
 			success: function(response, options) {
 				if(response !== undefined && response.responseText !== undefined ) {
 					var content = Ext.util.JSON.decode( response.responseText );
 
-					if (content !== undefined) {      		      					                   			 
-						nameMeta = content.name;                      
-						descriptionMeta = content.description; 
-						scopeMeta = (content.scope);    		                   
-						this.saveQueryWindow.setFormState({ 
+					if (content !== undefined) {
+						nameMeta = content.name;
+						descriptionMeta = content.description;
+						scopeMeta = (content.scope);
+						this.saveQueryWindow.setFormState({
 							name: nameMeta
 							, description: descriptionMeta
 							, scope: scopeMeta
-						});   				      			
-					} 
+						});
+					}
 				} else {
 					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
 				}
 			},
 			scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure		
-		});  
+			failure: Sbi.exception.ExceptionHandler.handleFailure
+		});
 
 		this.saveQueryWindow.on('save', function(win, formState){this.saveQuery(formState);}, this);
 	}
@@ -283,7 +283,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 }
 
 , saveView: function(meta) {
-	var url = this.services['saveView'];			
+	var url = this.services['saveView'];
 	url += '&viewName=' + meta.name;
 
 	Ext.Ajax.request({
@@ -294,8 +294,8 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			}
 		},
 		scope: this,
-		failure: Sbi.exception.ExceptionHandler.handleFailure		
-	});   
+		failure: Sbi.exception.ExceptionHandler.handleFailure
+	});
 
 }
 
@@ -333,8 +333,8 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 				callbackFn.call(scope, responseJSON);
 			},
 			scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure		
-		});   
+			failure: Sbi.exception.ExceptionHandler.handleFailure
+		});
 	}, this);
 }
 
@@ -380,13 +380,13 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			if(node.attributes.field && node.attributes.type == 'field') {
 				var field = {
 						id: node.id,
-						entity: node.attributes.entity, 
+						entity: node.attributes.entity,
 						field: node.attributes.field,
 						alias: node.attributes.field,
 						longDescription: node.attributes.longDescription
 				};
 
-				this.selectGridPanel.addField(field); 
+				this.selectGridPanel.addField(field);
 			}
 		}, this);
 		aDataMartStructurePanel.on('expand', function(panel, node) {
@@ -399,14 +399,14 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 				this.filterGridPanel.showTemporalBtn();
 			}
 			if(aDataMartStructurePanel.geographicEntity==true){
-				this.filterGridPanel.showSpatialOperators(); 
+				this.filterGridPanel.showSpatialOperators();
 				this.selectGridPanel.showSpatialFunctions();
 			}
 		}, this);
 		aDataMartStructurePanel.on('nodeclick', function(panel, node) {
 			this.onNodeClick(node);
 		}, this);
-		
+
 		aDataMartStructurePanel.on('selectCalendar', function( node) {
 			this.onSelectCalendar(node);
 		}, this);
@@ -469,8 +469,8 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 						}
 					},
 					scope: this,
-					failure: Sbi.exception.ExceptionHandler.handleFailure		
-				});  
+					failure: Sbi.exception.ExceptionHandler.handleFailure
+				});
 			}
 		, scope: this
 		}],
@@ -528,11 +528,11 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	var sharedConf = {
 			enableToggle : true
 			, toggleGroup : 'sbi.qbe.querybuilderpanel.togglegroup'
-				, allowDepress : false	
+				, allowDepress : false
 	};
 
 	this.selectGridButton = new Ext.Button(Ext.apply(sharedConf, {
-		cls: "x-btn-over", 
+		cls: "x-btn-over",
 		listeners:{
 			mouseout: function(button){
 				button.addClass("x-btn-over");
@@ -541,7 +541,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		text: LN('sbi.qbe.selectgridpanel.title')
 	}));
 	this.filterGridButton = new Ext.Button(Ext.apply(sharedConf, {
-		cls: "x-btn-over", 
+		cls: "x-btn-over",
 		listeners:{
 			mouseout: function(button){
 				button.addClass("x-btn-over");
@@ -550,7 +550,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		text: LN('sbi.qbe.filtergridpanel.title')
 	}));
 	this.havingGridButton = new Ext.Button(Ext.apply(sharedConf, {
-		cls: "x-btn-over", 
+		cls: "x-btn-over",
 		listeners:{
 			mouseout: function(button){
 				button.addClass("x-btn-over");
@@ -570,7 +570,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 
 	var toolbar = [this.selectGridButton, this.filterGridButton, this.havingGridButton, '->', this.getAmbiguousFieldsButton];
 
-	if(this.queryWidowTabs && this.queryWidowTabs.length>0){
+	if(this.queryWidowTabs && this.queryWidowTabs.length>0 && this.enableViewQueryButton == true){
 		this.getQueryButton = new Ext.Button({
 			text: LN('sbi.qbe.queryeditor.centerregion.buttons.getquery')
 		});
@@ -580,7 +580,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	}
 
 
-	this.centerRegionPanel = new Ext.Panel({ 
+	this.centerRegionPanel = new Ext.Panel({
 		title: LN('sbi.qbe.queryeditor.centerregion.title'),
 		region:'center',
 		width: '100%', // this is necessary in order to set the proper width to the columns of select/where/having clauses' grids in Firefox
@@ -596,7 +596,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 				tbar: toolbar
 	});
 
-	/*this.centerRegionPanel = new Ext.Panel({ 
+	/*this.centerRegionPanel = new Ext.Panel({
 	    	title: LN('sbi.qbe.queryeditor.centerregion.title'),
 	        region:'center',
 	        width: '100%', // this is necessary in order to set the proper width to the columns of select/where/having clauses' grids in Firefox
@@ -623,11 +623,11 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		       				this.showSaveViewWindow();
 		       			},
 		       			scope: this,
-		       			failure: Sbi.exception.ExceptionHandler.handleFailure,					
+		       			failure: Sbi.exception.ExceptionHandler.handleFailure,
 		       			params: this.getParams
-					});	   
+					});
 				},
-	            scope: this 
+	            scope: this
 	        },{
 	          id:'search',
 	          qtip: LN('sbi.qbe.queryeditor.centerregion.tools.validate'),
@@ -660,7 +660,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 
 		filter = {
 				leftOperandValue: record.data.id
-				, leftOperandDescription: record.data.entity + ' : ' + record.data.field 
+				, leftOperandDescription: record.data.entity + ' : ' + record.data.field
 				, leftOperandType: operandType
 				, leftOperandLongDescription: record.data.entity + ' : ' + record.data.alias
 				, leftOperandAlias: record.data.alias
@@ -690,7 +690,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 
 		filter = {
 				leftOperandValue: record.data.id
-				, leftOperandDescription: record.data.entity + ' : ' + record.data.field 
+				, leftOperandDescription: record.data.entity + ' : ' + record.data.field
 				, leftOperandType: operandType
 				, leftOperandAggregator: record.data.funct
 				, leftOperandLongDescription: record.data.longDescription
@@ -750,7 +750,7 @@ getAmbiguousFields: function() {
 					windowsItems.push(sqlPanel);
 				}
 			}
-		}				
+		}
 
 		var win= new Ext.Window({
 			layout:'fit',
@@ -912,7 +912,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 		    	   handler: function(event, toolEl, panel){
 		    		   var q = this.queryCataloguePanel.getSelectedQuery();
 		    		   this.queryCataloguePanel.deleteQueries(q);
-		    	   }, 
+		    	   },
 		    	   scope: this
 		       }, {
 		    	   id:'list',
@@ -939,7 +939,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 
 	this.queryCataloguePanel.on('beforeselect', function(panel, newquery, oldquery){
 		// save changes applied to old query before to move to the new selected one
-		this.applyChanges(); 
+		this.applyChanges();
 
 		this.setQuery( newquery );
 		// required in order to be sure to have all query stored at the server side while
@@ -957,14 +957,14 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 
 	var mystore = new Ext.data.JsonStore({
 		//autoload: true,
-		fields: [ 
+		fields: [
 		         {type: 'integer', name: 'id'},
 		         {type: 'string', name: 'column_1'}
 		         ]
 	});
 
 	var cb=new Ext.form.ComboBox({
-//		tpl: '<tpl for="."><div ext:qtip="{field}: {description}" class="x-combo-list-item">{field}</div></tpl>',	
+//		tpl: '<tpl for="."><div ext:qtip="{field}: {description}" class="x-combo-list-item">{field}</div></tpl>',
 		editable  : false,
 //		fieldLabel : 'Type',
 		forceSelection : false,
@@ -1017,9 +1017,9 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 			}
 		},
 		scope: this,
-		failure: Sbi.exception.ExceptionHandler.handleFailure		
-	});  
-	
+		failure: Sbi.exception.ExceptionHandler.handleFailure
+	});
+
 	dialogBox.show();
 
 }
@@ -1029,7 +1029,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 			id: node.id,
 			alias: node.attributes.field,
 			type:"datamartField",
-			entity: node.attributes.entity, 
+			entity: node.attributes.entity,
 			field: node.attributes.field,
 			funct:"",
 			group:false,
@@ -1037,20 +1037,20 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 			include:true,
 			visible:true,
 			longDescription: node.attributes.longDescription,
-			
-	};	
+
+	};
 
 	var filters = {
 			filterId:'calendarFilter',
 			filterDescripion: "calendar filter",
 			promptable:false,
 			leftOperandValue: node.id,
-			leftOperandDescription: node.attributes.entity + ' : ' + node.attributes.field, 
+			leftOperandDescription: node.attributes.entity + ' : ' + node.attributes.field,
 			leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD,
 			leftOperandLongDescription: node.attributes.longDescription,
 			leftOperandDefaultValue:null,
 			leftOperandLastValue:null,
-			leftOperandAlias: node.attributes.field, 
+			leftOperandAlias: node.attributes.field,
 			leftOperandDataType:"",
 			operator: "EQUALS TO",
 			rightOperandValue:[calendarName],
@@ -1063,7 +1063,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 			rightOperandDataType:"",
 			booleanConnector:"AND",
 			deleteButton:false
-			
+
 	};
 
 //	this.selectedCalendar={"fields":fields,"filters":filters};
@@ -1107,17 +1107,17 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 		if(!nodeParentType && node.parentNode && node.parentNode.attributes && node.parentNode.attributes.attributes && node.parentNode.attributes.attributes.type){
 			nodeParentType = node.parentNode.attributes.attributes.type;
 		}
-		
+
 		if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
 
 			field = {
 					id: node.id,
 					type: Sbi.constants.qbe.FIELD_TYPE_SIMPLE,
-					entity: node.attributes.attributes.entity, 
+					entity: node.attributes.attributes.entity,
 					field: node.attributes.attributes.field,
 					alias: node.attributes.attributes.field,
 					longDescription: node.attributes.attributes.longDescription
-			};		
+			};
 
 			Ext.apply(field, recordBaseConfig);
 
@@ -1133,11 +1133,11 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 			var field = {
 					id: node.attributes.attributes.formState,
 					type: Sbi.constants.qbe.FIELD_TYPE_CALCULATED,
-					entity: node.parentNode.text, 
+					entity: node.parentNode.text,
 					field: node.text,
 					alias: node.text,
 					longDescription: null
-			}; 
+			};
 
 			Ext.apply(field, recordBaseConfig);
 
@@ -1158,14 +1158,15 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 
 
 			}
-		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {	
+		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
 			var field = {
 					id: node.attributes.attributes.formState,
 					type: Sbi.constants.qbe.FIELD_TYPE_INLINE_CALCULATED,
-					entity: node.parentNode.text, 
+					entity: node.parentNode.text,
 					field: node.text,
 					alias: node.text,
-					longDescription: null
+					longDescription: null,
+					editable: node.attributes.attributes.editable
 			};
 
 			Ext.apply(field, recordBaseConfig);
@@ -1191,16 +1192,16 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 
 		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY){
 			for(var i = 0; i < node.attributes.children.length; i++) {
-				if((node.attributes.children[i].attributes.type != 'field' && node.attributes.children[i].attributes.type != Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) || 
+				if((node.attributes.children[i].attributes.type != 'field' && node.attributes.children[i].attributes.type != Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) ||
 						(node.attributes.children[i].attributes.type != 'field' && node.attributes.children[i].attributes.type != Sbi.constants.qbe.IN_LINE_CALCULATED_FIELD) ||
 						( node.attributes.children[i].iconCls=='calendar' )) continue;
 				field = {
-						id: node.attributes.children[i].id , 
-						entity: node.attributes.children[i].attributes.entity , 
+						id: node.attributes.children[i].id ,
+						entity: node.attributes.children[i].attributes.entity ,
 						field: node.attributes.children[i].attributes.field,
 						alias: node.attributes.children[i].attributes.field,
 						longDescription: node.attributes.children[i].attributes.longDescription
-				};				
+				};
 				this.selectGridPanel.addField(field);
 			}
 
@@ -1208,7 +1209,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 				|| nodeParentType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_FIELD ) {
 			if(node.parentNode.attributes.attributes.isdefault)	{
 				var i = 0;
-				while (node.parentNode.childNodes[i]!=node) { 
+				while (node.parentNode.childNodes[i]!=node) {
 					var n = node.parentNode.childNodes[i];
 					var field = {
 							id: n.attributes.alias,
@@ -1222,7 +1223,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 				}
 				var field = {
 						id: node.attributes.alias,
-						entity: node.parentNode.parentNode.text, 
+						entity: node.parentNode.parentNode.text,
 						field: node.text,
 						alias: node.text,
 						longDescription: node.parentNode.text + ' : ' + node.text
@@ -1260,7 +1261,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 	if(node.attributes) {
 		recordBaseConfig = recordBaseConfig || {};
 		nodeType = node.attributes.type || node.attributes.attributes.type;
-		
+
 		var nodeParentType = null;
 
 		if(node.parentNode &&  node.parentNode.attributes){
@@ -1274,10 +1275,10 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 
 			filter = {
 					leftOperandValue: node.id
-					, leftOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
+					, leftOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field
 					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 					, leftOperandLongDescription: node.attributes.attributes.longDescription
-					, leftOperandAlias: node.attributes.attributes.field 
+					, leftOperandAlias: node.attributes.attributes.field
 			};
 
 			this.filterGridPanel.addFilter(filter);
@@ -1286,9 +1287,9 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 
 			filter = {
 					leftOperandValue: node.attributes.attributes.formState
-					, leftOperandDescription: node.attributes.entity + ' : ' + node.attributes.attributes.formState.alias 
+					, leftOperandDescription: node.attributes.entity + ' : ' + node.attributes.attributes.formState.alias
 					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
-					, leftOperandLongDescription: node.attributes.attributes.formState.alias 
+					, leftOperandLongDescription: node.attributes.attributes.formState.alias
 			};
 
 			this.filterGridPanel.addFilter(filter);
@@ -1299,27 +1300,27 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 
 				var childNode = node.attributes.children[i];
 				nodeType = childNode.attributes.type;
-				
+
 				if( childNode.iconCls=='calendar' ) continue;
-				
+
 
 				if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
 
 					filter = {
 							leftOperandValue: childNode.id
-							, leftOperandDescription: childNode.attributes.entity + ' : ' + childNode.attributes.field 
+							, leftOperandDescription: childNode.attributes.entity + ' : ' + childNode.attributes.field
 							, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 							, leftOperandLongDescription: childNode.attributes.longDescription
-							, leftOperandAlias: node.attributes.attributes.field 
+							, leftOperandAlias: node.attributes.attributes.field
 					};
 
 					this.filterGridPanel.addFilter(filter);
 				} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
 					filter = {
 							leftOperandValue: childNode.attributes.formState
-							, leftOperandDescription: childNode.attributes.entity + ' : ' + childNode.attributes.formState.alias 
+							, leftOperandDescription: childNode.attributes.entity + ' : ' + childNode.attributes.formState.alias
 							, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
-							, leftOperandLongDescription: childNode.attributes.formState.alias 
+							, leftOperandLongDescription: childNode.attributes.formState.alias
 					};
 
 					this.filterGridPanel.addFilter(filter);
@@ -1330,11 +1331,11 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 				|| nodeParentType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_FIELD ) {
 			if(node.parentNode.attributes.attributes.isdefault)	{
 				var i = 0;
-				while (node.parentNode.childNodes[i]!=node) { 
+				while (node.parentNode.childNodes[i]!=node) {
 					var n = node.parentNode.childNodes[i];
 					filter = {
 							leftOperandValue: n.attributes.alias
-							, leftOperandDescription: n.parentNode.text + ' : ' + n.text 
+							, leftOperandDescription: n.parentNode.text + ' : ' + n.text
 							, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 							, leftOperandLongDescription: n.parentNode.text + ' : ' + n.text
 							, operator: 'EQUALS TO'
@@ -1346,7 +1347,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 
 				filter = {
 						leftOperandValue: node.attributes.alias
-						, leftOperandDescription: node.parentNode.text + ' : ' + node.text 
+						, leftOperandDescription: node.parentNode.text + ' : ' + node.text
 						, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 						, leftOperandLongDescription: node.parentNode.text + ' : ' + node.text
 						, operator: 'EQUALS TO'
@@ -1360,7 +1361,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 					buttons: Ext.Msg.OK,
 					icon: Ext.MessageBox.ERROR
 				});
-			} 			
+			}
 		} else {
 			Ext.Msg.show({
 				title: LN('sbi.qbe.bands.wizard.invalid.operation'),
@@ -1370,7 +1371,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 			});
 		}
 	}
-} 
+}
 
 , onAddNodeToHavingAndFocus: function (node, recordBaseConfig) {
 	this.toggleCenterPanelToItem(2);
@@ -1389,7 +1390,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 
 			filter = {
 					leftOperandValue: node.id
-					, leftOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
+					, leftOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field
 					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 					, leftOperandLongDescription: node.attributes.attributes.longDescription
 			};
@@ -1398,9 +1399,9 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD){
 			filter = {
 					leftOperandValue: node.attributes.attributes.formState
-					, leftOperandDescription: node.attributes.entity + ' : ' + node.attributes.attributes.formState.alias 
+					, leftOperandDescription: node.attributes.entity + ' : ' + node.attributes.attributes.formState.alias
 					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
-					, leftOperandLongDescription: node.attributes.attributes.formState.alias 
+					, leftOperandLongDescription: node.attributes.attributes.formState.alias
 			};
 
 			this.havingGridPanel.addFilter(filter);
@@ -1415,7 +1416,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 
 					filter = {
 							leftOperandValue: childNode.id
-							, leftOperandDescription: childNode.attributes.entity + ' : ' + childNode.attributes.field 
+							, leftOperandDescription: childNode.attributes.entity + ' : ' + childNode.attributes.field
 							, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 							, leftOperandLongDescription: childNode.attributes.longDescription
 					};
@@ -1425,9 +1426,9 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 
 					filter = {
 							leftOperandValue: childNode.attributes.formState
-							, leftOperandDescription: childNode.entity + ' : ' + childNode.attributes.formState.alias 
+							, leftOperandDescription: childNode.entity + ' : ' + childNode.attributes.formState.alias
 							, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD
-							, leftOperandLongDescription: childNode.attributes.formState.alias 
+							, leftOperandLongDescription: childNode.attributes.formState.alias
 					};
 
 					this.havingGridPanel.addFilter(filter);
@@ -1443,7 +1444,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 			});
 		}
 	}
-} 
+}
 
 //--------------------------------------------------------------------------------
 //deprecated methods
@@ -1459,8 +1460,8 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 
 
 	var params = {
-			query: queryStr 
-	};        	
+			query: queryStr
+	};
 
 	return params;
 }

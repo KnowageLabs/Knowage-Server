@@ -80,7 +80,6 @@ import org.safehaus.uuid.UUIDGenerator;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.birt.exceptions.ConnectionDefinitionException;
 import it.eng.spagobi.engines.birt.exceptions.ConnectionParameterNotValidException;
@@ -856,7 +855,6 @@ public class BirtReportServlet extends HttpServlet {
 	private Map getTaskContext(String userId, Map reportParams, HttpServletRequest request, String resourcePath, Map userProfileAttrs) throws IOException {
 		Map context = BirtUtility.getAppContext(request);
 
-		String pass = EnginConf.getInstance().getPass();
 		String spagoBiServerURL = EnginConf.getInstance().getSpagoBiServerUrl();
 		HttpSession session = request.getSession();
 		String secureAttributes = (String) session.getAttribute("isBackend");
@@ -866,21 +864,9 @@ public class BirtReportServlet extends HttpServlet {
 			SourceBean sourceBeanConf = (SourceBean) engineConfig.getAttribute("DataSetServiceProxy_URL");
 			serviceUrlStr = sourceBeanConf.getCharacters();
 		}
-		String token = null;
-		boolean isSecure = true;
-		if (secureAttributes != null && secureAttributes.equals("true")) {
-			isSecure = false;
-		}
 
-		if (!isSecure) {
-			token = pass;
-		}
-		if (!UserProfile.isSchedulerUser(userId)) {
-			SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
-			token = proxyService.readTicket(session);
-		} else {
-			token = "";
-		}
+		SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
+		String token = proxyService.readTicket(session);
 
 		context.put(REPORT_EXECUTION_ID, createNewExecutionId());
 		context.put("RESOURCE_PATH_JNDI_NAME", resourcePath);
@@ -890,7 +876,6 @@ public class BirtReportServlet extends HttpServlet {
 		context.put("SBI_BIRT_RUNTIME_SERVICE_URL", serviceUrlStr);
 		context.put("SBI_BIRT_RUNTIME_SERVER_URL", spagoBiServerURL);
 		context.put("SBI_BIRT_RUNTIME_TOKEN", token);
-		context.put("SBI_BIRT_RUNTIME_PASS", pass);
 		context.put("SBI_BIRT_RUNTIME_PARS_MAP", reportParams);
 		context.put("SBI_BIRT_RUNTIME_PROFILE_USER_ATTRS", userProfileAttrs);
 		context.put("SBI_BIRT_RUNTIME_GROOVY_SCRIPT_FILE_NAME", predefinedGroovyScriptFileName);

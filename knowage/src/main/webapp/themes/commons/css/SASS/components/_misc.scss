@@ -904,47 +904,27 @@ color-picker {
   }
 }
 
-.buttonBar {
-  display: inline-flex;
-  margin-bottom: 8px;
-  .md-button {
+.md-icon-button {
+  &.md-icon-button-32 {
     margin: 0;
-    &:first-child:not(:last-child) {
-      border-bottom-right-radius: 0;
-      border-top-right-radius: 0;
-    }
-    &:last-child:not(:first-child) {
-      border-bottom-left-radius: 0;
-      border-top-left-radius: 0;
-    }
-    &:not(:first-child):not(:last-child) {
-      border-radius: 0;
-    }
-    &.selected {
-      background-color: $baseColor;
-      color: white;
-    }
-    &:hover {
-      background-color: $secondaryColor;
-      color: white;
-    }
+    height: 32px;
+    min-width: 0;
+    line-height: 32px;
+    min-height: 32px;
+    padding: 0;
+    width: 32px;
+    border-radius: 50%;
   }
 }
 
-.warning {
-  &>md-icon, &>i {
-    color: $negativeColor;
+.selectable {
+  cursor: pointer;
+  &:hover {
+    background-color: lighten($tableSelectedElementColor,5%);
   }
-}
-
-.text-center {
-  text-align: center;
-}
-.text-left {
-  text-align: left;
-}
-.text-right {
-  text-align: right;
+  &.selected {
+    background-color: $tableSelectedElementColor;
+  }
 }
 
 /* IE11 fix */

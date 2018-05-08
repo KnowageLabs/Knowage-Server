@@ -11,6 +11,10 @@ md-toolbar.md-knowage-theme .md-toolbar-tools {
     font-weight: 600
 }
 
+div.md-button:first-child ._md-list-item-inner{
+	height:auto !important
+}
+
 
 @font-face {
     font-family: 'Roboto';

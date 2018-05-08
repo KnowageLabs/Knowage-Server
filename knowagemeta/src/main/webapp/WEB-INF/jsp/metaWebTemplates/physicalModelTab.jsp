@@ -1,6 +1,36 @@
 <angular-list-detail ng-controller="metaModelCreationPhysicalController">
 	<list label="translate.load('sbi.glossary.tables')" layout="column"> 
-		<span ng-if="meta.physicalModels.length>0">
+		<md-content class="noMargin" >
+		 	<!-- PHYSICAL CLASSES -->
+		 	
+			<div class="metaModelBusinessList" ng-if="meta.physicalModels.length>0">
+		   		<div class="md-dense" ng-repeat="pm in meta.physicalModels" >
+			   		<div class="selectable" ng-click="selectPhysicalModel(pm)" layout="row" layout-align="start center" ng-class="{'selected':pm == selectedPhysicalModel}">
+			   			<span class="businessListName"><md-icon md-font-icon="{{::physicalModel_getlevelIcon(pm)}}"></md-icon> {{pm.name}}</span>
+				   		<span flex></span>
+				     	<span class="businessListProperties">{{pm.columns.length}} properties</span>
+				     	<md-button class="md-icon-button md-icon-button-32" ng-click="openBusinessModel(pm,$event)">
+				     		<md-icon md-font-icon="fa fa-chevron-down"></md-icon>
+				     	</md-button>
+			   		</div>
+			     	<md-divider ng-if="!$last"></md-divider>
+					<div ng-if="pm.opened">
+						<md-card>
+							<md-card-content class="noPadding">
+								<ul>
+					  		<li ng-repeat-start="col in pm.columns" class="selectable" ng-click="selectPhysicalModel(col)" ng-class="{'selected':col == selectedPhysicalModel}">
+					  			<md-icon md-font-icon="{{::physicalModel_getlevelIcon(col)}}"></md-icon>
+					  			<span>{{col.name}}</span>
+					  		</li>
+					  		<md-divider ng-repeat-end ng-if="!$last"></md-divider>
+					  	</ul>
+							</md-card-content>
+						</md-card>
+						<md-divider></md-divider>
+					</div>
+			   	</div>
+		   	</div>
+		<!--  span ng-if="meta.physicalModels.length>0">
 			<component-tree id="pmTree"  style="margin:0px"
 				ng-model="meta.physicalModels"
 				highlights-selected-item="true"   
@@ -14,24 +44,13 @@
 				expand-on-click=false
 				interceptor="physicalModelTreeInterceptor"
 			></component-tree>
-		</span>
+		</span-->
 	</list>
 	
 	<extra-list-button>
-		<md-menu>
-			<md-button aria-label="Create" class="md-fab" ng-click="$mdOpenMenu($event)">
-			  <md-icon md-menu-origin  md-font-icon="fa fa-bars" class="md-primary"></md-icon>
-			</md-button>
-			<md-menu-content width="4">
-			  <md-menu-item>
-			    <md-button ng-click="refreshPhysicalModel()">
-			      <md-icon md-font-icon="fa fa-download" md-menu-align-target></md-icon>
-			    	 {{translate.load('sbi.meta.update.physicalModel')}}
-			    </md-button>
-			  </md-menu-item>
-			</md-menu-content>
-		</md-menu>
-		
+		<md-button ng-click="refreshPhysicalModel()">
+   	 		{{translate.load('sbi.meta.update.physicalModel')}}
+	    </md-button>
 	</extra-list-button>
 	
 	<detail label="selectedPhysicalModel.name==undefined ? '' : selectedPhysicalModel.name "  ng-if="selectedPhysicalModel.name!=undefined" >

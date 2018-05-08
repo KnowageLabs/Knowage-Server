@@ -4,7 +4,7 @@
 	   		<h2 flex="flex" class="md-title">Buttons Wizard</h2>
 	   </md-toolbar>
 	   
-	   <md-dialog-content class="designer-buttons-dialog-content">
+	   <md-dialog-content class="designer-buttons-dialog-content" layout="column">
 	   		<md-card >
 	   			<md-card-content layout="row" >
     				<md-checkbox aria-label="Select All Visible"
@@ -23,7 +23,7 @@
             		</md-checkbox>
 	   			 </md-card-content>
 	   		</md-card>
-	   			
+	   	<md-content flex layout="column">
 	   		   <angular-table
 							flex
 							id="olapDesignerButtonsList"
@@ -36,7 +36,7 @@
 							scope-functions=tableFunction
 						>
 				</angular-table>	   
-		   
+		   </md-content>
 	   </md-dialog-content>
 	
 	    <md-dialog-actions layout="row">
