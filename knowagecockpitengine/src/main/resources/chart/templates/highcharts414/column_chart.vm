@@ -720,7 +720,9 @@
 	
 		
 			type: "$a.type",
+			 #if(!$exportWebApp) 
 			id: $a.id,
+			#end
 			#if($a.name == $categorieColumns.name && $categorieColumns.orderType=="desc" && $isDateTime)
 				reversed: true,
 			#end
