@@ -319,8 +319,8 @@
 
 						var iframe = document.getElementById('documentFrame');
 						var gridsterContainer = iframe.contentDocument.getElementById('gridsterContainer');
-						var width = gridsterContainer.parentNode.scrollWidth;
-						var height = gridsterContainer.parentNode.scrollHeight;
+						var width = gridsterContainer ? gridsterContainer.parentNode.scrollWidth : 800;
+						var height = gridsterContainer ? gridsterContainer.parentNode.scrollHeight : 600;
 						var zoomFactor = 2.0;
 
 						$scope.parameters = {
