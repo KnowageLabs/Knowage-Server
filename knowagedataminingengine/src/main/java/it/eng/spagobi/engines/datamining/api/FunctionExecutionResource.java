@@ -1,17 +1,5 @@
 package it.eng.spagobi.engines.datamining.api;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineResource;
-import it.eng.spagobi.engines.datamining.common.FunctionExecutor;
-import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
-import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
-import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 import java.io.File;
 
 import javax.ws.rs.GET;
@@ -26,6 +14,18 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineResource;
+import it.eng.spagobi.engines.datamining.common.FunctionExecutor;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
+import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
+import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
 @Path("/1.0/functions-catalog")
 @ManageAuthorization
 public class FunctionExecutionResource extends AbstractDataMiningEngineResource {
@@ -35,7 +35,7 @@ public class FunctionExecutionResource extends AbstractDataMiningEngineResource 
 	@GET
 	@Path("/execute/sample/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String executeSampleCatalogFunctionById(@PathParam("id") int id) {
 		logger.debug("IN");
 		String response;
@@ -61,7 +61,7 @@ public class FunctionExecutionResource extends AbstractDataMiningEngineResource 
 	@GET
 	@Path("/execute/sample")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String executeSampleCatalogFunctionByLabel(@QueryParam("label") String label) {
 		logger.debug("IN");
 		String response;
@@ -87,7 +87,7 @@ public class FunctionExecutionResource extends AbstractDataMiningEngineResource 
 	@POST
 	@Path("/execute/new/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String executeCatalogFunctionById(String body, @PathParam("id") int id) {
 		logger.debug("IN");
 		String response;
@@ -113,7 +113,7 @@ public class FunctionExecutionResource extends AbstractDataMiningEngineResource 
 	@POST
 	@Path("/execute/new")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String executeCatalogFunctionByLabel(String body, @QueryParam("label") String label) {
 		logger.debug("IN");
 		String response;
@@ -139,7 +139,7 @@ public class FunctionExecutionResource extends AbstractDataMiningEngineResource 
 	@POST
 	@Path("/remote/example")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String executeRemoteExample(String body) {
 		logger.debug("IN");
 		String response;

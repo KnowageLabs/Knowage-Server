@@ -44,6 +44,14 @@
 					<groupId>org.cometd.java</groupId>
 					<artifactId>cometd-java-server</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.emf</groupId>
+					<artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.emf</groupId>
+					<artifactId>org.eclipse.emf.common</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		
