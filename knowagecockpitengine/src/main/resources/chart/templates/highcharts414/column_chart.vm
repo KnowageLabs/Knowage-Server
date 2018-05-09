@@ -731,7 +731,13 @@
 				text: "$xAxis.TITLE.text",
 				customTitle: true,
 			#elseif($categorieColumns.name != '')
+				#if($a.id==0)
 				text: "$a.name",
+				#else
+				text: "",
+				textOriginal: "$a.name",
+				
+				#end
 				customTitle: false,
 			#end
 			#if($chart.hideAxisTitleCategory)
