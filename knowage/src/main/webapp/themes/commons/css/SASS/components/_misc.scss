@@ -117,6 +117,11 @@ md-checkbox.md-knowage-theme.md-checked ._md-icon {
   }
 }
 
+.md-button.md-knowage-theme.md-raised.md-button-empty {
+  background-color: white;
+  color: $baseColor;
+}
+
 .md-button.md-knowage-theme.md-fab {
   &:not([disabled]) {
           background-color: $fabPrimaryColor !important;

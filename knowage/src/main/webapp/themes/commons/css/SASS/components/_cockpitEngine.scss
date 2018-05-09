@@ -1159,7 +1159,21 @@
     background-color: rgba(33,33,33,1.0);
 }
 
-
+.iconSelectorSide {
+	box-shadow: -3px 0 3px $shadowsColor;
+	md-content {
+		height: 635px;
+		h3 {
+			font-size: $headerFontSize;
+			text-transform: uppercase;
+			font-weight: 100;
+			margin: 4px 0;
+		}
+		md-grid-tile {
+			border: 1px solid $bordersColor;
+		}
+	}
+}
 
 &.disableanimation {
 	/** disable transitions and animations for tab-contents**/
