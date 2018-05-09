@@ -287,6 +287,7 @@ public class PageResource {
 			propertyType.setName("Custom function");
 			propertyType.setDescription("Custom DB function to apply to column");
 			propertyType.setCategory(structuralCategory);
+			propertyType.setDefaultValue("");
 
 			model.getPropertyTypes().add(propertyType);
 
