@@ -32,12 +32,13 @@ $cardActionIconsColor: 		$toolbarButtonColor;
 $tooltipBackgroundColor: 	#fcefbd;
 $shadowsColor:				#ccc;
 $warningColor:				lighten($secondaryColor,20%);
-$tableHeaderColor: white;
+$tableHeaderColor: 			white;
 
 $listRightBorder: 2px solid $ternaryColor;
 
 
 /* FONTS AND ICONS */
+$defaultFontFamily : 'Roboto', 'Helvetica Neue, Helvetica, Arial', sans-serif;
 $rootFontSize: 		16px;
 
 $headerFontWeight: 	600;

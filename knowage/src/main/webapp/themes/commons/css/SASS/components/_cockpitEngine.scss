@@ -5,15 +5,16 @@
     transition-duration: $duration;
 }
 .kn-cockpit {
-	md-icon {
-		text-align: center;
-	}
     margin: 0;
     padding: 0;
     height: 100%;
     background-color: rgba(240,240,240,1);
     background-image: #fff;
 
+    cockpit-html-widget {
+    	overflow: auto;
+
+    }
     .cockpit-map-widget {
     	overflow: hidden;
 		.ol-popup {
@@ -143,6 +144,18 @@
 				text-align: left;
 			}
 		}
+		.mapOptionsSidenav {
+	    	.indicatorOptions {
+	    		.indicatorLabel {
+	    			padding:8px;
+	    			outline: none;
+		    		cursor:pointer;
+		    		background-color: #f1f1f1;
+		    		font-size: $baseFontSize;
+		    		border-bottom: 1px solid #ccc;
+	    		}
+	    	}
+	    }
     }
     .imagesLibrary {
     	file-upload {
@@ -200,6 +213,7 @@
 		}
 		
 	}
+
     .cockpit-map-widget-edit {
     	.md-subheader {
     		._md-subheader-inner {
@@ -322,48 +336,122 @@
     			}
     		}
     	}
-    }
-
-
-    .iconSelector {
-    	h3 {
-    		margin-bottom: .5rem;
-    		margin-top: 0;
-    		font-size: $baseFontSize;
-    	}
-    	.iconContainer {
-    		border: 1px solid #ccc;
-    		&.selected {
-    			background-color: $secondaryColor;
-    		}
-    		&:hover {
-    			background-color: darken($secondaryColor,15%);
-    		}
-    	}
-    }
-
-    .mapOptionsSidenav {
-    	.indicatorOptions {
-    		.indicatorLabel {
-    			padding:8px;
-    			outline: none;
-	    		cursor:pointer;
-	    		background-color: #f1f1f1;
+    	.iconSelector {
+	    	h3 {
+	    		margin-bottom: .5rem;
+	    		margin-top: 0;
 	    		font-size: $baseFontSize;
-	    		border-bottom: 1px solid #ccc;
+	    	}
+	    	.iconContainer {
+	    		border: 1px solid #ccc;
+	    		&.selected {
+	    			background-color: $secondaryColor;
+	    		}
+	    		&:hover {
+	    			background-color: darken($secondaryColor,15%);
+	    		}
+	    	}
+	    }
+    }
+
+    cockpit-discovery-widget {
+    	.discoveryFiltersCard {
+    		
+    		&.sidenav-add, &.sidenav-remove {
+    			transition: max-width .4s linear;
     		}
+    		&.sidenav {
+    			max-width: 0;
+    			margin-left: 0;
+    			margin-right: 0;
+    			left: -300px;
+    			&.open-add, &.open-remove {
+    				transition: left .4s linear;
+    			}
+    			&.open,&.open-remove {
+    				position: absolute;
+    				left: -300px;
+    				max-width: 85%;
+    				width: 100%;
+    				height: calc(100% - 145px);
+				    top: 130px;
+				    z-index: 99;
+				    md-card-content {
+				    	height: 100%;
+				    }
+    			}
+    			&.open{
+				    left: 9px;
+    			}
+    		}
+    		.discoveryFiltersList {
+	    		height: calc(100% - 80px); 
+	    		overflow-y: auto;
+	    		@include coolScrollBars($baseColor,6px);
+	    		._md-subheader-inner {
+	    			padding:8px;
+	    		}
+	    		.discoveryFiltersItem {
+	    			&:nth-last-child {
+	    				border-bottom: none;
+	    			}
+	    			border-bottom: 1px solid $bordersColor;
+	    			padding: 0 8px;
+					min-height: 32px;
+					height: 32px;
+	    			.chip {
+	    				background-color: $ternaryColor;
+					    padding: 4px;
+					    border-radius: 15px;
+					    width: 40px;
+					    text-align: center;
+					    font-size: $mediumFontSize;
+	    			}
+	    		}
+	    	}
     	}
+    	.discoveryViewCard {
+    		md-card-content {
+    			height: calc(100% - 80px); 
+	    		overflow-y: auto;
+	    		@include coolScrollBars($baseColor,6px);
+    		}
+    		.discoveryListView {
+				.discoveryItem {
+					padding: 4px 16px;
+					.md-avatar {
+						color: white;
+						font-size: 1.5rem;
+						font-weight: 100;
+						display: flex;
+					    justify-content: center;
+					    align-items: center;
+					}
+					h3, p {
+						margin: 0;
+					}
+					h3 {
+						font-size: 16px;
+					    font-weight: 400;
+					    letter-spacing: .01em;
+					    line-height: 1.2em;
+					    overflow: hidden;
+					    white-space: nowrap;
+					    text-overflow: ellipsis;
+					}
+					p {
+						font-size: .8rem;
+					    font-weight: 500;
+					    letter-spacing: .01em;
+					    margin: 0;
+					    line-height: 1rem;
+					}
+				}
+			}
+    	}
+    	
     }
-
-    cockpit-html-widget {
-    	overflow: auto;
-
-    }
-    
     cockpit-image-widget {
-    	&.fadeOut {
-        	opacity: 1 !important;
-    	}
     	width:100%;
 		height:100%;
     	.widgetImageDiv
@@ -376,11 +464,6 @@
 	    }
     }
     
-    
-    cockpit-grid {
-    	//width: calc( #{$cockpitWidth} - 20px - #{$menuBarWidth} );
-    	//margin: 0 auto;
-    }
 
 	cockpit-widget{
 		&>li{
@@ -798,7 +881,7 @@
    		height: 90%;
    		margin: 2% 5%;
    		.htmlEditor {
-		.CodeMirror {
+   			.CodeMirror {
 				height: 500px;
 			}
    		}
@@ -807,11 +890,11 @@
 		}
 		.widgetId {
 			text-transform: none;
-	}    
+		}
 		.availableFunctions {
 			.description {
 				font-size: $mediumFontSize;
-	}    
+			}
 		}
 	}    
 
@@ -947,15 +1030,6 @@
         }
     }
 
-    .fadeOut {
-        transition: 0.3s linear all;
-        opacity: 1;
-    }
-
-    .fadeIn {
-        transition: 0.9s linear all;
-        opacity: 1;
-    }
     cockpit-grid {
     	overflow-y: auto;
     	overflow-y: overlay;
@@ -975,10 +1049,10 @@
 				opacity: .4 !important;
 				&:hover {
 					opacity: 1 !important;
+				}
 			}
-		}
 		}        
-        
+
         .gridster-item{
 			 md-card.md-knowage-theme md-card-title {
 			 	height:32px;
@@ -998,27 +1072,24 @@
 			&.expandedWidget {
 				background-color: $lightTextColor;
 			}
-
-			.cockpit-widget-card-selection .showActionButtonHandler{
-				left: 0 !important;
-			}
-			 
-			
-			&.leftPosition .widgetActionButton{
-					border-right:0px !important;
-				    box-shadow: none!important;
-					left: -54px;
-					-ms-flex-direction: column;
-					flex-direction: column;
-					box-sizing: border-box;
-					display: -ms-flexbox;
-					display: flex;
-				}
+			.showActionButtonHandler{
+			    position: absolute;
+			    right: 0;
+			    opacity: 0;
+				width: 60px;
+				height: 40px;
+				z-index: 9990;
+				&.md-is-open {
+					.menuOnTopButton {
+						background-color: rgba($fabPrimaryColor, .8);
+						md-icon {
+							color: $lightTextColor;
+						}
 						&:hover {
 							background-color: rgba($fabPrimaryColor, 0.5);
-			}
-			}
-        }
+						}
+					}
+				}
 				button:hover {
 					background-color: rgba($ternaryColor, 0.5);
 				}
@@ -1033,7 +1104,7 @@
 					padding: 4px;
 				}
 			}
-
+			
 			&.leftPosition .showActionButtonHandler {
 				left: 0;
 			}
@@ -2174,7 +2245,7 @@
 		align-items: center;
 		justify-content: center;
 	}
-
+	
 }
 
 #cockpitDataConfig {
