@@ -3,7 +3,12 @@
 		top: 0;
 		cursor: auto;
 		left: 0;
+    z-index: 1000;
+    position: fixed;
+    bottom: 10px;
+    padding: 10px;
 		background-color: $ternaryColor;
+    box-shadow: 0px 1px 4px rgba(0,0,0,0.37);
 		border-radius: 0;
     	width: 40px;
     	height: 100%;
