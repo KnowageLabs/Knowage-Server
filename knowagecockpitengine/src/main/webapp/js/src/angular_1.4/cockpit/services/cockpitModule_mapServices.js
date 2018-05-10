@@ -111,7 +111,7 @@
 						}	
 				        ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
 				       //at least add the layer owner
-				        feature.set("parentLayer",config.name);
+				        feature.set("parentLayer",  config.layerID);
 				        feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
 				        featuresSource.addFeature(feature);
 					}
@@ -195,22 +195,6 @@
 		    	}
 		}
 		
-		ms.setHeatmapWeight= function(feature){
-			var parentLayer = feature.get('parentLayer');
-			var config = cockpitModule_mapThematizerServices.getActiveConf(parentLayer) || {};
-			
-			var minmaxLabel = parentLayer + '|' + config.defaultIndicator;
-			var minmax = cockpitModule_mapThematizerServices.getCacheSymbolMinMax()[minmaxLabel];
-			if (!minmax) return 0;
-			
-			var props  = feature.getProperties();
-
-		    var p = feature.get(config.defaultIndicator);
-		    // perform calculation to get weight between 0 - 1
-		    // apply formule: w = w-min/max-min (http://www.statisticshowto.com/normalized/)
-		    weight = (p.value - minmax.minValue)/(minmax.maxValue-minmax.minValue);
-		    return weight;
-		}
 		
 		ms.getBaseLayer = function (conf){
 			

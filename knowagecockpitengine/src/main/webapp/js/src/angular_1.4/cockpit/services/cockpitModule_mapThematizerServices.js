@@ -48,13 +48,8 @@
 			var thematized = false;
 			if (configThematizer.defaultAnalysis == 'choropleth') {
 				if (!mts.cacheDatasetValue) mts.cacheDatasetValue = {};
-//				mts.checkForDatasetValueOfIndicator();
-				
-//				var dsItem = mts.cacheDatasetValue[parentLayer][mts.getActiveIndicator()];
-//				console.log("dsItem: ", dsItem);
 				configThematizer.choropleth.parentLayer = parentLayer;
 				configMarker.style.color = mts.getChoroplethColor(value, parentLayer).color;
-//				style = mts.getChoroplethStyles(value, props, configMarker, configThematizer.choropleth);
 				thematized = true;
 			}else if (configThematizer.defaultAnalysis == 'proportionalSymbol') {
 				style = mts.getProportionalSymbolStyles(value, props, configThematizer.proportionalSymbol);
@@ -71,7 +66,6 @@
 				useCache = true;
 //			useCache = false;
 			}
-			
 			
 			if (useCache && !styleCache[parentLayer]) {
 		          styleCache[parentLayer] = style;
@@ -297,6 +291,23 @@
 
 			}
 			return toReturn;
+		}
+		
+		mts.setHeatmapWeight= function(feature){
+			var parentLayer = feature.get('parentLayer');
+			var config = mts.getActiveConf(parentLayer) || {};
+			var layerIds = parentLayer.split("|");
+			var minmaxLabel = (layerIds.length > 1) ? layerIds[1] + '|' + config.defaultIndicator : layerIds[0] + '|' + config.defaultIndicator; //minMax uses just dslabel reference
+			var minmax = mts.getCacheSymbolMinMax()[minmaxLabel];
+			if (!minmax) return 0;
+			
+			var props  = feature.getProperties();
+
+		    var p = feature.get(config.defaultIndicator);
+		    // perform calculation to get weight between 0 - 1
+		    // apply formule: w = w-min/max-min (http://www.statisticshowto.com/normalized/)
+		    weight = (p.value - minmax.minValue)/(minmax.maxValue-minmax.minValue);
+		    return weight;
 		}
 		
 		mts.getLegend = function (){

@@ -249,6 +249,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		}
 
     		// apply (filtered) data
+//    		var name = ($scope.ngModel.content.idReference) ? $scope.ngModel.content.idReference + "|" + layerName : layerName;
     		$scope.createLayerWithData(layerName, $scope.values[layerName], false);
 	    }
 
@@ -290,7 +291,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    $scope.getLayers = function () {
 		    for (l in $scope.ngModel.content.layers){
 		    	var layerDef =  $scope.ngModel.content.layers[l];
-		    	$scope.configs[layerDef.name] = layerDef;
+		    	var layerID = ($scope.ngModel.content.idReference) ? $scope.ngModel.content.idReference + "|" + layerDef.name : layerDef.name;
+		    	$scope.configs[layerID] = layerDef;
 	    		if (layerDef.type === 'DATASET'){
 	    			$scope.getFeaturesFromDataset(layerDef);
 	    		}else if (layerDef.type === 'CATALOG'){
@@ -336,7 +338,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	//prepare object with metadata for desiderata dataset columns
 	    	var geoColumn, selectedMeasure = null;
     		var columnsForData, isHeatmap;
-    		var layerDef =  $scope.configs[label];
+    		var layerID = ($scope.ngModel.content.idReference) ? $scope.ngModel.content.idReference + "|" + label : label;
+    		var layerDef =  $scope.configs[layerID];
     		
     		
     		if (!layerDef) return;
@@ -354,13 +357,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     			if (tmpField.fieldType == "SPATIAL_ATTRIBUTE")
     				geoColumn = tmpField.name;
     		}
-
+    		
+    		layerDef.layerID = layerID;
     		var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, columnsForData, data);
 			if (featuresSource == null){
 				return;
 			}
-			cockpitModule_mapThematizerServices.setActiveConf(layerDef.name, layerDef);
-			cockpitModule_mapThematizerServices.updateLegend(layerDef.name, data);
+			cockpitModule_mapThematizerServices.setActiveConf(($scope.ngModel.content.idReference) ? $scope.ngModel.content.idReference + "|" + layerDef.name : layerDef.name, layerDef);
+			cockpitModule_mapThematizerServices.updateLegend(($scope.ngModel.content.idReference) ? $scope.ngModel.content.idReference + "|" + layerDef.name : layerDef.name, data);
 			$scope.getLegend();
 			var layer;
 			if (isCluster) {
@@ -547,15 +551,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            $scope.baseLayer = cockpitModule_mapServices.getBaseLayer($scope.ngModel.content.baseLayersConf[0]);
 	            
 	            if (!$scope.popupContainer){
-	            	if ($scope.ngModel.content.idReference){
-		            	$scope.popupContainer = document.getElementById('popup-' + $scope.ngModel.content.idReference);
-		            	$scope.closer = document.getElementById('popup-closer-' +$scope.ngModel.content.idReference);
-	            	}else{
-	            		//retrocompatibility management
-	            		$scope.popupContainer = document.getElementById('popup-');
-		            	$scope.closer = document.getElementById('popup-closer-');
-	            	}
-	            	
+	            	$scope.popupContainer = document.getElementById(($scope.ngModel.content.idReference) ? 'popup-' + $scope.ngModel.content.idReference : 'popup-');
+	            	$scope.closer = document.getElementById(($scope.ngModel.content.idReference) ?  'popup-closer-' +$scope.ngModel.content.idReference : 'popup-closer-');
 	            }
 	            
 	            //create overlayers (popup..)
@@ -649,15 +646,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  //thematizer functions
 	    $scope.refreshStyle = function (layer, measure, config, configColumns, values, geoColumn){
 			//prepare object for thematization
+	    	var layerID = ($scope.ngModel.content.idReference) ? $scope.ngModel.content.idReference + "|" + config.name :  config.name;
 	    	var elem = cockpitModule_mapServices.getColumnConfigByProp(configColumns, 'aliasToShow', measure);
 	    	if (elem){
 		    	cockpitModule_mapThematizerServices.setActiveIndicator(elem.name);
 		    	config.defaultIndicator = elem.name;
 	    	
 		    	cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name +'|'+ elem.name, values);
-		    	cockpitModule_mapThematizerServices.updateLegend(config.name, values);
+		    	cockpitModule_mapThematizerServices.updateLegend(layerID, values);
 		    	$scope.getLegend();
 	    	}
+	    	
+	    	config.layerID = layerID;
 			var newSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, measure, config, configColumns,  values);
 			if (config.clusterConf && config.clusterConf.enabled){
 				var clusterSource = new ol.source.Cluster({ source: newSource });
