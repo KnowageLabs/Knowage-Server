@@ -155,12 +155,8 @@ angular.module('cockpitModule')
 	                    		}
 
 	                    		scope.updateble=objType.updateble==undefined? true : objType.updateble;
-	                    		//if the dataset is realtime disable the cliccable icon in the toolbar
-	                    		if (dataset && dataset != null && dataset.isRealtime){
-	                        		scope.cliccable= false;
-	                    		} else {
-	                        		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
-	                    		}
+	                    		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
+
 	                    		if(objType!=undefined){
 	                    			var directive = document.createElement("cockpit-"+scope.ngModel.type.toLowerCase()+"-widget" );
 	                    			var content=element[0].querySelector("md-card-content");
@@ -246,7 +242,7 @@ function cockpitWidgetControllerFunction(
 
 	$scope.borderShadowStyle= {};
 	$scope.titleStyle		= {};
-	
+
 	$scope.widgetSpinner	= false;
 	$scope.widgetSearchBar 	= false; // default searchBar unactive
 	$scope.activeSearch 	= false; // default search unactive
@@ -264,16 +260,8 @@ function cockpitWidgetControllerFunction(
 			$scope.widgetActionButtonsVisible=false;
 		}
 	}
-	
-	$scope.widgetClass = 'cockpit-widget-card-' + $scope.ngModel.type;
 
-	//disable cliccable for real time dataset
-	if ($scope.ngModel.dataset){
-		var widgetDataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
-		if (widgetDataset && widgetDataset.isRealtime){
-			$scope.ngModel.cliccable = false;
-		}
-	}
+	$scope.widgetClass = 'cockpit-widget-card-' + $scope.ngModel.type;
 
 	// davverna - initializing search object to give all the columns to the user searchbar
 	if($scope.ngModel.type.toLowerCase() == "table" && (!$scope.ngModel.search || $scope.ngModel.search.columns == [])){
@@ -443,7 +431,7 @@ function cockpitWidgetControllerFunction(
 	$scope.updateFromDatasetFilter=function(label){
 //		var dataset= $scope.getDataset();
 		var dataset = $scope.getDataset(label);
-		
+
 		if($scope.ngModel.updateble==false){
 			if(dataset && $scope.cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 				$scope.cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
@@ -547,13 +535,6 @@ function cockpitWidgetControllerFunction(
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
-		}
-		//check if is a realtime dataset to disable selection
-		if ($scope.ngModel.dataset.dsId != undefined){
-    		var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
-    		if (dataset.isRealtime){
-    			return;
-    		}
 		}
 
 		// check if cross navigation was enable don this widget
@@ -726,6 +707,22 @@ function cockpitWidgetControllerFunction(
 				}
 				return;
 			}
+		}
+
+		// skip selection if dataset is realtime and associated
+		if ($scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
+    		var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
+    		if (dataset.isRealtime){
+    			for(var i in cockpitModule_template.configuration.associations){
+    				var association = cockpitModule_template.configuration.associations[i];
+    				for(var j in association.fields){
+    					var field = association.fields[j];
+    					if(field.type=="dataset" && field.store==dataset.label){
+    						return;
+    					}
+    				}
+    			}
+    		}
 		}
 
 		if($scope.getDataset() && columnName){
@@ -1014,7 +1011,7 @@ function cockpitWidgetControllerFunction(
 			return undefined;
 		}
 	}
-	
+
 	$scope.getDataset = function(label){
 		if($scope.ngModel.dataset!=undefined && $scope.ngModel.dataset.dsId != undefined){
 			if (!Array.isArray($scope.ngModel.dataset.dsId)){
@@ -1022,14 +1019,14 @@ function cockpitWidgetControllerFunction(
 			}
 			for (ds in $scope.ngModel.dataset.dsId){
 				var tmpDS = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId[ds]);
-				if (tmpDS.label == label) 
+				if (tmpDS.label == label)
 					return tmpDS;
 			}
 		} else{
 			return undefined;
 		}
 	}
-	
+
 	$scope.getDocument = function(){
 		if($scope.ngModel.document!=undefined && $scope.ngModel.document.docId != undefined){
 			return cockpitModule_documentServices.getDocumentById( $scope.ngModel.document.docId);
@@ -1132,7 +1129,7 @@ function cockpitWidgetControllerFunction(
 	$scope.showChartTypes = function(ev,widgetName){
 		if(!$scope.ngModel.content.chartTemplateOriginal){
 			$scope.ngModel.content.chartTemplateOriginal = angular.copy($scope.ngModel.content.chartTemplate);
-			
+
 		}else{
 			$scope.ngModel.content.chartTemplate = angular.copy($scope.ngModel.content.chartTemplateOriginal);
 		}
