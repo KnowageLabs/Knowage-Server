@@ -310,9 +310,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 	    	if (!$scope.ngModel.content.columnSelectedOfDataset) $scope.ngModel.content.columnSelectedOfDataset = {} ;
 
 	 	    	if (!$scope.ngModel.content.currentView.center) $scope.ngModel.content.currentView.center = [0,0];
-
+	 	    	var randomId = Math.ceil(Math.random()*1000).toString();
+	 	    	
 	 	    	if (!$scope.ngModel.content.mapId){
-	 	    		$scope.ngModel.content.mapId = 'map-' + Math.ceil(Math.random()*1000).toString();
+	 	    		$scope.ngModel.content.mapId = 'map-' + randomId;
+	 	    		$scope.ngModel.content.idReference = randomId;
 	 	    	}
 
 	 	    	//set default indicator (first one) for each layer
@@ -545,9 +547,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            $scope.baseLayer = cockpitModule_mapServices.getBaseLayer($scope.ngModel.content.baseLayersConf[0]);
 	            
 	            if (!$scope.popupContainer){
-	            	$scope.popupContainer = document.getElementById('popup');
-	            	$scope.closer = document.getElementById('popup-closer');
+	            	if ($scope.ngModel.content.idReference){
+		            	$scope.popupContainer = document.getElementById('popup-' + $scope.ngModel.content.idReference);
+		            	$scope.closer = document.getElementById('popup-closer-' +$scope.ngModel.content.idReference);
+	            	}else{
+	            		//retrocompatibility management
+	            		$scope.popupContainer = document.getElementById('popup-');
+		            	$scope.closer = document.getElementById('popup-closer-');
+	            	}
+	            	
 	            }
+	            
 	            //create overlayers (popup..)
 	            var overlay = new ol.Overlay({
 		              element: $scope.popupContainer,

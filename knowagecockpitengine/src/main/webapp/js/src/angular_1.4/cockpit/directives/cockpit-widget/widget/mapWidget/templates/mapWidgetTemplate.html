@@ -7,11 +7,11 @@
 	 	<ng-include src="getTemplateUrl('mapWidgetLegendPanel')"></ng-include>
  	</div>
  	
- 	<div id="popup" class="ol-popup" > 
- 		 <a href="#" id="popup-closer" class="ol-popup-closer">  
+ 	<div id="popup-{{ngModel.content.idReference}}" class="ol-popup" > 
+ 		 <a href="#" id="popup-closer-{{ngModel.content.idReference}}" class="ol-popup-closer">  
  		 	<i class="fa fa-times"></i>
  		 </a> 
- 		 <div id="popup-content" >
+ 		 <div id="popup-content-{{ngModel.content.idReference}}" class="popup-content" >
  		 	<h2>DETAILS</h2>
     	    <ul>
     	    	<li ng-repeat="prop in layerConfig track by $index" ng-if="prop.properties.showDetails">
