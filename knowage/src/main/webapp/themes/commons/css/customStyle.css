@@ -4813,7 +4813,8 @@ angular-time-picker .md-button.spinButton {
       border: 1px solid #cccccc;
       bottom: 12px;
       left: -50px;
-      min-width: 200px; }
+      min-width: 200px;
+      border-radius: 10px; }
       .kn-cockpit .cockpit-map-widget .ol-popup:after, .kn-cockpit .cockpit-map-widget .ol-popup:before {
         top: 100%;
         border: solid transparent;
@@ -4832,20 +4833,20 @@ angular-time-picker .md-button.spinButton {
         border-width: 11px;
         left: 48px;
         margin-left: -11px; }
-      .kn-cockpit .cockpit-map-widget .ol-popup #popup-content h2 {
+      .kn-cockpit .cockpit-map-widget .ol-popup .popup-content h2 {
         margin-top: 0;
         font-size: 1rem;
         text-transform: uppercase;
         font-family: 'Roboto';
         font-weight: 100; }
-      .kn-cockpit .cockpit-map-widget .ol-popup #popup-content ul {
+      .kn-cockpit .cockpit-map-widget .ol-popup .popup-content ul {
         list-style: none;
         padding: 0; }
-        .kn-cockpit .cockpit-map-widget .ol-popup #popup-content ul p {
+        .kn-cockpit .cockpit-map-widget .ol-popup .popup-content ul p {
           margin: 0; }
-          .kn-cockpit .cockpit-map-widget .ol-popup #popup-content ul p span {
+          .kn-cockpit .cockpit-map-widget .ol-popup .popup-content ul p span {
             padding-left: 10px; }
-          .kn-cockpit .cockpit-map-widget .ol-popup #popup-content ul p.warningMessage {
+          .kn-cockpit .cockpit-map-widget .ol-popup .popup-content ul p.warningMessage {
             color: #F44336;
             font-size: 0.6rem;
             padding-bottom: 5px; }

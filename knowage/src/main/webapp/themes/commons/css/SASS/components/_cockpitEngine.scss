@@ -27,6 +27,7 @@
 		    bottom: 12px;
 		    left: -50px;
 		    min-width: 200px;
+			border-radius: 10px;
 		    &:after, &:before {
 		        top: 100%;
 		        border: solid transparent;
@@ -48,31 +49,32 @@
 		        left: 48px;
 		        margin-left: -11px;
 	      	}
-	      	#popup-content {
-				h2 {
-					margin-top: 0;
-    				font-size: 1rem;
-    				text-transform: uppercase;
-    				font-family: 'Roboto';
-    				font-weight: 100;
-				}
-				ul {
-					list-style: none;
-					padding: 0;
-					p {
-						margin: 0;
-						span {
-							padding-left: 10px;
-						}
-						&.warningMessage{
-							color: $negativeColor;
-							font-size: $smallFontSize;
-							padding-bottom: 5px;
-						}
+		}
+		.popup-content {
+			h2 {
+				margin-top: 0;
+				font-size: 1rem;
+				text-transform: uppercase;
+				font-family: 'Roboto';
+				font-weight: 100;
+			}
+			ul {
+				list-style: none;
+				padding: 0;
+				p {
+					margin: 0;
+					span {
+						padding-left: 10px;
+					}
+					&.warningMessage{
+						color: $negativeColor;
+						font-size: $smallFontSize;
+						padding-bottom: 5px;
 					}
 				}
 			}
 		}
+			
 		.ol-popup-closer {
 			text-decoration: none;
 			position: absolute;
