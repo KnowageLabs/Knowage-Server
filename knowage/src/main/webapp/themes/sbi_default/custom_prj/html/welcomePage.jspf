@@ -1,0 +1,104 @@
+
+<md-toolbar class="header-toolbar" md-colors="::{background: 'grey-A100', color: 'default-blue-grey-900'}" md-scroll-shrink="true" md-whiteframe="1">
+    <div class="md-toolbar-tools">
+        <div layout="row" layout-align="start center">
+            <!--<img class="navbar-brand" src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/logo.png">-->
+            <div class="navbar-brand"></div>
+        </div>
+        <span flex></span>
+        <div layout="row" layout-align="end center">
+            <!--<img class="navbar-brand" src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/logo.png">-->
+            <div class="navbar-project"></div>
+        </div>
+    </div>
+</md-toolbar>
+
+
+ <md-content id="contentLevels" flex layout-padding>
+    <div class="knowage-intro" layout-wrap layout-align="center center" layout="row">
+<%-- LEVEL 1 --%>
+        <div id="level1" ng-show="level1" flex-gt-md="66" flex="99">
+
+          <div layout="row" layout-xs="column" flex>
+
+            <md-card flex-xs="99" flex-gt-sm="33" >
+              <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/dashboard_management.png" class="md-card-image" alt="Dashboard Management">
+              <md-card-title>
+                <md-card-title-text >
+                  <span class="md-headline">Dashboard Management</span>
+                </md-card-title-text>
+              </md-card-title>
+              <md-card-content>
+                  <span class="md-subhead">Create interactive visualizations and manage your dashboard</span>
+              </md-card-content>
+              <md-card-actions layout="row" layout-align="end center">
+                  <md-button class="md-accent" aria-label="New" ng-click="showLevel2A()">
+                    Manage
+                  </md-button>
+              </md-card-actions>
+            </md-card>
+
+            <md-card flex-xs="99" flex-gt-sm="33" >
+              <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/kpi_management.png" class="md-card-image" alt="KPI Management">
+              <md-card-title>
+                <md-card-title-text >
+                  <span class="md-headline">KPI Management</span>
+                </md-card-title-text>
+              </md-card-title>
+              <md-card-content>
+                  <span class="md-subhead">Develop metrics witch allow city manager to take a snapshot on key aspects of their city</span>
+              </md-card-content>
+              <md-card-actions layout="row" layout-align="end center">
+                  <md-button class="md-accent" aria-label="New" ng-click="showLevel2B()">
+                    Manage
+                  </md-button>
+              </md-card-actions>
+            </md-card>
+
+            <md-card flex-xs="99" flex-gt-sm="33" >
+              <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/dataset_management.png" class="md-card-image" alt="Dataset Management">
+              <md-card-title>
+                <md-card-title-text >
+                  <span class="md-headline">Dataset Management</span>
+                </md-card-title-text>
+              </md-card-title>
+              <md-card-content>
+                  <span class="md-subhead">Define and manage datasets among a wide range of types</span>
+              </md-card-content>
+              <md-card-actions layout="row" layout-align="end center">
+                  <md-button class="md-accent" aria-label="New" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/datasetManagement.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE">
+                    Manage
+                  </md-button>
+              </md-card-actions>
+            </md-card>
+
+          </div>
+        </div>
+
+        <%-- Dashboards Level --%>
+        <%@ include file="/themes/sbi_default/custom_prj/html/dashboardManagement.jspf"%>
+        <%-- KPI Level --%>
+        <%@ include file="/themes/sbi_default/custom_prj/html/kpiDocument.jspf"%>
+
+    </div>
+  </md-content>
+
+  <md-content layout="row" flex="noshrink" layout-align="center center">
+    <div id="license-footer" flex="" >
+      
+    </div>
+  </md-content>
+
+
+  <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jquery-1.5.1/jquery-1.5.1.js")%>"></script>
+
+  <!-- Angular Material requires Angular.js Libraries -->
+  <script src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/js/angular.min.js"></script>
+  <script src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/js/angular-animate.min.js"></script>
+  <script src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/js/angular-aria.min.js"></script>
+  <script src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/js/angular-messages.min.js"></script>
+  <!-- Angular Material Library -->
+  <script src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/js/angular-material.min.js"></script>
+  <!-- Custom Angular Library -->
+  <script src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/js/custom_prj-controller.js"></script>
+

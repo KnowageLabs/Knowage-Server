@@ -182,7 +182,7 @@
   		    <div class="container">
         <div class="card card-container">
 
-            <img id="profile-img" class="logoHeader" src='<%=urlBuilder.getResourceLinkByTheme(request, "/s4c/images/logo_alpha_270x.png", currTheme)%>' />
+            <img id="profile-img" class="logoHeader" src='<%=urlBuilder.getResourceLinkByTheme(request, "/custom_prj/images/logo_alpha_270x.png", currTheme)%>' />
             <p id="profile-name" class="profile-name-card"></p>
             <form class="form-signin"  id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
                 <input type="hidden" id="isInternalSecurity" name="isInternalSecurity" value="<%=isInternalSecurity %>" />        	
