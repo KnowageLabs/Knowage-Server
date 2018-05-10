@@ -15,7 +15,10 @@
  		 	<h2>DETAILS</h2>
     	    <ul>
     	    	<li ng-repeat="prop in layerConfig track by $index" ng-if="prop.properties.showDetails">
-    	    		<p><strong>{{prop.aliasToShow}}:</strong><span ng-cloak>{{props[prop.name].value}}</span></p> 
+					<p>
+						<strong>{{prop.aliasToShow}}:</strong>
+						<span class="clickable" ng-cloak ng-click="selectPropValue(prop.aliasToShow, props[prop.name].value)">{{props[prop.name].value}}</span>
+					</p>
     	    		<p ng-if="props[prop.name].showWarning" class="warningMessage"><i class='fa fa-warning'></i> The value is within the Alarm range!</p>
     	    	</li>
     	    </ul>

@@ -232,7 +232,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}, 500);
 	    		return;
 	    	}
-	    	
+
 			if (!options) options = {};
 			var layerName = (Array.isArray(options.label)) ? options.label[0] : options.label; //on delete of selections options is an array !!!
 
@@ -286,8 +286,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    $scope.getLegend = function(){
 	    	$scope.legend = cockpitModule_mapThematizerServices.getLegend();
 	    }
-	    
-	    
+
+
 	    $scope.getLayers = function () {
 		    for (l in $scope.ngModel.content.layers){
 		    	var layerDef =  $scope.ngModel.content.layers[l];
@@ -313,7 +313,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	 	    	if (!$scope.ngModel.content.currentView.center) $scope.ngModel.content.currentView.center = [0,0];
 	 	    	var randomId = Math.ceil(Math.random()*1000).toString();
-	 	    	
+
 	 	    	if (!$scope.ngModel.content.mapId){
 	 	    		$scope.ngModel.content.mapId = 'map-' + randomId;
 	 	    		$scope.ngModel.content.idReference = randomId;
@@ -340,10 +340,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		var columnsForData, isHeatmap;
     		var layerID = ($scope.ngModel.content.idReference) ? $scope.ngModel.content.idReference + "|" + label : label;
     		var layerDef =  $scope.configs[layerID];
-    		
-    		
+
+
     		if (!layerDef) return;
-    		
+
     		columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
     		isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
 
@@ -357,7 +357,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     			if (tmpField.fieldType == "SPATIAL_ATTRIBUTE")
     				geoColumn = tmpField.name;
     		}
-    		
+
     		layerDef.layerID = layerID;
     		var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, columnsForData, data);
 			if (featuresSource == null){
@@ -447,7 +447,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	              if ($scope.closer) $scope.closer.blur();
 	              return false;
             }
-            
+
             $scope.map.on('singleclick', function(evt) {
     			$scope.props = {};
 
@@ -549,12 +549,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	$scope.initializeTemplate().then(function(){
 	    		//create the base layer
 	            $scope.baseLayer = cockpitModule_mapServices.getBaseLayer($scope.ngModel.content.baseLayersConf[0]);
-	            
+
 	            if (!$scope.popupContainer){
 	            	$scope.popupContainer = document.getElementById(($scope.ngModel.content.idReference) ? 'popup-' + $scope.ngModel.content.idReference : 'popup-');
 	            	$scope.closer = document.getElementById(($scope.ngModel.content.idReference) ?  'popup-closer-' +$scope.ngModel.content.idReference : 'popup-closer-');
 	            }
-	            
+
 	            //create overlayers (popup..)
 	            var overlay = new ol.Overlay({
 		              element: $scope.popupContainer,
@@ -651,12 +651,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	if (elem){
 		    	cockpitModule_mapThematizerServices.setActiveIndicator(elem.name);
 		    	config.defaultIndicator = elem.name;
-	    	
+
 		    	cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name +'|'+ elem.name, values);
 		    	cockpitModule_mapThematizerServices.updateLegend(layerID, values);
 		    	$scope.getLegend();
 	    	}
-	    	
+
 	    	config.layerID = layerID;
 			var newSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, measure, config, configColumns,  values);
 			if (config.clusterConf && config.clusterConf.enabled){
@@ -723,6 +723,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		if ($scope.layers[o].name === l)
 	    			$scope.layers[o][p] = v;
 	    	}
+	    }
+
+	    $scope.selectPropValue = function(column, value){
+	    	$scope.doSelection(column, value);
 	    }
 
 	    //functions calls
