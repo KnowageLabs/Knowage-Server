@@ -5,11 +5,11 @@ angular.module('dinamic-list', ['ngMaterial','sbiModule'])
 		controller: dinamicListController,
 		scope: {
 			ngModel:'=',
-			selectedItem:'=', 
+			selectedItem:'=',
 			multiSelect: '=',
 			typeChart: '='
 		},
-		link: function (scope, elm, attrs) { 
+		link: function (scope, elm, attrs) {
 
 		}
 	}
@@ -22,16 +22,16 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 	s.tableKpisColumn = [];
 	s.tableFunction={
 			loadListKPI: function(item,evt){
-			
+
 				var promise = s.loadListKPI();
 				promise.then(function(result){
 					if(s.multiSelect==false){
 						angular.copy([result],s.ngModel);
-						
+
 					}else{
 						angular.copy(result,s.ngModel);
 					}
-					
+
 				});
 			},
 			checkValue: function(item){
@@ -50,7 +50,7 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 	s.measureMenuOption= [{
 		label : sbiModule_translate.load('sbi.generic.delete'),
 		icon:'fa fa-trash' ,
-		backgroundColor:'transparent',	
+		backgroundColor:'transparent',
 		action : function(item,event) {
 			s.removeKpi(item);
 		}
@@ -64,7 +64,7 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 		}
 
 	}
-	
+
 	s.$watch('typeChart' , function(newValue,oldValue){
 		if(newValue=='list'){
 			s.tableKpisColumn=[
@@ -82,10 +82,10 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 				                     {"label":"Range Max Value","name":"rangeMaxValueHTML"}
 				                  ];
 		}
-		
+
 	});
-		
-	
+
+
 	s.setColumns = function(){
 		if(s.typeChart=='list'){
 			s.tableKpisColumn=[
@@ -105,7 +105,7 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 		var confirm = $mdDialog.confirm()
 		.title(s.translate.load("sbi.kpi.measure.delete.title"))
 		.content(s.translate.load("sbi.kpi.measure.delete.content"))
-		.ariaLabel('delete kpi') 
+		.ariaLabel('delete kpi')
 		.ok(s.translate.load("sbi.general.yes"))
 		.cancel(s.translate.load("sbi.general.No"));
 		$mdDialog.show(confirm).then(function() {
@@ -124,7 +124,7 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 		var arr_name = [];
 		sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath);
 		sbiModule_restServices.promiseGet("1.0/kpi","listKpi")
-		.then(function(response){ 
+		.then(function(response){
 			for(var i=0;i<response.data.length;i++){
 
 				var obj = {};
@@ -137,8 +137,7 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 				obj["datacreation"]=new Date(response.data[i].dateCreation);
 				obj["id"]=response.data[i].id;
 				obj["vieweAsList"] ='<md-select ng-model="row.vieweAs" class="noMargin">'
-					+'<md-option value=""></md-option>'
-					+'<md-option ng-repeat="sev in scopeFunctions.vieweAs" value="{{sev.label}}">'
+					+'<md-option ng-repeat="sev in scopeFunctions.vieweAs" value="{{sev.label}}" ng-selected="$first">'
 					+'{{sev.value}}'
 					+' </md-option>'
 					+'</md-select>';
@@ -205,7 +204,7 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 
 
 function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,kpiSelected,multiSelect){
-	//controller mdDialog to select kpi 
+	//controller mdDialog to select kpi
 	var s = $scope;
 	s.tableFunction={
 			exists: function(item,evt){
