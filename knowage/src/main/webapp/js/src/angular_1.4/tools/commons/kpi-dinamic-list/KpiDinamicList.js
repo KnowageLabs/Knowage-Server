@@ -137,8 +137,7 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 				obj["datacreation"]=new Date(response.data[i].dateCreation);
 				obj["id"]=response.data[i].id;
 				obj["vieweAsList"] ='<md-select ng-model="row.vieweAs" class="noMargin">'
-					+'<md-option value=""></md-option>'
-					+'<md-option ng-repeat="sev in scopeFunctions.vieweAs" value="{{sev.label}}">'
+					+'<md-option ng-repeat="sev in scopeFunctions.vieweAs" value="{{sev.label}}" ng-selected="$first">'
 					+'{{sev.value}}'
 					+' </md-option>'
 					+'</md-select>';
