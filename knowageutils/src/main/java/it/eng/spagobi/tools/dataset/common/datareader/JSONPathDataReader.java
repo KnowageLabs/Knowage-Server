@@ -176,6 +176,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 			MetaData dataStoreMeta = new MetaData();
 			dataStore.setMetaData(dataStoreMeta);
 			List<Object> parsedData = getItems(d);
+			// List parsedData = getItems(d);
 			addFieldMetadata(dataStoreMeta, parsedData);
 			addData(d, dataStore, dataStoreMeta, parsedData, false);
 			return dataStore;
@@ -206,7 +207,19 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 
 		int rowFetched = 0;
-		for (Object o : parsedData) {
+		boolean wasJson = false;
+
+		if (parsedData instanceof net.minidev.json.JSONObject || parsedData instanceof net.minidev.json.JSONArray)
+			wasJson = true;
+		// for (Object o : parsedData) {
+		for (int i = 0; i < parsedData.size(); i++) {
+			Object o;
+			if (wasJson) {
+				o = getJSONFormat(parsedData.get(i));
+			} else {
+				o = parsedData.get(i);
+			}
+
 			if (skipPagination || (!paginated && (!checkMaxResults || (rowFetched < maxResults)))
 					|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize))
 							&& (!checkMaxResults || (rowFetched - offset < maxResults)))) {
@@ -252,7 +265,9 @@ public class JSONPathDataReader extends AbstractDataReader {
 		logger.debug("Read [" + rowFetched + "] records");
 		logger.debug("Insert [" + dataStore.getRecordsCount() + "] records");
 
-		if (this.isCalculateResultNumberEnabled()) {
+		if (this.isCalculateResultNumberEnabled())
+
+		{
 			logger.debug("Calculation of result set number is enabled");
 			dataStore.getMetaData().setProperty("resultNumber", new Integer(rowFetched));
 		} else {
@@ -365,6 +380,11 @@ public class JSONPathDataReader extends AbstractDataReader {
 			return null;
 		}
 
+		if (o instanceof net.minidev.json.JSONObject || o instanceof net.minidev.json.JSONArray) {
+			res = getJSONFormat(res);
+			return res.toString();
+		}
+
 		if (res instanceof JSONArray) {
 			JSONArray array = (JSONArray) res;
 			if (array.length() > 1) {
@@ -378,6 +398,20 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 
 		return res.toString();
+	}
+
+	private static Object getJSONFormat(Object res) {
+		// reconvert in standard json object / json array
+		if (res instanceof Map) {
+			net.minidev.json.JSONObject jsonObject = new net.minidev.json.JSONObject();
+			jsonObject.putAll((Map) res);
+			res = jsonObject;
+		} else if (res instanceof List) {
+			net.minidev.json.JSONArray jsonArray = new net.minidev.json.JSONArray();
+			jsonArray.addAll((List) res);
+			res = jsonArray;
+		}
+		return res;
 	}
 
 	public synchronized int getIdFieldIndex() {
