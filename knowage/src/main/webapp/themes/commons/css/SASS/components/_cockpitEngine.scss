@@ -234,6 +234,11 @@
 	    		&:hover {
 	    			background-color: darken($secondaryColor,15%);
 	    		}
+	    		&:hover, &.selected {
+	    			.visTypeIcon {
+    					background-color: $lightTextColor;
+    				}
+	    		}
     		}
     		.visTypeIcon {
     			width: 100px;
@@ -272,6 +277,16 @@
     				-webkit-mask-repeat: no-repeat;
     				-webkit-mask-position: 0 0;
     			}
+    			&.analysis {
+    				mask-image: url('../img/cockpit/mapWidget/analysisR.svg');
+    				mask-size: cover;
+    				mask-repeat: no-repeat;
+    				mask-position: 0 0;
+    				-webkit-mask-image: url('../img/cockpit/mapWidget/analysisR.svg');
+    				-webkit-mask-size: cover;
+    				-webkit-mask-repeat: no-repeat;
+    				-webkit-mask-position: 0 0;
+    			}
     		}
     	}
 
@@ -289,6 +304,11 @@
 	    		}
 	    		&:hover {
 	    			background-color: darken($secondaryColor,15%);
+	    		}
+	    		&.selected, &:hover {
+	    			md-icon {
+	    				color: $lightTextColor;
+	    			}
 	    		}
     		}
     	}

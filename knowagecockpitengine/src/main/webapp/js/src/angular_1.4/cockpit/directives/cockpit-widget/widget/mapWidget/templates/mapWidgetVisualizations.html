@@ -41,6 +41,33 @@
 				</div>
 			</div>
 		</div>
+		<md-subheader ng-if="layer.visualizationType == 'analysisR'">Analysis</md-subheader>
+		<div style="padding:12px" ng-if="layer.visualizationType == 'analysisR'">
+			
+			<div layout="row" layout-align="start center" style="margin: 20px 0">
+				<md-input-container flex="50" class="md-block">
+			        <label>Classes method</label>
+			        <md-select ng-model="layer.analysisConf.method" ng-init="layer.analysisConf.method = layer.analysisConf.method || 'CLASSIFY_BY_EQUAL_INTERVALS'">
+			        	<md-option value="CLASSIFY_BY_EQUAL_INTERVALS">Classify by equal intervals</md-option>
+			        	<md-option value="CLASSIFY_BY_QUANTILS">Classify by quantils</md-option>
+			        </md-select>
+		      	</md-input-container>
+		      	<md-input-container flex="50" class="md-block" >
+			        <label>Classes number</label>
+			        <input ng-model="layer.analysisConf.classes" type="number" ng-init="layer.analysisConf.classes=layer.analysisConf.classes||3">
+		      	</md-input-container>
+	      	</div>
+	      	<div layout="row" layout-align="start center" style="margin: 10px 0">
+		      	<md-input-container flex="50" class="md-block" >
+			        <label>From color</label>
+			         <color-picker options="colorPickerOptions" ng-model="layer.analysisConf.fromColor"></color-picker> 
+		      	</md-input-container>
+		      	<md-input-container flex="50" class="md-block">
+			        <label>To color</label>
+			         <color-picker options="colorPickerOptions" ng-model="layer.analysisConf.toColor"></color-picker> 
+		      	</md-input-container>
+			</div>
+		</div>
 		<md-subheader ng-if="layer.visualizationType == 'clusters' || layer.visualizationType == 'markers'">Markers</md-subheader>
 		<div style="padding:8px;" ng-if="layer.visualizationType == 'clusters' || layer.visualizationType == 'markers'">
 	 
