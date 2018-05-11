@@ -52,6 +52,15 @@
 	    		@include coolScrollBars($baseColor,6px);
 	    		._md-subheader-inner {
 	    			padding:8px;
+	    			._md-subheader-content {
+    				    display: flex;
+					    align-items: center;
+					    justify-content: space-between;
+					    height: 14px;
+					    md-icon {
+					    	margin:0;
+					    }
+	    			}
 	    		}
 	    		.discoveryFiltersItem {
 	    			&:nth-last-child {
@@ -61,19 +70,28 @@
 	    			padding: 0 8px;
 					min-height: 32px;
 					height: 32px;
+					.discoveryFiltersListName {
+						font-size: $mediumFontSize;
+					}
 	    			.chip {
 	    				background-color: $ternaryColor;
 					    padding: 4px;
 					    border-radius: 15px;
-					    width: 40px;
+					    min-width: 40px;
 					    text-align: center;
 					    font-size: $mediumFontSize;
 	    			}
 	    		}
 	    	}
     	}
-    	.discoveryViewCard {
+    	.discoveryViewCard.md-knowage-theme {
     		md-card-content {
+    			.ternaryToolbar {
+    				background-color: $contentBackground !important;
+    				md-icon {
+    					color: $smallTextColor !important;
+    				}
+    			}
     			height: calc(100% - 80px); 
 	    		overflow-y: auto;
 	    		@include coolScrollBars($baseColor,6px);
