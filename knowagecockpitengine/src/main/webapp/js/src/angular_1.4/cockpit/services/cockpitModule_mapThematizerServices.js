@@ -13,7 +13,7 @@
 	
 		var mts = this; //mapThematizerServices
 		
-		var cacheSymbolMinMax, cacheDatasetValue;
+		var cacheSymbolMinMax;
 		var activeInd, activeConf, activeLegend; 
 		
 		
@@ -46,14 +46,15 @@
 			}
 			
 			var thematized = false;
-			if (configThematizer.defaultAnalysis == 'choropleth') {
-				if (!mts.cacheDatasetValue) mts.cacheDatasetValue = {};
-				configThematizer.choropleth.parentLayer = parentLayer;
-				configMarker.style.color = mts.getChoroplethColor(value, parentLayer).color;
+
+			if (config.visualizationType == 'choropleth') {
+				configThematizer.parentLayer = parentLayer;
+				if (!configMarker.style) configMarker.style = {};
+				configMarker.style.color = mts.getChoroplethColor(value, parentLayer);
 				thematized = true;
-			}else if (configThematizer.defaultAnalysis == 'proportionalSymbol') {
-				style = mts.getProportionalSymbolStyles(value, props, configThematizer.proportionalSymbol);
-				thematized = true;
+//			}else if (configThematizer.defaultAnalysis == 'proportionalSymbol') {
+//				style = mts.getProportionalSymbolStyles(value, props, configThematizer.proportionalSymbol);
+//				thematized = true;
 			}
 			
 			
@@ -178,7 +179,7 @@
 					width: 1
 				}),
 				fill: new ol.style.Fill({
-					color: mts.getChoroplethColor(value, config.parentLayer).color
+					color: mts.getChoroplethColor(value, config.parentLayer)
 				}),
 				image: new ol.style.Circle({
 		  			radius: 5,
@@ -187,7 +188,7 @@
 						width: 1
 					}),
 		  			fill: new ol.style.Fill({
-		  				color: mts.getChoroplethColor(value, config.parentLayer).color
+		  				color: mts.getChoroplethColor(value, config.parentLayer)
 		  			})
 		  		})
 			})];
@@ -310,20 +311,23 @@
 		    return weight;
 		}
 		
-		mts.getLegend = function (){
+		mts.getLegend = function (referenceId){
 			var toReturn = [];
 			for (l in mts.activeLegend){
 				var colors = "";
 				var limits = [];
-				if (mts.activeLegend[l] && mts.activeLegend[l].choroplet){
-					for (c in mts.activeLegend[l].choroplet){
-						var tmpConf = mts.activeLegend[l].choroplet[c];
-						if (tmpConf.color) colors += ", " + tmpConf.color;
-						if (limits.length == 0) limits.push(tmpConf.from);
-						if (limits.length >= 1) limits.splice(1, 1, tmpConf.to);
-					}	
+				var tmpLayerName = l.split("|");
+				if (tmpLayerName[0] == referenceId){
+					if (tmpLayerName[0] == referenceId && mts.activeLegend[l] && mts.activeLegend[l].choroplet){
+						for (c in mts.activeLegend[l].choroplet){
+							var tmpConf = mts.activeLegend[l].choroplet[c];
+							if (tmpConf.color) colors += ", " + tmpConf.color;
+							if (limits.length == 0) limits.push(tmpConf.from);
+							if (limits.length >= 1) limits.splice(1, 1, tmpConf.to);
+						}	
+					}
+					toReturn.push({"layer": tmpLayerName[1], "colors": colors, "limits": limits});
 				}
-				toReturn.push({"layer": l, "colors": colors, "limits": limits});
 			}
 			return toReturn;
 		}
@@ -332,30 +336,36 @@
 		mts.updateLegend = function(layerName, data){
 			var config = mts.getActiveConf(layerName) || {};
 			
-			if (config.analysisConf && config.analysisConf.defaultAnalysis == 'choropleth'){
+			if (!config.visualizationType || config.visualizationType != 'choropleth') return; //legend is created just with choropleth
+			
+			if (!config.defaultIndicator) {
+				console.log("Choroplet thematization isn't applied because there aren't indicators (measures) defined for the layer ["+ layerName +"]");
+				return;
+			}
+			
+			if (config.visualizationType == 'choropleth' && config.analysisConf){
 						
 				if (!mts.activeLegend) mts.activeLegend = {};
+				
 				mts.setActiveIndicator(config.defaultIndicator);
-//				console.log("mts.getActiveIndicator(): ",mts.getActiveIndicator());
-//				console.log("config.defaultIndicator: ",config.defaultIndicator);
-				
-				
+					
 				if (!mts.activeLegend[layerName]){
 					mts.activeLegend[layerName] = {choroplet:[]};
 				}
 
-				if(config.analysisConf.choropleth.method == "CLASSIFY_BY_EQUAL_INTERVALS"){
-					mts.updateChoroplethLegendGradient(layerName, config.analysisConf.choropleth, config.analysisConf.choropleth.classes);
+				if(config.analysisConf.method == "CLASSIFY_BY_EQUAL_INTERVALS"){
+					mts.updateChoroplethLegendGradient(layerName, config.analysisConf, config.analysisConf.classes);
+					var layerNameForMinMAx = layerName.split("|");
 
-					var minValue = mts.cacheSymbolMinMax[layerName + '|' + mts.getActiveIndicator()].minValue;
-					var maxValue = mts.cacheSymbolMinMax[layerName + '|' + mts.getActiveIndicator()].maxValue;
-					var split = (maxValue-minValue)/(config.analysisConf.choropleth.classes);
-					for(var i=0; i<config.analysisConf.choropleth.classes; i++){
+					var minValue = mts.cacheSymbolMinMax[layerNameForMinMAx[1] + '|' + mts.getActiveIndicator()].minValue;
+					var maxValue = mts.cacheSymbolMinMax[layerNameForMinMAx[1] + '|' + mts.getActiveIndicator()].maxValue;
+					var split = (maxValue-minValue)/(config.analysisConf.classes);
+					for(var i=0; i<config.analysisConf.classes; i++){
 						mts.activeLegend[layerName].choroplet[i].from=(minValue+(split*i)).toFixed(2);
 						mts.activeLegend[layerName].choroplet[i].to=(minValue+(split*(i+1))).toFixed(2);
 					}
-//					console.log("Regular intervals legends: ", mts.activeLegend[layerName].choroplet);
-				}else if (config.analysisConf.choropleth.method == "CLASSIFY_BY_QUANTILS"){
+//					console.log("Regular intervals legends: ", mts.activeLegend[layerName]);
+				}else if (config.analysisConf.method == "CLASSIFY_BY_QUANTILS"){
 					//classify by quantils
 					var values=[];
 					var columnName =  mts.getColumnName(mts.getActiveIndicator(), data.metaData.fields);
@@ -367,10 +377,9 @@
 					values.sort(function sortNumber(a,b) {
 						return a - b;
 					});
-					var intervals = Number(values.length < config.analysisConf.choropleth.classes ? values.length : config.analysisConf.choropleth.classes );
-					mts.updateChoroplethLegendGradient(layerName, config.analysisConf.choropleth, intervals);
+					var intervals = Number(values.length < config.analysisConf.classes ? values.length : config.analysisConf.classes );
+					mts.updateChoroplethLegendGradient(layerName, config.analysisConf, intervals);
 					var quantils = math.quantileSeq(values, intervals);   
-//					console.log("quantils limits: ", quantils);
 					
 					var binSize = Math.floor(values.length  / intervals);
 					var k=0;
@@ -383,11 +392,15 @@
 							k++;
 						}
 					}
-//					console.log("Quantils legends: ", mts.activeLegend[layerName].choroplet);
+//					console.log("Quantils legends: ", mts.activeLegend[layerName]);
 				}else {
-					console.log("Temathization method [" + config.analysisConf.choropleth.method + "] not supported");
+					console.log("Temathization method [" + config.analysisConf.method + "] not supported");
 				}
 			}
+		}
+		
+		mts.removeLegends = function (){
+			 mts.activeLegend = {};
 		}
 		
 		mts.updateChoroplethLegendGradient = function(layerName, chorConfig, numberGradient){
@@ -403,21 +416,6 @@
 				mts.activeLegend[layerName].choroplet.push(tmpGrad);
 			}
 		}
-		
-//		mts.checkForDatasetValueOfIndicator = function(layerName, data){
-//			var indicator = mts.getActiveIndicator();
-//			var columnName =  mts.getColumnName(indicator, data.metaData.fields);
-//			
-//			if (!mts.cacheDatasetValue) mts.cacheDatasetValue = {};
-//			
-//			if(!mts.cacheDatasetValue.hasOwnProperty(indicator)){
-//				mts.cacheDatasetValue[indicator]={};
-//				for(var i=0; i < data.rows.length; i++){
-//					mts.cacheDatasetValue[layerName][indicator]={value: data.rows[i][indicator], row: i};
-//				}
-//			}
-//
-//		}
 		
 		mts.getProportionalSymbolSize = function(val, name, config){
 			if (!name) return 0;
@@ -475,13 +473,14 @@
 		}
 		
 		mts.getChoroplethColor = function(val,layerName){
+			if (!mts.activeLegend[layerName]) return;
+			
 			var color;
-			var alpha;
 			var value = Number(val);
+			
 			for(var i=0; i < mts.activeLegend[layerName].choroplet.length; i++){
 				if(Number(val) >= Number( mts.activeLegend[layerName].choroplet[i].from) && Number(val) < Number( mts.activeLegend[layerName].choroplet[i].to)){
 					color = mts.activeLegend[layerName].choroplet[i].color;
-					alpha =  mts.activeLegend[layerName].choroplet[i].alpha;
 					if( mts.activeLegend[layerName].choroplet[i].itemFeatures.indexOf(mts.getActiveIndicator())==-1){
 						 mts.activeLegend[layerName].choroplet[i].itemFeatures.push(mts.getActiveIndicator());
 						 mts.activeLegend[layerName].choroplet[i].item++;
@@ -491,13 +490,12 @@
 			}
 			if(color==undefined){
 				color= mts.activeLegend[layerName].choroplet[ mts.activeLegend[layerName].choroplet.length-1].color;
-				alpha= mts.activeLegend[layerName].choroplet[ mts.activeLegend[layerName].choroplet.length-1].alpha;
 				if( mts.activeLegend[layerName].choroplet[ mts.activeLegend[layerName].choroplet.length-1].itemFeatures.indexOf(mts.getActiveIndicator())==-1){
 					 mts.activeLegend[layerName].choroplet[ mts.activeLegend[layerName].choroplet.length-1].itemFeatures.push(mts.getActiveIndicator());
 					 mts.activeLegend[layerName].choroplet[ mts.activeLegend[layerName].choroplet.length-1].item++;
 				}
 			}
-			return {color:color,alpha:alpha};
+			return color;
 		}
 	
 		mts.getColumnName = function(key, values){

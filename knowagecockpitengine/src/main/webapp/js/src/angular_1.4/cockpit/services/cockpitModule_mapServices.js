@@ -40,10 +40,10 @@
 				if (geoFieldName){
 					var lon;
 					var lat;
-					
+					var isSimpleMarker = true;
 					for(var r=0; r < values.rows.length; r++){
 						//get coordinates
-						var coord;
+//						var coord;
 						var row = values.rows[r];
 						geoFieldValue = row[geoFieldName].trim();
 						if (!geoFieldConfig.properties.coordType){
@@ -55,51 +55,33 @@
 						if (geoFieldConfig.properties.coordType == 'json'){
 							var jsonConf = JSON.parse(geoFieldValue);
 							
-							if (geoFieldConfig.properties.jsonFeatureType && geoFieldConfig.properties.jsonFeatureType.toUpperCase() != 'POINT'){ //for the moment just Point are managed
+//							if (geoFieldConfig.properties.jsonFeatureType && geoFieldConfig.properties.jsonFeatureType.toUpperCase() != 'POINT'){ //for the moment just Point are managed
+//								sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.jsonCoordTypeInvalid').replace("{0}",geoFieldConfig.properties.jsonFeatureType), 'Title', 0);
+//								console.log("Json feature of type ["+ geoFieldConfig.properties.jsonFeatureType +"] is not managed. Only [Point] are permit.");
+//								return null;
+//							}
+							if (geoFieldConfig.properties.jsonFeatureType && geoFieldConfig.properties.jsonFeatureType.toUpperCase() == 'POINT'){ 
+								isSimpleMarker = true;
+								geoFieldValue = jsonConf.coordinates[0] + " " + jsonConf.coordinates[1];
+							}else if (geoFieldConfig.properties.jsonFeatureType && geoFieldConfig.properties.jsonFeatureType.toUpperCase() == 'OTHER'){ 
+								isSimpleMarker = false;
+								
+							}else{
 								sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.jsonCoordTypeInvalid').replace("{0}",geoFieldConfig.properties.jsonFeatureType), 'Title', 0);
-								console.log("Json feature of type ["+ geoFieldConfig.properties.jsonFeatureType +"] is not managed. Only [Point] are permit.");
+								console.log("Json feature of type ["+ geoFieldConfig.properties.jsonFeatureType +"] is not managed.");
 								return null;
 							}
-							geoFieldValue = jsonConf.coordinates[0] + " " + jsonConf.coordinates[1];
 						}
-						
-						if (geoFieldValue.indexOf(" ") > 0){
-							coord = geoFieldValue.split(" ");
-						}else if (geoFieldValue.indexOf(",")){
-							coord = geoFieldValue.split(",");
+						var geometry;
+						if (isSimpleMarker){
+					        geometry = ms.getSimplePointGeometry(geoColumn, geoFieldConfig, geoFieldValue);
 						}else{
-							sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.lonLatError').replace("{0}",geoColumn).replace("{1}",geoFieldValue), 'Title', 0);
-							console.log("Error getting longitude and latitude from column value ["+ geoColumn +"]. Check the dataset and its metadata.");
-							return null;
+							geometry = ms.getComplexGeometry(jsonConf);
 						}
-						if (coord.length != 2){
-							sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.lonLatError').replace("{0}",geoColumn).replace("{1}",geoFieldValue), 'Title', 0);
-							console.log("Error getting longitude and latitude from column value ["+ geoColumn +"]. Check the dataset and its metadata.");
-							return null; 
-						}
-						
-						//setting lon, lat values with correct order (LON, LAT)
-						switch(geoFieldConfig.properties.coordFormat) {
-					    case "lon lat": 
-					    	lon = parseFloat(coord[0].trim());
-					    	lat = parseFloat(coord[1].trim());
-					        break;
-					    case "lat lon":
-					    	lon = parseFloat(coord[1].trim());
-					    	lat = parseFloat(coord[0].trim());
-					    	break;
-					    default: 
-					    	lon = parseFloat(coord[0].trim());
-				    		lat = parseFloat(coord[1].trim());
-		    		}
-						
 						
 						//set ol objects
-						var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
+						
 						var feature = new ol.Feature();  
-
-				        var coordinate = transform([lon, lat]); 
-				        var geometry = new ol.geom.Point(coordinate);
 				        feature.setGeometry(geometry);
 
 						if (!selectedMeasure) selectedMeasure = config.defaultIndicator;					
@@ -110,6 +92,7 @@
 							}
 						}	
 				        ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
+						
 				       //at least add the layer owner
 				        feature.set("parentLayer",  config.layerID);
 				        feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
@@ -120,6 +103,84 @@
 				}
 			}
 			return new ol.source.Vector();
+		}
+		
+		ms.getSimplePointGeometry = function(geocol, config, value){
+			var coord;
+			if (value.indexOf(" ") > 0){
+				coord = value.split(" ");
+			}else if (value.indexOf(",")){
+				coord = value.split(",");
+			}else{
+				sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.lonLatError').replace("{0}",geocol).replace("{1}",value), 'Title', 0);
+				console.log("Error getting longitude and latitude from column value ["+ geoColumn +"]. Check the dataset and its metadata.");
+				return null;
+			}
+			if (coord.length != 2){
+				sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.lonLatError').replace("{0}",geocol).replace("{1}",value), 'Title', 0);
+				console.log("Error getting longitude and latitude from column value ["+ geoColumn +"]. Check the dataset and its metadata.");
+				return null; 
+			}
+			
+			//setting lon, lat values with correct order (LON, LAT)
+			switch(config.properties.coordFormat) {
+		    case "lon lat": 
+		    	lon = parseFloat(coord[0].trim());
+		    	lat = parseFloat(coord[1].trim());
+		        break;
+		    case "lat lon":
+		    	lon = parseFloat(coord[1].trim());
+		    	lat = parseFloat(coord[0].trim());
+		    	break;
+		    default: 
+		    	lon = parseFloat(coord[0].trim());
+	    		lat = parseFloat(coord[1].trim());
+			}
+			var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
+	        var coordinate = transform([lon, lat]); 
+	        var geometry = new ol.geom.Point(coordinate);
+	        
+	        return geometry;
+		}
+		
+		ms.getComplexGeometry = function(config){
+			var geometry;
+//			var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
+//		    var coordinates = transform(config.coordinates); 
+	        var coordinates = config.coordinates;
+	        
+			switch(config.type.toUpperCase()) {
+		    case "CIRCLE": 
+		    	geometry = new ol.geom.Circle(coordinates);
+		        break;
+		    case "MULTIPOLYGON":
+		    	geometry = new ol.geom.MultiPolygon(coordinates);
+		    	break;
+		    case "POLYGON":
+		    	geometry = new ol.geom.Polygon(coordinates);
+		    	break;
+		    case "LINEARRING":
+		    	geometry = new ol.geom.LinearRing(coordinates);
+		    	break;
+		    case "LINESTRING":
+		    	geometry = new ol.geom.LineString(coordinates);
+		    	break;
+		    case "MULTILINESTRING":
+		    	geometry = new ol.geom.MultiLineString(coordinates);
+		    	break;
+		    case "MULTIPOINT":
+		    	geometry = new ol.geom.MultiPoint(coordinates);
+		    	break;
+		    case "POLYGON":
+		    	geometry = new ol.geom.Polygon(coordinates);
+		    	break;
+		    case "POLYGON":
+		    	geometry = new ol.geom.Polygon(coordinates);
+		    	break;
+			}
+			
+	    
+	        return geometry;
 		}
 		
 		ms.getColumnConfigByProp = function(configColumns, propName, propValue){

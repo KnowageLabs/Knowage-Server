@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				compile: function (tElement, tAttrs, transclude) {
 					return {
 						pre: function preLink(scope, element, attrs, ctrl, transclud) {
+							
 						},
 						post: function postLink(scope, element, attrs, ctrl, transclud) {
 							element.ready(function () {
@@ -69,7 +70,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.savedValues = {};
 		$scope.configs = {}; //layers with configuration
 		$scope.columnsConfig = {} //layers with just columns definition
-		$scope.legends = []; //layers with legends configuration
 
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
 		//set a watcher on a variable that can contains the associative selections for realtime dataset
@@ -201,7 +201,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	for (l in $scope.ngModel.content.layers){
 	    		//remove old layers
 	    		var previousLayer = $scope.getLayerByName($scope.ngModel.content.layers[l].name);
-	    		if (previousLayer) $scope.map.removeLayer(previousLayer); //ol obj
+	    		if (previousLayer) 	$scope.map.removeLayer(previousLayer); //ol obj
 	    	}
 	    	$scope.removeLayers(); //clean internal obj
 	    	$scope.getLayers();
@@ -249,7 +249,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		}
 
     		// apply (filtered) data
-//    		var name = ($scope.ngModel.content.idReference) ? $scope.ngModel.content.idReference + "|" + layerName : layerName;
     		$scope.createLayerWithData(layerName, $scope.values[layerName], false);
 	    }
 
@@ -283,15 +282,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //############################################## SPECIFIC MAP WIDGET METHODS #########################################################################
 
-	    $scope.getLegend = function(){
-	    	$scope.legend = cockpitModule_mapThematizerServices.getLegend();
+	    $scope.getLegend = function(referenceId){
+	    	$scope.legend = cockpitModule_mapThematizerServices.getLegend(referenceId);
 	    }
 
 
 	    $scope.getLayers = function () {
 		    for (l in $scope.ngModel.content.layers){
 		    	var layerDef =  $scope.ngModel.content.layers[l];
-		    	var layerID = ($scope.ngModel.content.idReference) ? $scope.ngModel.content.idReference + "|" + layerDef.name : layerDef.name;
+		    	var layerID = $scope.ngModel.id + "|" + layerDef.name;
 		    	$scope.configs[layerID] = layerDef;
 	    		if (layerDef.type === 'DATASET'){
 	    			$scope.getFeaturesFromDataset(layerDef);
@@ -306,7 +305,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    $scope.initializeTemplate = function (){
 	    	 return $q(function(resolve, reject) {
-	    		 if (!$scope.ngModel.content.currentView)  $scope.ngModel.content.currentView = {};
+	    		if (!$scope.ngModel.content.currentView)  $scope.ngModel.content.currentView = {};
 	 	    	if (!$scope.ngModel.content.layers) $scope.ngModel.content.layers = [];
 	 	    	if (!$scope.ngModel.content.baseLayersConf) $scope.ngModel.content.baseLayersConf = [];
 	 	    	if (!$scope.ngModel.content.columnSelectedOfDataset) $scope.ngModel.content.columnSelectedOfDataset = {} ;
@@ -315,8 +314,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 	    	var randomId = Math.ceil(Math.random()*1000).toString();
 
 	 	    	if (!$scope.ngModel.content.mapId){
-	 	    		$scope.ngModel.content.mapId = 'map-' + randomId;
-	 	    		$scope.ngModel.content.idReference = randomId;
+	 	    		$scope.ngModel.content.mapId = 'map-' + $scope.ngModel.id;
 	 	    	}
 
 	 	    	//set default indicator (first one) for each layer
@@ -338,7 +336,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	//prepare object with metadata for desiderata dataset columns
 	    	var geoColumn, selectedMeasure = null;
     		var columnsForData, isHeatmap;
-    		var layerID = ($scope.ngModel.content.idReference) ? $scope.ngModel.content.idReference + "|" + label : label;
+    		var layerID = $scope.ngModel.id + "|" + label;
     		var layerDef =  $scope.configs[layerID];
 
 
@@ -363,9 +361,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if (featuresSource == null){
 				return;
 			}
-			cockpitModule_mapThematizerServices.setActiveConf(($scope.ngModel.content.idReference) ? $scope.ngModel.content.idReference + "|" + layerDef.name : layerDef.name, layerDef);
-			cockpitModule_mapThematizerServices.updateLegend(($scope.ngModel.content.idReference) ? $scope.ngModel.content.idReference + "|" + layerDef.name : layerDef.name, data);
-			$scope.getLegend();
+			cockpitModule_mapThematizerServices.setActiveConf($scope.ngModel.id + "|" + layerDef.name, layerDef);
+			cockpitModule_mapThematizerServices.updateLegend($scope.ngModel.id + "|" + layerDef.name, data);
+			if (layerDef.visualizationType == 'choropleth') $scope.getLegend($scope.ngModel.id);
 			var layer;
 			if (isCluster) {
 				var clusterSource = new ol.source.Cluster({source: featuresSource
@@ -442,12 +440,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 	    $scope.addMapEvents = function (overlay){
-            $scope.closer.onclick = function(){
-            	overlay.setPosition(undefined);
-	              if ($scope.closer) $scope.closer.blur();
-	              return false;
-            }
-
+	    	if ($scope.closer){
+	            $scope.closer.onclick = function(){
+	            	overlay.setPosition(undefined);
+		              if ($scope.closer) $scope.closer.blur();
+		              return false;
+	            }
+	    	}
             $scope.map.on('singleclick', function(evt) {
     			$scope.props = {};
 
@@ -527,8 +526,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     			var tmpField = columnsForData[f];
     			if (tmpField.fieldType == "SPATIAL_ATTRIBUTE")
     				geoColumn = tmpField.name;
-    			else if (tmpField.properties.showMap) 	//first measure
+    			else if (tmpField.properties.showMap) 	{ //first measure
     				selectedMeasure = tmpField.aliasToShow;
+    				if (!layerDef.defaultIndicator)  layerDef.defaultIndicator = selectedMeasure;
+    			}
+    			
     		}
 
     		var model = {content: {columnSelectedOfDataset: columnsForData }};
@@ -551,8 +553,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            $scope.baseLayer = cockpitModule_mapServices.getBaseLayer($scope.ngModel.content.baseLayersConf[0]);
 
 	            if (!$scope.popupContainer){
-	            	$scope.popupContainer = document.getElementById(($scope.ngModel.content.idReference) ? 'popup-' + $scope.ngModel.content.idReference : 'popup-');
-	            	$scope.closer = document.getElementById(($scope.ngModel.content.idReference) ?  'popup-closer-' +$scope.ngModel.content.idReference : 'popup-closer-');
+	            	$scope.popupContainer = document.getElementById('popup-' + $scope.ngModel.id);
+	            	$scope.closer = document.getElementById('popup-closer-' +$scope.ngModel.id);
 	            }
 
 	            //create overlayers (popup..)
@@ -569,8 +571,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    		var tmpLayer = $scope.layers[0].layer;
 		    		cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, tmpLayer, false);
 	    		}
-
+	            
 	    		$scope.map = new ol.Map({
+//	    		  target:  'map-' + $scope.ngModel.id,
 	    		  target:  $scope.ngModel.content.mapId,
 	    		  layers: [ $scope.baseLayer ],
 	    		  overlays: [overlay],
@@ -646,7 +649,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  //thematizer functions
 	    $scope.refreshStyle = function (layer, measure, config, configColumns, values, geoColumn){
 			//prepare object for thematization
-	    	var layerID = ($scope.ngModel.content.idReference) ? $scope.ngModel.content.idReference + "|" + config.name :  config.name;
+	    	var layerID = $scope.ngModel.id + "|" + config.name;
 	    	var elem = cockpitModule_mapServices.getColumnConfigByProp(configColumns, 'aliasToShow', measure);
 	    	if (elem){
 		    	cockpitModule_mapThematizerServices.setActiveIndicator(elem.name);
@@ -654,7 +657,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		    	cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name +'|'+ elem.name, values);
 		    	cockpitModule_mapThematizerServices.updateLegend(layerID, values);
-		    	$scope.getLegend();
+		    	$scope.getLegend($scope.ngModel.id);
 	    	}
 
 	    	config.layerID = layerID;
@@ -679,6 +682,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //	    }
 	    //Utility functions
 	    $scope.getLayerByName = function(n){
+	    	var tmpName = n.split("|");
+	    	if (tmpName.length > 1) n = tmpName[1];
 	    	for (l in $scope.layers){
 	    		if ($scope.layers[l].name === n)
 	    			return $scope.layers[l].layer;
@@ -702,6 +707,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	$scope.values = {};
 	    	$scope.savedValues = {};
 			$scope.configs = {};
+			$scope.legend = [];
+			cockpitModule_mapThematizerServices.removeLegends();
+			
 	    }
 
 	    $scope.setLayerProperty = function(l, p, v){

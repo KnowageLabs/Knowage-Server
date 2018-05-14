@@ -41,6 +41,8 @@
 													<md-input-container ng-if="column.properties.coordType == 'json'">
 														<md-select ng-model="column.properties.jsonFeatureType" ng-init="column.properties.jsonFeatureType = column.properties.jsonFeatureType || 'Point'">
 															<md-option value="Point">Point</md-option>
+															<!-- <md-option value="Collection">Geometry Collection</md-option>  -->
+															<md-option value="Other">Other</md-option>
 														</md-select>
 													</md-input-container>
 												</td>
