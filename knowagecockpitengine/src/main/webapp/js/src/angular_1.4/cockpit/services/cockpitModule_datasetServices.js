@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user){
+angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user,cockpitModule_templateServices){
 	var ds=this;
 
 	this.datasetList=[];
@@ -103,14 +103,26 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		for(var i=0; i < datasets.length; i++){
 			var dataset = datasets[i];
 			if(dataset.useCache == undefined){
-				dataset.useCache = !(dataset.isNearRealtimeSupported || dataset.isRealtime);
+				dataset.useCache = !(dataset.isRealtime ? cockpitModule_templateServices.isDatasetUsedByAssociations(dataset.label) : dataset.isNearRealtimeSupported);
 			}
 			if(dataset.frequency == undefined){
 				dataset.frequency = 0;
 			}
 		}
 	}
-	
+
+	this.forceNearRealTimeValues=function(datasets, associations){
+		if(datasets == undefined){
+			datasets = ds.datasetList;
+		}
+		for(var i=0; i < datasets.length; i++){
+			var dataset = datasets[i];
+			if(dataset.isRealtime){
+				dataset.useCache = !cockpitModule_templateServices.isDatasetUsedByAssociations(dataset.label, associations);
+			}
+		}
+	}
+
 	this.getDatasetLabelById=function(dsId){
 		if(ds.datasetMapById[dsId]){
 			return ds.datasetMapById[dsId].label;
@@ -396,7 +408,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			var dataset = cockpitModule_template.configuration.datasets[i];
 			var dsIl=ds.getDatasetById(dataset.dsId);
 			if(dsIl!=undefined){
-				dsIl.useCache = (dataset.useCache == undefined) ? !(dsIl.isNearRealtimeSupported || dsIl.isRealtime) : dataset.useCache;
+				if(!dsIl.isRealtime){ // load useCache from template only if dataset is not realtime
+					dsIl.useCache = (dataset.useCache == undefined) ? !dsIl.isNearRealtimeSupported : dataset.useCache;
+				}
 				dsIl.frequency = (dataset.frequency == undefined) ? 0 : dataset.frequency;
 				dsIl.expanded = true;
 				if(dataset.parameters!=undefined){

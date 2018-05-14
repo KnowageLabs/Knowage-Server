@@ -155,12 +155,8 @@ angular.module('cockpitModule')
 	                    		}
 
 	                    		scope.updateble=objType.updateble==undefined? true : objType.updateble;
-	                    		//if the dataset is realtime disable the cliccable icon in the toolbar
-	                    		if (dataset && dataset != null && dataset.isRealtime){
-	                        		scope.cliccable= false;
-	                    		} else {
-	                        		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
-	                    		}
+	                    		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
+
 	                    		if(objType!=undefined){
 	                    			var directive = document.createElement("cockpit-"+scope.ngModel.type.toLowerCase()+"-widget" );
 	                    			var content=element[0].querySelector("md-card-content");
@@ -246,7 +242,7 @@ function cockpitWidgetControllerFunction(
 
 	$scope.borderShadowStyle= {};
 	$scope.titleStyle		= {};
-	
+
 	$scope.widgetSpinner	= false;
 	$scope.widgetSearchBar 	= false; // default searchBar unactive
 	$scope.activeSearch 	= false; // default search unactive
@@ -262,14 +258,6 @@ function cockpitWidgetControllerFunction(
 	$scope.closeWidgetActionButtons = function() {
 		if(!$scope.widExp){
 			$scope.widgetActionButtonsVisible=false;
-		}
-	}
-
-	//disable cliccable for real time dataset
-	if ($scope.ngModel.dataset){
-		var widgetDataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
-		if (widgetDataset && widgetDataset.isRealtime){
-			$scope.ngModel.cliccable = false;
 		}
 	}
 
@@ -539,13 +527,6 @@ function cockpitWidgetControllerFunction(
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
-		}
-		//check if is a realtime dataset to disable selection
-		if ($scope.ngModel.dataset.dsId != undefined){
-    		var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
-    		if (dataset.isRealtime){
-    			return;
-    		}
 		}
 
 		// check if cross navigation was enable don this widget
