@@ -16,19 +16,19 @@
 			['$scope', '$http', '$mdSidenav', '$mdDialog', '$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_user',
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices', 'docExecute_urlViewPointService', 'docExecute_paramRolePanelService', 'infoMetadataService', 'sbiModule_download', '$crossNavigationScope',
-			 'docExecute_dependencyService', '$timeout', '$interval', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window','$mdMenu','sbiModule_i18n',
+			 'docExecute_dependencyService', '$timeout', '$interval', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window','$mdMenu','sbiModule_i18n','sbiModule_device',
 			 documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav, $mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices,sbiModule_user, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine, documentExecuteServices,
 			docExecute_urlViewPointService, docExecute_paramRolePanelService, infoMetadataService, sbiModule_download, $crossNavigationScope,
-			docExecute_dependencyService, $timeout, $interval, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing,$window,$mdMenu,sbiModule_i18n ) {
+			docExecute_dependencyService, $timeout, $interval, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing,$window,$mdMenu,sbiModule_i18n,sbiModule_device) {
 
 		console.log("documentExecutionControllerFn IN ");
 
-
 		$scope.showCollaborationMenu = sbiModule_user.functionalities.indexOf("Collaboration")>-1;
+		$scope.browser = sbiModule_device.browser;
 
 		//NAVIGATOR WHEEL
 		$scope.navigatorVisibility = false;
@@ -645,21 +645,32 @@
 		console.log("documentExecutionControllerFn OUT ");
 	};
 
-	documentExecutionApp.directive('iframeSetDimensionsOnload', ['docExecute_urlViewPointService',function(docExecute_urlViewPointService) {
+	documentExecutionApp.directive('iframeSetDimensionsOnload', ['docExecute_urlViewPointService','execProperties','sbiModule_device',function(docExecute_urlViewPointService, execProperties, sbiModule_device) {
 		return {
 			scope: {
 				iframeOnload: '&?'
 			},
 			restrict: 'A',
 			link: function(scope, element, attrs) {
-				element.on('load', function() {
-					// var iFrameHeight = element[0].parentElement.scrollHeight + 'px';
-					// changed to height 100% because of phantomjs rendering errors
+				// check browser and output type, cas eof internet needs different behaviour
+				var browser = sbiModule_device.browser;
+
+				if(browser.name == 'internet explorer'){
 					element.css('height', '100%');
 					element.css('width', '100%');
-					if(scope.iframeOnload)
-						scope.iframeOnload();
-				});
+					docExecute_urlViewPointService.frameLoaded = true;
+					//scope.iframeOnload();
+				}
+				else{
+					element.on('load', function() {
+						// var iFrameHeight = element[0].parentElement.scrollHeight + 'px';
+						// changed to height 100% because of phantomjs rendering errors
+						element.css('height', '100%');
+						element.css('width', '100%');
+						if(scope.iframeOnload)
+							scope.iframeOnload();
+					});
+				}
 			}
 		};
 	}]);
