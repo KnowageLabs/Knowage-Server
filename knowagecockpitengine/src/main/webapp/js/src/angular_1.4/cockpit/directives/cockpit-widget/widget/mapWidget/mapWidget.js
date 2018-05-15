@@ -25,7 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				compile: function (tElement, tAttrs, transclude) {
 					return {
 						pre: function preLink(scope, element, attrs, ctrl, transclud) {
-							
+							if (scope.ngModel.content.mapId){
+				 	    		scope.ngModel.content.mapId =  'map-' + scope.ngModel.id;
+				 	    	}
 						},
 						post: function postLink(scope, element, attrs, ctrl, transclud) {
 							element.ready(function () {
@@ -311,10 +313,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 	    	if (!$scope.ngModel.content.columnSelectedOfDataset) $scope.ngModel.content.columnSelectedOfDataset = {} ;
 
 	 	    	if (!$scope.ngModel.content.currentView.center) $scope.ngModel.content.currentView.center = [0,0];
-	 	    	var randomId = Math.ceil(Math.random()*1000).toString();
-
 	 	    	if (!$scope.ngModel.content.mapId){
-	 	    		$scope.ngModel.content.mapId = 'map-' + $scope.ngModel.id;
+	 	    		$scope.ngModel.content.mapId =  'map-' + $scope.ngModel.id;
 	 	    	}
 
 	 	    	//set default indicator (first one) for each layer
@@ -358,9 +358,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     		layerDef.layerID = layerID;
     		var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, columnsForData, data);
-			if (featuresSource == null){
+    		if (featuresSource == null){
 				return;
 			}
+
 			cockpitModule_mapThematizerServices.setActiveConf($scope.ngModel.id + "|" + layerDef.name, layerDef);
 			cockpitModule_mapThematizerServices.updateLegend($scope.ngModel.id + "|" + layerDef.name, data);
 			if (layerDef.visualizationType == 'choropleth') $scope.getLegend($scope.ngModel.id);
@@ -573,8 +574,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		}
 	            
 	    		$scope.map = new ol.Map({
-//	    		  target:  'map-' + $scope.ngModel.id,
-	    		  target:  $scope.ngModel.content.mapId,
+	    		  target: 'map-' + $scope.ngModel.id,
+//	    		  target: 'map-' + $scope.ngModel.content.mapId,
 	    		  layers: [ $scope.baseLayer ],
 	    		  overlays: [overlay],
 	    		  view: new ol.View({

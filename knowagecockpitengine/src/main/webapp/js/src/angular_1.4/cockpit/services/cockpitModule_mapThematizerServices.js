@@ -19,7 +19,7 @@
 		
 		var styleCache = {};
 	    mts.layerStyle = function(feature, resolution){
-	    	
+	    	var featureType = feature.getGeometry().getType();
 	    	var localFeature;
 			if (Array.isArray(feature.get('features')))
 				localFeature = feature.get('features')[0];
@@ -50,11 +50,20 @@
 			if (config.visualizationType == 'choropleth') {
 				configThematizer.parentLayer = parentLayer;
 				if (!configMarker.style) configMarker.style = {};
-				configMarker.style.color = mts.getChoroplethColor(value, parentLayer);
-				thematized = true;
+				if (localFeature.get('isSimpleMarker'))
+					configMarker.style.color = mts.getChoroplethColor(value, parentLayer) || "grey";
+				else{
+					style = mts.getChoroplethStyles(value, parentLayer);
+					thematized = true;
+				}
 //			}else if (configThematizer.defaultAnalysis == 'proportionalSymbol') {
 //				style = mts.getProportionalSymbolStyles(value, props, configThematizer.proportionalSymbol);
 //				thematized = true;
+			}
+			
+			if (!localFeature.get('isSimpleMarker')){
+				style = mts.getChoroplethStyles(value, parentLayer);
+				thematized = true;
 			}
 			
 			
@@ -62,7 +71,7 @@
 				style = mts.getClusterStyles(value, props, configCluster);
 				useCache = false;
 			}
-			else{
+			else if (!thematized){
 				style = mts.getOnlyMarkerStyles(value, props, configMarker);
 				useCache = true;
 //			useCache = false;
@@ -128,7 +137,7 @@
 	                  color: '#fff'
 	                }),
 	                fill: new ol.style.Fill({
-	                  color: (config.style && config.style['background-color']) ? config.style['background-color'] : 'blue'
+	                  color: (config.style && config.style['background-color']) ? config.style['background-color'] : 'grey'
 	                })
 	              }),
 	              text: new ol.style.Text({
@@ -155,7 +164,7 @@
 		              image: new ol.style.Circle({
 		                radius: mts.getProportionalSymbolSize(value, mts.getActiveIndicator(), config),
 		                fill: new ol.style.Fill({
-		                 color : config.style['color'] || 'blue',
+		                 color : config.style['color'] || 'grey',
 		                })
 		              }),
 		              text: new ol.style.Text({
@@ -169,40 +178,28 @@
 		            });
 		}
 		
-		mts.getChoroplethStyles = function(value, props, configMarker, configChoroplet){
-			var borderColor="#AAAAAA"
-			var textValue =  props[mts.getActiveIndicator()] || "";
+		mts.getChoroplethStyles=function(value, parentLayer){
+			var color =  mts.getChoroplethColor(value, parentLayer);
+			var borderColor = "black";
 			
 			return  [new ol.style.Style({
 				stroke: new ol.style.Stroke({
-					color: borderColor,
+					color: (borderColor) ? borderColor : color,
 					width: 1
 				}),
 				fill: new ol.style.Fill({
-					color: mts.getChoroplethColor(value, config.parentLayer)
-				}),
-				image: new ol.style.Circle({
-		  			radius: 5,
-		  			stroke: new ol.style.Stroke({
-						color: borderColor,
-						width: 1
-					}),
-		  			fill: new ol.style.Fill({
-		  				color: mts.getChoroplethColor(value, config.parentLayer)
-		  			})
-		  		})
+					color: color
+				})
 			})];
-			
-			return new ol.style.Style({
-			});
+
 		}
 		
-		mts.getOnlyMarkerStyles = function (value, props, config, isThematized){
+		mts.getOnlyMarkerStyles = function (value, props, config){
 			var style;
 			var color;
 			 
 			if (props[mts.getActiveIndicator()] && props[mts.getActiveIndicator()].thresholdsConfig) color = mts.getColorByThresholds(value, props);
-			if (!color)	color =  (config.style && config.style.color) ? config.style.color : 'blue';
+			if (!color)	color =  (config.style && config.style.color) ? config.style.color : 'grey';
 			
 			switch(config.type) {
 			
