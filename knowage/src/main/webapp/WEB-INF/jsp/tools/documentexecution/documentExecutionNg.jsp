@@ -429,12 +429,13 @@ if(executionRoleNames.size() > 0) {
             <div layout="row" flex="grow">
                 <!-- "ng-show" is used instead of "ng-if" (or "ng-switch") in order to prevent the iframe reloading -->
                 <md-content id="documentFrameContainer" layout="column" flex ng-show="currentView.status == 'DOCUMENT'">  
-                    <div layout="row" flex layout-align="center center"
-                            ng-hide="execProperties.executionInstance.IS_FOR_EXPORT || urlViewPointService.frameLoaded">
+                      <div layout="row" flex layout-align="center center"
+                            ng-hide="execProperties.executionInstance.IS_FOR_EXPORT || urlViewPointService.frameLoaded 
+                            || browser.name == 'internet explorer'">
                         <md-progress-circular md-mode="indeterminate" md-diameter="70" ></md-progress-circular>
                     </div>
                     <iframe class="noBorder" id="documentFrame" name="documentFrame" ng-src="{{execProperties.documentUrl}}" iframe-onload="iframeOnload()"
-                        iframe-set-dimensions-onload flex ng-show="urlViewPointService.frameLoaded">
+                        iframe-set-dimensions-onload flex ng-show="urlViewPointService.frameLoaded || browser.name == 'internet explorer'">
                     </iframe>
                 </md-content>
                                         
