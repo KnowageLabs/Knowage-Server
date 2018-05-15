@@ -47,11 +47,6 @@ import it.eng.spagobi.tools.dataset.cache.ICacheEvent;
 import it.eng.spagobi.tools.dataset.cache.ICacheListener;
 import it.eng.spagobi.tools.dataset.cache.ICacheTrigger;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
-import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
-import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
-import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
-import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
-import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -62,6 +57,11 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
+import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
+import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.Helper;
@@ -471,28 +471,6 @@ public class SQLDBCache implements ICache {
 	// REFRESH METHODS
 	// ===================================================================================
 
-	@Override
-	public synchronized void refreshIfNotContained(IDataSet dataSet, boolean wait) {
-		if (!contains(dataSet)) {
-			refresh(dataSet, wait);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
-	 */
-	@Override
-	public IDataStore refresh(IDataSet dataSet, boolean wait) {
-		return refresh(dataSet, null, wait, false);
-	}
-
-	@Override
-	public IDataStore refresh(IDataSet dataSet, IDataStore dataStore, boolean wait) {
-		return refresh(dataSet, dataStore, wait, false);
-	}
-
 	public IDataStore refresh(IDataSet dataSet, IDataStore dataStore, boolean wait, boolean force) {
 		try {
 			if (dataStore == null) {
@@ -581,6 +559,7 @@ public class SQLDBCache implements ICache {
 		return put(dataSet, dataStore, false);
 	}
 
+	@Override
 	@Deprecated
 	public long put(IDataSet dataSet, IDataStore dataStore, boolean forceUpdate) throws DataBaseException {
 		logger.trace("IN");

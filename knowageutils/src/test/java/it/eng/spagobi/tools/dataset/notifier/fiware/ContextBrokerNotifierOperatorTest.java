@@ -17,24 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.notifier.fiware;
 
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
-import it.eng.spagobi.tools.dataset.bo.RESTDataSetTest;
-import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
-import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
-import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
-import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReaderTest;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.listener.DataSetListenerException;
-import it.eng.spagobi.tools.dataset.listener.DataSetListenerManager;
-import it.eng.spagobi.tools.dataset.listener.DataSetListenerManagerFactory;
-import it.eng.spagobi.tools.dataset.listener.DataStoreChangedEvent;
-import it.eng.spagobi.tools.dataset.listener.IDataSetListener;
-import it.eng.spagobi.utilities.HelperForTest;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -60,6 +42,23 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
+import it.eng.spagobi.tools.dataset.bo.RESTDataSetTest;
+import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
+import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReaderTest;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.listener.DataSetListenerException;
+import it.eng.spagobi.tools.dataset.listener.DataSetListenerManager;
+import it.eng.spagobi.tools.dataset.listener.DataSetListenerManagerFactory;
+import it.eng.spagobi.tools.dataset.listener.DataStoreChangedEvent;
+import it.eng.spagobi.tools.dataset.listener.IDataSetListener;
+import it.eng.spagobi.utilities.HelperForTest;
 import junit.framework.TestCase;
 
 public class ContextBrokerNotifierOperatorTest extends TestCase {
@@ -83,23 +82,13 @@ public class ContextBrokerNotifierOperatorTest extends TestCase {
 			@Override
 			public void dataStoreChanged(DataStoreChangedEvent event) throws DataSetListenerException {
 				done = true;
-
-				List<IRecord> deleted = event.getDeleted();
-				assertEquals(0, deleted.size());
-				List<IRecord> updated = event.getUpdated();
-				assertEquals(2, updated.size());
-				assertContains(updated, "pros6_Meter");
-				IRecord rec1 = assertContains(updated, "pros5_Meter");
-				IRecord rec2 = assertContains(updated, 1.8);
-				assertTrue(rec1 == rec2);
-				List<IRecord> added = event.getAdded();
-				assertEquals(0, added.size());
 			}
 
 		}, "1");
 
 		JSONPathDataReader reader = dataset.getDataReader();
-		ContextBrokerNotifierOperator operator = new ContextBrokerNotifierOperator("55dae93ff23205eb4241ccd0", "user1", "label1", manager, reader);
+		ContextBrokerNotifierOperator operator = new ContextBrokerNotifierOperator("55dae93ff23205eb4241ccd0", "user1", "label1", dataset.getSignature(),
+				dataset.isRealtimeNgsiConsumer(), manager, reader);
 		String body = HelperForTest.readFile("notification.json", getClass());
 		operator.notify(new HttpServletRequestMock(body), null, body);
 		assertTrue(done);

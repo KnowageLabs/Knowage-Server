@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,7 +33,6 @@ public class NotifierManager {
 
 	private final ConcurrentMap<Object, INotifierOperator> operators = new ConcurrentHashMap<Object, INotifierOperator>();
 
-
 	public void addOperatorIfAbsent(Object id, INotifierOperator op) {
 		operators.putIfAbsent(id, op);
 	}
@@ -42,23 +41,27 @@ public class NotifierManager {
 		return operators.remove(id) != null;
 	}
 
+	public INotifierOperator getOperator(Object id) {
+		return operators.get(id);
+	}
+
 	public boolean containsOperator(Object operatorId) {
 		return operators.containsKey(operatorId);
 	}
 
 	public void manage(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		String body=getBody(req);
+		String body = getBody(req);
 		for (INotifierOperator l : operators.values()) {
 			try {
-				l.notify(req, resp,body);
+				l.notify(req, resp, body);
 			} catch (Exception e) {
 				log.error("Error on notification", e);
 			}
 
 		}
-		
+
 	}
-	
+
 	private static String getBody(HttpServletRequest request) throws IOException {
 		StringBuilder buffer = new StringBuilder();
 		BufferedReader reader = request.getReader();

@@ -35,7 +35,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.SingletonConfig;
@@ -50,13 +51,11 @@ import it.eng.spagobi.utilities.Helper;
  * @author Alberto Ghedin (alberto.ghedin@eng.it), Giulio Gavardi(giulio.gavardi@eng.it)
  */
 
-@SuppressWarnings("deprecation")
 public class SimpleRestClient {
 
 	static protected Logger logger = Logger.getLogger(SimpleRestClient.class);
 
 	private boolean addServerUrl = true;
-	private boolean useProxy = false;
 
 	private HMACFilterAuthenticationProvider authenticationProvider;
 
@@ -78,11 +77,6 @@ public class SimpleRestClient {
 		}
 	}
 
-	public SimpleRestClient(boolean useProxy) {
-		this();
-		useProxy = useProxy;
-	}
-
 	/**
 	 * Invokes a rest service in get and return response
 	 *
@@ -94,7 +88,6 @@ public class SimpleRestClient {
 	 * @return
 	 * @throws Exception
 	 */
-	@SuppressWarnings("rawtypes")
 	protected Response executeGetService(Map<String, Object> parameters, String serviceUrl, String userId) throws Exception {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.GET, null, null);
 	}
@@ -116,15 +109,31 @@ public class SimpleRestClient {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
 	}
 
-	protected HttpResponse executePostServiceWithFormParams(Map<String, Object> parameters, byte[] form, String serviceUrl, String userId)
-			throws Exception {
-		return executeServiceMultipart( parameters, form, serviceUrl, userId);
+	/**
+	 * Invokes a rest service in post and return response
+	 *
+	 * @param parameters
+	 *            the parameters of the request
+	 * @param serviceUrl
+	 *            the relative (refers always to core application context) path of the service
+	 * @param userId
+	 * @param mediaType
+	 * @param data
+	 * @return
+	 * @throws Exception
+	 */
+	protected Response executePutService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data) throws Exception {
+		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.PUT, mediaType, data);
+	}
+
+	protected HttpResponse executePostServiceWithFormParams(Map<String, Object> parameters, byte[] form, String serviceUrl, String userId) throws Exception {
+		return executeServiceMultipart(parameters, form, serviceUrl, userId);
 	}
 
 	@SuppressWarnings({ "rawtypes" })
 	private HttpResponse executeServiceMultipart(Map<String, Object> parameters, byte[] form, String serviceUrl, String userId) throws Exception {
 		logger.debug("IN");
-		org.apache.http.client.HttpClient client1 = null;
+		CloseableHttpClient client = null;
 		MultivaluedMap<String, Object> myHeaders = new MultivaluedHashMap<String, Object>();
 
 		if (!serviceUrl.contains("http") && addServerUrl) {
@@ -137,10 +146,9 @@ public class SimpleRestClient {
 			logger.debug("Call service URL " + serviceUrl);
 		}
 
-
 		try {
 
-			if(parameters!=null) {
+			if (parameters != null) {
 				logger.debug("adding parameters in the request");
 				StringBuilder sb = new StringBuilder(serviceUrl);
 				sb.append("?");
@@ -153,19 +161,18 @@ public class SimpleRestClient {
 				logger.debug("finish to add parameters in the request");
 			}
 
-
 			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 			builder.addPart("file", new ByteArrayBody(form, "file"));
-			HttpPost request1 = new HttpPost(serviceUrl);
-			request1.setEntity(builder.build());
-			client1 = new DefaultHttpClient();
+			HttpPost request = new HttpPost(serviceUrl);
+			request.setEntity(builder.build());
+			client = HttpClientBuilder.create().build();
 
 			String encodedBytes = Base64.encode(userId.getBytes("UTF-8"));
-			request1.addHeader("Authorization", "Direct " + encodedBytes);
+			request.addHeader("Authorization", "Direct " + encodedBytes);
 
-			authenticationProvider.provideAuthenticationMultiPart(request1, myHeaders);
+			authenticationProvider.provideAuthenticationMultiPart(request, myHeaders);
 
-			HttpResponse response1 = client1.execute(request1);
+			HttpResponse response1 = client.execute(request);
 
 			if (response1.getStatusLine().getStatusCode() >= 400) {
 				throw new RuntimeException("Request failed with HTTP error code : " + response1.getStatusLine().getStatusCode());
@@ -177,13 +184,14 @@ public class SimpleRestClient {
 			logger.debug("OUT");
 			return response1;
 		} finally {
-
-
+			if (client != null) {
+				client.close();
+			}
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes" })
-	private Response executeService(Map<String, Object> parameters, String serviceUrl, String userId, RequestTypeEnum type, String mediaType, Object data) throws Exception {
+	private Response executeService(Map<String, Object> parameters, String serviceUrl, String userId, RequestTypeEnum type, String mediaType, Object data)
+			throws Exception {
 		logger.debug("IN");
 
 		MultivaluedMap<String, Object> myHeaders = new MultivaluedHashMap<String, Object>();
@@ -222,10 +230,13 @@ public class SimpleRestClient {
 
 		// provide authentication exactly before of call
 		authenticationProvider.provideAuthentication(request, target, myHeaders, data);
-		if (type.equals(RequestTypeEnum.POST))
+		if (type.equals(RequestTypeEnum.POST)) {
 			response = request.post(Entity.json(data.toString()));
-		else
+		} else if (type.equals(RequestTypeEnum.PUT)) {
+			response = request.put(Entity.json(data.toString()));
+		} else {
 			response = request.get();
+		}
 
 		if (response.getStatus() >= 400) {
 			throw new RuntimeException("Request failed with HTTP error code : " + response.getStatus());
@@ -237,8 +248,6 @@ public class SimpleRestClient {
 		logger.debug("OUT");
 		return response;
 	}
-
-
 
 	private void addAuthorizations(Builder request, String userId, MultivaluedMap<String, Object> myHeaders) throws Exception {
 		logger.debug("Adding auth for user " + userId);
@@ -257,42 +266,6 @@ public class SimpleRestClient {
 	}
 
 	public enum RequestTypeEnum {
-		POST, GET
+		POST, GET, PUT
 	}
-
-//	public static HttpClient getHttpClient(boolean useProxy) {
-//
-//		// Getting proxy properties set as JVM args
-//		String proxyHost = System.getProperty("http.proxyHost");
-//		String proxyPort = System.getProperty("http.proxyPort");
-//		int proxyPortInt = CKANUtils.portAsInteger(proxyPort);
-//		String proxyUsername = System.getProperty("http.proxyUsername");
-//		String proxyPassword = System.getProperty("http.proxyPassword");
-//
-//		logger.debug("Setting REST client");
-//		HttpClient httpClient = new HttpClient();
-//		httpClient.setConnectionTimeout(500);
-//
-//		if (proxyHost != null && proxyPortInt > 0 && useProxy) {
-//			if (proxyUsername != null && proxyPassword != null) {
-//				logger.debug("Setting proxy with authentication");
-//				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
-//				HttpState state = new HttpState();
-//				state.setProxyCredentials(null, null, new UsernamePasswordCredentials(proxyUsername, proxyPassword));
-//				httpClient.setState(state);
-//				logger.debug("Proxy with authentication set");
-//			} else {
-//				// Username and/or password not acceptable. Trying to set proxy without credentials
-//				logger.debug("Setting proxy without authentication");
-//				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
-//				logger.debug("Proxy without authentication set");
-//			}
-//		} else {
-//			logger.debug("No proxy configuration found");
-//		}
-//		logger.debug("REST client set");
-//
-//		return httpClient;
-//	}
-
 }

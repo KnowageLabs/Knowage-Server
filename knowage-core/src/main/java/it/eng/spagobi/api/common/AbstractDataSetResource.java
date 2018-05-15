@@ -54,14 +54,6 @@ import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
-import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
-import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
-import it.eng.spagobi.tools.dataset.cache.query.item.LikeFilter;
-import it.eng.spagobi.tools.dataset.cache.query.item.MultipleProjectionSimpleFilter;
-import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
-import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
-import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
-import it.eng.spagobi.tools.dataset.cache.query.item.UnsatisfiedFilter;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
@@ -72,6 +64,14 @@ import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.DatasetInUseException;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.MultipleProjectionSimpleFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
+import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -163,7 +163,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				sortings.addAll(getSortings(dataSet, categoriesObject, measuresObject, columnAliasToName));
 
 				if (summaryRow != null && !summaryRow.isEmpty()) {
-					JSONObject summaryRowObject = new JSONObject(summaryRow);
 					JSONArray summaryRowMeasuresObject = getSummaryRowMeasures(measuresObject);
 					summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
 				}

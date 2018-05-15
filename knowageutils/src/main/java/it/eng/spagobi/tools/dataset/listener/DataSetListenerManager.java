@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,21 +11,23 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.listener;
-
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.utilities.Helper;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.client.CacheClient;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 public class DataSetListenerManager {
 
@@ -36,17 +38,17 @@ public class DataSetListenerManager {
 	 */
 	private final Map<String, Map<String, DataStoreListenerOperator>> operatorsyByLabelByUUId = new HashMap<String, Map<String, DataStoreListenerOperator>>();
 
-	public synchronized void addIDataSetListenerIfAbsent(String uuid, String dataSetLabel, IDataSetListener listener,String listenerId) {
+	public synchronized void addIDataSetListenerIfAbsent(String uuid, String dataSetLabel, IDataSetListener listener, String listenerId) {
 		Helper.checkNotNullNotTrimNotEmpty(uuid, "uuid");
 		Helper.checkNotNullNotTrimNotEmpty(dataSetLabel, "dataSetLabel");
 		Helper.checkNotNull(listener, "listener");
 		Helper.checkNotNullNotTrimNotEmpty(listenerId, "listenerId");
 
 		DataStoreListenerOperator op = getOperator(uuid, dataSetLabel);
-		op.addIDataSetListenerIfAbsent(listener,listenerId);
+		op.addIDataSetListenerIfAbsent(listener, listenerId);
 	}
 
-	public boolean removeIDataSetListener(String uuid, String dataSetLabel, IDataSetListener listener,String listenerId) {
+	public boolean removeIDataSetListener(String uuid, String dataSetLabel, IDataSetListener listener, String listenerId) {
 		Helper.checkNotNullNotTrimNotEmpty(uuid, "uuid");
 		Helper.checkNotNullNotTrimNotEmpty(dataSetLabel, "dataSetLabel");
 		Helper.checkNotNull(listener, "listener");
@@ -58,14 +60,14 @@ public class DataSetListenerManager {
 
 	public synchronized boolean removeUser(String uuid) {
 		Helper.checkNotNullNotTrimNotEmpty(uuid, "uuid");
-		
+
 		return operatorsyByLabelByUUId.remove(uuid) != null;
 	}
 
 	public synchronized boolean removeDataSetLabel(String uuid, String dataSetLabel) {
 		Helper.checkNotNullNotTrimNotEmpty(uuid, "uuid");
 		Helper.checkNotNullNotTrimNotEmpty(dataSetLabel, "dataSetLabel");
-		
+
 		Map<String, DataStoreListenerOperator> ops = operatorsyByLabelByUUId.get(uuid);
 		if (ops == null) {
 			return false;
@@ -78,7 +80,7 @@ public class DataSetListenerManager {
 		Helper.checkNotNullNotTrimNotEmpty(uuid, "uuid");
 		Helper.checkNotNullNotTrimNotEmpty(dataSetLabel, "dataSetLabel");
 		Helper.checkNotNull(currDataSet, "currDataSet");
-		
+
 		DataStoreListenerOperator op = getOperator(uuid, dataSetLabel);
 		List<ListenerResult> res = op.changedDataSet(currDataSet);
 		manageListenerResult(res);
@@ -99,18 +101,6 @@ public class DataSetListenerManager {
 		return op;
 	}
 
-	public void changedDataSet(String uuid, String dataSetLabel, List<IRecord> updated) {
-		Helper.checkNotNullNotTrimNotEmpty(uuid, "uuid");
-		Helper.checkNotNullNotTrimNotEmpty(dataSetLabel, "dataSetLabel");
-		Helper.checkNotNull(updated, "updated");
-		
-		DataStoreListenerOperator op = getOperator(uuid, dataSetLabel);
-
-		List<ListenerResult> res = op.changedDataSet(updated);
-		manageListenerResult(res);
-		
-	}
-
 	private static void manageListenerResult(List<ListenerResult> res) {
 		for (ListenerResult lr : res) {
 			if (lr.isException()) {
@@ -119,21 +109,41 @@ public class DataSetListenerManager {
 		}
 	}
 
-	public void changedDataSet(String uuid, String dataSetLabel, List<IRecord> updatedOrAdded, int idFieldIndex) {
+	public void changedDataSet(String uuid, boolean realtimeNgsiConsumer, String dataSetLabel, String dataSetSignature, IDataStore updatedOrAdded,
+			int idFieldIndex) throws Exception {
 		Helper.checkNotNullNotTrimNotEmpty(uuid, "uuid");
 		Helper.checkNotNullNotTrimNotEmpty(dataSetLabel, "dataSetLabel");
+		Helper.checkNotNullNotTrimNotEmpty(dataSetSignature, "dataSetSignature");
 		Helper.checkNotNull(updatedOrAdded, "updatedOrAdded");
 		Helper.checkNotNegative(idFieldIndex, "idFieldIndex");
-		
+
+		IDataStore dataStore = updateDataSetInCache(uuid, dataSetLabel, dataSetSignature, updatedOrAdded, realtimeNgsiConsumer);
+		if (realtimeNgsiConsumer) {
+			Assert.assertNotNull(dataStore, "Datastore from cache cannot be null");
+			changedDataSet(uuid, dataSetLabel, dataStore, idFieldIndex);
+		}
+	}
+
+	private IDataStore updateDataSetInCache(String uuid, String dataSetLabel, String dataSetSignature, IDataStore updatedOrAdded, boolean realtimeNgsiConsumer)
+			throws Exception {
 		DataStoreListenerOperator op = getOperator(uuid, dataSetLabel);
-		
-		List<ListenerResult> res = op.changedDataSetUpdatedOrAdded(updatedOrAdded,idFieldIndex);
+		String userId = op.getDataSet().getOwner();
+		CacheClient client = new CacheClient();
+		// return client.updateDataSet(dataSetSignature, updatedOrAdded, realtimeNgsiConsumer, userId);
+		op.getDataSet().loadData();
+		return op.getDataSet().getDataStore();
+	}
+
+	private void changedDataSet(String uuid, String dataSetLabel, IDataStore updatedOrAdded, int idFieldIndex) {
+		DataStoreListenerOperator op = getOperator(uuid, dataSetLabel);
+
+		List<ListenerResult> res = op.changedDataSet(updatedOrAdded);
 		manageListenerResult(res);
 	}
 
 	/**
 	 * If it's not initialized then it does nothing.
-	 * 
+	 *
 	 * @param uuid
 	 * @param dataSetLabel
 	 * @param listenerId
@@ -142,20 +152,20 @@ public class DataSetListenerManager {
 		if (!CometDInitializerChecker.isCometdInitialized()) {
 			return;
 		}
-		
-		IDataSetListener listener= new IDataSetListener() {
-			
+
+		IDataSetListener listener = new IDataSetListener() {
+
+			@Override
 			public void dataStoreChanged(DataStoreChangedEvent event) throws DataSetListenerException {
-				
-				//notify the frontend clients about the dataStore changes
+
+				// notify the frontend clients about the dataStore changes
 				CometServiceManager manager = CometServiceManagerFactory.getManager();
-				manager.dataStoreChanged(uuid, dataSetLabel, event,listenerId);
+				manager.dataStoreChanged(uuid, dataSetLabel, event, listenerId);
 			}
-			
+
 		};
-		
+
 		DataStoreListenerOperator op = getOperator(uuid, dataSetLabel);
-		op.addIDataSetListenerIfAbsent(listener,listenerId);
+		op.addIDataSetListenerIfAbsent(listener, listenerId);
 	}
-	
 }

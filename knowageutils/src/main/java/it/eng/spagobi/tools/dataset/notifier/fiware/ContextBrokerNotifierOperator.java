@@ -17,24 +17,21 @@
  */
 package it.eng.spagobi.tools.dataset.notifier.fiware;
 
-import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.listener.DataSetListenerManager;
-import it.eng.spagobi.tools.dataset.listener.DataSetListenerManagerFactory;
-import it.eng.spagobi.tools.dataset.notifier.INotifierOperator;
-import it.eng.spagobi.utilities.Helper;
-import it.eng.spagobi.utilities.assertion.Assert;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.listener.DataSetListenerManager;
+import it.eng.spagobi.tools.dataset.listener.DataSetListenerManagerFactory;
+import it.eng.spagobi.tools.dataset.notifier.INotifierOperator;
+import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class ContextBrokerNotifierOperator implements INotifierOperator {
 
@@ -44,29 +41,36 @@ public class ContextBrokerNotifierOperator implements INotifierOperator {
 	private final String subscriptionId;
 	private final String uuid;
 	private final String dataSetLabel;
+	private final String dataSetSignature;
+	private boolean realtimeNgsiConsumer;
 	private final DataSetListenerManager manager;
 	private final JSONPathDataReader reader;
 
-	public ContextBrokerNotifierOperator(String subscriptionId, String uuid, String dataSetLabel, DataSetListenerManager manager, JSONPathDataReader reader) {
+	public ContextBrokerNotifierOperator(String subscriptionId, String uuid, String dataSetLabel, String dataSetSignature, boolean realtimeNgsiConsumer,
+			DataSetListenerManager manager, JSONPathDataReader reader) {
 		Helper.checkNotNullNotTrimNotEmpty(subscriptionId, "subscriptionId");
 		Helper.checkNotNullNotTrimNotEmpty(uuid, "uuid");
 		Helper.checkNotNullNotTrimNotEmpty(dataSetLabel, "dataSetLabel");
+		Helper.checkNotNullNotTrimNotEmpty(dataSetSignature, "dataSetSignature");
 		Helper.checkNotNull(manager, "manager");
 		Helper.checkNotNull(reader, "reader");
 
 		this.subscriptionId = subscriptionId;
 		this.uuid = uuid;
 		this.dataSetLabel = dataSetLabel;
+		this.dataSetSignature = dataSetSignature;
+		this.realtimeNgsiConsumer = realtimeNgsiConsumer;
 		this.manager = manager;
 		this.reader = reader;
 
 	}
 
-	public ContextBrokerNotifierOperator(String subscriptionId, String uuid, String dataSetLabel, JSONPathDataReader reader) {
-		this(subscriptionId, uuid, dataSetLabel, DataSetListenerManagerFactory.getManager(), reader);
+	public ContextBrokerNotifierOperator(String subscriptionId, String uuid, String dataSetLabel, String dataSetSignature, boolean realtimeNgsiConsumer,
+			JSONPathDataReader reader) {
+		this(subscriptionId, uuid, dataSetLabel, dataSetSignature, realtimeNgsiConsumer, DataSetListenerManagerFactory.getManager(), reader);
 	}
 
-	private List<IRecord> getUpdatedOrAddedRecords(HttpServletRequest req, String body) {
+	private IDataStore getUpdatedOrAddedRecords(HttpServletRequest req, String body) {
 		try {
 			Helper.checkNotNull(req, "action");
 
@@ -92,9 +96,7 @@ public class ContextBrokerNotifierOperator implements INotifierOperator {
 
 			String data = bodyJSON.getJSONArray("data").toString();
 			// updated
-			IDataStore store = reader.read(data);
-			List<IRecord> records = getRecords(store);
-			return records;
+			return reader.read(data);
 		} catch (ContextBrokerNotifierException e) {
 			throw e;
 		} catch (Exception e) {
@@ -110,25 +112,29 @@ public class ContextBrokerNotifierOperator implements INotifierOperator {
 		}
 	}
 
-	private static List<IRecord> getRecords(IDataStore store) {
-		List<IRecord> res = new ArrayList<IRecord>((int) Math.min(Integer.MAX_VALUE, store.getRecordsCount()));
-		for (int i = 0; i < store.getRecordsCount(); i++) {
-			res.add(store.getRecordAt(i));
-		}
-		return res;
+	public boolean isRealtimeNgsiConsumer() {
+		return realtimeNgsiConsumer;
+	}
+
+	public void setRealtimeNgsiConsumer(boolean realtimeNgsiConsumer) {
+		this.realtimeNgsiConsumer = realtimeNgsiConsumer;
 	}
 
 	@Override
 	public void notify(HttpServletRequest req, HttpServletResponse resp, String reqBody) {
 		// updated and added (there is no disctinction in the notification)
-		List<IRecord> updatedOrAdded = getUpdatedOrAddedRecords(req, reqBody);
+		IDataStore updatedOrAdded = getUpdatedOrAddedRecords(req, reqBody);
 		if (updatedOrAdded == null) {
 			// different subscription id
 			return;
 		}
 		int idFieldIndex = reader.getIdFieldIndex();
 		Assert.assertTrue(idFieldIndex != -1, "idFieldIndex!=-1");
-		manager.changedDataSet(uuid, dataSetLabel, updatedOrAdded, idFieldIndex);
+		try {
+			manager.changedDataSet(uuid, realtimeNgsiConsumer, dataSetLabel, dataSetSignature, updatedOrAdded, idFieldIndex);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException(e);
+		}
 	}
 
 }

@@ -18,7 +18,7 @@
 
 package it.eng.spagobi.utilities.database;
 
-import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
+import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 
 public class MetaModelDataBase extends AbstractDataBase {
 

@@ -29,7 +29,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
-import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
@@ -38,6 +37,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
+import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
@@ -965,14 +965,14 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	@Override
 	public boolean isCachingSupported() {
-		return !isPersisted() && !isFlatDataset() && !isRealtime();
+		return !isPersisted() && !isFlatDataset();
 	}
 
 	@Override
 	public DatasetEvaluationStrategy getEvaluationStrategy(boolean isNearRealtime) {
 		DatasetEvaluationStrategy strategy;
 
-		if (isRealtime()) {
+		if (!isNearRealtime && isRealtime()) {
 			strategy = DatasetEvaluationStrategy.REALTIME;
 		} else if (isPersisted()) {
 			strategy = DatasetEvaluationStrategy.PERSISTED;

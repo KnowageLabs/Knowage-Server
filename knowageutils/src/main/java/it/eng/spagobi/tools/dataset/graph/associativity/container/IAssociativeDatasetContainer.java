@@ -26,9 +26,9 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
 import it.eng.spagobi.utilities.database.DataBaseException;
 
 public interface IAssociativeDatasetContainer {

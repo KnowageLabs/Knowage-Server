@@ -26,8 +26,8 @@ import java.util.Set;
 
 import org.jgrapht.graph.Pseudograph;
 
-import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
 
 public class Config {
 

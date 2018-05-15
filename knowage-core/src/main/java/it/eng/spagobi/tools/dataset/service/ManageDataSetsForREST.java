@@ -819,36 +819,9 @@ public class ManageDataSetsForREST {
 			toReturn = dataSet;
 		}
 
-		// if (toReturn.getDataSourceForReading() == null) {
-		// IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
-		// toReturn.setDataSourceForWriting(dataSource);
-		// }
-		// if (toReturn.getDataSourceForReading() == null) {
-		// IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
-		// toReturn.setDataSourceForReading(dataSource);
-		// }
-		//
-		// getPersistenceInfo(toReturn, json);
 		toReturn.setConfiguration(jsonDsConfig.toString());
 		return toReturn;
 	}
-
-	/*
-	 * private void setUsefulItemsInSession(IDataSetDAO dsDao, Locale locale) { try { List dsTypesList =
-	 * DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants .DATA_SET_TYPE); filterDataSetType(dsTypesList); List catTypesList = getCategories();
-	 * getSessionContainer().setAttribute("catTypesList", catTypesList); List dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();
-	 * getSessionContainer().setAttribute("dataSourceList", dataSourceList); List scriptLanguageList = DAOFactory.getDomainDAO().loadListDomainsByType(
-	 * DataSetConstants.SCRIPT_TYPE); getSessionContainer().setAttribute("scriptLanguageList", scriptLanguageList); List trasfTypesList =
-	 * DAOFactory.getDomainDAO().loadListDomainsByType (DataSetConstants.TRANSFORMER_TYPE); getSessionContainer().setAttribute("trasfTypesList",
-	 * trasfTypesList); List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes(); getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);
-	 *
-	 * List scopeCdList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants .DS_SCOPE); getSessionContainer().setAttribute("scopeCdList",
-	 * scopeCdList);
-	 *
-	 * String filePath = SpagoBIUtilities.getResourcePath(); filePath += File.separator + "dataset" + File.separator + "files"; File dir = new File(filePath);
-	 * String[] fileNames = dir.list(); getSessionContainer().setAttribute("fileNames", fileNames); } catch (EMFUserError | EMFInternalError e) {
-	 * logger.error(e.getMessage(), e); throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypesRetrieve", e); } }
-	 */
 
 	public List getCategories(UserProfile userProfile) {
 		IRoleDAO rolesDao = null;
@@ -1359,7 +1332,7 @@ public class ManageDataSetsForREST {
 	protected String datasetInsert(IDataSet ds, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, JSONObject json, HttpServletRequest req)
 			throws JSONException {
 		JSONObject attributesResponseSuccessJSON = new JSONObject();
-		HashMap<String, String> logParam = new HashMap();
+		HashMap<String, String> logParam = new HashMap<>();
 
 		if (ds != null) {
 			logParam.put("NAME", ds.getName());
