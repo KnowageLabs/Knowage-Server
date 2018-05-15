@@ -17,24 +17,30 @@
  */
 package it.eng.spagobi.api;
 
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
 import java.util.Iterator;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -74,5 +80,28 @@ public class CacheResource extends AbstractSpagoBIResource {
 					"An unexpected error occurred while deleting datasets from cache (deleteItem REST service)", e);
 		}
 		return Response.ok().build();
+	}
+
+	@PUT
+	@Path("/dataset/{hashedSignature}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public IDataStore updateDataset(@PathParam("hashedSignature") String hashedSignature, @QueryParam("realtimeNgsiConsumer") boolean realtimeNgsiConsumer,
+			IDataStore body) {
+		logger.debug("IN");
+		Helper.checkNotNullNotTrimNotEmpty(hashedSignature, "hashedSignature");
+		Helper.checkNotNull(body, "body");
+		try {
+			ICache cache = SpagoBICacheManager.getCache();
+			cache.update(hashedSignature, body);
+			if (realtimeNgsiConsumer) {
+				return cache.get(hashedSignature); // TODO: change with the correct get method
+			} else {
+				return new DataStore();
+			}
+			// logger.debug("Dataset with hash signature [" + hashedSignature + "] found in cache and updated.");
+
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occurred while updating dataset on cache", e);
+		}
 	}
 }

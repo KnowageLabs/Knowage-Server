@@ -20,10 +20,10 @@ package it.eng.spagobi.tools.dataset.cache;
 import java.util.List;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
-import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
-import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.utilities.database.DataBaseException;
 
 /**
@@ -193,6 +193,16 @@ public interface ICache {
 	 *            the dataSet from which derives the resultSet
 	 */
 	void put(IDataSet dataSet);
+
+	/**
+	 * Update the item referenced as hashedSignature with the dataStore
+	 *
+	 * @param hashedSignature
+	 *            the hashed unique dataSet signature
+	 * @param dataStore
+	 *            the resultSet to cache
+	 */
+	void update(String hashedSignature, IDataStore dataStore);
 
 	/**
 	 * @return the metadata description object of the cache
