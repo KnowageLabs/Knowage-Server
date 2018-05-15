@@ -450,15 +450,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
             $scope.map.on('singleclick', function(evt) {
     			$scope.props = {};
+    			$scope.clickOnFeature = false;
 
             	evt.map.forEachFeatureAtPixel(evt.pixel,
 		            function(feature, layer) {
 						$scope.selectedLayer = layer;
 		                $scope.selectedFeature = feature;
+		                $scope.clickOnFeature = true;
 	            });
 
             	//popup isn't shown with cluster
-    	        if ($scope.selectedFeature) {
+            	if (!$scope.clickOnFeature){
+            		$scope.closer.onclick();
+            		return;
+            	}
+    	        if ($scope.clickOnFeature && $scope.selectedFeature) {
     	        	$scope.tempFeature = (Array.isArray($scope.selectedFeature.get('features')) && $scope.selectedFeature.get('features').length == 1) ? $scope.selectedFeature.get('features')[0] : $scope.selectedFeature;
 
 	        		$scope.props = $scope.tempFeature.getProperties();
@@ -473,7 +479,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	        	}
 
     	            var geometry = $scope.tempFeature.getGeometry();
-    	            var coordinate = geometry.getCoordinates();
+//    	            var coordinate = geometry.getCoordinates();
+    	            var coordinate = evt.coordinate;
     	            overlay.setPosition(coordinate);
     	        }
              });

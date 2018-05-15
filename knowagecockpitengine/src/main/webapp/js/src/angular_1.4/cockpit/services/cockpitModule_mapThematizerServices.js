@@ -53,7 +53,7 @@
 				if (localFeature.get('isSimpleMarker'))
 					configMarker.style.color = mts.getChoroplethColor(value, parentLayer) || "grey";
 				else{
-					style = mts.getChoroplethStyles(value, parentLayer);
+					style = mts.getChoroplethStyles(value, parentLayer, null);
 					thematized = true;
 				}
 //			}else if (configThematizer.defaultAnalysis == 'proportionalSymbol') {
@@ -62,7 +62,8 @@
 			}
 			
 			if (!localFeature.get('isSimpleMarker')){
-				style = mts.getChoroplethStyles(value, parentLayer);
+				var userColor = (configMarker.style) ? configMarker.style.color : "grey";
+				style = mts.getChoroplethStyles(value, parentLayer, userColor);
 				thematized = true;
 			}
 			
@@ -178,8 +179,8 @@
 		            });
 		}
 		
-		mts.getChoroplethStyles=function(value, parentLayer){
-			var color =  mts.getChoroplethColor(value, parentLayer);
+		mts.getChoroplethStyles=function(value, parentLayer, fixedColor){
+			var color =  mts.getChoroplethColor(value, parentLayer) || fixedColor;
 			var borderColor = "black";
 			
 			return  [new ol.style.Style({
@@ -470,7 +471,7 @@
 		}
 		
 		mts.getChoroplethColor = function(val,layerName){
-			if (!mts.activeLegend[layerName]) return;
+			if (!mts.activeLegend || !mts.activeLegend[layerName]) return;
 			
 			var color;
 			var value = Number(val);
