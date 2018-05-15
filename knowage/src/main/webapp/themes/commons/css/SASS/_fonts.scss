@@ -154,8 +154,8 @@
   font-variant: normal !important;
   text-transform: none !important;
   speak: none;
-  font-size: 1.5rem;
-  line-height: 1.5rem;
+  font-size: 2rem;
+  line-height: 2rem;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -180,4 +180,22 @@
 }
 .ai-washer:before {
   content: "\67";
+}
+.ai-washdrier:before {
+  content: "\68";
+}
+.ai-lightbulb:before {
+  content: "\69";
+}
+.ai-hairdyer:before {
+  content: "\6a";
+}
+.ai-coffee:before {
+  content: "\6b";
+}
+.ai-cappa:before {
+  content: "\6c";
+}
+.ai-boiler:before {
+  content: "\6d";
 }

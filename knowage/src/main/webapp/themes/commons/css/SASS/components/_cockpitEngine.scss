@@ -68,14 +68,13 @@
 	    			}
 	    			border-bottom: 1px solid $bordersColor;
 	    			padding: 0 8px;
-					min-height: 32px;
-					height: 32px;
+					min-height: 24px;
+					height: 24px;
 					.discoveryFiltersListName {
 						font-size: $mediumFontSize;
 					}
 	    			.chip {
 	    				background-color: $ternaryColor;
-					    padding: 4px;
 					    border-radius: 15px;
 					    min-width: 40px;
 					    text-align: center;
@@ -85,14 +84,14 @@
 	    	}
     	}
     	.discoveryViewCard.md-knowage-theme {
+    		.ternaryToolbar {
+				background-color: $contentBackground !important;
+				md-icon {
+					color: $smallTextColor !important;
+				}
+			}
     		md-card-content {
-    			.ternaryToolbar {
-    				background-color: $contentBackground !important;
-    				md-icon {
-    					color: $smallTextColor !important;
-    				}
-    			}
-    			height: calc(100% - 80px); 
+    			height: calc(100% - 112px); 
 	    		overflow-y: auto;
 	    		@include coolScrollBars($baseColor,6px);
     		}

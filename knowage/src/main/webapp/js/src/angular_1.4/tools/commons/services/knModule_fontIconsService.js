@@ -38,7 +38,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					"icons":[
 						{"label":"refrigerator","className":"ai-fridge","unicode":"\61"},{"label":"iron","className":"ai-iron","unicode":"\62"},{"label":"microwave","className":"ai-microwave","unicode":"\63"},
 						{"label":"oven","className":"ai-oven","unicode":"\64"},{"label":"toaster","className":"ai-toaster","unicode":"\65"},{"label":"tv","className":"ai-tv","unicode":"\66"},
-						{"label":"washer","className":"ai-washer","unicode":"\67"},]
+						{"label":"washer","className":"ai-washer","unicode":"\67"},{"label":"washdrier","className":"ai-washdrier","unicode":"\68"},{"label":"lightbulb","className":"ai-lightbulb","unicode":"\69"},
+						{"label":"hairdyer","className":"ai-hairdyer","unicode":"\6a"},{"label":"coffee","className":"ai-coffee","unicode":"\6b"},{"label":"cappa","className":"ai-cappa","unicode":"\6c"},
+						{"label":"boiler","className":"ai-boiler","unicode":"\6d"}]
 				}
 			];
 		}
