@@ -36,6 +36,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
@@ -448,7 +449,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		dataStore.appendRecord(record);
 
 		// persist the datastore as a table on db
-		String dialect = dataSourceWriting.getHibDialectClass();
+		DatabaseDialect dialect = DatabaseDialect.get(dataSourceWriting.getHibDialectClass());
 		PersistedTableManager persistedTableManager = new PersistedTableManager();
 		persistedTableManager.setDialect(dialect);
 		Random ran = new Random();
