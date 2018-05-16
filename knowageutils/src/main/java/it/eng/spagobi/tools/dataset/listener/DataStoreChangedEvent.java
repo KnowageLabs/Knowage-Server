@@ -24,20 +24,20 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 public class DataStoreChangedEvent extends DataSetEvent {
 
 	private final IDataStore dataStore;
-	private final boolean isChanged;
+	private final boolean foundInCache;
 
 	public DataStoreChangedEvent(IDataSet dataSet, IDataStore dataStore) {
 		super(dataSet);
 		this.dataStore = dataStore;
-		this.isChanged = !dataStore.isEmpty();
+		this.foundInCache = dataStore != null;
 	}
 
 	public IDataStore getDataStore() {
 		return dataStore;
 	}
 
-	public boolean isChanged() {
-		return isChanged;
+	public boolean isFoundInCache() {
+		return foundInCache;
 	}
 
 }

@@ -129,9 +129,12 @@ public class DataSetListenerManager {
 		DataStoreListenerOperator op = getOperator(uuid, dataSetLabel);
 		String userId = op.getDataSet().getOwner();
 		CacheClient client = new CacheClient();
-		// return client.updateDataSet(dataSetSignature, updatedOrAdded, realtimeNgsiConsumer, userId);
-		op.getDataSet().loadData();
-		return op.getDataSet().getDataStore();
+		IDataStore result = client.updateDataSet(dataSetSignature, updatedOrAdded, realtimeNgsiConsumer, userId);
+		if (result == null) {
+			log.debug("Impossible to apply updates. Error while executing dataset with label [" + op.getDataSet().getLabel() + "] in cache for user [" + userId
+					+ "]");
+		}
+		return result;
 	}
 
 	private void changedDataSet(String uuid, String dataSetLabel, IDataStore updatedOrAdded, int idFieldIndex) {

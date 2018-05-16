@@ -1,30 +1,29 @@
-/** 
+/**
  * This service links datasets CometD notifications from server to frontend.
  * It permits to subscribe to server notifications and then update data models.
  *
  */
 angular.module("cockpitModule").service("cockpitModule_realtimeServices",function($rootScope, sbiModule_user, sbiModule_util, sbiModule_restServices, sbiModule_config, cockpitModule_template, cockpitModule_datasetServices, cometd){
 	var rt=this;
-	
+
 	broadcast = function(message, dsLabel){
 		var event = "UPDATE_FROM_REALTIME";
 		var data=JSON.parse(message.data);
-		console.log("Received the following message: ");
-		console.log("Number of deleted rows: " + data.deleted);
-		console.log("Number of added rows: " + data.added);
-		console.log("Number of updated rows: " + data.updated);
-		if(data.isChanged) {
+		if(data.isFoundInCache) {
 			console.log("Broadcasting a WIDGET_EVENT named " + event + " for dataset " + dsLabel)
 			$rootScope.$broadcast("WIDGET_EVENT", event, {dsLabel:dsLabel, data:data.dataStore});
+		} else {
+			console.log("Error while processing data from Context Broker. Data cannot be update due to missing of previous data.");
+			console.log("You can re-execute this dashboard to get updates again");
 		}
 	};
-	
+
 	this.init = function(){
 		console.log("Initializing realtime datasets subscriptions");
 		for(var i=0;i<cockpitModule_template.configuration.datasets.length;i++){
 			var label = cockpitModule_template.configuration.datasets[i].dsLabel;
 			console.log("Getting metadata for dataset " + label);
-			
+
 			var ds = cockpitModule_datasetServices.getDatasetByLabel(label);
 			console.log(ds);
 			if(ds.isRealtime){
@@ -41,15 +40,15 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 				console.log("Subscribe dataset " + label + " with the following config:");
 				console.log(cometdConfig);
 				rt.subscribe(cometdConfig);
-			}  
-		}	
+			}
+		}
 	};
-	
+
 	/**
 	 * It permits to subscribe to server notifications
 	 *  @example
 	 *  var cometdConfig = {
-	 *    contextPath: pageContextPath,  
+	 *    contextPath: pageContextPath,
 	 *    listenerId:"1",
 	 *    dsLabel:s.dsLabel,
 	 *  };
@@ -88,7 +87,7 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 	            if (config.connectionBroken!=null) {
 	                config.connectionBroken();
 	            }
-	        }   
+	        }
 	    }
 
 	    // Function invoked when first contacting the server and
@@ -115,7 +114,7 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 	        url: cometURL,
 	        logLevel: 'debug'
 	    });
-	    
+
 	    console.log("Comet config is set with the URL:");
 	    console.log(cometURL);
 
