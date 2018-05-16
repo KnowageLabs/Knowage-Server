@@ -53,9 +53,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_properties){
 
 		$scope.refresh = function(element,width,height, datasetRecords,nature) {
-			
+
 		}
-		
+
 		/**
 		 * Function to initialize the rendered html at the loading and after editing.
 		 * If there is a selected dataset the function calls the data rest service.
@@ -63,7 +63,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.reinit = function(){
 			if($scope.ngModel.datasetId){
 				sbiModule_restServices.restToRootProject();
-				sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(cockpitModule_datasetServices.getDatasetLabelById($scope.ngModel.datasetId)) + "/data").then(function(data){
+				var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.datasetId);
+				sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(dataset.label) + "/data?nearRealtime=" + !dataset.useCache).then(function(data){
 					$scope.htmlDataset = data.data;
 					if($scope.ngModel.cssToRender){
 						$scope.checkPlaceholders($scope.ngModel.cssToRender).then(
@@ -71,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									$scope.trustedCss = $sce.trustAsHtml('<style>'+placeholderResultCss+'</style>');
 								}
 							)
-					}		
+					}
 					$scope.checkCustomFunctions($scope.ngModel.htmlToRender).then(
 						function(resultHtml){
 							$scope.checkPlaceholders(resultHtml).then(
@@ -81,16 +82,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							)
 						}
 					)
-					
+
 				},function(error){
-					
+
 				});
 			}else {
 				$scope.trustedCss = $sce.trustAsHtml('<style>'+$scope.ngModel.cssToRender+'</style>');
 				$scope.trustedHtml = $sce.trustAsHtml($scope.ngModel.htmlToRender);
 			}
 		}
-		
+
 		/**
 		 * Get the dataset column name from the readable name. ie: 'column_1' for the name 'id'
 		 */
@@ -101,14 +102,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 		}
-		
+
 		/**
 		 * Regular Expressions used in the placeholder functions
 		 */
 		$scope.columnRegex = /(?:\[kn-column=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}(?:\s+row=[\'\"]{1}(\d*)[\'\"]{1})?\])/g;
 		$scope.functionsRegex = /(?:(?:\[kn-((?!column)[a-zA-Z0-9]+)\s*([\w\=\'\""\s]+)?\]([\s\S]*)(?:\[\/kn-[a-zA-Z0-9]+\])))/g;
 		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
-		
+
 		/**
 		 * Check the existence of placeholder inside the raw html.
 		 * If there is a match the placeholder is replaced with the dataset value for that column.
@@ -124,7 +125,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				resolve(resultHtml);
 			})
 		}
-		
+
 		/**
 		 * Check the existence of custom functions inside the raw html.
 		 * If there is a match the placeholder changes the html using the function selected.
@@ -147,8 +148,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				resolve(resultHtml);
 			})
 		}
-		
-		
+
+
 		$scope.editWidget=function(index){
 			var finishEdit=$q.defer();
 			var config = {
@@ -168,21 +169,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$mdPanel.open(config);
 			return finishEdit.promise;
 		}
-		
+
 		$scope.reinit();
-		
+
 	}
-	
+
 	function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,$timeout){
 		$scope.translate=sbiModule_translate;
 		$scope.newModel = angular.copy(model);
-		
+
 		if($scope.newModel.cssOpened) $scope.newModel.cssOpened = false;
-		
+
 		$scope.toggleCss = function() {
 			$scope.newModel.cssOpened = !$scope.newModel.cssOpened;
 		}
-		
+
         //codemirror initializer
         $scope.codemirrorLoaded = function(_editor) {
             $scope._doc = _editor.getDoc();
@@ -208,7 +209,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             mode: {name: "xml", htmlMode: true},
             onLoad: $scope.codemirrorLoaded
         };
-        
+
 		$scope.saveConfiguration=function(){
 			 mdPanelRef.close();
 			 angular.copy($scope.newModel,model);
@@ -218,7 +219,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    	  		mdPanelRef.close();
    	  		finishEdit.reject();
    	  	}
-		
+
 	}
 
 	/**

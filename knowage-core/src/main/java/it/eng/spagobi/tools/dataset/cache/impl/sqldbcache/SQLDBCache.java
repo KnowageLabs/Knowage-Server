@@ -19,16 +19,12 @@ package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -43,44 +39,35 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
-import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheActivity;
 import it.eng.spagobi.tools.dataset.cache.ICacheEvent;
 import it.eng.spagobi.tools.dataset.cache.ICacheListener;
 import it.eng.spagobi.tools.dataset.cache.ICacheTrigger;
-import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
-import it.eng.spagobi.tools.dataset.cache.SelectBuilder;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
-import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
-import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
-import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
-import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
-import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
-import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
-import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
+import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBaseException;
-import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
@@ -104,8 +91,6 @@ public class SQLDBCache implements ICache {
 
 	private static final long DEFAULT_HAZELCAST_TIMEOUT = 120;
 	private static final long DEFAULT_HAZELCAST_LEASETIME = 240;
-
-	private static final int BATCH_SIZE = 5000;
 
 	static private Logger logger = Logger.getLogger(SQLDBCache.class);
 
@@ -249,16 +234,6 @@ public class SQLDBCache implements ICache {
 						String tableName = cacheItem.getTable();
 						logger.debug("The table associated to dataset [" + resultsetSignature + "] is [" + tableName + "]");
 						dataStore = dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);
-
-						/*
-						 * StringBuffer selectBuffer = new StringBuffer(); IDataSetTableDescriptor descriptor = TemporaryTableManager.getTableDescriptor(null,
-						 * tableName, dataSource); Set<String> columns = descriptor.getColumnNames(); Iterator<String> it = columns.iterator(); while
-						 * (it.hasNext()) { String column = it.next(); if (column.equalsIgnoreCase("sbicache_row_id")) { continue; }
-						 * selectBuffer.append(AbstractJDBCDataset.encapsulateColumnAlaias (column, dataSource)); if (it.hasNext()) { selectBuffer.append(", ");
-						 * } } String selectClause = selectBuffer.toString(); if (selectClause.endsWith(", ")) { selectClause = selectClause.substring(0,
-						 * selectClause.length() - 2); } String sql = "SELECT " + selectClause + " FROM " + tableName; dataStore =
-						 * dataSource.executeStatement(sql, 0, 0);
-						 */
 					} else {
 						logger.debug("Resultset with signature [" + resultsetSignature + "] not found");
 					}
@@ -322,114 +297,6 @@ public class SQLDBCache implements ICache {
 			logger.debug("OUT");
 		}
 
-	}
-
-	private List<ProjectionCriteria> getProjectionsForInLineView(CacheItem cacheItem, String tableName, String dataSet) {
-		IDataSetTableDescriptor descriptor = null;
-		try {
-			descriptor = TemporaryTableManager.getTableDescriptor(null, tableName, getDataSource());
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Cannot read columns of table [" + tableName + "]", e);
-		}
-		Map<String, String> datasetsAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
-		Assert.assertNotNull(datasetsAlias, "Datasets' aliases must be specified!!");
-		String dataSetAlias = datasetsAlias.get(dataSet);
-		Assert.assertNotNull(dataSetAlias, "Dataset's alias must be specified!!");
-
-		List<ProjectionCriteria> toReturn = new ArrayList<ProjectionCriteria>();
-		Set<String> columnsName = descriptor.getColumnNames();
-		Iterator<String> it = columnsName.iterator();
-		while (it.hasNext()) {
-			String column = it.next();
-			String prefix = dataSetAlias.toUpperCase() + " - ";
-			if (column.toUpperCase().startsWith(prefix)) {
-				String colunmName = column.substring(prefix.length());
-				ProjectionCriteria projection = new ProjectionCriteria(dataSet, colunmName, null, colunmName);
-				toReturn.add(projection);
-			}
-		}
-		return toReturn;
-	}
-
-	private String getInLineViewSQLDefinition(List<ProjectionCriteria> projections, List<FilterCriteria> filters, CacheItem cacheItem, String tableName) {
-
-		SelectBuilder sqlBuilder = new SelectBuilder();
-		sqlBuilder.from(tableName);
-		sqlBuilder.setDistinctEnabled(true);
-
-		// Columns to SELECT
-		if (projections != null) {
-			for (ProjectionCriteria projection : projections) {
-				String aggregateFunction = projection.getAggregateFunction();
-				IAggregationFunction aggregationFunction = AggregationFunctions.get(aggregateFunction);
-
-				Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
-				String columnName = projection.getColumnName();
-				if (datasetAlias != null) {
-					columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
-				}
-				columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-
-				if (aggregationFunction != null && !aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION) && columnName != "*") {
-					String aliasName = projection.getAliasName();
-					aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
-					if (aliasName != null && !aliasName.isEmpty()) {
-						columnName = aggregationFunction.apply(columnName) + " AS " + aliasName;
-					}
-				}
-				sqlBuilder.column(columnName);
-
-			}
-		}
-
-		// WHERE conditions
-		if (filters != null) {
-			for (FilterCriteria filter : filters) {
-				String leftOperand = null;
-				if (filter.getLeftOperand().isCostant()) {
-					// why? warning!
-					leftOperand = filter.getLeftOperand().getOperandValueAsString();
-				} else { // it's a column
-					Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
-					String datasetLabel = filter.getLeftOperand().getOperandDataSet();
-					leftOperand = filter.getLeftOperand().getOperandValueAsString();
-					if (datasetAlias != null) {
-						if (datasetAlias.get(datasetLabel) == null)
-							continue;
-
-						leftOperand = datasetAlias.get(datasetLabel) + " - " + filter.getLeftOperand().getOperandValueAsString();
-					}
-					leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
-				}
-
-				String operator = filter.getOperator();
-
-				String rightOperand = null;
-				if (filter.getRightOperand().isCostant()) {
-					if (filter.getRightOperand().isMultivalue()) {
-						rightOperand = "(";
-						String separator = "";
-						String stringDelimiter = "'";
-						List<String> values = filter.getRightOperand().getOperandValueAsList();
-						for (String value : values) {
-							rightOperand += separator + stringDelimiter + value + stringDelimiter;
-							separator = ",";
-						}
-						rightOperand += ")";
-					} else {
-						rightOperand = filter.getRightOperand().getOperandValueAsString();
-					}
-				} else { // it's a column
-					rightOperand = filter.getRightOperand().getOperandValueAsString();
-					rightOperand = AbstractJDBCDataset.encapsulateColumnName(rightOperand, dataSource);
-				}
-
-				sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperand + ")");
-			}
-		}
-
-		String inLineViewSQL = sqlBuilder.toString();
-		return inLineViewSQL;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -604,28 +471,6 @@ public class SQLDBCache implements ICache {
 	// REFRESH METHODS
 	// ===================================================================================
 
-	@Override
-	public synchronized void refreshIfNotContained(IDataSet dataSet, boolean wait) {
-		if (!contains(dataSet)) {
-			refresh(dataSet, wait);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
-	 */
-	@Override
-	public IDataStore refresh(IDataSet dataSet, boolean wait) {
-		return refresh(dataSet, null, wait, false);
-	}
-
-	@Override
-	public IDataStore refresh(IDataSet dataSet, IDataStore dataStore, boolean wait) {
-		return refresh(dataSet, dataStore, wait, false);
-	}
-
 	public IDataStore refresh(IDataSet dataSet, IDataStore dataStore, boolean wait, boolean force) {
 		try {
 			if (dataStore == null) {
@@ -679,9 +524,21 @@ public class SQLDBCache implements ICache {
 					// check again it is not already inserted
 					if (!cacheMetadata.containsCacheItem(signature)) {
 						String tableName = PersistedTableManager.generateRandomTableName(cacheMetadata.getTableNamePrefix());
-						BigDecimal dimension = persist(dataSet, tableName);
-						cacheMetadata.addCacheItem(signature, tableName, dimension);
+						int queryTimeout = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
+						logger.debug("Configured query timeout is " + queryTimeout + "ms");
+						PersistedTableManager persistedTableManager = new PersistedTableManager();
+						persistedTableManager.setTableName(tableName);
+						persistedTableManager.setDialect(DatabaseDialect.get(getDataSource().getHibDialectClass()));
+						persistedTableManager.setRowCountColumIncluded(false);
+						if (queryTimeout > 0) {
+							logger.debug("Setting query timeout...");
+							persistedTableManager.setQueryTimeout(queryTimeout);
+						}
+						persistedTableManager.persist(dataSet, getDataSource(), tableName);
+						cacheMetadata.addCacheItem(signature, tableName, new BigDecimal(-1));
 					}
+				} catch (Exception e) {
+					new SpagoBIRuntimeException(e);
 				} finally {
 					timing.stop();
 					mapLocks.unlock(hashedSignature);
@@ -696,90 +553,13 @@ public class SQLDBCache implements ICache {
 		logger.debug("OUT");
 	}
 
-	private BigDecimal persist(IDataSet dataSet, String tableName) {
-		logger.debug("IN");
-
-		BigDecimal dimension = new BigDecimal(-1);
-
-		try {
-			int queryTimeout = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
-			logger.debug("Configured query timeout is " + queryTimeout + "ms");
-			PersistedTableManager persistedTableManager = new PersistedTableManager();
-			persistedTableManager.setTableName(tableName);
-			persistedTableManager.setDialect(getDataSource().getHibDialectClass());
-			persistedTableManager.setRowCountColumIncluded(false);
-			if (queryTimeout > 0) {
-				logger.debug("Setting query timeout...");
-				persistedTableManager.setQueryTimeout(queryTimeout);
-			}
-			Monitor monitor = MonitorFactory.start("spagobi.cache.sqldb.persist.paginated");
-			logger.debug("Starting iteration to transfer data");
-			try (DataIterator iterator = dataSet.iterator()) {
-				Connection connection = null;
-				PreparedStatement statement = null;
-				try {
-					connection = persistedTableManager.getConnection(getDataSource());
-					connection.setAutoCommit(false);
-					statement = persistedTableManager.defineStatement(iterator.getMetaData(), getDataSource(), connection);
-
-					logger.debug("Setting required column sizes");
-					persistedTableManager.configureColumnSize(iterator.getMetaData());
-
-					logger.debug("Creating table to transfer data");
-					persistedTableManager.createTable(iterator.getMetaData(), getDataSource());
-
-					List<IRecord> records = new ArrayList<>(BATCH_SIZE);
-					int recordCount = 0;
-					while (iterator.hasNext()) {
-						logger.debug("ResultSet iteration number " + recordCount);
-						IRecord record = iterator.next();
-						records.add(record);
-						if (records.size() == BATCH_SIZE) {
-							logger.debug("Building batch to insert " + BATCH_SIZE + " records");
-							persistedTableManager.insertRecords(records, iterator.getMetaData(), statement);
-							records.clear();
-						}
-						recordCount++;
-					}
-					if (!records.isEmpty()) {
-						logger.debug("There are still " + records.size() + " records left that need to be copied into the cache");
-						persistedTableManager.insertRecords(records, iterator.getMetaData(), statement);
-						records.clear();
-					}
-					logger.debug("Committing inserts...");
-					connection.commit();
-				} catch (Exception e) {
-					logger.error("Error while trasferring data from source to cache");
-					if (connection != null) {
-						connection.rollback();
-					}
-					logger.debug("Removing the empty table from cache because no data has been copied");
-					persistedTableManager.dropTableIfExists(getDataSource(), tableName);
-					throw e;
-				} finally {
-					if (statement != null) {
-						statement.close();
-					}
-					if (connection != null) {
-						connection.close();
-					}
-				}
-			}
-			monitor.stop();
-			return dimension;
-		} catch (Exception e) {
-			throw new CacheException("An unexpected error occured while persisting store in cache", e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
 	@Override
 	@Deprecated
 	public long put(IDataSet dataSet, IDataStore dataStore) throws DataBaseException {
 		return put(dataSet, dataStore, false);
 	}
 
+	@Override
 	@Deprecated
 	public long put(IDataSet dataSet, IDataStore dataStore, boolean forceUpdate) throws DataBaseException {
 		logger.trace("IN");
@@ -828,20 +608,6 @@ public class SQLDBCache implements ICache {
 							String tableName = persistStoreInCache(dataSet, dataStore);
 							timeSpent = System.currentTimeMillis() - start;
 							Map<String, Object> properties = new HashMap<String, Object>();
-							List<Integer> breakIndexes = (List<Integer>) dataStore.getMetaData().getProperty("BREAK_INDEXES");
-							if (breakIndexes != null) {
-								properties.put("BREAK_INDEXES", breakIndexes);
-							}
-							Map<String, List<String>> columnNames = (Map<String, List<String>>) dataStore.getMetaData().getProperty("COLUMN_NAMES");
-							if (columnNames != null) {
-								properties.put("COLUMN_NAMES", columnNames);
-							}
-							// a
-							Map<String, String> datasetAlias = (Map<String, String>) dataStore.getMetaData().getProperty("DATASET_ALIAS");
-							if (datasetAlias != null) {
-								properties.put("DATASET_ALIAS", datasetAlias);
-							}
-
 							getMetadata().addCacheItem(signature, properties, tableName, dataStore);
 
 						} else {
@@ -895,6 +661,30 @@ public class SQLDBCache implements ICache {
 				throw (CacheException) t;
 			else
 				throw new CacheException("An unexpected error occured while persisting store in cache", t);
+		} finally {
+			logger.trace("OUT");
+		}
+	}
+
+	private void updateStoreInCache(CacheItem cacheItem, IDataStore dataStore) {
+		logger.trace("IN");
+		try {
+			int queryTimeout;
+			try {
+				queryTimeout = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
+			} catch (NumberFormatException nfe) {
+				logger.debug("The value of SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT config must be an integer");
+				queryTimeout = -1;
+			}
+
+			PersistedTableManager persistedTableManager = new PersistedTableManager();
+			persistedTableManager.setRowCountColumIncluded(true);
+			if (queryTimeout > 0) {
+				persistedTableManager.setQueryTimeout(queryTimeout);
+			}
+			Monitor monitor = MonitorFactory.start("spagobi.cache.sqldb.updateStoreInCache.updatedataset");
+			// persistedTableManager.updateDataset(getDataSource(), dataStore, cacheItem.getTable());
+			monitor.stop();
 		} finally {
 			logger.trace("OUT");
 		}
@@ -1159,7 +949,7 @@ public class SQLDBCache implements ICache {
 		dataStore.appendRecord(record);
 
 		// persist the datastore as a table on db
-		String dialect = dataSource.getHibDialectClass();
+		DatabaseDialect dialect = DatabaseDialect.get(dataSource.getHibDialectClass());
 		PersistedTableManager persistedTableManager = new PersistedTableManager();
 		persistedTableManager.setDialect(dialect);
 		Random ran = new Random();
@@ -1265,8 +1055,7 @@ public class SQLDBCache implements ICache {
 
 	@Override
 	public IDataStore refresh(List<IDataSet> dataSets, boolean wait) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	public static long getTimeout() {
@@ -1291,5 +1080,45 @@ public class SQLDBCache implements ICache {
 			lockLeaseTime = DEFAULT_HAZELCAST_LEASETIME;
 		}
 		return lockLeaseTime;
+	}
+
+	@Override
+	public void update(String hashedSignature, IDataStore dataStore) {
+		logger.trace("IN");
+		logger.debug("Dataset has #" + dataStore.getMetaData().getFieldCount() + "  fields. The Dataset will be persisted.");
+
+		long timeSpent = 0;
+		Monitor timing = MonitorFactory.start("Knowage.SQLDBCache.put:gettingMap");
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		timing.stop();
+		try {
+			timing = MonitorFactory.start("Knowage.SQLDBCache.put:gettingLock[" + hashedSignature + "]");
+			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
+				timing.stop();
+				try {
+					timing = MonitorFactory.start("Knowage.SQLDBCache.put:usingLock[" + hashedSignature + "]");
+
+					// check again it is not already inserted
+					CacheItem cacheItem = getMetadata().getCacheItem(hashedSignature, true);
+					Assert.assertNotNull(cacheItem, "Cannot find a cache item for [" + hashedSignature + "]");
+
+					long start = System.currentTimeMillis();
+					updateStoreInCache(cacheItem, dataStore);
+					timeSpent = System.currentTimeMillis() - start;
+					cacheItem.setCreationDate(new Date());
+					getMetadata().updateCacheItem(cacheItem);
+				} finally {
+					timing.stop();
+					mapLocks.unlock(hashedSignature);
+				}
+			} else {
+				timing.stop();
+				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout.");
+			}
+		} catch (InterruptedException e) {
+			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time.", e);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 }

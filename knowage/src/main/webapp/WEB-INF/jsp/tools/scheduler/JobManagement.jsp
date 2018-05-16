@@ -172,13 +172,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 														</md-select>
 													</md-input-container>
 													
-													<md-input-container ng-show="parameter.type == 'fixed'">
-														<label>{{translate.load("sbi.execution.roleselection.fieldlabel")}}</label>
-														<md-select aria-label="aria-label" ng-model="parameter.role"> 
-															<md-option ng-repeat="role in ctrl.selectedDocumentRoles" value="{{role.role}}">{{role.role}}</md-option>
-														</md-select>
-													</md-input-container>
-													
 													<md-input-container class="md-block" ng-show="parameter.type == 'fixed' && parameter.values.length > 0 && !parameter.manualInput">
 														<label>{{translate.load("sbi.thresholds.values")}}</label>
 														<md-select ng-model="parameter.selectedValues" ng-disabled="!parameter.role || parameter.role == ''" md-on-close="ctrl.saveParameterValues(parameter)" multiple
@@ -194,7 +187,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 													
 													<md-input-container ng-show="parameter.type == 'loadAtRuntime'">
 														<label>{{translate.load("sbi.execution.roleselection.fieldlabel")}}</label>
-														<md-select aria-label="aria-label" ng-model="parameter.value"> 
+														<md-select aria-label="aria-label" ng-model="parameter.value">
 															<md-option ng-repeat="role in ctrl.selectedDocumentRoles" value="{{role.userAndRole}}">{{role.role}}</md-option>
 														</md-select>
 													</md-input-container>

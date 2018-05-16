@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,9 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -43,14 +47,17 @@ import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.database.CacheDataBase;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -67,7 +74,7 @@ public class PersistedTableManager implements IPersistedManager {
 
 	private static final int BATCH_SIZE = 1000;
 
-	private String dialect = new String();
+	private DatabaseDialect dialect = null;
 	private String tableName = new String();
 	private boolean rowCountColumIncluded = false;
 	private Map<String, Integer> columnSize = new HashMap<String, Integer>();
@@ -76,17 +83,6 @@ public class PersistedTableManager implements IPersistedManager {
 	private IEngUserProfile profile = null;
 
 	private static transient Logger logger = Logger.getLogger(PersistedTableManager.class);
-	public static final String DIALECT_MYSQL = "MySQL";
-	public static final String DIALECT_POSTGRES = "PostgreSQL";
-	public static final String DIALECT_ORACLE = "OracleDialect";
-	public static final String DIALECT_HSQL = "HSQL";
-	public static final String DIALECT_HSQL_PRED = "Predefined hibernate dialect";
-	public static final String DIALECT_ORACLE9i10g = "Oracle9Dialect";
-	public static final String DIALECT_SQLSERVER = "SQLServer";
-	public static final String DIALECT_DB2 = "DB2";
-	public static final String DIALECT_INGRES = "Ingres";
-	public static final String DIALECT_TERADATA = "Teradata";
-	public static final String DIALECT_VOLTDB = "VoltDBDialect";
 
 	static final String Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -115,17 +111,18 @@ public class PersistedTableManager implements IPersistedManager {
 	public void persistDataSet(IDataSet dataset, IDataSource dsPersist, String tableName) throws Exception {
 		logger.debug("IN");
 
-		// get persisted table name
-		this.setTableName(tableName);
-		logger.debug("Persisted table name is [" + getTableName() + "]");
-		// set dialect of db
-		this.setDialect(dsPersist.getHibDialectClass());
-		logger.debug("DataSource target dialect is [" + getDialect() + "]");
-		// for the first version not all target dialect are enable
-		if (getDialect().contains(DIALECT_DB2) || getDialect().contains(DIALECT_INGRES) || getDialect().contains(DIALECT_TERADATA)) {
+		IDataBase database = DataBaseFactory.getDataBase(dsPersist);
+		if (!database.isCacheSupported()) {
 			logger.error("Persistence management not implemented for dialect " + getDialect() + ".");
 			throw new SpagoBIRuntimeException("Persistence management not implemented for dialect " + getDialect() + ".");
 		}
+
+		setTableName(tableName);
+		logger.debug("Persisted table name is [" + getTableName() + "]");
+
+		setDialect(database.getDatabaseDialect());
+		logger.debug("DataSource target dialect is [" + getDialect() + "]");
+
 		String signature = dataset.getSignature();
 		logger.debug("Dataset signature : " + signature);
 		if (signature != null && signature.equals(TemporaryTableManager.getLastDataSetSignature(tableName))) {
@@ -135,18 +132,89 @@ public class PersistedTableManager implements IPersistedManager {
 		}
 
 		dataset.setPersisted(false);
-		dataset.loadData();
-		IDataStore datastore = dataset.getDataStore();
-		if (dataset.getDsType().toString().equalsIgnoreCase("File")) {
-			ajustMetaDataFromFrontend(datastore, dataset);
+		if (dataset.isIterable()) {
+			persist(dataset, dsPersist, tableName);
+		} else {
+			dataset.loadData();
+			IDataStore datastore = dataset.getDataStore();
+			if (dataset.getDsType().toString().equalsIgnoreCase("File")) {
+				ajustMetaDataFromFrontend(datastore, dataset);
+			}
+			persistDataset(datastore, dsPersist);
 		}
-		persistDataset(datastore, dsPersist);
+	}
+
+	public void persist(IDataSet dataSet, IDataSource datasource, String tableName) throws Exception {
+		logger.debug("IN");
+
+		Monitor monitor = MonitorFactory.start("spagobi.cache.sqldb.persist.paginated");
+		logger.debug("Starting iteration to transfer data");
+		try (DataIterator iterator = dataSet.iterator()) {
+			Connection connection = null;
+			PreparedStatement statement = null;
+			try {
+				connection = getConnection(datasource);
+				connection.setAutoCommit(false);
+				statement = defineStatement(iterator.getMetaData(), datasource, connection);
+
+				logger.debug("Setting required column sizes");
+				configureColumnSize(iterator.getMetaData());
+
+				logger.debug("Creating table to transfer data");
+				createTable(iterator.getMetaData(), datasource);
+
+				List<IRecord> records = new ArrayList<>(BATCH_SIZE);
+				int recordCount = 0;
+				while (iterator.hasNext()) {
+					logger.debug("ResultSet iteration number " + recordCount);
+					IRecord record = iterator.next();
+					records.add(record);
+					if (records.size() == BATCH_SIZE) {
+						logger.debug("Building batch to insert " + BATCH_SIZE + " records");
+						insertRecords(records, iterator.getMetaData(), statement);
+						records.clear();
+					}
+					recordCount++;
+				}
+				if (!records.isEmpty()) {
+					logger.debug("There are still " + records.size() + " records left that need to be copied into the cache");
+					insertRecords(records, iterator.getMetaData(), statement);
+					records.clear();
+				}
+				logger.debug("Committing inserts...");
+				connection.commit();
+			} catch (Exception e) {
+				logger.error("Error while trasferring data from source to cache");
+				if (connection != null) {
+					connection.rollback();
+				}
+				logger.debug("Removing the empty table from cache because no data has been copied");
+				dropTableIfExists(datasource, tableName);
+				throw e;
+			} finally {
+				if (statement != null) {
+					statement.close();
+				}
+				if (connection != null) {
+					connection.close();
+				}
+				monitor.stop();
+				logger.debug("OUT");
+			}
+		}
 	}
 
 	public void persistDataset(IDataSet dataSet, IDataStore datastore, IDataSource datasource, String tableName) throws Exception {
 
+		IDataBase database = DataBaseFactory.getDataBase(datasource);
+		if (!database.isCacheSupported()) {
+			logger.debug("Persistence management isn't implemented for " + getDialect() + ".");
+			throw new SpagoBIServiceException("", "sbi.ds.dsCannotPersistDialect");
+		}
+
 		this.setTableName(tableName);
-		this.setDialect(datasource.getHibDialectClass());
+		this.setDialect(database.getDatabaseDialect());
+		logger.debug("DataSource target dialect is [" + getDialect() + "]");
 
 		if (dataSet instanceof VersionedDataSet) {
 			dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
@@ -155,13 +223,26 @@ public class PersistedTableManager implements IPersistedManager {
 			datastore = normalizeFileDataSet(dataSet, datastore);
 		}
 
-		logger.debug("DataSource target dialect is [" + getDialect() + "]");
-		// for the first version not all target dialect are enable
-		if (getDialect().contains(DIALECT_DB2) || getDialect().contains(DIALECT_INGRES) || getDialect().contains(DIALECT_TERADATA)) {
+		persistDataset(datastore, datasource);
+	}
+
+	public void updateDataset(IDataSource datasource, IDataStore datastore, String tableName) throws Exception {
+
+		IDataBase database = DataBaseFactory.getDataBase(datasource);
+		if (!database.isCacheSupported()) {
 			logger.debug("Persistence management isn't implemented for " + getDialect() + ".");
 			throw new SpagoBIServiceException("", "sbi.ds.dsCannotPersistDialect");
 		}
-		persistDataset(datastore, datasource);
+
+		this.setTableName(tableName);
+		this.setDialect(database.getDatabaseDialect());
+		logger.debug("DataSource target dialect is [" + getDialect() + "]");
+
+		updateDataset(datastore, datasource);
+	}
+
+	private void updateDataset(IDataStore datastore, IDataSource datasource) throws Exception {
+
 	}
 
 	private IDataStore normalizeFileDataSet(IDataSet dataSet, IDataStore datastore) {
@@ -333,7 +414,7 @@ public class PersistedTableManager implements IPersistedManager {
 		String totalQuery = insertQuery + values;
 		logger.debug("create table statement: " + createQuery);
 		try {
-			if (getDialect().contains(DIALECT_HSQL) || getDialect().contains(DIALECT_HSQL_PRED)) {
+			if (getDialect().equals(DatabaseDialect.HSQL)) {
 				// WORKAROUND for HQL : it needs the physical table for define a
 				// prepareStatement.
 				// So, drop and create an empty target table
@@ -431,7 +512,7 @@ public class PersistedTableManager implements IPersistedManager {
 		String totalQuery = insertQuery + values;
 		logger.debug("create table statement: " + createQuery);
 		try {
-			if (getDialect().contains(DIALECT_HSQL) || getDialect().contains(DIALECT_HSQL_PRED)) {
+			if (getDialect().equals(DatabaseDialect.HSQL)) {
 				// WORKAROUND for HQL : it needs the physical table for define a
 				// prepareStatement.
 				// So, drop and create an empty target table
@@ -474,104 +555,6 @@ public class PersistedTableManager implements IPersistedManager {
 		return dataBase.getDataBaseType(type);
 	}
 
-	/**
-	 * @deprecated
-	 */
-	@Deprecated
-	private String getDBFieldType(IFieldMetaData fieldMetaData) {
-		String toReturn = "";
-		String type = fieldMetaData.getType().toString();
-		logger.debug("Column type input: " + type);
-		if (fieldMetaData.getFieldType().equals(FieldType.MEASURE) && type.contains("java.lang.String")) {
-			logger.debug("Column type is string but the field is measure: converting it into a double");
-			type = "java.lang.Double";
-		}
-
-		if (type.contains("java.lang.String")) {
-			String charLbl = "";
-			toReturn = " VARCHAR ";
-			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) {
-				toReturn = " VARCHAR2 ";
-				charLbl = " CHAR";
-			}
-			if (getColumnSize().get(fieldMetaData.getName()) == null) {
-				toReturn += " (4000)"; // maxvalue for default
-			} else {
-				toReturn += " (" + getColumnSize().get(fieldMetaData.getName()) + charLbl + " )";
-			}
-		} else if (type.contains("java.lang.Short")) {
-			toReturn = " INTEGER ";
-		} else if (type.contains("java.lang.Integer")) {
-			toReturn = " INTEGER ";
-		} else if (type.contains("java.lang.Long")) {
-			toReturn = " NUMERIC ";
-			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) {
-				toReturn = " NUMBER ";
-			} else if (getDialect().contains(DIALECT_MYSQL)) {
-				toReturn = " BIGINT ";
-			}
-		} else if (type.contains("java.lang.BigDecimal") || type.contains("java.math.BigDecimal")) {
-			toReturn = " NUMERIC ";
-			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) {
-				toReturn = " NUMBER ";
-			} else if (getDialect().contains(DIALECT_MYSQL)) {
-				toReturn = " DOUBLE ";
-			}
-		} else if (type.contains("java.lang.Double")) {
-			toReturn = " DOUBLE ";
-			if (getDialect().contains(DIALECT_POSTGRES) || getDialect().contains(DIALECT_SQLSERVER) || getDialect().contains(DIALECT_TERADATA)) {
-				toReturn = " NUMERIC ";
-			} else if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) {
-				toReturn = " NUMBER ";
-			}
-		} else if (type.contains("java.lang.Float")) {
-			toReturn = " DOUBLE ";
-			if (getDialect().contains(DIALECT_POSTGRES) || getDialect().contains(DIALECT_SQLSERVER) || getDialect().contains(DIALECT_TERADATA)) {
-				toReturn = " NUMERIC ";
-			} else if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) {
-				toReturn = " NUMBER ";
-			}
-		} else if (type.contains("java.lang.Boolean")) {
-			toReturn = " BOOLEAN ";
-			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g) || getDialect().contains(DIALECT_TERADATA)
-					|| getDialect().contains(DIALECT_DB2)) {
-				toReturn = " SMALLINT ";
-			} else if (getDialect().contains(DIALECT_SQLSERVER)) {
-				toReturn = " BIT ";
-			}
-		} else if (type.contains("java.sql.Date")) {
-			toReturn = " DATE ";
-			if (getDialect().contains(DIALECT_SQLSERVER)) {
-				toReturn = " DATETIME ";
-			}
-		} else if (type.contains("java.sql.Timestamp")) {
-			toReturn = " TIMESTAMP ";
-			if (getDialect().contains(DIALECT_SQLSERVER)) {
-				toReturn = " DATETIME ";
-			}
-		} else if (type.contains("[B")) {
-			toReturn = " TEXT ";
-			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) {
-				toReturn = " BLOB ";
-			} else if (getDialect().contains(DIALECT_MYSQL)) {
-				toReturn = " MEDIUMBLOB ";
-			} else if (getDialect().contains(DIALECT_POSTGRES)) {
-				toReturn = " BYTEA ";
-			} else if (getDialect().contains(DIALECT_HSQL)) {
-				toReturn = " LONGVARBINARY ";
-			}
-		} else if (type.contains("[C")) {
-			toReturn = " TEXT ";
-			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) {
-				toReturn = " CLOB ";
-			}
-		} else {
-			logger.debug("Cannot mapping the column type " + type);
-		}
-		logger.debug("Column type output: " + toReturn);
-		return toReturn;
-	}
-
 	private String getCreateTableQuery(IMetaData md, IDataSource dataSource) throws DataBaseException {
 		String toReturn = null;
 
@@ -591,6 +574,7 @@ public class PersistedTableManager implements IPersistedManager {
 				String columnName = getSQLColumnName(fmd);
 				logger.debug("Adding field #" + i + " with column name [" + columnName + "]");
 				toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource) + getDBFieldType(dataSource, fmd);
+				toReturn += " " + (md.getIdFieldIndex() == i ? "NOT NULL PRIMARY KEY" : "");
 				toReturn += ((i < l - 1) ? " , " : "");
 			}
 			toReturn += " )";
@@ -657,39 +641,6 @@ public class PersistedTableManager implements IPersistedManager {
 		}
 	}
 
-	private void executeBatch(List queryInsert, IDataSource datasource) throws Exception {
-		logger.debug("IN");
-		Connection connection = null;
-		String dialect = datasource.getHibDialectClass();
-		try {
-			// connection = datasource.getConnection();
-			connection = getConnection(datasource);
-			if (!dialect.contains("VoltDB")) {
-				connection.setAutoCommit(false);
-			}
-			Statement statement = connection.createStatement();
-			for (int i = 0, l = queryInsert.size(); i < l; i++) {
-				statement.addBatch(queryInsert.get(i).toString());
-			}
-			statement.executeBatch();
-			statement.close();
-			if (!dialect.contains("VoltDB")) {
-				connection.commit();
-			}
-			logger.debug("Insertion of records on persistable table executed successfully!");
-		} catch (Exception e) {
-			if (connection != null && !dialect.contains("VoltDB")) {
-				connection.rollback();
-			}
-			throw e;
-		} finally {
-			if (connection != null && !connection.isClosed()) {
-				connection.close();
-			}
-			logger.debug("OUT");
-		}
-	}
-
 	private void dropTableIfExists(IDataSource datasource) {
 		// drop the persisted table if one exists
 		try {
@@ -715,16 +666,16 @@ public class PersistedTableManager implements IPersistedManager {
 	public void dropTablesWithPrefix(IDataSource datasource, String prefix) {
 		logger.debug("Dropping Tables with name prefix " + prefix + " if they exists...");
 
-		String dialect = datasource.getHibDialectClass();
+		DatabaseDialect dialect = DatabaseDialect.get(datasource.getHibDialectClass());
 
 		String statement = null;
 
 		// get the list of tables names
-		if (dialect.contains(DIALECT_ORACLE) || dialect.contains(DIALECT_ORACLE9i10g)) {
+		if (dialect.equals(DatabaseDialect.ORACLE) || dialect.equals(DatabaseDialect.ORACLE_9I10G)) {
 			statement = "SELECT TABLE_NAME " + "FROM USER_TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toUpperCase() + "%'";
-		} else if (dialect.contains(DIALECT_SQLSERVER) || (dialect.contains(DIALECT_MYSQL) || dialect.contains(DIALECT_POSTGRES))) {
+		} else if (dialect.equals(DatabaseDialect.SQLSERVER) || dialect.equals(DatabaseDialect.MYSQL) || dialect.equals(DatabaseDialect.POSTGRESQL)) {
 			statement = "SELECT TABLE_NAME " + "FROM INFORMATION_SCHEMA.TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toLowerCase() + "%'";
-		} else if (dialect.contains(DIALECT_HSQL) || dialect.contains(DIALECT_HSQL_PRED)) {
+		} else if (dialect.equals(DatabaseDialect.HSQL)) {
 			statement = "SELECT TABLE_NAME " + "FROM INFORMATION_SCHEMA.SYSTEM_TABLES  " + "WHERE TABLE_TYPE = 'TABLE' AND TABLE_NAME LIKE '"
 					+ prefix.toUpperCase() + "%'";
 		}
@@ -824,11 +775,11 @@ public class PersistedTableManager implements IPersistedManager {
 		this.profile = profile;
 	}
 
-	public String getDialect() {
+	public DatabaseDialect getDialect() {
 		return dialect;
 	}
 
-	public void setDialect(String dialect) {
+	public void setDialect(DatabaseDialect dialect) {
 		this.dialect = dialect;
 	}
 

@@ -1,14 +1,11 @@
 <md-card class="flexCard customTableWidgetConfiguration" >
-	<md-card-content flex layout="column" class="noPadding">
-
-		<md-toolbar>
+	<md-toolbar>
 			<div class="md-toolbar-tools">
 				<h2>{{::translate.format(translate.load('sbi.cockpit.widget.configuration'),translate.load('sbi.cockpit.widget.table'))}}</h2>
 				<span flex/>
 			</div>
 		</md-toolbar>
-
-		<md-content flex layout="column" >
+	<md-card-content class="noPadding" layout="column" flex>
 			<md-tabs md-selected='selectedTab.tab' md-border-bottom flex>
 			
 				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.columns')}}">
@@ -201,9 +198,7 @@
 				</md-tab>
 				
 			</md-tabs>
-		</md-content>
 	</md-card-content>
-	
 	<md-card-actions layout="row" layout-align="end center">
 		<span flex></span>
 		<md-button ng-click="cancelConfiguration()" class=" md-raised" >

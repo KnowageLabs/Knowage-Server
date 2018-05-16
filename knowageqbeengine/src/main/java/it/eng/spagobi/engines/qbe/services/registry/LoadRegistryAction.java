@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,24 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.qbe.services.registry;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
@@ -52,22 +65,9 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- * 
+ *
  */
 
 public class LoadRegistryAction extends ExecuteQueryAction {
@@ -210,6 +210,15 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			Integer prevVal = (Integer) previousValue;
 			Integer result = currVal + prevVal;
 			resultToReturn = result;
+		} else if (currentValue instanceof Short) {
+			Integer currVal = ((Short) currentValue).intValue();
+			Integer prevVal = null;
+			if (previousValue instanceof Short) {
+				prevVal = ((Short) previousValue).intValue();
+			} else {
+				prevVal = (Integer) previousValue;
+			}
+			resultToReturn = currVal + prevVal;
 		} else if (currentValue instanceof Float) {
 			Float currValF = (Float) currentValue;
 			Float prevValF = (Float) previousValue;
@@ -627,8 +636,9 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 						name = field.getName();
 					}
 
-					String sorter = column.getSorter() != null && (column.getSorter().equalsIgnoreCase("ASC") || column.getSorter().equalsIgnoreCase("DESC")) ? column
-							.getSorter().toUpperCase() : null;
+					String sorter = column.getSorter() != null && (column.getSorter().equalsIgnoreCase("ASC") || column.getSorter().equalsIgnoreCase("DESC"))
+							? column.getSorter().toUpperCase()
+							: null;
 
 					query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, sorter, field.getPropertyAsString("format"));
 					fieldNameIdMap.put(column.getField(), field.getUniqueName());
@@ -770,8 +780,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			String subEntityKey = entityUName.substring(0, entityUName.lastIndexOf("::")) + "::" + column.getSubEntity() + "(" + column.getForeignKey() + ")";
 			IModelEntity subEntity = entity.getSubEntity(subEntityKey);
 			if (subEntity == null) {
-				throw new SpagoBIEngineServiceException(getActionName(), "Sub-entity [" + column.getSubEntity() + "] not found in entity [" + entity.getName()
-						+ "]!");
+				throw new SpagoBIEngineServiceException(getActionName(),
+						"Sub-entity [" + column.getSubEntity() + "] not found in entity [" + entity.getName() + "]!");
 			}
 			entity = subEntity;
 		}

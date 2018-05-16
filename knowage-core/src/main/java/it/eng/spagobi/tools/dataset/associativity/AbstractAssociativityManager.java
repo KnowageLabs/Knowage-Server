@@ -37,7 +37,6 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
-import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
@@ -47,6 +46,7 @@ import it.eng.spagobi.tools.dataset.graph.associativity.container.AssociativeDat
 import it.eng.spagobi.tools.dataset.graph.associativity.container.IAssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;

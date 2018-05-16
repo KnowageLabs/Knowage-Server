@@ -49,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body class="bodyStyle kn-dataSource" ng-controller="dataSourceController as ctrl">
 	<angular-list-detail  show-detail="showMe">
 
-	 	<list label='translate.load("sbi.ds.dataSource")' new-function="createNewDatasource">
+	 	<list label='translate.load("sbi.ds.dataSource")' new-function="createNewDatasource" show-new-button="<%= superadmin %>">
 			<angular-table
 						flex
 						id="dataSourceList"

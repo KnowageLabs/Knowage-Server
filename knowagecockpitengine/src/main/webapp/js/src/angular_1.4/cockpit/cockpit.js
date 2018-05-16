@@ -39,7 +39,8 @@ var cockpitApp= angular.module("cockpitModule",[
 	'accessible_angular_table',
 	'cockpitTable',
 	'jsonFormatter',
-	'ui.codemirror'
+	'ui.codemirror',
+	'knModule'
 	]);
 cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')

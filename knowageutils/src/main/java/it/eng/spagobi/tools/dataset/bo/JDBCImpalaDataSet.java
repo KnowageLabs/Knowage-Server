@@ -20,8 +20,8 @@ package it.eng.spagobi.tools.dataset.bo;
 
 import java.util.List;
 
-import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 
 /**
  * @authors Francesco Lucchi (francesco.lucchi@eng.it)

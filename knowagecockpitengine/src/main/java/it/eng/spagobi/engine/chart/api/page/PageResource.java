@@ -18,6 +18,7 @@
 package it.eng.spagobi.engine.chart.api.page;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,8 +46,11 @@ import it.eng.knowage.slimerjs.wrapper.beans.CustomHeaders;
 import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
 import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
 import it.eng.knowage.slimerjs.wrapper.enums.RenderFormat;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engine.chart.ChartEngine;
 import it.eng.spagobi.engine.chart.ChartEngineInstance;
 import it.eng.spagobi.engine.chart.api.AbstractChartEngineResource;
@@ -68,7 +72,7 @@ public class PageResource extends AbstractChartEngineResource {
 
 	private static final String OUTPUT_TYPE = "outputType";
 	private static final String PDF_PAGE_ORIENTATION = "pdfPageOrientation";
-	private static final String PDF_ZOOM = "pdfZoom";
+	private static final String PDF_ZOOM = "pdfZoomFactor";
 	private static final String PDF_WIDTH = "pdfWidth";
 	private static final String PDF_HEIGHT = "pdfHeight";
 	private static final String PDF_WAIT_TIME = "pdfWaitTime";
@@ -277,18 +281,32 @@ public class PageResource extends AbstractChartEngineResource {
 		return renderOptions;
 	}
 
-	private String getRequestUrlForPdfExport(HttpServletRequest request) {
-		StringBuilder sb = new StringBuilder(request.getRequestURL().toString());
+	public String getServiceHostUrl() {
+		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
+		return serviceURL;
+	}
+
+	private String getRequestUrlForPdfExport(HttpServletRequest request) throws UnsupportedEncodingException {
+		String requestURL = request.getRequestURL().toString();
+		String hostURL = GeneralUtilities.getSpagoBiHost();
+		String serviceURL = getServiceHostUrl();
+		StringBuilder sb = new StringBuilder(requestURL.replace(hostURL, serviceURL));
 		String sep = "?";
 		Map<String, String[]> parameterMap = request.getParameterMap();
+
 		for (String parameter : parameterMap.keySet()) {
 			if (!PDF_PARAMETERS.contains(parameter)) {
 				String[] values = parameterMap.get(parameter);
 				if (values != null && values.length > 0) {
 					sb.append(sep);
-					sb.append(parameter);
+					sb.append(URLEncoder.encode(parameter, "UTF-8"));
 					sb.append("=");
-					sb.append(values[0]);
+					if (parameter.equals(SpagoBIConstants.SBI_HOST)) {
+						sb.append(URLEncoder.encode(getServiceHostUrl(), "UTF-8"));
+					} else {
+						sb.append(URLEncoder.encode(values[0], "UTF-8"));
+					}
 					sep = "&";
 				}
 			}
@@ -297,18 +315,26 @@ public class PageResource extends AbstractChartEngineResource {
 		return sb.toString();
 	}
 
-	private String getRequestUrlForJpgExport(HttpServletRequest request) {
-		StringBuilder sb = new StringBuilder(request.getRequestURL().toString());
+	private String getRequestUrlForJpgExport(HttpServletRequest request) throws UnsupportedEncodingException {
+		String requestURL = request.getRequestURL().toString();
+		String hostURL = GeneralUtilities.getSpagoBiHost();
+		String serviceURL = getServiceHostUrl();
+		StringBuilder sb = new StringBuilder(requestURL.replace(hostURL, serviceURL));
 		String sep = "?";
 		Map<String, String[]> parameterMap = request.getParameterMap();
+
 		for (String parameter : parameterMap.keySet()) {
 			if (!JPG_PARAMETERS.contains(parameter)) {
 				String[] values = parameterMap.get(parameter);
 				if (values != null && values.length > 0) {
 					sb.append(sep);
-					sb.append(parameter);
+					sb.append(URLEncoder.encode(parameter, "UTF-8"));
 					sb.append("=");
-					sb.append(values[0]);
+					if (parameter.equals(SpagoBIConstants.SBI_HOST)) {
+						sb.append(URLEncoder.encode(getServiceHostUrl(), "UTF-8"));
+					} else {
+						sb.append(URLEncoder.encode(values[0], "UTF-8"));
+					}
 					sep = "&";
 				}
 			}

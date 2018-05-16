@@ -17,20 +17,15 @@
  */
 package it.eng.spagobi.tools.dataset.listener;
 
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
-
-import java.util.List;
-
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.ConfigurableServerChannel;
 import org.cometd.bayeux.server.LocalSession;
 import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.server.AbstractService;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 
 public class CometService extends AbstractService {
 
@@ -74,20 +69,8 @@ public class CometService extends AbstractService {
 
 	protected String getJSON(DataStoreChangedEvent event) throws JSONException {
 		JSONObject res = new JSONObject();
-		res.put("dataStore", writer.write(event.getCurrentStore()));
-		res.put("deleted", event.getDeleted().size());
-		res.put("added", event.getAdded().size());
-		res.put("updated", event.getUpdated().size());
+		res.put("dataStore", writer.write(event.getDataStore()));
 		res.put("isChanged", event.isChanged());
 		return res.toString();
 	}
-
-	private static JSONArray getJSONRecords(List<IRecord> recs, IDataStore dataStore) throws JSONException {
-		JSONArray res = new JSONArray();
-		for (IRecord rec : recs) {
-			res.put(writer.writeRecord(dataStore, rec));
-		}
-		return res;
-	}
-
 }

@@ -10,7 +10,7 @@
 			      </md-button>
 			      </div>
 		  </md-toolbar>
-    <md-dialog-content flex layout="column" autoWrap:false>
+    <md-dialog-content flex layout="row" >
     	  
 		      <div layout-margin layout="column" flex class="relative"> 
 		       	
@@ -95,12 +95,10 @@
 								<input class="input_class" type="number" ng-model="range.value"> 
 							</md-input-container>
 							
-							<md-input-container flex=10 class="md-block"> 
-								<label>Icon</label>
-								<md-select aria-label="aria-label" ng-model="range.icon">
-									<md-option ng-repeat="i in icons" value="{{i}}"><i ng-class="i"></i></md-option>
-								</md-select>
-							</md-input-container>
+							<button flex="10" class="md-button md-raised md-button-empty" ng-click="chooseIcon(range)" ng-style="{'background-color':range['background-color']}">
+								<span ng-if="!range.icon">Choose Icon</span>
+								<i ng-if="range.icon" ng-class="range.icon" ng-style="{'color':range.color}"></i>
+							</button>
 							
 							<md-input-container flex=20 class="md-block"> 
 								<label>Icon color</label>
@@ -192,6 +190,7 @@
 				</md-card>
 		      </div>
     		</div>
+    		<ng-include src="getTemplateUrl('tableWidgetAddIconDialog')" flex="20" ng-if="tempVar"></ng-include>
     </md-dialog-content>
    
     <md-dialog-actions layout="row">

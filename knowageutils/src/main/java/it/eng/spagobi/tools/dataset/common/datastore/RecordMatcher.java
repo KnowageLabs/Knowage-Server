@@ -1,9 +1,9 @@
 package it.eng.spagobi.tools.dataset.common.datastore;
 
-import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import it.eng.spagobi.tools.dataset.metasql.FilterCriteria;
 
 public class RecordMatcher implements IRecordMatcher {
 

@@ -117,6 +117,11 @@ md-checkbox.md-knowage-theme.md-checked ._md-icon {
   }
 }
 
+.md-button.md-knowage-theme.md-raised.md-button-empty {
+  background-color: white;
+  color: $baseColor;
+}
+
 .md-button.md-knowage-theme.md-fab {
   &:not([disabled]) {
           background-color: $fabPrimaryColor !important;
@@ -359,7 +364,6 @@ a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.m
 }
 
 .kn-noItems {
-    width: 60%;
     margin: 8px !important;
     border: 1px solid rgba($ternaryColor,.6);
     padding: 8px;
@@ -387,10 +391,14 @@ a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.m
     }
 }
 
+md-icon {
+  text-align: center;
+}
 
 .kn-list md-icon.fa {
   padding-left:0;
 }
+
 
 .zindexback{
   z-index:0 !important;
@@ -925,6 +933,12 @@ color-picker {
   &.selected {
     background-color: $tableSelectedElementColor;
   }
+}
+
+.truncated {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 /* IE11 fix */

@@ -56,10 +56,7 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		}
 		currStore.setMetaData(metadata);
 
-		DataStoreChangedEvent event = op.createEvent(prevStore, currStore, curr);
-		assertRecords(added, event.getAdded());
-		assertRecords(updated, event.getUpdated());
-		assertRecords(deleted, event.getDeleted());
+		DataStoreChangedEvent event = new DataStoreChangedEvent(curr, currStore);
 	}
 
 	public void testCreateEvent() {

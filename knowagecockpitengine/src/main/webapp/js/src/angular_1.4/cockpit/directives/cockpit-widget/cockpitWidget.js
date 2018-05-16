@@ -709,22 +709,6 @@ function cockpitWidgetControllerFunction(
 			}
 		}
 
-		// skip selection if dataset is realtime and associated
-		if ($scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
-    		var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
-    		if (dataset.isRealtime){
-    			for(var i in cockpitModule_template.configuration.associations){
-    				var association = cockpitModule_template.configuration.associations[i];
-    				for(var j in association.fields){
-    					var field = association.fields[j];
-    					if(field.type=="dataset" && field.store==dataset.label){
-    						return;
-    					}
-    				}
-    			}
-    		}
-		}
-
 		if($scope.getDataset() && columnName){
 
 			if(modalColumn!=undefined && modalValue!=undefined)
@@ -838,7 +822,7 @@ function cockpitWidgetControllerFunction(
 							var temp = cockpitModule_template.configuration.filters[dsLabel];
 							delete cockpitModule_template.configuration.filters[dsLabel];
 							cockpitModule_template.configuration.filters[dsLabel] = temp;
-					}
+						}
 					}
 					if (Array.isArray(originalColumnName)){
 						for (var o=0; o < originalColumnName.length; o++){
@@ -876,6 +860,7 @@ function cockpitWidgetControllerFunction(
 	}
 
 	$scope.doEditWidget=function(initOnFinish){
+
 		var deferred;
 		if(initOnFinish){
 			deferred=$q.defer();
@@ -980,7 +965,7 @@ function cockpitWidgetControllerFunction(
 			}
 			if($scope.extendedStyle.title && $scope.extendedStyle.title.height){
 				$scope.extendedStyle.title['min-height'] = $scope.extendedStyle.title.height;
-		}
+			}
 		}
 
 		// update widgets background color

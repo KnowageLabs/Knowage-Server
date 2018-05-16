@@ -40,11 +40,7 @@ function documentBrowserFunction(
 
 
 
-	$scope.$watch(function() { return !$mdMedia('gt-sm'); }, function(big) {
-	    $scope.smallScreen = big;
-	  });
-//	$scope.setDetailOpen(false);
-
+	
 	$scope.moveBreadCrumbToFolder=function(folder,index){
 		if(folder!=null){
 			$scope.selectedDocument = undefined;

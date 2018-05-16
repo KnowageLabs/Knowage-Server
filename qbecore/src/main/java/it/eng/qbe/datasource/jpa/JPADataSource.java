@@ -184,9 +184,10 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		if (dataMartModelStructure == null) {
 			IDataSource dsSource = getToolsDataSource();
 			String dialect = dsSource.getHibDialectClass();
-			JSONObject jsonObj = new CustomizedFunctionsReader().getJSONCustomFunctionsVariable(profile);
-			CustomFunctionsSingleton.getInstance().setCustomizedFunctionsJSON(jsonObj);
-
+			if (profile != null) {
+				JSONObject jsonObj = new CustomizedFunctionsReader().getJSONCustomFunctionsVariable(profile);
+				CustomFunctionsSingleton.getInstance().setCustomizedFunctionsJSON(jsonObj);
+			}
 			structureBuilder = new JPAModelStructureBuilder(this);
 			dataMartModelStructure = structureBuilder.build();
 

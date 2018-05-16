@@ -376,6 +376,12 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    	  $scope.tmpAssociations=[];
 		    	  angular.copy(cockpitModule_template.configuration.associations,$scope.tmpAssociations);
 
+		    	  var associationsWatch=$scope.$watchCollection("tmpAssociations",function(newVal,oldVal){
+		    		  if(newVal != undefined){
+		    			 cockpitModule_datasetServices.forceNearRealTimeValues($scope.tmpAvaiableDataset, $scope.tmpAssociations);
+		    		  }
+		    	  });
+
 		    	  $scope.tmpAggregations=[];
 		    	  angular.copy( cockpitModule_template.configuration.aggregations,$scope.tmpAggregations);
 
@@ -416,8 +422,8 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    			}
 		    	  }
 		    	  $scope.doSave=function(){
-		    	  	 if($scope.checkDataConfiguration()){
-		    	  		 var datasetParChange=false;
+		    		  if($scope.checkDataConfiguration()){
+		    	  		var datasetParChange=false;
 		    	  		var datasetParameterChanged={};
 		    	  		var oldDs=cockpitModule_datasetServices.getAvaiableDatasets();
 		    	  		if(!angular.equals(oldDs,$scope.tmpAvaiableDataset)){
@@ -459,6 +465,7 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    	  		}
 
 		    	  		angular.copy($scope.tmpAssociations,cockpitModule_template.configuration.associations);
+		    	  		cockpitModule_datasetServices.forceNearRealTimeValues();
 
 		    		  if(!angular.equals($scope.tmpAggregations,cockpitModule_template.configuration.aggregations)){
 		    			  // remove from list of datasetParameterChanged the
@@ -504,12 +511,14 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 
 		    		  $rootScope.$broadcast("WIDGET_EVENT","UPDATE_FROM_CLEAN_CACHE",null);
 		    		  mdPanelRef.close();
+		    		  associationsWatch();
 		    		  selectionWatch();
 		    		  $scope.$destroy();
 		    		  }
 		    	  }
 		    	  $scope.cancelConfiguration=function(){
 		    		  mdPanelRef.close();
+		    		  associationsWatch();
 		    		  selectionWatch();
 		    		  $scope.$destroy();
 		    	  }

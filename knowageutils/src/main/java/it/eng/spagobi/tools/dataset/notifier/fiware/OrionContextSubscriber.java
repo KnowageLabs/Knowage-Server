@@ -18,6 +18,7 @@
 package it.eng.spagobi.tools.dataset.notifier.fiware;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.NameValuePair;
+import org.apache.log4j.Logger;
 import org.joda.time.DurationFieldType;
 import org.joda.time.MutableDateTime;
 import org.json.JSONException;
@@ -40,7 +42,7 @@ import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader.JSONPat
 import it.eng.spagobi.tools.dataset.notifier.NotifierManager;
 import it.eng.spagobi.tools.dataset.notifier.NotifierManagerFactory;
 import it.eng.spagobi.tools.dataset.notifier.NotifierServlet;
-import it.eng.spagobi.tools.dataset.notifier.UserLabelId;
+import it.eng.spagobi.tools.dataset.notifier.UserSignatureId;
 import it.eng.spagobi.tools.dataset.notifier.fiware.ngsi.v2.Condition;
 import it.eng.spagobi.tools.dataset.notifier.fiware.ngsi.v2.Entity;
 import it.eng.spagobi.tools.dataset.notifier.fiware.ngsi.v2.Http;
@@ -55,6 +57,8 @@ import it.eng.spagobi.utilities.rest.RestUtilities.Response;
 
 public class OrionContextSubscriber {
 
+	private static final Logger log = Logger.getLogger(OrionContextSubscriber.class);
+
 	/*
 	 * the last char indicates the time unit (hour -> H, day -> D, month -> M, year -> Y) 1M -> one month 33D -> 33 days
 	 */
@@ -68,10 +72,13 @@ public class OrionContextSubscriber {
 	private final RESTDataProxy proxy;
 	private final JSONPathDataReader dataReader;
 	private String spagoBInotifyAddress;
+	private boolean realtimeNgsiConsumer;
 
 	private final String user;
 
 	private final String label;
+
+	private final String signature;
 
 	private final String authToken;
 
@@ -84,8 +91,13 @@ public class OrionContextSubscriber {
 		}
 
 		label = dataSet.getLabel();
-		if (user == null || user.isEmpty()) {
+		if (label == null || label.isEmpty()) {
 			throw new NGSISubscribingException("No label associated with dataset");
+		}
+
+		signature = dataSet.getSignature();
+		if (signature == null || signature.isEmpty()) {
+			throw new NGSISubscribingException("No signature associated with dataset");
 		}
 
 		authToken = dataSet.getOAuth2Token();
@@ -97,6 +109,8 @@ public class OrionContextSubscriber {
 		Helper.checkNotNull(dataReader, "dataReader");
 
 		this.spagoBInotifyAddress = spagoBInotifyAddress;
+
+		this.realtimeNgsiConsumer = dataSet.isRealtimeNgsiConsumer();
 	}
 
 	/**
@@ -119,19 +133,42 @@ public class OrionContextSubscriber {
 	public synchronized void subscribeNGSI() {
 		NotifierManager manager = NotifierManagerFactory.getManager();
 
-		UserLabelId subscriptionKey = new UserLabelId(user, label);
+		UserSignatureId subscriptionKey = new UserSignatureId(user, signature);
 		if (manager.containsOperator(subscriptionKey)) {
-			// already present
-			return;
+			log.debug("Subscription already available");
+			ContextBrokerNotifierOperator op = (ContextBrokerNotifierOperator) manager.getOperator(subscriptionKey);
+			if (op.isRealtimeNgsiConsumer() != realtimeNgsiConsumer) {
+				log.debug("Updating notifier operator because we required different behaviour");
+				op.setRealtimeNgsiConsumer(realtimeNgsiConsumer);
+			}
+		} else {
+			String subscriptionId = sendSubscription();
+			// In this mode (listening after subscription) I lose the first notification with all context elements
+			ContextBrokerNotifierOperator newOperator = new ContextBrokerNotifierOperator(subscriptionId, user, label, signature, realtimeNgsiConsumer,
+					dataReader);
+			manager.addOperatorIfAbsent(subscriptionKey, newOperator);
 		}
-
-		String subscriptionId = sendSubscription();
-		// In this mode (listening after subscription) I lose the first notification with all context elements
-		ContextBrokerNotifierOperator op = new ContextBrokerNotifierOperator(subscriptionId, user, label, dataReader);
-		manager.addOperatorIfAbsent(subscriptionKey, op);
 	}
 
 	protected String sendSubscription() {
+		try {
+			String requestBody = getSubscriptionRequestBody();
+			String address = getOrionSubscriptionBaseAddress();
+			address += SUBSCRIBE_CONTEXT_PATH;
+			Map<String, String> requestHeaders = getSubscriptionRequestHeaders();
+			Response resp = RestUtilities.makeRequest(HttpMethod.Post, address, requestHeaders, requestBody);
+			if (resp.getStatusCode() != 201) {
+				// not ok
+				throw new NGSISubscribingException("Status code of subscribing request is not 201: " + resp.getStatusCode());
+			}
+			String subscriptionId = getSubscriptionId(resp);
+			return subscriptionId;
+		} catch (Exception e) {
+			throw new NGSISubscribingException("Error while subscribing to Orion Context Broker", e);
+		}
+	}
+
+	protected String removeSubscription() {
 		try {
 			String requestBody = getSubscriptionRequestBody();
 			String address = getOrionSubscriptionBaseAddress();
@@ -227,8 +264,9 @@ public class OrionContextSubscriber {
 	 * @return
 	 * @throws JSONException
 	 * @throws MalformedURLException
+	 * @throws URISyntaxException
 	 */
-	protected String getSubscriptionRequestBody() throws JSONException, MalformedURLException {
+	protected String getSubscriptionRequestBody() throws JSONException, MalformedURLException, URISyntaxException {
 
 		List<String> attrs = new ArrayList<String>();
 		for (JSONPathAttribute attr : dataReader.getJsonPathAttributes()) {

@@ -30,7 +30,7 @@ app.filter('fromMillitoSeconds', function(){
 		var seconds = input / milisecond;
 		return seconds;
 	}
-}); 
+});
 
 var emptyDataSource = {
 	label : "",
@@ -81,7 +81,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.showAdvancedOptions = function() {
 		$scope.JDBCAdvancedOptionsShow = !$scope.JDBCAdvancedOptionsShow;
 	};
-	
+
 	//REST
 	$scope.getDataSources = function(){
 
@@ -105,7 +105,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		});
 
 	};
-	
+
 	//Function for conversion from milliseconds to seconds for JDBC Advanced Options
 	var convertMilliToSeconds = function(dataSourceArr) {
 		dataSourceArr.forEach(function(dataSource){
@@ -116,7 +116,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		});
 		return dataSourceArr;
 	};
-	
+
 	//REST
 	$scope.selectDatabase = function(dialectName){
 		for (i = 0; i < $scope.databases.length; i++) {
@@ -134,26 +134,26 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.saveOrUpdateDataSource = function(){
 		if($scope.jdbcOrJndi.type=="JDBC") {
 			$scope.selectedDataSource.jndi = "";
-			
+
 			//Convert seconds into milliseconds
 			$scope.selectedDataSource.jdbcPoolConfiguration.maxWait = $scope.selectedDataSource.jdbcPoolConfiguration.maxWait * 1000;
-			$scope.selectedDataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns = $scope.selectedDataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns * 1000;		
+			$scope.selectedDataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns = $scope.selectedDataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns * 1000;
 		} else if($scope.jdbcOrJndi.type=="JNDI") {
 			$scope.selectedDataSource.driver = "";
 			$scope.selectedDataSource.pwd = "";
 			$scope.selectedDataSource.user = "";
-			$scope.selectedDataSource.urlConnection = "";						
+			$scope.selectedDataSource.urlConnection = "";
 		}
 
-		delete $scope.jdbcOrJndi.type;				
-				
+		delete $scope.jdbcOrJndi.type;
+
 		if($scope.selectedDataSource.hasOwnProperty("dsId")){
 
 			var errorU = "Error updating the datasource!"
 
 			//MODIFY DATA SOURCE
 				$scope.checkReadOnly();
-								
+
 				sbiModule_restServices.promisePut('2.0/datasources','', $scope.selectedDataSource)
 				.then(function(response) {
 					console.log("[PUT]: SUCCESS!");
@@ -337,7 +337,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 	//LOAD SELECTED SOURCE
 	$scope.loadSelectedDataSource = function(item) {
-		
+
 		if ($scope.isSuperAdmin){
 			$scope.readOnly= false;
 		} else if( $scope.currentUser == item.userIn && item.jndi ==""){
@@ -346,7 +346,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			sbiModule_messaging.showInfoMessage("You are not the owner of this catalog", 'Information');
 			$scope.readOnly= true;
 		}
-							
+
 		$scope.jdbcOrJndi.type = null;
 		$scope.showMe=true;
 
@@ -440,7 +440,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		if(testJSON.jdbcPoolConfiguration) {
 			testJSON.jdbcPoolConfiguration = angular.toJson(testJSON.jdbcPoolConfiguration);
 		}
-		
+
 		if(testJSON.hasOwnProperty("dsId")){
 			delete testJSON.dsId;
 		}
@@ -450,9 +450,14 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		} else if(testJSON.readOnly=="0"){
 			testJSON.readOnly=false;
 		}
-		sbiModule_restServices.promisePost('datasourcestest/test','',testJSON)
+		sbiModule_restServices.promisePost('datasourcestest/2.0/test','',testJSON)
 		.then(function(response) {
-			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.datasource.testing.ok"), sbiModule_translate.load("sbi.datasource.info.msg"));
+			if(response.data && response.data.error){
+				sbiModule_messaging.showErrorMessage(response.data.error, sbiModule_translate.load("sbi.datasource.error.msg"));
+			}
+			else{
+				sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.datasource.testing.ok"), sbiModule_translate.load("sbi.datasource.info.msg"));
+			}
 		}, function(response) {
 			if(response.data.hasOwnProperty('RemoteException')){
 				sbiModule_messaging.showErrorMessage(response.data.RemoteException.message, sbiModule_translate.load("sbi.datasource.error.msg"));
@@ -507,7 +512,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 						 .targetEvent(event)
 		);
 	};
-	
+
 	//Abandoned Timeout INFO
 	$scope.showAbandonedTimeoutInfo = function(event) {
 		$mdDialog.show(
@@ -518,7 +523,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 						 .targetEvent(event)
 		);
 	};
-	
+
 	//Time between eviction runs INFO
 	$scope.showTimeBetweenEvictionRunsInfo = function(event) {
 		$mdDialog.show(
@@ -529,7 +534,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 						 .targetEvent(event)
 		);
 	};
-	
+
 	//Validation Query INFO
 	$scope.showValidationQueryInfo = function(event) {
 		$mdDialog.show(
@@ -540,7 +545,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 						 .targetEvent(event)
 		);
 	};
-	
+
 	$scope.confirm = $mdDialog
 	.confirm()
 	.title(sbiModule_translate.load("sbi.catalogues.generic.modify"))

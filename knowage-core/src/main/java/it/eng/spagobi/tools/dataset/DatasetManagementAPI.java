@@ -25,10 +25,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +61,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -73,32 +70,20 @@ import it.eng.spagobi.tools.dataset.association.DistinctValuesClearWork;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
-import it.eng.spagobi.tools.dataset.cache.query.PreparedStatementData;
-import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
-import it.eng.spagobi.tools.dataset.cache.query.item.AndFilter;
-import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
-import it.eng.spagobi.tools.dataset.cache.query.item.NullaryFilter;
-import it.eng.spagobi.tools.dataset.cache.query.item.OrFilter;
-import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
-import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
-import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilterOperator;
-import it.eng.spagobi.tools.dataset.cache.query.item.SingleProjectionSimpleFilter;
-import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
-import it.eng.spagobi.tools.dataset.cache.query.item.UnaryFilter;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
@@ -108,16 +93,25 @@ import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.crosstab.Measure;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
+import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.OrFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilterOperator;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SingleProjectionSimpleFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
+import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
-import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.groovy.GroovySandbox;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
 
@@ -142,8 +136,6 @@ public class DatasetManagementAPI {
 	public static final String NAME = "NAME";
 	public static final String TYPE = "TYPE";
 	public static final String MULTIVALUE = "MULTIVALUE";
-
-	private static final int METAMODEL_LIMIT = 5000;
 
 	// Cockpit filters
 	public static final String MAX_FILTER = "MAX()";
@@ -237,9 +229,6 @@ public class DatasetManagementAPI {
 				// check categories of dataset
 				Set<Domain> categoryList = UserUtilities.getDataSetCategoriesByUser(getUserProfile());
 				if (categoryList != null && categoryList.size() > 0) {
-
-					SbiDomains[] categoryArray = new SbiDomains[categoryList.size()];
-					int i = 0;
 					for (Iterator iterator = categoryList.iterator(); iterator.hasNext();) {
 						Domain domain = (Domain) iterator.next();
 						Integer domainId = domain.getValueId();
@@ -399,10 +388,6 @@ public class DatasetManagementAPI {
 					dataStore = queryJDBCDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 					timing.stop();
 					dataStore.setCacheDate(new Date());
-				} else if (DatasetEvaluationStrategy.REALTIME.equals(evaluationStrategy)) {
-					logger.debug("Querying realtime dataset");
-					dataStore = queryRealtimeDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
-					dataStore.setCacheDate(new Date());
 				} else {
 					logger.debug("Querying dataset in cache");
 					SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
@@ -410,13 +395,17 @@ public class DatasetManagementAPI {
 
 					Monitor totalCacheTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:totalCache");
 
-					IDataStore cachedResultSet = cache.get(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize,
-							maxRowCount);
+					IDataStore cachedResultSet = DatasetEvaluationStrategy.CACHED.equals(evaluationStrategy)
+							? cache.get(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount)
+							: null;
+
+					adjustNgsiDataSet(dataSet, evaluationStrategy);
+
 					if (cachedResultSet == null) {
 						logger.debug("Dataset not in cache");
 
 						Monitor timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:putInCache");
-						putDataSetInCache(dataSet, cache);
+						putDataSetInCache(dataSet, cache, evaluationStrategy);
 						timing.stop();
 
 						if (dataSet.getDataStore() != null && dataSet.getDataStore().getMetaData().getFieldCount() == 0) {
@@ -437,6 +426,8 @@ public class DatasetManagementAPI {
 						// if result was not cached put refresh date as now
 						dataStore.setCacheDate(new Date());
 					} else {
+						manageNgsiSubscription(dataSet, evaluationStrategy);
+
 						dataStore = cachedResultSet;
 						adjustMetadata((DataStore) dataStore, dataSet, null);
 						dataSet.decode(dataStore);
@@ -456,6 +447,26 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	private void adjustNgsiDataSet(IDataSet dataSet, DatasetEvaluationStrategy evaluationStrategy) {
+		if (dataSet.isRealtime() && !DatasetEvaluationStrategy.REALTIME.equals(evaluationStrategy)) {
+			if (dataSet instanceof VersionedDataSet) {
+				dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
+			}
+			RESTDataSet restDataSet = (RESTDataSet) dataSet;
+			restDataSet.setRealtimeNgsiConsumer(false);
+		}
+	}
+
+	private void manageNgsiSubscription(IDataSet dataSet, DatasetEvaluationStrategy evaluationStrategy) {
+		if (dataSet.isRealtime() && !DatasetEvaluationStrategy.REALTIME.equals(evaluationStrategy)) {
+			if (dataSet instanceof VersionedDataSet) {
+				dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
+			}
+			RESTDataSet restDataSet = (RESTDataSet) dataSet;
+			restDataSet.subscribeNGSI();
+		}
+	}
+
 	private IDataStore getEmptyDataStore(IDataSet dataSet) {
 		IDataStore dataStore;
 		dataStore = new DataStore();
@@ -467,6 +478,10 @@ public class DatasetManagementAPI {
 	}
 
 	public void putDataSetInCache(IDataSet dataSet, ICache cache) throws DataBaseException {
+		putDataSetInCache(dataSet, cache, DatasetEvaluationStrategy.CACHED);
+	}
+
+	public void putDataSetInCache(IDataSet dataSet, ICache cache, DatasetEvaluationStrategy evaluationStrategy) throws DataBaseException {
 		if (dataSet.isCachingSupported()) {
 			if (dataSet instanceof AbstractJDBCDataset && !dataSet.hasDataStoreTransformer()) {
 				logger.debug("Copying JDBC dataset in cache using its iterator");
@@ -475,7 +490,11 @@ public class DatasetManagementAPI {
 				logger.debug("Copying dataset in cache by loading the whole set of data in memory");
 				dataSet.loadData();
 				if (dataSet.getDataStore().getMetaData().getFieldCount() > 0) {
-					cache.put(dataSet, dataSet.getDataStore());
+					if (DatasetEvaluationStrategy.REALTIME.equals(evaluationStrategy)) {
+						cache.put(dataSet, dataSet.getDataStore(), true);
+					} else {
+						cache.put(dataSet, dataSet.getDataStore());
+					}
 				} else {
 					cache.put(dataSet, getEmptyDataStore(dataSet));
 				}
@@ -505,28 +524,7 @@ public class DatasetManagementAPI {
 		return toReturn;
 	}
 
-	protected void pageDataStoreRecords(DataStore dataStore, int offset, int fetchSize) {
-		List records = dataStore.getRecords();
-		int size = records.size();
-		if (offset > size) {
-			logger.debug("Offset [" + offset + "] is greater than records size [" + size + "]");
-			logger.debug("Returning an  empty list of records");
-			records.clear();
-		} else {
-			if (fetchSize > (size - offset)) {
-				logger.debug("Fetch size [" + fetchSize + "] is greater than records size [" + size + "]");
-				logger.debug("Returning an list of records from offset to size");
-				records = records.subList(offset, size);
-			} else {
-				logger.debug("Returning an list of records from offset to fetch size");
-				records = records.subList(offset, fetchSize);
-			}
-		}
-	}
-
-	/**
-	 * @deprectade
-	 */
+	@Deprecated
 	public IDataStore getAggregatedDataStore(String label, int offset, int fetchSize, int maxResults, CrosstabDefinition crosstabDefinition) {
 		try {
 
@@ -953,213 +951,6 @@ public class DatasetManagementAPI {
 		return queryDataset(dataSet, dataSource, projections, tableName, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 	}
 
-	private IDataStore queryRealtimeDataset(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
-		dataSet.loadData();
-		IDataStore dataStore = dataSet.getDataStore();
-		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
-			String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
-			List<String> orderColumns = new ArrayList<>();
-
-			PreparedStatementData data = new SelectQuery(dataSet).selectDistinct().select(projections).from(tableName).where(filter).groupBy(groups)
-					.orderBy(sortings).getPreparedStatementData(null);
-			boolean hasSortingOnCalculatedColumns = checkSortingOnCalculatedColumns(orderColumns);
-
-			IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(data.getQuery(), data.getValues(), -1, -1, maxRowCount, null);
-			if (hasSortingOnCalculatedColumns) {
-				appendCalculatedColumnsToDataStore(projections, originalDataStore);
-				sortColumnsOnDataStore(orderColumns, originalDataStore);
-			}
-
-			IDataStore pagedDataStore = originalDataStore.paginateRecords(offset, fetchSize);
-			if (!hasSortingOnCalculatedColumns) {
-				appendCalculatedColumnsToDataStore(projections, pagedDataStore);
-			}
-
-			if (summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
-				PreparedStatementData summaryRowData = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter)
-						.orderBy(sortings).getPreparedStatementData(null);
-				IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowData.getQuery(), summaryRowData.getValues(), -1, -1,
-						maxRowCount, null);
-				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
-			}
-
-			dataStore = pagedDataStore;
-			dataStore.setCacheDate(new Date());
-		} else {
-			throw new SpagoBIRuntimeException("Impossible to return data: the dataStore is [null], or it returns more than [" + METAMODEL_LIMIT
-					+ "] rows: it cannot be processed as near realtime dataset.");
-		}
-
-		return dataStore;
-	}
-
-	private void appendCalculatedColumnsToDataStore(List<Projection> projections, IDataStore pagedDataStore) {
-		if (projections != null) {
-			IMetaData storeMetaData = pagedDataStore.getMetaData();
-
-			Set<String> notCalculatedColumns = new HashSet<>();
-			Map<String, String> basicColumnMap = new HashMap<>(); // aggregated basic column name -> basic column name
-			Map<String, Integer> fieldIndexMap = new HashMap<>(); // basic column name -> field index
-
-			for (Projection projection : projections) {
-				String columnName = projection.getName();
-
-				IAggregationFunction aggregationFunction = projection.getAggregationFunction();
-
-				if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) { // this is a calculated field!
-					for (String basicColumnName : getBasicColumnsFromCalculatedColumn(columnName)) {
-						basicColumnMap.put(aggregationFunction.apply(basicColumnName), basicColumnName);
-					}
-
-					if (pagedDataStore.getRecordsCount() > 0) {
-						// aggregated basic column name -> field index
-						for (int i = 0; i < storeMetaData.getFieldCount(); i++) {
-							String fieldName = storeMetaData.getFieldName(i);
-							if (basicColumnMap.keySet().contains(fieldName)) {
-								fieldIndexMap.put(basicColumnMap.get(fieldName), i);
-								break;
-							}
-						}
-
-						for (int i = 0; i < pagedDataStore.getRecordsCount(); i++) {
-							IRecord record = pagedDataStore.getRecordAt(i);
-
-							// get basic values
-							boolean isNullValuePresent = false;
-							Map<String, Object> basicValues = new HashMap<>();
-							for (String basicColumnName : fieldIndexMap.keySet()) {
-								int fieldIndex = fieldIndexMap.get(basicColumnName);
-								IField field = record.getFieldAt(fieldIndex);
-								Object value = field.getValue();
-								isNullValuePresent = isNullValuePresent || value == null;
-								basicValues.put(basicColumnName, value);
-							}
-
-							// evaluate calculated column expression
-							Object calculatedValue = null;
-							if (aggregationFunction.equals(AggregationFunctions.COUNT_FUNCTION)
-									|| aggregationFunction.equals(AggregationFunctions.COUNT_DISTINCT_FUNCTION)) {
-								long count = -1;
-								for (String basicColumnName : basicValues.keySet()) {
-									count = Math.max(count, (long) basicValues.get(basicColumnName));
-								}
-								calculatedValue = count;
-							} else {
-								if (!isNullValuePresent) {
-									String expression = columnName.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, "");
-									for (String basicColumnName : basicValues.keySet()) {
-										Object object = basicValues.get(basicColumnName);
-										expression = expression.replace(basicColumnName, object.toString());
-									}
-									calculatedValue = new GroovySandbox().evaluate(expression);
-								}
-							}
-							record.appendField(new Field(calculatedValue));
-						}
-
-						// add column metadata
-						IFieldMetaData fieldMetaData = new FieldMetadata();
-						if (aggregationFunction != null && !aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION)) {
-							fieldMetaData.setName(aggregationFunction.apply(columnName));
-						} else {
-							fieldMetaData.setName(columnName);
-						}
-						String aliasName = projection.getAlias();
-						if (aliasName != null && !aliasName.isEmpty()) {
-							fieldMetaData.setAlias(aliasName);
-						}
-						fieldMetaData.setType(java.lang.Double.class);
-						fieldMetaData.setFieldType(FieldType.MEASURE);
-						storeMetaData.addFiedMeta(fieldMetaData);
-					}
-				} else {
-					if (aggregationFunction != null && !aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION)) {
-						columnName = aggregationFunction.apply(columnName);
-					}
-					notCalculatedColumns.add(columnName);
-				}
-			}
-
-			basicColumnMap.keySet().removeAll(notCalculatedColumns);
-			if (!basicColumnMap.isEmpty()) {
-				// delete values in additional columns
-				for (int recordIndex = 0; recordIndex < pagedDataStore.getRecordsCount(); recordIndex++) {
-					IRecord record = pagedDataStore.getRecordAt(recordIndex);
-					for (int fieldIndex = storeMetaData.getFieldCount() - 1; fieldIndex >= 0; fieldIndex--) {
-						String fieldName = storeMetaData.getFieldName(fieldIndex);
-						if (basicColumnMap.keySet().contains(fieldName)) {
-							record.removeFieldAt(fieldIndex);
-						}
-					}
-				}
-
-				// delete additional columns metadata
-				for (int fieldIndex = storeMetaData.getFieldCount() - 1; fieldIndex >= 0; fieldIndex--) {
-					IFieldMetaData fieldMetaData = storeMetaData.getFieldMeta(fieldIndex);
-					if (basicColumnMap.keySet().contains(fieldMetaData.getName())) {
-						storeMetaData.deleteFieldMetaDataAt(fieldIndex);
-					}
-				}
-			}
-		}
-	}
-
-	private boolean checkSortingOnCalculatedColumns(List<String> orderColumns) {
-		for (String orderColumn : orderColumns) {
-			if (orderColumn.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private void sortColumnsOnDataStore(List<String> orderColumns, IDataStore dataStore) {
-		for (int i = orderColumns.size() - 1; i >= 0; i--) {
-			String orderColumn = orderColumns.get(i);
-			String columnName = orderColumn.substring(0, orderColumn.lastIndexOf(' '));
-			final boolean isAscending = orderColumn.endsWith(" ASC");
-
-			int fieldIndex;
-			IMetaData metaData = dataStore.getMetaData();
-			for (fieldIndex = 0; fieldIndex < metaData.getFieldCount(); fieldIndex++) {
-				if (metaData.getFieldMeta(fieldIndex).getName().equals(columnName)) {
-					break;
-				}
-			}
-
-			Comparator<IField> comparator = new Comparator<IField>() {
-				@Override
-				public int compare(IField field1, IField field2) {
-					Comparable<Object> value1 = (Comparable<Object>) field1.getValue();
-					Comparable<Object> value2 = (Comparable<Object>) field2.getValue();
-
-					if (value1 == null && value2 == null) {
-						return 0;
-					}
-					if (isAscending) {
-						if (value1 == null) {
-							return -1;
-						} else if (value2 == null) {
-							return 1;
-						} else {
-							return value1.compareTo(value2);
-						}
-					} else {
-						if (value2 == null) {
-							return -1;
-						} else if (value1 == null) {
-							return 1;
-						} else {
-							return value2.compareTo(value1);
-						}
-					}
-				}
-			};
-			dataStore.sortRecords(fieldIndex, comparator);
-		}
-	}
-
 	public void appendSummaryRowToPagedDataStore(List<Projection> projections, List<Projection> summaryRowProjections, IDataStore pagedDataStore,
 			IDataStore summaryRowDataStore) {
 		IMetaData pagedMetaData = pagedDataStore.getMetaData();
@@ -1218,24 +1009,6 @@ public class DatasetManagementAPI {
 
 		logger.debug("OUT");
 		return pagedDataStore;
-	}
-
-	private Set<String> getBasicColumnsFromCalculatedColumn(String columnName) {
-		int delimiterCount = columnName.length() - columnName.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, "").length();
-		if (delimiterCount % 2 == 1) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while parsing [" + columnName + "]");
-		}
-
-		Set<String> columnNames = new HashSet<>();
-		int endIndex = -2;
-		int beginIndex = -1;
-		while ((beginIndex = columnName.indexOf(AbstractDataBase.STANDARD_ALIAS_DELIMITER, endIndex)) > -1) {
-			beginIndex++;
-			endIndex = columnName.indexOf(AbstractDataBase.STANDARD_ALIAS_DELIMITER, beginIndex);
-			columnNames.add(columnName.substring(beginIndex, endIndex));
-			endIndex++;
-		}
-		return columnNames;
 	}
 
 	protected List<Integer> getCategories(IEngUserProfile profile) {

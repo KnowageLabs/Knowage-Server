@@ -66,6 +66,8 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	private boolean ngsi;
 
+	private boolean realtimeNgsiConsumer = true;
+
 	/**
 	 * for testing purpose
 	 */
@@ -142,7 +144,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 		logger.debug("OUT");
 	}
 
-	private void subscribeNGSI() {
+	public void subscribeNGSI() {
 		try {
 			OrionContextSubscriber subscriber = new OrionContextSubscriber(this);
 			subscriber.subscribeNGSI();
@@ -398,6 +400,14 @@ public class RESTDataSet extends ConfigurableDataSet {
 		return ngsi;
 	}
 
+	public boolean isRealtimeNgsiConsumer() {
+		return realtimeNgsiConsumer;
+	}
+
+	public void setRealtimeNgsiConsumer(boolean realtimeNgsiConsumer) {
+		this.realtimeNgsiConsumer = realtimeNgsiConsumer;
+	}
+
 	@Override
 	public IDataSource getDataSource() {
 		return null;
@@ -422,5 +432,4 @@ public class RESTDataSet extends ConfigurableDataSet {
 	public boolean isRealtime() {
 		return isNgsi();
 	}
-
 }

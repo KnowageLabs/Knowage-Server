@@ -52,6 +52,7 @@
 			<md-input-container  class="md-block" >
 				<label>{{translate.load("sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.select.default.value")}}</label>
 				<md-select  ng-model="model.settings.defaultValue">
+					<md-option></md-option>
 					<md-option ng-repeat="v in defaultValues" value="{{v.value}}">{{v.name}} </md-option>
 				</md-select>
 	

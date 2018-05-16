@@ -30,12 +30,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.metamodel.data.DataSet;
 import org.jgrapht.graph.Pseudograph;
 
-import it.eng.spagobi.tools.dataset.cache.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 import it.eng.spagobi.tools.dataset.graph.associativity.container.IAssociativeDatasetContainer;
+import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
 
 public class AssociativeLogicUtils {
 

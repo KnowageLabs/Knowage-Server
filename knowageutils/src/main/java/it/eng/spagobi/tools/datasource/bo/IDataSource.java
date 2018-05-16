@@ -27,8 +27,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
-import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
 import it.eng.spagobi.utilities.database.DataBaseException;
 
 @JsonDeserialize(as = DataSource.class)

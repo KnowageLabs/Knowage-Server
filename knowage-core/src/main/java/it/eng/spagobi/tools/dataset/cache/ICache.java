@@ -20,10 +20,10 @@ package it.eng.spagobi.tools.dataset.cache;
 import java.util.List;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.query.item.Filter;
-import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
-import it.eng.spagobi.tools.dataset.cache.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
+import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.utilities.database.DataBaseException;
 
 /**
@@ -114,31 +114,6 @@ public interface ICache {
 	// =====================================================================================
 	// REFRESH METHODS
 	// =====================================================================================
-	/**
-	 * refresh the dataset and save the result dataStore in cache
-	 *
-	 * @param dataSet
-	 * @param wait
-	 *            true to wait until the dataStore is persisted in cache. false to return as soon as the dataStore is ready and persisting it in cache
-	 *            asynchronously
-	 *
-	 * @return the updated dataStore
-	 */
-	IDataStore refresh(IDataSet dataSet, boolean wait);
-
-	IDataStore refresh(IDataSet dataSet, IDataStore dataStore, boolean wait);
-
-	/**
-	 * if the dataset is not contained in the cache, refresh the dataset and save the result dataStore in cache
-	 *
-	 * @param dataSet
-	 * @param wait
-	 *            true to wait until the dataStore is persisted in cache. false to return as soon as the dataStore is ready and persisting it in cache
-	 *            asynchronously
-	 *
-	 * @return the updated dataStore
-	 */
-	void refreshIfNotContained(IDataSet dataSet, boolean wait);
 
 	IDataStore refresh(List<IDataSet> dataSets, boolean wait);
 
@@ -187,12 +162,37 @@ public interface ICache {
 	long put(IDataSet dataSet, IDataStore dataStore) throws DataBaseException;
 
 	/**
+	 * Insert a resultSet inside the cache using the resultsetSignature as an identifier
+	 *
+	 * @param signature
+	 *            the unique resultSet signature
+	 * @param dataset
+	 *            the dataSet from which derives the resultSet
+	 * @param dataStore
+	 *            the resultSet to cache
+	 * @param forceUpdate
+	 *            if true this method force the update of the dataset
+	 * @throws DataBaseException
+	 */
+	long put(IDataSet dataSet, IDataStore dataStore, boolean forceUpdate) throws DataBaseException;
+
+	/**
 	 * Insert a resultSet inside the cache
 	 *
 	 * @param dataset
 	 *            the dataSet from which derives the resultSet
 	 */
 	void put(IDataSet dataSet);
+
+	/**
+	 * Update the item referenced as hashedSignature with the dataStore
+	 *
+	 * @param hashedSignature
+	 *            the hashed unique dataSet signature
+	 * @param dataStore
+	 *            the resultSet to cache
+	 */
+	void update(String hashedSignature, IDataStore dataStore);
 
 	/**
 	 * @return the metadata description object of the cache
