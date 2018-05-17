@@ -733,6 +733,11 @@
 		}        
 
         .gridster-item{
+        	&.fixedLeft {
+        		.showActionButtonHandler {
+        			left: 0 !important;
+        		}
+        	}
 			 md-card.md-knowage-theme md-card-title {
 			 	height:32px;
 			 	min-height: 32px;
