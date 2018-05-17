@@ -87,6 +87,8 @@ public interface ICache {
 	 */
 	IDataStore get(String resultsetSignature);
 
+	IDataStore get(String signature, boolean isHash);
+
 	/**
 	 * @param dataSet
 	 *            the dataSet that generate the resultSet

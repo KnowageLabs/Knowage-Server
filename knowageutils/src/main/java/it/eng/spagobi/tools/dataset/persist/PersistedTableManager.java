@@ -22,13 +22,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
@@ -205,16 +208,7 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	public void persistDataset(IDataSet dataSet, IDataStore datastore, IDataSource datasource, String tableName) throws Exception {
-
-		IDataBase database = DataBaseFactory.getDataBase(datasource);
-		if (!database.isCacheSupported()) {
-			logger.debug("Persistence management isn't implemented for " + getDialect() + ".");
-			throw new SpagoBIServiceException("", "sbi.ds.dsCannotPersistDialect");
-		}
-
-		this.setTableName(tableName);
-		this.setDialect(database.getDatabaseDialect());
-		logger.debug("DataSource target dialect is [" + getDialect() + "]");
+		setTableNameAndDialect(datasource, tableName);
 
 		if (dataSet instanceof VersionedDataSet) {
 			dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
@@ -227,7 +221,12 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	public void updateDataset(IDataSource datasource, IDataStore datastore, String tableName) throws Exception {
+		setTableNameAndDialect(datasource, tableName);
 
+		updateDataset(datastore, datasource);
+	}
+
+	private void setTableNameAndDialect(IDataSource datasource, String tableName) throws DataBaseException {
 		IDataBase database = DataBaseFactory.getDataBase(datasource);
 		if (!database.isCacheSupported()) {
 			logger.debug("Persistence management isn't implemented for " + getDialect() + ".");
@@ -237,12 +236,204 @@ public class PersistedTableManager implements IPersistedManager {
 		this.setTableName(tableName);
 		this.setDialect(database.getDatabaseDialect());
 		logger.debug("DataSource target dialect is [" + getDialect() + "]");
-
-		updateDataset(datastore, datasource);
 	}
 
 	private void updateDataset(IDataStore datastore, IDataSource datasource) throws Exception {
+		logger.debug("IN");
 
+		Connection connection = null;
+		try {
+			logger.debug("The datastore metadata object contains # [" + datastore.getMetaData().getFieldCount() + "] fields");
+			if (datastore.getMetaData().getFieldCount() == 0) {
+				logger.debug("The datastore has no fields. Unable to update dataset.");
+				return;
+			}
+
+			int idFieldIndex = datastore.getMetaData().getIdFieldIndex();
+			if (idFieldIndex == -1) {
+				logger.debug("The datastore has no ID field. Unable to update dataset.");
+				return;
+			}
+
+			String idFieldAlias = datastore.getMetaData().getFieldAlias(idFieldIndex);
+			connection = getConnection(datasource);
+
+			Set<Object> sourceIds = getIds(connection, idFieldAlias);
+			Set<Object> insertIds = datastore.getFieldDistinctValues(idFieldIndex);
+			insertIds.removeAll(sourceIds);
+
+			PreparedStatement[] statements = getInsertOrUpdateStatements(datastore, datasource, connection, insertIds);
+
+			for (PreparedStatement statement : statements) {
+				if (queryTimeout > 0) {
+					statement.setQueryTimeout(queryTimeout);
+				}
+				statement.executeBatch();
+				statement.close();
+			}
+			logger.debug("Records updated on table successfully!");
+		} catch (Exception e) {
+			String message = "Error updating the dataset on table";
+			logger.error(message, e);
+			if (connection != null) {
+				connection.rollback();
+			}
+			throw new SpagoBIEngineRuntimeException(message, e);
+		} finally {
+			if (connection != null && !connection.isClosed()) {
+				connection.close();
+			}
+		}
+
+		logger.debug("OUT");
+	}
+
+	private Set<Object> getIds(Connection connection, String idFieldAlias) throws SQLException {
+		Set<Object> ids = new HashSet<>();
+		StringBuilder selectQuery = new StringBuilder();
+		selectQuery.append("SELECT ");
+		selectQuery.append(idFieldAlias);
+		selectQuery.append(" FROM ");
+		selectQuery.append(getTableName());
+		PreparedStatement preparedStatement = connection.prepareStatement(selectQuery.toString());
+		if (queryTimeout > 0) {
+			preparedStatement.setQueryTimeout(queryTimeout);
+		}
+		ResultSet rs = preparedStatement.executeQuery();
+		while (rs.next()) {
+			Object id = rs.getObject(idFieldAlias);
+			ids.add(id);
+		}
+		preparedStatement.close();
+		return ids;
+	}
+
+	private PreparedStatement[] getInsertOrUpdateStatements(IDataStore datastore, IDataSource datasource, Connection connection, Set<Object> insertIds) {
+		IMetaData storeMeta = datastore.getMetaData();
+		int fieldCount = storeMeta.getFieldCount();
+		int recordCount = (int) datastore.getRecordsCount();
+		if (fieldCount == 0 || recordCount == 0) {
+			return new PreparedStatement[0];
+		}
+
+		PreparedStatement[] toReturn = new PreparedStatement[recordCount];
+
+		StringBuilder insertSB = new StringBuilder("INSERT INTO ");
+		insertSB.append(getTableName());
+		insertSB.append(" (");
+
+		StringBuilder insertValuesSB = new StringBuilder(" VALUES (");
+
+		StringBuilder updateSB = new StringBuilder("UPDATE ");
+		updateSB.append(getTableName());
+		updateSB.append(" SET ");
+
+		String insertSeparator = "";
+		String updateSeparator = "";
+
+		if (this.isRowCountColumIncluded()) {
+			String rowCountColumnName = AbstractJDBCDataset.encapsulateColumnName(getRowCountColumnName(), datasource);
+
+			insertSB.append(insertSeparator);
+			insertSB.append(rowCountColumnName);
+
+			insertValuesSB.append(insertSeparator);
+			insertValuesSB.append("?");
+
+			insertSeparator = ",";
+
+			updateSB.append(updateSeparator);
+			updateSB.append(rowCountColumnName);
+			updateSB.append("=?");
+
+			updateSeparator = ",";
+		}
+
+		int idFieldIndex = datastore.getMetaData().getIdFieldIndex();
+		for (int i = 0; i < fieldCount; i++) {
+			IFieldMetaData fieldMeta = storeMeta.getFieldMeta(i);
+			String columnName = getSQLColumnName(fieldMeta);
+			String escapedColumnName = AbstractJDBCDataset.encapsulateColumnName(columnName, datasource);
+
+			insertSB.append(insertSeparator);
+			insertSB.append(escapedColumnName);
+
+			insertValuesSB.append(insertSeparator);
+			insertValuesSB.append("?");
+
+			insertSeparator = ",";
+
+			if (i != idFieldIndex) {
+				updateSB.append(updateSeparator);
+				updateSB.append(escapedColumnName);
+				updateSB.append("=?");
+
+				updateSeparator = ",";
+			}
+		}
+
+		insertSB.append(") ");
+
+		insertValuesSB.append(") ");
+
+		updateSB.append(" WHERE ");
+		updateSB.append(AbstractJDBCDataset.encapsulateColumnName(getSQLColumnName(storeMeta.getFieldMeta(idFieldIndex)), datasource));
+		updateSB.append("=?");
+
+		String insertQuery = insertSB.toString() + insertValuesSB.toString();
+		String updateQuery = updateSB.toString();
+
+		logger.debug("INSERT statement: " + insertQuery);
+		logger.debug("UPDATE statement: " + updateQuery);
+
+		try {
+			for (int i = 0; i < recordCount; i++) {
+				IRecord record = datastore.getRecordAt(i);
+				Object id = record.getFieldAt(idFieldIndex).getValue();
+				boolean doInsert = insertIds.contains(id);
+
+				PreparedStatement statement = connection.prepareStatement(doInsert ? insertQuery : updateQuery);
+				toReturn[i] = statement;
+
+				if (this.isRowCountColumIncluded()) {
+					statement.setLong(1, i + 1);
+				}
+
+				List<Integer> sortedIds = new ArrayList<>();
+				for (int j = 0; j < record.getFields().size(); j++) {
+					if (doInsert || j != idFieldIndex) {
+						sortedIds.add(j);
+					}
+				}
+				if (!doInsert) {
+					sortedIds.add(idFieldIndex);
+				}
+
+				for (int j = 0; j < sortedIds.size(); j++) {
+					try {
+						int index = sortedIds.get(j);
+						IFieldMetaData fieldMeta = storeMeta.getFieldMeta(index);
+						IField field = record.getFieldAt(index);
+						Object fieldValue = field.getValue();
+						String fieldMetaName = fieldMeta.getName();
+						String fieldMetaTypeName = fieldMeta.getType().toString();
+						boolean isfieldMetaFieldTypeMeasure = fieldMeta.getFieldType().equals(FieldType.MEASURE);
+
+						int fieldIndex = isRowCountColumIncluded() ? j + 1 : j;
+						PersistedTableHelper.addField(statement, fieldIndex, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure,
+								getColumnSize());
+					} catch (Exception e) {
+						throw new RuntimeException("An unexpected error occured while preparing statemenet for record [" + i + "]", e);
+					}
+				}
+				statement.addBatch();
+			}
+		} catch (Exception e) {
+			String message = "Error updating dataset into table";
+			logger.error(message, e);
+			throw new SpagoBIEngineRuntimeException(message, e);
+		}
+		return toReturn;
 	}
 
 	private IDataStore normalizeFileDataSet(IDataSet dataSet, IDataStore datastore) {

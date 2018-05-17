@@ -84,7 +84,6 @@ public class DataStoreListenerOperator {
 	}
 
 	public synchronized List<ListenerResult> changedDataSet(IDataStore dataStore) {
-		Helper.checkNotNull(dataStore, "dataStore");
 		checkStateNotNull();
 
 		// use the current data set

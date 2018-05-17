@@ -35,8 +35,10 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.common.datareader.JSONDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.Helper;
@@ -85,23 +87,32 @@ public class CacheResource extends AbstractSpagoBIResource {
 	@PUT
 	@Path("/dataset/{hashedSignature}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public IDataStore updateDataset(@PathParam("hashedSignature") String hashedSignature, @QueryParam("realtimeNgsiConsumer") boolean realtimeNgsiConsumer,
-			IDataStore body) {
+	public Response updateDataset(@PathParam("hashedSignature") String hashedSignature, @QueryParam("realtimeNgsiConsumer") boolean realtimeNgsiConsumer,
+			String body) {
 		logger.debug("IN");
 		Helper.checkNotNullNotTrimNotEmpty(hashedSignature, "hashedSignature");
 		Helper.checkNotNull(body, "body");
+
+		IDataStore result = null;
 		try {
 			ICache cache = SpagoBICacheManager.getCache();
-			cache.update(hashedSignature, body);
-			if (realtimeNgsiConsumer) {
-				return cache.get(hashedSignature); // TODO: change with the correct get method
-			} else {
-				return new DataStore();
-			}
-			// logger.debug("Dataset with hash signature [" + hashedSignature + "] found in cache and updated.");
+			IDataStore dataStore = new JSONDataReader().read(body);
+			cache.update(hashedSignature, dataStore);
+			logger.debug("Dataset with hashed signature [" + hashedSignature + "] found in cache and updated.");
 
+			if (realtimeNgsiConsumer) {
+				result = cache.get(hashedSignature, true);
+			} else {
+				result = new DataStore();
+			}
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occurred while updating dataset on cache", e);
+		}
+
+		if (result != null) {
+			return Response.ok(new JSONDataWriter().write(result).toString()).build();
+		} else {
+			return Response.serverError().build();
 		}
 	}
 }

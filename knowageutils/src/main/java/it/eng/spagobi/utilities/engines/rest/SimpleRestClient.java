@@ -41,6 +41,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
 import it.eng.spagobi.security.hmacfilter.HMACUtils;
 import it.eng.spagobi.services.common.EnginConf;
@@ -59,22 +60,37 @@ public class SimpleRestClient {
 
 	private HMACFilterAuthenticationProvider authenticationProvider;
 
-	public SimpleRestClient(String hmacKey) {
-		Helper.checkNotNullNotTrimNotEmpty(hmacKey, "hmacKey");
+	private String serverUrl;
 
-		authenticationProvider = new HMACFilterAuthenticationProvider(hmacKey);
+	public SimpleRestClient(String hmacKey) {
+		init(hmacKey);
 	}
 
 	public SimpleRestClient() {
-		String key = EnginConf.getInstance().getHmacKey();
-		if (key == null || key.isEmpty()) {
-			key = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(HMACUtils.HMAC_JNDI_LOOKUP));
+		String hmacKey = loadHmacKey();
+		init(hmacKey);
+	}
+
+	private void init(String hmacKey) {
+		Helper.checkNotNullNotTrimNotEmpty(hmacKey, "hmacKey");
+		this.authenticationProvider = new HMACFilterAuthenticationProvider(hmacKey);
+		this.serverUrl = loadServerUrl();
+	}
+
+	private String loadHmacKey() {
+		String hmacKey = EnginConf.getInstance().getHmacKey();
+		if (StringUtilities.isEmpty(hmacKey)) {
+			hmacKey = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(HMACUtils.HMAC_JNDI_LOOKUP));
 		}
-		if (key == null || key.isEmpty()) {
-			logger.warn("HMAC key not found. Requests will not be authenticated.");
-		} else {
-			authenticationProvider = new HMACFilterAuthenticationProvider(key);
+		return hmacKey;
+	}
+
+	private String loadServerUrl() {
+		String serverUrl = EnginConf.getInstance().getSpagoBiServerUrl();
+		if (StringUtilities.isEmpty(serverUrl)) {
+			serverUrl = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
 		}
+		return serverUrl;
 	}
 
 	/**
@@ -138,7 +154,6 @@ public class SimpleRestClient {
 
 		if (!serviceUrl.contains("http") && addServerUrl) {
 			logger.debug("Adding the server URL");
-			String serverUrl = EnginConf.getInstance().getSpagoBiServerUrl();
 			if (serverUrl != null) {
 				logger.debug("Executing the dataset from the core so use relative path to service");
 				serviceUrl = serverUrl + serviceUrl;
@@ -198,7 +213,6 @@ public class SimpleRestClient {
 
 		if (!serviceUrl.contains("http") && addServerUrl) {
 			logger.debug("Adding the server URL");
-			String serverUrl = EnginConf.getInstance().getSpagoBiServerUrl();
 			if (serverUrl != null) {
 				logger.debug("Executing the dataset from the core so use relative path to service");
 				serviceUrl = serverUrl + serviceUrl;
@@ -236,10 +250,6 @@ public class SimpleRestClient {
 			response = request.put(Entity.json(data.toString()));
 		} else {
 			response = request.get();
-		}
-
-		if (response.getStatus() >= 400) {
-			throw new RuntimeException("Request failed with HTTP error code : " + response.getStatus());
 		}
 
 		logger.debug("Rest query status " + response.getStatus());

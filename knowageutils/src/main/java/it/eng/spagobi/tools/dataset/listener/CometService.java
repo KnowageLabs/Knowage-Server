@@ -70,7 +70,7 @@ public class CometService extends AbstractService {
 	protected String getJSON(DataStoreChangedEvent event) throws JSONException {
 		JSONObject res = new JSONObject();
 		res.put("dataStore", writer.write(event.getDataStore()));
-		res.put("isChanged", event.isChanged());
+		res.put("isFoundInCache", event.isFoundInCache());
 		return res.toString();
 	}
 }
