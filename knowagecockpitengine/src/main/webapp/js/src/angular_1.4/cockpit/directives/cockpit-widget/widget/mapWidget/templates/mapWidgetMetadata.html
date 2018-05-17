@@ -14,7 +14,7 @@
 												<th>Column</th>
 												<th>Coordinates Type</th>
 												<th>Coordinates Format</th>
-												<th>Json Feature Type</th>
+											<!-- 	<th>Json Feature Type</th> -->
 											</tr>
 										</thead>
 										<tbody>
@@ -37,15 +37,14 @@
 														</md-select>
 													</md-input-container>
 												</td>
-												<td>
+												<!-- <td>
 													<md-input-container ng-if="column.properties.coordType == 'json'">
 														<md-select ng-model="column.properties.jsonFeatureType" ng-init="column.properties.jsonFeatureType = column.properties.jsonFeatureType || 'Point'">
 															<md-option value="Point">Simple Marker (Point)</md-option>
-															<!-- <md-option value="Collection">Geometry Collection</md-option>  -->
 															<md-option value="Other">Other</md-option>
 														</md-select>
 													</md-input-container>
-												</td>
+												</td> -->
 											</tr>
 										</tbody>
 									</table>

@@ -586,9 +586,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		  layers: [ $scope.baseLayer ],
 	    		  overlays: [overlay],
 	    		  view: new ol.View({
+//	    			center: [0, 3000000],
 	    		    center: $scope.ngModel.content.currentView.center,
 	    		    zoom:  $scope.ngModel.content.currentView.zoom || 3
 	    		  })
+
 	    		});
 
 	    		//just for refresh

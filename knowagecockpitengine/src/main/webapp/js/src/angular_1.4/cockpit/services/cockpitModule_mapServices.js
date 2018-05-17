@@ -55,25 +55,12 @@
 						
 						if (geoFieldConfig.properties.coordType == 'json'){
 							var jsonConf = JSON.parse(geoFieldValue);
-							if (jsonConf.type.toUpperCase() == 'POINT')
+							if (jsonConf.type.toUpperCase() == 'POINT'){
+								jsonConf.coordinates = [jsonConf.coordinates];
 								isSimpleMarker = true;
+							}
 							else
 								isSimpleMarker = false;
-//							if (geoFieldConfig.properties.jsonFeatureType && geoFieldConfig.properties.jsonFeatureType.toUpperCase() != 'POINT'){ //for the moment just Point are managed
-//								sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.jsonCoordTypeInvalid').replace("{0}",geoFieldConfig.properties.jsonFeatureType), 'Title', 0);
-//								console.log("Json feature of type ["+ geoFieldConfig.properties.jsonFeatureType +"] is not managed. Only [Point] are permit.");
-//								return null;
-//							}
-//							if (geoFieldConfig.properties.jsonFeatureType && geoFieldConfig.properties.jsonFeatureType.toUpperCase() == 'POINT'){ 
-//								isSimpleMarker = true;
-//								geoFieldValue = jsonConf.coordinates[0] + " " + jsonConf.coordinates[1];
-//							}else if (geoFieldConfig.properties.jsonFeatureType && geoFieldConfig.properties.jsonFeatureType.toUpperCase() == 'OTHER'){ 
-//								isSimpleMarker = false;
-//							}else{
-//								sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.jsonCoordTypeInvalid').replace("{0}",geoFieldConfig.properties.jsonFeatureType), 'Title', 0);
-//								console.log("Json feature of type ["+ geoFieldConfig.properties.jsonFeatureType +"] is not managed.");
-//								return null;
-//							}
 							jsonConf.properties = geoFieldConfig.properties;
 							geometry = ms.getGeometry(null, jsonConf, geoFieldConfig);
 						}else{
@@ -81,6 +68,7 @@
 						    geometry = ms.getGeometry(geoColumn, geoFieldConfig, geoFieldValue);
 						}
 
+						
 						//set ol objects
 						feature = new ol.Feature(geometry)
 
@@ -126,6 +114,7 @@
 					return null; 
 				}
 			}
+			
 			//setting lon, lat values with correct order (LON, LAT)
 			switch(config.properties.coordFormat) {
 		    case "lon lat": 
@@ -144,32 +133,40 @@
 			return [lon, lat]; 
 		}
 		
-		ms.getGeometry = function(geocol, config, value){
+		ms.getGeometry = function(geocol, config, value){		
 			var geometry;
 		    var coordinates = [];
 		    var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
 		    
-		    if (config.properties.coordType.toUpperCase() == "STRING" || config.type.toUpperCase() == 'POINT'){
+		    if (config.properties.coordType.toUpperCase() == "STRING"){
 		    	coordinates =  transform(ms.getSimpleCoordinates(geocol, config, value));
 		    }else{
 				config.coordinates.forEach(function(coords){
 						for (var i in coords) {
+							var coordinate;
 							if (Array.isArray(coords[i])){
-								for (var j in coords[i]){
-							        var coordinate = transform(ms.getSimpleCoordinates(geocol, config, coords[i][j]))
+								if (Array.isArray(coords[i][0])){
+									for (var j in coords[i]){							
+										coordinate = transform(ms.getSimpleCoordinates(geocol, config, coords[i][j]));
+										coordinates.push(coordinate);
+									}
+								}else{
+									coordinate = transform(ms.getSimpleCoordinates(geocol, config, coords[i]));	
 									coordinates.push(coordinate);
 								}
+								
 							 } else{
-								 var coordinate = transform(ms.getSimpleCoordinates(geocol, config, coords[i]));
-								 coordinates.push(coordinate);
-							 } 
+								 var coordinate = transform(ms.getSimpleCoordinates(geocol, config, coords));
+								 coordinates = coordinate; //point has already an array
+								 break;
+							 }
 						 }
 				});
 		    }
 	        
 			switch(config.type.toUpperCase()) {
 			case "POINT": 
-		    	geometry = new ol.geom.Point([coordinates]);	
+		    	geometry = new ol.geom.Point(coordinates);	
 		        break;
 			case "MULTIPOINT":
 		    	geometry = new ol.geom.MultiPoint([coordinates]);	
@@ -250,11 +247,14 @@
 		    		else
 		    			source = l.getSource();
 		    		
-		    		if (source.getFeatures().length>0 && source.getFeatures()[0].getGeometry().getType() == 'Point')
-			    		coord = source.getFeatures()[0].getGeometry().getCoordinates();
-					else
-						coord = source.getFeatures()[0].getGeometry().getCoordinates()[0][0][0];
-			    	
+		    		if (source.getFeatures().length>0){
+		    			if (source.getFeatures()[0].getGeometry().getType().toUpperCase() == 'POINT')
+		    				coord = source.getFeatures()[0].getGeometry().getCoordinates();
+						else if (source.getFeatures()[0].getGeometry().getType().toUpperCase() == 'MULTIPOLYGON')
+							coord = source.getFeatures()[0].getGeometry().getCoordinates()[0][0][0];
+						else 
+							coord = source.getFeatures()[0].getGeometry().getCoordinates()[0][0];
+		    		}
 			    	if(source.getFeatures().length>35){
 		    			zoom = 4;
 					}else{

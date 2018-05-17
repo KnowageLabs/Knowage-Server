@@ -20,6 +20,7 @@
 		var styleCache = {};
 	    mts.layerStyle = function(feature, resolution){
 	    	var featureType = feature.getGeometry().getType();
+	    	
 	    	var localFeature;
 			if (Array.isArray(feature.get('features')))
 				localFeature = feature.get('features')[0];
