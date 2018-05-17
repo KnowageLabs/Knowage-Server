@@ -72,14 +72,16 @@ public class OAuth2Filter implements Filter {
 				String url = oauth2Config.getProperty("AUTHORIZE_URL");
 				url += "?response_type=code&client_id=" + OAuth2Config.getInstance().getConfig().getProperty("CLIENT_ID");
 				url += "&redirect_uri=" + URLEncoder.encode(oauth2Config.getProperty("REDIRECT_URI"), "UTF-8");
+				if (oauth2Config.containsKey("STATE")) {
+					url += "&state=" + URLEncoder.encode(oauth2Config.getProperty("STATE"), "UTF-8");
+				}
 				((HttpServletResponse) response).sendRedirect(url);
 			} else {
 				// Using the code we get the access token and put it in session
 				OAuth2Client client = new OAuth2Client();
 				String accessToken = client.getAccessToken(((HttpServletRequest) request).getParameter("code"));
 				/*
-				 * author radmila.selakovic@mht.net setting access token in
-				 * request header
+				 * author radmila.selakovic@mht.net setting access token in request header
 				 */
 				String url = oauth2Config.getProperty("REST_BASE_URL") + oauth2Config.getProperty("ROLES_PATH") + "?application_id="
 						+ oauth2Config.getProperty("APPLICATION_ID");
@@ -87,7 +89,7 @@ public class OAuth2Filter implements Filter {
 				httpget.addRequestHeader("X-Auth-Token", accessToken);
 				session.setAttribute("access_token", accessToken);
 
-				((HttpServletResponse) response).sendRedirect(oauth2Config.getProperty("REDIRECT_URI"));
+				((HttpServletResponse) response).sendRedirect(((HttpServletRequest) request).getContextPath());
 			}
 		} else {
 			// pass the request along the filter chain
