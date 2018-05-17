@@ -232,12 +232,12 @@ function cockpitChartWidgetControllerFunction(
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			var aggregations = cockpitModule_widgetSelection.getAggregation($scope.ngModel,dataset);
-			
+
 			var filtersParams = $scope.cockpitModule_widgetSelection.getCurrentSelections(dataset.name);
 			if(Object.keys(filtersParams).length == 0){
 				var filtersParams = $scope.cockpitModule_widgetSelection.getCurrentFilters(dataset.name);
 			}
-			
+
 			var params = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
 			var objForDrill = {};
 			objForDrill.aggregations = aggregations;
@@ -270,7 +270,7 @@ function cockpitChartWidgetControllerFunction(
 				} else {
 					dataToPass = $scope.realtimeDataManagement($scope.realTimeDatasetData, nature);
 				}
-				$scope.$broadcast(nature,dataToPass,dataset.isRealtime,changedChartType,dataAndChartConf,objForDrill);
+				$scope.$broadcast(nature,dataToPass,(dataset.isRealtime && dataset.useCache),changedChartType,dataAndChartConf,objForDrill);
 
 			} else {
 				//Refresh for Not realtime datasets

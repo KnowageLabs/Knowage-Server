@@ -3,7 +3,7 @@
  * It permits to subscribe to server notifications and then update data models.
  *
  */
-angular.module("cockpitModule").service("cockpitModule_realtimeServices",function($rootScope, sbiModule_user, sbiModule_util, sbiModule_restServices, sbiModule_config, cockpitModule_template, cockpitModule_datasetServices, cometd){
+angular.module("cockpitModule").service("cockpitModule_realtimeServices",function($rootScope, sbiModule_user, sbiModule_util, sbiModule_restServices, sbiModule_config, cockpitModule_template, cockpitModule_datasetServices, cometd, sbiModule_messaging){
 	var rt=this;
 
 	broadcast = function(message, dsLabel){
@@ -13,8 +13,9 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 			console.log("Broadcasting a WIDGET_EVENT named " + event + " for dataset " + dsLabel)
 			$rootScope.$broadcast("WIDGET_EVENT", event, {dsLabel:dsLabel, data:data.dataStore});
 		} else {
-			console.log("Error while processing data from Context Broker. Data cannot be update due to missing of previous data.");
+			console.log("Error while processing data from Context Broker. Data cannot be updated due to missing of previous data.");
 			console.log("You can re-execute this dashboard to get updates again");
+			sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.cockpit.storeManager.noDatasetInCache"));
 		}
 	};
 

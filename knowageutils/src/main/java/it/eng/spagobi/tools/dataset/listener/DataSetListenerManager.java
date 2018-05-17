@@ -17,12 +17,15 @@
  */
 package it.eng.spagobi.tools.dataset.listener;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.client.CacheClient;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -128,8 +131,13 @@ public class DataSetListenerManager {
 			throws Exception {
 		DataStoreListenerOperator op = getOperator(uuid, dataSetLabel);
 		String userId = op.getDataSet().getOwner();
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.HOUR, 10);
+		Date expiresAt = calendar.getTime();
+		String jwtToken = JWTSsoService.userId2jwtToken(userId, expiresAt);
+
 		CacheClient client = new CacheClient();
-		IDataStore result = client.updateDataSet(dataSetSignature, updatedOrAdded, realtimeNgsiConsumer, userId);
+		IDataStore result = client.updateDataSet(dataSetSignature, updatedOrAdded, realtimeNgsiConsumer, jwtToken);
 		if (result == null) {
 			log.debug("Impossible to apply updates. Error while executing dataset with label [" + op.getDataSet().getLabel() + "] in cache for user [" + userId
 					+ "]");
