@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   JSONObject selfServiceParameters=new JSONObject(parameters);
   boolean isAdmin = UserUtilities.isAdministrator(userProfile);
   boolean isTechnicalUser =  UserUtilities.isTechnicalUser(userProfile);
+  int maxSizeStr = GeneralUtilities.getDataSetFileMaxSize();
 %>
 
 
@@ -50,6 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		   var datasetParameters=<%=selfServiceParameters%>;
 		   var isAdmin =<%=isAdmin%>;
 		   var isTechnicalUser = <%=isTechnicalUser%>;
+		   var maxSizeStr = <%=maxSizeStr%>;
 		</script>
 		
 		<!-- Codemirror -->
@@ -340,7 +342,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                  
 					                  	
 					                  
-					                  	<file-upload 	flex ng-model="fileObj" id="datasetFile"  ng-required=true
+					                  	<file-upload 	file-max-size=maxSizeStr flex ng-model="fileObj" id="datasetFile"  ng-required=true
 					                  					ng-click="fileChange();checkChange();fileObjTakeBackup()" 
 						                  				title="{{translate.load('sbi.workspace.dataset.wizard.browsefile.tooltip')}}">
 			                			</file-upload>
