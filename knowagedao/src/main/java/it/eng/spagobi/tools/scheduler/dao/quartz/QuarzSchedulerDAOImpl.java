@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,30 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.scheduler.dao.quartz;
-
-import it.eng.qbe.datasource.configuration.dao.DAOException;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
-import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.tools.scheduler.bo.CronExpression;
-import it.eng.spagobi.tools.scheduler.bo.Frequency;
-import it.eng.spagobi.tools.scheduler.bo.Job;
-import it.eng.spagobi.tools.scheduler.bo.Trigger;
-import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
-import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
-import it.eng.spagobi.tools.scheduler.metadata.SbiTriggerPaused;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +36,25 @@ import org.quartz.JobDetail;
 import org.quartz.ObjectAlreadyExistsException;
 import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
+
+import it.eng.qbe.datasource.configuration.dao.DAOException;
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.scheduler.bo.CronExpression;
+import it.eng.spagobi.tools.scheduler.bo.Frequency;
+import it.eng.spagobi.tools.scheduler.bo.Job;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.tools.scheduler.metadata.SbiTriggerPaused;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -106,8 +106,8 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 				}
 			}
 		} catch (Throwable t) {
-			throw new SpagoBIDAOException("An unexpected error occured while checking for the existence of job [" + jobName + "] in group [" + jobGroupName
-					+ "]", t);
+			throw new SpagoBIDAOException(
+					"An unexpected error occured while checking for the existence of job [" + jobName + "] in group [" + jobGroupName + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -442,7 +442,8 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 				}
 			}
 		} catch (Throwable t) {
-			throw new SpagoBIDAOException("An unexpected error occured while loading trigger s of job [" + jobName + "] in job group [" + jobGroupName + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading trigger s of job [" + jobName + "] in job group [" + jobGroupName + "]",
+					t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -469,8 +470,8 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 
 			scheduler.unscheduleJob(triggerName, triggerGroupName);
 		} catch (Throwable t) {
-			throw new SpagoBIDAOException("An unexpected error occured while deleting trigger [" + triggerName + "] of trigger group [" + triggerGroupName
-					+ "]", t);
+			throw new SpagoBIDAOException(
+					"An unexpected error occured while deleting trigger [" + triggerName + "] of trigger group [" + triggerGroupName + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -716,8 +717,9 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting trigger paused "
-					+ "whose triggerName is equal to [" + triggerName + "] and trigger group [" + triggerName + "]";
+			String msg = (t.getMessage() != null) ? t.getMessage()
+					: "An unexpected error occured while deleting trigger paused " + "whose triggerName is equal to [" + triggerName + "] and trigger group ["
+							+ triggerName + "]";
 			throw new SpagoBIDAOException(msg, t);
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -778,8 +780,9 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while checking trigger paused "
-					+ "whose triggerName is equal to [" + triggerName + "] and trigger group [" + triggerName + "]";
+			String msg = (t.getMessage() != null) ? t.getMessage()
+					: "An unexpected error occured while checking trigger paused " + "whose triggerName is equal to [" + triggerName + "] and trigger group ["
+							+ triggerName + "]";
 			throw new SpagoBIDAOException(msg, t);
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -808,19 +811,23 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 		Calendar startTime = Calendar.getInstance();
 		startTime.setTimeInMillis(frequency.getStartDate());
 
-		String[] sp = frequency.getStartTime().split(":");
-		String startHour = sp[0];
-		String startMinute = sp[1];
-		startTime.set(Calendar.HOUR_OF_DAY, new Integer(startHour).intValue());
-		startTime.set(Calendar.MINUTE, new Integer(startMinute).intValue());
+		String startTimeString = frequency.getStartTime();
+		if (StringUtilities.isNotEmpty(startTimeString)) {
+			String[] sp = startTimeString.split(":");
+			String startHour = sp[0];
+			String startMinute = sp[1];
+			startTime.set(Calendar.HOUR_OF_DAY, new Integer(startHour).intValue());
+			startTime.set(Calendar.MINUTE, new Integer(startMinute).intValue());
+		}
 
 		Trigger trigger = new Trigger();
 
 		if (frequency.getEndDate() != null) {
 			Calendar endTime = Calendar.getInstance();
 			endTime.setTimeInMillis(frequency.getEndDate());
-			if (frequency.getEndTime() != null) {
-				String[] endArr = frequency.getEndTime().split(":");
+			String endTimeString = frequency.getEndTime();
+			if (StringUtilities.isNotEmpty(endTimeString)) {
+				String[] endArr = endTimeString.split(":");
 				String endHour = endArr[0];
 				String endMinute = endArr[1];
 				endTime.set(Calendar.HOUR_OF_DAY, new Integer(endHour).intValue());

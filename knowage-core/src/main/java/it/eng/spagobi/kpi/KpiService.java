@@ -1080,7 +1080,7 @@ public class KpiService {
 	private void checkValidity(KpiScheduler scheduler) throws SpagoBIException {
 		String fieldValue = null;
 		String fieldName = null;
-		if (!scheduler.getFrequency().getStartTime().matches("\\d{2}:\\d{2}")) {
+		if (!scheduler.getFrequency().getEndTime().isEmpty() && !scheduler.getFrequency().getStartTime().matches("\\d{2}:\\d{2}")) {
 			fieldName = "StartTime";
 			fieldValue = scheduler.getFrequency().getStartTime();
 		}
