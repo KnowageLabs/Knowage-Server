@@ -200,6 +200,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										  		<md-card-content ng-if="JDBCAdvancedOptionsShow">
 										  			<div layout="row">
 										  				<md-input-container flex="90" class="md-block">
+															<label>{{translate.load("sbi.datasource.type.jdbc.maxTotal")}}</label>
+															<input type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.maxTotal"
+																ng-maxlength="20" ng-readonly="readOnly">
+															<div ng-messages="forms.dataSourceForm.driver.$error" ng-show="!selectedDataSource.jdbcPoolConfiguration.maxTotal">
+				          										<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+				        									</div>
+														</md-input-container>
+														<md-icon ng-click="showMaxTotalInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
+										  			</div>
+										  													  		
+										  			<div layout="row">
+										  				<md-input-container flex="90" class="md-block">
 															<label>{{translate.load("sbi.datasource.type.jdbc.maxWait")}}</label>
 															<input required type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.maxWait"
 																ng-maxlength="30" ng-readonly="readOnly">
@@ -232,6 +244,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				        									</div>
 														</md-input-container>
 														<md-icon ng-click="showTimeBetweenEvictionRunsInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
+										  			</div>
+										  			
+										  			<div layout="row">
+										  				<md-input-container flex="90" class="md-block">
+															<label>{{translate.load("sbi.datasource.type.jdbc.minEvictableIdleTimeMillis")}}</label>
+															<input type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis"
+																ng-maxlength="30" ng-readonly="readOnly">
+															<div ng-messages="forms.dataSourceForm.driver.$error" ng-show="!selectedDataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis">
+				          										<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+				        									</div>
+														</md-input-container>
+														<md-icon ng-click="showminEvictableIdleTimeMillisInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
 										  			</div>
 										  			
 										  			<div layout="row">

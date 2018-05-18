@@ -31,6 +31,11 @@ public class JDBCDataSourcePoolConfiguration implements Serializable {
 
 	@NotNull
 	@Xss
+	@Size(max = 20)
+	private Integer maxTotal;
+
+	@NotNull
+	@Xss
 	@Size(max = 30)
 	private Long maxWait;
 
@@ -44,6 +49,11 @@ public class JDBCDataSourcePoolConfiguration implements Serializable {
 	@Size(max = 30)
 	private Long timeBetweenEvictionRuns;
 
+	@NotNull
+	@Xss
+	@Size(max = 30)
+	private Long minEvictableIdleTimeMillis;
+
 	@Xss
 	@Size(max = 200)
 	private String validationQuery;
@@ -55,9 +65,11 @@ public class JDBCDataSourcePoolConfiguration implements Serializable {
 	private Boolean testWhileIdle;
 
 	public JDBCDataSourcePoolConfiguration() {
+		this.maxTotal = 20;
 		this.maxWait = 60000L;
 		this.abandonedTimeout = 60;
 		this.timeBetweenEvictionRuns = 10000L;
+		this.minEvictableIdleTimeMillis = 60000L;
 		this.removeAbandonedOnBorrow = true;
 		this.removeAbandonedOnMaintenance = true;
 		this.logAbandoned = true;
@@ -65,18 +77,29 @@ public class JDBCDataSourcePoolConfiguration implements Serializable {
 		this.testWhileIdle = true;
 	}
 
-	public JDBCDataSourcePoolConfiguration(Long maxWait, Integer abandonedTimeout, Long timeBetweenEvictionRuns, String validationQuery,
-			Boolean removeAbandonedOnBorrow, Boolean removeAbandonedOnMaintenance, Boolean logAbandoned, Boolean testOnReturn, Boolean testWhileIdle) {
+	public JDBCDataSourcePoolConfiguration(Integer maxTotal, Long maxWait, Integer abandonedTimeout, Long timeBetweenEvictionRuns,
+			Long minEvictableIdleTimeMillis, String validationQuery, Boolean removeAbandonedOnBorrow, Boolean removeAbandonedOnMaintenance,
+			Boolean logAbandoned, Boolean testOnReturn, Boolean testWhileIdle) {
 		super();
+		this.maxTotal = maxTotal;
 		this.maxWait = maxWait;
 		this.abandonedTimeout = abandonedTimeout;
 		this.timeBetweenEvictionRuns = timeBetweenEvictionRuns;
+		this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
 		this.validationQuery = validationQuery;
 		this.removeAbandonedOnBorrow = removeAbandonedOnBorrow;
 		this.removeAbandonedOnMaintenance = removeAbandonedOnMaintenance;
 		this.logAbandoned = logAbandoned;
 		this.testOnReturn = testOnReturn;
 		this.testWhileIdle = testWhileIdle;
+	}
+
+	public Integer getMaxTotal() {
+		return maxTotal;
+	}
+
+	public void setMaxTotal(Integer maxTotal) {
+		this.maxTotal = maxTotal;
 	}
 
 	public Long getMaxWait() {
@@ -101,6 +124,14 @@ public class JDBCDataSourcePoolConfiguration implements Serializable {
 
 	public void setTimeBetweenEvictionRuns(Long timeBetweenEvictionRuns) {
 		this.timeBetweenEvictionRuns = timeBetweenEvictionRuns;
+	}
+
+	public Long getMinEvictableIdleTimeMillis() {
+		return minEvictableIdleTimeMillis;
+	}
+
+	public void setMinEvictableIdleTimeMillis(Long minEvictableIdleTimeMillis) {
+		this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
 	}
 
 	public String getValidationQuery() {

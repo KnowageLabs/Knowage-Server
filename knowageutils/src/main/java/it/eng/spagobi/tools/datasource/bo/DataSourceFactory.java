@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.datasource.bo;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
+import it.eng.spagobi.tools.datasource.bo.deserializer.JDBCDataSourcePoolConfigurationJSONDeserializer;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -50,6 +51,12 @@ public abstract class DataSourceFactory {
 		dataSource.setReadOnly(dataSourceConfig.getReadOnly());
 		dataSource.setWriteDefault(dataSourceConfig.getWriteDefault());
 		dataSource.setHibDialectClass(dataSourceConfig.getHibDialectClass());
+
+		if (dataSourceConfig.getJdbcPoolConfiguration() != null) {
+			JDBCDataSourcePoolConfiguration jdbcDataSourcePoolConfiguration = (JDBCDataSourcePoolConfiguration) new JDBCDataSourcePoolConfigurationJSONDeserializer()
+					.deserialize(dataSourceConfig.getJdbcPoolConfiguration());
+			dataSource.setJdbcPoolConfiguration(jdbcDataSourcePoolConfiguration);
+		}
 		return dataSource;
 	}
 

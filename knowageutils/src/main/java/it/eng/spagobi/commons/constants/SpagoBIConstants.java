@@ -53,10 +53,8 @@ public class SpagoBIConstants {
 	public static final String FILE_METADATA_TYPE_CODE = "FILE";
 
 	/*
-	 * public static final String ACTOR = "ACTOR"; public static final String
-	 * TESTER_ACTOR = "TESTER_ACTOR"; public static final String USER_ACTOR =
-	 * "USER_ACTOR"; public static final String ADMIN_ACTOR = "ADMIN_ACTOR";
-	 * public static final String DEV_ACTOR = "DEV_ACTOR";
+	 * public static final String ACTOR = "ACTOR"; public static final String TESTER_ACTOR = "TESTER_ACTOR"; public static final String USER_ACTOR =
+	 * "USER_ACTOR"; public static final String ADMIN_ACTOR = "ADMIN_ACTOR"; public static final String DEV_ACTOR = "DEV_ACTOR";
 	 */
 	public static final String USE_PUBLIC_USER = "SPAGOBI.SECURITY.USE_PUBLIC_USER";
 	public static final String PUBLIC_USER_ID = "public_user";
@@ -432,6 +430,7 @@ public class SpagoBIConstants {
 	public static final String TIMESPAN = "Timespan";
 	public static final String CREATE_DATASETS_AS_FINAL_USER = "CreateDatasetsAsFinalUser";
 	public static final String USER_SAVE_DOCUMENT_FUNCTIONALITY = "UserSaveDocumentFunctionality";
+	public static final String FINAL_USER_INTERNATIONALIZATION = "FinalUserInternationalization";
 
 	public static final String DOCUMENT_MOVE_DOWN_STATE = "DocumentMoveDownState";
 	public static final String DOCUMENT_MOVE_UP_STATE = "DocumentMoveUpState";
@@ -577,8 +576,7 @@ public class SpagoBIConstants {
 	// Date Range
 	public static final String DATE_RANGE_OPTION_QUANTITY_PREFIX = "dateRangeOptionQuantity_";
 	public static final String DATE_RANGE_OPTION_TYPE_PREFIX = "dateRangeOptionType_";
-	public static final Set<String> DATE_RANGE_VALID_TYPES = Collections
-			.unmodifiableSet(new HashSet<>(Arrays.asList("years", "months", "days", "weeks")));
+	public static final Set<String> DATE_RANGE_VALID_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("years", "months", "days", "weeks")));
 	public static final String DATE_RANGE_TYPE_JSON = "type";
 	public static final String DATE_RANGE_QUANTITY_JSON = "quantity";
 	public static final String DATE_RANGE_TYPE = "DATE_RANGE";

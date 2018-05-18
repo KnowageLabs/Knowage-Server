@@ -112,6 +112,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			if(dataSource.hasOwnProperty('jdbcPoolConfiguration')) {
 				dataSource.jdbcPoolConfiguration.maxWait = dataSource.jdbcPoolConfiguration.maxWait / 1000;
 				dataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns = dataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns / 1000;
+				dataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis = dataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis / 1000;
 			}
 		});
 		return dataSourceArr;
@@ -138,6 +139,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			//Convert seconds into milliseconds
 			$scope.selectedDataSource.jdbcPoolConfiguration.maxWait = $scope.selectedDataSource.jdbcPoolConfiguration.maxWait * 1000;
 			$scope.selectedDataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns = $scope.selectedDataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns * 1000;
+			$scope.selectedDataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis = $scope.selectedDataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis * 1000;
 		} else if($scope.jdbcOrJndi.type=="JNDI") {
 			$scope.selectedDataSource.driver = "";
 			$scope.selectedDataSource.pwd = "";
@@ -193,9 +195,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			if ($scope.jdbcOrJndi.type == 'JDBC') {
 				$scope.selectedDataSource.jndi = "";
 				$scope.selectedDataSource.jdbcPoolConfiguration = {
+					maxTotal: 20,
 					maxWait: 60,
 					abandonedTimeout: 60,
 					timeBetweenEvictionRuns: 10,
+					minEvictableIdleTimeMillis: 60,
 					validationQuery: "",
 					removeAbandonedOnBorrow: true,
 					removeAbandonedOnMaintenance: true,
@@ -283,9 +287,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					pwd: "",
 					driver: "",
 					jdbcPoolConfiguration: {
+						maxTotal: 20,
 						maxWait: 60,
 						abandonedTimeout: 60,
 						timeBetweenEvictionRuns: 10,
+						minEvictableIdleTimeMillis: 60,
 						validationQuery: "",
 						removeAbandonedOnBorrow: true,
 						removeAbandonedOnMaintenance: true,
@@ -311,9 +317,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 						user: "",
 						pwd: "",
 						jdbcPoolConfiguration: {
+							maxTotal: 20,
 							maxWait: 60,
 							abandonedTimeout: 60,
 							timeBetweenEvictionRuns: 10,
+							minEvictableIdleTimeMillis: 60,
 							validationQuery: "",
 							removeAbandonedOnBorrow: true,
 							removeAbandonedOnMaintenance: true,
@@ -502,44 +510,72 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	}
 
 	//JDBC ADVANCED OPTIONS INFO DIALOGS
+	//Max Total INFO
+	$scope.showMaxTotalInfo = function(event) {
+		$mdDialog.show(
+				$mdDialog.alert()
+						 .clickOutsideToClose(true)
+						 .title(sbiModule_translate.load("sbi.datasource.type.jdbc.maxTotal"))
+						 .content(sbiModule_translate.load("sbi.datasource.type.jdbc.maxTotalInfo"))
+						 .ok(sbiModule_translate.load("sbi.federationdefinition.template.button.close"))
+						 .targetEvent(event)
+		);
+	};
+	
 	//Max Wait INFO
 	$scope.showMaxWaitInfo = function(event) {
 		$mdDialog.show(
 				$mdDialog.alert()
 						 .clickOutsideToClose(true)
+						 .title(sbiModule_translate.load("sbi.datasource.type.jdbc.maxWait"))
 						 .content(sbiModule_translate.load("sbi.datasource.type.jdbc.maxWaitInfo"))
 						 .ok(sbiModule_translate.load("sbi.federationdefinition.template.button.close"))
 						 .targetEvent(event)
 		);
 	};
-
+	
 	//Abandoned Timeout INFO
 	$scope.showAbandonedTimeoutInfo = function(event) {
 		$mdDialog.show(
 				$mdDialog.alert()
 						 .clickOutsideToClose(true)
+						 .title(sbiModule_translate.load("sbi.datasource.type.jdbc.abandonedTimeout"))
 						 .content(sbiModule_translate.load("sbi.datasource.type.jdbc.abandonedTimeoutInfo"))
 						 .ok(sbiModule_translate.load("sbi.federationdefinition.template.button.close"))
 						 .targetEvent(event)
 		);
 	};
-
+	
 	//Time between eviction runs INFO
 	$scope.showTimeBetweenEvictionRunsInfo = function(event) {
 		$mdDialog.show(
 				$mdDialog.alert()
 						 .clickOutsideToClose(true)
+						 .title(sbiModule_translate.load("sbi.datasource.type.jdbc.timeBetweenEvictionRuns"))
 						 .content(sbiModule_translate.load("sbi.datasource.type.jdbc.timeBetweenEvictionRunsInfo"))
 						 .ok(sbiModule_translate.load("sbi.federationdefinition.template.button.close"))
 						 .targetEvent(event)
 		);
 	};
-
+	
+	//Min Evictable Idle Time INFO
+	$scope.showminEvictableIdleTimeMillisInfo = function(event) {
+		$mdDialog.show(
+				$mdDialog.alert()
+						 .clickOutsideToClose(true)
+						 .title(sbiModule_translate.load("sbi.datasource.type.jdbc.minEvictableIdleTimeMillis"))
+						 .content(sbiModule_translate.load("sbi.datasource.type.jdbc.minEvictableIdleTimeMillisInfo"))
+						 .ok(sbiModule_translate.load("sbi.federationdefinition.template.button.close"))
+						 .targetEvent(event)
+		);
+	};
+	
 	//Validation Query INFO
 	$scope.showValidationQueryInfo = function(event) {
 		$mdDialog.show(
 				$mdDialog.alert()
 						 .clickOutsideToClose(true)
+						 .title(sbiModule_translate.load("sbi.datasource.type.jdbc.validationQuery"))
 						 .content(sbiModule_translate.load("sbi.datasource.type.jdbc.validationQueryInfo"))
 						 .ok(sbiModule_translate.load("sbi.federationdefinition.template.button.close"))
 						 .targetEvent(event)
