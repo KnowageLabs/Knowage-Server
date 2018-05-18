@@ -424,14 +424,14 @@ angular.module('chartInitializer')
 	this.handleDrillup = function(){
 
 		var chart=this;
-		//var axisTitle = chart.options.drilledCategories[chart.options.drilledCategories.length-2] 
+		var axisTitle = chart.options.drilledCategories[chart.options.drilledCategories.length-2] 
 		chart.options.drilledCategories.pop();
 		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-2] ? chart.options.drilledCategories[chart.options.drilledCategories.length-2] : chart.options.drilledCategories[0];
 		var backText=titleText;
 		chart.drillUpButton.textSetter("Back to: <b>"+backText+"</b>");
         //  chart.redraw();
 		var xAxisTitle={
-            	text:titleText
+            	text:axisTitle
 		};
 		
 		if(chart.xAxis[0].userOptions.title.customTitle==false){
