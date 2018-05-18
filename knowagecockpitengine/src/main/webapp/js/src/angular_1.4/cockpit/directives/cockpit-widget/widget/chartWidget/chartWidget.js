@@ -309,7 +309,7 @@ function cockpitChartWidgetControllerFunction(
 					scope.adaptMetadata(metadataFields);
 				}
 
-				scope.$broadcast('selections',originalData);
+				scope.$broadcast('selections',originalData,true);
 			}
 
 		} else if (scope.ngModel && scope.ngModel.dataset && scope.ngModel.dataset.dsId){
@@ -348,7 +348,7 @@ function cockpitChartWidgetControllerFunction(
 									  scope.adaptMetadata(metadataFields);
 
 									  //send broadcast for selections with data filtered by selections
-									  scope.$broadcast('selections',scope.realTimeDatasetData);
+									  scope.$broadcast('selections',scope.realTimeDatasetData,true);
 								  }
 							  }
 							}

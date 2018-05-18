@@ -84,13 +84,15 @@ angular.module('cockpitModule')
 		var realtimeSelectionsWatcher = $scope.$watchCollection('realTimeSelections',function(newValue,oldValue,scope){
 			if(scope.ngModel && scope.ngModel.dataset && scope.ngModel.dataset.dsId){
 				var dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId);
-				if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1 ){
-	                cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
-	            }
-				if(newValue != oldValue && newValue.length > 0){
-					scope.itemList = scope.filterDataset(scope.itemList,scope.reformatSelections(newValue));
-				}else{
-					angular.copy(scope.savedRows, scope.itemList);
+				if(dataset.isRealtime){
+					if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1 ){
+						cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
+					}
+					if(newValue != oldValue && newValue.length > 0){
+						scope.itemList = scope.filterDataset(scope.itemList,scope.reformatSelections(newValue));
+					}else{
+						angular.copy(scope.savedRows, scope.itemList);
+					}
 				}
 			}
 		});
@@ -133,7 +135,7 @@ angular.module('cockpitModule')
 		}
 
 		$scope.init=function(element,width,height){
-			$scope.refreshWidget();
+			$scope.refreshWidget(null, 'init');
 			$timeout(function(){
 				$scope.widgetIsInit=true;
 			},500);

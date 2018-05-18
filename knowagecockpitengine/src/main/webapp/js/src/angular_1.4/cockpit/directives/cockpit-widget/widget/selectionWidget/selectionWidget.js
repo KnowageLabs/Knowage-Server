@@ -64,7 +64,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 	angular.copy(cockpitModule_template.configuration.filters,$scope.tmpFilters);
 
 	$scope.init=function(element,width,height){
-		$scope.refreshWidget();
+		$scope.refreshWidget(null, 'init');
 	};
 
 	$scope.refresh=function(element,width,height){

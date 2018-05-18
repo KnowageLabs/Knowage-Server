@@ -54,7 +54,7 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 		$scope.hideWidgetSpinner();
 	}
 	$scope.init=function(element,width,height){
-		$scope.refreshWidget();
+		$scope.refreshWidget(null, 'init');
 	};
 	
 	$scope.refresh=function(element,width,height,data,nature){

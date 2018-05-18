@@ -129,7 +129,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		if(loadDomainValues == undefined){
 			loadDomainValues = false;
 		}
-		
+
 		if (!options) options = {};
 		var page = options.page;
 		var itemPerPage = options.itemPerPage;
@@ -164,7 +164,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			}
 			return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues);
 		}
-		return null ;
+		return null;
 	}
 
 	this.isFullPageWidget=function()
@@ -260,9 +260,25 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 							}
 						}
 					}
+
 					//for realtime dataset the associative selections are managed client side
-					if (dataset.isRealtime && nature == 'selections'){
+					if (dataset.isRealtime && (nature=='selections' || nature=='filters')){
 						var selections = cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
+						var filters = cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
+
+						for (var filterProp in filters) {
+							if(selections[filterProp]==undefined){
+								selections[filterProp]=filters[filterProp];
+							}else{
+								for (var filterProp2 in filters[filterProp]) {
+									if(selections[filterProp][filterProp2]==undefined){
+										selections[filterProp][filterProp2]=filters[filterProp][filterProp2];
+									}else{
+										selections[filterProp][filterProp2].push.apply(selections[filterProp][filterProp2], [filterProp][filterProp2]);
+									}
+								}
+							}
+						}
 
 						if (Object.keys(selections).length === 0 && selections.constructor === Object){
 							//cleaned selections
@@ -271,6 +287,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 							//save dataset and selections inside this array (that can be watched outside)
 							this.realtimeSelections.push({'datasetId':config.dataset.dsId, 'selections':selections});
 						}
+						return;
+					}
+
+					if(nature!='init' && dataset.isRealtime && dataset.useCache){
 						return;
 					}
 				}

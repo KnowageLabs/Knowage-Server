@@ -115,7 +115,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 
 	$scope.init=function(element,width,height){
-		$scope.refreshWidget();
+		$scope.refreshWidget(null, 'init');
 	};
 
 	$scope.cleanProperties = function(config, obj, admitObject) {

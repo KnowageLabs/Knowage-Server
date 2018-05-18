@@ -79,31 +79,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(newValue != oldValue){
 				if(scope.ngModel && scope.ngModel.dataset && scope.ngModel.dataset.dsId){
 					var dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId);
-					if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
-		                cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
-		            }
-
-					var layer = $scope.getLayerByName(dataset.label);
-
-					if(newValue.length > 0){
-						// save unfiltered data if not already saved
-						if(!$scope.savedValues[layer.name]){
-							$scope.savedValues[layer.name] = {};
-							angular.copy($scope.values[layer.name], $scope.savedValues[layer.name]);
+					if(dataset.isRealtime){
+						if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
+							cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
 						}
 
-						// calc filtered data
-						scope.filterDataset(scope.values[layer.name],scope.reformatSelections(newValue));
+						var layer = $scope.getLayerByName(dataset.label);
 
-						// apply filtered data
-						$scope.createLayerWithData(layer.name, scope.values[layer.name], false);
-					}else{
-						// restore unfiltered data
-						angular.copy(scope.savedValues[layer.name], scope.values[layer.name]);
-						delete scope.savedValues[layer.name];
+						if(newValue.length > 0){
+							// save unfiltered data if not already saved
+							if(!$scope.savedValues[layer.name]){
+								$scope.savedValues[layer.name] = {};
+								angular.copy($scope.values[layer.name], $scope.savedValues[layer.name]);
+							}
 
-						// apply unfiltered data
-						$scope.createLayerWithData(layer.name, scope.values[layer.name], false);
+							// calc filtered data
+							scope.filterDataset(scope.values[layer.name],scope.reformatSelections(newValue));
+
+							// apply filtered data
+							$scope.createLayerWithData(layer.name, scope.values[layer.name], false);
+						}else{
+							// restore unfiltered data
+							angular.copy(scope.savedValues[layer.name], scope.values[layer.name]);
+							delete scope.savedValues[layer.name];
+
+							// apply unfiltered data
+							$scope.createLayerWithData(layer.name, scope.values[layer.name], false);
+						}
 					}
 				}
 			}
