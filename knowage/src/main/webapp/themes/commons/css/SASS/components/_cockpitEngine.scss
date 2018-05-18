@@ -12,6 +12,7 @@
     background-image: #fff;
 
     cockpit-html-widget {
+    	height: 100%;
     	overflow: auto;
 
     }
@@ -1673,6 +1674,9 @@
 					background-color: transparent !important;
 				}
 			}
+		}
+		.fixedSelectionButton {
+			z-index: 50 !important;
 		}
 	}
 

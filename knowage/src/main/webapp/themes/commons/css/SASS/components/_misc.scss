@@ -925,6 +925,10 @@ color-picker {
   }
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 .selectable {
   cursor: pointer;
   &:hover {
