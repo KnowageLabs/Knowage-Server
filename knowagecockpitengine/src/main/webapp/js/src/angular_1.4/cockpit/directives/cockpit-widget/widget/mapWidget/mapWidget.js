@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				compile: function (tElement, tAttrs, transclude) {
 					return {
 						pre: function preLink(scope, element, attrs, ctrl, transclud) {
+							//defines new id for clone widget action
 							if (scope.ngModel.content.mapId){
 				 	    		scope.ngModel.content.mapId =  'map-' + scope.ngModel.id;
 				 	    	}
@@ -65,13 +66,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_properties){
 
 		//ol objects
-		$scope.popupContainer; //popup detail
-		$scope.closer; //popup detail closer icon
-		$scope.layers = [];  //layers with features
-		$scope.values = {};  //layers with values
+		$scope.popupContainer; 		//popup detail
+		$scope.closer; 				//popup detail closer icon
+		$scope.layers = [];  		//layers with features
+		$scope.values = {};  		//layers with values
 		$scope.savedValues = {};
-		$scope.configs = {}; //layers with configuration
-		$scope.columnsConfig = {} //layers with just columns definition
+		$scope.configs = {}; 		//layers with configuration
+		$scope.columnsConfig = {} 	//layers with just columns definition
+//		$scope.loading = true; 	  	//initializing directive with the loading active
+		
+//		//checking the presence of the rows model to stop the loading. deregistering the watcher after
+//        var loadingWatcher = scope.$watch('values', function(newValue, oldValue) {
+//            if (newValue != undefined) {
+//                scope.loading = false;
+//                loadingWatcher();
+//            }
+//        });
 
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
 		//set a watcher on a variable that can contains the associative selections for realtime dataset
@@ -141,7 +151,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				return formattedSelection;
 			}
 		}
-
+        
 		/**
 		 * Returns the column object that satisfy the original name (not aliasToShow) passed as argument
 		 */
@@ -435,11 +445,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            		}
 	            	}
         	    }
-
         	    $scope.ngModel.content.currentView.zoom = e.target.getZoom();
         	    $scope.ngModel.content.currentView.center = e.target.getCenter();
             });
-
 	    }
 
 	    $scope.addMapEvents = function (overlay){
@@ -473,7 +481,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        		if ($scope.props.features && Array.isArray($scope.props.features)) return;
 	        		$scope.$apply()
 
-	        		if (!$scope.columnsConfig[$scope.selectedLayer.name]){
+	        		if (cockpitModule_properties.EDIT_MODE || !$scope.columnsConfig[$scope.selectedLayer.name]){
     	        		$scope.layerConfig = $scope.getColumnSelectedOfDataset($scope.selectedLayer.dsId);
 	        			$scope.columnsConfig[$scope.selectedLayer.name] =  $scope.layerConfig;
     	        	}else{
@@ -481,7 +489,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	        	}
 
     	            var geometry = $scope.tempFeature.getGeometry();
-//    	            var coordinate = geometry.getCoordinates();
     	            var coordinate = evt.coordinate;
     	            overlay.setPosition(coordinate);
     	        }
@@ -584,11 +591,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            
 	    		$scope.map = new ol.Map({
 	    		  target: 'map-' + $scope.ngModel.id,
-//	    		  target: 'map-' + $scope.ngModel.content.mapId,
 	    		  layers: [ $scope.baseLayer ],
 	    		  overlays: [overlay],
 	    		  view: new ol.View({
-//	    			center: [0, 3000000],
 	    		    center: $scope.ngModel.content.currentView.center,
 	    		    zoom:  $scope.ngModel.content.currentView.zoom || 3
 	    		  })
@@ -608,6 +613,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				//add events methods
 	    		$scope.addViewEvents();
 	    		$scope.addMapEvents(overlay);
+//	    		$scope.loading = false;
 	    	});
 	    }
 
