@@ -974,7 +974,7 @@ public class StringUtilities {
 			int prefixLength = prefix.length();
 			return values.substring(prefixIndex + prefixLength, suffixIndex).split("\\Q" + delimiter + "\\E");
 		} else {
-			throw new SpagoBIRuntimeException("Unable to tokenize string [" + values + "] with delimiters [" + prefix + "," + delimiter + "," + suffix + "]");
+			return new String[] { values };
 		}
 	}
 }

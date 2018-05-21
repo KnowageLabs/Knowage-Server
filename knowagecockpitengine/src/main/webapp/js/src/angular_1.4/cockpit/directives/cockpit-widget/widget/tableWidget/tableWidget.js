@@ -77,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		var realtimeSelectionsWatcher = $scope.$watchCollection('realTimeSelections',function(newValue,oldValue,scope){
 			if(scope.ngModel && scope.ngModel.dataset && scope.ngModel.dataset.dsId){
 				var dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId);
-				if(dataset.isRealtime){
+				if(dataset.isRealtime && dataset.useCache){
 					if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1 ){
 		                cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
 		            }

@@ -262,7 +262,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					}
 
 					//for realtime dataset the associative selections are managed client side
-					if (dataset.isRealtime && (nature=='selections' || nature=='filters')){
+					if (dataset.isRealtime && dataset.useCache && (nature=='selections' || nature=='filters')){
 						var selections = cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
 						var filters = cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 
