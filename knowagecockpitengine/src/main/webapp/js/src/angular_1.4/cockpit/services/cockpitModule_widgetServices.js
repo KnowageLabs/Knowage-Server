@@ -225,8 +225,23 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				if (config && config.dataset && config.dataset.dsId){
 					var dataset = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId);
 					//for realtime dataset the associative selections are managed client side
-					if (dataset.isRealtime && nature == 'selections'){
+					if (dataset.isRealtime && dataset.useCache && (nature=='selections' || nature=='filters')){
 						var selections = cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
+						var filters = cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
+
+						for (var filterProp in filters) {
+							if(selections[filterProp]==undefined){
+								selections[filterProp]=filters[filterProp];
+							}else{
+								for (var filterProp2 in filters[filterProp]) {
+									if(selections[filterProp][filterProp2]==undefined){
+										selections[filterProp][filterProp2]=filters[filterProp][filterProp2];
+									}else{
+										selections[filterProp][filterProp2].push.apply(selections[filterProp][filterProp2], [filterProp][filterProp2]);
+									}
+								}
+							}
+						}
 
 						if (Object.keys(selections).length === 0 && selections.constructor === Object){
 							//cleaned selections
@@ -237,9 +252,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 						}
 						return;
 					}
+
+					if(nature!='init' && dataset.isRealtime && dataset.useCache){
+						return;
+					}
 				}
 
-				var dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, config.type == "selector");
+				var dsRecords = this.loadDatasetRecords(config,options, config.type == "selector");
 				if(dsRecords == null){
 					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
 				}else{
@@ -275,7 +294,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 						}
 
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
-						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,changedChartType:changedChartType, "chartConf":data});
+						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,changedChartType:changedChartType, "chartConf":data, options:options});
 					}, function(){
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
 						console.log("Error retry data");
@@ -283,7 +302,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				}
 			}
 		}else {
-			$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
+			$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,options:options});
 		}
 	};
 

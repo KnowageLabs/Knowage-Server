@@ -257,7 +257,7 @@ function cockpitChartWidgetControllerFunction(
 				objForDrill.par += "&limit=" + limitRows.rows;
 			}
 			objForDrill.par += "&widgetName=" + encodeURIComponent($scope.ngModel.content.name);
-			if (dataset.isRealtime == true){
+			if (dataset.isRealtime == true && dataset.useCache == true){
 				//Refresh for Realtime datasets
 				var dataToPass = data;
 				//apply filters for realtime dataset
@@ -287,7 +287,7 @@ function cockpitChartWidgetControllerFunction(
 	var realtimeSelectionsWatcher = $scope.$watchCollection('realtimeSelections',function(newValue,oldValue,scope){
 		if (scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId);
-			if (dataset.isRealtime == true){
+			if (dataset.isRealtime == true && dataset.useCache == true){
 				if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1 ){
 	                cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
 	            }
@@ -309,7 +309,7 @@ function cockpitChartWidgetControllerFunction(
 					scope.adaptMetadata(metadataFields);
 				}
 
-				scope.$broadcast('selections',originalData);
+				scope.$broadcast('selections',originalData,true);
 			}
 
 		} else if (scope.ngModel && scope.ngModel.dataset && scope.ngModel.dataset.dsId){
@@ -335,20 +335,26 @@ function cockpitChartWidgetControllerFunction(
 									  var filterValues = []
 									  filterValues.push(filterValue);
 
-									  //apply the filter function
-									  var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,columnName);
-									  //use the alias to match the filtercolumn name
-									  var filterColumnname = columnObject.alias;
-									  var columnType = columnObject.fieldType;
-									  scope.realTimeDatasetData.rows = scope.filterRows(scope.realTimeDatasetData,columnObject,filterValues,columnType);
-									  scope.realTimeDatasetData.results = scope.realTimeDatasetData.rows.length;
+									  if(scope.realTimeDatasetData){
+										  if(scope.realTimeDatasetData.jsonData){
+											  scope.realTimeDatasetData = JSON.parse(scope.realTimeDatasetData.jsonData);
+										  }
 
-									  // adapt the metadata to be sent to the backend
-									  var metadataFields = scope.realTimeDatasetData.metaData.fields;
-									  scope.adaptMetadata(metadataFields);
+										  //apply the filter function
+										  var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,columnName);
+										  //use the alias to match the filtercolumn name
+										  var filterColumnname = columnObject.alias;
+										  var columnType = columnObject.fieldType;
+										  scope.realTimeDatasetData.rows = scope.filterRows(scope.realTimeDatasetData,columnObject,filterValues,columnType);
+										  scope.realTimeDatasetData.results = scope.realTimeDatasetData.rows.length;
 
-									  //send broadcast for selections with data filtered by selections
-									  scope.$broadcast('selections',scope.realTimeDatasetData);
+										  // adapt the metadata to be sent to the backend
+										  var metadataFields = scope.realTimeDatasetData.metaData.fields;
+										  scope.adaptMetadata(metadataFields);
+
+										  //send broadcast for selections with data filtered by selections
+										  scope.$broadcast('selections',scope.realTimeDatasetData,true);
+									  }
 								  }
 							  }
 							}
@@ -384,7 +390,7 @@ function cockpitChartWidgetControllerFunction(
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			//Do something only if the dataset is realtime, otherwise just pass the data
-			if (dataset.isRealtime == true){
+			if (dataset.isRealtime == true && dataset.useCache == true){
 				//create a deep copy of the data, otherwise filtering on data will be spread to all the widgets
 				$scope.realTimeDatasetData = angular.copy(data);
 

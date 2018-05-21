@@ -60,7 +60,7 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 
 		$timeout( function(){
 			//imgObj.one("load",function(){
-				$scope.refreshWidget();
+				$scope.refreshWidget(null, 'init');
 			//});
 		},500);
 	};
