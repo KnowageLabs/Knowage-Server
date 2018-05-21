@@ -336,6 +336,9 @@ function cockpitChartWidgetControllerFunction(
 									  filterValues.push(filterValue);
 
 									  if(scope.realTimeDatasetData){
+										  if(scope.realTimeDatasetData.jsonData){
+											  scope.realTimeDatasetData = JSON.parse(scope.realTimeDatasetData.jsonData);
+										  }
 										  //apply the filter function
 										  var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,columnName);
 										  //use the alias to match the filtercolumn name

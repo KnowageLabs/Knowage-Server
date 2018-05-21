@@ -78,7 +78,11 @@ angular.module('chartInitializer')
 			this.chart =  new Highcharts.Chart(chartConf);
 			this.chart.widgetData = widgetData;
 			if(jsonData){
-				this.chart.jsonData = JSON.parse(jsonData.jsonData);
+				if(jsonData.jsonData){
+					this.chart.jsonData = JSON.parse(jsonData.jsonData);
+				}else{
+					this.chart.jsonData = jsonData;
+				}
 			}
 			if(selectionsAndParams){
 				this.chart.selectionsAndParams = selectionsAndParams;
