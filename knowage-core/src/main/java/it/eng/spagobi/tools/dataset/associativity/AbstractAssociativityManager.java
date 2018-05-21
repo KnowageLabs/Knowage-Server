@@ -142,22 +142,17 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 				IDataSet dataSet = dataSetDao.loadDataSetByLabel(v1);
 				Assert.assertNotNull(dataSet, "Unable to get metadata for dataset [" + v1 + "]");
 
-				if (dataSet.isRealtime()) {
-					documentsAndExcludedDatasets.add(v1);
-				} else {
-					Map<String, String> parametersValues = config.getDatasetParameters().get(v1);
-					dataSet.setParamsMap(parametersValues);
+				Map<String, String> parametersValues = config.getDatasetParameters().get(v1);
+				dataSet.setParamsMap(parametersValues);
 
-					boolean isNearRealtime = config.getNearRealtimeDatasets().contains(v1);
-					DatasetEvaluationStrategy evaluationStrategy = dataSet.getEvaluationStrategy(isNearRealtime);
+				boolean isNearRealtime = config.getNearRealtimeDatasets().contains(v1);
+				DatasetEvaluationStrategy evaluationStrategy = dataSet.getEvaluationStrategy(isNearRealtime);
 
-					IAssociativeDatasetContainer container = AssociativeDatasetContainerFactory.getContainer(evaluationStrategy, dataSet, parametersValues,
-							userProfile);
-					associativeDatasetContainers.put(v1, container);
-				}
+				IAssociativeDatasetContainer container = AssociativeDatasetContainerFactory.getContainer(evaluationStrategy, dataSet, parametersValues,
+						userProfile);
+				associativeDatasetContainers.put(v1, container);
 			}
 		}
-
 	}
 
 	private void initGraph(Config config) {
