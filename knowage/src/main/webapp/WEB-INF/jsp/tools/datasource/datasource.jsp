@@ -268,33 +268,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										  			</div>
 										  			
 										  			<div layout="row">
-										  				<md-input-container class="md-block">
+										  				<md-input-container flex="90" class="md-block">
 															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.removeAbandonedOnBorrow" aria-label="Remove Abandoned On Borrow">{{translate.load("sbi.datasource.removeAbandonedOnBorrow")}}</md-checkbox>
 														</md-input-container>
+														<md-icon ng-click="showRemoveAbandonedOnBorrowInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
 										  			</div>
 										  			
 										  			<div layout="row">
-										  				<md-input-container class="md-block">
+										  				<md-input-container flex="90" class="md-block">
 															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.removeAbandonedOnMaintenance" aria-label="Remove Abandoned On Maintenance">{{translate.load("sbi.datasource.removeAbandonedOnMaintenance")}}</md-checkbox>
 														</md-input-container>
+														<md-icon ng-click="showRemoveAbandonedOnMaintenanceInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
 										  			</div>
 										  			
 										  			<div layout="row">
-										  				<md-input-container class="md-block">
+										  				<md-input-container flex="90" class="md-block">
 															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.logAbandoned" aria-label="Log Abandoned">{{translate.load("sbi.datasource.logAbandoned")}}</md-checkbox>
 														</md-input-container>
+														<md-icon ng-click="showGetLogAbandonedInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
 										  			</div>
 										  			
 										  			<div layout="row">
-										  				<md-input-container class="md-block">
+										  				<md-input-container flex="90" class="md-block">
 															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.testOnReturn" aria-label="Test On Return">{{translate.load("sbi.datasource.testOnReturn")}}</md-checkbox>
 														</md-input-container>
+														<md-icon ng-click="showTestOnReturnInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
 										  			</div>
 										  			
 										  			<div layout="row">
-										  				<md-input-container class="md-block">
+										  				<md-input-container flex="90" class="md-block">
 															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.testWhileIdle" aria-label="Test While Idle">{{translate.load("sbi.datasource.testWhileIdle")}}</md-checkbox>
 														</md-input-container>
+														<md-icon ng-click="showTestWhileIdleInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
 										  			</div>
 										  		</md-card-content>
 										  </md-card>

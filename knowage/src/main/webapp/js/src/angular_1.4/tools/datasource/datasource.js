@@ -581,7 +581,67 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 						 .targetEvent(event)
 		);
 	};
+	
+	//Remove Abandoned On Borrow INFO
+	$scope.showRemoveAbandonedOnBorrowInfo = function(event) {
+		$mdDialog.show(
+				$mdDialog.alert()
+						 .clickOutsideToClose(true)
+						 .title(sbiModule_translate.load("sbi.datasource.removeAbandonedOnBorrow"))
+						 .content(sbiModule_translate.load("sbi.datasource.removeAbandonedOnBorrowInfo"))
+						 .ok(sbiModule_translate.load("sbi.federationdefinition.template.button.close"))
+						 .targetEvent(event)
+		);
+	};
+	
+	//Remove Abandoned On Maintenance INFO
+	$scope.showRemoveAbandonedOnMaintenanceInfo = function(event) {
+		$mdDialog.show(
+				$mdDialog.alert()
+						 .clickOutsideToClose(true)
+						 .title(sbiModule_translate.load("sbi.datasource.removeAbandonedOnMaintenance"))
+						 .content(sbiModule_translate.load("sbi.datasource.removeAbandonedOnMaintenanceInfo"))
+						 .ok(sbiModule_translate.load("sbi.federationdefinition.template.button.close"))
+						 .targetEvent(event)
+		);
+	};
+	
+	//Log Abandoned INFO
+	$scope.showGetLogAbandonedInfo = function(event) {
+		$mdDialog.show(
+				$mdDialog.alert()
+						 .clickOutsideToClose(true)
+						 .title(sbiModule_translate.load("sbi.datasource.logAbandoned"))
+						 .content(sbiModule_translate.load("sbi.datasource.logAbandonedInfo"))
+						 .ok(sbiModule_translate.load("sbi.federationdefinition.template.button.close"))
+						 .targetEvent(event)
+		);
+	};
 
+	//Test on Return INFO
+	$scope.showTestOnReturnInfo = function(event) {
+		$mdDialog.show(
+				$mdDialog.alert()
+						 .clickOutsideToClose(true)
+						 .title(sbiModule_translate.load("sbi.datasource.testOnReturn"))
+						 .content(sbiModule_translate.load("sbi.datasource.testOnReturnInfo"))
+						 .ok(sbiModule_translate.load("sbi.federationdefinition.template.button.close"))
+						 .targetEvent(event)
+		);
+	};
+	
+	//Test While Idle INFO
+	$scope.showTestWhileIdleInfo = function(event) {
+		$mdDialog.show(
+				$mdDialog.alert()
+						 .clickOutsideToClose(true)
+						 .title(sbiModule_translate.load("sbi.datasource.testWhileIdle"))
+						 .content(sbiModule_translate.load("sbi.datasource.testWhileIdleInfo"))
+						 .ok(sbiModule_translate.load("sbi.federationdefinition.template.button.close"))
+						 .targetEvent(event)
+		);
+	};
+	
 	$scope.confirm = $mdDialog
 	.confirm()
 	.title(sbiModule_translate.load("sbi.catalogues.generic.modify"))
