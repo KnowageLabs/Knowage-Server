@@ -666,7 +666,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listKpi")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT, SpagoBIConstants.CREATE_DOCUMENT })
 	public Response listKpi(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("listKpi IN");
 		Response out;

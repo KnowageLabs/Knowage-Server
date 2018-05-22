@@ -114,6 +114,8 @@
 								case "DOCUMENT_COMPOSITE":
 									$scope.cockpitAnalysisDocs.push($scope.allAnalysisDocs[i]);
 									break;
+
+								case "KPI":
 								case "MAP":
 								case "DOCUMENT_COMPOSITE":
 									$scope.cockpitAnalysisDocs.push($scope.allAnalysisDocs[i]);
@@ -311,6 +313,27 @@
 
 
 		}
+		
+		/**
+		 * add new kpi document
+		 */
+		$scope.addNewKPI = function() {
+			console.info("[NEW KPI - START]: Open page for adding a new kpi document.");
+			//console.log(datasetParameters);
+			$mdDialog.show({
+				scope:$scope,
+				preserveScope: true,
+				controller: CreateNewKPIController,
+				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
+				clickOutsideToClose:true,
+				escapeToClose :true,
+				fullscreen: true
+			});
+
+
+		}
+		
+		
 		/**
 		 * Edit existing GEO document
 		 */
@@ -321,7 +344,7 @@
 				sbiModule_restServices.promiseGet("1.0/datasets/id", document.dataset)
 				.then(function(response) {
 					//console.log(response);
-					$scope.openEditDialog(document.label,response.data);
+					$scope.openEditDialog(document.label,response.data,document.typeCode,document.id);
 				},function(response){
 
 					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
@@ -330,7 +353,7 @@
 				});
 			}else{
 
-				$scope.openEditDialog(document.label,"");
+				$scope.openEditDialog(document.label,"",document.typeCode,document.id);
 			}
 		}
 
@@ -351,18 +374,19 @@
 		}
 
 
-		$scope.openEditDialog=function(doclabel,dsLabel){
+		$scope.openEditDialog=function(doclabel,dsLabel,docType,docId){
 			$mdDialog.show({
 				scope:$scope,
 				preserveScope: true,
-				controller: EditGeoMapController,
+				controller: $scope.editControllers[docType],
 				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
 				clickOutsideToClose:true,
 				escapeToClose :true,
 				fullscreen: true,
 				locals:{
 					datasetLabel:dsLabel,
-					documentLabel:doclabel
+					documentLabel:doclabel,
+					documentId:docId
 				}
 			});
 		}
@@ -533,8 +557,36 @@
 
 
 		}
+		
+		function CreateNewKPIController($scope,$mdDialog){
+			console.log("hello from CreateNewKPIController");
 
-		function EditGeoMapController($scope,$mdDialog,datasetLabel,documentLabel){
+			$scope.iframeUrl = datasetParameters.kpiServiceUrl+'&SBI_ENVIRONMENT=WORKSPACE';
+
+			$scope.cancelDialog = function() {
+				
+				$mdDialog.cancel();
+			}
+
+
+		}
+		
+		$scope.editControllers = {};
+		
+		$scope.editControllers.KPI = function EditNewKPIController($scope,$mdDialog,datasetLabel,documentLabel,documentId){
+			console.log("hello from CreateNewKPIController");
+
+			$scope.iframeUrl = datasetParameters.kpiServiceUrl+'&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER='+ sbiModule_user.isTechnicalUser+'&document='+documentId+'&DOCUMENT_NAME='+documentLabel;
+
+			$scope.cancelDialog = function() {
+				
+				$mdDialog.cancel();
+			}
+
+
+		}
+		
+		$scope.editControllers.MAP = function EditGeoMapController($scope,$mdDialog,datasetLabel,documentLabel){
 			//console.log(sbiModule_user.isTechnicalUser);
 
 			$scope.iframeUrl = datasetParameters.georeportServiceUrl+'&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER='+ sbiModule_user.isTechnicalUser+'&DOCUMENT_LABEL='+documentLabel+'&DATASET_LABEL='+datasetLabel;
@@ -546,6 +598,9 @@
 
 
 		}
+		
+
+		
 
 		if(initialOptionMainMenu){
 			if(initialOptionMainMenu.toLowerCase() == 'analysis'){
