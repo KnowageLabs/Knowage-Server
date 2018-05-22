@@ -104,28 +104,25 @@ public class ProfileFilter implements Filter {
 				if (publicProfile != null)
 					profile = publicProfile;
 
+				String userId = null;
+				if (ChannelUtilities.isWebRunning() && !GeneralUtilities.isSSOEnabled()) {
+					// case of installation as web application without SSO
+					try {
+						userId = getUserIdInWebModeWithoutSSO(httpRequest);
+					} catch (Exception e) {
+						logger.error("Error authenticating user", e);
+						httpRequest.getRequestDispatcher("/WEB-INF/jsp/commons/silentLoginFailed.jsp").forward(request, response);
+						return;
+					}
+				} else {
+					// case of installation as portlet application and/or with SSO
+					userId = getUserIdWithSSO(httpRequest);
+				}
+				logger.debug("User id = " + userId);
+
 				if (profile == null) {
 					// in case the profile does not exist, creates a new one
 					logger.debug("User profile not found in session, creating a new one and putting in session....");
-
-					String userId = null;
-
-					if (ChannelUtilities.isWebRunning() && !GeneralUtilities.isSSOEnabled()) {
-						// case of installation as web application without SSO
-						try {
-							userId = getUserIdInWebModeWithoutSSO(httpRequest);
-						} catch (Exception e) {
-							logger.error("Error authenticating user", e);
-							httpRequest.getRequestDispatcher("/WEB-INF/jsp/commons/silentLoginFailed.jsp").forward(request, response);
-							return;
-						}
-					} else {
-						// case of installation as portlet application and/or
-						// with SSO
-						userId = getUserIdWithSSO(httpRequest);
-					}
-
-					logger.debug("User id = " + userId);
 					if (userId != null && !userId.trim().equals("")) {
 						profile = GeneralUtilities.createNewUserProfile(userId);
 						permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
@@ -133,16 +130,18 @@ public class ProfileFilter implements Filter {
 					} else {
 						logger.debug("User identifier not found.");
 					}
-
 				} else {
-					// in case the profile is different, creates a new one
-					// and overwrites the existing
-					/*
-					 * if (!((UserProfile) profile).getUserUniqueIdentifier().toString ().equals(userId)) {logger.debug(
-					 * "Different user profile found in session, creating a new one and replacing in session...." ); profile =
-					 * GeneralUtilities.createNewUserProfile(userId); permanentSession .setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile); } else {
-					 * logger.debug("User profile object for user [" + userId + "] already existing in session, ok"); }
-					 */
+					// in case the profile is different, creates a new one and overwrites the existing
+					if (userId != null) {
+						if (!((UserProfile) profile).getUserUniqueIdentifier().toString().equals(userId)) {
+							logger.debug("Different user profile found in session, creating a new one and replacing in session...");
+							profile = GeneralUtilities.createNewUserProfile(userId);
+							permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
+							session.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
+						} else {
+							logger.debug("User profile object for user [" + userId + "] already existing in session, ok");
+						}
+					}
 				}
 
 				if (profile != null) {
