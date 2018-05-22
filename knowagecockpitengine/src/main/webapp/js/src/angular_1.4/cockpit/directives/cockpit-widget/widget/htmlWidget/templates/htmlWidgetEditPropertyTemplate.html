@@ -2,7 +2,7 @@
 	<md-card-content flex layout="column" class="noPadding">
 	    <md-toolbar> 
 	      <div class="md-toolbar-tools">
-	        <h2>Edit html widget</h2>
+	        <h2>{{translate.load('kn.cockpit.html.editwidget')}}</h2>
 	        <span flex></span>
 	      </div>
 	    </md-toolbar>
@@ -10,75 +10,76 @@
 			<md-tabs flex md-border-bottom>
 				<md-tab label="Editor Html">
 					<section layout="row">
-					<md-content class="noPadding" layout="column" layout-fill>
-						<md-card>
-							<md-toolbar class="ternaryToolbar"> 
-						      <div class="md-toolbar-tools">
-						        <h2>Css</h2>
-						        <span flex></span>
-						        <md-button class="md-icon-button" ng-click="toggleCss()">
-						        	<md-icon ng-class="{'fa':true,'fa-chevron-down':!newModel.cssOpened,'fa-chevron-up':newModel.cssOpened}"></md-icon>
-						        </md-button>
-						      </div>
-						    </md-toolbar>
-							<md-card-content class="noPadding" ng-if="newModel.cssOpened">
-							<div layout="row" layout-align="center center">
-								<div class="kn-info" flex=80>To target only this widget with your modifications use <span class="widgetId">#w{{newModel.id}}</span> as a prefix</div>
-							</div>
-							<textarea id="css" ui-codemirror="editorOptionsCss" ng-model="newModel.cssToRender" ui-refresh="reloadCodemirror" flex></textarea>
-							</md-card-content>
-						</md-card>
-					
-						<md-card class="htmlEditor">
-							<md-toolbar class="ternaryToolbar"> 
-						      <div class="md-toolbar-tools"> 
-						        <h2>Html</h2>
-						        <span flex></span>
-						      </div>
-						    </md-toolbar>
-							<md-card-content class="noPadding">
-							<textarea id="html" ui-codemirror="editorOptionsHtml" ng-model="newModel.htmlToRender" ui-refresh="reloadCodemirror" flex></textarea>
-							</md-card-content>
-						</md-card>
+					<md-content class="noPadding" layout="row" layout-fill>
+						<div layout="column" flex>
+							<md-card>
+								<md-toolbar class="ternaryToolbar"> 
+							      <div class="md-toolbar-tools">
+							        <h2>{{translate.load('kn.cockpit.html.css')}}</h2>
+							        <span flex></span>
+							        <md-button class="md-icon-button" ng-click="toggleCss()">
+							        	<md-icon ng-class="{'fa':true,'fa-chevron-down':!newModel.cssOpened,'fa-chevron-up':newModel.cssOpened}"></md-icon>
+							        </md-button>
+							      </div>
+							    </md-toolbar>
+								<md-card-content class="noPadding" ng-if="newModel.cssOpened">
+								<div layout="row" layout-align="center center">
+									<div class="kn-info" flex=80>{{translate.load('kn.cockpit.html.cssprefix')}} <span class="widgetId">#w{{newModel.id}}</span></div>
+								</div>
+								<textarea id="css" ui-codemirror="editorOptionsCss" ng-model="newModel.cssToRender" ui-refresh="reloadCodemirror" flex></textarea>
+								</md-card-content>
+							</md-card>
 						
-				    </md-content>
-				    <md-sidenav
+							<md-card class="htmlEditor">
+								<md-toolbar class="ternaryToolbar"> 
+							      <div class="md-toolbar-tools"> 
+							        <h2>{{translate.load('kn.cockpit.html.html')}}</h2>
+							        <span flex></span>
+							      </div>
+							    </md-toolbar>
+								<md-card-content class="noPadding">
+								<textarea id="html" ui-codemirror="editorOptionsHtml" ng-model="newModel.htmlToRender" ui-refresh="reloadCodemirror" flex></textarea>
+								</md-card-content>
+							</md-card>
+						</div>
+						<md-sidenav
 					        class="md-sidenav-right availableFunctions"
 					        md-component-id="right"
 					        md-is-locked-open="$mdMedia('gt-md')"
-					        md-whiteframe="1" style="width:100%">
+					        md-whiteframe="1">
 					
 					      <md-toolbar class="secondaryToolbar">
-					        <h1 class="md-toolbar-tools">Available tags</h1>
+					        <h1 class="md-toolbar-tools">{{translate.load('kn.cockpit.html.availabletags')}}</h1>
 					      </md-toolbar>
 					      <md-content>
-					      	<div class="availableFunction" ng-repeat="function in availableFunctions">
-					      		<md-subheader>{{function.code}}</md-subheader>
-						        <p layout-padding class="description">
-						          {{function.description}}
-						        </p>
-					      	</div>
-					      	<md-subheader>[kn-column="column_name" <i><small>(row="5")</small></i>]</md-subheader>
+					      	<md-subheader>[kn-column='STRING' row='NUMBER']</md-subheader>
 					        <p layout-padding class="description">
-					          This tag is used to show a field value from the selected dataset column.
-					          The optional attribute <b>row</b> make the tag show the field value of the specified row for that column.
-					          If a row is not specified the tag will show the first occurrence for the column.
+					          {{translate.load('kn.cockpit.html.tag1.desc')}}
 					        </p>
 					        <md-divider></md-divider>
-					      	<md-subheader>[kn-repeat]...[/kn-repeat]</md-subheader>
+					        <md-subheader>[kn-parameter='STRING']</md-subheader>
 					        <p layout-padding class="description">
-					          This tag is used to repeat the html section delimited by the tag ending for every row in the dataset.
-					          Dynamic fields from dataset will take the value of the repeated row.
+					          {{translate.load('kn.cockpit.html.tag2.desc')}}
+					        </p>
+					        <md-divider></md-divider>
+					      	<md-subheader>&lt;div kn-repeat="CONDITION" (limit="NUMBER")&gt; ... &lt;/div&gt;</md-subheader>
+					        <p layout-padding class="description">
+					          {{translate.load('kn.cockpit.html.tag3.desc')}}
 					        </p>
 					        <md-divider></md-divider>
 					        <md-subheader>[kn-repeat-index]</md-subheader>
 					        <p layout-padding class="description">
-					          This tag is used inside a [kn-repeat] to get the current row value of the repeater..
-					          Dynamic fields from dataset will take the value of the repeated row.
+					          {{translate.load('kn.cockpit.html.tag4.desc')}}
+					        </p>
+					        <md-subheader>&lt;div kn-if="CONDITION"&gt; ... &lt;/div&gt;</md-subheader>
+					        <p layout-padding class="description">
+					          {{translate.load('kn.cockpit.html.tag5.desc')}}
 					        </p>
 					      </md-content>
 					
 					    </md-sidenav>
+				    </md-content>
+				    
 					    </section>
 		        </md-tab>
 		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
