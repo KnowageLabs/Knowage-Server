@@ -143,7 +143,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				return formattedSelection;
 			}
 		}
-        
+
 		/**
 		 * Returns the column object that satisfy the original name (not aliasToShow) passed as argument
 		 */
@@ -170,7 +170,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 					//if the column is an attribute check in filter
 					if (filters[f].type == 'ATTRIBUTE'){
-						if (filters[f].values.indexOf(datastore.rows[i][columnName])==-1){
+						var value = datastore.rows[i][columnName];
+						if(typeof value == "number"){
+							value = String(value);
+						}
+						if (filters[f].values.indexOf(value)==-1){
 							datastore.rows.splice(i,1);
 						}
 					//if the column is a measure cast it to number and check in filter
@@ -539,7 +543,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     				selectedMeasure = tmpField.aliasToShow;
     				if (!layerDef.defaultIndicator)  layerDef.defaultIndicator = selectedMeasure;
     			}
-    			
+
     		}
 
     		var model = {content: {columnSelectedOfDataset: columnsForData }};
@@ -581,7 +585,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    		var tmpLayer = $scope.layers[0].layer;
 		    		cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, tmpLayer, false);
 	    		}
-	            
+
 	    		$scope.map = new ol.Map({
 	    		  target: 'map-' + $scope.ngModel.id,
 	    		  layers: [ $scope.baseLayer ],
@@ -720,7 +724,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.configs = {};
 			$scope.legend = [];
 			cockpitModule_mapThematizerServices.removeLegends();
-			
+
 	    }
 
 	    $scope.setLayerProperty = function(l, p, v){
