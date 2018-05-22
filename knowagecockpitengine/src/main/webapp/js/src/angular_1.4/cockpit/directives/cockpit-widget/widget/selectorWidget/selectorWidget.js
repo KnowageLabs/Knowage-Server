@@ -158,9 +158,7 @@ angular.module('cockpitModule')
 				return;
 			}
 
-			if(nature == "refresh" || nature == "filters"){
-				$scope.datasetRecords = datasetRecords;
-			}
+			$scope.datasetRecords = datasetRecords;
 
 			checkForSavedSelections($scope.filtersParams,nature);
 			checkRefreshSettings();
