@@ -24,7 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				controller: cockpitHtmlWidgetControllerFunction,
 				compile: function (tElement, tAttrs, transclude) {
 					return {
-						pre: function preLink(scope, element, attrs, ctrl, transclud) {},
+						pre: function preLink(scope, element, attrs, ctrl, transclud) {
+							scope.showWidgetSpinner();
+						},
 						post: function postLink(scope, element, attrs, ctrl, transclud) {
 							element.ready(function () {
 								scope.initWidget();
@@ -51,6 +53,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
 			cockpitModule_properties){
+		
+		//Regular Expressions used
+		$scope.columnRegex = /(?:\[kn-column=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}(?:\s+row=[\'\"]{1}(\d*)[\'\"]{1})?\])/g;
+		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}\])/g;
+		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
+		$scope.gt = /(\<.*["].*)(>)(.*["].*\>)/g;
+		$scope.lt = /(\<.*["].*)(<)(.*["].*\>)/g;
 
 		$scope.refresh = function(element,width,height, datasetRecords,nature) {
 
@@ -64,7 +73,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.ngModel.datasetId){
 				sbiModule_restServices.restToRootProject();
 				var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.datasetId);
-				sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(dataset.label) + "/data?nearRealtime=" + !dataset.useCache).then(function(data){
+				
+				//getting dataset parameters if available
+				$scope.params = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.datasetId);
+				for(var p in $scope.params){
+					if($scope.params[p].length == 1){
+						$scope.params[p] = $scope.params[p][0];
+					}
+				}
+				sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(dataset.label) + "/data?nearRealtime=" + !dataset.useCache,$scope.params && JSON.stringify({"parameters": $scope.params})).then(function(data){
 					$scope.htmlDataset = data.data;
 					if($scope.ngModel.cssToRender){
 						$scope.checkPlaceholders($scope.ngModel.cssToRender).then(
@@ -73,28 +90,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								}
 							)
 					}
-					$scope.checkCustomFunctions($scope.ngModel.htmlToRender).then(
-						function(resultHtml){
-							$scope.checkPlaceholders(resultHtml).then(
-								function(placeholderResultHtml){
-									$scope.trustedHtml = $sce.trustAsHtml(placeholderResultHtml);
-								}
-							)
-						}
-					)
+					var wrappedHtmlToRender = "<div>" + $scope.ngModel.htmlToRender +" </div>";
+					
+					 //Escaping the illegal parsable characters < and >, or the parsing will throw an error
+					wrappedHtmlToRender = wrappedHtmlToRender.replace($scope.gt, '$1&gt;$3');
+					wrappedHtmlToRender = wrappedHtmlToRender.replace($scope.lt, '$1&lt;$3');
+					
+					$scope.parseHtmlFunctions(wrappedHtmlToRender).then(
+							function(resultHtml){
+								$scope.checkPlaceholders(resultHtml.firstChild.innerHTML).then(
+										function(placeholderResultHtml){
+											$scope.trustedHtml = $sce.trustAsHtml(placeholderResultHtml);
+											$scope.hideWidgetSpinner();
+										}
+									)
+							}
+						)
 
 				},function(error){
-
+					$scope.hideWidgetSpinner();
 				});
 			}else {
 				$scope.trustedCss = $sce.trustAsHtml('<style>'+$scope.ngModel.cssToRender+'</style>');
-				$scope.trustedHtml = $sce.trustAsHtml($scope.ngModel.htmlToRender);
+				$scope.trustedHtml = $sce.trustAsHtml($scope.parsedHtml);
 			}
 		}
 
-		/**
-		 * Get the dataset column name from the readable name. ie: 'column_1' for the name 'id'
-		 */
+		//Get the dataset column name from the readable name. ie: 'column_1' for the name 'id'
 		$scope.getColumnFromName = function(name){
 			for(var i in $scope.htmlDataset.metaData.fields){
 				if($scope.htmlDataset.metaData.fields[i].header && $scope.htmlDataset.metaData.fields[i].header == name){
@@ -102,14 +124,68 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 		}
-
-		/**
-		 * Regular Expressions used in the placeholder functions
-		 */
-		$scope.columnRegex = /(?:\[kn-column=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}(?:\s+row=[\'\"]{1}(\d*)[\'\"]{1})?\])/g;
-		$scope.functionsRegex = /(?:(?:\[kn-((?!column)[a-zA-Z0-9]+)\s*([\w\=\'\""\s]+)?\]([\s\S]*)(?:\[\/kn-[a-zA-Z0-9]+\])))/g;
-		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
-
+		
+		$scope.parseHtmlFunctions = function(rawHtml){
+			return $q(function(resolve, reject) {
+				var parser = new DOMParser()
+				var parsedHtml = parser.parseFromString(rawHtml, "text/xml");
+				
+				var allElements = parsedHtml.getElementsByTagName('*');
+				var i=0;
+				do {
+					if (allElements[i] && allElements[i].hasAttribute("kn-repeat")){
+						if(eval($scope.checkAttributePlaceholders(allElements[i].getAttribute('kn-repeat')))){
+							allElements[i].removeAttribute("kn-repeat");
+							var limit = allElements[i].hasAttribute("limit") ? allElements[i].getAttribute('limit') : $scope.htmlDataset.rows.length;
+					    	var repeatedElement = angular.copy(allElements[i]);
+					    	var tempElement;
+					    	for(var r = 0; r<limit; r++){
+					    		var tempRow = angular.copy(repeatedElement);
+					    		tempRow.innerHTML =  tempRow.innerHTML.replace($scope.columnRegex, function(match,c1,c2){
+									return "[kn-column='"+c1+"' row='"+(c2||r)+"']";
+								});
+					    		tempRow.innerHTML = tempRow.innerHTML.replace($scope.repeatIndexRegex, r);
+					    		if(r==0){
+					    			tempElement = tempRow.outerHTML;
+					    		}else{
+					    			tempElement += tempRow.outerHTML;
+					    		}
+							}
+					    	allElements[i].outerHTML = tempElement;
+						}else{
+							allElements[i].outerHTML = "";
+						}
+				    } i++;
+				} while (i<allElements.length);
+				    
+				  for (var j = 0, n = allElements.length; j < n; j++){
+					  if (allElements[j] && allElements[j].hasAttribute("kn-if")){
+					    	var condition = allElements[j].getAttribute("kn-if").replace($scope.columnRegex, $scope.replacer);
+					    	if(eval(condition)){
+					    		allElements[j].removeAttribute("kn-if");
+					    	}else{
+					    		allElements[j].parentNode.removeChild(allElements[j]);
+					    	}
+					    }
+				  }
+				  resolve(parsedHtml)
+			})
+		}
+		
+		$scope.replacer = function(match, p1, p2) {
+			p1=$scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)]
+			return p1;
+		}
+		$scope.paramsReplacer = function(match, p1){
+			p1=$scope.params[p1];
+			return p1;
+		}
+		
+		$scope.checkAttributePlaceholders = function(rawAttribute){
+			var resultAttribute = rawAttribute.replace($scope.columnRegex, $scope.replacer);
+			resultAttribute = resultAttribute.replace($scope.paramsRegex, $scope.paramsReplacer);
+			return resultAttribute;
+		}
 		/**
 		 * Check the existence of placeholder inside the raw html.
 		 * If there is a match the placeholder is replaced with the dataset value for that column.
@@ -117,38 +193,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 */
 		$scope.checkPlaceholders = function(rawHtml){
 			return $q(function(resolve, reject) {
-				function replacer(match, p1, p2) {
-					p1=$scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)]
-					return p1;
-				}
-				var resultHtml = rawHtml.replace($scope.columnRegex, replacer);
+				var resultHtml = rawHtml.replace($scope.columnRegex, $scope.replacer);
+				resultHtml = resultHtml.replace($scope.paramsRegex, $scope.paramsReplacer);
 				resolve(resultHtml);
 			})
 		}
-
-		/**
-		 * Check the existence of custom functions inside the raw html.
-		 * If there is a match the placeholder changes the html using the function selected.
-		 */
-		$scope.checkCustomFunctions = function(rawHtml){
+		
+		$scope.checkParamsPlaceholders = function(rawHtml){
 			return $q(function(resolve, reject) {
-				function replacer(match, functionType, attrs, html) {
-					var str = '';
-					if(functionType=='repeat'){
-						for(var r in $scope.htmlDataset.rows){
-							str += html.replace($scope.columnRegex, function(match,c1,c2){
-								return '[kn-column="'+c1+'" row="'+(c2||r)+'"]';
-							});
-							str = str.replace($scope.repeatIndexRegex, r);
-						}
-					}
-					return str;
-				}
-				var resultHtml = rawHtml.replace($scope.functionsRegex, replacer);
+				var resultHtml = rawHtml.replace($scope.paramsRegex, function(match, p1) {
+					p1=$scope.params[p1];
+					return p1;
+				});
 				resolve(resultHtml);
 			})
 		}
-
 
 		$scope.editWidget=function(index){
 			var finishEdit=$q.defer();
