@@ -132,13 +132,15 @@ public class ProfileFilter implements Filter {
 					}
 				} else {
 					// in case the profile is different, creates a new one and overwrites the existing
-					if (!((UserProfile) profile).getUserUniqueIdentifier().toString().equals(userId)) {
-						logger.debug("Different user profile found in session, creating a new one and replacing in session...");
-						profile = GeneralUtilities.createNewUserProfile(userId);
-						permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
-						session.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
-					} else {
-						logger.debug("User profile object for user [" + userId + "] already existing in session, ok");
+					if (userId != null) {
+						if (!((UserProfile) profile).getUserUniqueIdentifier().toString().equals(userId)) {
+							logger.debug("Different user profile found in session, creating a new one and replacing in session...");
+							profile = GeneralUtilities.createNewUserProfile(userId);
+							permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
+							session.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
+						} else {
+							logger.debug("User profile object for user [" + userId + "] already existing in session, ok");
+						}
 					}
 				}
 
