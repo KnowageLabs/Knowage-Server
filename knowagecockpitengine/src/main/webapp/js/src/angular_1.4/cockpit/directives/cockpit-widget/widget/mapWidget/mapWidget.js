@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							element.ready(function () {
 								scope.initWidget();
 								scope.createMap();
+								scope.showWidgetSpinner();
 							});
 						}
 					};
@@ -73,15 +74,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.savedValues = {};
 		$scope.configs = {}; 		//layers with configuration
 		$scope.columnsConfig = {} 	//layers with just columns definition
-//		$scope.loading = true; 	  	//initializing directive with the loading active
-		
-//		//checking the presence of the rows model to stop the loading. deregistering the watcher after
-//        var loadingWatcher = scope.$watch('values', function(newValue, oldValue) {
-//            if (newValue != undefined) {
-//                scope.loading = false;
-//                loadingWatcher();
-//            }
-//        });
 
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
 		//set a watcher on a variable that can contains the associative selections for realtime dataset
@@ -558,6 +550,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.dsId, undefined, undefined, undefined, undefined, model).then(
 	    		function(allDatasetRecords){
 	    			$scope.createLayerWithData(layerDef.name, allDatasetRecords, isCluster);
+	    			$scope.hideWidgetSpinner();
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.dsId+"] ");
 				sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.datasetLoadingError').replace("{0}",layerDef.dsId), 'Title', 3000);
@@ -613,7 +606,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				//add events methods
 	    		$scope.addViewEvents();
 	    		$scope.addMapEvents(overlay);
-//	    		$scope.loading = false;
+	    		$scope.loading = false;
 	    	});
 	    }
 
