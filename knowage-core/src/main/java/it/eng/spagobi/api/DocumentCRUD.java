@@ -234,6 +234,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 			if (personalFolder != null) {
 				Engine geoEngine = null;
 				Engine cockpitEngine = null;
+				Engine kpiEngine = null;
 
 				try {
 					geoEngine = ExecuteAdHocUtility.getGeoreportEngine();
@@ -249,6 +250,13 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 					logger.info("Engine not found. ", r);
 				}
 
+				try {
+					kpiEngine = ExecuteAdHocUtility.getKPIEngine();
+				} catch (SpagoBIRuntimeException r) {
+					// the kpi engine is not found
+					logger.info("Engine not found. ", r);
+				}
+
 				// return all documents inside the personal folder
 				if ((docType == null) || (docType.equalsIgnoreCase("ALL"))) {
 					List filteredMyObjects = new ArrayList();
@@ -258,7 +266,8 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 						BIObject biObject = (BIObject) it.next();
 						String biObjectType = biObject.getBiObjectTypeCode();
 						if ((geoEngine != null && biObject.getEngine().getId().equals(geoEngine.getId()))
-								|| (cockpitEngine != null && biObject.getEngine().getId().equals(cockpitEngine.getId()))) {
+								|| (cockpitEngine != null && biObject.getEngine().getId().equals(cockpitEngine.getId()))
+								|| (kpiEngine != null && biObject.getEngine().getId().equals(kpiEngine.getId()))) {
 							filteredMyObjects.add(biObject);
 						}
 					}

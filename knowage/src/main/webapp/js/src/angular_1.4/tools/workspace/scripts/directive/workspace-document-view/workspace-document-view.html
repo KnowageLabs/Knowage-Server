@@ -33,7 +33,7 @@
 			LIGHT_NAVIGATOR_DISABLED=TRUE&amp;operation=DOWNLOAD&amp;fileName={{document.previewFile}}" ng-click="clickDocument(document);">					
 	       	
 	       	<md-card-actions layout="row" layout-align="space-around end">
-	         	<md-button class="md-icon-button" aria-label="Edit" ng-click="editDocumentAction({doc:document});" ng-if="document.typeCode=='MAP'">
+	         	<md-button class="md-icon-button" aria-label="Edit" ng-click="editDocumentAction({doc:document});" ng-if="document.typeCode=='MAP'||document.typeCode=='KPI'">
 	           		
 	           		<md-icon md-font-icon="fa fa-pencil fa-2x"></md-icon>
 	           		

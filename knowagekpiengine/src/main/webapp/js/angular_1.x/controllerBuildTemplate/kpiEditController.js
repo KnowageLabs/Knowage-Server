@@ -7,9 +7,36 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 
-app.controller('templateBuildController', ['$scope','sbiModule_translate' ,"$mdDialog","sbiModule_restServices","$q","$mdToast",'$timeout','sbiModule_config','$httpParamSerializer','$filter','sbiModule_user',templateBuildControllerFunction ]);
+app.controller('templateBuildController', 
+		['$scope',
+		'sbiModule_translate' ,
+		"$mdDialog",
+		"sbiModule_restServices",
+		"$q","$mdToast",
+		'$timeout',
+		'sbiModule_config',
+		'$httpParamSerializer',
+		'$filter',
+		'sbiModule_user',
+		'sbiModule_config',
+		'documentService',
+		templateBuildControllerFunction ]);
 
-function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_restServices,$q,$mdToast,$timeout,sbiModule_config,$httpParamSerializer,$filter,sbiModule_user){
+function templateBuildControllerFunction(
+		$scope,
+		sbiModule_translate,
+		$mdDialog, 
+		sbiModule_restServices,
+		$q,
+		$mdToast,
+		$timeout,
+		sbiModule_config,
+		$httpParamSerializer,
+		$filter,
+		sbiModule_user,
+		sbiModule_config,
+		documentService
+		){
 	$scope.translate=sbiModule_translate;
 	$scope.addKpis = [];
 	$scope.typeDocument = 'widget';
@@ -25,6 +52,10 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.scorecardSelected =[];
 	$scope.allScorecard = [];
 	$scope.showScorecards = sbiModule_user.functionalities.indexOf("ScorecardsManagement")>-1;
+	$scope.documentService = documentService;
+	
+	
+	
 
 
 	$scope.tableFunction={
@@ -111,9 +142,11 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.closeTemplate = function(){
 		window.history.back();
 	}
+	
+	
 
-	$scope.saveTemplate = function(){
-		var obj = $scope.createJSONFromInfo();
+	var saveTemplate = function(template){
+		var obj = template;
 
 		if(obj==null){
 			$scope.showAction(sbiModule_translate.load('sbi.kpidocumentdesigner.errorrange'));
@@ -207,8 +240,10 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 
 				$scope.kpiList.push(obj);
 			}
-
-			$scope.loadTemplateIfExist();
+			if(sbiModule_config.docLabel){
+				$scope.loadTemplateIfExist();
+			}
+			
 		},function(response){
 		});
 	};
@@ -426,6 +461,14 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 
 		return obj;
 	};
+	
+	$scope.isWorkspace = function(){
+		var sbiEnviroment = sbiModule_config.sbiEnviroment;
+		return sbiEnviroment && sbiEnviroment.toUpperCase() == "WORKSPACE";
+	}
+	
+	$scope.isWorkspace() ? $scope.saveTemplate = $scope.documentService.save : $scope.saveTemplate = saveTemplate;
+	
 };
 
 function DialogControllerScorecard($scope,$mdDialog,items,allScorecard,scorecardSelected){

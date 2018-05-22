@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/kpi-dinamic-list/KpiDinamicList.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/controllerBuildTemplate/kpiEditController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/controllerBuildTemplate/services/documentService.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/style/kpiStyleController.js"></script>
 
 </head>
@@ -40,8 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<div class="md-toolbar-tools">
 			<h2>{{translate.load("sbi.kpidocumentdesigner")}}</h2>
 			<span flex></span>
-			<md-button ng-disabled="selectedKpis.length == 0 && scorecardSelected.length == 0" ng-click="saveTemplate()">{{translate.load("sbi.general.save")}}</md-button>
-			<md-button ng-click="closeTemplate()">{{translate.load("sbi.general.close")}}</md-button>
+			<md-button ng-disabled="selectedKpis.length == 0 && scorecardSelected.length == 0" ng-click="saveTemplate(createJSONFromInfo())">{{translate.load("sbi.general.save")}}</md-button>
+			<md-button ng-if="!isWorkspace();" ng-click="closeTemplate()">{{translate.load("sbi.general.close")}}</md-button>
 		</div>
 	</md-toolbar>
 	<div flex>
