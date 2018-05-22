@@ -77,13 +77,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		var realtimeSelectionsWatcher = $scope.$watchCollection('realTimeSelections',function(newValue,oldValue,scope){
 			if(scope.ngModel && scope.ngModel.dataset && scope.ngModel.dataset.dsId){
 				var dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId);
-				if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1 ){
-	                cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
-	            }
-				if(newValue != oldValue && newValue.length > 0){
-					scope.itemList = scope.filterDataset(scope.itemList,scope.reformatSelections(newValue));
-				}else{
-					angular.copy(scope.savedRows, scope.itemList);
+				if(dataset.isRealtime && dataset.useCache){
+					if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1 ){
+		                cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
+		            }
+					if(newValue != oldValue && newValue.length > 0){
+						scope.itemList = scope.filterDataset(scope.itemList,scope.reformatSelections(newValue));
+					}else{
+						angular.copy(scope.savedRows, scope.itemList);
+					}
 				}
 			}
 		});
@@ -412,8 +414,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.columnToshowinIndex = [];
 			$scope.tableFunction.widgetStyle = $scope.ngModel.style;
 			$scope.datasetRecords = datasetRecords;
+			if($scope.columnWatcher){$scope.columnWatcher};
 
-
+			$scope.columnWatcher = $scope.$watchCollection('ngModel.content.columnSelectedOfDataset',function(newValue,oldValue){
+				$scope.getColumns(newValue);
+			})
 			var calculateScaleValue=function(minVal, maxVal, val)
 			{
 				if(maxVal!=minVal)
@@ -491,8 +496,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						var leftOperand = String(columnValue);
 						var rightOperand = String(filterValue[0]);
 						var expression =  leftOperand + operator + rightOperand;
-						
-						
+
+
 						//if (filterValue.indexOf(columnValue)==-1){
 						if (eval(expression) == false){
 							dataset.splice(d,1);
@@ -632,7 +637,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.init=function(element,width,height){
-			$scope.refreshWidget();
+			$scope.refreshWidget(null, 'init');
 			$timeout(function(){
 				$scope.widgetIsInit=true;
 			},500);
@@ -659,9 +664,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 
-		$scope.$watchCollection('ngModel.content.columnSelectedOfDataset',function(newValue,oldValue){
-			$scope.getColumns(newValue);
-		})
+		
 
 		$scope.getOptions =function(){
 			var obj = {};
@@ -778,7 +781,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.model = {};
 		angular.copy(originalModel,$scope.model);
-
+		
+		$scope.toggleTh = function(){
+			$scope.colorPickerPropertyTh.disabled = $scope.model.style.th.enabled;
+		}
+		
+		$scope.colorPickerPropertyTh = {format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select'), disabled:($scope.model.style.th && $scope.model.style.th.enabled === false)}
+		
 		$scope.colorPickerProperty={format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select')};
 
 		$scope.colorPickerPropertyEvenOddRows = {placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:!$scope.model.settings.alternateRows.enabled};
@@ -818,6 +827,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.model.content.columnSelectedOfDataset == undefined || $scope.model.content.columnSelectedOfDataset.length==0){
 				$scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
 			}
+			$scope.watchColumnSelectedOfDataset();
 			finishEdit.resolve();
 		}
 
@@ -950,7 +960,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				return false;
 			}
 		}
-		$scope.$watchCollection('model.content.columnSelectedOfDataset', function(newColumns, oldColumns) {
+		$scope.watchColumnSelectedOfDataset = $scope.$watchCollection('model.content.columnSelectedOfDataset', function(newColumns, oldColumns) {
 			var disableShowSummary = true;
 			if(newColumns){
 				for(var i=0; i<newColumns.length; i++){
