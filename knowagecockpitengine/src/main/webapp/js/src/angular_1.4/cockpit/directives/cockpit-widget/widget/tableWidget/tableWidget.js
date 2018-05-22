@@ -472,7 +472,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				for(var d = dataset.length - 1; d >= 0; d--){
 					//if the column is an attribute check in filter
 					if (filters[f].type == 'ATTRIBUTE'){
-						if (filters[f].values.indexOf(dataset[d][f])==-1){
+						var value = dataset[d][f];
+						if(typeof value == "number"){
+							value = String(value);
+						}
+						if (filters[f].values.indexOf(value)==-1){
 							dataset.splice(d,1);
 						}
 					//if the column is a measure cast it to number and check in filter
