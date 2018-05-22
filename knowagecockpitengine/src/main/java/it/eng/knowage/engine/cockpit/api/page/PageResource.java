@@ -149,11 +149,11 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 			if ("execute".equals(pageName)) {
 				String outputType = request.getParameter(OUTPUT_TYPE);
-				if ("xls".equals(outputType) || "xlsx".equals(outputType)) {
+				if ("xls".equalsIgnoreCase(outputType) || "xlsx".equalsIgnoreCase(outputType)) {
 					request.setAttribute("template", getIOManager().getTemplateAsString());
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportExcel.jsp";
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-				} else if ("pdf".equals(outputType)) {
+				} else if ("pdf".equalsIgnoreCase(outputType)) {
 					String requestURL = getRequestUrlForPdfExport(request);
 					request.setAttribute("requestURL", requestURL);
 
@@ -162,7 +162,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportPdf.jsp";
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-				} else if ("JPG".equals(outputType)) {
+				} else if ("JPG".equalsIgnoreCase(outputType)) {
 					String requestURL = getRequestUrlForJpgExport(request);
 					request.setAttribute("requestURL", requestURL);
 
