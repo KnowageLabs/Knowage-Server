@@ -289,14 +289,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 						}
 						return;
 					}
-
-					if(nature!='init' && dataset.isRealtime && dataset.useCache){
-						return;
-					}
 				}
 
-//				var dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering);
-				var dsRecords = this.loadDatasetRecords(config,options, config.type == "selector");
+				var dsRecords = null;
+				if(nature=='init' || !dataset.isRealtime || !dataset.useCache){
+					dsRecords = this.loadDatasetRecords(config,options, config.type == "selector");
+				}
+
 				if(dsRecords == null){
 					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
 				}else{
