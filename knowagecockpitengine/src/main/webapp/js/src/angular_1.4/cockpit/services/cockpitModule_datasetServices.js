@@ -455,41 +455,43 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 	this.getDatasetParameters=function(dsId){
 		var params={};
-		for(var i=0;i<cockpitModule_template.configuration.datasets.length;i++){
-			if(angular.equals(cockpitModule_template.configuration.datasets[i].dsId,dsId)){
-				angular.forEach(cockpitModule_template.configuration.datasets[i].parameters,function(item,key){
-						this[key]=[cockpitModule_utilstServices.getParameterValue(item)];
-				},params)
+		if(dsId){
+			for(var i=0;i<cockpitModule_template.configuration.datasets.length;i++){
+				if(angular.equals(cockpitModule_template.configuration.datasets[i].dsId,dsId)){
+					angular.forEach(cockpitModule_template.configuration.datasets[i].parameters,function(item,key){
+							this[key]=[cockpitModule_utilstServices.getParameterValue(item)];
+					},params)
+				}
 			}
-		}
-
-		var datasetLabel=ds.getDatasetById(dsId).label;
-		var selections=cockpitModule_widgetSelection.getCurrentSelections(datasetLabel);
-		if(selections!=undefined && selections.hasOwnProperty(datasetLabel)){
-			for(var parName in selections[datasetLabel]){
-				if(parName.startsWith("$P{") && parName.endsWith("}")){
-					var parValue=selections[datasetLabel][parName];
-					if(parValue!=undefined){
-
-						var finalParams = []; // params to be overriden
-						angular.forEach(parName.match(new RegExp('\\$P\\{(.*?)\\}','g')),function(item){
-							this.push(item.substring(3, item.length - 1));
-						}, finalParams);
-
-						var finalValues = []; // all values to be replaced (flattened tuples)
-						angular.forEach(parValue,function(item){
-							angular.forEach(item.match(new RegExp("'(.*?)'",'g')),function(value){
-								this.push(value.substring(1, value.length - 1));
-							},finalValues);
-						}, finalValues);
-
-						for(var i=0; i<finalParams.length; i++){
-							var key = finalParams[i];
-							var values = [];
-							for(var j=i; j<finalValues.length; j += finalParams.length){
-								values.push(finalValues[j]);
+	
+			var datasetLabel=ds.getDatasetById(dsId).label;
+			var selections=cockpitModule_widgetSelection.getCurrentSelections(datasetLabel);
+			if(selections!=undefined && selections.hasOwnProperty(datasetLabel)){
+				for(var parName in selections[datasetLabel]){
+					if(parName.startsWith("$P{") && parName.endsWith("}")){
+						var parValue=selections[datasetLabel][parName];
+						if(parValue!=undefined){
+	
+							var finalParams = []; // params to be overriden
+							angular.forEach(parName.match(new RegExp('\\$P\\{(.*?)\\}','g')),function(item){
+								this.push(item.substring(3, item.length - 1));
+							}, finalParams);
+	
+							var finalValues = []; // all values to be replaced (flattened tuples)
+							angular.forEach(parValue,function(item){
+								angular.forEach(item.match(new RegExp("'(.*?)'",'g')),function(value){
+									this.push(value.substring(1, value.length - 1));
+								},finalValues);
+							}, finalValues);
+	
+							for(var i=0; i<finalParams.length; i++){
+								var key = finalParams[i];
+								var values = [];
+								for(var j=i; j<finalValues.length; j += finalParams.length){
+									values.push(finalValues[j]);
+								}
+								params[key] = values;
 							}
-							params[key] = values;
 						}
 					}
 				}
