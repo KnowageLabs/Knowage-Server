@@ -41,6 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/services/cockpitModule_templateServices.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/services/cockpitModule_utilstServices.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/services/cockpitModule_crossServices.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/services/knModule.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/services/knModule_fontIconsService.js"></script>
 
 
 
