@@ -116,11 +116,10 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.colorPickerOptions = {
 			placeholder:$scope.translate.load('sbi.cockpit.color.select'),
 			format:'rgb',
-			disabled: ($scope.cockpitStyle && $scope.cockpitStyle.titles) ? false : true
+			disabled: ($scope.cockpitStyle && $scope.cockpitStyle.titles) || ($scope.ngModel && !$scope.ngModel.titles) ? false : true
 		}
 
 	$scope.toggleTitle = function(){
-		$scope.ngModel.titles = !$scope.ngModel.titles;
 		$scope.colorPickerOptions.disabled = $scope.ngModel.titles;
 	}
 	$scope.resetShadowsStyle=function(){

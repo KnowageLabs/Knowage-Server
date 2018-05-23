@@ -45,14 +45,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
 	$scope.translate = sbiModule_translate;
 	$scope.i18n = sbiModule_i18n;
-	//if(!$scope.i18n.isLoaded()){
-	//	$scope.i18n.loadI18nMap();
-	//}
-
-
-	$scope.maxSizeStr = maxSizeStr;
-
-	$scope.translate = sbiModule_translate;
 
 	$scope.showCkanIntegration = sbiModule_user.functionalities.indexOf("CkanIntegrationFunctionality")>-1;
 

@@ -15,8 +15,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-
-<li gridster-item="ngModel" id="w{{ngModel.id}}" ng-cloak ng-class="{'topPosition' : widExp || gridsterItem.gridster.isMobile, 'hasCrossNavigation':ngModel.cross.cross.enable}"  ng-mouseleave="closeWidgetActionButtons()"
+<li gridster-item="ngModel" id="w{{ngModel.id}}" ng-cloak ng-class="{'topPosition' : widExp || gridsterItem.gridster.isMobile, 'hasCrossNavigation':ngModel.cross.cross.enable, 'expandedWidget':widExp, 'fixedLeft':ngModel.type === 'selection'}"  ng-mouseleave="closeWidgetActionButtons()"
 	action-button-position-handler widget-x-position=ngModel.col  action-button-class-container="widgetActionButton">
   	<div ng-show="widgetSpinner" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
        <md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>

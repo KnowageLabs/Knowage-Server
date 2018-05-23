@@ -720,7 +720,7 @@
 	
 		
 			type: "$a.type",
-			 #if(!$exportWebApp) 
+			#if(!$exportWebApp) 
 			id: $a.id,
 			#end
 			#if($a.name == $categorieColumns.name && $categorieColumns.orderType=="desc" && $isDateTime)
@@ -728,17 +728,19 @@
 			#end
 	 	title: {
 	 	    #if($xAxis.TITLE.text != '')
-				text: "$xAxis.TITLE.text",
 				customTitle: true,
+				#if($a.id==0)
+				text: "$xAxis.TITLE.text",
+				#else
+				text: "",
+				#end
 			#elseif($categorieColumns.name != '')
+				customTitle: false,
 				#if($a.id==0)
 				text: "$a.name",
 				#else
-				text: "",
-				textOriginal: "$a.name",
-				
+				text: "",				
 				#end
-				customTitle: false,
 			#end
 			#if($chart.hideAxisTitleCategory)
 				#if($chart.hideAxisTitleCategory=="true")

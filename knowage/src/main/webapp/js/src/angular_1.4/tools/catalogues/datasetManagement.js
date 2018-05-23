@@ -44,6 +44,8 @@ datasetModule
 
 function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer){
 
+	$scope.maxSizeStr = maxSizeStr;
+
 	$scope.csvEncodingDefault = "UTF-8";
 	$scope.csvDelimiterDefault = ",";
 	$scope.csvQuoteDefault = "\"";

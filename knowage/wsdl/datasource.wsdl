@@ -21,6 +21,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
      <element name="url" nillable="true" type="soapenc:string"/>
      <element name="user" nillable="true" type="soapenc:string"/>
      <element name="writeDefault" nillable="true" type="soapenc:boolean"/>
+     <element name="jdbcPoolConfiguration" nillable="true" type="soapenc:string"/>
     </sequence>
    </complexType>
   </schema>

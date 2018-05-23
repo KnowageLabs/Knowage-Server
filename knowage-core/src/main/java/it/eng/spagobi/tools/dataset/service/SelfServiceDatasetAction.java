@@ -78,6 +78,7 @@ public class SelfServiceDatasetAction {
 
 	public static final String OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL = "georeportServiceUrl";
 	public static final String OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL = "cockpitServiceUrl";
+	public static final String OUTPUT_PARAMETER_KPI_EDIT_SERVICE_URL = "kpiServiceUrl";
 	public static final String IS_FROM_MYDATA = "MYDATA";
 	public static final String TYPE_DOC = "TYPE_DOC";
 	public static final String IS_FROM_MYANALYSIS = "MYANALYSIS";
@@ -113,6 +114,7 @@ public class SelfServiceDatasetAction {
 			String buildQbeDataSetStartActionUrl = buildQbeDatasetStartServiceUrl(executionId, locale, profile);
 			String geoereportEditActionUrl = buildGeoreportEditServiceUrl(executionId, profile, locale);
 			String cockpitEditActionUrl = buildCockpitEditServiceUrl(executionId, locale, profile);
+			String kpiEditActionURL = buildKPIEditServiceUrl(executionId, locale, profile);
 			String userCanPersist = userCanPersist(profile);
 			String tableNamePrefix = getTableNamePrefix();
 			String isSmartFilterEnabled = isSmartFilterEnabled();
@@ -133,6 +135,7 @@ public class SelfServiceDatasetAction {
 				parameters.put(OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL, qbeEditDataSetActionUrl);
 				parameters.put(OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL, geoereportEditActionUrl);
 				parameters.put(OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL, cockpitEditActionUrl);
+				parameters.put(OUTPUT_PARAMETER_KPI_EDIT_SERVICE_URL, kpiEditActionURL);
 				parameters.put(OUTPUT_PARAMETER_BUILD_QBE_DATASET_START_ACTION, buildQbeDataSetStartActionUrl);
 				parameters.put(USER_CAN_PERSIST, userCanPersist);
 				parameters.put(TABLE_NAME_PREFIX, tableNamePrefix);
@@ -190,6 +193,31 @@ public class SelfServiceDatasetAction {
 		Map<String, String> parametersMap = buildServiceBaseParametersMap(locale, profile);
 
 		return parametersMap;
+	}
+
+	// KPI
+	protected String buildKPIEditServiceUrl(String executionId, Locale locale, UserProfile profile) {
+
+		Engine kpiEngine = null;
+		String kpiEditActionUrl = null;
+
+		Map<String, String> parametersMap = buildServiceBaseParametersMap(locale, profile);
+		parametersMap.put("SBI_EXECUTION_ID", executionId);
+
+		try {
+			kpiEngine = ExecuteAdHocUtility.getKPIEngine();
+		} catch (SpagoBIRuntimeException r) {
+			// the kpi engine is not found
+			logger.info("Engine not found. Error: ", r);
+		}
+
+		if (kpiEngine != null) {
+			String baseEditUrl = kpiEngine.getUrl().replace("pages/execute", "pages/edit");
+			kpiEditActionUrl = GeneralUtilities.getUrl(baseEditUrl, parametersMap);
+			LogMF.debug(logger, "KPI edit service invocation url is equal to [{}]", kpiEditActionUrl);
+		}
+
+		return kpiEditActionUrl;
 	}
 
 	// QBE from BM

@@ -351,6 +351,10 @@ function cockpitChartWidgetControllerFunction(
 										  var metadataFields = scope.realTimeDatasetData.metaData.fields;
 										  scope.adaptMetadata(metadataFields);
 
+										  // adapt the metadata to be sent to the backend
+										  var metadataFields = scope.realTimeDatasetData.metaData.fields;
+										  scope.adaptMetadata(metadataFields);
+
 										  //send broadcast for selections with data filtered by selections
 										  scope.$broadcast('selections',scope.realTimeDatasetData,true);
 									  }

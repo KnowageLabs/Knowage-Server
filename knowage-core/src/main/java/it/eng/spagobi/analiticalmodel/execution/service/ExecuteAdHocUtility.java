@@ -17,12 +17,6 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service;
 
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.json.JSONUtils;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -36,6 +30,12 @@ import org.safehaus.uuid.UUIDGenerator;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 public class ExecuteAdHocUtility {
 
@@ -53,6 +53,10 @@ public class ExecuteAdHocUtility {
 
 	public static Engine getCockpitEngine() {
 		return getEngineByDriver("it.eng.spagobi.engines.drivers.cockpit.CockpitDriver");
+	}
+
+	public static Engine getKPIEngine() {
+		return getEngineByDriver("it.eng.spagobi.engines.drivers.kpi.KpiDriver");
 	}
 
 	public static Engine getEngineByDriver(String driver) {

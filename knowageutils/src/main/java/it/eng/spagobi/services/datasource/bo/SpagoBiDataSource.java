@@ -1,19 +1,8 @@
-/*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+/**
+ * SpagoBiDataSource.java
  *
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
  */
 
 package it.eng.spagobi.services.datasource.bo;
@@ -33,6 +22,8 @@ public class SpagoBiDataSource implements java.io.Serializable {
 	private java.lang.String hibDialectClass;
 
 	private int id;
+
+	private java.lang.String jdbcPoolConfiguration;
 
 	private java.lang.String jndiName;
 
@@ -55,12 +46,13 @@ public class SpagoBiDataSource implements java.io.Serializable {
 	public SpagoBiDataSource() {
 	}
 
-	public SpagoBiDataSource(java.lang.String driver, java.lang.String hibDialectClass, java.lang.String hibDialectName, int id, java.lang.String jndiName,
-			java.lang.String label, java.lang.Boolean multiSchema, java.lang.String password, java.lang.Boolean readOnly, java.lang.String schemaAttribute,
-			java.lang.String url, java.lang.String user, java.lang.Boolean writeDefault) {
+	public SpagoBiDataSource(java.lang.String driver, java.lang.String hibDialectClass, int id, java.lang.String jdbcPoolConfiguration,
+			java.lang.String jndiName, java.lang.String label, java.lang.Boolean multiSchema, java.lang.String password, java.lang.Boolean readOnly,
+			java.lang.String schemaAttribute, java.lang.String url, java.lang.String user, java.lang.Boolean writeDefault) {
 		this.driver = driver;
 		this.hibDialectClass = hibDialectClass;
 		this.id = id;
+		this.jdbcPoolConfiguration = jdbcPoolConfiguration;
 		this.jndiName = jndiName;
 		this.label = label;
 		this.multiSchema = multiSchema;
@@ -124,6 +116,24 @@ public class SpagoBiDataSource implements java.io.Serializable {
 	 */
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	/**
+	 * Gets the jdbcPoolConfiguration value for this SpagoBiDataSource.
+	 * 
+	 * @return jdbcPoolConfiguration
+	 */
+	public java.lang.String getJdbcPoolConfiguration() {
+		return jdbcPoolConfiguration;
+	}
+
+	/**
+	 * Sets the jdbcPoolConfiguration value for this SpagoBiDataSource.
+	 * 
+	 * @param jdbcPoolConfiguration
+	 */
+	public void setJdbcPoolConfiguration(java.lang.String jdbcPoolConfiguration) {
+		this.jdbcPoolConfiguration = jdbcPoolConfiguration;
 	}
 
 	/**
@@ -308,6 +318,8 @@ public class SpagoBiDataSource implements java.io.Serializable {
 				&& ((this.hibDialectClass == null && other.getHibDialectClass() == null)
 						|| (this.hibDialectClass != null && this.hibDialectClass.equals(other.getHibDialectClass())))
 				&& this.id == other.getId()
+				&& ((this.jdbcPoolConfiguration == null && other.getJdbcPoolConfiguration() == null)
+						|| (this.jdbcPoolConfiguration != null && this.jdbcPoolConfiguration.equals(other.getJdbcPoolConfiguration())))
 				&& ((this.jndiName == null && other.getJndiName() == null) || (this.jndiName != null && this.jndiName.equals(other.getJndiName())))
 				&& ((this.label == null && other.getLabel() == null) || (this.label != null && this.label.equals(other.getLabel())))
 				&& ((this.multiSchema == null && other.getMultiSchema() == null)
@@ -340,6 +352,9 @@ public class SpagoBiDataSource implements java.io.Serializable {
 			_hashCode += getHibDialectClass().hashCode();
 		}
 		_hashCode += getId();
+		if (getJdbcPoolConfiguration() != null) {
+			_hashCode += getJdbcPoolConfiguration().hashCode();
+		}
 		if (getJndiName() != null) {
 			_hashCode += getJndiName().hashCode();
 		}
@@ -393,6 +408,12 @@ public class SpagoBiDataSource implements java.io.Serializable {
 		elemField.setXmlName(new javax.xml.namespace.QName("", "id"));
 		elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
 		elemField.setNillable(false);
+		typeDesc.addFieldDesc(elemField);
+		elemField = new org.apache.axis.description.ElementDesc();
+		elemField.setFieldName("jdbcPoolConfiguration");
+		elemField.setXmlName(new javax.xml.namespace.QName("", "jdbcPoolConfiguration"));
+		elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+		elemField.setNillable(true);
 		typeDesc.addFieldDesc(elemField);
 		elemField = new org.apache.axis.description.ElementDesc();
 		elemField.setFieldName("jndiName");
@@ -474,9 +495,9 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Read connection.
-	 * 
+	 *
 	 * @return the connection
-	 * 
+	 *
 	 * @throws NamingException
 	 *             the naming exception
 	 * @throws SQLException
@@ -498,7 +519,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Check is jndi.
-	 * 
+	 *
 	 * @return true, if successful
 	 */
 	public boolean checkIsJndi() {
@@ -511,7 +532,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Get the connection from JNDI
-	 * 
+	 *
 	 * @param connectionConfig
 	 *            SourceBean describing data connection
 	 * @return Connection to database
@@ -536,7 +557,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 	/**
 	 * Get the connection using jdbc
-	 * 
+	 *
 	 * @param connectionConfig
 	 *            SpagoBiDataSource describing data connection
 	 * @return Connection to database

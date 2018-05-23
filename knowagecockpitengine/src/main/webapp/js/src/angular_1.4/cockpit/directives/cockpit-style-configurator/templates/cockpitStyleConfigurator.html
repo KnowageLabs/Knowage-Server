@@ -2,7 +2,7 @@
 	<md-card>
 		<md-toolbar class="ternaryToolbar" >
 			<div class="md-toolbar-tools" layout="row">
-				<md-switch ng-model="ngModel.titles">{{translate.load("sbi.cockpit.style.titles")}}</md-switch>
+				<md-switch ng-model="ngModel.titles" ng-click="toggleTitle()">{{translate.load("sbi.cockpit.style.titles")}}</md-switch>
 				<span flex></span>
 				<md-button ng-click="resetTitlesStyle()" class="md-icon-button" ng-if="isWidget && (ngModel.titles!=cockpitStyle.titles || ngModel.headerHeight || !angular.equals(ngModel.title,cockpitStyle.title))" >
 					<md-tooltip>Clear title styles</md-tooltip>

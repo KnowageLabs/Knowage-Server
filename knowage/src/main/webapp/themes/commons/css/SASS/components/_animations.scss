@@ -2,8 +2,8 @@
 
 	//Slide Down Animation
 	&.slide-down.ng-enter {
-	  transition:0.3s cubic-bezier(0, 1, 0.5, 1) all;
-	  opacity: 0;
+	  transition: all 0.5s linear;
+	  opacity: .5;
 	  top: -70px;
 	}
 	&.slide-down.ng-enter.ng-enter-active {
@@ -17,6 +17,22 @@
 	&.slide-down.ng-leave.ng-leave-active {
 	  opacity:0;
 	  top: -70px;
+	}
+
+	//Fade-in Animation
+	&.shrink-down.ng-enter {
+	  	transition: all 0.5s linear;
+	  	transform: scale(0);
+	}
+	&.shrink-down.ng-enter.ng-enter-active {
+		transform: scale(1);
+	}
+	&.shrink-down.ng-leave {
+	  transition:0.3s linear all;
+	  transform: scale(1);
+	}
+	&.shrink-down.ng-leave.ng-leave-active {
+	  transform: scale(0);
 	}
 
 	//Fade Down Animation
