@@ -200,6 +200,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										  		<md-card-content ng-if="JDBCAdvancedOptionsShow">
 										  			<div layout="row">
 										  				<md-input-container flex="90" class="md-block">
+															<label>{{translate.load("sbi.datasource.type.jdbc.maxTotal")}}</label>
+															<input type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.maxTotal"
+																ng-maxlength="20" ng-readonly="readOnly">
+															<div ng-messages="forms.dataSourceForm.driver.$error" ng-show="!selectedDataSource.jdbcPoolConfiguration.maxTotal">
+				          										<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+				        									</div>
+														</md-input-container>
+														<md-icon ng-click="showMaxTotalInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
+										  			</div>
+										  													  		
+										  			<div layout="row">
+										  				<md-input-container flex="90" class="md-block">
 															<label>{{translate.load("sbi.datasource.type.jdbc.maxWait")}}</label>
 															<input required type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.maxWait"
 																ng-maxlength="30" ng-readonly="readOnly">
@@ -236,6 +248,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										  			
 										  			<div layout="row">
 										  				<md-input-container flex="90" class="md-block">
+															<label>{{translate.load("sbi.datasource.type.jdbc.minEvictableIdleTimeMillis")}}</label>
+															<input type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis"
+																ng-maxlength="30" ng-readonly="readOnly">
+															<div ng-messages="forms.dataSourceForm.driver.$error" ng-show="!selectedDataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis">
+				          										<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+				        									</div>
+														</md-input-container>
+														<md-icon ng-click="showminEvictableIdleTimeMillisInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
+										  			</div>
+										  			
+										  			<div layout="row">
+										  				<md-input-container flex="90" class="md-block">
 															<label>{{translate.load("sbi.datasource.type.jdbc.validationQuery")}}</label>
 															<input type="text" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.validationQuery"
 																ng-maxlength="200" ng-readonly="readOnly">														
@@ -244,33 +268,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										  			</div>
 										  			
 										  			<div layout="row">
-										  				<md-input-container class="md-block">
+										  				<md-input-container flex="90" class="md-block">
 															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.removeAbandonedOnBorrow" aria-label="Remove Abandoned On Borrow">{{translate.load("sbi.datasource.removeAbandonedOnBorrow")}}</md-checkbox>
 														</md-input-container>
+														<md-icon ng-click="showRemoveAbandonedOnBorrowInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
 										  			</div>
 										  			
 										  			<div layout="row">
-										  				<md-input-container class="md-block">
+										  				<md-input-container flex="90" class="md-block">
 															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.removeAbandonedOnMaintenance" aria-label="Remove Abandoned On Maintenance">{{translate.load("sbi.datasource.removeAbandonedOnMaintenance")}}</md-checkbox>
 														</md-input-container>
+														<md-icon ng-click="showRemoveAbandonedOnMaintenanceInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
 										  			</div>
 										  			
 										  			<div layout="row">
-										  				<md-input-container class="md-block">
+										  				<md-input-container flex="90" class="md-block">
 															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.logAbandoned" aria-label="Log Abandoned">{{translate.load("sbi.datasource.logAbandoned")}}</md-checkbox>
 														</md-input-container>
+														<md-icon ng-click="showGetLogAbandonedInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
 										  			</div>
 										  			
 										  			<div layout="row">
-										  				<md-input-container class="md-block">
+										  				<md-input-container flex="90" class="md-block">
 															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.testOnReturn" aria-label="Test On Return">{{translate.load("sbi.datasource.testOnReturn")}}</md-checkbox>
 														</md-input-container>
+														<md-icon ng-click="showTestOnReturnInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
 										  			</div>
 										  			
 										  			<div layout="row">
-										  				<md-input-container class="md-block">
+										  				<md-input-container flex="90" class="md-block">
 															<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.jdbcPoolConfiguration.testWhileIdle" aria-label="Test While Idle">{{translate.load("sbi.datasource.testWhileIdle")}}</md-checkbox>
 														</md-input-container>
+														<md-icon ng-click="showTestWhileIdleInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
 										  			</div>
 										  		</md-card-content>
 										  </md-card>
