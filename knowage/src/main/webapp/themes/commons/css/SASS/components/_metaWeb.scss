@@ -7,4 +7,31 @@
 	angular-table {
 		margin: 0 !important;
 	}
+	.metaModelBusinessList {
+		.md-subheader {
+			._md-subheader-inner {
+				padding: 8px;
+			}
+		}
+		.businessListName {
+			padding-left: 10px;
+		}
+		.businessListProperties {
+			font-size: $smallFontSize;
+		}
+		.md-icon-button {
+			margin-right:10px;
+		}
+		ul {
+			list-style:none;
+			margin: 0;
+			padding: 10px 0px;
+			li {
+				padding-left:10px;
+				span {
+					font-size: $mediumFontSize;
+				}
+			}
+		}
+	}
 }
