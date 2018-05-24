@@ -133,6 +133,29 @@ function mapWidgetEditControllerFunction(
   		}
   	}
   	
+  	$scope.hasShownDetails = function(layer){
+  		layer.hasShownDetails = false;
+  		var columnsList = $scope.newModel.content.columnSelectedOfDataset[layer.dsId];
+  		for(var i in columnsList){
+  			if(columnsList[i].properties.showDetails){
+  				layer.hasShownDetails = true;
+  				return;
+  			}
+  		}
+  		 
+  	}
+  	
+  	$scope.setModalColumn = function(column, layer){
+  		var columnsList = $scope.newModel.content.columnSelectedOfDataset[layer.dsId];
+  		layer.modalSelectionColumn = column.alias;
+  		for(var i in columnsList){
+  			if(columnsList[i].alias !== column.alias){
+  				columnsList[i].properties.modal = !column.properties.modal;
+  			}
+  		}
+  		
+  	}
+  	
   	$scope.deleteColumn = function(layer,column){
   		layer.splice(layer.indexOf(column),1);
   	}
@@ -427,13 +450,14 @@ function mapWidgetEditControllerFunction(
   	//MAIN DIALOG BUTTONS
 	$scope.saveConfiguration=function(){
 		for(var c in $scope.newModel.content.layers){
+			$scope.hasShownDetails($scope.newModel.content.layers[c])
 			if($scope.newModel.content.layers[c].expanded) delete $scope.newModel.content.layers[c].expanded;
 		}
 
 		if($scope.newModel.content.layers.length == 1){ // force target if only one layer is defined
 			$scope.newModel.content.layers[0].targetDefault = true;
 		}
-
+		
 		$scope.addToDatasets();
 		mdPanelRef.close();
 		angular.copy($scope.newModel,model);

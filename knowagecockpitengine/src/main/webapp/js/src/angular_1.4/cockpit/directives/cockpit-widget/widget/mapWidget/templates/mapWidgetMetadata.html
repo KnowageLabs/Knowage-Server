@@ -63,9 +63,10 @@
 												<th>Alias</th>
 												<th>Type</th>
 												<th>Aggregation function</th>
-												<th>Show on detail</th>
-												<th>Show on map</th>
-												<th></th>
+												<th style="text-align:center">Show on detail</th>
+												<th style="text-align:center">Show on map</th>
+												<th style="text-align:center">Modal column</th>
+												<th style="text-align:center">Threshold</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -96,11 +97,14 @@
 														</md-select>
 													</md-input-container>
 												</td>
-												<td>
+												<td style="text-align:center">
 													<md-checkbox ng-model="column.properties.showDetails" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE' || column.fieldType=='ATTRIBUTE'"/>
 												</td>
-												<td>
+												<td style="text-align:center">
 													<md-checkbox ng-model="column.properties.showMap" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE'"/>
+												</td>
+												<td style="display: flex;justify-content: center;">
+													<md-switch ng-model="column.properties.modal" class="noMargin" ng-change="setModalColumn(column,layer)" aria-label="modal"></md-switch>
 												</td>
 												<td class="multiTableAction">
 													<md-icon style="cursor: pointer" md-font-icon="fa fa-sliders" ng-if="column.fieldType === 'MEASURE'" ng-click="getThresholds($event,column)"></md-icon>
