@@ -23,6 +23,18 @@ function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate
 				.extractCategories($scope.selectedPhysicalModel.properties),
 				$scope.currentPhysicalModelParameterCategories);
 	}
+	
+	$scope.openedItems = [];
+
+	$scope.openBusinessModel = function(model,e){
+		e.stopPropagation();
+		if($scope.openedItems.indexOf(model.name)!==-1){
+			$scope.openedItems.splice($scope.openedItems.indexOf(model.name),1);
+		}else{
+			$scope.openedItems.push(model.name);
+		}
+	}
+	
 	$scope.physicalModel_getlevelIcon = function(node) {
 		if (node.hasOwnProperty("columns")) {
 			// is business model node
@@ -143,25 +155,16 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 	$scope.sbiModule_config=sbiModule_config;
 	$scope.sbiModule_user=sbiModule_user;
 	$scope.currentBusinessModelParameterCategories = [];
+	$scope.openedItems = [];
 
-	var pendingRefresh=0;
-	$scope.$watch(function() {
-		return $scope.selectedBusinessModel;
-	}, function(newValue, oldValue) {
-		if (!(angular.equals(newValue, oldValue) && newValue.expanded==oldValue.expanded)) {
-			pendingRefresh++;
-			$timeout(function(){
-				pendingRefresh--;
-				if(pendingRefresh==0){
-					if($scope.selectedBusinessModel.hasOwnProperty("joinRelationships")){
-						$scope.businessViewTreeInterceptor.refreshTree();
-					}else{
-						$scope.businessModelTreeInterceptor.refreshTree();
-					}
-				}
-			},500);
+	$scope.openBusinessModel = function(model,e){
+		e.stopPropagation();
+		if($scope.openedItems.indexOf(model.uniqueName)!==-1){
+			$scope.openedItems.splice($scope.openedItems.indexOf(model.uniqueName),1);
+		}else{
+			$scope.openedItems.push(model.uniqueName);
 		}
-	}, true);
+	}
 
 	$scope.selectBusinessModel = function(node) {
 		$scope.tabResource.selectedBusinessTab="propertiestab";
