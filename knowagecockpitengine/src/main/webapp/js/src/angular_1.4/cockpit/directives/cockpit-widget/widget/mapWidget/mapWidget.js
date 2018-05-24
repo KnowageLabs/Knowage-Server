@@ -396,6 +396,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			layer.name = layerDef.name;
 			layer.dsId = layerDef.dsId;
 			layer.setZIndex(layerDef.order*1000);
+			layer.modalSelectionColumn = layerDef.modalSelectionColumn;
 			$scope.map.addLayer(layer); 			//add layer to ol.Map
 			$scope.addLayer(layerDef.name, layer);	//add layer to internal object
 			$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
@@ -487,6 +488,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	            var geometry = $scope.tempFeature.getGeometry();
     	            var coordinate = evt.coordinate;
     	            overlay.setPosition(coordinate);
+    	        }
+    	        
+    	        //modal selection management
+    	        if ($scope.selectedLayer.modalSelectionColumn){
+    	        	 $scope.selectPropValue($scope.selectedLayer.modalSelectionColumn, $scope.props[$scope.selectedLayer.modalSelectionColumn].value);
     	        }
              });
 
