@@ -2,7 +2,6 @@
 	<list label="translate.load('sbi.glossary.tables')" layout="column"> 
 		<md-content class="noMargin" >
 		 	<!-- PHYSICAL CLASSES -->
-		 	
 			<div class="metaModelBusinessList" ng-if="meta.physicalModels.length>0">
 		   		<div class="md-dense" ng-repeat="pm in meta.physicalModels" >
 			   		<div class="selectable" ng-click="selectPhysicalModel(pm)" layout="row" layout-align="start center" ng-class="{'selected':pm == selectedPhysicalModel}">
@@ -14,7 +13,8 @@
 				     	</md-button>
 			   		</div>
 			     	<md-divider ng-if="!$last"></md-divider>
-					<div ng-if="pm.opened">
+			     	
+					<div ng-if="openedItems.indexOf(pm.name) !== -1">
 						<md-card>
 							<md-card-content class="noPadding">
 								<ul>
@@ -30,21 +30,6 @@
 					</div>
 			   	</div>
 		   	</div>
-		<!--  span ng-if="meta.physicalModels.length>0">
-			<component-tree id="pmTree"  style="margin:0px"
-				ng-model="meta.physicalModels"
-				highlights-selected-item="true"   
-				subnode-key="columns" 
-				click-function="selectPhysicalModel(node)"
-				hide-progress=true
-				not-hide-on-load = true
-				folder-icon-fn="physicalModel_getlevelIcon(node)"
-				open-folder-icon-fn="physicalModel_getlevelIcon(node)"
-				is-folder-fn="physicalModel_isFolder(node)"
-				expand-on-click=false
-				interceptor="physicalModelTreeInterceptor"
-			></component-tree>
-		</span-->
 	</list>
 	
 	<extra-list-button>

@@ -15,7 +15,7 @@
 				     	</md-button>
 			   		</div>
 			     	<md-divider ng-if="!$last"></md-divider>
-					<div ng-if="bm.opened">
+					<div ng-if="openedItems.indexOf(bm.uniqueName) !== -1">
 						<md-card>
 							<md-card-content class="noPadding">
 								<ul>
@@ -45,7 +45,7 @@
 		        	</md-button>
 		      	</div>
 		        <md-divider ng-if="!$last"></md-divider>
-		        <div ng-if="bv.opened">
+		        <div ng-if="openedItems.indexOf(bv.uniqueName) !== -1">
 		        	<md-card>
 		        		<md-card-content class="noPadding">
 		        			<ul>
@@ -62,40 +62,6 @@
 		      </div>
 	      	</div>
 		  </md-content>
-		 <!--  span ng-if="meta.businessModels.length>0">
-			<component-tree id="bcmTree"  style="margin:0px" 
-					ng-model="meta.businessModels"
-					highlights-selected-item="true"   
-					subnode-key="columns" 
-					click-function="selectBusinessModel(node)"
-					hide-progress=true
-					not-hide-on-load = true
-					is-folder-fn="businessModel_isFolder(node)"
-					folder-icon-fn="businesslModel_getlevelIcon(node)"
-					open-folder-icon-fn="businesslModel_getlevelIcon(node)"
-					interceptor="businessModelTreeInterceptor"
-					static-tree=true
-					expand-on-click=false
-					tree-root-name="translate.load('sbi.meta.businessclass')"
-				></component-tree>
-		</span-->
-	<!--  span ng-if="meta.businessViews.length>0">
-		<component-tree id="bvmTree"  style="margin:0px" 
-				ng-model="meta.businessViews"
-				highlights-selected-item="true"   
-				subnode-key="columns" 
-				hide-progress=true
-				interceptor="businessViewTreeInterceptor"
-				static-tree=true
-				not-hide-on-load = true
-				expand-on-click=false
-				click-function="selectBusinessModel(node)"
-				is-folder-fn="businessModel_isFolder(node)"
-				folder-icon-fn="businesslModel_getlevelIcon(node)"
-				open-folder-icon-fn="businesslModel_getlevelIcon(node)"
-				tree-root-name="translate.load('sbi.meta.businessview')"
-			></component-tree>
-		</span-->	
 	</list>
 	
 	
