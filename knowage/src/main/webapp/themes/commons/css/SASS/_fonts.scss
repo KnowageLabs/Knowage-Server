@@ -1,121 +1,204 @@
+
 /* -- import Roboto Font ---------------------------- */
 @font-face {
     font-family: 'Roboto';
-    src: url('../../sbi_default/fonts/roboto/Roboto-Regular-webfont.eot');
-    src: url('../../sbi_default/fonts/roboto/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../sbi_default/fonts/roboto/Roboto-Regular-webfont.woff') format('woff'),
-         url('../../sbi_default/fonts/roboto/Roboto-Regular-webfont.ttf') format('truetype'),
-         url('../../sbi_default/fonts/roboto/Roboto-Regular-webfont.svg#RobotoRegular') format('svg');
+    src: url('../fonts/roboto/Roboto-Regular-webfont.eot');
+    src: url('../fonts/roboto/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/roboto/Roboto-Regular-webfont.woff') format('woff'),
+         url('../fonts/roboto/Roboto-Regular-webfont.ttf') format('truetype'),
+         url('../fonts/roboto/Roboto-Regular-webfont.svg#RobotoRegular') format('svg');
 
 }
 
 @font-face {
     font-family: 'Roboto';
-    src: url('../../sbi_default/fonts/roboto/Roboto-Italic-webfont.eot');
-    src: url('../../sbi_default/fonts/roboto/Roboto-Italic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../sbi_default/fonts/roboto/Roboto-Italic-webfont.woff') format('woff'),
-         url('../../sbi_default/fonts/roboto/Roboto-Italic-webfont.ttf') format('truetype'),
-         url('../../sbi_default/fonts/roboto/Roboto-Italic-webfont.svg#RobotoItalic') format('svg');
+    src: url('../fonts/roboto/Roboto-Italic-webfont.eot');
+    src: url('../fonts/roboto/Roboto-Italic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/roboto/Roboto-Italic-webfont.woff') format('woff'),
+         url('../fonts/roboto/Roboto-Italic-webfont.ttf') format('truetype'),
+         url('../fonts/roboto/Roboto-Italic-webfont.svg#RobotoItalic') format('svg');
     font-weight: normal;
     font-style: italic;
 }
  
 @font-face {
     font-family: 'Roboto';
-    src: url('../../sbi_default/fonts/roboto/Roboto-Bold-webfont.eot');
-    src: url('../../sbi_default/fonts/roboto/Roboto-Bold-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../sbi_default/fonts/roboto/Roboto-Bold-webfont.woff') format('woff'),
-         url('../../sbi_default/fonts/roboto/Roboto-Bold-webfont.ttf') format('truetype'),
-         url('../../sbi_default/fonts/roboto/Roboto-Bold-webfont.svg#RobotoBold') format('svg');
+    src: url('../fonts/roboto/Roboto-Bold-webfont.eot');
+    src: url('../fonts/roboto/Roboto-Bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/roboto/Roboto-Bold-webfont.woff') format('woff'),
+         url('../fonts/roboto/Roboto-Bold-webfont.ttf') format('truetype'),
+         url('../fonts/roboto/Roboto-Bold-webfont.svg#RobotoBold') format('svg');
     font-weight: bold;
     font-style: normal;
 }
  
 @font-face {
     font-family: 'Roboto';
-    src: url('../../sbi_default/fonts/roboto/Roboto-BoldItalic-webfont.eot');
-    src: url('../../sbi_default/fonts/roboto/Roboto-BoldItalic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../sbi_default/fonts/roboto/Roboto-BoldItalic-webfont.woff') format('woff'),
-         url('../../sbi_default/fonts/roboto/Roboto-BoldItalic-webfont.ttf') format('truetype'),
-         url('../../sbi_default/fonts/roboto/Roboto-BoldItalic-webfont.svg#RobotoBoldItalic') format('svg');
+    src: url('../fonts/roboto/Roboto-BoldItalic-webfont.eot');
+    src: url('../fonts/roboto/Roboto-BoldItalic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/roboto/Roboto-BoldItalic-webfont.woff') format('woff'),
+         url('../fonts/roboto/Roboto-BoldItalic-webfont.ttf') format('truetype'),
+         url('../fonts/roboto/Roboto-BoldItalic-webfont.svg#RobotoBoldItalic') format('svg');
     font-weight: bold;
     font-style: italic;
 }
  
 @font-face {
     font-family: 'Roboto';
-    src: url('../../sbi_default/fonts/roboto/Roboto-Thin-webfont.eot');
-    src: url('../../sbi_default/fonts/roboto/Roboto-Thin-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../sbi_default/fonts/roboto/Roboto-Thin-webfont.woff') format('woff'),
-         url('../../sbi_default/fonts/roboto/Roboto-Thin-webfont.ttf') format('truetype'),
-         url('../../sbi_default/fonts/roboto/Roboto-Thin-webfont.svg#RobotoThin') format('svg');
+    src: url('../fonts/roboto/Roboto-Thin-webfont.eot');
+    src: url('../fonts/roboto/Roboto-Thin-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/roboto/Roboto-Thin-webfont.woff') format('woff'),
+         url('../fonts/roboto/Roboto-Thin-webfont.ttf') format('truetype'),
+         url('../fonts/roboto/Roboto-Thin-webfont.svg#RobotoThin') format('svg');
     font-weight: 200;
     font-style: normal;
 }
  
 @font-face {
     font-family: 'Roboto';
-    src: url('../../sbi_default/fonts/roboto/Roboto-ThinItalic-webfont.eot');
-    src: url('../../sbi_default/fonts/roboto/Roboto-ThinItalic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../sbi_default/fonts/roboto/Roboto-ThinItalic-webfont.woff') format('woff'),
-         url('../../sbi_default/fonts/roboto/Roboto-ThinItalic-webfont.ttf') format('truetype'),
-         url('../../sbi_default/fonts/roboto/Roboto-ThinItalic-webfont.svg#RobotoThinItalic') format('svg');  
+    src: url('../fonts/roboto/Roboto-ThinItalic-webfont.eot');
+    src: url('../fonts/roboto/Roboto-ThinItalic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/roboto/Roboto-ThinItalic-webfont.woff') format('woff'),
+         url('../fonts/roboto/Roboto-ThinItalic-webfont.ttf') format('truetype'),
+         url('../fonts/roboto/Roboto-ThinItalic-webfont.svg#RobotoThinItalic') format('svg');  
     font-weight: 200;
     font-style: italic;
 }
  
 @font-face {
     font-family: 'Roboto';
-    src: url('../../sbi_default/fonts/roboto/Roboto-Light-webfont.eot');
-    src: url('../../sbi_default/fonts/roboto/Roboto-Light-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../sbi_default/fonts/roboto/Roboto-Light-webfont.woff') format('woff'),
-         url('../../sbi_default/fonts/roboto/Roboto-Light-webfont.ttf') format('truetype'),
-         url('../../sbi_default/fonts/roboto/Roboto-Light-webfont.svg#RobotoLight') format('svg');
+    src: url('../fonts/roboto/Roboto-Light-webfont.eot');
+    src: url('../fonts/roboto/Roboto-Light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/roboto/Roboto-Light-webfont.woff') format('woff'),
+         url('../fonts/roboto/Roboto-Light-webfont.ttf') format('truetype'),
+         url('../fonts/roboto/Roboto-Light-webfont.svg#RobotoLight') format('svg');
     font-weight: 100;
     font-style: normal;
 }
  
 @font-face {
     font-family: 'Roboto';
-    src: url('../../sbi_default/fonts/roboto/Roboto-LightItalic-webfont.eot');
-    src: url('../../sbi_default/fonts/roboto/Roboto-LightItalic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../sbi_default/fonts/roboto/Roboto-LightItalic-webfont.woff') format('woff'),
-         url('../../sbi_default/fonts/roboto/Roboto-LightItalic-webfont.ttf') format('truetype'),
-         url('../../sbi_default/fonts/roboto/Roboto-LightItalic-webfont.svg#RobotoLightItalic') format('svg');
+    src: url('../fonts/roboto/Roboto-LightItalic-webfont.eot');
+    src: url('../fonts/roboto/Roboto-LightItalic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/roboto/Roboto-LightItalic-webfont.woff') format('woff'),
+         url('../fonts/roboto/Roboto-LightItalic-webfont.ttf') format('truetype'),
+         url('../fonts/roboto/Roboto-LightItalic-webfont.svg#RobotoLightItalic') format('svg');
     font-weight: 100;
     font-style: italic;
 }
  
 @font-face {
     font-family: 'Roboto';
-    src: url('../../sbi_default/fonts/roboto/Roboto-Medium-webfont.eot');
-    src: url('../../sbi_default/fonts/roboto/Roboto-Medium-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../sbi_default/fonts/roboto/Roboto-Medium-webfont.woff') format('woff'),
-         url('../../sbi_default/fonts/roboto/Roboto-Medium-webfont.ttf') format('truetype'),
-         url('../../sbi_default/fonts/roboto/Roboto-Medium-webfont.svg#RobotoMedium') format('svg');
+    src: url('../fonts/roboto/Roboto-Medium-webfont.eot');
+    src: url('../fonts/roboto/Roboto-Medium-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/roboto/Roboto-Medium-webfont.woff') format('woff'),
+         url('../fonts/roboto/Roboto-Medium-webfont.ttf') format('truetype'),
+         url('../fonts/roboto/Roboto-Medium-webfont.svg#RobotoMedium') format('svg');
     font-weight: 300;
     font-style: normal;
 }
  
 @font-face {
     font-family: 'Roboto';
-    src: url('../../sbi_default/fonts/roboto/Roboto-MediumItalic-webfont.eot');
-    src: url('../../sbi_default/fonts/roboto/Roboto-MediumItalic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../sbi_default/fonts/roboto/Roboto-MediumItalic-webfont.woff') format('woff'),
-         url('../../sbi_default/fonts/roboto/Roboto-MediumItalic-webfont.ttf') format('truetype'),
-         url('../../sbi_default/fonts/roboto/Roboto-MediumItalic-webfont.svg#RobotoMediumItalic') format('svg');
+    src: url('../fonts/roboto/Roboto-MediumItalic-webfont.eot');
+    src: url('../fonts/roboto/Roboto-MediumItalic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/roboto/Roboto-MediumItalic-webfont.woff') format('woff'),
+         url('../fonts/roboto/Roboto-MediumItalic-webfont.ttf') format('truetype'),
+         url('../fonts/roboto/Roboto-MediumItalic-webfont.svg#RobotoMediumItalic') format('svg');
     font-weight: 300;
     font-style: italic;
 }
 
 @font-face {
     font-family: "qbe-custom";
-    src:url("../../sbi_default/fonts/qbe-custom/qbe-custom.eot");
-    src:url("../../sbi_default/fonts/qbe-custom/qbe-custom.eot?#iefix") format("embedded-opentype"),
-    url("../../sbi_default/fonts/qbe-custom/qbe-custom.woff") format("woff"),
-    url("../../sbi_default/fonts/qbe-custom/qbe-custom.ttf") format("truetype"),
-    url("../../sbi_default/fonts/qbe-custom/qbe-custom.svg#qbe-custom") format("svg");
+    src:url("../fonts/qbe-custom/qbe-custom.eot");
+    src:url("../fonts/qbe-custom/qbe-custom.eot?#iefix") format("embedded-opentype"),
+    url("../fonts/qbe-custom/qbe-custom.woff") format("woff"),
+    url("../fonts/qbe-custom/qbe-custom.ttf") format("truetype"),
+    url("../fonts/qbe-custom/qbe-custom.svg#qbe-custom") format("svg");
     font-weight: normal;
     font-style: normal;
 
+}
+/* -- import Appliances FonIcon ---------------------------- */
+@font-face {
+  font-family: "appliances";
+  src:url("../fonts/appliances/appliances.eot");
+  src:url("../fonts/appliances/appliances.eot?#iefix") format("embedded-opentype"),
+    url("../fonts/appliances/appliances.woff") format("woff"),
+    url("../fonts/appliances/appliances.ttf") format("truetype"),
+    url("../fonts/appliances/appliances.svg#appliances") format("svg");
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+[data-icon]:before {
+  font-family: "appliances" !important;
+  content: attr(data-icon);
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[class^="ai-"]:before,
+[class*=" ai-"]:before {
+  font-family: "appliances" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ai-fridge:before {
+  content: "\61";
+}
+.ai-iron:before {
+  content: "\62";
+}
+.ai-microwave:before {
+  content: "\63";
+}
+.ai-oven:before {
+  content: "\64";
+}
+.ai-toaster:before {
+  content: "\65";
+}
+.ai-tv:before {
+  content: "\66";
+}
+.ai-washer:before {
+  content: "\67";
+}
+.ai-washdrier:before {
+  content: "\68";
+}
+.ai-lightbulb:before {
+  content: "\69";
+}
+.ai-hairdyer:before {
+  content: "\6a";
+}
+.ai-coffee:before {
+  content: "\6b";
+}
+.ai-cappa:before {
+  content: "\6c";
+}
+.ai-boiler:before {
+  content: "\6d";
+}
+.ai-alwayson:before {
+  content: "\6e";
 }

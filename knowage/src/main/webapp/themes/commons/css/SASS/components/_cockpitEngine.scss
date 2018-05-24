@@ -17,10 +17,121 @@
 
     }
     
-    cockpit-image-widget {
-    	&.fadeOut {
-        	opacity: 1 !important;
+    cockpit-discovery-widget {
+    	.discoveryFiltersCard {
+    		
+    		&.sidenav-add, &.sidenav-remove {
+    			transition: max-width .4s linear;
+    		}
+    		&.sidenav {
+    			max-width: 0;
+    			margin-left: 0;
+    			margin-right: 0;
+    			left: -300px;
+    			&.open-add, &.open-remove {
+    				transition: left .4s linear;
+    			}
+    			&.open,&.open-remove {
+    				position: absolute;
+    				left: -300px;
+    				max-width: 85%;
+    				width: 100%;
+    				height: calc(100% - 145px);
+				    top: 130px;
+				    z-index: 99;
+				    md-card-content {
+				    	height: 100%;
+				    }
+    			}
+    			&.open{
+				    left: 9px;
+    			}
+    		}
+    		.discoveryFiltersList {
+	    		height: calc(100% - 80px); 
+	    		overflow-y: auto;
+	    		@include coolScrollBars($baseColor,6px);
+	    		._md-subheader-inner {
+	    			padding:8px;
+	    			._md-subheader-content {
+    				    display: flex;
+					    align-items: center;
+					    justify-content: space-between;
+					    height: 14px;
+					    md-icon {
+					    	margin:0;
+					    }
+	    			}
+	    		}
+	    		.discoveryFiltersItem {
+	    			&:nth-last-child {
+	    				border-bottom: none;
+	    			}
+	    			border-bottom: 1px solid $bordersColor;
+	    			padding: 0 8px;
+					min-height: 24px;
+					height: 24px;
+					.discoveryFiltersListName {
+						font-size: $mediumFontSize;
+					}
+	    			.chip {
+	    				background-color: $ternaryColor;
+					    border-radius: 15px;
+					    min-width: 40px;
+					    text-align: center;
+					    font-size: $mediumFontSize;
+	    			}
+	    		}
+	    	}
     	}
+    	.discoveryViewCard.md-knowage-theme {
+    		.ternaryToolbar {
+				background-color: $contentBackground !important;
+				md-icon {
+					color: $smallTextColor !important;
+				}
+			}
+    		md-card-content {
+    			height: calc(100% - 112px); 
+	    		overflow-y: auto;
+	    		@include coolScrollBars($baseColor,6px);
+    		}
+    		.discoveryListView {
+				.discoveryItem {
+					padding: 4px 16px;
+					.md-avatar {
+						color: white;
+						font-size: 1.5rem;
+						font-weight: 100;
+						display: flex;
+					    justify-content: center;
+					    align-items: center;
+					}
+					h3, p {
+						margin: 0;
+					}
+					h3 {
+						font-size: 16px;
+					    font-weight: 400;
+					    letter-spacing: .01em;
+					    line-height: 1.2em;
+					    overflow: hidden;
+					    white-space: nowrap;
+					    text-overflow: ellipsis;
+					}
+					p {
+						font-size: .8rem;
+					    font-weight: 500;
+					    letter-spacing: .01em;
+					    margin: 0;
+					    line-height: 1rem;
+					}
+				}
+			}
+    	}
+    	
+    }
+    cockpit-image-widget {
     	width:100%;
 		height:100%;
     	.widgetImageDiv
@@ -33,11 +144,6 @@
 	    }
     }
     
-    
-    cockpit-grid {
-    	//width: calc( #{$cockpitWidth} - 20px - #{$menuBarWidth} );
-    	//margin: 0 auto;
-    }
 
 	cockpit-widget{
 		&>li{
@@ -604,15 +710,6 @@
         }
     }
 
-    .fadeOut {
-        transition: 0.3s linear all;
-        opacity: 1;
-    }
-
-    .fadeIn {
-        transition: 0.9s linear all;
-        opacity: 1;
-    }
     cockpit-grid {
     	overflow-y: auto;
     	overflow-y: overlay;
@@ -637,6 +734,11 @@
 		}        
 
         .gridster-item{
+        	&.fixedLeft {
+        		.showActionButtonHandler {
+        			left: 0 !important;
+        		}
+        	}
 			 md-card.md-knowage-theme md-card-title {
 			 	height:32px;
 			 	min-height: 32px;
@@ -1080,7 +1182,21 @@
     background-color: rgba(33,33,33,1.0);
 }
 
-
+.iconSelectorSide {
+	box-shadow: -3px 0 3px $shadowsColor;
+	md-content {
+		height: 635px;
+		h3 {
+			font-size: $headerFontSize;
+			text-transform: uppercase;
+			font-weight: 100;
+			margin: 4px 0;
+		}
+		md-grid-tile {
+			border: 1px solid $bordersColor;
+		}
+	}
+}
 
 &.disableanimation {
 	/** disable transitions and animations for tab-contents**/
@@ -1558,6 +1674,9 @@
 					background-color: transparent !important;
 				}
 			}
+		}
+		.fixedSelectionButton {
+			z-index: 50 !important;
 		}
 	}
 

@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				compile: function (tElement, tAttrs, transclude) {
 					return {
 						pre: function preLink(scope, element, attrs, ctrl, transclud) {
-							scope.showWidgetSpinner();
+							
 						},
 						post: function postLink(scope, element, attrs, ctrl, transclud) {
 							element.ready(function () {
@@ -68,6 +68,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 * If there is a selected dataset the function calls the data rest service.
 		 */
 		$scope.reinit = function(){
+			$scope.showWidgetSpinner();
 			if($scope.ngModel.datasetId){
 				sbiModule_restServices.restToRootProject();
 				var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.datasetId);
@@ -110,7 +111,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				});
 			}else {
 				$scope.trustedCss = $sce.trustAsHtml('<style>'+$scope.ngModel.cssToRender+'</style>');
-				$scope.trustedHtml = $sce.trustAsHtml($scope.parsedHtml);
+				$scope.trustedHtml = $sce.trustAsHtml($scope.ngModel.htmlToRender);
+				$scope.hideWidgetSpinner();
 			}
 		}
 
