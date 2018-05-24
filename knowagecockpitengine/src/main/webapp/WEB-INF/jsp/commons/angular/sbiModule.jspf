@@ -140,6 +140,47 @@ sbiM.config(function($mdDateLocaleProvider) {
 });
 
 
+sbiM.config(['$httpProvider',function ($httpProvider) {
+	$httpProvider.interceptors.push(['$rootScope', '$q',
+		function ($rootScope, $q) {
+			return {
+				responseError: function (response) {
+					if (response.status === 401) {
+						redirectToLoginUrl();
+					}
+					return $q.reject(response);
+				}
+			};
+		}]);
+
+	var loginUrl = '<%= GeneralUtilities.getSpagoBiContext() %>'; // login url, used when session is expired
+
+	var redirectToLoginUrl = function() {
+    	var sessionExpiredSpagoBIJSFound = false;
+    	try {
+    		var currentWindow = window;
+    		var parentWindow = parent;
+    		while (parentWindow != currentWindow) {
+    			if (parentWindow.sessionExpiredSpagoBIJS) {
+    				parentWindow.location = loginUrl;
+    				sessionExpiredSpagoBIJSFound = true;
+    				break;
+    			} else {
+    				currentWindow = parentWindow;
+    				parentWindow = currentWindow.parent;
+    			}
+    		}
+    	} catch (err) {
+    		console.log(err);
+    	}
+    	
+    	if (!sessionExpiredSpagoBIJSFound) {
+    		window.location = loginUrl;
+    	}
+    };
+}]);
+
+
 sbiM.factory('sbiModule_user',function(){
 	
 	var user={};
