@@ -6,11 +6,13 @@
          import="it.eng.spago.base.*,
                  it.eng.spagobi.commons.constants.SpagoBIConstants"
 %>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="it.eng.spago.base.SourceBean"%>
 <%@page import="it.eng.spago.navigation.LightNavigationManager"%>
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
@@ -18,7 +20,26 @@
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.Enumeration"%>
 
+
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
+
+<%
+  
+   String baseParams = "NEW_SESSION=TRUE&SBI_ENVIRONMENT=WORKSPACE" +
+   				"&user_id=" + userProfile.getUserUniqueIdentifier() +
+   				"&SBI_LANGUAGE=" +  permanentSession.getAttribute(Constants.USER_LANGUAGE) + 
+				"&SBI_COUNTRY=" + permanentSession.getAttribute(Constants.USER_COUNTRY) + 
+				"&SBI_HOST=" +  GeneralUtilities.getSpagoBiHost() + 
+				"&SBICONTEXT=" +  GeneralUtilities.getSpagoBiContext();
+				 
+	String baseUrlKPI = GeneralUtilities.getSpagoBiHost() + "/knowagekpiengine/restful-services/1.0/pages/edit?";
+	String urlKPI =  baseUrlKPI + baseParams;
+				
+	String baseUrlCockpit = GeneralUtilities.getSpagoBiHost() + "/knowagecockpitengine/api/1.0/pages/edit?";
+	String urlCockpit = baseUrlCockpit + baseParams + "&IS_TECHNICAL_USER=true&documentMode=EDIT"; 
+   
+%>
+
 
 <html>
 <head>
