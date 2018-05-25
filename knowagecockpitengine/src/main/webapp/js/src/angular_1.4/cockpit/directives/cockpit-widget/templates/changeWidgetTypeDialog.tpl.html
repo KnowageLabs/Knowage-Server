@@ -6,7 +6,7 @@
       </div>
     </md-toolbar>
     <md-dialog-content layout-padding>
-      	<div layout="row">
+      	<div layout="row" ng-if="ngModel.type=='map'">
         	<md-input-container flex>
             	<label>Select Dataset</label> 
            		<md-select ng-model="targetDataset" ng-change="selectDataset()">
@@ -16,7 +16,7 @@
             	</md-select>
           	</md-input-container>
          </div>
-         <div layout="row">
+         <div layout="row" ng-if="ngModel.type=='map'">
         	<md-input-container flex>
             	<label>Attribute</label>
            		<md-select ng-model="targetAttribute">
@@ -36,7 +36,7 @@
          </div>
          <div layout="row" layout-align="center center">
          	<div class="widgetTypeIcon" flex>
-         		<div class="item selectable" ng-click="selectVisualization('table')" ng-class="{'selected':targetVisualization === 'table'}">
+         		<div class="item selectable" ng-click="selectVisualization('table')" ng-class="{'selected':targetVisualization === 'table'}" ng-if="ngModel.type=='map'">
          			<md-tooltip>Add table widget</md-tooltip>
          			<div class="kn-svgIcon kn-svgIconTable"></div>
          		</div>
