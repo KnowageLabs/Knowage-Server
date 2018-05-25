@@ -60,11 +60,11 @@
 	      	<div layout="row" layout-align="start center" style="margin: 10px 0">
 		      	<md-input-container flex="50" class="md-block" >
 			        <label>From color</label>
-			         <color-picker options="colorPickerOptions" ng-model="layer.analysisConf.fromColor"></color-picker> 
+			         <color-picker options="colorPickerOptions" ng-model="layer.analysisConf.fromColor" ng-init="layer.analysisConf.fromColor=layer.analysisConf.fromColor|| '#d1d1d1' "></color-picker> 
 		      	</md-input-container>
 		      	<md-input-container flex="50" class="md-block">
 			        <label>To color</label>
-			         <color-picker options="colorPickerOptions" ng-model="layer.analysisConf.toColor"></color-picker> 
+			         <color-picker options="colorPickerOptions" ng-model="layer.analysisConf.toColor" ng-init="layer.analysisConf.toColor=layer.analysisConf.toColor|| '#5b5b5b' "></color-picker> 
 		      	</md-input-container>
 			</div>
 		</div>
