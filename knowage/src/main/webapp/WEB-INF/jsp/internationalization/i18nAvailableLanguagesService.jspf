@@ -1,0 +1,86 @@
+<%-- Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--%>
+
+<%--------- Java Imports  --------%>
+  <%@page import="org.apache.log4j.Logger"%>
+  <%@page import="it.eng.spagobi.commons.bo.Config"%>
+  <%@page import="it.eng.spagobi.commons.dao.IConfigDAO"%>
+  <%@page import="it.eng.spagobi.commons.dao.IDomainDAO"%>
+  <%@page import="it.eng.spagobi.commons.bo.Domain"%>
+  <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
+  <%@page import="java.util.ArrayList"%>	
+  <%@page import="java.util.Locale"%>
+  <%@page import="java.util.List"%>
+  <%@page import="java.util.Iterator"%>
+  <%@page import="org.json.JSONObject"%>
+  <%@page import="org.json.JSONArray"%>
+  <%@page import="org.json.JSONException"%>
+  
+ <%--------- Declarations  --------%>
+  <%	
+  	Logger logg = Logger.getLogger(this.getClass().getName());
+  	List<String> domainLanguages = new ArrayList();
+  	JSONObject i18nAvailableLanguages = new JSONObject();
+ 	JSONArray langs = new JSONArray();
+ 		
+	IDomainDAO domainDao = DAOFactory.getDomainDAO();
+	List<Domain> domainList = domainDao.loadListDomainsByType("LANG");
+	Iterator<Domain> it = domainList.iterator();
+	
+	while(it.hasNext()) {
+		Domain dom = it.next();
+		String lang = dom.getValueName();
+		domainLanguages.add(lang);
+	}
+	
+	IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+  	Config defaultLangConfig = configsDao.loadConfigParametersByLabel("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
+  	String defaultLangLocale = defaultLangConfig.getValueCheck();
+  	String[] array = defaultLangLocale.split(",");
+  	Locale localeObj = new Locale(array[0], array[1]);  	
+  	String defaultLang = localeObj.getDisplayLanguage();
+  	
+  	for(String member : domainLanguages) {
+  		JSONObject json = new JSONObject();
+  		try {
+  			json.put("language", member);
+  			if(member.equals(defaultLang)) {
+  				json.put("defaultLanguage", true);
+  			}
+  			langs.put(json);
+  		} catch (JSONException e) {
+  			logg.error(e.getMessage(), e);
+			throw new RuntimeException();
+  		}
+  	}
+  	  	
+  	i18nAvailableLanguages.put("languages", langs);
+  %>
+  
+ <script>
+	(function () {
+		angular.module('i18nAvailableLanguagesConfig')
+				.factory('i18nAvailableLanguagesService', function(){
+					return {
+						getAvailableLanguages: function() {
+							return <%= i18nAvailableLanguages.toString() %>
+						}
+					}
+				});	
+	})();
+ </script>
+ 
