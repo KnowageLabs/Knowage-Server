@@ -18,19 +18,17 @@
          </div>
          <div layout="row" ng-if="ngModel.type=='map'">
         	<md-input-container flex>
-          	{{targetAttribute}}
             	<label>Attribute</label>
            		<md-select ng-model="targetAttribute">
-              		<md-option ng-repeat="attr in modalAttributes" ng-value="attr" ng-click="onSelectAttr(attr)">
+              		<md-option ng-repeat="attr in modalAttributes" ng-value="attr">
                 		{{attr.alias}}
              		</md-option>
             	</md-select>
           	</md-input-container>
           	<md-input-container flex>
-          	{{targetMeasure}}
             	<label>Measure</label>
            		<md-select ng-model="targetMeasure">
-              		<md-option ng-repeat="meas in modalMeasures" ng-value="meas" ng-click="onSelectMeas(meas)">
+              		<md-option ng-repeat="meas in modalMeasures" ng-value="meas">
                 		{{meas.alias}}
              		</md-option>
             	</md-select>
@@ -69,7 +67,7 @@
       <md-button class="md-raised" ng-click="cancel()">
        {{::translate.load("sbi.cockpit.editor.widget.movesheet.cancel")}}
       </md-button>
-     <md-button ng-if="ngModel.type == 'map'" type="submit" class="md-raised md-primary" ng-click="add()" ng-disabled="disableSave()">
+     <md-button ng-if="ngModel.type == 'map'" type="submit" class="md-raised md-primary" ng-click="add()" ng-disabled="!targetAttribute || !targetMeasure || !targetVisualization">
        	Add
       </md-button>
       <md-button ng-if="ngModel.type == 'table'" type="submit" class="md-raised md-primary" ng-click="add()" ng-disabled="!targetVisualization">

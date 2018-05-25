@@ -1166,12 +1166,14 @@ function cockpitWidgetControllerFunction(
 			$mdDialog.show({
 				controller: function ($scope,$mdDialog,ngModel,cockpitModule_datasetServices) {
 					$scope.targetDataset = ngModel.dataset.dsId;
-					$scope.selectedDataset = {};
-					$scope.targetAttribute = {};
-					$scope.targetMeasure = {};
+					
 					$scope.availableDatasetToSwitch = cockpitModule_datasetServices.getAvaiableDatasets();
 					
 					$scope.selectDataset = function(){
+						$scope.selectedDataset = {};
+						$scope.targetAttribute = {};
+						$scope.targetMeasure = {};
+						$scope.targetVisualization = '';
 						$scope.modalMeasures = []; $scope.modalAttributes = [];
 						for(var i in $scope.availableDatasetToSwitch){
 							if($scope.availableDatasetToSwitch[i].id.dsId === $scope.targetDataset){
@@ -1228,6 +1230,7 @@ function cockpitWidgetControllerFunction(
 		      clickOutsideToClose:true,
 		      locals: {ngModel:$scope.ngModel}
 		    })
+		}
 	}
 	
 	$scope.chartTypes = [];
