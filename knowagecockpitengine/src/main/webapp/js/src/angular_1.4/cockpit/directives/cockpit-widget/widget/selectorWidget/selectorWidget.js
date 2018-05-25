@@ -51,6 +51,8 @@ angular.module('cockpitModule')
 			$filter,
 			sbiModule_translate,
 			sbiModule_restServices,
+			sbiModule_dateServices,
+			sbiModule_config,
 			cockpitModule_datasetServices,
 			cockpitModule_widgetConfigurator,
 			cockpitModule_widgetServices,
@@ -76,6 +78,75 @@ angular.module('cockpitModule')
 		$scope.totalCount = 0;
 		$scope.translate = sbiModule_translate;
 		$scope.datasetRecords = {};
+
+		$scope.$watch("startDate",function(newValue,oldValue){
+			if($scope.startDate != undefined
+					&& $scope.endDate != undefined
+					&& newValue.getTime() > $scope.endDate.getTime()){
+				$scope.endDate = newValue;
+			}
+			if(newValue != oldValue){
+				$scope.applyDateSelection(newValue,oldValue,$scope.endDate,$scope.endDate);
+			}
+		});
+
+		$scope.clearStartDate = function(){
+			$scope.startDate = undefined;
+		}
+
+		$scope.$watch("endDate",function(newValue,oldValue){
+			if(newValue != oldValue){
+				$scope.applyDateSelection($scope.startDate,$scope.startDate,newValue,oldValue);
+			}
+		});
+
+		$scope.clearEndDate = function(){
+			$scope.endDate = undefined;
+		}
+
+		$scope.applyDateSelection = function(newStartDate,oldStartDate,newEndDate,oldEndDate){
+			if(((newStartDate && !oldStartDate || newStartDate && newStartDate != oldStartDate) && newEndDate)
+					|| (newStartDate && (newEndDate && !oldEndDate || newEndDate && newEndDate != oldEndDate))){
+				var dates = $scope.getDatesBetween(newStartDate, newEndDate);
+				$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,dates);
+			}else if((!newStartDate && oldStartDate) || (!newEndDate && oldEndDate)){
+				var item = {};
+				item.aggregated = false;
+				item.columnName = $scope.ngModel.content.selectedColumn.aliasToShow;
+				item.columnAlias = $scope.ngModel.content.selectedColumn.aliasToShow;
+				item.ds = $scope.ngModel.dataset.name;
+
+				$rootScope.$broadcast('DELETE_SELECTION',item);
+				$scope.deleteSelections(item);
+			}
+		}
+
+		$scope.getDatesBetween = function(startDate, endDate){
+			var startMillis = startDate.getTime();
+			var endMillis = endDate.getTime() + 24 * 3600 * 1000;
+			var dates = [];
+			var dateFormat = sbiModule_config.clientServerTimestampFormat.replace("Y", "yyyy").replace("m", "MM").replace("d", "dd").replace("H", "HH").replace("i", "mm").replace("s", "ss");
+
+			for(var i=1; i<$scope.datasetRecords.rows.length; i++){
+				var dateString = $scope.datasetRecords.rows[i].column_1;
+				var dateMillis = sbiModule_dateServices.getDateFromFormat(dateString.split('.')[0], dateFormat).getTime();
+				if(startMillis <= dateMillis && dateMillis < endMillis){
+					dates.push(dateString);
+				}
+			}
+
+			return dates;
+		}
+
+		$scope.isSelectedColumnTemporal = function(){
+			if($scope.ngModel.content.selectedColumn && $scope.ngModel.content.selectedColumn && $scope.ngModel.content.selectedColumn.type){
+				var type = $scope.ngModel.content.selectedColumn.type.toLowerCase();
+				var isTemporal = type.indexOf('date') > -1 || type.indexOf('timestamp') > -1;
+				return isTemporal;
+			}
+			return false;
+		}
+
 		$scope.cockpitModule_widgetSelection = cockpitModule_widgetSelection;
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
 		cockpitModule_widgetSelection.setWidgetOfType("selector");
@@ -127,8 +198,7 @@ angular.module('cockpitModule')
 					focusOnOpen: true,
 					preserveScope: true,
 					autoWrap:false,
-					locals: {finishEdit: finishEdit, originalModel: $scope.ngModel, getMetadata: $scope.getMetadata, scopeFather: $scope},
-
+					locals: {finishEdit: finishEdit, originalModel: $scope.ngModel, getMetadata: $scope.getMetadata, scopeFather: $scope}
 			};
 			$mdPanel.open(config);
 			return finishEdit.promise;
@@ -169,8 +239,16 @@ angular.module('cockpitModule')
 		var checkForSavedSelections = function (filtersParams,nature){
 			$scope.selections.length = 0;
 			if(filtersParams.hasOwnProperty($scope.ngModel.dataset.name) && filtersParams[$scope.ngModel.dataset.name].hasOwnProperty($scope.ngModel.content.selectedColumn.aliasToShow) ){
-				$scope.selections = filtersParams[$scope.ngModel.dataset.name][$scope.ngModel.content.selectedColumn.aliasToShow].length > 1 ?
-						filtersParams[$scope.ngModel.dataset.name][$scope.ngModel.content.selectedColumn.aliasToShow] : filtersParams[$scope.ngModel.dataset.name][$scope.ngModel.content.selectedColumn.aliasToShow][0].split(",");
+				var fp = filtersParams[$scope.ngModel.dataset.name][$scope.ngModel.content.selectedColumn.aliasToShow];
+
+				if(fp.length == 0){
+					$scope.selections = [];
+				}else if(fp.length == 1){
+					$scope.selections = fp[0].split(",");
+				}else{
+					$scope.selections = fp;
+				}
+
 				for (var i = 0; i < $scope.selections.length; i++) {
 					$scope.selections[i] = $scope.selections[i].replace("')", "").replace("('", "").replace(/'/g,"")
 				}
@@ -267,6 +345,11 @@ angular.module('cockpitModule')
 				selections = cockpitModule_widgetSelection.getCurrentFilters(datasetName);
 				if(selections && selections[datasetName] && selections[datasetName][columnName]){
 					updateValues(selections[datasetName][columnName]);
+				}else{
+					if($scope.startDate && $scope.endDate){
+						$scope.startDate = undefined;
+						$scope.endDate = undefined;
+					}
 				}
 			}
 		}
@@ -335,7 +418,6 @@ angular.module('cockpitModule')
 		}
 
 	    $scope.clearParamSearch = function() {
-
 			$scope.searchParamText = "";
 		};
 

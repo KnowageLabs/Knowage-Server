@@ -56,9 +56,10 @@ sbiM.factory('sbiModule_config',function(){
 	};
 });
 
+<%-- 
 sbiM.config(function($mdDateLocaleProvider) {
 	
-<%-- 	this.localizedDateFormat= '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %>';  // the date format localized according to user language and country  --%>
+	<-- this.localizedDateFormat= '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %>';  // the date format localized according to user language and country -->
 	//TO-DO get localized date format
 	this.localizedDateFormat= 'gg/MM/aaaa';  // the date format localized according to user language and country 
 	
@@ -138,7 +139,7 @@ sbiM.config(function($mdDateLocaleProvider) {
 		return dateResult.substring(0, dateResult.length - 1);
 	};
 });
-
+ --%>
 
 sbiM.factory('sbiModule_user',function(){
 	

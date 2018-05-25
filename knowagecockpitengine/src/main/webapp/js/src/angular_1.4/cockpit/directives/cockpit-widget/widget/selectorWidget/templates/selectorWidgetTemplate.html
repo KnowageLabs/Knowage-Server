@@ -1,5 +1,5 @@
 <div flex layout-align="start" class="cockpitSelectorWidget">
-	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue'" layout="column" class="cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}">
+	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue' && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}">
 		<md-radio-group ng-model="parameter">
 			<md-radio-button class="md-primary cSelWRadio" ng-repeat="record in datasetRecords.rows"
 			value="{{record.column_1+''}}" ng-click="!ngModel.activeValues || ngModel.activeValues.indexOf(record.column_1) > -1 ? toggleRadioParameter(record.column_1+'') : null"
@@ -11,7 +11,7 @@
 	</div>
 	
 	<!-- lov list multiple input -->
-	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue'" layout="column" class="checkBoxParameter cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }">
+	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue' && !isSelectedColumnTemporal()" layout="column" class="checkBoxParameter cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }">
 		<div class="cSelWCheckContainer">
 			<md-checkbox class="md-primary cSelWCheck" ng-checked="checkboxParameterExists(record.column_1+'')" 
 			value="{{record.column_1+''}}" ng-click="!ngModel.activeValues || ngModel.activeValues.indexOf(record.column_1) > -1 ? toggleCheckboxParameter(record.column_1+'') : null" 
@@ -25,7 +25,7 @@
 	</div>
 	
 	<!-- lov combobox single and multiple input -->
-	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX'" layout="column" class="selectParameter cockpitSelectorWidgetCombobox" layout-padding>
+	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX' && !isSelectedColumnTemporal()" layout="column" class="selectParameter cockpitSelectorWidgetCombobox" layout-padding>
 	
 		<!-- multiple -->
 		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue=='multiValue'" >
@@ -68,5 +68,32 @@
 				</md-option>
 			</md-select>
 		</md-input-container>
+	</div>
+	
+	<!-- date pickers -->
+	<div ng-show="isSelectedColumnTemporal()" layout="column" class="checkBoxParameter cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}">
+	
+		<div layout="row" layout-align="start center">
+			<md-input-container>
+				<label>{{translate.load("sbi.cockpit.widgets.selector.startdate")}}</label>
+				<md-datepicker name="startDate" ng-model="startDate" md-max-date="endDate" md-open-on-focus></md-datepicker>
+			</md-input-container>
+			
+			<md-button class="md-icon-button" aria-label="Clear start date" title="Clear start date" ng-click="clearStartDate()">
+				<md-icon md-font-icon="fa fa-eraser"></md-icon>
+			</md-button>
+		</div>
+		
+		<div layout="row" layout-align="start center">
+			<md-input-container>
+				<label>{{translate.load("sbi.cockpit.widgets.selector.enddate")}}</label>
+				<md-datepicker name="endDate" ng-model="endDate" md-min-date="startDate" md-open-on-focus></md-datepicker>
+			</md-input-container>
+			
+			<md-button class="md-icon-button" aria-label="Clear end date" title="Clear end date" ng-click="clearEndDate()">
+				<md-icon md-font-icon="fa fa-eraser"></md-icon>
+			</md-button>
+		</div>
+		
 	</div>
 </div>
