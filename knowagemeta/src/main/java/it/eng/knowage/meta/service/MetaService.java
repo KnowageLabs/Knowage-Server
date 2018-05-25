@@ -1119,15 +1119,15 @@ public class MetaService extends AbstractSpagoBIResource {
 					HierarchyLevelDescriptor levelDescriptor = new HierarchyLevelDescriptor();
 					levelDescriptor.setName(tmplev.getString("name"));
 					levelDescriptor.setBusinessColumn(currBM.getSimpleBusinessColumnByUniqueName(tmplev.getJSONObject("column").getString("uniqueName")));
-					if (tmplev.has("properties")) {
+					if (tmplev.has("leveltype")) {
+						levelDescriptor.setLevelType(tmplev.getString("leveltype"));
+					} else if (tmplev.has("properties")) {
 						for (int pr = 0; pr < tmplev.getJSONArray("properties").length(); pr++) {
 							JSONObject tmpPro = tmplev.getJSONArray("properties").getJSONObject(pr);
-							if (tmpPro.getString("key").equals(OlapModelPropertiesFromFileInitializer.LEVEL_TYPE)) {
-								levelDescriptor.setLevelType(tmpPro.getJSONObject("value").getString("value"));
+							if (tmpPro.has(OlapModelPropertiesFromFileInitializer.LEVEL_TYPE)) {
+								levelDescriptor.setLevelType(tmpPro.getJSONObject(OlapModelPropertiesFromFileInitializer.LEVEL_TYPE).getString("value"));
 							}
 						}
-					} else if (tmplev.has("leveltype")) {
-						levelDescriptor.setLevelType(tmplev.getString("leveltype"));
 					}
 					Level lev = omInit.addHierarchyLevel(hie, levelDescriptor);
 
