@@ -191,24 +191,24 @@ angular.module('chartRendererModule')
 
 			})
 
-			scope.$on('resize',function(event,data){
+			scope.$on('resize',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
 
 
-				scope.renderChart(scope.chartConf);
-
-			})
-
-			scope.$on('fullExpand',function(event,data){
-
-
-				scope.renderChart(scope.chartConf);
+				scope.renderChart(scope.chartConf,data,selectionsAndParams);
 
 			})
 
-			scope.$on('gridster-resized',function(event,data){
+			scope.$on('fullExpand',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
 
 
-				scope.renderChart(scope.chartConf);
+				scope.renderChart(scope.chartConf,data,selectionsAndParams);
+
+			})
+
+			scope.$on('gridster-resized',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams){
+
+
+				scope.renderChart(scope.chartConf,data,selectionsAndParams);
 
 			})
 
