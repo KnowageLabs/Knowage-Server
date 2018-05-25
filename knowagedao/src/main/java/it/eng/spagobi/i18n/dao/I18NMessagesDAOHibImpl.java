@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.i18n.dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.i18n.metadata.SbiI18NMessageBody;
 import it.eng.spagobi.i18n.metadata.SbiI18NMessages;
 
 public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18NMessagesDAO {
@@ -154,7 +156,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			if (objList != null && objList.size() > 0) {
 				for (Iterator iterator = objList.iterator(); iterator.hasNext();) {
 					SbiI18NMessages i18NMess = (SbiI18NMessages) iterator.next();
-					toReturn.put(i18NMess.getId().getLabel(), i18NMess.getMessage());
+					toReturn.put(i18NMess.getLabel(), i18NMess.getMessage());
 				}
 			}
 
@@ -172,6 +174,269 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 		logger.debug("OUT.toReturn=" + toReturn);
 		return toReturn;
 
+	}
+
+	@Override
+	public List<SbiI18NMessages> getI18NMessages(String languageName) {
+		logger.debug("IN");
+
+		List<SbiI18NMessages> toReturn = null;
+
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Integer domainId = getSbiDomainId(languageName, aSession);
+			String tenant = getTenant();
+			String hql = "from SbiI18NMessages m where m.languageCd = :languageCd and m.commonInfo.organization = :organization";
+			Query query = aSession.createQuery(hql);
+			query.setInteger("languageCd", domainId);
+			query.setString("organization", tenant);
+
+			toReturn = query.list();
+
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new RuntimeException();
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT.toReturn=" + toReturn);
+		return toReturn;
+
+	}
+
+	@Override
+	public SbiI18NMessages getSbiI18NMessageById(Integer id) {
+		logger.debug("IN");
+		Session session = null;
+		SbiI18NMessages toReturn = null;
+		try {
+			session = getSession();
+			String hql = "from SbiI18NMessages m where m.id = :id";
+			Query query = session.createQuery(hql);
+			query.setInteger("id", id);
+			toReturn = (SbiI18NMessages) query.uniqueResult();
+		} catch (HibernateException e) {
+			logException(e);
+			throw new RuntimeException();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	@Override
+	public void insertI18NMessage(SbiI18NMessageBody message) {
+		logger.debug("IN");
+		Session session = null;
+		Transaction tx = null;
+		SbiI18NMessages toInsert = new SbiI18NMessages();
+		try {
+			session = getSession();
+			tx = session.beginTransaction();
+
+			Integer domainId = getSbiDomainId(message.getLanguage(), session);
+
+			toInsert.setLanguageCd(domainId);
+			toInsert.setLabel(message.getLabel());
+			toInsert.setMessage(message.getMessage());
+
+			updateSbiCommonInfo4Insert(toInsert);
+			session.save(toInsert);
+			tx.commit();
+			session.flush();
+		} catch (HibernateException e) {
+			logException(e);
+			if (tx != null)
+				tx.rollback();
+			throw new RuntimeException();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		logger.debug("OUT");
+	}
+
+	@Override
+	public void updateI18NMessage(SbiI18NMessages message) {
+		logger.debug("IN");
+		Session session = null;
+		Transaction tx = null;
+		SbiI18NMessages toModify = new SbiI18NMessages();
+		try {
+			session = getSession();
+			tx = session.beginTransaction();
+
+			toModify.setId(message.getId());
+			toModify.setLanguageCd(message.getLanguageCd());
+			toModify.setLabel(message.getLabel());
+			toModify.setMessage(message.getMessage());
+
+			updateSbiCommonInfo4Update(toModify);
+			session.update(toModify);
+			tx.commit();
+			session.flush();
+		} catch (HibernateException e) {
+			logException(e);
+			if (tx != null)
+				tx.rollback();
+			throw new RuntimeException();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		logger.debug("OUT");
+	}
+
+	@Override
+	public void updateNonDefaultI18NMessagesLabel(SbiI18NMessages oldMessage, SbiI18NMessages newMessage) {
+		logger.debug("IN");
+		Session session = null;
+		Transaction tx = null;
+		try {
+			session = getSession();
+			tx = session.beginTransaction();
+			String tenant = getTenant();
+			List<SbiI18NMessages> messages = getSbiI18NMessagesByLabel(oldMessage, tenant, session);
+			Iterator<SbiI18NMessages> it = messages.iterator();
+			while (it.hasNext()) {
+				SbiI18NMessages toModify = it.next();
+				toModify.setLabel(newMessage.getLabel());
+				updateSbiCommonInfo4Update(toModify);
+				session.update(toModify);
+				session.flush();
+			}
+			tx.commit();
+		} catch (HibernateException e) {
+			logException(e);
+			if (tx != null)
+				tx.rollback();
+			throw new RuntimeException();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		logger.debug("OUT");
+	}
+
+	@Override
+	public void deleteI18NMessage(Integer id) {
+		logger.debug("IN");
+		Session session = null;
+		Transaction tx = null;
+		SbiI18NMessages toDelete = new SbiI18NMessages();
+		try {
+			session = getSession();
+			tx = session.beginTransaction();
+
+			String hql = "from SbiI18NMessages mess where mess.id = :id";
+			Query query = session.createQuery(hql);
+			query.setInteger("id", id);
+			toDelete = (SbiI18NMessages) query.uniqueResult();
+
+			session.delete(toDelete);
+			tx.commit();
+			session.flush();
+		} catch (HibernateException e) {
+			logException(e);
+			if (tx != null)
+				tx.rollback();
+			throw new RuntimeException();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		logger.debug("OUT");
+	}
+
+	@Override
+	public void deleteNonDefaultI18NMessages(SbiI18NMessages message) {
+		logger.debug("IN");
+		Session session = null;
+		Transaction tx = null;
+		try {
+			session = getSession();
+			tx = session.beginTransaction();
+			String tenant = getTenant();
+			List<SbiI18NMessages> nonDefaultMessages = getSbiI18NMessagesByLabel(message, tenant, session);
+			Iterator<SbiI18NMessages> it = nonDefaultMessages.iterator();
+			while (it.hasNext()) {
+				SbiI18NMessages toDelete = it.next();
+				session.delete(toDelete);
+				session.flush();
+			}
+			tx.commit();
+		} catch (HibernateException e) {
+			logException(e);
+			if (tx != null)
+				tx.rollback();
+			throw new RuntimeException();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		logger.debug("OUT");
+	}
+
+	private Integer getSbiDomainId(String langName, Session curSession) {
+		logger.debug("IN");
+		Integer domainId = null;
+		SbiDomains domain = null;
+		String DOMAIN_CD = "LANG";
+		try {
+			String hql = "from SbiDomains d where d.domainCd = :domainCd and d.valueNm = :valueNm";
+			Query query = curSession.createQuery(hql);
+			query.setString("domainCd", DOMAIN_CD);
+			query.setString("valueNm", langName);
+			domain = (SbiDomains) query.uniqueResult();
+			domainId = domain.getValueId();
+		} catch (HibernateException e) {
+			logException(e);
+			throw new RuntimeException();
+		}
+		logger.debug("OUT");
+		return domainId;
+	}
+
+	private List<SbiI18NMessages> getSbiI18NMessagesByLabel(SbiI18NMessages message, String tenant, Session curSession) {
+		logger.debug("IN");
+		List<SbiI18NMessages> toReturn = new ArrayList<SbiI18NMessages>();
+		try {
+			String hql = "from SbiI18NMessages m where m.label = :label and m.commonInfo.organization = :organization and m.languageCd != :languageCd";
+			Query query = curSession.createQuery(hql);
+			query.setString("label", message.getLabel());
+			query.setString("organization", tenant);
+			query.setInteger("languageCd", message.getLanguageCd());
+			toReturn = query.list();
+		} catch (HibernateException e) {
+			logException(e);
+			throw new RuntimeException();
+		}
+		logger.debug("OUT");
+		return toReturn;
 	}
 
 }

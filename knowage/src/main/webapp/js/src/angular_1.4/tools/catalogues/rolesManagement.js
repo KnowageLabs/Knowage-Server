@@ -50,7 +50,8 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 	               {dbname:"VIEW_SOCIAL_ANALYSIS",label:"viewSocialAnalysis",visible:false, category:"ITEMS"},
 	               {dbname:"MANAGE_KPI_VALUE",label:"manageKpiValue",visible:false, category:"MANAGE"},
 	               {dbname:"FUNCTIONS_CATALOG_USAGE",label:"functionsCatalogUsage",visible:false, category:"ITEMS"},
-	               {dbname:"HIERARCHIES_MANAGEMENT",label:"hierarchiesManagement",visible:false, category:"ITEMS"}
+	               {dbname:"HIERARCHIES_MANAGEMENT",label:"hierarchiesManagement",visible:false, category:"ITEMS"},
+	               {dbname:"FINAL_USER_INTERNATIONALIZATION",label:"finalUserInternationalization",visible:false, category:"MANAGE"}
 	               ];
 
 	var showEEAuthorizations = sbiModule_user.functionalities.indexOf("EnterpriseAuthorizations")>-1;
@@ -122,6 +123,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 		$scope.selectedRole.ableToManageGlossaryTechnical= false;
 		$scope.selectedRole.ableToManageKpiValue= false;
 		$scope.selectedRole.ableToManageCalendar = false;
+		$scope.selectedRole.ableToManageInternationalization = false;
 		$scope.selectedRole.ableToUseFunctionsCatalog = false;
 		$scope.selectedRole.ableToManageUsers= false;
 		$scope.selectedRole.ableToSaveIntoPersonalFolder= true;
@@ -425,7 +427,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 	 * 	this function is called when clicking
 	 *  on save button.
 	 *  If item already exists do update @PUT,
-	 *  If item dont exists insert new one @POST
+	 *  If item doesn't exist insert new one @POST
 	 *
 	 */
 	$scope.saveRole = function () {
@@ -513,7 +515,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 		});
 	}
 
-	$scope.getAuthorizations = function () { // service that gets list of roles GET
+	$scope.getAuthorizations = function () { // service that gets list of authorizations GET
 
 		sbiModule_restServices.promiseGet("authorizations","")
 		.then(function(response) {

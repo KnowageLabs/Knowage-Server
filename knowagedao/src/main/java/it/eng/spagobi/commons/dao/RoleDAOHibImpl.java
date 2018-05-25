@@ -583,7 +583,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (authI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && aRole.isAbleToManageGlossaryTechnical())
 						|| (authI.getName().equals("MANAGE_KPI_VALUE") && aRole.isAbleToManageKpiValue())
 						|| (authI.getName().equals("MANAGE_CALENDAR") && aRole.isAbleToManageCalendar())
-						|| (authI.getName().equals("FUNCTIONS_CATALOG_USAGE") && aRole.isAbleToUseFunctionsCatalog())) {
+						|| (authI.getName().equals("FUNCTIONS_CATALOG_USAGE") && aRole.isAbleToUseFunctionsCatalog())
+						|| (authI.getName().equals("MANAGE_INTERNATIONALIZATION") && aRole.isAbleToManageInternationalization())) {
 
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
 					SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(authI.getId(), hibRole.getExtRoleId());
@@ -890,6 +891,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (name.equals("FUNCTIONS_CATALOG_USAGE")) {
 				role.setAbleToUseFunctionsCatalog(true);
 			}
+			if (name.equals("MANAGE_INTERNATIONALIZATION")) {
+				role.setAbleToManageInternationalization(true);
+			}
 
 		}
 
@@ -1076,7 +1080,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (functI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && role.isAbleToManageGlossaryTechnical())
 						|| (functI.getName().equals("MANAGE_KPI_VALUE") && role.isAbleToManageKpiValue())
 						|| (functI.getName().equals("MANAGE_CALENDAR") && role.isAbleToManageCalendar())
-						|| (functI.getName().equals("FUNCTIONS_CATALOG_USAGE") && role.isAbleToUseFunctionsCatalog())) {
+						|| (functI.getName().equals("FUNCTIONS_CATALOG_USAGE") && role.isAbleToUseFunctionsCatalog())
+						|| (functI.getName().equals("MANAGE_INTERNATIONALIZATION") && role.isAbleToManageInternationalization())) {
 
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
 					SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(functI.getId(), hibRole.getExtRoleId());

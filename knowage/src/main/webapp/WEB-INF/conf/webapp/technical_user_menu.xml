@@ -331,6 +331,11 @@
 						
 	  	</ITEM>	 
 	  		
+	  		<ITEM code="manage_internationalization" title="#menu.i18n"	groupingMenu="true" iconCls="flag">
+	  			<ITEM title="#menu.manageI18n" functionality="ManageInternationalization"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp" /> 
+	  		</ITEM>
+	  		
 	</ITEM>
 	
 	<!-- ITEM	code="repo_mng" 
