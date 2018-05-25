@@ -53,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<span ng-if="language.defaultLanguage">{{translate.load("kn.internationalization.default")}}</span>						
 					</md-tab-label>
 					<md-tab-body class="md-padding">
-						<div class="in-tab-content" style="padding:30px 50px;">
+						<div class="in-tab-content">
 							<div>
 								<md-input-container class="in-search-field">
 									<label> {{translate.load("kn.internationalization.search")}} </label>
@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							  			<th>{{translate.load("kn.internationalization.table.label")}}</th>
 							  			<th ng-if="!language.defaultLanguage">{{translate.load("kn.internationalization.table.defaultMessageCode")}}</th>							  			
 							  			<th>{{translate.load("kn.internationalization.table.messageCode")}}</th>
-							 			<th ng-if="language.defaultLanguage && isTechnicalUser" class="in-add-label-column" style="width:200px; text-align:center;">
+							 			<th ng-if="language.defaultLanguage && isTechnicalUser" class="in-add-label-column">
 							 				<md-button class="" ng-click="addLabel()">
                                					{{translate.load("kn.internationalization.table.addLabel")}}
                           					</md-button>
@@ -115,13 +115,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						  						</md-input-container>
 						  					</div>
 						  				</td>
-						  				<td class="in-add-label-column" style="text-align:center">
+						  				<td class="in-add-label-column">
 						  					<div>
-						  						<div class="in-btns saveBtn" style="display:inline; margin-right:20px; cursor:pointer;">
+						  						<div class="in-btns saveBtn">
 						  							<md-tooltip>{{translate.load("kn.internationalization.table.tooltip.save")}}</md-tooltip>
 						  							<md-icon ng-click="saveLabel(language, mess)" md-font-icon="fa fa-save fa-2x"></md-icon>
 						  						</div>
-						  						<div class="in-btns" style="display:inline; cursor:pointer;">
+						  						<div class="in-btns">
 						  							<md-tooltip>{{translate.load("kn.internationalization.table.tooltip.delete")}}</md-tooltip>
 						  							<md-icon md-font-icon="fa fa-trash fa-2x" ng-click="deleteLabel(language, mess, $event)"></md-icon>
 						  						</div>						  						
