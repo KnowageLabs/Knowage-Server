@@ -38,7 +38,7 @@ angular.module("cockpitModule").factory("cockpitModule_widgetConfigurator",funct
 
 
 
-angular.module("cockpitModule").service("cockpitModule_widgetServices",function($rootScope,cockpitModule_widgetConfigurator,cockpitModule_template,$mdDialog,sbiModule_translate,$timeout,$q,cockpitModule_datasetServices,sbiModule_restServices,cockpitModule_properties,cockpitModule_widgetSelection,cockpitModule_templateServices){
+angular.module("cockpitModule").service("cockpitModule_widgetServices",function($rootScope,cockpitModule_widgetConfigurator,cockpitModule_template,$mdDialog,sbiModule_translate,StructureTabService,$timeout,$q,cockpitModule_datasetServices,sbiModule_restServices,cockpitModule_properties,cockpitModule_widgetSelection,cockpitModule_templateServices){
 
 	var wi=this;
 
@@ -113,7 +113,15 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			}
 		})
 	};
-
+	this.probajjj=function(newModel){
+		newModel.content.chartTemplate = {"CHART" :  StructureTabService.getBaseTemplate()};
+		newModel.content.chartTemplate.CHART.VALUES.SERIE[0].column = newModel.content.columnSelectedOfDataset[9].alias
+		newModel.content.chartTemplate.CHART.VALUES.SERIE[0].name = newModel.content.columnSelectedOfDataset[9].alias
+		newModel.content.chartTemplate.CHART.VALUES.CATEGORY.name = newModel.content.columnSelectedOfDataset[4].alias
+		newModel.content.chartTemplate.CHART.VALUES.CATEGORY.column = newModel.content.columnSelectedOfDataset[4].alias
+		newModel.content.chartTemplate.CHART.type = 'PIE';
+		newModel.content.chartTemplate.from = true
+	};
 	this.moveWidget=function(sheetIndex,item){
 		angular.forEach(cockpitModule_template.sheets,function(value,key){
 			if(value.index==sheetIndex){

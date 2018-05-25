@@ -213,6 +213,9 @@ function cockpitChartWidgetControllerFunction(
 	};
 
 	$scope.init=function(element,width,height){
+		if($scope.ngModel.content.chartTemplate.from){
+			setAggregationsOnChartEngine($scope.ngModel.content);
+		}
 		$scope.refreshWidget({type:"chart",chartInit:true},'init');
 	};
 	$scope.chartLibNamesConfig = chartLibNamesConfig;

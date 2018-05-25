@@ -490,6 +490,34 @@ function cockpitWidgetControllerFunction(
 		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
 	}
 
+	$scope.addChartFromTable = function (){
+		var newModel = angular.copy($scope.ngModel);
+		newModel.id = new Date().getTime();
+		newModel.type = "chart";
+		newModel.content.limitRows= newModel.limitRows;
+		newModel.content.filters= newModel.filters;
+		newModel.content.wtype= "chart";
+		newModel.content.designer= "Chart Engine Designer";
+		newModel.content.datasetLabel = $scope.getDataset().label;
+		newModel.content.datasetId = newModel.dataset.dsId;
+		newModel.dataset.dsLabel = $scope.getDataset().label;
+		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
+		cockpitModule_widgetServices.probajjj(newModel);
+	}
+
+	$scope.addChartFromMap = function() {
+		var newModel = angular.copy($scope.ngModel);
+		newModel.id = new Date().getTime();
+		newModel.type = "chart";
+		newModel.content.wtype= "chart";
+		newModel.content.columnSelectedOfDataset= $scope.ngModel.content.columnSelectedOfDataset[ newModel.dataset.dsId];
+		newModel.content.designer= "Chart Engine Designer";
+		newModel.content.datasetLabel = $scope.getDataset().label;
+		newModel.content.datasetId = newModel.dataset.dsId;
+		newModel.dataset.dsLabel = $scope.getDataset().label;
+		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
+		cockpitModule_widgetServices.probajjj(newModel);
+	}
 	//dialog to choose the sheet where to move the widget
 	$scope.moveWidget = function(ev){
 		$scope.targetSheet = new Object();
@@ -1131,14 +1159,16 @@ function cockpitWidgetControllerFunction(
 			return;
 		}
 		if($scope.ngModel.type == 'table'){
-			//HERE YOUR TABLE FUNCTION
+			$scope.addChartFromTable();
 			return;
 		}
 		if($scope.ngModel.type == 'map'){
 			$mdDialog.show({
 				controller: function ($scope,$mdDialog,ngModel,cockpitModule_datasetServices) {
-					$scope.targetDataset = ngModel.datasetId;
+					$scope.targetDataset = ngModel.dataset.dsId;
 					$scope.selectedDataset = {};
+					$scope.targetAttribute = {};
+					$scope.targetMeasure = {};
 					$scope.availableDatasetToSwitch = cockpitModule_datasetServices.getAvaiableDatasets();
 					
 					$scope.selectDataset = function(){
@@ -1164,12 +1194,31 @@ function cockpitWidgetControllerFunction(
 					}
 					
 					$scope.add = function(){
-						//YOUR CODE GOES HERE
+						$scope.addChartFromMap();
 						$mdDialog.hide();
 					}
 					
 					$scope.selectVisualization = function(vis){
 						$scope.targetVisualization = vis;
+					}
+					$scope.disableSave = function (){
+						if($scope.targetMeasure.name){
+							if($scope.targetAttribute.name) {
+								if($scope.targetVisualization) {
+									return false;
+								}
+								return true;
+							}
+							return true;
+						}
+						return true;
+					}
+
+					$scope.onSelectAttr = function (attr){
+						$scope.targetAttribute = attr;
+					}
+					$scope.onSelectMeas = function (meas){
+						$scope.targetMeasure = meas;
 					}
 				},
 				scope: $scope,

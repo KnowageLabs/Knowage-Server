@@ -308,7 +308,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					         },
 					         "SERIE":[
 					        	 {
-					                 "axis":"",
+					                 "axis":"Y",
 					                 "color":"",
 					                 "column":"",
 					                 "groupingFunction":"SUM",
@@ -2652,7 +2652,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					if(Array.isArray(baseTemplate[attrname])){
 						baseTemplate[attrname] = originalTemplate[attrname];
 					} else {
-						getObjectProperties(baseTemplate[attrname], originalTemplate[attrname]);		
+						getObjectProperties(baseTemplate[attrname], originalTemplate[attrname]);
 					}
 				}
 			}
