@@ -397,6 +397,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			layer.dsId = layerDef.dsId;
 			layer.setZIndex(layerDef.order*1000);
 			layer.modalSelectionColumn = layerDef.modalSelectionColumn;
+			layer.hasShownDetails = layerDef.hasShownDetails;
 			$scope.map.addLayer(layer); 			//add layer to ol.Map
 			$scope.addLayer(layerDef.name, layer);	//add layer to internal object
 			$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
@@ -462,19 +463,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             	evt.map.forEachFeatureAtPixel(evt.pixel,
 		            function(feature, layer) {
 						$scope.selectedLayer = layer;
-		                $scope.selectedFeature = feature;
+						$scope.selectedFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
+						$scope.props = $scope.selectedFeature.getProperties();
 		                $scope.clickOnFeature = true;
-	            });
-
+	            });  
+            	
+            	//modal selection management
+    	        if ($scope.clickOnFeature && $scope.selectedLayer.modalSelectionColumn){
+    	        	$scope.doSelection($scope.selectedLayer.modalSelectionColumn, $scope.props[$scope.selectedLayer.modalSelectionColumn].value);
+    	        }
+    	        
             	//popup isn't shown with cluster
-            	if (!$scope.clickOnFeature){
+            	if (!$scope.clickOnFeature || !$scope.selectedLayer.hasShownDetails){
             		$scope.closer.onclick();
             		return;
             	}
     	        if ($scope.clickOnFeature && $scope.selectedFeature) {
-    	        	$scope.tempFeature = (Array.isArray($scope.selectedFeature.get('features')) && $scope.selectedFeature.get('features').length == 1) ? $scope.selectedFeature.get('features')[0] : $scope.selectedFeature;
-
-	        		$scope.props = $scope.tempFeature.getProperties();
 	        		if ($scope.props.features && Array.isArray($scope.props.features)) return;
 	        		$scope.$apply()
 
@@ -485,17 +489,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	        		$scope.layerConfig = $scope.columnsConfig[$scope.selectedLayer.name];
     	        	}
 
-    	            var geometry = $scope.tempFeature.getGeometry();
+	        		$scope.layerConfig.modalSelectionColumn = $scope.selectedLayer.modalSelectionColumn;
+    	            var geometry = $scope.selectedFeature.getGeometry();
     	            var coordinate = evt.coordinate;
     	            overlay.setPosition(coordinate);
     	        }
-    	        
-    	        //modal selection management
-    	        if ($scope.selectedLayer.modalSelectionColumn){
-    	        	 $scope.selectPropValue($scope.selectedLayer.modalSelectionColumn, $scope.props[$scope.selectedLayer.modalSelectionColumn].value);
-    	        }
              });
-
 
     		$scope.map.on('dblclick', function(evt) {
     			for (l in $scope.ngModel.content.layers){
@@ -754,8 +753,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
 	    }
 
-	    $scope.selectPropValue = function(column, value){
-	    	$scope.doSelection(column, value);
+	    $scope.selectPropValue = function(prop, modalSelectionColumn){
+	    	if (!modalSelectionColumn){
+	    		$scope.doSelection(prop.alias, $scope.props[prop.name].value);
+	    	}
 	    }
 
 	    //functions calls
