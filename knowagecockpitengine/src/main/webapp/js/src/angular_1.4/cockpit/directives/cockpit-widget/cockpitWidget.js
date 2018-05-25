@@ -1179,7 +1179,6 @@ function cockpitWidgetControllerFunction(
 		      clickOutsideToClose:true,
 		      locals: {ngModel:$scope.ngModel}
 		    })
-		//}
 	}
 	
 	$scope.chartTypes = [];
