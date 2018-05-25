@@ -11,6 +11,22 @@
     background-color: rgba(240,240,240,1);
     background-image: #fff;
 
+    .widgetTypeIcon {
+    	padding:8px;
+    	.item {
+    		cursor: pointer;
+    		border: 1px solid $bordersColor;
+		    width: 5rem;
+    		height: 5rem;
+    		padding: 16px;
+    		&:hover, &.selected{
+    			.kn-svgIcon {
+    				background-color: $lightTextColor;
+    			}
+    		}
+    	}
+    }
+
     cockpit-html-widget {
     	height: 100%;
     	overflow: auto;

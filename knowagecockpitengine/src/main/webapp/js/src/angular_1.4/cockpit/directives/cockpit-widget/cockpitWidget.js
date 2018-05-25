@@ -475,6 +475,20 @@ function cockpitWidgetControllerFunction(
 		newModel.id = new Date().getTime();
 		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
 	}
+	
+	$scope.addTableFromChart = function() {
+		var newModel = angular.copy($scope.ngModel);
+		newModel.type = 'table';
+		newModel.content.wtype = 'table';
+		for(var i in newModel.content.columnSelectedOfDataset){
+			var thisDs = newModel.content.columnSelectedOfDataset[i];
+			if(!thisDs.aliasToShow){
+				thisDs.aliasToShow = thisDs.alias;
+			}
+		}
+		newModel.id = new Date().getTime();
+		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
+	}
 
 	//dialog to choose the sheet where to move the widget
 	$scope.moveWidget = function(ev){
@@ -1110,6 +1124,64 @@ function cockpitWidgetControllerFunction(
 		}
 		return false;
 	}
+	
+	$scope.modalQuickWidget= function(ev) {
+		if($scope.ngModel.type == 'chart'){
+			$scope.addTableFromChart();
+			return;
+		}
+		if($scope.ngModel.type == 'table'){
+			//HERE YOUR TABLE FUNCTION
+			return;
+		}
+		if($scope.ngModel.type == 'map'){
+			$mdDialog.show({
+				controller: function ($scope,$mdDialog,ngModel,cockpitModule_datasetServices) {
+					$scope.targetDataset = ngModel.datasetId;
+					$scope.selectedDataset = {};
+					$scope.availableDatasetToSwitch = cockpitModule_datasetServices.getAvaiableDatasets();
+					
+					$scope.selectDataset = function(){
+						$scope.modalMeasures = []; $scope.modalAttributes = [];
+						for(var i in $scope.availableDatasetToSwitch){
+							if($scope.availableDatasetToSwitch[i].id.dsId === $scope.targetDataset){
+								$scope.selectedDataset = $scope.availableDatasetToSwitch[i];
+								for(var k in $scope.availableDatasetToSwitch[i].metadata.fieldsMeta){
+									if($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k].fieldType === 'ATTRIBUTE'){
+										$scope.modalAttributes.push($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k]);
+									}
+									if($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k].fieldType === 'MEASURE'){
+										$scope.modalMeasures.push($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k]);
+									}
+								}
+							}
+						}
+					}
+					$scope.selectDataset();
+					
+					$scope.cancel = function(){
+						$mdDialog.cancel();
+					}
+					
+					$scope.add = function(){
+						//YOUR CODE GOES HERE
+						$mdDialog.hide();
+					}
+					
+					$scope.selectVisualization = function(vis){
+						$scope.targetVisualization = vis;
+					}
+				},
+				scope: $scope,
+		      templateUrl: currentScriptPath+'/templates/changeWidgetTypeDialog.tpl.html',
+		      targetEvent: ev,
+		      preserveScope: true,
+		      clickOutsideToClose:true,
+		      locals: {ngModel:$scope.ngModel}
+		    })
+		//}
+	}
+	
 	$scope.chartTypes = [];
 	$scope.showChartTypes = function(ev,widgetName){
 		if(!$scope.ngModel.content.chartTemplateOriginal){
