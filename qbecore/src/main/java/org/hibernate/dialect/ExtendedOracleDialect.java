@@ -32,7 +32,7 @@ import it.eng.qbe.utility.bo.CustomizedFunction;
 
 public class ExtendedOracleDialect extends OracleDialect {
 
-	static protected Logger logger = Logger.getLogger(ExtendedMySQLDialect.class);
+	static protected Logger logger = Logger.getLogger(ExtendedOracleDialect.class);
 
 	public ExtendedOracleDialect() {
 		super();
