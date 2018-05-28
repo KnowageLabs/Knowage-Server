@@ -475,48 +475,65 @@ function cockpitWidgetControllerFunction(
 		newModel.id = new Date().getTime();
 		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
 	}
-	
-	$scope.addTableFromChart = function() {
+
+	var createNewWidget = function (widgetType){
 		var newModel = angular.copy($scope.ngModel);
-		newModel.type = 'table';
-		newModel.content.wtype = 'table';
-		for(var i in newModel.content.columnSelectedOfDataset){
-			var thisDs = newModel.content.columnSelectedOfDataset[i];
-			if(!thisDs.aliasToShow){
-				thisDs.aliasToShow = thisDs.alias;
-			}
+		newModel.id = new Date().getTime();
+		newModel.type = widgetType;
+		newModel.content.wtype = widgetType;
+		return newModel;
+	}
+	var addAliasToShow = function (columnSelectedOfDataset){
+		for(var i in columnSelectedOfDataset){
+			var thisDs = columnSelectedOfDataset[i];
+			thisDs.alias = thisDs.name;
+			thisDs.aliasToShow = thisDs.name;
 		}
-		newModel.id = new Date().getTime();
-		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
 	}
-
-	$scope.addChartFromTable = function (){
-		var newModel = angular.copy($scope.ngModel);
-		newModel.id = new Date().getTime();
-		newModel.type = "chart";
-		newModel.content.limitRows= newModel.limitRows;
+	var prepareColumnSelectedOfDataset = function (newModel){
+		delete newModel.content.columnSelectedOfDataset;
+		newModel.content.columnSelectedOfDataset=[];
+		newModel.content.columnSelectedOfDataset.push($scope.target.attribute);
+		newModel.content.columnSelectedOfDataset.push($scope.target.measure);
+	}
+	var prepareChartWidget = function (newModel){
 		newModel.content.filters= newModel.filters;
-		newModel.content.wtype= "chart";
 		newModel.content.designer= "Chart Engine Designer";
-		newModel.content.datasetLabel = $scope.getDataset().label;
-		newModel.content.datasetId = newModel.dataset.dsId;
-		newModel.dataset.dsLabel = $scope.getDataset().label;
+		cockpitModule_widgetServices.setChartTemp(newModel,$scope.target.visualization);
+	}
+	$scope.addTableFromChart = function(widgetType) {
+		var newModel = createNewWidget(widgetType);
+		addAliasToShow(newModel.content.columnSelectedOfDataset);
 		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
-		cockpitModule_widgetServices.probajjj(newModel);
 	}
 
-	$scope.addChartFromMap = function() {
-		var newModel = angular.copy($scope.ngModel);
-		newModel.id = new Date().getTime();
-		newModel.type = "chart";
-		newModel.content.wtype= "chart";
-		newModel.content.columnSelectedOfDataset= $scope.ngModel.content.columnSelectedOfDataset[ newModel.dataset.dsId];
-		newModel.content.designer= "Chart Engine Designer";
+	$scope.addTableFromMap = function(widgetType) {
+		var newModel = createNewWidget(widgetType);
+		prepareColumnSelectedOfDataset(newModel);
+		addAliasToShow(newModel.content.columnSelectedOfDataset);
+		newModel.dataset.dsId = $scope.target.dataset;
+		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
+	}
+
+	$scope.addChartFromTable = function (widgetType){
+		var newModel = createNewWidget(widgetType);
+		newModel.content.limitRows= newModel.limitRows;
 		newModel.content.datasetLabel = $scope.getDataset().label;
 		newModel.content.datasetId = newModel.dataset.dsId;
 		newModel.dataset.dsLabel = $scope.getDataset().label;
+		prepareChartWidget(newModel);
 		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
-		cockpitModule_widgetServices.probajjj(newModel);
+	}
+
+	$scope.addChartFromMap = function(widgetType) {
+		var newModel = createNewWidget(widgetType);
+		prepareColumnSelectedOfDataset(newModel);
+		newModel.content.datasetLabel = $scope.selectedDataset.label;
+		newModel.content.datasetId = $scope.target.dataset;
+		newModel.dataset.dsLabel = $scope.selectedDataset.label;
+		newModel.dataset.dsId = $scope.target.dataset;
+		prepareChartWidget(newModel);
+		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
 	}
 	//dialog to choose the sheet where to move the widget
 	$scope.moveWidget = function(ev){
@@ -1152,31 +1169,24 @@ function cockpitWidgetControllerFunction(
 		}
 		return false;
 	}
-	
+
 	$scope.modalQuickWidget= function(ev) {
 		if($scope.ngModel.type == 'chart'){
-			$scope.addTableFromChart();
+			$scope.addTableFromChart("table");
 			return;
-		}
-		if($scope.ngModel.type == 'table'){
-			$scope.addChartFromTable();
-			return;
-		}
-		if($scope.ngModel.type == 'map'){
+		} else {
 			$mdDialog.show({
 				controller: function ($scope,$mdDialog,ngModel,cockpitModule_datasetServices) {
-					$scope.targetDataset = ngModel.dataset.dsId;
-					
+
+					$scope.target = {"dataset":ngModel.dataset.dsId};
+
 					$scope.availableDatasetToSwitch = cockpitModule_datasetServices.getAvaiableDatasets();
-					
+
 					$scope.selectDataset = function(){
 						$scope.selectedDataset = {};
-						$scope.targetAttribute = {};
-						$scope.targetMeasure = {};
-						$scope.targetVisualization = '';
 						$scope.modalMeasures = []; $scope.modalAttributes = [];
 						for(var i in $scope.availableDatasetToSwitch){
-							if($scope.availableDatasetToSwitch[i].id.dsId === $scope.targetDataset){
+							if($scope.availableDatasetToSwitch[i].id.dsId === $scope.target.dataset){
 								$scope.selectedDataset = $scope.availableDatasetToSwitch[i];
 								for(var k in $scope.availableDatasetToSwitch[i].metadata.fieldsMeta){
 									if($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k].fieldType === 'ATTRIBUTE'){
@@ -1190,38 +1200,26 @@ function cockpitWidgetControllerFunction(
 						}
 					}
 					$scope.selectDataset();
-					
+
 					$scope.cancel = function(){
 						$mdDialog.cancel();
 					}
-					
+
 					$scope.add = function(){
-						$scope.addChartFromMap();
+						if($scope.ngModel.type == 'table'){
+							$scope.addChartFromTable("chart");
+						} else if($scope.target.visualization == "table"){
+							$scope.addTableFromMap("table")
+						} else {
+							$scope.addChartFromMap("chart");
+						}
 						$mdDialog.hide();
 					}
-					
+
 					$scope.selectVisualization = function(vis){
-						$scope.targetVisualization = vis;
-					}
-					$scope.disableSave = function (){
-						if($scope.targetMeasure.name){
-							if($scope.targetAttribute.name) {
-								if($scope.targetVisualization) {
-									return false;
-								}
-								return true;
-							}
-							return true;
-						}
-						return true;
+						$scope.target.visualization = vis;
 					}
 
-					$scope.onSelectAttr = function (attr){
-						$scope.targetAttribute = attr;
-					}
-					$scope.onSelectMeas = function (meas){
-						$scope.targetMeasure = meas;
-					}
 				},
 				scope: $scope,
 		      templateUrl: currentScriptPath+'/templates/changeWidgetTypeDialog.tpl.html',
@@ -1232,7 +1230,7 @@ function cockpitWidgetControllerFunction(
 		    })
 		}
 	}
-	
+
 	$scope.chartTypes = [];
 	$scope.showChartTypes = function(ev,widgetName){
 		if(!$scope.ngModel.content.chartTemplateOriginal){

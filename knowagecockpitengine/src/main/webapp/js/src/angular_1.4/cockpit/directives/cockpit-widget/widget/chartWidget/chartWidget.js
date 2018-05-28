@@ -213,7 +213,7 @@ function cockpitChartWidgetControllerFunction(
 	};
 
 	$scope.init=function(element,width,height){
-		if($scope.ngModel.content.chartTemplate.from){
+		if($scope.ngModel.content.chartTemplate.creationFromSecondWidget){
 			setAggregationsOnChartEngine($scope.ngModel.content);
 		}
 		$scope.refreshWidget({type:"chart",chartInit:true},'init');

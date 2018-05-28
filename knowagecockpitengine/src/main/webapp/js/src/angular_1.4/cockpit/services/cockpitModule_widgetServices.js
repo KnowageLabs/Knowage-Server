@@ -113,14 +113,28 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			}
 		})
 	};
-	this.probajjj=function(newModel){
+
+	this.setChartTemp=function(newModel,targetVisualization){
 		newModel.content.chartTemplate = {"CHART" :  StructureTabService.getBaseTemplate()};
-		newModel.content.chartTemplate.CHART.VALUES.SERIE[0].column = newModel.content.columnSelectedOfDataset[9].alias
-		newModel.content.chartTemplate.CHART.VALUES.SERIE[0].name = newModel.content.columnSelectedOfDataset[9].alias
-		newModel.content.chartTemplate.CHART.VALUES.CATEGORY.name = newModel.content.columnSelectedOfDataset[4].alias
-		newModel.content.chartTemplate.CHART.VALUES.CATEGORY.column = newModel.content.columnSelectedOfDataset[4].alias
-		newModel.content.chartTemplate.CHART.type = 'PIE';
-		newModel.content.chartTemplate.from = true
+		for (var i = 0; i < newModel.content.columnSelectedOfDataset.length; i++) {
+			if(newModel.content.columnSelectedOfDataset[i].fieldType=="MEASURE"){
+				if(newModel.content.chartTemplate.CHART.VALUES.SERIE[0].name=="") {
+					newModel.content.chartTemplate.CHART.VALUES.SERIE[0].column = newModel.content.columnSelectedOfDataset[i].alias;
+					newModel.content.chartTemplate.CHART.VALUES.SERIE[0].name = newModel.content.columnSelectedOfDataset[i].alias;
+				} else {
+					newModel.content.chartTemplate.CHART.VALUES.SERIE.push(angular.copy(newModel.content.chartTemplate.CHART.VALUES.SERIE[0]));
+					newModel.content.chartTemplate.CHART.VALUES.SERIE[newModel.content.chartTemplate.CHART.VALUES.SERIE.length-1].name = angular.copy(newModel.content.columnSelectedOfDataset[i].alias);
+					newModel.content.chartTemplate.CHART.VALUES.SERIE[newModel.content.chartTemplate.CHART.VALUES.SERIE.length-1].column = angular.copy(newModel.content.columnSelectedOfDataset[i].alias);
+				}
+			} else {
+				if(newModel.content.chartTemplate.CHART.VALUES.CATEGORY.name==""){
+					newModel.content.chartTemplate.CHART.VALUES.CATEGORY.name = newModel.content.columnSelectedOfDataset[i].alias;
+					newModel.content.chartTemplate.CHART.VALUES.CATEGORY.column = newModel.content.columnSelectedOfDataset[i].alias;
+				}
+			}
+		}
+		newModel.content.chartTemplate.CHART.type = targetVisualization.toUpperCase();
+		newModel.content.chartTemplate.creationFromSecondWidget = true
 	};
 	this.moveWidget=function(sheetIndex,item){
 		angular.forEach(cockpitModule_template.sheets,function(value,key){
