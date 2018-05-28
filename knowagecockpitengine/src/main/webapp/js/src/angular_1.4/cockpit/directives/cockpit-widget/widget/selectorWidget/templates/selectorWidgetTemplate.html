@@ -76,7 +76,7 @@
 		<div layout="row" layout-align="start center">
 			<md-input-container>
 				<label>{{translate.load("sbi.cockpit.widgets.selector.startdate")}}</label>
-				<md-datepicker name="startDate" ng-model="startDate" md-max-date="endDate" md-open-on-focus></md-datepicker>
+				<md-datepicker name="startDate" ng-model="startDate" md-max-date="ngModel.settings.modalityValue=='multiValue' ? endDate : null" md-open-on-focus></md-datepicker>
 			</md-input-container>
 			
 			<md-button class="md-icon-button" aria-label="Clear start date" title="Clear start date" ng-click="clearStartDate()">
@@ -84,7 +84,7 @@
 			</md-button>
 		</div>
 		
-		<div layout="row" layout-align="start center">
+		<div layout="row" layout-align="start center" ng-if="ngModel.settings.modalityValue=='multiValue'">
 			<md-input-container>
 				<label>{{translate.load("sbi.cockpit.widgets.selector.enddate")}}</label>
 				<md-datepicker name="endDate" ng-model="endDate" md-min-date="startDate" md-open-on-focus></md-datepicker>

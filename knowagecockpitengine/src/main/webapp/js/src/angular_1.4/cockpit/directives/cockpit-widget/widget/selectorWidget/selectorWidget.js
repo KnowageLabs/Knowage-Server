@@ -80,11 +80,16 @@ angular.module('cockpitModule')
 		$scope.datasetRecords = {};
 
 		$scope.$watch("startDate",function(newValue,oldValue){
+			if($scope.ngModel.settings.modalityValue=='singleValue'){
+				$scope.endDate = $scope.startDate;
+			}
+
 			if($scope.startDate != undefined
 					&& $scope.endDate != undefined
 					&& newValue.getTime() > $scope.endDate.getTime()){
 				$scope.endDate = newValue;
 			}
+
 			if(newValue != oldValue){
 				$scope.applyDateSelection(newValue,oldValue,$scope.endDate,$scope.endDate);
 			}
@@ -95,7 +100,7 @@ angular.module('cockpitModule')
 		}
 
 		$scope.$watch("endDate",function(newValue,oldValue){
-			if(newValue != oldValue){
+			if($scope.ngModel.settings.modalityValue=='multiValue' && newValue != oldValue){
 				$scope.applyDateSelection($scope.startDate,$scope.startDate,newValue,oldValue);
 			}
 		});
