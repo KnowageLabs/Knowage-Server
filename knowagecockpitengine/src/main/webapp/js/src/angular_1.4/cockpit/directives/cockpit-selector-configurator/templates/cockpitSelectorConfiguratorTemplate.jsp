@@ -28,7 +28,7 @@
              	</md-card-title-text>
         </md-card-title>
         <md-card-content class="alternatedInput">
-			<md-input-container class="md-block radioContainer" ng-if="!isSelectedColumnTemporal()">
+			<md-input-container class="md-block radioContainer">
 	       		<md-radio-group layout="row" ng-model="model.settings.modalityValue" layout="row" layout-align="start center"> 
 	       			<md-radio-button ng-repeat="button in modalityValue" ng-value="button.value">
 	           			{{button.name}}
