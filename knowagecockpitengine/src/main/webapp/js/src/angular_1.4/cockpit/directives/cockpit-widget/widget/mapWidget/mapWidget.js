@@ -208,9 +208,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    $scope.reinit = function(){
 	    	var isNew = ($scope.layers.length == 0);
-	    	for (l in $scope.ngModel.content.layers){
+	    	for (l in $scope.layers){
 	    		//remove old layers
-	    		var previousLayer = $scope.getLayerByName($scope.ngModel.content.layers[l].name);
+	    		var previousLayer = $scope.getLayerByName($scope.layers[l].name);
 	    		if (previousLayer) 	$scope.map.removeLayer(previousLayer); //ol obj
 	    	}
 	    	$scope.removeLayers(); //clean internal obj
@@ -309,6 +309,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    		}else{
 	    			sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.typeLayerNotManaged'), 'Title', 3000);
 	    			console.log("Layer with type ["+layerDef.type+"] not managed! ");
+	    			$timeout(function() {
+						$scope.hideWidgetSpinner();
+					}, 3000);
 	    		}
 	    	}
 	    }
@@ -564,6 +567,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.dsId+"] ");
 				sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.datasetLoadingError').replace("{0}",layerDef.dsId), 'Title', 3000);
+				$timeout(function() {
+					$scope.hideWidgetSpinner();
+				}, 3000);
+				
 			});
     	}
 
