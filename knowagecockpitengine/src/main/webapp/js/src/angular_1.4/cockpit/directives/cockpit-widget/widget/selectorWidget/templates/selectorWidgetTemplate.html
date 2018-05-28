@@ -84,7 +84,7 @@
 			</md-button>
 		</div>
 		
-		<div layout="row" layout-align="start center" ng-if="ngModel.settings.modalityValue=='multiValue'">
+		<div layout="row" layout-align="start center" ng-show="ngModel.settings.modalityValue=='multiValue'">
 			<md-input-container>
 				<label>{{translate.load("sbi.cockpit.widgets.selector.enddate")}}</label>
 				<md-datepicker name="endDate" ng-model="endDate" md-min-date="startDate" md-open-on-focus></md-datepicker>
