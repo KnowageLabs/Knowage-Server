@@ -715,6 +715,9 @@ public class UserUtilities {
 			if (virtualRole.isAbleToUseFunctionsCatalog()) {
 				roleFunctionalities.add(SpagoBIConstants.FUNCTIONS_CATALOG_USAGE);
 			}
+			if (virtualRole.isAbleToManageInternationalization()) {
+				roleFunctionalities.add(SpagoBIConstants.MANAGE_INTERNATIONALIZATION);
+			}
 
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
@@ -796,6 +799,7 @@ public class UserUtilities {
 		virtualRole.setIsAbleToHierarchiesManagement(false);
 		virtualRole.setIsAbleToEnableDatasetPersistence(false);
 		virtualRole.setIsAbleToEnableFederatedDataset(false);
+		virtualRole.setAbleToManageInternationalization(false);
 
 		if (roles != null) {
 			for (int i = 0; i < roles.length; i++) {
@@ -940,6 +944,10 @@ public class UserUtilities {
 					if (anotherRole.isAbleToUseFunctionsCatalog()) {
 						logger.debug("User has role " + roleName + " that is able to use functions catalog.");
 						virtualRole.setAbleToUseFunctionsCatalog(true);
+					}
+					if (anotherRole.isAbleToManageInternationalization()) {
+						logger.debug("User has role " + roleName + " that is able to manage Internationalization.");
+						virtualRole.setAbleToManageInternationalization(true);
 					}
 				}
 			}

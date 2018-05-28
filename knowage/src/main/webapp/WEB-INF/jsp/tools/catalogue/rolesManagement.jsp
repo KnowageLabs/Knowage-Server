@@ -180,9 +180,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       </md-input-container>
 			        <label flex="90">{{translate.load("sbi.roles.saveSubobj")}}</label>
 			   </div>
-			   <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('SEE')"
-												 >
-										{{translate.load("sbi.roles.see");}}
+			   <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('SEE')">
+								{{translate.load("sbi.roles.see");}}
 				</md-toolbar>
 				
 				
@@ -233,7 +232,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        </md-checkbox> 
 			       </md-input-container>
 			        <label flex="90">{{translate.load("sbi.roles.seeViewpoints")}}</label>
-			   </div>
+			   </div>			
 			   
 			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('SEND')"
 												 >
@@ -272,11 +271,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label flex="90">{{translate.load("sbi.roles.doMassiveExport")}}</label>
 
 			   </div>
-			  
-			   
 
-				
-				
 				 <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('MANAGE')"
 												 >
 										{{translate.load("sbi.roles.manage");}}
@@ -327,10 +322,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageCalendar" aria-label="check" name="manageCalendar">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div >
+			       <div>
 			        <label>{{translate.load("sbi.roles.manageCalendar")}}</label>
 			       </div> 
 			   </div>
+			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('manageCalendar')">
+				   <md-input-container class="small counter"> 
+			         <md-checkbox
+			           ng-change="setDirty()"  ng-model="selectedRole.ableToManageInternationalization" aria-label="check" name="Internationalization">
+		        	 </md-checkbox> 
+			       </md-input-container>
+			       <div>
+			       	 <label>{{translate.load("sbi.roles.manageInternationalization")}}</label>
+			       </div>			        
+			   </div>
+			  
 			  
 				<md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('EDIT')"
 												 >

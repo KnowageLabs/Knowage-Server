@@ -18,16 +18,33 @@
 
 package it.eng.spagobi.i18n.dao;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.i18n.metadata.SbiI18NMessageBody;
+import it.eng.spagobi.i18n.metadata.SbiI18NMessages;
 
 public interface I18NMessagesDAO extends ISpagoBIDao {
 
 	public String getI18NMessages(Locale locale, String code) throws EMFUserError;
 
 	public Map<String, String> getAllI18NMessages(Locale locale) throws EMFUserError;
+
+	public List<SbiI18NMessages> getI18NMessages(String languageName);
+
+	public SbiI18NMessages getSbiI18NMessageById(Integer id);
+
+	public void insertI18NMessage(SbiI18NMessageBody message);
+
+	public void updateI18NMessage(SbiI18NMessages message);
+
+	public void updateNonDefaultI18NMessagesLabel(SbiI18NMessages oldMessage, SbiI18NMessages newMessage);
+
+	public void deleteI18NMessage(Integer id);
+
+	public void deleteNonDefaultI18NMessages(SbiI18NMessages message);
 
 }

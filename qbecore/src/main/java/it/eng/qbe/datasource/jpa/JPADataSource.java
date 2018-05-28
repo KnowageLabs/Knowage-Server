@@ -69,7 +69,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	private static transient Logger logger = Logger.getLogger(JPADataSource.class);
 
 	protected JPADataSource(String dataSourceName, IDataSourceConfiguration configuration) {
-		logger.debug("Creating a new JPADataSource");
+		logger.debug("Creating a new JPADataSource -1");
 		setName(dataSourceName);
 		dataMartModelAccessModality = new AbstractModelAccessModality();
 
@@ -321,6 +321,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	}
 
 	protected Map<String, Object> buildEmptyConfiguration() {
+		logger.debug("IN");
 		Map<String, Object> cfg = new HashMap<String, Object>();
 		String dialect = getToolsDataSource().getHibDialectClass();
 
@@ -339,6 +340,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			dialect = "org.hibernate.dialect.PostgreSQLDialect";
 		}
 
+		logger.debug("Dialect set is " + dialect);
+
 		if (getToolsDataSource().checkIsJndi()) {
 			cfg.put("javax.persistence.nonJtaDataSource", getToolsDataSource().getJndi());
 			cfg.put("hibernate.dialect", dialect);
@@ -353,7 +356,10 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			cfg.put("hibernate.validator.apply_to_ddl", "false");
 			cfg.put("hibernate.validator.autoregister_listeners", "false");
 		}
+		logger.debug("OUT");
+
 		return cfg;
+
 	}
 
 	@Override

@@ -61,9 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.gt = /(\<.*["].*)(>)(.*["].*\>)/g;
 		$scope.lt = /(\<.*["].*)(<)(.*["].*\>)/g;
 
-		$scope.refresh = function(element,width,height, datasetRecords,nature) {
-
-		}
+		$scope.refresh = function(element,width,height, datasetRecords,nature) {}
 
 		/**
 		 * Function to initialize the rendered html at the loading and after editing.
@@ -133,6 +131,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var allElements = parsedHtml.getElementsByTagName('*');
 				var i=0;
 				do {
+					if(!allElements[i].innerHTML) allElements[i].innerHTML = ' ';
 					if (allElements[i] && allElements[i].hasAttribute("kn-repeat")){
 						if(eval($scope.checkAttributePlaceholders(allElements[i].getAttribute('kn-repeat')))){
 							allElements[i].removeAttribute("kn-repeat");

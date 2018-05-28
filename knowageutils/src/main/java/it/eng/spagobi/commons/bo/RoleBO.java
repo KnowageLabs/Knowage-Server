@@ -109,6 +109,8 @@ public class RoleBO implements Serializable {
 	private boolean ableToManageCalendar;
 	private boolean ableToUseFunctionsCatalog;
 
+	private boolean isAbleToManageInternationalization;
+
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
@@ -544,6 +546,14 @@ public class RoleBO implements Serializable {
 
 	public void setAbleToUseFunctionsCatalog(boolean ableToUseFunctionsCatalog) {
 		this.ableToUseFunctionsCatalog = ableToUseFunctionsCatalog;
+	}
+
+	public boolean isAbleToManageInternationalization() {
+		return isAbleToManageInternationalization;
+	}
+
+	public void setAbleToManageInternationalization(boolean isAbleToManageInternationalization) {
+		this.isAbleToManageInternationalization = isAbleToManageInternationalization;
 	}
 
 	public Boolean getIsPublic() {

@@ -15,43 +15,28 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package it.eng.spagobi.i18n.metadata;
 
-import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import java.io.Serializable;
 
-public class SbiI18NMessages extends SbiHibernateModel implements java.io.Serializable {
+public class SbiI18NMessageBody implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private Integer id;
-	private Integer languageCd;
 	private String label;
 	private String message;
 
-	public SbiI18NMessages() {
+	// Field for getting SbiDomain id
+	private String language;
+
+	public SbiI18NMessageBody() {
 	}
 
-	public SbiI18NMessages(Integer id, Integer languageCd, String label, String message) {
+	public SbiI18NMessageBody(String label, String message, String language) {
 		super();
-		this.id = id;
-		this.languageCd = languageCd;
 		this.label = label;
 		this.message = message;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public Integer getLanguageCd() {
-		return languageCd;
-	}
-
-	public void setLanguageCd(Integer languageCd) {
-		this.languageCd = languageCd;
+		this.language = language;
 	}
 
 	public String getLabel() {
@@ -63,11 +48,24 @@ public class SbiI18NMessages extends SbiHibernateModel implements java.io.Serial
 	}
 
 	public String getMessage() {
-		return this.message;
+		return message;
 	}
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	@Override
+	public String toString() {
+		return "SbiI18NMessageBody [label=" + label + ", message=" + message + ", language=" + language + "]";
 	}
 
 }

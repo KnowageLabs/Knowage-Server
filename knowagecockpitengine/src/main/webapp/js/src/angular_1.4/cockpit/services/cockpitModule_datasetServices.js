@@ -485,6 +485,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 	this.getDatasetParameters=function(dsId){
 		var params={};
+		if(dsId){
 		for(var i=0;i<cockpitModule_template.configuration.datasets.length;i++){
 			if(angular.equals(cockpitModule_template.configuration.datasets[i].dsId,dsId)){
 				angular.forEach(cockpitModule_template.configuration.datasets[i].parameters,function(item,key){
@@ -524,6 +525,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					}
 				}
 			}
+		}
 		}
 		return params;
 	}

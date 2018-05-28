@@ -30,9 +30,9 @@ import it.eng.qbe.utility.CustomFunctionsSingleton;
 import it.eng.qbe.utility.CustomizedFunctionsReader;
 import it.eng.qbe.utility.bo.CustomizedFunction;
 
-public class ExtendedOracleDialect extends OracleDialect {
+public class ExtendedOracleDialect extends Oracle10gDialect {
 
-	static protected Logger logger = Logger.getLogger(ExtendedMySQLDialect.class);
+	static protected Logger logger = Logger.getLogger(ExtendedOracleDialect.class);
 
 	public ExtendedOracleDialect() {
 		super();
@@ -51,11 +51,15 @@ public class ExtendedOracleDialect extends OracleDialect {
 			for (Iterator<CustomizedFunction> iterator = customizedFunctions.iterator(); iterator.hasNext();) {
 				CustomizedFunction customizedFunction = iterator.next();
 				logger.debug("register function " + customizedFunction);
+				logger.debug("register function with label " + customizedFunction.getLabel());
+				logger.debug("register function with name " + customizedFunction.getName());
 
 				if (!customizedFunction.getParameters().isEmpty()) {
+					logger.debug("fuction with parameters");
 					VarArgsSQLFunction sqlFunction = new VarArgsSQLFunction(customizedFunction.getName() + "(", ",", ")");
 					registerFunction(customizedFunction.getName(), sqlFunction);
 				} else {
+					logger.debug("fuction without parameters");
 					StandardSQLFunction sqlFunction = new StandardSQLFunction(customizedFunction.getName());
 					registerFunction(customizedFunction.getName(), sqlFunction);
 				}

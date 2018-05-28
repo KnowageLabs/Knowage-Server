@@ -290,21 +290,25 @@ public class PersistedTableManager implements IPersistedManager {
 
 	private Set<Object> getIds(Connection connection, String idFieldAlias) throws SQLException {
 		Set<Object> ids = new HashSet<>();
+
 		StringBuilder selectQuery = new StringBuilder();
 		selectQuery.append("SELECT ");
 		selectQuery.append(idFieldAlias);
 		selectQuery.append(" FROM ");
 		selectQuery.append(getTableName());
-		PreparedStatement preparedStatement = connection.prepareStatement(selectQuery.toString());
-		if (queryTimeout > 0) {
-			preparedStatement.setQueryTimeout(queryTimeout);
+
+		try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery.toString())) {
+			if (queryTimeout > 0) {
+				preparedStatement.setQueryTimeout(queryTimeout);
+			}
+			try (ResultSet rs = preparedStatement.executeQuery()) {
+				while (rs.next()) {
+					Object id = rs.getObject(idFieldAlias);
+					ids.add(id);
+				}
+			}
 		}
-		ResultSet rs = preparedStatement.executeQuery();
-		while (rs.next()) {
-			Object id = rs.getObject(idFieldAlias);
-			ids.add(id);
-		}
-		preparedStatement.close();
+
 		return ids;
 	}
 

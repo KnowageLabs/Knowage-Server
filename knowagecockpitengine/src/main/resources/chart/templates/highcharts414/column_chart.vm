@@ -60,7 +60,11 @@
 	#end
 #end
 #set($series = $chart.VALUES.SERIE) ## metadata related to series
-
+#if($series.size()==1)
+#set($yaxisName= $series.get(0).name)
+#else
+#set($yaxisName= "")
+#end
 #set($seriesMap = {}) ## conversion series metadata to map object
 
 #if($series.class.name == 'java.util.LinkedHashMap')
@@ -991,7 +995,7 @@
         			text: "$yAxis.TITLE.text",
         			custom: true,
         		#else
-        			text: "",
+        			text: '$yaxisName',
 					customTitle: false,
         		#end
         		#if($chart.hideAxisTitleSerie)

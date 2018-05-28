@@ -82,6 +82,8 @@ public class Role implements Serializable {
 
 	private boolean isAbleToUseFunctionsCatalog;
 
+	private boolean isAbleToManageInternationalization;
+
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
@@ -712,6 +714,14 @@ public class Role implements Serializable {
 
 	public void setIsPublic(Boolean isPublic) {
 		this.isPublic = isPublic;
+	}
+
+	public boolean isAbleToManageInternationalization() {
+		return isAbleToManageInternationalization;
+	}
+
+	public void setAbleToManageInternationalization(boolean isAbleToManageInternationalization) {
+		this.isAbleToManageInternationalization = isAbleToManageInternationalization;
 	}
 
 }

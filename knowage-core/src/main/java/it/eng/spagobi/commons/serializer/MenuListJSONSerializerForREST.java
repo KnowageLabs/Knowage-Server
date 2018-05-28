@@ -124,6 +124,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	private static final String HREF_WORKSPACE = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp";
 
+	private static final String HREF_I18N = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp";
+
 	public String contextName = "";
 	public String defaultThemePath = "/themes/sbi_default";
 
@@ -505,6 +507,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			calendar.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(calendar);
 		}
+
 		if (isAbleTo(SpagoBIConstants.DOMAIN_MANAGEMENT, funcs)) {
 			JSONObject domainManagementTechnical = new JSONObject();
 			domainManagementTechnical.put(ICON_CLS, "assignment");
@@ -662,6 +665,19 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			license.put(LINK_TYPE, "license");
 			tempMenuList.put(license);
 
+		}
+
+		if (isAbleTo(SpagoBIConstants.MANAGE_INTERNATIONALIZATION, funcs)) {
+			JSONObject i18n = new JSONObject();
+			i18n.put(ICON_CLS, "flag");
+			i18n.put(TOOLTIP, messageBuilder.getMessage("menu.i18n", locale));
+			i18n.put(ICON_ALIGN, "top");
+			i18n.put(SCALE, "large");
+			i18n.put(TARGET, "_self");
+			i18n.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_I18N + "');");
+			i18n.put(FIRST_URL, contextName + HREF_I18N);
+			i18n.put(LINK_TYPE, "execDirectUrl");
+			tempMenuList.put(i18n);
 		}
 
 		// end
