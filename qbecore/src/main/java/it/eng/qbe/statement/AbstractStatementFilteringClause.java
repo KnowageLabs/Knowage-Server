@@ -66,7 +66,7 @@ public abstract class AbstractStatementFilteringClause extends AbstractStatement
 			}
 
 			boolean editable = true;
-			if (leftOperandJSON.get("editable") != null && leftOperandJSON.get("editable").toString().equalsIgnoreCase("false")) {
+			if (leftOperandJSON.opt("editable") != null && leftOperandJSON.opt("editable").toString().equalsIgnoreCase("false")) {
 				editable = false;
 			}
 
