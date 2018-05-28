@@ -21,7 +21,7 @@
         	<md-input-container flex>
             	<label>Attribute</label>
            		<md-select ng-model="target.attribute">
-              		<md-option ng-repeat="attr in modalAttributes track by $index" ng-value="attr">
+              		<md-option ng-repeat="attr in modalFields.attributes track by $index" ng-value="attr">
                 		{{attr.alias}}
              		</md-option>
             	</md-select>
@@ -29,15 +29,15 @@
           	<md-input-container flex>
             	<label>Measure</label>
            		<md-select ng-model="target.measure">
-              		<md-option ng-repeat="meas in modalMeasures track by $index" ng-value="meas">
+              		<md-option ng-repeat="meas in modalFields.measures track by $index" ng-value="meas">
                 		{{meas.alias}}
              		</md-option>
             	</md-select>
           	</md-input-container>
          </div>
          <div layout="row" layout-align="center center">
-         	<div class="widgetTypeIcon" flex>
-         		<div class="item selectable" ng-click="selectVisualization('table')" ng-class="{'selected':target.visualization === 'table'}" ng-if="ngModel.type=='map'">
+         	<div class="widgetTypeIcon" flex ng-if="ngModel.type=='map'">
+         		<div class="item selectable" ng-click="selectVisualization('table')" ng-class="{'selected':target.visualization === 'table'}" >
          			<md-tooltip>Add table widget</md-tooltip>
          			<div class="kn-svgIcon kn-svgIconTable"></div>
          		</div>

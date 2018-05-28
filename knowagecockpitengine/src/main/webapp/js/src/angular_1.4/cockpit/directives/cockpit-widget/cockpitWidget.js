@@ -1186,16 +1186,16 @@ function cockpitWidgetControllerFunction(
 
 					$scope.selectDataset = function(){
 						$scope.selectedDataset = {};
-						$scope.modalMeasures = []; $scope.modalAttributes = [];
+						$scope.modalFields = {"measures":[],"attributes":[]};
 						for(var i in $scope.availableDatasetToSwitch){
 							if($scope.availableDatasetToSwitch[i].id.dsId === $scope.target.dataset){
 								$scope.selectedDataset = $scope.availableDatasetToSwitch[i];
 								for(var k in $scope.availableDatasetToSwitch[i].metadata.fieldsMeta){
 									if($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k].fieldType === 'ATTRIBUTE'){
-										$scope.modalAttributes.push($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k]);
+										$scope.modalFields.attributes.push($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k]);
 									}
 									if($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k].fieldType === 'MEASURE'){
-										$scope.modalMeasures.push($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k]);
+										$scope.modalFields.measures.push($scope.availableDatasetToSwitch[i].metadata.fieldsMeta[k]);
 									}
 								}
 							}
