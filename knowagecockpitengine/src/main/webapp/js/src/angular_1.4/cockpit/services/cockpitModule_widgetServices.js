@@ -134,6 +134,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			}
 		}
 		newModel.content.chartTemplate.CHART.type = targetVisualization.toUpperCase();
+		newModel.content.chartTemplate.CHART.isCockpitEngine = true;
 		newModel.content.chartTemplate.creationFromSecondWidget = true
 	};
 	this.moveWidget=function(sheetIndex,item){
