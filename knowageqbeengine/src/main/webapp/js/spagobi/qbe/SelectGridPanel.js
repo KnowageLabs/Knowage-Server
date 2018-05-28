@@ -751,8 +751,10 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 
 	, showInLineCalculatedFieldWizard: function(targetRecord) {
 
-		// show only if it is not a modelfield
-		if(targetRecord.data.editable == undefined || targetRecord.data.editable == true){
+		// show only if it is not a modelfield or if it is null (means general button has been clicked)
+		if(targetRecord == null
+				|| (targetRecord.data.editable == undefined || targetRecord.data.editable == true)
+				){
 
 			if(this.inLineCalculatedFieldWizard === null) {
 				this.initInLineCalculatedFieldWizard();
