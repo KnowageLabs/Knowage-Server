@@ -18,7 +18,11 @@
 #end
 
 #set($series = $chart.VALUES.SERIE) ## metadata related to series
-
+#if($series.size()==1)
+#set($yaxisName= $series.get(0).name)
+#else
+#set($yaxisName= "")
+#end
 #set($seriesMap = {}) ## conversion series metadata to map object
 
 #if($series.class.name == 'java.util.LinkedHashMap')
@@ -628,17 +632,17 @@
 			 	 	enabled: $yAxis.TITLE.enabled
 			 	#end
 		 	 
+				#if($yAxis.TITLE.text != '')
+        			text: "$yAxis.TITLE.text",
+        		#else
+        			text: '$yaxisName',
+        		#end
         		#if($chart.hideAxisTitleSerie)
-				 	#if($chart.hideAxisTitleSerie=="true")
-				 	 	text: "",	
-				 
-				 	#else
-				 	 	text: "$yAxis.TITLE.text",		
-				 	#end   
-			 	#else
-			  		text: "$yAxis.TITLE.text",		
-				#end 
-			 			 
+					#if($chart.hideAxisTitleSerie=="true")
+						text: "",
+					#end
+                #end
+				
         		style:{
 		        	#foreach($styleName in $yAxis.TITLE.style.keySet())
 		        		#set ($axisTitleStyle = $yAxis.TITLE.style[$styleName])
