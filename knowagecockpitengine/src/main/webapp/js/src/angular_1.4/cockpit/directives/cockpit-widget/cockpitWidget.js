@@ -590,7 +590,7 @@ function cockpitWidgetControllerFunction(
 	    });
 	}
 
-	$scope.doSelection = function(columnName,columnValue,modalColumn,modalValue,row, skipRefresh){
+	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
@@ -768,7 +768,9 @@ function cockpitWidgetControllerFunction(
 			}
 		}
 
-		if($scope.getDataset() && columnName){
+		var dataset = dsId != undefined ? cockpitModule_datasetServices.getDatasetById(dsId) : $scope.getDataset();
+
+		if(dataset && columnName){
 
 			if(modalColumn!=undefined && modalValue!=undefined)
 			{
@@ -777,7 +779,7 @@ function cockpitWidgetControllerFunction(
 			}
 
 			// check if all associated data
-			var dsLabel=$scope.getDataset().label;
+			var dsLabel = dataset.label;
 			var originalColumnName;
 			if (!Array.isArray(columnName)){
 				//original management with simple value as parameters (not array, not multiselection)

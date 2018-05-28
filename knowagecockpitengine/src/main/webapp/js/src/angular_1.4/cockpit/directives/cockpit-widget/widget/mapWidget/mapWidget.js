@@ -466,13 +466,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.selectedFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
 						$scope.props = $scope.selectedFeature.getProperties();
 		                $scope.clickOnFeature = true;
-	            });  
-            	
+	            });
+
             	//modal selection management
     	        if ($scope.clickOnFeature && $scope.selectedLayer.modalSelectionColumn){
-    	        	$scope.doSelection($scope.selectedLayer.modalSelectionColumn, $scope.props[$scope.selectedLayer.modalSelectionColumn].value);
+    	        	$scope.doSelection($scope.selectedLayer.modalSelectionColumn, $scope.props[$scope.selectedLayer.modalSelectionColumn].value, null, null, null, null, $scope.selectedLayer.dsId);
     	        }
-    	        
+
             	//popup isn't shown with cluster
             	if (!$scope.clickOnFeature || !$scope.selectedLayer.hasShownDetails){
             		$scope.closer.onclick();
@@ -489,6 +489,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	        		$scope.layerConfig = $scope.columnsConfig[$scope.selectedLayer.name];
     	        	}
 
+	        		$scope.layerConfig.dsId = $scope.selectedLayer.dsId;
 	        		$scope.layerConfig.modalSelectionColumn = $scope.selectedLayer.modalSelectionColumn;
     	            var geometry = $scope.selectedFeature.getGeometry();
     	            var coordinate = evt.coordinate;
@@ -753,9 +754,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
 	    }
 
-	    $scope.selectPropValue = function(prop, modalSelectionColumn){
+	    $scope.selectPropValue = function(dsId, prop, modalSelectionColumn){
 	    	if (!modalSelectionColumn){
-	    		$scope.doSelection(prop.alias, $scope.props[prop.name].value);
+	    		$scope.doSelection(prop.alias, $scope.props[prop.name].value, null, null, null, null, dsId);
 	    	}
 	    }
 
