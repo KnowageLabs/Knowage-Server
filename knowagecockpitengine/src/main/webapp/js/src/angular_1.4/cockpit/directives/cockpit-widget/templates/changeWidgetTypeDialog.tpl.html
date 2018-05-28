@@ -6,36 +6,8 @@
       </div>
     </md-toolbar>
     <md-dialog-content layout-padding>
-   
-      	<div layout="row" ng-if="ngModel.type=='map'">
-        	<md-input-container flex>
-            	<label>Select Dataset</label> 
-           		<md-select ng-model="target.dataset" ng-change="selectDataset()">
-              		<md-option ng-repeat="ds in availableDatasetToSwitch track by $index" ng-value="ds.id.dsId">
-                		{{ds.label}}
-             		</md-option>
-            	</md-select>
-          	</md-input-container>
-         </div>
-         <div layout="row" ng-if="ngModel.type=='map'">
-        	<md-input-container flex>
-            	<label>Attribute</label>
-           		<md-select ng-model="target.attribute">
-              		<md-option ng-repeat="attr in modalFields.attributes track by $index" ng-value="attr">
-                		{{attr.alias}}
-             		</md-option>
-            	</md-select>
-          	</md-input-container>
-          	<md-input-container flex>
-            	<label>Measure</label>
-           		<md-select ng-model="target.measure">
-              		<md-option ng-repeat="meas in modalFields.measures track by $index" ng-value="meas">
-                		{{meas.alias}}
-             		</md-option>
-            	</md-select>
-          	</md-input-container>
-         </div>
-         <div layout="row" layout-align="center center">
+   		
+   		<div layout="row" layout-align="center center">
          	<div class="widgetTypeIcon" flex ng-if="ngModel.type=='map'">
          		<div class="item selectable" ng-click="selectVisualization('table')" ng-class="{'selected':target.visualization === 'table'}" >
          			<md-tooltip>Add table widget</md-tooltip>
@@ -61,6 +33,56 @@
          		</div>
          	</div>
          </div>
+   
+      	<div layout="row" ng-if="ngModel.type=='map' && target.visualization">
+        	<md-input-container flex>
+            	<label>Select Dataset</label> 
+           		<md-select ng-model="target.dataset" ng-change="selectDataset()">
+              		<md-option ng-repeat="ds in availableDatasetToSwitch track by $index" ng-value="ds.id.dsId">
+                		{{ds.label}}
+             		</md-option>
+            	</md-select>
+          	</md-input-container>
+         </div>
+         
+         <div layout="row" ng-if="ngModel.type=='map' && target.visualization && target.visualization != 'table'">
+        	<md-input-container flex>
+            	<label>Attribute</label>
+           		<md-select ng-model="target.attribute">
+              		<md-option ng-repeat="attr in modalFields.attributes track by $index" ng-value="attr">
+                		{{attr.alias}}
+             		</md-option>
+            	</md-select>
+          	</md-input-container>
+          	<md-input-container flex>
+            	<label>Measure</label>
+           		<md-select ng-model="target.measure">
+              		<md-option ng-repeat="meas in modalFields.measures track by $index" ng-value="meas">
+                		{{meas.alias}}
+             		</md-option>
+            	</md-select>
+          	</md-input-container>
+         </div>
+         
+         <div layout="row" ng-if="ngModel.type=='map' && target.visualization == 'table'">
+        	<md-input-container flex>
+            	<label>Attribute</label>
+           		<md-select ng-model="target.attribute"  multiple="true">
+              		<md-option ng-repeat="attr in modalFields.attributes track by $index" ng-value="attr" >
+                		{{attr.alias}}
+             		</md-option>
+            	</md-select>
+          	</md-input-container>
+          	<md-input-container flex>
+            	<label>Measure</label>
+           		<md-select ng-model="target.measure"  multiple="true">
+              		<md-option ng-repeat="meas in modalFields.measures track by $index" ng-value="meas">
+                		{{meas.alias}}
+             		</md-option>
+            	</md-select>
+          	</md-input-container>
+         </div>
+         
     </md-dialog-content>
 
     <md-dialog-actions layout="row">

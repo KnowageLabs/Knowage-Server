@@ -493,8 +493,13 @@ function cockpitWidgetControllerFunction(
 	var prepareColumnSelectedOfDataset = function (newModel){
 		delete newModel.content.columnSelectedOfDataset;
 		newModel.content.columnSelectedOfDataset=[];
-		newModel.content.columnSelectedOfDataset.push($scope.target.attribute);
-		newModel.content.columnSelectedOfDataset.push($scope.target.measure);
+		if($scope.target.attribute instanceof Array){
+			Array.prototype.push.apply(newModel.content.columnSelectedOfDataset, $scope.target.attribute); 
+			Array.prototype.push.apply(newModel.content.columnSelectedOfDataset, $scope.target.measure); 
+		}else{
+			newModel.content.columnSelectedOfDataset.push($scope.target.attribute);
+			newModel.content.columnSelectedOfDataset.push($scope.target.measure);
+		}
 	}
 	var prepareChartWidget = function (newModel){
 		newModel.content.filters= newModel.filters;
