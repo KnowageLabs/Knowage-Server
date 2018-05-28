@@ -64,12 +64,13 @@ providing JDBC URL, username, password and driver class. Refer to the database d
 Then you have to configure some environment variables defined in KNOWAGE\_SERVER\_HOME/conf/server.xml:
 
 ``` xml
+    <Environment name="hmacKey" description="HMAC key" type="java.lang.String" value="abc123"/>
     <Environment name="resource_path" type="java.lang.String" value="${catalina.base}/resources"/>
     <Environment name="sso_class" type="java.lang.String" value="it.eng.spagobi.services.common.FakeSsoService"/>
     <Environment name="service_url" type="java.lang.String" value="http://localhost:8080/knowage"/>   
     <Environment name="host_url" type="java.lang.String" value="http://localhost:8080"/>
 ```
-
+-   hmacKey contains the secret to authenticate calls between different engines. You **must** change it, and **do not** distribuite it;
 -   resource\_path contains a reference to a path in the file system, this will be used in order to store static resources such images, i18n files, etc: you can set it as default ${catalina.base}/resources but check writing permissions;
 -   sso\_class is a Java class that is specific for a SSO system; default value is it.eng.spagobi.services.common.FakeSsoService but you can change it when using an SSO solution (see Knowage online documentation for details);
 -   service\_url is an URL used by the external engines to communicate with Knowage core; since Knowage core and external engines are installed on the same application server, you can leave it as "localhost";
