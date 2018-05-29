@@ -463,7 +463,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					},params)
 				}
 			}
-	
+
 			var datasetLabel=ds.getDatasetById(dsId).label;
 			var selections=cockpitModule_widgetSelection.getCurrentSelections(datasetLabel);
 			if(selections!=undefined && selections.hasOwnProperty(datasetLabel)){
@@ -471,19 +471,19 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					if(parName.startsWith("$P{") && parName.endsWith("}")){
 						var parValue=selections[datasetLabel][parName];
 						if(parValue!=undefined){
-	
+
 							var finalParams = []; // params to be overriden
 							angular.forEach(parName.match(new RegExp('\\$P\\{(.*?)\\}','g')),function(item){
 								this.push(item.substring(3, item.length - 1));
 							}, finalParams);
-	
+
 							var finalValues = []; // all values to be replaced (flattened tuples)
 							angular.forEach(parValue,function(item){
 								angular.forEach(item.match(new RegExp("'(.*?)'",'g')),function(value){
 									this.push(value.substring(1, value.length - 1));
 								},finalValues);
 							}, finalValues);
-	
+
 							for(var i=0; i<finalParams.length; i++){
 								var key = finalParams[i];
 								var values = [];
@@ -1252,16 +1252,16 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
             		var matches = text.match(reg);
             		if (matches){
 //            			//aggregation function management (ie: COUNT($F{xxx}) )
-            			var regAgg = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)(\\(\\$F{'+dataset.label+'.'+header+'}\\))','g');
+            			var regAgg = new RegExp('(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)(\\(\\$F{'+dataset.label+'.'+header+'}\\))','g');
             			var matchAgg = text.match(regAgg);
     					if (matchAgg){
     						//get the optional function
                     		var regFunc;
                     		if(dsObject.fieldType == 'MEASURE'){
-                    			regFunc = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)','g');
+                    			regFunc = new RegExp('(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)','g');
                     		}
                     		else{
-                    			regFunc = new RegExp('(MIN|MAX|COUNT|DISTINCT COUNT)','g');
+                    			regFunc = new RegExp('(MIN|MAX|COUNT_DISTINCT|COUNT|DISTINCT COUNT)','g');
                     		}
 
                     		dsObject.aggregationSelected = [];
@@ -1390,7 +1390,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 
 	 					//at first check for aggregation functions , than for simple values
-	 					//var reg = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)(\\(\\$F{'+colAlias+'}\\))','g');
+	 					//var reg = new RegExp('(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)(\\(\\$F{'+colAlias+'}\\))','g');
 	 					var matches = text.match(reg);
 	 					if (matches){
 	 						text = text.replace(reg, colValue);

@@ -157,13 +157,13 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 			    	            { name: 'styling', items: ['font', 'size', 'format'] }
 			    	            ]
 			    	  };
-			    	
+
 			    	  $scope.handleEvent=function(event, arg1){
 			    		  if(event=='datasetChanged'){
 							  changeDatasetFunction(arg1);
 						  }
 					  }
-			    	  
+
 			    	  $scope.formatPattern = ['#.###','#,###','#.###,##','#,###.##'];
 
 			    	  var changeDatasetFunction=function(dsIdArray){
@@ -178,7 +178,7 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 			    					  $scope.localModel.datasets[ds.label] = ds.metadata.fieldsMeta;
 			    					  $scope.localModel.viewDatasetsDett = {};
 			    					  $scope.localModel.viewDatasetsDett[ds.label] = false;
-			    					  $scope.localModel.functions=['SUM', 'AVG', 'MIN', 'MAX','COUNT'];
+			    					  $scope.localModel.functions=['SUM', 'AVG', 'MIN', 'MAX','COUNT', 'COUNT_DISTINCT'];
 			    					  $scope.localModel.viewDatasets = true;
 			    				  }
 			    			  }

@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -490,6 +491,13 @@ public class VersionedDataSet implements IDataSet {
 	@Override
 	public String getSignature() {
 		return wrappedDataset.getSignature();
+	}
+
+	@Override
+	public void setUserProfile(UserProfile profile) {
+		if (wrappedDataset instanceof AbstractDataSet) {
+			((AbstractDataSet) wrappedDataset).setUserProfile(profile);
+		}
 	}
 
 	@Override

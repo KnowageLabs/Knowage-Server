@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -285,4 +286,6 @@ public interface IDataSet extends Iterable<IRecord> {
 	public boolean isCachingSupported();
 
 	public DatasetEvaluationStrategy getEvaluationStrategy(boolean isNearRealtime);
+
+	public void setUserProfile(UserProfile profile);
 }

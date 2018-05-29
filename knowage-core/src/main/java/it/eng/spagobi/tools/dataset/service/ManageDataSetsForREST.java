@@ -125,6 +125,7 @@ public class ManageDataSetsForREST {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to preview Data Set due to bad formated json of data set.");
 
 		}
+
 		return datatsetTest(json, userProfile);
 	}
 
