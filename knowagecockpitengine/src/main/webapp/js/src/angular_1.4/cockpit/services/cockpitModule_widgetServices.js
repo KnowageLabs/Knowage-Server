@@ -133,7 +133,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			var dataset = cockpitModule_datasetServices.getDatasetById(ngModel.dataset.dsId);
 
 			//if it's a realtime dataset don't use backend filter on charts
-			if (dataset.isRealtime && ngModel.content && ngModel.content.filters) {
+			if (dataset && dataset.isRealtime && ngModel.content && ngModel.content.filters) {
 				var ngModelCopy = {};
 				angular.copy(ngModel, ngModelCopy);
 				ngModelCopy.content.filters = [];
@@ -225,7 +225,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				if (config && config.dataset && config.dataset.dsId){
 					var dataset = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId);
 					//for realtime dataset the associative selections are managed client side
-					if (dataset.isRealtime && dataset.useCache && (nature=='selections' || nature=='filters')){
+					if (dataset && dataset.isRealtime && dataset.useCache && (nature=='selections' || nature=='filters')){
 						var selections = cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
 						var filters = cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 
@@ -258,7 +258,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					}
 				}
 
-				var dsRecords = this.loadDatasetRecords(config,options, config.type == "selector");
+				var dsRecords = null;
+				if(nature=='init' || dataset && (!dataset.isRealtime || !dataset.useCache)){
+					dsRecords = this.loadDatasetRecords(config,options, config.type == "selector");
+				}
+				
 				if(dsRecords == null){
 					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
 				}else{
