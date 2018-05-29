@@ -206,6 +206,52 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
+	public IDataSet loadDataSetByName(String name) {
+		logger.debug("IN");
+
+		IDataSet toReturn = null;
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			if (name == null) {
+				throw new IllegalArgumentException("Input parameter [name] cannot be null");
+			}
+
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
+			}
+			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.name = ? ");
+			hibQuery.setBoolean(0, true);
+			hibQuery.setString(1, name);
+			SbiDataSet sbiDataSet = (SbiDataSet) hibQuery.uniqueResult();
+			if (sbiDataSet != null) {
+				toReturn = DataSetFactory.toDataSet(sbiDataSet, this.getUserProfile());
+			} else {
+				logger.debug("Impossible to load dataset with name [" + name + "].");
+			}
+
+			transaction.commit();
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset whose name is equal to [" + name + "]", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+
+	@Override
 	public List<IDataSet> loadDataSetsOwnedByUser(UserProfile user, Boolean showDerivedDatasets) {
 		return loadDataSetsByOwner(user, true, false, showDerivedDatasets);
 	}
