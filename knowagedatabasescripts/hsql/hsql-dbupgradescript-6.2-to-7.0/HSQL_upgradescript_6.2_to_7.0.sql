@@ -15,3 +15,5 @@ INSERT INTO hibernate_sequences VALUES ('SBI_I18N_MESSAGES',
                                                             (SELECT COALESCE(MAX(m.ID) + 1, 1) FROM SBI_I18N_MESSAGES m));
 COMMIT;                                                         
 --- END ---
+
+ALTER TABLE SBI_DATA_SET ADD CONSTRAINT XAK2SBI_DATA_SET UNIQUE (NAME, VERSION_NUM, ORGANIZATION);

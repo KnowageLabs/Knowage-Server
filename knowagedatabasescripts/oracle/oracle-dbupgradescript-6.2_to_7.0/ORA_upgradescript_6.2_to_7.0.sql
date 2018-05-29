@@ -15,3 +15,5 @@ INSERT INTO hibernate_sequences VALUES ('SBI_I18N_MESSAGES',
                                                             (SELECT NVL(MAX(m.ID) + 1, 1) FROM SBI_I18N_MESSAGES m));  
 COMMIT;                                                            
 --- END ---                    
+
+CREATE UNIQUE INDEX XAK2SBI_DATA_SET ON SBI_DATA_SET(NAME, VERSION_NUM, ORGANIZATION);
