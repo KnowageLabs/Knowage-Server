@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -720,6 +721,12 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		@Override
 		public DatasetEvaluationStrategy getEvaluationStrategy(boolean isNearRealtime) {
 			return DatasetEvaluationStrategy.REALTIME;
+		}
+
+		@Override
+		public void setUserProfile(UserProfile profile) {
+			// TODO Auto-generated method stub
+
 		}
 
 	}
