@@ -18,7 +18,7 @@
 		id='layersTable' ng-model="layerCatalogs"
 		columns='[{"label":"ID","name":"layerId"},{"label":"Name","name":"name"},{"label":"Description","name":"descr"},{"label":"Type","name":"type"}]'
 		columns-search='["name"]' show-search-bar=true multi-select="multiSelect" selected-item="newLayerCatalog" 
-		highlights-selected-item="true" 
+		highlights-selected-item="true" items-per-page=15 fixed-item-per-page=true
 		></angular-table>
 		</div>
    	 </md-dialog-content>
