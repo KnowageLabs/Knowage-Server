@@ -17,16 +17,16 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
+import java.util.List;
+import java.util.Set;
+
+import org.hibernate.Session;
+
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-
-import java.util.List;
-import java.util.Set;
-
-import org.hibernate.Session;
 
 /**
  * Defines the interfaces for all methods needed to create, read, update and delete a dataset (CRUD operations).
@@ -38,6 +38,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	// ========================================================================================
 
 	public IDataSet loadDataSetByLabel(String label);
+
+	public IDataSet loadDataSetByName(String label);
 
 	public IDataSet loadDataSetById(Integer id);
 

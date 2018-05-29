@@ -1340,7 +1340,12 @@ public class ManageDataSetsForREST {
 			logParam.put("TYPE", ds.getDsType());
 			String id = json.optString(DataSetConstants.ID);
 			try {
+				IDataSet existingByName = dsDao.loadDataSetByName(ds.getName());
 				if (id != null && !id.equals("") && !id.equals("0")) {
+					if (existingByName != null && !Integer.valueOf(id).equals(existingByName.getId())) {
+						throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.nameAlreadyExistent");
+					}
+
 					ds.setId(Integer.valueOf(id));
 					modifyPersistence(ds, logParam, req);
 					dsDao.modifyDataSet(ds);
@@ -1352,10 +1357,15 @@ public class ManageDataSetsForREST {
 					attributesResponseSuccessJSON.put("userIn", ds.getUserIn());
 					attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.metadataSerializerChooser(ds.getDsMetadata()));
 				} else {
-					IDataSet existing = dsDao.loadDataSetByLabel(ds.getLabel());
-					if (existing != null) {
+					IDataSet existingByLabel = dsDao.loadDataSetByLabel(ds.getLabel());
+					if (existingByLabel != null) {
 						throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.labelAlreadyExistent");
 					}
+
+					if (existingByName != null) {
+						throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.nameAlreadyExistent");
+					}
+
 					Integer dsID = dsDao.insertDataSet(ds);
 					VersionedDataSet dsSaved = (VersionedDataSet) dsDao.loadDataSetById(dsID);
 					auditlogger.info("[Saved dataset without metadata with id: " + dsID + "]");
