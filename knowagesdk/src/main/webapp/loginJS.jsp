@@ -156,6 +156,9 @@ Password: <input type="password" id="password" name="password" size="30" value="
 	<p>
 	<dt> <a target="_blank" href="example7.jsp">Example 7 : executeDataSet</a>
 	<dd>  Use <i>executeDataSet</i> function to get the content of a specific dataset.
+	   <p>
+    <dt> <a target="_blank" href="example8.jsp">Example 8 : getDocuments</a>
+    <dd>  Use <i>getDocumentsList</i> function to get the list of visible documents.
 
 </dl>
 </div>

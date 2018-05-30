@@ -16,7 +16,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -32,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	}
 	</style>
 	<!--  <script type="text/javascript" src="/knowagesdk/js/sbisdk-all-production.js"></script>-->
+	
 	<script type="text/javascript" src="/knowagesdk/js/commons.js"></script>
        <script type="text/javascript" src="/knowagesdk/js/ajax.js"></script>
        <script type="text/javascript" src="/knowagesdk/js/jsonp.js"></script>
@@ -39,10 +39,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        <script type="text/javascript" src="/knowagesdk/js/services.js"></script>      
        <script type="text/javascript" src="/knowagesdk/js/api_jsonp.js"></script>
        <script type="text/javascript" src="/knowagesdk/js/api_cors.js"></script>
-       <script type="text/javascript" src="/knowagesdk/js/api.js"></script>       
+       <script type="text/javascript" src="/knowagesdk/js/api.js"></script>
+       
 	
 	
-
 	<script type="text/javascript">
 
 		Sbi.sdk.services.setBaseUrl({
@@ -53,46 +53,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    });
 		
  		execTest8 = function() {
-		    Sbi.sdk.api.getDocuments({
-		    	callback: function( json, args, success ) {
-		    		if (success){
-		    			
-		    			var str = "";
-		    			
-		    			for (var key in json){
-			    			str += "<tr><td>" + json[key].label + "</td><td>" + json[key].name + "</td><td>" + json[key].description + "</td></tr>";
-		    			}
-		    			
-		    			document.getElementById('documents').innerHTML = str;
-		    		}
-				}});
+		    Sbi.sdk.cors.api.getDocuments({
+		    	basicAuthentication: {
+		    		userName: 'biadmin'
+		    		, password: 'biadmin'
+		    	}
+		    	, callbackOk: function(obj) {
+		    		str = '';
+		    		
+		    		for (var key in obj){
+		    			str += "<tr><td>" + obj[key].label + "</td><td>" + obj[key].name + "</td><td>" + obj[key].description + "</td></tr>";
+	    			}
+	    			
+	    			document.getElementById('documents').innerHTML = str;
+				}
+		    });
 		};
 	</script>
 </head>
 
 
 <body>
-<h2>Example 8 : getDocuments</h2>
+<h2>Example 8.1 : getDocuments with CORS</h2>
 <hr>
-<b>Description: </b> Use <i>getDocuments</i> function to retrieve the list of all documentss
+<b>Description: </b> Use <i>getDocuments</i> function to retrieve the list of all documents
 <p>
 <b>Code: </b>
 <p>
 <BLOCKQUOTE>
 <PRE>
 execTest8 = function() {
-    Sbi.sdk.api.getDocuments({
-    	callback: function( json, args, success ) {
-    		if (success){
-    			var str = "";
-    			
-    			for (var key in json){
-	    			str += "&lt;tr&gt;&lt;td&gt;" + json[key].label + "&lt;/td&gt;&lt;td&gt;" + json[key].name + "&lt;/td&gt;&lt;td&gt;" + json[key].description + "&lt;/td&gt;&lt;/tr&gt;";
-    			}
-    			
-    			document.getElementById('documents').innerHTML = str;
-    		}
-		}});
+    Sbi.sdk.cors.api.getDocuments({
+    	basicAuthentication: {
+    		userName: 'biadmin'
+    		, password: 'biadmin'
+    	}
+    	, callbackOk: function(obj) {
+    		str = '';
+    		
+    		for (var key in obj){
+    			str += "&lt;tr&gt;&lt;td&gt;" + obj[key].label + "&lt;/td&gt;&lt;td&gt;" + obj[key].name + "&lt;/td&gt;&lt;td&gt;" + obj[key].description + "&lt;/td&gt;&lt;/tr&gt;";
+   			}
+   			
+   			document.getElementById('documents').innerHTML = str;
+		}
+	});
 };
 </PRE>
 </BLOCKQUOTE>

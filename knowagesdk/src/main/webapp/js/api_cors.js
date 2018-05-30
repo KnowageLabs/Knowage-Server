@@ -174,4 +174,50 @@ Sbi.sdk.apply(Sbi.sdk.cors.api, {
 			callbackError: config.callbackError
 		});
 	}
+
+	/**
+	 * It returns the list of Documents. This time config contains two callback functions: callbackOk and callbackError. This is because with CORS it is possible to know when the server returns an error, so we can define the behavior to have if there is an error. However, it is not mandatory to specify the callbackError function: there is a default one that create a pop up with status code and text describing the error.
+	 * @example
+ 	 * execTest6 = function() {
+	 *    Sbi.sdk.cors.api.getDocuments({
+	 *    	callbackOk: function(obj) {
+	 *    		str = '';
+	 *
+	 *    		for (var key in obj){
+	 *    			str += "<tr><td>" + obj[key].label + "</td><td>" + obj[key].name + "</td><td>" + obj[key].description + "</td></tr>";
+	 *  			}
+	 *
+	 *  			document.getElementById('documentss').innerHTML = str;
+	 *		}
+	 *    });
+	 *	};
+	 * @method Sbi.sdk.cors.api.getDocuments
+	 * @param {Object} config - the configuration
+	 * @param {ResponseCallback} config.callbackOk - function to be called after the ok response is returned by the server
+	 * @param {ResponseCallback} [config.callbackError] - function to be called after the error response is returned by the server
+	 */
+	, getDocuments: function ( config ) {
+		var baseUrl = Sbi.sdk.services.baseUrl;
+		var serviceUrl = baseUrl.protocol + '://' + baseUrl.host + ":" + baseUrl.port + '/' + baseUrl.contextPath + '/restful-services/2.0/documents';
+
+		var headers = [];
+		if (config.basicAuthentication !== undefined) {
+			var ba = config.basicAuthentication;
+			var encoded = btoa(ba.userName + ':' + ba.password);
+
+			headers[0] = {
+				name: 'Authorization',
+				value: 'Basic ' + encoded
+			}
+		}
+
+		Sbi.sdk.cors.asyncRequest({
+			method: 'GET',
+			url: serviceUrl,
+			headers: headers,
+			callbackOk: config.callbackOk,
+			callbackError: config.callbackError
+		});
+	}
+
 });

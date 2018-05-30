@@ -621,7 +621,8 @@ public class DocumentResource extends AbstractDocumentResource {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentsV2(@QueryParam("type") String type, @QueryParam("folderId") String folderIdStr, @QueryParam("date") String date,
-			@QueryParam("searchKey") String searchKey, @QueryParam("searchAttributes") String attributes, @QueryParam("searchSimilar") Boolean similar) {
+			@QueryParam("searchKey") String searchKey, @QueryParam("searchAttributes") String attributes, @QueryParam("searchSimilar") Boolean similar,
+			@QueryParam("callback") String callback) {
 		logger.debug("IN");
 		IBIObjectDAO documentsDao = null;
 		List<BIObject> allObjects = null;
@@ -672,6 +673,10 @@ public class DocumentResource extends AbstractDocumentResource {
 			}
 
 			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
+
+			if (callback != null && !callback.isEmpty()) {
+				toBeReturned = callback + "(" + toBeReturned + ")";
+			}
 			return Response.ok(toBeReturned).build();
 		} catch (Exception e) {
 			logger.error("Error while getting the list of documents", e);
