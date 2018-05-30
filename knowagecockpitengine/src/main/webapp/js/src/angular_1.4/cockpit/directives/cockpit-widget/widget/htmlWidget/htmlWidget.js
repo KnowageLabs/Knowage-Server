@@ -58,8 +58,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.columnRegex = /(?:\[kn-column=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}(?:\s+row=[\'\"]{1}(\d*)[\'\"]{1})?\])/g;
 		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}\])/g;
 		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
-		$scope.gt = /(\<.*["].*)(>)(.*["].*\>)/g;
-		$scope.lt = /(\<.*["].*)(<)(.*["].*\>)/g;
+		$scope.gt = /(\<.*kn-.*=["].*)(>)(.*["].*\>)/g;
+		$scope.lt = /(\<.*kn-.*=["].*)(<)(.*["].*\>)/g;
 
 		$scope.refresh = function(element,width,height, datasetRecords,nature) {}
 
@@ -128,7 +128,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.parseHtmlFunctions = function(rawHtml){
 			return $q(function(resolve, reject) {
 				var parser = new DOMParser()
-				var parsedHtml = parser.parseFromString(rawHtml, "text/xml");
+				var parsedHtml = parser.parseFromString(rawHtml, "text/html");
 				
 				var allElements = parsedHtml.getElementsByTagName('*');
 				var i=0;
@@ -271,6 +271,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
 
 		$scope.saveConfiguration=function(){
+			      
 			 mdPanelRef.close();
 			 angular.copy($scope.newModel,model);
 			 finishEdit.resolve();
