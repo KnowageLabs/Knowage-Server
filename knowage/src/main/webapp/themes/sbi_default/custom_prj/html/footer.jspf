@@ -1,0 +1,8 @@
+
+
+  <md-content id="footerContent" layout="row" flex="noshrink" layout-align="center end">
+    <div id="license-footer" flex="" >
+            <!--<img class="navbar-brand" src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/logo.png">-->
+            <div class="navbar-project"></div>
+    </div>
+  </md-content>
