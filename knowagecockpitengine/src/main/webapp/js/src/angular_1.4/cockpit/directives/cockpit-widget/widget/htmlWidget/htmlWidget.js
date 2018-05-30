@@ -161,7 +161,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    
 				  for (var j = 0, n = allElements.length; j < n; j++){
 					  if (allElements[j] && allElements[j].hasAttribute("kn-if")){
-					    	var condition = allElements[j].getAttribute("kn-if").replace($scope.columnRegex, $scope.replacer);
+					    	var condition = allElements[j].getAttribute("kn-if").replace($scope.columnRegex, $scope.ifConditionReplacer);
 					    	if(eval(condition)){
 					    		allElements[j].removeAttribute("kn-if");
 					    	}else{
@@ -173,8 +173,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			})
 		}
 		
+		$scope.ifConditionReplacer = function(match, p1, p2){
+			if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)]){
+				p1 = typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)]) == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)]+'\'' : $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)];
+			}else {
+				p1 = 'null';
+			}
+			return p1;
+		}
+		
 		$scope.replacer = function(match, p1, p2) {
-			p1=$scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)]
+			p1=$scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)] ? $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)] : 'null';
 			return p1;
 		}
 		$scope.paramsReplacer = function(match, p1){
