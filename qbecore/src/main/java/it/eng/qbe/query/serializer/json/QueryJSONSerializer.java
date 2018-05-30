@@ -46,6 +46,7 @@ import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.StatementTockenizer;
 import it.eng.qbe.statement.graph.GraphUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
@@ -358,14 +359,25 @@ public class QueryJSONSerializer implements IQuerySerializer {
 	 * @return the nature of the calculated field
 	 */
 	public static String getInLinecalculatedFieldNature(String expr, Map<String, String> datamartFields) {
-
+		logger.debug("IN");
 		StatementTockenizer stk = new StatementTockenizer(expr);
 		while (stk.hasMoreTokens()) {
 			String alias = stk.nextTokenInStatement().trim();
+			logger.debug("alias: " + alias);
+
 			// alias can contain "DISTINCT" HQL/SQL key: we have to remove it
 			if (alias.toUpperCase().startsWith("DISTINCT ")) {
 				alias = alias.substring("DISTINCT ".length());
 			}
+
+			// if alias has entity informaton clean it
+			alias = DataSetUtilities.getColumnNameWithoutQbePrefix(alias);
+			if (alias.indexOf(".") != -1) {
+				int ind = alias.indexOf(".");
+				alias = alias.substring(ind + 1);
+			}
+			logger.debug("alias: " + alias);
+
 			if (datamartFields.get(alias) == null)
 				continue;
 			if ((!(datamartFields.get(alias)).equals(QuerySerializationConstants.FIELD_NATURE_MEASURE)
@@ -373,6 +385,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 				return QuerySerializationConstants.FIELD_NATURE_ATTRIBUTE;
 			}
 		}
+		logger.debug("OUT");
 		return QuerySerializationConstants.FIELD_NATURE_MEASURE;
 	}
 

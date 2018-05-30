@@ -309,7 +309,7 @@ public class SQLDBCache implements ICache {
 		logger.debug("IN");
 
 		try {
-
+			dataSet.setUserProfile(getUserProfile());
 			String resultsetSignature = dataSet.getSignature();
 			if (!getMetadata().containsCacheItem(resultsetSignature)) {
 				logger.debug("Not found resultSet with signature [" + resultsetSignature + "] inside the Cache");

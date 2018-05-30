@@ -350,7 +350,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 				String[] valuesArray = values.toArray(new String[0]);
 				Operand rightOperand = new Operand(valuesArray, null, AbstractStatement.OPERAND_TYPE_STATIC, null, null);
 				WhereField whereField = new WhereField(UUIDGenerator.getInstance().generateRandomBasedUUID().toString(), aFilterName, false, leftOperand,
-						operator, rightOperand, "AND");
+						operator, rightOperand, "AND", null);
 
 				whereFields.add(whereField);
 			}
@@ -387,7 +387,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 						operator = "IN";
 					}
 
-					whereFields.add(new WhereField("OptionalFilter" + i, "OptionalFilter" + i, false, leftOperand, operator, rightOperand, "AND"));
+					whereFields.add(new WhereField("OptionalFilter" + i, "OptionalFilter" + i, false, leftOperand, operator, rightOperand, "AND", null));
 				}
 			} else {
 				logger.debug("The values of the filter " + fieldName + " are not a JSONArray but " + valuesObject);

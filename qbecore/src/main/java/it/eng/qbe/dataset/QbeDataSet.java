@@ -42,6 +42,9 @@ import it.eng.qbe.query.TimeAggregationHandler;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.QbeDatasetFactory;
+import it.eng.qbe.utility.CustomFunctionsSingleton;
+import it.eng.qbe.utility.CustomizedFunctionsReader;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
@@ -126,6 +129,12 @@ public class QbeDataSet extends ConfigurableDataSet {
 
 	private void init() {
 		if (ds == null) {
+			UserProfile profile = getUserProfile();
+			if (profile != null) {
+				JSONObject jsonObj = new CustomizedFunctionsReader().getJSONCustomFunctionsVariable(profile);
+				CustomFunctionsSingleton.getInstance().setCustomizedFunctionsJSON(jsonObj);
+			}
+
 			it.eng.qbe.datasource.IDataSource qbeDataSource = getQbeDataSource();
 			QueryCatalogue catalogue = getCatalogue(jsonQuery, qbeDataSource);
 			Query query = catalogue.getFirstQuery();

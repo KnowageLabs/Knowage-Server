@@ -1532,6 +1532,8 @@ public class ManageDataSetsForREST {
 			}
 
 			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
+			if(profile instanceof UserProfile)
+				dataSet.setUserProfile((UserProfile)profile);
 			dataSet.setParamsMap(parametersFilled);
 			checkFileDataset(dataSet);
 			IDataStore dataStore = null;
