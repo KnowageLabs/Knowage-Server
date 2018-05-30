@@ -1236,16 +1236,16 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
             		var matches = text.match(reg);
             		if (matches){
 //            			//aggregation function management (ie: COUNT($F{xxx}) )
-            			var regAgg = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)(\\(\\$F{'+dataset.label+'.'+header+'}\\))','g');
+            			var regAgg = new RegExp('(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)(\\(\\$F{'+dataset.label+'.'+header+'}\\))','g');
             			var matchAgg = text.match(regAgg);
     					if (matchAgg){
     						//get the optional function
                     		var regFunc;
                     		if(dsObject.fieldType == 'MEASURE'){
-                    			regFunc = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)','g');
+                    			regFunc = new RegExp('(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)','g');
                     		}
                     		else{
-                    			regFunc = new RegExp('(MIN|MAX|COUNT|DISTINCT COUNT)','g');
+                    			regFunc = new RegExp('(MIN|MAX|COUNT_DISTINCT|COUNT|DISTINCT COUNT)','g');
                     		}
 
                     		dsObject.aggregationSelected = [];
