@@ -1,3 +1,4 @@
+
 function resizePage(){
   //$(window.top.document).find('body').height('0px');
   var cutomBottomMargin = 100;
@@ -5,14 +6,15 @@ function resizePage(){
   var iframe = $(window.top.document).find("#iframeDoc");
   var scroll = iframe[0].contentDocument.body.scrollHeight;
   var levels = $('#contentLevels').height()
+  var footer = $('#footerContent').outerHeight();
   var toolbar = $('.header-toolbar').height();
-
   if(win < levels){
-          var totHeight = 2*scroll - levels + toolbar + cutomBottomMargin;
+          var totHeight = 2*scroll - levels + toolbar + customBottomMargin+footer;
           $('body').height(totHeight+'px')
   }else{
     $('body').height('100%')
   }
+  $("#contentLevels").css('margin-bottom','80px');
 }
 
   /**
@@ -62,7 +64,10 @@ var app = angular.module('knowageIntro', ['ngMaterial', 'ngMessages', 'ngAnimate
             setTimeout(resizePage, 50);
         }
 
-        // resizePage();
+        $scope.openMenu = function($mdMenu, ev) {
+          originatorEv = ev;
+          $mdMenu.open(ev);
+        };
       }
     ]);
 
@@ -108,6 +113,16 @@ var app = angular.module('knowageIntro', ['ngMaterial', 'ngMessages', 'ngAnimate
             'contrastLightColors': undefined    // could also specify this if default was 'dark'
           });
 
+        // Extend the Grey color palette with the white color at code 'A100'        
+        var whiteMap = $mdThemingProvider.extendPalette('grey', {
+          'A100': '#ffffff',
+          'contrastDefaultColor': 'dark'
+        });
+
+        // Register the new color palette map with the name <code>neonWhite</code>
+        $mdThemingProvider.definePalette('neonWhite', whiteMap);
+
+        // Select For Cities Theme
         $mdThemingProvider.theme('S4C')
                 .primaryPalette('s4c-green', {
                   'default': '500', // by default use shade 400 from the pink palette for primary intentions
@@ -121,16 +136,8 @@ var app = angular.module('knowageIntro', ['ngMaterial', 'ngMessages', 'ngAnimate
                   'default': '500' // use shade 500 for default, and keep all other shades the same
                 })
                 .warnPalette('red')
-                .backgroundPalette('neonWhite')
-        
-        // Extend the Grey color palette with the white color at code 'A100'        
-        var whiteMap = $mdThemingProvider.extendPalette('grey', {
-            'A100': '#ffffff',
-            'contrastDefaultColor': 'dark'
-          });
+                .backgroundPalette('neonWhite');
 
-        // Register the new color palette map with the name <code>neonWhite</code>
-        $mdThemingProvider.definePalette('neonWhite', whiteMap);
 
         //Activate Theme
         $mdThemingProvider.setDefaultTheme('S4C');

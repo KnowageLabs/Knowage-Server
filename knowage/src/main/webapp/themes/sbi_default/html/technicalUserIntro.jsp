@@ -19,7 +19,10 @@
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.Enumeration"%>
-
+<!-- *** MENU TOOLS *** -->
+<%@ page language="java" import="java.util.*" %> 
+<%@ page import="java.util.ResourceBundle" %>
+<% ResourceBundle res = ResourceBundle.getBundle("tools");%>
 
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
@@ -55,6 +58,6 @@
 <body class="landingPageAdmin" data-ng-controller="MainController" ng-app="knowageIntro">
 
   <%@ include file="/themes/sbi_default/custom_prj/html/welcomePage.jspf"%>
-  
+  <%@ include file="/themes/sbi_default/custom_prj/html/footer.jspf"%>
 </body>
 </html>

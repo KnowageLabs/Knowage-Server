@@ -142,8 +142,8 @@
         <span class="md-subhead">Visualize your KPIs through Scorecards and/or Speedometer.</span>
       </md-card-content>
       <md-card-actions layout="row" layout-align="end center">
-        <%-- <md-button class="md-accent" aria-label="Scorecard" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/scorecardKpi.jsp"> --%>
-        <md-button class="md-accent" aria-label="Scorecard" ng-click="showLevel3B()">
+        <md-button class="md-accent" aria-label="Scorecard" ng-href="<%=urlKPI%>">
+        <%-- <md-button class="md-accent" aria-label="Open" ng-click="showLevel3B()"> --%>
         Open
         </md-button>
       </md-card-actions>

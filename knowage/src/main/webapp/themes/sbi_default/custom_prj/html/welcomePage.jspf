@@ -1,4 +1,5 @@
 
+
 <md-toolbar class="header-toolbar" md-colors="::{background: 'grey-A100', color: 'default-blue-grey-900'}" md-scroll-shrink="true" md-whiteframe="1">
     <div class="md-toolbar-tools">
         <div layout="row" layout-align="start center">
@@ -6,10 +7,95 @@
             <div class="navbar-brand"></div>
         </div>
         <span flex></span>
+        <!-- TOOLS -->
         <div layout="row" layout-align="end center">
+          <md-menu>
+            <md-button aria-label="Open Tools menu" class="md-icon-button" ng-click="openMenu($mdMenu, $event)">
+              <md-icon md-menu-origin md-colors="::{color: 'default-blue-grey-900'}">apps</md-icon>
+            </md-button>
+            <md-menu-content width="4">
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("cityFrontEnd-link")%>'>
+                  <img alt='<%= res.getString("cityFrontEnd")%>' ng-src="<%= res.getString("cityFrontEnd-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("cityFrontEnd")%>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+<!--
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("dashboardManager-link")%>'>
+                  <img alt='<%= res.getString("dashboardManager")%>' ng-src="<%= res.getString("dashboardManager-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("dashboardManager")%>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+-->
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("datasourceDiscoveryEngine-link")%>'>
+                  <img alt='<%= res.getString("datasourceDiscoveryEngine")%>' ng-src="<%= res.getString("datasourceDiscoveryEngine-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("datasourceDiscoveryEngine")%>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("ioTDeviceManager-link")%>'>
+                  <img alt='<%= res.getString("ioTDeviceManager")%>' ng-src="<%= res.getString("ioTDeviceManager-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("ioTDeviceManager")%>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("openInnovationArea-link")%>'>
+                  <img alt='<%= res.getString("openInnovationArea")%>' ng-src="<%= res.getString("openInnovationArea-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("openInnovationArea")%>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("dataMashupEditor-link")%>'>
+                  <img alt='<%= res.getString("dataMashupEditor")%>' ng-src="<%= res.getString("dataMashupEditor-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("dataMashupEditor")%>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("cityRealtimeLegacyDataRepository-link")%>'>
+                  <img alt='<%= res.getString("cityRealtimeLegacyDataRepository")%>' ng-src="<%= res.getString("cityRealtimeLegacyDataRepository-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("cityRealtimeLegacyDataRepository")%>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("citizenDataVault-link")%>'>
+                  <img alt='<%= res.getString("citizenDataVault")%>' ng-src="<%= res.getString("citizenDataVault-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("citizenDataVault")%>
+                </md-button>
+              </md-menu-item>
+              
+            </md-menu-content>
+          </md-menu>
+        </div>
+        <!-- Account -->  
+        <div layout="row" layout-align="end center">
+         <md-menu>
+            <md-button aria-label="Open account menu" class="md-button" ng-click="$mdMenu.open()">
+               <md-icon md-colors="::{color: 'default-blue-grey-900'}">account_circle</md-icon>
+               <%=userName%>
+               <md-icon md-colors="::{color: 'default-blue-grey-900'}">arrow_drop_down</md-icon>
+            </md-button>
+            <md-menu-content>
+              <md-menu-item>
+                <md-button ng-href="https://s4c.eng.it/logout" target="_blank">
+                  Logout
+                </md-button>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
+        </div>
+        <%-- <div layout="row" layout-align="end center">
             <!--<img class="navbar-brand" src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/logo.png">-->
             <div class="navbar-project"></div>
-        </div>
+        </div> --%>
     </div>
 </md-toolbar>
 

@@ -99,30 +99,7 @@
 }
 
 
-.poweredFooter {
-    transform: rotate(-90deg);
-    width: 260px;
-    bottom: 140px;
-    position: absolute;
-    /* flex-flow: column; */
-    /* line-height: 30px; */
-    /* margin: 0; */
-    color: rgba(0,0,0,0.54);
-    /* padding: 0px; */
-    /* height: auto; */
-    display: inline-flex;
-    flex-direction: row;
-}
 
-.poweredFooter .verticalAlign {
-    background-image: url(../../css/menuBar/logo_knowage.png);
-    background-repeat: no-repeat;
-    background-size: auto 12px;
-    width: 100px;
-    height: 14px;
-    display: inline;
-    margin: 1px 6px;
-}
 
 
 

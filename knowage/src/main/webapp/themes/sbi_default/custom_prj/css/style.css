@@ -153,18 +153,26 @@ img, a img {
 
 /* Others */
 
-.poweredFooter{
-    transform: rotate(-90deg);
-    width: 130px;
-    bottom: 70px;
-    position: absolute;
+md-content#footerContent {
+  background-color: #fff;
+  text-align: center;
+  position: fixed;
+  width: 100%;
+  bottom: 64px;
+  margin: 0;
+  padding: 8px 0;
 }
 
-.poweredFooter.verticalAlign{
-  background-image: url("../css/menuBar/logo_knowage.png");
-  background-repeat: no-repeat;
-  background-size: auto 45px;
-  width: 220px;
-  height: 45px;
-  display: inline-block;
+/* ANGULAR */
+md-menu-content {
+  max-height: 400px;  /*Dimensione ideale per il menu Tools*/
 }
+md-menu-item a.md-button.md-S4C-theme {
+  display: inline-flex !important;
+}
+md-menu-item img {
+  width: auto;
+  margin-right: 10px;
+  height: 40px;
+}
+

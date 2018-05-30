@@ -21,7 +21,8 @@ body {
 
 .sidebar {
 	.sidebar-header.header-cover {
-		background-image: url('../../sbi_default/custom_prj/images/logo.png');
+        // background-image: url('../../sbi_default/custom_prj/images/logo.png');
+        background-image: url('../../sbi_default/custom_prj/images/DM_logo_line.png');
 	}
 }
 .sidebar .sidebar-header {
@@ -48,3 +49,26 @@ body {
         color: $fabPrimaryColor;
     }
 }
+
+
+/*Footer*/
+
+.poweredFooter {
+    transform: rotate(-90deg);
+    width: 260px;
+    bottom: 180px;
+    position: absolute;
+    color: rgba(0,0,0,0.54);
+    display: inline-flex;
+    flex-direction: row;
+  }
+  
+  .poweredFooter .verticalAlign {
+    background-image: url("../../sbi_default/css/menuBar/logo_knowage.png");
+    background-repeat: no-repeat;
+    background-size: auto 12px;
+    width: 100px;
+    height: 14px;
+    display: inline;
+    margin: 1px 6px;
+  }
