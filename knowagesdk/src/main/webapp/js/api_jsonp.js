@@ -129,4 +129,37 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 
 		Sbi.sdk.jsonp.asyncRequest(serviceUrl, config.callback, this);
 	}
+
+	/**
+	 * It returns the list of documents
+	 * @example
+	 * execTest8 = function() {
+	 *	    Sbi.sdk.api.getDocuments({
+	 *	    	callback: function( json, args, success ) {
+	 *	    		if (success){
+	 *	    			var str = "";
+	 *
+	 *	    			for (var key in json){
+	 *		    			str += "<tr><td>" + json[key].label + "</td><td>" + json[key].name + "</td><td>" + json[key].description + "</td></tr>";
+	 *	    			}
+	 *
+	 *	    			document.getElementById('documents').innerHTML = str;
+	 *	    		}
+	 *			}});
+	 *	};
+	 * @method Sbi.sdk.api.getDocuments
+	 * @param {Object} config - the configuration
+	 * @param {ResponseCallback} config.callback - function to be called after the response is returned by the server
+	 */
+	, getDocuments: function( config ) {
+
+		Sbi.sdk.jsonp.timeout = 10000;
+
+		var baseUrl = Sbi.sdk.services.baseUrl;
+		var serviceUrl = baseUrl.protocol + '://' + baseUrl.host + ":" + baseUrl.port + '/' + baseUrl.contextPath + '/restful-services/2.0/documents';
+
+
+		Sbi.sdk.jsonp.asyncRequest(serviceUrl, config.callback, this);
+	}
+
 });
