@@ -1,5 +1,5 @@
 /*
-Knowage, Open Source Business Intelligence suite
+\Knowage, Open Source Business Intelligence suite
 Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 
 Knowage is free software: you can redistribute it and/or modify
@@ -38,7 +38,8 @@ var cockpitApp= angular.module("cockpitModule",[
 	'accessible_angular_table',
 	'cockpitTable',
 	'jsonFormatter',
-	'ui.codemirror'
+	'ui.codemirror',
+	'knModule'
 	]);
 cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')

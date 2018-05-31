@@ -82,6 +82,8 @@
 			}
 		}
 		$scope.colorPickerProperty={format:'rgb'}
+		
+		
 
 
 		$scope.actionsOfCockpitColumns = [{
@@ -416,7 +418,7 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 	}
 }
 
-function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,selectedColumn,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions,sbiModule_messaging){
+function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPanel,model,selectedColumn,cockpitModule_generalServices,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions,sbiModule_messaging,knModule_fontIconsService){
 	$scope.translate=sbiModule_translate;
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.selectedColumn = angular.copy(selectedColumn);
@@ -426,8 +428,22 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 	$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
 	$scope.visTypes=['Chart','Text','Text & Chart','Icon only'];
 	$scope.icons=["fa fa-warning","fa fa-bell","fa fa-bolt","fa fa-commenting","fa fa-asterisk","fa fa-ban", "fa fa-check","fa fa-clock-o","fa fa-close","fa fa-exclamation-circle","fa fa-flag","fa fa-star"];
+	$scope.availableIcons = knModule_fontIconsService.icons;
+	
+	$scope.getTemplateUrl = function(template){
+		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
+	}
+	$scope.chooseIcon = function(range) {
+		$scope.tempVar = !$scope.tempVar;
+		$scope.currentRange=range;
 
-
+  	}
+	$scope.setIcon = function(family,icon){
+		$scope.currentRange.icon = family.className+' '+icon.className;
+		$scope.tempVar = !$scope.tempVar;
+	}
+	
+	
 	if(!$scope.selectedColumn.hasOwnProperty('colorThresholdOptions'))
 	{
 		$scope.selectedColumn.colorThresholdOptions={};
@@ -439,7 +455,7 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 	}
 
 
-	$scope.$watch("selectedColumn.visType",function(newValue, oldValue){
+	$scope.selectedColumnWatcher = $scope.$watch("selectedColumn.visType",function(newValue, oldValue){
 		if($scope.selectedColumn.visType==undefined){
 			$scope.selectedColumn.visType="Text";
 		}else if($scope.selectedColumn.visType=="Chart"){

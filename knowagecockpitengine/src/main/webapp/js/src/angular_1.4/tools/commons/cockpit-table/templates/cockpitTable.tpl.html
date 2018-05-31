@@ -57,7 +57,7 @@
 		                </div>
 		                
 		                <span ng-if="column.ranges && column.ranges.length > 0">
-		                    <md-icon ng-class="::getDynamicIcon(column,row[column.aliasToShow]).iconClass" ng-style="{color: (::getDynamicIcon(column,row[column.aliasToShow]).iconColor)}"></md-icon>
+		                    <md-icon ng-class="::getDynamicIcon(column,row[column.aliasToShow]).iconClass" ng-style="{color: getDynamicIcon(column,row[column.aliasToShow].iconColor)}"></md-icon>
 		                </span>
 	                </div>
 	
