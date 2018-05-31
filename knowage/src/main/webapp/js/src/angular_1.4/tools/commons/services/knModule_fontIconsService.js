@@ -40,15 +40,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						{"label":"oven","className":"ai-oven","unicode":"\64"},{"label":"toaster","className":"ai-toaster","unicode":"\65"},{"label":"tv","className":"ai-tv","unicode":"\66"},
 						{"label":"washer","className":"ai-washer","unicode":"\67"},{"label":"washdrier","className":"ai-washdrier","unicode":"\68"},{"label":"lightbulb","className":"ai-lightbulb","unicode":"\69"},
 						{"label":"hairdyer","className":"ai-hairdyer","unicode":"\6a"},{"label":"coffee","className":"ai-coffee","unicode":"\6b"},{"label":"cappa","className":"ai-cappa","unicode":"\6c"},
-						{"label":"boiler","className":"ai-boiler","unicode":"\6d"}]
+						{"label":"boiler","className":"ai-boiler","unicode":"\6d"},{"label":"alwayson","className":"ai-alwayson","unicode":"\6e"},{"label":"home","className":"ai-home","unicode":"\6f"}]
 				}
 			];
 		}
-	
-	/*					"fa fa-at","fa fa-automobile","fa fa-balance-scale","fa fa-ban","fa fa-bank" ,
-						"fa fa-bar-chart","fa fa-bar-chart-o","fa fa-barcode","fa fa-bars","fa fa-battery-empty","fa fa-battery-full","fa fa-battery-half","fa fa-battery-quarter","fa fa-battery-three-quarters","fa fa-bed",
-						"fa fa-beer","fa fa-bell","fa fa-bell-o","fa fa-bell-slash","fa fa-bell-slash-o","fa fa-bicycle","fa fa-binoculars","fa fa-birthday-cake","fa fa-bolt","fa fa-bomb","fa fa-book","fa fa-bookmark","fa fa-bookmark-o","fa fa-briefcase",
-						"fa fa-bug","fa fa-building","fa fa-building-o","fa fa-bullhorn","fa fa-bullseye","fa fa-bus","fa fa-calculator","fa fa-calendar","fa fa-calendar-check-o","fa fa-calendar-minus-o","fa fa-calendar-o","fa fa-calendar-plus-o",
-						"fa fa-calendar-times-o","fa fa-camera","fa fa-camera-retro","fa fa-car","fa fa-caret-square-o-down","fa fa-caret-square-o-left","fa fa-caret-square-o-right","fa fa-caret-square-o-up","fa fa-cart-arrow-down",
-						"fa fa-cart-plus","fa fa-cc","fa fa-certificate","fa fa-check","fa fa-check-circle","fa fa-check-circle-o","fa fa-check-square","fa fa-check-square-o","fa fa-child","fa fa-circle","fa fa-circle-o","fa fa-circle-o-notch"*/
 }());
