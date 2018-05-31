@@ -150,7 +150,7 @@ function mapWidgetEditControllerFunction(
   		layer.modalSelectionColumn = column.alias;
   		for(var i in columnsList){
   			if(columnsList[i].alias !== column.alias){
-  				columnsList[i].properties.modal = !column.properties.modal;
+  				columnsList[i].properties.modal = false;
   			}
   		}
   		
