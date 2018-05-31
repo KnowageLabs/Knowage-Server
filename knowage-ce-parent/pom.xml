@@ -10,7 +10,7 @@
 		<!-- We use SpagoBI repo on GitHub because we cannot find HBql library somewhere else -->
 		<repository>
 			<id>spagobi-releases</id>
-			<url>https://raw.github.com/SpagoBILabs/SpagoBI/mvn-repo/releases</url>
+			<url>https://github.com/SpagoBILabs/SpagoBI/raw/mvn-repo/releases</url>
 		</repository>
 		<!-- We use www.license4j.com/maven because license4j is not available on Maven Central, it is available by its own repo -->
 		<repository>
