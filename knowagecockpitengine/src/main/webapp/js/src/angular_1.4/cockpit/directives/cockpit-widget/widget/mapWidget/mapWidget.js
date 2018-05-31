@@ -401,7 +401,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			layer.setZIndex(layerDef.order*1000);
 			layer.modalSelectionColumn = layerDef.modalSelectionColumn;
 			layer.hasShownDetails = layerDef.hasShownDetails;
-			$scope.map.addLayer(layer); 			//add layer to ol.Map
+			if ($scope.map) 
+				$scope.map.addLayer(layer); 			//add layer to ol.Map
+			else{
+				sbiModule_messaging.showInfoMessage("The map object isn't available for adding layer, please reload the document.", 'Title', 3000);
+				$timeout(function() {
+					$scope.hideWidgetSpinner();
+				}, 3000)
+			}
+				
 			$scope.addLayer(layerDef.name, layer);	//add layer to internal object
 			$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
 			$scope.values[layerDef.name] = data; //add values to internal object
