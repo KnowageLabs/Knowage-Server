@@ -363,8 +363,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     		for (f in columnsForData){
     			var tmpField = columnsForData[f];
-    			if (tmpField.fieldType == "SPATIAL_ATTRIBUTE")
+    			if (tmpField && tmpField.fieldType == "SPATIAL_ATTRIBUTE"){
     				geoColumn = tmpField.name;
+    				break;
+    			}
     		}
 
     		layerDef.layerID = layerID;
