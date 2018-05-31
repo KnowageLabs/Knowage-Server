@@ -158,18 +158,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 				    } i++;
 				} while (i<allElements.length);
-				    
-				  for (var j = 0, n = allElements.length; j < n; j++){
+				
+				var j = 0;
+				var nodesNumber = allElements.length;
+				do {
 					  if (allElements[j] && allElements[j].hasAttribute("kn-if")){
 					    	var condition = allElements[j].getAttribute("kn-if").replace($scope.columnRegex, $scope.ifConditionReplacer);
 					    	if(eval(condition)){
 					    		allElements[j].removeAttribute("kn-if");
 					    	}else{
 					    		allElements[j].parentNode.removeChild(allElements[j]);
+					    		j--;
 					    	}
 					    }
-				  }
-				  resolve(parsedHtml)
+					  j++;
+					  
+				 } while (j<nodesNumber);
+				
+				 resolve(parsedHtml)
 			})
 		}
 		
