@@ -1,7 +1,7 @@
 
 function resizePage(){
   //$(window.top.document).find('body').height('0px');
-  var cutomBottomMargin = 100;
+  var customBottomMargin = 100;
   var win = $(window).height()
   var iframe = $(window.top.document).find("#iframeDoc");
   var scroll = iframe[0].contentDocument.body.scrollHeight;
