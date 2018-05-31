@@ -64,10 +64,10 @@
 			<id>xss-html-filter releases</id>
 			<url>http://xss-html-filter.sf.net/releases/</url>
 		</repository>
-		<!-- We use Jahia repository for com.jamon:fdsapi, needed by knowage CE; this library is not available on Maven Central -->
+		<!-- We use Openscales Repository for com.jamon:fdsapi, needed by knowage CE; this library is not available on Maven Central -->
 		<repository>
-			<id>Jahia Repository</id>
-			<url>http://maven.jahia.org/maven2/</url>
+			<id>Openscales Repository</id>
+			<url>http://openscales.org/nexus/content/repositories/releases/</url>
 		</repository>
 		
 	</repositories>
