@@ -528,9 +528,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							};
 							for(var k in datasetSelection[s]){
 								// clean the value from the parenthesis ( )
-								datasetSelection[s][k] = datasetSelection[s][k].replace(/[()]/g, '');
-								datasetSelection[s][k] = datasetSelection[s][k].replace(/['']/g, '');
-								formattedSelection[columnObject.aliasToShow].values.push(datasetSelection[s][k]);
+								var x = datasetSelection[s][k].replace(/[()]/g, '').replace(/['']/g, '').split(/[,]/g);
+								for(var i=0; i<x.length; i++){
+									formattedSelection[columnObject.aliasToShow].values.push(x[i]);
+								}
 							}
 						}
 
@@ -785,9 +786,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.toggleTh = function(){
 			$scope.colorPickerPropertyTh.disabled = $scope.model.style.th.enabled;
 		}
-		
+
 		$scope.colorPickerPropertyTh = {format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select'), disabled:($scope.model.style.th && $scope.model.style.th.enabled === false)}
-		
+
 		$scope.colorPickerProperty={format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select')};
 
 		$scope.colorPickerPropertyEvenOddRows = {placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:!$scope.model.settings.alternateRows.enabled};

@@ -308,7 +308,17 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 							this.realtimeSelections.length = 0;
 						} else {
 							//save dataset and selections inside this array (that can be watched outside)
-							this.realtimeSelections.push({'datasetId':config.dataset.dsId, 'selections':selections});
+							var realtimeSelection = {'datasetId':config.dataset.dsId, 'selections':selections};
+							var found = false;
+							for(var i=0; i<this.realtimeSelections.length; i++){
+								if(this.realtimeSelections[i].datasetId == config.dataset.dsId){
+									this.realtimeSelections[i] = realtimeSelection;
+									found = true;
+								}
+							}
+							if(!found){
+								this.realtimeSelections.push(realtimeSelection);
+							}
 						}
 						return;
 					}

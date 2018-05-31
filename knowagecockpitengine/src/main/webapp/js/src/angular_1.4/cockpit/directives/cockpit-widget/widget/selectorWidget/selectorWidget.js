@@ -132,11 +132,22 @@ angular.module('cockpitModule')
 			var dates = [];
 			var dateFormat = sbiModule_config.clientServerTimestampFormat.replace("Y", "yyyy").replace("m", "MM").replace("d", "dd").replace("H", "HH").replace("i", "mm").replace("s", "ss");
 
-			for(var i=1; i<$scope.datasetRecords.rows.length; i++){
-				var dateString = $scope.datasetRecords.rows[i].column_1;
-				var dateMillis = sbiModule_dateServices.getDateFromFormat(dateString.split('.')[0], dateFormat).getTime();
-				if(startMillis <= dateMillis && dateMillis < endMillis){
-					dates.push(dateString);
+			var column;
+			for(var i=1; i<$scope.datasetRecords.metaData.fields.length; i++){
+				var field = $scope.datasetRecords.metaData.fields[i];
+				if(field.header == $scope.ngModel.content.selectedColumn.name){
+					column = field.name;
+					break;
+				}
+			}
+
+			if(column){
+				for(var i=1; i<$scope.datasetRecords.rows.length; i++){
+					var dateString = $scope.datasetRecords.rows[i][column];
+					var dateMillis = sbiModule_dateServices.getDateFromFormat(dateString.split('.')[0], dateFormat).getTime();
+					if(startMillis <= dateMillis && dateMillis < endMillis){
+						dates.push(dateString);
+					}
 				}
 			}
 
@@ -164,10 +175,17 @@ angular.module('cockpitModule')
 					if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1 ){
 						cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
 					}
-					if(newValue != oldValue && newValue.length > 0){
-						scope.itemList = scope.filterDataset(scope.itemList,scope.reformatSelections(newValue));
+					if($scope.isSelectedColumnTemporal()){
+						if(!newValue || newValue.length == 0){
+							$scope.clearStartDate();
+							$scope.clearEndDate();
+						}
 					}else{
-						angular.copy(scope.savedRows, scope.itemList);
+						if(newValue != oldValue && newValue.length > 0){
+							scope.itemList = scope.filterDataset(scope.datasetRecords,scope.reformatSelections(newValue));
+						}else{
+							angular.copy(scope.savedRows, scope.itemList);
+						}
 					}
 				}
 			}
@@ -240,6 +258,106 @@ angular.module('cockpitModule')
 			updateModel();
 		}
 
+		// reformatting the filter object to have an easier access on it
+		$scope.reformatFilters = function(){
+			var filters = {};
+			for(var f in $scope.ngModel.filters){
+				if($scope.ngModel.filters[f].filterVals.length > 0){
+					var columnObject = $scope.getColumnObjectFromName($scope.ngModel.content.columnSelectedOfDataset,$scope.ngModel.filters[f].colName);
+					var aliasToShow = columnObject.aliasToShow;
+					filters[aliasToShow] = {
+						"type":columnObject.fieldType,
+						"values":$scope.ngModel.filters[f].filterVals,
+						"operator":$scope.ngModel.filters[f].filterOperator
+					};
+				}
+			}
+			return filters;
+		};
+
+		// filtering the table for realtime dataset
+		$scope.filterDataset = function(dataset,selection){
+			if(dataset != undefined){
+				//using the reformatted filters
+				var filters = selection ? selection : $scope.reformatFilters();
+				for(var f in filters){
+					for(var d = dataset.length - 1; d >= 0; d--){
+						//if the column is an attribute check in filter
+						if (filters[f].type == 'ATTRIBUTE'){
+							var value = dataset[d][f];
+							if(typeof value == "number"){
+								value = String(value);
+							}
+							if (filters[f].values.indexOf(value)==-1){
+								dataset.splice(d,1);
+							}
+						//if the column is a measure cast it to number and check in filter
+						} else if (filters[f].type == 'MEASURE'){
+							var columnValue = Number(dataset[d][f]);
+							var filterValue = filters[f].values.map(function (x) {
+							    return Number(x);
+							});
+							//check operator
+							var operator = String(filters[f].operator);
+							if (operator == "="){
+								operator = "==";
+							}
+							var leftOperand = String(columnValue);
+							var rightOperand = String(filterValue[0]);
+							var expression =  leftOperand + operator + rightOperand;
+
+
+							//if (filterValue.indexOf(columnValue)==-1){
+							if (eval(expression) == false){
+								dataset.splice(d,1);
+							}
+						}
+					}
+				}
+			}
+			return dataset;
+		}
+
+		//reformatting the selections to have the same model of the filters
+		$scope.reformatSelections = function(realTimeSelections){
+			if ($scope.ngModel && $scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
+				var widgetDatasetId = $scope.ngModel.dataset.dsId;
+				var widgetDataset = cockpitModule_datasetServices.getDatasetById(widgetDatasetId)
+
+				for (var i=0; i< realTimeSelections.length; i++){
+					//search if there are selection on the widget's dataset
+					if (realTimeSelections[i].datasetId == widgetDatasetId){
+						var selections = realTimeSelections[i].selections;
+						var formattedSelection = {};
+						var datasetSelection = selections[widgetDataset.label];
+						for(var s in datasetSelection){
+							var columnObject = $scope.getColumnObjectFromName($scope.ngModel.content.columnSelectedOfDataset,s);
+							formattedSelection[columnObject.aliasToShow] = {
+									"values":[],
+									"type": columnObject.fieldType
+							};
+							for(var k in datasetSelection[s]){
+								// clean the value from the parenthesis ( )
+								var x = datasetSelection[s][k].replace(/[()]/g, '').replace(/['']/g, '').split(/[,]/g);
+								for(var i=0; i<x.length; i++){
+									formattedSelection[columnObject.aliasToShow].values.push(x[i]);
+								}
+							}
+						}
+
+					}
+				}
+				return formattedSelection;
+			}
+		}
+
+		$scope.getColumnObjectFromName = function(columnSelectedOfDataset, originalName){
+			for (i = 0; i < columnSelectedOfDataset.length; i++){
+				if (columnSelectedOfDataset[i].name === originalName){
+					return columnSelectedOfDataset[i];
+				}
+			}
+		}
 
 		var checkForSavedSelections = function (filtersParams,nature){
 			$scope.selections.length = 0;

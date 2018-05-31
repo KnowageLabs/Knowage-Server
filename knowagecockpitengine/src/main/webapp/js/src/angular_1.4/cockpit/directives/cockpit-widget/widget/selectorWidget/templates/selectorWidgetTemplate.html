@@ -75,7 +75,7 @@
 	
 		<div layout="row" layout-align="start center">
 			<md-input-container>
-				<label>{{translate.load("sbi.cockpit.widgets.selector.startdate")}}</label>
+				<label>{{translate.load(ngModel.settings.modalityValue=='multiValue' ? "sbi.cockpit.widgets.selector.startdate" : "sbi.cockpit.widgets.selector.singledate")}}</label>
 				<md-datepicker name="startDate" ng-model="startDate" md-max-date="ngModel.settings.modalityValue=='multiValue' ? endDate : null" md-open-on-focus></md-datepicker>
 			</md-input-container>
 			
