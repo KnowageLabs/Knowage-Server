@@ -78,7 +78,13 @@ public class JDBCAssociativeDatasetContainer extends AssociativeDatasetContainer
 			for (int i = 0; i < values.size(); i++) {
 				int parameterIndex = i + 1;
 				Object value = values.get(i);
-				if (java.util.Date.class.isAssignableFrom(value.getClass())) {
+				if (java.sql.Timestamp.class.isAssignableFrom(value.getClass())) {
+					java.sql.Timestamp timestamp = (java.sql.Timestamp) value;
+					stmt.setTimestamp(parameterIndex, timestamp);
+				} else if (java.sql.Date.class.isAssignableFrom(value.getClass())) {
+					java.sql.Date date = (java.sql.Date) value;
+					stmt.setDate(parameterIndex, date);
+				} else if (java.util.Date.class.isAssignableFrom(value.getClass())) {
 					java.util.Date date = (java.util.Date) value;
 					stmt.setDate(parameterIndex, new java.sql.Date(date.getTime()));
 				} else {

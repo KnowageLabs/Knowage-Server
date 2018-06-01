@@ -126,16 +126,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						var formattedSelection = {};
 						var datasetSelection = selections[widgetDataset.label];
 						for(var s in datasetSelection){
-							var columnObject = $scope.getColumnObjectFromName($scope.ngModel.content.columnSelectedOfDataset[widgetDatasetId],s);
-							formattedSelection[columnObject.alias] = {
-									"values":[],
-									"type": columnObject.fieldType
-							};
+							var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,s);
+							if (!columnObject){
+								columnObject = scope.getColumnObjectFromName(widgetDataset.metadata.fieldsMeta,s);
+							}
+
+							formattedSelection[columnObject.aliasToShow || columnObject.alias] = {"values":[], "type": columnObject.fieldType};
 							for(var k in datasetSelection[s]){
 								// clean the value from the parenthesis ( )
 								var x = datasetSelection[s][k].replace(/[()]/g, '').replace(/['']/g, '').split(/[,]/g);
 								for(var i=0; i<x.length; i++){
-									formattedSelection[columnObject.aliasToShow].values.push(x[i]);
+									formattedSelection[columnObject.aliasToShow || columnObject.alias].values.push(x[i]);
 								}
 							}
 						}
@@ -404,7 +405,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			layer.setZIndex(layerDef.order*1000);
 			layer.modalSelectionColumn = layerDef.modalSelectionColumn;
 			layer.hasShownDetails = layerDef.hasShownDetails;
-			if ($scope.map) 
+			if ($scope.map)
 				$scope.map.addLayer(layer); 			//add layer to ol.Map
 			else{
 				sbiModule_messaging.showInfoMessage("The map object isn't available for adding layer, please reload the document.", 'Title', 3000);
@@ -412,7 +413,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.hideWidgetSpinner();
 				}, 3000)
 			}
-				
+
 			$scope.addLayer(layerDef.name, layer);	//add layer to internal object
 			$scope.setLayerProperty (layerDef.name, 'geoColumn',geoColumn),
 			$scope.values[layerDef.name] = data; //add values to internal object
@@ -581,7 +582,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$timeout(function() {
 					$scope.hideWidgetSpinner();
 				}, 3000);
-				
+
 			});
     	}
 

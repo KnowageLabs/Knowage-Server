@@ -522,19 +522,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						var datasetSelection = selections[widgetDataset.label];
 						for(var s in datasetSelection){
 							var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,s);
-							formattedSelection[columnObject.aliasToShow] = {
-									"values":[],
-									"type": columnObject.fieldType
-							};
+							if (!columnObject){
+								columnObject = scope.getColumnObjectFromName(widgetDataset.metadata.fieldsMeta,s);
+							}
+
+							formattedSelection[columnObject.aliasToShow || columnObject.alias] = {"values":[], "type": columnObject.fieldType};
 							for(var k in datasetSelection[s]){
 								// clean the value from the parenthesis ( )
 								var x = datasetSelection[s][k].replace(/[()]/g, '').replace(/['']/g, '').split(/[,]/g);
 								for(var i=0; i<x.length; i++){
-									formattedSelection[columnObject.aliasToShow].values.push(x[i]);
+									formattedSelection[columnObject.aliasToShow || columnObject.alias].values.push(x[i]);
 								}
 							}
 						}
-
 					}
 				}
 				return formattedSelection;

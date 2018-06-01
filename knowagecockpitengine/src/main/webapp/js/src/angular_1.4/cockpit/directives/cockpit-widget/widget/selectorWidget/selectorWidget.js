@@ -116,7 +116,7 @@ angular.module('cockpitModule')
 				$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,dates);
 			}else if((!newStartDate && oldStartDate) || (!newEndDate && oldEndDate)){
 				var item = {};
-				item.aggregated = false;
+				item.aggregated = $scope.aggregated;
 				item.columnName = $scope.ngModel.content.selectedColumn.aliasToShow;
 				item.columnAlias = $scope.ngModel.content.selectedColumn.aliasToShow;
 				item.ds = $scope.ngModel.dataset.name;
@@ -331,20 +331,20 @@ angular.module('cockpitModule')
 						var formattedSelection = {};
 						var datasetSelection = selections[widgetDataset.label];
 						for(var s in datasetSelection){
-							var columnObject = $scope.getColumnObjectFromName($scope.ngModel.content.columnSelectedOfDataset,s);
-							formattedSelection[columnObject.aliasToShow] = {
-									"values":[],
-									"type": columnObject.fieldType
-							};
+							var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,s);
+							if (!columnObject){
+								columnObject = scope.getColumnObjectFromName(widgetDataset.metadata.fieldsMeta,s);
+							}
+
+							formattedSelection[columnObject.aliasToShow || columnObject.alias] = {"values":[], "type": columnObject.fieldType};
 							for(var k in datasetSelection[s]){
 								// clean the value from the parenthesis ( )
 								var x = datasetSelection[s][k].replace(/[()]/g, '').replace(/['']/g, '').split(/[,]/g);
 								for(var i=0; i<x.length; i++){
-									formattedSelection[columnObject.aliasToShow].values.push(x[i]);
+									formattedSelection[columnObject.aliasToShow || columnObject.alias].values.push(x[i]);
 								}
 							}
 						}
-
 					}
 				}
 				return formattedSelection;
