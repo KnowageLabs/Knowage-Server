@@ -214,7 +214,7 @@
 				var prop = {};
 				prop.value = row[c];
 				for (p in cols){
-					if (cols[p].alias == header){
+					if (cols[p] && cols[p].alias == header){
 						prop.type = cols[p].fieldType;
 						prop.aggregationSelected = ( cols[p].properties && cols[p].properties.aggregationSelected) ? cols[p].properties.aggregationSelected : '';
 						prop.thresholdsConfig =  ( cols[p].properties && cols[p].properties.thresholds) ? cols[p].properties.thresholds : null;
