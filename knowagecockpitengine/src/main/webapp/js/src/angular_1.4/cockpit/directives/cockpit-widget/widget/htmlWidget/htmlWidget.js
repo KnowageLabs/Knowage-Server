@@ -189,7 +189,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.replacer = function(match, p1, p2) {
-			p1=$scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)] ? $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)] : 'null';
+			p1=$scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)])!='undefined' ? $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)] : 'null';
 			return p1;
 		}
 		$scope.paramsReplacer = function(match, p1){
