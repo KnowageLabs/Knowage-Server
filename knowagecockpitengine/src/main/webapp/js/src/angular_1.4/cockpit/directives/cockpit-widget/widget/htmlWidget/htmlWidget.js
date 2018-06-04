@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				compile: function (tElement, tAttrs, transclude) {
 					return {
 						pre: function preLink(scope, element, attrs, ctrl, transclud) {
-							scope.showWidgetSpinner();
+							
 						},
 						post: function postLink(scope, element, attrs, ctrl, transclud) {
 							element.ready(function () {
@@ -58,8 +58,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.columnRegex = /(?:\[kn-column=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}(?:\s+row=[\'\"]{1}(\d*)[\'\"]{1})?\])/g;
 		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}\])/g;
 		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
-		$scope.gt = /(\<.*["].*)(>)(.*["].*\>)/g;
-		$scope.lt = /(\<.*["].*)(<)(.*["].*\>)/g;
+		$scope.gt = /(\<.*kn-.*=["].*)(>)(.*["].*\>)/g;
+		$scope.lt = /(\<.*kn-.*=["].*)(<)(.*["].*\>)/g;
 
 		$scope.refresh = function(element,width,height, datasetRecords,nature) {}
 
@@ -68,6 +68,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 * If there is a selected dataset the function calls the data rest service.
 		 */
 		$scope.reinit = function(){
+			$scope.showWidgetSpinner();
 			if($scope.ngModel.datasetId){
 				sbiModule_restServices.restToRootProject();
 				var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.datasetId);
@@ -110,7 +111,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				});
 			}else {
 				$scope.trustedCss = $sce.trustAsHtml('<style>'+$scope.ngModel.cssToRender+'</style>');
-				$scope.trustedHtml = $sce.trustAsHtml($scope.parsedHtml);
+				$scope.trustedHtml = $sce.trustAsHtml($scope.ngModel.htmlToRender);
+				$scope.hideWidgetSpinner();
 			}
 		}
 
@@ -126,7 +128,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.parseHtmlFunctions = function(rawHtml){
 			return $q(function(resolve, reject) {
 				var parser = new DOMParser()
-				var parsedHtml = parser.parseFromString(rawHtml, "text/xml");
+				var parsedHtml = parser.parseFromString(rawHtml, "text/html");
 				
 				var allElements = parsedHtml.getElementsByTagName('*');
 				var i=0;
@@ -156,23 +158,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 				    } i++;
 				} while (i<allElements.length);
-				    
-				  for (var j = 0, n = allElements.length; j < n; j++){
+				
+				var j = 0;
+				var nodesNumber = allElements.length;
+				do {
 					  if (allElements[j] && allElements[j].hasAttribute("kn-if")){
-					    	var condition = allElements[j].getAttribute("kn-if").replace($scope.columnRegex, $scope.replacer);
+					    	var condition = allElements[j].getAttribute("kn-if").replace($scope.columnRegex, $scope.ifConditionReplacer);
 					    	if(eval(condition)){
 					    		allElements[j].removeAttribute("kn-if");
 					    	}else{
 					    		allElements[j].parentNode.removeChild(allElements[j]);
+					    		j--;
 					    	}
 					    }
-				  }
-				  resolve(parsedHtml)
+					  j++;
+					  
+				 } while (j<nodesNumber);
+				
+				 resolve(parsedHtml)
 			})
 		}
 		
+		$scope.ifConditionReplacer = function(match, p1, p2){
+			if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)]){
+				p1 = typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)]) == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)]+'\'' : $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)];
+			}else {
+				p1 = 'null';
+			}
+			return p1;
+		}
+		
 		$scope.replacer = function(match, p1, p2) {
-			p1=$scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)]
+			p1=$scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)] ? $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)] : 'null';
 			return p1;
 		}
 		$scope.paramsReplacer = function(match, p1){
@@ -269,6 +286,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
 
 		$scope.saveConfiguration=function(){
+			      
 			 mdPanelRef.close();
 			 angular.copy($scope.newModel,model);
 			 finishEdit.resolve();
