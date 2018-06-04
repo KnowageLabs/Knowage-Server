@@ -46,7 +46,7 @@ public class CustomizedFunctionsReader {
 			if (propertyValue == null) {
 				logger.error("Config property KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS no defined");
 			} else {
-				if (propertyValue.equals("{}") || propertyValue.equals("[]")) {
+				if (propertyValue.equals("") || propertyValue.equals("{}") || propertyValue.equals("[]")) {
 					logger.debug("found KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS with empty value");
 					jsonObj = new JSONObject();
 				} else {
@@ -67,7 +67,7 @@ public class CustomizedFunctionsReader {
 		logger.debug("IN");
 		List<CustomizedFunction> toReturn = new ArrayList<CustomizedFunction>();
 
-		if (jsonObj != null) {
+		if (jsonObj != null && !jsonObj.toString().equals("{}")) {
 			// search for a key contained in current dbName (could be more than one for example (MySQL/MAria/DB)
 
 			String keyToSearch = null;
@@ -78,6 +78,7 @@ public class CustomizedFunctionsReader {
 				}
 			}
 
+			logger.debug("search for DB " + keyToSearch);
 			if (keyToSearch != null) {
 
 				JSONArray funcArray = jsonObj.optJSONArray(keyToSearch);

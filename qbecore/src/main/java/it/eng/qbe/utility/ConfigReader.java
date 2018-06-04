@@ -55,7 +55,7 @@ public class ConfigReader extends SimpleRestClient {
 
 		String respString = resp.readEntity(String.class);
 
-		if (respString != null) {
+		if (respString != null && !respString.equals("")) {
 			JSONObject json = new JSONObject(respString);
 			toReturn = json.optString("data");
 		}
