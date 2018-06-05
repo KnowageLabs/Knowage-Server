@@ -103,7 +103,11 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 	 * Flag that servers as indicator for toggling between grid and list view of documents.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	$scope.showGridView = true;
+	if(sbiModule_config.workspaceShowGrid != undefined &&
+			sbiModule_config.workspaceShowGrid == "false")
+		$scope.showGridView = false;
+	else
+		$scope.showGridView = true;
 
 	// @author Davide Vernassa toggle navbar
 		$scope.toggleLeftNav = function(){
@@ -263,8 +267,8 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 	 	{value:"\"",name:"\""},
 	 	{value:"\'",name:"\'"}
  	];
-	
-	$scope.dateFormatTypes = 
+
+	$scope.dateFormatTypes =
 	[
 	 	{value:"dd/MM/yyyy",name:"dd/MM/yyyy"},
 	 	{value:"MM/dd/yyyy",name:"MM/dd/yyyy"},
@@ -274,10 +278,10 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 	 	{value:"yyyy:MM:dd",name:"yyyy:MM:dd"},
 	 	{value:"dd.MM.yyyy",name:"dd.MM.yyyy"},
 	 	{value:"MM.dd.yyyy",name:"MM.dd.yyyy"}
-	
+
 	];
-	
-	
+
+
 
 	/**
 	 * Keep and change the values for three comboboxes that appear when user uploads a CSV file when creating a new Dataset.
@@ -294,7 +298,7 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 	$scope.chooseEncoding = function(encodingObj) {
 		$scope.dataset.csvEncoding = encodingObj;
 	}
-	
+
 	$scope.chooseDateFormat = function(dateFormat) {
 		$scope.dataset.dateFormat = dateFormat;
 	}
