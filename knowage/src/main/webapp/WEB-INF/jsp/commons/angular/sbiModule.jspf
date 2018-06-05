@@ -45,6 +45,7 @@ sbiM.factory('sbiModule_config',function(){
         sessionParametersStateKey: '<%= SpagoBIConstants.SESSION_PARAMETER_STATE_OBJECT_KEY %>',
         isStatePersistenceEnabled: <%= SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled")  %>,
         layerFileMaxSize: '<%= GeneralUtilities.getGisLayerFileMaxSize() %>',
+        workspaceShowGrid: '<%= SingletonConfig.getInstance().getConfigValue("KNOWAGE.WORKSPACE_SHOW_GRID") %>',
                 
         
 		<%-- <%if(parametersStatePersistenceEnabled != null) {%> --%>
