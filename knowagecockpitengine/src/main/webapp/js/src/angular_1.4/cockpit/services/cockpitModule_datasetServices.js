@@ -1421,7 +1421,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		//setting the number precision when format is not present
 		if (numbersModel && numbersModel.precision && !numbersModel.format) {
-			output = value.toFixed(precision);
+			output = parseFloat(value).toFixed(numbersModel.precision);
 		}
 
 		if (numbersModel && numbersModel.format){
