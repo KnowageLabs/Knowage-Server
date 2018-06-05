@@ -344,7 +344,7 @@ public class ExecutionProxy {
 			int statusCode = client.executeMethod(httpMethod);
 			logger.debug("statusCode=" + statusCode);
 			response = httpMethod.getResponseBody();
-			logger.debug("response=" + new String(response));
+
 			Header headContetType = httpMethod.getResponseHeader("Content-Type");
 			if (headContetType != null) {
 				returnedContentType = headContetType.getValue();
