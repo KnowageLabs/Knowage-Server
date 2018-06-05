@@ -67,6 +67,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.IJavaClassLov;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.JavaClassDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
+import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ScriptDetail;
@@ -220,6 +221,34 @@ public class LovResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
 
+	}
+
+	@GET
+	@Path("{id}/preview")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
+	public List previewLovValues(@PathParam("id") Integer lovId) {
+		logger.debug("IN: input id = " + lovId);
+
+		IModalitiesValueDAO modalitiesValueDAO;
+		ModalitiesValue listOfValues = null;
+		List lovValues = new ArrayList();
+		try {
+
+			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
+			modalitiesValueDAO.setUserProfile(getUserProfile());
+			listOfValues = modalitiesValueDAO.loadModalitiesValueByID(lovId);
+			String lovProv = listOfValues.getLovProvider();
+			ILovDetail lovProvDet = null;
+			lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+			String lovResult = lovProvDet.getLovResult(getUserProfile(), null, null, null);
+			LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
+			lovValues = lovResultHandler.getValues(lovProvDet.getValueColumnName());
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to get lov details", e);
+		}
+
+		return lovValues;
 	}
 
 	@POST
