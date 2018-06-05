@@ -155,7 +155,9 @@ public class DataSource implements Serializable, IDataSource {
 		sbd.setSchemaAttribute(schemaAttribute);
 		sbd.setReadOnly(readOnly);
 		sbd.setWriteDefault(writeDefault);
-		sbd.setJdbcPoolConfiguration((String) new JDBCDataSourcePoolConfigurationJSONSerializer().serialize(jdbcPoolConfiguration));
+		if(jdbcPoolConfiguration != null) {
+			sbd.setJdbcPoolConfiguration((String) new JDBCDataSourcePoolConfigurationJSONSerializer().serialize(jdbcPoolConfiguration));
+		}
 		return sbd;
 	}
 
