@@ -4110,7 +4110,7 @@ current_timestamp,
 current_timestamp,
 '6.2.0',	
 '6.2.0',			
-'DEFAULT_TENANT',
+null,
 'GENERIC_CONFIGURATION'
 );     
    
@@ -4147,3 +4147,12 @@ COMMIT;
 
 -- 29.05.2018 Francesco Lucchi
 ALTER TABLE SBI_DATA_SET ADD UNIQUE XAK2SBI_DATA_SET (NAME, VERSION_NUM, ORGANIZATION);
+
+-- 01.06.2018 Giulio Gavardi
+
+INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, VALUE_TYPE_ID, CATEGORY, USER_IN, TIME_IN) VALUES 
+((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_CONFIG'), 
+'KNOWAGE.WORKSPACE_SHOW_GRID', 'Show grid view as default in workspace', 'Show grid view as default in workspace', true, 'true',
+(select VALUE_ID from SBI_DOMAINS where VALUE_CD = 'STRING' AND DOMAIN_CD = 'PAR_TYPE'), 'GENERIC_CONFIGURATION', 'biadmin', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
+commit;
