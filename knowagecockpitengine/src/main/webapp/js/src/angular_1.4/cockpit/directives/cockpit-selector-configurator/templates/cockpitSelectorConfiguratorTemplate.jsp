@@ -5,7 +5,7 @@
      		<md-input-container class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.widgets.selector.column");}}</label>
          		<md-select ng-model="model.content.selectedColumn" ng-model-options="{trackBy: '$value.alias'}" ng-disabled="!model.dataset.dsId">
-          			<md-option ng-repeat="column in model.content.copyColumnSelectedOfDataset" ng-value="column" >
+          			<md-option ng-repeat="column in model.content.copyColumnSelectedOfDataset | filter : {fieldType:'ATTRIBUTE'}" ng-value="column" >
                			{{column.alias}}
           			</md-option>
       			</md-select>
