@@ -19,10 +19,17 @@ package it.eng.spagobi.profiling.bo;
 
 import java.io.Serializable;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BooleanJsonSerializer;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BooleanToShortJSONDeserializer;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.services.validation.Alphanumeric;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
@@ -36,10 +43,22 @@ public class ProfileAttribute implements Serializable {
 	@Size(max = 255)
 	private String attributeName = "";
 
-	@NotEmpty
 	@ExtendedAlphanumeric
 	@Size(max = 500)
 	private String attributeDescription = "";
+	@JsonDeserialize(using = BooleanToShortJSONDeserializer.class)
+	@JsonSerialize(using = BooleanJsonSerializer.class)
+	private Short allowUser;
+	@JsonDeserialize(using = BooleanToShortJSONDeserializer.class)
+	@JsonSerialize(using = BooleanJsonSerializer.class)
+	private Short multivalue;
+	@JsonDeserialize(using = BooleanToShortJSONDeserializer.class)
+	@JsonSerialize(using = BooleanJsonSerializer.class)
+	private Short syntax;
+	private Integer lovId;
+
+	@Enumerated(EnumType.STRING)
+	private ProfileAttributesValueTypes value;
 
 	public ProfileAttribute() {
 	}
@@ -48,6 +67,11 @@ public class ProfileAttribute implements Serializable {
 		this.attributeId = sa.getAttributeId();
 		this.attributeName = sa.getAttributeName();
 		this.attributeDescription = sa.getDescription();
+		this.allowUser = sa.getAllowUser();
+		this.lovId = sa.getLovId();
+		this.syntax = sa.getSyntax();
+		this.multivalue = sa.getMultivalue();
+		this.value = sa.getValue();
 	}
 
 	public Integer getAttributeId() {
@@ -72,6 +96,46 @@ public class ProfileAttribute implements Serializable {
 
 	public void setAttributeDescription(String attributeDescription) {
 		this.attributeDescription = attributeDescription;
+	}
+
+	public Short getAllowUser() {
+		return allowUser;
+	}
+
+	public void setAllowUser(Short allowUser) {
+		this.allowUser = allowUser;
+	}
+
+	public Short getMultivalue() {
+		return multivalue;
+	}
+
+	public void setMultivalue(Short multivalue) {
+		this.multivalue = multivalue;
+	}
+
+	public Short getSyntax() {
+		return syntax;
+	}
+
+	public void setSyntax(Short syntax) {
+		this.syntax = syntax;
+	}
+
+	public Integer getLovId() {
+		return lovId;
+	}
+
+	public void setLovId(Integer lovId) {
+		this.lovId = lovId;
+	}
+
+	public ProfileAttributesValueTypes getValue() {
+		return value;
+	}
+
+	public void setValue(ProfileAttributesValueTypes value) {
+		this.value = value;
 	}
 
 }

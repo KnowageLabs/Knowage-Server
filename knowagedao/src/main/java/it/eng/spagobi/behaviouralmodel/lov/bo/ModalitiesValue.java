@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,21 +11,29 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-
 import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import it.eng.spagobi.json.Xml;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import sun.misc.BASE64Encoder;
 
 /**
  * Defines a Value object for the Predefined LOV
@@ -48,6 +56,7 @@ public class ModalitiesValue implements Serializable {
 	 *
 	 */
 	private static final long serialVersionUID = 3600109325988207485L;
+	static protected Logger logger = Logger.getLogger(ModalitiesValue.class);
 
 	private Integer id;
 	@NotNull
@@ -60,6 +69,8 @@ public class ModalitiesValue implements Serializable {
 	@NotNull
 	private String iTypeCd = "";
 	private String iTypeId = "";
+
+	private final String lovProviderJSON = "";
 
 	/**
 	 * TODO: [IGNORED] This one is always an empty string !!!
@@ -150,6 +161,24 @@ public class ModalitiesValue implements Serializable {
 	 *            The lovProvider to set.
 	 */
 	public void setLovProvider(String lovProvider) {
+		this.lovProvider = lovProvider;
+	}
+
+	@JsonProperty(value = "lovProviderJSON")
+	public String getLovProviderJSON() {
+		String converted = convertSpecialChars(lovProvider);
+		String result = "";
+		try {
+			result = Xml.xml2json(converted);
+		} catch (TransformerFactoryConfigurationError | TransformerException e) {
+			logger.error("Error while transforming logProvider xmlString to JSON Object", e);
+		}
+
+		return result;
+	}
+
+	@JsonProperty(value = "lovProviderJSON")
+	public void setLovProviderJSON(String lovProvider) {
 		this.lovProvider = lovProvider;
 	}
 
@@ -288,17 +317,50 @@ public class ModalitiesValue implements Serializable {
 	public void setDataset(SbiDataSet dataset) {
 		this.dataset = dataset;
 	}
-	
-	  @Override
-	  public boolean equals(Object v) {
-	        boolean retVal = false;
 
-	        if (v instanceof ModalitiesValue){
-	        	ModalitiesValue ptr = (ModalitiesValue) v;
-	            retVal = ptr.id.longValue() == this.id;
-	        }
+	@Override
+	public boolean equals(Object v) {
+		boolean retVal = false;
 
-	     return retVal;
-	  }
-	
+		if (v instanceof ModalitiesValue) {
+			ModalitiesValue ptr = (ModalitiesValue) v;
+			retVal = ptr.id.longValue() == this.id;
+		}
+
+		return retVal;
+	}
+
+	public String convertSpecialChars(String provider) {
+
+		if (provider.contains("<SCRIPT>")) {
+
+			provider = provider.replace("<SCRIPT><![CDATA[", "<SCRIPT>");
+			provider = provider.replace("]]></SCRIPT>", "</SCRIPT>");
+			int pos1 = provider.indexOf("<SCRIPT>");
+			int pos2 = provider.indexOf("</SCRIPT>");
+			String content = provider.substring(pos1 + 8, pos2);
+			content = StringEscapeUtils.unescapeHtml4(content);
+			BASE64Encoder bASE64Encoder = new BASE64Encoder();
+			String encoded = bASE64Encoder.encode(content.getBytes());
+			provider = provider.substring(0, pos1 + 8) + encoded + provider.substring(pos2);
+
+		}
+
+		if (provider.contains("<STMT>")) {
+
+			provider = provider.replace("<STMT><![CDATA[", "<STMT>");
+			provider = provider.replace("]]></STMT>", "</STMT>");
+			int pos1 = provider.indexOf("<STMT>");
+			int pos2 = provider.indexOf("</STMT>");
+			String content = provider.substring(pos1 + 6, pos2);
+			content = StringEscapeUtils.unescapeHtml4(content);
+			BASE64Encoder bASE64Encoder = new BASE64Encoder();
+			String encoded = bASE64Encoder.encode(content.getBytes());
+			provider = provider.substring(0, pos1 + 6) + encoded + provider.substring(pos2);
+
+		}
+
+		return provider;
+
+	}
 }

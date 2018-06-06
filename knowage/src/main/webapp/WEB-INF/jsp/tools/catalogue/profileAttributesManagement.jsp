@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
-
+<%@include file="/WEB-INF/jsp/tools/catalogue/profileAtributesImport.jspf"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="profileAttributesManagementModule">
 <head>
@@ -94,7 +94,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        							<md-input-container class="md-block">
        								<label>{{translate.load("sbi.attributes.headerDescr")}}</label>
        								<input 	ng-model="selectedAttribute.attributeDescription"
-       										required
        										name="description"
         									ng-change="setDirty()"
         									ng-maxlength="500"
@@ -105,6 +104,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  								</div>
         						</md-input-container>
       						</div>
+      						<div flex=100>
+       							<md-input-container class="md-block">
+       							<label>LOV</label>
+       							
+       								<md-select placeholder="LOV to be used to retrieve admissible values" ng-model="selectedAttribute.lovId" ng-click="getColumnsById(selectedAttribute.lovId)">
+       								<label></label>
+       								<md-option ></md-option>
+       								<md-option ng-value="lov.id"  ng-repeat="lov in lovs track by $index">{{lov.name}}</md-option>
+									</md-select>
+								</md-input-container>
+							</div>
+							<div flex=100>
+								<md-input-container class="md-block">
+								<label>Data type</label>
+       								<md-select placeholder="Chose type of data to be stored" ng-change="setDirty(selectedAttribute)"   ng-model="selectedAttribute.value.name">
+       								<label></label>
+       								<md-option ng-value="dataType.name" ng-repeat="dataType in enumAsArrayOfObjects track by $index">{{dataType.type}}</md-option>
+									</md-select>
+								</md-input-container>		
+							</div>
+        						<div layout="row ">
+				                    <md-switch name="multivalue" ng-model="selectedAttribute.multivalue " ng-change="setDirty()"  flex="33 ">
+				                         <md-icon md-font-icon="fa fa-list"></md-icon>Multivalue
+				                    </md-switch>           
+				                    <md-switch name="allowUser" ng-model="selectedAttribute.allowUser " ng-change="setDirty()"  flex="33 ">
+				                        <md-icon md-font-icon="fa fa-eye"></md-icon>Allow user to see field
+				                    </md-switch>
+				                     </div>	
+				                 
+				                     <md-radio-group layout="column" ng-if="selectedAttribute.lovId && selectedAttribute.multivalue" name="syntax" ng-model="selectedAttribute.syntax " ng-change="setDirty()"  flex>
+									     <label>Syntax to be used for multivalue</label><br>
+									     <div layout="row" >
+										     <div flex="50">
+											 	<md-radio-button ng-value="false" >	Simple </md-radio-button>
+										  			<h5 ng-if="selectedAttribute.syntax == false">*Simple = ('Italy','USA','Serbia', ...)</h5>
+										 	 </div>
+										 	 <div flex="50">
+										     	<md-radio-button ng-value="true"> Complex </md-radio-button> 
+										  			<h5 ng-if="selectedAttribute.syntax == true">*Complex = {;{Italy;USA;Serbia; ...}}</h5>
+										  	 </div>
+									  	</div>	
+									</md-radio-group>				               	
 				</md-card>
 			</form>
 		</div>	
