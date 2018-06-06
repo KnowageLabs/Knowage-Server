@@ -653,7 +653,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						columns[k].text = {"enabled":true};
 					}
 				}else if(columns[k].visType == "Chart") {
-					if(!columns[k].barchart.enabled) columns[k].barchart.enabled=true;
+					if(!columns[k].barchart || !columns[k].barchart.enabled) columns[k].barchart = {'enabled':true};
 					columns[k].barchart.maxValue = columns[k].barchart.maxValue ? columns[k].barchart.maxValue : 100;
 					delete columns[k].text;
 				}else if(columns[k].visType == "Text & Chart") {

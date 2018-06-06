@@ -41,7 +41,7 @@
 	                	<span ng-if="column.type != 'java.lang.Double'">	{{row[column.aliasToShow]}} </span>
 	                </md-tooltip>
 					<div class="cellContainer" ng-style="::getContainerStyle(column)">
-		                <span ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex-50':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
+		                <span ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
 			                <span ng-if="column.style.prefix">{{column.style.prefix}}</span> 
 			                <span ng-if="column.type == 'java.lang.Double'">	{{row[column.aliasToShow] | number:1}} </span>
 			                <span ng-if="column.type != 'java.lang.Double'">	{{row[column.aliasToShow]}} </span>
@@ -49,7 +49,7 @@
 		                </span>
 		                <i  class="fa fa-search showFullContentIcon" ng-if="column.style.maxChars!= '' && row[column.aliasToShow].length > column.style.maxChars" ng-click="showFullContent($event,row[column.aliasToShow])"></i>
 		                    
-		                <div class="barChart" ng-if="column.barchart && column.barchart != {}" flex ng-class="{'flex-50':column.text.enabled}">
+		                <div class="barChart" ng-if="(column.visType == 'Chart' || column.visType == 'Text & Chart')  && column.barchart && column.barchart != {}" flex ng-class="{'flex':column.text.enabled}">
 		                    <div class="progressTrack" ng-style="{'height':column.barchart.style['height']}">
 		                        <div class="progressFill" ng-style="{'height':column.barchart.style['height'],'line-height':column.barchart.style['height'],'width':getBarChartFill(row[column.aliasToShow],column.barchart.minValue,column.barchart.maxValue),'background-color':column.barchart.style['background-color'], 'color':column.barchart.style['color']}">
 		                        </div>

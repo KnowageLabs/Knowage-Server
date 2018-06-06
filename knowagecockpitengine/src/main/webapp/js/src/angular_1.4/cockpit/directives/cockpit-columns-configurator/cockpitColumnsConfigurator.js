@@ -255,7 +255,7 @@
 					parent : angular.element(document.body),
 					clickOutsideToClose:true,
 					escapeToClose :true,
-					preserveScope: true,
+					preserveScope: false,
 					autoWrap:false,
 					fullscreen: true,
 					locals:{model:$scope.model, selectedColumn : $scope.selectedColumn},
@@ -455,7 +455,7 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	}
 
 
-	$scope.$watch("selectedColumn.visType",function(newValue, oldValue){
+	$scope.changeVisType = function(){
 		if($scope.selectedColumn.visType==undefined){
 			$scope.selectedColumn.visType="Text";
 		}else if($scope.selectedColumn.visType=="Chart"){
@@ -467,8 +467,7 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 		}else if($scope.selectedColumn.visType=='Icon only'){
 			$scope.selectedColumn.text.enabled=false;
 		}
-
-	})
+	}
 
 
 
