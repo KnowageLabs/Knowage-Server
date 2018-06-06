@@ -949,7 +949,7 @@ public class DatasetManagementAPI {
 			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
 		IDataSource dataSource = dataSet.getDataSource();
 		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
-		String tableName = "(" + querableBehaviour.getStatement() + ") T";
+		String tableName = "(" + querableBehaviour.getStatement().replace(";", "") + ") T";
 		return queryDataset(dataSet, dataSource, projections, tableName, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 	}
 
