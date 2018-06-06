@@ -260,9 +260,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 				var dsRecords = null;
 				if(nature=='init' || dataset && (!dataset.isRealtime || !dataset.useCache)){
-					dsRecords = this.loadDatasetRecords(config,options, config.type == "selector");
+					dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, config.type == "selector");
 				}
-				
+
 				if(dsRecords == null){
 					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
 				}else{
