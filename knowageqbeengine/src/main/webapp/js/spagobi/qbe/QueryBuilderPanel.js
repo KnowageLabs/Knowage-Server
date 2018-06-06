@@ -1116,7 +1116,8 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 					entity: node.attributes.attributes.entity,
 					field: node.attributes.attributes.field,
 					alias: node.attributes.attributes.field,
-					longDescription: node.attributes.attributes.longDescription
+					longDescription: node.attributes.attributes.longDescription,
+					customFunction: node.attributes.customFunction
 			};
 
 			Ext.apply(field, recordBaseConfig);

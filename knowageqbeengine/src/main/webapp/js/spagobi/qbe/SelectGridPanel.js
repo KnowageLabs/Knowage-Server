@@ -77,6 +77,7 @@ Sbi.qbe.SelectGridPanel = function(config) {
 	this.initGridListeners(c);
 
 
+
 	Ext.apply(c, {
 		layout: 'fit'
 		/*
@@ -118,6 +119,12 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 		 fields: ['funzione', 'nome', 'descrizione'],
 		 data: Sbi.constants.qbe.SELECT_CLAUSE_AGGREGATION_FUNCTION
 	 })
+
+	, aggregationFunctionsStoreCalculatedField:  new Ext.data.SimpleStore({
+		fields: ['funzione', 'nome', 'descrizione'],
+		data: Sbi.constants.qbe.SELECT_CLAUSE_AGGREGATION_FUNCTION_CALCULATED_FIELD
+	})
+
 
 	, temporalOperandStore:  new Ext.data.SimpleStore({
 	     fields: ['operand', 'nome', 'descrizione'],
@@ -184,8 +191,29 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 		return field;
 	}
 
+	, setAggregationFunctions : function(field){
+		// TODO substitute index 4 with another way to retrieve function column
+		var colFunction = this.cm.getColumnById( 4 );
+		if(colFunction){
+			if(
+					field &&
+					(field.type == 'inline.calculated.field' ||
+							(field.customFunction != undefined && field.customFunction != "")
+							)
+			){
+				colFunction.editor.bindStore(this.aggregationFunctionsStoreCalculatedField);
+			}
+			else{
+				colFunction.editor.bindStore(this.aggregationFunctionsStore);
+			}
+		}
+	}
+
 	, addField : function(field) {
 		field = field || {};
+
+		//this.setAggregationFunctions(field);
+
 		field = Ext.apply(this.createField(), field || {});
 		var record = new this.Record( field );
 		this.grid.store.add(record);
@@ -948,6 +976,13 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 	       	} else if(record.data.type === Sbi.constants.qbe.FIELD_TYPE_CALCULATED) {
 	       		this.showCalculatedFieldWizard(record);
 	       	}
+	     }, this);
+
+		this.grid.on("rowclick", function(grid,  rowIndex, e){
+	    	var row;
+	       	var record = grid.getStore().getAt( rowIndex );
+	       	this.setAggregationFunctions(record.data);
+
 	     }, this);
 
 		this.grid.on("mouseover", function(e, t){
