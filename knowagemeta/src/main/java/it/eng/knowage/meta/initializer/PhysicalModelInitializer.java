@@ -53,6 +53,7 @@ import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.util.JDBCTypeMapper;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.bo.serializer.JDBCDataSourcePoolConfigurationJSONSerializer;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
@@ -77,7 +78,6 @@ public class PhysicalModelInitializer {
 		setPropertiesInitializer(new PhysicalModelPropertiesFromFileInitializer());
 
 	}
-	
 
 	/**
 	 * @return the crossReferenceAdapter
@@ -86,14 +86,13 @@ public class PhysicalModelInitializer {
 		return crossReferenceAdapter;
 	}
 
-
 	/**
-	 * @param crossReferenceAdapter the crossReferenceAdapter to set
+	 * @param crossReferenceAdapter
+	 *            the crossReferenceAdapter to set
 	 */
 	public void setCrossReferenceAdapter(ECrossReferenceAdapter crossReferenceAdapter) {
 		this.crossReferenceAdapter = crossReferenceAdapter;
 	}
-
 
 	public PhysicalModel initializeLigth(PhysicalModel originalPM, List<String> selectedTables, IDataSource dataSource) {
 		PhysicalModel model;
@@ -216,6 +215,12 @@ public class PhysicalModelInitializer {
 			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME, ds.getLabel());
 			logger.debug("PhysicalModel Property: Connection databasename is [{}] "
 					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME).getValue());
+
+			String jdbcPoolConfig = (String) new JDBCDataSourcePoolConfigurationJSONSerializer().serialize(ds.getJdbcPoolConfiguration());
+
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JDBC_POOL_CONFIG, jdbcPoolConfig);
+			logger.debug("PhysicalModel Property: Connection jdbcpoolconfiguration is [{}] "
+					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JDBC_POOL_CONFIG).getValue());
 
 			// Quote string identification
 			String quote;
@@ -1264,7 +1269,7 @@ public class PhysicalModelInitializer {
 					PhysicalModel physicalModel = originalPhysicalColumn.getTable().getModel();
 					physicalModel.getPrimaryKeys().remove(primaryKey);
 					// remove inverse reference (if any)
-					//ModelSingleton modelSingleton = ModelSingleton.getInstance();
+					// ModelSingleton modelSingleton = ModelSingleton.getInstance();
 					ECrossReferenceAdapter adapter = getCrossReferenceAdapter();
 					Collection<Setting> settings = adapter.getInverseReferences(primaryKey, true);
 					for (Setting setting : settings) {
@@ -1325,7 +1330,7 @@ public class PhysicalModelInitializer {
 		physicalModel.getForeignKeys().remove(physicalForeignKey);
 
 		// remove inverse references (if any)
-		//ModelSingleton modelSingleton = ModelSingleton.getInstance();
+		// ModelSingleton modelSingleton = ModelSingleton.getInstance();
 		ECrossReferenceAdapter adapter = getCrossReferenceAdapter();
 		Collection<Setting> settings = adapter.getInverseReferences(physicalForeignKey, true);
 		for (Setting setting : settings) {

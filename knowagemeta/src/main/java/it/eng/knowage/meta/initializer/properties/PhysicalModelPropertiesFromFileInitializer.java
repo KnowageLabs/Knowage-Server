@@ -17,17 +17,6 @@
  */
 package it.eng.knowage.meta.initializer.properties;
 
-import it.eng.knowage.meta.initializer.InitializationException;
-import it.eng.knowage.meta.model.Model;
-import it.eng.knowage.meta.model.ModelFactory;
-import it.eng.knowage.meta.model.ModelObject;
-import it.eng.knowage.meta.model.ModelProperty;
-import it.eng.knowage.meta.model.ModelPropertyCategory;
-import it.eng.knowage.meta.model.ModelPropertyType;
-import it.eng.knowage.meta.model.physical.PhysicalColumn;
-import it.eng.knowage.meta.model.physical.PhysicalModel;
-import it.eng.knowage.meta.model.physical.PhysicalTable;
-
 import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -45,6 +34,17 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import it.eng.knowage.meta.initializer.InitializationException;
+import it.eng.knowage.meta.model.Model;
+import it.eng.knowage.meta.model.ModelFactory;
+import it.eng.knowage.meta.model.ModelObject;
+import it.eng.knowage.meta.model.ModelProperty;
+import it.eng.knowage.meta.model.ModelPropertyCategory;
+import it.eng.knowage.meta.model.ModelPropertyType;
+import it.eng.knowage.meta.model.physical.PhysicalColumn;
+import it.eng.knowage.meta.model.physical.PhysicalModel;
+import it.eng.knowage.meta.model.physical.PhysicalTable;
+
 /**
  * @author cortella
  *
@@ -60,6 +60,7 @@ public class PhysicalModelPropertiesFromFileInitializer implements IPropertiesIn
 	public static final String CONNECTION_DATABASENAME = "connection.databasename";
 	public static final String CONNECTION_DRIVER = "connection.driver";
 	public static final String CONNECTION_DATABASE_QUOTESTRING = "connection.databasequotestring";
+	public static final String CONNECTION_JDBC_POOL_CONFIG = "connection.jdbcpoolconfiguration";
 
 	public static final String IS_DELETED = "structural.deleted";
 
