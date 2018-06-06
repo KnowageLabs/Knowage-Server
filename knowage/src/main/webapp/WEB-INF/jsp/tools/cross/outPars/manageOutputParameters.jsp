@@ -100,7 +100,7 @@ var objectId = <%=objectId%>;
 					
 <!-- 					TO-DO add required flug to select. issure on version 1.1.0 rc5  -->
 						<md-select ng-model="ctrl.detail.type" ng-model-options="{trackBy: '$value.valueId'}" >
-				        	<md-option ng-repeat="l in ctrl.typeList" ng-value=l> {{l.translatedValueName}} </md-option>
+				        	<md-option ng-repeat="l in ctrl.typeList  | filter: {valueCd:'!DATE_RANGE'}"  ng-value=l> {{l.translatedValueName}}</md-option>
 				        </md-select>
 					</md-input-container>
 					<md-input-container ng-if="ctrl.detail.type && ctrl.detail.type.valueCd=='DATE'"> <label>{{translate.load("sbi.outputparameter.format");}}</label> 
