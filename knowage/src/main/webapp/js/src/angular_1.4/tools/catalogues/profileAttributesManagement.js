@@ -257,4 +257,4 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 		  };
 
 
-}}
+}
