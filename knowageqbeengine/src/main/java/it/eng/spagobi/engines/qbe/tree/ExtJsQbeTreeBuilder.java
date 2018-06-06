@@ -290,23 +290,14 @@ public class ExtJsQbeTreeBuilder {
 			JSONObject jsObject = getFieldNode(entity, field);
 
 			// // add custom function if present
-			// try {
-			// if (field.getProperties().get("customFunction") != null && !field.getProperties().get("customFunction").equals("")) {
-			// // String uniqueName = field.getUniqueName();
-			// // String customFunctionS = field.getProperties().get("customFunction").toString();
-			// // CustomFunction customFunction = new CustomFunction(customFunctionS);
-			// // String nameFieldApplied = customFunction.apply(uniqueName);
-			// // JSONObject attObj = jsObject.getJSONObject("attributes");
-			// // attObj.put("field", nameFieldApplied);
-			// //
-			// // field.setName(nameFieldApplied);
-			// // jsObject.put("customFunction", customFunction);
-			// String customFunction = field.getProperties().get("customFunction").toString();
-			// jsObject.put("customFunction", customFunction);
-			// }
-			// } catch (JSONException e) {
-			// logger.error("Error in writing custon function", e);
-			// }
+			try {
+				if (field.getProperties().get("customFunction") != null && !field.getProperties().get("customFunction").equals("")) {
+					String customFunction = field.getProperties().get("customFunction").toString();
+					jsObject.put("customFunction", customFunction);
+				}
+			} catch (JSONException e) {
+				logger.error("Error in writing custon function", e);
+			}
 
 			Boolean isARelation = (Boolean) field.getProperties().get("relation");
 			if (jsObject != null && (isARelation == null || !isARelation)) {
