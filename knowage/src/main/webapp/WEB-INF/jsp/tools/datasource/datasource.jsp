@@ -22,15 +22,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
+<%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
+
+
 <%
 	Boolean superadmin =(Boolean)((UserProfile)userProfile).getIsSuperadmin();
+	boolean isAdmin = UserUtilities.isAdministrator(userProfile);
 %>
 
 <script>
 	var superadmin = <%= superadmin %>;
+	var isAdmin = <%= isAdmin %>;
 </script>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -49,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body class="bodyStyle kn-dataSource" ng-controller="dataSourceController as ctrl">
 	<angular-list-detail  show-detail="showMe">
 
-	 	<list label='translate.load("sbi.ds.dataSource")' new-function="createNewDatasource" show-new-button="<%= superadmin %>">
+	 	<list label='translate.load("sbi.ds.dataSource")' new-function="createNewDatasource" show-new-button="<%= isAdmin %>">
 			<angular-table
 						flex
 						id="dataSourceList"
