@@ -199,11 +199,11 @@
 					
 				</md-tab>
 				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.cross')}}" ng-if="user.isTechnicalUser == 'true'">
-					<cockpit-cross-configurator ng-if="selectedTab.tab ==2" widget ng-cloak ng-model="model.cross">
+					<cockpit-cross-configurator ng-if="selectedTab.tab ==2" widget ng-cloak ng-model="model.cross"></cockpit-cross-configurator>
 				</md-tab>
 
 				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}">
-					<cockpit-filters-configuration ng-model-shared="model">
+					<cockpit-filters-configuration ng-model-shared="model"></cockpit-filters-configuration>
 				</md-tab>
 				
 			</md-tabs>

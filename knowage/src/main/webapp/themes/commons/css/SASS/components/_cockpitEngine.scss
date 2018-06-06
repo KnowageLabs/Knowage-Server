@@ -1022,6 +1022,9 @@
         md-content.md-knowage-theme {
             background-color: $listBackground;
         }
+        &>div {
+        	height: 100%;
+        }
     }
 
     .greyListItem {
