@@ -95,13 +95,6 @@ function cockpitTextControllerFunction($scope,cockpitModule_widgetServices,
 				//add functions to MEASURE fields, if ATTRIBUTE functions are restricted
 				var fieldType = $scope.getFieldType(key, param);
 
-//				if (fieldType != 'MEASURE' &&
-//						$scope.attributeFunctions.indexOf($scope.ngModelShared.selectedAggregation)<0
-//				) return;
-
-				if ($scope.attributeFunctions.indexOf($scope.ngModelShared.selectedAggregation)<0
-					) return;
-
 				if(fieldType == 'MEASURE' && !$scope.measureFunctions.includes($scope.ngModelShared.selectedAggregation))
 					return;
 				if(fieldType == 'ATTRIBUTE' && !$scope.attributeFunctions.includes($scope.ngModelShared.selectedAggregation))
