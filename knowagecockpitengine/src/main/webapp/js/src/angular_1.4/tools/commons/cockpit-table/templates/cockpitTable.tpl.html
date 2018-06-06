@@ -37,13 +37,13 @@
 	        <tr ng-repeat="row in model | orderBy : getSortingColumnFilter() : getSortingOrderAsBoolean() | limitTo : settings.pagination.enabled?settings.pagination.itemsNumber:undefined : (settings.pagination.enabled && settings.pagination.frontEnd)?(settings.page-1)*settings.pagination.itemsNumber:0" ng-style="::getRowStyle($even)" class="en-row" >
 	            <td ng-repeat="column in columns" ng-if="!column.style.hiddenColumn" ng-click="selectCell($event,row,column)" ng-style="::getCellStyle(column,row[column.aliasToShow])" ng-class="{'highlight': isCellSelected(row,column)}">
 	                <md-tooltip ng-if="!column.hideTooltip" md-direction="top" md-delay="500">
-	                 	<span ng-if="column.type == 'java.lang.Double'">	{{row[column.aliasToShow] | number:1}} </span>
+	                 	<span ng-if="column.type == 'java.lang.Double'">	{{row[column.aliasToShow] | number:(column.style.precision || 2)}} </span>
 	                	<span ng-if="column.type != 'java.lang.Double'">	{{row[column.aliasToShow]}} </span>
 	                </md-tooltip>
 					<div class="cellContainer" ng-style="::getContainerStyle(column)">
 		                <span ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
 			                <span ng-if="column.style.prefix">{{column.style.prefix}}</span> 
-			                <span ng-if="column.type == 'java.lang.Double'">	{{row[column.aliasToShow] | number:1}} </span>
+			                <span ng-if="column.type == 'java.lang.Double'">	{{row[column.aliasToShow] | number:(column.style.precision || 2)}} </span>
 			                <span ng-if="column.type != 'java.lang.Double'">	{{row[column.aliasToShow]}} </span>
 			                <span ng-if="column.style.suffix">{{column.style.suffix}}</span>
 		                </span>

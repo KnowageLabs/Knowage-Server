@@ -527,22 +527,11 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 		$scope.selectedColumn.style = undefined;
 	}
 
-	$scope.checkPrecision = function(){
-		if($scope.selectedColumn.style!=undefined && $scope.selectedColumn.style.format!=undefined && $scope.selectedColumn.style.precision!=undefined && !$scope.isPrecisionEnabled()){
-			$scope.selectedColumn.style.precision = null;
-		}
-	}
-
-	$scope.isPrecisionEnabled = function(){
-		return $scope.selectedColumn.style && $scope.selectedColumn.style.format != $scope.formatPattern[0] && $scope.selectedColumn.style.format != $scope.formatPattern[1];
-	}
-
 	$scope.saveColumnStyleConfiguration = function(){
 		if($scope.selectedColumn.style!=undefined && $scope.selectedColumn.style.precision!=undefined && $scope.selectedColumn.style.format==undefined){
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.chartengine.structure.serieStyleConfig.dataLabels.format.emptyText'), sbiModule_translate.load('sbi.generic.error'));
 			return;
 		}
-		$scope.checkPrecision();
 		angular.copy($scope.selectedColumn,selectedColumn);
 		$mdDialog.cancel();
 	}
