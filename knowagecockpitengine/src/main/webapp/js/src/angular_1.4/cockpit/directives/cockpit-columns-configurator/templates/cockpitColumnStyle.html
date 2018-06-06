@@ -41,7 +41,7 @@
 		       		<div layout="column">
 		       		<md-input-container md-class="md-block">
           				<label>{{translate.load('sbi.cockpit.table.visualizationtype')}}</label>
-          					<md-select ng-model="selectedColumn.visType">
+          					<md-select ng-model="selectedColumn.visType" ng-change="changeVisType()">
             					<md-option ng-repeat="vType in visTypes" value="{{vType}}">
               						{{vType}}
             					</md-option>
