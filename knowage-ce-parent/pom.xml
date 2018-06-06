@@ -10,7 +10,7 @@
 		<!-- We use SpagoBI repo on GitHub because we cannot find HBql library somewhere else -->
 		<repository>
 			<id>spagobi-releases</id>
-			<url>https://raw.github.com/SpagoBILabs/SpagoBI/mvn-repo/releases</url>
+			<url>https://github.com/SpagoBILabs/SpagoBI/raw/mvn-repo/releases</url>
 		</repository>
 		<!-- We use www.license4j.com/maven because license4j is not available on Maven Central, it is available by its own repo -->
 		<repository>
@@ -64,6 +64,11 @@
 			<id>xss-html-filter releases</id>
 			<url>http://xss-html-filter.sf.net/releases/</url>
 		</repository>
+		<!-- We use Openscales Repository for com.jamon:fdsapi, needed by knowage CE; this library is not available on Maven Central -->
+		<repository>
+			<id>Openscales Repository</id>
+			<url>http://openscales.org/nexus/content/repositories/releases/</url>
+		</repository>
 		
 	</repositories>
   
@@ -98,10 +103,15 @@
 		<module>../knowageoauth2securityprovider</module>
 		<module>../knowageldapsecurityprovider</module>
 		<module>../knowage</module>
+		<module>../knowagejasperreportengine</module>
+		<module>../spagobi.birt.oda</module>
+		<module>../knowagebirtreportengine</module>
 		<module>../slimerjs-wrapper</module>
 		<module>../knowagecockpitengine</module>
-		 <module>../knowagekpiengine</module>
-		<!--<module>../knowagegeoreportengine</module>
+		<module>../knowagecommonjengine</module>
+		<module>../knowagedataminingengine</module>
+		<module>../knowagegeoreportengine</module>
+		<module>../knowagekpiengine</module>
 		<module>../knowagemeta</module>
 		<module>../knowagenetworkengine</module>
 		<module>../knowageqbeengine3</module>
@@ -110,11 +120,6 @@
 		<module>../knowagetalendengine</module>
 		<module>../knowagewhatifengine</module>
 		<module>../knowagesdk</module>
-		<module>../knowagejasperreportengine</module>
-		<module>../spagobi.birt.oda</module>
-		<module>../knowagebirtreportengine</module>
-		<module>../knowagecommonjengine</module>
-		<module>../knowagedataminingengine</module> -->
 	</modules>
 
 	<build>
