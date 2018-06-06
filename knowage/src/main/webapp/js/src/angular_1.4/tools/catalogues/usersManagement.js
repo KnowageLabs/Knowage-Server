@@ -97,9 +97,9 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             }
 
             if ($scope.selectedUser.hasOwnProperty("sbiUserAttributeses")) {
-            	var value = $scope.selectedUser.sbiUserAttributeses[$scope.usersAttributes[i].attributeId][$scope.usersAttributes[i].attributeName];
+            	var value = ""
             	if($scope.selectedUser.sbiUserAttributeses.hasOwnProperty($scope.usersAttributes[i].attributeId) ){
-
+            		value =$scope.selectedUser.sbiUserAttributeses[$scope.usersAttributes[i].attributeId][$scope.usersAttributes[i].attributeName];
             		if(value.indexOf(',') != -1 && value.indexOf('\'') == -1 ){
             			obj.value = value.split(',');
 	            	}else if (value.indexOf('{') != -1){
