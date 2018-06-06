@@ -154,7 +154,6 @@
 	background-repeat: no-repeat;
 }
 .dimension-top-toolbar{
-    border-radius: 0px 7px 7px 0px;
     width:95%
 }
 
@@ -177,7 +176,6 @@
 }
 
 .dimension-left-toolbar{
-    border-radius: 0px 0px 7px 7px;
     width:32px;
 }
 
@@ -217,7 +215,7 @@
 .filter-toolbar-element{
   background-color:#3b678c;
   border-radius:5px; 
-  border:2px solid white;
+  border:1px solid white;
   margin-right: 10px;
   cursor: pointer;
   font-weight: normal;
@@ -226,6 +224,11 @@
   max-height:28px;
   max-width: 160px;
   min-width: 140px;
+}
+
+.filter-toolbar-element.dragging {
+	position:relative;
+	z-index:9;
 }
 
 .filter-toolbar-element .name{
@@ -240,15 +243,17 @@
   width:20%;
 }
 
-.filter-toolbar-element .button{
-  right:14;
-  bottom:2;
+.filter-toolbar-element .button, .filter-toolbar-element-left .button{
+    margin: 0;
+    padding: 0;
+    width: 28px;
+    height: 24px;
 }
 
 /**/
 
 .filter-toolbar-element-left{
-  border: 2px solid #FFF;
+  border: 1px solid #FFF;
   width: 80%;
   border-radius: 5px;
   margin-left: 4%;
@@ -261,7 +266,11 @@
   background-color:#3b678c;
   min-height: 120px;
   max-height: 130px;
+}
 
+.filter-toolbar-element-left.dragging {
+	z-index: 9;
+  	position: relative;
 }
 
 .filter-toolbar-element-left .name{
@@ -285,11 +294,6 @@
 .filter-toolbar-element-left .action{
   border-top: 2px solid white;
   max-height:20px;
-}
-
-.filter-toolbar-element-left .button{
-  right:12;
-  bottom:4;
 }
 
 .filter-toolbar-element-left md-icon{
@@ -768,14 +772,16 @@ md-option[selected], md-select-menu md-option[selected]{
 	color:green!important;
 }
 .menu-toolbar{
-	cursor:pointer;
-	border-radius: 7px 0px 0px 7px; 
+	cursor:pointer; 
 	width: 4%;
 }
 
 .top-axis-switch{
-	margin-left:0px!important;
-	margin-right:0px!important;
+    width: 24px !important;
+    height: 24px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    top: 2px;
 }
 
 .top-axis-element{
