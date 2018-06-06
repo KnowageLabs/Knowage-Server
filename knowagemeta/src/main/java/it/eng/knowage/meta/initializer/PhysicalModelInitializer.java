@@ -53,6 +53,7 @@ import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.util.JDBCTypeMapper;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.bo.serializer.JDBCDataSourcePoolConfigurationJSONSerializer;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
@@ -216,6 +217,12 @@ public class PhysicalModelInitializer {
 			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME, ds.getLabel());
 			logger.debug("PhysicalModel Property: Connection databasename is [{}] "
 					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME).getValue());
+			
+			String jdbcPoolConfig = (String) new JDBCDataSourcePoolConfigurationJSONSerializer().serialize(ds.getJdbcPoolConfiguration());
+
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JDBC_POOL_CONFIG, jdbcPoolConfig);
+			logger.debug("PhysicalModel Property: Connection jdbcpoolconfiguration is [{}] "
+					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JDBC_POOL_CONFIG).getValue());
 
 			// Quote string identification
 			String quote;

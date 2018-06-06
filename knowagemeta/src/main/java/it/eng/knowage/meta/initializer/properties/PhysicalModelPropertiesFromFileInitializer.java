@@ -60,6 +60,7 @@ public class PhysicalModelPropertiesFromFileInitializer implements IPropertiesIn
 	public static final String CONNECTION_DATABASENAME = "connection.databasename";
 	public static final String CONNECTION_DRIVER = "connection.driver";
 	public static final String CONNECTION_DATABASE_QUOTESTRING = "connection.databasequotestring";
+	public static final String CONNECTION_JDBC_POOL_CONFIG = "connection.jdbcpoolconfiguration";
 
 	public static final String IS_DELETED = "structural.deleted";
 
