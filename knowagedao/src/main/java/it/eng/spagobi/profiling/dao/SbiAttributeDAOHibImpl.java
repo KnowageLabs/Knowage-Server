@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,18 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.profiling.dao;
-
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.engines.config.metadata.SbiEngines;
-import it.eng.spagobi.profiling.bean.SbiAttribute;
-import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,13 +28,18 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 
-public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
-		ISbiAttributeDAO {
-	static private Logger logger = Logger
-			.getLogger(SbiAttributeDAOHibImpl.class);
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.profiling.bean.SbiAttribute;
+import it.eng.spagobi.profiling.bean.SbiUserAttributes;
+import it.eng.spagobi.profiling.bo.ProfileAttributesValueTypes;
 
-	public List<SbiUserAttributes> loadSbiUserAttributesById(Integer id)
-			throws EMFUserError {
+public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbiAttributeDAO {
+	static private Logger logger = Logger.getLogger(SbiAttributeDAOHibImpl.class);
+
+	@Override
+	public List<SbiUserAttributes> loadSbiUserAttributesById(Integer id) throws EMFUserError {
 		logger.debug("IN");
 		List<SbiUserAttributes> toReturn = null;
 		Session aSession = null;
@@ -72,8 +70,8 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 
 	}
 
-	public SbiUserAttributes loadSbiAttributesByUserAndId(Integer userId, Integer attributeId)
-			throws EMFUserError {
+	@Override
+	public SbiUserAttributes loadSbiAttributesByUserAndId(Integer userId, Integer attributeId) throws EMFUserError {
 		logger.debug("IN");
 		SbiUserAttributes toReturn = null;
 		Session aSession = null;
@@ -87,7 +85,7 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 			query.setInteger("id", attributeId);
 			query.setInteger("userId", userId);
 
-			toReturn = (SbiUserAttributes)query.uniqueResult();
+			toReturn = (SbiUserAttributes) query.uniqueResult();
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
@@ -105,6 +103,7 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 
 	}
 
+	@Override
 	public Integer saveSbiAttribute(SbiAttribute attribute) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
@@ -119,7 +118,7 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 			logger.debug("OUT");
 			return id;
 		} catch (HibernateException he) {
-			logger.error(he.getMessage(),he);
+			logger.error(he.getMessage(), he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -131,7 +130,8 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 		}
 
 	}
-	
+
+	@Override
 	public Integer saveOrUpdateSbiAttribute(SbiAttribute attribute) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
@@ -142,22 +142,50 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 			tx = aSession.beginTransaction();
 			SbiAttribute hibAttribute = attribute;
 			int id = attribute.getAttributeId();
-			if(id!=0){
-				hibAttribute = (SbiAttribute)aSession.load(SbiAttribute.class,  attribute.getAttributeId());
+			if (id != 0) {
+				hibAttribute = (SbiAttribute) aSession.load(SbiAttribute.class, attribute.getAttributeId());
 				String name = attribute.getAttributeName();
 				String description = attribute.getDescription();
-				if(name!=null){
+				Short allowUser = attribute.getAllowUser();
+				Short multivalue = attribute.getMultivalue();
+				Short syntax = attribute.getSyntax();
+				Integer lovId = attribute.getLovId();
+				ProfileAttributesValueTypes value = attribute.getValue();
+
+				if (name != null) {
 					hibAttribute.setAttributeName(name);
 				}
-				if(description!=null){
+				if (description != null) {
 					hibAttribute.setDescription(description);
 				}
+				if (allowUser != null) {
+					hibAttribute.setAllowUser(allowUser);
+				}
+				if (multivalue != null) {
+					hibAttribute.setMultivalue(multivalue);
+				}
+				if (syntax != null) {
+					hibAttribute.setSyntax(syntax);
+				}
+				if (lovId != null) {
+					hibAttribute.setLovId(lovId);
+				}
+				if (value != null) {
+					hibAttribute.setValue(value);
+				}
+
 			}
 			Integer idAttrPassed = attribute.getAttributeId();
-			if(idAttrPassed != null && !String.valueOf(idAttrPassed.intValue()).equals("")){
+			ProfileAttributesValueTypes value = attribute.getValue();
+			if (value != null) {
+				hibAttribute.setValue(value);
+			}
+			if (idAttrPassed != null && !String.valueOf(idAttrPassed.intValue()).equals("")) {
+
 				updateSbiCommonInfo4Insert(hibAttribute);
-				idToReturn = (Integer)aSession.save(hibAttribute);
-			}else{
+				idToReturn = (Integer) aSession.save(hibAttribute);
+			} else {
+
 				updateSbiCommonInfo4Update(hibAttribute);
 				aSession.saveOrUpdate(hibAttribute);
 				idToReturn = idAttrPassed;
@@ -165,7 +193,7 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 			tx.commit();
 			logger.debug("OUT");
 		} catch (HibernateException he) {
-			logger.error(he.getMessage(),he);
+			logger.error(he.getMessage(), he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -179,6 +207,7 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 
 	}
 
+	@Override
 	public List<SbiAttribute> loadSbiAttributes() throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
@@ -210,6 +239,7 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 
 	}
 
+	@Override
 	public SbiAttribute loadSbiAttributeByName(String name) throws EMFUserError {
 		logger.debug("IN");
 		SbiAttribute toReturn = null;
@@ -226,32 +256,7 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 			toReturn = (SbiAttribute) query.uniqueResult();
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error(he.getMessage(),he);
-			if (tx != null)
-				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
-		}
-		logger.debug("OUT");
-		return toReturn;
-	}
-	
-	public SbiAttribute loadSbiAttributeById(Integer id) throws EMFUserError {
-		logger.debug("IN");
-		SbiAttribute toReturn = null;
-		Session aSession = null;
-		Transaction tx = null;
-		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
-			toReturn = (SbiAttribute) aSession.load(SbiAttribute.class,  id);
-			tx.commit();
-		} catch (HibernateException he) {
-			logger.error(he.getMessage(),he);
+			logger.error(he.getMessage(), he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -265,8 +270,34 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 		return toReturn;
 	}
 
-	public HashMap<Integer, String> loadSbiAttributesByIds(List<String> ids)
-			throws EMFUserError {
+	@Override
+	public SbiAttribute loadSbiAttributeById(Integer id) throws EMFUserError {
+		logger.debug("IN");
+		SbiAttribute toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			toReturn = (SbiAttribute) aSession.load(SbiAttribute.class, id);
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	@Override
+	public HashMap<Integer, String> loadSbiAttributesByIds(List<String> ids) throws EMFUserError {
 		logger.debug("IN");
 		List<SbiUserAttributes> dbResult = null;
 		HashMap<Integer, String> toReturn = null;
@@ -278,25 +309,24 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 
 			StringBuffer q = new StringBuffer("from SbiUserAttributes att where ");
 			q.append(" att.id in (");
-			for(int i=0; i<ids.size(); i++){				
-				q.append(" :id"+i);				
-				if(i != ids.size()-1){
+			for (int i = 0; i < ids.size(); i++) {
+				q.append(" :id" + i);
+				if (i != ids.size() - 1) {
 					q.append(" , ");
 				}
 			}
 			q.append(" )");
-			
+
 			Query query = aSession.createQuery(q.toString());
-			for(int i=0; i<ids.size(); i++){				
-				query.setInteger("id"+i, Integer.valueOf(ids.get(i)));
+			for (int i = 0; i < ids.size(); i++) {
+				query.setInteger("id" + i, Integer.valueOf(ids.get(i)));
 			}
-			
 
 			dbResult = query.list();
-			if(dbResult != null && !dbResult.isEmpty()){
+			if (dbResult != null && !dbResult.isEmpty()) {
 				toReturn = new HashMap<Integer, String>();
-				for(int i=0; i< dbResult.size(); i++){
-					SbiUserAttributes res = (SbiUserAttributes)dbResult.get(i);
+				for (int i = 0; i < dbResult.size(); i++) {
+					SbiUserAttributes res = dbResult.get(i);
 					toReturn.put(res.getId().getAttributeId(), res.getAttributeValue());
 				}
 			}
@@ -317,6 +347,7 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 		return toReturn;
 	}
 
+	@Override
 	public void deleteSbiAttributeById(Integer id) throws EMFUserError {
 		logger.debug("IN");
 
@@ -325,7 +356,7 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiAttribute attrToDelete =(SbiAttribute)aSession.load(SbiAttribute.class, id);
+			SbiAttribute attrToDelete = (SbiAttribute) aSession.load(SbiAttribute.class, id);
 			aSession.delete(attrToDelete);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -335,11 +366,12 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			logger.debug("OUT");
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
-		
+
 	}
 
 }

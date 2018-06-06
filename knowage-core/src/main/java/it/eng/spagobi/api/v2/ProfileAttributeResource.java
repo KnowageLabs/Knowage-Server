@@ -36,6 +36,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -62,21 +63,27 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 		ISbiAttributeDAO objDao = null;
 		List<SbiAttribute> attrList = null;
 		List<ProfileAttribute> profileAttrs = new ArrayList<>();
+		boolean userNotAllowed = false;
+
 		try {
 			objDao = DAOFactory.getSbiAttributeDAO();
 			objDao.setUserProfile(getUserProfile());
+
 			attrList = objDao.loadSbiAttributes();
 
 			if (attrList != null && !attrList.isEmpty()) {
 				for (SbiAttribute attr : attrList) {
 					ProfileAttribute pa = new ProfileAttribute(attr);
-					profileAttrs.add(pa);
+					userNotAllowed = objDao.getUserProfile().getRoles().size() == 1 && objDao.getUserProfile().getRoles().toArray()[0].equals("user")
+							&& pa.getAllowUser() != null && pa.getAllowUser() == 0;
+					if (!userNotAllowed) {
+						profileAttrs.add(pa);
+					}
 				}
 			}
-
 			return profileAttrs;
 
-		} catch (EMFUserError e) {
+		} catch (EMFUserError | EMFInternalError e) {
 			// TODO Auto-generated catch block
 			logger.error("Error while loading profile attributes", e);
 			throw new SpagoBIRestServiceException(getLocale(), e);
@@ -103,7 +110,8 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 		try {
 			objDao = DAOFactory.getSbiAttributeDAO();
 			objDao.setUserProfile(getUserProfile());
-			SbiAttribute sa = new SbiAttribute(attribute.getAttributeId(), attribute.getAttributeName(), attribute.getAttributeDescription());
+			SbiAttribute sa = new SbiAttribute(attribute.getAttributeId(), attribute.getAttributeName(), attribute.getAttributeDescription(),
+					attribute.getAllowUser(), attribute.getSyntax(), attribute.getLovId(), attribute.getMultivalue(), attribute.getValue());
 			objDao.saveOrUpdateSbiAttribute(sa);
 
 			return Response.ok().build();
@@ -130,6 +138,11 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 			SbiAttribute sa = new SbiAttribute();
 			sa.setAttributeName(attribute.getAttributeName());
 			sa.setDescription(attribute.getAttributeDescription());
+			sa.setAllowUser(attribute.getAllowUser());
+			sa.setMultivalue(attribute.getMultivalue());
+			sa.setSyntax(attribute.getSyntax());
+			sa.setLovId(attribute.getLovId());
+			sa.setValue(attribute.getValue());
 			Integer id = objDao.saveSbiAttribute(sa);
 			attribute.setAttributeId(id);
 

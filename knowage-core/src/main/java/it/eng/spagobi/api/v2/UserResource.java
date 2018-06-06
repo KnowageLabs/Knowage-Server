@@ -19,6 +19,7 @@ package it.eng.spagobi.api.v2;
 
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +40,8 @@ import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -46,10 +49,12 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.dao.QueryFilters;
 import it.eng.spagobi.profiling.PublicProfile;
+import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
 import it.eng.spagobi.profiling.bo.UserBO;
+import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.profiling.dao.SbiUserDAOHibImpl;
 import it.eng.spagobi.profiling.dao.filters.FinalUsersFilter;
@@ -71,10 +76,16 @@ public class UserResource extends AbstractSpagoBIResource {
 	public Response getUserList(@QueryParam("dateFilter") String dateFilter) {
 		ISbiUserDAO usersDao = null;
 		List<UserBO> fullList = null;
-
+		List<SbiAttribute> attrList = null;
+		ISbiAttributeDAO objDao = null;
+		ArrayList<Integer> hiddenAttributesIds = new ArrayList<>();
+		ProfileAttributeResourceRoleProcessor roleFilter = new ProfileAttributeResourceRoleProcessor();
 		try {
 			IEngUserProfile profile = getUserProfile();
 			QueryFilters qp = new QueryFilters();
+			objDao = DAOFactory.getSbiAttributeDAO();
+			objDao.setUserProfile(getUserProfile());
+			attrList = objDao.loadSbiAttributes();
 			if (profile.isAbleToExecuteAction(SpagoBIConstants.PROFILE_MANAGEMENT)) {
 				// administrator: he can see every user
 			} else {
@@ -86,10 +97,19 @@ public class UserResource extends AbstractSpagoBIResource {
 
 			usersDao = DAOFactory.getSbiUserDAO();
 			usersDao.setUserProfile(getUserProfile());
+
 			if (dateFilter != null) {
 				fullList = usersDao.loadUsers(qp, dateFilter);
 			} else {
 				fullList = usersDao.loadUsers(qp);
+			}
+
+			for (UserBO user : fullList) {
+				if (objDao.getUserProfile().getRoles().size() == 1 && objDao.getUserProfile().getRoles().toArray()[0].equals("user")) {
+					hiddenAttributesIds = roleFilter.getHiddenAttributesIds();
+					roleFilter.removeHiddenAttributes(hiddenAttributesIds, user);
+				}
+
 			}
 
 			return Response.ok(fullList).build();
@@ -106,6 +126,10 @@ public class UserResource extends AbstractSpagoBIResource {
 	public Response getUserById(@PathParam("id") Integer id) {
 		ISbiUserDAO usersDao = null;
 		SbiUserDAOHibImpl hib = new SbiUserDAOHibImpl();
+		List<SbiAttribute> attrList = null;
+		ISbiAttributeDAO objDao = null;
+		ArrayList<Integer> hiddenAttributesIds = new ArrayList<>();
+		ProfileAttributeResourceRoleProcessor roleFilter = new ProfileAttributeResourceRoleProcessor();
 		try {
 
 			SbiUser sbiUser = new SbiUser();
@@ -114,6 +138,16 @@ public class UserResource extends AbstractSpagoBIResource {
 			usersDao.setUserProfile(getUserProfile());
 			sbiUser = usersDao.loadSbiUserById(id);
 			user = hib.toUserBO(sbiUser);
+
+			objDao = DAOFactory.getSbiAttributeDAO();
+			objDao.setUserProfile(getUserProfile());
+			attrList = objDao.loadSbiAttributes();
+
+			if (objDao.getUserProfile().getRoles().size() == 1 && objDao.getUserProfile().getRoles().toArray()[0].equals("user")) {
+				hiddenAttributesIds = roleFilter.getHiddenAttributesIds();
+				roleFilter.removeHiddenAttributes(hiddenAttributesIds, user);
+
+			}
 			return Response.ok(user).build();
 		} catch (Exception e) {
 			logger.error("User with selected id: " + id + " doesn't exists", e);
@@ -185,6 +219,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		}
 
 		try {
+
 			usersDao = DAOFactory.getSbiUserDAO();
 			usersDao.setUserProfile(getUserProfile());
 			Integer id = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
@@ -202,9 +237,10 @@ public class UserResource extends AbstractSpagoBIResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateUser(@PathParam("id") Integer id, String body) {
 
+		SbiUser sbiUserOriginal = new SbiUser();
 		UserBO user = null;
 		ISbiUserDAO usersDao = null;
-
+		ProfileAttributeResourceRoleProcessor roleFilter = new ProfileAttributeResourceRoleProcessor();
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			user = mapper.readValue(body, UserBO.class);
@@ -236,6 +272,19 @@ public class UserResource extends AbstractSpagoBIResource {
 
 		HashMap<Integer, HashMap<String, String>> map = user.getSbiUserAttributeses();
 		Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>(0);
+		List<SbiAttribute> attrList = null;
+		ISbiAttributeDAO objDao = null;
+
+		try {
+			usersDao = DAOFactory.getSbiUserDAO();
+			usersDao.setUserProfile(getUserProfile());
+			sbiUserOriginal = usersDao.loadSbiUserById(sbiUser.getId());
+			objDao = DAOFactory.getSbiAttributeDAO();
+			objDao.setUserProfile(getUserProfile());
+			attrList = objDao.loadSbiAttributes();
+		} catch (EMFUserError e1) {
+			logger.error("Impossible get attributes", e1);
+		}
 
 		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
 			SbiUserAttributes attribute = new SbiUserAttributes();
@@ -249,6 +298,16 @@ public class UserResource extends AbstractSpagoBIResource {
 			}
 			attributes.add(attribute);
 		}
+
+		// This method get hidden attributes from user and sets their value to last known in DB
+		// By this we are avoiding changing that value if user change some other attributes
+		try {
+			if (objDao.getUserProfile().getRoles().size() == 1 && objDao.getUserProfile().getRoles().toArray()[0].equals("user"))
+				roleFilter.setAttributeHiddenFromUser(sbiUserOriginal, attributes, attrList);
+		} catch (EMFInternalError e1) {
+			logger.error(e1.getMessage(), e1);
+		}
+
 		sbiUser.setSbiUserAttributeses(attributes);
 
 		String password = sbiUser.getPassword();
@@ -293,4 +352,5 @@ public class UserResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id, buildLocaleFromSession(), e);
 		}
 	}
+
 }

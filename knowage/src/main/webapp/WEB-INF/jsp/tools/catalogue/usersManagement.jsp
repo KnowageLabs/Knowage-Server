@@ -184,13 +184,18 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 				class="ToolbarBox noBorder">
                 <md-card layout-padding>
 			<div layout="row" layout-wrap ng-repeat="attribute in tempAttributes">
-				<div flex=100>
+				<div flex=100 ng-if="attribute.lovId == null ">
 					<md-input-container class="md-block"> <label>{{attribute.name}}</label>
 					<input name="attr" ng-model="attribute.value" ng-maxlength="100"
-						ng-change="setDirty()"> <div ng-messages="" ng-show="false"></div></md-input-container>
-						
+						ng-change="setDirty()"> <div ng-messages="" ng-show="false"></div></md-input-container>	
 				</div>
-
+				<div flex=100 ng-if="attribute.lovId != null ">
+					<md-input-container class="md-block"> <label>{{attribute.name}}</label>
+					<md-select  ng-multiple="attribute.multivalue == true" name="lovColumns" ng-model="attribute.value">
+						<md-option ng-repeat="lovColumn in attribute.lovColumns track by $index" ng-value="lovColumn">{{lovColumn}}</md-option>
+					</md-select>
+					 <div ng-messages="" ng-show="false"></div></md-input-container>	
+				</div>
 
 			</div>
            </md-card>

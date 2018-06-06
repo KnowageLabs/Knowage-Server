@@ -226,7 +226,7 @@ public class LovResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("{id}/preview")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
+	// @UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
 	public List previewLovValues(@PathParam("id") Integer lovId) {
 		logger.debug("IN: input id = " + lovId);
 

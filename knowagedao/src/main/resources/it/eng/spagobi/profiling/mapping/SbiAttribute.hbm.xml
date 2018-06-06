@@ -51,14 +51,34 @@
             <column name="ATTRIBUTE_NAME" not-null="true" />
         </property>
         <property name="description" type="string">
-            <column name="DESCRIPTION" length="500" not-null="true" />
+            <column name="DESCRIPTION" length="500"  />
         </property>
+         <property name="allowUser" type="short">
+            <column name="ALLOW_USER" not-null="false" />
+        </property>
+         <property name="lovId" type="integer">
+            <column name="LOV_ID" not-null="false" />
+        </property>
+         <property name="syntax" type="short">
+            <column name="SYNTAX" not-null="false" />
+        </property>
+        <property name="value" column="VALUE_TYPE">
+    		<type name="org.hibernate.type.EnumType">
+		        <param name="enumClass">it.eng.spagobi.profiling.bo.ProfileAttributesValueTypes</param>
+		        <param name="type">12</param>
+    		</type>
+		</property>
         <set name="sbiUserAttributeses" inverse="true" lazy="true" table="SBI_USER_ATTRIBUTES" fetch="select">
             <key>
                 <column name="ATTRIBUTE_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.profiling.bean.SbiUserAttributes" />
         </set>
+         <property name="multivalue" type="short">
+            <column name="MULTIVALUE" not-null="false" />
+        </property>
+
+   
         <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
 	<filter-def name="tenantFilter">
