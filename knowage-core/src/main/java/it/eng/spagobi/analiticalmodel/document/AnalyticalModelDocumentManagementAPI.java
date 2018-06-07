@@ -458,7 +458,7 @@ public class AnalyticalModelDocumentManagementAPI {
 
 				// document
 				logger.debug("Saving the clone of the document");
-				Integer clonedDocumentId = documentDAO.insertBIObject(clonedDocument, clonedTemplate);
+				Integer clonedDocumentId = documentDAO.insertBIObjectForClone(clonedDocument, clonedTemplate);
 				clonedDocument.setId(clonedDocumentId);
 
 				// parameters

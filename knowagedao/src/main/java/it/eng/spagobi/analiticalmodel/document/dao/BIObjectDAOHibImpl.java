@@ -984,7 +984,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 */
 	@Override
 	public void insertBIObject(BIObject obj, ObjTemplate objTemp, boolean loadParsDC) throws EMFUserError {
-		internalInsertBIObject(obj, objTemp, loadParsDC);
+		internalInsertBIObject(obj, objTemp, loadParsDC, true);
 	}
 
 	/**
@@ -997,7 +997,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 */
 	@Override
 	public void insertBIObject(BIObject obj) throws EMFUserError {
-		internalInsertBIObject(obj, null, false);
+		internalInsertBIObject(obj, null, false, true);
 	}
 
 	/**
@@ -1012,7 +1012,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 */
 	@Override
 	public void insertBIObject(BIObject obj, boolean loadParsDC) throws EMFUserError {
-		internalInsertBIObject(obj, null, loadParsDC);
+		internalInsertBIObject(obj, null, loadParsDC, true);
 	}
 
 	/**
@@ -1027,10 +1027,25 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 */
 	@Override
 	public Integer insertBIObject(BIObject obj, ObjTemplate objTemp) throws EMFUserError {
-		return internalInsertBIObject(obj, objTemp, false);
+		return internalInsertBIObject(obj, objTemp, false, true);
 	}
 
-	private Integer internalInsertBIObject(BIObject obj, ObjTemplate objTemp, boolean loadParsDC) throws EMFUserError {
+	/**
+	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
+	 *
+	 * @param obj
+	 *            The object containing all insert information
+	 * @param loadParsDC
+	 *            boolean for management Document Composition params
+	 * @throws EMFUserError
+	 *             If an Exception occurred
+	 */
+	@Override
+	public Integer insertBIObjectForClone(BIObject obj, ObjTemplate objTemp) throws EMFUserError {
+		return internalInsertBIObject(obj, objTemp, false, false); // clone doesn't add default output parameter for each engine
+	}
+
+	private Integer internalInsertBIObject(BIObject obj, ObjTemplate objTemp, boolean loadParsDC, boolean loadOP) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -1113,16 +1128,16 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject = (SbiObjects) aSession.load(SbiObjects.class, id);
 
 			// Saving output parameters
-			// hibBIObject.getSbiOutputParameters().addAll(loadDriverSpecificOutputParameters(hibBIObject));
-			List<SbiOutputParameter> op = loadDriverSpecificOutputParameters(hibBIObject);
+			if (loadOP) {
+				List<SbiOutputParameter> op = loadDriverSpecificOutputParameters(hibBIObject);
 
-			for (Iterator iterator = op.iterator(); iterator.hasNext();) {
-				SbiOutputParameter sbiOutputParameter = (SbiOutputParameter) iterator.next();
-				aSession.save(sbiOutputParameter);
+				for (Iterator iterator = op.iterator(); iterator.hasNext();) {
+					SbiOutputParameter sbiOutputParameter = (SbiOutputParameter) iterator.next();
+					aSession.save(sbiOutputParameter);
+				}
+
+				hibBIObject.getSbiOutputParameters().addAll(op);
 			}
-
-			hibBIObject.getSbiOutputParameters().addAll(op);
-
 			// functionalities storing
 			Set hibObjFunc = new HashSet();
 			List functionalities = obj.getFunctionalities();

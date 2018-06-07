@@ -6,10 +6,10 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
 }])
-.controller('outputParametersController',['$scope','sbiModule_restServices','sbiModule_translate','$mdDialog','$mdToast','$location','$timeout',outputParametersControllerFunction]);
-		
-		
-		function outputParametersControllerFunction($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, $mdToast, $location,$timeout){
+.controller('outputParametersController',['$scope','sbiModule_restServices','sbiModule_translate','sbiModule_config', '$mdDialog','$mdToast','$location','$timeout',outputParametersControllerFunction]);
+
+
+		function outputParametersControllerFunction($scope, sbiModule_restServices, sbiModule_translate, sbiModule_config, $mdDialog, $mdToast, $location,$timeout){
 			var ctr = this;
 			var s = $scope;
 			s.translate = sbiModule_translate;
@@ -27,14 +27,14 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 	                }]
 				},
 				detail : {
-					
+
 				}
 			};
-			
+
 			var newRecord = function(){
 				ctr.detail = {'id':null, 'biObjectId': objectId,type:{}};
 			};
-			
+
 			var loadParametersList = function(){
 				ctr.list = [];
 				ctr.listloadingSpinner = true;
@@ -43,7 +43,7 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 						ctr.list = response.data;
 						ctr.listloadingSpinner = false;
 					},function(response) {
-						
+
 					});
 			};
 			var loadTypeList = function(){
@@ -65,17 +65,17 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 						console.log(s.translate.load("sbi.glossary.load.error"));
 					});
 			}
-			
+
 			newRecord();
-			
+
 			loadTypeList();
 			loadParametersList();
 			loadDateTypes();
-			
+
 			ctr.newFunc = function(){
 				newRecord();
 			};
-			
+
 			ctr.cancelFunc = function(){
 				window.history.back();
 				//newRecord();
@@ -97,8 +97,12 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 			ctr.saveFunc = function(){
 				if(ctr.detail.formatObj){
 					ctr.detail.formatCode = ctr.detail.formatObj.valueCd;
-					if(ctr.detail.formatCode!='CUSTOM'){
-						ctr.detail.formatValue = ctr.detail.formatObj.valueName;
+					if(ctr.detail.formatCode =='DEFAULT'){
+						ctr.detail.formatValue = sbiModule_config.dateFormat;
+					}else{
+						if(ctr.detail.formatCode != 'CUSTOM'){
+							ctr.detail.formatValue = ctr.detail.formatObj.valueName;
+						}
 					}
 					delete ctr.detail.formatObj;
 				}
@@ -114,7 +118,7 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 					}
 				);
 			};
-			
+
 			$scope.showActionOK = function(msg) {
 				var delay = 3000;
 				var content = '';

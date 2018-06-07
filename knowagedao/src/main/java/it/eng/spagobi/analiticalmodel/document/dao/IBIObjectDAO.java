@@ -17,6 +17,11 @@
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.hibernate.Session;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -24,11 +29,6 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.bo.CriteriaParameter;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
-
-import java.util.Collection;
-import java.util.List;
-
-import org.hibernate.Session;
 
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting a BI object.
@@ -87,9 +87,9 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 */
 	public BIObject loadBIObjectById(Integer biObjectID) throws EMFUserError;
 
-	
+
 	public  List<BIObject> loadBIObjectsByLovId(Integer idLov) throws EMFUserError;
-	
+
 	public  List<BIObject> loadBIObjectsByParamterId(Integer idParameter) throws EMFUserError;
 	/**
 	 * Loads all detail information for a BI Object identified by its <code>id</code> identifier integer. All these information, achived by a query to the DB,
@@ -229,6 +229,21 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 *             If an Exception occurred
 	 */
 	public void insertBIObject(BIObject obj, ObjTemplate objTemp, boolean loadParsDC) throws EMFUserError;
+
+	/**
+	 * Implements the query to insert a BIObject and its template. All information needed is stored into the input <code>BIObject</code> and
+	 * <code>ObjTemplate</code> objects.
+	 *
+	 * @param obj
+	 *            The object containing all insert information
+	 * @param objTemp
+	 *            The template of the biobject
+	 * @return the cloned document id
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
+	 */
+	public Integer insertBIObjectForClone(BIObject obj, ObjTemplate objTemp) throws EMFUserError;
 
 	/**
 	 * Deletes a BIObject from a functionality. If the functionality is not specified (i.e. idFunct == null), the method deletes the BIObject from all the
