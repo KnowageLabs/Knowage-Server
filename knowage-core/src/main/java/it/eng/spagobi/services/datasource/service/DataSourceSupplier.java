@@ -23,6 +23,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -175,6 +177,11 @@ public class DataSourceSupplier {
 		sbds.setHibDialectClass(doDialect.getValueCd());
 		sbds.setReadOnly(ds.checkIsReadOnly());
 		sbds.setWriteDefault(ds.checkIsWriteDefault());
+		if (ds.getJdbcPoolConfiguration() != null) {
+			ObjectMapper mapper = new ObjectMapper();
+			String jdbcPoolConfiguration = mapper.writeValueAsString(ds.getJdbcPoolConfiguration());
+			sbds.setJdbcPoolConfiguration(jdbcPoolConfiguration);
+		}
 		return sbds;
 	}
 
