@@ -1,25 +1,60 @@
-<md-dialog aria-label="driver visualization" style="min-width:60%">
-      <div> 
+<!-- <md-dialog aria-label="driver visualization" style="min-width:60%"> -->
+<!-- <!--       <div>  --> -->
       
-      </div>
-<hr>
-<label>Search: <input ng-model="search" type= "text"></label>
+<!-- <!--       </div> --> -->
+<!-- <!-- <hr> --> -->
+<!-- <!-- <label>Search: <input ng-model="search" type= "text"></label> --> -->
 
-	<div ng-repeat="lovColumn in attribute.lovColumns | filter:search track by $index"  >
-	 <input type="checkbox" ng-model="checkeda[lovColumn].checked" ng-change="checkeda[$index].checked">
-	    Lov Value : {{lovColumn}}
-	</div>
+<!-- <!-- 	<div ng-repeat="lovColumn in attribute.lovColumns | filter:search track by $index"  > --> -->
+<!-- <!-- 	 <input type="checkbox" ng-checked="lovColumn.checked" ng-model="lovColumn.checked" > --> -->
+<!-- <!-- 	    Lov Value : {{lovColumn}} --> -->
+<!-- <!-- 	</div> --> -->
+<!-- <!-- 						<md-select  ng-multiple="attribute.multivalue == true" name="lovColumns" ng-model="attribute.value">   --> -->
+<!-- <!--   						<md-option ng-repeat="lovColumn in attribute.lovColumns |filter:search track by $index" ng-value="lovColumn">{{lovColumn}}</md-option>  --> -->
+<!-- <!--  					</md-select> --> -->
+
+<!-- <!-- <list label='lovColumns' new-function="createUser">  --> -->
+
+<!-- 		 <angular-table -->
+<!-- 		    flex -->
+<!-- 			id="lovColumns" ng-model="lovColumns" -->
+<!-- 			columns=' -->
+<!-- 						         {"label":"lovColumns"}  -->
+						         
+<!--  						         '  -->
+<!-- 			columns-search='["lov"]' -->
+<!-- 			show-search-bar=true highlights-selected-item=true -->
+<!-- 			speed-menu-option="umSpeedMenu" click-function="selectLov(attribute)"> -->
+<!-- 		</angular-table>  -->
+<!-- <!-- 	<detail label='selectedUser.userId==undefined? "" : selectedUser.userId'  save-function="saveUser" --> -->
+<!-- <!-- 		cancel-function="cancel" --> -->
+<!-- <!-- 		disable-save-button="!attributeForm.$valid || role.length== 0" --> -->
+<!-- <!-- 		show-save-button="showme" show-cancel-button="showme"> --> -->
+<!-- <!-- 	</list>  --> -->
+<!-- <!-- <hr>	 --> -->
+       
+
+<!-- <!-- 		 <angular-table --> -->
+<!-- <!-- 		    flex --> -->
+<!-- <!-- 			id="usersList_id" ng-model="usersList" --> -->
+<!-- <!-- 			columns='[ --> -->
+<!-- <!-- 						         {"label":"User ID","name":"userId"}, --> -->
+<!-- <!-- 						         {"label":"Full Name","name":"fullName"} --> -->
+<!-- <!-- 						         ]' --> -->
+<!-- <!-- 			columns-search='["userId","fullName"]' --> -->
+<!-- <!-- 			show-search-bar=true highlights-selected-item=true --> -->
+<!-- <!-- 			speed-menu-option="umSpeedMenu" click-function="loadUser(item)"> --> -->
+<!-- <!-- 		</angular-table>  --> -->
 	
-<hr>	
-        </md-dialog-content>
-        <md-dialog-actions layout="row">
-            <span flex></span>
-            <md-button class="md-raised" ng-click="close()">
-                Cancel
-            </md-button>
-            <md-button class="md-raised md-primary" ng-click="hide()">
-                Save
-            </md-button>
-        </md-dialog-actions>
+	
+<!--         <md-dialog-actions layout="row"> -->
+<!--             <span flex></span> -->
+<!--             <md-button class="md-raised" ng-click="close()"> -->
+<!--                 Cancel -->
+<!--             </md-button> -->
+<!--             <md-button class="md-raised md-primary" ng-click="hide()"> -->
+<!--                 Save -->
+<!--             </md-button> -->
+<!--         </md-dialog-actions> -->
    
-</md-dialog>
+<!-- </md-dialog> -->

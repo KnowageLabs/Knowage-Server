@@ -121,30 +121,33 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
     }
 
-//    $scope.openLovs = function(ev,attribute) {
-//
-//        $mdDialog.show({
-//                controller: lovsDialogController,
-//                templateUrl: '../js/src/angular_1.4/tools/catalogues/templates/lovValues.html',
-//                targetEvent: ev,
-//                clickOutsideToClose: true,
-//                locals: {
-//                	attribute: attribute
-//                }
-//            })
-//            .then(
-//                function(answer) {},
-//                function() {});
-//    };
+    $scope.openLovs = function(ev,attribute , usersList) {
 
-//    function lovsDialogController($scope,attribute, $mdDialog) {
-//    	$scope.checkeda = {};
-//    	for(var i = 0; i < attribute.value.length;i++){
-//    		if (attribute.lovColumns.indexOf(attribute.value[i]) != -1){
-//    			$scope.checkeda[attribute.value[i]] = attribute.value[i]
-//    		$scope.checkeda[attribute.value[i]].checked=true
-//    		}
-//    	}
+        $mdDialog.show({
+                controller: lovsDialogController,
+                templateUrl: '../js/src/angular_1.4/tools/catalogues/templates/lovValues.html',
+                targetEvent: ev,
+                clickOutsideToClose: true,
+                locals: {
+                	attribute: attribute,
+                	usersList: usersList
+                }
+            })
+            .then(
+                function(answer) {},
+                function() {});
+    };
+
+//    function lovsDialogController($scope,attribute , usersList, $mdDialog) {
+//    	 $scope.showme = true;
+//    	$scope.usersList = usersList;
+//    	$scope.lovColumns = attribute.lovColumns;
+////    	for(var i = 0; i < attribute.value.length;i++){
+////    		if (attribute.lovColumns.indexOf(attribute.value[i]) != -1){
+////    			attribute.value[i].checked = true
+////
+////    		}
+////    	}
 //    	console.log($scope.checkeda);
 //    	$scope.attribute = attribute;
 //        $scope.close = function() {
@@ -153,7 +156,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 //        $scope.hide = function() {
 //        	var values = [];
 //        	for(var i =0; i< attribute.lovColumns.length;i++){
-//        		if($scope.checkeda[$scope.attribute.lovColumns[i]] && $scope.checkeda[$scope.attribute.lovColumns[i]].checked){
+//        		if( $scope.attribute.lovColumns[i].checked){
 //        			values.push($scope.attribute.lovColumns[i])
 //        		}
 //        	}
@@ -161,7 +164,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 //
 //        	$mdDialog.hide(); }
 //    }
-
+//
 
 
     $scope.getLovsValues = function(obj){
