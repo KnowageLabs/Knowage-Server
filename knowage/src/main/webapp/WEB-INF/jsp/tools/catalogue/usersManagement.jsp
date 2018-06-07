@@ -192,12 +192,12 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 				<div flex=100 ng-if="attribute.lovId != null ">
 											 
 					<label>{{attribute.name}}</label>
-						 <md-button ng-click="openLovs($event,attribute)">Chose lov value</md-button>
+	<!-- 					 <md-button ng-click="openLovs($event,attribute)">Chose lov value</md-button>-->
 						 
-						 <label>{{attribute.value}}</label>			
-<!-- 					<md-select  ng-multiple="attribute.multivalue == true" name="lovColumns" ng-model="attribute.value"> -->
-<!-- 						<md-option ng-repeat="lovColumn in attribute.lovColumns track by $index" ng-value="lovColumn">{{lovColumn}}</md-option> -->
-<!-- 					</md-select> -->
+			<!-- 			 <label>{{attribute.value}}</label>	-->		
+ 					<md-select  ng-multiple="attribute.multivalue == true" name="lovColumns" ng-model="attribute.value"> 
+ 						<md-option ng-repeat="lovColumn in attribute.lovColumns track by $index" ng-value="lovColumn">{{lovColumn}}</md-option> 
+ 					</md-select> -->
 					 
 				</div>
 
