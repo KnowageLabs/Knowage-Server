@@ -680,16 +680,6 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		IDataSource ds = DataSourceFactory.getDataSource();
 
 		try {
-			if (!ds.checkIsJndi()) {
-				if (jdbcAdvancedOptions != null) {
-					JDBCDataSourcePoolConfiguration jdbcPoolConfig = mapper.readValue(jdbcAdvancedOptions, JDBCDataSourcePoolConfiguration.class);
-					ds.setJdbcPoolConfiguration(jdbcPoolConfig);
-				} else {
-					// retrocompatibility: in case of a previous knowage version (before 6.2.0), maybe database contains a JDBC datasource without any
-					// information about connection pool parameters. We are setting a default JDBCDataSourcePoolConfiguration with default values
-					ds.setJdbcPoolConfiguration(new JDBCDataSourcePoolConfiguration());
-				}
-			}
 			ds.setDsId(hibDataSource.getDsId());
 			ds.setLabel(hibDataSource.getLabel());
 			ds.setDescr(hibDataSource.getDescr());
@@ -706,6 +696,17 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			ds.setMultiSchema(hibDataSource.getMultiSchema());
 			ds.setReadOnly(hibDataSource.getReadOnly());
 			ds.setWriteDefault(hibDataSource.getWriteDefault());
+
+			if (!ds.checkIsJndi()) {
+				if (jdbcAdvancedOptions != null) {
+					JDBCDataSourcePoolConfiguration jdbcPoolConfig = mapper.readValue(jdbcAdvancedOptions, JDBCDataSourcePoolConfiguration.class);
+					ds.setJdbcPoolConfiguration(jdbcPoolConfig);
+				} else {
+					// retrocompatibility: in case of a previous knowage version (before 6.2.0), maybe database contains a JDBC datasource without any
+					// information about connection pool parameters. We are setting a default JDBCDataSourcePoolConfiguration with default values
+					ds.setJdbcPoolConfiguration(new JDBCDataSourcePoolConfiguration());
+				}
+			}
 
 		} catch (JsonParseException e) {
 			logger.error("Error with parsing JSON String to Object", e);

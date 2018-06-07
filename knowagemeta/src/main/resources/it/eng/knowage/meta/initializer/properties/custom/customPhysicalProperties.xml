@@ -43,7 +43,11 @@
       
       <type id="connection.databasequotestring" name="Connection DatabaseQuoteString"
       description="Data Source Connection Database Quote String"
-      category="Connection" defaultValue=" " />          
+      category="Connection" defaultValue=" " />    
+      
+      <type id="connection.jdbcpoolconfiguration" name="Connection JDBC Pool Configuration"
+      description="Data Source Connection Database JDBC Advanced Connection Pool Options"
+      category="Connection" defaultValue="jdbc" />          
       
     </types>
   

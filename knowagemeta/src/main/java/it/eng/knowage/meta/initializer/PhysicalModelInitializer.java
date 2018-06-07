@@ -216,11 +216,17 @@ public class PhysicalModelInitializer {
 			logger.debug("PhysicalModel Property: Connection databasename is [{}] "
 					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME).getValue());
 
-			String jdbcPoolConfig = (String) new JDBCDataSourcePoolConfigurationJSONSerializer().serialize(ds.getJdbcPoolConfiguration());
+			// -------------------------------------------------------------------------------------------------------------------
 
+			String jdbcPoolConfig = (String) new JDBCDataSourcePoolConfigurationJSONSerializer().serialize(ds.getJdbcPoolConfiguration());
+			if (jdbcPoolConfig == null) {
+				jdbcPoolConfig = "";
+			}
 			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JDBC_POOL_CONFIG, jdbcPoolConfig);
 			logger.debug("PhysicalModel Property: Connection jdbcpoolconfiguration is [{}] "
 					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JDBC_POOL_CONFIG).getValue());
+
+			// ------------------------------------------------------------------------------------------------------------------------
 
 			// Quote string identification
 			String quote;
