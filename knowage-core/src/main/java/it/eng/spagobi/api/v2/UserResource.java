@@ -47,6 +47,7 @@ import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.dao.QueryFilters;
 import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
@@ -105,7 +106,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			}
 
 			for (UserBO user : fullList) {
-				if (objDao.getUserProfile().getRoles().size() == 1 && objDao.getUserProfile().getRoles().toArray()[0].equals("user")) {
+				if (!UserUtilities.isTechnicalUser(getUserProfile())) {
 					hiddenAttributesIds = roleFilter.getHiddenAttributesIds();
 					roleFilter.removeHiddenAttributes(hiddenAttributesIds, user);
 				}
@@ -143,10 +144,9 @@ public class UserResource extends AbstractSpagoBIResource {
 			objDao.setUserProfile(getUserProfile());
 			attrList = objDao.loadSbiAttributes();
 
-			if (objDao.getUserProfile().getRoles().size() == 1 && objDao.getUserProfile().getRoles().toArray()[0].equals("user")) {
+			if (!UserUtilities.isTechnicalUser(getUserProfile())) {
 				hiddenAttributesIds = roleFilter.getHiddenAttributesIds();
 				roleFilter.removeHiddenAttributes(hiddenAttributesIds, user);
-
 			}
 			return Response.ok(user).build();
 		} catch (Exception e) {

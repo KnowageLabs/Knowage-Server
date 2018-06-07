@@ -1,0 +1,25 @@
+<md-dialog aria-label="driver visualization" style="min-width:60%">
+      <div> 
+      
+      </div>
+<hr>
+<label>Search: <input ng-model="search" type= "text"></label>
+
+	<div ng-repeat="lovColumn in attribute.lovColumns | filter:search track by $index"  >
+	 <input type="checkbox" ng-model="checkeda[lovColumn].checked" ng-change="checkeda[$index].checked">
+	    Lov Value : {{lovColumn}}
+	</div>
+	
+<hr>	
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button class="md-raised" ng-click="close()">
+                Cancel
+            </md-button>
+            <md-button class="md-raised md-primary" ng-click="hide()">
+                Save
+            </md-button>
+        </md-dialog-actions>
+   
+</md-dialog>

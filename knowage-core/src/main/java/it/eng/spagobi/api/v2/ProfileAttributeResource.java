@@ -36,11 +36,11 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bo.ProfileAttribute;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
@@ -74,8 +74,7 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 			if (attrList != null && !attrList.isEmpty()) {
 				for (SbiAttribute attr : attrList) {
 					ProfileAttribute pa = new ProfileAttribute(attr);
-					userNotAllowed = objDao.getUserProfile().getRoles().size() == 1 && objDao.getUserProfile().getRoles().toArray()[0].equals("user")
-							&& pa.getAllowUser() != null && pa.getAllowUser() == 0;
+					userNotAllowed = !UserUtilities.isTechnicalUser(getUserProfile()) && pa.getAllowUser() != null && pa.getAllowUser() == 0;
 					if (!userNotAllowed) {
 						profileAttrs.add(pa);
 					}
@@ -83,7 +82,7 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 			}
 			return profileAttrs;
 
-		} catch (EMFUserError | EMFInternalError e) {
+		} catch (EMFUserError e) {
 			// TODO Auto-generated catch block
 			logger.error("Error while loading profile attributes", e);
 			throw new SpagoBIRestServiceException(getLocale(), e);
