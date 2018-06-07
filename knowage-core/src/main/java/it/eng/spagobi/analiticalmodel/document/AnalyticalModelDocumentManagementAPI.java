@@ -458,7 +458,7 @@ public class AnalyticalModelDocumentManagementAPI {
 
 				// document
 				logger.debug("Saving the clone of the document");
-				Integer clonedDocumentId = documentDAO.insertBIObject(clonedDocument, clonedTemplate);
+				Integer clonedDocumentId = documentDAO.insertBIObjectForClone(clonedDocument, clonedTemplate);
 				clonedDocument.setId(clonedDocumentId);
 
 				// parameters
@@ -788,9 +788,7 @@ public class AnalyticalModelDocumentManagementAPI {
 	 */
 	private void copyOutputParameters(BIObject sourceDocument, BIObject destinationDocument) {
 		logger.debug("IN");
-
 		List<OutputParameter> outputParameters = sourceDocument.getOutputParameters();
-
 		for (Iterator iterator = outputParameters.iterator(); iterator.hasNext();) {
 			OutputParameter outputParameter = (OutputParameter) iterator.next();
 			OutputParameter newOutPar = new OutputParameter();
