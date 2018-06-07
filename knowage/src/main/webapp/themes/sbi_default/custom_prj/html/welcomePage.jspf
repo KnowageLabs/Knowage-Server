@@ -15,7 +15,7 @@
             </md-button>
             <md-menu-content width="4">
               <md-menu-item>
-                <md-button ng-href='<%= res.getString("cityFrontEnd-link")%>'>
+                <md-button ng-href='<%= res.getString("cityFrontEnd-link")%>' target="_blank">
                   <img alt='<%= res.getString("cityFrontEnd")%>' ng-src="<%= res.getString("cityFrontEnd-img")%>" class="" md-menu-align-target/>
                   <%= res.getString("cityFrontEnd")%>
                 </md-button>
@@ -23,7 +23,7 @@
               <md-menu-divider></md-menu-divider>
 <!--
               <md-menu-item>
-                <md-button ng-href='<%= res.getString("dashboardManager-link")%>'>
+                <md-button ng-href='<%= res.getString("dashboardManager-link")%>' target="_blank">
                   <img alt='<%= res.getString("dashboardManager")%>' ng-src="<%= res.getString("dashboardManager-img")%>" class="" md-menu-align-target/>
                   <%= res.getString("dashboardManager")%>
                 </md-button>
@@ -31,42 +31,42 @@
               <md-menu-divider></md-menu-divider>
 -->
               <md-menu-item>
-                <md-button ng-href='<%= res.getString("datasourceDiscoveryEngine-link")%>'>
+                <md-button ng-href='<%= res.getString("datasourceDiscoveryEngine-link")%>' target="_blank">
                   <img alt='<%= res.getString("datasourceDiscoveryEngine")%>' ng-src="<%= res.getString("datasourceDiscoveryEngine-img")%>" class="" md-menu-align-target/>
                   <%= res.getString("datasourceDiscoveryEngine")%>
                 </md-button>
               </md-menu-item>
               <md-menu-divider></md-menu-divider>
               <md-menu-item>
-                <md-button ng-href='<%= res.getString("ioTDeviceManager-link")%>'>
+                <md-button ng-href='<%= res.getString("ioTDeviceManager-link")%>' target="_blank">
                   <img alt='<%= res.getString("ioTDeviceManager")%>' ng-src="<%= res.getString("ioTDeviceManager-img")%>" class="" md-menu-align-target/>
                   <%= res.getString("ioTDeviceManager")%>
                 </md-button>
               </md-menu-item>
               <md-menu-divider></md-menu-divider>
               <md-menu-item>
-                <md-button ng-href='<%= res.getString("openInnovationArea-link")%>'>
+                <md-button ng-href='<%= res.getString("openInnovationArea-link")%>' target="_blank">
                   <img alt='<%= res.getString("openInnovationArea")%>' ng-src="<%= res.getString("openInnovationArea-img")%>" class="" md-menu-align-target/>
                   <%= res.getString("openInnovationArea")%>
                 </md-button>
               </md-menu-item>
               <md-menu-divider></md-menu-divider>
               <md-menu-item>
-                <md-button ng-href='<%= res.getString("dataMashupEditor-link")%>'>
+                <md-button ng-href='<%= res.getString("dataMashupEditor-link")%>' target="_blank">
                   <img alt='<%= res.getString("dataMashupEditor")%>' ng-src="<%= res.getString("dataMashupEditor-img")%>" class="" md-menu-align-target/>
                   <%= res.getString("dataMashupEditor")%>
                 </md-button>
               </md-menu-item>
               <md-menu-divider></md-menu-divider>
               <md-menu-item>
-                <md-button ng-href='<%= res.getString("cityRealtimeLegacyDataRepository-link")%>'>
+                <md-button ng-href='<%= res.getString("cityRealtimeLegacyDataRepository-link")%>' target="_blank">
                   <img alt='<%= res.getString("cityRealtimeLegacyDataRepository")%>' ng-src="<%= res.getString("cityRealtimeLegacyDataRepository-img")%>" class="" md-menu-align-target/>
                   <%= res.getString("cityRealtimeLegacyDataRepository")%>
                 </md-button>
               </md-menu-item>
               <md-menu-divider></md-menu-divider>
               <md-menu-item>
-                <md-button ng-href='<%= res.getString("citizenDataVault-link")%>'>
+                <md-button ng-href='<%= res.getString("citizenDataVault-link")%>' target="_blank">
                   <img alt='<%= res.getString("citizenDataVault")%>' ng-src="<%= res.getString("citizenDataVault-img")%>" class="" md-menu-align-target/>
                   <%= res.getString("citizenDataVault")%>
                 </md-button>
