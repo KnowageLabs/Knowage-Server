@@ -39,9 +39,7 @@
 	<DOMAIN valueCd="NETWORK" valueNm="sbidomains.nm.network"
 		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.network" />
 	<DOMAIN valueCd="DOSSIER" valueNm="sbidomains.nm.dossier"
-		domainCd="BIOBJ_TYPE" domainNm="Accessible Html" valueDs="sbidomains.ds.dossier" />			
-	<DOMAIN valueCd="ACCESSIBLE_HTML" valueNm="Accessible Html"
-		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="Accessible Html" />		
+		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.dossier" />			
 	<DOMAIN valueCd="BOOL" valueNm="sbidomains.nm.bool" domainCd="VALUE_TYPE"
 		domainNm="Input value types to check" valueDs="sbidomains.ds.bool" />
 	<DOMAIN valueCd="SINGLE" valueNm="sbidomains.nm.single"
