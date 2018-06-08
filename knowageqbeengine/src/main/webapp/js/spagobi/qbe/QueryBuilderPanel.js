@@ -1272,6 +1272,11 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 			nodeParentType = node.parentNode.attributes.attributes.type;
 		}
 
+		if(!node.attributes.entity && node.attributes.attributes && node.attributes.attributes.entity && node.attributes.attributes.formState){
+			node.attributes.attributes.formState.entity = node.attributes.attributes.entity;
+		}
+
+
 		if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
 
 			filter = {
