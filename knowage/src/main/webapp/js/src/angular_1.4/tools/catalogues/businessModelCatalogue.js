@@ -227,7 +227,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		                    	   return a.hasFileModel;
 		                       },
 		                       action:function(item,event){
-		                    	   $scope.downloadFile(item,event,'SBIMODULE');
+		                    	   $scope.downloadFile(item,event,'SBIMODEL');
 		                       }
 	                       },
 	                       {

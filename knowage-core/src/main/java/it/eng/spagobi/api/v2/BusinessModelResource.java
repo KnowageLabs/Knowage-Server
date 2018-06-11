@@ -71,7 +71,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	 *
 	 */
 	public static enum FILETYPE {
-		JAR, LOG, SBIMODULE
+		JAR, LOG, SBIMODEL
 	};
 
 	private static final String LOG_SUFFIX = ".log";
@@ -323,7 +323,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			response = Response.ok(byteContent);
 			response.header("Content-Disposition", "attachment; filename=" + filename);
 			break;
-		case SBIMODULE:
+		case SBIMODEL:
 			byteContent = content.getFileModel();
 			response = Response.ok(byteContent);
 			response.header("Content-Disposition", "attachment; filename=" + filename);
