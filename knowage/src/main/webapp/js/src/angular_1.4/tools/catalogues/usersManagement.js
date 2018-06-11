@@ -121,7 +121,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
     }
 
-    $scope.openLovs = function(ev,attribute , usersList) {
+    $scope.openLovs = function(ev,attribute) {
 
         $mdDialog.show({
                 controller: lovsDialogController,
@@ -130,7 +130,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 clickOutsideToClose: true,
                 locals: {
                 	attribute: attribute,
-                	usersList: usersList
                 }
             })
             .then(
@@ -138,33 +137,47 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 function() {});
     };
 
-//    function lovsDialogController($scope,attribute , usersList, $mdDialog) {
-//    	 $scope.showme = true;
-//    	$scope.usersList = usersList;
-//    	$scope.lovColumns = attribute.lovColumns;
-////    	for(var i = 0; i < attribute.value.length;i++){
-////    		if (attribute.lovColumns.indexOf(attribute.value[i]) != -1){
-////    			attribute.value[i].checked = true
-////
-////    		}
-////    	}
-//    	console.log($scope.checkeda);
-//    	$scope.attribute = attribute;
-//        $scope.close = function() {
-//        	console.log($scope.checkeda);
-//        	$mdDialog.cancel(); }
-//        $scope.hide = function() {
-//        	var values = [];
-//        	for(var i =0; i< attribute.lovColumns.length;i++){
-//        		if( $scope.attribute.lovColumns[i].checked){
-//        			values.push($scope.attribute.lovColumns[i])
-//        		}
-//        	}
-//        	$scope.attribute.value = values;
-//
-//        	$mdDialog.hide(); }
-//    }
-//
+    function lovsDialogController($scope,attribute , $mdDialog) {
+    	$scope.lovObjects = [];
+    	$scope.lovColumns = attribute.lovColumns;
+    	for(var i = 0; i < attribute.lovColumns.length;i++){
+    		var columnObject = {}
+    		if (attribute.value.indexOf(attribute.lovColumns[i]) != -1)
+    			columnObject.checked = true;
+
+    		columnObject.column = attribute.lovColumns[i];
+    		$scope.lovObjects.push(columnObject);
+    	}
+    	//console.log($scope.checkeda);
+    	$scope.attribute = attribute;
+    	$scope.clearChecked = function(lovObject){
+    		var boolean = lovObject.cheked;
+    		if(lovObject.checked){
+    			for(var j = 0; j < $scope.lovObjects.length ; j++){
+    				if(angular.equals($scope.lovObjects[j],lovObject)){
+    					continue;
+    				}else $scope.lovObjects[j].checked = false;
+    			}
+    		}
+    	}
+
+
+        $scope.close = function() {
+        	console.log($scope.checkeda);
+        	$mdDialog.cancel(); }
+        $scope.hide = function() {
+        	var values = [];
+        	for(var i =0; i< $scope.lovObjects.length;i++){
+        		if( $scope.lovObjects[i].checked){
+        			values.push($scope.lovObjects[i].column)
+        		}
+        	}
+        	$scope.attribute.value = values;
+console.log($scope.attribute.value)
+        	$mdDialog.hide(); }
+
+    }
+
 
 
     $scope.getLovsValues = function(obj){

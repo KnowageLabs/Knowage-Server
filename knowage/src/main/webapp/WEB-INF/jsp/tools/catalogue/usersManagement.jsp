@@ -190,13 +190,13 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 						ng-change="setDirty()"> <div ng-messages="" ng-show="false"></div></md-input-container>	
 				</div>
 				<div flex=100 ng-if="attribute.lovId != null ">
-							<md-input-container class="md-block"> 				 
-					<label>{{attribute.name}}</label>
-<!-- 	 					 <md-button ng-click="openLovs($event,attribute,usersList)">Chose lov value</md-button> -->  						 
-<!-- 			 			 <label>{{attribute.value}}</label>			 -->
- 					<md-select  ng-multiple="attribute.multivalue == true" name="lovColumns" ng-model="attribute.value"> 
- 						<md-option ng-repeat="lovColumn in attribute.lovColumns track by $index" ng-value="lovColumn">{{lovColumn}}</md-option> 
- 					</md-select> 
+					<md-input-container class="md-block"> 				 
+						 <label >{{attribute.name}}</label>  
+	<br>	
+						 <div layout="row">  
+							<p>Chosen value(s)  :   {{attribute.value}}</p> <md-button  ng-click="openLovs($event,attribute)">Change lov value</md-button>  
+						 </div>						 
+	<hr>
 					 </md-input-container>	
 				</div>
 
