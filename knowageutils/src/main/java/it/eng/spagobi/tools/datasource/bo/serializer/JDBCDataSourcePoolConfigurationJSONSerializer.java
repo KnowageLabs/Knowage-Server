@@ -26,7 +26,10 @@ public class JDBCDataSourcePoolConfigurationJSONSerializer {
 	public Object serialize(Object obj) {
 		String jsonString = null;
 		ObjectMapper mapper = new ObjectMapper();
-
+		
+		if (obj == null) {
+			return null;
+		}
 		if (!(obj instanceof JDBCDataSourcePoolConfiguration)) {
 			throw new RuntimeException("JDBCDataSourcePoolConfigurationJSONSerializer is not able to serialize: " + obj.getClass().getName());
 		}
