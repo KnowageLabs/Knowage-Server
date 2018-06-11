@@ -288,7 +288,14 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 		content.setFileName(file.getFileName());
 		bytes = file.getContent();
-		content.setContent(bytes);
+
+		if (file.getFileName().endsWith("sbimodel")) {
+			// .sbimodel file
+			content.setFileModel(bytes);
+		} else {
+			// .jar or other file
+			content.setContent(bytes);
+		}
 		content.setCreationDate(new Date());
 		content.setCreationUser(getUserProfile().getUserName().toString());
 
