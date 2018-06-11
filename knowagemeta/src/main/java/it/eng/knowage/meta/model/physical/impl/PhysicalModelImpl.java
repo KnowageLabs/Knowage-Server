@@ -626,7 +626,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 		dataSource.setPwd(getPropertyValueOrNull(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD));
 		
 		String property = getPropertyValueOrNull(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JDBC_POOL_CONFIG);
-		if (!property.equals("") && property != null) {
+		if (property != null && !property.equals("")) {
 			JDBCDataSourcePoolConfiguration JdbcPoolConfig = (JDBCDataSourcePoolConfiguration) new JDBCDataSourcePoolConfigurationJSONDeserializer()
 					.deserialize(property);
 			dataSource.setJdbcPoolConfiguration(JdbcPoolConfig);
