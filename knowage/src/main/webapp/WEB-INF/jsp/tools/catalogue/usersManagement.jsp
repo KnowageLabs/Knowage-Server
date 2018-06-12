@@ -192,8 +192,8 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 				</div>
 				<div flex=100 layout="row" ng-if="attribute.lovId != null " style="border-bottom:1px solid #000;border-color:Gainsboro;">
 				<div flex=50>
-					<md-input-container class="md-block"> 				 
-						 <label >{{attribute.name}}</label>  
+					<md-input-container class="md-block md-input-has-value"> 				 
+						 <label ">{{attribute.name}}</label>  
 	<br>	
 						 <div layout="row" >  
 							<p>&nbsp&nbsp{{attribute.value}}</p> 
