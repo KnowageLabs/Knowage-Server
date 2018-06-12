@@ -1,16 +1,27 @@
 <md-dialog aria-label="driver visualization" style="min-width:60%">
 
-<label>Search: <input ng-model="search" type= "text"> Filter list by desired input</label>
-<br>
-	Please check desired column(s) 
-<br/>
+<!-- <label>Search: <input ng-model="search" type= "text"> Filter list by desired input</label> -->
+<!-- <br> -->
+<!-- 	Please check desired column(s)  -->
+<!-- <br/> -->
 
-	<div ng-repeat="lovColumn in lovObjects | filter:search track by $index"  >
-	 <input ng-if="attribute.multivalue" type="checkbox" ng-checked="lovColumn.checked" ng-model="lovColumn.checked" >
-	  <input ng-if="!attribute.multivalue" type="checkbox" ng-checked="lovColumn.checked" ng-model="lovColumn.checked" ng-change="clearChecked(lovColumn)">
-	    {{$index}} : {{lovColumn.column}}
-	</div>
+<!-- 	<div ng-repeat="lovColumn in lovObjects | filter:search track by $index"  > -->
+<!-- 	 <input ng-if="attribute.multivalue" type="checkbox" ng-checked="lovColumn.checked" ng-model="lovColumn.checked" > -->
+<!-- 	  <input ng-if="!attribute.multivalue" type="checkbox" ng-checked="lovColumn.checked" ng-model="lovColumn.checked" ng-change="clearChecked(lovColumn)"> -->
+<!-- 	    {{$index}} : {{lovColumn.column}} -->
+<!-- 	</div> -->
 
+
+ 				<angular-table    id="lovObjects_id" ng-model="lovObjects"
+				columns='[
+							{"label":"VALUE","name":"column","size":"100px"},
+							 ]'
+							 columns-search='["column"]'
+							 show-search-bar=true
+							 no-pagination=true
+				selected-item="columnsSelected" highlights-selected-item="true"
+				multi-select="attribute.multivalue" >
+					 </angular-table>
         <md-dialog-actions layout="row">
             <span flex></span>
             <md-button class="md-raised" ng-click="close()">

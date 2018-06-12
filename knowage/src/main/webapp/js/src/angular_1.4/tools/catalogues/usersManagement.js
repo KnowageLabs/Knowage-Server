@@ -100,18 +100,19 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             	var value = ""
             	if($scope.selectedUser.sbiUserAttributeses.hasOwnProperty($scope.usersAttributes[i].attributeId) ){
             		value =$scope.selectedUser.sbiUserAttributeses[$scope.usersAttributes[i].attributeId][$scope.usersAttributes[i].attributeName];
-            		if(value.indexOf(',') != -1 && value.indexOf('\'') == -1 ){
-            			obj.value = value.split(',');
-	            	}else if (value.indexOf('{') != -1){
-	            		obj.value = value.replace(/{/g,'').replace(/}/g,'').replace(/;/,'').split(';');
-            		}
-	            	else if(value.indexOf('\'') != -1){
-	            		obj.value = value.replace(/\'/g,'').split(',')
-	            	}else if ($scope.selectedUser.sbiUserAttributeses.hasOwnProperty($scope.usersAttributes[i].attributeId)) {
-	                    obj.value = value;
-	                } else {
-	                    obj.value = "";
-	                }
+//            		if(value.indexOf(',') != -1 && value.indexOf('\'') == -1 ){
+//            			obj.value = value.split(',');
+//	            	}else if (value.indexOf('{') != -1){
+//	            		obj.value = value.replace(/{/g,'').replace(/}/g,'').replace(/;/,'').split(';');
+//            		}
+//	            	else if(value.indexOf('\'') != -1){
+//	            		obj.value = value.replace(/\'/g,'').split(',')
+//	            	}else if ($scope.selectedUser.sbiUserAttributeses.hasOwnProperty($scope.usersAttributes[i].attributeId)) {
+//	                    obj.value = value;
+//	                } else {
+//	                    obj.value = "";
+//	                }
+            		obj.value = value;
             	}
             } else {
                 obj.value = "";
@@ -138,17 +139,21 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     };
 
     function lovsDialogController($scope,attribute , $mdDialog) {
+    	if(attribute.multivalue){
+    	$scope.columnsSelected =[];
+    	}else $scope.columnsSelected = {}
     	$scope.lovObjects = [];
     	$scope.lovColumns = attribute.lovColumns;
     	for(var i = 0; i < attribute.lovColumns.length;i++){
     		var columnObject = {}
-    		if (attribute.value.indexOf(attribute.lovColumns[i]) != -1)
-    			columnObject.checked = true;
-
     		columnObject.column = attribute.lovColumns[i];
+    		if (attribute.value && attribute.value.indexOf(attribute.lovColumns[i]) != -1)
+    			if(attribute.multivalue){
+    			$scope.columnsSelected.push(columnObject)
+    			}else $scope.columnsSelected = columnObject;
+
     		$scope.lovObjects.push(columnObject);
     	}
-    	//console.log($scope.checkeda);
     	$scope.attribute = attribute;
     	$scope.clearChecked = function(lovObject){
     		var boolean = lovObject.cheked;
@@ -167,11 +172,11 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         	$mdDialog.cancel(); }
         $scope.hide = function() {
         	var values = [];
-        	for(var i =0; i< $scope.lovObjects.length;i++){
-        		if( $scope.lovObjects[i].checked){
-        			values.push($scope.lovObjects[i].column)
-        		}
-        	}
+        	if(angular.isArray($scope.columnsSelected)){
+	        	for(var i =0; i< $scope.columnsSelected.length;i++){
+	        			values.push($scope.columnsSelected[i].column)
+	        	}
+        	}else values.push($scope.columnsSelected.column);
         	$scope.attribute.value = values;
 console.log($scope.attribute.value)
         	$mdDialog.hide(); }

@@ -174,6 +174,7 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 				selected-item="role" highlights-selected-item="true"
 				multi-select="true" >
 				 </angular-table>
+			
 				 </md-card>
 				 </md-content> 
 				 </md-tab> 
@@ -183,21 +184,28 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 				flex 
 				class="ToolbarBox noBorder">
                 <md-card layout-padding>
-			<div layout="row" layout-wrap ng-repeat="attribute in tempAttributes">
-				<div flex=100 ng-if="attribute.lovId == null ">
+			<div layout="row" layout-wrap ng-repeat="attribute in tempAttributes | orderBy : '-lovId'">
+				<div flex=100 ng-if="attribute.lovId == null || attribute.lovId == 0  ">
 					<md-input-container class="md-block"> <label>{{attribute.name}}</label>
 					<input name="attr" ng-model="attribute.value" ng-maxlength="100"
 						ng-change="setDirty()"> <div ng-messages="" ng-show="false"></div></md-input-container>	
 				</div>
-				<div flex=100 ng-if="attribute.lovId != null ">
+				<div flex=100 layout="row" ng-if="attribute.lovId != null " style="border-bottom:1px solid #000;border-color:Gainsboro;">
+				<div flex=50>
 					<md-input-container class="md-block"> 				 
 						 <label >{{attribute.name}}</label>  
 	<br>	
-						 <div layout="row">  
-							<p>Chosen value(s)  :   {{attribute.value}}</p> <md-button  ng-click="openLovs($event,attribute)">Change lov value</md-button>  
+						 <div layout="row" >  
+							<p>&nbsp&nbsp{{attribute.value}}</p> 
+							
 						 </div>						 
-	<hr>
+	
 					 </md-input-container>	
+					 </div>
+					<div flex=50> 
+					<md-button  ng-click="openLovs($event,attribute)">Change lov value</md-button> 
+					</div>
+					
 				</div>
 
 			</div>
