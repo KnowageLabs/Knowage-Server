@@ -418,10 +418,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 							break;
 						}
 					}
-					if(!found){
-						sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.cockpit.wait.loading.association.group"));
-					return
-					}
+					//if(!found){
+					//	sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.cockpit.wait.loading.association.group"));
+					// return
+					//}
 
 				}
 				if(!isDoc){
