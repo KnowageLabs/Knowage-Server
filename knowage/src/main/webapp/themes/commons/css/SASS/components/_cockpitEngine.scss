@@ -92,7 +92,7 @@
 				}
 			}
     		md-card-content {
-    			height: calc(100% - 112px); 
+    			height: calc(100% - 80px); 
 	    		overflow-y: auto;
 	    		@include coolScrollBars($baseColor,6px);
     		}

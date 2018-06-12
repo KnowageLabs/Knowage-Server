@@ -311,10 +311,10 @@ function addTemporalHierarchyController($scope,sbiModule_translate,$mdPanel,mdPa
 	                        	  size:"100px",
 	                        	  label:" ",
 	                        	  transformer:function(item){
-	                        		  var template= '<md-button ng-click="scopeFunctions.moveUp($parent.$parent.$index)" ng-disabled="$parent.$parent.$index==0" class="md-icon-button md-primary" aria-label="MoveUp">'+
+	                        		  var template= '<md-button ng-click="scopeFunctions.moveUp($parent.$parent.$index)" ng-disabled="$parent.$parent.$index==0" class="md-icon-button" aria-label="MoveUp">'+
 	                        		  				'	<md-icon md-font-icon="fa fa-arrow-up"></md-icon>'+
                     		  						'</md-button>'+
-                    		  						'<md-button ng-click="scopeFunctions.moveDown($parent.$parent.$index)" ng-disabled="$parent.$parent.$last" class="md-icon-button md-primary" aria-label="MoveDown">'+
+                    		  						'<md-button ng-click="scopeFunctions.moveDown($parent.$parent.$index)" ng-disabled="$parent.$parent.$last" class="md-icon-button" aria-label="MoveDown">'+
                         		  					'	<md-icon md-font-icon="fa fa-arrow-down"></md-icon>'+
                     		  						'</md-button>';
 
