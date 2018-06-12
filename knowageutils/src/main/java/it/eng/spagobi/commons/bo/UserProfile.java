@@ -37,6 +37,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.security.AuthorizationsBusinessMapper;
 import it.eng.spagobi.services.common.JWTSsoService;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
@@ -118,6 +119,8 @@ public class UserProfile implements IEngUserProfile {
 		}
 		// putting tenant id on user attributes (for Spago modules' queries) :
 		userAttributes.put(SpagoBIConstants.TENANT_ID, this.organization);
+		// putting user id as a predefined profile attribute:
+		userAttributes.put(SsoServiceInterface.USER_ID, this.userId);
 
 		logger.debug("OUT");
 	}
