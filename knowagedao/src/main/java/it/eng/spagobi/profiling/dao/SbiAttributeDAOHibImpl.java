@@ -167,9 +167,9 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				if (syntax != null) {
 					hibAttribute.setSyntax(syntax);
 				}
-				if (lovId != null) {
-					hibAttribute.setLovId(lovId);
-				}
+
+				hibAttribute.setLovId(lovId);
+
 				if (value != null) {
 					hibAttribute.setValue(value);
 				}

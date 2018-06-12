@@ -112,7 +112,9 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 						$scope.attributeList[i].allowUser = $scope.selectedAttribute.allowUser;
 						$scope.attributeList[i].syntax = $scope.selectedAttribute.syntax;
 						$scope.attributeList[i].multivalue = $scope.selectedAttribute.multivalue;
+						if($scope.selectedAttribute.lovId != ""){
 						$scope.attributeList[i].lovId = $scope.selectedAttribute.lovId;
+						} else $scope.attributeList[i].lovId = undefined
 						if($scope.selectedAttribute.value)
 						$scope.selectedAttribute.value = ($scope.enumAsArrayOfObjects.filter(type => type.name == $scope.selectedAttribute.value )[0]);
 

@@ -110,7 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        							
        								<md-select placeholder="LOV to be used to retrieve admissible values" ng-model="selectedAttribute.lovId" ng-click="getColumnsById(selectedAttribute.lovId)">
        								<label></label>
-       								<md-option ng-value="0"></md-option>
+       								<md-option ></md-option>
        								<md-option ng-value="lov.id"  ng-repeat="lov in lovs track by $index">{{lov.name}}</md-option>
 									</md-select>
 								</md-input-container>
