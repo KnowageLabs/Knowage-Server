@@ -103,15 +103,14 @@
 		<module>../knowageoauth2securityprovider</module>
 		<module>../knowageldapsecurityprovider</module>
 		<module>../knowage</module>
-		<module>../knowagejasperreportengine</module>
-		<module>../spagobi.birt.oda</module>
-		<module>../knowagebirtreportengine</module>
 		<module>../slimerjs-wrapper</module>
 		<module>../knowagecockpitengine</module>
-		<module>../knowagecommonjengine</module>
+		<module>../knowagekpiengine</module>
+		<module>../knowagesdk</module>
+		
+		<!--<module>../knowagecommonjengine</module>
 		<module>../knowagedataminingengine</module>
 		<module>../knowagegeoreportengine</module>
-		<module>../knowagekpiengine</module>
 		<module>../knowagemeta</module>
 		<module>../knowagenetworkengine</module>
 		<module>../knowageqbeengine3</module>
@@ -119,7 +118,9 @@
 		<module>../knowagetalendenginclientapi</module>
 		<module>../knowagetalendengine</module>
 		<module>../knowagewhatifengine</module>
-		<module>../knowagesdk</module>
+		<module>../knowagejasperreportengine</module>
+		<module>../spagobi.birt.oda</module>
+		<module>../knowagebirtreportengine</module>-->
 	</modules>
 
 	<build>
