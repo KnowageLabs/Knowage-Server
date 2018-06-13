@@ -62,6 +62,7 @@ import org.olap4j.OlapDataSource;
 import org.olap4j.OlapException;
 import org.pivot4j.PivotModel;
 import org.pivot4j.ui.collector.NonInternalPropertyCollector;
+import org.pivot4j.ui.collector.PropertyCollector;
 import org.pivot4j.ui.fop.FopExporter;
 import org.pivot4j.ui.poi.ExcelExporter;
 import org.pivot4j.ui.table.TableRenderer;
@@ -76,6 +77,7 @@ import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
 import it.eng.spagobi.engines.whatif.export.ExportConfig;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
@@ -406,6 +408,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		ModelConfig modelConfig = ei.getModelConfig();
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -420,6 +423,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		// adds the calculated fields before rendering the model
 		model.applyCal();
+
+		applyConfiguration(modelConfig, model, render);
 		render.setPropertyCollector(new NonInternalPropertyCollector());
 		render.render(model, exporter);
 
@@ -438,7 +443,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
-
+		ModelConfig modelConfig = ei.getModelConfig();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		FopExporter exporter = new FopExporter(out);
@@ -455,7 +460,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		// adds the calculated fields before rendering the model
 		model.applyCal();
-		render.setPropertyCollector(new NonInternalPropertyCollector());
+		applyConfiguration(modelConfig, model, render);
 		render.render(model, exporter);
 
 		// restore the query without calculated fields
@@ -716,5 +721,63 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		defaultAlgorithm.setCellValue("Proportional");
 
 		return workbook;
+	}
+
+	private void applyConfiguration(ModelConfig modelConfig, SpagoBIPivotModel model, TableRenderer render) {
+		applyConfiguration(modelConfig, render);
+		applyConfiguration(modelConfig, model);
+	}
+
+	private void applyConfiguration(ModelConfig modelConfig, TableRenderer renderer) {
+
+		applyShowParentMembersConfiguration(modelConfig, renderer);
+		applyHideSpansConfiguration(modelConfig, renderer);
+		applyShowPropertyConfiguration(modelConfig, renderer);
+
+	}
+
+	private void applyShowPropertyConfiguration(ModelConfig modelConfig, TableRenderer renderer) {
+		Boolean showProperties = modelConfig.getShowProperties();
+		PropertyCollector propertyCollector = showProperties ? new NonInternalPropertyCollector() : null;
+		renderer.setPropertyCollector(propertyCollector);
+	}
+
+	private void applyHideSpansConfiguration(ModelConfig modelConfig, TableRenderer renderer) {
+		Boolean hideSpans = modelConfig.getHideSpans();
+		renderer.setHideSpans(hideSpans);
+	}
+
+	private void applyShowParentMembersConfiguration(ModelConfig modelConfig, TableRenderer renderer) {
+		Boolean showParentMembers = modelConfig.getShowParentMembers();
+		renderer.setShowParentMembers(showParentMembers);
+	}
+
+	private void applyConfiguration(ModelConfig modelConfig, SpagoBIPivotModel model) {
+		applySupperssEmptyConfiguration(modelConfig, model);
+		applySortConfiguration(modelConfig, model);
+
+	}
+
+	private void applySortConfiguration(ModelConfig modelConfig, SpagoBIPivotModel model) {
+		Boolean sortingEnabled = modelConfig.getSortingEnabled();
+		String sortingPositionUniqeName = modelConfig.getSortingPositionUniqueName();
+		int axisToSort = modelConfig.getAxisToSort();
+		int axis = modelConfig.getAxis();
+		String sortMode = modelConfig.getSortMode();
+		if (shouldSort(sortingEnabled, sortingPositionUniqeName)) {
+
+			model.sortModel(axisToSort, axis, sortingPositionUniqeName, sortMode);
+
+		}
+
+	}
+
+	private void applySupperssEmptyConfiguration(ModelConfig modelConfig, SpagoBIPivotModel model) {
+		Boolean suppressEmpty = modelConfig.getSuppressEmpty();
+		model.setNonEmpty(suppressEmpty);
+	}
+
+	private boolean shouldSort(boolean sortingEnabled, String sortingPositionUniqeName) {
+		return sortingEnabled && sortingPositionUniqeName != null;
 	}
 }
