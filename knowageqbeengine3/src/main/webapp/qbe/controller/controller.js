@@ -363,7 +363,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 				$scope.editQueryObj.fields[i].funct = $scope.queryModel[i].funct;
 				$scope.editQueryObj.fields[i].visible = $scope.queryModel[i].visible;
 				$scope.editQueryObj.fields[i].distinct = $scope.queryModel[i].distinct;
-				$scope.editQueryObj.fields[i].iconCls = scope.queryModel[i].visible;
+				$scope.editQueryObj.fields[i].iconCls = $scope.queryModel[i].visible;
 			}
 		}
 

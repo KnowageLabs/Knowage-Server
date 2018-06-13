@@ -1,4 +1,4 @@
-<div layout="column" class="qbeCustomTable">
+<div layout="column" class="qbeCustomTable" flex>
 	<div style="padding-bottom:5px">
 		<md-toolbar>
 	   		<div class="md-toolbar-tools secondaryToolbar">
@@ -30,18 +30,20 @@
 	   		</div>
 	   	</md-toolbar>
    	</div>
-   	<md-content>
+   	<md-content flex>
    	<qbe-advanced-visualization ng-if="selectedVisualization=='advanced'" ng-model="filters"></qbe-advanced-visualization>
    	<qbe-filter-visualization ng-if="selectedVisualization=='filters'"></qbe-filter-visualization>
    	
    	<div layout="column" ng-if="selectedVisualization=='previewData' && !smartPreview">
-   		<md-card layout-padding layout="column">			      						
+   		<md-card layout-padding layout="column">	
+   				      						
 			<angular-table
 				id="basicView"
 				layout-fill
 				ng-model="ngModel"
 				columns='basicViewColumns'
 				scope-functions=basicViewScopeFunctions
+				speed-menu-option="treeSpeedMenu"
 				no-pagination=true>
 			</angular-table>			   									
 		</md-card>

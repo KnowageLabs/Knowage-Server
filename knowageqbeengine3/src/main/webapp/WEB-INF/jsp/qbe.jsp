@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		      	</md-button>
         	</qbe-expander-list>
 		</div>
-		<div flex layout-fill>
+		<div flex layout="column">
 			<qbe-custom-table 
 			ng-drop="true" 
 			ng-drop-success="onDropComplete($data,$event)" 
