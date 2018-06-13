@@ -630,6 +630,12 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 			JDBCDataSourcePoolConfiguration JdbcPoolConfig = (JDBCDataSourcePoolConfiguration) new JDBCDataSourcePoolConfigurationJSONDeserializer()
 					.deserialize(property);
 			dataSource.setJdbcPoolConfiguration(JdbcPoolConfig);
+		} else if (property == null) {
+			String jndi = getPropertyValueOrNull(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JNDI_NAME);
+			if (jndi == null || jndi.equals("")) {
+				JDBCDataSourcePoolConfiguration jdbcConfig = new JDBCDataSourcePoolConfiguration();
+				dataSource.setJdbcPoolConfiguration(jdbcConfig);
+			}
 		}
 
 		dataSource.setHibDialectClass("");
