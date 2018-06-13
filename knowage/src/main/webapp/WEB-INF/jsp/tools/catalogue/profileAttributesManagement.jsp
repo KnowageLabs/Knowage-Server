@@ -105,10 +105,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         						</md-input-container>
       						</div>
       						<div flex=100>
+      							
        							<md-input-container class="md-block">
        							<label>LOV</label>
        							
-       								<md-select placeholder="LOV to be used to retrieve admissible values" ng-model="selectedAttribute.lovId" ng-click="getColumnsById(selectedAttribute.lovId)">
+       								<md-select ng-disabled="disableLov" placeholder="LOV to be used to retrieve admissible values" ng-model="selectedAttribute.lovId" ng-click="getColumnsById(selectedAttribute.lovId)">
        								<label></label>
        								<md-option ></md-option>
        								<md-option ng-value="lov.id"  ng-repeat="lov in lovs track by $index">{{lov.name}}</md-option>
@@ -131,6 +132,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                    <md-switch name="allowUser" ng-model="selectedAttribute.allowUser " ng-change="setDirty()"  flex="33 ">
 				                        <md-icon md-font-icon="fa fa-eye"></md-icon>Allow user to see field
 				                    </md-switch>
+				                    <md-switch ng-model="disableLov" >
+  										Disable LOV ?
+									</md-switch>
 				                     </div>	
 				                 
 				                     <md-radio-group layout="column" ng-if="selectedAttribute.lovId && selectedAttribute.multivalue" name="syntax" ng-model="selectedAttribute.syntax " ng-change="setDirty()"  flex>

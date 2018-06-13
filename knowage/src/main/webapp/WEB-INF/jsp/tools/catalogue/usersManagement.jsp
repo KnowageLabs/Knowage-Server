@@ -190,21 +190,19 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 					<input name="attr" ng-model="attribute.value" ng-maxlength="100"
 						ng-change="setDirty()"> <div ng-messages="" ng-show="false"></div></md-input-container>	
 				</div>
-				<div flex=100 layout="row" ng-if="attribute.lovId != null " style="border-bottom:1px solid #000;border-color:Gainsboro;">
-				<div flex=50>
+				<div flex=100 layout="row" ng-if="attribute.lovId != null ">
+				<div flex>
 					<md-input-container ng-class="{'md-input-has-value': attribute.value}"class="md-block "> 				 
 						 <label ">{{attribute.name}}</label>  
-						 <div layout="row">  
-							<p>&nbsp{{attribute.value}}</p> 							
-						 </div>						 
+						 <input name="attr" ng-model="attribute.value" readonly>
 					 </md-input-container>	
 					 </div>
-					<div flex=50> 
-					<md-button  ng-click="openLovs($event,attribute)">Change lov value</md-button> 
-					</div>
-					
+					<div flex=5> 
+						<md-button class="md-icon-button" ng-click="openLovs($event,attribute)">
+	    					<md-icon md-font-icon="fa fa-edit"></md-icon>
+						</md-button>
+					</div>				
 				</div>
-
 			</div>
            </md-card>
 			</md-content> </md-tab> </md-tabs> 

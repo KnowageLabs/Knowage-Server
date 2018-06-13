@@ -22,6 +22,8 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	$scope.enumAsArrayOfObjects = enumAsArrayOfObjects;
 	$scope.lovIdAndColumns = [];
 	$scope.lovColumnsId = [];
+	$scope.disableLov = false;
+
 	angular.element(document).ready(function () {
         $scope.getProfileAttributes();
         $scope.getLovs();
@@ -102,6 +104,10 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 																	// update
 																	// existing
 
+				if($scope.disableLov || $scope.selectedAttribute.lovId == "" ){
+				   $scope.selectedAttribute.lovId = undefined;
+				}
+			console.log($scope.selectedAttribute)
 			sbiModule_restServices.promisePut('2.0/attributes',$scope.selectedAttribute.attributeId,$scope.selectedAttribute)
 			.then(function(response) {
 
@@ -112,7 +118,7 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 						$scope.attributeList[i].allowUser = $scope.selectedAttribute.allowUser;
 						$scope.attributeList[i].syntax = $scope.selectedAttribute.syntax;
 						$scope.attributeList[i].multivalue = $scope.selectedAttribute.multivalue;
-						if($scope.selectedAttribute.lovId != ""){
+						if($scope.selectedAttribute.lovId != "" || !$scope.disableLov){
 						$scope.attributeList[i].lovId = $scope.selectedAttribute.lovId;
 						} else $scope.attributeList[i].lovId = undefined
 						if($scope.selectedAttribute.value)
