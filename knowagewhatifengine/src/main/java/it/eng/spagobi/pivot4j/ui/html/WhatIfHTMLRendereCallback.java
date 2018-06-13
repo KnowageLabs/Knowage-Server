@@ -263,11 +263,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						if (cmd != null) {
 							if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))
 									&& !drillMode.equals(DrillDownCommand.MODE_REPLACE)) {
-								/*
-								 * attributes.put("src", "../img/minus.gif"); attributes.put("ng-click", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" +
-								 * uniqueName + "','" + positionUniqueName + " '); $event.stopPropagation();"); startElement("img", attributes);
-								 * endElement("img");
-								 */
+
 								Map<String, String> drillUpAttributes = new TreeMap<String, String>();
 								drillUpAttributes.put("axis", String.valueOf(commandParams.getAxisOrdinal()));
 								drillUpAttributes.put("position", String.valueOf(commandParams.getMemberOrdinal()));
@@ -277,14 +273,9 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 								startElement("drillup", drillUpAttributes);
 								endElement("drillup");
 
-							} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))) {
+							} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))
+									&& commandParams.getMemberOrdinal() > -1) {
 
-								/*
-								 * attributes.put("src", "../img/plus.gif"); attributes.put("ng-click", "drillDown(" + axis + " , " + pos + " , " + memb + ",'"
-								 * + uniqueName + "','" + positionUniqueName + "' ); $event.stopPropagation();");
-								 *
-								 * startElement("img", attributes); endElement("img");
-								 */
 								Map<String, String> drillDownAttributes = new TreeMap<String, String>();
 								drillDownAttributes.put("axis", String.valueOf(axis));
 								drillDownAttributes.put("position", String.valueOf(commandParams.getMemberOrdinal()));
@@ -375,7 +366,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					pos = colIdx;
 				}
 
-				if (drillMode.equals(DrillDownCommand.MODE_REPLACE) && !context.getRenderer().getShowParentMembers()) {
+				if (drillMode.equals(DrillDownCommand.MODE_REPLACE)) {
 					Hierarchy h = context.getHierarchy();
 					PlaceMembersOnAxes pm = context.getModel().getTransform(PlaceMembersOnAxes.class);
 
