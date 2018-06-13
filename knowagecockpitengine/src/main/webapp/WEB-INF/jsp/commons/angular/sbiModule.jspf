@@ -281,6 +281,11 @@ sbiM.service('sbiModule_util',function(){
 	};
 });
 
+sbiM.service('kn_regex',function(){
+	this.extendedAlphanumeric = /^([\pL\w\s\-\_\(\)\[\]\;\:\!\?\,\.\'\"\x2F\x5F%])*$/;
+	this.xss = /^((?!<A|<LINK|<IMG|<SCRIPT|&LT;A|&LT;LINK|&LT;IMG|&LT;SCRIPT|{{).)*$/i;
+	this.alphanumeric = /^([a-zA-Z0-9\s\-\_])*$/;
+});
 
 sbiM.service('sbiModule_messaging',function(sbiModule_restServices,$mdToast){
 	

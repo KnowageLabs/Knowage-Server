@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         	</md-fab-trigger>
 
         	<md-fab-actions>
-          		<md-button aria-label="save" class="md-fab md-raised md-mini" ng-click="saveCockpit()" ng-if="cockpitModule_properties.EDIT_MODE">
+          		<md-button aria-label="save" class="md-fab md-raised md-mini" ng-click="saveCockpit($event)" ng-if="cockpitModule_properties.EDIT_MODE">
           			<md-tooltip md-direction="bottom">Save</md-tooltip>
             		<md-icon md-font-icon="fa fa-save"></md-icon>
           		</md-button>
