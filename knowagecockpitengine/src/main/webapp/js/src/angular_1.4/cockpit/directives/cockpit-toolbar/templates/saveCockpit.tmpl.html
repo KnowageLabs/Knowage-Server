@@ -1,0 +1,38 @@
+<md-dialog>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>{{translate.load("sbi.cockpit.saved.dialog.title")}}</h2>
+			<span flex></span>
+			<md-button class="md-icon-button" ng-click="cancel()">
+            	<md-icon md-font-icon="fa fa-close" aria-label="Close dialog"></md-icon>
+        	</md-button>
+		</div>
+	</md-toolbar>
+	<md-dialog-content layout-align="start center">
+		<div class="md-dialog-content">
+		<h3>{{translate.load("sbi.cockpit.saved.name.missing.text")}}</h3>
+			<div style="width:100%">
+				<form name="saveCockpitForm">
+					<div>
+						<md-input-container style="width:100%">
+							<label>{{translate.load("sbi.cockpit.saved.label")}}</label>
+							<input name="label" ng-model="cockpit.label" required md-maxlength="20" ng-pattern="regex.alphanumeric">							
+						</md-input-container>
+					</div>
+					
+					<div>
+						<md-input-container style="width:100%">
+							<label>{{translate.load("sbi.cockpit.saved.name")}}</label>
+							<input name="name" ng-model="cockpit.name" required md-maxlength="200" ng-pattern="regex.extendedAlphanumeric">							
+						</md-input-container>
+					</div>
+					<md-dialog-actions layout="row">
+						  <md-button ng-click="save(cockpit)" ng-disabled="saveCockpitForm.$invalid">
+					       	  {{translate.load("sbi.cockpit.saved.save")}}
+					      </md-button>
+					</md-dialog-actions>
+				</form>
+			</div>
+		</div>
+	</md-dialog-content>
+</md-dialog>

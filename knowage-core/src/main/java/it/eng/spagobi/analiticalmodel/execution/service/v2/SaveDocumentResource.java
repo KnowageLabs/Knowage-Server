@@ -158,7 +158,6 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		AnalyticalModelDocumentManagementAPI documentManagementAPI = null;
 		try {
 			documentManagementAPI = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-			documentJSON.put("label", documentJSON.getString("name"));// TODO remove this
 			if (documentManagementAPI.getDocument(documentJSON.getString("label")) != null) {
 				logger.error("sbi.document.labelAlreadyExistent");
 				error.addErrorKey("sbi.document.labelAlreadyExistent");
