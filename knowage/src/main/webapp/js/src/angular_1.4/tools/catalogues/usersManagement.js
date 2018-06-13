@@ -100,18 +100,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             	var value = ""
             	if($scope.selectedUser.sbiUserAttributeses.hasOwnProperty($scope.usersAttributes[i].attributeId) ){
             		value =$scope.selectedUser.sbiUserAttributeses[$scope.usersAttributes[i].attributeId][$scope.usersAttributes[i].attributeName];
-//            		if(value.indexOf(',') != -1 && value.indexOf('\'') == -1 ){
-//            			obj.value = value.split(',');
-//	            	}else if (value.indexOf('{') != -1){
-//	            		obj.value = value.replace(/{/g,'').replace(/}/g,'').replace(/;/,'').split(';');
-//            		}
-//	            	else if(value.indexOf('\'') != -1){
-//	            		obj.value = value.replace(/\'/g,'').split(',')
-//	            	}else if ($scope.selectedUser.sbiUserAttributeses.hasOwnProperty($scope.usersAttributes[i].attributeId)) {
-//	                    obj.value = value;
-//	                } else {
-//	                    obj.value = "";
-//	                }
             		obj.value = value;
             	}
             } else {
@@ -139,6 +127,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     };
 
     function lovsDialogController($scope,attribute , $mdDialog) {
+    	$scope.attribute = attribute;
     	if(attribute.multivalue){
     	$scope.columnsSelected =[];
     	}else $scope.columnsSelected = {}
@@ -154,21 +143,9 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
     		$scope.lovObjects.push(columnObject);
     	}
-    	$scope.attribute = attribute;
-    	$scope.clearChecked = function(lovObject){
-    		var boolean = lovObject.cheked;
-    		if(lovObject.checked){
-    			for(var j = 0; j < $scope.lovObjects.length ; j++){
-    				if(angular.equals($scope.lovObjects[j],lovObject)){
-    					continue;
-    				}else $scope.lovObjects[j].checked = false;
-    			}
-    		}
-    	}
 
 
         $scope.close = function() {
-        	console.log($scope.checkeda);
         	$mdDialog.cancel(); }
         $scope.hide = function() {
         	var values = [];
@@ -178,7 +155,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	        	}
         	}else values.push($scope.columnsSelected.column);
         	$scope.attribute.value = values;
-console.log($scope.attribute.value)
         	$mdDialog.hide(); }
 
     }
@@ -261,7 +237,7 @@ console.log($scope.attribute.value)
 	}
 
     $scope.loadUser = function (item) { // this function is called when item from custom table is clicked
-    	console.log($scope.selectedUser);
+
         if ($scope.dirtyForm) {
             $mdDialog.show($scope.confirm).then(function () {
             	$scope.showme = true;

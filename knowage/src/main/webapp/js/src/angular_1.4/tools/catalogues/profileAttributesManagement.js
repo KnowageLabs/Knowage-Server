@@ -32,7 +32,7 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 
 	$scope.setDirty=function(atr){
 		$scope.dirtyForm=true;
-		console.log(atr)
+
 	}
 
 	$scope.getProfileAttributes= function(){
@@ -99,7 +99,6 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	$scope.saveProfileAttribute=function(){
 		if($scope.selectedAttribute.value)
 		$scope.selectedAttribute.value = ($scope.enumAsArrayOfObjects.filter(type => type.name == $scope.selectedAttribute.value.name )[0].name);
-		console.log($scope.selectedAttribute)
 		if($scope.selectedAttribute.hasOwnProperty("attributeId")){ // put,
 																	// update
 																	// existing
@@ -107,7 +106,7 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 				if($scope.disableLov || $scope.selectedAttribute.lovId == "" ){
 				   $scope.selectedAttribute.lovId = undefined;
 				}
-			console.log($scope.selectedAttribute)
+
 			sbiModule_restServices.promisePut('2.0/attributes',$scope.selectedAttribute.attributeId,$scope.selectedAttribute)
 			.then(function(response) {
 
@@ -225,7 +224,7 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	               {
 	            	  label:'delete',
 	            	  action:function(item,event){
-	            		  console.log(item);
+
 	            	  }
 	               }
 	               ];
