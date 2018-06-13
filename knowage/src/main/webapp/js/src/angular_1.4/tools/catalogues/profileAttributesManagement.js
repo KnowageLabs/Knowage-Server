@@ -103,7 +103,7 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 																	// update
 																	// existing
 
-				if($scope.disableLov || $scope.selectedAttribute.lovId == "" ){
+				if(!$scope.disableLov || $scope.selectedAttribute.lovId == "" ){
 				   $scope.selectedAttribute.lovId = undefined;
 				}
 
@@ -149,6 +149,9 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	}
 
 	$scope.loadAttribute=function(item){
+		if(angular.isNumber(item.lovId)){
+			$scope.disableLov = true;
+		}else $scope.disableLov = false;
 
 		if($scope.dirtyForm){
 			$mdDialog.show($scope.confirm).then(function(){
@@ -165,6 +168,7 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 		}else{
 
 		$scope.selectedAttribute=angular.copy(item);
+
 		$scope.showMe=true;
 		}
 	}

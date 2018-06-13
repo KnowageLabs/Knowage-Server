@@ -105,18 +105,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         						</md-input-container>
       						</div>
       						<div flex=100>
-      							
-       							<md-input-container class="md-block">
-       							<label>LOV</label>
-       							
-       								<md-select ng-disabled="disableLov" placeholder="LOV to be used to retrieve admissible values" ng-model="selectedAttribute.lovId" ng-click="getColumnsById(selectedAttribute.lovId)">
-       								<label></label>
-       								<md-option ></md-option>
-       								<md-option ng-value="lov.id"  ng-repeat="lov in lovs track by $index">{{lov.name}}</md-option>
-									</md-select>
-								</md-input-container>
-							</div>
-							<div flex=100>
 								<md-input-container class="md-block">
 								<label>Data type</label>
        								<md-select placeholder="Chose type of data to be stored" ng-change="setDirty(selectedAttribute)"   ng-model="selectedAttribute.value.name">
@@ -125,6 +113,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									</md-select>
 								</md-input-container>		
 							</div>
+							<div flex=100>
+							<input type="radio" name="lovValues" id="manualInput" ng-model="disableLov" ng-value="false">
+							<label for="manualInput">Manual Input</label>
+							<input type="radio" name="lovValues" id="lov" ng-model="disableLov" ng-value="true">
+							<label for="lov">Lov</label>
+							</div>							
+      						<div flex=100 ng-if="disableLov" >						
+       							<md-input-container class="md-block">
+       							<label>LOV</label>      							
+       								<md-select placeholder="LOV to be used to retrieve admissible values" ng-model="selectedAttribute.lovId" ng-click="getColumnsById(selectedAttribute.lovId)">
+       								<label></label>
+       								<md-option ng-value >&lt;no LOV&gt;</md-option>
+       								<md-option ng-value="lov.id"  ng-repeat="lov in lovs track by $index">{{lov.name}}</md-option>
+									</md-select>
+								</md-input-container>
+							</div>
+							
         						<div layout="row ">
 				                    <md-switch name="multivalue" ng-model="selectedAttribute.multivalue " ng-change="setDirty()"  flex="33 ">
 				                         <md-icon md-font-icon="fa fa-list"></md-icon>Multivalue
@@ -132,9 +137,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                    <md-switch name="allowUser" ng-model="selectedAttribute.allowUser " ng-change="setDirty()"  flex="33 ">
 				                        <md-icon md-font-icon="fa fa-eye"></md-icon>Allow user to see field
 				                    </md-switch>
-				                    <md-switch ng-model="disableLov" >
-  										Disable LOV ?
-									</md-switch>
 				                     </div>	
 				                 
 				                     <md-radio-group layout="column" ng-if="selectedAttribute.lovId && selectedAttribute.multivalue" name="syntax" ng-model="selectedAttribute.syntax " ng-change="setDirty()"  flex>
