@@ -198,7 +198,7 @@ public class TestConnection {
 		} catch (Exception ex) {
 			logger.error("Error testing datasources", ex);
 			JSONObject toReturn = new JSONObject();
-			toReturn.put("error", ex.getMessage());
+			toReturn.put("error", "Connection Test failed, please look for more details in log file and check Your parameters");
 			return toReturn.toString();
 		}
 	}

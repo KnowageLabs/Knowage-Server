@@ -82,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				show-save-button="showMe"
 				show-cancel-button="showMe"
 			>
-							<form name="dataSourceForm"  ng-disabled="readOnly"ng-submit="dataSourceForm.$valid && saveOrUpdateDataSource()" class="detailBody mozSize">
+							<form name="dataSourceForm"  ng-disabled="readOnly" ng-submit="dataSourceForm.$valid && saveOrUpdateDataSource()" class="detailBody mozSize">
 								<md-card>
 									<md-card-content>
 									<div>
@@ -140,9 +140,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										</md-input-container>
 
 									<!-- TYPE -->
-										<md-radio-group   ng-model="jdbcOrJndi.type" ng-change="clearType()"> Type:
+										<md-radio-group ng-model="jdbcOrJndi.type" ng-change="clearType()"> Type:
 					      					<md-radio-button value="JDBC" ng-disabled="readOnly">JDBC</md-radio-button>
-					      					<md-radio-button value="JNDI" ng-disabled="readOnly">JNDI</md-radio-button>
+					      					<md-radio-button value="JNDI" ng-disabled="(readOnly || isAdmin) && !isSuperAdminFunction()">JNDI</md-radio-button>
 					    				</md-radio-group>
 									</div>
 									<!-- JDBC -->

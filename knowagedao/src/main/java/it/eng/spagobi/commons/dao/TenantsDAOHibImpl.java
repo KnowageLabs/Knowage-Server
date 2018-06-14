@@ -48,6 +48,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
@@ -522,8 +523,8 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			// carica il tenant tramite ID
-			// verifica che il nome sia uguale altrimenti eccezione
+			// load tenant by id
+			// check if name is the same, otherwise throw an exception
 			SbiTenant tenant = loadTenantById(aTenant.getId());
 			if (!tenant.getName().equalsIgnoreCase(aTenant.getName())) {
 				throw new SpagoBIRuntimeException("It's not allowed to modify the name of an existing Tenant.");
@@ -538,6 +539,8 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			SbiCommonInfo sbiCommoInfo = new SbiCommonInfo();
 			sbiCommoInfo.setOrganization(aTenant.getName());
 
+			UserProfile profile = (UserProfile) getUserProfile();
+
 			Set<SbiOrganizationDatasource> ds = aTenant.getSbiOrganizationDatasources();
 			ArrayList<Integer> datasourceToBeAss = new ArrayList<Integer>();
 			ArrayList<Integer> datasourceToBeInsert = new ArrayList<Integer>();
@@ -548,8 +551,10 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				datasourceToBeAss.add(dsI.getSbiDataSource().getDsId());
 				datasourceToBeInsert.add(dsI.getSbiDataSource().getDsId());
 			}
-			Query hibQuery = aSession.createQuery("from SbiOrganizationDatasource ds where ds.sbiOrganizations.id = :idTenant");
+			Query hibQuery = aSession.createQuery(
+					"from SbiOrganizationDatasource ds where ds.sbiOrganizations.id = :idTenant and (ds.sbiDataSource.commonInfo.userIn = :userId or (ds.sbiDataSource.jndi != '' and ds.sbiDataSource.jndi is not null))");
 			hibQuery.setInteger("idTenant", aTenant.getId());
+			hibQuery.setString("userId", profile.getUserId().toString());
 			ArrayList<SbiOrganizationDatasource> existingDsAssociated = (ArrayList<SbiOrganizationDatasource>) hibQuery.list();
 
 			boolean deletedSomedsOrgAss = false;
@@ -985,7 +990,11 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 
 	public void deleteUnusedDataSource(Session aSession, List<Integer> ids) throws EMFUserError {
 		logger.debug("IN");
-		Query hibQuery = aSession.createQuery("from SbiDataSource ds");
+		UserProfile profile = (UserProfile) this.getUserProfile();
+		Assert.assertNotNull(profile, "User profile object is null; it must be provided");
+
+		Query hibQuery = aSession.createQuery("from SbiDataSource ds where ds.commonInfo.userIn = :userId or (ds.jndi != '' and ds.jndi is not null)");
+		hibQuery.setString("userId", profile.getUserId().toString());
 		ArrayList<SbiDataSource> datasourceList = (ArrayList<SbiDataSource>) hibQuery.list();
 		for (Iterator iterator = datasourceList.iterator(); iterator.hasNext();) {
 			SbiDataSource sbiDataSource = (SbiDataSource) iterator.next();

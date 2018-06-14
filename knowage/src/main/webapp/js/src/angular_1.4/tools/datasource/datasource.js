@@ -24,14 +24,6 @@ var app = angular.module('dataSourceModule', ['ngMaterial', 'angular_list', 'ang
 app.controller('dataSourceController', ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast",
                                         "$timeout","sbiModule_messaging","sbiModule_user","sbiModule_messaging", dataSourceFunction]);
 
-app.filter('fromMillitoSeconds', function(){
-	return function(input){
-		var milisecond = 1000;
-		var seconds = input / milisecond;
-		return seconds;
-	}
-});
-
 var emptyDataSource = {
 	label : "",
 	descr : "",
@@ -60,8 +52,9 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.readOnly= false;
 	$scope.forms = {};
 	$scope.isSuperAdmin = superadmin;
+	$scope.isAdmin = isAdmin;
 	$scope.jdbcOrJndi = {};
-	$scope.currentUser = sbiModule_user.userUniqueIdentifier;
+	$scope.currentUser = sbiModule_user.userId;
 	$scope.JDBCAdvancedOptionsShow = false;
 
 	$scope.isSuperAdminFunction=function(){
@@ -151,8 +144,6 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 		if($scope.selectedDataSource.hasOwnProperty("dsId")){
 
-			var errorU = "Error updating the datasource!"
-
 			//MODIFY DATA SOURCE
 				$scope.checkReadOnly();
 
@@ -189,32 +180,27 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	};
 
 	$scope.clearType = function() {
-
-		if($scope.selectedDataSource.dsId == null){
-
-			if ($scope.jdbcOrJndi.type == 'JDBC') {
-				$scope.selectedDataSource.jndi = "";
-				$scope.selectedDataSource.jdbcPoolConfiguration = {
-					maxTotal: 20,
-					maxWait: 60,
-					abandonedTimeout: 60,
-					timeBetweenEvictionRuns: 10,
-					minEvictableIdleTimeMillis: 60,
-					validationQuery: "",
-					removeAbandonedOnBorrow: true,
-					removeAbandonedOnMaintenance: true,
-					logAbandoned: true,
-					testOnReturn: true,
-					testWhileIdle: true
-				}
-			} else {
-				$scope.selectedDataSource.urlConnection = "";
-				$scope.selectedDataSource.user = "";
-				$scope.selectedDataSource.pwd = "";
-				$scope.selectedDataSource.driver= "";
-				delete $scope.selectedDataSource.jdbcPoolConfiguration;
+		if ($scope.jdbcOrJndi.type == 'JDBC') {
+			$scope.selectedDataSource.jndi = "";
+			$scope.selectedDataSource.jdbcPoolConfiguration = {
+				maxTotal: 20,
+				maxWait: 60,
+				abandonedTimeout: 60,
+				timeBetweenEvictionRuns: 10,
+				minEvictableIdleTimeMillis: 60,
+				validationQuery: "",
+				removeAbandonedOnBorrow: true,
+				removeAbandonedOnMaintenance: true,
+				logAbandoned: true,
+				testOnReturn: true,
+				testWhileIdle: true
 			}
-
+		} else {
+			$scope.selectedDataSource.urlConnection = "";
+			$scope.selectedDataSource.user = "";
+			$scope.selectedDataSource.pwd = "";
+			$scope.selectedDataSource.driver= "";
+			delete $scope.selectedDataSource.jdbcPoolConfiguration;
 		}
 
 	};
@@ -234,8 +220,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		if($scope.selectedDataSourceItems.length > 1) {
 
 			sbiModule_restServices.delete("2.0/datasources",queryParamDataSourceIdsToDelete()).success(
-					function(data, status, headers, config) {
-						console.log(data);
+					function(data, status, headers, config) {						
 						if (data.hasOwnProperty("errors")) {
 							console.log("[DELETE MULTIPLE]: PROPERTY HAS ERRORS!");
 						} else {
@@ -270,8 +255,9 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 	//SHOW RIGHT-COLUMN
 	$scope.createNewDatasource = function () {
-
+		
 		if($scope.isDirty==false) {
+			$scope.readOnly = false;
 			$scope.showMe=true;
 			$scope.jdbcOrJndi = {type:"JDBC"};
 			$scope.selectedDataSource = {
@@ -344,11 +330,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 
 	//LOAD SELECTED SOURCE
-	$scope.loadSelectedDataSource = function(item) {
-
+	$scope.loadSelectedDataSource = function(item) {		
+		
 		if ($scope.isSuperAdmin){
 			$scope.readOnly= false;
-		} else if( $scope.currentUser == item.userIn && item.jndi ==""){
+		} else if( $scope.currentUser == item.owner && item.jndi ==""){
 			$scope.readOnly= false;
 		} else {
 			sbiModule_messaging.showInfoMessage("You are not the owner of this catalog", 'Information');
@@ -424,8 +410,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 	};
 
-	$scope.deleteItem = function (item) {
-		console.log(item)
+	$scope.deleteItem = function (item) {	
 		sbiModule_restServices.promiseDelete("2.0/datasources", item.dsId)
 		.then(function(response) {
 			console.log("[DELETE]: SUCCESS!");
@@ -445,8 +430,8 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		//TEST DATA SOURCE
 
 		var testJSON = angular.copy($scope.selectedDataSource);
-		if(testJSON.jdbcPoolConfiguration) {
-			testJSON.jdbcPoolConfiguration = angular.toJson(testJSON.jdbcPoolConfiguration);
+		if(testJSON.hasOwnProperty('jdbcPoolConfiguration')) {
+			delete testJSON.jdbcPoolConfiguration;
 		}
 
 		if(testJSON.hasOwnProperty("dsId")){
@@ -486,12 +471,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	                    	label:sbiModule_translate.load("sbi.generic.delete"),
 	                    	icon:'fa fa-trash-o',
 	                    	color:'#a3a5a6',
-	                    	action:function(item,event){
-
+	                    	action:function(item,event){	                    		
 	                    		$scope.confirmDelete(item);
 	                    	},
-	                    	 visible: function(row) {
-	             				return row.userIn==$scope.currentUser || $scope.isSuperAdmin ? true : false;
+	                    	 visible: function(row) {	                    		
+	             				return row.owner==$scope.currentUser || $scope.isSuperAdmin ? true : false;
 	                		 }
 
 	                     }

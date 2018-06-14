@@ -222,6 +222,10 @@ public interface IDataSource {
 
 	public abstract void setJdbcPoolConfiguration(JDBCDataSourcePoolConfiguration jDBCPoolConfiguration);
 
+	public abstract String getOwner();
+
+	public abstract void setOwner(String owner);
+
 	public String getHibDialectClass();
 
 	public void setHibDialectClass(String hibDialectClass);
