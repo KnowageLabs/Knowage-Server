@@ -93,8 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       						<div flex=100>
        							<md-input-container class="md-block">
        								<label>{{translate.load("sbi.attributes.headerDescr")}}</label>
-       								<input 	ng-model="selectedAttribute.attributeDescription"
-       										required
+       								<input 	ng-model="selectedAttribute.attributeDescription"       									
        										name="description"
         									ng-change="setDirty()"
         									ng-maxlength="500"

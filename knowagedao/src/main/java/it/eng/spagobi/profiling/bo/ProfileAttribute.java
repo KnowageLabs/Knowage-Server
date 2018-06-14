@@ -36,7 +36,6 @@ public class ProfileAttribute implements Serializable {
 	@Size(max = 255)
 	private String attributeName = "";
 
-	@NotEmpty
 	@ExtendedAlphanumeric
 	@Size(max = 500)
 	private String attributeDescription = "";

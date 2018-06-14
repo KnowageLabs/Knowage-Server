@@ -51,7 +51,7 @@
             <column name="ATTRIBUTE_NAME" not-null="true" />
         </property>
         <property name="description" type="string">
-            <column name="DESCRIPTION" length="500" not-null="true" />
+            <column name="DESCRIPTION" length="500" />
         </property>
         <set name="sbiUserAttributeses" inverse="true" lazy="true" table="SBI_USER_ATTRIBUTES" fetch="select">
             <key>
