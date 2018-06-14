@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.commons.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiProductType;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,6 +32,14 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiProductType;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a domain.
@@ -118,8 +119,10 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			tx = aSession.beginTransaction();
 
 			Criterion domainCdCriterrion = Expression.eq("domainCd", domainType);
+			Order valueIdOrder = Order.asc("valueId");
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(domainCdCriterrion);
+			criteria.addOrder(valueIdOrder);
 
 			List hibList = criteria.list();
 
@@ -172,8 +175,8 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 
 				SbiDomains domain = (SbiDomains) domainIt.next();
 
-				Query hibQueryProd = aSession.createQuery("select opt.sbiProductType from SbiOrganizationProductType opt "
-						+ "where opt.sbiOrganizations.name = :tenant ");
+				Query hibQueryProd = aSession
+						.createQuery("select opt.sbiProductType from SbiOrganizationProductType opt " + "where opt.sbiOrganizations.name = :tenant ");
 				hibQueryProd.setString("tenant", tenant);
 
 				List hibListProd = hibQueryProd.list();
@@ -461,7 +464,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadListDomains()
 	 */
 	@Override
