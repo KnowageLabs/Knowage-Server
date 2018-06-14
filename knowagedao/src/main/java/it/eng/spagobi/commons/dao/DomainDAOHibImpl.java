@@ -118,8 +118,10 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			tx = aSession.beginTransaction();
 
 			Criterion domainCdCriterrion = Expression.eq("domainCd", domainType);
+			Order valueIdOrder = Order.asc("valueId");
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(domainCdCriterrion);
+			criteria.addOrder(valueIdOrder);
 
 			List hibList = criteria.list();
 

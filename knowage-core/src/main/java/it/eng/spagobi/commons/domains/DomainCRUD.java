@@ -78,12 +78,7 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 		try {
 			domaindao = DAOFactory.getDomainDAO();
 			domains = domaindao.loadListDomainsByType(type);
-			Collections.sort(domains, new Comparator() {
-				@Override
-				public int compare(Object domain, Object otherDomain) {
-					return ((Domain) domain).getValueId().compareTo(((Domain) domain).getValueId());
-				}
-			});
+
 			if (type.equals("DIALECT_HIB")) {
 				filterDataSourceDomains(domains);
 			}
