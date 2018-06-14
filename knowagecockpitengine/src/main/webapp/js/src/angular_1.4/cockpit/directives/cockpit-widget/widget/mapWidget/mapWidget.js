@@ -126,9 +126,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						var formattedSelection = {};
 						var datasetSelection = selections[widgetDataset.label];
 						for(var s in datasetSelection){
-							var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,s);
+							var columnObject = $scope.getColumnObjectFromName($scope.ngModel.content.columnSelectedOfDataset,s);
 							if (!columnObject){
-								columnObject = scope.getColumnObjectFromName(widgetDataset.metadata.fieldsMeta,s);
+								columnObject = $scope.getColumnObjectFromName(widgetDataset.metadata.fieldsMeta,s);
 							}
 
 							formattedSelection[columnObject.aliasToShow || columnObject.alias] = {"values":[], "type": columnObject.fieldType};
