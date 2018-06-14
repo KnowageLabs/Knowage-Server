@@ -281,7 +281,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					dsRecords.then(function(data){
 						if(config.type == "selector"){
 							var lastSelection = cockpitModule_widgetSelection.getLastCurrentSelection();
-							if(lastSelection && (!lastSelection[config.dataset.name] || !lastSelection[config.dataset.name][config.content.selectedColumn.name])){
+							if(lastSelection && (!lastSelection[config.dataset.label] || !lastSelection[config.dataset.label][config.content.selectedColumn.name])){
 								var activeValues = wi.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, false);
 								activeValues.then(function(values){
 									var activeValues = [];
