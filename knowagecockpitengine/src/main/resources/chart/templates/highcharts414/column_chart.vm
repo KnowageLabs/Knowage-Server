@@ -851,7 +851,10 @@
 	        			#set($labelAlign=$axisStyle)
 	        		#elseif($styleName == 'rotate')
 	        			#set($rotation=$axisStyle)		        			
-					#else		        			
+					#elseif($styleName == 'color')
+	        			#set($axisLabelColor=$axisStyle)
+	        			color: "$axisLabelColor",	        			
+					#else	        			
 	        			$styleName: '$axisStyle',
 	        		#end
 	        	#end
@@ -1822,7 +1825,11 @@
         activeAxisLabelStyle: 
         {
 			cursor: '',
-			color: '#0d233a',
+			#if($axisLabelColor!='')
+			color: '$axisLabelColor',
+			#else
+			color: '#0d233a',			
+			#end
 			fontWeight: 'bold',
 			textDecoration: 'none'			
 		},
@@ -1838,7 +1845,11 @@
 	        activeDataLabelStyle: 
 	        {
 				cursor: 'pointer',
-				color: '#0d233a',
+				#if($axisLabelColor!='')
+				color: '$axisLabelColor',
+				#else
+				color: '#0d233a',			
+				#end
 				fontWeight: 'bold',
 				textDecoration: 'none'			
 			}
