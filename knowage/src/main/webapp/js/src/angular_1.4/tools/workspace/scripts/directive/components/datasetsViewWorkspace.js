@@ -838,6 +838,11 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
     }
 
+    $scope.isAbleToEditQbeDataset = function(selectedDataset) {
+    	var toReturn = (selectedDataset.dsTypeCd == 'Federated' || selectedDataset.dsTypeCd == 'Qbe') && sbiModule_user.userName == selectedDataset.owner;
+    	return toReturn;
+    }
+
     $scope.getBackPreviewSet=function(){
 
     	 if($scope.startPreviewIndex-$scope.itemsPerPage < 0){

@@ -169,11 +169,17 @@
 							<md-button title="{{translate.load('sbi.workspace.dataset.help')}}" aria-label="Help Online" class="md-icon-button" ng-click="showHelpOnline(selectedDataset)">
 									<md-icon md-font-icon="fa fa-question-circle"></md-icon>
 							</md-button>
-		                    <md-button title="{{translate.load('sbi.workspace.dataset.qbe')}}" aria-label="Open qbe" ng-show="!selectedDataset.derivated" class="md-icon-button" ng-click="showQbeDataset(selectedDataset)">
-									<md-icon md-font-icon="fa fa-search"></md-icon>
-							</md-button>
+
 							 <md-button title="{{translate.load('sbi.workspace.dataset.detail')}}" aria-label="Show detail" ng-show="currentDatasetsTab=='myDataSet' && selectedDataset.dsTypeCd=='File'" class="md-icon-button" ng-click="editFileDataset(selectedDataset)">
-									<md-icon md-font-icon="fa fa-info-circle"></md-icon>
+									<md-icon md-font-icon="fa fa-pencil"></md-icon>
+							</md-button>
+
+							 <md-button title="{{translate.load('sbi.workspace.dataset.qbe.edit')}}" aria-label="Show detail" ng-show="isAbleToEditQbeDataset(selectedDataset)" class="md-icon-button" ng-click="editQbeDataset(selectedDataset)">
+									<md-icon md-font-icon="fa fa-pencil"></md-icon>
+							</md-button>
+							
+							<md-button title="{{translate.load('sbi.workspace.dataset.qbe')}}" aria-label="Open qbe" ng-show="!selectedDataset.derivated" class="md-icon-button" ng-click="showQbeDataset(selectedDataset)">
+									<md-icon md-font-icon="fa fa-search"></md-icon>
 							</md-button>
 							
 							<md-button title="{{translate.load('sbi.workspace.dataset.delete')}}" aria-label="Delete Dataset" class="md-icon-button" ng-show="currentDatasetsTab=='myDataSet'" ng-click="deleteDataset(selectedDataset)">
@@ -243,7 +249,7 @@
 							</md-button>
 		                   
 							 <md-button title="{{translate.load('sbi.workspace.dataset.detail')}}" aria-label="Show detail" class="md-icon-button" ng-click="showDetailCkan(selectedCkan)">
-									<md-icon md-font-icon="fa fa-info-circle"></md-icon>
+									<md-icon md-font-icon="fa fa-pencil"></md-icon>
 							</md-button>
 							
 							 <md-button title="{{translate.load('sbi.workspace.dataset.edit')}}" aria-label="edit" class="md-icon-button" ng-click="editCkan(selectedCkan);">
