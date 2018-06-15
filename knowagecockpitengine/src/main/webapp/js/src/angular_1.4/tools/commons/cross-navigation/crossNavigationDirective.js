@@ -22,7 +22,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				var navObj=response.data;
 				var targetUrl="";
 				if(navObj.length==0){
-					alert("non ci sono documenti di destinazione");
+					alert("No cross navigation defined for the object");
 					return;
 				}else if(navObj.length==1){
 					execCross(navObj[0],outputParameter,inputParameter,true);

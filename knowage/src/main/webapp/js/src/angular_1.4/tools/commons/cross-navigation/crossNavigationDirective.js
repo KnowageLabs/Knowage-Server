@@ -310,8 +310,20 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 
 			}
 			if(param.inputParameterType=="NUM" || (param.type!=undefined && param.type.valueCd=="NUM")){
-				var res=parseFloat(value);
-				return isNaN(res) ? undefined : res;
+				var parsedValue;
+				if (Array.isArray(value)){
+					parsedValue = [];
+					for (v in value){
+						var res = parseFloat(value[v]);
+						if (!isNaN(res)) parsedValue.push(res);
+					}
+				}else{
+					var res=parseFloat(value);
+					parsedValue =  isNaN(res) ? undefined : res;
+				}
+//				var res=parseFloat(value);
+//				return isNaN(res) ? undefined : res;
+				return parsedValue;
 			}
 		};
 

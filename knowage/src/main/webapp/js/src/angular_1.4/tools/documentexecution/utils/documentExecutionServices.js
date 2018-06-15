@@ -784,7 +784,6 @@
 							if(parameter.selectionType.toLowerCase() == "tree" || parameter.selectionType.toLowerCase() == "lookup") {
 								//TREE DESC FOR LABEL
 								var ArrValue = JSON.parse(params[parameter.urlName]);
-
 								if (typeof parameter.parameterDescription === 'undefined'){
 									parameter.parameterDescription = {};
 								}
@@ -824,7 +823,15 @@
 							parameter.parameterValue = (parameter.multivalue)? valueToBeSplitted : valueToBeCleanedByQuotes;
 						} else {
 							if(parameter.type=='NUM'){
-								parameter.parameterValue = parseFloat(params[parameter.urlName],10);
+								if (parameter.multivalue){
+									var values = params[parameter.urlName].split(",");
+									parameter.parameterValue = "";
+									for (var v=0; v<values.length; v++){
+										parameter.parameterValue += parseFloat(values[v],10);
+										if (v < (values.length-1)) parameter.parameterValue += ",";
+									}
+								}else
+									parameter.parameterValue = parseFloat(params[parameter.urlName],10);
 							}else if(parameter.type=='DATE'){
 
 								//parameter.parameterValue= new Date(params[parameter.urlName]);
@@ -841,9 +848,7 @@
 									parameter.parameterValue= new Date(parseInt(dateRange));
 								}else{
 									//FROM VIEWPOINT
-
 									parameter.parameterValue= sbiModule_dateServices.getDateFromFormat(dateRange, sbiModule_config.serverDateFormat);
-
 								}
 								if(typeof parameter.datarange ==='undefined'){
 									parameter.datarange = {};
