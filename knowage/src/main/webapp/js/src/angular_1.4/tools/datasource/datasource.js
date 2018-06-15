@@ -180,29 +180,48 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	};
 
 	$scope.clearType = function() {
-		if ($scope.jdbcOrJndi.type == 'JDBC') {
-			$scope.selectedDataSource.jndi = "";
-			$scope.selectedDataSource.jdbcPoolConfiguration = {
-				maxTotal: 20,
-				maxWait: 60,
-				abandonedTimeout: 60,
-				timeBetweenEvictionRuns: 10,
-				minEvictableIdleTimeMillis: 60,
-				validationQuery: "",
-				removeAbandonedOnBorrow: true,
-				removeAbandonedOnMaintenance: true,
-				logAbandoned: true,
-				testOnReturn: true,
-				testWhileIdle: true
+		if(!$scope.selectedDataSource.hasOwnProperty('dsId')) {
+			if ($scope.jdbcOrJndi.type == 'JDBC') {
+				$scope.selectedDataSource.jndi = "";
+				$scope.selectedDataSource.jdbcPoolConfiguration = {
+					maxTotal: 20,
+					maxWait: 60,
+					abandonedTimeout: 60,
+					timeBetweenEvictionRuns: 10,
+					minEvictableIdleTimeMillis: 60,
+					validationQuery: "",
+					removeAbandonedOnBorrow: true,
+					removeAbandonedOnMaintenance: true,
+					logAbandoned: true,
+					testOnReturn: true,
+					testWhileIdle: true
+				}
+			} else {
+				$scope.selectedDataSource.urlConnection = "";
+				$scope.selectedDataSource.user = "";
+				$scope.selectedDataSource.pwd = "";
+				$scope.selectedDataSource.driver= "";
+				delete $scope.selectedDataSource.jdbcPoolConfiguration;
 			}
 		} else {
-			$scope.selectedDataSource.urlConnection = "";
-			$scope.selectedDataSource.user = "";
-			$scope.selectedDataSource.pwd = "";
-			$scope.selectedDataSource.driver= "";
-			delete $scope.selectedDataSource.jdbcPoolConfiguration;
+			if ($scope.jdbcOrJndi.type == 'JDBC') {
+				if(!$scope.selectedDataSource.hasOwnProperty('jdbcPoolConfiguration')) {
+					$scope.selectedDataSource.jdbcPoolConfiguration = {
+						maxTotal: 20,
+						maxWait: 60,
+						abandonedTimeout: 60,
+						timeBetweenEvictionRuns: 10,
+						minEvictableIdleTimeMillis: 60,
+						validationQuery: "",
+						removeAbandonedOnBorrow: true,
+						removeAbandonedOnMaintenance: true,
+						logAbandoned: true,
+						testOnReturn: true,
+						testWhileIdle: true
+					}
+				}
+			}
 		}
-
 	};
 
 	$scope.checkReadOnly = function() {
