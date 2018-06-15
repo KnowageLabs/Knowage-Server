@@ -148,7 +148,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 *             If an Exception occurred
 	 */
 
-	public List loadDataSourcesForSuperAdmin() throws EMFUserError;
+	public List<IDataSource> loadDataSourcesForSuperAdmin();
 
 	/**
 	 * Method to return name of BiObjects associated to datasource

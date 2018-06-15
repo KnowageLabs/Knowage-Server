@@ -86,7 +86,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 		JSONObject datasorcesJSON = new JSONObject();
 		try {
 			dataSourceDao = DAOFactory.getDataSourceDAO();
-
+			dataSourceDao.setUserProfile(profile);
 			if (profile.getIsSuperadmin() != null && profile.getIsSuperadmin()) {
 				TenantManager.unset();
 				dataSources = dataSourceDao.loadDataSourcesForSuperAdmin();

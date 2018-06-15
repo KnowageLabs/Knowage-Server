@@ -49,6 +49,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
@@ -65,6 +66,8 @@ import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.bo.JDBCDataSourcePoolConfiguration;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 /**
@@ -261,17 +264,22 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	}
 
 	@Override
-	public List loadDataSourcesForSuperAdmin() throws EMFUserError {
+	public List<IDataSource> loadDataSourcesForSuperAdmin() {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		List realResult = new ArrayList();
+		List<IDataSource> realResult = new ArrayList<IDataSource>();
+
 		try {
+
+			UserProfile profile = (UserProfile) this.getUserProfile();
+			Assert.assertNotNull(profile, "User profile object is null; it must be provided for this method to continue");
 
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = aSession.createQuery(" from SbiDataSource");
+			Query hibQuery = aSession.createQuery("from SbiDataSource ds where ds.commonInfo.userIn = :userId or (ds.jndi != '' and ds.jndi is not null)");
+			hibQuery.setString("userId", profile.getUserId().toString());
 
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
@@ -286,7 +294,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			if (tx != null)
 				tx.rollback();
 
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new SpagoBIRuntimeException("Error while loading data sources", he);
 
 		} finally {
 			if (aSession != null) {
@@ -688,6 +696,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			ds.setUser(hibDataSource.getUser());
 			ds.setPwd(hibDataSource.getPwd());
 			ds.setDriver(hibDataSource.getDriver());
+			ds.setOwner(hibDataSource.getCommonInfo().getUserIn());
 			ds.setDialectName(hibDataSource.getDialect().getValueCd());
 			ds.setHibDialectClass(hibDataSource.getDialect().getValueCd());
 			ds.setEngines(hibDataSource.getSbiEngineses());

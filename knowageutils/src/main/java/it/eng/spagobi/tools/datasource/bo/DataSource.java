@@ -39,8 +39,8 @@ import it.eng.spagobi.services.validation.Xss;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
-import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
 import it.eng.spagobi.tools.datasource.DataSourceManager;
 import it.eng.spagobi.tools.datasource.bo.serializer.JDBCDataSourcePoolConfigurationJSONSerializer;
 import it.eng.spagobi.utilities.database.DataBaseException;
@@ -103,8 +103,12 @@ public class DataSource implements Serializable, IDataSource {
 	private Boolean readOnly;
 	private Boolean writeDefault;
 
-	// Advanced Optoins - JDBCPoolConfiguration
+	// Advanced Options - JDBCPoolConfiguration
 	private JDBCDataSourcePoolConfiguration jdbcPoolConfiguration;
+	
+	// Owner of DataSource - UserIn column in Database
+	private String owner;
+
 
 	public Boolean getReadOnly() {
 		return readOnly;
@@ -155,7 +159,7 @@ public class DataSource implements Serializable, IDataSource {
 		sbd.setSchemaAttribute(schemaAttribute);
 		sbd.setReadOnly(readOnly);
 		sbd.setWriteDefault(writeDefault);
-		if(jdbcPoolConfiguration != null) {
+		if (jdbcPoolConfiguration != null) {
 			sbd.setJdbcPoolConfiguration((String) new JDBCDataSourcePoolConfigurationJSONSerializer().serialize(jdbcPoolConfiguration));
 		}
 		return sbd;
@@ -620,4 +624,15 @@ public class DataSource implements Serializable, IDataSource {
 	public void setJdbcPoolConfiguration(JDBCDataSourcePoolConfiguration jdbcPoolConfiguration) {
 		this.jdbcPoolConfiguration = jdbcPoolConfiguration;
 	}
+	
+	@Override
+	public String getOwner() {
+		return owner;
+	}
+
+	@Override
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
 }
