@@ -62,8 +62,9 @@ angular.module('cockpitModule')
 
 		$scope.accessibilityModeEnabled = accessibility_preferences.accessibilityModeEnabled;
 		if ($scope.ngModel && $scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
-			$scope.ngModel.dataset.isRealtime = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).isRealtime;
-			$scope.ngModel.dataset.name = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).name;
+			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
+			$scope.ngModel.dataset.isRealtime = dataset.isRealtime;
+			$scope.ngModel.dataset.label = dataset.label;
 		}
 		$scope.ngModel.activeValues = null;
 		$scope.multiCombo = {};
@@ -143,15 +144,15 @@ angular.module('cockpitModule')
 		}
 
 		$scope.refresh=function(element,width,height, datasetRecords,nature){
-			if(!$scope.ngModel.dataset.name){
-				$scope.ngModel.dataset.name = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).name;
+			if(!$scope.ngModel.dataset.label){
+				$scope.ngModel.dataset.label = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).label;
 			}
 
 			$scope.aggregated = true;
-			$scope.filtersParams = angular.copy($scope.cockpitModule_widgetSelection.getCurrentSelections($scope.ngModel.dataset.name));
+			$scope.filtersParams = angular.copy($scope.cockpitModule_widgetSelection.getCurrentSelections($scope.ngModel.dataset.label));
 			if(Object.keys($scope.filtersParams).length == 0){
 				$scope.aggregated = false;
-				$scope.filtersParams = $scope.cockpitModule_widgetSelection.getCurrentFilters($scope.ngModel.dataset.name);
+				$scope.filtersParams = $scope.cockpitModule_widgetSelection.getCurrentFilters($scope.ngModel.dataset.label);
 			}
 
 			if(nature == 'gridster-resized' || nature == 'fullExpand' || nature == 'resize'){
@@ -168,9 +169,9 @@ angular.module('cockpitModule')
 
 		var checkForSavedSelections = function (filtersParams,nature){
 			$scope.selections.length = 0;
-			if(filtersParams.hasOwnProperty($scope.ngModel.dataset.name) && filtersParams[$scope.ngModel.dataset.name].hasOwnProperty($scope.ngModel.content.selectedColumn.aliasToShow) ){
-				$scope.selections = filtersParams[$scope.ngModel.dataset.name][$scope.ngModel.content.selectedColumn.aliasToShow].length > 1 ?
-						filtersParams[$scope.ngModel.dataset.name][$scope.ngModel.content.selectedColumn.aliasToShow] : filtersParams[$scope.ngModel.dataset.name][$scope.ngModel.content.selectedColumn.aliasToShow][0].split(",");
+			if(filtersParams.hasOwnProperty($scope.ngModel.dataset.label) && filtersParams[$scope.ngModel.dataset.label].hasOwnProperty($scope.ngModel.content.selectedColumn.aliasToShow) ){
+				$scope.selections = filtersParams[$scope.ngModel.dataset.label][$scope.ngModel.content.selectedColumn.aliasToShow].length > 1 ?
+						filtersParams[$scope.ngModel.dataset.label][$scope.ngModel.content.selectedColumn.aliasToShow] : filtersParams[$scope.ngModel.dataset.label][$scope.ngModel.content.selectedColumn.aliasToShow][0].split(",");
 				for (var i = 0; i < $scope.selections.length; i++) {
 					$scope.selections[i] = $scope.selections[i].replace("')", "").replace("('", "").replace(/'/g,"")
 				}
@@ -222,7 +223,7 @@ angular.module('cockpitModule')
 				item.aggregated=$scope.aggregated;
 				item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
 				item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
-				item.ds=$scope.ngModel.dataset.name;
+				item.ds=$scope.ngModel.dataset.label;
 				if($scope.ngModel.settings.defaultValue!=""){
 					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,$scope.defaultValue);
 				}
@@ -257,16 +258,16 @@ angular.module('cockpitModule')
 		}
 
 		var updateModel = function(){
-			var datasetName = $scope.ngModel.dataset.name;
+			var datasetLabel = $scope.ngModel.dataset.label;
 			var columnName = $scope.ngModel.content.selectedColumn.name;
 
-			var selections = cockpitModule_widgetSelection.getCurrentSelections(datasetName);
-			if(selections && selections[datasetName] && selections[datasetName][columnName]){
-				updateValues(selections[datasetName][columnName]);
+			var selections = cockpitModule_widgetSelection.getCurrentSelections(datasetLabel);
+			if(selections && selections[datasetLabel] && selections[datasetLabel][columnName]){
+				updateValues(selections[datasetLabel][columnName]);
 			}else{
-				selections = cockpitModule_widgetSelection.getCurrentFilters(datasetName);
-				if(selections && selections[datasetName] && selections[datasetName][columnName]){
-					updateValues(selections[datasetName][columnName]);
+				selections = cockpitModule_widgetSelection.getCurrentFilters(datasetLabel);
+				if(selections && selections[datasetLabel] && selections[datasetLabel][columnName]){
+					updateValues(selections[datasetLabel][columnName]);
 				}
 			}
 		}
@@ -307,7 +308,7 @@ angular.module('cockpitModule')
 				item.aggregated=$scope.aggregated;
 				item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
 				item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
-				item.ds=$scope.ngModel.dataset.name;
+				item.ds=$scope.ngModel.dataset.label;
 				item.value=angular.copy($scope.multiValue);
 				$rootScope.$broadcast('DELETE_SELECTION',item);
 				$scope.deleteSelections(item);
@@ -322,7 +323,7 @@ angular.module('cockpitModule')
 			item.aggregated=$scope.aggregated;
 			item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
 			item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
-			item.ds=$scope.ngModel.dataset.name;
+			item.ds=$scope.ngModel.dataset.label;
 
 			if($scope.parameter != parVal){
 				$scope.parameter = parVal;
@@ -347,7 +348,7 @@ angular.module('cockpitModule')
 			item.aggregated=$scope.aggregated;
 			item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
 			item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
-			item.ds=$scope.ngModel.dataset.name;
+			item.ds=$scope.ngModel.dataset.label;
 
 			if($scope.ngModel.settings.modalityValue=="multiValue"){
 				var index = $scope.multiCombo.selected.indexOf(parVal);
