@@ -733,20 +733,18 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		var filtersToSendWithoutParams = {};
-		if(dataset.useCache == true || ngModel.updateble == true){
-			angular.copy(filtersToSend,filtersToSendWithoutParams);
-			angular.forEach(filtersToSendWithoutParams, function(item){
-				var paramsToDelete = [];
-				for (var property in item) {
-				    if (item.hasOwnProperty(property) && property.startsWith("$P{") && property.endsWith("}")) {
-				    	paramsToDelete.push(property);
-				    }
+		angular.copy(filtersToSend,filtersToSendWithoutParams);
+		angular.forEach(filtersToSendWithoutParams, function(item){
+			var paramsToDelete = [];
+			for (var property in item) {
+				if (item.hasOwnProperty(property) && property.startsWith("$P{") && property.endsWith("}")) {
+					paramsToDelete.push(property);
 				}
-				angular.forEach(paramsToDelete, function(prop){
-					delete item[prop];
-				});
+			}
+			angular.forEach(paramsToDelete, function(prop){
+				delete item[prop];
 			});
-		}
+		});
 
 		bodyString = bodyString + ",selections:" + JSON.stringify(filtersToSendWithoutParams) + "}";
 
