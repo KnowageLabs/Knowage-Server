@@ -353,7 +353,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		
 		if ($scope.isSuperAdmin){
 			$scope.readOnly= false;
-		} else if( $scope.currentUser == item.owner && item.jndi ==""){
+		} else if( $scope.currentUser == item.owner && (item.jndi != undefined || item.jndi == "")){
 			$scope.readOnly= false;
 		} else {
 			sbiModule_messaging.showInfoMessage("You are not the owner of this catalog", 'Information');
