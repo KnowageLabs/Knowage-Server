@@ -1593,6 +1593,61 @@
 		                      
 	                    
 	                	},
+	                	
+	                	tooltip: { 
+			#set($seriePrefix = $relatedSerie.prefixChar)
+			#if($seriePrefix != '')
+				valuePrefix: '$seriePrefix',
+			#end
+				 
+			#set($seriePostfix = $relatedSerie.postfixChar)
+			#if($seriePostfix != '')
+				valueSuffix: '$seriePostfix',
+			#end
+				
+			#if ($relatedSerie.precision != '')
+				valueDecimals: $relatedSerie.precision,
+			#end
+				
+			#*
+				If background color for the serie tooltip is not defined (empty)
+				take the default value (#FCFFC5) so the tooltip can be readable 
+				over the chart that stays behind it. Otherwise, take the value 
+				of the background color specified by the user.				
+				@author: danristo (danilo.ristovski@mht.net)
+			*#
+			#if ($relatedSerie.TOOLTIP.backgroundColor!="")
+                ttBackColor: '$relatedSerie.TOOLTIP.backgroundColor',
+            #else
+            	ttBackColor: '#FCFFC5',	## default background color for the serie tooltip
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.color != '')
+				ttColor: '$relatedSerie.TOOLTIP.style.color' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.align != '')
+				ttAlign: '$relatedSerie.TOOLTIP.style.align' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontFamily && $relatedSerie.TOOLTIP.style.fontFamily != '')
+				ttFont: '$relatedSerie.TOOLTIP.style.fontFamily' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontWeight != '')
+				ttFontWeight: '$relatedSerie.TOOLTIP.style.fontWeight' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontSize != '')
+				ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
+			#end
+			},
+		
+		#if($chartType != 'radar') 	
+    		#set($referencedAxis = $relatedSerie.axis)
+    		yAxis: $yAxisPositions[$referencedAxis]
+    	#end
+	    
 		},
 		#end
 	#end
