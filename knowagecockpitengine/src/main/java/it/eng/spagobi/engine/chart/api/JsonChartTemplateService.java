@@ -380,8 +380,8 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@SuppressWarnings("rawtypes")
 	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getDataAndConf(@PathParam("label") String label, String body, @Context HttpServletResponse servletResponse,
-			@DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
-			@QueryParam("nearRealtime") boolean isNearRealtime) {
+			@DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("limit") int limit,
+			@DefaultValue("-1") @QueryParam("size") int fetchSize, @QueryParam("nearRealtime") boolean isNearRealtime) {
 		logger.debug("IN");
 		Monitor getDataAndChartConfMonitor = MonitorFactory.start("Knowage.Cockpit.Chart.Get.Data.And.Chartconf");
 		String jsonTemplate = null;
@@ -396,6 +396,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 		queryParams.put("offset", offset);
 		queryParams.put("size", fetchSize);
 		queryParams.put("nearRealtime", isNearRealtime);
+		queryParams.put("limit", limit);
 
 		try {
 			if (StringUtilities.isNotEmpty(body)) {
