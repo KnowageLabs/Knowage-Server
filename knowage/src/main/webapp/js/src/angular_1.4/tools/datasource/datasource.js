@@ -456,6 +456,10 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		if(testJSON.hasOwnProperty("dsId")){
 			delete testJSON.dsId;
 		}
+		
+		if(!testJSON.hasOwnProperty('schemaAttribute')) {
+			testJSON.schemaAttribute = '';
+		}
 
 		if(testJSON.readOnly=="1"){
 			testJSON.readOnly=true;
