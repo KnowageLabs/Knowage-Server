@@ -1776,6 +1776,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		outp.setFormatCode(hiObjPar.getFormatCode());
 		outp.setFormatValue(hiObjPar.getFormatValue());
 		outp.setBiObjectId(hiObjPar.getBiobjId());
+		outp.setIsUserDefined(hiObjPar.getIsUserDefined());
 
 		return outp;
 	}
