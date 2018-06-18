@@ -55,6 +55,7 @@ import com.mongodb.MongoClient;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -86,10 +87,16 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		try {
 			IDataSourceDAO dataSourceDAO;
 			List<IDataSource> dataSources;
+			UserProfile profile = getUserProfile();
 
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
-			dataSourceDAO.setUserProfile(getUserProfile());
-			dataSources = dataSourceDAO.loadAllDataSources();
+			dataSourceDAO.setUserProfile(profile);
+
+			if (profile.getIsSuperadmin()) {
+				dataSources = dataSourceDAO.loadDataSourcesForSuperAdmin();
+			} else {
+				dataSources = dataSourceDAO.loadAllDataSources();
+			}
 
 			if ("cache".equals(type)) {
 				return getCacheDataSources(dataSources);

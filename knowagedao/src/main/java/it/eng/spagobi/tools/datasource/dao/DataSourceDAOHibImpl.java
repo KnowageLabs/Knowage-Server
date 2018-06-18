@@ -227,14 +227,13 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		Session aSession = null;
 		Transaction tx = null;
 		List<IDataSource> realResult = new ArrayList<>();
-		try {
 
+		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
 			Query hibQuery = null;
 
-			// superadmin task
 			hibQuery = aSession.createQuery("select ds.sbiDataSource from SbiOrganizationDatasource ds where ds.sbiOrganizations.name = :tenantName");
 			hibQuery.setString("tenantName", getTenant());
 
