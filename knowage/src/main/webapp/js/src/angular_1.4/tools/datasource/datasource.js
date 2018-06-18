@@ -220,7 +220,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 						testWhileIdle: true
 					}
 				}
-			}
+			} 
 		}
 	};
 
@@ -334,7 +334,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 							testOnReturn: true,
 							testWhileIdle: true
 						},
-						driver: ""
+						driver: ""						
 				};
 
 				$scope.isDirty = false;
@@ -353,7 +353,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		
 		if ($scope.isSuperAdmin){
 			$scope.readOnly= false;
-		} else if( $scope.currentUser == item.owner && item.jndi ==""){
+		} else if ($scope.currentUser == item.owner && (!item.hasOwnProperty('jndi') || item.jndi == "")){
 			$scope.readOnly= false;
 		} else {
 			sbiModule_messaging.showInfoMessage("You are not the owner of this catalog", 'Information');
@@ -456,7 +456,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		if(testJSON.hasOwnProperty("dsId")){
 			delete testJSON.dsId;
 		}
-
+		
+		if(!testJSON.hasOwnProperty('schemaAttribute')) {
+			testJSON.schemaAttribute = '';
+		}
+		
 		if(testJSON.readOnly=="1"){
 			testJSON.readOnly=true;
 		} else if(testJSON.readOnly=="0"){
