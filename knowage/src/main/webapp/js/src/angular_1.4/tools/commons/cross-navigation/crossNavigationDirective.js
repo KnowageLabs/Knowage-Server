@@ -305,13 +305,35 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 
 			if(param.inputParameterType=="DATE" || (param.type!=undefined && param.type.valueCd=="DATE")){
 				//back date server format
-				return sbiModule_dateServices.formatDate(sbiModule_dateServices.getDateFromFormat(value, param.dateFormat),sbiModule_config.serverDateFormat );
-				//return sbiModule_dateServices.getDateFromFormat(value, param.dateFormat)
+//				return sbiModule_dateServices.formatDate(sbiModule_dateServices.getDateFromFormat(value, param.dateFormat),sbiModule_config.serverDateFormat );
+				var parsedValue;
+				if (Array.isArray(value)){
+					parsedValue = [];
+					for (v in value){
+						var res = sbiModule_dateServices.formatDate(sbiModule_dateServices.getDateFromFormat(value[v], param.dateFormat),sbiModule_config.serverDateFormat );
+						if (res) parsedValue.push(res);
+					}
+				}else{
+					parsedValue = sbiModule_dateServices.formatDate(sbiModule_dateServices.getDateFromFormat(value, param.dateFormat),sbiModule_config.serverDateFormat );
+				}
+				return parsedValue;
 
 			}
 			if(param.inputParameterType=="NUM" || (param.type!=undefined && param.type.valueCd=="NUM")){
-				var res=parseFloat(value);
-				return isNaN(res) ? undefined : res;
+				var parsedValue;
+				if (Array.isArray(value)){
+					parsedValue = [];
+					for (v in value){
+						var res = parseFloat(value[v]);
+						if (!isNaN(res)) parsedValue.push(res);
+					}
+				}else{
+					var res=parseFloat(value);
+					parsedValue =  isNaN(res) ? undefined : res;
+				}
+//				var res=parseFloat(value);
+//				return isNaN(res) ? undefined : res;
+				return parsedValue;
 			}
 		};
 

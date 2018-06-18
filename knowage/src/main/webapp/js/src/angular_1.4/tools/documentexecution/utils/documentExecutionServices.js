@@ -799,22 +799,7 @@
 								}
 							} else {
 								//FROM VIEWPOINT : the lov value saved (multivalue or single value) matched  with the parameter
-								//parameter.parameterValue = parameter.multivalue ? JSON.parse(params[parameter.urlName])	: params[parameter.urlName];
-								//lookup old
-//								if(parameter.selectionType.toLowerCase() == "lookup"){
-//								var ArrValue = JSON.parse(params[parameter.urlName]);
-//								var ArrDesc = params[parameter.urlName+'_field_visible_description'].split(';');
-//								if (typeof parameter.parameterDescription === 'undefined'){
-//								parameter.parameterDescription = {};
-//								}
-//								for(var w=0; w<ArrValue.length; w++){
-//								parameter.parameterDescription[ArrValue[w]] =ArrDesc[w];
-//								}
-//								parameter.parameterValue = ArrValue;
-
-//								}else{
 								parameter.parameterValue = parameter.multivalue ? JSON.parse(params[parameter.urlName])	: params[parameter.urlName];
-								//}
 							}
 
 						} else if(parameter.valueSelection.toLowerCase() == 'map_in') {
@@ -824,13 +809,27 @@
 							parameter.parameterValue = (parameter.multivalue)? valueToBeSplitted : valueToBeCleanedByQuotes;
 						} else {
 							if(parameter.type=='NUM'){
-								parameter.parameterValue = parseFloat(params[parameter.urlName],10);
+								if (parameter.multivalue){
+									var values = params[parameter.urlName].split(",");
+									parameter.parameterValue = "";
+									for (var v=0; v<values.length; v++){
+										parameter.parameterValue += parseFloat(values[v],10);
+										if (v < (values.length-1)) parameter.parameterValue += ",";
+									}
+								}else
+									parameter.parameterValue = parseFloat(params[parameter.urlName],10);
 							}else if(parameter.type=='DATE'){
-
-								//parameter.parameterValue= new Date(params[parameter.urlName]);
 								//set parameter date server
-								parameter.parameterValue= sbiModule_dateServices.getDateFromFormat(params[parameter.urlName], sbiModule_config.serverDateFormat);
-
+								if (parameter.multivalue){
+									var values = params[parameter.urlName].split(",");
+									parameter.parameterValue = "";
+									for (var v=0; v<values.length; v++){
+										var res = sbiModule_dateServices.getDateFromFormat(values[v], sbiModule_config.serverDateFormat);
+										parameter.parameterValue += sbiModule_dateServices.formatDate(res, sbiModule_config.serverDateFormat); //convert to string
+										if (v < (values.length-1)) parameter.parameterValue += ",";
+									}
+								}else
+									parameter.parameterValue = sbiModule_dateServices.getDateFromFormat(params[parameter.urlName], sbiModule_config.serverDateFormat);
 							}else if(parameter.type=='DATE_RANGE'){
 								var dateRange = params[parameter.urlName];
 								var dateRangeArr = dateRange.split('_');
@@ -841,9 +840,7 @@
 									parameter.parameterValue= new Date(parseInt(dateRange));
 								}else{
 									//FROM VIEWPOINT
-
 									parameter.parameterValue= sbiModule_dateServices.getDateFromFormat(dateRange, sbiModule_config.serverDateFormat);
-
 								}
 								if(typeof parameter.datarange ==='undefined'){
 									parameter.datarange = {};
