@@ -1719,7 +1719,7 @@
         			
     		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
         	
-        	thisValue = valuePrefix + thisValue + valueSuffix;
+        	thisValue = valuePrefix + thisValue + valueSuffix; 
         	
         	var format = "";
         	var drilling = false;
@@ -1799,19 +1799,15 @@
 	        	var yValueOnlyIndexStart = format.indexOf(formatIntro);
 	        	var yValueOnlyIndexEnd = format.indexOf(formatOutro);
 	        	
-	        	prefix = format.substring(0,yValueOnlyIndexStart) + " ";
+	        	prefix = this.series.options.tooltip.valuePrefix + " ";
 	        	
-	        	var separatorOfThousands = format.substring(yValueOnlyIndexStart + formatIntro.length, 
-	        											yValueOnlyIndexStart + formatIntro.length + 1);
+	        	var separatorOfThousands = Highcharts.getOptions().lang.thousandsSep;
 	        	
-	        	var decimalPoint = format.substring(yValueOnlyIndexStart + formatIntro.length + 1, 
-	        											yValueOnlyIndexStart + formatIntro.length + 2);	
+	        	var decimalPoint = Highcharts.getOptions().lang.decimalPoint;
 	        											
-	        	var precision = format.substring(yValueOnlyIndexStart + formatIntro.length + 2, 
-	        											yValueOnlyIndexEnd);
+	        	var precision = this.series.options.tooltip.valueDecimals;
 	        				
-	        	postfix = " " + format.substring(yValueOnlyIndexEnd + formatOutro.length + 1,
-	        											format.length);
+	        	postfix = " " + this.series.options.tooltip.valueSuffix;
 	        	
 	        	thisValue = Highcharts.numberFormat(this.y, precision, decimalPoint, separatorOfThousands);
         	}
@@ -1849,7 +1845,7 @@
         		style of the fonts on the tooltip will be the same for every single font
         		element on it. HTML tag <strong> is removed.
         		@modifiedBy: danristo (danilo.ristovski@mht.net)
-        	*/ 	
+        	*/ 
             #if($isDateTime==true)
             
              result += '<span>' + Highcharts.dateFormat('$dateFormat', (this.x+86400000 )) + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';

@@ -13,6 +13,7 @@
 #foreach($serie in $chart.CHART.VALUES.SERIE)
 	#if($serie.get($name) == $drilldownSerie)
 	#set($mainSerieName =$serie.get($col))
+	#set($mainSerie =$serie)
 	#set($groupingFunction=$serie.get("groupingFunction"))
 	#end
 #end
@@ -70,6 +71,66 @@
 	
 	serieName:'$drilldownSerie',
      pointRange: 1,
+     "dataLabels": {
+			"enabled": $mainSerie.showValue,
+			"labelFormat": '${mainSerie.prefixChar}{y}${mainSerie.precision}${mainSerie.postfixChar}',
+			formatter: function() {
+			                     
+			                    var value = this.y;	
+			                    var newValue = "";		                    
+			                    
+		                      	var scaleFactor = '${mainSerie.scaleFactor}';
+		                      	
+		                      	var prefixValue = '${mainSerie.prefixChar}';
+		                      	var sufixValue = '${mainSerie.postfixChar}';
+		                      	
+		                      	
+		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+		                      	
+		                      	var precision = '${mainSerie.precision}';
+		                      	
+		                      	switch(scaleFactor.toUpperCase()) {
+		                      	
+		                      		case "EMPTY":
+		                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
+		                      			newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
+		                      			break;
+		                      		case "K":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";	
+		                      			break;
+		                      		case "M":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";	
+		                      			break;
+		                      		case "G":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+		                      			break;
+	                      			case "T":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+		                      			break;
+		                      		case "P":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+		                      			break;
+	                      			case "E":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+		                      			break;
+	                      			default:
+	                      				/* The same as for the case when user picked "no selection" - in case when the chart 
+	                      				template does not contain the scale factor for current serie */
+	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
+		                      			break;
+		                      	
+		                      	}						
+	                        		                       
+	                          	return prefixValue + ' ' + newValue + ' ' + sufixValue;
+			            	},
+		},
+     "tooltip": {
+			"valuePrefix": "$mainSerie.prefixChar",
+			"valueSuffix": "$mainSerie.postfixChar",
+			"valueDecimals": $mainSerie.precision,
+			"ttBackColor": "$mainSerie.TOOLTIP.backgroundColor"
+		},
 	data: [
 #foreach($row in $rows)
 #set ($serieValue=$row.get($serieColumnsMapped))
