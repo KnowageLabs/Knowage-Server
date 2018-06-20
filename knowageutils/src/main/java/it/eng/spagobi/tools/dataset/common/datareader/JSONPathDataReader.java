@@ -296,28 +296,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 		
 		
-		//If a column contains an Object then cast to a JSON string		
-		
-		for(Object r : parsedData) {
-			
-			LinkedHashMap<Object, Object> record = (LinkedHashMap<Object, Object>)r;
-			Set<Object> columnNames =  record.keySet();
-			for(Object column : columnNames) {
-					Object obj = record.get(column);
-					if(obj instanceof Map) {
-						ObjectMapper mapper = new ObjectMapper();
-						try {
-							obj = mapper.writeValueAsString((LinkedHashMap)obj);
-						} catch (JsonProcessingException e) {
-							// TODO Auto-generated catch block
-							System.out.println("Impossible to parse in JSON");
-							e.printStackTrace();
-						}
-						//obj = new Gson().toJson(obj,LinkedHashMap.class);
-						record.put(column, obj);
-					}
-			}
-		}
+
 		
 		return parsedData;
 	}
@@ -471,7 +450,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 	protected void addFieldMetadata(MetaData dataStoreMeta, List<Object> parsedData) {
 		boolean idSet = false;
 
-		manageNGSI(parsedData);
+		if(ngsiDefaultItems)manageNGSI(parsedData);
+		else manageNonNGSIObject(parsedData);
 
 		for (int index = 0; index < jsonPathAttributes.size(); index++) {
 			JSONPathAttribute jpa = jsonPathAttributes.get(index);
@@ -509,6 +489,32 @@ public class JSONPathDataReader extends AbstractDataReader {
 		if (ngsiDefaultItems && !dataReadFirstTime) {
 			List<JSONPathAttribute> ngsiAttributes = getNGSIAttributes(parsedData);
 			updateAttributes(ngsiAttributes);
+		}
+		dataReadFirstTime = true;
+	}
+	
+	private void manageNonNGSIObject(List<Object> parsedData) {
+		if (!ngsiDefaultItems && !dataReadFirstTime) {
+			//If a column contains an Object then cast to a JSON string		
+			
+			for(Object r : parsedData) {				
+				LinkedHashMap<Object, Object> record = (LinkedHashMap<Object, Object>)r;
+				Set<Object> columnNames =  record.keySet();
+				for(Object column : columnNames) {
+						Object obj = record.get(column);
+						if(obj instanceof Map) {
+							ObjectMapper mapper = new ObjectMapper();
+							try {
+								obj = mapper.writeValueAsString((LinkedHashMap)obj);
+							} catch (JsonProcessingException e) {
+								System.out.println("Impossible to parse JSON");
+								e.printStackTrace();
+							}
+							//obj = new Gson().toJson(obj,LinkedHashMap.class);
+							record.put(column, obj);
+						}
+				}
+			}
 		}
 		dataReadFirstTime = true;
 	}
