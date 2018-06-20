@@ -289,7 +289,10 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        		upload : '/upload'
 	        	        }
 
-	        	        scope.setFile = function (file){
+	        	        scope.setFile = function (file, isForUpdate){
+	        	        	if(isForUpdate) {
+	        	        		scope.isForUpdate = true;
+	        	        	}
 	        	        	scope.file = file.files[0];
 	        	        	scope.$apply();
 	        	        }
@@ -324,6 +327,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        					}
 	        	        				})
 	        	        	}
+	        	        	scope.isForUpdate = false;
 	        	        }
 
 	        	        scope.dowloadFile = function(license, hostName){

@@ -47,20 +47,23 @@
                  <md-icon md-font-set="fa" md-font-icon="fa fa-plus"></md-icon>
             </label>
             <input  ng-disabled='ngDisabled' id="upload_license_input" type="file" class="ng-hide" onchange='angular.element(this).scope().setFile(this)'>
-            <md-button ng-if="file" ng-click="uploadFile(host.hostName)" aria-label="menu" class="md-fab md-mini md-primary">
+            <md-button ng-if="file && !isForUpdate" ng-click="uploadFile(host.hostName)" aria-label="menu" class="md-fab md-mini md-primary">
                 <md-icon md-font-set="fa" md-font-icon="fa fa-upload"></md-icon>
              </md-button>
         </div>
         
-        <md-list class="md-dense">
-	        <md-list-item class="md-2-line" ng-repeat="license in licenseData[host.hostName]">
+        <md-list class="md-dense" layout="column">
+	        <md-list-item flex class="md-2-line" ng-repeat="license in licenseData[host.hostName]">
 	        	<img ng-src="/knowage/themes/commons/img/licenseImages/{{license.product}}.png" class="md-avatar" alt="{{license.product}}" />
-	        	<div class="md-list-item-text">
+	        	<div flex class="md-list-item-text">
 	          		<h3>{{license.product}}</h3>
 	          		<p ng-class="{'kn-danger':license.status.contains('INVALID'),'kn-success':!license.status.contains('INVALID')}">
 		          		{{license.status_ext}}
 		          		<span ng-if="license.expiration_date">- {{license.expiration_date}}</span>
 	          		</p>
+	         	</div>
+	         	<div flex class="md-list-item-text">
+	         		<h3>{{license.licenseId}}</h3>
 	         	</div>
 <!-- 	         	<md-button class="md-secondary md-icon-button" ng-click="dowloadFile(license, host.hostName)"  > -->
 <!-- 		        	<md-icon md-font-set="fa" md-font-icon="fa fa-download"></md-icon> -->
@@ -71,20 +74,17 @@
 			  </md-button>
 			  <md-menu-content width="1">
 			    <md-menu-item>
-			      <md-button ng-click="dowloadFile(license, host.hostName)">
-			        <md-icon md-font-set="fa" md-font-icon="fa fa-download" md-menu-align-target></md-icon>
-			      </md-button>
+			        <md-icon ng-click="dowloadFile(license, host.hostName)" md-font-set="fa" md-font-icon="fa fa-download" md-menu-align-target></md-icon>
 			    </md-menu-item>
+			   <md-menu-item>
+			   			<label ng-disabled='ngDisabled' for="upload_license_update">
+                 			<md-icon ng-if="!isForUpdate" md-font-set="fa" md-font-icon="fa fa-edit"></md-icon>
+            			</label>
+            			<input  ng-disabled='ngDisabled' id="upload_license_update" type="file" ng-hide="true" onchange="angular.element(this).scope().setFile(this, true)">
+                 		<md-icon ng-if="isForUpdate" ng-click="uploadFile(host.hostName)"   md-font-set="fa" md-font-icon="fa fa-upload"></md-icon>
+			   </md-menu-item>
 			    <md-menu-item>
-			      <md-button >
-			        	<md-icon md-font-set="fa" md-font-icon="fa fa-edit"></md-icon>
-			      </md-button>
-			    </md-menu-item>
-			    <md-menu-divider></md-menu-divider>
-			    <md-menu-item>
-			      <md-button ng-click="deleteFile(license, host.hostName)">
-			        	<md-icon md-font-set="fa" md-font-icon="fa fa-trash"></md-icon>
-			      </md-button>
+			        <md-icon ng-click="deleteFile(license, host.hostName)" md-font-set="fa" md-font-icon="fa fa-trash"></md-icon>
 			    </md-menu-item>
 			  </md-menu-content>
 			</md-menu>
