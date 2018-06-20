@@ -380,7 +380,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         	        					}else{
         	        						if(response.data.deleted == true){
         	        							var productD = response.data.product;
-        	        							var obj = $filter('filter')($scope.licenseData, {product: productD}, true)[0];
+        	        							var obj = $filter('filter')($scope.licenseData[currentHostName], {product: productD}, true)[0];
 
         	        							var index = $scope.licenseData[currentHostName].indexOf(obj);
         	        							$scope.licenseData[currentHostName].splice(index, 1);

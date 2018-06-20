@@ -2,6 +2,7 @@
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
+<%@page import="it.eng.spagobi.commons.utilities.SpagoBIUtilities"%>
 
  <%
     String userName="";
@@ -14,6 +15,11 @@
     }
 
     String contextName = ChannelUtilities.getSpagoBIContextName(request);
+    
+    String myHostName = SpagoBIUtilities.getCurrentHostName(); 
+    
+    int cpuNumber = Runtime.getRuntime().availableProcessors();
+       
 %>
     
 
@@ -21,6 +27,7 @@
 	<md-toolbar>
 	  <div class="md-toolbar-tools">
 	    <h2>{{title}}</h2>
+	    <h2>myHostName: <%=myHostName%> </h2>
 	    <span flex></span>
 	  </div>
 	</md-toolbar>
@@ -30,11 +37,12 @@
       
         <div layout="row" layout-align="center">
         	<div class="kn-info">
-        		<strong>Hardware Id: </strong>{{host.hardwareId}}
+        		<strong>Hardware Id: </strong>{{host.hardwareId}}<br>
+        		<strong>CPU Id: <%=cpuNumber%></strong>
         	</div>
         </div>
         
-        <div class="licenseTopButtons">
+ 	    <div class="licenseTopButtons">
             <label ng-disabled='ngDisabled' id="upload_license" class="md-knowage-theme md-button md-fab md-mini md-primary" md-ink-ripple for="upload_license_input">
                  <md-icon md-font-set="fa" md-font-icon="fa fa-plus"></md-icon>
             </label>
@@ -54,9 +62,32 @@
 		          		<span ng-if="license.expiration_date">- {{license.expiration_date}}</span>
 	          		</p>
 	         	</div>
-	         	<md-button class="md-secondary md-icon-button" ng-click="dowloadFile(license, host.hostName)" >
-		        	<md-icon md-font-set="fa" md-font-icon="fa fa-download"></md-icon>
-		        </md-button>
+<!-- 	         	<md-button class="md-secondary md-icon-button" ng-click="dowloadFile(license, host.hostName)"  > -->
+<!-- 		        	<md-icon md-font-set="fa" md-font-icon="fa fa-download"></md-icon> -->
+<!-- 		        </md-button> -->
+		        <md-menu>
+			      <md-button aria-label="Open phone interactions menu" class="md-icon-button">
+			    <md-icon md-font-set="fa" md-font-icon="fas fa-ellipsis-v"></md-icon>
+			  </md-button>
+			  <md-menu-content width="1">
+			    <md-menu-item>
+			      <md-button ng-click="dowloadFile(license, host.hostName)">
+			        <md-icon md-font-set="fa" md-font-icon="fa fa-download" md-menu-align-target></md-icon>
+			      </md-button>
+			    </md-menu-item>
+			    <md-menu-item>
+			      <md-button >
+			        	<md-icon md-font-set="fa" md-font-icon="fa fa-edit"></md-icon>
+			      </md-button>
+			    </md-menu-item>
+			    <md-menu-divider></md-menu-divider>
+			    <md-menu-item>
+			      <md-button ng-click="deleteFile(license, host.hostName)">
+			        	<md-icon md-font-set="fa" md-font-icon="fa fa-trash"></md-icon>
+			      </md-button>
+			    </md-menu-item>
+			  </md-menu-content>
+			</md-menu>
 		        <!--  uncomment this to add the license delete md-button class="md-secondary md-icon-button" ng-click="deleteFile(license, host.hostName)" >
 		        	<md-icon md-font-set="fa" md-font-icon="fa fa-trash"></md-icon>
 		        </md-button -->
