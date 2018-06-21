@@ -20,6 +20,17 @@ package it.eng.spagobi.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is useful for server-side paginated list services. It represents the result of a paginated list service, providing items of a particular page,
+ * plus the total number of items as returned by the query and the starting index of the provided results with respect to the complete list. Example: query is
+ * returning 5000 rows, but required page should display records from 150 to 200, then results property should contain items from 150 to 200, total property
+ * should be 5000 and start should be 150.
+ *
+ * @author zerbetto
+ *
+ * @param <T>
+ *
+ */
 public class PagedList<T> {
 
 	private List<T> results = null;
