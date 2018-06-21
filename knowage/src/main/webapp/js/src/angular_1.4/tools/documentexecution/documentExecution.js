@@ -96,7 +96,7 @@
 		$scope.isSuperAdmin = isSuperAdmin;
 		$scope.isAbleToExecuteAction = isAbleToExecuteAction;
 		$scope.addToWorkspaceEnabled = (sbiModule_user.functionalities.indexOf("SaveIntoFolderFunctionality")>-1)? true:false;
-		$scope.showScheduled = (sbiModule_user.functionalities.indexOf("SeeSnapshotsFunctionality")>-1)||(sbiModule_user.functionalities.indexOf("SchedulerManagement")>-1)? true:false;
+		$scope.showScheduled = ((sbiModule_user.functionalities.indexOf("SeeSnapshotsFunctionality")>-1) || (sbiModule_user.functionalities.indexOf("SchedulerManagement")>-1)) && isNotOlapDoc ? true : false;
 
 		//navigation default parameters
 		$scope.navigatorEnabled 	= false;
