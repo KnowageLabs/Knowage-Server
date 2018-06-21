@@ -502,7 +502,7 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 	}
 
 	$scope.createBusinessColumnFromPhysicalColumns=function(pc,businessModel){
-		sbiModule_restServices.promisePost("1.0/metaWeb", "createBusinessColumn",metaModelServices.createRequestRest({physicalTableName:pc.$parent.name,physicalColumnName:pc.name,businessModelUniqueName:businessModel.uniqueName}))
+		sbiModule_restServices.promisePost("1.0/metaWeb", "createBusinessColumn",metaModelServices.createRequestRest({physicalTableName:pc.tableName,physicalColumnName:pc.name,businessModelUniqueName:businessModel.uniqueName}))
 		   .then(function(response){
 				metaModelServices.applyPatch(response.data);
 		   },function(response){
