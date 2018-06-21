@@ -98,7 +98,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			Iterator iterHibSnaps = hibSnaps.iterator();
 			while (iterHibSnaps.hasNext()) {
 				SbiSnapshots hibSnap = (SbiSnapshots) iterHibSnaps.next();
-				Snapshot snap = toSnapshot(hibSnap);
+				Snapshot snap = toSnapshotBasicInfo(hibSnap);
 				snaps.add(snap);
 			}
 
@@ -517,6 +517,31 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			aLits.clear();
 			aLits.addAll(sortedList);
 		}
+	}
+	
+	/**
+	 * Getting the Snapshot information without content in purpose of optimization. When displaying a list of snapshots on web UI, all snapshots are loaded
+	 * without a content, then with clicking on one snapshot, user gets the snapshot's content for that particular snapshot
+	 */
+	private Snapshot toSnapshotBasicInfo(SbiSnapshots hibSnap) {
+		Snapshot snapshot = new Snapshot();
+		snapshot.setBiobjId(hibSnap.getSbiObject().getBiobjId());
+		snapshot.setBinId(hibSnap.getSbiBinContents().getId());
+		snapshot.setDateCreation(hibSnap.getCreationDate());
+		snapshot.setDescription(hibSnap.getDescription());
+		snapshot.setId(hibSnap.getSnapId());
+		snapshot.setName(hibSnap.getName());
+		snapshot.setContentType(hibSnap.getContentType());
+		snapshot.setSchedulation(hibSnap.getSchedulation());
+		snapshot.setSequence(hibSnap.getSequence());
+		snapshot.setSchedulationStartDate(hibSnap.getSchedulationStartDate());
+		snapshot.setScheduler(hibSnap.getScheduler());
+		snapshot.setSchedulationStartDate(hibSnap.getSchedulationStartDate());
+		snapshot.setTime(DATE_FORMATTER.format(hibSnap.getCreationDate()));
+		// content need to be empty
+		snapshot.setContent(new byte[0]);
+		
+		return snapshot;
 	}
 
 }
