@@ -122,8 +122,9 @@
                     	if(column.ranges && column.ranges.length >0){
                     		var ranges = column.ranges;
                     		for (var k in ranges) {
-                                if (value!="" && ranges[k]['background-color'] &&eval(value + ranges[k].operator + ranges[k].value)) {
-                                	style['background-color'] = ranges[k]['background-color'];
+                                if (value!="" && eval(value + ranges[k].operator + ranges[k].value)) {
+                                	style['background-color'] = ranges[k]['background-color'] || '';
+                                	style['color'] = ranges[k]['color'] || '';
                                     if (ranges[k].operator == '==') break;
                                 }
                             }
@@ -215,7 +216,15 @@
                     	}else{
                     		return '0%';
                     	}
-
+                    }
+                    
+                    scope.getBarchartColor = function(column,value){
+                		for(var r in column.ranges){
+                			if(eval(value+column.ranges[r].operator+column.ranges[r].value)){
+                				return column.ranges[r].color;
+                			}
+                		}
+                		return column.barchart.style['background-color'];
                     }
 
                     //icon ranges recognition
@@ -223,7 +232,7 @@
                     	var ranges = column.ranges;
                         var icon = "";
                         for (var k in ranges) {
-                            if (typeOf(value) !== 'undefined' && eval(value + ranges[k].operator + ranges[k].value)) {
+                            if (value!="" && eval(value + ranges[k].operator + ranges[k].value)) {
                                 icon = {
                                     "iconClass": ranges[k].icon,
                                     "iconColor": ranges[k].color

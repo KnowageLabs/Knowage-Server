@@ -37,7 +37,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		var ds = dataset.label;
 
 //		var columns = ngModel==undefined ? undefined : ngModel.content.columnSelectedOfDataset;
-		var columns = (ngModel==undefined) ? undefined :(Array.isArray(ngModel.content.columnSelectedOfDataset) ) ? ngModel.content.columnSelectedOfDataset : ngModel.content.columnSelectedOfDataset[dataset.id.dsId] ;
+		var columns = (ngModel==undefined || !ngModel.content.columnSelectedOfDataset) ? undefined :(Array.isArray(ngModel.content.columnSelectedOfDataset) ) ? ngModel.content.columnSelectedOfDataset : ngModel.content.columnSelectedOfDataset[dataset.id.dsId] ;
 		if(columns != undefined){
 			//create aggregation
 			for(var i=0;i<columns.length;i++){

@@ -41,7 +41,7 @@
 		       		<div layout="column">
 		       		<md-input-container md-class="md-block">
           				<label>{{translate.load('sbi.cockpit.table.visualizationtype')}}</label>
-          					<md-select ng-model="selectedColumn.visType">
+          					<md-select ng-model="selectedColumn.visType" ng-change="changeVisType()">
             					<md-option ng-repeat="vType in visTypes" value="{{vType}}">
               						{{vType}}
             					</md-option>
@@ -96,12 +96,12 @@
 							</md-input-container>
 							
 							<button flex="10" class="md-button md-raised md-button-empty" ng-click="chooseIcon(range)" ng-style="{'background-color':range['background-color']}">
-								<span ng-if="!range.icon">Choose Icon</span>
+								<span ng-if="!range.icon" ng-style="{'color':range.color}">Choose Icon</span>
 								<i ng-if="range.icon" ng-class="range.icon" ng-style="{'color':range.color}"></i>
 							</button>
 							
 							<md-input-container flex=20 class="md-block"> 
-								<label>Icon color</label>
+								<label>Text/icon color</label>
 								<color-picker options="colorPickerProperty" ng-model="range.color"></color-picker>
 							</md-input-container>
 
@@ -140,15 +140,15 @@
 						<label>{{translate.load('sbi.cockpit.style.suffix')}}</label>
 						<input class="input_class"  ng-model="selectedColumn.style.suffix"> 
 					</md-input-container>
-					<md-input-container flex class="md-block"  class="small counter">  
+					<!--  md-input-container flex class="md-block"  class="small counter">  
 						<label>{{translate.load('sbi.cockpit.style.format')}}</label>
 						<md-select aria-label="aria-label" ng-model="selectedColumn.style.format">
 							<md-option ng-repeat="f in formatPattern" value="{{f}}">{{f}}</md-option>
 						</md-select>
-					</md-input-container>
-					<md-input-container flex class="md-block" class="small counter">
+					</md-input-container-->
+					<md-input-container flex class="md-block" class="small counter" ng-if="selectedColumn.type == 'java.lang.Double' || selectedColumn.type == 'java.lang.Float'">
 						<label>{{translate.load('sbi.cockpit.style.precision')}}</label>
-						<input class="input_class" type="number" ng-model="selectedColumn.style.precision" min="0" ng-disabled="!isPrecisionEnabled()"> 
+						<input class="input_class" type="number" ng-model="selectedColumn.style.precision" min="0" > 
 					</md-input-container>
 		       </div>	
 		       <div flex layout="row">
