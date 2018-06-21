@@ -57,7 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?\])/g;
 		$scope.aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?\])/g;
 		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}\])/g;
-		$scope.calcRegex = /(?:\[kn-calc=\"([\d\D]*)\"(?:\s+precision=\'(\d)\')?\])/g;
+		$scope.calcRegex = /(?:\[kn-calc=\(([\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\|]*)\)(?:\s+precision=\'(\d)\')?\])/g;
 		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
 		$scope.gt = /(\<.*kn-.*=["].*)(>)(.*["].*\>)/g;
 		$scope.lt = /(\<.*kn-.*=["].*)(<)(.*["].*\>)/g;
