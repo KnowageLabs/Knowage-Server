@@ -505,44 +505,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			calendar.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(calendar);
 		}
-		if (isAbleTo(SpagoBIConstants.DOMAIN_MANAGEMENT, funcs)) {
-			JSONObject domainManagementTechnical = new JSONObject();
-			domainManagementTechnical.put(ICON_CLS, "assignment");
-			domainManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.domain.management", locale)); // TODO
-			domainManagementTechnical.put(ICON_ALIGN, "top");
-			domainManagementTechnical.put(SCALE, "large");
-			domainManagementTechnical.put(TARGET, "_self");
-			domainManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_DOMAIN + "');");
-			domainManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_DOMAIN);
-			domainManagementTechnical.put(LINK_TYPE, "execDirectUrl");
-			tempMenuList.put(domainManagementTechnical);
-		}
-
-		if (isAbleTo(SpagoBIConstants.CONFIG_MANAGEMENT, funcs)) {
-			JSONObject configManagementTechnical = new JSONObject();
-			configManagementTechnical.put(ICON_CLS, "build");
-			configManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.config.management", locale)); // TODO
-			configManagementTechnical.put(ICON_ALIGN, "top");
-			configManagementTechnical.put(SCALE, "large");
-			configManagementTechnical.put(TARGET, "_self");
-			configManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_CONFIG + "');");
-			configManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_CONFIG);
-			configManagementTechnical.put(LINK_TYPE, "execDirectUrl");
-			tempMenuList.put(configManagementTechnical);
-		}
-
-		if (isAbleTo(SpagoBIConstants.TENANT_MANAGEMENT, funcs)) {
-			JSONObject tenantManagementTechnical = new JSONObject();
-			tenantManagementTechnical.put(ICON_CLS, "supervisor_account");
-			tenantManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.tenant.management", locale)); // TODO
-			tenantManagementTechnical.put(ICON_ALIGN, "top");
-			tenantManagementTechnical.put(SCALE, "large");
-			tenantManagementTechnical.put(TARGET, "_self");
-			tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_TENANT + "');");
-			tenantManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_TENANT);
-			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
-			tempMenuList.put(tenantManagementTechnical);
-		}
 
 		// if (isAbleTo(SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT,
 		// funcs)) {
@@ -646,22 +608,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tenantManagementTechnical.put(FIRST_URL, contextName + HREF_IMPEXP_CATALOG);
 			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(tenantManagementTechnical);
-		}
-
-		if (isAbleTo(SpagoBIConstants.LICENSE_MANAGEMENT, funcs)) {
-			JSONObject license = new JSONObject();
-			license.put(ICON_CLS, "style"); // TODO: change
-											// icon
-			license.put(TOOLTIP, messageBuilder.getMessage("menu.license", locale));
-			license.put(ICON_ALIGN, "top");
-			license.put(SCALE, "large");
-			license.put(TARGET, "_self");
-			license.put(HREF, "javascript:license()");
-			// license.put(FIRST_URL, contextName + HREF_IMPEXP_CATALOG);
-			// //License open a dialog, no need for url!
-			license.put(LINK_TYPE, "license");
-			tempMenuList.put(license);
-
 		}
 
 		// end
