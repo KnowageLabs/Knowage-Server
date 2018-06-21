@@ -7,11 +7,12 @@
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 <!-- angular imports -->
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/event/eventLogsApp.js")%>"></script>
 <!-- Styles -->
 <link rel="stylesheet" type="text/css"
 	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 	
-<title>{{4+4}}</title>
+<p>{{4+4}}</p>
 </head>
 <body>
 
