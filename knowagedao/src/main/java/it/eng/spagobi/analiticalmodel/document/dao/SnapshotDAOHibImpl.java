@@ -89,7 +89,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			String hql = "from SbiSnapshots ss where ss.sbiObject.biobjId = ?";
+			String hql = "select ss.snapId, ss.sbiObject.biobjId, ss.sbiBinContents.id, ss.name, ss.description, ss.creationDate, ss.contentType, ss.schedulation, ss.scheduler, ss.schedulationStartDate, ss.sequence from SbiSnapshots ss where ss.sbiObject.biobjId = ?";
 
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, idBIObj.intValue());
@@ -97,8 +97,21 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			List hibSnaps = query.list();
 			Iterator iterHibSnaps = hibSnaps.iterator();
 			while (iterHibSnaps.hasNext()) {
-				SbiSnapshots hibSnap = (SbiSnapshots) iterHibSnaps.next();
-				Snapshot snap = toSnapshotBasicInfo(hibSnap);
+				Object[] hibSnap = (Object[]) iterHibSnaps.next();
+				Snapshot snap = new Snapshot();
+				snap.setId((Integer) hibSnap[0]);
+				snap.setBiobjId((Integer) hibSnap[1]);
+				snap.setBinId((Integer) hibSnap[2]);
+				snap.setName((String) hibSnap[3]);
+				snap.setDescription((String) hibSnap[4]);
+				snap.setDateCreation((Date) hibSnap[5]);
+				snap.setContentType((String) hibSnap[6]);
+				snap.setSchedulation((String) hibSnap[7]);
+				snap.setScheduler((String) hibSnap[8]);
+				snap.setSchedulationStartDate((Integer) hibSnap[9]);
+				snap.setSequence((Integer) hibSnap[10]);
+				snap.setContent(new byte[0]);
+
 				snaps.add(snap);
 			}
 
@@ -517,31 +530,6 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			aLits.clear();
 			aLits.addAll(sortedList);
 		}
-	}
-
-	/**
-	 * Getting the Snapshot information without content in purpose of optimization. When displaying a list of snapshots on web UI, all snapshots are loaded
-	 * without a content, then with clicking on one snapshot, user gets the snapshot's content for that particular snapshot
-	 */
-	private Snapshot toSnapshotBasicInfo(SbiSnapshots hibSnap) {
-		Snapshot snapshot = new Snapshot();
-		snapshot.setBiobjId(hibSnap.getSbiObject().getBiobjId());
-		snapshot.setBinId(hibSnap.getSbiBinContents().getId());
-		snapshot.setDateCreation(hibSnap.getCreationDate());
-		snapshot.setDescription(hibSnap.getDescription());
-		snapshot.setId(hibSnap.getSnapId());
-		snapshot.setName(hibSnap.getName());
-		snapshot.setContentType(hibSnap.getContentType());
-		snapshot.setSchedulation(hibSnap.getSchedulation());
-		snapshot.setSequence(hibSnap.getSequence());
-		snapshot.setSchedulationStartDate(hibSnap.getSchedulationStartDate());
-		snapshot.setScheduler(hibSnap.getScheduler());
-		snapshot.setSchedulationStartDate(hibSnap.getSchedulationStartDate());
-		snapshot.setTime(DATE_FORMATTER.format(hibSnap.getCreationDate()));
-		// content need to be empty
-		snapshot.setContent(new byte[0]);
-
-		return snapshot;
 	}
 
 }
