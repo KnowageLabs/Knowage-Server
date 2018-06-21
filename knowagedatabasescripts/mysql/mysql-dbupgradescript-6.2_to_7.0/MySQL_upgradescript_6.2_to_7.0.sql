@@ -14,7 +14,6 @@ ALTER TABLE SBI_I18N_MESSAGES ADD UNIQUE SBI_I18N_MESSAGES_UNIQUE(LANGUAGE_CD, L
 INSERT INTO hibernate_sequences VALUES ('SBI_I18N_MESSAGES',
                                                             (SELECT COALESCE(MAX(m.ID) + 1, 1) FROM SBI_I18N_MESSAGES m));
 COMMIT;                                                            
---- END ---
 
 ALTER TABLE SBI_DATA_SET ADD UNIQUE XAK2SBI_DATA_SET (NAME, VERSION_NUM, ORGANIZATION);
 
@@ -28,3 +27,18 @@ ALTER TABLE SBI_ATTRIBUTE ADD COLUMN  LOV_ID INTEGER NULL AFTER ATTRIBUTE_ID,
 
 ALTER TABLE `SBI_ATTRIBUTE` CHANGE COLUMN `DESCRIPTION` `DESCRIPTION` VARCHAR(500) NULL;
 
+ALTER TABLE SBI_EVENTS_LOG ADD COLUMN EVENT_TYPE VARCHAR(50) NOT NULL;
+
+UPDATE SBI_EVENTS_LOG SET EVENT_TYPE = (
+CASE HANDLER 
+	WHEN 'it.eng.spagobi.events.handlers.DefaultEventPresentationHandler' THEN 'SCHEDULER'
+	WHEN 'it.eng.spagobi.events.handlers.CommonjEventPresentationHandler' THEN 'COMMONJ'
+	WHEN 'it.eng.spagobi.events.handlers.TalendEventPresentationHandler' THEN 'ETL'
+	WHEN 'it.eng.spagobi.events.handlers.WekaEventPresentationHandler' THEN 'DATA_MINING'
+END
+)
+commit;
+
+ALTER TABLE SBI_EVENTS_LOG DROP COLUMN HANDLER;
+
+--- END ---

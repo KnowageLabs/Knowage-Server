@@ -55,6 +55,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.events.EventsManager;
+import it.eng.spagobi.events.bo.EventType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -370,7 +371,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 				List roles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(document.getId());
 
 				String startExecMsg = "${scheduler.startexecsched} " + document.getName();
-				Integer idEvent = eventManager.registerEvent("Scheduler", startExecMsg, "", roles);
+				Integer idEvent = eventManager.registerEvent("Scheduler", startExecMsg, "", roles, EventType.SCHEDULER);
 
 				Map<String, String> parametersMap = new HashMap<String, String>();
 				BIObjectParametersIterator objectParametersIterator = new BIObjectParametersIterator(document.getBiObjectParameters());
@@ -568,7 +569,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 				}
 
 				String endExecMsg = "${scheduler.endexecsched} " + document.getName();
-				eventManager.registerEvent("Scheduler", endExecMsg, "", roles);
+				eventManager.registerEvent("Scheduler", endExecMsg, "", roles, EventType.SCHEDULER);
 
 				logger.info("Processed document [" + (documentIndex + 1) + "] with label [" + documentLabel + "] ...");
 

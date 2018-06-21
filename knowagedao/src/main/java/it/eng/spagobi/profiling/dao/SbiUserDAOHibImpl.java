@@ -567,18 +567,15 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 	/**
-	 * Check if the user identifier in input is valid (for insertion or
-	 * modification) for the user with the input integer id. In case of user
-	 * insertion, id should be null.
+	 * Check if the user identifier in input is valid (for insertion or modification) for the user with the input integer id. In case of user insertion, id
+	 * should be null.
 	 *
 	 * @param userId
 	 *            The user identifier to check
 	 * @param id
-	 *            The id of the user to which the user identifier should be
-	 *            validated
+	 *            The id of the user to which the user identifier should be validated
 	 * @throws a
-	 *             EMFUserError with severity EMFErrorSeverity.ERROR and code
-	 *             400 in case the user id is already in use
+	 *             EMFUserError with severity EMFErrorSeverity.ERROR and code 400 in case the user id is already in use
 	 */
 	@Override
 	public void checkUserId(String userId, Integer id) throws EMFUserError {
@@ -641,8 +638,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 	/**
-	 * From the Hibernate SbiUser at input, gives the corrispondent BI object
-	 * (UserBO).
+	 * From the Hibernate SbiUser at input, gives the corrispondent BI object (UserBO).
 	 *
 	 * @param sbiUser
 	 *            The Hibernate SbiUser
@@ -803,8 +799,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 	/**
-	 * Get the SbiUser object with the input user identifier. The search method
-	 * is CASE INSENSITIVE!!!
+	 * Get the SbiUser object with the input user identifier. The search method is CASE INSENSITIVE!!!
 	 *
 	 * @param userId
 	 *            The user identifier
@@ -884,7 +879,6 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 			toReturn = new PagedList<UserBO>();
 			toReturn.setStart(indexStart + 1);
-			toReturn.setEnd(indexEnd + 1);
 			toReturn.setTotal(total);
 			toReturn.setResults(results);
 

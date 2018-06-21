@@ -478,7 +478,7 @@ CREATE TABLE SBI_EVENTS_LOG (
 		EVENT_DATE           TIMESTAMP DEFAULT NOW() NOT NULL,
 		DESCR                TEXT NOT NULL,
 		PARAMS               VARCHAR(1000),
-		HANDLER 			 VARCHAR(400) NOT NULL DEFAULT 'it.eng.spagobi.events.handlers.DefaultEventPresentationHandler',
+		EVENT_TYPE 			 VARCHAR(50) NOT NULL,
         USER_IN              VARCHAR(100) NOT NULL,
         USER_UP              VARCHAR(100),
         USER_DE              VARCHAR(100),

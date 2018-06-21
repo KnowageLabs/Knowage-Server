@@ -57,15 +57,23 @@
         <property name="params" type="string">
             <column name="params" length="1000" not-null="false" />
         </property>
-        <property name="handlerClass" type="string">
-            <column name="handler" length="400" not-null="true" />
+        <property name="eventType">
+        	<column name="event_type" length="50" not-null="true" />
+			<type name="org.hibernate.type.EnumType">
+				<param name="enumClass">it.eng.spagobi.events.bo.EventType</param>
+				<param name="useNamed">true</param>
+				<param name="type">12</param>
+			</type>
         </property>
-        <set name="roles" inverse="true">
+        <set name="roles" table="SBI_EVENTS_ROLES" 
+        	inverse="false" lazy="true" fetch="select" cascade="all" >
             <key>
-                <column name="event_id" not-null="true" />
+                <column name="EVENT_ID" not-null="true" />
             </key>
-            <one-to-many class="it.eng.spagobi.commons.metadata.SbiEventRole" />
-        </set> 
+            <many-to-many entity-name="it.eng.spagobi.commons.metadata.SbiExtRoles">
+                <column name="ROLE_ID" not-null="true" />
+            </many-to-many>
+        </set>
         <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
 	<filter-def name="tenantFilter">

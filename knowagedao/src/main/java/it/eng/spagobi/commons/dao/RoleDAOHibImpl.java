@@ -49,11 +49,9 @@ import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
 import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiEventRole;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
 import it.eng.spagobi.commons.metadata.SbiProductType;
-import it.eng.spagobi.events.metadata.SbiEventsLog;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import net.sf.ehcache.Cache;
@@ -418,21 +416,21 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			// aSession.createQuery(" from SbiEventRole ser where
 			// ser.id.role.extRoleId = "
 			// + hibRole.getExtRoleId().toString());
-			Query hibQuery = aSession.createQuery(" from SbiEventRole ser where ser.id.role.extRoleId = ?");
-			hibQuery.setInteger(0, hibRole.getExtRoleId().intValue());
-			List eventsRole = hibQuery.list();
-			Iterator it = eventsRole.iterator();
-			while (it.hasNext()) {
-				SbiEventRole eventRole = (SbiEventRole) it.next();
-				SbiEventsLog event = eventRole.getId().getEvent();
-				aSession.delete(eventRole);
-				aSession.flush();
-				aSession.refresh(event);
-				Set roles = event.getRoles();
-				if (roles.isEmpty()) {
-					aSession.delete(event);
-				}
-			}
+			// Query hibQuery = aSession.createQuery(" from SbiEventRole ser where ser.id.role.extRoleId = ?");
+			// hibQuery.setInteger(0, hibRole.getExtRoleId().intValue());
+			// List eventsRole = hibQuery.list();
+			// Iterator it = eventsRole.iterator();
+			// while (it.hasNext()) {
+			// SbiEventRole eventRole = (SbiEventRole) it.next();
+			// SbiEventsLog event = eventRole.getId().getEvent();
+			// aSession.delete(eventRole);
+			// aSession.flush();
+			// aSession.refresh(event);
+			// Set roles = event.getRoles();
+			// if (roles.isEmpty()) {
+			// aSession.delete(event);
+			// }
+			// }
 			Set<SbiAuthorizationsRoles> authorizations = hibRole.getSbiAuthorizationsRoleses();
 			Iterator itf = authorizations.iterator();
 			while (itf.hasNext()) {

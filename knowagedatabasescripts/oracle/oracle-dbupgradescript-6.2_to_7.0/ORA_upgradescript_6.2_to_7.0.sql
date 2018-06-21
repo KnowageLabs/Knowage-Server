@@ -25,4 +25,18 @@ ALTER TABLE SBI_ATTRIBUTE ADD CONSTRAINT ENUM_TYPE CHECK (VALUE_TYPE IN('STRING'
 
 ALTER TABLE SBI_ATTRIBUTE MODIFY (DESCRIPTION VARCHAR2(500) NULL);
 
+ALTER TABLE SBI_EVENTS_LOG ADD COLUMN EVENT_TYPE VARCHAR2(50) NOT NULL;
+
+UPDATE SBI_EVENTS_LOG SET EVENT_TYPE = (
+CASE HANDLER 
+	WHEN 'it.eng.spagobi.events.handlers.DefaultEventPresentationHandler' THEN 'SCHEDULER'
+	WHEN 'it.eng.spagobi.events.handlers.CommonjEventPresentationHandler' THEN 'COMMONJ'
+	WHEN 'it.eng.spagobi.events.handlers.TalendEventPresentationHandler' THEN 'ETL'
+	WHEN 'it.eng.spagobi.events.handlers.WekaEventPresentationHandler' THEN 'DATA_MINING'
+END
+)
+commit;
+
+ALTER TABLE SBI_EVENTS_LOG DROP COLUMN HANDLER;
+
 
