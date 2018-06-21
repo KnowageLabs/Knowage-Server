@@ -459,6 +459,17 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		
 		if(!testJSON.hasOwnProperty('schemaAttribute')) {
 			testJSON.schemaAttribute = '';
+		}  
+		
+		if (!testJSON.hasOwnProperty('jndi')) {
+			testJSON.jndi = '';
+		} 
+		
+		if (!testJSON.hasOwnProperty('driver') && !testJSON.hasOwnProperty('pwd') && !testJSON.hasOwnProperty('user') && !testJSON.hasOwnProperty('urlConnection')) {
+			testJSON.driver = '';
+			testJSON.pwd = '';
+			testJSON.user = '';
+			testJSON.urlConnection = '';
 		}
 		
 		if(testJSON.readOnly=="1"){
