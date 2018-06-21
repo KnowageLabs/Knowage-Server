@@ -18,17 +18,6 @@
 
 package it.eng.knowage.engine.cockpit.api.crosstable;
 
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.groovy.GroovySandbox;
-
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -50,6 +39,17 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.groovy.GroovySandbox;
 
 /**
  *
@@ -243,10 +243,6 @@ public class CrossTab {
 		this.rowsSortKeysMap = rowsSortKeysMap;
 		this.measuresSortKeysMap = measuresSortKeysMap;
 
-		// List<String> rowCordinates = new ArrayList<String>();
-		// List<String> columnCordinates = new ArrayList<String>();
-		// List<String> measuresCordinates = new ArrayList<String>();
-
 		rowCordinates = new LinkedList<String>();
 		columnCordinates = new LinkedList<String>();
 		measuresCordinates = new LinkedList<String>();
@@ -256,19 +252,11 @@ public class CrossTab {
 		columnsRoot = new Node("rootC");
 		rowsRoot = new Node("rootR");
 
-		// JSONObject dataStoreMetadata = datastore.getJSONObject("metaData");
 		JSONArray dataStoreMetadataFields = datastoreMetadata.getJSONArray("fields");
 
 		List<String> columnsNameList = new ArrayList<String>();
 		List<String> rowsNameList = new ArrayList<String>();
 		List<String> measuresNameList = new ArrayList<String>();
-
-		// List<String> columnsHeaderList = new ArrayList<String>();
-		// List<String> rowsHeaderList = new ArrayList<String>();
-		// List<String> measuresHeaderList = new ArrayList<String>();
-		// List<String> columnsHeaderIdList = new ArrayList<String>();
-		// List<String> rowsHeaderIdList = new ArrayList<String>();
-		// List<String> measuresHeaderIdList = new ArrayList<String>();
 
 		for (int i = 0; i < crosstabDefinition.getMeasures().size(); i++) {
 			measuresHeaderList.add(crosstabDefinition.getMeasures().get(i).getAlias());
@@ -327,9 +315,6 @@ public class CrossTab {
 			}
 			columnsOverflow = columnsRoot.getLeafsNumber() < completeColumnsRoot.getLeafsNumber();
 		}
-
-		// List<String> columnsSpecification = new ArrayList();
-		// List<String> rowsSpecification = new ArrayList();
 		Map measureToOrderMap = new LinkedHashMap();
 
 		for (index = 0; index < dataStoredata.length(); index++) {
@@ -471,8 +456,6 @@ public class CrossTab {
 	}
 
 	public String addNumberToColumnName(String columnName, int number) {
-		// String columnNumber = columnName.substring(7);// remove "column_"
-		// return "column_" + (new Integer(columnNumber) + number);
 		return columnName;
 	}
 
@@ -1084,7 +1067,7 @@ public class CrossTab {
 		public String getId() {
 			return id;
 		}
-		
+
 		public String getAggregationFunction() {
 			return aggregationFunction;
 		}
@@ -1546,38 +1529,38 @@ public class CrossTab {
 		}
 		return result;
 	}
-	
+
 	private double getMax(List<Double> values) {
 		return Collections.max(values);
 	}
-	
+
 	private double getMin(List<Double> values) {
 		return Collections.min(values);
-	}	
-	
+	}
+
 	private double getCount(List<Double> values) {
 		return new Double(values.size());
-	}	
-	
+	}
+
 	private double getSum(List<Double> values) {
 		double sum = 0;
 		for(Double value : values)
 		    sum += value;
 		return sum;
 	}
-	
+
 	private double getAvg(List<Double> values) {
 		double sum = getSum(values);
 		double count = getCount(values);
 		double avg = sum / count;
 		return avg;
-	}	
-	
+	}
+
 	private double getCountDistinct(List<Double> values) {
-		Set<Double> distinctValues = new HashSet<Double>(values); 
+		Set<Double> distinctValues = new HashSet<Double>(values);
 		return distinctValues.size();
 	}
-	
+
 
 
 	private String[] getTotalsOfRows(int start, int length) {
@@ -1638,7 +1621,7 @@ public class CrossTab {
 									List<Double> list = new ArrayList<Double>();
 									list.add(new Double(value));
 									valuesMap.put(j,list );
-								}						
+								}
 							}
 						}
 					} catch (Exception e) {
@@ -1646,17 +1629,17 @@ public class CrossTab {
 					}
 				}
 			}
-			
+
 			Iterator<Map.Entry<Integer,List<Double>>> it = valuesMap.entrySet().iterator();
 		    while (it.hasNext()) {
-		        Map.Entry<Integer,List<Double>> pair = (Map.Entry<Integer,List<Double>>)it.next();
+		        Map.Entry<Integer,List<Double>> pair = it.next();
 		        List<Double> values = pair.getValue();
 		        Integer index = pair.getKey();
 		        int measureIndex;
 		        if (measuresOnRow) {
-			        measureIndex = measureId;	        	
+			        measureIndex = measureId;
 		        } else {
-			        measureIndex = index % this.measures.size();		        	
+			        measureIndex = index % this.measures.size();
 		        }
 				MeasureInfo measureInfo = this.measures.get(measureIndex);
 				String aggregationFunction = measureInfo.getAggregationFunction();
@@ -1673,11 +1656,11 @@ public class CrossTab {
 						st[index] = getAvg(values);
 					} else if (aggregationFunction.equalsIgnoreCase("COUNT_DISTINCT")) {
 						st[index] = getCountDistinct(values);
-					}	
+					}
 				}
-	        
+
 		    }
-			
+
 			result.add(toStringArray(st));
 		}
 		return result;
@@ -1775,17 +1758,17 @@ public class CrossTab {
 	private String[] getSuperTotal(int measuresNumber) {
 
 		double[] st = new double[measuresNumber];
-		
+
 		String[] aggregationFunctions = new String[measuresNumber];
 		List<Integer> notDisplayedSuperTotal = new ArrayList<Integer>();
 
-		
+
 		for(int i=0; i < measuresNumber; i++) {
 			MeasureInfo measureInfo = this.measures.get(i);
 			String aggregationFunction = measureInfo.getAggregationFunction();
 			aggregationFunctions[i] = aggregationFunction;
 		}
-		
+
 
 		if (measuresOnRow) {
 			for (int i = 0; i < measuresNumber; i++) {
@@ -1810,10 +1793,10 @@ public class CrossTab {
 			for (int y = 0; y < columnsSum.get(0).length; y++) {
 				if (celltypeOfColumns.get(y).equals(CellType.DATA)) {
 					String value = columnsSum.get(0)[y];
-					
+
 					if (!value.equals(DATA_MATRIX_NA)) {
 						int index = measureIteration % measuresNumber;
-						
+
 						 if (aggregationFunctions[index].equalsIgnoreCase("SUM")) {
 							 st[index] = st[index] + new Double(value);
 							} else {
