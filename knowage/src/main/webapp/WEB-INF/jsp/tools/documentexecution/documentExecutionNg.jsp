@@ -44,6 +44,8 @@ String engineName = null;
 String isFromDocumentWidget = null;
 String isForExport = null;
 String cockpitSelections = null;
+String documentType = null;
+boolean isNotOlapDoc = true;
 
 // author: danristo
 String executedFrom = null;
@@ -89,7 +91,13 @@ try{
     
     executingEngine = obj.getEngine();
     engineName = executingEngine.getName();
+    documentType = obj.getBiObjectTypeCode();
     
+   	if(documentType.equals("OLAP")) {
+   		isNotOlapDoc = false;
+   	} else {
+   		isNotOlapDoc = true;
+   	}
     
     if(objId != null && !("null".equalsIgnoreCase(objId))) {
         Integer objIdInt = new Integer(objId);
@@ -124,7 +132,7 @@ if(executionRoleNames.size() > 0) {
     <head>
         <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
         
-          <%-- ---------------------------------------------------------------------- --%>
+<%-- ---------------------------------------------------------------------- --%>
 <%-- INCLUDE Persist JS                                                     --%>
 <%-- ---------------------------------------------------------------------- --%>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/persist-0.1.0/persist.js")%>"></script>
@@ -174,6 +182,7 @@ if(executionRoleNames.size() > 0) {
             var isAdmin = <%=isAdmin%>;
             var isSuperAdmin = <%=isSuperAdmin%>;
             var isAbleToExecuteAction = <%=isAbleToExecuteAction%>;
+            var isNotOlapDoc = <%=isNotOlapDoc%>;
         </script>
     
         <div  layout-fill ng-hide="hideProgressCircular.status" style="z-index: 10000; position: absolute; background-color: rgba(0, 0, 0, 0.21);">
