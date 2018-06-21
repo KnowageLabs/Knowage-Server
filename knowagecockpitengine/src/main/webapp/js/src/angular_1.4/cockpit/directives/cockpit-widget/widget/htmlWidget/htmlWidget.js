@@ -36,7 +36,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 		})
-
 	function cockpitHtmlWidgetControllerFunction(
 			$scope,
 			$mdDialog,
@@ -55,14 +54,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_properties){
 		
 		//Regular Expressions used
-		$scope.columnRegex = /(?:\[kn-column=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}(?:\s+row=[\'\"]{1}(\d*)[\'\"]{1})?\])/g;
+		$scope.columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?\])/g;
+		$scope.aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?\])/g;
 		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-]+)[\'\"]{1}\])/g;
+		$scope.calcRegex = /(?:\[kn-calc=\"([\d\D]*)\"(?:\s+precision=\'(\d)\')?\])/g;
 		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
 		$scope.gt = /(\<.*kn-.*=["].*)(>)(.*["].*\>)/g;
 		$scope.lt = /(\<.*kn-.*=["].*)(<)(.*["].*\>)/g;
 		
 		//dataset initializing and backward compatibilities checks
-		if(!$scope.ngModel.dataset){$scope.ngModel.dataset = ''};
+		if(!$scope.ngModel.dataset){$scope.ngModel.dataset = {}};
 		if($scope.ngModel.datasetId){
 			$scope.ngModel.dataset.dsId = $scope.ngModel.datasetId;
 			delete $scope.ngModel.datasetId;
@@ -81,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 */
 		$scope.reinit = function(){
 			$scope.showWidgetSpinner();
-			if($scope.ngModel.dataset){
+			if($scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
 				sbiModule_restServices.restToRootProject();
 				var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 				
@@ -92,13 +93,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.params[p] = $scope.params[p][0];
 					}
 				}
-				sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(dataset.label) + "/data?nearRealtime=" + !dataset.useCache,$scope.params && JSON.stringify({"parameters": $scope.params})).then(function(data){
-					$scope.htmlDataset = data.data;
-					$scope.manageHtml();
-
-				},function(error){
-					$scope.hideWidgetSpinner();
-				});
+				cockpitModule_datasetServices.loadDatasetRecordsById($scope.ngModel.dataset.dsId, 0, -1, undefined, undefined, $scope.ngModel, undefined).then(
+					function(data){
+						$scope.htmlDataset = data;
+						$scope.manageHtml();
+					},function(error){
+						$scope.hideWidgetSpinner();
+					});
 			}else {
 				$scope.trustedCss = $sce.trustAsHtml('<style>'+$scope.ngModel.cssToRender+'</style>');
 				$scope.trustedHtml = $sce.trustAsHtml($scope.ngModel.htmlToRender);
@@ -125,6 +126,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					function(resultHtml){
 						$scope.checkPlaceholders(resultHtml.firstChild.innerHTML).then(
 							function(placeholderResultHtml){
+								placeholderResultHtml = $scope.parseCalc(placeholderResultHtml);
 								$scope.trustedHtml = $sce.trustAsHtml(placeholderResultHtml);
 								$scope.hideWidgetSpinner();
 							}
@@ -134,14 +136,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		//Get the dataset column name from the readable name. ie: 'column_1' for the name 'id'
-		$scope.getColumnFromName = function(name){
-			for(var i in $scope.htmlDataset.metaData.fields){
-				if($scope.htmlDataset.metaData.fields[i].header && $scope.htmlDataset.metaData.fields[i].header == name){
-					return $scope.htmlDataset.metaData.fields[i].name;
+		$scope.getColumnFromName = function(name,ds,aggregation){
+			for(var i in ds.metaData.fields){
+				if(typeof ds.metaData.fields[i].header != 'undefined' && ds.metaData.fields[i].header == (aggregation ? name+'_'+aggregation : name)){
+					return ds.metaData.fields[i].name;
 				}
 			}
 		}
-		
 		
 		/**
 		 * Promise to get the functions inside the html, returns the parsed html
@@ -151,12 +152,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var parser = new DOMParser()
 				var parsedHtml = parser.parseFromString(rawHtml, "text/html");
 				var allElements = parsedHtml.getElementsByTagName('*');
-				
-				$scope.parseRepeat(allElements);
-				
-				$scope.parseIf(allElements);
-				
-				resolve(parsedHtml)
+				var aggregationsReg = rawHtml.match($scope.aggregationRegex);
+				if(aggregationsReg) {
+					var tempModel = angular.copy($scope.ngModel);
+					var tempDataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
+					for(var a in aggregationsReg){
+						var aggRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1})?(?:\s+precision=\'(\d)\')?\])/;
+						var aggregationReg = aggRegex.exec(aggregationsReg[a]);
+						for(var m in tempDataset.metadata.fieldsMeta){
+							if(tempDataset.metadata.fieldsMeta[m].name == aggregationReg[1]){
+								tempDataset.metadata.fieldsMeta[m].alias = aggregationReg[1]+'_'+aggregationReg[2];
+								tempDataset.metadata.fieldsMeta[m].aggregationSelected = aggregationReg[2];
+								if(tempModel.content.columnSelectedOfDataset) {
+									tempModel.content.columnSelectedOfDataset.push(angular.copy(tempDataset.metadata.fieldsMeta[m]));
+								}else{
+									tempModel.content.columnSelectedOfDataset = [angular.copy(tempDataset.metadata.fieldsMeta[m])];
+								}
+							}
+						}
+					}
+					
+					cockpitModule_datasetServices.loadDatasetRecordsById($scope.ngModel.dataset.dsId, 0, -1, undefined, undefined, tempModel, undefined).then(
+							function(data){
+								$scope.aggregationDataset = data;
+								allElements = $scope.parseRepeat(allElements);
+								allElements = $scope.parseIf(allElements);
+								resolve(parsedHtml);
+							},function(error){
+								$scope.hideWidgetSpinner();
+								reject(error);
+							});
+				}else{
+					allElements = $scope.parseRepeat(allElements);
+					allElements = $scope.parseIf(allElements);
+					resolve(parsedHtml);
+				}
 			})
 		}
 		
@@ -193,6 +223,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 			    } i++;
 			} while (i<allElements.length);
+			return allElements;
 		}
 		
 		/**
@@ -216,6 +247,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				  j++;
 				  
 			 } while (j<nodesNumber);
+			return allElements;
+		}
+		
+		/**
+		 * Function to replace kn-calc placeholders
+		 */
+		$scope.parseCalc = function(rawHtml) {
+			return rawHtml.replace($scope.calcRegex, $scope.calcReplacer);
 		}
 		
 		/**
@@ -242,18 +281,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		//Replacers
+		$scope.calcReplacer = function(match,p1,precision){
+			return (precision && !isNaN(p1))? eval(p1).toFixed(precision) : eval(p1);
+		}
+		
 		$scope.ifConditionReplacer = function(match, p1, p2){
-			if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)]){
-				p1 = typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)]) == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)]+'\'' : $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)];
+			if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]){
+				p1 = typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]) == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]+'\'' : $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)];
 			}else {
 				p1 = 'null';
 			}
 			return p1;
 		}
 		
-		$scope.replacer = function(match, p1, p2) {
-			p1=$scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)])!='undefined' ? $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1)] : 'null';
-			return p1;
+		$scope.replacer = function(match, p1, p2, p3, precision) {
+			if(p3){
+				p1=$scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,p3)])!='undefined' ? $scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,p3)] : 'null';
+			}else{
+				p1=$scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)])!='undefined' ? $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)] : 'null';
+			}
+			return (precision && !isNaN(p1))? p1.toFixed(precision) : p1;
+			
 		}
 		$scope.paramsReplacer = function(match, p1){
 			p1=$scope.params[p1];
@@ -327,7 +375,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
 
 		$scope.saveConfiguration=function(){
-			      
 			 mdPanelRef.close();
 			 angular.copy($scope.newModel,model);
 			 finishEdit.resolve();
