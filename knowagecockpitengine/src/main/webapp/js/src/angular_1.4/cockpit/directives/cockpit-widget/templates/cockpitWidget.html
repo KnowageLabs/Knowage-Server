@@ -104,6 +104,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        			 <md-icon md-font-icon="fa fa-mouse-pointer" ng-show="ngModel.cliccable"></md-icon>
        			 <md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable"></md-icon>
 			</md-button>
+			
+			<!-- quick widget BUTTON -->
+			<md-button class="md-icon-button " ng-if="ngModel.type=='chart' || ngModel.type=='table' || ngModel.type=='map'" aria-label="expand button" ng-click="modalQuickWidget($event);$event.stopPropagation();" >
+				<md-tooltip md-direction="top" md-delay="1000">Add quick widget</md-tooltip>
+				<md-icon md-font-icon="fa fa-magic" ></md-icon>
+			</md-button>
+			
 			</md-fab-actions>
 			</md-fab-speed-dial>
 	
@@ -133,7 +140,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-icon md-font-icon="fa fa-eraser"></md-icon>
 			</md-button-->
 			
-			<md-button class="md-icon-button "  ng-click="expandWidget();$event.stopPropagation();" >
+			<md-button class="md-icon-button "  ng-click="expandWidget();$event.stopPropagation();" ng-if="ngModel.type=='table' || ngModel.type=='chart' || ngModel.type=='pivot'">
 				<md-tooltip md-direction="bottom" ng-if="!widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
 				<md-tooltip md-direction="bottom" ng-if="widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.collapse")}}</md-tooltip>
 				<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
