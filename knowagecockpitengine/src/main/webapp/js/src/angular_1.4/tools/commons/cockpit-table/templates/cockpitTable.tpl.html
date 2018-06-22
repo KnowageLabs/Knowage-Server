@@ -37,14 +37,14 @@
 	        <tr ng-repeat="row in model | orderBy : getSortingColumnFilter() : getSortingOrderAsBoolean() | limitTo : settings.pagination.enabled?settings.pagination.itemsNumber:undefined : (settings.pagination.enabled && settings.pagination.frontEnd)?(settings.page-1)*settings.pagination.itemsNumber:0" ng-style="::getRowStyle($even)" class="en-row" >
 	            <td ng-repeat="column in columns" ng-if="!column.style.hiddenColumn" ng-click="selectCell($event,row,column)" ng-style="::getCellStyle(column,row[column.aliasToShow])" ng-class="{'highlight': isCellSelected(row,column)}">
 	                <md-tooltip ng-if="!column.hideTooltip" md-direction="top" md-delay="500">
-	                 	<span ng-if="column.type == 'java.lang.Double'">	{{row[column.aliasToShow] | number:(column.style.precision || 2)}} </span>
-	                	<span ng-if="column.type != 'java.lang.Double'">	{{row[column.aliasToShow]}} </span>
+	                 	<span ng-if="column.type == 'java.lang.Double' || column.type == 'java.lang.Float'">	{{row[column.aliasToShow] | number:(column.style.precision || 2)}} </span>
+	                	<span ng-if="column.type != 'java.lang.Double' && column.type != 'java.lang.Float'">	{{row[column.aliasToShow]}} </span>
 	                </md-tooltip>
 					<div class="cellContainer" ng-style="::getContainerStyle(column)">
 		                <span ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
 			                <span ng-if="column.style.prefix">{{column.style.prefix}}</span> 
-			                <span ng-if="column.type == 'java.lang.Double'">	{{row[column.aliasToShow] | number:(column.style.precision || 2)}} </span>
-			                <span ng-if="column.type != 'java.lang.Double'">	{{row[column.aliasToShow]}} </span>
+			                <span ng-if="column.type == 'java.lang.Double'">{{row[column.aliasToShow] | number:(column.style.precision || 2)}}</span>
+			                <span ng-if="column.type != 'java.lang.Double'">{{row[column.aliasToShow]}}</span>
 			                <span ng-if="column.style.suffix">{{column.style.suffix}}</span>
 		                </span>
 		                <i  class="fa fa-search showFullContentIcon" ng-if="column.style.maxChars!= '' && row[column.aliasToShow].length > column.style.maxChars" ng-click="showFullContent($event,row[column.aliasToShow])"></i>
@@ -55,9 +55,8 @@
 		                        </div>
 		                    </div>
 		                </div>
-		                
-		                <span ng-if="column.ranges && column.ranges.length > 0 && column.ranges[0].iconClass">
-		                    <md-icon ng-class="::getDynamicIcon(column,row[column.aliasToShow]).iconClass" ng-style="{color: getDynamicIcon(column,row[column.aliasToShow].iconColor)}"></md-icon>
+		                <span ng-if="column.ranges && column.ranges.length > 0 && column.ranges[0].icon">
+		                    <md-icon ng-class="::getDynamicIcon(column,row[column.aliasToShow]).iconClass" ng-style="{'color': getDynamicIcon(column,row[column.aliasToShow]).iconColor}"></md-icon>
 		                </span>
 	                </div>
 	
@@ -69,9 +68,12 @@
 				<td ng-style="styledata.summary">{{settings.summary.title}}</td>
 			</tr>
 			<tr ng-if="settings.summary.enabled" class="summary">
-	            <td ng-repeat="column in columns" ng-style="getSummaryStyle(column)" ng-if="!column.style.hiddenColumn">
-	            <md-tooltip md-direction="top" md-delay="500">{{formatValue(settings.summary.row[column.aliasToShow],column)}}</md-tooltip>
-	            {{formatValue(settings.summary.row[column.aliasToShow],column)}}</td>
+	            <td ng-repeat="column in columns" ng-style="getSummaryStyle(column)" ng-if="!column.style.hiddenColumn" >
+		            <div ng-if="column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.lang.Integer'">
+		            	<md-tooltip md-direction="top" md-delay="500">{{settings.summary.row[column.aliasToShow] | number:(column.style.precision || 2)}}</md-tooltip>
+	            			{{settings.summary.row[column.aliasToShow] | number:(column.style.precision || 2)}}
+		            </div>
+	            </td>
 	        </tr>
 	    </tfoot>
 	
