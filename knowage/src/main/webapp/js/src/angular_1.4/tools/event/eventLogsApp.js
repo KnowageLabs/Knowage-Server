@@ -2,7 +2,7 @@
 
 
 
-angular.module("eventModule",[]);
+angular.module("eventModule",["angular-list-detail", "angular_table"]);
 
 
 }());
