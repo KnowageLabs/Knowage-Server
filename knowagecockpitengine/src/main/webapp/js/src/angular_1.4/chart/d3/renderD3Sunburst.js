@@ -662,8 +662,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	            }
 	        });
 		}
-
-		drawLegend();
+	if(jsonObject.legend.showLegend) drawLegend();
 
 		d3.select("#togglelegend").on("click", toggleLegend);
 			// Add the mouseleave handler to the bounding circle.

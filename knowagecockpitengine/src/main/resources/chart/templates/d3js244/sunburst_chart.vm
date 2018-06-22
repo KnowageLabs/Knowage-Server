@@ -240,7 +240,7 @@
 		
 	},
 	labels: {
-			#if($chart.LABELS)
+			#if($chart.LABELS && $chart.LABELS.showLabels)
 			showLabels: $chart.LABELS.showLabels,
 			style: {
 				color: '$chart.LABELS.style.color',
@@ -254,7 +254,7 @@
 		},
 		
 	legend: {
-			#if($chart.LEGEND)
+			#if($chart.LEGEND && $chart.LEGEND.showLegend)
 			showLegend: $chart.LEGEND.showLegend,
 			#else
 			showLegend: false,
