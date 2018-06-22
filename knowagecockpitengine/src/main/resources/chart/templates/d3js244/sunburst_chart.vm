@@ -236,9 +236,30 @@
 			#elseif($chart.TIP.style.fontWeight == 'bold')		        			
     			fontWeight: '$chart.TIP.style.fontWeight',
     		#end
-		}
-	},
+		},
 		
+	},
+	labels: {
+			#if($chart.LABELS)
+			showLabels: $chart.LABELS.showLabels,
+			style: {
+				color: '$chart.LABELS.style.color',
+			}
+			#else
+			showLabels: false,
+			style: {
+				color: '#FFF',
+			}
+			#end
+		},
+		
+	legend: {
+			#if($chart.LEGEND)
+			showLegend: $chart.LEGEND.showLegend,
+			#else
+			showLegend: false,
+			#end
+		},
 	#* 	Something completely new that define through XML template
 		that we would like to have for the SUNBURST chart.  *# 	
 	toolbar:

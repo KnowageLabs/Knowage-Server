@@ -26,10 +26,14 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	var seriesItemConf = jsonObject.series;
-	
-	
+
+
+	var totalSum = 0
+	var showValue = jsonObject.labels.showLabels;
+	var labelsSunburstStyle = jsonObject.labels.style;
 	var seriesItemPrecision = seriesItemConf.precision;
 	var seriesItemScaleFactor = seriesItemConf.scaleFactor;
+	var showLegend = jsonObject.legend.showLegend ? "" : "hidden";
 	var seriesItemPrefix = seriesItemConf.prefixChar!=null ? seriesItemConf.prefixChar : "";
 	var seriesItemSuffix = seriesItemConf.postfixChar!=null ? seriesItemConf.postfixChar : "";
 	
@@ -122,14 +126,14 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
     	height = heightNormalized
 		- (Number(removePixelsFromFontSize(jsonObject.title.style.fontSize)) 
 						+ Number(removePixelsFromFontSize(jsonObject.subtitle.style.fontSize)))*1.4 
-							- bottomPadding - topPadding - bcHeight;
+							- bottomPadding - bcHeight;
 	}
     else
 	{
     	height = heightNormalized 
 					- (Number(removePixelsFromFontSize(jsonObject.title.style.fontSize)) 
 							+ Number(removePixelsFromFontSize(jsonObject.subtitle.style.fontSize)))*1.4 
-								- topPadding*2 - bottomPadding - bcHeight;
+								- bottomPadding - bcHeight;
 	}
 	
 //	    var height = jsonObject.chart.height;
@@ -286,31 +290,36 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
     		.style("text-decoration",jsonObject.subtitle.style.textDecoration)
     		.style("font-size",jsonObject.subtitle.style.fontSize)
 			.text(jsonObject.subtitle.text);
-	    
-		/* Put the topPadding on the the top of the chart, even if toolbar
-		 * is set on the bottom of the chart (because of the clearer and 
-		 * more structured view). */
-	    d3.select("#main"+randomId).append("div").style("height",topPadding);
+
+
+
+
+
+	
 	    
 	    /* Get the data about the height of the title, subtitle and toolbar 
 	     * already placed on the chart. */
 	    var titleHeight = d3.select("#title"+randomId)[0][0].getBoundingClientRect().height;
 	    var subtitleHeight = d3.select("#subtitle"+randomId)[0][0].getBoundingClientRect().height;
+	    
 	    var breadCrumbHeight = parseInt(jsonObject.toolbar.style.height);
 	    
 	    /* Sum of heights of all of the DOM elements above the chart's center:
 	     * title, subtitle, toolbar (breadcrumb), padding between the toolbar 
 	     * and the chart, half of the height of the chart. */
-	    var sumOfHeightsAboveChartCenter = parseInt(titleHeight + subtitleHeight + height/2 + topPadding);		    	
+	    var sumOfHeightsAboveChartCenter = parseInt(titleHeight + subtitleHeight +height/2);		    	
 	   		    
 	    if (jsonObject.toolbar.style.position=="top")
 		{   
-	    	sumOfHeightsAboveChartCenter = parseInt(sumOfHeightsAboveChartCenter + bcHeight + topPadding);		    	
-    		d3.select("#main"+randomId).append("div").attr("id","sequence"+randomId);	
-    		d3.select("#main"+randomId).append("div").style("height",topPadding);
+	    	sumOfHeightsAboveChartCenter = parseInt(sumOfHeightsAboveChartCenter + bcHeight);		    	
+    		d3.select("#main"+randomId).append("div").attr("id","sequence"+randomId);
+
 		}
 	    
-	    d3.select("#main"+randomId).append("div").attr("id","chart"+randomId).attr("class","d3chartclass");
+	    d3.select("#main"+randomId).append("div").attr("id","legend"+randomId).style("visibility", showLegend);
+	    var legendHeight = d3.select("#legend"+randomId)[0][0].getBoundingClientRect().height;
+	    sumOfHeightsAboveChartCenter = sumOfHeightsAboveChartCenter + legendHeight;
+         d3.select("#main"+randomId).append("div").attr("id","chart"+randomId).attr("class","d3chartclass");
     	
     	if (jsonObject.toolbar.style.position=="bottom")
 		{   
@@ -365,8 +374,8 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	var arc = d3.svg.arc()
 	    .startAngle(function(d) { return d.x; })
 	    .endAngle(function(d) { return d.x + d.dx; })
-	    .innerRadius(function(d) { return Math.sqrt(d.y); })
-	    .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
+	    .innerRadius(function(d) { return d.y /500})
+	    .outerRadius(function(d) { return (d.y + d.dy )/500});
 	 
 	/* Get hierarchy of root data (first level of the chart) - 
 	 * data ordered by their presence in total ammount (100% of the sum). 
@@ -563,7 +572,9 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 		
 		var path = vis.data([json]).selectAll("path")
 			.data(nodes)
-			.enter().append("svg:path")
+			.enter().append("g");
+		
+		path.append("svg:path")
 			.attr("display", function(d) { return (d.depth && (d.name!=""||d.name)) ? null : "none"; })
 			.attr("d", arc)
 			.attr('stroke', (jsonObject.chart.style.backgroundColor && 
@@ -634,16 +645,39 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 			.on("click",function(d){
 				return clickFunction(d);
 			});
+		totalSize = path.node().__data__.value;
+		if(showValue) {
+		    path.append("text")
+	        .text(function(d) { return d.name!="root"? d.name + " " + (100 * d.value / d.totalSum).toFixed(d.seriesItemPrecision) + "%": ""})
+	        .classed("label", true)
+	        .attr("x", function(d) { return d.x; })
+	        .attr("text-anchor", "middle")
+	        .style("fill",labelsSunburstStyle.color)
+	        .attr("transform", function(d) {
+	            if (d.depth > 0) {
+	                return "translate(" + arc.centroid(d) + ")" +
+	                       "rotate(" + getAngle(d) + ")";
+	            }  else {
+	                return null;
+	            }
+	        });
+		}
 
-			drawLegend();
-		
+		drawLegend();
+
+		d3.select("#togglelegend").on("click", toggleLegend);
 			// Add the mouseleave handler to the bounding circle.
-			d3.select("#container"+randomId).on("mouseleave", mouseleave);
+		d3.select("#container"+randomId).on("mouseleave", mouseleave);
 
 			// Get total size of the tree = value of root node from partition.
-			totalSize = path.node().__data__.value;
+
+			
 	 };
-	
+
+	 function getAngle(d) {
+        var thetaDeg = (180 / Math.PI * (arc.startAngle()(d) + arc.endAngle()(d)) / 2 - 90);
+        return (thetaDeg > 90) ? thetaDeg - 180 : thetaDeg;
+		    }
 	 /**
 	  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	  */
@@ -1167,18 +1201,21 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	}
 	
 	function drawLegend() 
-	{	
-		// Dimensions of legend item: width, height, spacing, radius of rounded rect.
-//			var li = 
-//					{ 
-//						w: parseInt(jsonObject.legend.style.width), h: parseInt(jsonObject.legend.style.height), 
-//						s: parseInt(jsonObject.legend.style.spacing), r: parseInt(jsonObject.legend.style.radius) 
-//					};
-		
-		var li = 
-		{ 
-			w: 200, h: 50, 
-			s: 10, r: 15 
+
+
+
+
+
+
+
+
+
+
+
+
+	{		
+		var li = { 
+			w: 150, h: 30, s: 3, r: 3
 		};
 
 		var numOfColorElems = Object.keys(colors).length;
@@ -1195,7 +1232,8 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 					"transform", 
 					
 					function(d, i) 
-					{
+
+					{debugger;
 						return "translate(0," + i * (li.h + li.s) + ")";
 					}
 			);
@@ -1205,14 +1243,14 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 		.attr("ry", li.r)
 		.attr("width", li.w)
 		.attr("height", li.h)
-		.style("fill", function(d) { return d.value; });
+		.style("fill", function(d) { debugger; return d.value; });
 
 		g.append("svg:text")
 		.attr("x", li.w / 2)
 		.attr("y", li.h / 2)
 		.attr("dy", "0.35em")
 		.attr("text-anchor", "middle")
-		.text(function(d) { return d.key; });
+		.text(function(d) { debugger; return  d.key; });
 	}
 	
 	/* ME: This function will be called whenever we click on "Legend" 
@@ -1238,6 +1276,9 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	// often that sequence occurred.
 	function buildHierarchy(jsonObject) 
 	{
+	for (var i = 0; i < jsonObject.length; i++) {
+		totalSum = totalSum+jsonObject[i].value
+	}
 	  var root = { "name": "root", "children": [] };
 	  
 	  /* Total number of data received when requesting dataset. */
@@ -1251,7 +1292,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 		  //console.log(i);
 		  var sequence = jsonObject[i].sequence;
 		  var size =+ jsonObject[i].value;
-		  		
+
 	    if (isNaN(size)) 
 	    { 
 	    	// e.g. if this is a header row
@@ -1269,7 +1310,9 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	    {
 	    	currentNode["layer"] = j-1;
     		currentNode["firstLayerParent"] = parts[0];	    
-    		
+
+    		currentNode.totalSum = totalSum;
+    		currentNode.seriesItemPrecision =seriesItemPrecision ;
 	    	var children = currentNode["children"];
 	    	var nodeName = parts[j];
 	    	var childNode;
@@ -1284,6 +1327,8 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	    			if (children[k]["name"] == nodeName) 
 	    			{
 	    				childNode = children[k];
+	    				childNode.totalSum = totalSum;
+					 	childNode.seriesItemPrecision =seriesItemPrecision;
 	    				foundChild = true;
 	    				break;
     				}
@@ -1292,12 +1337,16 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	    		// If we don't already have a child node for this branch, create it.
 	    		if (!foundChild) 
 	    		{		    			
-	    			childNode = {"name": nodeName, "children": []};		    	
+	    			childNode = {"name": nodeName, "children": []};	
+	    			childNode.totalSum = totalSum;
+				 	childNode.seriesItemPrecision =seriesItemPrecision;
 	    			children.push(childNode);
 	    		}
     		
 	    		currentNode = childNode;
-	    		
+
+	    		currentNode.totalSum = totalSum;
+	    		currentNode.seriesItemPrecision =seriesItemPrecision ;
 	    		currentNode["firstLayerParent"] = parts[0];
 	    		currentNode["layer"] = j-1;
 	    	} 
@@ -1307,14 +1356,19 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 			 	// Reached the end of the sequence; create a leaf node.
 			 	childNode = {"name": nodeName, "size": size};
 			 	childNode["layer"] = j;
+			 	childNode.totalSum = totalSum;
+			 	childNode.seriesItemPrecision =seriesItemPrecision ;
 			 	childNode["firstLayerParent"] = parts[0];
 			 	children.push(childNode);
 	    	}	    		
 	    
 	    } 	// inner for loop
 	    
-	  }		// outter for loop
-	  
+	  		// outter for loop
+
+	 
+	    
+	  }		// 
 	  return root;
 	  
 	};

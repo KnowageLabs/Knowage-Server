@@ -1633,7 +1633,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"color":"#000000",
 						"width":10
 					},
-					"text": ""
+					"text": "",
+					
 				},
 				"SUBTITLE": {
 					"style":{
@@ -1666,6 +1667,15 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 	                  },
 			         "text":""
 			     },
+			     "LABELS":{
+			    	 "showLabels":true,
+			    	 "style":{
+			    		 "color":"#000000",
+			    	 }
+				},
+				"LEGEND":{
+			    	 "showLegend":true,
+				},
 				"heightDimType": "percentage",
 				"widthDimType": "percentage",
 				"seriesStacking": false,
