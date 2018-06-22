@@ -21,5 +21,12 @@
 <input type="text" ng-model="test">
 <p>{{test}}</p>
 
+<div ng-repeat="(key,value) in events">{{key}} - {{value}}</div>
+<div style="border: 1px solid red;" ng-repeat="i in events">ID: {{i.id}} <br> USER: {{i.user}} <br> DATE: {{i.date}} <br> TYPE: {{i.type}} <br> DESC: {{i.desc}}</div>
+
+
+
+
+
 </body>
 </html>
