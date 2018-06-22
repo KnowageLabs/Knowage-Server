@@ -110,7 +110,7 @@ var objectId = <%=objectId%>;
 				        </md-select>
 					</md-input-container>
 					<md-input-container ng-if="ctrl.detail.formatObj && ctrl.detail.formatObj.valueCd=='CUSTOM'"> <label>{{::ctrl.detail.formatObj.translatedValueName}}</label> 
-						<input maxlength="20" type="text" ng-model="ctrl.detail.formatValue">
+						<input maxlength="30" type="text" ng-model="ctrl.detail.formatValue">
 					</md-input-container>
 				</div>
 			</form>
