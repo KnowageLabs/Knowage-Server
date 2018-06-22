@@ -18,7 +18,7 @@
 
 <!-- 	<div ng-repeat="(key,value) in events">{{key}} - {{value}}</div> -->
 
-<angular-list-detail>
+<angular-list-detail show-detail="showDetail">
 	<list label="Events" >
 	
 		<angular-table
@@ -31,12 +31,37 @@
 			{"label":"Type","name":"type"}
 		]'
 		highlights-selected-item=true
+		click-function="loadDetail(item)"
 		>
 		
 		</angular-table>
 	
 	</list>
-	<detail></detail>
+	<detail>
+	
+			<md-input-container>
+			  <label>User</label>
+			  <input type="text" ng-model="selectedDetail.user">
+			</md-input-container>
+			
+			<md-input-container>
+			  <label>Date</label>
+			  <input type="text" ng-model="selectedDetail.date">
+			</md-input-container>
+			
+			<md-input-container>
+			  <label>Type</label>
+			  <input type="text" ng-model="selectedDetail.type">
+			</md-input-container>
+			
+			<md-input-container>
+			  <label>Description</label>
+			  <input type="text" ng-model="selectedDetail.desc">
+			</md-input-container>
+			
+			
+	
+	</detail>
 </angular-list-detail>
 	
 <!-- 	<div style="border: 1px solid red;" ng-repeat="i in events"> -->
