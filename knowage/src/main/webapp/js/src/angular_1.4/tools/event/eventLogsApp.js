@@ -1,1 +1,8 @@
-var app = angular.module("eventModule",[])
+(function(){
+
+
+
+angular.module("eventModule",[]);
+
+
+}());
