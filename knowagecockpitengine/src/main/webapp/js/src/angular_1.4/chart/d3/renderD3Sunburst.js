@@ -316,11 +316,13 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 
 		}
 	    
-	    d3.select("#main"+randomId).append("div").attr("id","legend"+randomId).style("visibility", showLegend);
-	    var legendHeight = d3.select("#legend"+randomId)[0][0].getBoundingClientRect().height;
-	    sumOfHeightsAboveChartCenter = sumOfHeightsAboveChartCenter + legendHeight;
-         d3.select("#main"+randomId).append("div").attr("id","chart"+randomId).attr("class","d3chartclass");
-    	
+	    //sumOfHeightsAboveChartCenter = sumOfHeightsAboveChartCenter + legendHeight;
+	    d3.select("#main"+randomId).append("div").attr("id","maindiv"+randomId).style("display", "flex");
+        d3.select("#maindiv"+randomId).append("div").attr("id","chart"+randomId).attr("class","d3chartclass").style("width", "70%");
+         d3.select("#maindiv"+randomId).append("div").attr("id","legend"+randomId).style("width", "30%").style("visibility", showLegend);
+
+ 	    var legendHeight = d3.select("#legend"+randomId)[0][0].getBoundingClientRect().height;
+ 	    
     	if (jsonObject.toolbar.style.position=="bottom")
 		{   
 	    	/* Add padding between the bottom of the chart and the top of 
@@ -383,8 +385,12 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	 * USA: 78%, Canada: 12%, Mexico: 8%, No country: 2%, the "children"
 	 * array (sequence) inside "json" variable will be in descending order: 
 	 * USA, Canada, Mexico, No country. */
-	var json = buildHierarchy(jsonObject.data[0]);
-	
+	var colorMap = {};
+	var categoryFirstLevel= [];
+	var json = buildHierarchy(jsonObject.data[0], jsonObject.colors);
+	for (var j= 0; j < jsonObject.colors.length; j++) {
+		colorMap[categoryFirstLevel[j]] = jsonObject.colors[j]
+	}
 	createVisualization(json);
 	}
 	/**
@@ -587,57 +593,21 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 			(
 					"fill", 
 					
-					function(d,i) 
-					{   	    								
-						  /* Go through the array of key-value pairs (elements of the chart and their color)
-						   * and check if there is unique element-color mapping. */
-//							  if (colors[d.name] == undefined && d.name != "root")
-//							  {
-//								  var numberOfColor = Math.floor(Math.random()*children.length);
-//								  colors[d.name] = children[numberOfColor];								  
-//							  }
+					function(d,i){   
 													
 						if(d.name!=null && d.name!="")
 						{
 						  /* If current node is not a root */
 						  if (d.name != "root")
 						  {								  
-							  /* If current node's parent name is root
-							   * (if this node is part of the first layer) */
-							  
-							  if (d.parent.name=="root")
-							  {									  
-//									  colors[d.name] = varietiesOfMainColors[storeColors[counter]][0];	
-								  //console.log(allColorsLayered[counter][0]); //ok
-								  colors[d.name] = allColorsLayered[counter][0];
-//									  colors[d.name] = varietiesOfMainColors[counter][0];		
-								  counter++;
-							  }		
-							  else
-							  {
-								  //console.log(d.firstLayerParent);
-//									  console.log(rootParentsNodes.indexOf(d.firstLayerParent));
-								  //console.log(storeColors[rootParentsNodes.indexOf(d.firstLayerParent)]);
-//									  colors[d.name] = varietiesOfMainColors[storeColors[rootParentsNodes.indexOf(d.firstLayerParent)]][d.layer+1];
-								  //console.log(allColorsLayered[rootParentsNodes.indexOf(d.firstLayerParent)][d.layer+1]);
-								  colors[d.name] = allColorsLayered[rootParentsNodes.indexOf(d.firstLayerParent)][d.layer+1];
-							  }
-							  
-							  d['color'] = colors[d.name];
-							  
-							  //colorArrangement[i] = colors[d.name];
-							 // console.log(colors[d.name]);
-							  return colors[d.name];
-						  }							  	
+
+							  return d.color;
+						  }
 						}
 						else
-						{								 
+						{
 							  return "invisible";
-						  }		
-						  
-//							colorArrangement[i] = colors[d.name];
-//							  
-//							return colors[d.name];	
+						 }
 					}
 			)					
 			.style("opacity", 1)
@@ -662,7 +632,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	            }
 	        });
 		}
-	if(jsonObject.legend.showLegend) drawLegend();
+	if(jsonObject.legend.showLegend) drawLegend(colorMap);
 
 		d3.select("#togglelegend").on("click", toggleLegend);
 			// Add the mouseleave handler to the bounding circle.
@@ -1201,30 +1171,19 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	
 	function drawLegend() 
 
-
-
-
-
-
-
-
-
-
-
-
 	{		
 		var li = { 
 			w: 150, h: 30, s: 3, r: 3
 		};
 
-		var numOfColorElems = Object.keys(colors).length;
+		var numOfColorElems = Object.keys(colorMap).length;
 		
 		var legend = d3.select("#legend"+randomId).append("svg:svg")
 		.attr("width", li.w)
 		.attr("height", numOfColorElems * (li.h + li.s));
 				
 		var g = legend.selectAll("g")
-			.data(d3.entries(colors))
+			.data(d3.entries(colorMap))
 			.enter().append("svg:g")
 			.attr
 			(	
@@ -1273,8 +1232,27 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	// for a partition layout. The first column is a sequence of step names, from
 	// root to leaf, separated by hyphens. The second column is a count of how 
 	// often that sequence occurred.
-	function buildHierarchy(jsonObject) 
+
+
+	function buildHierarchy(jsonObject,colors) 
 	{
+	  /* Total number of data received when requesting dataset. */
+	var dataLength = jsonObject.length;
+	for (var i = 0; i < dataLength; i++) {
+		var sequence = jsonObject[i].sequence;
+		var size =+ jsonObject[i].value;
+	    if (isNaN(size)) {
+	    	continue;
+	    }
+	    var parts = sequence.split("_SEP_");
+	    if(categoryFirstLevel.indexOf(parts[0] )== -1){
+		    categoryFirstLevel.push(parts[0]);
+	    }
+	}
+	for (var j= 0; j < colors.length; j++) {
+		colorMap[categoryFirstLevel[j]] = colors[j]
+	}
+	
 	for (var i = 0; i < jsonObject.length; i++) {
 		totalSum = totalSum+jsonObject[i].value
 	}
@@ -1302,7 +1280,10 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	     * to create visualization of levels that represent those
 	     * data. */
 	    var parts = sequence.split("_SEP_");
-	    
+	    if(categoryFirstLevel.indexOf(parts[0] )== -1){
+		    categoryFirstLevel.push(parts[0]);
+	    }
+		
 	    var currentNode = root;		    
 	    
 	    for (var j = 0; j < parts.length; j++) 
@@ -1311,7 +1292,8 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
     		currentNode["firstLayerParent"] = parts[0];	    
 
     		currentNode.totalSum = totalSum;
-    		currentNode.seriesItemPrecision =seriesItemPrecision ;
+    		currentNode.color = colorMap[currentNode.firstLayerParent];
+    		currentNode.seriesItemPrecision =seriesItemPrecision;
 	    	var children = currentNode["children"];
 	    	var nodeName = parts[j];
 	    	var childNode;
@@ -1347,6 +1329,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	    		currentNode.totalSum = totalSum;
 	    		currentNode.seriesItemPrecision =seriesItemPrecision ;
 	    		currentNode["firstLayerParent"] = parts[0];
+	    		currentNode.color = colorMap[currentNode.firstLayerParent];
 	    		currentNode["layer"] = j-1;
 	    	} 
 	    	
@@ -1358,6 +1341,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 			 	childNode.totalSum = totalSum;
 			 	childNode.seriesItemPrecision =seriesItemPrecision ;
 			 	childNode["firstLayerParent"] = parts[0];
+				childNode.color = colorMap[childNode.firstLayerParent];
 			 	children.push(childNode);
 	    	}	    		
 	    
@@ -1370,9 +1354,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	  }		// 
 	  return root;
 	  
-	};
-	
-	/**
+	};	/**
 	 * Cockpit and chart cross-navigation handler - SUNBURST
 	 */
 	function clickFunction(d){
