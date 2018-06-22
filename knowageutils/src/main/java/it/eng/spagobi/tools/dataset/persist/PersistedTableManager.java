@@ -96,14 +96,7 @@ public class PersistedTableManager implements IPersistedManager {
 	@Override
 	public void persistDataSet(IDataSet dataset) throws Exception {
 		String tableName = dataset.getTableNameForReading();
-		// changed
-
-		logger.debug("The datastore metadata object contains # [" + dataset.getDataStore().getMetaData().getFieldCount() + "] fields");
-		if (dataset.getDataStore().getMetaData().getFieldCount() == 0) {
-			logger.debug("The datastore metadata object hasn't fields. Dataset doesn't persisted!!");
-			return;
-		}
-
+                
 		// get data source for writing not only getDataSource
 		IDataSource dsPersist = dataset.getDataSourceForWriting();
 		if (dsPersist == null) {
@@ -116,12 +109,7 @@ public class PersistedTableManager implements IPersistedManager {
 
 	public void persistDataSet(IDataSet dataset, IDataSource dsPersist, String tableName) throws Exception {
 		logger.debug("IN");
-
-		logger.debug("The datastore metadata object contains # [" + dataset.getDataStore().getMetaData().getFieldCount() + "] fields");
-		if (dataset.getDataStore().getMetaData().getFieldCount() == 0) {
-			logger.debug("The datastore metadata object hasn't fields. Dataset doesn't persisted!!");
-			return;
-		}
+		
 		// get persisted table name
 		this.setTableName(tableName);
 		logger.debug("Persisted table name is [" + getTableName() + "]");
