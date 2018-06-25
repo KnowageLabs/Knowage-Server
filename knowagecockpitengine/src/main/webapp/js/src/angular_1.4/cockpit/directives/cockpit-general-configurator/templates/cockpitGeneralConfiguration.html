@@ -43,15 +43,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					           
 					           <md-subheader>Background</md-subheader>
 					           <div layout="row" class="md-padding">
-						           <md-input-container flex="50"> 
+						           <md-input-container flex> 
 					        		  <label>Sheets background color</label>
 									  <color-picker  options="{format:'rgb'}" ng-model="clonedTemplate.style.sheetsBackgroundColor"></color-picker>
 								   </md-input-container> 
 					        	
-					               <md-input-container flex="50"> 
+					               <md-input-container flex> 
 					        		  <label>Sheets background image url</label>
 									  <input ng-model="clonedTemplate.style.imageBackgroundUrl"></input>
 								   </md-input-container> 
+								   
+								   <md-input-container flex> 
+										<label>Sheets Background size</label> 
+										<input ng-model="clonedTemplate.style.imageBackgroundSize" type="text" />
+									</md-input-container> 
 					           </div>
 				        	   
 							   <md-subheader>Menu and Widgets</md-subheader>
