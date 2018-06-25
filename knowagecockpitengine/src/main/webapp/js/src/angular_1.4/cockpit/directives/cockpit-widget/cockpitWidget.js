@@ -154,7 +154,11 @@ angular.module('cockpitModule')
 	                        		dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId)
 	                    		}
 
-	                    		scope.updateble=objType.updateble==undefined? true : objType.updateble;
+	                    		if(scope.ngModel.type == "selector"){
+	                    			scope.updateble = true;
+	                    		}else{
+	                    			scope.updateble=objType.updateble==undefined? true : objType.updateble;
+	                    		}
 	                    		//if the dataset is realtime disable the cliccable icon in the toolbar
 	                    		if (dataset && dataset != null && dataset.isRealtime){
 	                        		scope.cliccable= false;
