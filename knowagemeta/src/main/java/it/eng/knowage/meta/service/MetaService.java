@@ -1048,6 +1048,44 @@ public class MetaService extends AbstractSpagoBIResource {
 		String businessModelUniqueName = json.getString("businessModelUniqueName");
 		BusinessColumnSet currBM = model.getBusinessModels().get(0).getTableByUniqueName(businessModelUniqueName);
 		SimpleBusinessColumn columnToDelete = currBM.getSimpleBusinessColumnByUniqueName(businessColumnUniqueName);
+		if (columnToDelete.isIdentifier() || columnToDelete.isPartOfCompositeIdentifier()) {
+			// cannot delete because is an identifier
+			JSONObject jsonObject = new JSONObject();
+			JSONArray jsonArray = new JSONArray();
+			JSONObject jsonObjectMessage = new JSONObject();
+			jsonObjectMessage.put("message", "Cannot delete column used as identifier, please unset it as identifier first");
+			jsonArray.put(jsonObjectMessage);
+			jsonObject.put("errors", jsonArray);
+			return Response.status(Response.Status.BAD_REQUEST).entity(jsonObject.toString()).build();
+
+		}
+		// check if columns is used in a business relationship, if yes the delete is not possible
+		List<BusinessRelationship> businessRelationships = currBM.getRelationships();
+		boolean canDelete = true;
+		for (BusinessRelationship businessRelationship : businessRelationships) {
+			List<SimpleBusinessColumn> sourceColumns = businessRelationship.getSourceSimpleBusinessColumns();
+			if (sourceColumns.contains(columnToDelete)) {
+				canDelete = false;
+				break;
+			}
+			List<SimpleBusinessColumn> destinationColumns = businessRelationship.getDestinationSimpleBusinessColumns();
+			if (destinationColumns.contains(columnToDelete)) {
+				canDelete = false;
+				break;
+			}
+
+		}
+		if (!canDelete) {
+			// cannot delete column is inside a business relationship
+			JSONObject jsonObject = new JSONObject();
+			JSONArray jsonArray = new JSONArray();
+			JSONObject jsonObjectMessage = new JSONObject();
+			jsonObjectMessage.put("message", "Cannot delete column used in a business relationship, please remove the relationship first");
+			jsonArray.put(jsonObjectMessage);
+			jsonObject.put("errors", jsonArray);
+			return Response.status(Response.Status.BAD_REQUEST).entity(jsonObject.toString()).build();
+		}
+
 		columnToDelete.setIdentifier(false);
 		currBM.getColumns().remove(columnToDelete);
 
