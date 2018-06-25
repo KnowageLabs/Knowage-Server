@@ -250,17 +250,17 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 					var criteria3 = $scope.changedFileName == $scope.dataset.fileName;
 					var criteria4 = $scope.csvConfChanged == false;
 
-					if ((criteria1 || criteria2) && criteria3 && criteria4) {
-						$scope.dataset.meta = angular.copy($scope.metaDataCopy);
-					}
-					else {
+					//if ((criteria1 || criteria2) && criteria3 && criteria4) {
+					//	$scope.dataset.meta = angular.copy($scope.metaDataCopy);
+					//}
+					//else {
 						// Reset the metadata
 						$scope.dataset.meta = {};
 						$scope.dataset.meta = angular.copy(response.data.meta);
 						$scope.changedFileName = $scope.dataset.fileName;
 						// Set the status to FALSE since the new metadata is collected and set. (danristo)
 						$scope.validationPassed = false;
-					}
+					//}
 
 					angular.copy(response.data.datasetColumns,$scope.datasetColumns);
 
