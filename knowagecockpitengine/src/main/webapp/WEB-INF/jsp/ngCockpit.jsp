@@ -200,7 +200,7 @@ var chartLibNamesConfig = <%=ChartEngineUtil.getChartLibNamesConfig()%>;
 <title>Cockpit engine</title>
 </head> 
 
-		<body class="kn-cockpit " ng-class="{'disableanimation':sbiModule_device.browser.name!='chrome'}" md-no-ink ng-controller="cockpitMasterControllerWrapper" layout="column" style="background-image:url({{imageBackgroundUrl}}); background-color:{{cockpitModule_template.configuration.style.sheetsBackgroundColor}}; background-size:{{cockpitModule_template.configuration.style.imageBackgroundSize||'contain'}}; background-repeat: no-repeat; background-position: center;" >
+				<body class="kn-cockpit " ng-class="{'disableanimation':sbiModule_device.browser.name!='chrome'}" md-no-ink ng-controller="cockpitMasterControllerWrapper" layout="column" style="background-image:url({{imageBackgroundUrl}}); background-color:{{cockpitModule_template.configuration.style.sheetsBackgroundColor||'#fff'}}; background-size:{{cockpitModule_template.configuration.style.imageBackgroundSize||'contain'}}; background-repeat: no-repeat; background-position: center;" >
 	
 	<cockpit-toolbar config="configurator"></cockpit-toolbar>
 	<cockpit-sheet flex ng-if="datasetLoaded"></cockpit-sheet>

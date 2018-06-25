@@ -73,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 			
 			<!-- UPDATBLE BUTTON -->
-			 <md-button  class="md-icon-button " aria-label="updateable button" ng-if="updateble==true  && cockpitModule_properties.EDIT_MODE && ngModel.type!='selector'" ng-click="ngModel.updateble=!ngModel.updateble;$event.stopPropagation();" ng-init="ngModel.updateble=ngModel.updateble==undefined? true : ngModel.updateble">
+			 <md-button  class="md-icon-button " aria-label="updateable button" ng-if="updateble==true && cockpitModule_properties.EDIT_MODE && ngModel.type!='selector'" ng-click="ngModel.updateble=!ngModel.updateble;$event.stopPropagation();" ng-init="ngModel.updateble=ngModel.updateble==undefined? true : ngModel.updateble">
 				<md-tooltip md-direction="top" md-delay="1000">
 		          {{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description")}}
 		        </md-tooltip>
@@ -104,12 +104,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        			 <md-icon md-font-icon="fa fa-mouse-pointer" ng-show="ngModel.cliccable"></md-icon>
        			 <md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable"></md-icon>
 			</md-button>
-
+			
+			<!-- quick widget BUTTON -->
+			<!-- md-button class="md-icon-button " ng-if="ngModel.type=='chart' || ngModel.type=='table' || ngModel.type=='map'" aria-label="expand button" ng-click="modalQuickWidget($event);$event.stopPropagation();" >
+				<md-tooltip md-direction="top" md-delay="1000">Add quick widget</md-tooltip>
+				<md-icon md-font-icon="fa fa-magic" ></md-icon>
+			</md-button-->
+			
 			</md-fab-actions>
 			</md-fab-speed-dial>
 	
   	<div ng-show="widgetSpinner" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
-       <md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
+       <md-progress-circular  md-diameter="20px" md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
     </div>
 	<md-card class="placedWidget flexCard" ng-style="borderShadowStyle" ng-class="{'shadowedBox': extendedStyle.shadows, 'editWidgetMode':cockpitModule_properties.EDIT_MODE}" layout="column" layout-fill>
 		<md-card-title ng-style="extendedStyle.title" layout="row" layout-align="start center" ng-show="extendedStyle.titles">
