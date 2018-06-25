@@ -826,7 +826,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if (parameters[parameter] == null || parameters[parameter] == undefined) {
 					output += delim + "\"" + parameter + "\":null";
 				}else{
-					output += delim + "\"" + parameter + "\":" + JSON.stringify(parameters[parameter]).replace("[","").replace("]","").replace("\",\"",",");
+					output += delim + "\"" + parameter + "\":" + JSON.stringify(parameters[parameter]).replace("[","").replace("]","").replace(/\",\"/g,",");
 				}
 			}
 			delim = ",";
