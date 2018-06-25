@@ -1,16 +1,15 @@
 (function(){
 
-
 	var app = angular.module("eventModule");
-	
+
 	app.service("eventService", function (){
-		
-		var allEvents = [{         
+
+		var allEvents = [{
 
                 "id" : 1,
 
                 "user" : "biuser",
-                
+
                 "date" : "17/04/2018",
 
                 "type" : "type1",
@@ -18,7 +17,7 @@
                 "desc" : "someText"
             },
 
-            {         
+            {
 
                 "id" : 2,
 
@@ -31,7 +30,7 @@
                 "desc" : "someText"
             },
 
-            {         
+            {
 
                 "id" : 3,
 
@@ -45,13 +44,12 @@
 
             }
         ]
-		
+
 		this.getAllEvents = function() {
-			
+
 			return allEvents;
 		}
 
 	});
-
 
 }());
