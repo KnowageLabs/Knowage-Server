@@ -154,7 +154,11 @@ angular.module('cockpitModule')
 	                        		dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId)
 	                    		}
 
-	                    		scope.updateble=objType.updateble==undefined? true : objType.updateble;
+	                    		if(scope.ngModel.type == "selector"){
+	                    			scope.updateble = true;
+	                    		}else{
+	                    			scope.updateble=objType.updateble==undefined? true : objType.updateble;
+	                    		}
 	                    		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
 
 	                    		if(objType!=undefined){
