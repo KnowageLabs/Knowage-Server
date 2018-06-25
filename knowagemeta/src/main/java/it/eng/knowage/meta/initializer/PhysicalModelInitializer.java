@@ -78,7 +78,6 @@ public class PhysicalModelInitializer {
 		setPropertiesInitializer(new PhysicalModelPropertiesFromFileInitializer());
 
 	}
-	
 
 	/**
 	 * @return the crossReferenceAdapter
@@ -87,14 +86,13 @@ public class PhysicalModelInitializer {
 		return crossReferenceAdapter;
 	}
 
-
 	/**
-	 * @param crossReferenceAdapter the crossReferenceAdapter to set
+	 * @param crossReferenceAdapter
+	 *            the crossReferenceAdapter to set
 	 */
 	public void setCrossReferenceAdapter(ECrossReferenceAdapter crossReferenceAdapter) {
 		this.crossReferenceAdapter = crossReferenceAdapter;
 	}
-
 
 	public PhysicalModel initializeLigth(PhysicalModel originalPM, List<String> selectedTables, IDataSource dataSource) {
 		PhysicalModel model;
@@ -107,21 +105,22 @@ public class PhysicalModelInitializer {
 
 		try {
 			MetaDataBase database = DataBaseFactory.getMetaDataBase(dataSource);
-			Connection conn = originalPM.getConnection();
-			dbMeta = conn.getMetaData();
+			try (Connection conn = originalPM.getConnection()) {
+				dbMeta = conn.getMetaData();
 
-			addDatabase(dbMeta, model);
-			addCatalog(conn, model, database.getCatalog(conn));
-			addSchema(dbMeta, model, database.getSchema(conn));
+				addDatabase(dbMeta, model);
+				addCatalog(conn, model, database.getCatalog(conn));
+				addSchema(dbMeta, model, database.getSchema(conn));
 
-			addTables(dbMeta, model, selectedTables);
+				addTables(dbMeta, model, selectedTables);
 
-			for (int i = 0; i < model.getTables().size(); i++) {
-				addPrimaryKey(dbMeta, model, model.getTables().get(i));
-				addForeignKeys(dbMeta, model, model.getTables().get(i));
+				for (int i = 0; i < model.getTables().size(); i++) {
+					addPrimaryKey(dbMeta, model, model.getTables().get(i));
+					addForeignKeys(dbMeta, model, model.getTables().get(i));
+				}
+
+				getPropertiesInitializer().addProperties(model);
 			}
-
-			getPropertiesInitializer().addProperties(model);
 
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to initialize physical model", t);
@@ -140,84 +139,87 @@ public class PhysicalModelInitializer {
 			IDataSource ds = datasourceDao.loadDataSourceByID(datasourceId);
 			MetaDataBase database = DataBaseFactory.getMetaDataBase(ds);
 			logger.debug("Dataset is: " + ds.getLabel());
-			Connection conn = ds.getConnection();
-			logger.debug("Retrieve Connection: " + conn);
+			try (Connection conn = ds.getConnection()) {
+				logger.debug("Retrieve Connection: " + conn);
 
-			model = FACTORY.createPhysicalModel();
-			model.setName("model_name_mock");
+				model = FACTORY.createPhysicalModel();
+				model.setName("model_name_mock");
 
-			if (getRootModel() != null) {
-				model.setParentModel(getRootModel());
-			}
-
-			dbMeta = conn.getMetaData();
-			String connectionName = ds.getLabel();
-			logger.debug("Connection label is: " + connectionName);
-
-			addDatabase(dbMeta, model);
-			String catalog = database.getCatalog(conn);
-			addCatalog(conn, model, catalog);
-			logger.debug("Catalog name is: " + catalog);
-
-			try {
-				String schemaName = database.getSchema(conn);
-				logger.debug("Schema name is: " + schemaName);
-				addSchema(dbMeta, model, schemaName);
-			} catch (AbstractMethodError e) {
-				logger.error("Cannot retrieve schema for data source " + ds.getLabel(), e);
-				if (dbMeta.getDatabaseProductName().contains("Oracle")) {
-					// workaround for Oracle use the userName as default schemaName
-					addSchema(dbMeta, model, dbMeta.getUserName().toUpperCase());
-					logger.debug("Using username as default schema: " + dbMeta.getUserName().toUpperCase());
+				if (getRootModel() != null) {
+					model.setParentModel(getRootModel());
 				}
 
+				dbMeta = conn.getMetaData();
+				String connectionName = ds.getLabel();
+				logger.debug("Connection label is: " + connectionName);
+
+				addDatabase(dbMeta, model);
+				String catalog = database.getCatalog(conn);
+				addCatalog(conn, model, catalog);
+				logger.debug("Catalog name is: " + catalog);
+
+				try {
+					String schemaName = database.getSchema(conn);
+					logger.debug("Schema name is: " + schemaName);
+					addSchema(dbMeta, model, schemaName);
+				} catch (AbstractMethodError e) {
+					logger.error("Cannot retrieve schema for data source " + ds.getLabel(), e);
+					if (dbMeta.getDatabaseProductName().contains("Oracle")) {
+						// workaround for Oracle use the userName as default schemaName
+						addSchema(dbMeta, model, dbMeta.getUserName().toUpperCase());
+						logger.debug("Using username as default schema: " + dbMeta.getUserName().toUpperCase());
+					}
+
+				}
+
+				addTables(dbMeta, model, selectedTables);
+
+				for (int i = 0; i < model.getTables().size(); i++) {
+					addPrimaryKey(dbMeta, model, model.getTables().get(i));
+					addForeignKeys(dbMeta, model, model.getTables().get(i));
+				}
+
+				getPropertiesInitializer().addProperties(model);
+
+				// Setting Connection properties values
+				String jndiName;
+				if (ds.getJndi() == null) {
+					// force to empty string
+					jndiName = "";
+				} else {
+					jndiName = ds.getJndi();
+				}
+				model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JNDI_NAME, jndiName);
+				logger.debug("PhysicalModel Property: Jndi name is [{}] "
+						+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JNDI_NAME).getValue());
+
+				model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME, connectionName);
+				logger.debug("PhysicalModel Property: Connection name is [{}] "
+						+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME).getValue());
+
+				model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER, ds.getDriver());
+				logger.debug("PhysicalModel Property: Connection driver is [{}] "
+						+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER).getValue());
+
+				model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL, ds.getUrlConnection());
+				logger.debug("PhysicalModel Property: Connection url is [{}] "
+						+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL).getValue());
+
+				model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME, ds.getUser());
+				logger.debug("PhysicalModel Property: Connection username is [{}] "
+						+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME).getValue());
+
+				model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD, ds.getPwd());
+				logger.debug("PhysicalModel Property: Connection password is [{}] "
+						+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD).getValue());
+
+				model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME, ds.getLabel());
+				logger.debug("PhysicalModel Property: Connection databasename is [{}] "
+						+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME).getValue());
 			}
 
-			addTables(dbMeta, model, selectedTables);
+			// -------------------------------------------------------------------------------------------------------------------
 
-			for (int i = 0; i < model.getTables().size(); i++) {
-				addPrimaryKey(dbMeta, model, model.getTables().get(i));
-				addForeignKeys(dbMeta, model, model.getTables().get(i));
-			}
-
-			getPropertiesInitializer().addProperties(model);
-
-			// Setting Connection properties values
-			String jndiName;
-			if (ds.getJndi() == null) {
-				// force to empty string
-				jndiName = "";
-			} else {
-				jndiName = ds.getJndi();
-			}
-			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JNDI_NAME, jndiName);
-			logger.debug("PhysicalModel Property: Jndi name is [{}] "
-					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JNDI_NAME).getValue());
-
-			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME, connectionName);
-			logger.debug("PhysicalModel Property: Connection name is [{}] "
-					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME).getValue());
-
-			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER, ds.getDriver());
-			logger.debug("PhysicalModel Property: Connection driver is [{}] "
-					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER).getValue());
-
-			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL, ds.getUrlConnection());
-			logger.debug("PhysicalModel Property: Connection url is [{}] "
-					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL).getValue());
-
-			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME, ds.getUser());
-			logger.debug("PhysicalModel Property: Connection username is [{}] "
-					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME).getValue());
-
-			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD, ds.getPwd());
-			logger.debug("PhysicalModel Property: Connection password is [{}] "
-					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD).getValue());
-
-			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME, ds.getLabel());
-			logger.debug("PhysicalModel Property: Connection databasename is [{}] "
-					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME).getValue());
-										
 			String jdbcPoolConfig = (String) new JDBCDataSourcePoolConfigurationJSONSerializer().serialize(ds.getJdbcPoolConfiguration());
 			if (jdbcPoolConfig == null) {
 				jdbcPoolConfig = "";
@@ -225,7 +227,9 @@ public class PhysicalModelInitializer {
 			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JDBC_POOL_CONFIG, jdbcPoolConfig);
 			logger.debug("PhysicalModel Property: Connection jdbcpoolconfiguration is [{}] "
 					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JDBC_POOL_CONFIG).getValue());
-			
+
+			// ------------------------------------------------------------------------------------------------------------------------
+
 			// Quote string identification
 			String quote;
 			try {
@@ -1273,7 +1277,7 @@ public class PhysicalModelInitializer {
 					PhysicalModel physicalModel = originalPhysicalColumn.getTable().getModel();
 					physicalModel.getPrimaryKeys().remove(primaryKey);
 					// remove inverse reference (if any)
-					//ModelSingleton modelSingleton = ModelSingleton.getInstance();
+					// ModelSingleton modelSingleton = ModelSingleton.getInstance();
 					ECrossReferenceAdapter adapter = getCrossReferenceAdapter();
 					Collection<Setting> settings = adapter.getInverseReferences(primaryKey, true);
 					for (Setting setting : settings) {
@@ -1334,7 +1338,7 @@ public class PhysicalModelInitializer {
 		physicalModel.getForeignKeys().remove(physicalForeignKey);
 
 		// remove inverse references (if any)
-		//ModelSingleton modelSingleton = ModelSingleton.getInstance();
+		// ModelSingleton modelSingleton = ModelSingleton.getInstance();
 		ECrossReferenceAdapter adapter = getCrossReferenceAdapter();
 		Collection<Setting> settings = adapter.getInverseReferences(physicalForeignKey, true);
 		for (Setting setting : settings) {

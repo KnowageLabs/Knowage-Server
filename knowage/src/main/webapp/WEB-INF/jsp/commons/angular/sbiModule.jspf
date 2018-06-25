@@ -386,7 +386,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		alteredContextPath=cpat;
 	}
 
-	function getBaseUrl(endP_path) {
+	this.getBaseUrl = function(endP_path) {
 
 		var burl;
 		if(sbiModule_user.userId == ('public-'+sbiModule_user.tenant)){
@@ -408,29 +408,29 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 							.replace(/%3D/g,"=")
 							.replace(/%26/g,"&");
 		sbiModule_logger.trace("GET: " +endP_path+"/"+ req_Path + "" + item, conf);
-		return $http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item, conf);
+		return $http.get(this.getBaseUrl(endP_path) + "" + req_Path + "" + item, conf);
 	};
 
 	this.remove = function(endP_path, req_Path, item, conf) {
 		item == undefined ? item = "" : item = "?" + item;
 		sbiModule_logger.trace("REMOVE: "+endP_path+"/"+req_Path + "" + item,conf);
-		return $http.post(getBaseUrl(endP_path) + "" + req_Path + "" + item, conf);
+		return $http.post(this.getBaseUrl(endP_path) + "" + req_Path + "" + item, conf);
 	};
 
 	this.post = function(endP_path, req_Path, item, conf) {
 		sbiModule_logger.trace("POST: "+endP_path+"/"+ req_Path,item,conf);
-		return $http.post(getBaseUrl(endP_path) + "" + req_Path, item, conf);
+		return $http.post(this.getBaseUrl(endP_path) + "" + req_Path, item, conf);
 	};
 	
 	this.put = function(endP_path, req_Path, item, conf) {
 		sbiModule_logger.trace("PUT: "+endP_path+"/"+req_Path,item,conf);
-		return $http.put(getBaseUrl(endP_path) + "" + req_Path, item, conf);
+		return $http.put(this.getBaseUrl(endP_path) + "" + req_Path, item, conf);
 	};
 	
 	this.delete = function(endP_path, req_Path, item, conf) {
 		(item == undefined || item==null) ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
 		sbiModule_logger.trace("PUT:" +endP_path+"/"+req_Path+ "" + item,conf);
-		return $http.delete(getBaseUrl(endP_path) + "" + req_Path, conf);
+		return $http.delete(this.getBaseUrl(endP_path) + "" + req_Path, conf);
 	};
 
 
@@ -514,7 +514,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		
 		deferred.notify('About to call async function');
 
-		$http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item, conf)
+		$http.get(this.getBaseUrl(endP_path) + "" + req_Path + "" + item, conf)
 			.then(
 					function successCallback(data, status, headers, config) {
 						handleResponse(data, status, headers, config, deferred);
@@ -534,7 +534,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		
 		deferred.notify('About to call async function');
 
-		$http.post(getBaseUrl(endP_path) + "" + req_Path , item, conf)
+		$http.post(this.getBaseUrl(endP_path) + "" + req_Path , item, conf)
 			.then(
 					function successCallback(data, status, headers, config) {
 						handleResponse(data, status, headers, config, deferred);
@@ -554,7 +554,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		
 		deferred.notify('About to call async function');
 
-		$http.put(getBaseUrl(endP_path) + "" + req_Path , item, conf)
+		$http.put(this.getBaseUrl(endP_path) + "" + req_Path , item, conf)
 			.then(
 					function successCallback(data, status, headers, config) {
 						handleResponse(data, status, headers, config, deferred);
@@ -575,7 +575,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		deferred.notify('About to call async function');
 		(item == undefined || item==null) ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
 		
-		$http.delete(getBaseUrl(endP_path) + "" + req_Path+""+item, conf)
+		$http.delete(this.getBaseUrl(endP_path) + "" + req_Path+""+item, conf)
 			.then(
 					function successCallback(data, status, headers, config) {
 						handleResponse(data, status, headers, config, deferred);

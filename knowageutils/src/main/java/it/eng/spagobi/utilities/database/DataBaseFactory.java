@@ -43,6 +43,8 @@ public abstract class DataBaseFactory {
 				switch (sqlDialect) {
 				case HIVE:
 					return new HiveDataBase(dataSource);
+				case HIVE2:
+					return new Hive2DataBase(dataSource);
 				case SPARKSQL:
 					return new SparkSqlDataBase(dataSource);
 				case HSQL:

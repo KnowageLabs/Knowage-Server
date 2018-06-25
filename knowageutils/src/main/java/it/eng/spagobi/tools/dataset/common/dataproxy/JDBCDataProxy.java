@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -96,14 +97,18 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection", t);
 			}
 			String dialect = dataSource.getHibDialectClass();
-			Assert.assertNotNull(dialect, "Dialect cannot be null");
+			DatabaseDialect databaseDialect = DatabaseDialect.get(dialect);
+			Assert.assertNotNull(dialect, "Database dialect cannot be null");
 			try {
 				// ATTENTION: For the most db sets the stmt as a scrollable
 				// stmt, only for the compatibility with Ingres sets
 				// a stmt forward only
-				if (dialect.contains("Ingres") || dialect.contains("Vertica")) {
+				if (databaseDialect.equals(DatabaseDialect.INGRES) || databaseDialect.equals(DatabaseDialect.VERTICA)) {
 					stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-				} else if (dialect.contains("hbase") || SqlUtils.isHiveLikeDialect(dialect)) {
+				} else if (databaseDialect.equals(DatabaseDialect.HIVE) || databaseDialect.equals(DatabaseDialect.HIVE2)
+						|| databaseDialect.equals(DatabaseDialect.CASSANDRA) || databaseDialect.equals(DatabaseDialect.IMPALA)
+						|| databaseDialect.equals(DatabaseDialect.NEO4J) || databaseDialect.equals(DatabaseDialect.ORIENT)
+						|| databaseDialect.equals(DatabaseDialect.SPARKSQL)) {
 					stmt = connection.createStatement();
 				} else {
 					stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
