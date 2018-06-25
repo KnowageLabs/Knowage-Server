@@ -1708,13 +1708,13 @@
 					padding: 0;
 				}
 			    display: inline-flex;
-			    min-width: 100px;
+			    min-width: 80px;
 			    justify-content: space-around;
 			    align-items: center;
 				background-color: $lightTextColor;
 				border: 1px solid $ternaryColor;
 			    border-radius: 2px;
-			    padding: 4px 8px;
+			    padding: 4px;
 			    top: 12px;
 			    overflow: hidden;
 			    &.md-active {
