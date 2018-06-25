@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<!-- LABEL -->
 										<md-input-container  class="md-block">
 											<label>{{translate.load("sbi.ds.label")}}</label>
-											<input ng-model="selectedDataSource.label" required ng-change="setDirty()"  ng-maxlength="100" ng-readonly="readOnly">
+											<input ng-model="selectedDataSource.label" required ng-change="setDirty()"  ng-maxlength="100" ng-readonly="readOnly || modifyMode">
 											<div ng-messages="dataSourceForm.label.$error" ng-show="!selectedDataSource.label">
 												<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
 											</div>
