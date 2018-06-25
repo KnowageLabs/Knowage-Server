@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,19 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.qbe.statement.hibernate;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.datasource.transaction.hibernate.HibernateTransaction;
@@ -26,20 +34,10 @@ import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCSharedConnectionDataPro
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.hibernate.ScrollableResults;
-import org.hibernate.Session;
-
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class HQLDataSet extends AbstractQbeDataSet {
-
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(HQLDataSet.class);
@@ -49,14 +47,15 @@ public class HQLDataSet extends AbstractQbeDataSet {
 
 	}
 
-	public void loadData(int offset, int fetchSize, int maxResults)  {
+	@Override
+	public void loadData(int offset, int fetchSize, int maxResults) {
 		Session session = null;
 		org.hibernate.Query hibernateQuery;
 		int resultNumber = -1;
 		boolean overflow = false;
 
-		try{		
-			session = ((IHibernateDataSource)statement.getDataSource()).getHibernateSessionFactory().openSession();
+		try {
+			session = ((IHibernateDataSource) statement.getDataSource()).getHibernateSessionFactory().openSession();
 
 			Query query = this.statement.getQuery();
 			Map params = this.getParamsMap();
@@ -65,7 +64,7 @@ public class HQLDataSet extends AbstractQbeDataSet {
 			}
 
 			// execute query
-			hibernateQuery = session.createQuery( statement.getQueryString() );
+			hibernateQuery = session.createQuery(statement.getQueryString());
 
 			if (this.isCalculateResultNumberOnLoadEnabled()) {
 				resultNumber = getResultNumber(hibernateQuery, session);
@@ -80,28 +79,29 @@ public class HQLDataSet extends AbstractQbeDataSet {
 				result = new ArrayList();
 			} else {
 				offset = offset < 0 ? 0 : offset;
-				if(maxResults > 0) {
-					fetchSize = (fetchSize > 0)? Math.min(fetchSize, maxResults): maxResults;
+				if (maxResults > 0) {
+					fetchSize = (fetchSize > 0) ? Math.min(fetchSize, maxResults) : maxResults;
 				}
 				logger.debug("Executing query " + statement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize);
 				hibernateQuery.setFirstResult(offset);
-				if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
+				if (fetchSize > 0)
+					hibernateQuery.setMaxResults(fetchSize);
 				result = hibernateQuery.list();
 				logger.debug("Query " + statement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
-			}	
+			}
 
-			dataStore = toDataStore(result);
+			dataStore = toDataStore(result, getDataStoreMeta(statement.getQuery()));
 			if (this.isCalculateResultNumberOnLoadEnabled()) {
 				dataStore.getMetaData().setProperty("resultNumber", resultNumber);
 			}
 
-			if(hasDataStoreTransformer()) {
+			if (hasDataStoreTransformer()) {
 				getDataStoreTransformer().transform(dataStore);
 			}
 		} finally {
 			if (session != null && session.isOpen())
 				session.close();
-		}		
+		}
 	}
 
 	private int getResultNumber(org.hibernate.Query hibernateQuery, Session session) {
@@ -128,9 +128,9 @@ public class HQLDataSet extends AbstractQbeDataSet {
 		logger.debug("Query " + sqlQuery + " executed");
 		IDataStore dataStore = dataSet.getDataStore();
 		logger.debug("Data store retrieved");
-		resultNumber = ((Number)dataStore.getRecordAt(0).getFieldAt(0).getValue()).intValue();
+		resultNumber = ((Number) dataStore.getRecordAt(0).getFieldAt(0).getValue()).intValue();
 		logger.debug("Result number is " + resultNumber);
-		resultNumber = resultNumber < 0? 0: resultNumber;
+		resultNumber = resultNumber < 0 ? 0 : resultNumber;
 		logger.debug("OUT: returning " + resultNumber);
 		return resultNumber;
 	}
@@ -143,7 +143,7 @@ public class HQLDataSet extends AbstractQbeDataSet {
 		logger.debug("Scrolled query " + statement.getQueryString());
 		resultNumber = scrollableResults.getRowNumber() + 1; // Hibernate ScrollableResults row number starts with 0
 		logger.debug("Number of fetched records: " + resultNumber + " for query " + statement.getQueryString());
-		resultNumber = resultNumber < 0? 0: resultNumber;
+		resultNumber = resultNumber < 0 ? 0 : resultNumber;
 		return resultNumber;
 	}
 
@@ -157,60 +157,59 @@ public class HQLDataSet extends AbstractQbeDataSet {
 
 	}
 
-//	public void updateParameters(Query query, Map parameters) {
-//		logger.debug("IN");
-//		List whereFields = query.getWhereFields();
-//		Iterator whereFieldsIt = whereFields.iterator();
-//		while (whereFieldsIt.hasNext()) {
-//			WhereField whereField = (WhereField) whereFieldsIt.next();
-//			if (whereField.isPromptable()) {
-//				String key = getParameterKey(whereField.getRightOperand().values[0]);
-//				if (key != null) {
-//					String parameterValues = (String) parameters.get(key);
-//					if (parameterValues != null) {
-//						String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
-//						logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
-//						whereField.getRightOperand().lastValues = promptValues;
-//					}
-//				}
-//			}
-//		}
-//		List havingFields = query.getHavingFields();
-//		Iterator havingFieldsIt = havingFields.iterator();
-//		while (havingFieldsIt.hasNext()) {
-//			HavingField havingField = (HavingField) havingFieldsIt.next();
-//			if (havingField.isPromptable()) {
-//				String key = getParameterKey(havingField.getRightOperand().values[0]);
-//				if (key != null) {
-//					String parameterValues = (String) parameters.get(key);
-//					if (parameterValues != null) {
-//						String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
-//						logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
-//						havingField.getRightOperand().lastValues = promptValues; 
-//					}
-//				}
-//			}
-//		}
-//		logger.debug("OUT");
-//	}
-//
-//
-//	private String getParameterKey(String fieldValue) {
-//		int beginIndex = fieldValue.indexOf("P{");
-//		int endIndex = fieldValue.indexOf("}");
-//		if (beginIndex > 0 && endIndex > 0 && endIndex > beginIndex) {
-//			return fieldValue.substring(beginIndex + 2, endIndex);
-//		} else {
-//			return null;
-//		}
-//
-//	}
+	// public void updateParameters(Query query, Map parameters) {
+	// logger.debug("IN");
+	// List whereFields = query.getWhereFields();
+	// Iterator whereFieldsIt = whereFields.iterator();
+	// while (whereFieldsIt.hasNext()) {
+	// WhereField whereField = (WhereField) whereFieldsIt.next();
+	// if (whereField.isPromptable()) {
+	// String key = getParameterKey(whereField.getRightOperand().values[0]);
+	// if (key != null) {
+	// String parameterValues = (String) parameters.get(key);
+	// if (parameterValues != null) {
+	// String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
+	// logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
+	// whereField.getRightOperand().lastValues = promptValues;
+	// }
+	// }
+	// }
+	// }
+	// List havingFields = query.getHavingFields();
+	// Iterator havingFieldsIt = havingFields.iterator();
+	// while (havingFieldsIt.hasNext()) {
+	// HavingField havingField = (HavingField) havingFieldsIt.next();
+	// if (havingField.isPromptable()) {
+	// String key = getParameterKey(havingField.getRightOperand().values[0]);
+	// if (key != null) {
+	// String parameterValues = (String) parameters.get(key);
+	// if (parameterValues != null) {
+	// String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
+	// logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
+	// havingField.getRightOperand().lastValues = promptValues;
+	// }
+	// }
+	// }
+	// }
+	// logger.debug("OUT");
+	// }
+	//
+	//
+	// private String getParameterKey(String fieldValue) {
+	// int beginIndex = fieldValue.indexOf("P{");
+	// int endIndex = fieldValue.indexOf("}");
+	// if (beginIndex > 0 && endIndex > 0 && endIndex > beginIndex) {
+	// return fieldValue.substring(beginIndex + 2, endIndex);
+	// } else {
+	// return null;
+	// }
+	//
+	// }
 
+	@Override
 	public void setDataSource(IDataSource dataSource) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	
-	
 }

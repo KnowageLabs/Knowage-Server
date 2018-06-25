@@ -332,11 +332,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			dialect = "org.hibernate.dialect.ExtendedMySQLDialect";
 		} else if (dialect != null && dialect.contains("Oracle")) {
 			dialect = "org.hibernate.dialect.ExtendedOracleDialect";
-		}
-
-		// at the moment (04/2015) hibernate doesn't provide a dialect for hive
-		// or hbase with phoenix. But its similar to the postrges one
-		if (SqlUtils.isHiveLikeDialect(dialect)) {
+		} else if (SqlUtils.isHiveLikeDialect(dialect)) {
+			// because it seems similar.... really?
 			dialect = "org.hibernate.dialect.PostgreSQLDialect";
 		}
 

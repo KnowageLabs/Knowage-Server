@@ -30,7 +30,11 @@ import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.IStatement;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.common.iterator.JpaQueryIterator;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
@@ -46,39 +50,42 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 	@Override
 	public void loadData(int offset, int fetchSize, int maxResults) {
-		EntityManager entityManager;
-
 		try {
-			entityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager();
-			loadDataPersistenceProvider(offset, fetchSize, maxResults, entityManager);
+			loadDataPersistenceProvider(offset, fetchSize, maxResults);
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to load data", t);
 		}
-
 	}
 
-	private void loadDataPersistenceProvider(int offset, int fetchSize, int maxResults, EntityManager entityManager) {
+	private EntityManager getEntityMananger() {
+		Assert.assertNotNull(statement, "Statement cannot be null");
+		return ((IJpaDataSource) statement.getDataSource()).getEntityManager();
+	}
 
-		javax.persistence.Query jpqlQuery;
-		boolean overflow = false;
-		int resultNumber = -1;
-
+	private IStatement getLoadingStatement(EntityManager entityManager) {
 		logger.debug("Getting filtered statement...");
-		IStatement filteredStatement = this.getFilteredStatement();
+		IStatement filteredStatement = getFilteredStatement();
 		logger.debug("Filtered statement retrieved");
 
-		it.eng.qbe.query.Query query = filteredStatement.getQuery();
+		it.eng.qbe.query.Query query = getFilteredStatement().getQuery();
 		Map params = this.getParamsMap();
 		if (params != null && !params.isEmpty()) {
 			this.updateParameters(query, params);
 		}
-		String statementStr = filteredStatement.getQueryString();
+		return filteredStatement;
+	}
 
-		try {
-			jpqlQuery = entityManager.createQuery(statementStr);
-		} catch (Throwable t) {
-			throw new RuntimeException("Impossible to compile query statement [" + statementStr + "]", t);
-		}
+	private void loadDataPersistenceProvider(int offset, int fetchSize, int maxResults) {
+		boolean overflow = false;
+		int resultNumber = -1;
+
+		EntityManager entityManager = getEntityMananger();
+
+		IStatement filteredStatement = getLoadingStatement(entityManager);
+		String statementStr = filteredStatement.getQueryString();
+		logger.debug("Compiling query statement [" + statementStr + "]");
+
+		javax.persistence.Query jpqlQuery = entityManager.createQuery(statementStr);
 
 		if (this.isCalculateResultNumberOnLoadEnabled()) {
 			resultNumber = getResultNumber(statementStr, jpqlQuery, entityManager);
@@ -111,7 +118,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			logger.debug("Query " + filteredStatement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
 		}
 
-		dataStore = toDataStore(result);
+		dataStore = toDataStore(result, getDataStoreMeta(statement.getQuery()));
 
 		if (this.isCalculateResultNumberOnLoadEnabled()) {
 			dataStore.getMetaData().setProperty("resultNumber", resultNumber);
@@ -207,6 +214,33 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		}
 		logger.debug("OUT: returning [" + toReturn + "]");
 		return toReturn;
+	}
+
+	@Override
+	public DataIterator iterator() {
+		logger.debug("IN");
+		try {
+
+			EntityManager entityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager();
+			IStatement filteredStatement = getStatement();
+			String statementStr = filteredStatement.getQueryString();
+			logger.debug("Compiling query statement [" + statementStr + "]");
+
+			javax.persistence.Query jpqlQuery = entityManager.createQuery(statementStr);
+			jpqlQuery.setMaxResults(JpaQueryIterator.FETCH_SIZE);
+
+			IMetaData metadata = getDataStoreMeta(statement.getQuery());
+
+			DataIterator iterator = new JpaQueryIterator(jpqlQuery, metadata);
+			return iterator;
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@Override
+	public boolean isIterable() {
+		return true;
 	}
 
 }

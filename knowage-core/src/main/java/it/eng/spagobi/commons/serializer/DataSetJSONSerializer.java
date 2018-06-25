@@ -130,6 +130,7 @@ public class DataSetJSONSerializer implements Serializer {
 	public static final String FEDERATION_ID = "federationId";
 
 	public static final String IS_REALTIME = "isRealtime";
+	public static final String IS_ITERABLE = "isIterable";
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -423,6 +424,7 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(END_DATE, ds.getEndDateField());
 			result.put(SCHEDULING_CRON_LINE, ds.getSchedulingCronLine());
 			result.put(IS_REALTIME, ds.isRealtime());
+			result.put(IS_ITERABLE, ds.isIterable());
 			result.put(OWNER, ds.getOwner());
 			result.put(DATE_IN, ds.getDateIn());
 			result.put(SCOPE_CD, ds.getScopeCd());
@@ -441,12 +443,12 @@ public class DataSetJSONSerializer implements Serializer {
 
 	private void manageSPARQLDataSet(JSONObject conf, JSONObject result) throws JSONException {
 		for (String attr : DataSetConstants.SPARQL_ATTRIBUTES) {
-			if(!conf.has(attr)) {
+			if (!conf.has(attr)) {
 				continue;
 			}
 			Object value = conf.get(attr);
 			Assert.assertNotNull(value, "json value");
-			result.put(attr,  value.toString());
+			result.put(attr, value.toString());
 		}
 
 	}

@@ -162,8 +162,8 @@
 									<md-icon md-font-icon="fa fa-eye"></md-icon>
 							</md-button>
 							
-							<md-button title="{{translate.load('sbi.workspace.dataset.export')}}" aria-label="Export Dataset" class="md-icon-button" ng-click="exportDataset(selectedDataset)">
-									<md-icon md-font-icon="fa fa-file-excel-o"></md-icon>
+							<md-button title="{{translate.load('sbi.workspace.dataset.export')}}" aria-label="Export Dataset" ng-show="selectedDataset.isIterable && selectedDataset.pars.length == 0" class="md-icon-button" ng-click="exportDataset(selectedDataset)">
+									<md-icon md-font-icon="fa fa-file-text-o"></md-icon>
 							</md-button>
 							
 							<md-button title="{{translate.load('sbi.workspace.dataset.help')}}" aria-label="Help Online" class="md-icon-button" ng-click="showHelpOnline(selectedDataset)">

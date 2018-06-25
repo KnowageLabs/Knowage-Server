@@ -601,20 +601,16 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     }
 
     $scope.exportDataset= function(dataset){
-       var actionName='EXPORT_EXCEL_DATASET_ACTION';
+    	var id=dataset.id;
+       	if(isNaN(id)){
+       		id=id.dsId;
+       	}
 
-       var id=dataset.id;
-       if(isNaN(id)){
-    	   id=id.dsId;
-       }
+       	var url= sbiModule_restServices.getBaseUrl("1.0/datasets/" + id + "/export");
+   		console.info("[EXPORT]: Exporting dataset with id " + id);
 
-       var url= sbiModule_config.adapterPath
-               +'?ACTION_NAME='+actionName
-               +'&SBI_EXECUTION_ID=-1'
-               +'&LIGHT_NAVIGATOR_DISABLED=TRUE'
-               +'&id='+id;
-
-       $window.location.href=url;
+   		$window.open(url);
+   		//$window.location.href=url;
     }
 
     $scope.previewDataset = function(dataset){

@@ -40,6 +40,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -67,6 +69,8 @@ import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.iterator.CsvStreamingOutput;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
@@ -480,6 +484,35 @@ public class DataSetResource extends AbstractDataSetResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response execute(@PathParam("label") String label, String body) {
 		return super.execute(label, body);
+	}
+
+	@GET
+	@Path("/{id}/export")
+	@Produces(MediaType.TEXT_PLAIN)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public Response export(@PathParam("id") int id, @QueryParam("outputType") @DefaultValue("csv") String outputType) {
+
+		IDataSet dataSet = getDataSetDAO().loadDataSetById(id);
+		dataSet.setUserProfileAttributes(getUserProfile().getUserAttributes());
+		Assert.assertNotNull(dataSet, "Impossible to find a dataset with id [" + id + "]");
+		// Assert.assertTrue(dataSet.getParamsMap() == null || dataSet.getParamsMap().isEmpty(), "Impossible to export a dataset with parameters");
+		Assert.assertTrue(dataSet.isIterable(), "Impossible to export a non-iterable data set");
+		DataIterator iterator = null;
+		try {
+			logger.debug("Starting iteration to transfer data");
+			iterator = dataSet.iterator();
+
+			StreamingOutput stream = new CsvStreamingOutput(iterator);
+
+			ResponseBuilder response = Response.ok(stream);
+			response.header("Content-Disposition", "attachment;filename=" + dataSet.getName() + "." + outputType);
+			return response.build();
+		} catch (Exception e) {
+			if (iterator != null) {
+				iterator.close();
+			}
+			throw e;
+		}
 	}
 
 	@Override
@@ -1153,7 +1186,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		if (ordering != null) {
 			boolean reverseOrdering = ordering.optBoolean("reverseOrdering");
 			String columnOrdering = ordering.optString("columnOrdering");
-			if(columnOrdering.equalsIgnoreCase("dsTypeCd")) {
+			if (columnOrdering.equalsIgnoreCase("dsTypeCd")) {
 				columnOrdering = "type";
 			}
 			if (columnOrdering != null && !columnOrdering.isEmpty()) {
