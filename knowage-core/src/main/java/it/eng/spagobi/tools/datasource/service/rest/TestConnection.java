@@ -135,13 +135,14 @@ public class TestConnection {
 
 		JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 
-		String url = requestBodyJSON.getString("urlConnection");
-		String user = requestBodyJSON.getString("user");
-		String pwd = requestBodyJSON.getString("pwd");
-		String driver = requestBodyJSON.getString("driver");
-		String schemaAttr = requestBodyJSON.getString("schemaAttribute");
-		String jndi = requestBodyJSON.getString("jndi");
-
+		String url = requestBodyJSON.optString("urlConnection");
+		String user = requestBodyJSON.optString("user");
+		String pwd = requestBodyJSON.optString("pwd");
+		String driver = requestBodyJSON.optString("driver");
+		String schemaAttr = requestBodyJSON.optString("schemaAttribute");
+		String jndi = requestBodyJSON.optString("jndi");
+		String type = requestBodyJSON.getString("type");
+		
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 		String schema = (String) profile.getUserAttribute(schemaAttr);
@@ -149,7 +150,7 @@ public class TestConnection {
 		Connection connection = null;
 
 		try {
-			if (jndi != null && jndi.length() > 0) {
+			if (type.equals("JNDI")) {
 				String jndiName = schema == null ? jndi : jndi + schema;
 				logger.debug("Lookup JNDI name:" + jndiName);
 				Context ctx = new InitialContext();

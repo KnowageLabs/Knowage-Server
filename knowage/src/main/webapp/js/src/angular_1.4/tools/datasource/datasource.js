@@ -56,6 +56,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.jdbcOrJndi = {};
 	$scope.currentUser = sbiModule_user.userId;
 	$scope.JDBCAdvancedOptionsShow = false;
+	$scope.modifyMode = false;
 
 	$scope.isSuperAdminFunction=function(){
         return superadmin;
@@ -274,7 +275,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 	//SHOW RIGHT-COLUMN
 	$scope.createNewDatasource = function () {
-		
+		$scope.modifyMode = false;
 		if($scope.isDirty==false) {
 			$scope.readOnly = false;
 			$scope.showMe=true;
@@ -362,7 +363,8 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 		$scope.jdbcOrJndi.type = null;
 		$scope.showMe=true;
-
+		$scope.modifyMode = true;
+		
 		if($scope.isDirty==false) {
 			$scope.selectedDataSource = angular.copy(item);
 			$scope.selectDatabase($scope.selectedDataSource.dialectName);
@@ -449,6 +451,9 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		//TEST DATA SOURCE
 
 		var testJSON = angular.copy($scope.selectedDataSource);
+				
+		testJSON.type = $scope.jdbcOrJndi.type;
+		
 		if(testJSON.hasOwnProperty('jdbcPoolConfiguration')) {
 			delete testJSON.jdbcPoolConfiguration;
 		}
@@ -457,21 +462,6 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			delete testJSON.dsId;
 		}
 		
-		if(!testJSON.hasOwnProperty('schemaAttribute')) {
-			testJSON.schemaAttribute = '';
-		}  
-		
-		if (!testJSON.hasOwnProperty('jndi')) {
-			testJSON.jndi = '';
-		} 
-		
-		if (!testJSON.hasOwnProperty('driver') && !testJSON.hasOwnProperty('pwd') && !testJSON.hasOwnProperty('user') && !testJSON.hasOwnProperty('urlConnection')) {
-			testJSON.driver = '';
-			testJSON.pwd = '';
-			testJSON.user = '';
-			testJSON.urlConnection = '';
-		}
-
 		if(testJSON.readOnly=="1"){
 			testJSON.readOnly=true;
 		} else if(testJSON.readOnly=="0"){
