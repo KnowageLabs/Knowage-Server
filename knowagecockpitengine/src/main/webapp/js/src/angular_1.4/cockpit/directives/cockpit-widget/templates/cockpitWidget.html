@@ -73,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 			
 			<!-- UPDATBLE BUTTON -->
-			 <md-button  class="md-icon-button " aria-label="updateable button" ng-if="updateble==true  && cockpitModule_properties.EDIT_MODE" ng-click="ngModel.updateble=!ngModel.updateble;$event.stopPropagation();" ng-init="ngModel.updateble=ngModel.updateble==undefined? true : ngModel.updateble">
+			 <md-button  class="md-icon-button " aria-label="updateable button" ng-if="updateble==true  && cockpitModule_properties.EDIT_MODE && ngModel.type!='selector'" ng-click="ngModel.updateble=!ngModel.updateble;$event.stopPropagation();" ng-init="ngModel.updateble=ngModel.updateble==undefined? true : ngModel.updateble">
 				<md-tooltip md-direction="top" md-delay="1000">
 		          {{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description")}}
 		        </md-tooltip>
