@@ -34,6 +34,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 	$scope.changingFile = false;
 	$scope.categorySet = null;
 
+
 	/**
 	 * 'step2ValidationErrors' - contains the validation result. If there is not error after the validation, the property will
 	 * not be present in the retrieved JSON got after the validating process and this scope variable will be of a value NULL.
@@ -250,17 +251,17 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 					var criteria3 = $scope.changedFileName == $scope.dataset.fileName;
 					var criteria4 = $scope.csvConfChanged == false;
 
-					if ((criteria1 || criteria2) && criteria3 && criteria4) {
-						$scope.dataset.meta = angular.copy($scope.metaDataCopy);
-					}
-					else {
+				//	if ((criteria1 || criteria2) && criteria3 && criteria4) {
+					//	$scope.dataset.meta = angular.copy($scope.metaDataCopy);
+					//}
+					//else {
 						// Reset the metadata
 						$scope.dataset.meta = {};
 						$scope.dataset.meta = angular.copy(response.data.meta);
 						$scope.changedFileName = $scope.dataset.fileName;
 						// Set the status to FALSE since the new metadata is collected and set. (danristo)
 						$scope.validationPassed = false;
-					}
+				//	}
 
 					angular.copy(response.data.datasetColumns,$scope.datasetColumns);
 
