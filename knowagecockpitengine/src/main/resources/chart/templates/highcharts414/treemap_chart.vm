@@ -35,16 +35,16 @@
 	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 *#
 #if ($chart.VALUES.SERIE.class.name == 'java.util.LinkedHashMap')
-	#set($serie = $chart.VALUES.SERIE.name)
+	#set($serie = $chart.VALUES.SERIE)
 	#set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
 #elseif ($chart.VALUES.SERIE.class.name == 'java.util.ArrayList')
-	#set($serie = $chart.VALUES.SERIE[0].name)
+	#set($serie = $chart.VALUES.SERIE[0])
 	#set($groupingFunction = $chart.VALUES.SERIE[0].groupingFunction)
 #end
 
 #set($sizeCriteria = $chart.sizeCriteria)
 
-#set($result = $datasettransformer.createTreeChart($columnsNeeded,$serie,$dataColumnsMapper,$dataRows, $groupingFunction.toLowerCase()))
+#set($result = $datasettransformer.createTreeChart($columnsNeeded,$serie.name,$dataColumnsMapper,$dataRows, $groupingFunction.toLowerCase()))
 
 #set($crossNavigation = '')
 #set($crossNavigation = $chart.DRILL)	
@@ -292,7 +292,24 @@
             },
 		}
 	],
-	
+	additionalData:
+	{
+  		#if($serie.precision)
+  		precision: "$serie.precision",
+  		#else
+  		precision: "",
+  		#end
+  		#if($serie.prefixChar)
+  		prefixChar: "$serie.prefixChar",
+  		#else
+  		prefixChar: "",
+  		#end
+  		#if($serie.postfixChar)
+  		postfixChar: "$serie.postfixChar",
+  		#else  		
+  		postfixChar: "", 
+  		#end
+	},
 	plotOptions:
 	{
 		series:
