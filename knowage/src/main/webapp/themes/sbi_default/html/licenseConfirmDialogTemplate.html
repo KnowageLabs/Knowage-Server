@@ -1,0 +1,19 @@
+<md-dialog style="z-index:90">
+	<md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{dialogCtrl.translate.load('kn.license.confirmdialog.title')}}</h2>
+        <span flex></span>        
+      </div>
+    </md-toolbar>
+	
+	<md-dialog-content>
+		 <div class="md-dialog-content">
+		 	<p>{{dialogCtrl.translate.load('kn.license.confirmdialog.text')}}</p>
+		 </div>	
+	</md-dialog-content>
+	
+	 <md-dialog-actions layout="row">
+	 	<md-button ng-click="dialogCtrl.confirm()">{{dialogCtrl.translate.load('kn.license.confirmdialog.yes')}}</md-button>
+	 	<md-button ng-click="dialogCtrl.close()">{{dialogCtrl.translate.load('kn.license.confirmdialog.no')}}</md-button>
+	 </md-dialog-actions>	
+</md-dialog>
