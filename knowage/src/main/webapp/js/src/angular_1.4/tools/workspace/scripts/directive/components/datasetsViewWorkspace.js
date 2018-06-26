@@ -600,17 +600,31 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
         return $scope.currentTab==="myDataSet";
     }
 
-    $scope.exportDataset= function(dataset){
+    $scope.exportDataset= function(dataset,format){
     	var id=dataset.id;
        	if(isNaN(id)){
        		id=id.dsId;
        	}
 
-       	var url= sbiModule_restServices.getBaseUrl("1.0/datasets/" + id + "/export");
-   		console.info("[EXPORT]: Exporting dataset with id " + id);
+       	if(format == 'CSV') {
+       		var url= sbiModule_restServices.getBaseUrl("1.0/datasets/" + id + "/export");
+       		console.info("[EXPORT]: Exporting dataset with id " + id + " to CSV");
 
-   		$window.open(url);
-   		//$window.location.href=url;
+       		$window.open(url);
+       	} else if (format == 'XLSX') {
+       		var actionName='EXPORT_EXCEL_DATASET_ACTION';
+       		var url= sbiModule_config.adapterPath
+            +'?ACTION_NAME='+actionName
+            +'&SBI_EXECUTION_ID=-1'
+            +'&LIGHT_NAVIGATOR_DISABLED=TRUE'
+            +'&id='+id;
+
+       		console.info("[EXPORT]: Exporting dataset with id " + id + " to XLSX");
+
+       		$window.location.href=url;
+       	} else {
+       		console.info("Format " + format + " not supported");
+       	}
     }
 
     $scope.previewDataset = function(dataset){
