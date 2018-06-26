@@ -277,7 +277,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = aSession.createQuery("from SbiDataSource ds where ds.commonInfo.userIn = :userId or (ds.jndi != '' and ds.jndi is not null)");
+			Query hibQuery = aSession.createQuery("from SbiDataSource ds where ds.commonInfo.userIn = :userId or length(ds.jndi) > 0");
 			hibQuery.setString("userId", profile.getUserId().toString());
 
 			List hibList = hibQuery.list();
