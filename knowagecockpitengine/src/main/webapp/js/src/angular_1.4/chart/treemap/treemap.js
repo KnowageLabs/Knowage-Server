@@ -415,7 +415,22 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 		if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
 			chartObject.backgroundColor = chartConf.chart.backgroundColor;
 	}
+	var tooltipObject={};
+	prefix = chartConf.additionalData.prefixChar ? chartConf.additionalData.prefixChar : "";
+	postfix = chartConf.additionalData.postfixChar ?  chartConf.additionalData.postfixChar : "";
+	precision = chartConf.additionalData.precision ?  chartConf.additionalData.precision : "";    
 	
+   	tooltipFormatter= function () {
+		var val = this.point.value;   		
+		val = Highcharts.numberFormat(val,precision );	
+        return '<br>' + this.point.name +  ': <b>' +
+        prefix + " " +val + " " + postfix + ' </b>';
+	};
+
+	tooltipObject={
+		formatter:tooltipFormatter,
+
+	};
 	/**
 	 * Take drill up button (the "Back" button) setting from the VM.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -433,6 +448,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 		legend:{
 			enabled: false
 		},
+		tooltip: tooltipObject,
 		series:
 		[
          	{
@@ -476,13 +492,20 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 			layoutAlgorithm: 'squarified',
 			allowDrillToNode: true,
 			dataLabels: {
-				enabled: false
+				enabled: false,
+				
 			},
 			levelIsConstant: false,
 			levels: [{
 				level: 1,
 				dataLabels: {
-					enabled: true
+					enabled: true,
+					formatter: function() {
+						var val = this.point.value;   		
+						val = Highcharts.numberFormat(val,precision );	
+				        return '<br>' + this.point.name +  ': <b>' +
+				        prefix + " " +val + " " + postfix + ' </b>';
+					}
 				},
 				borderWidth: 6,
 				borderColor: "#FFFFFF",
@@ -490,7 +513,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 			data: points.map(function (point) {
                 if (point.colorValue ) { 
                     if(point.colorValue >= point.scale+ divider){
-                    	point.colorValue = point.scale+ divider  - 10
+                    	point.colorValue = point.scale+ divider  - 6
                     }
                 }
               
