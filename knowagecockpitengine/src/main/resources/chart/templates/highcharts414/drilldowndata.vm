@@ -12,7 +12,7 @@
 #if($chart.CHART.VALUES.SERIE.class.name == 'java.util.ArrayList')
 #foreach($serie in $chart.CHART.VALUES.SERIE)
 	#if($serie.get($name) == $drilldownSerie)
-	#set($mainSerieName =$serie.get($col))
+	#set($mainSerieName =$serie.get($name))
 	#set($mainSerie =$serie)
 	#set($groupingFunction=$serie.get("groupingFunction"))
 	#end
@@ -20,7 +20,7 @@
 #elseif($chart.CHART.VALUES.SERIE.class.name == 'java.util.LinkedHashMap')
 	#if($chart.CHART.VALUES.SERIE.name == $drilldownSerie)
 		#set($mainSerie = $chart.CHART.VALUES.SERIE)
-		#set($mainSerieName = $mainSerie.column)
+		#set($mainSerieName = $mainSerie.name)
 	#set($groupingFunction=$mainSerie.groupingFunction)
 	#end
 #else
