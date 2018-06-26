@@ -627,7 +627,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 		totalSize = path.node().__data__.value;
 		if(showValue) {
 		    path.append("text")
-             .text(function(d) { return d.name!="root"? d.name + " " + (100 * d.value / d.totalSum).toFixed(d.seriesItemPrecision) + "%": ""}).attr('width', 100 )
+             .text(function(d) { return d.name!="root"? d.name + " " + (100 * d.value / d.totalSum).toFixed(d.seriesItemPrecision) + "%": ""})
             
 	       .classed("label", true)
 	        .attr("x", function(d) { return d.x; })
