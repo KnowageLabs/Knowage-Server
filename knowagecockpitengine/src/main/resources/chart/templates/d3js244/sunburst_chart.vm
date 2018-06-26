@@ -244,11 +244,25 @@
 			showLabels: $chart.LABELS.showLabels,
 			style: {
 				color: '$chart.LABELS.style.color',
+				fontSize: '$chart.LABELS.style.fontSize',
+				fontFamily: '$chart.LABELS.style.fontFamily',
+				
+				#if($chart.LABELS.style.fontWeight == 'italic' || $chart.LABELS.style.fontWeight == 'normal')
+    			fontStyle: '$chart.LABELS.style.fontWeight',
+				#elseif($chart.LABELS.style.fontWeight == 'underline')
+    			textDecoration: '$chart.LABELS.style.fontWeight',
+				#elseif($chart.LABELS.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.LABELS.style.fontWeight',
+    			#end
+				fontSize: '$chart.LABELS.style.fontSize',
 			}
 			#else
 			showLabels: false,
 			style: {
 				color: '#FFF',
+				fontSize: '8px',
+				fontWeight: 'normal',
+				fontFamily: 'Arial',
 			}
 			#end
 		},

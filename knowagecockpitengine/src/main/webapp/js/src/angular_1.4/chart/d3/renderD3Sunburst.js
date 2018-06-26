@@ -124,14 +124,16 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
     	height = heightNormalized
 		- (Number(removePixelsFromFontSize(jsonObject.title.style.fontSize)) 
 						+ Number(removePixelsFromFontSize(jsonObject.subtitle.style.fontSize)))*1.4 
-							- bottomPadding - bcHeight;
+
+							- bcHeight;
 	}
     else
 	{
     	height = heightNormalized 
 					- (Number(removePixelsFromFontSize(jsonObject.title.style.fontSize)) 
 							+ Number(removePixelsFromFontSize(jsonObject.subtitle.style.fontSize)))*1.4 
-								- bottomPadding - bcHeight;
+
+								- bcHeight;
 	}
 	
 //	    var height = jsonObject.chart.height;
@@ -307,27 +309,33 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	    	sumOfHeightsAboveChartCenter = parseInt(sumOfHeightsAboveChartCenter + bcHeight);		    	
     		d3.select("#main"+randomId).append("div").attr("id","sequence"+randomId);
 		}
-	    //sumOfHeightsAboveChartCenter = sumOfHeightsAboveChartCenter + legendHeight;
-	    d3.select("#main"+randomId).append("div").attr("id","maindiv"+randomId).style("display", "flex");
-        d3.select("#maindiv"+randomId).append("div").attr("id","chart"+randomId).attr("class","d3chartclass").style("width", "70%");
-         d3.select("#maindiv"+randomId).append("div").attr("id","legend"+randomId).style("width", "30%").style("visibility", showLegend);
- 	    var legendHeight = d3.select("#legend"+randomId)[0][0].getBoundingClientRect().height;
+
+	    
+	    if(showLegend==""){
+	    	 d3.select("#main"+randomId).append("div").attr("id","maindiv"+randomId).style("display", "flex");
+	         d3.select("#maindiv"+randomId).append("div").attr("id","chart"+randomId).attr("class","d3chartclass").style("width", "70%");
+	         d3.select("#maindiv"+randomId).append("div").attr("id","legend"+randomId).style("width", "30%").style("visibility", showLegend);
+	    } else {
+	    	d3.select("#main"+randomId).append("div").attr("id","chart"+randomId).attr("class","d3chartclass")
+	    }
+ 	    //var legendHeight = d3.select("#legend"+randomId)[0][0].getBoundingClientRect().height;
  	    
     	if (jsonObject.toolbar.style.position=="bottom")
-		{   
-	    	/* Add padding between the bottom of the chart and the top of 
-	    	 * the toolbar (breadcrumb). */	  
-    		d3.select("#main"+randomId).append("div").style("height",bottomPadding);
-	    	d3.select("#main"+randomId).append("div").attr("id","sequence"+randomId);				
+
+
+
+		{
+    		d3.select("#main"+randomId).append("div").attr("id","sequence"+randomId);				
+
+
+
+
+
+
 		}
-    	
-    	if (jsonObject.toolbar.style.position=="top")
-		{   
-    		d3.select("#main"+randomId).append("div").style("height",bottomPadding);
-		}
-	       
+
 	
-	
+
 	/* Collect all possible colors into one array - PREDEFINED set of colors
 	 * (the ones that we are going to use in case configuration for the
 	 * current user (customized) is not set already) */	
@@ -379,6 +387,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	var categoryFirstLevel= [];
 	var newColors= [];
 	var json = buildHierarchy(jsonObject.data[0], jsonObject.colors);
+
 	createVisualization(json);
 	}
 	/**
@@ -421,7 +430,17 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 //
 //		    return [h, s, l];
 //		}
-	
+
+	 function wrap( d ) {
+         var self = d3.select(this),
+             textLength = self.node().getComputedTextLength(),
+             text = self.text();
+         while ( ( textLength > self.attr('width') )&& text.length > 0) {
+             text = text.slice(0, -1);
+             self.text(text + '...');
+             textLength = self.node().getComputedTextLength();
+         }
+     }
 	// Main function to draw and set up the visualization, once we have the data.
 	function createVisualization(json) 
 	{				
@@ -581,19 +600,21 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 			(
 					"fill", 
 					
-					function(d,i){
+					function(d,i){   	    						
+													
 						if(d.name!=null && d.name!="")
 						{
 						  /* If current node is not a root */
 						  if (d.name != "root")
-						  {
+						  {								  
 							  return d.color;
-						  }
+						  }							  	
 						}
 						else
-						{
+						{								 
 							  return "invisible";
-						 }
+						 }		
+						  
 					}
 			)					
 			.style("opacity", 1)
@@ -601,13 +622,21 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 			.on("click",function(d){
 				return clickFunction(d);
 			});
+		
+		
 		totalSize = path.node().__data__.value;
 		if(showValue) {
 		    path.append("text")
-	        .text(function(d) { return d.name!="root"? d.name + " " + (100 * d.value / d.totalSum).toFixed(d.seriesItemPrecision) + "%": ""})
-	        .classed("label", true)
+             .text(function(d) { return d.name!="root"? d.name + " " + (100 * d.value / d.totalSum).toFixed(d.seriesItemPrecision) + "%": ""}).attr('width', 100 )
+            
+	       .classed("label", true)
 	        .attr("x", function(d) { return d.x; })
 	        .attr("text-anchor", "middle")
+	        .style("font-size", labelsSunburstStyle.fontSize)
+	        .style("font-family",labelsSunburstStyle.fontFamily)
+	        .style("font-style",labelsSunburstStyle.fontStyle ? labelsSunburstStyle.fontStyle : "none")
+	        .style("font-weight",labelsSunburstStyle.fontWeight ? labelsSunburstStyle.fontWeight : "none")
+	        .style("text-decoration",labelsSunburstStyle.textDecoration ? labelsSunburstStyle.textDecoration : "none")
 	        .style("fill",labelsSunburstStyle.color)
 	        .attr("transform", function(d) {
 	            if (d.depth > 0) {
@@ -1153,7 +1182,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	
 	}
 	
-	function drawLegend(colorMap)
+	function drawLegend(colorMap) 
 	{		
 		var li = { 
 			w: 150, h: 30, s: 3, r: 3
@@ -1218,6 +1247,8 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 
 	function buildHierarchy(jsonObject,colors) 
 	{
+
+	  
 	  /* Total number of data received when requesting dataset. */
 	var dataLength = jsonObject.length;
 	for (var i = 0; i < dataLength; i++) {
@@ -1240,7 +1271,8 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	for (var j= 0; j < categoryFirstLevel.length; j++) {
 		colorMap[categoryFirstLevel[j]] = newColors[j]
 	}
-
+	
+	
 	for (var i = 0; i < jsonObject.length; i++) {
 		totalSum = totalSum+jsonObject[i].value
 	}

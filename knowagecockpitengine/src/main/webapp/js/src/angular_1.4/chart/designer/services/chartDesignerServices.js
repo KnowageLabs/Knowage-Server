@@ -1671,6 +1671,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			    	 "showLabels":true,
 			    	 "style":{
 			    		 "color":"#000000",
+			    		 "fontSize":"8px",
+			    		 "fontFamily":"Arial",
+	                	 "fontWeight":"normal",
 			    	 }
 				},
 				"LEGEND":{
