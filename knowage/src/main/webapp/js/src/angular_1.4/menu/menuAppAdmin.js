@@ -244,7 +244,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 				$scope.licenseData=[];
 				$scope.hostsData=[];
 
-	        	$http.get(Sbi.config.contextName+'/restful-services/1.0/license?onlyValid=true').success(function(data){
+	        	$http.get(Sbi.config.contextName+'/restful-services/1.0/license').success(function(data){
 	        		if (data.errors){
 						$scope.messaging.showErrorMessage(data.errors[0].message,$scope.translate.load('sbi.generic.error'));
 						return;
@@ -255,6 +255,8 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 					$mdDialog.show({
 						parent: parentEl,
 						templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/license.jsp',
+						bindToController: true,
+						preserveScope: true,
 						locals: {
 							title : sbiModule_translate.load('sbi.home.License'),
 							okMessage : sbiModule_translate.load('sbi.general.ok'),
@@ -265,7 +267,8 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 							messaging : $scope.messaging,
 							download : $scope.download
 						},
-						controller: licenseDialogController
+						controller: licenseDialogController,
+						autoWrap: false
 					});
 	        	}).
 	        	error(function(error){
@@ -283,8 +286,14 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 						scope.dialog = $mdDialog;
 						scope.hosts = hosts;
 
+						scope.httpConfig = {
+    	        				transformRequest:angular.identity,
+    	        				headers:{'Content-Type': undefined}
+    	        			};
+						
 	        	        var restLicense = {
 	        	        		base : scope.config.contextName + '/restful-services/1.0/license',
+	        	        		check: '/check',
 	        	        		download : '/download',
 	        	        		upload : '/upload'
 	        	        }
@@ -294,38 +303,90 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        	scope.$apply();
 	        	        }
 
+	        	        // firstly, check if license exists and is it valid 
 	        	        scope.uploadFile = function(hostName){
 	        	        	if (scope.file){
-	        	        		var config = {
-	        	        				transformRequest:angular.identity,
-	        	        				headers:{'Content-Type': undefined}
-	        	        			};
+	        	        		
+	        	        		scope.formData = new FormData();
+	        	        		scope.formData.append(scope.file.name, scope.file);
+	        	        		scope.currentHostName = hostName;	        	        		
+	        	        		
+	        	        		$http.post(restLicense.base + restLicense.check + "/" + scope.currentHostName, scope.formData, scope.httpConfig)
+		   	        		     .then(
+		   	        		    		 function(response, status, headers, config){		   	        		    			
+		   	        		    			if(response.data.license.doesExist && response.data.license.isValid) {
 
-	        	        		var formData = new FormData();
-	        	        		formData.append(scope.file.name,scope.file);
-	        	        		var currentHostName = hostName;
-	        	        		$http.post(restLicense.base + restLicense.upload + "/"+hostName ,formData,config)
-	        	        			.then(
-	        	        				function(response,status,headers,config){
-	        	        					if (response.data.errors){
-	        	        						scope.messaging.showErrorMessage(scope.translate.load(response.data.errors[0].message),scope.translate.load('sbi.generic.error'));
-	        	        					}else{
-	        	        						// add the new license to the list
-	        	        						$scope.licenseData[currentHostName].push(response.data);
-	        	        						scope.file = undefined;
-	        	        						scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
-	        	        					}
-	        	        				},
-	        	        				function(response,status,headers,config){
+		   	        		    				$mdDialog.show({
+		   	        		    				   parent: angular.element(document.body),
+		   	        		    				   locals: {
+		   	        		    					   dialogScope: scope,
+		   	        		    					   hostName: scope.currentHostName,
+		   	        		    					   formData: scope.formData,
+		   	        		    					   config: scope.httpConfig,
+		   	        		    					   translate: scope.translate
+	   	        		    					   },
+		   	        		    				   controller: function($mdDialog, dialogScope, hostName, formData, config, translate) {
+		   	        		    					    this.translate = translate;
+		   	        		    					    
+		   	        			        	        	this.confirm = function() {
+		   	        			        	        		dialogScope.doUpload(hostName, formData, config);
+		   	        			        	        		$mdDialog.hide();
+		   	        			        	        	};
+		   	        			        	        	
+		   	        			        	        	this.close = function() {
+		   	        			        	        		$mdDialog.hide();
+		   	        			        	        	};
+		   	        			        	        },		   	        			        	       
+		   	        		    					templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/licenseConfirmDialogTemplate.html',
+		   	        		    					preserveScope: true,
+		   	        		    	                autoWrap: true,		   	        		    	                
+		   	        		    	                controllerAs: 'dialogCtrl',
+		   	        		    	                bindToController: true,		   	        		    	             
+		   	        		                        skipHide: true		   	        		    	             
+		   	        		    				});
+		   	        		    				
+		   	        		    			} else {
+		   	        		    				scope.doUpload(hostName, scope.formData, scope.httpConfig);
+		   	        		    			}
+		   	        		    		 }, 
+		   	        		    		 function(response, status, headers, config){
 	        	        					if (response.data.errors){
 	        	        						scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
 	        	        					}else{
 	        	        						scope.messaging.showErrorMessage(scope.translate.load('sbi.ds.failedToUpload'),scope.translate.load('sbi.generic.error'));
 	        	        					}
-	        	        				})
+	        	        				}
+		   	        		     );	        	        			        	        			        	        		        	        		        	        	
 	        	        	}
-	        	        }
+	        	        };
 
+	        	        // Really do an upload
+	        	        scope.doUpload = function(currentHostName, formData, config) {
+	        	    		// upload a new license or replace the old one        	        
+	        	        	$http.post(restLicense.base + restLicense.upload + "/" + currentHostName, formData, config)
+							.then(
+								function(response,status,headers,config){
+									if (response.data.errors){
+										scope.messaging.showErrorMessage(scope.translate.load(response.data.errors[0].message),scope.translate.load('sbi.generic.error'));
+									}else{
+										// add the new license to the list										
+										var existingLicenses = $filter('filter')($scope.licenseData[currentHostName], {product: response.data.product}, true);
+										if(existingLicenses.length == 0) {
+											$scope.licenseData[currentHostName].push(response.data);
+										}																																						
+										scope.file = undefined;
+										scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
+									}
+								},
+								function(response,status,headers,config){
+									if (response.data.errors){
+										scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
+									}else{
+										scope.messaging.showErrorMessage(scope.translate.load('sbi.ds.failedToUpload'),scope.translate.load('sbi.generic.error'));
+									}
+								});
+	        	        };
+	        	        		        	        
 	        	        scope.dowloadFile = function(license, hostName){
 	        	        	$http
 	        	        		.get(restLicense.base + restLicense.download + '/' + hostName+ '/' + license.product)
