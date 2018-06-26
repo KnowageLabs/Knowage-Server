@@ -481,14 +481,16 @@ public class QbeDataSet extends ConfigurableDataSet {
 
 	@Override
 	public DataIterator iterator() {
-		init();
-		return ds.iterator();
+		//init();
+		//return ds.iterator();
+		return null;
 	}
 
 	@Override
 	public boolean isIterable() {
-		init();
-		return ds.isIterable();
+		//init();
+		//return ds.isIterable();
+		return false;
 	}
 
 	@Override
