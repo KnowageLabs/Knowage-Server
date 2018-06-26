@@ -162,7 +162,11 @@
 									<md-icon md-font-icon="fa fa-eye"></md-icon>
 							</md-button>
 							
-							<md-button title="{{translate.load('sbi.workspace.dataset.export')}}" aria-label="Export Dataset" ng-show="selectedDataset.isIterable && selectedDataset.pars.length == 0" class="md-icon-button" ng-click="exportDataset(selectedDataset)">
+							<md-button title="{{translate.load('sbi.workspace.dataset.export.xlsx')}}" aria-label="Export Dataset to XLSX" class="md-icon-button" ng-click="exportDataset(selectedDataset,'XLSX')">
+									<md-icon md-font-icon="fa fa-file-excel-o"></md-icon>
+							</md-button>
+							
+							<md-button title="{{translate.load('sbi.workspace.dataset.export.csv')}}" aria-label="Export Dataset to CSV" ng-show="selectedDataset.isIterable && selectedDataset.pars.length == 0" class="md-icon-button" ng-click="exportDataset(selectedDataset,'CSV')">
 									<md-icon md-font-icon="fa fa-file-text-o"></md-icon>
 							</md-button>
 							
