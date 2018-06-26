@@ -29,8 +29,6 @@
 						<tr>
 							<th>{{translate.load('kn.schedulation.triggers.name')}}</th>
 							<th>{{translate.load('kn.schedulation.triggers.description')}}</th>
-							<th>{{translate.load('kn.schedulation.triggers.start')}}</th>
-							<th>{{translate.load('kn.schedulation.triggers.end')}}</th>
 							<th></th>
 							<th></th>
 						</tr>
@@ -39,8 +37,6 @@
 						<tr ng-repeat="trigger in row.triggers track by $index ">
 							<td>{{trigger.triggerName}}</td>
 							<td>{{trigger.triggerDescription}}</td>
-							<td>{{trigger.triggerStartDate}} {{trigger.triggerStartTime}}</td>
-							<td>{{trigger.triggerEndDate}} {{trigger.triggerEndTime}}</td>
 							<td class="tableAction">
 								<md-checkbox ng-model="trigger.runnable" ng-change="toggleTriggerRun(trigger)"></md-checkbox>
 							</td>
