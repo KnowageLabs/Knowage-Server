@@ -111,7 +111,7 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 				})
 	};
 
-	this.saveCockpit=function(){
+	this.saveCockpit=function(event){
 		//check cockpit label
 		if(angular.equals(cockpitModule_properties.DOCUMENT_NAME.trim(),"")){
 			    $mdDialog.show(		    	

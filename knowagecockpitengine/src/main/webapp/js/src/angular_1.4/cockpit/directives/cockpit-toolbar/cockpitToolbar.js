@@ -89,7 +89,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 				cockpitModule_generalServices.saveCockpit();
 			});
 		}else{
-			cockpitModule_generalServices.saveCockpit();
+			cockpitModule_generalServices.saveCockpit(event);
 		}
 	};
 
