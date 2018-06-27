@@ -169,7 +169,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	
 	var chartOrientation = (width > height) ? "horizontal" : "vertical";		
 	
-    var tipFontSize = parseInt(jsonObject.tip.style.fontSize);
+    var tipFontSize = parseInt(jsonObject.tip.style.fontSize*2);
     var tipWidth = parseInt(jsonObject.tip.style.width);
 	
     // Parameters (dimensions) for the toolbar (breadcrumb)
@@ -362,9 +362,10 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	var vis = d3.select("#chart"+randomId).append("svg:svg")
 	    .attr("width", width-widthCorrection)
 	    .attr("height", height-heightCorrection)
+	    .attr("viewBox", "0 0 "+width+" "+height )
 	    .append("svg:g")
 	    .attr("id", "container"+randomId)
-	    .attr("transform", "translate(" + (width-widthCorrection) / 2 + "," + (height-heightCorrection) / 2 + ")");	
+	    .attr("transform", "translate(" + (width-widthCorrection) / 2 + "," + (height-heightCorrection) / 2 + ") scale(1.5)");	
 	
 	var partition = d3.layout.partition()
 	    .size([2 * Math.PI, radius * radius])
@@ -820,13 +821,20 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
   		.style("font-size",tipFontSize); 
 	
 	  d3.select("#percentage"+randomId)
-	  		.text(percentOrAbsSliceValueString)		  	
-	  		.style("font-family",jsonObject.tip.style.fontFamily)
-    		.style("font-style",jsonObject.tip.style.fontStyle ? jsonObject.tip.style.fontStyle : "none")
-    		.style("font-weight",jsonObject.tip.style.fontWeight ? jsonObject.tip.style.fontWeight : "none")
-    		.style("text-decoration",jsonObject.tip.style.textDecoration ? jsonObject.tip.style.textDecoration : "none")
-    		.style("font-size",tipFontSize)
-    		.style("vertical-align","middle");		  
+		.text(percentOrAbsSliceValueString)		  	
+		.style("font-family",jsonObject.tip.style.fontFamily)
+		.style("font-style",jsonObject.tip.style.fontStyle ? jsonObject.tip.style.fontStyle : "none")
+		.style("font-weight",jsonObject.tip.style.fontWeight ? jsonObject.tip.style.fontWeight : "none")
+		.style("text-decoration",jsonObject.tip.style.textDecoration ? jsonObject.tip.style.textDecoration : "none")
+		.style("font-size",setFontSize(width-widthCorrection,height-heightCorrection))
+		.style("vertical-align","middle");		  
+			
+function setFontSize(w,h){
+	var fontSize = (w*h)/8000;
+	if(fontSize>40) fontSize=40;
+	if(fontSize<20) fontSize=20;
+	return fontSize+"px";  
+}	  
     			
 	  var percentageHeight = document.getElementById('percentage'+randomId).getBoundingClientRect().height;
 	  var explanationHeight = document.getElementById('explanation'+randomId).getBoundingClientRect().height;	
@@ -843,7 +851,8 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	  	.style("color",jsonObject.tip.style.color)
 		.style("position","absolute")
 		.style("left",explanLeftDistance)
-		.style("width",tipWidth)
+		.style("width","100px")
+		.style("transform","translateX(-50%) translateY(-50%)")
 		.style("text-align","center");
 	    		
 	  /* When width of the text area (rectangle) is set, count 
