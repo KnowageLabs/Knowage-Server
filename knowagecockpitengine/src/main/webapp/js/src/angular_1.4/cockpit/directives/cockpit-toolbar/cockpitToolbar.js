@@ -61,7 +61,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 	}
 
 
-	$scope.saveCockpit=function(){
+	$scope.saveCockpit=function(event){
 		var haveSel=false;
 		for(var i=0;i<cockpitModule_template.configuration.aggregations.length;i++){
 			if(Object.keys(cockpitModule_template.configuration.aggregations[i].selection).length>0){
@@ -80,16 +80,16 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 			.ok(sbiModule_translate.load('sbi.qbe.messagewin.yes'))
 			.cancel(sbiModule_translate.load('sbi.qbe.messagewin.no'));
 			$mdDialog.show(confirm).then(function() {
-				cockpitModule_generalServices.saveCockpit();
+				cockpitModule_generalServices.saveCockpit(event);
 			}, function() {
 				for(var i=0;i<cockpitModule_template.configuration.aggregations.length;i++){
 					cockpitModule_template.configuration.aggregations[i].selection = {};
 				}
 				cockpitModule_template.configuration.filters={};
-				cockpitModule_generalServices.saveCockpit();
+				cockpitModule_generalServices.saveCockpit(event);
 			});
 		}else{
-			cockpitModule_generalServices.saveCockpit();
+			cockpitModule_generalServices.saveCockpit(event);
 		}
 	};
 
