@@ -365,7 +365,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	    .attr("viewBox", "0 0 "+width+" "+height )
 	    .append("svg:g")
 	    .attr("id", "container"+randomId)
-	    .attr("transform", "translate(" + (width-widthCorrection) / 2 + "," + (height-heightCorrection) / 2 + ") scale(1.5)");	
+	    .attr("transform", "translate(" + (width-widthCorrection) / 2 + "," + (height-heightCorrection) / 2 + ") scale(2)");	
 	
 	var partition = d3.layout.partition()
 	    .size([2 * Math.PI, radius * radius])
