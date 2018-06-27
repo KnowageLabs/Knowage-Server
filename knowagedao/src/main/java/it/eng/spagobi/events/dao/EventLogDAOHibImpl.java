@@ -160,7 +160,7 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 		}
 		if (!StringUtilities.isEmpty(type)) {
 			EventType eventType = EventType.valueOf(type);
-			criteria.add(Restrictions.eq("event_type", eventType));
+			criteria.add(Restrictions.eq("eventType", eventType));
 		}
 		return criteria;
 	}
