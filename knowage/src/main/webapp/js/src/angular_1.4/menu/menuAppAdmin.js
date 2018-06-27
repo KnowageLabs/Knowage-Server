@@ -313,8 +313,10 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        		
 	        	        		$http.post(restLicense.base + restLicense.check + "/" + scope.currentHostName, scope.formData, scope.httpConfig)
 		   	        		     .then(
-		   	        		    		 function(response, status, headers, config){		   	        		    			
-		   	        		    			if(response.data.license.doesExist && response.data.license.isValid) {
+		   	        		    		 function(response, status, headers, config){
+		   	        		    			if(response.data.hasOwnProperty('errors')) {
+		   	        		    				scope.messaging.showErrorMessage(response.data.errors[0].message, scope.translate.load('sbi.generic.error'));
+		   	        		    			} else if(response.data.license.doesExist && response.data.license.isValid) {
 
 		   	        		    				$mdDialog.show({
 		   	        		    				   parent: angular.element(document.body),
@@ -371,8 +373,13 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 									}else{
 										// add the new license to the list										
 										var existingLicenses = $filter('filter')($scope.licenseData[currentHostName], {product: response.data.product}, true);
-										if(existingLicenses.length == 0) {
-											$scope.licenseData[currentHostName].push(response.data);
+										if(existingLicenses.length !== 0) {
+											var existingLicObj = existingLicenses[0];
+											if(existingLicObj.expiration_date !== '') {
+												var index = $scope.licenseData[currentHostName].indexOf(existingLicObj);
+												$scope.licenseData[currentHostName].splice(index, 1);
+												$scope.licenseData[currentHostName].push(response.data);
+											}											
 										}																																						
 										scope.file = undefined;
 										scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
