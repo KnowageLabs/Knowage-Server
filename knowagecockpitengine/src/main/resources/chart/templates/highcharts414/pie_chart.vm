@@ -1161,7 +1161,6 @@
         	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : 0;
         	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
         	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
-        	
         	var thisValue = this.y;
         	
         	var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
@@ -1243,19 +1242,15 @@
 	        	var yValueOnlyIndexStart = format.indexOf(formatIntro);
 	        	var yValueOnlyIndexEnd = format.indexOf(formatOutro);
 	        	
-	        	prefix = format.substring(0,yValueOnlyIndexStart) + " ";
+	        	prefix = this.series.options.tooltip.valuePrefix + " ";
 	        	
-	        	var separatorOfThousands = format.substring(yValueOnlyIndexStart + formatIntro.length, 
-	        											yValueOnlyIndexStart + formatIntro.length + 1);
+	        	var separatorOfThousands = Highcharts.getOptions().lang.thousandsSep;
 	        	
-	        	var decimalPoint = format.substring(yValueOnlyIndexStart + formatIntro.length + 1, 
-	        											yValueOnlyIndexStart + formatIntro.length + 2);	
+	        	var decimalPoint = Highcharts.getOptions().lang.decimalPoint;
 	        											
-	        	var precision = format.substring(yValueOnlyIndexStart + formatIntro.length + 2, 
-	        											yValueOnlyIndexEnd);
+	        	var precision = this.series.options.tooltip.valueDecimals;
 	        				
-	        	postfix = " " + format.substring(yValueOnlyIndexEnd + formatOutro.length + 1,
-	        											format.length);
+	        	postfix = " " + this.series.options.tooltip.valueSuffix;
 	        	
 	        	thisValue = Highcharts.numberFormat(this.y, precision, decimalPoint, separatorOfThousands);
         	}
@@ -1274,7 +1269,7 @@
         		element on it. HTML tag <strong> is removed.
         		@modifiedBy: danristo (danilo.ristovski@mht.net)
         	*# 	
-            result += '<span>' + this.key + '</span><br/>' + this.series.name + ': ' + thisValue + '</div>';
+            result += '<span>' + this.key + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix  + '</div>';
             
             return result;
         }
