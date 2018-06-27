@@ -776,7 +776,7 @@ public class DataSetTransformer {
 		}
 
 		for (Object singleObject : dataRows) {
-			ArrayList<JSONObject> newListOfOrderColumnItems = map.get(((Map) singleObject).get(seria));
+			ArrayList<JSONObject> newListOfOrderColumnItems = map.get(((Map) singleObject).get(seria).toString());
 			if (newListOfOrderColumnItems == null) {
 				newListOfOrderColumnItems = new ArrayList<JSONObject>();
 				for (int i = 0; i < categoriesList.length; i++) {
