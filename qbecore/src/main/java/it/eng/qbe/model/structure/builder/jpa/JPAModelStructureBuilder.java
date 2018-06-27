@@ -73,6 +73,9 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 	 *            the JPA DataSource
 	 */
 	public JPAModelStructureBuilder(JPADataSource dataSource) {
+		if (dataSource == null) {
+			throw new IllegalArgumentException("DataSource parameter cannot be null");
+		}
 
 		String maxRecursionLevelProperty = (String) dataSource.getConfiguration().loadDataSourceProperties().get("maxRecursionLevel");
 		if (maxRecursionLevelProperty == null) {
@@ -81,9 +84,6 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 			this.maxRecursionLevel = Integer.parseInt(maxRecursionLevelProperty);
 		}
 
-		if (dataSource == null) {
-			throw new IllegalArgumentException("DataSource parameter cannot be null");
-		}
 		setDataSource(dataSource);
 		propertiesInitializer = ModelStructurePropertiesInitializerFactory.getDataMartStructurePropertiesInitializer(dataSource);
 	}

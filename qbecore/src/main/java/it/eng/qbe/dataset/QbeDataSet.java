@@ -37,6 +37,7 @@ import it.eng.qbe.datasource.configuration.DataSetDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.datasource.dataset.DataSetDriver;
+import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.TimeAggregationHandler;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
@@ -481,16 +482,14 @@ public class QbeDataSet extends ConfigurableDataSet {
 
 	@Override
 	public DataIterator iterator() {
-		//init();
-		//return ds.iterator();
-		return null;
+		init();
+		return ds.iterator();
 	}
 
 	@Override
 	public boolean isIterable() {
-		//init();
-		//return ds.isIterable();
-		return false;
+		// only underlying JPQLDataSet is iterable
+		return getQbeDataSource() instanceof JPADataSource;
 	}
 
 	@Override

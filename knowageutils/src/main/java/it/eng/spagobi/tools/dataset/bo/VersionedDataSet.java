@@ -696,4 +696,9 @@ public class VersionedDataSet implements IDataSet {
 	public DatasetEvaluationStrategy getEvaluationStrategy(boolean isNearRealtime) {
 		return wrappedDataset.getEvaluationStrategy(isNearRealtime);
 	}
+
+	@Override
+	public String toString() {
+		return wrappedDataset.toString();
+	}
 }
