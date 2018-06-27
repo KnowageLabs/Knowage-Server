@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
@@ -148,14 +147,6 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 		return toReturn;
 	}
 
-	private int getTotalNumber(Criteria criteria) {
-		ScrollableResults results = criteria.scroll();
-		results.last();
-		int total = results.getRowNumber() + 1;
-		results.close();
-		return total;
-	}
-
 	private Criteria getBaseFilteringCriteria(Date startDate, Date endDate, String creationUser, String type, Session aSession) {
 		Criteria criteria = aSession.createCriteria(SbiEventsLog.class);
 		if (startDate != null) {
@@ -233,43 +224,6 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 			int start = offset + 1;
 			toReturn = new PagedList<EventLog>(results, total, start);
 
-			// if (sortingColumn == null || sortingColumn.length() == 0) {
-			// sortingColumn = "date";
-			// }
-			// String sortingMode = (sortingAscending) ? "ASC" : "DESC";
-			//
-//			// @formatter:off
-//			hql =
-//					"select " +
-//					"eventlog " +
-//					"from " +
-//					"SbiEventsLog as eventlog, " +
-//					"SbiEventRole as eventRole, " +
-//					"SbiExtRoles as roles " +
-//					"where " +
-//					"eventlog.id = eventRole.id.event.id and " +
-//					"eventRole.id.role.extRoleId = roles.extRoleId " +
-//					"and " +
-//					"roles.name in (:ROLE_NAMES) ";
-//			// @formatter:on
-			//
-			// hql = hql + "order by eventlog." + sortingColumn + " " + sortingMode;
-			//
-			// hqlQuery = aSession.createQuery(hql);
-			// // hqlQuery.setString(0, collectionRoles);
-			// hqlQuery.setParameterList("ROLE_NAMES", roleNames);
-			//
-			// hqlQuery.setFirstResult(offset);
-			// hqlQuery.setMaxResults(fetchsize);
-			//
-			// List hibList = hqlQuery.list();
-			//
-			// Iterator it = hibList.iterator();
-			//
-			// while (it.hasNext()) {
-			// realResult.add(toEventsLog((SbiEventsLog) it.next()));
-			// }
-			// tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
 
@@ -330,27 +284,20 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 		try {
 			session = getSession();
 			tx = session.beginTransaction();
-			// SbiEventsLog hibEventLog = toSbiEventsLog(aSession, eventLog);
 
 			SbiEventsLog hibEventLog = new SbiEventsLog();
-			// hibEventLog.setId(eventLog.getId());
 			hibEventLog.setUser(eventLog.getUser());
 			hibEventLog.setDate(eventLog.getDate());
 			hibEventLog.setDesc(eventLog.getDesc());
 			hibEventLog.setParams(eventLog.getParams());
 			hibEventLog.setEventType(eventLog.getType());
 			this.updateSbiCommonInfo4Insert(hibEventLog);
-			session.save(hibEventLog);
 			Set hibEventRoles = new HashSet();
 			List roles = eventLog.getRoles();
 			Iterator rolesIt = roles.iterator();
 			while (rolesIt.hasNext()) {
 				String roleName = (String) rolesIt.next();
-				/*
-				 * String hql = "from SbiExtRoles as roles " + "where roles.name = '" + roleName + "'";
-				 */
-
-				String hql = "from SbiExtRoles as roles " + "where roles.name = ?";
+				String hql = "from SbiExtRoles as roles where roles.name = ?";
 
 				Query hqlQuery = session.createQuery(hql);
 				hqlQuery.setString(0, roleName);
@@ -360,14 +307,9 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 					continue;
 				}
 				hibEventRoles.add(aHibRole);
-				// SbiEventRoleId eventRoleId = new SbiEventRoleId();
-				// eventRoleId.setEvent(hibEventLog);
-				// eventRoleId.setRole(aHibRole);
-				// SbiEventRole aSbiEventRole = new SbiEventRole(eventRoleId);
-				// session.save(aSbiEventRole);
-				// hibEventRoles.add(aSbiEventRole);
 			}
 			hibEventLog.setRoles(hibEventRoles);
+			session.save(hibEventLog);
 			tx.commit();
 			return hibEventLog.getId();
 		} catch (HibernateException he) {

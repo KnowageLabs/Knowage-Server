@@ -204,17 +204,20 @@ public class EventLog implements Serializable {
 	}
 
 	public String getFormattedDate() {
-		SingletonConfig config = SingletonConfig.getInstance();
-		String formatSB = null;
-		if (config != null) {
-			formatSB = config.getConfigValue("SPAGOBI.DATE-FORMAT.format");
-		}
-		String format = (formatSB == null) ? "" : formatSB;
-		format = format.replaceAll("D", "d");
-		format = format.replaceAll("m", "M");
-		format = format.replaceAll("Y", "y");
-
+		String format = getDateFormat();
 		return StringUtils.dateToString(getDate(), format);
+	}
+
+	private String getDateFormat() {
+		SingletonConfig config = SingletonConfig.getInstance();
+		String format = null;
+		if (config != null) {
+			format = config.getConfigValue("SPAGOBI.TIMESTAMP-FORMAT.format");
+		} else {
+			logger.warn("Configuration property SPAGOBI.TIMESTAMP-FORMAT.format not found using dd/MM/yyyy HH:mm:ss as default");
+			format = "dd/MM/yyyy HH:mm:ss";
+		}
+		return format;
 	}
 
 	@JsonIgnore

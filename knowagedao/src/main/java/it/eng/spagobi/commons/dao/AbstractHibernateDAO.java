@@ -17,6 +17,18 @@
  */
 package it.eng.spagobi.commons.dao;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Filter;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
@@ -26,17 +38,6 @@ import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Filter;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  * Abstract class that al DAO will have to extend.
@@ -571,6 +572,14 @@ public class AbstractHibernateDAO {
 			}
 		}
 		return returnObj;
+	}
+
+	protected int getTotalNumber(Criteria criteria) {
+		ScrollableResults results = criteria.scroll();
+		results.last();
+		int total = results.getRowNumber() + 1;
+		results.close();
+		return total;
 	}
 
 }

@@ -53,9 +53,9 @@ public class EventResource extends AbstractSpagoBIResource {
 			@QueryParam("creationUser") String creationUser,
 			@QueryParam("type") String type,
 			@DefaultValue("date") @QueryParam("sortingColumn") String sortingColumn,
-			@DefaultValue("false") @QueryParam("sortingAscending") Boolean sortingAscending)
+			@DefaultValue("false") @QueryParam("sortingAscending") Boolean sortingAscending
 			// @formatter:on
-	{
+	) {
 		EventsAccessController eventAccessController = new EventsAccessController(this.getUserProfile());
 		PagedList<EventLog> toReturn = eventAccessController.loadEventsLogList(offset, fetchsize, startDate, endDate, creationUser, type, sortingColumn,
 				sortingAscending);
