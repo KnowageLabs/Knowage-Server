@@ -232,7 +232,7 @@
                     	var ranges = column.ranges;
                         var icon = "";
                         for (var k in ranges) {
-                            if (value!="" && eval(value + ranges[k].operator + ranges[k].value)) {
+                            if (typeof value != "undefined" && eval(value + ranges[k].operator + ranges[k].value)) {
                                 icon = {
                                     "iconClass": ranges[k].icon,
                                     "iconColor": ranges[k].color
