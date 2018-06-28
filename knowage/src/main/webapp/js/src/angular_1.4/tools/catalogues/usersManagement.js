@@ -133,17 +133,18 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     	}else $scope.columnsSelected = {}
     	$scope.lovObjects = [];
     	$scope.lovColumns = attribute.lovColumns;
-    	for(var i = 0; i < attribute.lovColumns.length;i++){
-    		var columnObject = {}
-    		columnObject.column = attribute.lovColumns[i];
-    		if (attribute.value && attribute.value.indexOf(attribute.lovColumns[i]) != -1)
-    			if(attribute.multivalue){
-    			$scope.columnsSelected.push(columnObject)
-    			}else $scope.columnsSelected = columnObject;
+    	if(attribute.lovColumns && attribute.lovColumns.length > 0){
+	    	for(var i = 0; i < attribute.lovColumns.length;i++){
+	    		var columnObject = {}
+	    		columnObject.column = attribute.lovColumns[i];
+	    		if (attribute.value && attribute.value.indexOf(attribute.lovColumns[i]) != -1)
+	    			if(attribute.multivalue){
+	    			$scope.columnsSelected.push(columnObject)
+	    			}else $scope.columnsSelected = columnObject;
 
-    		$scope.lovObjects.push(columnObject);
+	    		$scope.lovObjects.push(columnObject);
+	    	}
     	}
-
 
         $scope.close = function() {
         	$mdDialog.cancel(); }
@@ -166,6 +167,12 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		var columns = []
 		sbiModule_restServices.promiseGet("2.0/lovs", obj.lovId+'/preview')
 		.then(function(response){
+			if(response.data[0].value){
+				for(var i = 0; i< response.data.length;i++){
+						columns.push(response.data[i].value)
+				}
+				obj.lovColumns = columns;
+			}else
 			obj.lovColumns = response.data;
 		})
 	}
