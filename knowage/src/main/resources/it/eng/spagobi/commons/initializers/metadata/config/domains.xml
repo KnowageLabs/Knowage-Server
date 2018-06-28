@@ -121,8 +121,6 @@
 	<DOMAIN valueCd="COMBOBOX" valueNm="sbidomains.nm.combobox"
 		domainCd="SELECTION_TYPE" domainNm="Selection modality of parameter values"
 		valueDs="sbidomains.ds.combobox" />
-	<DOMAIN valueCd="-1" valueNm="sbidomains.nm.default" domainCd="DIALECT_HIB"
-		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.default" />
 	<DOMAIN valueCd="org.hibernate.dialect.OracleDialect" valueNm="sbidomains.nm.oracle"
 		domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect"
 		valueDs="sbidomains.ds.oracle" />
