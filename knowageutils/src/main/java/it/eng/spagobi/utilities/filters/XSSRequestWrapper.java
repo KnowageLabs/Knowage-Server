@@ -212,7 +212,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 		Pattern scriptPattern = Pattern.compile("<img[^>]+(src\\s*=\\s*['\"]([^'\"]+)['\"])[^>]*>",
 				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		Pattern dataPattern = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);base64",
+		Pattern dataPattern = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);(utf-8;)?base64",
 				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 		Matcher scriptMatcher = scriptPattern.matcher(value);
 
@@ -378,7 +378,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 	private static String checkCSS(String value) {
 		logger.debug("IN");
 		Pattern cssUrlPattern = Pattern.compile("url\\s*\\(['\"]?([^'\"\\)]+)['\"]?\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		Pattern cssUrlDataPattern = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);base64",
+		Pattern cssUrlDataPattern = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);(utf-8;)?base64",
 				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
 		Matcher urlMatcher = cssUrlPattern.matcher(value);
