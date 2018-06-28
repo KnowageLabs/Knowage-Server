@@ -255,7 +255,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 	var points = [];
 	
 	var counter=0;
-	
+	precision = chartConf.additionalData.precision ?  chartConf.additionalData.precision : ""; 
 	for (var dataset in chartConf.data[0]){
 		level = {
 				id: "id_" + counter,
@@ -266,7 +266,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 		points.push(level);
 		func(chartConf.data[0][dataset],dataset, level, dataset);
 	}
-	
+
 	function func(resultData, nameds, dataValue, dataset){
 		var counter=0;
 		for (var resultRecord in resultData){
@@ -278,7 +278,11 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 			}
 
 			if (resultData[resultRecord].value){
-				level.value = Math.round(Number(resultData[resultRecord].value));
+				if(precision==''){
+					level.value = resultData[resultRecord].value;
+				} else {
+					level.value = Number(Number(resultData[resultRecord].value).toFixed(precision));
+				}
 				points.push(level);
 			}
 			else{
@@ -418,11 +422,9 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 	var tooltipObject={};
 	prefix = chartConf.additionalData.prefixChar ? chartConf.additionalData.prefixChar : "";
 	postfix = chartConf.additionalData.postfixChar ?  chartConf.additionalData.postfixChar : "";
-	precision = chartConf.additionalData.precision ?  chartConf.additionalData.precision : "";    
 	
    	tooltipFormatter= function () {
-		var val = this.point.value;   		
-		val = Highcharts.numberFormat(val,precision );	
+		var val = this.point.value.toFixed(precision);
         return '<br>' + this.point.name +  ': <b>' +
         prefix + " " +val + " " + postfix + ' </b>';
 	};
@@ -501,8 +503,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 				dataLabels: {
 					enabled: true,
 					formatter: function() {
-						var val = this.point.value;   		
-						val = Highcharts.numberFormat(val,precision );	
+						var val = this.point.value.toFixed(precision);
 				        return '<br>' + this.point.name +  ': <b>' +
 				        prefix + " " +val + " " + postfix + ' </b>';
 					}
