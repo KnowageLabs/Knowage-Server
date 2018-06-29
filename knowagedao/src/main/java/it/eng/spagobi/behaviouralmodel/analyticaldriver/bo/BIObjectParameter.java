@@ -28,6 +28,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import it.eng.spagobi.services.validation.Alphanumeric;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
@@ -66,6 +68,8 @@ public class BIObjectParameter implements Serializable {
 	private Integer modifiable = null;
 
 	/* VIEW_FL NUMBER Y Paramenter visibility flag. */
+	@JsonDeserialize(using = BooleanJsonDeserializer.class)
+	@JsonSerialize(using = BooleanJsonSerializer.class)
 	private Integer visible = null;
 
 	/* MULT_FL NUMBER Y Multivalue parameter. */

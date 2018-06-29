@@ -58,13 +58,13 @@ public class SbiObjects extends SbiHibernateModel {
 	private String uuid;
 	private Date creationDate = null;
 	private String creationUser = null;
-	private Integer refreshSeconds = null;
+	private Integer refreshSeconds;
 	private String previewFile = null;
 	// private SbiDataSet dataSet=null;
 	// private Integer dataSet=null;
 	private String parametersRegion = null;
 	private String organization;
-	private String lockedByUser = null;
+	private String lockedByUser;
 
 	private Set<SbiOutputParameter> sbiOutputParameters = new HashSet<SbiOutputParameter>();
 

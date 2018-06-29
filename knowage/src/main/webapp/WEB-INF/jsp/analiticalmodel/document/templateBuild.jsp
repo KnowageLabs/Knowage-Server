@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+<%@include file="/WEB-INF/jsp/analiticalmodel/document/TemplateBuildImport.jsp" %>
 
 <%@page import="org.safehaus.uuid.UUIDGenerator"%>
 <%@page import="org.safehaus.uuid.UUID"%>
@@ -104,7 +105,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 -->
 
 	
-	<html ng-app>
+	<html ng-app="TemplateBuildModule" ng-controller="TemplateBuildController">
 		<body style="overflow: hidden">
 			<iframe flex class=" noBorder" width="100%" height="100%" ng-src="<%= (GeneralUtilities.getUrl(host+urlToCall.toString(), engineurl.getParameters())) %>" name="angularIframe"></iframe>
 		</body>

@@ -458,7 +458,7 @@ public class AnalyticalModelDocumentManagementAPI {
 
 				// document
 				logger.debug("Saving the clone of the document");
-				Integer clonedDocumentId = documentDAO.insertBIObjectForClone(clonedDocument, clonedTemplate);
+				Integer clonedDocumentId = documentDAO.insertBIObject(clonedDocument, clonedTemplate);
 				clonedDocument.setId(clonedDocumentId);
 
 				// parameters
@@ -788,7 +788,9 @@ public class AnalyticalModelDocumentManagementAPI {
 	 */
 	private void copyOutputParameters(BIObject sourceDocument, BIObject destinationDocument) {
 		logger.debug("IN");
+
 		List<OutputParameter> outputParameters = sourceDocument.getOutputParameters();
+
 		for (Iterator iterator = outputParameters.iterator(); iterator.hasNext();) {
 			OutputParameter outputParameter = (OutputParameter) iterator.next();
 			OutputParameter newOutPar = new OutputParameter();
@@ -886,12 +888,10 @@ public class AnalyticalModelDocumentManagementAPI {
 
 		try {
 			Assert.assertNotNull(documentDescriptor, "Input parameter [documentDescriptor] cannot be null");
-			Assert.assertNotNull(documentDescriptor, "Input parameter [analyticalDriverDescriptor] cannot be null");
+			Assert.assertNotNull(analyticalDriverDescriptor, "Input parameter [analyticalDriverDescriptor] cannot be null");
 
 			document = getDocument(documentDescriptor);
-			if (document == null) {
-				throw new SpagoBIRuntimeException("Analytical driver with " + documentDescriptor + " does not exist");
-			}
+			Assert.assertNotNull(document, "Analytical driver with " + documentDescriptor + " does not exist");
 
 			analyticalDriver = getAnalyticalDriver(analyticalDriverDescriptor);
 			if (analyticalDriver == null) {

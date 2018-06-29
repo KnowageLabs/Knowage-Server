@@ -996,8 +996,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 *             If an Exception occurred
 	 */
 	@Override
-	public void insertBIObject(BIObject obj) throws EMFUserError {
-		internalInsertBIObject(obj, null, false, true);
+	public Integer insertBIObject(BIObject obj) throws EMFUserError {
+		return internalInsertBIObject(obj, null, false, true);
 	}
 
 	/**
@@ -1187,10 +1187,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			logger.error("HibernateException", he);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-		} catch (EMFInternalError e) {
-			logger.error("Error inserting new BIObject", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())

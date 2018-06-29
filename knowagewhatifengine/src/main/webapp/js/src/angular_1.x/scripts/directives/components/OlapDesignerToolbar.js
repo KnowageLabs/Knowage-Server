@@ -36,7 +36,7 @@ angular.module('olap_designer_toolbar', ['sbiModule','olap_template'])
 				});
 
 
-function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $http, $sce,
+function olapDesignerToolbarController($scope, channelMessagingToolbar, $timeout, $window, $mdDialog, $http, $sce,
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
 		toastr, $cookies, sbiModule_docInfo, sbiModule_config,sbiModule_user,OlapTemplateService) {
 		
@@ -929,12 +929,7 @@ $scope.setAndLoadCN = function(num) {
 	  */
 	 $scope.closeOlapTemplate = function(){
 	 
-	 	if(sbiModule_config.externalBasePath == 'null'){
-	 		sbiModule_config.externalBasePath = '/knowage';
-	 	}
-		 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+sbiModule_config.externalBasePath;
-		 url+= "/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID="+sbiModule_docInfo.id;
-		 window.parent.location.href=url;
+		 channelMessagingToolbar.sendMessage();
 
 	 }
 	 
@@ -951,7 +946,7 @@ $scope.setAndLoadCN = function(num) {
 		 		"SBICONTEXT="+sbiModule_config.externalBasePath +
 		 		//"&SBI_HOST="+url +
 		 		"&DOCUMENT_LABEL="+sbiModule_docInfo.label +
-		 		"&onEditMode=''" +
+		 		"&mode=edit" +
 		 		"&user_id=" + sbiModule_user.userId +
 		 		"&document="+sbiModule_docInfo.id +
 		 		"&ENGINE=knowagewhatifengine" +

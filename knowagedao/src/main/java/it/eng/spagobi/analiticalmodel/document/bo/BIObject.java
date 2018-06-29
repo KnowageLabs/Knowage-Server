@@ -638,7 +638,11 @@ public class BIObject implements Serializable, Cloneable {
 
 	@JsonProperty(value = "creationDate")
 	public String getFormattedDate() {
-		return dateFormat.format(creationDate);
+		String formattedDate = null;
+		if (creationDate != null) {
+			formattedDate = dateFormat.format(creationDate);
+		}
+		return formattedDate;
 	}
 
 	/**
@@ -714,7 +718,7 @@ public class BIObject implements Serializable, Cloneable {
 	 *
 	 * @return refresh Seconds
 	 */
-	@JsonIgnore
+
 	public Integer getRefreshSeconds() {
 		return refreshSeconds;
 	}

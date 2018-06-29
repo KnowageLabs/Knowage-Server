@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons.dao;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
@@ -165,7 +166,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static IBIObjectParameterDAO getBIObjectParameterDAO() throws EMFUserError {
+	public static IBIObjectParameterDAO getBIObjectParameterDAO() throws HibernateException {
 		return (IBIObjectParameterDAO) createDAOInstance("BIObjectParameterDAO");
 	}
 
@@ -273,7 +274,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
-	public static IObjParuseDAO getObjParuseDAO() throws EMFUserError {
+	public static IObjParuseDAO getObjParuseDAO() throws HibernateException {
 		return (IObjParuseDAO) createDAOInstance("ObjParuseDAO");
 	}
 
@@ -285,7 +286,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
-	public static IObjParviewDAO getObjParviewDAO() throws EMFUserError {
+	public static IObjParviewDAO getObjParviewDAO() throws HibernateException {
 		return (IObjParviewDAO) createDAOInstance("ObjParviewDAO");
 	}
 
@@ -345,7 +346,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
-	public static IBinContentDAO getBinContentDAO() throws EMFUserError {
+	public static IBinContentDAO getBinContentDAO() {
 		return (IBinContentDAO) createDAOInstance("BinContentDAO");
 	}
 
@@ -757,7 +758,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
-	public static ICrossNavigationDAO getCrossNavigationDAO() throws EMFUserError {
+	public static ICrossNavigationDAO getCrossNavigationDAO() throws HibernateException {
 		return (ICrossNavigationDAO) createDAOInstance("CrossNavigationDAO");
 	}
 
@@ -968,7 +969,7 @@ public class DAOFactory {
 	public static ISbiDossierActivityDAO getDossierActivityDao() {
 		return (ISbiDossierActivityDAO) createDAOInstance("DossierActivityDAO");
 	}
-	
+
 	public static ISbiExportersDAO getExportersDao() {
 		return (ISbiExportersDAO) createDAOInstance("ExportersDAO");
 	}

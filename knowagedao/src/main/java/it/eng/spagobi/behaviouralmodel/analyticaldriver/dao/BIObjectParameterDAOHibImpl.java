@@ -91,7 +91,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	}
 
 	@Override
-	public BIObjectParameter loadBiObjParameterById(Integer id) throws EMFUserError {
+	public BIObjectParameter loadBiObjParameterById(Integer id) throws HibernateException {
 		BIObjectParameter objPar = null;
 		Session aSession = null;
 		Transaction tx = null;
@@ -107,7 +107,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			logException(he);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -204,7 +204,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#modifyBIObjectParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter)
 	 */
 	@Override
-	public void modifyBIObjectParameter(BIObjectParameter aBIObjectParameter) throws EMFUserError {
+	public void modifyBIObjectParameter(BIObjectParameter aBIObjectParameter) throws HibernateException {
 
 		Session aSession = null;
 		Transaction tx = null;
@@ -216,7 +216,6 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 
 			if (hibObjPar == null) {
 				logger.error("the BIObjectParameter with id=" + aBIObjectParameter.getId() + " does not exist.");
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 1033);
 			}
 
 			SbiObjects aSbiObject = (SbiObjects) aSession.load(SbiObjects.class, aBIObjectParameter.getBiObjectID());
@@ -260,7 +259,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			logException(he);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -281,7 +280,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#insertBIObjectParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter)
 	 */
 	@Override
-	public void insertBIObjectParameter(BIObjectParameter aBIObjectParameter) throws EMFUserError {
+	public Integer insertBIObjectParameter(BIObjectParameter aBIObjectParameter) throws HibernateException {
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -311,16 +310,17 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 
 			hibObjectParameterNew.setPriority(aBIObjectParameter.getPriority());
 			updateSbiCommonInfo4Insert(hibObjectParameterNew);
-			aSession.save(hibObjectParameterNew);
+			Integer id = (Integer) aSession.save(hibObjectParameterNew);
 
 			tx.commit();
+			return id;
 		} catch (HibernateException he) {
 			logException(he);
 
 			if (tx != null)
 				tx.rollback();
 
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new HibernateException(he.getLocalizedMessage(), he);
 
 		} finally {
 
@@ -345,7 +345,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#eraseBIObjectParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter)
 	 */
 	@Override
-	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter, boolean alsoDependencies) throws EMFUserError {
+	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter, boolean alsoDependencies) throws HibernateException {
 
 		Session aSession = null;
 		Transaction tx = null;
@@ -357,12 +357,12 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 
 			tx.commit();
 		} catch (ConstraintViolationException e) {
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 1086);
+			throw new HibernateException(e.getLocalizedMessage(), e);
 		} catch (HibernateException he) {
 			logException(he);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -428,12 +428,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 		logger.debug("OUT");
 	}
 
-	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter, Session aSession, boolean alsoDependencies) throws EMFUserError {
+	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter, Session aSession, boolean alsoDependencies) throws HibernateException {
 		SbiObjPar hibObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aBIObjectParameter.getId());
 
 		if (hibObjPar == null) {
 			logger.error("the BIObjectParameter with id=" + aBIObjectParameter.getId() + " does not exist.");
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 1034);
 		}
 
 		if (alsoDependencies) {
@@ -501,7 +500,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#getDocumentLabelsListUsingParameter(java.lang.Integer)
 	 */
 	@Override
-	public List getDocumentLabelsListUsingParameter(Integer parId) throws EMFUserError {
+	public List getDocumentLabelsListUsingParameter(Integer parId) throws HibernateException {
 
 		List toReturn = new ArrayList();
 		Session aSession = null;
@@ -522,7 +521,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			logException(he);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -546,7 +545,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#loadBIObjectParametersById(java.lang.Integer)
 	 */
 	@Override
-	public List loadBIObjectParametersById(Integer biObjectID) throws EMFUserError {
+	public List loadBIObjectParametersById(Integer biObjectID) throws HibernateException {
 
 		Session aSession = null;
 		Transaction tx = null;
@@ -588,7 +587,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			logException(he);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())

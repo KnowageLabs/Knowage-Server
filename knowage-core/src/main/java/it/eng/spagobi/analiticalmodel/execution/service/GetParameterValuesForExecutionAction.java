@@ -59,6 +59,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.hibernate.HibernateException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -182,7 +183,7 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 				try {
 					BIObjectParameter biObjPar = DAOFactory.getBIObjectParameterDAO().loadBiObjParameterById(objParId);
 					biObjectId = biObjPar.getBiObjectID();
-				} catch (EMFUserError e) {
+				} catch (HibernateException e) {
 					throw new SpagoBIServiceException("Could not recover document", e);
 				}
 				executionInstance = instances.get(biObjectId);

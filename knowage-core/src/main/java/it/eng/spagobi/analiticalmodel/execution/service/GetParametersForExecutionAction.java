@@ -59,6 +59,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.hibernate.HibernateException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -199,24 +200,16 @@ public class GetParametersForExecutionAction extends AbstractSpagoBIAction {
 			try {
 				ANALYTICAL_DRIVER_USE_MODALITY_DAO = DAOFactory.getParameterUseDAO();
 			} catch (EMFUserError e) {
-				throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DRIVER_USE_MODALITY_DAO.getClass().getName() + "]", e);
+				throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DRIVER_USE_MODALITY_DAO.getClass().getName() + "]",
+						e);
 			}
 
-			try {
-				DATA_DEPENDENCIES_DAO = DAOFactory.getObjParuseDAO();
-			} catch (EMFUserError e) {
-				throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + DATA_DEPENDENCIES_DAO.getClass().getName() + "]", e);
-			}
+			DATA_DEPENDENCIES_DAO = DAOFactory.getObjParuseDAO();
 
-			try {
-				VISUAL_DEPENDENCIES_DAO = DAOFactory.getObjParviewDAO();
-			} catch (EMFUserError e) {
-				throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + VISUAL_DEPENDENCIES_DAO.getClass().getName() + "]", e);
-
-			}
+			VISUAL_DEPENDENCIES_DAO = DAOFactory.getObjParviewDAO();
 			try {
 				ANALYTICAL_DOCUMENT_PARAMETER_DAO = DAOFactory.getBIObjectParameterDAO();
-			} catch (EMFUserError e) {
+			} catch (HibernateException e) {
 				throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DOCUMENT_PARAMETER_DAO.getClass().getName() + "]", e);
 			}
 
@@ -283,12 +276,13 @@ public class GetParametersForExecutionAction extends AbstractSpagoBIAction {
 				analyticalDriverExecModality = ANALYTICAL_DRIVER_USE_MODALITY_DAO.loadByParameterIdandRole(analyticalDocumentParameter.getParID(),
 						executionInstance.getExecutionRole());
 			} catch (Exception e) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to find any valid execution modality for parameter [" + id + "] and role ["
-						+ executionInstance.getExecutionRole() + "]", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Impossible to find any valid execution modality for parameter [" + id + "] and role [" + executionInstance.getExecutionRole() + "]",
+						e);
 			}
 
-			Assert.assertNotNull(analyticalDriverExecModality, "Impossible to find any valid execution modality for parameter [" + id + "] and role ["
-					+ executionInstance.getExecutionRole() + "]");
+			Assert.assertNotNull(analyticalDriverExecModality,
+					"Impossible to find any valid execution modality for parameter [" + id + "] and role [" + executionInstance.getExecutionRole() + "]");
 
 			parameterUseId = analyticalDriverExecModality.getUseID();
 
@@ -308,7 +302,7 @@ public class GetParametersForExecutionAction extends AbstractSpagoBIAction {
 
 			try {
 				visualDependencies = VISUAL_DEPENDENCIES_DAO.loadObjParviews(analyticalDocumentParameter.getId());
-			} catch (EMFUserError e) {
+			} catch (HibernateException e) {
 				throw new SpagoBIServiceException("An error occurred while loading parameter visual dependecies for parameter [" + id + "]", e);
 			}
 
@@ -391,8 +385,8 @@ public class GetParametersForExecutionAction extends AbstractSpagoBIAction {
 					lovParameters = lovDetail.getParameterNames();
 					if (lovParameters != null && !lovParameters.isEmpty()) {
 						logger.debug("Found one or more parameters inside the LOV");
-						List<BIObjectParameter> objParameters = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadBIObjectParametersById(analyticalDocumentParameter
-								.getBiObjectID());
+						List<BIObjectParameter> objParameters = ANALYTICAL_DOCUMENT_PARAMETER_DAO
+								.loadBIObjectParametersById(analyticalDocumentParameter.getBiObjectID());
 						LovDependency lovDependency = new LovDependency();
 						for (BIObjectParameter objParameter : objParameters) {
 							Parameter objAnalyticalDriver = ANALYTICAL_DRIVER_DAO.loadForDetailByParameterID(objParameter.getParameter().getId());
@@ -423,9 +417,8 @@ public class GetParametersForExecutionAction extends AbstractSpagoBIAction {
 			// if ("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType) || "SLIDER".equalsIgnoreCase(selectionType)
 			// || "TREE".equalsIgnoreCase(selectionType)) { // load values only if it is not a lookup
 
-			if (!hasParameterInsideLOV()
-					&& ("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType) || "SLIDER".equalsIgnoreCase(selectionType) || "TREE"
-							.equalsIgnoreCase(selectionType))) { // load values only if it is not a lookup
+			if (!hasParameterInsideLOV() && ("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType)
+					|| "SLIDER".equalsIgnoreCase(selectionType) || "TREE".equalsIgnoreCase(selectionType))) { // load values only if it is not a lookup
 
 				List lovs = getLOV();
 				setValuesCount(lovs == null ? 0 : lovs.size());

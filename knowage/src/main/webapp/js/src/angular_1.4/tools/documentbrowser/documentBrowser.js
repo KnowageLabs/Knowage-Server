@@ -291,7 +291,7 @@ function documentBrowserFunction(
  		      clickOutsideToClose:false,
  		      escapeToClose :false,
  		      fullscreen: true,
- 		      locals:{document:document, folderDocument : $scope.folderDocuments , searchDocuments:$scope.searchDocuments}
+ 		      locals:{document:document, folderDocument : $scope.folderDocuments , searchDocuments:$scope.searchDocuments, folderId : $scope.selectedFolder.id}
 
 		 })
 		 .then(function(answer) {
@@ -427,18 +427,18 @@ app.factory('setFocus', function($rootScope, $timeout) {
 });
 
 
-function DialogEditDocumentController($scope,$mdDialog,sbiModule_config,document,folderDocument,searchDocuments){
+function DialogEditDocumentController($scope,$mdDialog,sbiModule_config,document,folderDocument,searchDocuments,folderId){
 	$scope.closeDialogFromExt=function(){
 		 $mdDialog.cancel();
 		 //reload documents
 
 	}
-	$scope.iframeUrl=sbiModule_config.contextName+"/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID="+document.id;
+	$scope.iframeUrl=sbiModule_config.contextName+"/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID="+document.id+"&FUNCTIONALITY_ID="+folderId;
 }
 
 function DialogNewDocumentController($scope,$mdDialog,$mdBottomSheet,sbiModule_config,selectedFolder,typeDocument,sbiModule_config,sbiModule_user,sbiModule_translate){
 
-	var folderId= selectedFolder==undefined? "" : "&FUNCT_ID="+selectedFolder.id;
+	var folderId= selectedFolder==undefined? "" : "&FUNCTIONALITY_ID="+selectedFolder.id;
 	$scope.iframeUrl=sbiModule_config.contextName+"/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_NEW"+folderId;
 
 	 if(typeDocument=="cockpit"){

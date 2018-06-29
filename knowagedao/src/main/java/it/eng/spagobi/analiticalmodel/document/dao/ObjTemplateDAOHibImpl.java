@@ -423,8 +423,49 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 		}
 	}
 
+
 	@Override
-	public void insertBIObjectTemplate(ObjTemplate objTemplate, BIObject biObject) throws EMFUserError, EMFInternalError {
+	public void setTemplateActive(ObjTemplate objTemplate, BIObject biObject) throws EMFUserError, EMFInternalError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			// set to not active the current active template
+			String hql = "update SbiObjTemplates sot set sot.active = false where sot.active = true and sot.sbiObject.biobjId=?";
+			Query query = aSession.createQuery(hql);
+			query.setInteger(0, objTemplate.getBiobjId().intValue());
+			try {
+				logger.debug("Updates the current template of object " + objTemplate.getBiobjId() + " with active = false.");
+				query.executeUpdate();
+			} catch (Exception e) {
+				logger.error("Exception", e);
+			}
+			// store the object template
+			SbiObjTemplates hibObjTemplate = new SbiObjTemplates();
+			if (objTemplate.getId() != null && objTemplate.getId().compareTo(new Integer("-1")) != 0) {
+				logger.debug("Template yet exists with id: " + objTemplate.getId() + ". Updates it.");
+				hibObjTemplate = (SbiObjTemplates) aSession.load(SbiObjTemplates.class, objTemplate.getId());
+				hibObjTemplate.setActive(new Boolean(true));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new RuntimeException("Impossible to modify template [" + objTemplate.getName() + "] to document [" + objTemplate.getBiobjId() + "]", he);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+			logger.debug("OUT");
+		}
+	}
+	@Override
+	public void insertBIObjectTemplate(ObjTemplate objTemplate, BIObject biObject) {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -535,7 +576,6 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			if (tx != null)
 				tx.rollback();
 			throw new RuntimeException("Impossible to add template [" + objTemplate.getName() + "] to document [" + objTemplate.getBiobjId() + "]", he);
-			// throw new EMFUserError(EMFErrorSeverity.ERROR, "100");
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())

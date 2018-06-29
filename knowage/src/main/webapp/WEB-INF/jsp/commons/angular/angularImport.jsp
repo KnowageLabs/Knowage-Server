@@ -90,6 +90,7 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-tree/angular-ui-tree.js")%>"></script> 
 
 <!-- angular list -->
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/glossary/css/angular-list.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/AngularList.js")%>"></script> 		
 
 <!-- context menu -->
@@ -125,7 +126,8 @@ if(importAngularMaterialForExport == null) {
 
 <!-- deprecated angular 2 col -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-list-detail/angular2Col.js")%>"></script> 
-
+	
+	 
 <!-- toastr -->
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/css/angular-toastr.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-toastr.tpls.js")%>"></script> 		
@@ -147,6 +149,9 @@ if(importAngularMaterialForExport == null) {
 
 <!-- angular-base64 -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-base64/angular-base64.min.js")%>"></script> 
+
+<!-- angular JSON FORMATTER -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/jsonformatter/dist/json-formatter.min.js")%>"></script> 
 
 <!-- angular-xregexp -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/xregexp/xregexp-all.js")%>"></script>

@@ -23,9 +23,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller("ChartDesignerController", ["sbiModule_translate","$scope","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging", "PreviewService","sbiModule_logger", "$mdToast","sbiModule_user","$httpParamSerializer",ChartDesignerFunction]);
+app.controller("ChartDesignerController", ["sbiModule_translate","channelMessaging","$scope","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging", "PreviewService","sbiModule_logger", "$mdToast","$mdDialog","sbiModule_user","$httpParamSerializer",ChartDesignerFunction]);
 
-function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiModule_restServices, sbiModule_messaging,PreviewService,sbiModule_logger,$mdToast,sbiModule_user,$httpParamSerializer) {
+function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiModule_config, sbiModule_restServices, sbiModule_messaging,PreviewService,sbiModule_logger,$mdToast,$mdDialog,sbiModule_user,$httpParamSerializer) {
 
 	$scope.previewChartEnable =( sbiModule_user.functionalities.indexOf("PreviewChart")>-1)? true:false;
 	if(parent.angular.element(window.frameElement).scope().isCockpitEng){
@@ -129,10 +129,8 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 		});
 	}
 
-	$scope.goBackFromDesigner = function() {
-		 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+""+sbiModule_config.externalBasePath;
-		 url+= "/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID="+docId;
-		 window.parent.location.href=url;
+	$scope.goBackFromDesigner = function() {		
+		channelMessaging.sendMessage();
 	}
 
 	// The chart template (beneath the CHART tag, i.e. property)

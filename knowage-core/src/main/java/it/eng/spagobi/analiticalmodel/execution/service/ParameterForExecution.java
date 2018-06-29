@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-
+import org.hibernate.HibernateException;
 public class ParameterForExecution {
 	private static Logger logger = Logger.getLogger(ParameterForExecution.class);
 
@@ -112,21 +112,12 @@ public class ParameterForExecution {
 			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DRIVER_USE_MODALITY_DAO.getClass().getName() + "]", e);
 		}
 
-		try {
-			DATA_DEPENDENCIES_DAO = DAOFactory.getObjParuseDAO();
-		} catch (EMFUserError e) {
-			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + DATA_DEPENDENCIES_DAO.getClass().getName() + "]", e);
-		}
+		DATA_DEPENDENCIES_DAO = DAOFactory.getObjParuseDAO();
 
-		try {
-			VISUAL_DEPENDENCIES_DAO = DAOFactory.getObjParviewDAO();
-		} catch (EMFUserError e) {
-			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + VISUAL_DEPENDENCIES_DAO.getClass().getName() + "]", e);
-
-		}
+		VISUAL_DEPENDENCIES_DAO = DAOFactory.getObjParviewDAO();
 		try {
 			ANALYTICAL_DOCUMENT_PARAMETER_DAO = DAOFactory.getBIObjectParameterDAO();
-		} catch (EMFUserError e) {
+		} catch (HibernateException e) {
 			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DOCUMENT_PARAMETER_DAO.getClass().getName() + "]", e);
 		}
 	}
@@ -212,7 +203,7 @@ public class ParameterForExecution {
 
 		try {
 			visualDependencies = VISUAL_DEPENDENCIES_DAO.loadObjParviews(analyticalDocumentParameter.getId());
-		} catch (EMFUserError e) {
+		} catch (HibernateException e) {
 			throw new SpagoBIServiceException("An error occurred while loading parameter visual dependecies for parameter [" + id + "]", e);
 		}
 

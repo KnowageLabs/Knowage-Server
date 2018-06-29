@@ -58,6 +58,7 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.FSDirectory;
+import org.hibernate.HibernateException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -228,7 +229,7 @@ public class DocumentResource extends AbstractDocumentResource {
 			parameter = parameterDAO.loadBiObjParameterById(id);
 
 			parameter.setParameter(loadAnalyticalDriver(parameter));
-		} catch (EMFUserError e) {
+		} catch (HibernateException e) {
 			logger.error("Error while try to retrieve the specified parameter", e);
 			throw new SpagoBIRuntimeException("Error while try to retrieve the specified parameter", e);
 		}
@@ -267,7 +268,7 @@ public class DocumentResource extends AbstractDocumentResource {
 		IBIObjectParameterDAO parameterDAO = null;
 		try {
 			parameterDAO = DAOFactory.getBIObjectParameterDAO();
-		} catch (EMFUserError e) {
+		} catch (HibernateException e) {
 			logger.error("Error while retrieving parameters", e);
 			throw new SpagoBIRuntimeException("Error while retrieving parameters", e);
 		}
@@ -285,7 +286,7 @@ public class DocumentResource extends AbstractDocumentResource {
 
 		try {
 			parameterDAO.insertBIObjectParameter(parameter);
-		} catch (EMFUserError e) {
+		} catch (HibernateException e) {
 			logger.error("Error while inserting new parameter", e);
 			throw new SpagoBIRuntimeException("Error while inserting new parameter", e);
 		}
@@ -302,7 +303,7 @@ public class DocumentResource extends AbstractDocumentResource {
 		IBIObjectParameterDAO parameterDAO = null;
 		try {
 			parameterDAO = DAOFactory.getBIObjectParameterDAO();
-		} catch (EMFUserError e) {
+		} catch (HibernateException e) {
 			logger.error("Error while retrieving parameters", e);
 			throw new SpagoBIRuntimeException("Error while retrieving parameters", e);
 		}
@@ -322,7 +323,7 @@ public class DocumentResource extends AbstractDocumentResource {
 
 		try {
 			parameterDAO.modifyBIObjectParameter(parameter);
-		} catch (EMFUserError e) {
+		} catch (HibernateException e) {
 			logger.error("Error while modifying the specified parameter", e);
 			throw new SpagoBIRuntimeException("Error while modifying the specified parameter", e);
 		}
@@ -340,7 +341,7 @@ public class DocumentResource extends AbstractDocumentResource {
 			parameterDAO = DAOFactory.getBIObjectParameterDAO();
 
 			parameter = parameterDAO.loadBiObjParameterById(id);
-		} catch (EMFUserError e) {
+		} catch (HibernateException e) {
 			logger.error("Error while try to retrieve the specified parameter", e);
 			throw new SpagoBIRuntimeException("Error while try to retrieve the specified parameter", e);
 		}
@@ -358,7 +359,7 @@ public class DocumentResource extends AbstractDocumentResource {
 
 		try {
 			parameterDAO.eraseBIObjectParameter(parameter, true);
-		} catch (EMFUserError e) {
+		} catch (HibernateException e) {
 			logger.error("Error while trying to delete the specified parameter");
 			throw new SpagoBIRuntimeException("Error while trying to delete the specified parameter");
 		}
@@ -621,8 +622,7 @@ public class DocumentResource extends AbstractDocumentResource {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentsV2(@QueryParam("type") String type, @QueryParam("folderId") String folderIdStr, @QueryParam("date") String date,
-			@QueryParam("searchKey") String searchKey, @QueryParam("searchAttributes") String attributes, @QueryParam("searchSimilar") Boolean similar,
-			@QueryParam("callback") String callback) {
+			@QueryParam("searchKey") String searchKey, @QueryParam("searchAttributes") String attributes, @QueryParam("searchSimilar") Boolean similar) {
 		logger.debug("IN");
 		IBIObjectDAO documentsDao = null;
 		List<BIObject> allObjects = null;
@@ -674,9 +674,9 @@ public class DocumentResource extends AbstractDocumentResource {
 
 			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
 
-			if (callback != null && !callback.isEmpty()) {
-				toBeReturned = callback + "(" + toBeReturned + ")";
-			}
+			// if (callback != null && !callback.isEmpty()) {
+			// toBeReturned = callback + "(" + toBeReturned + ")";
+			// }
 			return Response.ok(toBeReturned).build();
 		} catch (Exception e) {
 			logger.error("Error while getting the list of documents", e);

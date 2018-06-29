@@ -22,7 +22,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
-
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 /**
@@ -50,46 +50,49 @@ public interface IObjParuseDAO extends ISpagoBIDao{
 	public List loadObjParuse(Integer objParId, Integer paruseId) throws EMFUserError;
 
 	/**
-	 * Implements the query to modify a ObjParuse. All information needed is stored
-	 * into the input <code>ObjParuse</code> object.
-	 * 
-	 * @param aObjParuse The ObjParuse containing all modify information
-	 * 
-	 * @throws EMFUserError If an Exception occurred
+	 * Implements the query to modify a ObjParuse. All information needed is stored into the input <code>ObjParuse</code> object.
+	 *
+	 * @param aObjParuse
+	 *            The ObjParuse containing all modify information
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
 	 */
-	public void modifyObjParuse(ObjParuse aObjParuse) throws EMFUserError;
+	public void modifyObjParuse(ObjParuse aObjParuse) throws HibernateException;
 
 	/**
-	 * Implements the query to insert a ObjParuse. All information needed is stored
-	 * into the input <code>ObjParuse</code> object.
-	 * 
-	 * @param aObjParuse The ObjParuse containing all insert information
-	 * 
-	 * @throws EMFUserError If an Exception occurred
+	 * Implements the query to insert a ObjParuse. All information needed is stored into the input <code>ObjParuse</code> object.
+	 *
+	 * @param aObjParuse
+	 *            The ObjParuse containing all insert information
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
 	 */
-	public void insertObjParuse(ObjParuse aObjParuse) throws EMFUserError;
+	public void insertObjParuse(ObjParuse aObjParuse) throws HibernateException;
 
 	/**
-	 * Implements the query to erase a ObjParuse. All information needed is stored
-	 * into the input <code>ObjParuse</code> object.
-	 * 
-	 * @param aObjParuse The object containing all delete information
-	 * 
-	 * @throws EMFUserError If an Exception occurred
+	 * Implements the query to erase a ObjParuse. All information needed is stored into the input <code>ObjParuse</code> object.
+	 *
+	 * @param aObjParuse
+	 *            The object containing all delete information
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
 	 */
-	public void eraseObjParuse(ObjParuse aObjParuse) throws EMFUserError;
-	
+	public void eraseObjParuse(ObjParuse aObjParuse) throws HibernateException;
+
 	/**
-	 * Returns the list of all ObjParuse objects associated to a <code>BIObjectParameter</code>,
-	 * known its <code>objParId</code>.
-	 * 
-	 * @param objParId The input BIObjectParameter id code
-	 * 
+	 * Returns the list of all ObjParuse objects associated to a <code>BIObjectParameter</code>, known its <code>objParId</code>.
+	 *
+	 * @param objParId
+	 *            The input BIObjectParameter id code
+	 *
 	 * @return The list of all ObjParuse objects associated
 	 * 
 	 * @throws EMFUserError If any exception occurred
 	 */
-	public List loadObjParuses(Integer objParId) throws EMFUserError;
+	public List loadObjParuses(Integer objParId) throws HibernateException;
 
 	/**
 	 * Returns the list of labels of BIObjectParameter objects that have a correlation relationship

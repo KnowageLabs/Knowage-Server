@@ -23,7 +23,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
-
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 /**
@@ -56,7 +56,7 @@ public interface IBIObjectParameterDAO extends ISpagoBIDao {
 	 * @throws EMFUserError
 	 */
 
-	public BIObjectParameter loadBiObjParameterById(Integer id) throws EMFUserError;
+	public BIObjectParameter loadBiObjParameterById(Integer id) throws HibernateException;
 
 	/**
 	 * Loads all detail information for a BI Object Parameter identified by <code>objId</code> and its <code>objParLabel</code>. Return a wrapper object
@@ -90,18 +90,19 @@ public interface IBIObjectParameterDAO extends ISpagoBIDao {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public void modifyBIObjectParameter(BIObjectParameter aBIObjectParameter) throws EMFUserError;
+	public void modifyBIObjectParameter(BIObjectParameter aBIObjectParameter) throws HibernateException;
 
 	/**
 	 * Implements the query to insert a BI Object Parameter. All information needed is stored into the input <code>BIObjectParameter</code> object.
 	 *
 	 * @param aBIObjectParameter
 	 *            The object containing all insert information
+	 * @return
 	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public void insertBIObjectParameter(BIObjectParameter aBIObjectParameter) throws EMFUserError;
+	public Integer insertBIObjectParameter(BIObjectParameter aBIObjectParameter) throws HibernateException;
 
 	/**
 	 * Implements the query to erase a BIObjectParameter. All information needed is stored into the input <code>aBIObjectParameter</code> object.
@@ -112,7 +113,7 @@ public interface IBIObjectParameterDAO extends ISpagoBIDao {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter, boolean alsoDependencies) throws EMFUserError;
+	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter, boolean alsoDependencies) throws HibernateException;
 
 	/**
 	 * Returns the labels list of document using the parameter identified by the id at input.
@@ -138,7 +139,7 @@ public interface IBIObjectParameterDAO extends ISpagoBIDao {
 	 * @throws EMFUserError
 	 *             If any exception occurred
 	 */
-	public List loadBIObjectParametersById(Integer biObjectID) throws EMFUserError;
+	public List loadBIObjectParametersById(Integer biObjectID) throws HibernateException;
 
 	/**
 	 * erase alld ependencies of a given object parameterr

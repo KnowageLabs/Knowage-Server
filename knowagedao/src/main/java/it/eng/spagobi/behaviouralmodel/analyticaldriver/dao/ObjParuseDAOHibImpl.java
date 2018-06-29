@@ -17,6 +17,15 @@
  */
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.dao;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
@@ -27,15 +36,6 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a ObjParuse object.
@@ -56,7 +56,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#modifyObjParuse(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse)
 	 */
 	@Override
-	public void modifyObjParuse(ObjParuse aObjParuse) throws EMFUserError {
+	public void modifyObjParuse(ObjParuse aObjParuse) throws HibernateException {
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -68,8 +68,8 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			 * aObjParuse.getParuseId() + " and s.id.sbiObjParFather.objParId = " + aObjParuse.getObjParFatherId() + " and s.id.filterOperation = '" +
 			 * aObjParuse.getFilterOperation()+"'";
 			 */
-			String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = ? " + " and s.id.sbiParuse.useId = ? "
-					+ " and s.id.sbiObjParFather.objParId = ? " + " and s.id.filterOperation = ? ";
+			String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = ? " + " and s.id.sbiParuse.useId = ? " + " and s.id.sbiObjParFather.objParId = ? "
+					+ " and s.id.filterOperation = ? ";
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, aObjParuse.getObjParId().intValue());
@@ -79,13 +79,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 
 			SbiObjParuse sbiObjParuse = (SbiObjParuse) hqlQuery.uniqueResult();
 			if (sbiObjParuse == null) {
-				SpagoBITracer.major(
-						SpagoBIConstants.NAME_MODULE,
-						this.getClass().getName(),
-						"modifyObjParuse",
+				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse",
 						"the ObjParuse relevant to BIObjectParameter with " + "id=" + aObjParuse.getObjParId() + " and ParameterUse with " + "id="
 								+ aObjParuse.getParuseId() + " does not exist.");
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 1043);
 			}
 			// delete the existing object
 			aSession.delete(sbiObjParuse);
@@ -94,9 +90,8 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aObjParuse.getParuseId());
 			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getObjParFatherId());
 			if (sbiObjParFather == null) {
-				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse", "the BIObjectParameter with " + "id="
-						+ aObjParuse.getObjParFatherId() + " does not exist.");
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 1043);
+				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse",
+						"the BIObjectParameter with " + "id=" + aObjParuse.getObjParFatherId() + " does not exist.");
 			}
 			SbiObjParuseId correlationId = new SbiObjParuseId();
 			correlationId.setSbiObjPar(sbiObjPar);
@@ -117,7 +112,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			logException(he);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -143,7 +138,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#insertObjParuse(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse)
 	 */
 	@Override
-	public void insertObjParuse(ObjParuse aObjParuse) throws EMFUserError {
+	public void insertObjParuse(ObjParuse aObjParuse) throws HibernateException {
 
 		Session aSession = null;
 		Transaction tx = null;
@@ -154,9 +149,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aObjParuse.getParuseId());
 			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getObjParFatherId());
 			if (sbiObjParFather == null) {
-				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse", "the BIObjectParameter with " + "id="
-						+ aObjParuse.getObjParFatherId() + " does not exist.");
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 1043);
+				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse",
+						"the BIObjectParameter with " + "id=" + aObjParuse.getObjParFatherId() + " does not exist.");
+
 			}
 			SbiObjParuseId correlationId = new SbiObjParuseId();
 			correlationId.setSbiObjPar(sbiObjPar);
@@ -176,7 +171,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			logException(he);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -197,7 +192,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#eraseObjParuse(ObjParuse)
 	 */
 	@Override
-	public void eraseObjParuse(ObjParuse aObjParuse) throws EMFUserError {
+	public void eraseObjParuse(ObjParuse aObjParuse) throws HibernateException {
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -211,7 +206,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			logException(he);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -225,7 +220,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 		 */
 	}
 
-	public void eraseObjParuse(ObjParuse aObjParuse, Session aSession) throws EMFUserError {
+	public void eraseObjParuse(ObjParuse aObjParuse, Session aSession) {
 		// get the existing object
 		/*
 		 * String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + aObjParuse.getObjParId() + " and s.id.sbiParuse.useId = " +
@@ -244,7 +239,6 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 		if (sbiObjParuse == null) {
 			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "eraseObjParuse", "the ObjParuse relevant to BIObjectParameter with "
 					+ "id=" + aObjParuse.getObjParId() + " and ParameterUse with " + "id=" + aObjParuse.getParuseId() + " does not exist.");
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 1045);
 		}
 		aSession.delete(sbiObjParuse);
 	}
@@ -263,7 +257,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#loadObjParuses(Integer)
 	 */
 	@Override
-	public List loadObjParuses(Integer objParId) throws EMFUserError {
+	public List loadObjParuses(Integer objParId) throws HibernateException {
 		List toReturn = new ArrayList();
 		Session aSession = null;
 		Transaction tx = null;
@@ -284,7 +278,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			logException(he);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -527,7 +521,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	}
 
 	@Override
-	public void eraseObjParuseIfExists(ObjParuse aObjParuse, Session aSession) throws EMFUserError {
+	public void eraseObjParuseIfExists(ObjParuse aObjParuse, Session aSession) throws HibernateException {
 		// get the existing object
 		/*
 		 * String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + aObjParuse.getObjParId() + " and s.id.sbiParuse.useId = " +
@@ -550,7 +544,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	}
 
 	@Override
-	public List loadObjParusesFather(Integer objParId) throws EMFUserError {
+	public List loadObjParusesFather(Integer objParId) throws HibernateException {
 		List toReturn = new ArrayList();
 		Session aSession = null;
 		Transaction tx = null;
@@ -571,7 +565,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			logException(he);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())

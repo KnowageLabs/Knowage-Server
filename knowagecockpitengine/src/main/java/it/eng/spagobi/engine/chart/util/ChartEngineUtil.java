@@ -44,7 +44,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engine.chart.ChartEngineConfig;
@@ -129,12 +128,9 @@ public class ChartEngineUtil {
 	}
 
 	/**
-	 * We are sending additional information about the web application from
-	 * which we call the VM. This boolean will tell us if we are coming from the
-	 * Highcharts Export web application. The value of "exportWebApp" input
-	 * parameter contains this boolean. This information is useful when we have
-	 * drilldown, i.e. more than one category for the Highcharts chart (BAR,
-	 * LINE).
+	 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the Highcharts
+	 * Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have drilldown, i.e. more
+	 * than one category for the Highcharts chart (BAR, LINE).
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
@@ -166,18 +162,15 @@ public class ChartEngineUtil {
 			}
 
 			/**
-			 * We are sending additional information about the web application
-			 * from which we call the VM. This boolean will tell us if we are
-			 * coming from the Highcharts Export web application. The value of
-			 * "exportWebApp" input parameter contains this boolean. This
-			 * information is useful when we have drilldown, i.e. more than one
-			 * category for the Highcharts chart (BAR, LINE).
+			 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the
+			 * Highcharts Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have
+			 * drilldown, i.e. more than one category for the Highcharts chart (BAR, LINE).
 			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			velocityContext.put("exportWebApp", exportWebApp);
 
-		} catch (IOException | EMFUserError e) {
+		} catch (IOException e) {
 			logger.error("Error in template to be converted: " + jsonToConvert, e);
 		}
 		return velocityContext;
@@ -293,8 +286,8 @@ public class ChartEngineUtil {
 				AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
 				associationGroupObject = serializer.deserialize(new JSONObject(associationGroup));
 			} catch (Throwable t) {
-				throw new SpagoBIServiceParameterException(request.getPathInfo(), "Parameter [associationGroup] value [" + associationGroup
-						+ "] is not a valid JSON object", t);
+				throw new SpagoBIServiceParameterException(request.getPathInfo(),
+						"Parameter [associationGroup] value [" + associationGroup + "] is not a valid JSON object", t);
 			}
 
 			JSONObject selectionsJSON = new JSONObject(selections);
@@ -384,8 +377,7 @@ public class ChartEngineUtil {
 	}
 
 	/**
-	 * This method converts the CSS format "#xxxxxx" (where "x" is a hexadecimal
-	 * digit [0-F]) color returning the equivalent format "rgba(r, g, b, o)".
+	 * This method converts the CSS format "#xxxxxx" (where "x" is a hexadecimal digit [0-F]) color returning the equivalent format "rgba(r, g, b, o)".
 	 *
 	 * @param colorStr
 	 * @param opacity

@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
@@ -462,7 +463,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 					errorHandler.addError(error);
 				}
 			}
-		} catch (EMFUserError e) {
+		} catch (HibernateException e) {
 			logger.error("Error while url name control", e);
 		}
 
@@ -483,7 +484,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 					break;
 				}
 			}
-		} catch (EMFUserError e) {
+		} catch (HibernateException e) {
 			logger.error("Cannot reload BIObjectParameter", e);
 		}
 		if (objPar == null) {

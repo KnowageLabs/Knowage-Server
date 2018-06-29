@@ -91,7 +91,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 	}
 
 	@Override
-	public Integer saveSbiComunity(SbiCommunity community) throws EMFUserError {
+	public Integer saveSbiComunity(SbiCommunity community) throws HibernateException, RuntimeException {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -113,12 +113,12 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			logger.error(he.getMessage(), he);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new HibernateException(he.getMessage(), he);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage(), re);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new RuntimeException(re.getMessage(), re);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())

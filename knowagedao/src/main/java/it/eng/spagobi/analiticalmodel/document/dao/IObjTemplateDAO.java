@@ -125,6 +125,17 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	public void deleteBIObjectTemplate(Integer tempId) throws EMFInternalError;
 
 	/**
+	 * Setting active bi object template.
+	 *
+	 * @param objTemplate
+	 *            the new template
+	 *
+	 * @throws EMFInternalError
+	 *             the EMF internal error
+	 */
+	public void setTemplateActive(ObjTemplate objTemplate, BIObject biObject) throws EMFUserError, EMFInternalError;
+
+	/**
 	 * Insert a new bi object template.
 	 *
 	 * @param objTemplate
@@ -133,7 +144,7 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */
-	public void insertBIObjectTemplate(ObjTemplate objTemplate, BIObject biObject) throws EMFUserError, EMFInternalError;
+	public void insertBIObjectTemplate(ObjTemplate objTemplate, BIObject biObject);
 
 	/**
 	 * Change activity of doc's template.
