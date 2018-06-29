@@ -17,9 +17,11 @@
 <body ng-controller="eventController" class="bodyStyle kn-usersManagement">
 
 <angular-list-detail show-detail="showDetail">
-	<list label="Events" >
+	<list label="Events">
 	
 		<angular-table
+			show-search-bar="true"
+			search-function = "functionSearchEvents(searchValue, itemsPerPage, currentPageNumber , columnsSearch, columnOrdering, reverseOrdering)"
 			flex
 			id="events_id"
 			ng-model="events"
@@ -28,6 +30,7 @@
 						{"label":"Date","name":"date"},
 						{"label":"Type","name":"type"}
 					]'
+			column-search='["user","type"]'		
 			highlights-selected-item=true
 			click-function="loadDetail(item)">
 		</angular-table>
