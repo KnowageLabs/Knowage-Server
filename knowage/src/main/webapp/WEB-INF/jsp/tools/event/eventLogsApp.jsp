@@ -28,7 +28,7 @@
 			ng-model="events"
 			columns='[
 						{"label":"User","name":"user"},
-						{"label":"Date","name":"date"},
+						{"label":"Date","name":"formattedDate"},
 						{"label":"Type","name":"type"}
 					]'
 
