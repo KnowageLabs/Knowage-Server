@@ -34,7 +34,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	var showLegend = jsonObject.legend.showLegend ? "" : "hidden";
 	var seriesItemPrefix = seriesItemConf.prefixChar!=null ? seriesItemConf.prefixChar : "";
 	var seriesItemSuffix = seriesItemConf.postfixChar!=null ? seriesItemConf.postfixChar : "";
-	
+	var scale = jsonObject.chart.scale
 	/*The part that we need to place into HTML (JSP) in order to attach 
 	 * given data to them - we are going to create it through D3 notation */
 			
@@ -365,7 +365,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	    .attr("viewBox", "0 0 "+width+" "+height )
 	    .append("svg:g")
 	    .attr("id", "container"+randomId)
-	    .attr("transform", "translate(" + (width-widthCorrection) / 2 + "," + (height-heightCorrection) / 2 + ") scale(2)");	
+	    .attr("transform", "translate(" + (width-widthCorrection) / 2 + "," + (height-heightCorrection) / 2 + ") scale("+ scale +")");	
 	
 	var partition = d3.layout.partition()
 	    .size([2 * Math.PI, radius * radius])

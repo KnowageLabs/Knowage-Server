@@ -45,7 +45,11 @@
 	{
 		type: '$chart.type',
 		opacMouseOver: '$chart.opacMouseOver',	
-		
+		#if($chart.scale)
+		scale: $chart.scale,
+		#else
+		scale: 1,
+		#end
 		#*
 		  Percentage/absolute value type for displaying tooltip and breadcrumb values for slices that are covered with mouse cursor.
 		  This parameter contains one of two possible values: percentage or absolute.

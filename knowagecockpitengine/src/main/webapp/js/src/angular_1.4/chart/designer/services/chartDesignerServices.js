@@ -1522,6 +1522,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					}]
 				},
 				"type": "SUNBURST",
+				"scale": 1,
 				"AXES_LIST": {
 					"AXIS": [{
 						"alias": "Y",
@@ -1634,7 +1635,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"width":10
 					},
 					"text": "",
-					
 				},
 				"SUBTITLE": {
 					"style":{
