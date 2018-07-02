@@ -75,7 +75,7 @@ public class FederatedDataSet extends QbeDataSet {
 		federation.setLabel(dataSetConfig.getFederationlabel());
 		federation.setFederation_id(dataSetConfig.getFederationId());
 		federation.setRelationships(dataSetConfig.getFederationRelations());
-
+		federation.setName(dataSetConfig.getName());
 		federation.setDegenerated(dataSetConfig.isDegenerated());
 
 		// load the map dataset->cached table name
@@ -83,7 +83,7 @@ public class FederatedDataSet extends QbeDataSet {
 		try {
 			this.setDataset2CacheTableName(
 					(jsonConf.opt(FederatedDataSet.QBE_DATASET_CACHE_MAP) != null) ? (JSONObject) jsonConf.get(FederatedDataSet.QBE_DATASET_CACHE_MAP)
-							: new JSONObject());
+							: new JSONObject());						
 		} catch (JSONException e) {
 			logger.error("Error loading the map dataset->cached dataset table name", e);
 			throw new SpagoBIEngineRuntimeException("Error loading the map dataset->cached dataset table name", e);
