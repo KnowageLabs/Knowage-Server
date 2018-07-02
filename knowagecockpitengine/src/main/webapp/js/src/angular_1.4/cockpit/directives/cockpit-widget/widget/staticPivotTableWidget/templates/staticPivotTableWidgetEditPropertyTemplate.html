@@ -292,6 +292,45 @@
 		     		
 		     		</cockpit-style-custom-widget-configurator>
 		     	
+		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.measuresHeaders')" layout="column">
+		     			<div layout=row flex >		     							     			
+				     		<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders.color"></color-picker>
+							</md-input-container>
+							<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders['background-color']" ></color-picker>
+							</md-input-container>
+			     		</div>
+			     		<div layout=row >
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.fontSize')}}</label>
+								<md-select ng-model="localModel.content.style.measuresHeaders['font-size']">
+									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontSizeDimension" ng-value="meas.value" >
+									{{meas.label}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.fontWeight')}}</label>
+								<md-select ng-model="localModel.content.style.measuresHeaders['font-weight']">
+									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontWeight" ng-value="meas.value" >
+									{{meas.label}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     			<md-input-container flex>
+								<label>{{translate.load('sbi.cockpit.style.textDecoration')}}</label>
+								<md-select ng-model="localModel.content.style.measuresHeaders['text-decoration']">
+									<md-option ng-repeat="meas in cockpitModule_generalOptions.textDecoration" ng-value="meas.value" >
+									{{meas.label}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+			     		</div>
+		     		
+		     		</cockpit-style-custom-widget-configurator>
 		     	
 		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.measuresFontOpts')" layout="column">
 			     		<div layout=row >
@@ -332,20 +371,34 @@
 			     		</div>
 			     	
 			     	</cockpit-style-custom-widget-configurator>
+
 		     	
-		     		<!--  <cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.measuresAlternateRows')" layout="column">		     			
-			     		<div layout=row >
-				     		<md-input-container flex class="md-block"> 
-								<label>{{translate.load('sbi.cockpit.table.alternate.evenrows')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresRow['even-background-color']" ></color-picker>
+		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.pivot.totals')">
+			     		<div layout=row flex>
+				     		<md-input-container flex class="md-block md-icon-right"> 
+								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
+								<color-picker options="colorPickerProperty" ng-model="localModel.content.style.totals.color "></color-picker>
 							</md-input-container>
 							<md-input-container flex class="md-block"> 
-								<label>{{translate.load('sbi.cockpit.table.alternate.oddrows')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresRow['odd-background-color']" ></color-picker>
+								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.totals['background-color'] "></color-picker>
 							</md-input-container>
 			     		</div>
-			     	</cockpit-style-custom-widget-configurator>   -->
-			     	<cockpit-style-custom-widget-configurator label="'Grid'">
+			        </cockpit-style-custom-widget-configurator>
+			        <cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.pivot.subtotals')">
+			     		<div layout=row flex>
+				     		<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.subTotals.color "></color-picker>
+							</md-input-container>
+							<md-input-container flex class="md-block"> 
+								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.subTotals['background-color'] "></color-picker>
+							</md-input-container>
+			     		</div>
+			        </cockpit-style-custom-widget-configurator>
+			         
+			        <cockpit-style-custom-widget-configurator label="'Grid'">
 			           <div layout="row" flex ng-cloak>
 				           <div flex=20 layout=column>
 				           		<div flex  layout="row" layout-align="start center">
@@ -355,6 +408,9 @@
 								<div flex  layout="row" layout-align="start center">
 						          <md-checkbox layout-align="space-around center" ng-model="localModel.content.style.showAlternateRows"  class="md-block"
 											aria-label="Checkbox 1"  ng-click ="enableAlternate()">{{translate.load('sbi.cockpit.table.alternate')}}</md-checkbox>
+								</div>
+								<div flex layout="row" layout-align="start center">
+									<div class="kn-info" flex>Attention: the alternate rows will be shown just without previous specific sections configuration (Headers and measures)</div>
 								</div>
 				           </div>
 				           <div flex layout=column >
@@ -391,76 +447,10 @@
 				           		</div>
 				           	</div>
 			           </div>
-			        </cockpit-style-custom-widget-configurator> 
-			        
-		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.measuresHeaders')" layout="column">
-		     			<div layout=row flex >		     							     			
-				     		<md-input-container flex class="md-block"> 
-								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders.color"></color-picker>
-							</md-input-container>
-							<md-input-container flex class="md-block"> 
-								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders['background-color']" ></color-picker>
-							</md-input-container>
-			     		</div>
-			     		<div layout=row >
-			     			<md-input-container flex>
-								<label>{{translate.load('sbi.cockpit.style.fontSize')}}</label>
-								<md-select ng-model="localModel.content.style.measuresHeaders['font-size']">
-									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontSizeDimension" ng-value="meas.value" >
-									{{meas.label}}
-									</md-option>
-								</md-select>
-							</md-input-container>
-			     			<md-input-container flex>
-								<label>{{translate.load('sbi.cockpit.style.fontWeight')}}</label>
-								<md-select ng-model="localModel.content.style.measuresHeaders['font-weight']">
-									<md-option ng-repeat="meas in cockpitModule_generalOptions.fontWeight" ng-value="meas.value" >
-									{{meas.label}}
-									</md-option>
-								</md-select>
-							</md-input-container>
-			     			<md-input-container flex>
-								<label>{{translate.load('sbi.cockpit.style.textDecoration')}}</label>
-								<md-select ng-model="localModel.content.style.measuresHeaders['text-decoration']">
-									<md-option ng-repeat="meas in cockpitModule_generalOptions.textDecoration" ng-value="meas.value" >
-									{{meas.label}}
-									</md-option>
-								</md-select>
-							</md-input-container>
-			     		</div>
-		     		
-		     		</cockpit-style-custom-widget-configurator>
-
-		     	 
-		     	
-		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.pivot.totals')">
-			     		<div layout=row flex>
-				     		<md-input-container flex class="md-block md-icon-right"> 
-								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
-								<color-picker options="colorPickerProperty" ng-model="localModel.content.style.totals.color "></color-picker>
-							</md-input-container>
-							<md-input-container flex class="md-block"> 
-								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.totals['background-color'] "></color-picker>
-							</md-input-container>
-			     		</div>
-			        </cockpit-style-custom-widget-configurator>
-			        <cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.pivot.subtotals')">
-			     		<div layout=row flex>
-				     		<md-input-container flex class="md-block"> 
-								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.subTotals.color "></color-picker>
-							</md-input-container>
-							<md-input-container flex class="md-block"> 
-								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.subTotals['background-color'] "></color-picker>
-							</md-input-container>
-			     		</div>
 			        </cockpit-style-custom-widget-configurator>
 			        
 		     	</cockpit-style-configurator>
+		     	 
 		     </md-tab>
 		     
 		     <md-tab label="{{translate.load('sbi.cockpit.widget.table.filters')}}">

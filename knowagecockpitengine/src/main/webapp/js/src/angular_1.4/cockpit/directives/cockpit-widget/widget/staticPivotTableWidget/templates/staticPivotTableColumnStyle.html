@@ -10,7 +10,7 @@
 			      </md-button>
 		  </md-toolbar>
 		      <div layout-margin layout="column" flex class="relative"> 
-		       	
+		       
 				<div flex>
 				<div layout="row" ng-if="!selectedColumn.widgetType || (selectedColumn.widgetType == 'staticPivotTable' && selectedColumn.containerType!='COLUMNS') " >					
 					<md-input-container class="md-block" class="small counter" flex>
@@ -182,22 +182,19 @@
 					</md-input-container>
 					<md-input-container flex class="md-block" class="small counter">
 						<label>{{translate.load('sbi.cockpit.style.precision')}}</label>
-						<input class="input_class" type="number" ng-model="selectedColumn.style.precision" min="0" ng-disabled="!isPrecisionEnabled()> 
+						<input class="input_class" type="number" ng-model="selectedColumn.style.precision" min="0" ng-disabled="!isPrecisionEnabled()"> 
 					</md-input-container>
 		       </div>	
-		       <div  flex>
-					<md-input-container class="md-block"> 
+		       <div  flex layout="row">
+					<md-input-container flex class="md-block"> 
+						<label>{{translate.load('sbi.cockpit.table.fontcolor')}}</label>
+						<color-picker  options="colorPickerProperty" ng-model="selectedColumn.style.color"></color-picker>
+					</md-input-container>
+					<md-input-container flex class="md-block"> 
 						<label>{{translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
 						<color-picker  options="colorPickerProperty" ng-model="selectedColumn.style.background "></color-picker>
 					</md-input-container>
 				</div>
-				<div flex>
-				   	<md-input-container class="md-block"> 
-						<label>{{translate.load('sbi.cockpit.table.fontcolor')}}</label>
-						<color-picker  options="colorPickerProperty" ng-model="selectedColumn.style.color"></color-picker>
-					</md-input-container>
-				</div>
-			
 		       <div flex>
 		       		<md-input-container flex class="md-block"> 
 							<label>{{translate.load('sbi.cockpit.table.fontweight')}}</label>
