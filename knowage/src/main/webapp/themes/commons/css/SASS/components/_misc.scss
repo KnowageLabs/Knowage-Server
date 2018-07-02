@@ -807,8 +807,9 @@ md-tab-item {
   color: $positiveColor !important;
 }
 
-.kn-danger {
+.kn-danger, .kn-dangerous {
   color: $negativeColor !important;
+  border-color: red;
 }
 
 .kn-inputError {
