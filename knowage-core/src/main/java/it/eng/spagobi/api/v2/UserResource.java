@@ -17,9 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.HashSet;
