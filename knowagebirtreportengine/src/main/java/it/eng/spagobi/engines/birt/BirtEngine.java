@@ -203,8 +203,4 @@ public class BirtEngine {
 		}
 	}
 
-	public static void setBirtEngine(IReportEngine birtEngine) {
-		BirtEngine.birtEngine = birtEngine;
-	}
-
 }
