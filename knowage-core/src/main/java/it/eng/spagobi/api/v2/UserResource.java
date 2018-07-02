@@ -177,6 +177,19 @@ public class UserResource extends AbstractSpagoBIResource {
 			throw new SpagoBIServiceException("SPAGOBI_SERVICE", "public_ is a reserved prefix for user name", null);
 		}
 
+		try {
+			usersDao = DAOFactory.getSbiUserDAO();
+			usersDao.setUserProfile(getUserProfile());
+			SbiUser existingUser = usersDao.loadSbiUserByUserId(userId);
+			if(existingUser != null && userId.equals(existingUser.getUserId())) {
+				logger.error("User already exists. User_ID is unique");
+				throw new RuntimeException("User with provided ID already exists.");
+			}
+		} catch (EMFUserError e) {
+			logger.error("Can not create SbiUser object");
+			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e);
+		}
+		
 		SbiUser sbiUser = new SbiUser();
 		sbiUser.setUserId(user.getUserId());
 		sbiUser.setFullName(user.getFullName());
@@ -219,9 +232,6 @@ public class UserResource extends AbstractSpagoBIResource {
 		}
 
 		try {
-
-			usersDao = DAOFactory.getSbiUserDAO();
-			usersDao.setUserProfile(getUserProfile());
 			Integer id = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
 			String encodedUser = URLEncoder.encode("" + id, "UTF-8");
 			return Response.created(new URI("2.0/users/" + encodedUser)).entity(encodedUser).build();
