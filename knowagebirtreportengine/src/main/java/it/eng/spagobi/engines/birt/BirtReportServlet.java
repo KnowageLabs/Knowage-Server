@@ -229,12 +229,12 @@ public class BirtReportServlet extends HttpServlet {
 		}
 	}
 
-	protected HTMLRenderOption prepareHtmlRenderOption(ServletContext servletContext, HttpServletRequest servletRequest) throws Exception {
+	protected HTMLRenderOption prepareHtmlRenderOption(HttpServletRequest servletRequest) throws Exception {
 		boolean isBackEndRequest = isBackEndRequest(servletRequest);
 		if (isBackEndRequest) {
 			return prerareBackEndHtmlRenderOption();
 		} else {
-			return prepareFrontEndHtmlRenderOption(servletRequest);
+			return prepareFrontEndHtmlRenderOption();
 		}
 	}
 
@@ -247,7 +247,7 @@ public class BirtReportServlet extends HttpServlet {
 		return toReturn;
 	}
 
-	private HTMLRenderOption prepareFrontEndHtmlRenderOption(HttpServletRequest servletRequest) {
+	private HTMLRenderOption prepareFrontEndHtmlRenderOption() {
 		logger.debug("IN");
 		String tmpDir = System.getProperty("java.io.tmpdir");
 		String imageDirectory = tmpDir.endsWith(File.separator) ? tmpDir + "birt" : tmpDir + File.separator + "birt";
@@ -261,7 +261,6 @@ public class BirtReportServlet extends HttpServlet {
 		renderOption.setImageDirectory(imageDirectory);
 		renderOption.setBaseImageURL(imageBaseUrl);
 		renderOption.setEmbeddable(false);
-		this.birtReportEngine.getConfig().getEmitterConfigs().put("html", renderOption);
 		logger.debug("OUT");
 		return renderOption;
 	}
@@ -281,7 +280,6 @@ public class BirtReportServlet extends HttpServlet {
 				return "data:image/" + extension + ";base64," + embeddedImage;
 			}
 		});
-		this.birtReportEngine.getConfig().getEmitterConfigs().put("html", renderOption);
 		logger.debug("OUT");
 		return renderOption;
 	}
@@ -663,7 +661,7 @@ public class BirtReportServlet extends HttpServlet {
 			response.setContentType("application/pdf");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".pdf");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT)) {
-			renderOption = prepareHtmlRenderOption(servletContext, request);
+			renderOption = prepareHtmlRenderOption(request);
 			renderOption.setOutputFormat(IBirtConstants.HTML_RENDER_FORMAT);
 			response.setHeader("Content-Type", "text/html");
 			response.setContentType("text/html");
@@ -678,7 +676,7 @@ public class BirtReportServlet extends HttpServlet {
 			response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".docx");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(RTF_FORMAT)) {
-			renderOption = prepareHtmlRenderOption(servletContext, request);
+			renderOption = prepareHtmlRenderOption(request);
 			renderOption.setOutputFormat(RTF_FORMAT);
 			response.setContentType("application/rtf");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".rtf");
@@ -716,7 +714,7 @@ public class BirtReportServlet extends HttpServlet {
 		} else {
 			logger.debug(" Output format parameter not set or not valid. Using default output format: HTML.");
 			outputFormat = IBirtConstants.HTML_RENDER_FORMAT;
-			renderOption = prepareHtmlRenderOption(servletContext, request);
+			renderOption = prepareHtmlRenderOption(request);
 			renderOption.setOutputFormat(IBirtConstants.HTML_RENDER_FORMAT);
 			response.setContentType("text/html");
 			response.setHeader("Content-Type", "text/html");
@@ -736,10 +734,7 @@ public class BirtReportServlet extends HttpServlet {
 			runAndRenderTask.setRenderOption(renderOption);
 			logger.debug("runReport(): RunAndRenderTask created successfully.");
 		} else { // progressive run
-			ProgressiveCustomPageHandler myPageHandler = new ProgressiveCustomPageHandler((String) context.get(REPORT_EXECUTION_ID), request.getContextPath());
-			myPageHandler.setRequest(request);
-			myPageHandler.setServletContext(servletContext);
-
+			ProgressiveCustomPageHandler myPageHandler = new ProgressiveCustomPageHandler((String) context.get(REPORT_EXECUTION_ID));
 			runTask = birtReportEngine.createRunTask(design);
 			runTask.setLocale(locale);
 			runTask.setPageHandler(myPageHandler);
@@ -761,16 +756,12 @@ public class BirtReportServlet extends HttpServlet {
 			if (progressiveViewing == false) {
 				runAndRenderTask.run();
 			} else {
-				// String file = OUTPUT_FOLDER + createNewExecutionId() +
-				// File.separator + "doc.rptdocument";
 				String file = OUTPUT_FOLDER + reportExecutionId + ".rptdocument";
 				logger.debug("output file path is  " + file);
 
 				runTask.run(file);
 
 				Utils.sendPage(response, 1, (String) context.get(REPORT_EXECUTION_ID));
-				birtReportEngine = null;
-				BirtEngine.setBirtEngine(null);
 
 			}
 		} catch (Exception e) {
@@ -1135,31 +1126,10 @@ public class BirtReportServlet extends HttpServlet {
 
 		// Define local variables for the callback class
 		private int lastCheckpoint = 0;
-		private int pageCounter = 0;
 		private String reportExecutionId = null;
-		private String contextPath = null;
-		private HttpServletRequest request = null;
-		private ServletContext servletContext = null;
 
-		public ProgressiveCustomPageHandler(String reportExecutionId, String contextPath) {
+		public ProgressiveCustomPageHandler(String reportExecutionId) {
 			this.reportExecutionId = reportExecutionId;
-			this.contextPath = contextPath;
-		}
-
-		public HttpServletRequest getRequest() {
-			return request;
-		}
-
-		public void setRequest(HttpServletRequest request) {
-			this.request = request;
-		}
-
-		public ServletContext getServletContext() {
-			return servletContext;
-		}
-
-		public void setServletContext(ServletContext servletContext) {
-			this.servletContext = servletContext;
 		}
 
 		// @Override
@@ -1175,7 +1145,6 @@ public class BirtReportServlet extends HttpServlet {
 				int pageStart;
 				int pageEnd;
 
-				String pageRange = "0-0";
 				if (lastCheckpoint == 0) {
 					// pageRange = 1 + "-" + pageNumber;
 					pageStart = 1;
@@ -1192,23 +1161,19 @@ public class BirtReportServlet extends HttpServlet {
 				IRenderTask task = null;
 				IReportDocument iReportDocument = null;
 				try {
-					// open the report document then create the render task from
-					// it
+					// open the report document then create the render task from it
 					iReportDocument = reportDocument.openReportDocument();
 					task = birtReportEngine.createRenderTask(iReportDocument);
 
-					IRenderOption renderOption = prepareHtmlRenderOption(servletContext, request);
+					IRenderOption renderOption = prepareFrontEndHtmlRenderOption();
 					renderOption.setOutputFormat(IBirtConstants.HTML_RENDER_FORMAT);
 
 					for (int i = pageStart; i <= pageEnd; i++) {
 						renderOption.setOutputFileName(
 								BirtReportServlet.OUTPUT_FOLDER + reportExecutionId + File.separator + BirtReportServlet.PAGE_FILE_NAME + i + ".html");
-						pageCounter++;
 
 						task.setRenderOption(renderOption);
 						logger.debug("Page number " + i + " is ready for viewing");
-						// logger.debug("Page range " + pageRange + " is ready for viewing");
-						// task.setPageRange(pageRange);
 						task.setPageNumber(i);
 						task.render();
 
@@ -1225,66 +1190,5 @@ public class BirtReportServlet extends HttpServlet {
 			}
 		}
 
-		/**
-		 *
-		 * void onPage**
-		 *
-		 * @param pageNumber
-		 *            - the page number that is currently be called for event*
-		 * @param readyForViewing
-		 *            - is this event a Check POint event*
-		 * @param reportDocument
-		 *            - instance to the report document
-		 */
-
-		// @Override
-		// public void onPage(int pageNumber, boolean readyForViewing, IReportDocumentInfo reportDocument) {
-		// // we only want to do something if this is a checkpoint event
-		// if (readyForViewing) {
-		// // Just let the user know that the next page ranges are ready,
-		// // then set the last check point to the
-		// // current page
-		// logger.debug("Pages " + lastCheckpoint + " through " + pageNumber + " are ready for viewing");
-		// String pageRange = "0-0";
-		// if (lastCheckpoint == 0)
-		// pageRange = 1 + "-" + pageNumber;
-		// else
-		// pageRange = (lastCheckpoint + 1) + "-" + pageNumber;
-		//
-		// lastCheckpoint = pageNumber;
-		//
-		// IRenderTask task = null;
-		// IReportDocument iReportDocument = null;
-		// try {
-		// // open the report document then create the render task from
-		// // it
-		// iReportDocument = reportDocument.openReportDocument();
-		// task = birtReportEngine.createRenderTask(iReportDocument);
-		//
-		// IRenderOption renderOption = prepareHtmlRenderOption(servletContext, request);
-		// renderOption.setOutputFormat(IBirtConstants.HTML_RENDER_FORMAT);
-		// renderOption.setOutputFileName(BirtReportServlet.OUTPUT_FOLDER + reportExecutionId);
-		//
-		// System.out.println(BirtReportServlet.OUTPUT_FOLDER + reportExecutionId);
-		//
-		// task.setRenderOption(renderOption);
-		//
-		// // Render Page and close the render task
-		//
-		// logger.debug("Page range " + pageRange + " is ready for viewing");
-		// System.out.println("Page range " + pageRange + " is ready for viewing");
-		// task.setPageRange(pageRange);
-		// task.render();
-		//
-		// } catch (Exception e) {
-		// logger.error("Exception while rendering page " + pageNumber, e);
-		// } finally {
-		// if (iReportDocument != null)
-		// iReportDocument.close();
-		// if (task != null)
-		// task.close();
-		// }
-		// }
-		// }
 	}
 }
