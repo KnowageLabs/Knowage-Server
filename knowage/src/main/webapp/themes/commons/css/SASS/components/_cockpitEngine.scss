@@ -1095,7 +1095,6 @@
 				tr{
 					height: $angularTableDenseTRHeight;
 					td{
-					
 						&.level{
 							text-align: center;
 							font-size: 16px;
@@ -1106,10 +1105,11 @@
 								display: initial;
 							}
 							.crosstab-header-text{
+								text-align: center;
 								font-family: Roboto,"Helvetica Neue",sans-serif;
 								text-align: center;
 								font-size: $headerFontSize;
-								color: black;
+								color: #3b678c;
 								font-weight: 600;								
 							}
 							.sortIcon{
@@ -1145,7 +1145,13 @@
 							color:white;
 						}
 						&.crosstab-header-text {
-							border-top:none;							
+							border-top:none;	
+							text-align: center;
+							font-family: Roboto,"Helvetica Neue",sans-serif;
+							text-align: center;
+							font-size: $headerFontSize;
+							color: #3b678c;
+							font-weight: 600;									
 						}
 						&.sortIcon {
 							border-top: none;

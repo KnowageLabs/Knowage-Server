@@ -325,14 +325,16 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			var subtotalsItem;
 			var dataItem;
 			var memberItem;
+			var measureHeaderItem;
 			var crossItem;
 			//generic
 			if($scope.ngModel.content.style.generic!=undefined && Object.keys($scope.ngModel.content.style.generic).length>0 ){
-				totalsItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".totals"));
-				subtotalsItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".partialsum"));
-				dataItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".data"));
-				memberItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".member"));
-				crossItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".crosstab-header-text"));
+				totalsItem 			= angular.element($scope.subCockpitWidget[0].querySelectorAll(".totals"));
+				subtotalsItem 		= angular.element($scope.subCockpitWidget[0].querySelectorAll(".partialsum"));
+				dataItem 			= angular.element($scope.subCockpitWidget[0].querySelectorAll(".data"));
+				memberItem 			= angular.element($scope.subCockpitWidget[0].querySelectorAll(".member"));
+				measureHeaderItem 	= angular.element($scope.subCockpitWidget[0].querySelectorAll(".measures-header-text"));
+				crossItem 			= angular.element($scope.subCockpitWidget[0].querySelectorAll(".crosstab-header-text"));
 				for(var prop in $scope.ngModel.content.style.generic){
 					if ($scope.ngModel.content.style.generic[prop]!=""){
 						totalsItem.css(prop,$scope.ngModel.content.style.generic[prop]);
@@ -354,6 +356,10 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 					if(dataColumnList.length>0){
 						$scope.applyBorderStyle(dataColumnList);
 					}
+//					dataColumnList=row.querySelectorAll(".measures-header-text");
+//					if(dataColumnList.length>0){
+//						$scope.applyBorderStyle(dataColumnList);
+//					}
 					dataColumnList=row.querySelectorAll(".memberNoStandardStyle");
 					if(dataColumnList.length>0){
 						$scope.applyBorderStyle(dataColumnList);
@@ -373,13 +379,23 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 					if(dataColumnList.length>0){
 						$scope.applyBorderStyle(dataColumnList);
 					}
+					//apply borders on 'empty' class
+					dataColumnList=row.querySelectorAll(".empty");
+					if(dataColumnList.length>0){
+						$scope.applyBorderStyle(dataColumnList);
+					}
 					//apply borders on 'total' class
 					dataColumnList=row.querySelectorAll(".totals");
 					if(dataColumnList.length>0){
 						$scope.applyBorderStyle(dataColumnList);
 					}
 					//apply borders on 'subtotal' class
-					dataColumnList=row.querySelectorAll(".subTotals");
+					dataColumnList=row.querySelectorAll(".partialsum");
+					if(dataColumnList.length>0){
+						$scope.applyBorderStyle(dataColumnList);
+					}
+					//apply borders on 'crosstab-header-text' class
+					dataColumnList=row.querySelectorAll("td.crosstab-header-text");
 					if(dataColumnList.length>0){
 						$scope.applyBorderStyle(dataColumnList);
 					}
@@ -405,63 +421,83 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				});
 			}
 
-			//totals
-			if($scope.ngModel.content.style.totals!=undefined && Object.keys($scope.ngModel.content.style.totals).length>0 ){
-				if(totalsItem==undefined){
-					totalsItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".totals"));
-				}
-				for(var prop in $scope.ngModel.content.style.totals){
-					if ($scope.ngModel.content.style.totals[prop]!= "")
-						totalsItem.css(prop,$scope.ngModel.content.style.totals[prop])
-				}
-			}
-			//subTotals
-			if($scope.ngModel.content.style.subTotals!=undefined && Object.keys($scope.ngModel.content.style.subTotals).length>0 ){
-				if(subtotalsItem==undefined){
-					subtotalsItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".partialsum"));
-				}
-				for(var prop in $scope.ngModel.content.style.subTotals){
-					if ($scope.ngModel.content.style.subTotals[prop] != "")
-						subtotalsItem.css(prop,$scope.ngModel.content.style.subTotals[prop])
-				}
-			}
-
 			//measures
 			if($scope.ngModel.content.style.measures!=undefined && Object.keys($scope.ngModel.content.style.measures).length>0 ){
 				if(dataItem==undefined){
 					dataItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".data"));
 				}
 				for(var prop in $scope.ngModel.content.style.measures){
-					if ($scope.ngModel.content.style.measures[prop] != "")
+					if(angular.equals("background-color",prop) && $scope.ngModel.content.style.measures[prop]!= ""){
+						dataItem.parent().parent().css(prop,$scope.ngModel.content.style.measures[prop])
+					}else if ($scope.ngModel.content.style.measures[prop] != "")
 						dataItem.css(prop,$scope.ngModel.content.style.measures[prop])
 				}
 			}
 
 			//measuresHeaders
 			if($scope.ngModel.content.style.measuresHeaders!=undefined && Object.keys($scope.ngModel.content.style.measuresHeaders).length>0 ){
-				if(memberItem==undefined){
-					memberItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".member"));
+				if(measureHeaderItem==undefined){
+//					memberItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".member"));
+					measureHeaderItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".measures-header-text"));
 				}
 				for(var prop in $scope.ngModel.content.style.measuresHeaders){
-					if ($scope.ngModel.content.style.measuresHeaders[prop]!= "")
-						memberItem.css(prop,$scope.ngModel.content.style.measuresHeaders[prop])
+					if(angular.equals("background-color",prop) && $scope.ngModel.content.style.measuresHeaders[prop]!= ""){
+						if ($scope.ngModel.content.crosstabDefinition.config.measureson == "columns")
+							measureHeaderItem.parent().parent().css(prop,$scope.ngModel.content.style.measuresHeaders[prop])
+						else
+							measureHeaderItem.css(prop,$scope.ngModel.content.style.measuresHeaders[prop])
+					}else if ($scope.ngModel.content.style.measuresHeaders[prop]!= "")
+						measureHeaderItem.css(prop,$scope.ngModel.content.style.measuresHeaders[prop])
 				}
 			}
 
 			//crossTabHeaders
 			if($scope.ngModel.content.style.crossTabHeaders!=undefined && Object.keys($scope.ngModel.content.style.crossTabHeaders).length>0 ){
 				if(crossItem==undefined){
+					var crossEmptyItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".empty"));
 					crossItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".crosstab-header-text"));
+					Array.prototype.push.apply(crossItem, crossEmptyItem);
 				}
 				for(var prop in $scope.ngModel.content.style.crossTabHeaders){
 					if(angular.equals("background-color",prop) && $scope.ngModel.content.style.crossTabHeaders[prop]!= ""){
-						crossItem.parent().parent().parent().parent().css(prop,$scope.ngModel.content.style.crossTabHeaders[prop])
+						crossItem.parent().css(prop,$scope.ngModel.content.style.crossTabHeaders[prop])
 					}else if ($scope.ngModel.content.style.crossTabHeaders[prop]!=""){
 						crossItem.css(prop,$scope.ngModel.content.style.crossTabHeaders[prop])
 					}
 				}
-			}
 
+				//memebers are managed with crosstab-header-text too
+				if(memberItem==undefined){
+					memberItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".member"));
+				}
+				for(var prop in $scope.ngModel.content.style.crossTabHeaders){
+					if ($scope.ngModel.content.style.crossTabHeaders[prop]!=""){
+						memberItem.css(prop,$scope.ngModel.content.style.crossTabHeaders[prop])
+					}
+				}
+
+				//totals
+				if($scope.ngModel.content.style.totals!=undefined && Object.keys($scope.ngModel.content.style.totals).length>0 ){
+					if(totalsItem==undefined){
+						totalsItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".totals"));
+					}
+					for(var prop in $scope.ngModel.content.style.totals){
+						if ($scope.ngModel.content.style.totals[prop]!= "")
+							totalsItem.css(prop,$scope.ngModel.content.style.totals[prop])
+					}
+				}
+				//subTotals
+				if($scope.ngModel.content.style.subTotals!=undefined && Object.keys($scope.ngModel.content.style.subTotals).length>0 ){
+					if(subtotalsItem==undefined){
+						subtotalsItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".partialsum"));
+					}
+					for(var prop in $scope.ngModel.content.style.subTotals){
+						if ($scope.ngModel.content.style.subTotals[prop] != "")
+							subtotalsItem.css(prop,$scope.ngModel.content.style.subTotals[prop])
+					}
+				}
+
+			}
 		}
 
 	};
