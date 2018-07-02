@@ -52,7 +52,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/interceptors/httpInterceptor.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/closingIFrame.js")%>"></script>
 
-<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/css/documentDetails.css")%>" >
 
 <% 
 String resourcePath = SpagoBIUtilities.getResourcePath();
