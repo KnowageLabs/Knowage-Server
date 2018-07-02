@@ -57,7 +57,7 @@
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		$scope.tableColumnsFederation = [{"label":"Label","name":"label"},{"label":"Name","name":"name"}];
-		$scope.tableColumnsModels = [{"label":"Name","name":"name"}, {"label":"Description","name":"description"}];
+		$scope.tableColumnsModels = [{"label":"Name","name":"name","type":"text"}, {"label":"Description","name":"description","type":"text"}];
 
 		$scope.showModelInfo = false;
 		$scope.idsOfFederationDefinitionsUsediNFederatedDatasets = [];

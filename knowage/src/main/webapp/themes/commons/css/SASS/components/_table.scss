@@ -1,5 +1,14 @@
+.kn-table-container {
+	min-height: calc(100% - 16px);
+	margin: 8px;
+	background-color: $tabBackground;
+	&.kn-table-shadowed {
+		box-shadow: 0px 3px 3px $shadowsColor;
+	}
+}
 .kn-table{
 	width: 100%;
+	height: auto;
 	border-collapse: collapse;
 	thead {
 		color: $baseColor;
@@ -11,6 +20,7 @@
 				border-bottom: 1px solid $ternaryColor;
 				text-align: left;
 				md-icon{
+					color: $baseColor;
 					transition: transform .3s ease-in;
 					&.rotate180{
 						transform: rotate(180deg);
@@ -28,6 +38,7 @@
 				&.sortable {
 					outline: none;
 					cursor: pointer;
+					line-height: 2rem;
 				}
 			}
 		}
@@ -134,16 +145,20 @@
 			}
 		}
 	}
-	&.kn-table-medium-rows {
+	&.kn-table-inverse-header {
 		thead {
 			tr {
-				height: 3rem;
 				th {
-					line-height: 2rem;
-					text-transform: uppercase;
+					color: $lightTextColor;
+					background-color: $baseColor;
+					md-icon {
+						color: $lightTextColor;
+					}
 				}
 			}
 		}
+	}
+	&.kn-table-medium-rows {
 		tr {
 			height: 2rem;
 			td {
