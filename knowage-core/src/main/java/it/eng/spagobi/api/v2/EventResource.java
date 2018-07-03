@@ -48,8 +48,8 @@ public class EventResource extends AbstractSpagoBIResource {
 	// @formatter:off
 			@DefaultValue("0") @QueryParam("offset") Integer offset,
 			@DefaultValue("20") @QueryParam("fetchsize") Integer fetchsize,
-			@QueryParam("startDate") @DateFormat("yyyy-MM-dd HH:mm:ss") Date startDate,
-			@QueryParam("endDate") @DateFormat("yyyy-MM-dd HH:mm:ss") Date endDate,
+			@QueryParam("startDate") @DateFormat("yyyy-MM-dd+HH:mm:ss") Date startDate,
+			@QueryParam("endDate") @DateFormat("yyyy-MM-dd+HH:mm:ss") Date endDate,
 			@QueryParam("creationUser") String creationUser,
 			@QueryParam("type") String type,
 			@DefaultValue("date") @QueryParam("sortingColumn") String sortingColumn,

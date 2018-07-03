@@ -1,11 +1,9 @@
 (function(){
 
-var app = angular.module("eventModule").controller("eventController",["$scope","eventService","sbiModule_messaging" ,function ($scope,eventService,sbiModule_messaging){
+var app = angular.module("eventModule").controller("eventController",["$scope","eventService","sbiModule_messaging", function ($scope,eventService,sbiModule_messaging){
 
 	eventService.getAllEvents().then(function(response){
 		$scope.events = response.data.results;
-
-//		sbiModule_messaging.showInfoMessage(response.data.total, "Total Events Number")
 
 	}, function(response){
 
@@ -17,6 +15,13 @@ var app = angular.module("eventModule").controller("eventController",["$scope","
 
 	})
 
+	$scope.eventSelectModel = ["SCHEDULER", "ETL", "COMMONJ", "DATA_MINING"]
+	$scope.eventSearch = function (startDate,endDate,type){
+
+		getQueryEvents();
+
+	}
+
 	$scope.showDetail = false;
 	$scope.selectedDetail = {};
 
@@ -25,6 +30,30 @@ var app = angular.module("eventModule").controller("eventController",["$scope","
 		$scope.selectedDetail = angular.copy(item);
 
 	}
+
+	$scope.getQEvents = function (){
+
+		var startDateFormat = moment($scope.startDate).format("YYYY-MM-DD HH:mm:ss");
+		var endDateFormat = moment($scope.endDate).format("YYYY-MM-DD HH:mm:ss");
+		var eventObjSerialized = {
+
+				startDate:startDateFormat,
+				endDate:endDateFormat,
+				type:$scope.type
+		}
+		eventService.getQueryEvents(eventObjSerialized)
+		.then(function(response){
+			$scope.events=response.data.results;
+		},	  function(response){
+
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message,"nani")
+			sbiModule_messaging.showErrorMessage("no error property","nani")
+
+		});
+
+	}
+
+
 
 }])
 

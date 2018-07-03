@@ -15,12 +15,31 @@
 </head>
 
 <body ng-controller="eventController" class="bodyStyle kn-usersManagement">
-
 <angular-list-detail show-detail="showDetail">
 	<list label="Events">
 <!-- 			show-search-bar="true" -->
 <!-- 			search-function = "functionSearchEvents(searchValue, itemsPerPage, currentPageNumber , columnsSearch, columnOrdering, reverseOrdering)" -->
+		<div layout="row">
 	
+		  <md-input-container flex>
+		  <md-datepicker aria-label="startDate" ng-model="startDate">Start Date</md-datepicker>
+		  </md-input-container>
+		  <md-input-container flex>
+		  <md-datepicker aria-label="endDate" ng-model="endDate">End Date</md-datepicker>
+		  </md-input-container>
+		  <md-input-container flex>
+		  <md-select ng-model="type" placeholder="Select favorite type" flex>
+		    <md-option ng-value="i" ng-repeat="i in eventSelectModel">{{ i }}</md-option>
+		  </md-select>
+		  </md-input-container>
+		  <md-input-container flex>
+		   <md-button ng-click="getQEvents()">
+          <md-icon md-font-icon="fas fa-search" class="fa"></md-icon>
+           </md-button>
+		</md-input-container>
+		</div>
+		
+		
 		<angular-table
 
 			flex
