@@ -31,6 +31,7 @@ import it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.ISubreportDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIMetaModelParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
@@ -168,6 +169,10 @@ public class DAOFactory {
 	 */
 	public static IBIObjectParameterDAO getBIObjectParameterDAO() throws HibernateException {
 		return (IBIObjectParameterDAO) createDAOInstance("BIObjectParameterDAO");
+	}
+
+	public static IBIMetaModelParameterDAO getBIMetaModelParameterDAO() throws HibernateException {
+		return (IBIMetaModelParameterDAO) createDAOInstance("BIMetaModelParameterDAO");
 	}
 
 	/**

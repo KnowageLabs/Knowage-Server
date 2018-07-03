@@ -17,23 +17,6 @@
  */
 package it.eng.spagobi.analiticalmodel.document.bo;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
-import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.utilities.SpagoBITracer;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.engines.config.dao.IEngineDAO;
-import it.eng.spagobi.services.validation.Alphanumeric;
-import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
-import it.eng.spagobi.services.validation.Xss;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -52,10 +35,27 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.utilities.SpagoBITracer;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.config.dao.IEngineDAO;
+import it.eng.spagobi.services.validation.Alphanumeric;
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.services.validation.Xss;
+import it.eng.spagobi.tools.catalogue.metadata.DriverableObject;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 /**
  * Defines a Business Intelligence object.
  */
-public class BIObject implements Serializable, Cloneable {
+public class BIObject implements Serializable, Cloneable, DriverableObject {
 
 	// BIOBJ_ID NUMBER N Business Intelligence Object identifier
 	private Integer id = null;
@@ -892,8 +892,9 @@ public class BIObject implements Serializable, Cloneable {
 
 	@Override
 	public boolean equals(Object v) {
-		if (this == v) return true;
-		
+		if (this == v)
+			return true;
+
 		boolean toReturn = false;
 
 		if (v instanceof BIObject) {
