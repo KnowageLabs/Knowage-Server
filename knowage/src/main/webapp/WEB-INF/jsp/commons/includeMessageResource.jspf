@@ -19,9 +19,10 @@
 			//For IE6, IE5
 			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
 		}
-		
+				
 		xmlhttp.open('GET', url, false);
-		xmlhttp.send();
+		xmlhttp.overrideMimeType('text/plain; charset=UTF-8');
+		xmlhttp.send();		
 		callback(xmlhttp.responseText);
 	}
 	
