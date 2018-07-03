@@ -18,8 +18,10 @@ var app = angular.module("eventModule").controller("eventController",["$scope","
 		
 		$scope.fetchsize = itemsPerPage;
 		
+		$scope.offset = 0;
+		
 		if(currentPageNumber > 1) {
-			$scope.offset = currentPageNumber * $scope.fetchsize;
+			$scope.offset = (currentPageNumber -1) * $scope.fetchsize;
 		}
 		
 		eventService.getAllEvents(ev).then(function(response) {
