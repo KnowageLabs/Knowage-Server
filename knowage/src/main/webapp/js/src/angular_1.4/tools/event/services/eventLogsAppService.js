@@ -4,15 +4,14 @@
 
 	app.service("eventService", function (sbiModule_restServices,$httpParamSerializer){
 
-		this.getAllEvents = function (){
-			return sbiModule_restServices.promiseGet("2.0/events","");
+		this.getAllEvents = function (ev){
+			
+			return sbiModule_restServices.promiseGet("2.0/events", "", $httpParamSerializer(ev));
 
 		}
-
-
-
+		
 		this.getQueryEvents = function (eventObjSerialized){
-
+			
 			return sbiModule_restServices.promiseGet("2.0/events","",$httpParamSerializer(eventObjSerialized));
 		}
 

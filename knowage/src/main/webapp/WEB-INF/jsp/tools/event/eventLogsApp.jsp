@@ -52,7 +52,12 @@
 					]'
 
 			highlights-selected-item=true
-			click-function="loadDetail(item)">
+			click-function="loadDetail(item)"
+			no-pagination=false
+			current-page-number=currentPageNum
+			total-item-count=totalItemCountt
+			page-changed-function=pageChangedFun(itemsPerPage,currentPageNumber)
+			>
 		</angular-table>
 	<!-- 			column-search='["user","type"]'		 -->
 	</list>
