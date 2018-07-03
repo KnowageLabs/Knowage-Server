@@ -1,10 +1,10 @@
-<div layout-padding>
-	<table class="kn-table" ng-hide="showGridView==true || ngModel.length==0 " >
+<div class="kn-table-container" ng-class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed">
+	<table class="kn-table" ng-hide="showGridView==true || ngModel.length==0 " class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed">
 		<thead>
 			<tr> 
 			<th ng-repeat="column in schedulationColumns">{{column.label}}</th>
 			<th class="multiTableAction">
-			<md-button ng-if="runSnapshots" ng-disabled="selectedTriggers.length == 0" ng-click="runTriggers('all')">
+			<md-button ng-if="runSnapshots" ng-disabled="selectedTriggers.length == 0" ng-click="runTriggers('all')" style="margin: 0;">
 	            {{translate.load('kn.schedulation.triggers.runall')}}
 	        </md-button>
 	        </th>
@@ -15,7 +15,7 @@
 				<td ng-repeat="column in schedulationColumns">{{row[column.name]}}</td>
 					<td class="tableAction">
 						<div layout="row" layout-align="end center" >
-							<md-button class="md-icon-button" ng-click="getSchedulations.action(row,$event)">
+							<md-button class="md-icon-button" style="height: 32px;" ng-click="getSchedulations.action(row,$event)">
 								<md-tooltip>{{getSchedulations.label}}</md-tooltip>
 								<md-icon md-font-icon="{{getSchedulations.icon}}">
 							</md-button>
