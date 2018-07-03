@@ -1,19 +1,7 @@
-<angular-table  ng-hide="showGridView==true || ngModel.length==0 "  
-				layout-fill 
- 				style="position:absolute;overflow:auto"
- 				no-pagination=true
-			    ng-model=ngModel
-			    no-pagination=true
-				columns='[{"label":"Label","name":"label"},{"label":"Name","name":"name"}]'
-				columnsSearch='["name"]' 
-				show-search-bar=false
-				speed-menu-option=tableSpeedMenuOption
-				highlights-selected-item="true"
-				selected-item=selectedDataset
-				click-function="clickDataset(item);">
-</angular-table>					 
-					
-					
+<kn-table ng-hide="showGridView==true || ngModel.length==0 "
+	columns='[{"label":"Label","name":"label","type":"text"},{"label":"Name","name":"name"}]' 
+	model=ngModel
+	click-function="clickDataset(item)" custom-class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed"></kn-table>						
 <!-- Dataset Grid View -->
 <div layout="row"  layout-wrap ng-hide="showGridView!=true " >
 	<div  class="workspaceCardContainer" ng-repeat="dataset in ngModel| orderBy:orderingDatasetCards"  flex-xl=25 flex=33 flex-sm=50 flex-xs=100>

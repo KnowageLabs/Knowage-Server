@@ -1,13 +1,7 @@
-<angular-table  ng-hide="showGridView==true || ngModel.length==0 " layout-fill style="position:relative"
-	id='folderListTable' ng-model=ngModel
-	columns='[{"label":"Name","name":"name"},{"label":"Author","name":"userIn"},{"label":"Last modified","name":"timeIn"}]'
-	columnsSearch='["name"]' 
-	show-search-bar=false
-	speed-menu-option=tableSpeedMenuOption
-	highlights-selected-item="true"
-	selected-item=selectedFolder
-	click-function="clickFolder(item)">
-</angular-table>
+<kn-table ng-hide="showGridView==true || ngModel.length==0 "
+	columns='[{"label":"Name","name":"name"},{"label":"Author","name":"userIn"},{"label":"Last modified","name":"timeIn"}]' 
+	model="ngModel"
+	click-function="clickFolder(item)" custom-class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed"></kn-table>	
  
 
 <!-- Document Grid View -->

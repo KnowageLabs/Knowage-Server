@@ -106,6 +106,8 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js")%>"></script> 
 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/kn-table/knTable.js")%>"></script> 
+
 <!-- document tree -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script> 
 
@@ -125,7 +127,6 @@ if(importAngularMaterialForExport == null) {
 
 <!-- deprecated angular 2 col -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-list-detail/angular2Col.js")%>"></script> 
-
 <!-- toastr -->
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/css/angular-toastr.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-toastr.tpls.js")%>"></script> 		

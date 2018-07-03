@@ -1,5 +1,14 @@
+.kn-table-container {
+	min-height: calc(100% - 16px);
+	margin: 8px;
+	background-color: $tabBackground;
+	&.kn-table-shadowed {
+		box-shadow: 0px 3px 3px $shadowsColor;
+	}
+}
 .kn-table{
 	width: 100%;
+	height: auto;
 	border-collapse: collapse;
 	thead {
 		color: $baseColor;
@@ -10,6 +19,13 @@
 			th{
 				border-bottom: 1px solid $ternaryColor;
 				text-align: left;
+				md-icon{
+					color: $baseColor;
+					transition: transform .3s ease-in;
+					&.rotate180{
+						transform: rotate(180deg);
+					}
+				}
 				&:first-child {
 					padding-left: 10px;
 				}
@@ -18,6 +34,11 @@
 				}
 				&.multiTableAction{
 					width: 100px;
+				}
+				&.sortable {
+					outline: none;
+					cursor: pointer;
+					line-height: 2rem;
 				}
 			}
 		}
@@ -124,11 +145,25 @@
 			}
 		}
 	}
+	&.kn-table-inverse-header {
+		thead {
+			tr {
+				th {
+					color: $lightTextColor;
+					background-color: $baseColor;
+					md-icon {
+						color: $lightTextColor;
+					}
+				}
+			}
+		}
+	}
 	&.kn-table-medium-rows {
 		tr {
 			height: 2rem;
 			td {
-				.md-icon-button {
+				.md-icon-button, .md-menu {
+					padding: 0;
 					margin: 0;
 					height: 40px;
 					width: 40px;
@@ -140,8 +175,11 @@
 		tbody{
 			tr {
 				cursor: pointer;
-				&:hover {
+				&.selected {
 					background-color: $tableSelectedElementColor;
+				}
+				&:hover {
+					background-color: lighten($tableSelectedElementColor,5%);
 				}
 			}
 		}

@@ -1,6 +1,6 @@
 bread-crumb {
     min-height: 30px;
-    &.kn-documentBrowser-comp{
+    &.kn-documentBrowser-comp, &.kn-workspace-comp{
         nav {
             background-color: $ternaryColor;
             md-tabs {
