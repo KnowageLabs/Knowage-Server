@@ -438,7 +438,9 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
     var drillUpButtonSettings = chartConf.series[0].drillUpButton;
-	
+    if(points.length > chartConf.plotOptions.series.turboThreshold){
+		chartConf.emptymessage.text = "Your dataset is returning too much data"
+	}
 	return 	{
 		chart: chartObject,
 		colorAxis: {
