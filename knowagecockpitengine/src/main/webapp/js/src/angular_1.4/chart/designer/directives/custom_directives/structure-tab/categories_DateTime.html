@@ -21,6 +21,11 @@
 		<md-input-container class="small counter"> <md-checkbox ng-disabled="chartTemplate.groupSeries || chartTemplate.groupCategories"
 			ng-model="chartTemplate.dateTime" style="margin:0 8px" aria-label="dateTime" name="generic_dateTime" ></md-checkbox>
 		</md-input-container>
+		<md-icon ng-show="chartTemplate.dateTime" md-menu-origin class="fa fa-question-circle" style="display:inline">
+			<md-tooltip md-direction="bottom">
+				{{translate.load("sbi.chartengine.structure.categoryStyleConfig.categoryDate.info")}}
+			</md-tooltip>
+		</md-icon>
 	</div>
 
 	<div ng-show="chartTemplate.dateTime" layout="column" layout-padding ng-if="selectedChartType.toLowerCase()!='radar'">
