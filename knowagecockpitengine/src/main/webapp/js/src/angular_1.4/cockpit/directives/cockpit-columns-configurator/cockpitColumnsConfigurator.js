@@ -433,6 +433,14 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
 	}
+	
+	$scope.hasPrecision = function(column){
+		if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.lang.BigDecimal' || column.type == 'java.lang.Long'){
+			return true;
+		}
+		return false;
+	}
+	
 	$scope.chooseIcon = function(range) {
 		$scope.tempVar = !$scope.tempVar;
 		$scope.currentRange=range;
