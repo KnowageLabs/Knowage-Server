@@ -5,23 +5,6 @@ var app = angular.module("eventModule").controller("eventController",["$scope","
 	$scope.eventSelectModel = ["SCHEDULER", "ETL", "COMMONJ", "DATA_MINING"]
 $scope.pageChangedFun = function(itemsPerPage, currentPageNumber) {
 		
-		var filter = {
-			offset: $scope.offset,
-			fetchsize: itemsPerPage
-		}
-		
-		if($scope.startDate != undefined) {
-			filter.startDate = $scope.startDate;
-		}
-		
-		if($scope.endDate != undefined) {
-			filter.endDate = $scope.endDate;
-		}
-		
-		if($scope.type != undefined) {
-			filter.type = $scope.type;
-		}
-		
 		$scope.fetchsize = itemsPerPage;
 		
 		$scope.offset = 0;
@@ -31,7 +14,25 @@ $scope.pageChangedFun = function(itemsPerPage, currentPageNumber) {
 			$scope.offset = (currentPageNumber -1) * $scope.fetchsize;
 		}
 		
-		eventService.getAllEvents(filter).then(function(response) {
+		$scope.filter = {
+			offset: $scope.offset,
+			fetchsize: itemsPerPage
+		}
+		
+		if($scope.startDate != undefined) {
+			$scope.filter.startDate = $scope.startDate;
+		}
+		
+		if($scope.endDate != undefined) {
+			$scope.filter.endDate = $scope.endDate;
+		}
+		
+		if($scope.type != undefined) {
+			$scope.filter.type = $scope.type;
+		}
+		
+		
+		eventService.getAllEvents($scope.filter).then(function(response) {
 			
 			$scope.events = response.data.results;
 			$scope.totalItemCountt = response.data.total;
@@ -57,6 +58,7 @@ $scope.pageChangedFun = function(itemsPerPage, currentPageNumber) {
 
 		var startDateFormat = moment($scope.startDate).format("YYYY-MM-DD HH:mm:ss");
 		var endDateFormat = moment($scope.endDate).format("YYYY-MM-DD HH:mm:ss");
+		
 		var filter = {
 
 			startDate:startDateFormat,
