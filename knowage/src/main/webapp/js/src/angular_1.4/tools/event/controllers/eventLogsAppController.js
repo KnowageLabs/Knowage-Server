@@ -30,7 +30,6 @@ var app = angular.module("eventModule").controller("eventController",["$scope","
 			$scope.filter.type = $scope.type;
 		}
 
-
 		eventService.getAllEvents($scope.filter).then(function(response) {
 			$scope.events = response.data.results;
 			$scope.totalItemCountt = response.data.total;
