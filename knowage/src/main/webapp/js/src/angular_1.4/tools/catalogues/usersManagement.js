@@ -117,6 +117,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 templateUrl: '../js/src/angular_1.4/tools/catalogues/templates/lovValues.html',
                 targetEvent: ev,
                 clickOutsideToClose: true,
+                fullscreen: true,
                 locals: {
                 	attribute: attribute,
                 }
