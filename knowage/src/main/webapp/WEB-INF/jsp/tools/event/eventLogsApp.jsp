@@ -21,12 +21,10 @@
 <!-- 			search-function = "functionSearchEvents(searchValue, itemsPerPage, currentPageNumber , columnsSearch, columnOrdering, reverseOrdering)" -->
 		<div layout="row">
 	
-		  <md-input-container flex>
-		  <md-datepicker aria-label="startDate" ng-model="startDate">Start Date</md-datepicker>
-		  </md-input-container>
-		  <md-input-container flex>
-		  <md-datepicker aria-label="endDate" ng-model="endDate">End Date</md-datepicker>
-		  </md-input-container>
+		  <md-datepicker flex ng-model="startDate">Start Date</md-datepicker>
+	
+		  <md-datepicker flex ng-model="endDate">End Date</md-datepicker>
+
 		  <md-input-container flex>
 		  <md-select ng-model="type" placeholder="Select favorite type" flex>
 		    <md-option ng-value="i" ng-repeat="i in eventSelectModel">{{ i }}</md-option>
