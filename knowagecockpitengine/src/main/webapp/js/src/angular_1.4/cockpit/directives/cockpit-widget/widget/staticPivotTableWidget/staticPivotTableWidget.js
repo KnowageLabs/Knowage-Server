@@ -475,28 +475,27 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 						memberItem.css(prop,$scope.ngModel.content.style.crossTabHeaders[prop])
 					}
 				}
+			}
 
-				//totals
-				if($scope.ngModel.content.style.totals!=undefined && Object.keys($scope.ngModel.content.style.totals).length>0 ){
-					if(totalsItem==undefined){
-						totalsItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".totals"));
-					}
-					for(var prop in $scope.ngModel.content.style.totals){
-						if ($scope.ngModel.content.style.totals[prop]!= "")
-							totalsItem.css(prop,$scope.ngModel.content.style.totals[prop])
-					}
+			//totals
+			if($scope.ngModel.content.style.totals!=undefined && Object.keys($scope.ngModel.content.style.totals).length>0 ){
+				if(totalsItem==undefined){
+					totalsItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".totals"));
 				}
-				//subTotals
-				if($scope.ngModel.content.style.subTotals!=undefined && Object.keys($scope.ngModel.content.style.subTotals).length>0 ){
-					if(subtotalsItem==undefined){
-						subtotalsItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".partialsum"));
-					}
-					for(var prop in $scope.ngModel.content.style.subTotals){
-						if ($scope.ngModel.content.style.subTotals[prop] != "")
-							subtotalsItem.css(prop,$scope.ngModel.content.style.subTotals[prop])
-					}
+				for(var prop in $scope.ngModel.content.style.totals){
+					if ($scope.ngModel.content.style.totals[prop]!= "")
+						totalsItem.css(prop,$scope.ngModel.content.style.totals[prop])
 				}
-
+			}
+			//subTotals
+			if($scope.ngModel.content.style.subTotals!=undefined && Object.keys($scope.ngModel.content.style.subTotals).length>0 ){
+				if(subtotalsItem==undefined){
+					subtotalsItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".partialsum"));
+				}
+				for(var prop in $scope.ngModel.content.style.subTotals){
+					if ($scope.ngModel.content.style.subTotals[prop] != "")
+						subtotalsItem.css(prop,$scope.ngModel.content.style.subTotals[prop])
+				}
 			}
 		}
 
