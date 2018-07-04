@@ -435,7 +435,7 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	}
 	
 	$scope.hasPrecision = function(column){
-		if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.lang.BigDecimal' || column.type == 'java.lang.Long'){
+		if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long'){
 			return true;
 		}
 		return false;
@@ -536,10 +536,6 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	}
 
 	$scope.saveColumnStyleConfiguration = function(){
-		if($scope.selectedColumn.style!=undefined && $scope.selectedColumn.style.precision!=undefined && $scope.selectedColumn.style.format==undefined){
-			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.chartengine.structure.serieStyleConfig.dataLabels.format.emptyText'), sbiModule_translate.load('sbi.generic.error'));
-			return;
-		}
 		angular.copy($scope.selectedColumn,selectedColumn);
 		$mdDialog.cancel();
 	}
