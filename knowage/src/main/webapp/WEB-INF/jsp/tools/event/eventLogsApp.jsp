@@ -40,7 +40,6 @@
 		</div>
 		
 		<angular-table
-
 			flex
 			id="events_id"
 			ng-model="events"
@@ -58,7 +57,7 @@
 			page-changed-function=pageChangedFun(itemsPerPage,currentPageNumber)
 			>
 		</angular-table>
-	<!-- 			column-search='["user","type"]'		 -->
+
 	</list>
 	
 	<detail>
