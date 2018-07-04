@@ -39,7 +39,6 @@
 		</md-input-container>
 		</div>
 		
-		
 		<angular-table
 
 			flex
