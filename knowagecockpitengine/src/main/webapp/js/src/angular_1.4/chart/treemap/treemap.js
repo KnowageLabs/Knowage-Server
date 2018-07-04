@@ -425,8 +425,8 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 	
    	tooltipFormatter= function () {
 		var val = this.point.value.toFixed(precision);
-        return '<br>' + this.point.name +  ': <b>' +
-        prefix + " " +val + " " + postfix + ' </b>';
+        return this.point.name +  ': <b>' +
+        prefix + " " +val + " " + postfix;
 	};
 
 	tooltipObject={
@@ -506,8 +506,8 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 					enabled: true,
 					formatter: function() {
 						var val = this.point.value.toFixed(precision);
-				        return '<br>' + this.point.name +  ': <b>' +
-				        prefix + " " +val + " " + postfix + ' </b>';
+				        return this.point.name +  ': <b>' +
+				        prefix + " " +val + " " + postfix;
 					}
 				},
 				borderWidth: 6,
