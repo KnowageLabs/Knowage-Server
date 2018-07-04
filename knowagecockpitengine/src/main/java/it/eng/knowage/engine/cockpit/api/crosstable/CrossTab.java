@@ -204,7 +204,6 @@ public class CrossTab {
 				calculateCF(cf.getString("operation"), horizontal, cf.getInt("level"), cf.getString("name"), CellType.CF);
 			}
 		}
-		// addMeasuresScaleFactor(worksheetEngineInstance);
 		addSubtotals();
 
 		addTotals();
@@ -485,19 +484,10 @@ public class CrossTab {
 		int measuresCount = crosstabDefinition.getMeasures().size();
 		int index;
 
-		// if(crosstabDefinition.isPivotTable()){
-		// cellLimit = cellLimit/measuresCount;
-		// }else{
-		// cellLimit=0;
-		// }
-		//
-
 		this.columnsSortKeysMap = columnsSortKeysMap;
 		this.rowsSortKeysMap = rowsSortKeysMap;
 		this.measuresSortKeysMap = measuresSortKeysMap;
 
-		// List<String> rowCordinates = new ArrayList<String>();
-		// List<String> columnCordinates = new ArrayList<String>();
 		rowCordinates = new LinkedList<String>();
 		columnCordinates = new LinkedList<String>();
 		List<String> data = new LinkedList<String>();
@@ -1690,7 +1680,9 @@ public class CrossTab {
 	private double getTotalsOfColumn(int colunm, CellType type) {
 
 		double sum = 0;
-		for (int y = 0; y < dataMatrix.length; y++) {
+		int nrows = (type.getValue().equalsIgnoreCase("partialsum")) ? dataMatrix.length - 1 : dataMatrix.length; //  if subtotal doesn't sum that partial total
+//		for (int y = 0; y < dataMatrix.length; y++) { ORIG
+		for (int y = 0; y < nrows; y++) {
 			if (celltypeOfColumns.get(colunm).equals(type)) {
 				String value = dataMatrix[y][colunm];
 				if (!value.equals(DATA_MATRIX_NA)) {
@@ -1716,16 +1708,31 @@ public class CrossTab {
 		return toStringArray(st);
 	}
 
-	private double getTotalsOfRow(int row, CellType type) {
+	private int getSubtotalCellsNumber( List<CellType> celltypeOfRows) {
+		int toReturn = 0;
 
+		for(int c=0; c<celltypeOfRows.size(); c++) {
+			if (celltypeOfRows.get(c).getValue().equals("partialsum"))
+				toReturn ++;
+		}
+		return toReturn;
+	}
+
+	private double getTotalsOfRow(int row, CellType type) {
 		double sum = 0;
+		int nSubtotals = getSubtotalCellsNumber(celltypeOfRows);
+		nSubtotals = (nSubtotals == 0) ? 0 : nSubtotals-1;
+		int nMaxCol = dataMatrix[0].length - (nSubtotals);
 		for (int y = 0; y < dataMatrix[0].length; y++) {
-			if (y < celltypeOfRows.size() && celltypeOfRows.get(y).equals(type)) {
-				String value = dataMatrix[row][y];
-				if (!value.equals(DATA_MATRIX_NA)) {
-					sum = sum + new Double(value);
-				}
+//			if (y < celltypeOfRows.size() && celltypeOfRows.get(y).equals(type)) { //ORIG
+			if (y < celltypeOfRows.size() && celltypeOfRows.get(row).equals(type)) {
+					String value = dataMatrix[row][y];
+//					if (!value.equals(DATA_MATRIX_NA)) {
+					if (nMaxCol <= 0 || (!value.equals(DATA_MATRIX_NA) && y < nMaxCol)) { //if maxcol <= 0 add always the value
+						sum = sum + new Double(value);
+					}
 			}
+
 		}
 		return sum;
 	}
@@ -1882,10 +1889,7 @@ public class CrossTab {
 		if (measuresOnRow) {
 			if (rowsTotals) {
 				if (!measuresOnRow) {
-					// gestire il secondo true in base al fatto che ci siano o meno le colonne
-					// addSubtotalsToTheNodeFirstLevel(columnsRoot, true, true, 0);
 					addSubtotalsToTheNodeFirstLevel(columnsRoot, true, 0);
-					// addSubtotalsToTheTree(columnsRoot, true, true, 0);
 					addSubtotalsToTheTree(columnsRoot, true, 0);
 				} else {
 					int startPosition = 0;
@@ -1897,10 +1901,7 @@ public class CrossTab {
 
 			if (columnsTotals) {
 				if (measuresOnRow) {
-					// anto
-					// addSubtotalsToTheNodeFirstLevel(rowsRoot, false, true, 0);
 					addSubtotalsToTheNodeFirstLevel(rowsRoot, false, 0);
-					// addSubtotalsToTheTree(rowsRoot, false, true, 0);
 					addSubtotalsToTheTree(rowsRoot, false, 0);
 				} else {
 					int startPosition = 0;
@@ -1913,10 +1914,7 @@ public class CrossTab {
 
 			if (columnsTotals) {
 				if (measuresOnRow) {
-					// anto
-					// addSubtotalsToTheNodeFirstLevel(rowsRoot, false, true, 0);
 					addSubtotalsToTheNodeFirstLevel(rowsRoot, false, 0);
-					// addSubtotalsToTheTree(rowsRoot, false, true, 0);
 					addSubtotalsToTheTree(rowsRoot, false, 0);
 				} else {
 					int startPosition = 0;
@@ -1927,10 +1925,7 @@ public class CrossTab {
 			}
 			if (rowsTotals) {
 				if (!measuresOnRow) {
-					// anto gestire secondo true
-					// addSubtotalsToTheNodeFirstLevel(columnsRoot, true, true, 0);
 					addSubtotalsToTheNodeFirstLevel(columnsRoot, true, 0);
-					// addSubtotalsToTheTree(columnsRoot, true, true, 0);
 					addSubtotalsToTheTree(columnsRoot, true, 0);
 				} else {
 					int startPosition = 0;
@@ -1940,7 +1935,6 @@ public class CrossTab {
 				}
 			}
 		}
-
 	}
 
 	public int addSubtotalsToTheTreeNoMeasure(Node node, boolean horizontal, int startingPosition) {
@@ -1973,21 +1967,17 @@ public class CrossTab {
 
 	}
 
-	// public void addSubtotalsToTheTree(Node node, boolean horizontal, boolean hasColumns, int startingPosition) {
 	public void addSubtotalsToTheTree(Node node, boolean horizontal, int startingPosition) {
 		if (node.getSubTreeDepth() <= 4) {
 			return;
 		} else {
 			for (int i = 0; i < node.getChilds().size(); i++) {
-				// addSubtotalsToTheTree(node.getChilds().get(i), horizontal, hasColumns, startingPosition);
 				addSubtotalsToTheTree(node.getChilds().get(i), horizontal, startingPosition);
-				// startingPosition = addSubtotalsToTheNodeUpLevel(node.getChilds().get(i), horizontal, hasColumns, startingPosition);
 				startingPosition = addSubtotalsToTheNodeUpLevel(node.getChilds().get(i), horizontal, startingPosition);
 			}
 		}
 	}
 
-	// public int addSubtotalsToTheNodeUpLevel(Node node, boolean horizontal, boolean hasColumns, int startingPosition) {
 	public int addSubtotalsToTheNodeUpLevel(Node node, boolean horizontal, int startingPosition) {
 		List<Node> children = node.getChilds();
 		List<List<Integer>> valuesTosum = new ArrayList<List<Integer>>();
@@ -2010,7 +2000,6 @@ public class CrossTab {
 
 		for (int y = 0; y < valuesTosum.size(); y++) {
 			List<Integer> linesToSum = valuesTosum.get(y);
-			// linesums.add(getTotals(linesToSum, horizontal, hasColumns));
 			linesums.add(getTotals(linesToSum, horizontal));
 		}
 
@@ -2019,7 +2008,6 @@ public class CrossTab {
 		return startingPosition + measures.size();
 	}
 
-	// public int addSubtotalsToTheNodeFirstLevel(Node node, boolean horizontal, boolean hasColumns, int positionToAddNode) {
 	public int addSubtotalsToTheNodeFirstLevel(Node node, boolean horizontal, int positionToAddNode) {
 		Node n = node;
 		List<String[]> linesums = new ArrayList<String[]>();
@@ -2032,7 +2020,6 @@ public class CrossTab {
 																					// not
 																					// leaf
 			for (int i = 0; i < n.getChilds().size(); i++) {
-				// positionToAddNode = addSubtotalsToTheNodeFirstLevel(n.getChilds().get(i), horizontal, hasColumns, positionToAddNode);
 				positionToAddNode = addSubtotalsToTheNodeFirstLevel(n.getChilds().get(i), horizontal, positionToAddNode);
 			}
 		} else {
@@ -2042,7 +2029,6 @@ public class CrossTab {
 				for (int k = 0; k < n.getChilds().size(); k++) {
 					linesToSum.add(positionToAddNode + measures.size() * k + y);
 				}
-				// linesums.add(getTotals(linesToSum, horizontal, hasColumns));
 				linesums.add(getTotals(linesToSum, horizontal));
 			}
 			positionToAddNode = positionToAddNode + measures.size() * n.getChilds().size();
@@ -2073,22 +2059,24 @@ public class CrossTab {
 		return toReturn;
 
 	}
-
-	// private String[] getTotals(List<Integer> lines, boolean horizontal, boolean hasColumns) {
+	// get totals just for subtotals columns
 	private String[] getTotals(List<Integer> lines, boolean horizontal) {
 		double sum[];
 		if (!horizontal) {
 			sum = new double[dataMatrix[0].length];
 			for (int i = 0; i < dataMatrix[0].length; i++) {
 				String value = dataMatrix[lines.get(0)][i];
-				if (!value.equals(DATA_MATRIX_NA) && (getCellType(lines.get(0), i).equals(CellType.DATA))) {
+				if (!value.equals(DATA_MATRIX_NA) &&
+						(getCellType(lines.get(0), i).equals(CellType.DATA) || getCellType(lines.get(0), i).equals(CellType.SUBTOTAL))) { //get SUBTOTAL too for grand-subtotal
 					sum[i] = new Double(value);
 				}
 			}
 			for (int j = 1; j < lines.size(); j++) {
 				for (int i = 0; i < dataMatrix[0].length; i++) {
 					String value = dataMatrix[lines.get(j)][i];
-					if (!value.equals(DATA_MATRIX_NA) && (getCellType(lines.get(j), i).equals(CellType.DATA))) {
+//					if (!value.equals(DATA_MATRIX_NA) && (getCellType(lines.get(j), i).equals(CellType.DATA))) {
+					if (!value.equals(DATA_MATRIX_NA) &&
+							(getCellType(lines.get(j), i).equals(CellType.DATA)|| getCellType(lines.get(j), i).equals(CellType.SUBTOTAL))) {
 						sum[i] = sum[i] + new Double(value);
 					}
 				}
@@ -2097,16 +2085,19 @@ public class CrossTab {
 			sum = new double[dataMatrix.length];
 			for (int i = 0; i < dataMatrix.length; i++) {
 				String value = dataMatrix[i][lines.get(0)];
-				if (!value.equals(DATA_MATRIX_NA) && (getCellType(i, lines.get(0)).equals(CellType.DATA))) {
+//				if (!value.equals(DATA_MATRIX_NA) && (getCellType(i, lines.get(0)).equals(CellType.DATA))) { // ORIG
+				if (!value.equals(DATA_MATRIX_NA) &&
+						(getCellType(i, lines.get(0)).equals(CellType.DATA) || getCellType(i, lines.get(0)).equals(CellType.SUBTOTAL))) { //get SUBTOTAL too for grand-subtotal
 					sum[i] = new Double(value);
 				}
 			}
-			// int startJ = (hasColumns) ? 1 : 0;
 			int startJ = 1;
 			for (int j = startJ; j < lines.size(); j++) {
 				for (int i = 0; i < dataMatrix.length; i++) {
 					String value = dataMatrix[i][lines.get(j)];
-					if (!value.equals(DATA_MATRIX_NA) && (getCellType(i, lines.get(j)).equals(CellType.DATA))) {
+//					if (!value.equals(DATA_MATRIX_NA) && (getCellType(i, lines.get(j)).equals(CellType.DATA))) {
+					if (!value.equals(DATA_MATRIX_NA) &&
+							(getCellType(i, lines.get(j)).equals(CellType.DATA) || getCellType(i, lines.get(j)).equals(CellType.SUBTOTAL))) { //get SUBTOTAL too for grand-subtotal
 						sum[i] = sum[i] + new Double(value);
 					}
 
