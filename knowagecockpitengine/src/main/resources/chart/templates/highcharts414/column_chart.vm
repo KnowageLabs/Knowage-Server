@@ -873,8 +873,10 @@
         			comes right in the middle of the category value.
         			  			
         			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-        		*#  
-        		#if($labelAlign && $chart.orientation == 'vertical' && $chartType != "radar")
+
+        		*# 
+
+        		#if($labelAlign && $chartType != "radar")
         			align: "$labelAlign", 
         		#end
         		
@@ -1132,7 +1134,7 @@
 	        			style configuration popup will not be taken into account.
 	        			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	        		*# 	        		       		
-	        		#if($labelAlign && ($chart.orientation == 'horizontal' || $chartType == "radar"))
+	        		#if($labelAlign && $chartType != "radar")
 	        			align: "$labelAlign",	        		     			
 	        		#end
 	        		        		
@@ -1324,6 +1326,8 @@
 				#end
 	    	],
 	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
+
+
 						
 						#*
 							If inside the style template the value of the "Show value"
@@ -1371,7 +1375,6 @@
 		                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
                      		*/                		                    
 			               	formatter: function() {
-			                     
 			                    var value = this.y;	
 			                    var newValue = "";		                    
 			                    
