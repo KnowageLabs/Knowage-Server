@@ -3,32 +3,45 @@
 var app = angular.module("eventModule").controller("eventController",["$scope","eventService","sbiModule_messaging", function ($scope,eventService,sbiModule_messaging){
 
 	$scope.eventSelectModel = ["SCHEDULER", "ETL", "COMMONJ", "DATA_MINING"]
-	$scope.pageChangedFun = function(itemsPerPage, currentPageNumber) {
-
-		var ev = {
+$scope.pageChangedFun = function(itemsPerPage, currentPageNumber) {
+		
+		var filter = {
 			offset: $scope.offset,
 			fetchsize: itemsPerPage
 		}
-
+		
+		if($scope.startDate != undefined) {
+			filter.startDate = $scope.startDate;
+		}
+		
+		if($scope.endDate != undefined) {
+			filter.endDate = $scope.endDate;
+		}
+		
+		if($scope.type != undefined) {
+			filter.type = $scope.type;
+		}
+		
 		$scope.fetchsize = itemsPerPage;
-
+		
 		$scope.offset = 0;
-
+		
+		
 		if(currentPageNumber > 1) {
 			$scope.offset = (currentPageNumber -1) * $scope.fetchsize;
 		}
-
-		eventService.getAllEvents(ev).then(function(response) {
-
+		
+		eventService.getAllEvents(filter).then(function(response) {
+			
 			$scope.events = response.data.results;
 			$scope.totalItemCountt = response.data.total;
-
+			
 		}, function(response) {
-
+			
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, "Error");
-
+			
 		});
-
+		
 	}
 
 	$scope.showDetail = false;
