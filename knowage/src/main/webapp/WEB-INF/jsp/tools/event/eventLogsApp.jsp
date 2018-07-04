@@ -33,7 +33,7 @@
 		  </md-select>
 		  </md-input-container>
 		  <md-input-container flex>
-		   <md-button ng-click="getQEvents()">
+		   <md-button ng-click="searchEvents()">
           <md-icon md-font-icon="fas fa-search" class="fa"></md-icon>
            </md-button>
 		</md-input-container>
