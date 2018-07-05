@@ -111,6 +111,7 @@ import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBaseException;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
@@ -947,7 +948,8 @@ public class DatasetManagementAPI {
 			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
 		IDataSource dataSource = dataSet.getDataSource();
 		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
-		String tableName = "(" + querableBehaviour.getStatement().replace(";", "") + ") T";
+		String subQueryAlias = DataBaseFactory.getDataBase(dataSource).getSubQueryAlias();
+		String tableName = "(" + querableBehaviour.getStatement().replace(";", "") + ") " + subQueryAlias;
 		return queryDataset(dataSet, dataSource, projections, tableName, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 	}
 

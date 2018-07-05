@@ -36,6 +36,7 @@ import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUt
 import it.eng.spagobi.tools.dataset.metasql.query.PreparedStatementData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.database.DataBaseException;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
 
 public class JDBCAssociativeDatasetContainer extends AssociativeDatasetContainer {
 
@@ -46,7 +47,14 @@ public class JDBCAssociativeDatasetContainer extends AssociativeDatasetContainer
 	@Override
 	protected String getTableName() {
 		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
-		return "(" + querableBehaviour.getStatement() + ") T";
+		String subQueryAlias = "";
+		try {
+			subQueryAlias = DataBaseFactory.getDataBase(dataSet.getDataSource()).getSubQueryAlias();
+		} catch (DataBaseException e) {
+			logger.error("Error while retrieving Database type");
+		}
+
+		return "(" + querableBehaviour.getStatement() + ") " + subQueryAlias;
 	}
 
 	@Override
