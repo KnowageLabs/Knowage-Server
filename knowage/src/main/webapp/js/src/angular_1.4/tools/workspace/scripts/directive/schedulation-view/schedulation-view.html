@@ -1,46 +1,46 @@
-<div layout-padding>
-	<table class="kn-table" ng-hide="showGridView==true || ngModel.length==0 " >
+<div class="kn-table-container" ng-class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed">
+	<table class="kn-table" ng-hide="showGridView==true || ngModel.length==0 " class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed" style="table-layout:fixed;">
 		<thead>
 			<tr> 
-			<th ng-repeat="column in schedulationColumns">{{column.label}}</th>
-			<th class="multiTableAction">
-			<md-button ng-if="runSnapshots" ng-disabled="selectedTriggers.length == 0" ng-click="runTriggers('all')">
-	            {{translate.load('kn.schedulation.triggers.runall')}}
-	        </md-button>
-	        </th>
+				<th ng-repeat="column in schedulationColumns" style="width: 40%">{{column.label}}</th>
+				<th class="multiTableAction" style="width: 20%; text-align: center">
+					<md-button ng-if="runSnapshots" ng-disabled="selectedTriggers.length == 0" ng-click="runTriggers('all')">
+			            {{translate.load('kn.schedulation.triggers.runall')}}
+			        </md-button>
+		        </th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr ng-repeat-start="row in ngModel">
 				<td ng-repeat="column in schedulationColumns">{{row[column.name]}}</td>
-					<td class="tableAction">
-						<div layout="row" layout-align="end center" >
-							<md-button class="md-icon-button" ng-click="getSchedulations.action(row,$event)">
-								<md-tooltip>{{getSchedulations.label}}</md-tooltip>
-								<md-icon md-font-icon="{{getSchedulations.icon}}">
-							</md-button>
-						</div>
-					</td>
+				<td class="tableAction">
+					<div layout="row" layout-align="center center" >
+						<md-button class="md-icon-button" ng-click="getSchedulations.action(row,$event)">
+							<md-tooltip>{{getSchedulations.label}}</md-tooltip>
+							<md-icon md-font-icon="{{getSchedulations.icon}}">
+						</md-button>
+					</div>
+				</td>
 			</tr>
 			<tr ng-repeat-end ng-if="row.triggers.length >0 && runSnapshots">
 			<td colspan="1000" class="inner-space">
-				<table class="kn-table kn-inner-table" layout-padding>
+				<table class="kn-table kn-inner-table" layout-padding style="table-layout: fixed">
 					<thead>
 						<tr>
-							<th>{{translate.load('kn.schedulation.triggers.name')}}</th>
-							<th>{{translate.load('kn.schedulation.triggers.description')}}</th>
-							<th></th>
-							<th></th>
+							<th style="width: 40%">{{translate.load('kn.schedulation.triggers.name')}}</th>
+							<th style="width: 40%">{{translate.load('kn.schedulation.triggers.description')}}</th>
+							<th style="width: 10%"></th>
+							<th style="width: 10%"></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr ng-repeat="trigger in row.triggers track by $index ">
 							<td>{{trigger.triggerName}}</td>
 							<td>{{trigger.triggerDescription}}</td>
-							<td class="tableAction">
+							<td class="tableAction" layout-align="end center" style="text-align: center">
 								<md-checkbox ng-model="trigger.runnable" ng-change="toggleTriggerRun(trigger)"></md-checkbox>
 							</td>
-							<td class="tableAction">							
+							<td class="tableAction" layout-align="end center" style="text-align: center">
 								<md-icon md-font-icon="fa fa-play-circle" ng-click="runTriggers(trigger, row)" >
 								<md-tooltip>{{translate.load('kn.schedulation.triggers.run')}}</md-tooltip></md-icon>
 							</td>
