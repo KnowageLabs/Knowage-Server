@@ -18,12 +18,56 @@
 
 package it.eng.spagobi.tools.dataset.cache.query.visitor;
 
+import java.util.List;
+
+import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
+import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
 import it.eng.spagobi.utilities.database.IDataBase;
 
 public class OrientDbSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 	public OrientDbSelectQueryVisitor(IDataBase database) {
 		super(database);
+	}
+
+	@Override
+	protected void append(InFilter item) {
+		List<Projection> projections = item.getProjections();
+		String openBracket = projections.size() > 1 ? "(" : "";
+		String closeBracket = projections.size() > 1 ? ")" : "";
+
+		queryBuilder.append(openBracket);
+
+		append(projections.get(0), false);
+		for (int i = 1; i < projections.size(); i++) {
+			queryBuilder.append(",");
+			append(projections.get(i), false);
+		}
+
+		queryBuilder.append(closeBracket);
+
+		queryBuilder.append(" ");
+		queryBuilder.append(item.getOperator());
+		queryBuilder.append(" [");
+
+		List<Object> operands = item.getOperands();
+		for (int i = 0; i < operands.size(); i++) {
+			if (i % projections.size() == 0) { // 1st item of tuple of values
+				if (i >= projections.size()) { // starting from 2nd tuple of values
+					queryBuilder.append(",");
+				}
+				queryBuilder.append(openBracket);
+			}
+			if (i % projections.size() != 0) {
+				queryBuilder.append(",");
+			}
+			append(operands.get(i));
+			if (i % projections.size() == projections.size() - 1) { // last item of tuple of values
+				queryBuilder.append(closeBracket);
+			}
+		}
+
+		queryBuilder.append("]");
 	}
 
 }

@@ -45,6 +45,12 @@ public interface IDataBase extends Comparable<IDataBase> {
 	 */
 	String getAliasDelimiter();
 
+	/**
+	 *
+	 * @return the alias name used for sub queries in the FROM
+	 */
+	String getSubQueryAlias();
+
 	public abstract IDataSource getDataSource();
 
 	public abstract boolean isMetaSupported();
