@@ -10,7 +10,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
@@ -83,15 +82,19 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 			}
 
 			SbiMetaModel hibMetaModel = (SbiMetaModel) session.load(SbiMetaModel.class, aBIMetaModelParameter.getBiMetaModelID());
-			SbiParameters aSbiParameter = (SbiParameters) session.load(SbiParameters.class, aBIMetaModelParameter.getParameter().getId());
+			SbiParameters aSbiParameter = (SbiParameters) session.load(SbiParameters.class, aBIMetaModelParameter.getParID());
 
 			hibBIMetaModelParameter.setSbiMetaModel(hibMetaModel);
 			hibBIMetaModelParameter.setSbiParameter(aSbiParameter);
 			hibBIMetaModelParameter.setLabel(aBIMetaModelParameter.getLabel());
-			hibBIMetaModelParameter.setReqFl(new Short(aBIMetaModelParameter.getRequired().shortValue()));
-			hibBIMetaModelParameter.setModFl(new Short(aBIMetaModelParameter.getModifiable().shortValue()));
-			hibBIMetaModelParameter.setViewFl(new Short(aBIMetaModelParameter.getVisible().shortValue()));
-			hibBIMetaModelParameter.setMultFl(new Short(aBIMetaModelParameter.getMultivalue().shortValue()));
+			if (aBIMetaModelParameter.getRequired() != null)
+				hibBIMetaModelParameter.setReqFl(new Short(aBIMetaModelParameter.getRequired().shortValue()));
+			if (aBIMetaModelParameter.getModifiable() != null)
+				hibBIMetaModelParameter.setModFl(new Short(aBIMetaModelParameter.getModifiable().shortValue()));
+			if (aBIMetaModelParameter.getVisible() != null)
+				hibBIMetaModelParameter.setViewFl(new Short(aBIMetaModelParameter.getVisible().shortValue()));
+			if (aBIMetaModelParameter.getMultivalue() != null)
+				hibBIMetaModelParameter.setMultFl(new Short(aBIMetaModelParameter.getMultivalue().shortValue()));
 			hibBIMetaModelParameter.setParurlNm(aBIMetaModelParameter.getParameterUrlName());
 
 			Integer colSpan = aBIMetaModelParameter.getColSpan();
@@ -141,7 +144,7 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 			transaction = session.beginTransaction();
 
 			SbiMetaModel hibMetaModel = (SbiMetaModel) session.load(SbiMetaModel.class, aBIMetaModelParameter.getBiMetaModelID());
-			SbiParameters aSbiParameter = (SbiParameters) session.load(SbiParameters.class, aBIMetaModelParameter.getParameter().getId());
+			SbiParameters aSbiParameter = (SbiParameters) session.load(SbiParameters.class, aBIMetaModelParameter.getParID());
 
 			SbiMetaModelParameter newHibMetaModelParameter = new SbiMetaModelParameter();
 
@@ -166,7 +169,7 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 					+ aBIMetaModelParameter.getPriority();// + " and s.sbiMetaModel.id = " + hibMetaModel.getId();
 			Query query = session.createQuery(hqlUpdateShiftRight);
 			query.executeUpdate();
-			setTenant("DEFAULT TENANT");
+			setTenant("DEFAULT_TENANT");
 			newHibMetaModelParameter.setPriority(aBIMetaModelParameter.getPriority());
 			newHibMetaModelParameter.getCommonInfo().setOrganization(getTenant());
 			updateSbiCommonInfo4Insert(newHibMetaModelParameter);
@@ -198,7 +201,7 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 		Session session = getSession();
 		Transaction transaction = session.beginTransaction();
 
-		SbiMetaModelParameter hibMetaModelParameter = (SbiMetaModelParameter) session.load(SbiObjPar.class, aBIMetaModelParameter.getId());
+		SbiMetaModelParameter hibMetaModelParameter = (SbiMetaModelParameter) session.load(SbiMetaModelParameter.class, aBIMetaModelParameter.getId());
 
 		if (hibMetaModelParameter == null) {
 			logger.error("the BIObjectParameter with id=" + aBIMetaModelParameter.getId() + " does not exist.");

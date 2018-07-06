@@ -556,4 +556,12 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		}
 		return null;
 	}
+
+	@Path("/{id}/drivers")
+	@Consumes("application/json")
+	@Produces("application/json")
+	public BusinessModelDriversResource getBusinessModelDrivers(@PathParam("id") Integer id) {
+		logger.debug("Getting DriversResource instance");
+		return new BusinessModelDriversResource();
+	}
 }
