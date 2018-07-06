@@ -809,10 +809,10 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	  d3.select("#chart"+randomId)   	
     	.append("div").attr("id","explanation"+randomId)
     	//.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
-    	.append("span").attr("id","percentage"+randomId);
+    	.append("div").attr("id","percentage"+randomId);
 	  
 	  d3.select("#explanation"+randomId)
-	  	.append("text").html("</br>" + jsonObject.tip.text)
+	  	.append("text").html(jsonObject.tip.text)
     	.style("text-align","center")
     	.style("font-family",jsonObject.tip.style.fontFamily)
   		.style("font-style",jsonObject.tip.style.fontStyle ? jsonObject.tip.style.fontStyle : "none")
@@ -821,13 +821,13 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
   		.style("font-size",tipFontSize); 
 	
 	  d3.select("#percentage"+randomId)
-		.text(percentOrAbsSliceValueString)		  	
+		.append("text").html("</br>" + percentOrAbsSliceValueString)		  	
 		.style("font-family",jsonObject.tip.style.fontFamily)
 		.style("font-style",jsonObject.tip.style.fontStyle ? jsonObject.tip.style.fontStyle : "none")
 		.style("font-weight",jsonObject.tip.style.fontWeight ? jsonObject.tip.style.fontWeight : "none")
 		.style("text-decoration",jsonObject.tip.style.textDecoration ? jsonObject.tip.style.textDecoration : "none")
-		.style("font-size",setFontSize(width-widthCorrection,height-heightCorrection))
-		.style("vertical-align","middle");		  
+		.style("font-size",tipFontSize)
+		.style("text-align","center")  
 			
 function setFontSize(w,h){
 	var fontSize = (w*h)/8000;
