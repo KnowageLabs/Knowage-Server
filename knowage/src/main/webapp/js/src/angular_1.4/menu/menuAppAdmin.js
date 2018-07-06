@@ -334,9 +334,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        						var sLicense = scope.file.name;
 	        	        						if(scope.isForUpdate) {
 	        	        							for(var i = 0; i < scope.licenseData[currentHostName].length; i++) {
-		        	        							// console.log(scope.licenseData[currentHostName][i]);
 		        	        							if(response.data.product === scope.licenseData[currentHostName][i].product) {
-		        	        								//scope.licenseData[currentHostName][i] = response.data.product;
 		        	        								scope.licenseData[currentHostName][i] = response.data;
 		        	        							} 
 		        	        						}
