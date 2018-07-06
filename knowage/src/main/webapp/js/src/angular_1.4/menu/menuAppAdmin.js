@@ -299,7 +299,10 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 
 	        	        scope.uploadFile = function(hostName, license){
 	        	        	if (scope.file){
-	        	        		
+	        	        		if(!scope.file.name.endsWith(".lic")){
+                                    sbiModule_messaging.showErrorMessage("The type of file must be license!", "Different type error");
+                                    return;
+                                }
 	        	        		if(scope.isForUpdate){
 	        	        			var selectedLicense = scope.file.name;
 	        	        			var existingLicense = license.product;
