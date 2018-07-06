@@ -1457,7 +1457,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									
 										<span flex></span>
 									
-										<md-button class="md-icon-button" aria-label="Add new dataset parameter" ng-click="parametersAddItem(); setFormDirty()" 
+										<md-button class="md-icon-button" aria-label="Add new dataset parameter" ng-click="parametersAddItem($event); setFormDirty()" 
 												title="{{translate.load('sbi.ds.parameters.add.tooltip')}}">
 										  <md-icon md-font-icon="fa fa-plus-circle" ></md-icon>
 										</md-button>
@@ -1615,7 +1615,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                  		<md-input-container class="small counter" style="padding-left:8px;">
 				                     		<md-checkbox 	aria-label="Persisted" 
 					                     					ng-model="selectedDataSet.isPersisted" ng-checked="" 
-					                     					ng-change="setFormDirty()">
+					                     					ng-change="setFormDirty()"
+					                     					ng-disabled="disablePersisting">
 											</md-checkbox>
 				                  		</md-input-container>
 				                  		
