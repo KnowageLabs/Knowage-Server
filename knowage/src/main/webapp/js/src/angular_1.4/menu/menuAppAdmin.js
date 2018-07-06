@@ -299,6 +299,18 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 
 	        	        scope.uploadFile = function(hostName, license){
 	        	        	if (scope.file){
+	        	        		
+	        	        		if(scope.isForUpdate){
+	        	        			var selectedLicense = scope.file.name;
+	        	        			var existingLicense = license.product;
+	        	        			
+	        	        			if(selectedLicense.indexOf(existingLicense) == -1)   {
+	        	        				sbiModule_messaging.showErrorMessage("You have chosen wrong type of license", "Different type error");
+		        	        			scope.isForUpdate = false;
+	        	        				return;	
+	        	        			}     	        			
+	        	        		}
+	        	        		
 	        	        		var config = {
 	        	        				transformRequest:angular.identity,
 	        	        				headers:{'Content-Type': undefined}
@@ -308,12 +320,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        		formData.append(scope.file.name,scope.file);
 	        	        		var currentHostName = hostName;
 
-	        	        		var selectedLicense = scope.file.name;
-	        	        		var existingLicense = license.product;
-
-	        	        		if(selectedLicense.indexOf(existingLicense) > -1){
-
-	        	        			$http.post(restLicense.base + restLicense.upload + "/"+hostName ,formData,config)
+	        	        			$http.post(restLicense.base + restLicense.upload + "/"+hostName+"?isForUpdate=" +scope.isForUpdate ,formData,config)
 	        	        			.then(
 	        	        				function(response,status,headers,config){
 	        	        					if (response.data.errors){
@@ -322,16 +329,22 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        						// add the new license to the list 
 	        	        						
 	        	        						var sLicense = scope.file.name;
-	        	        						for(var i = 0; i < scope.licenseData[currentHostName].length; i++) {
-	        	        							// console.log(scope.licenseData[currentHostName][i]);
-	        	        							if(response.data.product === scope.licenseData[currentHostName][i].product) {
-	        	        								//scope.licenseData[currentHostName][i] = response.data.product;
-	        	        								scope.licenseData[currentHostName][i] = response.data;
-	        	        							}
+	        	        						if(scope.isForUpdate) {
+	        	        							for(var i = 0; i < scope.licenseData[currentHostName].length; i++) {
+		        	        							// console.log(scope.licenseData[currentHostName][i]);
+		        	        							if(response.data.product === scope.licenseData[currentHostName][i].product) {
+		        	        								//scope.licenseData[currentHostName][i] = response.data.product;
+		        	        								scope.licenseData[currentHostName][i] = response.data;
+		        	        							} 
+		        	        						}
+	        	        						} else {
+	        	        							$scope.licenseData[currentHostName].push(response.data);
 	        	        						}
-	        	        						$scope.licenseData[currentHostName].push(response.data);
+	        	        						
+	        	        						
 	        	        						scope.file = undefined;
 	        	        						scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
+	        	        						scope.isForUpdate = false;
 	        	        					}
 	        	        				},
 	        	        				function(response,status,headers,config){
@@ -341,19 +354,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        						scope.messaging.showErrorMessage(scope.translate.load('sbi.ds.failedToUpload'),scope.translate.load('sbi.generic.error'));
 	        	        					}
 	        	        				})
-
-	        	        		} else {
-	        	        			console.log("it does not")
-	        	        			var wrongLicenseSelected = selectedLicense.slice(0,9);
-	        	        			sbiModule_messaging.showErrorMessage
-	        	        			(
-	        	        			"Your license must be type of "+existingLicense+" not "+wrongLicenseSelected+" please select same type of license",
-	        	        			"Different types of licenses and try again."
-	        	        			);
-	        	        		}
-
 	        	        	}
-	        	        	scope.isForUpdate = false;
 	        	        }
 
 	        	        scope.dowloadFile = function(license, hostName){

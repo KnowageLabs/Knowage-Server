@@ -60,7 +60,7 @@
 	          			
 	          		<p ng-class="{'kn-success': license.status == 'LICENSE_VALID' ,'kn-danger' :license.status !== 'LICENSE_VALID'}">
 	          
-		          				{{license.status}}
+		          				{{license.status_ext}}
 		          		
 		          		<span ng-if="license.expiration_date">- {{license.expiration_date}}</span>
 	          		</p>
