@@ -435,7 +435,7 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	}
 	
 	$scope.hasPrecision = function(column){
-		if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.lang.BigDecimal' || column.type == 'java.lang.Long'){
+		if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long'){
 			return true;
 		}
 		return false;
