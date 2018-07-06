@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.api.v2;
+package it.eng.spagobi.api.v2.businessmodelcatalogue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -563,5 +563,21 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	public BusinessModelDriversResource getBusinessModelDrivers(@PathParam("id") Integer id) {
 		logger.debug("Getting DriversResource instance");
 		return new BusinessModelDriversResource();
+	}
+
+	@Path("/{id}/datadependencies")
+	@Consumes("application/json")
+	@Produces("application/json")
+	public BusinessModelDataDependenciesResource getDataDependencies(@PathParam("id") Integer id, @QueryParam("driverId") Integer driverId) {
+		logger.debug("Getting DataDependenciesResource instance");
+		return new BusinessModelDataDependenciesResource();
+	}
+
+	@Path("/{id}/visualdependencies")
+	@Consumes("application/json")
+	@Produces("application/json")
+	public BusinessModelVisualDependenciesResource getVisualDependencies() {
+		logger.debug("Getting VisualDependenciesResource instance");
+		return new BusinessModelVisualDependenciesResource();
 	}
 }
