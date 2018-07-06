@@ -181,6 +181,12 @@
 	}
 
 	cockpit-table-widget {
+		.kn-noItems {
+			top: 40px;
+			p {
+				margin: 0;
+			}
+		}
 		.highlight {
 			background-color: $secondaryColor !important;
 		}

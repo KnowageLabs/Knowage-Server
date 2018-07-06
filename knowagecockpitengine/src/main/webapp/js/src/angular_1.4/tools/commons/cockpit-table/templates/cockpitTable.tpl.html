@@ -37,14 +37,14 @@
 	        <tr ng-repeat="row in model | orderBy : getSortingColumnFilter() : getSortingOrderAsBoolean() | limitTo : settings.pagination.enabled?settings.pagination.itemsNumber:undefined : (settings.pagination.enabled && settings.pagination.frontEnd)?(settings.page-1)*settings.pagination.itemsNumber:0" ng-style="::getRowStyle($even)" class="en-row" >
 	            <td ng-repeat="column in columns" ng-if="!column.style.hiddenColumn" ng-click="selectCell($event,row,column)" ng-style="::getCellStyle(column,row[column.aliasToShow])" ng-class="{'highlight': isCellSelected(row,column)}">
 	                <md-tooltip ng-if="!column.hideTooltip" md-direction="top" md-delay="500">
-	                 	<span ng-if="column.type == 'java.lang.Double' || column.type == 'java.lang.Float'">	{{row[column.aliasToShow] | number:(column.style.precision || 2)}} </span>
-	                	<span ng-if="column.type != 'java.lang.Double' && column.type != 'java.lang.Float'">	{{row[column.aliasToShow]}} </span>
+	                 	<span ng-if="::hasPrecision(column)">	{{row[column.aliasToShow] | number:(column.style.precision || 2)}} </span>
+	                	<span ng-if="::!hasPrecision(column)">	{{row[column.aliasToShow]}} </span>
 	                </md-tooltip>
 					<div class="cellContainer" ng-style="::getContainerStyle(column)">
 		                <span ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
 			                <span ng-if="column.style.prefix">{{column.style.prefix}}</span> 
-			                <span ng-if="column.type == 'java.lang.Double'">{{row[column.aliasToShow] | number:(column.style.precision || 2)}}</span>
-			                <span ng-if="column.type != 'java.lang.Double'">{{row[column.aliasToShow]}}</span>
+			                <span ng-if="::hasPrecision(column)">{{row[column.aliasToShow] | number:(column.style.precision || 2)}}</span>
+			                <span ng-if="::!hasPrecision(column)">{{row[column.aliasToShow]}}</span>
 			                <span ng-if="column.style.suffix">{{column.style.suffix}}</span>
 		                </span>
 		                <i  class="fa fa-search showFullContentIcon" ng-if="column.style.maxChars!= '' && row[column.aliasToShow].length > column.style.maxChars" ng-click="showFullContent($event,row[column.aliasToShow])"></i>
@@ -69,7 +69,7 @@
 			</tr>
 			<tr ng-if="settings.summary.enabled" class="summary">
 	            <td ng-repeat="column in columns" ng-style="getSummaryStyle(column)" ng-if="!column.style.hiddenColumn" >
-		            <div ng-if="column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.lang.BigDecimal' || column.type == 'java.lang.Long'">
+		            <div ng-if="::hasPrecision(column)">
 		            	<md-tooltip md-direction="top" md-delay="500">{{settings.summary.row[column.aliasToShow] | number:(column.style.precision || 2)}}</md-tooltip>
 	            			{{settings.summary.row[column.aliasToShow] | number:(column.style.precision || 2)}}
 		            </div>
@@ -79,7 +79,7 @@
 	
 	</table>
 </div>
-<div ng-if="(settings.noData && settings.noData.enabled) && (!model || model.length == 0)" layout="row" layout-align="center center" layout-fill>
+<div ng-if="(settings.noData && settings.noData.enabled) && (!model || model.length == 0)" layout="row" layout-align="center start" layout-fill>
 	<div class="kn-noItems" flex="60" flex-xs="100">
 		<p class="ng-binding" ng-if="settings.noData.message">{{settings.noData.message}}</p>
 		<p class="ng-binding" ng-if="!settings.noData.message">{{::translate.load('sbi.cockpit.widgets.table.nodata.default')}}</p>

@@ -242,6 +242,11 @@
                         }
                         return icon;
                     };
+                    
+                    scope.hasPrecision = function(column){
+                    	if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long'){return true}
+                    	return false;
+                    }
 
                     //conditional value formatting
                     scope.formatValue = function (value, column){
