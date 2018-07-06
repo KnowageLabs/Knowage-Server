@@ -115,6 +115,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.showSaveAndCancelButtons = false;
 
 	$scope.scheduling = {};
+	
+	$scope.disablePersisting = false;
 
 	// The current date for data pickers for Scheduling
 	var currentDate = new Date();
@@ -808,20 +810,50 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.parameterItems = [];
 	$scope.parametersCounter = 0;
 
-	$scope.parametersAddItem = function() {
-
-		$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":"","index":$scope.parametersCounter++});
-
-		$timeout(
+	$scope.parametersAddItem = function(event) {
+		
+		if($scope.selectedDataSet.isPersisted == true) {
+			var confirm = $mdDialog.confirm()
+				         .title($scope.translate.load("sbi.ds.parameters.dialog.title"))
+				         .targetEvent(event)
+				         .textContent($scope.translate.load("sbi.ds.parameters.dialog.text"))
+				         .ariaLabel("Add dataset parameter")
+				         .ok($scope.translate.load("sbi.general.yes"))
+				         .cancel($scope.translate.load("sbi.general.No"));
+			
+			$mdDialog.show(confirm).then(
 					function() {
-						var page = $scope.tableLastPage("datasetParametersTable");
-						// If the page that is returned is less than the current one, that means that we are already on that page, so keep it (danristo)
-						$scope.parametersTableLastPage = page<$scope.parametersTableLastPage ? $scope.parametersTableLastPage : page;
-					},
+						$scope.selectedDataSet.isPersisted = false;
+						$scope.selectedDataSet.persistTableName = '';
+						$scope.disablePersisting = true;
+						$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":"","index":$scope.parametersCounter++});
+						
+						$timeout(
+									function() {
+										var page = $scope.tableLastPage("datasetParametersTable");
+										// If the page that is returned is less than the current one, that means that we are already on that page, so keep it (danristo)
+										$scope.parametersTableLastPage = page<$scope.parametersTableLastPage ? $scope.parametersTableLastPage : page;
+									},
 
-					300
-				);
+									300
+								);
+					}
+			);
+		} else {			
+			$scope.disablePersisting = true;
+			$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":"","index":$scope.parametersCounter++});
+			
+			$timeout(
+						function() {
+							var page = $scope.tableLastPage("datasetParametersTable");
+							// If the page that is returned is less than the current one, that means that we are already on that page, so keep it (danristo)
+							$scope.parametersTableLastPage = page<$scope.parametersTableLastPage ? $scope.parametersTableLastPage : page;
+						},
 
+						300
+					);
+		}
+		
 	}
 
 	$scope.parameterDelete =
@@ -856,10 +888,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						 				break;
 						 			}
 						 		}
-
+								
+								if($scope.parameterItems.length == 0) {
+									$scope.disablePersisting = false;
+								}
+								
 					 		}
-						);
-
+						);								
 	 		}
 
 	 	}
@@ -884,6 +919,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						function() {
 							$scope.setFormDirty();
 							$scope.parameterItems = [];
+							$scope.disablePersisting = false;
 				 		}
 					);
 		}
@@ -1842,6 +1878,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSet = angular.copy(item);
 		$scope.showSaveAndCancelButtons = true;
 
+		if($scope.selectedDataSet.pars.length > 0) {
+			$scope.disablePersisting = true;
+		} else {
+			$scope.disablePersisting = false;
+		}
+		
 		// SCHEDULING
 		if ($scope.selectedDataSet.isScheduled) {
 			$scope.selectedDataSet.startDate = new Date($scope.selectedDataSet.startDate);
@@ -2296,14 +2338,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					sparqlExecutionTimeout: 30
 
 			}
-
+						
 			$scope.datasetsListTemp.push(object);
 			$scope.selectedDataSet = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]);
 			$scope.selectedDataSetInit = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]); // Reset the selection (none dataset item will be selected) (danristo)
 			$scope.showSaveAndCancelButtons = true;
 
 			$scope.transformDatasetState = false;
-
+			$scope.disablePersisting = false;
+			
 			// Give a little time for the AT to render after the insertion of a new table element (new dataset) (danristo)
 			// We do not need to check if the current page is the one that is return by a function, since we cannot add more than one empty dataset
 			$timeout(function() { var page = $scope.tableLastPage("datasetList_id"); $scope.datasetTableLastPage = (page<=$scope.datasetTableLastPage)
@@ -2493,7 +2536,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			if ($scope.selectedDataSet.id) {
 				for (i=0; i<$scope.datasetsListTemp.length; i++) {
 					if ($scope.datasetsListTemp[i].id == $scope.selectedDataSet.id) {
-//						console.log("nasao 3: ",$scope.datasetsListTemp[i]);
 						indexOfExistingDSInAT = i;
 					}
 				}
