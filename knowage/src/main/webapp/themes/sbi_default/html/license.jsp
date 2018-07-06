@@ -57,8 +57,11 @@
 	        	<img ng-src="/knowage/themes/commons/img/licenseImages/{{license.product}}.png" class="md-avatar" alt="{{license.product}}" />
 	        	<div flex class="md-list-item-text">
 	          		<h3>{{license.product}}</h3>
-	          		<p ng-class="{'kn-danger':license.status.contains('INVALID'),'kn-success':!license.status.contains('INVALID')}">
-		          		{{license.status_ext}}
+	          			
+	          		<p ng-class="{'kn-success': license.status == 'LICENSE_VALID' ,'kn-danger' :license.status !== 'LICENSE_VALID'}">
+	          
+		          				{{license.status}}
+		          		
 		          		<span ng-if="license.expiration_date">- {{license.expiration_date}}</span>
 	          		</p>
 	         	</div>
@@ -81,7 +84,7 @@
                  			<md-icon ng-if="!isForUpdate" md-font-set="fa" md-font-icon="fa fa-edit"></md-icon>
             			</label>
             			<input  ng-disabled='ngDisabled' id="upload_license_update" type="file" ng-hide="true" onchange="angular.element(this).scope().setFile(this, true)">
-                 		<md-icon ng-if="isForUpdate" ng-click="uploadFile(host.hostName)"   md-font-set="fa" md-font-icon="fa fa-upload"></md-icon>
+                 		<md-icon ng-if="isForUpdate" ng-click="uploadFile(host.hostName, license, isForUpdate)"   md-font-set="fa" md-font-icon="fa fa-upload"></md-icon>
 			   </md-menu-item>
 			    <md-menu-item>
 			        <md-icon ng-click="deleteFile(license, host.hostName)" md-font-set="fa" md-font-icon="fa fa-trash"></md-icon>

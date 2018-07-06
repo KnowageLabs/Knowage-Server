@@ -244,7 +244,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 				$scope.licenseData=[];
 				$scope.hostsData=[];
 
-	        	$http.get(Sbi.config.contextName+'/restful-services/1.0/license?onlyValid=true').success(function(data){
+	        	$http.get(Sbi.config.contextName+'/restful-services/1.0/license').success(function(data){
 	        		if (data.errors){
 						$scope.messaging.showErrorMessage(data.errors[0].message,$scope.translate.load('sbi.generic.error'));
 						return;
@@ -297,7 +297,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        	scope.$apply();
 	        	        }
 
-	        	        scope.uploadFile = function(hostName){
+	        	        scope.uploadFile = function(hostName, license){
 	        	        	if (scope.file){
 	        	        		var config = {
 	        	        				transformRequest:angular.identity,
@@ -307,13 +307,18 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        		var formData = new FormData();
 	        	        		formData.append(scope.file.name,scope.file);
 	        	        		var currentHostName = hostName;
-	        	        		$http.post(restLicense.base + restLicense.upload + "/"+hostName ,formData,config)
+
+	        	        		var selectedLicense = scope.file.name;
+	        	        		var existingLicense = license.product;
+
+	        	        		if(selectedLicense.indexOf(existingLicense) > -1){
+
+	        	        			$http.post(restLicense.base + restLicense.upload + "/"+hostName ,formData,config)
 	        	        			.then(
 	        	        				function(response,status,headers,config){
 	        	        					if (response.data.errors){
 	        	        						scope.messaging.showErrorMessage(scope.translate.load(response.data.errors[0].message),scope.translate.load('sbi.generic.error'));
 	        	        					}else{
-	        	        						// add the new license to the list
 	        	        						$scope.licenseData[currentHostName].push(response.data);
 	        	        						scope.file = undefined;
 	        	        						scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
@@ -326,6 +331,17 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        						scope.messaging.showErrorMessage(scope.translate.load('sbi.ds.failedToUpload'),scope.translate.load('sbi.generic.error'));
 	        	        					}
 	        	        				})
+
+	        	        		} else {
+	        	        			console.log("it does not")
+	        	        			var wrongLicenseSelected = selectedLicense.slice(0,9);
+	        	        			sbiModule_messaging.showErrorMessage
+	        	        			(
+	        	        			"Your license must be type of "+existingLicense+" not "+wrongLicenseSelected+" please select same type of license",
+	        	        			"Different types of licenses and try again."
+	        	        			);
+	        	        		}
+
 	        	        	}
 	        	        	scope.isForUpdate = false;
 	        	        }
