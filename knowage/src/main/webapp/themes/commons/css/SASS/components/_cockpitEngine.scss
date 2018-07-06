@@ -1695,6 +1695,13 @@
 	}
 
 	cockpit-sheet {
+		#sheetTabs:not(.cockpitEditMode) {
+	    	&.highlander {
+	    		md-pagination-wrapper {
+	    			display: none;
+	    		}
+	    	}
+    	}
 		md-tabs-content-wrapper {
 			bottom: 0;
 			md-tab-content{

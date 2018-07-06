@@ -1,4 +1,5 @@
-<md-tabs id="sheetTabs" ng-class="{'cockpitSheetTabs':cockpitModule_properties.EDIT_MODE && cockpitModule_template.sheets.length<maxSheetsNumber, 'highlander':cockpitModule_template.sheets.length==1}" class="cockpitSheetTabsHook" md-align-tabs="bottom" flex md-selected="cockpitModule_properties.CURRENT_SHEET" md-autoselect >
+<md-tabs id="sheetTabs" ng-class="{'cockpitEditMode':cockpitModule_properties.EDIT_MODE,'cockpitSheetTabs':cockpitModule_properties.EDIT_MODE && cockpitModule_template.sheets.length<maxSheetsNumber, 'highlander':cockpitModule_template.sheets.length==1}" 
+class="cockpitSheetTabsHook" md-align-tabs="bottom" flex md-selected="cockpitModule_properties.CURRENT_SHEET" md-autoselect >
 	<md-tab ng-repeat="sheet in cockpitModule_template.sheets | orderObjectBy : 'index' | limitTo: maxSheetsNumber">
 		<md-tab-label >
 			<span ng-if="cockpitModule_properties.EDIT_MODE" class="sheetPageButton-{{$index}}" ng-dblClick="renameSheet(sheet,$event)">{{sheet.label}}</span>
