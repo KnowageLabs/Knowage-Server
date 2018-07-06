@@ -1177,6 +1177,31 @@ function cockpitWidgetControllerFunction(
 		return false;
 	}
 
+	$scope.mutualExclusionToggle = function() {
+		$scope.ngModel.mutualExclusion = !$scope.ngModel.mutualExclusion;
+		console.log($scope.ngModel.mutualExclusion);
+		if($scope.ngModel.mutualExclusion !== undefined) {
+			var l = $scope.getLayerByName($scope.ngModel.content.layers[0].name);
+			if (!l) return; //do nothing
+			l.setVisible(true);	
+			if( $scope.ngModel.mutualExclusion === true) {
+				//By default select only the first layer
+				for(var i = 1; i < $scope.ngModel.content.layers.length ; i++) {
+					var l = $scope.getLayerByName($scope.ngModel.content.layers[i].name);
+					if (!l) return; //do nothing
+					l.setVisible(false);	
+				}
+			} else {
+				//By  default select all layers
+				for(var i = 1; i < $scope.ngModel.content.layers.length ; i++) {
+					var l = $scope.getLayerByName($scope.ngModel.content.layers[i].name);
+					if (!l) return; //do nothing
+					l.setVisible(true);	
+				}
+			}
+		}
+	}
+
 	$scope.modalQuickWidget= function(ev) {
 		if($scope.ngModel.type == 'chart'){
 			$scope.addTableFromChart("table");

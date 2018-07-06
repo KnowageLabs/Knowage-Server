@@ -641,11 +641,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    //control panel events
 	    $scope.toggleLayer = function(e,n){
-	    	e.stopPropagation();
-	    	var l = $scope.getLayerByName(n);
-	    	if (!l) return; //do nothing
-	    	var toggle = !l.getVisible();
-	    	l.setVisible(!l.getVisible());
+			e.stopPropagation();
+			console.log($scope.ngModel.mutualExclusion);
+			if($scope.ngModel.mutualExclusion === false) {
+				console.log("Non mutual exclusion");
+				var l = $scope.getLayerByName(n);
+				if (!l) return; //do nothing
+				var toggle = !l.getVisible();
+				l.setVisible(!l.getVisible());
+			} else {
+				console.log("Mutual exclusion, layer selected: "+n);
+				var l = $scope.getLayerByName(n);
+				if (!l) return; //do nothing
+				l.setVisible(true);
+				for(var i in $scope.ngModel.content.layers) {
+					var layerName = $scope.ngModel.content.layers[i].name;
+					console.log(layerName);
+					if(n !== layerName ) {
+						console.log("setting to false");
+						var l_tmp = $scope.getLayerByName(layerName);
+						if (!l_tmp) return; //do nothing
+						l_tmp.setVisible(false);
+					}
+				}
+			}
 	    }
 
 	    $scope.toggleLayerExpanse = function(layer){
