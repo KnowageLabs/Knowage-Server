@@ -33,6 +33,8 @@ import it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIMetaModelParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IMetaModelParuseDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IMetaModelParviewDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
@@ -979,4 +981,11 @@ public class DAOFactory {
 		return (ISbiExportersDAO) createDAOInstance("ExportersDAO");
 	}
 
+	public static IMetaModelParuseDAO getMetaModelParuseDao() {
+		return (IMetaModelParuseDAO) createDAOInstance("MetaModelParuseDAO");
+	}
+
+	public static IMetaModelParviewDAO getMetaModelParviewDao() {
+		return (IMetaModelParviewDAO) createDAOInstance("MetaModelParviewDAO");
+	}
 }

@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 5, 2018 12:12:30 PM by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+   <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParview" table="SBI_METAMODEL_PARVIEW">
+        <id name="parviewId" type="java.lang.Integer">
+            <column name="PARVIEW_ID" />
+           <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+		        <param name="segment_value">SBI_METAMODEL_PARVIEW</param>	
+		        <param name="initial_value">1</param>
+   			</generator>
+        </id>
+        <many-to-one name="sbiMetaModelPar" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParameter" >
+            <column name="METAMODEL_PAR_ID" />
+        </many-to-one>
+        <property name="compareValue" type="java.lang.String">
+            <column name="COMPARE_VALUE" />
+        </property>
+        <property name="viewLabel" type="java.lang.String">
+            <column name="VIEW_LABEL" />
+        </property>
+        <many-to-one name="sbiMetaModelFather" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParameter" >
+            <column name="METAMODEL_PAR_FATHER_ID" />
+        </many-to-one>
+        <property name="operation" type="java.lang.String">
+            <column name="OPERATION" />
+        </property>
+        <property name="prog" type="java.lang.Integer">
+            <column name="PROG" />
+        </property>
+         <component name="commonInfo" insert="true" update="true" 
+  			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+        <property name="userIn" type="string">
+            <column name="USER_IN" length="100" not-null="true" />
+        </property> 
+        <property name="userUp" type="string">
+            <column name="USER_UP" length="100" not-null="false" />
+        </property> 
+        <property name="userDe" type="string">
+            <column name="USER_DE" length="100" not-null="false" />
+        </property>                 
+        <property name="timeIn" type="timestamp">
+            <column name="TIME_IN" not-null="true" />
+        </property> 
+        <property name="timeUp" type="timestamp">
+            <column name="TIME_UP" not-null="false" />
+        </property> 
+        <property name="timeDe" type="timestamp">
+            <column name="TIME_DE" not-null="false" />
+        </property>                      
+        <property name="sbiVersionIn" type="string">
+            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionUp" type="string">
+            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionDe" type="string">
+            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+        </property>                 
+        <property name="organization" type="string">
+            <column name="ORGANIZATION" length="20" not-null="false" />
+        </property>  			 
+  </component>     
+    </class>
+    <filter-def name="tenantFilter">
+  		<filter-param name="tenant" type="string"/>
+ 	</filter-def>
+</hibernate-mapping>

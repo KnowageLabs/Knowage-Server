@@ -11,6 +11,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.MetaModelParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.MetaModelParview;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
@@ -204,8 +207,42 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 		SbiMetaModelParameter hibMetaModelParameter = (SbiMetaModelParameter) session.load(SbiMetaModelParameter.class, aBIMetaModelParameter.getId());
 
 		if (hibMetaModelParameter == null) {
-			logger.error("the BIObjectParameter with id=" + aBIMetaModelParameter.getId() + " does not exist.");
+			logger.error("the BIMetaModelParameter with id=" + aBIMetaModelParameter.getId() + " does not exist.");
 		}
+
+		MetaModelParuseDAOHibImpl metaModelParuseDAO = new MetaModelParuseDAOHibImpl();
+		List metaModelParuses = metaModelParuseDAO.loadAllParuses(hibMetaModelParameter.getMetaModelParId());
+		Iterator itMetaModelParuses = metaModelParuses.iterator();
+		while (itMetaModelParuses.hasNext()) {
+			MetaModelParuse aMetaModelParuse = (MetaModelParuse) itMetaModelParuses.next();
+			metaModelParuseDAO.eraseMetaModelParuse(aMetaModelParuse);
+		}
+
+		// deletes all MetaModelParuse object (dependencies) of the biMetaModelParameter that have a father relationship
+		List metaModelParusesFather = metaModelParuseDAO.loadMetaModelParusesFather(hibMetaModelParameter.getMetaModelParId());
+		Iterator itMetaModelParusesFather = metaModelParusesFather.iterator();
+		while (itMetaModelParusesFather.hasNext()) {
+			MetaModelParuse aMetaModelParuseFather = (MetaModelParuse) itMetaModelParusesFather.next();
+			metaModelParuseDAO.eraseMetaModelParuse(aMetaModelParuseFather);
+		}
+
+		// delete also all MetaModelParView (visibility dependencies) of the biMetaModelParameter
+		MetaModelParviewDAOHibImpl metaModelParviewDAO = new MetaModelParviewDAOHibImpl();
+		List metaModelParview = metaModelParviewDAO.loadMetaModelParviews(hibMetaModelParameter.getMetaModelParId());
+		Iterator itMetaModelParviews = metaModelParview.iterator();
+		while (itMetaModelParviews.hasNext()) {
+			MetaModelParview aMetaModelParview = (MetaModelParview) itMetaModelParviews.next();
+			metaModelParviewDAO.eraseMetaModelParview(aMetaModelParview.getParviewId());
+		}
+
+		// delete also all MetaModelParView (visibility dependencies) of the biMetaModelParameter father
+		List metaModelParviewFather = metaModelParviewDAO.loadMetaModelParviewsFather(hibMetaModelParameter.getMetaModelParId());
+		Iterator itMetaModelParviewsFather = metaModelParviewFather.iterator();
+		while (itMetaModelParviewsFather.hasNext()) {
+			MetaModelParview aMetaMOdelParviewFather = (MetaModelParview) itMetaModelParviewsFather.next();
+			metaModelParviewDAO.eraseMetaModelParview(aMetaMOdelParviewFather.getParviewId());
+		}
+
 		session.delete(hibMetaModelParameter);
 
 		Integer metaModelId = hibMetaModelParameter.getSbiMetaModel().getId();
@@ -214,6 +251,7 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 				+ hibMetaModelParameter.getPriority() + " and s.sbiMetaModel.id = " + metaModelId;
 		Query query = session.createQuery(hqlUpdateShiftRight);
 		query.executeUpdate();
+		transaction.commit();
 	}
 
 	@Override
@@ -277,16 +315,17 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 			hibMetaModel = (SbiMetaModel) session.load(SbiMetaModel.class, MetaModelId);
 			List<SbiMetaModelParameter> metaModelParameters = hibMetaModel.getSbiMetaModelParameters();
 
-			logger.debug("delete all objParameters for obj with label " + hibMetaModel.getName());
+			logger.debug("delete all metaModelParameters for MetaModel with label " + hibMetaModel.getName());
 
 			for (Iterator iterator = metaModelParameters.iterator(); iterator.hasNext();) {
 				SbiMetaModelParameter HibMetaModelParameter = (SbiMetaModelParameter) iterator.next();
 				BIMetaModelParameter biMetaModelParameter = toBIMetaModelParameter(HibMetaModelParameter);
-				logger.debug("delete biObjPar with label " + HibMetaModelParameter.getLabel() + " and url name " + HibMetaModelParameter.getParurlNm());
+				logger.debug("delete biMetaModelPar with label " + HibMetaModelParameter.getLabel() + " and url name " + HibMetaModelParameter.getParurlNm());
 				eraseBIMetaModelParameter(biMetaModelParameter);
 			}
 		} catch (Exception he) {
-			logger.error("Erro while deleting obj pars associated to document with label = " + hibMetaModel != null ? hibMetaModel.getName() : "null", he);
+			logger.error("Erro while deleting MetaModel pars associated to document with label = " + hibMetaModel != null ? hibMetaModel.getName() : "null",
+					he);
 			logException(he);
 			if (transaction != null)
 				transaction.rollback();
@@ -340,10 +379,10 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 		if (sbiMetaModelPar.getThickPerc() != null)
 			metaModel.setThickPerc(sbiMetaModelPar.getThickPerc());
 
-		// Parameter parameter = new Parameter();
-		// parameter.setId(sbiMetaModelPar.getSbiParameter().getParId());
-		// parameter.setType(sbiMetaModelPar.getSbiParameter().getParameterTypeCode());
-		// metaModel.setParameter(parameter);
+		Parameter parameter = new Parameter();
+		parameter.setId(sbiMetaModelPar.getSbiParameter().getParId());
+		parameter.setType(sbiMetaModelPar.getSbiParameter().getParameterTypeCode());
+		metaModel.setParameter(parameter);
 		return metaModel;
 	}
 }

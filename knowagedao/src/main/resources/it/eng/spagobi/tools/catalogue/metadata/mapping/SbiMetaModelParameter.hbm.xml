@@ -54,7 +54,7 @@
         <property name="parurlNm" type="java.lang.String">
             <column name="PARURL_NM" />
         </property>
-        <many-to-one name="sbiMetaModel" class="it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel" fetch="join">
+        <many-to-one name="sbiMetaModel" class="it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel" >
             <column name="METAMODEL_ID" />
         </many-to-one>
         <property name="multFl" type="java.lang.Short">
@@ -63,7 +63,7 @@
         <property name="ThickPerc" type="java.lang.Integer">
             <column name="THICK_PERC" />
         </property>
-        <many-to-one name="sbiParameter" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters" fetch="join">
+        <many-to-one name="sbiParameter" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters" >
             <column name="PAR_ID" />
         </many-to-one>
         <property name="colSpan" type="java.lang.Integer">

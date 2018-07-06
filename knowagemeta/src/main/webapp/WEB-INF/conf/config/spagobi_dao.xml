@@ -116,8 +116,8 @@
 		<DAO name="ISbiObjDsDAO" implementation="it.eng.spagobi.metadata.dao.SbiObjDsDAOHibImpl"/>
 		<DAO name="ISbiTableBcDAO" implementation="it.eng.spagobi.metadata.dao.SbiTableBcDAOHibImpl"/>
 		<DAO name="BIMetaModelParameterDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIMetaModelDAOHibImpl"/>
-
-
+		<DAO name="MetaModelParuseDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.MetaModelParuseDAOHibImpl"/>
+     	<DAO name="MetaModelParviewDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.MetaModelParviewDAOHibImpl"/>
 	</DAO-CONF>
 
 	<!-- ********************* END DAO CONFIGURATION ************************ -->

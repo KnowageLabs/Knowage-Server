@@ -142,4 +142,8 @@ public class SbiMetaModel extends SbiHibernateModel implements DriverableObject 
 		this.biMetaModelParameters = biMetaModelParameters;
 	}
 
+	public List<SbiMetaModelParameter> getBiMetaModelParameters() {
+		return biMetaModelParameters;
+	}
+
 }

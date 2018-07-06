@@ -65,6 +65,7 @@
 		   class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" fetch="join" name="dataSource">
 		   <column name="DATA_SOURCE_ID" not-null="false"/>
 		 </many-to-one>
+		 
 		<filter name="tenantFilter" condition="organization=:tenant" />
 	</class>
 	<filter-def name="tenantFilter">

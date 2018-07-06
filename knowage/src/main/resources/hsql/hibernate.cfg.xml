@@ -145,7 +145,8 @@
 		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModel.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModelContent.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModelParameter.hbm.xml" />
-		
+		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetamodelParuse.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetamodelParview.hbm.xml" />
 			
 		<!-- Federation definition -->
 		<mapping resource="it/eng/spagobi/federateddataset/metadata/mapping/SbiFederationDefinition.hbm.xml"/>
