@@ -319,6 +319,16 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        					if (response.data.errors){
 	        	        						scope.messaging.showErrorMessage(scope.translate.load(response.data.errors[0].message),scope.translate.load('sbi.generic.error'));
 	        	        					}else{
+	        	        						// add the new license to the list 
+	        	        						
+	        	        						var sLicense = scope.file.name;
+	        	        						for(var i = 0; i < scope.licenseData[currentHostName].length; i++) {
+	        	        							// console.log(scope.licenseData[currentHostName][i]);
+	        	        							if(response.data.product === scope.licenseData[currentHostName][i].product) {
+	        	        								//scope.licenseData[currentHostName][i] = response.data.product;
+	        	        								scope.licenseData[currentHostName][i] = response.data;
+	        	        							}
+	        	        						}
 	        	        						$scope.licenseData[currentHostName].push(response.data);
 	        	        						scope.file = undefined;
 	        	        						scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
