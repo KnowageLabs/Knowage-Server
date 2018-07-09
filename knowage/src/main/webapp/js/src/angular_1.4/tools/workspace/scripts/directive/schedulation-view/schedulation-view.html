@@ -1,5 +1,5 @@
 <div class="kn-table-container" ng-class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed">
-	<table class="kn-table" ng-hide="showGridView==true || ngModel.length==0 " class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed">
+	<table ng-hide="showGridView==true || ngModel.length==0 " class="kn-table kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed">
 		<thead>
 			<tr> 
 			<th ng-repeat="column in schedulationColumns">{{column.label}}</th>
