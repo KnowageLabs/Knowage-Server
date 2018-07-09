@@ -109,8 +109,11 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 		angular.copy($scope.cockpitStyle.title,$scope.ngModel.title);
 	}
 	$scope.resetBackgroundStyle=function(){
-		$scope.ngModel.backgroundColor=$scope.cockpitStyle.backgroundColor;
-		angular.copy($scope.cockpitStyle.backgroundColor,$scope.ngModel.backgroundColor);
+		if($scope.cockpitStyle.backgroundColor){
+			angular.copy($scope.cockpitStyle.backgroundColor,$scope.ngModel.backgroundColor);
+		}else{
+			delete $scope.ngModel.backgroundColor;
+		}
 	}
 
 	$scope.colorPickerOptions = {

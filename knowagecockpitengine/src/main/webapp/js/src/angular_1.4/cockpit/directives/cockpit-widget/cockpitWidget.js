@@ -984,10 +984,8 @@ function cockpitWidgetControllerFunction(
 		}
 
 		// update widgets background color
-		if($scope.extendedStyle.backgroundColor!=undefined) {
-			var tempBackGround={'background-color': $scope.extendedStyle.backgroundColor};
-			angular.merge($scope.borderShadowStyle,tempBackGround);
-		}
+		var tempBackGround={'background-color': $scope.extendedStyle.backgroundColor || ''};
+		angular.merge($scope.borderShadowStyle,tempBackGround);
 
 		// update sheets background color
 		if($scope.extendedStyle.sheetsBackgroundColor!=undefined && $scope.cockpitModule_template.style) {
