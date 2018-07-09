@@ -82,21 +82,21 @@
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') == -1 && newFilter.type.toLowerCase().indexOf('timestamp') == -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.value")}}</label>
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.value")}}: yyyy-MM-dd hh:mm:ss</label>
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('timestamp') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.value")}}: yyyy-MM-dd hh:mm:ss.SSS</label>	
-	                <input   maxlength="100" type="text" ng-model="newFilter.filterVal1" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
+	                <input maxlength="500" type="text" ng-model="newFilter.filterVal1" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
 	      		</md-input-container>
       		
 				<md-input-container flex=35 ng-show="newFilter.filterOperator == 'range'"> 
 					<label ng-show="newFilter.type.toLowerCase().indexOf('date') == -1 && newFilter.type.toLowerCase().indexOf('timestamp') == -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.from")}}</label>
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.from")}}: yyyy-MM-dd hh:mm:ss</label>
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('timestamp') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.from")}}: yyyy-MM-dd hh:mm:ss.SSS</label>
-					<input maxlength="100" type="text" ng-model="newFilter.filterVal1" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
+					<input maxlength="500" type="text" ng-model="newFilter.filterVal1" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
 				</md-input-container>
 				
                 <md-input-container  flex=35 ng-show="newFilter.filterOperator == 'range'"> 
 					<label ng-show="newFilter.type.toLowerCase().indexOf('date') == -1 && newFilter.type.toLowerCase().indexOf('timestamp') == -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.to")}}</label>
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.to")}}: yyyy-MM-dd hh:mm:ss</label>
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('timestamp') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.to")}}: yyyy-MM-dd hh:mm:ss.SSS</label>
-	                <input maxlength="100" type="text" ng-model="newFilter.filterVal2" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
+	                <input maxlength="500" type="text" ng-model="newFilter.filterVal2" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
             	</md-input-container>
             	
             	<div flex></div>
