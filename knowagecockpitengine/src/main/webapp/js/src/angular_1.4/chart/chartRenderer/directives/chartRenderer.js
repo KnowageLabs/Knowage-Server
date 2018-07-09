@@ -30,6 +30,7 @@ angular.module('chartRendererModule')
 			datasetLabel:'=',
 			widgetData:'=',
 			updateble:'=',
+			drillable:'=',
 			lib:'=',
 			onClickSeries:'='
 		},
@@ -214,7 +215,13 @@ angular.module('chartRendererModule')
 				scope.renderChart(scope.chartConf,data,selectionsAndParams);
 
 			})
+			
+			scope.$on('drillClick',function(event,data){
 
+				scope.chartInitializer.chart.drillable = data.drillable;
+				scope.chartInitializer.chart.cliccable = data.cliccable;
+			})
+			
 			if(!scope.widgetData){
 				var lib = getChartExecutionLib(scope.chartTemplate);
 				if(lib){

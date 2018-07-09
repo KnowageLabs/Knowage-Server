@@ -47,12 +47,17 @@
 #set($result = $datasettransformer.createTreeChart($columnsNeeded,$serie.name,$dataColumnsMapper,$dataRows, $groupingFunction.toLowerCase()))
 
 #set($crossNavigation = '')
-#set($crossNavigation = $chart.DRILL)	
+#set($crossNavigation = $chart.DRILL)
 
 {
  	chart: 
  	{
   		type: '$chartType',
+		#if($chart.isCockpitEngine=="true")
+			drillable: $chart.drillable,
+		#else
+			drillable: true,
+		#end
 		
 		  #if($chart.height != '' && $chart.isCockpitEngine!="true")
         	height: $chart.height,
@@ -90,9 +95,8 @@
 		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	*#
 	#if($chart.isCockpitEngine=='true' && "$!chart.outcomingEventsEnabled" != "")
-		outcomingEventsEnabled: $chart.outcomingEventsEnabled,
+		cliccable: $chart.cliccable,
 	#end
-  	
 	#*
 		Provide enough space for the "Back" button.		
 	*# 

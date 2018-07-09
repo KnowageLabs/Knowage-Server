@@ -1198,6 +1198,6 @@ function setAggregationsOnChartEngine(wconf){
 }
 
 //this function register the widget in the cockpitModule_widgetConfigurator factory
-addWidgetFunctionality("chart",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':true});
+addWidgetFunctionality("chart",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':true, 'drillable' : false});
 
 })();
