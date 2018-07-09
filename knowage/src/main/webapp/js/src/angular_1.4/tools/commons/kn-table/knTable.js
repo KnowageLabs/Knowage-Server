@@ -44,7 +44,9 @@
 		$scope.sortingColumn = $scope.columns[0].name;
 		$scope.sortingDirection = false;
 		
-		
+		$scope.setDate = function(string){
+			return new Date(string);
+		}
 		$scope.setColumnSorting = function(column){
 			$scope.sortingDirection = column.name == $scope.sortingColumn ? !$scope.sortingDirection : false;
 			$scope.sortingColumn = column.name;
