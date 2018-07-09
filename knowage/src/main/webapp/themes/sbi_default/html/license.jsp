@@ -62,7 +62,7 @@
 	          
 		          				{{license.status_ext}}
 		          		
-		          		<span ng-if="license.expiration_date">- {{license.expiration_date}}</span>
+		          		<span ng-if="license.expiration_date"><br />- {{license.expiration_date}}</span>
 	          		</p>
 	         	</div>
 	         	<div flex class="md-list-item-text">
