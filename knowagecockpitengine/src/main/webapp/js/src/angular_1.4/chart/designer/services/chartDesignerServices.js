@@ -1522,6 +1522,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					}]
 				},
 				"type": "SUNBURST",
+				"scale": 1,
 				"AXES_LIST": {
 					"AXIS": [{
 						"alias": "Y",
@@ -1633,7 +1634,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"color":"#000000",
 						"width":10
 					},
-					"text": ""
+					"text": "",
 				},
 				"SUBTITLE": {
 					"style":{
@@ -1666,6 +1667,18 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 	                  },
 			         "text":""
 			     },
+			     "LABELS":{
+			    	 "showLabels":true,
+			    	 "style":{
+			    		 "color":"#000000",
+			    		 "fontSize":"8px",
+			    		 "fontFamily":"Arial",
+	                	 "fontWeight":"normal",
+			    	 }
+				},
+				"LEGEND":{
+			    	 "showLegend":true,
+				},
 				"heightDimType": "percentage",
 				"widthDimType": "percentage",
 				"seriesStacking": false,
