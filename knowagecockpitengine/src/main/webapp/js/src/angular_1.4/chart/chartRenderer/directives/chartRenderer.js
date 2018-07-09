@@ -103,7 +103,7 @@ angular.module('chartRendererModule')
 							renderObject.selectionsAndParams = selectionsAndParams;								
 						}
 
-						if(chartConf.series && chartConf.series[0] && chartConf.series[0].data && chartConf.series[0].data.length > chartConf.plotOptions.series.turboThreshold){
+						if(chartConf.plotOptions && chartConf.series && chartConf.series[0] && chartConf.series[0].data && chartConf.series[0].data.length > chartConf.plotOptions.series.turboThreshold){
 							chartConf.lang.noData = "Your dataset is returning too much data"
 						}
 						scope.chartInitializer.renderChart(renderObject, jsonData);
