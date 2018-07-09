@@ -154,6 +154,14 @@ angular.module('cockpitModule')
 	                        		dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId)
 	                    		}
 
+	                    		if(scope.ngModel.type.toLowerCase()=="chart" && scope.ngModel.drillable == undefined){
+	                    			if(scope.ngModel.cliccable){
+	                    				scope.ngModel.drillable = false;	
+	                    			} else {
+	                    				scope.ngModel.drillable = true;
+	                    			}
+	                    			
+	                    		}
 	                    		if(scope.ngModel.type == "selector"){
 	                    			scope.updateble = true;
 	                    		}else{
@@ -527,6 +535,20 @@ function cockpitWidgetControllerFunction(
 	    });
 	}
 
+	$scope.chartsForDrill = ["bar","pie","line","treemap"]
+	$scope.changeClickability = function(){
+		if($scope.ngModel.cliccable && !$scope.ngModel.drillable){
+			$scope.ngModel.cliccable = false;
+			$scope.ngModel.drillable = true;
+		} else if(!$scope.ngModel.cliccable && $scope.ngModel.drillable){
+			$scope.ngModel.cliccable = false;
+			$scope.ngModel.drillable = false;
+		}  else {
+			$scope.ngModel.cliccable = true;
+			$scope.ngModel.drillable = false;
+		}
+		$scope.$broadcast("drillClick",{ "drillable": $scope.ngModel.drillable, "cliccable": $scope.ngModel.cliccable});;
+	}
 	$scope.doSelection = function(columnName,columnValue,modalColumn,modalValue,row, skipRefresh){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")

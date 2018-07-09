@@ -30,6 +30,7 @@ angular.module('chartRendererModule')
 			datasetLabel:'=',
 			widgetData:'=',
 			updateble:'=',
+			drillable:'=',
 			lib:'=',
 			onClickSeries:'='
 		},
@@ -102,7 +103,7 @@ angular.module('chartRendererModule')
 							renderObject.selectionsAndParams = selectionsAndParams;								
 						}
 
-						if(chartConf.series[0].data && chartConf.series[0].data.length > chartConf.plotOptions.series.turboThreshold){
+						if(chartConf.series && chartConf.series[0] && chartConf.series[0].data && chartConf.series[0].data.length > chartConf.plotOptions.series.turboThreshold){
 							chartConf.lang.noData = "Your dataset is returning too much data"
 						}
 						scope.chartInitializer.renderChart(renderObject, jsonData);
@@ -214,7 +215,13 @@ angular.module('chartRendererModule')
 				scope.renderChart(scope.chartConf,data,selectionsAndParams);
 
 			})
+			
+			scope.$on('drillClick',function(event,data){
 
+				scope.chartInitializer.chart.drillable = data.drillable;
+				scope.chartInitializer.chart.cliccable = data.cliccable;
+			})
+			
 			if(!scope.widgetData){
 				var lib = getChartExecutionLib(scope.chartTemplate);
 				if(lib){

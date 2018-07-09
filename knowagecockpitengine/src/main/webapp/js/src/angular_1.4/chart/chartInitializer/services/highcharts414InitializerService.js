@@ -25,7 +25,7 @@ angular.module('chartInitializer')
 	var chartConfConf = null;
 
 	this.renderChart = function(renderObj, jsonData){
-
+		
 		var chartConf = renderObj.chartConf;
 		if(chartConf.chart.additionalData && chartConf.chart.additionalData.dateTime && chartConf.chart.additionalData.datetype!="string"){
 			for (var i = 0; i < chartConf.series.length; i++) {
@@ -40,9 +40,9 @@ angular.module('chartInitializer')
 						dat.x = (new Date(dateSplit[2], dateSplit[1]-1, dateSplit[0])).getTime();
 					}
 				}
-			}
+			}	
 		}
-
+		
 		var element = renderObj.element;
 		var handleCockpitSelection = renderObj.handleCockpitSelection;
 		var exportWebApp = renderObj.exportWebApp;
@@ -62,6 +62,7 @@ angular.module('chartInitializer')
 				return  renderTreemap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo,exportWebApp );
 			} else {
 				this.chart = renderTreemap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo);
+				this.chart.drillable = chartConf.chart.drillable
 			}
 		}
 		else if (chartType == 'heatmap')
@@ -318,6 +319,13 @@ angular.module('chartInitializer')
 
 
 	this.handleDrilldown = function(e){
+		var drillable = this.drillable != undefined ? 
+				this.drillable : (this.options.chart.additionalData.isCockpit ?
+						this.options.chart.additionalData.drillable: this.options.chart.additionalData.drillableChart);
+		if(!drillable){
+			console.log("chart is not drillable")
+			return;		
+		}
 		var chart = this;
 		if(!chart.breadcrumb)chart.breadcrumb=[];
 
@@ -339,7 +347,6 @@ angular.module('chartInitializer')
 				chart.showLoading('Loading...');
 
 					var params = {};
-
 					if(chart.jsonData ){
 						params.jsonMetaData = chart.jsonData.metaData;
 					}
@@ -387,8 +394,6 @@ angular.module('chartInitializer')
 					if(chart.selectionsAndParams && chart.selectionsAndParams.par){
 						forQueryParam = chart.selectionsAndParams.par;
 					}
-
-
 					jsonChartTemplate.drilldownHighchart(params,forQueryParam)
 					.then(function(series){
 
@@ -403,12 +408,9 @@ angular.module('chartInitializer')
 			            var yAxisTitle={
 			            		text:series.serieName
 			            };
-
 			            if(chart.xAxis[0].userOptions.title.customTitle==false){
 			            	chart.xAxis[0].setTitle(xAxisTitle);
 			            }
-
-
 			            if(chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
 			            	chart.yAxis[0].setTitle(yAxisTitle);
 			            }
@@ -438,7 +440,6 @@ angular.module('chartInitializer')
 		var xAxisTitle={
             	text:axisTitle
 		};
-
 		if(chart.xAxis[0].userOptions.title.customTitle==false){
         	chart.xAxis[0].setTitle(xAxisTitle);
 		}

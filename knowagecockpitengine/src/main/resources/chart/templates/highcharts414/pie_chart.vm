@@ -26,8 +26,16 @@
 #set($crossNavigation = '')
 #set($crossNavigation = $chart.DRILL)
 #set($axis = $chart.AXES_LIST.AXIS[0])
+#set($enableDrilldown = false)
+#set($drillable = "true")
+#set($cliccable = "false")
 
-#set($enableDrilldown = false) 
+#if($chart.drillable)
+	#set($drillable = $chart.drillable)
+#end
+#if($chart.cliccable)
+	#set($cliccable = $chart.cliccable)
+#end
 #if($categorieColumns.groupby != '')
 	#set($enableDrilldown = true)
 
@@ -49,6 +57,10 @@
 			
 		additionalData:
 		{
+			cliccable: $cliccable,
+			drillable: $drillable,
+			drillableChart: $enableDrilldown,
+			isCockpit: $chart.isCockpitEngine,
 			categoryColumn: '$categorieColumns.column',
 			categoryGroupBy: '$categorieColumns.groupby',
 			categoryGroupByNamens: '$categorieColumns.groupbyNames',
@@ -121,8 +133,8 @@
         		#end
         	#end
         },
-        #if($drilldownEnabledFlag && $exportWebApp==false)
-	    	#if($enableDrilldown)
+        #if($chart.isCockpitEngine=="true" || ($drilldownEnabledFlag && $exportWebApp==false))
+	    	#if($chart.isCockpitEngine=="true" || $enableDrilldown)
 		    events: {
 				drilldown: scope.chartInitializer.handleDrilldown,
 				drillup: scope.chartInitializer.handleDrillup
@@ -538,7 +550,7 @@
 		            }
 		            
 		            
-		            #elseif($chart.outcomingEventsEnabled == 'true')
+		            #elseif($cliccable=="true")
 		              	events:{
 		                	click: handleCockpitSelection,
 

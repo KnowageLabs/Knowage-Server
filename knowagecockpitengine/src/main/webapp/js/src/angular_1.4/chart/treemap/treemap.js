@@ -524,20 +524,16 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
             }),
 			events:{
 				click: function(event){
-//					console.log(event.point);
 					if(!exportWebApp){
-						 if(chartConf.chart.isCockpit==true){
-					        	if(chartConf.chart.outcomingEventsEnabled){
+						if(chartConf.chart.isCockpit){
+					        if(this.chart.cliccable != undefined ? this.chart.cliccable : true && chartConf.chart.cliccable){
 					        	handleCockpitSelection(event);
-					        	}
-					        }else if(event.point.node.children.length==0){
-								
+					        }
+						 } else if(event.point.node.children.length==0){
 				            	var params=getCrossParamsForTreemap(event.point,chartConf);
 				            	handleCrossNavigationTo(params);
-				            	
-							}
+						 }
 					}
-			       
 				}
 			}
 		}],

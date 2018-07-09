@@ -45,9 +45,16 @@
 		#end
 	#end
 #end
-
 #set($xAxisMap = $datasettransformer.getXAxisMap($categorieColumns, $categoryDate))
-#set($enableDrilldown = false) 
+#set($enableDrilldown = false)
+#set($drillable = "false")
+#set($cliccable = "false")
+#if($chart.drillable)
+	#set($drillable = $chart.drillable)
+#end
+#if($chart.cliccable)
+	#set($cliccable = $chart.cliccable)
+#end
 #if($chart.groupCategories)
 	#if($categorieColumns.groupby != ''  && $chart.groupCategories =='false')
 		#set($enableDrilldown = true)
@@ -55,7 +62,7 @@
 #end
 #if(!$chart.groupCategories)
 #set($chart.groupCategories ='false')
-	#if($categorieColumns.groupby != ''  && $chart.groupCategories =='false' )
+	#if($categorieColumns.groupby != ''  && $chart.groupCategories =='false')
 		#set($enableDrilldown = true)
 	#end
 #end
@@ -110,6 +117,10 @@
 		{
 			dateTime: $isDateTime,
 			datetype: '$datetype',
+			cliccable: $cliccable,
+			drillable: $drillable,
+			drillableChart: $enableDrilldown,
+			isCockpit: $chart.isCockpitEngine,
 			categoryColumn: '$categorieColumns.column',
 			categoryGroupBy: '$categorieColumns.groupby',
 			categoryGroupByNamens: '$categorieColumns.groupbyNames',
@@ -245,8 +256,8 @@
     		
     		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	*#
-    	#if($chart.type.toUpperCase() != 'RADAR' && $drilldownEnabledFlag && $exportWebApp==false)
-	    	#if($enableDrilldown)
+    	#if($chart.type.toUpperCase() != 'RADAR' && ($chart.isCockpitEngine=="true" || ($drilldownEnabledFlag && $exportWebApp==false)))
+	    	#if($chart.isCockpitEngine=="true" || $enableDrilldown) 
 		    events: {
 				drilldown: scope.chartInitializer.handleDrilldown,
 				drillup: scope.chartInitializer.handleDrillup
@@ -873,8 +884,9 @@
         			comes right in the middle of the category value.
         			  			
         			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-        		*#  
-        		#if($labelAlign && $chart.orientation == 'vertical' && $chartType != "radar")
+        		*# 
+
+        		#if($labelAlign && $chartType != "radar")
         			align: "$labelAlign", 
         		#end
         		
@@ -1132,7 +1144,7 @@
 	        			style configuration popup will not be taken into account.
 	        			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	        		*# 	        		       		
-	        		#if($labelAlign && ($chart.orientation == 'horizontal' || $chartType == "radar"))
+	        		#if($labelAlign && $chartType != "radar")
 	        			align: "$labelAlign",	        		     			
 	        		#end
 	        		        		
@@ -1324,6 +1336,7 @@
 				#end
 	    	],
 	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
+
 						
 						#*
 							If inside the style template the value of the "Show value"
@@ -1371,7 +1384,6 @@
 		                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
                      		*/                		                    
 			               	formatter: function() {
-			                     
 			                    var value = this.y;	
 			                    var newValue = "";		                    
 			                    
@@ -2016,56 +2028,37 @@
    		
 	        column: {
 	        
-	        	stacking: "normal", 
-	        	   	 	
+	        	stacking: "normal",
 	    	 	dataLabels: {
 	                enabled: true
 	            }
-	            
 	        },
-      
-         
 	     	## (danristo)
 	        bar: {
-	        	
-				stacking: "normal", 
-	        	   	 	
+				stacking: "normal",
 	    	 	dataLabels: {
 	                enabled: true
 	            }
-	            
 	        },
-	        
       	#end
-      
-      
-      
-      
-        
         series: {
             cursor: 'pointer', 
             #if(!$exportWebApp)
             point: {
                #if($chart.isCockpitEngine=="false" && !$enableDrilldown)
-          
 					events:{
 						click: scope.chartInitializer.handleCrossNavigationTo,
 					}
-		         #elseif($chart.outcomingEventsEnabled == 'true')
+		         #elseif($cliccable == "true")
 		              	events:{
 		                	click: handleCockpitSelection
 		            	}
-		            	
-		            	
 		         #end
-		         
             }, 
             #end
             dataLabels: {
                    allowOverlap: true,
-                   
             },
-            
             #* 
             	From Highcharts API: When a series contains a data array that is longer than this, 
             	only one dimensional arrays of numbers, or two dimensional arrays with x and y values 
