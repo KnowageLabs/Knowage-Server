@@ -313,7 +313,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			IRecord row = iterator.next();
 			LinkedHashMap<String, Comparable> rowValues = new LinkedHashMap<String, Comparable>();
 			for (int i = 0; i < metaData.getFieldCount(); i++) {
-				IField field = row.getFieldAt(metaData.getFieldIndex(metaData.getFieldMeta(i)));
+				IField field = row.getFieldAt(i);
 				rowValues.put(metaData.getFieldMeta(i).getName(), (Comparable) field.getValue());
 			}
 			return rowValues;
