@@ -12,6 +12,7 @@
 			<tr ng-repeat-start="row in model | orderBy:sortingColumn:sortingDirection" ng-click="clickFunctionWrapper(row,$event)" ng-class="{'selected':selectedItem == row}">
 				<td ng-repeat="column in columns">
 					<span ng-if="!column.type || column.type=='text'">{{row[column.name]}}</span>
+					<span ng-if="column.type=='date'">{{setDate(row[column.name]) | date:'yyyy MMMM dd, HH:mm' }}</span>
 					<div layout="row" layout-align="end center" ng-if="column.type == 'buttons'">
 						<md-button class="md-icon-button" ng-click="actionClick(row,button,$event)" ng-repeat="button in column.buttons" ng-if="column.buttons.length <= 2">
 							<md-tooltip>{{button.name}}</md-tooltip>
