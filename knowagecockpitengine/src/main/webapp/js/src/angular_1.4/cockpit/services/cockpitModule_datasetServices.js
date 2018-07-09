@@ -1244,56 +1244,44 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	       	 	model.dataset = {}
 	       	 	model.dataset.dsId = datasetId;
 
+	       	 	var regAggFunctions = 'AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT'
+
 	       	 	//get columnsSelected metadata: adds aggregation functions if required
 				for(var dsField in dataset.metadata.fieldsMeta){
 					var dsObject = dataset.metadata.fieldsMeta[dsField];
 					var header = dsObject.alias;
-					var reg = new RegExp('\\$F\\{('+dataset.label+'.'+header+')\\}','g');
+					var reg = new RegExp('('+regAggFunctions+')\\(\\$F{'+dataset.label+'.'+header+'}\\)|\\$F{'+dataset.label+'.'+header+'}','g');
             		var matches = text.match(reg);
-            		if (matches){
-//            			//aggregation function management (ie: COUNT($F{xxx}) )
-            			var regAgg = new RegExp('(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)(\\(\\$F{'+dataset.label+'.'+header+'}\\))','g');
-            			var matchAgg = text.match(regAgg);
-    					if (matchAgg){
-    						//get the optional function
-                    		var regFunc;
-                    		if(dsObject.fieldType == 'MEASURE'){
-                    			regFunc = new RegExp('(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)','g');
-                    		}
-                    		else{
-                    			regFunc = new RegExp('(MIN|MAX|COUNT_DISTINCT|COUNT|DISTINCT COUNT)','g');
-                    		}
+					if(matches){
+						dsObject.aggregationSelected = [];
+						var noAggregation = false;
 
-                    		dsObject.aggregationSelected = [];
-                    		for(var i = 0; i < matchAgg.length; i++)
-                    		{
-                    			var matchFunc = matchAgg[i].match(regFunc);
-                    			if (matchFunc){
-                    				dsObject.aggregationSelected.push(matchFunc[0]);
-//                  				dsObject.funcSummary = matchFunc[0];
-                    				//set configuration for ask summary values
-//                  				if (!model.style) model.style={};
-//                  				model.style.showSummary=true;
-//                  				}else{
-//                  				dsObject.aggregationSelected = 'NONE';
-//                  				dsObject.funcSummary = 'NONE';
-                    			}
+						for(var j = 0; j < matches.length; j++){
+	            			//aggregation function management (ie: COUNT($F{xxx}) )
+	            			var regAgg = new RegExp('^'+regAggFunctions,'g');
+	            			var matchAgg = matches[j].match(regAgg);
+	    					if (matchAgg){
+	    						var aggFunc = matchAgg[0];
+    							if(dsObject.aggregationSelected.indexOf(aggFunc) == -1){
+    								dsObject.aggregationSelected.push(aggFunc);
+    							}
+	    					}else{
+	    						noAggregation = true;
+	    					}
+	            		}
 
-                    		}
-
+						if(noAggregation){
+							dsObject.aggregationSelected.push('NONE');
     					}
-    					//column is required
+
     					if(dsObject.aggregationSelected != undefined){
     						for(var i = 0; i<dsObject.aggregationSelected.length; i++){
     							var agg = dsObject.aggregationSelected[i];
     							columnsToshow.push(dataset.label+'.'+header+':'+agg);
+    							columnsToshowMeta.push(dsObject);
     						}
     					}
-    					else{
-                			columnsToshow.push(dataset.label+'.'+header);
-    					}
-            			columnsToshowMeta.push(dsObject);
-            		}
+					}
 				}
 //				model.content.columnSelectedOfDataset = dataset.metadata.fieldsMeta;
 				model.content.columnSelectedOfDataset = columnsToshowMeta;
