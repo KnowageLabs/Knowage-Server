@@ -46,7 +46,7 @@
 		$scope.rolesIds = [];
 		$scope.categoriesForUser = [];
 		$scope.selectedModel = undefined;
-
+		$scope.sbiUser = sbiModule_user;
 		$scope.i18n = sbiModule_i18n;
 
 		/**
@@ -65,6 +65,10 @@
 
 		$scope.federationsEnabled= function (){
 			return datasetParameters.CAN_USE_FEDERATED_DATASET_AS_FINAL_USER === "true";
+		}
+		
+		$scope.isAbletoDelete = function(federation){
+			return $scope.sbiUser.isTechnicalUser == "true"|| $scope.sbiUser.userId==federation.owner;
 		}
 
 		$scope.getFederatedDatasets = function() {

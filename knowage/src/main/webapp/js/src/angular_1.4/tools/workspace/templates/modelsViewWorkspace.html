@@ -65,7 +65,7 @@
 						<md-icon md-font-icon="fa fa-pencil"></md-icon>
 				</md-button>
 				
-				 <md-button title="{{translate.load('sbi.workspace.dataset.delete')}}" aria-label="Edit" class="md-icon-button" ng-show="currentModelsTab=='federations'" ng-click="deleteFederation(selectedModel)">
+				 <md-button title="{{translate.load('sbi.workspace.dataset.delete')}}" aria-label="Delete" class="md-icon-button" ng-show="currentModelsTab=='federations' && isAbletoDelete(selectedModel)" ng-click="deleteFederation(selectedModel)">
 						<md-icon md-font-icon="fa fa-trash"></md-icon>
 				</md-button>
 				

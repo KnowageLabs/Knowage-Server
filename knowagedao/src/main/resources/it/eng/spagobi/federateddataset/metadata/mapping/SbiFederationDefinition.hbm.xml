@@ -29,6 +29,10 @@
 		<property name="degenerated" type="boolean">
 			<column name="DEGENERATED"/>
 		</property>
+		<property name="owner" type="string">
+			<column name="OWNER"/>
+		</property>
+		
 		<set name="sourceDatasets" table="SBI_DATA_SET_FEDERATION" lazy="true">
 			<key>
 				<column name="FEDERATION_ID"/>
