@@ -168,7 +168,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		var columns = []
 		sbiModule_restServices.promiseGet("2.0/lovs", obj.lovId+'/preview')
 		.then(function(response){
-			if(response.data[0].value){
+			if(response.data[0] && response.data[0].value){
 				for(var i = 0; i< response.data.length;i++){
 						columns.push(response.data[i].value)
 				}
