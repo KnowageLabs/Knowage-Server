@@ -195,7 +195,7 @@ public class JSONDataWriter implements IDataWriter {
 
 			IField field = new Field();
 			try {
-				field = record.getFieldAt(metaData.getFieldIndex(fieldMetaData));
+				field = record.getFieldAt(i);
 			} catch (IndexOutOfBoundsException idxEx) {
 				logger.info("Unavailable field " + fieldMetaData.getName());
 				field.setValue(null);
@@ -310,7 +310,7 @@ public class JSONDataWriter implements IDataWriter {
 						continue;
 					}
 
-					int fieldPosition = dataStore.getMetaData().getFieldIndex(fieldMetaData);
+					int fieldPosition = i;
 					if (recordSize < 0 || fieldPosition < recordSize) {
 						field = record.getFieldAt(fieldPosition);
 					} else {

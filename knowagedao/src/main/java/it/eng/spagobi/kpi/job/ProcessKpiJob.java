@@ -1,5 +1,34 @@
 package it.eng.spagobi.kpi.job;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -34,39 +63,10 @@ import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
 @SuppressWarnings("rawtypes")
 public class ProcessKpiJob extends AbstractSuspendableJob {
 	public static final String CARDINALITY_ALL = "ALL";
-	
+
 	static private Logger logger = Logger.getLogger(ProcessKpiJob.class);
 
 	// Only SQL is supported.
@@ -313,7 +313,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			IRecord row = iterator.next();
 			LinkedHashMap<String, Comparable> rowValues = new LinkedHashMap<String, Comparable>();
 			for (int i = 0; i < metaData.getFieldCount(); i++) {
-				IField field = row.getFieldAt(metaData.getFieldIndex(metaData.getFieldMeta(i)));
+				IField field = row.getFieldAt(i);
 				rowValues.put(metaData.getFieldMeta(i).getName(), (Comparable) field.getValue());
 			}
 			return rowValues;
@@ -796,8 +796,8 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				Object theYear = ifNull(temporalValues.get("YEAR"), CARDINALITY_ALL);
 				String insertSql = "INSERT INTO SBI_KPI_VALUE (id, kpi_id, kpi_version, logical_key, time_run, computed_value,"
 						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (" + (++lastId) + ", " + parsedKpi.id + "," + parsedKpi.version
-						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "',?, coalesce(" + (nullValue ? "0" : value) + ", 0) ,'" + theDay + "','" + theWeek + "','"
-						+ theMonth + "','" + theQuarter + "','" + theYear + "','" + (nullValue ? '1' : '0') + "')";
+						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "',?, coalesce(" + (nullValue ? "0" : value) + ", 0) ,'" + theDay + "','"
+						+ theWeek + "','" + theMonth + "','" + theQuarter + "','" + theYear + "','" + (nullValue ? '1' : '0') + "')";
 				String whereCondition = "kpi_id = " + parsedKpi.id + " AND kpi_version = " + parsedKpi.version + " AND logical_key = '"
 						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + theDay + "' AND the_week = '" + theWeek + "'"
 						+ " AND the_month = '" + theMonth + "' AND the_quarter = '" + theQuarter + "' AND the_year = '" + theYear + "'";
@@ -809,9 +809,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				if (replaceMode) {
 					session.createSQLQuery(deleteSql).executeUpdate();
 				}
-				
+
 				logger.debug("PERFORMING INSERT: " + insertSql);
-				
+
 				session.createSQLQuery(insertSql).setParameter(0, timeRun).executeUpdate();
 				session.getTransaction().commit();
 				// break; // TODO remove after debug
