@@ -301,7 +301,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			SpagoBIEngineServiceException exception;
 			String message;
 
-			message = "An error occurred in " + getActionName() + " service while executing query: [" + statement.getQueryString() + "]";
+			message = "An error occurred in " + getActionName() + " service while executing query. Please see the log files for details.";
+			logger.error("An error occurred in " + getActionName() + " service while executing query: [" + statement.getQueryString() + "]");
 			exception = new SpagoBIEngineServiceException(getActionName(), message, e);
 			exception.addHint("Check if the query is properly formed: [" + statement.getQueryString() + "]");
 			exception.addHint("Check connection configuration");
