@@ -245,16 +245,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-content>
 							
 							<!-- DATASET VERSIONS -->
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" layout-padding style="padding-top:0px;">
+							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable layout-padding">
 							
 								<!-- TOOLBAR FOR THE CARD THAT HOLDS OLDER DATASET VERSIONS. (danristo) -->
-						     	<md-toolbar class="secondaryToolbar" layout-padding>
+						     	<md-toolbar class="secondaryToolbar noPadding">
 						     	
 						          	<div class="md-toolbar-tools">
 							            
-							            <h2>
-							              <span>{{translate.load('sbi.ds.versionPanel')}}</span>
-							            </h2>
+							            <h2>{{translate.load('sbi.ds.versionPanel')}}</h2>
 							            
 						         		<span flex></span>
 							         											            
@@ -1118,13 +1116,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<!-- SOLR DATASET (2.0) FACTES -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="(selectedDataSet.dsTypeCd=='Solr' && selectedDataSet.solrType=='FACETS')" style="padding: 0 8 0 8">
 							
-							<md-toolbar class="secondaryToolbar" layout-padding>
+							<md-toolbar class="secondaryToolbar">
 					     	
 					          	<div class="md-toolbar-tools">
 						            
-						            <h2>
-						              <span>Facets</span>
-						            </h2>
+						            <h2>Facets</h2>
 						            
 						            
 					          	</div>
@@ -1179,13 +1175,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Solr' " style="padding:0 8 0 8">
 							
 							<!-- TOOLBAR FOR THE CARD THAT HOLDS ADD REQUEST HEADER BUTTON -->
-					     	<md-toolbar class="secondaryToolbar" layout-padding>
+					     	<md-toolbar class="secondaryToolbar">
 					     	
 					          	<div class="md-toolbar-tools">
 						            
-						            <h2>
-						              <span>Request Headers</span>
-						            </h2>
+						            <h2>Request Headers</h2>
 						            
 					         		<span flex></span>
 						         											            
@@ -1310,13 +1304,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST' || (selectedDataSet.dsTypeCd=='Solr' && selectedDataSet.solrType=='DOCUMENTS')" style="padding:0 8 0 8">
 							
 							<!-- TOOLBAR FOR THE CARD THAT HOLDS ADD REQUEST HEADER BUTTON. (danristo) -->
-					     	<md-toolbar class="secondaryToolbar" layout-padding>
+					     	<md-toolbar class="secondaryToolbar">
 					     	
 					          	<div class="md-toolbar-tools">
 						            
-						            <h2>
-						              <span>JSON path attributes</span>
-						            </h2>
+						            <h2>JSON path attributes</h2>
 						            
 					         		<span flex></span>
 						         											            
@@ -1399,13 +1391,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Solr' " style="padding:0 8 0 8">
 							
 							<!-- TOOLBAR FOR ADDITIONAL QUERY PARAMS-->
-					     	<md-toolbar class="secondaryToolbar" layout-padding>
+					     	<md-toolbar class="secondaryToolbar">
 					     	
 					          	<div class="md-toolbar-tools">
 						            
-						            <h2>
-						              <span>Request Additional Parameters</span>
-						            </h2>
+						            <h2>Request Additional Parameters</h2>
 						            
 					         		<span flex></span>
 						         											            
@@ -1446,14 +1436,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<!-- DATASET PARAMETERS -->					
 						<md-content ng-show="selectedDataSet.dsTypeCd && selectedDataSet.dsTypeCd.toLowerCase()!='file' && selectedDataSet.dsTypeCd.toLowerCase()!='flat'" 
 									style="padding: 0 8 8 8" flex class="ToolbarBox miniToolbar noBorder mozTable">
-															
-								<md-toolbar class="secondaryToolbar" layout-padding>
+								<md-toolbar class="secondaryToolbar">
 								
 									<div class="md-toolbar-tools">
 								
-										<h2>
-										  <span>{{translate.load('sbi.execution.parametersselection.parameters')}}</span>
-										</h2>
+										<h2>{{translate.load('sbi.execution.parametersselection.parameters')}}</h2>
 									
 										<span flex></span>
 									
@@ -1644,13 +1631,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<!-- OLD ADVANCED TAB (Scheduling) -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" style="margin:0 8 0 8" ng-if="showDatasetScheduler && (selectedDataSet.isPersisted || selectedDataSet.isPersistedHDFS)">
 							
-							<md-toolbar class="secondaryToolbar" layout-padding>
+							<md-toolbar class="secondaryToolbar">
 						     	
 						          	<div class="md-toolbar-tools">
 							            
-							            <h2>
-							              <span>{{translate.load('sbi.ds.persist.cron.scheduling.title')}}</span>
-							            </h2>
+							            <h2>{{translate.load('sbi.ds.persist.cron.scheduling.title')}}</h2>
 							            
 						         		<span flex></span>
 							         

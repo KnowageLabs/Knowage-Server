@@ -869,7 +869,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 	// TODO: translate
 		    	var confirm = $mdDialog.confirm()
 			         .title("Delete dataset parameter")
-			         .targetEvent(event)
 			         .textContent("Are you sure you want to delete the dataset parameter?")
 			         .ariaLabel("Delete dataset parameter")
 			         .ok($scope.translate.load("sbi.general.yes"))
@@ -907,7 +906,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			// TODO: translate
 	    	var confirm = $mdDialog.confirm()
 		         .title("Clear all dataset parameters")
-		         .targetEvent(event)
 		         .textContent("Are you sure you want to delete all dataset parameters")
 		         .ariaLabel("Clear all dataset parameters")
 		         .ok($scope.translate.load("sbi.general.yes"))
