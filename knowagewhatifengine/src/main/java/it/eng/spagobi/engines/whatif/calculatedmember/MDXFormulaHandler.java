@@ -18,6 +18,7 @@
 package it.eng.spagobi.engines.whatif.calculatedmember;
 
 import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,7 +40,8 @@ import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 
 public class MDXFormulaHandler {
 
-	private static String xmlPath = WhatIfEngineConfig.getInstance().getEngineResourcePath() + "Olap/formulas.xml";;
+	private static final String SERVER_RESOURCE_FILE_PATH = WhatIfEngineConfig.getInstance().getEngineResourcePath() + "Olap/formulas.xml";;
+	private static final String JAVA_RESOURCE_FILE_PATH = File.separatorChar + "calculated_fields_formulas" + File.separatorChar + "formulas.xml";
 	private static File xmlFile;
 	private static MDXFormulas formulas;
 	private static Map<String, String> placeHolders = new HashMap<String, String>();
@@ -72,10 +74,14 @@ public class MDXFormulaHandler {
 
 	private static boolean loadFile() {
 
-		xmlFile = new File(xmlPath);
+		xmlFile = new File(SERVER_RESOURCE_FILE_PATH);
 		try {
 			if (!xmlFile.exists()) {
-				xmlFile = new File(classLoader.getResource(File.separatorChar + "calculated_fields_formulas" + File.separatorChar + "formulas.xml").getPath());
+				URL resource = classLoader.getResource(JAVA_RESOURCE_FILE_PATH);
+				if (resource != null) {
+					xmlFile = new File(resource.getPath());
+				}
+
 			}
 		} catch (Exception e) {
 			logger.error("Can not load MDX formulas", e);
