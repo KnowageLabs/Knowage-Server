@@ -33,8 +33,8 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.MetaModelParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IMetaModelParuseDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
@@ -47,16 +47,16 @@ public class BusinessModelDataDependenciesResource extends AbstractSpagoBIResour
 	@SuppressWarnings("unchecked")
 	@GET
 	@Produces("application/json")
-	public List<ObjParuse> getDataDependeciesForBusinessModelDriver(@PathParam("id") Integer id, @QueryParam("driverId") Integer driverId) {
+	public List<MetaModelParuse> getDataDependenciesForBusinessModelDriver(@PathParam("id") Integer id, @QueryParam("driverId") Integer driverId) {
 		logger.debug("IN");
-		List<ObjParuse> dataDependencies = null;
-		IObjParuseDAO parameterUseDAO;
+		List<MetaModelParuse> dataDependencies = null;
+		IMetaModelParuseDAO parameterUseDAO;
 		try {
-			parameterUseDAO = DAOFactory.getObjParuseDAO();
-			dataDependencies = parameterUseDAO.loadObjParuses(driverId);
+			parameterUseDAO = DAOFactory.getMetaModelParuseDao();
+			dataDependencies = parameterUseDAO.loadAllParuses(driverId);
 		} catch (HibernateException e) {
 			logger.error("Data Dependencies can not be loaded", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
 		}
 		logger.debug("OUT");
 		return dataDependencies;
@@ -65,17 +65,17 @@ public class BusinessModelDataDependenciesResource extends AbstractSpagoBIResour
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
-	public ObjParuse addDataDependeciesForBusinessModelDriver(@PathParam("id") Integer id, ObjParuse parameterUseObject) {
+	public MetaModelParuse addDataDependenciesForBusinessModelDriver(@PathParam("id") Integer id, MetaModelParuse parameterUseObject) {
 		logger.debug("IN");
-		IObjParuseDAO parameterUseDAO;
+		IMetaModelParuseDAO parameterUseDAO;
 
 		Assert.assertNotNull(parameterUseObject, "Data Dependencies can not be null");
 		try {
-			parameterUseDAO = DAOFactory.getObjParuseDAO();
-			parameterUseDAO.insertObjParuse(parameterUseObject);
+			parameterUseDAO = DAOFactory.getMetaModelParuseDao();
+			parameterUseDAO.insertMetaModelParuse(parameterUseObject);
 		} catch (HibernateException e) {
 			logger.error("Data Dependencies can not be created", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage() + " in Data Dependency", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage() + " in Data Dependency", buildLocaleFromSession(), e);
 		}
 		logger.debug("OUT");
 		return parameterUseObject;
@@ -83,15 +83,15 @@ public class BusinessModelDataDependenciesResource extends AbstractSpagoBIResour
 
 	@POST
 	@Path("delete")
-	public void deleteDataDependeciesForBusinessModelDriverByPost(@PathParam("id") Integer id, ObjParuse parameterUseObject) {
+	public void deleteDataDependenciesForBusinessModelDriverByPost(@PathParam("id") Integer id, MetaModelParuse parameterUseObject) {
 		logger.debug("IN");
-		IObjParuseDAO parameterUseDAO;
+		IMetaModelParuseDAO parameterUseDAO;
 		try {
-			parameterUseDAO = DAOFactory.getObjParuseDAO();
-			parameterUseDAO.eraseObjParuse(parameterUseObject);
+			parameterUseDAO = DAOFactory.getMetaModelParuseDao();
+			parameterUseDAO.eraseMetaModelParuse(parameterUseObject);
 		} catch (HibernateException e) {
 			logger.error("Data Dependencies can not be deleted", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
 		}
 		logger.debug("OUT");
 	}
@@ -99,17 +99,17 @@ public class BusinessModelDataDependenciesResource extends AbstractSpagoBIResour
 	@PUT
 	@Consumes("application/json")
 	@Produces("application/json")
-	public ObjParuse setDataDependeciesForBusinessModelDriver(@PathParam("id") Integer id, ObjParuse parameterUseObject) {
+	public MetaModelParuse setDataDependenciesForBusinessModelDriver(@PathParam("id") Integer id, MetaModelParuse parameterUseObject) {
 		logger.debug("IN");
-		IObjParuseDAO parameterUseDAO;
+		IMetaModelParuseDAO parameterUseDAO;
 
 		Assert.assertNotNull(parameterUseObject, "Data Dependencies can not be null");
 		try {
-			parameterUseDAO = DAOFactory.getObjParuseDAO();
-			parameterUseDAO.modifyObjParuse(parameterUseObject);
+			parameterUseDAO = DAOFactory.getMetaModelParuseDao();
+			parameterUseDAO.modifyMetaModelParuse(parameterUseObject);
 		} catch (HibernateException e) {
 			logger.error("Data Dependencies can not be modified", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
 		}
 		logger.debug("OUT");
 		return parameterUseObject;
@@ -117,15 +117,15 @@ public class BusinessModelDataDependenciesResource extends AbstractSpagoBIResour
 
 	@DELETE
 	@Consumes("application/json")
-	public void deleteDataDependeciesForBusinessModelDriver(@PathParam("id") Integer id, ObjParuse parametarUseObject) {
+	public void deleteDataDependenciesForBusinessModelDriver(@PathParam("id") Integer id, MetaModelParuse parametarUseObject) {
 		logger.debug("IN");
-		IObjParuseDAO parameterUseDAO;
+		IMetaModelParuseDAO parameterUseDAO;
 		try {
-			parameterUseDAO = DAOFactory.getObjParuseDAO();
-			parameterUseDAO.eraseObjParuse(parametarUseObject);
+			parameterUseDAO = DAOFactory.getMetaModelParuseDao();
+			parameterUseDAO.eraseMetaModelParuse(parametarUseObject);
 		} catch (HibernateException e) {
 			logger.error("Data Dependencies can not be deleted", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
 		}
 		logger.debug("OUT");
 	}

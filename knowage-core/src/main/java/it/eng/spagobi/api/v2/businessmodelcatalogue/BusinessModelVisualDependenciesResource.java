@@ -33,8 +33,8 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.MetaModelParview;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IMetaModelParviewDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
@@ -47,17 +47,17 @@ public class BusinessModelVisualDependenciesResource extends AbstractSpagoBIReso
 	@SuppressWarnings("unchecked")
 	@GET
 	@Produces("application/json")
-	public List<ObjParview> getVisualDependencies(@PathParam("id") Integer id, @QueryParam("driverId") Integer driverId) {
+	public List<MetaModelParview> getVisualDependencies(@PathParam("id") Integer id, @QueryParam("driverId") Integer driverId) {
 		logger.debug("IN");
-		List<ObjParview> parameterViewObjects = null;
-		IObjParviewDAO parameterViewDAO;
+		List<MetaModelParview> parameterViewObjects = null;
+		IMetaModelParviewDAO parameterViewDAO;
 		try {
-			parameterViewDAO = DAOFactory.getObjParviewDAO();
-			parameterViewObjects = parameterViewDAO.loadObjParviewsFather(driverId);
+			parameterViewDAO = DAOFactory.getMetaModelParviewDao();
+			parameterViewObjects = parameterViewDAO.loadMetaModelParviews(driverId);
 			Assert.assertNotNull(parameterViewObjects, "Visual Dependencies can not be null");
 		} catch (HibernateException e) {
 			logger.error("Visual dependencies could not be loaded", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
 		}
 		logger.debug("OUT");
 		return parameterViewObjects;
@@ -66,17 +66,17 @@ public class BusinessModelVisualDependenciesResource extends AbstractSpagoBIReso
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
-	public ObjParview addVisualDependeciesForBusinessModelDriver(@PathParam("id") Integer id, ObjParview parameterViewObject) {
+	public MetaModelParview addVisualDependeciesForBusinessModelDriver(@PathParam("id") Integer id, MetaModelParview parameterViewObject) {
 		logger.debug("IN");
-		IObjParviewDAO parameterViewDAO;
+		IMetaModelParviewDAO parameterViewDAO;
 
 		Assert.assertNotNull(parameterViewObject, "Visual Dependencies can not be null");
 		try {
-			parameterViewDAO = DAOFactory.getObjParviewDAO();
-			parameterViewDAO.insertObjParview(parameterViewObject);
+			parameterViewDAO = DAOFactory.getMetaModelParviewDao();
+			parameterViewDAO.insertMetaModelParview(parameterViewObject);
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be created", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage() + "in Visual Dependencsies", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage() + "in Visual Dependencsies", buildLocaleFromSession(), e);
 		}
 		logger.debug("OUT");
 		return parameterViewObject;
@@ -86,15 +86,15 @@ public class BusinessModelVisualDependenciesResource extends AbstractSpagoBIReso
 	@POST
 	@Path("delete")
 	@Consumes("application/json")
-	public void deleteVisualDependeciesForBusinessModelDriverByPost(@PathParam("id") Integer id, ObjParview parameterViewObject) {
+	public void deleteVisualDependeciesForBusinessModelDriverByPost(@PathParam("id") Integer id, MetaModelParview parameterViewObject) {
 		logger.debug("IN");
-		IObjParviewDAO parameterViewDAO;
+		IMetaModelParviewDAO parameterViewDAO;
 		try {
-			parameterViewDAO = DAOFactory.getObjParviewDAO();
-			parameterViewDAO.eraseObjParview(parameterViewObject);
+			parameterViewDAO = DAOFactory.getMetaModelParviewDao();
+			parameterViewDAO.eraseMetaModelParview(parameterViewObject.getParviewId());
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be removed", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
 		}
 		logger.debug("OUT");
 	}
@@ -102,32 +102,32 @@ public class BusinessModelVisualDependenciesResource extends AbstractSpagoBIReso
 	@PUT
 	@Consumes("application/json")
 	@Produces("application/json")
-	public void setVisualDependeciesForBusinessModelDriver(@PathParam("id") Integer id, ObjParview parameterViewObject) {
+	public void setVisualDependeciesForBusinessModelDriver(@PathParam("id") Integer id, MetaModelParview parameterViewObject) {
 		logger.debug("IN");
-		IObjParviewDAO parameterViewDAO;
+		IMetaModelParviewDAO parameterViewDAO;
 
 		Assert.assertNotNull(parameterViewObject, "Visual Dependencies can not be null");
 		try {
-			parameterViewDAO = DAOFactory.getObjParviewDAO();
-			parameterViewDAO.modifyObjParview(parameterViewObject);
+			parameterViewDAO = DAOFactory.getMetaModelParviewDao();
+			parameterViewDAO.modifyMetaModelParview(parameterViewObject);
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be modified", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
 		}
 		logger.debug("OUT");
 	}
 
 	@DELETE
 	@Consumes("application/json")
-	public void deleteVisualDependeciesForBusinessModelDriver(ObjParview parameterViewObject) {
+	public void deleteVisualDependeciesForBusinessModelDriver(MetaModelParview parameterViewObject) {
 		logger.debug("IN");
-		IObjParviewDAO parameterViewDAO;
+		IMetaModelParviewDAO parameterViewDAO;
 		try {
-			parameterViewDAO = DAOFactory.getObjParviewDAO();
-			parameterViewDAO.eraseObjParview(parameterViewObject);
+			parameterViewDAO = DAOFactory.getMetaModelParviewDao();
+			parameterViewDAO.eraseMetaModelParview(parameterViewObject.getParviewId());
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be removed", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
 		}
 		logger.debug("OUT");
 	}
