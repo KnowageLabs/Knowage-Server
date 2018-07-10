@@ -195,10 +195,14 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.jamonapi</groupId>
-			<artifactId>fdsapi</artifactId>
-			<version>1.2</version>
+  			<groupId>com.fdsapi</groupId>
+  			<artifactId>fdsapi</artifactId>
+  			<version>1.2</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.fdsapi/fdsapi -->
+	
+		
 
 		<dependency>
 			<groupId>oro</groupId>
