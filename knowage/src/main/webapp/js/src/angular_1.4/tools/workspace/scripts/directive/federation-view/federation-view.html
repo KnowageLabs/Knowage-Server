@@ -39,7 +39,7 @@
 		           	</md-tooltip>
 		        </md-button>
 	      	 
-		        <md-button class="md-icon-button" aria-label="delete" ng-show="deleteEnabled" ng-click="deleteFederationAction({fed:federation});">
+		        <md-button  class="md-icon-button" aria-label="delete" ng-if="deleteEnabled && isAbletoDelete(federation)" ng-click="deleteFederationAction({fed:federation});">
 		          	<md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
 		          	<md-tooltip md-delay="1000">
 		             	{{translate.load('sbi.workspace.models.federationdefinition.delete')}}
