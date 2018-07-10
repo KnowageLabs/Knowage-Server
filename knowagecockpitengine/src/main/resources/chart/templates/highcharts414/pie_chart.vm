@@ -550,7 +550,7 @@
 		            }
 		            
 		            
-		            #elseif($cliccable=="true")
+		            #elseif($chart.isCockpitEngine=="true")
 		              	events:{
 		                	click: handleCockpitSelection,
 
@@ -1091,6 +1091,16 @@
 			#if ($relatedSerie.precision != '')
 				valueDecimals: $relatedSerie.precision ,
 			#end
+			#if ($relatedSerie.TOOLTIP.showAbsValueTooltip)
+				showAbsValueTooltip: $relatedSerie.TOOLTIP.showAbsValueTooltip ,
+			#else
+				showAbsValueTooltip: false,
+			#end
+			#if ($relatedSerie.TOOLTIP.showPercentageTooltip)
+				showPercentageTooltip: $relatedSerie.TOOLTIP.showPercentageTooltip ,
+			#else
+				showPercentageTooltip: true,
+			#end
 				
 			#*
 				If background color for the serie tooltip is not defined (empty)
@@ -1174,13 +1184,29 @@
         	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
         	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
         	var thisValue = this.y;
+        	var thisValuePercentage = this.percentage;
+        	var showAbsValueTooltip = this.series.tooltipOptions.showAbsValueTooltip;
+        	var showPercentageTooltip = this.series.tooltipOptions.showPercentageTooltip;
         	
         	var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
         			thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+        	
+        	if(showAbsValueTooltip && showPercentageTooltip){
+        		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
+    			thisValuePercentage = Highcharts.numberFormat(thisValuePercentage, valueDecimals, decimalPoint, thousandsSep);
+    			thisValue = valuePrefix + thisValuePercentage +"%"+ valueSuffix+ " ("+thisValue+")"
+        	} else if(!showAbsValueTooltip && showPercentageTooltip){
+        		thisValue = "";
+    			thisValuePercentage = Highcharts.numberFormat(thisValuePercentage, valueDecimals, decimalPoint, thousandsSep);
+    			thisValue = valuePrefix + thisValuePercentage +"%"+ valueSuffix;
+        	} else if(showAbsValueTooltip && !showPercentageTooltip){
+        		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
+    			thisValue = valuePrefix + thisValue + valueSuffix;
+        	} else {
+        		thisValue = ""
+        	}
         			
-    		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
     		
-        	thisValue = valuePrefix + thisValue + valueSuffix;
         	var format = "";
         	var drilling = false;
         	if (this.series.chart.drilldownLevels && this.series.chart.drilldownLevels.length > 0)
@@ -1255,7 +1281,8 @@
 	        	var yValueOnlyIndexEnd = format.indexOf(formatOutro);
 	        	
 	        	prefix = this.series.options.tooltip.valuePrefix + " ";
-	        	
+	        	var showAbsValueTooltip = this.series.options.tooltip.showAbsValueTooltip;
+	        	var showPercentageTooltip = this.series.options.tooltip.showPercentageTooltip;
 	        	var separatorOfThousands = Highcharts.getOptions().lang.thousandsSep;
 	        	
 	        	var decimalPoint = Highcharts.getOptions().lang.decimalPoint;
@@ -1264,8 +1291,21 @@
 	        				
 	        	postfix = " " + this.series.options.tooltip.valueSuffix;
 	        	
-	        	thisValue = Highcharts.numberFormat(this.y, precision, decimalPoint, separatorOfThousands);
-        	}
+	        	if(showAbsValueTooltip && showPercentageTooltip){
+	        		thisValue = Highcharts.numberFormat(this.y, precision, decimalPoint, separatorOfThousands);
+	    			thisValuePercentage = Highcharts.numberFormat(this.percentage, precision, decimalPoint, separatorOfThousands);
+	    			thisValue = valuePrefix + thisValuePercentage +"%"+ valueSuffix+ " ("+thisValue+")"
+	        	} else if(!showAbsValueTooltip && showPercentageTooltip){
+	        		thisValue = "";
+	    			thisValuePercentage = Highcharts.numberFormat(this.percentage, precision, decimalPoint, separatorOfThousands);
+	    			thisValue = valuePrefix + thisValuePercentage +"%"+ valueSuffix;
+	        	} else if(showAbsValueTooltip && !showPercentageTooltip){
+	        		thisValue = Highcharts.numberFormat(this.y, precision, decimalPoint, separatorOfThousands);
+	    			thisValue = valuePrefix + thisValue + valueSuffix;
+	        	} else {
+	        		thisValue = ""
+	        	}
+	        }
             #*
         		Separate font elements (family, size and weight (style)) so the tooltip
         		font characteristics can be separately (independently) specified by the user.
