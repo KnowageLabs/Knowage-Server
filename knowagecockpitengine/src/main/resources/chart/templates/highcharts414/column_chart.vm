@@ -2049,7 +2049,7 @@
 					events:{
 						click: scope.chartInitializer.handleCrossNavigationTo,
 					}
-		         #elseif($cliccable == "true")
+		         #elseif($chart.isCockpitEngine=="true")
 		              	events:{
 		                	click: handleCockpitSelection
 		            	}
