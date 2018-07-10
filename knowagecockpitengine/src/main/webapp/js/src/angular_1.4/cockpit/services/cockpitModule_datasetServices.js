@@ -645,7 +645,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		var filtersToSend = {};
-		if(loadDomainValues == false){
+		if(!loadDomainValues && ngModel.updateble){
 			 filtersToSend = angular.copy(cockpitModule_widgetSelection.getCurrentSelections(dataset.label));
 			if( Object.keys(filtersToSend).length == 0){
 				filtersToSend = cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
