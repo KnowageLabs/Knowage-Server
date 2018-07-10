@@ -58,18 +58,26 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 			 $scope.onChange({dsId:data.id.dsId});
 		 });
 	}
+	$scope.cancelDataset=function(){
+		delete $scope.ngModel;
+	}
 	$scope.getMetaData = function(id){
-		sbiModule_restServices.restToRootProject();
-		var params = cockpitModule_datasetServices.getDatasetParameters(id);
-		for(var p in params){
-			if(params[p].length == 1){
-				params[p] = params[p][0];
+		if(id){
+			sbiModule_restServices.restToRootProject();
+			var params = cockpitModule_datasetServices.getDatasetParameters(id);
+			for(var p in params){
+				if(params[p].length == 1){
+					params[p] = params[p][0];
+				}
 			}
+			sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(cockpitModule_datasetServices.getDatasetLabelById(id)) + "/data",params && JSON.stringify({"parameters": params}))
+				.then(function(data){
+					$scope.dataset = data.data;
+				})
+		}else {
+			$scope.dataset = {};
 		}
-		sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(cockpitModule_datasetServices.getDatasetLabelById(id)) + "/data",params && JSON.stringify({"parameters": params}))
-			.then(function(data){
-				$scope.dataset = data.data;
-			})
+		
 	}
 	if($scope.extended){
 		$scope.getMetaData($scope.ngModel);
