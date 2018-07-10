@@ -550,7 +550,7 @@
 		            }
 		            
 		            
-		            #elseif($cliccable=="true")
+		            #elseif($chart.isCockpitEngine=="true")
 		              	events:{
 		                	click: handleCockpitSelection,
 
