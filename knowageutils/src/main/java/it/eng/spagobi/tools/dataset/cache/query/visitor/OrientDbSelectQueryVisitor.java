@@ -18,13 +18,20 @@
 
 package it.eng.spagobi.tools.dataset.cache.query.visitor;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import it.eng.spagobi.tools.dataset.cache.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.cache.query.item.Projection;
+import it.eng.spagobi.tools.dataset.cache.query.item.UnaryFilter;
+import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.utilities.database.IDataBase;
 
 public class OrientDbSelectQueryVisitor extends AbstractSelectQueryVisitor {
+	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	public OrientDbSelectQueryVisitor(IDataBase database) {
 		super(database);
@@ -68,6 +75,51 @@ public class OrientDbSelectQueryVisitor extends AbstractSelectQueryVisitor {
 		}
 
 		queryBuilder.append("]");
+	}
+
+	@Override
+	public void visit(UnaryFilter item) {
+		if (Date.class.isAssignableFrom(item.getOperand().getClass())) {
+			append(item.getProjection(), false);
+			queryBuilder.append(".format('");
+			queryBuilder.append(DATE_FORMAT);
+			queryBuilder.append("') ");
+
+		} else if (Timestamp.class.isAssignableFrom(item.getOperand().getClass())) {
+			append(item.getProjection(), false);
+			queryBuilder.append(".format('");
+			queryBuilder.append(DATE_TIME_FORMAT);
+			queryBuilder.append("') ");
+		} else {
+			append(item.getProjection(), false);
+		}
+		queryBuilder.append(" ");
+		queryBuilder.append(item.getOperator());
+		queryBuilder.append(" ");
+		append(item.getOperand());
+	}
+
+	@Override
+	public String getFormattedDate(Date date) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT);
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("'");
+		sb.append(dateFormat.format(date));
+		sb.append("'");
+
+		return sb.toString();
+	}
+
+	public String getFormattedTimestamp(String timestamp) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_TIMESTAMP_FORMAT);
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("'");
+		sb.append(dateFormat.format(timestamp));
+		sb.append("'");
+
+		return sb.toString();
 	}
 
 }
