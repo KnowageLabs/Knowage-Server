@@ -8,17 +8,14 @@
 	</md-toolbar>
    
    <md-dialog-content>
-      
 	   <angular-table
 				id="datasetParametersTable"
-				flex
-				style="height:100%;padding:8px"
+				style="padding:8px;"
 				ng-model=parameterPreviewItems
 				columns=parametersPreviewColumns
 				show-search-bar=false
 				scope-functions=paramScopeFunctions
-				no-pagination=false
-				current-page-number=parametersTableLastPage >
+				no-pagination=true >
 		</angular-table>
    		
    </md-dialog-content>
