@@ -513,7 +513,17 @@
 			"valuePrefix": "$mainSerie.prefixChar",
 			"valueSuffix": "$mainSerie.postfixChar",
 			"valueDecimals": $mainSerie.precision,
-			"ttBackColor": "$mainSerie.TOOLTIP.backgroundColor"
+			"ttBackColor": "$mainSerie.TOOLTIP.backgroundColor",
+			#if ($mainSerie.TOOLTIP.showAbsValueTooltip)
+				showAbsValueTooltip: $mainSerie.TOOLTIP.showAbsValueTooltip ,
+			#else
+				showAbsValueTooltip: false,
+			#end
+			#if ($mainSerie.TOOLTIP.showPercentageTooltip)
+				showPercentageTooltip: $mainSerie.TOOLTIP.showPercentageTooltip ,
+			#else
+				showPercentageTooltip: true,
+			#end
 		},
 	data: [
 #foreach($row in $rows)

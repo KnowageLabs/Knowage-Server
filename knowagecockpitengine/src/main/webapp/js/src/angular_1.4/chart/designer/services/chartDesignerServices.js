@@ -327,6 +327,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					                    "backgroundColor":"",
 					                    "borderWidth":0,
 					                    "borderRadius":0,
+					                    "showAbsValueTooltip":false,
+						                "showPercentageTooltip":true,
 					                    "style":{
 							            	   "align":"",
 							            	   "color":"",
