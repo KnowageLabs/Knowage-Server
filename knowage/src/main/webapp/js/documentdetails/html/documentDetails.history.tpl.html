@@ -45,16 +45,31 @@
                     	</md-button>
                     	<md-menu-content width="4">
                     	
-                    		<md-menu-item>                    			
-                        		<md-icon md-font-icon="fa fa-check-circle" class="md-secondary md-icon-button" ng-click="dh.setActive(template)" aria-label="set active template">{{translate.load("sbi.documentdetails.templates.setactive")}}</md-icon>
+                    		<md-menu-item> 
+                    			<md-button ng-click="dh.setActive(template)">
+			                  		<div layout="row" flex>
+			                  			<md-icon md-menu-align-target md-font-icon="fa fa-check-circle" class="md-secondary md-icon-button"  aria-label="set active template"></md-icon>
+				                    	<p flex>{{translate.load("sbi.documentdetails.templates.setactive")}}</p>
+				                  	</div>
+				              	</md-button>          
                         	</md-menu-item>
                         	
-                    		<md-menu-item>                    			
-                        		<md-icon md-font-icon="fa fa-download" class="md-secondary md-icon-button" ng-click="dh.downloadTemplate(template)" aria-label="download template">{{translate.load("sbi.documentdetails.templates.download")}}</md-icon>
-                        	</md-menu-item>
+                    		<md-menu-item> 
+                    			<md-button ng-click="dh.downloadTemplate(template)">
+			                  		<div layout="row" flex>
+			                  			<md-icon md-menu-align-target md-font-icon="fa fa-download" class="md-secondary md-icon-button"  aria-label="download template"></md-icon>
+				                    	<p flex>{{translate.load("sbi.documentdetails.templates.download")}}</p>
+				                  	</div>
+				              	</md-button>
+				            </md-menu-item>
                         	
-                    		<md-menu-item>                    			
-                        		<md-icon md-font-icon="fa fa-trash" class="md-secondary md-icon-button" ng-click="dh.removeTemplateFromList($index)" aria-label="delete template">{{translate.load("sbi.documentdetails.templates.delete")}}</md-icon>
+                    		<md-menu-item>      
+                    			<md-button ng-click="dh.removeTemplateFromList($index)">
+			                  		<div layout="row" flex>
+			                  			<md-icon md-menu-align-target md-font-icon="fa fa-trash" class="md-secondary md-icon-button"  aria-label="delete template"></md-icon>
+				                    	<p flex>{{translate.load("sbi.documentdetails.templates.delete")}}</p>
+				                  	</div>
+				              	</md-button>              			
                         	</md-menu-item>
                     		
                     	</md-menu-content>

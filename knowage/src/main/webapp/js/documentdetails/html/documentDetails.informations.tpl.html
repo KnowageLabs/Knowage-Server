@@ -28,9 +28,9 @@
                 </div>
                 <div layout="row">
                     <div layout="column" layout-align="start center" flex>
-					<img data-ng-src="data:image/(png|jpg|jpeg|png|gif);base64,{{di.documentService.documentImage}}" width="320" height="180" >
+					<img data-ng-src="data:image/(png|jpg|jpeg|png|gif);base64,{{di.documentService.documentImage}}" width="90%" height="180" >
 					<p ng-if="di.documentService.documentImage == undefined">  <em>{{di.translate.load("sbi.documentdetails.drivers.previewimage")}}  </em></p>       
-                        <div layout="row">
+                        <div layout="row" style="width:100%">
                         <file-upload ng-model="di.documentService.previewFile" flex></file-upload>
                         </div>
                     </div>
