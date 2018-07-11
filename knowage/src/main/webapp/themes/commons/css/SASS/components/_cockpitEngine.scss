@@ -1733,13 +1733,16 @@
 				&>md-tabs-wrapper{}
 				}
 			md-tabs-wrapper {
+				background-color: $detailBackground;
+				border-top: 1px solid $bordersColor;
 				margin-left: 0;
 				width: 100%;
 				height: 30px;
+				md-prev-button {
+					left: 32px;
+				}
 				md-tabs-canvas {
 					height: 30px;
-					background-color: $detailBackground;
-					border-top: 1px solid $bordersColor;
 					md-pagination-wrapper {
 						height: 30px;
 						.md-tab {
@@ -1754,7 +1757,7 @@
 							margin: 2px 4px;
 							border-radius: 2px;
 							&:first-child {
-								margin-left: 20px;
+								margin-left: 10px;
 							}
 							span {
 								position: relative;
