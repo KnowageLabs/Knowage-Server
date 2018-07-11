@@ -189,7 +189,7 @@ angular.module('cockpitModule')
 				$scope.defaultValue = "";
 			}
 
-			if($scope.hasDefaultValue && (nature == "refresh" || nature == "filters")){
+			if($scope.hasDefaultValue && (nature == "init" || nature == "refresh" || nature == "filters")){
 				switch($scope.ngModel.settings.defaultValue.toUpperCase()){
 				case 'FIRST':
 					if(Array.isArray($scope.defaultValue)){
