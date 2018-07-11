@@ -993,6 +993,7 @@
         		#if($yAxis.min)
         			#if($yAxis.min!=0)
     		    		min: $yAxis.min,
+						startOnTick: false,
         			#end
         		#end
         		
@@ -1001,9 +1002,11 @@
      		   			max: $yAxis.max,
         			#end
         		#end
-        	#end
-        	#if($chartType=="radar")
+        	#elseif($chartType=="radar")
         		min: 0,
+			#else
+				min: $yAxis.min,
+				 startOnTick: false,
         	#end
         	title: {
         	    #if($yAxis.TITLE.text != '')
