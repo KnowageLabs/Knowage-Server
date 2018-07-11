@@ -341,6 +341,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					         ]
 					      },
 					      "type":"BAR",
+					      "alignAxis": false,
 					      "AXES_LIST":{
 					    	  "AXIS":[
 					    		  {
