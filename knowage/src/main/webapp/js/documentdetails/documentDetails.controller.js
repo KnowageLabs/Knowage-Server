@@ -19,7 +19,7 @@
     'use strict';
 
     angular
-        .module('DocumentDetails', ['ngMaterial', 'jsonFormatter','sbiModule', 'componentTreeModule', 'file_upload'])
+        .module('DocumentDetails', ['ngMaterial', 'jsonFormatter','sbiModule', 'componentTreeModule', 'file_upload','DriversModule'])
         .config(['$mdThemingProvider','$locationProvider','$httpProvider', function($mdThemingProvider,$locationProvider,$httpProvider) {
             $mdThemingProvider.theme('knowage')
             $mdThemingProvider.setDefaultTheme('knowage');
@@ -29,9 +29,9 @@
             	  requireBase: false
             	});
         }])
-        .controller('DocumentDetailsController',['$scope','$filter','DocumentService','closingIFrame','$location','resourceService','multipartForm','$mdDialog', 'sbiModule_restServices', 'sbiModule_translate', 'sbiModule_messaging', DocumentDetailsController])
+        .controller('DocumentDetailsController',['$scope','$filter','DriversService','DocumentService','closingIFrame','$location','resourceService','multipartForm','$mdDialog', 'sbiModule_restServices', 'sbiModule_translate', 'sbiModule_messaging', DocumentDetailsController])
 
-    function DocumentDetailsController($scope,$filter,DocumentService,closingIFrame,$location,resourceService,multipartForm,$mdDialog,sbiModule_restServices,sbiModule_translate,sbiModule_messaging) {
+    function DocumentDetailsController($scope,$filter,DriversService,DocumentService,closingIFrame,$location,resourceService,multipartForm,$mdDialog,sbiModule_restServices,sbiModule_translate,sbiModule_messaging) {
         var self = this;
         var documentService = DocumentService;
         self.translate = sbiModule_translate;
@@ -41,9 +41,11 @@
         self.title = "Document Details";
         var template = documentService.template;
         var document = documentService.document;
+        DriversService.setDriverRelatedObject(document);
+		DriversService.getDriversOnRelatedObject(requiredPath,document.id + "/drivers");
         self.analyticalDrivers = documentAndInfo.analyticalDrivers;
         self.lovIdAndColumns = documentService.lovIdAndColumns;
-        var documentBasePath =""+ document.id ;
+        var documentBasePath =""+ document.id;
         var driverPostBasePath = document.id + '/drivers';
     	var outputParametersPostBasePath = document.id + '/outputparameters';
 		var templateUploadBasePath = document.id + '/templates';
@@ -64,13 +66,11 @@
         	uploadTemplate();
         	setActiveTemplate();
 
-
         	deleteDrivers();
         	deleteDataDependencies();
         	deleteVisualDependencies();
         	deleteOutputParameters();
 			deleteTemplates();
-
 
 			deleteSubreports();
 			persistSubreports();
