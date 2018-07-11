@@ -85,7 +85,11 @@
 		#set($serieKeyFeed = $serieKeyFeed + 1)
 	#end
 #end
-
+#if($chart.isCockpitEngine)
+	#set($isCockpit = $chart.isCockpitEngine)
+#else
+	#set($isCockpit = false)
+#end
 {
 	#set($drilldownEnabledFlag = false)
 	
@@ -120,7 +124,7 @@
 			cliccable: $cliccable,
 			drillable: $drillable,
 			drillableChart: $enableDrilldown,
-			isCockpit: $chart.isCockpitEngine,
+			isCockpit: $isCockpit,
 			categoryColumn: '$categorieColumns.column',
 			categoryGroupBy: '$categorieColumns.groupby',
 			categoryGroupByNamens: '$categorieColumns.groupbyNames',
