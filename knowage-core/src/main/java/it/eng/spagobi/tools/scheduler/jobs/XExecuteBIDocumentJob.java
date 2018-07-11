@@ -516,7 +516,15 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						}
 						String contentType = executionProxy.getReturnedContentType();
 
-						String fileExtension = MimeUtils.getFileExtension(contentType.toLowerCase().replace(";charset=utf-8", ""));
+						String mimeType = contentType.toLowerCase().replace(";charset=utf-8", "");
+						String fileExtension = null;
+						if (mimeType.contains("application/vnd.ms-excel")) {
+							fileExtension = "xls";
+						} else if (mimeType.contains("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
+							fileExtension = "xlsx";
+						} else {
+							fileExtension = MimeUtils.getFileExtension(mimeType);
+						}
 
 						long end = System.currentTimeMillis();
 						long elapsed = (end - start) / 1000;
