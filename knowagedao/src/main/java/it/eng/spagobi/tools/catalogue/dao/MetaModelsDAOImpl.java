@@ -441,7 +441,6 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			hibModel.setCategory(model.getCategory());
 			hibModel.setModelLocker(model.getModelLocker());
 			hibModel.setModelLocked(model.getModelLocked());
-			hibModel.getCommonInfo().setOrganization("DEFAULT TENANT");
 			if (model.getDataSourceLabel() != null && !model.getDataSourceLabel().equals("")) {
 				// Criterion aCriterion = Expression.eq("label", model.getDataSourceLabel());
 				// Criteria criteria = session.createCriteria(SbiDataSource.class);
