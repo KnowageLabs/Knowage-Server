@@ -363,9 +363,10 @@ function cockpitWidgetControllerFunction(
 		switch(eventType){
 		case "REFRESH"  :
 			if($scope.refresh==undefined){
-				$timeout(function(){
+				/*$timeout(function(){
 					$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
-				},1000);
+				},1000);*/
+				$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 			}else{
 				$scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection, config.changedChartType,config.chartConf);
 			}
