@@ -209,7 +209,11 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		}
 
 		try {
-			String sqlQuery = "SELECT COUNT(*) FROM (" + statement + ") temptable";
+			String tableAlias = "";
+			if (!dialect.toLowerCase().contains("orient")) {
+				tableAlias = "temptable";
+			}
+			String sqlQuery = "SELECT COUNT(*) FROM (" + statement + ") " + tableAlias;
 			logger.info("Executing query " + sqlQuery + " ...");
 			stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			rs = stmt.executeQuery(sqlQuery);
