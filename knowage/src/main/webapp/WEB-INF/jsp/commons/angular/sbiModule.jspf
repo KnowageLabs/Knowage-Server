@@ -430,7 +430,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 	this.delete = function(endP_path, req_Path, item, conf) {
 		(item == undefined || item==null) ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
 		sbiModule_logger.trace("DELETE:" +endP_path+"/"+req_Path+ "" + item,conf);
-		return $http.delete(getBaseUrl(endP_path) + "" + req_Path, conf);
+		return $http.delete(this.getBaseUrl(endP_path) + "" + req_Path, conf);
 	};
 
 
