@@ -196,6 +196,7 @@ function cockpitChartWidgetControllerFunction(
 		sbiModule_translate,
 		sbiModule_user,
 		$filter,
+		$timeout,
 		cockpitModule_widgetServices,
 		cockpitModule_properties,
 		cockpitModule_template,
@@ -274,7 +275,10 @@ function cockpitChartWidgetControllerFunction(
 
 			} else {
 				//Refresh for Not realtime datasets
-				$scope.$broadcast(nature,data, false, changedChartType,dataAndChartConf,objForDrill);
+				$timeout(function (){
+					$scope.$broadcast(nature,data, false, changedChartType,dataAndChartConf,objForDrill);
+				},400)
+				
 			}
 		}
 
