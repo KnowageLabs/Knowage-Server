@@ -1828,7 +1828,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				// TODO: translate
 				var confirm = $mdDialog.confirm()
 				        .title($scope.translate.load("sbi.catalogues.generic.modify"))
-				        .targetEvent(event)
 				        .textContent($scope.translate.load("sbi.catalogues.generic.modify.msg"))
 				        .ariaLabel("Losing the changed and not saved data")
 				        .ok($scope.translate.load("sbi.general.yes"))
