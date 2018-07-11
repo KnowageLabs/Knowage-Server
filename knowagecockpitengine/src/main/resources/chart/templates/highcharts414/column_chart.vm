@@ -974,15 +974,18 @@
 	#end
     #end
     ],
-	 
+	
     
-    
+    #set ($axisCounter = 0)
     yAxis: [
         ## Serie add
         #foreach($yAxisKey in $yAxisList.keySet())
         	#set ($yAxis = $yAxisList[$yAxisKey] )
         {
-        	
+        	#if($chart.alignAxis && $chart.alignAxis =="true" && $axisCounter!=0)
+        	linkedTo:0,
+        	#end
+        	#set ($axisCounter = 1)
         	#*
         		Provide possibility for BAR chart to show also negative values.
         		@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -993,7 +996,6 @@
         		#if($yAxis.min)
         			#if($yAxis.min!=0)
     		    		min: $yAxis.min,
-						startOnTick: false,
         			#end
         		#end
         		
@@ -1002,11 +1004,9 @@
      		   			max: $yAxis.max,
         			#end
         		#end
-        	#elseif($chartType=="radar")
+        	#end
+        	#if($chartType=="radar")
         		min: 0,
-			#else
-				min: $yAxis.min,
-				 startOnTick: false,
         	#end
         	title: {
         	    #if($yAxis.TITLE.text != '')
@@ -2052,7 +2052,7 @@
 					events:{
 						click: scope.chartInitializer.handleCrossNavigationTo,
 					}
-		         #elseif($chart.isCockpitEngine == "true")
+		         #elseif($chart.isCockpitEngine=="true")
 		              	events:{
 		                	click: handleCockpitSelection
 		            	}
