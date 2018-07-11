@@ -179,25 +179,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			params.put("pagination", getPaginationParamVaue(mimeType) );
 			
 			
-			SourceBean config = (SourceBean)ConfigSingleton.getInstance();		
-			SourceBean baseTemplateFileSB = (SourceBean)config.getAttribute("QBE.TEMPLATE-BUILDER.BASE-TEMPLATE");
-			String baseTemplateFileStr = null;
-			if(baseTemplateFileSB != null) baseTemplateFileStr = baseTemplateFileSB.getCharacters();
-			File baseTemplateFile = null;
-			if(baseTemplateFileStr != null) baseTemplateFile = new File(baseTemplateFileStr);
-			
-			templateBuilder = new TemplateBuilder(sqlQuery, extractedFields, params, baseTemplateFile);
-			templateContent = templateBuilder.buildTemplate();
-			
-			if ("text/jrxml".equalsIgnoreCase( mimeType ) ) {
-				// return the jrxml template
-				try {				
-					writeBackToClient(200, templateContent, writeBackResponseInline, "report." + fileExtension, mimeType);
-				} catch (IOException e) {
-					throw new SpagoBIEngineException("Impossible to write back the responce to the client", e);
-				}
-				
-			} else if( "application/vnd.ms-excel".equalsIgnoreCase( mimeType ) ) {
+			if( "application/vnd.ms-excel".equalsIgnoreCase( mimeType ) ) {
 				// export into XLS
 				exportIntoXLS(writeBackResponseInline, mimeType, statement,
 						sqlQuery, extractedFields);
@@ -210,33 +192,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			} else if ("text/csv".equalsIgnoreCase( mimeType )) {
 				// export into CSV
 				exportIntoCSV(writeBackResponseInline, mimeType,
-						fileExtension, transaction, sqlQuery);
-				
-			} else {
-				// other export formats using JasperReport API
-				try {
-					reportFile = File.createTempFile("report", ".rpt");
-				} catch (IOException ioe) {
-					throw new SpagoBIEngineException("Impossible to create a temporary file to store the template generated on the fly", ioe);
-				}
-				
-				setJasperClasspath();
-				
-				runner = new ReportRunner( );
-				Locale locale = this.getLocale();
-				try {
-					runner.run( templateContent, reportFile, mimeType, connection, locale);
-				}  catch (Exception e) {
-					throw new SpagoBIEngineException("Impossible compile or to export the report", e);
-				}
-				
-				try {				
-					writeBackToClient(reportFile, null, writeBackResponseInline, "report." + fileExtension, mimeType);
-				} catch (IOException ioe) {
-					throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
-				}
-				
-			}
+						fileExtension, transaction, sqlQuery);				
+			} 
 
 		} catch (Throwable t) {			
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);

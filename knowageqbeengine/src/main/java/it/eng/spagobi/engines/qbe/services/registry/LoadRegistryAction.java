@@ -38,6 +38,7 @@ import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
@@ -74,6 +75,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 
 	private static final long serialVersionUID = -642121076148276452L;
 	private final String ID_COLUMN = "ID_COLUMN";
+	private final String REGISTRY_QUERY_ID = "q9";
 
 	private final JSONArray mandatories = new JSONArray();
 	private final JSONArray columnsInfos = new JSONArray();
@@ -611,11 +613,14 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			Map env = qbeEngineInstance.getEnv();
 
 			query = new Query();
+			query.setId(REGISTRY_QUERY_ID);
+			QueryCatalogue queryCatalogue = qbeEngineInstance.getQueryCatalogue();
+			queryCatalogue.addQuery(query);
 			query.setDistinctClauseEnabled(false);
+			qbeEngineInstance.setActiveQuery(REGISTRY_QUERY_ID);
 			IModelEntity entity = getSelectedEntity();
 
-			QbeEngineInstance engineInstance = getEngineInstance();
-			QbeTemplate template = engineInstance.getTemplate();
+			QbeTemplate template = qbeEngineInstance.getTemplate();
 			registryConfig = (RegistryConfiguration) template.getProperty("registryConfiguration");
 			List<Column> columns = registryConfig.getColumns();
 			columnMaxSize = registryConfig.getColumnsMaxSize();
