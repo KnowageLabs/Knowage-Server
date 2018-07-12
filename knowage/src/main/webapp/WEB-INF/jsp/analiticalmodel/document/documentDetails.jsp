@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			            		<div ng-class="documentDetailsForm.informations.$invalid ? 'kn-dangerous':''">Informations</div>			            	 
 			            	</md-tab-label>
 							<md-tab-body>
-			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/html/documentDetails.informations.tpl.html")%>'" />
+			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/templates/documentDetails.informations.tpl.html")%>'" />
 			                 </md-tab-body>
 			            </md-tab>		
 			            	          		              
@@ -53,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			            		<div ng-class="documentDetailsForm.drivers.$invalid ? 'kn-dangerous':''">Drivers</div>
 			           		 </md-tab-label>
 			           		 <md-tab-body>
-			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/html/documentDetails.drivers.tpl.html")%>'" />
+			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/templates/documentDetails.drivers.tpl.html")%>'" />
 			           		 </md-tab-body>
 			            </md-tab>
 			            
@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			            		<div ng-class="documentDetailsForm.outputparameters.$invalid ? 'kn-dangerous':''">Output Parameters</div>
 			            	</md-tab-label>
 			            	<md-tab-body>
-			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/html/outputParameters.html")%>'" />
+			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/templates/outputParameters.html")%>'" />
 			                </md-tab-body>
 			            </md-tab>			            
 			            
@@ -71,7 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				            	<div ng-class="documentDetailsForm.datalineage.$invalid ? 'kn-dangerous':''">Data Lineage</div>
 				            </md-tab-label>
 				            <md-tab-body>    	
-			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/html/dataLineage.html")%>'" />	
+			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/templates/dataLineage.html")%>'" />	
 			                </md-tab-body>		                
 			            </md-tab>		
 			                        
@@ -80,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			            		<div ng-class="documentDetailsForm.templates.$invalid ? 'kn-dangerous':''">History</div>
 			            	</md-tab-label>
 			            	<md-tab-body>
-			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/html/templates.html")%>'" />
+			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/templates/templates.html")%>'" />
 			                </md-tab-body>
 			            </md-tab>
 
@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			            		<div ng-class="documentDetailsForm.subreports.$invalid ? 'kn-dangerous':''">Subreports</div>
 			            	</md-tab-label>
 			            	<md-tab-body>
-			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/html/subreports.html")%>'" />
+			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/templates/subreports.html")%>'" />
 			                </md-tab-body>
 			            </md-tab>
 			            
