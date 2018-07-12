@@ -125,115 +125,119 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		angular.forEach(cockpitModule_template.configuration.datasets,function(item){
 			var actualDs=ds.getDatasetById(item.dsId);
-			var addedParams=[];
-			var removedParams=[];
+			if(actualDs==undefined){
+				this.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoloaddataset").replace("{0}", "<b>" + item.dsLabel + "</b>"));
+			}else{
+				var addedParams=[];
+				var removedParams=[];
 
-			//check if label changed
-			if(!angular.equals(actualDs.label,item.dsLabel)){
-				var oldlab=angular.copy(item.dsLabel);
-				//update the label of dataset
-				this.push(sbiModule_translate.load("sbi.generic.label")+": "+item.dsLabel+" -> "+actualDs.label)
-				item.dsLabel=actualDs.label;
+				//check if label changed
+				if(!angular.equals(actualDs.label,item.dsLabel)){
+					var oldlab=angular.copy(item.dsLabel);
+					//update the label of dataset
+					this.push(sbiModule_translate.load("sbi.generic.label")+": "+item.dsLabel+" -> "+actualDs.label)
+					item.dsLabel=actualDs.label;
 
-				//update the dataset label in the associations
-				for(var i=0;i<cockpitModule_template.configuration.associations.length;i++){
-					var ass=cockpitModule_template.configuration.associations[i];
-					if(ass.description.search("="+oldlab+"\.")!=-1){
-						ass.description=ass.description.replace("="+oldlab+"\.", "="+item.dsLabel+".");
-						for(var f=0;f<ass.fields.length;f++){
-							if(angular.equals(ass.fields[f].store,oldlab)){
-								ass.fields[f].store=item.dsLabel;
-								break;
+					//update the dataset label in the associations
+					for(var i=0;i<cockpitModule_template.configuration.associations.length;i++){
+						var ass=cockpitModule_template.configuration.associations[i];
+						if(ass.description.search("="+oldlab+"\.")!=-1){
+							ass.description=ass.description.replace("="+oldlab+"\.", "="+item.dsLabel+".");
+							for(var f=0;f<ass.fields.length;f++){
+								if(angular.equals(ass.fields[f].store,oldlab)){
+									ass.fields[f].store=item.dsLabel;
+									break;
+								}
+							}
+						}
+					}
+
+					//update the dataset in the filters
+					if(cockpitModule_template.configuration.filters.hasOwnProperty(oldlab)){
+						cockpitModule_template.configuration.filters[item.dsLabel]=cockpitModule_template.configuration.filters[oldlab];
+						delete cockpitModule_template.configuration.filters[oldlab];
+					}
+
+					//update the dataset label in the aggregations
+					for(var i=0;i<cockpitModule_template.configuration.aggregations.length;i++){
+						var aggr=cockpitModule_template.configuration.aggregations[i];
+						//check if this aggregations have this ds
+						var ind=aggr.datasets.indexOf(oldlab);
+						if(ind!=-1){
+							//alter the label in dstasets variable
+							aggr.datasets[ind]=item.dsLabel;
+							//alter the label in selections
+							var alteration={add:{},remove:[]}
+							angular.forEach(aggr.selection,function(selVal,selInd){
+								if(selInd.startsWith(oldlab)){
+									this.add[item.dsLabel+"."+selInd.split(".")[1]]=selVal;
+									this.remove.push(selInd);
+								}
+							},alteration)
+
+							angular.forEach(alteration.add,function(val,ind){
+								this[ind]=val;
+							},aggr.selection)
+
+							angular.forEach(alteration.remove,function(val){
+								delete this[val];
+							},aggr.selection)
+						}
+					}
+				}
+
+				//check if name changed
+				if(!angular.equals(actualDs.name,item.name)){
+					//update the name of dataset
+					this.push(sbiModule_translate.load("sbi.generic.name")+": "+item.name+" -> "+actualDs.name);
+					item.name=actualDs.name;
+				}
+
+				//check if parameters changed
+				removedDatasetParams[item.dsLabel] = [];
+				if(actualDs.parameters!=undefined && item.parameters!=undefined){
+
+					//check added params
+					for(var i=0; i<actualDs.parameters.length; i++){
+						var paramName = actualDs.parameters[i].name;
+						if(!item.parameters.hasOwnProperty(paramName)){
+							addedParams.push(paramName);
+							this.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.addedParameter")
+									.replace("{0}", "<b>" + item.dsLabel + ".$P{" + paramName + "}</b>"));
+						}
+					}
+
+					//check removed params
+					for (var paramName in item.parameters) {
+						if (item.parameters.hasOwnProperty(paramName)) {
+							var removed = true;
+							for(var i=0; i<actualDs.parameters.length; i++){
+								if(actualDs.parameters[i].name == paramName){
+									removed = false;
+									break;
+								}
+							}
+							if(removed){
+								removedParams.push(paramName);
+								removedDatasetParams[item.dsLabel].push(paramName);
+								this.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.removedParameter")
+										.replace("{0}", "<b>" + item.dsLabel + ".$P{" + paramName + "}</b>"));
 							}
 						}
 					}
 				}
 
-				//update the dataset in the filters
-				if(cockpitModule_template.configuration.filters.hasOwnProperty(oldlab)){
-					cockpitModule_template.configuration.filters[item.dsLabel]=cockpitModule_template.configuration.filters[oldlab];
-					delete cockpitModule_template.configuration.filters[oldlab];
+				//fix template parameters
+				for(var i=0; i<addedParams.length; i++){
+					var addedParam = addedParams[i];
+					item.parameters[addedParam] = null;
 				}
-
-				//update the dataset label in the aggregations
-				for(var i=0;i<cockpitModule_template.configuration.aggregations.length;i++){
-					var aggr=cockpitModule_template.configuration.aggregations[i];
-					//check if this aggregations have this ds
-					var ind=aggr.datasets.indexOf(oldlab);
-					if(ind!=-1){
-						//alter the label in dstasets variable
-						aggr.datasets[ind]=item.dsLabel;
-						//alter the label in selections
-						var alteration={add:{},remove:[]}
-						angular.forEach(aggr.selection,function(selVal,selInd){
-							if(selInd.startsWith(oldlab)){
-								this.add[item.dsLabel+"."+selInd.split(".")[1]]=selVal;
-								this.remove.push(selInd);
-							}
-						},alteration)
-
-						angular.forEach(alteration.add,function(val,ind){
-							this[ind]=val;
-						},aggr.selection)
-
-						angular.forEach(alteration.remove,function(val){
-							delete this[val];
-						},aggr.selection)
-					}
+				for(var i=0; i<removedParams.length; i++){
+					var removedParam = removedParams[i];
+					delete item.parameters[removedParam];
 				}
 			}
-
-			//check if name changed
-			if(!angular.equals(actualDs.name,item.name)){
-				//update the name of dataset
-				this.push(sbiModule_translate.load("sbi.generic.name")+": "+item.name+" -> "+actualDs.name)
-				item.name=actualDs.name;
-			}
-
-			//check if parameters changed
-			removedDatasetParams[item.dsLabel] = [];
-			if(actualDs.parameters!=undefined && item.parameters!=undefined){
-
-				//check added params
-				for(var i=0; i<actualDs.parameters.length; i++){
-					var paramName = actualDs.parameters[i].name;
-					if(!item.parameters.hasOwnProperty(paramName)){
-						addedParams.push(paramName);
-						this.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.addedParameter")
-								.replace("{0}", "<b>" + item.dsLabel + ".$P{" + paramName + "}</b>"));
-					}
-				}
-
-				//check removed params
-				for (var paramName in item.parameters) {
-				    if (item.parameters.hasOwnProperty(paramName)) {
-				    	var removed = true;
-				    	for(var i=0; i<actualDs.parameters.length; i++){
-							if(actualDs.parameters[i].name == paramName){
-								removed = false;
-								break;
-							}
-						}
-				    	if(removed){
-				    		removedParams.push(paramName);
-				    		removedDatasetParams[item.dsLabel].push(paramName);
-				    		this.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.removedParameter")
-				    				.replace("{0}", "<b>" + item.dsLabel + ".$P{" + paramName + "}</b>"));
-				    	}
-				    }
-				}
-			}
-
-			//fix template parameters
-			for(var i=0; i<addedParams.length; i++){
-				var addedParam = addedParams[i];
-				item.parameters[addedParam] = null;
-			}
-			for(var i=0; i<removedParams.length; i++){
-				var removedParam = removedParams[i];
-				delete item.parameters[removedParam];
-			}
-		},changed)
+		},changed);
 
 		var modifiedAssociations = 0;
 		angular.forEach(cockpitModule_template.configuration.associations,function(item){
@@ -287,20 +291,22 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			angular.forEach(sheet.widgets,function(widget){
 				if(widget.dataset && widget.dataset.dsId){
 					var actualDs=ds.getDatasetById(widget.dataset.dsId);
-					angular.forEach(widget.content.columnSelectedOfDataset,function(widgetColumn){
-						var isWidgetColumnMatching = false;
-						for(var i = 0; i < actualDs.metadata.fieldsMeta.length; i++){
-							if(actualDs.metadata.fieldsMeta[i].name == widgetColumn.name || actualDs.metadata.fieldsMeta[i].alias == widgetColumn.name || widgetColumn.formula){
-								isWidgetColumnMatching = true;
-								break;
+					if(actualDs!=undefined){
+						angular.forEach(widget.content.columnSelectedOfDataset,function(widgetColumn){
+							var isWidgetColumnMatching = false;
+							for(var i = 0; i < actualDs.metadata.fieldsMeta.length; i++){
+								if(actualDs.metadata.fieldsMeta[i].name == widgetColumn.name || actualDs.metadata.fieldsMeta[i].alias == widgetColumn.name || widgetColumn.formula){
+									isWidgetColumnMatching = true;
+									break;
+								}
 							}
-						}
-						if(!isWidgetColumnMatching){
-							this.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoloadcolumnforwidget")
-									.replace("{0}", "<b>" + actualDs.name + "." + widgetColumn.alias + "</b>")
-									.replace("{1}", "<b>" + widget.content.name + "</b>"));
-						}
-					}, changed);
+							if(!isWidgetColumnMatching){
+								this.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoloadcolumnforwidget")
+										.replace("{0}", "<b>" + actualDs.name + "." + widgetColumn.alias + "</b>")
+										.replace("{1}", "<b>" + widget.content.name + "</b>"));
+							}
+						}, changed);
+					}
 				}
 			});
 		});
