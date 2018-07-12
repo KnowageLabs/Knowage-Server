@@ -57,7 +57,9 @@ angular
              self.addDriver = function() {
             	 nameOfObjectIdProperty= "";
             	 self.driverRelatedObject.hasOwnProperty('ModelLocked') ? nameOfObjectIdProperty = "biMetaModelID" : nameOfObjectIdProperty = "biObjectID";
-                 if (self.drivers) {
+                 
+				 if(self.document.id){
+				 if (self.drivers) {
                      self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',nameOfObjectIdProperty:self.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
                      var index = self.drivers.length;
                      self.selectDriver( index );
@@ -65,6 +67,7 @@ angular
                      self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true',nameOfObjectIdProperty:self.driverRelatedObject.id ,'visible':false,'required':false,'multivalue':false}];
                      self.selectDriver(1);
                  }
+				 }
              }
              self.openMenu=function(menu,event){
             	 menu(event);
@@ -135,6 +138,7 @@ angular
 	                    	 self.setParameterInfo(self.drivers[i]);
 	                         self.selectedDriver = self.drivers[i];
 	                         self.setParameterInfo(self.selectedDriver);
+							 if(self.selectedDriver.parID)
 	                         getLovsByAnalyticalDriverId(self.selectedDriver.parID);
 	                         	if(self.selectedDriver.id){
 			                         querryParams = setQuerryParameters(self.selectedDriver.id);
