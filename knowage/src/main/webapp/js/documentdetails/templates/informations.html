@@ -70,11 +70,10 @@
                         <md-select  ng-required="di.isDatasetVisible()" name="dataset" ng-model="di.document.dataSetId" >
                           <md-select-header>
 					            <input ng-model="di.searchTerm"
-					                   type="search"
-					                   placeholder="Search for dataset..." >
+					                   type="text"
+					                   placeholder="Search for dataset..."
+					                    onkeydown="event.stopPropagation()" >
 					          </md-select-header>
-                            <md-option ng-value=" "></md-option>
-                            <md-option ng-repeat="dataset in di.datasets" ng-value="dataset.id.dsId">{{dataset.label}}</md-option>
                             <md-option ng-repeat="dataset in di.datasets | filter:di.searchTerm" ng-value="dataset.id.dsId">{{dataset.label}}</md-option>
                         </md-select>
                                            
