@@ -1,6 +1,20 @@
 angular.module("cockpitModule").service("cockpitModule_documentServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, $q,$mdPanel,sbiModule_messaging){
 	var ds=this;
 
+	this.loadDocumentsFromTemplate=function(){
+		var def=$q.defer();
+		if(cockpitModule_template.configuration.documents.length == 0){
+			def.resolve();
+		}else{
+			var documentLabels = [];
+			angular.forEach(cockpitModule_template.configuration.documents, function(item){
+				this.push(item.DOCUMENT_LABEL);
+			}, documentLabels);
+
+			ds.loadDocumentList("", undefined, undefined, undefined, undefined, false, documentLabels, undefined, true);
+		}
+		return def.promise;
+	};
 
 	//return a COPY of document with specific id or null
 	this.getDocumentById=function(docId){
@@ -59,7 +73,7 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 
 	}
 
-	this.loadDocumentList=function(searchValue, itemsPerPage, currentPageNumber, columnsSearch, columnOrdering, reverseOrdering, excludeItem, enableCheckForChanges){
+	this.loadDocumentList=function(searchValue, itemsPerPage, currentPageNumber, columnsSearch, columnOrdering, reverseOrdering,includeItems, excludeItems, enableCheckForChanges){
 		var deferred = $q.defer();
 
 		if(searchValue==undefined || searchValue.trim().lenght==0 ){
@@ -72,8 +86,11 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 		if(itemsPerPage != undefined){
 			item += "&ItemPerPage=" + itemsPerPage;
 		}
-		if(excludeItem!=undefined && excludeItem.length>0){
-			item += "&objLabelNotIn="+excludeItem.join(",");
+		if(includeItems!=undefined && includeItems.length>0){
+			item += "&objLabelIn="+includeItems.join(",");
+		}
+		if(excludeItems!=undefined && excludeItems.length>0){
+			item += "&objLabelNotIn="+excludeItems.join(",");
 		}
 
 		sbiModule_restServices.restToRootProject();
@@ -115,11 +132,11 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 				    	$scope.documentList=[];
 				    	$scope.totalCount=0;
 				    	$scope.changeDocPage=function(searchValue, itemsPerPage, currentPageNumber , columnsSearch,columnOrdering, reverseOrdering){
-				    		var excludeItem=[];
+				    		var excludeItems=[];
 				    		for(var i=0;i<currentAvaiableDocument.length;i++){
-				    			excludeItem.push(currentAvaiableDocument[i].DOCUMENT_LABEL)
+				    			excludeItems.push(currentAvaiableDocument[i].DOCUMENT_LABEL)
 				    		}
-							ds.loadDocumentList(searchValue, itemsPerPage, currentPageNumber , columnsSearch,columnOrdering, reverseOrdering,excludeItem).then(
+							ds.loadDocumentList(searchValue, itemsPerPage, currentPageNumber , columnsSearch,columnOrdering, reverseOrdering, undefined, excludeItems).then(
 									function(data){
 										angular.copy(data.items,$scope.documentList);
 										$scope.totalCount=data.count
@@ -198,7 +215,7 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 					var oldLabel=angular.copy(item.DOCUMENT_LABEL);
 					//update the label of document
 					this.push(sbiModule_translate.load("sbi.generic.label")+": "+item.DOCUMENT_LABEL+" -> "+actualDoc.DOCUMENT_LABEL)
-					item.DOCUMENT_LABEL=actualDs.DOCUMENT_LABEL;
+					item.DOCUMENT_LABEL=actualDoc.DOCUMENT_LABEL;
 
 					//update the dataset label in the associations
 					for(var i=0;i<cockpitModule_template.configuration.associations.length;i++){

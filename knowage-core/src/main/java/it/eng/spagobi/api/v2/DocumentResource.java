@@ -440,7 +440,8 @@ public class DocumentResource extends AbstractDocumentResource {
 	public String getDocumentSearchAndPaginate(@QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
 			@QueryParam("label") String label, @QueryParam("name") String name, @QueryParam("descr") String descr,
 			@QueryParam("excludeType") String excludeType, @QueryParam("includeType") String includeType, @QueryParam("scope") String scope,
-			@QueryParam("loadObjPar") Boolean loadObjPar, @QueryParam("objLabelNotIn") String objLabelNotIn) throws EMFInternalError {
+			@QueryParam("loadObjPar") Boolean loadObjPar, @QueryParam("objLabelIn") String objLabelIn, @QueryParam("objLabelNotIn") String objLabelNotIn)
+			throws EMFInternalError {
 		logger.debug("IN");
 		UserProfile profile = getUserProfile();
 		IBIObjectDAO documentsDao = null;
@@ -484,6 +485,9 @@ public class DocumentResource extends AbstractDocumentResource {
 		}
 		if (includeType != null) {
 			restritions.add(new CriteriaParameter("objectTypeCode", includeType, Match.EQ));
+		}
+		if (objLabelIn != null) {
+			restritions.add(new CriteriaParameter("label", objLabelIn.split(","), Match.IN));
 		}
 		if (objLabelNotIn != null) {
 			restritions.add(new CriteriaParameter("label", objLabelNotIn.split(","), Match.NOT_IN));
