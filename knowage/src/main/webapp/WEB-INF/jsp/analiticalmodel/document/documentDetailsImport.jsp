@@ -39,10 +39,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/documentDetails.controller.js")%>"></script>
 
 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/documentDetailsDrivers.controller.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/drivers.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/templates.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/outputParameters.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/documentDetailsInformations.controller.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/informations.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/dataLineage.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/subreports.js")%>"></script>
 
@@ -54,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/templateService.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/outputParametersService.js")%>"></script>
 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/DriversModule.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/modules/driversModule.js")%>"></script>
 
 
 <% 
