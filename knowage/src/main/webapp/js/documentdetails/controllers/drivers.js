@@ -57,7 +57,7 @@ angular
              self.addDriver = function() {
             	 nameOfObjectIdProperty= "";
             	 self.driverRelatedObject.hasOwnProperty('ModelLocked') ? nameOfObjectIdProperty = "biMetaModelID" : nameOfObjectIdProperty = "biObjectID";
-                 
+
 				 if(self.document.id){
 				 if (self.drivers) {
                      self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',nameOfObjectIdProperty:self.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
@@ -205,7 +205,7 @@ angular
                  }
              $mdDialog.show({
                          controller: CorrelationDialogController,
-                         templateUrl: '../js/documentdetails/html/documentDetails.correlationDialog.tpl.html',
+                         templateUrl: '../js/documentdetails/templates/correlationDialog.html',
                          targetEvent: ev,
                          clickOutsideToClose: true,
                          locals: {
@@ -238,7 +238,7 @@ angular
 
              $mdDialog.show({
                          controller: CorrelationDataDialogController,
-                         templateUrl: '../js/documentdetails/html/documentDetails.correlationDataDialog.tpl.html',
+                         templateUrl: '../js/documentdetails/templates/correlationDataDialog.html',
                          targetEvent: ev,
                          clickOutsideToClose: true,
                          locals: {
@@ -270,7 +270,7 @@ angular
             	 }
             	 var selectedConditionIndex = selectedCondition;
             	 $scope.driversService = DriversService;
-                 $scope.document = driversService.document;////*****************************
+                 $scope.document = driversService.driverRelatedObject;
                  $scope.drivers = driversService.driversOnObject;
                  $scope.selectedDriver = selectedDriver;
                  $scope.selectedCondition = driversService.visusalDependencyObjects[selectedCondition];
