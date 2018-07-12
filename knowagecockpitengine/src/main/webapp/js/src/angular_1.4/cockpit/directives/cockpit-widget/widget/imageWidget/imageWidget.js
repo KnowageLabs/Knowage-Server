@@ -147,6 +147,19 @@ function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbi
 	$scope.getImageUrl=function(img){
 		return sbiModule_config.externalBasePath + "/restful-services" + img.urlPreview;
 	};
+	
+	$scope.setFile = function (element){
+		var max = 10 * 1024 * 1024;;
+	    if (element.files && element.files[0] && element.files[0].size > max) {
+	    	$scope.showAction('File too large. Max file size is: '+max/1024/1024 + 'MB');
+	    	element.value = null;
+	    	delete $scope.uploadImg;
+	    }else{
+	    	$scope.uploadImg.file = element.files[0];
+			$scope.uploadImg.fileName = element.files[0] !== undefined ? element.files[0].name : '';
+	    }
+	    $scope.$apply();
+	}
 
 	 $scope.showAction = function(text) {
 			var toast = $mdToast.simple()

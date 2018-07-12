@@ -1063,18 +1063,6 @@
         background-color: $detailBackground;
         border-top: 1px solid $listBackground;
     }
-
-	md-tabs.cockpitSheetTabs>md-tabs-wrapper{
-		margin-left: 50px;
-	}
-	
-	.md-button.addSheetTabButton{
-	    bottom: 0;
-	    margin-bottom: 1px;
-    	position: absolute;
-    	min-width: 40px;
-    	z-index: 9;
-    	}
     	
 	.selectedImage{
 		background-color:#a9c3db;
@@ -1721,7 +1709,7 @@
 		}
 	}
 
-	cockpit-sheet {
+	/*cockpit-sheet {
 		#sheetTabs:not(.cockpitEditMode) {
 	    	&.highlander {
 	    		md-pagination-wrapper {
@@ -1786,6 +1774,97 @@
 				color: $lightTextColor;
 			}
 		}
+	}*/
+
+	cockpit-sheet {
+		.md-button.addSheetTabButton{
+		    bottom: 2px;
+		    margin-bottom: 1px;
+	    	position: absolute;
+	    	min-width: 24px;
+		    padding: 0;
+		    width: 24px;
+	    	height: 24px;
+	    	min-height: 24px;
+	    	z-index: 9;
+	    	&:hover {
+				background-color: darken($detailBackground,5%);
+			}
+    	}
+		md-tabs {
+			padding-bottom: 28px;
+			&.highlander {
+				padding-bottom: 0;
+				md-tabs-wrapper {
+					display: none;
+				}
+				md-tabs-content-wrapper {
+					bottom: 0;
+				}
+				.md-button.addSheetTabButton {
+					width: 32px;
+					height: 32px;
+					background-color: $detailBackground;
+					border: 1px solid $bordersColor;
+				}
+			}
+			&.cockpitSheetTabs {
+				md-pagination-wrapper{
+					padding-left: 24px;
+				}
+				&>md-tabs-wrapper{}
+				}
+			md-tabs-wrapper {
+				background-color: $detailBackground;
+				border-top: 1px solid $bordersColor;
+				margin-left: 0;
+				width: 100%;
+				height: 30px;
+				md-prev-button {
+					left: 32px;
+				}
+				md-tabs-canvas {
+					height: 30px;
+					md-pagination-wrapper {
+						height: 30px;
+						.md-tab {
+							cursor: pointer;
+							transition: background-color .3s ease-in;
+							border: 1px solid $detailBackground;
+							line-height: 24px;
+							height: 24px;
+							padding: 0 8px;
+							font-size: $mediumFontSize;
+							text-transform: none;
+							margin: 2px 4px;
+							border-radius: 2px;
+							&:first-child {
+								margin-left: 10px;
+							}
+							span {
+								position: relative;
+								outline: none;
+								top: -1px;
+							}
+							&:hover {
+								background-color: darken($detailBackground,5%);
+							}
+							&.md-active {
+								background-color: darken($detailBackground,10%);
+								border: 1px solid $bordersColor;
+							}
+						}
+					}
+					md-ink-bar {
+						display: none;
+					}
+				}
+			}
+			md-tabs-content-wrapper {
+				bottom: 28px;
+			}
+		}
+
 	}
 
 	.widgetSearchBar {
@@ -1996,6 +2075,21 @@
 		align-items: center;
 		justify-content: center;
 	}
+
+	.imagesLibrary {
+    	.imageContainer {
+    		.imageEraser {
+    			transition: all .3s ease-in;
+    			position: absolute;
+    			bottom: 4px;
+			    z-index: 10;
+			    right: 8px;
+    			&:hover{
+    				background-color: $bordersColor;
+    			}
+    		}
+    	}
+    }
 	
 }
 
