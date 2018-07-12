@@ -1,4 +1,4 @@
-<md-card class="flexCard customTableWidgetConfiguration" >
+<md-card class="flexCard customTableWidgetConfiguration imagesLibrary" >
 	<md-card-content flex layout="column" class="noPadding">
 		<md-toolbar>
 			<div class="md-toolbar-tools">
@@ -11,27 +11,36 @@
 			
 				<md-tab label="{{translate.load('sbi.cockpit.widget.image.gallery')}}">
 					<md-content layout-fill>
-						<div layout="row">
-							<file-upload flex id="ImageUpload" ng-model="uploadImg"></file-upload>
+						<div layout="row" layout-align="center center">
+							<!--  file-upload flex id="ImageUpload" ng-model="uploadImg"></file-upload-->
+							<md-content layout="row" layout-padding>
+								<!-- Simulate button and link the click event with the input type='file' -->
+								<input type="file" onchange='angular.element(this).scope().setFile(this)'/>
+							</md-content>
+							
 							<md-button ng-click="upload($event)" aria-label="upload Menu"
 									class="md-fab md-mini">
 								<md-icon md-font-icon="fa fa-upload"/>
 							</md-button>
-							<md-button ng-click="erase($event)" aria-label="upload Menu"
-									class="md-fab md-mini">
-								<md-icon md-font-icon="fa fa-eraser"/>
-							</md-button>
 						</div>
-						<md-grid-list layout-margin
-								md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6"
-								md-row-height-gt-md="1:1" md-row-height="4:3"
-								md-gutter="8px" md-gutter-gt-sm="4px" >
-							<md-grid-tile ng-repeat="img in listImages" flex ng-click="model.content.imgId=img.imgId" ng-class="{'selectedImage' : model.content.imgId==img.imgId }">
-								<img ng-src="{{getImageUrl(img)}}" alt="{{img.name}}" >
-								<md-grid-tile-footer><h3>{{img.name}}</h3></md-grid-tile-footer>
-							</md-grid-tile>
-						</md-grid-list>
-					</md-content>
+						<div layout-margin>
+							<md-grid-list 
+									md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6"
+									md-row-height-gt-md="1:1" md-row-height="4:3"
+									md-gutter="8px" md-gutter-gt-sm="4px" class="imageSelector">
+									
+								<md-grid-tile class="imageContainer" ng-repeat="img in listImages" flex ng-click="model.content.imgId=img.imgId" ng-class="{'selectedImage' : model.content.imgId==img.imgId }">
+									<md-button ng-click="erase($event, img)" aria-label="erase image" class="md-icon-button imageEraser">
+										<md-tooltip md-delay="500">Delete Image</md-tooltip>
+										<md-icon md-font-icon="fa fa-trash"/>
+									</md-button>
+									<img ng-src="{{getImageUrl(img)}}" alt="{{img.name}}" >
+									<md-grid-tile-footer><h3>{{img.name}}</h3></md-grid-tile-footer>
+								</md-grid-tile>
+							</md-grid-list>
+						</div>
+						</md-content>
+						
 				</md-tab>
 
 				<md-tab label="{{translate.load('sbi.cockpit.style')}}">
@@ -77,10 +86,10 @@
 	</md-card-content>
 	
 	<md-card-actions layout="row" layout-align="end center">
-		<md-button ng-click="cancelConfiguration()" >
+		<md-button ng-click="cancelConfiguration()" class="md-raised" >
 			{{translate.load('sbi.generic.cancel')}}
 		</md-button>
-		<md-button ng-click="saveConfiguration()">
+		<md-button ng-click="saveConfiguration()" class="md-raised md-primary" >
 			{{translate.load('sbi.generic.save')}}
 		</md-button>
 	</md-card-actions>

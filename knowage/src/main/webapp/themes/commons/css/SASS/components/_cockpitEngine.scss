@@ -1993,6 +1993,21 @@
 		align-items: center;
 		justify-content: center;
 	}
+
+	.imagesLibrary {
+    	.imageContainer {
+    		.imageEraser {
+    			transition: all .3s ease-in;
+    			position: absolute;
+    			bottom: 4px;
+			    z-index: 10;
+			    right: 8px;
+    			&:hover{
+    				background-color: $bordersColor;
+    			}
+    		}
+    	}
+    }
 	
 }
 
