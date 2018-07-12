@@ -164,6 +164,8 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 		console.error("error when load dataset list")
 	});
 
+	cockpitModule_documentServices.loadDocumentsFromTemplate();
+
 	if(cockpitModule_properties.DOCUMENT_LABEL != undefined && cockpitModule_properties.DOCUMENT_LABEL != ''){
 		cockpitModule_crossServices.loadCrossNavigationByDocument(cockpitModule_properties.DOCUMENT_LABEL).then(
 			function(){},

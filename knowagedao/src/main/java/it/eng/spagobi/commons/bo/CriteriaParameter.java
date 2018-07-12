@@ -29,7 +29,7 @@ public class CriteriaParameter implements Serializable {
 	 * equal, not equal, like, like ignore case
 	 */
 	public enum Match {
-		EQ, NOT_EQ, LIKE, ILIKE, NOT_IN
+		EQ, NOT_EQ, LIKE, ILIKE, IN, NOT_IN
 	};
 
 	private Match match;
@@ -57,6 +57,9 @@ public class CriteriaParameter implements Serializable {
 			break;
 		case NOT_EQ:
 			restriction = Restrictions.ne(getName(), getValue());
+			break;
+		case IN:
+			restriction = Restrictions.in(getName(), (Object[]) getValue());
 			break;
 		case NOT_IN:
 			restriction = Restrictions.not(Restrictions.in(getName(), (Object[]) getValue()));
