@@ -552,7 +552,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				datasourceToBeInsert.add(dsI.getSbiDataSource().getDsId());
 			}
 			Query hibQuery = aSession.createQuery(
-					"from SbiOrganizationDatasource ds where ds.sbiOrganizations.id = :idTenant and (ds.sbiDataSource.commonInfo.userIn = :userId or (ds.sbiDataSource.jndi != '' and ds.sbiDataSource.jndi is not null))");
+					"from SbiOrganizationDatasource ds where ds.sbiOrganizations.id = :idTenant and (ds.sbiDataSource.commonInfo.userIn = :userId or length(ds.sbiDataSource.jndi) > 0)");
 			hibQuery.setInteger("idTenant", aTenant.getId());
 			hibQuery.setString("userId", profile.getUserId().toString());
 			ArrayList<SbiOrganizationDatasource> existingDsAssociated = (ArrayList<SbiOrganizationDatasource>) hibQuery.list();
@@ -616,57 +616,6 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				aSession.save(sbiOrganizationDatasource);
 				aSession.flush();
 			}
-
-			// // cancello tutte le Engine associate al tenant
-			//
-			// Set<SbiOrganizationEngine> engines = aTenant.getSbiOrganizationEngines();
-			// ArrayList<Integer> enginesToBeAss = new ArrayList<Integer>();
-			// ArrayList<Integer> enginesToBeInsert = new ArrayList<Integer>();
-			// // get a list of engines ids
-			// Iterator iteng = engines.iterator();
-			// while (iteng.hasNext()) {
-			// SbiOrganizationEngine enI = (SbiOrganizationEngine) iteng.next();
-			// enginesToBeAss.add(enI.getSbiEngines().getEngineId());
-			// enginesToBeInsert.add(enI.getSbiEngines().getEngineId());
-			// }
-			//
-			// hibQuery = aSession.createQuery("from SbiOrganizationEngine en where en.sbiOrganizations.id = :idTenant");
-			// hibQuery.setInteger("idTenant", aTenant.getId());
-			// ArrayList<SbiOrganizationEngine> existingEnginesAssociated = (ArrayList<SbiOrganizationEngine>) hibQuery.list();
-			// if (existingEnginesAssociated != null) {
-			// Iterator it = existingEnginesAssociated.iterator();
-			// while (it.hasNext()) {
-			// SbiOrganizationEngine assEng = (SbiOrganizationEngine) it.next();
-			//
-			// if (enginesToBeAss.contains(assEng.getSbiEngines().getEngineId())) {
-			// // already existing --> do nothing but delete it from the list of associations
-			// enginesToBeInsert.remove(assEng.getSbiEngines().getEngineId());
-			// } else {
-			//
-			// Query docsQ = aSession.createQuery("from SbiObjects o where o.sbiEngines.engineId = :idEngine and o.commonInfo.organization = :tenant");
-			// docsQ.setInteger("idEngine", assEng.getSbiEngines().getEngineId());
-			// docsQ.setString("tenant", aTenant.getName());
-			// ArrayList<Object> docs = (ArrayList<Object>) docsQ.list();
-			// if (docs != null && !docs.isEmpty()) {
-			// tx.rollback();
-			// throw new Exception("engine:" + assEng.getSbiEngines().getName());
-			//
-			// } else {
-			// aSession.delete(assEng);
-			// aSession.flush();
-			// }
-			// }
-			// }
-			// }
-			// // insert filtered engines list
-			// for (Integer idEngToAss : enginesToBeInsert) {
-			// SbiOrganizationEngine sbiOrganizationEngine = new SbiOrganizationEngine();
-			// sbiOrganizationEngine.setId(new SbiOrganizationEngineId(idEngToAss, aTenant.getId()));
-			// sbiOrganizationEngine.setCommonInfo(sbiCommoInfo);
-			// updateSbiCommonInfo4Insert(sbiOrganizationEngine);
-			// aSession.save(sbiOrganizationEngine);
-			// aSession.flush();
-			// }
 
 			// Product Type Association Management
 			// first delete product types relationship with this tenant then insert the new ones
