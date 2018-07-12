@@ -87,22 +87,23 @@
         		    $mdDialog.show(confirm).then(function() {
         		    	switch(name){
         		    		case "driver":
-        		    			DriversService.drivers.splice(index, 1);
-        		    			DriversService.driversForDeleting.push(documentAndInfo.drivers[index]);
+
+        		    			DriversService.driversForDeleting.push(DriversService.driversOnObject[index]);
+        		    			DriversService.driversOnObject.splice(index, 1);
 		        		    	 break;
         		    		case "visual":
-        		    			 for(var i = 0; i< self.visibilityConditions.length;i++){
+        		    			 for(var i = 0; i< documentData.visusalDependencyObjects.length;i++){
         		            		 if(i == index)
-        		            			 documentData.visualDependenciesForDeleting.push(documentData.visusalDependencyObjects[index]);
+        		            			 DriversService.visualDependenciesForDeleting.push(DriversService.visusalDependencyObjects[index]);
         		            		 }
-        		    			documentData.visusalDependencyObjects.splice(index, 1);
+        		    			 DriversService.visusalDependencyObjects.splice(index, 1);
         		    		 break;
         		    		case "data":
-        		    			for(var i = 0; i< self.dataConditions.length;i++){
+        		    			for(var i = 0; i< DriversService.dataDependencyObjects.length;i++){
         		            		 if(i == index)
-        		            			 documentData.dataDependenciesForDeleting.push(documentData.dataDependencyObjects[index]);
+        		            			 documentData.dataDependenciesForDeleting.push(DriversService.dataDependencyObjects[index]);
         		            	 }
-        		    		 documentData.dataDependencyObjects.splice(index, 1);
+        		    			DriversService.dataDependencyObjects.splice(index, 1);
            		    		 break;
         		    	}
         		    }, function() {

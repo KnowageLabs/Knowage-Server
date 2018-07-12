@@ -58,10 +58,12 @@ angular
             	 nameOfObjectIdProperty= "";
             	 self.driverRelatedObject.hasOwnProperty('ModelLocked') ? nameOfObjectIdProperty = "biMetaModelID" : nameOfObjectIdProperty = "biObjectID";
                  if (self.drivers) {
-                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length +1,'newDriver':'true',nameOfObjectIdProperty:self.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
+                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',nameOfObjectIdProperty:self.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
+                     var index = self.drivers.length;
+                     self.selectDriver( index );
                  } else {
                      self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true',nameOfObjectIdProperty:self.driverRelatedObject.id ,'visible':false,'required':false,'multivalue':false}];
-                     self.selectDriver(0);
+                     self.selectDriver(1);
                  }
              }
              self.openMenu=function(menu,event){
@@ -153,7 +155,7 @@ angular
                  var index;
                  for (var i = 0; i< self.drivers.length;i++) {
                      if (self.drivers[i].id == driver.id) {
-                        	 delete self.selectedDriver;
+                        	// delete self.selectedDriver;
                         	 index = i;
                          }
                      }
@@ -265,11 +267,11 @@ angular
             	 var selectedConditionIndex = selectedCondition;
             	 $scope.driversService = DriversService;
                  $scope.document = driversService.document;////*****************************
-                 $scope.drivers = driversService.drivers;
+                 $scope.drivers = driversService.driversOnObject;
                  $scope.selectedDriver = selectedDriver;
                  $scope.selectedCondition = driversService.visusalDependencyObjects[selectedCondition];
                  $scope.availableOperators = ['>', '<', '=', 'contains','notcontains'];
-                 documentService.selectedVisualCondition = driversService.visusalDependencyObjects[selectedCondition];
+                 driversService.selectedVisualCondition = driversService.visusalDependencyObjects[selectedCondition];
                  $scope.close = function(selectedCondition) {
                 	 for(var i = 0; i < driversService.visusalDependencyObjects.length;i++){
 	                	 if( $scope.selectedCondition.newDependency && selectedConditionIndex == i)
@@ -284,10 +286,10 @@ angular
                 		 driversService.changedVisualDependencies.push(visualDependency);
                  }
                  var setVisualDependencyProperties = function(visualDependency){
-                	 var driverIndex = $scope.driversService.drivers.findIndex(i => i.priority ==selectedDriver.priority);
- 					if($scope.driversService.drivers.length > 1){
- 						selectedDriver = $scope.driversService.drivers[driverIndex];
- 					}else selectedDriver = $scope.driversService.drivers[0] ;
+                	 var driverIndex = $scope.driversService.driversOnObject.findIndex(i => i.priority ==selectedDriver.priority);
+ 					if($scope.driversService.driversOnObject.length > 1){
+ 						selectedDriver = $scope.driversService.driversOnObject[driverIndex];
+ 					}else selectedDriver = $scope.driversService.driversOnObject[0] ;
                 	 var visualProgram;
                 	 var visualObjects = driversService.visusalDependencyObjects;
                 	 for(var i = 0; i<visualObjects.length;i++){
@@ -313,7 +315,7 @@ angular
                  $scope.document = driversService.document;///****************************
                  $scope.drivers = [];
                  $scope.paruseColumns = {};
-                 angular.copy(driversService.drivers,  $scope.drivers);
+                 angular.copy(driversService.driversOnObject,  $scope.drivers);
                  $scope.selectedDriver = selectedDriver;
                  $scope.driverName = $scope.selectedDriver.label;
                  $scope.analyticalDrivers = driversService.analyticalDrivers;
@@ -375,10 +377,10 @@ angular
                 	}
                  }
                  var setDataDependencyProperties = function(dataDependency){
-                	 var driverIndex = $scope.driversService.drivers.findIndex(i => i.priority ==selectedDriver.priority);
-  					if($scope.driversService.drivers.length > 1){
-  						selectedDriver = $scope.driversService.drivers[driverIndex];
-  					}else selectedDriver = $scope.driversService.drivers[0] ;
+                	 var driverIndex = $scope.driversService.driversOnObject.findIndex(i => i.priority ==selectedDriver.priority);
+  					if($scope.driversService.driversOnObject.length > 1){
+  						selectedDriver = $scope.driversService.driversOnObject[driverIndex];
+  					}else selectedDriver = $scope.driversService.driversOnObject[0] ;
                 	 var dataProgram;
                 	 var dataObjects = driversService.dataDependencyObjects;
                 	 for(var i = 0; i<dataObjects.length;i++){

@@ -51,6 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/documentDataService.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/interceptors/httpInterceptor.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/closingIFrame.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/DriversModule.js")%>"></script>
 
 
 <% 
