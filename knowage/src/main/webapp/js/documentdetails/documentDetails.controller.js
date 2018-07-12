@@ -19,7 +19,7 @@
     'use strict';
 
     angular
-        .module('DocumentDetails', ['ngMaterial', 'jsonFormatter','sbiModule', 'componentTreeModule', 'file_upload','DriversModule'])
+        .module('DocumentDetails', ['ngMaterial', 'jsonFormatter','sbiModule', 'componentTreeModule', 'file_upload','DriversModule','TemplateModule', 'OutputParametersModule'])
         .config(['$mdThemingProvider','$locationProvider','$httpProvider', function($mdThemingProvider,$locationProvider,$httpProvider) {
             $mdThemingProvider.theme('knowage')
             $mdThemingProvider.setDefaultTheme('knowage');
@@ -29,17 +29,19 @@
             	  requireBase: false
             	});
         }])
-        .controller('DocumentDetailsController',['$scope','$filter','DriversService','DocumentService','closingIFrame','$location','resourceService','multipartForm','$mdDialog', 'sbiModule_restServices', 'sbiModule_translate', 'sbiModule_messaging', DocumentDetailsController])
+        .controller('DocumentDetailsController',['$scope','$filter','DriversService','DocumentService','templateService','outputParametersService','closingIFrame','$location','resourceService','multipartForm','$mdDialog', 'sbiModule_restServices', 'sbiModule_translate', 'sbiModule_messaging', DocumentDetailsController])
 
-    function DocumentDetailsController($scope,$filter,DriversService,DocumentService,closingIFrame,$location,resourceService,multipartForm,$mdDialog,sbiModule_restServices,sbiModule_translate,sbiModule_messaging) {
+    function DocumentDetailsController($scope,$filter,DriversService,DocumentService,templateService,outputParametersService,closingIFrame,$location,resourceService,multipartForm,$mdDialog,sbiModule_restServices,sbiModule_translate,sbiModule_messaging) {
         var self = this;
         var documentService = DocumentService;
+        var templateService = templateService;
+        var outputParametersService = outputParametersService;
         self.translate = sbiModule_translate;
         var requiredPath = documentService.requiredPath;
 		var requiredPathForRelations = documentService.requiredPathForRelations;
         var paruses = documentService.driverParuses;
         self.title = "Document Details";
-        var template = documentService.template;
+        var template = templateService.template;
         var document = documentService.document;
         DriversService.setDriverRelatedObject(document);
 		DriversService.getDriversOnRelatedObject(requiredPath,document.id + "/drivers");
@@ -82,8 +84,8 @@
 
         var getAllTemplates = function() {
         	var templateBasePath = document.id + '/templates';
-        	resourceService.get(documentService.requiredPath, templateBasePath).then(function(response) {
-        		DocumentService.listOfTemplates = response.data;
+        	resourceService.get(templateService.requiredPath, templateBasePath).then(function(response) {
+        		templateService.listOfTemplates = response.data;
         	});
         }
 
@@ -168,9 +170,9 @@
         };
 
         var uploadTemplate = function() {
-        	if(documentService.file.file) {
+        	if(templateService.file.file) {
         		var templateUploadBasePath = document.id + '/templates';
-        		multipartForm.post(documentService.requiredPath +"/"+ templateUploadBasePath, documentService.file).then(function(response){
+        		multipartForm.post(templateService.requiredPath +"/"+ templateUploadBasePath, templateService.file).then(function(response){
         			getAllTemplates();
   	      	  });
         	}
@@ -189,9 +191,9 @@
            	});
         }
         var setActiveTemplate = function() {
-        	if(documentService.changedTemplate) {
-				var templateModifyBasePath = document.id + "/templates/" + documentService.changedTemplate.id;
-    			resourceService.put(documentService.requiredPath, templateModifyBasePath);
+        	if(templateService.changedTemplate) {
+				var templateModifyBasePath = document.id + "/templates/" + templateService.changedTemplate.id;
+    			resourceService.put(templateService.requiredPath, templateModifyBasePath);
 			}
         };
 
@@ -204,21 +206,21 @@
         };
 
         var deleteTemplates = function() {
-       	 for(var i = 0; i < documentService.templatesForDeleting.length; i++) {
-       		 self.deleteTemplateById(documentService.templatesForDeleting[i]);
+       	 for(var i = 0; i < templateService.templatesForDeleting.length; i++) {
+       		 self.deleteTemplateById(templateService.templatesForDeleting[i]);
        	 }
         };
 
         var persistOutputParameters = function() {
-        	for(var i = 0; i < documentService.changedOutputParameters.length; i++) {
-        		if(!documentService.changedOutputParameters[i].id) {
-        			delete documentService.changedOutputParameters[i].$$hashKey;
+        	for(var i = 0; i < outputParametersService.changedOutputParameters.length; i++) {
+        		if(!outputParametersService.changedOutputParameters[i].id) {
+        			delete outputParametersService.changedOutputParameters[i].$$hashKey;
         			var outputParametersPostBasePath = document.id + '/outputparameters';
-        			resourceService.post(documentService.requiredPath, outputParametersPostBasePath, documentService.changedOutputParameters[i]);
+        			resourceService.post(documentService.requiredPath, outputParametersPostBasePath, outputParametersService.changedOutputParameters[i]);
         		} else {
-        			delete documentService.changedOutputParameters[i].$$hashKey;
-        			var outputParametersPutBasePath = document.id + "/outputparameters/" + documentService.changedOutputParameters[i].id;
-        			resourceService.put(documentService.requiredPath, outputParametersPutBasePath, documentService.changedOutputParameters[i]);
+        			delete outputParametersService.changedOutputParameters[i].$$hashKey;
+        			var outputParametersPutBasePath = document.id + "/outputparameters/" + outputParametersService.changedOutputParameters[i].id;
+        			resourceService.put(documentService.requiredPath, outputParametersPutBasePath, outputParametersService.changedOutputParameters[i]);
         		}
         	}
         };
@@ -283,8 +285,8 @@
          };
 
          var deleteOutputParameters = function() {
-        	 for(var i = 0; i < documentService.outputParametersForDeleting.length; i++) {
-        		 self.deleteOutputParameterById(documentService.outputParametersForDeleting[i]);
+        	 for(var i = 0; i < outputParametersService.outputParametersForDeleting.length; i++) {
+        		 self.deleteOutputParameterById(outputParametersService.outputParametersForDeleting[i]);
         	 }
          };
 
@@ -297,8 +299,8 @@
            };
 
            var deleteTemplates = function() {
-          	 for(var i = 0; i < documentService.templatesForDeleting.length; i++) {
-          		 self.deleteTemplateById(documentService.templatesForDeleting[i]);
+          	 for(var i = 0; i < templateService.templatesForDeleting.length; i++) {
+          		 self.deleteTemplateById(templateService.templatesForDeleting[i]);
           	 }
            };
 
