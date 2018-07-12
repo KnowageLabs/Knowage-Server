@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			            		<div ng-class="documentDetailsForm.informations.$invalid ? 'kn-dangerous':''">Informations</div>			            	 
 			            	</md-tab-label>
 							<md-tab-body>
-			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/templates/documentDetails.informations.tpl.html")%>'" />
+			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/templates/informations.html")%>'" />
 			                 </md-tab-body>
 			            </md-tab>		
 			            	          		              
@@ -53,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			            		<div ng-class="documentDetailsForm.drivers.$invalid ? 'kn-dangerous':''">Drivers</div>
 			           		 </md-tab-label>
 			           		 <md-tab-body>
-			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/templates/documentDetails.drivers.tpl.html")%>'" />
+			                	<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/templates/drivers.html")%>'" />
 			           		 </md-tab-body>
 			            </md-tab>
 			            
