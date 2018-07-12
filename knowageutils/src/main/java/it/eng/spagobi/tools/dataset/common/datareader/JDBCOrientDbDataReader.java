@@ -86,7 +86,27 @@ public class JDBCOrientDbDataReader extends AbstractDataReader {
 		try {
 			boolean ok = true;
 
-			while (rs.next()) {
+			if (getOffset() > 0) {
+				logger.debug("Offset is equal to [" + getOffset() + "]");
+
+				rs.first();
+				rs.relative(getOffset() - 1);
+
+			} else {
+				logger.debug("Offset not set");
+			}
+
+			long maxRecToParse = Long.MAX_VALUE;
+			if (getFetchSize() > 0) {
+				maxRecToParse = getFetchSize();
+				logger.debug("FetchSize is equal to [" + maxRecToParse + "]");
+			} else {
+				logger.debug("FetchSize not set");
+			}
+
+			int recCount = 0;
+
+			while ((recCount < maxRecToParse) && rs.next()) {
 				IRecord record = new Record(dataStore);
 				ResultSetMetaData meta = rs.getMetaData();
 
@@ -149,6 +169,8 @@ public class JDBCOrientDbDataReader extends AbstractDataReader {
 				} catch (ArrayIndexOutOfBoundsException arrEx) {
 					ok = false;
 					record.setFields(fields);
+					recCount++;
+
 					// continue;
 
 				} catch (ClassNotFoundException e) {
@@ -159,6 +181,7 @@ public class JDBCOrientDbDataReader extends AbstractDataReader {
 				}
 
 			}
+			logger.debug("Readed [" + recCount + "] records");
 
 		} catch (SQLException e) {
 			logger.error("An unexpected error occured while reading resultset", e);
