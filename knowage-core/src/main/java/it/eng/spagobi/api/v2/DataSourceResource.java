@@ -170,7 +170,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			logger.debug(dataSource);
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
-			IDataSource existingDS = dataSourceDAO.loadDataSourceByLabel(dataSource.getLabel());
+			IDataSource existingDS = dataSourceDAO.findDataSourceByLabel(dataSource.getLabel());
 			
 			if(existingDS != null && dataSource.getLabel().equals(existingDS.getLabel())) {
 				throw new SpagoBIRestServiceException("Data source with provided Label already exists", buildLocaleFromSession(), new Throwable());

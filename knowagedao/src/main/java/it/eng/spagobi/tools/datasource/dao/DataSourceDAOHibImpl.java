@@ -169,6 +169,42 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	}
 
 	@Override
+	public IDataSource findDataSourceByLabel(String label) {
+		logger.debug("IN");
+		IDataSource biDS = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			Query hibQuery = null;
+			
+			hibQuery = tmpSession.createQuery("from SbiDataSource ds where ds.label = :label");
+			hibQuery.setString("label", label);
+			
+			SbiDataSource hibDS = (SbiDataSource) hibQuery.uniqueResult();
+			if(hibDS == null) {
+				return null;
+			}
+			
+			biDS = toDataSource(hibDS);
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			throw e;
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+		}		
+		logger.debug("OUT");
+		return biDS;
+	}
+	
+	@Override
 	public IDataSource loadDataSourceWriteDefault() throws EMFUserError {
 		logger.debug("IN");
 		IDataSource toReturn = null;
