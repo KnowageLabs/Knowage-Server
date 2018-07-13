@@ -14,6 +14,12 @@
     cockpit-html-widget {
     	height: 100%;
     	overflow: auto;
+    	.trustedHtml {
+    		height: 100%;
+    		&>div {
+    			height: 100%;
+    		}
+    	}
 
     }
     
@@ -1467,17 +1473,6 @@
 	
 //IE style
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-	 .cockpitSheetTabsHook {
-    	md-tabs-canvas {
-    		width: 10px;
-    	}
-    	md-tabs-wrapper {
-    		width: 10px;
-    	}
-    	md-tab-data {
-    		display: none;
-    	}
-    }
     cockpit-table {
 	    .cockpitTableContainer {
 	    	table.cockpitTable {
@@ -1490,6 +1485,21 @@
 			.widgetsContainer {
 				.widgetContainer {
 					min-width: 100px;
+				}
+			}
+		}
+	}
+	cockpit-sheet {
+		md-tabs {
+			md-tabs-wrapper {
+				md-tabs-canvas {
+					md-pagination-wrapper {
+						.md-tab {
+							span {
+								top: -8px;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -1708,73 +1718,6 @@
 			z-index: 50 !important;
 		}
 	}
-
-	/*cockpit-sheet {
-		#sheetTabs:not(.cockpitEditMode) {
-	    	&.highlander {
-	    		md-pagination-wrapper {
-	    			display: none;
-	    		}
-	    	}
-    	}
-		md-tabs-content-wrapper {
-			bottom: 0;
-			md-tab-content{
-				overflow:hidden;
-			}
-		}
-		md-ink-bar {
-			display: none;
-		}
-		.addSheetTabButton {
-			background-color: #f0f0f0;
-		} 
-		md-tabs {
-			&:not(.cockpitSheetTabs) {
-				md-pagination-wrapper {
-					margin-left: 8px;
-				}
-			}
-			background-color: transparent;
-			md-tab-item {
-				.md-menu {
-					padding: 0;
-				}
-			    display: inline-flex;
-			    min-width: 80px;
-			    justify-content: space-around;
-			    align-items: center;
-				background-color: $lightTextColor;
-				border: 1px solid $ternaryColor;
-			    border-radius: 2px;
-			    padding: 4px;
-			    top: 12px;
-			    overflow: hidden;
-			    &.md-active {
-			    	background-color: $baseColor;
-			    	color: $lightTextColor !important;
-			    	md-icon {
-			    		color: $lightTextColor !important;
-			    	}
-			    }
-			}
-			md-tab-item:only-of-type {
-				display: none
-			} 
-			&.highlander {
-				md-tab-item {
-					display: none;
-				}
-			}
-		}
-		md-prev-button, md-next-button{
-			background-color: $baseColor;
-			border-radius: 4px;
-			md-icon {
-				color: $lightTextColor;
-			}
-		}
-	}*/
 
 	cockpit-sheet {
 		.md-button.addSheetTabButton{
