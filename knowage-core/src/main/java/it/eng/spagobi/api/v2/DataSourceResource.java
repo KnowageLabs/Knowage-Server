@@ -163,21 +163,30 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public String postDataSource(IDataSource dataSource) {
-		logger.debug("IN");
+		logger.debug("IN");		
 		try {
 			IDataSourceDAO dataSourceDAO;
 
 			logger.debug(dataSource);
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
+			IDataSource existingDS = dataSourceDAO.loadDataSourceByLabel(dataSource.getLabel());
+			
+			if(existingDS != null && dataSource.getLabel().equals(existingDS.getLabel())) {
+				throw new SpagoBIRestServiceException("Data source with provided Label already exists", buildLocaleFromSession(), new Throwable());
+			}
+			
 			dataSourceDAO.insertDataSource(dataSource, getUserProfile().getOrganization());
 
 			IDataSource newLabel = dataSourceDAO.loadDataSourceByLabel(dataSource.getLabel());
 			int newId = newLabel.getDsId();
 
 			return Integer.toString(newId);
+			
+		} catch (SpagoBIRestServiceException e) {
+			throw e;
 		} catch (Exception exception) {
-			logger.error("Error while posting DS", exception);
+			logger.error("Error while posting DS", exception);			
 			throw new SpagoBIRestServiceException("Error while posting DS", buildLocaleFromSession(), exception);
 		} finally {
 			logger.debug("OUT");
