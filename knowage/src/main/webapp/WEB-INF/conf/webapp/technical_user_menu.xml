@@ -317,7 +317,7 @@
 			<ITEM title="#menu.InstallConf" functionality="InstallConfig"
 				url="${SPAGOBI_CONTEXT}/restful-services/2.0/installconfig"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
-			<!--  
+			<!-- 
 	        <ITEM   title="#menu.ETLMetadata"
 	                functionality="EtlMetadataManagement"
 	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/etlMetadataExtraction.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
@@ -328,12 +328,17 @@
                     url="showLicenseDialog" 
                     linkType="dialog"
                     />    
+                       		
+            <ITEM 	title="#menu.event"
+            		functionality="EventsManagement"
+            		url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/event/eventLogsApp.jsp"
+            		/>
 						
 	  	</ITEM>	 
 	  		
 	  		<ITEM code="manage_internationalization" title="#menu.i18n"	groupingMenu="true" iconCls="flag">
 	  			<ITEM title="#menu.manageI18n" functionality="ManageInternationalization"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp" /> 
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp" /> 	
 	  		</ITEM>
 	  		
 	</ITEM>
