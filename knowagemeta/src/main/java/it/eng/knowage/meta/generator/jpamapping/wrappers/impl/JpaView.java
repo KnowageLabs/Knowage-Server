@@ -17,6 +17,14 @@
  */
 package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.eng.knowage.meta.exception.KnowageMetaException;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaCalculatedColumn;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaColumn;
@@ -36,13 +44,6 @@ import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
 import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -187,7 +188,7 @@ public class JpaView implements IJpaView {
 				jpaCalculatedColumns = new ArrayList<IJpaCalculatedColumn>();
 				for (CalculatedBusinessColumn calculatedBusinessColumn : businessView.getCalculatedBusinessColumns()) {
 					IJpaTable foundTable = null;
-					List<SimpleBusinessColumn> referencedColumns = calculatedBusinessColumn.getReferencedColumns();
+					Set<SimpleBusinessColumn> referencedColumns = calculatedBusinessColumn.getReferencedColumns();
 					List<IJpaTable> innerTables = this.getInnerTables();
 					// check if all the referenced columns are contained in an inner table
 					for (IJpaTable innerTable : innerTables) {
@@ -242,10 +243,10 @@ public class JpaView implements IJpaView {
 	public List<JpaViewOuterRelationship> getRelationships() {
 
 		// logger.trace("IN");
-		// logger.debug("Business view [{}] have  [{}] relationships", businessView.getName(), businessView.getRelationships().size());
+		// logger.debug("Business view [{}] have [{}] relationships", businessView.getName(), businessView.getRelationships().size());
 		//
 		// for(BusinessRelationship relationship : businessView.getRelationships()) {
-		// logger.debug("Business view [{}] contains relationship  [{}] ", businessView.getName(), relationship.getName());
+		// logger.debug("Business view [{}] contains relationship [{}] ", businessView.getName(), relationship.getName());
 		//
 		// }
 		//

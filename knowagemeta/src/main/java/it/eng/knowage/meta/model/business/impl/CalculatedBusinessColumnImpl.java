@@ -17,8 +17,9 @@
  */
 package it.eng.knowage.meta.model.business.impl;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -67,8 +68,8 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 	}
 
 	@Override
-	public List<SimpleBusinessColumn> getReferencedColumns() throws KnowageMetaException {
-		List<SimpleBusinessColumn> columnsReferenced = new ArrayList<SimpleBusinessColumn>();
+	public Set<SimpleBusinessColumn> getReferencedColumns() throws KnowageMetaException {
+		Set<SimpleBusinessColumn> columnsReferenced = new HashSet<SimpleBusinessColumn>();
 		BusinessColumnSet businessColumnSet = this.getTable();
 
 		// get Expression String
