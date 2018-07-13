@@ -70,7 +70,6 @@ angular.module('cockpitModule')
 		$scope.multiCombo = {};
 		$scope.multiCombo.selected = [];
 		$scope.multiValue = [];
-		$scope.selections = [];
 		$scope.searchParamText = "";
 		$scope.selectedTab = {'tab' : 0};
 		$scope.widgetIsInit=false;
@@ -149,10 +148,8 @@ angular.module('cockpitModule')
 			}
 
 			$scope.aggregated = true;
-			$scope.filtersParams = angular.copy($scope.cockpitModule_widgetSelection.getCurrentSelections($scope.ngModel.dataset.label));
-			if(Object.keys($scope.filtersParams).length == 0){
+			if(Object.keys($scope.cockpitModule_widgetSelection.getCurrentSelections($scope.ngModel.dataset.label)).length == 0){
 				$scope.aggregated = false;
-				$scope.filtersParams = $scope.cockpitModule_widgetSelection.getCurrentFilters($scope.ngModel.dataset.label);
 			}
 
 			if(nature == 'gridster-resized' || nature == 'fullExpand' || nature == 'resize'){
@@ -161,27 +158,17 @@ angular.module('cockpitModule')
 
 			$scope.datasetRecords = datasetRecords;
 
-			checkForSavedSelections($scope.filtersParams,nature);
-			checkRefreshSettings();
+			checkForSavedSelections(nature);
 			updateModel();
 		}
 
 
-		var checkForSavedSelections = function (filtersParams,nature){
-			$scope.selections.length = 0;
-			if(filtersParams.hasOwnProperty($scope.ngModel.dataset.label) && filtersParams[$scope.ngModel.dataset.label].hasOwnProperty($scope.ngModel.content.selectedColumn.aliasToShow) ){
-				$scope.selections = filtersParams[$scope.ngModel.dataset.label][$scope.ngModel.content.selectedColumn.aliasToShow].length > 1 ?
-						filtersParams[$scope.ngModel.dataset.label][$scope.ngModel.content.selectedColumn.aliasToShow] : filtersParams[$scope.ngModel.dataset.label][$scope.ngModel.content.selectedColumn.aliasToShow][0].split(",");
-				for (var i = 0; i < $scope.selections.length; i++) {
-					$scope.selections[i] = $scope.selections[i].replace("')", "").replace("('", "").replace(/'/g,"")
-				}
-			}
+		var checkForSavedSelections = function (nature){
+			var datasetLabel = $scope.ngModel.dataset.label;
+			var columnName = $scope.ngModel.content.selectedColumn.name;
+			var selections = cockpitModule_widgetSelection.getSelectionValues(datasetLabel,columnName);
 
-			if($scope.hasDefaultValue == true){
-				$scope.hasDefaultValue = false;
-			}else if($scope.selections.length==0){
-				$scope.hasDefaultValue = true;
-			}
+			$scope.hasDefaultValue = !selections || selections.length==0;
 
 			if( $scope.ngModel.settings.modalityValue=="multiValue"){
 				$scope.defaultValue = [];
@@ -189,7 +176,9 @@ angular.module('cockpitModule')
 				$scope.defaultValue = "";
 			}
 
-			if($scope.hasDefaultValue && (nature == "init" || nature == "refresh" || nature == "filters")){
+			if($scope.hasDefaultValue && (nature == "init" || nature == "refresh" || nature=='selections' || nature == "filters")){
+				var applyDefaultValues = false;
+
 				switch($scope.ngModel.settings.defaultValue.toUpperCase()){
 				case 'FIRST':
 					if(Array.isArray($scope.defaultValue)){
@@ -197,7 +186,7 @@ angular.module('cockpitModule')
 					} else {
 						$scope.defaultValue =  $scope.datasetRecords.rows[0].column_1;
 					}
-
+					applyDefaultValues = true;
 					break;
 				case 'LAST':
 					if(Array.isArray($scope.defaultValue)){
@@ -205,6 +194,7 @@ angular.module('cockpitModule')
 					} else {
 						$scope.defaultValue =  $scope.datasetRecords.rows[$scope.datasetRecords.rows.length-1].column_1;
 					}
+					applyDefaultValues = true;
 					break;
 				case 'STATIC':
 					if(Array.isArray($scope.defaultValue)){
@@ -212,23 +202,21 @@ angular.module('cockpitModule')
 					} else {
 						$scope.defaultValue =  $scope.ngModel.settings.staticValue;
 					}
-					break;
-				default:
-					if(!Array.isArray($scope.defaultValue)){
-						$scope.defaultValue = "";
-					}
+					applyDefaultValues = true;
 					break;
 				}
-				var item = {};
-				item.aggregated=$scope.aggregated;
-				item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
-				item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
-				item.ds=$scope.ngModel.dataset.label;
-				if($scope.ngModel.settings.defaultValue!=""){
+
+				if(applyDefaultValues){
+					var item = {};
+					item.aggregated=$scope.aggregated;
+					item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
+					item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
+					item.ds=$scope.ngModel.dataset.label;
 					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,$scope.defaultValue);
+				}else{
+					$scope.defaultValue = angular.copy(selections);
+					checkRefreshSettings();
 				}
-			}else{
-				$scope.defaultValue =  angular.copy($scope.selections);
 			}
 		}
 
@@ -261,22 +249,13 @@ angular.module('cockpitModule')
 			var datasetLabel = $scope.ngModel.dataset.label;
 			var columnName = $scope.ngModel.content.selectedColumn.name;
 
-			var selections = cockpitModule_widgetSelection.getCurrentSelections(datasetLabel);
-			if(selections && selections[datasetLabel] && selections[datasetLabel][columnName]){
-				updateValues(selections[datasetLabel][columnName]);
-			}else{
-				selections = cockpitModule_widgetSelection.getCurrentFilters(datasetLabel);
-				if(selections && selections[datasetLabel] && selections[datasetLabel][columnName]){
-					updateValues(selections[datasetLabel][columnName]);
-				}
+			var values = cockpitModule_widgetSelection.getSelectionValues(datasetLabel,columnName);
+			if(values){
+				updateValues(values);
 			}
 		}
 
-		var updateValues = function(structuredValues){
-			var values = [];
-			for(var i in structuredValues){
-				values = values.concat(structuredValues[i].slice(2,structuredValues[i].length-2).split("','"));
-			}
+		var updateValues = function(values){
 			if($scope.ngModel.settings.modalityValue != 'multiValue'){
 				$scope.parameter = (values.length == 1) ? values[0] : "";
 			} else {
