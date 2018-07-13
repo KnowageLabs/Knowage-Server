@@ -56,17 +56,17 @@ angular
 
              self.addDriver = function() {
             	 nameOfObjectIdProperty= "";
-            	 self.driverRelatedObject.hasOwnProperty('ModelLocked') ? nameOfObjectIdProperty = "biMetaModelID" : nameOfObjectIdProperty = "biObjectID";
+            	 self.driverRelatedObject.hasOwnProperty('modelLocked') ? nameOfObjectIdProperty = "biMetaModelID" : nameOfObjectIdProperty = "biObjectID";
 
-				 if(self.document.id){
-				 if (self.drivers) {
-                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',nameOfObjectIdProperty:self.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
-                     var index = self.drivers.length;
-                     self.selectDriver( index );
-                 } else {
-                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true',nameOfObjectIdProperty:self.driverRelatedObject.id ,'visible':false,'required':false,'multivalue':false}];
-                     self.selectDriver(1);
-                 }
+				 if(self.driverRelatedObject.id){
+					 if (self.drivers) {
+	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',nameOfObjectIdProperty:self.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
+	                     var index = self.drivers.length;
+	                     self.selectDriver( index );
+	                 } else {
+	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true',nameOfObjectIdProperty:self.driverRelatedObject.id ,'visible':false,'required':false,'multivalue':false}];
+	                     self.selectDriver(1);
+	                 }
 				 }
              }
              self.openMenu=function(menu,event){
