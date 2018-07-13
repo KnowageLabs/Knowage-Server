@@ -103,7 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}else {
 				$scope.trustedCss = $sce.trustAsHtml('<style>'+$scope.ngModel.cssToRender+'</style>');
 				if($scope.ngModel.htmlToRender){
-					$scope.trustedHtml = $sce.trustAsHtml($scope.parseCalc($scope.ngModel.htmlToRender));
+					$scope.trustedHtml = $sce.trustAsHtml($scope.parseCalc("<div>" + $scope.ngModel.htmlToRender +" </div>"));
 				}
 				$scope.hideWidgetSpinner();
 			}
@@ -209,7 +209,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    	var tempElement;
 				    	for(var r = 0; r<limit; r++){
 				    		var tempRow = angular.copy(repeatedElement);
-				    		tempRow.innerHTML =  tempRow.innerHTML.replace($scope.columnRegex, function(match,c1,c2){
+				    		tempRow.innerHTML =  tempRow.innerHTML.replace($scope.columnRegex, function(match,c1,c2,c3, precision){
 								return "[kn-column='"+c1+"' row='"+(c2||r)+"']";
 							});
 				    		tempRow.innerHTML = tempRow.innerHTML.replace($scope.repeatIndexRegex, r);
@@ -239,6 +239,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			do {
 				  if (allElements[j] && allElements[j].hasAttribute("kn-if")){
 				    	var condition = allElements[j].getAttribute("kn-if").replace($scope.columnRegex, $scope.ifConditionReplacer);
+				    	condition = condition.replace($scope.paramsRegex, $scope.paramsReplacer);
 				    	if(eval(condition)){
 				    		allElements[j].removeAttribute("kn-if");
 				    	}else{
@@ -284,7 +285,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		//Replacers
 		$scope.calcReplacer = function(match,p1,precision){
-			return (precision && !isNaN(p1))? eval(p1).toFixed(precision) : eval(p1);
+			return (precision && !isNaN(eval(p1)))? eval(p1).toFixed(precision) : eval(p1);
 		}
 		
 		$scope.ifConditionReplacer = function(match, p1, p2){

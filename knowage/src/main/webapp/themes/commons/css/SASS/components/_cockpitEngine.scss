@@ -1452,17 +1452,6 @@
 	
 //IE style
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-	 .cockpitSheetTabsHook {
-    	md-tabs-canvas {
-    		width: 10px;
-    	}
-    	md-tabs-wrapper {
-    		width: 10px;
-    	}
-    	md-tab-data {
-    		display: none;
-    	}
-    }
     cockpit-table {
 	    .cockpitTableContainer {
 	    	table.cockpitTable {
@@ -1475,6 +1464,21 @@
 			.widgetsContainer {
 				.widgetContainer {
 					min-width: 100px;
+				}
+			}
+		}
+	}
+	cockpit-sheet {
+		md-tabs {
+			md-tabs-wrapper {
+				md-tabs-canvas {
+					md-pagination-wrapper {
+						.md-tab {
+							span {
+								top: -8px;
+							}
+						}
+					}
 				}
 			}
 		}
