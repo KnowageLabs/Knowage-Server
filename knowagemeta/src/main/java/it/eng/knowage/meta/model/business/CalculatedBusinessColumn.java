@@ -17,9 +17,9 @@
  */
 package it.eng.knowage.meta.model.business;
 
-import it.eng.knowage.meta.exception.KnowageMetaException;
+import java.util.Set;
 
-import java.util.List;
+import it.eng.knowage.meta.exception.KnowageMetaException;
 
 /**
  * <!-- begin-user-doc --> A representation of the model object '<em><b>Calculated Business Column</b></em>'. <!-- end-user-doc -->
@@ -31,5 +31,5 @@ import java.util.List;
  */
 public interface CalculatedBusinessColumn extends BusinessColumn {
 
-	List<SimpleBusinessColumn> getReferencedColumns() throws KnowageMetaException;
+	Set<SimpleBusinessColumn> getReferencedColumns() throws KnowageMetaException;
 } // CalculatedBusinessColumn

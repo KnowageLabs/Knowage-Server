@@ -17,9 +17,10 @@
  */
 package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONObject;
@@ -115,11 +116,11 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 		return property != null ? property.getValue() : "";
 	}
 
-	public List<IJpaColumn> getReferencedColumns() {
-		List<IJpaColumn> jpaColumns = new ArrayList<IJpaColumn>();
+	public Set<IJpaColumn> getReferencedColumns() {
+		Set<IJpaColumn> jpaColumns = new HashSet<IJpaColumn>();
 
 		try {
-			List<SimpleBusinessColumn> businessColumns = businessCalculatedColumn.getReferencedColumns();
+			Set<SimpleBusinessColumn> businessColumns = businessCalculatedColumn.getReferencedColumns();
 			if (!businessColumns.isEmpty()) {
 				for (SimpleBusinessColumn businessColumn : businessColumns) {
 					JpaColumn jpaColumn = new JpaColumn(jpaTable, businessColumn);
@@ -136,8 +137,8 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 
 	public String getExpressionWithUniqueNames() {
 		String expression = getExpression();
-		List<IJpaColumn> jpaColumns = this.getReferencedColumns();
-		List<String> operands = new ArrayList<String>();
+		Set<IJpaColumn> jpaColumns = this.getReferencedColumns();
+		Set<String> operands = new HashSet<String>();
 
 		if (!jpaColumns.isEmpty()) {
 			// retrieve operands from string
@@ -181,16 +182,26 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 			operands.removeAll(Arrays.asList("", null));
 		}
 
-		for (int i = 0; i < operands.size(); i++) {
-			if (jpaColumns.size() > i) {
-				logger.debug("Replacing " + operands.get(i) + " with " + jpaColumns.get(i).getUniqueName());
-				if (jpaColumns.get(i) != null) {
-					expression = expression.replace(operands.get(i), jpaColumns.get(i).getUniqueName().replaceAll("/", ":"));
-				}
+		for (String operand : operands) {
+			// search if the operand is a column of the metamodel (it could be a fixed value)
+			String uniqueName = getUniqueNameOfOperand(jpaColumns, operand);
+			if (uniqueName != null) {
+				logger.debug("Replacing " + operand + " with " + uniqueName);
+				expression = expression.replace(operand, uniqueName);
 			}
+
 		}
 
 		return expression;
+	}
+
+	public String getUniqueNameOfOperand(Set<IJpaColumn> jpaColumns, String operandToFind) {
+		for (IJpaColumn jpaColumn : jpaColumns) {
+			if (jpaColumn.getName().equals(operandToFind)) {
+				return jpaColumn.getUniqueName().replaceAll("/", ":");
+			}
+		}
+		return null;
 	}
 
 }
