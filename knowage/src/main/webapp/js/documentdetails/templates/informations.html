@@ -67,7 +67,7 @@
                     </md-input-container>
                     <md-input-container flex ng-if="di.isDatasetVisible()">
                         <label>{{di.translate.load("sbi.documentdetails.informations.dataset")}}</label>
-                        <md-select  ng-required="di.isDatasetVisible()" name="dataset" ng-model="di.document.dataSetId" >
+                        <md-select  ng-required="!documentDetailsForm.informations.$pristine" name="dataset" ng-model="di.document.dataSetId" >
                           <md-select-header>
 					            <input ng-model="di.searchTerm"
 					                   type="text"
