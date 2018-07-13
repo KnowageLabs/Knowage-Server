@@ -183,8 +183,10 @@ public class UserResource extends AbstractSpagoBIResource {
 			SbiUser existingUser = usersDao.loadSbiUserByUserId(userId);
 			if(existingUser != null && userId.equals(existingUser.getUserId())) {
 				logger.error("User already exists. User_ID is unique");
-				throw new RuntimeException("User with provided ID already exists.");
+				throw new SpagoBIRestServiceException("User with provided ID already exists.", buildLocaleFromSession(), new Throwable());
 			}
+		} catch(SpagoBIRestServiceException ex) {
+			throw ex;
 		} catch (EMFUserError e) {
 			logger.error("Can not create SbiUser object");
 			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e);
