@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.naming.NamingException;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.EList;
@@ -55,6 +57,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.bo.serializer.JDBCDataSourcePoolConfigurationJSONSerializer;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.database.MetaDataBase;
@@ -105,7 +108,7 @@ public class PhysicalModelInitializer {
 
 		try {
 			MetaDataBase database = DataBaseFactory.getMetaDataBase(dataSource);
-			try (Connection conn = originalPM.getConnection()) {
+			try (Connection conn = dataSource.getConnection()) {
 				dbMeta = conn.getMetaData();
 
 				addDatabase(dbMeta, model);
@@ -646,14 +649,20 @@ public class PhysicalModelInitializer {
 	/**
 	 * Get tables names that are present in the database but not in the passed physical model
 	 *
-	 * @param connection
-	 *            jdbc connection to the database
+	 * @param dataSource
+	 *            specified data source
 	 * @param physicalModel
 	 *            physical model to check
 	 */
-	public List<String> getMissingTablesNames(Connection connection, PhysicalModel physicalModel) {
+	public List<String> getMissingTablesNames(IDataSource dataSource, PhysicalModel physicalModel) {
+		Connection connection = null;
 		try {
+			MetaDataBase database = DataBaseFactory.getMetaDataBase(dataSource);
+			connection = dataSource.getConnection();
+
 			DatabaseMetaData dbMeta = connection.getMetaData();
+			addSchema(dbMeta, physicalModel, database.getSchema(connection));
+			addCatalog(connection, physicalModel, database.getCatalog(connection));
 
 			List<String> tablesOnDatabase = new ArrayList<String>();
 			ResultSet tableRs = dbMeta.getTables(physicalModel.getCatalog(), physicalModel.getSchema(), null, new String[] { "TABLE", "VIEW" });
@@ -675,9 +684,15 @@ public class PhysicalModelInitializer {
 			}
 			return tablesOnDatabase;
 
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException | NamingException | DataBaseException e) {
 			throw new RuntimeException("Physical Model - Impossible to get missing tables names", e);
 
+		} finally {
+			try {
+				connection.close();
+			} catch (Exception e) {
+				logger.error("Error while trying to close database connection");
+			}
 		}
 
 	}
@@ -685,13 +700,16 @@ public class PhysicalModelInitializer {
 	/**
 	 * Get columns names that are present in the database but not in the passed physical model
 	 *
-	 * @param connection
-	 *            jdbc connection to the database
+	 * @param dataSource
+	 *            specified data source
 	 * @param physicalModel
 	 *            physical model to check
 	 */
-	public List<String> getMissingColumnsNames(Connection connection, PhysicalModel physicalModel) {
+	public List<String> getMissingColumnsNames(IDataSource dataSource, PhysicalModel physicalModel) {
+		Connection connection = null;
 		try {
+			connection = dataSource.getConnection();
+
 			DatabaseMetaData dbMeta = connection.getMetaData();
 
 			List<String> tablesOnDatabase = new ArrayList<String>();
@@ -727,22 +745,33 @@ public class PhysicalModelInitializer {
 			}
 			return newColumnsNames;
 
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException | NamingException e) {
 			throw new RuntimeException("Physical Model - Impossible to get missing tables names", e);
 
+		} finally {
+			try {
+				connection.close();
+			} catch (Exception e) {
+				logger.error("Error while trying to close database connection");
+			}
 		}
+
 	}
 
 	/**
 	 * Get tables and columns names that are present in the database but not in the passed physical model
 	 *
-	 * @param connection
-	 *            jdbc connection to the database
+	 * @param dataSource
+	 *            specified data source
 	 * @param physicalModel
 	 *            physical model to check
 	 */
-	public List<String> getRemovedTablesAndColumnsNames(Connection connection, PhysicalModel physicalModel) {
+	public List<String> getRemovedTablesAndColumnsNames(IDataSource dataSource, PhysicalModel physicalModel) {
+		Connection connection = null;
 		try {
+
+			connection = dataSource.getConnection();
+
 			DatabaseMetaData dbMeta = connection.getMetaData();
 
 			List<String> tablesOnDatabase = new ArrayList<String>();
@@ -792,9 +821,15 @@ public class PhysicalModelInitializer {
 
 			return tablesRemoved;
 
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException | NamingException e) {
 			throw new RuntimeException("Physical Model - Impossible to get missing tables names", e);
 
+		} finally {
+			try {
+				connection.close();
+			} catch (Exception e) {
+				logger.error("Error while trying to close database connection");
+			}
 		}
 	}
 
