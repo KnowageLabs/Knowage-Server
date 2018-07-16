@@ -24,6 +24,7 @@
 	#set($groupingFunction=$mainSerie.groupingFunction)
 	#end
 #else
+
 #set($mainSerieName = $drilldownSerie)
 #end
 
@@ -76,7 +77,6 @@
 			"enabled": $mainSerie.showValue,
 			"labelFormat": '${mainSerie.prefixChar}{y}${mainSerie.precision}${mainSerie.postfixChar}',
 			formatter: function() {
-			                     
 			                    var value = this.y;	
 			                    var newValue = "";		                    
 			                    
@@ -169,7 +169,6 @@
 								#end
 	                     		 
 			                    formatter: function() {
-			                     
 				                    var value = this.y;	
 				                    var newValue = "";	                  
 				                    
@@ -220,7 +219,7 @@
 		                        		                       
 		                          	return prefixValue + ' ' + newValue + ' '+ sufixValue;
 				            	}
-		               }
+		               },
 			                
 		          #elseif($relatedSerieShowAbsValue == false && $relatedSerieShowPercentage == true && $relatedSerieCategoryValue == false)
 			              	
@@ -259,7 +258,6 @@
 			                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	                     		*/
 			                   	formatter: function() {
-			                     
 				                    var value = this.y;	
 				                    var newValue = "";	                  
 				                    
@@ -353,7 +351,6 @@
 			                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	                     		*/
 			                   	formatter: function() {
-			                     
 				                    var value = this.y;	
 				                    var newValue = "";	                  
 				                    
@@ -437,7 +434,6 @@
 			                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	                     		*/
 			                   	formatter: function() {
-			                     
 				                    var value = this.y;	
 				                    var newValue = "";	                  
 				                    
@@ -513,6 +509,7 @@
 			"valuePrefix": "$mainSerie.prefixChar",
 			"valueSuffix": "$mainSerie.postfixChar",
 			"valueDecimals": $mainSerie.precision,
+			"scaleFactor": '$mainSerie.scaleFactor',
 			"ttBackColor": "$mainSerie.TOOLTIP.backgroundColor",
 			#if ($mainSerie.TOOLTIP.showAbsValueTooltip)
 				showAbsValueTooltip: $mainSerie.TOOLTIP.showAbsValueTooltip ,
