@@ -85,7 +85,11 @@
 		#set($serieKeyFeed = $serieKeyFeed + 1)
 	#end
 #end
-
+#if($chart.isCockpitEngine)
+	#set($isCockpit = $chart.isCockpitEngine)
+#else
+	#set($isCockpit = false)
+#end
 {
 	#set($drilldownEnabledFlag = false)
 	
@@ -120,7 +124,7 @@
 			cliccable: $cliccable,
 			drillable: $drillable,
 			drillableChart: $enableDrilldown,
-			isCockpit: $chart.isCockpitEngine,
+			isCockpit: $isCockpit,
 			categoryColumn: '$categorieColumns.column',
 			categoryGroupBy: '$categorieColumns.groupby',
 			categoryGroupByNamens: '$categorieColumns.groupbyNames',
@@ -1068,9 +1072,13 @@
         	labels: {
         		
         		formatter: function () {
+        		debugger;
 			                    var value = this.value;	
 			                    var newValue = "";	
-		                      	var scaleFactor =  '${yAxis.LABELS.scaleFactor}';	                    
+		                      	var scaleFactor =  '${yAxis.LABELS.scaleFactor}';
+		                      	if(scaleFactor.indexOf("yAxis")>-1){
+		                      		scaleFactor =  '${yAxis.labels.scaleFactor}';
+		                      	} 
 			                    if(scaleFactor.indexOf("yAxis")!==-1){
 		                      		scaleFactor = "empty"
 		                      	}
@@ -1242,16 +1250,19 @@
 	#if($chart.groupSeries !='true' && $chart.groupSeriesCateg !='true')
 	#foreach($valueKey in $seriesMap.keySet())
 	    #set($relatedSerie = $seriesMap.get($valueKey))
-	      #foreach($yAxisKey in $yAxisList.keySet())
+		#foreach($yAxisKey in $yAxisList.keySet())
         	#set ($yAxis = $yAxisList[$yAxisKey] )
 			#if($yAxis.LABELS)
 				#if($relatedSerie.axis == $yAxis.alias)
 				#set ($relatedSerie.scaleFactor = $yAxis.LABELS.scaleFactor)
 				#end
+			#elseif($yAxis.labels)
+				#if($relatedSerie.axis == $yAxis.alias)
+				#set ($relatedSerie.scaleFactor = $yAxis.labels.scaleFactor)
+				#end
 			#end
           #end
-	
-	    {	
+		{	
 			#set($relatedSerieColor = false)
 			#set($relatedSerieColor = $relatedSerie.color)
 			#if($relatedSerieColor && $relatedSerieColor != '')
@@ -1452,6 +1463,7 @@
 			#if ($relatedSerie.precision != '')
 				valueDecimals: $relatedSerie.precision,
 			#end
+				scaleFactor: '$relatedSerie.scaleFactor',
 				
 			#*
 				If background color for the serie tooltip is not defined (empty)
@@ -1623,7 +1635,7 @@
 			#if ($relatedSerie.precision != '')
 				valueDecimals: $relatedSerie.precision,
 			#end
-				
+				scaleFactor: '$relatedSerie.scaleFactor',			
 			#*
 				If background color for the serie tooltip is not defined (empty)
 				take the default value (#FCFFC5) so the tooltip can be readable 
@@ -1681,9 +1693,8 @@
         style: {
             padding: 0
         },
-        formatter: function() {
-      
-        	var ttColor = this.series.tooltipOptions.ttColor ? this.series.tooltipOptions.ttColor : '';
+        formatter: function() {   
+			var ttColor = this.series.tooltipOptions.ttColor ? this.series.tooltipOptions.ttColor : '';
         	var ttBackColor = this.series.tooltipOptions.ttBackColor ? this.series.tooltipOptions.ttBackColor : '';
         	
         	var ttAlign = this.series.tooltipOptions.ttAlign ? this.series.tooltipOptions.ttAlign : '';
@@ -1719,7 +1730,8 @@
         	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : 0;
         	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
         	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
-        	
+			var scaleFactor = this.series.tooltipOptions.scaleFactor ? this.series.tooltipOptions.scaleFactor : 'empty';
+        	    	
         	var thisValue = this.y;
         	
         	/*
@@ -1731,10 +1743,38 @@
         	*/
         	var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
         			thousandsSep = Highcharts.getOptions().lang.thousandsSep;
-        			
-    		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
-        	
-        	thisValue = valuePrefix + thisValue + valueSuffix; 
+    		switch(scaleFactor.toUpperCase()) {
+		                      	
+				case "EMPTY":
+		               /* No selection is provided for the number to be displayed as the data label (pure value). */
+		               thisValue = Highcharts.numberFormat(thisValue,valueDecimals,decimalPoint,thousandsSep);		                      			
+		               break;
+				case "K":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,3),valueDecimals,decimalPoint,thousandsSep) + "k";	
+		               break;
+		        case "M":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,6),valueDecimals,decimalPoint,thousandsSep) + "M";	
+		               break;
+		        case "G":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,9),valueDecimals,decimalPoint,thousandsSep) + "G";
+		               break;
+	            case "T":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,12),valueDecimals,decimalPoint,thousandsSep) + "T";
+		               break;
+		        case "P":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,15),valueDecimals,decimalPoint,thousandsSep) + "P";
+		               break;
+	            case "E":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,18),valueDecimals,decimalPoint,thousandsSep) + "E";
+		               break;
+	            default:
+	                   /* The same as for the case when user picked "no selection" - in case when the chart 
+	                   template does not contain the scale factor for current serie */
+	                   thisValue = Highcharts.numberFormat(thisValue,valueDecimals,decimalPoint,thousandsSep);	
+		               break;
+		                      	
+		    }
+		    thisValue = valuePrefix + thisValue + valueSuffix;  
         	
         	var format = "";
         	var drilling = false;
@@ -1816,15 +1856,46 @@
 	        	
 	        	prefix = this.series.options.tooltip.valuePrefix + " ";
 	        	
-	        	var separatorOfThousands = Highcharts.getOptions().lang.thousandsSep;
+	        	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
 	        	
 	        	var decimalPoint = Highcharts.getOptions().lang.decimalPoint;
 	        											
-	        	var precision = this.series.options.tooltip.valueDecimals;
+	        	var valueDecimals = this.series.options.tooltip.valueDecimals;
+	        	var scaleFactor = this.series.options.tooltip.scaleFactor;
 	        				
 	        	postfix = " " + this.series.options.tooltip.valueSuffix;
 	        	
-	        	thisValue = Highcharts.numberFormat(this.y, precision, decimalPoint, separatorOfThousands);
+				switch(scaleFactor.toUpperCase()) {
+		                      	
+					case "EMPTY":
+						   /* No selection is provided for the number to be displayed as the data label (pure value). */
+						   thisValue = Highcharts.numberFormat(this.y,valueDecimals,decimalPoint,thousandsSep);		                      			
+						   break;
+					case "K":
+						   thisValue = Highcharts.numberFormat(this.y/Math.pow(10,3),valueDecimals,decimalPoint,thousandsSep) + "k";	
+						   break;
+					case "M":
+						   thisValue = Highcharts.numberFormat(this.y/Math.pow(10,6),valueDecimals,decimalPoint,thousandsSep) + "M";	
+						   break;
+					case "G":
+						   thisValue = Highcharts.numberFormat(this.y/Math.pow(10,9),valueDecimals,decimalPoint,thousandsSep) + "G";
+						   break;
+					case "T":
+						   thisValue = Highcharts.numberFormat(this.y/Math.pow(10,12),valueDecimals,decimalPoint,thousandsSep) + "T";
+						   break;
+					case "P":
+						   thisValue = Highcharts.numberFormat(this.y/Math.pow(10,15),valueDecimals,decimalPoint,thousandsSep) + "P";
+						   break;
+					case "E":
+						   thisValue = Highcharts.numberFormat(this.y/Math.pow(10,18),valueDecimals,decimalPoint,thousandsSep) + "E";
+						   break;
+					default:
+						   /* The same as for the case when user picked "no selection" - in case when the chart 
+						   template does not contain the scale factor for current serie */
+						   thisValue = Highcharts.numberFormat(this.y,valueDecimals,decimalPoint,thousandsSep);	
+						   break;
+		                      	
+		    	}
         	}
         	
         	var fontStyle = "";

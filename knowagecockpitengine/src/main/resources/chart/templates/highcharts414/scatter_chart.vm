@@ -673,7 +673,11 @@
         		formatter: function () {
 			                    var value = this.value;	
 			                    var newValue = "";	
-		                      	var scaleFactor =  '${yAxis.LABELS.scaleFactor}';	                    
+		                      	var scaleFactor =  '${yAxis.LABELS.scaleFactor}';
+		                      	if(scaleFactor.indexOf("yAxis")>-1){
+		                      		scaleFactor =  '${yAxis.labels.scaleFactor}';
+
+		                      	}  
 			                    if(scaleFactor.indexOf("yAxis")!==-1){
 		                      		scaleFactor = "empty"
 		                      	}
@@ -823,6 +827,10 @@
 			#if($yAxis.LABELS)
 				#if($relatedSerie.axis == $yAxis.alias)
 				#set ($relatedSerie.scaleFactor = $yAxis.LABELS.scaleFactor)
+				#end
+			#elseif($yAxis.labels)
+				#if($relatedSerie.axis == $yAxis.alias)
+				#set ($relatedSerie.scaleFactor = $yAxis.labels.scaleFactor)
 				#end
 			#end
           #end
@@ -990,6 +998,7 @@
 				valueDecimals: $relatedSerie.precision ,
 			#end
 				
+				scaleFactor: '$relatedSerie.scaleFactor',
 			#*
 				If background color for the serie tooltip is not defined (empty)
 				take the default value (#FCFFC5) so the tooltip can be readable 
@@ -1039,7 +1048,6 @@
         formatter: function() {
         	var ttColor = this.series.tooltipOptions.ttColor ? this.series.tooltipOptions.ttColor : '';
         	var ttBackColor = this.series.tooltipOptions.ttBackColor ? this.series.tooltipOptions.ttBackColor : '';
-        	
         	var ttAlign = this.series.tooltipOptions.ttAlign ? this.series.tooltipOptions.ttAlign : '';
         	var ttFont = this.series.tooltipOptions.ttFont ? ' ' + this.series.tooltipOptions.ttFont : '';
         	var ttFontSize = this.series.tooltipOptions.ttFontSize ? ' ' + this.series.tooltipOptions.ttFontSize : '';
@@ -1066,6 +1074,7 @@
         	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : 0;
         	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
         	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
+        	var scaleFactor = this.series.tooltipOptions.scaleFactor ? this.series.tooltipOptions.scaleFactor : 'empty';
         	
         	var thisValue = this.y;
         	
@@ -1081,7 +1090,37 @@
         	var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
         			thousandsSep = Highcharts.getOptions().lang.thousandsSep;
         			
-    		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
+    		switch(scaleFactor.toUpperCase()) {
+		                      	
+				case "EMPTY":
+		               /* No selection is provided for the number to be displayed as the data label (pure value). */
+		               thisValue = Highcharts.numberFormat(thisValue,valueDecimals,decimalPoint,thousandsSep);		                      			
+		               break;
+				case "K":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,3),valueDecimals,decimalPoint,thousandsSep) + "k";	
+		               break;
+		        case "M":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,6),valueDecimals,decimalPoint,thousandsSep) + "M";	
+		               break;
+		        case "G":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,9),valueDecimals,decimalPoint,thousandsSep) + "G";
+		               break;
+	            case "T":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,12),valueDecimals,decimalPoint,thousandsSep) + "T";
+		               break;
+		        case "P":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,15),valueDecimals,decimalPoint,thousandsSep) + "P";
+		               break;
+	            case "E":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,18),valueDecimals,decimalPoint,thousandsSep) + "E";
+		               break;
+	            default:
+	                   /* The same as for the case when user picked "no selection" - in case when the chart 
+	                   template does not contain the scale factor for current serie */
+	                   thisValue = Highcharts.numberFormat(thisValue,valueDecimals,decimalPoint,thousandsSep);	
+		               break;
+		                      	
+		    }
         	
         	thisValue = valuePrefix + thisValue + valueSuffix;
         	
@@ -1108,7 +1147,6 @@
             return result;
         }
     },
-    
     lang: {
         noData: '$chart.EMPTYMESSAGE.text'
     },
@@ -1155,9 +1193,26 @@
     	enabled: false
     },
     
-    plotOptions: 
-    {
-            scatter: {
+    plotOptions: {
+    	#* 
+            	From Highcharts API: When a series contains a data array that is longer than this, 
+            	only one dimensional arrays of numbers, or two dimensional arrays with x and y values 
+            	are allowed. Also, only the first point is tested, and the rest are assumed to be the 
+            	same format. This saves expensive data checking and indexing in long series. Set it to 
+            	0 disable. Defaults to 1000.
+            	
+            	URL: http://api.highcharts.com/highcharts#plotOptions.series.turboThreshold
+            	
+            	We will increase this value in order to display series that contain a data array bigger
+            	than 1000 (default), because it is most likely that we will have this situation very 
+            	often.
+                
+            	@author: danristo (danilo.ristovski@mht.net)
+            *#
+        series:{
+        	turboThreshold: 5000
+		},
+    	scatter: {
                 marker: {
                     radius: 5,
                     states: {
@@ -1174,27 +1229,7 @@
                             enabled: false
                         }
                     }
-            },
-            
-            #* 
-            	From Highcharts API: When a series contains a data array that is longer than this, 
-            	only one dimensional arrays of numbers, or two dimensional arrays with x and y values 
-            	are allowed. Also, only the first point is tested, and the rest are assumed to be the 
-            	same format. This saves expensive data checking and indexing in long series. Set it to 
-            	0 disable. Defaults to 1000.
-            	
-            	URL: http://api.highcharts.com/highcharts#plotOptions.series.turboThreshold
-            	
-            	We will increase this value in order to display series that contain a data array bigger
-            	than 1000 (default), because it is most likely that we will have this situation very 
-            	often.
-                
-            	@author: danristo (danilo.ristovski@mht.net)
-            *#
-            series:{
-            	
-					turboThreshold: 5000
-            	}  
+         	   },
             }
         }
 }

@@ -302,6 +302,15 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 				$scope.chartTemplate.styleName = $scope.clearStyleTag($scope.chartTemplate.styleName);
 			}
 		}
+		if($scope.chartTemplate.type == "SCATTER" || $scope.chartTemplate.type == "BAR" || $scope.chartTemplate.type == "LINE"){
+	    	  for (var i = 0; i < $scope.chartTemplate.VALUES.SERIE.length; i++) {
+	    		  for (var j = 0; j < $scope.chartTemplate.AXES_LIST.AXIS.length; j++) {
+						if($scope.chartTemplate.VALUES.SERIE[i].axis == $scope.chartTemplate.AXES_LIST.AXIS[j].alias){
+							$scope.chartTemplate.VALUES.SERIE[i].scaleFactor = $scope.chartTemplate.AXES_LIST.AXIS[j].labels.scaleFactor
+						}
+		    	  }
+	    	  }
+		}
 
 	}
 	var checkChartSettings = function (){
