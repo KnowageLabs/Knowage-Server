@@ -13,7 +13,7 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 	<div layout="row" layout-align="space-around center">	
 		<md-button aria-label="Reset Parameter" class="md-icon-button" ng-click="clearListParametersForm();">
 			<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.clear")}}</md-tooltip>
-			<md-icon md-font-icon="fa fa-reply-all"></md-icon>
+			<md-icon md-font-icon="fa fa-eraser"></md-icon>
 		</md-button>	
 		<% 
 		if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.SEE_VIEWPOINTS_FUNCTIONALITY}) || 
