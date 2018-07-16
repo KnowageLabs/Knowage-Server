@@ -8,28 +8,20 @@
     		   documentData.documentId = documentData.documentInfoObject.OBJECT_ID;
     		   documentData.templates = "templates";
     		   documentData.requiredPath = "2.0/documents1";
-    		   documentData.requiredPathForRelations = "2.0/metaDocumetRelationResource";
     		   documentData.template= documentAndInfo.template;
-    		   ///fdfdsfdf
-    		   //documentData.visualDependencies = "visualdependencies";
-    		   //documentData.dataDependenciesName = "datadependencies";
+    		   
+//    		   documentData.visualDependencies = "visualdependencies";
+//    		   documentData.dataDependenciesName = "datadependencies";
 //    		   documentData.selectedVisualCondition = {};
 //    		   documentData.selectedDataCondition = {};
 //    		   documentData.analyticalDrivers = documentAndInfo.analyticalDrivers;
 //    		   documentData.visusalDependencyObjects = [];
 //    		   documentData.dataDependencyObjects = [];
 //    		   documentData.changedDrivers = [];
-			   documentData.changedOutputParameters = [];
-			   documentData.listOfTemplates = [];
-    		   documentData.changedTemplates = [];
-    		   documentData.changedTemplate = {};
-    		   documentData.file = {};
 //    		   documentData.changedVisualDependencies = [];
 //    		   documentData.changedDataDependencies = [];
 //    		   documentData.driverParuses = [];
 //    		   documentData.driversForDeleting = [];
-    		   documentData.outputParametersForDeleting = [];
-    		   documentData.templatesForDeleting = [];
 //    		   documentData.dataDependenciesForDeleting = [];
 //    		   documentData.visualDependenciesForDeleting = [];
 //    		   documentData.lovIdAndColumns = [];

@@ -19,7 +19,7 @@
     'use strict';
 
     angular
-        .module('DocumentDetails', ['ngMaterial', 'jsonFormatter','sbiModule', 'componentTreeModule', 'file_upload','DriversModule','TemplateModule', 'OutputParametersModule'])
+        .module('DocumentDetails', ['ngMaterial', 'jsonFormatter','sbiModule', 'componentTreeModule', 'file_upload','DriversModule','TemplateModule', 'OutputParametersModule', 'DataLineageModule', 'SubreportsModule'])
         .config(['$mdThemingProvider','$locationProvider','$httpProvider', function($mdThemingProvider,$locationProvider,$httpProvider) {
             $mdThemingProvider.theme('knowage')
             $mdThemingProvider.setDefaultTheme('knowage');
@@ -29,16 +29,13 @@
             	  requireBase: false
             	});
         }])
-        .controller('DocumentDetailsController',['$scope','$filter','DriversService','DocumentService','templateService','outputParametersService','closingIFrame','$location','resourceService','multipartForm','$mdDialog', 'sbiModule_restServices', 'sbiModule_translate', 'sbiModule_messaging', DocumentDetailsController])
+        .controller('DocumentDetailsController',['$scope','$filter','DriversService','DocumentService','templateService','outputParametersService','dataLineageService','subreportsService','closingIFrame','$location','resourceService','multipartForm','$mdDialog', 'sbiModule_restServices', 'sbiModule_translate', 'sbiModule_messaging', DocumentDetailsController])
 
-    function DocumentDetailsController($scope,$filter,DriversService,DocumentService,templateService,outputParametersService,closingIFrame,$location,resourceService,multipartForm,$mdDialog,sbiModule_restServices,sbiModule_translate,sbiModule_messaging) {
+    function DocumentDetailsController($scope,$filter,DriversService,DocumentService,templateService,outputParametersService,dataLineageService,subreportsService,closingIFrame,$location,resourceService,multipartForm,$mdDialog,sbiModule_restServices,sbiModule_translate,sbiModule_messaging) {
         var self = this;
         var documentService = DocumentService;
-        var templateService = templateService;
-        var outputParametersService = outputParametersService;
         self.translate = sbiModule_translate;
         var requiredPath = documentService.requiredPath;
-		var requiredPathForRelations = documentService.requiredPathForRelations;
         var paruses = documentService.driverParuses;
         self.title = "Document Details";
         var template = templateService.template;
@@ -49,8 +46,6 @@
         self.lovIdAndColumns = DriversService.lovIdAndColumns;
         var documentBasePath =""+ document.id;
         var driverPostBasePath = document.id + '/drivers';
-    	var outputParametersPostBasePath = document.id + '/outputparameters';
-		var templateUploadBasePath = document.id + '/templates';
 		self.typeCode = documentService.document.typeCode;
 		self.docId = documentService.documentId;
 
@@ -61,122 +56,32 @@
         self.savingFunction = function(){
 
         	persistDocument();
+        	
         	persistDrivers();
-        	persistDataDependency();
-        	persistVisualDependency();
-        	persistOutputParameters();
-        	uploadTemplate();
-        	setActiveTemplate();
-
         	deleteDrivers();
+        	
+        	persistDataDependency();
         	deleteDataDependencies();
+        	
+        	persistVisualDependency();
         	deleteVisualDependencies();
-        	deleteOutputParameters();
-			deleteTemplates();
+        	
+        	outputParametersService.persistOutputParameters();
+        	outputParametersService.deleteOutputParameters();
+        	
+        	dataLineageService.persistTables();
+			dataLineageService.deleteTables();
+        	
+        	templateService.uploadTemplate();
+        	templateService.setActiveTemplate();
+        	templateService.deleteTemplates();
 
-			deleteSubreports();
-			persistSubreports();
-			persistTables();
-			deleteTables();
-
+        	subreportsService.deleteSubreports();
+			subreportsService.persistSubreports();			
 
         };
 
-        var getAllTemplates = function() {
-        	var templateBasePath = document.id + '/templates';
-        	resourceService.get(templateService.requiredPath, templateBasePath).then(function(response) {
-        		templateService.listOfTemplates = response.data;
-        	});
-        }
 
-        var persistTables = function() {
-        	var checkedTables = $filter('filter')(documentService.tablesList, {wanted: true});
-        	var savedTables = documentService.savedTables;
-        	if(checkedTables) {
-        		for(var i = 0; i < checkedTables.length; i++) {
-            		if(!containsTable(checkedTables[i], savedTables)) {
-            			var table = angular.copy(checkedTables[i]);
-        				delete table.wanted;
-        				sbiModule_restServices.promisePost(requiredPathForRelations + "/" + document.id, "", table);
-            		}
-            	}
-        	}
-        };
-
-        var containsTable = function(obj, list) {
-        	for(var i = 0; i < list.length; i++) {
-        		if(list[i].tableId === obj.tableId) {
-        			return true;
-        		}
-        	}
-        	return false;
-        }
-
-        var deleteTables = function() {
-        	var tablesForRemoving = $filter('filter')(documentService.tablesList, {wanted: false});
-        	if(tablesForRemoving) {
-        		for(var i = 0; i < tablesForRemoving.length; i++) {
-            		self.deleteTableById(tablesForRemoving[i]);
-            	}
-        	}
-        }
-
-        self.deleteTableById = function(table) {
-        	var tableBasePath = document.id +  "/" + table.tableId;
-        	sbiModule_restServices.promiseDelete(requiredPathForRelations, tableBasePath).then(function(response) {
-        		sbiModule_messaging.showSuccessMessage(self.translate.load("sbi.documentdetails.toast.deleted"), 'Success!');
-        	});
-        };
-
-        var persistSubreports = function() {
-        	var checkedDocuments = $filter('filter')(documentService.documentsList, {wanted: true});
-        	var savedSubreports = documentService.savedSubreports;
-        	var subreportBasePath = document.id + '/subreports';
-        	if(checkedDocuments) {
-        		for(var i = 0; i < checkedDocuments.length; i++) {
-            		if(!containsSubreport(checkedDocuments[i], savedSubreports)) {
-            			var subreport = angular.copy(checkedDocuments[i]);
-        				delete subreport.wanted;
-        				prepareDocumentForPersisting(subreport);
-        				sbiModule_restServices.promisePost(documentService.requiredPath, subreportBasePath, subreport);
-            		}
-            	}
-        	}
-        };
-
-        var containsSubreport = function(obj, list) {
-        	for(var i = 0; i < list.length; i++) {
-        		if(list[i].sub_rpt_id === obj.id) {
-        			return true;
-        		}
-        	}
-        	return false;
-        }
-
-        var deleteSubreports = function() {
-        	var subreportsForRemoving = $filter('filter')(documentService.documentsList, {wanted: false});
-        	if(subreportsForRemoving) {
-        		for(var i = 0; i < subreportsForRemoving.length; i++) {
-            		self.deleteSubreportById(subreportsForRemoving[i]);
-            	}
-        	}
-        }
-
-        self.deleteSubreportById = function(subreport) {
-        	var subreportBasePath = document.id + '/subreports/' + subreport.id;
-        	sbiModule_restServices.promiseDelete(requiredPath, subreportBasePath).then(function(response) {
-        		sbiModule_messaging.showSuccessMessage(self.translate.load("sbi.documentdetails.toast.deleted"), 'Success!');
-        	});
-        };
-
-        var uploadTemplate = function() {
-        	if(templateService.file.file) {
-        		var templateUploadBasePath = document.id + '/templates';
-        		multipartForm.post(templateService.requiredPath +"/"+ templateUploadBasePath, templateService.file).then(function(response){
-        			getAllTemplates();
-  	      	  });
-        	}
-        };
         var uploadImage = function() {
         	if(documentService.previewFile.file) {
         		var templateUploadBasePath = document.id + '/image';
@@ -190,40 +95,6 @@
         		 documentService.documentImage = response.data;
            	});
         }
-        var setActiveTemplate = function() {
-        	if(templateService.changedTemplate) {
-				var templateModifyBasePath = document.id + "/templates/" + templateService.changedTemplate.id;
-    			resourceService.put(templateService.requiredPath, templateModifyBasePath);
-			}
-        };
-
-        self.deleteTemplateById = function(template) {
-       	 var basePath = document.id + "/" + 'templates';
-       	 var basePathWithId = basePath + "/" + template.id;
-       	 resourceService.delete(requiredPath, basePathWithId).then(function(response) {
-       		 sbiModule_messaging.showSuccessMessage(self.translate.load("sbi.documentdetails.toast.deleted"), 'Success!');
-       	 });
-        };
-
-        var deleteTemplates = function() {
-       	 for(var i = 0; i < templateService.templatesForDeleting.length; i++) {
-       		 self.deleteTemplateById(templateService.templatesForDeleting[i]);
-       	 }
-        };
-
-        var persistOutputParameters = function() {
-        	for(var i = 0; i < outputParametersService.changedOutputParameters.length; i++) {
-        		if(!outputParametersService.changedOutputParameters[i].id) {
-        			delete outputParametersService.changedOutputParameters[i].$$hashKey;
-        			var outputParametersPostBasePath = document.id + '/outputparameters';
-        			resourceService.post(documentService.requiredPath, outputParametersPostBasePath, outputParametersService.changedOutputParameters[i]);
-        		} else {
-        			delete outputParametersService.changedOutputParameters[i].$$hashKey;
-        			var outputParametersPutBasePath = document.id + "/outputparameters/" + outputParametersService.changedOutputParameters[i].id;
-        			resourceService.put(documentService.requiredPath, outputParametersPutBasePath, outputParametersService.changedOutputParameters[i]);
-        		}
-        	}
-        };
 
         var prepareDocumentForPersisting = function(document){
         	delete document.dataSetLabel;
@@ -253,9 +124,9 @@
        			}else
 	      		sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.deleted"), 'Success!');
 	      	  });
-      };
+        };
 
-      self.deleteDriverDataDependency = function(dataDependency){
+        self.deleteDriverDataDependency = function(dataDependency){
       	  var dataDependencyBasePath = document.id + "/" + DriversService.dataDependenciesName + "/delete";
       	  resourceService.post(requiredPath,dataDependencyBasePath,dataDependency).then(function(response){
       		if(response.data.errors){
@@ -263,32 +134,19 @@
    			}else
       		sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.deleted"), 'Success!');
       	  });
-    };
+        };
 
-    self.deleteDriverById = function(driver){
-     	  var requiredPath = documentService.requiredPath;
-        var basePath = document.id + "/" + 'drivers' ;
-     	  var basePathWithId = basePath + "/" + driver.id;
-     	  resourceService.delete(requiredPath,basePathWithId).then(function(response){
-     		if(response.data.errors){
- 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
- 			}else
-         		sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.deleted"), 'Success!');
-         });
-   };
-         self.deleteOutputParameterById = function(outputParameter) {
-        	 var basePath = document.id + "/" + 'outputparameters';
-        	 var basePathWithId = basePath + "/" + outputParameter.id;
-        	 resourceService.delete(requiredPath, basePathWithId).then(function(response) {
-        		 sbiModule_messaging.showSuccessMessage(self.translate.load("sbi.documentdetails.toast.deleted"), 'Success!');
-        	 });
-         };
-
-         var deleteOutputParameters = function() {
-        	 for(var i = 0; i < outputParametersService.outputParametersForDeleting.length; i++) {
-        		 self.deleteOutputParameterById(outputParametersService.outputParametersForDeleting[i]);
-        	 }
-         };
+	    self.deleteDriverById = function(driver){
+	     	  var requiredPath = documentService.requiredPath;
+	        var basePath = document.id + "/" + 'drivers' ;
+	     	  var basePathWithId = basePath + "/" + driver.id;
+	     	  resourceService.delete(requiredPath,basePathWithId).then(function(response){
+	     		if(response.data.errors){
+	 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
+	 			}else
+	         		sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.deleted"), 'Success!');
+	         });
+	   };
 
         self.setParameterInfo = function(driver){
           	 for(var i = 0 ; i<self.analyticalDrivers.length; i++){
@@ -296,14 +154,8 @@
           			 driver.parameter = self.analyticalDrivers[i];
           		 	 driver.parID = self.analyticalDrivers[i].id;}
           	 }
-           };
-
-           var deleteTemplates = function() {
-          	 for(var i = 0; i < templateService.templatesForDeleting.length; i++) {
-          		 self.deleteTemplateById(templateService.templatesForDeleting[i]);
-          	 }
-           };
-
+        };
+    
         var deleteDrivers = function(){
         	for(var i = 0; i < DriversService.driversForDeleting.length; i++){
         		self.deleteDriverById(DriversService.driversForDeleting[i]);
