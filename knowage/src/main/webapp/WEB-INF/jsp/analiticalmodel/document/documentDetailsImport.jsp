@@ -53,6 +53,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/closingIFrame.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/templateService.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/outputParametersService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/dataLineageService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/subreportsService.js")%>"></script>
 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/modules/driversModule.js")%>"></script>
 
