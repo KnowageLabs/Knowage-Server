@@ -56,7 +56,13 @@
 						<md-icon md-font-icon="fa fa-clone"></md-icon>
 				</md-button>
 				
-				<md-button 	title="{{translate.load('sbi.workspace.delete.document')}}" aria-label="Delete Document" 
+				<!-- @author Marko  -->
+				<md-button title="{{translate.load('sbi.workspace.edit.document')}}" aria-label="Edit Document"
+							class="md-icon-button" ng-click="editAnalysisDocument(selectedDocument,$event)" ng-if="isVisible(selectedDocument)">
+						<md-icon md-font-icon="fa fa-edit"></md-icon>
+				</md-button>
+				
+				<md-button title="{{translate.load('sbi.workspace.delete.document')}}" aria-label="Delete Document" 
 							class="md-icon-button" ng-click="deleteAnalysisDocument(selectedDocument)">
 						<md-icon md-font-icon="fa fa-trash-o"></md-icon>
 				</md-button>

@@ -201,6 +201,60 @@
 					}
 			);
 		}
+		
+		/**
+		 * Edit particular analysis document from the workspace */
+		
+		$scope.editAnalysisDocument = function(selectedDocument, ev) {
+			
+			console.info("[EDIT START]: Edit of Analysis Cockpit document with the label '", selectedDocument);
+			
+			$mdDialog.show({
+				controller: editAnalysisDocumentController,
+				templateUrl: sbiModule_config.contextName + "/js/src/angular_1.4/tools/workspace/templates/editAnalysisDocumentTemp.html",
+				locals: {
+					document: selectedDocument		
+				},
+				parent: angular.element(document.body),
+				targetEvent: ev,
+				clickOutsideToClose: false
+				
+			});	
+		}
+		
+		$scope.isVisible = function(document) {
+			
+			return ((document) && sbiModule_user.userId === document.creationUser) ? true : false;
+		}
+		
+		function editAnalysisDocumentController($scope, $mdDialog, document) {
+			
+			$scope.document = document;
+					
+			$scope.cancel = function() {
+				$mdDialog.cancel();
+			}
+			
+			$scope.save = function(document) {
+				console.log(document);
+				
+				$scope.document = {
+					name: document.name,
+					label: document.label,
+					description: document.description,
+					id: document.id
+				}
+				
+				$scope.dataToSend = {
+					document: $scope.document,
+					updateFromWorkspace: true
+				};
+				
+				sbiModule_restServices.promisePost("2.0/saveDocument", "", $scope.dataToSend);
+				$mdDialog.hide();
+				
+			}
+		}
 
 		/**
 		 * Delete particular Analysis document from the Workspace.
