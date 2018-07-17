@@ -303,7 +303,7 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 		if($scope.chartTemplate.type == "SCATTER" || $scope.chartTemplate.type == "BAR" || $scope.chartTemplate.type == "LINE"){
 	    	  for (var i = 0; i < $scope.chartTemplate.VALUES.SERIE.length; i++) {
 	    		  for (var j = 0; j < $scope.chartTemplate.AXES_LIST.AXIS.length; j++) {
-						if($scope.chartTemplate.VALUES.SERIE[i].axis == $scope.chartTemplate.AXES_LIST.AXIS[j].alias){
+						if($scope.chartTemplate.VALUES.SERIE[i].axis == $scope.chartTemplate.AXES_LIST.AXIS[j].alias && $scope.chartTemplate.AXES_LIST.AXIS[j].labels){
 							$scope.chartTemplate.VALUES.SERIE[i].scaleFactor = $scope.chartTemplate.AXES_LIST.AXIS[j].labels.scaleFactor
 						}
 		    	  }
