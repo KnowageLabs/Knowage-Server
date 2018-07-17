@@ -18,6 +18,9 @@
     }
     
     cockpit-discovery-widget {
+    	.discoveryCardsContainer {
+    		height: calc(100% - 75px);
+    	}
     	.discoveryFiltersCard {
     		
     		&.sidenav-add, &.sidenav-remove {
@@ -48,7 +51,6 @@
     			}
     		}
     		.discoveryFiltersList {
-	    		height: calc(100% - 80px); 
 	    		overflow-y: auto;
 	    		@include coolScrollBars($baseColor,6px);
 	    		._md-subheader-inner {
