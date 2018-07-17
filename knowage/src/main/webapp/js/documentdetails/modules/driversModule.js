@@ -2,12 +2,10 @@
     angular.module('DriversModule',[])
     		.service('DriversService',['sbiModule_translate','resourceService','sbiModule_messaging',
     			function(sbiModule_translate,resourceService,sbiModule_messaging){
-    			//  var injector = angular.injector();
-    			 // var DocumentService = injector.get('DocumentService');
+
 	    		  var driversResource = {};
 	      		  var crudService = resourceService;
 	      		  self.translate = sbiModule_translate;
-	      		 // var requiredPath = DocumentService.requiredPath;
 	      		  driversResource.changedDrivers = [];
 	      		  driversResource.driverParuses = [];
 	      		  driversResource.driversForDeleting = [];
@@ -16,7 +14,6 @@
 	      		  driversResource.driverRelatedObject;
 	      		  driversResource.analyticalDrivers = [];
 
-	      		  //*****Dependencies*****
 
 	      		  driversResource.visualDependencies = "visualdependencies";
 	      		  driversResource.dataDependenciesName = "datadependencies";
@@ -95,7 +92,6 @@
 	           					if(driverIndex == -1){
 	           						driversResource.driversOnObject.push(response.data);
 	           					}else{driversResource.driversOnObject[driverIndex].id = response.data.id}
-		           					 driversResource.getAllAnalyticalDrivers();
 		           					 driversResource.driversNum = (driversResource.driversOnObject.length > 1);
 	    	        				 querryParams = setQuerryParameters(response.data.id);
 	    	        				 basePath =driverableObjectId +"/" + basePath + querryParams;

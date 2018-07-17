@@ -8,25 +8,22 @@
     		   documentData.documentId = documentData.documentInfoObject.OBJECT_ID;
     		   documentData.templates = "templates";
     		   documentData.requiredPath = "2.0/documents1";
-    		   documentData.template= documentAndInfo.template;
-    		   documentData.changedOutputParameters = [];
-    		   documentData.listOfTemplates = [];
-    		   documentData.changedTemplates = [];
-    		   documentData.changedTemplate = {};
+    		   documentData.drivers = [];
     		   documentData.previewFile = {};
     		   documentData.documentImage;
-    		   documentData.file = {};
-    		   documentData.outputParametersForDeleting = [];
-    		   documentData.templatesForDeleting = [];
+
+
+    		   if(documentAndInfo){
+    		   documentData.template= documentAndInfo.template;
 			   documentData.engines = documentAndInfo.engines;
     		   documentData.resourcePath= documentAndInfo.resourcePath;
-    		   documentData.drivers = [];
     		   if( documentAndInfo.document){
     			   documentData.document = documentAndInfo.document;
     			   documentData.drivers = documentAndInfo.drivers
     		   } else {
     			   documentData.document = {};
     			   documentData.drivers = [];
+    		   }
     		   }
     		   documentData.driversNum =documentData.drivers.length > 1;
     		   documentData.folders = [];
