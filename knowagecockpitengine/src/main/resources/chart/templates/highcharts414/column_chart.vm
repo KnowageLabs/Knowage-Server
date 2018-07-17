@@ -85,7 +85,7 @@
 		#set($serieKeyFeed = $serieKeyFeed + 1)
 	#end
 #end
-#if($chart.isCockpitEngine)
+#if($chart.isCockpitEngine && $chart.isCockpitEngine!="")
 	#set($isCockpit = $chart.isCockpitEngine)
 #else
 	#set($isCockpit = false)
