@@ -42,6 +42,7 @@
         var document = documentService.document;
         DriversService.setDriverRelatedObject(document);
 		DriversService.getDriversOnRelatedObject(requiredPath,document.id + "/drivers");
+		documentService.drivers = DriversService.driversOnObject
         self.analyticalDrivers = DriversService.analyticalDrivers;
         self.lovIdAndColumns = DriversService.lovIdAndColumns;
         var documentBasePath =""+ document.id;
@@ -56,28 +57,28 @@
         self.savingFunction = function(){
 
         	persistDocument();
-        	
-        	persistDrivers();
-        	deleteDrivers();
-        	
-        	persistDataDependency();
-        	deleteDataDependencies();
-        	
-        	persistVisualDependency();
-        	deleteVisualDependencies();
-        	
+
+        	DriversService.persistDrivers(document.id,requiredPath);
+        	DriversService.deleteDrivers(document.id,requiredPath);
+
+        	DriversService.persistDataDependency(document.id,requiredPath);
+        	DriversService.deleteDataDependencies(document.id,requiredPath);
+
+        	DriversService.persistVisualDependency(document.id,requiredPath);
+        	DriversService.deleteVisualDependencies(document.id,requiredPath);
+
         	outputParametersService.persistOutputParameters();
         	outputParametersService.deleteOutputParameters();
-        	
+
         	dataLineageService.persistTables();
 			dataLineageService.deleteTables();
-        	
+
         	templateService.uploadTemplate();
         	templateService.setActiveTemplate();
         	templateService.deleteTemplates();
 
         	subreportsService.deleteSubreports();
-			subreportsService.persistSubreports();			
+			subreportsService.persistSubreports();
 
         };
 
@@ -102,230 +103,7 @@
     		document.refreshSeconds = parseInt(document.refreshSeconds);
         };
 
-        var prepareDependencyForPersisting = function(dependency){
-        	delete dependency.newDependency;
-        };
 
-        var prepareDriverForPersisting = function(driver){
-        	self.setParameterInfo(driver);
-        	delete driver.newDriver;
-			delete driver.$$hashKey;
-			delete driver.parameter.checks;
-			delete driver.parameter.$$hashKey;
-			delete driver.parameter.$$mdSelectId;
-			driver.modifiable = 0;
-        };
-
-        self.deleteDriverVisualDependency = function(visualDependency){
-      	  var visualDependencyBasePath = document.id + "/" + DriversService.visualDependencies + "/delete";
-      	  resourceService.post(requiredPath,visualDependencyBasePath,visualDependency).then(function(response){
-      		  if(response.data.errors){
-       				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
-       			}else
-	      		sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.deleted"), 'Success!');
-	      	  });
-        };
-
-        self.deleteDriverDataDependency = function(dataDependency){
-      	  var dataDependencyBasePath = document.id + "/" + DriversService.dataDependenciesName + "/delete";
-      	  resourceService.post(requiredPath,dataDependencyBasePath,dataDependency).then(function(response){
-      		if(response.data.errors){
-   				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
-   			}else
-      		sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.deleted"), 'Success!');
-      	  });
-        };
-
-	    self.deleteDriverById = function(driver){
-	     	  var requiredPath = documentService.requiredPath;
-	        var basePath = document.id + "/" + 'drivers' ;
-	     	  var basePathWithId = basePath + "/" + driver.id;
-	     	  resourceService.delete(requiredPath,basePathWithId).then(function(response){
-	     		if(response.data.errors){
-	 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
-	 			}else
-	         		sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.deleted"), 'Success!');
-	         });
-	   };
-
-        self.setParameterInfo = function(driver){
-          	 for(var i = 0 ; i<self.analyticalDrivers.length; i++){
-          		 if(self.analyticalDrivers[i].label==driver.parameter.name){
-          			 driver.parameter = self.analyticalDrivers[i];
-          		 	 driver.parID = self.analyticalDrivers[i].id;}
-          	 }
-        };
-    
-        var deleteDrivers = function(){
-        	for(var i = 0; i < DriversService.driversForDeleting.length; i++){
-        		self.deleteDriverById(DriversService.driversForDeleting[i]);
-        	}
-        };
-
-        var deleteDataDependencies = function(){
-        	for(var i = 0; i < DriversService.dataDependenciesForDeleting.length; i++){
-        		self.deleteDriverDataDependency(DriversService.dataDependenciesForDeleting[i])
-        	}
-        	DriversService.dataDependenciesForDeleting=[];
-        };
-
-        var deleteVisualDependencies = function(){
-        	for(var i = 0; i < DriversService.visualDependenciesForDeleting.length; i++){
-        		self.deleteDriverVisualDependency(DriversService.visualDependenciesForDeleting[i])
-        	}
-        	DriversService.visualDependenciesForDeleting=[];
-        };
-
-        var persistDrivers = function(){
-          	 var basePath = DriversService.visualDependencies;
-         	 var baseDataPath = DriversService.dataDependenciesName;
-          	 var querryParams = "";
-          	driverPostBasePath = document.id + "/drivers" ;
-          	for(var i = 0; i < DriversService.changedDrivers.length; i++){
-          		if(DriversService.changedDrivers[i].newDriver){
-          			 prepareDriverForPersisting(DriversService.changedDrivers[i]);
-          			resourceService.post(documentService.requiredPath,driverPostBasePath,DriversService.changedDrivers[i]).then(function(response){
-          				if(response.data.errors){
-              				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
-              			}else
-       				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.drivercreated"), 'Success!');
-
-          					var driverIndex = DriversService.drivers.findIndex(i => i.priority ==response.data.priority);
-          					if(driverIndex == -1){
-          						DriversService.drivers.push(response.data);
-          					}else{documentService.drivers[driverIndex].id = response.data.id}
-          					DriversService.getAllAnalyticalDrivers();
-          					DriversService.driversNum = (DriversService.drivers.length > 1);
-   	        				 querryParams = setQuerryParameters(response.data.id);
-   	        				 basePath =document.id+"/" + basePath + querryParams;
-   	        	             baseDataPath = document.id+"/" + baseDataPath + querryParams;
-   	        				getLovsByAnalyticalDriverId(response.data.parID);
-          			});
-          		}else{
-          			prepareDriverForPersisting(DriversService.changedDrivers[i]);
-          			var driverPutBasePath = document.id + "/drivers/" +  DriversService.changedDrivers[i].id;
-          			resourceService.put(documentService.requiredPath,driverPutBasePath,DriversService.changedDrivers[i]).then(function(response){
-          				if(response.data.errors){
-              				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
-              			}else
-       				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.driverupdated"), 'Success!');
-          			});
-          		}
-
-          		}
-          	DriversService.changedDrivers = [];
-           }
-
-       var setQuerryParameters = function(driverID){
-      	 return "?driverId="+driverID;
-       }
-       var persistVisualDependency = function(){
-       	for(var i = 0; i < DriversService.changedVisualDependencies.length; i++){
-       		var visualDependency = DriversService.changedVisualDependencies[i];
-       		var visualPath = document.id+ '/visualdependencies';
-       		if(visualDependency.newDependency){
-       			prepareDependencyForPersisting(visualDependency)
-       			resourceService.post(documentService.requiredPath,visualPath,visualDependency).then(function(response){
-       				if(response.data.errors){
-              				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
-              			}else
-       				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.visualdependecycreated"), 'Success!');
-       			});;
-       		}else{
-       			resourceService.put(documentService.requiredPath,visualPath,visualDependency).then(function(response){
-       				if(response.data.errors){
-              				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
-              			}else
-       				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.visualdependecyupdated"), 'Success!');
-       			});;
-       		}
-       	}
-       	documentService.changedVisualDependencies = [];
-       };
-
-       var persistDataDependency = function(documentBasePath){
-       	for(var i = 0; i < DriversService.changedDataDependencies.length; i++){
-       		var persistances =  Object.keys(DriversService.paruseColumns);
-       		var filterColumns =  Object.values(DriversService.paruseColumns);
-       		var dataDependency = DriversService.changedDataDependencies[i];
-       		var isNew = dataDependency.newDependency;
-       		var prog = dataDependency.prog;
-       		var dataPath = document.id+ '/datadependencies';
-       		var parusesForDataDependency={};
-       		var filterColumnsForDataDependency=[];
-       		parusesForDataDependency = dataDependency.persist;
-       		for(var j = 0 ; j < persistances.length;j++){
-       			if(persistances[j] != "undefined" && parusesForDataDependency[persistances[j]]){
-       			var newDataDependency = {};
-       			if(prog == dataDependency.prog){
-       				newDataDependency = dataDependency;
-       			}else{
-       				newDataDependency = angular.copy(dataDependency);
-       			}
-       				newDataDependency.filterColumn =  filterColumns[j]
-       				var paruse = paruses.filter(par => par.useID==persistances[j])
-       				newDataDependency.paruseId= paruse[0].useID;
-		        		if(isNew){
-		        			prepareDependencyForPersisting(newDataDependency);
-		        			delete newDataDependency.persist;
-		        			resourceService.post(documentService.requiredPath,dataPath,newDataDependency).then(function(response){
-		        				if(response.data.errors){
-		               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
-		               			}else
-		        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.datadependecycreated"), 'Success!');
-		        			});
-		        			newDataDependency.prog++;
-		        		}else{
-		        			delete newDataDependency.persist;
-		        			resourceService.put(documentService.requiredPath,dataPath,newDataDependency).then(function(response){
-		        				if(response.data.errors){
-		               				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
-		               			}else
-		        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.datadependecyupdated"), 'Success!');
-		        			});
-		        			newDataDependency.prog++;
-       			}
-       		}
-       	}
-
-       };
-       DriversService.changedDataDependencies = [];
-       };
-        var getLovColumnsForParuse = function(paruse){
-       	 for(var i = 0; i < DriversService.lovIdAndColumns.length;i++){
-       		 if(paruse.idLov == DriversService.lovIdAndColumns[i].id)
-       			 return DriversService.lovIdAndColumns[i].columns;
-       	 }
-
-       };
-       var getLovsByAnalyticalDriverId = function(driverId){
-        	 var requiredPath = "2.0/analyticalDrivers";
-        	 var basePath = driverId + "/lovs";
-        	resourceService.get(requiredPath,basePath).then(function(response){
-        		for(var i = 0;i<response.data.length;i++){
-        			DriversService.lovIdAndColumns.push( setLovColumns(response.data[i]));
-        		 }
-        	 });
-         }
-         var setLovColumns = function(lov){
-        	 var lovIdAndColumns = {}
-        	 var lovColumns = [];
-        	 var lovObject = JSON.parse(lov.lovProviderJSON);
-        	 	if(lovObject != []){
-        	 	var stringColumns = lovObject.QUERY['VISIBLE-COLUMNS'];
-  	            	 if(stringColumns.includes(",")){
-  	            		  lovColumns = stringColumns.split(',')
-  	            		  lovIdAndColumns.id = lov.id;
-  	            		  lovIdAndColumns.columns = lovColumns;
-  	            	 }else{
-  	            		  lovColumns.push(stringColumns);
-  	            		  lovIdAndColumns.id = lov.id;
-  	            		  lovIdAndColumns.columns = lovColumns;
-  	            	 }
-        	 }
-
-        	 	return lovIdAndColumns;
-         }
          var persistDocument = function(){
       	   prepareDocumentForPersisting(document);
       	   setFoldersPath();

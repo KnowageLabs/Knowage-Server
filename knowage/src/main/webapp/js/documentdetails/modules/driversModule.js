@@ -115,7 +115,9 @@
 	           	}
 	           	driversResource.changedDrivers = [];
 	            }
-
+	      	  var setQuerryParameters = function(driverID){
+	           	 return "?driverId="+driverID;
+	            }
 	      	 var prepareDriverForPersisting = function(driver){
 	         	setParameterInfo(driver);
 	         	delete driver.newDriver;
@@ -228,6 +230,34 @@
 	             	  });
 	           };
 
+	           var getLovsByAnalyticalDriverId = function(driverId){
+	          	 var requiredPath = "2.0/analyticalDrivers";
+	          	 var basePath = driverId + "/lovs";
+	          	resourceService.get(requiredPath,basePath).then(function(response){
+	          		for(var i = 0;i<response.data.length;i++){
+	          			driversResource.lovIdAndColumns.push( setLovColumns(response.data[i]));
+	          		 }
+	          	 });
+	           }
+	           var setLovColumns = function(lov){
+	          	 var lovIdAndColumns = {}
+	          	 var lovColumns = [];
+	          	 var lovObject = JSON.parse(lov.lovProviderJSON);
+	          	 	if(lovObject != []){
+	          	 	var stringColumns = lovObject.QUERY['VISIBLE-COLUMNS'];
+	    	            	 if(stringColumns.includes(",")){
+	    	            		  lovColumns = stringColumns.split(',')
+	    	            		  lovIdAndColumns.id = lov.id;
+	    	            		  lovIdAndColumns.columns = lovColumns;
+	    	            	 }else{
+	    	            		  lovColumns.push(stringColumns);
+	    	            		  lovIdAndColumns.id = lov.id;
+	    	            		  lovIdAndColumns.columns = lovColumns;
+	    	            	 }
+	          	 }
+
+	          	 	return lovIdAndColumns;
+	           }
 	           driversResource.deleteDrivers = function(driverableObjectId,requiredPath){
 	           	for(var i = 0; i < driversResource.driversForDeleting.length; i++){
 	           		driversResource.deleteDriverById(driversResource.driversForDeleting[i],driverableObjectId,requiredPath);

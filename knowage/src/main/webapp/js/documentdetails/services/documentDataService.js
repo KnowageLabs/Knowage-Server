@@ -9,25 +9,15 @@
     		   documentData.templates = "templates";
     		   documentData.requiredPath = "2.0/documents1";
     		   documentData.template= documentAndInfo.template;
-    		   
-//    		   documentData.visualDependencies = "visualdependencies";
-//    		   documentData.dataDependenciesName = "datadependencies";
-//    		   documentData.selectedVisualCondition = {};
-//    		   documentData.selectedDataCondition = {};
-//    		   documentData.analyticalDrivers = documentAndInfo.analyticalDrivers;
-//    		   documentData.visusalDependencyObjects = [];
-//    		   documentData.dataDependencyObjects = [];
-//    		   documentData.changedDrivers = [];
-//    		   documentData.changedVisualDependencies = [];
-//    		   documentData.changedDataDependencies = [];
-//    		   documentData.driverParuses = [];
-//    		   documentData.driversForDeleting = [];
-//    		   documentData.dataDependenciesForDeleting = [];
-//    		   documentData.visualDependenciesForDeleting = [];
-//    		   documentData.lovIdAndColumns = [];
+    		   documentData.changedOutputParameters = [];
+    		   documentData.listOfTemplates = [];
+    		   documentData.changedTemplates = [];
+    		   documentData.changedTemplate = {};
     		   documentData.previewFile = {};
     		   documentData.documentImage;
-//    		   documentData.paruseColumns = {};
+    		   documentData.file = {};
+    		   documentData.outputParametersForDeleting = [];
+    		   documentData.templatesForDeleting = [];
 			   documentData.engines = documentAndInfo.engines;
     		   documentData.resourcePath= documentAndInfo.resourcePath;
     		   documentData.drivers = [];
@@ -44,31 +34,7 @@
     			   if(document.template)
     				   return false;
     		   }
-//    		   documentData.getAllParuses = function (driverId){
-//    			   var base = "2.0/analyticalDrivers";
-//                   var path = driverId + "/modes";
-//                   crudService.get(base,path).then(function(response){
-//                		for(var i = 0; i < response.data.length; i++) {
-//                			var obj = documentData.driverParuses.filter(paruse => (paruse.useID == response.data[i].useID))
-//                			if(obj.length != 0)
-//                				continue;
-//                			documentData.driverParuses.push(response.data[i]);
-//                		}
-//                   });
-//    		   }
-//    		   documentData.getAllAnalyticalDrivers = function (){
-//    			   var base = "2.0/analyticalDrivers";
-//                   var path = "";
-//                   crudService.get(base,path).then(function(response){
-//                		for(var i = 0; i < response.data.length; i++) {
-//                			documentData.analyticalDrivers=response.data;
-//                		}
-//                   });
-//    		   }
-//
-//    		   for(var i = 0;i< documentData.analyticalDrivers.length;i++){
-//    			   documentData.getAllParuses(documentData.analyticalDrivers[i].id);
-//    		   }
+
     		   documentData.confirmDelete = function(index,name) {
         		    var confirm = $mdDialog.confirm()
         		          .title(translate.load("sbi.documentdetails.toast.confirm.title"))
@@ -84,7 +50,7 @@
         		    			DriversService.driversOnObject.splice(index, 1);
 		        		    	 break;
         		    		case "visual":
-        		    			 for(var i = 0; i< documentData.visusalDependencyObjects.length;i++){
+        		    			 for(var i = 0; i< DriversService.visusalDependencyObjects.length;i++){
         		            		 if(i == index)
         		            			 DriversService.visualDependenciesForDeleting.push(DriversService.visusalDependencyObjects[index]);
         		            		 }
@@ -93,7 +59,7 @@
         		    		case "data":
         		    			for(var i = 0; i< DriversService.dataDependencyObjects.length;i++){
         		            		 if(i == index)
-        		            			 documentData.dataDependenciesForDeleting.push(DriversService.dataDependencyObjects[index]);
+        		            			 DriversService.dataDependenciesForDeleting.push(DriversService.dataDependencyObjects[index]);
         		            	 }
         		    			DriversService.dataDependencyObjects.splice(index, 1);
            		    		 break;
