@@ -111,7 +111,7 @@
 		<module>../knowagekpiengine</module>
 		<module>../knowagemeta</module>
 		<module>../knowagenetworkengine</module>
-		<module>../knowageqbeengine3</module>
+		<module>../knowageqbeengine</module>
 		<module>../knowagesvgviewerengine</module>
 		<module>../knowagetalendenginclientapi</module>
 		<module>../knowagetalendengine</module>
