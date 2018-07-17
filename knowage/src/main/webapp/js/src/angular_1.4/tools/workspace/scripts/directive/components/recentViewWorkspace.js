@@ -53,7 +53,7 @@ function recentController($scope, sbiModule_restServices, sbiModule_translate, $
 				}
 
 				$scope.recentDocumentsInitial = $scope.recentDocumentsList;
-				$scope.convertTimestampToDate();
+				//$scope.convertTimestampToDate();
 				console.info("[LOAD END]: Loading of Recent documents is finished.");
 
 			}); // end of load I 18n
