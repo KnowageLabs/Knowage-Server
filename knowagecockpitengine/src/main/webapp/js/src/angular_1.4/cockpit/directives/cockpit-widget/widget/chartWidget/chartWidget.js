@@ -690,7 +690,7 @@ function cockpitChartWidgetControllerFunction(
 				    	  if(chartTemplateFake.type == "SCATTER" || chartTemplateFake.type == "BAR" || chartTemplateFake.type == "LINE"){
 					    	  for (var i = 0; i < chartTemplateFake.VALUES.SERIE.length; i++) {
 					    		  for (var j = 0; j < chartTemplateFake.AXES_LIST.AXIS.length; j++) {
-										if(chartTemplateFake.VALUES.SERIE[i].axis == chartTemplateFake.AXES_LIST.AXIS[j].alias){
+										if(chartTemplateFake.VALUES.SERIE[i].axis == chartTemplateFake.AXES_LIST.AXIS[j].alias && && chartTemplateFake.AXES_LIST.AXIS[j].labels){
 											chartTemplateFake.VALUES.SERIE[i].scaleFactor = chartTemplateFake.AXES_LIST.AXIS[j].labels.scaleFactor
 										}
 						    	  }
