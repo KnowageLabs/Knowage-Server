@@ -31,9 +31,13 @@ angular
              var requiredPath = "2.0/documents1";
              var id = self.driverRelatedObject.id;
              var basePath = id + "/" + 'drivers';
+//             DriversService.setDriverRelatedObject(document);
+//     		 DriversService.getDriversOnRelatedObject(requiredPath,document.id + "/drivers");
              self.driverParuses = [];
              self.drivers=driversService.driversOnObject;
              DocumentService.drivers = driversService.driversOnObject;
+
+
              driversService.lovColumns=[];
              self.selectedDataCondition = driversService.selectedDataCondition;
              self.selectedVisualCondition = driversService.selectedVisualCondition;
@@ -419,7 +423,7 @@ angular
              self.setParameterInfo = function(driver){
             	 if(driversService.analyticalDrivers){
                	 for(var i = 0 ; i<driversService.analyticalDrivers.length; i++){
-               		 if(driver.parameter && driversService.analyticalDrivers[i].name==driver.parameter.name){
+               		 if((driver.parameter && driversService.analyticalDrivers[i].id==driver.parID) || (driver.parameter && driversService.analyticalDrivers[i].name==driver.parameter.name) ){
                			 driver.parameter = driversService.analyticalDrivers[i];
                		 	 driver.parID = driversService.analyticalDrivers[i].id;
                		 	driver.parameter.name = driversService.analyticalDrivers[i].name}
