@@ -19,7 +19,6 @@ package it.eng.spagobi.engines.whatif.api;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -94,8 +93,10 @@ import it.eng.spagobi.engines.whatif.parser.parser;
 import it.eng.spagobi.engines.whatif.version.VersionManager;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -516,14 +517,14 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	public void excelFillExample(@Context ServletContext context) throws IOException, Exception {
 
 		File result = exportExcelForMerging();
-
+		String EXCELL_TEMPLATE_FILE_NAME = "export_dataset_template.xlsm";
 		OutputStream out = null;
-
-		URL resourceLocation = Thread.currentThread().getContextClassLoader().getResource("export_dataset_template.xlsm");
-		FileInputStream fileInputStream1 = new FileInputStream(new File(resourceLocation.toURI().getPath()));
-		FileInputStream fileInputStream2 = new FileInputStream(result);
-
 		try {
+			URL resourceLocation = Thread.currentThread().getContextClassLoader().getResource(EXCELL_TEMPLATE_FILE_NAME);
+			logger.debug("Resource is: " + resourceLocation);
+			Assert.assertNotNull(resourceLocation, "Could not find " + EXCELL_TEMPLATE_FILE_NAME + " in java resources");
+			FileInputStream fileInputStream1 = new FileInputStream(new File(resourceLocation.toURI().getPath()));
+			FileInputStream fileInputStream2 = new FileInputStream(result);
 
 			XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream1);
 			HSSFWorkbook exportedOlapWorkbook = new HSSFWorkbook(fileInputStream2);
@@ -546,10 +547,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 				throw new SpagoBIServiceException("test", "Impossible to write output file xls error", e);
 			}
 
-		} catch (FileNotFoundException e) {
-			logger.error("File not found");
-		} catch (IOException e) {
-			logger.error("Impossible to write to file");
+		} catch (Exception e) {
+			throw new SpagoBIEngineServiceException(getClass().getName(), "Error while downloading edit excel file", e);
 		}
 
 	}
