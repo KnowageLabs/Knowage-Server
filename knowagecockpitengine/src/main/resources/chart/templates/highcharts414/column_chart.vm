@@ -962,14 +962,14 @@
 		#if(($chart.groupSeries && $chart.groupSeries =='true') || ($chart.groupSeriesCateg && $chart.groupSeriesCateg =='true'))	
 		
 		#set($enableValues = $chart.VALUES.SERIE.showValue)
-		#if($chart.VALUES.SERIE.get(0))
-		#set($relatedSerie = $chart.VALUES.SERIE.get(0))
-		#if($chart.type.toUpperCase() == 'RADAR' && $chart.groupSeriesCateg && $chart.groupSeriesCateg =='true')
-		#set($relatedSerieTypes = $chart.VALUES.SERIE.get(0).serieTypeRadar.split(", "))
-		#set($count = $chart.VALUES.SERIE.get(0).serieTypeRadar.length() - $chart.VALUES.SERIE.get(0).serieTypeRadar.replace(",", "").length())
-		#end
-		#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
-		#end
+			#if($chart.VALUES.SERIE.get(0))
+			#set($relatedSerie = $chart.VALUES.SERIE.get(0))
+				#if($chart.type.toUpperCase() == 'RADAR' && $chart.groupSeriesCateg && $chart.groupSeriesCateg =='true')
+				#set($relatedSerieTypes = $chart.VALUES.SERIE.get(0).serieTypeRadar.split(", "))
+				#set($count = $chart.VALUES.SERIE.get(0).serieTypeRadar.length() - $chart.VALUES.SERIE.get(0).serieTypeRadar.replace(",", "").length())
+				#end
+			#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
+			#end
 		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine, $chart.groupSeries, $chart.groupSeriesCateg))
      
 		#end
@@ -1072,7 +1072,6 @@
         	labels: {
         		
         		formatter: function () {
-        		debugger;
 			                    var value = this.value;	
 			                    var newValue = "";	
 		                      	var scaleFactor =  '${yAxis.LABELS.scaleFactor}';
@@ -1261,7 +1260,7 @@
 				#set ($relatedSerie.scaleFactor = $yAxis.labels.scaleFactor)
 				#end
 			#end
-          #end
+		#end
 		{	
 			#set($relatedSerieColor = false)
 			#set($relatedSerieColor = $relatedSerie.color)
@@ -1318,8 +1317,6 @@
 						#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 						#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
 						#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
-					
-						#if($serieValue!="")
 						{
 							##drilldown: $enableDrilldown,
 							drilldown: $drilldownEnabledFlag,
@@ -1333,7 +1330,8 @@
 									high: $row.get($serieColumnsMappedhigh),
 								#end 
 							#end	
-							#if($relatedSerieType != 'arearange')
+							#if($relatedSerieType != 'arearange' && $serieValue!="")
+							
 								y: $serieValue,
 							#end
 							name: "$serieCategoryName",
@@ -1344,7 +1342,6 @@
 							#end
 							#end
 						},
-						#end
 					 
 					#end
 				#end
