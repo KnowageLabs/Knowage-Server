@@ -25,8 +25,11 @@
     
     
     cockpit-discovery-widget {
+    	.discoveryCardsContainer {
+    		height: calc(100% - 70px);
+    	}
     	.discoveryFiltersCard {
-    		
+    		border: 1px solid $bordersColor;
     		&.sidenav-add, &.sidenav-remove {
     			transition: max-width .4s linear;
     		}
@@ -58,9 +61,8 @@
     			}
     		}
     		.discoveryFiltersList {
-	    		height: calc(100% - 16px); 
 	    		overflow-y: auto;
-	    		border: 1px solid $bordersColor;
+	    		
 	    		@include coolScrollBars($baseColor,6px);
 	    		.md-subheader {
 	    			border-bottom: 1px solid $bordersColor;
