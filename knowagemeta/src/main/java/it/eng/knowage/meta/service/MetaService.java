@@ -946,17 +946,31 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/updatePhysicalModel")
-	public Response updatePhysicalModel(@Context HttpServletRequest req) throws ClassNotFoundException, NamingException, SQLException, JSONException {
+	public Response updatePhysicalModel(@Context HttpServletRequest req)
+			throws ClassNotFoundException, NamingException, SQLException, JSONException, EMFUserError {
 		PhysicalModelInitializer physicalModelInitializer = new PhysicalModelInitializer();
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		ECrossReferenceAdapter crossReferenceAdapter = (ECrossReferenceAdapter) req.getSession().getAttribute(EMF_MODEL_CROSS_REFERENCE);
 		physicalModelInitializer.setCrossReferenceAdapter(crossReferenceAdapter);
 
-		PhysicalModel phyMod = model.getPhysicalModels().get(0);
-		IDataSource dataSource = phyMod.getDataSource();
-		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
-		List<String> missingColumns = physicalModelInitializer.getMissingColumnsNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
-		List<String> removingItems = physicalModelInitializer.getRemovedTablesAndColumnsNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
+		String modelName = model.getName();
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+		businessModelsDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		if (profile != null) {
+			UserProfile userProfile = (UserProfile) profile;
+			TenantManager.setTenant(new Tenant(userProfile.getOrganization()));
+		}
+		MetaModel metamodel = businessModelsDAO.loadMetaModelByName(modelName);
+		String dataSourceLabel = metamodel.getDataSourceLabel();
+		IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+		IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceLabel);
+		// PhysicalModel phyMod = model.getPhysicalModels().get(0);
+		// IDataSource dataSource = phyMod.getDataSource();
+
+		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource, model.getPhysicalModels().get(0));
+		List<String> missingColumns = physicalModelInitializer.getMissingColumnsNames(dataSource, model.getPhysicalModels().get(0));
+		List<String> removingItems = physicalModelInitializer.getRemovedTablesAndColumnsNames(dataSource, model.getPhysicalModels().get(0));
 		JSONObject resp = new JSONObject();
 		resp.put("missingTables", new JSONArray(JsonConverter.objectToJson(missingTables, missingTables.getClass())));
 		resp.put("missingColumns", new JSONArray(JsonConverter.objectToJson(missingColumns, missingColumns.getClass())));
