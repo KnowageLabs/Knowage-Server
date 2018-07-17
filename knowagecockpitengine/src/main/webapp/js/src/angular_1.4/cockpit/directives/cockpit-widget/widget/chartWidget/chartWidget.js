@@ -217,7 +217,7 @@ function cockpitChartWidgetControllerFunction(
 		if($scope.ngModel.content.chartTemplate.CHART.type == "SCATTER" || $scope.ngModel.content.chartTemplate.CHART.type == "BAR" || $scope.ngModel.content.chartTemplate.CHART.type == "LINE"){
 	    	  for (var i = 0; i < $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length; i++) {
 	    		  for (var j = 0; j < $scope.ngModel.content.chartTemplate.CHART.AXES_LIST.AXIS.length; j++) {
-						if($scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE[i].axis == $scope.ngModel.content.chartTemplate.CHART.AXES_LIST.AXIS[j].alias){
+						if($scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE[i].axis == $scope.ngModel.content.chartTemplate.CHART.AXES_LIST.AXIS[j].alias && $scope.ngModel.content.chartTemplate.CHART.AXES_LIST.AXIS[j].labels){
 							$scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE[i].scaleFactor = $scope.ngModel.content.chartTemplate.CHART.AXES_LIST.AXIS[j].labels.scaleFactor
 						}
 		    	  }
