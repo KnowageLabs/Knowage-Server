@@ -516,14 +516,14 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	public void excelFillExample(@Context ServletContext context) throws IOException, Exception {
 
 		File result = exportExcelForMerging();
-
+		String EXCELL_TEMPLATE_FILE_NAME = "export_dataset_template.xlsm";
 		OutputStream out = null;
-
-		URL resourceLocation = Thread.currentThread().getContextClassLoader().getResource("it/eng/spagobi/engines/whatif/model/export_dataset_template.xlsm");
-		FileInputStream fileInputStream1 = new FileInputStream(new File(resourceLocation.toURI().getPath()));
-		FileInputStream fileInputStream2 = new FileInputStream(result);
-
 		try {
+			URL resourceLocation = Thread.currentThread().getContextClassLoader().getResource(EXCELL_TEMPLATE_FILE_NAME);
+			logger.debug("Resource is: " + resourceLocation);
+			Assert.assertNotNull(resourceLocation, "Could not find " + EXCELL_TEMPLATE_FILE_NAME + " in java resources");
+			FileInputStream fileInputStream1 = new FileInputStream(new File(resourceLocation.toURI().getPath()));
+			FileInputStream fileInputStream2 = new FileInputStream(result);
 
 			XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream1);
 			HSSFWorkbook exportedOlapWorkbook = new HSSFWorkbook(fileInputStream2);
@@ -546,10 +546,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 				throw new SpagoBIServiceException("test", "Impossible to write output file xls error", e);
 			}
 
-		} catch (FileNotFoundException e) {
-			logger.error("File not found");
-		} catch (IOException e) {
-			logger.error("Impossible to write to file");
+		} catch (Exception e) {
+			throw new SpagoBIEngineServiceException(getClass().getName(), "Error while downloading edit excel file", e);
 		}
 
 	}
