@@ -73,7 +73,7 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 
 	}
 
-	this.loadDocumentList=function(searchValue, itemsPerPage, currentPageNumber, columnsSearch, columnOrdering, reverseOrdering, includeItems, excludeItems, enableCheckForChanges){
+	this.loadDocumentList=function(searchValue, itemsPerPage, currentPageNumber, columnsSearch, columnOrdering, reverseOrdering,includeItems, excludeItems, enableCheckForChanges){
 		var deferred = $q.defer();
 
 		if(searchValue==undefined || searchValue.trim().lenght==0 ){
@@ -198,7 +198,7 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 			var actualDoc;
 			for(var i=0; i<docs.length;i++){
 				var doc = docs[i];
-				if(doc.DOCUMENT_ID = item.DOCUMENT_ID){
+				if(doc.DOCUMENT_ID == item.DOCUMENT_ID){
 					actualDoc = doc;
 					break;
 				}
@@ -207,6 +207,8 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 				this.push(sbiModule_translate.load("sbi.cockpit.load.documentsInformation.removedDocument")
 						.replace("{0}", "<b>" + item.DOCUMENT_ID + "</b>"));
 			}else{
+				item.expanded = true;
+				
 				var addedParams=[];
 				var removedParams=[];
 
@@ -302,7 +304,7 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 			for(var i=item.fields.length-1; i>=0; i--){
 				var field = item.fields[i];
 				var paramName = (field.column.startsWith("$P{") && field.column.endsWith("}")) ? field.column.substring(3, field.column.length - 1) : field.column;
-				if(field.type == "document" && removedDocumentParams[field.store].indexOf(paramName) > -1){
+				if(field.type == "document" && removedDocumentParams[field.store] && removedDocumentParams[field.store].indexOf(paramName) > -1){
 					item.description = item.description.replace(field.store + "." + field.column, "");
 					if(item.description.startsWith("=")){
 						item.description = item.description.substring(1);
