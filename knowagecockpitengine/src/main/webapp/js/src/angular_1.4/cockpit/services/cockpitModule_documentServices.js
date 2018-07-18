@@ -198,7 +198,7 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 			var actualDoc;
 			for(var i=0; i<docs.length;i++){
 				var doc = docs[i];
-				if(doc.DOCUMENT_ID = item.DOCUMENT_ID){
+				if(doc.DOCUMENT_ID == item.DOCUMENT_ID){
 					actualDoc = doc;
 					break;
 				}
@@ -207,6 +207,8 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 				this.push(sbiModule_translate.load("sbi.cockpit.load.documentsInformation.removedDocument")
 						.replace("{0}", "<b>" + item.DOCUMENT_ID + "</b>"));
 			}else{
+				item.expanded = true;
+				
 				var addedParams=[];
 				var removedParams=[];
 
