@@ -28,25 +28,20 @@ import it.eng.spagobi.utilities.assertion.Assert;
 public enum DatabaseDialect {
 
 	HIVE("Apache Hive v1", "hive", true, false, false, true), HIVE2("Apache Hive v2", "org.hibernate.dialect.MySQLDialect", true, false, false, true), MONGO(
-			"MongoDB", "MongoDialect", false, false, false,
-			false), CASSANDRA("Apache Cassandra", "org.hibernate.dialect.cassandra", true, false, false, false), DB2("IBM DB2",
-					"org.hibernate.dialect.DB2400Dialect", true, true, false,
-					true), HSQL("HyperSQL", "org.hibernate.dialect.HSQLDialect", true, true, false, true), IMPALA("Apache Impala",
+			"MongoDB", "MongoDialect", false, false, false, false), CASSANDRA("Apache Cassandra", "org.hibernate.dialect.cassandra", true, false, false,
+					false), DB2("IBM DB2", "org.hibernate.dialect.DB2400Dialect", true, true, false, false), IMPALA("Apache Impala",
 							"org.hibernate.dialect.impala", true, true, false,
-							true), INGRES("Ingres", "org.hibernate.dialect.IngresDialect", true, true, false, false), MYSQL("MySQL/MariaDB",
-									"org.hibernate.dialect.MySQLInnoDBDialect", true, true, true,
-									true), NEO4J("Neo4j", "org.hibernate.dialect.neo4j", false, false, false, false), ORACLE_9I10G("Oracle 9i/10g",
-											"org.hibernate.dialect.Oracle9Dialect", true, true, true,
-											true), ORACLE("Oracle", "org.hibernate.dialect.OracleDialect", true, true, true, true), POSTGRESQL("PostgreSQL",
-													"org.hibernate.dialect.PostgreSQLDialect", true, true, true,
-													true), SPARKSQL("Apache Spark SQL", "org.hibernate.dialect.sparksql", true, false, false, true), SQLSERVER(
-															"Microsoft SQL Server", "org.hibernate.dialect.SQLServerDialect", true, true, false,
-															true), ORACLE_SPATIAL("Oracle Database Spatial",
-																	"org.hibernatespatial.oracle.CustomOracleSpatialDialect", true, true, true,
-																	true), ORIENT("OrientDB", "orient", true, true, false, true), TERADATA("Teradata",
-																			"org.hibernate.dialect.TeradataDialect", true, true, false,
-																			true), VERTICA("Vertica", "org.hibernate.dialect.VerticaDialect", true, true, true,
-																					true), METAMODEL("MetaModelDialect", "metamodel", true, false, false, true);
+							true), MYSQL("MySQL/MariaDB", "org.hibernate.dialect.MySQLInnoDBDialect", true, true, true, true), ORACLE_9I10G("Oracle 9i/10g",
+									"org.hibernate.dialect.Oracle9Dialect", true, true, true,
+									true), ORACLE("Oracle", "org.hibernate.dialect.OracleDialect", true, true, true, true), POSTGRESQL("PostgreSQL",
+											"org.hibernate.dialect.PostgreSQLDialect", true, true, true,
+											true), SPARKSQL("Apache Spark SQL", "org.hibernate.dialect.sparksql", true, false, false, true), SQLSERVER(
+													"Microsoft SQL Server", "org.hibernate.dialect.SQLServerDialect", true, true, false,
+													true), ORACLE_SPATIAL("Oracle Database Spatial", "org.hibernatespatial.oracle.CustomOracleSpatialDialect",
+															true, true, true, true), ORIENT("OrientDB", "orient", true, true, false, true), TERADATA("Teradata",
+																	"org.hibernate.dialect.TeradataDialect", true, true, false, true), VERTICA("Vertica",
+																			"org.hibernate.dialect.VerticaDialect", true, true, true,
+																			true), METAMODEL("MetaModelDialect", "metamodel", true, false, false, true);
 
 	private final static HashMap<String, DatabaseDialect> dialects = new HashMap<>(DatabaseDialect.values().length);
 

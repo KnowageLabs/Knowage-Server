@@ -47,12 +47,8 @@ public abstract class DataBaseFactory {
 					return new Hive2DataBase(dataSource);
 				case SPARKSQL:
 					return new SparkSqlDataBase(dataSource);
-				case HSQL:
-					return new HSQLDataBase(dataSource);
 				case IMPALA:
 					return new ImpalaDataBase(dataSource);
-				case INGRES:
-					return new IngresDataBase(dataSource);
 				case MYSQL:
 					return new MySQLDataBase(dataSource);
 				case ORACLE:
@@ -75,8 +71,6 @@ public abstract class DataBaseFactory {
 					return new DB2DataBase(dataSource);
 				case MONGO:
 					return new MongoDataBase(dataSource);
-				case NEO4J:
-					return new Neo4jDataBase(dataSource);
 				case VERTICA:
 					return new VerticaDataBase(dataSource);
 				default:
