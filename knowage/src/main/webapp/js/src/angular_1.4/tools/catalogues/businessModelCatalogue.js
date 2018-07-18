@@ -2,16 +2,16 @@
  *
  */
 
-var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'ngMessages', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload','angular-list-detail', 'angularXRegExp']);
+var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'ngMessages', 'angular_list', 'angular_table','sbiModule', 'DocumentDetails', 'DriversModule', 'angular_2_col','file_upload','angular-list-detail', 'angularXRegExp']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
-app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "kn_regex",
+app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "DriversService", "resourceService", "kn_regex",
                                                    "$scope", "$mdDialog", "$mdToast","multipartForm", "sbiModule_download",
                                                    "sbiModule_messaging","sbiModule_config","sbiModule_user","sbiModule_messaging",businessModelCatalogueFunction]);
 
-function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, kn_regex, $scope, $mdDialog,
+function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, DriversService, resourceService, kn_regex, $scope, $mdDialog,
 		$mdToast,multipartForm,sbiModule_download,sbiModule_messaging,sbiModule_config,sbiModule_user,sbiModule_messaging){
 
 	$scope.regex = kn_regex;
@@ -47,6 +47,10 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.fileCWMClicked =false;
 
 	$scope.togenerate = false;
+	
+	var requiredPath = "2.0/businessmodels";
+    var businessModelBasePath =""+ $scope.selectedBusinessModel.id;    
+    var driversService = DriversService;
 
 	angular.element(document).ready(function () {
         $scope.getData();
@@ -163,6 +167,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.businessModelForm.$setUntouched();
 			    });
 			}
+		
+		$scope.driverPostBasePath = $scope.selectedBusinessModel.id + '/drivers';    
+	    
+	    driversService.setDriverRelatedObject($scope.selectedBusinessModel);
+		driversService.getDriversOnRelatedObject(requiredPath, $scope.driverPostBasePath);
+		$scope.analyticalDrivers = driversService.analyticalDrivers;
 
 	}
 
@@ -338,6 +348,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					angular.copy($scope.selectedBusinessModel,$scope.savedBusinessModel);
 					$scope.businessModelList.push(response.data);
 					$scope.selectedVersions=[];
+					DriversService.persistDrivers();
 					$scope.isDirty = false;
 					$scope.isCWMDirty = false;
 					if($scope.fileObj.fileName !== undefined)
@@ -353,7 +364,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 				sbiModule_restServices.promisePut("2.0/businessmodels", $scope.selectedBusinessModel.id, $scope.selectedBusinessModel)
 				.then(function(response) {
-
+					
 					if($scope.fileObj.fileName !== undefined)
 						$scope.saveBusinessModelFile();
 
@@ -372,6 +383,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.getBusinessModels();
 					$scope.isDirty = false;
 					$scope.selectedBusinessModel.modelLocker = response.data.modelLocker;
+					DriversService.persistDrivers();
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'check');
 					$scope.$apply();
 
@@ -381,8 +393,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				});
 			}
 	 }
-
-
+	 
 	 //calling service method DELETE/{bmId} deleting single item
 	 $scope.deleteItem=function(item,event){
 		 var id = item.id;

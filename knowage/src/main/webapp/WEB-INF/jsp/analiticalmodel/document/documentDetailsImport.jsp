@@ -35,9 +35,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.user.UserProfileManager"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 
- <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/documentDetails.controller.js")%>"></script>
-
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/modules/driversModule.js")%>"></script>
 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/drivers.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/templates.js")%>"></script>
@@ -56,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/dataLineageService.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/subreportsService.js")%>"></script>
 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/modules/driversModule.js")%>"></script>
+
 
 
 <% 

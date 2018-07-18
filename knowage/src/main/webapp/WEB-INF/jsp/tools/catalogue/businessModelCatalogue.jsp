@@ -31,12 +31,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
-
+.
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="businessModelCatalogueModule">
 <head>
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+
+<%@include file="/WEB-INF/jsp/analiticalmodel/document/documentDetailsImport.jsp"%>
 
 <!-- Styles -->
 <!-- <link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css"> -->
@@ -102,8 +104,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				cancel-function="cancel"
 				disable-save-button="!businessModelForm.$valid"
 				show-save-button="showMe" show-cancel-button="showMe">
-		   <form name="businessModelForm" novalidate >
+		   <form name="businessModelForm">
 		
+	       	<md-tabs md-border-bottom="" style="min-height:100%">						     
+						         			
+			  <md-tab label='{{translate.load("sbi.generic.details");}}'>
 		
 	          <md-card>
 		        <md-card-content layout="column">
@@ -170,8 +175,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 				</md-card-content>
 		      </md-card>
+		      </md-tab>
+		      
+		      <md-tab label='{{translate.load("sbi.catalogues.generic.title.metadata");}}'>		      
+		      
 		      <%
 						if( (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_SAVING_TO_RDBMS)) || (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_CWM_EXPORTING)) ) {%>
+		      
+		      
 		      <md-card ng-if="bmVersions!=undefined && bmVersions.length>0">
 	
 		      	<md-toolbar class="secondaryToolbar">
@@ -230,8 +241,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      			</div> 
 		      </md-card-content>
 		      </md-card>
-	 		<%} %>   
 		      
+	 		<%} %>   
+		      </md-tab>
+		      <md-tab label='{{translate.load("sbi.widgets.catalogueversionsgridpanel.title");}}'>
 		      <md-card layout="column">
 		      	<md-toolbar class="secondaryToolbar">
 			      <div class="md-toolbar-tools">
@@ -270,7 +283,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 		      </md-card-content>
 		      </md-card>
+		      </md-tab>
+		      <md-tab label="Drivers">			  	
+			  	<md-tab-body>
+			  		<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/documentdetails/templates/drivers.html")%>'" />
+			  	</md-tab-body>
+			  </md-tab>
 
+			</md-tabs>
 	      </form>
 		</detail>
 	</angular-list-detail>

@@ -17,7 +17,7 @@
  */
 (function () {
 angular
-        .module('DocumentDetails')
+        .module('DriversModule')
         .controller('DocumentDetailsDriversController',['$scope','$location','DocumentService','DriversService','resourceService','$httpParamSerializer', '$mdDialog','sbiModule_translate','sbiModule_messaging',
         										function($scope,$location,DocumentService,DriversService,resourceService,$httpParamSerializer, $mdDialog,sbiModule_translate,sbiModule_messaging){
 
@@ -59,7 +59,7 @@ angular
              self.analyticalDrivers = getDriverNames(driversService.analyticalDrivers);
 
              self.addDriver = function() {
-
+            	 self.driverRelatedObject = driversService.driverRelatedObject;
               if(self.driverRelatedObject.hasOwnProperty('modelLocked')){
 
             	 		if(self.driverRelatedObject.id){
