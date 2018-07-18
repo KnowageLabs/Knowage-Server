@@ -1,14 +1,14 @@
 <div layout-fill class="overlayGray" layout="row" layout-align="center center">
 
 <md-dialog aria-label="table configuration" ng-cloak  layout="column" class="width80">
-   
+   <md-toolbar class="secondaryToolbar" layout="row">
+	        <h1 flex class="md-toolbar-tools">{{translate.load('sbi.cockpit.widgets.table.columnstyle')}}</h1>
+	         <md-button class="md-icon-button" ng-click="cleanStyleColumn()" >
+		      <md-icon md-font-icon="fa fa-eraser" aria-label="Clean"></md-icon>
+		      </md-button>
+	  </md-toolbar>
     <md-dialog-content flex layout="column" autoWrap:false>
-    	  <md-toolbar class="secondaryToolbar" layout="row">
-		        <h1 flex class="md-toolbar-tools">{{translate.load('sbi.cockpit.widgets.table.columnstyle')}}</h1>
-		         <md-button  flex=10  ng-click="cleanStyleColumn()" >
-			      <md-icon md-font-icon="fa fa-eraser" aria-label="Clean"></md-icon>
-			      </md-button>
-		  </md-toolbar>
+    	  
 		      <div layout-margin layout="column" flex class="relative"> 
 		       	
 				<div flex>
@@ -20,12 +20,12 @@
 					<!-- only for simple table ng-enabled="!selectedColumn.widgetType" -->
 					<md-input-container  class="md-block" class="small counter" flex>
 						<label>{{translate.load('sbi.cockpit.table.maxChars')}}</label>
-						<input ng-disabled="selectedColumn.widgetType!=undefined" class="input_class" type="text" ng-model="selectedColumn.style.maxChars"> 
+						<input class="input_class" type="text" ng-model="selectedColumn.style.maxChars"> 
 					</md-input-container>
-					<md-switch ng-disabled="selectedColumn.widgetType!=undefined"  ng-model="selectedColumn.style.hiddenColumn" aria-label="Hidden Column" flex>
+					<md-switch ng-model="selectedColumn.style.hiddenColumn" aria-label="Hidden Column" flex>
 						{{translate.load('sbi.cockpit.table.hiddencolumn')}}
 					</md-switch>
-					<md-switch ng-disabled="selectedColumn.widgetType!=undefined || selectedColumn.style.hiddenColumn" ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
+					<md-switch ng-disabled="selectedColumn.style.hiddenColumn" ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
 						{{translate.load('sbi.cockpit.table.hide')}}
 					</md-switch>
 				 </div>
@@ -54,9 +54,7 @@
 						</md-select>
 					</md-input-container>
 				</div>
-		       
-				<!-- added by alepiova & revised by davverna -->
-		       
+		         
 		       <div ng-if="selectedColumn.fieldType=='MEASURE'">
 		       		<!-- both simple table and static pivot table -->
 		       		<div layout="column">
@@ -233,10 +231,10 @@
    
     <md-dialog-actions layout="row">
       <span flex></span>
-      <md-button ng-click="cancelcolumnStyleConfiguration()" >
+      <md-button ng-click="cancelcolumnStyleConfiguration()" class="md-raised" >
         {{translate.load('sbi.generic.cancel')}}
       </md-button>
-      <md-button ng-click="saveColumnStyleConfiguration()" ng-disabled="checkIfDisable()" >
+      <md-button ng-click="saveColumnStyleConfiguration()" class="md-primary md-raised" ng-disabled="checkIfDisable()" >
         {{translate.load('sbi.generic.save')}}
       </md-button>
     </md-dialog-actions>
