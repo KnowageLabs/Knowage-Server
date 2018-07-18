@@ -279,7 +279,11 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 
 			if (resultData[resultRecord].value){
 				if(precision==''){
-					level.value = resultData[resultRecord].value;
+					if(typeof resultData[resultRecord].value == "string"){
+						level.value = Number(level.value = resultData[resultRecord].value);
+					} else {
+						level.value = resultData[resultRecord].value;
+					}
 				} else {
 					level.value = Number(Number(resultData[resultRecord].value).toFixed(precision));
 				}
