@@ -536,10 +536,6 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	}
 
 	$scope.saveColumnStyleConfiguration = function(){
-		if($scope.selectedColumn.style!=undefined && $scope.selectedColumn.style.precision!=undefined && $scope.selectedColumn.style.format==undefined){
-			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.chartengine.structure.serieStyleConfig.dataLabels.format.emptyText'), sbiModule_translate.load('sbi.generic.error'));
-			return;
-		}
 		angular.copy($scope.selectedColumn,selectedColumn);
 		$mdDialog.cancel();
 	}
