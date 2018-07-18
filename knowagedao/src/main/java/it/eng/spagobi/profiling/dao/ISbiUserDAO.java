@@ -20,7 +20,6 @@ package it.eng.spagobi.profiling.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.dao.PagedList;
@@ -32,44 +31,40 @@ import it.eng.spagobi.profiling.bo.UserBO;
 
 public interface ISbiUserDAO extends ISpagoBIDao {
 
-	public SbiUser loadSbiUserByUserId(String userId) throws EMFUserError;
+	public SbiUser loadSbiUserByUserId(String userId);
 
-	public SbiUser loadSbiUserById(Integer id) throws EMFUserError;
+	public SbiUser loadSbiUserById(Integer id);
 
-	// public UserBO loadUserById(Integer id) throws EMFUserError;
+	public void deleteSbiUserById(Integer id);
 
-	public void deleteSbiUserById(Integer id) throws EMFUserError;
+	public void deleteSbiUserAttributeById(Integer id, Integer attrId);
 
-	public void deleteSbiUserAttributeById(Integer id, Integer attrId) throws EMFUserError;
+	public Integer saveSbiUser(SbiUser user);
 
-	public Integer saveSbiUser(SbiUser user) throws EMFUserError;
+	public void updateSbiUserRoles(SbiExtUserRoles role);
 
-	public void updateSbiUserRoles(SbiExtUserRoles role) throws EMFUserError;
+	public void updateSbiUserAttributes(SbiUserAttributes attribute);
 
-	public void updateSbiUserAttributes(SbiUserAttributes attribute) throws EMFUserError;
+	public ArrayList<SbiExtRoles> loadSbiUserRolesById(Integer id);
 
-	public ArrayList<SbiExtRoles> loadSbiUserRolesById(Integer id) throws EMFUserError;
+	public ArrayList<SbiUserAttributes> loadSbiUserAttributesById(Integer id);
 
-	public ArrayList<SbiUserAttributes> loadSbiUserAttributesById(Integer id) throws EMFUserError;
+	public ArrayList<SbiUser> loadSbiUsers();
 
-	public ArrayList<SbiUser> loadSbiUsers() throws EMFUserError;
+	public ArrayList<UserBO> loadUsers();
 
-	public ArrayList<UserBO> loadUsers() throws EMFUserError;
+	public List<UserBO> loadUsers(QueryFilters filters);
 
-	public List<UserBO> loadUsers(QueryFilters filters) throws EMFUserError;
+	public List<UserBO> loadUsers(QueryFilters filters, String dateFilter);
 
-	public List<UserBO> loadUsers(QueryFilters filters, String dateFilter) throws EMFUserError;
+	public void updateSbiUser(SbiUser user, Integer userID);
 
-	public void updateSbiUser(SbiUser user, Integer userID) throws EMFUserError;
+	public Integer fullSaveOrUpdateSbiUser(SbiUser user);
 
-	public Integer fullSaveOrUpdateSbiUser(SbiUser user) throws EMFUserError;
+	public PagedList<UserBO> loadUsersPagedList(QueryFilters filters, Integer offset, Integer fetchSize);
 
-	public PagedList<UserBO> loadUsersPagedList(QueryFilters filters, Integer offset, Integer fetchSize) throws EMFUserError;
-
-	public void checkUserId(String userId, Integer id) throws EMFUserError;
+	public void checkUserId(String userId, Integer id);
 
 	public Integer isUserIdAlreadyInUse(String userId);
-
-	// public PagedList<UserBO> loadSbiUserListFiltered(String hsql,Integer offset, Integer fetchSize) throws EMFUserError;
 
 }
