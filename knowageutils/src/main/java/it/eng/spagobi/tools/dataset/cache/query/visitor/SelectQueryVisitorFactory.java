@@ -35,12 +35,8 @@ public class SelectQueryVisitorFactory {
 			return new HiveSelectQueryVisitor(database);
 		case SPARKSQL:
 			return new SparkSqlSelectQueryVisitor(database);
-		case HSQL:
-			return new HsqlDbSelectQueryVisitor(database);
 		case IMPALA:
 			return new ImpalaSelectQueryVisitor(database);
-		case INGRES:
-			return new IngresSelectQueryVisitor(database);
 		case MYSQL:
 			return new MySqlSelectQueryVisitor(database);
 		case ORACLE:

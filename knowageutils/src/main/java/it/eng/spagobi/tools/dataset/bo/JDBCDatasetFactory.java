@@ -42,7 +42,6 @@ public class JDBCDatasetFactory {
 
 		IDataSet dataSet = null;
 		switch (databaseDialect) {
-		case NEO4J:
 		case CASSANDRA:
 		case HIVE:
 		case SPARKSQL:

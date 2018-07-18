@@ -20,71 +20,16 @@ package it.eng.spagobi.utilities.database;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
-
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class SQLServerDataBase extends AbstractDataBase implements CacheDataBase, MetaDataBase {
-
-	private static transient Logger logger = Logger.getLogger(SQLServerDataBase.class);
-
-	private int varcharLength = 255;
+public class SQLServerDataBase extends AbstractDataBase implements MetaDataBase {
 
 	public SQLServerDataBase(IDataSource dataSource) {
 		super(dataSource);
-	}
-
-	@Override
-	public int getVarcharLength() {
-		return varcharLength;
-	}
-
-	@Override
-	public void setVarcharLength(int varcharLength) {
-		this.varcharLength = varcharLength;
-	}
-
-	@Override
-	public String getDataBaseType(Class javaType) {
-		String toReturn = null;
-		String javaTypeName = javaType.toString();
-		if (javaTypeName.contains("java.lang.String")) {
-			toReturn = " VARCHAR (" + getVarcharLength() + ")";
-		} else if (javaTypeName.contains("java.lang.Byte")) {
-			toReturn = " INTEGER ";
-		} else if (javaTypeName.contains("java.lang.Short")) {
-			toReturn = " INTEGER ";
-		} else if (javaTypeName.contains("java.lang.Integer")) {
-			toReturn = " INTEGER ";
-		} else if (javaTypeName.contains("java.lang.Long")) {
-			toReturn = " NUMERIC ";
-		} else if (javaTypeName.contains("java.lang.BigDecimal") || javaTypeName.contains("java.math.BigDecimal")) {
-			toReturn = " NUMERIC ";
-		} else if (javaTypeName.contains("java.lang.Double")) {
-			toReturn = " NUMERIC ";
-		} else if (javaTypeName.contains("java.lang.Float")) {
-			toReturn = " NUMERIC ";
-		} else if (javaTypeName.contains("java.lang.Boolean")) {
-			toReturn = " BIT ";
-		} else if (javaTypeName.contains("java.sql.Date") || javaTypeName.contains("java.util.Date")) {
-			toReturn = " DATETIME ";
-		} else if (javaTypeName.toLowerCase().contains("timestamp")) {
-			toReturn = " DATETIME ";
-		} else if (javaTypeName.contains("java.sql.Time")) {
-			toReturn = " TIME ";
-		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
-			toReturn = " VARBINARY(MAX) ";
-		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB") || javaTypeName.contains("JSON")) {
-			toReturn = " TEXT ";
-		} else {
-			logger.debug("Cannot map java type [" + javaTypeName + "] to a valid database type ");
-		}
-
-		return toReturn;
 	}
 
 	/*
@@ -95,29 +40,6 @@ public class SQLServerDataBase extends AbstractDataBase implements CacheDataBase
 	@Override
 	public String getAliasDelimiter() {
 		return "\"";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String) Returning null the used memory size
-	 * wil be calculated by the abstract call using an heuristic not dependent by the database.
-	 */
-	@Override
-	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		String query = "select SUM(UsedSpace*8*1024) from " + "( select UsedSpace from( " + "SELECT " + "SCHEMA_NAME(sysTab.SCHEMA_ID) as SchemaName, "
-				+ "sysTab.NAME AS TableName, " + "parti.rows AS RowCounts, " + " SUM(alloUni.total_pages) AS TotalSpace, "
-				+ " SUM(alloUni.used_pages) AS UsedSpace, " + " (SUM(alloUni.total_pages) - SUM(alloUni.used_pages)) AS UnusedSpace " + "FROM "
-				+ "sys.tables sysTab " + "INNER JOIN " + "sys.indexes ind ON sysTab.OBJECT_ID = ind.OBJECT_ID and ind.Index_ID<=1 " + "INNER JOIN "
-				+ "sys.partitions parti ON ind.OBJECT_ID = parti.OBJECT_ID AND ind.index_id = parti.index_id " + "INNER JOIN "
-				+ "sys.allocation_units alloUni ON parti.partition_id = alloUni.container_id " + "WHERE sysTab.is_ms_shipped = 0 "
-				+ "GROUP BY sysTab.Name, parti.Rows,sysTab.SCHEMA_ID) dati " + "where TableName like '" + tableNamePrefix + "%' ";
-		if ((schema != null) && (!schema.isEmpty())) {
-			query = query + " and SchemaName = '" + schema + "'";
-		}
-		query = query + "UNION " + "select 0 ) as dati ";
-
-		return query;
 	}
 
 	@Override
