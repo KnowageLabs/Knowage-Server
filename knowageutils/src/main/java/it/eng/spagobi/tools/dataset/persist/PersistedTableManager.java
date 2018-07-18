@@ -609,15 +609,6 @@ public class PersistedTableManager implements IPersistedManager {
 		String totalQuery = insertQuery + values;
 		logger.debug("create table statement: " + createQuery);
 		try {
-			if (getDialect().equals(DatabaseDialect.HSQL)) {
-				// WORKAROUND for HQL : it needs the physical table for define a
-				// prepareStatement.
-				// So, drop and create an empty target table
-				dropTableIfExists(datasource);
-				// creates temporary table
-				executeStatement(createQuery, datasource);
-			}
-
 			for (int i = 0; i < batchCount; i++) {
 				toReturn[i] = connection.prepareStatement(totalQuery);
 			}
@@ -707,15 +698,6 @@ public class PersistedTableManager implements IPersistedManager {
 		String totalQuery = insertQuery + values;
 		logger.debug("create table statement: " + createQuery);
 		try {
-			if (getDialect().equals(DatabaseDialect.HSQL)) {
-				// WORKAROUND for HQL : it needs the physical table for define a
-				// prepareStatement.
-				// So, drop and create an empty target table
-				dropTableIfExists(datasource);
-				// creates temporary table
-				executeStatement(createQuery, datasource);
-			}
-
 			statement = connection.prepareStatement(totalQuery);
 
 			// set query timeout (if necessary)
@@ -870,9 +852,6 @@ public class PersistedTableManager implements IPersistedManager {
 			statement = "SELECT TABLE_NAME " + "FROM USER_TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toUpperCase() + "%'";
 		} else if (dialect.equals(DatabaseDialect.SQLSERVER) || dialect.equals(DatabaseDialect.MYSQL) || dialect.equals(DatabaseDialect.POSTGRESQL)) {
 			statement = "SELECT TABLE_NAME " + "FROM INFORMATION_SCHEMA.TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toLowerCase() + "%'";
-		} else if (dialect.equals(DatabaseDialect.HSQL)) {
-			statement = "SELECT TABLE_NAME " + "FROM INFORMATION_SCHEMA.SYSTEM_TABLES  " + "WHERE TABLE_TYPE = 'TABLE' AND TABLE_NAME LIKE '"
-					+ prefix.toUpperCase() + "%'";
 		}
 
 		if ((statement != null) && (!statement.isEmpty())) {
