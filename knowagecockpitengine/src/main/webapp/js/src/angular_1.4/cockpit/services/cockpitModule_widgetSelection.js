@@ -69,9 +69,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 							}
 						}
 						else {
-
-							obj["orderColumn"] = col.orderColumn;
-							obj["orderType"] = col.orderColumn!="" && col.orderType=="" ? "ASC" : col.orderType;
+							if(col.fieldType == "ATTRIBUTE" && ngModel.content.chartTemplate.CHART.groupCategories){
+								obj["orderColumn"] = col.name;
+								obj["orderType"] = "asc";
+							} else {
+								obj["orderColumn"] = col.orderColumn;
+								obj["orderType"] = col.orderColumn!="" && col.orderType=="" ? "ASC" : col.orderType;
+							}
 						}
 					}
 				}
