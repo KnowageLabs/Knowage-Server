@@ -31,12 +31,10 @@ angular
              var requiredPath = "2.0/documents1";
              var id = self.driverRelatedObject.id;
              var basePath = id + "/" + 'drivers';
-//             DriversService.setDriverRelatedObject(document);
-//     		 DriversService.getDriversOnRelatedObject(requiredPath,document.id + "/drivers");
              self.driverParuses = [];
              self.drivers=driversService.driversOnObject;
              DocumentService.drivers = driversService.driversOnObject;
-
+             self.analyticalDrivers = [];
 
              driversService.lovColumns=[];
              self.selectedDataCondition = driversService.selectedDataCondition;
@@ -48,38 +46,38 @@ angular
 
              var getDriverNames = function(driversOnObject){
             	 var driverNames=[];
-		            if(id){
+		            if(driversService.driverRelatedObject.id){
 		            	 for(var i = 0; i< driversOnObject.length;i++){
 		            		 driverNames.push(driversOnObject[i].name);
 		            	 }
-		            	 return driverNames;
+		            return driverNames;
 		            	 }
              }
 
-             self.analyticalDrivers = getDriverNames(driversService.analyticalDrivers);
-
              self.addDriver = function() {
-            	 self.driverRelatedObject = driversService.driverRelatedObject;
-              if(self.driverRelatedObject.hasOwnProperty('modelLocked')){
+            	 if( self.analyticalDrivers.length == 0){
+            		 self.analyticalDrivers = getDriverNames(driversService.analyticalDrivers);
+            	 }
+              if(driversService.driverRelatedObject.hasOwnProperty('modelLocked')){
 
-            	 		if(self.driverRelatedObject.id){
+            	 		if(driversService.driverRelatedObject.id){
        					 if (self.drivers) {
-       	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biMetaModelID' :self.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
+       	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biMetaModelID' :driversService.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
        	                     var index = self.drivers.length;
        	                     self.selectDriver( index );
        	                 } else {
-       	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true','biMetaModelID' : self.driverRelatedObject.id ,'visible':false,'required':false,'multivalue':false}];
+       	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true','biMetaModelID' : driversService.driverRelatedObject.id ,'visible':false,'required':false,'multivalue':false}];
        	                     self.selectDriver(1);
        	                 }
        				 }
              }else{
-				 if(self.driverRelatedObject.id){
+				 if(driversService.driverRelatedObject.id){
 					 if (self.drivers) {
-	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biObjectID' :self.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
+	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biObjectID' :driversService.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
 	                     var index = self.drivers.length;
 	                     self.selectDriver( index );
 	                 } else {
-	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true', 'biObjectID' : self.driverRelatedObject.id ,'visible':false,'required':false,'multivalue':false}];
+	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true', 'biObjectID' : driversService.driverRelatedObject.id ,'visible':false,'required':false,'multivalue':false}];
 	                     self.selectDriver(1);
 	                 }
 				 }
@@ -145,6 +143,8 @@ angular
              }
 
              self.selectDriver = function(priority) {
+            	 if( self.analyticalDrivers.length == 0)
+            		 self.analyticalDrivers = getDriverNames(driversService.analyticalDrivers);
             	 if(self.drivers.length==1 && self.drivers.length == 0){self.selectedDriver = self.drivers[0];}
             	  var querryParams = "";
             	  var basePath = driversService.visualDependencies;
