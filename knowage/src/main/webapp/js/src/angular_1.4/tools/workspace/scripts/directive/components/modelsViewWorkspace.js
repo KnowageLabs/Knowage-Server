@@ -56,8 +56,18 @@
 		 * @author Ana Tomic (atomic, ana.tomic@mht.net)
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
+		
+		$scope.showQbeModel = function(model){
+
+			if($scope.currentModelsTab=='federations'){
+				$scope.showQbeFederation(model);
+			}else if($scope.currentModelsTab=='businessModels'){
+				$scope.showQbeFromBM(model);
+			}
+		}
+		
 		$scope.tableColumnsFederation = [{"label":"Label","name":"label"},{"label":"Name","name":"name"}];
-		$scope.tableColumnsModels = [{"label":"Name","name":"name","type":"text"}, {"label":"Description","name":"description","type":"text"}];
+		$scope.tableColumnsModels = [{"label":"Name","name":"name","type":"text"}, {"label":"Description","name":"description","type":"text"},{"type": "buttons", "buttons": [{"name": "Open business model in QBE", "icon": "fa fa-search", "action": $scope.showQbeModel}]}];
 
 		$scope.showModelInfo = false;
 		$scope.idsOfFederationDefinitionsUsediNFederatedDatasets = [];
@@ -233,15 +243,6 @@
 				$scope.setDetailOpenModel(model !== undefined);
 			}
 		};
-
-		$scope.showQbeModel = function(model){
-
-			if($scope.currentModelsTab=='federations'){
-				$scope.showQbeFederation(model);
-			}else if($scope.currentModelsTab=='businessModels'){
-				$scope.showQbeFromBM(model);
-			}
-		}
 
 		$scope.showQbeFederation = function(federation){
 
