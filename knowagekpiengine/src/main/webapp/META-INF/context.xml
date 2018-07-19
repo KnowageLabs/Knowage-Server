@@ -1,8 +1,6 @@
 <Context path="/knowagekpiengine" >
 	<!--	<Loader delegate="true"/>  -->
-	<ResourceLink global="jdbc/foodmart_oracle" name="jdbc/foodmart_oracle" type="javax.sql.DataSource"/>
-	<ResourceLink global="jdbc/foodmart_mysql" name="jdbc/foodmart_mysql" type="javax.sql.DataSource"/>
-	<ResourceLink global="jdbc/foodmart_demo" name="jdbc/foodmart_demo" type="javax.sql.DataSource" />
+	<ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource"/>
 	<ResourceLink global="jdbc/knowage" name="jdbc/knowage" type="javax.sql.DataSource"/>
 	<ResourceLink global="jdbc/ds_cache" name="jdbc/ds_cache" type="javax.sql.DataSource"/>
     <ResourceLink global="resource_path" name="resource_path" type="java.lang.String"/>
