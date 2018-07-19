@@ -1,5 +1,5 @@
 (function() {
-    angular.module('DriversModule',[])
+    angular.module('DriversModule',['ResourceModule'])
     		.service('DriversService',['sbiModule_translate','resourceService','sbiModule_messaging',
     			function(sbiModule_translate,resourceService,sbiModule_messaging){
 

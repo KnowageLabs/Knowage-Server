@@ -2,16 +2,16 @@
  *
  */
 
-var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'ngMessages', 'angular_list', 'angular_table','sbiModule', 'DocumentDetails', 'DriversModule', 'angular_2_col','file_upload','angular-list-detail', 'angularXRegExp']);
+var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'ngMessages', 'angular_list', 'angular_table','sbiModule', 'DriversModule', 'angular_2_col','file_upload','angular-list-detail', 'angularXRegExp']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
-app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "DriversService", "resourceService", "kn_regex",
+app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "DriversService",  "kn_regex",
                                                    "$scope", "$mdDialog", "$mdToast","multipartForm", "sbiModule_download",
                                                    "sbiModule_messaging","sbiModule_config","sbiModule_user","sbiModule_messaging",businessModelCatalogueFunction]);
 
-function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, DriversService, resourceService, kn_regex, $scope, $mdDialog,
+function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, DriversService, kn_regex, $scope, $mdDialog,
 		$mdToast,multipartForm,sbiModule_download,sbiModule_messaging,sbiModule_config,sbiModule_user,sbiModule_messaging){
 
 	$scope.regex = kn_regex;

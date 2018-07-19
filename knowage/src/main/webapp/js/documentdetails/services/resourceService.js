@@ -1,5 +1,5 @@
 (function () {
-    angular.module('DocumentDetails')
+    angular.module('ResourceModule', [])
     	   .factory('resourceService', ["sbiModule_restServices", function(sbiModule_restServices) {
 
     		   var crud = {};

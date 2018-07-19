@@ -18,22 +18,21 @@
 (function () {
 angular
         .module('DriversModule')
-        .controller('DocumentDetailsDriversController',['$scope','$location','DocumentService','DriversService','resourceService','$httpParamSerializer', '$mdDialog','sbiModule_translate','sbiModule_messaging',
-        										function($scope,$location,DocumentService,DriversService,resourceService,$httpParamSerializer, $mdDialog,sbiModule_translate,sbiModule_messaging){
+        .controller('DocumentDetailsDriversController',['$scope','$location','DriversService','resourceService','$httpParamSerializer', '$mdDialog','sbiModule_translate','sbiModule_messaging',
+        										function($scope,$location,DriversService,resourceService,$httpParamSerializer, $mdDialog,sbiModule_translate,sbiModule_messaging){
 
         	 var self = this;
         	 var driversService = DriversService;
         	 self.translate = sbiModule_translate;
              self.driverRelatedObject = driversService.driverRelatedObject;
-             self.confirmDelete = DocumentService.confirmDelete;   //****************** TODO: ...
+//             self.confirmDelete = DocumentService.confirmDelete;   //****************** TODO: ...
 
              var crudService = resourceService;
              var requiredPath = "2.0/documents1";
              var id = self.driverRelatedObject.id;
              var basePath = id + "/" + 'drivers';
              self.driverParuses = [];
-             self.drivers=driversService.driversOnObject;
-             DocumentService.drivers = driversService.driversOnObject;
+             self.drivers=driversService.driversOnObject;             
              self.analyticalDrivers = [];
 
              driversService.lovColumns=[];
@@ -60,7 +59,7 @@ angular
             	 }
               if(driversService.driverRelatedObject.hasOwnProperty('modelLocked')){
 
-            	 		if(driversService.driverRelatedObject.id){
+            	 		if(driversService.driverRelatedObject.id){            	 			
        					 if (self.drivers) {
        	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biMetaModelID' :driversService.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
        	                     var index = self.drivers.length;
