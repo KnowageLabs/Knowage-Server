@@ -31,9 +31,9 @@ public final class VersionInfo {
 			+ VersionInfo.PATCH + VersionInfo.OPTIONAL;
 	public static final String VERSION_FOR_EXPORT = VersionInfo.MAJOR + VersionInfo.VERSION_SEPARATOR + VersionInfo.MINOR;
 
-	public static final String YEAR = "yyyy";
-	public static final String MONTH = "MM";
-	public static final String DAY = "dd";
+	public static final String YEAR = "2018";
+	public static final String MONTH = "07";
+	public static final String DAY = "19";
 	public static final String DATE_SEPARATOR = "/";
 
 	public static final String RELEASE_DATE = VersionInfo.YEAR + VersionInfo.DATE_SEPARATOR + VersionInfo.MONTH + VersionInfo.DATE_SEPARATOR + VersionInfo.DAY;
