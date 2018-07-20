@@ -1,5 +1,5 @@
 (function() {
-    angular.module('DriversModule',['ResourceModule'])
+	angular.module('DriversModule',['ResourceModule'])
     		.service('DriversService',['sbiModule_translate','resourceService','sbiModule_messaging',
     			function(sbiModule_translate,resourceService,sbiModule_messaging){
 
@@ -11,7 +11,7 @@
 	      		  driversResource.driversForDeleting = [];
 	      		  driversResource.lovIdAndColumns = [];
 	      		  driversResource.paruseColumns = {};
-	      		  driversResource.driverRelatedObject;
+
 	      		  driversResource.analyticalDrivers = [];
 
 
@@ -40,6 +40,27 @@
 	                		}
 	                   });
 	    		   }
+
+	      		driversResource.driverableObjects = [];
+
+	      		driversResource.fillDrivers = function(businesModelList){
+	      			for(var i = 0; i < businesModelList.length;i++){
+	      				driversResource.driverableObjects.push(businesModelList[i]);
+	      			}
+	      		}
+	      		driversResource.driversPerModel = [];
+
+	      		driversResource.fillAllDriversPerModel = function(basePath,list){
+	      			for(var i = 0; i < list.length; i++){
+	      				var endPath = list[i].id + '/drivers';
+		      			crudService.get(basePath,endPath).then(function(response){
+		      				for(var i = 0; i < response.data.length; i++)
+		      					if(driversResource.driversPerModel.findIndex(index => index.label == response.data[i].label) == -1)
+		      				driversResource.driversPerModel.push(response.data[i]);
+		      			});
+	      			}
+	      		}
+
 	      		driversResource.getAllAnalyticalDrivers = function (){
 	    			   var base = "2.0/analyticalDrivers";
 	                   var path = "";
@@ -50,7 +71,10 @@
 	             	    		 }
 	                   });
 	    		   }
+	      		var setDriverNum = function(model){
+	      			driversResource.driversNum = driversResource.driversPerModel.filter(driver => driver.biMetaModelID = model.id).length >1;
 
+	      		}
 	      		driversResource.getDriverRelatedObject = function(basePath,endPath){
 	      			crudService.get(basePath,endPath).then(function(response){
 	      				driversResource.driverRelatedObject = response.data;
@@ -130,6 +154,16 @@
 	          		 	 driver.parID = driversResource.analyticalDrivers[i].id;}
 	          	 }
 	           };
+
+	          driversResource.updateDriversList = function(model){
+	        	  var newList = 0;
+	        	  for(var i = 0; i<driversResource.driversPerModel.length; i++){
+	        		  if(model.biMetaModelID == driversResource.driversPerModel[i].id )
+	        			 newList.push(driversResource.driversPerModel[i])
+	        	  }
+
+	        	  driversResource.driversPerModel = newList;
+	          }
 	      		driversResource.persistVisualDependency = function(driverableObjectId,requiredPath){
 	      	       	for(var i = 0; i < driversResource.changedVisualDependencies.length; i++){
 	      	       		var visualDependency = driversResource.changedVisualDependencies[i];

@@ -25,23 +25,27 @@ angular
         	 var driversService = DriversService;
         	 self.translate = sbiModule_translate;
              self.driverRelatedObject = driversService.driverRelatedObject;
-//             self.confirmDelete = DocumentService.confirmDelete;   //****************** TODO: ...
-
+          //   self.confirmDelete = DocumentService.confirmDelete;   // ******************
+																	// TODO: ...
+             var a  = $scope;
              var crudService = resourceService;
              var requiredPath = "2.0/documents1";
              var id = self.driverRelatedObject.id;
              var basePath = id + "/" + 'drivers';
              self.driverParuses = [];
-             self.drivers=driversService.driversOnObject;             
+
              self.analyticalDrivers = [];
 
+             self.driversPerModel = driversService.driversPerModel;
              driversService.lovColumns=[];
              self.selectedDataCondition = driversService.selectedDataCondition;
              self.selectedVisualCondition = driversService.selectedVisualCondition;
              self.visibilityConditions = driversService.visusalDependencyObjects;
              self.dataConditions = driversService.dataDependencyObjects;
-             self.driversNum = driversService.driversNum;
+             self.drivers=DriversService.driversOnObject;
              self.required = true;
+             var requiredPath = "2.0/documents1";
+
 
              var getDriverNames = function(driversOnObject){
             	 var driverNames=[];
@@ -54,12 +58,9 @@ angular
              }
 
              self.addDriver = function() {
-            	 if( self.analyticalDrivers.length == 0){
-            		 self.analyticalDrivers = getDriverNames(driversService.analyticalDrivers);
-            	 }
               if(driversService.driverRelatedObject.hasOwnProperty('modelLocked')){
 
-            	 		if(driversService.driverRelatedObject.id){            	 			
+            	 		if(driversService.driverRelatedObject.id){
        					 if (self.drivers) {
        	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biMetaModelID' :driversService.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
        	                     var index = self.drivers.length;
@@ -92,6 +93,12 @@ angular
             		 driversService.changedDrivers.push(driver);
              }
 
+             $scope.$on('changedModel', function(event, data) {
+            	   self.driverRelatedObject = data;
+            	   self.selectedDriver = undefined;
+            	   self.drivers = $filter('filter')(driversService.driversPerModel, {biMetaModelID: data.id});
+            	   requiredPath = "2.0/businessmodels";
+             });
 
              var addParId = function(driver){
             	 driver.parID = driver.parameter.id;
@@ -142,6 +149,11 @@ angular
              }
 
              self.selectDriver = function(priority) {
+            	 if( self.selectedBusinessModel){
+               	  self.driversNum = $scope.ctrl.driversNum
+                }else{
+               	  self.driversNum = driversService.driversNum;
+                }
             	 if( self.analyticalDrivers.length == 0)
             		 self.analyticalDrivers = getDriverNames(driversService.analyticalDrivers);
             	 if(self.drivers.length==1 && self.drivers.length == 0){self.selectedDriver = self.drivers[0];}
@@ -316,8 +328,13 @@ angular
                 			 visualProgram = i+1;
                 	 }
                 	 visualDependency.prog = visualProgram;
-                	 visualDependency.objParFatherId = selectedDriver.id;
-                	 visualDependency.objParFatherUrlName = selectedDriver.parameterUrlName;
+                	 if( !$scope.document.hasOwnProperty('modelLocked')){
+	                	 visualDependency.objParFatherId = selectedDriver.id;
+	                	 visualDependency.objParFatherUrlName = selectedDriver.parameterUrlName;
+                	 }else{
+                		 visualDependency.metaModelParFatherId = selectedDriver.id;
+                    	 visualDependency.metaModelParFatherUrlName = selectedDriver.parameterUrlName;
+                	 }
                  }
                  $scope.getDriverNameById = function(visualDependency){
 	            	  for(var i = 0; i< drivers.length;i++){
@@ -331,7 +348,7 @@ angular
             	 $scope.translate = sbiModule_translate;
             	 var selectedConditionIndex = selectedDataCondition;
             	 $scope.driversService = DriversService;
-                 $scope.document = driversService.document;///****************************
+                 $scope.document = driversService.driverRelatedObject;// /****************************
                  $scope.drivers = [];
                  $scope.paruseColumns = {};
                  angular.copy(driversService.driversOnObject,  $scope.drivers);
@@ -407,9 +424,14 @@ angular
                 			 dataProgram = i+1;
                 	 }
                 	 dataDependency.prog = dataProgram;
-                	 dataDependency.objParId = selectedDriver.id;
-                	 dataDependency.objParFatherUrlName = selectedDriver.parameterUrlName;
                 	 dataDependency.paruseId=selectedDriver.parID;
+                	 if( !$scope.document.hasOwnProperty('modelLocked')){
+	                	 dataDependency.objParId = selectedDriver.id;
+	                	 dataDependency.objParFatherUrlName = selectedDriver.parameterUrlName;
+                	 }else{
+                		 dataDependency.metamodelParId = selectedDriver.id;
+                    	 dataDependency.metaModelParFatherUrlName = selectedDriver.parameterUrlName;
+                	 }
                  }
                  $scope.getDriverNameById = function(dataDependency){
                   	  for(var i = 0; i< $scope.drivers.length;i++){

@@ -47,11 +47,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.fileCWMClicked =false;
 
 	$scope.togenerate = false;
-	
-	var requiredPath = "2.0/businessmodels";
-    var businessModelBasePath =""+ $scope.selectedBusinessModel.id;    
-    var driversService = DriversService;
 
+	var requiredPath = "2.0/businessmodels";
+    var businessModelBasePath =""+ $scope.selectedBusinessModel.id;
+    var driversService = DriversService;
+    d.driversOnObject = [];
+    d.ananas = [];
 	angular.element(document).ready(function () {
         $scope.getData();
     });
@@ -167,13 +168,14 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.businessModelForm.$setUntouched();
 			    });
 			}
-		
-		$scope.driverPostBasePath = $scope.selectedBusinessModel.id + '/drivers';    
-	    
+
+		$scope.driverPostBasePath = $scope.selectedBusinessModel.id + '/drivers';
+
 	    driversService.setDriverRelatedObject($scope.selectedBusinessModel);
 		driversService.getDriversOnRelatedObject(requiredPath, $scope.driverPostBasePath);
 		$scope.analyticalDrivers = driversService.analyticalDrivers;
-
+		d.selected = $scope.selectedBusinessModel;
+		$scope.$broadcast('changedModel', d.selected);
 	}
 
 	$scope.downloadFile = function(item,ev,filetype){
@@ -259,6 +261,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 sbiModule_restServices.promiseGet("2.0", 'businessmodels')
 			.then(function(response) {
 				angular.copy(response.data,$scope.businessModelList)
+				driversService.fillDrivers(response.data);
+				driversService.fillAllDriversPerModel(requiredPath,response.data)
 			}, function(response) {
 				sbiModule_restServices.errorHandler(response.data, 'Error');
 			});
@@ -349,6 +353,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.businessModelList.push(response.data);
 					$scope.selectedVersions=[];
 					DriversService.persistDrivers($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.persistVisualDependency($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
 					$scope.isDirty = false;
 					$scope.isCWMDirty = false;
 					if($scope.fileObj.fileName !== undefined)
@@ -364,7 +370,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 				sbiModule_restServices.promisePut("2.0/businessmodels", $scope.selectedBusinessModel.id, $scope.selectedBusinessModel)
 				.then(function(response) {
-					
+
 					if($scope.fileObj.fileName !== undefined)
 						$scope.saveBusinessModelFile();
 
@@ -384,7 +390,10 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.isDirty = false;
 					$scope.selectedBusinessModel.modelLocker = response.data.modelLocker;
 					DriversService.persistDrivers($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.persistVisualDependency($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'check');
+
 					$scope.$apply();
 
 				}, function(response) {
@@ -393,7 +402,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				});
 			}
 	 }
-	 
+
 	 //calling service method DELETE/{bmId} deleting single item
 	 $scope.deleteItem=function(item,event){
 		 var id = item.id;
