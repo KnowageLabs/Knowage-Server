@@ -67,8 +67,9 @@ angular
        	                     self.selectDriver( index );
        	                 } else {
        	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true','biMetaModelID' : driversService.driverRelatedObject.id ,'visible':false,'required':false,'multivalue':false}];
+       	                  self.driversNum = self.drivers.length > 1;
        	                     self.selectDriver(1);
-       	                     self.driversNum = self.drivers.length > 1;
+
        	                 }
        				 }
              }else{
@@ -76,9 +77,11 @@ angular
 					 if (self.drivers) {
 	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biObjectID' :driversService.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
 	                     var index = self.drivers.length;
+	                     self.driversNum = self.drivers.length > 1;
 	                     self.selectDriver( index );
 	                 } else {
 	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true', 'biObjectID' : driversService.driverRelatedObject.id ,'visible':false,'required':false,'multivalue':false}];
+	                     self.driversNum = self.drivers.length > 1;
 	                     self.selectDriver(1);
 	                 }
 				 }
