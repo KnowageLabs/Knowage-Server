@@ -13,7 +13,7 @@ app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiMo
 
 function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, DriversService, kn_regex, $scope, $mdDialog,
 		$mdToast,multipartForm,sbiModule_download,sbiModule_messaging,sbiModule_config,sbiModule_user,sbiModule_messaging){
-
+	var d = this;
 	$scope.regex = kn_regex;
 	//variables
 	///////////////////////////////////////////////////////////
