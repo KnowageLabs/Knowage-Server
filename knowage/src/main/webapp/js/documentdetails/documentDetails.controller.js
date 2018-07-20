@@ -49,7 +49,7 @@
         var driverPostBasePath = document.id + '/drivers';
 		self.typeCode = documentService.document.typeCode;
 		self.docId = documentService.documentId;
-
+		$scope.$broadcast('setDocumentPath', requiredPath);
         self.cancelFunction = function() {
         	window.parent.angular.element(window.frameElement).scope().closeDialogFromExt();
         };

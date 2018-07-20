@@ -27,9 +27,8 @@ angular
              self.driverRelatedObject = driversService.driverRelatedObject;
           //   self.confirmDelete = DocumentService.confirmDelete;   // ******************
 																	// TODO: ...
-             var a  = $scope;
              var crudService = resourceService;
-             var requiredPath = "2.0/documents1";
+             var requiredPath = "";
              var id = self.driverRelatedObject.id;
              var basePath = id + "/" + 'drivers';
              self.driverParuses = [];
@@ -43,6 +42,7 @@ angular
              self.visibilityConditions = driversService.visusalDependencyObjects;
              self.dataConditions = driversService.dataDependencyObjects;
              self.drivers=DriversService.driversOnObject;
+             self.driversNum = self.drivers.length > 1;
              self.required = true;
              var requiredPath = "2.0/documents1";
 
@@ -64,10 +64,12 @@ angular
        					 if (self.drivers) {
        	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biMetaModelID' :driversService.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
        	                     var index = self.drivers.length;
+       	                  self.driversNum = self.drivers.length > 1;
        	                     self.selectDriver( index );
        	                 } else {
        	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true','biMetaModelID' : driversService.driverRelatedObject.id ,'visible':false,'required':false,'multivalue':false}];
        	                     self.selectDriver(1);
+       	                     self.driversNum = self.drivers.length > 1;
        	                 }
        				 }
              }else{
@@ -83,6 +85,7 @@ angular
 				 }
              }
              }
+
              self.openMenu=function(menu,event){
             	 menu(event);
              }
@@ -98,6 +101,11 @@ angular
             	   self.selectedDriver = undefined;
             	   self.drivers = $filter('filter')(driversService.driversPerModel, {biMetaModelID: data.id});
             	   requiredPath = "2.0/businessmodels";
+            	   self.driversNum = self.drivers.length > 1
+             });
+
+             $scope.$on('setDocumentPath', function(event, data) {
+            	 requiredPath = data;
              });
 
              var addParId = function(driver){
