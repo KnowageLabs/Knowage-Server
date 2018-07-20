@@ -42,7 +42,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/resourceService.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/modules/driversModule.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/controllers/drivers.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/documentdetails/services/interceptors/httpInterceptor.js")%>"></script>
 
 <!-- Styles -->
 <!-- <link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css"> -->
