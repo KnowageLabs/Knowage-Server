@@ -9,181 +9,181 @@ kn-table {
 			box-shadow: 0px 3px 3px $shadowsColor;
 		}
 	}
-	.kn-table{
-		width: 100%;
-		height: auto;
-		border-collapse: collapse;
-		thead {
-			color: $baseColor;
-			background-color: $tableHeaderColor;
-			font-size: $baseFontSize;
-			tr {
-				height: $angularTableTRHeight;
-				th{
-					border-bottom: 1px solid $ternaryColor;
-					text-align: left;
-					md-icon{
-						color: $baseColor;
-						transition: transform .3s ease-in;
-						&.rotate180{
-							transform: rotate(180deg);
-						}
-					}
-					&:first-child {
-						padding-left: 10px;
-					}
-					&.tableAction{
-						width: 50px;
-					}
-					&.multiTableAction{
-						width: 100px;
-					}
-					&.sortable {
-						outline: none;
-						cursor: pointer;
-						line-height: 2rem;
+}
+.kn-table{
+	width: 100%;
+	height: auto;
+	border-collapse: collapse;
+	thead {
+		color: $baseColor;
+		background-color: $tableHeaderColor;
+		font-size: $baseFontSize;
+		tr {
+			height: $angularTableTRHeight;
+			th{
+				border-bottom: 1px solid $ternaryColor;
+				text-align: left;
+				md-icon{
+					color: $baseColor;
+					transition: transform .3s ease-in;
+					&.rotate180{
+						transform: rotate(180deg);
 					}
 				}
+				&:first-child {
+					padding-left: 10px;
+				}
+				&.tableAction{
+					width: 50px;
+				}
+				&.multiTableAction{
+					width: 100px;
+				}
+				&.sortable {
+					outline: none;
+					cursor: pointer;
+					line-height: 2rem;
+				}
+			}
+		}
+	}
+	tbody {
+		tr {
+			border-bottom: 1px solid lighten($ternaryColor,10%);
+			td {
+				font-size: $baseFontSize;
+				&:first-child {
+					padding-left: 10px;
+				}
+				&.tableAction{
+					width: 50px;
+				}
+				&.colorPickerTd{
+					width: 200px;
+				}
+				&.multiTableAction{
+					width: 100px;
+				}
+				md-input-container, md-select {
+					margin: 0;
+					width: 100%;
+				}
+				md-checkbox {
+					margin-bottom: 0;
+				}
+				.md-icon-button {
+					margin: 0;
+					padding: 0;
+					height: 32px;
+					min-height: 32px;
+					width: 32px;
+				}
+				.truncated {
+					white-space: nowrap;
+				    text-overflow: ellipsis;
+				    overflow: hidden;
+				    display: block;
+				}
+				color-picker{
+					width: 195px;
+					.color-picker-wrapper{
+						width: 195px;
+						z-index: unset;
+						.input-group .input-group-addon:first-child {
+							border: 1px solid $ternaryColor;
+						}
+						.color-picker-input-wrapper {
+							width: 100%;
+							.color-picker-input{
+								width: 100%;
+								border: 0;
+							    border-bottom: 1px solid $ternaryColor;
+							    padding: 5px 0 5px 30px !important;
+							    outline: none;
+							    &:focus{
+							    	border-bottom: 2px solid $baseColor;
+							    }
+							}
+						}
+					}
+				}
+				&.inner-space {
+					padding:0 0 10px 0;
+				}
+			}
+		}
+	}
+	&.kn-inner-table {
+		background-color: $listBackground;
+		thead {
+			background-color: $secondaryColor;
+			font-size: $mediumFontSize;
+			tr {
+				height: $defaultSize;
 			}
 		}
 		tbody {
 			tr {
-				border-bottom: 1px solid lighten($ternaryColor,10%);
 				td {
-					font-size: $baseFontSize;
-					&:first-child {
-						padding-left: 10px;
-					}
+					font-size: $mediumFontSize;
 					&.tableAction{
 						width: 50px;
 					}
-					&.colorPickerTd{
-						width: 200px;
-					}
-					&.multiTableAction{
-						width: 100px;
-					}
-					md-input-container, md-select {
-						margin: 0;
-						width: 100%;
-					}
-					md-checkbox {
-						margin-bottom: 0;
-					}
-					.md-icon-button {
-						margin: 0;
-						padding: 0;
-						height: 32px;
-						min-height: 32px;
-						width: 32px;
-					}
-					.truncated {
-						white-space: nowrap;
-					    text-overflow: ellipsis;
-					    overflow: hidden;
-					    display: block;
-					}
-					color-picker{
-						width: 195px;
-						.color-picker-wrapper{
-							width: 195px;
-							z-index: unset;
-							.input-group .input-group-addon:first-child {
-								border: 1px solid $ternaryColor;
-							}
-							.color-picker-input-wrapper {
-								width: 100%;
-								.color-picker-input{
-									width: 100%;
-									border: 0;
-								    border-bottom: 1px solid $ternaryColor;
-								    padding: 5px 0 5px 30px !important;
-								    outline: none;
-								    &:focus{
-								    	border-bottom: 2px solid $baseColor;
-								    }
-								}
-							}
-						}
-					}
-					&.inner-space {
-						padding:0 0 10px 0;
+					md-icon {
+						text-align: center;
+						cursor: pointer;
+						font-size: $baseFontSize;
 					}
 				}
 			}
 		}
-		&.kn-inner-table {
-			background-color: $listBackground;
-			thead {
-				background-color: $secondaryColor;
-				font-size: $mediumFontSize;
-				tr {
-					height: $defaultSize;
-				}
-			}
-			tbody {
-				tr {
-					td {
-						font-size: $mediumFontSize;
-						&.tableAction{
-							width: 50px;
-						}
-						md-icon {
-							text-align: center;
-							cursor: pointer;
-							font-size: $baseFontSize;
-						}
-					}
-				}
-			}
-		}
+	}
 
-		&.kn-table-fixed {
-			table-layout: fixed;
-		}
-		&.kn-table-alternated-rows {
-			tbody{
-				tr:nth-child(odd) {
-					background: $pageBackground;
-				}
+	&.kn-table-fixed {
+		table-layout: fixed;
+	}
+	&.kn-table-alternated-rows {
+		tbody{
+			tr:nth-child(odd) {
+				background: $pageBackground;
 			}
 		}
-		&.kn-table-inverse-header {
-			thead {
-				tr {
-					th {
-						color: $lightTextColor;
-						background-color: $baseColor;
-						md-icon {
-							color: $lightTextColor;
-						}
-					}
-				}
-			}
-		}
-		&.kn-table-medium-rows {
+	}
+	&.kn-table-inverse-header {
+		thead {
 			tr {
-				height: 2rem;
-				td {
-					.md-icon-button, .md-menu {
-						padding: 0;
-						margin: 0;
-						height: 40px;
-						width: 40px;
+				th {
+					color: $lightTextColor;
+					background-color: $baseColor;
+					md-icon {
+						color: $lightTextColor;
 					}
 				}
 			}
 		}
-		&.kn-table-clickable-rows {
-			tbody{
-				tr {
-					cursor: pointer;
-					&.selected {
-						background-color: $tableSelectedElementColor;
-					}
-					&:hover {
-						background-color: lighten($tableSelectedElementColor,5%);
-					}
+	}
+	&.kn-table-medium-rows {
+		tr {
+			height: 2rem;
+			td {
+				.md-icon-button, .md-menu {
+					padding: 0;
+					margin: 0;
+					height: 40px;
+					width: 40px;
+				}
+			}
+		}
+	}
+	&.kn-table-clickable-rows {
+		tbody{
+			tr {
+				cursor: pointer;
+				&.selected {
+					background-color: $tableSelectedElementColor;
+				}
+				&:hover {
+					background-color: lighten($tableSelectedElementColor,5%);
 				}
 			}
 		}
