@@ -260,7 +260,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 sbiModule_restServices.promiseGet("2.0", 'businessmodels')
 			.then(function(response) {
 				angular.copy(response.data,$scope.businessModelList)
-				driversService.fillDrivers(response.data);
 				driversService.fillAllDriversPerModel(requiredPath,response.data)
 			}, function(response) {
 				sbiModule_restServices.errorHandler(response.data, 'Error');

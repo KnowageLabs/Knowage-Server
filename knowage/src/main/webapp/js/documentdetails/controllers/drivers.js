@@ -46,7 +46,6 @@ angular
              self.required = true;
              var requiredPath = "2.0/documents1";
 
-
              var getDriverNames = function(driversOnObject){
             	 var driverNames=[];
 		            if(driversService.driverRelatedObject.id){
@@ -157,11 +156,6 @@ angular
              }
 
              self.selectDriver = function(priority) {
-            	 if( self.selectedBusinessModel){
-               	  self.driversNum = $scope.ctrl.driversNum
-                }else{
-               	  self.driversNum = driversService.driversNum;
-                }
             	 if( self.analyticalDrivers.length == 0)
             		 self.analyticalDrivers = getDriverNames(driversService.analyticalDrivers);
             	 if(self.drivers.length==1 && self.drivers.length == 0){self.selectedDriver = self.drivers[0];}
