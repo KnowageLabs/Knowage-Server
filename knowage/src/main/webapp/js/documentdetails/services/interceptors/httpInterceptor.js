@@ -18,7 +18,7 @@
 
 
 (function() {
-	 angular.module('DocumentDetails')
+	 angular.module('InterceptorModule', [])
     .factory('httpInterceptor', ['$q', '$injector', function($q, $injector) {
 
     	return {
