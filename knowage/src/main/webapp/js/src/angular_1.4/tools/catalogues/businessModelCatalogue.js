@@ -51,8 +51,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	var requiredPath = "2.0/businessmodels";
     var businessModelBasePath =""+ $scope.selectedBusinessModel.id;
     var driversService = DriversService;
-    d.driversOnObject = [];
-    d.ananas = [];
+
 	angular.element(document).ready(function () {
         $scope.getData();
     });
