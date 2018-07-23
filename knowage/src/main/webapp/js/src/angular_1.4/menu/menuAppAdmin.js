@@ -380,6 +380,8 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 												$scope.licenseData[currentHostName].splice(index, 1);
 												$scope.licenseData[currentHostName].push(response.data);
 											}											
+										} else {
+											$scope.licenseData[currentHostName].push(response.data);
 										}																																						
 										scope.file = undefined;
 										scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
