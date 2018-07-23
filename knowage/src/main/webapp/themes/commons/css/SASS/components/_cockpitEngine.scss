@@ -62,6 +62,7 @@
     		}
     		.discoveryFiltersList {
 	    		overflow-y: auto;
+	    		height: calc(100% - 10px);
 	    		
 	    		@include coolScrollBars($baseColor,6px);
 	    		.md-subheader {
@@ -126,7 +127,7 @@
 	    			z-index: 9;
 	    		}
 	    		position: relative;
-    			height: calc(100% - 16px); 
+    			height: calc(100% - 40px); 
 	    		overflow-y: auto;
 	    		@include coolScrollBars($baseColor,6px);
     		}
