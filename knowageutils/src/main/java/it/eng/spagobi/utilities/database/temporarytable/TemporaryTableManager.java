@@ -454,13 +454,14 @@ public class TemporaryTableManager {
 	private static void executeStatement(String sql, IDataSource dataSource, int queryTimeout) throws Exception {
 		logger.debug("IN");
 		Connection connection = null;
+		Statement stmt = null;
 		String dialect = dataSource.getHibDialectClass();
 		try {
 			connection = dataSource.getConnection();
 			if (!dialect.contains("VoltDB")) {
 				connection.setAutoCommit(false);
 			}
-			Statement stmt = connection.createStatement();
+			stmt = connection.createStatement();
 			if (queryTimeout > 0) {
 				stmt.setQueryTimeout(queryTimeout);
 			}
@@ -477,8 +478,19 @@ public class TemporaryTableManager {
 			}
 			throw e;
 		} finally {
-			if (connection != null && !connection.isClosed()) {
-				connection.close();
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					logger.debug(e);
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					logger.debug(e);
+				}
 			}
 			logger.debug("OUT");
 		}

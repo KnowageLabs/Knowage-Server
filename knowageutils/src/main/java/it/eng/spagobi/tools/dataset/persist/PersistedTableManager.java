@@ -630,6 +630,7 @@ public class PersistedTableManager implements IPersistedManager {
 	private void executeStatement(String sql, IDataSource dataSource) throws Exception {
 		logger.debug("IN");
 		Connection connection = null;
+		Statement stmt = null;
 		String dialect = dataSource.getHibDialectClass();
 		try {
 			// connection = dataSource.getConnection();
@@ -637,7 +638,7 @@ public class PersistedTableManager implements IPersistedManager {
 			if (!dialect.contains("VoltDB")) {
 				connection.setAutoCommit(false);
 			}
-			Statement stmt = connection.createStatement();
+			stmt = connection.createStatement();
 			logger.debug("Executing sql " + sql);
 			stmt.execute(sql);
 			if (!dialect.contains("VoltDB")) {
@@ -650,8 +651,19 @@ public class PersistedTableManager implements IPersistedManager {
 			}
 			throw e;
 		} finally {
-			if (connection != null && !connection.isClosed()) {
-				connection.close();
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					logger.debug(e);
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					logger.debug(e);
+				}
 			}
 			logger.debug("OUT");
 		}
@@ -660,6 +672,7 @@ public class PersistedTableManager implements IPersistedManager {
 	private void executeBatch(List queryInsert, IDataSource datasource) throws Exception {
 		logger.debug("IN");
 		Connection connection = null;
+		Statement statement = null;
 		String dialect = datasource.getHibDialectClass();
 		try {
 			// connection = datasource.getConnection();
@@ -667,7 +680,7 @@ public class PersistedTableManager implements IPersistedManager {
 			if (!dialect.contains("VoltDB")) {
 				connection.setAutoCommit(false);
 			}
-			Statement statement = connection.createStatement();
+			statement = connection.createStatement();
 			for (int i = 0, l = queryInsert.size(); i < l; i++) {
 				statement.addBatch(queryInsert.get(i).toString());
 			}
@@ -683,8 +696,19 @@ public class PersistedTableManager implements IPersistedManager {
 			}
 			throw e;
 		} finally {
-			if (connection != null && !connection.isClosed()) {
-				connection.close();
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					logger.debug(e);
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					logger.debug(e);
+				}
 			}
 			logger.debug("OUT");
 		}
