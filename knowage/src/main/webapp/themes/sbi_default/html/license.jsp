@@ -14,6 +14,7 @@
     }
 
     String contextName = ChannelUtilities.getSpagoBIContextName(request);
+	int cpuNumber = Runtime.getRuntime().availableProcessors();
 %>
     
 
@@ -31,6 +32,7 @@
         <div layout="row" layout-align="center">
         	<div class="kn-info">
         		<strong>Hardware Id: </strong>{{host.hardwareId}}
+				<strong>CPU Id: <%=cpuNumber%></strong>
         	</div>
         </div>
         
