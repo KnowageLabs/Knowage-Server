@@ -188,14 +188,14 @@ angular
              }
 
              self.deleteDriver = function(driver,name) {
-            	 
+
                  var index;
                  for (var i = 0; i< self.drivers.length;i++) {
-                     if (self.drivers[i].id == driver.id) {     
+                     if (self.drivers[i].id == driver.id) {
                         	// delete self.selectedDriver;
                     	 index = i;
                     	 driversService.driversForDeleting.push(driver);
-                    	 self.drivers.splice(i, 1);                    	 
+                    	 self.drivers.splice(i, 1);
                      }
                  }
                  self.priorityOfDeletedDriver = self.drivers[index].priority;
@@ -342,7 +342,7 @@ angular
 	                	 visualDependency.objParFatherId = selectedDriver.id;
 	                	 visualDependency.objParFatherUrlName = selectedDriver.parameterUrlName;
                 	 }else{
-                		 visualDependency.metaModelParFatherId = selectedDriver.id;
+                		 visualDependency.metaModelParId = selectedDriver.id;
                     	 visualDependency.metaModelParFatherUrlName = selectedDriver.parameterUrlName;
                 	 }
                  }
@@ -369,6 +369,7 @@ angular
                  $scope.paruses = driversService.driverParuses;
                  $scope.dataDependencyModel = {};
                  $scope.selectedDataCondition = driversService.dataDependencyObjects[selectedDataCondition];
+                 $scope.selectedDataCondition.paruseId=selectedDriver.parID;
                  $scope.selectedDataCondition.persist ={};
                  $scope.selectedDataCondition.persist[(driversService.driverParuses.filter(par => par.useID == $scope.selectedDriver.parID))[0].useID] = true;
 

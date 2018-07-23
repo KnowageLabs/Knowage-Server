@@ -26,7 +26,7 @@
                 </md-input-container>
                  <md-input-container flex  ng-if='document.category'>
                     <label>{{translate.load("sbi.documentdetails.visualdependency.analyticaldriver")}}</label>
-                    <md-select ng-model="selectedCondition.metaModelParId" ng-change="addToChangedVisualDepedencies(selectedCondition)">
+                    <md-select ng-model="selectedCondition.metaModelParFatherId" ng-change="addToChangedVisualDepedencies(selectedCondition)">
                         <md-option ng-value="option.id" ng-repeat="option in drivers track by $index">
                             {{ option.label }}
                         </md-option>
