@@ -188,21 +188,26 @@ angular
              }
 
              self.deleteDriver = function(driver,name) {
+            	 
                  var index;
                  for (var i = 0; i< self.drivers.length;i++) {
-                     if (self.drivers[i].id == driver.id) {
+                     if (self.drivers[i].id == driver.id) {     
                         	// delete self.selectedDriver;
-                        	 index = i;
-                         }
+                    	 index = i;
+                    	 driversService.driversForDeleting.push(driver);
+                    	 self.drivers.splice(i, 1);                    	 
                      }
+                 }
+                 self.priorityOfDeletedDriver = self.drivers[index].priority;
                  for (var d in self.drivers) {
                      if (self.drivers[d].priority > self.drivers[index].priority) {
+                     if (self.drivers[d].priority > self.priorityOfDeletedDriver) {
                          self.drivers[d].priority--;
                      }
                  }
-                 self.confirmDelete(index,name);
+//                 self.confirmDelete(index,name);
+                 }
              }
-
              self.movePriority = function(priority, direction) {
                  var cur, next, prev;
                  for (var p in self.drivers) {

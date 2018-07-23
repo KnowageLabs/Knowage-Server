@@ -353,6 +353,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					DriversService.persistDrivers($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.persistVisualDependency($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.deleteDrivers($scope.selectedBusinessModel.id, requiredPath);
 					$scope.isDirty = false;
 					$scope.isCWMDirty = false;
 					if($scope.fileObj.fileName !== undefined)
@@ -390,6 +391,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					DriversService.persistDrivers($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.persistVisualDependency($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.deleteDrivers($scope.selectedBusinessModel.id, requiredPath);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'check');
 
 					$scope.$apply();
