@@ -1,0 +1,9 @@
+<div ng-form name="structure-gaugeSubtypesForm" layout="column" layout-padding flex>
+
+<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.designer.gauge.subtypes")}}</label>
+		 <md-select ng-model="chartTemplate.subtype" name="gauge_subtypes"> <md-option
+		ng-repeat="subtype in gaugeSubtypes" value="{{subtype}}">{{subtype}}</md-option>
+	</md-select> </md-input-container>
+
+</div>

@@ -343,7 +343,12 @@
 						      	</md-button>
 						      	
 						      	<md-menu-content width="5">
-							    
+							    	<md-menu-item ng-if=" selectedChartType.toLowerCase()=='gauge' && disableHtmlElementForChartJs()">
+					          			<md-button ng-click="showStructureDetails('gaugeSubtypes',seriesContainer.name)">
+					 						<md-icon class="fa fa-clock-o" style="display:inline"></md-icon>
+						            		<span>Change gauge's subtype</span>
+						          		</md-button>
+					        		</md-menu-item>
 					        		<md-menu-item ng-if=" selectedChartType.toLowerCase()!='pie' && disableHtmlElementForChartJs()">
 					          			<md-button ng-click="showStructureDetails('axisConfiguration',seriesContainer.name)">
 					 						<md-icon class="fa fa-pencil-square-o" style="display:inline"></md-icon>

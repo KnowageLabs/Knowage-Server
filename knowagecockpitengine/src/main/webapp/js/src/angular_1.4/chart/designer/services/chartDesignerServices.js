@@ -2345,6 +2345,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			                               ]
 		return data;
 	};
+	this.getGaugeSybtypes = function(){ 
+		return ["simple","activity","solid","vumetar"]
+	}
 
 	// Returns templates for specific details for series items on the Structure tab
 	this.getSeriesItemsConfDetailsTemplateURL = function(detailsForOption) {
@@ -2397,6 +2400,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			case "serieTitle": templatesURLs = sbiModule_config.contextName +
 			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/serie_title_details.html"; break;
 
+			case "gaugeSubtypes": templatesURLs = sbiModule_config.contextName +
+			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/gauge_subtypes.html"; break;
+
 
 		};
 
@@ -2422,6 +2428,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			case "categoriesDateTimeHeatMap": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.dateTime"); break;
 			case "categoriesDateTime": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.dateTimeAndGrouping"); break;
 			case "serieTitle": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.serie.serieTitle"); break;
+			case "gaugeSubtypes": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.gauge.subtypes"); break;
 			default : detailsNameToReturn = translate.load("Gauge axis additional options"); break;
 		}
 

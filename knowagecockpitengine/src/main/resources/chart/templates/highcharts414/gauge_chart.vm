@@ -43,18 +43,15 @@
 #end
 
 #set($type = 'gauge')
-#if(!$chart.subtype)
-	#set($subtype = 'simple')
-#else 
-	#if($chart.subtype=="vumetar")
-		#set($subtype = 'vumetar')
-	#elseif($chart.subtype=="solid")
-		#set($subtype = 'solid'),
-		#set($type = 'solidgauge')
-	#else
-		#set($type= 'solidgauge')
-		#set($subtype = 'activity')
-	#end
+#set($subtype = 'simple')
+#if($chart.subtype && $chart.subtype=="vumetar")
+	#set($subtype = 'vumetar')
+#elseif($chart.subtype && $chart.subtype=="solid")
+	#set($subtype = 'solid'),
+	#set($type = 'solidgauge')
+#elseif($chart.subtype && $chart.subtype=="activity")
+	#set($type= 'solidgauge')
+	#set($subtype = 'activity')
 #end
 
 {

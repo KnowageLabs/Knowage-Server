@@ -997,6 +997,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
     $scope.fontSize = ChartDesignerData.getFontSizeOptions();
     $scope.lineTypeOptions = StructureTabService.getLineTypesOptions();
     $scope.gaugeTicksPositionOptions = StructureTabService.getGaugeTicksPosition();
+    $scope.gaugeSubtypes = StructureTabService.getGaugeSybtypes();
 
     $scope.seriesItemAggregationTypes = StructureTabService.getSeriesItemAggregationTypes();
 
