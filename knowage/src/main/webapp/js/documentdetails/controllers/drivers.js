@@ -101,7 +101,7 @@ angular
              $scope.$on('changedModel', function(event, data) {
             	   self.driverRelatedObject = data;
             	   self.selectedDriver = undefined;
-            	   self.drivers = $filter('filter')(driversService.driversPerModel, {biMetaModelID: data.id});
+            	   self.drivers = $filter('filter')(driversService.driversPerModel, {biMetaModelID: data.id},true);
             	   requiredPath = "2.0/businessmodels";
             	   self.driversNum = self.drivers.length > 1
              });
