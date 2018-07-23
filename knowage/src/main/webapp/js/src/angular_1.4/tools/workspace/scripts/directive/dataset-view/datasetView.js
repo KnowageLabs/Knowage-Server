@@ -46,6 +46,7 @@ angular.module('dataset_view', ['ngMaterial'])
 			//executeDocumentAction:"&",
 			orderingDatasetCards:"=?",
 			deleteDatasetAction:"&",
+			tableColumns:"=?"
 		},
 
 		link: function (scope, elem, attrs) {
@@ -68,6 +69,7 @@ function datasetViewControllerFunction($scope,sbiModule_user,sbiModule_translate
 	}
 	$scope.sbiUser = sbiModule_user;
 	$scope.translate=sbiModule_translate;
+//	$scope.tableDatasets = [{"label":"Label","name":"label","type":"text"},{"label":"Name","name":"name"},{"type": "buttons", "buttons": [{"name": "Preview Daeeetaset", "icon": "fa fa-eye", "action":$scope.previewDatasetAction},{"name": "Show dataset details", "icon": "fa fa-pencil"},{"name": "Open dataset in QBE", "icon": "fa fa-search"}]}];
 
 }
 })();

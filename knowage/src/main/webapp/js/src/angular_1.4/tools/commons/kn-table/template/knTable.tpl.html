@@ -14,11 +14,11 @@
 					<span ng-if="!column.type || column.type=='text'">{{row[column.name]}}</span>
 					<span ng-if="column.type=='date'">{{setDate(row[column.name]) | date:'medium' }}</span>
 					<div layout="row" layout-align="end center" ng-if="column.type == 'buttons'">
-						<md-button class="md-icon-button" ng-click="actionClick(row,button,$event)" ng-repeat="button in column.buttons" ng-if="column.buttons.length <= 2">
+						<md-button class="md-icon-button" ng-click="actionClick(row,button,$event)" ng-repeat="button in column.buttons" ng-if="column.buttons.length <= 3">
 							<md-tooltip>{{button.name}}</md-tooltip>
 							<md-icon md-font-icon="{{button.icon}}">
 						</md-button>
-						<md-menu ng-if="column.buttons.length > 2">
+						<md-menu ng-if="column.buttons.length > 3">
 					      <md-button class="md-icon-button" ng-click="$event.stopPropagation();$mdOpenMenu()">
 					        <md-icon md-menu-origin md-font-icon="fa fa-ellipsis-h"></md-icon>
 					      </md-button>

@@ -626,7 +626,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
        		console.info("Format " + format + " not supported");
        	}
     }
-
+    
     $scope.previewDataset = function(dataset){
 
     	console.info("DATASET FOR PREVIEW: ",dataset);
@@ -689,6 +689,50 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		    });
 
     }
+    
+    $scope.editQbeDataset = function(dataset) {
+    	$scope.selectedDataSet = dataset;
+    	var url = null;
+	     if(dataset.dsTypeCd=='Federated'){
+	      url = datasetParameters.qbeEditFederatedDataSetServiceUrl
+	         +'&FEDERATION_ID='+dataset.federationId;
+	     } else {
+	      var modelName= dataset.qbeDatamarts;
+	   var dataSource=dataset.qbeDataSource;
+	      url = datasetParameters.buildQbeDataSetServiceUrl
+	           +'&DATAMART_NAME='+modelName
+	           +'&DATASOURCE_LABEL='+ dataSource;
+	     }
+
+	  //url = "http://localhost:8080/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=BUILD_QBE_DATASET_START_ACTION&user_id=biadmin&NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_COUNTRY=US&DATASOURCE_LABEL=foodmart&DATAMART_NAME=foodmart";
+	  // $window.location.href=url;
+	  $scope.isFromDataSetCatalogue = false;
+	  $qbeViewer.openQbeInterfaceDSet($scope, true, url);
+    }
+    
+    $scope.editFileDataset = function (arg) {
+
+  	  $scope.initializeDatasetWizard(arg);
+
+  	  // Set the flag for editing the current dataaset (file)
+  	  $scope.editingDatasetFile = true;
+
+        $mdDialog.show({
+  		  scope:$scope,
+  		  preserveScope: true,
+  	      controller: DatasetCreateController,
+  	      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',
+  	      clickOutsideToClose: false,
+  	      escapeToClose :true,
+  	      //fullscreen: true,
+  	      locals:{
+  	    	 // previewDatasetModel:$scope.previewDatasetModel,
+  	         // previewDatasetColumns:$scope.previewDatasetColumns
+  	      }
+  	    });
+  }
+    
+    $scope.tableDatasets = [{"label":"Label","name":"label","type":"text"},{"label":"Name","name":"name"},{"type": "buttons", "buttons": [{"name": "Preview Daeeetaset", "icon": "fa fa-eye", "action":$scope.previewDataset},{"name": "Show dataset details", "icon": "fa fa-pencil", "action": $scope.editFileDataset},{"name": "Open dataset in QBE", "icon": "fa fa-search", "action": $scope.showQbeDataset}]}];
 
     $scope.getPreviewSet = function(dataset){
 
@@ -1243,49 +1287,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	}
 
     }
-
-    $scope.editFileDataset = function (arg) {
-
-    	  $scope.initializeDatasetWizard(arg);
-
-    	  // Set the flag for editing the current dataaset (file)
-    	  $scope.editingDatasetFile = true;
-
-          $mdDialog.show({
-    		  scope:$scope,
-    		  preserveScope: true,
-    	      controller: DatasetCreateController,
-    	      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',
-    	      clickOutsideToClose: false,
-    	      escapeToClose :true,
-    	      //fullscreen: true,
-    	      locals:{
-    	    	 // previewDatasetModel:$scope.previewDatasetModel,
-    	         // previewDatasetColumns:$scope.previewDatasetColumns
-    	      }
-    	    });
-    }
-
-    $scope.editQbeDataset = function(dataset) {
-    	$scope.selectedDataSet = dataset;
-    	var url = null;
-	     if(dataset.dsTypeCd=='Federated'){
-	      url = datasetParameters.qbeEditFederatedDataSetServiceUrl
-	         +'&FEDERATION_ID='+dataset.federationId;
-	     } else {
-	      var modelName= dataset.qbeDatamarts;
-	   var dataSource=dataset.qbeDataSource;
-	      url = datasetParameters.buildQbeDataSetServiceUrl
-	           +'&DATAMART_NAME='+modelName
-	           +'&DATASOURCE_LABEL='+ dataSource;
-	     }
-
-	  //url = "http://localhost:8080/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=BUILD_QBE_DATASET_START_ACTION&user_id=biadmin&NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_COUNTRY=US&DATASOURCE_LABEL=foodmart&DATAMART_NAME=foodmart";
-	  // $window.location.href=url;
-	  $scope.isFromDataSetCatalogue = false;
-	  $qbeViewer.openQbeInterfaceDSet($scope, true, url);
-    }
-
 
 	if(initialOptionMainMenu){
 		if(initialOptionMainMenu.toLowerCase() == 'datasets'){

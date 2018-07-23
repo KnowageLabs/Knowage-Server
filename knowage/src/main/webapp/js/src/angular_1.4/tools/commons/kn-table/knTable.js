@@ -39,7 +39,6 @@
 		}
 	};
 
-	
 	function knTableController($scope){
 		$scope.sortingColumn = $scope.columns[0].name;
 		$scope.sortingDirection = false;
