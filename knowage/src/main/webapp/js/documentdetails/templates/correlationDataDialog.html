@@ -50,8 +50,7 @@
 	                   <p><h4>{{paruse.name}} : {{paruse.description}} </h4></p>
                    
                       <h3>{{translate.load("sbi.documentdetails.datadependency.columns")}}</h3>
-           		<md-select ng-model="paruseColumns[paruse.useID]" ng-change="addToChangedDataDepedencies(selectedDataCondition)">
-	                       
+           		<md-select ng-model="paruseColumns[paruse.useID]" ng-change="addToChangedDataDepedencies(selectedDataCondition)">	                       
 	                        <md-option ng-value="option" ng-repeat="option in getLovColumnsForParuse(paruse) track by $index">
 	                            {{ option }}
 	                        </md-option>

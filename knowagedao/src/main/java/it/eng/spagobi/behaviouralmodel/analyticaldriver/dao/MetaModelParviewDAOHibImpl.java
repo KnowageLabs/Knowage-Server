@@ -216,6 +216,7 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 		if (aSbiMetaModelParview == null)
 			return null;
 		MetaModelParview toReturn = new MetaModelParview();
+		toReturn.setParviewId(aSbiMetaModelParview.getParviewId());
 		toReturn.setMetaModelParId(aSbiMetaModelParview.getSbiMetaModelPar().getMetaModelParId());
 		toReturn.setMetaModelParFatherId(aSbiMetaModelParview.getSbiMetaModelFather().getMetaModelParId());
 		toReturn.setMetaModelParFatherUrlName(aSbiMetaModelParview.getSbiMetaModelFather().getParurlNm());
