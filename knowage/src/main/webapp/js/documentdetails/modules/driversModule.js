@@ -49,9 +49,10 @@
 	      			for(var i = 0; i < list.length; i++){
 	      				var endPath = list[i].id + '/drivers';
 		      			crudService.get(basePath,endPath).then(function(response){
-		      				for(var i = 0; i < response.data.length; i++)
-		      					if(driversResource.driversPerModel.findIndex(index => index.label == response.data[i].label) == -1)
-		      				driversResource.driversPerModel.push(response.data[i]);
+		      				for(var i = 0; i < response.data.length; i++){
+		      					if(driversResource.driversPerModel.findIndex(index => index.id == response.data[i].id) == -1)
+		      						driversResource.driversPerModel.push(response.data[i]);
+		      				}
 		      			});
 	      			}
 	      		}
