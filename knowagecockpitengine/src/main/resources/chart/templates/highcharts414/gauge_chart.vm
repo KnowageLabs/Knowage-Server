@@ -42,10 +42,24 @@
 	#end
 #end
 
+#set($type = 'gauge')
+#if(!$chart.subtype)
+	#set($subtype = 'simple')
+#else 
+	#if($chart.subtype=="vumetar")
+		#set($subtype = 'vumetar')
+	#elseif($chart.subtype=="solid")
+		#set($subtype = 'solid'),
+		#set($type = 'solidgauge')
+	#else
+		#set($type= 'solidgauge')
+		#set($subtype = 'activity')
+	#end
+#end
+
 {
     chart: {
-   		type: 'gauge',
-
+    	type: '$type',
 		#*
 			This parameter must be set to false, since if not defined
 			in the case where we have more than one Y-axis ticks on lines 
@@ -160,6 +174,7 @@
         #end
         
         background: [
+        #if($subtype=="simple")
         {
             backgroundColor: {
                 linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -184,7 +199,17 @@
             borderWidth: 0,
             outerRadius: '105%',
             innerRadius: '103%'
-        }]
+        }
+        #elseif($subtype=='solid')
+        {
+            innerRadius: '60%',
+            outerRadius: '100%',
+            shape: 'arc'
+        }
+        #else
+        
+        #end
+        ]
     },
     
     #set($axisList = {})
@@ -570,7 +595,9 @@
 					
 					#foreach($row in $rows)
 						#set ($serieValue = $row.get($serieColumnsMapped))
-						$serieValue,
+						{
+							y:$serieValue
+						},
 					#end
 		    	],
 		    	

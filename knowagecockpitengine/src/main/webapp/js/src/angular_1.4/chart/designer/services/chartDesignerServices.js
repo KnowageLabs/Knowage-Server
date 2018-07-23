@@ -687,7 +687,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					"PANE": {
 						"endAngle": 120,
 						"startAngle": -120
-					}
+					},
+					"subtype": "simple",
 				}
 
 			return guageTemp;
