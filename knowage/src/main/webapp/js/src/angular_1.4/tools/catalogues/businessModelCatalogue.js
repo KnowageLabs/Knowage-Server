@@ -358,7 +358,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.isCWMDirty = false;
 					if($scope.fileObj.fileName !== undefined)
 						$scope.saveBusinessModelFile();
-					$scope.$apply();
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'check');
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -394,7 +393,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					DriversService.deleteDrivers($scope.selectedBusinessModel.id, requiredPath);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'check');
 
-					$scope.$apply();
 
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
