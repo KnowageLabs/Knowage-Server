@@ -732,7 +732,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
   	    });
   }
     
-    $scope.tableDatasets = [{"label":"Label","name":"label","type":"text"},{"label":"Name","name":"name"},{"type": "buttons", "buttons": [{"name": "Preview Daeeetaset", "icon": "fa fa-eye", "action":$scope.previewDataset},{"name": "Show dataset details", "icon": "fa fa-pencil", "action": $scope.editFileDataset},{"name": "Open dataset in QBE", "icon": "fa fa-search", "action": $scope.showQbeDataset}]}];
+    $scope.tableDatasets = [{"label":"Label","name":"label","type":"text"},{"label":"Name","name":"name"},{"type": "buttons", "buttons": [{"name": "Preview Dataset", "icon": "fa fa-eye", "action":$scope.previewDataset},{"name": "Show dataset details", "icon": "fa fa-pencil", "action": $scope.editFileDataset},{"name": "Open dataset in QBE", "icon": "fa fa-search", "action": $scope.showQbeDataset}]}];
 
     $scope.getPreviewSet = function(dataset){
 
