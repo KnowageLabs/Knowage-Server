@@ -54,6 +54,28 @@
 	#set($subtype = 'activity')
 #end
 
+#*
+	If the number of series is grater then number of colors in Color Pallete, 
+	set the color of remaining series to default one. Otherwise, use colors 
+	from Color Pallete, defained by user. 
+*#
+#set($seriesNum = $series.size())
+#set($seriesColorsMapNum = $seriesColorsMap.size())
+
+#if($seriesNum > $seriesColorsMapNum)
+	
+	#foreach($colorObj in $series)
+		#set($counter = $foreach.index)	
+		#if($counter >= $seriesColorsMapNum)	
+			#set($color = $datasettransformer.getColorObject($counter))	
+			#set($temp = $seriesColorsMap)	
+			#set($new = $temp.add($color))	
+			#set($seriesColorsMap = $temp)			
+		#end			
+	#end	
+#end
+
+
 {
     chart: {
     	type: '$type',
@@ -203,8 +225,26 @@
             outerRadius: '100%',
             shape: 'arc'
         }
-        #else
-        
+        #elseif($subtype == 'activity')        	
+        	#set($offset = 0)
+        	#set($centerRadius = 25)
+        	#set($outer = 101)
+        	        
+        	#foreach($serie in $series)
+        		{	 
+        			#set($opacityColor = $seriesColorsMap[$foreach.index].value)
+        			       			
+        			#set($outerRadius = $outer - 1)
+        			outerRadius: $outerRadius+"%",        			
+        			#set($offset = (100 - $centerRadius) / $seriesNum)        		
+        			#set($innerRadius = $outerRadius - $offset)
+        			#set($outer = $innerRadius)
+        			innerRadius: $innerRadius +"%",
+        			backgroundColor: Highcharts.Color("$opacityColor")
+               				  .setOpacity(0.3)
+              				  .get()
+        		},
+        	#end
         #end
         ]
     },
@@ -526,6 +566,10 @@
     	*#
     	#set($colorFromPaletteCounter = 0)
     	
+		#set($offset = 0)
+    	#set($centerRadius = 25)
+    	#set($outer = 101)
+    	
     	#foreach($valueKey in $seriesMap.keySet())
     	
 	    	#set($relatedSerie = $seriesMap.get($valueKey))
@@ -589,12 +633,24 @@
 		        data: [
 		    	    #set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 		    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
-					
+															
 					#foreach($row in $rows)
-						#set ($serieValue = $row.get($serieColumnsMapped))
-						{
-							y:$serieValue
-						},
+						#set ($serieValue = $row.get($serieColumnsMapped))						
+																															
+							{
+								#if($subtype == 'activity')
+				        			
+				        			#set($outerRadius = $outer - 1)
+				        			color: '$relatedSerieColor',
+				        			radius: $outerRadius+"%",        			
+				        			#set($offset = (100 - $centerRadius) / $seriesNum)        		
+				        			#set($innerRadius = $outerRadius - $offset)
+				        			#set($outer = $innerRadius)
+				        			innerRadius: $innerRadius +"%",				        			
+		        				#end
+								y:$serieValue								
+							},
+						
 					#end
 		    	],
 		    	
@@ -931,6 +987,19 @@
         }
     },
     
+    #if($subtype == 'activity')
+	  plotOptions: {
+	        solidgauge: {
+	            dataLabels: {
+	                enabled: false
+	            },	            
+	            rounded: true
+	        },
+	        series: {
+         		turboThreshold: 0
+	        }
+    	},
+    #end
     
     #if($chart.EMPTYMESSAGE != '')
     lang: {

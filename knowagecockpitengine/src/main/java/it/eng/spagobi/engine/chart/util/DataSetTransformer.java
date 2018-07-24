@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,12 +41,14 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class DataSetTransformer {
 
+	public static transient Logger logger = Logger.getLogger(DataSetTransformer.class);
+
 	public void print(Object object) {
 
-		/*
-		 * System.out.println("-----------------------"); System.out.println(object); System.out.println(object.getClass().toString());
-		 * System.out.println("-----------------------");
-		 */
+		// System.out.println("-----------------------");
+		// System.out.println(object);
+		// System.out.println(object.getClass().toString());
+		// System.out.println("-----------------------");
 
 	}
 
@@ -1353,6 +1356,20 @@ public class DataSetTransformer {
 		/*
 		 * if (value.contains("_SUM")) return value.toLowerCase(); else return value;
 		 */
+	}
+
+	public JSONObject getColorObject(int counter) {
+		String[] defaultColors = { "#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1" };
+		JSONObject toReturn = new JSONObject();
+		String name = defaultColors[counter].substring(1, defaultColors[counter].length());
+		String value = defaultColors[counter];
+		try {
+			toReturn.put("name", name);
+			toReturn.put("value", value);
+		} catch (JSONException e) {
+			logger.error("Can not create JSON object", e);
+		}
+		return toReturn;
 	}
 
 }
