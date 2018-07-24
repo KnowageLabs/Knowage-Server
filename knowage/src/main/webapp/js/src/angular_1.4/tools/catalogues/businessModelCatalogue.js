@@ -350,10 +350,14 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					angular.copy($scope.selectedBusinessModel,$scope.savedBusinessModel);
 					$scope.businessModelList.push(response.data);
 					$scope.selectedVersions=[];
+					
 					DriversService.persistDrivers($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.persistVisualDependency($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.deleteDrivers($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.deleteVisualDependencies($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.deleteDataDependencies($scope.selectedBusinessModel.id, requiredPath);
+					
 					$scope.isDirty = false;
 					$scope.isCWMDirty = false;
 					if($scope.fileObj.fileName !== undefined)
@@ -387,10 +391,14 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.getBusinessModels();
 					$scope.isDirty = false;
 					$scope.selectedBusinessModel.modelLocker = response.data.modelLocker;
+					
 					DriversService.persistDrivers($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.persistVisualDependency($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
 					DriversService.deleteDrivers($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.deleteVisualDependencies($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.deleteDataDependencies($scope.selectedBusinessModel.id, requiredPath);
+					
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'check');
 
 

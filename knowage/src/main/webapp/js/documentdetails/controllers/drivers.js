@@ -288,12 +288,19 @@ angular
                          function() {});
              };
 
-             self.deleteCondition = function(index,name) {
-            	 self.confirmDelete(index,name);
+             self.deleteVisualCondition = function(index,name) {
+//            	 self.confirmDelete(index,name);
+            	 
+            	 driversService.visualDependenciesForDeleting.push(self.visibilityConditions[index]);
+            	 self.visibilityConditions.splice(index, 1);
              }
 
              self.deleteDataCondition = function(index,name) {
-            	 self.confirmDelete(index,name);
+            //	 self.confirmDelete(index,name);
+            	 
+            	driversService.dataDependenciesForDeleting.push(self.dataConditions[index]);
+           	  	self.dataConditions.splice(index, 1);          	 
+            	 
              }
 
              var setQuerryParameters = function(driverID){
