@@ -22,14 +22,10 @@ import java.io.Serializable;
 /**
  * Defines a Business Intelligence object
  */
-public class ObjParview implements Serializable {
+public class ObjParview extends AbstractParview implements Serializable {
 
 	private Integer objParId;
 	private Integer objParFatherId;
-	private Integer prog;
-	private String operation;
-	private String compareValue;
-	private String viewLabel;
 	private String objParFatherUrlName;
 
 	public String getObjParFatherUrlName() {
@@ -54,38 +50,6 @@ public class ObjParview implements Serializable {
 
 	public void setObjParFatherId(Integer objParFatherId) {
 		this.objParFatherId = objParFatherId;
-	}
-
-	public Integer getProg() {
-		return prog;
-	}
-
-	public void setProg(Integer prog) {
-		this.prog = prog;
-	}
-
-	public String getOperation() {
-		return operation;
-	}
-
-	public void setOperation(String operation) {
-		this.operation = operation;
-	}
-
-	public String getCompareValue() {
-		return compareValue;
-	}
-
-	public void setCompareValue(String compareValue) {
-		this.compareValue = compareValue;
-	}
-
-	public String getViewLabel() {
-		return viewLabel;
-	}
-
-	public void setViewLabel(String viewLabel) {
-		this.viewLabel = viewLabel;
 	}
 
 }

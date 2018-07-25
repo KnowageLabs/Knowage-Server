@@ -2,15 +2,11 @@ package it.eng.spagobi.behaviouralmodel.analyticaldriver.bo;
 
 import java.io.Serializable;
 
-public class MetaModelParview implements Serializable {
+public class MetaModelParview extends AbstractParview implements Serializable {
 
 	private Integer parviewId;
 	private Integer metaModelParId;
 	private Integer metaModelParFatherId;
-	private Integer prog;
-	private String operation;
-	private String compareValue;
-	private String viewLabel;
 	private String metaModelParFatherUrlName;
 
 	public Integer getParviewId() {
@@ -35,38 +31,6 @@ public class MetaModelParview implements Serializable {
 
 	public void setMetaModelParFatherId(Integer metaModelParFatherId) {
 		this.metaModelParFatherId = metaModelParFatherId;
-	}
-
-	public Integer getProg() {
-		return prog;
-	}
-
-	public void setProg(Integer prog) {
-		this.prog = prog;
-	}
-
-	public String getOperation() {
-		return operation;
-	}
-
-	public void setOperation(String operation) {
-		this.operation = operation;
-	}
-
-	public String getCompareValue() {
-		return compareValue;
-	}
-
-	public void setCompareValue(String compareValue) {
-		this.compareValue = compareValue;
-	}
-
-	public String getViewLabel() {
-		return viewLabel;
-	}
-
-	public void setViewLabel(String viewLabel) {
-		this.viewLabel = viewLabel;
 	}
 
 	public String getMetaModelParFatherUrlName() {

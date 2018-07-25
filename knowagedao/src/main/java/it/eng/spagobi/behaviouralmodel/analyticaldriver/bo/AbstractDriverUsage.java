@@ -9,6 +9,9 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import it.eng.spagobi.services.validation.Alphanumeric;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
@@ -16,8 +19,7 @@ import it.eng.spagobi.services.validation.NoSpaces;
 
 public class AbstractDriverUsage {
 
-	private Integer id = null;
-
+	private Integer id;
 	/* PAR_ID NUMBER N Parameter identifier */
 	@NotNull
 	private Integer parID = null;
@@ -74,18 +76,122 @@ public class AbstractDriverUsage {
 
 	private ParameterValuesRetriever parameterValuesRetriever = null;
 
-	public Integer getId() {
-		return id;
+	/* REQ_FL NUMBER Y Parameter required flag. */
+	private Integer required = null;
+
+	/* MOD_FL NUMBER Y Parameter modifiable flag. */
+	private Integer modifiable = null;
+
+	/* VIEW_FL NUMBER Y Paramenter visibility flag. */
+	@JsonDeserialize(using = BooleanJsonDeserializer.class)
+	@JsonSerialize(using = BooleanJsonSerializer.class)
+	private Integer visible = null;
+
+	/* MULT_FL NUMBER Y Multivalue parameter. */
+	private Integer multivalue = null;
+
+	public Integer getModifiable() {
+		return modifiable;
 	}
 
 	/**
-	 * Sets the id.
+	 * Sets the modifiable.
 	 *
-	 * @param id
-	 *            The BIObjectParameter to set
+	 * @param modifiable
+	 *            The modifiable to set.
 	 */
-	public void setId(Integer id) {
-		this.id = id;
+	public void setModifiable(Integer modifiable) {
+		this.modifiable = modifiable;
+	}
+
+	/**
+	 * Gets the multivalue attribute that is equal to 0 if the parameter is not multivalue, 1 otherwise .
+	 *
+	 * @return Returns the multivalue.
+	 */
+	@JsonIgnore
+	public Integer getMultivalue() {
+		return multivalue;
+	}
+
+	@JsonProperty(value = "multivalue")
+	public boolean isMultivalue() {
+		if (multivalue == null)
+			return false;
+		return multivalue.intValue() > 0;
+	}
+
+	/**
+	 * Sets the multivalue.
+	 *
+	 * @param multivalue
+	 *            The multivalue to set.
+	 */
+	@JsonIgnore
+	public void setMultivalue(Integer multivalue) {
+		this.multivalue = multivalue;
+	}
+
+	public void setMultivalue(boolean multivalue) {
+		if (multivalue)
+			this.multivalue = 1;
+		else
+			this.multivalue = 0;
+	}
+
+	/**
+	 * Gets the parameter url name.
+	 *
+	 * @return Returns the parameterUrlName.
+	 */
+
+	@JsonIgnore
+	public Integer getRequired() {
+		return required;
+	}
+
+	@JsonProperty(value = "required")
+	public boolean isRequired() {
+		if (required == null)
+			return false;
+		return required.intValue() > 0;
+	}
+
+	/**
+	 * Sets the required.
+	 *
+	 * @param required
+	 *            The required to set.
+	 */
+	@JsonIgnore
+	public void setRequired(Integer required) {
+		this.required = required;
+	}
+
+	public void setRequired(boolean required) {
+		if (required)
+			this.required = 1;
+		else
+			this.required = 0;
+	}
+
+	/**
+	 * Gets the visible.
+	 *
+	 * @return Returns the visible.
+	 */
+	public Integer getVisible() {
+		return visible;
+	}
+
+	/**
+	 * Sets the visible.
+	 *
+	 * @param visible
+	 *            The visible to set.
+	 */
+	public void setVisible(Integer visible) {
+		this.visible = visible;
 	}
 
 	/**
@@ -342,6 +448,18 @@ public class AbstractDriverUsage {
 
 	public void setThickPerc(Integer thickPerc) {
 		this.thickPerc = thickPerc;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public boolean isHasValidValues() {
+		return hasValidValues;
 	}
 
 }
