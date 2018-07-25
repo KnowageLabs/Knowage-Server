@@ -41,7 +41,9 @@
         var template = templateService.template;
         var document = documentService.document;
         DriversService.setDriverRelatedObject(document);
+        if(document.id != undefined){
 		DriversService.getDriversOnRelatedObject(requiredPath,document.id + "/drivers");
+        }
 		documentService.drivers = DriversService.driversOnObject
         self.analyticalDrivers = DriversService.analyticalDrivers;
         self.lovIdAndColumns = DriversService.lovIdAndColumns;
@@ -58,6 +60,7 @@
 
         	persistDocument();
 
+        	if(document.id != undefined){
         	DriversService.persistDrivers(document.id,requiredPath);
         	DriversService.deleteDrivers(document.id,requiredPath);
 
@@ -66,7 +69,7 @@
 
         	DriversService.persistVisualDependency(document.id,requiredPath);
         	DriversService.deleteVisualDependencies(document.id,requiredPath);
-
+        	}
         	outputParametersService.persistOutputParameters();
         	outputParametersService.deleteOutputParameters();
 
