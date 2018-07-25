@@ -838,7 +838,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
                 formatter: function() {
                     return '' + Highcharts.dateFormat(dateF, this.value);
                 },  
-                rotation: (chartConf.xaxis.labels.rotation!=undefined && chartConf.xaxis.labels.rotation!="") ? chartConf.xaxis.labels.rotation : '',	
+                rotation: (chartConf.xaxis.labels.rotation!=undefined && chartConf.xaxis.labels.rotation!="") ? chartConf.xaxis.labels.rotation : 0,	
                 align: (chartConf.xaxis.labels.align!=undefined && chartConf.xaxis.labels.align!="") ? chartConf.xaxis.labels.align : undefined,	
                 style:{
                 	color: (chartConf.xaxis.labels.style.color!=undefined && chartConf.xaxis.labels.style.color!="" && chartConf.xaxis.labels.style.color!="transparent") ? chartConf.xaxis.labels.style.color : '',
@@ -891,7 +891,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
            
               // x: 5,
               // y: 15,
-                rotation: (chartConf.xaxis.labels.rotation!=undefined && chartConf.xaxis.labels.rotation!="") ? chartConf.xaxis.labels.rotation : '',	
+                rotation: (chartConf.xaxis.labels.rotation!=undefined && chartConf.xaxis.labels.rotation!="") ? chartConf.xaxis.labels.rotation : 0,	
                 align: (chartConf.xaxis.labels.align!=undefined && chartConf.xaxis.labels.align!="") ? chartConf.xaxis.labels.align : undefined,	
                 style:{
                 	color: (chartConf.xaxis.labels.style.color!=undefined && chartConf.xaxis.labels.style.color!="" && chartConf.xaxis.labels.style.color!="transparent") ? chartConf.xaxis.labels.style.color : '',
@@ -997,7 +997,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
         		}
         	},
             labels:{
-            	rotation: (chartConf.yaxis.labels.rotation!=undefined && chartConf.yaxis.labels.rotation!="") ? chartConf.yaxis.labels.rotation : '',	
+            	rotation: (chartConf.yaxis.labels.rotation!=undefined && chartConf.yaxis.labels.rotation!="") ? chartConf.yaxis.labels.rotation : 0,	
                 align: (chartConf.yaxis.labels.align!=undefined && chartConf.yaxis.labels.align!="") ? chartConf.yaxis.labels.align : '',	
         		
         		/**
