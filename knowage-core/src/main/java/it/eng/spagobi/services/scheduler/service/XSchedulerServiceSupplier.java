@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,27 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.services.scheduler.service;
-
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.deserializer.Deserializer;
-import it.eng.spagobi.commons.deserializer.DeserializerFactory;
-import it.eng.spagobi.commons.deserializer.TriggerXMLDeserializer;
-import it.eng.spagobi.commons.serializer.JobXMLSerializer;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.commons.serializer.XMLSerializer;
-import it.eng.spagobi.commons.utilities.SpagoBITracer;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.scheduler.bo.Job;
-import it.eng.spagobi.tools.scheduler.bo.Trigger;
-import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +25,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.quartz.ObjectAlreadyExistsException;
+
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.deserializer.Deserializer;
+import it.eng.spagobi.commons.deserializer.DeserializerFactory;
+import it.eng.spagobi.commons.deserializer.TriggerXMLDeserializer;
+import it.eng.spagobi.commons.serializer.JobXMLSerializer;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.serializer.XMLSerializer;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.scheduler.bo.Job;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 
@@ -176,6 +174,7 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 			servreponse.append("<EXECUTION_OUTCOME ");
 			schedulerDAO.deleteTrigger(triggerName, triggerGroup);
 		} catch (Exception e) {
+			logger.error("Cannot delete trigger", e);
 			servreponse.append("outcome=\"fault\"/>");
 		}
 		servreponse.append("outcome=\"perform\"/>");
@@ -190,7 +189,7 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 			schedulerDAO.deleteJob(jobName, jobGroupName);
 			servreponse.append("outcome=\"perform\"/>");
 		} catch (Exception e) {
-			SpagoBITracer.critical(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "deleteJob", "Error while deleting job", e);
+			logger.error("Cannot delete job", e);
 			servreponse.append("outcome=\"fault\"/>");
 		}
 		return servreponse.toString();
@@ -202,11 +201,10 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 		try {
 			Deserializer deserializer = DeserializerFactory.getDeserializer("application/xml");
 			Job job = (Job) deserializer.deserialize(xmlRequest, Job.class);
-
 			schedulerDAO.insertJob(job);
-
 			servreponse.append("<EXECUTION_OUTCOME outcome=\"perform\"/>");
 		} catch (Exception e) {
+			logger.error("Cannot insert job", e);
 			servreponse.append("<EXECUTION_OUTCOME outcome=\"fault\"/>");
 		}
 		return servreponse.toString();
@@ -228,7 +226,7 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 			// servreponse.append("<EXECUTION_OUTCOME outcome=\"perform\"/>");
 		} catch (Exception e) {
 			// something wrong
-			logger.error("Cannot schedule job", e);
+			logger.error("Cannot save trigger", e);
 			try {
 				resp.put("Status", "NON OK");
 				JSONArray ja = new JSONArray();
