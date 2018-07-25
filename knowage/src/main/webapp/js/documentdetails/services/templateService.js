@@ -33,12 +33,12 @@
     	        	if(templateResource.file.file) {
     	        		var templateUploadBasePath = documentService.document.id + '/templates';
     	        		multipartForm.post(requiredPath +"/"+ templateUploadBasePath, templateResource.file).then(function(response){
-    	        			getAllTemplates();
+    	        			templateResource.getAllTemplates();
     	  	      	  });
     	        	}
     	        };
     	        
-    	        var getAllTemplates = function() {
+    	        templateResource.getAllTemplates = function() {
     	        	var templateBasePath = documentService.document.id + '/templates';
     	        	resourceService.get(requiredPath, templateBasePath).then(function(response) {
     	        		templateResource.listOfTemplates = response.data;

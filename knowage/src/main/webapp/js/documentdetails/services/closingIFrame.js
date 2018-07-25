@@ -18,11 +18,12 @@
 
 (function () {
 	angular.module('DocumentDetails')
-		.service('closingIFrame', ['$mdDialog', function($mdDialog) {    		  
+		.service('closingIFrame', ['$mdDialog', 'templateService', function($mdDialog, templateService) {    		  
     		   
 			this.close = function() {    			   
 				window.addEventListener("message", function(e) {
 					$mdDialog.cancel();
+					templateService.getAllTemplates();
 				});    			   
 			}    		       		   
     		       		   
