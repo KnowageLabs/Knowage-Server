@@ -113,7 +113,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <body>
-<h2>Welcome to SpagoBI SDK - JS API demo</h2>
+<h2>Welcome to Knowage SDK - JS API demo</h2>
 <br/>
 
 <div id="authentication" style="display:inline">
