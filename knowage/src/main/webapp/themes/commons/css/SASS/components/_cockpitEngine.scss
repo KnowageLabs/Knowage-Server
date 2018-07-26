@@ -66,6 +66,7 @@
 	    		
 	    		@include coolScrollBars($baseColor,6px);
 	    		.md-subheader {
+	    			cursor: pointer;
 	    			border-bottom: 1px solid $bordersColor;
 	    			._md-subheader-inner {
 		    			padding:8px;
@@ -75,9 +76,15 @@
 						    align-items: center;
 						    justify-content: space-between;
 						    height: 14px;
-						    md-icon {
-						    	margin:0;
+						    .md-button {
+						    	padding:0;
+						    	height: 30px;
+						    	min-height: 30px;
+						    	md-icon {
+						    		margin:0;
+						    	}
 						    }
+						    
 		    			}
 		    		}
 	    		}
@@ -167,6 +174,35 @@
     	}
     	
     }
+
+    .discoveryWidgetConfiguration {
+    	position: absolute;
+   		width: 90%;
+   		height: 90%;
+   		margin: 2% 5%;
+		.facetReady {
+			transition: opacity .3s linear;
+			.fa-stack {
+				width: 24px;
+			    height: 24px;
+			    line-height: 24px;
+			}
+    		.fa-stack-2x {
+    			height: 24px;
+    			line-height: 24px;
+    			opacity: 0;
+    		}
+    		.facet-hidden {
+    			opacity: 1;
+    		}
+    		&:hover {
+				.fa-stack-2x {
+	    			opacity: .6;
+	    		}
+    		}
+    	}
+    }
+
     cockpit-image-widget {
     	width:100%;
 		height:100%;
@@ -1499,6 +1535,9 @@
 					md-pagination-wrapper {
 						.md-tab {
 							span {
+								&.viewModeSheet {
+									top: -1px;
+								}
 								top: -8px;
 							}
 						}
