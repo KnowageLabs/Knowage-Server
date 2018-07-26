@@ -32,7 +32,7 @@
 								<md-grid-tile class="imageContainer" ng-repeat="img in listImages" flex ng-click="model.content.imgId=img.imgId" ng-class="{'selectedImage' : model.content.imgId==img.imgId }">
 									<md-button ng-click="erase($event, img)" aria-label="erase image" class="md-icon-button imageEraser">
 										<md-tooltip md-delay="500">Delete Image</md-tooltip>
-										<md-icon md-font-icon="fa fa-trash"/>
+										<md-icon md-font-icon="fa fa-trash"></md-icon>
 									</md-button>
 									<img ng-src="{{getImageUrl(img)}}" alt="{{img.name}}" >
 									<md-grid-tile-footer><h3>{{img.name}}</h3></md-grid-tile-footer>
