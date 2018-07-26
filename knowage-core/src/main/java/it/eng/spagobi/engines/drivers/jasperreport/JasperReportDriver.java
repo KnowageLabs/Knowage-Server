@@ -31,7 +31,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Subreport;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
-import it.eng.spagobi.engines.drivers.AbstractDriver;
+import it.eng.spagobi.engines.drivers.AbstractEngineDriver;
 import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
@@ -49,7 +49,7 @@ import org.json.JSONException;
 /**
  * Driver Implementation (IEngineDriver Interface) for Jasper Report Engine.
  */
-public class JasperReportDriver extends AbstractDriver implements IEngineDriver {
+public class JasperReportDriver extends AbstractEngineDriver implements IEngineDriver {
 
 	static Logger logger = Logger.getLogger(JasperReportDriver.class);
 

@@ -28,7 +28,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.engines.drivers.AbstractDriver;
+import it.eng.spagobi.engines.drivers.AbstractEngineDriver;
 import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
@@ -47,7 +47,7 @@ import org.json.JSONException;
 /**
  * Driver Implementation (IEngineDriver Interface) for Geo External Engine.
  */
-public class GeoDriver extends AbstractDriver implements IEngineDriver {
+public class GeoDriver extends AbstractEngineDriver implements IEngineDriver {
 
 	static private Logger logger = Logger.getLogger(GeoDriver.class);
 

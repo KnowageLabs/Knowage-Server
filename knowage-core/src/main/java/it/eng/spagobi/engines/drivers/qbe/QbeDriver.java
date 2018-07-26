@@ -27,7 +27,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
-import it.eng.spagobi.engines.drivers.AbstractDriver;
+import it.eng.spagobi.engines.drivers.AbstractEngineDriver;
 import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
@@ -49,7 +49,7 @@ import org.json.JSONException;
 /**
  * Driver Implementation (IEngineDriver Interface) for Qbe External Engine.
  */
-public class QbeDriver extends AbstractDriver implements IEngineDriver {
+public class QbeDriver extends AbstractEngineDriver implements IEngineDriver {
 
 	static private Logger logger = Logger.getLogger(QbeDriver.class);
 

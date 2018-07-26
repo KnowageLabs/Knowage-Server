@@ -35,7 +35,7 @@ import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.engines.drivers.AbstractDriver;
+import it.eng.spagobi.engines.drivers.AbstractEngineDriver;
 import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
@@ -57,7 +57,7 @@ import org.json.JSONObject;
 /**
  * Driver Implementation (IEngineDriver Interface) for Network External Engine.
  */
-public class NetworkDriver extends AbstractDriver implements IEngineDriver {
+public class NetworkDriver extends AbstractEngineDriver implements IEngineDriver {
 
 	static private Logger logger = Logger.getLogger(NetworkDriver.class);
 

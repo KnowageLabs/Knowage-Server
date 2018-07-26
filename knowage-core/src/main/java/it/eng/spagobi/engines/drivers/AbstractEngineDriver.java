@@ -47,16 +47,16 @@ import it.eng.spagobi.services.common.SsoServiceInterface;
 /**
  * @author Angelo Bernabei angelo.bernabei@eng.it
  */
-public class AbstractDriver {
+public class AbstractEngineDriver {
 
 	private static final String DESCRIPTION_SUFFIX = "_description";
 
-	static Logger logger = Logger.getLogger(AbstractDriver.class);
+	static Logger logger = Logger.getLogger(AbstractEngineDriver.class);
 
 	/**
 	 *
 	 */
-	public AbstractDriver() {
+	public AbstractEngineDriver() {
 		super();
 	}
 
