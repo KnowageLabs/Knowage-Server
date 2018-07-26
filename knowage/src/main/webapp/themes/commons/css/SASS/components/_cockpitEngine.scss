@@ -1473,6 +1473,9 @@
 					md-pagination-wrapper {
 						.md-tab {
 							span {
+								&.viewModeSheet {
+									top: -1px;
+								}
 								top: -8px;
 							}
 						}
