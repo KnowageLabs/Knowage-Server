@@ -751,14 +751,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
   	    });
     }
     
-//    function visible(dataset) {
-//    	$scope.selectedDataset = dataset;
-//    	return (dataset.qbeDatamarts || dataset.federationName)
-//    	
-//    	
-//    }
-    
-    
     
     $scope.tableDatasets = [
     	{"label":"Label","name":"label","type":"text"},
