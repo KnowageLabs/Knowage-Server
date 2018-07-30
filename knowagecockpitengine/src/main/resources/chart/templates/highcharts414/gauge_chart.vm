@@ -47,7 +47,7 @@
 #if($chart.subtype && $chart.subtype=="vumetar")
 	#set($subtype = 'vumetar')
 #elseif($chart.subtype && $chart.subtype=="solid")
-	#set($subtype = 'solid'),
+	#set($subtype = 'solid')
 	#set($type = 'solidgauge')
 #elseif($chart.subtype && $chart.subtype=="activity")
 	#set($type= 'solidgauge')
@@ -381,6 +381,9 @@
 	            #if($yAxis.endOnTickGauge)
 	            	endOnTick: $yAxis.endOnTickGauge,
 	            #end
+	            
+	            $datasettransformer.print($yAxis)
+	            
 	        	#if($yAxis.minorTickInterval == '' ||  $yAxis.minorTickInterval == '0' || $yAxis.minorTickInterval == 'auto')
 	        		minorTickInterval: 'auto',
         		#else
@@ -524,7 +527,18 @@
 				        	}
 			        	#end
 			        	*#
-			        	]
+			        	],
+			        	#if($subtype=="solid")
+				        	stops:[
+			        
+						        #foreach($plotElement in $plots)   																								
+								
+								[$plotElement.to/$yAxis.max,'$plotElement.color'],
+																												      																							        		
+								#end
+						
+							],
+						 #end 	
 			        #end 
 		        #end
 		        },
