@@ -128,6 +128,7 @@ public class DataSetJSONSerializer implements Serializer {
 	public static final String CKAN_URL = "ckanUrl";
 	public static final String CKAN_ID = "ckanId";
 	public static final String FEDERATION_ID = "federationId";
+	public static final String FEDERATION_NAME = "federationName";
 
 	public static final String IS_REALTIME = "isRealtime";
 	public static final String IS_ITERABLE = "isIterable";
@@ -151,6 +152,7 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(DESCRIPTION, ds.getDescription());
 			if (ds.getDatasetFederation() != null) {
 				result.put(FEDERATION_ID, ds.getDatasetFederation().getFederation_id());
+				result.put(FEDERATION_NAME, ds.getDatasetFederation().getName());
 			}
 
 			Integer numObjAssociated = DAOFactory.getDataSetDAO().countBIObjAssociated(dsId);
@@ -362,6 +364,7 @@ public class DataSetJSONSerializer implements Serializer {
 					result.put(QBE_JSON_QUERY, jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 					result.put(QBE_DATA_SOURCE, jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
 					result.put(FEDERATION_ID, ds.getDatasetFederation().getFederation_id());
+					result.put(FEDERATION_NAME, ds.getDatasetFederation().getName());
 				} else if (type.equalsIgnoreCase(DataSetConstants.WEB_SERVICE)) {
 					String ws_address = jsonConf.getString(DataSetConstants.WS_ADDRESS);
 					if (ws_address != null) {

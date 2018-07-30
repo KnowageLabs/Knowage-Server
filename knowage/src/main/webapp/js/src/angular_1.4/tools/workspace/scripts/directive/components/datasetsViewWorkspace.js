@@ -38,7 +38,7 @@ angular
 	  	};
 	})
 
-function datasetsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window, $mdSidenav,
+function datasetsController($scope, sbiModule_restServices, sbiModule_translate, sbiModule_messaging,$mdDialog, sbiModule_config, $window, $mdSidenav,
 		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n){
 
 	$scope.maxSizeStr = maxSizeStr;
@@ -97,6 +97,17 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.datasetSavedFromQbe = false;
 
 	$scope.datasetTemp = null;
+	
+	function createSourceNameOnDataset(datasetsArray) {
+		for(var i=0; i < datasetsArray.length; i++) {
+			var index = datasetsArray.indexOf(datasetsArray[i]);
+			if(datasetsArray[i].hasOwnProperty("qbeDatamarts")) {
+				datasetsArray[index].sourceName = datasetsArray[i].qbeDatamarts;
+			} else if(datasetsArray[i].hasOwnProperty("federationName")) {
+				datasetsArray[index].sourceName = datasetsArray[i].federationName;
+			}
+		}
+	}
 
     $scope.markNotDerived = function(datasets){
 
@@ -133,6 +144,9 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		sbiModule_restServices.promiseGet("1.0/datasets/mydata", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.datasets);
+			
+			createSourceNameOnDataset($scope.datasets);
+			
 			$scope.markNotDerived($scope.datasets);
 			angular.copy($scope.datasets,$scope.datasetsInitial);
 			console.info("[LOAD END]: Loading of All datasets is finished.");
@@ -182,6 +196,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		sbiModule_restServices.promiseGet("1.0/datasets/owned", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.myDatasets);
+			createSourceNameOnDataset($scope.myDatasets);
 			$scope.markNotDerived($scope.myDatasets);
 			angular.copy($scope.myDatasets,$scope.myDatasetsInitial);
 			console.info("[LOAD END]: Loading of My datasets is finished.");
@@ -214,16 +229,18 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		.then(function(response) {
 			var enterpriseDatasetsWithParams = [];
 			angular.copy(response.data.root,enterpriseDatasetsWithParams);
+			
 			for (var i = 0; i < enterpriseDatasetsWithParams.length; i++) {
 				if(enterpriseDatasetsWithParams[i].pars.length==0){
 					$scope.enterpriseDatasets.push(enterpriseDatasetsWithParams[i]);
 				}
 			}
 			//angular.copy(response.data.root,$scope.enterpriseDatasets);
+			createSourceNameOnDataset($scope.enterpriseDatasets);
 			$scope.markNotDerived($scope.enterpriseDatasets);
+			
 			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
 			console.info("[LOAD END]: Loading of Enterprised datasets is finished.");
-
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 
 		},function(response){
@@ -257,6 +274,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 					$scope.sharedDatasets.push(sharedDatasetsWithParams[i]);
 				}
 			}
+			createSourceNameOnDataset($scope.sharedDatasets);
 			$scope.markNotDerived($scope.sharedDatasets);
 		    angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
 			console.info("[LOAD END]: Loading of Shared datasets is finished.");
@@ -398,6 +416,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		}
 		var alreadySelected = (dataset !== undefined && $scope.selectedDataset === dataset);
 		$scope.selectedDataset = dataset;
+		
 		if (alreadySelected) {
 			$scope.selectedDataset=undefined;
 			$scope.setDetailOpen(!$scope.showDatasetDetail);
@@ -730,10 +749,29 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
   	         // previewDatasetColumns:$scope.previewDatasetColumns
   	      }
   	    });
-  }
+    }
     
-    $scope.tableDatasets = [{"label":"Label","name":"label","type":"text"},{"label":"Name","name":"name"},{"type": "buttons", "buttons": [{"name": "Preview Dataset", "icon": "fa fa-eye", "action":$scope.previewDataset},{"name": "Show dataset details", "icon": "fa fa-pencil", "action": $scope.editFileDataset},{"name": "Open dataset in QBE", "icon": "fa fa-search", "action": $scope.showQbeDataset}]}];
-
+//    function visible(dataset) {
+//    	$scope.selectedDataset = dataset;
+//    	return (dataset.qbeDatamarts || dataset.federationName)
+//    	
+//    	
+//    }
+    
+    
+    
+    $scope.tableDatasets = [
+    	{"label":"Label","name":"label","type":"text"},
+    	{"label":"Name","name":"name","type":"text"},
+    	{"label":"BM/F", "name": "sourceName","type":"text"},
+    	{"type": "buttons", "buttons": [
+    		{"name": "Preview Dataset", "icon": "fa fa-eye", "action":$scope.previewDataset, "visible": function(){return true;} },
+    		{"name": "Show dataset details", "icon": "fa fa-pencil-square-o", "action": $scope.editFileDataset, "visible": function(ds){ return (ds.fileType) && (ds.dsTypeCd=='File')} },
+    		{"name": "Edit dataset", "icon": "fa fa-pencil-square-o", "action": $scope.editQbeDataset, "visible": function(ds){ return ((ds.fileType) && (ds.dsTypeCd == 'Federated' || ds.dsTypeCd == 'Qbe'))} },
+    		{"name": "Open dataset in QBE", "icon": "fa fa-search", "action": $scope.showQbeDataset, "visible": function(ds){return !ds.derivated && ds.pars.length == 0}}
+    	]}
+    ];
+    
     $scope.getPreviewSet = function(dataset){
 
     	var datasetType = dataset.dsTypeCd.toUpperCase();

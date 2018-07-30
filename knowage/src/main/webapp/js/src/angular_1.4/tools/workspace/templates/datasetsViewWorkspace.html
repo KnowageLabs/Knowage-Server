@@ -9,7 +9,6 @@
 				    <md-tab id="my-dataset" label="{{translate.load('sbi.workspace.dataset.my')}}" flex ng-click="switchDatasetsTab('myDataSet')">
 				       
 				       <md-tab-body>
-				       
 					 	  <dataset-view flex style='overflow: auto;' ng-model="myDatasets"
 							show-grid-view="showGridView"
 							show-qbe-enabled="true"
@@ -137,9 +136,9 @@
 								select-dataset-action="selectDataset(ds);"
 								edit-qbe-dataset-action="editQbeDataset(ds);"
 								show-qbe-dataset-action="showQbeDataset(ds);"
-								preview-dataset-action= "previewDataset(ds);"	
-								table-columns="tableDatasets"						
-					 	  	></dataset-view>	
+								preview-dataset-action= "previewDataset(ds);"
+								table-columns="tableDatasets"
+					 	  	></dataset-view>
 				 	  	</md-tab-body>
 				 	</md-tab>    
 				 	
@@ -242,8 +241,19 @@
 							          <div class="md-list-item-text">
 							            <h3><b>{{translate.load("sbi.ds.changedon")}}</b></h3>
 							            <p>{{selectedDataset.dateIn | date}}</p>
-							          </div>
-							         
+							          </div>  
+							 </md-list-item>
+							 <md-list-item class="md-2-line" ng-if="selectedDataset.qbeDatamarts">
+							 	<div class="md-list-item-text" ng-if="selectedDataset.qbeDatamarts">
+							 		<h3><b>{{translate.load("sbi.ds.businessModel")}}</b></h3>
+							 		<p>{{selectedDataset.qbeDatamarts}}</p>
+							 	</div>
+							 </md-list-item>
+							 <md-list-item class="md-2-line" ng-if="selectedDataset.federationName">
+							 	<div class="md-list-item-text">
+							 		<h3><b>{{translate.load("sbi.ds.federationModel")}}</b></h3>
+							 		<p>{{selectedDataset.federationName}}</p>
+							 	</div>
 							 </md-list-item>
 						</md-list>
 					</md-content>
