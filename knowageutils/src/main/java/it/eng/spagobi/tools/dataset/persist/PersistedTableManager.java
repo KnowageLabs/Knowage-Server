@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -316,12 +317,21 @@ public class PersistedTableManager implements IPersistedManager {
 		IMetaData storeMeta = datastore.getMetaData();
 		int fieldCount = storeMeta.getFieldCount();
 		int recordCount = (int) datastore.getRecordsCount();
+		
 		if (fieldCount == 0 || recordCount == 0) {
 			return new PreparedStatement[0];
 		}
 
+		//TODO Pre Fill Column Size
+		try {
+			fillSizeColumn(connection);
+		} catch (DataBaseException | SQLException e1) {
+			logger.error("impossible to prefill column size");
+			e1.printStackTrace();
+		}
+		//---------------
+		
 		PreparedStatement[] toReturn = new PreparedStatement[recordCount];
-
 		StringBuilder insertSB = new StringBuilder("INSERT INTO ");
 		insertSB.append(getTableName());
 		insertSB.append(" (");
@@ -402,6 +412,7 @@ public class PersistedTableManager implements IPersistedManager {
 				if (this.isRowCountColumIncluded()) {
 					statement.setLong(1, i + 1);
 				}
+				
 
 				List<Integer> sortedIds = new ArrayList<>();
 				for (int j = 0; j < record.getFields().size(); j++) {
@@ -412,6 +423,7 @@ public class PersistedTableManager implements IPersistedManager {
 				if (!doInsert) {
 					sortedIds.add(idFieldIndex);
 				}
+				
 
 				for (int j = 0; j < sortedIds.size(); j++) {
 					try {
@@ -419,13 +431,28 @@ public class PersistedTableManager implements IPersistedManager {
 						IFieldMetaData fieldMeta = storeMeta.getFieldMeta(index);
 						IField field = record.getFieldAt(index);
 						Object fieldValue = field.getValue();
-						String fieldMetaName = fieldMeta.getName();
+						//String fieldMetaName = fieldMeta.getName();
+						String fieldMetaName = fieldMeta.getAlias() != null ? fieldMeta.getAlias() : fieldMeta.getName();
 						String fieldMetaTypeName = fieldMeta.getType().toString();
 						boolean isfieldMetaFieldTypeMeasure = fieldMeta.getFieldType().equals(FieldType.MEASURE);
-
+						Map<String,Integer> columnSizeCopy = new HashMap<String,Integer>();
 						int fieldIndex = isRowCountColumIncluded() ? j + 1 : j;
 						PersistedTableHelper.addField(statement, fieldIndex, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure,
-								getColumnSize());
+								columnSizeCopy);
+						//Refresh the columnSize
+						Integer oldLen = getColumnSize().get(fieldMetaName);
+						Integer newLen = columnSizeCopy.get(fieldMetaName);
+						
+						if(oldLen != null && newLen != null) {
+							if(newLen > oldLen) {
+								getColumnSize().remove(fieldMetaName);
+								getColumnSize().put(fieldMetaName, newLen);
+								Statement ps = connection.createStatement();
+									String query = "ALTER TABLE " + tableName +" MODIFY COLUMN " + fieldMetaName + " " + getDBFieldTypeFromAlias(datasource, fieldMeta) + " ;";
+								ps.executeUpdate(query);
+								
+							}
+						}
 					} catch (Exception e) {
 						throw new RuntimeException("An unexpected error occured while preparing statemenet for record [" + i + "]", e);
 					}
@@ -660,6 +687,28 @@ public class PersistedTableManager implements IPersistedManager {
 		}
 		return toReturn;
 	}
+	
+	private void fillSizeColumn(Connection connection) throws DataBaseException, SQLException {
+		Set<Object> ids = new HashSet<>();
+		Map<String,Integer> columnSize= getColumnSize();
+		StringBuilder selectQuery = new StringBuilder();
+		selectQuery.append("SELECT * FROM ");
+		selectQuery.append(getTableName());
+
+		try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery.toString())) {
+			if (queryTimeout > 0) {
+				preparedStatement.setQueryTimeout(queryTimeout);
+			}
+			try (ResultSet rs = preparedStatement.executeQuery()) {
+				ResultSetMetaData rsmd = rs.getMetaData();
+				while (rs.next()) {
+					int i = 1;
+					for(i = 1; i <=rsmd.getColumnCount(); i++)
+						columnSize.put(rsmd.getColumnName(i), rsmd.getColumnDisplaySize(i));
+				}
+			}
+		}
+	}
 
 	private void initializeStatement(PreparedStatement statement, IRecord record, IMetaData storeMeta) {
 		for (int j = 0; j < record.getFields().size(); j++) {
@@ -740,6 +789,21 @@ public class PersistedTableManager implements IPersistedManager {
 		CacheDataBase dataBase = DataBaseFactory.getCacheDataBase(dataSource);
 		if (getColumnSize().get(fieldMetaData.getName()) != null) {
 			dataBase.setVarcharLength(getColumnSize().get(fieldMetaData.getName()));
+		}
+		Class type = fieldMetaData.getType();
+		if (fieldMetaData.getFieldType().equals(FieldType.MEASURE) && type == String.class) {
+			logger.debug("Column type is string but the field is measure: converting it into a double");
+			type = Double.class;
+		}
+
+		return dataBase.getDataBaseType(type);
+	}
+	
+	private String getDBFieldTypeFromAlias(IDataSource dataSource, IFieldMetaData fieldMetaData) throws DataBaseException {
+		CacheDataBase dataBase = DataBaseFactory.getCacheDataBase(dataSource);
+		Integer alias = getColumnSize().get(fieldMetaData.getAlias());
+		if (alias != null) {
+			dataBase.setVarcharLength(alias);
 		}
 		Class type = fieldMetaData.getType();
 		if (fieldMetaData.getFieldType().equals(FieldType.MEASURE) && type == String.class) {

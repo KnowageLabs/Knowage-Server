@@ -81,7 +81,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 	private static final String DEFAULT_TIME_PATTERN = "HH:mm:ss";
 
 	private static final String DEFAULT_TIMESTAMP_PATTERN_UNQUOTED = "yyyy-MM-ddTHH:mm:ss.SSSZ";
-
+	
 	private static final String DEFAULT_TIMESTAMP_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
 	private static final String ATTRIBUTES_DIRECTLY = "attributesDirectly";
@@ -641,6 +641,10 @@ public class JSONPathDataReader extends AbstractDataReader {
 		// time or everything else
 		if (typeString.toLowerCase().startsWith("time")) {
 			return DEFAULT_TIME_PATTERN;
+		}
+		
+		if (typeString.startsWith("ISO8601")) {
+			return DEFAULT_TIMESTAMP_PATTERN;
 		}
 
 		Assert.assertUnreachable("type date not recognized: " + typeString);
