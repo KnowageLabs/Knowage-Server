@@ -326,10 +326,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.manageCalendar")}}</label>
 			       </div> 
 			   </div>
-			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('manageCalendar')">
+			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('manageInternationalization')">
 				   <md-input-container class="small counter"> 
 			         <md-checkbox
-			           ng-change="setDirty()"  ng-model="selectedRole.ableToManageInternationalization" aria-label="check" name="Internationalization">
+			           ng-change="setDirty()"  ng-model="selectedRole.ableToManageInternationalization" aria-label="check" name="manageInternationalization">
 		        	 </md-checkbox> 
 			       </md-input-container>
 			       <div>

@@ -51,7 +51,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 	               {dbname:"MANAGE_KPI_VALUE",label:"manageKpiValue",visible:false, category:"MANAGE"},
 	               {dbname:"FUNCTIONS_CATALOG_USAGE",label:"functionsCatalogUsage",visible:false, category:"ITEMS"},
 	               {dbname:"HIERARCHIES_MANAGEMENT",label:"hierarchiesManagement",visible:false, category:"ITEMS"},
-	               {dbname:"FINAL_USER_INTERNATIONALIZATION",label:"finalUserInternationalization",visible:false, category:"MANAGE"}
+	               {dbname:"MANAGE_INTERNATIONALIZATION",label:"manageInternationalization",visible:false, category:"MANAGE"}
 	               ];
 
 	var showEEAuthorizations = sbiModule_user.functionalities.indexOf("EnterpriseAuthorizations")>-1;
