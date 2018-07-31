@@ -927,7 +927,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	    	var toReturn = (selectedDataset.dsTypeCd == 'Federated' || selectedDataset.dsTypeCd == 'Qbe') && sbiModule_user.userName == selectedDataset.owner;
 	    	return toReturn;
     	}
-    }
+    };
 
     $scope.getBackPreviewSet=function(){
 
