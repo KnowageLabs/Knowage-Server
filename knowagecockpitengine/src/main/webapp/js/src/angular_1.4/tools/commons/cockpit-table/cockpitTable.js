@@ -84,6 +84,10 @@
                     	return style;
                     }
 
+                    scope.checkPrecision = function(column){
+                    	return (column.style && typeof column.style.precision != 'undefined') ? column.style.precision : 2;
+                    }
+                    
                     //changing the flex align to text-align for the table cells
 
 
