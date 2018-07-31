@@ -283,7 +283,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		//Replacers
-		$scope.calcReplacer = function(match,p1,precision){
+		$scope.calcReplacer = function(match,p1,precision = 2){
 			return (precision && !isNaN(p1))? eval(p1).toFixed(precision) : eval(p1);
 		}
 		

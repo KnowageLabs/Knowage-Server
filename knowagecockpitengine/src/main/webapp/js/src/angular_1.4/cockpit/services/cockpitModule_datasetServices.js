@@ -316,7 +316,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			angular.forEach(sheet.widgets,function(widget){
 				if(widget.dataset && widget.dataset.dsId){
 					var actualDs=ds.getDatasetById(widget.dataset.dsId);
-					var selectedColumnsDs = (typeof widget.content.columnSelectedOfDataset == 'object') ? widget.content.columnSelectedOfDataset[widget.dataset.dsId] : widget.content.columnSelectedOfDataset;
+					var selectedColumnsDs = (widget.content.columnSelectedOfDataset instanceof Array) ? widget.content.columnSelectedOfDataset : widget.content.columnSelectedOfDataset[widget.dataset.dsId];
 //					angular.forEach(widget.content.columnSelectedOfDataset,function(widgetColumn){
 					angular.forEach(selectedColumnsDs,function(widgetColumn){
 						var isWidgetColumnMatching = false;
