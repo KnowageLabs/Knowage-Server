@@ -110,7 +110,7 @@ public class GetPngAction extends AbstractHttpAction {
 		logger.debug(dateString);	
 		response.setDateHeader("Expires", date.getTime());
 		//response.setHeader("Expires", "Sat, 6 May 2010 12:00:00 GMT");	
-		response.setHeader("Cache-Control: max-age", "600");
+		response.setHeader("Cache-Control","max-age=600");
 		
 
 		String filePath = (String)serviceRequest.getAttribute("path");
