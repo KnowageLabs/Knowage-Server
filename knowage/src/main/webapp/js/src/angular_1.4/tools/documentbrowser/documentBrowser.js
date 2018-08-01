@@ -48,6 +48,7 @@ $scope.documentBrowserGrid = {
         pagination: true,
         paginationAutoPageSize: true,
         rowSelection:'single',
+        rowDeselection: true,
         onSelectionChanged: onSelectionChanged
 };
 
@@ -64,15 +65,19 @@ $scope.documentBrowserGrid.onGridReady = function(){
 }
 
  function onSelectionChanged(){
-	 var ua = $window.navigator.userAgent;
-	 var reg = /internet explorer/i;
 	 $scope.selectedDocument = $scope.documentBrowserGrid.api.getSelectedRows()[0];
-	 $scope.openDocumentDetail = $scope.selectedDocument ? true : false;
-	 $mdSidenav('right').open();
+	 if(!$scope.selectedDocument){
+		 $scope.openDocumentDetail = false;
+		 $mdSidenav('right').close().then(function(){
+			 $scope.documentBrowserGrid.api.sizeColumnsToFit();
+		 });
+	 }else{
+		 $scope.openDocumentDetail = true;
+		 $mdSidenav('right').open().then(function(){
+			 $scope.documentBrowserGrid.api.sizeColumnsToFit();
+		 });
+	 }
 	 $scope.$apply();
-	 $timeout(function(){
-		 $scope.documentBrowserGrid.api.sizeColumnsToFit();
-	 },reg.test(ua)?1000:300)
 }
 
  function buttonRenderer(params){
@@ -103,11 +108,11 @@ $scope.documentBrowserGrid.onGridReady = function(){
 	$scope.setSelectedFolder = function (folder) {
 		if ($scope.selectedFolder==undefined || folder.id !== $scope.selectedFolder.id) {
 			$scope.selectedDocument = undefined;
-			 $scope.openDocumentDetail = false;
 			$scope.showDocumentDetail = false;
-			$timeout(function(){
+			$scope.openDocumentDetail = false;
+			 $mdSidenav('right').close().then(function(){
 				 $scope.documentBrowserGrid.api.sizeColumnsToFit();
-			 },300)
+			 });
 
 			$scope.breadCrumbControl.resetBreadCrumb();
 

@@ -124,14 +124,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-card >
 					<md-card-content class="noPadding" style="height:100%;">
 						<h3 class="md-title" layout-padding ng-show="folderDocuments.length==0">{{translate.load("sbi.browser.document.noDocument")}}</h3>
-						<div ng-hide="showGridView==true || folderDocuments.length==0" ag-grid="documentBrowserGrid" class="ag-theme-balham noMargin documentBrowserGrid"></div>
+						<div ng-hide="showGridView==true || folderDocuments.length==0" ag-grid="documentBrowserGrid" class="ag-theme-balham noMargin documentBrowserGrid ag-theme-knowage"></div>
 					</md-card-content>
 				</md-card>
 			</md-content>
 			
 
-		<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="right" md-is-locked-open="$mdMedia('gt-sm')"
-			ng-class="{'full-screen-sidenav': smallScreen}" ng-show="openDocumentDetail"> 
+		<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="right" md-is-locked-open="openDocumentDetail" ng-class="{'full-screen-sidenav': smallScreen}" > 
 			
 			<md-toolbar class="ternaryToolbar">
 				<div layout="row" layout-align="space-around center">
