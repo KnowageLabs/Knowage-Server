@@ -73,6 +73,7 @@ public class Role implements Serializable {
 	private boolean isAbleToEnableDatasetPersistence;
 	private boolean isAbleToEnableFederatedDataset;
 	private boolean isAbleToEnableRate;
+	private boolean isAbleToEnablePrint;
 
 	private boolean isAbleToManageGlossaryBusiness;
 	private boolean isAbleToManageGlossaryTechnical;
@@ -688,6 +689,14 @@ public class Role implements Serializable {
 
 	public void setIsAbleToEnableRate(boolean isAbleToEnableRate) {
 		this.isAbleToEnableRate = isAbleToEnableRate;
+	}
+
+	public boolean isAbleToEnablePrint() {
+		return isAbleToEnablePrint;
+	}
+
+	public void setIsAbleToEnablePrint(boolean isAbleToEnablePrint) {
+		this.isAbleToEnablePrint = isAbleToEnablePrint;
 	}
 
 	public Boolean getIsPublic() {

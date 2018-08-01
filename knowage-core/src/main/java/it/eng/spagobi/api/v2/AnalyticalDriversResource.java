@@ -462,6 +462,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		role.setIsAbleToEnableDatasetPersistence(bo.isAbleToEnableDatasetPersistence());
 		role.setIsAbleToEnableFederatedDataset(bo.isAbleToEnableFederatedDataset());
 		role.setIsAbleToEnableRate(bo.isAbleToEnableRate());
+		role.setIsAbleToEnablePrint(bo.isAbleToEnablePrint());
 		role.setAbleToManageGlossaryBusiness(bo.isAbleToManageGlossaryBusiness());
 		role.setAbleToManageGlossaryTechnical(bo.isAbleToManageGlossaryTechnical());
 		role.setAbleToManageKpiValue(bo.isAbleToManageKpiValue());

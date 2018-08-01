@@ -472,6 +472,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 		aRole.setIsAbleToEnableDatasetPersistence(true);
 		aRole.setIsAbleToEnableFederatedDataset(true);
 		aRole.setIsAbleToEnableRate(true);
+		aRole.setIsAbleToEnablePrint(true);
 		aRole.setIsAbleToHierarchiesManagement(true);
 		aRole.setIsAbleToManageUsers(true);
 		aRole.setIsAbleToSaveIntoPersonalFolder(true);

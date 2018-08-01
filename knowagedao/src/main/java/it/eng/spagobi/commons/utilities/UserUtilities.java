@@ -694,6 +694,9 @@ public class UserUtilities {
 			if (virtualRole.isAbleToEnableRate()) {
 				roleFunctionalities.add(SpagoBIConstants.ENABLE_TO_RATE);
 			}
+			if (virtualRole.isAbleToEnablePrint()) {
+				roleFunctionalities.add(SpagoBIConstants.ENABLE_TO_PRINT);
+			}
 			if (virtualRole.isAbleToManageGlossaryBusiness()) {
 				roleFunctionalities.add(SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS);
 			}
@@ -794,6 +797,7 @@ public class UserUtilities {
 		virtualRole.setIsAbleToEnableDatasetPersistence(false);
 		virtualRole.setIsAbleToEnableFederatedDataset(false);
 		virtualRole.setIsAbleToEnableRate(false);
+		virtualRole.setIsAbleToEnablePrint(false);
 		virtualRole.setAbleToManageInternationalization(false);
 
 		if (roles != null) {
@@ -923,6 +927,10 @@ public class UserUtilities {
 					if (anotherRole.isAbleToEnableRate()) {
 						logger.debug("User has role " + roleName + " that is able to enable rating.");
 						virtualRole.setIsAbleToEnableRate(true);
+					}
+					if (anotherRole.isAbleToEnablePrint()) {
+						logger.debug("User has role " + roleName + " that is able to print documents.");
+						virtualRole.setIsAbleToEnablePrint(true);
 					}
 					if (anotherRole.isAbleToManageGlossaryBusiness()) {
 						logger.debug("User has role " + roleName + " that is able to manage glossary business.");

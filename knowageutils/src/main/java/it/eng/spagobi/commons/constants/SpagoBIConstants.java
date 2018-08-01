@@ -516,6 +516,7 @@ public class SpagoBIConstants {
 	public static final String ENABLE_DATASET_PERSISTENCE = "EnableDatasetPersistence";
 	public static final String ENABLE_FEDERATED_DATASET = "EnableFederatedDataset";
 	public static final String ENABLE_TO_RATE = "EnableToRate";
+	public static final String ENABLE_TO_PRINT = "EnableToPrint";
 	public static final String FEDERATED_DATASET_MANAGEMENT = "EnableFederatedDataset";
 
 	public static final String MANAGE_GLOSSARY_BUSINESS = "ManageGlossaryBusiness";

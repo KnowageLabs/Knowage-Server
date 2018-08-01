@@ -86,8 +86,8 @@
 		$scope.filterDropping = null;
 		
 		$scope.canRate = (sbiModule_user.functionalities.indexOf("EnableToRate") > 0) ? true : false;
+		$scope.canPrintDocuments = (sbiModule_user.functionalities.indexOf("EnableToPrint") > 0) ? true : false;
 		
-
 		/**
 		 * Add these 'documentExecutionNg.jsp' Javascript variables to the scope of the document execution controller and use them
 		 * for managing the view part of the application (e.g. whether the "Add to my workspace" document execution menu option (or

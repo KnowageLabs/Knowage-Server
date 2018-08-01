@@ -101,6 +101,7 @@ public class RoleBO implements Serializable {
 	private boolean ableToEnableDatasetPersistence;
 	private boolean ableToEnableFederatedDataset;
 	private boolean ableToEnableRate;
+	private boolean ableToEnablePrint;
 
 	private boolean ableToManageGlossaryBusiness;
 	private boolean ableToManageGlossaryTechnical;
@@ -499,6 +500,14 @@ public class RoleBO implements Serializable {
 
 	public void setAbleToEnableRate(boolean ableToEnableRate) {
 		this.ableToEnableRate = ableToEnableRate;
+	}
+
+	public boolean isAbleToEnablePrint() {
+		return ableToEnablePrint;
+	}
+
+	public void setIsAbleToEnablePrint(boolean ableToEnablePrint) {
+		this.ableToEnablePrint = ableToEnablePrint;
 	}
 
 	public boolean isAbleToManageGlossaryBusiness() {

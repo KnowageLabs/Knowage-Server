@@ -276,7 +276,7 @@ if(executionRoleNames.size() > 0) {
                             </md-button>
                             <md-menu-content>
                                 <span class="divider">{{translate.load("sbi.ds.wizard.file")}}</span>
-                                <md-menu-item class="md-indent">
+                                <md-menu-item class="md-indent" ng-if="canPrintDocuments">
                                     <md-icon class="fa fa-print "></md-icon>
                                     <md-button ng-click="printDocument()">
                                         {{translate.load("sbi.execution.executionpage.toolbar.print")}}

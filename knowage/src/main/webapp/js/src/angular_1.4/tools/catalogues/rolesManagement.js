@@ -42,7 +42,8 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 	               {dbname:"CREATE_DOCUMENTS",label:"createDocument",visible:false, category:"ITEMS"},
 	               {dbname:"ENABLE_DATASET_PERSISTENCE",label:"enableDatasetPersistence",visible:false, category:"ENABLE"},
 	               {dbname:"ENABLE_FEDERATED_DATASET",label:"enableFederatedDataset",visible:false, category:"ENABLE"},
-	               {dbname:"ENABLE_TO_RATE",label:"enableToRate",visible:false, category:"ENABLE"},
+	               {dbname: "ENABLE_TO_RATE", label: "enableToRate", visible: false, category: "ENABLE"},
+	               {dbname: "ENABLE_TO_PRINT", label: "enableToPrint", visible: false, category: "ENABLE"},
 	               {dbname:"SEE_MY_DATA",label:"seeMyData",visible:false, category:"ITEMS"},
 	               {dbname:"SEE_MY_WORKSPACE",label:"seeMyWorkspace",visible:false, category:"ITEMS"},
 	               {dbname:"DO_MASSIVE_EXPORT",label:"doMassiveExport",visible:false, category:"EXPORT"},
@@ -157,6 +158,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 		$scope.selectedRole.ableToViewSocialAnalysis= true;
 		$scope.selectedRole.ableToDeleteKpiComm= true;
 		$scope.selectedRole.ableToEnableRate = false;
+		$scope.selectedRole.ableToEnablePrint = false;
 	}
 
 	$scope.setDirty = function () {
