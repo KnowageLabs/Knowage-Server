@@ -14,7 +14,12 @@
     cockpit-html-widget {
     	height: 100%;
     	overflow: auto;
-
+    	.trustedHtml {
+    		height: 100%;
+    		&>div {
+    			height: 100%;
+    		}
+    	}
     }
     
     cockpit-discovery-widget {
