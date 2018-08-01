@@ -850,7 +850,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
     $scope.isAbleToEditQbeDataset = function(selectedDataset) {
     	if(selectedDataset !== undefined) {
-	    	var toReturn = (selectedDataset.dsTypeCd == 'Federated' || selectedDataset.dsTypeCd == 'Qbe') && sbiModule_user.userName == selectedDataset.owner;
+	    	var toReturn = (selectedDataset.dsTypeCd == 'Federated' || selectedDataset.dsTypeCd == 'Qbe') && sbiModule_user.userId == selectedDataset.owner;
 	    	return toReturn;
     	}
     };
