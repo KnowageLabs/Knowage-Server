@@ -356,8 +356,16 @@
 	}
 
 	.mainContent {
-		&>md-content {
-			@include coolScrollBars($baseColor,6px);
+		md-card {
+			height: calc(100% - 80px);
+			.documentBrowserGrid {
+				height: 100%;
+				width: 100%;
+				&.ag-theme-balham .ag-header {
+				    background-color: $baseColor;
+				    color: $lightTextColor;
+				}
+			}
 		}
 	}
 
@@ -391,6 +399,15 @@
 				overflow: hidden;
 			}
 		}
+		.mainContent {
+			height:100%;
+			md-card {
+				height: 100%;
+			}
+			.documentBrowserGrid  {
+				height: 100%;
+			}
+		}
 	}
 }
 
@@ -410,5 +427,17 @@
 				}
 			}
 		}
+		.mainContent {
+			md-card {
+				height: 100%;
+			}
+		}
+
+	}
+}
+
+@supports (-ms-ime-align:auto) {
+	.kn-documentBrowser .mainContent md-card {
+		height: calc(-50px + 100%);
 	}
 }

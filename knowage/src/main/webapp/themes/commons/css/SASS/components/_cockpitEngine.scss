@@ -1546,6 +1546,32 @@
 			}
 		}
 	}
+	.htmlWidgetConfiguration {
+		section {
+			height: 100%;
+		}
+		.availableFunctions {
+			._md-subheader-content {
+				
+			}
+		}
+   		.htmlEditor {
+   			.CodeMirror {
+				height: 500px;
+			}
+   		}
+		.CodeMirror {
+			width: 100%;
+		}
+		.widgetId {
+			text-transform: none;
+		}
+		.availableFunctions {
+			.description {
+				font-size: $mediumFontSize;
+			}
+		}
+	}    
 }
 
 }

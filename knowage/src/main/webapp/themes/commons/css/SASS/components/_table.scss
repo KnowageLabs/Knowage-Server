@@ -188,4 +188,16 @@ kn-table {
 				}
 			}
 		}
+		&.kn-table-hovering-rows {
+			tbody{
+				tr {
+					&:hover {
+						background-color: lighten($tableSelectedElementColor,5%);
+					}
+				}
+			}
+		}
+		&.kn-table-overflow-auto {
+			overflow: auto;
+		}
 	}	
