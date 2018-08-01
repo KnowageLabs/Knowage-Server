@@ -319,7 +319,7 @@ if(executionRoleNames.size() > 0) {
                                     <md-button ng-click="openInfoMetadata()">{{translate.load("sbi.execution.executionpage.toolbar.metadata")}}</md-button>
                                 </md-menu-item>
                                 <%} %>
-                                <md-menu-item class="md-indent" ng-if="showCollaborationMenu">
+                                <md-menu-item class="md-indent" ng-if="showCollaborationMenu && canRate">
                                     <md-icon class="fa fa-star"></md-icon>
                                     <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.rating')}}" class="toolbar-button-custom"
                                         ng-click="rankDocument()">{{translate.load('sbi.execution.executionpage.toolbar.rating')}}

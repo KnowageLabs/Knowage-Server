@@ -72,6 +72,7 @@ public class Role implements Serializable {
 
 	private boolean isAbleToEnableDatasetPersistence;
 	private boolean isAbleToEnableFederatedDataset;
+	private boolean isAbleToEnableRate;
 
 	private boolean isAbleToManageGlossaryBusiness;
 	private boolean isAbleToManageGlossaryTechnical;
@@ -100,8 +101,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the checks if is able to save subobjects.
 	 *
-	 * @param isAbleToSaveSubobjects
-	 *            the new checks if is able to save subobjects
+	 * @param isAbleToSaveSubobjects the new checks if is able to save subobjects
 	 */
 	public void setIsAbleToSaveSubobjects(boolean isAbleToSaveSubobjects) {
 		this.isAbleToSaveSubobjects = isAbleToSaveSubobjects;
@@ -119,8 +119,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the checks if is able to see subobjects.
 	 *
-	 * @param isAbleToSeeSubobjects
-	 *            the new checks if is able to see subobjects
+	 * @param isAbleToSeeSubobjects the new checks if is able to see subobjects
 	 */
 	public void setIsAbleToSeeSubobjects(boolean isAbleToSeeSubobjects) {
 		this.isAbleToSeeSubobjects = isAbleToSeeSubobjects;
@@ -138,8 +137,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the checks if is able to see viewpoints.
 	 *
-	 * @param isAbleToSeeViewpoints
-	 *            the new checks if is able to see viewpoints
+	 * @param isAbleToSeeViewpoints the new checks if is able to see viewpoints
 	 */
 	public void setIsAbleToSeeViewpoints(boolean isAbleToSeeViewpoints) {
 		this.isAbleToSeeViewpoints = isAbleToSeeViewpoints;
@@ -157,8 +155,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the checks if is able to see snapshots.
 	 *
-	 * @param isAbleToSeeSnapshots
-	 *            the new checks if is able to see snapshots
+	 * @param isAbleToSeeSnapshots the new checks if is able to see snapshots
 	 */
 	public void setIsAbleToSeeSnapshots(boolean isAbleToSeeSnapshots) {
 		this.isAbleToSeeSnapshots = isAbleToSeeSnapshots;
@@ -176,8 +173,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the checks if is able to run snapshots.
 	 *
-	 * @param isAbleToRunSnapshots
-	 *            the new checks if is able to run snapshots
+	 * @param isAbleToRunSnapshots the new checks if is able to run snapshots
 	 */
 	public void setIsAbleToRunSnapshots(boolean isAbleToRunSnapshots) {
 		this.isAbleToRunSnapshots = isAbleToRunSnapshots;
@@ -195,8 +191,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the checks if is able to see notes.
 	 *
-	 * @param isAbleToSeeNotes
-	 *            the new checks if is able to see notes
+	 * @param isAbleToSeeNotes the new checks if is able to see notes
 	 */
 	public void setIsAbleToSeeNotes(boolean isAbleToSeeNotes) {
 		this.isAbleToSeeNotes = isAbleToSeeNotes;
@@ -214,8 +209,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the checks if is able to send mail.
 	 *
-	 * @param isAbleToSendMail
-	 *            the new checks if is able to send mail
+	 * @param isAbleToSendMail the new checks if is able to send mail
 	 */
 	public void setIsAbleToSendMail(boolean isAbleToSendMail) {
 		this.isAbleToSendMail = isAbleToSendMail;
@@ -233,8 +227,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the checks if is able to save into personal folder.
 	 *
-	 * @param isAbleToSaveIntoPersonalFolder
-	 *            the new checks if is able to save into personal folder
+	 * @param isAbleToSaveIntoPersonalFolder the new checks if is able to save into personal folder
 	 */
 	public void setIsAbleToSaveIntoPersonalFolder(boolean isAbleToSaveIntoPersonalFolder) {
 		this.isAbleToSaveIntoPersonalFolder = isAbleToSaveIntoPersonalFolder;
@@ -252,8 +245,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the checks if is able to save remember me.
 	 *
-	 * @param isAbleToSaveRememberMe
-	 *            the new checks if is able to save remember me
+	 * @param isAbleToSaveRememberMe the new checks if is able to save remember me
 	 */
 	public void setIsAbleToSaveRememberMe(boolean isAbleToSaveRememberMe) {
 		this.isAbleToSaveRememberMe = isAbleToSaveRememberMe;
@@ -271,8 +263,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the checks if is able to see metadata.
 	 *
-	 * @param isAbleToSeeMetadata
-	 *            the new checks if is able to see metadata
+	 * @param isAbleToSeeMetadata the new checks if is able to see metadata
 	 */
 	public void setIsAbleToSeeMetadata(boolean isAbleToSeeMetadata) {
 		this.isAbleToSeeMetadata = isAbleToSeeMetadata;
@@ -290,8 +281,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the checks if is able to save metadata.
 	 *
-	 * @param isAbleToSaveMetadata
-	 *            the new checks if is able to save metadata
+	 * @param isAbleToSaveMetadata the new checks if is able to save metadata
 	 */
 	public void setIsAbleToSaveMetadata(boolean isAbleToSaveMetadata) {
 		this.isAbleToSaveMetadata = isAbleToSaveMetadata;
@@ -326,10 +316,8 @@ public class Role implements Serializable {
 	/**
 	 * Constructor.
 	 *
-	 * @param name
-	 *            the name
-	 * @param description
-	 *            the description
+	 * @param name        the name
+	 * @param description the description
 	 */
 	public Role(String name, String description) {
 		super();
@@ -350,8 +338,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the description.
 	 *
-	 * @param description
-	 *            the description to set
+	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -369,8 +356,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the id.
 	 *
-	 * @param id
-	 *            the role id to set
+	 * @param id the role id to set
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -388,8 +374,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name
-	 *            the name to set
+	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -407,8 +392,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the role type cd.
 	 *
-	 * @param roleTypeCD
-	 *            The roleTypeCD to set.
+	 * @param roleTypeCD The roleTypeCD to set.
 	 */
 	public void setRoleTypeCD(String roleTypeCD) {
 		this.roleTypeCD = roleTypeCD;
@@ -426,8 +410,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the role type id.
 	 *
-	 * @param roleTypeID
-	 *            The roleTypeID to set.
+	 * @param roleTypeID The roleTypeID to set.
 	 */
 	public void setRoleTypeID(Integer roleTypeID) {
 		this.roleTypeID = roleTypeID;
@@ -445,8 +428,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the code.
 	 *
-	 * @param code
-	 *            The code to set.
+	 * @param code The code to set.
 	 */
 	public void setCode(String code) {
 		this.code = code;
@@ -484,8 +466,7 @@ public class Role implements Serializable {
 	}
 
 	/**
-	 * @param isAbleToSeeDocumentBrowser
-	 *            the isAbleToSeeDocumentBrowser to set
+	 * @param isAbleToSeeDocumentBrowser the isAbleToSeeDocumentBrowser to set
 	 */
 	public void setIsAbleToSeeDocumentBrowser(boolean isAbleToSeeDocumentBrowser) {
 		this.isAbleToSeeDocumentBrowser = isAbleToSeeDocumentBrowser;
@@ -499,8 +480,7 @@ public class Role implements Serializable {
 	}
 
 	/**
-	 * @param isAbleToSeeFavourites
-	 *            the isAbleToSeeFavourites to set
+	 * @param isAbleToSeeFavourites the isAbleToSeeFavourites to set
 	 */
 	public void setIsAbleToSeeFavourites(boolean isAbleToSeeFavourites) {
 		this.isAbleToSeeFavourites = isAbleToSeeFavourites;
@@ -514,8 +494,7 @@ public class Role implements Serializable {
 	}
 
 	/**
-	 * @param isAbleToSeeSubscriptions
-	 *            the isAbleToSeeSubscriptions to set
+	 * @param isAbleToSeeSubscriptions the isAbleToSeeSubscriptions to set
 	 */
 	public void setIsAbleToSeeSubscriptions(boolean isAbleToSeeSubscriptions) {
 		this.isAbleToSeeSubscriptions = isAbleToSeeSubscriptions;
@@ -529,8 +508,7 @@ public class Role implements Serializable {
 	}
 
 	/**
-	 * @param isAbleToSeeMyData
-	 *            the isAbleToSeeMyData to set
+	 * @param isAbleToSeeMyData the isAbleToSeeMyData to set
 	 */
 	public void setIsAbleToSeeMyData(boolean isAbleToSeeMyData) {
 		this.isAbleToSeeMyData = isAbleToSeeMyData;
@@ -544,8 +522,7 @@ public class Role implements Serializable {
 	}
 
 	/**
-	 * @param isAbleToSeeMyWorkspace
-	 *            the isAbleToSeeMyWorkspace to set
+	 * @param isAbleToSeeMyWorkspace the isAbleToSeeMyWorkspace to set
 	 */
 	public void setIsAbleToSeeMyWorkspace(boolean isAbleToSeeMyWorkspace) {
 		this.isAbleToSeeMyWorkspace = isAbleToSeeMyWorkspace;
@@ -559,8 +536,7 @@ public class Role implements Serializable {
 	}
 
 	/**
-	 * @param isAbleToSeeToDoList
-	 *            the isAbleToSeeToDoList to set
+	 * @param isAbleToSeeToDoList the isAbleToSeeToDoList to set
 	 */
 	public void setIsAbleToSeeToDoList(boolean isAbleToSeeToDoList) {
 		this.isAbleToSeeToDoList = isAbleToSeeToDoList;
@@ -574,8 +550,7 @@ public class Role implements Serializable {
 	}
 
 	/**
-	 * @param isAbleToCreateDocuments
-	 *            the isAbleToCreateDocuments to set
+	 * @param isAbleToCreateDocuments the isAbleToCreateDocuments to set
 	 */
 	public void setIsAbleToCreateDocuments(boolean isAbleToCreateDocuments) {
 		this.isAbleToCreateDocuments = isAbleToCreateDocuments;
@@ -597,8 +572,7 @@ public class Role implements Serializable {
 	}
 
 	/**
-	 * @param roleMetaModelCategories
-	 *            the roleMetaModelCategories to set
+	 * @param roleMetaModelCategories the roleMetaModelCategories to set
 	 */
 	public void setRoleMetaModelCategories(List<RoleMetaModelCategory> roleMetaModelCategories) {
 		this.roleMetaModelCategories = roleMetaModelCategories;
@@ -706,6 +680,14 @@ public class Role implements Serializable {
 
 	public void setIsAbleToEnableFederatedDataset(boolean isAbleToEnableFederatedDataset) {
 		this.isAbleToEnableFederatedDataset = isAbleToEnableFederatedDataset;
+	}
+
+	public boolean isAbleToEnableRate() {
+		return isAbleToEnableRate;
+	}
+
+	public void setIsAbleToEnableRate(boolean isAbleToEnableRate) {
+		this.isAbleToEnableRate = isAbleToEnableRate;
 	}
 
 	public Boolean getIsPublic() {

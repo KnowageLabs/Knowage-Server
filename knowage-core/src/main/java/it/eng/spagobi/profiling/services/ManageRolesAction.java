@@ -97,6 +97,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 	private final String HIERARCHIES_MANAGEMENT = "hierarchiesManagement";
 	private final String ENABLE_DATASET_PERSISTENCE = "enableDatasetPersistence";
 	private final String ENABLE_FEDERATED_DATASET = "enableFederatedDataset";
+	private final String ENABLE_TO_RATE = "enableToRate";
 
 	private final String MANAGE_GLOSSARY_BUSINESS = "manageGlossaryBusiness";
 	private final String MANAGE_GLOSSARY_TECHNICAL = "manageGlossaryTechnical";
@@ -199,6 +200,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 			Boolean hierarchiesManagement = getAttributeAsBoolean(HIERARCHIES_MANAGEMENT);
 			Boolean enableDatasetPersistence = getAttributeAsBoolean(ENABLE_DATASET_PERSISTENCE);
 			Boolean enableFederatedDataset = getAttributeAsBoolean(ENABLE_FEDERATED_DATASET);
+			Boolean enableToRate = getAttributeAsBoolean(ENABLE_TO_RATE);
 
 			Boolean manageGlossaryBusiness = getAttributeAsBoolean(MANAGE_GLOSSARY_BUSINESS);
 			Boolean manageGlossaryTechnical = getAttributeAsBoolean(MANAGE_GLOSSARY_TECHNICAL);
@@ -295,6 +297,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				role.setIsAbleToHierarchiesManagement(hierarchiesManagement);
 				role.setIsAbleToEnableDatasetPersistence(enableDatasetPersistence);
 				role.setIsAbleToEnableFederatedDataset(enableFederatedDataset);
+				role.setIsAbleToEnableRate(enableToRate);
 
 				role.setAbleToManageGlossaryBusiness(manageGlossaryBusiness);
 				role.setAbleToManageGlossaryTechnical(manageGlossaryTechnical);

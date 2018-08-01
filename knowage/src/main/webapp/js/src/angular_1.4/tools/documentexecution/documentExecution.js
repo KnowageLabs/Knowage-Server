@@ -84,6 +84,9 @@
 		$scope.sidenavToShow = 'east';
 		$scope.sidenavCenter = null;
 		$scope.filterDropping = null;
+		
+		$scope.canRate = (sbiModule_user.functionalities.indexOf("EnableToRate") > 0) ? true : false;
+		
 
 		/**
 		 * Add these 'documentExecutionNg.jsp' Javascript variables to the scope of the document execution controller and use them

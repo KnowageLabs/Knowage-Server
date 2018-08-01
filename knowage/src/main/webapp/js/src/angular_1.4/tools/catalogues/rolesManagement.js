@@ -28,7 +28,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 	$scope.listCategories = [];
 	//VARIABLE FOR CATEGORY KPI
 	$scope.categoriesSelected = [];
-	checkboxList =[{dbname:"SAVE_SUBOBJECTS",label:"saveSubobj",visible:false, category:"SAVE"},  //save,see,send,build,manage,items,export,edit
+	checkboxList =[{dbname:"SAVE_SUBOBJECTS",label:"saveSubobj",visible:false, category:"SAVE"},  //save,see,send,build,manage,items,export,ENABLE
 	               {dbname:"SEE_SUBOBJECTS",label:"seeSubobj",visible:false, category:"SEE"},
 	               {dbname:"SEE_VIEWPOINTS",label:"seeViewpoints",visible:false, category:"SEE"},
 	               {dbname:"SEND_MAIL",label:"sendMail",visible:false, category:"SEND"},
@@ -42,6 +42,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 	               {dbname:"CREATE_DOCUMENTS",label:"createDocument",visible:false, category:"ITEMS"},
 	               {dbname:"ENABLE_DATASET_PERSISTENCE",label:"enableDatasetPersistence",visible:false, category:"ENABLE"},
 	               {dbname:"ENABLE_FEDERATED_DATASET",label:"enableFederatedDataset",visible:false, category:"ENABLE"},
+	               {dbname:"ENABLE_TO_RATE",label:"enableToRate",visible:false, category:"ENABLE"},
 	               {dbname:"SEE_MY_DATA",label:"seeMyData",visible:false, category:"ITEMS"},
 	               {dbname:"SEE_MY_WORKSPACE",label:"seeMyWorkspace",visible:false, category:"ITEMS"},
 	               {dbname:"DO_MASSIVE_EXPORT",label:"doMassiveExport",visible:false, category:"EXPORT"},
@@ -52,6 +53,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 	               {dbname:"FUNCTIONS_CATALOG_USAGE",label:"functionsCatalogUsage",visible:false, category:"ITEMS"},
 	               {dbname:"HIERARCHIES_MANAGEMENT",label:"hierarchiesManagement",visible:false, category:"ITEMS"},
 	               {dbname:"MANAGE_INTERNATIONALIZATION",label:"manageInternationalization",visible:false, category:"MANAGE"}
+	               
 	               ];
 
 	var showEEAuthorizations = sbiModule_user.functionalities.indexOf("EnterpriseAuthorizations")>-1;
@@ -154,6 +156,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 		$scope.selectedRole.ableToSeeToDoList= true;
 		$scope.selectedRole.ableToViewSocialAnalysis= true;
 		$scope.selectedRole.ableToDeleteKpiComm= true;
+		$scope.selectedRole.ableToEnableRate = false;
 	}
 
 	$scope.setDirty = function () {
