@@ -11,6 +11,7 @@ CREATE TABLE SBI_CHECKS (
        VALUE_TYPE_CD        VARCHAR(20) NOT NULL,
        VALUE_TYPE_ID        INTEGER NOT NULL,
        VALUE_1              VARCHAR(400) NULL,
+	   VALUE_2              VARCHAR(400) NULL,
        NAME                 VARCHAR(40) NOT NULL,
        USER_IN              VARCHAR(100) NOT NULL,
        USER_UP              VARCHAR(100),
