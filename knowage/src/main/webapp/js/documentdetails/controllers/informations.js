@@ -18,8 +18,8 @@
 (function () {
 angular
         .module('DocumentDetails')
-        .controller('DocumentDetailsInformationsController',['$scope','$location','resourceService','DocumentService','sbiModule_translate',
-        											 function($scope,$location, resourceService, DocumentService,sbiModule_translate){
+        .controller('DocumentDetailsInformationsController',['$scope','$location','resourceService','DocumentService','sbiModule_translate','templateService',
+        											 function($scope,$location, resourceService, DocumentService,sbiModule_translate,templateService){
 
         	 var self = this;
         	 self.documentService = DocumentService;
@@ -48,6 +48,7 @@ angular
              self.folderObject=[];
              self.previewImage = {};
              self.document.lockedByUser = (self.document.lockedByUser == "true");
+             self.file = templateService.file;
              var pathForFolderLocation = [];
 
              var createStringPath = function(folderArray){
