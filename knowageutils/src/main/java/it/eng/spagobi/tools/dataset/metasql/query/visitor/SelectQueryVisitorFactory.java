@@ -32,6 +32,7 @@ public class SelectQueryVisitorFactory {
 		}
 		switch (database.getDatabaseDialect()) {
 		case HIVE:
+		case HIVE2:
 			return new HiveSelectQueryVisitor(database);
 		case SPARKSQL:
 			return new SparkSqlSelectQueryVisitor(database);
