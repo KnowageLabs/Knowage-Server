@@ -52,6 +52,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCVerticaDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
@@ -59,12 +60,12 @@ import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
@@ -598,15 +599,9 @@ public class DataSetFactory {
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
 				if (userProfile != null)
 					dataSourceDao.setUserProfile(userProfile);
-				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
 
-				Assert.assertNotNull(dataSource, "Datasource cannot be null");
-				DatabaseDialect dialect = DataBaseFactory.getDataBase(dataSource).getDatabaseDialect();
-				if (dialect.equals(DatabaseDialect.MONGO)) {
-					ds = new MongoDataSet();
-				} else {
-					ds = JDBCDatasetFactory.getJDBCDataSet(dataSource);
-				}
+				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
+				ds = getDataset(dataSource);
 
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				ds.setDsType(JDBC_DS_TYPE);
@@ -777,6 +772,23 @@ public class DataSetFactory {
 		return ds;
 	}
 
+	private static IDataSet getDataset(IDataSource dataSource) {
+		IDataSet ds = null;
+		if (dataSource != null) {
+			String dialectToLowerCase = dataSource.getHibDialectClass().toLowerCase();
+			if (dialectToLowerCase.contains("mongo")) {
+				ds = new MongoDataSet();
+			} else if (SqlUtils.isHiveLikeDialect(dialectToLowerCase)) {
+				ds = new JDBCHiveDataSet();
+			} else if (dialectToLowerCase.contains("orient")) {
+				ds = new JDBCOrientDbDataSet();
+			} else if (dialectToLowerCase.contains("vertica")) {
+				ds = new JDBCVerticaDataSet();
+			}
+		}
+		return (ds != null) ? ds : new JDBCDataSet();
+	}
+
 	public static IDataSet toDataSetForImport(SbiDataSet sbiDataSet, IEngUserProfile userProfile) {
 		IDataSet ds = null;
 		VersionedDataSet versionDS = null;
@@ -868,15 +880,7 @@ public class DataSetFactory {
 					dataSourceDao.setUserProfile(userProfile);
 				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
 
-				if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
-					ds = new MongoDataSet();
-				} else if (dataSource != null && SqlUtils.isHiveLikeDialect(dataSource.getHibDialectClass().toLowerCase())) {
-					ds = new JDBCHiveDataSet();
-				} else if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("orient")) {
-					ds = new JDBCOrientDbDataSet();
-				} else {
-					ds = new JDBCDataSet();
-				}
+				ds = getDataset(dataSource);
 
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				ds.setDsType(DataSetConstants.DS_QUERY);

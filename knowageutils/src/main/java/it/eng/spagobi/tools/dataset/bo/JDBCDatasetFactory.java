@@ -53,6 +53,9 @@ public class JDBCDatasetFactory {
 		case IMPALA:
 			dataSet = new JDBCImpalaDataSet();
 			break;
+		case VERTICA:
+			dataSet = new JDBCVerticaDataSet();
+			break;
 		default:
 			dataSet = new JDBCDataSet();
 		}

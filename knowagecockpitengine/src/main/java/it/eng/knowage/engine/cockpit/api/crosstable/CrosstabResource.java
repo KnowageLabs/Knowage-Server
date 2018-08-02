@@ -51,9 +51,13 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCImpalaDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCVerticaDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -625,13 +629,18 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 			logger.debug("SQL statement is [" + crosstabQuery + "]");
 			IDataSet newdataset;
-			if (dataset instanceof JDBCHiveDataSet) {
+			if (dataset instanceof JDBCImpalaDataSet) {
+				newdataset = new JDBCImpalaDataSet();
+			} else if (dataset instanceof JDBCHiveDataSet) {
 				newdataset = new JDBCHiveDataSet();
-				((JDBCHiveDataSet) newdataset).setQuery(crosstabQuery);
+			} else if (dataset instanceof JDBCOrientDbDataSet) {
+				newdataset = new JDBCOrientDbDataSet();
+			} else if (dataset instanceof JDBCVerticaDataSet) {
+				newdataset = new JDBCVerticaDataSet();
 			} else {
 				newdataset = new JDBCDataSet();
-				((JDBCDataSet) newdataset).setQuery(crosstabQuery);
 			}
+			((AbstractDataSet) newdataset).setQuery(crosstabQuery);
 
 			newdataset.setDataSource(dataset.getDataSourceForReading());
 			if (start == null && limit == null) {

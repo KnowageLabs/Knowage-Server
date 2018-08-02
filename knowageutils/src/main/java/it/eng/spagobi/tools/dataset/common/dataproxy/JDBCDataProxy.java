@@ -25,9 +25,9 @@ import java.sql.Statement;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.cache.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -103,11 +103,10 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				// ATTENTION: For the most db sets the stmt as a scrollable
 				// stmt, only for the compatibility with Ingres sets
 				// a stmt forward only
-				if (databaseDialect.equals(DatabaseDialect.VERTICA)) {
-					stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-				} else if (databaseDialect.equals(DatabaseDialect.HIVE) || databaseDialect.equals(DatabaseDialect.HIVE2)
+				if (databaseDialect.equals(DatabaseDialect.HIVE) || databaseDialect.equals(DatabaseDialect.HIVE2)
 						|| databaseDialect.equals(DatabaseDialect.CASSANDRA) || databaseDialect.equals(DatabaseDialect.IMPALA)
-						|| databaseDialect.equals(DatabaseDialect.ORIENT) || databaseDialect.equals(DatabaseDialect.SPARKSQL)) {
+						|| databaseDialect.equals(DatabaseDialect.ORIENT) || databaseDialect.equals(DatabaseDialect.SPARKSQL)
+						|| databaseDialect.equals(DatabaseDialect.VERTICA)) {
 					stmt = connection.createStatement();
 				} else {
 					stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
