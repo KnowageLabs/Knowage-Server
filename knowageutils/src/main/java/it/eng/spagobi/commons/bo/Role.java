@@ -74,6 +74,7 @@ public class Role implements Serializable {
 	private boolean isAbleToEnableFederatedDataset;
 	private boolean isAbleToEnableRate;
 	private boolean isAbleToEnablePrint;
+	private boolean isAbleToEnableCopyAndEmbed;
 
 	private boolean isAbleToManageGlossaryBusiness;
 	private boolean isAbleToManageGlossaryTechnical;
@@ -697,6 +698,14 @@ public class Role implements Serializable {
 
 	public void setIsAbleToEnablePrint(boolean isAbleToEnablePrint) {
 		this.isAbleToEnablePrint = isAbleToEnablePrint;
+	}
+
+	public boolean isAbleToEnableCopyAndEmbed() {
+		return isAbleToEnableCopyAndEmbed;
+	}
+
+	public void setIsAbleToEnableCopyAndEmbed(boolean isAbleToEnableCopyAndEmbed) {
+		this.isAbleToEnableCopyAndEmbed = isAbleToEnableCopyAndEmbed;
 	}
 
 	public Boolean getIsPublic() {

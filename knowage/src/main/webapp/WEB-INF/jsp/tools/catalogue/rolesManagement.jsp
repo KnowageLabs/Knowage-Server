@@ -395,6 +395,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <label>{{translate.load("sbi.roles.enableToPrint")}}</label>
                    </div> 
                </div>
+               
+               <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('enableToCopyAndEmbed')">
+                 <md-input-container class="small counter"> 
+                    <md-checkbox
+                     ng-change="setDirty()"  ng-model="selectedRole.ableToEnableCopyAndEmbed" aria-label="check" name="enableToCopyAndEmbed">
+                    </md-checkbox> 
+                   </md-input-container>
+                   <div >
+                    <label>{{translate.load("sbi.roles.enableToCopyAndEmbed")}}</label>
+                   </div> 
+               </div>
 				
 				 <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('ITEMS')"
 												 >

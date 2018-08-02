@@ -568,6 +568,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (authI.getName().equals("ENABLE_FEDERATED_DATASET") && aRole.isAbleToEnableFederatedDataset())
 						|| (authI.getName().equals("ENABLE_TO_RATE") && aRole.isAbleToEnableRate())
 						|| (authI.getName().equals("ENABLE_TO_PRINT") && aRole.isAbleToEnablePrint())
+						|| (authI.getName().equals("ENABLE_TO_COPY_AND_EMBED") && aRole.isAbleToEnableCopyAndEmbed())
 						|| (authI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && aRole.isAbleToManageGlossaryBusiness())
 						|| (authI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && aRole.isAbleToManageGlossaryTechnical())
 						|| (authI.getName().equals("MANAGE_KPI_VALUE") && aRole.isAbleToManageKpiValue())
@@ -866,6 +867,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (name.equals("ENABLE_TO_PRINT")) {
 				role.setIsAbleToEnablePrint(true);
 			}
+			if (name.equals("ENABLE_TO_COPY_AND_EMBED")) {
+				role.setIsAbleToEnableCopyAndEmbed(true);
+			}
 			if (name.equals("MANAGE_GLOSSARY_BUSINESS")) {
 				role.setAbleToManageGlossaryBusiness(true);
 			}
@@ -1064,6 +1068,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (functI.getName().equals("ENABLE_FEDERATED_DATASET") && role.isAbleToEnableFederatedDataset())
 						|| (functI.getName().equals("ENABLE_TO_RATE") && role.isAbleToEnableRate())
 						|| (functI.getName().equals("ENABLE_TO_PRINT") && role.isAbleToEnablePrint())
+						|| (functI.getName().equals("ENABLE_TO_COPY_AND_EMBED") && role.isAbleToEnableCopyAndEmbed())
 						|| (functI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && role.isAbleToManageGlossaryBusiness())
 						|| (functI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && role.isAbleToManageGlossaryTechnical())
 						|| (functI.getName().equals("MANAGE_KPI_VALUE") && role.isAbleToManageKpiValue())

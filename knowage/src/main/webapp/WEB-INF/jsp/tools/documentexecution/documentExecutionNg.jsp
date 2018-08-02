@@ -399,7 +399,7 @@ if(executionRoleNames.size() > 0) {
                                 
                                 <!-- SHORTCUTS: end -->
 
-                                 <md-menu-item class="md-indent">
+                                 <md-menu-item class="md-indent" ng-if="canCopyAndEmbedLink">
                                     <md-icon class="fa fa-share"></md-icon>
                                     <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" 
                                     		   class="toolbar-button-custom"
@@ -408,7 +408,7 @@ if(executionRoleNames.size() > 0) {
                                 </md-menu-item>
                                 
                                                                 
-                                 <md-menu-item class="md-indent">
+                                 <md-menu-item class="md-indent" ng-if="canCopyAndEmbedLink">
                                     <md-icon class="fa fa-share"></md-icon>
                                     <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" 
                                     		   class="toolbar-button-custom"

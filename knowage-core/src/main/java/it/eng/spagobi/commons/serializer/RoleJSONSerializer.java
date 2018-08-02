@@ -72,6 +72,7 @@ public class RoleJSONSerializer implements Serializer {
 	private static final String ENABLE_FEDERATED_DATASET = "enableFederatedDataset";
 	private static final String ENABLE_TO_RATE = "enableToRate";
 	private static final String ENABLE_TO_PRINT = "enableToPrint";
+	private static final String ENABLE_TO_COPY_AND_EMBED = "enableToCopyAndEmbed";
 
 	public static final String MANAGE_GLOSSARY_BUSINESS = "manageGlossaryBusiness";
 	public static final String MANAGE_GLOSSARY_TECHNICAL = "manageGlossaryTechnical";
@@ -136,6 +137,7 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(ENABLE_FEDERATED_DATASET, role.isAbleToEnableFederatedDataset());
 			result.put(ENABLE_TO_RATE, role.isAbleToEnableRate());
 			result.put(ENABLE_TO_PRINT, role.isAbleToEnablePrint());
+			result.put(ENABLE_TO_COPY_AND_EMBED, role.isAbleToEnableCopyAndEmbed());
 
 			// create an array for Business Model Categories Ids
 			JSONArray bmCategories = new JSONArray();
