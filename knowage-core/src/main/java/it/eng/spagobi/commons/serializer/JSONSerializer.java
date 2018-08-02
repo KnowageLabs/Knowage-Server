@@ -56,6 +56,9 @@ import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCImpalaDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCVerticaDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
@@ -109,6 +112,9 @@ public class JSONSerializer implements Serializer {
 		mappings.put(FederatedDataSet.class, new DataSetJSONSerializer());
 		mappings.put(RESTDataSet.class, new DataSetJSONSerializer());
 		mappings.put(SPARQLDataSet.class, new DataSetJSONSerializer());
+		mappings.put(JDBCImpalaDataSet.class, new DataSetJSONSerializer());
+		mappings.put(JDBCOrientDbDataSet.class, new DataSetJSONSerializer());
+		mappings.put(JDBCVerticaDataSet.class, new DataSetJSONSerializer());
 
 		mappings.put(RoleMetaModelCategory.class, new RoleMetaModelCategoryJSONSerializer());
 
