@@ -64,6 +64,20 @@ $scope.documentBrowserGrid.onGridReady = function(){
 		$scope.documentBrowserGrid.api.sizeColumnsToFit();
 }
 
+
+$scope.tableElement = angular.element(document.querySelectorAll(".documentBrowserGrid")[0]);
+
+$scope.$watch(function () {
+    return $scope.tableElement[0].clientWidth;
+   }, function(newVal, oldVal) {
+	   if(newVal!=oldVal){
+		   $scope.documentBrowserGrid.api.sizeColumnsToFit();
+		   if(newVal<600){
+			   $scope.openDocumentDetail = false;
+		   }
+	   }
+});
+
  function onSelectionChanged(){
 	 $scope.selectedDocument = $scope.documentBrowserGrid.api.getSelectedRows()[0];
 	 if(!$scope.selectedDocument){
@@ -72,7 +86,7 @@ $scope.documentBrowserGrid.onGridReady = function(){
 			 $scope.documentBrowserGrid.api.sizeColumnsToFit();
 		 });
 	 }else{
-		 $scope.openDocumentDetail = true;
+		 $scope.openDocumentDetail = $scope.tableElement[0].clientWidth<600? false : true;
 		 $mdSidenav('right').open().then(function(){
 			 $scope.documentBrowserGrid.api.sizeColumnsToFit();
 		 });
