@@ -38,6 +38,14 @@ function documentBrowserFunction($window,
 		var cookiesObj = 'breadCrumb_'+sbiModule_user.userId;
 		$cookies.putObject(cookiesObj, JSON.parse(defaultFoldersId));
 	}
+	
+	$scope.columns = [
+		{"headerName":"Type","field":"typeCode"},
+		{"headerName":"Name","field":"name"},
+		{"headerName":"Author","field":"creationUser"},
+		{"headerName":"Label","field":"viewLabel"},
+		{"headerName":"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end"},
+			suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true,suppressMovable:true}];
 
 
 $scope.documentBrowserGrid = {
@@ -52,14 +60,20 @@ $scope.documentBrowserGrid = {
         onSelectionChanged: onSelectionChanged
 };
 
+$scope.searchResultGrid = {
+		angularCompileRows: true,
+		enableColResize: false,
+        enableFilter: false,
+        pagination: true,
+        paginationAutoPageSize: true,
+        rowSelection:'single',
+        rowDeselection: true,
+        onSelectionChanged: onSelectionChanged,
+        columnDefs : $scope.columns
+}
+
 $scope.documentBrowserGrid.onGridReady = function(){
-	$scope.documentBrowserGrid.api.setColumnDefs([
-		{"headerName":"Type","field":"typeCode"},
-		{"headerName":"Name","field":"name"},
-		{"headerName":"Author","field":"creationUser"},
-		{"headerName":"Label","field":"viewLabel"},
-		{"headerName":"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end"},
-			suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true,suppressMovable:true}]);
+	$scope.documentBrowserGrid.api.setColumnDefs($scope.columns);
 	
 		$scope.documentBrowserGrid.api.sizeColumnsToFit();
 }
@@ -124,6 +138,7 @@ $scope.$watch(function () {
 			$scope.selectedDocument = undefined;
 			$scope.showDocumentDetail = false;
 			$scope.openDocumentDetail = false;
+			$scope.documentBrowserGrid.api.sizeColumnsToFit();
 			 $mdSidenav('right').close().then(function(){
 				 $scope.documentBrowserGrid.api.sizeColumnsToFit();
 			 });
@@ -312,6 +327,8 @@ $scope.$watch(function () {
 					sbiModule_restServices.promiseGet("2.0", "documents?searchAttributes=all&searchKey=" + encodeURIComponent(newSearchInput + "*"))
 					.then(function(response) {
 						$scope.searchDocuments = response.data;
+						$scope.searchResultGrid.api.setRowData($scope.searchDocuments);
+						$scope.searchResultGrid.api.sizeColumnsToFit();
 						$scope.searchingDocuments=false;
 					},function(response){
 						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.search.error'))
@@ -345,8 +362,11 @@ $scope.$watch(function () {
 		$scope.showSearchView = !$scope.showSearchView;
 		if ($scope.showSearchView) {
 			setFocus('searchInput');
+			$scope.selectDocument();
+		}else{
+			$scope.searchDocuments = [];
+			$scope.searchInput = '';
 		}
-		$scope.selectDocument();
 	};
 
 

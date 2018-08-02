@@ -66,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 			<span flex=""></span>
 		
-			<!--  Search view button>
+			<!--  Search view button-->
 			<md-button tabindex="1" class="md-icon-button" title="Search" aria-label="Search"
 				ng-hide="showSearchView" ng-click="toggleSearchView()"> <md-icon
 				md-font-icon="fa fa-search"></md-icon> </md-button>
@@ -112,7 +112,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</div>
 	</md-toolbar>
 	<md-content layout="row" flex>
-			<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-xs')">
+			<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-xs')" ng-show="searchDocuments==0">
 				<md-content> 
 					<document-tree ng-model="folders" highlights-selected-item="true" create-tree="true" selected-item="selectedFolder" click-function="setSelectedFolder(item)"></document-tree>
 				</md-content>
@@ -121,12 +121,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<bread-crumb item-name='name' ng-model="breadModel" selected-item="selectedFolder" class="kn-documentBrowser-comp"
 					control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)>
 				</bread-crumb>
-				<md-card >
+				<md-card ng-show="!searchingDocuments && searchDocuments.length==0">
 					<md-card-content class="noPadding" style="height:100%;">
 						<h3 class="md-title" layout-padding ng-show="folderDocuments.length==0">{{translate.load("sbi.browser.document.noDocument")}}</h3>
-						<div ng-hide="showGridView==true || folderDocuments.length==0" ag-grid="documentBrowserGrid" class="ag-theme-balham noMargin documentBrowserGrid ag-theme-knowage"></div>
+						<div ng-show="folderDocuments.length>0" ag-grid="documentBrowserGrid" class="ag-theme-balham noMargin documentBrowserGrid ag-theme-knowage"></div>
 					</md-card-content>
 				</md-card>
+				
+				<md-content flex ng-show="searchingDocuments"> 
+					<md-progress-circular loading md-mode="indeterminate" md-diameter="75%"
+					style="position:fixed; top:50%; left:50%; z-index:500; background:rgba(255, 255, 255, 0);">
+					</md-progress-circular>
+				</md-content> 
+				
+				<md-card ng-show="searchDocuments.length>0">
+					<md-card-content class="noPadding" style="height:100%;">
+						<div layout="row" layout-align="center center">
+							<div class="kn-info" flex="60">
+								<span ng-show="searchDocuments.length == 0">{{translate.load("sbi.browser.document.noDocument")}}</span>
+								<span ng-show="searchDocuments.length > 0">{{searchDocuments.length || 0}} {{translate.load("sbi.browser.document.found")}}</span>
+							</div>
+						</div>
+						<div ng-show="searchDocuments.length>0" ag-grid="searchResultGrid" class="ag-theme-balham noMargin documentBrowserGrid ag-theme-knowage" style="height:calc(100% - 50px)"></div>
+					</md-card-content>
+				</md-card>
+
 			</md-content>
 			
 
