@@ -50,6 +50,9 @@
         <property name="fileName" type="string">
             <column name="name" />
         </property>
+         <property name="fileModel" type="binary">
+            <column name="FILE_MODEL" sql-type="longvarbinary"/>
+        </property>
         <property name="prog" type="integer">
             <column name="prog" />
         </property>
