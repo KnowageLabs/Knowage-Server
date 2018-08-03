@@ -34,7 +34,6 @@ import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
@@ -602,29 +601,7 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	public Connection getConnection(IDataSource datasource) {
-		try {
-			Boolean multiSchema = datasource.getMultiSchema();
-			logger.debug("Datasource is multischema: " + multiSchema);
-			String schema;
-			if (multiSchema == null || !multiSchema.booleanValue()) {
-				schema = null;
-			} else {
-				String attributeName = datasource.getSchemaAttribute();
-				logger.debug("Datasource multischema attribute name: " + attributeName);
-
-				logger.debug("Looking for attribute " + attributeName + " for user " + profile + " ...");
-				Object attributeValue = profile.getUserAttribute(attributeName);
-				logger.debug("Attribute " + attributeName + "  is " + attributeValue);
-				if (attributeValue == null) {
-					throw new RuntimeException("No attribute with name " + attributeName + " found for user " + ((UserProfile) profile).getUserId());
-				} else {
-					schema = attributeValue.toString();
-				}
-			}
-			return datasource.getConnection(schema);
-		} catch (Exception e) {
-			throw new SpagoBIEngineRuntimeException("Cannot get connection to datasource", e);
-		}
+		return datasource.getConnectionFromUserProfile(profile);
 	}
 
 	private void executeStatement(String sql, IDataSource dataSource) throws Exception {

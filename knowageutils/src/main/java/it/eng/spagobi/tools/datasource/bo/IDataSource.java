@@ -26,6 +26,7 @@ import javax.naming.NamingException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -52,6 +53,8 @@ public interface IDataSource {
 	public Connection getConnection() throws NamingException, SQLException, ClassNotFoundException;
 
 	public Connection getConnection(String schema) throws NamingException, SQLException, ClassNotFoundException;
+	
+	public Connection getConnectionFromUserProfile(IEngUserProfile profile);
 
 	/**
 	 * Gets the ds id.
