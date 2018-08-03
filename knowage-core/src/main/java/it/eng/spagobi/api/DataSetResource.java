@@ -1178,8 +1178,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			String columnFilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
 			if (typeFilter.equals("=")) {
 				hsql += " and h." + columnFilter + " = '" + valuefilter + "'";
-			} else if (typeFilter.equals("ilike")) {
-				hsql += " and h." + columnFilter + " ilike '%" + valuefilter + "%'";
+			} else if (typeFilter.equals("like")) {
+				hsql += " and h." + columnFilter.toLowerCase() + " like '%" + valuefilter.toLowerCase() + "%'";
 			}
 		}
 
