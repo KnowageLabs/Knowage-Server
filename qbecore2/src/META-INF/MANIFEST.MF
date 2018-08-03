@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: KnowageQbeCore2.jar
-
-Name: knowage.qbecore2-6.0.0.jar
-Implementation-Title: KnowageQbeCore2
-Implementation-Version: 6.0.0
-
