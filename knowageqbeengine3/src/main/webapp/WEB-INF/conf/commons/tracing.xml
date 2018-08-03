@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<TRACING>
-	<LOGGER isDefault="true" name="Spago" class="it.eng.spago.tracing.Log4JLogger">
-		<CONFIG trace_min_log_severity="5" debug="false"  append="true" trace_thread_name="false" /> 
-	</LOGGER>
-</TRACING>

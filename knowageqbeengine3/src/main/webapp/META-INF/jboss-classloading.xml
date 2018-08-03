@@ -1,6 +1,0 @@
-<classloading xmlns="urn:jboss:classloading:1.0"
-domain="SpagoBIQbeEngine.war"
-export-all="NON_EMPTY"
-import-all="true"
-parent-first="false">
-</classloading>
