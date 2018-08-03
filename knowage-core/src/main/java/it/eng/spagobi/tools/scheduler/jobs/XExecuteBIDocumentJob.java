@@ -282,7 +282,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 					continue;
 				}
 				String encodedDispatchContext = jobDataMap.getString("biobject_id_" + document.getId() + "__" + (documentIndex + 1));
-				if (StringUtilities.isNotEmpty(encodedGlobalDispatchContext)) {
+				if (StringUtilities.isNotEmpty(encodedDispatchContext)) {
 					DispatchContext dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);
 					if (dispatchContext.isUniqueMail()) {
 						uniqueMailForAll = true;
