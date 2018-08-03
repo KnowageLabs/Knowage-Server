@@ -44,6 +44,7 @@ public class JDBCDatasetFactory {
 		switch (databaseDialect) {
 		case CASSANDRA:
 		case HIVE:
+		case HIVE2:
 		case SPARKSQL:
 			dataSet = new JDBCHiveDataSet();
 			break;
