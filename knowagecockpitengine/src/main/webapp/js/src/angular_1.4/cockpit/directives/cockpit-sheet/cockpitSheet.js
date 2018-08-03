@@ -79,6 +79,12 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 			label: sbiModule_translate.load("sbi.cockpit.new.sheet"),
 			widgets: angular.copy(sheet.widgets)
 		};
+		
+		var nextId = new Date().getTime();
+		for(var i in newSheet.widgets){
+			newSheet.widgets[i].id = nextId++;
+		}
+		
 		cockpitModule_template.sheets.push(newSheet);
 	}
 	
