@@ -25,7 +25,7 @@ angular.module('chartInitializer')
 	var chartConfConf = null;
 
 	this.renderChart = function(renderObj, jsonData){
-		
+
 		var chartConf = renderObj.chartConf;
 		if(chartConf.chart.additionalData && chartConf.chart.additionalData.dateTime && chartConf.chart.additionalData.datetype!="string"){
 			for (var i = 0; i < chartConf.series.length; i++) {
@@ -40,9 +40,9 @@ angular.module('chartInitializer')
 						dat.x = (new Date(dateSplit[2], dateSplit[1]-1, dateSplit[0])).getTime();
 					}
 				}
-			}	
+			}
 		}
-		
+
 		var element = renderObj.element;
 		var handleCockpitSelection = renderObj.handleCockpitSelection;
 		var exportWebApp = renderObj.exportWebApp;
@@ -76,6 +76,19 @@ angular.module('chartInitializer')
 		else
 		{
 			if (chartType == 'scatter') delete this.updateData;
+
+			if(chartType == 'solidgauge' && chartConf.chart.subtype == 'solid') {
+
+					var seriesOrder = chartConf.series;
+
+					function sortYFunction (){
+						seriesOrder.sort(function(a,b){
+							return b[0].data[0].y - a[0].data[0].y;
+
+						})
+					}
+
+			}
 			this.chart =  new Highcharts.Chart(chartConf);
 			this.chart.widgetData = widgetData;
 			if(jsonData){
@@ -319,12 +332,12 @@ angular.module('chartInitializer')
 
 
 	this.handleDrilldown = function(e){
-		var drillable = this.drillable != undefined ? 
+		var drillable = this.drillable != undefined ?
 				this.drillable : (this.options.chart.additionalData.isCockpit ?
 						this.options.chart.additionalData.drillable: this.options.chart.additionalData.drillableChart);
 		if(!drillable){
 			console.log("chart is not drillable")
-			return;		
+			return;
 		}
 		var chart = this;
 		if(!chart.breadcrumb)chart.breadcrumb=[];

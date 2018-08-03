@@ -62,7 +62,7 @@
 #set($seriesNum = $series.size())
 #set($seriesColorsMapNum = $seriesColorsMap.size())
 
-#if($seriesNum > $seriesColorsMapNum)
+#if($subtype == 'activity' && $seriesNum > $seriesColorsMapNum)
 	
 	#foreach($colorObj in $series)
 		#set($counter = $foreach.index)	
@@ -79,6 +79,7 @@
 {
     chart: {
     	type: '$type',
+    	subtype: "$subtype",
 		#*
 			This parameter must be set to false, since if not defined
 			in the case where we have more than one Y-axis ticks on lines 
@@ -382,8 +383,6 @@
 	            	endOnTick: $yAxis.endOnTickGauge,
 	            #end
 	            
-	            $datasettransformer.print($yAxis)
-	            
 	        	#if($yAxis.minorTickInterval == '' ||  $yAxis.minorTickInterval == '0' || $yAxis.minorTickInterval == 'auto')
 	        		minorTickInterval: 'auto',
         		#else
@@ -445,7 +444,7 @@
 			        	plotBands: [        	
 			        	
 			        	#set($plots = $yAxis.PLOTBANDS.PLOT) 
-			        	       	
+			        	   #if($subtype !="solid")    	
 			        	#if ($plots.class.name == "java.util.ArrayList")
 			        	
 				        	#foreach($plotElement in $plots)
@@ -481,7 +480,7 @@
 					        		#end		        		
 					        	},
 					        #end
-				        	
+				          #end
 				        #end
 			        	
 			        	#*
@@ -530,13 +529,15 @@
 			        	],
 			        	#if($subtype=="solid")
 				        	stops:[
-			        
-						        #foreach($plotElement in $plots)   																								
-								
-								[$plotElement.to/$yAxis.max,'$plotElement.color'],
-																												      																							        		
-								#end
-						
+			   						#if($plots.size() > 0)
+								        #foreach($plotElement in $plots)   																								
+										[$plotElement.to/$yAxis.max,'$plotElement.color'],																			      																							        		
+										#end
+									#else
+										        [0.3, '#7cb5ec'], 
+									            [0.6, '#434348'],
+									            [1, '#90ed7d'],
+									#end
 							],
 						 #end 	
 			        #end 
