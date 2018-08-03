@@ -17,6 +17,13 @@
  */
 package it.eng.spagobi.engines.qbe;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.query.Query;
@@ -37,13 +44,6 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -100,6 +100,11 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		dataSourceProperties.put(EngineConstants.ENV_RELATIONS, env.get(EngineConstants.ENV_RELATIONS));
 
 		dataSourceProperties.put("datasource", dataSrc);
+
+		dataSourceProperties.put(EngineConstants.MODEL_NAME, env.get(EngineConstants.MODEL_NAME));
+		if (env.get(EngineConstants.MODEL_NAME) == null) {
+			dataSourceProperties.put(EngineConstants.MODEL_NAME, env.get("DATAMART_NAME"));
+		}
 
 		dataSource = QbeDataSourceManager.getInstance().getDataSource(template != null ? template.getDatamartNames() : null, dataSourceProperties,
 				QbeEngineConfig.getInstance().isDataSourceCacheEnabled());
@@ -379,8 +384,8 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	}
 
 	public it.eng.spagobi.tools.datasource.bo.IDataSource getDataSourceForWriting() {
-		it.eng.spagobi.tools.datasource.bo.IDataSource datasource = (it.eng.spagobi.tools.datasource.bo.IDataSource) this.getEnv().get(
-				EngineConstants.DATASOURCE_FOR_WRITING);
+		it.eng.spagobi.tools.datasource.bo.IDataSource datasource = (it.eng.spagobi.tools.datasource.bo.IDataSource) this.getEnv()
+				.get(EngineConstants.DATASOURCE_FOR_WRITING);
 		if (datasource == null) {
 			throw new SpagoBIEngineRuntimeException("Datasource for writing not defined!");
 		}

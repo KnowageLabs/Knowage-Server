@@ -1,0 +1,17 @@
+<md-dialog style="min-width:400px;">
+ <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{translate.load("kn.qbe.selectgridpanel.name.temporalOperand.parameter")}}</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding>      
+       <md-input-container  class="md-block">
+			<input ng-model="tmpOperand.param">
+		</md-input-container>
+    </md-dialog-content>
+    
+   <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button class="md-raised" ng-click="applyTmpOperandParam()">{{translate.load("kn.qbe.general.ok")}}</md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,103 @@
+<%-- Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--%>
+
+<script>
+
+	angular.module('sbiModule')
+	
+	.service('sbiModule_action_builder',function(sbiModule_action,$httpParamSerializer){
+		
+		return {
+				
+				getActionBuilder:function(type){
+					
+					var getActionBuilder;
+					
+					if(type.toUpperCase()=="GET"){
+						getActionBuilder = new GetActionBuilder();
+						getActionBuilder.execute = sbiModule_action.promiseGet;
+					}else{
+						getActionBuilder = new PostActionBuilder();
+						getActionBuilder.execute = sbiModule_action.promisePost;
+					}
+					
+					return getActionBuilder;
+					}
+			
+				}
+		
+		function GetActionBuilder(){
+			this.actionName="";
+			this.queryParams={};
+			this.conf={};
+			this.execute;
+			this.executeAction = function(){
+			return	this.execute(this.actionName,this.queryParams,this.conf);
+			}
+		}
+		
+		function PostActionBuilder(){
+			this.actionName="";
+			this.queryParams={};
+			this.formParams={};
+			this.item={},
+			this.conf={};
+			this.execute;
+			this.transformFormParams = function(){
+				
+					this.item = this.serializeParams(this.formParams);
+					this.conf.headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+					this.conf.transformRequest = function(obj) {
+				        var str = [];
+				        for(var p in obj)
+				        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+				        return str.join("&");
+				    }
+				
+			}
+			
+			this.isFormParamsEmtpy = function(){
+				return angular.equals(this.formParams, {});
+			}
+			
+			this.serializeParams = function(paramObj){
+				var obj = {}
+				angular.forEach(paramObj,function(value,key){
+					if(angular.isObject(value)){
+						this[key] = angular.toJson(value);
+					}else{
+						this[key] = value;
+					}
+					
+				},obj)
+				
+				return obj;
+			}
+			
+			
+			this.executeAction = function(){
+				if(!this.isFormParamsEmtpy())this.transformFormParams();
+				return	this.execute(this.actionName,this.queryParams,this.item,this.conf);
+			}
+		}
+	    
+	})
+	
+	
+	
+
+</script>

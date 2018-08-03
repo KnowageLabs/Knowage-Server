@@ -140,7 +140,8 @@
     <PUBLISHER name="BUILD_QBE_DATASET_START_ACTION_PUBLISHER">		
 		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
 			<RESOURCES>
-				<ITEM prog="0" resource="/WEB-INF/jsp/dataset/editDataset.jsp" />
+<!-- 				<ITEM prog="0" resource="/WEB-INF/jsp/dataset/editDataset.jsp" /> -->
+				<ITEM prog="0" resource="/WEB-INF/jsp/qbe.jsp" />
 			</RESOURCES>
 		</RENDERING>    	
 	</PUBLISHER>
@@ -164,7 +165,7 @@
 	<PUBLISHER name="REGISTRY_ENGINE_START_ACTION_PUBLISHER">		
 		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
 			<RESOURCES>
-				<ITEM prog="0" resource="/WEB-INF/jsp/registry.jsp" />
+				<ITEM prog="0" resource="/WEB-INF/jsp/registry/testRegistry.jsp" />
 			</RESOURCES>
 		</RENDERING>    	
 	</PUBLISHER>

@@ -17,6 +17,12 @@
  */
 package it.eng.spagobi.engines.qbe.services.initializers;
 
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.qbe.QbeEngine;
@@ -31,12 +37,6 @@ import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 /**
  * The Class QbeEngineStartAction.
@@ -221,4 +221,19 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 
 		return env;
 	}
+
+	/**
+	 * Gets the datasource of the cache
+	 *
+	 * @return
+	 */
+	protected IDataSource getCacheDataSource() {
+		logger.debug("Loading the cache datasource");
+		String datasourceLabel = (String) getSpagoBIRequestContainer().get(EngineConstants.ENV_DATASOURCE_FOR_CACHE);
+		logger.debug("The datasource for cahce is " + datasourceLabel);
+		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceLabel);
+		logger.debug("cache datasource loaded");
+		return dataSource;
+	}
+
 }

@@ -1,0 +1,115 @@
+<!-- Markup for lists inside the dropzone. It's inside a seperate template
+     because it will be used recursively. The dnd-list directive enables
+     to drop elements into the referenced array. The dnd-draggable directive
+     makes an element draggable and will transfer the object that was
+     assigned to it. If an element was dragged away, you have to remove
+     it from the original list yourself using the dnd-moved attribute -->
+<script type="text/ng-template" id="list.html">
+    <ul dnd-list="list">
+        <li ng-repeat="item in list track by $index"
+            dnd-draggable="item"
+            dnd-effect-allowed="move"
+            dnd-moved="list.splice($index, 1)"
+            dnd-selected="models.selected = item"
+            ng-class="{selected: models.selected === item,'innerLast':$index == (list.length-1)}"
+			class="filterItemLi"
+            ng-include="item.type + '.html'">{{item}}
+        </li>
+    </ul>
+</script>
+
+<!-- This template is responsible for rendering a container element. It uses
+     the above list template to render each container column -->
+<script type="text/ng-template" id="group.html">
+	<div class="groupContainer" layout="row">
+    	<div class="filterGroup">
+			<h3 layout="row" layout-align="start center">Group {{item.id}} 
+				<span flex></span>
+				<md-button class="md-icon-button" ng-click="removeGroup(item, $index)">
+					<md-icon md-font-icon="fa fa-trash"></md-icon>
+				</md-button>
+			</h3>
+        	<div class="column" layout-wrap ng-repeat="list in item.columns" ng-include="'list.html'"></div>
+        	<div class="clearfix"></div>
+    	</div>
+		<div class="filterOperator" layout="column">
+			<md-icon md-font-icon="fa fa-link"></md-icon>
+			<md-select ng-model="item.connector" >
+				<md-option ng-repeat="c in getBooleanConnectors" value="{{c}}"  >
+		    		{{c}}
+				</md-option>
+			</md-select>
+		</div>
+	</div>
+ 
+</script>
+
+<!-- Template for a normal list item -->
+<script type="text/ng-template" id="item.html">
+<div layout="row">
+	<md-card class="filterItem" ng-style={'border-color':item.color}>
+		<h4>{{item.name}}</h4>
+			&nbsp; {{item.leftValue}} {{item.operator}} {{item.rightValue}}
+	</md-card>
+	<div layout="column" class="filterOperator">
+		<md-icon md-font-icon="fa fa-link"></md-icon>
+		<md-select ng-model="item.connector" >
+			<md-option ng-repeat="c in getBooleanConnectors" value="{{c}}"  >
+		    	{{c}}
+			</md-option>
+		</md-select>
+	</div>
+</div>
+ 
+</script>
+
+<div class="md-panel" style="width:100%;height:100%;min-height:100%;background-color:white" layout="column">
+	<md-toolbar class="secondaryToolbar" layout-padding>
+		<div class="md-toolbar-tools">
+	   		<h2><span>Advanced filter visualization</span></h2>
+			<span flex></span>									 
+	   	</div>
+	</md-toolbar>
+		<md-menu-bar>
+          <md-menu>
+          	<button  class="md-button md-knowage-theme md-ink-ripple"
+          		ng-repeat="item in models.templates"
+				                dnd-draggable="item"
+				                dnd-effect-allowed="copy"
+				                dnd-copied="item.id = item.id + 1"
+          	ng-click="$mdMenu.open()">
+            	Drag to add group
+            </button>
+          </md-menu>
+       	</md-menu-bar>
+		<div>
+			<div class="row">
+       				<div ng-repeat="(zone, list) in models.dropzones">
+           				<div class="dropzone box box-yellow">
+                			<ul dnd-list="list" layout="row" layout-wrap layout-align="start center">
+						        <li ng-repeat="item in list"
+						            dnd-draggable="item"
+						            dnd-effect-allowed="move"
+						            dnd-moved="list.splice($index, 1)"
+						            dnd-selected="models.selected = item"
+						            ng-class="{selected: models.selected === item, 'last':$index == (list.length-1)}"
+						            ng-include="item.type + '.html'"
+						            >
+						        </li>
+						    </ul>
+            			</div>
+        			</div>
+    			</div>
+		</div>
+			
+	<div flex></div>
+        <div layout="row" layout-align="start center">
+        	<span flex></span>
+            <md-button ng-click="closeFiltersAdvanced()" class="md-raised">
+                {{translate.load("kn.qbe.general.cancel")}}
+            </md-button>
+            <md-button ng-click="saveFiltersAdvanced()" class="md-primary md-raised">
+                {{translate.load("kn.qbe.general.save")}}
+            </md-button>
+        </div>
+</div>

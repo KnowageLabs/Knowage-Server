@@ -1,0 +1,576 @@
+<?xml version="1.0"?>
+<formulas>
+	<formula >
+		<name>Sum</name>
+		<syntax>Sum( Field )</syntax>
+			<body>Sum(field)</body>
+			<argument>
+				<name>Field</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>Field type Number</argument_description>
+			</argument>
+			
+			
+		
+		<output>Number</output>
+		<description>
+			Returns the total sum of a numeric field.
+		</description>
+		<type>aggregation</type>
+	</formula>
+	
+	<formula >
+		<name>Min</name>
+		<syntax>Min( Field )</syntax>
+			<body>Min(field)</body>
+			<argument>
+				<name>Field</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>Field type Number</argument_description>
+			</argument>
+			
+			
+		
+		<output>Number</output>
+		<description>
+			Returns the smallest value of a numeric field.
+		</description>
+		<type>aggregation</type>
+	</formula>
+	
+	<formula >
+		<name>Max</name>
+		<syntax>MAx( Field )</syntax>
+			<body>Max(field)</body>
+			<argument>
+				<name>Field</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>Field type Number</argument_description>
+			</argument>
+			
+			
+		
+		<output>Number</output>
+		<description>
+			Returns the largest value of a numeric field.
+		</description>
+		<type>aggregation</type>
+	</formula>
+	
+	<formula >
+		<name>Count</name>
+		<syntax>Count( Field )</syntax>
+			<body>Count(field)</body>
+			<argument>
+				<name>Field</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>Field of any type or *</argument_description>
+			</argument>
+			
+		<output>Integer</output>
+		<description>
+			Returns the number of rows that matches the specific criteria.
+		</description>
+		<type>aggregation</type>
+	</formula>
+	
+	<formula >
+		<name>Average</name>
+		<syntax>Avg( Field )</syntax>
+			<body>Avg(field)</body>
+			<argument>
+				<name>Field</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>Field type Number</argument_description>
+			</argument>
+			
+		<output>Number</output>
+		<description>
+			Returns the average value of a numeric field.
+		</description>
+		<type>aggregation</type>
+	</formula>
+	
+	<formula >
+		<name>Concat</name>
+		<syntax>Concat(expression1, expression2, expression3,...)</syntax>
+			<body>Concat(expressionParams)</body>
+			<argument>
+				<name>Expression</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>Expression than returns string</argument_description>
+			</argument>
+			
+		<output>String</output>
+		<description>
+			If expression is a numeric value, it will be converted to a binary string. 
+			If all expressions are nonbinary strings, this function will return a nonbinary string. 
+			If any of the expressions is a binary string, this function will return a binary string. 
+			If any of the expressions is a NULL, this function will return a NULL value..
+		</description>
+		<type>string</type>
+	</formula>
+	
+	<formula >
+		<name>Length</name>
+		<syntax>Length(string)</syntax>
+			<body>Concat(string)</body>
+			<argument>
+				<name>String</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>Expression than returns string</argument_description>
+			</argument>
+			
+		<output>String</output>
+		<description>
+			Returns a length of a string
+		</description>
+		<type>string</type>
+	</formula>
+	
+	<formula >
+		<name>Locate</name>
+		<syntax>Locate(substring,string,start)</syntax>
+			<body>Locate(string)</body>
+			<argument>
+				<name>Substring</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>Substring to search in a string</argument_description>
+			</argument>
+			<argument>
+				<name>String</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>String that will be searched</argument_description>
+			</argument>
+			<argument>
+				<name>Start</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>The starting position for the search.Position 1 is default</argument_description>
+			</argument>
+			
+		<output>Integer</output>
+		<description>
+			Returns a position of a subtring in the string
+		</description>
+		<type>string</type>
+	</formula>
+	
+	<formula >
+		<name>Lower</name>
+		<syntax>Lower(string)</syntax>
+			<body>Lower(string)</body>
+			<argument>
+				<name>String</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>Expression than returns string</argument_description>
+			</argument>
+			
+		<output>String</output>
+		<description>
+			Convert the string value to lower case.
+		</description>
+		<type>string</type>
+	</formula>
+	
+	<formula >
+		<name>Substring</name>
+		<syntax>Substring(string, start_pos, number_of_chars))</syntax>
+			<body>Substring(string, start_pos, number_of_chars)</body>
+			<argument>
+				<name>String</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>String to extract from</argument_description>
+			</argument>
+			<argument>
+				<name>Start positions</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>The position to start extraction from. The first position in string is 1</argument_description>
+			</argument>
+			<argument>
+				<name>Number of chars</name>
+				<expected_value></expected_value>
+				<default_value></default_value>
+				<argument_description>The number of characters to extract</argument_description>
+			</argument>
+			
+		<output>String</output>
+		<description>
+			Returns a substring of a string.
+		</description>
+		<type>string</type>
+	</formula>
+	
+	<formula >
+		<name>Current date</name>
+		<syntax>CURRENT_DATE()</syntax>
+			<body>CURRENT_DATE()</body>
+			
+		<output>String</output>
+		<description>
+			Returns the current date on the database
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula >
+		<name>Current time</name>
+		<syntax>CURRENT_TIME()</syntax>
+			<body>CURRENT_TIME()</body>
+			
+		<output>String</output>
+		<description>
+			Returns the current time on the database
+		</description>
+		<type>time</type>
+	</formula>
+	
+	<formula>
+		<name>Distance</name>
+		<syntax>Distance (Geom1, Dim1, Geom2, Dim2, Unit, Tol)</syntax>
+		<body>Distance(geom1, dim1, geom2, dim2, unit, tol)</body>
+		
+		<argument>
+			<name>Geom1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Geometry object whose distance from geom2 is to be computed.</argument_description>
+		</argument>
+		<argument>
+			<name>Dim1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
+		</argument>
+		<argument>
+			<name>Geom2</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Geometry object whose distance from geom1 is to be computed.</argument_description>
+		</argument>
+		<argument>
+			<name>Dim2</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Dimensional information array corresponding to geom2.</argument_description>
+		</argument>
+		<argument>
+			<name>Unit</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Unit of measurement.</argument_description>
+		</argument>
+		<argument>
+			<name>Tol</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Tolerance value</argument_description>
+		</argument>
+		
+		<output>Number</output>
+		<description>Returns the distance between two geometry objects.</description>
+		<type>space</type>
+	</formula>
+	
+	<formula>
+		<name>Dwithin</name>
+		<syntax>Dwithin (Geom1, Dim1, Dist, Geom2, Dim2, Tol)</syntax>
+		<body>Dwithin(geom1, dim1, dist, geom2, dim2, tol)</body>
+		
+		<argument>
+			<name>Geom1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Geometry object.</argument_description>
+		</argument>
+		<argument>
+			<name>Dim1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
+		</argument>
+		<argument>
+			<name>Dist</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Distance value.</argument_description>
+		</argument>
+		<argument>
+			<name>Geom2</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Geometry object.</argument_description>
+		</argument>
+		<argument>
+			<name>Dim2</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Dimensional information array corresponding to geom2.</argument_description>
+		</argument>		
+		<argument>
+			<name>Tol</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Tolerance value</argument_description>
+		</argument>
+		
+		<output>Boolean</output>
+		<description>Returns TRUE for object pairs that are within the specified distance, and FALSE otherwise.</description>
+		<type>space</type>
+	</formula>
+	
+	<formula>
+		<name>Dimension</name>
+		<syntax>Dimension ()</syntax>
+		<body>Dimension()</body>
+		
+		<output>Number</output>
+		<description>Returns the number of dimensions of a geometry object.</description>
+		<type>space</type>
+	</formula>
+	
+	<formula>
+		<name>Difference</name>
+		<syntax>Difference (Geom1, Dim1, Geom2, Dim2, Tol)</syntax>
+		<body>Difference(geom1, dim1, geom2, dim2, tol)</body>
+		
+		<argument>
+			<name>Geom1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Geometry object.</argument_description>
+		</argument>
+		<argument>
+			<name>Dim1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
+		</argument>
+		<argument>
+			<name>Geom2</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Geometry object.</argument_description>
+		</argument>
+		<argument>
+			<name>Dim2</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Dimensional information array corresponding to geom2.</argument_description>
+		</argument>		
+		<argument>
+			<name>Tol</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Tolerance value</argument_description>
+		</argument>
+		
+		<output>Object</output>
+		<description>Returns a geometry object that is the topological difference of two geometry objects.</description>
+		<type>space</type>
+	</formula>
+	
+	<formula>
+		<name>Centroid</name>
+		<syntax>Centroid (Geom1, Dim1, Tol)</syntax>
+		<body>Centroid(geom1, dim1, tol)</body>
+		
+		<argument>
+			<name>Geom1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Geometry object.</argument_description>
+		</argument>
+		<argument>
+			<name>Dim1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
+		</argument>		
+		<argument>
+			<name>Tol</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Tolerance value</argument_description>
+		</argument>
+		
+		<output>Number</output>
+		<description>Returns a point geometry that is the centroid of a polygon, multipolygon, point, or point cluster.</description>
+		<type>space</type>
+	</formula>
+	
+	<formula>
+		<name>Geometrytype</name>
+		<syntax>Geometrytype ()</syntax>
+		<body>Geometrytype()</body>
+		
+		<output>Number</output>
+		<description>Returns the geometry type of a geometry object.</description>
+		<type>space</type>
+	</formula>
+	
+	<formula>
+		<name>Union</name>
+		<syntax>Union (Geom1, Dim1, Geom2, Dim2, Tol)</syntax>
+		<body>Union(geom1, dim1, geom2, dim2, tol)</body>
+		
+		<argument>
+			<name>Geom1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Geometry object.</argument_description>
+		</argument>
+		<argument>
+			<name>Dim1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
+		</argument>
+		<argument>
+			<name>Geom2</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Geometry object.</argument_description>
+		</argument>
+		<argument>
+			<name>Dim2</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Dimensional information array corresponding to geom2.</argument_description>
+		</argument>		
+		<argument>
+			<name>Tol</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Tolerance value</argument_description>
+		</argument>
+		
+		<output>Object</output>
+		<description>Returns a geometry object that is the topological union (OR operation) of two geometry objects.</description>
+		<type>space</type>
+	</formula>
+	
+	<formula>
+		<name>Length</name>
+		<syntax>Length (Geom, Dim, Unit, Tol)</syntax>
+		<body>Length(geom, dim, unit, tol)</body>
+		
+		<argument>
+			<name>Geom1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Geometry object.</argument_description>
+		</argument>
+		<argument>
+			<name>Dim1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Dimensional information array corresponding to geom.</argument_description>
+		</argument>
+		<argument>
+			<name>Unit</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Unit of measurement.</argument_description>
+		</argument>
+		<argument>
+			<name>Tol</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Tolerance value</argument_description>
+		</argument>
+		
+		<output>Number</output>
+		<description>Returns the length or perimeter of a geometry object.</description>
+		<type>space</type>
+	</formula>
+	
+	<formula>
+		<name>Relate</name>
+		<syntax>Relate (Geom1, Dim1, Mask, Geom2, Dim2, Tol)</syntax>
+		<body>Relate(geom1, dim1, mask, geom2, dim2, tol))</body>
+		
+		<argument>
+			<name>Geom1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Geometry object.</argument_description>
+		</argument>
+		<argument>
+			<name>Dim1</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Dimensional information array corresponding to geom1.</argument_description>
+		</argument>
+		<argument>
+			<name>Mask</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Specifies a list of relationships to check.</argument_description>
+		</argument>
+		<argument>
+			<name>Geom2</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Geometry object.</argument_description>
+		</argument>
+		<argument>
+			<name>Dim2</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Dimensional information array corresponding to geom2.</argument_description>
+		</argument>
+		<argument>
+			<name>Tol</name>
+			<expected_value></expected_value>
+			<default_value></default_value>
+			<argument_description>Tolerance value</argument_description>
+		</argument>
+		
+		<output>String</output>
+		<description>Examines two geometry objects to determine their spatial relationship.</description>
+		<type>space</type>
+	</formula>
+	
+	<formula>
+		<name>Case</name>
+		<syntax>Case when Exp then val else val2 end </syntax>
+		<body>Case when Exp then val else val2 end</body>
+		<argument>
+			<name>Exp</name>
+			<expected_value/>
+			<default_value/>
+			<argument_description>Exp</argument_description>
+		</argument>
+		<argument>
+			<name>val</name>
+			<expected_value/>
+			<default_value/>
+			<argument_description>val</argument_description>
+		</argument>
+		<argument>
+			<name>val2</name>
+			<expected_value/>
+			<default_value/>
+			<argument_description>val2</argument_description>
+		</argument>
+		<output>Object</output>
+		<description>Returns the result if condition is true.</description>
+		<type>sql</type>
+	</formula>
+
+	
+ 
+</formulas>

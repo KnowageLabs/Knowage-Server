@@ -1,0 +1,21 @@
+<md-dialog style="min-width:400px;">
+ <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{entityItem.text}}</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding>      
+       <angular-table  
+				flex
+ 				ng-model="entityItem.relation" 
+ 				columns='relationsListColumns'
+ 				items-per-page=10
+ 				fixed-item-per-page=true>
+ 	  </angular-table>
+    </md-dialog-content>
+    
+   <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button class="md-raised" ng-click="ok()">{{translate.load("kn.qbe.general.ok")}}</md-button>
+    </md-dialog-actions>
+</md-dialog>

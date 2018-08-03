@@ -1,0 +1,159 @@
+<md-card ng-if="!params" layout-fill layout="column" class="flexCard" style="position:absolute">
+	<md-card-content flex layout="column" class="noPadding">
+		<md-toolbar class="secondaryToolbar" layout-padding>
+			<div class="md-toolbar-tools">
+		   		<h2><span>{{translate.load("kn.qbe.general.filters")}}</span></h2>
+				<span flex></span>
+				<md-button class="md-icon-button" aria-label="Add new filter" ng-show="field.iconCls=='the_date'" ng-click="loadTemporalFilters()" 
+						title='{{translate.load("kn.qbe.general.field")}}'>
+					<md-icon md-font-icon="fa fa-puzzle-piece" ></md-icon>
+				</md-button>
+				 <md-button class="md-fab md-mini" aria-label="Add new filter" ng-click="addNewFilter()">
+		            <md-icon md-font-icon="fa fa-plus" ></md-icon>
+		        </md-button>
+										 
+		   	</div>
+		</md-toolbar>
+		<md-content flex layout="column" >
+			<div layout="row" layout-align="center center" ng-if="(filters | filter : field.id).length==0">
+				<div class="kn-noItems" flex="60" flex-xs="100">
+					<p class="ng-binding">{{translate.load("kn.qbe.filters.nofilters")}}</p>
+				</div>
+			</div>
+			<md-card ng-if="(filters | filter : field.id).length > 0">
+				<md-card-content layout="column" layout-padding>
+
+					<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="filter in filters | filter: field.id" >     			
+						<md-input-container flex=30  >
+							<label class="filterLabel">{{translate.load("kn.qbe.general.field")}}</label>
+				      		<input name="leftOperand" ng-model="filter.leftOperandDescription" readonly>
+				    	</md-input-container>
+				    	
+				   		<md-input-container flex=10 >
+				   			<label class="filterLabel">{{translate.load("kn.qbe.filters.condition")}}</label>
+				          	<md-select ng-model="filter.operator" >
+				                 <md-option ng-repeat="operator in getConditionOptions()" value="{{operator.value}}" >{{operator.name}}
+				                 </md-option>
+				                 
+				             </md-select>   
+				        </md-input-container>
+				        
+						<md-input-container flex=20 >
+							<label class="filterLabel">{{translate.load("kn.qbe.filters.targetType")}}</label>
+				          	<md-select ng-model="filter.rightType" >
+				                 <md-option ng-repeat="type in targetTypes" value="{{type.value}}" 
+				                 ng-click="changeTarget(type.value,filter)">{{type.name}}</md-option>
+				             </md-select>   
+				        </md-input-container>
+				        
+					 	<md-input-container flex=25  ng-if="filter.rightType=='anotherEntity'">
+					 		<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label>
+				        	<input name="rightOperand" ng-model="filter.rightOperandDescription" readonly>
+					    </md-input-container>       
+					    
+					    <div  ng-if="filter.rightType=='anotherEntity'" >
+				        	<md-menu>
+				        		<md-button 	aria-label="Open menu for setting target type" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event);" >
+									<md-icon md-menu-origin class="fa fa-angle-down"></md-icon>
+								</md-button>
+				       			<md-menu-content>
+									<md-menu-item ng-repeat="entity in tree">
+										<md-menu class="filterOtherEntity">
+					      					<md-button ng-click="$mdMenu.open()"><span>{{entity.text}}</span></md-button>
+				    						<md-menu-content >
+				    							<md-menu-item ng-repeat="r in entity.children">
+							    					<md-button  ng-click="fillInput(filter, r, 'field')">
+							       						<span>{{r.text}}</span>
+							    					</md-button>
+								    			</md-menu-item>
+											</md-menu-content>
+										</md-menu>
+									</md-menu-item>
+								</md-menu-content>
+							</md-menu>
+				       	</div>
+
+				        <md-input-container flex=30 ng-if="filter.rightType=='subquery'" >
+				        	<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label>
+				       		<md-select ng-model="filter.rightOperandDescription" >
+				               <md-option ng-repeat="s in subqueries" value="{{s.name}}" ng-click="fillInput(filter,s, 'subquery')">{{s.name}}</md-option>
+				           </md-select>  
+				       	</md-input-container>
+				        <md-input-container flex=30 ng-if="filter.rightType=='parameter'">
+				        	<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label>
+							<md-select ng-model="filter.rightOperandDescription" >
+								<md-option ng-repeat="p in pars" value="{{p.name}}" ng-click="fillInput(filter,p, 'parameter')">{{p.name}}</md-option>
+							</md-select>   
+					    </md-input-container>
+
+				        <md-input-container flex=30  ng-if="filter.rightType!='parameter' && filter.rightType!='subquery' && filter.rightType!='anotherEntity'">
+				        	<label class="filterLabel">{{translate.load("kn.qbe.filters.target")}}</label>
+					    	<input name="rightOperand" ng-model="filter.rightOperandDescription" ng-change="edit(filter)">
+					    </md-input-container>
+
+				        <md-button  class="md-icon-button" ng-click="deleteFilter(filter)">
+				        	<md-icon md-font-icon="fa fa-eraser" ></md-icon>
+				        	<md-tooltip md-delay="1000" >{{translate.load("kn.qbe.filters.clear")}}</md-tooltip>
+				        </md-button>      				
+					</div>	
+				</md-card-content>
+			</md-card>
+			<md-card  ng-if="showTable" >
+				<md-card-content layout="column" layout-padding>
+					<angular-table layout-fill
+							  id="vauleField_id" ng-model="listOfValues"
+							columns='[
+									{"label":"Valori","name":"column_1","size":"50px"},
+									]'
+							no-pagination=false
+							selected-item="value" highlights-selected-item="true"
+							multi-select="true" >
+							 </angular-table>
+				</md-card-content>
+			</md-card>
+		</md-content>
+	</md-card-content>
+	<md-card-actions layout="row" layout-align="start center">
+		<span flex></span>
+	    <md-button ng-click="closeFilters()" class="md-raised">{{translate.load("kn.qbe.general.cancel")}}</md-button>
+	    <md-button ng-click="saveFilters()"  class="md-primary md-raised">{{translate.load("kn.qbe.general.save")}}</md-button>
+	</md-card-actions>
+</md-card>
+<md-card ng-if="params"  layout-fill layout="column" class="flexCard" style="position:absolute">
+	<md-card-content flex layout="column" class="noPadding">
+		<md-toolbar class="secondaryToolbar" layout-padding>
+			<div class="md-toolbar-tools">
+		   		<h2><span>{{translate.load("kn.qbe.filters.parameters")}}</span></h2>
+				<span flex></span>									 
+		   	</div>
+		</md-toolbar>
+		
+		<md-content flex layout="column">
+			<md-card>
+				<md-card-content layout="row" layout-padding>
+					 <angular-table
+							id="datasetParametersTable"
+							flex
+							style="height:100%;padding:8px"
+							ng-model=pars
+							columns=parametersPreviewColumns
+							show-search-bar=false
+							scope-functions=paramScopeFunctions
+							no-pagination=false
+							current-page-number=parametersTableLastPage >
+					</angular-table>
+				</md-card-content>
+			</md-card>
+		</md-content>
+	</md-card-content>
+	
+	 <md-card-actions layout="row" layout-align="start center">
+	 	<span flex></span>
+		<md-button ng-click="closeFilters()" class="md-raised">
+        	{{translate.load("kn.qbe.general.cancel")}}
+		</md-button>
+		<md-button ng-click="applyValueOfParameterAndContinuePreviewExecution()" md-autofocus class="md-primary md-raised">
+			{{translate.load("kn.qbe.filters.apply.parameters")}}
+		</md-button>
+	</md-card-actions>
+</md-card>

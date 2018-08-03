@@ -123,6 +123,9 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
 
+		String jsonEncodedCatalogue = null;
+		JSONArray queries;
+		JSONObject queryJSON;
 		Query query;
 		QueryGraph oldQueryGraph = null;
 		String roleSelectionFromTheSavedQuery = null;
@@ -157,7 +160,32 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				}
 			}
 
-			parseIncomingCatalogue();
+			// get the cataologue from the request
+			jsonEncodedCatalogue = getAttributeAsString(CATALOGUE);
+			if (jsonEncodedCatalogue == null) {
+				jsonEncodedCatalogue = getAttributeAsString("qbeJSONQuery");
+				JSONObject jo = new JSONObject(jsonEncodedCatalogue);
+				jo = jo.getJSONObject("catalogue");
+				queries = jo.getJSONArray("queries");
+			} else {
+				queries = new JSONArray(jsonEncodedCatalogue);
+			}
+
+			logger.debug(CATALOGUE + " = [" + jsonEncodedCatalogue + "]");
+
+			try {
+
+				for (int i = 0; i < queries.length(); i++) {
+					queryJSON = queries.getJSONObject(i);
+					query = deserializeQuery(queryJSON);
+					getEngineInstance().getQueryCatalogue().addQuery(query);
+					getEngineInstance().resetActiveQuery();
+				}
+
+			} catch (SerializationException e) {
+				String message = "Impossible to syncronize the query with the server. Query passed by the client is malformed";
+				throw new SpagoBIEngineServiceException(getActionName(), message, e);
+			}
 
 			query = this.getCurrentQuery();
 			if (query == null) {
@@ -173,7 +201,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
-			// we create a new query adding filters defined by profile attributes
+			// we create a new query adding filters defined by profile
+			// attributes
 			IModelAccessModality accessModality = this.getEngineInstance().getDataSource().getModelAccessModality();
 
 			if (handleTimeFilter) {
@@ -321,38 +350,6 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			writeBackToClient(toReturn.toString());
 		} catch (IOException e) {
 			String message = "Impossible to write back the responce to the client";
-			throw new SpagoBIEngineServiceException(getActionName(), message, e);
-		}
-	}
-
-	private void parseIncomingCatalogue() {
-		String jsonEncodedCatalogue;
-		JSONArray queries;
-		JSONObject queryJSON;
-		Query query;
-		try {
-			// get the catalogue from the request
-			jsonEncodedCatalogue = getAttributeAsString(CATALOGUE);
-			if (jsonEncodedCatalogue == null) {
-				jsonEncodedCatalogue = getAttributeAsString("qbeJSONQuery");
-				JSONObject jo = new JSONObject(jsonEncodedCatalogue);
-				jo = jo.getJSONObject("catalogue");
-				queries = jo.getJSONArray("queries");
-			} else {
-				queries = new JSONArray(jsonEncodedCatalogue);
-			}
-
-			logger.debug(CATALOGUE + " = [" + jsonEncodedCatalogue + "]");
-
-			for (int i = 0; i < queries.length(); i++) {
-				queryJSON = queries.getJSONObject(i);
-				query = deserializeQuery(queryJSON);
-				getEngineInstance().getQueryCatalogue().addQuery(query);
-				getEngineInstance().resetActiveQuery();
-			}
-
-		} catch (Exception e) {
-			String message = "Impossible to syncronize the query with the server. Query passed by the client is malformed";
 			throw new SpagoBIEngineServiceException(getActionName(), message, e);
 		}
 	}

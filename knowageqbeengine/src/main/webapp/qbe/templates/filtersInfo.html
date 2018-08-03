@@ -1,0 +1,21 @@
+<md-dialog flex="30" style="min-width:200px;">
+ <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{field.entity}} : {{field.name}}</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding>      
+       <angular-table  
+				flex
+ 				ng-model="allFilters" 
+ 				columns='filtersListColumns'
+ 				items-per-page=10
+ 				fixed-item-per-page=true>
+ 	  </angular-table>
+    </md-dialog-content>
+    
+   <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button class="md-raised" ng-click="ok()">{{translate.load("kn.qbe.general.ok")}}</md-button>
+    </md-dialog-actions>
+</md-dialog>

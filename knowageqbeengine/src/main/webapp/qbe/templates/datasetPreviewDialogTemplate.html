@@ -1,0 +1,24 @@
+<md-card class="qbePreviewDialog">
+	<md-card-content flex layout="column" class="noPadding">
+		<md-toolbar class="secondaryToolbar" >
+			<div class="md-toolbar-tools">{{translate.load("kn.qbe.custom.table.preview")}}
+				<span flex></span>
+			<md-button class="md-icon-button" aria-label="Close" ng-click="closePanel()" 
+					title="Close">
+				<md-icon md-font-icon="fa fa-times" ></md-icon>
+			</md-button>
+			</div>
+		</md-toolbar>
+		<angular-table
+				id="basicView"
+				flex layout-padding
+				ng-model="model.previewModel"
+				columns='model.completeResultsColumns'
+				page-changed-function="changeDatasetPage(itemsPerPage, currentPageNumber)"
+				total-item-count="model.totalNumberOfItems"
+				items-per-page=20
+ 				fixed-item-per-page=true>
+		</angular-table>		
+	</md-card-content>
+
+</md-card>

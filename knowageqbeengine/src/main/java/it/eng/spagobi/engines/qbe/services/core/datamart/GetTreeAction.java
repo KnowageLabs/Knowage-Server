@@ -1,23 +1,29 @@
 /*
 * Knowage, Open Source Business Intelligence suite
 * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-* 
+*
 * Knowage is free software: you can redistribute it and/or modify
 * it under the terms of the GNU Affero General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
-* 
+*
 * Knowage is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU Affero General Public License for more details.
-* 
+*
 * You should have received a copy of the GNU Affero General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 package it.eng.spagobi.engines.qbe.services.core.datamart;
 
-import it.eng.qbe.datasource.jpa.JPADataSource;
+import java.io.IOException;
+import java.util.Iterator;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import it.eng.qbe.model.structure.filter.IQbeTreeEntityFilter;
 import it.eng.qbe.model.structure.filter.IQbeTreeFieldFilter;
 import it.eng.qbe.model.structure.filter.QbeTreeAccessModalityEntityFilter;
@@ -37,12 +43,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
-import java.io.IOException;
-import java.util.Iterator;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-
 /**
  *
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -54,6 +54,8 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 	// INPUT PARAMETERS
 	public static final String QUERY_ID = "parentQueryId";
 	public static final String DATAMART_NAME = "datamartName";
+
+	public static final String ENTITIES = "entities";
 
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(GetTreeAction.class);
@@ -72,8 +74,8 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 		QbeTreeFilter treeFilter = null;
 
 		ExtJsQbeTreeBuilder qbeBuilder = null;
-		JSONArray nodes;
-
+		JSONObject node=new JSONObject();
+		JSONArray nodes = null;
 		logger.debug("IN");
 
 		try {
@@ -110,11 +112,16 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 			qbeBuilder = new ExtJsQbeTreeBuilder(treeFilter);
 
 			datamartName = getAttributeAsString(DATAMART_NAME);
+
+
 			if (datamartName != null) {
+//				if(datamartName.equals("null"))
+//					datamartName="";
 				nodes = qbeBuilder.getQbeTree(getDataSource(), getLocale(), datamartName, userProfile);
+
 			} else {
-				nodes = new JSONArray();
-				Iterator<String> it = ((JPADataSource)getDataSource()).getModelStructure(userProfile).getModelNames().iterator();
+			 nodes = new JSONArray();
+				Iterator<String> it = getDataSource().getModelStructure(userProfile).getModelNames().iterator();
 				while (it.hasNext()) {
 					String modelName = it.next();
 					JSONArray temp = qbeBuilder.getQbeTree(getDataSource(), getLocale(), modelName, userProfile);
@@ -123,10 +130,14 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 						nodes.put(object);
 					}
 				}
+
+
 			}
 
+			node.put(ENTITIES, nodes);
+
 			try {
-				writeBackToClient( new JSONSuccess(nodes) );
+				writeBackToClient( new JSONSuccess(node) );
 			} catch (IOException e) {
 				String message = "Impossible to write back the responce to the client";
 				throw new SpagoBIEngineServiceException(getActionName(), message, e);

@@ -188,8 +188,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		} else {
 			logger.debug("no need of summary lines");
 		}
-
 		RegistryJSONDataWriter dataSetWriter = new RegistryJSONDataWriter();
+		dataSetWriter.setPreserveOriginalDataTypes(true);
 		JSONObject gridDataFeed = (JSONObject) dataSetWriter.write(dataStore);
 		setMandatoryMetadata(gridDataFeed);
 		setColumnMaxSize(gridDataFeed);
@@ -212,15 +212,6 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			Integer prevVal = (Integer) previousValue;
 			Integer result = currVal + prevVal;
 			resultToReturn = result;
-		} else if (currentValue instanceof Short) {
-			Integer currVal = ((Short) currentValue).intValue();
-			Integer prevVal = null;
-			if (previousValue instanceof Short) {
-				prevVal = ((Short) previousValue).intValue();
-			} else {
-				prevVal = (Integer) previousValue;
-			}
-			resultToReturn = currVal + prevVal;
 		} else if (currentValue instanceof Float) {
 			Float currValF = (Float) currentValue;
 			Float prevValF = (Float) previousValue;
@@ -342,6 +333,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			// if merging goes on update counters else add summarization line
 			if (isEqual) {
 				sumCounter++;
+
 				for (Iterator iterator = columnsIndexToSum2Counter.keySet().iterator(); iterator.hasNext();) {
 					Integer indexMeasure = (Integer) iterator.next();
 					Object value = record.getFieldAt(indexMeasure).getValue();
