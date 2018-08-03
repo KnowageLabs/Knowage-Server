@@ -41,7 +41,10 @@ angular
              self.datasets =[];
              self.document = self.documentService.document;
              if(self.document.visible != true || self.document.visible != false )self.document.visible = true;
-             console.log(self.document);
+
+             if(self.document.refreshSeconds == null)
+            	 self.document.refreshSeconds = 0;
+
              self.availableStatuses = documentAndInfo.states;
              self.template = self.documentService.template;
              self.required = true;
