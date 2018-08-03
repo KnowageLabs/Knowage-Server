@@ -26,7 +26,7 @@ angular.module('cockpitModule').directive('mdTabFixedAddSheetButton',function ($
         }
     };
 })
-	
+
 angular.module('cockpitModule').directive('cockpitSheet',function($compile){
 	   return{
 		   templateUrl: baseScriptPath+ '/directives/cockpit-sheet/templates/cockpitSheet.html',
@@ -64,11 +64,11 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.maxSheetsNumber = 7;
-	
+
 	for(var sh in cockpitModule_template.sheets){
 		cockpitModule_template.sheets[sh].index = cockpitModule_template.sheets[sh].index!=undefined?parseInt(cockpitModule_template.sheets[sh].index):sh;
 	}
-	
+
 	$scope.addSheet=function(){
 		cockpitModule_template.sheets.push({index:cockpitModule_template.sheets.length,label:sbiModule_translate.load("sbi.cockpit.new.sheet"),widgets:[]});
 	};
@@ -79,9 +79,15 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 			label: sbiModule_translate.load("sbi.cockpit.new.sheet"),
 			widgets: angular.copy(sheet.widgets)
 		};
+
+		var nextId = new Date().getTime();
+		for(var i in newSheet.widgets){
+			newSheet.widgets[i].id = nextId++;
+		}
+
 		cockpitModule_template.sheets.push(newSheet);
 	}
-	
+
 	$scope.deleteSheet=function(sheet,ev){
 		var confirm = $mdDialog.confirm()
 	        .title(sbiModule_translate.load("sbi.cockpit.sheet.delete.title"))
@@ -90,17 +96,17 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 	        .targetEvent(ev)
 	        .ok(sbiModule_translate.load("sbi.ds.wizard.confirm"))
 	        .cancel(sbiModule_translate.load("sbi.ds.wizard.cancel"));
-		
+
 		$mdDialog.show(confirm).then(function() {
 		  for(var sh in cockpitModule_template.sheets){
 			  if(cockpitModule_template.sheets[sh].index>sheet.index){
-				  cockpitModule_template.sheets[sh].index --; 
-			  } 
+				  cockpitModule_template.sheets[sh].index --;
+			  }
 		  }
 		  cockpitModule_template.sheets.splice(cockpitModule_template.sheets.indexOf(sheet),1);
 	  });
 	}
-	
+
 	$scope.moveSheet = function(sheet,direction){
 		var cur, prev, next;
 		for(var sh in cockpitModule_template.sheets){
@@ -110,13 +116,13 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 		}
 		if(direction == 'prev'){
 			cockpitModule_template.sheets[cur].index --;
-			cockpitModule_template.sheets[prev].index ++;	
+			cockpitModule_template.sheets[prev].index ++;
 		}else {
 			cockpitModule_template.sheets[cur].index ++;
 			cockpitModule_template.sheets[next].index --;
 		}
 	};
-	
+
 	$scope.renameSheet=function(sheet,ev){
 		var confirm = $mdDialog.prompt()
 	      .title(sbiModule_translate.load("sbi.cockpit.sheet.rename.title"))
