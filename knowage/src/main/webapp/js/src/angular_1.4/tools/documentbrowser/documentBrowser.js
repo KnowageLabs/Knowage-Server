@@ -437,6 +437,7 @@ $scope.$watch(function () {
 				if(index2!=-1){
 					$scope.searchDocuments.splice(index2,1);
 				}
+				$scope.documentBrowserGrid.api.setRowData($scope.folderDocuments);
 			$scope.selectedDocument = undefined;
 			},function(response) {
 				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.delete.error'));
@@ -459,7 +460,8 @@ $scope.$watch(function () {
 			sbiModule_restServices.promisePost("documents","clone?docId="+Document.id)
 			.then(function(response) {
 			$scope.folderDocuments.push(response.data);
-			$scope.searchDocuments.push(response.data);
+			//$scope.searchDocuments.push(response.data);
+			$scope.documentBrowserGrid.api.setRowData($scope.folderDocuments);
 			},function(response) {
 				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.clone.error'));
 			});
