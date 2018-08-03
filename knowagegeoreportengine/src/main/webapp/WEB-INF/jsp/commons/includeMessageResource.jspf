@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	//Initialization of the messageResource object
 	messageResource.init({
-  		filePath : "${pageContext.request.contextPath}/js/src/ext/sbi/messages/"
+  		filePath : "${pageContext.request.contextPath}/js/src/messages/"
   		, defaultLocale : 'en_US'
   		, ajaxFunction : getSynch
 	});

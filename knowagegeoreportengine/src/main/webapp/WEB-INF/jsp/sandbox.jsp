@@ -56,7 +56,6 @@ locale = engineInstance.getLocale();
 	<head>
 		<title>Welcome to the sandbox</title>
 		<%@include file="commons/includeMessageResource.jspf" %>
-		<%@include file="commons/includeGeoExt.jspf" %>
 	</head>
 	
 	<body>
@@ -77,13 +76,6 @@ locale = engineInstance.getLocale();
 		        );
 		        map.addLayer(layer);
 
-		        new GeoExt.MapPanel({
-		            renderTo: 'gxmap',
-		            height: 400,
-		            width: 600,
-		            map: map,
-		            title: 'A Simple GeoExt Map'
-		        });
 		    });
 
 		</script>
