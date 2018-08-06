@@ -759,7 +759,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	{"type": "buttons", "buttons": [
     		{"name": "Preview Dataset", "icon": "fa fa-eye", "action":$scope.previewDataset, "visible": function(){return true;} },
     		{"name": "Show dataset details", "icon": "fa fa-pencil-square-o", "action": $scope.editFileDataset, "visible": function(ds){ return (ds.fileType) && (ds.dsTypeCd=='File')} },
-    		{"name": "Edit dataset", "icon": "fa fa-pencil-square-o", "action": $scope.editQbeDataset, "visible": function(ds){ return ((ds.fileType) && (ds.dsTypeCd == 'Federated' || ds.dsTypeCd == 'Qbe'))} },
+    		{"name": "Edit dataset", "icon": "fa fa-pencil-square-o", "action": $scope.editQbeDataset, "visible": function(ds){ return ds.dsTypeCd == 'Qbe'} },
     		{"name": "Open dataset in QBE", "icon": "fa fa-search", "action": $scope.showQbeDataset, "visible": function(ds){return !ds.derivated && ds.pars.length == 0}}
     	]}
     ];
