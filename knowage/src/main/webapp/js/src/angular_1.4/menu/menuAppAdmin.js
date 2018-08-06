@@ -250,6 +250,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 						return;
 					}
 	        		console.log("License Data:", data);
+
 	        		$scope.hostsData=data.hosts;
 	        		$scope.licenseData=data.licenses;
 					$mdDialog.show({
@@ -282,6 +283,9 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 						scope.download = $scope.download;
 						scope.dialog = $mdDialog;
 						scope.hosts = hosts;
+						scope.trimExpirationDate = function(date){
+							return moment(date).format("YYYY-MM-DD");
+						}
 
 	        	        var restLicense = {
 	        	        		base : scope.config.contextName + '/restful-services/1.0/license',
@@ -306,14 +310,14 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        		if(scope.isForUpdate){
 	        	        			var selectedLicense = scope.file.name;
 	        	        			var existingLicense = license.product;
-	        	        			
+
 	        	        			if(selectedLicense.indexOf(existingLicense) == -1)   {
 	        	        				sbiModule_messaging.showErrorMessage("You have chosen wrong type of license", "Different type error");
 		        	        			scope.isForUpdate = false;
-	        	        				return;	
-	        	        			}     	        			
+	        	        				return;
+	        	        			}
 	        	        		}
-	        	        		
+
 	        	        		var config = {
 	        	        				transformRequest:angular.identity,
 	        	        				headers:{'Content-Type': undefined}
@@ -329,20 +333,19 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        					if (response.data.errors){
 	        	        						scope.messaging.showErrorMessage(scope.translate.load(response.data.errors[0].message),scope.translate.load('sbi.generic.error'));
 	        	        					}else{
-	        	        						// add the new license to the list 
-	        	        						
+	        	        						// add the new license to the list
+
 	        	        						var sLicense = scope.file.name;
 	        	        						if(scope.isForUpdate) {
 	        	        							for(var i = 0; i < scope.licenseData[currentHostName].length; i++) {
 		        	        							if(response.data.product === scope.licenseData[currentHostName][i].product) {
 		        	        								scope.licenseData[currentHostName][i] = response.data;
-		        	        							} 
+		        	        							}
 		        	        						}
 	        	        						} else {
 	        	        							$scope.licenseData[currentHostName].push(response.data);
 	        	        						}
-	        	        						
-	        	        						
+
 	        	        						scope.file = undefined;
 	        	        						scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
 	        	        						scope.isForUpdate = false;

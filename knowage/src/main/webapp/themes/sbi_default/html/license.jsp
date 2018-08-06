@@ -58,11 +58,12 @@
 	        	<div flex class="md-list-item-text">
 	          		<h3>{{license.product}}</h3>
 	          			
-	          		<p ng-class="{'kn-success': license.status == 'LICENSE_VALID' ,'kn-danger' :license.status !== 'LICENSE_VALID'}">
+	          		<p ng-class="{'kn-success': license.status == 'LICENSE_VALID' ,'kn-danger':license.status !== 'LICENSE_VALID'}">
 	          
-		          				{{license.status_ext}}
-		          		
-		          		<span ng-if="license.expiration_date"><br />- {{license.expiration_date}}</span>
+<!-- 		          				{{license.status_ext}} -->
+		          		<span ng-if="license.status == 'LICENSE_VALID'"><br />Valid license</span>	
+		          		<span ng-if="license.status != 'LICENSE_VALID'"><br />Invalid license</span>
+		          		<span ng-if="license.expiration_date"><br />{{license.expiration_date_format}}</span>
 	          		</p>
 	         	</div>
 	         	<div flex class="md-list-item-text">
