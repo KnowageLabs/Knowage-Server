@@ -1179,7 +1179,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			if (typeFilter.equals("=")) {
 				hsql += " and h." + columnFilter + " = '" + valuefilter + "'";
 			} else if (typeFilter.equals("like")) {
-				hsql += " and h." + columnFilter.toLowerCase() + " like '%" + valuefilter.toLowerCase() + "%'";
+				//hsql += " and h." + columnFilter + " like '%" + valuefilter.toUpperCase() + "%'";
+				hsql += " and upper(h." + columnFilter + ") like '%" + valuefilter.toUpperCase() + "%'";
 			}
 		}
 
