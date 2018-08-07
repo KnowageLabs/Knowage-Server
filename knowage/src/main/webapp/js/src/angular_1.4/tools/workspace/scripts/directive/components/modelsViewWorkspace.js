@@ -66,8 +66,21 @@
 			}
 		}
 		
+		$scope.showQbeFromBM=function(businessModel){
+
+			var modelName= businessModel.name;
+			var dataSource=businessModel.dataSourceLabel;
+			var url = datasetParameters.qbeFromBMServiceUrl
+			+'&MODEL_NAME='+modelName
+			+'&DATA_SOURCE_LABEL='+ dataSource
+			+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
+
+			// $window.location.href=url;
+			$qbeViewer.openQbeInterfaceFromModel($scope,url);
+		}
+		
 		$scope.tableColumnsFederation = [{"label":"Label","name":"label"},{"label":"Name","name":"name"}];
-		$scope.tableColumnsModels = [{"label":"Name","name":"name","type":"text"}, {"label":"Description","name":"description","type":"text"},{"type": "buttons", "buttons": [{"name": "Open business model in QBE", "icon": "fa fa-search", "action": $scope.showQbeModel}]}];
+		$scope.tableColumnsModels = [{"label":"Name","name":"name","type":"text"}, {"label":"Description","name":"description","type":"text"},{"type": "buttons", "buttons": [{"name": "Open business model in QBE", "icon": "fa fa-search", "action": $scope.showQbeModel, "visible": function(){return true;}}]}];
 
 		$scope.showModelInfo = false;
 		$scope.idsOfFederationDefinitionsUsediNFederatedDatasets = [];
@@ -338,19 +351,6 @@
 				fullscreen: true,
 				locals:{federation:undefined}
 			})
-		}
-
-		$scope.showQbeFromBM=function(businessModel){
-
-			var modelName= businessModel.name;
-			var dataSource=businessModel.dataSourceLabel;
-			var url = datasetParameters.qbeFromBMServiceUrl
-			+'&MODEL_NAME='+modelName
-			+'&DATA_SOURCE_LABEL='+ dataSource
-			+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
-
-			// $window.location.href=url;
-			$qbeViewer.openQbeInterfaceFromModel($scope,url);
 		}
 
 		function DialogEditFederationController($scope,$mdDialog,sbiModule_config,federation){
