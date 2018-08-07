@@ -2003,60 +2003,131 @@
 	}
 
 	.cockpitSelectorWidget{
-		.cockpitSelectorWidgetCombobox {
-			padding-top: 0;
-			md-input-container {
-				margin: 8px 0;
-				width: 100%;
+		.grid {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			.kn-custom-checkbox-container, .grid .kn-custom-radio-container{
+				width: 150px;
 			}
 		}
-		.cSelWRadio,.cSelWCheck{
-			margin-bottom: 8px;
-			outline: none;
-			span {
-				font-size: $mediumFontSize;
-			}
+		.horizontal {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
 		}
-		.cSelWScroller {
-			&.horizontal {
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				.cSelWCheckContainer, md-radio-group{
-					md-radio-button, md-checkbox {
-						margin-right: 16px;
-					}
-					display: flex;
-					flex-direction: row;
-					align-items: center;
-					._md-label{
-						white-space: nowrap;
-					}
+		.kn-custom-checkbox-container, .kn-custom-radio-container {
+		    display: inline-flex;
+		    position: relative;
+		    flex-direction: row-reverse;
+		    justify-content: flex-end;
+		    align-items: center;
+		    min-height: 24px;
+		    margin-right: 10px;
+		    cursor: pointer;
+		    font-size: 12px;
+		    -webkit-user-select: none;
+		    -moz-user-select: none;
+		    -ms-user-select: none;
+		    user-select: none;
+		    .checkmark:after {
+			  content: "";
+			  position: absolute;
+			  display: none;
+			}
+			&:focus {
+				outline: none;
+			}
+		    input {
+		    	position: absolute;
+			  	opacity: 0;
+			 	cursor: pointer;
+			 	&:checked {
+			 		~ .checkmark {
+			 			background-color: $baseColor !important;
+  						border: 2px solid $baseColor !important;
+			 			&:after {
+			 				display: block;
+			 			}
+			 		}
+			 	}
+		    }
+		    span {
+		    	overflow: hidden;
+			  	text-overflow: ellipsis;
+			  	white-space: nowrap;
+		    }
+		    &:hover {
+				background-color: #ccc;
+				input ~ .checkmark {
+					background-color: #ccc;
 				}
 				
-			}
-			&.grid {
-				.cSelWCheckContainer, md-radio-group{
-					display: flex;
-					flex-direction: row;
-					flex-wrap: wrap;
-					md-radio-button, md-checkbox {
-						margin-right: 8px;
-						width: 150px;
-						span {
-							overflow: hidden;
-							text-overflow: ellipsis;
-							white-space: nowrap;
-							display: block;
-							width: 120px;
-						}
-					}
-				}
-			}
+		    }
+		    &[disabled="disabled"]{
+		    	color: #ccc;
+		    	&:hover {
+		    		background-color: transparent;
+					cursor: default;
+					input ~ .checkmark {
+			    		background-color: #eee;
+			    	}
+		    	}
+		    	input:checked ~ .checkmark {
+		    		background-color: #eee;
+		    	}
+
+		    }
+		}
+		.kn-custom-radio-container .checkmark {
+		  	position: relative;
+		  	height: 18px;
+		  	width: 18px;
+		  	min-width: 18px;
+		  	max-width: 18px;
+		  	margin-right: 10px;
+		  	background-color: transparent;
+		  	border: 2px solid #ccc;
+		  	border-radius: 50%;
+		  	&:after {
+		  		top: 5px;
+			  	left: 5px;
+			  	width: 8px;
+			  	height: 8px;
+			  	border-radius: 50%;
+			  	background: $lightTextColor;
+		  	}
+		}
+		.kn-custom-checkbox-container .checkmark {
+		  	position: relative;
+		    margin-right: 10px;
+		    height: 18px;
+		    width: 18px;
+		    min-width: 18px;
+		    max-width: 18px;
+		    background-color: transparent;
+		    border: 2px solid #ccc;
+		    border-radius: 2px;
+		    &:after {
+		    	left: 5px;
+			  	top: 1px;
+			  	width: 5px;
+			  	height: 10px;
+			  	border: solid $lightTextColor;
+			  	border-width: 0 3px 3px 0;
+			  	-webkit-transform: rotate(45deg);
+			  	-ms-transform: rotate(45deg);
+			  	transform: rotate(45deg);
+		    }
+		}
+		.cSelWScroller {
 			padding-left: 8px;
 			padding-top: 4px;
 			overflow-y: auto;
 			height: 100%;
+			&:focus {
+				outline: none;
+			}
 			@include coolScrollBars($baseColor,6px);
 		}
 	}
