@@ -56,8 +56,37 @@
 		 * @author Ana Tomic (atomic, ana.tomic@mht.net)
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
+		
+		$scope.showQbeModel = function(model){
+
+			if($scope.currentModelsTab=='federations'){
+				$scope.showQbeFederation(model);
+			}else if($scope.currentModelsTab=='businessModels'){
+				$scope.showQbeFromBM(model);
+			}
+		}
+		
+		$scope.showQbeFromBM=function(businessModel){
+
+			var modelName= businessModel.name;
+			var dataSource=businessModel.dataSourceLabel;
+			var url = datasetParameters.qbeFromBMServiceUrl
+			+'&MODEL_NAME='+modelName
+			+'&DATA_SOURCE_LABEL='+ dataSource
+			+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
+
+			// $window.location.href=url;
+			$qbeViewer.openQbeInterfaceFromModel($scope,url);
+		}
+		
 		$scope.tableColumnsFederation = [{"label":"Label","name":"label"},{"label":"Name","name":"name"}];
-		$scope.tableColumnsModels = [{"label":"Name","name":"name","type":"text"}, {"label":"Description","name":"description","type":"text"}];
+		$scope.tableColumnsModels = [
+			{"label":"Name","name":"name","type":"text"}, 
+			{"label":"Description","name":"description","type":"text"},
+			{"type": "buttons", "buttons": [
+				{"name": "Open business model in QBE", "icon": "fa fa-search", "action": $scope.showQbeModel}
+			]}
+		];
 
 		$scope.showModelInfo = false;
 		$scope.idsOfFederationDefinitionsUsediNFederatedDatasets = [];
@@ -234,15 +263,6 @@
 			}
 		};
 
-		$scope.showQbeModel = function(model){
-
-			if($scope.currentModelsTab=='federations'){
-				$scope.showQbeFederation(model);
-			}else if($scope.currentModelsTab=='businessModels'){
-				$scope.showQbeFromBM(model);
-			}
-		}
-
 		$scope.showQbeFederation = function(federation){
 
 			var federationId = federation.federation_id;
@@ -337,19 +357,6 @@
 				fullscreen: true,
 				locals:{federation:undefined}
 			})
-		}
-
-		$scope.showQbeFromBM=function(businessModel){
-
-			var modelName= businessModel.name;
-			var dataSource=businessModel.dataSourceLabel;
-			var url = datasetParameters.qbeFromBMServiceUrl
-			+'&MODEL_NAME='+modelName
-			+'&DATA_SOURCE_LABEL='+ dataSource
-			+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
-
-			// $window.location.href=url;
-			$qbeViewer.openQbeInterfaceFromModel($scope,url);
 		}
 
 		function DialogEditFederationController($scope,$mdDialog,sbiModule_config,federation){
