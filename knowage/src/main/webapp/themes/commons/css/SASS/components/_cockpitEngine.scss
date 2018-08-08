@@ -2010,11 +2010,17 @@
 			.kn-custom-checkbox-container, .grid .kn-custom-radio-container{
 				width: 150px;
 			}
+			&:focus {
+				outline: none;
+			}
 		}
 		.horizontal {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
+			&:focus {
+				outline: none;
+			}
 		}
 		.kn-custom-checkbox-container, .kn-custom-radio-container {
 		    display: inline-flex;
@@ -2023,6 +2029,7 @@
 		    justify-content: flex-end;
 		    align-items: center;
 		    min-height: 24px;
+		    height: 24px;
 		    margin-right: 10px;
 		    cursor: pointer;
 		    font-size: 12px;
