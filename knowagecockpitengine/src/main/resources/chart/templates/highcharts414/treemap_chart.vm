@@ -41,7 +41,6 @@
 	#set($serie = $chart.VALUES.SERIE[0])
 	#set($groupingFunction = $chart.VALUES.SERIE[0].groupingFunction)
 #end
-
 #set($sizeCriteria = $chart.sizeCriteria)
 
 #set($result = $datasettransformer.createTreeChart($columnsNeeded,$serie.name,$dataColumnsMapper,$dataRows, $groupingFunction.toLowerCase()))
@@ -313,6 +312,17 @@
   		#else  		
   		postfixChar: "", 
   		#end
+  		#if($serie.showAbsValue)
+  		showAbsValue: $serie.showAbsValue,
+  		#else
+  		showAbsValue:false,
+  		#end
+  		#if($serie.showPercentage)
+  		showPercentage:$serie.showPercentage,
+  		#else
+  		showPercentage:false,
+  		#end
+  		  		
 	},
 	plotOptions:
 	{
