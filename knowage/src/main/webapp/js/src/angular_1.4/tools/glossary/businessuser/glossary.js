@@ -1556,7 +1556,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 		var item = "Page=1&ItemsPerPage=" + itemsPerPage;
 		item += "&GLOSSARY_NM=" + searchValue;
 		ctr.showSearchPreloaderGlossary = true;
-		sbiModule_restServices.get("1.0/glossary", "listGlossary2", item)
+		sbiModule_restServices.get("1.0/glossary", "listGlossaryByName", item)
 			.success(function(data) {
 				
 				if (data.hasOwnProperty("errors")) {
