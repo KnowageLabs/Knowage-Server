@@ -72,6 +72,12 @@ angular.module('chartInitializer')
 				return renderHeatmap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo,exportWebApp );
 			}
 			this.chart = renderHeatmap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo);
+		} else if (chartType == 'sunburst') {
+			delete this.updateData;
+			if(exportWebApp) {
+				return renderHCSunburst(chartConf,handleCockpitSelection, this.handleCrossNavigationTo,exportWebApp );
+			}
+			this.chart = renderHCSunburst(chartConf,handleCockpitSelection, this.handleCrossNavigationTo);
 		}
 		else
 		{
