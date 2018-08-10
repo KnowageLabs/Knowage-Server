@@ -55,9 +55,7 @@ $scope.documentBrowserGrid = {
         enableSorting: true,
         pagination: true,
         paginationAutoPageSize: true,
-        rowSelection:'single',
-        rowDeselection: true,
-        onSelectionChanged: onSelectionChanged
+        onRowClicked: onSelectionChanged
 };
 
 $scope.searchResultGrid = {
@@ -66,9 +64,7 @@ $scope.searchResultGrid = {
         enableFilter: false,
         pagination: true,
         paginationAutoPageSize: true,
-        rowSelection:'single',
-        rowDeselection: true,
-        onSelectionChanged: onSelectionChanged,
+        onRowClicked: onSelectionChanged,
         columnDefs : $scope.columns
 }
 
@@ -92,20 +88,24 @@ $scope.$watch(function () {
 	   }
 });
 
- function onSelectionChanged(){
-	 $scope.selectedDocument = $scope.documentBrowserGrid.api.getSelectedRows()[0];
-	 if(!$scope.selectedDocument){
-		 $scope.openDocumentDetail = false;
-		 $mdSidenav('right').close().then(function(){
-			 $scope.documentBrowserGrid.api.sizeColumnsToFit();
-		 });
-	 }else{
-		 $scope.openDocumentDetail = $scope.tableElement[0].clientWidth<600? false : true;
-		 $mdSidenav('right').open().then(function(){
-			 $scope.documentBrowserGrid.api.sizeColumnsToFit();
-		 });
-	 }
-	 $scope.$apply();
+function onSelectionChanged(node){
+	if($scope.selectedDocument == node.data){
+		node.node.setSelected(false,true);
+		$scope.selectedDocument = {};
+		$scope.openDocumentDetail = false;
+		$mdSidenav('right').close().then(function(){
+			$scope.documentBrowserGrid.api.sizeColumnsToFit();
+		});
+		return;
+	}else{
+		node.node.setSelected(true,true);
+		$scope.openDocumentDetail = $scope.tableElement[0].clientWidth<600? false : true;
+		$scope.selectedDocument = node.data;
+		$mdSidenav('right').open().then(function(){
+			$scope.documentBrowserGrid.api.sizeColumnsToFit();
+		});
+	}
+	$scope.$apply();
 }
 
  function buttonRenderer(params){
