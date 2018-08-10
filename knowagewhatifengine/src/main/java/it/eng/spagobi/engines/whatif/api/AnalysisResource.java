@@ -70,7 +70,7 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 		IDataSource dataSource = ei.getDataSource();
 		try {
 			logger.debug("Getting the connection to DB");
-			connection = dataSource.getConnection(null);
+			connection = dataSource.getConnection();
 		} catch (Exception e) {
 			logger.error("Error opening connection to datasource " + dataSource.getLabel());
 			throw new SpagoBIRuntimeException("Error opening connection to datasource " + dataSource.getLabel(), e);
@@ -120,7 +120,7 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 		IDataSource dataSource = ei.getDataSource();
 		try {
 			logger.debug("Getting the connection to DB");
-			connection = dataSource.getConnection(null);
+			connection = dataSource.getConnection();
 		} catch (Exception e) {
 			logger.error("Error opening connection to datasource " + dataSource.getLabel());
 			throw new SpagoBIRuntimeException("Error opening connection to datasource " + dataSource.getLabel(), e);

@@ -82,7 +82,7 @@ public class VersionManager {
 
 		try {
 			logger.debug("Getting the connection to DB");
-			connection = dataSource.getConnection(null);
+			connection = dataSource.getConnection();
 		} catch (Exception e) {
 			logger.error("Error in opening connection to datasource " + dataSource.getLabel());
 			throw new SpagoBIRuntimeException("Error in opening connection to datasource " + dataSource.getLabel(), e);
@@ -191,7 +191,7 @@ public class VersionManager {
 
 		try {
 			logger.debug("Getting the connection to DB");
-			connection = dataSource.getConnection(null);
+			connection = dataSource.getConnection();
 		} catch (Exception e) {
 			logger.error("Error in opening connection to datasource " + dataSource.getLabel());
 			throw new SpagoBIRuntimeException("Error in opening connection to datasource " + dataSource.getLabel(), e);
@@ -228,7 +228,7 @@ public class VersionManager {
 
 		try {
 			logger.debug("Getting the connection to DB");
-			connection = dataSource.getConnection(null);
+			connection = dataSource.getConnection();
 		} catch (Exception e) {
 			logger.error("Error in opening connection to datasource " + dataSource.getLabel());
 			throw new SpagoBIRuntimeException("Error in opening connection to datasource " + dataSource.getLabel(), e);

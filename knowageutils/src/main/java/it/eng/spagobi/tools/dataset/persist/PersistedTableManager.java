@@ -601,7 +601,7 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	public Connection getConnection(IDataSource datasource) {
-		return datasource.getConnectionFromUserProfile(profile);
+		return datasource.getConnectionByUserProfile(profile);
 	}
 
 	private void executeStatement(String sql, IDataSource dataSource) throws Exception {

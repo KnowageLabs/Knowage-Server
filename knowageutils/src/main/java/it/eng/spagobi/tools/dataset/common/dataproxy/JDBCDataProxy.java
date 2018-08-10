@@ -92,7 +92,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		try {
 
 			try {
-				connection = getDataSource().getConnection(getSchema());
+				connection = getDataSource().getConnection();
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection", t);
 			}
