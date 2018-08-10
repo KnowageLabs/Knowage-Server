@@ -66,21 +66,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		<angular-list-detail layout-fill> 
 		<list	label="translate.load('sbi.glossary.word')" new-function="ctrl.newWordFunction">
+<!-- 		Word -->
 			<div layout="column" layout-wrap layout-fill class="absolute">
 				<div class="wordListBox">
-					<angular-list layout-fill id='word' enable-drag=true
-						enable-clone=true drag-drop-options=ctrl.TreeOptionsWord
-						ng-model=ctrl.words item-name='WORD' show-search-bar=true
+					<angular-list 
+						layout-fill id='word' 
+						enable-drag=true
+						enable-clone=true 
+						drag-drop-options=ctrl.TreeOptionsWord
+						ng-model=ctrl.words 
+						item-name='WORD' 
+						show-search-bar=true
 						search-function="ctrl.WordLike(searchValue,itemsPerPage)"
 						show-search-preloader="ctrl.showSearchPreloader"
 						page-canged-function="ctrl.pageChanged(newPageNumber,itemsPerPage,searchValue)"
-						total-item-count=ctrl.totalWord menu-option=ctrl.menuOpt>
+						total-item-count=ctrl.totalWord 
+						menu-option=ctrl.menuOpt>
 					</angular-list>
 	
 	
 				</div>
-	
-	
+<!-- 			Glossary  -->
 				<div layout="column" flex layout-wrap class="glossaryListBox">
 					<md-toolbar class="md-blue minihead">
 					<div class="md-toolbar-tools">
@@ -94,11 +100,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 					</md-toolbar>
 	
-					<div flex class=" noBorder " style="position:relative;"> <angular-list
-						layout-fill class="absolute" id='glossary' ng-model=ctrl.glossary
-						item-name='GLOSSARY_NM' menu-option=ctrl.glossMenuOpt
-						click-function="ctrl.showClickedGlossary(item)"
-						speed-menu-option=ctrl.glossSpeedMenuOpt no-pagination=true />
+					<div flex class=" noBorder " style="position:relative;"> 
+						<angular-list
+							layout-fill class="absolute"
+							id='glossary' 
+							ng-model=ctrl.glossary
+							search-function="ctrl.GlossaryLike(searchValue,itemsPerPage)"
+							show-search-bar=true
+							item-name='GLOSSARY_NM' 
+							click-function="ctrl.showClickedGlossary(item)"
+							show-search-preloader="ctrl.showSearchPreloaderGlossary"
+							speed-menu-option=ctrl.glossSpeedMenuOpt 
+							no-pagination=true
+							total-item-count=ctrl.totalGlossaries 
+							menu-option=ctrl.glossMenuOpt />
 	
 					</div>
 	

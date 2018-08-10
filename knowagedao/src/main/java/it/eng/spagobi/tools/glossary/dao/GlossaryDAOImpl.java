@@ -31,6 +31,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -188,6 +189,12 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	@Override
 	public List<SbiGlGlossary> listGlossary() {
 		return list(SbiGlGlossary.class);
+	}
+	
+	@Override
+	public List<SbiGlGlossary> listGlossary2(Integer page, Integer itemsPerPage, String glossary) {
+		
+		return list(new SearchGlossaryByName(page, itemsPerPage, glossary));
 	}
 
 	@Override

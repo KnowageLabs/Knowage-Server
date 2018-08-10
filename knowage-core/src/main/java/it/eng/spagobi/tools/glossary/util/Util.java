@@ -179,9 +179,8 @@ public class Util {
 		return obj;
 	}
 
-	public static JSONObject fromGlossaryLight(SbiGlGlossary sbiGlGlossary)
-
-	throws JSONException {
+	public static JSONObject fromGlossaryLight(SbiGlGlossary sbiGlGlossary) throws JSONException {
+		
 		JSONObject ret = new JSONObject();
 		ret.put("GLOSSARY_ID", sbiGlGlossary.getGlossaryId());
 		ret.put("GLOSSARY_NM", sbiGlGlossary.getGlossaryNm());

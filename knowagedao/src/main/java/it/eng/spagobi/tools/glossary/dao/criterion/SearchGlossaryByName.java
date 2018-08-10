@@ -22,27 +22,43 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 
 public class SearchGlossaryByName implements ICriterion<SbiGlGlossary> {
 
-	private final String gloss;
+	private  String glossary;
+	private  Integer page;
+	private  Integer itemsPerPage;
+	
+	
+	public SearchGlossaryByName(String glossary) {
+		this.glossary = glossary;
+	}
 
-	public SearchGlossaryByName(String gloss) {
-		this.gloss = gloss;
+	public SearchGlossaryByName(Integer page, Integer itemsPerPage, String glossary) {
+		this.page = page;
+		this.itemsPerPage = itemsPerPage;
+		this.glossary = glossary;
 	}
 
 	@Override
 	public Criteria evaluate(Session session) {
-		Criteria c = session.createCriteria(SbiGlGlossary.class);
-		c.setProjection(Projections.projectionList().add(Projections.property("glossaryId"), "glossaryId").add(Projections.property("glossaryNm"), "glossaryNm"))
+		Criteria criteria = session.createCriteria(SbiGlGlossary.class);
+		criteria.setProjection(Projections.projectionList().add(Projections.property("glossaryId"), "glossaryId").add(Projections.property("glossaryNm"), "glossaryNm"))
 				.setResultTransformer(Transformers.aliasToBean(SbiGlGlossary.class));
-		if (gloss != null && !gloss.isEmpty()) {
-			c.add(Restrictions.eq("glossaryNm", gloss).ignoreCase());
+		if (glossary != null && !glossary.isEmpty()) {
+			criteria.add(Restrictions.like("glossaryNm", glossary, MatchMode.ANYWHERE).ignoreCase());
 		}
-		return c;
+		
+		if(page != null && itemsPerPage != null) {
+			criteria.setFirstResult((page - 1) * itemsPerPage);
+			criteria.setMaxResults(itemsPerPage);
+		}
+		
+		return criteria;
 	}
 
 }
