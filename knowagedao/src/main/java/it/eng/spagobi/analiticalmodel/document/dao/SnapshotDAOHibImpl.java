@@ -110,7 +110,9 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 				snap.setScheduler((String) hibSnap[8]);
 				snap.setSchedulationStartDate((Integer) hibSnap[9]);
 				snap.setSequence((Integer) hibSnap[10]);
-				snap.setContent(new byte[0]);
+				/**
+				 * We mustn't set Content in this point, it should stay Null, only in that way functionality of Exporting Snapshot will work
+				 */
 
 				snaps.add(snap);
 			}

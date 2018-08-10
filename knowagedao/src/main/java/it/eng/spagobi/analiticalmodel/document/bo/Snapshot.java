@@ -200,6 +200,10 @@ public class Snapshot implements Serializable {
 
 	/**
 	 * Sets the content.
+	 * <p>
+	 * <b> Note: </b> getContent() method checking if content field is null. If it is, getContent() method will try to load it from database if binary content
+	 * identifier is available. <b> Pay attention when using this method! </b>
+	 * </p>
 	 *
 	 * @param content
 	 *            the new content
