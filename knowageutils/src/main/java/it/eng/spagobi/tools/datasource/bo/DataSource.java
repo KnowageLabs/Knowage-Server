@@ -35,7 +35,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.services.validation.Xss;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
@@ -45,6 +44,8 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
 import it.eng.spagobi.tools.datasource.DataSourceManager;
 import it.eng.spagobi.tools.datasource.bo.serializer.JDBCDataSourcePoolConfigurationJSONSerializer;
+import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
@@ -180,44 +181,33 @@ public class DataSource implements Serializable, IDataSource {
 	@Override
 	@JsonIgnore
 	public Connection getConnection() throws NamingException, SQLException, ClassNotFoundException {
-		return getConnection(null);
+		IEngUserProfile profile = UserProfileManager.getProfile();
+		return getConnectionByUserProfile(profile);
 	}
 
 	@Override
-	public Connection getConnection(String schema) throws NamingException, SQLException, ClassNotFoundException {
-		Connection connection = null;
-
-		if (checkIsJndi()) {
-			connection = getJndiConnection(schema);
-		} else {
-			connection = getDirectConnection();
-		}
-
-		return connection;
-	}
-
-	@Override
-	public Connection getConnectionFromUserProfile(IEngUserProfile profile) {
+	public Connection getConnectionByUserProfile(IEngUserProfile profile) {
 		try {
-			Boolean multiSchema = this.getMultiSchema();
-			logger.debug("Datasource is multischema: " + multiSchema);
-			String schema;
-			if (multiSchema == null || !multiSchema.booleanValue()) {
-				schema = null;
-			} else {
-				String attributeName = this.getSchemaAttribute();
-				logger.debug("Datasource multischema attribute name: " + attributeName);
+			if (checkIsJndi()) {
+				if (checkIsMultiSchema()) {
+					// We check if User profile is required by datasource (in case of multischema datasource) but user profile object is missing
+					Assert.assertNotNull(profile, "User profile object is not provided");
 
-				logger.debug("Looking for attribute " + attributeName + " for user " + profile + " ...");
-				Object attributeValue = profile.getUserAttribute(attributeName);
-				logger.debug("Attribute " + attributeName + "  is " + attributeValue);
-				if (attributeValue == null) {
-					throw new RuntimeException("No attribute with name " + attributeName + " found for user " + ((UserProfile) profile).getUserId());
+					String attributeName = this.getSchemaAttribute();
+					logger.debug("Datasource multischema attribute name: " + attributeName);
+
+					logger.debug("Looking for attribute " + attributeName + " for user " + profile + " ...");
+					Object attributeValue = profile.getUserAttribute(attributeName);
+					logger.debug("Attribute " + attributeName + "  is " + attributeValue);
+					String schema = attributeValue.toString();
+					return getJndiConnection(schema);
 				} else {
-					schema = attributeValue.toString();
+					// For regular datasource (one that is NOT multischema) schema is not required and it can be null
+					return getJndiConnection(null);
 				}
+			} else {
+				return getDirectConnection();
 			}
-			return this.getConnection(schema);
 		} catch (Exception e) {
 			throw new SpagoBIEngineRuntimeException("Cannot get connection to datasource", e);
 		}

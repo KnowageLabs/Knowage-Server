@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,23 +11,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.spagobi.engines.whatif.version;
-
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
-import it.eng.spagobi.engines.whatif.model.ModelConfig;
-import it.eng.spagobi.engines.whatif.model.ModelUtilities;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -43,6 +32,17 @@ import org.pivot4j.transform.ChangeSlicer;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.ModelUtilities;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class VersionManager {
 
@@ -67,22 +67,23 @@ public class VersionManager {
 	}
 
 	/**
-	 * Creates a new version in the db and persists the modifications in the new
-	 * version
+	 * Creates a new version in the db and persists the modifications in the new version
 	 *
 	 * @param version
 	 *            the actual version (the new one will be version+1)
 	 * @return
 	 */
-	public PivotModel persistNewVersionProcedure(Integer version, Integer newVersion, String name, String descr) throws WhatIfPersistingTransformationException {
+	public PivotModel persistNewVersionProcedure(Integer version, Integer newVersion, String name, String descr)
+			throws WhatIfPersistingTransformationException {
 		logger.debug("IN");
-		Monitor persistNewVersionProcedure = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.WhatIfEngineInstance.VersionDAO.increaseVersion.persistNewVersionProcedure");
+		Monitor persistNewVersionProcedure = MonitorFactory
+				.start("WhatIfEngine/it.eng.spagobi.engines.whatif.WhatIfEngineInstance.VersionDAO.increaseVersion.persistNewVersionProcedure");
 		Connection connection;
 		IDataSource dataSource = instance.getDataSource();
 
 		try {
 			logger.debug("Getting the connection to DB");
-			connection = dataSource.getConnection(null);
+			connection = dataSource.getConnection();
 		} catch (Exception e) {
 			logger.error("Error in opening connection to datasource " + dataSource.getLabel());
 			throw new SpagoBIRuntimeException("Error in opening connection to datasource " + dataSource.getLabel(), e);
@@ -128,7 +129,6 @@ public class VersionManager {
 			logger.debug("SAVE AS connection closed");
 		}
 
-		
 		logger.debug("OUT");
 		return instance.getPivotModel();
 
@@ -191,7 +191,7 @@ public class VersionManager {
 
 		try {
 			logger.debug("Getting the connection to DB");
-			connection = dataSource.getConnection(null);
+			connection = dataSource.getConnection();
 		} catch (Exception e) {
 			logger.error("Error in opening connection to datasource " + dataSource.getLabel());
 			throw new SpagoBIRuntimeException("Error in opening connection to datasource " + dataSource.getLabel(), e);
@@ -217,7 +217,8 @@ public class VersionManager {
 	}
 
 	public void deleteVersions(String versionIds) {
-		Monitor deleteAction = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.WhatIfEngineInstance.VersionDAO.deleteVersion.onlyDeleteMethod");
+		Monitor deleteAction = MonitorFactory
+				.start("WhatIfEngine/it.eng.spagobi.engines.whatif.WhatIfEngineInstance.VersionDAO.deleteVersion.onlyDeleteMethod");
 		if (versionIds == null || versionIds.length() == 0) {
 			logger.debug("No version to delete");
 			return;
@@ -228,7 +229,7 @@ public class VersionManager {
 
 		try {
 			logger.debug("Getting the connection to DB");
-			connection = dataSource.getConnection(null);
+			connection = dataSource.getConnection();
 		} catch (Exception e) {
 			logger.error("Error in opening connection to datasource " + dataSource.getLabel());
 			throw new SpagoBIRuntimeException("Error in opening connection to datasource " + dataSource.getLabel(), e);

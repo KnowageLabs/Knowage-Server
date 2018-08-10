@@ -52,9 +52,7 @@ public interface IDataSource {
 	@JsonIgnore
 	public Connection getConnection() throws NamingException, SQLException, ClassNotFoundException;
 
-	public Connection getConnection(String schema) throws NamingException, SQLException, ClassNotFoundException;
-
-	public Connection getConnectionFromUserProfile(IEngUserProfile profile);
+	public Connection getConnectionByUserProfile(IEngUserProfile profile);
 
 	/**
 	 * Gets the ds id.
