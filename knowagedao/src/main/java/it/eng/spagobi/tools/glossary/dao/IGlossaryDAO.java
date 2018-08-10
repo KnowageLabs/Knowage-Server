@@ -62,7 +62,7 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	public List<SbiGlGlossary> listGlossary();
 	
-	public List<SbiGlGlossary> listGlossary2(Integer page, Integer itemsPerPage, String glossary);
+	public List<SbiGlGlossary> listGlossaryByNm(Integer page, Integer itemsPerPage, String glossary);
 
 	public Integer insertGlossary(SbiGlGlossary glossary);
 
