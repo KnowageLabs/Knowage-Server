@@ -1,4 +1,4 @@
-<Context  path="/SpagoBIWhatIfEngine" >
+<Context  path="/knowagewhatifengine" >
 	<!--	<Loader delegate="true"/>  -->
     <ResourceLink global="jdbc/foodmart_oracle" name="jdbc/foodmart_oracle" type="javax.sql.DataSource"/>
     <ResourceLink global="jdbc/foodmart_mysql" name="jdbc/foodmart_mysql" type="javax.sql.DataSource"/>
