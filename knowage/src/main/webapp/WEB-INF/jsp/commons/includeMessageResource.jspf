@@ -27,7 +27,7 @@
 	
 	//Initialization of the messageResource object
 	messageResource.init({
-  		filePath : '<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/messages/")%>'
+  		filePath : '<%=urlBuilder.getResourceLink(request, "/js/src/messages/")%>'
   		, defaultLocale : 'en_US'
   		, ajaxFunction : getSynch
 	});
