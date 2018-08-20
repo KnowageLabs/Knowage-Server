@@ -1,17 +1,17 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -46,7 +46,7 @@ function setDocs(pUrls, pTestUrls, pTitle, pExport, pExportTypes, pDocTypes){
 	asExportDocs = pExport;
 	asExportTypes = pExportTypes;
 	asDocTypes = pDocTypes;
-	
+
 }
 
 function setLinkedDocs(pLinkedDocs){
@@ -72,27 +72,27 @@ function execDrill(name, url) {
 
 function getParamsNumber(JSONPars){
 	var toReturn = 0;
-	
+
 	for (p in JSONPars){
 		toReturn++;
 	}
-	
+
 	return toReturn;
-} 
+}
 
 function jsonToURI(jsonObj){
 	var strURI = "";
 
 	for (var o in jsonObj){
 		if (jsonObj[o] != null){
-			strURI += o + "=" + jsonObj[o] + "&";	
+			strURI += o + "=" + jsonObj[o] + "&";
 		}
 	}
-	
+
 	//clean from the last '&' char
 	strURI = strURI.substring(0, strURI.length-1);
-	
-	
+
+
 	return strURI;
 }
 
@@ -105,34 +105,34 @@ function parseParameterValue(param,value){
 		var res = "";
 		if (Array.isArray(value)){
 			var i=0;
-			for(var v in value){  
+			for(var v in value){
 				if (i > 0) res +=","
 				res +=  "\"" + value[v] + "\"";
-				i++;				
+				i++;
 			}
 		}else{
 			res = "\"" + value + "\"";
 		}
-			
+
 		return res;
 	}
-	
+
 	if(param.inputParameterType=="DATE" || (param.type!=undefined && param.type.valueCd=="DATE")){
 		 // return sbiModule_dateServices.getDateFromFormat(value, param.dateFormat)
-		 			
+
 	}
 	if(param.inputParameterType=="NUM" || (param.type!=undefined && param.type.valueCd=="NUM")){
 		var res=parseFloat(value);
 		return isNaN(res) ? undefined : res;
 	}
-	
+
 	return value; //default
 }
 
 /* Override of the method execExternalCrossNavigation ONLY for the DocumentComposition */
 function execExternalCrossNavigation(outputParameters, inputParameter, targetCrossNavigation, sourceLabel) {
 	var thisM = this;
-	
+
 	if (sourceLabel == null){
 		alert("Label of the source document is not defined! Contact the System Administrator.");
 		return;
@@ -140,35 +140,35 @@ function execExternalCrossNavigation(outputParameters, inputParameter, targetCro
 
 	 if(outputParameters.length==1)
 		 outputParameters = outputParameters[0];
-			
+
 	//call REST service to get cross navigation informations
 	var sourceLabelForRest = (sourceLabel.indexOf("iframe_")>=0) ? sourceLabel.substring(7) : sourceLabel;
 	var urlRest =  Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: '1.0/crossNavigation/'+ sourceLabelForRest +'/loadCrossNavigationByDocument'
-			, baseParams: {}			
+			, baseParams: {}
 	});
-	
+
 	Ext.Ajax.request({
 		 url: urlRest,
-		 success: function (response){			
-		  	  	if(response !== undefined) {   
+		 success: function (response){
+		  	  	if(response !== undefined) {
 			      		if(response.responseText == undefined) {
 			      			Ext.MessageBox.show({
 			               		title: 'Server error'
 			               		, msg: 'Server response is empty'
-			               		, buttons: Ext.MessageBox.OK     
+			               		, buttons: Ext.MessageBox.OK
 			               		, icon: Ext.MessageBox.ERROR
 			               		, modal: false
 			           		});
 			      			return;
-			      		}	      		
+			      		}
 		      			var parameters = {};
 		      			var content = Ext.util.JSON.decode( response.responseText );
 		      			if (content.errors != undefined) {
 			      			Ext.MessageBox.show({
 			               		title: 'Server error'
 			               		, msg: content.errors[0].message
-			               		, buttons: Ext.MessageBox.OK     
+			               		, buttons: Ext.MessageBox.OK
 			               		, icon: Ext.MessageBox.ERROR
 			               		, modal: false
 			           		});
@@ -177,9 +177,9 @@ function execExternalCrossNavigation(outputParameters, inputParameter, targetCro
 		      			if(content !== undefined && content[0] != undefined && content[0].navigationParams !== undefined) {
 		      				content = content[0];
 		      			}
-		      			
+
 	      				if(Array.isArray(outputParameters)){
-		      					for(var dataKey in outputParameters){  
+		      					for(var dataKey in outputParameters){
 		      						for(var key in content.navigationParams){
 		      							var parVal=content.navigationParams[key];
 		      							if(parVal.fixed){
@@ -187,44 +187,44 @@ function execExternalCrossNavigation(outputParameters, inputParameter, targetCro
 		      									parameters[key]=[];
 		      								}
 		      								if(parameters[key].indexOf(parVal.value)==-1)
-		      								{ 
+		      								{
 		      									parameters[key].push(parVal.value);
 		      								}
 		      							}else{
-		      								if(outputParameters[dataKey].hasOwnProperty(parVal.value.label) && outputParameters[dataKey][parVal.value.label]!=undefined && outputParameters[dataKey][parVal.value.label]!=null){ 
+		      								if(outputParameters[dataKey].hasOwnProperty(parVal.value.label) && outputParameters[dataKey][parVal.value.label]!=undefined && outputParameters[dataKey][parVal.value.label]!=null){
 		      									if(!parameters.hasOwnProperty(key)){
 		      										parameters[key]=[];
 		      									}
-		      									
+
 //		      									parameters[key].push(outputParameters[dataKey][parVal.value.label]);
 		      									parameters[key].push(parseParameterValue(parVal.value, outputParameters[dataKey][parVal.value.label]));
 		      								}
 		      							}
-		      							
-		      						} 
-		      					}			      					
-		      				
-		      				}else{			      							      				
+
+		      						}
+		      					}
+
+		      				}else{
 			      				for(var key in content.navigationParams){
 			    					var parVal=content.navigationParams[key];
 			    					if(parVal.fixed){
 			    						parameters[key]=parVal.value;
 			    					}else{
-			    						if(outputParameters.hasOwnProperty(parVal.value.label) && outputParameters[parVal.value.label]!=undefined && outputParameters[parVal.value.label]!=null){ 
+			    						if(outputParameters.hasOwnProperty(parVal.value.label) && outputParameters[parVal.value.label]!=undefined && outputParameters[parVal.value.label]!=null){
 //			    							parameters[key]=outputParameters[parVal.value.label];
 			    							parameters[key]=parseParameterValue(parVal.value,outputParameters[parVal.value.label]);
 			    						}
 			    					}
-			    				}			      						      							      
+			    				}
 		      			}
 	      				//call the internal function
-	      				parameters = jsonToURI(parameters); 	
-	      				var windowName = (sourceLabel.indexOf("iframe_")>=0) ? sourceLabel : "iframe_" + sourceLabel; 
-	      				execCrossNavigation(windowName, null, parameters);	
+	      				parameters = jsonToURI(parameters);
+	      				var windowName = (sourceLabel.indexOf("iframe_")>=0) ? sourceLabel : "iframe_" + sourceLabel;
+	      				execCrossNavigation(windowName, null, parameters);
 		  	  		}
 		        }
 		       , scope: this
-		       , failure: this.handleFailure  
+		       , failure: this.handleFailure
    });
 }
 
@@ -234,21 +234,21 @@ function execCrossNavigation(windowName, label, parameters) {
 	var labelDocClicked = windowName.substring(baseName.length);
 	var tmpUrl = "";
 	var extDocsExecute = [];
-	
-	
-	for(var docMaster in asUrls){	
+
+
+	for(var docMaster in asUrls){
 		var reload = false;
 		var	typeCross = "";
 		var sbiLabelMasterDoc = docMaster;
 		var generalLabelDoc = "";
 		if (sbiLabelMasterDoc == labelDocClicked){
-						
+
 			for (var docLabel in asLinkedDocs){
-							
-				if (docLabel.indexOf(sbiLabelMasterDoc + "__") >= 0){					
+
+				if (docLabel.indexOf(sbiLabelMasterDoc + "__") >= 0){
 					generalLabelDoc = asLinkedDocs[docLabel];
 					var sbiLabelDocLinked = generalLabelDoc[0];
-					
+
 					//gets the cross type (internal or external) of tge target
 					for (var fieldCross in asLinkedCross){
 						var totalCrossPar =  asLinkedCross[fieldCross];
@@ -257,9 +257,9 @@ function execCrossNavigation(windowName, label, parameters) {
 						if (crossTypeDoc == sbiLabelDocLinked){
 							break;
 						}
-					}	
+					}
 					if (typeCross === 'EXTERNAL' && reload) {
-						//checks if the target document is been yet loaded  												
+						//checks if the target document is been yet loaded
 						reload = false;
 						for (var f=0, flen=extDocsExecute.length; f<flen; f++){
 							if (extDocsExecute[f] == sbiLabelDocLinked) {
@@ -267,36 +267,36 @@ function execCrossNavigation(windowName, label, parameters) {
 								break;
 							}
 						}
-						break; 
+						break;
 					}
 					//gets iframe element
 					var nameIframe = "iframe_" + sbiLabelDocLinked;
 					var element = document.getElementById(nameIframe);
-					
+
 					//updating url with fields found in object
-					var j=0; 
+					var j=0;
 					var sbiParMaster = "";
 					var tmpOldSbiSubDoc = "";
 					var newUrl = "";
 					tmpUrl = "";
 					var finalUrl = "";
-					
 
-					for (var fieldLabel in asLinkedFields){ 
-						if (typeCross === 'EXTERNAL' && reload) {							
-							//it means that the target document is already loaded (tipical EXTERNAL cross case)							
-							break; 
+
+					for (var fieldLabel in asLinkedFields){
+						if (typeCross === 'EXTERNAL' && reload) {
+							//it means that the target document is already loaded (tipical EXTERNAL cross case)
+							break;
 						}
 						var totalLabelPar =  asLinkedFields[fieldLabel];
 						var	sbiLabelPar = totalLabelPar[0];
 						var sbiSubDoc 	= fieldLabel.substring(0, fieldLabel.indexOf("__"));
-	
+
 						if (sbiSubDoc == sbiLabelDocLinked){
 							if (tmpOldSbiSubDoc != sbiSubDoc){
 								newUrl = asUrls[sbiSubDoc]; //final url
 								if (newUrl === undefined ) {
 									//check if the url is an external type
-									newUrl = asUrls["EXT__" + sbiSubDoc]; 
+									newUrl = asUrls["EXT__" + sbiSubDoc];
 								}
 							 	tmpUrl = newUrl[0].substring(newUrl[0].indexOf("?")+1);
 							 	finalUrl = newUrl[0];
@@ -305,8 +305,8 @@ function execCrossNavigation(windowName, label, parameters) {
 							var paramsNewValues = parameters.split("&");
 							var tmpNewValue = "";
 							var tmpNewLabel = "";
-							var tmpOldValue = "";	
-							var tmpOldLabel = "";								
+							var tmpOldValue = "";
+							var tmpOldLabel = "";
 							if (paramsNewValues != null && paramsNewValues.length > 0) {
 								for (j = 0; j < paramsNewValues.length; j++) {
 									tmpNewValue = paramsNewValues[j];
@@ -318,23 +318,23 @@ function execCrossNavigation(windowName, label, parameters) {
 										if (paramsOldValues != null && paramsOldValues.length > 0) {
 											for (k = 0; k < paramsOldValues.length; k++) {
 												tmpOldLabel = paramsOldValues[k].substring(0, paramsOldValues[k].indexOf("="));
-												//replace all old values of parameter:											
+												//replace all old values of parameter:
 												if (tmpOldLabel == tmpNewLabel){
-													reload = true; 
+													reload = true;
 													//tmpNewValue = tmpNewValue.substring(tmpNewValue.indexOf("=")+1);
 													tmpNewValue = getNewValues(tmpNewLabel, paramsNewValues);
 													tmpOldValue = paramsOldValues[k] ;
 													tmpOldValue = tmpOldValue.substring(tmpOldValue.indexOf("=")+1);
-													//if ( tmpNewValue != ""){													
+													//if ( tmpNewValue != ""){
 													    if (tmpNewValue == "%") tmpNewValue = "%25";
 													    if (tmpOldValue.indexOf(DEFAULT_OPEN_BLOCK_MARKER + DEFAULT_SEPARATOR + DEFAULT_OPEN_BLOCK_MARKER) != -1){
-													    	tmpNewValue = setMultivalueFormat(tmpNewValue, tmpOldValue);														    
+													    	tmpNewValue = setMultivalueFormat(tmpNewValue, tmpOldValue);
 													    }
 														finalUrl = finalUrl.replace(tmpOldLabel+"="+tmpOldValue, tmpNewLabel+"="+tmpNewValue);
 														newUrl[0] = finalUrl;
 														tmpOldValue = "";
 														tmpNewValue = "";
-														break;														
+														break;
 													//}
 												}
 											}
@@ -347,7 +347,7 @@ function execCrossNavigation(windowName, label, parameters) {
 										idParSupp = idPar.substring(0,idPar.indexOf("__"))+"__";
 										idParSupp = idParSupp+idPar.substring(idParSupp.length,idPar.indexOf("__",idParSupp.length));
 										sbiParMaster = asLinkedFields["SBI_LABEL_PAR_MASTER__" + idParSupp];
-	
+
 										if ((tmpNewValue.substring(0, tmpNewValue.indexOf("=")) == sbiParMaster) ){
 											reload = true; //reload only if document target has the parameter inline
 											//tmpNewValue = tmpNewValue.substring(tmpNewValue.indexOf("=")+1);
@@ -355,7 +355,7 @@ function execCrossNavigation(windowName, label, parameters) {
 											if (paramsOldValues != null && paramsOldValues.length > 0) {
 												for (k = 0; k < paramsOldValues.length; k++) {
 													tmpOldLabel = paramsOldValues[k].substring(0, paramsOldValues[k].indexOf("="));
-													//gets old value of parameter:											
+													//gets old value of parameter:
 													if (tmpOldLabel == sbiLabelPar){
 														tmpOldValue = paramsOldValues[k] ;
 														tmpOldValue = tmpOldValue.substring(tmpOldValue.indexOf("=")+1);
@@ -363,9 +363,9 @@ function execCrossNavigation(windowName, label, parameters) {
 														// if (tmpOldValue != "" && tmpNewValue != ""){
 														    if (tmpNewValue == "%") tmpNewValue = "%25";
 														    if (tmpOldValue.indexOf(DEFAULT_OPEN_BLOCK_MARKER + DEFAULT_SEPARATOR + DEFAULT_OPEN_BLOCK_MARKER) != -1){
-														    	tmpNewValue = setMultivalueFormat(tmpNewValue, tmpOldValue);														    
+														    	tmpNewValue = setMultivalueFormat(tmpNewValue, tmpOldValue);
 														    }
-															finalUrl = finalUrl.replace(sbiLabelPar+"="+tmpOldValue, sbiLabelPar+"="+tmpNewValue);															
+															finalUrl = finalUrl.replace(sbiLabelPar+"="+tmpOldValue, sbiLabelPar+"="+tmpNewValue);
 															newUrl[0] = finalUrl;
 															tmpOldValue = "";
 															tmpNewValue = "";
@@ -376,36 +376,36 @@ function execCrossNavigation(windowName, label, parameters) {
 											}
 										}
 									}
-								}						
+								}
 							}
-		
+
 						}
-					} //for (var fieldLabel in asLinkedFields){ 	
+					} //for (var fieldLabel in asLinkedFields){
 					//updated general url  with new values
 					if (reload){
 						if (asUrls[generalLabelDoc] !== undefined){
 							//internal cross
 							asUrls[generalLabelDoc][0]=newUrl[0];
-							reload = false; 
+							reload = false;
 						}else{
 							asUrls["EXT__" + generalLabelDoc][0]=newUrl[0];
 							extDocsExecute.push(generalLabelDoc[0]);
 						}
 						RE = new RegExp("&amp;", "ig");
 						var lastUrl = newUrl[0];
-						lastUrl = lastUrl.replace(RE, "&");					
+						lastUrl = lastUrl.replace(RE, "&");
 						var msg = {
 								label: sbiLabelDocLinked
 							  , windowName: this.name//docLabel
 							  , typeCross: typeCross
-						  	  };						
-						sendUrl(nameIframe,lastUrl,msg);						
+						  	  };
+						sendUrl(nameIframe,lastUrl,msg);
 					}
 				}//if (docLabel.indexOf(sbiLabelMasterDoc) >= 0){
-			}//for (var docLabel in asLinkedDocs){ 
+			}//for (var docLabel in asLinkedDocs){
 		}
-	}   
-  
+	}
+
 	return;
 }
 
@@ -413,10 +413,10 @@ function sendUrl(nameIframe, url, msg){
 	if (msg !== null && msg !== undefined && msg.typeCross === 'EXTERNAL'){
 		//EXTERNAL cross management
 		var params =  url.substring(url.indexOf("?")+1);
-		if (params.substring(0,1) === '&') params = params.substring(1);		
+		if (params.substring(0,1) === '&') params = params.substring(1);
 		msg.target = 'self';
 		RE = new RegExp("%", "ig");
-		params = params.replace(RE, "%25");					
+		params = params.replace(RE, "%25");
 		msg.parameters = params;
 		//msg.parameters = getUrlVars(params);
 		//msg.parameters = params.slice(params.indexOf('?') + 1).split('&');
@@ -426,8 +426,8 @@ function sendUrl(nameIframe, url, msg){
 		//INTERNAL cross management
 		Ext.get(nameIframe).setSrc(url);
 	}
-	return;	
-} 
+	return;
+}
 
 function getUrlVars(url) {
     var hash;
@@ -474,12 +474,12 @@ function  exportExecution(item) {
     var endUrl = this.changeDocumentExecutionUrlParameter('outputType', exportType, doclabel);
     if(item.docType == 'REPORT' || (item.docType == 'MAP')){
     	window.open(endUrl, 'name', 'resizable=1,height=750,width=1000');
-    
+
     }else if(item.docType == 'DASH' || item.docType == 'CHART'){
     	exportChartExecution(exportType, doclabel);
     }
-	
-} 
+
+}
 
 function getNewValues(newLabel, paramsNewValues){
 	var newValues = "";
@@ -491,15 +491,15 @@ function getNewValues(newLabel, paramsNewValues){
    			newValues += (newValues=="")?"":",";
    			newValues +=  singleValue;
    		}
-   	}   	
-   	//remove "" if are present ONLY FOR SINGLE VALUES 
+   	}
+   	//remove "" if are present ONLY FOR SINGLE VALUES
    	if (newValues.indexOf(",") < 0){
 		RE = new RegExp("\"", "ig");
 		newValues = newValues.replace(RE,"");
    	}
    	return newValues;
 }
- 
+
 function setMultivalueFormat(newValue, oldValue){
 	//set the format =%7B%3B%newValue%7DSTRING%7D; the type (ie. STRING) is manteined by the original parameter value
 	var typePar = oldValue.substring(oldValue.indexOf(DEFAULT_CLOSE_BLOCK_MARKER)+3 , oldValue.length-3 );
@@ -508,41 +508,41 @@ function setMultivalueFormat(newValue, oldValue){
 	if (typePar === 'STRING'){
 		//remove ' if are present
 		RE = new RegExp("'", "ig");
-		value = value.replace(RE,"");	
+		value = value.replace(RE,"");
 		//remove " if are present
 		RE = new RegExp("\"", "ig");
-		value = value.replace(RE,"");	
+		value = value.replace(RE,"");
 	}
-	value = DEFAULT_OPEN_BLOCK_MARKER + DEFAULT_SEPARATOR + DEFAULT_OPEN_BLOCK_MARKER + 
+	value = DEFAULT_OPEN_BLOCK_MARKER + DEFAULT_SEPARATOR + DEFAULT_OPEN_BLOCK_MARKER +
 		    value + DEFAULT_CLOSE_BLOCK_MARKER + typePar + DEFAULT_CLOSE_BLOCK_MARKER;
 	return value;
 }
 
 function createPanels(){
 	//create panel for each document
-	for (var docLabel in asUrls){ 	
+	for (var docLabel in asUrls){
 		//alert(asUrls.toSource());
 		if (docLabel.substring(0,5) !== 'EXT__'){
-			var totalDocLabel=docLabel;	
+			var totalDocLabel=docLabel;
 			var strDocLabel = totalDocLabel.substring(totalDocLabel.indexOf('|')+1);
 			//gets style (width and height)
-			var style = asStylePanels[strDocLabel];	  				
+			var style = asStylePanels[strDocLabel];
 			var exportDoc = asExportDocs[strDocLabel] || "false";
 			//the title drives the header's visualization
 			var titleDoc = asTitleDocs[strDocLabel] ;
 			var itemTitleArr = [];
 			var itemTitleDoc = {};
 			var bodyStyleDoc = "padding:1px";
-									
+
 			if (titleDoc[0] === "" && exportDoc[0] === "false"){
-				titleDoc = null;	  					
+				titleDoc = null;
 			}else{
 				itemTitleDoc.text = titleDoc;
 				itemTitleArr.push(itemTitleDoc);
 			}
 			var widthPx = "";
 			var heightPx = "";
-			
+
 			if (style != null){
 				widthPx = style[0].substring(0, style[0].indexOf("|"));
 				heightPx = style[0].substring(style[0].indexOf("|")+1);
@@ -551,7 +551,7 @@ function createPanels(){
 			}
 			//defines the tools (header's buttons):
 			var menuItems = new Array();
-	
+
 			var tb = new Ext.Toolbar({
 			    style: {
 		            background: '#ffffff',
@@ -566,44 +566,44 @@ function createPanels(){
 		        buttonAlign: 'right',
 		        items: []
 		        //items: itemTitleArr
-			}); 
+			});
 			if (exportDoc !== undefined && exportDoc[0] === "true"){
 				bodyStyleDoc = "padding:10px";
 				var docsExpArrays= asExportTypes[strDocLabel];
-				if(docsExpArrays !== undefined && docsExpArrays !== null && docsExpArrays.length != 0){		
+				if(docsExpArrays !== undefined && docsExpArrays !== null && docsExpArrays.length != 0){
 					var docType = asDocTypes[strDocLabel];
 					if(docsExpArrays.length > 1){
 						for(k=0; k< docsExpArrays.length; k++){
 							var type = docsExpArrays[k];
-						
+
 							var iconname = 'icon-'+type.toLowerCase();
-							
+
 							var itemExp = new Ext.menu.Item({
 		                        text: type
 		                        , group: 'group_2'
-		                        , iconCls: iconname 
+		                        , iconCls: iconname
 						     	, scope: this
 								, width: 15
 						    	//, handler : function() { exportExecution(type, strDocLabel); }
 								, listeners:{
-									click: function() { exportExecution(this); }								
+									click: function() { exportExecution(this); }
 								}
 								, href: ''
 								, document: strDocLabel
 								, docType : docType
-		                    })	
-							menuItems.push(itemExp); 
+		                    })
+							menuItems.push(itemExp);
 						}
-	
+
 						var menu0 = new Ext.menu.Menu({
 							id: 'basicMenu_0',
-							items: menuItems    
-							});	
+							items: menuItems
+							});
 						var menuBtn = new Ext.Toolbar.MenuButton({
 							id: Ext.id()
 				            , tooltip: 'Exporters'
-							, path: 'Exporters'	
-							, iconCls: 'icon-export' 	
+							, path: 'Exporters'
+							, iconCls: 'icon-export'
 				            , menu: menu0
 				            , width: 15
 				            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
@@ -611,11 +611,11 @@ function createPanels(){
 						tb = new Ext.Toolbar({
 						    style: {
 					            background: '#ffffff',
-					            margin: 0,	
+					            margin: 0,
 					            border: '0',
 					            color: '#000000',
 					            align: 'right',
-					            padding: 0, 
+					            padding: 0,
 					            'padding-left': 10,
 					            'z-index': 100
 					        },
@@ -623,17 +623,17 @@ function createPanels(){
 					        items: [menuBtn]
 						});
 					}else if(docsExpArrays.length == 1){
-						var type = docsExpArrays[0];								
+						var type = docsExpArrays[0];
 						var iconname = 'icon-'+type.toLowerCase();
 						var btnSingle = new Ext.Toolbar.Button({
 	                        text: type
 	                        , group: 'group_2'
-	                        , iconCls: iconname 
+	                        , iconCls: iconname
 					     	, scope: this
 							, width: 15
 					    	//, handler : function() { exportExecution(type, strDocLabel); }
 							, listeners:{
-								click: function() { exportExecution(this); }								
+								click: function() { exportExecution(this); }
 							}
 							, href: ''
 							, document: strDocLabel
@@ -642,11 +642,11 @@ function createPanels(){
 						tb = new Ext.Toolbar({
 						    style: {
 					            background: '#ffffff',
-					            margin: 0, 
+					            margin: 0,
 					            border: '0',
 					            color: '#000000',
 					            align: 'right',
-					            padding: 0,	 
+					            padding: 0,
 					            'padding-left': 10,
 					            'z-index': 100
 					        },
@@ -656,9 +656,9 @@ function createPanels(){
 						});
 					}
 				}
-	
+
 			}
-			
+
 			//create panel with iframe
 			var p = new   Ext.ux.ManagedIframePanel({
 				frameConfig:{autoCreate:{id:'iframe_' + strDocLabel, name:'iframe_' + strDocLabel}}
@@ -668,42 +668,42 @@ function createPanels(){
 	            ,loadMask   : true//(Ext.isIE)?true:false
 	            ,border		: false //the border style should be defined into document template within the "style" tag
 				,height		: Number(heightPx)
-				,scrolling  : 'auto'	 //possible values: yes, no, auto  
+				,scrolling  : 'auto'	 //possible values: yes, no, auto
 				,tbar		: tb
 				,bodyStyle	: bodyStyleDoc
 				//,preventHeader: true
 				,scope: this
-	
+
 		});
 		}
 	}
 }
- 
-function isEmpty(obj) { 
+
+function isEmpty(obj) {
 	for(var i in obj) {
 		var tmpObj = obj[i];
-		if (Ext.isArray(tmpObj)){
+		if (Array.isArray(tmpObj)){
 			var strValue = "";
 			for(var i = 0; i < tmpObj.length; i++) {
 				strValue +=	tmpObj[i];
 				if (strValue != "") return false;
 			}
-		}else if (obj != "") return false; 
-	} 
-	return true; 
+		}else if (obj != "") return false;
+	}
+	return true;
 }
 
 function setValidSession(url, isValid, msg){
-	asTestUrls[url] = isValid;	
+	asTestUrls[url] = isValid;
 	if (msg !== ""){
 		alert(msg);
 	}
 }
 
 function handleFailure(response, options) {
-	
+
 	var errorSeparator = "error.mesage.description.";
-	
+
 	var errMessage = ''
 	if(response !== undefined) {
 		if (response.responseText !== undefined) {
@@ -712,7 +712,7 @@ function handleFailure(response, options) {
 			}catch(e){
 				var content =Ext.JSON.decode( response.responseText );
 			}
-			
+
 			if (content.errors !== undefined  && content.errors.length > 0) {
 				if (content.errors[0].message === 'session-expired') {
 					// session expired
@@ -750,38 +750,38 @@ function handleFailure(response, options) {
 			errMessage = LN('sbi.generic.genericError');
 		}
 	}
-	
+
 	Sbi.exception.ExceptionHandler.showErrorMessage(errMessage, LN('sbi.generic.serviceError'));
-	
+
 }
 
-Ext.onReady(function() {  
-	
+Ext.onReady(function() {
+
 	if (numDocs == 0){ return; }
-		
+
 	if (asTestUrls == undefined || asTestUrls == null || isEmpty(asTestUrls)){
 		//only internal engines
 		this.createPanels();
 	}else{
-		//with external engines	
+		//with external engines
 		var stop = false;
 		var task = {
 		    run: function(){
 		        if(!stop){
 		        	stop = true;
-		        	for (var url in asTestUrls){ 	
+		        	for (var url in asTestUrls){
 		        		var isValid = asTestUrls[url];
 		        		if (isValid == false){
 		        			stop = false;
 		        			break;
-		        		}	        		
+		        		}
 		        	}
 		        	if (stop == true){
-			            runner.stop(task); // stop the task 
+			            runner.stop(task); // stop the task
 			            createPanels();
 		        	}
 		        }else{
-		            runner.stop(task); // stop the task 
+		            runner.stop(task); // stop the task
 		        	createPanels();
 		        }
 		    },
@@ -789,7 +789,7 @@ Ext.onReady(function() {
 		};
 		var runner = new Ext.util.TaskRunner();
 		runner.start(task);
-	 
+
 		//creates sessions for external engine
 		for (var testUrl in asTestUrls){
 			Ext.Ajax.request({
@@ -799,5 +799,5 @@ Ext.onReady(function() {
 		    });
 		}
 	}
-}); 
+});
 
