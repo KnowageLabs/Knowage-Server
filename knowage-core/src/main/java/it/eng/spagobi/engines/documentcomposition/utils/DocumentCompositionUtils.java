@@ -175,7 +175,21 @@ public class DocumentCompositionUtils {
 					baseUrlReturn += "?";
 				String driverClassName = obj.getEngine().getDriverName();
 				IEngineDriver aEngineDriver = (IEngineDriver) Class.forName(driverClassName).newInstance();
-				Map mapPars = aEngineDriver.getParameterMap(obj, profile, executionRole);
+				Map tmpPars = aEngineDriver.getParameterMap(obj, profile, executionRole);
+				Map mapPars = new HashMap();
+				//clean from complex objects (array)
+				for ( Object key : tmpPars.keySet() ) {
+					Object value = tmpPars.get(key);
+					if (value != null) {
+						if (value instanceof ArrayList) {
+							logger.debug("Remove object ["+ key + "] - [" + value +"] from url because is an array");
+						} else {
+							mapPars.put(key, value);
+						}
+					} else {
+						mapPars.put(key, value);
+					}
+				}
 				String id = (String) requestSB.getAttribute("vpId");
 				if (id != null) {
 					IViewpointDAO VPDAO = DAOFactory.getViewpointDAO();
