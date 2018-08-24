@@ -89,11 +89,11 @@ function mapWidgetEditControllerFunction(
 	  		}
   		}
   	}
-  	
+
   	$scope.addField = function(columns){
   		columns.unshift({});
   	}
-  	
+
   	$scope.checkDs = function(column){
   		for(var i in $scope.confrontationDs.metadata.fieldsMeta){
   			var confrontField = $scope.confrontationDs.metadata.fieldsMeta[i];
@@ -109,7 +109,7 @@ function mapWidgetEditControllerFunction(
   		}
   		return false;
   	}
-  	
+
   	$scope.updateDsList = function(column, dsId){
   		for(var j in $scope.newModel.content.columnSelectedOfDataset[dsId]){
   			if($scope.newModel.content.columnSelectedOfDataset[dsId][j].name == column.name){
@@ -132,7 +132,7 @@ function mapWidgetEditControllerFunction(
   			}
   		}
   	}
-  	
+
   	$scope.hasShownDetails = function(layer){
   		layer.hasShownDetails = false;
   		var columnsList = $scope.newModel.content.columnSelectedOfDataset[layer.dsId];
@@ -142,9 +142,9 @@ function mapWidgetEditControllerFunction(
   				return;
   			}
   		}
-  		 
+
   	}
-  	
+
   	$scope.setModalColumn = function(column, layer){
   		var columnsList = $scope.newModel.content.columnSelectedOfDataset[layer.dsId];
   		layer.modalSelectionColumn = column.alias;
@@ -153,9 +153,9 @@ function mapWidgetEditControllerFunction(
   				columnsList[i].properties.modal = false;
   			}
   		}
-  		
+
   	}
-  	
+
   	$scope.deleteColumn = function(layer,column){
   		layer.splice(layer.indexOf(column),1);
   	}
@@ -246,7 +246,7 @@ function mapWidgetEditControllerFunction(
 					}
 					$mdDialog.hide();
 				}
-				
+
 				$scope.selectLayer = function(layer, e){
 					e.preventDefault();
 					e.stopImmediatePropagation();
@@ -266,7 +266,8 @@ function mapWidgetEditControllerFunction(
 	      locals: {  }
 	    })
   	}
-  	$scope.colorPickerOptions = {format:'hex'};
+//  	$scope.colorPickerOptions = {format:'hex'};
+  	$scope.colorPickerOptions = {format:'rgb'};
   	$scope.setIconType = function(layer,type) {
   		if (!layer.markerConf) layer.markerConf={};
   		layer.markerConf.type = type;
@@ -457,7 +458,7 @@ function mapWidgetEditControllerFunction(
 		if($scope.newModel.content.layers.length == 1){ // force target if only one layer is defined
 			$scope.newModel.content.layers[0].targetDefault = true;
 		}
-		
+
 		$scope.addToDatasets();
 		mdPanelRef.close();
 		angular.copy($scope.newModel,model);

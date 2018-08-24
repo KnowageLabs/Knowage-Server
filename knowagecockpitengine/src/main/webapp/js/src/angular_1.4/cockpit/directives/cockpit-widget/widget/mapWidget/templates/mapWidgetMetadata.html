@@ -104,7 +104,7 @@
 													<md-checkbox ng-model="column.properties.showMap" aria-label="Checkbox 2" ng-if="column.fieldType=='MEASURE'"/>
 												</td>
 												<td style="display: flex;justify-content: center;">
-													<md-switch ng-model="column.properties.modal" class="noMargin" ng-change="setModalColumn(column,layer)" aria-label="modal"></md-switch>
+													<md-switch ng-if="column.fieldType == 'ATTRIBUTE'" ng-model="column.properties.modal" class="noMargin" ng-change="setModalColumn(column,layer)" aria-label="modal"></md-switch>
 												</td>
 												<td class="multiTableAction">
 													<md-icon style="cursor: pointer" md-font-icon="fa fa-sliders" ng-if="column.fieldType === 'MEASURE'" ng-click="getThresholds($event,column)"></md-icon>

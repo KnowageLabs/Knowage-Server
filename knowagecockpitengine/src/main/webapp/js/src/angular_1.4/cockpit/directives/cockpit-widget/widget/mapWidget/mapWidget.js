@@ -99,14 +99,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							scope.filterDataset(scope.values[layer.name],scope.reformatSelections(newValue));
 
 							// apply filtered data
-							$scope.createLayerWithData(layer.name, scope.values[layer.name], false);
+							$scope.createLayerWithData(layer.name, scope.values[layer.name], false, false);
 						}else{
 							// restore unfiltered data
 							angular.copy(scope.savedValues[layer.name], scope.values[layer.name]);
 							delete scope.savedValues[layer.name];
 
 							// apply unfiltered data
-							$scope.createLayerWithData(layer.name, scope.values[layer.name], false);
+							$scope.createLayerWithData(layer.name, scope.values[layer.name], false, false);
 						}
 					}
 				}
@@ -261,7 +261,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		}
 
     		// apply (filtered) data
-    		$scope.createLayerWithData(layerName, $scope.values[layerName], false);
+    		$scope.createLayerWithData(layerName, $scope.values[layerName], false, false);
 	    }
 
 	    $scope.getOptions =function(){
@@ -329,7 +329,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 	    	if (!$scope.ngModel.content.mapId){
 	 	    		$scope.ngModel.content.mapId =  'map-' + $scope.ngModel.id;
 	 	    	}
-
 	 	    	//set default indicator (first one) for each layer
 	 	    	for (l in $scope.ngModel.content.layers){
 	 	    		var columns = $scope.getColumnSelectedOfDataset($scope.ngModel.content.layers[l].dsId);
@@ -345,7 +344,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    }
 
-	    $scope.createLayerWithData = function(label, data, isCluster){
+	    $scope.createLayerWithData = function(label, data, isCluster, isHeatmap){
 	    	//prepare object with metadata for desiderata dataset columns
 	    	var geoColumn, selectedMeasure = null;
     		var columnsForData, isHeatmap;
@@ -356,7 +355,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		if (!layerDef) return;
 
     		columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
-    		isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
 
     		//remove old layer
     		var previousLayer = $scope.getLayerByName(label);
@@ -374,6 +372,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		layerDef.layerID = layerID;
     		var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, columnsForData, data);
     		if (featuresSource == null){
+    			//creates a fake layer for internal object (becasue isn't the first loop anymore)
+    			layer = {};
+    			layer.name = layerDef.name;
+    			layer.dsId = layerDef.dsId;
+    			$scope.addLayer(layerDef.name, layer);	//add layer to internal object
 				return;
 			}
 
@@ -392,6 +395,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										      blur: layerDef.heatmapConf.blur,
 										      radius: layerDef.heatmapConf.radius,
 										      weight: cockpitModule_mapThematizerServices.setHeatmapWeight
+//										      gradient:['#00f', '#0ff', '#0f0', '#ff0', '#ff8d10', '#ff10f5', '#f00', '#00f', '#0ff', '#0f0', '#ff0', '#ff8d10', '#ff10f5', '#f00']
 										     });
 			} else {
 				layer = new ol.layer.Vector({source: featuresSource,
@@ -405,6 +409,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			layer.setZIndex(layerDef.order*1000);
 			layer.modalSelectionColumn = layerDef.modalSelectionColumn;
 			layer.hasShownDetails = layerDef.hasShownDetails;
+
 			if ($scope.map)
 				$scope.map.addLayer(layer); 			//add layer to ol.Map
 			else{
@@ -451,9 +456,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            		for (l in $scope.ngModel.content.layers){
 		    		    	var layerDef =  $scope.ngModel.content.layers[l];
 		    		    	var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
-			    			if (isCluster){
+		    		    	var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
+		    		    	if (isCluster){
 			    				var values = $scope.values[layerDef.name];
-				        		$scope.createLayerWithData(layerDef.name, values, true); //return to cluster view
+				        		$scope.createLayerWithData(layerDef.name, values, true, false); //return to cluster view
+			    			}
+			    			if (isHeatmap){
+			    				var values = $scope.values[layerDef.name];
+				        		$scope.createLayerWithData(layerDef.name, values, false, true); //return to cluster view
 			    			}
 	            		}
 	            	}
@@ -516,9 +526,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     			for (l in $scope.ngModel.content.layers){
     		    	var layerDef =  $scope.ngModel.content.layers[l];
     		    	var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
-	    			if (isCluster){
+    		    	var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
+	    			if (isCluster || isHeatmap){
 	    				var values = $scope.values[layerDef.name];
-		        		$scope.createLayerWithData(layerDef.name, values, false);
+		        		$scope.createLayerWithData(layerDef.name, values, false, false);
 	    			}
     			}
     		});
@@ -553,6 +564,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		var selectedMeasure = null;
     		var columnsForData = [];
     		var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
+    		var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
 
     		var columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
 
@@ -574,7 +586,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		//get the dataset columns values
 	    	cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.dsId, undefined, undefined, undefined, undefined, model).then(
 	    		function(allDatasetRecords){
-	    			$scope.createLayerWithData(layerDef.name, allDatasetRecords, isCluster);
+	    			$scope.createLayerWithData(layerDef.name, allDatasetRecords, isCluster, isHeatmap);
 	    			$scope.hideWidgetSpinner();
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.dsId+"] ");
@@ -610,7 +622,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    		var tmpLayer = $scope.layers[0].layer;
 		    		cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, tmpLayer, false);
 	    		}
-
 	    		$scope.map = new ol.Map({
 	    		  target: 'map-' + $scope.ngModel.id,
 	    		  layers: [ $scope.baseLayer ],
@@ -673,7 +684,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    $scope.getLayerVisibility = function(n){
 	    	var l = $scope.getLayerByName(n);
-	    	if (!l) return; //do nothing
+	    	if (!l || !l.getVisible) return; //do nothing
 	    	return l.getVisible();
 	    }
 
@@ -793,7 +804,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 	    $scope.selectPropValue = function(dsId, prop, modalSelectionColumn){
-	    	if (!modalSelectionColumn){
+	    	if (!modalSelectionColumn && prop.fieldType !== "MEASURE"){
 	    		$scope.doSelection(prop.alias, $scope.props[prop.name].value, null, null, null, null, dsId);
 	    	}
 	    }

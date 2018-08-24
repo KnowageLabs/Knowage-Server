@@ -5,28 +5,28 @@
 		function CockpitModuleMapThematizerServiceController(
 				sbiModule_translate,
 				sbiModule_messaging,
-				cockpitModule_utilstServices, 
-				$q, 
+				cockpitModule_utilstServices,
+				$q,
 				$mdPanel,
 				$rootScope,
 				$location){
-	
+
 		var mts = this; //mapThematizerServices
-		
+
 		var cacheSymbolMinMax;
-		var activeInd, activeConf, activeLegend; 
-		
-		
+		var activeInd, activeConf, activeLegend;
+
+
 		var styleCache = {};
 	    mts.layerStyle = function(feature, resolution){
 	    	var featureType = feature.getGeometry().getType();
-	    	
+
 	    	var localFeature;
 			if (Array.isArray(feature.get('features')))
 				localFeature = feature.get('features')[0];
 	    	else
 	    		localFeature = feature;
-	    	    	
+
 			var props  = localFeature.getProperties();
 			var parentLayer = localFeature.get('parentLayer');
 			var config = mts.getActiveConf(parentLayer) || {};
@@ -37,7 +37,7 @@
 			var isCluster = (Array.isArray(feature.get('features'))) ? true : false;
 			var value;
 			var style;
-			
+
 			mts.setActiveIndicator(config.defaultIndicator);
 
 			if (isCluster){
@@ -45,7 +45,7 @@
 			}else{
 				value =  (props[mts.getActiveIndicator()])  ? props[mts.getActiveIndicator()].value : undefined;
 			}
-			
+
 			var thematized = false;
 
 			if (config.visualizationType == 'choropleth') {
@@ -61,14 +61,14 @@
 //				style = mts.getProportionalSymbolStyles(value, props, configThematizer.proportionalSymbol);
 //				thematized = true;
 			}
-			
+
 			if (!localFeature.get('isSimpleMarker')){
 				var userColor = (configMarker.style) ? configMarker.style.color : "grey";
 				style = mts.getChoroplethStyles(value, parentLayer, userColor);
 				thematized = true;
 			}
-			
-			
+
+
 			if (!thematized && isCluster && feature.get('features').length > 1 ){
 				style = mts.getClusterStyles(value, props, configCluster);
 				useCache = false;
@@ -78,7 +78,7 @@
 				useCache = true;
 //			useCache = false;
 			}
-			
+
 			if (useCache && !styleCache[parentLayer]) {
 		          styleCache[parentLayer] = style;
 		          return styleCache[parentLayer] ;
@@ -86,13 +86,35 @@
 				return style;
 			}
 	    }
-	    
-	    mts.getClusteredValue = function (feature) { 
+
+	    mts.trim = function (str) {
+	    	return str.replace(/^\s+|\s+$/gm,'');
+	    }
+
+	    mts.rgbaToHex = function (rgba) {
+	        var parts = rgba.substring(rgba.indexOf("(")).split(","),
+	            r = parseInt(mts.trim(parts[0].substring(1)), 10),
+	            g = parseInt(mts.trim(parts[1]), 10),
+	            b = parseInt(mts.trim(parts[2]), 10);
+
+	        return ('#' + r.toString(16) + g.toString(16) + b.toString(16));
+	    }
+
+	    mts.rgbaToAlpha = function (rgba) {
+	        var parts = rgba.substring(rgba.indexOf("(")).split(","),
+	        	alpha = '1'; //default is opaque
+	        if (parts[3])
+	        	alpha = parseFloat(mts.trim(parts[3].substring(0, parts[3].length - 1))).toFixed(2);
+
+	        return alpha;
+	    }
+
+	    mts.getClusteredValue = function (feature) {
 	    	var toReturn = 0;
 	    	var total = 0;
 	    	var values = [];
 	    	var aggregationFunc = "";
-	    	
+
 	    	if (Array.isArray(feature.get('features'))){
 	    		total = 0;
 	    		for (var i=0; i<feature.get('features').length; i++){
@@ -101,15 +123,15 @@
 					values.push(tmpValue);
 					total = total + tmpValue;
 				}
-				
+
 	    		switch(aggregationFunc) {
-				    case "MIN": 
+				    case "MIN":
 				    	toReturn = Math.min.apply(null, values);
 				        break;
 				    case "MAX":
 				    	toReturn = Math.max.apply(null, values);
 				    	break;
-				    case "SUM": 
+				    case "SUM":
 				    	toReturn = total;
 				    	break;
 				    case  "AVG":
@@ -121,14 +143,14 @@
 				    	break;
 				    default: //SUM
 				    	toReturn = total;
-	    		}			
+	    		}
 	    	}
 	    	else{
 	    		toReturn += feature.get(mts.getActiveIndicator());
 	    	}
 			return Math.round(toReturn*100)/100; //max 2 decimals
 	    }
-	    
+
 	    mts.getClusterStyles = function (value, props, config){
 	      var tmpSize =  (config.style && config.style['font-size']) ? config.style['font-size'] : '12px';
 	      var tmpFont = "bold " + tmpSize + " Roboto";
@@ -151,7 +173,7 @@
 	              })
 	            });
 	    }
-		
+
 		mts.getProportionalSymbolStyles = function(value, props, config){
 			var tmpSize =  (config.style && config.style['font-size']) ? config.style['font-size'] : '12px';
 		    var tmpFont = "normal " + tmpSize + " Roboto";
@@ -179,11 +201,11 @@
 		                })
 		            });
 		}
-		
+
 		mts.getChoroplethStyles=function(value, parentLayer, fixedColor){
 			var color =  mts.getChoroplethColor(value, parentLayer) || fixedColor;
 			var borderColor = "black";
-			
+
 			return  [new ol.style.Style({
 				stroke: new ol.style.Stroke({
 					color: (borderColor) ? borderColor : color,
@@ -195,31 +217,35 @@
 			})];
 
 		}
-		
+
 		mts.getOnlyMarkerStyles = function (value, props, config){
 			var style;
 			var color;
-			 
+			var alpha;
+
 			if (props[mts.getActiveIndicator()] && props[mts.getActiveIndicator()].thresholdsConfig) color = mts.getColorByThresholds(value, props);
 			if (!color)	color =  (config.style && config.style.color) ? config.style.color : 'grey';
-			
+//			if (!color)	color =  (config.style && config.style.color) ? mts.rgbaToHex(config.style.color) : 'grey';
+			if (!alpha) alpha = (config.style && config.style.color) ?  mts.rgbaToAlpha(config.style.color) : 1;
+
 			switch(config.type) {
-			
+
 			case "icon":
 				//font-awesome
 				var size = config.size || 100;
 				style = new ol.style.Style({
 					  text: new ol.style.Text({
-						  	text: config.icon.unicode, 
+						  	text: config.icon.unicode,
 						    font: 'normal ' + ((2*size) + '% ') + config.icon.family,
 						    fill: new ol.style.Fill({
-						    	 color: color
+						    	 color: color,
+						    	 opacity: alpha
 						    })
 						  })
 					});
 				break;
-				
-			case "url": case 'img': 
+
+			case "url": case 'img':
 				//img (upload)
 				style =  new ol.style.Style({
 				image: new ol.style.Icon(
@@ -230,13 +256,13 @@
 						width: 10
 					}),
 					scale: (config.scale) ? (config.scale/100) : 1,
-				    opacity: 1,
+					opacity: 1,
 				    crossOrigin: 'anonymous',
 				    src: config[config.type]
 					}))
 		          });
 				break;
-				
+
 			default:
 				style =  new ol.style.Style({
 				image: new ol.style.Icon(
@@ -246,23 +272,23 @@
 						color: 'red',
 						width: 3
 					}),
-				    opacity: 1,
 				    crossOrigin: 'anonymous',
 				    color: color,
+				    opacity: alpha,
 				    src:  $location.$$absUrl.substring(0,$location.$$absUrl.indexOf('api/')) + '/img/dot.png'
 					}))
 		          });
 				break;
-				
+
 			}
 			return style;
 		}
-	
+
 		mts.getColorByThresholds = function(value, props){
 			var config = props[mts.getActiveIndicator()].thresholdsConfig;
 			var toReturn = null;
 			var isEqualOp = false;
-			
+
 			for (c in config){
 				var evalText = "";
 				var thr = config[c];
@@ -272,8 +298,8 @@
 					if (value != '' && !isNaN(value) && typeof(thr['operator'+idx]) != 'undefined' && typeof(thr['val'+idx]) != 'undefined'){
 						if (evalText != "") evalText += " && ";
 						evalText += "(" + value + " " + thr['operator'+idx] + " " + thr['val'+idx] + " )";
-						if (thr['operator'+idx] == '==' && eval(evalText)) {							
-							toReturn = thr['color']; 
+						if (thr['operator'+idx] == '==' && eval(evalText)) {
+							toReturn = thr['color'];
 							isEqualOp = true; //the equal operator has the priority
 							if (thr['warning'])
 								 props[mts.getActiveIndicator()]['showWarning'] = true;
@@ -284,7 +310,7 @@
 					idx++;
 				}
 				if (!isEqualOp && eval(evalText) == true) { //get the last color definition
-					toReturn = thr['color']; 
+					toReturn = thr['color'];
 					if (thr['warning'])
 						 props[mts.getActiveIndicator()]['showWarning'] = true;
 				}
@@ -292,24 +318,28 @@
 			}
 			return toReturn;
 		}
-		
+
 		mts.setHeatmapWeight= function(feature){
 			var parentLayer = feature.get('parentLayer');
 			var config = mts.getActiveConf(parentLayer) || {};
 			var layerIds = parentLayer.split("|");
 			var minmaxLabel = (layerIds.length > 1) ? layerIds[1] + '|' + config.defaultIndicator : layerIds[0] + '|' + config.defaultIndicator; //minMax uses just dslabel reference
 			var minmax = mts.getCacheSymbolMinMax()[minmaxLabel];
-			if (!minmax) return 0;
-			
 			var props  = feature.getProperties();
-
 		    var p = feature.get(config.defaultIndicator);
+
+		    if (!minmax == undefined || p.value === "")
+		    	return 0;
+
 		    // perform calculation to get weight between 0 - 1
 		    // apply formule: w = w-min/max-min (http://www.statisticshowto.com/normalized/)
 		    weight = (p.value - minmax.minValue)/(minmax.maxValue-minmax.minValue);
+		    weight = Math.round(weight * 1000) / 1000; //round 3 digits
+		    if (weight == 0) weight = parseFloat("0.2"); //force weight for minimum values
+//		    console.log("Id ["+ props.id.value + "] - Label [" + minmaxLabel + "] - value [" + p.value + "] - weight [" + weight+ "]");
 		    return weight;
 		}
-		
+
 		mts.getLegend = function (referenceId){
 			var toReturn = [];
 			for (l in mts.activeLegend){
@@ -323,7 +353,7 @@
 							if (tmpConf.color) colors += ", " + tmpConf.color;
 							if (limits.length == 0) limits.push(tmpConf.from);
 							if (limits.length >= 1) limits.splice(1, 1, tmpConf.to);
-						}	
+						}
 					}
 					toReturn.push({"layer": tmpLayerName[1], "colors": colors, "limits": limits});
 				}
@@ -331,23 +361,22 @@
 			return toReturn;
 		}
 
-
 		mts.updateLegend = function(layerName, data){
 			var config = mts.getActiveConf(layerName) || {};
-			
+
 			if (!config.visualizationType || config.visualizationType != 'choropleth') return; //legend is created just with choropleth
-			
+
 			if (!config.defaultIndicator) {
 				console.log("Choroplet thematization isn't applied because there aren't indicators (measures) defined for the layer ["+ layerName +"]");
 				return;
 			}
-			
+
 			if (config.visualizationType == 'choropleth' && config.analysisConf){
-						
+
 				if (!mts.activeLegend) mts.activeLegend = {};
-				
+
 				mts.setActiveIndicator(config.defaultIndicator);
-					
+
 				if (!mts.activeLegend[layerName]){
 					mts.activeLegend[layerName] = {choroplet:[]};
 				}
@@ -378,8 +407,8 @@
 					});
 					var intervals = Number(values.length < config.analysisConf.classes ? values.length : config.analysisConf.classes );
 					mts.updateChoroplethLegendGradient(layerName, config.analysisConf, intervals);
-					var quantils = math.quantileSeq(values, intervals);   
-					
+					var quantils = math.quantileSeq(values, intervals);
+
 					var binSize = Math.floor(values.length  / intervals);
 					var k=0;
 					for(var i=0;i<values.length;i+=binSize){
@@ -397,16 +426,16 @@
 				}
 			}
 		}
-		
+
 		mts.removeLegends = function (){
 			 mts.activeLegend = {};
 		}
-		
+
 		mts.updateChoroplethLegendGradient = function(layerName, chorConfig, numberGradient){
 			var grad = tinygradient([chorConfig.fromColor, chorConfig.toColor]);
 			var gradienti= grad.rgb(numberGradient == 1 ? 2 : numberGradient); // ternary operator required to handle single line dataset
 			mts.activeLegend[layerName].choroplet.length=0;
-			
+
 			for(var i=0; i < gradienti.length; i++){
 				var  tmpGrad={};
 				tmpGrad.color = gradienti[i].toRgbString();
@@ -415,14 +444,14 @@
 				mts.activeLegend[layerName].choroplet.push(tmpGrad);
 			}
 		}
-		
+
 		mts.getProportionalSymbolSize = function(val, name, config){
 			if (!name) return 0;
-			
+
 			var minValue = mts.cacheSymbolMinMax[config.name+'|'+name].minValue;
 			var maxValue = mts.cacheSymbolMinMax[config.name+'|'+name].maxValue;
 			var size;
-			
+
 			var maxRadiusSize = config.maxRadiusSize;
 			var minRadiusSize = config.minRadiusSize;
 
@@ -433,27 +462,27 @@
 			}
 			return (size < 0 ) ? 0 : size;
 		}
-		
-		
-		
+
+
+
 		mts.getCacheSymbolMinMax=function(){
 			return mts.cacheSymbolMinMax || {};
 		}
-		
+
 		mts.setCacheSymbolMinMax=function(n, c){
 			if (!mts.cacheSymbolMinMax) mts.cacheSymbolMinMax = {};
 			mts.cacheSymbolMinMax[n] = c;
 		}
-		
-		
+
+
 		mts.getActiveIndicator=function(){
 			return mts.activeInd;
 		}
-		
+
 		mts.setActiveIndicator=function(i){
 			mts.activeInd = i;
 		}
-		
+
 		mts.loadIndicatorMaxMinVal=function(key, values){
 			var minV;
 			var maxV;
@@ -470,13 +499,13 @@
 			}
 			mts.setCacheSymbolMinMax(key, {minValue:minV, maxValue:maxV});
 		}
-		
+
 		mts.getChoroplethColor = function(val,layerName){
 			if (!mts.activeLegend || !mts.activeLegend[layerName]) return;
-			
+
 			var color;
 			var value = Number(val);
-			
+
 			for(var i=0; i < mts.activeLegend[layerName].choroplet.length; i++){
 				if(Number(val) >= Number( mts.activeLegend[layerName].choroplet[i].from) && Number(val) < Number( mts.activeLegend[layerName].choroplet[i].to)){
 					color = mts.activeLegend[layerName].choroplet[i].color;
@@ -496,17 +525,17 @@
 			}
 			return color;
 		}
-	
+
 		mts.getColumnName = function(key, values){
 			var toReturn = key.substring(key.indexOf('|')+1);;
 			for (var v=0; v<values.length; v++){
 				if (values[v].header === toReturn)
 					return values[v].name;
 			}
-				
+
 			return toReturn;
 		}
-		
+
 		mts.getActiveConf=function(l){
 			for (c in mts.activeConf){
 				if (mts.activeConf[c].layer === l)
@@ -515,7 +544,7 @@
 			console.log("Active configuration for layer ["+l+"] not found.");
 			return null;
 		}
-		
+
 		mts.getActiveConfIdx=function(l){
 			for (var i=0; i<mts.activeConf.length; i++){
 				if (mts.activeConf[i].layer === l)
@@ -523,17 +552,17 @@
 			}
 			return null;
 		}
-		
+
 		mts.setActiveConf=function(l, c){
 			if (!mts.activeConf)
 				mts.activeConf = [];
-			
+
 			var idx = mts.getActiveConfIdx(l);
 			if (idx != null){
 				mts.activeConf.splice(idx,1);
-			} 
+			}
 			mts.activeConf.push({"layer": l, "config":c});
 		}
-	
+
 	}
 })();
