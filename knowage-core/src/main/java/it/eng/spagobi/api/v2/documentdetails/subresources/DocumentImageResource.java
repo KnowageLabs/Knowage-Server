@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -27,6 +28,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import com.hazelcast.util.Base64;
 
 import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
@@ -79,6 +81,7 @@ public class DocumentImageResource extends AbstractSpagoBIResource {
 				String previewFilePath = previewDirectory.getAbsolutePath() + File.separator + previewFileName;
 
 				File previewFile = new File(previewFilePath);
+
 				if (!previewFile.exists()) {
 					logger.error("Preview file " + previewFileName + " does not exist");
 					rb = Response.status(Status.NOT_FOUND);
@@ -157,6 +160,29 @@ public class DocumentImageResource extends AbstractSpagoBIResource {
 					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "preview file", e.getMessage());
 				}
 			}
+		}
+	}
+
+	@DELETE
+	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	public void deleteDocumentImage(@PathParam("id") Integer id) {
+		logger.debug("IN");
+
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		BIObject document = documentManager.getDocument(id);
+		String previewFileName = "";
+
+		try {
+			if (ObjectsAccessVerifier.canSee(document, getUserProfile())) {
+				previewFileName = document.getPreviewFile();
+			}
+
+			File previewDirectory = GeneralUtilities.getPreviewFilesStorageDirectoryPath();
+			String previewFilePath = previewDirectory.getAbsolutePath() + File.separator + previewFileName;
+			File previewFile = new File(previewFilePath);
+			previewFile.delete();
+		} catch (EMFInternalError e) {
+			throw new SpagoBIRuntimeException("User is not allowed to preview document", e);
 		}
 	}
 

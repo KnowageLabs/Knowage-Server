@@ -127,6 +127,7 @@
          			}else
          			sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.documentcreated"), 'Success!');
          			documentService.document = response.data;
+         			DriversService.setDriverRelatedObject(response.data);
          			document = response.data;
          			self.docId = response.data.id;
          			uploadImage();

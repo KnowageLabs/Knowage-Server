@@ -28,10 +28,13 @@
                 </div>
                 <div layout="row">
                     <div layout="column" layout-align="start center" flex>
-					<img data-ng-src="data:image/(png|jpg|jpeg|png|gif);base64,{{di.documentService.documentImage}}" width="90%" height="180" >
+					<img ng-if="di.documentService.documentImage != undefined"data-ng-src="data:image/(png|jpg|jpeg|png|gif);base64,{{di.documentService.documentImage}}" width="90%" height="180" >
 					<p ng-if="di.documentService.documentImage == undefined">  <em>{{di.translate.load("sbi.documentdetails.drivers.previewimage")}}  </em></p>       
                         <div layout="row" style="width:100%">
                         <file-upload ng-model="di.documentService.previewFile" flex></file-upload>
+	                        <md-button class="md-secondary md-icon-button" ng-click="di.deleteImage() " aria-label="delete image">
+	                       		 <md-icon md-font-icon="fa fa-trash "></md-icon>
+	                    	</md-button>
                         </div>
                     </div>
                     <md-input-container flex>
@@ -126,6 +129,24 @@
            
              
             </md-card>
+             <div layout="row " layout-align="center center ">
+                <div class="kn-info " flex="80 ">
+                    {{di.translate.load("sbi.documentdetails.informations.visibilityRestriction")}}
+                </div>
+            </div>
+<!--             <md-card> -->
+<!--                 <md-card-content> -->
+<!--                 	  <md-input-container class="md-block " flex> -->
+<!--                         <label>{{di.translate.load("sbi.documentdetails.informations.state")}}</label> -->
+<!--                         <md-select   name="visibiltyRestriction" ng-model="di.document.visibilityR ">  TO DO: Change ngModel -->
+<!--                             <md-option ng-repeat="attribute in di.attributeValues track by $index " ng-value="di.visibilityAttribute">{{attribute}}</md-option> -->
+<!--                         </md-select> -->
+<!--                         = -->
+<!--                         <input type="text" name="resttrictionValue" ng-model="resttrictionValue"> -->
+<!--                     </md-input-container> -->
+                
+<!--                 </md-card-content>             -->
+<!--             </md-card> -->
         </md-content>
     </div>
 </div>

@@ -40,7 +40,7 @@ angular
              self.datasets1 = documentAndInfo.datasets;
              self.datasets =[];
              self.document = self.documentService.document;
-             if(self.document.visible != true || self.document.visible != false )self.document.visible = true;
+             if(self.document.visible != false )self.document.visible = true;
 
              if(self.document.refreshSeconds == null)
             	 self.document.refreshSeconds = 0;
@@ -103,7 +103,7 @@ angular
              }
              var setCheckedFolder = function(folders){
             	 for(var i = 0; i < folders.length; i++){
-            		 if(documentAndInfo.folderId == folders[i].id)
+            		 if(self.document.functionalities.indexOf(folders[i].path) != -1)
             			 folders[i].checked = true;
             	 }
             	 return folders;
@@ -135,6 +135,12 @@ angular
 
              if(self.document.previewFile){
             	 self.getImage();
+             }
+
+             self.deleteImage = function(){
+            	 resourceService.delete(self.documentService.requiredPath,self.document.id + '/image').then(function(response){
+            		 self.documentService.documentImage = undefined;
+               	});
              }
              self.getFunctionalities(functionalitiesPath);
 

@@ -34,7 +34,12 @@
 	                   var path = driverId + "/modes";
 	                   crudService.get(base,path).then(function(response){
 	                		for(var i = 0; i < response.data.length; i++) {
-	                			var existingDriverList = driversResource.driverParuses.filter(paruse => (paruse.useID == response.data[i].useID))
+	                			var existingDriverList = [];
+	                			for(var j = 0; j < driversResource.driverParuses.length;j++){
+	                				if(driversResource.driverParuses[j].useID == response.data[i].useID)
+	                					existingDriverList.push(driversResource.driverParuses[j]);
+	                			}
+	                			//var existingDriverList = driversResource.driverParuses.filter(paruse => (paruse.useID == response.data[i].useID))
 	                			if(existingDriverList.length != 0)
 	                				continue;
 	                			driversResource.driverParuses.push(response.data[i]);
@@ -49,10 +54,25 @@
 	      			for(var i = 0; i < list.length; i++){
 	      				var endPath = list[i].id + '/drivers';
 		      			crudService.get(basePath,endPath).then(function(response){
+
 		      				for(var i = 0; i < response.data.length; i++){
-		      					if(driversResource.driversPerModel.findIndex(index => index.id == response.data[i].id) == -1)
-		      						driversResource.driversPerModel.push(response.data[i]);
-		      				}
+		      					var isNotContained = true;
+		      					if(driversResource.driversPerModel.length == 0){
+		      						driversResource.driversPerModel.push(response.data[i])
+		      						continue;
+		      					}
+		      					for(var j = 0; j < driversResource.driversPerModel.length;j++){
+		      						if(driversResource.driversPerModel[j].id == response.data[i].id ){
+		      							isNotContained = false;
+		      							break;
+		      						}
+		      					}
+		      						if(isNotContained)driversResource.driversPerModel.push(response.data[i]);
+		      					}
+		      			//		if(driversResource.driversPerModel.findIndex(index => index.id == response.data[i].id) == -1)
+
+		      			//	}
+
 		      			});
 	      			}
 	      		}
@@ -103,7 +123,12 @@
 	               			}else
 	        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.drivercreated"), 'Success!');
 
-	           					var driverIndex = driversResource.driversOnObject.findIndex(i => i.priority ==response.data.priority);
+	           					//var driverIndex = driversResource.driversOnObject.findIndex(i => i.priority ==response.data.priority);
+	           					var driverIndex = -1;
+	                       	 for(var i = 0; i < driversResource.driversOnObject.length;i++){
+	                       		 if(driversResource.driversOnObject[i].priority == response.data.priority)
+	                       			 driverIndex = i;
+	                       	 }
 	           					if(driverIndex == -1){
 	           						driversResource.driversOnObject.push(response.data);
 	           					}else{driversResource.driversOnObject[driverIndex].id = response.data.id}
@@ -190,8 +215,14 @@
 	      	       			}else{
 	      	       				newDataDependency = angular.copy(dataDependency);
 	      	       			}
-	      	       			newDataDependency.filterColumn =  filterColumns[j]
-	      	       			var paruse = driversResource.driverParuses.filter(par => par.useID==persistances[j])
+	      	       			newDataDependency.filterColumn =  filterColumns[j];
+	      	       		var paruse = [];
+            			for(var j = 0; j < driversResource.driverParuses.length;j++){
+            				if(driversResource.driverParuses[j].useID == persistances[j])
+            					existingDriverList.push(driversResource.driverParuses[j]);
+            			}
+	      	       			//var paruse = driversResource.driverParuses.filter(par => par.useID==persistances[j])
+
 	      	       			newDataDependency.paruseId= paruse[0].useID;
 	      			        		if(isNew){
 	      			        			prepareDependencyForPersisting(newDataDependency);
