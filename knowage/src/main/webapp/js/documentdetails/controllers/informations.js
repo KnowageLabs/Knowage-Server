@@ -103,7 +103,9 @@ angular
              }
              var setCheckedFolder = function(folders){
             	 for(var i = 0; i < folders.length; i++){
-            		 if(self.document.functionalities && self.document.functionalities.indexOf(folders[i].path) != -1)
+            		 if(!self.document.functionalities && documentAndInfo.folderId == folders[i].id){
+            			 folders[i].checked = true;
+            		 }else if (self.document.functionalities && self.document.functionalities.indexOf(folders[i].path) != -1)
             			 folders[i].checked = true;
             	 }
             	 return folders;
