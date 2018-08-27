@@ -316,7 +316,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			angular.forEach(sheet.widgets,function(widget){
 				if(widget.dataset && widget.dataset.dsId){
 					var actualDs=ds.getDatasetById(widget.dataset.dsId);
-					var selectedColumnsDs = (widget.content.columnSelectedOfDataset instanceof Array) ? widget.content.columnSelectedOfDataset : widget.content.columnSelectedOfDataset[widget.dataset.dsId];
+					
+					var selectedColumnsDs = widget.content.columnSelectedOfDataset;
+					if(selectedColumnsDs !== undefined)
+						selectedColumnsDs = (selectedColumnsDs instanceof Array) ? widget.content.columnSelectedOfDataset : widget.content.columnSelectedOfDataset[widget.dataset.dsId];
 //					angular.forEach(widget.content.columnSelectedOfDataset,function(widgetColumn){
 					angular.forEach(selectedColumnsDs,function(widgetColumn){
 						var isWidgetColumnMatching = false;
