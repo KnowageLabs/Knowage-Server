@@ -580,8 +580,8 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						if(parameter.type == "fixed"){
 							ctrl.loadParameterValues(parameter);
 						}else if(parameter.type == "loadAtRuntime"){
-							for(i in ctrl.selectedDocumentRoles){
-								var role = ctrl.selectedDocumentRoles[i];
+							for(var j in ctrl.selectedDocumentRoles){
+								var role = ctrl.selectedDocumentRoles[j];
 								if(parameter.value.endsWith(role.role)){
 									parameter.value = role.userAndRole;
 									break;
