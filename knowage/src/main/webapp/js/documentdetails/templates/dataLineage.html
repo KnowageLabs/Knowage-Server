@@ -27,16 +27,14 @@
                         </div>
                     </div>
                     
-                    <md-list class="md-dense">
-                        <md-list-item class="" ng-repeat="table in dl.tablesList">
-                            <div class="md-list-item-text ">
-                                <p> {{ table.name }} </p>
-                                <md-checkbox class="md-secondary" ng-model="table.wanted"></md-checkbox>
-                            </div>
+                    <div layout="column">
+                        <div class="" ng-repeat="table in dl.tablesList" >                        
+                            <div class="md-list-item-text ">                                
+                                <md-checkbox class="md-secondary" ng-model="table.wanted">{{ table.name }}</md-checkbox>
+                            </div>                            
+                        </div>                        
+                    </div>                    
 
-                            <md-divider></md-divider>
-                        </md-list-item>
-                    </md-list>
                 </md-card-content>
             </md-card>
 
