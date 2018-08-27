@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
-.
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="businessModelCatalogueModule">
 <head>
@@ -109,12 +109,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				show-save-button="showMe" show-cancel-button="showMe">
 		   <form name="businessModelForm">
 		
-	       	<md-tabs md-border-bottom="" style="min-height:100%">						     
+	       	<md-tabs md-border-bottom="" >						     
 						         			
-			  <md-tab label='{{translate.load("sbi.generic.details");}}'>
-		
+			  <md-tab label='{{translate.load("sbi.generic.details");}}' style="position:fixed"  >	
+			  <div >	
 	          <md-card>
-		        <md-card-content layout="column">
+		        <md-card-content layout="column" flex>
 			        <md-input-container class="md-block" >
 						<label>{{translate.load("sbi.ds.name")}}</label>
 						<input ng-disabled="isEdit(selectedBusinessModel)"  ng-model="selectedBusinessModel.name" name="name" required ng-maxlength="100" ng-pattern="regex.extendedAlphanumeric">
@@ -178,6 +178,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 				</md-card-content>
 		      </md-card>
+		      </div>
 		      </md-tab>
 		      
 		      <md-tab label='{{translate.load("sbi.catalogues.generic.title.metadata");}}'>		      
