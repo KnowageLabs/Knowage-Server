@@ -50,6 +50,7 @@
         var documentBasePath =""+ document.id;
         var driverPostBasePath = document.id + '/drivers';
 		self.typeCode = documentService.document.typeCode;
+		self.engine = documentService.document.engine;
 		self.docId = documentService.documentId;
 		$scope.$broadcast('setDocumentPath', requiredPath);
         self.cancelFunction = function() {
@@ -81,7 +82,7 @@
         	templateService.deleteTemplates();
 
         	subreportsService.deleteSubreports();
-			subreportsService.persistSubreports();
+			subreportsService.persistSubreports();			
 
         };
 
@@ -116,7 +117,9 @@
          				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
          			}else
          			sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.documentupdated"), 'Success!');
-         			documentService.document = response.data;
+         			documentService.document = response.data;         			
+         			self.typeCode = response.data.typeCode;
+         			self.engine = response.data.engine;
          			uploadImage();
          		});
          	} else{
@@ -125,9 +128,11 @@
          				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
          			}else
          			sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.documentcreated"), 'Success!');
-         			documentService.document = response.data;
+         			documentService.document = response.data;         			
          			DriversService.setDriverRelatedObject(response.data);
          			self.docId = response.data.id;
+         			self.typeCode = response.data.typeCode;
+         			self.engine = response.data.engine;
          			uploadImage();
          		});
          	}
