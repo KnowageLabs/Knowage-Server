@@ -109,13 +109,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				show-save-button="showMe" show-cancel-button="showMe">
 		   <form name="businessModelForm">
 		
-	       	<md-tabs md-border-bottom="" >						     
+	       	<md-tabs md-border-bottom="" style="min-height:100%">						     
 						         			
-			  <md-tab label='{{translate.load("sbi.generic.details");}}' style="position:fixed"  >	
-			  <div >	
+			  <md-tab label='{{translate.load("sbi.generic.details");}}' >		
 	          <md-card>
 		        <md-card-content layout="column" flex>
-			        <md-input-container class="md-block" >
+			        <md-input-container class="md-block"  >
 						<label>{{translate.load("sbi.ds.name")}}</label>
 						<input ng-disabled="isEdit(selectedBusinessModel)"  ng-model="selectedBusinessModel.name" name="name" required ng-maxlength="100" ng-pattern="regex.extendedAlphanumeric">
 						<div ng-messages="businessModelForm.name.$error" role="alert" ng-messages-multiple>
@@ -178,7 +177,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 				</md-card-content>
 		      </md-card>
-		      </div>
 		      </md-tab>
 		      
 		      <md-tab label='{{translate.load("sbi.catalogues.generic.title.metadata");}}'>		      
