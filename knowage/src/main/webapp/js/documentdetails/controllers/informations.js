@@ -111,6 +111,8 @@ angular
             	 return folders;
              }
 
+
+
              self.getFunctionalities = function(functionalitiesPath){
 
 	              	crudService.get(functionalitiesPath,functionalitiesBasePath,functionalitiesQuerryParam).then(function(response){
