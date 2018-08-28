@@ -246,7 +246,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.optionsSidenavOpened = !$scope.optionsSidenavOpened;
 			$timeout(function() {
 				$scope.map.updateSize();
-			}, 500);
+			}, 600);
 		}
 
 	    $scope.refresh = function(element,width,height, data, nature, associativeSelection, changedChartType, chartConf, options) {
