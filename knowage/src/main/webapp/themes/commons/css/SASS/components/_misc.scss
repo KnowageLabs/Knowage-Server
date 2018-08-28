@@ -947,6 +947,12 @@ color-picker {
   overflow: hidden;
 }
 
+.warning {
+  &>md-icon {
+    color: $negativeColor;
+  }
+}
+
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
