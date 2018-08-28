@@ -303,5 +303,11 @@
 		document-paramenter-element {
 			max-width: 97%;
 		}
+		.lateralsidenav {
+			overflow-x: hidden;
+			md-toolbar {
+				min-width: 350px;
+			}
+		}
 	}
 }

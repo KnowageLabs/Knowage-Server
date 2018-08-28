@@ -345,6 +345,19 @@ a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.m
     background: $secondaryColor;
 }
 
+md-datepicker.kn-custom-datepicker {
+  display:block;
+  button {
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0 !important;
+    width: 32px !important;
+  }
+  .md-datepicker-input-container {
+    padding: 0;
+  }
+}
+
 //Info box 
 .kn-info {
     margin: 8px !important;
