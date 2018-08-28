@@ -949,7 +949,7 @@ public class DatasetManagementAPI {
 		IDataSource dataSource = dataSet.getDataSource();
 		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 		String subQueryAlias = DataBaseFactory.getDataBase(dataSource).getSubQueryAlias();
-		String tableName = "(" + querableBehaviour.getStatement().replace(";", "") + ") " + subQueryAlias;
+		String tableName = "(\n" + querableBehaviour.getStatement().replace(";", "") + "\n) " + subQueryAlias;
 		return queryDataset(dataSet, dataSource, projections, tableName, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 	}
 
