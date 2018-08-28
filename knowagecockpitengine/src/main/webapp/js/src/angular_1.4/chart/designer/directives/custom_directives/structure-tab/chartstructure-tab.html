@@ -152,7 +152,7 @@
 							
 							<!-- Menu for generic axis customization: axis configuration, title configuration, major grid, minor grid -->
 							<md-menu ng-hide="categoriesContainerConfigDropDownExcludeTypes.indexOf(selectedChartType.toLowerCase())>=0">
-							      
+							     
 						      	<md-button 	aria-label="Open generic axis configurations' list" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)"
 						      				style="margin-left:2; margin-right:2;">
 						        	<md-icon md-menu-origin class="fa fa-angle-down" style="display:inline"></md-icon>
@@ -335,7 +335,7 @@
 							
 							<!-- Menu for generic axis customization: axis configuration, title configuration, major grid, minor grid -->
 							<md-menu ng-hide="seriesContainerConfigDropDownExcludeTypes.indexOf(selectedChartType.toLowerCase())>=0" ng-if="disableHtmlElementForChartJs()">
-							      
+							    
 						      	<md-button 	aria-label="Open generic axis configurations' list" class="md-icon-button" 
 						      				ng-click="openMenu($mdOpenMenu, $event);"
 						      				style="margin-left:2; margin-right:2;">
@@ -352,7 +352,7 @@
 					        		<md-menu-item ng-if=" selectedChartType.toLowerCase()!='pie' && disableHtmlElementForChartJs()">
 					          			<md-button ng-click="showStructureDetails('axisConfiguration',seriesContainer.name)">
 					 						<md-icon class="fa fa-pencil-square-o" style="display:inline"></md-icon>
-						            		<span>Axis configuration</span>
+						            		<span>Axis configuration</span> 
 						          		</md-button>
 					        		</md-menu-item>
 						        
@@ -376,6 +376,7 @@
 						            		<span>Minor grid configuration</span>
 						          		</md-button>
 						        	</md-menu-item>	
+						        	     
 						        	<md-menu-item ng-if=" selectedChartType.toLowerCase()=='pie' && disableHtmlElementForChartJs()">
 						          		<md-button ng-click="showStructureDetails('serieTitle',seriesContainer.name)" >
 						            		<md-icon class="fa fa-pencil-square-o" style="display:inline"></md-icon>
@@ -392,7 +393,7 @@
 						    		- 
 						     -->
 							<md-menu ng-if="selectedChartType.toLowerCase()=='gauge'">
-							      
+							  
 						      	<md-button 	aria-label="Open generic axis configurations' list" class="md-icon-button" 
 						      				ng-click="openMenu($mdOpenMenu, $event);"
 						      				style="margin-left:2; margin-right:2;">
@@ -451,7 +452,7 @@
 						<md-list-item ng-if="seriesContainer.series.length>0" ng-repeat="seriesItem in seriesContainer.series track by $index" class="noright" style="padding:0 8 0 16">
 						    
 						    <span><b>{{seriesItem}}</b></span>
-						    
+						   
 						    <span flex></span>
 						 
 						   	<md-button class="md-icon-button" ng-show="$index>0" ng-click="seriesItemMoveUp(seriesItem,seriesContainer)" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">

@@ -52,7 +52,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	$scope.$watch('categories',function(newValue,oldValue){
 		$scope.categ.lengthh = $scope.categories.length;
 	},true)
-	
+
 	$scope.$watch('chartTemplate.dateTime',function(newValue,oldValue){
 		if(!newValue && $scope.chartTemplate) $scope.chartTemplate.categoryDate = "";
 	},true)
@@ -148,7 +148,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			return;
 		}
 		$scope.structureTabDetailsName = StructureTabService.getStructureTabDetailsName(detailsForOption);
-		$scope.structureTabDetailsTemplateURL = StructureTabService.getSeriesItemsConfDetailsTemplateURL(detailsForOption);
+		$scope.structureTabDetailsTemplateURL = StructureTabService.getSeriesItemsConfDetailsTemplateURL(detailsForOption);/*scattermilossesic*/
 		$scope.structurePreviewFlex = 25;
 		$scope.structureDetailsShown = true;
 

@@ -1314,7 +1314,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"axis": "",
 						"color": "",
 						"column": "",
-						"groupingFunction": "SUM",
+						"groupingFunction": "NONE",
 						"name": "",
 						"orderType": "",
 						"postfixChar": "",
@@ -2345,7 +2345,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			                               ]
 		return data;
 	};
-	this.getGaugeSybtypes = function(){ 
+	this.getGaugeSybtypes = function(){
 		return ["simple","activity","solid","vumetar"]
 	}
 
@@ -2676,7 +2676,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					if(Array.isArray(baseTemplate[attrname])){
 						baseTemplate[attrname] = originalTemplate[attrname];
 					} else {
-						getObjectProperties(baseTemplate[attrname], originalTemplate[attrname]);		
+						getObjectProperties(baseTemplate[attrname], originalTemplate[attrname]);
 					}
 				}
 			}
