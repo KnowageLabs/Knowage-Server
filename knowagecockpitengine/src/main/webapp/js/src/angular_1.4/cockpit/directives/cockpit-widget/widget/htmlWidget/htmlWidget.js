@@ -303,7 +303,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}else{
 				p1=$scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)])!='undefined' ? $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)] : 'null';
 			}
-			return (precision && !isNaN(p1))? p1.toFixed(precision) : p1;
+			return (precision && !isNaN(parseFloat(p1)))? parseFloat(p1).toFixed(precision) : p1;
 			
 		}
 		$scope.paramsReplacer = function(match, p1){
