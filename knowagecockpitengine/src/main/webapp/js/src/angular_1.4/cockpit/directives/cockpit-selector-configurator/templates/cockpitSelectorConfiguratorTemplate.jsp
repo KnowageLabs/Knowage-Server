@@ -59,7 +59,7 @@
 		    </md-input-container>
 		    <md-input-container  class="md-block" ng-if="model.settings.defaultValue=='STATIC'">
 				<label>static</label>
-				<input ng-model="model.settings.staticValue">
+				<input ng-model="model.settings.staticValues">
 			</md-input-container>
 	    </md-card-content>
     </md-card>

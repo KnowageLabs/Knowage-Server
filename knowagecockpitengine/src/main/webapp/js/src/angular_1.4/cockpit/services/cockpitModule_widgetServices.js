@@ -281,24 +281,12 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					dsRecords.then(function(data){
 						if(config.type == "selector"){
 							var lastSelection = cockpitModule_widgetSelection.getLastCurrentSelection();
-							//if(lastSelection && (!lastSelection[config.dataset.label] || !lastSelection[config.dataset.label][config.content.selectedColumn.name])){
-								var activeValues = wi.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, false);
-								activeValues.then(function(values){
-									var activeValues = [];
-									for(var i in values.rows){
-										activeValues.push(values.rows[i].column_1);
-									}
-									config.activeValues = activeValues;
-								}, function(){
-									console.log("Error retry data");
-								});
-							//}else{
-								//config.activeValues = null;
-							//}
+							if(lastSelection && (!lastSelection[config.dataset.label] || !lastSelection[config.dataset.label][config.content.selectedColumn.name])){
+								data.activeValues = wi.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering, false);
+							}
 						}
 
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
-						data.activeValues = activeValues;
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,changedChartType:changedChartType, "chartConf":data, options:options});
 					}, function(){
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});

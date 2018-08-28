@@ -17,13 +17,13 @@
 	});
 
 	function cockpitSelectorConfiguratorControllerFunction($scope,$mdDialog,cockpitModule_datasetServices,$mdToast,cockpitModule_widgetConfigurator,sbiModule_restServices,sbiModule_translate,sbiModule_config,$mdSidenav,$q,cockpitModule_generalOptions){
-		
-	
+
+
 		$scope.translate=sbiModule_translate;
 		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 		$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
 
-		
+
 		if(!$scope.model.settings.modalityValue){
 			$scope.model.settings.modalityValue="singleValue";
 		}
@@ -36,10 +36,10 @@
 		if(!$scope.model.settings.defaultValue){
 			$scope.model.settings.defaultValue="";
 		}
-		if(!$scope.model.settings.staticValue){
-			$scope.model.settings.staticValue="";
+		if(!$scope.model.settings.staticValues){
+			$scope.model.settings.staticValues="";
 		}
-		
+
 		$scope.lastId = -1;
 
 		if($scope.model.dataset && $scope.model.dataset.dsId){
@@ -52,7 +52,7 @@
 				$scope.model.content.columnSelectedOfDataset.push(newValue);
 			}
 		},true)
-		
+
 		$scope.showCircularcolumns = {value :false};
 		$scope.modalityValue = [{value: "singleValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.single.value')},{value :"multiValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.multivalue')}];
 		$scope.modalityView = [
