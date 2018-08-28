@@ -769,9 +769,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				deferred.resolve(response.data);
 			},function(response){
 				var regex = /(.*)1.0\/chart\/jsonChartTemplate\/(.*)\/getDataAndConf(.*)widgetName=(.*)/g;
-				var array = regex.exec(response.config.url);
+				var array = regex.exec(decodeURIComponent(response.config.url));
 				var datasetLabel = array[2];
-				var widgetName = decodeURIComponent(array[4]);
+				var widgetName = array[4];
 				var title = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.widget")
 						.replace("{0}", "<b>" + widgetName + "</b>");
 				var text = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoloaddatafromdataset")
@@ -793,9 +793,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				deferred.resolve(response.data);
 			},function(response){
 				var regex = /(.*)2.0\/datasets\/(.*)\/data(.*)widgetName=(.*)/g;
-				var array = regex.exec(response.config.url);
+				var array = regex.exec(decodeURIComponent(response.config.url));
 				var datasetLabel = array[2];
-				var widgetName = decodeURIComponent(array[4]);
+				var widgetName = array[4];
 				var title = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.widget")
 						.replace("{0}", "<b>" + widgetName + "</b>");
 				var text = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoloaddatafromdataset")
