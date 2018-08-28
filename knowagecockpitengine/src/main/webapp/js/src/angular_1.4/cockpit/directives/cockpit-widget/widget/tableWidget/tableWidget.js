@@ -472,6 +472,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			//using the reformatted filters
 			var filters = selection ? selection : $scope.reformatFilters();
 			for(var f in filters){
+
 				for(var d = dataset.length - 1; d >= 0; d--){
 					//if the column is an attribute check in filter
 					if (filters[f].type == 'ATTRIBUTE'){
@@ -502,6 +503,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if (eval(expression) == false){
 							dataset.splice(d,1);
 						}
+					}else if (filters[f].type == 'SPATIAL_ATTRIBUTE'){
+						var value = dataset[d][f];
+
+						if (filters[f].values.indexOf(value)==-1){
+							dataset.splice(d,1);
+						}
 					}
 				}
 			}
@@ -529,9 +536,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							formattedSelection[columnObject.aliasToShow || columnObject.alias] = {"values":[], "type": columnObject.fieldType};
 							for(var k in datasetSelection[s]){
 								// clean the value from the parenthesis ( )
-								var x = datasetSelection[s][k].replace(/[()]/g, '').replace(/['']/g, '').split(/[,]/g);
-								for(var i=0; i<x.length; i++){
-									formattedSelection[columnObject.aliasToShow || columnObject.alias].values.push(x[i]);
+								if (columnObject.fieldType == "SPATIAL_ATTRIBUTE") {
+									//for spatial attribute doens't split value
+									var x = datasetSelection[s][k].replace(/[()]/g, '').replace(/['']/g, '');
+									formattedSelection[columnObject.aliasToShow || columnObject.alias].values.push(x);
+								}else{
+									var x = datasetSelection[s][k].replace(/[()]/g, '').replace(/['']/g, '').split(/[,]/g);
+									for(var i=0; i<x.length; i++){
+										formattedSelection[columnObject.aliasToShow || columnObject.alias].values.push(x[i]);
+									}
 								}
 							}
 						}

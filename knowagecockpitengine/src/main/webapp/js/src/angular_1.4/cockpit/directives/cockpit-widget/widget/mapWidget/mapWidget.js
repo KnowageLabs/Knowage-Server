@@ -134,9 +134,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							formattedSelection[columnObject.aliasToShow || columnObject.alias] = {"values":[], "type": columnObject.fieldType};
 							for(var k in datasetSelection[s]){
 								// clean the value from the parenthesis ( )
-								var x = datasetSelection[s][k].replace(/[()]/g, '').replace(/['']/g, '').split(/[,]/g);
-								for(var i=0; i<x.length; i++){
-									formattedSelection[columnObject.aliasToShow || columnObject.alias].values.push(x[i]);
+								if (columnObject.fieldType == "SPATIAL_ATTRIBUTE") {
+									//for spatial attribute doens't split value
+									var x = datasetSelection[s][k].replace(/[()]/g, '').replace(/['']/g, '');
+									formattedSelection[columnObject.aliasToShow || columnObject.alias].values.push(x);
+								}else{
+									var x = datasetSelection[s][k].replace(/[()]/g, '').replace(/['']/g, '').split(/[,]/g);
+									for(var i=0; i<x.length; i++){
+										formattedSelection[columnObject.aliasToShow || columnObject.alias].values.push(x[i]);
+									}
 								}
 							}
 						}
@@ -196,6 +202,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 						//if (filterValue.indexOf(columnValue)==-1){
 						if (eval(expression) == false){
+							datastore.rows.splice(i,1);
+						}
+					}else if (filters[f].type == 'SPATIAL_ATTRIBUTE'){
+						var value = datastore.rows[i][columnName];
+
+						if (filters[f].values.indexOf(value)==-1){
 							datastore.rows.splice(i,1);
 						}
 					}
@@ -409,6 +421,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			layer.setZIndex(layerDef.order*1000);
 			layer.modalSelectionColumn = layerDef.modalSelectionColumn;
 			layer.hasShownDetails = layerDef.hasShownDetails;
+			layer.isHeatmap = isHeatmap;
+			layer.isCluster = isCluster;
 
 			if ($scope.map)
 				$scope.map.addLayer(layer); 			//add layer to ol.Map
@@ -498,8 +512,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	        	$scope.doSelection($scope.selectedLayer.modalSelectionColumn, $scope.props[$scope.selectedLayer.modalSelectionColumn].value, null, null, null, null, $scope.selectedLayer.dsId);
     	        }
 
-            	//popup isn't shown with cluster
-            	if (!$scope.clickOnFeature || !$scope.selectedLayer.hasShownDetails){
+            	//popup isn't shown with cluster and heatmap
+            	if ($scope.selectedLayer.isCluster || $scope.selectedLayer.isHeatmap  || !$scope.selectedLayer.hasShownDetails){
             		$scope.closer.onclick();
             		return;
             	}
