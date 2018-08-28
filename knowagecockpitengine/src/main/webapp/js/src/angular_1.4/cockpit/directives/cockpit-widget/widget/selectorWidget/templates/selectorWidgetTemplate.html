@@ -49,7 +49,7 @@
 		<!-- single -->
 		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue!='multiValue'" style="width:100%">
 			<div class="kn-select" ng-if="showSelection">
-				<select ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" 
+				<select ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0].column_1)" 
 					ng-options="record.column_1 disable when isActive(record.column_1) for record in datasetRecords.rows track by record.id"></select>
 			</div>
 		</md-input-container>
