@@ -513,7 +513,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	        }
 
             	//popup isn't shown with cluster and heatmap
-            	if ($scope.selectedLayer.isCluster || $scope.selectedLayer.isHeatmap  || !$scope.selectedLayer.hasShownDetails){
+            	if (($scope.selectedLayer && ($scope.selectedLayer.isCluster || $scope.selectedLayer.isHeatmap))  || !$scope.selectedLayer.hasShownDetails){
             		$scope.closer.onclick();
             		return;
             	}
