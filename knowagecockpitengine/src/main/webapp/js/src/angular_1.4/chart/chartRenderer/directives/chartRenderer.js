@@ -68,7 +68,7 @@ angular.module('chartRendererModule')
 							scope.chartTemplate.CHART.COLORPALETTE.COLOR = angular.copy(scope.chartTemplate.CHART.COLORPALETTE.COLORCopy)
 							delete scope.chartTemplate.CHART.COLORPALETTE.COLORCopy
 						}
-						
+
 						if(scope.chartTemplate.CHART.groupSeriesCateg && scope.chartConf.series.length > 0){
 							scope.chartConf.colorsCopy = angular.copy(scope.chartConf.colors);
 							if(scope.colorMap){
@@ -88,9 +88,9 @@ angular.module('chartRendererModule')
 									scope.colorMap[scope.chartConf.series[i].name] = scope.chartConf.colors[i];
 								}
 							}
-							
+
 						}
-						
+
 						var renderObject = {};
 						renderObject.chartConf = scope.chartConf;
 						renderObject.element = element[0];
@@ -99,9 +99,9 @@ angular.module('chartRendererModule')
 						renderObject.widgetData = scope.widgetData;
 						renderObject.chartTemplate = scope.chartTemplate.CHART;
 						if(selectionsAndParams){
-							renderObject.selectionsAndParams = selectionsAndParams;								
+							renderObject.selectionsAndParams = selectionsAndParams;
 						}
-						
+
 						scope.chartInitializer.renderChart(renderObject, jsonData);
 					}
 				}
@@ -144,7 +144,7 @@ angular.module('chartRendererModule')
 					}else{
 						var transformedData = dataForSending;
 						if(isRealtime){
-							if(scope.chartInitializer.transformeData){
+							if(scope.chartInitializer && scope.chartInitializer.transformeData){
 								transformedData = scope.chartInitializer.transformeData(scope.widgetData,dataForSending);
 							}
 						}
