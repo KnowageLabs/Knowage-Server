@@ -1,7 +1,5 @@
 <div flex layout-align="center center" class="cockpitSelectorWidget">
-	<div ng-show="!showSelection" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
-       <md-progress-circular  md-diameter="20px" md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
-    </div>
+
 	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue'" layout="column" class="cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}">
 		<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue' && showSelection" layout="column" 
 			ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
@@ -18,7 +16,7 @@
 		ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
 		<label class="kn-custom-checkbox-container" ng-repeat="record in datasetRecords.rows" ng-disabled="::isActive(record.column_1)" title="{{::record.column_1}}">
 			<span>{{::record.column_1}}</span>
-		  <input type="checkbox" ng-checked="::checkboxParameterExists(record.column_1+'')" ng-disabled="::isActive(record.column_1)" ng-value="::record.column_1">
+		  <input type="checkbox" ng-checked="::checkboxParameterExists(record.column_1)" ng-disabled="::isActive(record.column_1)" ng-value="::record.column_1">
 		  <span class="checkmark"></span>
 		</label>
 	</div>
@@ -50,17 +48,9 @@
 		
 		<!-- single -->
 		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue!='multiValue'" style="width:100%">
-			<div class="kn-select">
-				<select ng-model="parameter" ng-change="toggleComboParameter(parameter)" ng-if="!ngModel.activeValues">
-			    	<option ng-repeat="record in datasetRecords.rows" value="{{::record.column_1}}" ng-disabled="::isActive(record.column_1)" >
-			    		{{::record.column_1}}
-			    	</option>
-			  	</select>
-			  	<select ng-model="parameter" ng-change="toggleComboParameter(parameter)" ng-if="ngModel.activeValues">
-			    	<option ng-repeat="record in datasetRecords.rows" value="{{::record.column_1}}" ng-disabled="::isActive(record.column_1)" >
-			    		{{::record.column_1}}
-			    	</option>
-			  	</select>
+			<div class="kn-select" ng-if="showSelection">
+				<select ng-model="parameter" ng-change="toggleComboParameter(parameter)" 
+					ng-options="record.column_1 disable when isActive(record.column_1) for record in datasetRecords.rows track by record.id"></select>
 			</div>
 		</md-input-container>
 	</div>
