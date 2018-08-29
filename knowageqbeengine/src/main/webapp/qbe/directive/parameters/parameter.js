@@ -102,7 +102,7 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 			label : $scope.translate.load("sbi.generic.delete"),
 			icon : 'fa fa-trash',
 			backgroundColor : 'transparent',
-			action : function(item) {
+			action : function(item,event) {
 				var confirm = $mdDialog.confirm().title(
 						$scope.translate.load("kn.qbe.params.delete.param"))
 						.targetEvent(event).textContent(
