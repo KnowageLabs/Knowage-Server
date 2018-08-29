@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		xmlhttp.open('GET', url, false);
+		xmlhttp.overrideMimeType('text/plain; charset=UTF-8');
 		xmlhttp.send();
 		callback(xmlhttp.responseText)
 	}
