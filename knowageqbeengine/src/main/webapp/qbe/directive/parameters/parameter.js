@@ -51,16 +51,6 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 			value : "Number"
 		},
 
-		{
-			name : $scope.translate.load("kn.qbe.params.raw"),
-			value : "Raw"
-		},
-
-		{
-			name : $scope.translate.load("kn.qbe.params.generic"),
-			value : "Generic"
-		}
-
 		];
 
 	$scope.parametersColumns = [
