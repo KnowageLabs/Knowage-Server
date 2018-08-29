@@ -87,6 +87,14 @@ angular.module('cockpitModule')
 				}
 			}
 		}
+		
+		$scope.gridWidth = function() {
+			var tempStyle = {};
+			if($scope.ngModel.settings.modalityView == 'grid' && $scope.ngModel.settings.gridColumnsWidth){
+				tempStyle.width = $scope.ngModel.settings.gridColumnsWidth;
+			}
+			return tempStyle;
+		}
 
 		$scope.accessibilityModeEnabled = accessibility_preferences.accessibilityModeEnabled;
 
@@ -141,29 +149,7 @@ angular.module('cockpitModule')
 					'style': {}
 			};
 		}
-
-		$scope.editWidget=function(index){
-			var finishEdit=$q.defer();
-			var config = {
-					attachTo:  angular.element(document.body),
-					controller: selectorWidgetEditControllerFunction,
-					disableParentScroll: true,
-					templateUrl: $scope.getTemplateUrl('selectorWidgetEditPropertyTemplate'),
-					position: $mdPanel.newPanelPosition().absolute().center(),
-					fullscreen :true,
-					hasBackdrop: true,
-					clickOutsideToClose: false,
-					escapeToClose: false,
-					focusOnOpen: true,
-					preserveScope: true,
-					autoWrap:false,
-					locals: {finishEdit: finishEdit, originalModel: $scope.ngModel, getMetadata: $scope.getMetadata, scopeFather: $scope},
-
-			};
-			$mdPanel.open(config);
-			return finishEdit.promise;
-		}
-
+		
 		$scope.init=function(element,width,height){
 			$scope.refreshWidget(null, 'init');
 			$timeout(function(){
@@ -432,6 +418,28 @@ angular.module('cockpitModule')
 				cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=false;
 			}
 	    }
+	    
+	    $scope.editWidget=function(index){
+			var finishEdit=$q.defer();
+			var config = {
+					attachTo:  angular.element(document.body),
+					controller: selectorWidgetEditControllerFunction,
+					disableParentScroll: true,
+					templateUrl: $scope.getTemplateUrl('selectorWidgetEditPropertyTemplate'),
+					position: $mdPanel.newPanelPosition().absolute().center(),
+					fullscreen :true,
+					hasBackdrop: true,
+					clickOutsideToClose: false,
+					escapeToClose: false,
+					focusOnOpen: true,
+					preserveScope: true,
+					autoWrap:false,
+					locals: {finishEdit: finishEdit, originalModel: $scope.ngModel, getMetadata: $scope.getMetadata, scopeFather: $scope},
+
+			};
+			$mdPanel.open(config);
+			return finishEdit.promise;
+		}
 	};
 
 	function selectorWidgetEditControllerFunction(

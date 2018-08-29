@@ -49,17 +49,25 @@
 	       			</md-radio-button>
 	   			</md-radio-group>
 		    </md-input-container>
-			<md-input-container  class="md-block" >
-				<label>{{translate.load("sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.select.default.value")}}</label>
-				<md-select  ng-model="model.settings.defaultValue">
-					<md-option></md-option>
-					<md-option ng-repeat="v in defaultValues" value="{{v.value}}">{{v.name}} </md-option>
-				</md-select>
-	
-		    </md-input-container>
+		    
+		    <div layout="row">
+		    	<md-input-container  class="md-block" flex>
+					<label>{{translate.load("sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.select.default.value")}}</label>
+					<md-select  ng-model="model.settings.defaultValue">
+						<md-option></md-option>
+						<md-option ng-repeat="v in defaultValues" value="{{v.value}}">{{v.name}} </md-option>
+					</md-select>
+			    </md-input-container>
+			    <md-input-container  class="md-block" flex ng-if="model.settings.modalityView == 'grid'">
+					<label>Grid columns width</label>
+					<input ng-model="model.settings.gridColumnsWidth" />
+						
+			    </md-input-container>
+		    </div>
+			
 		    <md-input-container  class="md-block" ng-if="model.settings.defaultValue=='STATIC'">
 				<label>static</label>
-				<input ng-model="model.settings.staticValues">
+				<input ng-model="model.settings.staticValues" />
 			</md-input-container>
 	    </md-card-content>
     </md-card>

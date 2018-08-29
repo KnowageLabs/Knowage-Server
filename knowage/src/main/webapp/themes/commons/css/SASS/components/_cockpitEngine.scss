@@ -2030,7 +2030,6 @@
 		    align-items: center;
 		    min-height: 24px;
 		    height: 24px;
-		    margin-right: 10px;
 		    cursor: pointer;
 		    font-size: 12px;
 		    -webkit-user-select: none;
@@ -2061,6 +2060,7 @@
 		    }
 		    span {
 		    	overflow: hidden;
+		    	margin-right: 10px;
 			  	text-overflow: ellipsis;
 			  	white-space: nowrap;
 		    }
