@@ -215,8 +215,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<h3>
 							<b>{{translate.load("sbi.generic.creationdate")}}</b>
 						</h3>
-						<p>{{selectedDocument.creationDate | asDate | date:'yyyy/MM/dd
-							HH:mm:ss' }}</p>
+						<p>{{selectedDocument.creationDate | asDate | date:'medium' }}</p>
 					</div>
 				</md-list-item> 
 			</md-list>

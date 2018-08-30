@@ -62,7 +62,7 @@
 		color: white;
 	}
 	
-	md-sidenav.selectedDocumentSidenav>md-content>md-list>md-list-item>div {
+	md-sidenav.selectedDocumentSidenav>md-content>md-list>md-list-item>div:not(._md-secondary-container) {
 		width: 100%;
 	}
 

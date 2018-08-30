@@ -97,13 +97,13 @@ function onSelectionChanged(node){
 		node.node.setSelected(false,true);
 		$scope.selectedDocument = {};
 		$scope.openDocumentDetail = false;
-		$mdSidenav('right').close().then(function(){});
+		$mdSidenav('right').close();
 		return;
 	}else{
 		node.node.setSelected(true,true);
 		$scope.openDocumentDetail = $scope.tableElement[0].clientWidth<600? false : true;
 		$scope.selectedDocument = node.data;
-		$mdSidenav('right').open().then(function(){});
+		$mdSidenav('right').open();
 	}
 	$scope.$apply();
 }
