@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spagobi.tools.dataset.constants.SPARQLDatasetConstants;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -24,7 +25,6 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.SPARQLDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.SPARQLDataReader;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.utils.ParametersResolver;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.Helper;
@@ -114,10 +114,10 @@ public class SPARQLDataSet extends ConfigurableDataSet {
 	}
 
 	private void initDataProxy(JSONObject jsonConf, boolean resolveParams) {
-		String sparqlEndpoint = getProp(DataSetConstants.SPARQL_ENDPOINT, jsonConf, false, resolveParams);
-		String sparqlQuery = getProp(DataSetConstants.SPARQL_QUERY, jsonConf, false, resolveParams);
-		String defaultGraphIRI = getProp(DataSetConstants.SPARQL_DEFAULT_GRAPH_IRI, jsonConf, true, resolveParams);
-		int executionTimeout = Integer.parseInt(getProp(DataSetConstants.SPARQL_EXECUTION_TIMEOUT, jsonConf, true, resolveParams));
+		String sparqlEndpoint = getProp(SPARQLDatasetConstants.SPARQL_ENDPOINT, jsonConf, false, resolveParams);
+		String sparqlQuery = getProp(SPARQLDatasetConstants.SPARQL_QUERY, jsonConf, false, resolveParams);
+		String defaultGraphIRI = getProp(SPARQLDatasetConstants.SPARQL_DEFAULT_GRAPH_IRI, jsonConf, true, resolveParams);
+		int executionTimeout = Integer.parseInt(getProp(SPARQLDatasetConstants.SPARQL_EXECUTION_TIMEOUT, jsonConf, true, resolveParams));
 
 		setDataProxy(new SPARQLDataProxy(sparqlEndpoint, sparqlQuery, defaultGraphIRI, executionTimeout));
 	}

@@ -20,16 +20,22 @@ package it.eng.spagobi.tools.dataset.cache;
 
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheMetadata;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
-public class CacheFactory {
+public abstract class CacheFactory {
 
-	public ICache getCache(ICacheConfiguration cacheConfiguration){
-		return new SQLDBCache( (SQLDBCacheConfiguration)cacheConfiguration );		
+	public static ICache getCache(ICacheConfiguration cacheConfiguration){
+		Assert.assertNotNull(cacheConfiguration, "Impossible to initialize cache. The cache configuration object cannot be null");
+		IDataSource dataSource = cacheConfiguration.getCacheDataSource();
+		Assert.assertNotNull(dataSource, "Datasource cannot be null");
+
+		return new SQLDBCache(dataSource, new SQLDBCacheMetadata((SQLDBCacheConfiguration) cacheConfiguration));
 	}
 
 }

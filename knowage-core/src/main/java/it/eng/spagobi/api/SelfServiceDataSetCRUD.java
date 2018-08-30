@@ -36,6 +36,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -1612,8 +1613,8 @@ public class SelfServiceDataSetCRUD {
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
-			jsonDsConfig.put(DataSetConstants.CKAN_ID, ckanId);
-			jsonDsConfig.put(DataSetConstants.CKAN_URL, ckanUrl);
+			jsonDsConfig.put(CkanDataSetConstants.CKAN_ID, ckanId);
+			jsonDsConfig.put(CkanDataSetConstants.CKAN_URL, ckanUrl);
 			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
 
 		} catch (Exception e) {

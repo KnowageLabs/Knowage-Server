@@ -17,25 +17,20 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
+import com.jayway.jsonpath.JsonPath;
+import it.eng.spagobi.tools.dataset.common.datastore.*;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.solr.SolrDataStore;
+import it.eng.spagobi.utilities.Helper;
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-
-import com.jayway.jsonpath.JsonPath;
-
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.Field;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.datastore.Record;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.utilities.Helper;
 
 public class SolrDataReader extends JSONPathDataReader {
 
@@ -47,19 +42,19 @@ public class SolrDataReader extends JSONPathDataReader {
 	private int resultNumber = -1;
 
 	public SolrDataReader(String jsonPathItems, boolean hasFacets, boolean hasFacetQuery) {
-		super(jsonPathItems, null, false, false);
+		this(jsonPathItems, null, false, false);
+
+	}
+
+	public SolrDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes, boolean hasFacets, boolean hasFacetQuery) {
+		super(jsonPathItems, jsonPathAttributes, false, false);
 		this.hasFacetQuery = hasFacetQuery;
 		this.hasFacets = hasFacets;
 
 	}
 
-	public SolrDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes, boolean useDirectlyAttributesi) {
-		super(jsonPathItems, jsonPathAttributes, useDirectlyAttributesi, false);
-		hasFacets = false;
-	}
-
 	@Override
-	protected void addFieldMetadata(MetaData dataStoreMeta, List<Object> parsedData) {
+	protected void addFieldMetadata(IMetaData dataStoreMeta, List<Object> parsedData) {
 		if (!hasFacets) {
 			super.addFieldMetadata(dataStoreMeta, parsedData);
 		} else {
@@ -80,7 +75,7 @@ public class SolrDataReader extends JSONPathDataReader {
 	}
 
 	@Override
-	protected void addData(String data, DataStore dataStore, MetaData dataStoreMeta, List<Object> parsedData, boolean skipPagination)
+	protected void addData(String data, IDataStore dataStore, IMetaData dataStoreMeta, List<Object> parsedData, boolean skipPagination)
 			throws ParseException, JSONException {
 		if (!hasFacets) {
 			super.addData(data, dataStore, dataStoreMeta, parsedData, true);
@@ -135,7 +130,7 @@ public class SolrDataReader extends JSONPathDataReader {
 	}
 
 	@Override
-	public synchronized IDataStore read(Object data) {
+	public IDataStore read(Object data) {
 		if (!hasFacets) {
 			IDataStore ds = super.read(data);
 			Object parsed = JsonPath.read((String) data, "$.response.numFound");
@@ -148,8 +143,8 @@ public class SolrDataReader extends JSONPathDataReader {
 			}
 			String d = (String) data;
 			try {
-				DataStore dataStore = new DataStore();
-				MetaData dataStoreMeta = new MetaData();
+				IDataStore dataStore = new SolrDataStore();
+				IMetaData dataStoreMeta = new MetaData();
 				dataStore.setMetaData(dataStoreMeta);
 				List<Object> parsedData = getItems(d);
 				addFieldMetadata(dataStoreMeta, parsedData);

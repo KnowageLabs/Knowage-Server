@@ -54,15 +54,9 @@ public class DeleteObjectAction extends AbstractSpagoBIAction {
 		try {
 			// BIObject obj = executionInstance.getBIObject();
 			UserProfile userProfile = (UserProfile) this.getUserProfile();
-			IBIObjectDAO dao = null;
-			ILowFunctionalityDAO functDAO = null;
-			try {
-				dao = DAOFactory.getBIObjectDAO();
-				functDAO = DAOFactory.getLowFunctionalityDAO();
-			} catch (EMFUserError e) {
-				logger.error("Error while istantiating DAO", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
-			}
+			IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
+			ILowFunctionalityDAO functDAO = DAOFactory.getLowFunctionalityDAO();
+
 			String ids = this.getAttributeAsString(OBJECT_ID);
 
 			Object folder = this.getAttribute(FUNCT_ID);
@@ -77,7 +71,7 @@ public class DeleteObjectAction extends AbstractSpagoBIAction {
 					folderId = this.getAttributeAsInteger(FUNCT_ID);
 					logger.debug("Input Folder:" + folderId);
 				} else if (folder instanceof String) {
-					// TODO: to fix
+					// FIXME
 				}
 			}
 

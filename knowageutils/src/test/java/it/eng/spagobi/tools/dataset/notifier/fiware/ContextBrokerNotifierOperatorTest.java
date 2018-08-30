@@ -17,31 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.notifier.fiware;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.security.Principal;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
-
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
@@ -53,13 +28,18 @@ import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReaderTest;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.listener.DataSetListenerException;
-import it.eng.spagobi.tools.dataset.listener.DataSetListenerManager;
-import it.eng.spagobi.tools.dataset.listener.DataSetListenerManagerFactory;
-import it.eng.spagobi.tools.dataset.listener.DataStoreChangedEvent;
-import it.eng.spagobi.tools.dataset.listener.IDataSetListener;
+import it.eng.spagobi.tools.dataset.listener.*;
 import it.eng.spagobi.utilities.HelperForTest;
 import junit.framework.TestCase;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.security.Principal;
+import java.util.*;
 
 public class ContextBrokerNotifierOperatorTest extends TestCase {
 
@@ -73,7 +53,6 @@ public class ContextBrokerNotifierOperatorTest extends TestCase {
 		// load data to set the datastore for the first time
 		String jsonData = JSONPathDataReaderTest.getJSONData();
 		dataset.setDataProxy(new DataProxymock(jsonData));
-		dataset.setIgnoreConfigurationOnLoad(true);
 		dataset.loadData();
 
 		manager.changedDataSet("user1", "label1", dataset);

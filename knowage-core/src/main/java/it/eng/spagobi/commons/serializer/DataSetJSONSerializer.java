@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import it.eng.spagobi.tools.dataset.constants.*;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +35,6 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
@@ -295,21 +295,21 @@ public class DataSetJSONSerializer implements Serializer {
 
 					if (type.equalsIgnoreCase(DataSetConstants.CKAN)) {
 
-						String ckanFileType = jsonConf.getString(DataSetConstants.CKAN_FILE_TYPE);
+						String ckanFileType = jsonConf.getString(CkanDataSetConstants.CKAN_FILE_TYPE);
 						if (ckanFileType != null) {
 							result.put(CKAN_FILE_TYPE, ckanFileType);
 						}
-						String ckanCsvDelimiter = jsonConf.getString(DataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
+						String ckanCsvDelimiter = jsonConf.getString(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
 						if (ckanCsvDelimiter != null) {
 							result.put(CKAN_CSV_FILE_DELIMITER_CHARACTER, ckanCsvDelimiter);
 						}
-						String ckanCsvQuote = jsonConf.getString(DataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
+						String ckanCsvQuote = jsonConf.getString(CkanDataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
 						if (ckanCsvQuote != null) {
 							result.put(CKAN_CSV_FILE_QUOTE_CHARACTER, ckanCsvQuote);
 						}
 						// added this check for retrocompatibility
-						if (jsonConf.has(DataSetConstants.CKAN_CSV_FILE_ENCODING)) {
-							String ckanCsvEncoding = jsonConf.getString(DataSetConstants.CKAN_CSV_FILE_ENCODING);
+						if (jsonConf.has(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING)) {
+							String ckanCsvEncoding = jsonConf.getString(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING);
 							if (ckanCsvEncoding != null) {
 								result.put(CKAN_CSV_FILE_ENCODING, ckanCsvEncoding);
 							}
@@ -317,33 +317,33 @@ public class DataSetJSONSerializer implements Serializer {
 							result.put(CKAN_CSV_FILE_ENCODING, "");
 						}
 
-						if (jsonConf.has(DataSetConstants.CKAN_CSV_DATE_FORMAT)) {
-							String dateFormat = jsonConf.getString(DataSetConstants.CKAN_CSV_DATE_FORMAT);
+						if (jsonConf.has(CkanDataSetConstants.CKAN_CSV_DATE_FORMAT)) {
+							String dateFormat = jsonConf.getString(CkanDataSetConstants.CKAN_CSV_DATE_FORMAT);
 							if (dateFormat != null) {
 								result.put(CKAN_CSV_DATE_FORMAT, dateFormat);
 							}
 						} else {
 							result.put(CKAN_CSV_DATE_FORMAT, "");
 						}
-						String ckanSkipRows = jsonConf.getString(DataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
+						String ckanSkipRows = jsonConf.getString(CkanDataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
 						if (ckanSkipRows != null) {
 							result.put(CKAN_XSL_FILE_SKIP_ROWS, ckanSkipRows);
 						}
-						String ckanLimitRows = jsonConf.getString(DataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
+						String ckanLimitRows = jsonConf.getString(CkanDataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
 						if (ckanLimitRows != null) {
 							result.put(CKAN_XSL_FILE_LIMIT_ROWS, ckanLimitRows);
 						}
-						String ckanXslSheetNumber = jsonConf.getString(DataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER);
+						String ckanXslSheetNumber = jsonConf.getString(CkanDataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER);
 						if (ckanXslSheetNumber != null) {
 							result.put(CKAN_XSL_FILE_SHEET_NUMBER, ckanXslSheetNumber);
 						}
 
-						String ckanUrl = jsonConf.getString(DataSetConstants.CKAN_URL);
+						String ckanUrl = jsonConf.getString(CkanDataSetConstants.CKAN_URL);
 						if (ckanUrl != null) {
 							result.put(CKAN_URL, ckanUrl);
 						}
 
-						String ckanId = jsonConf.getString(DataSetConstants.CKAN_ID);
+						String ckanId = jsonConf.getString(CkanDataSetConstants.CKAN_ID);
 						if (ckanId != null) {
 							result.put(CKAN_ID, ckanId);
 						}
@@ -445,7 +445,7 @@ public class DataSetJSONSerializer implements Serializer {
 	}
 
 	private void manageSPARQLDataSet(JSONObject conf, JSONObject result) throws JSONException {
-		for (String attr : DataSetConstants.SPARQL_ATTRIBUTES) {
+		for (String attr : SPARQLDatasetConstants.SPARQL_ATTRIBUTES) {
 			if (!conf.has(attr)) {
 				continue;
 			}
@@ -457,7 +457,7 @@ public class DataSetJSONSerializer implements Serializer {
 	}
 
 	private static void manageRESTDataSet(JSONObject conf, JSONObject result) throws JSONException {
-		for (String attr : DataSetConstants.REST_ALL_ATTRIBUTES) {
+		for (String attr : RESTDataSetConstants.REST_ALL_ATTRIBUTES) {
 			if (!conf.has(attr)) {
 				// optional attribute
 				continue;
@@ -470,7 +470,7 @@ public class DataSetJSONSerializer implements Serializer {
 
 	private static void manageSolrDataSet(JSONObject conf, JSONObject result) throws JSONException {
 		manageRESTDataSet(conf, result);
-		for (String attr : DataSetConstants.SOLR_ALL_ATTRIBUTES) {
+		for (String attr : SolrDataSetConstants.SOLR_ALL_ATTRIBUTES) {
 			if (!conf.has(attr)) {
 				// optional attribute
 				continue;

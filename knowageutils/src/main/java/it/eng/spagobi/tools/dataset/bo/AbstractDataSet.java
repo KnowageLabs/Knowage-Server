@@ -17,25 +17,20 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
+import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
+import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
+import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
@@ -51,6 +46,11 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators;
 import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators.IConditionalOperator;
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.*;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
@@ -348,6 +348,120 @@ public abstract class AbstractDataSet implements IDataSet {
 	public void setParamsMap(Map paramsMap) {
 		this.paramsMap = paramsMap;
 		DataSetUtilities.fillDefaultValues(this, this.paramsMap);
+	}
+
+	@Override
+	public void setParametersMap(Map<String, String> paramValues) throws JSONException {
+		List<JSONObject> parameters = getDataSetParameters();
+		if (parameters.size() > paramValues.size()) {
+			String parameterNotValorizedStr = getParametersNotValorized(parameters, paramValues);
+			throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
+		}
+
+		if (paramValues.size() > 0) {
+			for (String paramName : paramValues.keySet()) {
+				for (int i = 0; i < parameters.size(); i++) {
+					JSONObject parameter = parameters.get(i);
+					if (paramName.equals(parameter.optString("namePar"))) {
+						String[] values = paramValues.get(paramName).split(",");
+						boolean isMultiValue = parameter.optBoolean("multiValuePar");
+						int length = isMultiValue ? values.length : 1;
+
+						String typePar = parameter.optString("typePar");
+						String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
+
+						List<String> newValues = new ArrayList<>();
+						for (int j = 0; j < length; j++) {
+							String value = values[j].trim();
+							if (!value.isEmpty()) {
+								if (!value.startsWith(delim) && !value.endsWith(delim)) {
+									newValues.add(delim + value + delim);
+								} else {
+									newValues.add(value);
+								}
+							}
+						}
+						paramValues.put(paramName, org.apache.commons.lang3.StringUtils.join(newValues, ","));
+						break;
+					}
+				}
+			}
+			setParamsMap(paramValues);
+		}
+	}
+
+	@Override
+	public List<JSONObject> getDataSetParameters() {
+		logger.debug("IN");
+		try {
+			List<JSONObject> parametersList = new ArrayList<>();
+
+			String strParams = getParameters();
+			if (strParams == null) {
+				return parametersList;
+			}
+
+			try {
+				SourceBean xmlParams = SourceBean.fromXMLString(strParams);
+				SourceBean sbRows = (SourceBean) xmlParams.getAttribute(ROWS);
+				List lst = sbRows.getAttributeAsList(ROW);
+				for (Iterator iterator = lst.iterator(); iterator.hasNext(); ) {
+					SourceBean sbRow = (SourceBean) iterator.next();
+					String namePar = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
+					String typePar = sbRow.getAttribute(TYPE) != null ? sbRow.getAttribute(TYPE).toString() : null;
+					boolean multiValue = sbRow.getAttribute(MULTIVALUE) != null ? Boolean.valueOf(sbRow.getAttribute(MULTIVALUE).toString()) : false;
+
+					if (typePar != null && typePar.startsWith("class")) {
+						typePar = typePar.substring(6);
+					}
+					JSONObject paramMetaDataJSON = new JSONObject();
+					String filterId = "ds__" + getLabel() + "__" + namePar;
+					paramMetaDataJSON.put("id", filterId);
+					paramMetaDataJSON.put("labelObj", getLabel());
+					paramMetaDataJSON.put("nameObj", getName());
+					paramMetaDataJSON.put("typeObj", "Dataset");
+					paramMetaDataJSON.put("namePar", namePar);
+					paramMetaDataJSON.put("typePar", typePar);
+					paramMetaDataJSON.put("multiValuePar", multiValue);
+					parametersList.add(paramMetaDataJSON);
+				}
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("Impossible to parse parameters [" + strParams + "]", t);
+			} finally {
+				logger.debug("OUT");
+			}
+
+			return parametersList;
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	private static String getParametersNotValorized(List<JSONObject> parameters, Map<String, String> parametersValues) throws JSONException {
+		String toReturn = "";
+
+		for (Iterator<JSONObject> iterator = parameters.iterator(); iterator.hasNext();) {
+			JSONObject parameter = iterator.next();
+				String parameterName = parameter.getString("namePar");
+				if (parametersValues.get(parameterName) == null) {
+					toReturn += parameterName;
+					if (iterator.hasNext()) {
+						toReturn += ", ";
+					}
+				}
+		}
+		return toReturn;
+	}
+
+	@Override
+	public void resolveParameters() {
+		// force resolution of parameters
+		QuerableBehaviour querableBehaviour = (QuerableBehaviour) getBehaviour(QuerableBehaviour.class.getName());
+		if (querableBehaviour != null) {
+			querableBehaviour.getStatement();
+		}
 	}
 
 	// these has to be implemented by the user creating a custom DataSet
@@ -655,8 +769,8 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param oldVersions
-	 *            the oldVersions to set
+	 * @param noActiveVersions
+	 *            the noActiveVersions to set
 	 */
 	@Override
 	public void setNoActiveVersions(List noActiveVersions) {
@@ -853,18 +967,6 @@ public abstract class AbstractDataSet implements IDataSet {
 		return toReturn;
 	}
 
-	// public IDataSource getDataSourceForReading() {
-	// return getDataSource();
-	//
-	// // if (isPersisted()) {
-	// // return getDataSourcePersist();
-	// // } else if (isFlatDataset()) {
-	// // return getDataSource();
-	// // } else {
-	// // return null;
-	// // }
-	// }
-
 	@Override
 	public String getOrganization() {
 		return organization;
@@ -940,10 +1042,12 @@ public abstract class AbstractDataSet implements IDataSet {
 		return DataSetUtilities.getParamsDefaultValues(this);
 	}
 
+	@Override
 	public UserProfile getUserProfile() {
 		return userProfile;
 	}
 
+	@Override
 	public void setUserProfile(UserProfile userProfile) {
 		this.userProfile = userProfile;
 	}
@@ -969,27 +1073,31 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	@Override
-	public DatasetEvaluationStrategy getEvaluationStrategy(boolean isNearRealtime) {
-		DatasetEvaluationStrategy strategy;
+	public DatasetEvaluationStrategyType getEvaluationStrategy(boolean isNearRealtime) {
+		DatasetEvaluationStrategyType strategy;
 
 		if (!isNearRealtime && isRealtime()) {
-			strategy = DatasetEvaluationStrategy.REALTIME;
+			strategy = DatasetEvaluationStrategyType.REALTIME;
 		} else if (isPersisted()) {
-			strategy = DatasetEvaluationStrategy.PERSISTED;
+			strategy = DatasetEvaluationStrategyType.PERSISTED;
 		} else if (isFlatDataset()) {
-			strategy = DatasetEvaluationStrategy.FLAT;
+			strategy = DatasetEvaluationStrategyType.FLAT;
 		} else {
 			IDataSource dataSource = getDataSource();
 			DatabaseDialect dialect = dataSource != null ? DatabaseDialect.get(dataSource.getHibDialectClass()) : null;
 			boolean inLineViewSupported = dialect != null ? dialect.isInLineViewSupported() : false;
 			if (isNearRealtime && inLineViewSupported && !hasDataStoreTransformer()) {
-				strategy = DatasetEvaluationStrategy.INLINE_VIEW;
+				strategy = DatasetEvaluationStrategyType.INLINE_VIEW;
 			} else {
-				strategy = DatasetEvaluationStrategy.CACHED;
+				strategy = DatasetEvaluationStrategyType.CACHED;
 			}
 		}
 
 		return strategy;
+	}
+
+	public <T> T getImplementation(Class<T> clazz) {
+		return (T) this;
 	}
 
 }

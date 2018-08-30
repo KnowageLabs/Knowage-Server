@@ -7,11 +7,7 @@ import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.*;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
@@ -24,15 +20,10 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
+
+import java.util.*;
 public class ParameterForExecution {
 	private static Logger logger = Logger.getLogger(ParameterForExecution.class);
 
@@ -106,11 +97,7 @@ public class ParameterForExecution {
 	}
 
 	private void initDAO() {
-		try {
 			ANALYTICAL_DRIVER_USE_MODALITY_DAO = DAOFactory.getParameterUseDAO();
-		} catch (EMFUserError e) {
-			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DRIVER_USE_MODALITY_DAO.getClass().getName() + "]", e);
-		}
 
 		DATA_DEPENDENCIES_DAO = DAOFactory.getObjParuseDAO();
 
@@ -123,18 +110,6 @@ public class ParameterForExecution {
 	}
 
 	ExecutionInstance getExecutionInstance() {
-		// ExecutionInstance executionInstance = null;
-		//
-		// boolean isAMap = getContext().isExecutionInstanceAMap(ExecutionInstance.class.getName());
-		//
-		// if (!isAMap) {
-		// executionInstance = getContext().getExecutionInstance(ExecutionInstance.class.getName());
-		// } else {
-		// Map<Integer, ExecutionInstance> instances = getContext().getExecutionInstancesAsMap(ExecutionInstance.class.getName());
-		// Integer objId = analyticalDocumentParameter.getBiObjectID();
-		// executionInstance = instances.get(objId);
-		// }
-
 		return executionInstance;
 	}
 

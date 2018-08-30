@@ -17,13 +17,9 @@
  */
 package it.eng.spagobi.tools.dataset.common.metadata;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.*;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -33,7 +29,7 @@ public class MetaData implements IMetaData, Cloneable {
 
 	int idFieldIndex;
 
-	List<IFieldMetaData> fieldsMeta;
+	private List<IFieldMetaData> fieldsMeta;
 	Map<String, Object> properties;
 
 	// @deprecated this map is used only by deprecated method getFieldIndex. Once this method will be removed
@@ -52,7 +48,7 @@ public class MetaData implements IMetaData, Cloneable {
 	@Override
 	@JsonIgnore
 	public int getFieldCount() {
-		return fieldsMeta.size();
+		return getFieldsMeta().size();
 	}
 
 	@Override
@@ -78,7 +74,7 @@ public class MetaData implements IMetaData, Cloneable {
 
 	@Override
 	public int getFieldIndex(IFieldMetaData fieldMeta) {
-		return fieldsMeta.indexOf(fieldMeta);
+		return getFieldsMeta().indexOf(fieldMeta);
 	}
 
 	@Override
@@ -87,7 +83,7 @@ public class MetaData implements IMetaData, Cloneable {
 		int currentIndex = 0;
 		int toReturn = -1;
 
-		for (Iterator iterator = fieldsMeta.iterator(); iterator.hasNext() && toReturn == -1;) {
+		for (Iterator iterator = getFieldsMeta().iterator(); iterator.hasNext() && toReturn == -1;) {
 			IFieldMetaData cycleMeta = (IFieldMetaData) iterator.next();
 			if (currentIndex < fromIndex) {
 				currentIndex++;
@@ -106,11 +102,7 @@ public class MetaData implements IMetaData, Cloneable {
 
 	@Override
 	public IFieldMetaData getFieldMeta(int fieldIndex) {
-		IFieldMetaData fieldMeta = null;
-
-		fieldMeta = fieldsMeta.get(fieldIndex);
-
-		return fieldMeta;
+		return fieldsMeta.get(fieldIndex);
 	}
 
 	@Override
@@ -119,7 +111,7 @@ public class MetaData implements IMetaData, Cloneable {
 		Iterator it;
 
 		results = new ArrayList();
-		it = fieldsMeta.iterator();
+		it = getFieldsMeta().iterator();
 		while (it.hasNext()) {
 			IFieldMetaData fieldMeta = (IFieldMetaData) it.next();
 			if (fieldMeta.getProperty(propertyName) != null && fieldMeta.getProperty(propertyName).equals(propertyValue)) {
@@ -186,8 +178,8 @@ public class MetaData implements IMetaData, Cloneable {
 
 	@Override
 	public void addFiedMeta(IFieldMetaData fieldMetaData) {
-		Integer fieldIndex = new Integer(fieldsMeta.size());
-		fieldsMeta.add(fieldMetaData);
+		Integer fieldIndex = new Integer(getFieldsMeta().size());
+		getFieldsMeta().add(fieldMetaData);
 		String fieldName = fieldMetaData.getName();
 		if (fieldMetaData.getAlias() != null) {
 			String fieldAlias = fieldMetaData.getAlias();
@@ -198,13 +190,13 @@ public class MetaData implements IMetaData, Cloneable {
 
 	@Override
 	public String toString() {
-		return fieldsMeta.toString();
+		return getFieldsMeta().toString();
 	}
 
 	@Override
 	public void deleteFieldMetaDataAt(int pivotFieldIndex) {
 		name2IndexMap.remove(getFieldMeta(pivotFieldIndex));
-		fieldsMeta.remove(pivotFieldIndex);
+		getFieldsMeta().remove(pivotFieldIndex);
 	}
 
 	@Override
@@ -216,6 +208,7 @@ public class MetaData implements IMetaData, Cloneable {
 		this.properties = properties;
 	}
 
+	@Override
 	public List getFieldsMeta() {
 		return fieldsMeta;
 	}
@@ -224,7 +217,7 @@ public class MetaData implements IMetaData, Cloneable {
 		this.fieldsMeta = new ArrayList<IFieldMetaData>(fieldsMeta.length);
 
 		for (FieldMetadata fm : fieldsMeta) {
-			this.fieldsMeta.add(fm);
+			this.getFieldsMeta().add(fm);
 		}
 	}
 

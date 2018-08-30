@@ -23,12 +23,10 @@ import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.stub.SecurityServiceServiceLocator;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.security.Principal;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
+import java.security.Principal;
 
 /**
  *
@@ -119,7 +117,7 @@ public final class SecurityServiceProxy extends AbstractServiceProxy {
 			}
 		} catch (Throwable e) {
 			logger.error("Error occured while retrieving user profile of user [" + userId + "] from service [" + SERVICE_NAME + "] at endpoint [" + serviceUrl
-					+ "]");
+					+ "]", e);
 			throw new SecurityException("Error occured while retrieving user profile of user [" + userId + "] from service [" + SERVICE_NAME
 					+ "] at endpoint [" + serviceUrl + "]", e);
 		} finally {

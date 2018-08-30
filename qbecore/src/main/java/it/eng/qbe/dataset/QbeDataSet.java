@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -50,7 +51,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
-import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
+import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
@@ -493,15 +494,29 @@ public class QbeDataSet extends ConfigurableDataSet {
 	}
 
 	@Override
-	public DatasetEvaluationStrategy getEvaluationStrategy(boolean isNearRealtime) {
-		DatasetEvaluationStrategy strategy;
+	public DatasetEvaluationStrategyType getEvaluationStrategy(boolean isNearRealtime) {
+		DatasetEvaluationStrategyType strategy;
 
 		if (isPersisted()) {
-			strategy = DatasetEvaluationStrategy.PERSISTED;
+			strategy = DatasetEvaluationStrategyType.PERSISTED;
 		} else {
-			strategy = DatasetEvaluationStrategy.CACHED;
+			strategy = DatasetEvaluationStrategyType.CACHED;
 		}
 
 		return strategy;
+	}
+
+	public String getColumn(String columnName) {
+		String result = columnName;
+
+		for (int i = 0; i < getMetadata().getFieldCount(); i++) {
+			IFieldMetaData fieldMeta = getMetadata().getFieldMeta(i);
+			if (fieldMeta.getName().equals(columnName)) {
+				result = fieldMeta.getAlias();
+				break;
+			}
+		}
+
+		return result;
 	}
 }

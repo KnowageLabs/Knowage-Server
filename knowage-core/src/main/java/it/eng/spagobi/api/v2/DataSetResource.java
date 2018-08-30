@@ -17,38 +17,8 @@
  */
 package it.eng.spagobi.api.v2;
 
-import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -60,12 +30,10 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.bo.*;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
@@ -73,18 +41,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
-import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.BetweenFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.PlaceholderFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
-import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilterOperator;
-import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.*;
 import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
@@ -95,6 +52,24 @@ import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
@@ -147,13 +122,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			return getDatasetsAsPagedList(pageStr, itemPerPageStr, search, seeTechnical, ids);
 		}
 
-		ISbiDataSetDAO dsDAO;
-		try {
-			dsDAO = DAOFactory.getSbiDataSetDAO();
-		} catch (EMFUserError e) {
-			logger.error("Error while looking for datasets", e);
-			throw new SpagoBIRuntimeException("Error while looking for datasets", e);
-		}
+		ISbiDataSetDAO dsDAO = DAOFactory.getSbiDataSetDAO();
 
 		List<SbiDataSet> dataSets = dsDAO.loadSbiDataSets();
 		List<SbiDataSet> toBeReturned = new ArrayList<SbiDataSet>();
@@ -307,7 +276,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				if (dataSet instanceof AbstractJDBCDataset) {
 					IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
 					isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
-				} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted()) {
+				} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted() || dataSet instanceof SolrDataSet) {
 					isNearRealtimeSupported = true;
 				}
 				jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);
@@ -532,10 +501,10 @@ public class DataSetResource extends AbstractDataSetResource {
 					String parameters = info.getString("parameters");
 
 					IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
-					ICache cache = SpagoBICacheManager.getCache();
+					ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 
 					DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI();
-					datasetManagementAPI.setDataSetParameters(dataSet, DataSetUtilities.getParametersMap(parameters));
+					dataSet.setParametersMap(DataSetUtilities.getParametersMap(parameters));
 					datasetManagementAPI.putDataSetInCache(dataSet, cache);
 				}
 			}

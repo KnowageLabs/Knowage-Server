@@ -17,10 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
@@ -33,8 +29,20 @@ import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public interface IDataSet extends Iterable<IRecord> {
+
+	String ROWS = "ROWS";
+	String ROW = "ROW";
+	String NAME = "NAME";
+	String TYPE = "TYPE";
+	String MULTIVALUE = "MULTIVALUE";
 
 	String getDsMetadata();
 
@@ -111,6 +119,10 @@ public interface IDataSet extends Iterable<IRecord> {
 	Map getParamsMap();
 
 	void setParamsMap(Map params);
+
+	List<JSONObject> getDataSetParameters();
+
+	void setParametersMap(Map<String, String> paramValues) throws JSONException;
 
 	// --------------------------------------------------------------------------------------------------
 
@@ -285,7 +297,13 @@ public interface IDataSet extends Iterable<IRecord> {
 
 	public boolean isCachingSupported();
 
-	public DatasetEvaluationStrategy getEvaluationStrategy(boolean isNearRealtime);
+	public DatasetEvaluationStrategyType getEvaluationStrategy(boolean isNearRealtime);
+
+	UserProfile getUserProfile();
 
 	public void setUserProfile(UserProfile profile);
+
+	void resolveParameters();
+
+	<T> T getImplementation(Class<T> clazz);
 }

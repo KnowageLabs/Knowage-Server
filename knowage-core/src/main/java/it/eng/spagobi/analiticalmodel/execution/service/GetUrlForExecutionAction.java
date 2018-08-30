@@ -17,17 +17,6 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -44,6 +33,16 @@ import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Zerbetto Davide
@@ -114,22 +113,16 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 		UserProfile profile = (UserProfile) this.getUserProfile();
 		executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 		obj = executionInstance.getBIObject();
-		dao = null;
+		dao = DAOFactory.getSnapshotDAO();;
 		HashMap<String, String> logParam = new HashMap();
 		logParam.put("DOCUMENT NAME", obj.getName());
 		logParam.put("PARAMS", this.getAttributeAsString( PARAMETERS ));
-		try {
-			dao = DAOFactory.getSnapshotDAO();
-		} catch (EMFUserError e) {				
-			logger.error("Error while istantiating DAO", e);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
-		}
+
 		
 		try {
 			snapshot = dao.loadSnapshot(snapshotId);
 		} catch (EMFUserError e) {
 			try {
-				
 				logParam.put("SNAPSHOT ID", snapshotId.toString());				
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SNAPSHOT",logParam , "KO");
 			} catch (Exception e1) {
@@ -199,13 +192,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 		logParam.put("PARAMS", this.getAttributeAsString( PARAMETERS ));
 		
 		JSONObject response = new JSONObject();
-		ISubObjectDAO dao = null;
-		try {
-			dao = DAOFactory.getSubObjectDAO();
-		} catch (EMFUserError e) {				
-			logger.error("Error while istantiating DAO", e);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
-		}
+		ISubObjectDAO dao = DAOFactory.getSubObjectDAO();
+
 		SubObject subObject = null;
 		try {
 			subObject = dao.getSubObject(subObjectId);

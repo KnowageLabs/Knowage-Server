@@ -17,17 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
@@ -41,27 +30,10 @@ import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
 import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
 import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
-import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
-import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
-import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
-import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
-import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCVerticaDataSet;
-import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
-import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
-import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
-import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
-import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
-import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.bo.*;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
+import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
@@ -75,6 +47,10 @@ import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.sql.SqlUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
+import java.util.*;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -268,31 +244,31 @@ public class DataSetFactory {
 				cds.setCkanUrl(resourcePath);
 
 				if (!jsonConf.isNull(DataSetConstants.FILE_TYPE)) {
-					jsonConf.put(DataSetConstants.CKAN_FILE_TYPE, jsonConf.getString(DataSetConstants.FILE_TYPE));
+					jsonConf.put(CkanDataSetConstants.CKAN_FILE_TYPE, jsonConf.getString(DataSetConstants.FILE_TYPE));
 				}
 				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER)) {
-					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER));
+					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER));
 				}
 				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_QUOTE_CHARACTER)) {
-					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER));
+					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER));
 				}
 				if (!jsonConf.isNull(DataSetConstants.FILE_DATE_FORMAT)) {
-					jsonConf.put(DataSetConstants.CKAN_CSV_DATE_FORMAT, jsonConf.getString(DataSetConstants.FILE_DATE_FORMAT));
+					jsonConf.put(CkanDataSetConstants.CKAN_CSV_DATE_FORMAT, jsonConf.getString(DataSetConstants.FILE_DATE_FORMAT));
 				}
 				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_ENCODING)) {
-					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_ENCODING, jsonConf.getString(DataSetConstants.CSV_FILE_ENCODING));
+					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING, jsonConf.getString(DataSetConstants.CSV_FILE_ENCODING));
 				}
 				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SKIP_ROWS)) {
-					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_SKIP_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_SKIP_ROWS));
+					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_SKIP_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_SKIP_ROWS));
 				}
 				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_LIMIT_ROWS)) {
-					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_LIMIT_ROWS));
+					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_LIMIT_ROWS));
 				}
 				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SHEET_NUMBER)) {
-					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER, jsonConf.getString(DataSetConstants.XSL_FILE_SHEET_NUMBER));
+					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER, jsonConf.getString(DataSetConstants.XSL_FILE_SHEET_NUMBER));
 				}
-				if (!jsonConf.isNull(DataSetConstants.CKAN_ID)) {
-					jsonConf.put(DataSetConstants.CKAN_ID, jsonConf.getString(DataSetConstants.CKAN_ID));
+				if (!jsonConf.isNull(CkanDataSetConstants.CKAN_ID)) {
+					jsonConf.put(CkanDataSetConstants.CKAN_ID, jsonConf.getString(CkanDataSetConstants.CKAN_ID));
 				}
 
 				cds.setConfiguration(jsonConf.toString());
@@ -560,28 +536,28 @@ public class DataSetFactory {
 				cds.setCkanUrl(resourcePath);
 
 				if (!jsonConf.isNull(DataSetConstants.FILE_TYPE)) {
-					jsonConf.put(DataSetConstants.CKAN_FILE_TYPE, jsonConf.getString(DataSetConstants.FILE_TYPE));
+					jsonConf.put(CkanDataSetConstants.CKAN_FILE_TYPE, jsonConf.getString(DataSetConstants.FILE_TYPE));
 				}
 				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER)) {
-					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER));
+					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER));
 				}
 				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_QUOTE_CHARACTER)) {
-					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER));
+					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER));
 				}
 				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_ENCODING)) {
-					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_ENCODING, jsonConf.getString(DataSetConstants.CSV_FILE_ENCODING));
+					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING, jsonConf.getString(DataSetConstants.CSV_FILE_ENCODING));
 				}
 				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SKIP_ROWS)) {
-					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_SKIP_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_SKIP_ROWS));
+					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_SKIP_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_SKIP_ROWS));
 				}
 				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_LIMIT_ROWS)) {
-					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_LIMIT_ROWS));
+					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_LIMIT_ROWS));
 				}
 				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SHEET_NUMBER)) {
-					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER, jsonConf.getString(DataSetConstants.XSL_FILE_SHEET_NUMBER));
+					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER, jsonConf.getString(DataSetConstants.XSL_FILE_SHEET_NUMBER));
 				}
-				if (!jsonConf.isNull(DataSetConstants.CKAN_ID)) {
-					jsonConf.put(DataSetConstants.CKAN_ID, jsonConf.getString(DataSetConstants.CKAN_ID));
+				if (!jsonConf.isNull(CkanDataSetConstants.CKAN_ID)) {
+					jsonConf.put(CkanDataSetConstants.CKAN_ID, jsonConf.getString(CkanDataSetConstants.CKAN_ID));
 				}
 
 				cds.setConfiguration(jsonConf.toString());
@@ -839,28 +815,28 @@ public class DataSetFactory {
 				cds.setCkanUrl(resourcePath);
 
 				if (!jsonConf.isNull(DataSetConstants.FILE_TYPE)) {
-					jsonConf.put(DataSetConstants.CKAN_FILE_TYPE, jsonConf.getString(DataSetConstants.FILE_TYPE));
+					jsonConf.put(CkanDataSetConstants.CKAN_FILE_TYPE, jsonConf.getString(DataSetConstants.FILE_TYPE));
 				}
 				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER)) {
-					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER));
+					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER));
 				}
 				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_QUOTE_CHARACTER)) {
-					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER));
+					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER));
 				}
 				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_ENCODING)) {
-					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_ENCODING, jsonConf.getString(DataSetConstants.CSV_FILE_ENCODING));
+					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING, jsonConf.getString(DataSetConstants.CSV_FILE_ENCODING));
 				}
 				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SKIP_ROWS)) {
-					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_SKIP_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_SKIP_ROWS));
+					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_SKIP_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_SKIP_ROWS));
 				}
 				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_LIMIT_ROWS)) {
-					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_LIMIT_ROWS));
+					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_LIMIT_ROWS));
 				}
 				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SHEET_NUMBER)) {
-					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER, jsonConf.getString(DataSetConstants.XSL_FILE_SHEET_NUMBER));
+					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER, jsonConf.getString(DataSetConstants.XSL_FILE_SHEET_NUMBER));
 				}
-				if (!jsonConf.isNull(DataSetConstants.CKAN_ID)) {
-					jsonConf.put(DataSetConstants.CKAN_ID, jsonConf.getString(DataSetConstants.CKAN_ID));
+				if (!jsonConf.isNull(CkanDataSetConstants.CKAN_ID)) {
+					jsonConf.put(CkanDataSetConstants.CKAN_ID, jsonConf.getString(CkanDataSetConstants.CKAN_ID));
 				}
 
 				cds.setConfiguration(jsonConf.toString());

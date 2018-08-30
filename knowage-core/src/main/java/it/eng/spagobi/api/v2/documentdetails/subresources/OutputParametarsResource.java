@@ -17,19 +17,6 @@
  */
 package it.eng.spagobi.api.v2.documentdetails.subresources;
 
-import java.util.List;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.analiticalmodel.document.dao.IOutputParameterDAO;
@@ -40,6 +27,10 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import org.apache.log4j.Logger;
+
+import javax.ws.rs.*;
+import java.util.List;
 
 @Path("/")
 public class OutputParametarsResource extends AbstractSpagoBIResource {
@@ -51,17 +42,9 @@ public class OutputParametarsResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
 	public List<OutputParameter> getDocumentOutputParameters(@PathParam("id") Integer id) {
 		logger.debug("IN");
-		IOutputParameterDAO outputParameterDAO;
-		List<OutputParameter> documentOutputParameters = null;
-		try {
-			outputParameterDAO = DAOFactory.getOutputParameterDAO();
-			documentOutputParameters = outputParameterDAO.getOutputParametersByObjId(id);
-
-			Assert.assertNotNull(documentOutputParameters, "Output Parameters can not be null");
-		} catch (EMFUserError e) {
-			logger.error("Error while getting the list of drivers", e);
-			throw new SpagoBIRestServiceException("Getting drivers has failed", buildLocaleFromSession(), e);
-		}
+		IOutputParameterDAO outputParameterDAO = DAOFactory.getOutputParameterDAO();;
+		List<OutputParameter> documentOutputParameters = outputParameterDAO.getOutputParametersByObjId(id);
+		Assert.assertNotNull(documentOutputParameters, "Output Parameters can not be null");
 		logger.debug("OUT");
 		return documentOutputParameters;
 	}
@@ -72,16 +55,10 @@ public class OutputParametarsResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
 	public OutputParameter addDocumentOutputParameters(@PathParam("id") Integer id, OutputParameter outputParameter) {
 		logger.debug("IN");
-		IOutputParameterDAO outputParameterDAO;
-
 		Assert.assertNotNull(outputParameter, "Output Parameters can not be null");
-		try {
-			outputParameterDAO = DAOFactory.getOutputParameterDAO();
-			outputParameterDAO.saveParameter(outputParameter);
-		} catch (EMFUserError e) {
-			logger.error("Error while setting driver", e);
-			throw new SpagoBIRestServiceException("Setting driver has failed", buildLocaleFromSession(), e);
-		}
+
+		IOutputParameterDAO outputParameterDAO = DAOFactory.getOutputParameterDAO();;
+		outputParameterDAO.saveParameter(outputParameter);
 		logger.debug("OUT");
 		return outputParameter;
 	}

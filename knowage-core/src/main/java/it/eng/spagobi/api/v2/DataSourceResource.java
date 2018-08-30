@@ -17,41 +17,8 @@
  */
 package it.eng.spagobi.api.v2;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.naming.AuthenticationException;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
@@ -70,6 +37,19 @@ import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.database.MetaDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.naming.AuthenticationException;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.sql.*;
+import java.util.*;
 
 @Path("/2.0/datasources")
 public class DataSourceResource extends AbstractSpagoBIResource {
@@ -208,8 +188,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			IDataSource oldDataSource = dataSourceDAO.loadDataSourceWriteDefault();
 
 			if (oldDataSource != null && dataSource.checkIsWriteDefault() && oldDataSource.getDsId() != dataSource.getDsId()) {
-				// unset the cache
-				// SpagoBICacheManager.removeCache();
 				oldDataSource.setWriteDefault(false);
 				dataSourceDAO.modifyDataSource(oldDataSource);
 			}

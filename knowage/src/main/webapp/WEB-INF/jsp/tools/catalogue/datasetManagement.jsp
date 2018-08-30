@@ -1056,31 +1056,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<div flex=100>
 									<md-input-container class="md-block">
 								    	<label>Address</label>
-										<input ng-model="selectedDataSet.restAddress" ng-required = "selectedDataSet.dsTypeCd=='REST'" ng-change="setFormDirty()">
-										<div ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='REST' && !selectedDataSet.restAddress">
+										<input ng-model="selectedDataSet.restAddress" ng-required ="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Solr'" ng-change="setFormDirty()">
+										<div ng-messages="datasetForm.lbl.$error" ng-show="(selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Solr') && !selectedDataSet.restAddress">
 			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 		       						 	</div>
 									</md-input-container>
 								</div>
+
+								<div flex=100>
+                                	<md-input-container class="md-block">
+                                		<label>Collection</label>
+                                		<input ng-model="selectedDataSet.solrCollection" ng-required = "selectedDataSet.dsTypeCd=='Solr'" ng-change="setFormDirty()">
+                                		<div ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Solr' && !selectedDataSet.solrCollection">
+                                			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+                                		</div>
+                                	</md-input-container>
+                                </div>
 								
-								<div flex=100 ng-if="selectedDataSet.dsTypeCd=='REST'">
+								<div flex=100 ng-if="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Solr'">
 									<md-input-container class="md-block">
-										<label>Request body</label>
+										<label ng-if="selectedDataSet.dsTypeCd=='REST'">Request body</label>
+										<label ng-if="selectedDataSet.dsTypeCd=='Solr'">Query</label>
 								    	<textarea 	ng-model="selectedDataSet.restRequestBody" md-maxlength="2000" rows="3" 
 								    				md-select-on-focus ng-change="setFormDirty()"></textarea>
 									</md-input-container>
 								</div>
 								
 								<div flex=100 ng-if="selectedDataSet.dsTypeCd=='Solr'">
-									<md-input-container class="md-block">
-										<label>Query</label>
-								    	<textarea 	ng-model="selectedDataSet.restRequestBody" md-maxlength="2000" rows="3" 
-								    				md-select-on-focus ng-change="setFormDirty()"></textarea>
-									</md-input-container>
-								</div>
-								
-								<div flex=100 ng-if="selectedDataSet.dsTypeCd=='Solr'">
-										<md-radio-group   ng-model="selectedDataSet.solrType" ng-change="setFormDirty()"> Type:
+										<md-radio-group layout="row" ng-model="selectedDataSet.solrType" ng-change="setFormDirty()">
 					      					<md-radio-button value="DOCUMENTS" ng-disabled="readOnly">Documents</md-radio-button>
 					      					<md-radio-button value="FACETS" ng-disabled="readOnly">Facets</md-radio-button>
 					    				</md-radio-group>
@@ -1112,8 +1115,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-card>
 						
 						</md-content>
+
+						<!-- SOLR DATASET (2.0) DOCUMENTS -->
+                        	<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="(selectedDataSet.dsTypeCd=='Solr' && selectedDataSet.solrType=='DOCUMENTS')" style="padding: 0 8 0 8">
+
+                        		<md-toolbar class="secondaryToolbar">
+
+                        			<div class="md-toolbar-tools">
+                        			    <h2>Documents</h2>
+                        			</div>
+
+                        		</md-toolbar>
+
+                                    <div flex=100>
+
+                                        <md-input-container class="md-block">
+                                            <label>Facet Field (comma-separated values)</label>
+                                            <input ng-model="selectedDataSet.solrFieldList" ng-required ="selectedDataSet.dsTypeCd=='Solr' && selectedDataSet.solrType=='DOCUMENTS'" ng-change="setFormDirty()" type="text">
+                                            <div ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Solr' && !selectedDataSet.solrFieldList">
+                                            	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+                                            </div>
+                                        </md-input-container>
+
+                                    </div>
+
+                        		</md-card>
+
+                        	</md-content>
 						
-						<!-- SOLR DATASET (2.0) FACTES -->
+						<!-- SOLR DATASET (2.0) FACETS -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="(selectedDataSet.dsTypeCd=='Solr' && selectedDataSet.solrType=='FACETS')" style="padding: 0 8 0 8">
 							
 							<md-toolbar class="secondaryToolbar">
@@ -1121,14 +1151,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					          	<div class="md-toolbar-tools">
 						            
 						            <h2>Facets</h2>
-						            
-						            
 					          	</div>
-					          	
+
 					        </md-toolbar>	
 					        
 							<md-card layout-padding style="margin:0 0 8 0">
-							
 
 								<div flex=100 style="display:flex;">											
 																			
@@ -1139,20 +1166,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									 
 									<div style="width:25%">
 										<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
-													aria-label="Add request header" ng-click="showInfoForRestParams('facetQuery')" 
+													aria-label="facetQuery" ng-click="showInfoForRestParams('facetQuery')"
 													title="{{translate.load('sbi.ds.help')}}">
 							              	<md-icon md-font-icon="fa fa-info-circle"></md-icon>
 							            </md-button>
 						            </div>
 									
 								</div>
-								
 
-								
 								<div flex=100>											
 																			
 									<md-input-container class="md-block">
-								    	<label>Facet Field</label>
+								    	<label>Facet Field (comma-separated values)</label>
 										<input ng-model="selectedDataSet.solrFacetField" ng-change="setFormDirty()" type="text">
 									</md-input-container>
 									
@@ -1171,7 +1196,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 						</md-content>
 							
-						<!-- REST DATASET (2) -->	
+						<!-- REST DATASET: Request headers -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Solr' " style="padding:0 8 0 8">
 							
 							<!-- TOOLBAR FOR THE CARD THAT HOLDS ADD REQUEST HEADER BUTTON -->
@@ -1218,8 +1243,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-content>	
 							
 								
-						<!-- REST DATASET (3) -->
-						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST' || (selectedDataSet.dsTypeCd=='Solr' && selectedDataSet.solrType=='DOCUMENTS')" style="padding: 0 8 0 8">
+						<!-- REST DATASET: JSON Path items | NGSI checkbox -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding: 0 8 0 8">
 							
 							<md-card layout-padding style="margin:0 0 8 0">
 							
@@ -1232,7 +1257,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									 
 									<div style="width:25%">
 										<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
-													aria-label="Add request header" ng-click="showInfoForRestParams('jsonPathItems')" 
+													aria-label="JSON Path Items" ng-click="showInfoForRestParams('jsonPathItems')"
 													title="{{translate.load('sbi.ds.help')}}">
 							              	<md-icon md-font-icon="fa fa-info-circle"></md-icon>
 							            </md-button>
@@ -1240,7 +1265,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									
 								</div>
 								
-								<div flex=100 style="display:flex;" ng-if="selectedDataSet.dsTypeCd=='REST' || selectedDataSet.dsTypeCd=='Solr'" >
+								<div flex=100 style="display:flex;" ng-if="selectedDataSet.dsTypeCd=='REST'" >
 									<div flex=50 layout="row" layout-align="start center">
 						           	
 				                  		<label>
@@ -1259,7 +1284,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									
 									<div style="width:50%">
 										<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
-													aria-label="Add request header" ng-click="showInfoForRestParams('directJsonAttributes')" 
+													aria-label="JSON attribute help" ng-click="showInfoForRestParams('directJsonAttributes')"
 													title="{{translate.load('sbi.ds.help')}}">
 							              	<md-icon md-font-icon="fa fa-info-circle"></md-icon>
 							            </md-button>
@@ -1286,7 +1311,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									
 									<div style="width:50%">
 										<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
-													aria-label="Add request header" ng-click="showInfoForRestParams('ngsi')" 
+													aria-label="NGSI help" ng-click="showInfoForRestParams('ngsi')"
 													title="{{translate.load('sbi.ds.help')}}">
 							              	<md-icon md-font-icon="fa fa-info-circle"></md-icon>
 							            </md-button>
@@ -1301,7 +1326,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<!-- REST DATASET (4) -->
 						<!-- JSON path attributes grid  -->
 						
-						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST' || (selectedDataSet.dsTypeCd=='Solr' && selectedDataSet.solrType=='DOCUMENTS')" style="padding:0 8 0 8">
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding:0 8 0 8">
 							
 							<!-- TOOLBAR FOR THE CARD THAT HOLDS ADD REQUEST HEADER BUTTON. (danristo) -->
 					     	<md-toolbar class="secondaryToolbar">
@@ -1388,14 +1413,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-content>
 						
 						<!-- ADDITIONAL QUERY PARAMS -->
-						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Solr' " style="padding:0 8 0 8">
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Solr'" style="padding:0 8 0 8">
 							
-							<!-- TOOLBAR FOR ADDITIONAL QUERY PARAMS-->
+							<!-- TOOLBAR FOR ADDITIONAL FILTER QUERY PARAMS-->
 					     	<md-toolbar class="secondaryToolbar">
 					     	
 					          	<div class="md-toolbar-tools">
 						            
-						            <h2>Request Additional Parameters</h2>
+						            <h2>Filter Query parameter</h2>
 						            
 					         		<span flex></span>
 						         											            
@@ -1405,8 +1430,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						              	<md-icon md-font-icon="fa fa-plus-circle"></md-icon>
 						            </md-button>
 						            
-						            <md-button class="md-icon-button" aria-label="Clear all request headers" 
-												ng-click="deleteAllRESTRequestAdditionalParameters()" title="Clear all additional parameters">
+						            <md-button class="md-icon-button" aria-label="Clear filter query parameter"
+												ng-click="deleteAllRESTRequestAdditionalParameters()" title="Clear filter query parameter">
 						              	<md-icon md-font-icon="fa fa-eraser"></md-icon>
 						            </md-button>
 						         

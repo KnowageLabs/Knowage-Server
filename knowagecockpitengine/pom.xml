@@ -14,6 +14,7 @@
 	<name>knowagecockpitengine</name>
 
 	<build>
+		<finalName>knowagecockpitengine</finalName>
 	    <plugins>
 	        <plugin>
 	            <artifactId>maven-war-plugin</artifactId>
@@ -22,6 +23,22 @@
 	                <classesClassifier>classes</classesClassifier>
 	            </configuration>
 	        </plugin>
+			<plugin>
+				<groupId>org.codehaus.cargo</groupId>
+				<artifactId>cargo-maven2-plugin</artifactId>
+				<version>1.6.9</version>
+				<configuration>
+					<container>
+						<containerId>tomcat8x</containerId>
+						<type>installed</type>
+						<home>C:\Data\Knowage\Server\apache-tomcat-8.5.32\</home>
+					</container>
+					<configuration>
+						<type>existing</type>
+						<home>C:\Data\Knowage\Server\apache-tomcat-8.5.32</home>
+					</configuration>
+				</configuration>
+			</plugin>
 	    </plugins>
 	</build>
 	

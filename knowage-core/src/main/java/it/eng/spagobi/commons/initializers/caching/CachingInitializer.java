@@ -20,12 +20,12 @@ package it.eng.spagobi.commons.initializers.caching;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.ICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-
 import org.apache.log4j.Logger;
 
 public class CachingInitializer implements InitializerIFace {
@@ -43,10 +43,11 @@ public class CachingInitializer implements InitializerIFace {
 		logger.debug("IN");
 		_config = config;
 
-		ICache cache = SpagoBICacheManager.getCache();
+		ICacheConfiguration cacheConfiguration = SpagoBICacheConfiguration.getInstance();
+		ICache cache = CacheFactory.getCache(cacheConfiguration);
 		cache.deleteAll();
 
-		IDataSource dataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
+		IDataSource dataSource = cacheConfiguration.getCacheDataSource();
 		String prefix = SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.NAMEPREFIX");
 		if (prefix != null && !prefix.isEmpty() && dataSource != null) {
 			PersistedTableManager persistedTableManager = new PersistedTableManager();

@@ -17,27 +17,10 @@
  */
 package it.eng.spagobi.api.common;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
@@ -50,10 +33,8 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
-import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
@@ -64,21 +45,19 @@ import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.DatasetInUseException;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.MultipleProjectionSimpleFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
-import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
-import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.*;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.core.Response;
+import java.util.*;
 
 public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
@@ -470,7 +449,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		for (int i = 0; i < columnList.size(); i++) {
 			String column = columnList.get(i);
 			if (column.contains(":")) {
-				columnList.set(i, getDatasetManagementAPI().getQbeDataSetColumn(dataSet, column));
+				QbeDataSet qbeDataSet = (QbeDataSet) dataSet;
+				columnList.set(i, qbeDataSet.getColumn(column));
 			}
 		}
 
@@ -643,13 +623,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	public Response deleteDataset(String label) {
-		IDataSetDAO datasetDao = null;
-		try {
-			datasetDao = DAOFactory.getDataSetDAO();
-		} catch (EMFUserError e) {
-			logger.error("Internal error", e);
-			throw new SpagoBIRuntimeException("Internal error", e);
-		}
+		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
 
 		IDataSet dataset = getDatasetManagementAPI().getDataSet(label);
 
@@ -738,32 +712,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	protected IDataSetDAO getDataSetDAO() {
-		IDataSetDAO dsDAO;
-		try {
-			dsDAO = DAOFactory.getDataSetDAO();
-		} catch (EMFUserError e) {
-			String error = "Error while looking for datasets";
-			logger.error(error, e);
-			throw new SpagoBIRuntimeException(error, e);
-		}
+		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
 		return dsDAO;
-	}
-
-	protected IDataSource getDataSource(IDataSet dataSet, boolean isNearRealTime) {
-		DatasetEvaluationStrategy strategy = dataSet.getEvaluationStrategy(isNearRealTime);
-		IDataSource dataSource = null;
-
-		if (strategy == DatasetEvaluationStrategy.PERSISTED) {
-			dataSource = dataSet.getDataSourceForWriting();
-		} else if (strategy == DatasetEvaluationStrategy.FLAT || strategy == DatasetEvaluationStrategy.INLINE_VIEW) {
-			try {
-				dataSource = dataSet.getDataSource();
-			} catch (UnreachableCodeException e) {
-			}
-		} else {
-			dataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
-		}
-
-		return dataSource;
 	}
 }

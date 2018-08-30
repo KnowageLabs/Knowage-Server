@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.dataset.cache.impl.sqldbcache.test;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.configuration.FileCreatorConfiguration;
@@ -45,6 +36,14 @@ import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import junit.framework.TestCase;
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -213,8 +212,7 @@ public abstract class AbstractCacheTest extends TestCase {
 
 	protected ICache createCache(SQLDBCacheConfiguration cacheConfiguration) {
 		// Create a cache with space available equal to dimension
-		CacheFactory cacheFactory = new CacheFactory();
-		ICache cacheCustom = cacheFactory.getCache(cacheConfiguration);
+		ICache cacheCustom = CacheFactory.getCache(cacheConfiguration);
 		return cacheCustom;
 	}
 

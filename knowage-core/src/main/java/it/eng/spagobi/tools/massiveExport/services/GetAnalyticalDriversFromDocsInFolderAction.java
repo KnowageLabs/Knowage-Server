@@ -64,16 +64,7 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 	public void doService() {
 		logger.debug("IN");
 
-		IBIObjectDAO biObjDao;
-		ILowFunctionalityDAO funcDao;
-
-		try {
-			biObjDao = DAOFactory.getBIObjectDAO();
-			funcDao = DAOFactory.getLowFunctionalityDAO();
-		} catch (EMFUserError e1) {
-			logger.error(e1.getMessage(), e1);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Error occurred");
-		}
+		ILowFunctionalityDAO funcDao = DAOFactory.getLowFunctionalityDAO();
 
 		Integer folderId = this.getAttributeAsInteger(FUNCTIONALITY_ID);
 		String documentType = this.getAttributeAsString(TYPE);

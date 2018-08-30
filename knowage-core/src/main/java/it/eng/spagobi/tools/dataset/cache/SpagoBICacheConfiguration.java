@@ -26,14 +26,12 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguratio
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.threadmanager.WorkManager;
+import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -63,17 +61,7 @@ public class SpagoBICacheConfiguration {
 		cacheConfiguration.setSchema(getCacheDatabaseSchema());
 		cacheConfiguration.setCachePercentageToStore(getCachePercentageToStore());
 		cacheConfiguration.setObjectsTypeDimension(getDimensionTypes());
-		cacheConfiguration.setWorkManager(getWorkManager());
 		return cacheConfiguration;
-	}
-
-	private static WorkManager getWorkManager() {
-		try {
-			WorkManager spagoBIWorkManager = new WorkManager(getSpagoBIConfigurationProperty(JNDI_THREAD_MANAGER));
-			return spagoBIWorkManager;
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
-		}
 	}
 
 	private static IDataSource getCacheDataSource() {

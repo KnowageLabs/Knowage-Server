@@ -17,12 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
@@ -35,6 +29,13 @@ import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -80,7 +81,7 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param wrappedDataset
+	 * @param organization
 	 *            the organization to set
 	 */
 	@Override
@@ -250,6 +251,16 @@ public class VersionedDataSet implements IDataSet {
 	@Override
 	public void setParamsMap(Map params) {
 		wrappedDataset.setParamsMap(params);
+	}
+
+	@Override
+	public List<JSONObject> getDataSetParameters() {
+		return wrappedDataset.getDataSetParameters();
+	}
+
+	@Override
+	public void setParametersMap(Map<String, String> paramValues) throws JSONException {
+		wrappedDataset.setParametersMap(paramValues);
 	}
 
 	// --------------------------------------------------------------------------------------------------
@@ -501,6 +512,11 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	@Override
+	public void resolveParameters() {
+		wrappedDataset.resolveParameters();
+	}
+
+	@Override
 	public IDataSetTableDescriptor persist(String tableName, IDataSource dataSource) {
 		return wrappedDataset.persist(tableName, dataSource);
 	}
@@ -693,12 +709,21 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	@Override
-	public DatasetEvaluationStrategy getEvaluationStrategy(boolean isNearRealtime) {
+	public DatasetEvaluationStrategyType getEvaluationStrategy(boolean isNearRealtime) {
 		return wrappedDataset.getEvaluationStrategy(isNearRealtime);
+	}
+
+	@Override
+	public UserProfile getUserProfile() {
+		return wrappedDataset.getUserProfile();
 	}
 
 	@Override
 	public String toString() {
 		return wrappedDataset.toString();
+	}
+
+	public <T> T getImplementation(Class<T> clazz) {
+		return (T) wrappedDataset;
 	}
 }

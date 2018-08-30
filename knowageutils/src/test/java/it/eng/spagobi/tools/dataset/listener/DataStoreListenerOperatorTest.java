@@ -17,23 +17,12 @@
  */
 package it.eng.spagobi.tools.dataset.listener;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
+import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.Field;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.datastore.*;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
@@ -42,6 +31,13 @@ import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import junit.framework.TestCase;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class DataStoreListenerOperatorTest extends TestCase {
 
@@ -329,6 +325,16 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		@Override
 		@SuppressWarnings("rawtypes")
 		public void setParamsMap(Map params) {
+
+		}
+
+		@Override
+		public List<JSONObject> getDataSetParameters() {
+			return null;
+		}
+
+		@Override
+		public void setParametersMap(Map<String, String> paramValues) throws JSONException {
 
 		}
 
@@ -719,14 +725,29 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		}
 
 		@Override
-		public DatasetEvaluationStrategy getEvaluationStrategy(boolean isNearRealtime) {
-			return DatasetEvaluationStrategy.REALTIME;
+		public DatasetEvaluationStrategyType getEvaluationStrategy(boolean isNearRealtime) {
+			return null;
+		}
+
+		@Override
+		public UserProfile getUserProfile() {
+			return null;
 		}
 
 		@Override
 		public void setUserProfile(UserProfile profile) {
 			// TODO Auto-generated method stub
 
+		}
+
+		@Override
+		public void resolveParameters() {
+
+		}
+
+		@Override
+		public <T> T getImplementation(Class<T> clazz) {
+			return null;
 		}
 
 	}

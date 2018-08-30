@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2018 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,30 +14,29 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
-package it.eng.spagobi.tools.dataset.bo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+package it.eng.spagobi.tools.dataset.solr;
 
-public class JavaClassDataSetExample implements IJavaClassDataSet {
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import org.apache.log4j.Logger;
 
-	@Override
-	public String getValues(Map userProfileAttributes, Map parameters) {
+public class SolrDataStore extends DataStore {
 
-		String result = "<ROWS>";
-		result += "<ROW VALUE=\"";
-		int i = 2 * 100;
-		result += new Integer(i).toString() + "\"/>";
-		result += "</ROWS>";
-		return result;
+    private static final Logger logger = Logger.getLogger(SolrDataStore.class);
+    
+    private IDataStore facets;
 
-	}
+    public SolrDataStore() {
+    }
 
-	@Override
-	public List getNamesOfProfileAttributeRequired() {
-		return new ArrayList();
-	}
+    public IDataStore getFacets() {
+        return facets;
+    }
 
+    public void setFacets(IDataStore facets) {
+        this.facets = facets;
+    }
 }

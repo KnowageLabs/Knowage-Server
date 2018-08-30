@@ -17,18 +17,6 @@
  */
 package it.eng.spagobi.dataset.cache.impl.sqldbcache.test;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
 import it.eng.spagobi.dataset.cache.test.TestXmlFactory;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
@@ -38,6 +26,17 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.database.DataBaseException;
+import org.apache.log4j.Logger;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)
@@ -129,7 +128,7 @@ public class GenericSQLDBCachePersistTableTest extends AbstractCacheTest {
 
 		sqlDataset.loadData();
 		IDataStore dataStore = sqlDataset.getDataStore();
-		cache = new CacheFactory().getCache(getDefaultCacheConfiguration());
+		cache = CacheFactory.getCache(getDefaultCacheConfiguration());
 		cache.deleteAll();
 		cache.put(sqlDataset, dataStore);
 		dataStore = cache.get(sqlDataset.getSignature());

@@ -18,24 +18,6 @@
 
 package it.eng.spagobi.tools.datasource.service.rest;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -51,8 +33,9 @@ import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -60,6 +43,18 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -138,9 +133,9 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 			// for dataset that are
 			// not in cache anymore since the caching db is changed
 			if (ds.checkIsWriteDefault()) {
-				ICache cache = SpagoBICacheManager.getCache();
+				ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 				// unset the cache
-				SpagoBICacheManager.removeCache();
+				cache.deleteAll();
 			}
 			DAOFactory.getDataSourceDAO().eraseDataSource(ds);
 			logParam.put("TYPE", ds.getJndi());
@@ -197,9 +192,9 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 				// look for dataset that are
 				// not in cache yet since the caching db is changed
 				if (dsNew.checkIsWriteDefault()) {
-					ICache cache = SpagoBICacheManager.getCache();
+					ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 					// unset the cache
-					SpagoBICacheManager.removeCache();
+					cache.deleteAll();
 				}
 				updateAudit(req, profile, "DATA_SOURCE.ADD", logParam, "OK");
 			} else {
@@ -215,9 +210,9 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 				// look for dataset that are
 				// not in cache yet since the caching db is changed
 				if (isWriteDefaultChanged) {
-					ICache cache = SpagoBICacheManager.getCache();
+					ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 					// unset the cache
-					SpagoBICacheManager.removeCache();
+					cache.deleteAll();
 				}
 				updateAudit(req, profile, "DATA_SOURCE.MODIFY", logParam, "OK");
 			}

@@ -36,15 +36,10 @@ import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.json.JSONException;
+
+import java.util.*;
 
 /**
  * Driver Implementation (IEngineDriver Interface) for Jasper Report Engine.
@@ -230,8 +225,6 @@ public class JasperReportDriver extends AbstractEngineDriver implements IEngineD
 					}
 				}
 			}
-		} catch (EMFUserError e) {
-			logger.error("Error while reading subreports:", e);
 		} catch (EMFInternalError ex) {
 			logger.error("Error while reading subreports:", ex);
 		}

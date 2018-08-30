@@ -29,12 +29,11 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 /**
  * @author Zerbetto Davide
@@ -55,13 +54,8 @@ public class DeleteSubObjectsAction extends AbstractSpagoBIAction {
 			ExecutionInstance executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 			BIObject obj = executionInstance.getBIObject();
 			UserProfile userProfile = (UserProfile) this.getUserProfile();
-			ISubObjectDAO dao = null;
-			try {
-				dao = DAOFactory.getSubObjectDAO();
-			} catch (EMFUserError e) {
-				logger.error("Error while istantiating DAO", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
-			}
+			ISubObjectDAO dao = DAOFactory.getSubObjectDAO();
+
 			String ids = this.getAttributeAsString(SUBOBJECT_ID);
 			// ids contains the id of the subobjects to be deleted separated by ,
 			String[] idArray = ids.split(",");

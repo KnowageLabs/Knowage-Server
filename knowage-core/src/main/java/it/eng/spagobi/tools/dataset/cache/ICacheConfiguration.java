@@ -18,11 +18,8 @@
 package it.eng.spagobi.tools.dataset.cache;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.math.BigDecimal;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * The cache configuration.
@@ -58,24 +55,7 @@ public interface ICacheConfiguration {
 
 	public void setCachePercentageToStore(Integer cachePercentageToStore);
 
-	WorkManager getWorkManager();
-
-	void setWorkManager(WorkManager workManager);
-
-	// =========================================================================================
-	// GENERICS
-	// =========================================================================================
-	Set<String> getPropertyNames();
-
-	boolean containsProperty(String propertyName);
-
 	Object getProperty(String propertyName);
 
 	Object setProperty(String propertyName, Object propertyValue);
-
-	Object deleteProperty(String propertyName);
-
-	void deleteAllProperties(String propertyName);
-
-	void addAllProperties(Map<String, Object> properties);
 }
