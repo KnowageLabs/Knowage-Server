@@ -145,7 +145,7 @@ angular
 
 
 				if(!$scope.editQbeDset){
-					document.getElementById("documentViewerIframe").contentWindow.qbe.openSaveDataSetWizard("TRUE");
+					window.openPanelForSavingQbeDataset();
 				} else {
 
 					$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
@@ -170,7 +170,7 @@ angular
 				 * Catch the 'save' event that is fired when the DS is persisted (saved) after confirming the dataset wizard inside the QBE (as a
 				 * result of calling the 'openSaveDataSetWizard' function.
 				 */
-				document.getElementById("documentViewerIframe").contentWindow.qbe.on("save", function() {$scope.datasetSavedFromQbe = true;})
+				//document.getElementById("documentViewerIframe").contentWindow.qbe.on("save", function() {$scope.datasetSavedFromQbe = true;})
 
 			}
 
