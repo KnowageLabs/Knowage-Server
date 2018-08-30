@@ -56,7 +56,14 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		if(item.leftOperandValue==$scope.field.id) return item
 	}
 
-	$scope.targetTypes = filters_service.getTargetTypes;
+	$scope.targetTypes = angular.copy(filters_service.getTargetTypes);
+	if($scope.pars.length>0){
+		$scope.targetTypes.push({name:sbiModule_translate.load("kn.qbe.filters.target.types.param"),value:"parameter"})
+	}
+	if($scope.subqueries.length>0){
+		$scope.targetTypes.push({name:sbiModule_translate.load("kn.qbe.filters.target.types.subquery"),value:"subquery"})
+		
+	}
 	$scope.params=false;
 	$scope.targetAF = {};
 	var checkForIndex = function(){
@@ -179,7 +186,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 				"rightOperandDescription": "",
 				"rightOperandLongDescription": "",
 				"rightOperandType": "",
-				"rightType" : "",
+				"rightType" : "manual",
 				"rightOperandDefaultValue": [""],
 				"rightOperandLastValue": [""],
 				"rightOperandAlias": null,
@@ -374,8 +381,8 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 			$scope.ngModel.queryFilters.length = 0;
 			$scope.ngModel.advancedFilters.length = 0;
 			Array.prototype.push.apply($scope.ngModel.queryFilters, $scope.filters);
-			 generateExpressions ($scope.filters, $scope.ngModel.expression, $scope.advancedFilters );
-				Array.prototype.push.apply($scope.ngModel.advancedFilters, $scope.advancedFilters);
+			generateExpressions ($scope.filters, $scope.ngModel.expression, $scope.advancedFilters );
+			Array.prototype.push.apply($scope.ngModel.advancedFilters, $scope.advancedFilters);
 			//$scope.ngModel.field.field.expression = generateExpressions ($scope.filters);
 			$scope.ngModel.mdPanelRef.close();
 		}
