@@ -363,8 +363,8 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	}
 
 	$scope.edit = function (filter){
-		filter.rightOperandValue=[];
-		filter.rightOperandValue.push(filter.rightOperandDescription );
+		filter.rightOperandValue.length = 0;
+		manageSpecOperators (filter)
 		filter.rightOperandType="Static Content";
 	}
 	$scope.saveFilters=function(){
@@ -373,6 +373,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 			if($scope.filters[i].hasParam){
 				countParam++;
 			}
+			manageSpecOperators($scope.filters[i]);
 		}
 
 		if($scope.pars.length>0 && countParam>0){
@@ -387,7 +388,15 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 			$scope.ngModel.mdPanelRef.close();
 		}
 	}
-
+	var manageSpecOperators = function (filter) {
+		if (filter.operator == 'BETWEEN' || filter.operator == 'NOT BETWEEN' || 
+				filter.operator == 'IN' || filter.operator == 'NOT IN') {
+			var splitted = filter.rightOperandDescription.split(" ---- ");
+			Array.prototype.push.apply(filter.rightOperandValue, splitted);
+		} else {
+			filter.rightOperandValue.push(filter.rightOperandDescription);
+		}
+	}
 	$scope.closeFilters=function(){
 		$scope.ngModel.mdPanelRef.close();
 	}
