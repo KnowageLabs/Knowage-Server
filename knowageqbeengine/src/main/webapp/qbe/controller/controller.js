@@ -374,7 +374,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			   "fieldType":field.attributes.iconCls,
 			   "entity":field.attributes.entity,
 			   "field":field.attributes.field,
-			   "funct":"",
+			   "funct":field.attributes.iconCls=="measure"? "SUM":"",
 			   "color":field.color,
 			   "group":false,
 
