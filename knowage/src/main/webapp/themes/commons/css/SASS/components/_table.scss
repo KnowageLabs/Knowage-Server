@@ -5,6 +5,9 @@ kn-table {
 		height: 100%;
 		margin: 8px;
 		background-color: $tabBackground;
+		&.kn-table-full-width {
+			margin: 0;
+		}
 		&.kn-table-shadowed {
 			box-shadow: 0px 3px 3px $shadowsColor;
 		}
