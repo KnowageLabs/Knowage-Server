@@ -145,42 +145,42 @@
 			      		<md-menu-content class="qbeMenuContent">
 				      
 					      	<md-menu-item>
-				          		<md-button ng-click="applyFuntion('none',field.id,field.entity)">
+				          		<md-button ng-click="applyFuntion('none',field.id,field.entity)" ng-class="{'md-raised':field.funct=='NONE'}">
 				            		<span>{{translate.load("kn.qbe.custom.table.none")}}</span>
 				            		</md-button>
 				       		</md-menu-item>
 				       		
 				       		<md-menu-item>
-				          		<md-button ng-click="applyFuntion('sum',field.id,field.entity)">
+				          		<md-button ng-click="applyFuntion('sum',field.id,field.entity)"  ng-class="{'md-raised':field.funct=='SUM'}">
 				            		<span>{{translate.load("kn.qbe.custom.table.sum")}}</span>
 				            		</md-button>
 				       		</md-menu-item>
 				       		
 				       		<md-menu-item>
-				       			<md-button ng-click="applyFuntion('min',field.id,field.entity)">
+				       			<md-button ng-click="applyFuntion('min',field.id,field.entity)" ng-class="{'md-raised':field.funct=='MIN'}">
 				            		<span>{{translate.load("kn.qbe.custom.table.min")}}</span></md-button>
 				       		</md-menu-item>
 				       		
 				       		<md-menu-item>
-				       			<md-button ng-click="applyFuntion('max',field.id,field.entity)">
+				       			<md-button ng-click="applyFuntion('max',field.id,field.entity)" ng-class="{'md-raised':field.funct=='MAX'}">
 				            		<span>{{translate.load("kn.qbe.custom.table.max")}}</span>
 				            	</md-button>
 				       		</md-menu-item>    
 				       		
 				       		<md-menu-item>
-				          		<md-button ng-click="applyFuntion('avg',field.id,field.entity)">
+				          		<md-button ng-click="applyFuntion('avg',field.id,field.entity)" ng-class="{'md-raised':field.funct=='AVG'}">
 				            		<span>{{translate.load("kn.qbe.custom.table.avg")}}</span>
 				            	</md-button>
 				       		</md-menu-item>
 				       		
 				       		<md-menu-item>
-				          		<md-button ng-click="applyFuntion('count',field.id,field.entity)">
+				          		<md-button ng-click="applyFuntion('count',field.id,field.entity)" ng-class="{'md-raised':field.funct=='COUNT'}">
 				            		<span>{{translate.load("kn.qbe.custom.table.count")}}</span>
 				            	</md-button>
 				       		</md-menu-item>
 				       		
 				       		<md-menu-item>
-				          		<md-button ng-click="applyFuntion('count_distinct',field.id,field.entity)">
+				          		<md-button ng-click="applyFuntion('count_distinct',field.id,field.entity)" ng-class="{'md-raised':field.funct=='COUNT_DISTINCT'}">
 				            		<span>{{translate.load("kn.qbe.custom.table.count.distinct")}}</span>
 				            	</md-button>
 				       		</md-menu-item>      		
