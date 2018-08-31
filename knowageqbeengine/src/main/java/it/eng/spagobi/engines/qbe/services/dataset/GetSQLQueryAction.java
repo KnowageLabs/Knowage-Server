@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.qbe.services.dataset;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.hibernate.jdbc.util.BasicFormatterImpl;
+import org.json.JSONObject;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
@@ -31,16 +38,9 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.hibernate.jdbc.util.BasicFormatterImpl;
-import org.json.JSONObject;
-
 /**
  * The Class GetSQLQueryAction.
- * 
+ *
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public class GetSQLQueryAction extends AbstractQbeEngineAction {
@@ -135,7 +135,7 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 
 	/**
 	 * Get the query string of the passed Query. The returned query is formatted
-	 * 
+	 *
 	 * @param dataSource
 	 * @param query
 	 * @return
@@ -160,7 +160,7 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 			for (int i = 0; i < selectFields.size(); i++) {
 				int startColAlias = queryString.indexOf("as col_");
 				int endColAlias = queryString.indexOf(",", startColAlias);
-				int fromPosition = queryString.indexOf(" from ");
+				int fromPosition = queryString.lastIndexOf(" from ");
 				if (endColAlias == -1 || fromPosition < endColAlias) {
 					endColAlias = fromPosition;
 				}
