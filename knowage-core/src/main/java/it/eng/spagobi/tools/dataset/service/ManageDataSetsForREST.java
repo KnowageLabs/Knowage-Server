@@ -1170,6 +1170,7 @@ public class ManageDataSetsForREST {
         for (String sa : SolrDataSetConstants.SOLR_STRING_ATTRIBUTES) {
             config.put(sa, json.optString(sa));
         }
+
         for (String ja : SolrDataSetConstants.SOLR_JSON_ARRAY_ATTRIBUTES) {
             String prop = json.optString(ja);
             if (prop != null && !prop.trim().isEmpty()) {

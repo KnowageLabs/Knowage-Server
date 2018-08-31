@@ -419,7 +419,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 					isAnEmptySelection = true;
 					break;
 				}
-				String pattern = "%" + value + "%";
 
 				List<String> columnsList = getColumnList(columns, dataSet, columnAliasToColumnName);
 				List<Projection> projections = new ArrayList<>(columnsList.size());
@@ -428,7 +427,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				}
 
 				for (Projection projection : projections) {
-					SimpleFilter filter = new LikeFilter(projection, pattern);
+					SimpleFilter filter = new LikeFilter(projection, value, LikeFilter.TYPE.SIMPLE);
 					likeFilters.add(filter);
 				}
 			}

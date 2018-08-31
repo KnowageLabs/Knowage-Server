@@ -17,17 +17,6 @@
  */
 package it.eng.spagobi.commons.serializer;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import it.eng.spagobi.tools.dataset.constants.*;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -35,9 +24,19 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.constants.*;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 public class DataSetJSONSerializer implements Serializer {
 
@@ -469,15 +468,24 @@ public class DataSetJSONSerializer implements Serializer {
 	}
 
 	private static void manageSolrDataSet(JSONObject conf, JSONObject result) throws JSONException {
-		manageRESTDataSet(conf, result);
-		for (String attr : SolrDataSetConstants.SOLR_ALL_ATTRIBUTES) {
-			if (!conf.has(attr)) {
-				// optional attribute
-				continue;
+		for (String ja : RESTDataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
+			Object prop = conf.get(ja);
+			if (prop != null) {
+				result.put(ja, new JSONObject(prop));
 			}
-			Object value = conf.get(attr);
-			Assert.assertNotNull(value, "json value");
-			result.put(attr, value.toString());
+		}
+
+		for (String sa : SolrDataSetConstants.SOLR_STRING_ATTRIBUTES) {
+			Object prop = conf.get(sa);
+			if (prop != null) {
+				result.put(sa, prop);
+			}
+		}
+		for (String ja : SolrDataSetConstants.SOLR_JSON_ARRAY_ATTRIBUTES) {
+			Object prop = conf.get(ja);
+			if (prop != null) {
+				result.put(ja, prop);
+			}
 		}
 	}
 

@@ -42,7 +42,7 @@ public class SolrDataReader extends JSONPathDataReader {
 	private int resultNumber = -1;
 
 	public SolrDataReader(String jsonPathItems, boolean hasFacets, boolean hasFacetQuery) {
-		this(jsonPathItems, null, false, false);
+		this(jsonPathItems, null, hasFacets, hasFacetQuery);
 
 	}
 

@@ -429,7 +429,7 @@ public class DataSetResource extends AbstractDataSetResource {
 							filter = new InFilter(projections, valueObjects);
 						}
 					} else if (SimpleFilterOperator.LIKE.equals(operator)) {
-						filter = new LikeFilter(projections.get(0), valueObjects.get(0).toString());
+						filter = new LikeFilter(projections.get(0), valueObjects.get(0).toString(), LikeFilter.TYPE.PATTERN);
 					} else if (SimpleFilterOperator.BETWEEN.equals(operator)) {
 						filter = new BetweenFilter(projections.get(0), valueObjects.get(0), valueObjects.get(1));
 					} else if (operator.isNullary()) {

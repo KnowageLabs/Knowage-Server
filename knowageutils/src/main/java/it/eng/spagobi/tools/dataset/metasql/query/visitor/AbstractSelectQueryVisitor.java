@@ -190,12 +190,13 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		append(item.getProjection(), false);
 		queryBuilder.append(" ");
 		queryBuilder.append(item.getOperator());
+		String value = item.isPattern() ? item.getValue() : "%" + item.getValue() + "%";
 		if (buildPreparedStatement) {
 			queryBuilder.append(" ?");
-			queryParameters.add(item.getPattern());
+			queryParameters.add(value);
 		} else {
 			queryBuilder.append(" '");
-			queryBuilder.append(item.getPattern());
+			queryBuilder.append(value);
 			queryBuilder.append("'");
 		}
 	}
