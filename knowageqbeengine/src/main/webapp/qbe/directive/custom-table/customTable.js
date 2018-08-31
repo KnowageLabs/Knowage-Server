@@ -335,14 +335,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	}
 	                        	},
 	                        	{
-	                        		"label":$scope.translate.load("kn.qbe.custom.table.function.temporal"),
-	                            	"name":"temporalOperand",
-	                            	hideTooltip:true,
-	                            	transformer: function() {
-	                            		return '<md-select ng-show="row.iconCls==measure" ng-model=row.temporalOperand class="noMargin" ><md-option ng-repeat="col in scopeFunctions.temporalFunctions" value="{{col}}">{{col}}</md-option></md-select>';
-	                            	}
-	                        	},	                        	
-	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.custom.table.show.field"),
 	                            	"name":"visible",
 	                    			hideTooltip:true,
@@ -351,6 +343,19 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	}
 	                        	}
 	]
+
+	$scope.$watch('isTemporal',function(newValue,oldValue){
+		if($scope.isTemporal){
+			$scope.basicViewColumns.splice(5, 0, {
+	    		"label":$scope.translate.load("kn.qbe.custom.table.function.temporal"),
+	        	"name":"temporalOperand",
+	        	hideTooltip:true,
+	        	transformer: function() {
+	        		return '<md-select ng-show="row.iconCls==measure" ng-model=row.temporalOperand class="noMargin" ><md-option ng-repeat="col in scopeFunctions.temporalFunctions" value="{{col}}">{{col}}</md-option></md-select>';
+	        	}
+	    	});
+		}
+	},true)
 	
 	$scope.treeSpeedMenu= [
        
