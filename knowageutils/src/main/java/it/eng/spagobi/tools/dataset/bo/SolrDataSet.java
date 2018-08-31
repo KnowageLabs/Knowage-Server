@@ -19,6 +19,8 @@ package it.eng.spagobi.tools.dataset.bo;
 
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.SolrDataProxy;
+import it.eng.spagobi.tools.dataset.common.datareader.CompositeSolrDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.FacetSolrDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.SolrDataReader;
 import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
@@ -111,7 +113,7 @@ public class SolrDataSet extends RESTDataSet {
         for(int i = 0; i < fields.length; i++) {
             jsonPathAttributes.add(new JSONPathDataReader.JSONPathAttribute(fields[i], "$." + fields[i], "string"));
         }
-        setDataReader(new SolrDataReader("$.response.docs.[*]", jsonPathAttributes, false, false));
+        setDataReader(new SolrDataReader("$.response.docs.[*]", jsonPathAttributes));
     }
 
     private void initDataProxy(JSONObject jsonConf, boolean resolveParams) {
@@ -160,6 +162,18 @@ public class SolrDataSet extends RESTDataSet {
         solrConfiguration.setSolrQuery(solrQuery);
         try {
             initDataProxy(new JSONObject(configuration), true);
+            String[] facets = solrQuery.getFacetFields();
+            if(facets != null) {
+                CompositeSolrDataReader compositeSolrDataReader = new CompositeSolrDataReader((SolrDataReader)dataReader);
+
+                for(int i = 0; i < facets.length; i++) {
+                    FacetSolrDataReader facetSolrDataReader = new FacetSolrDataReader("$.facet_counts.facet_fields." + facets[i] + ".[*]");
+                    facetSolrDataReader.setFacetField(facets[i]);
+                    facetSolrDataReader.setCalculateResultNumberEnabled(true);
+                    compositeSolrDataReader.addFacetSolrDataReader(facetSolrDataReader);
+                }
+                setDataReader(compositeSolrDataReader);
+            }
         } catch (JSONException e) {
             throw new ConfigurationException("Problems in configuration of data proxy", e);
         }

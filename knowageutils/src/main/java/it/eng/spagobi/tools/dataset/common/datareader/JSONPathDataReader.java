@@ -113,7 +113,6 @@ public class JSONPathDataReader extends AbstractDataReader {
 	private boolean ngsiDefaultItems;
 
 	public JSONPathDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes, boolean useDirectlyAttributes, boolean ngsi) {
-		// Helper.checkWithoutNulls(jsonPathAttributes, "pathAttributes");
 		this.jsonPathAttributes = jsonPathAttributes;
 		this.useDirectlyAttributes = useDirectlyAttributes;
 		this.ngsi = ngsi;

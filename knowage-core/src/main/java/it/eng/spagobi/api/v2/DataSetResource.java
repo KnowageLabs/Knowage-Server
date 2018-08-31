@@ -517,7 +517,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	@Override
-	protected IDataWriter getDataSetWriter() throws JSONException {
+	protected IDataWriter getDataStoreWriter() throws JSONException {
 		CockpitJSONDataWriter dataWriter = new CockpitJSONDataWriter(getDataSetWriterProperties());
 		dataWriter.setLocale(buildLocaleFromSession());
 		return dataWriter;

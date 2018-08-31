@@ -174,10 +174,10 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 			IDataStore dataStore = getDatasetManagementAPI().getDataStore(dataSet, isNearRealtime, DataSetUtilities.getParametersMap(parameters), projections,
 					where, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
-			IDataWriter dataWriter = getDataSetWriter();
+			IDataWriter dataWriter = getDataStoreWriter();
 
 			timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:convertToJson");
-			JSONObject gridDataFeed = (JSONObject) dataWriter.write(dataStore);
+			Object gridDataFeed = dataWriter.write(dataStore);
 			timing.stop();
 
 			String stringFeed = gridDataFeed.toString();
@@ -469,7 +469,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return columnList;
 	}
 
-	protected IDataWriter getDataSetWriter() throws JSONException {
+	protected IDataWriter getDataStoreWriter() throws JSONException {
 		JSONDataWriter dataWriter = new JSONDataWriter(getDataSetWriterProperties());
 		dataWriter.setLocale(buildLocaleFromSession());
 		return dataWriter;

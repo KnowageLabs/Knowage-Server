@@ -23,20 +23,29 @@ import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import org.apache.log4j.Logger;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SolrDataStore extends DataStore {
 
     private static final Logger logger = Logger.getLogger(SolrDataStore.class);
     
-    private IDataStore facets;
+    private Map<String, IDataStore> facets = new HashMap<>();
 
-    public SolrDataStore() {
+    public SolrDataStore(IDataStore documentDataStore) {
+        records = documentDataStore.getRecords();
+        metaData = documentDataStore.getMetaData();
     }
 
-    public IDataStore getFacets() {
+    public  Map<String, IDataStore> getFacets() {
         return facets;
     }
 
-    public void setFacets(IDataStore facets) {
+    public void setFacets(Map<String, IDataStore> facets) {
         this.facets = facets;
+    }
+
+    public void addFacetDataStore(String name, IDataStore dataStore) {
+        facets.put(name, dataStore);
     }
 }

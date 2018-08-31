@@ -40,6 +40,10 @@ public interface IDataStore {
 
 	long getRecordsCount();
 
+	List getRecords();
+
+	void setRecords(List records);
+
 	IRecord getRecordAt(int i);
 
 	IRecord getRecordByID(Object value);

@@ -56,9 +56,9 @@ public class DataStore implements IDataStore {
 	public static String DEFAULT_TABLE_NAME = "TemporaryTable";
 	public static String DEFAULT_SCHEMA_NAME = "KA";
 
-	IMetaData metaData;
+	protected IMetaData metaData;
 
-	List records = null;
+	protected List records = null;
 
 	Date cacheDate = null;
 

@@ -20,7 +20,7 @@
 package it.eng.spagobi.tools.dataset.bo;
 
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.tools.dataset.common.datareader.SolrDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.FacetSolrDataReader;
 import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -47,9 +47,9 @@ public class FacetSolrDataSet extends SolrDataSet {
     protected void initDataReader(JSONObject jsonConf, boolean resolveParams) {
         logger.debug("Reading Solr dataset facets");
         if (getProp(SolrDataSetConstants.SOLR_FACET_QUERY, jsonConf, true, resolveParams) != null) {
-            setDataReader(new SolrDataReader("$.facet_counts.facet_queries", true, true));
+            setDataReader(new FacetSolrDataReader("$.facet_counts.facet_queries", true));
         } else {
-            setDataReader(new SolrDataReader("$.facet_counts.facet_fields.*.[*]", true, false));
+            setDataReader(new FacetSolrDataReader("$.facet_counts.facet_fields.*.[*]", false));
         }
     }
 
