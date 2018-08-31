@@ -30,7 +30,7 @@ angular.module('cockpitModule')
 						element[0].classList.add("layout-fill");
 					},
 					post: function postLink(scope, element, attrs, ctrl, transclud) {
-						//init the widget
+						// init the widget
 						element.ready(function () {
 							scope.initWidget();
 						});
@@ -65,17 +65,23 @@ angular.module('cockpitModule')
 	  		return cockpitModule_generalServices.getTemplateUrl('selectorWidget',template);
 	  	}
 
-		$scope.isActive = function(p){
-			return $scope.ngModel.activeValues && $scope.ngModel.activeValues.indexOf(p) == -1;
+		$scope.isDisabled = function(p){
+			if($scope.ngModel.settings.modalityPresent=="COMBOBOX" && $scope.ngModel.settings.modalityValue=="singleValue"){
+				return $scope.ngModel.activeValues && $scope.ngModel.activeValues.indexOf(p) == -1 && $scope.selectedValues.indexOf(p) == -1;
+			}else{
+				return $scope.ngModel.activeValues && $scope.ngModel.activeValues.indexOf(p) == -1;
+			}
 		}
 
 		$scope.isSelected = function(p){
-			return $scope.selectedValues.indexOf(p) > -1;
+			return $scope.selectedValues && $scope.selectedValues.indexOf(p) > -1;
+		}
+
+		$scope.mapToColumn = function(x){
+			return x.column_1;
 		}
 
 		$scope.selectElement = function(e){
-			// e.preventDefault()
-			// e.stopImmediatePropagation();
 			if(e.target.attributes.disabled || e.target.parentNode.attributes.disabled) return;
 
 			var tempValue;
@@ -87,7 +93,7 @@ angular.module('cockpitModule')
 				}
 			}
 		}
-		
+
 		$scope.gridWidth = function() {
 			var tempStyle = {};
 			if($scope.ngModel.settings.modalityView == 'grid' && $scope.ngModel.settings.gridColumnsWidth){
@@ -103,22 +109,23 @@ angular.module('cockpitModule')
 			$scope.ngModel.dataset.isRealtime = dataset.isRealtime;
 			$scope.ngModel.dataset.label = dataset.label;
 		}
+
 		$scope.ngModel.activeValues = null;
 
 		$scope.selectedValues = [];
+		$scope.oldSelectedValues = null;
 
 		$scope.searchParamText = "";
 		$scope.selectedTab = {'tab' : 0};
 		$scope.widgetIsInit=false;
 		$scope.totalCount = 0;
+
 		$scope.translate = sbiModule_translate;
 		$scope.datasetRecords = {};
 		$scope.cockpitModule_widgetSelection = cockpitModule_widgetSelection;
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
 
-		//cockpitModule_widgetSelection.setWidgetOfType("selector");
-
-		//set a watcher on a variable that can contains the associative selections for realtime dataset
+		// set a watcher on a variable that can contains the associative selections for realtime dataset
 		var realtimeSelectionsWatcher = $scope.$watchCollection('realTimeSelections',function(newValue,oldValue,scope){
 			if(scope.ngModel && scope.ngModel.dataset && scope.ngModel.dataset.dsId){
 				var dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId);
@@ -149,7 +156,7 @@ angular.module('cockpitModule')
 					'style': {}
 			};
 		}
-		
+
 		$scope.init=function(element,width,height){
 			$scope.refreshWidget(null, 'init');
 			$timeout(function(){
@@ -174,26 +181,23 @@ angular.module('cockpitModule')
 				return;
 			}
 
-			$scope.datasetRecords = datasetRecords;
+			$scope.datasetRecords.activeValues = datasetRecords.activeValues;
+			$scope.datasetRecords.metaData = datasetRecords.metaData;
+			if(!angular.equals($scope.datasetRecords.rows, datasetRecords.rows)){
+				$scope.datasetRecords.rows = datasetRecords.rows;
+			}
 
 			checkForSavedSelections(nature);
 
 			updateModel();
-			$scope.showSelection = false;
 			if(datasetRecords.activeValues){
 				datasetRecords.activeValues.then(function(activeValues){
-
 					var tempActs = [];
 					for(var k in activeValues.rows){
 						tempActs.push(activeValues.rows[k].column_1);
 					}
-
-					updateModel(tempActs);
-
-					$scope.showSelection = true;
+					updateActiveValues(tempActs);
 				},function(error){})
-			}else{
-				$scope.showSelection = true;
 			}
 
 			$scope.hideWidgetSpinner();
@@ -234,9 +238,12 @@ angular.module('cockpitModule')
 					item.ds=$scope.ngModel.dataset.label;
 					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.defaultValues);
 				}else{
-					Array.prototype.push.apply($scope.defaultValues, selections);
-					$scope.selectedValues.length=0;
-					Array.prototype.push.apply($scope.selectedValues, $scope.defaultValues);
+					if(selections && !angular.equals($scope.defaultValues, selections)){
+						$scope.defaultValues = angular.copy(selections);
+					}
+					if(!angular.equals($scope.selectedValues, $scope.defaultValues)){
+						$scope.selectedValues = angular.copy($scope.defaultValues);
+					}
 				}
 			}
 		}
@@ -244,76 +251,33 @@ angular.module('cockpitModule')
 		var updateModel = function(activeVals){
 			var datasetLabel = $scope.ngModel.dataset.label;
 			var columnName = $scope.ngModel.content.selectedColumn.name;
-
-			if(activeVals){
-				$scope.ngModel.activeValues = activeVals;
-			}
 			var values = $scope.cockpitModule_widgetSelection.getSelectionValues(datasetLabel,columnName);
-			if(values){
-				updateValues(values);
+			updateValues(values);
+		}
+
+		var updateActiveValues = function(activeValues){
+			if(activeValues){
+				$scope.ngModel.activeValues = activeValues;
 			}
 		}
 
 		var updateValues = function(values){
-			$scope.selectedValues.length=0;
-			Array.prototype.push.apply($scope.selectedValues, values);
+			if(values && !angular.equals($scope.selectedValues, values)){
+				$scope.selectedValues = angular.copy(values);
+			}
 		}
 
-//		$scope.toggleCheckboxParameter = function(parVal) {
-//			cockpitModule_widgetSelection.setWidgetOfType("selector");
-//			cockpitModule_widgetSelection.setWidgetID($scope.ngModel.id);
-//			$scope.hasDefaultValue = false;
-//			var index = $scope.multiValue.indexOf(parVal);
-//
-//			if (index > -1) {
-//				$scope.multiValue.splice(index, 1);
-//			} else {
-//				$scope.multiValue.push(parVal);
-//
-//			}
-//
-//			if($scope.multiValue.length>0){
-//				$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,$scope.multiValue);
-//			} else {
-//				var item = {};
-//				item.aggregated=$scope.aggregated;
-//				item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
-//				item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
-//				item.ds=$scope.ngModel.dataset.label;
-//				item.value=angular.copy($scope.multiValue);
-//				$rootScope.$broadcast('DELETE_SELECTION',item);
-//				$scope.deleteSelections(item);
-//			}
-//		};
-
-//		$scope.toggleRadioParameter = function(parVal ) {
-//			cockpitModule_widgetSelection.setWidgetOfType("selector");
-//			cockpitModule_widgetSelection.setWidgetID($scope.ngModel.id);
-//			$scope.hasDefaultValue = false;
-//			var item = {};
-//			item.aggregated=$scope.aggregated;
-//			item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
-//			item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
-//			item.ds=$scope.ngModel.dataset.label;
-//
-//			if($scope.parameter != parVal){
-//				$scope.parameter = parVal;
-//				$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,parVal);
-//			} else {
-//				item.value=angular.copy($scope.parameter);
-//				$rootScope.$broadcast('DELETE_SELECTION',item);
-//				$scope.deleteSelections(item);
-//			}
-//		}
-
 	    $scope.clearParamSearch = function() {
-
 			$scope.searchParamText = "";
 		};
 
 		$scope.toggleParameter = function(parVal) {
-			// cockpitModule_widgetSelection.setWidgetOfType("selector");
-			// cockpitModule_widgetSelection.setWidgetID($scope.ngModel.id);
+			if($scope.ngModel.settings.modalityPresent=="COMBOBOX"){
+				if(angular.equals(parVal, $scope.oldSelectedValues)){
+					return;
+				}
+				$scope.oldSelectedValues = angular.copy(parVal);
+			}
 
 			$scope.hasDefaultValues = false;
 
@@ -324,35 +288,46 @@ angular.module('cockpitModule')
 			item.ds=$scope.ngModel.dataset.label;
 
 			if($scope.ngModel.settings.modalityValue=="multiValue"){
-				var index = $scope.selectedValues.indexOf(parVal);
-
-				if (index > -1) {
-					$scope.selectedValues.splice(index, 1);
-				} else {
-					$scope.selectedValues.push(parVal);
+				var values;
+				if($scope.ngModel.settings.modalityPresent=="LIST"){
+					var index = $scope.selectedValues.indexOf(parVal);
+					if (index > -1) {
+						$scope.selectedValues.splice(index, 1);
+					} else {
+						$scope.selectedValues.push(parVal);
+					}
+					values = $scope.selectedValues;
+				}else{
+					values = parVal;
 				}
 
-				if($scope.selectedValues.length>0){
-					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,angular.copy($scope.selectedValues));
+				if(values.length>0){
+					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow,angular.copy(values));
 				} else {
-					item.value=angular.copy($scope.selectedValues);
+					item.value=angular.copy(values);
 					$rootScope.$broadcast('DELETE_SELECTION',item);
 					$scope.deleteSelections(item);
 				}
-			} else {
-				if($scope.selectedValues[0] != parVal){
-					$scope.selectedValues[0] = parVal;
-					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
-				} else {
-					item.value=angular.copy($scope.selectedValues[0]);
-					$rootScope.$broadcast('DELETE_SELECTION',item);
-					$scope.deleteSelections(item);
+			} else { // singleValue
+				if($scope.ngModel.settings.modalityPresent=="LIST"){
+					if($scope.selectedValues[0] != parVal){
+						$scope.selectedValues[0] = parVal;
+						$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.selectedValues[0]);
+					} else {
+						item.value=angular.copy($scope.selectedValues[0]);
+						$rootScope.$broadcast('DELETE_SELECTION',item);
+						$scope.deleteSelections(item);
+					}
+				}else{ // COMBOBOX
+					if(parVal){
+						$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, angular.copy(parVal));
+					}else{
+						item.value=angular.copy(parVal);
+						$rootScope.$broadcast('DELETE_SELECTION',item);
+						$scope.deleteSelections(item);
+					}
 				}
 			}
-		}
-
-		$scope.hasParameter = function(value) {
-			return $scope.selectedValues.indexOf(value) > -1;
 		}
 
 	    $scope.getOptions = function(){
@@ -418,7 +393,7 @@ angular.module('cockpitModule')
 				cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=false;
 			}
 	    }
-	    
+
 	    $scope.editWidget=function(index){
 			var finishEdit=$q.defer();
 			var config = {
