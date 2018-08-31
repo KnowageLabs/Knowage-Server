@@ -126,13 +126,16 @@ angular.module('qbe_expander_list', ['ngDraggable'])
                 }
 
                 scope.isThereAFilter = function (entity) {
-                	for (var i = 0; i < entity.children.length; i++) {
-                		if(scope.countFilters(entity.children[i])>0){
-            				return true;
-            			} else {
-            				return false;
-            			}
-            		}
+                	if(entity.children){
+                		for (var i = 0; i < entity.children.length; i++) {
+                    		if(scope.countFilters(entity.children[i])>0){
+                				return true;
+                			} else {
+                				return false;
+                			}
+                		}
+                	}
+                	
                 }
 
 
