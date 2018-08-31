@@ -389,13 +389,16 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		}
 	}
 	var manageSpecOperators = function (filter) {
-		if (filter.operator == 'BETWEEN' || filter.operator == 'NOT BETWEEN' || 
-				filter.operator == 'IN' || filter.operator == 'NOT IN') {
-			var splitted = filter.rightOperandDescription.split(" ---- ");
-			Array.prototype.push.apply(filter.rightOperandValue, splitted);
-		} else {
-			filter.rightOperandValue.push(filter.rightOperandDescription);
+		if(filter.rightType == "manual" || filter.rightType == "valueOfField" ) {
+			if (filter.operator == 'BETWEEN' || filter.operator == 'NOT BETWEEN' || 
+					filter.operator == 'IN' || filter.operator == 'NOT IN') {
+				var splitted = filter.rightOperandDescription.split(" ---- ");
+				Array.prototype.push.apply(filter.rightOperandValue, splitted);
+			} else {
+				filter.rightOperandValue.push(filter.rightOperandDescription);
+			}
 		}
+		
 	}
 	$scope.closeFilters=function(){
 		$scope.ngModel.mdPanelRef.close();
