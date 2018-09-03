@@ -239,13 +239,15 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 	});
 
 	$scope.exportFiles= function(){
-		var config={"DOCUMENT_ID_LIST":[],
+		var config={
+				"DOCUMENT_ID_LIST":[],
 				"EXPORT_FILE_NAME":$scope.exportName,
 				"EXPORT_SUB_OBJ":$scope.checkboxs.exportSubObj,
 				"EXPORT_SNAPSHOT":$scope.checkboxs.exportSnapshots,
 				"EXPORT_CROSSNAV":$scope.checkboxs.exportCrossNav,
 				"EXPORT_BIRT": $scope.checkboxs.exportBirt,
-				"EXPORT_SCHEDULER": $scope.checkboxs.exportScheduler};
+				"EXPORT_SCHEDULER": $scope.checkboxs.exportScheduler
+		};
 
 		for (var i =0 ; i < $scope.selected.length;i++){
 			if ($scope.selected[i].type == "biObject"){
@@ -282,7 +284,6 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			$scope.flags.waitExport=false;
 			sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
 		});
-
 
 	}
 
