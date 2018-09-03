@@ -80,7 +80,7 @@
 		}
 		
 		$scope.tableColumnsFederation = [{"label":"Label","name":"label"},{"label":"Name","name":"name"}];
-		$scope.tableColumnsModels = [{"label":"Name","name":"name","type":"text"}, {"label":"Description","name":"description","type":"text"},{"type": "buttons", "buttons": [{"name": "Open business model in QBE", "icon": "fa fa-search", "action": $scope.showQbeModel, "visible": function(){return true;}}]}];
+		$scope.tableColumnsModels = [{"label":"Name","name":"name","type":"text"}, {"label":"Description","name":"description","type":"text"},{"type": "buttons", "buttons": [{"name": "Open business model in QBE", "icon": "fa fa-search", "action": $scope.showQbeModel, "visible": true}]}];
 
 		$scope.showModelInfo = false;
 		$scope.idsOfFederationDefinitionsUsediNFederatedDatasets = [];
