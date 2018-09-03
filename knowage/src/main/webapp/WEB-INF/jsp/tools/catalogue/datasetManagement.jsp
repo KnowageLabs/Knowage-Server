@@ -76,6 +76,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		
+		<!--Drivers  execution-->
+			 <script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/driversexecution/driversExecutionService.js")%>"></script>
+		  <script type="text/javascript" 
+                src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentParamenterElement/documentParamenterElementController.js")%>"></script>
+          
+		
 		<title>Dataset Catalogue</title>
 		
 		<script>

@@ -173,6 +173,7 @@ angular
 	                     if (self.drivers[i].priority == priority) {
 	                    	 self.setParameterInfo(self.drivers[i]);
 	                         self.selectedDriver = self.drivers[i];
+	                     	 driversService.getParusesByAnaliticalDriverId(self.selectedDriver.parID);
 	                         self.setParameterInfo(self.selectedDriver);
 							 if(self.selectedDriver.parID)
 	                         getLovsByAnalyticalDriverId(self.selectedDriver.parID);

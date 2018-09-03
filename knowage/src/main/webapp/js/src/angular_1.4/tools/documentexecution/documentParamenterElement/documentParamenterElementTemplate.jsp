@@ -3,7 +3,7 @@
 	<!-- Map input -->		
 	<div ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in' && parameter.showOnPanel=='true'" layout="column">
 	 	<div layout="row" layout-align="start">
-	 		<label ng-class="parameter.showMapDriver && showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{i18n.getI18n(parameter.label)}}
+	 		<label ng-class="parameter.showMapDriver && showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" flex = 80>{{i18n.getI18n(parameter.label)}}
 					<md-tooltip ng-if="!parameter.showMapDriver"> {{sbiModule_translate.load("sbi.execution.parametersselection.message.parametersdisabled")}} </md-tooltip>
 				</label>
 			<md-button ng-disabled="!parameter.showMapDriver" ng-click="popupMapParameterDialog(parameter)" ng-required="::parameter.mandatory"	id="{{::parameter.urlName}}" aria-label="{{i18n.getI18N(parameter.label)}}">
@@ -27,10 +27,11 @@
 	<!-- lov LOOKUP single and multiple input -->
 	<div ng-if="parameter.selectionType=='LOOKUP'  && parameter.showOnPanel=='true'" layout="column" class="lookupParameter" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" flex = 80>{{i18n.getI18n(parameter.label)}}</label> 
 			<md-icon md-font-icon="fa fa-eraser" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
-			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{i18n.getI18n(parameter.label)}}</label> 
+		
 		</div>
 		<div layout="row" layout-align="start center">
 			<md-button class="md-icon-button" id="{{::parameter.urlName}}" ng-click="popupLookupParameterDialog(parameter)">
@@ -49,12 +50,13 @@
 
 	<!-- Tree input -->	
 	<div ng-if="parameter.selectionType=='TREE'  && parameter.showOnPanel=='true'" layout="column" class="lookupParameter" layout-margin>
-		<div layout="row" layout-align="start center" class="labelContainer">
-			<md-icon md-font-icon="fa fa-eraser" ng-click="documentExecuteServices.resetParameter(parameter)">
+ 		<div layout="row" layout-align="start center" class="labelContainer"> 
+ 		<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" flex = 80 >{{i18n.getI18n(parameter.label)}}</label> 
+			<md-icon md-font-icon="fa fa-eraser" ng-click="documentExecuteServices.resetParameter(parameter)" class="iconWidth-16">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
-			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{i18n.getI18n(parameter.label)}}</label> 
-		</div>
+			
+ 		</div> 
 		<div layout="row" layout-align="start center">
 			<md-button class="md-icon-button" id="{{::parameter.urlName}}" ng-click="getTreeParameterValue()">
 				<md-icon md-font-icon="fa fa-external-link"></md-icon>
@@ -72,10 +74,11 @@
 	<!-- Date -->
 	<div ng-if="parameter.type=='DATE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" class="datePickerParameter" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" flex = 80>{{i18n.getI18n(parameter.label)}}</label> 
 			<md-icon md-font-icon="fa fa-eraser" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
-			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{i18n.getI18n(parameter.label)}}</label> 
+		
 		</div>
 		<md-datepicker ng-model="parameter.parameterValue" style="margin-right:0;max-height:90px;" layout="row" layout-align="start center"></md-datepicker>
 	</div>		
@@ -83,10 +86,11 @@
 	<!-- Date RANGE-->
 	<section ng-if="parameter.type=='DATE_RANGE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" class="datePickerParameter" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" flex = 80>{{i18n.getI18n(parameter.label)}}</label> 
 			<md-icon md-font-icon="fa fa-eraser" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
-			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{i18n.getI18n(parameter.label)}}</label> 
+		
 		</div>
 		<md-datepicker ng-model="parameter.parameterValue"  md-placeholder="{{i18n.getI18n(parameter.label)}}" ></md-datepicker>
 		<md-select ng-model="parameter.datarange.opt"> 
@@ -101,10 +105,11 @@
 	<!-- manual number input -->
 	<md-input-container class="md-block" ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" flex = 80>{{i18n.getI18n(parameter.label)}}</label> 
 			<md-icon md-font-icon="fa fa-eraser" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
-			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{i18n.getI18n(parameter.label)}}</label> 
+		
 		</div>
 		<input class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" type="number">	
 	</md-input-container>
@@ -112,10 +117,11 @@
 	<!-- manual text input -->
 	<div ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" layout-margin class="textInput">
 		<div layout="row" layout-align="start center" class="labelContainer">
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" flex = 80>{{i18n.getI18n(parameter.label)}} </label> 
 			<md-icon md-font-icon="fa fa-eraser" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
-			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{i18n.getI18n(parameter.label)}} </label> 
+		
 		</div>
 		<md-input-container class="md-block noMargin" flex>
 			<input class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" >
@@ -125,10 +131,11 @@
 	<!-- lov list radio input -->
 	<div ng-if="parameter.selectionType=='LIST' && !parameter.multivalue  && parameter.showOnPanel=='true'" layout="column" layout-margin class="radioParameter">
 		<div layout="row" layout-align="start center" class="labelContainer">
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" flex = 80>{{i18n.getI18n(parameter.label)}}</label> 
 			<md-icon md-font-icon="fa fa-eraser" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
-			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{i18n.getI18n(parameter.label)}}</label> 
+		
 		</div>
 		<md-radio-group ng-model="parameter.parameterValue" ng-required="::parameter.mandatory">
 			<md-radio-button class="md-primary" ng-repeat="defaultParameter in parameter.defaultValues" ng-if="defaultParameter.isEnabled" value="{{::defaultParameter.value}}" ng-click="toggleRadioParameter(defaultParameter.value, defaultParameter.description, parameter)">
@@ -140,10 +147,11 @@
 	<!-- lov list multiple input -->
 	<div ng-if="parameter.selectionType=='LIST' && parameter.multivalue  && parameter.showOnPanel=='true'" layout="column" layout-margin class="checkBoxParameter">
 		<div layout="row" layout-align="start center" class="labelContainer">
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" flex = 80>{{i18n.getI18n(parameter.label)}}</label>
 			<md-icon md-font-icon="fa fa-eraser" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
-			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{i18n.getI18n(parameter.label)}}</label> 
+		 
 		</div>
 		<div ng-repeat="defaultParameter in parameter.defaultValues">
 			<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled"
@@ -157,10 +165,10 @@
 	
 	<div ng-if="parameter.selectionType=='COMBOBOX'  && parameter.showOnPanel=='true'" layout="column" layout-margin class="selectParameter">
 		<div layout="row" layout-align="start center" class="labelContainer">
+					<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" flex = 80>{{i18n.getI18n(parameter.label)}}</label> 
 			<md-icon md-font-icon="fa fa-eraser" ng-click="documentExecuteServices.resetParameter(parameter)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
-			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{i18n.getI18n(parameter.label)}}</label> 
 		</div>
 		<md-input-container class="md-block" ng-if="parameter.selectionType=='COMBOBOX'  && parameter.showOnPanel=='true'">
 		<!-- multiple -->

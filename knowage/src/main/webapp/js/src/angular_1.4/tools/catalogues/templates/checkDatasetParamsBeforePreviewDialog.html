@@ -2,12 +2,14 @@
       
    <md-toolbar class="miniheadfederation">
 		<div class="md-toolbar-tools">
-			<h2 class="md-flex">{{translate.load("sbi.ds.set.param.values")}}</h2>
+			<h2 class="md-flex">{{translate.load("sbi.ds.set.param.values")}}  </h2>
 			<span flex=""></span>
 		</div>	
 	</md-toolbar>
    
    <md-dialog-content>
+	  		
+	  
 	   <angular-table
 				id="datasetParametersTable"
 				style="padding:8px;"
@@ -17,9 +19,11 @@
 				scope-functions=paramScopeFunctions
 				no-pagination=true >
 		</angular-table>
-   		
+   	<div>
+   		   <document-paramenter-element execProperties="selectedDataSet"  parameter="parameter" ng-repeat="parameter in documentParameters" ng-show="parameter.visible" layout="row" layout-align="center center" /> 
+   			</div>
    </md-dialog-content>
-
+	
     <md-dialog-actions layout="row">
      <md-button ng-click="applyValueOfParameterAndContinuePreviewExecution()" class="md-raised"  md-autofocus>
          {{translate.load("sbi.ds.test")}}

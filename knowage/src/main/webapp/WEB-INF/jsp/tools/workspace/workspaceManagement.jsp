@@ -50,6 +50,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<!-- Styles -->
 		<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>"> 
 		
+		
+		<!--Drivers  execution-->
+			 <script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/driversexecution/driversExecutionService.js")%>"></script>
+		  <script type="text/javascript" 
+                src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentParamenterElement/documentParamenterElementController.js")%>"></script>
+          
+ 
 	
 		<script language="javascript" type="text/javascript">		   
 		   /* 

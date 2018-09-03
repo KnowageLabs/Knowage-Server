@@ -82,9 +82,6 @@
 	                   var path = "";
 	                   crudService.get(base,path).then(function(response){
 	                			driversResource.analyticalDrivers=response.data;
-	                			 for(var i = 0;i< driversResource.analyticalDrivers.length;i++){
-	             	      			driversResource.getParusesByAnaliticalDriverId(driversResource.analyticalDrivers[i].id);
-	             	    		 }
 	                   });
 	    		   }
 

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box', 'qbe_viewer']);
+var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box', 'qbe_viewer','driversExecutionModule']);
 
 datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
@@ -24,7 +24,7 @@ datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 datasetModule
-	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer", datasetFunction])
+	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer","driversExecutionService", datasetFunction])
 	.service('multipartForm',['$http',function($http){
 
 			this.post = function(uploadUrl,data){
@@ -42,7 +42,7 @@ datasetModule
 		}]);
 
 
-function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer){
+function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer,driversExecutionService){
 
 	$scope.maxSizeStr = maxSizeStr;
 
@@ -54,6 +54,68 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.xslSheetNumberDefault = 1;
 	$scope.dateFormatDefault = "dd/MM/yyyy";
 
+//	$scope.documentParameters = [
+//		{allowInternalNodeSelection: true,
+//		dataDependencies: [],
+//		dependsOn: {},
+//		driverLabel: "Tree inner node",
+//		driverUseLabel: "A",
+//		id: 263,
+//		label: "Tree inner node",
+//		lovDependencies: [],
+//		mandatory: true,
+//		multivalue: false,
+//		selectedLayer: null,
+//		selectedLayerProp: null,
+//		selectionType: "TREE",
+//		showOnPanel: "true",
+//		type: "STRING",
+//		typeCode: "QUERY",
+//		urlName: "par_cross2",
+//		valueSelection: "lov",
+//		visible: true,
+//		visualDependencies: []},
+//		{
+//		allowInternalNodeSelection: false,
+//		dataDependencies: [],
+//		dependsOn: {},
+//		driverLabel: "Tree",
+//		driverUseLabel: "all",
+//		id: 262,
+//		label: "tree",
+//		lovDependencies: [],
+//		mandatory: true,
+//		multivalue: false,
+//		selectedLayer: null,
+//		selectedLayerProp: null,
+//		selectionType: "TREE",
+//		showOnPanel: "true",
+//		type: "STRING",
+//		typeCode: "QUERY",
+//		urlName: "par_cross",
+//		valueSelection: "lov",
+//		visible: true,
+//		visualDependencies: []
+//		},
+//		{urlName:"outputType",
+//			visible:true,
+//			dependsOn:{},
+//			selectedLayerProp:null,
+//			dataDependencies:[],
+//			valueSelection:"man_in",
+//			showOnPanel:"true",
+//			driverUseLabel:"All",
+//			label:"outputType",
+//			selectedLayer:null,
+//			type:"STRING",
+//			driverLabel:"MANUAL_STRING",
+//			mandatory:false,
+//			allowInternalNodeSelection:false,
+//			lovDependencies:[],
+//			typeCode:"MAN_IN",
+//			multivalue:false,
+//			selectionType:"",
+//			visualDependencies:[],"id":266} ]
 
 	$scope.$watch("selectedDataSet.restNGSI",function(newValue,oldValue){
 		if(newValue && (newValue===true || newValue==="true")){
@@ -115,7 +177,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.showSaveAndCancelButtons = false;
 
 	$scope.scheduling = {};
-	
+
 	$scope.disablePersisting = false;
 
 	// The current date for data pickers for Scheduling
@@ -811,7 +873,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.parametersCounter = 0;
 
 	$scope.parametersAddItem = function(event) {
-		
+
 		if($scope.selectedDataSet.isPersisted == true) {
 			var confirm = $mdDialog.confirm()
 				         .title($scope.translate.load("sbi.ds.parameters.dialog.title"))
@@ -820,14 +882,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				         .ariaLabel("Add dataset parameter")
 				         .ok($scope.translate.load("sbi.general.yes"))
 				         .cancel($scope.translate.load("sbi.general.No"));
-			
+
 			$mdDialog.show(confirm).then(
 					function() {
 						$scope.selectedDataSet.isPersisted = false;
 						$scope.selectedDataSet.persistTableName = '';
 						$scope.disablePersisting = true;
 						$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":"","index":$scope.parametersCounter++});
-						
+
 						$timeout(
 									function() {
 										var page = $scope.tableLastPage("datasetParametersTable");
@@ -839,10 +901,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 								);
 					}
 			);
-		} else {			
+		} else {
 			$scope.disablePersisting = true;
 			$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":"","index":$scope.parametersCounter++});
-			
+
 			$timeout(
 						function() {
 							var page = $scope.tableLastPage("datasetParametersTable");
@@ -853,7 +915,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						300
 					);
 		}
-		
+
 	}
 
 	$scope.parameterDelete =
@@ -887,13 +949,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						 				break;
 						 			}
 						 		}
-								
+
 								if($scope.parameterItems.length == 0) {
 									$scope.disablePersisting = false;
 								}
-								
+
 					 		}
-						);								
+						);
 	 		}
 
 	 	}
@@ -1880,7 +1942,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		} else {
 			$scope.disablePersisting = false;
 		}
-		
+
 		// SCHEDULING
 		if ($scope.selectedDataSet.isScheduled) {
 			$scope.selectedDataSet.startDate = new Date($scope.selectedDataSet.startDate);
@@ -2337,7 +2399,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					sparqlExecutionTimeout: 30
 
 			}
-						
+
 			$scope.datasetsListTemp.push(object);
 			$scope.selectedDataSet = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]);
 			$scope.selectedDataSetInit = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]); // Reset the selection (none dataset item will be selected) (danristo)
@@ -2345,7 +2407,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 			$scope.transformDatasetState = false;
 			$scope.disablePersisting = false;
-			
+
 			// Give a little time for the AT to render after the insertion of a new table element (new dataset) (danristo)
 			// We do not need to check if the current page is the one that is return by a function, since we cannot add more than one empty dataset
 			$timeout(function() { var page = $scope.tableLastPage("datasetList_id"); $scope.datasetTableLastPage = (page<=$scope.datasetTableLastPage)
@@ -3032,6 +3094,137 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.checkIfDataSetHasParameters = function () {
 		$scope.selectedDataSet.pars = $scope.parameterItems;
 		var hasParameters = $scope.selectedDataSet.pars != undefined && $scope.selectedDataSet.pars.length>0
+		$scope.documentParameters = [{
+//			urlName: "Famiglia",
+//			visible: true,
+//			dependsOn: {
+//			},
+//			selectedLayerProp: null,
+//			descriptionColumnNameMetadata: "PRODUCT_FAMILY",
+//			dataDependencies: [],
+//			valueSelection: "lov",
+//			showOnPanel: "true",
+//			driverUseLabel: "A",
+//			label: "Famiglia",
+//			selectedLayer: null,
+//			type: "STRING",
+//			driverLabel: "CORR_PRD_FAM",
+//			mandatory: true,
+//			allowInternalNodeSelection: false,
+//			lovDependencies: [],
+//			typeCode: "QUERY",
+//			multivalue: false,
+//			selectionType: "LIST",
+//			visualDependencies: [],
+//			valueColumnNameMetadata: "PRODUCT_FAMILY",
+//			defaultValues: [{
+//				PRODUCT_FAMILY: "Non-Consumable",
+//				isEnabled: true,
+//				description: "Non-Consumable",
+//				label: "Non-Consumable",
+//				value: "Non-Consumable"
+//			},
+//			{
+//				PRODUCT_FAMILY: "Food",
+//				isEnabled: true,
+//				description: "Food",
+//				label: "Food",
+//				value: "Food"
+//			},
+//			{
+//				PRODUCT_FAMILY: "Drink",
+//				isEnabled: true,
+//				description: "Drink",
+//				label: "Drink",
+//				value: "Drink"
+//			}],
+//			id: 234,
+//			defaultValuesMeta: ["PRODUCT_FAMILY"]
+//		},
+//		{
+//			urlName: "categoria",
+//			visible: true,
+//			dependsOn: {
+//				Famiglia: [{
+//					urlName: "Famiglia"
+//				}]
+//			},
+//			selectedLayerProp: null,
+//			descriptionColumnNameMetadata: "PRODUCT_CATEGORY",
+//			dataDependencies: [{
+//				paruseId: 71,
+//				prog: 1,
+//				filterColumn: "PRODUCT_FAMILY",
+//				filterOperation: "contains",
+//				preCondition: null,
+//				postCondition: null,
+//				logicOperator: null,
+//				objParFatherId: 234,
+//				objParFatherUrlName: "Famiglia",
+//				objParId: 235
+//			}],
+//			valueSelection: "lov",
+//			showOnPanel: "true",
+//			driverUseLabel: "A",
+//			label: "Categoria",
+//			selectedLayer: null,
+//			type: "STRING",
+//			driverLabel: "CORR_PRD_CAT",
+//			mandatory: true,
+//			allowInternalNodeSelection: false,
+//			lovDependencies: [],
+//			typeCode: "QUERY",
+//			multivalue: false,
+//			selectionType: "LOOKUP",
+//			visualDependencies: [],
+//			valueColumnNameMetadata: "PRODUCT_CATEGORY",
+//			defaultValues: [],
+//			id: 235,
+//			defaultValuesMeta: ["PRODUCT_CATEGORY",
+//			"PRODUCT_FAMILY"]
+//		},
+//		{
+//			urlName: "subcat",
+//			visible: true,
+//			dependsOn: {
+//				categoria: [{
+//					urlName: "categoria"
+//				}]
+//			},
+//			selectedLayerProp: null,
+//			descriptionColumnNameMetadata: "PRODUCT_SUBCATEGORY",
+//			dataDependencies: [{
+//				paruseId: 72,
+//				prog: 1,
+//				filterColumn: "PRODUCT_CATEGORY",
+//				filterOperation: "contains",
+//				preCondition: null,
+//				postCondition: null,
+//				logicOperator: null,
+//				objParFatherId: 235,
+//				objParFatherUrlName: "categoria",
+//				objParId: 236
+//			}],
+//			valueSelection: "lov",
+//			showOnPanel: "true",
+//			driverUseLabel: "A",
+//			label: "sub categoria",
+//			selectedLayer: null,
+//			type: "STRING",
+//			driverLabel: "CORR_PRD_SUBCAT",
+//			mandatory: true,
+//			allowInternalNodeSelection: false,
+//			lovDependencies: [],
+//			typeCode: "QUERY",
+//			multivalue: false,
+//			selectionType: "LOOKUP",
+//			visualDependencies: [],
+//			valueColumnNameMetadata: "PRODUCT_SUBCATEGORY",
+//			defaultValues: [],
+//			id: 236,
+//			defaultValuesMeta: ["PRODUCT_CATEGORY",
+//			"PRODUCT_SUBCATEGORY"]
+		}]
 		if(hasParameters){
 			$scope.parameterPreviewItems = $scope.parameterItems;
 			for (var i = 0; i < $scope.parameterPreviewItems.length; i++) {

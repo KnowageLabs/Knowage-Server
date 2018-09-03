@@ -17,19 +17,6 @@
  */
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.crossnavigation.dao.ICrossNavigationDAO;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -44,6 +31,20 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 import org.hibernate.exception.ConstraintViolationException;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.crossnavigation.dao.ICrossNavigationDAO;
+import it.eng.spagobi.user.UserProfileManager;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a BI Object Parameter.
@@ -242,8 +243,8 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 							+ " and s.priority < " + oldPriority + "and s.sbiObject.biobjId = " + aSbiObject.getBiobjId();
 					query = aSession.createQuery(hqlUpdateShiftRight);
 				} else {
-					String hqlUpdateShiftLeft = "update SbiObjPar s set s.priority = (s.priority - 1) where s.priority > " + oldPriority
-							+ " and s.priority <= " + newPriority + "and s.sbiObject.biobjId = " + aSbiObject.getBiobjId();
+					String hqlUpdateShiftLeft = "update SbiObjPar s set s.priority = (s.priority - 1) where s.priority > " + oldPriority + " and s.priority <= "
+							+ newPriority + "and s.sbiObject.biobjId = " + aSbiObject.getBiobjId();
 					query = aSession.createQuery(hqlUpdateShiftLeft);
 				}
 				query.executeUpdate();
@@ -310,13 +311,12 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 
 			hibObjectParameterNew.setPriority(aBIObjectParameter.getPriority());
 			updateSbiCommonInfo4Insert(hibObjectParameterNew);
+			hibObjectParameterNew.getCommonInfo().setUserIn((String) UserProfileManager.getProfile().getUserId());
 			Integer id = (Integer) aSession.save(hibObjectParameterNew);
-
 			tx.commit();
 			return id;
 		} catch (HibernateException he) {
 			logException(he);
-
 			if (tx != null)
 				tx.rollback();
 
@@ -570,8 +570,8 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 				// if the priority is different from the value expected,
 				// recalculates it for all the parameter of the document
 				if (priority == null || priority.intValue() != count) {
-					logger.error("The priorities of the biparameters for the document with id = " + biObjectID
-							+ " are not sorted. Priority recalculation starts.");
+					logger.error(
+							"The priorities of the biparameters for the document with id = " + biObjectID + " are not sorted. Priority recalculation starts.");
 					recalculateBiParametersPriority(biObjectID, aSession);
 					// restarts this method in order to load updated priorities
 					aBIObjectParameter.setPriority(new Integer(count));

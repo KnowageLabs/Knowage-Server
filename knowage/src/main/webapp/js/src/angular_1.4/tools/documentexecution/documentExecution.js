@@ -17,13 +17,13 @@
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices', 'docExecute_urlViewPointService', 'docExecute_paramRolePanelService', 'infoMetadataService', 'sbiModule_download', '$crossNavigationScope',
 			 'docExecute_dependencyService', '$timeout', '$interval', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window','$mdMenu','sbiModule_i18n','sbiModule_device',
-			 documentExecutionControllerFn]);
+			 'driversExecutionService',documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav, $mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices,sbiModule_user, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine, documentExecuteServices,
 			docExecute_urlViewPointService, docExecute_paramRolePanelService, infoMetadataService, sbiModule_download, $crossNavigationScope,
-			docExecute_dependencyService, $timeout, $interval, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing,$window,$mdMenu,sbiModule_i18n,sbiModule_device) {
+			docExecute_dependencyService, $timeout, $interval, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing,$window,$mdMenu,sbiModule_i18n,sbiModule_device,driversExecutionService) {
 
 		console.log("documentExecutionControllerFn IN ");
 
@@ -84,11 +84,11 @@
 		$scope.sidenavToShow = 'east';
 		$scope.sidenavCenter = null;
 		$scope.filterDropping = null;
-		
+
 		$scope.canRate = (sbiModule_user.functionalities.indexOf("EnableToRate") > 0) ? true : false;
 		$scope.canPrintDocuments = (sbiModule_user.functionalities.indexOf("EnableToPrint") > 0) ? true : false;
 		$scope.canCopyAndEmbedLink = (sbiModule_user.functionalities.indexOf("EnableToCopyAndEmbed") > 0) ? true : false;
-		
+
 		/**
 		 * Add these 'documentExecutionNg.jsp' Javascript variables to the scope of the document execution controller and use them
 		 * for managing the view part of the application (e.g. whether the "Add to my workspace" document execution menu option (or
@@ -343,7 +343,7 @@
 			var tenant = sbiModule_user.tenant;
 			var label = $scope.executionInstance.OBJECT_LABEL;
 
-			var parametersO = documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+			var parametersO = driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
 			//var parameters = encodeURIComponent(JSON.stringify(parametersO)).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
 			var parameters = $scope.urlEncode(parametersO);
 
@@ -435,7 +435,7 @@
 					sendmailctl.mail.docId = $scope.executionInstance.OBJECT_ID;
 					sendmailctl.mail.userId = sbiModule_user.userId;
 					sendmailctl.mail.MESSAGE = "";
-					params = documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+					params = driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
 					params= typeof params === 'undefined' ? {} : params;
 					sendmailctl.mail.parameters = params;
 					sendmailctl.submit = function() {
@@ -524,7 +524,7 @@
 			var action = function() {
 				docExecute_urlViewPointService.frameLoaded=false;
 				docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name,
-						 documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters));
+						driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters));
 				docExecute_paramRolePanelService.toggleParametersPanel(false);
 				$scope.cockpitEditing.documentMode="VIEW";
 			};
@@ -562,12 +562,14 @@
 					docExecute_urlViewPointService.executionProcesRestV1(role,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
 					$scope.firstExecutionProcessRestV1=false;
 				}else{
-					docExecute_urlViewPointService.executionProcesRestV1(role, documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters));
-				}
+					docExecute_urlViewPointService.executionProcesRestV1(role, driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters));				}
 
 			}
 			console.log("changeRole OUT ");
 		};
+		$scope.getExecProperties = function(){
+			return execProperties;
+		}
 
 		$scope.isParameterPanelDisabled = function() {
 			return (!execProperties.parametersData.documentParameters || execProperties.parametersData.documentParameters.length == 0);
