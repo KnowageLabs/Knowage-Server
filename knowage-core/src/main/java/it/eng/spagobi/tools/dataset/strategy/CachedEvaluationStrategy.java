@@ -60,7 +60,7 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
             if (dataSet.isRealtime()) unsetNgsiConsumer();
 
             if (dataStore == null) {
-                manageDatasetNotInCache(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
+                dataStore = manageDatasetNotInCache(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
             } else {
                 if (dataSet.isRealtime()) subscribeNGSI();
             }

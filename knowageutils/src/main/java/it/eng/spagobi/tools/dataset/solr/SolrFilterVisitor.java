@@ -57,7 +57,7 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
     @Override
     public void visit(InFilter item) {
         if(item.getProjections().size() == 1) {
-            queryBuilder.append(item.getProjections().get(0));
+            append(item.getProjections().get(0));
             queryBuilder.append(":");
             queryBuilder.append("(");
             String isNot = item.getOperator().equals(SimpleFilterOperator.NOT_IN) ? "-" : "";
@@ -74,7 +74,7 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
         if(item.getOperator().equals(SimpleFilterOperator.NOT_LIKE)) {
             queryBuilder.append("-");
         }
-        queryBuilder.append(item.getProjection().getName());
+        append(item.getProjection());
         queryBuilder.append(":");
         String value = item.isPattern() ? item.getValue() : "*" + item.getValue() + "*";
         queryBuilder.append(value);
@@ -85,7 +85,7 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
         if(item.getOperator().equals(SimpleFilterOperator.IS_NULL)) {
             queryBuilder.append("-");
         }
-        queryBuilder.append(item.getProjection().getName());
+        append(item.getProjection());
         queryBuilder.append(":[* TO *]");
     }
 

@@ -28,6 +28,12 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.solr.ExtendedSolrQuery;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.DataBaseException;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -47,6 +53,12 @@ import java.util.Set;
  */
 
 public class SolrAssociativeDatasetContainer extends AssociativeDatasetContainer {
+
+	private static String PROXY_HOST = System.getProperty("http.proxyHost");
+	private static String PROXY_PORT = System.getProperty("http.proxyPort");
+	private static String PROXY_USER = System.getProperty("http.proxyUser");
+	private static String PROXY_PASSWORD = System.getProperty("http.proxyPassword");
+
 
 	protected SolrAssociativeDatasetContainer(IDataSet dataSet, Map<String, String> parameters) {
 		super(dataSet, parameters);
@@ -96,9 +108,16 @@ public class SolrAssociativeDatasetContainer extends AssociativeDatasetContainer
 	}
 
 	private SolrClient getSolrClient(String url) {
+		CredentialsProvider provider = new BasicCredentialsProvider();
+		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+				PROXY_USER, PROXY_PASSWORD);
+		provider.setCredentials(AuthScope.ANY, credentials);
+		HttpClient client = HttpClientBuilder.create().useSystemProperties().setDefaultCredentialsProvider(provider).build();
+
 		return new HttpSolrClient.Builder(url)
-				.withConnectionTimeout(10000)
-				.withSocketTimeout(60000)
+				.withConnectionTimeout(1000)
+				.withSocketTimeout(3000)
+				.withHttpClient(client)
 				.build();
 	}
 }
