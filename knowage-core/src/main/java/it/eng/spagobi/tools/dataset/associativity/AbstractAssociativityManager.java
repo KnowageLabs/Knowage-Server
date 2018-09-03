@@ -140,9 +140,9 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 				dataSet.setParamsMap(parametersValues);
 
 				boolean isNearRealtime = config.getNearRealtimeDatasets().contains(v1);
-				DatasetEvaluationStrategyType evaluationStrategy = dataSet.getEvaluationStrategy(isNearRealtime);
+				DatasetEvaluationStrategyType evaluationStrategyType = dataSet.getEvaluationStrategy(isNearRealtime);
 
-				IAssociativeDatasetContainer container = AssociativeDatasetContainerFactory.getContainer(evaluationStrategy, dataSet, parametersValues,
+				IAssociativeDatasetContainer container = AssociativeDatasetContainerFactory.getContainer(evaluationStrategyType, dataSet, parametersValues,
 						userProfile);
 				associativeDatasetContainers.put(v1, container);
 			}

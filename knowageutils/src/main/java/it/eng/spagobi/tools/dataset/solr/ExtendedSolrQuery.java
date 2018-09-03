@@ -19,12 +19,14 @@
 
 package it.eng.spagobi.tools.dataset.solr;
 
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExtendedSolrQuery extends SolrQuery {
@@ -65,6 +67,14 @@ public class ExtendedSolrQuery extends SolrQuery {
             }
         }
         return this;
+    }
+
+    public ExtendedSolrQuery facets(IDataSet dataSet, String... columnNames) {
+        List<Projection> facets = new ArrayList<>(columnNames.length);
+        for (String columnName : columnNames) {
+            facets.add(new Projection(dataSet, columnName));
+        }
+        return facets(facets);
     }
 
     public ExtendedSolrQuery sorts(List<Sorting> sortings) {

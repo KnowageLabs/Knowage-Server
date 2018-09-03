@@ -35,17 +35,17 @@ public abstract class AssociativeDatasetContainerFactory {
 
 	static protected Logger logger = Logger.getLogger(AssociativeDatasetContainerFactory.class);
 
-	public static IAssociativeDatasetContainer getContainer(DatasetEvaluationStrategyType evaluationStrategy, IDataSet dataSet,
+	public static IAssociativeDatasetContainer getContainer(DatasetEvaluationStrategyType evaluationStrategyType, IDataSet dataSet,
                                                             Map<String, String> parametersValues, UserProfile userProfile) throws DataBaseException {
-		Assert.assertNotNull(evaluationStrategy, "Dataset evaluation strategy cannot be null");
+		Assert.assertNotNull(evaluationStrategyType, "Dataset evaluation strategy cannot be null");
 
-		switch (evaluationStrategy) {
+		switch (evaluationStrategyType) {
 		case PERSISTED:
 			return new PersistedAssociativeDatasetContainer(dataSet, parametersValues);
 		case FLAT:
 			return new FlatAssociativeDatasetContainer(dataSet, parametersValues);
 		case INLINE_VIEW:
-			return new JDBCAssociativeDatasetContainer(dataSet, parametersValues);
+			return new InlineViewAssociativeDatasetContainer(dataSet, parametersValues);
 		case CACHED:
 			IDataSource cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 			ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
@@ -53,8 +53,10 @@ public abstract class AssociativeDatasetContainerFactory {
 			CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
 			cacheItem = cacheDataSetIfMissing(dataSet, cache, cacheItem, userProfile);
 			return new CachedAssociativeDatasetContainer(dataSet, cacheItem.getTable(), cacheDataSource, parametersValues);
+		case SOLR:
+			return new SolrAssociativeDatasetContainer(dataSet, parametersValues);
 		default:
-			throw new IllegalArgumentException("Dataset evaluation strategy [" + evaluationStrategy + "] not supported");
+			throw new IllegalArgumentException("Dataset evaluation strategy [" + evaluationStrategyType + "] not supported");
 		}
 	}
 

@@ -158,6 +158,12 @@ public class SolrDataSet extends RESTDataSet {
         return solrConfiguration.getSolrQuery();
     }
 
+    public String getSolrUrl() {
+        return solrConfiguration.getUrl();
+    }
+
+    public String getSolrCollection() { return solrConfiguration.getCollection(); }
+
     public void setSolrQuery(SolrQuery solrQuery) {
         solrConfiguration.setSolrQuery(solrQuery);
         try {
