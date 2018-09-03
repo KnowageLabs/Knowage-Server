@@ -21,7 +21,6 @@ package it.eng.spagobi.tools.dataset.solr;
 
 import it.eng.spagobi.tools.dataset.metasql.query.item.*;
 import it.eng.spagobi.tools.dataset.metasql.query.visitor.AbstractFilterVisitor;
-import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -57,12 +56,16 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
     @Override
     public void visit(InFilter item) {
         if(item.getProjections().size() == 1) {
+            if(item.getOperator().equals(SimpleFilterOperator.NOT_IN)) {
+                queryBuilder.append("-");
+            }
             append(item.getProjections().get(0));
             queryBuilder.append(":");
             queryBuilder.append("(");
-            String isNot = item.getOperator().equals(SimpleFilterOperator.NOT_IN) ? "-" : "";
-            String values = StringUtils.join(item.getOperands(), " ", isNot);
-            queryBuilder.append(values);
+            for(Object operand : item.getOperands()) {
+                append(operand);
+                queryBuilder.append(" ");
+            }
             queryBuilder.append(")");
         } else {
             visit(transformToAndOrFilters(item));
@@ -77,7 +80,7 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
         append(item.getProjection());
         queryBuilder.append(":");
         String value = item.isPattern() ? item.getValue() : "*" + item.getValue() + "*";
-        queryBuilder.append(value);
+        append(value);
     }
 
     @Override
@@ -125,7 +128,7 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
         }
         append(item.getProjection());
         queryBuilder.append(":");
-        append(item.getOperand(), "\"");
+        append(item.getOperand());
     }
 
     public void apply(SolrQuery solrQuery, Filter filter) {
@@ -137,11 +140,7 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
         queryBuilder.append(projection.getName());
     }
 
-    protected void append(Object operand) {
-        append(operand, "");
-    }
-
-    protected void append(Object operand, String delimiter) {
+    protected void append(Object operand){
         String parsedOperand;
         if (operand == null) {
             parsedOperand = "NULL";
@@ -154,9 +153,7 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
                 parsedOperand = operand.toString();
             }
         }
-        queryBuilder.append(delimiter);
         queryBuilder.append(ClientUtils.escapeQueryChars(parsedOperand));
-        queryBuilder.append(delimiter);
     }
 
     @Override
