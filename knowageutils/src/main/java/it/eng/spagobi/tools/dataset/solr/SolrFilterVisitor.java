@@ -22,6 +22,7 @@ package it.eng.spagobi.tools.dataset.solr;
 import it.eng.spagobi.tools.dataset.metasql.query.item.*;
 import it.eng.spagobi.tools.dataset.metasql.query.visitor.AbstractFilterVisitor;
 import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.util.ClientUtils;
@@ -38,13 +39,19 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
 
     @Override
     public void visit(BetweenFilter item) {
+        visit(item, true);
+    }
+
+    private void visit(BetweenFilter item, boolean openEnded) {
         append(item.getProjection());
         queryBuilder.append(":");
-        queryBuilder.append("[");
+        String openDelimiter = openEnded ? "[" : "{";
+        queryBuilder.append(openDelimiter);
         append(item.getBeginValue());
         queryBuilder.append(" TO ");
         append(item.getEndValue());
-        queryBuilder.append("]");
+        String closeDelimiter = openEnded ? "]" : "}";
+        queryBuilder.append(closeDelimiter);
     }
 
     @Override
@@ -84,16 +91,41 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
 
     @Override
     public void visit(UnaryFilter item) {
-        append(item.getProjection());
-        queryBuilder.append(" ");
-        queryBuilder.append(item.getOperator());
-        queryBuilder.append(" ");
-        append(item.getOperand());
+        switch(item.getOperator()) {
+            case DIFFERENT_FROM:
+            case EQUALS_TO:
+                visitEqualsToAndDifferentFrom(item);
+                break;
+            case GREATER_THAN:
+                visit(new BetweenFilter(item.getProjection(), item.getOperand(), "*"), false);
+                break;
+            case GREATER_THAN_OR_EQUAL:
+                visit(new BetweenFilter(item.getProjection(), item.getOperand(), "*"));
+                break;
+            case LESS_THAN:
+                visit(new BetweenFilter(item.getProjection(), "*", item.getOperand()), false);
+                break;
+            case LESS_THAN_OR_EQUAL:
+                visit(new BetweenFilter(item.getProjection(), "*", item.getOperand()));
+                break;
+            default:
+                throw new IllegalArgumentException("Operator " + item.getOperator() + " cannot be used with unary filter");
+        }
     }
 
     @Override
     public void visit(UnsatisfiedFilter item) {
-        throw new UnsupportedOperationException("Visitor for " + UnsatisfiedFilter.class + "is not implemented yet");
+        throw new UnsupportedOperationException("Visitor for " + UnsatisfiedFilter.class + " is not implemented yet");
+    }
+
+    private void visitEqualsToAndDifferentFrom(UnaryFilter item) {
+        Assert.assertTrue(item.getOperator().equals(SimpleFilterOperator.EQUALS_TO) || item.getOperator().equals(SimpleFilterOperator.DIFFERENT_FROM), "This method can be used only with " + SimpleFilterOperator.EQUALS_TO + " or " + SimpleFilterOperator.DIFFERENT_FROM);
+        if(item.getOperator().equals(SimpleFilterOperator.DIFFERENT_FROM)) {
+            queryBuilder.append("-");
+        }
+        append(item.getProjection());
+        queryBuilder.append(":");
+        append(item.getOperand(), "\"");
     }
 
     public void apply(SolrQuery solrQuery, Filter filter) {
@@ -106,6 +138,10 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
     }
 
     protected void append(Object operand) {
+        append(operand, "");
+    }
+
+    protected void append(Object operand, String delimiter) {
         String parsedOperand;
         if (operand == null) {
             parsedOperand = "NULL";
@@ -118,7 +154,9 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
                 parsedOperand = operand.toString();
             }
         }
+        queryBuilder.append(delimiter);
         queryBuilder.append(ClientUtils.escapeQueryChars(parsedOperand));
+        queryBuilder.append(delimiter);
     }
 
     @Override
