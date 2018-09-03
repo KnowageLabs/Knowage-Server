@@ -79,6 +79,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	public static transient Logger auditlogger = Logger.getLogger("audit.query");
 	private static final String PARAM_VALUE_NAME = "value";
 	public static final String DEFAULT_VALUE_PARAM = "defaultValue";
+	public static final String MULTI_PARAM = "multiValue";
 	public static final String SERVICE_NAME = "SPAGOBI_SERVICE";
 	protected boolean handleTimeFilter = true;
 
@@ -264,18 +265,18 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			if (j == 0) {
 				toReturn = getSingleValue(tempValue, type);
 			} else {
-				toReturn = toReturn + "," + getSingleValue(tempValue, type);
+				toReturn = toReturn + ", " + getSingleValue(tempValue, type);
 			}
 		}
 
 		return toReturn;
 	}
-	static String getSingleValue(String value, String type) {
+	private String getSingleValue(String value, String type) {
 		String toReturn = "";
 		value = value.trim();
 		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
 			if (!(value.startsWith("'") && value.endsWith("'"))) {
-				toReturn = "'" + value + "'";
+				toReturn = value;
 			} else {
 				toReturn = value;
 			}
@@ -424,7 +425,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 			logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
 
-			logQueryInAudit(qbeDataSet);
+			// logQueryInAudit(qbeDataSet);
 
 			dataSet.loadData(start, limit, (maxSize == null ? -1 : maxSize.intValue()));
 			dataStore = dataSet.getDataStore();

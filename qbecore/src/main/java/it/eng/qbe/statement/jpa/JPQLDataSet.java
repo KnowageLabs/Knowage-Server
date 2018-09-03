@@ -81,7 +81,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 		EntityManager entityManager = getEntityMananger();
 
-		IStatement filteredStatement = getLoadingStatement(entityManager);
+		IStatement filteredStatement = this.getStatement();
 		String statementStr = filteredStatement.getQueryString();
 		logger.debug("Compiling query statement [" + statementStr + "]");
 
