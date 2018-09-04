@@ -190,6 +190,8 @@ angular.module('cockpitModule')
 			checkForSavedSelections(nature);
 
 			updateModel();
+
+			$scope.showSelection = false;
 			if(datasetRecords.activeValues){
 				datasetRecords.activeValues.then(function(activeValues){
 					var tempActs = [];
@@ -197,7 +199,12 @@ angular.module('cockpitModule')
 						tempActs.push(activeValues.rows[k].column_1);
 					}
 					updateActiveValues(tempActs);
+					$scope.showSelection = true;
 				},function(error){})
+			}else{
+				$timeout(function(){
+					$scope.showSelection = true;
+				}, 0);
 			}
 
 			$scope.hideWidgetSpinner();
@@ -212,7 +219,7 @@ angular.module('cockpitModule')
 
 			$scope.defaultValues = [];
 
-			if($scope.hasDefaultValues && (nature == "init" || nature == "refresh" || nature=='selections' || nature == "filters")){
+			if($scope.hasDefaultValues && (nature == "init" || nature == "refresh")){
 				var applyDefaultValues = false;
 
 				switch($scope.ngModel.settings.defaultValue.toUpperCase()){
@@ -262,8 +269,12 @@ angular.module('cockpitModule')
 		}
 
 		var updateValues = function(values){
-			if(values && !angular.equals($scope.selectedValues, values)){
-				$scope.selectedValues = angular.copy(values);
+			if(values){
+				if(!angular.equals($scope.selectedValues, values)){
+					$scope.selectedValues = angular.copy(values);
+				}
+			}else{
+				$scope.selectedValues = [];
 			}
 		}
 
