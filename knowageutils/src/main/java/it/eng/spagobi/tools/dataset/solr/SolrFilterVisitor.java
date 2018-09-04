@@ -79,8 +79,10 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
         }
         append(item.getProjection());
         queryBuilder.append(":");
-        String value = item.isPattern() ? item.getValue() : "*" + item.getValue() + "*";
-        append(value);
+        String wildcard = item.isPattern() ? "" : "*";
+        queryBuilder.append(wildcard);
+        append(item.getValue());
+        queryBuilder.append(wildcard);
     }
 
     @Override
