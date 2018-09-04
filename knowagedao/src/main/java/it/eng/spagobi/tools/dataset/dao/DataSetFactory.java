@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
@@ -30,7 +41,25 @@ import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
 import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
 import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.tools.dataset.bo.*;
+import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
+import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
+import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
+import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
+import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCVerticaDataSet;
+import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
+import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
+import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
+import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
+import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
@@ -47,10 +76,6 @@ import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.sql.SqlUtils;
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
-import java.util.*;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
