@@ -7,7 +7,10 @@
         </md-toolbar>
 
         <md-dialog-content style="height:516px">
-            <qbe-calculated-field-editor entities="entityModel.entities" functions="formulas" calculated-field="calculatedFieldOutput" selected-entity="cfSelectedEntity"></qbe-calculated-field-editor>
+            <qbe-calculated-field-editor entities="entityModel.entities" 
+            functions="formulas | byNotExistingMembers:'type':['space']:{space:'geographic_dimension'}:entities:'iconCls'" 
+            calculated-field="calculatedFieldOutput" 
+            selected-entity="cfSelectedEntity"></qbe-calculated-field-editor>
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
