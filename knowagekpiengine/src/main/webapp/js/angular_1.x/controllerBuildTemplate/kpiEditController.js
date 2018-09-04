@@ -26,7 +26,7 @@ app.controller('templateBuildController',
 function templateBuildControllerFunction(
 		$scope,
 		sbiModule_translate,
-		channelMessaging,,
+		channelMessaging,
 		$mdDialog, 
 		sbiModule_restServices,
 		$q,
