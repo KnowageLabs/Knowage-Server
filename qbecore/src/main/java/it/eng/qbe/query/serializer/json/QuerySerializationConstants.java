@@ -41,6 +41,7 @@ public class QuerySerializationConstants {
 	public static final String FIELD_INCLUDE = "include";
 	public static final String FIELD_INITIAL_VALUE = "initialValue";
 	public static final String FIELD_EXPRESSION = "expression";
+	public static final String FIELD_EXPRESSION_SIMPLE = "expressionSimple";
 	public static final String FIELD_SLOTS = "slots";
 	public static final String FIELD_NATURE = "nature";
 	public static final String FIELD_NATURE_MEASURE = "measure";

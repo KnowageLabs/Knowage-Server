@@ -164,8 +164,8 @@ public class ExtJsQbeTreeBuilder {
 	 *            the datamart name
 	 */
 	public void addEntityNodes(JSONArray nodes, String datamartName, UserProfile userProfile) {
-		FilteredModelStructure filteredModelStructure = new FilteredModelStructure(
-				(dataSource).getModelStructure(userProfile), getDataSource(), getQbeTreeFilter());
+		FilteredModelStructure filteredModelStructure = new FilteredModelStructure((dataSource).getModelStructure(userProfile), getDataSource(),
+				getQbeTreeFilter());
 		List<IModelEntity> entities = filteredModelStructure.getRootEntities(datamartName);
 
 		Iterator<IModelEntity> it = entities.iterator();
@@ -339,8 +339,7 @@ public class ExtJsQbeTreeBuilder {
 				// if the source entity refer to another entity more than one
 				// time, we print the relation name in the label of the relation
 				// field
-				boolean needRelationInLabel = (entity.getStructure().getDirectConnections(entity,
-						relationship.getTargetEntity())).size() > 1;
+				boolean needRelationInLabel = (entity.getStructure().getDirectConnections(entity, relationship.getTargetEntity())).size() > 1;
 				JSONObject jsObject = getRelationFieldNode(relationship, entity, needRelationInLabel);
 				if (jsObject != null) {
 					relation.put(jsObject);
@@ -485,6 +484,7 @@ public class ExtJsQbeTreeBuilder {
 			formState.put("type", field.getType());
 			formState.put("nature", field.getNature());
 			formState.put("expression", field.getExpression());
+			formState.put("expressionSimple", field.getExpressionSimple());
 
 			List<Slot> slots = field.getSlots();
 			JSONArray slotsJSON = new JSONArray();
@@ -494,8 +494,7 @@ public class ExtJsQbeTreeBuilder {
 				defaultSlot.put(QbeSerializationConstants.SLOT_NAME, field.getDefaultSlotValue());
 				JSONArray valuesets = new JSONArray();
 				JSONObject valueset = new JSONObject();
-				valueset.put(QbeSerializationConstants.SLOT_VALUESET_TYPE,
-						QbeSerializationConstants.SLOT_VALUESET_TYPE_DEFAULT);
+				valueset.put(QbeSerializationConstants.SLOT_VALUESET_TYPE, QbeSerializationConstants.SLOT_VALUESET_TYPE_DEFAULT);
 				valueset.put(QbeSerializationConstants.SLOT_VALUESET_VALUES, "");
 				valuesets.put(valueset);
 				defaultSlot.put(QbeSerializationConstants.SLOT_VALUESET, valuesets);
@@ -522,8 +521,7 @@ public class ExtJsQbeTreeBuilder {
 		return fieldNode;
 	}
 
-	public JSONObject getRelationFieldNode(Relationship relation, IModelEntity parentEntity,
-			boolean needRelationInLabel) {
+	public JSONObject getRelationFieldNode(Relationship relation, IModelEntity parentEntity, boolean needRelationInLabel) {
 		String iconCls = "relation";
 		String sourceText = relation.getSourceFieldsString();
 		String targetText = relation.getTargetFieldsString();
@@ -537,13 +535,10 @@ public class ExtJsQbeTreeBuilder {
 			relationEntityString = relationEntityString + "(" + relationName + ")";
 		}
 
-		String relationTooltip = (EngineMessageBundle.getMessage("sbi.qbe.tree.relation.name", this.getLocale())) + ": "
-				+ relationName + "<br>"
-				+ (EngineMessageBundle.getMessage("sbi.qbe.tree.source.fields", this.getLocale())) + ": [" + sourceText
-				+ "]<br>" + (EngineMessageBundle.getMessage("sbi.qbe.tree.target.entity", this.getLocale())) + ": "
-				+ targetEntityLabel + "<br>"
-				+ (EngineMessageBundle.getMessage("sbi.qbe.tree.target.fields", this.getLocale())) + ": " + targetText
-				+ "<br>";
+		String relationTooltip = (EngineMessageBundle.getMessage("sbi.qbe.tree.relation.name", this.getLocale())) + ": " + relationName + "<br>"
+				+ (EngineMessageBundle.getMessage("sbi.qbe.tree.source.fields", this.getLocale())) + ": [" + sourceText + "]<br>"
+				+ (EngineMessageBundle.getMessage("sbi.qbe.tree.target.entity", this.getLocale())) + ": " + targetEntityLabel + "<br>"
+				+ (EngineMessageBundle.getMessage("sbi.qbe.tree.target.fields", this.getLocale())) + ": " + targetText + "<br>";
 
 		JSONObject fieldNode = new JSONObject();
 		try {
@@ -572,8 +567,7 @@ public class ExtJsQbeTreeBuilder {
 	}
 
 	/**
-	 * Add Calculate Fields on the entity Control recursion level because
-	 * calculate field are applied only at entity level not in dimension level.
+	 * Add Calculate Fields on the entity Control recursion level because calculate field are applied only at entity level not in dimension level.
 	 *
 	 * @param tree
 	 *            the tree
@@ -589,34 +583,24 @@ public class ExtJsQbeTreeBuilder {
 	public int addCalculatedFieldNodes(IQbeTree tree, IModelEntity entity, int parentEntityNodeId, int nodeCounter) {
 
 		/*
-		 * List manualCalcultatedFieldForEntity =
-		 * getDatamartModel().getDataSource().getFormula().
-		 * getManualCalculatedFieldsForEntity( entity.getType() );
+		 * List manualCalcultatedFieldForEntity = getDatamartModel().getDataSource().getFormula(). getManualCalculatedFieldsForEntity( entity.getType() );
 		 *
 		 * CalculatedField calculatedField = null; String fieldAction = null;
 		 *
-		 * Iterator manualCalculatedFieldsIterator =
-		 * manualCalcultatedFieldForEntity.iterator(); while
-		 * (manualCalculatedFieldsIterator.hasNext()){ calculatedField =
-		 * (CalculatedField)manualCalculatedFieldsIterator.next();
+		 * Iterator manualCalculatedFieldsIterator = manualCalcultatedFieldForEntity.iterator(); while (manualCalculatedFieldsIterator.hasNext()){
+		 * calculatedField = (CalculatedField)manualCalculatedFieldsIterator.next();
 		 *
 		 *
 		 *
-		 * if (prefix != null){ calculatedField.setFldCompleteNameInQuery(prefix
-		 * + "." + calculatedField.getId()); }else{
+		 * if (prefix != null){ calculatedField.setFldCompleteNameInQuery(prefix + "." + calculatedField.getId()); }else{
 		 * calculatedField.setFldCompleteNameInQuery(calculatedField.getId()); }
 		 *
 		 *
-		 * fieldAction =
-		 * getUrlGenerator().getActionUrlForCalculateField(calculatedField.getId
-		 * (), entity.getName(), calculatedField.getFldCompleteNameInQuery());
+		 * fieldAction = getUrlGenerator().getActionUrlForCalculateField(calculatedField.getId (), entity.getName(),
+		 * calculatedField.getFldCompleteNameInQuery());
 		 *
-		 * nodeCounter++; tree.addNode("" + nodeCounter, "" +
-		 * parentEntityNodeId, calculatedField.getFldLabel(), fieldAction,
-		 * calculatedField.getFldLabel(), "_self",
-		 * getUrlGenerator().getResourceUrl("../img/cfield.gif"),
-		 * getUrlGenerator().getResourceUrl("../img/cfield.gif"), "", "", "",
-		 * "", ""); }
+		 * nodeCounter++; tree.addNode("" + nodeCounter, "" + parentEntityNodeId, calculatedField.getFldLabel(), fieldAction, calculatedField.getFldLabel(),
+		 * "_self", getUrlGenerator().getResourceUrl("../img/cfield.gif"), getUrlGenerator().getResourceUrl("../img/cfield.gif"), "", "", "", "", ""); }
 		 *
 		 * return nodeCounter;
 		 */
