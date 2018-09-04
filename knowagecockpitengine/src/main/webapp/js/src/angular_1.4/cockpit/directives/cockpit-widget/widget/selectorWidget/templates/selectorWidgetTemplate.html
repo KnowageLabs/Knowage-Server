@@ -25,8 +25,8 @@
 	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX'" layout="column" class="selectParameter cockpitSelectorWidgetCombobox" layout-padding layout-fill layout-align="center center">
 	
 		<!-- single -->
-		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue!='multiValue'" style="width:100%">
-			<div class="kn-select" && showSelection>
+		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue!='multiValue' && showSelection" style="width:100%">
+			<div class="kn-select">
 				<select ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])"
 						ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)">
 					<option></option>
@@ -35,7 +35,7 @@
 		</md-input-container>
 		
 		<!-- multiple -->
-		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue=='multiValue'" style="width:100%">
+		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue=='multiValue' && showSelection" style="width:100%">
 			<div class="kn-select">
 				<select ng-model="selectedValues" multiple ng-change="toggleParameter(selectedValues)" 
 						ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)"></select>
