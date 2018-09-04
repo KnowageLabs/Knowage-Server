@@ -399,7 +399,7 @@ public class PersistedTableManager implements IPersistedManager {
 				toReturn[i] = statement;
 
 				if (this.isRowCountColumIncluded()) {
-					statement.setLong(1, i + 1);
+					statement.setLong(1, i + 1L);
 				}
 
 				List<Integer> sortedIds = new ArrayList<>();
@@ -619,7 +619,7 @@ public class PersistedTableManager implements IPersistedManager {
 				PreparedStatement statement = toReturn[currentBatch];
 
 				if (this.isRowCountColumIncluded()) {
-					statement.setLong(1, i + 1);
+					statement.setLong(1, i + 1L);
 				}
 
 				IRecord record = datastore.getRecordAt(i);
