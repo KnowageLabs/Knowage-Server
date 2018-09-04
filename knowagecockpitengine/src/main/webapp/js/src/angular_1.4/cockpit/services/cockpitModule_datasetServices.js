@@ -657,6 +657,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				filtersToSend = cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 			}
 		}
+		if(ngModel.type=="selector"){
+			var datasetLabel = ngModel.dataset.label;
+			if(loadDomainValues==false && filtersToSend[datasetLabel]){
+				delete filtersToSend[datasetLabel][ngModel.content.selectedColumn.name];
+			}
+		}
 
 		var limitRows;
 		if(ngModel.limitRows){
