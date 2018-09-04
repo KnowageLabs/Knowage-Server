@@ -309,15 +309,17 @@ public class UserProfile implements IEngUserProfile {
 	 */
 	@Override
 	public boolean isAbleToExecuteAction(String actionName) throws EMFInternalError {
-		// first check if the actionName is a functionality...
-		if (functionalities != null && functionalities.contains(actionName)) {
-			return true;
-		}
-		List<String> businessProcessNames = AuthorizationsBusinessMapper.getInstance().mapActionToBusinessProcess(actionName);
-		if (businessProcessNames != null) {
-			for (String businessProcess : businessProcessNames) {
-				if (functionalities.contains(businessProcess)) {
-					return true;
+		if (functionalities != null) {
+			if (functionalities.contains(actionName)) {
+				return true;
+			}
+
+			List<String> businessProcessNames = AuthorizationsBusinessMapper.getInstance().mapActionToBusinessProcess(actionName);
+			if (businessProcessNames != null) {
+				for (String businessProcess : businessProcessNames) {
+					if (functionalities.contains(businessProcess)) {
+						return true;
+					}
 				}
 			}
 		}
