@@ -39,9 +39,7 @@ angular.module('qbe_calculated_field_editor', ['ngSanitize', 'ui.codemirror'])
         	$scope.translate = sbiModule_translate;
             $scope.availableFormulaTypes = [];
             $scope.availableTypes = ['NUMBER','STRING'];
-            $scope.calculatedField = {
-        		"filedType":"inLineCalculatedField"
-            }
+            $scope.calculatedField.filedType = "inLineCalculatedField";
             
             //fix for codemirror to refresh when opened
             $timeout(function() {

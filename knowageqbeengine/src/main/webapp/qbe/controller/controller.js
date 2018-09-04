@@ -437,18 +437,38 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         }
     }];
 
-    $scope.fieldsFunctions = [{
-         "label": "havings",
-         "icon": "fa fa-check-square-o",
-         "action": function(item, event) {
-         	$scope.openHavings(item, $scope.editQueryObj.havings,$scope.entityModel, $scope.editQueryObj.subqueries);
-         }
-         }, {"label": "filters",
-        "icon": "fa fa-filter",
-        "action": function(item, event) {
-        	$scope.openFilters(item,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries, $scope.editQueryObj.expression, $scope.advancedFilters);
-        }
-    }];
+    $scope.fieldsFunctions = [
+    	{
+    		"label": "calc",
+    		"icon": "fa fa-calculator",
+    		"visible": function (item){
+    			if(item.iconCls =='calculation') return true;
+    			else return false
+    		},
+    		"action": function(item, event) {
+    			$scope.showCalculatedField($scope.entityModel.entities[0],event,item);
+    		}
+    	},{
+    		"label": "havings",
+    		"icon": "fa fa-check-square-o",
+    		"visible": function (item){
+    			return true;
+    		},
+    		"action": function(item, event) {
+         		$scope.openHavings(item, $scope.editQueryObj.havings,$scope.entityModel, $scope.editQueryObj.subqueries);
+    		}
+    	}, 
+    	{
+    		"label": "filters",
+    		"icon": "fa fa-filter",
+    		"visible": function (item){
+    			return true;
+    		},
+    		"action": function(item, event) {
+    			$scope.openFilters(item,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries, $scope.editQueryObj.expression, $scope.advancedFilters);
+    		}
+    	}    	
+    ];
 
     $scope.query = new Query(1);
     $scope.query.name = $scope.translate.load("kn.qbe.custom.table.toolbar.main");
@@ -700,11 +720,24 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         }
     };
 
-    $scope.showCalculatedField = function(item,ev){
+    $scope.showCalculatedField = function(item,ev,cf){
     	$scope.cfSelectedEntity = item;
+    	$scope.cfSelectedField= angular.copy(cf);
     	$mdDialog.show({
             controller: function ($scope, $mdDialog) {
+        		$scope.modifyCF = false;
             	$scope.calculatedFieldOutput = new Object;
+            	if($scope.cfSelectedField){
+            		$scope.modifyCF = true;
+            		$scope.originalCFname = angular.copy($scope.cfSelectedField.text);
+            		$scope.calculatedFieldOutput.id = $scope.cfSelectedField.attributes.formState;
+            		//$scope.calculatedFieldOutput.id.expression = $scope.cfSelectedField.attributes.formState.expression;
+            		delete $scope.calculatedFieldOutput.id.slots;
+                	$scope.calculatedFieldOutput.alias = $scope.cfSelectedField.text;
+                	$scope.calculatedFieldOutput.type =$scope.cfSelectedField.attributes.formState.type;
+                	$scope.calculatedFieldOutput.expression = $scope.cfSelectedField.attributes.formState.expressionSimple;
+                	$scope.calculatedFieldOutput.calculationDescriptor= $scope.calculatedFieldOutput.id;
+            	}
                 $scope.hide = function() {
 
                 	//parameters to add in the calculatedFieldOutput object to prepare it for the sending
@@ -712,11 +745,13 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
             			"alias":$scope.calculatedFieldOutput.alias,
             			"type":$scope.calculatedFieldOutput.type,
             			"nature":"ATTRIBUTE",
-            			"expression":$scope.calculatedFieldOutput.formula
+            			"expression":$scope.calculatedFieldOutput.formula,
+            			"expressionSimple": $scope.calculatedFieldOutput.expression,
                 	}
                 	$scope.calculatedFieldOutput.id = $scope.addedParameters;
                 	$scope.calculatedFieldOutput.alias = $scope.calculatedFieldOutput.alias;
                 	$scope.calculatedFieldOutput.expression = $scope.calculatedFieldOutput.formula;
+                	$scope.calculatedFieldOutput.expressionSimple = $scope.calculatedFieldOutput.expression;
                 	$scope.calculatedFieldOutput.calculationDescriptor= $scope.addedParameters;
 
                 	$mdDialog.hide()};
@@ -732,12 +767,16 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         	console.log($scope.calculatedFieldOutput);
         	
         	$scope.saveCC($scope.cfSelectedEntity.id,$scope.calculatedFieldOutput);
-        	var addCalclatedFieldAction  = $scope.sbiModule_action_builder.getActionBuilder("POST");
+        	/*var addCalclatedFieldAction  = $scope.sbiModule_action_builder.getActionBuilder("POST");
         	
         	addCalclatedFieldAction.actionName = "ADD_CALCULATED_FIELD_ACTION";
         	addCalclatedFieldAction.queryParams.datamartName = inputParamService.modelName;
         	addCalclatedFieldAction.formParams.field = $scope.calculatedFieldOutput;
         	addCalclatedFieldAction.formParams.editingMode = "create";
+        	if($scope.modifyCF){
+        		addCalclatedFieldAction.formParams.editingMode = "modify";
+        	}
+        	
         	addCalclatedFieldAction.formParams.fieldId = "";
         	addCalclatedFieldAction.formParams.entityId = $scope.cfSelectedEntity.id;
         	
@@ -749,7 +788,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         	},
         	function(){
         		
-        	})
+        	})*/
         },
     		function() {
         	$scope.calculatedFieldOutput={};
@@ -782,6 +821,10 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     	addCalclatedFieldAction.formParams.field = cc;
     	addCalclatedFieldAction.formParams.editingMode = "create";
     	addCalclatedFieldAction.formParams.fieldId = "";
+    	if($scope.modifyCF){
+    		addCalclatedFieldAction.formParams.editingMode = "modify";
+        	addCalclatedFieldAction.formParams.fieldId = $scope.originalCFname;
+    	}
     	addCalclatedFieldAction.formParams.entityId = selectedEntity;
     	
     	addCalclatedFieldAction.executeAction().then(function(){
