@@ -24,6 +24,7 @@
     
     
     cockpit-discovery-widget {
+    	height: 100%;
     	.discoveryCardsContainer {
     		height: calc(100% - 70px);
     	}
@@ -247,6 +248,14 @@
 			position: relative;
 			.tooltip {
 				position: absolute !important;
+			}
+		}
+	}
+
+	cockpit-selector-widget {
+		.kn-select {
+			select[multiple] {
+				height: 100%;
 			}
 		}
 	}
