@@ -52,6 +52,8 @@ import it.eng.qbe.query.filters.ProfileAttributesModelAccessModality;
 import it.eng.qbe.utility.CustomFunctionsSingleton;
 import it.eng.qbe.utility.CustomizedFunctionsReader;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.sql.SqlUtils;
@@ -323,7 +325,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	protected Map<String, Object> buildEmptyConfiguration() {
 		logger.debug("IN");
 		Map<String, Object> cfg = new HashMap<String, Object>();
-		String dialect = getToolsDataSource().getHibDialectClass();
+		IDataSource dataSource = getToolsDataSource();
+		String dialect = dataSource.getHibDialectClass();
 
 		// to solve http://spagoworld.org/jira/browse/SPAGOBI-1934
 		if (dialect != null && dialect.contains("SQLServerDialect")) {
@@ -339,16 +342,23 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 
 		logger.debug("Dialect set is " + dialect);
 
-		if (getToolsDataSource().checkIsJndi()) {
-			cfg.put("javax.persistence.nonJtaDataSource", getToolsDataSource().getJndi());
+		if (dataSource.checkIsJndi()) {
+			if (dataSource.checkIsMultiSchema()) {
+				IEngUserProfile profile = UserProfileManager.getProfile();
+				// We check if User profile is required by datasource (in case of multischema datasource) but user profile object is missing
+				Assert.assertNotNull(profile, "Datasource is multischme, but User profile object is not provided");
+				cfg.put("javax.persistence.nonJtaDataSource", dataSource.getJNDIRunTime(profile));
+			} else {
+				cfg.put("javax.persistence.nonJtaDataSource", dataSource.getJndi());
+			}
 			cfg.put("hibernate.dialect", dialect);
 			cfg.put("hibernate.validator.apply_to_ddl", "false");
 			cfg.put("hibernate.validator.autoregister_listeners", "false");
 		} else {
-			cfg.put("javax.persistence.jdbc.url", getToolsDataSource().getUrlConnection());
-			cfg.put("javax.persistence.jdbc.password", getToolsDataSource().getPwd());
-			cfg.put("javax.persistence.jdbc.user", getToolsDataSource().getUser());
-			cfg.put("javax.persistence.jdbc.driver", getToolsDataSource().getDriver());
+			cfg.put("javax.persistence.jdbc.url", dataSource.getUrlConnection());
+			cfg.put("javax.persistence.jdbc.password", dataSource.getPwd());
+			cfg.put("javax.persistence.jdbc.user", dataSource.getUser());
+			cfg.put("javax.persistence.jdbc.driver", dataSource.getDriver());
 			cfg.put("hibernate.dialect", dialect);
 			cfg.put("hibernate.validator.apply_to_ddl", "false");
 			cfg.put("hibernate.validator.autoregister_listeners", "false");

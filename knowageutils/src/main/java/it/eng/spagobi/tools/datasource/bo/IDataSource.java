@@ -53,6 +53,13 @@ public interface IDataSource {
 	public Connection getConnection() throws NamingException, SQLException, ClassNotFoundException;
 	
 	public Connection getConnectionByUserProfile(IEngUserProfile profile);
+	
+	/**
+	 * This method is in charge of getting the full JNDI name string at Runtime considering User profile Object for multischema Datasources. This method is
+	 * different from getJndi() method because it is returning the configured JNDI string without considering the User profile Object. <br>
+	 * <b>Note:</b> Strings returned from getJndi() and getJNDIRunTime() are different in case of multischema Datasource.
+	 */
+	public String getJNDIRunTime(IEngUserProfile profile);
 
 	/**
 	 * Gets the ds id.

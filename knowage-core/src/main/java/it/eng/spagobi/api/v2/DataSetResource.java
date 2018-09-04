@@ -295,7 +295,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			JSONObject jo = new JSONObject();
 			JSONArray ja = new JSONArray();
 			for (SbiDataSet ds : dataset) {
-				IDataSet dataSet = DataSetFactory.toDataSet(ds);
+				IDataSet dataSet = DataSetFactory.toDataSet(ds, getUserProfile());
 				JSONObject jsonIDataSet = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataSet, null);
 
 				JSONObject jsonSbiDataSet = new JSONObject(JsonConverter.objectToJson(ds, SbiDataSet.class));
