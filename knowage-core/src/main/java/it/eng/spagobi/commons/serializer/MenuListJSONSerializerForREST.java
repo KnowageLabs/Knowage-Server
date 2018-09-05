@@ -241,11 +241,11 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							//
 							// }
 
-							if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin_angular")) {
+//							if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin_angular")) {
+							if (menuElem.getCode() != null && (menuElem.getCode().equals("doc_admin_angular") || menuElem.getCode().equals("doc_test_angular"))) {
 								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_ANGULAR + "', '" + text + "')");
 								temp.put(FIRST_URL, contextName + HREF_DOC_BROWSER_ANGULAR);
 								temp.put(LINK_TYPE, "execDirectUrl");
-
 							}
 
 							/**
@@ -294,6 +294,10 @@ public class MenuListJSONSerializerForREST implements Serializer {
 								JSONArray tempMenuList = (JSONArray) getChildren(lstChildrenLev2, 1, locale);
 								temp.put(MENU, tempMenuList);
 							}
+							if (menuElem.getCode().equals("doc_test_angular") && UserUtilities.isAdministrator(this.getUserProfile())) {
+								continue;
+							}
+
 							userMenu.put(temp);
 						}
 					}

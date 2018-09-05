@@ -206,6 +206,12 @@
 			url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION"
 			iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png" 
 			iconCls="folder_open"/>
+			
+	<ITEM code="doc_test_angular" 	title="#menu.DocumentTest"
+			functionality="DocumentTestManagement"
+			url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION"
+			iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png" 
+			iconCls="folder_open"/>
       
 	<ITEM code="workspace" title="Workspace"
 				   functionality="WorkspaceManagement"
