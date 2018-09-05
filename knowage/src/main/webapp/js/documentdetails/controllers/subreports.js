@@ -31,23 +31,9 @@ angular
          	   var documentBasePath = "";
         	   var resourceName = DocumentService.requiredPath; 
         	   var basePath = id + "/" + 'subreports';
-         	   self.listOfDocuments = [];
+         	   self.listOfDocuments = documentAndInfo.documents;
          	   self.listOfSubreports = [];
          	   self.showSelected = true;
-              
-              self.getAllDocuments = function() {
-            	  resourceService.get(resourceName, documentBasePath)
-            	  .then(function(response) {
-            		  self.listOfDocuments = response.data;
-            		  documentService.documentsList = response.data;
-            		  self.setChecked();
-            		  console.log(response);
-            	  }, function(response) {
-      					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');        				
-      			  });
-              }
-              
-              self.getAllDocuments();
               
               self.getSubreportsForMasterDocument = function(id) {
             	  resourceService.get(resourceName, basePath)
