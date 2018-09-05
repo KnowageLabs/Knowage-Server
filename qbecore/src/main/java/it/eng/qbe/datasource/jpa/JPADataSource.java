@@ -343,14 +343,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		logger.debug("Dialect set is " + dialect);
 
 		if (dataSource.checkIsJndi()) {
-			if (dataSource.checkIsMultiSchema()) {
-				IEngUserProfile profile = UserProfileManager.getProfile();
-				// We check if User profile is required by datasource (in case of multischema datasource) but user profile object is missing
-				Assert.assertNotNull(profile, "Datasource is multischme, but User profile object is not provided");
-				cfg.put("javax.persistence.nonJtaDataSource", dataSource.getJNDIRunTime(profile));
-			} else {
-				cfg.put("javax.persistence.nonJtaDataSource", dataSource.getJndi());
-			}
+			IEngUserProfile profile = UserProfileManager.getProfile();
+			cfg.put("javax.persistence.nonJtaDataSource", dataSource.getJNDIRunTime(profile));		
 			cfg.put("hibernate.dialect", dialect);
 			cfg.put("hibernate.validator.apply_to_ddl", "false");
 			cfg.put("hibernate.validator.autoregister_listeners", "false");

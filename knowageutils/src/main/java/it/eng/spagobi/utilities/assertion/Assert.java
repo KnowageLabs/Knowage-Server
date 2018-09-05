@@ -39,4 +39,9 @@ public class Assert {
 	public static void assertUnreachable(String message) {
 		throw new UnreachableCodeException(message);
 	}
+	
+	public static void assertNotEmpty(String input, String message) {
+		if (input.isEmpty())
+			throw new AssertionException(message);
+	}
 }
