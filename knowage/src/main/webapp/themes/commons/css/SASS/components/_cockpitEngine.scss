@@ -254,6 +254,9 @@
 
 	cockpit-selector-widget {
 		.kn-select {
+			&.multipleSelect {
+				background: none;
+			}
 			select[multiple] {
 				height: 100%;
 			}
