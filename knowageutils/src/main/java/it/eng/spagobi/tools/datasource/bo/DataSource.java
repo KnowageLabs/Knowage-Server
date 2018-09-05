@@ -34,7 +34,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.services.validation.Xss;
@@ -49,6 +48,7 @@ import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Defines an <code>DataSource</code> object
@@ -190,15 +190,8 @@ public class DataSource implements Serializable, IDataSource {
 	public Connection getConnectionByUserProfile(IEngUserProfile profile) {
 		try {
 			if (checkIsJndi()) {
-				if (checkIsMultiSchema()) {
-					// We check if User profile is required by datasource (in case of multischema datasource) but user profile object is missing
-					Assert.assertNotNull(profile, "Datasource is multiscehma, but User profile object is not provided");
-					String jndiName = this.getJNDIRunTime(profile);
-					return getJndiConnection(jndiName);
-				} else {
-					// For regular datasource (one that is NOT multischema) we can consider that provided JNDI string is the final one
-					return getJndiConnection(this.getJndi());
-				}
+				String jndiName = this.getJNDIRunTime(profile);
+				return getJndiConnection(jndiName);
 			} else {
 				return getDirectConnection();
 			}
@@ -228,23 +221,37 @@ public class DataSource implements Serializable, IDataSource {
 
 	@Override
 	public String getJNDIRunTime(IEngUserProfile profile) {
-		String attributeName = this.getSchemaAttribute();
-		logger.debug("Datasource multischema attribute name: " + attributeName);
-		String jndiName = null;
-		logger.debug("Looking for attribute [" + attributeName + "] for user [" + profile + "] ...");
-		Object attributeValue;
-		try {
-			attributeValue = profile.getUserAttribute(attributeName);
-		} catch (EMFInternalError e) {
-			throw new SpagoBIEngineRuntimeException("Cannot get attribute [" + attributeName + "] from user profile object", e);
+
+		if (checkIsMultiSchema()) {
+			// We check if User profile is required by datasource (in case of multischema datasource) but user profile object is missing
+			Assert.assertNotNull(profile, "Datasource is multiscehma, but User profile object is not provided");
+			String attributeName = this.getSchemaAttribute();
+			logger.debug("Datasource multischema attribute name: " + attributeName);
+			String jndiName = null;
+			String schema = null;
+			logger.debug("Looking for attribute [" + attributeName + "] for user [" + profile + "] ...");
+			Object attributeValue;
+			try {
+				attributeValue = profile.getUserAttribute(attributeName);
+				if (attributeValue != null) {
+					schema = attributeValue.toString();
+					Assert.assertNotEmpty(schema.trim(), "Attibute value of current User profile is not provided");
+				}
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException("Cannot get attribute [" + attributeName + "] from user profile object", e);
+			}
+			logger.debug("Attribute " + attributeName + " is " + attributeValue);
+
+			jndiName = getJndi() + schema;
+			logger.debug("OUT: JNDI name is [" + jndiName + "]");
+
+			return jndiName;
+
+		} else {
+			// For regular datasource (one that is NOT multischema) we can consider that provided JNDI string is the final one
+			return this.getJndi();
 		}
-		logger.debug("Attribute " + attributeName + "  is " + attributeValue);
-		String schema = attributeValue.toString();
 
-		jndiName = getJndi() + schema;
-		logger.debug("OUT: JNDI name is [" + jndiName + "]");
-
-		return jndiName;
 	}
 
 	/**
