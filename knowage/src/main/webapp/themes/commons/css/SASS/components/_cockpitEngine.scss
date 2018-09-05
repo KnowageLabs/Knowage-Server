@@ -253,12 +253,18 @@
 	}
 
 	cockpit-selector-widget {
-		.kn-select {
-			&.multipleSelect {
-				background: none;
-			}
-			select[multiple] {
+		md-input-container {
+			&.multipleSelect{
 				height: 100%;
+			}
+			.kn-select {
+				&.multipleSelect {
+					height: 100%;
+					background: none;
+				}
+				select[multiple] {
+					height: 100%;
+				}
 			}
 		}
 	}
