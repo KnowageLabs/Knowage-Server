@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.utilities.assertion;
 
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -47,6 +45,6 @@ public class Assert {
 
 	public static void assertNotEmpty(String input, String message) {
 		if (input.isEmpty())
-			throw new SpagoBIRuntimeException(message);
+			throw new AssertionException(message);
 	}
 }
