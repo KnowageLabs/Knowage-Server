@@ -169,8 +169,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the id.
 	 *
-	 * @param businessObjectID
-	 *            The id to set.
+	 * @param businessObjectID The id to set.
 	 */
 	public void setId(Integer businessObjectID) {
 		this.id = businessObjectID;
@@ -189,8 +188,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the bi object parameters.
 	 *
-	 * @param businessObjectParameters
-	 *            The biObjectParameters to set.
+	 * @param businessObjectParameters The biObjectParameters to set.
 	 */
 	public void setBiObjectParameters(List<BIObjectParameter> businessObjectParameters) {
 		this.biObjectParameters = businessObjectParameters;
@@ -208,8 +206,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the description.
 	 *
-	 * @param description
-	 *            The description to set.
+	 * @param description The description to set.
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -228,8 +225,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the encrypt.
 	 *
-	 * @param encrypt
-	 *            The encrypt to set.
+	 * @param encrypt The encrypt to set.
 	 */
 	public void setEncrypt(Integer encrypt) {
 		this.encrypt = encrypt;
@@ -248,8 +244,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the visible.
 	 *
-	 * @param visible
-	 *            the new visible
+	 * @param visible the new visible
 	 */
 	@JsonIgnore
 	public void setVisible(Integer visible) {
@@ -283,8 +278,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the engine.
 	 *
-	 * @param engine
-	 *            The engine to set.
+	 * @param engine The engine to set.
 	 */
 	@JsonIgnore
 	public void setEngine(Engine engine) {
@@ -317,8 +311,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the data source id.
 	 *
-	 * @param dataSourceId
-	 *            the data source id
+	 * @param dataSourceId the data source id
 	 */
 	public void setDataSourceId(Integer dataSourceId) {
 		this.dataSourceId = dataSourceId;
@@ -352,8 +345,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the label.
 	 *
-	 * @param label
-	 *            The label to set.
+	 * @param label The label to set.
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -372,8 +364,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the rel name.
 	 *
-	 * @param relName
-	 *            The relName to set.
+	 * @param relName The relName to set.
 	 */
 	@JsonSetter
 	public void setRelName(String relName) {
@@ -393,8 +384,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the bi object type code.
 	 *
-	 * @param businessObjectTypeCD
-	 *            The biObjectTypeCode to set.
+	 * @param businessObjectTypeCD The biObjectTypeCode to set.
 	 */
 	@JsonIgnore
 	public void setBiObjectTypeCode(String businessObjectTypeCD) {
@@ -404,8 +394,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the bi object type code and update the type id.
 	 *
-	 * @param businessObjectTypeCD
-	 *            The biObjectTypeCode to set.
+	 * @param businessObjectTypeCD The biObjectTypeCode to set.
 	 * @throws EMFUserError
 	 */
 	@JsonProperty(value = "typeCode")
@@ -429,8 +418,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the bi object type id.
 	 *
-	 * @param biObjectTypeID
-	 *            The biObjectTypeID to set.
+	 * @param biObjectTypeID The biObjectTypeID to set.
 	 */
 	public void setBiObjectTypeID(Integer biObjectTypeID) {
 		this.biObjectTypeID = biObjectTypeID;
@@ -449,8 +437,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the state code.
 	 *
-	 * @param stateCD
-	 *            The stateCode to set.
+	 * @param stateCD The stateCode to set.
 	 */
 	@JsonIgnore
 	public void setStateCode(String stateCD) {
@@ -460,8 +447,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the state code and update the state id.
 	 *
-	 * @param stateCD
-	 *            The stateCode to set.
+	 * @param stateCD The stateCode to set.
 	 * @throws EMFUserError
 	 */
 	@JsonProperty(value = "stateCode")
@@ -485,8 +471,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the state id.
 	 *
-	 * @param stateID
-	 *            The stateID to set.
+	 * @param stateID The stateID to set.
 	 */
 	public void setStateID(Integer stateID) {
 		this.stateID = stateID;
@@ -505,8 +490,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the path.
 	 *
-	 * @param path
-	 *            The path to set.
+	 * @param path The path to set.
 	 */
 	public void setPath(String path) {
 		this.path = path;
@@ -524,8 +508,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name
-	 *            the new name
+	 * @param name the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -544,8 +527,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the uuid.
 	 *
-	 * @param uuid
-	 *            the new uuid
+	 * @param uuid the new uuid
 	 */
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
@@ -564,8 +546,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the functionalities.
 	 *
-	 * @param functionalities
-	 *            the new functionalities
+	 * @param functionalities the new functionalities
 	 */
 	public void setFunctionalities(List functionalities) {
 		this.functionalities = functionalities;
@@ -648,8 +629,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the creation date.
 	 *
-	 * @param creationDate
-	 *            the new creation date
+	 * @param creationDate the new creation date
 	 */
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
@@ -668,8 +648,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the creation user.
 	 *
-	 * @param creationUser
-	 *            the new creation user
+	 * @param creationUser the new creation user
 	 */
 	@JsonIgnore
 	public void setCreationUser(String creationUser) {
@@ -689,8 +668,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	/**
 	 * Sets the data set id.
 	 *
-	 * @param dataSetId
-	 *            the new data set id
+	 * @param dataSetId the new data set id
 	 */
 	public void setDataSetId(Integer dataSetId) {
 		this.dataSetId = dataSetId;
@@ -733,12 +711,10 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 		this.refreshSeconds = refreshSeconds;
 	}
 
-	@JsonIgnore
 	public String getProfiledVisibility() {
 		return profiledVisibility;
 	}
 
-	@JsonSetter
 	public void setProfiledVisibility(String profiledVisibility) {
 		this.profiledVisibility = profiledVisibility;
 	}
@@ -767,8 +743,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	}
 
 	/**
-	 * @param previewFile
-	 *            the previewFile to set
+	 * @param previewFile the previewFile to set
 	 */
 	public void setPreviewFile(String previewFile) {
 		this.previewFile = previewFile;
@@ -783,8 +758,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	}
 
 	/**
-	 * @param publicDoc
-	 *            the publicDoc to set
+	 * @param publicDoc the publicDoc to set
 	 */
 	public void setPublicDoc(boolean publicDoc) {
 		this.publicDoc = publicDoc;
@@ -798,8 +772,7 @@ public class BIObject implements Serializable, Cloneable, DriverableObject {
 	}
 
 	/**
-	 * @param docVersion
-	 *            the docVersion to set
+	 * @param docVersion the docVersion to set
 	 */
 	public void setDocVersion(Integer docVersion) {
 		this.docVersion = docVersion;

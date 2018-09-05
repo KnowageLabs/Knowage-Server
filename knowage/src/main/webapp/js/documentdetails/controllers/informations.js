@@ -40,6 +40,7 @@ angular
              self.datasets1 = documentAndInfo.datasets;
              self.datasets =[];
              self.document = self.documentService.document;
+             console.log(self.document)
              if(self.document.visible != false )self.document.visible = true;
 
              if(self.document.refreshSeconds == null)
@@ -111,7 +112,12 @@ angular
             	 return folders;
              }
 
-
+             self.addRestriction = function(){
+            	 if(self.document.profiledVisibility){
+            		 self.document.profiledVisibility = self.document.profiledVisibility + " AND " + self.visibilityAttribute + " = " + self.restrictionValue;
+            	 }else {self.document.profiledVisibility =self.visibilityAttribute + " = " + self.restrictionValue;
+            	 }
+             }
 
              self.getFunctionalities = function(functionalitiesPath){
 
@@ -136,6 +142,14 @@ angular
              		self.documentService.documentImage = response.data;
                 	});
              }
+
+             self.getProfileAttributes = function(){
+            	 crudService.get("2.0/attributes","").then(function(response){
+            		 self.attributeValues = response.data;
+            		 console.log(response.data)
+            	 })
+             }
+             self.getProfileAttributes();
 
              if(self.document.previewFile){
             	 self.getImage();

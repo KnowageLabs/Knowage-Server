@@ -54,22 +54,22 @@
 		self.docId = documentService.documentId;
 		$scope.$broadcast('setDocumentPath', requiredPath);
         self.cancelFunction = function() {
-        	window.parent.angular.element(window.frameElement).scope().closeDialogFromExt();
+        	window.parent.angular.element(window.frameElement).scope().closeDialogFromExt(true);
         };
 
         self.savingFunction = function(){
 
         	persistDocument();
 
-        	if(document.id != undefined){
-        	DriversService.persistDrivers(document.id,requiredPath);
-        	DriversService.deleteDrivers(document.id,requiredPath);
+        	if(documentService.document.id != undefined){
+        	DriversService.persistDrivers(documentService.document.id,requiredPath);
+        	DriversService.deleteDrivers(documentService.document.idd,requiredPath);
 
-        	DriversService.persistDataDependency(document.id,requiredPath);
-        	DriversService.deleteDataDependencies(document.id,requiredPath);
+        	DriversService.persistDataDependency(documentService.document.id,requiredPath);
+        	DriversService.deleteDataDependencies(documentService.document.id,requiredPath);
 
-        	DriversService.persistVisualDependency(document.id,requiredPath);
-        	DriversService.deleteVisualDependencies(document.id,requiredPath);
+        	DriversService.persistVisualDependency(documentService.document.id,requiredPath);
+        	DriversService.deleteVisualDependencies(documentService.document.idd,requiredPath);
         	}
         	outputParametersService.persistOutputParameters();
         	outputParametersService.deleteOutputParameters();
@@ -82,7 +82,7 @@
         	templateService.deleteTemplates();
 
         	subreportsService.deleteSubreports();
-			subreportsService.persistSubreports();			
+			subreportsService.persistSubreports();
 
         };
 
@@ -109,15 +109,15 @@
 
 
          var persistDocument = function(){
-      	   prepareDocumentForPersisting(document);
+      	   prepareDocumentForPersisting(documentService.document);
       	   setFoldersPath();
-         	if(document.id){
-         		resourceService.put(documentService.requiredPath,document.id,document).then(function(response){
+         	if(documentService.document.id || document.id){
+         		resourceService.put(documentService.requiredPath,documentService.document.id,documentService.document).then(function(response){
          			if(response.data.errors){
          				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
          			}else
          			sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.documentupdated"), 'Success!');
-         			documentService.document = response.data;         			
+         			documentService.document = response.data;
          			self.typeCode = response.data.typeCode;
          			self.engine = response.data.engine;
          			uploadImage();
@@ -128,7 +128,7 @@
          				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
          			}else
          			sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.documentcreated"), 'Success!');
-         			documentService.document = response.data;         			
+         			documentService.document = response.data;
          			DriversService.setDriverRelatedObject(response.data);
          			self.docId = response.data.id;
          			self.typeCode = response.data.typeCode;

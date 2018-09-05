@@ -43,10 +43,11 @@ angular
              self.dataConditions = driversService.dataDependencyObjects;
              if(driversService.driversOnObject.length == 0){
             crudService.get(requiredPath,basePath).then(function(response){
-            	 self.drivers=response.data
+            	 driversService.driversOnObject = response.data;
+            	 self.drivers=driversService.driversOnObject;
             	 self.driversNum = self.drivers.length > 1;
              });
-             }else {self.drivers = driversService.driversOnObject}
+             }else {self.drivers = driversService.driversOnObject;self.driversNum = self.drivers.length > 1}
              self.required = true;
 
 
@@ -65,12 +66,12 @@ angular
 
             	 		if(driversService.driverRelatedObject.id){
        					 if (self.drivers) {
-       	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biMetaModelID' :driversService.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
+       	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biMetaModelID' :driversService.driverRelatedObject.id,'visible':true,'required':false,'multivalue':false });
        	                     var index = self.drivers.length;
        	                  self.driversNum = self.drivers.length > 1;
        	                     self.selectDriver( index );
        	                 } else {
-       	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true','biMetaModelID' : driversService.driverRelatedObject.id ,'visible':false,'required':false,'multivalue':false}];
+       	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true','biMetaModelID' : driversService.driverRelatedObject.id ,'visible':true,'required':false,'multivalue':false}];
        	                  self.driversNum = self.drivers.length > 1;
        	                     self.selectDriver(1);
 
@@ -79,12 +80,12 @@ angular
              }else{
 				 if(driversService.driverRelatedObject.id){
 					 if (self.drivers) {
-	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biObjectID' :driversService.driverRelatedObject.id,'visible':false,'required':false,'multivalue':false });
+	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biObjectID' :driversService.driverRelatedObject.id,'visible':true,'required':false,'multivalue':false });
 	                     var index = self.drivers.length;
 	                     self.driversNum = self.drivers.length > 1;
 	                     self.selectDriver( index );
 	                 } else {
-	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true', 'biObjectID' : driversService.driverRelatedObject.id ,'visible':false,'required':false,'multivalue':false}];
+	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true', 'biObjectID' : driversService.driverRelatedObject.id ,'visible':true,'required':false,'multivalue':false}];
 	                     self.driversNum = self.drivers.length > 1;
 	                     self.selectDriver(1);
 	                 }
@@ -398,9 +399,9 @@ angular
                  $scope.selectedDataCondition.persist ={};
 
                  var selectedParuse = [];
-     			for(var j = 0; j < driversResource.driverParuses.length;j++){
-     				if(driversResource.driverParuses[j].useID == response.data[i].useID)
-     					selectedParuse.push(driversResource.driverParuses[j]);
+     			for(var j = 0; j < $scope.driversService.driverParuses.length;j++){
+     				if($scope.driversService.driverParuses[j].useID == $scope.selectedDriver.useID)
+     					selectedParuse.push($scope.driversService.driverParuses[j]);
      			}
                 // var selectedParuse = driversService.driverParuses.filter(par => par.useID == $scope.selectedDriver.parID);
                  if (selectedParuse[0])
