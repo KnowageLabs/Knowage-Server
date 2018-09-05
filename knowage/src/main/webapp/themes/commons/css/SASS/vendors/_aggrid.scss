@@ -14,9 +14,18 @@
 		}
 	}
 	&.ag-theme-knowage {
+		&.ag-theme-knowage-secondary {
+			.ag-header {
+			    background-color: $secondaryColor;
+			    color: $lightTextColor;
+			}
+		}
 		.ag-header {
 		    background-color: $baseColor;
 		    color: $lightTextColor;
+		}
+		.ag-root {
+			border: none;
 		}
 		.ag-row-selected {
 			background-color: $secondaryColor;
@@ -32,6 +41,9 @@
 		}
 		.ag-icon-filter {
 			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDMuNWg5di41ODZhMSAxIDAgMCAxLS4yOTMuNzA3TDkuMjkzIDcuNzA3QTEgMSAwIDAgMCA5IDguNDE0VjEwbC0yIDEuNVY4LjQxNGExIDEgMCAwIDAtLjI5My0uNzA3TDMuNzkzIDQuNzkzYTEgMSAwIDAgMS0uMjkzLS43MDdWMy41eiIgc3Ryb2tlPSIjZmZmIiBmaWxsPSJub25lIi8+PC9zdmc+);
+		}
+		.ag-paging-panel {
+			border-top: none;
 		}
 	}
 }
