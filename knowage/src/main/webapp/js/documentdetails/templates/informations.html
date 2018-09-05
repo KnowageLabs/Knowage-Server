@@ -137,12 +137,13 @@
             <md-card>
                 <md-card-content>
                  <div flex layout = "row">
-                <md-input-container flex = 60>              
+                <md-input-container flex = 60>  
+                  	 <label>{{di.translate.load("sbi.documentdetails.informations.definedRestrictions")}}</label>                                                      
                   <textarea ng-model="di.document.profiledVisibility" readonly></textarea>
                   </md-input-container>
                    <div layout="row" flex = 10>
                         <md-button ng-click="di.addRestriction()">
-							<md-icon class="fa fa-plus-circle"><md-tooltip md-delay="1000">{{di.load("documentdetails.informations.add")}}</md-tooltip></md-icon>
+							<md-icon class="fa fa-plus-circle"><md-tooltip md-delay="1000">{{di.load("sbi.documentdetails.informations.add")}}</md-tooltip></md-icon>
 						</md-button>
 						<md-button ng-click="di.clearRestrictions()">
                       		<md-icon md-font-icon="fa fa-eraser"><md-tooltip md-delay="1000">{{di.load("sbi.documentdetails.informations.clear")}}</md-tooltip></md-icon>
@@ -159,7 +160,8 @@
                         </md-select>
                          </md-input-container>
                        <p> = </p>
-  					 <md-input-container flex>                                          
+  					 <md-input-container flex>
+  					 <label>{{di.translate.load("sbi.documentdetails.informations.attributeValue")}}</label>                                          
                         <div flex><input type="text" name="restrictionValue" ng-model="di.restrictionValue"></div>
                      </md-input-container>
                       </div>

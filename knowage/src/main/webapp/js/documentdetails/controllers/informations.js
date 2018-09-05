@@ -118,7 +118,9 @@ angular
             	 }else {self.document.profiledVisibility =self.visibilityAttribute + " = " + self.restrictionValue;
             	 }
              }
-
+             self.clearRestrictions = function(){
+            	 self.document.profiledVisibility = ""
+             }
              self.getFunctionalities = function(functionalitiesPath){
 
 	              	crudService.get(functionalitiesPath,functionalitiesBasePath,functionalitiesQuerryParam).then(function(response){
