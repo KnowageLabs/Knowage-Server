@@ -273,16 +273,8 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		sbiModule_action.promisePost('SET_CATALOGUE_ACTION',queryParam,item, conf).then(function(response){
 			$scope.getSQL();
 		}, function(response){
-			$mdDialog.show(
-	        		$mdDialog.alert()
-	        		     .clickOutsideToClose(true)
-	        		     .title($scope.translate.load("kn.generic.query.SQL"))
-	        		     .textContent(response.data.errors[0].message)
-	        		     .ok($scope.translate.load("kn.qbe.general.ok"))
-	            );
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 		});
-
-
 	});
 
 	$scope.getSQL = function () {
@@ -313,13 +305,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	        		     .ok($scope.translate.load("kn.qbe.general.ok"))
 	            );
 		}, function(response){
-			$mdDialog.show(
-	        		$mdDialog.alert()
-	        		     .clickOutsideToClose(true)
-	        		     .title($scope.translate.load("kn.generic.query.SQL"))
-	        		     .textContent(response.data.errors[0].message)
-	        		     .ok($scope.translate.load("kn.qbe.general.ok"))
-	            );
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 		});
 	}
 
@@ -439,7 +425,17 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 
     $scope.fieldsFunctions = [
     	{
-    		"label": "calc",
+    		"label": "delete",
+    		"icon": "fa fa-trash",
+    		"visible": function (item){
+    			if(item.iconCls =='calculation') return true;
+    			else return false
+    		},
+    		"action": function(item, event) {
+    			$scope.deleteCalculatedField(item);
+    		}
+    	},{
+    		"label": "modify",
     		"icon": "fa fa-calculator",
     		"visible": function (item){
     			if(item.iconCls =='calculation') return true;
@@ -719,8 +715,31 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
             );
         }
     };
+    
+    $scope.deleteCalculatedField = function (selectedField){
+    	
+    	var field = {};
+    	field.id = selectedField.attributes.formState;
+    	field.alias = selectedField.text;
+    	field.type =selectedField.attributes.formState.type;
+    	field.expression = selectedField.attributes.formState.expressionSimple;
+    	field.calculationDescriptor= field.id;
+    	
+    	var deleteCalclatedFieldAction  = $scope.sbiModule_action_builder.getActionBuilder("POST");
+    	deleteCalclatedFieldAction.actionName = "DELETE_CALCULATED_FIELD_ACTION"; 
+    	deleteCalclatedFieldAction.formParams.entityId = selectedField.id.substring(0,selectedField.id.indexOf(":"))+"::"+selectedField.attributes.entity;
+    	deleteCalclatedFieldAction.formParams.field = field ;
+    	deleteCalclatedFieldAction.executeAction().then(function(){
+    		 $scope.getEntityTree();
+    		 sbiModule_messaging.showSuccessMessage("Calculated field is deleted", 'Success!');
+    	},
+    	 function(response){
+    		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+		})
+	}
+    
 
-    $scope.showCalculatedField = function(item,ev,cf){
+	$scope.showCalculatedField = function(item,ev,cf){
     	$scope.cfSelectedEntity = item;
     	$scope.cfSelectedField= angular.copy(cf);
     	$mdDialog.show({
@@ -731,7 +750,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
             		$scope.modifyCF = true;
             		$scope.originalCFname = angular.copy($scope.cfSelectedField.text);
             		$scope.calculatedFieldOutput.id = $scope.cfSelectedField.attributes.formState;
-            		//$scope.calculatedFieldOutput.id.expression = $scope.cfSelectedField.attributes.formState.expression;
+
             		delete $scope.calculatedFieldOutput.id.slots;
                 	$scope.calculatedFieldOutput.alias = $scope.cfSelectedField.text;
                 	$scope.calculatedFieldOutput.type =$scope.cfSelectedField.attributes.formState.type;
@@ -764,58 +783,23 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
             preserveScope: true
         })
         .then(function() {
-        	console.log($scope.calculatedFieldOutput);
-        	
         	$scope.saveCC($scope.cfSelectedEntity.id,$scope.calculatedFieldOutput);
-        	/*var addCalclatedFieldAction  = $scope.sbiModule_action_builder.getActionBuilder("POST");
-        	
-        	addCalclatedFieldAction.actionName = "ADD_CALCULATED_FIELD_ACTION";
-        	addCalclatedFieldAction.queryParams.datamartName = inputParamService.modelName;
-        	addCalclatedFieldAction.formParams.field = $scope.calculatedFieldOutput;
-        	addCalclatedFieldAction.formParams.editingMode = "create";
-        	if($scope.modifyCF){
-        		addCalclatedFieldAction.formParams.editingMode = "modify";
-        	}
-        	
-        	addCalclatedFieldAction.formParams.fieldId = "";
-        	addCalclatedFieldAction.formParams.entityId = $scope.cfSelectedEntity.id;
-        	
-        	addCalclatedFieldAction.executeAction().then(function(){
-        		entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
-        			 $scope.entityModel = response.data;
-
-        		});
-        	},
-        	function(){
-        		
-        	})*/
-        },
-    		function() {
+        },function() {
         	$scope.calculatedFieldOutput={};
         });
     };
     
     $scope.getEntityTree = function(){
-    	entityService.getEntitiyTree(inputParamService.modelName)
-    	.then(function(response){
-    		
-   		 $scope.entityModel = response.data;
-
-   	}, function(response){
-		$mdDialog.show(
-        		$mdDialog.alert()
-        		     .clickOutsideToClose(true)
-        		     .title($scope.translate.load("kn.generic.query.SQL"))
-        		     .textContent(response.data.errors[0].message)
-        		     .ok($scope.translate.load("kn.qbe.general.ok"))
-            );
-	});
-
+    	entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
+   			$scope.entityModel = response.data;
+   		}, function(response){
+   			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+   		});
     }
     
     $scope.saveCC = function(selectedEntity,cc){
     	var addCalclatedFieldAction  = $scope.sbiModule_action_builder.getActionBuilder("POST");
-    	
+
     	addCalclatedFieldAction.actionName = "ADD_CALCULATED_FIELD_ACTION";
     	addCalclatedFieldAction.queryParams.datamartName = inputParamService.modelName;
     	addCalclatedFieldAction.formParams.field = cc;
@@ -828,41 +812,23 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     	addCalclatedFieldAction.formParams.entityId = selectedEntity;
     	
     	addCalclatedFieldAction.executeAction().then(function(){
-    		 $scope.getEntityTree();
-    	},
-    	 function(response){
-			$mdDialog.show(
-	        		$mdDialog.alert()
-	        		     .clickOutsideToClose(true)
-	        		     .title($scope.translate.load("kn.generic.query.SQL"))
-	        		     .textContent(response.data.errors[0].message)
-	        		     .ok($scope.translate.load("kn.qbe.general.ok"))
-	            );
+    		$scope.getEntityTree();
+     		sbiModule_messaging.showSuccessMessage("Calculated field is added", 'Success!');
+    	},function(response){
+    		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 		})
     }
-	$scope.saveEntityTree = function(){
+
+    $scope.saveEntityTree = function(){
     	var saveTreeAction  = $scope.sbiModule_action_builder.getActionBuilder("GET");
     	saveTreeAction.actionName = "SAVE_TREE_ACTION";
     	saveTreeAction.executeAction().then(function(response){
-			$mdDialog.show(
-	        		$mdDialog.alert()
-	        		     .clickOutsideToClose(true)
-	        		     .title($scope.translate.load("kn.qbe.expander.list.entities.tree.saving"))
-	        		     .textContent($scope.translate.load("kn.qbe.expander.list.entities.tree.saved"))
-	        		     .ok($scope.translate.load("kn.qbe.general.ok"))
-	            );
+    		sbiModule_messaging.showSuccessMessage($scope.translate.load("kn.qbe.expander.list.entities.tree.saved"), $scope.translate.load("kn.qbe.expander.list.entities.tree.saving"));
 		}, function(response){
-			$mdDialog.show(
-	        		$mdDialog.alert()
-	        		     .clickOutsideToClose(true)
-	        		     .title($scope.translate.load("kn.qbe.expander.list.entities.tree.saving"))
-	        		     .textContent(response.data.errors[0].message)
-	        		     .ok($scope.translate.load("kn.qbe.general.ok"))
-	            );
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load("kn.qbe.expander.list.entities.tree.saving"));
 		});
 
     }
 
-
-	 $scope.getEntityTree();
+    $scope.getEntityTree();
 }
