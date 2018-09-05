@@ -847,15 +847,15 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			$mdDialog.show(
 	        		$mdDialog.alert()
 	        		     .clickOutsideToClose(true)
-	        		     .title($scope.translate.load("kn.generic.query.SQL"))
-	        		     .textContent(response.data.sqlFormatted)
+	        		     .title($scope.translate.load("kn.qbe.expander.list.entities.tree.saving"))
+	        		     .textContent($scope.translate.load("kn.qbe.expander.list.entities.tree.saved"))
 	        		     .ok($scope.translate.load("kn.qbe.general.ok"))
 	            );
 		}, function(response){
 			$mdDialog.show(
 	        		$mdDialog.alert()
 	        		     .clickOutsideToClose(true)
-	        		     .title($scope.translate.load("kn.generic.query.SQL"))
+	        		     .title($scope.translate.load("kn.qbe.expander.list.entities.tree.saving"))
 	        		     .textContent(response.data.errors[0].message)
 	        		     .ok($scope.translate.load("kn.qbe.general.ok"))
 	            );
