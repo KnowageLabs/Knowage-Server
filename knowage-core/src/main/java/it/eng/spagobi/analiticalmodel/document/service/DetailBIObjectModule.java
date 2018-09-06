@@ -27,6 +27,9 @@ import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -121,6 +124,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	 */
 	@Override
 	public void service(SourceBean request, SourceBean response) throws Exception {
+		Monitor loadingMonitor = MonitorFactory.start("Knowage.DetailBIObjectModule.service");
 		// RECOVER REQUEST CONTAINER, SESSION CONTAINER, USER PROFILE AND ERROR HANDLER
 		RequestContainer requestContainer = this.getRequestContainer();
 		ResponseContainer responseContainer = this.getResponseContainer();
@@ -219,6 +223,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			errorHandler.addError(internalError);
 			return;
 		}
+		loadingMonitor.stop();
 	}
 
 	private void setLoopbackContext(SourceBean request, String message) throws EMFUserError {
