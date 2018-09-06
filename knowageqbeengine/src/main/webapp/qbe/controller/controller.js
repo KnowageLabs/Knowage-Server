@@ -813,7 +813,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     	
     	addCalclatedFieldAction.executeAction().then(function(){
     		$scope.getEntityTree();
-     		sbiModule_messaging.showSuccessMessage("Calculated field is added", $scope.translate.load("kn.qbe.general.success"));
+     		
     	},function(response){
     		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load("kn.qbe.general.error"));
 		})
