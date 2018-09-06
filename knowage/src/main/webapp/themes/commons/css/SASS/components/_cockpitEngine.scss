@@ -29,7 +29,6 @@
     		height: calc(100% - 70px);
     	}
     	.discoveryFiltersCard {
-    		border: 1px solid $bordersColor;
     		&.sidenav-add, &.sidenav-remove {
     			transition: max-width .4s linear;
     		}
@@ -68,9 +67,9 @@
 	    		.md-subheader {
 	    			cursor: pointer;
 	    			border-bottom: 1px solid $bordersColor;
-	    			._md-subheader-inner {
+	    			._md-subheader-inner, .md-subheader-inner {
 		    			padding:8px;
-		    			._md-subheader-content {
+		    			._md-subheader-content, .md-subheader-content {
 		    				font: 600 $mediumFontSize $defaultFontFamily;
 	    				    display: flex;
 						    align-items: center;
@@ -264,6 +263,9 @@
 				}
 				select[multiple] {
 					height: 100%;
+				}
+				option {
+					font-size: $baseFontSize;
 				}
 			}
 		}

@@ -46,4 +46,12 @@
 			border-top: none;
 		}
 	}
+	&.ag-noBorders {
+		.ag-root {
+			border: none;
+		}
+		.ag-paging-panel {
+			border-top: none;
+		}
+	}
 }

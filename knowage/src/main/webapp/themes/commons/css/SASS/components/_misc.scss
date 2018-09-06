@@ -446,7 +446,7 @@ md-icon {
 	margin:0 !important;
 }
 
-.noPadding, .noPadding ._md-subheader-inner{
+.noPadding, .noPadding > ._md-subheader-inner, .noPadding > .md-subheader-inner{
 	padding:0px;
 }
 
@@ -875,22 +875,6 @@ md-tab-item {
   }
 }
 
-.codeMirrorScriptEditor {
-  pre {
-    white-space: pre-wrap;
-    word-break: break-all;
-    word-wrap: break-word;
-  }
-  .CodeMirror-gutter-wrapper {
-    left: -30px !important;
-  }
-  md-card {
-    md-input-container{
-      margin: 0;
-    }
-  }
-}
-
 color-picker {
   width: 100%;
   min-height: 30px;
@@ -899,6 +883,11 @@ color-picker {
     position: absolute;
     width: 100%;
     z-index:9000;
+    .input-group {
+      .input-group-addon{
+        padding: 0;
+      }
+    }
     .color-picker-panel {
       
     }
