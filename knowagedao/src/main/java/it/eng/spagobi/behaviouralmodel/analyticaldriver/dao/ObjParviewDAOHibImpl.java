@@ -17,16 +17,6 @@
  */
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParview;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParviewId;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.utilities.SpagoBITracer;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +25,15 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParview;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a ObjParview object.
@@ -46,11 +45,9 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 	/**
 	 * Modify obj parview.
 	 *
-	 * @param aObjParview
-	 *            the a obj parview
+	 * @param aObjParview the a obj parview
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO#modifyObjParview(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview)
 	 */
@@ -62,14 +59,10 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			// get the existing object
-			String hql = "from SbiObjParview s where s.id.sbiObjPar.objParId = ? " + " and s.id.sbiObjParFather.objParId = ? " + " and s.id.operation = ? "
-					+ " and s.id.compareValue = ? ";
+			String hql = "from SbiObjParview s where s.id = ? ";
 
 			Query hqlQuery = aSession.createQuery(hql);
-			hqlQuery.setInteger(0, aObjParview.getObjParId().intValue());
-			hqlQuery.setInteger(1, aObjParview.getObjParFatherId().intValue());
-			hqlQuery.setString(2, aObjParview.getOperation());
-			hqlQuery.setString(3, aObjParview.getCompareValue());
+			hqlQuery.setInteger(0, aObjParview.getId().intValue());
 
 			SbiObjParview sbiObjParview = (SbiObjParview) hqlQuery.uniqueResult();
 			if (sbiObjParview == null) {
@@ -87,12 +80,12 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 						"the BIObjectParameter with " + " does not exist.");
 
 			}
-			SbiObjParviewId viewId = new SbiObjParviewId();
-			viewId.setSbiObjPar(sbiObjPar);
-			viewId.setSbiObjParFather(sbiObjParFather);
-			viewId.setOperation(aObjParview.getOperation());
-			viewId.setCompareValue(aObjParview.getCompareValue());
-			SbiObjParview view = new SbiObjParview(viewId);
+			SbiObjParview view = new SbiObjParview();
+			view.setSbiObjPar(sbiObjPar);
+			view.setSbiObjParFather(sbiObjParFather);
+			view.setOperation(aObjParview.getOperation());
+			view.setCompareValue(aObjParview.getCompareValue());
+
 			view.setProg(aObjParview.getProg());
 			view.setViewLabel(aObjParview.getViewLabel());
 
@@ -121,11 +114,9 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 	/**
 	 * Insert obj parview.
 	 *
-	 * @param aObjParview
-	 *            the a obj parview
+	 * @param aObjParview the a obj parview
 	 *
-	 * @throws EMFviewrError
-	 *             the EMF user error
+	 * @throws EMFviewrError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#insertObjParuse(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse)
 	 */
@@ -144,12 +135,11 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 						"the BIObjectParameter with " + "id=" + aObjParview.getObjParFatherId() + " does not exist.");
 
 			}
-			SbiObjParviewId viewId = new SbiObjParviewId();
-			viewId.setSbiObjPar(sbiObjPar);
-			viewId.setSbiObjParFather(sbiObjParFather);
-			viewId.setOperation(aObjParview.getOperation());
-			viewId.setCompareValue(aObjParview.getCompareValue());
-			SbiObjParview view = new SbiObjParview(viewId);
+			SbiObjParview view = new SbiObjParview();
+			view.setSbiObjPar(sbiObjPar);
+			view.setSbiObjParFather(sbiObjParFather);
+			view.setOperation(aObjParview.getOperation());
+			view.setCompareValue(aObjParview.getCompareValue());
 			view.setProg(aObjParview.getProg());
 			view.setViewLabel(aObjParview.getViewLabel());
 			updateSbiCommonInfo4Insert(view);
@@ -171,11 +161,9 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 	/**
 	 * Erase obj parview.
 	 *
-	 * @param aObjParview
-	 *            the a obj parview
+	 * @param aObjParview the a obj parview
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO#eraseObjParview(ObjParview)
 	 */
@@ -216,14 +204,10 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 		 * aObjParuse.getParuseId() + " and s.id.sbiObjParFather.objParId = " + aObjParuse.getObjParFatherId() + " and s.id.filterOperation = '" +
 		 * aObjParuse.getFilterOperation() + "'";
 		 */
-		String hql = "from SbiObjParview s where s.id.sbiObjPar.objParId = ? " + " and s.id.sbiObjParFather.objParId = ? " + " and s.id.operation = ? "
-				+ " and s.id.compareValue = ? ";
+		String hql = "from SbiObjParview s where s.id = ?";
 
 		Query hqlQuery = aSession.createQuery(hql);
-		hqlQuery.setInteger(0, aObjParview.getObjParId().intValue());
-		hqlQuery.setInteger(1, aObjParview.getObjParFatherId().intValue());
-		hqlQuery.setString(2, aObjParview.getOperation());
-		hqlQuery.setString(3, aObjParview.getCompareValue());
+		hqlQuery.setInteger(0, aObjParview.getId().intValue());
 
 		SbiObjParview sbiObjParview = (SbiObjParview) hqlQuery.uniqueResult();
 		if (sbiObjParview == null) {
@@ -236,13 +220,11 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 	/**
 	 * Load obj parviews.
 	 *
-	 * @param objParId
-	 *            the obj par id
+	 * @param objParId the obj par id
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO#loadObjParviews(Integer)
 	 */
@@ -255,7 +237,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			// String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + objParId + " order by s.prog";
-			String hql = "from SbiObjParview s where s.id.sbiObjPar.objParId = ? order by s.prog";
+			String hql = "from SbiObjParview s where s.sbiObjPar.objParId = ? order by s.prog";
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, objParId.intValue());
 			List sbiObjParviews = hqlQuery.list();
@@ -281,8 +263,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 	/**
 	 * From the hibernate SbiObjParview at input, gives the corrispondent <code>ObjParview</code> object.
 	 *
-	 * @param aSbiObjParview
-	 *            The hybernate SbiObjParview
+	 * @param aSbiObjParview The hybernate SbiObjParview
 	 *
 	 * @return The corrispondent <code>ObjParview</code>
 	 */
@@ -290,11 +271,12 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 		if (aSbiObjParview == null)
 			return null;
 		ObjParview toReturn = new ObjParview();
-		toReturn.setObjParId(aSbiObjParview.getId().getSbiObjPar().getObjParId());
-		toReturn.setObjParFatherId(aSbiObjParview.getId().getSbiObjParFather().getObjParId());
-		toReturn.setObjParFatherUrlName(aSbiObjParview.getId().getSbiObjParFather().getParurlNm());
-		toReturn.setOperation(aSbiObjParview.getId().getOperation());
-		toReturn.setCompareValue(aSbiObjParview.getId().getCompareValue());
+		toReturn.setId(aSbiObjParview.getId());
+		toReturn.setObjParId(aSbiObjParview.getSbiObjPar().getObjParId());
+		toReturn.setObjParFatherId(aSbiObjParview.getSbiObjParFather().getObjParId());
+		toReturn.setObjParFatherUrlName(aSbiObjParview.getSbiObjParFather().getParurlNm());
+		toReturn.setOperation(aSbiObjParview.getOperation());
+		toReturn.setCompareValue(aSbiObjParview.getCompareValue());
 		toReturn.setProg(aSbiObjParview.getProg());
 		toReturn.setViewLabel(aSbiObjParview.getViewLabel());
 
@@ -304,13 +286,11 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 	/**
 	 * Gets the dependencies.
 	 *
-	 * @param objParFatherId
-	 *            the obj par father id
+	 * @param objParFatherId the obj par father id
 	 *
 	 * @return the dependencies
 	 *
-	 * @throws EMFviewrError
-	 *             the EMF user error
+	 * @throws EMFviewrError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO#getDependencies(Integer)
 	 */
@@ -324,7 +304,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 			tx = aSession.beginTransaction();
 			// get all the sbiobjparview objects which have the parameter as the father
 			// String hql = "from SbiObjParview s where s.id.sbiObjParFather=" + objParFatherId;
-			String hql = "from SbiObjParview s where s.id.sbiObjParFather=? ";
+			String hql = "from SbiObjParview s where s.sbiObjParFather=? ";
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, objParFatherId.intValue());
 			List objParviews = query.list();
@@ -334,7 +314,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 			Iterator it = objParviews.iterator();
 			while (it.hasNext()) {
 				SbiObjParview objParviewHib = (SbiObjParview) it.next();
-				Integer objParId = objParviewHib.getId().getSbiObjPar().getObjParId();
+				Integer objParId = objParviewHib.getSbiObjPar().getObjParId();
 				SbiObjPar hibObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, objParId);
 				String label = hibObjPar.getLabel();
 				if (!toReturn.contains(label)) {
@@ -359,13 +339,11 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 	/**
 	 * Gets the all dependencies for parameter view.
 	 *
-	 * @param viewId
-	 *            the view id
+	 * @param viewId the view id
 	 *
 	 * @return the all dependencies for parameter view
 	 *
-	 * @throws EMFviewrError
-	 *             the EMF user error
+	 * @throws EMFviewrError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO#getAllDependenciesForParameterview(java.lang.Integer)
 	 */
@@ -378,7 +356,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			// String hql = "from SbiObjParview s where s.id.sbiParview.viewId = " + viewId;
-			String hql = "from SbiObjParview s where s.id.sbiParview.viewId = ?";
+			String hql = "from SbiObjParview s where s.sbiParview.viewId = ?";
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, viewId.intValue());
 			List result = query.list();
@@ -404,13 +382,11 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 	/**
 	 * Gets the document labels list with associated dependencies.
 	 *
-	 * @param viewId
-	 *            the view id
+	 * @param viewId the view id
 	 *
 	 * @return the document labels list with associated dependencies
 	 *
-	 * @throws EMFviewrError
-	 *             the EMF user error
+	 * @throws EMFviewrError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO#getDocumentLabelsListWithAssociatedDependencies(java.lang.Integer)
 	 */
@@ -427,7 +403,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 			 * "	obj.sbiObjPars.objParId = s.id.sbiObjPar.objParId and " + "	s.id.sbiParview.viewId = " + viewId;
 			 */
 			String hql = "select " + "	distinct(obj.label) " + "from " + "	SbiObjects obj, SbiObjPar p, SbiObjParview s " + "where "
-					+ "	obj.biobjId = p.sbiObject.biobjId and " + "	p.objParId = s.id.sbiObjPar.objParId and ";
+					+ "	obj.biobjId = p.sbiObject.biobjId and " + "	p.objParId = s.sbiObjPar.objParId and ";
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, viewId.intValue());
 			List result = query.list();
@@ -450,15 +426,12 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 	/**
 	 * Load obj parview.
 	 *
-	 * @param objParId
-	 *            the obj par id
-	 * @param parviewId
-	 *            the parview id
+	 * @param objParId  the obj par id
+	 * @param parviewId the parview id
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFviewrError
-	 *             the EMF user error
+	 * @throws EMFviewrError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO#loadObjParview(java.lang.Integer, java.lang.Integer)
 	 */
@@ -478,7 +451,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 			/*
 			 * String hql = "from SbiObjParview s where s.id.sbiObjPar.objParId=" + objParId + " and s.id.sbiParview.viewId=" + parviewId + " order by s.prog";
 			 */
-			String hql = "from SbiObjParview s where s.id.sbiObjPar.objParId=? " + " and s.id.sbiParview.viewId=? " + " order by s.prog";
+			String hql = "from SbiObjParview s where s.sbiObjPar.objParId=? " + " and s.sbiParview.viewId=? " + " order by s.prog";
 
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, objParId.intValue());
@@ -511,13 +484,11 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 	/**
 	 * Load obj parviews with father relationship
 	 *
-	 * @param objParId
-	 *            the obj par id
+	 * @param objParId the obj par id
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO#loadObjParviews(Integer)
 	 */
@@ -530,7 +501,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			// String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + objParId + " order by s.prog";
-			String hql = "from SbiObjParview s where s.id.sbiObjParFather = ? order by s.prog";
+			String hql = "from SbiObjParview s where s.sbiObjParFather = ? order by s.prog";
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, objParId.intValue());
 			List sbiObjParviews = hqlQuery.list();
@@ -561,14 +532,10 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 		 * aObjParuse.getParuseId() + " and s.id.sbiObjParFather.objParId = " + aObjParuse.getObjParFatherId() + " and s.id.filterOperation = '" +
 		 * aObjParuse.getFilterOperation() + "'";
 		 */
-		String hql = "from SbiObjParview s where s.id.sbiObjPar.objParId = ? " + " and s.id.sbiObjParFather.objParId = ? " + " and s.id.operation = ? "
-				+ " and s.id.compareValue = ? ";
+		String hql = "from SbiObjParview s where s.id = ? ";
 
 		Query hqlQuery = aSession.createQuery(hql);
-		hqlQuery.setInteger(0, aObjParview.getObjParId().intValue());
-		hqlQuery.setInteger(1, aObjParview.getObjParFatherId().intValue());
-		hqlQuery.setString(2, aObjParview.getOperation());
-		hqlQuery.setString(3, aObjParview.getCompareValue());
+		hqlQuery.setInteger(0, aObjParview.getId().intValue());
 
 		SbiObjParview sbiObjParview = (SbiObjParview) hqlQuery.uniqueResult();
 		if (sbiObjParview == null) {

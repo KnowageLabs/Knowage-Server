@@ -395,17 +395,17 @@ angular
                  $scope.paruses = driversService.driverParuses;
                  $scope.dataDependencyModel = {};
                  $scope.selectedDataCondition = driversService.dataDependencyObjects[selectedDataCondition];
-                 $scope.selectedDataCondition.paruseId=selectedDriver.parID;
+                 //if(!$scope.selectedDataCondition.paruseId)
+                 //$scope.selectedDataCondition.paruseId=selectedDriver.parID;
                  $scope.selectedDataCondition.persist ={};
 
                  var selectedParuse = [];
      			for(var j = 0; j < $scope.driversService.driverParuses.length;j++){
-     				if($scope.driversService.driverParuses[j].useID == $scope.selectedDriver.useID)
+     				if($scope.driversService.driverParuses[j].id == $scope.selectedDriver.parID)
      					selectedParuse.push($scope.driversService.driverParuses[j]);
      			}
                 // var selectedParuse = driversService.driverParuses.filter(par => par.useID == $scope.selectedDriver.parID);
-                 if (selectedParuse[0])
-                 $scope.selectedDataCondition.persist[(selectedParuse)[0].useID] = true;
+
 
                  $scope.paruseColumns[$scope.selectedDataCondition.paruseId] = $scope.selectedDataCondition.filterColumn;
                  $scope.driversService.paruseColumns = $scope.paruseColumns;
@@ -487,7 +487,37 @@ angular
                   		  return  $scope.drivers[i].name;
                   	  }
                   }
+                 var paruseIndex;
+                 $scope.isItChecked = function(index){
 
+                 var itIsChecked = false;
+
+                	 for(var i = 0; i < selectedParuse.length;i++){
+                	 if($scope.selectedDataCondition.paruseId == selectedParuse[i].useID ){
+                		 paruseIndex = i;
+                		 $scope.selectedDataCondition.persist[(selectedParuse)[i].useID] = true;
+                		 break;
+                	 }
+                	 }
+                	 if(paruseIndex && paruseIndex == index){
+                	 	 return true;
+                	 }else if (!paruseIndex && index == 0){
+                		  $scope.selectedDataCondition.persist[(selectedParuse)[0].useID] = true;
+                		  $scope.paruseColumns[(selectedParuse)[0].useID] = ($scope.getLovColumnsForParuse((selectedParuse)[0]))[0];
+                	 	return true;
+                	 }else return false;
+
+                 }
+
+                 $scope.hasParuseColumns = function(){
+                	 var hasColumns = false;
+                	 for(var i=0; i< selectedParuse.length;i++){
+                		 if($scope.getLovColumnsForParuse(selectedParuse[i])){
+                			 return true;
+                		 }
+                	 }
+                	 return false;
+                 }
                 }
              self.setParameterInfo = function(driver){
             	 if(driversService.analyticalDrivers){

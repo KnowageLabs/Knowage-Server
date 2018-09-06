@@ -24,6 +24,15 @@ import java.io.Serializable;
  */
 public class ObjParview extends AbstractParview implements Serializable {
 
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	private Integer id;
 	private Integer objParId;
 	private Integer objParFatherId;
 	private String objParFatherUrlName;

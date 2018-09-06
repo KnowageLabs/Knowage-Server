@@ -214,12 +214,12 @@
 	      	       			}
 	      	       			newDataDependency.filterColumn =  filterColumns[j];
 	      	       		var paruse = [];
-            			for(var j = 0; j < driversResource.driverParuses.length;j++){
-            				if(driversResource.driverParuses[j].useID == persistances[j])
-            					existingDriverList.push(driversResource.driverParuses[j]);
+            			for(var k = 0; k < driversResource.driverParuses.length;k++){
+            				if(driversResource.driverParuses[k].useID == persistances[j])
+            					paruse.push(driversResource.driverParuses[j]);
             			}
+	      	       			}
 	      	       			//var paruse = driversResource.driverParuses.filter(par => par.useID==persistances[j])
-
 	      	       			newDataDependency.paruseId= paruse[0].useID;
 	      			        		if(isNew){
 	      			        			prepareDependencyForPersisting(newDataDependency);
@@ -240,11 +240,10 @@
 	      			        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.datadependecyupdated"), 'Success!');
 	      			        			});
 	      			        			newDataDependency.prog++;
-	      	       			}
+
 	      	       		}
 	      	       	}
-	      	       };
-
+	      	       }
 	      	     }
 	      	     var prepareDependencyForPersisting = function(dependency){
 	             	delete dependency.newDependency;

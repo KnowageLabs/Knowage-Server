@@ -24,9 +24,18 @@ import java.io.Serializable;
  */
 public class ObjParuse extends AbstractParuse implements Serializable {
 
+	private Integer id;
 	private Integer objParFatherId;
 	private String objParFatherUrlName;
 	private Integer objParId;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public Integer getObjParFatherId() {
 		return objParFatherId;

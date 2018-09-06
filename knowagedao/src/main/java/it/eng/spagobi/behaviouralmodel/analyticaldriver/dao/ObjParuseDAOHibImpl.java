@@ -31,7 +31,6 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuseId;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
@@ -47,11 +46,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	/**
 	 * Modify obj paruse.
 	 *
-	 * @param aObjParuse
-	 *            the a obj paruse
+	 * @param aObjParuse the a obj paruse
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#modifyObjParuse(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse)
 	 */
@@ -68,14 +65,10 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			 * aObjParuse.getParuseId() + " and s.id.sbiObjParFather.objParId = " + aObjParuse.getObjParFatherId() + " and s.id.filterOperation = '" +
 			 * aObjParuse.getFilterOperation()+"'";
 			 */
-			String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = ? " + " and s.id.sbiParuse.useId = ? " + " and s.id.sbiObjParFather.objParId = ? "
-					+ " and s.id.filterOperation = ? ";
+			String hql = "from SbiObjParuse s where s.id= ? ";
 
 			Query hqlQuery = aSession.createQuery(hql);
-			hqlQuery.setInteger(0, aObjParuse.getObjParId().intValue());
-			hqlQuery.setInteger(1, aObjParuse.getParuseId().intValue());
-			hqlQuery.setInteger(2, aObjParuse.getObjParFatherId().intValue());
-			hqlQuery.setString(3, aObjParuse.getFilterOperation());
+			hqlQuery.setInteger(0, aObjParuse.getId().intValue());
 
 			SbiObjParuse sbiObjParuse = (SbiObjParuse) hqlQuery.uniqueResult();
 			if (sbiObjParuse == null) {
@@ -93,12 +86,11 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse",
 						"the BIObjectParameter with " + "id=" + aObjParuse.getObjParFatherId() + " does not exist.");
 			}
-			SbiObjParuseId correlationId = new SbiObjParuseId();
-			correlationId.setSbiObjPar(sbiObjPar);
-			correlationId.setSbiParuse(sbiParuse);
-			correlationId.setSbiObjParFather(sbiObjParFather);
-			correlationId.setFilterOperation(aObjParuse.getFilterOperation());
-			SbiObjParuse correlation = new SbiObjParuse(correlationId);
+			SbiObjParuse correlation = new SbiObjParuse(aObjParuse.getParuseId());
+			correlation.setSbiObjPar(sbiObjPar);
+			correlation.setSbiParuse(sbiParuse);
+			correlation.setSbiObjParFather(sbiObjParFather);
+			correlation.setFilterOperation(aObjParuse.getFilterOperation());
 			correlation.setProg(aObjParuse.getProg());
 			correlation.setFilterColumn(aObjParuse.getFilterColumn());
 			correlation.setPreCondition(aObjParuse.getPreCondition());
@@ -129,11 +121,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	/**
 	 * Insert obj paruse.
 	 *
-	 * @param aObjParuse
-	 *            the a obj paruse
+	 * @param aObjParuse the a obj paruse
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#insertObjParuse(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse)
 	 */
@@ -153,12 +143,12 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 						"the BIObjectParameter with " + "id=" + aObjParuse.getObjParFatherId() + " does not exist.");
 
 			}
-			SbiObjParuseId correlationId = new SbiObjParuseId();
-			correlationId.setSbiObjPar(sbiObjPar);
-			correlationId.setSbiParuse(sbiParuse);
-			correlationId.setSbiObjParFather(sbiObjParFather);
-			correlationId.setFilterOperation(aObjParuse.getFilterOperation());
-			SbiObjParuse correlation = new SbiObjParuse(correlationId);
+			SbiObjParuse correlation = new SbiObjParuse();
+
+			correlation.setSbiObjPar(sbiObjPar);
+			correlation.setSbiParuse(sbiParuse);
+			correlation.setSbiObjParFather(sbiObjParFather);
+			correlation.setFilterOperation(aObjParuse.getFilterOperation());
 			correlation.setProg(aObjParuse.getProg());
 			correlation.setFilterColumn(aObjParuse.getFilterColumn());
 			correlation.setPreCondition(aObjParuse.getPreCondition());
@@ -183,11 +173,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	/**
 	 * Erase obj paruse.
 	 *
-	 * @param aObjParuse
-	 *            the a obj paruse
+	 * @param aObjParuse the a obj paruse
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#eraseObjParuse(ObjParuse)
 	 */
@@ -227,13 +215,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 		 * aObjParuse.getParuseId() + " and s.id.sbiObjParFather.objParId = " + aObjParuse.getObjParFatherId() + " and s.id.filterOperation = '" +
 		 * aObjParuse.getFilterOperation() + "'";
 		 */
-		String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = ? " + " and s.id.sbiParuse.useId = ? " + " and s.id.sbiObjParFather.objParId = ? "
-				+ " and s.id.filterOperation = ? ";
+		String hql = "from SbiObjParuse s where s.id = ? ";
 		Query hqlQuery = aSession.createQuery(hql);
-		hqlQuery.setInteger(0, aObjParuse.getObjParId().intValue());
-		hqlQuery.setInteger(1, aObjParuse.getParuseId().intValue());
-		hqlQuery.setInteger(2, aObjParuse.getObjParFatherId().intValue());
-		hqlQuery.setString(3, aObjParuse.getFilterOperation());
+		hqlQuery.setInteger(0, aObjParuse.getId().intValue());
 
 		SbiObjParuse sbiObjParuse = (SbiObjParuse) hqlQuery.uniqueResult();
 		if (sbiObjParuse == null) {
@@ -246,13 +230,11 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	/**
 	 * Load obj paruses.
 	 *
-	 * @param objParId
-	 *            the obj par id
+	 * @param objParId the obj par id
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#loadObjParuses(Integer)
 	 */
@@ -265,7 +247,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			// String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + objParId + " order by s.prog";
-			String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = ? order by s.prog";
+			String hql = "from SbiObjParuse s where s.sbiObjPar.objParId = ? order by s.prog";
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, objParId.intValue());
 			List sbiObjParuses = hqlQuery.list();
@@ -291,8 +273,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	/**
 	 * From the hibernate SbiObjParuse at input, gives the corrispondent <code>ObjParuse</code> object.
 	 *
-	 * @param aSbiObjParuse
-	 *            The hybernate SbiObjParuse
+	 * @param aSbiObjParuse The hybernate SbiObjParuse
 	 *
 	 * @return The corrispondent <code>ObjParuse</code>
 	 */
@@ -300,29 +281,28 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 		if (aSbiObjParuse == null)
 			return null;
 		ObjParuse toReturn = new ObjParuse();
-		toReturn.setObjParId(aSbiObjParuse.getId().getSbiObjPar().getObjParId());
-		toReturn.setParuseId(aSbiObjParuse.getId().getSbiParuse().getUseId());
+		toReturn.setId(aSbiObjParuse.getId());
+		toReturn.setObjParId(aSbiObjParuse.getSbiObjPar().getObjParId());
+		toReturn.setParuseId(aSbiObjParuse.getSbiParuse().getUseId());
 		toReturn.setProg(aSbiObjParuse.getProg());
-		toReturn.setObjParFatherId(aSbiObjParuse.getId().getSbiObjParFather().getObjParId());
+		toReturn.setObjParFatherId(aSbiObjParuse.getSbiObjParFather().getObjParId());
 		toReturn.setFilterColumn(aSbiObjParuse.getFilterColumn());
-		toReturn.setFilterOperation(aSbiObjParuse.getId().getFilterOperation());
+		toReturn.setFilterOperation(aSbiObjParuse.getFilterOperation());
 		toReturn.setPreCondition(aSbiObjParuse.getPreCondition());
 		toReturn.setPostCondition(aSbiObjParuse.getPostCondition());
 		toReturn.setLogicOperator(aSbiObjParuse.getLogicOperator());
-		toReturn.setObjParFatherUrlName(aSbiObjParuse.getId().getSbiObjParFather().getParurlNm());
+		toReturn.setObjParFatherUrlName(aSbiObjParuse.getSbiObjParFather().getParurlNm());
 		return toReturn;
 	}
 
 	/**
 	 * Gets the dependencies.
 	 *
-	 * @param objParFatherId
-	 *            the obj par father id
+	 * @param objParFatherId the obj par father id
 	 *
 	 * @return the dependencies
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#getDependencies(Integer)
 	 */
@@ -336,7 +316,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			tx = aSession.beginTransaction();
 			// get all the sbiobjparuse objects which have the parameter as the father
 			// String hql = "from SbiObjParuse s where s.id.sbiObjParFather=" + objParFatherId;
-			String hql = "from SbiObjParuse s where s.id.sbiObjParFather=? ";
+			String hql = "from SbiObjParuse s where s.sbiObjParFather=? ";
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, objParFatherId.intValue());
 			List objParuses = query.list();
@@ -346,7 +326,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			Iterator it = objParuses.iterator();
 			while (it.hasNext()) {
 				SbiObjParuse objParuseHib = (SbiObjParuse) it.next();
-				Integer objParId = objParuseHib.getId().getSbiObjPar().getObjParId();
+				Integer objParId = objParuseHib.getSbiObjPar().getObjParId();
 				SbiObjPar hibObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, objParId);
 				String label = hibObjPar.getLabel();
 				if (!toReturn.contains(label)) {
@@ -371,13 +351,11 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	/**
 	 * Gets the all dependencies for parameter use.
 	 *
-	 * @param useId
-	 *            the use id
+	 * @param useId the use id
 	 *
 	 * @return the all dependencies for parameter use
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#getAllDependenciesForParameterUse(java.lang.Integer)
 	 */
@@ -390,7 +368,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			// String hql = "from SbiObjParuse s where s.id.sbiParuse.useId = " + useId;
-			String hql = "from SbiObjParuse s where s.id.sbiParuse.useId = ?";
+			String hql = "from SbiObjParuse s where s.sbiParuse.useId = ?";
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, useId.intValue());
 			List result = query.list();
@@ -416,13 +394,11 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	/**
 	 * Gets the document labels list with associated dependencies.
 	 *
-	 * @param useId
-	 *            the use id
+	 * @param useId the use id
 	 *
 	 * @return the document labels list with associated dependencies
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#getDocumentLabelsListWithAssociatedDependencies(java.lang.Integer)
 	 */
@@ -439,7 +415,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			 * "	obj.sbiObjPars.objParId = s.id.sbiObjPar.objParId and " + "	s.id.sbiParuse.useId = " + useId;
 			 */
 			String hql = "select " + "	distinct(obj.label) " + "from " + "	SbiObjects obj, SbiObjPar p, SbiObjParuse s " + "where "
-					+ "	obj.biobjId = p.sbiObject.biobjId and " + "	p.objParId = s.id.sbiObjPar.objParId and " + "	s.id.sbiParuse.useId = ?";
+					+ "	obj.biobjId = p.sbiObject.biobjId and " + "	p.objParId = s.sbiObjPar.objParId and " + "	s.sbiParuse.useId = ?";
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, useId.intValue());
 			List result = query.list();
@@ -462,15 +438,12 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	/**
 	 * Load obj paruse.
 	 *
-	 * @param objParId
-	 *            the obj par id
-	 * @param paruseId
-	 *            the paruse id
+	 * @param objParId the obj par id
+	 * @param paruseId the paruse id
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#loadObjParuse(java.lang.Integer, java.lang.Integer)
 	 */
@@ -490,7 +463,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			/*
 			 * String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId=" + objParId + " and s.id.sbiParuse.useId=" + paruseId + " order by s.prog";
 			 */
-			String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId=? " + " and s.id.sbiParuse.useId=? " + " order by s.prog";
+			String hql = "from SbiObjParuse s where s.sbiObjPar.objParId=? " + " and s.sbiParuse.useId=? " + " order by s.prog";
 
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, objParId.intValue());
@@ -528,13 +501,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 		 * aObjParuse.getParuseId() + " and s.id.sbiObjParFather.objParId = " + aObjParuse.getObjParFatherId() + " and s.id.filterOperation = '" +
 		 * aObjParuse.getFilterOperation() + "'";
 		 */
-		String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = ? " + " and s.id.sbiParuse.useId = ? " + " and s.id.sbiObjParFather.objParId = ? "
-				+ " and s.id.filterOperation = ? ";
+		String hql = "from SbiObjParuse s where s.id = ? ";
 		Query hqlQuery = aSession.createQuery(hql);
-		hqlQuery.setInteger(0, aObjParuse.getObjParId().intValue());
-		hqlQuery.setInteger(1, aObjParuse.getParuseId().intValue());
-		hqlQuery.setInteger(2, aObjParuse.getObjParFatherId().intValue());
-		hqlQuery.setString(3, aObjParuse.getFilterOperation());
+		hqlQuery.setInteger(0, aObjParuse.getId().intValue());
 
 		SbiObjParuse sbiObjParuse = (SbiObjParuse) hqlQuery.uniqueResult();
 		if (sbiObjParuse == null) {
@@ -552,7 +521,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			// String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + objParId + " order by s.prog";
-			String hql = "from SbiObjParuse s where s.id.sbiObjParFather.objParId = ? order by s.prog";
+			String hql = "from SbiObjParuse s where s.sbiObjParFather.objParId = ? order by s.prog";
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, objParId.intValue());
 			List sbiObjParuses = hqlQuery.list();

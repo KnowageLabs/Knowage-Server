@@ -41,10 +41,11 @@
 	                    </md-select>
 	                </md-input-container>
 <hr>
+				<div ng-if="hasParuseColumns()">
 					<div  ng-repeat="paruse in paruses | filter:{id:selectedDriver.parID} ">	
 						<div>		  
 						<label> {{translate.load("sbi.documentdetails.datadependency.check")}}</label>
-						<input type="checkbox" ng-checked="selectedDataCondition.paruseId == paruse.useID || $index == 0" ng-model="selectedDataCondition.persist[paruse.useID]">
+						<input type="checkbox" ng-checked="isItChecked($index)"  ng-model="selectedDataCondition.persist[paruse.useID]">
 						{{selectedDataCondition.persist[paruse.useID]}}
                       <h3>{{translate.load("sbi.documentdetails.datadependency.usename")}}</h3>
 	                   <p><h4>{{paruse.name}} : {{paruse.description}} </h4></p>
@@ -57,7 +58,7 @@
 	             		</md-select>  
 	             		</div>	                 
 	            	</div> 
-	            
+	            </div>
 			</div>
 	        </md-dialog-content>
 	        <md-dialog-actions layout="row">

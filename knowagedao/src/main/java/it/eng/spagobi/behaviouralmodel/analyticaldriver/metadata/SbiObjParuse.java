@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,18 +11,22 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata;
 
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 public class SbiObjParuse extends SbiHibernateModel {
 
-
-	private SbiObjParuseId id;
+	private Integer id;
+	private SbiParuse sbiParuse;
+	private SbiObjPar sbiObjPar;
+	private SbiObjPar sbiObjParFather;
+	private String filterOperation;
 	private Integer prog;
 	private String filterColumn;
 	private String preCondition;
@@ -39,16 +43,48 @@ public class SbiObjParuse extends SbiHibernateModel {
 
 	/**
 	 * constructor with id.
-	 * 
+	 *
 	 * @param id the id
 	 */
-	public SbiObjParuse(SbiObjParuseId id) {
+	public SbiObjParuse(Integer id) {
 		this.id = id;
+	}
+
+	public SbiParuse getSbiParuse() {
+		return sbiParuse;
+	}
+
+	public void setSbiParuse(SbiParuse sbiParuse) {
+		this.sbiParuse = sbiParuse;
+	}
+
+	public SbiObjPar getSbiObjPar() {
+		return sbiObjPar;
+	}
+
+	public void setSbiObjPar(SbiObjPar sbiObjPar) {
+		this.sbiObjPar = sbiObjPar;
+	}
+
+	public SbiObjPar getSbiObjParFather() {
+		return sbiObjParFather;
+	}
+
+	public void setSbiObjParFather(SbiObjPar sbiObjParFather) {
+		this.sbiObjParFather = sbiObjParFather;
+	}
+
+	public String getFilterOperation() {
+		return filterOperation;
+	}
+
+	public void setFilterOperation(String filterOperation) {
+		this.filterOperation = filterOperation;
 	}
 
 	/**
 	 * Gets the filter column.
-	 * 
+	 *
 	 * @return the filter column
 	 */
 	public String getFilterColumn() {
@@ -57,7 +93,7 @@ public class SbiObjParuse extends SbiHibernateModel {
 
 	/**
 	 * Sets the filter column.
-	 * 
+	 *
 	 * @param filterColumn the new filter column
 	 */
 	public void setFilterColumn(String filterColumn) {
@@ -66,7 +102,7 @@ public class SbiObjParuse extends SbiHibernateModel {
 
 	/**
 	 * Gets the logic operator.
-	 * 
+	 *
 	 * @return the logic operator
 	 */
 	public String getLogicOperator() {
@@ -75,7 +111,7 @@ public class SbiObjParuse extends SbiHibernateModel {
 
 	/**
 	 * Sets the logic operator.
-	 * 
+	 *
 	 * @param logicOperator the new logic operator
 	 */
 	public void setLogicOperator(String logicOperator) {
@@ -84,7 +120,7 @@ public class SbiObjParuse extends SbiHibernateModel {
 
 	/**
 	 * Gets the post condition.
-	 * 
+	 *
 	 * @return the post condition
 	 */
 	public String getPostCondition() {
@@ -93,7 +129,7 @@ public class SbiObjParuse extends SbiHibernateModel {
 
 	/**
 	 * Sets the post condition.
-	 * 
+	 *
 	 * @param postCondition the new post condition
 	 */
 	public void setPostCondition(String postCondition) {
@@ -102,7 +138,7 @@ public class SbiObjParuse extends SbiHibernateModel {
 
 	/**
 	 * Gets the pre condition.
-	 * 
+	 *
 	 * @return the pre condition
 	 */
 	public String getPreCondition() {
@@ -111,7 +147,7 @@ public class SbiObjParuse extends SbiHibernateModel {
 
 	/**
 	 * Sets the pre condition.
-	 * 
+	 *
 	 * @param preCondition the new pre condition
 	 */
 	public void setPreCondition(String preCondition) {
@@ -120,7 +156,7 @@ public class SbiObjParuse extends SbiHibernateModel {
 
 	/**
 	 * Gets the prog.
-	 * 
+	 *
 	 * @return the prog
 	 */
 	public Integer getProg() {
@@ -129,7 +165,7 @@ public class SbiObjParuse extends SbiHibernateModel {
 
 	/**
 	 * Sets the prog.
-	 * 
+	 *
 	 * @param prog the new prog
 	 */
 	public void setProg(Integer prog) {
@@ -138,22 +174,20 @@ public class SbiObjParuse extends SbiHibernateModel {
 
 	/**
 	 * Gets the id.
-	 * 
+	 *
 	 * @return the id
 	 */
-	public SbiObjParuseId getId() {
+	public Integer getId() {
 		return id;
 	}
 
 	/**
 	 * Sets the id.
-	 * 
+	 *
 	 * @param objparuseId the new id
 	 */
-	public void setId(SbiObjParuseId objparuseId) {
+	public void setId(Integer objparuseId) {
 		this.id = objparuseId;
 	}
-
-
 
 }
