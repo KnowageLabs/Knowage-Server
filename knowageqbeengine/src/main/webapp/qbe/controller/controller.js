@@ -273,7 +273,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		sbiModule_action.promisePost('SET_CATALOGUE_ACTION',queryParam,item, conf).then(function(response){
 			$scope.getSQL();
 		}, function(response){
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load("kn.qbe.general.error"));
 		});
 	});
 
@@ -305,7 +305,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	        		     .ok($scope.translate.load("kn.qbe.general.ok"))
 	            );
 		}, function(response){
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load("kn.qbe.general.error"));
 		});
 	}
 
@@ -731,10 +731,10 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     	deleteCalclatedFieldAction.formParams.field = field ;
     	deleteCalclatedFieldAction.executeAction().then(function(){
     		 $scope.getEntityTree();
-    		 sbiModule_messaging.showSuccessMessage("Calculated field is deleted", 'Success!');
+    		 sbiModule_messaging.showSuccessMessage($scope.translate.load("kn.qbe.calculatedFields.delete"), $scope.translate.load("kn.qbe.general.success"));
     	},
     	 function(response){
-    		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+    		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load("kn.qbe.general.error"));
 		})
 	}
     
@@ -793,7 +793,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     	entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
    			$scope.entityModel = response.data;
    		}, function(response){
-   			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+   			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load("kn.qbe.general.error"));
    		});
     }
     
@@ -813,9 +813,9 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     	
     	addCalclatedFieldAction.executeAction().then(function(){
     		$scope.getEntityTree();
-     		sbiModule_messaging.showSuccessMessage("Calculated field is added", 'Success!');
+     		sbiModule_messaging.showSuccessMessage("Calculated field is added", $scope.translate.load("kn.qbe.general.success"));
     	},function(response){
-    		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+    		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load("kn.qbe.general.error"));
 		})
     }
 
