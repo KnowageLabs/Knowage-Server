@@ -24,30 +24,24 @@ public interface IJpaCalculatedColumn {
 	public static final String PRIVATE_SCOPE = "private"; //$NON-NLS-1$
 
 	/**
-	 * 
+	 *
 	 * @return the parent table
 	 */
 	IJpaTable getJpaTable();
-	
+
 	String getName();
-	
+
 	String getDescription();
-	
+
+	String getNature();
+
 	String getDataType();
-	
-    String getExpression();
 
+	String getExpression();
 
-	
-	
 	/**
 	 * @return the value of the specified column attribute
 	 */
 	public String getAttribute(String name);
-	
-	
 
-
-
-	
 }

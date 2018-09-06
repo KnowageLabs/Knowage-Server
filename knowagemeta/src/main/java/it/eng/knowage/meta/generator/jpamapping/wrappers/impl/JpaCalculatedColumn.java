@@ -46,6 +46,7 @@ import it.eng.qbe.utility.bo.CustomizedFunction;
 public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 	public static final String CALCULATED_COLUMN_EXPRESSION = "structural.expression";
 	public static final String CALCULATED_COLUMN_DATATYPE = "structural.datatype";
+	public static final String CALCULATED_COLUMN_NATURE = "structural.columntype";
 
 	CalculatedBusinessColumn businessCalculatedColumn;
 	AbstractJpaTable jpaTable;
@@ -201,6 +202,12 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public String getNature() {
+		ModelProperty property = businessCalculatedColumn.getProperties().get(CALCULATED_COLUMN_NATURE);
+		return property != null ? property.getValue() : "";
 	}
 
 }
