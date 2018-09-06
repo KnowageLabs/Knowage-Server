@@ -18,7 +18,7 @@
 
 (function() {
 	
-	angular.module('qbeManager')
+	angular.module('qbe.controller')
 	  .filter('byNotExistingMembers', function($filter) {
 	    return function(array,filterProperty,filterValues,mapping,comparationArray,comparationProperty) {
 	    

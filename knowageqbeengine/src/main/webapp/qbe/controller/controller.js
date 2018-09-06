@@ -38,10 +38,11 @@ angular
 		"$mdDialog",
 		"$mdPanel",
 		"$q",
+		"byNotExistingMembersFilter",
 		qbeFunction]);
 
 
-function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, sbiModule_user, $mdDialog ,$mdPanel,$q){
+function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,formulaService,save_service,sbiModule_inputParams,sbiModule_translate,sbiModule_config,sbiModule_action,sbiModule_action_builder,sbiModule_restServices,sbiModule_messaging, sbiModule_user, $mdDialog ,$mdPanel,$q,byNotExistingMembersFilter){
 	$scope.translate = sbiModule_translate;
 	$scope.sbiModule_action_builder = sbiModule_action_builder;
 	var entityService = entity_service;
@@ -54,6 +55,8 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	$scope.entityModel = {};
 	$scope.subqueriesModel = {};
 	$scope.formulas = formulaService.getFormulas();
+	
+	
 
 	$scope.$watch('editQueryObj',function(newValue,oldValue){
 		$scope.meta.length = 0;
@@ -360,9 +363,9 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			   "fieldType":field.attributes.iconCls,
 			   "entity":field.attributes.entity,
 			   "field":field.attributes.field,
-			   "funct":field.attributes.iconCls=="measure"? "SUM":"",
+			   "funct":isColumnType(field,"measure")? "SUM":"",
 			   "color":field.color,
-			   "group":false,
+			   "group":isColumnType(field,"attribute"),
 
 			   "order":"NONE",
 			   "include":true,
@@ -379,11 +382,22 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			newField.temporal=field.temporal;
 		}
 
-		if(field.iconCls=="attribute") {
-			newField.group = true;
-		}
+		
+		
 
 		$scope.editQueryObj.fields.push(newField);
+	}
+	
+	var isColumnType = function(field,columnType){
+		return field.iconCls==columnType || isCalculatedFieldColumnType(field,columnType)
+	}
+	
+	var isInLineCalculatedField = function(field){
+		return field.attributes.type === "inLineCalculatedField"
+	}
+	
+	var isCalculatedFieldColumnType = function(inLineCalculatedField,columnType){
+		return isInLineCalculatedField(inLineCalculatedField) && inLineCalculatedField.attributes.formState.nature === columnType
 	}
 
 	$scope.colors = ['#F44336', '#673AB7', '#03A9F4', '#4CAF50', '#FFEB3B', '#3F51B5', '#8BC34A', '#009688', '#F44336'];
@@ -792,6 +806,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     $scope.getEntityTree = function(){
     	entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
    			$scope.entityModel = response.data;
+   			$scope.filteredFormulas = byNotExistingMembersFilter($scope.formulas,'type',['space'],{space:'geographic_dimension'},$scope.entityModel.entities,'iconCls')
    		}, function(response){
    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, $scope.translate.load("kn.qbe.general.error"));
    		});
