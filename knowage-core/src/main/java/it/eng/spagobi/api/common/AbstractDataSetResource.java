@@ -75,6 +75,7 @@ import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -726,6 +727,12 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 					dataSet.setParamsMap(parameters);
 				}
 				dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+			}
+			// get user profile's attributes
+			UserProfile userProfile = UserProfileManager.getProfile();
+			if (userProfile != null) {
+				Map attributes = userProfile.getUserAttributes();
+				dataSet.setUserProfileAttributes(attributes);
 			}
 
 			dataSet.loadData();
