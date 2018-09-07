@@ -42,8 +42,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						{"label":"washer","className":"ai-washer","unicode":"\67"},{"label":"washdrier","className":"ai-washdrier","unicode":"\68"},{"label":"lightbulb","className":"ai-lightbulb","unicode":"\69"},
 						{"label":"hairdyer","className":"ai-hairdyer","unicode":"\6a"},{"label":"coffee","className":"ai-coffee","unicode":"\6b"},{"label":"cappa","className":"ai-cappa","unicode":"\6c"},
 						{"label":"boiler","className":"ai-boiler","unicode":"\6d"},{"label":"aways on","className":"ai-alwayson","unicode":"\6e"},{"label":"home","className":"ai-home","unicode":"\6f"},
-						{"label":"conditioning","className":"ai-conditioning","unicode":"\f0"},{"label":"fan","className":"ai-fan","unicode":"\f1"},{"label":"vacuum","className":"ai-vacuum","unicode":"\f2"},
-						{"label":"dishwasher","className":"ai-dishwasher","unicode":"\f3"},{"label":"mixer","className":"ai-mixer","unicode":"\f4"},{"label":"mixedwasher","className":"ai-mixedwasher","unicode":"\f5"}]
+						{"label":"conditioning","className":"ai-conditioning","unicode":"\70"},{"label":"fan","className":"ai-fan","unicode":"\71"},{"label":"vacuum","className":"ai-vacuum","unicode":"\72"},
+						{"label":"dishwasher","className":"ai-dishwasher","unicode":"\73"},{"label":"mixer","className":"ai-mixer","unicode":"\74"},{"label":"mixedwasher","className":"ai-mixedwasher","unicode":"\75"},
+						{"label":"magnet","className":"ai-magnet","unicode":"\76"},{"label":"battery","className":"ai-battery","unicode":"\77"},{"label":"resistor","className":"ai-resistor","unicode":"\78"}]
 				}
 			];
 		}
