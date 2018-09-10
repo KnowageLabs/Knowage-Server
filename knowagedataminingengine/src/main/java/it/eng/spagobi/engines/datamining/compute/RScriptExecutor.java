@@ -82,14 +82,14 @@ public class RScriptExecutor {
 			logger.debug("loaded libraries from local dir (if needed)");
 			// command-->script name --> execute script without output
 			String scriptToExecute = getScriptCodeToEval(command, params);
-			logger.debug("loaded script to execute");
+			logger.debug("loaded script to execute: " + scriptToExecute);
 			// loading libraries, preprocessing, functions definition in main
 			// "auto"
 			// script
 			logger.info("creating temporary script...");
 
 			String ret = createTemporarySourceScript(scriptToExecute);
-			logger.info("created temporary script");
+			logger.info("created temporary script: " + ret);
 
 			logger.info("executing temporary script...");
 			REXP rexp = re.parseAndEval("source(\"" + ret + "\")");
