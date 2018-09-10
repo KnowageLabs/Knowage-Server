@@ -156,7 +156,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 					+ 'functionCatalogResults.jsp',
 			preserveScope : true,
 			locals : {
-				results : result,
+				results : result.data,
 				logger : $log,
 				translate : sbiModule_translate,
 				isDemo : isDemoExecution
