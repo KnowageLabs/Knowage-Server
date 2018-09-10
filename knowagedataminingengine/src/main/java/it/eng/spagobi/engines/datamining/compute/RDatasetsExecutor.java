@@ -69,18 +69,22 @@ public class RDatasetsExecutor {
 				if (ds.getType().equalsIgnoreCase("file")) {
 
 					// tries to get it from user workspace
-					REXP datasetNameInR = re.parseAndEval(ds.getName());
-					if (datasetNameInR.isNull() || datasetNameInR instanceof REXPUnknown) {
+					REXP datasetNameInR = null;
+					try {
+						datasetNameInR = re.parseAndEval(ds.getName());
+					} catch (REngineException | REXPMismatchException e) {
+						logger.debug(e);
+					}
+					if (datasetNameInR == null || datasetNameInR.isNull() || datasetNameInR instanceof REXPUnknown) {
 						logger.debug("File ds: gets default DS");
 						Boolean defaultExists = getAndEvalDefaultDataset(ds);
 						if (!defaultExists) {
-
-							File fileDSDir = new File(DataMiningUtils.getUserResourcesPath(profile) + ds.getName());
+							String path = DataMiningUtils.getUserResourcesPath(profile) + ds.getName();
+							File fileDSDir = new File(path);
 							// /find file in dir
 							File[] dsfiles = fileDSDir.listFiles();
 							if (dsfiles != null && dsfiles.length != 0) {
 								String fileDSPath = dsfiles[0].getPath();
-
 								fileDSPath = fileDSPath.replaceAll("\\\\", "/");
 
 								String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + options + ");";
@@ -91,10 +95,10 @@ public class RDatasetsExecutor {
 								} else {
 									logger.debug("Dataset " + ds.getName() + "sucessfull read");
 								}
-
+							} else {
+								logger.error("Unable to read file from path " + path);
 							}
 						}
-
 					} else {
 						// use it!
 						logger.debug("dataset " + ds.getName() + " already loaded in user workspace!");
