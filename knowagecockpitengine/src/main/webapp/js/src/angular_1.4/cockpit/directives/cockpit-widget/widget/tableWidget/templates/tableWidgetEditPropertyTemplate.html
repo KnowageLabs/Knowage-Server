@@ -1,212 +1,208 @@
 <md-card class="flexCard customTableWidgetConfiguration" >
 	<md-toolbar>
-			<div class="md-toolbar-tools">
-				<h2>{{::translate.format(translate.load('sbi.cockpit.widget.configuration'),translate.load('sbi.cockpit.widget.table'))}}</h2>
-				<span flex/>
-			</div>
-		</md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>{{::translate.format(translate.load('sbi.cockpit.widget.configuration'),translate.load('sbi.cockpit.widget.table'))}}</h2>
+			<span flex/>
+		</div>
+	</md-toolbar>
 	<md-card-content class="noPadding" layout="column" flex>
-			<md-tabs md-selected='selectedTab.tab' md-border-bottom flex>
+		<md-tabs md-border-bottom flex>
 			
-				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.columns')}}">
-					<cockpit-columns-configurator ng-if="selectedTab.tab ==0"/>
-				</md-tab>
+			<md-tab label="{{::translate.load('sbi.cockpit.widget.table.columns')}}">
+				<cockpit-columns-configurator></cockpit-columns-configurator>
+			</md-tab>
 				
-				<md-tab label="{{::translate.load('sbi.cockpit.style')}}" ng-cloak>
-					<cockpit-style-configurator ng-if="selectedTab.tab ==1" widget ng-cloak ng-model="model.style">
-						<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.widget.table.summary')" switch="true" clear="true" ng-model="model.settings.summary.enabled">
-							<div flex layout="column" ng-cloak>
-								<div layout="row" flex>
-									<div flex=20 layout="row" layout-align="start center">
-										<md-checkbox ng-model="model.settings.summary.enabled" class="md-block" ng-disabled="model.settings.summary.forceDisabled"
-									aria-label="Checkbox 1">{{::translate.load('sbi.cockpit.table.sumamry.showsummary')}}</md-checkbox>
-									</div>
-									<div flex layout=column >
-										<div flex layout="row" >
-											<md-input-container flex class="md-block">
-												<label>{{::translate.load('sbi.cockpit.table.summary.title')}}</label>
-												<input class="input_class" ng-disabled="!model.settings.summary.enabled" ng-model="model.settings.summary.title" />
-											</md-input-container>
-											<md-input-container flex class="md-block">
-												<label>{{::translate.load('sbi.cockpit.table.fontfamily')}}</label>
-												<md-select ng-disabled ="!model.settings.summary.enabled" aria-label="aria-label" ng-model="model.style.summary['font-family']">
-													<md-option ng-repeat="fam in fontFamily" value="{{fam}}">{{fam}}</md-option>
-												</md-select>
-											</md-input-container>
-											<md-input-container flex class="md-block" >
-												<label>{{::translate.load("sbi.cockpit.style.titles.font.size")}}</label>
-												<md-select ng-model="model.style.summary['font-size']" ng-disabled ="!model.settings.summary.enabled">
-													<md-option ng-repeat="fs in cockpitModule_generalOptions.fontSizeDimension" ng-value="fs.value">{{fs.label}}</md-option>
-												</md-select>
-											</md-input-container>
-										</div>
-										<div flex layout="row" >
-											<md-input-container flex class="md-block">
-												<label>{{::translate.load('sbi.cockpit.table.fontweight')}}</label>
-												<md-select ng-disabled ="!model.settings.summary.enabled" aria-label="aria-label" ng-model="model.style.summary['font-weight']">
-													<md-option ng-repeat="weight in fontWeight" value="{{weight}}">{{weight}}</md-option>
-												</md-select>
-											</md-input-container>
-											<md-input-container flex class="md-block">
-												<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
-												<color-picker options="colorPickerProperty" ng-model="model.style.summary['color']"/>
-											</md-input-container>
-											<md-input-container flex class="md-block">
-												<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
-												<color-picker options="colorPickerProperty" ng-model="model.style.summary['background-color']"/>
-											</md-input-container>
-										</div>
-											
-									</div>
+			<md-tab label="{{::translate.load('sbi.cockpit.style')}}" ng-cloak>
+				<cockpit-style-configurator widget ng-cloak ng-model="model.style">
+				
+					<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.widget.table.summary')" switch="true" clear="true" ng-model="model.settings.summary.enabled">
+						<div flex layout="column" ng-cloak>
+							<div layout="row" flex>
+								<div flex=20 layout="row" layout-align="start center">
+									<md-checkbox ng-model="model.settings.summary.enabled" class="md-block" ng-disabled="model.settings.summary.forceDisabled" aria-label="Checkbox 1">{{::translate.load('sbi.cockpit.table.sumamry.showsummary')}}</md-checkbox>
 								</div>
-							</div>
-						</cockpit-style-custom-widget-configurator>
-						
-						<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.widget.table.rows')">
-							<div flex layout="column" ng-cloak>
-								<div layout="row" flex>
-									<md-checkbox ng-model="model.settings.multiselectable" class="md-block" aria-label="Checkbox 2">
-										{{::translate.load('sbi.cockpit.table.rows.multiselectable')}}
-									</md-checkbox>
-								</div>
-								<div layout="row" flex>
-									<div flex=20 layout="row" layout-align="start center">
-										<md-checkbox ng-model="model.settings.autoRowsHeight" class="md-block" aria-label="Auto rows height">
-											{{::translate.load('sbi.cockpit.table.rows.autoAdapt')}}
-										</md-checkbox>
-									</div>
-									<div flex layout=column >
-										<div flex layout="row" >
-											<md-input-container flex class="md-block">
-												<label>{{::translate.load('sbi.cockpit.table.rows.height')}}</label>
-												<input class="input_class" ng-disabled="model.settings.autoRowsHeight" ng-model="model.style.tr.height" />
-											</md-input-container>
-										</div>
-									</div>
-								</div>
-								<div flex layout="row">
-									<div flex=20 layout="row" layout-align="start center">
-										<md-checkbox ng-model="model.settings.noData.enabled" class="md-block" aria-label="Enable nodata message">
-											{{::translate.load('sbi.cockpit.widgets.table.nodata.label')}}
-										</md-checkbox>
-									</div>
-									<md-input-container flex class="md-block">
-										<label>{{::translate.load('sbi.cockpit.widgets.table.nodata.message')}}</label>
-										<input class="input_class" ng-disabled="!model.settings.noData.enabled" ng-model="model.settings.noData.message" />
-									</md-input-container>
-								</div>
-							</div>
-						</cockpit-style-custom-widget-configurator>
-						
-						<cockpit-style-custom-widget-configurator label="'Grid'">
-							<div layout="row" flex ng-cloak>
-								<div flex=20 layout=column>
-									<div flex layout="row" layout-align="start center">
-										<md-checkbox layout-align="space-around center" ng-model="model.settings.showGrid" class="md-block"
-												aria-label="enable grid" ng-click="enableGrid()">
-											{{::translate.load('sbi.cockpit.table.grid.showgrid')}}
-										</md-checkbox>
-									</div>
-									<div flex layout="row" layout-align="start center">
-										<md-checkbox layout-align="space-around center" ng-model="model.settings.alternateRows.enabled" class="md-block"
-												aria-label="enable alternate rows" ng-click="enableAlternate()">
-											{{::translate.load('sbi.cockpit.table.alternate')}}
-										</md-checkbox>
-									</div>
-								</div>
-								<div flex layout=column >
-									<div flex layout="row" ng-init="model.style.td['border-style']='solid'">
-										<md-input-container flex=50 class="md-block">
-											<label>{{::translate.load('sbi.cockpit.table.grid.width')}}</label>
-											<input class="input_class" ng-disabled ="!model.settings.showGrid" ng-model="model.style.td['border-width']" />
-										</md-input-container>
-										<md-input-container flex=50 class="md-block">
-											<label>{{::translate.load('sbi.cockpit.table.grid.color')}}</label>
-											<color-picker options="colorPickerPropertyGrid" ng-model="model.style.td['border-color'] "/>
-										</md-input-container>
-
-									</div>
-									<div flex layout=column >
-										<div flex layout="row" >
-											<md-input-container flex=50 class="md-block">
-												<label>{{::translate.load('sbi.cockpit.table.alternate.evenrows')}}</label>
-												<color-picker options="colorPickerPropertyEvenOddRows" ng-model="model.settings.alternateRows.evenRowsColor"/>
-											</md-input-container>
-
-											<md-input-container flex=50 class="md-block">
-												<label>{{::translate.load('sbi.cockpit.table.alternate.oddrows')}}</label>
-												<color-picker options="colorPickerPropertyEvenOddRows" ng-model="model.settings.alternateRows.oddRowsColor"/>
-											</md-input-container>
-										</div>
-									</div>
-								</div>
-							</div>
-						</cockpit-style-custom-widget-configurator>
-						
-						<md-card>
-							<md-toolbar class="ternaryToolbar" >
-								<div class="md-toolbar-tools" layout="row">
-									<md-switch ng-model="model.style.th.enabled" ng-click="toggleTh()" ng-init="model.style.th.enabled = model.style.th.enabled || true">Header</md-switch>
-									<span flex></span>
-								</div>
-							</md-toolbar>
-							<md-card-content >
 								<div flex layout=column >
 									<div flex layout="row" >
 										<md-input-container flex class="md-block">
+											<label>{{::translate.load('sbi.cockpit.table.summary.title')}}</label>
+											<input class="input_class" ng-disabled="!model.settings.summary.enabled" ng-model="model.settings.summary.title" />
+										</md-input-container>
+										<md-input-container flex class="md-block">
 											<label>{{::translate.load('sbi.cockpit.table.fontfamily')}}</label>
-											<md-select aria-label="aria-label" ng-model="model.style.th['font-family']" ng-disabled="!model.style.th.enabled">
+											<md-select ng-disabled ="!model.settings.summary.enabled" aria-label="aria-label" ng-model="model.style.summary['font-family']">
 												<md-option ng-repeat="fam in fontFamily" value="{{fam}}">{{fam}}</md-option>
 											</md-select>
 										</md-input-container>
 										<md-input-container flex class="md-block" >
 											<label>{{::translate.load("sbi.cockpit.style.titles.font.size")}}</label>
-											<md-select ng-model="model.style.th['font-size']" ng-disabled="!model.style.th.enabled">
+											<md-select ng-model="model.style.summary['font-size']" ng-disabled ="!model.settings.summary.enabled">
 												<md-option ng-repeat="fs in cockpitModule_generalOptions.fontSizeDimension" ng-value="fs.value">{{fs.label}}</md-option>
 											</md-select>
 										</md-input-container>
+									</div>
+									<div flex layout="row" >
 										<md-input-container flex class="md-block">
 											<label>{{::translate.load('sbi.cockpit.table.fontweight')}}</label>
-											<md-select aria-label="aria-label" ng-model="model.style.th['font-weight']" ng-disabled="!model.style.th.enabled">
+											<md-select ng-disabled ="!model.settings.summary.enabled" aria-label="aria-label" ng-model="model.style.summary['font-weight']">
 												<md-option ng-repeat="weight in fontWeight" value="{{weight}}">{{weight}}</md-option>
 											</md-select>
 										</md-input-container>
+										<md-input-container flex class="md-block">
+											<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
+											<color-picker options="colorPickerProperty" ng-model="model.style.summary['color']"/>
+										</md-input-container>
+										<md-input-container flex class="md-block">
+											<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
+											<color-picker options="colorPickerProperty" ng-model="model.style.summary['background-color']"/>
+										</md-input-container>
 									</div>
-									<div flex layout=column >
-										<div flex layout="row" >
-											<md-input-container flex class="md-block">
-												<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
-												<color-picker options="colorPickerPropertyTh" ng-model="model.style.th.color"/>
-											</md-input-container>
-											<md-input-container flex class="md-block">
-												<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
-												<color-picker options="colorPickerPropertyTh" ng-model="model.style.th['background-color']"/>
-											</md-input-container>
-											<md-input-container flex class="md-block">
-												<label>{{::translate.load('sbi.cockpit.table.alignment')}}</label>
-												<md-select aria-label="aria-label" ng-model="model.style.th['text-align']" ng-disabled="!model.style.th.enabled">
-													<md-option ng-repeat="a in textAlign" value="{{a}}">{{a}}</md-option>
-												</md-select>
-											</md-input-container>
-										</div>
+										
+								</div>
+							</div>
+						</div>
+					</cockpit-style-custom-widget-configurator>
+					
+					<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.widget.table.rows')">
+						<div flex layout="column" ng-cloak>
+							<div layout="row" flex>
+								<md-checkbox ng-model="model.settings.multiselectable" class="md-block" aria-label="Checkbox 2">
+									{{::translate.load('sbi.cockpit.table.rows.multiselectable')}}
+								</md-checkbox>
+							</div>
+							<div layout="row" flex>
+								<div flex=20 layout="row" layout-align="start center">
+									<md-checkbox ng-model="model.settings.autoRowsHeight" class="md-block" aria-label="Auto rows height">
+										{{::translate.load('sbi.cockpit.table.rows.autoAdapt')}}
+									</md-checkbox>
+								</div>
+								<div flex layout=column >
+									<div flex layout="row" >
+										<md-input-container flex class="md-block">
+											<label>{{::translate.load('sbi.cockpit.table.rows.height')}}</label>
+											<input class="input_class" ng-disabled="model.settings.autoRowsHeight" ng-model="model.style.tr.height" />
+										</md-input-container>
 									</div>
 								</div>
-							
-							</md-card-content>
-						</md-card>
-						
-					</cockpit-style-configurator>
+							</div>
+							<div flex layout="row">
+								<div flex=20 layout="row" layout-align="start center">
+									<md-checkbox ng-model="model.settings.noData.enabled" class="md-block" aria-label="Enable nodata message">
+										{{::translate.load('sbi.cockpit.widgets.table.nodata.label')}}
+									</md-checkbox>
+								</div>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.widgets.table.nodata.message')}}</label>
+									<input class="input_class" ng-disabled="!model.settings.noData.enabled" ng-model="model.settings.noData.message" />
+								</md-input-container>
+							</div>
+						</div>
+					</cockpit-style-custom-widget-configurator>
 					
-				</md-tab>
-				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.cross')}}" ng-if="user.isTechnicalUser == 'true'">
-					<cockpit-cross-configurator ng-if="selectedTab.tab ==2" widget ng-cloak ng-model="model.cross"></cockpit-cross-configurator>
-				</md-tab>
+					<cockpit-style-custom-widget-configurator label="'Grid'">
+						<div layout="row" flex ng-cloak>
+							<div flex=20 layout=column>
+								<div flex layout="row" layout-align="start center">
+									<md-checkbox layout-align="space-around center" ng-model="model.settings.showGrid" class="md-block" aria-label="enable grid" ng-click="enableGrid()">
+										{{::translate.load('sbi.cockpit.table.grid.showgrid')}}
+									</md-checkbox>
+								</div>
+								<div flex layout="row" layout-align="start center">
+									<md-checkbox layout-align="space-around center" ng-model="model.settings.alternateRows.enabled" class="md-block"
+											aria-label="enable alternate rows" ng-click="enableAlternate()">
+										{{::translate.load('sbi.cockpit.table.alternate')}}
+									</md-checkbox>
+								</div>
+							</div>
+							<div flex layout=column >
+								<div flex layout="row" ng-init="model.style.td['border-style']='solid'">
+									<md-input-container flex=50 class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.grid.width')}}</label>
+										<input class="input_class" ng-disabled ="!model.settings.showGrid" ng-model="model.style.td['border-width']" />
+									</md-input-container>
+									<md-input-container flex=50 class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.grid.color')}}</label>
+										<color-picker options="colorPickerPropertyGrid" ng-model="model.style.td['border-color'] "/>
+									</md-input-container>
 
-				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}">
-					<cockpit-filters-configuration ng-model-shared="model" ></cockpit-filters-configuration>
-				</md-tab>
+								</div>
+								<div flex layout=column >
+									<div flex layout="row" >
+										<md-input-container flex=50 class="md-block">
+											<label>{{::translate.load('sbi.cockpit.table.alternate.evenrows')}}</label>
+											<color-picker options="colorPickerPropertyEvenOddRows" ng-model="model.settings.alternateRows.evenRowsColor"/>
+										</md-input-container>
+
+										<md-input-container flex=50 class="md-block">
+											<label>{{::translate.load('sbi.cockpit.table.alternate.oddrows')}}</label>
+											<color-picker options="colorPickerPropertyEvenOddRows" ng-model="model.settings.alternateRows.oddRowsColor"/>
+										</md-input-container>
+									</div>
+								</div>
+							</div>
+						</div>
+					</cockpit-style-custom-widget-configurator>
+					
+					<md-card>
+						<md-toolbar class="ternaryToolbar" >
+							<div class="md-toolbar-tools" layout="row">
+								<md-switch ng-model="model.style.th.enabled" ng-click="toggleTh()" ng-init="model.style.th.enabled = model.style.th.enabled || true">Header</md-switch>
+								<span flex></span>
+							</div>
+						</md-toolbar>
+						<md-card-content >
+							<div flex layout=column >
+								<div flex layout="row" >
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.fontfamily')}}</label>
+										<md-select aria-label="aria-label" ng-model="model.style.th['font-family']" ng-disabled="!model.style.th.enabled">
+											<md-option ng-repeat="fam in fontFamily" value="{{fam}}">{{fam}}</md-option>
+										</md-select>
+									</md-input-container>
+									<md-input-container flex class="md-block" >
+										<label>{{::translate.load("sbi.cockpit.style.titles.font.size")}}</label>
+										<md-select ng-model="model.style.th['font-size']" ng-disabled="!model.style.th.enabled">
+											<md-option ng-repeat="fs in cockpitModule_generalOptions.fontSizeDimension" ng-value="fs.value">{{fs.label}}</md-option>
+										</md-select>
+									</md-input-container>
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.fontweight')}}</label>
+										<md-select aria-label="aria-label" ng-model="model.style.th['font-weight']" ng-disabled="!model.style.th.enabled">
+											<md-option ng-repeat="weight in fontWeight" value="{{weight}}">{{weight}}</md-option>
+										</md-select>
+									</md-input-container>
+								</div>
+								<div flex layout=column >
+									<div flex layout="row" >
+										<md-input-container flex class="md-block">
+											<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
+											<color-picker options="colorPickerPropertyTh" ng-model="model.style.th.color"/>
+										</md-input-container>
+										<md-input-container flex class="md-block">
+											<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
+											<color-picker options="colorPickerPropertyTh" ng-model="model.style.th['background-color']"/>
+										</md-input-container>
+										<md-input-container flex class="md-block">
+											<label>{{::translate.load('sbi.cockpit.table.alignment')}}</label>
+											<md-select aria-label="aria-label" ng-model="model.style.th['text-align']" ng-disabled="!model.style.th.enabled">
+												<md-option ng-repeat="a in textAlign" value="{{a}}">{{a}}</md-option>
+											</md-select>
+										</md-input-container>
+									</div>
+								</div>
+							</div>
+						</md-card-content>
+					</md-card>
+				</cockpit-style-configurator>
 				
-			</md-tabs>
+			</md-tab>
+			<md-tab label="{{::translate.load('sbi.cockpit.widget.table.cross')}}" ng-if="user.isTechnicalUser == 'true'">
+				<cockpit-cross-configurator widget ng-cloak ng-model="model.cross"></cockpit-cross-configurator>
+			</md-tab>
+			<md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}">
+				<cockpit-filters-configuration ng-model-shared="model" ></cockpit-filters-configuration>
+			</md-tab>
+				
+		</md-tabs>
 	</md-card-content>
 	<md-card-actions layout="row" layout-align="end center">
 		<span flex></span>

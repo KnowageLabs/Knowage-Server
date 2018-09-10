@@ -1,23 +1,19 @@
-<md-card class="flexCard customTableWidgetConfiguration" >
+<md-card class="flexCard customTableWidgetConfiguration" ng-cloak >
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>{{::translate.format(translate.load('sbi.cockpit.widget.configuration'),translate.load('sbi.cockpit.widget.selector'))}}</h2>
+			<span flex/>
+		</div>
+	</md-toolbar>
 	<md-card-content flex layout="column" class="noPadding">
-
-		<md-toolbar>
-			<div class="md-toolbar-tools">
-				<h2>{{::translate.format(translate.load('sbi.cockpit.widget.configuration'),translate.load('sbi.cockpit.widget.selector'))}}</h2>
-				<span flex/>
-			</div>
-		</md-toolbar>
-
-		<md-content flex layout="column" >
-			<md-tabs md-selected='selectedTab.tab' md-border-bottom flex>
+			<md-tabs md-border-bottom flex>
 			
 				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.columns')}}">
-					<cockpit-selector-configurator ng-if="selectedTab.tab ==0"/>
+					<cockpit-selector-configurator ></cockpit-selector-configurator>
 				</md-tab>
 				
-				<md-tab label="{{::translate.load('sbi.cockpit.style')}}" ng-cloak>
-					<cockpit-style-configurator ng-if="selectedTab.tab ==1" widget ng-cloak ng-model="model.style">
-					</cockpit-style-configurator>
+				<md-tab label="{{::translate.load('sbi.cockpit.style')}}">
+					<cockpit-style-configurator ng-model="model.style"></cockpit-style-configurator>
 				</md-tab>
 
 				<md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}">
@@ -25,7 +21,6 @@
 				</md-tab>
 				
 			</md-tabs>
-		</md-content>
 	</md-card-content>
 	
 	<md-card-actions layout="row" layout-align="end center">
