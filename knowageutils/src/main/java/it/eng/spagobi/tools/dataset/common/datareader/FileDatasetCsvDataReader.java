@@ -210,8 +210,8 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 							}
 							//check if it's a Date
 							else {
-								DateTimeFormatter formatter = DateTimeFormat.forPattern(dateFormat);
 								try {
+									DateTimeFormatter formatter = DateTimeFormat.forPattern(dateFormat);
 									LocalDate localDate = LocalDate.parse((String) field.getValue(), formatter);
 									//Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 									Date date = localDate.toDate();
