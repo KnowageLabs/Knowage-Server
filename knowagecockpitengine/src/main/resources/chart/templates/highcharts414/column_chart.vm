@@ -1317,6 +1317,8 @@
 						#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 						#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
 						#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
+						
+						#if($serieValue!="")
 						{
 							##drilldown: $enableDrilldown,
 							drilldown: $drilldownEnabledFlag,
@@ -1342,7 +1344,7 @@
 							#end
 							#end
 						},
-					 
+					 #end
 					#end
 				#end
 	    	],
