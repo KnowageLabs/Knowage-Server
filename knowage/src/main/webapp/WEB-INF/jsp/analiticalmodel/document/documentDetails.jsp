@@ -84,7 +84,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			                </md-tab-body>
 			            </md-tab>
 
-			            <md-tab ng-if="ddc.docId && ddc.typeCode=='REPORT' && ddc.engine=='knowagejasperreporte'">
+			            <md-tab ng-if="ddc.docId && ddc.typeCode=='REPORT' && ddc.engine=='knowagejasperreporte'" ng-click="ddc.getAllDocuments()">
 			            	<md-tab-label>
 			            		<div ng-class="documentDetailsForm.subreports.$invalid ? 'kn-dangerous':''">Subreports</div>
 			            	</md-tab-label>

@@ -86,7 +86,6 @@ List types =  domainDao.loadListDomainsByTypeAndTenant("BIOBJ_TYPE");
 List engines =  engineDao.loadAllEnginesByTenant();
 List states = domainDao.loadListDomainsByType("STATE");
 List<Parameter> analyticalDrivers = analyticalDriversDao.loadAllParameters();
-List<BIObject> documents = documentDao.loadAllBIObjects();
 
 List<IDataSource> datasources = dataSourceDAO.loadAllDataSources();
 
@@ -95,7 +94,6 @@ String JSONtypes = JsonConverter.objectToJson(types, types.getClass());
 String JSONstates = JsonConverter.objectToJson(states, states.getClass());
 String JSONanalyticalDrivers = JsonConverter.objectToJson(analyticalDrivers, analyticalDrivers.getClass());
 String JSONdatasources = JsonConverter.objectToJson(datasources, datasources.getClass());
-String JSONdocuments = JsonConverter.objectToJson(documents, documents.getClass());
 
 int idDriver;
 	//Informations about document if u are changing existing
@@ -129,6 +127,5 @@ if(documentNumber != null){
 	 documentAndInfo.engines = <%= JSONengines %>
 	 documentAndInfo.states = <%= JSONstates %>
 	 documentAndInfo.analyticalDrivers =<%= JSONanalyticalDrivers %>
-	 documentAndInfo.documents = <%= JSONdocuments %>
 </script>
 

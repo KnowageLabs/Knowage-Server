@@ -24,6 +24,7 @@ angular
 
         	   var self = this;
         	   var documentService = DocumentService;
+        	   self.documentService = DocumentService;
          	   self.translate = sbiModule_translate;
          	   self.document = DocumentService.document;
          	   self.documentInfoObject = $location.search();
@@ -31,14 +32,13 @@ angular
          	   var documentBasePath = "";
         	   var resourceName = DocumentService.requiredPath; 
         	   var basePath = id + "/" + 'subreports';
-         	   self.listOfDocuments = documentAndInfo.documents;
          	   self.listOfSubreports = [];
-         	   self.showSelected = true;
-              
+         	   self.showSelected = true;         	 
+         	   
               self.getSubreportsForMasterDocument = function(id) {
             	  resourceService.get(resourceName, basePath)
             	  .then(function(response) {
-            		  self.listOfSubreports = response.data;            		  
+            		  self.documentService.documentsList = response.data;            		  
             		  documentService.savedSubreports = response.data;
             		  console.log(response);
             	  }, function(response) {
@@ -48,16 +48,7 @@ angular
               
               self.getSubreportsForMasterDocument(id);
               
-              self.setChecked = function() {
-            	  for(var i = 0; i < self.listOfDocuments.length; i++) {
-            		  for(var j = 0; j < self.listOfSubreports.length; j++) {
-            			  if(self.listOfDocuments[i].id == self.listOfSubreports[j].sub_rpt_id) {
-            				  self.listOfDocuments[i].wanted = true;
-            			  }
-            		  }
-            	  }
-            	  return self.listOfDocuments;
-              }
+              
        }])
           
 })();

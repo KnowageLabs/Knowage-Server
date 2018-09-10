@@ -25,7 +25,7 @@
                 </md-toolbar>
                 
                 <kn-custom-list class="h42" ng-if="ds.showSelected">
-                    <kn-list-item ng-repeat="document in ds.listOfDocuments">                        
+                    <kn-list-item ng-repeat="document in ds.documentService.documentsList">                        
                     	<div layout="row" layout-align="center center" class="row layout-align-center-center">
 			            	<span class="flex" flex> {{ document.label }} </span>
 			                <span class="flex" flex>{{ document.name }} </span>
@@ -37,7 +37,7 @@
                 </kn-custom-list>
                 
                 <kn-custom-list class="h42" ng-if="!ds.showSelected">
-                    <kn-list-item ng-repeat="document in ds.listOfDocuments" ng-if="document.wanted == true">                        
+                    <kn-list-item ng-repeat="document in ds.documentService.documentsList" ng-if="document.wanted == true">                        
                     	<div layout="row" layout-align="center center" class="row layout-align-center-center">
 			            	<span class="flex" flex> {{ document.label }} </span>
 			                <span class="flex" flex>{{ document.name }} </span>
