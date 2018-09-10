@@ -218,7 +218,7 @@
             				if(driversResource.driverParuses[k].useID == persistances[j])
             					paruse.push(driversResource.driverParuses[j]);
             			}
-	      	       			}
+
 	      	       			//var paruse = driversResource.driverParuses.filter(par => par.useID==persistances[j])
 	      	       			newDataDependency.paruseId= paruse[0].useID;
 	      			        		if(isNew){
@@ -240,7 +240,7 @@
 	      			        				sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.datadependecyupdated"), 'Success!');
 	      			        			});
 	      			        			newDataDependency.prog++;
-
+	      			        		}
 	      	       		}
 	      	       	}
 	      	       }
