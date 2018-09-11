@@ -88,6 +88,7 @@ public class RDatasetsExecutor {
 								fileDSPath = fileDSPath.replaceAll("\\\\", "/");
 
 								String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + options + ");";
+								logger.debug("Evaluating script: " + stringToEval);
 								REXP resultRead = re.parseAndEval(stringToEval);
 								if (resultRead.inherits("try-error")) {
 									logger.error("Impossibile to read the dataset with command: " + stringToEval);
@@ -118,8 +119,8 @@ public class RDatasetsExecutor {
 					{
 						stringToEval = ds.getName() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
 					}
-					logger.debug(stringToEval);
-
+					
+					logger.debug("Evaluating script: " + stringToEval);
 					REXP resultRead = re.parseAndEval(stringToEval);
 					if (resultRead.inherits("try-error")) {
 						throw new SpagoBIRuntimeException("Impossibile to write the dataset with command: " + stringToEval + ". " + resultRead.asString());
