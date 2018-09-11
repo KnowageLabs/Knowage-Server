@@ -273,7 +273,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		}
 
     		// apply (filtered) data
-    		$scope.createLayerWithData(layerName, $scope.values[layerName], false, false);
+    		var tmpLayer = $scope.getLayerByName(layerName);
+    		$scope.createLayerWithData(layerName, $scope.values[layerName], tmpLayer.isCluster, tmpLayer.isHeatmap);
 	    }
 
 	    $scope.getOptions =function(){
@@ -362,7 +363,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		var columnsForData, isHeatmap;
     		var layerID = $scope.ngModel.id + "|" + label;
     		var layerDef =  $scope.configs[layerID];
-
 
     		if (!layerDef) return;
 
@@ -491,7 +491,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	if ($scope.closer){
 	            $scope.closer.onclick = function(){
 	            	overlay.setPosition(undefined);
-		              if ($scope.closer) $scope.closer.blur();
+		              if ($scope.closer && $scope.closer.blur) $scope.closer.blur();
 		              return false;
 	            }
 	    	}
