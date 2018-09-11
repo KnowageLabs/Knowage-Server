@@ -333,10 +333,10 @@
 
 		    // perform calculation to get weight between 0 - 1
 		    // apply formule: w = w-min/max-min (http://www.statisticshowto.com/normalized/)
-		    weight = (p.value - minmax.minValue)/(minmax.maxValue-minmax.minValue);
+//		    weight = (p.value - minmax.minValue)/(minmax.maxValue-minmax.minValue);
+		    weight = (((p.value - minmax.minValue)/(minmax.maxValue-minmax.minValue))*(1-0.3))+0.3;
 		    weight = Math.round(weight * 1000) / 1000; //round 3 digits
-//		    if (weight == 0) weight = parseFloat("0.2"); //force weight for minimum values
-//		    console.log("Id ["+ props.id.value + "] - Label [" + minmaxLabel + "] - value [" + p.value + "] - weight [" + weight+ "]");
+//		    console.log("p.value: " + p.value + " - weight: ", weight );
 		    return weight;
 		}
 
