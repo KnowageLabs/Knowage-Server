@@ -118,6 +118,7 @@ public class RDatasetsExecutor {
 					{
 						stringToEval = ds.getName() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
 					}
+					logger.debug(stringToEval);
 
 					REXP resultRead = re.parseAndEval(stringToEval);
 					if (resultRead.inherits("try-error")) {
