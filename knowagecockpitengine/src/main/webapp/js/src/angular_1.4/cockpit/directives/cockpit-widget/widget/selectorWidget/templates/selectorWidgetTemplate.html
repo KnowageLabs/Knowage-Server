@@ -35,7 +35,7 @@
 		</md-input-container>
 		
 		<!-- multiple -->
-		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue=='multiValue' && showSelection" style="width:100%">
+		<md-input-container class="md-block multipleSelect" ng-if="ngModel.settings.modalityValue=='multiValue' && showSelection" style="width:100%">
 			<div class="kn-select multipleSelect">
 				<select ng-model="selectedValues" multiple ng-change="toggleParameter(selectedValues)" 
 						ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)"></select>

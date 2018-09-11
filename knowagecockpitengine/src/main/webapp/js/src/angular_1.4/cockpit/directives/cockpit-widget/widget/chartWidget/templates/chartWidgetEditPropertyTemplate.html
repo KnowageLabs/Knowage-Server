@@ -11,7 +11,7 @@
 			<md-tabs flex md-border-bottom md-selected='selectedTab.tab'>
 		  
 		  		<md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
-		   			<dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsId)"></dataset-selector>  	
+		   			<dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsId)" dataset-type-exclusion="[{type:'SbiSolrDataSet',configuration:{property:'solrType',value:'DOCUMENTS'}}]"></dataset-selector>  	
 		     	</md-tab>
 		     	
 		     	<md-tab label="{{translate.load('sbi.cockpit.widgets.chartengine.chartEngineDesigner.title')}}" md-on-select="handleEvent('openConfiguration')" md-on-deselect="handleEvent('closeConfiguration')">

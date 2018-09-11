@@ -166,6 +166,7 @@ angular.module('cockpitModule')
 		}
 
 		$scope.refresh=function(element,width,height, datasetRecords,nature){
+			$scope.showWidgetSpinner();
 			$scope.ngModel.activeValues = null;
 
 			if(!$scope.ngModel.dataset.label){
@@ -206,7 +207,6 @@ angular.module('cockpitModule')
 					$scope.showSelection = true;
 				}, 0);
 			}
-
 			$scope.hideWidgetSpinner();
 		}
 

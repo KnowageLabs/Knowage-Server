@@ -13,7 +13,7 @@
 		  <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
 		  	<div layout="column" layout-fill ng-cloak ng-if="tabsUtils.selectedIndex==0">
 		      	
-			   <dataset-selector ng-model=localModel.dataset.dsId on-change="changeDatasetFunction(dsId)"></dataset-selector>
+			   <dataset-selector ng-model=localModel.dataset.dsId on-change="changeDatasetFunction(dsId)" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>
 			   
 			   <md-card ng-if="localModel.dataset.dsId!=undefined" layout="column" flex class="flexCard">	
 			     	<md-card-content flex layout="row" class="pivotTableDesigner" >			     		

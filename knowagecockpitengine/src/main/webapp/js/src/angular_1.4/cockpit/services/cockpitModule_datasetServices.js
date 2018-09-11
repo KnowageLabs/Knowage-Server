@@ -634,14 +634,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		bodyString = bodyString + "aggregations:" + JSON.stringify(aggregations) + ",parameters:" + parametersString;
-
 		if(page!=undefined && page>-1 && itemPerPage!=undefined && itemPerPage>-1){
 			params = params + "offset=" + (page * itemPerPage) + "&size=" + itemPerPage;
 		}else{
 			params = params + "offset=-1&size=-1";
 		}
 
-		if(ngModel.settings && ngModel.settings.summary.enabled){
+		if(ngModel.settings && ngModel.settings.summary && ngModel.settings.summary.enabled){
 			var summaryRow = ds.getSummaryRow(ngModel);
 			bodyString = bodyString + ",summaryRow:" + JSON.stringify(summaryRow);
 		}
@@ -904,7 +903,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 	}
 
-	this.addDataset=function(attachToElementWithId,container,multiple,autoAdd){
+	this.addDataset=function(attachToElementWithId,container,multiple,autoAdd,typeAvailable,typeExclusion){
 		var deferred = $q.defer();
 		var eleToAtt=document.body;
 		if(attachToElementWithId!=undefined){
@@ -940,6 +939,48 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 								}
 							}
 						}
+						if(typeAvailable){
+							var specificDatasets = [];
+							for(var y=0; y<datasetList.length; y++){
+								for(var k in typeAvailable){
+									if(datasetList[y].type == typeAvailable[k].type){
+										if(typeAvailable[k].configuration){
+											if(datasetList[y].configuration[typeAvailable[k].configuration.property] == typeAvailable[k].configuration.value) {
+												specificDatasets.push(datasetList[y]);
+												break;
+											}
+										} 
+										else {
+											specificDatasets.push(datasetList[y]);
+											break;
+										}
+									}
+								}
+								
+							}
+							datasetList = specificDatasets;
+						}
+						if(typeExclusion){
+							for(var y=0; y<datasetList.length; y++){
+								for(var k in typeExclusion){
+									if(datasetList[y].type == typeExclusion[k].type){
+										if(typeExclusion[k].configuration){
+											if(datasetList[y].configuration[typeExclusion[k].configuration.property] == typeExclusion[k].configuration.value) {
+												datasetList.splice(y,1);
+												break;
+											}
+										} 
+										else {
+											datasetList.splice(y,1);
+											break;
+										}
+									}
+								}
+								
+							}
+						}
+						
+						
 						$scope.datasetList = datasetList;
 						$scope.isDatasetListLoaded = true;
 					},function(response){
