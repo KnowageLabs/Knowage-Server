@@ -1303,7 +1303,7 @@
 	    	dataLabels: {
 	    		allowOverlap: true
 	    	},
-	    	
+	    	#set ($counterX = 0)
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 	    	  	#if($chart.isCockpitEngine != 'true')
@@ -1318,8 +1318,10 @@
 						#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
 						#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
 						
+						
 						#if($serieValue!="")
 						{
+						
 							##drilldown: $enableDrilldown,
 							drilldown: $drilldownEnabledFlag,
 							#if($relatedSerieType == 'arearange')
@@ -1336,6 +1338,8 @@
 							
 								y: $serieValue,
 							#end
+							x: $counterX,
+							
 							name: "$serieCategoryName",
 							datetype:"$datetype",
 							#if($isDateTime==true)
@@ -1344,6 +1348,9 @@
 							#end
 							#end
 						},
+						 #set ($counterX = $counterX+1)
+					 #else
+						#set ($counterX = $counterX+1)
 					 #end
 					#end
 				#end
