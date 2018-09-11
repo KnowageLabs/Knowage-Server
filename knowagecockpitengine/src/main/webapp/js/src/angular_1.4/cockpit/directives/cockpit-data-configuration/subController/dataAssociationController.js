@@ -146,7 +146,8 @@ function dataAssociationControllerFunction($scope,cockpitModule_template,cockpit
             console.log(intersection);
 
             if(intersection.size > 0) {
-                deferred.reject(sbiModule_translate.load("sbi.cockpit.association.editor.msg.solr.tuple"), intersection);
+                var message = sbiModule_translate.load("sbi.cockpit.association.editor.msg.solr.tuple") + ".\n" + sbiModule_translate.load("sbi.cockpit.association.editor.msg.solr.invalid") + "\n[" + Array.from(intersection) + "]";
+                deferred.reject(message);
                 stop=true;
             }
 		}
@@ -247,16 +248,12 @@ function dataAssociationControllerFunction($scope,cockpitModule_template,cockpit
 					 $scope.tmpEditCurrAss={};
 					 $scope.deleteCurrentAssociations();
 				 },
-				 function(message, details){
-					 if(message!=undefined){
-					     if(details != undefined) {
-					        sbiModule_messaging.showErrorMessage(message, details);
-					     } else {
-					        sbiModule_messaging.showErrorMessage(message, "");
-					     }
-					 }
-				 });
-		 
+				 function(message){
+				          if(message != undefined) {
+                               sbiModule_messaging.showErrorMessage(message, "");
+                          }
+			     }
+		);
 	 }
 	 
 	$scope.deleteCurrentAssociations=function(){
