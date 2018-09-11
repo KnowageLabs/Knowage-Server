@@ -274,6 +274,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     		// apply (filtered) data
     		var tmpLayer = $scope.getLayerByName(layerName);
+    		if (!tmpLayer){
+    			tmpLayer = {};
+    			tmpLayer.isCluster = false;
+    			tmpLayer.isHeatmap = false;
+    		}
     		$scope.createLayerWithData(layerName, $scope.values[layerName], tmpLayer.isCluster, tmpLayer.isHeatmap);
 	    }
 
