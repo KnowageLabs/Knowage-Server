@@ -46,6 +46,20 @@
 			border-top: none;
 		}
 	}
+	&.ag-theme-knowage-discovery {
+		.ag-header-cell {
+			padding: 0;
+			.ag-cell-label-container {
+				padding-left: 12px;
+				padding-right: 12px;
+			}
+		}
+		.ag-cell {
+			line-height: 100%;
+			display: inline-flex;
+			align-items: center;
+		}
+	}
 	&.ag-noBorders {
 		.ag-root {
 			border: none;

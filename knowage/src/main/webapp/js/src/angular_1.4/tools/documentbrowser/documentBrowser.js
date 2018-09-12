@@ -44,7 +44,7 @@ function documentBrowserFunction($window,
 		{"headerName":"Name","field":"name"},
 		{"headerName":"Author","field":"creationUser"},
 		{"headerName":"Label","field":"viewLabel"},
-		{"headerName":"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end"},
+		{"headerName":"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},
 			suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true,suppressMovable:true}];
 
 
@@ -109,7 +109,10 @@ function onSelectionChanged(node){
 }
 
  function buttonRenderer(params){
-	return 	'<md-button class="md-icon-button" ng-click="executeDoc(\''+params.data.id+'\',$event)"><md-icon md-font-icon="fa fa-play-circle"></md-icon></md-button>';
+	return 	'<md-button class="md-icon-button" ng-click="executeDoc(\''+params.data.id+'\',$event)">'+
+			'	<md-tooltip md-delay="500">'+$scope.translate.load('sbi.documentbrowser.execute')+'</md-tooltip>'+
+			'	<md-icon md-font-icon="fa fa-play-circle"></md-icon>'+
+			'</md-button>';
 }
  
 	 $scope.executeDoc = function(id,e){

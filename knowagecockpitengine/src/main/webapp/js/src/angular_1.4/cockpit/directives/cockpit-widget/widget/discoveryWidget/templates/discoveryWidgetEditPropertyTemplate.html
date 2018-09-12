@@ -94,7 +94,7 @@
 		        	<md-card>
 						<md-toolbar class="ternaryToolbar" >
 							<div class="md-toolbar-tools" layout="row">
-								<md-switch ng-model="newModel.style.th.enabled" ng-click="toggleTh()" ng-init="newModel.style.th.enabled = typeOf(newModel.style.th.enabled) != 'undefined' ? newModel.style.th.enabled : true">Header</md-switch>
+								<md-switch ng-model="newModel.style.th.enabled" ng-click="toggleTh()" ng-init="newModel.style.th.enabled = (typeOf(newModel.style.th.enabled) != 'undefined') ? newModel.style.th.enabled : true">Header</md-switch>
 								<span flex></span>
 							</div>
 						</md-toolbar>

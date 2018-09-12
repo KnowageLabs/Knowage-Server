@@ -1,6 +1,6 @@
-<md-card>
+<md-card ng-hide="showGridView==true || ngModel.length==0 ">
 	<md-card-content class="noPadding" style="overflow-y:auto;">
-		<kn-table ng-hide="showGridView==true || ngModel.length==0 "
+		<kn-table 
 			columns=tableColumns
 			model=ngModel
 			click-function="clickDataset(item)" custom-class="kn-table-clickable-rows kn-table-inverse-header kn-table-full-height kn-table-full-width">
