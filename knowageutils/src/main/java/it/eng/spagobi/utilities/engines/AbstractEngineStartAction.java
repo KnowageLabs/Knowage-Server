@@ -103,10 +103,6 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	public static final String SUBOBJ_DESCRIPTION = "descriptionSubObject";
 	public static final String SUBOBJ_VISIBILITY = "visibilitySubObject";
 
-	public static final String ENGINE_DATASOURCE_LABEL = "ENGINE_DATASOURCE_LABEL";
-
-	private static final String DATA_SOURCE_LABEL = "DATA_SOURCE_LABEL";
-
 	/**
 	 * Logger component
 	 */
@@ -310,11 +306,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		String attrname = null;
 
 		if (dataSource == null) {
-			String dataSourceLabel = getAttributeAsString(DATA_SOURCE_LABEL);
-			if (dataSourceLabel == null) {
-				dataSourceLabel = this.getAttributeAsString(ENGINE_DATASOURCE_LABEL);
-			}
-			dataSource = getDataSourceServiceProxy().getDataSourceByLabel(dataSourceLabel);
+			dataSource = getDataSourceServiceProxy().getDataSource(getDocumentId());
 			if (dataSource == null) {
 				logger.warn("Datasource is not defined.");
 				if (!this.tolerateMissingDatasource()) {
