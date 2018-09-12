@@ -90,12 +90,7 @@ function documentBrowserFunction(
 		.then(function(response) {
 			angular.copy(response.data,$scope.folderDocuments);
 
-			// i18n translate all document names
-			for(var i=0; i<$scope.folderDocuments.length; i++){
-				$scope.folderDocuments[i].name = $scope.i18n.getI18n($scope.folderDocuments[i].name);
-				$scope.folderDocuments[i].description = $scope.i18n.getI18n($scope.folderDocuments[i].description);
-				$scope.folderDocuments[i].viewLabel = $scope.i18n.getI18n($scope.folderDocuments[i].label);
-			}
+			$scope.translateDocuments($scope.folderDocuments);
 
 			$scope.hideProgressCircular=true;
 			//PUT bread crumb in cookies
@@ -109,6 +104,15 @@ function documentBrowserFunction(
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
+	
+	$scope.translateDocuments=function(docs){
+		for(var i=0; i<docs.length; i++){
+			docs[i].name = $scope.i18n.getI18n(docs[i].name);
+			docs[i].description = $scope.i18n.getI18n(docs[i].description);
+			docs[i].viewLabel = $scope.i18n.getI18n(docs[i].label);
+		}
+	}
+	
 	$scope.loadFolders=function(){
 		sbiModule_restServices.promiseGet("2.0/folders", "")
 		.then(function(response) {
@@ -241,6 +245,7 @@ function documentBrowserFunction(
 					sbiModule_restServices.promiseGet("2.0", "documents?searchAttributes=all&searchKey=" + encodeURIComponent(newSearchInput + "*"))
 					.then(function(response) {
 						$scope.searchDocuments = response.data;
+						$scope.translateDocuments($scope.searchDocuments);
 						$scope.searchingDocuments=false;
 					},function(response){
 						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.search.error'))
