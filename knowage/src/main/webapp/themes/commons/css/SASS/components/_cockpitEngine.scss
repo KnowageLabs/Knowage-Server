@@ -16,18 +16,22 @@
     	overflow: auto;
     	.trustedHtml {
     		height: 100%;
+    		position: relative;
     		&>div {
+    			position: absolute;
     			height: 100%;
+    			width: 100%;
     		}
     	}
     }
     
+    
     cockpit-discovery-widget {
+    	height: 100%;
     	.discoveryCardsContainer {
-    		height: calc(100% - 75px);
+    		height: calc(100% - 70px);
     	}
     	.discoveryFiltersCard {
-    		
     		&.sidenav-add, &.sidenav-remove {
     			transition: max-width .4s linear;
     		}
@@ -36,39 +40,65 @@
     			margin-left: 0;
     			margin-right: 0;
     			left: -300px;
+    			.discoveryFiltersList {
+    				border: none;
+    			}
     			&.open-add, &.open-remove {
     				transition: left .4s linear;
     			}
     			&.open,&.open-remove {
+    				border: 1px solid $bordersColor;
     				position: absolute;
     				left: -300px;
     				max-width: 85%;
     				width: 100%;
-    				height: calc(100% - 145px);
-				    top: 130px;
+    				height: calc(100% - 48px);
 				    z-index: 99;
 				    md-card-content {
 				    	height: 100%;
 				    }
     			}
     			&.open{
-				    left: 9px;
+				    left: 8px;
     			}
     		}
     		.discoveryFiltersList {
 	    		overflow-y: auto;
+	    		height: calc(100% - 10px);
+	    		
 	    		@include coolScrollBars($baseColor,6px);
-	    		._md-subheader-inner {
-	    			padding:8px;
-	    			._md-subheader-content {
-    				    display: flex;
-					    align-items: center;
-					    justify-content: space-between;
-					    height: 14px;
-					    md-icon {
-					    	margin:0;
-					    }
-	    			}
+	    		.md-subheader {
+	    			cursor: pointer;
+	    			border-bottom: 1px solid $bordersColor;
+	    			._md-subheader-inner, .md-subheader-inner {
+		    			padding:8px;
+		    			._md-subheader-content, .md-subheader-content {
+		    				font: 600 $mediumFontSize $defaultFontFamily;
+	    				    display: flex;
+						    align-items: center;
+						    justify-content: space-between;
+						    height: 14px;
+						    .md-button {
+						    	padding:0;
+						    	height: 30px;
+						    	min-height: 30px;
+						    	md-icon {
+						    		margin:0;
+						    	}
+						    }
+						    
+		    			}
+		    		}
+	    		}
+	    		.selectable {
+	    			&:hover {
+		    			background-color: $listBackground;
+		    		}
+		    		&.selected {
+		    			.chip {
+		    				border: 1px solid $lightTextColor;
+		    			}
+		    		}
 	    		}
 	    		.discoveryFiltersItem {
 	    			&:nth-last-child {
@@ -82,7 +112,7 @@
 						font-size: $mediumFontSize;
 					}
 	    			.chip {
-	    				background-color: $ternaryColor;
+	    				border: 1px solid $bordersColor;
 					    border-radius: 15px;
 					    min-width: 40px;
 					    text-align: center;
@@ -99,10 +129,18 @@
 				}
 			}
     		md-card-content {
-    			height: calc(100% - 112px); 
+    			.menuToggler {
+	    			position: absolute;
+	    			top: 0;
+	    			left: 0;
+	    			z-index: 9;
+	    		}
+	    		position: relative;
+    			height: calc(100% - 40px); 
 	    		overflow-y: auto;
 	    		@include coolScrollBars($baseColor,6px);
     		}
+    		
     		.discoveryListView {
 				.discoveryItem {
 					padding: 4px 16px;
@@ -138,6 +176,40 @@
     	}
     	
     }
+
+    .discoveryWidgetConfiguration {
+    	position: absolute;
+   		width: 90%;
+   		height: 90%;
+   		margin: 2% 5%;
+   		md-tabs {
+			md-tab-content {
+				background-color: $pageBackground;
+			}
+		} 
+		.facetReady {
+			transition: opacity .3s linear;
+			.fa-stack {
+				width: 24px;
+			    height: 24px;
+			    line-height: 24px;
+			}
+    		.fa-stack-2x {
+    			height: 24px;
+    			line-height: 24px;
+    			opacity: 0;
+    		}
+    		.facet-hidden {
+    			opacity: 1;
+    		}
+    		&:hover {
+				.fa-stack-2x {
+	    			opacity: .6;
+	    		}
+    		}
+    	}
+    }
+
     cockpit-image-widget {
     	width:100%;
 		height:100%;
@@ -183,6 +255,26 @@
 			position: relative;
 			.tooltip {
 				position: absolute !important;
+			}
+		}
+	}
+
+	cockpit-selector-widget {
+		md-input-container {
+			&.multipleSelect{
+				height: 100%;
+			}
+			.kn-select {
+				&.multipleSelect {
+					height: 100%;
+					background: none;
+				}
+				select[multiple] {
+					height: 100%;
+				}
+				option {
+					font-size: $baseFontSize;
+				}
 			}
 		}
 	}
@@ -1035,7 +1127,7 @@
             background-color: $listBackground;
         }
         &>div {
-        	height: 100%;
+        	height: auto;
         }
     }
 
@@ -1043,14 +1135,6 @@
         background-color: $detailBackground;
         border-top: 1px solid $listBackground;
     }
-	
-	.md-button.addSheetTabButton{
-	    bottom: 0;
-	    margin-bottom: 1px;
-    	position: absolute;
-    	min-width: 40px;
-    	z-index: 9;
-    	}
     	
 	.selectedImage{
 		background-color:#a9c3db;
@@ -1104,7 +1188,6 @@
 				tr{
 					height: $angularTableDenseTRHeight;
 					td{
-					
 						&.level{
 							text-align: center;
 							font-size: 16px;
@@ -1115,6 +1198,7 @@
 								display: initial;
 							}
 							.crosstab-header-text{
+								text-align: center;
 								font-family: Roboto,"Helvetica Neue",sans-serif;
 								text-align: center;
 								font-size: $headerFontSize;
@@ -1160,7 +1244,7 @@
 							text-align: center;
 							font-size: $headerFontSize;
 							color: #3b678c;
-							font-weight: 600;							
+							font-weight: 600;									
 						}
 						&.sortIcon {
 							border-top: none;
@@ -1489,6 +1573,32 @@
 			}
 		}
 	}
+	.htmlWidgetConfiguration {
+		section {
+			height: 100%;
+		}
+		.availableFunctions {
+			._md-subheader-content {
+				
+			}
+		}
+   		.htmlEditor {
+   			.CodeMirror {
+				height: 500px;
+			}
+   		}
+		.CodeMirror {
+			width: 100%;
+		}
+		.widgetId {
+			text-transform: none;
+		}
+		.availableFunctions {
+			.description {
+				font-size: $mediumFontSize;
+			}
+		}
+	}    
 }
 
 }
@@ -1921,60 +2031,138 @@
 	}
 
 	.cockpitSelectorWidget{
-		.cockpitSelectorWidgetCombobox {
-			padding-top: 0;
-			md-input-container {
-				margin: 8px 0;
-				width: 100%;
+		.grid {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			.kn-custom-checkbox-container, .grid .kn-custom-radio-container{
+				width: 150px;
+			}
+			&:focus {
+				outline: none;
 			}
 		}
-		.cSelWRadio,.cSelWCheck{
-			margin-bottom: 8px;
-			outline: none;
-			span {
-				font-size: $mediumFontSize;
+		.horizontal {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			&:focus {
+				outline: none;
 			}
 		}
-		.cSelWScroller {
-			&.horizontal {
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				.cSelWCheckContainer, md-radio-group{
-					md-radio-button, md-checkbox {
-						margin-right: 16px;
-					}
-					display: flex;
-					flex-direction: row;
-					align-items: center;
-					._md-label{
-						white-space: nowrap;
-					}
+		.kn-custom-checkbox-container, .kn-custom-radio-container {
+		    display: inline-flex;
+		    position: relative;
+		    flex-direction: row-reverse;
+		    justify-content: flex-end;
+		    align-items: center;
+		    min-height: 24px;
+		    height: 24px;
+		    cursor: pointer;
+		    font-size: 12px;
+		    -webkit-user-select: none;
+		    -moz-user-select: none;
+		    -ms-user-select: none;
+		    user-select: none;
+		    .checkmark:after {
+			  content: "";
+			  position: absolute;
+			  display: none;
+			}
+			&:focus {
+				outline: none;
+			}
+		    input {
+		    	position: absolute;
+			  	opacity: 0;
+			 	cursor: pointer;
+			 	&:checked {
+			 		~ .checkmark {
+			 			background-color: $baseColor !important;
+  						border: 2px solid $baseColor !important;
+			 			&:after {
+			 				display: block;
+			 			}
+			 		}
+			 	}
+		    }
+		    span {
+		    	overflow: hidden;
+		    	margin-right: 10px;
+			  	text-overflow: ellipsis;
+			  	white-space: nowrap;
+		    }
+		    &:hover {
+				background-color: #ccc;
+				input ~ .checkmark {
+					background-color: #ccc;
 				}
 				
-			}
-			&.grid {
-				.cSelWCheckContainer, md-radio-group{
-					display: flex;
-					flex-direction: row;
-					flex-wrap: wrap;
-					md-radio-button, md-checkbox {
-						margin-right: 8px;
-						width: 150px;
-						span {
-							overflow: hidden;
-							text-overflow: ellipsis;
-							white-space: nowrap;
-							display: block;
-							width: 120px;
-						}
-					}
-				}
-			}
+		    }
+		    &[disabled="disabled"]{
+		    	color: #ccc;
+		    	&:hover {
+		    		background-color: transparent;
+					cursor: default;
+					input ~ .checkmark {
+			    		background-color: #eee;
+			    	}
+		    	}
+		    	input:checked ~ .checkmark {
+		    		background-color: #eee;
+		    	}
+
+		    }
+		}
+		.kn-custom-radio-container .checkmark {
+		  	position: relative;
+		  	height: 18px;
+		  	width: 18px;
+		  	min-width: 18px;
+		  	max-width: 18px;
+		  	margin-right: 10px;
+		  	background-color: transparent;
+		  	border: 2px solid #ccc;
+		  	border-radius: 50%;
+		  	&:after {
+		  		top: 5px;
+			  	left: 5px;
+			  	width: 8px;
+			  	height: 8px;
+			  	border-radius: 50%;
+			  	background: $lightTextColor;
+		  	}
+		}
+		.kn-custom-checkbox-container .checkmark {
+		  	position: relative;
+		    margin-right: 10px;
+		    height: 18px;
+		    width: 18px;
+		    min-width: 18px;
+		    max-width: 18px;
+		    background-color: transparent;
+		    border: 2px solid #ccc;
+		    border-radius: 2px;
+		    &:after {
+		    	left: 5px;
+			  	top: 1px;
+			  	width: 5px;
+			  	height: 10px;
+			  	border: solid $lightTextColor;
+			  	border-width: 0 3px 3px 0;
+			  	-webkit-transform: rotate(45deg);
+			  	-ms-transform: rotate(45deg);
+			  	transform: rotate(45deg);
+		    }
+		}
+		.cSelWScroller {
 			padding-left: 8px;
 			padding-top: 4px;
 			overflow-y: auto;
 			height: 100%;
+			&:focus {
+				outline: none;
+			}
 			@include coolScrollBars($baseColor,6px);
 		}
 	}

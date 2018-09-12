@@ -13,6 +13,43 @@
 			line-height: $biggerListHeight;
 		}
 	}
+	&.h42 {
+		.kn-list-item {
+		    height: 42px;
+		    display: flex;
+		    flex-direction: row;
+		    justify-content: start;
+		    align-items: center;
+		    border-bottom: 1px solid $bordersColor;
+		    .kn-list-preicon {
+			    margin: 0 10px;
+			}
+			.kn-list-action-button{
+			    margin: 0 6px;
+			    height: 40px;
+			    min-width: 0;
+			    line-height: 24px;
+			    padding: 8px;
+			    width: 40px;
+			    border-radius: 50%;
+			}
+			.kn-list-text {
+			    box-sizing: border-box;
+			    height: 100%;
+			    flex: 1;
+			    justify-content: center;
+			}
+
+			.kn-list-text h3 {
+			    margin: 0;
+			    font-size: .8rem;
+			}
+			.kn-list-text p {
+			    margin: 0;
+			    font-size: .7rem;
+			}
+		}
+	}
 }
  
 .angularListTemplate {

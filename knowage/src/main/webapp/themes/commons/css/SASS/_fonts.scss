@@ -169,9 +169,6 @@
 .ai-microwave:before {
   content: "\63";
 }
-.ai-oven:before {
-  content: "\64";
-}
 .ai-toaster:before {
   content: "\65";
 }
@@ -180,9 +177,6 @@
 }
 .ai-washer:before {
   content: "\67";
-}
-.ai-washdrier:before {
-  content: "\68";
 }
 .ai-lightbulb:before {
   content: "\69";
@@ -204,4 +198,37 @@
 }
 .ai-home:before {
   content: "\6f";
+}
+.ai-washdrier:before {
+  content: "\68";
+}
+.ai-oven:before {
+  content: "\64";
+}
+.ai-fan:before {
+  content: "\71";
+}
+.ai-vacuum:before {
+  content: "\72";
+}
+.ai-dishwasher:before {
+  content: "\73";
+}
+.ai-mixer:before {
+  content: "\74";
+}
+.ai-conditioning:before {
+  content: "\70";
+}
+.ai-mixedwasher:before {
+  content: "\75";
+}
+.ai-magnet:before {
+  content: "\76";
+}
+.ai-battery:before {
+  content: "\77";
+}
+.ai-resistor:before {
+  content: "\78";
 }

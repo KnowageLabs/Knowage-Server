@@ -62,7 +62,7 @@
 		color: white;
 	}
 	
-	md-sidenav.selectedDocumentSidenav>md-content>md-list>md-list-item>div {
+	md-sidenav.selectedDocumentSidenav>md-content>md-list>md-list-item>div:not(._md-secondary-container) {
 		width: 100%;
 	}
 
@@ -219,11 +219,6 @@
 	    
 	}
 	
-	.full-screen-sidenav {
-		width: 100%;
-		max-width: 100%;
-	}
-	
 	.document_browser_image_, .document_browser_image_EMPTY{
 	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_generic.png')!important;
 	}
@@ -361,8 +356,12 @@
 	}
 
 	.mainContent {
-		&>md-content {
-			@include coolScrollBars($baseColor,6px);
+		md-card {
+			height: calc(100% - 80px);
+			.documentBrowserGrid {
+				height: 100%;
+				width: 100%;
+			}
 		}
 	}
 
@@ -396,6 +395,15 @@
 				overflow: hidden;
 			}
 		}
+		.mainContent {
+			height:100%;
+			md-card {
+				height: 100%;
+			}
+			.documentBrowserGrid  {
+				height: 100%;
+			}
+		}
 	}
 }
 
@@ -415,5 +423,17 @@
 				}
 			}
 		}
+		.mainContent {
+			md-card {
+				height: 100%;
+			}
+		}
+
+	}
+}
+
+@supports (-ms-ime-align:auto) {
+	.kn-documentBrowser .mainContent md-card {
+		height: calc(-50px + 100%);
 	}
 }

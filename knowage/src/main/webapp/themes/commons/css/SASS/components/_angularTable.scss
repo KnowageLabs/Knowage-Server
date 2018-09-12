@@ -238,17 +238,17 @@ angular-table, cockpit-angular-table{
 	    min-height: 25px !important;
 	    margin: 0 !important;
 	    padding: 0 !important;
-    }
+	    }
 	   
-   	table>tbody>tr>td button.actionButton:hover{	
+	   table>tbody>tr>td button.actionButton:hover{	
 		background-color: #C0C9D0!important;
-    }
+	    }
 	     
-	table>tbody>tr>td button.actionButton md-icon{
-		display: flex !important;
-		justify-content: center;
-		align-items: center;
-	}
+	    table>tbody>tr>td button.actionButton md-icon{
+	    	display: flex !important;
+	    	justify-content: center;
+	    	align-items: center;
+	    }
 	
 	@-moz-document url-prefix() {
 		table>tbody>tr>td{

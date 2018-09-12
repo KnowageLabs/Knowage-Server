@@ -1,5 +1,5 @@
 /*!
- * XRegExp.matchRecursive 4.1.1
+ * XRegExp.matchRecursive 4.2.0
  * <xregexp.com>
  * Steven Levithan (c) 2009-present MIT License
  */
@@ -77,7 +77,7 @@ export default (XRegExp) => {
         const sticky = flags.includes('y');
         // Flag `y` is controlled internally
         const basicFlags = flags.replace(/y/g, '');
-        let escapeChar = options.escapeChar;
+        let {escapeChar} = options;
         const vN = options.valueNames;
         const output = [];
         let openTokens = 0;

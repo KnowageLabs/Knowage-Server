@@ -1,13 +1,13 @@
 var app = angular.module('documentBrowserModule');
 app.controller('documentBrowserController',
-		[ '$mdMedia', '$scope', '$http', '$mdSidenav',
+		[ '$window','$mdMedia', '$scope', '$http', '$mdSidenav',
 		  '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices',
 		  'sbiModule_config', 'setFocus','$timeout', '$cookies',
 		  'sbiModule_user','$interval','$q','sbiModule_i18n',documentBrowserFunction]);
 
 
 
-function documentBrowserFunction(
+function documentBrowserFunction($window,
 		$mdMedia, $scope, $http, $mdSidenav,
 		$mdDialog, sbiModule_translate, sbiModule_restServices,
 		sbiModule_config, setFocus,$timeout, $cookies,
@@ -24,6 +24,7 @@ function documentBrowserFunction(
 	$scope.selectedDocument = undefined;
 	$scope.lastDocumentSelected = null;
 	$scope.showDocumentDetail = false;
+	$scope.openDocumentDetail = false;
 	$scope.orderElements = [{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Date","name":"creationDate"}]
 	$scope.selectedOrder = $scope.orderElements[1].name;
 	$scope.showDocumentGridView = ($mdMedia('gt-sm') ? $scope.showDocumentGridView = false : $scope.showDocumentGridView = true);
@@ -37,13 +38,95 @@ function documentBrowserFunction(
 		var cookiesObj = 'breadCrumb_'+sbiModule_user.userId;
 		$cookies.putObject(cookiesObj, JSON.parse(defaultFoldersId));
 	}
+	
+	$scope.columns = [
+		{"headerName":"Type","field":"typeCode"},
+		{"headerName":"Name","field":"name"},
+		{"headerName":"Author","field":"creationUser"},
+		{"headerName":"Label","field":"viewLabel"},
+		{"headerName":"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},
+			suppressSorting:true,suppressFilter:true,width: 50,suppressSizeToFit:true,suppressMovable:true}];
 
 
+$scope.documentBrowserGrid = {
+		angularCompileRows: true,
+        enableColResize: false,
+        enableFilter: true,
+        enableSorting: true,
+        pagination: true,
+        paginationAutoPageSize: true,
+        onGridSizeChanged: resizeColumns,
+        onRowClicked: onSelectionChanged
+};
 
-	$scope.$watch(function() { return !$mdMedia('gt-sm'); }, function(big) {
-	    $scope.smallScreen = big;
-	  });
-//	$scope.setDetailOpen(false);
+$scope.searchResultGrid = {
+		angularCompileRows: true,
+		enableColResize: false,
+        enableFilter: false,
+        pagination: true,
+        paginationAutoPageSize: true,
+        onRowClicked: onSelectionChanged,
+        columnDefs : $scope.columns
+}
+
+$scope.documentBrowserGrid.onGridReady = function(){
+	$scope.documentBrowserGrid.api.setColumnDefs($scope.columns);
+		$scope.documentBrowserGrid.api.sizeColumnsToFit();
+}
+
+
+$scope.tableElement = angular.element(document.querySelectorAll(".documentBrowserGrid")[0]);
+
+$scope.$watch(function () {
+    return $scope.tableElement[0].clientWidth;
+   }, function(newVal, oldVal) {
+	   if(newVal!=oldVal){
+		   $scope.documentBrowserGrid.api.sizeColumnsToFit();
+		   if(newVal<600){
+			   $scope.openDocumentDetail = false;
+		   }
+	   }
+});
+
+function resizeColumns(){
+	$scope.documentBrowserGrid.api.sizeColumnsToFit();
+}
+
+function onSelectionChanged(node){
+	if($scope.selectedDocument == node.data){
+		node.node.setSelected(false,true);
+		$scope.selectedDocument = {};
+		$scope.openDocumentDetail = false;
+		$mdSidenav('right').close();
+		return;
+	}else{
+		node.node.setSelected(true,true);
+		$scope.openDocumentDetail = $scope.tableElement[0].clientWidth<600? false : true;
+		$scope.selectedDocument = node.data;
+		$mdSidenav('right').open();
+	}
+	$scope.$apply();
+}
+
+ function buttonRenderer(params){
+	return 	'<md-button class="md-icon-button" ng-click="executeDoc(\''+params.data.id+'\',$event)">'+
+			'	<md-tooltip md-delay="500">'+$scope.translate.load('sbi.documentbrowser.execute')+'</md-tooltip>'+
+			'	<md-icon md-font-icon="fa fa-play-circle"></md-icon>'+
+			'</md-button>';
+}
+ 
+	 $scope.executeDoc = function(id,e){
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		for(var k in $scope.folderDocuments){
+			if($scope.folderDocuments[k].id == id){
+				$scope.selectedDocument = $scope.folderDocuments[k];
+				$scope.executeDocument($scope.selectedDocument);
+				return;
+			}
+			
+		}
+	 }
 
 	$scope.moveBreadCrumbToFolder=function(folder,index){
 		if(folder!=null){
@@ -57,6 +140,11 @@ function documentBrowserFunction(
 		if ($scope.selectedFolder==undefined || folder.id !== $scope.selectedFolder.id) {
 			$scope.selectedDocument = undefined;
 			$scope.showDocumentDetail = false;
+			$scope.openDocumentDetail = false;
+			$scope.documentBrowserGrid.api.sizeColumnsToFit();
+			 $mdSidenav('right').close().then(function(){
+				 $scope.documentBrowserGrid.api.sizeColumnsToFit();
+			 });
 
 			$scope.breadCrumbControl.resetBreadCrumb();
 
@@ -88,7 +176,9 @@ function documentBrowserFunction(
 		$scope.hideProgressCircular=false;
 		sbiModule_restServices.promiseGet("2.0","documents","folderId=" + folderId)
 		.then(function(response) {
+			
 			angular.copy(response.data,$scope.folderDocuments);
+			
 
 			$scope.translateDocuments($scope.folderDocuments);
 
@@ -99,6 +189,7 @@ function documentBrowserFunction(
 				foldersId[i] = $scope.breadModel[i].id;
 			}
 			$cookies.putObject('breadCrumb_'+sbiModule_user.userId, foldersId);
+			$scope.documentBrowserGrid.api.setRowData($scope.folderDocuments);
 
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
@@ -182,8 +273,6 @@ function documentBrowserFunction(
 		document.location.replace(url);
 	}
 
-
-
 	$scope.setDetailOpen = function(isOpen) {
 		if (isOpen && !$mdSidenav('right').isLockedOpen() && !$mdSidenav('right').isOpen()) {
 			$scope.toggleDocumentDetail();
@@ -208,7 +297,7 @@ function documentBrowserFunction(
 	};
 
 	$scope.executeDocument = function(document) {
-
+		
 		var params = {};
 
 		var url = sbiModule_config.contextName
@@ -246,7 +335,8 @@ function documentBrowserFunction(
 					.then(function(response) {
 						$scope.searchDocuments = response.data;
 						$scope.translateDocuments($scope.searchDocuments);
-						$scope.searchingDocuments=false;
+						$scope.searchResultGrid.api.setRowData($scope.searchDocuments);
+						$scope.searchResultGrid.api.sizeColumnsToFit();						$scope.searchingDocuments=false;
 					},function(response){
 						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.search.error'))
 						.finally(function(){
@@ -279,8 +369,11 @@ function documentBrowserFunction(
 		$scope.showSearchView = !$scope.showSearchView;
 		if ($scope.showSearchView) {
 			setFocus('searchInput');
+			$scope.selectDocument();
+		}else{
+			$scope.searchDocuments = [];
+			$scope.searchInput = '';
 		}
-		$scope.selectDocument();
 	};
 
 
@@ -300,7 +393,7 @@ function documentBrowserFunction(
  		      clickOutsideToClose:false,
  		      escapeToClose :false,
  		      fullscreen: true,
- 		      locals:{document:document, folderDocument : $scope.folderDocuments , searchDocuments:$scope.searchDocuments}
+ 		      locals:{document:document, folderDocument : $scope.folderDocuments , searchDocuments:$scope.searchDocuments, folderId : $scope.selectedFolder.id}
 
 		 })
 		 .then(function(answer) {
@@ -351,6 +444,7 @@ function documentBrowserFunction(
 				if(index2!=-1){
 					$scope.searchDocuments.splice(index2,1);
 				}
+				$scope.documentBrowserGrid.api.setRowData($scope.folderDocuments);
 			$scope.selectedDocument = undefined;
 			},function(response) {
 				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.delete.error'));
@@ -373,7 +467,8 @@ function documentBrowserFunction(
 			sbiModule_restServices.promisePost("documents","clone?docId="+Document.id)
 			.then(function(response) {
 			$scope.folderDocuments.push(response.data);
-			$scope.searchDocuments.push(response.data);
+			//$scope.searchDocuments.push(response.data);
+			$scope.documentBrowserGrid.api.setRowData($scope.folderDocuments);
 			},function(response) {
 				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.clone.error'));
 			});
@@ -436,18 +531,18 @@ app.factory('setFocus', function($rootScope, $timeout) {
 });
 
 
-function DialogEditDocumentController($scope,$mdDialog,sbiModule_config,document,folderDocument,searchDocuments){
+function DialogEditDocumentController($scope,$mdDialog,sbiModule_config,document,folderDocument,searchDocuments,folderId){
 	$scope.closeDialogFromExt=function(){
 		 $mdDialog.cancel();
 		 //reload documents
 
 	}
-	$scope.iframeUrl=sbiModule_config.contextName+"/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID="+document.id;
+	$scope.iframeUrl=sbiModule_config.contextName+"/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID="+document.id+"&FUNCTIONALITY_ID="+folderId;
 }
 
 function DialogNewDocumentController($scope,$mdDialog,$mdBottomSheet,sbiModule_config,selectedFolder,typeDocument,sbiModule_config,sbiModule_user,sbiModule_translate){
 
-	var folderId= selectedFolder==undefined? "" : "&FUNCT_ID="+selectedFolder.id;
+	var folderId= selectedFolder==undefined? "" : "&FUNCTIONALITY_ID="+selectedFolder.id;
 	$scope.iframeUrl=sbiModule_config.contextName+"/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_NEW"+folderId;
 
 	 if(typeDocument=="cockpit"){

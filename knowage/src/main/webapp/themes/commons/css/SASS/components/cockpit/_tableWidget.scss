@@ -1,0 +1,260 @@
+cockpit-table-widget {
+	.highlight {
+		background-color: $secondaryColor !important;
+	}
+	.infoBar {
+		font-size: $baseFontSize;
+		background-color: lighten($secondaryColor,20%);
+		min-height: 25px;
+		max-height: 25px;
+		border-top: 1px solid $baseColor;
+		border-bottom: 1px solid $baseColor;
+		text-align: center;
+		position: absolute;
+		width: 100%;
+		z-index: 9999;
+		opacity: .7;
+		&:hover {
+			opacity: 1;
+		}
+		button {
+			min-height: 25px;
+			line-height: 25px;
+			font-size: $smallFontSize;
+		}
+
+	}
+	.cockpitTablePagination {
+	        height: 36px;
+	        min-height: 36px;
+	        position: relative;
+	        font-size: $baseFontSize;
+	        display: flex;
+	        flex-direction: row;
+	        justify-content: flex-end;
+	        align-items: center;
+	        .page-select {
+	            display: flex;
+	            align-items: center;
+	            flex-direction: row;
+	            margin-right: 16px;
+	            md-select {
+	                margin: 0;
+	            }
+	            label {
+	                margin-right: 10px;
+	            }
+	        }
+	        .next, .prev{
+	        	margin: 0;
+	        }
+	    }
+	cockpit-table {
+		outline: none;
+		.showFullContentIcon {
+		    font-size: .8rem;
+		    padding: 4px;
+		    cursor: pointer;
+		    position: relative;
+		    right: 0;
+		}
+	    font-size: 12px;
+        display: flex;
+	    flex-direction: column;
+	    height: 100%;
+	    //overflow-y: auto;
+	    position: relative;
+	    .cockpitTableContainer {
+	    	width: 100%;
+	    	&.main {
+	    		overflow-y: auto;
+	    		@include coolScrollBars($baseColor,6px);
+	    		margin-top: 32px; 
+	    		thead {
+	    			display: none;
+	    		}
+	    	}
+	    	&.fake {
+	    		position: absolute;
+	    		overflow: hidden;
+	    		top: 0;
+	    		table {
+	    			position: relative;
+	    		}
+	    	}
+	    	//overflow-y: auto;
+	    	table.cockpitTable {
+	    		table-layout: fixed;
+		    	width: calc(100% + 0.5px);
+		        .loadingBar {
+		            tr {
+		                height: 0px;
+		                th {
+		                    padding: 0;
+		                    md-progress-linear {
+		                        .md-container {
+		                            top: 0;
+		                        }
+		                    }
+		                }
+		            }
+		        }
+		        border-collapse: collapse;
+		        tr {
+		            border-bottom: 1px solid #ddd;
+		            height: 32px;
+		            th {
+		                @extend .noSelect;
+		                cursor: pointer;
+		                text-align: left;
+		                background-color: $contentBackground;
+		                color: $darkTextColor;
+		                opacity: .7;
+		                font-size: 12px;
+		                font-weight: 700;
+		                white-space: nowrap;
+		                overflow: hidden;
+		                text-overflow: ellipsis;
+		                &.active {
+		                    opacity: 1;
+		                    font-weight: bold;
+		                }
+		                &.hiddenIcon {
+		                    .sortingIcon {
+		                        opacity: 0;
+		                    }
+		                    &:hover {
+		                        .sortingIcon {
+		                            opacity: .5;
+		                        }
+		                    }
+		                }
+		                &.unsortable {
+		                    cursor: default;
+		                    .sortingIcon {
+		                        display: none;
+		                    }
+		                }
+		                .sortingIcon {
+		                    display: inline-block;
+		                    @include transition(0.4s);
+		                    &.inverse {
+		                        -ms-transform: rotate(-180deg);
+		                        -webkit-transform: rotate(-180deg);
+		                        transform: rotate(-180deg);
+		                    }
+		                }
+		            }
+		            td {
+		            	span {
+		            		font-size: .8rem;
+		            	}
+		                
+		            }
+		        }
+		        tbody {
+		            tr {
+		                border-top: 1px rgba(0, 0, 0, .12) solid;
+		                &.en-row {
+		                    &:not([disabled]) {
+		                        &:hover {
+		                            background-color: #eee !important;
+		                        }
+		                    }
+		                }
+		                td {
+		                	.textEllipsis {
+								overflow: hidden;
+								width: calc(100% - 20px);
+								position: absolute;
+								white-space: nowrap;
+								text-overflow: ellipsis;
+							}
+		                	.cellContainer {
+		                		display: flex;
+		                		position: relative;
+		                		flex-direction: row;
+		                		align-items: center;
+		                		width: 100%;
+		                		span {
+		                			position: relative;
+		                			width: auto;
+		                			white-space: nowrap;
+		                			overflow: hidden;
+		                			text-overflow: ellipsis;
+		                		}
+		                		.barChart {
+						            .progressTrack {
+						                position: relative;
+						                width: 100%;
+						                height: 20px;
+						                background: #ebebeb;
+						                .progressFill {
+						                    position: relative;
+						                    background: #2196F3;
+						                    height: 20px;
+						                    width: 50%;
+						                    max-width: 100%;
+						                    color: $darkTextColor;
+						                    text-align: center;
+						                    font-size: 12px;
+						                    line-height: 20px;
+						                }
+						            }
+						        }
+		                	}
+		                }
+		            }
+		        }
+		        tfoot {
+		        	tr {
+		        		&.summaryTitle {
+	        				position: absolute;
+	        				td{
+	        					min-height: 30px;
+	        					line-height: 28px;
+	        					vertical-align: middle;
+	        				}
+	        			}
+		        		border-bottom: none;
+		        		&.summary {
+		        			border-bottom: 1px solid #ddd;
+		        			td {
+		        				font-size: $baseFontSize;
+		        			}
+		        		}
+		        	}
+		        }
+		    }
+	    }
+	    
+	    .selection {
+	        width: 20px;
+	        padding: 0 0 0 16px;
+	        md-checkbox {
+	            margin-bottom: 0;
+	        }
+	    }
+	    
+	    .noSelect {
+	        outline: none;
+	        -webkit-touch-callout: none;
+	        -webkit-user-select: none;
+	        -khtml-user-select: none;
+	        -moz-user-select: none;
+	        -ms-user-select: none;
+	        user-select: none;
+	    }
+	    .truncated {
+	        display: block;
+	        overflow: hidden;
+	        white-space: nowrap;
+	        text-overflow: ellipsis;
+	    }
+	    md-icon.fa {
+	        text-align: center;
+	        line-height: 24px;
+	    }
+	}
+	
+}

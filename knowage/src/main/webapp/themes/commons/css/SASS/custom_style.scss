@@ -23,6 +23,7 @@
   'components/documentBrowser',
   'components/documentExecution',
   'components/documentExecutionMaster',
+  'components/documentDetails',
   'components/scorecardKpiDefinition',
   'components/schedulerKpi',
   'components/angularTable',
@@ -53,8 +54,11 @@
   'components/dataSetManagement',
   'components/qbeEngine',
   'components/table',
-  'components/wheelNavigator';
+  'components/wheelNavigator',
+  'components/internationalization';
 
   @import 
   'vendors/aggrid',
+  'vendors/angularMaterial',
   'vendors/codeMirror';
+

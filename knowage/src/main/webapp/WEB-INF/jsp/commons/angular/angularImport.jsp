@@ -153,6 +153,9 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/xregexp/xregexp-all.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-xregexp/angular-xregexp.js")%>"></script> 
 
+<!-- AG GRID -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/ag-grid/dist/ag-grid.min.js")%>"></script>
+
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>">
 
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>

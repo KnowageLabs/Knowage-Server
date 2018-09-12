@@ -4,4 +4,68 @@
 		font-family: $defaultFontFamily;
 		font: 600 $mediumFontSize $defaultFontFamily;
 	}
+	.ag-body-container {
+		.md-button {
+			height: 24px;
+			width: 24px;
+			min-height: 24px;
+			line-height: 24px;
+			padding: 0;
+		}
+	}
+	&.ag-theme-knowage {
+		&.ag-theme-knowage-secondary {
+			.ag-header {
+			    background-color: $secondaryColor;
+			    color: $lightTextColor;
+			}
+		}
+		.ag-header {
+		    background-color: $baseColor;
+		    color: $lightTextColor;
+		}
+		.ag-root {
+			border: none;
+		}
+		.ag-row-selected {
+			background-color: $secondaryColor;
+		}
+		.ag-icon-menu {
+			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDQuNWg5bS05IDNoOW0tOSAzaDkiIHN0cm9rZT0iI2ZmZiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjwvc3ZnPg==);
+		}
+		.ag-icon-desc {
+			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDExVjNtLTMgNS41bDMgMyAzLTMiIHN0cm9rZT0iI2ZmZiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);
+		}
+		.ag-icon-asc {
+			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDEyVjRtMyAyLjVsLTMtMy0zIDMiIHN0cm9rZT0iI2ZmZiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);
+		}
+		.ag-icon-filter {
+			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDMuNWg5di41ODZhMSAxIDAgMCAxLS4yOTMuNzA3TDkuMjkzIDcuNzA3QTEgMSAwIDAgMCA5IDguNDE0VjEwbC0yIDEuNVY4LjQxNGExIDEgMCAwIDAtLjI5My0uNzA3TDMuNzkzIDQuNzkzYTEgMSAwIDAgMS0uMjkzLS43MDdWMy41eiIgc3Ryb2tlPSIjZmZmIiBmaWxsPSJub25lIi8+PC9zdmc+);
+		}
+		.ag-paging-panel {
+			border-top: none;
+		}
+	}
+	&.ag-theme-knowage-discovery {
+		.ag-header-cell {
+			padding: 0;
+			.ag-cell-label-container {
+				padding-left: 12px;
+				padding-right: 12px;
+			}
+		}
+		.ag-cell {
+			line-height: 100%;
+			display: inline-flex;
+			align-items: center;
+		}
+	}
+	&.ag-noBorders {
+		.ag-root {
+			border: none;
+		}
+		.ag-paging-panel {
+			border-top: none;
+		}
+	}
 }

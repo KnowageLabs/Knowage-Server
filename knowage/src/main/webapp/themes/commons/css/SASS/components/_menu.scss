@@ -1,69 +1,69 @@
 #menuAppAdmin, #menuApp{
 .overlayButtonBar {
-    top: 0;
-    cursor: auto;
-    left: 0;
+		top: 0;
+		cursor: auto;
+		left: 0;
     z-index: 1000;
     position: fixed;
     bottom: 10px;
     padding: 10px;
-    background-color: $ternaryColor;
+		background-color: $ternaryColor;
     box-shadow: 0px 1px 4px rgba(0,0,0,0.37);
-    border-radius: 0;
-      width: 40px;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    .logoKnowage {
+		border-radius: 0;
+    	width: 40px;
+    	height: 100%;
+    	display: flex;
+    	flex-direction: column;
+    	align-items: center;
+		.logoKnowage {
       float:left;
-      cursor: default;
-      margin: 0;
-      top: 10px;
-      position: relative;
-      width: 20px;
-      height: 143px;
-      display: block;
-      opacity: 1;
-      background-image: url('../img/defaultTheme/logotipoVert.png');
-      background-repeat: none;
-      img {
-        display: none;
-      }
-    }
-    .menuKnowage {
-      &>i {
-        color: $baseColor;
-      }
-    }
-  }
+			cursor: default;
+			margin: 0;
+		  top: 10px;
+    	position: relative;
+			width: 20px;
+			height: 143px;
+			display: block;
+			opacity: 1;
+			background-image: url('../img/defaultTheme/logotipoVert.png');
+			background-repeat: none;
+			img {
+				display: none;
+			}
+		}
+		.menuKnowage {
+			&>i {
+				color: $baseColor;
+			}
+		}
+	}
 }
 .landingPageEndUser, .landingPageAdmin {
-  .layer>.text {
-      top: 0px !important;
-    }
+	.layer>.text {
+	    top: 0px !important;
+	  }
 }
 
 #licenseDialog{
-  .md-avatar {
-    border-radius: 0;
-  }
-  .licenseTopButtons {
-    position: absolute;
-      right: 0;
-      top: 0;
-      label{
-        md-icon{
-          line-height: $fabHeight
-        }
-      }
-  } 
+	.md-avatar {
+		border-radius: 0;
+	}
+	.licenseTopButtons {
+		position: absolute;
+	    right: 0;
+	    top: 0;
+	    label{
+	    	md-icon{
+	    		line-height: $fabHeight
+	    	}
+	    }
+	}	
 }
 
 #languageDialog{
-  img{
-    border-radius: 0;
-  }
+	img{
+		border-radius: 0;
+	}
 }
 
 .sidebar-overlay {
@@ -102,76 +102,76 @@
 /* ---- ADMIN SIDEBAR STYLE ------------------------*/
 #contieniLinkAdmin{
   @include custom-linear-gradient($pageBackground,#e3eaed,37%,$ternaryColor,#f2f5f6);
-  position: fixed;
-  height: 95%;
-  top: 30px;
-  z-index: 1035;
-  left:0;
-  -webkit-transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-  -o-transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-  width: 0;
-    overflow: hidden;
-    -webkit-transform: translate3d(-90%, 0, 0);
-    transform: translate3d(-90%, 0, 0);
-  .row {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding-left: 300px;
-    padding-top: 5px;
-  }
-  h4 {
-      color: $lightTextColor;
-      margin-top: 5px;
-      font-size: 14px;
-      font-weight: 300;
-      font-family: $defaultFontFamily;
-      background: $baseColor;
-      padding: 4px;
-      width: 90%;
-  }
-  ul {
-    padding-left: 5px;
-    list-style: none;
-    font-family: $defaultFontFamily;
-    font-weight: 100;
-  }
+	position: fixed;
+	height: 95%;
+	top: 30px;
+	z-index: 1035;
+	left:0;
+	-webkit-transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+	-o-transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+	transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+	width: 0;
+  	overflow: hidden;
+  	-webkit-transform: translate3d(-90%, 0, 0);
+  	transform: translate3d(-90%, 0, 0);
+	.row {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		padding-left: 300px;
+		padding-top: 5px;
+	}
+	h4 {
+	    color: $lightTextColor;
+	    margin-top: 5px;
+	    font-size: 14px;
+	    font-weight: 300;
+	    font-family: $defaultFontFamily;
+	    background: $baseColor;
+	    padding: 4px;
+	    width: 90%;
+	}
+	ul {
+		padding-left: 5px;
+		list-style: none;
+		font-family: $defaultFontFamily;
+		font-weight: 100;
+	}
 
-  li {
-    position: relative;
-    margin-left: 1em;
-    line-height: 1rem;
-    &:before {
-      font-family: 'FontAwesome';
-      position: absolute;
-      left: -1em;
-      content: "\f105";
-      font-size: 12px;
-      top: 1px;
-    }
-    a{
-      text-decoration: none;
-      color: black;
-      font-size:12px;
-      -webkit-transition: color 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-      -o-transition: color 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-      transition: color 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-      font-weight: 300;
-      &:hover{
-        color: $baseColor;
-      }
-    }
-  }
-  &.open {
-    top: 10px;
-    bottom: 10px; 
-    min-width: 600px;
-    width: 90%;
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-    border-radius: 5px;
-  }
+	li {
+		position: relative;
+		margin-left: 1em;
+		line-height: 1rem;
+		&:before {
+			font-family: 'FontAwesome';
+			position: absolute;
+			left: -1em;
+			content: "\f105";
+			font-size: 12px;
+			top: 1px;
+		}
+		a{
+			text-decoration: none;
+			color: black;
+			font-size:12px;
+			-webkit-transition: color 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+			-o-transition: color 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+			transition: color 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+			font-weight: 300;
+			&:hover{
+				color: $baseColor;
+			}
+		}
+	}
+	&.open {
+		top: 10px;
+		bottom: 10px;	
+		min-width: 600px;
+		width: 90%;
+		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
+		border-radius: 5px;
+	}
 }
 .gruppoLinkAdmin{
   margin-bottom: 5px;
@@ -189,11 +189,11 @@
   border-left: 4px solid transparent;
 }
 .caretPosition {
-  position: absolute !important;
+	position: absolute !important;
     right: 24px !important;
     top: 20px !important;
     color: $detailBackground !important;
-} 
+}	
 
 .nav>li>a:focus, .nav>li>a:hover {
     text-decoration: none;
@@ -206,16 +206,16 @@
    width: 0;
   -webkit-transform: translate3d(-280px, 0, 0);
   transform: translate3d(-280px, 0, 0);
-  background-color:$baseColor;
-  position: relative;
-  display: block;
-  min-height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  border: none;
-  -webkit-transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-  -o-transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+	background-color:$baseColor;
+	position: relative;
+	display: block;
+	min-height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	border: none;
+	-webkit-transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+	-o-transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+	transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
   &.open {
     min-width: 280px;
     width: 280px;
@@ -488,9 +488,9 @@
   content: "\e614";
 }
 .menuKnowage{
-  color: black;
-  float: left;
-  opacity: .6;
+	color: black;
+	float: left;
+	opacity: .6;
   &:hover {
     opacity: 1;
   }
@@ -535,20 +535,20 @@
 }
 
 .centered {
-  text-align: center;
+	text-align: center;
 }
 
 
 .container-fluid {
     padding-right: 0px; 
-    padding-left: 0px;
+   	padding-left: 0px;
     margin-right: auto;
     margin-left: auto;
 }
 
 .iconBarAdmin {
-  margin-right: 0;
-  margin-left: 0;
+	margin-right: 0;
+	margin-left: 0;
   display: inline-block;
   float: none;
   width: 100%;
@@ -571,7 +571,7 @@
 }
 
 md-list-item.license-item::before{
-  min-height: 0px !important;
+	min-height: 0px !important;
 }
 
 @media (max-width: 768px) {
