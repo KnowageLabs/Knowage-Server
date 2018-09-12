@@ -559,8 +559,8 @@ public class DatasetManagementAPI {
 	 */
 
 	// FIXME
-	public List<Filter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections,
-			List<Filter> filters, List<SimpleFilter> likeFilters, List<Projection> groups) throws DataBaseException, JSONException {
+	public List<Filter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues,
+			List<Filter> filters, List<SimpleFilter> likeFilters) throws JSONException {
 
 		logger.debug("IN");
 
