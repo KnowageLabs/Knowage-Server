@@ -125,7 +125,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 		    				  id:(new Date()).getTime(),
 		    				  sizeX	:6,
 		    				  sizeY:6,
-		    				  content:{name:"new Widget"},
+		    				  content:{name:"new "+type+" Widget"},
 		    				  type:type,
 		    				  isNew : true,
 		    				  updateble : true,
@@ -213,6 +213,13 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 							    	  class: "fa fa-caret-square-o-down",
 							    	  img : "9.png",
 							    	  type : "selector"
+							      }
+							      ,{
+							    	  name:"Discovery",
+							    	  description: 'discovery',
+							    	  tags : ["discovery"],
+							    	  class: "fa fa-rocket",
+							    	  type : "discovery"
 							      }
 		    	        	];
 

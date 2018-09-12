@@ -1,0 +1,167 @@
+<md-card   class="flexCard discoveryWidgetConfiguration" >
+	<md-card-content flex layout="column" class="noPadding">
+	    <md-toolbar> 
+	      <div class="md-toolbar-tools">
+	        <h2>Edit Discovery widget</h2>
+	        <span flex></span>
+	      </div>
+	    </md-toolbar>
+			<md-tabs flex md-border-bottom>
+				<md-tab label="Columns">
+						<md-card>
+		        			<md-card-content layout="row">
+		   						<dataset-selector flex="70" ng-model="newModel.datasetId" on-change="handleEvent('datasetChanged',dsId)" dataset-type-available="[{type:'SbiSolrDataSet',configuration:{property:'solrType',value:'DOCUMENTS'}}]" ></dataset-selector>  
+		   						<md-input-container flex class="md-block">
+									<label>Items per page</label>
+									<input ng-model="newModel.settings.pagination.itemsNumber" type="number" />
+								</md-input-container>
+		   					</md-card-content>
+		   				</md-card>
+		   				<md-card ng-if="newModel.datasetId">
+		   					<md-subheader class="noPadding">
+		   						<div layout="row" layout-align="start center"><span layout-padding>Columns List</span><span flex></span><md-button ng-disabled="newModel.content.columnSelectedOfDataset.length >= local.metadata.fieldsMeta.length" ng-click="addColumn()">Add Column</md-button></div>
+		   					</md-subheader>
+		        			<md-card-content>
+		        				<div class="" ng-repeat="col in newModel.content.columnSelectedOfDataset" layout="row" layout-align="start center">
+	        						<md-input-container flex style="margin-bottom: 4px;">
+							        	<label>Column</label>
+							        	<md-select ng-model="col.name">
+							              <md-option ng-repeat="field in local.metadata.fieldsMeta" value="{{field.name}}">
+							                {{field.name}}
+							              </md-option>
+							            </md-select>
+							      	</md-input-container>
+							      	<md-input-container flex style="margin-bottom: 4px;">
+							        	<label>Alias</label>
+								        <input ng-model="col.alias" >
+							      	</md-input-container>
+							      	<md-input-container flex style="margin-bottom: 4px;">
+							        	<label>Type</label>
+								        <md-select ng-model="col.fieldType" ng-change="resetAggregations(col)">
+							              <md-option ng-repeat="type in availableTypes" value="{{type}}">
+							                {{type}}
+							              </md-option>
+							            </md-select>
+							      	</md-input-container>
+							      	<md-input-container flex style="margin-bottom: 4px;">
+							        	<label>Facet aggregation function</label>
+								        <md-select ng-model="col.aggregationSelected" ng-init="col.aggregationSelected = initAggregation(col)" ng-disabled="col.fieldType == 'ATTRIBUTE' || !col.facet">
+							              <md-option ng-repeat="aggregation in availableAggregations" value="{{aggregation}}">
+							                {{aggregation}}
+							              </md-option>
+							            </md-select>
+							      	</md-input-container>
+							      	<md-button class="md-icon-button" ng-click="showSettingsDialog($event,col)" style="background-color:{{col.style['background-color']}}">
+							      		<md-tooltip md-delay="500">Column Settings</md-tooltip>
+							      		<md-icon md-font-icon="fa fa-paint-brush" style="color:{{col.style.color}}"></md-icon>
+							      	</md-button>
+							      	<md-button class="md-icon-button facetReady" ng-init="col.visible = initProperty(col.visible)" ng-click="col.visible=!col.visible">
+							      		<md-tooltip ng-if="col.visible" md-delay="500">Hide Column</md-tooltip>
+							      		<md-tooltip ng-if="!col.visible" md-delay="500">Show Column</md-tooltip>
+							      		<span class="fa-stack">
+										  <i class="fa fa-eye fa-stack-1x"></i>
+										  <i class="fa fa-ban fa-stack-2x kn-danger" ng-class="{'facet-hidden':!col.visible}"></i>
+										</span>
+							      	</md-button>
+							      	<md-button class="md-icon-button facetReady" ng-init="col.facet = initProperty(col.facet)" ng-click="col.facet=!col.facet">
+							      		<md-tooltip ng-if="col.facet" md-delay="500">Hide Facet</md-tooltip>
+							      		<md-tooltip ng-if="!col.facet" md-delay="500">Show Facet</md-tooltip>
+							      		<span class="fa-stack">
+										  <i class="fa fa-indent fa-stack-1x"></i>
+										  <i class="fa fa-ban fa-stack-2x kn-danger" ng-class="{'facet-hidden':!col.facet}"></i>
+										</span>
+							      	</md-button>
+							      	<md-button class="md-icon-button facetReady" ng-init="col.fullTextSearch = initProperty(col.fullTextSearch)" ng-click="col.fullTextSearch=!col.fullTextSearch">
+							      		<md-tooltip ng-if="col.fullTextSearch" md-delay="500">Skip column in text search</md-tooltip>
+							      		<md-tooltip ng-if="!col.fullTextSearch" md-delay="500">Use column in text search</md-tooltip>
+							      		<span class="fa-stack">
+										  <i class="fa fa-file-text fa-stack-1x"></i>
+										  <i class="fa fa-ban fa-stack-2x kn-danger" ng-class="{'facet-hidden':!col.fullTextSearch}"></i>
+										</span>
+							      	</md-button>
+							      	<md-button class="md-icon-button" ng-click="deleteColumn(col)">
+							      		<md-tooltip md-delay="500">Delete Column</md-tooltip>
+							      		<span class="fa-stack">
+										  <i class="fa fa-trash fa-stack-1x"></i>
+										</span>
+							      	</md-button>
+		        				</div>
+		   					</md-card-content>
+		   				</md-card>	
+		        </md-tab>
+		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
+		        	
+		        	<md-card>
+						<md-toolbar class="ternaryToolbar" >
+							<div class="md-toolbar-tools" layout="row">
+								<md-switch ng-model="newModel.style.th.enabled" ng-click="toggleTh()" ng-init="newModel.style.th.enabled = typeOf(newModel.style.th.enabled) != 'undefined' ? newModel.style.th.enabled : true">Header</md-switch>
+								<span flex></span>
+							</div>
+						</md-toolbar>
+						<md-card-content >
+							<div flex layout=column >
+								<div flex layout="row" >
+									<md-input-container flex class="md-block" >
+										<label>{{::translate.load("sbi.cockpit.style.titles.font.size")}}</label>
+										 <input ng-model="newModel.style.th['font-size']" type="text" ng-disabled="!newModel.style.th.enabled">
+									</md-input-container>
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.fontweight')}}</label>
+										<input ng-model="newModel.style.th['font-weight']" type="text" ng-disabled="!newModel.style.th.enabled">
+									</md-input-container>
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.table.alignment')}}</label>
+										<md-select aria-label="aria-label" ng-model="newModel.style.th['text-align']" ng-disabled="!newModel.style.th.enabled">
+											<md-option ng-repeat="a in textAlign" value="{{a}}">{{a}}</md-option>
+										</md-select>
+									</md-input-container>
+								</div>
+								<div flex layout=column >
+									<div flex layout="row" >
+										<md-input-container flex class="md-block">
+											<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
+											<color-picker options="colorPickerPropertyTh" ng-model="newModel.style.th.color"/>
+										</md-input-container>
+										<md-input-container flex class="md-block">
+											<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
+											<color-picker options="colorPickerPropertyTh" ng-model="newModel.style.th['background-color']"/>
+										</md-input-container>
+										
+									</div>
+								</div>
+							</div>
+						</md-card-content>
+					</md-card>
+					
+					<md-card>
+						<md-toolbar class="ternaryToolbar" >
+							<div class="md-toolbar-tools" layout="row">
+								<h2>Rows</h2>
+								<span flex></span>
+							</div>
+						</md-toolbar>
+						<md-card-content >
+								<div flex layout="row" >
+									<md-input-container flex class="md-block" >
+										<label>Rows Height</label>
+										 <input ng-model="newModel.style.tr.height" type="text" />
+									</md-input-container>
+								</div>
+						</md-card-content>
+					</md-card>
+					
+		        	<cockpit-style-configurator ng-model="newModel.style" style="display:block">
+		        	</cockpit-style-configurator>
+		        </md-tab>
+		        
+	      	</md-tabs>
+    </md-card-content>
+    <md-card-actions layout="row"  layout-align="end center">
+	    <md-button class="md-raised" ng-click="cancelConfiguration()" >
+	     {{translate.load('sbi.generic.cancel')}}
+	    </md-button>
+	    <md-button class="md-raised md-primary" ng-click="saveConfiguration()"  >
+	     {{translate.load('sbi.generic.save')}}
+	    </md-button>
+    </md-card-actions>
+</md-card>

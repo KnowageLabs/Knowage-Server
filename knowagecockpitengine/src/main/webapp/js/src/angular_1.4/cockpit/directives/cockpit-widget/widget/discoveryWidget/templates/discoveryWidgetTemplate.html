@@ -1,0 +1,68 @@
+<div layout="row">
+	<md-card flex>
+		<md-card-content class="noPadding" layout="row">
+			<md-input-container flex class="md-icon-float" style="margin:8px 4px;">
+		        <md-icon md-font-icon="fa fa-search" ></md-icon>
+		        <input ng-model="ngModel.search.text" type="text">
+      		</md-input-container>
+		</md-card-content>
+	</md-card>
+</div>
+<div layout="row" class="discoveryCardsContainer">
+	<md-card flex="30" class="discoveryFiltersCard" ng-class="{'sidenav':dimensions.width<600, 'open': sidemenuOpened}" style="margin-top:0;">
+		<md-card-content class="noPadding discoveryFiltersList">
+			<div class="md-dense noPadding noSelect">
+        		<md-subheader ng-repeat-start="(key,facet) in facets" ng-if="isFacetVisible(key)" ng-click="facet.closed=!facet.closed" class="noPadding">
+        			<span>{{key}}</span>
+       				<md-button class="md-icon-button noMargin" >
+        				<md-icon ng-if="facet.closed" md-font-icon="fa fa-chevron-down" ></md-icon>
+        				<md-icon ng-if="!facet.closed" md-font-icon="fa fa-chevron-up" ></md-icon>
+       				</md-button>
+        		</md-subheader>
+        		<div ng-if="isFacetVisible(key)">
+        			<div class="kn-info" ng-if="!facet.closed && item.column_2==0">No facets available</div>
+	        		<div  
+	        			ng-if="!facet.closed && item.column_2>0" 
+	        			class="selectable discoveryFiltersItem" 
+	        			ng-repeat="item in facet.rows | orderBy:'column_2':true" 
+	        			ng-class="{'selected':selectedItems[key] == item.column_1}" 
+	        			ng-click="selectItem(key,item)" 
+	        			layout="row" layout-align="start center">
+	          			<span class="discoveryFiltersListName truncated">
+	          				{{ item.column_1 }}
+	          			</span>
+	          			<span flex></span>
+	          			<div class="chip">{{item.column_2}}</div>
+	          			<md-tooltip md-delay="500">{{item.column_1}}</md-tooltip>
+	        		</div>
+        		</div>
+        		<md-divider ng-repeat-end class="hide"></md-divider>
+      		</div>
+		</md-card-content>
+	</md-card>
+	<md-card flex class="discoveryViewCard" style="margin-top:0;">
+		<md-card-content class="noPadding">
+			<md-button class="md-icon-button noMargin menuToggler" ng-if="dimensions.width<600" ng-click="toggleMenu()">
+	        	<md-icon md-font-icon="fa fa-list"></md-icon>
+	        </md-button>
+	        
+			<div ag-grid="gridOptions" class="ag-theme-balham ag-noBorders ag-theme-knowage-discovery" style="width:100%;height: 100%;"></div>
+		</md-card-content>
+		<div ref="south" class="ag-theme-balham ag-noBorders">
+				<div>
+					<div class="ag-paging-panel ag-font-style">
+                		<span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
+                    		<span ref="lbFirstRowOnPage">{{(ngModel.settings.page-1)*ngModel.settings.pagination.itemsNumber+1}}</span> to <span ref="lbLastRowOnPage">{{maxPageNumber()}}</span> {{::translate.load('sbi.cockpit.widgets.table.pagination.of')}} <span ref="lbRecordCount">{{totalResults}}</span>
+                		</span>
+                		<span class="ag-paging-page-summary-panel">
+                    		<button type="button" class="ag-paging-button" ref="btFirst" ng-disabled="ngModel.settings.page==1" ng-click="first()">First</button>
+                    		<button type="button" class="ag-paging-button" ref="btPrevious" ng-disabled="ngModel.settings.page==1" ng-click="prev()">Previous</button>
+                    		{{::translate.load('sbi.cockpit.widgets.table.pagination.page')}} <span ref="lbCurrent">{{ngModel.settings.page}}</span> of <span ref="lbTotal">{{totalPageNumber()}}</span>
+                    		<button type="button" class="ag-paging-button" ref="btNext" ng-click="next()" ng-disabled="ngModel.settings.page==totalPageNumber()">Next</button>
+                    		<button type="button" class="ag-paging-button" ref="btLast" ng-disabled="ngModel.settings.page==totalPageNumber()" ng-click="last()">Last</button>
+                		</span>
+            		</div>
+            	</div>
+           </div>
+	</md-card>
+</div>

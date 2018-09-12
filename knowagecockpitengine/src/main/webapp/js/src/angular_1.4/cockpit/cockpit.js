@@ -21,7 +21,7 @@ var baseScriptPath  = scripts[scripts.length - 1].src;
 baseScriptPath =baseScriptPath .substring(0, baseScriptPath .lastIndexOf('/'));
 
 (function() {
-
+	agGrid.initialiseAgGridWithAngular1(angular);
 var cockpitApp= angular.module("cockpitModule",[
 	'ngMaterial',
 	'ngSanitize',
@@ -39,7 +39,8 @@ var cockpitApp= angular.module("cockpitModule",[
 	'cockpitTable',
 	'jsonFormatter',
 	'ui.codemirror',
-	'knModule'
+	'knModule',
+	'agGrid'
 	]);
 cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
