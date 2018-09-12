@@ -38,7 +38,7 @@ function documentBrowserFunction($window,
 		var cookiesObj = 'breadCrumb_'+sbiModule_user.userId;
 		$cookies.putObject(cookiesObj, JSON.parse(defaultFoldersId));
 	}
-	
+
 	$scope.columns = [
 		{"headerName":"Type","field":"typeCode"},
 		{"headerName":"Name","field":"name"},
@@ -114,7 +114,7 @@ function onSelectionChanged(node){
 			'	<md-icon md-font-icon="fa fa-play-circle"></md-icon>'+
 			'</md-button>';
 }
- 
+
 	 $scope.executeDoc = function(id,e){
 		e.preventDefault();
 		e.stopImmediatePropagation();
@@ -124,7 +124,7 @@ function onSelectionChanged(node){
 				$scope.executeDocument($scope.selectedDocument);
 				return;
 			}
-			
+
 		}
 	 }
 
@@ -176,16 +176,10 @@ function onSelectionChanged(node){
 		$scope.hideProgressCircular=false;
 		sbiModule_restServices.promiseGet("2.0","documents","folderId=" + folderId)
 		.then(function(response) {
-			
-			angular.copy(response.data,$scope.folderDocuments);
-			
 
-			// i18n translate all document names
-			for(var i=0; i<$scope.folderDocuments.length; i++){
-				$scope.folderDocuments[i].name = $scope.i18n.getI18n($scope.folderDocuments[i].name);
-				$scope.folderDocuments[i].description = $scope.i18n.getI18n($scope.folderDocuments[i].description);
-				$scope.folderDocuments[i].viewLabel = $scope.i18n.getI18n($scope.folderDocuments[i].label);
-			}
+			angular.copy(response.data,$scope.folderDocuments);
+
+			$scope.translateDocuments($scope.folderDocuments);
 
 			$scope.hideProgressCircular=true;
 			//PUT bread crumb in cookies
@@ -200,6 +194,15 @@ function onSelectionChanged(node){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
+
+	$scope.translateDocuments=function(docs){
+		for(var i=0; i<docs.length; i++){
+			docs[i].name = $scope.i18n.getI18n(docs[i].name);
+			docs[i].description = $scope.i18n.getI18n(docs[i].description);
+			docs[i].viewLabel = $scope.i18n.getI18n(docs[i].label);
+		}
+	}
+
 	$scope.loadFolders=function(){
 		sbiModule_restServices.promiseGet("2.0/folders", "")
 		.then(function(response) {
@@ -293,7 +296,7 @@ function onSelectionChanged(node){
 	};
 
 	$scope.executeDocument = function(document) {
-		
+
 		var params = {};
 
 		var url = sbiModule_config.contextName
@@ -330,6 +333,7 @@ function onSelectionChanged(node){
 					sbiModule_restServices.promiseGet("2.0", "documents?searchAttributes=all&searchKey=" + encodeURIComponent(newSearchInput + "*"))
 					.then(function(response) {
 						$scope.searchDocuments = response.data;
+						$scope.translateDocuments($scope.searchDocuments);
 						$scope.searchResultGrid.api.setRowData($scope.searchDocuments);
 						$scope.searchResultGrid.api.sizeColumnsToFit();
 						$scope.searchingDocuments=false;
