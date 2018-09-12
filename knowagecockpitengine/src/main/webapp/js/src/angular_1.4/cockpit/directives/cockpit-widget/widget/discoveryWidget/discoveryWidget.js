@@ -38,13 +38,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	function cockpitDiscoveryWidgetControllerFunction(
 			$scope,
+			$rootScope,
 			$timeout,
 			$mdPanel,
 			$q,
 			$filter,
 			sbiModule_translate,
 			cockpitModule_widgetConfigurator,
-			cockpitModule_generalServices){
+			cockpitModule_generalServices,
+			cockpitModule_template){
 		
 		$scope.getTemplateUrl = function(template){
 	  		return cockpitModule_generalServices.getTemplateUrl('discoveryWidget',template);
@@ -173,6 +175,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 		
+		$scope.deleteFilterSelection = function(group, value){
+			var item = {};
+			item.aggregated=false;
+			item.columnName=group;
+			item.columnAlias=group;
+			item.value = value;
+			item.ds=$scope.ngModel.dataset.label;
+			delete cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label][group];
+			$rootScope.$broadcast('DELETE_SELECTION',item);
+		}
+		
 		$scope.selectItem = function(group, item){
 			$scope.showWidgetSpinner();
 			var tempFilter = {
@@ -187,12 +200,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.ngModel.filters && $scope.ngModel.filters.length>0){
 				for(var k in $scope.ngModel.filters){
 					if($scope.ngModel.filters[k].colName == group && $scope.ngModel.filters[k].filterVals.indexOf(item.column_1)!=-1) {
+						$scope.deleteFilterSelection(group,item.column_1);
 						$scope.ngModel.filters.splice(k,1);
 					}else {
+						$scope.doSelection(group,item.column_1,null,null,item, null);
 						$scope.ngModel.filters.push(tempFilter);
 					}
 				}
 			}else {
+				$scope.doSelection(group,item.column_1,null,null,item, null);
 				$scope.ngModel.filters = [tempFilter];
 			}
 			
@@ -259,7 +275,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					*/
 					$scope.showWidgetSpinner();
 					$scope.refreshWidget();
-				},1000)
+				},500)
 			}
 		});		
 		
