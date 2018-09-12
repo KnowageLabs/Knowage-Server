@@ -34,15 +34,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.services.validation.Xss;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.cache.query.SelectQuery;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.DataSourceManager;
 import it.eng.spagobi.tools.datasource.bo.serializer.JDBCDataSourcePoolConfigurationJSONSerializer;
 import it.eng.spagobi.user.UserProfileManager;
@@ -111,10 +110,9 @@ public class DataSource implements Serializable, IDataSource {
 
 	// Advanced Options - JDBCPoolConfiguration
 	private JDBCDataSourcePoolConfiguration jdbcPoolConfiguration;
-	
+
 	// Owner of DataSource - UserIn column in Database
 	private String owner;
-
 
 	public Boolean getReadOnly() {
 		return readOnly;
@@ -207,10 +205,8 @@ public class DataSource implements Serializable, IDataSource {
 	 *
 	 * @return Connection to database
 	 *
-	 * @throws NamingException
-	 *             the naming exception
-	 * @throws SQLException
-	 *             the SQL exception
+	 * @throws NamingException the naming exception
+	 * @throws SQLException    the SQL exception
 	 */
 	private Connection getJndiConnection(String jndiName) throws NamingException, SQLException {
 		Connection connection = null;
@@ -223,47 +219,45 @@ public class DataSource implements Serializable, IDataSource {
 
 	@Override
 	public String getJNDIRunTime(IEngUserProfile profile) {
-		
+
 		if (checkIsMultiSchema()) {
-				// We check if User profile is required by datasource (in case of multischema datasource) but user profile object is missing
-				Assert.assertNotNull(profile, "Datasource is multiscehma, but User profile object is not provided");
-				String attributeName = this.getSchemaAttribute();
-				logger.debug("Datasource multischema attribute name: " + attributeName);
-				String jndiName = null;
-				String schema = null;
-				logger.debug("Looking for attribute [" + attributeName + "] for user [" + profile + "] ...");
-				Object attributeValue;
-				try {
-					attributeValue = profile.getUserAttribute(attributeName);
-					if (attributeValue != null) {
-						schema = attributeValue.toString();
-						Assert.assertNotEmpty(schema.trim(), "Attibute value of current User profile is not provided");
-					}
-				} catch (Exception e) {
-					throw new SpagoBIRuntimeException("Cannot get attribute [" + attributeName + "] from user profile object", e);
+			// We check if User profile is required by datasource (in case of multischema datasource) but user profile object is missing
+			Assert.assertNotNull(profile, "Datasource is multischema, but User profile object is not provided");
+			String attributeName = this.getSchemaAttribute();
+			logger.debug("Datasource multischema attribute name: " + attributeName);
+			String jndiName = null;
+			String schema = null;
+			logger.debug("Looking for attribute [" + attributeName + "] for user [" + profile + "] ...");
+			Object attributeValue;
+			try {
+				attributeValue = profile.getUserAttribute(attributeName);
+				if (attributeValue != null) {
+					schema = attributeValue.toString();
+					Assert.assertNotEmpty(schema.trim(), "Attibute value of current User profile is not provided");
 				}
-				logger.debug("Attribute " + attributeName + " is " + attributeValue);
-
-				jndiName = getJndi() + schema;
-				logger.debug("OUT: JNDI name is [" + jndiName + "]");
-
-				return jndiName;
-
-			} else {
-				// For regular datasource (one that is NOT multischema) we can consider that provided JNDI string is the final one
-				return this.getJndi();
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException("Cannot get attribute [" + attributeName + "] from user profile object", e);
 			}
+			logger.debug("Attribute " + attributeName + " is " + attributeValue);
+
+			jndiName = getJndi() + schema;
+			logger.debug("OUT: JNDI name is [" + jndiName + "]");
+
+			return jndiName;
+
+		} else {
+			// For regular datasource (one that is NOT multischema) we can consider that provided JNDI string is the final one
+			return this.getJndi();
+		}
 	}
-	
+
 	/**
 	 * Get the connection using jdbc.
 	 *
 	 * @return Connection to database
 	 *
-	 * @throws ClassNotFoundException
-	 *             the class not found exception
-	 * @throws SQLException
-	 *             the SQL exception
+	 * @throws ClassNotFoundException the class not found exception
+	 * @throws SQLException           the SQL exception
 	 */
 	@JsonIgnore
 	private Connection getDirectConnection() throws ClassNotFoundException, SQLException {
@@ -660,7 +654,7 @@ public class DataSource implements Serializable, IDataSource {
 	public void setJdbcPoolConfiguration(JDBCDataSourcePoolConfiguration jdbcPoolConfiguration) {
 		this.jdbcPoolConfiguration = jdbcPoolConfiguration;
 	}
-	
+
 	@Override
 	public String getOwner() {
 		return owner;
