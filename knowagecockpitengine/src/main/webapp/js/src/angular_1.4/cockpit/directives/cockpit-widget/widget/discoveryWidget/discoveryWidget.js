@@ -140,7 +140,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].visible) tempCol.hide = true;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
 						tempCol.headerComponentParams = {template: headerTemplate()};
-						//tempCol.cellStyle = getCellStyle;
+						tempCol.cellStyle = getCellStyle;
 						columns.push(tempCol);
 						break;
 					}
