@@ -53,8 +53,8 @@ public class ExtendedSolrQuery extends SolrQuery {
             String[] facetFields = new String[groups.size()];
             for(int i = 0; i < groups.size(); i++) {
                 facetFields[i] = groups.get(i).getName();
-                addFacetField(facetFields);
             }
+            addFacetField(facetFields);
         }
         return this;
     }
