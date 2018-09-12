@@ -20,12 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- 
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
-<%@page import="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineFromFederationStartAction"%>
-<%@page import="it.eng.qbe.datasource.jpa.JPADataSource"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=UTF-8" 
 	     pageEncoding="UTF-8"%>	
-
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
@@ -52,10 +49,22 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%@page import="it.eng.qbe.query.serializer.SerializerFactory"%>
 <%@page import="it.eng.qbe.query.Query"%>
 <%@page import="org.json.JSONArray"%>
+<%@page import="org.apache.log4j.Logger"%>
+<%@page import="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineStartAction"%>
+<%@page import="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineFromFederationStartAction"%>
+<%@page import="it.eng.qbe.datasource.jpa.JPADataSource"%>
+
+<%!
+	private static transient Logger logger = Logger.getLogger(QbeEngineStartAction.class);
+%>
+
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%
+
+try {
+	
 	QbeEngineInstance qbeEngineInstance;
 	QbeEngineConfig qbeEngineConfig;
 	UserProfile profile;
@@ -269,3 +278,10 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	</body>
 
 </html>
+
+<%
+} catch (Exception e) {
+	logger.error("Error while initializing Qbe interface", e);
+}
+%>
+
