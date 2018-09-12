@@ -140,7 +140,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].visible) tempCol.hide = true;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
 						tempCol.headerComponentParams = {template: headerTemplate()};
-						tempCol.cellStyle = getCellStyle;
+						//tempCol.cellStyle = getCellStyle;
 						columns.push(tempCol);
 						break;
 					}
@@ -148,9 +148,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return columns
 		}
-		
-		//$scope.ngModel.style.header = {"background-color": "tan","color":"red","justify-content":"center"};
-		if(!$scope.ngModel.style.th) $scope.ngModel.style.th = {};
 		
 		function headerTemplate() { 
 			return 	'<div class="ag-cell-label-container" role="presentation" style="background-color:'+$scope.ngModel.style.th["background-color"]+'">'+
@@ -167,9 +164,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		function getCellStyle(params){
 			var tempStyle = angular.copy(params.colDef.style);
-			if(params.data[params.column.colId] =="Apple" && params.column.colId == "column_2"){
-				tempStyle['background-color'] = 'green';
-			}
 			return tempStyle;
 		}
 		
