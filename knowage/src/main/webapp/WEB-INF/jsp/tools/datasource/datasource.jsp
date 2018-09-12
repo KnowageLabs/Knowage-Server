@@ -114,7 +114,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										</md-input-container>
 
 									<!-- MULTISCHEMA -->
-										<md-input-container class="md-block">
+										<md-input-container ng-if="jdbcOrJndi.type == 'JNDI'" class="md-block">
 											<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.multiSchema" aria-label="Multischema">{{translate.load("sbi.datasource.multischema")}}</md-checkbox>
 										</md-input-container>
 
