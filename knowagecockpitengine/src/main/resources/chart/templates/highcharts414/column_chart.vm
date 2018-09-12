@@ -1522,14 +1522,17 @@
 		    	type: '$relatedSerieTypes[$counter]',
 		    	 #set ($counter = $counter+1)
 		    #end
+			#set ($counterX = 0)
 			data: [
-				#foreach($el in  $map.get($valueKey))	
+				#foreach($el in  $map.get($valueKey))
+				#if($el.y!="")				
 				{
 				
-					#if($el.y!="")
-						y: $el.y,
-					#end
+					
+					y: $el.y,
+					
 					name: '$el.name',
+					x: $counterX,
 					datetype:"$datetype",
 					#if($isDateTime==true)
 					#if($datetype=="string")
@@ -1537,8 +1540,11 @@
 					#end
 					#end
 					
-				},	
-					
+				},
+				#else
+				#set ($counterX = $counterX+1)
+				#end
+				#set ($counterX = $counterX+1)
 				#end	
 			], 
 						dataLabels: 
