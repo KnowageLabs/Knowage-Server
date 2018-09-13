@@ -48,7 +48,8 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 
 <md-content>
 	<div ng-hide="isParameterPanelDisabled()" layout="{{filterDropping}}">
-		<document-paramenter-element execProperties="getExecProperties()"  parameter="parameter" ng-repeat="parameter in documentParameters" ng-show="parameter.visible" layout="row" layout-align="start" />
+		<document-paramenter-element parameter="parameter" ng-repeat="parameter in documentParameters" ng-show="parameter.visible" layout="row" layout-align="start" />
+	</div>
 </md-content>
 <div flex></div>
 		

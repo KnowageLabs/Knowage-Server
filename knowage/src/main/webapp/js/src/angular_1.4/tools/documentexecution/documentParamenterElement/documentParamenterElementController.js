@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 (function() {
-	var documentExecutionModule = angular.module('driversExecutionModule');
+	var documentExecutionModule = angular.module('documentExecutionModule');
 
 	documentExecutionModule.directive('documentParamenterElement',
 			['sbiModule_config',
@@ -28,60 +28,47 @@
 			controller: documentParamenterElementCtrl,
 			scope: {
 				parameter: '=',
-				execproperties: '=',
 			}
 		};
 	}]);
 
 	var documentParamenterElementCtrl = function(
 			$scope, sbiModule_config, sbiModule_restServices, sbiModule_translate,
-			 $mdDialog, $mdMedia,$filter,sbiModule_dateServices, sbiModule_user,
+			execProperties, documentExecuteServices, $mdDialog, $mdMedia,execProperties,$filter,sbiModule_dateServices, sbiModule_user,
 			sbiModule_messaging, sbiModule_i18n,driversExecutionService) {
 
-		$scope.translate = sbiModule_translate;
-		//$scope.parameter.showMapDriver = sbiModule_user.functionalities.indexOf("MapDriverManagement")>-1;
+		$scope.parameter.showMapDriver = sbiModule_user.functionalities.indexOf("MapDriverManagement")>-1;
+		$scope.execProperties = execProperties;
+		$scope.documentExecuteServices = documentExecuteServices;
 		$scope.sbiModule_translate = sbiModule_translate;
 		$scope.sbiModule_messaging = sbiModule_messaging;
 		$scope.i18n = sbiModule_i18n;
-		$scope.execProperties = $scope.execproperties
-
-
-
-		var initalize = function(){
-		if($scope.execProperties.currentView && $scope.execProperties.currentView.status == 'DOCUMENT'){
-			$scope.executionPath = "1.0/documentexecution";
-			$scope.valuesPath = "parametervalues";
-			$scope.executionParameters = "1.0/documentExeParameters";
-			$scope.parametersPath = "getParameters";
-		}else /*if($scope.execProperties.meta.dataset.hasOwnProperty('dataset'))*/{
-			adaptExecutionProperties();
-			/*  TODO : For Behairoval Model
-			$scope.executionPath =
-			$scope.valuesPath =
-			$scope.executionParameters =
-			$scope.parametersPath =
-			*/
-		}
-
-		}
 
 		$scope.getTreeParameterValue = function(innerNode) {
 			if (typeof innerNode === 'undefined'){
-				$scope.execProperties.hideProgressCircular.status=false;
+				execProperties.hideProgressCircular.status=false;
 			}
 
 			var treeLovNode = (innerNode != undefined && innerNode != null)? innerNode.id : 'lovroot';
 			var templateUrl = sbiModule_config.contextName
 				+ '/js/src/angular_1.4/tools/documentexecution/templates/popupTreeParameterDialogTemplate.jsp';
 
+//			var params =
+//				'label=' + execProperties.executionInstance.OBJECT_LABEL
+//				+ '&role=' + execProperties.selectedRole.name
+//				+ '&biparameterId=' + $scope.parameter.urlName
+//				+ '&mode=' + 'COMPLETE'
+//				+ '&treeLovNode=' + treeLovNode
+//			;
+
+
 			var params = {};
-			params.label = $scope.execProperties.executionInstance.OBJECT_LABEL;
-			params.role=$scope.execProperties.selectedRole.name;
+			params.label = execProperties.executionInstance.OBJECT_LABEL;
+			params.role=execProperties.selectedRole.name;
 			params.biparameterId=$scope.parameter.urlName;
 			params.mode='complete';
 			params.treeLovNode=treeLovNode;
-			params.PARAMETERS=driversExecutionService.buildStringParameters($scope.execProperties.parametersData.documentParameters);
-
+			driversExecutionService.buildStringParameters($scope.execProperties.parametersData.documentParameters);
 
 			if(!$scope.parameter.children || $scope.parameter.children.length == 0) {
 				$scope.parameter.children = $scope.parameter.children || [];
@@ -89,11 +76,13 @@
 
 //				treeLovNode = 'lovroot';
 
-				sbiModule_restServices.post($scope.executionPath,$scope.valuesPath , params)
+				sbiModule_restServices.post("1.0/documentexecution", "parametervalues", params)
 				.success(function(response, status, headers, config) {
 					console.log('parametervalues response OK -> ', response);
 
 					angular.copy(response.filterValues, $scope.parameter.children);
+//					$scope.updateAddToParameterInnerValuesMap($scope.parameter, $scope.parameter.children);
+
 					//check parameters selected field
 					if($scope.parameter.parameterValue && $scope.parameter.parameterValue.length>0){
 						for(var z=0;z<$scope.parameter.children.length;z++){
@@ -116,7 +105,7 @@
 				if(!innerNode.children || innerNode.children.length == 0) {
 					innerNode.children = innerNode.children || [];
 
-					sbiModule_restServices.post($scope.executionPath,$scope.valuesPath, params)
+					sbiModule_restServices.post("1.0/documentexecution", "parametervalues", params)
 					.success(function(response, status, headers, config) {
 						console.log('parametervalues response OK -> ', response);
 						angular.copy(response.filterValues, innerNode.children);
@@ -140,7 +129,6 @@
 				$scope.popupParameterDialog($scope.parameter, templateUrl);
 			}
 		};
-
 
 
 		$scope.checkboxParameterExists = function (parVal,parameter) {
@@ -233,13 +221,16 @@
 				parameter.parameterValue= [];
 			}
 			if(parameter.parameterDescription == undefined ) parameter.parameterDescription ="";
-				addParameterValueDescription(parameter);
+//			var idx = parameter.parameterValue.indexOf(parVal);
+//			parameter.parameterDescription[idx] = parDescr;
+			addParameterValueDescription(parameter);
+
 		}
 
 
 		$scope.popupLookupParameterDialog = function(parameter) {
 
-			$scope.execProperties.hideProgressCircular.status=false;
+			execProperties.hideProgressCircular.status=false;
 			parameter.PARAMETERS=driversExecutionService.buildStringParameters($scope.execProperties.parametersData.documentParameters);
 			var templateUrl = sbiModule_config.contextName
 				+ '/js/src/angular_1.4/tools/documentexecution/templates/popupLookupParameterDialogTemplate.htm';
@@ -250,6 +241,8 @@
 
 		$scope.endDateRange = function(defaultValue, parameter){
 			var dateStart = parameter.parameterValue;
+			//console.log('range : ' , defaultValue);
+			//console.log('datestart : ' , dateStart);
 			if(defaultValue && defaultValue!='' && dateStart!=null && dateStart!=''){
 				var defaultValueObj = {};
 				for(var i=0; i<parameter.defaultValues.length; i++){
@@ -277,6 +270,7 @@
 					dateS.setDate(ys + ye);
 				}
 				var dateToSubmit = $filter('date')(dateS, $scope.parseDateTemp(sbiModule_config.localizedDateFormat));
+				//var dateToSubmit = sbiModule_dateServices.formatDate(parameter.parameterValue, sbiModule_config.localizedDateFormat);
 				if(typeof parameter.datarange == 'undefined' ){
 					parameter.datarange = {};
 				}
@@ -297,6 +291,11 @@
 			}
 			return result;
 		}
+
+
+
+
+
 
 		$scope.showRequiredFieldMessage = function(parameter) {
 		return (
@@ -333,7 +332,6 @@
 		};
 
 
-
 		$scope.popupParameterDialog = function(parameter, templateUrl) {
 			$mdDialog.show({
 				$type: "confirm",
@@ -343,7 +341,7 @@
 				closeTo: '#' + parameter.urlName,
 				templateUrl : templateUrl,
 				onComplete : function() {
-					$scope.execProperties.hideProgressCircular.status=true;
+								execProperties.hideProgressCircular.status=true;
 								},
 				locals : {
 					parameter: parameter,
@@ -503,15 +501,17 @@
 						objPost.MODE = 'extra';
 						objPost.PARAMETERS = paramDialogCtrl.tempParameter.PARAMETERS;
 
-						sbiModule_restServices.post($scope.executionParameters,$scope.parametersPath, objPost)
-											  .success(function(data, status, headers, config) {
-													if(data.errors && data.errors[0]){
-														sbiModule_messaging.showWarningMessage(data.errors[0].message, 'Warning');
-													}
-													else if(data.status=="OK"){
-														paramDialogCtrl.tableData = data.result.root;
-														paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
-													}
+						sbiModule_restServices.post(
+								"1.0/documentExeParameters",
+								"getParameters", objPost)
+								.success(function(data, status, headers, config) {
+									if(data.errors && data.errors[0]){
+										sbiModule_messaging.showWarningMessage(data.errors[0].message, 'Warning');
+									}
+									else if(data.status=="OK"){
+										paramDialogCtrl.tableData = data.result.root;
+										paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
+									}
 								});
 
 						paramDialogCtrl.initSelectedTableItems = function() {
@@ -679,17 +679,5 @@
 			}
 			return ret;
 		}
-
-		var adaptExecutionProperties = function(){
-			$scope.execProperties.selectedRole = {}
-			$scope.execProperties.executionInstance = {}
-			$scope.execProperties.executionInstance.OBJECT_ID = $scope.execProperties.id;
-			$scope.execProperties.executionInstance.OBJECT_LABEL = $scope.execProperties.name;
-			$scope.execProperties.executionInstance.OBJECT_NAME = $scope.execProperties.name;
-			$scope.execProperties.selectedRole.name = sbiModule_user.roles[0];
-		}
-
-		initalize();
-
 	};
 })();
