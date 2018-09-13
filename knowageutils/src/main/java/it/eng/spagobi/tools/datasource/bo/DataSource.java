@@ -224,7 +224,7 @@ public class DataSource implements Serializable, IDataSource {
 
 		if (checkIsMultiSchema()) {
 			// We check if User profile is required by datasource (in case of multischema datasource) but user profile object is missing
-			Assert.assertNotNull(profile, "Datasource is multiscehma, but User profile object is not provided");
+			Assert.assertNotNull(profile, "Datasource is multischema, but User profile object is not provided");
 			String attributeName = this.getSchemaAttribute();
 			logger.debug("Datasource multischema attribute name: " + attributeName);
 			String jndiName = null;

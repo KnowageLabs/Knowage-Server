@@ -39,6 +39,7 @@ import it.eng.spagobi.services.proxy.SecurityServiceProxy;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.callbacks.audit.AuditAccessUtils;
 
 public class SpagoBIAccessFilter implements Filter {
@@ -183,6 +184,7 @@ public class SpagoBIAccessFilter implements Filter {
 
 			if (profile != null) {
 				manageTenant(profile);
+				UserProfileManager.setProfile((UserProfile) profile);
 			} else {
 				logger.debug("User profile is null. Impossibile to manage tenant.");
 			}
@@ -203,9 +205,9 @@ public class SpagoBIAccessFilter implements Filter {
 			throw new ServletException(t);
 		} finally {
 			logger.debug("OUT");
-			// since TenantManager uses a ThreadLocal, we must clean after
-			// request processed in each case
+			// since TenantManager and UserProfileManager use ThreadLocal, we must clean thread after request is processed
 			TenantManager.unset();
+			UserProfileManager.unset();
 		}
 
 	}
