@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -65,7 +66,10 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -303,6 +307,53 @@ public class DataSetResource extends AbstractDataSetResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+	
+	@GET
+	@Path("/olderversions/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public String geOlderVersionsForDataset(@PathParam("id") int id) {
+		logger.debug("IN");
+		List<IDataSet> olderVersions = null;
+		JSONObject toReturn = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
+		try {
+			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
+			dsDao.setUserProfile(getUserProfile());
+
+			olderVersions = dsDao.loadDataSetOlderVersions(id);
+
+			if (olderVersions != null && !olderVersions.isEmpty()) {
+				Iterator<IDataSet> it = olderVersions.iterator();
+				while (it.hasNext()) {
+					IDataSet oldVersion = it.next();
+					Integer dsVersionNum = null;
+					if (oldVersion instanceof VersionedDataSet) {
+						dsVersionNum = ((VersionedDataSet) oldVersion).getVersionNum();
+					}
+					String dsType = oldVersion.getDsType();
+					String userIn = oldVersion.getUserIn();
+					Date timeIn = oldVersion.getDateIn();
+
+					JSONObject oldDsJsonObj = new JSONObject();
+					oldDsJsonObj.put("type", dsType);
+					oldDsJsonObj.put("userIn", userIn);
+					oldDsJsonObj.put("versNum", dsVersionNum);
+					oldDsJsonObj.put("dateIn", timeIn);
+					oldDsJsonObj.put("dsId", id);
+					jsonArray.put(oldDsJsonObj);
+				}
+				toReturn.put("root", jsonArray);
+			}
+
+		} catch (SpagoBIRuntimeException ex) {
+			throw ex;
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+		}
+
+		return toReturn.toString();
 	}
 
 	@Override

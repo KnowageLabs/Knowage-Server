@@ -24,7 +24,7 @@ datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 datasetModule
-	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer", datasetFunction])
+	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer", '$q', datasetFunction])
 	.service('multipartForm',['$http',function($http){
 
 			this.post = function(uploadUrl,data){
@@ -42,7 +42,7 @@ datasetModule
 		}]);
 
 
-function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer){
+function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer, $q){
 
 	$scope.maxSizeStr = maxSizeStr;
 
@@ -1762,11 +1762,23 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 $scope.loadDataSet = function(item,index) {
 		 $scope.isSelected = true;
 		 $scope.step=1;
-//		 console.log("A8");
-//		 console.log(item);
-//		 console.log($scope.dirtyForm);
-//		 console.log($scope.selectedDataSet);
-		 //$scope.selectedDataSet ? console.log("id: ",$scope.selectedDataSet.id) : console.log("UNDEFINED");
+
+		 // Load the Dataset's older versions
+		 if(!item.hasOwnProperty('selected') || 
+			(item.hasOwnProperty('selected') && item.selected != true)) {
+			var defer = $q.defer();
+			var olderVersionsPromise = loadOlderVersions(item.id);
+			olderVersionsPromise.then(function(response){											 		
+				item.dsVersions = response;
+				item.selected = true;
+				$scope.selectedDataSetInit = angular.copy(item);
+				$scope.selectedDataSet = angular.copy(item);
+				defer.resolve(response);				
+			}, function(error){					
+				sbiModule_messaging.showErrorMessage(error, 'Error');				
+			});			
+		 }
+		
 		 // DS not yet selected
 		 if (!$scope.selectedDataSet) {
 			 //console.log("a2");
@@ -1775,10 +1787,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 }
 		 // Moving from selected new DS to existing DS
 		 else if (!$scope.selectedDataSet.id) {
-			 //console.log("b2");
-			 //console.log(item.id);
-			 //console.log($scope.dirtyForm);
-//			 if ($scope.selectedDataSet.id!=item.id && $scope.dirtyForm) {
+
 			 // If we move to the already existing DS and not clicking on the new DS again
 			 if (item.id) {
 
@@ -1838,7 +1847,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					.then(
 							function() {
 
-								//console.log($scope.selectedDataSet);
+								
 								selectDataset(item,index);
 								$scope.setFormNotDirty();
 					 		},
@@ -1846,7 +1855,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					 		function() {
 
 					 			var indexOfExistingDSInAT = -1;
-//
+
 								for (i=0; i<$scope.datasetsListTemp.length; i++) {
 									if ($scope.datasetsListTemp[i].id == $scope.selectedDataSet.id) {
 										indexOfExistingDSInAT = i;
@@ -2157,7 +2166,22 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.setFormNotDirty();
 
 	}
-
+	
+	var loadOlderVersions = function(id) {
+		var deferred = $q.defer();
+				
+		var promise = sbiModule_restServices.promiseGet('1.0/datasets/olderversions', id);
+		promise.then(function(response){
+			var result = response.data.root;				
+			deferred.resolve(result);
+		}, function(error) {
+			if(error.data && error.data.errors)
+				deferred.reject(error.data.errors[0].message);
+   		});
+			
+		return deferred.promise;
+	}
+	
 	$scope.refactorFileDatasetConfig = function(item) {
 
 		$scope.selectedDataSet.fileType = item!=undefined ? item.fileType : "";
