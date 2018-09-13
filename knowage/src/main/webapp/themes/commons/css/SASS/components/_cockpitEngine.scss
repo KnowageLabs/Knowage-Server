@@ -68,6 +68,8 @@
 	    		
 	    		@include coolScrollBars($baseColor,6px);
 	    		.md-subheader {
+	    			background-color: $baseColor;
+	    			color: $lightTextColor;
 	    			cursor: pointer;
 	    			border-bottom: 1px solid $bordersColor;
 	    			._md-subheader-inner, .md-subheader-inner {
@@ -84,6 +86,7 @@
 						    	min-height: 30px;
 						    	md-icon {
 						    		margin:0;
+						    		color: $lightTextColor;
 						    	}
 						    }
 						    
