@@ -71,7 +71,6 @@ import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
@@ -309,9 +308,15 @@ public class DataSetFactory {
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
 				if (userProfile != null)
 					dataSourceDao.setUserProfile(userProfile);
+
 				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
 
-				Assert.assertNotNull(dataSource, "Datasource cannot be null");
+				if (dataSource == null) {
+					logger.debug("Datasource " + jsonConf.getString(DataSetConstants.DATA_SOURCE) + " is null for " + sbiDataSet.getLabel());
+					throw new SpagoBIRuntimeException(
+							"Datasource " + jsonConf.getString(DataSetConstants.DATA_SOURCE) + " no longer exists for " + sbiDataSet.getLabel() + " Dataset");
+				}
+
 				DatabaseDialect dialect = DataBaseFactory.getDataBase(dataSource).getDatabaseDialect();
 				if (dialect.equals(DatabaseDialect.MONGO)) {
 					ds = new MongoDataSet();
@@ -332,9 +337,6 @@ public class DataSetFactory {
 					if (!dataSource.checkIsReadOnly()) {
 						ds.setDataSourceForWriting(dataSource);
 					}
-				} else {
-					logger.error("Could not retrieve datasource with label " + jsonConf.getString(DataSetConstants.DATA_SOURCE) + " for dataset "
-							+ sbiDataSet.getLabel());
 				}
 			} else if (type.equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {
 				ds = new ScriptDataSet();
@@ -441,6 +443,8 @@ public class DataSetFactory {
 				ds.setDsType(FLAT_DS_TYPE);
 			}
 
+		} catch (SpagoBIRuntimeException ex) {
+			throw ex;
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while defining dataset configuration.", e);
 		}

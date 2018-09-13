@@ -76,6 +76,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 
 	public List<IDataSet> loadDataSets();
 
+	public List<IDataSet> loadDataSetOlderVersions(Integer dsId);
+
 	// ========================================================================================
 	// CEATE operations (Crud)
 	// ========================================================================================
