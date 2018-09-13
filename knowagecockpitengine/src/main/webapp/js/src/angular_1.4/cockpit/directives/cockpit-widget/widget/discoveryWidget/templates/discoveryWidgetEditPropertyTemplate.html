@@ -154,6 +154,10 @@
 		        	</cockpit-style-configurator>
 		        </md-tab>
 		        
+		        <md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}">
+					<cockpit-filters-configuration ng-model-shared="newModel" ></cockpit-filters-configuration>
+				</md-tab>
+		        
 	      	</md-tabs>
     </md-card-content>
     <md-card-actions layout="row"  layout-align="end center">
