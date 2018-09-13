@@ -183,6 +183,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					md-font-icon="fa fa-trash-o"></md-icon> </md-button>
 				<%
 					}
+					if (!UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0]) &&
+						UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ROLE_TYPE_TEST, new String[0])) {
+				%>
+				
+				
+				<md-button ng-if="selectedDocument.stateCode=='TEST'" title="{{translate.load('sbi.documentbrowser.moveUp')}}"  
+					aria-label="Move Up State Document" class="md-icon-button"
+					ng-click="changeStateDocument(selectedDocument, 'UP')"> <md-icon
+					md-font-icon="fa fa-arrow-circle-o-up"></md-icon> </md-button>
+			
+				<md-button ng-if="selectedDocument.stateCode=='TEST' || selectedDocument.stateCode=='REL'" title="{{translate.load('sbi.documentbrowser.moveDown')}}"
+					aria-label="Move Down State Document" class="md-icon-button"
+					ng-click="changeStateDocument(selectedDocument, 'DOWN')"> <md-icon
+					md-font-icon="fa fa-arrow-circle-o-down"></md-icon> </md-button>
+			
+				<%
+					}
 				%>
 			</div>
 		</md-toolbar> 

@@ -64,6 +64,7 @@ import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.DocumentsJSONDecorator;
@@ -96,6 +97,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 	public static final String IS_SHARE = "isShare";
 	public static final String USER = "user";
 	public static final String DOCUMENT_TYPE = "docType";
+	public static final String DIRECTION = "direction";
 
 	static private Logger logger = Logger.getLogger(DocumentCRUD.class);
 
@@ -371,6 +373,84 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 		logger.debug("OUT");
 		return "{}";
 	}
+
+	/**
+	 * Service to change document STATE by TESTER
+	 *
+	 * @param req
+	 * @return
+	 */
+	@POST
+	@Path("/changeStateDocument")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String chnageStateDocument(@Context HttpServletRequest req) {
+
+		logger.debug("IN");
+		try {
+			String ids = req.getParameter(OBJECT_ID);
+			String direction = req.getParameter(DIRECTION);
+
+			Integer id = -1;
+			try {
+				id = new Integer(ids);
+			} catch (Exception e) {
+				logger.error("Error cloning the document.. Impossible to parse the id of the document " + ids, e);
+				throw new SpagoBIRuntimeException("Error cloning the document.. Impossible to parse the id of the document " + ids, e);
+			}
+
+			if (direction != null && "UP".equalsIgnoreCase(direction)) {
+				moveStateUp(id);
+			}else if (direction != null && "DOWN".equalsIgnoreCase(direction)) {
+				moveStateDown(id);
+			}
+		} catch (EMFUserError e) {
+			logger.error("Error in changeStateDocument Service: " + e);
+		}
+
+		logger.debug("OUT");
+		return "{}";
+	}
+
+	private void moveStateUp(Integer id) throws EMFUserError  {
+
+	    if (id != null){
+    		BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(new Integer(id));
+    		if (obj!= null){
+    			String state = obj.getStateCode();
+    			if (state!= null && state.equals("DEV")){
+    				Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "TEST");
+    				obj.setStateCode("TEST");
+    				obj.setStateID(dTemp.getValueId());
+    			}else if (state!= null && state.equals("TEST")){
+    				Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "REL");
+    				obj.setStateCode("REL");
+    				obj.setStateID(dTemp.getValueId());
+    			}
+    			DAOFactory.getBIObjectDAO().modifyBIObject(obj);
+    		}
+	     }
+	 }
+
+
+	private void moveStateDown(Integer id) throws EMFUserError  {
+
+	    if (id != null){
+    		BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(new Integer(id));
+    		if (obj!= null){
+    			String state = obj.getStateCode();
+    			if (state!= null && state.equals("REL")){
+    				Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "TEST");
+    				obj.setStateCode("TEST");
+    				obj.setStateID(dTemp.getValueId());
+    			}else if (state!= null && state.equals("TEST")){
+    				Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "DEV");
+    				obj.setStateCode("DEV");
+    				obj.setStateID(dTemp.getValueId());
+    			}
+    			DAOFactory.getBIObjectDAO().modifyBIObject(obj);
+    		}
+	     }
+	 }
 
 	/**
 	 * Creates a json array with children document informations

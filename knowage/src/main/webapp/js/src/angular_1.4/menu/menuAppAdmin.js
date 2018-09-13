@@ -23,6 +23,7 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
 	function ($scope,$mdDialog ) {
 		$scope.languages = [];
 		$scope.openAside = false;
+		$scope.hideAdminPanel = false;
 		$scope.toggleMenu = function(){
 			$scope.openAside = !$scope.openAside;
 		}
@@ -34,7 +35,7 @@ myApp.config(function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 });
 
-myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter','sbiModule_restServices', 'sbiModule_config', 'sbiModule_i18n', function($window,$http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_restServices, sbiModule_config, sbiModule_i18n) {
+myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter','sbiModule_restServices', 'sbiModule_config', 'sbiModule_i18n', 'sbiModule_user', function($window,$http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_restServices, sbiModule_config, sbiModule_i18n, sbiModule_user) {
     return {
 
         restrict: 'E',
@@ -58,6 +59,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         		$scope.translate = sbiModule_translate;
         		$scope.messaging = sbiModule_messaging;
         		$scope.download = sbiModule_download;
+        		$scope.user = sbiModule_user;
 
         		$scope.i18n = sbiModule_i18n;
 
@@ -104,6 +106,8 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         			});
 
         			$scope.groups = newJson;
+        			if ($scope.user.isSuperAdmin == 'false' && $scope.user.isTesterUser == 'true')
+        				$scope.hideAdminPanel = true;
 
 
         		}); // end of load I 18n
@@ -290,7 +294,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
     	        				transformRequest:angular.identity,
     	        				headers:{'Content-Type': undefined}
     	        			};
-						
+
 	        	        var restLicense = {
 	        	        		base : scope.config.contextName + '/restful-services/1.0/license',
 	        	        		check: '/check',
@@ -303,14 +307,14 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        	scope.$apply();
 	        	        }
 
-	        	        // firstly, check if license exists and is it valid 
+	        	        // firstly, check if license exists and is it valid
 	        	        scope.uploadFile = function(hostName){
 	        	        	if (scope.file){
-	        	        		
+
 	        	        		scope.formData = new FormData();
 	        	        		scope.formData.append(scope.file.name, scope.file);
-	        	        		scope.currentHostName = hostName;	        	        		
-	        	        		
+	        	        		scope.currentHostName = hostName;
+
 	        	        		$http.post(restLicense.base + restLicense.check + "/" + scope.currentHostName, scope.formData, scope.httpConfig)
 		   	        		     .then(
 		   	        		    		 function(response, status, headers, config){
@@ -329,28 +333,28 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	   	        		    					   },
 		   	        		    				   controller: function($mdDialog, dialogScope, hostName, formData, config, translate) {
 		   	        		    					    this.translate = translate;
-		   	        		    					    
+
 		   	        			        	        	this.confirm = function() {
 		   	        			        	        		dialogScope.doUpload(hostName, formData, config);
 		   	        			        	        		$mdDialog.hide();
 		   	        			        	        	};
-		   	        			        	        	
+
 		   	        			        	        	this.close = function() {
 		   	        			        	        		$mdDialog.hide();
 		   	        			        	        	};
-		   	        			        	        },		   	        			        	       
+		   	        			        	        },
 		   	        		    					templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/licenseConfirmDialogTemplate.html',
 		   	        		    					preserveScope: true,
-		   	        		    	                autoWrap: true,		   	        		    	                
+		   	        		    	                autoWrap: true,
 		   	        		    	                controllerAs: 'dialogCtrl',
-		   	        		    	                bindToController: true,		   	        		    	             
-		   	        		                        skipHide: true		   	        		    	             
+		   	        		    	                bindToController: true,
+		   	        		                        skipHide: true
 		   	        		    				});
-		   	        		    				
+
 		   	        		    			} else {
 		   	        		    				scope.doUpload(hostName, scope.formData, scope.httpConfig);
 		   	        		    			}
-		   	        		    		 }, 
+		   	        		    		 },
 		   	        		    		 function(response, status, headers, config){
 	        	        					if (response.data.errors){
 	        	        						scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
@@ -358,20 +362,20 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        						scope.messaging.showErrorMessage(scope.translate.load('sbi.ds.failedToUpload'),scope.translate.load('sbi.generic.error'));
 	        	        					}
 	        	        				}
-		   	        		     );	        	        			        	        			        	        		        	        		        	        	
+		   	        		     );
 	        	        	}
 	        	        };
 
 	        	        // Really do an upload
 	        	        scope.doUpload = function(currentHostName, formData, config) {
-	        	    		// upload a new license or replace the old one        	        
+	        	    		// upload a new license or replace the old one
 	        	        	$http.post(restLicense.base + restLicense.upload + "/" + currentHostName, formData, config)
 							.then(
 								function(response,status,headers,config){
 									if (response.data.errors){
 										scope.messaging.showErrorMessage(scope.translate.load(response.data.errors[0].message),scope.translate.load('sbi.generic.error'));
 									}else{
-										// add the new license to the list										
+										// add the new license to the list
 										var existingLicenses = $filter('filter')($scope.licenseData[currentHostName], {product: response.data.product}, true);
 										if(existingLicenses.length !== 0) {
 											var existingLicObj = existingLicenses[0];
@@ -379,10 +383,10 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 												var index = $scope.licenseData[currentHostName].indexOf(existingLicObj);
 												$scope.licenseData[currentHostName].splice(index, 1);
 												$scope.licenseData[currentHostName].push(response.data);
-											}											
+											}
 										} else {
 											$scope.licenseData[currentHostName].push(response.data);
-										}																																						
+										}
 										scope.file = undefined;
 										scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
 									}
@@ -395,7 +399,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 									}
 								});
 	        	        };
-	        	        		        	        
+
 	        	        scope.dowloadFile = function(license, hostName){
 	        	        	$http
 	        	        		.get(restLicense.base + restLicense.download + '/' + hostName+ '/' + license.product)
