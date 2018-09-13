@@ -1303,6 +1303,7 @@
 	    	dataLabels: {
 	    		allowOverlap: true
 	    	},
+			#set ($counterX = 0)
 	    	
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
@@ -1317,6 +1318,7 @@
 						#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 						#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
 						#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
+						#if($serieValue!="")
 						{
 							##drilldown: $enableDrilldown,
 							drilldown: $drilldownEnabledFlag,
@@ -1334,6 +1336,7 @@
 							
 								y: $serieValue,
 							#end
+							x: $counterX,
 							name: "$serieCategoryName",
 							datetype:"$datetype",
 							#if($isDateTime==true)
@@ -1342,7 +1345,11 @@
 							#end
 							#end
 						},
-					 
+						 #set ($counterX = $counterX+1)
+					 #else
+						#set ($counterX = $counterX+1)
+					 #end
+
 					#end
 				#end
 	    	],
@@ -1536,14 +1543,15 @@
 		    	type: '$relatedSerieTypes[$counter]',
 		    	 #set ($counter = $counter+1)
 		    #end
+			#set ($counterX = 0)
 			data: [
 				#foreach($el in  $map.get($valueKey))	
+				#if($el.y!="")		
 				{
 				
-					#if($el.y!="")
-						y: $el.y,
-					#end
+					y: $el.y,
 					name: '$el.name',
+					x: $counterX,
 					datetype:"$datetype",
 					#if($isDateTime==true)
 					#if($datetype=="string")
@@ -1551,8 +1559,13 @@
 					#end
 					#end
 					
-				},	
-					
+				},
+				#else
+				#set ($counterX = $counterX+1)
+				#end
+				#set ($counterX = $counterX+1)
+
+
 				#end	
 			], 
 						dataLabels: 
