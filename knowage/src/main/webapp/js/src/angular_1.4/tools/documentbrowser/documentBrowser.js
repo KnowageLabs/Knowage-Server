@@ -454,7 +454,7 @@ function onSelectionChanged(node){
 	}
 
 
-	$scope.cloneDocument = function(Document){
+	$scope.cloneDocument = function(document){
 		var confirm = $mdDialog.confirm()
 		.title($scope.translate.load("sbi.browser.document.clone.ask.title"))
 		.content($scope.translate.load("sbi.browser.document.clone.ask"))
@@ -464,7 +464,7 @@ function onSelectionChanged(node){
 			$mdDialog.show(confirm).then(function() {
 
 			//var index = $scope.folderDocuments.indexOf(Document);
-			sbiModule_restServices.promisePost("documents","clone?docId="+Document.id)
+			sbiModule_restServices.promisePost("documents","clone?docId="+document.id)
 			.then(function(response) {
 			$scope.folderDocuments.push(response.data);
 			//$scope.searchDocuments.push(response.data);
@@ -475,7 +475,23 @@ function onSelectionChanged(node){
 		});
 	}
 
+	$scope.changeStateDocument = function(document, direction){
+		var confirm = $mdDialog.confirm()
+		.title($scope.translate.load("sbi.browser.document.changeState.ask.title"))
+		.content($scope.translate.load("sbi.browser.document.changeState.ask"))
+		.ariaLabel('change state Document')
+		.ok($scope.translate.load("sbi.general.yes"))
+		.cancel($scope.translate.load("sbi.general.No"));
+			$mdDialog.show(confirm).then(function() {
 
+			sbiModule_restServices.promisePost("documents","changeStateDocument?docId="+document.id+"&direction="+direction)
+			.then(function(response) {
+				$scope.loadFolderDocuments($scope.selectedFolder.id);
+			},function(response) {
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.changeState.error'));
+			});
+		});
+	}
 
 	$scope.documentTableButton=[{
 		label : sbiModule_translate.load('sbi.generic.run'),

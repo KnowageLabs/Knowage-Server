@@ -36,8 +36,6 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="DistributionListUser" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="DistributionListUser" roleType="TEST_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="DocumentAdministration" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="DocumentAdminManagement" roleType="ADMIN" />
@@ -63,8 +61,6 @@
 		userFunctionality="DocumentMetadataManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="DocumentMetadataManagement" roleType="DEV_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="DocumentMetadataManagement" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="DocumentMoveDownState" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
@@ -99,8 +95,6 @@
 		userFunctionality="EventsManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="EventsManagement" roleType="DEV_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="EventsManagement" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="FunctionalitiesManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
@@ -289,7 +283,6 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="USER" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="DEV_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="MODEL_ADMIN" />
 	
 	
@@ -308,7 +301,6 @@
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="DEV_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="MODEL_ADMIN" />
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ExecuteCrossNavigation" roleType="ADMIN" />
@@ -359,7 +351,6 @@
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogManagement" roleType="DEV_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogManagement" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogManagement" roleType="MODEL_ADMIN" />
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DomainWrite" roleType="ADMIN" />
@@ -375,7 +366,6 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="USER" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="DEV_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="MODEL_ADMIN" />	
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AlertManagement" roleType="ADMIN" />

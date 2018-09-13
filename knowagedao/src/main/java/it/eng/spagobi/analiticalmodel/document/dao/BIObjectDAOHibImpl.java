@@ -1501,8 +1501,18 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				// or TEST state),
 				// it is a correct role
 				String role = rolesIt.next().toString();
-				if (allRolesWithPermission.contains(role))
-					userRolesWithPermission.add(role);
+				//TESTER management: add all available folders execution roles
+				String roleTHql = "select roles.roleTypeCode from SbiExtRoles as roles "
+						+ "where roles.name = '" + role + "' ";
+				Query roleHqlQuery = aSession.createQuery(roleTHql);
+				String roleType = (String)roleHqlQuery.uniqueResult();
+				if (SpagoBIConstants.ROLE_TYPE_TEST.equals(roleType)) {
+					userRolesWithPermission = allRolesWithPermission;
+					break;
+				}else {
+					if (allRolesWithPermission.contains(role))
+						userRolesWithPermission.add(role);
+				}
 			}
 
 			logger.debug("The user have [" + userRolesWithPermission.size() + "] different roles that can execute doc [" + id + "] depending on its location");
