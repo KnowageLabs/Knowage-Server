@@ -7,33 +7,23 @@
 	      </div>
 	    </md-toolbar>
 			<md-tabs flex md-border-bottom>
-				<md-tab label="Columns">
+				<md-tab label="Settings">
 						<md-card>
 		        			<md-card-content layout="row">
-		   						<dataset-selector flex="70" ng-model="newModel.datasetId" on-change="handleEvent('datasetChanged',dsId)" dataset-type-available="[{type:'SbiSolrDataSet',configuration:{property:'solrType',value:'DOCUMENTS'}}]" ></dataset-selector>  
-		   						<md-input-container flex class="md-block">
-									<label>Items per page</label>
-									<input ng-model="newModel.settings.pagination.itemsNumber" type="number" />
-								</md-input-container>
+		   						<dataset-selector flex ng-model="newModel.datasetId" on-change="handleEvent('datasetChanged',dsId)" dataset-type-available="[{type:'SbiSolrDataSet',configuration:{property:'solrType',value:'DOCUMENTS'}}]" ></dataset-selector>  
 		   					</md-card-content>
 		   				</md-card>
 		   				<md-card ng-if="newModel.datasetId">
 		   					<md-subheader class="noPadding">
-		   						<div layout="row" layout-align="start center"><span layout-padding>Columns List</span><span flex></span><md-button ng-disabled="newModel.content.columnSelectedOfDataset.length >= local.metadata.fieldsMeta.length" ng-click="addColumn()">Add Column</md-button></div>
+		   						<div layout="row" layout-align="start center" style="height:48px;">
+		   							<span layout-padding>Facets</span><span flex></span>
+		   						</div>
 		   					</md-subheader>
-		        			<md-card-content>
-		        				<div class="" ng-repeat="col in newModel.content.columnSelectedOfDataset" layout="row" layout-align="start center">
+		   					<md-card-content>
+		   						<div class="" ng-repeat="col in newModel.content.columnSelectedOfDataset" layout="row" layout-align="start center">
 	        						<md-input-container flex style="margin-bottom: 4px;">
 							        	<label>Column</label>
-							        	<md-select ng-model="col.name">
-							              <md-option ng-repeat="field in local.metadata.fieldsMeta" value="{{field.name}}">
-							                {{field.name}}
-							              </md-option>
-							            </md-select>
-							      	</md-input-container>
-							      	<md-input-container flex style="margin-bottom: 4px;">
-							        	<label>Alias</label>
-								        <input ng-model="col.alias" >
+							        	<input type="text" disabled ng-model="col.name" />
 							      	</md-input-container>
 							      	<md-input-container flex style="margin-bottom: 4px;">
 							        	<label>Type</label>
@@ -44,25 +34,13 @@
 							            </md-select>
 							      	</md-input-container>
 							      	<md-input-container flex style="margin-bottom: 4px;">
-							        	<label>Facet aggregation function</label>
+							        	<label>Aggregation function</label>
 								        <md-select ng-model="col.aggregationSelected" ng-init="col.aggregationSelected = initAggregation(col)" ng-disabled="col.fieldType == 'ATTRIBUTE' || !col.facet">
 							              <md-option ng-repeat="aggregation in availableAggregations" value="{{aggregation}}">
 							                {{aggregation}}
 							              </md-option>
 							            </md-select>
 							      	</md-input-container>
-							      	<md-button class="md-icon-button" ng-click="showSettingsDialog($event,col)" style="background-color:{{col.style['background-color']}}">
-							      		<md-tooltip md-delay="500">Column Settings</md-tooltip>
-							      		<md-icon md-font-icon="fa fa-paint-brush" style="color:{{col.style.color}}"></md-icon>
-							      	</md-button>
-							      	<md-button class="md-icon-button facetReady" ng-init="col.visible = initProperty(col.visible)" ng-click="col.visible=!col.visible">
-							      		<md-tooltip ng-if="col.visible" md-delay="500">Hide Column</md-tooltip>
-							      		<md-tooltip ng-if="!col.visible" md-delay="500">Show Column</md-tooltip>
-							      		<span class="fa-stack">
-										  <i class="fa fa-eye fa-stack-1x"></i>
-										  <i class="fa fa-ban fa-stack-2x kn-danger" ng-class="{'facet-hidden':!col.visible}"></i>
-										</span>
-							      	</md-button>
 							      	<md-button class="md-icon-button facetReady" ng-init="col.facet = initProperty(col.facet)" ng-click="col.facet=!col.facet">
 							      		<md-tooltip ng-if="col.facet" md-delay="500">Hide Facet</md-tooltip>
 							      		<md-tooltip ng-if="!col.facet" md-delay="500">Show Facet</md-tooltip>
@@ -77,6 +55,51 @@
 							      		<span class="fa-stack">
 										  <i class="fa fa-file-text fa-stack-1x"></i>
 										  <i class="fa fa-ban fa-stack-2x kn-danger" ng-class="{'facet-hidden':!col.fullTextSearch}"></i>
+										</span>
+							      	</md-button>
+		        				</div>
+		   					</md-card-content>
+		   				</md-card>
+		   				<md-card ng-if="newModel.datasetId">
+		   					<md-subheader class="noPadding">
+		   						<div layout="row" layout-align="start center">
+			   						<md-switch ng-model="newModel.settings.table.enabled" style="margin:9px 9px 9px 10px;"></md-switch>
+			   						<span layout-padding>Data Table</span>
+			   						<span flex></span>
+			   						<md-button ng-if="newModel.settings.table.enabled" ng-disabled="newModel.content.columnSelectedOfDataset.length >= local.metadata.fieldsMeta.length" ng-click="addColumn()">Add Column</md-button>
+			   					</div>
+		   					</md-subheader>
+		        			<md-card-content ng-if="newModel.settings.table.enabled">
+		        				<div layout="row">
+		        					<md-input-container flex class="md-block">
+										<label>Items per page</label>
+										<input ng-model="newModel.settings.pagination.itemsNumber" type="number" />
+									</md-input-container>
+		        				</div>
+		        				<div class="" ng-repeat="col in newModel.content.columnSelectedOfDataset" layout="row" layout-align="start center">
+	        						<md-input-container flex style="margin-bottom: 4px;">
+							        	<label>Column</label>
+							        	<md-select ng-model="col.name">
+							              <md-option ng-repeat="field in local.metadata.fieldsMeta" value="{{field.name}}">
+							                {{field.name}}
+							              </md-option>
+							            </md-select>
+							      	</md-input-container>
+							      	<md-input-container flex style="margin-bottom: 4px;">
+							        	<label>Alias</label>
+								        <input ng-model="col.alias" >
+							      	</md-input-container>
+							      	
+							      	<md-button class="md-icon-button" ng-click="showSettingsDialog($event,col)" style="background-color:{{col.style['background-color']}}">
+							      		<md-tooltip md-delay="500">Column Settings</md-tooltip>
+							      		<md-icon md-font-icon="fa fa-paint-brush" style="color:{{col.style.color}}"></md-icon>
+							      	</md-button>
+							      	<md-button class="md-icon-button facetReady" ng-init="col.visible = initProperty(col.visible)" ng-click="col.visible=!col.visible">
+							      		<md-tooltip ng-if="col.visible" md-delay="500">Hide Column</md-tooltip>
+							      		<md-tooltip ng-if="!col.visible" md-delay="500">Show Column</md-tooltip>
+							      		<span class="fa-stack">
+										  <i class="fa fa-eye fa-stack-1x"></i>
+										  <i class="fa fa-ban fa-stack-2x kn-danger" ng-class="{'facet-hidden':!col.visible}"></i>
 										</span>
 							      	</md-button>
 							      	<md-button class="md-icon-button" ng-click="deleteColumn(col)">
@@ -94,7 +117,7 @@
 		        	<md-card>
 						<md-toolbar class="ternaryToolbar" >
 							<div class="md-toolbar-tools" layout="row">
-								<md-switch ng-model="newModel.style.th.enabled" ng-click="toggleTh()" ng-init="newModel.style.th.enabled = (typeOf(newModel.style.th.enabled) != 'undefined') ? newModel.style.th.enabled : true">Header</md-switch>
+								<md-switch ng-model="newModel.style.th.enabled" ng-click="toggleTh()" ng-init="newModel.style.th.enabled = initTh()">Header</md-switch>
 								<span flex></span>
 							</div>
 						</md-toolbar>

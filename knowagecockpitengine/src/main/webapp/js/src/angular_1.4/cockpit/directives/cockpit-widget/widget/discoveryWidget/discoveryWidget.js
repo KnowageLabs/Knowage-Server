@@ -45,8 +45,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$filter,
 			sbiModule_translate,
 			cockpitModule_widgetConfigurator,
+			cockpitModule_widgetSelection,
 			cockpitModule_generalServices,
 			cockpitModule_template){
+		
+		$scope.template = cockpitModule_template;
 		
 		$scope.getTemplateUrl = function(template){
 	  		return cockpitModule_generalServices.getTemplateUrl('discoveryWidget',template);
@@ -116,14 +119,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(datasetRecords){
 				$scope.facets = datasetRecords.facets;
 				$scope.metaData = datasetRecords.metaData;
-				$scope.gridOptions.headerHeight = !$scope.ngModel.style.th.enabled && 0;
-				if(nature == 'init'){
-					$scope.columns = $scope.getColumns(datasetRecords.metaData.fields);
-					$scope.gridOptions.api.setColumnDefs($scope.columns);
-					$scope.gridOptions.api.resetRowHeights();
+				if($scope.ngModel.settings.table && $scope.ngModel.settings.table.enabled){
+					$scope.gridOptions.headerHeight = !$scope.ngModel.style.th.enabled && 0;
+					if(nature == 'init'){
+						$scope.columns = $scope.getColumns(datasetRecords.metaData.fields);
+						$scope.gridOptions.api.setColumnDefs($scope.columns);
+						$scope.gridOptions.api.resetRowHeights();
+					}
+					$scope.gridOptions.api.setRowData(datasetRecords.rows);
+					resizeColumns();
 				}
-				$scope.gridOptions.api.setRowData(datasetRecords.rows);
-				resizeColumns();
 				$scope.totalResults = datasetRecords.results;
 				$scope.hideWidgetSpinner();
 			}
@@ -164,6 +169,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					'	</div>'+
 					'</div>';
 		}
+		
 		function getCellStyle(params){
 			var tempStyle = angular.copy(params.colDef.style);
 			return tempStyle;
@@ -187,38 +193,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.selectItem = function(group, item){
-			$scope.showWidgetSpinner();
-			var tempFilter = {
-				"colAlias":group,
-				"colName":group,
-				"dataset":$scope.ngModel.dataset.label,
-				filterOperator : "=",
-				filterVals : [item.column_1],
-				type:"java.lang.String"
-			};
-			
-			if($scope.ngModel.filters && $scope.ngModel.filters.length>0){
-				for(var k in $scope.ngModel.filters){
-					if($scope.ngModel.filters[k].colName == group && $scope.ngModel.filters[k].filterVals.indexOf(item.column_1)!=-1) {
-						$scope.deleteFilterSelection(group,item.column_1);
-						$scope.ngModel.filters.splice(k,1);
-					}else {
-						$scope.doSelection(group,item.column_1,null,null,item, null);
-						$scope.ngModel.filters.push(tempFilter);
-					}
-				}
-			}else {
-				$scope.doSelection(group,item.column_1,null,null,item, null);
-				$scope.ngModel.filters = [tempFilter];
-			}
-			
-			if($scope.selectedItems[group] == item.column_1) delete $scope.selectedItems[group];
-			else $scope.selectedItems[group] = item.column_1;
-			
 			if($scope.dimensions && $scope.dimensions.width<600){
 				$scope.toggleMenu();
 			}
-			$scope.refreshWidget();
+			if(cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label] && cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label][group]==item.column_1){
+				$scope.deleteFilterSelection(group, item.column_1);
+			}else{
+				$scope.doSelection(group,item.column_1,null,null,item, null);
+			}
+			
 		}
 		
 		$scope.first = function(){
@@ -268,11 +251,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$timeout.cancel(timer)
 				}  
 				timer = $timeout(function(){
-					/*temporary workaround to show the facets
-						$scope.ngModel.content.columnSelectedOfDataset[0].fieldType = 'MEASURE';
-						$scope.ngModel.content.columnSelectedOfDataset[0].type = 'java.lang.Integer';
-						$scope.ngModel.content.columnSelectedOfDataset[0].aggregationSelected = 'COUNT';
-					*/
 					$scope.showWidgetSpinner();
 					$scope.refreshWidget();
 				},500)

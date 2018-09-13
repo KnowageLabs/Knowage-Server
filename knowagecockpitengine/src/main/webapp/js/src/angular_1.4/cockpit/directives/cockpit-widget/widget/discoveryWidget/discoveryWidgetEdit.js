@@ -57,6 +57,10 @@ function discoveryWidgetEditControllerFunction(
   		return property;
   	}
   	
+  	$scope.initTh = function(){
+  		return typeof($scope.newModel.style.th.enabled) != 'undefined' ? $scope.newModel.style.th.enabled : true;
+  	}
+  	
   	$scope.initAggregation = function(col){
   		if(typeof col.aggregationSelected == 'undefined') return 'COUNT';
   		return col.aggregationSelected;
