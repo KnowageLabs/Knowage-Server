@@ -164,6 +164,7 @@ sbiM.factory('sbiModule_user',function(){
 	user.isSuperAdmin = '<%= userProfile != null && ((UserProfile)userProfile).getIsSuperadmin() %>';
 	user.isTechnicalUser = '<%= userProfile != null && UserUtilities.isTechnicalUser((UserProfile)userProfile)%>'
 	user.isTesterUser = '<%= userProfile != null && UserUtilities.isTester((UserProfile)userProfile)%>'
+	user.isAdminUser = '<%= userProfile != null && UserUtilities.isAdministrator((UserProfile)userProfile)%>'
 	user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>';
 	user.tenant = '<%= ((UserProfile)userProfile).getOrganization() != null ? ((UserProfile)userProfile).getOrganization() : TenantManager.getTenant().getName() %>';
 	// 	set roles

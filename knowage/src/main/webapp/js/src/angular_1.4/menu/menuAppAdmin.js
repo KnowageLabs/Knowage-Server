@@ -106,7 +106,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         			});
 
         			$scope.groups = newJson;
-        			if ($scope.user.isSuperAdmin == 'false' && $scope.user.isTesterUser == 'true')
+        			if ($scope.user.isSuperAdmin == 'false' && $scope.user.isAdminUser == 'false' && $scope.user.isTesterUser == 'true')
         				$scope.hideAdminPanel = true;
 
         		}); // end of load I 18n
