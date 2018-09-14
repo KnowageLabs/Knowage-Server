@@ -624,7 +624,8 @@ public class CrossTabHTMLSerializer {
 								rowHeaders += crossTab.PATH_SEPARATOR + rowsDef.get(r);
 							}
 							if (!crossTab.isMeasureOnRow()) {
-								int posRow = i - nPartialSum;
+//								int posRow = i - nPartialSum;
+								int posRow = (i < nPartialSum) ?i : i - nPartialSum;
 								if (posRow < crossTab.getRowsSpecification().size())
 									rowCord = (crossTab.getRowsSpecification().get(posRow) != null) ? crossTab.getRowsSpecification().get(posRow) : null;
 							} else {
@@ -652,7 +653,7 @@ public class CrossTabHTMLSerializer {
 						aColumn.setAttribute(NG_CLICK_ATTRIBUTE,
 								"selectMeasure('" + rowHeaders + "','" + rowCord + "','" + columnsHeaders + "','" + columnCord + "')");
 					} else if (!hasPartialSum && cellTypeValue.equalsIgnoreCase("partialsum")) {
-						nPartialSum++; // update contator of subtotals (1 for row)
+						nPartialSum++; // update contator of subtotals (1 or more for row)
 						hasPartialSum = true;
 					}
 
