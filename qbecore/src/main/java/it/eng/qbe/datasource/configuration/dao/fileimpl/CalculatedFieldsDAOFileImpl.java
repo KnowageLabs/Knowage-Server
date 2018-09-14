@@ -376,7 +376,8 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 							.addAttribute(FIELD_TAG_NATURE_ATTR, modelCalculatedField.getNature())
 							.addAttribute(FIELD_TAG_IN_LINE_ATTR, "" + modelCalculatedField.isInLine());
 
-					fieldElement.addElement(EXPRESSION_TAG).addCDATA(modelCalculatedField.getExpression());
+					fieldElement.addElement(EXPRESSION_TAG).addCDATA(modelCalculatedField.getExpression()).addElement(EXPRESSION_SIMPLE_TAG)
+							.addCDATA(modelCalculatedField.getExpressionSimple());
 
 					List<Slot> slots = modelCalculatedField.getSlots();
 					if (slots != null && slots.size() > 0) {
