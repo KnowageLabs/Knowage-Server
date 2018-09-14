@@ -1136,7 +1136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                     <div flex=100>
 
                                         <md-input-container class="md-block">
-                                            <label>Facet Field (comma-separated values)</label>
+                                            <label>Field list (comma-separated values)</label>
                                             <input ng-model="selectedDataSet.solrFieldList" ng-required ="selectedDataSet.dsTypeCd=='Solr' && selectedDataSet.solrType=='DOCUMENTS'" ng-change="setFormDirty()" type="text">
                                             <div ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Solr' && !selectedDataSet.solrFieldList">
                                             	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
