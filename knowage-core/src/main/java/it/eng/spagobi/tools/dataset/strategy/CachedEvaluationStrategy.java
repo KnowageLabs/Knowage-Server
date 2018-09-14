@@ -30,6 +30,7 @@ import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -52,7 +53,7 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
     }
 
     @Override
-    public IDataStore executeQuery(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
+    protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
         Monitor totalCacheTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:totalCache");
         IDataStore dataStore;
         try {
@@ -74,6 +75,17 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
         }
         return dataStore;
     }
+
+    @Override
+    protected IDataStore executeSummaryRow(List<Projection> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount) {
+        throw new UnsupportedOperationException("Summary row is already included in the datastore from the execution, so this method should not be called");
+    }
+
+    @Override
+    protected boolean isSummaryRowIncluded() {
+        return true;
+    }
+
 
     protected IDataStore manageDatasetNotInCache(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
         Monitor timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:putInCache");

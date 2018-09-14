@@ -143,7 +143,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
                 sortings.addAll(getSortings(dataSet, categoriesObject, measuresObject, columnAliasToName));
 
                 if (summaryRow != null && !summaryRow.isEmpty()) {
-                    JSONArray summaryRowMeasuresObject = getSummaryRowMeasures(measuresObject);
+                    JSONObject summaryRowObject = new JSONObject(summaryRow);
+                    JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
                     summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
                 }
             }
@@ -190,17 +191,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
             totalTiming.stop();
             logger.debug("OUT");
         }
-    }
-
-    private JSONArray getSummaryRowMeasures(JSONArray measures) throws JSONException {
-        JSONArray summaryRowMeasures = new JSONArray(measures.toString());
-        for (int i = 0; i < summaryRowMeasures.length(); i++) {
-            JSONObject summaryRowMeasure = (JSONObject) summaryRowMeasures.get(i);
-            if (summaryRowMeasure.has("funct") && summaryRowMeasure.getString("funct").equals("NONE")) {
-                summaryRowMeasure.put("funct", "SUM");
-            }
-        }
-        return summaryRowMeasures;
     }
 
     private void addProjection(IDataSet dataSet, ArrayList<Projection> projections, JSONObject catOrMeasure, Map<String, String> columnAliasToName)

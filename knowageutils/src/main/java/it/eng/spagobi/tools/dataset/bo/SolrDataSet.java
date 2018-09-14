@@ -164,10 +164,20 @@ public class SolrDataSet extends RESTDataSet {
 
     public String getSolrCollection() { return solrConfiguration.getCollection(); }
 
+    public String getSolrUrlWithCollection() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(solrConfiguration.getUrl());
+        if(!solrConfiguration.getUrl().endsWith("/")) sb.append("/");
+        sb.append(solrConfiguration.getCollection());
+        return sb.toString();
+    }
+
     public void setSolrQuery(SolrQuery solrQuery) {
         solrConfiguration.setSolrQuery(solrQuery);
         try {
-            initDataProxy(new JSONObject(configuration), true);
+            JSONObject jsonConfiguration = new JSONObject(configuration);
+            initDataProxy(jsonConfiguration, true);
+            initDataReader(jsonConfiguration, true);
             String[] facets = solrQuery.getFacetFields();
             if(facets != null) {
                 CompositeSolrDataReader compositeSolrDataReader = new CompositeSolrDataReader((SolrDataReader)dataReader);

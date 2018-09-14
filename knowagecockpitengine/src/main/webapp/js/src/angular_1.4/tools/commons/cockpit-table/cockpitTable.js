@@ -251,6 +251,10 @@
                     	if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long'){return true}
                     	return false;
                     }
+
+                    scope.isNumber = function(value){
+                         return value != undefined && value.trim().length > 0 && !isNaN(value);
+                    }
                     
                     //conditional value formatting
                     scope.formatValue = function (value, column){

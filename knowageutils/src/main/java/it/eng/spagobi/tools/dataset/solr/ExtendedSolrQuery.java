@@ -20,6 +20,7 @@
 package it.eng.spagobi.tools.dataset.solr;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -75,6 +76,18 @@ public class ExtendedSolrQuery extends SolrQuery {
             facets.add(new Projection(dataSet, columnName));
         }
         return facets(facets);
+    }
+
+    public ExtendedSolrQuery stats(List<Projection> projections) {
+        if(!projections.isEmpty()) {
+            for (Projection projection : projections) {
+                setGetFieldStatistics(projection.getName());
+                if(AggregationFunctions.COUNT_DISTINCT.equals(projection.getAggregationFunction().getName())) {
+                    addStatsFieldCalcDistinct(projection.getName(), true);
+                }
+            }
+        }
+        return this;
     }
 
     public ExtendedSolrQuery sorts(List<Sorting> sortings) {

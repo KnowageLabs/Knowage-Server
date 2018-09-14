@@ -58,12 +58,11 @@ public class DataStore implements IDataStore {
 
 	protected IMetaData metaData;
 
-	protected List records = null;
+	protected List records = new ArrayList();
 
 	Date cacheDate = null;
 
 	public DataStore() {
-		this.records = new ArrayList();
 		this.metaData = new MetaData();
 	}
 

@@ -30,4 +30,6 @@ public interface IDatasetEvaluationStrategy {
 
     IDataStore executeQuery(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount);
 
+    IDataStore executeSummaryRowQuery(List<Projection> summaryRowProjections, Filter filter, int maxRowCount);
+
 }

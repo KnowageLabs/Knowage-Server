@@ -604,7 +604,7 @@ public class DatasetManagementAPI {
 
 			Filter where = getWhereFilter(noMinMaxFilters, likeFilters);
 
-			IDataStore dataStore = getDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, null, null, null, -1, -1, -1);
+			IDataStore dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, -1);
 			if (dataStore == null) {
 				String errorMessage = "Error in getting min and max filters values";
 				logger.error(errorMessage);
@@ -640,6 +640,14 @@ public class DatasetManagementAPI {
 
 		logger.debug("OUT");
 		return newFilters;
+	}
+
+	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections, Filter filter, int maxRowCount) throws JSONException {
+		dataSet.setParametersMap(parametersValues);
+		dataSet.resolveParameters();
+
+		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userProfile);
+		return strategy.executeSummaryRowQuery(projections, filter, maxRowCount);
 	}
 
 	public Filter getWhereFilter(List<Filter> filters, List<SimpleFilter> likeFilters) {
