@@ -36,22 +36,11 @@ angular.module('qbe_parameters', ['ngMaterial','angular_table' ])
 	}
 });
 
-function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,$mdPanel,$mdDialog){
+function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,$mdPanel,$mdDialog,params_service){
 	$scope.translate = sbiModule_translate;
 	$scope.parameterItems = angular.copy($scope.ngModel.pars);
 	
-	$scope.datasetParameterTypes = [ 
-		{
-			name : $scope.translate.load("kn.qbe.params.string"),
-			value : "String"
-		},
-
-		{
-			name : $scope.translate.load("kn.qbe.params.number"),
-			value : "Number"
-		},
-
-		];
+	$scope.parameterTypes = params_service.getParamTypes();
 
 	$scope.parametersColumns = [
 		{
@@ -70,7 +59,7 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 			hideTooltip : true,
 
 			transformer : function() {
-				return '<md-select ng-model=row.type class="noMargin" ><md-option ng-repeat="col in scopeFunctions.datasetParameterTypes" value="{{col.name}}">{{col.name}}</md-option></md-select>';
+				return '<md-select ng-model=row.type class="noMargin" ><md-option ng-repeat="col in scopeFunctions.parameterTypes" value="{{col.name}}">{{col.name}}</md-option></md-select>';
 			}
 		},
 
@@ -132,7 +121,7 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 	};
 	
 	$scope.paramScopeFunctions = {
-			datasetParameterTypes: $scope.datasetParameterTypes
+			parameterTypes: $scope.parameterTypes
 	};
 	
 	$scope.saveParams = function(){

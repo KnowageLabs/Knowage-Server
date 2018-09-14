@@ -212,7 +212,6 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 
 	}
 
-	$scope.value =[];
 	$scope.entitiesField=[];
 	for (var i = 0; i < $scope.tree.length; i++) {
 		if($scope.tree[i].qtip==$scope.field.entity  ){
@@ -230,7 +229,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 
 	$scope.entityTypes = entity_service.getEntityTypes();
 	$scope.getConditionOptions = function() {
-		if($scope.spatial && $scope.entityTypes.includes("geographical dimension")){
+		if($scope.spatial && $scope.entityTypes.indexOf("geographical dimension")>-1){
 			return filters_service.getOperators.concat(filters_service.getSpatialOperators);
 		} else {
 			return filters_service.getOperators;
@@ -304,43 +303,25 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	$scope.showTable = false;
 	$scope.listOfValues = [];
 	var openTableWithValues = function (filter){
-		$scope.value.length=filter.rightOperandValue.length;
+		//$scope.selected.length=filter.rightOperandValue.length;
 		$scope.showTable = true;
 		filters_service.getFieldsValue($scope.ngModel.field.field.id).then(function(response){
 			$scope.listOfValues = response.data.rows;
-
-		});
-		for (var i = 0; i < filter.rightOperandValue.length; i++) {
-			if(!$scope.value[i]){
-				$scope.value[i] = {
-						"column_1" : "",
+			$scope.valuesGrid.api.setRowData($scope.listOfValues);
+			$scope.valuesGrid.api.forEachNode( function (node) {
+				for (var i = 0; i < filter.rightOperandValue.length; i++) {
+					if (node.data.column_1 === filter.rightOperandValue[i]) {
+						$scope.valuesGrid.api.selectNode(node, true);
+			            
+			        }
+					
 				}
-			}
-			if(filter.rightType=="valueOfField"){
-				$scope.value[i].column_1 = filter.rightOperandValue[i]
-
-			}
-		}
+		        
+		    });
+			
+		});
 
 	}
-
-	$scope.$watch('value',function(newValue){
-		$scope.forInput = '';
-		for (var i = 0; i < newValue.length; i++) {
-			$scope.forInput += newValue[i].column_1;
-			if(i+1!=newValue.length) 	$scope.forInput += " ---- "
-		}
-		if($scope.currentFilter) {
-			$scope.currentFilter.rightOperandDescription = angular.copy($scope.forInput);
-			$scope.currentFilter.rightOperandValue=[];
-			for (var i = 0; i < newValue.length; i++) {
-				$scope.currentFilter.rightOperandValue.push(newValue[i].column_1)
-			}
-			$scope.currentFilter.rightOperandType="Static Content";
-			$scope.currentFilter.rightOperandLongDescription=$scope.currentFilter.rightOperandDescription;
-		}
-	}, true);
-
 
 	$scope.left = null;
 	$scope.setLeftValue= function (value,filter){
@@ -391,8 +372,9 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	var manageSpecOperators = function (filter) {
 		if(filter.rightType == "manual" || filter.rightType == "valueOfField" ) {
 			if (filter.operator == 'BETWEEN' || filter.operator == 'NOT BETWEEN' || 
-					filter.operator == 'IN' || filter.operator == 'NOT IN') {
+					filter.operator == 'IN' || filter.operator == 'NOT IN' || filter.rightOperandDescription.indexOf(" ---- ")>-1) {
 				var splitted = filter.rightOperandDescription.split(" ---- ");
+				filter.rightOperandValue.length = 0;
 				Array.prototype.push.apply(filter.rightOperandValue, splitted);
 			} else {
 				filter.rightOperandValue.push(filter.rightOperandDescription);
@@ -465,34 +447,89 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 
 	};
 	$scope.parametersPreviewColumns = [
+		{"headerName":$scope.translate.load("kn.qbe.params.name"),"field":"name"},
+		{"headerName":$scope.translate.load("kn.qbe.params.value"),"field":"defaultValue",  editable: true},
+		{"headerName":$scope.translate.load("kn.qbe.params.value"),"field":"value",  hide: true},
+		
+		
+	];
 
-	                                   {
-	                                   	"label":$scope.translate.load("kn.qbe.params.name"),
-	                                   	"name":"name",
-	                                   	hideTooltip:true,
-	                                   	transformer: function() {
-	                                   		return '<md-input-container class="md-block" style="margin:0"><input ng-disabled=true ng-model="row.name"></md-input-container>';
-	                                   	}
-	                               	},
-
-	                               	{
-	                            		"label":$scope.translate.load("kn.qbe.params.value"),
-	                            		"name":"defaultValue",
-	                            		hideTooltip:true,
-
-	                                   	transformer: function() {
-	                                   		return '<md-input-container class="md-block" style="margin:0"><input placeholder="If not set, parameter will have default value." ng-model="row.value"></md-input-container>';
-	                                   	}
-	                            	}
-	                               ];
-
-	$scope.applyValueOfParameterAndContinuePreviewExecution = function (){
+	$scope.applyParams = function (){
 		$scope.ngModel.queryFilters.length = 0;
 		$scope.ngModel.pars.length = 0;
 		Array.prototype.push.apply($scope.ngModel.pars, $scope.pars);
 		Array.prototype.push.apply($scope.ngModel.queryFilters, $scope.filters);
 		generateExpressions ($scope.filters, $scope.ngModel.expression, $scope.ngModel.advancedFilters);
 		$scope.ngModel.mdPanelRef.close();
+	};
+	
+	$scope.columns = [
+		{"headerName":"Valori","field":"column_1",checkboxSelection:true,rowMultiSelectWithClick:true}
+	];
+	
+	$scope.valuesGrid = {
+			rowData: null,
+			angularCompileRows: true,
+	        enableColResize: false,
+	        enableFilter: true,
+	        enableSorting: true,
+	        pagination: true,
+	        suppressRowClickSelection: true,
+	        paginationAutoPageSize: true,
+	        columnDefs:$scope.columns,
+	        rowSelection:"multiple",
+	        onRowSelected: rowSelected,
+	        onGridSizeChanged: resizeColumns,
+	        onGridReady: resizeColumns
+	        
+	};
+	function resizeColumns(){
+	    $scope.valuesGrid.api.sizeColumnsToFit();
+	};
+	function rowSelected(){
+	    $scope.selected = $scope.valuesGrid.api.getSelectedRows();
+	    $scope.forInput = '';
+		for (var i = 0; i < $scope.selected.length; i++) {
+			$scope.forInput += $scope.selected[i].column_1;
+			if(i+1!=$scope.selected.length) 	$scope.forInput += " ---- "
+		}
+		if($scope.currentFilter) {
+			$scope.currentFilter.rightOperandDescription = angular.copy($scope.forInput);
+			/*$scope.currentFilter.rightOperandValue=[];
+			for (var i = 0; i < $scope.selected.length; i++) {
+				$scope.currentFilter.rightOperandValue.push($scope.selected[i].column_1)
+			}*/
+			$scope.currentFilter.rightOperandType="Static Content";
+			$scope.currentFilter.rightOperandLongDescription=$scope.currentFilter.rightOperandDescription;
+		}
+	};
+	
+	$scope.paramsPreviewGrid = {
+			rowData: $scope.pars,
+			angularCompileRows: true,
+	        enableColResize: false,
+	        enableFilter: true,
+	        enableSorting: true,
+	        pagination: true,
+	        suppressRowClickSelection: true,
+	        paginationAutoPageSize: true,
+	        columnDefs:$scope.parametersPreviewColumns,
+	        onGridSizeChanged: resizeColumnsParams,
+	        onGridReady: resizeColumnsParams,
+	        editType: 'fullRow',
+	        onRowValueChanged: function(event,a) {
+	        	if(!event.data) {
+	        		event.data["value"] = event.data.defaultValue;
+	        	} else {
+	        		event.data["value"] = event.data.defaultValue;
+	        	}
+	        	
+	        },
+	        
+	};
+	
+	function resizeColumnsParams(){
+	    $scope.paramsPreviewGrid.api.sizeColumnsToFit();
 	}
 
 }

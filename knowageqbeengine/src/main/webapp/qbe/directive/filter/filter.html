@@ -99,16 +99,9 @@
 				</md-card-content>
 			</md-card>
 			<md-card  ng-if="showTable" >
-				<md-card-content layout="column" layout-padding>
-					<angular-table layout-fill
-							  id="vauleField_id" ng-model="listOfValues"
-							columns='[
-									{"label":"Valori","name":"column_1","size":"50px"},
-									]'
-							no-pagination=false
-							selected-item="value" highlights-selected-item="true"
-							multi-select="true" >
-							 </angular-table>
+				<md-card-content layout="column" layout-padding style="height:400px">
+					<div  ag-grid="valuesGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage" 
+						style="width:100%;height: 100%;"></div>	
 				</md-card-content>
 			</md-card>
 		</md-content>
@@ -128,20 +121,11 @@
 		   	</div>
 		</md-toolbar>
 		
-		<md-content flex layout="column">
+		<md-content flex layout="column" layout-padding> 
 			<md-card>
-				<md-card-content layout="row" layout-padding>
-					 <angular-table
-							id="datasetParametersTable"
-							flex
-							style="height:100%;padding:8px"
-							ng-model=pars
-							columns=parametersPreviewColumns
-							show-search-bar=false
-							scope-functions=paramScopeFunctions
-							no-pagination=false
-							current-page-number=parametersTableLastPage >
-					</angular-table>
+				<md-card-content layout="row" layout-padding  style="height:400px">
+						<div  ag-grid="paramsPreviewGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage" 
+						style="width:100%;height: 100%;"></div>	
 				</md-card-content>
 			</md-card>
 		</md-content>
@@ -152,7 +136,7 @@
 		<md-button ng-click="closeFilters()" class="md-raised">
         	{{translate.load("kn.qbe.general.cancel")}}
 		</md-button>
-		<md-button ng-click="applyValueOfParameterAndContinuePreviewExecution()" md-autofocus class="md-primary md-raised">
+		<md-button ng-click="applyParams()" md-autofocus class="md-primary md-raised">
 			{{translate.load("kn.qbe.filters.apply.parameters")}}
 		</md-button>
 	</md-card-actions>
