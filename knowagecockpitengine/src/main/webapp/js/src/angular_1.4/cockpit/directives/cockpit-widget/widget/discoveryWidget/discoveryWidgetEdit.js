@@ -26,13 +26,20 @@ function discoveryWidgetEditControllerFunction(
 		sbiModule_translate,
 		cockpitModule_datasetServices,
 		cockpitModule_generalServices,
+		cockpitModule_generalOptions,
 		mdPanelRef,
 		$mdDialog
 		){
 	$scope.translate=sbiModule_translate;
+	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 	$scope.newModel = angular.copy(model);
-	$scope.availableAggregations = ['COUNT','SUM','AVG','MIN','MAX'];
-	$scope.availableTypes = ['ATTRIBUTE','MEASURE'];
+	$scope.textAlignments = [{text:'left',align:'flex-start'},{text:'center',align:'center'},{text:'right',align:'flex-end'}];
+	$scope.availableAggregations = [
+		{name:'COUNT',available:['MEASURE','ATTRIBUTE']},
+		{name:'SUM',available:['MEASURE']},
+		{name:'AVG',available:['MEASURE']},
+		{name:'MIN',available:['MEASURE','ATTRIBUTE']},
+		{name:'MAX',available:['MEASURE','ATTRIBUTE']}];
 	
 	if($scope.newModel.dataset && $scope.newModel.dataset.dsId){
 		$scope.local = cockpitModule_datasetServices.getDatasetById($scope.newModel.dataset.dsId);
@@ -64,7 +71,6 @@ function discoveryWidgetEditControllerFunction(
   	$scope.initAggregation = function(col){
   		if(typeof col.aggregationSelected == 'undefined') return 'COUNT';
   		return col.aggregationSelected;
-  			
   	}
   	
   	$scope.resetAggregations = function(col){

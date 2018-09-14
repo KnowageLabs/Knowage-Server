@@ -57,14 +57,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		$scope.selectedItems = {};
 		if(!$scope.ngModel.style) $scope.ngModel.style = {"th":{},"tr":{}}; 
-		$scope.ngModel.settings = {
-			"pagination" : {
-				'enabled': true,
-				'itemsNumber': 10,
-				'frontEnd': false
-			},
-			"page":1
-		};
+		if(!$scope.ngModel.settings){
+			$scope.ngModel.settings = {
+				"pagination" : {
+					'enabled': true,
+					'itemsNumber': 10,
+					'frontEnd': false
+				},
+				"page":1,
+				"table" : {
+					"enabled" : true
+				},
+				"facets" : {
+					"selection" : true
+				}
+			};
+		}else $scope.ngModel.settings.page = 1;
+		
+			
+		if($scope.ngModel.settings)
 		
 		$scope.getOptions = function(){
 			var obj = {};
@@ -196,12 +207,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.dimensions && $scope.dimensions.width<600){
 				$scope.toggleMenu();
 			}
-			if(cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label] && cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label][group]==item.column_1){
-				$scope.deleteFilterSelection(group, item.column_1);
-			}else{
-				$scope.doSelection(group,item.column_1,null,null,item, null);
-			}
-			
+//			if($scope.ngModel.settings.facets.selection){
+				if(cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label] && cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label][group]==item.column_1){
+					$scope.deleteFilterSelection(group, item.column_1);
+				}else{
+					$scope.doSelection(group,item.column_1,null,null,item, null);
+				}
+//			}else{
+//				$scope.showWidgetSpinner();
+//				var tempFilter = {
+//					"colAlias":group,
+//					"colName":group,
+//					"dataset":$scope.ngModel.dataset.label,
+//					filterOperator : "=",
+//					filterVals : [item.column_1],
+//					type:"java.lang.String"
+//				};
+//				if($scope.ngModel.filters && $scope.ngModel.filters.length>0){
+//					for(var k in $scope.ngModel.filters){
+//						if($scope.ngModel.filters[k].colName == group && $scope.ngModel.filters[k].filterVals.indexOf(item.column_1)!=-1) {
+//							$scope.ngModel.filters.splice(k,1);
+//						}else {
+//							$scope.ngModel.filters.push(tempFilter);
+//						}
+//					}
+//				}else {
+//					$scope.ngModel.filters = [tempFilter];
+//				}
+//				$scope.refreshWidget();
+//			}
 		}
 		
 		$scope.first = function(){
@@ -256,6 +290,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				},500)
 			}
 		});		
+		
+		$scope.facetSettingsWatcher = $scope.$watch('ngModel.settings.facet', function(newValue,oldValue){
+			if(newValue && oldValue != newValue){
+				$scope.ngModel.filters
+			}
+		})
 		
 		$scope.dimensionWatcher = $scope.$watch('element.clientWidth',function(newValue, oldValue){
 			if(newValue) $scope.dimensions = {"width": newValue};
