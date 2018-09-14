@@ -1604,6 +1604,7 @@ public class CrossTab {
 					try {
 						if (getCellType(i * measures + measureId, j).equals(CellType.DATA) || getCellType(i * measures + measureId, j).equals(CellType.TOTAL)) {
 							String value = dataMatrix[i * measures + measureId][j];
+
 							if (!value.equals(DATA_MATRIX_NA)) {
 								if (valuesMap.containsKey(j)) {
 									valuesMap.get(j).add( new Double(value));
@@ -1677,16 +1678,21 @@ public class CrossTab {
 		return toStringArray(st);
 	}
 
-	private double getTotalsOfColumn(int colunm, CellType type) {
+	private double getTotalsOfColumn(int column, CellType type) {
 
 		double sum = 0;
 		int nrows = (type.getValue().equalsIgnoreCase("partialsum")) ? dataMatrix.length - 1 : dataMatrix.length; //  if subtotal doesn't sum that partial total
 //		for (int y = 0; y < dataMatrix.length; y++) { ORIG
 		for (int y = 0; y < nrows; y++) {
-			if (celltypeOfColumns.get(colunm).equals(type)) {
-				String value = dataMatrix[y][colunm];
-				if (!value.equals(DATA_MATRIX_NA)) {
-					sum = sum + new Double(value);
+			if (celltypeOfColumns.get(column).equals(type)) {
+				//se la colonna precedente è di tipo SUBTOTAL non sommare il valore perchè lo raddoppierebbe!!
+				//just if previous column is of DATA type sum  the value
+				CellType prevCellType = getCellType(y,column-1);
+				if (prevCellType.equals(CellType.DATA)) {
+					String value = dataMatrix[y][column];
+					if (!value.equals(DATA_MATRIX_NA)) {
+						sum = sum + new Double(value);
+					}
 				}
 			}
 		}

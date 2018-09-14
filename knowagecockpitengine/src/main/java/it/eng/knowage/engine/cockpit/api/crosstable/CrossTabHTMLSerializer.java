@@ -625,12 +625,14 @@ public class CrossTabHTMLSerializer {
 							}
 							if (!crossTab.isMeasureOnRow()) {
 //								int posRow = i - nPartialSum;
-								int posRow = (i < nPartialSum) ?i : i - nPartialSum;
+								int posRow = (i < nPartialSum) ? i : i - nPartialSum;
 								if (posRow < crossTab.getRowsSpecification().size())
 									rowCord = (crossTab.getRowsSpecification().get(posRow) != null) ? crossTab.getRowsSpecification().get(posRow) : null;
 							} else {
-								int posRow = (measuresInfo.size() == 1) ? (i - nPartialSum) : (i - nPartialSum) / measuresInfo.size();
-								rowCord = (crossTab.getRowsSpecification().get(posRow) != null) ? crossTab.getRowsSpecification().get(posRow) : null;
+								int idx  =  (i < nPartialSum) ? i : i - nPartialSum;
+								int posRow = (measuresInfo.size() == 1) ? idx: idx / measuresInfo.size();
+								if (posRow < crossTab.getRowsSpecification().size())
+									rowCord = (crossTab.getRowsSpecification().get(posRow) != null) ? crossTab.getRowsSpecification().get(posRow) : null;
 							}
 						}
 						String columnCord = "";
