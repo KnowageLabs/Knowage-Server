@@ -542,8 +542,10 @@ public class QueryJSONSerializer implements IQuerySerializer {
 				}
 
 				filterJSON.put(QuerySerializationConstants.FILTER_LO_TYPE, operand.type);
-				filterJSON.put(QuerySerializationConstants.FILTER_LO_DEFAULT_VALUE, operand.defaulttValues[0]);
-				filterJSON.put(QuerySerializationConstants.FILTER_LO_LAST_VALUE, operand.lastValues[0]);
+				String leftOperandDefaultValue = operand.defaulttValues != null && operand.defaulttValues.length > 0 ? operand.defaulttValues[0] : "";
+				filterJSON.put(QuerySerializationConstants.FILTER_LO_DEFAULT_VALUE, leftOperandDefaultValue);
+				String leftOperandLastValue = operand.lastValues != null && operand.lastValues.length > 0 ? operand.lastValues[0] : "";
+				filterJSON.put(QuerySerializationConstants.FILTER_LO_LAST_VALUE, leftOperandLastValue);
 				filterJSON.put(QuerySerializationConstants.FILTER_LO_ALIAS, operand.alias);
 				filterJSON.put(QuerySerializationConstants.FILTER_OPERATOR, filter.getOperator());
 
