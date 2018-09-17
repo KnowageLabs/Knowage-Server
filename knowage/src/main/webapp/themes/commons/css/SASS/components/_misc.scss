@@ -450,6 +450,14 @@ md-icon {
 	padding:0px;
 }
 
+.noPadding > ._md-subheader-inner, .noPadding > .md-subheader-inner {
+   ._md-subheader-content {
+    &>div {
+      height: 48px;
+    }
+  }
+}
+
 .noBorder{
 	border:0px;
 }
@@ -966,6 +974,25 @@ color-picker {
     &:focus {
       outline: none;
     }
+  }
+}
+
+.kn-grid-container {
+  height: 100%;
+  display: flex;
+  padding: $tabPadding;
+  .ag-theme-knowage {
+    width: 100%;
+    box-shadow: 0px 3px 3px $shadowsColor;
+  }
+}
+
+@supports (-ms-ime-align: auto) {
+  .kn-list-detail {
+    overflow-y: hidden;
+  }
+  .kn-grid-container {
+    height: calc(100% - 64px);
   }
 }
 
