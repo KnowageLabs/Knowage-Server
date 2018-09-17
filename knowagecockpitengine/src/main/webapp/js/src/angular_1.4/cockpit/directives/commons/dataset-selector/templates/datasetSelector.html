@@ -7,7 +7,7 @@
 					<input ng-model="searchTerm" type="search" ng-keydown="$event.stopPropagation()" placeholder="Search for a dataset.." class="demo-header-searchbox _md-text">
 				</md-select-header>
 				<md-optgroup label="dataset">
-					<md-option ng-value="item.id.dsId" ng-repeat="item in availableDatasets | filter:searchTerm">{{item.name}} ({{item.label}})</md-option>
+					<md-option ng-value="item.id.dsId" ng-repeat="item in availableDatasets | filter:searchTerm" ng-if="::isDatasetAvailable(item)">{{item.name}} ({{item.label}})</md-option>
 				</md-optgroup>
 			</md-select>
 		</md-input-container>	
