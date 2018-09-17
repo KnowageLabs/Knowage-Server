@@ -82,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		                cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
 		            }
 					if(newValue != oldValue && newValue.length > 0){
-						scope.itemList = scope.filterDataset(scope.itemList,scope.reformatSelections(newValue));
+						scope.itemList = scope.filterDataset(angular.copy(scope.savedRows),scope.reformatSelections(newValue));
 					}else{
 						angular.copy(scope.savedRows, scope.itemList);
 					}

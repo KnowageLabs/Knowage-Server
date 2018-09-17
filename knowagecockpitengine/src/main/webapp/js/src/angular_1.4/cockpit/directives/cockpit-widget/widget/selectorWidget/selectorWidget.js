@@ -142,7 +142,7 @@ angular.module('cockpitModule')
 			}
 
 			if(column){
-				for(var i=1; i<$scope.datasetRecords.rows.length; i++){
+				for(var i=0; i<$scope.datasetRecords.rows.length; i++){
 					var dateString = $scope.datasetRecords.rows[i][column];
 					var dateMillis = sbiModule_dateServices.getDateFromFormat(dateString.split('.')[0], dateFormat).getTime();
 					if(startMillis <= dateMillis && dateMillis < endMillis){
