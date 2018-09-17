@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 (function() {
-	var documentExecutionModule = angular.module('documentExecutionModule',[]);
+	var documentExecutionModule = angular.module('driversExecutionModule');
 
 	documentExecutionModule.directive('documentParamenterElement',
-			['sbiModule_config',
+			['sbiModule_config',"$mdDialog",
 			 function(sbiModule_config) {
 		return {
 			restrict: 'E',
