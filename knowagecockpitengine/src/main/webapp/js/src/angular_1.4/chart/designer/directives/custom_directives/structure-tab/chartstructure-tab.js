@@ -241,6 +241,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	}*/
 
 	 $scope.moveAttributeToCategories = function(item) {
+
 			var chartType = $scope.chartTemplate.type;
 			var index = findInArray($scope.categories,'column',item.alias);
 
@@ -250,7 +251,6 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 				} else {
 					if(index<0){
 						  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:"",fakeCategory:false});
-
 					}
 				}
 			} else if (chartType.toUpperCase() == "PARALLEL") {
@@ -258,6 +258,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.max.categories"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
 				} else {
 					if(index<0){
+
 						  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
 					  }
 				}

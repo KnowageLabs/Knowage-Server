@@ -223,7 +223,7 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 	}
 
 	$scope.refreshJsonTree = function() {
-		$scope.attachCategoriesToTemplate();
+		$scope.attachCategoriesToTemplate(true);
 
 	}
 
@@ -245,7 +245,7 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 
 	}
 
-	$scope.attachCategoriesToTemplate = function () {
+	$scope.attachCategoriesToTemplate = function(advancedTrue) {
 		var chartType = $scope.selectedChartType;
 		//attach categories to template for chart types that have an array for categories
 		if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" ||
@@ -256,7 +256,7 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 					) {
 			$scope.chartTemplate.VALUES.CATEGORY = $scope.categories;
 
-			if(chartType.toUpperCase() == "SCATTER"){
+			if(chartType.toUpperCase() == "SCATTER" && !advancedTrue){
 
 				var valueCategories = $scope.chartTemplate.VALUES.CATEGORY
 				var totalAttributes = $scope.allAttributes;

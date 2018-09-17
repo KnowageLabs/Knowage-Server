@@ -859,12 +859,10 @@
 				#end 
             
 				       
-	    	],milos*#
+	    	],*#
 	    	
 			#end 	
 
-			
-			
 			data: [
 						#foreach($row in $rows)
 			  		
@@ -881,14 +879,8 @@
 							
 						},
 						
-						
 					#end	
 			],			
-			
-			
-			
-			
-			
 			
 	    	#if($chart.dateTime=="true")
 			data: [
@@ -916,8 +908,7 @@
 					
 				#end	       
 	    	],
-	    	
-	    	
+	    		    	
 			#end 
 	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
 						#if ($relatedSerieShowValue != '')
@@ -1168,12 +1159,27 @@
         		element on it. HTML tag <strong> is removed.
         		@modifiedBy: danristo (danilo.ristovski@mht.net)
         	*# 	
+
 			#if($chart.dateTime!="false")
 			result += '<span>' + Highcharts.dateFormat('$dateFormat', this.key) + '</span><br/>' + this.series.name + ': ' + thisValue + '</div>';
+			#elseif($chart.tooltipExpression)
+			
+					#if($chart.tooltipExpression != "")
+					
+					var tooltipEx = $chart.tooltipExpression
+			
+						result +=tooltipEx
+						
+					#else
+						result += '</span>' + this.series.name + ': '+ thisValue + '</div>'
+					#end	
+
 			#else
-			result += '<span>' + this.key + '</span><br/>' + this.series.name + ': '+ thisValue + '</div>';
+			
+			result += '<span>' + this.key + '</span><br/>' + this.series.name + ': '+ thisValue + '</div>'
+		
 			#end
-            return result;
+            return result
         }
     },
     lang: {

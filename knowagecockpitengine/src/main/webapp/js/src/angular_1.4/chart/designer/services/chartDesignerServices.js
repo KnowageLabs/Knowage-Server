@@ -1299,6 +1299,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			         },
 			         "text":""
 			      },
+			      "tooltipExpression":"",
 				"VALUES": {
 					"CATEGORY": {
 						"column": "",
