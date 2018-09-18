@@ -536,7 +536,7 @@ angular.module('chartInitializer')
 				var pointOptions={};
 				if (this.chart.options.chart.type == "gauge") {
 					pointOptions.y = parseFloat(data[j]["column_" + (i + 1)]);
-					newDataSerie.add(pointOptions);
+					newDataSerie.push(pointOptions);
 
 				} else {
 					if(this.chart.options.xAxis[0].type!="datetime"){
