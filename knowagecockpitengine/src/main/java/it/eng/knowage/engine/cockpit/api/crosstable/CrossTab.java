@@ -2032,12 +2032,23 @@ public class CrossTab {
 			Node subtotalNode = buildSubtotalNode(1, true);
 			for (int y = 0; y < measures.size(); y++) {
 				List<Integer> linesToSum = new ArrayList<Integer>();
-				for (int k = 0; k < n.getChilds().size(); k++) {
-					linesToSum.add(positionToAddNode + measures.size() * k + y);
+				if ((!measuresOnRow && crosstabDefinition.getColumns().size() == 0) ||
+					(measuresOnRow && crosstabDefinition.getRows().size() == 0)) {
+					//no columns required: just measures
+						linesToSum.add(positionToAddNode + y);
+				}else {
+					for (int k = 0; k < n.getChilds().size(); k++) {
+						linesToSum.add(positionToAddNode + measures.size() * k + y);
+					}
 				}
 				linesums.add(getTotals(linesToSum, horizontal));
 			}
-			positionToAddNode = positionToAddNode + measures.size() * n.getChilds().size();
+			if ((!measuresOnRow && crosstabDefinition.getColumns().size() == 0) ||
+				 (measuresOnRow && crosstabDefinition.getRows().size() == 0)) {
+				positionToAddNode = positionToAddNode + measures.size();
+			}else {
+				positionToAddNode = positionToAddNode + measures.size() * n.getChilds().size();
+			}
 			node.addChild(subtotalNode);
 			addCrosstabDataLine(positionToAddNode, linesums, horizontal, CellType.SUBTOTAL);
 			positionToAddNode = positionToAddNode + linesums.size();

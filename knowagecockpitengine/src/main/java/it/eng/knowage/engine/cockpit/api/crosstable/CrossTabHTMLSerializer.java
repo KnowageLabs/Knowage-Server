@@ -111,11 +111,10 @@ public class CrossTabHTMLSerializer {
 		SourceBean rowsHeaders = this.serializeRowsHeaders(crossTab);
 		SourceBean topLeftCorner = this.mergeVertically(emptyTopLeftCorner, rowsHeaders);
 		SourceBean columnsHeaders = this.serializeColumnsHeaders(crossTab);
-		SourceBean head = this.mergeHorizontally(topLeftCorner, columnsHeaders);
-
+		SourceBean head = this.mergeHorizontally(topLeftCorner, columnsHeaders, crossTab);
 		SourceBean rowsMember = this.serializeRowsMembers(crossTab);
 		SourceBean data = this.serializeData(crossTab);
-		SourceBean body = this.mergeHorizontally(rowsMember, data);
+		SourceBean body = this.mergeHorizontally(rowsMember, data, crossTab);
 
 		SourceBean crossTabSB = this.mergeVertically(head, body);
 		toReturn.setAttribute(crossTabSB);
@@ -125,19 +124,38 @@ public class CrossTabHTMLSerializer {
 	private SourceBean serializeRowsMembers(CrossTab crossTab) throws SourceBeanException, JSONException {
 		SourceBean table = new SourceBean(TABLE_TAG);
 		int leaves = crossTab.getRowsRoot().getLeafsNumber();
+		JSONObject config = crossTab.getCrosstabDefinition().getConfig();
+		Boolean columnsTotals = config.optBoolean("calculatetotalsonrows");
+		Boolean noSelectedColumn = crossTab.getCrosstabDefinition().getRows().isEmpty();
 
 		List<SourceBean> rows = new ArrayList<SourceBean>();
-		// initialize all rows (with no columns)
-		for (int i = 0; i < leaves; i++) {
-			SourceBean aRow = new SourceBean(ROW_TAG);
-			table.setAttribute(aRow);
-			rows.add(aRow);
-		}
-
 		int levels = crossTab.getRowsRoot().getDistanceFromLeaves();
 		if (crossTab.isMeasureOnRow()) {
 			levels--;
 		}
+		// initialize all rows (without columns)
+		for (int i = 0; i < leaves; i++) {
+			SourceBean aRow = new SourceBean(ROW_TAG);
+			if (columnsTotals && noSelectedColumn) {
+				SourceBean aColumn = new SourceBean(COLUMN_TAG);
+				aRow.setAttribute(aColumn);
+			}
+			table.setAttribute(aRow);
+			rows.add(aRow);
+		}
+
+		//just if there is total on column BUT no columns are required add a row for the total
+		if (columnsTotals && noSelectedColumn) {
+			SourceBean aRow = new SourceBean(ROW_TAG);
+			SourceBean aColumn = new SourceBean(COLUMN_TAG);
+			aColumn.setCharacters("Total");
+			aColumn.setAttribute(CLASS_ATTRIBUTE, "totals");
+			aRow.setAttribute(aColumn);
+			table.setAttribute(aRow);
+			rows.add(aRow);
+			return table;
+		}
+
 		boolean addedLabelTotal = false;
 		for (int i = 0; i < levels; i++) {
 			List<Node> levelNodes = crossTab.getRowsRoot().getLevel(i + 1);
@@ -155,6 +173,7 @@ public class CrossTabHTMLSerializer {
 					text = aNode.getDescription();
 					if (text.equalsIgnoreCase("Total")) {
 						if (addedLabelTotal) {
+							//if label total was already added or just total is the node (no column) : doesn't show label
 							text = "";
 						} else
 							addedLabelTotal = true;
@@ -164,38 +183,32 @@ public class CrossTabHTMLSerializer {
 				String style;
 				boolean appliedStyle = false;
 				List<Row> rowsDef = crossTab.getCrosstabDefinition().getRows();
-				Row row = rowsDef.get(i);
+				if (rowsDef != null && rowsDef.size() > 0) {
+					Row row = rowsDef.get(i);
 
-				JSONObject rowConfig = row.getConfig();
-				style = getConfiguratedElementStyle(null, null, rowConfig, crossTab);
-				if (!style.equals(DEFAULT_STYLE)) {
-					 if (!text.equalsIgnoreCase("Total") && !text.equalsIgnoreCase("SubTotal")) {
-						aColumn.setAttribute(STYLE_ATTRIBUTE, style);
-						appliedStyle = true;
-					 } else {
-						 // get only the alignment from the detail configuration cells
-						 String totStyle = getConfiguratedElementStyle(null, null, rowConfig, crossTab, "text-align");
-						 aColumn.setAttribute(STYLE_ATTRIBUTE, totStyle);
-					 }
+					JSONObject rowConfig = row.getConfig();
+					style = getConfiguratedElementStyle(null, null, rowConfig, crossTab);
+					if (!style.equals(DEFAULT_STYLE)) {
+						 if (!text.equalsIgnoreCase("Total") && !text.equalsIgnoreCase("SubTotal")) {
+							aColumn.setAttribute(STYLE_ATTRIBUTE, style);
+							appliedStyle = true;
+						 } else {
+							 // get only the alignment from the detail configuration cells
+							 String totStyle = getConfiguratedElementStyle(null, null, rowConfig, crossTab, "text-align");
+							 aColumn.setAttribute(STYLE_ATTRIBUTE, totStyle);
+						 }
+					}
 				}
-//				if (text.equalsIgnoreCase("Total")) {
-//					aColumn.setAttribute(CLASS_ATTRIBUTE, "totals");
-//				}else if (text.equalsIgnoreCase("SubTotal")) {
-//					aColumn.setAttribute(CLASS_ATTRIBUTE, "partialsum");
-//				}else{
-//					if (!appliedStyle)
-//						aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS);
-//					else
-//						aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS + "NoStandardStyle");
-//				}
 				if (!appliedStyle)
 					aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS);
 				else
 					aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS + "NoStandardStyle");
 
-				aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','" + text + "')");
+				if (crossTab.getCrosstabDefinition().getRows().size() > 0)
+					aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','" + text + "')");
 				aColumn.setCharacters(text);
 				int rowSpan = aNode.getLeafsNumber();
+//				if (rowSpan > 1 || (rowSpan==1 && columnsTotals && noSelectedColumn)) {
 				if (rowSpan > 1) {
 					aColumn.setAttribute(ROWSPAN_ATTRIBUTE, rowSpan);
 				}
@@ -963,17 +976,26 @@ public class CrossTabHTMLSerializer {
 		}
 	}
 
-	private SourceBean mergeHorizontally(SourceBean left, SourceBean right) throws SourceBeanException {
+	private SourceBean mergeHorizontally(SourceBean left, SourceBean right, CrossTab crossTab) throws SourceBeanException {
 
 		SourceBean table = new SourceBean(TABLE_TAG);
 		List leftRows = left.getAttributeAsList(ROW_TAG);
 		List rightRows = right.getAttributeAsList(ROW_TAG);
-		if (leftRows.size() == 0) {
+
+		if (leftRows.size() < rightRows.size()) {
 			// no categories on rows: forces fake ones to continue
-			for (int i = 0; i < rightRows.size(); i++) {
+			for (int i = leftRows.size(); i < rightRows.size(); i++) {
 				leftRows.add(new SourceBean(ROW_TAG));
 			}
 		}
+
+		if (rightRows.size() < leftRows.size()) {
+			// no categories on columns: forces fake ones to continue
+			for (int i = rightRows.size(); i < leftRows.size(); i++) {
+				rightRows.add(new SourceBean(ROW_TAG));
+			}
+		}
+
 		if (leftRows.size() != rightRows.size()) {
 			throw new SpagoBIEngineRuntimeException("Cannot merge horizontally 2 tables with a different number of rows");
 		}
@@ -1101,6 +1123,16 @@ public class CrossTabHTMLSerializer {
 			aRow.setAttribute(aColumn);
 		}
 
+		if (crossTab.getCrosstabDefinition().getRows().size() == 0 &&
+			crossTab.getCrosstabDefinition().getConfig().optBoolean("calculatetotalsonrows")) {
+			//add fake TD just for total column values (if required)
+			addRow = true;
+			SourceBean aColumn = new SourceBean(COLUMN_TAG);
+//			aColumn.setAttribute(COLSPAN_ATTRIBUTE, 1);
+			aColumn.setAttribute(CLASS_ATTRIBUTE, EMPTY_CLASS);
+			aRow.setAttribute(aColumn);
+		}
+
 		if (addRow)
 			table.setAttribute(aRow);
 		return table;
@@ -1146,7 +1178,9 @@ public class CrossTabHTMLSerializer {
 			SourceBean emptyColumn = new SourceBean(COLUMN_TAG);
 			emptyColumn.setAttribute(CLASS_ATTRIBUTE, EMPTY_CLASS);
 			if (!crossTab.isMeasureOnRow()) {
-				if (rows.size() == 0)
+				if (crossTab.getCrosstabDefinition().getRows().size() == 0 &&
+				   !crossTab.getCrosstabDefinition().getConfig().optBoolean("calculatetotalsonrows"))
+//				if (rows.size() == 0)
 					break;
 				emptyColumn.setAttribute(COLSPAN_ATTRIBUTE, rows.size());
 			} else {
