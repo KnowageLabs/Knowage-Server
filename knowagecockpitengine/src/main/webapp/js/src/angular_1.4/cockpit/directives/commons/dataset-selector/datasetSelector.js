@@ -83,23 +83,27 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 	}
 	
 	$scope.isDatasetAvailable = function(ds){
-		for(var e in $scope.datasetTypeExclusion){
-			if($scope.datasetTypeAvailable[e].type == ds.type){
-				if($scope.datasetTypeAvailable[e].configuration){
-					if(ds.configuration[$scope.datasetTypeAvailable[e].configuration.property] == $scope.datasetTypeAvailable[e].configuration.value) return false;
-					else return true;
-				}	
-				return false;
-			}else return true;
+		if($scope.datasetTypeExclusion){
+			for(var e in $scope.datasetTypeExclusion){
+				if($scope.datasetTypeAvailable[e].type == ds.type){
+					if($scope.datasetTypeAvailable[e].configuration){
+						if(ds.configuration[$scope.datasetTypeAvailable[e].configuration.property] == $scope.datasetTypeAvailable[e].configuration.value) return false;
+						else return true;
+					}	
+					return false;
+				}else return true;
+			}
 		}
-		for(var a in $scope.datasetTypeAvailable){
-			if($scope.datasetTypeAvailable[a].type == ds.type){
-				if($scope.datasetTypeAvailable[a].configuration){
-					if(ds.configuration[$scope.datasetTypeAvailable[a].configuration.property] == $scope.datasetTypeAvailable[a].configuration.value) return true;
-					else return false;
-				}	
-				return true;
-			}else return false;
+		if(datasetTypeAvailable){
+			for(var a in $scope.datasetTypeAvailable){
+				if($scope.datasetTypeAvailable[a].type == ds.type){
+					if($scope.datasetTypeAvailable[a].configuration){
+						if(ds.configuration[$scope.datasetTypeAvailable[a].configuration.property] == $scope.datasetTypeAvailable[a].configuration.value) return true;
+						else return false;
+					}	
+					return true;
+				}else return false;
+			}
 		}
 		return true;
 	}
