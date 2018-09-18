@@ -9,7 +9,10 @@
 #set($isCockpitEngine = $chart.isCockpitEngine)
 #set($rows = $data.rows) ## data in table rows
 
-#set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
+#set($categorieColumns = $chart.VALUES.CATEGORY.get(0)) ## metadata related to categories
+#if(!$categorieColumns)
+#set($categorieColumns = $chart.VALUES.CATEGORY)
+#end
 #set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
 #foreach($element in $dataFields)
 #if($element.header == $categorieColumns.column || $element.header == $categorieColumns.name)
@@ -523,13 +526,7 @@
 			align: 'high',
 			#end
 		 },
-		#set ($counter = $datasettransformer.prepareDataForScater($rows,$columnMap,$isCockpitEngine,null).entrySet())
-   		#if($chart.dateTime!="true")    
-   	
-            
 
-            
-		#end 
 		labels:{
 		#if($xAxis.step)
 			#if($xAxis.step!="")
@@ -834,6 +831,7 @@
 				#end
 			#end
           #end
+		#if($relatedSerie.fakeSerie != 'true')
 	    {	
 		#set($relatedSerieColor = false)
 		#set($relatedSerieColor = $relatedSerie.color)
@@ -843,12 +841,13 @@
 		
 			name: '$relatedSerie.name',
 			#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
+
 	    	 #if($chart.isCockpitEngine != 'true')
 	      			#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 	   			 #end
 	    	#set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
 			#if($chart.dateTime!="true")
-			data: [
+			#**data: [
 	    		
             	#foreach($element in $datasettransformer.prepareDataForScater($rows,$columnMap,$isCockpitEngine,$serieColumnsMapped).entrySet())
             		#foreach($el in $element.value)
@@ -858,10 +857,29 @@
 				#end 
             
 				       
-	    	],
+	    	],*#
 	    	
 			#end 	
-	    	
+
+			data: [
+						#foreach($row in $rows)
+			  		
+					#set ($serieValue = $row.get($serieColumnsMapped))
+					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
+						
+						{
+							y: $serieValue,
+							name: "$serieCategoryName",
+							#foreach($valueKey in $dataColumnsMapper.keySet())
+							#set ($col =  $dataColumnsMapper.get($valueKey))
+							$valueKey: "$row.get($col)",
+							#end
+							
+						},
+						
+					#end	
+			],			
+			
 	    	#if($chart.dateTime=="true")
 			data: [
 	    			
@@ -870,8 +888,7 @@
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 					#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
-					#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
-					
+					#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )					
 						#if($chart.isCockpitEngine=="true")
 						#set($date = $serieCategoryName.split("/"))
 						#set($day = $date.get(0))
@@ -1034,6 +1051,7 @@
 			},
 	    },
 	#end
+	#end
     ],
     
      tooltip: {
@@ -1139,12 +1157,27 @@
         		element on it. HTML tag <strong> is removed.
         		@modifiedBy: danristo (danilo.ristovski@mht.net)
         	*# 	
+
 			#if($chart.dateTime!="false")
 			result += '<span>' + Highcharts.dateFormat('$dateFormat', this.key) + '</span><br/>' + this.series.name + ': ' + thisValue + '</div>';
+			#elseif($chart.tooltipExpression)
+			
+					#if($chart.tooltipExpression != "")
+					
+					var tooltipEx = $chart.tooltipExpression
+			
+						result +=tooltipEx
+						
+					#else
+						result += '</span>' + this.series.name + ': '+ thisValue + '</div>'
+					#end	
+
 			#else
-			result += '<span>' + this.key + '</span><br/>' + this.series.name + ': '+ thisValue + '</div>';
+			
+			result += '<span>' + this.key + '</span><br/>' + this.series.name + ': '+ thisValue + '</div>'
+		
 			#end
-            return result;
+            return result
         }
     },
     lang: {
@@ -1210,7 +1243,7 @@
             	@author: danristo (danilo.ristovski@mht.net)
             *#
         series:{
-        	turboThreshold: 5000
+        	turboThreshold: 15000
 		},
     	scatter: {
                 marker: {

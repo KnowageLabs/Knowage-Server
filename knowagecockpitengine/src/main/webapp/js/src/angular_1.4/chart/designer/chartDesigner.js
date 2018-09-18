@@ -43,6 +43,16 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 	$scope.selectedChartType = "";
 
 	var urlForDataset="";
+
+	var findInArray = function(array, attr, value) {
+	    for(var i = 0; i < array.length; i += 1) {
+	        if(array[i][attr] === value) {
+	            return i;
+	        }
+	    }
+	    return -1;
+	}
+
 	if($scope.isCockpitEng){
 		urlForDataset = "../api/1.0/chart/jsonChartTemplate/usedDataset/"+parent.angular.element(window.frameElement).scope().datasetId;
 	}else{
@@ -74,6 +84,7 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 	}
 	$scope.saveChartTemplate = function() {
 		$scope.attachCategoriesToTemplate();
+		$scope.attachSeriesToTemplate();
 		$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
 		if($scope.chartTemplate.hasOwnProperty("COLORPALETTE")){
 			var color = $scope.chartTemplate.COLORPALETTE.COLOR;
@@ -197,6 +208,7 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 
 	window.attachCategories = function() {
 		$scope.attachCategoriesToTemplate();
+		$scope.attachSeriesToTemplate();
 		$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
 		var chartObj = angular.copy($scope.chartTemplate);
 		var chartTemp = {}
@@ -212,17 +224,60 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 	}
 
 	$scope.refreshJsonTree = function() {
-		$scope.attachCategoriesToTemplate();
+		$scope.attachCategoriesToTemplate(true);
 	}
 
+	$scope.attachSeriesToTemplate = function() {
 
-	$scope.attachCategoriesToTemplate = function () {
+		var valueSeries = $scope.chartTemplate.VALUES.SERIE;
+		var totalSeries = $scope.allMeasures;
+
+		for(var i = 0; i < totalSeries.length; i++){
+
+			if(findInArray(valueSeries,'column',totalSeries[i].alias) == -1){
+
+				valueSeries.push({axis:"Y",color:"",column:totalSeries[i].alias,groupingFunction:"NONE", name:totalSeries[i].alias,orderType:"",postfixChar:"",
+					precision:2,prefixChar:"",scaleFactor:"empty",showAbsValue:"false",showPercentage:false, showValue: "",type:"",fakeSerie:true})
+
+			}
+
+		}
+
+	}
+
+	$scope.attachCategoriesToTemplate = function(advancedTrue) {
 		var chartType = $scope.selectedChartType;
 		//attach categories to template for chart types that have an array for categories
 		if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" ||
 				chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "PARALLEL" ||
-					chartType.toUpperCase() == "HEATMAP" || chartType.toUpperCase() == "CHORD") {
-			$scope.chartTemplate.VALUES.CATEGORY = $scope.categories;
+				chartType.toUpperCase() == "HEATMAP" || chartType.toUpperCase() == "CHORD"
+					||
+				chartType.toUpperCase() == "SCATTER"
+					) {
+			$scope.chartTemplate.VALUES.CATEGORY = angular.copy($scope.categories);
+
+			if(chartType.toUpperCase() == "SCATTER" && !advancedTrue){
+
+				var valueCategories = $scope.chartTemplate.VALUES.CATEGORY
+				var totalAttributes = $scope.allAttributes;
+
+				for(var i = 0; i < totalAttributes.length; i++){
+					if(valueCategories[0].column != totalAttributes[i].alias){
+
+						valueCategories.push({column:totalAttributes[i].alias,
+												groupby:"",
+												groupbyNames:"",
+												name:totalAttributes[i].alias,
+												orderColumn:"",
+												orderType:"",
+												stacked:"",
+												stackedType:"",
+												fakeCategory:true});
+					}
+				}
+
+			}
+
 		//attach categories to template for chart types that have an object for categories
 		} else if (chartType.toUpperCase() != "GAUGE"){
 			$scope.chartTemplate.VALUES.CATEGORY = {

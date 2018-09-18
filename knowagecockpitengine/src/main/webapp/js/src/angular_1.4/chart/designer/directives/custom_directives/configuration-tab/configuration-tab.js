@@ -37,7 +37,6 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
  $scope.selectedConfigurationButton = "";
  $scope.selectedColor = "#FFFFFF";
  $scope.colorObj = {
-		 gradient:"",
 		 name:"",
 		 order:"",
 		 value:""
@@ -84,7 +83,6 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 	$scope.colorObj.order = order.toString();
 	$scope.colors.push($scope.colorObj);
 	$scope.colorObj = {
-			 gradient:"",
 			 name:"",
 			 order:"",
 			 value:""

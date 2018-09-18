@@ -192,6 +192,11 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				parent.angular.element(window.frameElement).scope().localMod.chartTemplate = $scope.chartTemplate;
 				
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();
+
+				if($scope.selectedChartType == 'scatter' && !$scope.chartTemplate.tooltipExpression){
+					$scope.chartTemplate.tooltipExpression = ""
+				}
+
 				setConfigurationButtons($scope.chartTemplate.type.toLowerCase());
 				
 				
@@ -218,6 +223,12 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			if ($scope.chartTemplate) {
 				
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();
+				if($scope.selectedChartType == 'scatter' && !$scope.chartTemplate.tooltipExpression){
+					$scope.chartTemplate.tooltipExpression = ""
+				}
+
+
+
 				setConfigurationButtons($scope.selectedChartType);
 				
 			}
