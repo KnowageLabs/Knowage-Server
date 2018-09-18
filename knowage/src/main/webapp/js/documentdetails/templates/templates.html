@@ -18,22 +18,9 @@
                     {{translate.load("sbi.documentdetails.templates.notemplates")}}
                 </div>
             </div>
-            <div class="kn-custom-list h42">
-            
-				<div class="kn-list-item selectable" ng-click="dh.selectTemplate(template)" ng-class="{'selected':!dh.selectedTemplate}" ng-repeat="template in dh.templateService.listOfTemplates" ng-if="template.active == true">
-				 <md-icon md-font-icon="kn-list-preicon fa fa-check"></md-icon>
-                    <div class="kn-list-text" layout="column">                        
-                        <h3>{{ template.name }}</h3>
-                        <p>{{ template.creationDate | date:'yyyy-MM-dd HH:mm:ss Z'}}</p>
-                    </div>
-				 	<md-button class="md-secondary md-icon-button" ng-click="dh.downloadTemplate(template)" aria-label="download template" >
-                        <md-icon md-font-icon="fa fa-download">
-                            <md-tooltip>{{translate.load("sbi.documentdetails.templates.download")}}</md-tooltip>
-                        </md-icon>
-                    </md-button>				
-				</div>
-			
-                <div class="kn-list-item selectable" ng-repeat="template in dh.templateService.listOfTemplates track by $index" ng-click="dh.selectTemplate(template)" ng-class="{'selected':template.$$hashKey == dh.selectedTemplate}">
+            <div class="kn-custom-list h42">            
+
+                <div class="kn-list-item selectable" ng-repeat="template in dh.templateService.listOfTemplates track by $index" ng-click="dh.selectTemplate(template)" ng-class="{'selected':template.$$hashKey == dh.selectedTemplate}" ng-style="{'background-color': template.active ? '#cddcea' : ''}">
                     <md-icon ng-if="template.active == false" md-font-icon="kn-list-preicon fa fa-history"></md-icon>
                     <md-icon ng-if="template.active == true" md-font-icon="kn-list-preicon fa fa-check"></md-icon>
                     
