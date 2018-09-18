@@ -568,11 +568,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    	  $scope.colorPickerAlternateGrid={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:$scope.localModel.content.style && $scope.localModel.content.style.showAlternateRows ? false : true};
 			    	  
 			    	  $scope.enableAlternate = function() {
-			    		  debugger;
 			    		  $scope.colorPickerAlternateGrid.disabled=!$scope.localModel.content.style.showAlternateRows;
 		    		  }
 			    	  $scope.enableGrid = function() {
-			    		  debugger;
 			    		  $scope.colorPickerPropertyGrid.disabled=!$scope.localModel.content.style.showGrid;
 			    	  }
 
