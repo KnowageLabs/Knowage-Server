@@ -9,6 +9,9 @@
 #set($isCockpitEngine = $chart.isCockpitEngine)
 #set($rows = $data.rows) ## data in table rows
 #set($categorieColumns = $chart.VALUES.CATEGORY.get(0)) ## metadata related to categories
+#if(!$categorieColumns)
+#set($categorieColumns = $chart.VALUES.CATEGORY)
+#end
 #set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
 #foreach($element in $dataFields)
 #if($element.header == $categorieColumns.column || $element.header == $categorieColumns.name)
@@ -522,8 +525,7 @@
 			align: 'high',
 			#end
 		 },
-		#set ($counter = $datasettransformer.prepareDataForScater($rows,$columnMap,$isCockpitEngine,null).entrySet())
-   		#if($chart.dateTime!="true")    
+		#if($chart.dateTime!="true")    
    	
             
 

@@ -254,7 +254,7 @@ function ChartDesignerFunction(sbiModule_translate,channelMessaging,$scope,sbiMo
 					||
 				chartType.toUpperCase() == "SCATTER"
 					) {
-			$scope.chartTemplate.VALUES.CATEGORY = $scope.categories;
+			$scope.chartTemplate.VALUES.CATEGORY = angular.copy($scope.categories);
 
 			if(chartType.toUpperCase() == "SCATTER" && !advancedTrue){
 
