@@ -198,11 +198,6 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	}
 
 	@Override
-	public String getSignature() {
-		return this.getSQLQuery(true);
-	}
-
-	@Override
 	public String getSQLQuery(boolean includeInjectedFilters) {
 		logger.debug("IN: includeInjectedFilters = " + includeInjectedFilters);
 		String toReturn = null;

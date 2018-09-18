@@ -431,7 +431,9 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
 	@Override
 	public String getSignature() {
-		return getSQLQuery(true);
+		String datasourceSignature = this.getDataSource().getSignature(getUserProfile());
+		String querySignature = getSQLQuery(true);
+		return datasourceSignature + "_" + querySignature;
 	}
 
 	@Override
@@ -550,10 +552,8 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	 * Adjusts the metadata of the datastore retrieved by a JDBCDataSet, since executed JDBC dataset does not contain correct metadata (name, alias,
 	 * attribute/measure) therefore we need to merge metadata
 	 *
-	 * @param jdbcMetadata
-	 *            the metadata retrieved by executing the JDBC dataset
-	 * @param qbeQueryMetaData
-	 *            the metadata of the Qbe query
+	 * @param jdbcMetadata     the metadata retrieved by executing the JDBC dataset
+	 * @param qbeQueryMetaData the metadata of the Qbe query
 	 */
 	protected IMetaData mergeMetadata(IMetaData jdbcMetadata, IMetaData qbeQueryMetaData) {
 		int count = jdbcMetadata.getFieldCount();
