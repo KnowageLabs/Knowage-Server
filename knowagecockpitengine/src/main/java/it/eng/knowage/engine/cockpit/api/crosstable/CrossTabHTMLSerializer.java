@@ -208,7 +208,7 @@ public class CrossTabHTMLSerializer {
 					aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','" + text + "')");
 				aColumn.setCharacters(text);
 				int rowSpan = aNode.getLeafsNumber();
-//				if (rowSpan > 1 || (rowSpan==1 && columnsTotals && noSelectedColumn)) {
+
 				if (rowSpan > 1) {
 					aColumn.setAttribute(ROWSPAN_ATTRIBUTE, rowSpan);
 				}
@@ -239,6 +239,7 @@ public class CrossTabHTMLSerializer {
 			int measureNumber = crossTab.getCrosstabDefinition().getMeasures().size();
 			List<String> levelValues = new ArrayList();
 			List<String> lastLevelValues = new ArrayList();
+			int colSpanSubTot = 0;
 			for (int i = 0; i < levels; i++) {
 				boolean showHeader = true;
 				SourceBean aRow = new SourceBean(ROW_TAG);
@@ -361,6 +362,12 @@ public class CrossTabHTMLSerializer {
 					}
 
 					int colSpan = aNode.getLeafsNumber();
+					if (text.equalsIgnoreCase(CrossTab.SUBTOTAL)) {
+						colSpanSubTot = colSpan;
+					}
+					if (text.equalsIgnoreCase(CrossTab.TOTAL) && colSpanSubTot>0) {
+						colSpan = colSpanSubTot;
+					}
 					if (colSpan > 1) {
 						aColumn.setAttribute(COLSPAN_ATTRIBUTE, colSpan);
 					}
