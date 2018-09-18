@@ -21,20 +21,19 @@
     	   .service('outputParametersService', ['resourceService', 'DocumentService', 'sbiModule_translate', 'sbiModule_messaging', function(resourceService,DocumentService,sbiModule_translate,sbiModule_messaging) {
     		   var outputResource = {};
     		   var documentService = DocumentService;
-    		   var requiredPath = "2.0/documents1";    		   
-    		   outputResource.changedOutputParameters = [];			   
+    		   var requiredPath = "2.0/documents1";
     		   outputResource.outputParametersForDeleting = [];
 
     		   outputResource.persistOutputParameters = function() {
-    	        	for(var i = 0; i < outputResource.changedOutputParameters.length; i++) {
-    	        		if(!outputResource.changedOutputParameters[i].id) {
-    	        			delete outputResource.changedOutputParameters[i].$$hashKey;
+    	        	for(var i = 0; i < DocumentService.document.outputParameters.length; i++) {
+    	        		if(!DocumentService.document.outputParameters[i].id) {
+    	        			delete DocumentService.document.outputParameters[i].$$hashKey;
     	        			var outputParametersPostBasePath = documentService.document.id + '/outputparameters';
-    	        			resourceService.post(requiredPath, outputParametersPostBasePath, outputResource.changedOutputParameters[i]);
+    	        			resourceService.post(requiredPath, outputParametersPostBasePath, DocumentService.document.outputParameters[i]);
     	        		} else {
-    	        			delete outputResource.changedOutputParameters[i].$$hashKey;
-    	        			var outputParametersPutBasePath = documentService.document.id + "/outputparameters/" + outputResource.changedOutputParameters[i].id;
-    	        			resourceService.put(requiredPath, outputParametersPutBasePath, outputResource.changedOutputParameters[i]);
+    	        			delete DocumentService.document.outputParameters[i].$$hashKey;
+    	        			var outputParametersPutBasePath = documentService.document.id + "/outputparameters/" + DocumentService.document.outputParameters[i].id;
+    	        			resourceService.put(requiredPath, outputParametersPutBasePath, DocumentService.document.outputParameters[i]);
     	        		}
     	        	}
     	        };

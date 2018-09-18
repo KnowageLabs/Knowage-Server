@@ -59,7 +59,7 @@
 
         self.savingFunction = function(){
 
-        	persistDocument();
+        	
 
         	if(documentService.document.id != undefined){
         	DriversService.persistDrivers(documentService.document.id,requiredPath);
@@ -84,6 +84,8 @@
         	subreportsService.deleteSubreports();
 			subreportsService.persistSubreports();
 
+			persistDocument();
+			
         };
 
 

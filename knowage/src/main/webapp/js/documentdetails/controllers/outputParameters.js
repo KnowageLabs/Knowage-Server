@@ -23,14 +23,23 @@ angular
 
         	  var self = this;
         	  var documentService = DocumentService;
-        	  var outputParametersService = outputParametersService;
+        	  self.outputParametersService = outputParametersService;
         	  $scope.translate = sbiModule_translate;
         	  self.document = DocumentService.document;
         	  self.documentInfoObject = $location.search();
         	  var id = self.document.id;
         	  var basePath = id + "/" + 'outputparameters';
         	  var resourceName = DocumentService.requiredPath; 
-        	  self.listOfOutputParameters = [];
+        	  
+        	  
+        	  function getSortedArray() {
+        		  self.document.outputParameters.sort(function(a, b) {
+            		  return a.id - b.id;
+            	  });
+        		  return self.document.outputParameters;
+        	  }
+        	  
+        	  getSortedArray();
         	  
               self.addParameter = function() {
             	  self.selectedParameter = {
@@ -40,39 +49,20 @@ angular
             			  isUserDefined: true,
             			  type: self.typeList[0] ? self.typeList[0] : {} 
             	  }
-                  if (self.listOfOutputParameters) {
-                	  self.listOfOutputParameters.push(self.selectedParameter);
+                  if (self.document.outputParameters) {
+                	  self.document.outputParameters.push(self.selectedParameter);
                   } else {
-                	  self.listOfOutputParameters.push(self.selectedParameter);
+                	  self.document.outputParameters.push(self.selectedParameter);
                   }
-              };
-              
-              outputParametersService.changedOutputParameters = self.listOfOutputParameters;
-              
-              self.getOutputParameters = function() {
-            	  resourceService.get(resourceName, basePath)
-            	  .then(function(response) {
-            		  self.listOfOutputParameters.length = 0;
-            		  angular.copy(response.data, self.listOfOutputParameters);
-            		  console.log(response)
-            	  });
-              };
-              
-              self.showOutputParametersTab = function() {
-            	  if(id) {
-            		  self.getOutputParameters();
-            	  }
-              };
-              
-              self.showOutputParametersTab();              
+              };               
               
               self.selectOutputParameter = function(index) {
-                  self.selectedParameter = self.listOfOutputParameters[index];
+                  self.selectedParameter = DocumentService.document.outputParameters[index];
               }
               
               self.removeOutputParameterFromList = function(index) {            	              	  
-            	  outputParametersService.outputParametersForDeleting.push(self.listOfOutputParameters[index]);
-            	  self.listOfOutputParameters.splice(index, 1);
+            	  self.outputParametersService.outputParametersForDeleting.push(DocumentService.document.outputParameters[index]);
+            	  DocumentService.document.outputParameters.splice(index, 1);
               }
           	
           	self.loadTypeList = function(){
