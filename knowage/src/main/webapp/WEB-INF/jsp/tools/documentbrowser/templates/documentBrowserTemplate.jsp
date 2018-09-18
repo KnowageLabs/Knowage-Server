@@ -203,7 +203,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</md-toolbar> 
 		<md-content layout-margin>
 			<md-list> 
-				<md-list-item layout="column" class="md-2-line">
+				<md-list-item class="md-2-line" ng-if="selectedDocument.description">
 					<div class="md-list-item-text " flex>
 						<h3> <b>{{translate.load("sbi.generic.descr")}}</b> </h3>
 						<p>{{selectedDocument.description}}</p>
