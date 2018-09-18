@@ -112,7 +112,7 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 
 		finishEdit.promise.then(function(){
 			$scope.refresh();
-		});
+		},function(){});
 
 		return finishEdit.promise;
 	};
@@ -188,19 +188,18 @@ function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbi
 			else{
 				var imageId = 'imageId='+imgId;
 				sbiModule_restServices.get("1.0/images", 'deleteImage', imageId)
-				.success(function(data, status, headers, config) {
-					if(data.success){
+				.then(function(response) {
+					if(response.data.success){
 						refreshImagesList();
-					}else if (data.hasOwnProperty("msg")){
-						$mdToast.show($mdToast.simple().content(sbiModule_translate.load(data.msg)).position('top').action(
+					}else if (response.data.hasOwnProperty("msg")){
+						$mdToast.show($mdToast.simple().content(sbiModule_translate.load(response.data.msg)).position('top').action(
 						'OK').highlightAction(false).hideDelay(5000));
 					}else{
 						$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.genericError')).position('top').action(
 						'OK').highlightAction(false).hideDelay(5000));
 					}
-				})
-				.error(function(data, status, headers, config) {
-					$mdToast.show($mdToast.simple().content(data.ERROR).position('top').action(
+				},function(error) {
+					$mdToast.show($mdToast.simple().content(error.data.ERROR).position('top').action(
 					'OK').highlightAction(false).hideDelay(5000));
 
 				});
@@ -216,19 +215,18 @@ function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbi
 			fd.append('uploadedImage', $scope.uploadImg.file);
 			sbiModule_restServices.restToRootProject();
 			sbiModule_restServices.post("1.0/images", 'addImage', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
-			.success(function(data, status, headers, config) {
-				if(data.success){
+			.then(function(response) {
+				if(response.data.success){
 					refreshImagesList();
-				}else if (data.hasOwnProperty("msg")){
-						$mdToast.show($mdToast.simple().content(sbiModule_translate.load(data.msg)).position('top').action(
+				}else if (response.data.hasOwnProperty("msg")){
+						$mdToast.show($mdToast.simple().content(sbiModule_translate.load(response.data.msg)).position('top').action(
 						'OK').highlightAction(false).hideDelay(5000));
 				}else{
 					$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.genericError')).position('top').action(
 					'OK').highlightAction(false).hideDelay(5000));
 				}
-			})
-			.error(function(data, status, headers, config) {
-				$mdToast.show($mdToast.simple().content(data.ERROR).position('top').action(
+			},function(error) {
+				$mdToast.show($mdToast.simple().content(error.data.ERROR).position('top').action(
 				'OK').highlightAction(false).hideDelay(5000));
 
 			});
@@ -237,15 +235,15 @@ function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbi
 	function refreshImagesList(){
 
 		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.get("1.0/images", 'listImages').success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						sbiModule_logger.log("error:"+data.errors);
+		sbiModule_restServices.get("1.0/images", 'listImages').then(
+				function(response) {
+					if (response.data.hasOwnProperty("errors")) {
+						sbiModule_logger.log("error:"+response.data.errors);
 					} else {
-						angular.copy(data.data,$scope.listImages);
+						angular.copy(response.data.data,$scope.listImages);
 					}
-				}).error(function(data, status, headers, config) {
-					console.log("Error " + status);
+				},function(error) {
+					console.log("Error " + error.status);
 				});
 	};
 	refreshImagesList();

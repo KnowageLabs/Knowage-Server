@@ -8,8 +8,15 @@
 	<md-card-content flex layout="column" class="noPadding">
 		<md-tabs flex md-border-bottom >
 	  		<md-tab label="{{translate.load('sbi.cockpit.style')}}">
-		     	<cockpit-style-configurator widget ng-model="localModel.style">
-		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.widget.table.rows')">
+	  		
+	  			<md-card>
+					<md-toolbar class="ternaryToolbar" >
+						<div class="md-toolbar-tools" layout="row">
+							<h2>{{translate.load('sbi.cockpit.widget.table.rows')}}</h2>
+							<span flex></span>
+						</div>
+					</md-toolbar>
+					<md-card-content >
 						<div flex layout="column" ng-cloak>
 							<div layout="row">
 								<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.showDataset" class="md-block" flex="20">
@@ -22,7 +29,7 @@
 							</div>
 							
 							<div layout="row">
-								<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.alternateRows.enabled" class="md-block" flex="20">
+								<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.alternateRows.enabled" ng-change="changeAlternatedRows()" class="md-block" flex="20">
 									{{translate.load('sbi.cockpit.widget.selection.row.alternate')}}
 								</md-checkbox>
 								<md-input-container flex class="md-block">
@@ -35,7 +42,11 @@
 								</md-input-container>
 							</div>
 						</div>
-					</cockpit-style-custom-widget-configurator>
+					</md-card-content>
+				</md-card>
+	  		
+	  		
+		     	<cockpit-style-configurator widget ng-model="localModel.style">
 		     	</cockpit-style-configurator>
 		    </md-tab>
 		</md-tabs>

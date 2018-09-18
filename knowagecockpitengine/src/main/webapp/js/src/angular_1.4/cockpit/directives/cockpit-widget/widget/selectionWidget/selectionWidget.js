@@ -321,10 +321,16 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 			locals: {finishEdit:finishEdit,model:$scope.ngModel},
 			controller: function($scope,finishEdit,sbiModule_translate,model,mdPanelRef,$mdToast){
 				$scope.translate=sbiModule_translate;
-
+				
+				
 				$scope.localModel = {};
 				angular.copy(model,$scope.localModel);
-
+				$scope.colorPickerPropertyEvenOddRows={format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select'),disabled:!$scope.localModel.style || !$scope.localModel.style.alternateRows || !$scope.localModel.style.alternateRows.enabled};
+				
+				$scope.changeAlternatedRows = function(){
+					$scope.colorPickerPropertyEvenOddRows.disabled = !$scope.localModel.style.alternateRows.enabled;
+				}
+				
 				$scope.saveConfiguration=function(){
 					angular.copy($scope.localModel,model);
 					mdPanelRef.close();

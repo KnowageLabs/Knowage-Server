@@ -44,8 +44,15 @@
 				</md-tab>
 
 				<md-tab label="{{translate.load('sbi.cockpit.style')}}">
-					<cockpit-style-configurator widget ng-model="model.style">
-						<cockpit-style-custom-widget-configurator label="'Image'">
+					
+					<md-card>
+						<md-toolbar class="ternaryToolbar" >
+							<div class="md-toolbar-tools" layout="row">
+								<h2>Image</h2>
+								<span flex></span>
+							</div>
+						</md-toolbar>
+						<md-card-content >
 							<div layout="row" flex ng-cloak layout-wrap>
 								<md-input-container flex=50 class="md-block">
 									<label>Height</label>
@@ -73,7 +80,10 @@
 								</md-input-container>
 							
 							</div>
-						</cockpit-style-custom-widget-configurator>
+						</md-card-content>
+					</md-card>
+					
+					<cockpit-style-configurator widget ng-model="model.style">
 					</cockpit-style-configurator>
 				</md-tab>
 				
