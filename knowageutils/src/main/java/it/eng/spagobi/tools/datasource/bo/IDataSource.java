@@ -71,8 +71,7 @@ public interface IDataSource {
 	/**
 	 * Sets the ds id.
 	 *
-	 * @param dsId
-	 *            the new ds id
+	 * @param dsId the new ds id
 	 */
 	public abstract void setDsId(int dsId);
 
@@ -86,8 +85,7 @@ public interface IDataSource {
 	/**
 	 * Sets the descr.
 	 *
-	 * @param descr
-	 *            the new descr
+	 * @param descr the new descr
 	 */
 	public abstract void setDescr(String descr);
 
@@ -101,8 +99,7 @@ public interface IDataSource {
 	/**
 	 * Sets the label.
 	 *
-	 * @param label
-	 *            the new label
+	 * @param label the new label
 	 */
 	public abstract void setLabel(String label);
 
@@ -116,8 +113,7 @@ public interface IDataSource {
 	/**
 	 * Sets the jndi.
 	 *
-	 * @param jndi
-	 *            the new jndi
+	 * @param jndi the new jndi
 	 */
 	public abstract void setJndi(String jndi);
 
@@ -131,8 +127,7 @@ public interface IDataSource {
 	/**
 	 * Sets the url connection.
 	 *
-	 * @param url_connection
-	 *            the new url connection
+	 * @param url_connection the new url connection
 	 */
 	public abstract void setUrlConnection(String url_connection);
 
@@ -146,8 +141,7 @@ public interface IDataSource {
 	/**
 	 * Sets the user.
 	 *
-	 * @param user
-	 *            the new user
+	 * @param user the new user
 	 */
 	public abstract void setUser(String user);
 
@@ -161,8 +155,7 @@ public interface IDataSource {
 	/**
 	 * Sets the pwd.
 	 *
-	 * @param pwd
-	 *            the new pwd
+	 * @param pwd the new pwd
 	 */
 	public abstract void setPwd(String pwd);
 
@@ -176,8 +169,7 @@ public interface IDataSource {
 	/**
 	 * Sets the driver.
 	 *
-	 * @param driver
-	 *            the new driver
+	 * @param driver the new driver
 	 */
 	public abstract void setDriver(String driver);
 
@@ -191,8 +183,7 @@ public interface IDataSource {
 	/**
 	 * Sets the dialect name.
 	 *
-	 * @param dialectName
-	 *            the new dialect name
+	 * @param dialectName the new dialect name
 	 */
 	public abstract void setDialectName(String dialectName);
 
@@ -206,8 +197,7 @@ public interface IDataSource {
 	/**
 	 * Sets the engines.
 	 *
-	 * @param engines
-	 *            the new engines
+	 * @param engines the new engines
 	 */
 	public abstract void setEngines(Set engines);
 
@@ -221,8 +211,7 @@ public interface IDataSource {
 	/**
 	 * Sets the objects.
 	 *
-	 * @param objects
-	 *            the new objects
+	 * @param objects the new objects
 	 */
 	public abstract void setObjects(Set objects);
 
@@ -251,5 +240,7 @@ public interface IDataSource {
 	public IDataStore executeStatement(String statement, Integer start, Integer limit, Integer maxRowCount);
 
 	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount) throws DataBaseException;
+
+	public String getSignature(IEngUserProfile profile);
 
 }

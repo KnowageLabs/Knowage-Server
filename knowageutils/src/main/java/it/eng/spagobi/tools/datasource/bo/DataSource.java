@@ -254,6 +254,17 @@ public class DataSource implements Serializable, IDataSource {
 
 	}
 
+	@Override
+	public String getSignature(IEngUserProfile profile) {
+		String toReturn;
+		if (this.checkIsJndi()) {
+			toReturn = this.getJNDIRunTime(profile);
+		} else {
+			toReturn = this.getUser() + "_" + this.getUrlConnection();
+		}
+		return toReturn;
+	}
+
 	/**
 	 * Get the connection using jdbc.
 	 *
