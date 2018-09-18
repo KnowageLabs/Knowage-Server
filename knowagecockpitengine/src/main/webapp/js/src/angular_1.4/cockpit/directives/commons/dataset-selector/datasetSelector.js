@@ -94,7 +94,7 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 				}else return true;
 			}
 		}
-		if(datasetTypeAvailable){
+		if($scope.datasetTypeAvailable){
 			for(var a in $scope.datasetTypeAvailable){
 				if($scope.datasetTypeAvailable[a].type == ds.type){
 					if($scope.datasetTypeAvailable[a].configuration){

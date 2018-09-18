@@ -452,11 +452,11 @@
 				           <div flex=20 layout=column>
 				           		<div flex  layout="row" layout-align="start center">
 						           <md-checkbox layout-align="space-around center" ng-model="localModel.content.style.showGrid"  class="md-block"
-											aria-label="Checkbox 1" ng-click="enableGrid()">{{translate.load('sbi.cockpit.table.grid.showgrid')}}</md-checkbox>
+											aria-label="Checkbox 1" ng-change="enableGrid()">{{translate.load('sbi.cockpit.table.grid.showgrid')}}</md-checkbox>
 								</div>
 								<div flex  layout="row" layout-align="start center">
 						          <md-checkbox layout-align="space-around center" ng-model="localModel.content.style.showAlternateRows"  class="md-block"
-											aria-label="Checkbox 1"  ng-click ="enableAlternate()">{{translate.load('sbi.cockpit.table.alternate')}}</md-checkbox>
+											aria-label="Checkbox 1"  ng-change="enableAlternate()">{{translate.load('sbi.cockpit.table.alternate')}}</md-checkbox>
 								</div>
 								<div flex layout="row" layout-align="start center">
 									<div class="kn-info" flex>Attention: the alternate rows will be shown just without previous specific sections configuration (Headers and measures)</div>
@@ -486,11 +486,11 @@
 						           	<div layout=row >
 							     		<md-input-container flex=50 class="md-block"> 
 											<label>{{translate.load('sbi.cockpit.table.alternate.evenrows')}}</label>
-											<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresRow['even-background-color']" ></color-picker>
+											<color-picker  options="colorPickerAlternateGrid" ng-model="localModel.content.style.measuresRow['even-background-color']" ></color-picker>
 										</md-input-container>
 										<md-input-container flex=50 class="md-block"> 
 											<label>{{translate.load('sbi.cockpit.table.alternate.oddrows')}}</label>
-											<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresRow['odd-background-color']" ></color-picker>
+											<color-picker  options="colorPickerAlternateGrid" ng-model="localModel.content.style.measuresRow['odd-background-color']" ></color-picker>
 										</md-input-container>
 						     		</div>
 				           		</div>

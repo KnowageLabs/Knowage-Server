@@ -79,39 +79,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$mdDialog,
 		sbiModule_device,
 		sbiModule_i18n){
-	$scope.bordersSize=[{
-    	label:$scope.translate.load("sbi.cockpit.style.borders.solid"),
-    	value:'solid',
-    	exampleClass:"borderExampleSolid"
-    },
-    {
-    	label:$scope.translate.load("sbi.cockpit.style.borders.dashed"),
-    	value:'dashed',
-    	exampleClass:"borderExampleDashed"
-    },
-    {
-    	label:$scope.translate.load("sbi.cockpit.style.borders.dotted"),
-    	value:'dotted',
-    	exampleClass:"borderExampleDotted"
-    }
-	];
-	$scope.bordersWidth=[{
-	    	label:$scope.translate.load("sbi.cockpit.style.small"),
-	    	value:"0.1em"
-	    },
-	    {
-	    	label:$scope.translate.load("sbi.cockpit.style.medium"),
-	    	value:"0.3em"
-	    },
-	    {
-	    	label:$scope.translate.load("sbi.cockpit.style.large"),
-	    	value:"0.7em"
-	    },
-	    {
-	    	label:$scope.translate.load("sbi.cockpit.style.extralarge"),
-	    	value:"1em"
-	    },
-	];
+	
 
 
 	$scope.init=function(element,width,height){
@@ -529,9 +497,46 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    	  $scope.originalCurrentDataset={};
 			    	  $scope.dragUtils={dragObjectType:undefined};
 			    	  $scope.tabsUtils={selectedIndex:0};
-			    	  $scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
+			    	  
+			    	  
+			    	  
+			    	  
 			    	  $scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
+			    	  $scope.bordersSize=[{
+			  	    	label:$scope.translate.load("sbi.cockpit.style.borders.solid"),
+			  	    	value:'solid',
+			  	    	exampleClass:"borderExampleSolid"
+			  	    },
+			  	    {
+			  	    	label:$scope.translate.load("sbi.cockpit.style.borders.dashed"),
+			  	    	value:'dashed',
+			  	    	exampleClass:"borderExampleDashed"
+			  	    },
+			  	    {
+			  	    	label:$scope.translate.load("sbi.cockpit.style.borders.dotted"),
+			  	    	value:'dotted',
+			  	    	exampleClass:"borderExampleDotted"
+			  	    }
+			  		];
+			  		$scope.bordersWidth=[{
+			  		    	label:$scope.translate.load("sbi.cockpit.style.small"),
+			  		    	value:"0.1em"
+			  		    },
+			  		    {
+			  		    	label:$scope.translate.load("sbi.cockpit.style.medium"),
+			  		    	value:"0.3em"
+			  		    },
+			  		    {
+			  		    	label:$scope.translate.load("sbi.cockpit.style.large"),
+			  		    	value:"0.7em"
+			  		    },
+			  		    {
+			  		    	label:$scope.translate.load("sbi.cockpit.style.extralarge"),
+			  		    	value:"1em"
+			  		    },
+			  		];
 			    	  angular.copy(model,$scope.localModel);
+			    	  
 
 			    	  if($scope.localModel.content==undefined){
 		    			  $scope.localModel.content={};
@@ -558,6 +563,18 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    		  $scope.localModel.content.crosstabDefinition.config.percenton="no";
 			    	  }
 
+			    	  $scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'};
+			    	  $scope.colorPickerPropertyGrid={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:$scope.localModel.content.style && $scope.localModel.content.style.showGrid ? false : true};
+			    	  $scope.colorPickerAlternateGrid={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:$scope.localModel.content.style && $scope.localModel.content.style.showAlternateRows ? false : true};
+			    	  
+			    	  $scope.enableAlternate = function() {
+			    		  debugger;
+			    		  $scope.colorPickerAlternateGrid.disabled=!$scope.localModel.content.style.showAlternateRows;
+		    		  }
+			    	  $scope.enableGrid = function() {
+			    		  debugger;
+			    		  $scope.colorPickerPropertyGrid.disabled=!$scope.localModel.content.style.showGrid;
+			    	  }
 
 			    	  $scope.changeDatasetFunction=function(dsId,noReset){
 			    		  $scope.currentDataset= cockpitModule_datasetServices.getDatasetById( dsId);
@@ -747,6 +764,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$scope.formatPattern = ['','#.###','#,###','#.###,##','#,###.##'];
 		$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
 		$scope.visTypes=['Text','Icon only'];
+		
 		$scope.selectedColumn.disableShowHeader = false; //default is enabled: only for measures force disable if there are many measures
 		if ($scope.selectedColumn.containerType && $scope.selectedColumn.containerType == 'MEASURE-PT'){
 			if (model.content.crosstabDefinition.measures.length==1)
