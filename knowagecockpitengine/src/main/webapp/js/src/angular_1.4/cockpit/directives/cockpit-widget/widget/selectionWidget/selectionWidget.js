@@ -177,7 +177,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 	$scope.getSelections();
 
 	if(!$scope.ngModel.style) $scope.ngModel.style = {};
-	if(!$scope.ngModel.style.showColumn) $scope.ngModel.style.showColumn = true;
+	if(typeof($scope.ngModel.style.showColumn) == 'undefined') $scope.ngModel.style.showColumn = true;
 	$scope.columnTableSelection = [
 	{
 		label: $scope.translate.load("sbi.cockpit.dataset"),
