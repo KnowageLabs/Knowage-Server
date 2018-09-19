@@ -177,6 +177,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 	$scope.getSelections();
 
 	if(!$scope.ngModel.style) $scope.ngModel.style = {};
+	if(!$scope.ngModel.style.showColumn) $scope.ngModel.style.showColumn = true;
 	$scope.columnTableSelection = [
 	{
 		label: $scope.translate.load("sbi.cockpit.dataset"),
@@ -187,7 +188,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 		label: $scope.translate.load("sbi.cockpit.cross.column"),
 		name: "columnAlias",
 		hideTooltip: false,
-		visible: true
+		visible: $scope.ngModel.style.showColumn
   },{
 	  label: $scope.translate.load("sbi.cockpit.core.selections.list.columnValues"),
 	  name: "value",
@@ -198,6 +199,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 
 	$scope.$watch('ngModel.style',function(newValue,oldValue){
 		$scope.columnTableSelection[0].visible = newValue.showDataset;
+		$scope.columnTableSelection[1].visible = newValue.showColumn;
 	})
 
 	$scope.actionsOfSelectionColumns = [

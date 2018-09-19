@@ -1986,7 +1986,10 @@
 				max-height: 32px;
 				min-height: 32px;
 				padding-right: 0;
-				border-bottom: 1px solid #ccc;
+				border-top: 1px solid #ccc;
+				&:first-child {
+					border-top: 0;
+				}
 			}
 			.selectionSpan {
 				white-space: nowrap;

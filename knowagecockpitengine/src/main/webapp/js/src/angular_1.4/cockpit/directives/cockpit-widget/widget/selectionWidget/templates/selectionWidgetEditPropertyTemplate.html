@@ -22,6 +22,9 @@
 								<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.showDataset" class="md-block" flex="20">
 									{{translate.load('sbi.cockpit.widget.selection.showdataset')}}
 								</md-checkbox>
+								<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.showColumn" class="md-block" flex="20">
+									Show Column
+								</md-checkbox>
 								<md-input-container flex class="md-block" >
 									<label>{{translate.load('sbi.cockpit.widget.selection.row.height')}}</label>
 									<input class="input_class" ng-model="localModel.style.row.height" type="number" />
