@@ -84,7 +84,9 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 	}
 	$scope.saveChartTemplate = function() {
 		$scope.attachCategoriesToTemplate();
-		$scope.attachSeriesToTemplate();
+		if($scope.selectedChartType == 'scatter'){		
+			$scope.attachSeriesToTemplate();	
+		}
 		$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
 		if($scope.chartTemplate.hasOwnProperty("COLORPALETTE")){
 			var color = $scope.chartTemplate.COLORPALETTE.COLOR;
@@ -207,8 +209,11 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 
 
 	window.attachCategories = function() {
+		
 		$scope.attachCategoriesToTemplate();
-		$scope.attachSeriesToTemplate();
+		if($scope.selectedChartType == 'scatter'){		
+			$scope.attachSeriesToTemplate();	
+		}
 		$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
 		var chartObj = angular.copy($scope.chartTemplate);
 		var chartTemp = {}
