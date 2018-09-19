@@ -376,7 +376,8 @@
 				+ "ACTION_NAME=EXECUTE_DOCUMENT_ACTION"
 				+  "&OBJECT_LABEL="+label
 				+ "&TOOLBAR_VISIBLE=true"
-				+ "&ORGANIZATION="+tenant;
+				+ "&ORGANIZATION="+tenant
+				+ "&NEW_SESSION=true";
 
 				if(parameters != undefined && parameters != ''){
 					url += "&PARAMETERS="+parameters;
