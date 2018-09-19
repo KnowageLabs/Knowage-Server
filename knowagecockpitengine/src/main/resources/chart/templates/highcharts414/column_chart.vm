@@ -1532,7 +1532,7 @@
 					y: $el.y,
 					
 					name: '$el.name',
-					x: $counterX,
+					
 					datetype:"$datetype",
 					#if($isDateTime==true)
 					#if($datetype=="string")
@@ -1541,10 +1541,7 @@
 					#end
 					
 				},
-				#else
-				#set ($counterX = $counterX+1)
 				#end
-				#set ($counterX = $counterX+1)
 				#end	
 			], 
 						dataLabels: 
