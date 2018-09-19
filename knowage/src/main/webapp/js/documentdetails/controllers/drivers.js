@@ -26,7 +26,7 @@ angular
         	 self.translate = sbiModule_translate;
              self.driverRelatedObject = driversService.driverRelatedObject;
           //   self.confirmDelete = DocumentService.confirmDelete;   // ******************
-																	// TODO: ...
+						console.log(self.driverRelatedObject);											// TODO: ...
              var crudService = resourceService;
              var requiredPath = "";
              var id = self.driverRelatedObject.id;
@@ -34,14 +34,14 @@ angular
              self.driverParuses = [];
              var requiredPath = "2.0/documents1";
              self.analyticalDrivers = [];
-
+             self.hasParuse = true;
              self.driversPerModel = driversService.driversPerModel;
              driversService.lovColumns=[];
              self.selectedDataCondition = driversService.selectedDataCondition;
              self.selectedVisualCondition = driversService.selectedVisualCondition;
              self.visibilityConditions = driversService.visusalDependencyObjects;
              self.dataConditions = driversService.dataDependencyObjects;
-             if(driversService.driversOnObject.length == 0){
+             if(self.driverRelatedObject == {} && driversService.driversOnObject.length == 0){
             crudService.get(requiredPath,basePath).then(function(response){
             	 driversService.driversOnObject = response.data;
             	 self.drivers=driversService.driversOnObject;
@@ -176,6 +176,7 @@ angular
 	                         self.selectedDriver = self.drivers[i];
 	                     	 driversService.getParusesByAnaliticalDriverId(self.selectedDriver.parID);
 	                         self.setParameterInfo(self.selectedDriver);
+	                         self.hasParuse = ($filter('filter')(driversService.driverParuses, {id:self.selectedDriver.parID},true)).length > 0 ;
 							 if(self.selectedDriver.parID)
 	                         getLovsByAnalyticalDriverId(self.selectedDriver.parID);
 	                         	if(self.selectedDriver.id){

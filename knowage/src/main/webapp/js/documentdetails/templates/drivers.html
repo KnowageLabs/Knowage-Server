@@ -87,39 +87,8 @@
         </md-card>
        
         <div flex ng-if="dd.driversNum" layout="row">
-        <div flex  layout="row ">
-        <md-card ng-if="dd.selectedDriver" flex>
-            <md-toolbar class="ternaryToolbar ">
-            <div >
-                <div class="md-toolbar-tools "  layout="row ">
-                    <h2 >{{dd.translate.load("sbi.documentdetails.drivers.visibility")}}</h2>
-                    <span flex></span>
-                    <md-button ng-click="dd.editCondition($event,dd.selectedDriver)">{{dd.translate.load("sbi.documentdetails.drivers.addcondition")}}</md-button>
-                </div>
-                </div>
-            </md-toolbar>
-           
-            <md-card-content layout="column" class="noPadding">
-                <div layout="row" layout-align="center center" ng-if=" !dd.visibilityConditions.length > 0">
-                    <div class="kn-noItems">
-                        {{dd.translate.load("sbi.documentdetails.drivers.novisibility")}}
-                    </div>
-                </div>
-                <md-list class="md-dense">
-                    <md-list-item class=" md-2-line " ng-repeat="correlation in dd.visibilityConditions track by $index" ng-form="visualDependency" ng-click="dd.editCondition($event,dd.selectedDriver,$index)">
-                        <div class="md-list-item-text ">
-                            <h3><strong>{{ correlation.viewLabel }}</strong> {{correlation.objParFatherUrlName}} {{correlation.operation}} {{correlation.compareValue}}</h3>
-                        </div>
-                        <md-button class="md-secondary md-icon-button" ng-click="dd.deleteVisualCondition($index,'visual') " aria-label="delete driver ">
-                            <md-icon md-font-icon="fa fa-trash "></md-icon>
-                        </md-button>
-                        <md-divider></md-divider>
-                    </md-list-item>
-                </md-list>
-                  </md-card-content>
-         </md-card>
-       </div>
-          <div flex = "50" layout="row ">
+        
+          <div flex = "50" layout="row " ><!-- ng-if="dd.hasParuse" -->
             <md-card ng-if="dd.selectedDriver " flex>
   
              <md-toolbar class="ternaryToolbar ">
@@ -157,6 +126,38 @@
  
         </md-card>
         </div>
+        <div flex  layout="row ">
+        <md-card ng-if="dd.selectedDriver" flex>
+            <md-toolbar class="ternaryToolbar ">
+            <div >
+                <div class="md-toolbar-tools "  layout="row ">
+                    <h2 >{{dd.translate.load("sbi.documentdetails.drivers.visibility")}}</h2>
+                    <span flex></span>
+                    <md-button ng-click="dd.editCondition($event,dd.selectedDriver)">{{dd.translate.load("sbi.documentdetails.drivers.addcondition")}}</md-button>
+                </div>
+                </div>
+            </md-toolbar>
+           
+            <md-card-content layout="column" class="noPadding">
+                <div layout="row" layout-align="center center" ng-if=" !dd.visibilityConditions.length > 0">
+                    <div class="kn-noItems">
+                        {{dd.translate.load("sbi.documentdetails.drivers.novisibility")}}
+                    </div>
+                </div>
+                <md-list class="md-dense">
+                    <md-list-item class=" md-2-line " ng-repeat="correlation in dd.visibilityConditions track by $index" ng-form="visualDependency" ng-click="dd.editCondition($event,dd.selectedDriver,$index)">
+                        <div class="md-list-item-text ">
+                            <h3><strong>{{ correlation.viewLabel }}</strong> {{correlation.objParFatherUrlName}} {{correlation.operation}} {{correlation.compareValue}}</h3>
+                        </div>
+                        <md-button class="md-secondary md-icon-button" ng-click="dd.deleteVisualCondition($index,'visual') " aria-label="delete driver ">
+                            <md-icon md-font-icon="fa fa-trash "></md-icon>
+                        </md-button>
+                        <md-divider></md-divider>
+                    </md-list-item>
+                </md-list>
+                  </md-card-content>
+         </md-card>
+       </div>
         </div>
     </div>
 </div>
