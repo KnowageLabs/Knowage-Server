@@ -139,6 +139,7 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 					$scope.data[idx]=item;
 					$angularListDetail.goToList();
 					$scope.domain = {};
+					$scope.gridOptions.api.setRowData($scope.data);
 					$scope.message.showSuccessMessage($scope.translate.load('sbi.generic.operationSucceded'));
 				},function(){
 					$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
@@ -154,7 +155,7 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 				item.valueId = response.data;
 				$scope.data.splice(0, 0, item);
 				$angularListDetail.goToList();
-				$scope.gridOptions.api.setRowData($scope.data);
+				$scope.gridOptions.api.updateRowData({add: [item], addIndex: 0});
 				$scope.domain = {};
 				$scope.message.showSuccessMessage($scope.translate.load('sbi.generic.operationSucceded'));
 			}
@@ -194,7 +195,8 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
   	  								return;
   	  							}
   	  							$scope.oldValue = $scope.data.splice(idx, 1);
-  	  							$scope.gridOptions.api.setRowData($scope.data);
+  	  							//$scope.gridOptions.api.setRowData($scope.data);
+  	  							$scope.gridOptions.api.updateRowData({remove: [rowsSelected]});
   	  							$scope.message.showSuccessMessage($scope.translate.load('sbi.generic.operationSucceded'));
   	  						},function(data,status){
   	  							$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + data);

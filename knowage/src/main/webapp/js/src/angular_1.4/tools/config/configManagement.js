@@ -1,14 +1,31 @@
+/*
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 
-var app = angular.module('configManagementApp',  ['angular_table','ngMaterial', 'ngMessages', 'ui.tree', 'angularUtils.directives.dirPagination', 'angular_list', 'angular-list-detail', 'sbiModule', 'angularXRegExp']);
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging','sbiModule_translate','sbiModule_restServices', 'kn_regex', '$scope', '$q', '$log', '$mdDialog','sbiModule_config', manageConfigFucntion ])
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-sbiM.config(['$mdThemingProvider', function($mdThemingProvider) {
-    $mdThemingProvider.theme('knowage')
-    $mdThemingProvider.setDefaultTheme('knowage');
- }]);
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+(function() {
+agGrid.initialiseAgGridWithAngular1(angular);
+angular
+	.module('configManagementApp',  ['angular_table','ngMaterial', 'ngMessages', 'ui.tree', 'angularUtils.directives.dirPagination', 'angular_list', 'angular-list-detail', 'sbiModule', 'angularXRegExp','agGrid'])
+	.controller('Controller', manageConfigFunction )
+	.config(['$mdThemingProvider', function($mdThemingProvider) {
+	    $mdThemingProvider.theme('knowage')
+	    $mdThemingProvider.setDefaultTheme('knowage');
+	 }]);
 
-function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_translate, sbiModule_restServices, kn_regex, $scope, $q, $log,  $mdDialog,sbiModule_config) {
+function manageConfigFunction($angularListDetail,sbiModule_messaging, sbiModule_translate, sbiModule_restServices, kn_regex, $scope, $q, $log,  $mdDialog,sbiModule_config) {
 
 	var path = "2.0/configs";
 	var headers = {
@@ -17,6 +34,41 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	$scope.translate=sbiModule_translate;
 	$scope.message = sbiModule_messaging;
 	$scope.data=[]
+	
+	$scope.columns = [{"headerName":"Label","field":"label"},
+		{"headerName":"Name","field":"name"},
+		{"headerName":"Value Check","field":"valueCheck"},
+		{"headerName":"Category","field":"category"},
+		{"headerName":"",cellRenderer: buttonRenderer,"field":"id","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end","border":"none"},
+			suppressSorting:true,suppressFilter:true,width: 100,suppressSizeToFit:true, tooltip: false}];
+	
+	function buttonRenderer(params){
+		return 	'<md-button class="md-icon-button" ng-click="editRow(\''+params.data.id+'\')"><md-icon md-font-icon="fa fa-pencil"></md-icon></md-button>'+
+				'<md-button class="md-icon-button" ng-click="deleteRow(\''+params.data.id+'\')"><md-icon md-font-icon="fa fa-trash"></md-icon></md-button>';
+	}
+	
+	$scope.configurationGridOptions = {
+			angularCompileRows: true,
+            enableColResize: false,
+            enableFilter: true,
+            enableSorting: true,
+            pagination: true,
+            paginationAutoPageSize: true,
+            onGridSizeChanged: resizeColumns,
+            columnDefs : $scope.columns,
+            defaultColDef: {
+            	suppressMovable: true,
+            	tooltip: function (params) {
+                    return params.value;
+                },
+            }
+	};
+	
+	function resizeColumns(){
+		$scope.configurationGridOptions.api.sizeColumnsToFit();
+	}
+	
+	
 	$scope.itemSelected= {};
 	$scope.filterCategory=[];
 	$scope.hashCategory={};
@@ -71,6 +123,8 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 			$scope.filterCategory.push({"value" :k , "label": k});
 		}
 		$scope.data = data;
+		$scope.configurationGridOptions.api.setRowData($scope.data);
+		$scope.configurationGridOptions.api.sizeColumnsToFit();
 	},function(data, status, headers, config){
 		$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + data);
 	});
@@ -85,10 +139,19 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 		$scope.configForm.$setPristine();
 		$scope.configForm.$setUntouched();
 	}
-
-	$scope.editRow = function(item) {
-		$scope.config = angular.copy(item);
-		$scope.config.valueTypeId = item.valueTypeId == 'NUM' ? 407 : 408;
+	
+	$scope.getRowFromId = function(id){
+		for(var r in $scope.data){
+			if($scope.data[r].id==id){
+				return $scope.data[r];
+			}
+		}
+		return false;
+	}
+	
+	$scope.editRow = function(id) {
+		$scope.config = angular.copy($scope.getRowFromId(id));
+		$scope.config.valueTypeId = $scope.config.valueTypeId == 'NUM' ? 407 : 408;
 		$angularListDetail.goToDetail();
 	}
 
@@ -116,6 +179,7 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 					$scope.data[idx]=item;
 					$angularListDetail.goToList();
 					$scope.config = {};
+					$scope.configurationGridOptions.api.setRowData($scope.data);
 					$scope.message.showSuccessMessage($scope.translate.load('sbi.generic.operationSucceded'));
 				},function(){
 					$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
@@ -132,6 +196,7 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 					$scope.data.splice(0, 0, item);
 					$angularListDetail.goToList();
 					$scope.config = {};
+					$scope.configurationGridOptions.api.updateRowData({add: [item], addIndex: 0})
 					$scope.message.showSuccessMessage($scope.translate.load('sbi.generic.operationSucceded'));
 				}
 				else {
@@ -150,7 +215,7 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	}
 
 
-	$scope.deleteRow = function(item) {
+	$scope.deleteRow = function(id) {
 	  var confirm = $mdDialog.confirm()
 			        .title($scope.translate.load('sbi.generic.delete'))
 			        .content($scope.translate.load('sbi.generic.confirmDelete'))
@@ -159,7 +224,7 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	  $mdDialog
 	  	.show(confirm)
 	  	.then(function(){
-	  			var rowsSelected = item;
+	  			var rowsSelected = $scope.getRowFromId(id);
 	  			if (rowsSelected.id !== undefined) {
 	  				var idx = $scope.indexOf($scope.data, rowsSelected);
 	  				if (idx>=0){
@@ -170,6 +235,7 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	  								return;
 	  							}
 	  							$scope.oldValue = $scope.data.splice(idx, 1);
+	  							$scope.configurationGridOptions.api.updateRowData({remove: [rowsSelected]});
 	  							$scope.message.showSuccessMessage($scope.translate.load('sbi.generic.operationSucceded'));
 	  						},function(data,status){
 	  							$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + data);
@@ -200,3 +266,4 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 		return -1;
 	};
 };
+})();
