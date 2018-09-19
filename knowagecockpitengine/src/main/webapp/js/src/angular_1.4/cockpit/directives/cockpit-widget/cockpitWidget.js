@@ -477,6 +477,8 @@ function cockpitWidgetControllerFunction(
 
 	$scope.cloneWidget = function(){
 		var newModel = angular.copy($scope.ngModel);
+		delete newModel.col;
+		delete newModel.row;
 		newModel.id = new Date().getTime();
 		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
 	}

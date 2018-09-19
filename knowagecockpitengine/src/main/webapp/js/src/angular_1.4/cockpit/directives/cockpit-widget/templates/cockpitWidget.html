@@ -125,7 +125,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-card-title ng-style="extendedStyle.title" layout="row" layout-align="start center" ng-show="extendedStyle.titles">
 			<md-toolbar class="widgetToolbar" layout="row" layout-align="start center">
 				<div class="md-toolbar-tools" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp),'draggableToolbar':editingWidgetName!=true}" layout="row">
-					<!--  span  class="md-headline editWidgetNameSpan " ng-style="extendedStyle.title" ng-show="editingWidgetName!=true">{{ngModel.content.name | i18n | parameter_fill}}</span-->
 					<span  flex ng-style="extendedStyle.title.font" ng-if="extendedStyle.title.label">{{extendedStyle.title.label | i18n | parameter_fill}}</span>
 					<span  flex ng-style="extendedStyle.title.font" ng-if="!extendedStyle.title.label">New Widget</span>
 				</div>

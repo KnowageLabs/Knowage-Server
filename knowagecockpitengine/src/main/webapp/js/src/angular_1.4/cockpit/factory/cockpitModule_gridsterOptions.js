@@ -6,7 +6,7 @@ angular.module('cockpitModule').factory('cockpitModule_gridsterOptions',function
 		margins: [0, 0],
 		pushing : false,
 		floating : false,
-		swapping : true,
+		swapping : false,
 		rowHeight: 30,
 		width : 'auto',
 		sparse: true,// "true" can increase performance of dragging and resizing for big grid (e.g. 20x50)

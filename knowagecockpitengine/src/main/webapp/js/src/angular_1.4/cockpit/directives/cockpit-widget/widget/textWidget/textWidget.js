@@ -238,17 +238,6 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 	$scope.getOptions =function(){
 		var obj = {};
 
-//		if(!$scope.ngModel.settings.pagination.enabled || $scope.ngModel.settings.pagination.frontEnd){
-//			obj["page"] = -1;
-//			obj["itemPerPage"] = -1;
-//		}else{
-//			obj["page"] = $scope.ngModel.settings.page ? $scope.ngModel.settings.page - 1 : 0;
-//			obj["itemPerPage"] = $scope.ngModel.settings.pagination ? $scope.ngModel.settings.pagination.itemsNumber : -1;
-//		}
-//
-//		obj["columnOrdering"] = { name: $scope.ngModel.settings.sortingColumn };
-//		obj["reverseOrdering"] = ($scope.ngModel.settings.sortingOrder == 'ASC');
-
 		obj["type"] = $scope.ngModel.type;
 
 		return obj;
@@ -260,6 +249,6 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 
 
 //this function register the widget in the cockpitModule_widgetConfigurator factory
-addWidgetFunctionality("text",{'initialDimension':{'width':5, 'height':5},'updateble':false,'cliccable':false});
+addWidgetFunctionality("text",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':false});
 
 })();
