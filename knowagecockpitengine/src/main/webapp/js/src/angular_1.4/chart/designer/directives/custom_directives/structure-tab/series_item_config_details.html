@@ -16,7 +16,7 @@
 </div> 
 
 <!-- Aggregation type for the series item -->
-<div ng-if="!$scope.chartTemplate.type.toUpperCase()='SCATTER'" layout="row" flex layout-margin>
+<div ng-if="$scope.chartTemplate.type.toUpperCase()!='SCATTER'" layout="row" flex layout-margin>
 	<md-input-container class="md-block" flex> 
 		<label>{{translate.load('sbi.chartengine.designer.series.aggrtype')}}</label>
 		
