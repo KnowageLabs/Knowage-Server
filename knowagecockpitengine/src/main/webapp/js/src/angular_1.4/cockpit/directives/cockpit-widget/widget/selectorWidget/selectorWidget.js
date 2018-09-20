@@ -179,6 +179,7 @@ angular.module('cockpitModule')
 			}
 
 			if(nature == 'gridster-resized' || nature == 'fullExpand' || nature == 'resize'){
+				$scope.hideWidgetSpinner();
 				return;
 			}
 

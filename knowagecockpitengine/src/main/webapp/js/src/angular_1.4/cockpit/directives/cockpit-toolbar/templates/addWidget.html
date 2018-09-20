@@ -1,12 +1,11 @@
 <md-dialog class="addNewWidget">
-	<md-toolbar>
+	<md-toolbar class="secondaryToolbar">
       <div class="md-toolbar-tools">
         <h2>{{::translate.load("sbi.cockpit.editor.newwidget.title")}}</h2>
         <span flex></span>
-        <md-button ng-click="cancelConfiguration()">{{::translate.load("sbi.cockpit.editor.newwidget.close")}}</md-button>
       </div>
     </md-toolbar>
-	<md-dialog-content layout-align="start center">
+	<md-dialog-content layout-align="start center" flex-xs="100">
 		<div layout="row" layout-align="center center">
 			<div class="kn-info" flex="60">
 				{{::translate.load("sbi.cockpit.editor.newwidget.info")}}
@@ -22,4 +21,10 @@
 			</div>
 		</div>
 	</md-dialog-content>
+	<md-dialog-actions layout="row" layout-align="end center"  >
+	    <span flex></span>
+      <md-button class="md-raised" ng-click="cancelConfiguration()" >
+        {{translate.load('sbi.generic.cancel')}}
+      </md-button>
+	</md-dialog-actions>
 </md-dialog>
