@@ -138,8 +138,9 @@ public class QbeDataSet extends ConfigurableDataSet {
 		}
 	}
 
-	public void initDs(it.eng.qbe.datasource.IDataSource qbeDataSource, Query query) {
+	private void initDs(it.eng.qbe.datasource.IDataSource qbeDataSource, Query query) {
 		ds = QbeDatasetFactory.createDataSet(qbeDataSource.createStatement(query));
+		ds.setUserProfile(getUserProfile());
 		ds.setUserProfileAttributes(attributes);
 		ds.setParamsMap(params);
 		ds.setTransformerId(transformerId);
@@ -354,8 +355,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 	/**
 	 * Get the driver name (hibernate or jpa). It checks if the passed jar file contains the persistence.xml in the META-INF folder
 	 *
-	 * @param jarFile
-	 *            a jar file with the model definition
+	 * @param jarFile a jar file with the model definition
 	 * @return jpa if the persistence provder is JPA o hibernate otherwise
 	 */
 	private static String getDriverName(File jarFile) {
