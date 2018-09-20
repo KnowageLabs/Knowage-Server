@@ -142,6 +142,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			dataSetDao.setUserProfile(getUserProfile());
 			IDataSet dataSet = dataSetDao.loadDataSetByLabel(label);
 			Assert.assertNotNull(dataSet, "Unable to load dataset with label [" + label + "]");
+			dataSet.setUserProfile(getUserProfile());
 
 			timing.stop();
 			timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:getQueryDetails");
@@ -531,11 +532,10 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	/**
 	 * @param profile
 	 * @param datasetsJSONArray
-	 * @param typeDocWizard
-	 *            Usato dalla my analysis per visualizzare solo i dataset su cui è possi bile costruire un certo tipo di analisi selfservice. Al momento filtra
-	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
-	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
-	 *            rifattorizzata al più presto.
+	 * @param typeDocWizard     Usato dalla my analysis per visualizzare solo i dataset su cui è possi bile costruire un certo tipo di analisi selfservice. Al
+	 *                          momento filtra la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un
+	 *                          riferimento alla dimensione spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista
+	 *                          dei dataset è una follia che andrebbe rifattorizzata al più presto.
 	 * @return
 	 * @throws JSONException
 	 * @throws EMFInternalError
