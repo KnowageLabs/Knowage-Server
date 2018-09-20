@@ -266,7 +266,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		var height = angular.element(element)[0].parentElement.offsetHeight;
 		if(data == undefined) {
 			if(nature == "fullExpand"){
-				$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:null,nature:nature});
+				$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:null,nature:nature,options:options});
 			}else{
 				if (config && config.dataset && config.dataset.dsId){
 
@@ -330,7 +330,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				}
 
 				if(dsRecords == null){
-					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
+					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature,options:options});
 				}else{
 					/*
 						author: rselakov, Radmila Selakovic,
