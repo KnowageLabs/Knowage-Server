@@ -7,6 +7,19 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 	var rt=this;
 
 	broadcast = function(message, dsLabel){
+		if(this.oldDataMap && this.oldDataMap[message.channel]){
+			if(this.oldDataMap[message.channel] != message.data){
+				this.oldDataMap[message.channel] = message.data;
+			}else{
+				return;
+			}
+		}else{
+			if(!this.oldDataMap){
+				this.oldDataMap = {};
+			}
+			this.oldDataMap[message.channel] = message.data;
+		}
+
 		var event = "UPDATE_FROM_REALTIME";
 		var data=JSON.parse(message.data);
 		if(data.isFoundInCache) {
