@@ -272,6 +272,10 @@ function cockpitWidgetControllerFunction(
 			$scope.widgetActionButtonsVisible=false;
 		}
 	}
+	
+	if($scope.ngModel.style && $scope.ngModel.style.title && $scope.ngModel.style.title.label){
+		$scope.ngModel.content.name = $scope.ngModel.style.title.label;
+	}
 
 	// davverna - initializing search object to give all the columns to the user searchbar
 	if($scope.ngModel.type.toLowerCase() == "table" && (!$scope.ngModel.search || $scope.ngModel.search.columns == [])){

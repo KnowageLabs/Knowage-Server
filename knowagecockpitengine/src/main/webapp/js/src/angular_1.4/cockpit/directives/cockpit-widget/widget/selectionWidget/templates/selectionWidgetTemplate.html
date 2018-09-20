@@ -10,9 +10,13 @@
 	
 	 <md-list class="md-dense" flex ng-if="selection.length > 0">
         <md-list-item ng-repeat="row in selection" layout="row" layout-align="start center" ng-style="getRowStyle($even)">
-			<p class="selectionSpan" ng-repeat="column in columnTableSelection" ng-if="column.visible" flex>{{row[column.name]}}</p>
-           <md-button class="md-secondary md-icon-button" ng-click="deleteSelection(row, true)">
+			<p class="selectionSpan" ng-repeat="column in columnTableSelection" ng-if="column.visible" flex>
+				{{row[column.name]}}
+				<md-tooltip md-delay="500">{{row[column.name]}}</md-tooltip>
+			</p>
+           <md-button class="md-secondary md-icon-button" ng-click="deleteSelection(row, true)" aria-label="clear selection">
             <md-icon md-font-icon="fa fa-trash"></md-icon>
+            <md-tooltip md-delay="500">{{::translate.load('sbi.cockpit.selections.clearselection')}}</md-tooltip>
           </md-button>
         </md-list-item>
      </md-list>

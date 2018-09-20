@@ -348,7 +348,7 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	$scope.actionsOfSelectionColumns = [
 
 	                                    {
-	                                    	icon:'fa fa-trash iconAlignFix' ,
+	                                    	icon:'fa fa-trash' ,
 	                                    	action : function(item,event) {
 	                                    		$scope.deleteSelection(item);
 
