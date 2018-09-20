@@ -361,23 +361,37 @@
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.execution.noPublicRole"), sbiModule_translate.load('sbi.generic.error'));
 					return;
 				}
-
-				var publicStr = canExec == true ? "/public" : "";
-
+				
 				if(host.endsWith("/")){
 					host = host.substring(0, host.length - 1);
 				}
-
-				var url = host
-				+ context
-				+ publicStr
-				+ adapter
-				+ "?"
-				+ "ACTION_NAME=EXECUTE_DOCUMENT_ACTION"
-				+  "&OBJECT_LABEL="+label
-				+ "&TOOLBAR_VISIBLE=true"
-				+ "&ORGANIZATION="+tenant
-				+ "&NEW_SESSION=true";
+				
+				var url;
+				
+				if(canExec == true) {
+					// If document is public, authentication is not needed
+					url = host
+					+ context
+					+ "/public"
+					+ adapter
+					+ "?"
+					+ "ACTION_NAME=EXECUTE_DOCUMENT_ACTION"
+					+  "&OBJECT_LABEL="+label
+					+ "&TOOLBAR_VISIBLE=true"
+					+ "&ORGANIZATION="+tenant
+					+ "&NEW_SESSION=true";
+				} else {
+					// Document is not public, so user need to be redirected to login page firstly, then execute the document
+					url = host 
+					+ context
+					+ adapter
+					+ "?"
+					+ "PAGE=LoginPage"
+					+  "&OBJECT_LABEL="+label
+					+ "&TOOLBAR_VISIBLE=true"					
+					+ "&NEW_SESSION=true";
+				}
+				
 
 				if(parameters != undefined && parameters != ''){
 					url += "&PARAMETERS="+parameters;
@@ -400,7 +414,6 @@
 
 				$mdDialog.show({
 					locals: {publicUrl: urlToSend, embedHTML: embedHTML, isPublic: canExec},
-					//flex: 80,
 					templateUrl: sbiModule_config.contextName+"/js/src/angular_1.4/tools/documentexecution/templates/publicExecutionUrl.html",
 					parent: angular.element(document.body),
 					clickOutsideToClose:true,
@@ -409,10 +422,6 @@
 					fullscreen: true,
 					controller: publicExecutionUrlControllerFunction
 				});
-
-//				else {
-//					sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.execution.publicUrlExecutionEnable"), sbiModule_translate.load('sbi.generic.warning'));
-//				}
 
 			},function(response, status, headers, config) {
 				sbiModule_restServices.errorHandler(response.data,"error while checking if public url can be delivered")

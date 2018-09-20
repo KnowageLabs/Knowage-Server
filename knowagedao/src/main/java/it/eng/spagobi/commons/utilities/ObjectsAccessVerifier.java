@@ -836,14 +836,14 @@ public class ObjectsAccessVerifier {
 		Role[] execRoles = funct.getExecRoles();
 		for (int i = 0; i < execRoles.length && !isPublic; i++) {
 			Role role = execRoles[i];
-			if (role.getIsPublic() == true) {
+			if (role.getIsPublic() != null && role.getIsPublic() == true) {
 				isPublic = true;
 			}
 		}
 		return isPublic;
 	}
 
-	private static boolean isObjectPublic(BIObject obj) {
+	public static boolean isObjectPublic(BIObject obj) {
 		// check if is a public folder
 		boolean isPublic = false;
 		try {
