@@ -1166,7 +1166,7 @@
 			var sername = this.series.name
 			 
 			#foreach($element in $chart.VALUES.SERIE)
-			debugger
+
 			
 			  	var elname = '${element.column}';
 				if(elname ==sername){
