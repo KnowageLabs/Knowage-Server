@@ -6,6 +6,7 @@
 #end
 #end
 #set($rows=$data.rows) ## data in table rows
+
 #set($categorieColumnsMapped=$dataColumnsMapper.get($drilldownCategory.toLowerCase().trim()))
 	#set($name= "name")
 	#set($col= "column")
@@ -69,7 +70,9 @@
 	#set ($category=$drilldownCategory)
 	#end
 	category: '$category',
-	
+	#if($indexAxis==1)
+	firstLevelCategory: '$categorieColumns.column',
+	#end
 	serieName:'$drilldownSerie',
      pointRange: 1,
      #if($chart.CHART.type.toLowerCase()!='pie')

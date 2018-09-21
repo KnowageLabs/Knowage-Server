@@ -398,10 +398,16 @@ angular.module('chartInitializer')
 					.then(function(series){
 
 						if(chart.options.drilledCategories.length==0){
-							chart.options.drilledCategories.push(chart.xAxis[0].userOptions.title.text);
+							 if(series.firstLevelCategory){
+								 chart.options.drilledCategories.push(series.firstLevelCategory);
+					        } else {
+					          	chart.options.drilledCategories.push(chart.xAxis[0].userOptions.title.text);
+					        }
+							
 						}
 
 						chart.options.drilledCategories.push(series.category);
+						
 						var xAxisTitle={
 							text:series.category
 			            };
@@ -417,8 +423,13 @@ angular.module('chartInitializer')
 
 			            chart.addSeriesAsDrilldown(e.point, series);
 
-			            var backText="Back to: <b>"+chart.options.drilledCategories[chart.options.drilledCategories.length-2]+"</b>";
-
+			            if(series.firstLevelCategory){
+			            	var backText="Back to: <b>"+series.firstLevelCategory+"</b>";
+			            } else {
+			            	var backText="Back to: <b>"+ chart.options.drilledCategories[chart.options.drilledCategories.length-2]+"</b>";
+			            }
+			            
+			
 			            chart.drillUpButton.textSetter(backText);
 
 						chart.hideLoading();
