@@ -29,6 +29,7 @@ import java.util.Scanner;
 
 import javax.script.ScriptEngineManager;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import it.eng.qbe.datasource.AbstractDataSource;
@@ -43,6 +44,7 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.script.groovy.GroovyScriptAPI;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -431,9 +433,13 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
 	@Override
 	public String getSignature() {
-		String datasourceSignature = this.getDataSource().getSignature(getUserProfile());
+		UserProfile profile = getUserProfile();
+		LogMF.debug(logger, "User profile is {0}", profile);
+		String datasourceSignature = this.getDataSource().getSignature(profile);
 		String querySignature = getSQLQuery(true);
-		return datasourceSignature + "_" + querySignature;
+		String toReturn = datasourceSignature + "_" + querySignature;
+		LogMF.debug(logger, "Dataset signature is {0}", toReturn);
+		return toReturn;
 	}
 
 	@Override
