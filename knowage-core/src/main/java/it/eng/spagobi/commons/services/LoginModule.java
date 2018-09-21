@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -39,7 +38,6 @@ import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -57,6 +55,7 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -117,41 +116,12 @@ public class LoginModule extends AbstractHttpModule {
 
 		boolean activeSoo = isSSOActive();
 
-		// Set BACK URL if present
-		String backUrl = (String) request.getAttribute(SpagoBIConstants.BACK_URL);
-		String fromLogin = (String) request.getAttribute("fromLogin");
 		String docLabel = (String) request.getAttribute(SpagoBIConstants.OBJECT_LABEL);
 		boolean isPublicDoc = false;
 		boolean isPublicUser = false;
 		if (docLabel != null) {
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(docLabel);
-			if (obj.isPublicDoc())
-				isPublicDoc = true;
-		}
-
-		if (backUrl != null && !backUrl.equalsIgnoreCase("") && fromLogin == null) {
-			String parametersStr = "";
-			List params = request.getContainedAttributes();
-			ListIterator it = params.listIterator();
-			int count = 0;
-
-			while (it.hasNext()) {
-
-				SourceBeanAttribute par = (SourceBeanAttribute) it.next();
-				String name = par.getKey();
-				String val = (String) par.getValue();
-				if (count == 0) {
-					parametersStr += "?" + name + "=" + val;
-				} else {
-					parametersStr += "&" + name + "=" + val;
-				}
-				count++;
-
-			}
-			// append to back url
-			backUrl += parametersStr;
-			getHttpRequest().setAttribute(SpagoBIConstants.BACK_URL, backUrl);
-
+			isPublicDoc = ObjectsAccessVerifier.isObjectPublic(obj);
 		}
 
 		errorHandler = getErrorHandler();
@@ -174,20 +144,16 @@ public class LoginModule extends AbstractHttpModule {
 					logger.debug("User is authenticated");
 					// fill response
 					List lstMenu = MenuUtilities.getMenuItems(profile);
-					if (backUrl == null) {
-						String url = "/themes/" + currTheme + "/jsp/";
-						if (UserUtilities.isTechnicalUser(profile)) {
-							url += "adminHome.jsp";
-						} else {
-							url += "userHome.jsp";
-						}
-						servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
-						getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-						// response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+					
+					String url = "/themes/" + currTheme + "/jsp/";
+					if (UserUtilities.isTechnicalUser(profile)) {
+						url += "adminHome.jsp";
 					} else {
-						servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
-						getHttpResponse().sendRedirect(backUrl);
+						url += "userHome.jsp";
 					}
+					servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+				
 					return;
 				} else {
 					// user must authenticate
@@ -221,20 +187,16 @@ public class LoginModule extends AbstractHttpModule {
 					logger.debug("User is authenticated");
 					// fill response
 					List lstMenu = MenuUtilities.getMenuItems(profile);
-					if (backUrl == null) {
-						// set publisher name
-						String url = "/themes/" + currTheme + "/jsp/";
-						if (UserUtilities.isTechnicalUser(profile)) {
-							url += "adminHome.jsp";
-						} else {
-							url += "userHome.jsp";
-						}
-						servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
-						getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+
+					// set publisher name
+					String url = "/themes/" + currTheme + "/jsp/";
+					if (UserUtilities.isTechnicalUser(profile)) {
+						url += "adminHome.jsp";
 					} else {
-						servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
-						getHttpResponse().sendRedirect(backUrl);
+						url += "userHome.jsp";
 					}
+					servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());				
 
 					return;
 				}
@@ -418,22 +380,15 @@ public class LoginModule extends AbstractHttpModule {
 			// End writing log in the DB
 
 			List lstMenu = MenuUtilities.getMenuItems(profile);
-
-			if (backUrl == null) {
-				String url = "/themes/" + currTheme + "/jsp/";
-				if (UserUtilities.isTechnicalUser(profile)) {
-					url += "adminHome.jsp";
-				} else {
-					url += "userHome.jsp";
-				}
-				servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
-				getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-				// response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+			
+			String url = "/themes/" + currTheme + "/jsp/";
+			if (UserUtilities.isTechnicalUser(profile)) {
+				url += "adminHome.jsp";
 			} else {
-				servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
-				getHttpResponse().sendRedirect(backUrl);
+				url += "userHome.jsp";
 			}
-
+			servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+			getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after request processed in each case
 			TenantManager.unset();

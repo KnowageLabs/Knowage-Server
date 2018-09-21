@@ -17,10 +17,7 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service;
 
-import java.io.IOException;
 import java.util.HashMap;
-
-import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 
@@ -36,8 +33,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.themes.ThemesManager;
 
 /**
  *
@@ -56,24 +51,6 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 		logger.debug("IN");
 		UserProfile profile = (UserProfile) this.getUserProfile();
 		BIObject obj = null;
-
-		if (profile == null) {
-			logger.warn("User is not authenticated - redirect to login");
-			try {
-				String currTheme = ThemesManager.getCurrentTheme(getRequestContainer());
-				// set publisher name
-				String url = "/themes/" + currTheme + "/jsp/login.jsp";
-				// getHttpRequest().setAttribute("start_url", url);
-				getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-
-			} catch (ServletException e) {
-				logger.error("Error in redirecting to login page", e);
-				throw new SpagoBIRuntimeException("Error in redirecting to login page");
-			} catch (IOException e) {
-				logger.error("Error in redirecting to login page", e);
-				throw new SpagoBIRuntimeException("Error in redirecting to login page");
-			}
-		}
 
 		try {
 			obj = getRequiredBIObject();

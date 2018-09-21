@@ -187,25 +187,13 @@
             <form class="form-signin"  id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
                 <input type="hidden" id="isInternalSecurity" name="isInternalSecurity" value="<%=isInternalSecurity %>" />        	
         		<input type="hidden" id="<%=roleToCheckLbl%>" name="<%=roleToCheckLbl%>" value="<%=roleToCheckVal%>" />
-        		<%	
-	        	//manages backUrl after login
-		        	String backUrl = (String)request.getAttribute(SpagoBIConstants.BACK_URL);
-		        	if (backUrl != null && !backUrl.equals("")) {
-		        		String objLabel = (String)request.getAttribute(SpagoBIConstants.OBJECT_LABEL);
-		        		backUrl += (backUrl.indexOf("?")<0)?"?":"&";
-		        		backUrl += "fromLogin=true";
-				%>
-				<input type="hidden" name="<%= SpagoBIConstants.BACK_URL %>" value="<%= backUrl %>" />
-				<input type="hidden" name="<%= SpagoBIConstants.OBJECT_LABEL %>" value="<%= objLabel %>" />
-				<input type="hidden" name="fromLogin" value="true" />
-				<%
-		        	}
+        		<%		        	
 		        	// propagates parameters (if any) for document execution
 		        	if (request.getParameter(ObjectsTreeConstants.OBJECT_LABEL) != null) {
 		        		String label = request.getParameter(ObjectsTreeConstants.OBJECT_LABEL);
 		        	    String subobjectName = request.getParameter(SpagoBIConstants.SUBOBJECT_NAME);
 		        	    %>
-		        	    <input type="hidden" name="<%= ObjectsTreeConstants.OBJECT_LABEL %>" value="<%= StringEscapeUtils.escapeHtml(label) %>" />
+							<input type="hidden" name="<%= SpagoBIConstants.OBJECT_LABEL %>" value="<%= label %>" />
 		        	    <% if (subobjectName != null && !subobjectName.trim().equals("")) { %>
 		        	    	<input type="hidden" name="<%= SpagoBIConstants.SUBOBJECT_NAME %>" value="<%= StringEscapeUtils.escapeHtml(subobjectName) %>" />
 		        	    <% } %>
