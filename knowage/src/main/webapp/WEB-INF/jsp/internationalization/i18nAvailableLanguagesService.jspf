@@ -73,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
  <script>
 	(function () {
-		angular.module('i18nAvailableLanguagesConfig')
+		angular.module('i18nAvailableLanguagesModule')
 				.factory('i18nAvailableLanguagesService', function(){
 					return {
 						getAvailableLanguages: function() {
