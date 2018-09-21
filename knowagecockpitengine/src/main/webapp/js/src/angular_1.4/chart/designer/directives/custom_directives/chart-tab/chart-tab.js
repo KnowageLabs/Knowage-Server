@@ -184,22 +184,22 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 	var checkDocumentType = function(){
 		
 		if($scope.isCockpitEng){
-			
+
 			if (parent.angular.element(window.frameElement).scope().localMod.chartTemplate!=undefined) {
 				var chart = angular.copy(parent.angular.element(window.frameElement).scope().localMod.chartTemplate.CHART);
-				
+
 				$scope.chartTemplate = angular.copy(chart);
 				parent.angular.element(window.frameElement).scope().localMod.chartTemplate = $scope.chartTemplate;
-				
+
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();
 
-				if($scope.selectedChartType == 'scatter' && !$scope.chartTemplate.tooltipExpression){
-					$scope.chartTemplate.tooltipExpression = ""
+				if($scope.selectedChartType == 'scatter' && !$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression){
+					$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression = ""
 				}
 
 				setConfigurationButtons($scope.chartTemplate.type.toLowerCase());
-				
-				
+
+
 			} else {
 				
 				$scope.chartTemplate = StructureTabService.getBaseTemplate();
@@ -221,13 +221,11 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			console.log("chart template: ",$scope.chartTemplate);
 			
 			if ($scope.chartTemplate) {
-				
+
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();
-				if($scope.selectedChartType == 'scatter' && !$scope.chartTemplate.tooltipExpression){
-					$scope.chartTemplate.tooltipExpression = ""
+				if($scope.selectedChartType == 'scatter' && !$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression){
+					$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression = ""
 				}
-
-
 
 				setConfigurationButtons($scope.selectedChartType);
 				
