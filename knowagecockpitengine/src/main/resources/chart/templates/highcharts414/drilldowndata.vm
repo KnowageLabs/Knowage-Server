@@ -69,7 +69,9 @@
 	#set ($category=$drilldownCategory)
 	#end
 	category: '$category',
-	
+	#if($indexAxis==1)
+	firstLevelCategory: '$categorieColumns.column',
+	#end
 	serieName:'$drilldownSerie',
      pointRange: 1,
      #if($chart.CHART.type.toLowerCase()!='pie')

@@ -436,7 +436,12 @@ angular.module('chartInitializer')
 
 			            chart.addSeriesAsDrilldown(e.point, series);
 
-			            var backText="Back to: <b>"+chart.options.drilledCategories[chart.options.drilledCategories.length-2]+"</b>";
+			            if(series.firstLevelCategory){
+			            	var backText="Back to: <b>"+series.firstLevelCategory+"</b>";
+			            } else {
+			            	var backText="Back to: <b>"+ chart.options.drilledCategories[chart.options.drilledCategories.length-2]+"</b>";
+			            }
+
 
 			            chart.drillUpButton.textSetter(backText);
 
