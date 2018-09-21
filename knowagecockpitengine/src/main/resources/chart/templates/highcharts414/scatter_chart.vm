@@ -1005,11 +1005,13 @@
 	    	}, 
 	    	#end
 	    	tooltip: { 
+
+
 			#set($seriePrefix = $relatedSerie.prefixChar)
 			#if($seriePrefix != '')
 				valuePrefix: '$seriePrefix',
 			#end
-				
+
 			#set($seriePostfix = $relatedSerie.postfixChar)
 			#if($seriePostfix != '')
 				valueSuffix: '$seriePostfix',
@@ -1074,6 +1076,7 @@
         	var ttFont = this.series.tooltipOptions.ttFont ? ' ' + this.series.tooltipOptions.ttFont : '';
         	var ttFontSize = this.series.tooltipOptions.ttFontSize ? ' ' + this.series.tooltipOptions.ttFontSize : '';
         	var ttFontWeight = this.series.tooltipOptions.ttFontWeight ? ' ' + this.series.tooltipOptions.ttFontWeight : '';
+        	var tooltipExpression = this.series.tooltipOptions.tooltipExpression ? this.series.tooltipOptions.tooltipExpression : '';
         	       	
         	#*
         		Depending on font style chosen by the user for the serie tooltip
@@ -1097,7 +1100,7 @@
         	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
         	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
         	var scaleFactor = this.series.tooltipOptions.scaleFactor ? this.series.tooltipOptions.scaleFactor : 'empty';
-        	
+
         	var thisValue = this.y;
         	
         	/*
@@ -1164,23 +1167,26 @@
 
 			#if($chart.dateTime!="false")
 			result += '<span>' + Highcharts.dateFormat('$dateFormat', this.key) + '</span><br/>' + this.series.name + ': ' + thisValue + '</div>';
-			#elseif($chart.tooltipExpression)
-			
-					#if($chart.tooltipExpression != "")
-					
-					var tooltipEx = $chart.tooltipExpression
-			
-						result +=tooltipEx
-						
-					#else
-						result += '</span>' + this.series.name + ': '+ thisValue + '</div>'
-					#end	
-
-			#else
-			
-			result += '<span>' + this.key + '</span><br/>' + this.series.name + ': '+ thisValue + '</div>'
-		
 			#end
+		
+			var sername = this.series.name
+			 
+			#foreach($element in $chart.VALUES.SERIE)
+			debugger
+			
+			  	var elname = '${element.column}';
+				if(elname ==sername){
+		
+					#if(!$element.TOOLTIP.tooltipExpression ||  $element.TOOLTIP.tooltipExpression=="")
+						result += '</span>' + this.series.name + ': '+ thisValue + '</div>'
+
+					#else
+						result +=$element.TOOLTIP.tooltipExpression + '</div>'
+					#end	
+				}
+			#end
+			
+			 	
             return result
         }
     },

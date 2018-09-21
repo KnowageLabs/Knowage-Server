@@ -193,8 +193,8 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();
 
-				if($scope.selectedChartType == 'scatter' && !$scope.chartTemplate.tooltipExpression){
-					$scope.chartTemplate.tooltipExpression = ""
+				if($scope.selectedChartType == 'scatter' && !$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression){
+					$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression = ""
 				}
 
 				setConfigurationButtons($scope.chartTemplate.type.toLowerCase());
@@ -223,8 +223,8 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			if ($scope.chartTemplate) {
 
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();
-				if($scope.selectedChartType == 'scatter' && !$scope.chartTemplate.tooltipExpression){
-					$scope.chartTemplate.tooltipExpression = ""
+				if($scope.selectedChartType == 'scatter' && !$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression){
+					$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression = ""
 				}
 
 

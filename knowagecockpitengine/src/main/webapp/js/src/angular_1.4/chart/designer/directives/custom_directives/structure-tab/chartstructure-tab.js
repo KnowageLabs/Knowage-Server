@@ -241,7 +241,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	}*/
 
 	 $scope.moveAttributeToCategories = function(item) {
-
+		 	debugger;
 			var chartType = $scope.chartTemplate.type;
 			var index = findInArray($scope.categories,'column',item.alias);
 

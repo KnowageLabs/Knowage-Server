@@ -1299,7 +1299,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			         },
 			         "text":""
 			      },
-			      "tooltipExpression":"",
 				"VALUES": {
 					"CATEGORY": {
 						"column": "",
@@ -1337,8 +1336,10 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				            	   "fontWeight":""
 				               },
 		                    "borderWidth":0,
-		                    "borderRadius":0
-		                 }
+		                    "borderRadius":0,
+		                    "tooltipExpression":"",
+		                 },
+
 					}]
 				},
 				"type": "SCATTER",
