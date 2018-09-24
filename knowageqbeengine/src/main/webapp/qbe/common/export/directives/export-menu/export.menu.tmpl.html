@@ -1,0 +1,15 @@
+<md-menu >
+	<md-button  
+		class="kn-list-action-button md-icon-button"  
+		ng-click="openMenu($mdOpenMenu,$event)"
+		>
+		<md-tooltip> {{translate.load("kn.qbe.export.menu.tooltip")}}</md-tooltip>
+		<md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
+	</md-button>
+	<md-menu-content>
+		<md-menu-item ng-repeat="exporter in exportService.getExporters()">
+			<md-button class="md-button" ng-click="exportService.exportQueryResults(query,exporter.mimeType)" >
+					{{exporter.name | uppercase}}
+			</md-button>
+		</md-menu-item>			
+</md-menu>		 

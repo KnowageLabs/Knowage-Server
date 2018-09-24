@@ -20,7 +20,7 @@
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-angular.module('qbe_custom_table', ['ngDraggable'])
+angular.module('qbe_custom_table', ['ngDraggable','exportModule'])
 .directive('qbeCustomTable', function() {
     return {
         restrict: 'E',
@@ -507,8 +507,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	$scope.showSQLQuery = function () {
 		$rootScope.$broadcast('showSQLQuery', true);
 	}
-
-
-
+	
 }
 })();

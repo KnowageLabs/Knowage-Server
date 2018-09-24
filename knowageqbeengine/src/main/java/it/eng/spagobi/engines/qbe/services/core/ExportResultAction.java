@@ -31,10 +31,15 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.qbe.datasource.transaction.ITransaction;
 import it.eng.qbe.query.ISelectField;
+import it.eng.qbe.query.Query;
 import it.eng.qbe.query.SimpleSelectField;
+import it.eng.qbe.query.serializer.SerializerFactory;
+import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
@@ -44,6 +49,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.exporter.QbeCSVExporter;
 import it.eng.spagobi.engines.qbe.exporter.QbeXLSExporter;
+import it.eng.spagobi.engines.qbe.exporter.QbeXLSXExporter;
 import it.eng.spagobi.engines.qbe.query.Field;
 import it.eng.spagobi.engines.qbe.query.ReportRunner;
 import it.eng.spagobi.engines.qbe.query.SQLFieldsReader;
@@ -67,6 +73,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 
 	// INPUT PARAMETERS
 	public static final String MIME_TYPE = "MIME_TYPE";
+	public static final String QUERY = "query";
 	public static final String RESPONSE_TYPE = "RESPONSE_TYPE";
 
 	// misc
@@ -82,6 +89,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		String responseType = null;
 		boolean writeBackResponseInline = false;
 		String mimeType = null;
+		JSONObject queryJSON = null;
 		String fileExtension = null;
 		IStatement statement = null;
 		ITransaction transaction = null;
@@ -97,6 +105,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		File reportFile = null;
 		ReportRunner runner = null;
 		boolean isFormEngineInstance = false;
+		Query query = null;
 
 		logger.debug("IN");
 
@@ -105,8 +114,12 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 
 			mimeType = getAttributeAsString(MIME_TYPE);
 			logger.debug(MIME_TYPE + ": " + mimeType);
+
 			responseType = getAttributeAsString(RESPONSE_TYPE);
 			logger.debug(RESPONSE_TYPE + ": " + responseType);
+
+			queryJSON = getAttributeAsJSONObject(QUERY);
+			logger.debug(QUERY + ": " + queryJSON);
 
 			Assert.assertNotNull(getEngineInstance(),
 					"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
@@ -120,21 +133,19 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			isFormEngineInstance = getEngineInstance().getTemplate().getProperty("formJSONTemplate") != null;
 			if (!isFormEngineInstance) {
 				// case of standard QBE
-
-				Assert.assertNotNull(getEngineInstance().getActiveQuery(),
-						"Query object cannot be null in oder to execute " + this.getActionName() + " service");
-				Assert.assertTrue(getEngineInstance().getActiveQuery().isEmpty() == false,
-						"Query object cannot be empty in oder to execute " + this.getActionName() + " service");
+				query = deserializeQuery(queryJSON);
+				Assert.assertNotNull(query, "Query object cannot be null in oder to execute " + this.getActionName() + " service");
+				Assert.assertTrue(query.isEmpty() == false, "Query object cannot be empty in oder to execute " + this.getActionName() + " service");
 
 				Assert.assertNotNull(mimeType, "Input parameter [" + MIME_TYPE + "] cannot be null in oder to execute " + this.getActionName() + " service");
 				Assert.assertTrue(MimeUtils.isValidMimeType(mimeType) == true, "[" + mimeType + "] is not a valid value for " + MIME_TYPE + " parameter");
 
-				Assert.assertNotNull(responseType,
-						"Input parameter [" + RESPONSE_TYPE + "] cannot be null in oder to execute " + this.getActionName() + " service");
-				Assert.assertTrue(RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType) || RESPONSE_TYPE_ATTACHMENT.equalsIgnoreCase(responseType),
-						"[" + responseType + "] is not a valid value for " + RESPONSE_TYPE + " parameter");
+				// Assert.assertNotNull(responseType,
+				// "Input parameter [" + RESPONSE_TYPE + "] cannot be null in oder to execute " + this.getActionName() + " service");
+				// Assert.assertTrue(RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType) || RESPONSE_TYPE_ATTACHMENT.equalsIgnoreCase(responseType),
+				// "[" + responseType + "] is not a valid value for " + RESPONSE_TYPE + " parameter");
 
-				statement = getEngineInstance().getDataSource().createStatement(getEngineInstance().getActiveQuery());
+				statement = getEngineInstance().getDataSource().createStatement(query);
 				// logger.debug("Parametric query: [" + statement.getQueryString() + "]");
 
 				statement.setParameters(getEnv());
@@ -168,12 +179,10 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 
 			logger.debug("Fields extracted succesfully");
 
-			Assert.assertTrue(
-					getEngineInstance().getActiveQuery().getSimpleSelectFields(true).size()
-							+ getEngineInstance().getActiveQuery().getInLineCalculatedSelectFields(true).size() == extractedFields.size(),
+			Assert.assertTrue(query.getSimpleSelectFields(true).size() + query.getInLineCalculatedSelectFields(true).size() == extractedFields.size(),
 					"The number of fields extracted from query resultset cannot be different from the number of fields specified into the query select clause");
 
-			decorateExtractedFields(extractedFields);
+			decorateExtractedFields(extractedFields, query);
 
 			params = new HashMap();
 			params.put("pagination", getPaginationParamVaue(mimeType));
@@ -276,7 +285,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		IDataStore dataStore = getDataStore(statement, sqlQuery);
 
 		Locale locale = (Locale) getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);
-		QbeXLSExporter exp = new QbeXLSExporter(dataStore, locale);
+		QbeXLSXExporter exp = new QbeXLSXExporter(dataStore, locale);
 		exp.setExtractedFields(extractedFields);
 
 		Workbook wb = exp.export();
@@ -348,8 +357,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		return dataStore;
 	}
 
-	private void decorateExtractedFields(List extractedFields) {
-		List selectedFields = getEngineInstance().getActiveQuery().getSelectFields(true);
+	private void decorateExtractedFields(List extractedFields, Query query) {
+		List selectedFields = query.getSelectFields(true);
 		Iterator selectedFieldsIterator = selectedFields.iterator();
 		Iterator extractedFieldsIterator = extractedFields.iterator();
 		while (extractedFieldsIterator.hasNext()) {
@@ -412,6 +421,16 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		// jasperReportClassPath += jarFile.toString();
 		System.setProperty("jasper.reports.compile.class.path", jasperReportClassPath);
 
+	}
+
+	private Query getQuery(String catalogueString) {
+
+		return null;
+	}
+
+	private Query deserializeQuery(JSONObject queryJSON) throws SerializationException, JSONException {
+		// queryJSON.put("expression", queryJSON.get("filterExpression"));
+		return SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON.toString(), getEngineInstance().getDataSource());
 	}
 
 }

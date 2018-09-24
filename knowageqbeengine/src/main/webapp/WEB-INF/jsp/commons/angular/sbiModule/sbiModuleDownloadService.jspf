@@ -1,0 +1,72 @@
+<%-- Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--%>
+<script>
+angular.module('sbiModule').service('sbiModuleDownloadService', function(sbiModule_config,sbiModule_logger, sbiModuleDeviceService, $window) {
+	var deviceBrowser = sbiModuleDeviceService.browser.name;
+	/* allows download of Blob files. The files processed as blob are:
+			txt -> typeFile = 'text/plain'
+			json -> typeFile = 'text/json'
+			zip -> typeFile = 'application/zip'
+			image -> typeFile = 'image/[png | jpeg | gif |...]'
+	 */
+	this.getBlob = function(response,fileName,fileExtension){
+		var data = response.data;
+		var mimeType = response.headers("Content-type");
+		var contentDisposition = response.headers("Content-Disposition");	
+		var fileAndExtension = contentDisposition.match(/(?!([\b attachment; filename=" \b])).*(?=";)/g)[0];
+		var blob = new Blob([data],{type: mimeType}); 
+		var urlCreator = window.URL || window.webkitURL || window.mozURL || window.msURL;
+		var url = urlCreator !== undefined ? urlCreator.createObjectURL(blob) : JSON.stringify(blob);
+		
+		if (deviceBrowser == 'internet explorer'){
+			window.navigator.msSaveBlob(blob, fileAndExtension); // The user only has the option of clicking the Save button.
+		}else{
+			var link = document.createElement('a');
+			document.body.appendChild(link);
+			link.download = fileAndExtension;
+			link.href = url;
+			link.target = '_blank';
+			link.click();
+			
+			document.body.removeChild(link);
+		}
+	};
+			
+	this.getPlain = function(data, nameFile, typeFile, extensionFile){
+		this.getBlob(data, nameFile, typeFile, extensionFile);
+		
+	/*	if (deviceBrowser == 'internet explorer'){
+			this.getBlob(data, nameFile, typeFile, extensionFile);
+		}else{
+			text = JSON.stringify(data);	
+			a = document.createElement('a');
+			document.body.appendChild(a);
+			a.download = nameFile+ '.'  + extensionFile;
+			a.href = 'data:'+typeFile+ ';charset=utf-8,' + encodeURI(text);
+			a.target = '_blank';
+			a.click(); 
+		}*/
+	};
+	
+	/* download file from direct link */
+	this.getLink = function (endPath){
+		var link = sbiModule_config.contextName + endPath;
+		console.log(link)
+		$window.location = link;
+	};
+});
+</script>

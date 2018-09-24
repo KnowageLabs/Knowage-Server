@@ -35,6 +35,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/save/save.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/having/having.js"></script>
 
+
+
 <!-- SERVICES -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/entities/entities.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/queries/queries.js"></script>
@@ -47,3 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- FILTERS -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/filters/byNotExistingMembers.js"></script>
 
+<!-- EXPORT -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/common/export/exportModule.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/common/export/services/exportService.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/common/export/directives/export-menu/exportMenu.js"></script>

@@ -26,7 +26,10 @@
 				 
 				 <md-button ng-if="selectedVisualization=='previewData' && !smartPreview" class="md-icon-button"  ng-click="executeRequest()">
 					<md-icon md-font-icon="fa fa-play"></md-icon>
-				</md-button>		 
+				</md-button>
+				
+				<export-menu ng-show="ngModel.length>0" ></export-menu>
+				
 	   		</div>
 	   	</md-toolbar>
    	</div>

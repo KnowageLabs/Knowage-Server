@@ -60,6 +60,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 
 	$scope.$watch('editQueryObj',function(newValue,oldValue){
 		$scope.meta.length = 0;
+		$rootScope.$broadcast('editQueryObj',newValue);
 		for (var i = 0; i < newValue.fields.length; i++) {
 			var meta = {
 					"displayedName":newValue.fields[i].field,
