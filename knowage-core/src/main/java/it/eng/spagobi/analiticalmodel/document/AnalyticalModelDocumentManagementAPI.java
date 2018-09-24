@@ -704,13 +704,13 @@ public class AnalyticalModelDocumentManagementAPI {
 							// get the new objParId (just created)
 							BIObjectParameter newParUse = documentParameterDAO.loadBiObjParameterByObjIdAndLabel(destinationDocument.getId(),
 									parameter.getLabel());
-							paruse.setObjParId(newParUse.getId());
+							paruse.setParId(newParUse.getId());
 							// get the new fatherObjParId (through the original father reference )
-							BIObjectParameter sourceFatherParUse = documentParameterDAO.loadBiObjParameterById(paruse.getObjParFatherId());
+							BIObjectParameter sourceFatherParUse = documentParameterDAO.loadBiObjParameterById(paruse.getParFatherId());
 							String sourceFatherParUseLabel = sourceFatherParUse.getLabel();
 							BIObjectParameter newParUseFather = documentParameterDAO.loadBiObjParameterByObjIdAndLabel(destinationDocument.getId(),
 									sourceFatherParUseLabel);
-							paruse.setObjParFatherId(newParUseFather.getId());
+							paruse.setParFatherId(newParUseFather.getId());
 
 							documentParuseDAO.insertObjParuse(paruse);
 						}
@@ -720,14 +720,14 @@ public class AnalyticalModelDocumentManagementAPI {
 							// get the new objParId (just created)
 							BIObjectParameter newParView = documentParameterDAO.loadBiObjParameterByObjIdAndLabel(destinationDocument.getId(),
 									parameter.getLabel());
-							parview.setObjParId(newParView.getId());
+							parview.setParId(newParView.getId());
 							// get the new fatherObjParId (through the original father reference )
-							BIObjectParameter sourceFatherParView = documentParameterDAO.loadBiObjParameterById(parview.getObjParFatherId());
+							BIObjectParameter sourceFatherParView = documentParameterDAO.loadBiObjParameterById(parview.getParFatherId());
 							String sourceFatherParViewLabel = sourceFatherParView.getLabel();
 							BIObjectParameter newParUseFather = documentParameterDAO.loadBiObjParameterByObjIdAndLabel(destinationDocument.getId(),
 									sourceFatherParViewLabel);
-							parview.setObjParFatherId(newParUseFather.getId());
-							parview.setObjParFatherUrlName(newParUseFather.getParameterUrlName());
+							parview.setParFatherId(newParUseFather.getId());
+							parview.setParFatherUrlName(newParUseFather.getParameterUrlName());
 							documentParviewDAO.insertObjParview(parview);
 						}
 					} catch (Throwable t) {
