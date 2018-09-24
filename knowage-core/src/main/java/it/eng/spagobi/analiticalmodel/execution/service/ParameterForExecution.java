@@ -1,5 +1,14 @@
 package it.eng.spagobi.analiticalmodel.execution.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -7,7 +16,11 @@ import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.*;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
@@ -20,10 +33,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-
-import java.util.*;
 public class ParameterForExecution {
 	private static Logger logger = Logger.getLogger(ParameterForExecution.class);
 
@@ -185,7 +194,7 @@ public class ParameterForExecution {
 		Iterator it = visualDependencies.iterator();
 		while (it.hasNext()) {
 			ObjParview dependency = (ObjParview) it.next();
-			Integer objParFatherId = dependency.getObjParFatherId();
+			Integer objParFatherId = dependency.getParFatherId();
 			try {
 				BIObjectParameter objParFather = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadForDetailByObjParId(objParFatherId);
 				VisualDependency visualDependency = new VisualDependency();
@@ -217,7 +226,7 @@ public class ParameterForExecution {
 		Iterator it = dataDependencies.iterator();
 		while (it.hasNext()) {
 			ObjParuse dependency = (ObjParuse) it.next();
-			Integer objParFatherId = dependency.getObjParFatherId();
+			Integer objParFatherId = dependency.getParFatherId();
 			try {
 				BIObjectParameter objParFather = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadForDetailByObjParId(objParFatherId);
 				DataDependency dataDependency = new DataDependency();
