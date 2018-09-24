@@ -55,7 +55,7 @@ public class DriversResource extends AbstractSpagoBIResource {
 		BIObjectParameter test1 = new BIObjectParameter();
 		test1.setParameterUrlName("DraganPirkovic");
 		test1.setLabel("DraganPirkovic");
-		test1.setBiObjectID(5);
+		test1.setBiObjectID(279);
 
 		try {
 			IBIObjectParameterDAO driversDao;
