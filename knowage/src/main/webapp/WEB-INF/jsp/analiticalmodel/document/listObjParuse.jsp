@@ -1198,7 +1198,7 @@ function viewView(indexView) {
 	 	    int prog = 0;
 	 	    while(iterCorr.hasNext()) {
 	 	    	ObjParuse corr = (ObjParuse) iterCorr.next();
-	 	    	Integer pfid = corr.getObjParFatherId();
+	 	    	Integer pfid = corr.getParFatherId();
 	 	    	String fo = corr.getFilterOperation();
 	 	%>
 	 	      
@@ -1207,7 +1207,7 @@ function viewView(indexView) {
           } catch (err) {
               paruseSettings<%=pfid%><%=fo%> = new Array();
           }
-	 	    	puset<%=prog%> = new paruseSetting(true, <%=corr.getParuseId()%>, '<%=corr.getFilterColumn()%>');
+	 	    	puset<%=prog%> = new paruseSetting(true, <%=corr.getUseModeId()%>, '<%=corr.getFilterColumn()%>');
 	 	      paruseSettings<%=pfid%><%=fo%>[paruseSettings<%=pfid%><%=fo%>.length] = puset<%=prog%>;
 	 	<%   
 	 	    prog ++;
@@ -1225,7 +1225,7 @@ function viewView(indexView) {
 	 	    	if(corr.getPostCondition()==null){
 	 	    		corr.setPostCondition("");
 	 	    	}
-	 	    	Integer pfid = corr.getObjParFatherId();
+	 	    	Integer pfid = corr.getParFatherId();
 	 	    	String fo = corr.getFilterOperation();
 	 	%>
 	 	    	try {
@@ -1237,7 +1237,7 @@ function viewView(indexView) {
           try{
             correlation<%=pfid%><%=fo%>==null;
           } catch (err) {
-            correlation<%=pfid%><%=fo%> = new correlation(<%=corr.getObjParFatherId()%>, getParNameFromParId(<%=corr.getObjParFatherId()%>), "<%=corr.getFilterOperation()%>", getFilterOpNameFromCode("<%=corr.getFilterOperation()%>"), paruseSettings<%=pfid%><%=fo%>);
+            correlation<%=pfid%><%=fo%> = new correlation(<%=corr.getParFatherId()%>, getParNameFromParId(<%=corr.getParFatherId()%>), "<%=corr.getFilterOperation()%>", getFilterOpNameFromCode("<%=corr.getFilterOperation()%>"), paruseSettings<%=pfid%><%=fo%>);
             correlation<%=pfid%><%=fo%>.preCond = "<%=corr.getPreCondition()%>";
     	      correlation<%=pfid%><%=fo%>.postCond = "<%=corr.getPostCondition()%>";
     	      correlation<%=pfid%><%=fo%>.logicOper = "<%=corr.getLogicOperator()%>";
@@ -1288,8 +1288,8 @@ function viewView(indexView) {
 	 		Iterator iterViews = biParamViews.iterator();
 	 	    while(iterViews.hasNext()) {
 	 	    	ObjParview view = (ObjParview) iterViews.next();
-		    	Integer id = view.getObjParId();
-		    	Integer pfid = view.getObjParFatherId();
+		    	Integer id = view.getParId();
+		    	Integer pfid = view.getParFatherId();
 	 	    	String operation = view.getOperation();
 	 	    	String comparevalue = view.getCompareValue();
 	 	    	Integer progG = view.getProg();
@@ -1304,7 +1304,7 @@ function viewView(indexView) {
 
 	
 		{ // if removing this block pay attention not to have more variables with same name, comparevalueNoPoint should be use as value
-	            view<%=pfid%><%=operation%>compareValueNoPoint = new view(<%=view.getObjParFatherId()%>, getParNameFromParId(<%=view.getObjParFatherId()%>), "<%=view.getOperation()%>", getFilterOpNameFromCode("<%=view.getOperation()%>"), "<%=view.getCompareValue()%>", "<%=view.getViewLabel()%>", <%=view.getProg()%> );
+	            view<%=pfid%><%=operation%>compareValueNoPoint = new view(<%=view.getParFatherId()%>, getParNameFromParId(<%=view.getParFatherId()%>), "<%=view.getOperation()%>", getFilterOpNameFromCode("<%=view.getOperation()%>"), "<%=view.getCompareValue()%>", "<%=view.getViewLabel()%>", <%=view.getProg()%> );
       			 viewManager.addView(view<%=pfid%><%=operation%>compareValueNoPoint);
 	         } 	 
         <%   
