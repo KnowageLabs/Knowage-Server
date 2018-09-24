@@ -53,10 +53,6 @@ public class DriversResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 		List<BIObjectParameter> biObjectParameters = null;
 		BIObjectParameter test1 = new BIObjectParameter();
-		test1.setParameterUrlName("DraganPirkovic");
-		test1.setLabel("DraganPirkovic");
-		test1.setBiObjectID(279);
-
 		try {
 			IBIObjectParameterDAO driversDao;
 			driversDao = DAOFactory.getBIObjectParameterDAO();
@@ -67,7 +63,6 @@ public class DriversResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
 		}
 		logger.debug("OUT");
-		biObjectParameters.add(test1);
 		return biObjectParameters;
 	}
 
