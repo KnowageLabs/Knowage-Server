@@ -4,7 +4,7 @@
 <!-- Generated Jul 4, 2018 4:22:29 PM by Hibernate Tools 3.5.0.Final -->
 <hibernate-mapping>
     <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiMetamodelParuse" table="SBI_METAMODEL_PARUSE">
-        <id name="paruseId" type="java.lang.Integer">
+        <id name="id" type="java.lang.Integer">
             <column name="PARUSE_ID" />
            <generator class="org.hibernate.id.enhanced.TableGenerator">
 				<param name="optimizer">none</param>

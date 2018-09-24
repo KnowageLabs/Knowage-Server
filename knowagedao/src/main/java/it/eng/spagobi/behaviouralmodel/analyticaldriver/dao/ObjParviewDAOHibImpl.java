@@ -67,14 +67,14 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 			SbiObjParview sbiObjParview = (SbiObjParview) hqlQuery.uniqueResult();
 			if (sbiObjParview == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParview",
-						"the ObjParview relevant to BIObjectParameter with " + "id=" + aObjParview.getObjParId() + "  does not exist.");
+						"the ObjParview relevant to BIObjectParameter with " + "id=" + aObjParview.getParId() + "  does not exist.");
 
 			}
 			// delete the existing object
 			aSession.delete(sbiObjParview);
 			// create the new object
-			SbiObjPar sbiObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParview.getObjParId());
-			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParview.getObjParFatherId());
+			SbiObjPar sbiObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParview.getParId());
+			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParview.getParFatherId());
 			if (sbiObjParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParview",
 						"the BIObjectParameter with " + " does not exist.");
@@ -128,11 +128,11 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiObjPar sbiObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParview.getObjParId());
-			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParview.getObjParFatherId());
+			SbiObjPar sbiObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParview.getParId());
+			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParview.getParFatherId());
 			if (sbiObjParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParview",
-						"the BIObjectParameter with " + "id=" + aObjParview.getObjParFatherId() + " does not exist.");
+						"the BIObjectParameter with " + "id=" + aObjParview.getParFatherId() + " does not exist.");
 
 			}
 			SbiObjParview view = new SbiObjParview();
@@ -212,7 +212,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 		SbiObjParview sbiObjParview = (SbiObjParview) hqlQuery.uniqueResult();
 		if (sbiObjParview == null) {
 			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "eraseObjParview",
-					"the ObjParview relevant to BIObjectParameter with " + "id=" + aObjParview.getObjParId() + " does not exist.");
+					"the ObjParview relevant to BIObjectParameter with " + "id=" + aObjParview.getParId() + " does not exist.");
 		}
 		aSession.delete(sbiObjParview);
 	}
@@ -272,9 +272,9 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 			return null;
 		ObjParview toReturn = new ObjParview();
 		toReturn.setId(aSbiObjParview.getId());
-		toReturn.setObjParId(aSbiObjParview.getSbiObjPar().getObjParId());
-		toReturn.setObjParFatherId(aSbiObjParview.getSbiObjParFather().getObjParId());
-		toReturn.setObjParFatherUrlName(aSbiObjParview.getSbiObjParFather().getParurlNm());
+		toReturn.setParId(aSbiObjParview.getSbiObjPar().getObjParId());
+		toReturn.setParFatherId(aSbiObjParview.getSbiObjParFather().getObjParId());
+		toReturn.setParFatherUrlName(aSbiObjParview.getSbiObjParFather().getParurlNm());
 		toReturn.setOperation(aSbiObjParview.getOperation());
 		toReturn.setCompareValue(aSbiObjParview.getCompareValue());
 		toReturn.setProg(aSbiObjParview.getProg());

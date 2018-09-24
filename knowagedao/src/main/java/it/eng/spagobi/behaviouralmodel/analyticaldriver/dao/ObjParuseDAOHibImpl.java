@@ -62,7 +62,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			// get the existing object
 			/*
 			 * String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + aObjParuse.getObjParId() + " and s.id.sbiParuse.useId = " +
-			 * aObjParuse.getParuseId() + " and s.id.sbiObjParFather.objParId = " + aObjParuse.getObjParFatherId() + " and s.id.filterOperation = '" +
+			 * aObjParuse.getUseModeId() + " and s.id.sbiObjParFather.objParId = " + aObjParuse.getParFatherId() + " and s.id.filterOperation = '" +
 			 * aObjParuse.getFilterOperation()+"'";
 			 */
 			String hql = "from SbiObjParuse s where s.id= ? ";
@@ -73,20 +73,20 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			SbiObjParuse sbiObjParuse = (SbiObjParuse) hqlQuery.uniqueResult();
 			if (sbiObjParuse == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse",
-						"the ObjParuse relevant to BIObjectParameter with " + "id=" + aObjParuse.getObjParId() + " and ParameterUse with " + "id="
-								+ aObjParuse.getParuseId() + " does not exist.");
+						"the ObjParuse relevant to BIObjectParameter with " + "id=" + aObjParuse.getParId() + " and ParameterUse with " + "id="
+								+ aObjParuse.getUseModeId() + " does not exist.");
 			}
 			// delete the existing object
 			aSession.delete(sbiObjParuse);
 			// create the new object
-			SbiObjPar sbiObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getObjParId());
-			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aObjParuse.getParuseId());
-			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getObjParFatherId());
+			SbiObjPar sbiObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParId());
+			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aObjParuse.getUseModeId());
+			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParFatherId());
 			if (sbiObjParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse",
-						"the BIObjectParameter with " + "id=" + aObjParuse.getObjParFatherId() + " does not exist.");
+						"the BIObjectParameter with " + "id=" + aObjParuse.getParFatherId() + " does not exist.");
 			}
-			SbiObjParuse correlation = new SbiObjParuse(aObjParuse.getParuseId());
+			SbiObjParuse correlation = new SbiObjParuse(aObjParuse.getUseModeId());
 			correlation.setSbiObjPar(sbiObjPar);
 			correlation.setSbiParuse(sbiParuse);
 			correlation.setSbiObjParFather(sbiObjParFather);
@@ -113,7 +113,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 		}
 		/*
 		 * Criterion aCriterion = Expression.and( Expression.eq("id.sbiObjPar.objParId", aObjParuse.getObjParId()), Expression.eq("id.sbiParuse.useId",
-		 * aObjParuse.getParuseId())); Criteria aCriteria = aSession.createCriteria(SbiObjParuse.class); aCriteria.add(aCriterion); SbiObjParuse sbiObjParuse =
+		 * aObjParuse.getUseModeId())); Criteria aCriteria = aSession.createCriteria(SbiObjParuse.class); aCriteria.add(aCriterion); SbiObjParuse sbiObjParuse =
 		 * (SbiObjParuse) aCriteria.uniqueResult();
 		 */
 	}
@@ -135,12 +135,12 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiObjPar sbiObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getObjParId());
-			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aObjParuse.getParuseId());
-			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getObjParFatherId());
+			SbiObjPar sbiObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParId());
+			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aObjParuse.getUseModeId());
+			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParFatherId());
 			if (sbiObjParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse",
-						"the BIObjectParameter with " + "id=" + aObjParuse.getObjParFatherId() + " does not exist.");
+						"the BIObjectParameter with " + "id=" + aObjParuse.getParFatherId() + " does not exist.");
 
 			}
 			SbiObjParuse correlation = new SbiObjParuse();
@@ -203,7 +203,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 		}
 		/*
 		 * Criterion aCriterion = Expression.and( Expression.eq("id.sbiObjPar.objParId", aObjParuse.getObjParId()), Expression.eq("id.sbiParuse.useId",
-		 * aObjParuse.getParuseId())); Criteria aCriteria = aSession.createCriteria(SbiObjParuse.class); aCriteria.add(aCriterion); SbiObjParuse sbiObjParuse =
+		 * aObjParuse.getUseModeId())); Criteria aCriteria = aSession.createCriteria(SbiObjParuse.class); aCriteria.add(aCriterion); SbiObjParuse sbiObjParuse =
 		 * (SbiObjParuse)aCriteria.uniqueResult();
 		 */
 	}
@@ -212,7 +212,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 		// get the existing object
 		/*
 		 * String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + aObjParuse.getObjParId() + " and s.id.sbiParuse.useId = " +
-		 * aObjParuse.getParuseId() + " and s.id.sbiObjParFather.objParId = " + aObjParuse.getObjParFatherId() + " and s.id.filterOperation = '" +
+		 * aObjParuse.getUseModeId() + " and s.id.sbiObjParFather.objParId = " + aObjParuse.getParFatherId() + " and s.id.filterOperation = '" +
 		 * aObjParuse.getFilterOperation() + "'";
 		 */
 		String hql = "from SbiObjParuse s where s.id = ? ";
@@ -222,7 +222,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 		SbiObjParuse sbiObjParuse = (SbiObjParuse) hqlQuery.uniqueResult();
 		if (sbiObjParuse == null) {
 			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "eraseObjParuse", "the ObjParuse relevant to BIObjectParameter with "
-					+ "id=" + aObjParuse.getObjParId() + " and ParameterUse with " + "id=" + aObjParuse.getParuseId() + " does not exist.");
+					+ "id=" + aObjParuse.getParId() + " and ParameterUse with " + "id=" + aObjParuse.getUseModeId() + " does not exist.");
 		}
 		aSession.delete(sbiObjParuse);
 	}
@@ -282,16 +282,16 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			return null;
 		ObjParuse toReturn = new ObjParuse();
 		toReturn.setId(aSbiObjParuse.getId());
-		toReturn.setObjParId(aSbiObjParuse.getSbiObjPar().getObjParId());
-		toReturn.setParuseId(aSbiObjParuse.getSbiParuse().getUseId());
+		toReturn.setParId(aSbiObjParuse.getSbiObjPar().getObjParId());
+		toReturn.setUseModeId(aSbiObjParuse.getSbiParuse().getUseId());
 		toReturn.setProg(aSbiObjParuse.getProg());
-		toReturn.setObjParFatherId(aSbiObjParuse.getSbiObjParFather().getObjParId());
+		toReturn.setParFatherId(aSbiObjParuse.getSbiObjParFather().getObjParId());
 		toReturn.setFilterColumn(aSbiObjParuse.getFilterColumn());
 		toReturn.setFilterOperation(aSbiObjParuse.getFilterOperation());
 		toReturn.setPreCondition(aSbiObjParuse.getPreCondition());
 		toReturn.setPostCondition(aSbiObjParuse.getPostCondition());
 		toReturn.setLogicOperator(aSbiObjParuse.getLogicOperator());
-		toReturn.setObjParFatherUrlName(aSbiObjParuse.getSbiObjParFather().getParurlNm());
+		toReturn.setParFatherUrlName(aSbiObjParuse.getSbiObjParFather().getParurlNm());
 		return toReturn;
 	}
 
@@ -498,7 +498,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 		// get the existing object
 		/*
 		 * String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + aObjParuse.getObjParId() + " and s.id.sbiParuse.useId = " +
-		 * aObjParuse.getParuseId() + " and s.id.sbiObjParFather.objParId = " + aObjParuse.getObjParFatherId() + " and s.id.filterOperation = '" +
+		 * aObjParuse.getUseModeId() + " and s.id.sbiObjParFather.objParId = " + aObjParuse.getParFatherId() + " and s.id.filterOperation = '" +
 		 * aObjParuse.getFilterOperation() + "'";
 		 */
 		String hql = "from SbiObjParuse s where s.id = ? ";

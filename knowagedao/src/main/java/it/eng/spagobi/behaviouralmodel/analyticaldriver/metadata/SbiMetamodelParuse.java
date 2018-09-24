@@ -4,7 +4,7 @@ import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 public class SbiMetamodelParuse extends SbiHibernateModel {
 
-	private Integer paruseId;
+	private Integer id;
 	private SbiParuse sbiParuse;
 	private SbiMetaModelParameter sbiMetaModelPar;
 	private SbiMetaModelParameter sbiMetaModelParFather;
@@ -25,7 +25,15 @@ public class SbiMetamodelParuse extends SbiHibernateModel {
 	 *            the id
 	 */
 	public SbiMetamodelParuse(Integer id) {
-		this.paruseId = id;
+		this.id = id;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public SbiParuse getSbiParuse() {
@@ -90,14 +98,6 @@ public class SbiMetamodelParuse extends SbiHibernateModel {
 
 	public void setLogicOperator(String logicOperator) {
 		this.logicOperator = logicOperator;
-	}
-
-	public Integer getParuseId() {
-		return paruseId;
-	}
-
-	public void setParuseId(Integer paruseId) {
-		this.paruseId = paruseId;
 	}
 
 	public String getPostCondition() {

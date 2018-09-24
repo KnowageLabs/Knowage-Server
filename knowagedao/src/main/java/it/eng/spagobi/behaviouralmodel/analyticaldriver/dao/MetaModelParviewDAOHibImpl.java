@@ -61,27 +61,27 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 			String hql = "from SbiMetaModelParview s where s.parviewId= ? ";
 
 			Query hqlQuery = aSession.createQuery(hql);
-			hqlQuery.setInteger(0, metaModelParview.getParviewId().intValue());
+			hqlQuery.setInteger(0, metaModelParview.getId().intValue());
 
 			SbiMetaModelParview sbiMetaModelParview = (SbiMetaModelParview) hqlQuery.uniqueResult();
 			if (sbiMetaModelParview == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyMetaModelParview",
-						"the MetaModelParview with " + "id=" + metaModelParview.getParviewId() + "  does not exist.");
+						"the MetaModelParview with " + "id=" + metaModelParview.getId() + "  does not exist.");
 
 			}
 			// delete the existing object
 			aSession.delete(sbiMetaModelParview);
 			// create the new object
-			SbiMetaModelParameter sbiMetaModelPar = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, metaModelParview.getMetaModelParId());
+			SbiMetaModelParameter sbiMetaModelPar = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, metaModelParview.getParId());
 			SbiMetaModelParameter sbiMetaModelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class,
-					metaModelParview.getMetaModelParFatherId());
+					metaModelParview.getParFatherId());
 			if (sbiMetaModelParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyMetaModelParview",
 						"the BIMetaModelParameter with " + " does not exist.");
 
 			}
 			SbiMetaModelParview view = new SbiMetaModelParview();
-			view.setParviewId(metaModelParview.getParviewId());
+			view.setParviewId(metaModelParview.getId());
 			view.setSbiMetaModelPar(sbiMetaModelPar);
 			view.setSbiMetaModelFather(sbiMetaModelParFather);
 			view.setOperation(metaModelParview.getOperation());
@@ -114,12 +114,12 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiMetaModelParameter sbiMetaModelPar = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, metaModelParview.getMetaModelParId());
+			SbiMetaModelParameter sbiMetaModelPar = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, metaModelParview.getParId());
 			SbiMetaModelParameter sbiMetaModelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class,
-					metaModelParview.getMetaModelParFatherId());
+					metaModelParview.getParFatherId());
 			if (sbiMetaModelParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyMetaModelParview",
-						"the MetaModelParameter with " + "id=" + metaModelParview.getMetaModelParFatherId() + " does not exist.");
+						"the MetaModelParameter with " + "id=" + metaModelParview.getParFatherId() + " does not exist.");
 
 			}
 			SbiMetaModelParview view = new SbiMetaModelParview();
@@ -216,10 +216,10 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 		if (aSbiMetaModelParview == null)
 			return null;
 		MetaModelParview toReturn = new MetaModelParview();
-		toReturn.setParviewId(aSbiMetaModelParview.getParviewId());
-		toReturn.setMetaModelParId(aSbiMetaModelParview.getSbiMetaModelPar().getMetaModelParId());
-		toReturn.setMetaModelParFatherId(aSbiMetaModelParview.getSbiMetaModelFather().getMetaModelParId());
-		toReturn.setMetaModelParFatherUrlName(aSbiMetaModelParview.getSbiMetaModelFather().getParurlNm());
+		toReturn.setId(aSbiMetaModelParview.getParviewId());
+		toReturn.setParId(aSbiMetaModelParview.getSbiMetaModelPar().getMetaModelParId());
+		toReturn.setParFatherId(aSbiMetaModelParview.getSbiMetaModelFather().getMetaModelParId());
+		toReturn.setParFatherUrlName(aSbiMetaModelParview.getSbiMetaModelFather().getParurlNm());
 		toReturn.setOperation(aSbiMetaModelParview.getOperation());
 		toReturn.setCompareValue(aSbiMetaModelParview.getCompareValue());
 		toReturn.setProg(aSbiMetaModelParview.getProg());

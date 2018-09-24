@@ -232,7 +232,7 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 		Iterator itMetaModelParviews = metaModelParview.iterator();
 		while (itMetaModelParviews.hasNext()) {
 			MetaModelParview aMetaModelParview = (MetaModelParview) itMetaModelParviews.next();
-			metaModelParviewDAO.eraseMetaModelParview(aMetaModelParview.getParviewId());
+			metaModelParviewDAO.eraseMetaModelParview(aMetaModelParview.getId());
 		}
 
 		// delete also all MetaModelParView (visibility dependencies) of the biMetaModelParameter father
@@ -240,7 +240,7 @@ public class BIMetaModelDAOHibImpl extends AbstractHibernateDAO implements IBIMe
 		Iterator itMetaModelParviewsFather = metaModelParviewFather.iterator();
 		while (itMetaModelParviewsFather.hasNext()) {
 			MetaModelParview aMetaMOdelParviewFather = (MetaModelParview) itMetaModelParviewsFather.next();
-			metaModelParviewDAO.eraseMetaModelParview(aMetaMOdelParviewFather.getParviewId());
+			metaModelParviewDAO.eraseMetaModelParview(aMetaMOdelParviewFather.getId());
 		}
 
 		session.delete(hibMetaModelParameter);

@@ -2,7 +2,11 @@ package it.eng.spagobi.behaviouralmodel.analyticaldriver.bo;
 
 public abstract class AbstractParuse {
 
-	private Integer paruseId;
+	private Integer id;
+	private Integer parFatherId;
+	private Integer parId;
+	private Integer useModeId;
+	private String parFatherUrlName;
 	private Integer prog;
 	private String filterColumn;
 	private String filterOperation;
@@ -10,12 +14,44 @@ public abstract class AbstractParuse {
 	private String postCondition;
 	private String logicOperator;
 
-	public Integer getParuseId() {
-		return paruseId;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setParuseId(Integer paruseId) {
-		this.paruseId = paruseId;
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Integer getParFatherId() {
+		return parFatherId;
+	}
+
+	public void setParFatherId(Integer parFatherId) {
+		this.parFatherId = parFatherId;
+	}
+
+	public Integer getParId() {
+		return parId;
+	}
+
+	public void setParId(Integer parId) {
+		this.parId = parId;
+	}
+
+	public Integer getUseModeId() {
+		return useModeId;
+	}
+
+	public void setUseModeId(Integer useModeId) {
+		this.useModeId = useModeId;
+	}
+
+	public String getParFatherUrlName() {
+		return parFatherUrlName;
+	}
+
+	public void setParFatherUrlName(String parFatherUrlName) {
+		this.parFatherUrlName = parFatherUrlName;
 	}
 
 	public Integer getProg() {

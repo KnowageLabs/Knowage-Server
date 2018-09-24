@@ -70,18 +70,18 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 			String hql = "from SbiMetamodelParuse s  where s.paruseId=? ";
 
 			Query hqlQuery = aSession.createQuery(hql);
-			hqlQuery.setInteger(0, aMetaModelParuse.getParuseId().intValue());
+			hqlQuery.setInteger(0, aMetaModelParuse.getUseModeId().intValue());
 
 			SbiMetamodelParuse sbiMetamodelParuse = (SbiMetamodelParuse) hqlQuery.uniqueResult();
 			if (sbiMetamodelParuse == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyMetaModelParuse",
-						"the MetaModelParuse with id " + aMetaModelParuse.getParuseId() + " does not exist.");
+						"the MetaModelParuse with id " + aMetaModelParuse.getUseModeId() + " does not exist.");
 			}
 
-			SbiMetaModelParameter metaModelParameter = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, aMetaModelParuse.getMetamodelParId());
-			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aMetaModelParuse.getParuseId());
+			SbiMetaModelParameter metaModelParameter = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, aMetaModelParuse.getParId());
+			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aMetaModelParuse.getUseModeId());
 			SbiMetaModelParameter sbiMetaModelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class,
-					aMetaModelParuse.getMetaModelParFatherId());
+					aMetaModelParuse.getParFatherId());
 
 			sbiMetamodelParuse.setFilterColumn(aMetaModelParuse.getFilterColumn());
 			sbiMetamodelParuse.setFilterOperation(aMetaModelParuse.getFilterOperation());
@@ -93,7 +93,7 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 
 			if (sbiMetaModelParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyMetaModelParuse",
-						"the MetaModelParameter with " + "id=" + aMetaModelParuse.getMetaModelParFatherId() + " does not exist.");
+						"the MetaModelParameter with " + "id=" + aMetaModelParuse.getParFatherId() + " does not exist.");
 			}
 
 			sbiMetamodelParuse.setSbiMetaModelParFather(sbiMetaModelParFather);
@@ -123,13 +123,13 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiMetaModelParameter sbiMetamodelPar = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, aMetaModelParuse.getMetamodelParId());
-			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aMetaModelParuse.getParuseId());
+			SbiMetaModelParameter sbiMetamodelPar = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, aMetaModelParuse.getParId());
+			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aMetaModelParuse.getUseModeId());
 			SbiMetaModelParameter sbiMetamodelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class,
-					aMetaModelParuse.getMetaModelParFatherId());
+					aMetaModelParuse.getParFatherId());
 			if (sbiMetamodelParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyMetaModelParuse",
-						"the BIMetaMOdelParameter with " + "id=" + aMetaModelParuse.getMetaModelParFatherId() + " does not exist.");
+						"the BIMetaMOdelParameter with " + "id=" + aMetaModelParuse.getParFatherId() + " does not exist.");
 
 			}
 			SbiMetamodelParuse newHibMetaModel = new SbiMetamodelParuse();
@@ -170,12 +170,12 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 
 			String hql = "from SbiMetamodelParuse s where s.paruseId = ? ";
 			Query hqlQuery = aSession.createQuery(hql);
-			hqlQuery.setInteger(0, aMetaModelParuse.getParuseId().intValue());
+			hqlQuery.setInteger(0, aMetaModelParuse.getUseModeId().intValue());
 
 			SbiMetamodelParuse sbiMetamodelParuse = (SbiMetamodelParuse) hqlQuery.uniqueResult();
 			if (sbiMetamodelParuse == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "eraseMetaModelParuse",
-						"the MetaModelParuse with " + "id=" + aMetaModelParuse.getParuseId() + " does not exist.");
+						"the MetaModelParuse with " + "id=" + aMetaModelParuse.getUseModeId() + " does not exist.");
 			}
 			aSession.delete(sbiMetamodelParuse);
 			tx.commit();
@@ -259,16 +259,17 @@ public class MetaModelParuseDAOHibImpl extends AbstractHibernateDAO implements I
 		if (aSbiMetamodelParuse == null)
 			return null;
 		MetaModelParuse toReturn = new MetaModelParuse();
-		toReturn.setMetamodelParId(aSbiMetamodelParuse.getSbiMetaModelPar().getMetaModelParId());
-		toReturn.setParuseId(aSbiMetamodelParuse.getParuseId());
+		toReturn.setId(aSbiMetamodelParuse.getId());
+		toReturn.setParId(aSbiMetamodelParuse.getSbiMetaModelPar().getMetaModelParId());
+		toReturn.setUseModeId(aSbiMetamodelParuse.getSbiParuse().getUseId());
 		toReturn.setProg(aSbiMetamodelParuse.getProg());
-		toReturn.setMetaModelParFatherId(aSbiMetamodelParuse.getSbiMetaModelParFather().getMetaModelParId());
+		toReturn.setParFatherId(aSbiMetamodelParuse.getSbiMetaModelParFather().getMetaModelParId());
 		toReturn.setFilterColumn(aSbiMetamodelParuse.getFilterColumn());
 		toReturn.setFilterOperation(aSbiMetamodelParuse.getFilterOperation());
 		toReturn.setPreCondition(aSbiMetamodelParuse.getPreCondition());
 		toReturn.setPostCondition(aSbiMetamodelParuse.getPostCondition());
 		toReturn.setLogicOperator(aSbiMetamodelParuse.getLogicOperator());
-		toReturn.setMetaModelParFatherUrlName(aSbiMetamodelParuse.getSbiMetaModelParFather().getParurlNm());
+		toReturn.setParFatherUrlName(aSbiMetamodelParuse.getSbiMetaModelParFather().getParurlNm());
 		return toReturn;
 	}
 
