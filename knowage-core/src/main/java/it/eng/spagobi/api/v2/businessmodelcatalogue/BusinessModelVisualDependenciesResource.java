@@ -91,7 +91,7 @@ public class BusinessModelVisualDependenciesResource extends AbstractSpagoBIReso
 		IMetaModelParviewDAO parameterViewDAO;
 		try {
 			parameterViewDAO = DAOFactory.getMetaModelParviewDao();
-			parameterViewDAO.eraseMetaModelParview(parameterViewObject.getParviewId());
+			parameterViewDAO.eraseMetaModelParview(parameterViewObject.getId());
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be removed", e);
 			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
@@ -124,7 +124,7 @@ public class BusinessModelVisualDependenciesResource extends AbstractSpagoBIReso
 		IMetaModelParviewDAO parameterViewDAO;
 		try {
 			parameterViewDAO = DAOFactory.getMetaModelParviewDao();
-			parameterViewDAO.eraseMetaModelParview(parameterViewObject.getParviewId());
+			parameterViewDAO.eraseMetaModelParview(parameterViewObject.getId());
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be removed", e);
 			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
