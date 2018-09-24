@@ -58,7 +58,7 @@
                 <md-input-container class="md-block">
                
                     <label>{{dd.selectedDriver.parameter.name}}</label>
-					<md-select ng-required="dd.required" name="analyticalDriver" ng-model="dd.selectedDriver.parameter.name"  ng-change="dd.addToChangedDrivers(dd.selectedDriver)" >
+					<md-select ng-required="dd.required" name="analyticalDriver" ng-model="dd.selectedDriver.parameter.name"  ng-change="dd.addToChangedDrivers(dd.selectedDriver);" >
                         <md-option ng-repeat="analyticaldriver in dd.analyticalDrivers track by $index" ng-value="analyticaldriver" >
                             {{ analyticaldriver }}
                         </md-option>
@@ -88,7 +88,7 @@
        
         <div flex ng-if="dd.driversNum" layout="row">
         
-          <div flex = "50" layout="row " ><!-- ng-if="dd.hasParuse" -->
+          <div flex = "50" layout="row " ng-if="dd.hasParuse" ><!--  -->
             <md-card ng-if="dd.selectedDriver " flex>
   
              <md-toolbar class="ternaryToolbar ">
@@ -109,10 +109,10 @@
                     <md-list-item class=" md-2-line "  ng-repeat="correlation in dd.dataConditions track by $index" ng-form="dataDependency" ng-click="dd.editDataCondition($event,dd.selectedDriver,$index)">
                          
                         <div class="md-list-item-text " ng-if='!dd.driverRelatedObject.category'>
-                            <h3><strong>{{ correlation.filterOperation }} {{dd.translate.load("sbi.documentdetails.drivers.value")}} </strong> {{correlation.objParFatherUrlName}} </h3>
+                            <h3><strong>{{ correlation.filterOperation }} {{dd.translate.load("sbi.documentdetails.drivers.value")}} </strong> {{correlation.parFatherUrlName}} </h3>
                         </div>
                          <div class="md-list-item-text " ng-if='dd.driverRelatedObject.category'>
-                            <h3><strong>{{ correlation.filterOperation }} {{dd.translate.load("sbi.documentdetails.drivers.value")}} </strong> {{correlation.metaModelParFatherUrlName}} </h3>
+                            <h3><strong>{{ correlation.filterOperation }} {{dd.translate.load("sbi.documentdetails.drivers.value")}} </strong> {{correlation.parFatherUrlName}} </h3>
                  
                         </div>
                         <md-button class="md-secondary md-icon-button" ng-click="dd.deleteDataCondition($index,'data') " aria-label="delete driver ">
@@ -147,7 +147,7 @@
                 <md-list class="md-dense">
                     <md-list-item class=" md-2-line " ng-repeat="correlation in dd.visibilityConditions track by $index" ng-form="visualDependency" ng-click="dd.editCondition($event,dd.selectedDriver,$index)">
                         <div class="md-list-item-text ">
-                            <h3><strong>{{ correlation.viewLabel }}</strong> {{correlation.objParFatherUrlName}} {{correlation.operation}} {{correlation.compareValue}}</h3>
+                            <h3><strong>{{ correlation.viewLabel }}</strong> {{correlation.parFatherUrlName}} {{correlation.operation}} {{correlation.compareValue}}</h3>
                         </div>
                         <md-button class="md-secondary md-icon-button" ng-click="dd.deleteVisualCondition($index,'visual') " aria-label="delete driver ">
                             <md-icon md-font-icon="fa fa-trash "></md-icon>

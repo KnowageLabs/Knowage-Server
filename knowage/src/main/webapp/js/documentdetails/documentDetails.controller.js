@@ -59,17 +59,17 @@
 
         self.savingFunction = function(){
 
-        	
+
 
         	if(documentService.document.id != undefined){
         	DriversService.persistDrivers(documentService.document.id,requiredPath);
-        	DriversService.deleteDrivers(documentService.document.idd,requiredPath);
+        	DriversService.deleteDrivers(documentService.document.id,requiredPath);
 
         	DriversService.persistDataDependency(documentService.document.id,requiredPath);
         	DriversService.deleteDataDependencies(documentService.document.id,requiredPath);
 
         	DriversService.persistVisualDependency(documentService.document.id,requiredPath);
-        	DriversService.deleteVisualDependencies(documentService.document.idd,requiredPath);
+        	DriversService.deleteVisualDependencies(documentService.document.id,requiredPath);
         	}
         	outputParametersService.persistOutputParameters();
         	outputParametersService.deleteOutputParameters();
@@ -85,7 +85,7 @@
 			subreportsService.persistSubreports();
 
 			persistDocument();
-			
+
         };
 
 
@@ -157,10 +157,10 @@
     		  self.setChecked();
     		  console.log(response);
     	  }, function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');        				
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			 });
       }
-      
+
      self.setChecked = function() {
    	  for(var i = 0; i < documentService.documentsList.length; i++) {
    		  for(var j = 0; j < documentService.savedSubreports.length; j++) {
@@ -170,8 +170,8 @@
    		  }
    	  }
    	  return documentService.documentsList;
-     }      
-     
+     }
+
      closingIFrame.close();
 
    };

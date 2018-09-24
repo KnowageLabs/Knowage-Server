@@ -14,7 +14,7 @@
             <div>
 	                <md-input-container   ng-if='!document.category'flex>
 	                    <h3>{{translate.load("sbi.documentdetails.visualdependency.analyticaldriver")}} "{{driverName}}" {{translate.load("sbi.documentdetails.datadependency.depends")}}</h3>
-	                    <md-select ng-required = "'true'" ng-model="selectedDataCondition.objParFatherId" ng-change="addToChangedDataDepedencies(selectedDataCondition)" >
+	                    <md-select ng-required = "'true'" ng-model="selectedDataCondition.parFatherId" ng-change="addToChangedDataDepedencies(selectedDataCondition)" >
 	                        <md-option ng-value="option.id" ng-repeat="option in drivers track by $index">
 	                            {{ option.label }}
 	                        </md-option>
@@ -22,7 +22,7 @@
 	                </md-input-container>
 	                <md-input-container   ng-if='document.category'flex>
 	                    <h3>{{translate.load("sbi.documentdetails.visualdependency.analyticaldriver")}} "{{driverName}}" {{translate.load("sbi.documentdetails.datadependency.depends")}}</h3>
-	                    <md-select ng-required = "'true'" ng-model="selectedDataCondition.metaModelParFatherId" ng-change="addToChangedDataDepedencies(selectedDataCondition)" >
+	                    <md-select ng-required = "'true'" ng-model="selectedDataCondition.parFatherId" ng-change="addToChangedDataDepedencies(selectedDataCondition)" >
 	                        <md-option ng-value="option.id" ng-repeat="option in drivers track by $index">
 	                            {{ option.label }}
 	                        </md-option>

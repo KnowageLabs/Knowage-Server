@@ -82,6 +82,13 @@
 	                   var path = "";
 	                   crudService.get(base,path).then(function(response){
 	                			driversResource.analyticalDrivers=response.data;
+	                			console.log('response.data.drivers' )
+	                			console.log(response.data)
+	                			for(var i = 0; i < response.data.length; i++){
+	                				getLovsByAnalyticalDriverId(response.data[i].id)
+	                				driversResource.getParusesByAnaliticalDriverId(response.data[i].id)
+
+	                			}
 	                   });
 	    		   }
 
@@ -220,7 +227,7 @@
             			}
 
 	      	       			//var paruse = driversResource.driverParuses.filter(par => par.useID==persistances[j])
-	      	       			newDataDependency.paruseId= paruse[0].useID;
+	      	       			newDataDependency.useModeId= paruse[0].useID;
 	      			        		if(isNew){
 	      			        			prepareDependencyForPersisting(newDataDependency);
 	      			        			delete newDataDependency.persist;
@@ -242,6 +249,7 @@
 	      			        			newDataDependency.prog++;
 	      			        		}
 	      	       		}
+
 	      	       	}
 	      	       }
 	      	     }
