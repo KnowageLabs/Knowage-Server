@@ -1,5 +1,23 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -8,9 +26,21 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.*;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.*;
-import it.eng.spagobi.behaviouralmodel.lov.bo.*;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
+import it.eng.spagobi.behaviouralmodel.lov.bo.DependenciesPostProcessingLov;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
+import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.exceptions.MissingLOVDependencyException;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -18,15 +48,6 @@ import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 public class DocumentParameters {
     private static Logger logger = Logger.getLogger(DocumentParameters.class);
@@ -205,7 +226,7 @@ public class DocumentParameters {
         Iterator it = visualDependencies.iterator();
         while (it.hasNext()) {
             ObjParview dependency = (ObjParview) it.next();
-            Integer objParFatherId = dependency.getObjParFatherId();
+            Integer objParFatherId = dependency.getParFatherId();
             try {
                 BIObjectParameter objParFather = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadForDetailByObjParId(objParFatherId);
                 VisualDependency visualDependency = new VisualDependency();
@@ -295,7 +316,7 @@ public class DocumentParameters {
         Iterator it = dataDependencies.iterator();
         while (it.hasNext()) {
             ObjParuse dependency = (ObjParuse) it.next();
-            Integer objParFatherId = dependency.getObjParFatherId();
+            Integer objParFatherId = dependency.getParFatherId();
             try {
                 BIObjectParameter objParFather = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadForDetailByObjParId(objParFatherId);
                 DataDependency dataDependency = new DataDependency();
