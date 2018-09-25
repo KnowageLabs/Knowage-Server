@@ -62,18 +62,35 @@ angular
              }
 
              self.addDriver = function() {
-            	 		if(driversService.driverRelatedObject.id){
-       					 if (self.drivers) {
-       	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'id' :driversService.driverRelatedObject.id,'visible':true,'required':false,'multivalue':false });
-       	                     var index = self.drivers.length;
-       	                  self.driversNum = self.drivers.length > 1;
-       	                     self.selectDriver( index );
-       	                 } else {
-       	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true','id' : driversService.driverRelatedObject.id ,'visible':true,'required':false,'multivalue':false}];
-       	                  self.driversNum = self.drivers.length > 1;
-       	                     self.selectDriver(1);
-       	                 }
-       				 }
+            	 if(driversService.driverRelatedObject.hasOwnProperty('modelLocked')){
+
+         	 		if(driversService.driverRelatedObject.id){
+    					 if (self.drivers) {
+    	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biMetaModelID' :driversService.driverRelatedObject.id,'visible':true,'required':false,'multivalue':false });
+    	                     var index = self.drivers.length;
+    	                  self.driversNum = self.drivers.length > 1;
+    	                     self.selectDriver( index );
+    	                 } else {
+    	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true','biMetaModelID' : driversService.driverRelatedObject.id ,'visible':true,'required':false,'multivalue':false}];
+    	                  self.driversNum = self.drivers.length > 1;
+    	                     self.selectDriver(1);
+
+    	                 }
+    				 }
+          }else{
+				 if(driversService.driverRelatedObject.id){
+					 if (self.drivers) {
+	                     self.drivers.push({ 'label': '', 'priority': self.drivers.length == 0 ? 1: self.drivers.length ,'newDriver':'true',  'biObjectID' :driversService.driverRelatedObject.id,'visible':true,'required':false,'multivalue':false });
+	                     var index = self.drivers.length;
+	                     self.driversNum = self.drivers.length > 1;
+	                     self.selectDriver( index );
+	                 } else {
+	                     self.drivers = [{ 'label': '', 'priority': 1,'newDriver':'true', 'biObjectID' : driversService.driverRelatedObject.id ,'visible':true,'required':false,'multivalue':false}];
+	                     self.driversNum = self.drivers.length > 1;
+	                     self.selectDriver(1);
+	                 }
+				 }
+          }
              }
 
              self.openMenu=function(menu,event){
@@ -159,7 +176,6 @@ angular
 	                         self.selectedDriver = self.drivers[i];
 	                     	 driversService.getParusesByAnaliticalDriverId(self.selectedDriver.parID);
 	                         self.setParameterInfo(self.selectedDriver);
-	                         self.hasParuse = self.hasDependencies(self.selectedDriver.parameter.name) ;
 							 if(self.selectedDriver.parID)
 	                         getLovsByAnalyticalDriverId(self.selectedDriver.parID);
 	                         	if(self.selectedDriver.id){
