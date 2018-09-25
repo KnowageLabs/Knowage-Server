@@ -691,7 +691,8 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     }
 
     if(parent.globalQbeJson){
-    	$scope.editQueryObj = parent.globalQbeJson.catalogue.queries[0];
+    	var qbeJsonObj = angular.fromJson(parent.globalQbeJson)
+    	$scope.editQueryObj = qbeJsonObj.catalogue.queries[0];
     }
 
     $scope.relationsListColumns = [
