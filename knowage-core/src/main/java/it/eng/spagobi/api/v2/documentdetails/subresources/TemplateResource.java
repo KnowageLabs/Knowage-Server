@@ -17,6 +17,25 @@
  */
 package it.eng.spagobi.api.v2.documentdetails.subresources;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
+import org.apache.clerezza.jaxrs.utils.form.FormFile;
+import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+import org.apache.log4j.Logger;
+
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -30,22 +49,12 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import org.apache.clerezza.jaxrs.utils.form.FormFile;
-import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
-import org.apache.log4j.Logger;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import java.util.Date;
-import java.util.List;
 
 @Path("")
 public class TemplateResource extends AbstractSpagoBIResource {
 
 	public static enum FILETYPE {
-		json, xml, bin, rptdesign
+		json, xml, bin, rptdesign, sbicockpit
 	};
 
 	static protected Logger logger = Logger.getLogger(TemplateResource.class);
@@ -175,6 +184,11 @@ public class TemplateResource extends AbstractSpagoBIResource {
 				response.header("Content-Disposition", "attachment; filename=" + filename);
 				break;
 			case rptdesign:
+				byteContent = template.getContent();
+				response = Response.ok(byteContent);
+				response.header("Content-Disposition", "attachment; filename=" + filename);
+				break;
+			case sbicockpit:
 				byteContent = template.getContent();
 				response = Response.ok(byteContent);
 				response.header("Content-Disposition", "attachment; filename=" + filename);
