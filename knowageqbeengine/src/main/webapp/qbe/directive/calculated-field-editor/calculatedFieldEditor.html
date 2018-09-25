@@ -13,7 +13,7 @@
             </div> -->
 
             <md-list>
-                <md-list-item ng-repeat="field in selectedEntity.children" ng-click="addField(field)">
+                <md-list-item ng-repeat="field in selectedEntity.children|withoutPropertyValue:'iconCls':'calculation'" ng-click="addField(field)">
                     {{field.text}}
                 </md-list-item>
             </md-list>

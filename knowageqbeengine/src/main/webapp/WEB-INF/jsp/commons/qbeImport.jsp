@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/custom-table/customTable.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/expander-list/expanderList.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/calculated-field-editor/calculatedFieldEditor.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/calculated-field-editor/withoutPropertyValue.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/filter/filter.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/parameters/parameter.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/group/group.js"></script>
@@ -48,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- FILTERS -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/filters/byNotExistingMembers.js"></script>
+
 
 <!-- EXPORT -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/common/export/exportModule.js"></script>
