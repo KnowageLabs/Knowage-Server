@@ -64,7 +64,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 	angular.copy(cockpitModule_template.configuration.filters,$scope.tmpFilters);
 
 	$scope.init=function(element,width,height){
-		$scope.refreshWidget();
+		$scope.refreshWidget(null, 'init');
 	};
 
 	$scope.refresh=function(element,width,height){
@@ -177,6 +177,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 	$scope.getSelections();
 
 	if(!$scope.ngModel.style) $scope.ngModel.style = {};
+	if(typeof($scope.ngModel.style.showColumn) == 'undefined') $scope.ngModel.style.showColumn = true;
 	$scope.columnTableSelection = [
 	{
 		label: $scope.translate.load("sbi.cockpit.dataset"),
@@ -187,7 +188,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 		label: $scope.translate.load("sbi.cockpit.cross.column"),
 		name: "columnAlias",
 		hideTooltip: false,
-		visible: true
+		visible: $scope.ngModel.style.showColumn
   },{
 	  label: $scope.translate.load("sbi.cockpit.core.selections.list.columnValues"),
 	  name: "value",
@@ -198,6 +199,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 
 	$scope.$watch('ngModel.style',function(newValue,oldValue){
 		$scope.columnTableSelection[0].visible = newValue.showDataset;
+		$scope.columnTableSelection[1].visible = newValue.showColumn;
 	})
 
 	$scope.actionsOfSelectionColumns = [
@@ -321,10 +323,16 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 			locals: {finishEdit:finishEdit,model:$scope.ngModel},
 			controller: function($scope,finishEdit,sbiModule_translate,model,mdPanelRef,$mdToast){
 				$scope.translate=sbiModule_translate;
-
+				
+				
 				$scope.localModel = {};
 				angular.copy(model,$scope.localModel);
-
+				$scope.colorPickerPropertyEvenOddRows={format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select'),disabled:!$scope.localModel.style || !$scope.localModel.style.alternateRows || !$scope.localModel.style.alternateRows.enabled};
+				
+				$scope.changeAlternatedRows = function(){
+					$scope.colorPickerPropertyEvenOddRows.disabled = !$scope.localModel.style.alternateRows.enabled;
+				}
+				
 				$scope.saveConfiguration=function(){
 					angular.copy($scope.localModel,model);
 					mdPanelRef.close();

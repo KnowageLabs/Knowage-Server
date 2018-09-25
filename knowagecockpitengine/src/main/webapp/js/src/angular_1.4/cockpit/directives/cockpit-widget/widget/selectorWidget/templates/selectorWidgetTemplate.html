@@ -1,72 +1,46 @@
-<div flex layout-align="start" class="cockpitSelectorWidget">
-	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue'" layout="column" class="cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}">
-		<md-radio-group ng-model="parameter">
-			<md-radio-button class="md-primary cSelWRadio" ng-repeat="record in datasetRecords.rows"
-			value="{{record.column_1+''}}" ng-click="!ngModel.activeValues || ngModel.activeValues.indexOf(record.column_1) > -1 ? toggleRadioParameter(record.column_1+'') : null"
-			ng-disabled="ngModel.activeValues && ngModel.activeValues.indexOf(record.column_1) == -1"
-			>
-				{{record.column_1}} 
-			</md-radio-button>
-		</md-radio-group>
+<div flex layout-align="center center" class="cockpitSelectorWidget">
+
+	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue' && showSelection" layout="column" class="cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}">
+		<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue'" layout="column" 
+			ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
+			<label class="kn-custom-radio-container" ng-repeat="record in datasetRecords.rows" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}" ng-style="::gridWidth()">
+				<span>{{::record.column_1}}</span>
+			  <input type="radio" ng-checked="::isSelected(record.column_1)" ng-disabled="::isDisabled(record.column_1)" ng-value="::record.column_1">
+			  <span class="checkmark"></span>
+			</label>
+		</div>
 	</div>
 	
 	<!-- lov list multiple input -->
-	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue'" layout="column" class="checkBoxParameter cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }">
-		<div class="cSelWCheckContainer">
-			<md-checkbox class="md-primary cSelWCheck" ng-checked="checkboxParameterExists(record.column_1+'')" 
-			value="{{record.column_1+''}}" ng-click="!ngModel.activeValues || ngModel.activeValues.indexOf(record.column_1) > -1 ? toggleCheckboxParameter(record.column_1+'') : null" 
-			layout="row" layout-align="start center" ng-repeat="record in datasetRecords.rows"
-			ng-disabled="ngModel.activeValues && ngModel.activeValues.indexOf(record.column_1) == -1"
-			>
-				{{record.column_1}}
-			</md-checkbox>
-		</div>
-		
+	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue' && showSelection" layout="column" class="cSelWScroller"
+		ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
+		<label class="kn-custom-checkbox-container" ng-repeat="record in datasetRecords.rows" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}">
+			<span>{{::record.column_1}}</span>
+		  <input type="checkbox" ng-checked="::isSelected(record.column_1)" ng-disabled="::isDisabled(record.column_1)" ng-value="::record.column_1">
+		  <span class="checkmark"></span>
+		</label>
 	</div>
 	
 	<!-- lov combobox single and multiple input -->
 	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX'" layout="column" class="selectParameter cockpitSelectorWidgetCombobox" layout-padding layout-fill layout-align="center center">
 	
-		<!-- multiple -->
-		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue=='multiValue'" >
-			<md-select ng-model="multiCombo.selected" multiple md-on-close="clearParamSearch()"> 
-				<md-select-header>
-					<md-input-container class="md-block">
-						<input
-								type="search"
-								ng-model="searchParamText"
-								ng-keydown="$event.stopPropagation()"
-								placeholder="{{::translate.load('sbi.cockpit.widgets.table.search')}}...">
-					</md-input-container>
-				</md-select-header>
-				
-				<md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" 
-						ng-value="record.column_1+''" ng-click="!ngModel.activeValues || ngModel.activeValues.indexOf(record.column_1) > -1 ? toggleComboParameter(record.column_1+'', false) : null"
-						ng-disabled="ngModel.activeValues && ngModel.activeValues.indexOf(record.column_1) == -1">
-					{{record.column_1}}
-				</md-option>
-			</md-select>
+		<!-- single -->
+		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue!='multiValue' && showSelection" style="width:100%">
+			<div class="kn-select">
+				<select ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])"
+						ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)">
+					<option></option>
+				</select>
+			</div>
 		</md-input-container>
 		
-		<!-- single -->
-		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue!='multiValue'" >
-			<md-select ng-model="parameter" md-on-close="clearParamSearch()">
-				<md-select-header>
-					<md-input-container class="md-block">
-						<input
-								type="search"
-								ng-model="searchParamText"
-								ng-keydown="$event.stopPropagation()"
-								placeholder="{{::translate.load('sbi.cockpit.widgets.table.search')}}...">
-					</md-input-container>
-				</md-select-header>
-
-				<md-option ng-repeat="record in datasetRecords.rows | filter:searchParamText" 
-						ng-value="record.column_1+''" ng-click="!ngModel.activeValues || ngModel.activeValues.indexOf(record.column_1) > -1 ? toggleComboParameter(record.column_1+'', true) : null"
-						ng-disabled="ngModel.activeValues && ngModel.activeValues.indexOf(record.column_1) == -1">
-					{{record.column_1}}
-				</md-option>
-			</md-select>
+		<!-- multiple -->
+		<md-input-container class="md-block multipleSelect" ng-if="ngModel.settings.modalityValue=='multiValue' && showSelection" style="width:100%">
+			<div class="kn-select multipleSelect">
+				<select ng-model="selectedValues" multiple ng-change="toggleParameter(selectedValues)" 
+						ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)"></select>
+			</div>
 		</md-input-container>
+		
 	</div>
 </div>

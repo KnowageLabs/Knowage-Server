@@ -18,10 +18,12 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			toRet[datasetLabel]={};
 			for(col in cockpitModule_template.configuration.filters[datasetLabel]){
 				var values = cockpitModule_template.configuration.filters[datasetLabel][col];
-				if(values.constructor === Array) {
-					toRet[datasetLabel][col]=["('"+values.join("','")+"')"];
-				} else {
-					toRet[datasetLabel][col]=["('"+values+"')"];
+				if(values){
+					if(values.constructor === Array) {
+						toRet[datasetLabel][col]=["('"+values.join("','")+"')"];
+					} else {
+						toRet[datasetLabel][col]=["('"+values+"')"];
+					}
 				}
 			}
 		}
@@ -440,7 +442,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		if (!Array.isArray(columnName)){
 			arColumnName.push(columnName);
 			arOriginalColumnName.push(originalColumnName);
-			arColumn.push(column);
+			if (!Array.isArray(column)){
+				arColumn.push(column);
+			}else{
+				arColumn = column;
+			}
 		}else{
 			arColumnName = columnName;
 			arOriginalColumnName = originalColumnName;
@@ -679,13 +685,15 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 						for(var widgetColumnIndex in widget.content.columnSelectedOfDataset){
 							var widgetColumn = widget.content.columnSelectedOfDataset[widgetColumnIndex];
 
-							var columnName = widgetColumn.name;
-							var colonIndex = columnName.indexOf(":");
-							if(colonIndex == -1){
-								if(columnName == widgetColumn.aliasToShow){
-									columnSet.add(datasetLabel + "." + columnName);
-								}else{
-									aliasMap[datasetLabel + "." + widgetColumn.aliasToShow] = datasetLabel + "." + columnName;
+							if(widgetColumn && widgetColumn.name){
+								var columnName = widgetColumn.name;
+								var colonIndex = columnName.indexOf(":");
+								if(colonIndex == -1){
+									if(columnName == widgetColumn.aliasToShow){
+										columnSet.add(datasetLabel + "." + columnName);
+									}else{
+										aliasMap[datasetLabel + "." + widgetColumn.aliasToShow] = datasetLabel + "." + columnName;
+									}
 								}
 							}
 						}
@@ -749,6 +757,40 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			}
 		}
 
+		return null;
+	}
+
+	this.isLastCurrentSelection = function(datasetLabel, columnName){
+		var lastSel = ws.getLastCurrentSelection();
+		return lastSel && lastSel[datasetLabel] && lastSel[datasetLabel][columnName];
+	}
+
+	this.getSelectionValues = function(datasetLabel, columnName){
+		var result = null;
+
+		var selections = cockpitModule_template.configuration.aggregations;
+		for(var i=0;i<selections.length;i++){
+			var selections = selections[i].selection;
+			if(selections!=undefined){
+				var datasetLabelAndColumnNames = Object.keys(selections);
+				for(var i in datasetLabelAndColumnNames){
+					var datasetLabelAndColumnName = datasetLabelAndColumnNames[i];
+					var split = datasetLabelAndColumnName.split(".");
+					if(split[0]==datasetLabel && split[1]==columnName){
+						result = selections[datasetLabelAndColumnName]
+					}
+				}
+			}
+		}
+
+		selections = cockpitModule_template.configuration.filters;
+		if(selections && selections[datasetLabel] && selections[datasetLabel][columnName]){
+			result = selections[datasetLabel][columnName];
+		}
+
+		if(result){
+			return Array.isArray(result) ? result : [result];
+		}
 		return null;
 	}
 })

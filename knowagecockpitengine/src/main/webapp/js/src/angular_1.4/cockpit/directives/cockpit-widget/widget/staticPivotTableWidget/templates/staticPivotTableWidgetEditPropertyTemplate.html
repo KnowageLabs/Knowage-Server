@@ -8,12 +8,12 @@
 		</md-toolbar>
 		<md-content flex layout="column">
 		   
-		  <md-tabs flex md-border-bottom md-selected="tabsUtils.selectedIndex">
+		  <md-tabs flex md-border-bottom>
 		  
 		  <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
-		  	<div layout="column" layout-fill ng-cloak ng-if="tabsUtils.selectedIndex==0">
+		  	<div layout="column" layout-fill ng-cloak>
 		      	
-			   <dataset-selector ng-model=localModel.dataset.dsId on-change="changeDatasetFunction(dsId)"></dataset-selector>
+			   <dataset-selector ng-model=localModel.dataset.dsId on-change="changeDatasetFunction(dsId)" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>
 			   
 			   <md-card ng-if="localModel.dataset.dsId!=undefined" layout="column" flex class="flexCard">	
 			     	<md-card-content flex layout="row" class="pivotTableDesigner" >			     		
@@ -160,7 +160,7 @@
 		  
 		  	<md-tab label="{{translate.load('sbi.cockpit.pivot.config')}}">
 		  	
-		  		<md-card ng-if="tabsUtils.selectedIndex==1">
+		  		<md-card>
 					<md-card-title>
 						<md-card-title-text layout="row">
 							<span flex class="md-headline">{{translate.load("sbi.cockpit.pivot.general")}}</span>
@@ -192,7 +192,7 @@
 					</md-card-content>
 				</md-card>
 				
-				<md-card ng-if="tabsUtils.selectedIndex==1">
+				<md-card>
 					<md-card-title>
 						<md-card-title-text layout="row">
 							<span flex class="md-headline">{{translate.load("sbi.crosstab.crosstabdetailswizard.onrows")}}</span>
@@ -208,7 +208,7 @@
 					</md-card-content>
 				</md-card>
 				
-				<md-card ng-if="tabsUtils.selectedIndex==1">
+				<md-card >
 					<md-card-title>
 						<md-card-title-text layout="row">
 							<span flex class="md-headline">{{translate.load("sbi.crosstab.crosstabdetailswizard.oncolumns")}}</span>
@@ -228,11 +228,15 @@
 		    </md-tab>
 		  
 		    <md-tab label="{{translate.load('sbi.cockpit.style')}}">
-	        	
-		     	<cockpit-style-configurator widget ng-model="localModel.style" ng-if="tabsUtils.selectedIndex==2">
-		     	
-		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.crosstabFontGeneralOpts')" layout="column">
-		     			<div layout=row >
+		     	<md-card>
+					<md-toolbar class="ternaryToolbar" >
+						<div class="md-toolbar-tools" layout="row">
+							<h2>{{translate.load('sbi.cockpit.designer.fontConf.crosstabFontGeneralOpts')}}</h2>
+							<span flex></span>
+						</div>
+					</md-toolbar>
+					<md-card-content >
+						<div layout=row >
 			     			<md-input-container flex>
 								<label>{{translate.load('sbi.cockpit.style.fontSize')}}</label>
 								<md-select ng-model="localModel.content.style.generic['font-size']">
@@ -250,10 +254,18 @@
 								</md-select>
 							</md-input-container>
 						</div>
-		     		
-		     		</cockpit-style-custom-widget-configurator>
-		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.crosstabHeadersFontOpts')" layout="column">
-		     			<div layout=row >
+					</md-card-content>
+				</md-card>
+				
+				<md-card>
+					<md-toolbar class="ternaryToolbar" >
+						<div class="md-toolbar-tools" layout="row">
+							<h2>{{translate.load('sbi.cockpit.designer.fontConf.crosstabHeadersFontOpts')}}</h2>
+							<span flex></span>
+						</div>
+					</md-toolbar>
+					<md-card-content >
+						<div layout=row >
 				     		<md-input-container flex class="md-block"> 
 								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
 								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.crossTabHeaders.color "></color-picker>
@@ -289,11 +301,18 @@
 								</md-select>
 							</md-input-container>
 			     		</div>
-		     		
-		     		</cockpit-style-custom-widget-configurator>
-		     	
-		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.measuresHeaders')" layout="column">
-		     			<div layout=row flex >		     							     			
+					</md-card-content>
+				</md-card>
+				
+				<md-card>
+					<md-toolbar class="ternaryToolbar" >
+						<div class="md-toolbar-tools" layout="row">
+							<h2>{{translate.load('sbi.cockpit.designer.fontConf.measuresHeaders')}}</h2>
+							<span flex></span>
+						</div>
+					</md-toolbar>
+					<md-card-content >
+						<div layout=row flex >		     							     			
 				     		<md-input-container flex class="md-block"> 
 								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
 								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders.color"></color-picker>
@@ -329,11 +348,18 @@
 								</md-select>
 							</md-input-container>
 			     		</div>
-		     		
-		     		</cockpit-style-custom-widget-configurator>
-		     	
-		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.measuresFontOpts')" layout="column">
-			     		<div layout=row >
+					</md-card-content>
+				</md-card>
+				
+				<md-card>
+					<md-toolbar class="ternaryToolbar" >
+						<div class="md-toolbar-tools" layout="row">
+							<h2>{{translate.load('sbi.cockpit.designer.fontConf.measuresFontOpts')}}</h2>
+							<span flex></span>
+						</div>
+					</md-toolbar>
+					<md-card-content >
+						<div layout=row >
 				     		<md-input-container flex class="md-block"> 
 								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
 								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measures.color "></color-picker>
@@ -369,12 +395,18 @@
 								</md-select>
 							</md-input-container>
 			     		</div>
-			     	
-			     	</cockpit-style-custom-widget-configurator>
-
-		     	
-		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.pivot.totals')">
-			     		<div layout=row flex>
+					</md-card-content>
+				</md-card>
+				
+				<md-card>
+					<md-toolbar class="ternaryToolbar" >
+						<div class="md-toolbar-tools" layout="row">
+							<h2>{{translate.load('sbi.cockpit.pivot.totals')}}</h2>
+							<span flex></span>
+						</div>
+					</md-toolbar>
+					<md-card-content >
+						<div layout=row flex>
 				     		<md-input-container flex class="md-block md-icon-right"> 
 								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
 								<color-picker options="colorPickerProperty" ng-model="localModel.content.style.totals.color "></color-picker>
@@ -384,9 +416,18 @@
 								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.totals['background-color'] "></color-picker>
 							</md-input-container>
 			     		</div>
-			        </cockpit-style-custom-widget-configurator>
-			        <cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.pivot.subtotals')">
-			     		<div layout=row flex>
+					</md-card-content>
+				</md-card>
+				
+				<md-card>
+					<md-toolbar class="ternaryToolbar" >
+						<div class="md-toolbar-tools" layout="row">
+							<h2>{{translate.load('sbi.cockpit.pivot.subtotals')}}</h2>
+							<span flex></span>
+						</div>
+					</md-toolbar>
+					<md-card-content >
+						<div layout=row flex>
 				     		<md-input-container flex class="md-block"> 
 								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
 								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.subTotals.color "></color-picker>
@@ -396,18 +437,26 @@
 								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.subTotals['background-color'] "></color-picker>
 							</md-input-container>
 			     		</div>
-			        </cockpit-style-custom-widget-configurator>
-			         
-			        <cockpit-style-custom-widget-configurator label="'Grid'">
-			           <div layout="row" flex ng-cloak>
+					</md-card-content>
+				</md-card>
+				
+				<md-card>
+					<md-toolbar class="ternaryToolbar" >
+						<div class="md-toolbar-tools" layout="row">
+							<h2>Grid</h2>
+							<span flex></span>
+						</div>
+					</md-toolbar>
+					<md-card-content >
+						<div layout="row" flex ng-cloak>
 				           <div flex=20 layout=column>
 				           		<div flex  layout="row" layout-align="start center">
 						           <md-checkbox layout-align="space-around center" ng-model="localModel.content.style.showGrid"  class="md-block"
-											aria-label="Checkbox 1" ng-click="enableGrid()">{{translate.load('sbi.cockpit.table.grid.showgrid')}}</md-checkbox>
+											aria-label="Checkbox 1" ng-change="enableGrid()">{{translate.load('sbi.cockpit.table.grid.showgrid')}}</md-checkbox>
 								</div>
 								<div flex  layout="row" layout-align="start center">
 						          <md-checkbox layout-align="space-around center" ng-model="localModel.content.style.showAlternateRows"  class="md-block"
-											aria-label="Checkbox 1"  ng-click ="enableAlternate()">{{translate.load('sbi.cockpit.table.alternate')}}</md-checkbox>
+											aria-label="Checkbox 1"  ng-change="enableAlternate()">{{translate.load('sbi.cockpit.table.alternate')}}</md-checkbox>
 								</div>
 								<div flex layout="row" layout-align="start center">
 									<div class="kn-info" flex>Attention: the alternate rows will be shown just without previous specific sections configuration (Headers and measures)</div>
@@ -437,19 +486,20 @@
 						           	<div layout=row >
 							     		<md-input-container flex=50 class="md-block"> 
 											<label>{{translate.load('sbi.cockpit.table.alternate.evenrows')}}</label>
-											<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresRow['even-background-color']" ></color-picker>
+											<color-picker  options="colorPickerAlternateGrid" ng-model="localModel.content.style.measuresRow['even-background-color']" ></color-picker>
 										</md-input-container>
 										<md-input-container flex=50 class="md-block"> 
 											<label>{{translate.load('sbi.cockpit.table.alternate.oddrows')}}</label>
-											<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresRow['odd-background-color']" ></color-picker>
+											<color-picker  options="colorPickerAlternateGrid" ng-model="localModel.content.style.measuresRow['odd-background-color']" ></color-picker>
 										</md-input-container>
 						     		</div>
 				           		</div>
 				           	</div>
 			           </div>
-			        </cockpit-style-custom-widget-configurator>
-			        
-		     	</cockpit-style-configurator>
+					</md-card-content>
+				</md-card>
+   
+			     	<cockpit-style-configurator widget ng-model="localModel.style"></cockpit-style-configurator>
 		     	 
 		     </md-tab>
 		     
@@ -461,10 +511,10 @@
 		</md-content>
     </md-card-content>
     <md-card-actions layout="row" layout-align="end center">
-      <md-button ng-click="cancelConfiguration()" >
+      <md-button class="md-raised" ng-click="cancelConfiguration()" >
          {{translate.load('sbi.generic.cancel')}}
       </md-button>
-      <md-button ng-click="saveConfiguration()"  >
+      <md-button class="md-raised md-primary" ng-click="saveConfiguration()"  >
          {{translate.load('sbi.generic.save')}}
       </md-button>
     </md-card-actions>

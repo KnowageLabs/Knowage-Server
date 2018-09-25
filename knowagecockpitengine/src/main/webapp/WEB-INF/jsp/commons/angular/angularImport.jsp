@@ -27,18 +27,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <link rel="stylesheet" href="<%=spagoBiContext%>/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
 
+<!--  script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular.js"></script-->
+
 <!-- angular reference-->
 <!-- START-DEBUG -->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular/angular.js"></script>
+
 <!-- END-DEBUG -->
 <!-- START-PRODUCTION 
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular/angular.min.js"></script>
 END-PRODUCTION -->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-messages.min.js"></script>
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular-cookies.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-animate/angular-animate.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-aria/angular-aria.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-sanitize/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-messages/angular-messages.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-cookies/angular-cookies.min.js"></script>
 
 <!-- angular-material-->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
@@ -112,6 +115,8 @@ END-PRODUCTION -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/mode/xml/xml.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/mode/css/css.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-ui-codemirror/src/ui-codemirror.js"></script>
+
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid/dist/ag-grid.min.js"></script>
 
 <!-- angular json tree -->
 <link rel="stylesheet" 	href="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.css">
