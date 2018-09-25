@@ -130,6 +130,8 @@
 
 		</md-card-content>
 	</md-card>
-	
+	<div layout="row" ng-if="!ngModelShared.filters" layout-align="center center">
+		<div class="kn-noItems">{{translate.load('sbi.cockpit.table.missingdataset')}}</div>
+	</div>
 	
 </md-content>
