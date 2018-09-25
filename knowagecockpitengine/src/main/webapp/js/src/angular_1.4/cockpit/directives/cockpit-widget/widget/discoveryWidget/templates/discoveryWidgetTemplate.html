@@ -1,3 +1,19 @@
+<!-- Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
+
 <div layout="row">
 	<md-card flex>
 		<md-card-content class="noPadding" layout="row">
@@ -41,28 +57,28 @@
 		</md-card-content>
 	</md-card>
 	<md-card flex="70" class="discoveryViewCard" ng-if="ngModel.settings.table && ngModel.settings.table.enabled" style="margin-top:0;">
-		<md-card-content class="noPadding">
+		<md-card-content class="noPadding" >
 			<md-button class="md-icon-button noMargin menuToggler" ng-if="dimensions.width<600" ng-click="toggleMenu()">
 	        	<md-icon md-font-icon="fa fa-list"></md-icon>
 	        </md-button>
 	        
-			<div ag-grid="gridOptions" class="ag-theme-balham ag-noBorders ag-theme-knowage-discovery" style="width:100%;height: 100%;"></div>
+			<div ag-grid="gridOptions" class="ag-theme-balham ag-noBorders ag-theme-knowage-discovery" style="width:100%;height:100%;"></div>
 		</md-card-content>
 		<div ref="south" class="ag-theme-balham ag-noBorders">
-				<div>
-					<div class="ag-paging-panel ag-font-style">
-                		<span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
-                    		<span ref="lbFirstRowOnPage">{{(ngModel.settings.page-1)*ngModel.settings.pagination.itemsNumber+1}}</span> to <span ref="lbLastRowOnPage">{{maxPageNumber()}}</span> {{::translate.load('sbi.cockpit.widgets.table.pagination.of')}} <span ref="lbRecordCount">{{totalResults}}</span>
-                		</span>
-                		<span class="ag-paging-page-summary-panel">
-                    		<button type="button" class="ag-paging-button" ref="btFirst" ng-disabled="ngModel.settings.page==1" ng-click="first()">First</button>
-                    		<button type="button" class="ag-paging-button" ref="btPrevious" ng-disabled="ngModel.settings.page==1" ng-click="prev()">Previous</button>
-                    		{{::translate.load('sbi.cockpit.widgets.table.pagination.page')}} <span ref="lbCurrent">{{ngModel.settings.page}}</span> of <span ref="lbTotal">{{totalPageNumber()}}</span>
-                    		<button type="button" class="ag-paging-button" ref="btNext" ng-click="next()" ng-disabled="ngModel.settings.page==totalPageNumber()">Next</button>
-                    		<button type="button" class="ag-paging-button" ref="btLast" ng-disabled="ngModel.settings.page==totalPageNumber()" ng-click="last()">Last</button>
-                		</span>
-            		</div>
-            	</div>
-           </div>
+			<div>
+				<div class="ag-paging-panel ag-font-style">
+               		<span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
+                   		<span ref="lbFirstRowOnPage">{{(ngModel.settings.page-1)*ngModel.settings.pagination.itemsNumber+1}}</span> to <span ref="lbLastRowOnPage">{{maxPageNumber()}}</span> {{::translate.load('sbi.cockpit.widgets.table.pagination.of')}} <span ref="lbRecordCount">{{totalResults}}</span>
+               		</span>
+               		<span class="ag-paging-page-summary-panel">
+                   		<button type="button" class="ag-paging-button" ref="btFirst" ng-disabled="ngModel.settings.page==1" ng-click="first()">First</button>
+                   		<button type="button" class="ag-paging-button" ref="btPrevious" ng-disabled="ngModel.settings.page==1" ng-click="prev()">Previous</button>
+                   		{{::translate.load('sbi.cockpit.widgets.table.pagination.page')}} <span ref="lbCurrent">{{ngModel.settings.page}}</span> of <span ref="lbTotal">{{totalPageNumber()}}</span>
+                   		<button type="button" class="ag-paging-button" ref="btNext" ng-click="next()" ng-disabled="ngModel.settings.page==totalPageNumber()">Next</button>
+                   		<button type="button" class="ag-paging-button" ref="btLast" ng-disabled="ngModel.settings.page==totalPageNumber()" ng-click="last()">Last</button>
+               		</span>
+           		</div>
+           	</div>
+          </div>
 	</md-card>
 </div>

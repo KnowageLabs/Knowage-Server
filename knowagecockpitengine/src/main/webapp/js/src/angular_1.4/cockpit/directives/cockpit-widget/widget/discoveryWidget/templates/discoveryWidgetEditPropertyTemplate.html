@@ -30,14 +30,17 @@
 		   						</div>
 		   					</md-card-content>
 	   					</md-card>
-		   				<md-card ng-if="newModel.datasetId">
+		   				<md-card ng-show="newModel.datasetId">
 		   					<md-subheader class="noPadding">
 		   						<div layout="row" layout-align="start center" style="height:48px;">
 		   							<span layout-padding>Columns</span><span flex></span>
 		   						</div>
 		   					</md-subheader>
-		   					<md-card-content>
-		   						<div class="" ng-repeat="col in newModel.content.columnSelectedOfDataset" layout="row" layout-align="start center">
+		   					<md-card-content class="noPadding" style="padding:0;height:350px;">
+		   						<div class="kn-grid-container" style="padding:0;">
+		   							<div ag-grid="columnsGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage noPadding" style="width:100%;"></div>
+		   						</div>
+		   						<!-- div class="" ng-repeat="col in newModel.content.columnSelectedOfDataset" layout="row" layout-align="start center">
 	        						<md-input-container flex style="margin-bottom: 4px;">
 							        	<label>Column</label>
 							        	<md-select ng-model="col.name">
@@ -90,7 +93,7 @@
 										  <i class="fa fa-ban fa-stack-2x kn-danger" ng-class="{'facet-hidden':!col.fullTextSearch}"></i>
 										</span>
 							      	</md-button>
-		        				</div>
+		        				</div-->
 		   					</md-card-content>
 		   				</md-card>
 		        </md-tab>

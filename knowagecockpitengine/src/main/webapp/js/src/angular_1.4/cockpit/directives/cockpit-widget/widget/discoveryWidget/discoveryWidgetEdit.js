@@ -41,6 +41,47 @@ function discoveryWidgetEditControllerFunction(
 		{name:'MIN',available:['MEASURE','ATTRIBUTE']},
 		{name:'MAX',available:['MEASURE','ATTRIBUTE']}];
 	
+	$scope.columnsGrid = {
+		angularCompileRows: true,
+		enableColResize: false,
+        enableSorting: false,
+        enableFilter: false,
+        onGridReady: resizeColumns,
+        onGridSizeChanged: resizeColumns,
+        columnDefs: [{"headerName":"Column","field":"name"},
+    		{"headerName":"Alias","field":"alias","editable":true},
+    		{"headerName":"Type","field":"fieldType","editable":true,cellEditor:"agSelectCellEditor",cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}  },
+    		//{"headerName":"Aggregation Function","field":"aggregationSelected","editable":true,cellEditor:"agPopupSelectCellEditor",cellEditorParams: {values: ['COUNT','SUM','AVG','MIN','MAX']}},
+    		{"headerName":"Style","field":"style", cellStyle: {border:"none"},cellRenderer:styleRenderer,width: 50},
+    		{"headerName":"Aggregation","field":"aggregationSelected", cellRenderer:aggregationRenderer,width: 80},
+    		{"headerName":"Show Column","field":"visible",cellRenderer:checkboxRenderer,headerCheckboxSelection:true,width: 100},
+    		{"headerName":"Hide Facet","field":"facet",cellRenderer:checkboxRenderer,headerCheckboxSelection:true,width: 100},
+    		{"headerName":"fullTextSearch","field":"fullTextSearch",cellRenderer:checkboxRenderer,headerCheckboxSelection:true,width: 100}],
+    	rowData : $scope.newModel.content.columnSelectedOfDataset
+	};
+	
+	function resizeColumns(){
+		$scope.columnsGrid.api.sizeColumnsToFit();
+	}
+	
+	function checkboxRenderer(params){
+		return '<div style="display:inline-flex;justify-content:center;width:100%;"><input type="checkbox" ng-model="newModel.content.columnSelectedOfDataset['+params.rowIndex+'][\''+params.column.colId+'\']"/></div>'
+	}
+	
+	function styleRenderer(params){
+		return 	'<div style="display:inline-flex;justify-content:center;width:100%;"><md-button class="md-icon-button" ng-click="showSettingsDialog($event,'+params.rowIndex+')" ng-style="{\'background-color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style[\'background-color\']}">'+
+			  	'	<md-tooltip md-delay="500">Column Settings</md-tooltip>'+
+			  	'	<md-icon md-font-icon="fa fa-paint-brush" ng-style="{\'color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style.color}"></md-icon>'+
+			  	'</md-button></div>';
+	}
+	
+	function aggregationRenderer(params){
+		return '<div style="display:inline-flex;justify-content:center;width:100%;"><md-button class="md-icon-button" ng-click="showAggregationDialog($event,'+params.rowIndex+')" >'+
+			  	'	<md-tooltip md-delay="500">Column Settings</md-tooltip>'+
+			  	'	<md-icon md-font-icon="fa fa-pencil"></md-icon>'+
+			  	'</md-button></div>';
+	}
+	
 	if($scope.newModel.dataset && $scope.newModel.dataset.dsId){
 		$scope.local = cockpitModule_datasetServices.getDatasetById($scope.newModel.dataset.dsId);
 	}
@@ -83,6 +124,10 @@ function discoveryWidgetEditControllerFunction(
   		$scope.local = cockpitModule_datasetServices.getDatasetById($scope.newModel.dataset.dsId);
   		$scope.newModel.dataset.label = $scope.local.label;
   		$scope.newModel.content.columnSelectedOfDataset = $scope.local.metadata.fieldsMeta;
+  		for(var c in $scope.newModel.content.columnSelectedOfDataset){
+  			$scope.newModel.content.columnSelectedOfDataset[c].visible = true;
+  		}
+  		$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
   	}
   	
   	$scope.addColumn = function(){
@@ -98,25 +143,22 @@ function discoveryWidgetEditControllerFunction(
   		}
   	}
   	
-  	$scope.showSettingsDialog = function(ev,col){
+  	$scope.showSettingsDialog = function(ev,index){
 	    $mdDialog.show({
 	      controller: DialogContent,
 	      templateUrl: $scope.getTemplateUrl('discoveryWidgetColumnStyleTemplate'),
 	      parent: angular.element(document.body),
 	      targetEvent: ev,
 	      clickOutsideToClose:true,
-	      locals: {column:col}
+	      locals: {column:$scope.newModel.content.columnSelectedOfDataset[index],index:index}
 	    })
         .then(function(column) {
-        	for(var k in $scope.newModel.content.columnSelectedOfDataset){
-    			if($scope.newModel.content.columnSelectedOfDataset[k].name == column.name) $scope.newModel.content.columnSelectedOfDataset[k] = column;
-    		}
-        	
+        	$scope.newModel.content.columnSelectedOfDataset[index] = column;
         }, function() {
         });
   	}
   	
-  	function DialogContent($scope, $mdDialog, column){
+  	function DialogContent($scope, $mdDialog, column, index){
   		$scope.translate=sbiModule_translate;
   		$scope.selectedColumn = angular.copy(column);
   		$scope.textAlignments = [{text:'left',align:'flex-start'},{text:'center',align:'center'},{text:'right',align:'flex-end'}];
@@ -129,6 +171,21 @@ function discoveryWidgetEditControllerFunction(
   		$scope.save = function(){
   			$mdDialog.hide($scope.selectedColumn);
   		}
+  	}
+  	
+  	$scope.showAggregationDialog = function(ev,index){
+  		 $mdDialog.show({
+  		      controller: DialogContent,
+  		      templateUrl: $scope.getTemplateUrl('discoveryWidgetColumnStyleTemplate'),
+  		      parent: angular.element(document.body),
+  		      targetEvent: ev,
+  		      clickOutsideToClose:true,
+  		      locals: {column:$scope.newModel.content.columnSelectedOfDataset[index],index:index}
+  		    })
+  	        .then(function(column) {
+  	        	$scope.newModel.content.columnSelectedOfDataset[index] = column;
+  	        }, function() {
+  	        });
   	}
   	
   	//MAIN DIALOG BUTTONS
