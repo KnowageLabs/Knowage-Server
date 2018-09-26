@@ -509,9 +509,9 @@ public class ROutputExecutor {
 
 		configurationObj.put(DataSetConstants.FILE_TYPE, "CSV");
 		configurationObj.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, ",");
-		configurationObj.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, "'");
+		configurationObj.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, "\"");
 		configurationObj.put(DataSetConstants.FILE_NAME, spagoBiDatasetname + ".csv");
-		configurationObj.put("encoding", "UTF-8");
+		configurationObj.put(DataSetConstants.CSV_FILE_ENCODING, "UTF-8");
 		configurationObj.put(DataSetConstants.XSL_FILE_SKIP_ROWS, DataSetConstants.XSL_FILE_SKIP_ROWS);
 		configurationObj.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, DataSetConstants.XSL_FILE_LIMIT_ROWS);
 		configurationObj.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, DataSetConstants.XSL_FILE_SHEET_NUMBER);

@@ -17,12 +17,6 @@
  */
 package it.eng.spagobi.engines.datamining.compute;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
-import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
-import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -34,6 +28,12 @@ import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REXPUnknown;
 import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.REngineException;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
+import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class RDatasetsExecutor {
 
@@ -69,21 +69,26 @@ public class RDatasetsExecutor {
 				if (ds.getType().equalsIgnoreCase("file")) {
 
 					// tries to get it from user workspace
-					REXP datasetNameInR = re.parseAndEval(ds.getName());
-					if (datasetNameInR.isNull() || datasetNameInR instanceof REXPUnknown) {
+					REXP datasetNameInR = null;
+					try {
+						datasetNameInR = re.parseAndEval(ds.getName());
+					} catch (REngineException | REXPMismatchException e) {
+						logger.debug(e);
+					}
+					if (datasetNameInR == null || datasetNameInR.isNull() || datasetNameInR instanceof REXPUnknown) {
 						logger.debug("File ds: gets default DS");
 						Boolean defaultExists = getAndEvalDefaultDataset(ds);
 						if (!defaultExists) {
-
-							File fileDSDir = new File(DataMiningUtils.getUserResourcesPath(profile) + ds.getName());
+							String path = DataMiningUtils.getUserResourcesPath(profile) + ds.getName();
+							File fileDSDir = new File(path);
 							// /find file in dir
 							File[] dsfiles = fileDSDir.listFiles();
 							if (dsfiles != null && dsfiles.length != 0) {
 								String fileDSPath = dsfiles[0].getPath();
-
 								fileDSPath = fileDSPath.replaceAll("\\\\", "/");
 
 								String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + options + ");";
+								logger.debug("Evaluating: " + stringToEval);
 								REXP resultRead = re.parseAndEval(stringToEval);
 								if (resultRead.inherits("try-error")) {
 									logger.error("Impossibile to read the dataset with command: " + stringToEval);
@@ -91,7 +96,8 @@ public class RDatasetsExecutor {
 								} else {
 									logger.debug("Dataset " + ds.getName() + "sucessfull read");
 								}
-
+							} else {
+								logger.error("Unable to read file from path " + path);
 							}
 						}
 
@@ -115,6 +121,7 @@ public class RDatasetsExecutor {
 						stringToEval = ds.getName() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
 					}
 
+					logger.debug("Evaluating: " + stringToEval);
 					REXP resultRead = re.parseAndEval(stringToEval);
 					if (resultRead.inherits("try-error")) {
 						throw new SpagoBIRuntimeException("Impossibile to write the dataset with command: " + stringToEval + ". " + resultRead.asString());

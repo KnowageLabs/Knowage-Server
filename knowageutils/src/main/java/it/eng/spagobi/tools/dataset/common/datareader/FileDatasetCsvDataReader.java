@@ -17,12 +17,9 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-
 import java.util.Date;
 import java.util.Map;
 
@@ -202,26 +199,24 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 							if (NumberUtils.isNumber((String) field.getValue())) {
 								((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(BigDecimal.class);
 								field.setValue(new BigDecimal(String.valueOf(field.getValue())));
-							} 
-							//check if it's a number using comma decimal separator
+							}
+							// check if it's a number using comma decimal separator
 							else if (NumberUtils.isNumber(((String) field.getValue()).replace(",", "."))) {
 								((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(BigDecimal.class);
 								field.setValue(new BigDecimal(((String) field.getValue()).replace(",", ".")));
 							}
-							//check if it's a Date
+							// check if it's a Date
 							else {
-								DateTimeFormatter formatter = DateTimeFormat.forPattern(dateFormat);
 								try {
+									DateTimeFormatter formatter = DateTimeFormat.forPattern(dateFormat);
 									LocalDate localDate = LocalDate.parse((String) field.getValue(), formatter);
-									//Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+									// Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 									Date date = localDate.toDate();
 									((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(Date.class);
 									field.setValue(date);
-									
-								} catch (Exception ex){
-									logger.debug((String) field.getValue()+" is not a date");
+								} catch (Exception ex) {
+									logger.debug((String) field.getValue() + " is not a date");
 								}
-								
 							}
 						}
 						record.appendField(field);
