@@ -2032,9 +2032,15 @@
 
 	.cockpitSelectorWidget{
 		.grid {
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
+			.cSelWCheckContainer, md-radio-group {
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				md-radio-button {
+					margin-right: 16px;
+				}
+			}
+			
 			.kn-custom-checkbox-container, .grid .kn-custom-radio-container{
 				width: 150px;
 			}
@@ -2043,9 +2049,14 @@
 			}
 		}
 		.horizontal {
-			display: flex;
-			flex-direction: row;
-			align-items: center;
+			.cSelWCheckContainer, md-radio-group {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				md-radio-button {
+					margin-right: 16px;
+				}
+			}
 			&:focus {
 				outline: none;
 			}
