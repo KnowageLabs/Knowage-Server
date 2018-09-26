@@ -355,7 +355,7 @@ public class CrossTab {
 							Double value = Double.valueOf(String.valueOf(valueRecord.get(colName)));
 							String[] columnPathArray = columnPath.trim().split(PATH_SEPARATOR);
 							String[] entryParents = measuresSortKeysMap.get(entry.getKey()).getParentValue().split(PATH_SEPARATOR);
-							// add value to order only if parents are correct (usefull for deep levels)
+							// add value to order only if parents are correct (useful for deep levels)
 							if (columnPathArray != null && entryParents != null && Arrays.deepEquals(columnPathArray, entryParents)) {
 								String valueLbl = rowPath + columnPath + PATH_SEPARATOR + colName;
 								measureToOrderMap.put(valueLbl, value);
@@ -791,6 +791,7 @@ public class CrossTab {
 	private boolean addRecord(Node root, JSONObject datasetRecords, List<String> attributeFieldsName) {
 		boolean toReturn = false;
 		String valueField;
+		String descriptionField;
 		Node node;
 		Node nodeToCheck = root;
 		int nodePosition;
@@ -798,11 +799,12 @@ public class CrossTab {
 		for (int indexFields = 0; indexFields < attributeFieldsName.size(); indexFields++) {
 			try {
 				valueField = datasetRecords.getString(attributeFieldsName.get(indexFields));
+				descriptionField = valueField; //temporaneo: recuperare dinamicamente il valore
 			} catch (JSONException e) {
 				logger.error("Error getting the values from the dataset");
 				throw new SpagoBIEngineRuntimeException("Error getting the values from the dataset");
 			}
-			node = new Node(valueField);
+			node = new Node(valueField, descriptionField); //aggiungere il valore della colonna di ordinamento e chiamare il costruttore Node(value, description) dove value è il valore della colonna di ordinamento
 
 			nodePosition = nodeToCheck.getChilds().indexOf(node);
 			if (nodePosition < 0) {
@@ -2573,8 +2575,10 @@ public class CrossTab {
 		// sort measure on rows
 		for (int c = 0; c < totRows; c++) {
 			List valuesForCategory = getRowsCategoryValues(valuesCopy, rowsCount);
-			if (valuesForCategory.size() == 0)
+			if (valuesForCategory.size() == 0) {
+//				valuesToOrder.add(new Double("0")); //no value to order
 				continue;
+			}
 			if (valuesForCategory.size() > 0 && comparator != null) {
 				Collections.sort(valuesForCategory, comparator);
 			} else {

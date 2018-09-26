@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.utilities.json;
 
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +36,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
+
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -176,6 +176,32 @@ public class JSONUtils {
 
 	}
 
+
+	/**
+	 * Transform a jsonarray into a unique map with ALL json object properties
+	 *
+	 * @param object
+	 * @return
+	 * @throws JSONException
+	 */
+	public static List<Map<String, Object>> toMap(JSONArray object) throws JSONException {
+		List<Map<String, Object>> toReturn = new ArrayList<Map<String, Object>>();
+
+		if (object != null) {
+			for (int o=0; o < object.length(); o++) {
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				JSONObject obj = (JSONObject)object.get(o);
+				String[] names = JSONObject.getNames(obj);
+				for (int i = 0; i < names.length; i++) {
+					map.put(names[i], obj.get(names[i]));
+				}
+				toReturn.add(map);
+			}
+		}
+
+		return toReturn;
+
+	}
 	/**
 	 * Transform a map into a jsonObject
 	 *
