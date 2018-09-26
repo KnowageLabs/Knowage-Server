@@ -2038,11 +2038,15 @@
 				flex-wrap: wrap;
 				md-radio-button {
 					margin-right: 16px;
+					width: 150px;
+				}
+				md-checkbox {
+					width: 150px;
 				}
 			}
 			
 			.kn-custom-checkbox-container, .grid .kn-custom-radio-container{
-				width: 150px;
+				
 			}
 			&:focus {
 				outline: none;
