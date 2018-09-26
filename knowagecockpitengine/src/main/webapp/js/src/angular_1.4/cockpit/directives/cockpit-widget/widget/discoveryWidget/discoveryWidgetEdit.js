@@ -34,34 +34,31 @@ function discoveryWidgetEditControllerFunction(
 	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 	$scope.newModel = angular.copy(model);
 	$scope.textAlignments = [{text:'left',align:'flex-start'},{text:'center',align:'center'},{text:'right',align:'flex-end'}];
-	$scope.availableAggregations = [
-		{name:'COUNT',available:['MEASURE','ATTRIBUTE']},
-		{name:'SUM',available:['MEASURE']},
-		{name:'AVG',available:['MEASURE']},
-		{name:'MIN',available:['MEASURE','ATTRIBUTE']},
-		{name:'MAX',available:['MEASURE','ATTRIBUTE']}];
 	
 	$scope.columnsGrid = {
 		angularCompileRows: true,
 		enableColResize: false,
-        enableSorting: false,
+        enableSorting: true,
         enableFilter: false,
         onGridReady: resizeColumns,
         onGridSizeChanged: resizeColumns,
         columnDefs: [{"headerName":"Column","field":"name"},
-    		{"headerName":"Alias","field":"alias","editable":true},
-    		{"headerName":"Type","field":"fieldType","editable":true,cellEditor:"agSelectCellEditor",cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}  },
-    		//{"headerName":"Aggregation Function","field":"aggregationSelected","editable":true,cellEditor:"agPopupSelectCellEditor",cellEditorParams: {values: ['COUNT','SUM','AVG','MIN','MAX']}},
+    		{"headerName":"Alias","field":"alias","editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
+    		{"headerName":"Type","field":"fieldType","editable":true,cellRenderer:editableCell, cellClass: 'editableCell',cellEditor:"agSelectCellEditor",cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}  },
     		{"headerName":"Style","field":"style", cellStyle: {border:"none"},cellRenderer:styleRenderer,width: 50},
     		{"headerName":"Aggregation","field":"aggregationSelected", cellRenderer:aggregationRenderer,width: 80},
-    		{"headerName":"Show Column","field":"visible",cellRenderer:checkboxRenderer,headerCheckboxSelection:true,width: 100},
-    		{"headerName":"Hide Facet","field":"facet",cellRenderer:checkboxRenderer,headerCheckboxSelection:true,width: 100},
-    		{"headerName":"fullTextSearch","field":"fullTextSearch",cellRenderer:checkboxRenderer,headerCheckboxSelection:true,width: 100}],
+    		{"headerName":"Show Column","field":"visible",cellRenderer:checkboxRenderer,width: 100},
+    		{"headerName":"Show Facet","field":"facet",cellRenderer:checkboxRenderer,width: 100},
+    		{"headerName":"Enable text search","field":"fullTextSearch",cellRenderer:checkboxRenderer,width: 100}],
     	rowData : $scope.newModel.content.columnSelectedOfDataset
 	};
 	
 	function resizeColumns(){
 		$scope.columnsGrid.api.sizeColumnsToFit();
+	}
+	
+	function editableCell(params){
+		return '<i>'+params.value+'</i>';
 	}
 	
 	function checkboxRenderer(params){
@@ -126,6 +123,10 @@ function discoveryWidgetEditControllerFunction(
   		$scope.newModel.content.columnSelectedOfDataset = $scope.local.metadata.fieldsMeta;
   		for(var c in $scope.newModel.content.columnSelectedOfDataset){
   			$scope.newModel.content.columnSelectedOfDataset[c].visible = true;
+  			$scope.newModel.content.columnSelectedOfDataset[c].facet = true;
+  			$scope.newModel.content.columnSelectedOfDataset[c].fullTextSearch = true;
+  			$scope.newModel.content.columnSelectedOfDataset[c].aggregationSelected = 'COUNT';
+  			$scope.newModel.content.columnSelectedOfDataset[c].aggregationColumn = $scope.newModel.content.columnSelectedOfDataset[c].name;
   		}
   		$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
   	}
@@ -145,7 +146,7 @@ function discoveryWidgetEditControllerFunction(
   	
   	$scope.showSettingsDialog = function(ev,index){
 	    $mdDialog.show({
-	      controller: DialogContent,
+	      controller: settingsDialogContent,
 	      templateUrl: $scope.getTemplateUrl('discoveryWidgetColumnStyleTemplate'),
 	      parent: angular.element(document.body),
 	      targetEvent: ev,
@@ -158,7 +159,7 @@ function discoveryWidgetEditControllerFunction(
         });
   	}
   	
-  	function DialogContent($scope, $mdDialog, column, index){
+  	function settingsDialogContent($scope, $mdDialog, column, index){
   		$scope.translate=sbiModule_translate;
   		$scope.selectedColumn = angular.copy(column);
   		$scope.textAlignments = [{text:'left',align:'flex-start'},{text:'center',align:'center'},{text:'right',align:'flex-end'}];
@@ -175,17 +176,38 @@ function discoveryWidgetEditControllerFunction(
   	
   	$scope.showAggregationDialog = function(ev,index){
   		 $mdDialog.show({
-  		      controller: DialogContent,
-  		      templateUrl: $scope.getTemplateUrl('discoveryWidgetColumnStyleTemplate'),
+  		      controller: aggregationDialogContent,
+  		      templateUrl: $scope.getTemplateUrl('discoveryWidgetColumnAggregationTemplate'),
   		      parent: angular.element(document.body),
   		      targetEvent: ev,
   		      clickOutsideToClose:true,
-  		      locals: {column:$scope.newModel.content.columnSelectedOfDataset[index],index:index}
+  		      locals: {columns:$scope.newModel.content.columnSelectedOfDataset,index:index}
   		    })
   	        .then(function(column) {
   	        	$scope.newModel.content.columnSelectedOfDataset[index] = column;
   	        }, function() {
   	        });
+  	}
+  	
+  	function aggregationDialogContent($scope, $mdDialog, columns, index){
+  		$scope.translate=sbiModule_translate;
+  		$scope.columns = columns;
+  		$scope.selectedColumn = angular.copy(columns[index]);
+  		if(!$scope.selectedColumn.aggregationColumn) $scope.selectedColumn.aggregationColumn = $scope.selectedColumn.name;
+  		$scope.availableAggregations = [
+  			{name:'COUNT',available:['MEASURE','ATTRIBUTE']},
+  			{name:'SUM',available:['MEASURE']},
+  			{name:'AVG',available:['MEASURE']},
+  			{name:'MIN',available:['MEASURE','ATTRIBUTE']},
+  			{name:'MAX',available:['MEASURE','ATTRIBUTE']}];
+  		
+  		$scope.cancel = function(){
+  			$mdDialog.cancel();
+  		}
+  		
+  		$scope.save = function(){
+  			$mdDialog.hide($scope.selectedColumn);
+  		}
   	}
   	
   	//MAIN DIALOG BUTTONS

@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 	</md-card>
 </div>
 <div layout="row" class="discoveryCardsContainer">
-	<md-card flex class="discoveryFiltersCard" ng-class="{'sidenav':dimensions.width<600 && ngModel.settings.table.enabled, 'open': sidemenuOpened}" style="margin-top:0;">
+	<md-card class="discoveryFiltersCard" ng-class="{'sidenav':dimensions.width<600 && ngModel.settings.table.enabled, 'open': sidemenuOpened, 'flex-100':!ngModel.settings.table.enabled, 'flex-30':ngModel.settings.table.enabled}" style="margin-top:0;">
 		<md-card-content class="noPadding discoveryFiltersList">
 			<div class="md-dense noPadding noSelect">
         		<md-subheader ng-repeat-start="(key,facet) in facets" ng-if="isFacetVisible(key)" ng-click="facet.closed=!facet.closed" class="noPadding">
@@ -36,9 +36,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
        				</md-button>
         		</md-subheader>
         		<div ng-if="isFacetVisible(key)">
-        			<div class="kn-info" ng-if="!facet.closed && item.column_2==0">No facets available</div>
 	        		<div  
-	        			ng-if="!facet.closed && item.column_2>0" 
+	        			ng-if="!facet.closed" 
 	        			class="selectable discoveryFiltersItem" 
 	        			ng-repeat="item in facet.rows | orderBy:'column_2':true" 
 	        			ng-class="{'selected':template.configuration.filters[ngModel.dataset.label][key] == item.column_1}" 
@@ -56,7 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
       		</div>
 		</md-card-content>
 	</md-card>
-	<md-card flex="70" class="discoveryViewCard" ng-if="ngModel.settings.table && ngModel.settings.table.enabled" style="margin-top:0;">
+	<md-card flex class="discoveryViewCard" ng-if="ngModel.settings.table && ngModel.settings.table.enabled" style="margin-top:0;">
 		<md-card-content class="noPadding" >
 			<md-button class="md-icon-button noMargin menuToggler" ng-if="dimensions.width<600" ng-click="toggleMenu()">
 	        	<md-icon md-font-icon="fa fa-list"></md-icon>

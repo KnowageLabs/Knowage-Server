@@ -149,6 +149,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var columns = [];
 			$scope.ngModel.search.columns = [];
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
+				
 				if($scope.ngModel.content.columnSelectedOfDataset[c].fullTextSearch){
 					$scope.ngModel.search.columns.push($scope.ngModel.content.columnSelectedOfDataset[c].name);
 				}
