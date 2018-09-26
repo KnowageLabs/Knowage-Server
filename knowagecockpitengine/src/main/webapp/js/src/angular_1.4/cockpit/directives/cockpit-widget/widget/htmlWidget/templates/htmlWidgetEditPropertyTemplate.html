@@ -13,11 +13,11 @@
 					<md-content class="noPadding" layout="row" layout-fill>
 						<div layout="column" flex>
 							<md-card>
-								<md-toolbar class="ternaryToolbar"> 
+								<md-toolbar class="ternaryToolbar" ng-click="toggleCss()"> 
 							      <div class="md-toolbar-tools">
 							        <h2>{{translate.load('kn.cockpit.html.css')}}</h2>
 							        <span flex></span>
-							        <md-button class="md-icon-button" ng-click="toggleCss()">
+							        <md-button class="md-icon-button" >
 							        	<md-icon ng-class="{'fa':true,'fa-chevron-down':!newModel.cssOpened,'fa-chevron-up':newModel.cssOpened}"></md-icon>
 							        </md-button>
 							      </div>

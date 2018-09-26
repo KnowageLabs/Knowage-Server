@@ -672,7 +672,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
 			params += "&limit=" + limitRows.rows;
 		}
-
+		
 		var filters;
 		if(ngModel.filters){
 			filters = ngModel.filters;
