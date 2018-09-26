@@ -114,17 +114,17 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		logger.debug("IN");
 
 		// the sort options
-		Map<String, Object> columnsSortKeys;
-		Map<String, Object> rowsSortKeys;
-		Map<String, Object> measuresSortKeys;
+		List<Map<String, Object>> columnsSortKeys;
+		List<Map<String, Object>> rowsSortKeys;
+		List<Map<String, Object>> measuresSortKeys;
 		// the id of the crosstab in the client configuration array
 		Integer myGlobalId;
 
 		try {
 			JSONObject object = RestUtilities.readBodyAsJSONObject(servletRequest);
-			JSONObject columnsSortKeysJo = object.optJSONObject("columnsSortKeys");
-			JSONObject rowsSortKeysJo = object.optJSONObject("rowsSortKeys");
-			JSONObject measuresSortKeysJo = object.optJSONObject("measuresSortKeys");
+			JSONArray columnsSortKeysJo = object.optJSONArray("columnsSortKeys");
+			JSONArray rowsSortKeysJo = object.optJSONArray("rowsSortKeys");
+			JSONArray measuresSortKeysJo = object.optJSONArray("measuresSortKeys");
 			myGlobalId = object.optInt("myGlobalId");
 			columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
 			rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
@@ -155,9 +155,9 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		logger.debug("IN");
 
 		// the sort options
-		Map<String, Object> columnsSortKeys;
-		Map<String, Object> rowsSortKeys;
-		Map<String, Object> measuresSortKeys;
+		List<Map<String, Object>> columnsSortKeys;
+		List<Map<String, Object>> rowsSortKeys;
+		List<Map<String, Object>> measuresSortKeys;
 
 		// the id of the crosstab in the client configuration array
 		Integer myGlobalId;
@@ -179,15 +179,14 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);
 			JSONObject crosstabStyleJo = (request.isNull("style")) ? new JSONObject() : request.getJSONObject("style");
 			crosstabDefinitionConfigJo.put("style", crosstabStyleJo);
-			// String crosstabDefinition = crosstabDefinitionJo.toString();
-			// String crosstabDefinition = request.getJSONObject("crosstabDefinition").toString();
+
 			JSONObject crosstabDefinition = request.getJSONObject("crosstabDefinition");
 
 			JSONObject sortOptions = request.getJSONObject("sortOptions");
 
-			JSONObject columnsSortKeysJo = sortOptions.optJSONObject("columnsSortKeys");
-			JSONObject rowsSortKeysJo = sortOptions.optJSONObject("rowsSortKeys");
-			JSONObject measuresSortKeysJo = sortOptions.optJSONObject("measuresSortKeys");
+			JSONArray columnsSortKeysJo = sortOptions.optJSONArray("columnsSortKeys");
+			JSONArray rowsSortKeysJo = sortOptions.optJSONArray("rowsSortKeys");
+			JSONArray measuresSortKeysJo = sortOptions.optJSONArray("measuresSortKeys");
 			myGlobalId = sortOptions.optInt("myGlobalId");
 			columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
 			rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
@@ -233,6 +232,23 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		if (key != null)
 			sortKeys.put(key, nc);
 
+		return sortKeys;
+	}
+
+	private Map<Integer, NodeComparator> toComparatorMap(List<Map<String, Object>> sortKeyMap) {
+		Map<Integer, NodeComparator> sortKeys = new HashMap<Integer, NodeComparator>();
+
+		for (int s=0; s<sortKeyMap.size(); s++) {
+			Map <String, Object> sMap = sortKeyMap.get(s);
+			NodeComparator nc = new NodeComparator();
+
+			nc.setParentValue((String)sMap.get("parentValue"));
+			nc.setMeasureLabel((String)sMap.get("measureLabel"));
+			if (sMap.get("direction")!= null) {
+				nc.setDirection(Integer.valueOf(sMap.get("direction").toString()));
+				sortKeys.put(Integer.valueOf(sMap.get("column").toString()), nc);
+			}
+		}
 		return sortKeys;
 	}
 

@@ -287,11 +287,12 @@ public class CrossTabHTMLSerializer {
 					}
 
 					if (isLevel) {
-						aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + i + "','1'," + myGlobalId + ")");
+						int idxEl = i/2; // just for columns headers divide the position of cell in couple (name + value)
+						aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + idxEl + "','1'," + myGlobalId + ")");
 
 						Integer direction = 1;
-						if (columnsSortKeysMap != null && columnsSortKeysMap.get(i) != null) {
-							direction = columnsSortKeysMap.get(i).getDirection();
+						if (columnsSortKeysMap != null && columnsSortKeysMap.get(idxEl) != null) {
+							direction = columnsSortKeysMap.get(idxEl).getDirection();
 						}
 
 						if (parentStyle != null)
@@ -305,12 +306,32 @@ public class CrossTabHTMLSerializer {
 						if (parentIsLevel) {
 							aColumn.setAttribute(NG_CLICK_ATTRIBUTE,
 									"selectRow('" + crossTab.getColumnsRoot().getLevel(i).get(0).getValue() + "','" + text + "')");
-							levelValues.add(text);
 							if (crossTab.getCrosstabDefinition().isMeasuresOnColumns() && i + 2 == levels) {
+//								String completeText = CrossTab.PATH_SEPARATOR;
+//								if (aNode.getParentNode() != null && !aNode.getParentNode().getDescription().equalsIgnoreCase("rootC")
+//										&& !aNode.getParentNode().getDescription().equalsIgnoreCase("rootR")) {
+//									completeText += aNode.getParentNode().getDescription() + CrossTab.PATH_SEPARATOR;
+//								}
+//								completeText += text;
+//								lastLevelValues.add(completeText);
+
 								String completeText = CrossTab.PATH_SEPARATOR;
-								if (aNode.getParentNode() != null && !aNode.getParentNode().getDescription().equalsIgnoreCase("rootC")
-										&& !aNode.getParentNode().getDescription().equalsIgnoreCase("rootR")) {
-									completeText += aNode.getParentNode().getDescription() + CrossTab.PATH_SEPARATOR;
+								Node tmpNode = aNode;
+								int idx = 0;
+								while (idx < (levels-1)/2) {
+									Node parentNode = tmpNode.getParentNode();
+									int maxParentIdx = ((levels-1)/2)-idx;
+									while (maxParentIdx > 1) {
+										if (parentNode != null && parentNode.getParentNode() != null) {
+											parentNode = parentNode.getParentNode();
+										}
+										maxParentIdx--;
+									}
+									if (parentNode != null && !parentNode.getDescription().equalsIgnoreCase("rootC")
+											&& !parentNode.getDescription().equalsIgnoreCase("rootR")) {
+										completeText += parentNode.getDescription() + CrossTab.PATH_SEPARATOR;
+									}
+									idx++;
 								}
 								completeText += text;
 								lastLevelValues.add(completeText);
