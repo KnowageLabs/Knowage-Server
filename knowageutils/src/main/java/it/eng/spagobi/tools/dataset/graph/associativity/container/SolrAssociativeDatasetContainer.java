@@ -54,8 +54,6 @@ import java.util.Set;
 
 public class SolrAssociativeDatasetContainer extends AssociativeDatasetContainer {
 
-	private static String PROXY_HOST = System.getProperty("http.proxyHost");
-	private static String PROXY_PORT = System.getProperty("http.proxyPort");
 	private static String PROXY_USER = System.getProperty("http.proxyUser");
 	private static String PROXY_PASSWORD = System.getProperty("http.proxyPassword");
 

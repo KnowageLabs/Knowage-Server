@@ -183,7 +183,7 @@ public class SolrDataSet extends RESTDataSet {
                 CompositeSolrDataReader compositeSolrDataReader = new CompositeSolrDataReader((SolrDataReader)dataReader);
 
                 for(int i = 0; i < facets.length; i++) {
-                    FacetSolrDataReader facetSolrDataReader = new FacetSolrDataReader("$.facet_counts.facet_fields." + facets[i] + ".[*]");
+                    FacetSolrDataReader facetSolrDataReader = new FacetSolrDataReader("$.facets.facet_fields." + facets[i] + ".buskets.[*]");
                     facetSolrDataReader.setFacetField(facets[i]);
                     facetSolrDataReader.setCalculateResultNumberEnabled(true);
                     compositeSolrDataReader.addFacetSolrDataReader(facetSolrDataReader);

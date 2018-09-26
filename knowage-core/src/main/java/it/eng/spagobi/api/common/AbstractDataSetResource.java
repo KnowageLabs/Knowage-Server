@@ -232,21 +232,24 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
         return projections;
     }
 
-    private Projection getProjectionWithFunct(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName, String functName)
+    private Projection getProjectionWithFunct (IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName, String functName)
             throws JSONException {
         String columnName = getColumnName(jsonObject, columnAliasToName);
         String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
         IAggregationFunction function = AggregationFunctions.get(functName);
-        Projection projection = new Projection(function, dataSet, columnName, columnAlias);
+        String functionColumnName = jsonObject.optString("functColumnName");
+        Projection projection;
+        if(functionColumnName != null) {
+            Projection aggregatedProjection = new Projection(dataSet, functionColumnName);
+            projection = new CoupledProjection(function, aggregatedProjection, dataSet, columnName, columnAlias);
+        } else {
+            projection = new Projection(function, dataSet, columnName, columnAlias);
+        }
         return projection;
     }
 
     private Projection getProjection(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
-        String columnName = getColumnName(jsonObject, columnAliasToName);
-        String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
-        IAggregationFunction function = AggregationFunctions.get(jsonObject.optString("funct"));
-        Projection projection = new Projection(function, dataSet, columnName, columnAlias);
-        return projection;
+        return getProjectionWithFunct(dataSet, jsonObject, columnAliasToName, jsonObject.optString("funct"));
     }
 
     private String getColumnName(JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {

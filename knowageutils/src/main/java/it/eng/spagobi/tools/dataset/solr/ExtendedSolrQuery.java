@@ -49,6 +49,28 @@ public class ExtendedSolrQuery extends SolrQuery {
         return this;
     }
 
+    public ExtendedSolrQuery fields(List<Projection> projections) {
+        if(!projections.isEmpty()) {
+            setFields(null);
+            for (Projection projection : projections) {
+                addField(projection.getName());
+            }
+        }
+        return this;
+    }
+
+    public ExtendedSolrQuery jsonFacets(List<Projection> groups) {
+        /*if (!groups.isEmpty()) {
+            String[] facetFields = new String[groups.size()];
+            for(int i = 0; i < groups.size(); i++) {
+                facetFields[i] = groups.get(i).getName();
+            }
+            add("json.facet", "...");
+        }
+        return this;*/
+        return facets(groups);
+    }
+
     public ExtendedSolrQuery facets(List<Projection> groups) {
         if (!groups.isEmpty()) {
             String[] facetFields = new String[groups.size()];
@@ -56,16 +78,6 @@ public class ExtendedSolrQuery extends SolrQuery {
                 facetFields[i] = groups.get(i).getName();
             }
             addFacetField(facetFields);
-        }
-        return this;
-    }
-
-    public ExtendedSolrQuery fields(List<Projection> projections) {
-        if(!projections.isEmpty()) {
-            setFields(null);
-            for (Projection projection : projections) {
-                addField(projection.getName());
-            }
         }
         return this;
     }

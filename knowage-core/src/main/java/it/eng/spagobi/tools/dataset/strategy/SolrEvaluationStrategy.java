@@ -51,7 +51,7 @@ class SolrEvaluationStrategy extends AbstractEvaluationStrategy {
     @Override
     protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
         SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
-        SolrQuery solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(projections).sorts(sortings).filter(filter).facets(groups);
+        SolrQuery solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(projections).sorts(sortings).filter(filter).jsonFacets(groups);
         solrDataSet.setSolrQuery(solrQuery);
         dataSet.loadData(offset, fetchSize, maxRowCount);
         IDataStore dataStore = dataSet.getDataStore();
