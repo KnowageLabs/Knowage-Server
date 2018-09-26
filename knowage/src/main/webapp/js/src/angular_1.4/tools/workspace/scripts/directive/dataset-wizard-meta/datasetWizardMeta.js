@@ -121,7 +121,8 @@ function datasetWizardMetaController($scope,$mdDialog,sbiModule_translate){
     			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="string".toLowerCase()||
     			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="double".toLowerCase()||
     			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="integer".toLowerCase()||
-    			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="date".toLowerCase())
+    			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="date".toLowerCase() ||
+    			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="timestamp".toLowerCase())
     				 row.dsMetaValue.push(this.dsMetaValue[i]);
     			
     			}

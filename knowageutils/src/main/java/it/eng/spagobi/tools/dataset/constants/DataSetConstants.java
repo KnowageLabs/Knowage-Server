@@ -148,6 +148,7 @@ public class DataSetConstants {
 	public static final String XSL_FILE_SHEET_NUMBER = "xslSheetNumber";
 
 	public static final String FILE_DATE_FORMAT = "dateFormat";
+	public static final String FILE_TIMESTAMP_FORMAT = "timestampFormat";
 
 	public static final Map<String, String> name2Code;
 
