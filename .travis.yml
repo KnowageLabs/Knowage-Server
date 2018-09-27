@@ -1,0 +1,11 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+script:
+  - mvn -f knowage-ce-parent/pom.xml clean compile
+
+cache:
+  directories:
+  - $HOME/.m2
