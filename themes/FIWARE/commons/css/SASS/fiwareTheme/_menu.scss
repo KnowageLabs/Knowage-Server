@@ -1,0 +1,111 @@
+#menuAppAdmin, #menuApp{
+	#contieniLinkAdmin {
+		border-radius: 0;
+		background: $toolbarButtonColor;
+		h4 {
+			background-color: $baseColor;
+		}	
+	}
+	.iconBar>li>a:focus, .iconBar>li>a:hover {
+		background-color: $secondaryColor;
+	}
+	.sidebar-inverse{
+		background-color: $ternaryColor;
+
+		.sidebar-nav {
+
+		} 
+		.sidebar-nav > .dropdown > .dropdown-menu.open {
+			background-color: $secondaryColor;
+			li > a {
+				color: white;
+				i {
+					color: white;
+				}
+				&:hover {
+					i {
+						color: $ternaryColor;
+					}
+				}
+			} 
+			li:hover > a, li > a:hover, li > a:active {
+				background-color: darken($secondaryColor, 15%) !important;
+			}
+		}
+		.sidebar-header {
+			&.header-cover {
+				background-image: url('../img/fiware/logoHoriz.png');
+			}
+			background-color: $ternaryColor;
+			.sidebar-brand {
+				color: $smallTextColor;
+			}
+		}
+	}
+
+	.overlayButtonBar {
+		top: 0;
+		cursor: auto;
+		left: 0;
+		background-color: $ternaryColor;
+		border-radius: 0;
+    	width: 40px;
+    	height: 100%;
+    	display: flex;
+    	flex-direction: column;
+    	align-items: center;
+		.logoKnowage {
+			margin: 0;
+			width: 36px;
+			height: 150px;
+			display: block;
+			opacity: 1;
+			background-image: url('../img/fiware/logotipoVert.png');
+			background-repeat: none;
+			img {
+				display: none;
+			}
+		}
+	}
+	.iconBarAdmin {
+		li > a i {
+			color: $baseColor;
+		}
+		li > a:hover,  li > a:active, li > a:focus {
+			background-color: $secondaryColor;
+			i {
+				color: white;
+			}
+		}
+	}
+	#customMenu > li > a {
+		color: $smallTextColor;
+		i {
+			color: $smallTextColor;
+		}
+		.caretPosition {
+			color: $smallTextColor !important;
+		}
+		&:hover {
+			color: white;
+			i {
+				color: white;
+			}
+			.caretPosition {
+				color: white !important;
+			}
+		}
+	}
+}
+
+.landingPageEndUser, .landingPageAdmin {
+	background: {
+		image: url('../img/fiware/fiwareBg.png');
+		size: cover;
+
+	}
+	.logo, .layer, #myCarousel, .carousel{
+		display: none;
+	}
+
+}

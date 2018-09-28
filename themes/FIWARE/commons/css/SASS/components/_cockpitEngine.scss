@@ -1,0 +1,1242 @@
+.kn-cockpit {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: rgba(240,240,240,1);
+    background-image: #fff;
+    
+    cockpit-image-widget {
+    	&.fadeOut {
+        	opacity: 1 !important;
+    	}
+    	width:100%;
+		height:100%;
+    	.widgetImageDiv
+    	{	
+	    	width:100%;
+			height:100%;
+			background-repeat: no-repeat;  
+			position: relative;  
+	    }
+    }
+    
+    
+    
+	cockpit-widget{
+		&>li{
+			&.fullScreenWidget{
+				width:100%!important;
+				height:100%!important;
+				left: 0!important;
+				top: 0!important;
+				position: relative;
+				z-index: 9999 !important;
+			}
+			&>md-card{
+				&>md-card-content{
+					&.fadeOut{
+						&>cockpit-document-widget>iframe{
+							display:none;
+						}
+						&>cockpit-chart-widget iframe{
+							display:none;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	cockpit-chart-widget {
+		/* d3 binded classes for the chart widgets */
+		.d3chartclass {
+			position: relative;
+			.tooltip {
+				position: absolute !important;
+			}
+		}
+	}
+
+	cockpit-table-widget {
+		table>thead {
+			background-color: transparent;
+		}
+		table>tbody>tr:hover{
+		    background-color: inherit;
+		}
+		table {
+			tbody {
+				td {
+					&:hover {
+						transition:0.2s linear background-color;
+						background-color: lighten($secondaryColor,10%);
+					}
+				}
+			}
+		}
+		
+	}
+
+	.noWidget {
+		position: absolute;
+	    width: 400px;
+	    background-color: #e5e5e5;
+	    color: #8a8a8a;
+	    top: calc(50% - 75px);
+	    font-size: $smallFontSize;
+	    text-transform: uppercase;
+	    text-align: center;
+	    left: calc(50% - 200px);
+	    z-index: 1000;
+	}
+	
+	
+    .md-button.md-knowage-theme.md-fab {
+        z-index: 998;
+        top: 0;
+    }
+    
+    .selectedMeasure{
+	    background-color: #3b678c;
+	    color: white;
+    }
+    
+    .sheetMenuPanel{
+        width: 200px;
+    	margin-left: -24px;
+    	box-shadow : 0 1px 5px 0 rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+    	md-list{
+    		background-color: white;
+    	}
+    }
+    .cockpitSheetTabsHook {
+    	md-tabs-canvas {
+    		overflow: visible;
+    		.md-tab {
+    			margin-right: 2px;
+    		}
+    	}
+    	md-tabs-wrapper {
+    		right: initial;
+    	}
+    }
+    
+	.rtchips{
+		color: #3b678c;
+		text-decoration: underline;
+	}
+	
+    .openSheetMenuIconButton{
+    	position: absolute;
+	    color: black;
+	    margin: 0;
+	    padding: 0;
+	    top: 8px;
+	    width: 24px;
+	    height: 24px;
+	    min-height: 24px;
+    	&:hover{
+    	    background-color: rgba(158,158,158,0.2)!important;
+    		}
+    }
+    
+    .overlayGray {
+    	background:rgba(10, 10, 10, 0.58);
+    }
+    .width80 {
+   		width:80%;
+   		}
+   	.overflowAuto {
+   		overflow: auto;
+   	}
+    .toolbarFab {
+        position:absolute;
+        top: 0;
+        right: 10px;
+        md-icon {
+            vertical-align: baseline;
+        }
+    }
+
+    md-toolbar {
+        &.miniToolbar {
+            background-color: $baseColor;
+            height: 36px;
+            min-height: 36px;
+            line-height: 36px;
+
+            .md-toolbar-tools {
+                height: 36px;
+            }
+        }
+    }
+
+    .custom-chips {
+        display: block;
+        font-size: 12px;
+        padding: 0 0 8px 3px;
+        vertical-align: middle;
+        md-chip{
+            cursor: default;
+            border-radius: 16px;
+            display: block;
+            height: 32px;
+            line-height: 32px;
+            margin: 8px 8px 0 0;
+            padding: 0 12px;
+            float: left;
+            box-sizing: border-box;
+            max-width: 100%;
+            position: relative;
+            background: rgb(224,224,224);
+            color: rgb(66,66,66);
+        }
+    }
+	.customTableWidgetConfiguration {
+	    position: absolute;
+   		width: 90%;
+   		height: 90%;
+   		margin: 2% 5%;
+		&.textWidget{
+			wysiwyg-edit{
+				.tinyeditor {
+					height: 100%;
+					padding: 0;
+					border: 0;
+					.sizer{
+						height: calc( 100% - 34px);
+						.resizer{
+							display:none;
+						}
+					}
+					.tinyeditor-footer{
+						display:none;
+					}
+				}
+			}
+		}
+		&.pivotTableWidget{
+			.pivotTableDesigner{
+				padding:0px;
+				.measureAttributeTab{
+					min-width:250px;
+				}
+				.contentElementTab{
+					.contentElementBox{
+						border: $cockpitDefaultBorder;
+						margin: 5px;
+						}
+				}
+				md-list[dnd-list]{
+					min-height:42px;
+				}
+				
+				.dropZone{
+					border: 2px dashed lightslategray;
+				}
+				
+				.dndDraggingSource{
+					display:none;
+				}
+						
+				.dndPlaceholder{
+					background-color:rgba(59, 103, 140, 0.44);
+				}
+				
+			}
+			.dndDragging{
+					background-color: #eceff1 !important;
+					opacity: 1  !important;
+					box-shadow: 0 1px 8px 0 rgba(0,0,0,.2),0 3px 4px 0 rgba(0,0,0,.14),0 3px 3px -2px rgba(0,0,0,.12)  !important;
+				}
+		}
+	}
+    .md-button.md-knowage-theme.md-fab:not([disabled]):hover {
+        background-color: darken($baseColor, 15%);
+    }
+
+    md-fab-toolbar {
+        position: absolute;
+        right: 0;
+        width: 100%;
+
+        .md-fab-toolbar-wrapper {
+            height: 48px;
+        }
+
+        md-toolbar {
+            .md-toolbar-tools {
+                span {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    /* OPENED TOOLBAR */
+    md-fab-toolbar.md-is-open {
+        background-color: $baseColor !important;
+
+        .md-button.md-knowage-theme.md-fab {
+            background-color: $baseColor !important;
+        }
+
+        position: relative;
+
+        .md-fab-toolbar-wrapper {
+            height: 40px;
+            background-color: $baseColor;
+        }
+
+        md-toolbar {
+            height: 40px;
+            background-color: $baseColor;
+            min-height: 40px;
+
+            .md-toolbar-tools {
+                height: 40px;
+
+                span {
+                    display: inline-flex;
+                }
+            }
+        }
+    }
+
+    .fadeOut {
+        transition: 0.3s linear all;
+        opacity: 1;
+    }
+
+    .fadeIn {
+        transition: 0.9s linear all;
+        opacity: 1;
+    }
+
+    .gridster {
+		&.gridster-mobile{
+			width: calc(100% - 20px);
+		}
+		&.cockpitEditMode{
+			background-size:40px 10px;
+			height: 100% !important;
+			border: $cockpitDefaultBorder;
+			background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 40px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 10px);
+			//background: url("../../sbi_default/img/grid.png") repeat 0 0 transparent;
+			.showActionButtonHandler {
+				opacity: .4 !important;
+			}
+		}
+        
+		//min-height: calc(100% - 20px);
+
+        .gridster-item{
+			 md-card.md-knowage-theme md-card-title {
+				padding: 0;
+				margin: 0;
+				min-height: 40px;
+				md-toolbar.md-knowage-theme {
+					background-color: transparent !important;
+					color: $baseColor !important;
+					min-height: 32px;
+					.md-toolbar-tools {
+					   height: 32px; 
+					}
+				}
+			}
+			
+			&.leftPosition .showActionButtonHandler {
+				left: 0;
+			}
+			 
+			
+			&.leftPosition .widgetActionButton{
+					border-right:0px !important;
+				    box-shadow: none!important;
+					left: -54px;
+					-ms-flex-direction: column;
+					flex-direction: column;
+					box-sizing: border-box;
+					display: -ms-flexbox;
+					display: flex;
+				}
+			&.rightPosition .widgetActionButton{
+				border-left:0px !important;
+				box-shadow: none!important;
+				right: -54px;
+				-ms-flex-direction: column;
+				flex-direction: column;
+				box-sizing: border-box;
+				display: -ms-flexbox;
+				display: flex;
+			}
+			&.topPosition .widgetActionButton{
+				border-left: 0px !important;
+				border-bottom: 0px !important;
+				box-shadow: none!important;
+				right: 0px;
+				left: inherit;
+				-ms-flex-direction: row;
+				flex-direction: row;
+				box-sizing: border-box;
+				display: -ms-flexbox;
+				display: flex!important;
+			}
+        }
+
+        .gridster-item md-card-title md-toolbar .md-toolbar-tools button, md-toolbar.miniToolbar .md-toolbar-tools button {
+            height: 42px;
+            width: 42px;
+        }
+    }
+
+    .dragCursor {
+        cursor: move;
+    }
+ 
+    /* CUSTOM CARDS */
+
+
+    md-card.md-knowage-theme {
+        md-card-title {
+            padding:$standardPadding;
+            span.md-headline {
+                font-size: $headerFontSize;
+                color: $baseColor;
+            }
+        }
+
+        &.placedWidget {
+            box-shadow: none;
+			position:relative;
+            border-radius: 0;
+			&.editWidgetMode{
+				border: 1px dashed $bordersColor;
+			}
+            
+            md-card-title{
+           	 flex: inherit;
+            }
+            &:hover {
+            	.showActionButtonHandler {
+            		opacity: 1 !important;
+            	}
+            }
+			.showActionButtonHandler{
+			    position: absolute;
+			    right: 10px;
+			    opacity: 0;
+				width: 40px;
+				height: 40px;
+				z-index: 9999;
+				button:hover {
+					background-color: rgba($ternaryColor, 0.5);
+				}
+			}
+			
+			.widgetActionButton{
+				position:absolute;
+				background-color: white;
+				top: -1px;
+				border: $cockpitDefaultBorder;
+				
+			}    	
+			.widgetActionButton>.md-button{
+				z-index: 10;
+			}
+    
+
+            md-toolbar.md-knowage-theme {
+                background-color: transparent;
+                color: $baseColor;
+
+                .md-toolbar-tools {
+                    padding: 0 8px;
+                    span.editWidgetNameSpan{
+						z-index: 2;
+    					cursor: text;
+    					min-height:1em;
+    					min-width:1em;
+					}
+					.editWidgetNameInput>.md-button{
+						&.saveEditText>md-icon{
+							color:green;
+						}
+						&.cancelEditText>md-icon{
+							color:red;
+						}
+					}
+					
+                    span {
+                        font-weight: 200;
+                        font-size: 14px;
+                    }
+                    md-icon {
+                        color: $baseColor;
+                    }
+                }
+            }
+            &.shadowedBox {
+                box-shadow: 0px 2px 2px #ccc;
+            }
+            &.noTitle {
+                md-card-title {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    /* WIDGET CARDS */
+    .searchWidget {
+        border: 0;
+        border-bottom: 3px solid white;
+        background-color: transparent;
+        color: white;
+        font-family: "Roboto";
+        height: 40px;
+    }
+    md-card.md-knowage-theme.widget {
+        md-card-title {
+            margin: 16px;
+        }
+        md-card-content {
+            background-size: contain;
+            min-height: 100px;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+        max-height: 250px;
+        height: 250px;
+    }
+    
+    div.associationBox{
+		padding: 5px;
+    	margin: 10px;
+    	border: 2px solid gray;   
+    	&.editingAssociation{
+	    	border: 2px dashed gray;   
+    	}
+		.associationsArrow{
+		    line-height: 22px;
+	    	padding: 0px 10px;
+			color: blue;
+		}
+    }
+	md-card.md-knowage-theme.associationCard {
+         md-card-content {
+			md-toolbar.documentAssociationToolbar{
+				background-color: $fabPrimaryColor !important
+			}
+         	md-content{
+            	background-color: white;
+            	md-list{
+            		md-list-item{
+            			&.selectedRow{
+            			    background-color: rgb(63, 102, 143);
+            			    color: white;
+            			}
+						span{
+							width : 100%;
+							p{
+								&.metatype{
+									font-weight: bold;
+								}
+								&.metaname{
+									overflow: hidden;
+									text-overflow: ellipsis;
+									white-space: nowrap;
+								}
+							}
+						}
+	            		min-height: 36px;
+	    				height: 36px;	
+            		}
+            		
+            	}
+            } 
+		}
+		width: 250px; 
+		min-width: 250px; 
+    }
+
+    md-tab-content{
+        md-content.md-knowage-theme {
+            background-color: $listBackground;
+        }
+    }
+
+    .greyListItem {
+        background-color: $detailBackground;
+        border-top: 1px solid $listBackground;
+    }
+
+	md-tabs.cockpitSheetTabs>md-tabs-wrapper{
+		margin-left: 50px;
+	}
+	
+	.md-button.addSheetTabButton{
+	    bottom: 0;
+    	position: absolute;
+    	min-width: 40px;
+    	}
+    	
+	.selectedImage{
+		background-color:#a9c3db;
+	}
+	.noClickCursor{
+		cursor: default;
+	}
+	.selectdemoSelectHeader.md-knowage-theme {
+        .demo-select-header {
+            .demo-header-searchbox {
+                margin-left: 10px;
+                line-height: 30px;
+                min-width: calc(100% - 35px);
+                padding-left: 10px;
+            }
+        }
+    }
+
+	 
+	cockpit-static-pivot-table-widget{
+		@extend angular-table;
+		overflow:auto;
+		
+		&[multi-select] table>thead>tr>th:nth-child(2),&:not(multi-select) table>thead>tr>th:nth-child(1),
+		&[multi-select]  table>tbody>tr>td:nth-child(2),&:not(multi-select) table>tbody>tr>td:nth-child(1),
+		&:not(multi-select) table>tbody>tr>td:nth-child(n+1):nth-last-child(n+2){
+			padding: 0 !important;
+		}
+	 &>table{
+			border-collapse: collapse;
+			width:auto;
+			border-bottom: 1px solid $tableLineSeparator;
+			tbody{
+				tr{
+					height: $angularTableDenseTRHeight;
+					td{
+					
+						&.level{
+							text-align: center;
+							font-size: 16px;
+							color: #3b678c;
+							font-weight: 600;
+							table{
+								table-layout:auto;
+								display: initial;
+							}
+							.crosstab-header-text{
+								font-family: Roboto,"Helvetica Neue",sans-serif;
+								text-align: center;
+								font-size: $headerFontSize;
+								color: black;
+								font-weight: 600;								
+							}
+							.sortIcon{
+								line-height: 33px;
+								padding: 0!important;
+							}
+							/*}*/
+						}
+						&.member{
+							text-align: center;
+							font-size: $baseFontSize;
+							color: $baseColor;
+							font-weight: 600;
+							.crosstab-header-text{
+								font-family: Roboto,"Helvetica Neue",sans-serif;
+								text-align: center;
+								font-size: $headerFontSize;
+								font-weight: 600;
+								font-style:normal !important;								
+							}
+						}
+						&.data{
+							text-align: center;
+						}
+						&.partialsum{
+							text-align: center;
+							background-color: rgba(59, 103, 140, 0.45);
+							color:white;
+						}
+						&.totals{
+							text-align: center;
+							background-color: rgba(59, 103, 140, 0.8);
+							color:white;
+						}
+						&.crosstab-header-text {
+							border-top:none;							
+						}
+						&.sortIcon {
+							border-top: none;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	md-card#cockpitDataConfig{
+		&>md-card-content>md-content>md-tabs>md-tabs-content-wrapper>md-tab-content>div>md-content>md-card{
+			min-height:300px;
+		}
+		angular-table#cockpit-dataset,angular-table#cockpit-document{
+			.datasetParameterDetail,.analiticalParameterDetail{
+				background-color: #eceff1;
+				md-card-content{
+					padding:0px;
+					md-toolbar{
+						background-color: transparent!important;
+						color: black!important;
+					}
+					&>div{
+						padding:0px 10px;
+						
+					}
+					
+				}
+			}
+		}
+	}
+	
+	//material version issue 
+.md-panel._md-panel-backdrop.md-default-theme, .md-panel._md-panel-backdrop {
+    background-color: rgba(33,33,33,1.0);
+}
+
+
+
+&.disableanimation {
+	/** disable transitions and animations for tab-contents**/
+	md-tab-content.md-right:not(.md-active) {
+		animation: none;
+		-webkit-animation: none;
+	}
+
+	md-tab-content.md-left:not(.md-active) {
+		animation: none;
+		-webkit-animation: none;
+	}
+
+	md-tab-content.md-left:not(.md-active) * {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	md-tab-content.md-right:not(.md-active) * {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	.md-tab {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	/**disable slider animation for thumbs **/
+	md-slider .md-focus-thumb {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+		animation: none !important;
+		-webkit-animation: none !important;
+	}
+	md-slider ._md-thumb{
+		 transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+	md-option{
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+	/*Disable transition for opening menu.*/
+
+	/**disable on dialogs**/
+	md-dialog._md-transition-out {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	md-dialog._md-transition-in {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	/**Disable on ripple buttons**/
+	.md-ripple.md-ripple-placed {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	.md-ripple-container, .md-ripple-placed {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	/**Disable checkbox **/
+	md-checkbox ._md-icon {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	md-tabs-wrapper md-next-button, md-tabs-wrapper md-prev-button {
+		 transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	md-pagination-wrapper {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	._md-subheader-wrapper:not(.md-sticky-no-effect) {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	._md-sticky-clone[sticky-state=active]:not(.md-sticky-no-effect) ._md-subheader-inner {
+		-webkit-animation: none !important;
+		animation: none !important;
+	}
+
+	/**Disable on all other buttons**/
+	.md-button {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	/**Disable fading labels**/
+	md-input-container label {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	/** Disable slider animations**/
+	md-slider ._md-thumb-container, ._md-focus-ring, ._md-track-fill, ._md-thumb {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	md-input-container .md-char-counter, md-input-container .md-input-message-animation {
+		transition: none !important;
+	}
+
+	/*  Disable dropdown animations*/
+
+	md-select-menu {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	md-select-menu md-content {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	._md-select-menu-container._md-leave {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	md-tab-content {
+		-webkit-transition: none !important;
+		-moz-transition: none !important;
+		-ms-transition: none !important;
+		-o-transition: none !important;
+		transition: none !important;
+	}
+
+	md-ink-bar.md-right {
+		-webkit-transition: none !important;
+		-moz-transition: none !important;
+		-ms-transition: none !important;
+		-o-transition: none !important;
+		transition: none !important;
+	}
+
+	md-ink-bar.md-left {
+		-webkit-transition: none !important;
+		-moz-transition: none !important;
+		-ms-transition: none !important;
+		-o-transition: none !important;
+		transition: none !important;
+	}
+
+	md-tab-content.md-right {
+		-webkit-transition: none !important;
+		-moz-transition: none !important;
+		-ms-transition: none !important;
+		-o-transition: none !important;
+		transition: none !important;
+	}
+
+	md-tab-content.md-left {
+		-webkit-transition: none !important;
+		-moz-transition: none !important;
+		-ms-transition: none !important;
+		-o-transition: none !important;
+		transition: none !important;
+	}
+
+	/*
+	 ******************************************
+	 ******************************************
+	   Disable box shadows
+	 ******************************************
+	 ******************************************
+	*/
+
+	
+
+	md-dialog {
+		border: 1px solid rgba(0, 0, 0, .14) !important;
+		box-shadow: none !important;
+		-webkit-box-shadow: none !important;
+		-moz-box-shadow: none !important;
+	}
+
+	md-select-menu {
+		border: 1px solid rgba(0, 0, 0, .14) !important;
+		box-shadow: none !important;
+		-webkit-box-shadow: none !important;
+		-moz-box-shadow: none !important;
+	}
+
+	.md-button.md-raised {
+		border: 1px solid rgba(0, 0, 0, .14) !important;
+		box-shadow: none !important;
+		-webkit-box-shadow: none !important;
+		-moz-box-shadow: none !important;
+	}
+
+	md-toast .md-toast-content {
+		/**no border needed here**/
+		box-shadow: none !important;
+		-webkit-box-shadow: none !important;
+		-moz-box-shadow: none !important;
+	}
+
+	
+//firefox style
+@-moz-document url-prefix() {
+ 
+        /*md-card-title {
+            width: 100%;
+        }*/
+    }
+	
+//IE style
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	 .cockpitSheetTabsHook {
+    	md-tabs-canvas {
+    		width: 10px;
+    	}
+    	md-tabs-wrapper {
+    		width: 10px;
+    	}
+    	md-tab-data {
+    		display: none;
+    	}
+    }
+}
+
+}
+
+/* WIDGET DIALOG */
+
+.widgetSelection {
+    background-color: transparent !important;
+    box-shadow: none;
+    width: 90%;
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
+    md-dialog-content {
+        ::-webkit-scrollbar {
+            width: 0px;  /* remove scrollbar space */
+            background: transparent;  /* optional: just make scrollbar invisible */
+        }
+        /* optional: show position indicator in red */
+        ::-webkit-scrollbar-thumb {
+            background: #FF0000;
+        }
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        .gridWidgetList {
+            width: 100%;
+            height: 100%;
+            overflow-y: scroll;
+            .widgetAddButton {
+                display: none;
+            }
+            .widgetDescription {
+                display: none;
+            }
+        }
+    }
+
+    md-progress-linear-custom {
+	  display: block;
+	  position: relative;
+	  width: 100%;
+	  height: 5px;
+	  padding-top: 0 !important;
+	  margin-bottom: 0 !important; 
+	}
+	md-progress-linear-custom .md-container {
+	    display: block;
+	    position: relative;
+	    overflow: hidden;
+	    width: 100%;
+	    height: 5px;
+	    -webkit-transform: translate(0, 0) scale(1, 1);
+        transform: translate(0, 0) scale(1, 1); 
+    }
+    md-progress-linear-custom .md-container .md-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      height: 5px; 
+  	}
+    md-progress-linear-custom .md-container .md-dashed:before {
+      content: "";
+      display: none;
+      position: absolute;
+      margin-top: 0;
+      height: 5px;
+      width: 100%;
+      background-color: transparent;
+      background-size: 10px 10px !important;
+      background-position: 0px -23px; 
+  	}
+    md-progress-linear-custom .md-container .md-bar1, md-progress-linear-custom .md-container .md-bar2 {
+      -webkit-transition: -webkit-transform 0.2s linear;
+      transition: -webkit-transform 0.2s linear;
+      transition: transform 0.2s linear;
+      transition: transform 0.2s linear, -webkit-transform 0.2s linear; }
+    
+}
+/* Bounce To Left */
+.hvr-bounce-to-left {
+  display: flex;
+  vertical-align: middle;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  -webkit-transition-property: color;
+  transition-property: color;
+  -webkit-transition-duration: 0.5s;
+  transition-duration: 0.5s;
+    &:before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: $baseColor;
+      -webkit-transform: scaleX(0);
+      transform: scaleX(0);
+      -webkit-transform-origin: 100% 50%;
+      transform-origin: 100% 50%;
+      -webkit-transition-property: transform;
+      transition-property: transform;
+      -webkit-transition-duration: 0.5s;
+      transition-duration: 0.5s;
+      -webkit-transition-timing-function: ease-out;
+      transition-timing-function: ease-out;
+    }
+    &:hover, &:focus, &:active {
+        color: white;
+        md-card-content {
+            background-image: none !important;
+        }
+        .widgetAddButton, .widgetDescription{
+            display: flex !important;
+        }
+        .widgetImage, .custom-chips {
+            display: none;
+        }
+        &:before {
+            -webkit-transform: scaleX(1);
+            transform: scaleX(1);
+            -webkit-transition-timing-function: cubic-bezier(0.52, 1.64, 0.37, 0.66);
+            transition-timing-function: cubic-bezier(0.52, 1.64, 0.37, 0.66);
+        }
+    }
+
+}
+
+
+	.kn-fab-toolbar {
+		position: absolute;
+		background-color: transparent !important;
+		top: 0;
+		right: 20px;
+		.md-button.md-knowage-theme.md-fab:not([disabled]) {
+			background-color: rgba($fabPrimaryColor,.7) !important;
+			&:hover {
+				background-color: rgba($fabPrimaryColor,.9) !important;
+			}
+		}
+		.md-button.md-mini.md-knowage-theme.md-fab:not([disabled]) {
+			background-color: rgba($toolbarButtonColor,.7) !important;
+			&:hover {
+				background-color: rgba($toolbarButtonColor,.9) !important;
+			}
+			md-icon {
+				color: $baseColor;
+			}
+		}
+		md-fab-speed-dial {
+			background-color: transparent !important;
+			md-fab-trigger{
+					background-color: transparent !important;
+				}
+			md-fab-actions {
+				background-color: transparent !important;
+				.md-fab-action-item {
+					background-color: transparent !important;
+				}
+			}
+		}
+	}
+
+	cockpit-sheet {
+		md-tabs-content-wrapper {
+			bottom: 0;
+		}
+		md-ink-bar {
+			display: none;
+		}
+		.addSheetTabButton {
+			background-color: #f0f0f0;
+		} 
+		md-tabs {
+			background-color: transparent;
+			md-tab-item {
+				background-color: #f0f0f0;
+			    border-radius: 4px;
+			    padding: 8px 30px 8px 15px;
+			    top: 4px;
+			    overflow: hidden;
+			    &.md-active {
+			    	background-color: $baseColor;
+			    	color: $lightTextColor !important;
+			    	md-icon {
+			    		color: $lightTextColor !important;
+			    	}
+			    }
+			}
+			md-tab-item:only-of-type {
+				display: none
+			} 
+			&.highlander {
+				md-tab-item {
+					display: none;
+				}
+			}
+		}
+	}
+
+	.widgetSearchBar {
+		border: $cockpitDefaultBorder;
+	    position: absolute;
+	    top: 0;
+	    left: 0;
+	    z-index: 99999;
+	    width: 100%;
+	    background-color: rgba($tabBackground,.8);
+	    &:hover {
+	    	background-color: rgba($tabBackground,1);
+	    }
+	    .hint {
+    	    position: absolute;
+		    left: 2px;
+		    right: auto;
+		    font-size: $smallFontSize;
+		    line-height: 14px;
+		    color: $smallTextColor;
+	    }
+	}
+
+	.textEllipsis {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	
+	.datasetParameterDetail {
+		.chip {
+			padding: 4px 8px;
+		    background-color: #ccc;
+		    border-radius: 20px;
+		    margin: 2px 4px;
+		    cursor: pointer;
+		    font-size: $smallFontSize;
+		    &.active {
+		    	background-color: darken(#ccc,20%);
+		    }
+		}
+		md-list.md-knowage-theme {
+		
+			padding-top: 0;
+			.md-subheader {
+				._md-subheader-inner {
+			    	padding: $tabPadding;
+			    	width:100%;
+			    }
+			}
+			md-list-item {
+			&:hover {
+				background-color: rgba($secondaryColor,0.4);
+			}
+				min-height: $smallLineHeight;
+				height: $smallLineHeight;
+				.md-button.md-icon-button {
+					min-height: $smallLineHeight;
+					height: $smallLineHeight;
+					line-height: $smallLineHeight;
+					font-size: $smallFontSize;
+					padding: 0;
+				}
+				p {
+					font-size: $smallFontSize;
+				}
+			}
+		}
+	}
+
+	.widgetToolbar {
+		height: $toolbarHeight;
+	}
+
+
+}
