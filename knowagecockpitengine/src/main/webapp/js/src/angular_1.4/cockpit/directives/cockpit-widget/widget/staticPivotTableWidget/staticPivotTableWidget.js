@@ -267,6 +267,8 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var columnsSortKeys = [];
 		var measuresSortKeys = [];
 
+		if (!oldSortOptions) return toReturn;
+		
 		if (oldSortOptions.columnsSortKeys && !Array.isArray(oldSortOptions.columnsSortKeys)){
 			for (var c in oldSortOptions.columnsSortKeys){
 				var cSort = {};
@@ -358,7 +360,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$scope.doSelection(lstHeaders,lstValues); //call selection method passing all headers and values (unique time)
 
 	};
-
 
 	$scope.enableAlternate = function(){
 		$scope.colorPickerProperty['disabled'] = $scope.ngModel.content.style.showAlternateRows;
@@ -766,7 +767,8 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    			  $scope.showAction($scope.translate.load('sbi.cockpit.widgets.staticpivot.missingfield'));
 			    			  return;
 			    		  }
-			    		  $scope.localModel.content.sortOptions =  fnOrder(model.content.crosstabDefinition.columns, model.content.crosstabDefinition.rows) || {}; //update sorting
+			    		  if (model.content.crosstabDefinition)
+			    			  $scope.localModel.content.sortOptions =  fnOrder(model.content.crosstabDefinition.columns, model.content.crosstabDefinition.rows) || {}; //update sorting
 			    		  angular.copy($scope.localModel,model);
 			    		  mdPanelRef.close();
 			    		  $scope.$destroy();
