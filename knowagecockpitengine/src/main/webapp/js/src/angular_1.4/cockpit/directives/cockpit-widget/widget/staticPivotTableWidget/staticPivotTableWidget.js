@@ -361,7 +361,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 	};
 
-
 	$scope.enableAlternate = function(){
 		$scope.colorPickerProperty['disabled'] = $scope.ngModel.content.style.showAlternateRows;
 	}
