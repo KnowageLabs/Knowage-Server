@@ -2174,7 +2174,7 @@
             	
             	We will increase this value in order to display series that contain a data array bigger
             	than 1000 (default), because it is most likely that we will have this situation very 
-            	often. test push
+            	often.
             	
             	@author: danristo (danilo.ristovski@mht.net)
             *#
