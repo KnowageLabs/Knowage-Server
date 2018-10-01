@@ -111,9 +111,7 @@ public class DocumentParameters {
 
 	public abstract class ParameterDependency {
 		public String urlName;
-	}
-
-	;
+	};
 
 	public class DataDependency extends ParameterDependency {
 	}
@@ -158,17 +156,35 @@ public class DocumentParameters {
 	}
 
 	private void initDAO() {
-		ANALYTICAL_DRIVER_USE_MODALITY_DAO = DAOFactory.getParameterUseDAO();
+		try {
+			ANALYTICAL_DRIVER_USE_MODALITY_DAO = DAOFactory.getParameterUseDAO();
+		} catch (EMFUserError e) {
+			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DRIVER_USE_MODALITY_DAO.getClass().getName() + "]", e);
+		}
 
-		DATA_DEPENDENCIES_DAO = DAOFactory.getObjParuseDAO();
+		try {
+			DATA_DEPENDENCIES_DAO = DAOFactory.getObjParuseDAO();
+		} catch (EMFUserError e) {
+			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + DATA_DEPENDENCIES_DAO.getClass().getName() + "]", e);
+		}
 
-		VISUAL_DEPENDENCIES_DAO = DAOFactory.getObjParviewDAO();
+		try {
+			VISUAL_DEPENDENCIES_DAO = DAOFactory.getObjParviewDAO();
+		} catch (EMFUserError e) {
+			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + VISUAL_DEPENDENCIES_DAO.getClass().getName() + "]", e);
+
+		}
 		try {
 			ANALYTICAL_DOCUMENT_PARAMETER_DAO = DAOFactory.getBIObjectParameterDAO();
-		} catch (HibernateException e) {
+		} catch (EMFUserError e) {
 			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DOCUMENT_PARAMETER_DAO.getClass().getName() + "]", e);
 		}
-		ANALYTICAL_DRIVER_DAO = DAOFactory.getParameterDAO();
+
+		try {
+			ANALYTICAL_DRIVER_DAO = DAOFactory.getParameterDAO();
+		} catch (EMFUserError e) {
+			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DRIVER_DAO.getClass().getName() + "]", e);
+		}
 
 	}
 
@@ -219,13 +235,13 @@ public class DocumentParameters {
 		}
 		try {
 			visualDependencies = VISUAL_DEPENDENCIES_DAO.loadObjParviews(analyticalDocumentParameter.getId());
-		} catch (HibernateException e) {
+		} catch (EMFUserError e) {
 			throw new SpagoBIServiceException("An error occurred while loading parameter visual dependecies for parameter [" + id + "]", e);
 		}
 		Iterator it = visualDependencies.iterator();
 		while (it.hasNext()) {
 			ObjParview dependency = (ObjParview) it.next();
-			Integer objParFatherId = dependency.getParFatherId();
+			Integer objParFatherId = dependency.getObjParFatherId();
 			try {
 				BIObjectParameter objParFather = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadForDetailByObjParId(objParFatherId);
 				VisualDependency visualDependency = new VisualDependency();
@@ -315,7 +331,7 @@ public class DocumentParameters {
 		Iterator it = dataDependencies.iterator();
 		while (it.hasNext()) {
 			ObjParuse dependency = (ObjParuse) it.next();
-			Integer objParFatherId = dependency.getParFatherId();
+			Integer objParFatherId = dependency.getObjParFatherId();
 			try {
 				BIObjectParameter objParFather = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadForDetailByObjParId(objParFatherId);
 				DataDependency dataDependency = new DataDependency();
@@ -394,7 +410,9 @@ public class DocumentParameters {
 				JSONArray valuesJSONArray = valuesJSON.getJSONArray("root");
 
 				for (int i = 0; i < valuesJSONArray.length(); i++) {
+					// System.out.println(i);
 					JSONObject item = valuesJSONArray.getJSONObject(i);
+
 					if (item.length() > 0) {
 
 						HashMap<String, Object> itemAsMap = fromJSONtoMap(item);
@@ -407,26 +425,21 @@ public class DocumentParameters {
 								&& !analyticalDocumentParameter.getParameter().getModalityValue().getSelectionType().equals("LOOKUP")) {
 
 							for (HashMap<String, Object> defVal : admissibleValues) {
-								if (item.has("value") && item.has("description")) {
-									if (defVal.get("value") != null && defVal.get("value").equals(item.get("value")) && !item.isNull("label")) {
-										if (defVal.get("label").equals(item.get("label")) && defVal.get("description") != null
-												&& item.opt("description") != null && defVal.get("description").equals(item.get("description"))) {
-											defaultParameterAlreadyExist = true;
-											break;
-										} else {
-											HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
-											itemErrorMap.put("error", true);
-											itemErrorMap.put("value", defVal.get("value"));
-											itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
-											itemErrorMap.put("labelSameValue", item.get("label"));
-											defaultErrorValues.add(itemErrorMap);
-											// return defaultErrorValues;
-											admissibleValues = defaultErrorValues;
-										}
+								if (defVal.get("value") != null && defVal.get("value").equals(item.get("value")) && !item.isNull("label")) {
+									if (defVal.get("label").equals(item.get("label")) && defVal.get("description") != null && item.opt("description") != null
+											&& defVal.get("description").equals(item.get("description"))) {
+										defaultParameterAlreadyExist = true;
+										break;
+									} else {
+										HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
+										itemErrorMap.put("error", true);
+										itemErrorMap.put("value", defVal.get("value"));
+										itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
+										itemErrorMap.put("labelSameValue", item.get("label"));
+										defaultErrorValues.add(itemErrorMap);
+										// return defaultErrorValues;
+										admissibleValues = defaultErrorValues;
 									}
-								} else {
-									defaultParameterAlreadyExist = true;
-									continue;
 								}
 							}
 						}
