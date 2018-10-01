@@ -50,6 +50,7 @@ Temporary Items
 .settings/
 .classpath
 .project
+.gitignore
 
 # ant folders
 ant-build/
