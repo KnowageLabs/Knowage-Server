@@ -85,8 +85,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 							cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
 						}
-
+						//get layer (by dataset label or by dataset name)
 						var layer = $scope.getLayerByName(dataset.label);
+						if (!layer)
+							layer = $scope.getLayerByName(dataset.name);
 
 						if(newValue.length > 0){
 							// save unfiltered data if not already saved
