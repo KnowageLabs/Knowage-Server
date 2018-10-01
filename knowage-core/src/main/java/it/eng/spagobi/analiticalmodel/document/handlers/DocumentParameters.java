@@ -425,21 +425,26 @@ public class DocumentParameters {
 								&& !analyticalDocumentParameter.getParameter().getModalityValue().getSelectionType().equals("LOOKUP")) {
 
 							for (HashMap<String, Object> defVal : admissibleValues) {
-								if (defVal.get("value") != null && defVal.get("value").equals(item.get("value")) && !item.isNull("label")) {
-									if (defVal.get("label").equals(item.get("label")) && defVal.get("description") != null && item.opt("description") != null
-											&& defVal.get("description").equals(item.get("description"))) {
-										defaultParameterAlreadyExist = true;
-										break;
-									} else {
-										HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
-										itemErrorMap.put("error", true);
-										itemErrorMap.put("value", defVal.get("value"));
-										itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
-										itemErrorMap.put("labelSameValue", item.get("label"));
-										defaultErrorValues.add(itemErrorMap);
-										// return defaultErrorValues;
-										admissibleValues = defaultErrorValues;
+								if (item.has("value") && item.has("description")) {
+									if (defVal.get("value") != null && defVal.get("value").equals(item.get("value")) && !item.isNull("label")) {
+										if (defVal.get("label").equals(item.get("label")) && defVal.get("description") != null
+												&& item.opt("description") != null && defVal.get("description").equals(item.get("description"))) {
+											defaultParameterAlreadyExist = true;
+											break;
+										} else {
+											HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
+											itemErrorMap.put("error", true);
+											itemErrorMap.put("value", defVal.get("value"));
+											itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
+											itemErrorMap.put("labelSameValue", item.get("label"));
+											defaultErrorValues.add(itemErrorMap);
+											// return defaultErrorValues;
+											admissibleValues = defaultErrorValues;
+										}
 									}
+								} else {
+									defaultParameterAlreadyExist = true;
+									continue;
 								}
 							}
 						}
