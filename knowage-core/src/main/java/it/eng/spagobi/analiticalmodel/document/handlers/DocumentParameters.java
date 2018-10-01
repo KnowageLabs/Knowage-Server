@@ -112,9 +112,7 @@ public class DocumentParameters {
 
 	public abstract class ParameterDependency {
 		public String urlName;
-	}
-
-	;
+	};
 
 	public class DataDependency extends ParameterDependency {
 	}
