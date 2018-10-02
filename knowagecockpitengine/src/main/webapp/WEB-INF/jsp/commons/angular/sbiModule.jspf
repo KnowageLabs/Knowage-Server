@@ -17,8 +17,8 @@ sbiM.factory('sbiModule_config',function(){
     	host: '<%= GeneralUtilities.getSpagoBiHost() %>',
     	curr_country: '<%= curr_country %>',
     	curr_language: '<%= curr_language%>',
-    	thous: '<%= GeneralUtilities.getGroupingSeparator()%>',
-    	dec: '<%= GeneralUtilities.getDecimalSeparator()%>',
+    	thous: '<%= GeneralUtilities.getGroupingSeparator(locale)%>',
+        dec: '<%= GeneralUtilities.getDecimalSeparator(locale)%>',
     	<%-- 		loginUrl: '<%= GeneralUtilities.getSpagoBiContext() %>', // login url, used when session is expired --%>
     	<%--     	currTheme: '<%= currTheme %>', --%>
 		<%-- 	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>, --%>
