@@ -19,6 +19,7 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.*;
@@ -29,6 +30,7 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.solr.ExtendedSolrQuery;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -51,7 +53,12 @@ class SolrEvaluationStrategy extends AbstractEvaluationStrategy {
     @Override
     protected IDataStore execute(List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
         SolrDataSet solrDataSet = dataSet.getImplementation(SolrDataSet.class);
-        SolrQuery solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(projections).sorts(sortings).filter(filter).jsonFacets(groups);
+        SolrQuery solrQuery;
+        try {
+            solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(projections).sorts(sortings).filter(filter).facets(groups).jsonFacets(groups);
+        } catch (JsonProcessingException e) {
+            throw new SpagoBIRuntimeException(e);
+        }
         solrDataSet.setSolrQuery(solrQuery);
         dataSet.loadData(offset, fetchSize, maxRowCount);
         IDataStore dataStore = dataSet.getDataStore();

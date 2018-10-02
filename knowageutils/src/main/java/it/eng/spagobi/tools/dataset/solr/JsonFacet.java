@@ -17,24 +17,32 @@
  *
  */
 
-package it.eng.spagobi.tools.dataset.metasql.query.item;
+package it.eng.spagobi.tools.dataset.solr;
 
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import org.apache.log4j.Logger;
 
-public class CoupledProjection extends Projection {
+import java.util.HashMap;
+import java.util.Map;
 
-    private static final Logger logger = Logger.getLogger(CoupledProjection.class);
+public class JsonFacet extends CountJsonFacet {
 
-    private Projection aggregatedProjection;
+    private static final Logger logger = Logger.getLogger(JsonFacet.class);
 
-    public CoupledProjection(IAggregationFunction aggregationFunction, Projection aggregatedProjection, IDataSet dataSet, String columnName, String alias) {
-        super(aggregationFunction, dataSet, columnName, alias);
-        this.aggregatedProjection = aggregatedProjection;
+    private final String sort;
+    private final Map<String,String> facet = new HashMap<>(1);
+
+    public JsonFacet(String field, IAggregationFunction function, String columnToAggregate) {
+        super(field);
+        facet.put(function.getName().toLowerCase(), function.getName().toLowerCase() + "(" + columnToAggregate + ")");
+        this.sort = function.getName().toLowerCase() + " desc";
     }
 
-    public Projection getAggregatedProjection() {
-        return aggregatedProjection;
+    public Map<String, String> getFacet() {
+        return facet;
+    }
+
+    public String getSort() {
+        return sort;
     }
 }
