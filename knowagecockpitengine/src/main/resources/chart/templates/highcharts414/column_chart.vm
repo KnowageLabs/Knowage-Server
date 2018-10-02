@@ -1303,13 +1303,12 @@
 	    	dataLabels: {
 	    		allowOverlap: true
 	    	},
-	    	#set ($counterX = 0)
+	    	#set ($countXvalues = 0)
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 	    	  	#if($chart.isCockpitEngine != 'true')
 	    	  	#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
 	    	  	#end
-	    	  
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"
 	    	   	#foreach($row in $rows)
 					#if( $row.get($serieColumnsMapped))
@@ -1319,7 +1318,6 @@
 						#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
 
 						{
-						
 							##drilldown: $enableDrilldown,
 							drilldown: $drilldownEnabledFlag,
 							#if($relatedSerieType == 'arearange')
@@ -1333,10 +1331,10 @@
 								#end 
 							#end	
 							#if($relatedSerieType != 'arearange' && $serieValue!="")
-								y: $serieValue,
+							y: $serieValue,
 							#end
 							#if($relatedSerieType=="line")
-								x: $counterX,
+							x: $countXvalues,
 							#end							
 							name: "$serieCategoryName",
 							datetype:"$datetype",
@@ -1346,8 +1344,7 @@
 							#end
 							#end
 						},
-						 #set ($counterX = $counterX+1)
-
+						#set ($countXvalues = $countXvalues+1)
 					#end
 				#end
 	    	],
