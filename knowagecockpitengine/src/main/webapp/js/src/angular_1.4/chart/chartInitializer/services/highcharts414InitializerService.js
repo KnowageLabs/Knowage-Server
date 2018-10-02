@@ -575,8 +575,8 @@ angular.module('chartInitializer')
 
 						if(widgetData.chartTemplate.CHART.VALUES.SERIE[i].type == "arearangelow"){
 
-							pointOptions.low = parseFloat(data[j][seriesNamesColumnBind[widgetData.chartTemplate.CHART.VALUES.SERIE[i].name]]);;
-							pointOptions.high = parseFloat(data[j][seriesNamesColumnBind[widgetData.chartTemplate.CHART.VALUES.SERIE[i+1].name]]);;
+							pointOptions.low = parseFloat(data[j][seriesNamesColumnBind[widgetData.chartTemplate.CHART.VALUES.SERIE[i].name]]);
+							pointOptions.high = parseFloat(data[j][seriesNamesColumnBind[widgetData.chartTemplate.CHART.VALUES.SERIE[i+1].name]]);
 							areaRangeType = true;
 
 						} else {
@@ -598,7 +598,19 @@ angular.module('chartInitializer')
 						pointOptions = [];
 						pointOptions.push(Date.UTC(year, month, day));
 
-						pointOptions.push(parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]));
+						if(widgetData.chartTemplate.CHART.VALUES.SERIE[i].type == "arearangelow"){
+
+							pointOptions.push(parseFloat(data[j][seriesNamesColumnBind[widgetData.chartTemplate.CHART.VALUES.SERIE[i].name]]));
+							pointOptions.push(parseFloat(data[j][seriesNamesColumnBind[widgetData.chartTemplate.CHART.VALUES.SERIE[i+1].name]]));
+							areaRangeType = true;
+
+						} else {
+
+							pointOptions.push(parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]));
+
+						}
+						
+						
 					}
 					newDataSerie.push(pointOptions);
 					if(Object.prototype.toString.call(pointOptions) === '[object Array]')
