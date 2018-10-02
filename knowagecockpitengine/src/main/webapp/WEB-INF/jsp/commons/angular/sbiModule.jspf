@@ -56,9 +56,10 @@ sbiM.factory('sbiModule_config',function(){
 	};
 });
 
+<%-- 
 sbiM.config(function($mdDateLocaleProvider) {
 	
-<%-- 	this.localizedDateFormat= '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %>';  // the date format localized according to user language and country  --%>
+	<-- this.localizedDateFormat= '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %>';  // the date format localized according to user language and country -->
 	//TO-DO get localized date format
 	this.localizedDateFormat= 'gg/MM/aaaa';  // the date format localized according to user language and country 
 	
@@ -138,6 +139,47 @@ sbiM.config(function($mdDateLocaleProvider) {
 		return dateResult.substring(0, dateResult.length - 1);
 	};
 });
+ --%>
+
+sbiM.config(['$httpProvider',function ($httpProvider) {
+	$httpProvider.interceptors.push(['$rootScope', '$q',
+		function ($rootScope, $q) {
+			return {
+				responseError: function (response) {
+					if (response.status === 401) {
+						redirectToLoginUrl();
+					}
+					return $q.reject(response);
+				}
+			};
+		}]);
+
+	var loginUrl = '<%= GeneralUtilities.getSpagoBiContext() %>'; // login url, used when session is expired
+
+	var redirectToLoginUrl = function() {
+    	var sessionExpiredSpagoBIJSFound = false;
+    	try {
+    		var currentWindow = window;
+    		var parentWindow = parent;
+    		while (parentWindow != currentWindow) {
+    			if (parentWindow.sessionExpiredSpagoBIJS) {
+    				parentWindow.location = loginUrl;
+    				sessionExpiredSpagoBIJSFound = true;
+    				break;
+    			} else {
+    				currentWindow = parentWindow;
+    				parentWindow = currentWindow.parent;
+    			}
+    		}
+    	} catch (err) {
+    		console.log(err);
+    	}
+    	
+    	if (!sessionExpiredSpagoBIJSFound) {
+    		window.location = loginUrl;
+    	}
+    };
+}]);
 
 
 sbiM.config(['$httpProvider',function ($httpProvider) {
@@ -302,7 +344,7 @@ sbiM.service('sbiModule_messaging',function(sbiModule_restServices,$mdToast){
 
 		var timeout = 3000;
 
-		if (hideTimeout && typeof hideTimeout == "number") {
+		if (hideTimeout != undefined && typeof hideTimeout == "number") {
 			timeout = hideTimeout;
 		}
 
@@ -320,7 +362,7 @@ sbiM.service('sbiModule_messaging',function(sbiModule_restServices,$mdToast){
 	this.showInfoMessage = function(msg,title,hideTimeout){
 		var timeout = 3000;
 
-		if (hideTimeout && typeof hideTimeout == "number") {
+		if (hideTimeout != undefined && typeof hideTimeout == "number") {
 			timeout = hideTimeout;
 		}
 
@@ -339,7 +381,7 @@ sbiM.service('sbiModule_messaging',function(sbiModule_restServices,$mdToast){
 	this.showSuccessMessage = function(msg,title,hideTimeout){
 		var timeout = 3000;
 
-		if (hideTimeout && typeof hideTimeout == "number") {
+		if (hideTimeout != undefined && typeof hideTimeout == "number") {
 			timeout = hideTimeout;
 		}
 
@@ -598,15 +640,15 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 				    },
 				    disableParentScroll: true,
 				    template:	'<md-card>'+
-				    	 		'	<md-card-title style="min-width: 300px; max-height: 400px;max-width: 600px; overflow: auto;">'+
+				    	 		'	<md-card-title style="min-width: 300px;max-width: 600px;">'+
 			          			'		<md-card-title-text>'+
 			            		'			<span class="md-headline" ng-bind-html="title"></span>'+
 			          			'		</md-card-title-text>'+
-			          			'	</md-card-title>'+
-								'	<md-card-content>'+
-								'		<span ng-bind-html="text"></span>'+
+			          			'	</md-card-title  >'+
+								'	<md-card-content style="max-height: 400px;overflow-y:auto;">'+
+								'		<div ng-bind-html="text"></div>'+
 								'	</md-card-content>'+
-			          			'	<md-card-actions layout="row" layout-align="end center">'+
+			          			'	<md-card-actions class="noMargin" style="padding:8px" layout="row" layout-align="end center">'+
 								'		<md-button ng-click="closeDialog()">{{ok}}</md-button>'+
 								'	</md-card-actions>'+
 								'</md-card>',

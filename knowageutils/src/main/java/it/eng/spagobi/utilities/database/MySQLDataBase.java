@@ -76,7 +76,7 @@ public class MySQLDataBase extends AbstractDataBase implements CacheDataBase, Me
 			toReturn = " MEDIUMBLOB ";
 		} else if ((javaTypeName.contains("java.lang.String") && getVarcharLength() > MAX_VARCHAR_VALUE) || javaTypeName.contains("[C")
 				|| javaTypeName.contains("CLOB") || javaTypeName.contains("JSON") || javaTypeName.contains("Map") || javaTypeName.contains("List")) {
-			toReturn = " TEXT ";
+			toReturn = " LONGTEXT ";
 		} else {
 			toReturn = " TEXT ";
 			logger.error("Cannot map java type [" + javaTypeName + "] to a valid database type. Set TEXT by default ");

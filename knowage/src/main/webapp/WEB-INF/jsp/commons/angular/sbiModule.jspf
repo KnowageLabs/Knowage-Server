@@ -9,7 +9,7 @@ var sbiM=angular.module('sbiModule',["toastr","ngSanitize"]);
 // sbiM.config(function($mdThemingProvider) {
 // 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
 // });
-<%
+<%	
 String contextNameForEngineComposition = GeneralUtilities.getSpagoBiContext().replaceAll("^/", "");
 %>
 sbiM.factory('sbiModule_config',function(){ 

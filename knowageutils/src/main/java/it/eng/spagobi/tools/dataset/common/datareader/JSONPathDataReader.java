@@ -17,10 +17,39 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.log4j.Logger;
+import org.joda.time.Instant;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+
 import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.dataset.common.datastore.*;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -28,19 +57,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
-import org.apache.log4j.Logger;
-import org.joda.time.Instant;
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
 /**
  * This reader convert JSON string to an {@link IDataStore}. The JSON must contains the items to convert, they are found using {@link JsonPath}. The name of
  * each {@link IField} must be defined. The type can be fixed or can be defined dynamically by {@link JsonPath}. The value is found dynamically by
@@ -49,6 +65,7 @@ import java.util.*;
  * @author fabrizio
  *
  */
+
 public class JSONPathDataReader extends AbstractDataReader {
 
 	private static final Class<String> ALL_OTHER_TYPES = String.class;
@@ -163,6 +180,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 			MetaData dataStoreMeta = new MetaData();
 			dataStore.setMetaData(dataStoreMeta);
 			List<Object> parsedData = getItems(d);
+			// List parsedData = getItems(d);
 			addFieldMetadata(dataStoreMeta, parsedData);
 			addData(d, dataStore, dataStoreMeta, parsedData, false);
 			return dataStore;
@@ -193,7 +211,19 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 
 		int rowFetched = 0;
-		for (Object o : parsedData) {
+		boolean wasJson = false;
+
+		if (parsedData instanceof net.minidev.json.JSONObject || parsedData instanceof net.minidev.json.JSONArray)
+			wasJson = true;
+		// for (Object o : parsedData) {
+		for (int i = 0; i < parsedData.size(); i++) {
+			Object o;
+			if (wasJson) {
+				o = getJSONFormat(parsedData.get(i));
+			} else {
+				o = parsedData.get(i);
+			}
+
 			if (skipPagination || (!paginated && (!checkMaxResults || (rowFetched < maxResults)))
 					|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize))
 							&& (!checkMaxResults || (rowFetched - offset < maxResults)))) {
@@ -239,7 +269,9 @@ public class JSONPathDataReader extends AbstractDataReader {
 		logger.debug("Read [" + rowFetched + "] records");
 		logger.debug("Insert [" + dataStore.getRecordsCount() + "] records");
 
-		if (this.isCalculateResultNumberEnabled()) {
+		if (this.isCalculateResultNumberEnabled())
+
+		{
 			logger.debug("Calculation of result set number is enabled");
 			dataStore.getMetaData().setProperty("resultNumber", new Integer(rowFetched));
 		} else {
@@ -261,6 +293,10 @@ public class JSONPathDataReader extends AbstractDataReader {
 		} else {
 			parsedData = Arrays.asList(parsed);
 		}
+
+
+
+
 		return parsedData;
 	}
 
@@ -351,6 +387,11 @@ public class JSONPathDataReader extends AbstractDataReader {
 			return null;
 		}
 
+		if (o instanceof net.minidev.json.JSONObject || o instanceof net.minidev.json.JSONArray) {
+			res = getJSONFormat(res);
+			return res.toString();
+		}
+
 		if (res instanceof JSONArray) {
 			JSONArray array = (JSONArray) res;
 			if (array.length() > 1) {
@@ -364,6 +405,20 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 
 		return res.toString();
+	}
+
+	private static Object getJSONFormat(Object res) {
+		// reconvert in standard json object / json array
+		if (res instanceof Map) {
+			net.minidev.json.JSONObject jsonObject = new net.minidev.json.JSONObject();
+			jsonObject.putAll((Map) res);
+			res = jsonObject;
+		} else if (res instanceof List) {
+			net.minidev.json.JSONArray jsonArray = new net.minidev.json.JSONArray();
+			jsonArray.addAll((List) res);
+			res = jsonArray;
+		}
+		return res;
 	}
 
 	public synchronized int getIdFieldIndex() {
@@ -393,7 +448,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 	protected void addFieldMetadata(IMetaData dataStoreMeta, List<Object> parsedData) {
 		boolean idSet = false;
 
-		manageNGSI(parsedData);
+		if(ngsiDefaultItems)manageNGSI(parsedData);
+		else manageNonNGSIObject(parsedData);
 
 		for (int index = 0; index < jsonPathAttributes.size(); index++) {
 			JSONPathAttribute jpa = jsonPathAttributes.get(index);
@@ -431,6 +487,32 @@ public class JSONPathDataReader extends AbstractDataReader {
 		if (ngsiDefaultItems && !dataReadFirstTime) {
 			List<JSONPathAttribute> ngsiAttributes = getNGSIAttributes(parsedData);
 			updateAttributes(ngsiAttributes);
+		}
+		dataReadFirstTime = true;
+	}
+
+	private void manageNonNGSIObject(List<Object> parsedData) {
+		if (!ngsiDefaultItems && !dataReadFirstTime) {
+			//If a column contains an Object then cast to a JSON string
+
+			for(Object r : parsedData) {
+				LinkedHashMap<Object, Object> record = (LinkedHashMap<Object, Object>)r;
+				Set<Object> columnNames =  record.keySet();
+				for(Object column : columnNames) {
+						Object obj = record.get(column);
+						if(obj instanceof Map) {
+							ObjectMapper mapper = new ObjectMapper();
+							try {
+								obj = mapper.writeValueAsString((LinkedHashMap)obj);
+							} catch (JsonProcessingException e) {
+								System.out.println("Impossible to parse JSON");
+								e.printStackTrace();
+							}
+							//obj = new Gson().toJson(obj,LinkedHashMap.class);
+							record.put(column, obj);
+						}
+				}
+			}
 		}
 		dataReadFirstTime = true;
 	}
@@ -557,6 +639,10 @@ public class JSONPathDataReader extends AbstractDataReader {
 		// time or everything else
 		if (typeString.toLowerCase().startsWith("time")) {
 			return DEFAULT_TIME_PATTERN;
+		}
+
+		if (typeString.startsWith("ISO8601")) {
+			return DEFAULT_TIMESTAMP_PATTERN;
 		}
 
 		Assert.assertUnreachable("type date not recognized: " + typeString);

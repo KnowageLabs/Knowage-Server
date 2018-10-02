@@ -18,13 +18,15 @@ angular.module('cron_frequency', [ 'ngMaterial','sbiModule','angular_time_picker
 		frequency.startDate = frequency.startDate.getTime();
 		frequency.startTime = "";
 
-		if(!angular.isDate(frequency.endDate)){
-			frequency.endDate = new Date(frequency.endDate);
+		if(frequency.endDate){
+			if(!angular.isDate(frequency.endDate)){
+				frequency.endDate = new Date(frequency.endDate);
+			}
+			var hoursAndMinutes = frequency.endTime.split(":");
+			frequency.endDate.setHours(hoursAndMinutes[0]);
+			frequency.endDate.setMinutes(hoursAndMinutes[1]);
+			frequency.endDate = frequency.endDate.getTime();
 		}
-		var hoursAndMinutes = frequency.endTime.split(":");
-		frequency.endDate.setHours(hoursAndMinutes[0]);
-		frequency.endDate.setMinutes(hoursAndMinutes[1]);
-		frequency.endDate = frequency.endDate.getTime();
 		frequency.endTime = "";
 
 		frequency.cron=JSON.stringify(frequency.cron);

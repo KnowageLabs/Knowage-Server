@@ -142,9 +142,11 @@ public class MeasureCatalogueCRUD {
 				IFieldMetaData fieldMeta = dataStore.getMetaData().getFieldMeta(i);
 				JSONObject fieldMetaJSON = fieldsMetaJSON.getJSONObject(i + 1);
 				if (fieldMeta.getFieldType().equals(FieldType.MEASURE)) {
-					fieldMetaJSON.put("role", "MEASURE");
+					fieldMetaJSON.put("role", FieldType.MEASURE.toString());
+				} else if (fieldMeta.getFieldType().equals(FieldType.SPATIAL_ATTRIBUTE)) {
+					fieldMetaJSON.put("role", FieldType.SPATIAL_ATTRIBUTE.toString());
 				} else if (fieldMeta.getFieldType().equals(FieldType.ATTRIBUTE)) {
-					fieldMetaJSON.put("role", "ATTRIBUTE");
+					fieldMetaJSON.put("role", FieldType.ATTRIBUTE.toString());
 					String hierarchy = (String) fieldMeta.getProperty("hierarchy");
 					if (hierarchy != null) {
 						fieldMetaJSON.put("hierarchy", hierarchy);

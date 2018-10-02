@@ -1,0 +1,42 @@
+<md-dialog style="min-width:60%; ">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Add Layer</h2>
+        <span flex></span>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content layout-padding style="min-height:400px">
+    	<div layout="row" layout-align="center center" style="min-height:400px" ng-if="!availableSpatialLayers || availableSpatialLayers.length == 0">
+			<div class="kn-noItems" >
+				No Layers available, add some from the datasets list
+			</div>
+		</div>
+      <table class="kn-table kn-table-medium-rows kn-table-clickable-rows" ng-if="availableSpatialLayers.length > 0">
+      	<thead>
+      		<tr>
+	      		<th></th>
+	      		<th>Name</th>
+	      		<th>Description</th>
+      		</tr>
+      	</thead>
+      	<tbody>
+      		<tr ng-repeat="layer in availableSpatialLayers">
+      			<td class="tableAction"><md-checkbox ng-model="layer.selected"></md-checkbox></td>
+	      		<td ng-click="selectLayer(layer,$event)">{{layer.name}}</td>
+	      		<td ng-click="selectLayer(layer,$event)">{{layer.description}}</td
+			<tr>
+      	</tbody>
+      </table>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" ng-click="cancel()">
+        Cancel
+      </md-button>
+      <md-button class="md-raised md-primary" ng-click="add()">
+       Add
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -12,7 +12,7 @@
 		    </md-input-container>
 		    <md-input-container flex="20" class="md-block">
        			<label>{{::translate.load("sbi.cockpit.widgets.table.sorting.order");}}</label>
-          		<md-select ng-model="model.content.sortingOrder" ng-disabled="!model.dataset.dsId || !model.content.selectedColumn">
+          		<md-select ng-model="model.content.sortingOrder" ng-disabled="!model.dataset.dsId || !model.content.selectedColumn || isSelectedColumnTemporal()">
           			<md-option></md-option>
            			<md-option value="ASC">{{::translate.load("sbi.cockpit.widgets.table.sorting.asc");}}</md-option>
           			<md-option value="DESC">{{::translate.load("sbi.cockpit.widgets.table.sorting.desc");}}</md-option>
@@ -35,14 +35,14 @@
 	       			</md-radio-button>
 	   			</md-radio-group>
 		    </md-input-container>
-		    <md-input-container  class="md-block radioContainer" >
+		    <md-input-container class="md-block radioContainer" ng-if="!isSelectedColumnTemporal()>
 	       		<md-radio-group layout="row" ng-model="model.settings.modalityPresent" layout="row" layout-align="start center"> 
 	       			<md-radio-button ng-repeat="button in modalityPresent" ng-value="button.value">
 	           			{{button.name}}
 	       			</md-radio-button>
 	   			</md-radio-group>
 		    </md-input-container>
-		    <md-input-container  class="md-block radioContainer" ng-if="model.settings.modalityPresent=='LIST'">
+		    <md-input-container class="md-block radioContainer" ng-if="model.settings.modalityPresent=='LIST'">
 	      		<md-radio-group  layout="row" ng-model="model.settings.modalityView" layout="row" layout-align="start center"> 
 	       			<md-radio-button ng-repeat="button in modalityView" ng-value="button.value">
 	            		<md-icon md-font-icon="{{button.icon}}" style="text-align:center"></md-icon> {{button.name}}
@@ -51,21 +51,21 @@
 		    </md-input-container>
 		    
 		    <div layout="row">
-		    	<md-input-container  class="md-block" flex>
+		    	<md-input-container class="md-block" flex ng-if="!isSelectedColumnTemporal()">
 					<label>{{::translate.load("sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.select.default.value")}}</label>
 					<md-select  ng-model="model.settings.defaultValue">
 						<md-option></md-option>
 						<md-option ng-repeat="v in defaultValues" value="{{v.value}}">{{v.name}} </md-option>
 					</md-select>
 			    </md-input-container>
-			    <md-input-container  class="md-block" flex ng-if="model.settings.modalityView == 'grid'">
+			    <md-input-container class="md-block" flex ng-if="model.settings.modalityView == 'grid'">
 					<label>Grid columns width</label>
 					<input ng-model="model.settings.gridColumnsWidth" />
 						
 			    </md-input-container>
 		    </div>
 			
-		    <md-input-container  class="md-block" ng-if="model.settings.defaultValue=='STATIC'">
+		    <md-input-container class="md-block" ng-if="model.settings.defaultValue=='STATIC' && !isSelectedColumnTemporal()">
 				<label>{{::translate.load("sbi.cockpit.core.selections.list.columnValues")}}</label>
 				<input ng-model="model.settings.staticValues" />
 			</md-input-container>

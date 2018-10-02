@@ -32,6 +32,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					}
 
 					ds.initNearRealTimeValues(ds.datasetList);
+					ds.initSpatialAttributesFlag(ds.datasetList);
 					ds.checkForDSChange();
 					cockpitModule_widgetSelection.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS,undefined,def);
 
@@ -78,6 +79,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				}, newDatasets);
 
 				ds.initNearRealTimeValues(newDatasets);
+				ds.initSpatialAttributesFlag(newDatasets);
 
 				for(var i in newDatasets){
 					var dataset = newDatasets[i];
@@ -110,6 +112,21 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			}
 		}
 	}
+	this.initSpatialAttributesFlag=function(datasets){
+		for(var i in datasets){
+			var dataset = datasets[i];
+			var hasSpatialAttributes = false;
+			if(dataset.metadata && dataset.metadata.fieldsMeta){
+				for(var j in dataset.metadata.fieldsMeta){
+					if(dataset.metadata.fieldsMeta[j].fieldType == "SPATIAL_ATTRIBUTE"){
+						hasSpatialAttributes = true;
+						break;
+					}
+				}
+			}
+			dataset.hasSpatialAttributes = hasSpatialAttributes;
+		}
+  
 
 	this.forceNearRealTimeValues=function(datasets, associations){
 		if(datasets == undefined){
@@ -304,7 +321,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if(widget.dataset && widget.dataset.dsId){
 					var actualDs=ds.getDatasetById(widget.dataset.dsId);
 					if(actualDs!=undefined){
-						angular.forEach(widget.content.columnSelectedOfDataset,function(widgetColumn){
+						
+						var selectedColumnsDs = widget.content.columnSelectedOfDataset;
+						if(selectedColumnsDs !== undefined){
+							selectedColumnsDs = (selectedColumnsDs instanceof Array) ? widget.content.columnSelectedOfDataset : widget.content.columnSelectedOfDataset[widget.dataset.dsId];
+						}
+						angular.forEach(selectedColumnsDs,function(widgetColumn){
 							var isWidgetColumnMatching = false;
 							for(var i = 0; i < actualDs.metadata.fieldsMeta.length; i++){
 								if(actualDs.metadata.fieldsMeta[i].name == widgetColumn.name || actualDs.metadata.fieldsMeta[i].alias == widgetColumn.name || widgetColumn.formula){
@@ -333,9 +355,17 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		return angular.copy(ds.datasetList);
 	}
 
+	this.setDatasetList=function(dsList){
+		return ds.datasetList = dsList;
+	}
+
 	//return a COPY of dataset with specific id or null
 	this.getDatasetById=function(dsId){
 		return angular.copy(ds.datasetMapById[dsId]);
+	}
+
+	this.setDatasetById=function(dsIds){
+		ds.datasetMapById = dsIds;
 	}
 
 	//return a COPY of dataset with specific label or null
@@ -343,6 +373,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		return angular.copy(ds.datasetMapByLabel[dsLabel]);
 	}
 
+	this.setDatasetByLabel=function(dsLabels){
+		ds.datasetMapByLabel = dsLabels;
+	}
 
 	//return a COPY of avaiable dataset with specific id or null
 	this.getAvaiableDatasetById=function(dsId){
@@ -519,8 +552,19 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		var params="?";
 		var bodyString = "{";
+		
+																																																   
+		var newModel = angular.copy(ngModel);
+		if (Array.isArray(ngModel.content.columnSelectedOfDataset)){
+			//converts the columns array in a jsonObject of arrays
+			var newcolumnSelectedOfDataset = {};
+			newcolumnSelectedOfDataset[dsId] = newModel.content.columnSelectedOfDataset;
+			delete newModel.content.columnSelectedOfDataset;
+			newModel.content.columnSelectedOfDataset = newcolumnSelectedOfDataset;
+		}
 
 		var aggregations = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
+																													
 
 		// apply sorting column & order
 		if(ngModel.settings && ngModel.settings.sortingColumn && ngModel.settings.sortingColumn!=""){
@@ -634,6 +678,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		bodyString = bodyString + "aggregations:" + JSON.stringify(aggregations) + ",parameters:" + parametersString;
+
 		if(page!=undefined && page>-1 && itemPerPage!=undefined && itemPerPage>-1){
 			params = params + "offset=" + (page * itemPerPage) + "&size=" + itemPerPage;
 		}else{
@@ -760,6 +805,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		var filtersToSendWithoutParams = {};
+															
 		angular.copy(filtersToSend,filtersToSendWithoutParams);
 		angular.forEach(filtersToSendWithoutParams, function(item){
 			var paramsToDelete = [];
@@ -772,6 +818,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				delete item[prop];
 			});
 		});
+   
 
 		bodyString = bodyString + ",selections:" + JSON.stringify(filtersToSendWithoutParams) + "}";
 
@@ -1317,23 +1364,43 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	    						var aggFunc = matchAgg[0];
     							if(dsObject.aggregationSelected.indexOf(aggFunc) == -1){
     								dsObject.aggregationSelected.push(aggFunc);
+																						  
     							}
 	    					}else{
 	    						noAggregation = true;
 	    					}
+
+														
+															  
+					   
+																  
+									  
+																		
+															
+																  
+														 
+													 
+							  
+															  
+													  
 	            		}
 
 						if(noAggregation){
 							dsObject.aggregationSelected.push('NONE');
     					}
 
+		  
+							 
     					if(dsObject.aggregationSelected != undefined){
     						for(var i = 0; i<dsObject.aggregationSelected.length; i++){
     							var agg = dsObject.aggregationSelected[i];
     							columnsToshow.push(dataset.label+'.'+header+':'+agg);
     							columnsToshowMeta.push(dsObject);
     						}
+			  
+																
     					}
+												
 					}
 				}
 //				model.content.columnSelectedOfDataset = dataset.metadata.fieldsMeta;

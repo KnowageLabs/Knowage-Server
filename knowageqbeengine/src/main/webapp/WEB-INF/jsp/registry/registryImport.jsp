@@ -17,11 +17,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/registry/registry.controller.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/registry/services/registryCRUDService.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/registry/services/registryFilterGetData.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/registry/services/interceptors/httpInterceptor.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/registry/services/paginationService.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/registry/filters/registryDecimalFormatFilter.js"></script>
-
 
 <%@include file="/WEB-INF/jsp/registry/registryConfig/registryConfigModule.jspf"%>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/registry/css/registry.css" >

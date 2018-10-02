@@ -23,11 +23,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
 <html>
 <head></head>
-<body ng-app="RegistryDocument" class="kn-registry">
+<body ng-app="BlankApp" ng-controller="RegistryController">
 
-	<rest-loading></rest-loading>
-    <ng-include src="'${pageContext.request.contextPath}/registry/registry.tpl.html'"></ng-include>
-    
+
+      <ng-include src="'${pageContext.request.contextPath}/registry/registry.tpl.html'"></ng-include> 
 	
 </body>
 

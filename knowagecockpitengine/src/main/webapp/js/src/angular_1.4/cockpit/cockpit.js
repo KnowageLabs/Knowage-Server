@@ -27,6 +27,7 @@ var cockpitApp= angular.module("cockpitModule",[
 	'ngSanitize',
 	'cometd',
 	'sbiModule',
+	'knModule',
 	'gridster',
 	'file_upload',
 	'ngWYSIWYG',

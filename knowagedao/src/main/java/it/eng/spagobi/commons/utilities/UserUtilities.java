@@ -415,7 +415,8 @@ public class UserUtilities {
 	/**
 	 * User functionality root exists.
 	 *
-	 * @param username the username
+	 * @param username
+	 *            the username
 	 * @return true, if successful
 	 * @throws Exception the exception
 	 */
@@ -435,9 +436,10 @@ public class UserUtilities {
 	/**
 	 * User functionality root exists.
 	 *
-	 * @param userProfile the user profile
+	 * @param userProfile
+	 *            the user profile
 	 * @return true, if successful
-	 * @throws Exception the exception
+	 	 * @throws Exception the exception
 	 */
 	public static boolean userFunctionalityRootExists(UserProfile userProfile) {
 		Assert.assertNotNull(userProfile, "User profile in input is null");
@@ -455,8 +457,10 @@ public class UserUtilities {
 	 * Load the user personal folder as a LowFunctionality object. If the personal folder exists, it is returned; if it does not exist and create is false, null
 	 * is returned, otherwise the personal folder is created and then returned.
 	 *
-	 * @param userProfile         UserProfile the user profile object
-	 * @param createIfNotExisting Boolean that specifies if the personal folder must be created if it doesn't exist
+	 * @param userProfile
+	 *            UserProfile the user profile object
+	 * @param createIfNotExisting
+	 *            Boolean that specifies if the personal folder must be created if it doesn't exist
 	 * @return the personal folder as a LowFunctionality object, or null in case the personal folder does not exist and create is false
 	 */
 	public static LowFunctionality loadUserFunctionalityRoot(UserProfile userProfile, boolean createIfNotExisting) {
@@ -513,7 +517,8 @@ public class UserUtilities {
 	/**
 	 * Creates the user functionality root.
 	 *
-	 * @param userProfile the user profile
+	 * @param userProfile
+	 *            the user profile
 	 * @throws Exception the exception
 	 */
 	public static void createUserFunctionalityRoot(IEngUserProfile userProfile) throws Exception {
@@ -1028,7 +1033,8 @@ public class UserUtilities {
 	 * Clones the input profile object. We don't implement the SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by Axis tools, and
 	 * therefore, when generating the class we may lost that method.
 	 *
-	 * @param profile The input SpagoBIUserProfile object
+	 * @param profile
+	 *            The input SpagoBIUserProfile object
 	 * @return a clone of the input SpagoBIUserProfile object
 	 */
 	public static SpagoBIUserProfile clone(SpagoBIUserProfile profile) {

@@ -6,68 +6,58 @@
          import="it.eng.spago.base.*,
                  it.eng.spagobi.commons.constants.SpagoBIConstants"
 %>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="it.eng.spago.base.SourceBean"%>
 <%@page import="it.eng.spago.navigation.LightNavigationManager"%>
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.Enumeration"%>
+<!-- *** MENU TOOLS *** -->
+<%@ page language="java" import="java.util.*" %> 
+<%@ page import="java.util.ResourceBundle" %>
+<% ResourceBundle res = ResourceBundle.getBundle("tools");%>
 
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
+<%
+  
+   String baseParams = "NEW_SESSION=TRUE&SBI_ENVIRONMENT=WORKSPACE" +
+   				"&user_id=" + userProfile.getUserUniqueIdentifier() +
+   				"&SBI_LANGUAGE=" +  permanentSession.getAttribute(Constants.USER_LANGUAGE) + 
+				"&SBI_COUNTRY=" + permanentSession.getAttribute(Constants.USER_COUNTRY) + 
+				"&SBI_HOST=" +  GeneralUtilities.getSpagoBiHost() + 
+				"&SBICONTEXT=" +  GeneralUtilities.getSpagoBiContext();
+				 
+	String baseUrlKPI = GeneralUtilities.getSpagoBiHost() + "/knowagekpiengine/restful-services/1.0/pages/edit?";
+	String urlKPI =  baseUrlKPI + baseParams;
+				
+	String baseUrlCockpit = GeneralUtilities.getSpagoBiHost() + "/knowagecockpitengine/api/1.0/pages/edit?";
+	String urlCockpit = baseUrlCockpit + baseParams + "&IS_TECHNICAL_USER=true&documentMode=EDIT"; 
+   
+%>
+
+
 <html>
 <head>
-<style>
 
+<!--custom_prj-->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/css/angular-material.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/material-icons/material-icons.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/css/style.css">
+<!--custom_prj fine -->
 
-
-.layer
-{
-			height:100%;
-			width:100%;
-			position:fixed;
-			left:0;
-			top:0;
-			z-index:1 !important;
-			background-image: url('../img/backgroundLogo.jpg');
-			background-size: cover;
-}
-
-img {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    margin: 10px;
-    width: 15%;
-}
-
-.text {
-    position: absolute;
-    bottom: 40px;
-    left: 0px;
-    margin: 10px;
-    font-family: Sans-Serif;
-    font-weight: 600;
-    color: rgb(189, 80, 128);
-}
-
-</style> 
-<link id="spagobi-angular" rel="styleSheet"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>" type="text/css" /> 
- 
+<link id="spagobi-angular" rel="styleSheet"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>" type="text/css" />  
 </head>
-<body class="landingPageAdmin">
-  
+<body class="landingPageAdmin" data-ng-controller="MainController" ng-app="knowageIntro">
 
-	<div class="layer">
-		<img src="../img/adminLogo.png" class="logo"/>
-		<div class="text">Open menu here to begin</div>
-
-	</div>
-
+  <%@ include file="/themes/sbi_default/custom_prj/html/welcomePage.jspf"%>
+  <%@ include file="/themes/sbi_default/custom_prj/html/footer.jspf"%>
 </body>
 </html>

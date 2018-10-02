@@ -1,0 +1,247 @@
+<%-- KPI LEVEL 2 --%>
+
+<div id="level2B" ng-show="level2B" flex-gt-md="66" flex="99">
+  <div class="footer-button" layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+    <md-button class="md-raised md-accent" ng-click="showLevel1()">Back</md-button>
+  </div>
+  <br><br>
+  <!--Timeline-->
+  <div layout="row" layout-align="center center" layout-wrap hide-sm hide-xs>
+    <ul class="timeline" id="timeline">
+      <li class="li verde custom_theme">
+        <div class="timestamp">
+          <span class="author md-body-2">Measure/Rule</span>
+          <span class="date md-body-2">Definition<span>
+        </div>
+        <div class="status ">
+          <h4>1</h4>
+        </div>
+      </li>
+      <li class="li azzurro custom_theme">
+        <div class="timestamp">
+          <span class="author md-body-2">KPI</span>
+          <span class="date md-body-2">Definition<span>
+        </div>
+        <div class="status ">
+          <h4>2</h4>
+        </div>
+      </li>
+      <li class="li rosso custom_theme">
+        <div class="timestamp">
+          <span class="author md-body-2">Target</span>
+          <span class="date md-body-2">Definition<span>
+        </div>
+        <div class="status ">
+          <h4>3</h4>
+        </div>
+      </li>
+      <li class="li viola custom_theme">
+        <div class="timestamp">
+          <span class="author md-body-2">KPI</span>
+          <span class="date md-body-2">Scheduling<span>
+        </div>
+        <div class="status ">
+          <h4>4</h4>
+        </div>
+      </li>
+      <li class="li giallo custom_theme">
+        <div class="timestamp">
+          <span class="author md-body-2">KPIs</span>
+          <span class="date md-body-2">Visualization<span>
+        </div>
+        <div class="status ">
+          <h4>5</h4>
+        </div>
+      </li>
+    </ul>
+  </div><!--End Timeline-->
+  <br><br>
+
+  <div layout="row" layout-xs="column">
+
+    <md-card flex-xs="99" flex-gt-sm="33">
+      <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/kpi_measure.svg" class="md-card-image" alt="Measure/Rule Definition">
+      <md-card-title>
+        <md-card-title-text layout-align="center center">
+          <p class="md-headline">Measure/Rule Definition</p>
+        </md-card-title-text>
+      </md-card-title>
+      <md-card-content>
+          <span class="md-subhead">Define measures from datasources or datasets.</span>
+      </md-card-content>
+      <md-card-actions layout="row" layout-align="end center">
+        <md-button class="md-accent" aria-label="Measure/Rule Definition" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/measureRuleDefinition.jsp" >
+            Open
+        </md-button>
+      </md-card-actions>
+    </md-card>
+
+    <md-card flex-xs="99" flex-gt-sm="33" >
+      <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/kpi_definition.svg" class="md-card-image" alt="KPI Definition">
+      <md-card-title>
+        <md-card-title-text layout-align="center center"> 
+          <span class="md-headline">KPI Definition</span>
+        </md-card-title-text>
+      </md-card-title>
+      <md-card-content>
+        <span class="md-subhead">Define key performance indicators from measures.</span>
+      </md-card-content>
+      <md-card-actions layout="row" layout-align="end center">
+        <md-button class="md-accent" aria-label="KPI Definition" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/kpiDefinition.jsp">
+            Open
+        </md-button>
+      </md-card-actions>
+    </md-card>
+
+    <md-card flex-xs="99" flex-gt-sm="33" >
+      <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/kpi_target.svg" class="md-card-image" alt="Target Definition">
+
+      <md-card-title>
+        <md-card-title-text layout-align="center center">
+          <span class="md-headline">Target Definition</span>
+        </md-card-title-text>
+      </md-card-title>
+      <md-card-content>
+        <span class="md-subhead">Define taget values for each KPI. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      </md-card-content>
+      <md-card-actions layout="row" layout-align="end center">
+        <md-button class="md-accent" aria-label="Target definition" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/targetDefinition.jsp">
+        Open
+        </md-button>
+      </md-card-actions>
+    </md-card>
+
+  </div>
+  <div layout="row" layout-xs="column">
+
+    <md-card flex-xs="99" flex-gt-sm="33" flex-offset-gt-sm="17">
+      <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/kpi_scheduler.svg" class="md-card-image" alt="KPI Scheduler">
+      <md-card-title>
+        <md-card-title-text layout-align="center center">
+          <span class="md-headline">KPI Scheduler</span>
+        </md-card-title-text>
+      </md-card-title>
+      <md-card-content>
+        <span class="md-subhead">Schedule the frequency when the KPI measurement should happen.</span>
+      </md-card-content>
+      <md-card-actions layout="row" layout-align="end center">
+        <md-button class="md-accent" aria-label="KPI Scheduler" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/schedulerKpi.jsp">
+        Open
+        </md-button>
+      </md-card-actions>
+    </md-card>
+
+    <md-card flex-xs="99" flex-gt-sm="33" >
+      <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/kpi_scorecard.svg" class="md-card-image" alt="Scorecard">
+      <md-card-title>
+        <md-card-title-text layout-align="center center">
+          <span class="md-headline">KPIs Visualization</span>
+        </md-card-title-text>
+      </md-card-title>
+      <md-card-content>
+        <span class="md-subhead">Visualize your KPIs through Scorecards and/or Speedometer.</span>
+      </md-card-content>
+      <md-card-actions layout="row" layout-align="end center">
+        <md-button class="md-accent" aria-label="Scorecard" ng-href="<%=urlKPI%>">
+        <%-- <md-button class="md-accent" aria-label="Open" ng-click="showLevel3B()"> --%>
+        Open
+        </md-button>
+      </md-card-actions>
+    </md-card>
+
+  </div>
+</div>
+
+<%-- KPI LEVEL 3 --%>
+<div id="level3B" ng-show="level3B" flex-gt-md="66" flex="99">
+  <div class="footer-button" layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+    <md-button class="md-raised md-accent" ng-click="showLevel2B()">Back</md-button>
+  </div>
+  <div layout="row" layout-xs="column">
+
+    <md-card class="" flex-xs="99" flex-gt-sm="33" flex-offset-gt-sm="17">
+      <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/empty.png" class="md-card-image" alt="image caption">
+      <md-card-title>
+        <md-card-title-text>
+          <span class="md-headline">New Visualization</span>
+        </md-card-title-text>
+      </md-card-title>
+      <md-card-content>
+        Create nice visualizations and understand the data of your city.
+      </md-card-content>
+      <md-card-actions layout="row" layout-align="end center">
+          <md-button class="md-accent" aria-label="Create" ng-click="showLevel4B()">
+            create
+          </md-button>
+      </md-card-actions>
+    </md-card>
+
+    <md-card flex-xs="99" flex-gt-sm="33" >
+      <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/empty.png" class="md-card-image" alt="image caption">
+      <md-card-title>
+        <md-card-title-text>
+          <span class="md-headline">Manage Visualizations</span>
+        </md-card-title-text>
+      </md-card-title>
+      <md-card-content>
+        Manage your KPI visualizations.
+      </md-card-content>
+      <md-card-actions layout="row" layout-align="end center">
+        <md-button class="md-accent">Manage</md-button>
+      </md-card-actions>
+    </md-card>
+
+  </div>
+</div>
+
+
+<%-- KPI LEVEL 4 Document Form --%>
+<div id="level4B" ng-show="level4B" flex="66">
+    <div class="footer-button" layout="row" layout-sm="column" layout-align="center center">
+      <md-button class="md-raised md-accent" ng-click="showLevel3B()">Back</md-button>
+    </div>
+
+    <div layout=column ng-cloak layout-margin>
+      <md-content md-colors="{background: 'grey-A100'}" md-whiteframe="1">
+        
+        <md-toolbar md-scroll-shrink>
+          <div class="md-toolbar-tools">
+            <h3>
+              <span>New KPI Visualization</span>
+            </h3>
+          </div>
+        </md-toolbar>
+
+          <form name="kpiDocumentForm" layout-padding>
+
+              <div layout-gt-sm="row" layout-xs="column" layout-sm="column">
+                <md-input-container  flex-gt-sm="45">
+                  <label>Label</label>
+                  <input ng-model="kpi.label">
+                </md-input-container>
+              
+                <div flex="5" hide-xs hide-sm><!-- Spacer //--></div>
+
+                <md-input-container  flex-gt-sm="45">
+                  <label>Name</label>
+                  <input ng-model="kpi.name">
+                </md-input-container>
+              </div>
+
+              <md-input-container class="md-block">
+                <label>Description</label>
+                <textarea ng-model="kpi.description" rows="5" md-select-on-focus></textarea>
+              </md-input-container>
+
+              <input ng-model="kpi.type" hidden>
+              <input ng-model="kpi.engine" hidden>
+              <input ng-model="kpi.folder" hidden>
+
+              <div layout="row" layout-align="end center">
+                <md-button class="md-accent" type="submit">Submit</md-button>
+              </div>
+
+          </form>
+      </md-content>
+    </div>
+</div>

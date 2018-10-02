@@ -103,7 +103,6 @@ angular.module('chartInitializer')
 				}else{
 					this.chart.jsonData = jsonData;
 				}
-
 			}
 			if(selectionsAndParams){
 				this.chart.selectionsAndParams = selectionsAndParams;
@@ -377,7 +376,7 @@ angular.module('chartInitializer')
 					var drillValue = e.point.name;
 
 					var highchartsDrilldownHelperDone = false;
-					if(chart.jsonData ){
+					if(chart.jsonData ){						
 						params.jsonMetaData = chart.jsonData.metaData;
 						try {
 							var fields = chart.jsonData.metaData.fields;
@@ -455,7 +454,7 @@ angular.module('chartInitializer')
 	this.handleDrillup = function(){
 
 		var chart=this;
-		var axisTitle = chart.options.drilledCategories[chart.options.drilledCategories.length-2];
+		var axisTitle = chart.options.drilledCategories[chart.options.drilledCategories.length-2] 
 		chart.options.drilledCategories.pop();
 		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-2] ? chart.options.drilledCategories[chart.options.drilledCategories.length-2] : chart.options.drilledCategories[0];
 		var backText=titleText;
@@ -550,18 +549,10 @@ angular.module('chartInitializer')
 				  drill = false
 			  }
 			  this.chart.series[j].setData([]);
-		 }
+		  }
 
-		var areaRangeType = false;
 		var newData = new Array();
-
 		for (var i = 0; i < counterSeries; i++) {
-
-			if(areaRangeType) {
-				areaRangeType = false;
-				continue;
-				}
-
 			var newDataSerie = new Array();
 			for (var j = 0; j < data.length; j++) {
 
@@ -572,19 +563,7 @@ angular.module('chartInitializer')
 
 				} else {
 					if(this.chart.options.xAxis[0].type!="datetime"){
-
-						if(widgetData.chartTemplate.CHART.VALUES.SERIE[i].type == "arearangelow"){
-
-							pointOptions.low = parseFloat(data[j][seriesNamesColumnBind[widgetData.chartTemplate.CHART.VALUES.SERIE[i].name]]);;
-							pointOptions.high = parseFloat(data[j][seriesNamesColumnBind[widgetData.chartTemplate.CHART.VALUES.SERIE[i+1].name]]);;
-							areaRangeType = true;
-
-						} else {
-
-							pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]);
-
-						}
-
+						pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]);
 						pointOptions.name=data[j][column];
 						if(this.chart.options.chart.type!= "pie"){
 							pointOptions.drilldown = drill;
@@ -627,12 +606,6 @@ angular.module('chartInitializer')
 
 
 		for (var i = 0; i < counterSeries; i++) {
-			if(widgetData.chartTemplate.CHART.VALUES.SERIE[i].type == "arearangelow"){
-
-				counterSeries -= 1;
-
-			}
-
 			this.chart.series[i].update({data:newData[i]},false);
 		}
 		this.chart.redraw()

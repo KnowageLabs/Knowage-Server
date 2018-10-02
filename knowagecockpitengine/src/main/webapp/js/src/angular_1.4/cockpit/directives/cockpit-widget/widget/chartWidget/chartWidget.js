@@ -343,8 +343,9 @@ function cockpitChartWidgetControllerFunction(
 							  if (selectionsOfDataset.hasOwnProperty(columnName)) {
 								  var selectionsValues = selectionsOfDataset[columnName]
 								  for (var z=0 ; z < selectionsValues.length ; z++){
-									  var filterValue = selectionsValues[z]
+									  var filterValue = selectionsValues[z];
 									  // clean the value from the parenthesis ( )
+
 									  filterValue = filterValue.replace(/[()]/g, '');
 									  // clean the value from the parenthesis ''
 									  filterValue = filterValue.replace(/['']/g, '');
@@ -358,6 +359,9 @@ function cockpitChartWidgetControllerFunction(
 
 										  //apply the filter function
 										  var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,columnName);
+										  if (!columnObject){
+												columnObject = scope.getColumnObjectFromName(widgetDataset.metadata.fieldsMeta,columnName);
+										  }
 										  //use the alias to match the filtercolumn name
 										  var filterColumnname = columnObject.alias;
 										  var columnType = columnObject.fieldType;
@@ -367,6 +371,10 @@ function cockpitChartWidgetControllerFunction(
 										  // adapt the metadata to be sent to the backend
 										  var metadataFields = scope.realTimeDatasetData.metaData.fields;
 										  scope.adaptMetadata(metadataFields);
+
+														   
+																		   
+												
 
 										  //send broadcast for selections with data filtered by selections
 										  scope.$broadcast('selections',scope.realTimeDatasetData,true);
@@ -519,7 +527,7 @@ function cockpitChartWidgetControllerFunction(
 				if (rows[i][dataIndex]){
 					for (var y=0; y < values.length ; y++){
 						//handle Attribute as String and Measure as number
-						if (columnType == 'ATTRIBUTE'){
+						if (columnType == 'ATTRIBUTE' || columnType == 'SPATIAL_ATTRIBUTE'){
 							if (rows[i][dataIndex] == values[y]){
 								toReturn.push(rows[i]);
 							}

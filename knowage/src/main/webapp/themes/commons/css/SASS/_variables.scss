@@ -1,12 +1,12 @@
 /* COLORS */
-$baseColor: 				#3b678c;
-$secondaryColor: 			#a9c3db;
+$baseColor: 				#1B4754;
+$secondaryColor: 			#397173;
 $ternaryColor:				#ccc;
 $bordersColor:				$ternaryColor;
 $darkTextColor:				lighten(#000,15%);
 $lightTextColor:			white;		
 $smallTextColor: 			lighten(#000, 50%);
-$fabPrimaryColor: 			#c70751;
+$fabPrimaryColor: 			#F79646;
 $negativeColor:				#F44336;
 $positiveColor:				#4CAF50;
 $headerBackground: 			$baseColor;
@@ -19,7 +19,7 @@ $toolbarButtonColor: 		white;
 $listBackground:	 		$pageBackground;
 $detailBackground: 			#f6f6f6;
 $tabBackground: 			white;
-$tableLineSeparator: 		#c3d4df;
+$tableLineSeparator: 		#F79646;
 $tableSelectedElementColor: lighten($secondaryColor,5%);
 $federatedDatasetBackground: $pageBackground;
 $raisedButtonTextColor: 	white;

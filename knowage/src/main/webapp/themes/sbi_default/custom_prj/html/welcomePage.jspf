@@ -1,0 +1,190 @@
+
+
+<md-toolbar class="header-toolbar" md-colors="::{background: 'grey-A100', color: 'default-blue-grey-900'}" md-scroll-shrink="true" md-whiteframe="1">
+    <div class="md-toolbar-tools">
+        <div layout="row" layout-align="start center">
+            <!--<img class="navbar-brand" src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/logo.png">-->
+            <div class="navbar-brand"></div>
+        </div>
+        <span flex></span>
+        <!-- TOOLS -->
+        <div layout="row" layout-align="end center">
+          <md-menu>
+            <md-button aria-label="Open Tools menu" class="md-icon-button" ng-click="openMenu($mdMenu, $event)">
+              <md-icon md-menu-origin md-colors="::{color: 'default-blue-grey-900'}">apps</md-icon>
+            </md-button>
+            <md-menu-content width="4">
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("cityFrontEnd-link")%>' target="_blank">
+                  <img alt='<%= res.getString("cityFrontEnd")%>' ng-src="<%= res.getString("cityFrontEnd-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("cityFrontEnd")%>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+<!--
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("dashboardManager-link")%>' target="_blank">
+                  <img alt='<%= res.getString("dashboardManager")%>' ng-src="<%= res.getString("dashboardManager-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("dashboardManager")%>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+-->
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("datasourceDiscoveryEngine-link")%>' target="_blank">
+                  <img alt='<%= res.getString("datasourceDiscoveryEngine")%>' ng-src="<%= res.getString("datasourceDiscoveryEngine-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("datasourceDiscoveryEngine")%>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("ioTDeviceManager-link")%>' target="_blank">
+                  <img alt='<%= res.getString("ioTDeviceManager")%>' ng-src="<%= res.getString("ioTDeviceManager-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("ioTDeviceManager")%>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("openInnovationArea-link")%>' target="_blank">
+                  <img alt='<%= res.getString("openInnovationArea")%>' ng-src="<%= res.getString("openInnovationArea-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("openInnovationArea")%>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("dataMashupEditor-link")%>' target="_blank">
+                  <img alt='<%= res.getString("dataMashupEditor")%>' ng-src="<%= res.getString("dataMashupEditor-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("dataMashupEditor")%>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("cityRealtimeLegacyDataRepository-link")%>' target="_blank">
+                  <img alt='<%= res.getString("cityRealtimeLegacyDataRepository")%>' ng-src="<%= res.getString("cityRealtimeLegacyDataRepository-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("cityRealtimeLegacyDataRepository")%>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+              <md-menu-item>
+                <md-button ng-href='<%= res.getString("citizenDataVault-link")%>' target="_blank">
+                  <img alt='<%= res.getString("citizenDataVault")%>' ng-src="<%= res.getString("citizenDataVault-img")%>" class="" md-menu-align-target/>
+                  <%= res.getString("citizenDataVault")%>
+                </md-button>
+              </md-menu-item>
+              
+            </md-menu-content>
+          </md-menu>
+        </div>
+        <!-- Account -->  
+        <div layout="row" layout-align="end center">
+         <md-menu>
+            <md-button aria-label="Open account menu" class="md-button" ng-click="$mdMenu.open()">
+               <md-icon md-colors="::{color: 'default-blue-grey-900'}">account_circle</md-icon>
+               <%=userName%>
+               <md-icon md-colors="::{color: 'default-blue-grey-900'}">arrow_drop_down</md-icon>
+            </md-button>
+            <md-menu-content>
+              <md-menu-item>
+                <md-button ng-href="https://s4c.eng.it/logout" target="_blank">
+                  Logout
+                </md-button>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
+        </div>
+        <%-- <div layout="row" layout-align="end center">
+            <!--<img class="navbar-brand" src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/logo.png">-->
+            <div class="navbar-project"></div>
+        </div> --%>
+    </div>
+</md-toolbar>
+
+
+ <md-content id="contentLevels" flex layout-padding>
+    <div class="knowage-intro" layout-wrap layout-align="center center" layout="row">
+<%-- LEVEL 1 --%>
+        <div id="level1" ng-show="level1" flex-gt-md="66" flex="99">
+
+          <div layout="row" layout-xs="column" flex>
+
+            <md-card flex-xs="99" flex-gt-sm="33" >
+              <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/dashboard_management.png" class="md-card-image" alt="Dashboard Management">
+              <md-card-title>
+                <md-card-title-text >
+                  <span class="md-headline">Dashboard Management</span>
+                </md-card-title-text>
+              </md-card-title>
+              <md-card-content>
+                  <span class="md-subhead">Create interactive visualizations and manage your dashboard</span>
+              </md-card-content>
+              <md-card-actions layout="row" layout-align="end center">
+                  <md-button class="md-accent" aria-label="New" ng-click="showLevel2A()">
+                    Manage
+                  </md-button>
+              </md-card-actions>
+            </md-card>
+
+            <md-card flex-xs="99" flex-gt-sm="33" >
+              <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/kpi_management.png" class="md-card-image" alt="KPI Management">
+              <md-card-title>
+                <md-card-title-text >
+                  <span class="md-headline">KPI Management</span>
+                </md-card-title-text>
+              </md-card-title>
+              <md-card-content>
+                  <span class="md-subhead">Develop metrics witch allow city manager to take a snapshot on key aspects of their city</span>
+              </md-card-content>
+              <md-card-actions layout="row" layout-align="end center">
+                  <md-button class="md-accent" aria-label="New" ng-click="showLevel2B()">
+                    Manage
+                  </md-button>
+              </md-card-actions>
+            </md-card>
+
+            <md-card flex-xs="99" flex-gt-sm="33" >
+              <img ng-src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/images/dataset_management.png" class="md-card-image" alt="Dataset Management">
+              <md-card-title>
+                <md-card-title-text >
+                  <span class="md-headline">Dataset Management</span>
+                </md-card-title-text>
+              </md-card-title>
+              <md-card-content>
+                  <span class="md-subhead">Define and manage datasets among a wide range of types</span>
+              </md-card-content>
+              <md-card-actions layout="row" layout-align="end center">
+                  <md-button class="md-accent" aria-label="New" ng-href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/datasetManagement.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE">
+                    Manage
+                  </md-button>
+              </md-card-actions>
+            </md-card>
+
+          </div>
+        </div>
+
+        <%-- Dashboards Level --%>
+        <%@ include file="/themes/sbi_default/custom_prj/html/dashboardManagement.jspf"%>
+        <%-- KPI Level --%>
+        <%@ include file="/themes/sbi_default/custom_prj/html/kpiDocument.jspf"%>
+
+    </div>
+  </md-content>
+
+  <md-content layout="row" flex="noshrink" layout-align="center center">
+    <div id="license-footer" flex="" >
+      
+    </div>
+  </md-content>
+
+
+  <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jquery-1.5.1/jquery-1.5.1.js")%>"></script>
+
+  <!-- Angular Material requires Angular.js Libraries -->
+  <script src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/js/angular.min.js"></script>
+  <script src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/js/angular-animate.min.js"></script>
+  <script src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/js/angular-aria.min.js"></script>
+  <script src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/js/angular-messages.min.js"></script>
+  <!-- Angular Material Library -->
+  <script src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/js/angular-material.min.js"></script>
+  <!-- Custom Angular Library -->
+  <script src="${pageContext.request.contextPath}/themes/sbi_default/custom_prj/js/custom_prj-controller.js"></script>
+

@@ -238,6 +238,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
       },
 
       {
+    	  name: "SPATIAL ATTRIBUTE",
+    	  value: "SPATIAL_ATTRIBUTE"
+      },
+
+      {
     	  name: "MEASURE",
     	  value: "MEASURE"
       }
@@ -267,7 +272,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			hideTooltip: true,
 
 			transformer: function() {
-				return '<md-select ng-model=row.fieldType class="noMargin" ng-change="scopeFunctions.setFormDirty()"><md-option ng-repeat="col in scopeFunctions.fieldsMetadataTypes" value="{{col.name}}">{{col.name}}</md-option></md-select>';
+				return '<md-select ng-model=row.fieldType class="noMargin" ng-change="scopeFunctions.setFormDirty()"><md-option ng-repeat="col in scopeFunctions.fieldsMetadataTypes" value="{{col.value}}">{{col.name}}</md-option></md-select>';
 			}
 		}
 	];
@@ -1780,6 +1785,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		console.log(datasetFieldsMetadata);
 		console.log($scope.datasetMetaWithFieldsMetaIndexes);
 
+		var numberOfSpatialAttribute = 0;
+		for (i=0; i<$scope.fieldsMetadata.length; i++) {
+			if($scope.fieldsMetadata[i].fieldType == "SPATIAL_ATTRIBUTE"){
+				numberOfSpatialAttribute++;
+				if(numberOfSpatialAttribute > 1) {
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.ds.field.metadata.duplicateSpatialAttribute"), sbiModule_translate.load('sbi.generic.error'));
+					return;
+				}
+			}
+		}
+
 		for (i=0; i<$scope.fieldsMetadata.length; i++) {
 			//var index = $scope.datasetMetaWithFieldsMetaIndexes[i];
 			//$scope.selectedDataSet.meta.columns[index].pvalue = $scope.fieldsMetadata[i].fieldType;
@@ -1792,6 +1808,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		console.log("posle: ",$scope.selectedDataSet.meta.columns);
 
+		$scope.closeScript();
 	}
 
 	 /**
@@ -2855,7 +2872,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	   theme:"eclipse",
 	   lineNumbers: true
 	 };
-
+	 
 	 $scope.codemirrorSparqlOptions = {
 		   mode: 'application/sparql-query',
 		   lineWrapping : true,
@@ -4172,7 +4189,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
         		}else if(value.toLowerCase()==="fieldType".toLowerCase()){
         			for(i=0;i<this.dsMetaValue.length;i++){
-           			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="attribute".toLowerCase()||
+           			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="attribute".toLowerCase()|| this.dsMetaValue[i].VALUE_CD.toLowerCase()==="spatial_attribute".toLowerCase()||
            			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="measure".toLowerCase())
            				 row.dsMetaValue.push(this.dsMetaValue[i]);
 
@@ -4357,7 +4374,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		/**
 		 * If the user just opens the Dataset wizard dialog and goes to the Step 2, the grid will be initialized with the saved (when updating/editing) or with the
 		 * default (when creating a new File dataset) data. In that situation, the 'item' and 'index' will be undefined. These two values are defined only when user
-		 * clicks on the Value column comboboxes for Field type of the particular column. They tell us the type of the Field type (ATTRIBUTE or MEASURE). So, this
+		 * clicks on the Value column comboboxes for Field type of the particular column. They tell us the type of the Field type (ATTRIBUTE, SPATIAL ATTRIBUTE or MEASURE). So, this
 		 * variable will be true only when just opening (entering) the Step 2.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
@@ -4383,7 +4400,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 			/**
 			 * If initializing (entering) the Step 2, the expression (pname=="type") will indicate that we are dealing with the Type type of the Attribute column
-			 * (possible values of these combo boxes: String, Integer, Double). In that case, inspect the subsequent Field type type (ATTRIBUTE or MEASURE) and in
+			 * (possible values of these combo boxes: String, Integer, Double). In that case, inspect the subsequent Field type type (ATTRIBUTE, SPATIAL ATTRIBUTE or MEASURE) and in
 			 * the case it is a MEASURE, remove the String item from the current Type combobox, since the MEASURE can be only Integer/Double. Otherwise, if the
 			 * Attribute column value is the Field type, just proceed with the filtering of metadata.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -4578,7 +4595,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		}else if(pname.toLowerCase()==="fieldType".toLowerCase()){
 			for(j=0;j<$scope.dsMetaValue.length;j++){
-   			 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="attribute".toLowerCase()||
+   			 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="attribute".toLowerCase()|| $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="spatial_attribute".toLowerCase()||
    			    $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="measure".toLowerCase()){
    				filteredMetaValues.push($scope.dsMetaValue[j]);
    			 }
@@ -4596,7 +4613,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	$scope.metaScopeFunctions.valueChanged = function(item,index) {
 
-    	if (item.VALUE_CD=="MEASURE" || item.VALUE_CD=="ATTRIBUTE") {
+    	if (item.VALUE_CD=="MEASURE" || item.VALUE_CD=="ATTRIBUTE" || item.VALUE_CD=="SPATIAL_ATTRIBUTE") {
     		$scope.prepareMetaForView(item.VALUE_CD,index);
     	}
 

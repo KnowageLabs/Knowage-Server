@@ -109,6 +109,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        			 <md-icon md-font-icon="fa fa-ban fa-negativer" ng-show="!ngModel.cliccable && !ngModel.drillable"></md-icon>
 			</md-button>
 			
+			<!-- XOR BUTTON -->
+			<md-button class="md-icon-button " ng-init="ngModel.mutualExclusion=false" ng-if="ngModel.type=='map'" aria-label="mutual exclusion button" ng-click="mutualExclusionToggle();$event.stopPropagation();" >
+				<md-tooltip md-direction="top" md-delay="1000">View only one layer at time</md-tooltip>
+				<md-icon md-font-icon="fa fa-long-arrow-right" ng-if="ngModel.mutualExclusion==false"></md-icon>
+				<md-icon md-font-icon="fa fa-arrows-h" ng-if="ngModel.mutualExclusion==true"></md-icon>
+			</md-button>
+			
 			<!-- quick widget BUTTON -->
 			<!-- md-button class="md-icon-button " ng-if="ngModel.type=='chart' || ngModel.type=='table' || ngModel.type=='map'" aria-label="expand button" ng-click="modalQuickWidget($event);$event.stopPropagation();" >
 				<md-tooltip md-direction="top" md-delay="1000">Add quick widget</md-tooltip>

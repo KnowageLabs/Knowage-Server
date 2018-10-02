@@ -1,6 +1,6 @@
 <div flex layout-align="center center" class="cockpitSelectorWidget">
 
-	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue' && showSelection" layout="column" class="cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}">
+	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue' && showSelection && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}">
 		<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue!='multiValue'" layout="column" 
 			ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
 			<label class="kn-custom-radio-container" ng-repeat="record in datasetRecords.rows" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}" ng-style="::gridWidth()">
@@ -12,7 +12,7 @@
 	</div>
 	
 	<!-- lov list multiple input -->
-	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue' && showSelection" layout="column" class="cSelWScroller"
+	<div ng-if="ngModel.settings.modalityPresent=='LIST' && ngModel.settings.modalityValue=='multiValue' && showSelection && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller"
 		ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
 		<label class="kn-custom-checkbox-container" ng-repeat="record in datasetRecords.rows" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}">
 			<span>{{::record.column_1}}</span>
@@ -22,7 +22,7 @@
 	</div>
 	
 	<!-- lov combobox single and multiple input -->
-	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX'" layout="column" class="selectParameter cockpitSelectorWidgetCombobox" layout-padding layout-fill layout-align="center center">
+	<div ng-if="ngModel.settings.modalityPresent=='COMBOBOX' && !isSelectedColumnTemporal()" layout="column" class="selectParameter cockpitSelectorWidgetCombobox" layout-padding layout-fill layout-align="center center">
 	
 		<!-- single -->
 		<md-input-container class="md-block" ng-if="ngModel.settings.modalityValue!='multiValue' && showSelection" style="width:100%">
@@ -43,4 +43,32 @@
 		</md-input-container>
 		
 	</div>
+	
+	<!-- date pickers -->
+	<div ng-show="isSelectedColumnTemporal()" layout="column" class="cSelWScroller" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}">
+	
+		<div layout="row" layout-align="start center">
+			<md-input-container>
+				<label>{{::translate.load(ngModel.settings.modalityValue=='multiValue' ? "sbi.cockpit.widgets.selector.startdate" : "sbi.cockpit.widgets.selector.singledate")}}</label>
+				<md-datepicker name="startDate" ng-model="startDate" md-max-date="ngModel.settings.modalityValue=='multiValue' ? endDate : null" md-open-on-focus></md-datepicker>
+			</md-input-container>
+			
+			<md-button class="md-icon-button" aria-label="Clear start date" title="Clear start date" ng-click="clearStartDate()">
+				<md-icon md-font-icon="fa fa-eraser"></md-icon>
+			</md-button>
+		</div>
+		
+		<div layout="row" layout-align="start center" ng-show="ngModel.settings.modalityValue=='multiValue'">
+			<md-input-container>
+				<label>{{::translate.load("sbi.cockpit.widgets.selector.enddate")}}</label>
+				<md-datepicker name="endDate" ng-model="endDate" md-min-date="startDate" md-open-on-focus></md-datepicker>
+			</md-input-container>
+			
+			<md-button class="md-icon-button" aria-label="Clear end date" title="Clear end date" ng-click="clearEndDate()">
+				<md-icon md-font-icon="fa fa-eraser"></md-icon>
+			</md-button>
+		</div>
+		
+	</div>
+
 </div>

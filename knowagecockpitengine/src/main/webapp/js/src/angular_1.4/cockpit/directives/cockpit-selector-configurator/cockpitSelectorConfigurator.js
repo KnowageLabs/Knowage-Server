@@ -51,7 +51,16 @@
 				$scope.model.content.columnSelectedOfDataset.length = 0;
 				$scope.model.content.columnSelectedOfDataset.push(newValue);
 			}
-		},true)
+		},true);
+
+		$scope.isSelectedColumnTemporal = function(){
+			if($scope.model.content.selectedColumn && $scope.model.content.selectedColumn && $scope.model.content.selectedColumn.type){
+				var type = $scope.model.content.selectedColumn.type.toLowerCase();
+				var isTemporal = type.indexOf('date') > -1 || type.indexOf('timestamp') > -1;
+				return isTemporal;
+			}
+			return false;
+		}
 
 		$scope.showCircularcolumns = {value :false};
 		$scope.modalityValue = [{value: "singleValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.single.value')},{value :"multiValue",name: $scope.translate.load('sbi.cockpit.widgets.selector.multivalue')}];

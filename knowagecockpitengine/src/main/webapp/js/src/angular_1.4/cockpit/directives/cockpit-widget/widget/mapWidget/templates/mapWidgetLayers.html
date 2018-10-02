@@ -1,0 +1,78 @@
+<md-card class="cockpit-map-widget-edit">
+ 	<md-toolbar class="secondaryToolbar"> 
+      <div class="md-toolbar-tools">
+        <h2>Layers</h2>
+        <span flex></span>
+        <md-button class="" ng-click="addLayer($event)">
+			Add layer
+		</md-button>
+      </div>
+    </md-toolbar>
+	<md-card-content>
+		<div layout="row" layout-align="center center">
+			<div class="kn-noItems" ng-if="!newModel.content.layers || newModel.content.layers.length == 0">
+				No Layers present, add one or more to continue
+			</div>
+		</div>
+		
+		<table class="kn-table" ng-if="newModel.content.layers.length > 0">
+			<thead>
+				<tr>
+					<th ng-if="newModel.content.layers.length > 1"></th><th>Type</th><th>Name</th><th>Label</th><th>Target</th><th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat-start="layer in newModel.content.layers | orderBy:'order' ">
+					
+					<td class="multiTableAction" ng-if="newModel.content.layers.length > 1">
+						<div layout="row" layout-align="center"> 
+		                	<md-button ng-click="move($event,layer,'up')" class="md-icon-button" aria-label="up" ng-show="!$first"> 
+	               				<md-icon md-font-icon="fa fa-arrow-up"></md-icon>
+	          				</md-button>
+	          				<md-button ng-click="move($event,layer,'down')" class="md-icon-button" aria-label="down" ng-show="!$last">
+	          					<md-icon md-font-icon="fa fa-arrow-down"></md-icon>
+	          				</md-button>
+          				</div>
+  					</td>
+					<td>{{layer.type}}</td>
+					<td>{{layer.name}}</td>
+					<td>
+						<md-input-container class="md-block">
+				            <input ng-model="layer.alias">
+		          		</md-input-container></td>
+					<td>
+						<md-switch ng-model="layer.targetDefault" aria-label="target layer" ng-change="setTargetLayer(layer)">
+					  </md-switch>
+					</td>
+					<td class="colorPickerTd" style="text-align:right;">
+						<md-button class="md-icon-button" ng-click="expandRow(layer,'metadata')" ng-class="{'expanded':layer.expanded=='metadata'}">
+							<md-tooltip>Metadata</md-tooltip>
+							<md-icon md-font-icon="fa fa-tags"></md-icon>
+						</md-button>
+						
+						<md-button class="md-icon-button" ng-click="expandRow(layer,'style')" ng-class="{'expanded':layer.expanded=='style'}">
+							<md-tooltip>Style</md-tooltip>
+							<md-icon md-font-icon="fa fa-paint-brush"></md-icon>
+						</md-button>
+						
+						<md-button class="md-icon-button" ng-click="deleteLayer(layer)">
+							<md-tooltip>Delete</md-tooltip>
+							<md-icon md-font-icon="fa fa-trash"></md-icon>
+						</md-button>
+					</td>
+				    
+				</tr>
+				<tr ng-repeat-end ng-if="layer.expanded">
+					<td colspan="100">
+						
+						<ng-include src="getTemplateUrl('mapWidgetMetadata')"></ng-include>
+						
+						<ng-include src="getTemplateUrl('mapWidgetVisualizations')"></ng-include>
+						
+					</td>
+				</tr>
+							
+			</tbody>
+		</table>
+	</md-card-content>
+</md-card>
