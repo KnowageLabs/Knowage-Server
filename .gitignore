@@ -52,6 +52,9 @@ Temporary Items
 .project
 .gitignore
 
+# IntelliJ Idea files
+.idea/
+
 # ant folders
 ant-build/
 dist/
