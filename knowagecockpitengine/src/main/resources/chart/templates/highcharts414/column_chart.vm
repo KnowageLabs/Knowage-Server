@@ -1318,7 +1318,7 @@
 						#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 						#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
 						#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
-						#if($serieValue!="")
+
 						{
 							##drilldown: $enableDrilldown,
 							drilldown: $drilldownEnabledFlag,
@@ -1333,10 +1333,11 @@
 								#end 
 							#end	
 							#if($relatedSerieType != 'arearange' && $serieValue!="")
-							
 								y: $serieValue,
 							#end
-							x: $counterX,
+							#if($relatedSerieType=="line")
+								x: $counterX,
+							#end							
 							name: "$serieCategoryName",
 							datetype:"$datetype",
 							#if($isDateTime==true)
@@ -1346,9 +1347,6 @@
 							#end
 						},
 						 #set ($counterX = $counterX+1)
-					 #else
-						#set ($counterX = $counterX+1)
-					 #end
 
 					#end
 				#end
@@ -1543,13 +1541,15 @@
 		    	type: '$relatedSerieTypes[$counter]',
 		    	 #set ($counter = $counter+1)
 		    #end
-		
 			data: [
-				#foreach($el in  $map.get($valueKey))	
-				#if($el.y!="")		
+				#foreach($el in  $map.get($valueKey))
+							
 				{
 				
-					y: $el.y,
+					#if($el.y!="")	
+						y: $el.y,
+					#end
+					
 					name: '$el.name',
 					
 					datetype:"$datetype",
@@ -1560,9 +1560,6 @@
 					#end
 					
 				},
-				#end
-
-
 				#end	
 			], 
 						dataLabels: 
