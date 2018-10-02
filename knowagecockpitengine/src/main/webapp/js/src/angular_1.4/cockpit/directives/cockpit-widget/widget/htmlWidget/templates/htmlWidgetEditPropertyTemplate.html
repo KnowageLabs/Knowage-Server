@@ -1,4 +1,4 @@
-<md-card   class="flexCard htmlWidgetConfiguration" >
+<md-card  class="flexCard htmlWidgetConfiguration" >
 	<md-card-content flex layout="column" class="noPadding">
 	    <md-toolbar> 
 	      <div class="md-toolbar-tools">
@@ -89,10 +89,14 @@
 		        <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
 		        	<md-card>
 		        		<md-card-content>
-		   					<dataset-selector ng-model="newModel.dataset.dsId" on-change="handleDsChange('datasetChanged',dsId)" extended="true"></dataset-selector>  
+		   					<dataset-selector ng-model="newModel.dataset.dsId" on-change="handleDsChange('datasetChanged',dsId)" extended="true" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>  
 		   				</md-card-content>
 		   			</md-card>	
 		     	</md-tab>
+		     	
+		     	 <md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}">
+					<cockpit-filters-configuration ng-model-shared="newModel" ></cockpit-filters-configuration>
+				</md-tab>
 		        
 	      	</md-tabs>
 	    </md-content>

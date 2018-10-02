@@ -32,13 +32,13 @@ angular
 	 	return {
 	      	restrict: 'E',
 	      	replace: 'true',
-//	      	templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/datasetsViewWorkspace.html',
+//	      	templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/datasetsViewWorkspace.html' ,
 	      	templateUrl: currentScriptPath + '../../../templates/datasetsViewWorkspace.html',
 	      	controller: datasetsController
 	  	};
 	})
 
-function datasetsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window, $mdSidenav,
+function datasetsController($scope, sbiModule_restServices, sbiModule_translate, sbiModule_messaging,$mdDialog, sbiModule_config, $window, $mdSidenav,
 		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n){
 
 	$scope.maxSizeStr = maxSizeStr;
@@ -97,6 +97,17 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.datasetSavedFromQbe = false;
 
 	$scope.datasetTemp = null;
+	
+	function createSourceNameOnDataset(datasetsArray) {
+		for(var i=0; i < datasetsArray.length; i++) {
+			var index = datasetsArray.indexOf(datasetsArray[i]);
+			if(datasetsArray[i].hasOwnProperty("qbeDatamarts")) {
+				datasetsArray[index].sourceName = datasetsArray[i].qbeDatamarts;
+			} else if(datasetsArray[i].hasOwnProperty("federationName")) {
+				datasetsArray[index].sourceName = datasetsArray[i].federationName;
+			}
+		}
+	}
 
     $scope.markNotDerived = function(datasets){
 
@@ -133,6 +144,9 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		sbiModule_restServices.promiseGet("1.0/datasets/mydata", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.datasets);
+			
+			createSourceNameOnDataset($scope.datasets);
+			
 			$scope.markNotDerived($scope.datasets);
 			angular.copy($scope.datasets,$scope.datasetsInitial);
 			console.info("[LOAD END]: Loading of All datasets is finished.");
@@ -182,6 +196,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		sbiModule_restServices.promiseGet("1.0/datasets/owned", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.myDatasets);
+			createSourceNameOnDataset($scope.myDatasets);
 			$scope.markNotDerived($scope.myDatasets);
 			angular.copy($scope.myDatasets,$scope.myDatasetsInitial);
 			console.info("[LOAD END]: Loading of My datasets is finished.");
@@ -214,16 +229,18 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		.then(function(response) {
 			var enterpriseDatasetsWithParams = [];
 			angular.copy(response.data.root,enterpriseDatasetsWithParams);
+			
 			for (var i = 0; i < enterpriseDatasetsWithParams.length; i++) {
 				if(enterpriseDatasetsWithParams[i].pars.length==0){
 					$scope.enterpriseDatasets.push(enterpriseDatasetsWithParams[i]);
 				}
 			}
 			//angular.copy(response.data.root,$scope.enterpriseDatasets);
+			createSourceNameOnDataset($scope.enterpriseDatasets);
 			$scope.markNotDerived($scope.enterpriseDatasets);
+			
 			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
 			console.info("[LOAD END]: Loading of Enterprised datasets is finished.");
-
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 
 		},function(response){
@@ -257,6 +274,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 					$scope.sharedDatasets.push(sharedDatasetsWithParams[i]);
 				}
 			}
+			createSourceNameOnDataset($scope.sharedDatasets);
 			$scope.markNotDerived($scope.sharedDatasets);
 		    angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
 			console.info("[LOAD END]: Loading of Shared datasets is finished.");
@@ -398,6 +416,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		}
 		var alreadySelected = (dataset !== undefined && $scope.selectedDataset === dataset);
 		$scope.selectedDataset = dataset;
+		
 		if (alreadySelected) {
 			$scope.selectedDataset=undefined;
 			$scope.setDetailOpen(!$scope.showDatasetDetail);
@@ -600,23 +619,33 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
         return $scope.currentTab==="myDataSet";
     }
 
-    $scope.exportDataset= function(dataset){
-       var actionName='EXPORT_EXCEL_DATASET_ACTION';
+    $scope.exportDataset= function(dataset,format){
+    	var id=dataset.id;
+       	if(isNaN(id)){
+       		id=id.dsId;
+       	}
 
-       var id=dataset.id;
-       if(isNaN(id)){
-    	   id=id.dsId;
-       }
+       	if(format == 'CSV') {
+       		var url= sbiModule_restServices.getBaseUrl("1.0/datasets/" + id + "/export");
+       		console.info("[EXPORT]: Exporting dataset with id " + id + " to CSV");
 
-       var url= sbiModule_config.adapterPath
-               +'?ACTION_NAME='+actionName
-               +'&SBI_EXECUTION_ID=-1'
-               +'&LIGHT_NAVIGATOR_DISABLED=TRUE'
-               +'&id='+id;
+       		$window.open(url);
+       	} else if (format == 'XLSX') {
+       		var actionName='EXPORT_EXCEL_DATASET_ACTION';
+       		var url= sbiModule_config.adapterPath
+            +'?ACTION_NAME='+actionName
+            +'&SBI_EXECUTION_ID=-1'
+            +'&LIGHT_NAVIGATOR_DISABLED=TRUE'
+            +'&id='+id;
 
-       $window.location.href=url;
+       		console.info("[EXPORT]: Exporting dataset with id " + id + " to XLSX");
+
+       		$window.location.href=url;
+       	} else {
+       		console.info("Format " + format + " not supported");
+       	}
     }
-
+    
     $scope.previewDataset = function(dataset){
 
     	console.info("DATASET FOR PREVIEW: ",dataset);
@@ -679,7 +708,62 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		    });
 
     }
+    
+    $scope.editQbeDataset = function(dataset) {
+    	$scope.selectedDataSet = dataset;
+    	var url = null;
+	     if(dataset.dsTypeCd=='Federated'){
+	      url = datasetParameters.qbeEditFederatedDataSetServiceUrl
+	         +'&FEDERATION_ID='+dataset.federationId;
+	     } else {
+	      var modelName= dataset.qbeDatamarts;
+	   var dataSource=dataset.qbeDataSource;
+	      url = datasetParameters.buildQbeDataSetServiceUrl
+	           +'&DATAMART_NAME='+modelName
+	           +'&DATASOURCE_LABEL='+ dataSource;
+	     }
 
+	  //url = "http://localhost:8080/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=BUILD_QBE_DATASET_START_ACTION&user_id=biadmin&NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_COUNTRY=US&DATASOURCE_LABEL=foodmart&DATAMART_NAME=foodmart";
+	  // $window.location.href=url;
+	  $scope.isFromDataSetCatalogue = false;
+	  $qbeViewer.openQbeInterfaceDSet($scope, true, url);
+    }
+    
+    $scope.editFileDataset = function (arg) {
+
+  	  $scope.initializeDatasetWizard(arg);
+
+  	  // Set the flag for editing the current dataaset (file)
+  	  $scope.editingDatasetFile = true;
+
+        $mdDialog.show({
+  		  scope:$scope,
+  		  preserveScope: true,
+  	      controller: DatasetCreateController,
+  	      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',
+  	      clickOutsideToClose: false,
+  	      escapeToClose :true,
+  	      //fullscreen: true,
+  	      locals:{
+  	    	 // previewDatasetModel:$scope.previewDatasetModel,
+  	         // previewDatasetColumns:$scope.previewDatasetColumns
+  	      }
+  	    });
+    }
+    
+    
+    $scope.tableDatasets = [
+    	{"label":"Label","name":"label","type":"text"},
+    	{"label":"Name","name":"name","type":"text"},
+    	{"label":"BM/F", "name": "sourceName","type":"text"},
+    	{"type": "buttons", "buttons": [
+    		{"name": "Preview Dataset", "icon": "fa fa-eye", "action":$scope.previewDataset, "visible": function(){return true;} },
+    		{"name": "Show dataset details", "icon": "fa fa-pencil-square-o", "action": $scope.editFileDataset, "visible": function(ds){ return (ds.fileType) && (ds.dsTypeCd=='File')} },
+    		{"name": "Edit dataset", "icon": "fa fa-pencil-square-o", "action": $scope.editQbeDataset, "visible": function(ds){ return ds.dsTypeCd == 'Qbe'} },
+    		{"name": "Open dataset in QBE", "icon": "fa fa-search", "action": $scope.showQbeDataset, "visible": function(ds){return !ds.derivated && ds.pars.length == 0}}
+    	]}
+    ];
+    
     $scope.getPreviewSet = function(dataset){
 
     	var datasetType = dataset.dsTypeCd.toUpperCase();
@@ -837,6 +921,13 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	$scope.ckanDatasetsListInitial=[];
 
     }
+
+    $scope.isAbleToEditQbeDataset = function(selectedDataset) {
+    	if(selectedDataset !== undefined) {
+	    	var toReturn = (selectedDataset.dsTypeCd == 'Federated' || selectedDataset.dsTypeCd == 'Qbe') && sbiModule_user.userName == selectedDataset.owner;
+	    	return toReturn;
+    	}
+    };
 
     $scope.getBackPreviewSet=function(){
 
@@ -1226,49 +1317,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	}
 
     }
-
-    $scope.editFileDataset = function (arg) {
-
-    	  $scope.initializeDatasetWizard(arg);
-
-    	  // Set the flag for editing the current dataaset (file)
-    	  $scope.editingDatasetFile = true;
-
-          $mdDialog.show({
-    		  scope:$scope,
-    		  preserveScope: true,
-    	      controller: DatasetCreateController,
-    	      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',
-    	      clickOutsideToClose: false,
-    	      escapeToClose :true,
-    	      //fullscreen: true,
-    	      locals:{
-    	    	 // previewDatasetModel:$scope.previewDatasetModel,
-    	         // previewDatasetColumns:$scope.previewDatasetColumns
-    	      }
-    	    });
-    }
-
-    $scope.editQbeDataset = function(dataset) {
-    	$scope.selectedDataSet = dataset;
-    	var url = null;
-	     if(dataset.dsTypeCd=='Federated'){
-	      url = datasetParameters.qbeEditFederatedDataSetServiceUrl
-	         +'&FEDERATION_ID='+dataset.federationId;
-	     } else {
-	      var modelName= dataset.qbeDatamarts;
-	   var dataSource=dataset.qbeDataSource;
-	      url = datasetParameters.buildQbeDataSetServiceUrl
-	           +'&DATAMART_NAME='+modelName
-	           +'&DATASOURCE_LABEL='+ dataSource;
-	     }
-
-	  //url = "http://localhost:8080/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=BUILD_QBE_DATASET_START_ACTION&user_id=biadmin&NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_COUNTRY=US&DATASOURCE_LABEL=foodmart&DATAMART_NAME=foodmart";
-	  // $window.location.href=url;
-	  $scope.isFromDataSetCatalogue = false;
-	  $qbeViewer.openQbeInterfaceDSet($scope, true, url);
-    }
-
 
 	if(initialOptionMainMenu){
 		if(initialOptionMainMenu.toLowerCase() == 'datasets'){

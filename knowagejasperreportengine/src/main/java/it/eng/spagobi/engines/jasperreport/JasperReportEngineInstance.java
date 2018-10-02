@@ -765,7 +765,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		}
 
 		try {
-			conn = getDataSource().getConnection(schema);
+			conn = getDataSource().getConnection();
 		} catch (Throwable t2) {
 			logger.error("Cannot retrieve connection for schema [" + schema + "]", t2);
 		}

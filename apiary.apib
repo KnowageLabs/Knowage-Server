@@ -1,0 +1,1409 @@
+FORMAT: 1A
+HOST: https://demo.knowage-suite.com/knowage/
+TITLE: Knowage REST API 2.0
+DATE: June 29th 2017
+VERSION: 2.0
+APIARY_PROJECT: knowage
+
+# Knowage REST API 2.0
+
+This specification defines the Knowage REST API 2.0. Knowage REST API is intended to manage the lifecycle of Knowage analytical documents and datasets.
+
+## Editors
+
+  + Davide Zerbetto, Engineering Ingegneria Informatica S.p.A
+  + Alessandro Portosa, Engineering Ingegneria Informatica S.p.A
+  
+## Acknowledgements
+
+The editors would like to express their gratitude to the following people who actively contributed to this specification:
+Monica Franceschini, Alessandro Daniele
+
+## Status
+
+This is a work in progress and is changing on a monthly basis.
+
+This specification is licensed under the [FIWARE Open Specification License](http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28implicit_patents_license%29).
+Engineering Ingegneria Informatica S.p.A. provides the software associated to Knowage as open source: see details on the [Knowage web site](https://www.knowage-suite.com/site/licensing/community-edition/).
+
+## Copyright
+
+Copyright © 2017 Engineering Ingegneria Informatica S.p.A.
+All rights reserved.
+
+
+##Authentication
+In order to use RESTful API you will have to authenticate yourself. You can do that through basic authentication.
+
+It is not however mandatory to send authentication information if you are already accessing the REST services through a browser and you are logged in Knowage, in that case the session will be used to retrieve profile information.
+
+NB: there is no REST interfaces to manage users. This is because users authenticate using Fiware IdM. So, to manage users you can use IdM RESTful API (https://github.com/ging/fi-ware-idm/wiki/REST-API).
+
+In the future will implement a second method of authentication: it will require that you send a token in all of your HTTP requests. We will add the token as a resource in our RESTful API so it will be possible to generate the token by sending a POST request to the token resource's url. The response will be a json object containing the token that will be used later on.
+In this way, username and password will be required only the first time. 
+ 
+##Authorization
+Each request will give you results accordingly to your roles and tenant (for example, if a document is not visible to members of your tenant it will not be in the list of documents).
+
+Right now a user can be part at most of one tenant. In future we will probably extend Knowage such that a user could be part of more than one.
+
+When this change will be applied, a request will return all the resources available for each tenant of the user. It will be however added a parameter for specify the tenant to give user the possibility to filter results accordingly to what he will be going to do.
+
+##Errors
+
+If the user is not authenticated the response status code will be 401
+The other times an error appears the response code is 200 and the response body contains a json object containing the error messages.
+
++ Response (application/json)
+
+            {
+                "service": "",
+                "errors": [
+                    {
+                        "message": "Document with label [wrong_label] doesn't exist"
+                    }
+                ]
+            }
+
+
+## The documents resource [/restful-services/2.0/documents]
+The documents resource represents the list of documents that are visible to the authenticated user.
+
+### List All Documents [GET]
+
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 2832,
+                "dataSetId": null,
+                "name": "CUSTOMER RETENTION",
+                "description": "CUSTOMER RETENTION",
+                "datasetsIds": null,
+                "label": "CUSTOMER RETENTION",
+                "visible": false,
+                "stateCode": "REL",
+                "creationUser": "demo_admin",
+                "objMetaDataAndContents": null,
+                "tenant": "DEMO",
+                "previewFile": null,
+                "docVersion": null,
+                "parametersRegion": "east",
+                "lockedByUser": null,
+                "outputParameters": [],
+                "stateCodeStr": "sbidomains.nm.rel",
+                "dataSetLabel": null,
+                "dataSourceLabel": null,
+                "typeCode": "KPI",
+                "public": true,
+                "creationDate": "2017-02-06 10:33:15",
+                "engine": "knowagekpiengine",
+                "functionalities": [
+                    "/Functionalities/Demo/KPI"
+                ]
+            },
+            {
+                "id": 2792,
+                "dataSetId": null,
+                "name": "Customer_Review",
+                "description": "",
+                "datasetsIds": null,
+                "label": "Customer_Review",
+                "visible": true,
+                "stateCode": "REL",
+                "creationUser": "demo_admin",
+                "objMetaDataAndContents": null,
+                "tenant": "DEMO",
+                "previewFile": "85354906e4a411e6a90e5395ecfc366a.png",
+                "docVersion": null,
+                "parametersRegion": "east",
+                "lockedByUser": null,
+                "outputParameters": [],
+                "stateCodeStr": "sbidomains.nm.rel",
+                "dataSetLabel": null,
+                "dataSourceLabel": null,
+                "typeCode": "DOCUMENT_COMPOSITE",
+                "public": true,
+                "creationDate": "2017-01-27 16:22:02",
+                "engine": "knowagecockpitengine",
+                "functionalities": [
+                    "/Functionalities/Demo/Cockpit"
+                ]
+            }
+        ]
+
+### Adds a new document [POST]
+
+Before adding a new document, you have to pay attention to the fact that the document could depend on other objects, in particular a data source and/or a dataset objects.
+In this case you have to create those objects first, using the standard web GUI. After you created those objects, you have to reference them by their label in 'dataSourceLabel' and 'dataSetLabel' request properties.
+
++ Request (application/json)
+
+        {
+            "name": "My Report",
+            "description": "My Report",
+            "label": "My Report",
+            "visible": true,
+            "stateCode": "REL",
+            "tenant": "DEMO",
+            "parametersRegion": "east",
+            "dataSourceLabel": "Foodmart",
+            "typeCode": "REPORT",
+            "public": true,
+            "engine": "knowagebirtreporteng",
+            "functionalities": [
+                "/Functionalities/Demo/Demo_Dashboards/Single documents"
+            ]
+        }
+        
++ Response 200 (application/json)
+
+## The document resource [/restful-services/2.0/documents/{document_label}]
+
+The document resource represents a specific document.
+
++ Parameters
+    + document_label (string) - the document's label
+
+
+### Return document with specified Label [GET]
+
++ Response 200 (application/json)
+
+  
+        {
+            "id": 1,
+            "name": "Sales and costs",
+            "description": "",
+            "label": "Sales and costs",
+            "visible": true,
+            "stateCode": "REL",
+            "creationUser": "demo_admin",
+            "objMetaDataAndContents": null,
+            "tenant": "DEFAULT",
+            "previewFile": null,
+            "docVersion": null,
+            "parametersRegion": "east",
+            "dataSourceLabel": "foodmart",
+            "dataSetLabel": "DEMO_SALES_COSTS",
+            "typeCode": "REPORT",
+            "public": true,
+            "engine": "knowagebirtreportengine",
+            "functionalities": [
+                "/Functionalities/DOC_DEMO/Reports"
+            ],
+            "creationDate": "2015-04-20 10:12:08.0"
+        }
+        
+### Update the document [PUT]
+
++ Request (application/json)
+
+  
+        {
+            "id": 1,
+            "name": "Sales and costs",
+            "description": "",
+            "label": "Sales and costs",
+            "visible": true,
+            "stateCode": "REL",
+            "creationUser": "demo_admin",
+            "objMetaDataAndContents": null,
+            "tenant": "DEFAULT",
+            "previewFile": null,
+            "docVersion": null,
+            "parametersRegion": "east",
+            "dataSourceLabel": "foodmart",
+            "dataSetLabel": "DEMO_SALES_COSTS",
+            "typeCode": "REPORT",
+            "public": true,
+            "engine": "knowagebirtreportengine",
+            "functionalities": [
+                "/Functionalities/DOC_DEMO/Reports"
+            ],
+            "creationDate": "2015-04-20 10:12:08.0"
+        }
+        
++ Response 200 (application/json)
+
+### Delete the document [DELETE]
+
++ Response 200 (application/json)
+
+
+## The preview subresource [/restful-services/2.0/documents/{document_label}/preview]
+
+An analytical document can optionally have a static preview file, typically a screenshot. In case the document has no preview, a response with status code 404 (Not found) is returned.
+
++ Parameters
+    + document_label (string) - the document's label
+
+
+### Return the preview file of the document specified by the document_label parameter [GET]
+
++ Response 200
+
+    + Headers
+
+            Content-Disposition: attachment; filename="preview.JPG"
+    + Body
+    
+            Preview is a file, typically an image.
+
+
+## The template subresource [/restful-services/2.0/documents/{document_label}/template]
+
+The template resource is optional. It is however mandatory for some type of documents. The templates of a document are versioned, so if you add a new template, the old one will be not deleted.
+
++ Parameters
+    + document_label (string) - the document's label
+
+
+### Return template with Specified Label [GET]
+
++ Response 200
+
+    + Headers
+
+            Content-Disposition: attachment; filename="my_file"
+    + Body
+    
+            Template is a file, generally an xml.
+       
+        
+### Update the template [POST]
+
+Pay attention to the fact that, if a high-level REST client is used, some header information could vary.
+
++ Request
+
+    + Headers
+    
+            Content-Type: multipart/form-data
+        
+            Content-Disposition: form-data; name="file"; filename="my_file"
+        
+    + Body    
+    
+            Template is a file, generally an xml.
+        
++ Response 200 (application/json)
+
+### Delete the template [DELETE]
+
++ Response 200 (application/json)
+
+
+## The parameters subresource [/restful-services/2.0/documents/{document_label}/parameters]
+
+A document can have one ore more parameters (i.e. analytical drivers) associated; you must create the analytical driver before invoking this service. 
+
++ Parameters
+    + document_label (string) - the document's label
+
+
+### Return parameters by document's label [GET]
+
++ Response 200 (application/json)
+       
+            [
+                {
+                    "id": 44,
+                    "biObjectID": 8,
+                    "parID": 4,
+                    "parameter": {
+                        "id": 4,
+                        "description": "",
+                        "length": null,
+                        "label": "",
+                        "name": "",
+                        "type": "",
+                        "mask": "",
+                        "typeId": null,
+                        "modality": "",
+                        "modalityValue": null,
+                        "modalityValueForDefault": null,
+                        "defaultFormula": "",
+                        "checks": null,
+                        "temporal": false,
+                        "functional": false
+                    },
+                    "label": "Prod. department",
+                    "required": true,
+                    "modifiable": 0,
+                    "visible": 1,
+                    "multivalue": false,
+                    "colSpan": null,
+                    "thickPerc": null,
+                    "prog": 1,
+                    "priority": 2,
+                    "parameterUrlName": "ParDepartment",
+                    "parameterValues": null,
+                    "parameterValuesDescription": null,
+                    "transientParmeters": false,
+                    "parameterValuesRetriever": null,
+                    "iterative": false
+                },
+                {
+                    "id": 45,
+                    "biObjectID": 8,
+                    "parID": 3,
+                    "parameter": {
+                        "id": 3,
+                        "description": "",
+                        "length": null,
+                        "label": "",
+                        "name": "",
+                        "type": "",
+                        "mask": "",
+                        "typeId": null,
+                        "modality": "",
+                        "modalityValue": null,
+                        "modalityValueForDefault": null,
+                        "defaultFormula": "",
+                        "checks": null,
+                        "temporal": false,
+                        "functional": false
+                    },
+                    "label": "Age range",
+                    "required": true,
+                    "modifiable": 0,
+                    "visible": 1,
+                    "multivalue": false,
+                    "colSpan": null,
+                    "thickPerc": null,
+                    "prog": 1,
+                    "priority": 3,
+                    "parameterUrlName": "ParAgeGroup",
+                    "parameterValues": null,
+                    "parameterValuesDescription": null,
+                    "transientParmeters": false,
+                    "parameterValuesRetriever": null,
+                    "iterative": false
+                }
+            ]
+
+        
+### Add a parameter [POST]
+
++ Request (application/json)
+
+                {
+                    "biObjectID": 8,
+                    "parID": 4,
+                    "parameter": {
+                        "id": 4,
+                        "description": "",
+                        "length": null,
+                        "label": "",
+                        "name": "",
+                        "type": "",
+                        "mask": "",
+                        "typeId": null,
+                        "modality": "",
+                        "modalityValue": null,
+                        "modalityValueForDefault": null,
+                        "defaultFormula": "",
+                        "checks": null,
+                        "temporal": false,
+                        "functional": false
+                    },
+                    "label": "Prod. department",
+                    "required": true,
+                    "modifiable": 0,
+                    "visible": 1,
+                    "multivalue": false,
+                    "colSpan": null,
+                    "thickPerc": null,
+                    "prog": 1,
+                    "priority": 2,
+                    "parameterUrlName": "ParDepartment",
+                    "parameterValues": null,
+                    "parameterValuesDescription": null,
+                    "transientParmeters": false,
+                    "parameterValuesRetriever": null,
+                    "iterative": false
+                }
+            
+        
++ Response 200 (application/json)
+
+
+
+## The parameter subresource [/restful-services/2.0/documents/{document_label}/parameters/{par_id}]
+
+Each parameter is seen as a resource (subresource of parameters) and is uniquely identified by its id.
+
++ Parameters
+    + document_label (string) - the document's label
+    + par_id (string) - the parameter's id
+
+
+### Return Parameter with specified Id [GET]
+
++ Response 200 (application/json)
+       
+                {
+                    "id": 44,
+                    "biObjectID": 8,
+                    "parID": 4,
+                    "parameter": {
+                        "id": 4,
+                        "description": "",
+                        "length": null,
+                        "label": "",
+                        "name": "",
+                        "type": "",
+                        "mask": "",
+                        "typeId": null,
+                        "modality": "",
+                        "modalityValue": null,
+                        "modalityValueForDefault": null,
+                        "defaultFormula": "",
+                        "checks": null,
+                        "temporal": false,
+                        "functional": false
+                    },
+                    "label": "Prod. department",
+                    "required": true,
+                    "modifiable": 0,
+                    "visible": 1,
+                    "multivalue": false,
+                    "colSpan": null,
+                    "thickPerc": null,
+                    "prog": 1,
+                    "priority": 2,
+                    "parameterUrlName": "ParDepartment",
+                    "parameterValues": null,
+                    "parameterValuesDescription": null,
+                    "transientParmeters": false,
+                    "parameterValuesRetriever": null,
+                    "iterative": false
+                }
+
+        
+### Update the parameter [PUT]
+
++ Request (application/json)
+
+                {
+                    "id": 44,
+                    "biObjectID": 8,
+                    "parID": 4,
+                    "parameter": {
+                        "id": 4,
+                        "description": "",
+                        "length": null,
+                        "label": "",
+                        "name": "",
+                        "type": "",
+                        "mask": "",
+                        "typeId": null,
+                        "modality": "",
+                        "modalityValue": null,
+                        "modalityValueForDefault": null,
+                        "defaultFormula": "",
+                        "checks": null,
+                        "temporal": false,
+                        "functional": false
+                    },
+                    "label": "Prod. department",
+                    "required": true,
+                    "modifiable": 0,
+                    "visible": 1,
+                    "multivalue": false,
+                    "colSpan": null,
+                    "thickPerc": null,
+                    "prog": 1,
+                    "priority": 2,
+                    "parameterUrlName": "ParDepartment",
+                    "parameterValues": null,
+                    "parameterValuesDescription": null,
+                    "transientParmeters": false,
+                    "parameterValuesRetriever": null,
+                    "iterative": false
+                }
+        
++ Response 200 (application/json)
+
+### Delete the parameter [DELETE]
+
+
++ Response 200 (application/json)
+
+
+
+## The content subresource: document execution [/restful-services/2.0/documents/{document_label}/content]
+
+This REST service applies to static reports, since they do not require user interaction. 
+Executing a document can be seen as the act of retrieving its content. For this reason, the content of a document is represented as a subresource of it.
+
++ Parameters
+    + document_label (string) - the document's label
+   
+
+### Return the document content [POST]
+
+Pre-requisite: you should have a static report defined (as analytical document) and running on Knowage Server (look at Knowage documentation in order to see how to define an analytical document of type report).
+In order to execute the document you must put the document's parameters inside the body payload as a JSON object. The example shows JSON for parameter "country", notice that only "urlName" and "values" attributes are mandatory, because the system automatically detects which analytical driver is referred by specified "urlName". There is also the outputType parameter represented as queryParameter.
+It accepts an output type, for example "HTML" or "PDF". The available output types depend from the kind of document. Check the available export types from the Knowage web application, inside the view of document. 
+        
++ Request (application/json)
+        
+    + Body
+    
+                [
+                    {
+                            "id":"1",
+                            "label":"Country",
+                            "type":"string",
+                            "urlName":"country",
+                            "values":["Italy","USA"]
+                    }
+                ]
+
++ Response 200 (application/json)
+    + Headers
+
+            Content-Disposition: attachment; filename="my_file"
+            
+    + Body
+    
+            documents content as file
+
+
+## The datasets [/restful-services/2.0/datasets]
+
+CRUD operations for Datasets
+
+### Returns the datasets [GET]
+
++ Request 
+
+    + Attributes
+        + callback (string) - the callback function for the response, optional
+
++ Response 200 (application/json)
+
+            [
+                {
+                    "active": true,
+                    "categoryId": null,
+                    "commonInfo": {
+                        "organization": null,
+                        "sbiVersionDe": null,
+                        "sbiVersionIn": "4.0",
+                        "sbiVersionUp": null,
+                        "timeDe": null,
+                        "timeIn": 1437646316000,
+                        "timeUp": null,
+                        "userDe": null,
+                        "userIn": "biadmin",
+                        "userUp": null
+                    },
+                    "configuration": {
+                        "Query": "select * from business_demo_meter",
+                        "dataSource": "Cosmos",
+                        "queryScript": "",
+                        "queryScriptLanguage": ""
+                    },
+                    "description": null,
+                    "id": {
+                        "dsId": 4,
+                        "organization": "DEFAULT",
+                        "versionNum": 7
+                    },
+                    "label": "Meter",
+                    "metaVersion": null,
+                    "metadata": {
+                        "fieldsMeta": [
+                            {
+                                "alias": "id",
+                                "fieldType": "ATTRIBUTE",
+                                "name": "id",
+                                "properties": {},
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "alias": "recvtime",
+                                "fieldType": "ATTRIBUTE",
+                                "name": "recvtime",
+                                "properties": {},
+                                "type": "java.lang.String"
+                            }
+                        ],
+                        "properties": {
+                            "resultNumber": "3276"
+                        }
+                    },
+                    "name": "Meter",
+                    "numRows": false,
+                    "owner": "biadmin",
+                    "parameters": [],
+                    "persistTableName": "",
+                    "persisted": false,
+                    "pivotColumnName": null,
+                    "pivotColumnValue": null,
+                    "pivotRowName": null,
+                    "publicDS": true,
+                    "sbiVersionDe": null,
+                    "sbiVersionIn": null,
+                    "sbiVersionUp": null,
+                    "scope": {
+                        "commonInfo": {
+                            "organization": null,
+                            "sbiVersionDe": null,
+                            "sbiVersionIn": "4.0",
+                            "sbiVersionUp": null,
+                            "timeDe": null,
+                            "timeIn": 1436791308000,
+                            "timeUp": null,
+                            "userDe": null,
+                            "userIn": "server",
+                            "userUp": null
+                        },
+                        "domainCd": "DS_SCOPE",
+                        "domainNm": "Dataset scope",
+                        "valueCd": "USER",
+                        "valueDs": "Dataset scope",
+                        "valueId": 185,
+                        "valueNm": "User"
+                    },
+                    "scopeId": 185,
+                    "timeDe": null,
+                    "timeIn": null,
+                    "timeUp": null,
+                    "transformerId": null,
+                    "type": "SbiQueryDataSet",
+                    "userDe": null,
+                    "userIn": null,
+                    "userUp": null
+                },
+                {
+                    "active": true,
+                    "categoryId": 150,
+                    "commonInfo": {
+                        "organization": null,
+                        "sbiVersionDe": null,
+                        "sbiVersionIn": "4.0",
+                        "sbiVersionUp": null,
+                        "timeDe": null,
+                        "timeIn": 1441025411000,
+                        "timeUp": null,
+                        "userDe": null,
+                        "userIn": "biadmin",
+                        "userUp": null
+                    },
+                    "configuration": {
+                        "restAddress": "http://192.168.2.137:1026/v1/queryContext",
+                        "restDirectlyJSONAttributes": "false",
+                        "restFetchSize": "limit",
+                        "restHttpMethod": "Post",
+                        "restJsonPathAttributes": [
+                            {
+                                "jsonPathType": "string",
+                                "jsonPathValue": "pros3",
+                                "name": "id"
+                            }
+                        
+                        ],
+                        "restJsonPathItems": "$",
+                        "restMaxResults": "",
+                        "restNGSI": "true",
+                        "restOffset": "offset",
+                        "restRequestBody": "{ \n    \"entities\": [ \n        {\n            \"isPattern\": \"true\",\n            \"type\":\"Meter\",\n            \"id\": \".*\"\n        }\n    ]\n}",
+                        "restRequestHeaders": {
+                            "Accept": "application/json",
+                            "Content-Type": "application/json"
+                        }
+                    },
+                    "description": "Meters Values",
+                    "id": {
+                        "dsId": 5,
+                        "organization": "DEFAULT",
+                        "versionNum": 10
+                    },
+                    "label": "RestMetersValues",
+                    "metaVersion": null,
+                    "metadata": {
+                        "fieldsMeta": [
+                
+                            {
+                                "alias": "upstreamActivePower",
+                                "fieldType": "ATTRIBUTE",
+                                "name": "upstreamActivePower",
+                                "properties": {
+                                    "jsonPathValue": "$.contextResponses[?(@.contextElement.id==pros3_Meter)].contextElement.attributes[?(@.name==upstreamActivePower)].value"
+                                },
+                                "type": "java.lang.Double"
+                            },
+                            {
+                                "alias": "downstreamActivePower",
+                                "fieldType": "ATTRIBUTE",
+                                "name": "downstreamActivePower",
+                                "properties": {
+                                    "jsonPathValue": "$.contextResponses[?(@.contextElement.id==pros3_Meter)].contextElement.attributes[?(@.name==downstreamActivePower)].value"
+                                },
+                                "type": "java.lang.Double"
+                            }
+                        ],
+                        "properties": {}
+                    },
+                    "name": "RestMetersValues",
+                    "numRows": false,
+                    "owner": "biadmin",
+                    "parameters": [],
+                    "persistTableName": "",
+                    "persisted": false,
+                    "pivotColumnName": null,
+                    "pivotColumnValue": null,
+                    "pivotRowName": null,
+                    "publicDS": true,
+                    "sbiVersionDe": null,
+                    "sbiVersionIn": null,
+                    "sbiVersionUp": null,
+                    "scope": null,
+                    "scopeId": null,
+                    "timeDe": null,
+                    "timeIn": null,
+                    "timeUp": null,
+                    "transformerId": null,
+                    "type": "SbiRESTDataSet",
+                    "userDe": null,
+                    "userIn": null,
+                    "userUp": null
+                },
+                {
+                    "active": true,
+                    "categoryId": null,
+                    "commonInfo": {
+                        "organization": null,
+                        "sbiVersionDe": null,
+                        "sbiVersionIn": "4.0",
+                        "sbiVersionUp": null,
+                        "timeDe": null,
+                        "timeIn": 1440514105000,
+                        "timeUp": null,
+                        "userDe": null,
+                        "userIn": "biadmin",
+                        "userUp": null
+                    },
+                    "configuration": {
+                        "Query": "select *",
+                        "dataSource": "Cosmos",
+                        "queryScript": "",
+                        "queryScriptLanguage": ""
+                    },
+                    "description": null,
+                    "id": {
+                        "dsId": 6,
+                        "organization": "DEFAULT",
+                        "versionNum": 1
+                    },
+                    "label": "LoadCosmos",
+                    "metaVersion": null,
+                    "metadata": null,
+                    "name": "LoadCosmos",
+                    "numRows": false,
+                    "owner": "biadmin",
+                    "parameters": [],
+                    "persistTableName": "",
+                    "persisted": false,
+                    "pivotColumnName": null,
+                    "pivotColumnValue": null,
+                    "pivotRowName": null,
+                    "publicDS": true,
+                    "sbiVersionDe": null,
+                    "sbiVersionIn": null,
+                    "sbiVersionUp": null,
+                    "scope": null,
+                    "scopeId": null,
+                    "timeDe": null,
+                    "timeIn": null,
+                    "timeUp": null,
+                    "transformerId": null,
+                    "type": "SbiQueryDataSet",
+                    "userDe": null,
+                    "userIn": null,
+                    "userUp": null
+                },
+                {
+                    "active": true,
+                    "categoryId": 150,
+                    "commonInfo": {
+                        "organization": null,
+                        "sbiVersionDe": null,
+                        "sbiVersionIn": "4.0",
+                        "sbiVersionUp": null,
+                        "timeDe": null,
+                        "timeIn": 1441189575000,
+                        "timeUp": null,
+                        "userDe": null,
+                        "userIn": "biadmin",
+                        "userUp": null
+                    },
+                    "configuration": {
+                        "restAddress": "http://192.168.2.137:1026/v1/queryContext",
+                        "restDirectlyJSONAttributes": "false",
+                        "restFetchSize": "",
+                        "restHttpMethod": "Post",
+                        "restJsonPathAttributes": [],
+                        "restJsonPathItems": "",
+                        "restMaxResults": "",
+                        "restNGSI": "true",
+                        "restOffset": "",
+                        "restRequestBody": "{ \n    \"entities\": [ \n        {\n            \"isPattern\": \"true\",\n            \"type\":\"Meter\",\n            \"id\": \".*\"\n        }\n    ]\n}",
+                        "restRequestHeaders": {}
+                    },
+                    "description": "Rest1 Desc",
+                    "id": {
+                        "dsId": 7,
+                        "organization": "DEFAULT",
+                        "versionNum": 2
+                    },
+                    "label": "Rest2",
+                    "metaVersion": null,
+                    "metadata": {
+                        "fieldsMeta": [
+                            {
+                                "alias": "id",
+                                "fieldType": "ATTRIBUTE",
+                                "name": "id",
+                                "properties": {
+                                    "jsonPathValue": "$.id"
+                                },
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "alias": "atTime",
+                                "fieldType": "ATTRIBUTE",
+                                "name": "atTime",
+                                "properties": {
+                                    "dateFormat": "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+                                    "jsonPathType": "$.attributes[?(@.name==atTime)].type",
+                                    "jsonPathValue": "$.attributes[?(@.name==atTime)].value"
+                                },
+                                "type": "java.util.Date"
+                            }
+            
+                        ],
+                        "properties": {}
+                    },
+                    "name": "Rest2",
+                    "numRows": false,
+                    "owner": "biadmin",
+                    "parameters": [],
+                    "persistTableName": "",
+                    "persisted": false,
+                    "pivotColumnName": null,
+                    "pivotColumnValue": null,
+                    "pivotRowName": null,
+                    "publicDS": true,
+                    "sbiVersionDe": null,
+                    "sbiVersionIn": null,
+                    "sbiVersionUp": null,
+                    "scope": null,
+                    "scopeId": null,
+                    "timeDe": null,
+                    "timeIn": null,
+                    "timeUp": null,
+                    "transformerId": null,
+                    "type": "SbiRESTDataSet",
+                    "userDe": null,
+                    "userIn": null,
+                    "userUp": null
+                }
+            ]
+
+
+### Add a dataset [POST]
+
++ Request (application/json)
+
+            {
+                "active": true,
+                "categoryId": null,
+                "commonInfo": {
+                    "organization": null,
+                    "sbiVersionDe": null,
+                    "sbiVersionIn": "4.0",
+                    "sbiVersionUp": null,
+                    "timeDe": null,
+                    "timeIn": 1437646316000,
+                    "timeUp": null,
+                    "userDe": null,
+                    "userIn": "biadmin",
+                    "userUp": null
+                },
+                "configuration": {
+                    "Query": "select * from business_demo_meter",
+                    "dataSource": "Cosmos",
+                    "queryScript": "",
+                    "queryScriptLanguage": ""
+                },
+                "description": null,
+                "id": {
+                    "dsId": 4,
+                    "organization": "DEFAULT",
+                    "versionNum": 7
+                },
+                "label": "Meter",
+                "metaVersion": null,
+                "metadata": {
+                    "fieldsMeta": [
+                        {
+                            "alias": "id",
+                            "fieldType": "ATTRIBUTE",
+                            "name": "id",
+                            "properties": {},
+                            "type": "java.lang.String"
+                        },
+                        {
+                            "alias": "recvtime",
+                            "fieldType": "ATTRIBUTE",
+                            "name": "recvtime",
+                            "properties": {},
+                            "type": "java.lang.String"
+                        }
+                    ],
+                    "properties": {
+                        "resultNumber": "3276"
+                    }
+                },
+                "name": "Meter",
+                "numRows": false,
+                "owner": "biadmin",
+                "parameters": [],
+                "persistTableName": "",
+                "persisted": false,
+                "pivotColumnName": null,
+                "pivotColumnValue": null,
+                "pivotRowName": null,
+                "publicDS": true,
+                "sbiVersionDe": null,
+                "sbiVersionIn": null,
+                "sbiVersionUp": null,
+                "scope": {
+                    "commonInfo": {
+                        "organization": null,
+                        "sbiVersionDe": null,
+                        "sbiVersionIn": "4.0",
+                        "sbiVersionUp": null,
+                        "timeDe": null,
+                        "timeIn": 1436791308000,
+                        "timeUp": null,
+                        "userDe": null,
+                        "userIn": "server",
+                        "userUp": null
+                    },
+                    "domainCd": "DS_SCOPE",
+                    "domainNm": "Dataset scope",
+                    "valueCd": "USER",
+                    "valueDs": "Dataset scope",
+                    "valueId": 185,
+                    "valueNm": "User"
+                },
+                "scopeId": 185,
+                "timeDe": null,
+                "timeIn": null,
+                "timeUp": null,
+                "transformerId": null,
+                "type": "SbiQueryDataSet",
+                "userDe": null,
+                "userIn": null,
+                "userUp": null
+            }
+            
++ Response 201 
+
+    + Headers
+
+            Location: 1.0/datasets/datasetLabel
+
+
+## The dataset [/restful-services/2.0/datasets/{dataset_label}]
+
+CRUD operations for a specific dataset
+
++ Parameters
+
+    + dataset_label (string) - the dataset's label
+    
+### Return the dataset [GET]
+
++ Response 200 (application/json)
+
+            {
+                "active": true,
+                "categoryId": null,
+                "commonInfo": {
+                    "organization": null,
+                    "sbiVersionDe": null,
+                    "sbiVersionIn": "4.0",
+                    "sbiVersionUp": null,
+                    "timeDe": null,
+                    "timeIn": 1437646316000,
+                    "timeUp": null,
+                    "userDe": null,
+                    "userIn": "biadmin",
+                    "userUp": null
+                },
+                "configuration": {
+                    "Query": "select * from business_demo_meter",
+                    "dataSource": "Cosmos",
+                    "queryScript": "",
+                    "queryScriptLanguage": ""
+                },
+                "description": null,
+                "id": {
+                    "dsId": 4,
+                    "organization": "DEFAULT",
+                    "versionNum": 7
+                },
+                "label": "Meter",
+                "metaVersion": null,
+                "metadata": {
+                    "fieldsMeta": [
+                        {
+                            "alias": "id",
+                            "fieldType": "ATTRIBUTE",
+                            "name": "id",
+                            "properties": {},
+                            "type": "java.lang.String"
+                        },
+                        {
+                            "alias": "recvtime",
+                            "fieldType": "ATTRIBUTE",
+                            "name": "recvtime",
+                            "properties": {},
+                            "type": "java.lang.String"
+                        }
+                    ],
+                    "properties": {
+                        "resultNumber": "3276"
+                    }
+                },
+                "name": "Meter",
+                "numRows": false,
+                "owner": "biadmin",
+                "parameters": [],
+                "persistTableName": "",
+                "persisted": false,
+                "pivotColumnName": null,
+                "pivotColumnValue": null,
+                "pivotRowName": null,
+                "publicDS": true,
+                "sbiVersionDe": null,
+                "sbiVersionIn": null,
+                "sbiVersionUp": null,
+                "scope": {
+                    "commonInfo": {
+                        "organization": null,
+                        "sbiVersionDe": null,
+                        "sbiVersionIn": "4.0",
+                        "sbiVersionUp": null,
+                        "timeDe": null,
+                        "timeIn": 1436791308000,
+                        "timeUp": null,
+                        "userDe": null,
+                        "userIn": "server",
+                        "userUp": null
+                    },
+                    "domainCd": "DS_SCOPE",
+                    "domainNm": "Dataset scope",
+                    "valueCd": "USER",
+                    "valueDs": "Dataset scope",
+                    "valueId": 185,
+                    "valueNm": "User"
+                },
+                "scopeId": 185,
+                "timeDe": null,
+                "timeIn": null,
+                "timeUp": null,
+                "transformerId": null,
+                "type": "SbiQueryDataSet",
+                "userDe": null,
+                "userIn": null,
+                "userUp": null
+            }
+            
+            
+### Update tha dataset [PUT]
+
++ Request (application/json)
+
+            {
+                "active": true,
+                "categoryId": null,
+                "commonInfo": {
+                    "organization": null,
+                    "sbiVersionDe": null,
+                    "sbiVersionIn": "4.0",
+                    "sbiVersionUp": null,
+                    "timeDe": null,
+                    "timeIn": 1437646316000,
+                    "timeUp": null,
+                    "userDe": null,
+                    "userIn": "biadmin",
+                    "userUp": null
+                },
+                "configuration": {
+                    "Query": "select * from business_demo_meter",
+                    "dataSource": "Cosmos",
+                    "queryScript": "",
+                    "queryScriptLanguage": ""
+                },
+                "description": null,
+                "id": {
+                    "dsId": 4,
+                    "organization": "DEFAULT",
+                    "versionNum": 7
+                },
+                "label": "Meter",
+                "metaVersion": null,
+                "metadata": {
+                    "fieldsMeta": [
+                        {
+                            "alias": "id",
+                            "fieldType": "ATTRIBUTE",
+                            "name": "id",
+                            "properties": {},
+                            "type": "java.lang.String"
+                        },
+                        {
+                            "alias": "recvtime",
+                            "fieldType": "ATTRIBUTE",
+                            "name": "recvtime",
+                            "properties": {},
+                            "type": "java.lang.String"
+                        }
+                    ],
+                    "properties": {
+                        "resultNumber": "3276"
+                    }
+                },
+                "name": "Meter",
+                "numRows": false,
+                "owner": "biadmin",
+                "parameters": [],
+                "persistTableName": "",
+                "persisted": false,
+                "pivotColumnName": null,
+                "pivotColumnValue": null,
+                "pivotRowName": null,
+                "publicDS": true,
+                "sbiVersionDe": null,
+                "sbiVersionIn": null,
+                "sbiVersionUp": null,
+                "scope": {
+                    "commonInfo": {
+                        "organization": null,
+                        "sbiVersionDe": null,
+                        "sbiVersionIn": "4.0",
+                        "sbiVersionUp": null,
+                        "timeDe": null,
+                        "timeIn": 1436791308000,
+                        "timeUp": null,
+                        "userDe": null,
+                        "userIn": "server",
+                        "userUp": null
+                    },
+                    "domainCd": "DS_SCOPE",
+                    "domainNm": "Dataset scope",
+                    "valueCd": "USER",
+                    "valueDs": "Dataset scope",
+                    "valueId": 185,
+                    "valueNm": "User"
+                },
+                "scopeId": 185,
+                "timeDe": null,
+                "timeIn": null,
+                "timeUp": null,
+                "transformerId": null,
+                "type": "SbiQueryDataSet",
+                "userDe": null,
+                "userIn": null,
+                "userUp": null
+            }
+            
++ Response 200
+
+
+### Delete tha dataset [DELETE]
+
++ Response 200
+
+
+## The dataset content [/restful-services/2.0/datasets/{dataset_label}/content]
+
++ Parameters
+
+    + dataset_label (string) - the dataset's label
+    
+### Return the dataset's content [GET]
+It accepts a list of multiple query parameters, name1=value1&name2=value2&...&nameN=valueN.
+        
++ Response 200
+
+            {
+                "metaData": {
+                    "totalProperty": "results",
+                    "root": "rows",
+                    "id": "id",
+                    "fields": [
+                        "recNo",
+                        {
+                            "name": "column_1",
+                            "header": "MONTH",
+                            "dataIndex": "column_1",
+                            "type": "string"
+                        },
+                        {
+                            "name": "column_2",
+                            "header": "SALES_STORE",
+                            "dataIndex": "column_2",
+                            "type": "float"
+                        },
+                        {
+                            "name": "column_3",
+                            "header": "COSTS_STORE",
+                            "dataIndex": "column_3",
+                            "type": "float"
+                        },
+                        {
+                            "name": "column_4",
+                            "header": "REVENUE",
+                            "dataIndex": "column_4",
+                            "type": "float"
+                        },
+                        {
+                            "name": "column_5",
+                            "header": "PERC_SALES",
+                            "dataIndex": "column_5",
+                            "type": "float"
+                        },
+                        {
+                            "name": "column_6",
+                            "header": "PERC_COSTS",
+                            "dataIndex": "column_6",
+                            "type": "float"
+                        },
+                        {
+                            "name": "column_7",
+                            "header": "PERC_REVENUE",
+                            "dataIndex": "column_7",
+                            "type": "float"
+                        }
+                    ]
+                },
+                "results": 11,
+                "rows": [
+                    {
+                        "id": 1,
+                        "column_1": "January",
+                        "column_2": "71048.40",
+                        "column_3": "28416.27",
+                        "column_4": "207046.27",
+                        "column_5": "9.13",
+                        "column_6": "9.11",
+                        "column_7": "9.12"
+                    },
+                    {
+                        "id": 2,
+                        "column_1": "February",
+                        "column_2": "68078.88",
+                        "column_3": "27334.47",
+                        "column_4": "197757.39",
+                        "column_5": "8.75",
+                        "column_6": "8.76",
+                        "column_7": "8.71"
+                    },
+                    {
+                        "id": 3,
+                        "column_1": "March",
+                        "column_2": "70768.11",
+                        "column_3": "28402.76",
+                        "column_4": "206900.17",
+                        "column_5": "9.09",
+                        "column_6": "9.10",
+                        "column_7": "9.11"
+                    }
+                ]
+            }
+
+
+## The engines resource [/restful-services/2.0/engines]
+
+In order to create a document it is mandatory to specify its engine. The list of engines can be retrieved by sending a GET request to the engines resource's url.
+There POST method is not implemented because engines cannot be changed.
+    
+### Get the engine resources [GET]
+        
++ Response 200 (application/json)
+
+            [
+                {
+                    "biobjTypeId": 15,
+                    "className": "",
+                    "criptable": 0,
+                    "description": "Cockpit Engine",
+                    "dirUpload": null,
+                    "dirUsable": null,
+                    "driverName": "it.eng.spagobi.engines.drivers.cockpit.CockpitDriver",
+                    "engineTypeId": 55,
+                    "id": 25,
+                    "label": "knowagecockpitengine",
+                    "name": "Cockpit Engine",
+                    "secondaryUrl": null,
+                    "url": "/knowagecockpitengine/api/1.0/pages/execute",
+                    "useDataSet": false,
+                    "useDataSource": false
+                },
+                {
+                    "biobjTypeId": 7,
+                    "className": "",
+                    "criptable": 0,
+                    "description": "What-If Engine",
+                    "dirUpload": null,
+                    "dirUsable": null,
+                    "driverName": "it.eng.spagobi.engines.drivers.whatif.WhatIfDriver",
+                    "engineTypeId": 55,
+                    "id": 26,
+                    "label": "knowagewhatifengine",
+                    "name": "What-If Engine",
+                    "secondaryUrl": null,
+                    "url": "/knowagewhatifengine/restful-services/start",
+                    "useDataSet": false,
+                    "useDataSource": true
+                }
+            ]
+            
+            
+## The engine resource [/restful-services/2.0/engines/{label}]
+
++ Parameters
+
+    + label (string) - the engine's label
+    
+### Get the engine specified resource [GET]
+        
++ Response 200 (application/json)
+
+            
+            {
+                "biobjTypeId": 15,
+                "className": "",
+                "criptable": 0,
+                "description": "Cockpit Engine",
+                "dirUpload": null,
+                "dirUsable": null,
+                "driverName": "it.eng.spagobi.engines.drivers.cockpit.CockpitDriver",
+                "engineTypeId": 55,
+                "id": 25,
+                "label": "knowagecockpitengine",
+                "name": "Cockpit Engine",
+                "secondaryUrl": null,
+                "url": "/knowagecockpitengine/api/1.0/pages/execute",
+                "useDataSet": false,
+                "useDataSource": false
+            }

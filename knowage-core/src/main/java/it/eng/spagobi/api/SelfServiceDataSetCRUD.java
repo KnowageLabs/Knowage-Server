@@ -20,6 +20,7 @@ package it.eng.spagobi.api;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -40,6 +41,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
@@ -92,6 +94,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
@@ -1110,6 +1113,22 @@ public class SelfServiceDataSetCRUD {
 								}
 
 								break;
+							case "TIMESTAMP":
+								try {
+									if (obj != null && !(obj instanceof Timestamp)) {
+										String dsConfiguration = dataSet.getConfiguration();
+										JSONObject jsonConf = new JSONObject(dsConfiguration);
+										String timestampFormat = jsonConf.get(DataSetConstants.FILE_TIMESTAMP_FORMAT).toString();
+										DateTimeFormatter formatter = DateTimeFormat.forPattern(timestampFormat);
+										LocalDateTime localDatetime = LocalDateTime.parse(obj.toString(), formatter);
+										localDatetime.toDateTime();
+									}
+								} catch (Exception e) {
+									logger.error("The cell cannot be formatted as Timestamp value", e);
+									validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
+											"sbi.workspace.dataset.wizard.metadata.validation.error.timestamp.title");
+								}
+								break;
 							}
 
 						}
@@ -1483,6 +1502,7 @@ public class SelfServiceDataSetCRUD {
 			String limitRows = req.getParameter("limitRows");
 			String xslSheetNumber = req.getParameter("xslSheetNumber");
 			String dateFormat = req.getParameter("dateFormat");
+			String timestampFormat = req.getParameter("timestampFormat");
 
 			String scopeCd = DataSetConstants.DS_SCOPE_USER;
 
@@ -1502,6 +1522,7 @@ public class SelfServiceDataSetCRUD {
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
 			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
 			jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
+			jsonDsConfig.put(DataSetConstants.FILE_TIMESTAMP_FORMAT, timestampFormat);
 
 		} catch (Exception e) {
 			logger.error("Error while defining dataset configuration. Error: " + e.getMessage());
@@ -1606,6 +1627,7 @@ public class SelfServiceDataSetCRUD {
 			String ckanUrl = req.getParameter("ckanUrl");
 			String scopeCd = DataSetConstants.DS_SCOPE_USER;
 			String dateFormat = req.getParameter("dateFormat");
+			String timestampFormat = req.getParameter("timestampFormat");
 
 			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
 			if (savingDataset) {
@@ -1619,11 +1641,12 @@ public class SelfServiceDataSetCRUD {
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, csvEncoding);
 			jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
+			jsonDsConfig.put(DataSetConstants.FILE_TIMESTAMP_FORMAT, timestampFormat);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
-			jsonDsConfig.put(DataSetConstants.CKAN_ID, ckanId);
-			jsonDsConfig.put(DataSetConstants.CKAN_URL, ckanUrl);
+			jsonDsConfig.put(CkanDataSetConstants.CKAN_ID, ckanId);
+			jsonDsConfig.put(CkanDataSetConstants.CKAN_URL, ckanUrl);
 			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
 
 		} catch (Exception e) {
@@ -1795,14 +1818,21 @@ public class SelfServiceDataSetCRUD {
 
 				String guessedType = guessColumnType(dataStore, i);
 				boolean isDate = false;
+				boolean isTimestamp = false;
 				if (!guessedType.equalsIgnoreCase("Double") && !guessedType.equalsIgnoreCase("Integer")) {
 					isDate = isADate(dataSet, dataStore, i);
+					isTimestamp = isATimestamp(dataSet, dataStore, i);
 				}
+
 				// Setting mandatory property to defaults, if specified they
 				// will be overridden
 				if (isDate) {
 					ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
 					Class type = Class.forName("java.util.Date");
+					ifmd.setType(type);
+				} else if (isTimestamp) {
+					ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+					Class type = Class.forName("java.sql.Timestamp");
 					ifmd.setType(type);
 				} else if ("Integer".equalsIgnoreCase(guessedType)) {
 					ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
@@ -1862,6 +1892,9 @@ public class SelfServiceDataSetCRUD {
 								ifmd.setType(type);
 							} else if (propertyValue.equalsIgnoreCase("Date") || propertyValue.equalsIgnoreCase("java.util.Date")) {
 								Class type = Class.forName("java.util.Date");
+								ifmd.setType(type);
+							} else if (propertyValue.equalsIgnoreCase("Timestamp") || propertyValue.equalsIgnoreCase("java.sql.Timestamp")) {
+								Class type = Class.forName("java.sql.Timestamp");
 								ifmd.setType(type);
 							} else {
 								if ("Double".equalsIgnoreCase(guessedType)) {
@@ -1970,6 +2003,26 @@ public class SelfServiceDataSetCRUD {
 
 			} catch (Exception ex) {
 				logger.debug(field.getValue() + " is not a date");
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean isATimestamp(IDataSet dataSet, IDataStore dataStore, int columnIndex) throws JSONException {
+		String dsConfiguration = dataSet.getConfiguration();
+		JSONObject jsonConf = new JSONObject(dsConfiguration);
+		String timestampFormat = jsonConf.get(DataSetConstants.FILE_TIMESTAMP_FORMAT).toString();
+		for (int i = 0; i < Math.min(10, dataStore.getRecordsCount()); i++) {
+			IRecord record = dataStore.getRecordAt(i);
+			IField field = record.getFieldAt(columnIndex);
+			Object value = field.getValue();
+			try {
+				DateTimeFormatter formatter = DateTimeFormat.forPattern(timestampFormat);
+				LocalDateTime localDatetime = LocalDateTime.parse(value.toString(), formatter);
+				localDatetime.toDateTime();
+			} catch (Exception e) {
+				logger.debug(field.getValue() + " is not a timestamp");
 				return false;
 			}
 		}

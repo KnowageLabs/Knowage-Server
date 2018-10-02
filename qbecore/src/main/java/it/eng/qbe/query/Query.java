@@ -688,7 +688,9 @@ public class Query implements IQuery {
 		for (ISelectField selectAbstractField : selectFields) {
 			if (selectAbstractField.isSimpleField()) {
 				IModelField datamartField = dataSource.getModelStructure().getField(((SimpleSelectField) selectAbstractField).getUniqueName());
-				addFieldIntoMap(selectAbstractField, datamartField, modelFieldsInvolved);
+				if (datamartField != null) {
+					addFieldIntoMap(selectAbstractField, datamartField, modelFieldsInvolved);
+				}
 
 			} else if (selectAbstractField.isInLineCalculatedField()) {
 				replaceFieldsIncalculatedFields((InLineCalculatedSelectField) selectAbstractField, modelFieldsInvolved, dataSource);
@@ -779,7 +781,9 @@ public class Query implements IQuery {
 				|| AbstractStatement.OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(operand.type)) {
 
 			IModelField datamartField = dataSource.getModelStructure().getField(operand.values[0]);
-			addFieldIntoMap(whereField, datamartField, modelFieldsInvolved);
+			if (datamartField != null) {
+				addFieldIntoMap(whereField, datamartField, modelFieldsInvolved);
+			}
 		}
 	}
 

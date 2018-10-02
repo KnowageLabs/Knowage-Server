@@ -1,0 +1,99 @@
+<div layout="row" class="calculatedFieldEditor">
+    <md-card layout="column" flex="20" flex-sm="30" flex-xs="40" class="left">
+        <md-card-content layout="column">
+            <!--  <div layout="row" class="entitySelect">
+                <md-input-container flex>
+                    <label>{{translate.load("kn.qbe.calculatedfield.entity")}}</label>
+                    <md-select ng-model="selectedEntity" ng-change="changeSelectedEntity()">
+                        <md-option ng-value="entity" ng-repeat="entity in entities">
+                            {{ entity.text }}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </div> -->
+
+            <md-list>
+                <md-list-item ng-repeat="field in selectedEntity.children|withoutPropertyValue:'iconCls':'calculation'" ng-click="addField(field)">
+                    {{field.text}}
+                </md-list-item>
+            </md-list>
+
+        </md-card-content>
+    </md-card>
+    <md-card layout="column" flex="80" flex-sm="70" flex-xs="60" class="right">
+        <md-card-content>
+            <div class="kn-info">
+            	{{translate.load("kn.qbe.calculatedfield.info")}}
+            </div>
+            <div layout="row">
+                <md-input-container flex>
+                    <label>{{translate.load("kn.qbe.calculatedfield.name")}}</label>
+                    <input name="name" type="text" ng-model="calculatedField.alias" required>
+                </md-input-container>
+                <md-input-container flex>
+                    <label>{{translate.load("kn.qbe.calculatedfield.type")}}</label>
+                    <md-select ng-model="calculatedField.type" required>
+                    	<md-option ng-repeat="type in availableTypes" value="{{type}}">{{type}}</md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+            <md-menu-bar>
+                <md-menu ng-repeat="type in availableFormulaTypes">
+                    <button ng-click="$mdOpenMenu()">{{type}}</button>
+                    <md-menu-content>
+                        <md-menu-item ng-repeat="formula in functions" ng-if="formula.type == type">
+                            <md-button ng-click="addFormula(formula)" title="{{formula.description}}">
+                                <span ng-if="formula.description" class="functionDescription">{{formula.syntax | limitTo:50}}</span>
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+                <md-menu class="validationMenu">
+                	<button>{{translate.load("kn.qbe.calculatedfield.validate")}} <i class="fa fa-check-circle"></i></button>
+                </md-menu>
+            </md-menu-bar>
+
+            <div layout="row">
+                <textarea id="formula" ui-codemirror="editorOptions" ng-model="calculatedField.expression" ui-refresh="reloadCodemirror" flex></textarea>
+            </div>
+
+        </md-card-content>
+    </md-card>
+    <md-sidenav class="md-sidenav-right" md-component-id="functionWizard" md-whiteframe="4">
+
+        <md-toolbar>
+            <h1 class="md-toolbar-tools">{{selectedFunction.name}}</h1>
+        </md-toolbar>
+        <md-content layout-padding layout="column">
+            <div class="kn-info">{{selectedFunction.description}}</div>
+            <md-input-container ng-repeat="argument in selectedFunction.arguments" class="noPadding">
+                <label>{{argument.name}}</label>
+                <input name="argument.name" type="text" ng-model="selectedFunction.temp[argument.name]" ng-if="!argument.type || argument.type=='string'">
+                <input name="argument.name" type="number" ng-model="selectedFunction.temp[argument.name]" ng-if="argument.type=='integer'">
+                <md-select ng-model="selectedFunction.temp[argument.name]" ng-if="argument.type=='field'">
+                    <md-option ng-value="fie.text" ng-repeat="fie in selectedEntity.children">
+                        {{ fie.text }}
+                    </md-option>
+                </md-select>
+                <md-select ng-model="selectedFunction.temp[argument.name]" ng-if="argument.type=='list'">
+                    <md-option ng-value="par" ng-repeat="par in argument.list">
+                        {{ par }}
+                    </md-option>
+                </md-select>
+                <div class="hint" ng-if="argument.argument_description">{{argument.argument_description}}</div>
+            </md-input-container>
+            <div flex></div>
+            <div layout="row" layout-align="start center" class="noPadding">
+                <div flex></div>
+                <md-button ng-click="toggleFunctionWizard()" class="md-raised">
+                    {{translate.load("kn.qbe.general.cancel")}}
+                </md-button>
+                <md-button ng-click="addFromFunction(selectedFunction)" class="md-primary md-raised">
+                    {{translate.load("kn.qbe.general.ok")}}
+                </md-button>
+            </div>
+
+        </md-content>
+
+    </md-sidenav>
+</div>

@@ -9,27 +9,27 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 	
 
 <md-toolbar class="header secondaryToolbar" ng-hide="isParameterPanelDisabled()" 
-		ng-if="!(execProperties.isFromDocumentWidget)">
-	<div layout="row" layout-align="space-around center">	
-		<md-button aria-label="Reset Parameter" class="md-icon-button" ng-click="clearListParametersForm();">
-			<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.clear")}}</md-tooltip>
-			<md-icon md-font-icon="fa fa-reply-all"></md-icon>
-		</md-button>	
-		<% 
-		if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.SEE_VIEWPOINTS_FUNCTIONALITY}) || 
-						UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0])){
-		%>					
-		<md-button aria-label="Open Saved Parameters" class="md-icon-button" 
-				ng-click="urlViewPointService.getViewpoints();">
-				<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.open")}}</md-tooltip>
-				<md-icon md-font-icon="fa fa-pencil"></md-icon>
-		</md-button>	
-		<md-button aria-label="Save Parameters" class="md-icon-button"	ng-click="urlViewPointService.createNewViewpoint();">
-				<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.save")}}</md-tooltip>
-				<md-icon md-font-icon="fa fa-floppy-o"></md-icon>
-		</md-button>
-	  	<%} %>
-	</div>
+		ng-if="!(execProperties.isFromDocumentWidget)" >
+		<div class="md-toolbar-tools" layout="row" layout-align="space-around center">
+			<md-button aria-label="Reset Parameter" class="md-icon-button" ng-click="clearListParametersForm();">
+				<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.clear")}}</md-tooltip>
+				<md-icon md-font-icon="fa fa-eraser"></md-icon>
+			</md-button>	
+			<% 
+			if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.SEE_VIEWPOINTS_FUNCTIONALITY}) || 
+							UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0])){
+			%>					
+			<md-button aria-label="Open Saved Parameters" class="md-icon-button" 
+					ng-click="urlViewPointService.getViewpoints();">
+					<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.open")}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-pencil"></md-icon>
+			</md-button>	
+			<md-button aria-label="Save Parameters" class="md-icon-button"	ng-click="urlViewPointService.createNewViewpoint();">
+					<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.save")}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-floppy-o"></md-icon>
+			</md-button>
+		  	<%} %>
+	  	</div>
 </md-toolbar>
 		
 <div ng-show="showSelectRoles" ng-cloak layout-padding>

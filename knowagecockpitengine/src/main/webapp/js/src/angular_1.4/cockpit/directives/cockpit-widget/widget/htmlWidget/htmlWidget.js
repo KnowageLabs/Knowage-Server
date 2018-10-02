@@ -103,7 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}else {
 				$scope.trustedCss = $sce.trustAsHtml('<style>'+$scope.ngModel.cssToRender+'</style>');
 				if($scope.ngModel.htmlToRender){
-					$scope.trustedHtml = $sce.trustAsHtml($scope.parseCalc($scope.ngModel.htmlToRender));
+					$scope.trustedHtml = $sce.trustAsHtml($scope.parseCalc("<div>" + $scope.ngModel.htmlToRender +" </div>"));
 				}
 				$scope.hideWidgetSpinner();
 			}
@@ -114,6 +114,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.ngModel.cssToRender){
 				$scope.checkPlaceholders($scope.ngModel.cssToRender).then(
 						function(placeholderResultCss){
+							placeholderResultCss = $scope.parseCalc(placeholderResultCss);
 							$scope.trustedCss = $sce.trustAsHtml('<style>'+placeholderResultCss+'</style>');
 						}
 					)
@@ -209,8 +210,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    	var tempElement;
 				    	for(var r = 0; r<limit; r++){
 				    		var tempRow = angular.copy(repeatedElement);
-				    		tempRow.innerHTML =  tempRow.innerHTML.replace($scope.columnRegex, function(match,c1,c2){
-								return "[kn-column='"+c1+"' row='"+(c2||r)+"']";
+				    		tempRow.innerHTML =  tempRow.innerHTML.replace($scope.columnRegex, function(match,c1,c2,c3, precision){
+				    			var precisionPlaceholder = '';
+				    			if(precision) precisionPlaceholder = "precision='"+precision+"'";
+								return "[kn-column=\'"+c1+"\' row=\'"+(c2||r)+"\' " + precisionPlaceholder + "]";
 							});
 				    		tempRow.innerHTML = tempRow.innerHTML.replace($scope.repeatIndexRegex, r);
 				    		if(r==0){
@@ -239,6 +242,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			do {
 				  if (allElements[j] && allElements[j].hasAttribute("kn-if")){
 				    	var condition = allElements[j].getAttribute("kn-if").replace($scope.columnRegex, $scope.ifConditionReplacer);
+				    	condition = condition.replace($scope.paramsRegex, $scope.paramsReplacer);
 				    	if(eval(condition)){
 				    		allElements[j].removeAttribute("kn-if");
 				    	}else{
@@ -283,12 +287,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		//Replacers
-		$scope.calcReplacer = function(match,p1,precision = 2){
-			return (precision && !isNaN(p1))? eval(p1).toFixed(precision) : eval(p1);
+		$scope.calcReplacer = function(match,p1,precision){
+			return (precision && !isNaN(eval(p1)))? eval(p1).toFixed(precision) : eval(p1);
 		}
 		
-		$scope.ifConditionReplacer = function(match, p1, p2){
-			if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]){
+		$scope.ifConditionReplacer = function(match, p1, p2, aggr){
+			if(aggr){
+				p1=$scope.aggregationDataset && $scope.aggregationDataset.rows[0] && typeof($scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,aggr)])!='undefined' ? $scope.aggregationDataset.rows[0][$scope.getColumnFromName(p1,$scope.aggregationDataset,aggr)] : 'null';
+			}
+			else if($scope.htmlDataset.rows[p2||0] && $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]){
 				p1 = typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]) == 'string' ? '\''+$scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)]+'\'' : $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)];
 			}else {
 				p1 = 'null';
@@ -302,7 +309,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}else{
 				p1=$scope.htmlDataset.rows[p2||0] && typeof($scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)])!='undefined' ? $scope.htmlDataset.rows[p2||0][$scope.getColumnFromName(p1,$scope.htmlDataset)] : 'null';
 			}
-			return (precision && !isNaN(p1))? p1.toFixed(precision) : p1;
+			return (precision && !isNaN(parseFloat(p1)))? parseFloat(p1).toFixed(precision) : p1;
 			
 		}
 		$scope.paramsReplacer = function(match, p1){

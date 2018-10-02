@@ -72,12 +72,16 @@ angular.module('federation_view', ['ngMaterial'])
 	}
 });
 
-function federationViewControllerFunction($scope,sbiModule_translate){
+function federationViewControllerFunction($scope,sbiModule_user,sbiModule_translate){
 	$scope.clickFederation=function(item){
 		
 		 $scope.selectFederationAction({federation: item});
 	}
-	
+	$scope.sbiUser = sbiModule_user;
 	$scope.translate=sbiModule_translate;
+	
+	$scope.isAbletoDelete = function(federation){
+		return $scope.sbiUser.isTechnicalUser == "true"|| $scope.sbiUser.userId==federation.owner;
+	}
 };
 })();

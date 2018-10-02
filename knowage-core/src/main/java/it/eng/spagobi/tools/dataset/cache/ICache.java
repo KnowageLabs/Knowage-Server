@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.dataset.cache;
 
 import java.util.List;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
@@ -31,19 +32,6 @@ import it.eng.spagobi.utilities.database.DataBaseException;
  *
  */
 public interface ICache {
-
-	/**
-	 * Enable disable the cache
-	 *
-	 * @param enable
-	 *            true to enable the cache, false to disable it.
-	 */
-	void enable(boolean enable);
-
-	/**
-	 * @return true if the cache is enabled false otherwise.
-	 */
-	boolean isEnabled();
 
 	/**
 	 * Facility method. It is equivalent to contains(dataSet.getSignature) call.
@@ -103,27 +91,17 @@ public interface ICache {
 	 * @return the resultSet if cached, null elsewhere
 	 */
 
-	IDataStore get(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount);
+	IDataStore get(UserProfile userProfile, IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
+			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException;
 
-	// =====================================================================================
-	// LOAD METHODS
-	// =====================================================================================
-	IDataStore load(IDataSet dataSet, boolean wait);
 
-	List<IDataStore> load(List<IDataSet> dataSets, boolean wait);
-
-	// =====================================================================================
-	// REFRESH METHODS
-	// =====================================================================================
-
-	IDataStore refresh(List<IDataSet> dataSets, boolean wait);
+	public void refresh(IDataSet dataSet);
 
 	/**
 	 * Facility method. It is equivalent to delete(dataSet.getSignature) call.
 	 *
-	 * @param resultsetSignature
-	 *            the unique resultSet signature
+	 * @param dataSet
+	 *            the dataSet
 	 *
 	 * @return true if resultSet is deleted from cache, false if resultSet wasn't cached
 	 */
@@ -201,24 +179,8 @@ public interface ICache {
 	 */
 	ICacheMetadata getMetadata();
 
-	/**
-	 * Register the listener on the specified event
-	 *
-	 * @param event
-	 *            the event type
-	 * @param listener
-	 *            the listener type
-	 */
-	void addListener(ICacheEvent event, ICacheListener listener);
+	UserProfile getUserProfile();
 
-	/**
-	 * Schedule the execution of an activity
-	 *
-	 * @param activity
-	 *            the type of activity
-	 * @param trigger
-	 *            the condition
-	 */
-	void scheduleActivity(ICacheActivity activity, ICacheTrigger trigger);
+	void setUserProfile(UserProfile userProfile);
 
 }

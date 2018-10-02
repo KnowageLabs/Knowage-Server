@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +41,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.StreamingOutput;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,27 +58,25 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.deserializer.DeserializerFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.iterator.CsvStreamingOutput;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.dataset.crosstab.CrossTab;
-import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.service.ManageDataSetsForREST;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
@@ -83,7 +85,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
@@ -301,6 +302,53 @@ public class DataSetResource extends AbstractDataSetResource {
 		}
 	}
 
+	@GET
+	@Path("/olderversions/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public String geOlderVersionsForDataset(@PathParam("id") int id) {
+		logger.debug("IN");
+		List<IDataSet> olderVersions = null;
+		JSONObject toReturn = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
+		try {
+			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
+			dsDao.setUserProfile(getUserProfile());
+
+			olderVersions = dsDao.loadDataSetOlderVersions(id);
+
+			if (olderVersions != null && !olderVersions.isEmpty()) {
+				Iterator<IDataSet> it = olderVersions.iterator();
+				while (it.hasNext()) {
+					IDataSet oldVersion = it.next();
+					Integer dsVersionNum = null;
+					if (oldVersion instanceof VersionedDataSet) {
+						dsVersionNum = ((VersionedDataSet) oldVersion).getVersionNum();
+					}
+					String dsType = oldVersion.getDsType();
+					String userIn = oldVersion.getUserIn();
+					Date timeIn = oldVersion.getDateIn();
+
+					JSONObject oldDsJsonObj = new JSONObject();
+					oldDsJsonObj.put("type", dsType);
+					oldDsJsonObj.put("userIn", userIn);
+					oldDsJsonObj.put("versNum", dsVersionNum);
+					oldDsJsonObj.put("dateIn", timeIn);
+					oldDsJsonObj.put("dsId", id);
+					jsonArray.put(oldDsJsonObj);
+				}
+				toReturn.put("root", jsonArray);
+			}
+
+		} catch (SpagoBIRuntimeException ex) {
+			throw ex;
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+		}
+
+		return toReturn.toString();
+	}
+
 	@Override
 	@GET
 	@Path("/{label}")
@@ -317,13 +365,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	public String getDataSetLabelById(@PathParam("id") String id) {
 		logger.debug("IN");
 
-		IDataSetDAO datasetDao = null;
-		try {
-			datasetDao = DAOFactory.getDataSetDAO();
-		} catch (EMFUserError e) {
-			logger.error("Internal error", e);
-			throw new SpagoBIRuntimeException("Internal error", e);
-		}
+		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
 		IDataSet dataset = datasetDao.loadDataSetById(new Integer(id));
 
 		return dataset.getLabel();
@@ -335,8 +377,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	 * @param id
 	 * @return
 	 * @throws JSONException
-	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 * @throws SerializationException
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	@GET
 	@Path("/dataset/id/{id}")
@@ -345,14 +387,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	public String getDataSetById(@PathParam("id") String id) throws JSONException, SerializationException {
 		logger.debug("IN");
 
-		IDataSetDAO datasetDao = null;
-
-		try {
-			datasetDao = DAOFactory.getDataSetDAO();
-		} catch (EMFUserError e) {
-			logger.error("Internal error", e);
-			throw new SpagoBIRuntimeException("Internal error", e);
-		}
+		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
 
 		/**
 		 * When retrieving the dataset that is previously saved, call the method that retrieves all the available datasets since they contain also information
@@ -445,14 +480,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 		logger.debug("IN");
 
-		IDataSetDAO datasetDao = null;
-
-		try {
-			datasetDao = DAOFactory.getDataSetDAO();
-		} catch (EMFUserError e) {
-			logger.error("Internal error", e);
-			throw new SpagoBIRuntimeException("Internal error", e);
-		}
+		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
 
 		// Execute restoring of the dataset version (get the required version of the dataset). This will provide changes in the database.
 		datasetDao.restoreOlderDataSetVersion(Integer.parseInt(datasetId), Integer.parseInt(versionId));
@@ -482,6 +510,35 @@ public class DataSetResource extends AbstractDataSetResource {
 		return super.execute(label, body);
 	}
 
+	@GET
+	@Path("/{id}/export")
+	@Produces(MediaType.TEXT_PLAIN)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public Response export(@PathParam("id") int id, @QueryParam("outputType") @DefaultValue("csv") String outputType) {
+
+		IDataSet dataSet = getDataSetDAO().loadDataSetById(id);
+		dataSet.setUserProfileAttributes(getUserProfile().getUserAttributes());
+		Assert.assertNotNull(dataSet, "Impossible to find a dataset with id [" + id + "]");
+		// Assert.assertTrue(dataSet.getParamsMap() == null || dataSet.getParamsMap().isEmpty(), "Impossible to export a dataset with parameters");
+		Assert.assertTrue(dataSet.isIterable(), "Impossible to export a non-iterable data set");
+		DataIterator iterator = null;
+		try {
+			logger.debug("Starting iteration to transfer data");
+			iterator = dataSet.iterator();
+
+			StreamingOutput stream = new CsvStreamingOutput(iterator);
+
+			ResponseBuilder response = Response.ok(stream);
+			response.header("Content-Disposition", "attachment;filename=" + dataSet.getName() + "." + outputType);
+			return response.build();
+		} catch (Exception e) {
+			if (iterator != null) {
+				iterator.close();
+			}
+			throw e;
+		}
+	}
+
 	@Override
 	@DELETE
 	@Path("/{label}")
@@ -505,15 +562,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response deleteDatasetVersion(@PathParam("id") String datasetId, @PathParam("versionId") String versionId) {
 
-		IDataSetDAO datasetDao = null;
-
-		try {
-			datasetDao = DAOFactory.getDataSetDAO();
-			datasetDao.setUserProfile(getUserProfile());
-		} catch (EMFUserError e) {
-			logger.error("Internal error", e);
-			throw new SpagoBIRuntimeException("Internal error", e);
-		}
+		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+		datasetDao.setUserProfile(getUserProfile());
 
 		boolean deleted = datasetDao.deleteInactiveDataSetVersion(Integer.parseInt(versionId), Integer.parseInt(datasetId));
 
@@ -529,8 +579,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * Delete all versions for the selected dataset.
 	 *
-	 * @param id
-	 *            The ID of the selected dataset.
+	 * @param datasetId
+	 *            The datasetId of the selected dataset.
 	 * @return Status of the request (OK status).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
@@ -539,15 +589,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response deleteAllDatasetVersions(@PathParam("id") String datasetId) {
 
-		IDataSetDAO datasetDao = null;
-
-		try {
-			datasetDao = DAOFactory.getDataSetDAO();
-			datasetDao.setUserProfile(getUserProfile());
-		} catch (EMFUserError e) {
-			logger.error("Internal error", e);
-			throw new SpagoBIRuntimeException("Internal error", e);
-		}
+		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+		datasetDao.setUserProfile(getUserProfile());
 
 		boolean deleted = datasetDao.deleteAllInactiveDataSetVersions(Integer.parseInt(datasetId));
 
@@ -586,58 +629,16 @@ public class DataSetResource extends AbstractDataSetResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSetParameters(@Context HttpServletRequest req, @PathParam("label") String label) {
 		logger.debug("IN");
+		Assert.assertTrue(StringUtils.isNotBlank(label), "Dataset label cannot must be valorized");
 		try {
-			List<JSONObject> fieldsParameters = getDatasetManagementAPI().getDataSetParameters(label);
+			IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+			IDataSet dataSet = datasetDao.loadDataSetByLabel(label);
+			Assert.assertNotNull(dataSet, "Dataset cannot be null");
+			List<JSONObject> fieldsParameters = dataSet.getDataSetParameters();
 			JSONArray paramsJSON = writeParameters(fieldsParameters);
 			JSONObject resultsJSON = new JSONObject();
 			resultsJSON.put("results", paramsJSON);
 			return resultsJSON.toString();
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	private static final String CROSSTAB_DEFINITION = "crosstabDefinition";
-
-	@POST
-	@Path("/{label}/chartData")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getChartDataStore(@PathParam("label") String label, @QueryParam("offset") @DefaultValue("-1") int offset,
-			@QueryParam("fetchSize") @DefaultValue("-1") int fetchSize, @QueryParam("maxResults") @DefaultValue("-1") int maxResults) {
-		logger.debug("IN");
-		try {
-			String crosstabDefinitionParam = request.getParameter(CROSSTAB_DEFINITION);
-			if (crosstabDefinitionParam == null) {
-				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Parameter [" + CROSSTAB_DEFINITION + "] cannot be null");
-			}
-
-			JSONObject crosstabDefinitionJSON = ObjectUtils.toJSONObject(crosstabDefinitionParam);
-
-			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
-			CrosstabDefinition crosstabDefinition = (CrosstabDefinition) DeserializerFactory.getDeserializer("application/json")
-					.deserialize(crosstabDefinitionJSON, CrosstabDefinition.class);
-
-			IDataStore dataStore = getDatasetManagementAPI().getAggregatedDataStore(label, offset, fetchSize, maxResults, crosstabDefinition);
-			Assert.assertNotNull(dataStore, "Aggregated Datastore is null");
-
-			// serialize crosstab
-			CrossTab crossTab;
-			if (crosstabDefinition.isPivotTable()) {
-				// TODO: see the implementation in LoadCrosstabAction
-				throw new SpagoBIServiceException(this.request.getPathInfo(), "Crosstable Pivot not yet managed");
-			} else {
-				// load the crosstab data structure for all other widgets
-				crossTab = new CrossTab(dataStore, crosstabDefinition);
-			}
-			JSONObject crossTabDefinition = crossTab.getJSONCrossTab();
-
-			return crossTabDefinition.toString();
-
-		} catch (ParametersNotValorizedException p) {
-			throw new ParametersNotValorizedException(p.getMessage());
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {
@@ -796,15 +797,18 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String persistDataSets(@Context HttpServletRequest req) throws IOException, JSONException {
 		IDataSetDAO dsDao;
+		String toReturnString = null;
 		try {
 			dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
+			JSONObject json = RestUtilities.readBodyAsJSONObject(req);
+			ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
+
+			toReturnString = mdsfr.insertDataset(json.toString(), dsDao, null, getUserProfile(), req);
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
-		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
-		ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
-		String toReturnString = mdsfr.insertDataset(json.toString(), dsDao, null, getUserProfile(), req);
+
 		return toReturnString;
 	}
 
@@ -994,7 +998,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		try {
 			logger.debug("get dataset with label " + datasetLabel);
 			IDataSet dataSet = getDatasetManagementAPI().getDataSet(datasetLabel);
-			ICache cache = SpagoBICacheManager.getCache();
+			ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 			logger.debug("Delete from cache dataset references with signature " + dataSet.getSignature());
 			cache.delete(dataSet.getSignature());
 		} catch (Throwable t) {
@@ -1078,7 +1082,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				if (dataSet == null) {
 					throw new SpagoBIRuntimeException("Impossibile to load dataSet with label [" + label + "]");
 				}
-				SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+				SQLDBCache cache = (SQLDBCache) CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 				String tableName = null;
 				if (dataSet.isPersisted() && dataSet.getDataSourceForWriting().getDsId() == cache.getDataSource().getDsId()) {
 					tableName = dataSet.getTableNameForReading();
@@ -1087,7 +1091,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				} else {
 					DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
 					dataSetManagementAPI.setUserProfile(getUserProfile());
-					tableName = dataSetManagementAPI.persistDataset(label, true);
+					tableName = dataSetManagementAPI.persistDataset(label);
 					Monitor monitorIdx = MonitorFactory.start("spagobi.dataset.persist.indixes");
 					if (tableName != null) {
 						JSONArray columnsArray = labels.getJSONArray(label);
@@ -1108,7 +1112,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				} else {
 					logger.debug("Impossible to get dataset with label [" + label + "]");
 				}
-			} catch (JSONException | EMFUserError e) {
+			} catch (JSONException e) {
 				logger.error("error in persisting dataset with label: " + label, e);
 				throw new RuntimeException("error in persisting dataset with label " + label);
 			}
@@ -1167,7 +1171,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			if (typeFilter.equals("=")) {
 				hsql += " and h." + columnFilter + " = '" + valuefilter + "'";
 			} else if (typeFilter.equals("like")) {
-				hsql += " and h." + columnFilter + " like '%" + valuefilter + "%'";
+				hsql += " and upper(h." + columnFilter + ") like '%" + valuefilter.toUpperCase() + "%'";
 			}
 		}
 

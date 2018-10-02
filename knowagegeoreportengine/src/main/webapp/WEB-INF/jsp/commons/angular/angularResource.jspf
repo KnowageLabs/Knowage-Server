@@ -107,8 +107,5 @@
 
 <%@include file="../../commons/includeMessageResource.jspf"%>
 
-<%--    <%@include file="commons/includeGeoExt.jspf" %> --%>
-<%-- 		<%@include file="commons/includeExtensionsJS.jspf" %> --%>
-<%-- 		<%@include file="commons/includeSpagoBIGeoReportJS.jspf" %> --%>
 		
 		

@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.tools.catalogue.service;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
@@ -33,16 +32,15 @@ import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 
@@ -115,10 +113,6 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 			} catch (SerializationException e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize objects into a JSON object", e);
 			}
-
-		} catch (EMFUserError eue) {
-			logger.error("Error in getting federated datasets", eue);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Error in getting federated datasets", eue);
 		} catch (JSONException e) {
 			logger.error("Cannot serialize objects into a JSON object", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize objects into a JSON object", e);

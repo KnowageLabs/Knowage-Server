@@ -30,7 +30,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,17 +71,15 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 public class MemberResource extends AbstractWhatIfEngineService {
 
-
 	private static String factCountUniqueName = "[Measures].[Fact Count]";
-
 
 	@POST
 	@Path("/drilldown/{axis}/{position}/{member}")
 	@Produces("text/html; charset=UTF-8")
-	
+
 	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
 			@PathParam("member") int memberPos) throws JSONException, IOException {
-
+		Member m2 = null;
 		Monitor totalTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.totalTime");
 
 		Monitor readbodyTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.readBody");
@@ -104,7 +101,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		Position p = CubeUtilities.getPosition(positions, jo.getString("positionUniqueName"));
 
 		List<Member> m = p.getMembers();
-		Member m2 = m.get(memberPos);
+		if (memberPos > -1) {
+			m2 = m.get(memberPos);
+		}
 
 		try {
 			m2 = CubeUtilities.getMember(model.getCube(), jo.getString("memberUniqueName"));
@@ -151,7 +150,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@Path("/drillup")
 	// {axis}/{position}/{memberPosition}/{positionUniqueName}/{memberUniqueName}
 	@Produces("text/html; charset=UTF-8")
-	
+
 	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req) {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
@@ -175,7 +174,6 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		} catch (JSONException e) {
 			logger.error("Error serializing JSON", e);
 		}
-
 
 		Member m2 = null;
 		Hierarchy hierarchy = null;
@@ -202,8 +200,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			}
 		} else {
 			/*
-			 * p = positions.get(positionPos); m = p.getMembers(); m2 =
-			 * m.get(memberPos);
+			 * p = positions.get(positionPos); m = p.getMembers(); m2 = m.get(memberPos);
 			 */
 			try {
 				hierarchy = CubeUtilities.getHierarchy(model.getCube(), positionUniqueName);
@@ -234,14 +231,13 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			}
 		}
 
-
 		return renderModel(model);
 	}
 
 	@POST
 	@Path("/drilltrough/levels")
 	@Produces("text/html; charset=UTF-8")
-	
+
 	public String getallLevels(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException {
 
 		JSONArray array = new JSONArray();
@@ -340,7 +336,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/properties")
 	@Produces("text/html; charset=UTF-8")
-	
+
 	public String getProperties(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException, JSONException {
 
 		String name = null;
@@ -374,7 +370,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/drilltrough")
 	@Produces("text/html; charset=UTF-8")
-	
+
 	public String drillt(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException {
 		JSONArray array = null;
 		ResultSet set;
@@ -406,7 +402,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/drilltrough/full")
 	@Produces("text/html; charset=UTF-8")
-	
+
 	public String drillfull(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException {
 		JSONArray array = null;
 		ResultSet set = null;
@@ -499,7 +495,6 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
 
 		model.removeSubset();
-
 
 		getWhatIfEngineInstance().getModelConfig().setSortingEnabled(!modelConfig.getSortingEnabled());
 		if (!modelConfig.getSortingEnabled()) {

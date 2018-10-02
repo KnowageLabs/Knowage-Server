@@ -46,6 +46,7 @@ angular.module('dataset_view', ['ngMaterial'])
 			//executeDocumentAction:"&",
 			orderingDatasetCards:"=?",
 			deleteDatasetAction:"&",
+			tableColumns:"=?"
 		},
 
 		link: function (scope, elem, attrs) {

@@ -32,6 +32,8 @@ angular.module('cockpitModule').directive('datasetSelector',function($compile){
 			   ngModel:"=",
 			   extended:"=?",
 			   onChange:"&",
+			   datasetTypeAvailable:"=?",
+			   datasetTypeExclusion:"=?"
 		   },
 		   compile: function (tElement, tAttrs, transclude) {
                 return {
@@ -51,26 +53,61 @@ function datasetSelectorControllerFunction($scope,cockpitModule_datasetServices,
 	$scope.translate=sbiModule_translate;
 	$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
 	$scope.addNewDataset=function(){
-		 cockpitModule_datasetServices.addDataset(undefined,$scope.availableDatasets,false,true)
+		 cockpitModule_datasetServices.addDataset(undefined,$scope.availableDatasets,false,true,$scope.datasetTypeAvailable || undefined,$scope.datasetTypeExclusion || undefined)
 		 .then(function(data){
 			 $scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
 			 $scope.ngModel=data.id.dsId;
 			 $scope.onChange({dsId:data.id.dsId});
 		 });
 	}
+	$scope.cancelDataset=function(){
+		delete $scope.ngModel;
+	}
 	$scope.getMetaData = function(id){
-		sbiModule_restServices.restToRootProject();
-		var params = cockpitModule_datasetServices.getDatasetParameters(id);
-		for(var p in params){
-			if(params[p].length == 1){
-				params[p] = params[p][0];
+		if(id){
+			sbiModule_restServices.restToRootProject();
+			var params = cockpitModule_datasetServices.getDatasetParameters(id);
+			for(var p in params){
+				if(params[p].length == 1){
+					params[p] = params[p][0];
+				}
+			}
+			sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(cockpitModule_datasetServices.getDatasetLabelById(id)) + "/data",params && JSON.stringify({"parameters": params}))
+				.then(function(data){
+					$scope.dataset = data.data;
+				})
+		}else {
+			$scope.dataset = {};
+		}
+		
+	}
+	
+	$scope.isDatasetAvailable = function(ds){
+		if($scope.datasetTypeExclusion){
+			for(var e in $scope.datasetTypeExclusion){
+				if($scope.datasetTypeExclusion[e].type == ds.type){
+					if($scope.datasetTypeExclusion[e].configuration){
+						if(ds.configuration[$scope.datasetTypeExclusion[e].configuration.property] == $scope.datasetTypeExclusion[e].configuration.value) return false;
+						else return true;
+					}	
+					return false;
+				}else return true;
 			}
 		}
-		sbiModule_restServices.promisePost("2.0/datasets", encodeURIComponent(cockpitModule_datasetServices.getDatasetLabelById(id)) + "/data",params && JSON.stringify({"parameters": params}))
-			.then(function(data){
-				$scope.dataset = data.data;
-			})
+		if($scope.datasetTypeAvailable){
+			for(var a in $scope.datasetTypeAvailable){
+				if($scope.datasetTypeAvailable[a].type == ds.type){
+					if($scope.datasetTypeAvailable[a].configuration){
+						if(ds.configuration[$scope.datasetTypeAvailable[a].configuration.property] == $scope.datasetTypeAvailable[a].configuration.value) return true;
+						else return false;
+					}	
+					return true;
+				}else return false;
+			}
+		}
+		return true;
 	}
+	
 	if($scope.extended){
 		$scope.getMetaData($scope.ngModel);
 	}

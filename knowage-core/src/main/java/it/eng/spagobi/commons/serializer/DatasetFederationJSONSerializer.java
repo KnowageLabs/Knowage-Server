@@ -17,15 +17,15 @@
  */
 package it.eng.spagobi.commons.serializer;
 
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import org.json.JSONObject;
 
 import java.util.Locale;
-
-import org.json.JSONObject;
 
 public class DatasetFederationJSONSerializer implements Serializer {
 
@@ -77,7 +77,7 @@ public class DatasetFederationJSONSerializer implements Serializer {
 	private String getCacheDataSource() {
 		String label = "";
 		try {
-			ICache cache = SpagoBICacheManager.getCache();
+			ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 			if (cache instanceof SQLDBCache) {
 				label = ((SQLDBCache) cache).getDataSource().getLabel();
 			}

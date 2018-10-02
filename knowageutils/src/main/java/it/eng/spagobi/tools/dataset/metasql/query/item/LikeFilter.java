@@ -24,19 +24,30 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 public class LikeFilter extends SingleProjectionSimpleFilter {
 
-	private String pattern;
+	private String value;
 
-	public LikeFilter(Projection projection, String pattern) {
+	private TYPE valueType;
+
+	public LikeFilter(Projection projection, String value, TYPE valueType) {
 		Assert.assertNotNull(projection, "Projection can't be null");
-		Assert.assertNotNull(pattern, "Pattern can't be null");
-
+		Assert.assertNotNull(value, "Value can't be null");
+		Assert.assertNotNull(valueType, "Value type can't be null");
 		this.projection = projection;
 		this.operator = SimpleFilterOperator.LIKE;
-		this.pattern = pattern;
+		this.value = value;
+		this.valueType = valueType;
 	}
 
-	public String getPattern() {
-		return pattern;
+	public String getValue() {
+		return value;
+	}
+
+	public TYPE getValueType() {
+		return valueType;
+	}
+
+	public boolean isPattern() {
+		return valueType.equals(TYPE.PATTERN);
 	}
 
 	@Override
@@ -48,4 +59,6 @@ public class LikeFilter extends SingleProjectionSimpleFilter {
 	public IDataSet getDataset() {
 		return projection.getDataset();
 	}
+
+	public enum TYPE {SIMPLE, PATTERN}
 }

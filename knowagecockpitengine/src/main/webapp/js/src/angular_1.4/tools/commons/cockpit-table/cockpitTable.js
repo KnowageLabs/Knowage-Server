@@ -83,6 +83,10 @@
                     	}
                     	return style;
                     }
+                    
+                    scope.checkPrecision = function(column){
+                    	return (column.style && typeof column.style.precision != 'undefined') ? column.style.precision : 2;
+                    }
 
                     //changing the flex align to text-align for the table cells
 
@@ -232,7 +236,7 @@
                     	var ranges = column.ranges;
                         var icon = "";
                         for (var k in ranges) {
-                            if (value!="" && eval(value + ranges[k].operator + ranges[k].value)) {
+                            if (typeof value != "undefined" && eval(value + ranges[k].operator + ranges[k].value)) {
                                 icon = {
                                     "iconClass": ranges[k].icon,
                                     "iconColor": ranges[k].color
@@ -243,6 +247,15 @@
                         return icon;
                     };
 
+                    scope.hasPrecision = function(column){
+                    	if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long'){return true}
+                    	return false;
+                    }
+
+                    scope.isNumber = function(value){
+                         return value != undefined && value.trim().length > 0 && !isNaN(value);
+                    }
+                    
                     //conditional value formatting
                     scope.formatValue = function (value, column){
             			var output = value;

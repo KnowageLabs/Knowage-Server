@@ -34,3 +34,5 @@
 <!-- SERVICES -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/spagobi/commons/Settings.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/olapTemplate/OlapTemplateService.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/services/channelMessaging.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/services/channelMessagingToolbar.js"></script>

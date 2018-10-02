@@ -227,6 +227,29 @@ public class StringUtils {
 	}
 
 	/**
+	 * Joins the input collection of string into a unique string using the specified separator
+	 *
+	 * @param objects
+	 *            The collection to be joined
+	 * @param separator
+	 * @param prefix
+	 * 			 The prefix to be applied on each element
+	 * @return Joins the input collection of string into a unique string using the specified separator
+	 */
+	public static String join(Collection<Object> objects, String separator, String prefix) {
+		StringBuffer sb = new StringBuffer();
+		Iterator<Object> i = objects.iterator();
+		while (i.hasNext()) {
+			sb.append(prefix);
+			sb.append(i.next());
+			if (i.hasNext()) {
+				sb.append(separator);
+			}
+		}
+		return sb.toString();
+	}
+
+	/**
 	 * escape all the occurences of '. As escape char use ' so all the ' in the original string will be replaced with ''
 	 *
 	 * @param the
@@ -273,69 +296,6 @@ public class StringUtils {
 	public static String escapeForHtml(String str) {
 		str = it.eng.spago.util.StringUtils.replace(str, "'", "&#39;");
 		return str;
-	}
-
-	/**
-	 * Convert Map<String, String> to String (URL format)
-	 *
-	 * @param str
-	 * @return
-	 */
-	public static String mapToString(Map<String, String> map) {
-		StringBuilder stringBuilder = new StringBuilder();
-
-		for (String key : map.keySet()) {
-			if (stringBuilder.length() > 0) {
-				stringBuilder.append("&");
-			}
-			String value = map.get(key);
-			try {
-				if (value instanceof String && value != null) {
-					stringBuilder.append((key != null ? URLEncoder.encode(key, "UTF-8") : ""));
-					stringBuilder.append("=");
-					stringBuilder.append(value != null ? URLEncoder.encode(value, "UTF-8") : "");
-				}
-			} catch (UnsupportedEncodingException e) {
-				throw new RuntimeException("This method requires UTF-8 encoding support", e);
-			}
-		}
-
-		return stringBuilder.toString();
-	}
-
-	/**
-	 * The main method.
-	 *
-	 * @param args
-	 *            the arguments
-	 */
-	public static void main(String[] args) {
-		String[] str = new String[] { "P{p1} = P{p2}", "P{p1}P{p2}", "P{p1} uguale P{p5}", "ciao mondo", "ciao {pi} mondo",
-				// "ciao P{p mondo",
-				"P{p1} uguale P{p2}", };
-
-		Properties props = new Properties();
-		props.put("p1", "P1");
-		props.put("p2", "P2");
-
-		for (int i = 0; i < str.length; i++) {
-
-			Set parameters;
-			try {
-				logger.debug("String: " + replaceParameters(str[i], "P", props));
-				parameters = getParameters(str[i], "P");
-				Iterator it = parameters.iterator();
-				while (it.hasNext()) {
-					String parameter = (String) it.next();
-					logger.debug(" - " + parameter);
-				}
-			} catch (IOException e) {
-				// logger.error("ERROR: malformed string: " + str[i]);
-				e.printStackTrace();
-			}
-
-		}
-
 	}
 
 	public static String escapeForSQLColumnName(String fieldName) {

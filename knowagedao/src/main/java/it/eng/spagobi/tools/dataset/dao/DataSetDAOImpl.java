@@ -834,28 +834,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (sbiDatasetVersions != null && sbiDatasetVersions.isEmpty() == false) {
 				for (SbiDataSet sbiDatasetVersion : sbiDatasetVersions) {
 					IDataSet guiDataSet = DataSetFactory.toDataSet(sbiDatasetVersion, this.getUserProfile());
-
-					List<IDataSet> oldDsVersion = new ArrayList();
-
-					if (Integer.valueOf(sbiDatasetVersion.getId().getVersionNum()) != null) {
-						Integer dsId = sbiDatasetVersion.getId().getDsId();
-						Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
-						hibQuery.setBoolean(0, false);
-						hibQuery.setInteger(1, dsId);
-
-						List<SbiDataSet> olderTemplates = hibQuery.list();
-						if (olderTemplates != null && !olderTemplates.isEmpty()) {
-							Iterator it2 = olderTemplates.iterator();
-							while (it2.hasNext()) {
-								SbiDataSet hibOldDataSet = (SbiDataSet) it2.next();
-								if (hibOldDataSet != null && !hibOldDataSet.isActive()) {
-									IDataSet dsD = DataSetFactory.toDataSet(hibOldDataSet);
-									oldDsVersion.add(dsD);
-								}
-							}
-						}
-					}
-					guiDataSet.setNoActiveVersions(oldDsVersion);
 					toReturn.add(guiDataSet);
 				}
 			}
@@ -872,6 +850,81 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			logger.debug("OUT");
 		}
 		return toReturn;
+	}
+
+	@Override
+	public List<IDataSet> loadDataSetOlderVersions(Integer dsId) {
+		logger.debug("IN");
+		Session session = null;
+		Query query = null;
+
+		List<IDataSet> toReturn = new ArrayList<>();
+		try {
+			session = getSession();
+			query = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
+			query.setBoolean(0, false);
+			query.setInteger(1, dsId);
+
+			List<SbiDataSet> olderTemplates = query.list();
+
+			if (olderTemplates != null && !olderTemplates.isEmpty()) {
+				Iterator<SbiDataSet> it = olderTemplates.iterator();
+				while (it.hasNext()) {
+					SbiDataSet hibOldDataSet = it.next();
+					if (hibOldDataSet != null && !hibOldDataSet.isActive()) {
+						IDataSet dsD = DataSetFactory.toDataSet(hibOldDataSet);
+						toReturn.add(dsD);
+					}
+				}
+			}
+		} catch (SpagoBIRuntimeException ex) {
+			throw ex;
+		} catch (Exception e) {
+			throw new SpagoBIDAOException("An error has occured while loading dataset's older versions", e);
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	private List<SbiDataSet> getDatasetOlderVersions(Integer dsId) {
+		logger.debug("IN");
+		Session session = null;
+		Query query = null;
+
+		List<SbiDataSet> olderVersions = new ArrayList<>();
+		try {
+			session = getSession();
+			query = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
+			query.setBoolean(0, false);
+			query.setInteger(1, dsId);
+			olderVersions = query.list();
+		} catch (Exception e) {
+			throw new SpagoBIDAOException("An error has occured while loading dataset's older versions", e);
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+		logger.debug("OUT");
+		return olderVersions;
+	}
+
+	private void updateDatasetOlderVersion(SbiDataSet sbiDataSet, Session session) {
+		logger.debug("IN");
+		try {
+			if (session == null) {
+				Assert.assertNotNull(session, "Session cannot be null");
+			}
+			session.update(sbiDataSet);
+			session.flush();
+		} catch (Exception e) {
+			throw new SpagoBIDAOException("An error has occured while updating dataset's older version", e);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 	/**
@@ -1642,6 +1695,28 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				dsActiveDetail.setActive(false);
 				session.update(dsActiveDetail);
 				session.save(hibDataSet);
+
+				/**
+				 * When active version of Dataset is modified, update Datasources for all previous versions, so we can make sure not to brake particular Dataset
+				 * if user delete Datasource that is used by some of older versions of that Dataset
+				 */
+				String type = dataSet.getDsType();
+				if (type.equalsIgnoreCase(DataSetConstants.DS_QUERY) || type.equalsIgnoreCase(DataSetConstants.DS_QBE)
+						|| type.equalsIgnoreCase(DataSetConstants.DS_FLAT)) {
+					List<SbiDataSet> olderVersions = getDatasetOlderVersions(dataSet.getId());
+					Iterator<SbiDataSet> it = olderVersions.iterator();
+					String dataSourceLabel = dataSet.getDataSource().getLabel();
+
+					while (it.hasNext()) {
+						SbiDataSet ds = it.next();
+						JSONObject jsonConf = ObjectUtils.toJSONObject(ds.getConfiguration());
+						if (!dataSourceLabel.equals(jsonConf.get(DataSetConstants.DATA_SOURCE))) {
+							jsonConf.put(DataSetConstants.DATA_SOURCE, dataSourceLabel);
+							ds.setConfiguration(JSONUtils.escapeJsonString(jsonConf.toString()));
+							updateDatasetOlderVersion(ds, session);
+						}
+					}
+				}
 
 				if (keepPreviousSession == false && transaction != null) {
 					transaction.commit();

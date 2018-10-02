@@ -17,19 +17,14 @@
 	<EXPORTER domain="JPG" engine="knowagebirtreporteng" defaultValue="false" />
 	<EXPORTER domain="TXT" engine="knowagebirtreporteng" defaultValue="false" />
 	<EXPORTER domain="PPT" engine="knowagebirtreporteng" defaultValue="false" />
-	<EXPORTER domain="PDF" engine="knowageqbeengine" defaultValue="true" />
-	<EXPORTER domain="XLS" engine="knowageqbeengine" defaultValue="false" />
+	<EXPORTER domain="XLS" engine="knowageqbeengine" defaultValue="true" />
 	<EXPORTER domain="XLSX" engine="knowageqbeengine" defaultValue="false" />
 	<EXPORTER domain="CSV" engine="knowageqbeengine" defaultValue="false" />
-	<EXPORTER domain="RTF" engine="knowageqbeengine" defaultValue="false" />
-	<EXPORTER domain="JRXML" engine="knowageqbeengine" defaultValue="false" />
-	<EXPORTER domain="JSON" engine="knowageqbeengine" defaultValue="false" />	
 	<EXPORTER domain="JPG" engine="knowagechartengine" defaultValue="true" />
 	<EXPORTER domain="PDF" engine="knowagechartengine" defaultValue="false" />		
 	<EXPORTER domain="PNG" engine="knowagenetworkengine" defaultValue="true" />
 	<EXPORTER domain="PDF" engine="knowagenetworkengine" defaultValue="false" />
 	<EXPORTER domain="GRAPHML" engine="knowagenetworkengine" defaultValue="false" />
-	<!-- <EXPORTER domain="PDF" engine="knowagecompositedoce" defaultValue="true" />  -->
 	<EXPORTER domain="XLS" engine="knowagecockpitengine" defaultValue="false" />
 	<EXPORTER domain="XLSX" engine="knowagecockpitengine" defaultValue="false" />
 	<EXPORTER domain="PDF" engine="knowagecockpitengine" defaultValue="true" />

@@ -17,25 +17,13 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader.JSONPathAttribute;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
 import it.eng.spagobi.tools.dataset.listener.DataSetListenerManager;
 import it.eng.spagobi.tools.dataset.listener.DataSetListenerManagerFactory;
 import it.eng.spagobi.tools.dataset.notifier.NotifierServlet;
@@ -49,6 +37,12 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.ConfigurationException;
 import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.*;
 
 public class RESTDataSet extends ConfigurableDataSet {
 
@@ -57,9 +51,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 	public static final String DATASET_TYPE = "SbiRESTDataSet";
 
 	private static final String NAME_JSON_PATH_ATTRIBUTE_PROP_NAME = "name";
-
 	private static final String JSON_PATH_VALUE_JSON_PATH_ATTRIBUTE_PROP_NAME = "jsonPathValue";
-
 	private static final String JSON_PATH_TYPE_JSON_PATH_ATTRIBUTE_PROP_NAME = "jsonPathType";
 
 	private final ParametersResolver parametersResolver = new ParametersResolver();
@@ -67,11 +59,6 @@ public class RESTDataSet extends ConfigurableDataSet {
 	private boolean ngsi;
 
 	private boolean realtimeNgsiConsumer = true;
-
-	/**
-	 * for testing purpose
-	 */
-	private boolean ignoreConfigurationOnLoad;
 
 	private boolean notifiable;
 
@@ -106,11 +93,6 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	@Override
 	public void loadData(int offset, int fetchSize, int maxResults) {
-		if (!ignoreConfigurationOnLoad) {
-			// reload the configuration for possible changes due to
-			// customizable properties through parameters and/or profile attributes
-			initConf(true);
-		}
 
 		super.loadData(offset, fetchSize, maxResults);
 
@@ -169,15 +151,6 @@ public class RESTDataSet extends ConfigurableDataSet {
 		return (JSONPathDataReader) super.getDataReader();
 	}
 
-	/**
-	 * for testing
-	 *
-	 * @param ignoreConfigurationOnLoad
-	 */
-	public void setIgnoreConfigurationOnLoad(boolean ignoreConfigurationOnLoad) {
-		this.ignoreConfigurationOnLoad = ignoreConfigurationOnLoad;
-	}
-
 	public void initConf(JSONObject jsonConf, boolean resolveParams) {
 		initNGSI(jsonConf, resolveParams);
 		initDataProxy(jsonConf, resolveParams);
@@ -185,32 +158,32 @@ public class RESTDataSet extends ConfigurableDataSet {
 	}
 
 	private void initNGSI(JSONObject jsonConf, boolean resolveParams) {
-		String ngsiProp = getProp(DataSetConstants.REST_NGSI, jsonConf, true, false);
+		String ngsiProp = getProp(RESTDataSetConstants.REST_NGSI, jsonConf, true, false);
 		this.ngsi = Boolean.parseBoolean(ngsiProp);
 	}
 
 	private void initDataReader(JSONObject jsonConf, boolean resolveParams) {
 		// json data reader attributes
-		String jsonPathItems = getProp(DataSetConstants.REST_JSON_PATH_ITEMS, jsonConf, true, resolveParams);
+		String jsonPathItems = getProp(RESTDataSetConstants.REST_JSON_PATH_ITEMS, jsonConf, true, resolveParams);
 		List<JSONPathAttribute> jsonPathAttributes;
 		try {
-			jsonPathAttributes = getJsonPathAttributes(DataSetConstants.REST_JSON_PATH_ATTRIBUTES, jsonConf, resolveParams);
+			jsonPathAttributes = getJsonPathAttributes(RESTDataSetConstants.REST_JSON_PATH_ATTRIBUTES, jsonConf, resolveParams);
 		} catch (JSONException e) {
 			throw new ConfigurationException("Problems in configuration of data reader", e);
 		}
 
-		String directlyAttributes = getProp(DataSetConstants.REST_JSON_DIRECTLY_ATTRIBUTES, jsonConf, true, false);
+		String directlyAttributes = getProp(RESTDataSetConstants.REST_JSON_DIRECTLY_ATTRIBUTES, jsonConf, true, false);
 		setDataReader(new JSONPathDataReader(jsonPathItems, jsonPathAttributes, Boolean.parseBoolean(directlyAttributes), this.ngsi));
 	}
 
 	private void initDataProxy(JSONObject jsonConf, boolean resolveParams) {
 		// data proxy attributes
-		String address = getProp(DataSetConstants.REST_ADDRESS, jsonConf, false, resolveParams);
+		String address = getProp(RESTDataSetConstants.REST_ADDRESS, jsonConf, false, resolveParams);
 
 		// can be null not empty
-		String requestBody = getProp(DataSetConstants.REST_REQUEST_BODY, jsonConf, true, resolveParams);
+		String requestBody = getProp(RESTDataSetConstants.REST_REQUEST_BODY, jsonConf, true, resolveParams);
 
-		String method = getProp(DataSetConstants.REST_HTTP_METHOD, jsonConf, false, resolveParams);
+		String method = getProp(RESTDataSetConstants.REST_HTTP_METHOD, jsonConf, false, resolveParams);
 		method = method.toLowerCase();
 		HttpMethod methodEnum;
 		try {
@@ -226,7 +199,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 		Map<String, String> requestHeaders;
 		try {
-			requestHeaders = getRequestHeadersPropMap(DataSetConstants.REST_REQUEST_HEADERS, jsonConf, resolveParams);
+			requestHeaders = getRequestHeadersPropMap(RESTDataSetConstants.REST_REQUEST_HEADERS, jsonConf, resolveParams);
 
 			// add bearer token for OAuth Fiware
 			if (resolveParams && OAuth2Utils.isOAuth2() && !OAuth2Utils.containsOAuth2(requestHeaders)) {
@@ -240,11 +213,11 @@ public class RESTDataSet extends ConfigurableDataSet {
 		}
 
 		// Pagination parameters
-		String offset = getProp(DataSetConstants.REST_OFFSET, jsonConf, true, resolveParams);
+		String offset = getProp(RESTDataSetConstants.REST_OFFSET, jsonConf, true, resolveParams);
 
-		String fetchSize = getProp(DataSetConstants.REST_FETCH_SIZE, jsonConf, true, resolveParams);
+		String fetchSize = getProp(RESTDataSetConstants.REST_FETCH_SIZE, jsonConf, true, resolveParams);
 
-		String maxResults = getProp(DataSetConstants.REST_MAX_RESULTS, jsonConf, true, resolveParams);
+		String maxResults = getProp(RESTDataSetConstants.REST_MAX_RESULTS, jsonConf, true, resolveParams);
 
 		setDataProxy(new RESTDataProxy(address, methodEnum, requestBody, requestHeaders, offset, fetchSize, maxResults, isNgsi()));
 	}

@@ -18,7 +18,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			toRet[datasetLabel]={};
 			for(col in cockpitModule_template.configuration.filters[datasetLabel]){
 				var values = cockpitModule_template.configuration.filters[datasetLabel][col];
-				if(values.length>0){
+				if(values){
 					if(values.constructor === Array) {
 						toRet[datasetLabel][col]=["('"+values.join("','")+"')"];
 					} else {
@@ -26,6 +26,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					}
 				}else{
 					toRet[datasetLabel][col]=[];
+				}
 				}
 			}
 		}
@@ -74,15 +75,18 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 								}
 							}
 						else {
-
-							obj["orderColumn"] = col.orderColumn;
-							obj["orderType"] = col.orderColumn!="" && col.orderType=="" ? "ASC" : col.orderType;
+							if(col.fieldType == "ATTRIBUTE" && ngModel.content.chartTemplate.CHART.groupCategories){
+								obj["orderColumn"] = col.name;
+								obj["orderType"] = "asc";
+							} else {
+								obj["orderColumn"] = col.orderColumn;
+								obj["orderType"] = col.orderColumn!="" && col.orderType=="" ? "ASC" : col.orderType;
+							}
 						}
 					}
 				}
 
 				// SUM is default but for attribute is meaningless
-
 				if((col.fieldType=="ATTRIBUTE" || col.fieldType=="SPATIAL_ATTRIBUTE") && col.aggregationSelected && col.aggregationSelected === 'SUM'){
 					obj["funct"] = 'NONE';
 				}
@@ -114,10 +118,12 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 						}
 					}
 					else {
+						if(col.aggregationColumn) obj.functColumn = col.aggregationColumn;
 						categories.push(obj)
 					}
 				}else if (col.fieldType=="MEASURE"){
 					//it is measure
+					if(col.aggregationColumn) obj.functColumn = col.aggregationColumn;
 					obj["orderColumn"] = col.name;
 					measures.push(obj);
 				}
@@ -420,7 +426,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					}
 					//if(!found){
 					//	sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.cockpit.wait.loading.association.group"));
-					// return
+					//	return
 					//}
 
 				}
@@ -441,7 +447,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		if (!Array.isArray(columnName)){
 			arColumnName.push(columnName);
 			arOriginalColumnName.push(originalColumnName);
-			arColumn.push(column);
+			if (!Array.isArray(column)){
+				arColumn.push(column);
+			}else{
+				arColumn = column;
+			}
 		}else{
 			arColumnName = columnName;
 			arOriginalColumnName = originalColumnName;
@@ -753,6 +763,40 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 		}
 
+		return null;
+	}
+
+	this.isLastCurrentSelection = function(datasetLabel, columnName){
+		var lastSel = ws.getLastCurrentSelection();
+		return lastSel && lastSel[datasetLabel] && lastSel[datasetLabel][columnName];
+	}
+
+	this.getSelectionValues = function(datasetLabel, columnName){
+		var result = null;
+
+		var selections = cockpitModule_template.configuration.aggregations;
+		for(var i=0;i<selections.length;i++){
+			var selections = selections[i].selection;
+			if(selections!=undefined){
+				var datasetLabelAndColumnNames = Object.keys(selections);
+				for(var i in datasetLabelAndColumnNames){
+					var datasetLabelAndColumnName = datasetLabelAndColumnNames[i];
+					var split = datasetLabelAndColumnName.split(".");
+					if(split[0]==datasetLabel && split[1]==columnName){
+						result = selections[datasetLabelAndColumnName]
+					}
+				}
+			}
+		}
+
+		selections = cockpitModule_template.configuration.filters;
+		if(selections && selections[datasetLabel] && selections[datasetLabel][columnName]){
+			result = selections[datasetLabel][columnName];
+		}
+
+		if(result){
+			return Array.isArray(result) ? result : [result];
+		}
 		return null;
 	}
 })

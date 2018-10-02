@@ -35,24 +35,28 @@
 	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 *#
 #if ($chart.VALUES.SERIE.class.name == 'java.util.LinkedHashMap')
-	#set($serie = $chart.VALUES.SERIE.name)
+	#set($serie = $chart.VALUES.SERIE)
 	#set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
 #elseif ($chart.VALUES.SERIE.class.name == 'java.util.ArrayList')
-	#set($serie = $chart.VALUES.SERIE[0].name)
+	#set($serie = $chart.VALUES.SERIE[0])
 	#set($groupingFunction = $chart.VALUES.SERIE[0].groupingFunction)
 #end
-
 #set($sizeCriteria = $chart.sizeCriteria)
 
-#set($result = $datasettransformer.createTreeChart($columnsNeeded,$serie,$dataColumnsMapper,$dataRows, $groupingFunction.toLowerCase()))
+#set($result = $datasettransformer.createTreeChart($columnsNeeded,$serie.name,$dataColumnsMapper,$dataRows, $groupingFunction.toLowerCase()))
 
 #set($crossNavigation = '')
-#set($crossNavigation = $chart.DRILL)	
+#set($crossNavigation = $chart.DRILL)
 
 {
  	chart: 
  	{
   		type: '$chartType',
+		#if($chart.isCockpitEngine=="true")
+			drillable: $chart.drillable,
+		#else
+			drillable: true,
+		#end
 		
 		  #if($chart.height != '' && $chart.isCockpitEngine!="true")
         	height: $chart.height,
@@ -89,10 +93,9 @@
 		'$chart.outcomingEventsEnabled'.
 		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	*#
-	#if($chart.isCockpitEngine=='true' && "$!chart.outcomingEventsEnabled" != "")
-		outcomingEventsEnabled: $chart.outcomingEventsEnabled,
+	#if($chart.isCockpitEngine=='true' && $chart.cliccable)
+		cliccable: $chart.cliccable,
 	#end
-  	
 	#*
 		Provide enough space for the "Back" button.		
 	*# 
@@ -292,7 +295,35 @@
             },
 		}
 	],
-	
+	additionalData:
+	{
+  		#if($serie.precision)
+  		precision: "$serie.precision",
+  		#else
+  		precision: "",
+  		#end
+  		#if($serie.prefixChar)
+  		prefixChar: "$serie.prefixChar",
+  		#else
+  		prefixChar: "",
+  		#end
+  		#if($serie.postfixChar)
+  		postfixChar: "$serie.postfixChar",
+  		#else  		
+  		postfixChar: "", 
+  		#end
+  		#if($serie.showAbsValue)
+  		showAbsValue: $serie.showAbsValue,
+  		#else
+  		showAbsValue:false,
+  		#end
+  		#if($serie.showPercentage)
+  		showPercentage:$serie.showPercentage,
+  		#else
+  		showPercentage:false,
+  		#end
+  		  		
+	},
 	plotOptions:
 	{
 		series:
@@ -308,7 +339,7 @@
             	
             	We will increase this value in order to display series that contain a data array bigger
             	than 1000 (default), because it is most likely that we will have this situation very 
-            	often.
+            	often. test
             	
             	@author: danristo (danilo.ristovski@mht.net)
             *#

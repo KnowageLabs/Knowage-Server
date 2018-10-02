@@ -33,15 +33,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						{"label":"archive","className":"fa fa-archive","unicode":"\uf187"},{"label":"area chart","className":"fa fa-area-chart","unicode":"\uf1fe"},{"label":"bidirectional arrows","className":"fa fa-arrows","unicode":"\uf047"},
 						{"label":"horizontal arrows","className":"fa fa-arrows-h","unicode":"\uf07e"},{"label":"vertical arrows","className":"fa fa-arrows-v","unicode":"\uf07d"},{"label":"asterisk","className":"fa fa-asterisk","unicode":"\uf069"},
 						{"label":"address at","className":"fa fa-at","unicode":"\uf1fa"},{"label":"bolt","className":"fa fa-bolt","unicode":"\uf0e7"},{"label":"circle","className":"fa fa-plus-circle","unicode":"\uf055"},
-						{"label":"breafcase","className":"fa fa-briefcase","unicode":"\uf0b1"}]
+						{"label":"breafcase","className":"fa fa-briefcase","unicode":"\uf0b1"},{"label":"check","className":"fa fa-check","unicode":"\uf00c"},{"label":"times","className":"fa fa-times","unicode":"\uf00d"},
+						{"label":"warning","className":"fa fa-warning","unicode":"\uf071"},{"label":"exclamation","className":"fa fa-exclamation-circle","unicode":"\uf06a"}]
+						{"label":"boiler","className":"ai-boiler","unicode":"\6d"},{"label":"aways on","className":"ai-alwayson","unicode":"\6e"},{"label":"home","className":"ai-home","unicode":"\6f"},
+						{"label":"conditioning","className":"ai-conditioning","unicode":"\70"},{"label":"fan","className":"ai-fan","unicode":"\71"},{"label":"vacuum","className":"ai-vacuum","unicode":"\72"},
+						{"label":"dishwasher","className":"ai-dishwasher","unicode":"\73"},{"label":"mixer","className":"ai-mixer","unicode":"\74"},{"label":"mixedwasher","className":"ai-mixedwasher","unicode":"\75"},
+						{"label":"magnet","className":"ai-magnet","unicode":"\76"},{"label":"battery","className":"ai-battery","unicode":"\77"},{"label":"resistor","className":"ai-resistor","unicode":"\78"}]
 				}
 			];
 		}
-	
-	/*					"fa fa-at","fa fa-automobile","fa fa-balance-scale","fa fa-ban","fa fa-bank" ,
-						"fa fa-bar-chart","fa fa-bar-chart-o","fa fa-barcode","fa fa-bars","fa fa-battery-empty","fa fa-battery-full","fa fa-battery-half","fa fa-battery-quarter","fa fa-battery-three-quarters","fa fa-bed",
-						"fa fa-beer","fa fa-bell","fa fa-bell-o","fa fa-bell-slash","fa fa-bell-slash-o","fa fa-bicycle","fa fa-binoculars","fa fa-birthday-cake","fa fa-bolt","fa fa-bomb","fa fa-book","fa fa-bookmark","fa fa-bookmark-o","fa fa-briefcase",
-						"fa fa-bug","fa fa-building","fa fa-building-o","fa fa-bullhorn","fa fa-bullseye","fa fa-bus","fa fa-calculator","fa fa-calendar","fa fa-calendar-check-o","fa fa-calendar-minus-o","fa fa-calendar-o","fa fa-calendar-plus-o",
-						"fa fa-calendar-times-o","fa fa-camera","fa fa-camera-retro","fa fa-car","fa fa-caret-square-o-down","fa fa-caret-square-o-left","fa fa-caret-square-o-right","fa fa-caret-square-o-up","fa fa-cart-arrow-down",
-						"fa fa-cart-plus","fa fa-cc","fa fa-certificate","fa fa-check","fa fa-check-circle","fa fa-check-circle-o","fa fa-check-square","fa fa-check-square-o","fa fa-child","fa fa-circle","fa fa-circle-o","fa fa-circle-o-notch"*/
 }());

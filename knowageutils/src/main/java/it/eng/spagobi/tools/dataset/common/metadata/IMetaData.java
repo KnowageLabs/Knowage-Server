@@ -26,6 +26,8 @@ import java.util.Map;
  */
 public interface IMetaData {
 
+	public static final String RESULT_NUMBER_PROPERTY = "resultNumber";
+
 	/**
 	 * @return Returns the index of identifier field if any. -1 otherwise.
 	 */
@@ -102,5 +104,7 @@ public interface IMetaData {
 	void deleteFieldMetaDataAt(int pivotFieldIndex);
 
 	void changeFieldAlias(int fieldIndex, String newAlias);
+
+	List getFieldsMeta();
 
 }

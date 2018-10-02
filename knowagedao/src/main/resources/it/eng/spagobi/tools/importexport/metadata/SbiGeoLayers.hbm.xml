@@ -27,6 +27,9 @@
         <property name="layerDef" type="binary">
             <column name="LAYER_DEFINITION" />
         </property>
+        <property name="category_id" type="integer">
+            <column name="GEO_CATEGORY" />
+        </property>
         
     </class>
 	

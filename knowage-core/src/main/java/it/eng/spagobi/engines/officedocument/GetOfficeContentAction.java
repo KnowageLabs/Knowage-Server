@@ -91,8 +91,8 @@ public class GetOfficeContentAction extends AbstractHttpAction {
 				templateFileName="";
 			}
 			
-			response.setHeader("Cache-Control: ",""); // leave blank to avoid IE errors
-			response.setHeader("Pragma: ",""); // leave blank to avoid IE errors 
+			response.setHeader("Cache-Control", ""); // leave blank to avoid IE errors
+			response.setHeader("Pragma", ""); // leave blank to avoid IE errors 
 			response.setHeader("content-disposition","inline; filename="+templateFileName);	
 			
 			String mimeType = MimeUtils.getMimeType(templateFileName);

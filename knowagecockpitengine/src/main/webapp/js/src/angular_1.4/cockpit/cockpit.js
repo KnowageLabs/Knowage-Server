@@ -21,7 +21,7 @@ var baseScriptPath  = scripts[scripts.length - 1].src;
 baseScriptPath =baseScriptPath .substring(0, baseScriptPath .lastIndexOf('/'));
 
 (function() {
-
+	agGrid.initialiseAgGridWithAngular1(angular);
 var cockpitApp= angular.module("cockpitModule",[
 	'ngMaterial',
 	'ngSanitize',
@@ -40,11 +40,13 @@ var cockpitApp= angular.module("cockpitModule",[
 	'cockpitTable',
 	'jsonFormatter',
 	'ui.codemirror',
-	'knModule'
+	'knModule',
+	'agGrid'
 	]);
-cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
+cockpitApp.config(['$mdThemingProvider','$mdGestureProvider', function($mdThemingProvider,$mdGestureProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
+    $mdGestureProvider.skipClickHijack();
 }]);
 
 
@@ -164,6 +166,8 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	},function(){
 		console.error("error when load dataset list")
 	});
+
+	cockpitModule_documentServices.loadDocumentsFromTemplate();
 
 	if(cockpitModule_properties.DOCUMENT_LABEL != undefined && cockpitModule_properties.DOCUMENT_LABEL != ''){
 		cockpitModule_crossServices.loadCrossNavigationByDocument(cockpitModule_properties.DOCUMENT_LABEL).then(

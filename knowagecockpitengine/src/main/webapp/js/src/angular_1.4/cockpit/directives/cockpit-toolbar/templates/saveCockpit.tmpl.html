@@ -1,0 +1,34 @@
+<md-dialog>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>{{translate.load("sbi.cockpit.saved.dialog.title")}}</h2>
+		</div>
+	</md-toolbar>
+	<md-dialog-content layout-align="start center" layout-padding>
+		<div layout="row">
+			<div class="kn-info" flex="100">
+				{{translate.load("sbi.cockpit.saved.name.missing.text")}}
+			</div>
+		</div>
+		<form name="saveCockpitForm" layout="column">
+			<md-input-container>
+				<label>{{translate.load("sbi.cockpit.saved.label")}}</label>
+				<input name="label" ng-model="cockpit.label" required md-maxlength="20" ng-pattern="regex.alphanumeric">							
+			</md-input-container>
+		
+			<md-input-container>
+				<label>{{translate.load("sbi.cockpit.saved.name")}}</label>
+				<input name="name" ng-model="cockpit.name" required md-maxlength="200" ng-pattern="regex.extendedAlphanumeric">							
+			</md-input-container>
+		</form>
+	</md-dialog-content>
+	 	
+	<md-dialog-actions layout="row">
+		<md-button ng-click="cancel()" class="md-raised">
+       	  {{translate.load("sbi.generic.cancel")}}
+      	</md-button>
+		<md-button ng-click="save(cockpit)" class="md-raised md-primary" ng-disabled="saveCockpitForm.$invalid">
+       	  {{translate.load("sbi.cockpit.saved.save")}}
+      	</md-button>
+	</md-dialog-actions>
+</md-dialog>

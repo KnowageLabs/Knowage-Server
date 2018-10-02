@@ -41,7 +41,6 @@ import it.eng.knowage.slimerjs.wrapper.DeleteOnCloseFileInputStream;
 import it.eng.knowage.slimerjs.wrapper.SlimerJS;
 import it.eng.knowage.slimerjs.wrapper.SlimerJSConstants;
 import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
-import it.eng.spago.error.EMFAbstractError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -128,8 +127,6 @@ public class PdfExporter {
 				return numOfPages;
 			}
 
-		} catch (EMFAbstractError e) {
-			throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
 		} catch (JSONException e) {
 			throw new SpagoBIRuntimeException("Invalid template for document with id [" + documentId + "]", e);
 		}
@@ -166,8 +163,6 @@ public class PdfExporter {
 				break;
 			}
 			return sheetHeight;
-		} catch (EMFAbstractError e) {
-			throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
 		} catch (JSONException e) {
 			throw new SpagoBIRuntimeException("Invalid template for document with id [" + documentId + "]", e);
 		}

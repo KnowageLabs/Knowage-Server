@@ -39,7 +39,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body  ng-controller="Controller as ctr" >
 	<angular-list-detail full-screen=true layout-column>
 		<list label="translate.load('sbi.config.manageconfig')" new-function="addConfig" >
-			 <angular-table flex 
+			<div class="kn-grid-container">
+				<div ag-grid="configurationGridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="width:100%;"></div>
+			</div>
+			 <!--  angular-table flex 
 				id="table" ng-model="data" 
 				columns='["label","name","valueCheck","category"]'
 				columns-search='["label","name","valueCheck","category"]'
@@ -47,7 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				show-search-bar="true"
 				selected-item="itemSelected"
 				speed-menu-option="configSpeedMenu"
-			></angular-table>	
+			></angular-table-->	
 		</list>
 		<detail label="labelDetailFunction()" save-function="saveRow" layout="column"   cancel-function="closeDetail" disable-save-button="configForm.$invalid">
 			<form name="configForm" layout="row" flex layout-align="center start"> 

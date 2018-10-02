@@ -149,9 +149,8 @@
 
 
 		dee.exportQbeTo = function(mimeType, contentUrl){
-			var paramsExportType = '&ACTION_NAME=EXPORT_RESULT_ACTION&MIME_TYPE='+format+'&RESPONSE_TYPE=RESPONSE_TYPE_ATTACHMENT';
-//			window.open(dee.getExportationUrl(format,paramsExportType,'knowageqbeengine/servlet/AdapterHTTP') , 'name', 'resizable=1,height=750,width=1000');
-			window.open(dee.getExportationUrl(format,paramsExportType, sbiModule_config.qbeEngineContextName + '/servlet/AdapterHTTP') , 'name', 'resizable=1,height=750,width=1000');
+			var paramsExportType = '&ACTION_NAME=EXPORT_RESULT_ACTION&MIME_TYPE='+mimeType+'&RESPONSE_TYPE=RESPONSE_TYPE_ATTACHMENT';
+			window.open(dee.getExportationUrl(mimeType, paramsExportType, sbiModule_config.qbeEngineContextName + '/servlet/AdapterHTTP') , 'name', 'resizable=1,height=750,width=1000');
 		};
 
 

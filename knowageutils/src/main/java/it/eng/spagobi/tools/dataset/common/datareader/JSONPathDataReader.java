@@ -40,7 +40,6 @@ import org.json.JSONException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 
@@ -53,11 +52,11 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
 /**
  * This reader convert JSON string to an {@link IDataStore}. The JSON must contains the items to convert, they are found using {@link JsonPath}. The name of
  * each {@link IField} must be defined. The type can be fixed or can be defined dynamically by {@link JsonPath}. The value is found dynamically by
@@ -66,6 +65,7 @@ import it.eng.spagobi.utilities.json.JSONUtils;
  * @author fabrizio
  *
  */
+
 public class JSONPathDataReader extends AbstractDataReader {
 
 	private static final Class<String> ALL_OTHER_TYPES = String.class;
@@ -81,7 +81,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 	private static final String DEFAULT_TIME_PATTERN = "HH:mm:ss";
 
 	private static final String DEFAULT_TIMESTAMP_PATTERN_UNQUOTED = "yyyy-MM-ddTHH:mm:ss.SSSZ";
-	
+
 	private static final String DEFAULT_TIMESTAMP_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
 	private static final String ATTRIBUTES_DIRECTLY = "attributesDirectly";
@@ -130,7 +130,6 @@ public class JSONPathDataReader extends AbstractDataReader {
 	private boolean ngsiDefaultItems;
 
 	public JSONPathDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes, boolean useDirectlyAttributes, boolean ngsi) {
-		// Helper.checkWithoutNulls(jsonPathAttributes, "pathAttributes");
 		this.jsonPathAttributes = jsonPathAttributes;
 		this.useDirectlyAttributes = useDirectlyAttributes;
 		this.ngsi = ngsi;
@@ -194,7 +193,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 	}
 
-	protected void addData(String data, DataStore dataStore, MetaData dataStoreMeta, List<Object> parsedData, boolean skipPagination)
+	protected void addData(String data, IDataStore dataStore, IMetaData dataStoreMeta, List<Object> parsedData, boolean skipPagination)
 			throws ParseException, JSONException {
 
 		boolean checkMaxResults = false;
@@ -294,15 +293,14 @@ public class JSONPathDataReader extends AbstractDataReader {
 		} else {
 			parsedData = Arrays.asList(parsed);
 		}
-		
-		
 
-		
+
+
+
 		return parsedData;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void manageDirectlyAttributes(Object data, IRecord rec, MetaData dsm, DataStore dataStore) {
+	private static void manageDirectlyAttributes(Object data, IRecord rec, IMetaData dsm, IDataStore dataStore) {
 		Assert.assertTrue(data instanceof Map, "data instanceof Map");
 		Map jsonObject = (Map) data;
 
@@ -447,7 +445,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 	 * @param parsedData
 	 *            list of json object (net.minidev)
 	 */
-	protected void addFieldMetadata(MetaData dataStoreMeta, List<Object> parsedData) {
+	protected void addFieldMetadata(IMetaData dataStoreMeta, List<Object> parsedData) {
 		boolean idSet = false;
 
 		if(ngsiDefaultItems)manageNGSI(parsedData);
@@ -492,12 +490,12 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 		dataReadFirstTime = true;
 	}
-	
+
 	private void manageNonNGSIObject(List<Object> parsedData) {
 		if (!ngsiDefaultItems && !dataReadFirstTime) {
-			//If a column contains an Object then cast to a JSON string		
-			
-			for(Object r : parsedData) {				
+			//If a column contains an Object then cast to a JSON string
+
+			for(Object r : parsedData) {
 				LinkedHashMap<Object, Object> record = (LinkedHashMap<Object, Object>)r;
 				Set<Object> columnNames =  record.keySet();
 				for(Object column : columnNames) {
@@ -642,7 +640,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		if (typeString.toLowerCase().startsWith("time")) {
 			return DEFAULT_TIME_PATTERN;
 		}
-		
+
 		if (typeString.startsWith("ISO8601")) {
 			return DEFAULT_TIMESTAMP_PATTERN;
 		}

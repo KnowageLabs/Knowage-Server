@@ -95,6 +95,10 @@
 		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_MY_WORKSPACE" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageBD" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageBD" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>	
+		<AUTHORIZATION productType="KnowageBD" authorizationName="MANAGE_INTERNATIONALIZATION" organization="DEFAULT_TENANT" />	
+		<AUTHORIZATION productType="KnowageBD" authorizationName="ENABLE_TO_RATE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="ENABLE_TO_PRINT" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowageSI -->
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
@@ -115,6 +119,10 @@
 		<AUTHORIZATION productType="KnowageSI" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
+		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_INTERNATIONALIZATION" organization="DEFAULT_TENANT"/>	
+		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_TO_RATE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_TO_PRINT" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowageER -->
 		<AUTHORIZATION productType="KnowageER" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
@@ -128,7 +136,10 @@
 		<AUTHORIZATION productType="KnowageER" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
-	
+		<AUTHORIZATION productType="KnowageER" authorizationName="MANAGE_INTERNATIONALIZATION" organization="DEFAULT_TENANT"/>	
+		<AUTHORIZATION productType="KnowageER" authorizationName="ENABLE_TO_RATE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageER" authorizationName="ENABLE_TO_PRINT" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageER" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowagePM -->
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
@@ -143,6 +154,10 @@
 		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_INTERNATIONALIZATION" organization="DEFAULT_TENANT"/>	
+		<AUTHORIZATION productType="KnowagePM" authorizationName="ENABLE_TO_RATE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePM" authorizationName="ENABLE_TO_PRINT" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePM" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowageLI -->
 		<AUTHORIZATION productType="KnowageLI" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
@@ -162,13 +177,16 @@
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_INTERNATIONALIZATION" organization="DEFAULT_TENANT"/>	
+		<AUTHORIZATION productType="KnowageLI" authorizationName="ENABLE_TO_RATE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="ENABLE_TO_PRINT" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowagePA -->
 		<AUTHORIZATION productType="KnowagePA" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_DATASET_PERSISTENCE" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_CALENDAR" organization="DEFAULT_TENANT" />
         <AUTHORIZATION productType="KnowagePA" authorizationName="FUNCTIONS_CATALOG_USAGE" organization="DEFAULT_TENANT" />
-		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT" />
@@ -179,5 +197,11 @@
 		<AUTHORIZATION productType="KnowagePA" authorizationName="RUN_SNAPSHOTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_INTERNATIONALIZATION" organization="DEFAULT_TENANT"/>	
+		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_TO_RATE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_TO_PRINT" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
+		
+		
 	</DEFAULT_AUTHORIZATIONS>
 </INTERNAL_PROFILING_INITIALIZER>

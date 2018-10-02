@@ -31,6 +31,7 @@ public abstract class AbstractDataBase implements IDataBase {
 	IDataSource dataSource;
 	protected DatabaseDialect databaseDialect;
 	public static final String STANDARD_ALIAS_DELIMITER = "\"";
+	public static final String STANDARD_SUBQUERY_ALIAS_DELIMITER = "T";
 
 	private static transient Logger logger = Logger.getLogger(AbstractDataBase.class);
 
@@ -56,6 +57,12 @@ public abstract class AbstractDataBase implements IDataBase {
 	@Override
 	public String getAliasDelimiter() {
 		return STANDARD_ALIAS_DELIMITER;
+	}
+
+	@Override
+	public String getSubQueryAlias() {
+		return STANDARD_SUBQUERY_ALIAS_DELIMITER;
+
 	}
 
 	/*

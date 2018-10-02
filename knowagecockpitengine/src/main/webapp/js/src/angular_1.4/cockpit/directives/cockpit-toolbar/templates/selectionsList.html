@@ -7,24 +7,26 @@
 		</md-button>
 	</md-toolbar>
 	
-	<md-dialog-content>
+	<md-dialog-content layout="column" flex-xs="100" style="min-height:200px; min-width:300px;">
 		<angular-table layout-padding ng-show="selection.length >0" 
 			id='selectionTable' ng-model="selection"
 			columns='columnTableSelection'
 			columns-search='["label"]'
 			no-pagination=true  speed-menu-option= actionsOfSelectionColumns
 		> </angular-table> 
-		<div layout="row" class="noTable" layout-align="center center" ng-if="selection.length ==0" layout-padding>
-			<span>{{translate.load('sbi.cockpit.selections.noselections')}}</span>
-		</div>	       
+		<div layout="row" layout-align="center center" ng-if="selection.length ==0" flex>
+			<div class="kn-noItems">
+				{{translate.load('sbi.cockpit.selections.noselections')}}
+			</div>
+		</div>	      
 	</md-dialog-content>
 	
 	<md-dialog-actions layout="row" layout-align="end center"  >
 	    <span flex></span>
-      <md-button ng-click="cancelConfiguration()" >
+      <md-button class="md-raised" ng-click="cancelConfiguration()" >
         {{translate.load('sbi.generic.cancel')}}
       </md-button>
-      <md-button ng-click="saveConfiguration()"  >
+      <md-button class="md-raised md-primary" ng-click="saveConfiguration()"  >
         {{translate.load('sbi.generic.save')}}
       </md-button>
 

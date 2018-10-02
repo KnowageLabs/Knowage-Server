@@ -2,27 +2,28 @@
       
    <md-toolbar class="miniheadfederation">
 		<div class="md-toolbar-tools">
-			<h2 class="md-flex">{{translate.load("sbi.ds.set.param.values")}}</h2>
+			<h2 class="md-flex">{{translate.load("sbi.ds.set.param.values")}}  </h2>
 			<span flex=""></span>
 		</div>	
 	</md-toolbar>
    
    <md-dialog-content>
-      
+	  		
+	  
 	   <angular-table
 				id="datasetParametersTable"
-				flex
-				style="height:100%;padding:8px"
+				style="padding:8px;"
 				ng-model=parameterPreviewItems
 				columns=parametersPreviewColumns
 				show-search-bar=false
 				scope-functions=paramScopeFunctions
-				no-pagination=false
-				current-page-number=parametersTableLastPage >
+				no-pagination=true >
 		</angular-table>
-   		
+   	<div>
+<!--    		   <document-paramenter-element execProperties="selectedDataSet"  parameter="parameter" ng-repeat="parameter in documentParameters" ng-show="parameter.visible" layout="row" layout-align="center center" />  -->
+   			</div>
    </md-dialog-content>
-
+	
     <md-dialog-actions layout="row">
      <md-button ng-click="applyValueOfParameterAndContinuePreviewExecution()" class="md-raised"  md-autofocus>
          {{translate.load("sbi.ds.test")}}

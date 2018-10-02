@@ -30,6 +30,11 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
+import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
+import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
+import it.eng.spagobi.tools.dataset.constants.SPARQLDatasetConstants;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -82,7 +87,6 @@ import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
@@ -1313,21 +1317,21 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			// added
 			String dsId = getAttributeAsString(DataSetConstants.DS_ID);
 			String dsLabel = getAttributeAsString(DataSetConstants.LABEL);
-			String fileType = getAttributeAsString(DataSetConstants.CKAN_FILE_TYPE);
+			String fileType = getAttributeAsString(CkanDataSetConstants.CKAN_FILE_TYPE);
 
-			String csvDelimiter = getAttributeAsString(DataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
-			String csvQuote = getAttributeAsString(DataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
+			String csvDelimiter = getAttributeAsString(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
+			String csvQuote = getAttributeAsString(CkanDataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
 
-			String skipRows = getAttributeAsString(DataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
-			String limitRows = getAttributeAsString(DataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
-			String xslSheetNumber = getAttributeAsString(DataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER);
+			String skipRows = getAttributeAsString(CkanDataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
+			String limitRows = getAttributeAsString(CkanDataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
+			String xslSheetNumber = getAttributeAsString(CkanDataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER);
 
-			String ckanUrl = getAttributeAsString(DataSetConstants.CKAN_URL);
+			String ckanUrl = getAttributeAsString(CkanDataSetConstants.CKAN_URL);
 
-			String ckanId = getAttributeAsString(DataSetConstants.CKAN_ID);
+			String ckanId = getAttributeAsString(CkanDataSetConstants.CKAN_ID);
 			String scopeCd = DataSetConstants.DS_SCOPE_USER;
 
-			String ckanEncodig = getAttributeAsString(DataSetConstants.CKAN_CSV_FILE_ENCODING);
+			String ckanEncodig = getAttributeAsString(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING);
 
 			Boolean newFileUploaded = false;
 			if (getAttributeAsString("fileUploaded") != null) {
@@ -1341,8 +1345,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
-			jsonDsConfig.put(DataSetConstants.CKAN_URL, ckanUrl);
-			jsonDsConfig.put(DataSetConstants.CKAN_ID, ckanId);
+			jsonDsConfig.put(CkanDataSetConstants.CKAN_URL, ckanUrl);
+			jsonDsConfig.put(CkanDataSetConstants.CKAN_ID, ckanId);
 			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
 
 			dataSet = new CkanDataSet();
@@ -1391,7 +1395,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			} else {
 				// fileName can be empty if you preview it as administrator
 				if (fileName.isEmpty()) {
-					((CkanDataSet) dataSet).setFileName(DataSetConstants.CKAN_DUMMY_FILENAME + "." + fileType.toLowerCase());
+					((CkanDataSet) dataSet).setFileName(CkanDataSetConstants.CKAN_DUMMY_FILENAME + "." + fileType.toLowerCase());
 				} else {
 					((CkanDataSet) dataSet).setFileName(fileName);
 				}
@@ -1537,7 +1541,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			dao.setUserProfile(getUserProfile());
 			dataSet = dao.loadDataSetById(id);
 			// if its a federated dataset the datasource are teh ones on cahce
-			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+			SQLDBCache cache = (SQLDBCache) CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 			dataSet.setDataSourceForReading(cache.getDataSource());
 			dataSet.setDataSourceForWriting(cache.getDataSource());
 			jsonDsConfig = new JSONObject(dataSet.getConfiguration());
@@ -1566,7 +1570,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	}
 
 	private SPARQLDataSet manageSPARQLDataSet(boolean savingDataset, JSONObject config) throws JSONException {
-		for (String sa : DataSetConstants.SPARQL_ATTRIBUTES) {
+		for (String sa : SPARQLDatasetConstants.SPARQL_ATTRIBUTES) {
 			config.put(sa, getAttributeAsString(sa));
 		}
 		SPARQLDataSet res = new SPARQLDataSet(config);
@@ -1574,13 +1578,13 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	}
 
 	private RESTDataSet manageRESTDataSet(boolean savingDataset, JSONObject config) throws JSONException {
-		for (String sa : DataSetConstants.REST_STRING_ATTRIBUTES) {
+		for (String sa : RESTDataSetConstants.REST_STRING_ATTRIBUTES) {
 			config.put(sa, getAttributeAsString(sa));
 		}
-		for (String ja : DataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
+		for (String ja : RESTDataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
 			config.put(ja, getAttributeAsJSONObject(ja));
 		}
-		for (String ja : DataSetConstants.REST_JSON_ARRAY_ATTRIBUTES) {
+		for (String ja : RESTDataSetConstants.REST_JSON_ARRAY_ATTRIBUTES) {
 			config.put(ja, getAttributeAsJSONArray(ja));
 		}
 		RESTDataSet res = new RESTDataSet(config);

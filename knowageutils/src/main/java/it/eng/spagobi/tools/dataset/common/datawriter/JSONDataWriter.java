@@ -38,6 +38,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.solr.SolrDataStore;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
@@ -67,10 +68,10 @@ public class JSONDataWriter implements IDataWriter {
 	private boolean useIdProperty;
 	private boolean preserveOriginalDataTypes = false;
 
-	public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
-	public static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(TIMESTAMP_FORMAT);
-	public static final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat(CACHE_TIMESTAMP_FORMAT);
-	public static final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat(TIME_FORMAT);
+	protected final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
+	protected final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(TIMESTAMP_FORMAT);
+	protected final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat(CACHE_TIMESTAMP_FORMAT);
+	protected final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat(TIME_FORMAT);
 
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
@@ -112,14 +113,13 @@ public class JSONDataWriter implements IDataWriter {
 		}
 	}
 
-	/** Logger component. */
+	/**
+	 * Logger component.
+	 */
 	public static transient Logger logger = Logger.getLogger(JSONDataWriter.class);
 
 	/**
-	 *
 	 * @param dataStore
-	 * @param useIdProperty
-	 *            added for configuration of Ext.data.JsonReader: it defined the id field in the Record
 	 * @return
 	 * @throws RuntimeException
 	 */
@@ -128,14 +128,32 @@ public class JSONDataWriter implements IDataWriter {
 		if (writeDataOnly) {
 			return writeOnlyData(dataStore);
 		} else {
-			return writeDataAndMeta(dataStore);
+			if (dataStore instanceof SolrDataStore) {
+				return write((SolrDataStore) dataStore);
+			} else {
+				return writeDataAndMeta(dataStore);
+			}
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	public Object writeOnlyData(IDataStore dataStore) throws RuntimeException {
+	private Object write(SolrDataStore dataStore) throws RuntimeException {
+		JSONObject result;
+		try {
+			result = writeDataAndMeta(dataStore);
+			JSONObject facets = new JSONObject();
+			for (String columnName : dataStore.getFacets().keySet()) {
+				facets.put(columnName, writeDataAndMeta(dataStore.getFacets().get(columnName)));
+			}
 
-		JSONObject metadata;
+			result.put("facets", facets);
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public JSONArray writeOnlyData(IDataStore dataStore) throws RuntimeException {
 
 		int recNo;
 
@@ -143,8 +161,6 @@ public class JSONDataWriter implements IDataWriter {
 		Object propertyRawValue;
 
 		Assert.assertNotNull(dataStore, "Object to be serialized connot be null");
-
-		metadata = (JSONObject) write(dataStore.getMetaData());
 
 		try {
 			JSONArray results = new JSONArray();
@@ -195,7 +211,7 @@ public class JSONDataWriter implements IDataWriter {
 
 			IField field = new Field();
 			try {
-				field = record.getFieldAt(metaData.getFieldIndex(fieldMetaData));
+				field = record.getFieldAt(i);
 			} catch (IndexOutOfBoundsException idxEx) {
 				logger.info("Unavailable field " + fieldMetaData.getName());
 				field.setValue(null);
@@ -242,7 +258,7 @@ public class JSONDataWriter implements IDataWriter {
 
 	}
 
-	public Object writeDataAndMeta(IDataStore dataStore) throws RuntimeException {
+	public JSONObject writeDataAndMeta(IDataStore dataStore) throws RuntimeException {
 		JSONObject result = null;
 		JSONObject metadata;
 		IField field;
@@ -310,7 +326,7 @@ public class JSONDataWriter implements IDataWriter {
 						continue;
 					}
 
-					int fieldPosition = dataStore.getMetaData().getFieldIndex(fieldMetaData);
+					int fieldPosition = i;
 					if (recordSize < 0 || fieldPosition < recordSize) {
 						field = record.getFieldAt(fieldPosition);
 					} else {
@@ -397,8 +413,6 @@ public class JSONDataWriter implements IDataWriter {
 					fieldMetaDataJSON.put("renderer", "myRenderer");
 				}
 
-				addMeasuresScaleFactor(fieldsOptions, fieldMetaData.getName(), fieldMetaDataJSON);
-
 				Class clazz = fieldMetaData.getType();
 				if (clazz == null) {
 					logger.debug("Metadata class is null; considering String as default");
@@ -479,27 +493,6 @@ public class JSONDataWriter implements IDataWriter {
 		}
 	}
 
-	// fieldOptions = [{id: 4, options: {measureScaleFactor: 0.5}}]
-
-	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId, JSONObject fieldMetaDataJSON) {
-		if (fieldOptions != null) {
-			// for (int i = 0; i < fieldOptions.length(); i++) {
-			// try {
-			// JSONObject afield = fieldOptions.getJSONObject(i);
-			// JSONObject aFieldOptions = afield.getJSONObject(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
-			// String afieldId = afield.getString("id");
-			// String scaleFactor = aFieldOptions.optString(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
-			// if (afieldId.equals(fieldId) && scaleFactor != null) {
-			// fieldMetaDataJSON.put(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR, scaleFactor);
-			// return;
-			// }
-			// } catch (Exception e) {
-			// throw new RuntimeException("An unpredicted error occurred while adding measures scale factor", e);
-			// }
-			// }
-		}
-	}
-
 	/**
 	 * @return the setRenderer
 	 */
@@ -529,14 +522,6 @@ public class JSONDataWriter implements IDataWriter {
 
 	public void setAdjust(boolean adjust) {
 		this.adjust = adjust;
-	}
-
-	public boolean isUseIdProperty() {
-		return useIdProperty;
-	}
-
-	public void setUseIdProperty(boolean useIdProperty) {
-		this.useIdProperty = useIdProperty;
 	}
 
 	public void setPreserveOriginalDataTypes(boolean preserveOriginalDataTypes) {

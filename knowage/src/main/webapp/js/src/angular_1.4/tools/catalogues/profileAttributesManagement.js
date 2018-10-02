@@ -18,31 +18,61 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	$scope.selectedAttribute={};
 	$scope.attributeList=[];
 	$scope.tempObj = [];
+	$scope.lovs = [];
+	$scope.enumAsArrayOfObjects = enumAsArrayOfObjects;
+	$scope.lovIdAndColumns = [];
+	$scope.lovColumnsId = [];
+	$scope.disableLov = false;
 
 	angular.element(document).ready(function () {
         $scope.getProfileAttributes();
+        $scope.getLovs();
     });
 
 
-	$scope.setDirty=function(){
+	$scope.setDirty=function(atr){
 		$scope.dirtyForm=true;
+
 	}
 
 	$scope.getProfileAttributes= function(){
-
 			sbiModule_restServices.promiseGet("2.0/attributes", '')
 			.then(function(response) {
 				$scope.attributeList = response.data;
+				prepareForMultiselect($scope.attributeList)
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 
 			});
 
 	}
+    var prepareForMultiselect = function(attributes){
+    	for(var i = 0; i<attributes.length; i++){
+    		if(attributes[i].lovColumns){
+    			attributes[i].lovColumns = attributes[i].lovColumns.split(',')
+    		}
+    	}
+}
+	$scope.getLovs= function(){
 
+		sbiModule_restServices.promiseGet("2.0/lovs", 'get/all')
+		.then(function(response) {
+			$scope.lovs = response.data;
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 
-
-
+		});
+}
+	$scope.getLovsValues = function(lovId){
+		var lovIdAndColumns = {}
+		var columns = []
+		sbiModule_restServices.promiseGet("2.0/lovs", lovId+'/preview')
+		.then(function(response){
+			lovIdAndColumns.id = lovId ;
+			lovIdAndColumns.columns = response.data;
+			$scope.lovIdAndColumns.push(lovIdAndColumns);
+		})
+	}
 
 	$scope.createProfileAttribute=function(){
 
@@ -67,8 +97,15 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	}
 
 	$scope.saveProfileAttribute=function(){
+		if($scope.selectedAttribute.value)
+		$scope.selectedAttribute.value = ($scope.enumAsArrayOfObjects.filter(type => type.name == $scope.selectedAttribute.value.name )[0].name);
+		if($scope.selectedAttribute.hasOwnProperty("attributeId")){ // put,
+																	// update
+																	// existing
 
-		if($scope.selectedAttribute.hasOwnProperty("attributeId")){ // put, update existing
+				if(!$scope.disableLov || $scope.selectedAttribute.lovId == "" ){
+				   $scope.selectedAttribute.lovId = undefined;
+				}
 
 			sbiModule_restServices.promisePut('2.0/attributes',$scope.selectedAttribute.attributeId,$scope.selectedAttribute)
 			.then(function(response) {
@@ -77,6 +114,15 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 					if($scope.attributeList[i].attributeId===$scope.selectedAttribute.attributeId){
 						$scope.attributeList[i].attributeName=$scope.selectedAttribute.attributeName;
 						$scope.attributeList[i].attributeDescription=$scope.selectedAttribute.attributeDescription;
+						$scope.attributeList[i].allowUser = $scope.selectedAttribute.allowUser;
+						$scope.attributeList[i].syntax = $scope.selectedAttribute.syntax;
+						$scope.attributeList[i].multivalue = $scope.selectedAttribute.multivalue;
+						if($scope.selectedAttribute.lovId != "" || !$scope.disableLov){
+						$scope.attributeList[i].lovId = $scope.selectedAttribute.lovId;
+						} else $scope.attributeList[i].lovId = undefined
+						if($scope.selectedAttribute.value)
+						$scope.selectedAttribute.value = ($scope.enumAsArrayOfObjects.filter(type => type.name == $scope.selectedAttribute.value )[0]);
+
 					}
 				}
 				$scope.dirtyForm=false;
@@ -103,6 +149,9 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	}
 
 	$scope.loadAttribute=function(item){
+		if(angular.isNumber(item.lovId)){
+			$scope.disableLov = true;
+		}else $scope.disableLov = false;
 
 		if($scope.dirtyForm){
 			$mdDialog.show($scope.confirm).then(function(){
@@ -119,6 +168,7 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 		}else{
 
 		$scope.selectedAttribute=angular.copy(item);
+
 		$scope.showMe=true;
 		}
 	}
@@ -178,7 +228,7 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	               {
 	            	  label:'delete',
 	            	  action:function(item,event){
-	            		  console.log(item);
+
 	            	  }
 	               }
 	               ];
@@ -187,8 +237,8 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	                     {
 	                    	label:'delete',
 	                    	icon:'fa fa-trash',
-	                    	//icon:'fa fa-trash-o fa-lg',
-	                    	//color:'#153E7E',
+	                    	// icon:'fa fa-trash-o fa-lg',
+	                    	// color:'#153E7E',
 	                    	action:function(item,event){
 
 	                    		$scope.confirmDelete(item,event);

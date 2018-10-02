@@ -34,7 +34,7 @@ angular
 var downlf;
 function olapPanelController($scope, $rootScope,$timeout, $window, $mdDialog, $http, $sce,
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
-		toastr, $cookies,$localStorage, sbiModule_docInfo, sbiModule_config) {
+		toastr, $cookies,$localStorage, sbiModule_docInfo, sbiModule_config,sbiModule_download) {
 
 	downlf = function(type) {
 		$scope.exportOlap(type);
@@ -126,7 +126,24 @@ function olapPanelController($scope, $rootScope,$timeout, $window, $mdDialog, $h
 					
 		}else{
 			var encoded = encodeURI("1.0/model/exceledit?SBI_EXECUTION_ID="+ JSsbiExecutionID);
-			window.open(sbiModule_restServices.getCompleteBaseUrl(encoded));
+			sbiModule_restServices.promiseGet(encoded,"").then(
+					function(){
+						sbiModule_download.getLink("/restful-services/"+encoded);
+						},
+					function(response){
+							var errorResponse = response.data;
+							if(errorResponse.errors){
+								var errorMessagesObjects = errorResponse.errors;
+								var errorMessage = "";
+								for(var i in errorMessagesObjects){
+									errorMessage += " " + errorMessagesObjects[i].localizedMessage;
+									console.error(errorMessagesObjects[i])
+								}
+								sbiModule_messaging.showErrorMessage(errorMessage, sbiModule_translate.load('sbi.common.error'));
+							}
+							
+						})
+			
 		}
 	}
 	

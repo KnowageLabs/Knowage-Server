@@ -130,7 +130,7 @@
     
     
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Select For Cities</title>
+    <title>Knowage</title>
   
   
   <script type="text/javascript">
@@ -182,18 +182,20 @@
   		    <div class="container">
         <div class="card card-container">
 
-            <img id="profile-img" class="logoHeader" src='<%=urlBuilder.getResourceLinkByTheme(request, "/custom_prj/images/logo_alpha_270x.png", currTheme)%>' />
+            <img id="profile-img" class="logoHeader" src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logo.png", currTheme)%>' />
             <p id="profile-name" class="profile-name-card"></p>
             <form class="form-signin"  id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
                 <input type="hidden" id="isInternalSecurity" name="isInternalSecurity" value="<%=isInternalSecurity %>" />        	
         		<input type="hidden" id="<%=roleToCheckLbl%>" name="<%=roleToCheckLbl%>" value="<%=roleToCheckVal%>" />
-        		<%		        	
+        		<%	
 		        	// propagates parameters (if any) for document execution
 		        	if (request.getParameter(ObjectsTreeConstants.OBJECT_LABEL) != null) {
 		        		String label = request.getParameter(ObjectsTreeConstants.OBJECT_LABEL);
+						%>
+						<input type="hidden" name="<%= SpagoBIConstants.OBJECT_LABEL %>" value="<%= label %>" />
+						<%
 		        	    String subobjectName = request.getParameter(SpagoBIConstants.SUBOBJECT_NAME);
 		        	    %>
-							<input type="hidden" name="<%= SpagoBIConstants.OBJECT_LABEL %>" value="<%= label %>" />
 		        	    <% if (subobjectName != null && !subobjectName.trim().equals("")) { %>
 		        	    	<input type="hidden" name="<%= SpagoBIConstants.SUBOBJECT_NAME %>" value="<%= StringEscapeUtils.escapeHtml(subobjectName) %>" />
 		        	    <% } %>

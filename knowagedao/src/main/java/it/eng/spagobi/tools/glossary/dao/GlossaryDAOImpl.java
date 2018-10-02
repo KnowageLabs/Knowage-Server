@@ -1521,4 +1521,10 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 		}
 	}
 
+	@Override
+	public List<SbiGlGlossary> listGlossaryByNm(Integer page, Integer itemsPerPage, String glossary) {
+
+		return list(new SearchGlossaryByName(page, itemsPerPage, glossary));
+	}
+
 }

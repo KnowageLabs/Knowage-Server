@@ -62,6 +62,7 @@ angular.module('chartInitializer')
 				return  renderTreemap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo,exportWebApp );
 			} else {
 				this.chart = renderTreemap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo);
+				this.chart.drillable = chartConf.chart.drillable
 			}
 		}
 		else if (chartType == 'heatmap')
@@ -71,10 +72,29 @@ angular.module('chartInitializer')
 				return renderHeatmap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo,exportWebApp );
 			}
 			this.chart = renderHeatmap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo);
+		} else if (chartType == 'sunburst') {
+			delete this.updateData;
+			if(exportWebApp) {
+				return renderHCSunburst(chartConf,handleCockpitSelection, this.handleCrossNavigationTo,exportWebApp );
+			}
+			this.chart = renderHCSunburst(chartConf,handleCockpitSelection, this.handleCrossNavigationTo);
 		}
 		else
 		{
 			if (chartType == 'scatter') delete this.updateData;
+
+			if(chartType == 'solidgauge' && chartConf.chart.subtype == 'solid') {
+
+					var seriesOrder = chartConf.series;
+
+					function sortYFunction (){
+						seriesOrder.sort(function(a,b){
+							return b[0].data[0].y - a[0].data[0].y;
+
+						})
+					}
+
+			}
 			this.chart =  new Highcharts.Chart(chartConf);
 			this.chart.widgetData = widgetData;
 			if(jsonData){
@@ -317,6 +337,13 @@ angular.module('chartInitializer')
 
 
 	this.handleDrilldown = function(e){
+		var drillable = this.drillable != undefined ?
+				this.drillable : (this.options.chart.additionalData.isCockpit ?
+						this.options.chart.additionalData.drillable: this.options.chart.additionalData.drillableChart);
+		if(!drillable){
+			console.log("chart is not drillable")
+			return;
+		}
 		var chart = this;
 		if(!chart.breadcrumb)chart.breadcrumb=[];
 
@@ -338,7 +365,6 @@ angular.module('chartInitializer')
 				chart.showLoading('Loading...');
 
 					var params = {};
-					
 					if(chart.jsonData ){
 						params.jsonMetaData = chart.jsonData.metaData;
 					}
@@ -386,8 +412,6 @@ angular.module('chartInitializer')
 					if(chart.selectionsAndParams && chart.selectionsAndParams.par){
 						forQueryParam = chart.selectionsAndParams.par;
 					}
-					
-					
 					jsonChartTemplate.drilldownHighchart(params,forQueryParam)
 					.then(function(series){
 
@@ -402,19 +426,21 @@ angular.module('chartInitializer')
 			            var yAxisTitle={
 			            		text:series.serieName
 			            };
-			            
 			            if(chart.xAxis[0].userOptions.title.customTitle==false){
 			            	chart.xAxis[0].setTitle(xAxisTitle);
 			            }
-			            			           
-			            
 			            if(chart.options.chart.type!="pie" && chart.yAxis[0].userOptions.title.custom==false){
 			            	chart.yAxis[0].setTitle(yAxisTitle);
 			            }
 
 			            chart.addSeriesAsDrilldown(e.point, series);
 
-			            var backText="Back to: <b>"+chart.options.drilledCategories[chart.options.drilledCategories.length-2]+"</b>";
+			            if(series.firstLevelCategory){
+			            	var backText="Back to: <b>"+series.firstLevelCategory+"</b>";
+			            } else {
+			            	var backText="Back to: <b>"+ chart.options.drilledCategories[chart.options.drilledCategories.length-2]+"</b>";
+			            }
+
 
 			            chart.drillUpButton.textSetter(backText);
 
@@ -437,7 +463,6 @@ angular.module('chartInitializer')
 		var xAxisTitle={
             	text:axisTitle
 		};
-
 		if(chart.xAxis[0].userOptions.title.customTitle==false){
         	chart.xAxis[0].setTitle(xAxisTitle);
 		}
@@ -534,7 +559,7 @@ angular.module('chartInitializer')
 				var pointOptions={};
 				if (this.chart.options.chart.type == "gauge") {
 					pointOptions.y = parseFloat(data[j]["column_" + (i + 1)]);
-					newDataSerie.add(pointOptions);
+					newDataSerie.push(pointOptions);
 
 				} else {
 					if(this.chart.options.xAxis[0].type!="datetime"){

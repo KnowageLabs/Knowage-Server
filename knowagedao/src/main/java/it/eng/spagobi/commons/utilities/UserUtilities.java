@@ -116,8 +116,7 @@ public class UserUtilities {
 	 * Gets the user profile.
 	 *
 	 * @return the user profile
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public static IEngUserProfile getUserProfile() throws Exception {
 		RequestContainer aRequestContainer = RequestContainer.getRequestContainer();
@@ -419,8 +418,7 @@ public class UserUtilities {
 	 * @param username
 	 *            the username
 	 * @return true, if successful
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public static boolean userFunctionalityRootExists(String username) throws Exception {
 		boolean exists = false;
@@ -441,8 +439,7 @@ public class UserUtilities {
 	 * @param userProfile
 	 *            the user profile
 	 * @return true, if successful
-	 * @throws Exception
-	 *             the exception
+	 	 * @throws Exception the exception
 	 */
 	public static boolean userFunctionalityRootExists(UserProfile userProfile) {
 		Assert.assertNotNull(userProfile, "User profile in input is null");
@@ -522,8 +519,7 @@ public class UserUtilities {
 	 *
 	 * @param userProfile
 	 *            the user profile
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public static void createUserFunctionalityRoot(IEngUserProfile userProfile) throws Exception {
 		logger.debug("IN");
@@ -700,6 +696,15 @@ public class UserUtilities {
 			if (virtualRole.isAbleToEnableFederatedDataset()) {
 				roleFunctionalities.add(SpagoBIConstants.ENABLE_FEDERATED_DATASET);
 			}
+			if (virtualRole.isAbleToEnableRate()) {
+				roleFunctionalities.add(SpagoBIConstants.ENABLE_TO_RATE);
+			}
+			if (virtualRole.isAbleToEnablePrint()) {
+				roleFunctionalities.add(SpagoBIConstants.ENABLE_TO_PRINT);
+			}
+			if (virtualRole.isAbleToEnableCopyAndEmbed()) {
+				roleFunctionalities.add(SpagoBIConstants.ENABLE_TO_COPY_AND_EMBED);
+			}
 			if (virtualRole.isAbleToManageGlossaryBusiness()) {
 				roleFunctionalities.add(SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS);
 			}
@@ -799,6 +804,9 @@ public class UserUtilities {
 		virtualRole.setIsAbleToHierarchiesManagement(false);
 		virtualRole.setIsAbleToEnableDatasetPersistence(false);
 		virtualRole.setIsAbleToEnableFederatedDataset(false);
+		virtualRole.setIsAbleToEnableRate(false);
+		virtualRole.setIsAbleToEnablePrint(false);
+		virtualRole.setIsAbleToEnableCopyAndEmbed(false);
 		virtualRole.setAbleToManageInternationalization(false);
 
 		if (roles != null) {
@@ -924,6 +932,18 @@ public class UserUtilities {
 					if (anotherRole.isAbleToEnableFederatedDataset()) {
 						logger.debug("User has role " + roleName + " that is able to manage federated dataset.");
 						virtualRole.setIsAbleToEnableFederatedDataset(true);
+					}
+					if (anotherRole.isAbleToEnableRate()) {
+						logger.debug("User has role " + roleName + " that is able to enable rating.");
+						virtualRole.setIsAbleToEnableRate(true);
+					}
+					if (anotherRole.isAbleToEnablePrint()) {
+						logger.debug("User has role " + roleName + " that is able to print documents.");
+						virtualRole.setIsAbleToEnablePrint(true);
+					}
+					if (anotherRole.isAbleToEnableCopyAndEmbed()) {
+						logger.debug("User has role " + roleName + " that is able to copy or embed link.");
+						virtualRole.setIsAbleToEnableCopyAndEmbed(true);
 					}
 					if (anotherRole.isAbleToManageGlossaryBusiness()) {
 						logger.debug("User has role " + roleName + " that is able to manage glossary business.");

@@ -19,6 +19,8 @@ package it.eng.spagobi.tools.dataset.dao;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
@@ -41,5 +43,7 @@ public interface ISbiDataSetDAO extends ISpagoBIDao {
 	public Integer countSbiDataSet(String search, Integer[] ids) throws EMFUserError;
 
 	public SbiDataSet loadSbiDataSetByIdAndOrganiz(Integer id, String organiz);
+
+	public SbiDataSet loadSbiDataSetByIdAndOrganiz(Integer id, String organiz, Session session);
 
 }

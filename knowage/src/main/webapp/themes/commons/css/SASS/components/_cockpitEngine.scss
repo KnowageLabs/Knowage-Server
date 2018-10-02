@@ -11,391 +11,27 @@
     background-color: rgba(240,240,240,1);
     background-image: #fff;
 
-    .widgetTypeIcon {
-    	padding:8px;
-    	.item {
-    		cursor: pointer;
-    		border: 1px solid $bordersColor;
-		    width: 5rem;
-    		height: 5rem;
-    		padding: 16px;
-    		&:hover, &.selected{
-    			.kn-svgIcon {
-    				background-color: $lightTextColor;
-    			}
-    		}
-    	}
-    }
-
     cockpit-html-widget {
     	height: 100%;
     	overflow: auto;
-
-    }
-    .cockpit-map-widget {
-    	overflow: hidden;
-		.ol-popup {
-		    position: absolute;
-		    background-color: white;
-		    -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
-		    filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
-		    padding: 8px;
-		    border: 1px solid #cccccc;
-		    bottom: 12px;
-		    left: -50px;
-		    min-width: 200px;
-			border-radius: 10px;
-		    &:after, &:before {
-		        top: 100%;
-		        border: solid transparent;
-		        content: " ";
-		        height: 0;
-		        width: 0;
-		        position: absolute;
-		        pointer-events: none;
-	      	}
-	      	&:after {
-	      		border-top-color: white;
-		        border-width: 10px;
-		        left: 48px;
-		        margin-left: -10px;
-	      	}
-	      	&:before {
-	      		border-top-color: #cccccc;
-		        border-width: 11px;
-		        left: 48px;
-		        margin-left: -11px;
-	      	}
-		}
-		.popup-content {
-			h2 {
-				margin-top: 0;
-				font-size: 1rem;
-				text-transform: uppercase;
-				font-family: 'Roboto';
-				font-weight: 100;
-			}
-			ul {
-				list-style: none;
-				padding: 0;
-				p {
-					margin: 0;
-					span {
-						padding-left: 10px;
-					}
-					&.warningMessage{
-						color: $negativeColor;
-						font-size: $smallFontSize;
-						padding-bottom: 5px;
-					}
-				}
-			}
-		}
-			
-		.ol-popup-closer {
-			text-decoration: none;
-			position: absolute;
-			top: 8px;
-			right: 8px;
-		}
-
-		md-sidenav { 
-			transition: 0.2s linear all;
-			md-radio-button {
-				margin-bottom: 8px;
-				outline: none;
-				._md-container {
-					width: 15px;
-					height: 15px;
-					._md-off, ._md-on {
-						width: 15px;
-						height: 15px;
-					}
-				}
-				
-			}
-		}
-    	.map {
+    	.trustedHtml {
+    		height: 100%;
     		position: relative;
-    		.optionsController {
-			    position: absolute;
-			    right: 7px;
-			    top: 40px;
-			    padding: 5px;
-			    background-color: #6690B9;
-			    border: 3px solid rgba(white,.7);
-			    color: white;
-			    border-radius:2px;
-			    z-index: 99;
-			    &:hover {
-			    	background-color: darken(#6690B9,15%);
-			    }
-	    	}
-    	}
-		
-		.mapWidgetLegend{
-			position:absolute;
-			display:block;
-			min-width:240px;
-			width:auto;
-			height:auto;
-			bottom:0;
-			z-index:999;
-			background-color:white;
-			opacity:0.9;
-			border-radius:5px;
-			.legendLayerLabel{
-				font-size:.7rem;
-				font-weight:bold;
-			}
-			.legendStartLimit{
-				left:0%;
-				position:relative;
-				font-size:.7rem;
-				width:50px;
-				text-align: right;
-			}
-			.legendEndLimit{
-				right:0%;
-				position:relative;
-				font-size:.7rem;
-				width:50px;
-				text-align: left;
-			}
-		}
-		.mapOptionsSidenav {
-	    	.indicatorOptions {
-	    		.indicatorLabel {
-	    			padding:8px;
-	    			outline: none;
-		    		cursor:pointer;
-		    		background-color: #f1f1f1;
-		    		font-size: $baseFontSize;
-		    		border-bottom: 1px solid #ccc;
-	    		}
-	    	}
-	    }
-    }
-    .imagesLibrary {
-    	file-upload {
-			md-content {
-				background-color: transparent;
-			}
-		}
-		md-grid-tile {
-			figure {
-				.md-icon-button {
-					position: absolute;
-					top: 4px;
-					right: 0;
-					z-index: 9;
-					opacity: 0;
-					background-color: rgba($baseColor, .6);
-					md-icon {
-						color: white;
-					}
-				}
-				&>div {
-					width: 100%;
-					height: 100%;
-				    background-size: contain;
-				    background-repeat: no-repeat;
-				    background-position: center;
-				    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
-    				filter: grayscale(100%);
-				    
-				    &.selected {
-				    	
-				    	-webkit-filter: grayscale(0%); /* Safari 6.0 - 9.0 */
-    					filter: grayscale(0%);
-				    }
-				}
-				md-grid-tile-footer {
-			    	background: rgba(0,0,0,.5);
-			    }
-			}
-			&:hover {
-		    	outline: 2px solid $baseColor;
-			    	.md-icon-button {
-					opacity: 1;
-					&:hover {
-						background-color: rgba($baseColor, 1);
-					}
-				}
-		    }
-			&.selected {
-				outline: 4px solid $baseColor;
-				md-grid-tile-footer {
-			    	background: rgba($baseColor,.5);
-			    }
-			}
-		}
-		
-	}
-
-    .cockpit-map-widget-edit {
-    	.md-subheader {
-    		._md-subheader-inner {
-    			padding: 8px;
-    		}
-    	}
-    	.visTypes {
-    		.outerIcon {
-    			padding: 0 8px;
-    			border: 1px solid $ternaryColor;
-    			cursor: pointer;
-    			margin-right: 8px;
-    			&.selected {
-    				background-color: $secondaryColor;
-	    		}
-	    		&:hover {
-	    			background-color: darken($secondaryColor,15%);
-	    		}
-	    		&:hover, &.selected {
-	    			.visTypeIcon {
-    					background-color: $lightTextColor;
-    				}
-	    		}
-    		}
-    		.visTypeIcon {
-    			width: 100px;
-    			height: 60px;
-    			background-repeat: no-repeat;
-    			background-size: cover;
-    			background-position: 0 0;
-    			background-color: $baseColor;
-    			&.clusters {
-    				mask-image: url('../img/cockpit/mapWidget/clusters.svg');
-    				mask-size: cover;
-    				mask-repeat: no-repeat;
-    				mask-position: 0 0;
-    				-webkit-mask-image: url('../img/cockpit/mapWidget/clusters.svg');
-    				-webkit-mask-size: cover;
-    				-webkit-mask-repeat: no-repeat;
-    				-webkit-mask-position: 0 0;
-    			}
-    			&.markers {
-    				mask-image: url('../img/cockpit/mapWidget/markers.svg');
-    				mask-size: cover;
-    				mask-repeat: no-repeat;
-    				mask-position: 0 0;
-    				-webkit-mask-image: url('../img/cockpit/mapWidget/markers.svg');
-    				-webkit-mask-size: cover;
-    				-webkit-mask-repeat: no-repeat;
-    				-webkit-mask-position: 0 0;
-    			}
-    			&.heatmap {
-    				mask-image: url('../img/cockpit/mapWidget/heatmap.svg');
-    				mask-size: cover;
-    				mask-repeat: no-repeat;
-    				mask-position: 0 0;
-    				-webkit-mask-image: url('../img/cockpit/mapWidget/heatmap.svg');
-    				-webkit-mask-size: cover;
-    				-webkit-mask-repeat: no-repeat;
-    				-webkit-mask-position: 0 0;
-    			}
-    			&.choropleth {
-    				mask-image: url('../img/cockpit/mapWidget/choropleth.svg');
-    				mask-size: cover;
-    				mask-repeat: no-repeat;
-    				mask-position: 0 0;
-    				-webkit-mask-image: url('../img/cockpit/mapWidget/choropleth.svg');
-    				-webkit-mask-size: cover;
-    				-webkit-mask-repeat: no-repeat;
-    				-webkit-mask-position: 0 0;
-    			}
-    		}
-    	}
-
-    	.buttonBarSquared {
-    		.markerTypeIcon {
-    			border: 1px solid $ternaryColor;
-    			padding: 8px;
-    			cursor: pointer;
-    			margin-right: 4px;
-    			md-icon {
-    				color: $baseColor;
-    			}
-    			&.selected {
-    				background-color: $secondaryColor;
-	    		}
-	    		&:hover {
-	    			background-color: darken($secondaryColor,15%);
-	    		}
-	    		&.selected, &:hover {
-	    			md-icon {
-	    				color: $lightTextColor;
-	    			}
-	    		}
-    		}
-    	}
-
-    	.markersExpander {
-    		.color-picker-wrapper {
-    			z-index: 11;
+    		&>div {
+    			position: absolute;
+    			height: 100%;
     			width: 100%;
     		}
-    		file-upload {
-    			md-content {
-    				background-color: transparent;
-    			}
-    		}
-    		.preview {
-    			position: relative;
-    			width: 76px;
-    			height: 76px;
-    			display: flex;
-    			align-items: center;
-    			justify-content: center;
-    			padding: 8px;
-    			margin-top: 1rem;
-    			margin-left: 10px;
-    			border: 1px solid #ccc;
-    			box-shadow: 0px 3px 3px #ccc;
-    			overflow: hidden;
-    			.defaultIcon {
-    				font-size: 1.5rem;
-    			}
-    			img, .clusterExample {
-    				position: absolute;
-    			}
-    			label {
-    				position: absolute;
-    				top: -1rem;
-    				left: 0;
-    				font-size: $smallFontSize;
-    				color: $secondaryColor;
-
-    			}
-    			.clusterExample {
-    				border-radius: 50px;
-    				display: flex;
-				    align-items: center;
-				    justify-content: center;
-    			}
-    		}
     	}
-    	.iconSelector {
-	    	h3 {
-	    		margin-bottom: .5rem;
-	    		margin-top: 0;
-	    		font-size: $baseFontSize;
-	    	}
-	    	.iconContainer {
-	    		border: 1px solid #ccc;
-	    		&.selected {
-	    			background-color: $secondaryColor;
-	    		}
-	    		&:hover {
-	    			background-color: darken($secondaryColor,15%);
-	    		}
-	    	}
-	    }
     }
-
+    
+    
     cockpit-discovery-widget {
+    	height: 100%;
+    	.discoveryCardsContainer {
+    		height: calc(100% - 70px);
+    	}
     	.discoveryFiltersCard {
-    		
     		&.sidenav-add, &.sidenav-remove {
     			transition: max-width .4s linear;
     		}
@@ -404,137 +40,68 @@
     			margin-left: 0;
     			margin-right: 0;
     			left: -300px;
+    			.discoveryFiltersList {
+    				border: none;
+    			}
     			&.open-add, &.open-remove {
     				transition: left .4s linear;
     			}
     			&.open,&.open-remove {
+    				border: 1px solid $bordersColor;
     				position: absolute;
     				left: -300px;
     				max-width: 85%;
     				width: 100%;
-    				height: calc(100% - 145px);
-				    top: 130px;
+    				height: calc(100% - 48px);
 				    z-index: 99;
 				    md-card-content {
 				    	height: 100%;
 				    }
     			}
     			&.open{
-				    left: 9px;
+				    left: 8px;
     			}
     		}
     		.discoveryFiltersList {
-	    		height: calc(100% - 80px); 
 	    		overflow-y: auto;
+	    		height: calc(100% - 10px);
+	    		
 	    		@include coolScrollBars($baseColor,6px);
-	    		._md-subheader-inner {
-	    			padding:8px;
-	    		}
-	    		.discoveryFiltersItem {
-	    			&:nth-last-child {
-	    				border-bottom: none;
-	    			}
+	    		.md-subheader {
+	    			background-color: $baseColor;
+	    			color: $lightTextColor;
+	    			cursor: pointer;
 	    			border-bottom: 1px solid $bordersColor;
-	    			padding: 0 8px;
-					min-height: 32px;
-					height: 32px;
-	    			.chip {
-	    				background-color: $ternaryColor;
-					    padding: 4px;
-					    border-radius: 15px;
-					    width: 40px;
-					    text-align: center;
-					    font-size: $mediumFontSize;
-	    			}
+	    			._md-subheader-inner, .md-subheader-inner {
+		    			padding:8px;
+		    			._md-subheader-content, .md-subheader-content {
+		    				font: 600 $mediumFontSize $defaultFontFamily;
+	    				    display: flex;
+						    align-items: center;
+						    justify-content: space-between;
+						    height: 14px;
+						    .md-button {
+						    	padding:0;
+						    	height: 30px;
+						    	min-height: 30px;
+						    	md-icon {
+						    		margin:0;
+						    		color: $lightTextColor;
+						    	}
+						    }
+						    
+		    			}
+		    		}
 	    		}
-	    	}
-    	}
-    	.discoveryViewCard {
-    		md-card-content {
-    			height: calc(100% - 80px); 
-	    		overflow-y: auto;
-	    		@include coolScrollBars($baseColor,6px);
-    		}
-    		.discoveryListView {
-				.discoveryItem {
-					padding: 4px 16px;
-					.md-avatar {
-						color: white;
-						font-size: 1.5rem;
-						font-weight: 100;
-						display: flex;
-					    justify-content: center;
-					    align-items: center;
-					}
-					h3, p {
-						margin: 0;
-					}
-					h3 {
-						font-size: 16px;
-					    font-weight: 400;
-					    letter-spacing: .01em;
-					    line-height: 1.2em;
-					    overflow: hidden;
-					    white-space: nowrap;
-					    text-overflow: ellipsis;
-					}
-					p {
-						font-size: .8rem;
-					    font-weight: 500;
-					    letter-spacing: .01em;
-					    margin: 0;
-					    line-height: 1rem;
-					}
-				}
-			}
-    	}
-    	
-    }
-    cockpit-discovery-widget {
-    	.discoveryFiltersCard {
-    		
-    		&.sidenav-add, &.sidenav-remove {
-    			transition: max-width .4s linear;
-    		}
-    		&.sidenav {
-    			max-width: 0;
-    			margin-left: 0;
-    			margin-right: 0;
-    			left: -300px;
-    			&.open-add, &.open-remove {
-    				transition: left .4s linear;
-    			}
-    			&.open,&.open-remove {
-    				position: absolute;
-    				left: -300px;
-    				max-width: 85%;
-    				width: 100%;
-    				height: calc(100% - 145px);
-				    top: 130px;
-				    z-index: 99;
-				    md-card-content {
-				    	height: 100%;
-				    }
-    			}
-    			&.open{
-				    left: 9px;
-    			}
-    		}
-    		.discoveryFiltersList {
-	    		height: calc(100% - 80px); 
-	    		overflow-y: auto;
-	    		@include coolScrollBars($baseColor,6px);
-	    		._md-subheader-inner {
-	    			padding:8px;
-	    			._md-subheader-content {
-    				    display: flex;
-					    align-items: center;
-					    justify-content: space-between;
-					    height: 14px;
-					    md-icon {
-					    	margin:0;
-					    }
-	    			}
+	    		.selectable {
+	    			&:hover {
+		    			background-color: $listBackground;
+		    		}
+		    		&.selected {
+		    			.chip {
+		    				border: 1px solid $lightTextColor;
+		    			}
+		    		}
 	    		}
 	    		.discoveryFiltersItem {
 	    			&:nth-last-child {
@@ -548,7 +115,7 @@
 						font-size: $mediumFontSize;
 					}
 	    			.chip {
-	    				background-color: $ternaryColor;
+	    				border: 1px solid $bordersColor;
 					    border-radius: 15px;
 					    min-width: 40px;
 					    text-align: center;
@@ -565,10 +132,18 @@
 				}
 			}
     		md-card-content {
-    			height: calc(100% - 112px); 
+    			.menuToggler {
+	    			position: absolute;
+	    			top: 0;
+	    			left: 0;
+	    			z-index: 9;
+	    		}
+	    		position: relative;
+    			height: calc(100% - 40px); 
 	    		overflow-y: auto;
 	    		@include coolScrollBars($baseColor,6px);
     		}
+    		
     		.discoveryListView {
 				.discoveryItem {
 					padding: 4px 16px;
@@ -604,6 +179,40 @@
     	}
     	
     }
+
+    .discoveryWidgetConfiguration {
+    	position: absolute;
+   		width: 90%;
+   		height: 90%;
+   		margin: 2% 5%;
+   		md-tabs {
+			md-tab-content {
+				background-color: $pageBackground;
+			}
+		} 
+		.facetReady {
+			transition: opacity .3s linear;
+			.fa-stack {
+				width: 24px;
+			    height: 24px;
+			    line-height: 24px;
+			}
+    		.fa-stack-2x {
+    			height: 24px;
+    			line-height: 24px;
+    			opacity: 0;
+    		}
+    		.facet-hidden {
+    			opacity: 1;
+    		}
+    		&:hover {
+				.fa-stack-2x {
+	    			opacity: .6;
+	    		}
+    		}
+    	}
+    }
+
     cockpit-image-widget {
     	width:100%;
 		height:100%;
@@ -653,7 +262,33 @@
 		}
 	}
 
+	cockpit-selector-widget {
+		md-input-container {
+			&.multipleSelect{
+				height: 100%;
+			}
+			.kn-select {
+				&.multipleSelect {
+					height: 100%;
+					background: none;
+				}
+				select[multiple] {
+					height: 100%;
+				}
+				option {
+					font-size: $baseFontSize;
+				}
+			}
+		}
+	}
+
 	cockpit-table-widget {
+		.kn-noItems {
+			top: 40px;
+			p {
+				margin: 0;
+			}
+		}
 		.highlight {
 			background-color: $secondaryColor !important;
 		}
@@ -764,7 +399,7 @@
 			                text-align: left;
 			                background-color: $contentBackground;
 			                color: $darkTextColor;
-			                opacity: .7;
+			                opacity: .85;
 			                font-size: 12px;
 			                font-weight: 700;
 			                white-space: nowrap;
@@ -1196,7 +831,6 @@
 			background-size:100% 30px;
 			min-height: 100% !important;
 			background-position: 0 0;
-			background-color: white;
 			background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 30px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 2%);
 			.showActionButtonHandler {
 				opacity: .4 !important;
@@ -1495,24 +1129,15 @@
         md-content.md-knowage-theme {
             background-color: $listBackground;
         }
+        &>div {
+        	height: auto;
+        }
     }
 
     .greyListItem {
         background-color: $detailBackground;
         border-top: 1px solid $listBackground;
     }
-
-	md-tabs.cockpitSheetTabs>md-tabs-wrapper{
-		margin-left: 50px;
-	}
-	
-	.md-button.addSheetTabButton{
-	    bottom: 0;
-	    margin-bottom: 1px;
-    	position: absolute;
-    	min-width: 40px;
-    	z-index: 9;
-    	}
     	
 	.selectedImage{
 		background-color:#a9c3db;
@@ -1566,7 +1191,6 @@
 				tr{
 					height: $angularTableDenseTRHeight;
 					td{
-					
 						&.level{
 							text-align: center;
 							font-size: 16px;
@@ -1577,10 +1201,11 @@
 								display: initial;
 							}
 							.crosstab-header-text{
+								text-align: center;
 								font-family: Roboto,"Helvetica Neue",sans-serif;
 								text-align: center;
 								font-size: $headerFontSize;
-								color: black;
+								color: #3b678c;
 								font-weight: 600;								
 							}
 							.sortIcon{
@@ -1616,7 +1241,13 @@
 							color:white;
 						}
 						&.crosstab-header-text {
-							border-top:none;							
+							border-top:none;	
+							text-align: center;
+							font-family: Roboto,"Helvetica Neue",sans-serif;
+							text-align: center;
+							font-size: $headerFontSize;
+							color: #3b678c;
+							font-weight: 600;									
 						}
 						&.sortIcon {
 							border-top: none;
@@ -1911,17 +1542,6 @@
 	
 //IE style
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-	 .cockpitSheetTabsHook {
-    	md-tabs-canvas {
-    		width: 10px;
-    	}
-    	md-tabs-wrapper {
-    		width: 10px;
-    	}
-    	md-tab-data {
-    		display: none;
-    	}
-    }
     cockpit-table {
 	    .cockpitTableContainer {
 	    	table.cockpitTable {
@@ -1938,6 +1558,50 @@
 			}
 		}
 	}
+	cockpit-sheet {
+		md-tabs {
+			md-tabs-wrapper {
+				md-tabs-canvas {
+					md-pagination-wrapper {
+						.md-tab {
+							span {
+								&.viewModeSheet {
+									top: -1px;
+								}
+								top: -8px;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	.htmlWidgetConfiguration {
+		section {
+			height: 100%;
+		}
+		.availableFunctions {
+			._md-subheader-content {
+				
+			}
+		}
+   		.htmlEditor {
+   			.CodeMirror {
+				height: 500px;
+			}
+   		}
+		.CodeMirror {
+			width: 100%;
+		}
+		.widgetId {
+			text-transform: none;
+		}
+		.availableFunctions {
+			.description {
+				font-size: $mediumFontSize;
+			}
+		}
+	}    
 }
 
 }
@@ -2150,67 +1814,98 @@
 		}
 		.fixedSelectionButton {
 			z-index: 50 !important;
-	}
+		}
 	}
 
 	cockpit-sheet {
-		md-tabs-content-wrapper {
-			bottom: 0;
-			md-tab-content{
-				overflow:hidden;
+		.md-button.addSheetTabButton{
+		    bottom: 2px;
+		    margin-bottom: 1px;
+	    	position: absolute;
+	    	min-width: 24px;
+		    padding: 0;
+		    width: 24px;
+	    	height: 24px;
+	    	min-height: 24px;
+	    	z-index: 9;
+	    	&:hover {
+				background-color: darken($detailBackground,5%);
 			}
-		}
-		md-ink-bar {
-			display: none;
-		}
-		.addSheetTabButton {
-			background-color: #f0f0f0;
-		} 
+    	}
 		md-tabs {
-			&:not(.cockpitSheetTabs) {
-				md-pagination-wrapper {
-					margin-left: 8px;
-				}
-			}
-			background-color: transparent;
-			md-tab-item {
-				.md-menu {
-					padding: 0;
-				}
-			    display: inline-flex;
-			    min-width: 100px;
-			    justify-content: space-around;
-			    align-items: center;
-				background-color: $lightTextColor;
-				border: 1px solid $ternaryColor;
-			    border-radius: 2px;
-			    padding: 4px 8px;
-			    top: 12px;
-			    overflow: hidden;
-			    &.md-active {
-			    	background-color: $baseColor;
-			    	color: $lightTextColor !important;
-			    	md-icon {
-			    		color: $lightTextColor !important;
-			    	}
-			    }
-			}
-			md-tab-item:only-of-type {
-				display: none
-			} 
+			padding-bottom: 28px;
 			&.highlander {
-				md-tab-item {
+				padding-bottom: 0;
+				md-tabs-wrapper {
 					display: none;
 				}
+				md-tabs-content-wrapper {
+					bottom: 0;
+				}
+				.md-button.addSheetTabButton {
+					width: 32px;
+					height: 32px;
+					background-color: $detailBackground;
+					border: 1px solid $bordersColor;
+				}
+			}
+			&.cockpitSheetTabs {
+				md-pagination-wrapper{
+					padding-left: 24px;
+				}
+				&>md-tabs-wrapper{}
+				}
+			md-tabs-wrapper {
+				background-color: $detailBackground;
+				border-top: 1px solid $bordersColor;
+				margin-left: 0;
+				width: 100%;
+				height: 30px;
+				md-prev-button {
+					left: 32px;
+				}
+				md-tabs-canvas {
+					height: 30px;
+					md-pagination-wrapper {
+						height: 30px;
+						.md-tab {
+							cursor: pointer;
+							transition: background-color .3s ease-in;
+							border: 1px solid $detailBackground;
+							line-height: 24px;
+							height: 24px;
+							padding: 0 8px;
+							font-size: $mediumFontSize;
+							text-transform: none;
+							margin: 2px 4px;
+							border-radius: 2px;
+							&:first-child {
+								margin-left: 10px;
+							}
+							span {
+								position: relative;
+								outline: none;
+								top: -1px;
+							}
+							&:hover {
+								background-color: darken($detailBackground,5%);
+							}
+							&.md-active {
+								background-color: darken($detailBackground,10%);
+								border: 1px solid $bordersColor;
+							}
+						}
+					}
+					md-ink-bar {
+						display: none;
+					}
+				}
+			}
+			md-tabs-content-wrapper {
+				bottom: 28px;
 			}
 		}
-		md-prev-button, md-next-button{
-			background-color: $baseColor;
-			border-radius: 4px;
-			md-icon {
-				color: $lightTextColor;
-			}
-		}
+
 	}
 
 	.widgetSearchBar {
@@ -2291,7 +1986,10 @@
 				max-height: 32px;
 				min-height: 32px;
 				padding-right: 0;
-				border-bottom: 1px solid #ccc;
+				border-top: 1px solid #ccc;
+				&:first-child {
+					border-top: 0;
+				}
 			}
 			.selectionSpan {
 				white-space: nowrap;
@@ -2339,59 +2037,138 @@
 	}
 
 	.cockpitSelectorWidget{
-		.cockpitSelectorWidgetCombobox {
-			padding-top: 0;
-			md-input-container {
-				margin: 8px 0;
+		.grid {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			.kn-custom-checkbox-container, .grid .kn-custom-radio-container{
+				width: 150px;
+			}
+			&:focus {
+				outline: none;
 			}
 		}
-		.cSelWRadio,.cSelWCheck{
-			margin-bottom: 8px;
-			outline: none;
-			span {
-				font-size: $mediumFontSize;
+		.horizontal {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			&:focus {
+				outline: none;
 			}
 		}
-		.cSelWScroller {
-			&.horizontal {
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				.cSelWCheckContainer, md-radio-group{
-					md-radio-button, md-checkbox {
-						margin-right: 16px;
-					}
-					display: flex;
-					flex-direction: row;
-					align-items: center;
-					._md-label{
-						white-space: nowrap;
-					}
+		.kn-custom-checkbox-container, .kn-custom-radio-container {
+		    display: inline-flex;
+		    position: relative;
+		    flex-direction: row-reverse;
+		    justify-content: flex-end;
+		    align-items: center;
+		    min-height: 24px;
+		    height: 24px;
+		    cursor: pointer;
+		    font-size: 12px;
+		    -webkit-user-select: none;
+		    -moz-user-select: none;
+		    -ms-user-select: none;
+		    user-select: none;
+		    .checkmark:after {
+			  content: "";
+			  position: absolute;
+			  display: none;
+			}
+			&:focus {
+				outline: none;
+			}
+		    input {
+		    	position: absolute;
+			  	opacity: 0;
+			 	cursor: pointer;
+			 	&:checked {
+			 		~ .checkmark {
+			 			background-color: $baseColor !important;
+  						border: 2px solid $baseColor !important;
+			 			&:after {
+			 				display: block;
+			 			}
+			 		}
+			 	}
+		    }
+		    span {
+		    	overflow: hidden;
+		    	margin-right: 10px;
+			  	text-overflow: ellipsis;
+			  	white-space: nowrap;
+		    }
+		    &:hover {
+				background-color: #ccc;
+				input ~ .checkmark {
+					background-color: #ccc;
 				}
 				
-			}
-			&.grid {
-				.cSelWCheckContainer, md-radio-group{
-					display: flex;
-					flex-direction: row;
-					flex-wrap: wrap;
-					md-radio-button, md-checkbox {
-						margin-right: 8px;
-						width: 150px;
-						span {
-							overflow: hidden;
-							text-overflow: ellipsis;
-							white-space: nowrap;
-							display: block;
-							width: 120px;
-						}
-					}
-				}
-			}
+		    }
+		    &[disabled="disabled"]{
+		    	color: #ccc;
+		    	&:hover {
+		    		background-color: transparent;
+					cursor: default;
+					input ~ .checkmark {
+			    		background-color: #eee;
+			    	}
+		    	}
+		    	input:checked ~ .checkmark {
+		    		background-color: #eee;
+		    	}
+
+		    }
+		}
+		.kn-custom-radio-container .checkmark {
+		  	position: relative;
+		  	height: 18px;
+		  	width: 18px;
+		  	min-width: 18px;
+		  	max-width: 18px;
+		  	margin-right: 10px;
+		  	background-color: transparent;
+		  	border: 2px solid #ccc;
+		  	border-radius: 50%;
+		  	&:after {
+		  		top: 5px;
+			  	left: 5px;
+			  	width: 8px;
+			  	height: 8px;
+			  	border-radius: 50%;
+			  	background: $lightTextColor;
+		  	}
+		}
+		.kn-custom-checkbox-container .checkmark {
+		  	position: relative;
+		    margin-right: 10px;
+		    height: 18px;
+		    width: 18px;
+		    min-width: 18px;
+		    max-width: 18px;
+		    background-color: transparent;
+		    border: 2px solid #ccc;
+		    border-radius: 2px;
+		    &:after {
+		    	left: 5px;
+			  	top: 1px;
+			  	width: 5px;
+			  	height: 10px;
+			  	border: solid $lightTextColor;
+			  	border-width: 0 3px 3px 0;
+			  	-webkit-transform: rotate(45deg);
+			  	-ms-transform: rotate(45deg);
+			  	transform: rotate(45deg);
+		    }
+		}
+		.cSelWScroller {
 			padding-left: 8px;
 			padding-top: 4px;
 			overflow-y: auto;
 			height: 100%;
+			&:focus {
+				outline: none;
+			}
 			@include coolScrollBars($baseColor,6px);
 		}
 	}
@@ -2420,6 +2197,21 @@
 		align-items: center;
 		justify-content: center;
 	}
+
+	.imagesLibrary {
+    	.imageContainer {
+    		.imageEraser {
+    			transition: all .3s ease-in;
+    			position: absolute;
+    			bottom: 4px;
+			    z-index: 10;
+			    right: 8px;
+    			&:hover{
+    				background-color: $bordersColor;
+    			}
+    		}
+    	}
+    }
 	
 }
 

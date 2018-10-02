@@ -17,21 +17,14 @@
  */
 package it.eng.spagobi.commons.serializer;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.*;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -105,14 +98,8 @@ public class TriggerJSONSerializer implements Serializer {
 			String triggerCronType = trigger.getChronType() != null ? trigger.getChronType() : "";
 			result.put(TRIGGER_CHRON_TYPE, triggerCronType);
 
-			ISchedulerDAO schedulerDAO;
-			boolean isTriggerPaused = false;
-			try {
-				schedulerDAO = DAOFactory.getSchedulerDAO();
-				isTriggerPaused = schedulerDAO.isTriggerPaused(triggerGroup, triggerName, jobGroup, jobName);
-			} catch (EMFUserError e) {
-				logger.error("Error while checking if the trigger [" + triggerName + "] is paused");
-			}
+			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();;
+			boolean isTriggerPaused = schedulerDAO.isTriggerPaused(triggerGroup, triggerName, jobGroup, jobName);
 			result.put(TRIGGER_IS_PAUSED, isTriggerPaused);
 
 			// Job parameter for trigger details
@@ -136,8 +123,6 @@ public class TriggerJSONSerializer implements Serializer {
 
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
-		} finally {
-
 		}
 
 		return result;

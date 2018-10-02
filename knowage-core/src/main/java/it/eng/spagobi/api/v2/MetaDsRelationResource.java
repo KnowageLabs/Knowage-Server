@@ -1,17 +1,5 @@
 package it.eng.spagobi.api.v2;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -22,6 +10,11 @@ import it.eng.spagobi.metadata.metadata.SbiMetaDsTabRel;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("2.0/metaDsRelationResource")
 @ManageAuthorization
@@ -35,13 +28,8 @@ public class MetaDsRelationResource extends AbstractSpagoBIResource {
 	}
 
 	private void init() {
-		try {
 			sbiMetaDsTabRelDAO = DAOFactory.getDsTableRelDAO();
 			sbiMetaTableDao = DAOFactory.getSbiMetaTableDAO();
-
-		} catch (EMFUserError e) {
-			logger.error("Error in initialization", e);
-		}
 	}
 
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASET_MANAGEMENT })

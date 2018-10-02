@@ -16,9 +16,10 @@
 </div> 
 
 <!-- Aggregation type for the series item -->
-<div layout="row" flex layout-margin>
+<div ng-if="chartTemplate.type.toUpperCase()!='SCATTER'" layout="row" flex layout-margin>
 	<md-input-container class="md-block" flex> 
 		<label>{{translate.load('sbi.chartengine.designer.series.aggrtype')}}</label>
+		
 		<md-select ng-model="detailsForSeriesItem.groupingFunction"> 
 			<md-option ng-repeat="option in seriesItemAggregationTypes  | filter: filterAgregations" value="{{option.value}}">{{option.name}}</md-option>
 		</md-select> 

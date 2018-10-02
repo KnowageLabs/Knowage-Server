@@ -844,7 +844,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	}
 
 	private BIObjectParameter getFatherParameter(ObjParuse dependency, List<BIObjectParameter> BIObjectParameters) {
-		Integer fatherId = dependency.getObjParFatherId();
+		Integer fatherId = dependency.getParFatherId();
 		Iterator it = BIObjectParameters.iterator();
 		while (it.hasNext()) {
 			BIObjectParameter temp = (BIObjectParameter) it.next();

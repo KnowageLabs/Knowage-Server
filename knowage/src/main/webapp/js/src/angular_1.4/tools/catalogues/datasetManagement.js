@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box', 'qbe_viewer']);
+var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box', 'qbe_viewer','driversExecutionModule']);
 
 datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
@@ -24,7 +24,7 @@ datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 datasetModule
-	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer", datasetFunction])
+	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer", "driversExecutionService", "$q", datasetFunction])
 	.service('multipartForm',['$http',function($http){
 
 			this.post = function(uploadUrl,data){
@@ -42,7 +42,7 @@ datasetModule
 		}]);
 
 
-function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer){
+function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer, driversExecutionService, $q){
 
 	$scope.maxSizeStr = maxSizeStr;
 
@@ -54,6 +54,68 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.xslSheetNumberDefault = 1;
 	$scope.dateFormatDefault = "dd/MM/yyyy";
 
+//	$scope.documentParameters = [
+//		{allowInternalNodeSelection: true,
+//		dataDependencies: [],
+//		dependsOn: {},
+//		driverLabel: "Tree inner node",
+//		driverUseLabel: "A",
+//		id: 263,
+//		label: "Tree inner node",
+//		lovDependencies: [],
+//		mandatory: true,
+//		multivalue: false,
+//		selectedLayer: null,
+//		selectedLayerProp: null,
+//		selectionType: "TREE",
+//		showOnPanel: "true",
+//		type: "STRING",
+//		typeCode: "QUERY",
+//		urlName: "par_cross2",
+//		valueSelection: "lov",
+//		visible: true,
+//		visualDependencies: []},
+//		{
+//		allowInternalNodeSelection: false,
+//		dataDependencies: [],
+//		dependsOn: {},
+//		driverLabel: "Tree",
+//		driverUseLabel: "all",
+//		id: 262,
+//		label: "tree",
+//		lovDependencies: [],
+//		mandatory: true,
+//		multivalue: false,
+//		selectedLayer: null,
+//		selectedLayerProp: null,
+//		selectionType: "TREE",
+//		showOnPanel: "true",
+//		type: "STRING",
+//		typeCode: "QUERY",
+//		urlName: "par_cross",
+//		valueSelection: "lov",
+//		visible: true,
+//		visualDependencies: []
+//		},
+//		{urlName:"outputType",
+//			visible:true,
+//			dependsOn:{},
+//			selectedLayerProp:null,
+//			dataDependencies:[],
+//			valueSelection:"man_in",
+//			showOnPanel:"true",
+//			driverUseLabel:"All",
+//			label:"outputType",
+//			selectedLayer:null,
+//			type:"STRING",
+//			driverLabel:"MANUAL_STRING",
+//			mandatory:false,
+//			allowInternalNodeSelection:false,
+//			lovDependencies:[],
+//			typeCode:"MAN_IN",
+//			multivalue:false,
+//			selectionType:"",
+//			visualDependencies:[],"id":266} ]
 
 	$scope.$watch("selectedDataSet.restNGSI",function(newValue,oldValue){
 		if(newValue && (newValue===true || newValue==="true")){
@@ -115,6 +177,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.showSaveAndCancelButtons = false;
 
 	$scope.scheduling = {};
+
+	$scope.disablePersisting = false;
 
 	// The current date for data pickers for Scheduling
 	var currentDate = new Date();
@@ -813,19 +877,49 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.parameterItems = [];
 	$scope.parametersCounter = 0;
 
-	$scope.parametersAddItem = function() {
+	$scope.parametersAddItem = function(event) {
 
-		$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":"","index":$scope.parametersCounter++});
+		if($scope.selectedDataSet.isPersisted == true) {
+			var confirm = $mdDialog.confirm()
+				         .title($scope.translate.load("sbi.ds.parameters.dialog.title"))
+				         .targetEvent(event)
+				         .textContent($scope.translate.load("sbi.ds.parameters.dialog.text"))
+				         .ariaLabel("Add dataset parameter")
+				         .ok($scope.translate.load("sbi.general.yes"))
+				         .cancel($scope.translate.load("sbi.general.No"));
 
-		$timeout(
+			$mdDialog.show(confirm).then(
 					function() {
-						var page = $scope.tableLastPage("datasetParametersTable");
-						// If the page that is returned is less than the current one, that means that we are already on that page, so keep it (danristo)
-						$scope.parametersTableLastPage = page<$scope.parametersTableLastPage ? $scope.parametersTableLastPage : page;
-					},
+						$scope.selectedDataSet.isPersisted = false;
+						$scope.selectedDataSet.persistTableName = '';
+						$scope.disablePersisting = true;
+						$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":"","index":$scope.parametersCounter++});
 
-					300
-				);
+						$timeout(
+									function() {
+										var page = $scope.tableLastPage("datasetParametersTable");
+										// If the page that is returned is less than the current one, that means that we are already on that page, so keep it (danristo)
+										$scope.parametersTableLastPage = page<$scope.parametersTableLastPage ? $scope.parametersTableLastPage : page;
+									},
+
+									300
+								);
+					}
+			);
+		} else {
+			$scope.disablePersisting = true;
+			$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":"","index":$scope.parametersCounter++});
+
+			$timeout(
+						function() {
+							var page = $scope.tableLastPage("datasetParametersTable");
+							// If the page that is returned is less than the current one, that means that we are already on that page, so keep it (danristo)
+							$scope.parametersTableLastPage = page<$scope.parametersTableLastPage ? $scope.parametersTableLastPage : page;
+						},
+
+						300
+					);
+		}
 
 	}
 
@@ -842,7 +936,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 	// TODO: translate
 		    	var confirm = $mdDialog.confirm()
 			         .title("Delete dataset parameter")
-			         .targetEvent(event)
 			         .textContent("Are you sure you want to delete the dataset parameter?")
 			         .ariaLabel("Delete dataset parameter")
 			         .ok($scope.translate.load("sbi.general.yes"))
@@ -862,9 +955,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						 			}
 						 		}
 
+								if($scope.parameterItems.length == 0) {
+									$scope.disablePersisting = false;
+								}
+
 					 		}
 						);
-
 	 		}
 
 	 	}
@@ -877,7 +973,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			// TODO: translate
 	    	var confirm = $mdDialog.confirm()
 		         .title("Clear all dataset parameters")
-		         .targetEvent(event)
 		         .textContent("Are you sure you want to delete all dataset parameters")
 		         .ariaLabel("Clear all dataset parameters")
 		         .ok($scope.translate.load("sbi.general.yes"))
@@ -889,6 +984,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						function() {
 							$scope.setFormDirty();
 							$scope.parameterItems = [];
+							$scope.disablePersisting = false;
 				 		}
 					);
 		}
@@ -1742,26 +1838,34 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 }
 
 	 // SELECT DATASET
-	 $scope.loadDataSet = function(item,index) {
+	 $scope.loadDataSet = function(item, index) {
 		 $scope.isSelected = true;
 		 $scope.step=1;
-//		 console.log("A8");
-//		 console.log(item);
-//		 console.log($scope.dirtyForm);
-//		 console.log($scope.selectedDataSet);
-		 //$scope.selectedDataSet ? console.log("id: ",$scope.selectedDataSet.id) : console.log("UNDEFINED");
-		 // DS not yet selected
+
+		// Load the Dataset's older versions
+		if(!item.hasOwnProperty('selected') || 
+				(item.hasOwnProperty('selected') && item.selected != true)) {
+			var defer = $q.defer();
+			var olderVersionsPromise = loadOlderVersions(item.id);
+			olderVersionsPromise.then(function(response){											 		
+				item.dsVersions = response;
+				item.selected = true;
+				$scope.selectedDataSetInit = angular.copy(item);
+				$scope.selectedDataSet = angular.copy(item);
+				defer.resolve(response);				
+			}, function(error){					
+				sbiModule_messaging.showErrorMessage(error, 'Error');				
+			});			
+		}
+		 
 		 if (!$scope.selectedDataSet) {
 			 //console.log("a2");
 			 $scope.setFormNotDirty();
-			 selectDataset(item,index);
+			 selectDataset(item, index);
 		 }
 		 // Moving from selected new DS to existing DS
 		 else if (!$scope.selectedDataSet.id) {
-			 //console.log("b2");
-			 //console.log(item.id);
-			 //console.log($scope.dirtyForm);
-//			 if ($scope.selectedDataSet.id!=item.id && $scope.dirtyForm) {
+
 			 // If we move to the already existing DS and not clicking on the new DS again
 			 if (item.id) {
 
@@ -1795,7 +1899,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				 }
 				 else {
 
-					 selectDataset(item,index);
+					 selectDataset(item, index);
 					 $scope.setFormNotDirty();
 				 }
 
@@ -1811,7 +1915,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				// TODO: translate
 				var confirm = $mdDialog.confirm()
 				        .title($scope.translate.load("sbi.catalogues.generic.modify"))
-				        .targetEvent(event)
 				        .textContent($scope.translate.load("sbi.catalogues.generic.modify.msg"))
 				        .ariaLabel("Losing the changed and not saved data")
 				        .ok($scope.translate.load("sbi.general.yes"))
@@ -1830,7 +1933,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					 		function() {
 
 					 			var indexOfExistingDSInAT = -1;
-//
+
 								for (i=0; i<$scope.datasetsListTemp.length; i++) {
 									if ($scope.datasetsListTemp[i].id == $scope.selectedDataSet.id) {
 										indexOfExistingDSInAT = i;
@@ -1853,12 +1956,18 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	};
 
-	var selectDataset = function(item,index) {
-
+	var selectDataset = function(item, index) {
+						
 		$scope.selectedDataSetInit = angular.copy(item);
 		$scope.selectedDataSet = angular.copy(item);
 		$scope.showSaveAndCancelButtons = true;
-
+		
+		if($scope.selectedDataSet.pars.length > 0) {
+			$scope.disablePersisting = true;
+		} else {
+			$scope.disablePersisting = false;
+		}
+								
 		// SCHEDULING
 		if ($scope.selectedDataSet.isScheduled) {
 			$scope.selectedDataSet.startDate = new Date($scope.selectedDataSet.startDate);
@@ -2135,7 +2244,22 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.setFormNotDirty();
 
 	}
-
+	
+	var loadOlderVersions = function(id) {
+		var deferred = $q.defer();
+				
+		var promise = sbiModule_restServices.promiseGet('1.0/datasets/olderversions', id);
+		promise.then(function(response){
+			var result = response.data.root;				
+			deferred.resolve(result);
+		}, function(error) {
+			if(error.data && error.data.errors)
+				deferred.reject(error.data.errors[0].message);
+   		});
+			
+		return deferred.promise;
+	}
+	
 	$scope.refactorFileDatasetConfig = function(item) {
 
 		$scope.selectedDataSet.fileType = item!=undefined ? item.fileType : "";
@@ -2292,6 +2416,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					versNum:"",
 					trasfTypeCd: "",
 					restAddress: "",
+					solrCollection: "",
 					restDirectlyJSONAttributes: "",
 					restFetchSize: "",
 					restHttpMethod: "",
@@ -2303,6 +2428,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					restRequestBody: "",
 					restRequestHeaders: "",
 					restRequestAdditionalParameters: [],
+					solrFieldList: "",
 					solrType: "FACETS",
 					solrFacetQuery: "",
 					solrFacetField: "",
@@ -2320,6 +2446,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.showSaveAndCancelButtons = true;
 
 			$scope.transformDatasetState = false;
+			$scope.disablePersisting = false;
 
 			// Give a little time for the AT to render after the insertion of a new table element (new dataset) (danristo)
 			// We do not need to check if the current page is the one that is return by a function, since we cannot add more than one empty dataset
@@ -2510,7 +2637,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			if ($scope.selectedDataSet.id) {
 				for (i=0; i<$scope.datasetsListTemp.length; i++) {
 					if ($scope.datasetsListTemp[i].id == $scope.selectedDataSet.id) {
-//						console.log("nasao 3: ",$scope.datasetsListTemp[i]);
 						indexOfExistingDSInAT = i;
 					}
 				}
@@ -3008,6 +3134,137 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.checkIfDataSetHasParameters = function () {
 		$scope.selectedDataSet.pars = $scope.parameterItems;
 		var hasParameters = $scope.selectedDataSet.pars != undefined && $scope.selectedDataSet.pars.length>0
+		$scope.documentParameters = [{
+//			urlName: "Famiglia",
+//			visible: true,
+//			dependsOn: {
+//			},
+//			selectedLayerProp: null,
+//			descriptionColumnNameMetadata: "PRODUCT_FAMILY",
+//			dataDependencies: [],
+//			valueSelection: "lov",
+//			showOnPanel: "true",
+//			driverUseLabel: "A",
+//			label: "Famiglia",
+//			selectedLayer: null,
+//			type: "STRING",
+//			driverLabel: "CORR_PRD_FAM",
+//			mandatory: true,
+//			allowInternalNodeSelection: false,
+//			lovDependencies: [],
+//			typeCode: "QUERY",
+//			multivalue: false,
+//			selectionType: "LIST",
+//			visualDependencies: [],
+//			valueColumnNameMetadata: "PRODUCT_FAMILY",
+//			defaultValues: [{
+//				PRODUCT_FAMILY: "Non-Consumable",
+//				isEnabled: true,
+//				description: "Non-Consumable",
+//				label: "Non-Consumable",
+//				value: "Non-Consumable"
+//			},
+//			{
+//				PRODUCT_FAMILY: "Food",
+//				isEnabled: true,
+//				description: "Food",
+//				label: "Food",
+//				value: "Food"
+//			},
+//			{
+//				PRODUCT_FAMILY: "Drink",
+//				isEnabled: true,
+//				description: "Drink",
+//				label: "Drink",
+//				value: "Drink"
+//			}],
+//			id: 234,
+//			defaultValuesMeta: ["PRODUCT_FAMILY"]
+//		},
+//		{
+//			urlName: "categoria",
+//			visible: true,
+//			dependsOn: {
+//				Famiglia: [{
+//					urlName: "Famiglia"
+//				}]
+//			},
+//			selectedLayerProp: null,
+//			descriptionColumnNameMetadata: "PRODUCT_CATEGORY",
+//			dataDependencies: [{
+//				paruseId: 71,
+//				prog: 1,
+//				filterColumn: "PRODUCT_FAMILY",
+//				filterOperation: "contains",
+//				preCondition: null,
+//				postCondition: null,
+//				logicOperator: null,
+//				objParFatherId: 234,
+//				objParFatherUrlName: "Famiglia",
+//				objParId: 235
+//			}],
+//			valueSelection: "lov",
+//			showOnPanel: "true",
+//			driverUseLabel: "A",
+//			label: "Categoria",
+//			selectedLayer: null,
+//			type: "STRING",
+//			driverLabel: "CORR_PRD_CAT",
+//			mandatory: true,
+//			allowInternalNodeSelection: false,
+//			lovDependencies: [],
+//			typeCode: "QUERY",
+//			multivalue: false,
+//			selectionType: "LOOKUP",
+//			visualDependencies: [],
+//			valueColumnNameMetadata: "PRODUCT_CATEGORY",
+//			defaultValues: [],
+//			id: 235,
+//			defaultValuesMeta: ["PRODUCT_CATEGORY",
+//			"PRODUCT_FAMILY"]
+//		},
+//		{
+//			urlName: "subcat",
+//			visible: true,
+//			dependsOn: {
+//				categoria: [{
+//					urlName: "categoria"
+//				}]
+//			},
+//			selectedLayerProp: null,
+//			descriptionColumnNameMetadata: "PRODUCT_SUBCATEGORY",
+//			dataDependencies: [{
+//				paruseId: 72,
+//				prog: 1,
+//				filterColumn: "PRODUCT_CATEGORY",
+//				filterOperation: "contains",
+//				preCondition: null,
+//				postCondition: null,
+//				logicOperator: null,
+//				objParFatherId: 235,
+//				objParFatherUrlName: "categoria",
+//				objParId: 236
+//			}],
+//			valueSelection: "lov",
+//			showOnPanel: "true",
+//			driverUseLabel: "A",
+//			label: "sub categoria",
+//			selectedLayer: null,
+//			type: "STRING",
+//			driverLabel: "CORR_PRD_SUBCAT",
+//			mandatory: true,
+//			allowInternalNodeSelection: false,
+//			lovDependencies: [],
+//			typeCode: "QUERY",
+//			multivalue: false,
+//			selectionType: "LOOKUP",
+//			visualDependencies: [],
+//			valueColumnNameMetadata: "PRODUCT_SUBCATEGORY",
+//			defaultValues: [],
+//			id: 236,
+//			defaultValuesMeta: ["PRODUCT_CATEGORY",
+//			"PRODUCT_SUBCATEGORY"]
+		}]
 		if(hasParameters){
 			$scope.parameterPreviewItems = $scope.parameterItems;
 			for (var i = 0; i < $scope.parameterPreviewItems.length; i++) {

@@ -45,6 +45,7 @@ sbiM.factory('sbiModule_config',function(){
         sessionParametersStateKey: '<%= SpagoBIConstants.SESSION_PARAMETER_STATE_OBJECT_KEY %>',
         isStatePersistenceEnabled: <%= SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled")  %>,
         layerFileMaxSize: '<%= GeneralUtilities.getGisLayerFileMaxSize() %>',
+        workspaceShowGrid: '<%= SingletonConfig.getInstance().getConfigValue("KNOWAGE.WORKSPACE_SHOW_GRID") %>',
                 
         
 		<%-- <%if(parametersStatePersistenceEnabled != null) {%> --%>
@@ -162,6 +163,8 @@ sbiM.factory('sbiModule_user',function(){
 	user.ismodeweb = <%= sbiMode.equals("WEB")? "true" : "false"%>;
 	user.isSuperAdmin = '<%= userProfile != null && ((UserProfile)userProfile).getIsSuperadmin() %>';
 	user.isTechnicalUser = '<%= userProfile != null && UserUtilities.isTechnicalUser((UserProfile)userProfile)%>'
+	user.isTesterUser = '<%= userProfile != null && UserUtilities.isTester((UserProfile)userProfile)%>'
+	user.isAdminUser = '<%= userProfile != null && UserUtilities.isAdministrator((UserProfile)userProfile)%>'
 	user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>';
 	user.tenant = '<%= ((UserProfile)userProfile).getOrganization() != null ? ((UserProfile)userProfile).getOrganization() : TenantManager.getTenant().getName() %>';
 	// 	set roles
@@ -385,7 +388,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		alteredContextPath=cpat;
 	}
 
-	function getBaseUrl(endP_path) {
+	this.getBaseUrl = function(endP_path) {
 
 		var burl;
 		if(sbiModule_user.userId == ('public-'+sbiModule_user.tenant)){
@@ -407,29 +410,29 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 							.replace(/%3D/g,"=")
 							.replace(/%26/g,"&");
 		sbiModule_logger.trace("GET: " +endP_path+"/"+ req_Path + "" + item, conf);
-		return $http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item, conf);
+		return $http.get(this.getBaseUrl(endP_path) + "" + req_Path + "" + item, conf);
 	};
 
 	this.remove = function(endP_path, req_Path, item, conf) {
 		item == undefined ? item = "" : item = "?" + item;
 		sbiModule_logger.trace("REMOVE: "+endP_path+"/"+req_Path + "" + item,conf);
-		return $http.post(getBaseUrl(endP_path) + "" + req_Path + "" + item, conf);
+		return $http.post(this.getBaseUrl(endP_path) + "" + req_Path + "" + item, conf);
 	};
 
 	this.post = function(endP_path, req_Path, item, conf) {
 		sbiModule_logger.trace("POST: "+endP_path+"/"+ req_Path,item,conf);
-		return $http.post(getBaseUrl(endP_path) + "" + req_Path, item, conf);
+		return $http.post(this.getBaseUrl(endP_path) + "" + req_Path, item, conf);
 	};
 	
 	this.put = function(endP_path, req_Path, item, conf) {
 		sbiModule_logger.trace("PUT: "+endP_path+"/"+req_Path,item,conf);
-		return $http.put(getBaseUrl(endP_path) + "" + req_Path, item, conf);
+		return $http.put(this.getBaseUrl(endP_path) + "" + req_Path, item, conf);
 	};
 	
 	this.delete = function(endP_path, req_Path, item, conf) {
 		(item == undefined || item==null) ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
-		sbiModule_logger.trace("PUT:" +endP_path+"/"+req_Path+ "" + item,conf);
-		return $http.delete(getBaseUrl(endP_path) + "" + req_Path, conf);
+		sbiModule_logger.trace("DELETE:" +endP_path+"/"+req_Path+ "" + item,conf);
+		return $http.delete(this.getBaseUrl(endP_path) + "" + req_Path, conf);
 	};
 
 
@@ -513,7 +516,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		
 		deferred.notify('About to call async function');
 
-		$http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item, conf)
+		$http.get(this.getBaseUrl(endP_path) + "" + req_Path + "" + item, conf)
 			.then(
 					function successCallback(data, status, headers, config) {
 						handleResponse(data, status, headers, config, deferred);
@@ -533,7 +536,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		
 		deferred.notify('About to call async function');
 
-		$http.post(getBaseUrl(endP_path) + "" + req_Path , item, conf)
+		$http.post(this.getBaseUrl(endP_path) + "" + req_Path , item, conf)
 			.then(
 					function successCallback(data, status, headers, config) {
 						handleResponse(data, status, headers, config, deferred);
@@ -553,7 +556,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		
 		deferred.notify('About to call async function');
 
-		$http.put(getBaseUrl(endP_path) + "" + req_Path , item, conf)
+		$http.put(this.getBaseUrl(endP_path) + "" + req_Path , item, conf)
 			.then(
 					function successCallback(data, status, headers, config) {
 						handleResponse(data, status, headers, config, deferred);
@@ -574,7 +577,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		deferred.notify('About to call async function');
 		(item == undefined || item==null) ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
 		
-		$http.delete(getBaseUrl(endP_path) + "" + req_Path+""+item, conf)
+		$http.delete(this.getBaseUrl(endP_path) + "" + req_Path+""+item, conf)
 			.then(
 					function successCallback(data, status, headers, config) {
 						handleResponse(data, status, headers, config, deferred);
@@ -648,6 +651,31 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		
 	};
 });
+
+sbiM.service('multipartForm',['$http', 'sbiModule_config',function($http, sbiModule_config){
+	
+	function getBaseUrl(endP_path) {
+
+		var url = sbiModule_config.contextName +'/restful-services/'+ endP_path;
+		
+		return url ;
+	};
+	
+	this.post = function(endP_path,data){
+		
+		var formData = new FormData();
+		
+		for(var key in data){			
+			formData.append(key,data[key]);
+		}
+
+		return $http.post(getBaseUrl(endP_path),formData,{
+			transformRequest:angular.identity,
+			headers:{'Content-Type': undefined}
+		})
+	}
+	
+}]);
 
 
 sbiM.service('sbiModule_i18n', function(sbiModule_config, sbiModule_restServices, $q) {
@@ -838,4 +866,6 @@ sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModu
 
 <!-- sbiModule_dateServices -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/sbiModule_services/sbiModule_dateServices.js")%>"></script>
+
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular-localization/" + curr_language + "-" + curr_country + ".js")%>"></script>
 	 

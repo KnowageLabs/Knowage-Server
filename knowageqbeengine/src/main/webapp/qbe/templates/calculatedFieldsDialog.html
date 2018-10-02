@@ -1,0 +1,26 @@
+<md-dialog flex="70" style="overflow-x:hidden">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>{{translate.load("kn.qbe.calculatedfield.new")}} --> </h2> <h2>{{cfSelectedEntity.text}}</h2>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content style="height:516px">
+            <qbe-calculated-field-editor entities="entityModel.entities" 
+            functions="filteredFormulas" 
+            calculated-field="calculatedFieldOutput" 
+            selected-entity="cfSelectedEntity"></qbe-calculated-field-editor>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button class="md-raised" ng-click="cancel()">
+                {{translate.load("kn.qbe.general.cancel")}}
+            </md-button>
+            <md-button class="md-raised md-primary" ng-click="hide()">
+               {{translate.load("kn.qbe.general.save")}}
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

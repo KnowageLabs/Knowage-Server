@@ -79,39 +79,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$mdDialog,
 		sbiModule_device,
 		sbiModule_i18n){
-	$scope.bordersSize=[{
-    	label:$scope.translate.load("sbi.cockpit.style.borders.solid"),
-    	value:'solid',
-    	exampleClass:"borderExampleSolid"
-    },
-    {
-    	label:$scope.translate.load("sbi.cockpit.style.borders.dashed"),
-    	value:'dashed',
-    	exampleClass:"borderExampleDashed"
-    },
-    {
-    	label:$scope.translate.load("sbi.cockpit.style.borders.dotted"),
-    	value:'dotted',
-    	exampleClass:"borderExampleDotted"
-    }
-	];
-	$scope.bordersWidth=[{
-	    	label:$scope.translate.load("sbi.cockpit.style.small"),
-	    	value:"0.1em"
-	    },
-	    {
-	    	label:$scope.translate.load("sbi.cockpit.style.medium"),
-	    	value:"0.3em"
-	    },
-	    {
-	    	label:$scope.translate.load("sbi.cockpit.style.large"),
-	    	value:"0.7em"
-	    },
-	    {
-	    	label:$scope.translate.load("sbi.cockpit.style.extralarge"),
-	    	value:"1em"
-	    },
-	];
+
 
 
 	$scope.init=function(element,width,height){
@@ -149,16 +117,21 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		}
 		$scope.showWidgetSpinner();
 
+//		$scope.ngModel.content.sortOptions =  $scope.getSortOptions($scope.ngModel.content.crosstabDefinition.columns, $scope.ngModel.content.crosstabDefinition.rows) || {};
+
 		var dataToSend={
 				 config: {
 				        type: "pivot"
 				    },
 				metadata: datasetRecords.metaData,
 				jsonData: datasetRecords.rows,
-				sortOptions:{}
+//				sortOptions: $scope.ngModel.content.sortOptions //initialization with template version
+				sortOptions: $scope.getSortOptions($scope.ngModel.content.crosstabDefinition.columns, $scope.ngModel.content.crosstabDefinition.rows) || {} //initialization with template version
 		};
 
+		$scope.ngModel.content.sortOptions = $scope.manageSortCompatibility($scope.ngModel.content.sortOptions);
 		angular.merge(dataToSend,$scope.ngModel.content);
+
 
 		if( dataToSend.crosstabDefinition==undefined ||
 			dataToSend.crosstabDefinition.measures==undefined||dataToSend.crosstabDefinition.measures.length==0 ||
@@ -169,11 +142,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			return;
 		}
 
-//		dataToSend.crosstabDefinition = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition, 'style', false);
 		dataToSend.crosstabDefinition.measures = $scope.initializeStyleFormat(dataToSend.crosstabDefinition.measures);
 		dataToSend.crosstabDefinition.rows = $scope.initializeStyleFormat(dataToSend.crosstabDefinition.rows);
 		dataToSend.crosstabDefinition.columns = $scope.initializeStyleFormat(dataToSend.crosstabDefinition.columns);
-
 
 		dataToSend.crosstabDefinition.measures = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.measures, 'style', false);
 		dataToSend.crosstabDefinition.rows = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.rows, 'style', false);
@@ -184,7 +155,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		sbiModule_restServices.promisePost("1.0/crosstab","update",dataToSend).then(
 				function(response){
 					$scope.subCockpitWidget.html(response.data.htmlTable);
-//					$compile(angular.element($scope.subCockpitWidget).contents())($scope)
 					$scope.addPivotTableStyle();
 					$scope.hideWidgetSpinner();
 					$compile(angular.element($scope.subCockpitWidget).contents())($scope);
@@ -259,6 +229,89 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$scope.doSelection(columnName,columnValue);
 	};
 
+	$scope.getSortOptions = function(columns, rows){
+		var toReturn = {};
+		var rowsSortKeys = [];
+		var columnsSortKeys = [];
+
+		for (var c=0; c < columns.length; c++){
+			var cObj = columns[c];
+			if (cObj.sorting){
+				var cSort = {};
+				cSort.column = c;
+				cSort.direction = (cObj.sortingOrder == "ASC")? 1 : -1;
+				columnsSortKeys.push(cSort);
+			}
+		}
+		if (columnsSortKeys.length > 0)
+			toReturn.columnsSortKeys = columnsSortKeys;
+
+		for (var c=0; c < rows.length; c++){
+			var rObj = rows[c];
+			if (rObj.sorting){
+				var rSort = {};
+				rSort.column = c;
+				rSort.direction = (rObj.sortingOrder == "ASC")? 1 : -1;
+				rowsSortKeys.push(rSort);
+			}
+		}
+		if (rowsSortKeys.length > 0)
+			toReturn.rowsSortKeys = rowsSortKeys;
+
+		return toReturn;
+	}
+
+	$scope.manageSortCompatibility = function(oldSortOptions){
+		var toReturn={};
+		var rowsSortKeys = [];
+		var columnsSortKeys = [];
+		var measuresSortKeys = [];
+
+		if (!oldSortOptions) return toReturn;
+		
+		if (oldSortOptions.columnsSortKeys && !Array.isArray(oldSortOptions.columnsSortKeys)){
+			for (var c in oldSortOptions.columnsSortKeys){
+				var cSort = {};
+				cSort.column = c;
+				cSort.direction = oldSortOptions.columnsSortKeys[c];
+				columnsSortKeys.push(cSort);
+
+			}
+			if (columnsSortKeys.length > 0)
+				toReturn.columnsSortKeys = columnsSortKeys;
+		}
+
+		if (oldSortOptions.rowsSortKeys && !Array.isArray(oldSortOptions.rowsSortKeys)){
+			for (var r in oldSortOptions.rowsSortKeys){
+				var rSort = {};
+				rSort.column = r;
+				rSort.direction = oldSortOptions.rowsSortKeys[r];
+				rowsSortKeys.push(rSort);
+			}
+			if (rowsSortKeys.length > 0)
+				toReturn.rowsSortKeys = rowsSortKeys;
+		}
+
+		if (oldSortOptions.measuresSortKeys && !Array.isArray(oldSortOptions.measuresSortKeys)){
+			for (var m in oldSortOptions.measuresSortKeys){
+				var mSort = {};
+				mSort.column = m;
+				mSort.direction = oldSortOptions.measuresSortKeys[m];
+				mSort.measureLabel = oldSortOptions.measuresSortKeys.measureLabel;
+				mSort.parentValue = oldSortOptions.measuresSortKeys.parentValue;
+				measuresSortKeys.push(mSort);
+				break;
+			}
+			if (measuresSortKeys.length > 0)
+				toReturn.measuresSortKeys = measuresSortKeys;
+		}
+
+		if (JSON.stringify(toReturn) === JSON.stringify({}))
+			toReturn = oldSortOptions; //syntax is already correct
+
+		return toReturn;
+	}
+
 	$scope.cleanObjectConfiguration = function(config, obj, admitObject){
 
 		if (Array.isArray(config)){
@@ -308,7 +361,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 	};
 
-
 	$scope.enableAlternate = function(){
 		$scope.colorPickerProperty['disabled'] = $scope.ngModel.content.style.showAlternateRows;
 	}
@@ -325,14 +377,16 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			var subtotalsItem;
 			var dataItem;
 			var memberItem;
+			var measureHeaderItem;
 			var crossItem;
 			//generic
 			if($scope.ngModel.content.style.generic!=undefined && Object.keys($scope.ngModel.content.style.generic).length>0 ){
-				totalsItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".totals"));
-				subtotalsItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".partialsum"));
-				dataItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".data"));
-				memberItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".member"));
-				crossItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".crosstab-header-text"));
+				totalsItem 			= angular.element($scope.subCockpitWidget[0].querySelectorAll(".totals"));
+				subtotalsItem 		= angular.element($scope.subCockpitWidget[0].querySelectorAll(".partialsum"));
+				dataItem 			= angular.element($scope.subCockpitWidget[0].querySelectorAll(".data"));
+				memberItem 			= angular.element($scope.subCockpitWidget[0].querySelectorAll(".member"));
+				measureHeaderItem 	= angular.element($scope.subCockpitWidget[0].querySelectorAll(".measures-header-text"));
+				crossItem 			= angular.element($scope.subCockpitWidget[0].querySelectorAll(".crosstab-header-text"));
 				for(var prop in $scope.ngModel.content.style.generic){
 					if ($scope.ngModel.content.style.generic[prop]!=""){
 						totalsItem.css(prop,$scope.ngModel.content.style.generic[prop]);
@@ -354,6 +408,10 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 					if(dataColumnList.length>0){
 						$scope.applyBorderStyle(dataColumnList);
 					}
+//					dataColumnList=row.querySelectorAll(".measures-header-text");
+//					if(dataColumnList.length>0){
+//						$scope.applyBorderStyle(dataColumnList);
+//					}
 					dataColumnList=row.querySelectorAll(".memberNoStandardStyle");
 					if(dataColumnList.length>0){
 						$scope.applyBorderStyle(dataColumnList);
@@ -373,13 +431,23 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 					if(dataColumnList.length>0){
 						$scope.applyBorderStyle(dataColumnList);
 					}
+					//apply borders on 'empty' class
+					dataColumnList=row.querySelectorAll(".empty");
+					if(dataColumnList.length>0){
+						$scope.applyBorderStyle(dataColumnList);
+					}
 					//apply borders on 'total' class
 					dataColumnList=row.querySelectorAll(".totals");
 					if(dataColumnList.length>0){
 						$scope.applyBorderStyle(dataColumnList);
 					}
 					//apply borders on 'subtotal' class
-					dataColumnList=row.querySelectorAll(".subTotals");
+					dataColumnList=row.querySelectorAll(".partialsum");
+					if(dataColumnList.length>0){
+						$scope.applyBorderStyle(dataColumnList);
+					}
+					//apply borders on 'crosstab-header-text' class
+					dataColumnList=row.querySelectorAll("td.crosstab-header-text");
 					if(dataColumnList.length>0){
 						$scope.applyBorderStyle(dataColumnList);
 					}
@@ -405,6 +473,62 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				});
 			}
 
+			//measures
+			if($scope.ngModel.content.style.measures!=undefined && Object.keys($scope.ngModel.content.style.measures).length>0 ){
+				if(dataItem==undefined){
+					dataItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".data"));
+				}
+				for(var prop in $scope.ngModel.content.style.measures){
+					if(angular.equals("background-color",prop) && $scope.ngModel.content.style.measures[prop]!= ""){
+						dataItem.parent().parent().css(prop,$scope.ngModel.content.style.measures[prop])
+					}else if ($scope.ngModel.content.style.measures[prop] != "")
+						dataItem.css(prop,$scope.ngModel.content.style.measures[prop])
+				}
+			}
+
+			//measuresHeaders
+			if($scope.ngModel.content.style.measuresHeaders!=undefined && Object.keys($scope.ngModel.content.style.measuresHeaders).length>0 ){
+				if(measureHeaderItem==undefined){
+//					memberItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".member"));
+					measureHeaderItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".measures-header-text"));
+				}
+				for(var prop in $scope.ngModel.content.style.measuresHeaders){
+					if(angular.equals("background-color",prop) && $scope.ngModel.content.style.measuresHeaders[prop]!= ""){
+						if ($scope.ngModel.content.crosstabDefinition.config.measureson == "columns")
+							measureHeaderItem.parent().parent().css(prop,$scope.ngModel.content.style.measuresHeaders[prop])
+						else
+							measureHeaderItem.css(prop,$scope.ngModel.content.style.measuresHeaders[prop])
+					}else if ($scope.ngModel.content.style.measuresHeaders[prop]!= "")
+						measureHeaderItem.css(prop,$scope.ngModel.content.style.measuresHeaders[prop])
+				}
+			}
+
+			//crossTabHeaders
+			if($scope.ngModel.content.style.crossTabHeaders!=undefined && Object.keys($scope.ngModel.content.style.crossTabHeaders).length>0 ){
+				if(crossItem==undefined){
+					var crossEmptyItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".empty"));
+					crossItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".crosstab-header-text"));
+					Array.prototype.push.apply(crossItem, crossEmptyItem);
+				}
+				for(var prop in $scope.ngModel.content.style.crossTabHeaders){
+					if(angular.equals("background-color",prop) && $scope.ngModel.content.style.crossTabHeaders[prop]!= ""){
+						crossItem.parent().css(prop,$scope.ngModel.content.style.crossTabHeaders[prop])
+					}else if ($scope.ngModel.content.style.crossTabHeaders[prop]!=""){
+						crossItem.css(prop,$scope.ngModel.content.style.crossTabHeaders[prop])
+					}
+				}
+
+				//memebers are managed with crosstab-header-text too
+				if(memberItem==undefined){
+					memberItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".member"));
+				}
+				for(var prop in $scope.ngModel.content.style.crossTabHeaders){
+					if ($scope.ngModel.content.style.crossTabHeaders[prop]!=""){
+						memberItem.css(prop,$scope.ngModel.content.style.crossTabHeaders[prop])
+					}
+				}
+			}
+
 			//totals
 			if($scope.ngModel.content.style.totals!=undefined && Object.keys($scope.ngModel.content.style.totals).length>0 ){
 				if(totalsItem==undefined){
@@ -425,43 +549,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 						subtotalsItem.css(prop,$scope.ngModel.content.style.subTotals[prop])
 				}
 			}
-
-			//measures
-			if($scope.ngModel.content.style.measures!=undefined && Object.keys($scope.ngModel.content.style.measures).length>0 ){
-				if(dataItem==undefined){
-					dataItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".data"));
-				}
-				for(var prop in $scope.ngModel.content.style.measures){
-					if ($scope.ngModel.content.style.measures[prop] != "")
-						dataItem.css(prop,$scope.ngModel.content.style.measures[prop])
-				}
-			}
-
-			//measuresHeaders
-			if($scope.ngModel.content.style.measuresHeaders!=undefined && Object.keys($scope.ngModel.content.style.measuresHeaders).length>0 ){
-				if(memberItem==undefined){
-					memberItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".member"));
-				}
-				for(var prop in $scope.ngModel.content.style.measuresHeaders){
-					if ($scope.ngModel.content.style.measuresHeaders[prop]!= "")
-						memberItem.css(prop,$scope.ngModel.content.style.measuresHeaders[prop])
-				}
-			}
-
-			//crossTabHeaders
-			if($scope.ngModel.content.style.crossTabHeaders!=undefined && Object.keys($scope.ngModel.content.style.crossTabHeaders).length>0 ){
-				if(crossItem==undefined){
-					crossItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".crosstab-header-text"));
-				}
-				for(var prop in $scope.ngModel.content.style.crossTabHeaders){
-					if(angular.equals("background-color",prop) && $scope.ngModel.content.style.crossTabHeaders[prop]!= ""){
-						crossItem.parent().parent().parent().parent().css(prop,$scope.ngModel.content.style.crossTabHeaders[prop])
-					}else if ($scope.ngModel.content.style.crossTabHeaders[prop]!=""){
-						crossItem.css(prop,$scope.ngModel.content.style.crossTabHeaders[prop])
-					}
-				}
-			}
-
 		}
 
 	};
@@ -486,7 +573,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
-				controller: function($scope,finishEdit,sbiModule_translate,model,mdPanelRef,cockpitModule_datasetServices,cockpitModule_generalOptions,$mdDialog,$mdToast,sbiModule_device){
+				controller: function($scope,finishEdit,sbiModule_translate,model,fnOrder,mdPanelRef,cockpitModule_datasetServices,cockpitModule_generalOptions,$mdDialog,$mdToast,sbiModule_device){
 			    	  $scope.translate=sbiModule_translate;
 			    	  $scope.sbiModule_device=sbiModule_device;
 			    	  $scope.localModel={};
@@ -494,9 +581,46 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    	  $scope.originalCurrentDataset={};
 			    	  $scope.dragUtils={dragObjectType:undefined};
 			    	  $scope.tabsUtils={selectedIndex:0};
-			    	  $scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
+
+
+
+
 			    	  $scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
+			    	  $scope.bordersSize=[{
+			  	    	label:$scope.translate.load("sbi.cockpit.style.borders.solid"),
+			  	    	value:'solid',
+			  	    	exampleClass:"borderExampleSolid"
+			  	    },
+			  	    {
+			  	    	label:$scope.translate.load("sbi.cockpit.style.borders.dashed"),
+			  	    	value:'dashed',
+			  	    	exampleClass:"borderExampleDashed"
+			  	    },
+			  	    {
+			  	    	label:$scope.translate.load("sbi.cockpit.style.borders.dotted"),
+			  	    	value:'dotted',
+			  	    	exampleClass:"borderExampleDotted"
+			  	    }
+			  		];
+			  		$scope.bordersWidth=[{
+			  		    	label:$scope.translate.load("sbi.cockpit.style.small"),
+			  		    	value:"0.1em"
+			  		    },
+			  		    {
+			  		    	label:$scope.translate.load("sbi.cockpit.style.medium"),
+			  		    	value:"0.3em"
+			  		    },
+			  		    {
+			  		    	label:$scope.translate.load("sbi.cockpit.style.large"),
+			  		    	value:"0.7em"
+			  		    },
+			  		    {
+			  		    	label:$scope.translate.load("sbi.cockpit.style.extralarge"),
+			  		    	value:"1em"
+			  		    },
+			  		];
 			    	  angular.copy(model,$scope.localModel);
+
 
 			    	  if($scope.localModel.content==undefined){
 		    			  $scope.localModel.content={};
@@ -523,6 +647,16 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    		  $scope.localModel.content.crosstabDefinition.config.percenton="no";
 			    	  }
 
+			    	  $scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'};
+			    	  $scope.colorPickerPropertyGrid={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:$scope.localModel.content.style && $scope.localModel.content.style.showGrid ? false : true};
+			    	  $scope.colorPickerAlternateGrid={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:$scope.localModel.content.style && $scope.localModel.content.style.showAlternateRows ? false : true};
+
+			    	  $scope.enableAlternate = function() {
+			    		  $scope.colorPickerAlternateGrid.disabled=!$scope.localModel.content.style.showAlternateRows;
+		    		  }
+			    	  $scope.enableGrid = function() {
+			    		  $scope.colorPickerPropertyGrid.disabled=!$scope.localModel.content.style.showGrid;
+			    	  }
 
 			    	  $scope.changeDatasetFunction=function(dsId,noReset){
 			    		  $scope.currentDataset= cockpitModule_datasetServices.getDatasetById( dsId);
@@ -592,7 +726,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    							  iconCls: item.fieldType.toLowerCase(),
 			    							  nature: item.fieldType.toLowerCase(),
 			    							  values: "[]",
-			    							  sortable: false,
+//			    							  sortable: false,
 			    							  width: 0
 			    					  };
 			    					   if(angular.equals(containerType,"MEASURE-PT")){
@@ -633,6 +767,8 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    			  $scope.showAction($scope.translate.load('sbi.cockpit.widgets.staticpivot.missingfield'));
 			    			  return;
 			    		  }
+			    		  if (model.content.crosstabDefinition)
+			    			  $scope.localModel.content.sortOptions =  fnOrder(model.content.crosstabDefinition.columns, model.content.crosstabDefinition.rows) || {}; //update sorting
 			    		  angular.copy($scope.localModel,model);
 			    		  mdPanelRef.close();
 			    		  $scope.$destroy();
@@ -690,7 +826,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				escapeToClose: false,
 				focusOnOpen: true,
 				preserveScope: true,
-				locals: {finishEdit:finishEdit,model:$scope.ngModel},
+				locals: {finishEdit:finishEdit,model:$scope.ngModel,fnOrder:$scope.getSortOptions},
 				onRemoving :function(){
 					$scope.refreshWidget();
 				}
@@ -712,6 +848,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$scope.formatPattern = ['','#.###','#,###','#.###,##','#,###.##'];
 		$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
 		$scope.visTypes=['Text','Icon only'];
+
 		$scope.selectedColumn.disableShowHeader = false; //default is enabled: only for measures force disable if there are many measures
 		if ($scope.selectedColumn.containerType && $scope.selectedColumn.containerType == 'MEASURE-PT'){
 			if (model.content.crosstabDefinition.measures.length==1)
@@ -829,7 +966,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			$mdDialog.cancel();
 		}
 
-		//aaaa
 		$scope.cleanObjectConfiguration = function(config, obj, admitObject){
 			var toReturn = {};
 			for (var c in config){
@@ -884,58 +1020,69 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 	$scope.orderPivotTable=function(column, axis, globalId, measureLabel, parentValue){
 		if($scope.ngModel.content.sortOptions==undefined){
-			$scope.ngModel.content.sortOptions={};
+//			$scope.ngModel.content.sortOptions={};
+			$scope.ngModel.content.sortOptions = $scope.getSortOptions($scope.ngModel.content.crosstabDefinition.columns, $scope.ngModel.content.crosstabDefinition.rows) || {} //initialization with template version
 		}
 		var axisConfig;
 		if(axis==1){
 			if (measureLabel){
 				var previousSelection = $scope.getPreviousSelection($scope.ngModel.content.sortOptions.measuresSortKeys);
-				if($scope.ngModel.content.sortOptions.measuresSortKeys==undefined || previousSelection!=column){
-					$scope.ngModel.content.sortOptions.measuresSortKeys={}
+				if($scope.ngModel.content.sortOptions.measuresSortKeys==undefined || previousSelection != column){
+					$scope.ngModel.content.sortOptions.measuresSortKeys = [];
 				}
-				$scope.ngModel.content.sortOptions.measuresSortKeys.parentValue = parentValue;
-				$scope.ngModel.content.sortOptions.measuresSortKeys.measureLabel = measureLabel;
+				var colDef = {};
+				colDef.column = column;
+				colDef.parentValue = parentValue;
+				colDef.measureLabel = measureLabel;
+				let exists = $scope.ngModel.content.sortOptions.measuresSortKeys.some(member => member.column == column);
+				if (!exists) $scope.ngModel.content.sortOptions.measuresSortKeys.push(colDef);
 				axisConfig = $scope.ngModel.content.sortOptions.measuresSortKeys;
 			}else{
-				var previousSelection = $scope.getPreviousSelection($scope.ngModel.content.sortOptions.columnsSortKeys);
-				if($scope.ngModel.content.sortOptions.columnsSortKeys==undefined || previousSelection!=column){
-					$scope.ngModel.content.sortOptions.columnsSortKeys={}
+//				column = column/2;
+				if($scope.ngModel.content.sortOptions.columnsSortKeys==undefined){
+					$scope.ngModel.content.sortOptions.columnsSortKeys=[];
 				}
 				//reset measure ordering
 				if($scope.ngModel.content.sortOptions.measuresSortKeys!=undefined ){
 					$scope.ngModel.content.sortOptions.measuresSortKeys=undefined;
 				}
+				let exists = $scope.ngModel.content.sortOptions.columnsSortKeys.some(member => member.column == column);
+				if (!exists) $scope.ngModel.content.sortOptions.columnsSortKeys.push({'column': column});
 				axisConfig = $scope.ngModel.content.sortOptions.columnsSortKeys;
 			}
 		}else{
 			if (measureLabel){
 				var previousSelection = $scope.getPreviousSelection($scope.ngModel.content.sortOptions.measuresSortKeys);
-				if($scope.ngModel.content.sortOptions.measuresSortKeys==undefined || previousSelection!=column){
-					$scope.ngModel.content.sortOptions.measuresSortKeys={}
+				if($scope.ngModel.content.sortOptions.measuresSortKeys==undefined || previousSelection != column){
+					$scope.ngModel.content.sortOptions.measuresSortKeys=[];
 				}
-				$scope.ngModel.content.sortOptions.measuresSortKeys.parentValue = parentValue;
-				$scope.ngModel.content.sortOptions.measuresSortKeys.measureLabel = measureLabel;
+				var colDef = {};
+				colDef.column = column;
+				colDef.parentValue = parentValue;
+				colDef.measureLabel = measureLabel;
+				let exists = $scope.ngModel.content.sortOptions.measuresSortKeys.some(member => member.column == column);
+				if (!exists) $scope.ngModel.content.sortOptions.measuresSortKeys.push(colDef);
 				axisConfig = $scope.ngModel.content.sortOptions.measuresSortKeys;
 			}else{
-				var previousSelection = $scope.getPreviousSelection($scope.ngModel.content.sortOptions.rowsSortKeys);
-				if($scope.ngModel.content.sortOptions.rowsSortKeys==undefined || previousSelection!=column){
-					$scope.ngModel.content.sortOptions.rowsSortKeys={}
+				if($scope.ngModel.content.sortOptions.rowsSortKeys==undefined){
+					$scope.ngModel.content.sortOptions.rowsSortKeys=[];
 				}
 				//reset measure ordering
 				if($scope.ngModel.content.sortOptions.measuresSortKeys!=undefined ){
 					$scope.ngModel.content.sortOptions.measuresSortKeys=undefined;
 				}
+				let exists = $scope.ngModel.content.sortOptions.rowsSortKeys.some(member => member.column == column);
+				if (!exists) $scope.ngModel.content.sortOptions.rowsSortKeys.push({'column': column});
 				axisConfig = $scope.ngModel.content.sortOptions.rowsSortKeys;
 			}
 		}
 
-		var direction = axisConfig[column];
+		var direction = $scope.getItemDirection(axisConfig, column);
 		if(!direction){
 			direction = 1;
 		}
 		direction = direction*(-1);
-
-		axisConfig[column] = direction;
+		$scope.setItemDirection(axisConfig, column, direction);
 
 		$scope.refreshWidget();
 	}
@@ -945,7 +1092,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 		if(keys!=undefined){
 			for (var m in keys){
-				toReturn = m;
+				toReturn = keys[m].column;
 				break;
 			}
 		}
@@ -953,7 +1100,20 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		return toReturn;
 	}
 
+	$scope.getItemDirection = function(axisConf, idx){
+		for (c in axisConf){
+			if (axisConf[c].column == idx)
+				return axisConf[c].direction;
+		}
+		return null;
+	}
 
+	$scope.setItemDirection = function(axisConf, idx, direction){
+		for (c in axisConf){
+			if (axisConf[c].column == idx)
+				axisConf[c].direction = direction;
+		}
+	}
 };
 
 

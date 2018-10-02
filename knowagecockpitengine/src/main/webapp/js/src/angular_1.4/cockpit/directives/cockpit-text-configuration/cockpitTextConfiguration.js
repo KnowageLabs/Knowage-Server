@@ -49,8 +49,8 @@ function cockpitTextControllerFunction($scope,cockpitModule_widgetServices,
 	$scope.cockpitModule_datasetServices=cockpitModule_datasetServices;
 	$scope.translate=sbiModule_translate;
 
-	$scope.measureFunctions=['SUM', 'AVG', 'MIN', 'MAX','COUNT'];
-	$scope.attributeFunctions=['MIN', 'MAX','COUNT'];
+	$scope.measureFunctions=['SUM', 'AVG', 'MIN', 'MAX','COUNT','COUNT_DISTINCT'];
+	$scope.attributeFunctions=['MIN', 'MAX','COUNT','COUNT_DISTINCT'];
 
 	//set flags
 	$scope.ngModelShared.selectedAggregation = false;
@@ -95,10 +95,10 @@ function cockpitTextControllerFunction($scope,cockpitModule_widgetServices,
 				//add functions to MEASURE fields, if ATTRIBUTE functions are restricted
 				var fieldType = $scope.getFieldType(key, param);
 
-				if (fieldType != 'MEASURE' &&
-						$scope.attributeFunctions.indexOf($scope.ngModelShared.selectedAggregation)<0
-				) return;
-
+				if(fieldType == 'MEASURE' && !$scope.measureFunctions.includes($scope.ngModelShared.selectedAggregation))
+					return;
+				if(fieldType == 'ATTRIBUTE' && !$scope.attributeFunctions.includes($scope.ngModelShared.selectedAggregation))
+					return;
 
 				ph = $scope.ngModelShared.selectedAggregation + "(" + ph + ")";
 				$scope.ngModelShared.selectedAggregation = false; // reset function selection

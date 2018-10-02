@@ -18,8 +18,6 @@
 package it.eng.spagobi.commons.domains;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -78,12 +76,7 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 		try {
 			domaindao = DAOFactory.getDomainDAO();
 			domains = domaindao.loadListDomainsByType(type);
-			Collections.sort(domains, new Comparator() {
-				@Override
-				public int compare(Object domain, Object otherDomain) {
-					return ((Domain) domain).getValueId().compareTo(((Domain) domain).getValueId());
-				}
-			});
+
 			if (type.equals("DIALECT_HIB")) {
 				filterDataSourceDomains(domains);
 			}

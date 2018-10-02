@@ -31,7 +31,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -117,7 +116,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/filtertree")
 	@Produces("text/html; charset=UTF-8")
-	
+
 	public String getMemberValue(@javax.ws.rs.core.Context HttpServletRequest req) {
 		Hierarchy hierarchy = null;
 
@@ -346,7 +345,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	@GET
 	@Path("/{hierarchy}/filtertree2/{axis}")
 	@Produces("text/html; charset=UTF-8")
-	
+
 	public String getMemberValue2(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
 			@PathParam("axis") int axis) {
 		Hierarchy hierarchy = null;
@@ -560,7 +559,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		IDataSource dataSource = getWhatIfEngineInstance().getDataSource();
 		try {
 			logger.debug("Getting the connection to DB");
-			connection = dataSource.getConnection(null);
+			connection = dataSource.getConnection();
 		} catch (Exception e) {
 			logger.error("Error opening connection to datasource " + dataSource.getLabel());
 			throw new SpagoBIRuntimeException("Error opening connection to datasource " + dataSource.getLabel(), e);

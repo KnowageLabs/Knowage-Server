@@ -327,7 +327,10 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 			String uniqueName = (String) iterator.next();
 			if (uniqueName.endsWith("::" + notUniqueName)) {
 				toReturn = entities.get(uniqueName);
+			} else if (uniqueName.toLowerCase().endsWith("::" + notUniqueName.toLowerCase())) {
+				toReturn = entities.get(uniqueName);
 			}
+
 		}
 		return toReturn;
 	}

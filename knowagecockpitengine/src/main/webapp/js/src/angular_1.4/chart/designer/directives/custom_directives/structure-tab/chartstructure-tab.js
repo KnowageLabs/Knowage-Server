@@ -52,7 +52,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	$scope.$watch('categories',function(newValue,oldValue){
 		$scope.categ.lengthh = $scope.categories.length;
 	},true)
-	
+
 	$scope.$watch('chartTemplate.dateTime',function(newValue,oldValue){
 		if(!newValue && $scope.chartTemplate) $scope.chartTemplate.categoryDate = "";
 	},true)
@@ -223,18 +223,34 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		}
 	}
 	 // Called when the user clicks on the attribute in its container, so the attribute can be used as a category in the chart.
-	 $scope.moveAttributeToCategories = function(item) {
 
+	/*$scope.moveAttributeToTooltip = function (item) {
+
+		var index = findInArray($scope.categories,'column',item.alias);
+		var indexTooltip = findInArray($scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.categories,'column',item.alias);
+
+		if (index<0) {
+			$scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:"",tooltip:true});
+		}
+
+		if (indexTooltip<0){
+			$scope.chartTemplate.VALUES.SERIE[0].TOOLTIP.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:"",tooltip:true});
+		}
+		//sesic
+
+	}*/
+
+	 $scope.moveAttributeToCategories = function(item) {
+		 	debugger;
 			var chartType = $scope.chartTemplate.type;
 			var index = findInArray($scope.categories,'column',item.alias);
 
-			if (
-					chartType.toUpperCase() == "SCATTER" || chartType.toUpperCase() == "WORDCLOUD") {
+			if (chartType.toUpperCase() == "SCATTER" || chartType.toUpperCase() == "WORDCLOUD") {
 				if($scope.categories.length>=1){
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.max.categories"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
 				} else {
 					if(index<0){
-						  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
+						  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:"",fakeCategory:false});
 					}
 				}
 			} else if (chartType.toUpperCase() == "PARALLEL") {
@@ -242,6 +258,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.max.categories"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
 				} else {
 					if(index<0){
+
 						  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
 					  }
 				}
@@ -392,6 +409,9 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					temp.column = item.alias;
 					temp.name = item.alias;
 					temp.precision = Number(item.precision);
+					if($scope.chartTemplate.type.toUpperCase()=="SCATTER"){
+						temp.fakeSerie = false;
+					}
 					var checkForSameAxis = findInArray($scope.chartTemplate.VALUES.SERIE,'axis',temp.axis)
 					var checkForSameColumn = findInArray($scope.chartTemplate.VALUES.SERIE,'column',temp.column);
 					if( checkForSameAxis == -1 || checkForSameColumn == -1){
@@ -467,7 +487,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 				if (allSeries.length) {
 					for (j=0; j<allSeries.length; j++) {
 
-						if ($scope.seriesContainers[i].name==allSeries[j].axis) {
+						if ($scope.seriesContainers[i].name==allSeries[j].axis  && !allSeries[j].fakeSerie) {
 							if(allSeries[j].column!=""){
 								$scope.seriesContainers[i].series.push(allSeries[j].column);
 							}
@@ -482,6 +502,15 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					}
 				}
 
+			}
+			if($scope.chartTemplate.type == 'SCATTER'){
+				for (j=0; j<allSeries.length; j++) {
+					if(allSeries[j].fakeSerie){
+						$scope.indexSerie = j
+						break;
+					}
+				}
+				allSeries.splice($scope.indexSerie, allSeries.length - $scope.indexSerie)
 			}
 		}
 
@@ -526,15 +555,27 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			if ($scope.categoriesExist) {
 
 				var categoryTag = $scope.chartTemplate.VALUES.CATEGORY;
-				console.log(categoryTag);
 //				console.log(categoryTag.length);
 				// If the CATEGORY tag contains an array (e.g. this goes for the SUNBURST chart type)
 				if (categoryTag.length) {
+					if($scope.chartTemplate.type == 'SCATTER'){
+						for (j=0; j<categoryTag.length; j++) {
+
+							if(categoryTag[j].fakeCategory){
+								$scope.indexCateg = j
+								break;
+
+							}
+
+						}
+						categoryTag.splice($scope.indexCateg, categoryTag.length - $scope.indexCateg)
+					}
+
 					//if($scope.chartTemplate.type=="PARALLEL" || $scope.chartTemplate.type=="HEATMAP" || $scope.chartTemplate.type=="CHORD") {
 						for (i=0; i<categoryTag.length; i++) {
 							$scope.categories.push(categoryTag[i]);
 						}
-					//}
+
 
 				}
 				// If all (if there are more than one) categories are under the single tag (column and groupby properties (attributes))
@@ -562,6 +603,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 										obj.name = groupByNameSplitArray[j];
 									}
 								}
+
 								 $scope.categories.push(obj);
 							}
 
@@ -646,7 +688,6 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 		// If the chart is already defined (it is NOT the new one - not yet persisted)
 		if ($scope.chartTemplate) {
-
 			var series = [];
 			   var chartSeries = [];
 			   // Series from chart template (from its JSON)
@@ -663,16 +704,13 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			if(chartSeries[0].column==""){
 				$scope.chartTemplate.VALUES.SERIE = [];
 			}
-
-			//chartSeries.length ? series = chartSeries : series.push(chartSeries);
-			if(chartSeries.length>0){
-				for (i=0; i<chartSeries.length; i++) {
-					if(chartSeries[i].column!="" && chartSeries[i].column!=undefined){
-						$scope.seriesContainer.push(chartSeries[i].column);
+				if(chartSeries.length>0){
+					for (i=0; i<chartSeries.length; i++) {
+						if(chartSeries[i].column!="" && chartSeries[i].column!=undefined){
+							$scope.seriesContainer.push(chartSeries[i].column);
+						}
 					}
 				}
-			}
-
 
 		}
 		var sflag = 0;
@@ -997,6 +1035,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
     $scope.fontSize = ChartDesignerData.getFontSizeOptions();
     $scope.lineTypeOptions = StructureTabService.getLineTypesOptions();
     $scope.gaugeTicksPositionOptions = StructureTabService.getGaugeTicksPosition();
+    $scope.gaugeSubtypes = StructureTabService.getGaugeSybtypes();
 
     $scope.seriesItemAggregationTypes = StructureTabService.getSeriesItemAggregationTypes();
 

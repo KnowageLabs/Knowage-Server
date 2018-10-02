@@ -100,6 +100,9 @@ public class RoleBO implements Serializable {
 
 	private boolean ableToEnableDatasetPersistence;
 	private boolean ableToEnableFederatedDataset;
+	private boolean ableToEnableRate;
+	private boolean ableToEnablePrint;
+	private boolean ableToEnableCopyAndEmbed;
 
 	private boolean ableToManageGlossaryBusiness;
 	private boolean ableToManageGlossaryTechnical;
@@ -126,10 +129,8 @@ public class RoleBO implements Serializable {
 	/**
 	 * Constructor.
 	 *
-	 * @param name
-	 *            the name
-	 * @param description
-	 *            the description
+	 * @param name        the name
+	 * @param description the description
 	 */
 	public RoleBO(String name, String description) {
 		super();
@@ -150,8 +151,7 @@ public class RoleBO implements Serializable {
 	/**
 	 * Sets the description.
 	 *
-	 * @param description
-	 *            the description to set
+	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -169,8 +169,7 @@ public class RoleBO implements Serializable {
 	/**
 	 * Sets the id.
 	 *
-	 * @param id
-	 *            the role id to set
+	 * @param id the role id to set
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -188,8 +187,7 @@ public class RoleBO implements Serializable {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name
-	 *            the name to set
+	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -207,8 +205,7 @@ public class RoleBO implements Serializable {
 	/**
 	 * Sets the role type cd.
 	 *
-	 * @param roleTypeCD
-	 *            The roleTypeCD to set.
+	 * @param roleTypeCD The roleTypeCD to set.
 	 */
 	public void setRoleTypeCD(String roleTypeCD) {
 		this.roleTypeCD = roleTypeCD;
@@ -226,8 +223,7 @@ public class RoleBO implements Serializable {
 	/**
 	 * Sets the role type id.
 	 *
-	 * @param roleTypeID
-	 *            The roleTypeID to set.
+	 * @param roleTypeID The roleTypeID to set.
 	 */
 	public void setRoleTypeID(Integer roleTypeID) {
 		this.roleTypeID = roleTypeID;
@@ -245,8 +241,7 @@ public class RoleBO implements Serializable {
 	/**
 	 * Sets the code.
 	 *
-	 * @param code
-	 *            The code to set.
+	 * @param code The code to set.
 	 */
 	public void setCode(String code) {
 		this.code = code;
@@ -498,6 +493,30 @@ public class RoleBO implements Serializable {
 
 	public void setAbleToEnableFederatedDataset(boolean ableToEnableFederatedDataset) {
 		this.ableToEnableFederatedDataset = ableToEnableFederatedDataset;
+	}
+
+	public boolean isAbleToEnableRate() {
+		return ableToEnableRate;
+	}
+
+	public void setAbleToEnableRate(boolean ableToEnableRate) {
+		this.ableToEnableRate = ableToEnableRate;
+	}
+
+	public boolean isAbleToEnablePrint() {
+		return ableToEnablePrint;
+	}
+
+	public void setIsAbleToEnablePrint(boolean ableToEnablePrint) {
+		this.ableToEnablePrint = ableToEnablePrint;
+	}
+
+	public boolean isAbleToEnableCopyAndEmbed() {
+		return ableToEnableCopyAndEmbed;
+	}
+
+	public void setIsAbleToEnableCopyAndEmbed(boolean ableToEnableCopyAndEmbed) {
+		this.ableToEnableCopyAndEmbed = ableToEnableCopyAndEmbed;
 	}
 
 	public boolean isAbleToManageGlossaryBusiness() {

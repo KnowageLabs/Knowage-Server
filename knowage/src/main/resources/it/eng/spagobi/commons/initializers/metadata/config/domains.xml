@@ -39,9 +39,7 @@
 	<DOMAIN valueCd="NETWORK" valueNm="sbidomains.nm.network"
 		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.network" />
 	<DOMAIN valueCd="DOSSIER" valueNm="sbidomains.nm.dossier"
-		domainCd="BIOBJ_TYPE" domainNm="Accessible Html" valueDs="sbidomains.ds.dossier" />			
-	<DOMAIN valueCd="ACCESSIBLE_HTML" valueNm="Accessible Html"
-		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="Accessible Html" />		
+		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.dossier" />			
 	<DOMAIN valueCd="BOOL" valueNm="sbidomains.nm.bool" domainCd="VALUE_TYPE"
 		domainNm="Input value types to check" valueDs="sbidomains.ds.bool" />
 	<DOMAIN valueCd="SINGLE" valueNm="sbidomains.nm.single"
@@ -123,8 +121,6 @@
 	<DOMAIN valueCd="COMBOBOX" valueNm="sbidomains.nm.combobox"
 		domainCd="SELECTION_TYPE" domainNm="Selection modality of parameter values"
 		valueDs="sbidomains.ds.combobox" />
-	<DOMAIN valueCd="-1" valueNm="sbidomains.nm.default" domainCd="DIALECT_HIB"
-		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.default" />
 	<DOMAIN valueCd="org.hibernate.dialect.OracleDialect" valueNm="sbidomains.nm.oracle"
 		domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect"
 		valueDs="sbidomains.ds.oracle" />
@@ -137,18 +133,12 @@
 	<DOMAIN valueCd="org.hibernate.dialect.SQLServerDialect"
 		valueNm="sbidomains.nm.sqlserver" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.sqlserver" />
-	<DOMAIN valueCd="org.hibernate.dialect.HSQLDialect" valueNm="sbidomains.nm.hsql"
-		domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect"
-		valueDs="sbidomains.ds.hsql" />
 	<DOMAIN valueCd="org.hibernate.dialect.MySQLInnoDBDialect"
 		valueNm="sbidomains.nm.mysql" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect"
 		valueDs="sbidomains.ds.mysql" />
 	<DOMAIN valueCd="org.hibernate.dialect.PostgreSQLDialect"
 		valueNm="sbidomains.nm.postgresql" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.postgresql" />
-	<DOMAIN valueCd="org.hibernate.dialect.neo4j"
-		valueNm="sbidomains.nm.neo4j" domainCd="DIALECT_HIB"
-		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.neo4j" />
 	<DOMAIN valueCd="org.hibernate.dialect.cassandra"
 		valueNm="sbidomains.nm.cassandra" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.cassandra" />
@@ -158,20 +148,12 @@
 	<DOMAIN valueCd="org.hibernate.dialect.impala"
 		valueNm="sbidomains.nm.impala" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.impala" />
-	<DOMAIN valueCd="org.hibernate.dialect.drill"
-		valueNm="sbidomains.nm.drill" domainCd="DIALECT_HIB"
-		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.drill" />
-	<DOMAIN valueCd="org.hibernate.dialect.IngresDialect" valueNm="sbidomains.nm.ingres"
-		domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect"
-		valueDs="sbidomains.ds.ingres" />
-	<DOMAIN valueCd="VoltDBDialect" valueNm="sbidomains.nm.voltdb"
-		domainCd="DIALECT_HIB" domainNm="VoltDB dialect" valueDs="sbidomains.ds.voltdb" />
 	<DOMAIN valueCd="MongoDialect" valueNm="sbidomains.nm.mongo"
 		domainCd="DIALECT_HIB" domainNm="MongoDB dialect" valueDs="sbidomains.ds.mongo" />
-	<DOMAIN valueCd="hbase" valueNm="sbidomains.nm.hbase" domainCd="DIALECT_HIB"
-		domainNm="HBQL HBase dialect" valueDs="sbidomains.ds.hbase" />
 	<DOMAIN valueCd="hive" valueNm="sbidomains.nm.hive" domainCd="DIALECT_HIB"
 		domainNm="HQL Hive dialect" valueDs="sbidomains.ds.hive" />
+	<DOMAIN valueCd="org.hibernate.dialect.MySQLDialect" valueNm="sbidomains.nm.hive2" domainCd="DIALECT_HIB"
+		domainNm="HQL Hive2 dialect" valueDs="sbidomains.ds.hive2" />
 	<DOMAIN valueCd="orient" valueNm="sbidomains.nm.orient"
 		domainCd="DIALECT_HIB" domainNm="OrientDB dialect" valueDs="sbidomains.ds.orient" />
 	<DOMAIN valueCd="org.hibernate.dialect.TeradataDialect"
@@ -386,7 +368,9 @@
 	<DOMAIN valueCd="Double" valueNm="Double" domainCd="DS_META_VALUE"
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
 	<DOMAIN valueCd="Date" valueNm="Date" domainCd="DS_META_VALUE"
-		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />		
+		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
+		<DOMAIN valueCd="Timestamp" valueNm="Timestamp" domainCd="DS_META_VALUE"
+		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />				
 	<DOMAIN valueCd="Default Model Category" valueNm="Default Model Category"
 		domainCd="BM_CATEGORY" domainNm="Category Meta Model" valueDs="Default Model Category" />
 

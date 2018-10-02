@@ -17,23 +17,17 @@
  */
 package it.eng.spagobi.tools.dataset.common.datastore;
 
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
+import gnu.trove.set.hash.TLongHashSet;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.common.query.IQuery;
+import it.eng.spagobi.utilities.NumberUtilities;
+import net.openhft.hashing.LongHashFunction;
 import org.apache.log4j.Logger;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
@@ -47,17 +41,10 @@ import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.util.SimpleTableDef;
 
-import gnu.trove.set.hash.TLongHashSet;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.common.query.IQuery;
-import it.eng.spagobi.utilities.NumberUtilities;
-import net.openhft.hashing.LongHashFunction;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
@@ -69,16 +56,21 @@ public class DataStore implements IDataStore {
 	public static String DEFAULT_TABLE_NAME = "TemporaryTable";
 	public static String DEFAULT_SCHEMA_NAME = "KA";
 
-	IMetaData metaData;
+	protected IMetaData metaData;
 
-	List records = null;
+	protected List records = new ArrayList();
 
 	Date cacheDate = null;
 
 	public DataStore() {
-		super();
-		this.records = new ArrayList();
 		this.metaData = new MetaData();
+	}
+
+	public DataStore(IMetaData dataSetMetadata) {
+		super();
+		this.metaData = dataSetMetadata;
+		this.metaData.setProperty(IMetaData.RESULT_NUMBER_PROPERTY, 0);
+		adjustMetadata(dataSetMetadata);
 	}
 
 	@Override
@@ -747,46 +739,39 @@ public class DataStore implements IDataStore {
 	}
 
 	@Override
-	public IDataStore paginateRecords(int offset, int fetchSize) {
-		IDataStore dataStore = new DataStore();
-		IMetaData dataStoreMetaData = dataStore.getMetaData();
-
-		for (int fieldIndex = 0; fieldIndex < metaData.getFieldCount(); fieldIndex++) {
-			FieldMetadata fieldMetadata = (FieldMetadata) metaData.getFieldMeta(fieldIndex);
-			try {
-				dataStoreMetaData.addFiedMeta(fieldMetadata.clone());
-			} catch (CloneNotSupportedException e) {
-				logger.error("Unable to clone FieldMetadata", e);
-			}
-		}
-
-		int resultCount = (int) getRecordsCount();
-		dataStoreMetaData.setProperty("resultNumber", resultCount);
-
-		logger.debug("offset is equal to [" + offset + "]");
-		logger.debug("fetchSize is equal to [" + fetchSize + "]");
-		logger.debug("resultCount is equal to [" + resultCount + "]");
-
-		boolean isPaginationValid = offset > -1 && fetchSize > 0;
-		int startIndex = isPaginationValid ? offset : 0;
-		int endIndex = isPaginationValid ? Math.min(offset + fetchSize, resultCount) : resultCount;
-
-		logger.debug("Returning records within index interval [" + startIndex + "; " + endIndex + "]");
-		for (int i = startIndex; i < endIndex; i++) {
-			Record record = (Record) getRecordAt(i);
-			try {
-				dataStore.appendRecord((IRecord) record.clone());
-			} catch (CloneNotSupportedException e) {
-				logger.error("Unable to clone Record", e);
-			}
-		}
-
-		return dataStore;
-	}
-
-	@Override
 	public IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, int maxRowCount, String dateFormatJava) {
 		return aggregateAndFilterRecords(sqlQuery, new ArrayList<Object>(0), offset, fetchSize, maxRowCount, dateFormatJava);
 	}
 
+	@Override
+	public void adjustMetadata(IMetaData dataSetMetadata) {
+
+		IMetaData dataStoreMetadata = getMetaData();
+		MetaData newDataStoreMetadata = new MetaData();
+		int fieldCount = dataStoreMetadata.getFieldCount();
+		for (int i = 0; i < fieldCount; i++) {
+			IFieldMetaData dataStoreFieldMetadata = dataStoreMetadata.getFieldMeta(i);
+			String fieldName = dataStoreFieldMetadata.getName();
+			int index = dataSetMetadata.getFieldIndex(fieldName);
+			IFieldMetaData newFieldMetadata = null;
+			if (index >= 0) {
+				newFieldMetadata = new FieldMetadata();
+				IFieldMetaData dataSetFieldMetadata = dataSetMetadata.getFieldMeta(index);
+				String decimalPrecision = (String) dataSetFieldMetadata.getProperty(IFieldMetaData.DECIMALPRECISION);
+				if (decimalPrecision != null) {
+					newFieldMetadata.setProperty(IFieldMetaData.DECIMALPRECISION, decimalPrecision);
+				}
+
+				newFieldMetadata.setAlias(dataStoreFieldMetadata.getAlias());
+				newFieldMetadata.setFieldType(dataSetFieldMetadata.getFieldType());
+				newFieldMetadata.setName(dataStoreFieldMetadata.getName());
+				newFieldMetadata.setType(dataStoreFieldMetadata.getType());
+			} else {
+				newFieldMetadata = dataStoreFieldMetadata;
+			}
+			newDataStoreMetadata.addFiedMeta(newFieldMetadata);
+		}
+		newDataStoreMetadata.setProperties(dataStoreMetadata.getProperties());
+		setMetaData(newDataStoreMetadata);
+	}
 }

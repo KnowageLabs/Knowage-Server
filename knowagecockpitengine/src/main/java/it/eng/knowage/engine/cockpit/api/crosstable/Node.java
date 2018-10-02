@@ -17,8 +17,6 @@
  */
 package it.eng.knowage.engine.cockpit.api.crosstable;
 
-import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.CellType;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,6 +26,8 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.CellType;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -39,8 +39,8 @@ public class Node implements Cloneable, Comparable<Node> {
 	public static final String CROSSTAB_NODE_JSON_DESCRIPTION = "node_description";
 
 	private final String value;// the value of the node
-	private final String description;// the value of the node
-	private CellType cellType;// the value of the node
+	private final String description;// the description of the node
+	private CellType cellType;// the type of the node
 	private List<Node> childs;// list of childs
 	private int leafPosition = -1;// position of the leafs in the tree.. If this
 									// is the right most leaf the value is 0 and
@@ -440,13 +440,12 @@ public class Node implements Cloneable, Comparable<Node> {
 			Comparator<Node> comparator = null;
 			if (sortKeys != null) {
 				comparator = sortKeys.get(this.getDistanceFromRoot());
+				if (comparator != null) {
+					Collections.sort(childs, comparator);
+				} else {
+					Collections.sort(childs);
+				}
 			}
-			if (comparator != null) {
-				Collections.sort(childs, comparator);
-			} else {
-				Collections.sort(childs);
-			}
-
 		}
 		for (int i = 0; i < childs.size(); i++) {
 			childs.get(i).orderedSubtree(sortKeys);

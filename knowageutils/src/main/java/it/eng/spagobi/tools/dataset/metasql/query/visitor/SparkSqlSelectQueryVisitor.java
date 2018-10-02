@@ -18,14 +18,14 @@
 
 package it.eng.spagobi.tools.dataset.metasql.query.visitor;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.metasql.query.PreparedStatementData;
 import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
 import it.eng.spagobi.utilities.database.IDataBase;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class SparkSqlSelectQueryVisitor extends AbstractSelectQueryVisitor {
 

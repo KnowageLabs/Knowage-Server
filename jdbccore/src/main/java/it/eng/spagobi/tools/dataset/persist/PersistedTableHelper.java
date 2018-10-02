@@ -239,7 +239,11 @@ public class PersistedTableHelper {
 				insertStatement.setObject(fieldIndex + 1, fieldValue.toString());
 			}
 		} catch (Throwable t) {
-			logger.error("FieldValue [" + fieldValue + "] has class name [" + fieldValue.getClass().getName() + "]");
+			if (fieldValue == null) {
+				logger.error("FieldValue is null", t);
+			} else {
+				logger.error("FieldValue [" + fieldValue + "] is instance of class [" + fieldValue.getClass().getName() + "]", t);
+			}
 			throw new RuntimeException("An unexpected error occured while adding to statement value [" + fieldValue + "] of field [" + fieldMetaName
 					+ "] whose type is equal to [" + fieldMetaTypeName + "]", t);
 		}

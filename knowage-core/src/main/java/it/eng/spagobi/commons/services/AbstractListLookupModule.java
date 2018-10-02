@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,19 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.services;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
@@ -38,38 +46,29 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
-import it.eng.spagobi.container.ContextManager;
 import it.eng.spagobi.container.CoreContextManager;
 import it.eng.spagobi.container.SpagoBISessionContainer;
 import it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 
 	private EMFErrorHandler errorHand = null;
 	CoreContextManager contextManager = null;
-	
+
 	protected void getErroHandler() {
 		ResponseContainer respCont = getResponseContainer();
 		errorHand = respCont.getErrorHandler();
 	}
-	
-	
+
+
 	/**
 	 * Filter list for correlated param.
-	 * 
+	 *
 	 * @param request the request
 	 * @param list the list
-	 * 
+	 *
 	 * @return the list i face
-	 * 
+	 *
 	 * @throws Exception the exception
 	 */
 	public ListIFace filterListForCorrelatedParam(SourceBean request, ListIFace list) throws Exception {
@@ -80,10 +79,10 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 		BIObject obj = instance.getBIObject();
 		// get the id of the lookup parameter
 		String objParIdStr = (String) request.getAttribute("LOOKUP_PARAMETER_ID");
-//		if(objParIdStr==null) 
+//		if(objParIdStr==null)
 //			objParIdStr = (String)getSession(request).getAttribute("LOOKUP_PARAMETER_ID");
 		Integer objParId = Integer.valueOf(objParIdStr);
-		// get the id of the paruse correlated 
+		// get the id of the paruse correlated
 		Integer correlatedParuseId = Integer.valueOf((String) request.getAttribute("correlated_paruse_id"));
 		// get dao of objparuse (correlation)
 		IObjParuseDAO objParuseDAO = DAOFactory.getObjParuseDAO();
@@ -115,16 +114,16 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Filter list for correlated param.
-	 * 
+	 *
 	 * @param request the request
 	 * @param list the list
 	 * @param httpRequest the http request
-	 * 
+	 *
 	 * @return the list i face
-	 * 
+	 *
 	 * @throws Exception the exception
 	 */
 	public ListIFace filterListForCorrelatedParam(SourceBean request, ListIFace list, HttpServletRequest httpRequest) throws Exception {
@@ -132,17 +131,17 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 		ResponseContainer respCont = ChannelUtilities.getResponseContainer(httpRequest);
 		errorHand = respCont.getErrorHandler();
 		SessionContainer sessionCont = reqCont.getSessionContainer();
-		contextManager = new CoreContextManager(new SpagoBISessionContainer(sessionCont), 
+		contextManager = new CoreContextManager(new SpagoBISessionContainer(sessionCont),
 				new LightNavigatorContextRetrieverStrategy(request));
 		// get biobject from the session
 		ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
 		BIObject obj = instance.getBIObject();
 		// get the id of the lookup parameter
 		String objParIdStr = (String) request.getAttribute("LOOKUP_PARAMETER_ID");
-//		if(objParIdStr==null) 
+//		if(objParIdStr==null)
 //			objParIdStr = (String)getSession(request).getAttribute("LOOKUP_PARAMETER_ID");
 		Integer objParId = Integer.valueOf(objParIdStr);
-		// get the id of the paruse correlated 
+		// get the id of the paruse correlated
 		Integer correlatedParuseId = Integer.valueOf((String) request.getAttribute("correlated_paruse_id"));
 		// get dao of objparuse (correlation)
 		IObjParuseDAO objParuseDAO = DAOFactory.getObjParuseDAO();
@@ -174,8 +173,8 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 		}
 		return list;
 	}
-	
-	
+
+
 	private ListIFace evaluateExpression(String expr, ListIFace list, List ops, BIObject obj) {
 		ListIFace previusCalculated = list;
 		try {
@@ -195,14 +194,14 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 				tmpExpr = tmpExpr.substring(indRR+1);
 			}
 			if(numberOfLeftRound!=numberOfRightRound) {
-				SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), 
+				SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(),
 						            "evaluateExpression", "Expression is wrong: number of left breaks is" +
 						            "different from right breaks. Returning list without evaluating expression");
 				return list;
 			}
-			
+
 			//TODO make some more formal check on the expression before start to process it
-			
+
 			// calculate the list filtered based on each objparuse setting
 			Map calculatedLists = new HashMap();
 			int posinlist = 0;
@@ -213,9 +212,9 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 				calculatedLists.put(String.valueOf(posinlist), listop);
 				posinlist ++;
 			}
-			
+
 			// generate final list evaluating expression
-			
+
 			while(expr.indexOf("(")!=-1) {
 				int indLR = expr.indexOf("(");
 				int indNextLR = expr.indexOf("(", indLR+1);
@@ -226,7 +225,7 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 					indNextRR = expr.indexOf(")", indLR+1);
 				}
 				int indRR = indNextRR;
-				
+
 				String exprPart = expr.substring(indLR, indRR+1);
 				if(exprPart.indexOf("AND")!=-1) {
 					int indexOper = exprPart.indexOf("AND");
@@ -264,21 +263,21 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 					previusCalculated = mergeLists(firstList, secondList);
 				} else {
 					// previousList remains the same as before
-					SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), 
+					SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(),
 						            "evaluateExpression", "A part of the Expression is wrong: inside a " +
 						            " left break and right break there's no condition AND or OR");
 				}
 				expr = expr.substring(0, indLR) + "previousList" + expr.substring(indRR+1);
 			}
 		} catch (Exception e) {
-			SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), 
+			SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(),
 		            			"evaluateExpression", "An error occurred while evaluating expression, " +
 		            			"return the complete list");
 			return list;
 		}
 		return previusCalculated;
 	}
-	
+
 
 	private ListIFace evaluateSingleLogicOperation(ObjParuse obpuLeft, ObjParuse obpuRight, ListIFace list, BIObject obj) {
 		ListIFace listToReturn = list;
@@ -294,16 +293,16 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 		}
 		return listToReturn;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	protected ListIFace mergeLists(ListIFace list1, ListIFace list2) {
 		// transform all row sourcebean of the list 2 into strings and put them into a list
 		PaginatorIFace pagLis2 = list2.getPaginator();
 		SourceBean allRowsList2 = pagLis2.getAll();
-		List rowsSBList2 = allRowsList2.getAttributeAsList("ROW"); 
+		List rowsSBList2 = allRowsList2.getAttributeAsList("ROW");
 		Iterator rowsSBList2Iter = rowsSBList2.iterator();
 		List rowsList2 = new ArrayList();
 		while(rowsSBList2Iter.hasNext()) {
@@ -313,7 +312,7 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 		}
 		// if a row of the list one is not contained into list 2 then add it to the list 2
 		SourceBean allRowsList1 = list1.getPaginator().getAll();
-		List rowsSBList1 = allRowsList1.getAttributeAsList("ROW"); 
+		List rowsSBList1 = allRowsList1.getAttributeAsList("ROW");
 		Iterator rowsSBList1Iter = rowsSBList1.iterator();
 		while(rowsSBList1Iter.hasNext()) {
 			SourceBean rowSBList1 = (SourceBean)rowsSBList1Iter.next();
@@ -326,15 +325,15 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 		list2.setPaginator(pagLis2);
 		return list2;
 	}
-	
-	
-	
+
+
+
 	protected ListIFace intersectLists(ListIFace list1, ListIFace list2) {
-		
+
 		// transform all row sourcebean of the list 2 into strings and put them into a list
 		PaginatorIFace pagLis2 = list2.getPaginator();
 		SourceBean allRowsList2 = pagLis2.getAll();
-		List rowsSBList2 = allRowsList2.getAttributeAsList("ROW"); 
+		List rowsSBList2 = allRowsList2.getAttributeAsList("ROW");
 		Iterator rowsSBList2Iter = rowsSBList2.iterator();
 		List rowsList2 = new ArrayList();
 		while(rowsSBList2Iter.hasNext()) {
@@ -342,15 +341,15 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 			String rowStrList2 = rowSBList2.toXML(false).toLowerCase();
 			rowsList2.add(rowStrList2);
 		}
-		
-		ListIFace newlist = new GenericList();	
+
+		ListIFace newlist = new GenericList();
 		PaginatorIFace newpaginator = new GenericPaginator();
 		newpaginator.setPageSize(pagLis2.getPageSize());
-		
-		
+
+
 		// if a row of the list one is contained into list 2 then add it to the reulting list
 		SourceBean allRowsList1 = list1.getPaginator().getAll();
-		List rowsSBList1 = allRowsList1.getAttributeAsList("ROW"); 
+		List rowsSBList1 = allRowsList1.getAttributeAsList("ROW");
 		Iterator rowsSBList1Iter = rowsSBList1.iterator();
 		while(rowsSBList1Iter.hasNext()) {
 			SourceBean rowSBList1 = (SourceBean)rowsSBList1Iter.next();
@@ -363,14 +362,14 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 		newlist.setPaginator(newpaginator);
 		return newlist;
 	}
-	
-	
-	
-	
+
+
+
+
 	private ListIFace filterForCorrelation(ListIFace list, ObjParuse objParuse, BIObject obj) {
 		try {
 			// get the id of the parent parameter
-			Integer objParFatherId = objParuse.getObjParFatherId();
+			Integer objParFatherId = objParuse.getParFatherId();
 	        // find the bi parameter for the correlation (biparameter father)
 			List biparams = obj.getBiObjectParameters();
 			BIObjectParameter objParFather = null;
@@ -390,27 +389,27 @@ public abstract class AbstractListLookupModule extends AbstractBasicListModule {
 			String valueFilter = "";
 			// get the values of the father parameter
 			List valuesFilter = objParFather.getParameterValues();
-			if (valuesFilter == null) 
+			if (valuesFilter == null)
 				return list;
 	        // based on the values number do different filter operations
 			switch (valuesFilter.size()) {
 				case 0: return list;
 				case 1: valueFilter = (String) valuesFilter.get(0);
 						if (valueFilter != null && !valueFilter.equals(""))
-							return DelegatedBasicListService.filterList(list, valueFilter, valueTypeFilter, 
+							return DelegatedBasicListService.filterList(list, valueFilter, valueTypeFilter,
 								objParuse.getFilterColumn(), objParuse.getFilterOperation(), errorHand);
 						else return list;
-				default: return DelegatedBasicListService.filterList(list, valuesFilter, valueTypeFilter, 
+				default: return DelegatedBasicListService.filterList(list, valuesFilter, valueTypeFilter,
 								objParuse.getFilterColumn(), objParuse.getFilterOperation(), errorHand);
 			}
 		} catch (Exception e) {
-			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), 
+			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(),
 					            "filterForCorrelation", "Error while doing filter for corelation ", e);
 			return list;
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 }

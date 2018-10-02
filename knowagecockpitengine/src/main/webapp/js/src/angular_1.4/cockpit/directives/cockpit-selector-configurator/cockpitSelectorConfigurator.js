@@ -36,8 +36,8 @@
 		if(!$scope.model.settings.defaultValue){
 			$scope.model.settings.defaultValue="";
 		}
-		if(!$scope.model.settings.staticValue){
-			$scope.model.settings.staticValue="";
+		if(!$scope.model.settings.staticValues){
+			$scope.model.settings.staticValues="";
 		}
 
 		$scope.lastId = -1;

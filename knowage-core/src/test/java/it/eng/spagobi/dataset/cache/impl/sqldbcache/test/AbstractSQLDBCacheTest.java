@@ -17,11 +17,6 @@
  */
 package it.eng.spagobi.dataset.cache.impl.sqldbcache.test;
 
-import java.math.BigDecimal;
-import java.util.Random;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.DataType;
 import it.eng.spagobi.dataset.cache.test.TestConstants;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
@@ -42,6 +37,10 @@ import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBaseException;
+import org.apache.log4j.Logger;
+
+import java.math.BigDecimal;
+import java.util.Random;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -60,7 +59,6 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 	public void testCacheInitWrongTablePrefixName() {
 		boolean cacheError = false;
-		CacheFactory cacheFactory = new CacheFactory();
 
 		SQLDBCacheConfiguration cacheConfigurationCustom = new SQLDBCacheConfiguration();
 		// Setting wrong table prefix for tables created by the cache
@@ -73,7 +71,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		DataType dataType = new DataType(); // class used for setting data type dimension properties
 		cacheConfigurationCustom.setObjectsTypeDimension(dataType.getProps());
 		try {
-			ICache cacheCustom = cacheFactory.getCache(cacheConfigurationCustom);
+			ICache cacheCustom = CacheFactory.getCache(cacheConfigurationCustom);
 		} catch (CacheException e) {
 			cacheError = true;
 		} finally {
@@ -84,7 +82,6 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 	public void testCacheInitWrongSchemaName() {
 		boolean cacheError = false;
-		CacheFactory cacheFactory = new CacheFactory();
 
 		SQLDBCacheConfiguration cacheConfigurationCustom = new SQLDBCacheConfiguration();
 		cacheConfigurationCustom.setTableNamePrefix(TestConstants.CACHE_CONFIG_TABLE_PREFIX);
@@ -97,7 +94,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		DataType dataType = new DataType(); // class used for setting data type dimension properties
 		cacheConfigurationCustom.setObjectsTypeDimension(dataType.getProps());
 		try {
-			ICache cacheCustom = cacheFactory.getCache(cacheConfigurationCustom);
+			ICache cacheCustom = CacheFactory.getCache(cacheConfigurationCustom);
 		} catch (CacheException e) {
 			cacheError = true;
 		} finally {

@@ -1,0 +1,39 @@
+.kn-kpi-definition {
+	md-card .thresholdDefinitionWarning {
+		background-color: $warningColor;
+		margin-bottom: 30px;
+	}
+	.thresholdTable {
+		.thresholdOrderButton {
+			padding: 0;
+		}
+	}
+	expander-box {
+		md-toolbar {
+			border-bottom: 1px solid white;
+		}
+		md-icon {
+			line-height: 24px !important;
+		}
+	}
+	md-radio-button.md-knowage-theme .md-on {
+		background-color: $baseColor;
+	}
+	.colorpickerInput {
+		display: block !important;
+		color-picker {
+			width: 100%;
+			input {
+				width: 100%;
+			}
+		}
+	}
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .kn-kpi-definition {
+    md-checkbox.md-checked .md-icon:after {
+	    padding-top: 11px;
+	  }
+  }
+}

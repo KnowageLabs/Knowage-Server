@@ -1,0 +1,44 @@
+<div class="kn-table-container" ng-class="customClass">
+	<table class="kn-table" ng-class="customClass">
+		<thead>
+			<tr> 
+				<th ng-repeat="column in columns" ng-style="{'width':column.width}" ng-click="setColumnSorting(column)" ng-class="{'sortable':!column.unsortable}">
+					<span>{{column.label}}</span>
+					<md-icon ng-if="column.name == sortingColumn" md-font-icon="fa fa-arrow-down" ng-class="{'rotate180':column.name == sortingColumn && sortingDirection}"></md-icon>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat-start="row in model | orderBy:sortingColumn:sortingDirection" ng-click="clickFunctionWrapper(row,$event)" ng-class="{'selected':selectedItem == row}">
+				<td ng-repeat="column in columns">
+					<span ng-if="!column.type || column.type=='text'">{{row[column.name]}}</span>
+					<span ng-if="column.type=='date'">{{setDate(row[column.name]) | date:'medium' }}</span>
+					<div layout="row" layout-align="end center" ng-if="column.type == 'buttons'">
+						<md-button class="md-icon-button" ng-click="actionClick(row,button,$event)" ng-repeat="button in column.buttons" ng-if="column.buttons.length <= 2 && button.visible(row)">
+							<md-tooltip>{{button.name}}</md-tooltip>
+							<md-icon md-font-icon="{{button.icon}}">
+						</md-button>
+						
+						<md-menu ng-if="column.buttons.length > 2">
+					      <md-button class="md-icon-button" ng-click="$event.stopPropagation();$mdOpenMenu()">
+					        <md-icon md-menu-origin md-font-icon="fa fa-ellipsis-h"></md-icon>
+					      </md-button>
+					      <md-menu-content width="3">
+					        <md-menu-item ng-repeat="button in column.buttons" ng-if="button.visible(row)">
+ 					          <md-button ng-click="actionClick(row,button,$event)" >
+					            <md-icon  md-font-icon="{{button.icon}}" md-menu-align-target></md-icon>
+					            {{button.name}}
+					          </md-button>
+					        </md-menu-item>
+					       </md-menu-content>
+				       </md-menu>
+					</div>
+				</td>
+			</tr>
+			
+			<tr ng-repeat-end ng-if="expandable && row.expanded">
+
+			</tr>
+		</tbody>
+	</table>
+</div>

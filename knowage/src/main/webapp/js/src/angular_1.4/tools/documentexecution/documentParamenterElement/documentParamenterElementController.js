@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 (function() {
-	var documentExecutionModule = angular.module('documentExecutionModule');
+	var documentExecutionModule = angular.module('driversExecutionModule');
 
 	documentExecutionModule.directive('documentParamenterElement',
-			['sbiModule_config',
+			['sbiModule_config',"$mdDialog",
 			 function(sbiModule_config) {
 		return {
 			restrict: 'E',
@@ -35,7 +35,7 @@
 	var documentParamenterElementCtrl = function(
 			$scope, sbiModule_config, sbiModule_restServices, sbiModule_translate,
 			execProperties, documentExecuteServices, $mdDialog, $mdMedia,execProperties,$filter,sbiModule_dateServices, sbiModule_user,
-			sbiModule_messaging, sbiModule_i18n) {
+			sbiModule_messaging, sbiModule_i18n,driversExecutionService) {
 
 		$scope.parameter.showMapDriver = sbiModule_user.functionalities.indexOf("MapDriverManagement")>-1;
 		$scope.execProperties = execProperties;
@@ -68,8 +68,7 @@
 			params.biparameterId=$scope.parameter.urlName;
 			params.mode='complete';
 			params.treeLovNode=treeLovNode;
-			params.PARAMETERS=documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
-
+			driversExecutionService.buildStringParameters($scope.execProperties.parametersData.documentParameters);
 
 			if(!$scope.parameter.children || $scope.parameter.children.length == 0) {
 				$scope.parameter.children = $scope.parameter.children || [];
@@ -232,7 +231,7 @@
 		$scope.popupLookupParameterDialog = function(parameter) {
 
 			execProperties.hideProgressCircular.status=false;
-			parameter.PARAMETERS=documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+			parameter.PARAMETERS=driversExecutionService.buildStringParameters($scope.execProperties.parametersData.documentParameters);
 			var templateUrl = sbiModule_config.contextName
 				+ '/js/src/angular_1.4/tools/documentexecution/templates/popupLookupParameterDialogTemplate.htm';
 
@@ -428,7 +427,7 @@
 						angular.copy(paramDialogCtrl.tempParameter, paramDialogCtrl.initialParameterState);
 
 						if(paramDialogCtrl.initialParameterState.selectionType == 'TREE'){
-							documentExecuteServices.setParameterValueResult(paramDialogCtrl.initialParameterState);
+							driversExecutionService.setParameterValueResult(paramDialogCtrl.initialParameterState);
 						}
 
 

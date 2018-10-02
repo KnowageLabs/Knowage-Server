@@ -18,13 +18,13 @@
 
 package it.eng.spagobi.tools.dataset.metasql.query.visitor;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilterOperator;
 import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
 import it.eng.spagobi.utilities.database.IDataBase;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class TeradataSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
@@ -64,7 +64,7 @@ public class TeradataSelectQueryVisitor extends AbstractSelectQueryVisitor {
 	public void visit(UnaryFilter item) {
 		append(item.getProjection(), false);
 		queryBuilder.append(" ");
-		String operator = item.getOperator().equals(SimpleFilterOperator.DIFFERENT_FROM) ? DIFFERENT_FROM_OPERATOR.toString() : item.getOperator().toString();
+		String operator = item.getOperator().equals(SimpleFilterOperator.DIFFERENT_FROM) ? DIFFERENT_FROM_OPERATOR : item.getOperator().toString();
 		queryBuilder.append(operator);
 		queryBuilder.append(" ");
 		append(item.getOperand());

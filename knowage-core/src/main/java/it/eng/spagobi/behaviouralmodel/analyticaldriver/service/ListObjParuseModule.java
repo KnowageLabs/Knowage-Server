@@ -17,6 +17,12 @@
  */
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
 /**
  * Implements a module which handles ObjParuse objects relevant to a BIObjectParameter,
  * where a ObjParuse is a correlation between the parameter with another parameter
@@ -49,12 +55,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.engines.config.service.ListEnginesModule;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
 public class ListObjParuseModule extends AbstractModule {
 
 	private EMFErrorHandler errorHandler;
@@ -63,7 +63,7 @@ public class ListObjParuseModule extends AbstractModule {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.dispatching.module.AbstractModule#init(it.eng.spago.base.SourceBean)
 	 */
 	@Override
@@ -72,7 +72,7 @@ public class ListObjParuseModule extends AbstractModule {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.dispatching.service.ServiceIFace#service(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
 	@Override
@@ -199,9 +199,9 @@ public class ListObjParuseModule extends AbstractModule {
 						if (logicOperator != null && logicOperator.equalsIgnoreCase("null"))
 							logicOperator = null;
 						correlation.setLogicOperator(logicOperator);
-						correlation.setObjParFatherId(idParFather);
-						correlation.setObjParId(biParamId);
-						correlation.setParuseId(paruseid);
+						correlation.setParFatherId(idParFather);
+						correlation.setParId(biParamId);
+						correlation.setUseModeId(paruseid);
 						correlation.setPostCondition(postCondition);
 						correlation.setPreCondition(preCondition);
 						correlation.setProg(new Integer(prog));
@@ -252,8 +252,8 @@ public class ListObjParuseModule extends AbstractModule {
 
 				ObjParview view = new ObjParview();
 				view.setProg(new Integer(prog));
-				view.setObjParFatherId(idParFather);
-				view.setObjParId(biParamId);
+				view.setParFatherId(idParFather);
+				view.setParId(biParamId);
 				view.setCompareValue(compareValues);
 				view.setViewLabel(viewLabel);
 				view.setOperation(operation);

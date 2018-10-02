@@ -22,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -38,6 +40,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
+import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -53,6 +56,8 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 	static private String LDAP_AUTHENTICATION_CONFIG = "ldap.config";
 
+	private static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
+
 	@Override
 	public SpagoBIUserProfile checkAuthentication(String userId, String psw) {
 		SpagoBIUserProfile profile = null;
@@ -66,7 +71,14 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 					}
 
 					profile = new SpagoBIUserProfile();
-					profile.setUniqueIdentifier(user.getUserId());
+
+					Calendar calendar = Calendar.getInstance();
+					calendar.add(Calendar.HOUR, USER_JWT_TOKEN_EXPIRE_HOURS);
+					Date expiresAt = calendar.getTime();
+
+					String jwtToken = JWTSsoService.userId2jwtToken(userId, expiresAt);
+
+					profile.setUniqueIdentifier(jwtToken);
 					profile.setUserId(user.getUserId());
 					profile.setUserName(user.getFullName());
 					profile.setOrganization(user.getCommonInfo().getOrganization());
@@ -93,7 +105,7 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 	 * @throws FileNotFoundException
 	 */
 
-	private boolean bind(String userId, String psw) throws FileNotFoundException, IOException {
+	protected boolean bind(String userId, String psw) throws FileNotFoundException, IOException {
 
 		String filename = System.getProperty(LDAP_AUTHENTICATION_CONFIG);
 		Assert.assertNotNull(filename, "System property " + LDAP_AUTHENTICATION_CONFIG + " has not been configured. Please add it while starting your JVM.");

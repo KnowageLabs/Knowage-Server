@@ -83,8 +83,108 @@
 		}
 		$scope.colorPickerProperty={format:'rgb'}
 		
+		$scope.columnsGrid = {
+			angularCompileRows: true,
+	        enableColResize: false,
+	        enableFilter: false,
+	        enableSorting: false,
+	        onGridReady : resizeColumns,
+	        columnDefs: [
+	        	{headerName:'Order', cellRenderer: orderRenderer, field:'order',width: 100,suppressSizeToFit:true,sort: 'asc',"cellStyle":{"border":"none !important","display":"inline-flex","justify-content":"center"}},
+	        	{headerName:'Name', field:'name'},
+	        	{headerName:'Alias', field:'alias'},
+	        	{headerName:'Aggregation', cellRenderer: aggregationRenderer},
+	        	{headerName:'Type', field: 'fieldType'},
+	        	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 150,suppressSizeToFit:true, tooltip: false}],
+			rowData: $scope.model.content.columnSelectedOfDataset
+		}
 		
+		function resizeColumns(){
+			$scope.columnsGrid.api.sizeColumnsToFit();
+		}
+		
+		function orderRenderer(params){
+			if(!params.data.order) {
+				params.data.order = params.rowIndex;
+				$scope.model.content.columnSelectedOfDataset[params.rowIndex].order = params.rowIndex;
+			}
+			var upButton = params.data.order !=0 ?  '<md-button ng-click="moveUp($event,'+params.data.order+')" class="md-icon-button h20" aria-label="up"><md-icon md-font-icon="fa fa-arrow-up"></md-icon></md-button>' : '';
+			var downButton = params.data.order != $scope.columnsGrid.api.getDisplayedRowCount()-1 ?  '<md-button ng-click="moveDown($event,'+params.data.order+')" class="md-icon-button h20" aria-label="up"><md-icon md-font-icon="fa fa-arrow-down"></md-icon></md-button>' : '';
+			return 	'<div layout="row">'+
+						upButton+
+						downButton+
+				 	'</div>';
+		}
+		
+		function aggregationRenderer(params){
+			return params.data.fieldType == "MEASURE" ? params.data.aggregationSelected : '';
+		}
+		
+		function buttonRenderer(params){
+			if(params.data.style) var color = params.data.style.color;
+			return 	'<md-button class="md-icon-button noMargin" ng-click="draw(\''+params.data.name+'\')">'+
+					'	<md-icon style="color:'+color+'" md-font-icon="fa fa-paint-brush" aria-label="Paint brush"></md-icon>'+
+					'</md-button>'+
+					'<md-button class="md-icon-button" ng-click="editRow(\''+params.data.name+'\',$event)"><md-icon md-font-icon="fa fa-pencil"></md-icon></md-button>'+
+					'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.name+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon></md-button>';
+		}
+		
+		$scope.moveUp = function(evt,index){
+			evt.stopImmediatePropagation();
+			for(var k in $scope.model.content.columnSelectedOfDataset){
+				if($scope.model.content.columnSelectedOfDataset[k].order == index) {$scope.model.content.columnSelectedOfDataset[k].order --; continue;}
+				if($scope.model.content.columnSelectedOfDataset[k].order == index-1) {$scope.model.content.columnSelectedOfDataset[k].order ++; continue;}
+			}
+			$scope.columnsGrid.api.setRowData($scope.model.content.columnSelectedOfDataset);
+		};
+		$scope.moveDown = function(evt,index){
+			evt.stopImmediatePropagation();
+			for(var k in $scope.model.content.columnSelectedOfDataset){
+				if($scope.model.content.columnSelectedOfDataset[k].order == index) {$scope.model.content.columnSelectedOfDataset[k].order ++; continue;}
+				if($scope.model.content.columnSelectedOfDataset[k].order == index+1) {$scope.model.content.columnSelectedOfDataset[k].order --; continue;}
+			}
+			$scope.columnsGrid.api.setRowData($scope.model.content.columnSelectedOfDataset);
+		};
+		
+		$scope.draw = function(rowName) {
+			for(var k in $scope.model.content.columnSelectedOfDataset){
+				if($scope.model.content.columnSelectedOfDataset[k].name == rowName) $scope.selectedColumn = $scope.model.content.columnSelectedOfDataset[k];
+			}
+			
+			$mdDialog.show({
+				templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnStyle.html',
+				parent : angular.element(document.body),
+				clickOutsideToClose:true,
+				escapeToClose :true,
+				preserveScope: false,
+				autoWrap:false,
+				fullscreen: true,
+				locals:{model:$scope.model, selectedColumn : $scope.selectedColumn},
+				controller: cockpitStyleColumnFunction
+			}).then(function(answer) {
+				console.log("Selected column:", $scope.selectedColumn);
+			}, function() {
+				console.log("Selected column:", $scope.selectedColumn);
+			});
+		},
+		
+		$scope.deleteColumn = function(rowName,event) {
+			for(var k in $scope.model.content.columnSelectedOfDataset){
+				if($scope.model.content.columnSelectedOfDataset[k].name == rowName) var item = $scope.model.content.columnSelectedOfDataset[k];
+			}
+	  		  var index=$scope.model.content.columnSelectedOfDataset.indexOf(item);
+			  $scope.model.content.columnSelectedOfDataset.splice(index,1);
+			  if($scope.model.settings.sortingColumn == item.aliasToShow){
+				  $scope.model.settings.sortingColumn = null;
+			  }
+		  }
 
+		$scope.$watchCollection('model.content.columnSelectedOfDataset',function(newValue,oldValue){
+			if($scope.columnsGrid.api && newValue){
+				$scope.columnsGrid.api.setRowData(newValue);
+			}
+		})
+		
 
 		$scope.actionsOfCockpitColumns = [{
 	    	  icon:'fa fa-calculator' ,
@@ -255,7 +355,7 @@
 					parent : angular.element(document.body),
 					clickOutsideToClose:true,
 					escapeToClose :true,
-					preserveScope: true,
+					preserveScope: false,
 					autoWrap:false,
 					fullscreen: true,
 					locals:{model:$scope.model, selectedColumn : $scope.selectedColumn},
@@ -433,6 +533,14 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
 	}
+	
+	$scope.hasPrecision = function(column){
+		if(column.type == 'java.lang.Double' || column.type == 'java.lang.Float' || column.type == 'java.math.BigDecimal' || column.type == 'java.lang.Long'){
+			return true;
+		}
+		return false;
+	}
+	
 	$scope.chooseIcon = function(range) {
 		$scope.tempVar = !$scope.tempVar;
 		$scope.currentRange=range;
@@ -455,7 +563,7 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 	}
 
 
-	$scope.$watch("selectedColumn.visType",function(newValue, oldValue){
+	$scope.changeVisType = function(){
 		if($scope.selectedColumn.visType==undefined){
 			$scope.selectedColumn.visType="Text";
 		}else if($scope.selectedColumn.visType=="Chart"){
@@ -467,8 +575,7 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 		}else if($scope.selectedColumn.visType=='Icon only'){
 			$scope.selectedColumn.text.enabled=false;
 		}
-
-	})
+	}
 
 
 
@@ -528,22 +635,7 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPane
 		$scope.selectedColumn.style = undefined;
 	}
 
-	$scope.checkPrecision = function(){
-		if($scope.selectedColumn.style!=undefined && $scope.selectedColumn.style.format!=undefined && $scope.selectedColumn.style.precision!=undefined && !$scope.isPrecisionEnabled()){
-			$scope.selectedColumn.style.precision = null;
-		}
-	}
-
-	$scope.isPrecisionEnabled = function(){
-		return $scope.selectedColumn.style && $scope.selectedColumn.style.format != $scope.formatPattern[0] && $scope.selectedColumn.style.format != $scope.formatPattern[1];
-	}
-
 	$scope.saveColumnStyleConfiguration = function(){
-		if($scope.selectedColumn.style!=undefined && $scope.selectedColumn.style.precision!=undefined && $scope.selectedColumn.style.format==undefined){
-			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.chartengine.structure.serieStyleConfig.dataLabels.format.emptyText'), sbiModule_translate.load('sbi.generic.error'));
-			return;
-		}
-		$scope.checkPrecision();
 		angular.copy($scope.selectedColumn,selectedColumn);
 		$mdDialog.cancel();
 	}

@@ -984,7 +984,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 */
 	@Override
 	public void insertBIObject(BIObject obj, ObjTemplate objTemp, boolean loadParsDC) throws EMFUserError {
-		internalInsertBIObject(obj, objTemp, loadParsDC);
+		internalInsertBIObject(obj, objTemp, loadParsDC, true);
 	}
 
 	/**
@@ -996,8 +996,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 *             If an Exception occurred
 	 */
 	@Override
-	public void insertBIObject(BIObject obj) throws EMFUserError {
-		internalInsertBIObject(obj, null, false);
+	public Integer insertBIObject(BIObject obj) throws EMFUserError {
+		return internalInsertBIObject(obj, null, false, true);
 	}
 
 	/**
@@ -1012,7 +1012,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 */
 	@Override
 	public void insertBIObject(BIObject obj, boolean loadParsDC) throws EMFUserError {
-		internalInsertBIObject(obj, null, loadParsDC);
+		internalInsertBIObject(obj, null, loadParsDC, true);
 	}
 
 	/**
@@ -1027,10 +1027,25 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 */
 	@Override
 	public Integer insertBIObject(BIObject obj, ObjTemplate objTemp) throws EMFUserError {
-		return internalInsertBIObject(obj, objTemp, false);
+		return internalInsertBIObject(obj, objTemp, false, true);
 	}
 
-	private Integer internalInsertBIObject(BIObject obj, ObjTemplate objTemp, boolean loadParsDC) throws EMFUserError {
+	/**
+	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
+	 *
+	 * @param obj
+	 *            The object containing all insert information
+	 * @param loadParsDC
+	 *            boolean for management Document Composition params
+	 * @throws EMFUserError
+	 *             If an Exception occurred
+	 */
+	@Override
+	public Integer insertBIObjectForClone(BIObject obj, ObjTemplate objTemp) throws EMFUserError {
+		return internalInsertBIObject(obj, objTemp, false, false); // clone doesn't add default output parameter for each engine
+	}
+
+	private Integer internalInsertBIObject(BIObject obj, ObjTemplate objTemp, boolean loadParsDC, boolean loadOP) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -1114,14 +1129,16 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			// Saving output parameters
 			// hibBIObject.getSbiOutputParameters().addAll(loadDriverSpecificOutputParameters(hibBIObject));
-			List<SbiOutputParameter> op = loadDriverSpecificOutputParameters(hibBIObject);
+			if (loadOP) {
+				List<SbiOutputParameter> op = loadDriverSpecificOutputParameters(hibBIObject);
 
-			for (Iterator iterator = op.iterator(); iterator.hasNext();) {
-				SbiOutputParameter sbiOutputParameter = (SbiOutputParameter) iterator.next();
-				aSession.save(sbiOutputParameter);
+				for (Iterator iterator = op.iterator(); iterator.hasNext();) {
+					SbiOutputParameter sbiOutputParameter = (SbiOutputParameter) iterator.next();
+					aSession.save(sbiOutputParameter);
+				}
+
+				hibBIObject.getSbiOutputParameters().addAll(op);
 			}
-
-			hibBIObject.getSbiOutputParameters().addAll(op);
 
 			// functionalities storing
 			Set hibObjFunc = new HashSet();
@@ -1170,10 +1187,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			logger.error("HibernateException", he);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-		} catch (EMFInternalError e) {
-			logger.error("Error inserting new BIObject", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -1487,8 +1501,18 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				// or TEST state),
 				// it is a correct role
 				String role = rolesIt.next().toString();
-				if (allRolesWithPermission.contains(role))
-					userRolesWithPermission.add(role);
+				//TESTER management: add all available folders execution roles
+				String roleTHql = "select roles.roleTypeCode from SbiExtRoles as roles "
+						+ "where roles.name = '" + role + "' ";
+				Query roleHqlQuery = aSession.createQuery(roleTHql);
+				String roleType = (String)roleHqlQuery.uniqueResult();
+				if (SpagoBIConstants.ROLE_TYPE_TEST.equals(roleType)) {
+					userRolesWithPermission = allRolesWithPermission;
+					break;
+				}else {
+					if (allRolesWithPermission.contains(role))
+						userRolesWithPermission.add(role);
+				}
 			}
 
 			logger.debug("The user have [" + userRolesWithPermission.size() + "] different roles that can execute doc [" + id + "] depending on its location");
@@ -1759,6 +1783,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		outp.setFormatCode(hiObjPar.getFormatCode());
 		outp.setFormatValue(hiObjPar.getFormatValue());
 		outp.setBiObjectId(hiObjPar.getBiobjId());
+		outp.setIsUserDefined(hiObjPar.getIsUserDefined());
 
 		return outp;
 	}

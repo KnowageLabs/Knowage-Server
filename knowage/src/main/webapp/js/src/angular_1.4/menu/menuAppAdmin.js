@@ -23,6 +23,7 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
 	function ($scope,$mdDialog ) {
 		$scope.languages = [];
 		$scope.openAside = false;
+		$scope.hideAdminPanel = false;
 		$scope.toggleMenu = function(){
 			$scope.openAside = !$scope.openAside;
 		}
@@ -34,7 +35,7 @@ myApp.config(function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 });
 
-myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter','sbiModule_restServices', 'sbiModule_config', 'sbiModule_i18n', function($window,$http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_restServices, sbiModule_config, sbiModule_i18n) {
+myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter','sbiModule_restServices', 'sbiModule_config', 'sbiModule_i18n','sbiModule_user', function($window,$http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_restServices, sbiModule_config, sbiModule_i18n, sbiModule_user) {
     return {
 
         restrict: 'E',
@@ -58,6 +59,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         		$scope.translate = sbiModule_translate;
         		$scope.messaging = sbiModule_messaging;
         		$scope.download = sbiModule_download;
+        		$scope.user = sbiModule_user;
 
         		$scope.i18n = sbiModule_i18n;
 
@@ -104,7 +106,8 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         			});
 
         			$scope.groups = newJson;
-
+        			if ($scope.user.isSuperAdmin == 'false' && $scope.user.isAdminUser == 'false' && $scope.user.isTesterUser == 'true')
+        				$scope.hideAdminPanel = true;
 
         		}); // end of load I 18n
 
@@ -244,12 +247,13 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 				$scope.licenseData=[];
 				$scope.hostsData=[];
 
-	        	$http.get(Sbi.config.contextName+'/restful-services/1.0/license?onlyValid=true').success(function(data){
+	        	$http.get(Sbi.config.contextName+'/restful-services/1.0/license').success(function(data){
 	        		if (data.errors){
 						$scope.messaging.showErrorMessage(data.errors[0].message,$scope.translate.load('sbi.generic.error'));
 						return;
 					}
 	        		console.log("License Data:", data);
+
 	        		$scope.hostsData=data.hosts;
 	        		$scope.licenseData=data.licenses;
 					$mdDialog.show({
@@ -282,6 +286,9 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 						scope.download = $scope.download;
 						scope.dialog = $mdDialog;
 						scope.hosts = hosts;
+						scope.trimExpirationDate = function(date){
+							return moment(date).format("YYYY-MM-DD");
+						}
 
 	        	        var restLicense = {
 	        	        		base : scope.config.contextName + '/restful-services/1.0/license',
@@ -289,13 +296,31 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        		upload : '/upload'
 	        	        }
 
-	        	        scope.setFile = function (file){
+	        	        scope.setFile = function (file, isForUpdate){
+	        	        	if(isForUpdate) {
+	        	        		scope.isForUpdate = true;
+	        	        	}
 	        	        	scope.file = file.files[0];
 	        	        	scope.$apply();
 	        	        }
 
-	        	        scope.uploadFile = function(hostName){
+	        	        scope.uploadFile = function(hostName, license){
 	        	        	if (scope.file){
+	        	        		if(!scope.file.name.endsWith(".lic")){
+                                    sbiModule_messaging.showErrorMessage("The type of file must be license!", "Different type error");
+                                    return;
+                                }
+	        	        		if(scope.isForUpdate){
+	        	        			var selectedLicense = scope.file.name;
+	        	        			var existingLicense = license.product;
+
+	        	        			if(selectedLicense.indexOf(existingLicense) == -1)   {
+	        	        				sbiModule_messaging.showErrorMessage("You have chosen wrong type of license", "Different type error");
+		        	        			scope.isForUpdate = false;
+	        	        				return;
+	        	        			}
+	        	        		}
+
 	        	        		var config = {
 	        	        				transformRequest:angular.identity,
 	        	        				headers:{'Content-Type': undefined}
@@ -304,16 +329,29 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        		var formData = new FormData();
 	        	        		formData.append(scope.file.name,scope.file);
 	        	        		var currentHostName = hostName;
-	        	        		$http.post(restLicense.base + restLicense.upload + "/"+hostName ,formData,config)
+
+	        	        			$http.post(restLicense.base + restLicense.upload + "/"+hostName+"?isForUpdate=" +scope.isForUpdate ,formData,config)
 	        	        			.then(
 	        	        				function(response,status,headers,config){
 	        	        					if (response.data.errors){
 	        	        						scope.messaging.showErrorMessage(scope.translate.load(response.data.errors[0].message),scope.translate.load('sbi.generic.error'));
 	        	        					}else{
 	        	        						// add the new license to the list
-	        	        						$scope.licenseData[currentHostName].push(response.data);
+
+	        	        						var sLicense = scope.file.name;
+	        	        						if(scope.isForUpdate) {
+	        	        							for(var i = 0; i < scope.licenseData[currentHostName].length; i++) {
+		        	        							if(response.data.product === scope.licenseData[currentHostName][i].product) {
+		        	        								scope.licenseData[currentHostName][i] = response.data;
+		        	        							}
+		        	        						}
+	        	        						} else {
+	        	        							$scope.licenseData[currentHostName].push(response.data);
+	        	        						}
+
 	        	        						scope.file = undefined;
 	        	        						scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
+	        	        						scope.isForUpdate = false;
 	        	        					}
 	        	        				},
 	        	        				function(response,status,headers,config){
@@ -380,7 +418,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         	        					}else{
         	        						if(response.data.deleted == true){
         	        							var productD = response.data.product;
-        	        							var obj = $filter('filter')($scope.licenseData, {product: productD}, true)[0];
+        	        							var obj = $filter('filter')($scope.licenseData[currentHostName], {product: productD}, true)[0];
 
         	        							var index = $scope.licenseData[currentHostName].indexOf(obj);
         	        							$scope.licenseData[currentHostName].splice(index, 1);

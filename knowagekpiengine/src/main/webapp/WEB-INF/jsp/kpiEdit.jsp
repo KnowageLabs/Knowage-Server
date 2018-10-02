@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/controllerBuildTemplate/kpiEditController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/controllerBuildTemplate/services/documentService.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/style/kpiStyleController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/services/channelMessaging.js"></script>
 
 </head>
 <body ng-controller="templateBuildController" class="kn-kpi-definition">

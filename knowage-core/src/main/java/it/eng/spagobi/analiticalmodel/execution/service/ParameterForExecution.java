@@ -1,5 +1,14 @@
 package it.eng.spagobi.analiticalmodel.execution.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -24,15 +33,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 public class ParameterForExecution {
 	private static Logger logger = Logger.getLogger(ParameterForExecution.class);
 
@@ -106,44 +106,19 @@ public class ParameterForExecution {
 	}
 
 	private void initDAO() {
-		try {
 			ANALYTICAL_DRIVER_USE_MODALITY_DAO = DAOFactory.getParameterUseDAO();
-		} catch (EMFUserError e) {
-			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DRIVER_USE_MODALITY_DAO.getClass().getName() + "]", e);
-		}
 
-		try {
-			DATA_DEPENDENCIES_DAO = DAOFactory.getObjParuseDAO();
-		} catch (EMFUserError e) {
-			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + DATA_DEPENDENCIES_DAO.getClass().getName() + "]", e);
-		}
+		DATA_DEPENDENCIES_DAO = DAOFactory.getObjParuseDAO();
 
-		try {
-			VISUAL_DEPENDENCIES_DAO = DAOFactory.getObjParviewDAO();
-		} catch (EMFUserError e) {
-			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + VISUAL_DEPENDENCIES_DAO.getClass().getName() + "]", e);
-
-		}
+		VISUAL_DEPENDENCIES_DAO = DAOFactory.getObjParviewDAO();
 		try {
 			ANALYTICAL_DOCUMENT_PARAMETER_DAO = DAOFactory.getBIObjectParameterDAO();
-		} catch (EMFUserError e) {
+		} catch (HibernateException e) {
 			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DOCUMENT_PARAMETER_DAO.getClass().getName() + "]", e);
 		}
 	}
 
 	ExecutionInstance getExecutionInstance() {
-		// ExecutionInstance executionInstance = null;
-		//
-		// boolean isAMap = getContext().isExecutionInstanceAMap(ExecutionInstance.class.getName());
-		//
-		// if (!isAMap) {
-		// executionInstance = getContext().getExecutionInstance(ExecutionInstance.class.getName());
-		// } else {
-		// Map<Integer, ExecutionInstance> instances = getContext().getExecutionInstancesAsMap(ExecutionInstance.class.getName());
-		// Integer objId = analyticalDocumentParameter.getBiObjectID();
-		// executionInstance = instances.get(objId);
-		// }
-
 		return executionInstance;
 	}
 
@@ -212,14 +187,14 @@ public class ParameterForExecution {
 
 		try {
 			visualDependencies = VISUAL_DEPENDENCIES_DAO.loadObjParviews(analyticalDocumentParameter.getId());
-		} catch (EMFUserError e) {
+		} catch (HibernateException e) {
 			throw new SpagoBIServiceException("An error occurred while loading parameter visual dependecies for parameter [" + id + "]", e);
 		}
 
 		Iterator it = visualDependencies.iterator();
 		while (it.hasNext()) {
 			ObjParview dependency = (ObjParview) it.next();
-			Integer objParFatherId = dependency.getObjParFatherId();
+			Integer objParFatherId = dependency.getParFatherId();
 			try {
 				BIObjectParameter objParFather = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadForDetailByObjParId(objParFatherId);
 				VisualDependency visualDependency = new VisualDependency();
@@ -251,7 +226,7 @@ public class ParameterForExecution {
 		Iterator it = dataDependencies.iterator();
 		while (it.hasNext()) {
 			ObjParuse dependency = (ObjParuse) it.next();
-			Integer objParFatherId = dependency.getObjParFatherId();
+			Integer objParFatherId = dependency.getParFatherId();
 			try {
 				BIObjectParameter objParFather = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadForDetailByObjParId(objParFatherId);
 				DataDependency dataDependency = new DataDependency();

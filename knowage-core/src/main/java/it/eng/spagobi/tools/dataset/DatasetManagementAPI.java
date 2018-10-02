@@ -17,41 +17,13 @@
  */
 package it.eng.spagobi.tools.dataset;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.zip.InflaterInputStream;
-
-import javax.naming.NamingException;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.UnsafeInput;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-
 import commonj.work.Work;
-import commonj.work.WorkException;
 import commonj.work.WorkItem;
 import gnu.trove.set.hash.TLongHashSet;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
@@ -68,45 +40,23 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.association.DistinctValuesCalculateWork;
 import it.eng.spagobi.tools.dataset.association.DistinctValuesClearWork;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
+import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.cache.CacheException;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
-import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.datastore.Record;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
-import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
-import it.eng.spagobi.tools.dataset.crosstab.Measure;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
-import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
-import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.OrFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
-import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilterOperator;
-import it.eng.spagobi.tools.dataset.metasql.query.item.SingleProjectionSimpleFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
-import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.*;
+import it.eng.spagobi.tools.dataset.strategy.DatasetEvaluationStrategyFactory;
+import it.eng.spagobi.tools.dataset.strategy.IDatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
@@ -114,6 +64,18 @@ import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+
+import javax.naming.NamingException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
+import java.util.zip.InflaterInputStream;
 
 /**
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
@@ -126,22 +88,10 @@ import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
 
 public class DatasetManagementAPI {
 
+	static private Logger logger = Logger.getLogger(DatasetManagementAPI.class);
+
 	private UserProfile userProfile;
 	private IDataSetDAO dataSetDao;
-
-	// XML tags
-	public static final String PARAMETERSLIST = "PARAMETERSLIST";
-	public static final String ROWS = "ROWS";
-	public static final String ROW = "ROW";
-	public static final String NAME = "NAME";
-	public static final String TYPE = "TYPE";
-	public static final String MULTIVALUE = "MULTIVALUE";
-
-	// Cockpit filters
-	public static final String MAX_FILTER = "MAX()";
-	public static final String MIN_FILTER = "MIN()";
-
-	static private Logger logger = Logger.getLogger(DatasetManagementAPI.class);
 
 	// ==============================================================================
 	// COSTRUCTOR METHODS
@@ -190,9 +140,6 @@ public class DatasetManagementAPI {
 			List<IDataSet> dataSets = null;
 			if (UserUtilities.isTechnicalUser(getUserProfile())) {
 				dataSets = getDataSetDAO().loadDataSets();
-				// for (IDataSet dataSet : dataSets) {
-				// checkQbeDataset(dataSet);
-				// }
 			} else {
 				dataSets = getMyDataDataSet();
 			}
@@ -250,97 +197,27 @@ public class DatasetManagementAPI {
 	public List<IFieldMetaData> getDataSetFieldsMetadata(String label) {
 		try {
 			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
-
-			if (dataSet == null) {
-				throw new RuntimeException("Impossible to get dataset [" + label + "] from SpagoBI Server");
-			}
-
+			Assert.assertNotNull(dataSet, "Impossible to get dataset [" + label + "]");
 			IMetaData metadata = dataSet.getMetadata();
-			if (metadata == null) {
-				throw new RuntimeException("Impossible to retrive metadata of dataset [" + metadata + "]");
-			}
+			Assert.assertNotNull(dataSet, "Impossible to retrive metadata of dataset [" + metadata + "]");
 
-			List<IFieldMetaData> fieldsMetaData = new ArrayList<>();
-			int fieldCount = metadata.getFieldCount();
-			for (int i = 0; i < fieldCount; i++) {
-				IFieldMetaData fieldMetaData = metadata.getFieldMeta(i);
-				fieldsMetaData.add(fieldMetaData);
-			}
-
-			return fieldsMetaData;
+			return metadata.getFieldsMeta();
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {
 			logger.debug("OUT");
 		}
-	}
-
-	public List<JSONObject> getDataSetParameters(String label) {
-		logger.debug("IN");
-		try {
-			List<JSONObject> parametersList = new ArrayList<>();
-			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
-
-			if (dataSet == null) {
-				throw new RuntimeException("Impossible to get dataset [" + label + "] from SpagoBI Server");
-			}
-
-			String strParams = dataSet.getParameters();
-			if (strParams == null) {
-				return parametersList;
-			}
-
-			try {
-				SourceBean xmlParams = SourceBean.fromXMLString(strParams);
-				SourceBean sbRows = (SourceBean) xmlParams.getAttribute(ROWS);
-				List lst = sbRows.getAttributeAsList(ROW);
-				for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
-					SourceBean sbRow = (SourceBean) iterator.next();
-					String namePar = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
-					String typePar = sbRow.getAttribute(TYPE) != null ? sbRow.getAttribute(TYPE).toString() : null;
-					boolean multiValue = sbRow.getAttribute(MULTIVALUE) != null ? Boolean.valueOf(sbRow.getAttribute(MULTIVALUE).toString()) : false;
-
-					if (typePar != null && typePar.startsWith("class")) {
-						typePar = typePar.substring(6);
-					}
-					JSONObject paramMetaDataJSON = new JSONObject();
-					String filterId = "ds__" + dataSet.getLabel() + "__" + namePar;
-					paramMetaDataJSON.put("id", filterId);
-					paramMetaDataJSON.put("labelObj", dataSet.getLabel());
-					paramMetaDataJSON.put("nameObj", dataSet.getName());
-					paramMetaDataJSON.put("typeObj", "Dataset");
-					paramMetaDataJSON.put("namePar", namePar);
-					paramMetaDataJSON.put("typePar", typePar);
-					paramMetaDataJSON.put("multiValuePar", multiValue);
-					parametersList.add(paramMetaDataJSON);
-				}
-			} catch (Throwable t) {
-				throw new SpagoBIRuntimeException("Impossible to parse parameters [" + strParams + "]", t);
-			} finally {
-				logger.debug("OUT");
-			}
-
-			return parametersList;
-		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while executing method", t);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	public String persistDataset(String label) {
-		return persistDataset(label, false);
 	}
 
 	/*
 	 * Refresh cache for a specific dataset
 	 */
-	public String persistDataset(String label, boolean forceRefresh) {
+	public String persistDataset(String label) {
 		logger.debug("IN dataset label " + label);
-		SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+		ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 		cache.setUserProfile(userProfile);
 		IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
-		cache.refresh(dataSet, null, true, forceRefresh);
+		cache.refresh(dataSet);
 
 		String signature = dataSet.getSignature();
 		logger.debug("Retrieve table name for signature " + signature);
@@ -357,131 +234,27 @@ public class DatasetManagementAPI {
 	}
 
 	public IDataStore getDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections, Filter filter,
-			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) {
-		String errorMessage = "An unexpected error occured while executing method";
+			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws JSONException {
 
 		Monitor totalTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore");
 		try {
-			setDataSetParameters(dataSet, parametersValues);
+			dataSet.setParametersMap(parametersValues);
+			dataSet.resolveParameters();
 
-			// force resolution of parameters
-			QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
-			if (querableBehaviour != null) {
-				querableBehaviour.getStatement();
-			}
+			IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userProfile);
+			return strategy.executeQuery(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
 
-			IDataStore dataStore = null;
-
-			DatasetEvaluationStrategy evaluationStrategy = dataSet.getEvaluationStrategy(isNearRealtime);
-			if (DatasetEvaluationStrategy.PERSISTED.equals(evaluationStrategy)) {
-				logger.debug("Querying persisted dataset");
-				dataStore = queryPersistedDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
-				dataStore.setCacheDate(getPersistedDate(dataSet));
-			} else if (DatasetEvaluationStrategy.FLAT.equals(evaluationStrategy)) {
-				logger.debug("Querying flat dataset");
-				dataStore = queryFlatDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
-				dataStore.setCacheDate(new Date());
-			} else {
-				if (DatasetEvaluationStrategy.INLINE_VIEW.equals(evaluationStrategy)) {
-					logger.debug("Querying near realtime/JDBC dataset");
-					Monitor timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:inLineView");
-					dataStore = queryJDBCDataset(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
-					timing.stop();
-					dataStore.setCacheDate(new Date());
-				} else {
-					logger.debug("Querying dataset in cache");
-					SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
-					cache.setUserProfile(userProfile);
-
-					Monitor totalCacheTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:totalCache");
-
-					IDataStore cachedResultSet = DatasetEvaluationStrategy.CACHED.equals(evaluationStrategy)
-							? cache.get(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount)
-							: null;
-
-					adjustNgsiDataSet(dataSet, evaluationStrategy);
-
-					if (cachedResultSet == null) {
-						logger.debug("Dataset not in cache");
-
-						Monitor timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:putInCache");
-						putDataSetInCache(dataSet, cache, evaluationStrategy);
-						timing.stop();
-
-						if (dataSet.getDataStore() != null && dataSet.getDataStore().getMetaData().getFieldCount() == 0) {
-							// update only datasource's metadata from dataset if for some strange cause it hasn't got fields
-							logger.debug("Update datastore's metadata with dataset's metadata for nodata found...");
-							return getEmptyDataStore(dataSet);
-						}
-
-						timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:getFromCache");
-						dataStore = cache.get(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
-						timing.stop();
-						if (dataStore == null) {
-							throw new CacheException(errorMessage);
-						}
-						adjustMetadata((DataStore) dataStore, dataSet, null);
-						dataSet.decode(dataStore);
-
-						// if result was not cached put refresh date as now
-						dataStore.setCacheDate(new Date());
-					} else {
-						manageNgsiSubscription(dataSet, evaluationStrategy);
-
-						dataStore = cachedResultSet;
-						adjustMetadata((DataStore) dataStore, dataSet, null);
-						dataSet.decode(dataStore);
-					}
-					totalCacheTiming.stop();
-				}
-			}
-
-			return dataStore;
-
-		} catch (Throwable t) {
-			logger.error(errorMessage, t);
-			throw new RuntimeException(errorMessage, t);
 		} finally {
 			totalTiming.stop();
 			logger.debug("OUT");
 		}
 	}
 
-	private void adjustNgsiDataSet(IDataSet dataSet, DatasetEvaluationStrategy evaluationStrategy) {
-		if (dataSet.isRealtime() && !DatasetEvaluationStrategy.REALTIME.equals(evaluationStrategy)) {
-			if (dataSet instanceof VersionedDataSet) {
-				dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
-			}
-			RESTDataSet restDataSet = (RESTDataSet) dataSet;
-			restDataSet.setRealtimeNgsiConsumer(false);
-		}
-	}
-
-	private void manageNgsiSubscription(IDataSet dataSet, DatasetEvaluationStrategy evaluationStrategy) {
-		if (dataSet.isRealtime() && !DatasetEvaluationStrategy.REALTIME.equals(evaluationStrategy)) {
-			if (dataSet instanceof VersionedDataSet) {
-				dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
-			}
-			RESTDataSet restDataSet = (RESTDataSet) dataSet;
-			restDataSet.subscribeNGSI();
-		}
-	}
-
-	private IDataStore getEmptyDataStore(IDataSet dataSet) {
-		IDataStore dataStore;
-		dataStore = new DataStore();
-		IMetaData metadata = dataSet.getMetadata();
-		metadata.setProperty("resultNumber", 0);
-		dataStore.setMetaData(metadata);
-		adjustMetadata((DataStore) dataStore, dataSet, null);
-		return dataStore;
-	}
-
 	public void putDataSetInCache(IDataSet dataSet, ICache cache) throws DataBaseException {
-		putDataSetInCache(dataSet, cache, DatasetEvaluationStrategy.CACHED);
+		putDataSetInCache(dataSet, cache, DatasetEvaluationStrategyType.CACHED);
 	}
 
-	public void putDataSetInCache(IDataSet dataSet, ICache cache, DatasetEvaluationStrategy evaluationStrategy) throws DataBaseException {
+	public void putDataSetInCache(IDataSet dataSet, ICache cache, DatasetEvaluationStrategyType evaluationStrategy) throws DataBaseException {
 		if (dataSet.isCachingSupported()) {
 			if (dataSet instanceof AbstractJDBCDataset && !dataSet.hasDataStoreTransformer()) {
 				logger.debug("Copying JDBC dataset in cache using its iterator");
@@ -490,108 +263,21 @@ public class DatasetManagementAPI {
 				logger.debug("Copying dataset in cache by loading the whole set of data in memory");
 				dataSet.loadData();
 				if (dataSet.getDataStore().getMetaData().getFieldCount() > 0) {
-					if (DatasetEvaluationStrategy.REALTIME.equals(evaluationStrategy)) {
+					if (DatasetEvaluationStrategyType.REALTIME.equals(evaluationStrategy)) {
 						cache.put(dataSet, dataSet.getDataStore(), true);
 					} else {
 						cache.put(dataSet, dataSet.getDataStore());
 					}
 				} else {
-					cache.put(dataSet, getEmptyDataStore(dataSet));
+					cache.put(dataSet, new DataStore(dataSet.getMetadata()));
 				}
 			}
 		}
-	}
-
-	private Date getPersistedDate(IDataSet dataSet) {
-		Date toReturn = null;
-		String triggerGroupName = "DEFAULT";
-		String triggerName = "persist_" + dataSet.getName();
-		try {
-			// try to get the schedule trigger
-			Trigger trigger = DAOFactory.getSchedulerDAO().loadTrigger(triggerGroupName, triggerName);
-			Date previousFireTime = null;
-			if (trigger != null) { // dataset is scheduled
-				previousFireTime = trigger.getPreviousFireTime();
-			}
-			if (previousFireTime != null) {
-				toReturn = previousFireTime;
-			} else { // dataset is not scheduled or no previous fire time available
-				toReturn = dataSet.getDateIn();
-			}
-		} catch (EMFUserError e) {
-			logger.error("Unable to load trigger with name [" + triggerName + "] from group [" + triggerGroupName + "]", e);
-		}
-		return toReturn;
-	}
-
-	@Deprecated
-	public IDataStore getAggregatedDataStore(String label, int offset, int fetchSize, int maxResults, CrosstabDefinition crosstabDefinition) {
-		try {
-
-			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
-			// checkQbeDataset(dataSet);
-
-			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
-			cache.setUserProfile(userProfile);
-			IDataStore cachedResultSet = cache.get(dataSet);
-			IDataStore dataStore = null;
-
-			if (cachedResultSet == null) {
-				// Dataset not yet cached
-				dataSet.loadData(offset, fetchSize, maxResults);
-				dataStore = dataSet.getDataStore();
-
-				cache.put(dataSet, dataStore);
-
-			}
-
-			List<Projection> projections = this.getProjections(dataSet, crosstabDefinition);
-			List<Projection> groups = this.getGroups(dataSet, crosstabDefinition);
-			dataStore = cache.get(dataSet, projections, null, groups, null, null, 0, 0, -1);
-
-			/*
-			 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias...
-			 * therefore we adjust its metadata
-			 */
-			this.adjustMetadata((DataStore) dataStore, dataSet, null);
-
-			logger.debug("Decoding dataset ...");
-			dataSet.decode(dataStore);
-			LogMF.debug(logger, "Dataset decoded: {0}", dataStore);
-
-			return dataStore;
-
-		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while executing method", t);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	private static String getParametersNotValorized(List<JSONObject> parameters, Map<String, String> parametersValues) {
-		String toReturn = "";
-
-		for (Iterator<JSONObject> iterator = parameters.iterator(); iterator.hasNext();) {
-			JSONObject parameter = iterator.next();
-			try {
-				String parameterName = parameter.getString("namePar");
-				if (parametersValues.get(parameterName) == null) {
-					toReturn += parameterName;
-					if (iterator.hasNext()) {
-						toReturn += ", ";
-					}
-				}
-			} catch (Throwable t) {
-				throw new SpagoBIRuntimeException("An unexpected exception occured while checking spagobi filters ", t);
-			}
-		}
-		return toReturn;
 	}
 
 	public List<IDataSet> getAllDataSet() {
 		try {
-			List<IDataSet> dataSets = getDataSetDAO().loadDataSets();
-			return dataSets;
+			return getDataSetDAO().loadDataSets();
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {
@@ -601,11 +287,7 @@ public class DatasetManagementAPI {
 
 	public List<IDataSet> getEnterpriseDataSet() {
 		try {
-			List<IDataSet> dataSets = getDataSetDAO().loadEnterpriseDataSets(getUserProfile());
-			// for (IDataSet dataSet : dataSets) {
-			// checkQbeDataset(dataSet);
-			// }
-			return dataSets;
+			return getDataSetDAO().loadEnterpriseDataSets(getUserProfile());
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {
@@ -615,12 +297,7 @@ public class DatasetManagementAPI {
 
 	public List<IDataSet> getOwnedDataSet() {
 		try {
-
-			List<IDataSet> dataSets = getDataSetDAO().loadDataSetsOwnedByUser(getUserProfile(), true);
-			// for (IDataSet dataSet : dataSets) {
-			// checkQbeDataset(dataSet);
-			// }
-			return dataSets;
+			return getDataSetDAO().loadDataSetsOwnedByUser(getUserProfile(), true);
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {
@@ -631,12 +308,7 @@ public class DatasetManagementAPI {
 
 	public List<IDataSet> getSharedDataSet() {
 		try {
-			List<IDataSet> validDataSets = getDataSetDAO().loadDatasetsSharedWithUser(getUserProfile(), true);
-
-			// for (IDataSet dataSet : dataSets) {
-			// checkQbeDataset(dataSet);
-			// }
-			return validDataSets;
+			return getDataSetDAO().loadDatasetsSharedWithUser(getUserProfile(), true);
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {
@@ -646,12 +318,7 @@ public class DatasetManagementAPI {
 
 	public List<IDataSet> getUncertifiedDataSet() {
 		try {
-
-			List<IDataSet> dataSets = getDataSetDAO().loadDatasetOwnedAndShared(getUserProfile());
-			// for (IDataSet dataSet : dataSets) {
-			// checkQbeDataset(dataSet);
-			// }
-			return dataSets;
+			return getDataSetDAO().loadDatasetOwnedAndShared(getUserProfile());
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {
@@ -661,13 +328,7 @@ public class DatasetManagementAPI {
 
 	public List<IDataSet> getMyDataDataSet() {
 		try {
-
-			List<IDataSet> dataSets = getDataSetDAO().loadMyDataDataSets(getUserProfile());
-
-			// for (IDataSet dataSet : dataSets) {
-			// checkQbeDataset(dataSet);
-			// }
-			return dataSets;
+			return getDataSetDAO().loadMyDataDataSets(getUserProfile());
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {
@@ -677,166 +338,11 @@ public class DatasetManagementAPI {
 
 	public List<IDataSet> getMyFederatedDataSets() {
 		try {
-
-			List<IDataSet> dataSets = getDataSetDAO().loadMyDataFederatedDataSets(getUserProfile());
-
-			// for (IDataSet dataSet : dataSets) {
-			// checkQbeDataset(dataSet);
-			// }
-			return dataSets;
+			return getDataSetDAO().loadMyDataFederatedDataSets(getUserProfile());
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {
 			logger.debug("OUT");
-		}
-	}
-
-	// ------------------------------------------------------------------------------
-	// Methods for extracting information from CrosstabDefinition and related
-	// ------------------------------------------------------------------------------
-
-	/**
-	 * @deprecated
-	 */
-	@Deprecated
-	private List<Projection> getProjections(IDataSet dataSet, CrosstabDefinition crosstabDefinition) {
-		logger.debug("IN");
-
-		List<Projection> projections = new ArrayList<>();
-
-		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
-		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
-		List<Measure> measures = crosstabDefinition.getMeasures();
-
-		// appends columns
-		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
-		while (columsIt.hasNext()) {
-			CrosstabDefinition.Column aColumn = columsIt.next();
-			String columnName = aColumn.getEntityId();
-			projections.add(new Projection(dataSet, columnName));
-		}
-		// appends rows
-		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
-		while (rowsIt.hasNext()) {
-			CrosstabDefinition.Row aRow = rowsIt.next();
-			String columnName = aRow.getEntityId();
-			projections.add(new Projection(dataSet, columnName));
-		}
-
-		// appends measures
-		Iterator<Measure> measuresIt = measures.iterator();
-		while (measuresIt.hasNext()) {
-			Measure aMeasure = measuresIt.next();
-			IAggregationFunction function = aMeasure.getAggregationFunction();
-			String columnName = aMeasure.getEntityId();
-			if (columnName == null) {
-				// when defining a crosstab inside the SmartFilter document, an
-				// additional COUNT field with id QBE_SMARTFILTER_COUNT
-				// is automatically added inside query fields, therefore the
-				// entity id is not found on base query selected fields
-
-				/*
-				 * columnName = "Count"; if (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) { toReturn
-				 * .append(AggregationFunctions.COUNT_FUNCTION.apply("*")); } else { logger.error("Entity id " + aMeasure.getEntityId() +
-				 * " not found on the base query!!!!"); throw new RuntimeException("Entity id " + aMeasure.getEntityId() + " not found on the base query!!!!");
-				 * }
-				 */
-			} else {
-				if (function != AggregationFunctions.NONE_FUNCTION) {
-					projections.add(new Projection(function, dataSet, columnName));
-				} else {
-					projections.add(new Projection(dataSet, columnName));
-				}
-			}
-		}
-
-		logger.debug("OUT");
-		return projections;
-	}
-
-	/**
-	 * @deprecated
-	 */
-	@Deprecated
-	private List<Projection> getGroups(IDataSet dataSet, CrosstabDefinition crosstabDefinition) {
-		logger.debug("IN");
-		List<Projection> groups = new ArrayList<>();
-
-		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
-		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
-
-		// appends columns
-		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
-		while (columsIt.hasNext()) {
-			CrosstabDefinition.Column aColumn = columsIt.next();
-			String columnName = aColumn.getEntityId();
-			groups.add(new Projection(dataSet, columnName));
-		}
-
-		// appends rows
-		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
-		while (rowsIt.hasNext()) {
-			CrosstabDefinition.Row aRow = rowsIt.next();
-			String columnName = aRow.getEntityId();
-			groups.add(new Projection(dataSet, columnName));
-		}
-		logger.debug("OUT");
-		return groups;
-	}
-
-	protected void adjustMetadata(DataStore dataStore, IDataSet dataset, JSONArray fieldOptions) {
-
-		IMetaData dataStoreMetadata = dataStore.getMetaData();
-		IMetaData dataSetMetadata = dataset.getMetadata();
-		MetaData newDataStoreMetadata = new MetaData();
-		int fieldCount = dataStoreMetadata.getFieldCount();
-		for (int i = 0; i < fieldCount; i++) {
-			IFieldMetaData dataStoreFieldMetadata = dataStoreMetadata.getFieldMeta(i);
-			String fieldName = dataStoreFieldMetadata.getName();
-			int index = dataSetMetadata.getFieldIndex(fieldName);
-			IFieldMetaData newFieldMetadata = null;
-			if (index >= 0) {
-				newFieldMetadata = new FieldMetadata();
-				IFieldMetaData dataSetFieldMetadata = dataSetMetadata.getFieldMeta(index);
-				String decimalPrecision = (String) dataSetFieldMetadata.getProperty(IFieldMetaData.DECIMALPRECISION);
-				if (decimalPrecision != null) {
-					newFieldMetadata.setProperty(IFieldMetaData.DECIMALPRECISION, decimalPrecision);
-				}
-				if (fieldOptions != null) {
-					addMeasuresScaleFactor(fieldOptions, dataSetFieldMetadata.getName(), newFieldMetadata);
-				}
-				newFieldMetadata.setAlias(dataStoreFieldMetadata.getAlias());
-				newFieldMetadata.setFieldType(dataSetFieldMetadata.getFieldType());
-				newFieldMetadata.setName(dataStoreFieldMetadata.getName());
-				newFieldMetadata.setType(dataStoreFieldMetadata.getType());
-			} else {
-				newFieldMetadata = dataStoreFieldMetadata;
-			}
-			newDataStoreMetadata.addFiedMeta(newFieldMetadata);
-		}
-		newDataStoreMetadata.setProperties(dataStoreMetadata.getProperties());
-		dataStore.setMetaData(newDataStoreMetadata);
-	}
-
-	public static final String ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
-	public static final String ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
-
-	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId, IFieldMetaData newFieldMetadata) {
-		if (fieldOptions != null) {
-			for (int i = 0; i < fieldOptions.length(); i++) {
-				try {
-					JSONObject afield = fieldOptions.getJSONObject(i);
-					JSONObject aFieldOptions = afield.getJSONObject(ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
-					String afieldId = afield.getString("id");
-					String scaleFactor = aFieldOptions.optString(ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
-					if (afieldId.equals(fieldId) && scaleFactor != null) {
-						newFieldMetadata.setProperty(ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR, scaleFactor);
-						return;
-					}
-				} catch (Exception e) {
-					throw new RuntimeException("An unpredicted error occurred while adding measures scale factor", e);
-				}
-			}
 		}
 	}
 
@@ -845,7 +351,7 @@ public class DatasetManagementAPI {
 	 */
 	public void createIndexes(String label, Set<String> columns) {
 		logger.debug("IN - Dataset label " + label);
-		SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+		SQLDBCache cache = (SQLDBCache) CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 		cache.setUserProfile(userProfile);
 		IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 		String signature = dataSet.getSignature();
@@ -929,87 +435,6 @@ public class DatasetManagementAPI {
 		return statement;
 	}
 
-	private IDataStore queryPersistedDataset(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
-		IDataSource dataSource = dataSet.getDataSourceForWriting();
-		String tableName = dataSet.getPersistTableName();
-		return queryDataset(dataSet, dataSource, projections, tableName, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
-	}
-
-	private IDataStore queryFlatDataset(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
-		IDataSource dataSource = dataSet.getDataSource();
-		String tableName = dataSet.getFlatTableName();
-		return queryDataset(dataSet, dataSource, projections, tableName, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
-	}
-
-	private IDataStore queryJDBCDataset(IDataSet dataSet, List<Projection> projections, Filter filter, List<Projection> groups, List<Sorting> sortings,
-			List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount) throws DataBaseException {
-		IDataSource dataSource = dataSet.getDataSource();
-		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
-		String tableName = "(" + querableBehaviour.getStatement() + ") T";
-		return queryDataset(dataSet, dataSource, projections, tableName, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount);
-	}
-
-	public void appendSummaryRowToPagedDataStore(List<Projection> projections, List<Projection> summaryRowProjections, IDataStore pagedDataStore,
-			IDataStore summaryRowDataStore) {
-		IMetaData pagedMetaData = pagedDataStore.getMetaData();
-		IMetaData summaryRowMetaData = summaryRowDataStore.getMetaData();
-
-		if (pagedMetaData.getFieldCount() >= summaryRowMetaData.getFieldCount()) {
-			// calc a map for summaryRowProjections -> projections
-			Map<Integer, Integer> projectionToSummaryRowProjection = new HashMap<>();
-			for (int i = 0; i < summaryRowProjections.size(); i++) {
-				Projection summaryRowProjection = summaryRowProjections.get(i);
-				for (int j = 0; j < projections.size(); j++) {
-					Projection projection = projections.get(j);
-					String projectionAlias = projection.getAlias();
-					if (summaryRowProjection.getAlias().equals(projectionAlias) || summaryRowProjection.getName().equals(projectionAlias)) {
-						projectionToSummaryRowProjection.put(j, i);
-						break;
-					}
-				}
-			}
-
-			// append summary row
-			IRecord summaryRowRecord = summaryRowDataStore.getRecordAt(0);
-			Record newRecord = new Record();
-			for (int projectionIndex = 0; projectionIndex < pagedMetaData.getFieldCount(); projectionIndex++) {
-				Field field = new Field(null);
-				if (projectionToSummaryRowProjection.containsKey(projectionIndex)) {
-					Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
-					Object value = summaryRowRecord.getFieldAt(summaryRowIndex).getValue();
-					field.setValue(value);
-				}
-				newRecord.appendField(field);
-			}
-			pagedDataStore.appendRecord(newRecord);
-
-			// copy metadata from summary row
-			for (Integer projectionIndex : projectionToSummaryRowProjection.keySet()) {
-				Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
-				pagedMetaData.getFieldMeta(projectionIndex).setType(summaryRowMetaData.getFieldType(summaryRowIndex));
-			}
-		}
-	}
-
-	private IDataStore queryDataset(IDataSet dataSet, IDataSource dataSource, List<Projection> projections, String tableName, Filter filter,
-			List<Projection> groups, List<Sorting> sortings, List<Projection> summaryRowProjections, int offset, int fetchSize, int maxRowCount)
-			throws DataBaseException {
-		logger.debug("IN");
-
-		SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(projections).from(tableName).where(filter).groupBy(groups).orderBy(sortings);
-		IDataStore pagedDataStore = dataSource.executeStatement(selectQuery, offset, fetchSize, maxRowCount);
-
-		if (summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
-			String summaryRowQuery = new SelectQuery(dataSet).selectDistinct().select(summaryRowProjections).from(tableName).where(filter).toSql(dataSource);
-			IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1, maxRowCount);
-			appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
-		}
-
-		logger.debug("OUT");
-		return pagedDataStore;
-	}
 
 	protected List<Integer> getCategories(IEngUserProfile profile) {
 
@@ -1053,51 +478,11 @@ public class DatasetManagementAPI {
 		return categories;
 	}
 
-	public void setDataSetParameters(IDataSet dataSet, Map<String, String> paramValues) {
-		List<JSONObject> parameters = getDataSetParameters(dataSet.getLabel());
-		if (parameters.size() > paramValues.size()) {
-			String parameterNotValorizedStr = getParametersNotValorized(parameters, paramValues);
-			throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
-		}
-
-		if (paramValues.size() > 0) {
-			for (String paramName : paramValues.keySet()) {
-				for (int i = 0; i < parameters.size(); i++) {
-					JSONObject parameter = parameters.get(i);
-					if (paramName.equals(parameter.optString("namePar"))) {
-						String[] values = paramValues.get(paramName).split(",");
-						boolean isMultiValue = parameter.optBoolean("multiValuePar");
-						int length = isMultiValue ? values.length : 1;
-
-						String typePar = parameter.optString("typePar");
-						String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
-
-						List<String> newValues = new ArrayList<>();
-						for (int j = 0; j < length; j++) {
-							String value = values[j].trim();
-							if (!value.isEmpty()) {
-								if (!value.startsWith(delim) && !value.endsWith(delim)) {
-									newValues.add(delim + value + delim);
-								} else {
-									newValues.add(value);
-								}
-							}
-						}
-						paramValues.put(paramName, StringUtils.join(newValues, ","));
-						break;
-					}
-				}
-			}
-			dataSet.setParamsMap(paramValues);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
 	public Map<String, TLongHashSet> readDomainValues(IDataSet dataSet, Map<String, String> parametersValues, boolean wait)
-			throws NamingException, WorkException, InterruptedException {
+			throws NamingException, InterruptedException, JSONException {
 		logger.debug("IN");
 		Map<String, TLongHashSet> toReturn = new HashMap<>(0);
-		setDataSetParameters(dataSet, parametersValues);
+		dataSet.setParametersMap(parametersValues);
 		String signature = dataSet.getSignature();
 		logger.debug("Looking for domain values for dataSet with signature [" + signature + "]...");
 		String hashSignature = Helper.sha256(signature);
@@ -1131,11 +516,11 @@ public class DatasetManagementAPI {
 		return toReturn;
 	}
 
-	public void calculateDomainValues(IDataSet dataSet) throws NamingException, WorkException, InterruptedException {
+	public void calculateDomainValues(IDataSet dataSet) throws NamingException, InterruptedException {
 		calculateDomainValues(dataSet, false);
 	}
 
-	public void calculateDomainValues(IDataSet dataSet, boolean wait) throws NamingException, WorkException, InterruptedException {
+	public void calculateDomainValues(IDataSet dataSet, boolean wait) throws NamingException, InterruptedException {
 		logger.debug("IN");
 		logger.debug("Getting the JNDI Work Manager");
 		WorkManager spagoBIWorkManager = new WorkManager(GeneralUtilities.getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
@@ -1156,7 +541,7 @@ public class DatasetManagementAPI {
 		logger.debug("OUT");
 	}
 
-	public void clearDomainValues(IDataSet dataSet) throws NamingException, WorkException {
+	public void clearDomainValues(IDataSet dataSet) throws NamingException {
 		logger.debug("IN");
 		logger.debug("Getting the JNDI Work Manager");
 		WorkManager spagoBIWorkManager = new WorkManager(GeneralUtilities.getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
@@ -1169,47 +554,13 @@ public class DatasetManagementAPI {
 		logger.debug("OUT");
 	}
 
-	public String getQbeDataSetColumn(IDataSet dataSet, String columnName) {
-		String result = columnName;
-
-		Assert.assertNotNull(dataSet, "Impossible to load dataset with label [" + dataSet.getLabel() + "]");
-		for (int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
-			IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
-			if (fieldMeta.getName().equals(columnName)) {
-				result = fieldMeta.getAlias();
-				break;
-			}
-		}
-
-		return result;
-	}
-
 	/**
 	 * if a filter has MAX() or MIN() value convert it by calculating the right value
-	 *
-	 * @param label
-	 * @param parameters
-	 * @param selections
-	 * @param likeSelections
-	 * @param maxRowCount
-	 * @param aggregations
-	 * @param summaryRow
-	 * @param offset
-	 * @param fetchSize
-	 * @param isNearRealtime
-	 * @param groupCriteria
-	 * @param filterCriteriaForMetaModel
-	 * @param summaryRowProjectionCriteria
-	 * @param havingCriteria
-	 * @param havingCriteriaForMetaModel
-	 * @param filterCriteria
-	 * @param projectionCriteria
-	 * @return
 	 */
 
 	// FIXME
-	public List<Filter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections,
-			List<Filter> filters, List<SimpleFilter> likeFilters, List<Projection> groups) {
+	public List<Filter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues,
+			List<Filter> filters, List<SimpleFilter> likeFilters) throws JSONException {
 
 		logger.debug("IN");
 
@@ -1253,7 +604,7 @@ public class DatasetManagementAPI {
 
 			Filter where = getWhereFilter(noMinMaxFilters, likeFilters);
 
-			IDataStore dataStore = getDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, null, null, null, -1, -1, -1);
+			IDataStore dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, -1);
 			if (dataStore == null) {
 				String errorMessage = "Error in getting min and max filters values";
 				logger.error(errorMessage);
@@ -1291,12 +642,20 @@ public class DatasetManagementAPI {
 		return newFilters;
 	}
 
+	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Projection> projections, Filter filter, int maxRowCount) throws JSONException {
+		dataSet.setParametersMap(parametersValues);
+		dataSet.resolveParameters();
+
+		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userProfile);
+		return strategy.executeSummaryRowQuery(projections, filter, maxRowCount);
+	}
+
 	public Filter getWhereFilter(List<Filter> filters, List<SimpleFilter> likeFilters) {
 		Filter where = null;
 		if (filters.size() > 0) {
 			AndFilter andFilter = new AndFilter(filters);
 			if (likeFilters.size() > 0) {
-				where = andFilter.and(new OrFilter(likeFilters));
+				andFilter.and(new OrFilter(likeFilters));
 			}
 			where = andFilter;
 		} else if (likeFilters.size() > 0) {

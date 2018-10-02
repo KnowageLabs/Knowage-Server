@@ -1,0 +1,71 @@
+<%-- Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--%>
+<script>
+angular.module('sbiModule').factory('sbiModuleDeviceService',function($window){
+	var deviceObj = {};
+	var browserObj = {};
+	
+	var userAgent = $window.navigator.userAgent;
+	if (/Firefox[\/\s](\d+\.\d+)/.test(userAgent)){
+		//detecting Firefox
+		browserObj.name='firefox';
+		browserObj.version = RegExp.$1;contentDisposition
+	
+	}else if(
+			/Chrome[\/\s](\d+\.\d+)/.test(userAgent)
+			&& !(/Edge(\/)/.test(userAgent))
+		){
+		//detecting Chrome
+		browserObj.name='chrome';
+		browserObj.version = RegExp.$1;
+	
+	} else {
+		//detecting IE
+		var detectIEregexp = "";
+		if (userAgent.indexOf('MSIE') != -1){ // IE 9/10
+			detectIEregexp = /MSIE (\d+\.\d+);/ //test for MSIE x.x		
+		
+		} else if (
+				/Trident.*rv[ :]*(\d+\.\d+)/.test(userAgent)
+				&& !(/Edge(\/)/.test(userAgent))
+		){ // IE 11 // if no "MSIE" string in userAgent
+			detectIEregexp = /Trident.*rv[ :]*(\d+\.\d+)/;
+		} else { // IE Edge
+			detectIEregexp = /Mozilla.*Edge\/(12.\d+)/;
+		}
+		
+		
+		if (detectIEregexp.test(userAgent)){ //if some form of IE
+			browserObj.name='internet explorer';
+			browserObj.version = RegExp.$1;
+		 }
+	}
+	
+	if (/iPhone|iPad|iPod|BlackBerry|Opera Mini|IEMobile|Android/i.test(userAgent)){
+		deviceObj.isMobile = true;
+	}else{
+		deviceObj.isMobile = false;
+	}
+	deviceObj.platform = $window.navigator.platform;	
+
+	return{
+		browser : browserObj,
+		device : deviceObj
+	}
+});
+
+</script>

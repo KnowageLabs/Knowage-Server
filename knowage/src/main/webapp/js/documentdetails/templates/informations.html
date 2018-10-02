@@ -1,0 +1,174 @@
+<div flex ng-cloak layout="row" ng-controller="DocumentDetailsInformationsController as di" layout-fill  ng-form name="informations" >
+
+    <div flex="60" style="border-right:1px solid #ccc">
+        <md-toolbar class="secondaryToolbar">
+            <div class="md-toolbar-tools" layout="row">
+                <h2>{{di.translate.load("sbi.documentdetails.informations")}}</h2>
+            </div>
+        </md-toolbar>
+        <div layout="column " ng-if="di.template == undefined">            
+            <div class="kn-info " layout-align="center center ">
+                {{di.translate.load("sbi.documentdetails.informations.upload")}}                
+            </div>
+            <file-upload ng-model="di.file" flex></file-upload>        	
+        </div>
+        <md-card>
+            <md-card-content layout="column">
+                <div layout="row">
+                    <md-input-container class="md-block" flex>
+                        <label>{{di.translate.load("sbi.documentdetails.informations.label")}}</label>
+                        <input ng-required="true"  name="label" placeholder="{{sbi.documentdetails.informations.label}}" ng-model="di.document.label" type="text">
+                         <span style="color:red" ng-if="informations.label.$error.required">{{di.translate.load("sbi.documentdetails.drivers.required")}}</span>
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label>{{di.translate.load("sbi.documentdetails.informations.name")}}</label>
+                        <input ng-required="true"  name="name" placeholder="{{sbi.documentdetails.informations.name}}" ng-model="di.document.name" type="text">
+                     <span style="color:red" ng-if="informations.name.$error.required">{{di.translate.load("sbi.documentdetails.drivers.required")}}</span>
+                    </md-input-container>
+                </div>
+                <div layout="row">
+                    <div layout="column" layout-align="start center" flex>
+					<img ng-if="di.documentService.documentImage != undefined"data-ng-src="data:image/(png|jpg|jpeg|png|gif);base64,{{di.documentService.documentImage}}" width="90%" height="180" >
+					<p ng-if="di.documentService.documentImage == undefined">  <em>{{di.translate.load("sbi.documentdetails.drivers.previewimage")}}  </em></p>       
+                        <div layout="row" style="width:100%">
+                        <file-upload ng-model="di.documentService.previewFile" flex></file-upload>
+	                        <md-button class="md-secondary md-icon-button" ng-click="di.deleteImage() " aria-label="delete image">
+	                       		 <md-icon md-font-icon="fa fa-trash "></md-icon>
+	                    	</md-button>
+                        </div>
+                    </div>
+                    <md-input-container flex>
+                        <label>{{di.translate.load("sbi.documentdetails.informations.description")}}</label>
+                        <textarea ng-model="di.document.description" md-maxlength="250" rows="6" md-select-on-focus></textarea>
+                    </md-input-container>
+                </div>
+                <div layout="row">
+                    <md-input-container class="md-block" flex>
+                        <label>{{di.translate.load("sbi.documentdetails.informations.type")}}</label>
+                        <md-select  ng-required="!documentDetailsForm.informations.$pristine" name="type" ng-model="di.document.typeCode">
+                            <md-option ng-repeat="type in di.types " ng-value="type.valueCd" >{{type.translatedValueName}}</md-option>
+                        </md-select>
+                          <span style="color:red" ng-if="informations.type.$error.required">{{di.translate.load("sbi.documentdetails.drivers.required")}}</span>
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label>{{di.translate.load("sbi.documentdetails.informations.engine")}}</label>
+                        <md-select  ng-required="!documentDetailsForm.informations.$pristine" name="engine" ng-model="di.document.engine" ng-disabled="!di.document.typeCode || di.document.typeCode== '' ">
+                            <md-option ng-value=" "></md-option>
+                            <md-option ng-repeat="engine in di.engines | filter:{biobjTypeId:(di.types|filter:{valueCd:di.document.typeCode})[0].valueId}  " ng-value="engine.label">{{engine.name}}</md-option>
+                        </md-select>
+                        <span class="hint ">{{di.translate.load("sbi.documentdetails.informations.enginehint")}}</span>                       
+                    </md-input-container>
+                  </div>
+                  <div layout="row ">
+                    <md-input-container flex  ng-if="di.isDatasourceVisible()">
+                        <label>{{di.translate.load("sbi.documentdetails.informations.datasource")}}</label>
+                        <md-select  name="datasource" ng-model="di.document.dataSourceLabel">
+                            <md-option ng-value=" "></md-option>
+                            <md-option ng-repeat="datasource in di.datasources  " ng-value="datasource.label">{{datasource.label}}</md-option>
+                        </md-select>
+                                              
+                    </md-input-container>
+                    <md-input-container flex ng-if="di.isDatasetVisible()">
+                        <label>{{di.translate.load("sbi.documentdetails.informations.dataset")}}</label>
+                        <md-select  ng-required="!documentDetailsForm.informations.$pristine" name="dataset" ng-model="di.document.dataSetId" >
+                          <md-select-header>
+					            <input ng-model="di.searchTerm"
+					                   type="text"
+					                   placeholder="Search for dataset..."
+					                    onkeydown="event.stopPropagation()" >
+					          </md-select-header>
+                            <md-option ng-repeat="dataset in di.datasets | filter:di.searchTerm" ng-value="dataset.id.dsId">{{dataset.label}}</md-option>
+                        </md-select>
+                                           
+                    </md-input-container>
+                </div>
+                <div layout="row ">
+                    <md-input-container class="md-block " flex>
+                        <label>{{di.translate.load("sbi.documentdetails.informations.state")}}</label>
+                        <md-select  ng-required="!documentDetailsForm.informations.$pristine" name="state" ng-model="di.document.stateCode ">  
+                            <md-option ng-repeat="status in di.availableStatuses track by $index " ng-value="status.valueCd">{{status.translatedValueName}}</md-option>
+                        </md-select>
+                         <span style="color:red" ng-if="informations.state.$error.required">{{di.translate.load("sbi.documentdetails.drivers.required")}}</span>
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label>{{di.translate.load("sbi.documentdetails.informations.refresh")}}</label>
+                        <input  name="refresh" ng-model="di.document.refreshSeconds" type="text"  >
+                        <span class="hint ">{{di.translate.load("sbi.documentdetails.informations.refreshhint")}}</span>
+                    </md-input-container>
+                </div>
+                <div layout="row">
+                    <md-switch ng-model="di.document.visible " aria-label="document visibility " flex="50 ">
+                        <md-icon ng-required="true" md-font-icon="fa fa-eye"></md-icon> {{di.translate.load("sbi.documentdetails.drivers.visible")}}  
+                    </md-switch>
+                     <span style="color:red" ng-if="informations.visible.$error.required">{{di.translate.load("sbi.documentdetails.drivers.required")}}</span>
+                    <md-switch ng-model="di.document.lockedByUser" aria-label="document locked " flex="50 ">
+                        <md-icon md-font-icon="fa fa-lock"></md-icon> {{di.translate.load("sbi.documentdetails.informations.locked")}}
+                    </md-switch>
+                </div>
+               
+            </md-card-content>
+        </md-card>
+    </div>
+    <div flex="40 ">
+        <md-toolbar class="secondaryToolbar ">
+            <div class="md-toolbar-tools " layout="row ">
+                <h2>{{di.translate.load("sbi.documentdetails.informations.position")}}</h2>
+            </div>
+        </md-toolbar>
+        <md-content layout="column ">
+            <div layout="row " layout-align="center center ">
+                <div class="kn-info " flex="80 ">
+                    {{di.translate.load("sbi.documentdetails.informations.functionalities")}}
+                </div>
+            </div>
+            <md-card>
+                <md-card-content>
+                    <component-tree ng-model="di.folders" id="id" create-tree="true"
+									click-function = "di.showFolderid(node)" selected-item="selected" multi-select="true" show-files="true"> </component-tree>
+                </md-card-content>
+           
+             
+            </md-card>
+             <div layout="row " layout-align="center center">
+                <div class="kn-info " flex="80 ">
+                    {{di.translate.load("sbi.documentdetails.informations.visibilityRestriction")}}
+                </div>
+            </div>
+            <md-card>
+                <md-card-content>
+                 <div flex layout = "row">
+                <md-input-container flex = 60>  
+                  	 <label>{{di.translate.load("sbi.documentdetails.informations.definedRestrictions")}}</label>                                                      
+                  <textarea ng-model="di.document.profiledVisibility" readonly></textarea>
+                  </md-input-container>
+                   <div layout="row" flex = 10>
+                        <md-button ng-click="di.addRestriction()">
+							<md-icon class="fa fa-plus-circle"><md-tooltip md-delay="1000">{{di.load("sbi.documentdetails.informations.add")}}</md-tooltip></md-icon>
+						</md-button>
+						<md-button ng-click="di.clearRestrictions()">
+                      		<md-icon md-font-icon="fa fa-eraser"><md-tooltip md-delay="1000">{{di.load("sbi.documentdetails.informations.clear")}}</md-tooltip></md-icon>
+						</md-button>													
+                      </div>
+                
+                	</div> 
+                	  <div layout = "row" flex>
+                	   <md-input-container flex>  
+                	  	
+                        <label>{{di.translate.load("sbi.documentdetails.informations.restrictionAttribute")}}</label>
+                        <md-select   name="visibiltyRestriction" ng-model="di.visibilityAttribute"> 
+                            <md-option ng-repeat="attribute in di.attributeValues track by $index " ng-value="attribute.attributeName">{{attribute.attributeName}}</md-option>
+                        </md-select>
+                         </md-input-container>
+                       <p> = </p>
+  					 <md-input-container flex>
+  					 <label>{{di.translate.load("sbi.documentdetails.informations.attributeValue")}}</label>                                          
+                        <div flex><input type="text" name="restrictionValue" ng-model="di.restrictionValue"></div>
+                     </md-input-container>
+                      </div>
+                     
+                                   
+                </md-card-content>            
+            </md-card>
+        </md-content>
+    </div>
+</div>

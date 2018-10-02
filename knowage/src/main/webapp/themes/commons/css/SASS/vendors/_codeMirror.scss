@@ -1,0 +1,19 @@
+.CodeMirror {
+	font-size: $mediumFontSize;
+}
+
+.codeMirrorScriptEditor {
+  pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+    word-wrap: break-word;
+  }
+  .CodeMirror-gutter-wrapper {
+    left: -30px !important;
+  }
+  md-card {
+    md-input-container{
+      margin: 0;
+    }
+  }
+}

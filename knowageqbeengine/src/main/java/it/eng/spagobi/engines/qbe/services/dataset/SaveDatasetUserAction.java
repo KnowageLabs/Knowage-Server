@@ -17,21 +17,6 @@
  */
 package it.eng.spagobi.engines.qbe.services.dataset;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.qbe.statement.AbstractQbeDataSet;
@@ -44,6 +29,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.services.core.catalogue.SetCatalogueAction;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
@@ -65,6 +51,21 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
@@ -109,8 +110,8 @@ public class SaveDatasetUserAction extends SetCatalogueAction {
 			super.handleTimeFilter = false;
 			super.service(request, response);
 
-			Assert.assertNotNull(getEngineInstance(),
-					"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
+			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName()
+			+ " service before having properly created an instance of EngineInstance class");
 
 			validateLabel();
 			validateInput();
@@ -224,6 +225,10 @@ public class SaveDatasetUserAction extends SetCatalogueAction {
 		// saves owner of the dataset
 		newDataset.setOwner(owner);
 
+		String metadata = getMetadataAsString(dataset);
+		logger.debug("Dataset's metadata: [" + metadata + "]");
+		newDataset.setDsMetadata(metadata);
+
 		newDataset.setDataSource(qbeDataset.getDataSource());
 
 		String datamart = qbeDataset.getStatement().getDataSource().getConfiguration().getModelName();
@@ -269,14 +274,13 @@ public class SaveDatasetUserAction extends SetCatalogueAction {
 			newDataset.setSchedulingCronLine(schedulingCronLine);
 		}
 
-		// merge metadata added in interface with metadata of qbedataset
 		String meta = getAttributeAsString("meta");
 
 		try {
 
 			JSONArray metadataArray = JSONUtils.toJSONArray(meta);
 
-			IMetaData metaData = getDataSetMetadata(dataset);
+			IMetaData metaData = dataset.getMetadata();
 			for (int i = 0; i < metaData.getFieldCount(); i++) {
 				IFieldMetaData ifmd = metaData.getFieldMeta(i);
 				for (int j = 0; j < metadataArray.length(); j++) {
@@ -319,7 +323,6 @@ public class SaveDatasetUserAction extends SetCatalogueAction {
 		int datasetId = datasetSaved.getId();
 		return datasetId;
 	}
-
 	private void validateLabel() {
 		String label = getAttributeAsString(LABEL);
 		DataSetServiceProxy proxy = (DataSetServiceProxy) getEnv().get(EngineConstants.ENV_DATASET_PROXY);
@@ -402,7 +405,6 @@ public class SaveDatasetUserAction extends SetCatalogueAction {
 		String toReturn = parser.metadataToXML(newMetadata);
 		return toReturn;
 	}
-
 	private String getMetadataAsString(IDataSet dataset) {
 		IMetaData metadata = getDataSetMetadata(dataset);
 		DatasetMetadataParser parser = new DatasetMetadataParser();
@@ -415,15 +417,13 @@ public class SaveDatasetUserAction extends SetCatalogueAction {
 		Integer start = new Integer(0);
 		Integer limit = new Integer(10);
 		Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();
-		if (dataset.getDataStore() == null) {
-			try {
-				dataset.loadData(start, limit, maxSize);
-			} catch (Exception e) {
-				throw new SpagoBIRuntimeException("Error while executing dataset", e);
-			}
+		try {
+			dataset.loadData(start, limit, maxSize);
+			IDataStore dataStore = dataset.getDataStore();
+			metaData = dataStore.getMetaData();
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while executing dataset", e);
 		}
-		IDataStore dataStore = dataset.getDataStore();
-		metaData = dataStore.getMetaData();
 		return metaData;
 	}
 

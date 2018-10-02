@@ -2,18 +2,18 @@
  *
  */
 
-var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'ngMessages', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload','angular-list-detail', 'angularXRegExp']);
+var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'ngMessages', 'angular_list', 'angular_table','sbiModule', 'DriversModule', 'angular_2_col','file_upload','angular-list-detail', 'angularXRegExp']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
-app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "kn_regex",
+app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "DriversService",  "kn_regex",
                                                    "$scope", "$mdDialog", "$mdToast","multipartForm", "sbiModule_download",
                                                    "sbiModule_messaging","sbiModule_config","sbiModule_user","sbiModule_messaging",businessModelCatalogueFunction]);
 
-function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, kn_regex, $scope, $mdDialog,
+function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, DriversService, kn_regex, $scope, $mdDialog,
 		$mdToast,multipartForm,sbiModule_download,sbiModule_messaging,sbiModule_config,sbiModule_user,sbiModule_messaging){
-
+	var d = this;
 	$scope.regex = kn_regex;
 	//variables
 	///////////////////////////////////////////////////////////
@@ -47,6 +47,10 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.fileCWMClicked =false;
 
 	$scope.togenerate = false;
+
+	var requiredPath = "2.0/businessmodels";
+    var businessModelBasePath =""+ $scope.selectedBusinessModel.id;
+    var driversService = DriversService;
 
 	angular.element(document).ready(function () {
         $scope.getData();
@@ -164,6 +168,13 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			    });
 			}
 
+		$scope.driverPostBasePath = $scope.selectedBusinessModel.id + '/drivers';
+
+	    driversService.setDriverRelatedObject($scope.selectedBusinessModel);
+		driversService.getDriversOnRelatedObject(requiredPath, $scope.driverPostBasePath);
+		$scope.analyticalDrivers = driversService.analyticalDrivers;
+		d.selected = $scope.selectedBusinessModel;
+		$scope.$broadcast('changedModel', d.selected);
 	}
 
 	$scope.downloadFile = function(item,ev,filetype){
@@ -227,7 +238,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		                    	   return a.hasFileModel;
 		                       },
 		                       action:function(item,event){
-		                    	   $scope.downloadFile(item,event,'SBIMODULE');
+		                    	   $scope.downloadFile(item,event,'SBIMODEL');
 		                       }
 	                       },
 	                       {
@@ -249,6 +260,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 sbiModule_restServices.promiseGet("2.0", 'businessmodels')
 			.then(function(response) {
 				angular.copy(response.data,$scope.businessModelList)
+				driversService.fillAllDriversPerModel(requiredPath,response.data)
 			}, function(response) {
 				sbiModule_restServices.errorHandler(response.data, 'Error');
 			});
@@ -294,7 +306,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	  					activeFlagStyle();
 	  					millisToDate($scope.bmVersions);
 	  					$scope.versionLoadingShow = false;
-	  					$scope.$apply();
+	  				//	$scope.$apply();
 					 },600);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -338,11 +350,18 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					angular.copy($scope.selectedBusinessModel,$scope.savedBusinessModel);
 					$scope.businessModelList.push(response.data);
 					$scope.selectedVersions=[];
+
+					DriversService.persistDrivers($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.persistVisualDependency($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.deleteDrivers($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.deleteVisualDependencies($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.deleteDataDependencies($scope.selectedBusinessModel.id, requiredPath);
+
 					$scope.isDirty = false;
 					$scope.isCWMDirty = false;
 					if($scope.fileObj.fileName !== undefined)
 						$scope.saveBusinessModelFile();
-					$scope.$apply();
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'check');
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -372,8 +391,16 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.getBusinessModels();
 					$scope.isDirty = false;
 					$scope.selectedBusinessModel.modelLocker = response.data.modelLocker;
+
+					DriversService.persistDrivers($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.persistVisualDependency($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.persistDataDependency($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.deleteDrivers($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.deleteVisualDependencies($scope.selectedBusinessModel.id, requiredPath);
+					DriversService.deleteDataDependencies($scope.selectedBusinessModel.id, requiredPath);
+
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'check');
-					$scope.$apply();
+
 
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -381,7 +408,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				});
 			}
 	 }
-
 
 	 //calling service method DELETE/{bmId} deleting single item
 	 $scope.deleteItem=function(item,event){

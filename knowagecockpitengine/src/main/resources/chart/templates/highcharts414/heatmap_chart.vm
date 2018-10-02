@@ -562,7 +562,7 @@
   		#if($serieObj.prefixChar)
   		prefixChar: "$serieObj.prefixChar",
   		#else
-  		postfixChar: "",
+  		prefixChar: "",
   		#end
   		#if($serieObj.postfixChar)
   		postfixChar: "$serieObj.postfixChar",

@@ -18,25 +18,14 @@
 
 package it.eng.spagobi.tools.dataset.associativity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.jgrapht.graph.Pseudograph;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
+import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
@@ -51,6 +40,11 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.parameters.ParametersUtilities;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.jgrapht.graph.Pseudograph;
+
+import java.util.*;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -146,9 +140,9 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 				dataSet.setParamsMap(parametersValues);
 
 				boolean isNearRealtime = config.getNearRealtimeDatasets().contains(v1);
-				DatasetEvaluationStrategy evaluationStrategy = dataSet.getEvaluationStrategy(isNearRealtime);
+				DatasetEvaluationStrategyType evaluationStrategyType = dataSet.getEvaluationStrategy(isNearRealtime);
 
-				IAssociativeDatasetContainer container = AssociativeDatasetContainerFactory.getContainer(evaluationStrategy, dataSet, parametersValues,
+				IAssociativeDatasetContainer container = AssociativeDatasetContainerFactory.getContainer(evaluationStrategyType, dataSet, parametersValues,
 						userProfile);
 				associativeDatasetContainers.put(v1, container);
 			}
@@ -161,7 +155,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 	private void initCache() {
 		cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
-		cache = SpagoBICacheManager.getCache();
+		cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 	}
 
 	protected void addEdgeGroup(String v1, Set<LabeledEdge<String>> edges, IAssociativeDatasetContainer container) {

@@ -94,11 +94,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 					</md-toolbar>
 	
-					<div flex class=" noBorder " style="position:relative;"> <angular-list
-						layout-fill class="absolute" id='glossary' ng-model=ctrl.glossary
-						item-name='GLOSSARY_NM' menu-option=ctrl.glossMenuOpt
+					<div flex class=" noBorder " style="position:relative;"> 
+					<angular-list
+						layout-fill class="absolute" 
+						id='glossary' 
+						ng-model=ctrl.glossary
+						item-name='GLOSSARY_NM' 
+						show-search-bar=true
+						menu-option=ctrl.glossMenuOpt
 						click-function="ctrl.showClickedGlossary(item)"
-						speed-menu-option=ctrl.glossSpeedMenuOpt no-pagination=true />
+						speed-menu-option=ctrl.glossSpeedMenuOpt 
+						no-pagination=true
+						total-item-count=ctrl.totalGlossaries
+						show-search-preloader="ctrl.showSearchPreloaderGlossary"
+						search-function="ctrl.GlossaryLike(searchValue,itemsPerPage)" />
 	
 					</div>
 	

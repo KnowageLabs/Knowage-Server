@@ -20,10 +20,17 @@
 				    </div>
 		        </md-tab>
 		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
-		        	<cockpit-style-configurator widget ng-model="localModel.style">
-			        	<cockpit-style-custom-widget-configurator label="'Measures Formatting'">
-				           <div layout="row" flex ng-cloak layout-wrap>
-	
+		        	
+		        	
+		        		<md-card>
+							<md-toolbar class="ternaryToolbar" >
+								<div class="md-toolbar-tools" layout="row">
+									<h2>Measures Formatting</h2>
+									<span flex></span>
+								</div>
+							</md-toolbar>
+							<md-card-content >
+								<div layout="row" flex ng-cloak layout-wrap>
 						           	<md-input-container flex=25 class="md-block"> 
 										<label>Prefix</label>
 										<input class="input_class" ng-model="localModel.numbers.prefix" /> 
@@ -42,11 +49,19 @@
 											<md-option ng-repeat="f in formatPattern" value="{{f}}">{{f}}</md-option>
 										</md-select>
 									</md-input-container> 
-				          
-				           </div>
-				        </cockpit-style-custom-widget-configurator>
-		        		<cockpit-style-custom-widget-configurator label="'Padding'">
-			           <div layout="row" flex ng-cloak layout-wrap>
+					           </div>
+							</md-card-content>
+						</md-card>
+						
+						<md-card>
+							<md-toolbar class="ternaryToolbar" >
+								<div class="md-toolbar-tools" layout="row">
+									<h2>Padding</h2>
+									<span flex></span>
+								</div>
+							</md-toolbar>
+							<md-card-content >
+								<div layout="row" flex ng-cloak layout-wrap>
 
 					           	<md-input-container flex=50 class="md-block"> 
 									<label><i class="fa fa-angle-double-up"></i> Top</label>
@@ -66,7 +81,10 @@
 								</md-input-container>
 			          
 			           </div>
-			        </cockpit-style-custom-widget-configurator>
+							</md-card-content>
+						</md-card>
+
+		        		<cockpit-style-configurator widget ng-model="localModel.style">
 		        	</cockpit-style-configurator>
 		        </md-tab>
 		        

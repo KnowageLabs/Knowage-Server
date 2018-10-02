@@ -105,6 +105,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			{"label":$scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.val"),"name":"filterVal2"}
 			];
 
+		$scope.isObjectEmpty = function(obj){
+		   return Object.keys(obj).length === 0;
+		}
 
 		// current selected Widget datasets
 		$scope.newFilterAllWidgetDS=[];

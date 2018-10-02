@@ -48,7 +48,7 @@ import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.community.mapping.SbiCommunity;
-import it.eng.spagobi.engines.drivers.AbstractDriver;
+import it.eng.spagobi.engines.drivers.AbstractEngineDriver;
 import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
@@ -58,7 +58,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 /**
  * Driver Implementation (IEngineDriver Interface) for Qbe External Engine.
  */
-public class GenericDriver extends AbstractDriver implements IEngineDriver {
+public class GenericDriver extends AbstractEngineDriver implements IEngineDriver {
 
 	private final static String PARAM_NEW_SESSION = "NEW_SESSION";
 	public static final String DOCUMENT_ID = "document";

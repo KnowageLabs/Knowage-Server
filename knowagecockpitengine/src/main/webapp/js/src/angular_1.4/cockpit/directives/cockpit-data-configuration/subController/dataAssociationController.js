@@ -83,27 +83,82 @@ function dataAssociationControllerFunction($scope,cockpitModule_template,cockpit
 		delete copyOfcurrentAss.description;
 		delete copyOfcurrentAss.id;
 		
-		//check for duplicate association
+
 		for(var i=0;i<$scope.tmpAssociations.length;i++){
 			var tmpAss= angular.copy($scope.tmpAssociations[i]);
 			delete tmpAss.$$hashKey;
 			delete tmpAss.description;
 			delete tmpAss.id;
+
+			//check for duplicate association
 			if(angular.equals(tmpAss,copyOfcurrentAss) && !angular.equals($scope.utils.currentAss.id,$scope.tmpAssociations[i].id)){
 				deferred.reject(sbiModule_translate.load("sbi.cockpit.association.editor.msg.duplicate"));
 				stop=true;
 				break;
 			}
+
+            // check for solr associations
+			var tmpPairAss = new Set();
+
+            // Since you only want pairs, there's no reason
+            // to iterate over the last element directly
+            for (var i = 0; i < tmpAss.fields.length - 1; i++) {
+                var labelDs1 = tmpAss.fields[i].store;
+                var ds1=cockpitModule_datasetServices.getDatasetByLabel(labelDs1);
+                // This is where you'll capture that last value
+                for (var j = i + 1; j < tmpAss.fields.length; j++) {
+                    var labelDs2 = tmpAss.fields[j].store;
+                    var ds2=cockpitModule_datasetServices.getDatasetByLabel(labelDs2);
+                    if(ds1.type == 'SbiSolrDataSet' || ds2.type == 'SbiSolrDataSet') {
+                         if(labelDs1.localeCompare(labelDs2) == -1)  {
+                                tmpPairAss.add(labelDs1 + ' ' + labelDs2);
+                         } else {
+                                tmpPairAss.add(labelDs2 + ' ' + labelDs1);
+                         }
+                     }
+                 }
+             }
+
+             //check for solr dataset and already existing associations
+             var currentPairAss = new Set();
+
+             // Since you only want pairs, there's no reason
+             // to iterate over the last element directly
+             for (var i = 0; i < $scope.utils.currentAss.fields.length - 1; i++) {
+                  var labelDs1 = $scope.utils.currentAss.fields[i].store;
+                  var ds1=cockpitModule_datasetServices.getDatasetByLabel(labelDs1);
+                  // This is where you'll capture that last value
+                  for (var j = i + 1; j < $scope.utils.currentAss.fields.length; j++) {
+                      var labelDs2 = $scope.utils.currentAss.fields[j].store;
+                      var ds2=cockpitModule_datasetServices.getDatasetByLabel(labelDs2);
+                      if(ds1.type == 'SbiSolrDataSet' || ds2.type == 'SbiSolrDataSet') {
+                          if(labelDs1.localeCompare(labelDs2) == -1)  {
+                              currentPairAss.add(labelDs1 + ' ' + labelDs2);
+                          } else {
+                              currentPairAss.add(labelDs2 + ' ' + labelDs1);
+                          }
+                      }
+                  }
+              }
+
+              var intersection = new Set([...tmpPairAss].filter(x => currentPairAss.has(x)));
+              if(intersection.size > 0) {
+                   var message = sbiModule_translate.load("sbi.cockpit.association.editor.msg.solr.tuple") + ".\n" + sbiModule_translate.load("sbi.cockpit.association.editor.msg.solr.invalid") + "\n[" + Array.from(intersection) + "]";
+                   deferred.reject(message);
+                   stop=true;
+                   break;
+               }
 		}
-		
-		//check for inconsistent data
+
 		if(!stop){
 			var dataType;
 			for(var i=0;i<$scope.utils.currentAss.fields.length;i++){
 				var ds=cockpitModule_datasetServices.getDatasetByLabel($scope.utils.currentAss.fields[i].store);
 				
 				if(ds!=undefined){
-					//is a dataset
+					//it's a dataset
+
+					//check for inconsistent data
 					for(var md=0;md<ds.metadata.fieldsMeta.length;md++){
 						if(angular.equals($scope.utils.currentAss.fields[i].column,ds.metadata.fieldsMeta[md].name)){
 							if(!angular.equals(ds.metadata.fieldsMeta[md].type,dataType) && dataType!=undefined){
@@ -191,11 +246,11 @@ function dataAssociationControllerFunction($scope,cockpitModule_template,cockpit
 					 $scope.deleteCurrentAssociations();
 				 },
 				 function(message){
-					 if(message!=undefined){
-						 sbiModule_messaging.showErrorMessage(message,"")
-					 }
-				 });
-		 
+				          if(message != undefined) {
+                               sbiModule_messaging.showErrorMessage(message, "");
+                          }
+			     }
+		);
 	 }
 	 
 	$scope.deleteCurrentAssociations=function(){

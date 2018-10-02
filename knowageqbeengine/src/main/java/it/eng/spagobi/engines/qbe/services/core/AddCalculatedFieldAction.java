@@ -64,129 +64,128 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 		String fieldName;
 		String parentEntityUniqueName;
 		JSONObject fieldJSON;
-				
+
 		logger.debug("IN");
-		
+
 		try {
-		
+
 			super.service(request, response);
-			
-			editingMode = this.getAttributeAsString( EDITING_MODE );
+
+			editingMode = this.getAttributeAsString(EDITING_MODE);
 			logger.debug("Parameter [" + EDITING_MODE + "] is equals to [" + editingMode + "]");
 			Assert.assertNotNull(editingMode, "Parametr [" + EDITING_MODE + "] cannot be null");
 			fieldName = null;
-			if(editingMode.equalsIgnoreCase("modify")) {
-				fieldName = this.getAttributeAsString( FIELD_NAME );
+			if (editingMode.equalsIgnoreCase("modify")) {
+				fieldName = this.getAttributeAsString(FIELD_NAME);
 				logger.debug("Parameter [" + FIELD_NAME + "] is equals to [" + fieldName + "]");
-				Assert.assertNotNull(fieldName, "Parametr [" + FIELD_NAME + "] cannot be null if parameter [" + EDITING_MODE + "] is equal to [" + editingMode + "]");
-			} 
-			
-			parentEntityUniqueName = this.getAttributeAsString( PARENT_ENTITY_UNIQUE_NAME );
+				Assert.assertNotNull(fieldName,
+						"Parametr [" + FIELD_NAME + "] cannot be null if parameter [" + EDITING_MODE + "] is equal to [" + editingMode + "]");
+			}
+
+			parentEntityUniqueName = this.getAttributeAsString(PARENT_ENTITY_UNIQUE_NAME);
 			logger.debug("Parameter [" + PARENT_ENTITY_UNIQUE_NAME + "] is equals to [" + parentEntityUniqueName + "]");
-		
-			fieldJSON = this.getAttributeAsJSONObject( FIELD );
+
+			fieldJSON = this.getAttributeAsJSONObject(FIELD);
 			logger.debug("Parameter [" + FIELD + "] is equals to [" + fieldJSON + "]");
-			
-			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
-			
-			
+
+			Assert.assertNotNull(getEngineInstance(),
+					"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
+
 			ModelCalculatedField calculatedField = deserialize(fieldJSON);
-		
+
 			IModelEntity parentEntity = getDataSource().getModelStructure().getEntity(parentEntityUniqueName);
-			if(editingMode.equalsIgnoreCase("modify")) {
-				ModelCalculatedField calculatedFieldToModify = new ModelCalculatedField(fieldName, null, null);
+			if (editingMode.equalsIgnoreCase("modify")) {
+				ModelCalculatedField calculatedFieldToModify = new ModelCalculatedField(fieldName, null, null, null);
 				calculatedFieldToModify.setParent(parentEntity);
 				parentEntity.deleteCalculatedField(calculatedFieldToModify.getUniqueName());
 				parentEntity.addCalculatedField(calculatedField);
 			} else {
 				parentEntity.addCalculatedField(calculatedField);
 			}
-			
+
 			try {
-				writeBackToClient( new JSONAcknowledge() );
+				writeBackToClient(new JSONAcknowledge());
 			} catch (IOException e) {
 				String message = "Impossible to write back the responce to the client";
 				throw new SpagoBIEngineServiceException(getActionName(), message, e);
 			}
-			
-		} catch(Throwable t) {
+
+		} catch (Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
 			logger.debug("OUT");
-		}			
+		}
 	}
 
 	private ModelCalculatedField deserialize(JSONObject fieldJSON) {
 		ModelCalculatedField field;
 		String alias;
 		String fieldType;
-		
+
 		JSONObject fieldClaculationDescriptor;
 		String type;
 		String nature;
 		String expression;
+		String expressionSimple;
 		String slots;
 
-		
-		
 		try {
 			alias = fieldJSON.getString(QuerySerializationConstants.FIELD_ALIAS);
 			fieldType = fieldJSON.getString(QuerySerializationConstants.FIELD_TYPE);
-						
+
 			fieldClaculationDescriptor = fieldJSON.getJSONObject("calculationDescriptor");
 			type = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_TYPE);
 			nature = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_NATURE);
 			expression = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_EXPRESSION);
+			expressionSimple = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_EXPRESSION_SIMPLE);
 			slots = fieldClaculationDescriptor.optString(QuerySerializationConstants.FIELD_SLOTS);
-						
+
 			fieldType = fieldJSON.getString("filedType");
-			if(fieldType.equals("calculatedField")){
-				field = new ModelCalculatedField(alias, type, expression);
+			if (fieldType.equals("calculatedField")) {
+				field = new ModelCalculatedField(alias, type, expression, expressionSimple);
 			} else {
-				field = new ModelCalculatedField(alias, type, expression, true);
+				field = new ModelCalculatedField(alias, type, expression, expressionSimple, true);
 			}
 			field.setNature(nature);
-			
-			///begin patch : default properties --bug SPAGOBI-1292
+
+			/// begin patch : default properties --bug SPAGOBI-1292
 			setDefaultProperties(field, nature);
-			////---end patch
-			
-			if(slots != null && slots.trim().length() > 0) {
+			//// ---end patch
+
+			if (slots != null && slots.trim().length() > 0) {
 				JSONArray slotsJSON = new JSONArray(slots);
 				List<Slot> slotList = new ArrayList<Slot>();
-				for(int i = 0; i < slotsJSON.length(); i++) {
-					Slot slot = (Slot)SerializationManager.deserialize(slotsJSON.get(i), "application/json", Slot.class);
-					if( slot.getMappedValuesDescriptors().isEmpty() ){
+				for (int i = 0; i < slotsJSON.length(); i++) {
+					Slot slot = (Slot) SerializationManager.deserialize(slotsJSON.get(i), "application/json", Slot.class);
+					if (slot.getMappedValuesDescriptors().isEmpty()) {
 						// it's the default slot
 						field.setDefaultSlotValue(slot.getName());
 					} else {
 						slotList.add(slot);
 					}
 				}
-				
+
 				field.addSlots(slotList);
 			}
-			
-			
+
 		} catch (Throwable t) {
 			throw new SpagoBIEngineServiceException(getActionName(), "impossible to deserialize calculated field [" + fieldJSON.toString() + "]", t);
-		}					
-		
-		
+		}
+
 		return field;
 	}
-	
-	private void setDefaultProperties(ModelCalculatedField field, String nature){
-		
+
+	private void setDefaultProperties(ModelCalculatedField field, String nature) {
+
 		HashMap<String, Object> properties = new HashMap<String, Object>();
-		properties.put(QuerySerializationConstants.FIELD_VISIBLE, "true");	
+		properties.put(QuerySerializationConstants.FIELD_VISIBLE, "true");
 		properties.put("position", "0");
-		if(nature == null){
+		if (nature == null) {
 			nature = "attribute";
 		}
 		properties.put("type", nature.toLowerCase());
 		properties.put("format", "null");
-		field.setProperties(properties);	
-		
+		field.setProperties(properties);
+
 	}
 }

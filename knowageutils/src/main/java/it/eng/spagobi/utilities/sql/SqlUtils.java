@@ -44,8 +44,7 @@ public class SqlUtils {
 	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
 	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
 
-	private static Set<String> hiveLikeDatabases = new HashSet<>(
-			Arrays.asList("voltdb", "hbase", "hive", "orient", "cassandra", "hive", "neo4j", "drill", "spark", "phoenix", "impala", "h2"));
+	private static Set<String> hiveLikeDatabases = new HashSet<>(Arrays.asList("hive", "cassandra", "neo4j", "spark", "impala"));
 
 	static protected Logger logger = Logger.getLogger(SqlUtils.class);
 

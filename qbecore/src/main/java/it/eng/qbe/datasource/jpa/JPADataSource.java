@@ -51,8 +51,10 @@ import it.eng.qbe.query.Filter;
 import it.eng.qbe.query.filters.ProfileAttributesModelAccessModality;
 import it.eng.qbe.utility.CustomFunctionsSingleton;
 import it.eng.qbe.utility.CustomizedFunctionsReader;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
@@ -323,7 +325,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	protected Map<String, Object> buildEmptyConfiguration() {
 		logger.debug("IN");
 		Map<String, Object> cfg = new HashMap<String, Object>();
-		String dialect = getToolsDataSource().getHibDialectClass();
+		IDataSource dataSource = getToolsDataSource();
+		String dialect = dataSource.getHibDialectClass();
 
 		// to solve http://spagoworld.org/jira/browse/SPAGOBI-1934
 		if (dialect != null && dialect.contains("SQLServerDialect")) {
@@ -332,26 +335,21 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			dialect = "org.hibernate.dialect.ExtendedMySQLDialect";
 		} else if (dialect != null && dialect.contains("Oracle")) {
 			dialect = "org.hibernate.dialect.ExtendedOracleDialect";
-		}
-
-		// at the moment (04/2015) hibernate doesn't provide a dialect for hive
-		// or hbase with phoenix. But its similar to the postrges one
-		if (SqlUtils.isHiveLikeDialect(dialect)) {
+		} else if (SqlUtils.isHiveLikeDialect(dialect)) {
+			// because it seems similar.... really?
 			dialect = "org.hibernate.dialect.PostgreSQLDialect";
 		}
 
-		logger.debug("Dialect set is " + dialect);
-
-		if (getToolsDataSource().checkIsJndi()) {
-			cfg.put("javax.persistence.nonJtaDataSource", getToolsDataSource().getJndi());
-			cfg.put("hibernate.dialect", dialect);
+		if (dataSource.checkIsJndi()) {
+			IEngUserProfile profile = UserProfileManager.getProfile();
+			cfg.put("javax.persistence.nonJtaDataSource", dataSource.getJNDIRunTime(profile));			cfg.put("hibernate.dialect", dialect);
 			cfg.put("hibernate.validator.apply_to_ddl", "false");
 			cfg.put("hibernate.validator.autoregister_listeners", "false");
 		} else {
-			cfg.put("javax.persistence.jdbc.url", getToolsDataSource().getUrlConnection());
-			cfg.put("javax.persistence.jdbc.password", getToolsDataSource().getPwd());
-			cfg.put("javax.persistence.jdbc.user", getToolsDataSource().getUser());
-			cfg.put("javax.persistence.jdbc.driver", getToolsDataSource().getDriver());
+			cfg.put("javax.persistence.jdbc.url", dataSource.getUrlConnection());
+			cfg.put("javax.persistence.jdbc.password", dataSource.getPwd());
+			cfg.put("javax.persistence.jdbc.user", dataSource.getUser());
+			cfg.put("javax.persistence.jdbc.driver", dataSource.getDriver());
 			cfg.put("hibernate.dialect", dialect);
 			cfg.put("hibernate.validator.apply_to_ddl", "false");
 			cfg.put("hibernate.validator.autoregister_listeners", "false");

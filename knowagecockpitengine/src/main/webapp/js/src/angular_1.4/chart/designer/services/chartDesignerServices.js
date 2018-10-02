@@ -327,6 +327,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					                    "backgroundColor":"",
 					                    "borderWidth":0,
 					                    "borderRadius":0,
+					                    "showAbsValueTooltip":false,
+						                "showPercentageTooltip":true,
 					                    "style":{
 							            	   "align":"",
 							            	   "color":"",
@@ -339,6 +341,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					         ]
 					      },
 					      "type":"BAR",
+					      "alignAxis": true,
 					      "AXES_LIST":{
 					    	  "AXIS":[
 					    		  {
@@ -684,7 +687,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					"PANE": {
 						"endAngle": 120,
 						"startAngle": -120
-					}
+					},
+					"subtype": "simple",
 				}
 
 			return guageTemp;
@@ -1310,7 +1314,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"axis": "",
 						"color": "",
 						"column": "",
-						"groupingFunction": "SUM",
+						"groupingFunction": "NONE",
 						"name": "",
 						"orderType": "",
 						"postfixChar": "",
@@ -1332,8 +1336,10 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				            	   "fontWeight":""
 				               },
 		                    "borderWidth":0,
-		                    "borderRadius":0
-		                 }
+		                    "borderRadius":0,
+		                    "tooltipExpression":"",
+		                 },
+
 					}]
 				},
 				"type": "SCATTER",
@@ -1522,6 +1528,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					}]
 				},
 				"type": "SUNBURST",
+				"scale": 1,
 				"AXES_LIST": {
 					"AXIS": [{
 						"alias": "Y",
@@ -1633,7 +1640,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"color":"#000000",
 						"width":10
 					},
-					"text": ""
+					"text": "",
 				},
 				"SUBTITLE": {
 					"style":{
@@ -1666,6 +1673,18 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 	                  },
 			         "text":""
 			     },
+			     "LABELS":{
+			    	 "showLabels":true,
+			    	 "style":{
+			    		 "color":"#000000",
+			    		 "fontSize":"8px",
+			    		 "fontFamily":"Arial",
+	                	 "fontWeight":"normal",
+			    	 }
+				},
+				"LEGEND":{
+			    	 "showLegend":true,
+				},
 				"heightDimType": "percentage",
 				"widthDimType": "percentage",
 				"seriesStacking": false,
@@ -2328,6 +2347,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			                               ]
 		return data;
 	};
+	this.getGaugeSybtypes = function(){
+		return ["simple","activity","solid","vumetar"]
+	}
 
 	// Returns templates for specific details for series items on the Structure tab
 	this.getSeriesItemsConfDetailsTemplateURL = function(detailsForOption) {
@@ -2380,6 +2402,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			case "serieTitle": templatesURLs = sbiModule_config.contextName +
 			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/serie_title_details.html"; break;
 
+			case "gaugeSubtypes": templatesURLs = sbiModule_config.contextName +
+			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/gauge_subtypes.html"; break;
+
 
 		};
 
@@ -2405,6 +2430,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			case "categoriesDateTimeHeatMap": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.dateTime"); break;
 			case "categoriesDateTime": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.dateTimeAndGrouping"); break;
 			case "serieTitle": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.serie.serieTitle"); break;
+			case "gaugeSubtypes": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.gauge.subtypes"); break;
 			default : detailsNameToReturn = translate.load("Gauge axis additional options"); break;
 		}
 

@@ -45,9 +45,16 @@
 		#end
 	#end
 #end
-
 #set($xAxisMap = $datasettransformer.getXAxisMap($categorieColumns, $categoryDate))
-#set($enableDrilldown = false) 
+#set($enableDrilldown = false)
+#set($drillable = "false")
+#set($cliccable = "false")
+#if($chart.drillable)
+	#set($drillable = $chart.drillable)
+#end
+#if($chart.cliccable)
+	#set($cliccable = $chart.cliccable)
+#end
 #if($chart.groupCategories)
 	#if($categorieColumns.groupby != ''  && $chart.groupCategories =='false')
 		#set($enableDrilldown = true)
@@ -55,7 +62,7 @@
 #end
 #if(!$chart.groupCategories)
 #set($chart.groupCategories ='false')
-	#if($categorieColumns.groupby != ''  && $chart.groupCategories =='false' )
+	#if($categorieColumns.groupby != ''  && $chart.groupCategories =='false')
 		#set($enableDrilldown = true)
 	#end
 #end
@@ -78,7 +85,11 @@
 		#set($serieKeyFeed = $serieKeyFeed + 1)
 	#end
 #end
-
+#if($chart.isCockpitEngine && $chart.isCockpitEngine!='')
+	#set($isCockpit = $chart.isCockpitEngine)
+#else
+	#set($isCockpit = false)
+#end
 {
 	#set($drilldownEnabledFlag = false)
 	
@@ -110,6 +121,10 @@
 		{
 			dateTime: $isDateTime,
 			datetype: '$datetype',
+			cliccable: $cliccable,
+			drillable: $drillable,
+			drillableChart: $enableDrilldown,
+			isCockpit: $isCockpit,
 			categoryColumn: '$categorieColumns.column',
 			categoryGroupBy: '$categorieColumns.groupby',
 			categoryGroupByNamens: '$categorieColumns.groupbyNames',
@@ -245,8 +260,8 @@
     		
     		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	*#
-    	#if($chart.type.toUpperCase() != 'RADAR' && $drilldownEnabledFlag && $exportWebApp==false)
-	    	#if($enableDrilldown)
+    	#if($chart.type.toUpperCase() != 'RADAR' && ($chart.isCockpitEngine=="true" || ($drilldownEnabledFlag && $exportWebApp==false)))
+	    	#if($chart.isCockpitEngine=="true" || $enableDrilldown) 
 		    events: {
 				drilldown: scope.chartInitializer.handleDrilldown,
 				drillup: scope.chartInitializer.handleDrillup
@@ -851,7 +866,10 @@
 	        			#set($labelAlign=$axisStyle)
 	        		#elseif($styleName == 'rotate')
 	        			#set($rotation=$axisStyle)		        			
-					#else		        			
+					#elseif($styleName == 'color')
+	        			#set($axisLabelColor=$axisStyle)
+	        			color: "$axisLabelColor",	        			
+					#else	        			
 	        			$styleName: '$axisStyle',
 	        		#end
 	        	#end
@@ -870,8 +888,9 @@
         			comes right in the middle of the category value.
         			  			
         			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-        		*#  
-        		#if($labelAlign && $chart.orientation == 'vertical' && $chartType != "radar")
+        		*# 
+
+        		#if($labelAlign && $chartType != "radar")
         			align: "$labelAlign", 
         		#end
         		
@@ -943,14 +962,14 @@
 		#if(($chart.groupSeries && $chart.groupSeries =='true') || ($chart.groupSeriesCateg && $chart.groupSeriesCateg =='true'))	
 		
 		#set($enableValues = $chart.VALUES.SERIE.showValue)
-		#if($chart.VALUES.SERIE.get(0))
-		#set($relatedSerie = $chart.VALUES.SERIE.get(0))
-		#if($chart.type.toUpperCase() == 'RADAR' && $chart.groupSeriesCateg && $chart.groupSeriesCateg =='true')
-		#set($relatedSerieTypes = $chart.VALUES.SERIE.get(0).serieTypeRadar.split(", "))
-		#set($count = $chart.VALUES.SERIE.get(0).serieTypeRadar.length() - $chart.VALUES.SERIE.get(0).serieTypeRadar.replace(",", "").length())
-		#end
-		#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
-		#end
+			#if($chart.VALUES.SERIE.get(0))
+			#set($relatedSerie = $chart.VALUES.SERIE.get(0))
+				#if($chart.type.toUpperCase() == 'RADAR' && $chart.groupSeriesCateg && $chart.groupSeriesCateg =='true')
+				#set($relatedSerieTypes = $chart.VALUES.SERIE.get(0).serieTypeRadar.split(", "))
+				#set($count = $chart.VALUES.SERIE.get(0).serieTypeRadar.length() - $chart.VALUES.SERIE.get(0).serieTypeRadar.replace(",", "").length())
+				#end
+			#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
+			#end
 		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine, $chart.groupSeries, $chart.groupSeriesCateg))
      
 		#end
@@ -959,15 +978,18 @@
 	#end
     #end
     ],
-	 
+	
     
-    
+    #set ($axisCounter = 0)
     yAxis: [
         ## Serie add
         #foreach($yAxisKey in $yAxisList.keySet())
         	#set ($yAxis = $yAxisList[$yAxisKey] )
         {
-        	
+        	#if($chart.alignAxis && $chart.alignAxis =="true" && $axisCounter!=0)
+        	linkedTo:0,
+        	#end
+        	#set ($axisCounter = 1)
         	#*
         		Provide possibility for BAR chart to show also negative values.
         		@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -1052,7 +1074,10 @@
         		formatter: function () {
 			                    var value = this.value;	
 			                    var newValue = "";	
-		                      	var scaleFactor =  '${yAxis.LABELS.scaleFactor}';	                    
+		                      	var scaleFactor =  '${yAxis.LABELS.scaleFactor}';
+		                      	if(scaleFactor.indexOf("yAxis")>-1){
+		                      		scaleFactor =  '${yAxis.labels.scaleFactor}';
+		                      	} 
 			                    if(scaleFactor.indexOf("yAxis")!==-1){
 		                      		scaleFactor = "empty"
 		                      	}
@@ -1129,7 +1154,7 @@
 	        			style configuration popup will not be taken into account.
 	        			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	        		*# 	        		       		
-	        		#if($labelAlign && ($chart.orientation == 'horizontal' || $chartType == "radar"))
+	        		#if($labelAlign && $chartType != "radar")
 	        			align: "$labelAlign",	        		     			
 	        		#end
 	        		        		
@@ -1224,16 +1249,19 @@
 	#if($chart.groupSeries !='true' && $chart.groupSeriesCateg !='true')
 	#foreach($valueKey in $seriesMap.keySet())
 	    #set($relatedSerie = $seriesMap.get($valueKey))
-	      #foreach($yAxisKey in $yAxisList.keySet())
+		#foreach($yAxisKey in $yAxisList.keySet())
         	#set ($yAxis = $yAxisList[$yAxisKey] )
 			#if($yAxis.LABELS)
 				#if($relatedSerie.axis == $yAxis.alias)
 				#set ($relatedSerie.scaleFactor = $yAxis.LABELS.scaleFactor)
 				#end
+			#elseif($yAxis.labels)
+				#if($relatedSerie.axis == $yAxis.alias)
+				#set ($relatedSerie.scaleFactor = $yAxis.labels.scaleFactor)
+				#end
 			#end
-          #end
-	
-	    {	
+		#end
+		{	
 			#set($relatedSerieColor = false)
 			#set($relatedSerieColor = $relatedSerie.color)
 			#if($relatedSerieColor && $relatedSerieColor != '')
@@ -1275,6 +1303,7 @@
 	    	dataLabels: {
 	    		allowOverlap: true
 	    	},
+			#set ($counterX = 0)
 	    	
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
@@ -1289,7 +1318,6 @@
 						#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 						#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
 						#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
-					
 						#if($serieValue!="")
 						{
 							##drilldown: $enableDrilldown,
@@ -1304,9 +1332,11 @@
 									high: $row.get($serieColumnsMappedhigh),
 								#end 
 							#end	
-							#if($relatedSerieType != 'arearange')
+							#if($relatedSerieType != 'arearange' && $serieValue!="")
+							
 								y: $serieValue,
 							#end
+							x: $counterX,
 							name: "$serieCategoryName",
 							datetype:"$datetype",
 							#if($isDateTime==true)
@@ -1315,12 +1345,16 @@
 							#end
 							#end
 						},
-						#end
-					 
+						 #set ($counterX = $counterX+1)
+					 #else
+						#set ($counterX = $counterX+1)
+					 #end
+
 					#end
 				#end
 	    	],
 	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
+
 						
 						#*
 							If inside the style template the value of the "Show value"
@@ -1345,7 +1379,7 @@
 							#end
 							
 		                    #set ($prefixValueAsString = '')
-		                    
+
 		                    #if ($relatedSerie.prefixChar != '')
 			                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
 							#end
@@ -1368,8 +1402,7 @@
 		                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
                      		*/                		                    
 			               	formatter: function() {
-			                     
-			                    var value = this.y;	
+			                    var value = this.y;
 			                    var newValue = "";		                    
 			                    
 		                      	var scaleFactor = '${relatedSerie.scaleFactor}';
@@ -1382,6 +1415,10 @@
 		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
 		                      	
 		                      	var precision = '${relatedSerie.precision}';
+		                      	
+		                      	var showAbsValue = ${relatedSerie.showAbsValue};
+		                      	
+		                      	var showPercentage = ${relatedSerie.showPercentage};
 		                      	
 		                      	switch(scaleFactor.toUpperCase()) {
 		                      	
@@ -1413,9 +1450,28 @@
 	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
 		                      			break;
 		                      	
-		                      	}						
-	                        		                       
-	                          	return prefixValue + ' ' + newValue + ' ' + sufixValue;
+		                      	}		
+
+		             					   var groupTotal = this.series.data.map(x => x.y).reduce((a, b) => a + b, 0),
+		                 				
+		                 				   percentage = 100 * value/groupTotal;	
+		                 				     
+		                 				   var precisePercentage = percentage.toFixed(precision);		
+		                 				   
+		                 					if(showAbsValue && showPercentage){
+													return prefixValue + ' ' + newValue + ' '  + precisePercentage + '%' + sufixValue;
+											
+											} else if (!showAbsValue && !showPercentage){
+													return prefixValue + ' ' + sufixValue;
+
+											} else if (showAbsValue && !showPercentage){
+													return prefixValue + ' ' + newValue + ' ' + sufixValue;
+													
+											} else if(!showAbsValue && showPercentage){
+													return prefixValue + ' ' + precisePercentage + '%' + ' ' + sufixValue;
+													
+											}		                       
+	                   
 			            	},
 		                      
 	                    
@@ -1434,6 +1490,7 @@
 			#if ($relatedSerie.precision != '')
 				valueDecimals: $relatedSerie.precision,
 			#end
+				scaleFactor: '$relatedSerie.scaleFactor',
 				
 			#*
 				If background color for the serie tooltip is not defined (empty)
@@ -1486,14 +1543,15 @@
 		    	type: '$relatedSerieTypes[$counter]',
 		    	 #set ($counter = $counter+1)
 		    #end
+		
 			data: [
 				#foreach($el in  $map.get($valueKey))	
+				#if($el.y!="")		
 				{
 				
-					#if($el.y!="")
-						y: $el.y,
-					#end
+					y: $el.y,
 					name: '$el.name',
+					
 					datetype:"$datetype",
 					#if($isDateTime==true)
 					#if($datetype=="string")
@@ -1501,8 +1559,10 @@
 					#end
 					#end
 					
-				},	
-					
+				},
+				#end
+
+
 				#end	
 			], 
 						dataLabels: 
@@ -1590,6 +1650,61 @@
 		                      
 	                    
 	                	},
+	                	
+	                	tooltip: { 
+			#set($seriePrefix = $relatedSerie.prefixChar)
+			#if($seriePrefix != '')
+				valuePrefix: '$seriePrefix',
+			#end
+				 
+			#set($seriePostfix = $relatedSerie.postfixChar)
+			#if($seriePostfix != '')
+				valueSuffix: '$seriePostfix',
+			#end
+				
+			#if ($relatedSerie.precision != '')
+				valueDecimals: $relatedSerie.precision,
+			#end
+				scaleFactor: '$relatedSerie.scaleFactor',			
+			#*
+				If background color for the serie tooltip is not defined (empty)
+				take the default value (#FCFFC5) so the tooltip can be readable 
+				over the chart that stays behind it. Otherwise, take the value 
+				of the background color specified by the user.				
+				@author: danristo (danilo.ristovski@mht.net)
+			*#
+			#if ($relatedSerie.TOOLTIP.backgroundColor!="")
+                ttBackColor: '$relatedSerie.TOOLTIP.backgroundColor',
+            #else
+            	ttBackColor: '#FCFFC5',	## default background color for the serie tooltip
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.color != '')
+				ttColor: '$relatedSerie.TOOLTIP.style.color' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.align != '')
+				ttAlign: '$relatedSerie.TOOLTIP.style.align' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontFamily && $relatedSerie.TOOLTIP.style.fontFamily != '')
+				ttFont: '$relatedSerie.TOOLTIP.style.fontFamily' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontWeight != '')
+				ttFontWeight: '$relatedSerie.TOOLTIP.style.fontWeight' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontSize != '')
+				ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
+			#end
+			},
+		
+		#if($chartType != 'radar') 	
+    		#set($referencedAxis = $relatedSerie.axis)
+    		yAxis: $yAxisPositions[$referencedAxis]
+    	#end
+	    
 		},
 		#end
 	#end
@@ -1608,9 +1723,8 @@
         style: {
             padding: 0
         },
-        formatter: function() {
-      
-        	var ttColor = this.series.tooltipOptions.ttColor ? this.series.tooltipOptions.ttColor : '';
+        formatter: function() {   
+			var ttColor = this.series.tooltipOptions.ttColor ? this.series.tooltipOptions.ttColor : '';
         	var ttBackColor = this.series.tooltipOptions.ttBackColor ? this.series.tooltipOptions.ttBackColor : '';
         	
         	var ttAlign = this.series.tooltipOptions.ttAlign ? this.series.tooltipOptions.ttAlign : '';
@@ -1646,7 +1760,8 @@
         	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : 0;
         	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
         	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
-        	
+			var scaleFactor = this.series.tooltipOptions.scaleFactor ? this.series.tooltipOptions.scaleFactor : 'empty';
+        	    	
         	var thisValue = this.y;
         	
         	/*
@@ -1658,10 +1773,38 @@
         	*/
         	var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
         			thousandsSep = Highcharts.getOptions().lang.thousandsSep;
-        			
-    		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
-        	
-        	thisValue = valuePrefix + thisValue + valueSuffix;
+    		switch(scaleFactor.toUpperCase()) {
+		                      	
+				case "EMPTY":
+		               /* No selection is provided for the number to be displayed as the data label (pure value). */
+		               thisValue = Highcharts.numberFormat(thisValue,valueDecimals,decimalPoint,thousandsSep);		                      			
+		               break;
+				case "K":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,3),valueDecimals,decimalPoint,thousandsSep) + "k";	
+		               break;
+		        case "M":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,6),valueDecimals,decimalPoint,thousandsSep) + "M";	
+		               break;
+		        case "G":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,9),valueDecimals,decimalPoint,thousandsSep) + "G";
+		               break;
+	            case "T":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,12),valueDecimals,decimalPoint,thousandsSep) + "T";
+		               break;
+		        case "P":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,15),valueDecimals,decimalPoint,thousandsSep) + "P";
+		               break;
+	            case "E":
+		               thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,18),valueDecimals,decimalPoint,thousandsSep) + "E";
+		               break;
+	            default:
+	                   /* The same as for the case when user picked "no selection" - in case when the chart 
+	                   template does not contain the scale factor for current serie */
+	                   thisValue = Highcharts.numberFormat(thisValue,valueDecimals,decimalPoint,thousandsSep);	
+		               break;
+		                      	
+		    }
+		    thisValue = valuePrefix + thisValue + valueSuffix;  
         	
         	var format = "";
         	var drilling = false;
@@ -1741,21 +1884,48 @@
 	        	var yValueOnlyIndexStart = format.indexOf(formatIntro);
 	        	var yValueOnlyIndexEnd = format.indexOf(formatOutro);
 	        	
-	        	prefix = format.substring(0,yValueOnlyIndexStart) + " ";
+	        	prefix = this.series.options.tooltip.valuePrefix + " ";
 	        	
-	        	var separatorOfThousands = format.substring(yValueOnlyIndexStart + formatIntro.length, 
-	        											yValueOnlyIndexStart + formatIntro.length + 1);
+	        	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
 	        	
-	        	var decimalPoint = format.substring(yValueOnlyIndexStart + formatIntro.length + 1, 
-	        											yValueOnlyIndexStart + formatIntro.length + 2);	
+	        	var decimalPoint = Highcharts.getOptions().lang.decimalPoint;
 	        											
-	        	var precision = format.substring(yValueOnlyIndexStart + formatIntro.length + 2, 
-	        											yValueOnlyIndexEnd);
+	        	var valueDecimals = this.series.options.tooltip.valueDecimals;
+	        	var scaleFactor = this.series.options.tooltip.scaleFactor;
 	        				
-	        	postfix = " " + format.substring(yValueOnlyIndexEnd + formatOutro.length + 1,
-	        											format.length);
+	        	postfix = " " + this.series.options.tooltip.valueSuffix;
 	        	
-	        	thisValue = Highcharts.numberFormat(this.y, precision, decimalPoint, separatorOfThousands);
+				switch(scaleFactor.toUpperCase()) {
+		                      	
+					case "EMPTY":
+						   /* No selection is provided for the number to be displayed as the data label (pure value). */
+						   thisValue = Highcharts.numberFormat(this.y,valueDecimals,decimalPoint,thousandsSep);		                      			
+						   break;
+					case "K":
+						   thisValue = Highcharts.numberFormat(this.y/Math.pow(10,3),valueDecimals,decimalPoint,thousandsSep) + "k";	
+						   break;
+					case "M":
+						   thisValue = Highcharts.numberFormat(this.y/Math.pow(10,6),valueDecimals,decimalPoint,thousandsSep) + "M";	
+						   break;
+					case "G":
+						   thisValue = Highcharts.numberFormat(this.y/Math.pow(10,9),valueDecimals,decimalPoint,thousandsSep) + "G";
+						   break;
+					case "T":
+						   thisValue = Highcharts.numberFormat(this.y/Math.pow(10,12),valueDecimals,decimalPoint,thousandsSep) + "T";
+						   break;
+					case "P":
+						   thisValue = Highcharts.numberFormat(this.y/Math.pow(10,15),valueDecimals,decimalPoint,thousandsSep) + "P";
+						   break;
+					case "E":
+						   thisValue = Highcharts.numberFormat(this.y/Math.pow(10,18),valueDecimals,decimalPoint,thousandsSep) + "E";
+						   break;
+					default:
+						   /* The same as for the case when user picked "no selection" - in case when the chart 
+						   template does not contain the scale factor for current serie */
+						   thisValue = Highcharts.numberFormat(this.y,valueDecimals,decimalPoint,thousandsSep);	
+						   break;
+		                      	
+		    	}
         	}
         	
         	var fontStyle = "";
@@ -1791,7 +1961,7 @@
         		style of the fonts on the tooltip will be the same for every single font
         		element on it. HTML tag <strong> is removed.
         		@modifiedBy: danristo (danilo.ristovski@mht.net)
-        	*/ 	
+        	*/ 
             #if($isDateTime==true)
             
              result += '<span>' + Highcharts.dateFormat('$dateFormat', (this.x+86400000 )) + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
@@ -1822,7 +1992,11 @@
         activeAxisLabelStyle: 
         {
 			cursor: '',
-			color: '#0d233a',
+			#if($axisLabelColor!='')
+			color: '$axisLabelColor',
+			#else
+			color: '#0d233a',			
+			#end
 			fontWeight: 'bold',
 			textDecoration: 'none'			
 		},
@@ -1838,7 +2012,11 @@
 	        activeDataLabelStyle: 
 	        {
 				cursor: 'pointer',
-				color: '#0d233a',
+				#if($axisLabelColor!='')
+				color: '$axisLabelColor',
+				#else
+				color: '#0d233a',			
+				#end
 				fontWeight: 'bold',
 				textDecoration: 'none'			
 			}
@@ -1954,56 +2132,37 @@
    		
 	        column: {
 	        
-	        	stacking: "normal", 
-	        	   	 	
+	        	stacking: "normal",
 	    	 	dataLabels: {
 	                enabled: true
 	            }
-	            
 	        },
-      
-         
 	     	## (danristo)
 	        bar: {
-	        	
-				stacking: "normal", 
-	        	   	 	
+				stacking: "normal",
 	    	 	dataLabels: {
 	                enabled: true
 	            }
-	            
 	        },
-	        
       	#end
-      
-      
-      
-      
-        
         series: {
             cursor: 'pointer', 
             #if(!$exportWebApp)
             point: {
                #if($chart.isCockpitEngine=="false" && !$enableDrilldown)
-          
 					events:{
 						click: scope.chartInitializer.handleCrossNavigationTo,
 					}
-		         #elseif($chart.outcomingEventsEnabled == 'true')
+		         #elseif($chart.isCockpitEngine=="true")
 		              	events:{
 		                	click: handleCockpitSelection
 		            	}
-		            	
-		            	
 		         #end
-		         
             }, 
             #end
             dataLabels: {
                    allowOverlap: true,
-                   
             },
-            
             #* 
             	From Highcharts API: When a series contains a data array that is longer than this, 
             	only one dimensional arrays of numbers, or two dimensional arrays with x and y values 
@@ -2015,7 +2174,7 @@
             	
             	We will increase this value in order to display series that contain a data array bigger
             	than 1000 (default), because it is most likely that we will have this situation very 
-            	often.
+            	often. newcomment
             	
             	@author: danristo (danilo.ristovski@mht.net)
             *#

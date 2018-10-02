@@ -326,10 +326,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.manageCalendar")}}</label>
 			       </div> 
 			   </div>
-			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('manageCalendar')">
+			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('manageInternationalization')">
 				   <md-input-container class="small counter"> 
 			         <md-checkbox
-			           ng-change="setDirty()"  ng-model="selectedRole.ableToManageInternationalization" aria-label="check" name="Internationalization">
+			           ng-change="setDirty()"  ng-model="selectedRole.ableToManageInternationalization" aria-label="check" name="manageInternationalization">
 		        	 </md-checkbox> 
 			       </md-input-container>
 			       <div>
@@ -361,6 +361,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												 >
 										{{translate.load("sbi.roles.view");}}
 				</md-toolbar>
+				
+				
 				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('enableFederatedDataset')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
@@ -371,6 +373,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.enableFederatedDataset")}}</label>
 			       </div> 
 			   </div>
+			   
+			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('enableToRate')">
+                 <md-input-container class="small counter"> 
+                    <md-checkbox
+                     ng-change="setDirty()"  ng-model="selectedRole.ableToEnableRate" aria-label="check" name="enableToRate">
+                    </md-checkbox> 
+                   </md-input-container>
+                   <div >
+                    <label>{{translate.load("sbi.roles.enableToRate")}}</label>
+                   </div> 
+               </div>
+               
+               <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('enableToPrint')">
+                 <md-input-container class="small counter"> 
+                    <md-checkbox
+                     ng-change="setDirty()"  ng-model="selectedRole.ableToEnablePrint" aria-label="check" name="enableToPrint">
+                    </md-checkbox> 
+                   </md-input-container>
+                   <div >
+                    <label>{{translate.load("sbi.roles.enableToPrint")}}</label>
+                   </div> 
+               </div>
+               
+               <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('enableToCopyAndEmbed')">
+                 <md-input-container class="small counter"> 
+                    <md-checkbox
+                     ng-change="setDirty()"  ng-model="selectedRole.ableToEnableCopyAndEmbed" aria-label="check" name="enableToCopyAndEmbed">
+                    </md-checkbox> 
+                   </md-input-container>
+                   <div >
+                    <label>{{translate.load("sbi.roles.enableToCopyAndEmbed")}}</label>
+                   </div> 
+               </div>
 				
 				 <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('ITEMS')"
 												 >
@@ -496,7 +531,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                    </div> 
                </div>
 			
-				
 				</md-card>
 				 </md-content> </md-tab> 
 				<md-tab

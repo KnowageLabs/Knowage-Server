@@ -1,0 +1,85 @@
+.kn-documentDetails {
+    height: 100%;
+    .templateHistory .selected {
+        background-color: $tableSelectedElementColor;
+    }
+    .tabContainer {
+        height: calc(100% - 32px) !important;
+    }
+    md-menu {
+        padding: 0;
+    }
+    .flexButton {
+        display: flex;
+    }
+    .outputType {
+        text-transform: uppercase;
+        width: 40%;
+        display: inline-block;
+    }
+    .outputName {
+        width: 40%;
+        display: inline-block;
+    }
+    md-menu>.md-button {
+        text-align: left;
+        display: inline-block;
+        border-radius: 0;
+        margin: auto 0;
+        font-size: 15px;
+        text-transform: none;
+        font-weight: 400;
+        height: 100%;
+        padding-left: 16px;
+        padding-right: 16px;
+        width: 100%;
+    }
+    .kn-custom-tree {
+        position: relative;
+        &:before {
+            position: absolute;
+            top: 0;
+            bottom: 1rem;
+            left: -.5em;
+            display: block;
+            width: 0;
+            border-left: 1px dashed #777;
+            content: "";
+        }
+        md-checkbox {
+            margin-bottom: 0;
+        }
+        .item {
+            height: 32px;
+            position: relative;
+            &:last-child::before {
+                height: 50%;
+            }
+            &:after {
+                border-top: 1px dashed #777;
+                border-bottom: 0;
+                border-left: 0;
+                bottom: 0;
+                left: -.2rem;
+                top: 1rem;
+                width: 1rem;
+                height: auto;
+                content: "";
+                position: absolute;
+            }
+            .fa::before {
+                position: relative;
+                z-index: 2;
+                background-color: white;
+            }
+        }
+        .expandedItems {
+            padding-left: 20px;
+        }
+    }
+    md-list md-list-item.md-2-line,
+    md-list md-list-item.md-2-line .md-button {
+        min-height: 42px;
+        height: 42px;
+    }
+}

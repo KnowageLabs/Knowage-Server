@@ -30,7 +30,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.log4j.Logger;
-
 import org.pivot4j.PivotModel;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
@@ -57,8 +56,8 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 	public Response exportEditTableCSV(@PathParam("version") int version, @PathParam("fieldDelimiter") String fieldDelimiter) {
 
 		byte[] csv = null;
-		//String text = "dragan";
-		//csv = text.getBytes();
+		// String text = "dragan";
+		// csv = text.getBytes();
 		Connection connection;
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		String fileName = EXPORT_FILE_NAME + "-" + (new Date()).toLocaleString() + ".csv";
@@ -70,7 +69,7 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 		IDataSource dataSource = ei.getDataSource();
 		try {
 			logger.debug("Getting the connection to DB");
-			connection = dataSource.getConnection(null);
+			connection = dataSource.getConnection();
 		} catch (Exception e) {
 			logger.error("Error opening connection to datasource " + dataSource.getLabel());
 			throw new SpagoBIRuntimeException("Error opening connection to datasource " + dataSource.getLabel(), e);
@@ -97,11 +96,9 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 		response.header("Content-Disposition", "attachment; filename=" + fileName);
 		response.header("Content-Transfer-Encoding", "binary");
 
-
 		return response.build();
 
-
-		//return Response.ok(csv, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
+		// return Response.ok(csv, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
 
 	}
 
@@ -120,7 +117,7 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 		IDataSource dataSource = ei.getDataSource();
 		try {
 			logger.debug("Getting the connection to DB");
-			connection = dataSource.getConnection(null);
+			connection = dataSource.getConnection();
 		} catch (Exception e) {
 			logger.error("Error opening connection to datasource " + dataSource.getLabel());
 			throw new SpagoBIRuntimeException("Error opening connection to datasource " + dataSource.getLabel(), e);

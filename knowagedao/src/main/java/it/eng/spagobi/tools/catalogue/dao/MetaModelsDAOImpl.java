@@ -441,7 +441,6 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			hibModel.setCategory(model.getCategory());
 			hibModel.setModelLocker(model.getModelLocker());
 			hibModel.setModelLocked(model.getModelLocked());
-
 			if (model.getDataSourceLabel() != null && !model.getDataSourceLabel().equals("")) {
 				// Criterion aCriterion = Expression.eq("label", model.getDataSourceLabel());
 				// Criteria criteria = session.createCriteria(SbiDataSource.class);
@@ -573,9 +572,12 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			}
 
 			// set to not active the current active template
-			String hql = " update SbiMetaModelContent mmc set mmc.active = false where mmc.active = true and mmc.model.id = ? ";
+			String hql = " update SbiMetaModelContent mmc set mmc.active = ? where mmc.active = ? and mmc.model.id = ? ";
 			Query query = session.createQuery(hql);
-			query.setInteger(0, modelId.intValue());
+			query.setBoolean(0, false);
+			query.setBoolean(1, true);
+			query.setInteger(2, modelId.intValue());
+
 			logger.debug("Updates the current content of model " + modelId + " with active = false.");
 			query.executeUpdate();
 			// get the next prog for the new content
@@ -655,9 +657,11 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			}
 
 			// set to not active the current active template
-			String hql = " update SbiMetaModelContent mmc set mmc.active = false where mmc.active = true and mmc.model.id = ? ";
+			String hql = " update SbiMetaModelContent mmc set mmc.active = ? where mmc.active = ? and mmc.model.id = ? ";
 			Query query = session.createQuery(hql);
-			query.setInteger(0, modelId.intValue());
+			query.setBoolean(0, false);
+			query.setBoolean(1, true);
+			query.setInteger(2, modelId.intValue());
 			logger.debug("Updates the current content of model " + modelId + " with active = false.");
 			query.executeUpdate();
 			// get the next prog for the new content
@@ -834,8 +838,9 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
-			Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.id = ? and mmc.active = true ");
+			Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.id = ? and mmc.active = ? ");
 			query.setInteger(0, modelId);
+			query.setBoolean(1, true);
 			SbiMetaModelContent hibContent = (SbiMetaModelContent) query.uniqueResult();
 			logger.debug("Content loaded");
 
@@ -882,8 +887,9 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
-			Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.name = ? and mmc.active = true ");
+			Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.name = ? and mmc.active = ? ");
 			query.setString(0, modelName);
+			query.setBoolean(1, true);
 			SbiMetaModelContent hibContent = (SbiMetaModelContent) query.uniqueResult();
 			logger.debug("Content loaded");
 
@@ -1039,19 +1045,22 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			}
 
 			// set to not active the current active template
-			String hql = " update SbiMetaModelContent mmc set mmc.active = false where mmc.active = true and mmc.model.id = ? ";
+			String hql = " update SbiMetaModelContent mmc set mmc.active = ? where mmc.active = ? and mmc.model.id = ? ";
 			Query query = session.createQuery(hql);
-			query.setInteger(0, modelId.intValue());
+			query.setBoolean(0, false);
+			query.setBoolean(1, true);
+			query.setInteger(2, modelId.intValue());
 			logger.debug("Updates the current content of model " + modelId + " with active = false.");
 			query.executeUpdate();
 
 			// set to active the new active template
-			hql = " update SbiMetaModelContent mmc set mmc.active = true where mmc.id = ? and mmc.model.id = ? ";
-			query = session.createQuery(hql);
-			query.setInteger(0, contentId);
-			query.setInteger(1, modelId.intValue());
-			logger.debug("Updates the current content " + contentId + " of model " + modelId + " with active = true.");
-			query.executeUpdate();
+            hql = " update SbiMetaModelContent mmc set mmc.active = ? where mmc.id = ? and mmc.model.id = ? ";
+            query = session.createQuery(hql);
+            query.setBoolean(0, true);
+            query.setInteger(1, contentId);
+            query.setInteger(2, modelId.intValue());
+            logger.debug("Updates the current content " + contentId + " of model " + modelId + " with active = true.");
+            query.executeUpdate();
 
 			transaction.commit();
 
@@ -1235,8 +1244,9 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
-			Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.name = ? and mmc.active = true ");
+			Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.name = ? and mmc.active = ? ");
 			query.setString(0, modelName);
+			query.setBoolean(1, true);
 			SbiMetaModelContent hibContent = (SbiMetaModelContent) query.uniqueResult();
 			logger.debug("Content loaded");
 

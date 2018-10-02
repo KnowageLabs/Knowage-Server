@@ -1,7 +1,7 @@
 <md-content class="filters" layout="column" layout-fill ng-cloak>
 	<md-card ng-if="ngModelShared.filters!=undefined" >
-		<md-card-content layout="column">
-			<div layout="row" layout-align="center center" ng-show="ngModelShared.type != 'static-pivot-table' || ngModelShared.limitRows.enable == true">
+		<md-card-content layout="column" class="noPadding">
+			<div layout="row" layout-align="center center" ng-show="ngModelShared.type != 'static-pivot-table' || ngModelShared.limitRows.enable == true" layout-padding>
 				<md-switch ng-model="ngModelShared.limitRows.enable" aria-label="Limit rows">
 					{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.limitrows")}} &nbsp;
 				</md-switch>
@@ -15,18 +15,16 @@
 			<div layout="row" layout-align="center center">
 				<div class="kn-info" flex=80>{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.filters.info")}}</div>
 			</div>
-			
-			
-			<div layout="row" layout-align="left center">
-			    <label>{{translate.load("sbi.cockpit.widgets.filtersConfiguration.addButtonLabel")}}</label>
-			   	<md-button  class="md-icon-button" ng-click="addNewFilter()" ng-show="newFilterAddMode == false && newFilterEditMode == false">
-            		<md-icon md-font-icon="fa fa-plus">
-            		</md-icon>
-            	</md-button>
-			</div>			
-			
+			         	
+			<md-subheader class="noPadding">
+				<div layout="row" layout-align="start center">
+					<span layout-padding>Current Filters</span>
+					<span flex></span>
+					<md-button ng-click="addNewFilter()" ng-show="newFilterAddMode == false && newFilterEditMode == false">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.addButtonLabel")}}</md-button>
+				</div>
+			</md-subheader>
 			<!-- New Filter definition Row -->
-			<div layout="row" layout-align="left center" ng-show="newFilterAddMode == true || newFilterEditMode == true">
+			<div layout="row" layout-align="start center" ng-show="newFilterAddMode == true || newFilterEditMode == true" layout-padding>
 			
 	      		<md-input-container flex=15 >
 	                <label>{{translate.load("sbi.cockpit.dataset")}}</label>
@@ -82,21 +80,21 @@
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') == -1 && newFilter.type.toLowerCase().indexOf('timestamp') == -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.value")}}</label>
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.value")}}: yyyy-MM-dd hh:mm:ss</label>
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('timestamp') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.value")}}: yyyy-MM-dd hh:mm:ss.SSS</label>	
-	                <input   maxlength="100" type="text" ng-model="newFilter.filterVal1" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
+	                <input maxlength="500" type="text" ng-model="newFilter.filterVal1" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
 	      		</md-input-container>
       		
 				<md-input-container flex=35 ng-show="newFilter.filterOperator == 'range'"> 
 					<label ng-show="newFilter.type.toLowerCase().indexOf('date') == -1 && newFilter.type.toLowerCase().indexOf('timestamp') == -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.from")}}</label>
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.from")}}: yyyy-MM-dd hh:mm:ss</label>
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('timestamp') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.from")}}: yyyy-MM-dd hh:mm:ss.SSS</label>
-					<input maxlength="100" type="text" ng-model="newFilter.filterVal1" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
+					<input maxlength="500" type="text" ng-model="newFilter.filterVal1" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
 				</md-input-container>
 				
                 <md-input-container  flex=35 ng-show="newFilter.filterOperator == 'range'"> 
 					<label ng-show="newFilter.type.toLowerCase().indexOf('date') == -1 && newFilter.type.toLowerCase().indexOf('timestamp') == -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.to")}}</label>
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('date') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.to")}}: yyyy-MM-dd hh:mm:ss</label>
 	                <label ng-show="newFilter.type.toLowerCase().indexOf('timestamp') > -1">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.to")}}: yyyy-MM-dd hh:mm:ss.SSS</label>
-	                <input maxlength="100" type="text" ng-model="newFilter.filterVal2" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
+	                <input maxlength="500" type="text" ng-model="newFilter.filterVal2" ng-disabled="newFilterAddMode == false && newFilterEditMode == false"> 
             	</md-input-container>
             	
             	<div flex></div>
@@ -110,12 +108,9 @@
             		<md-icon md-font-icon="fa fa-eraser"></md-icon>
             		<md-tooltip md-delay="1000" >{{translate.load("sbi.cockpit.widgets.filtersConfiguration.clearNewFilter")}}</md-tooltip>
             	</md-button> 
-
-		            
-	            	
-			</div> 
-			
-			<div layout="row" layout-align="left center">
+            	
+           	</div>
+			<div layout="row" layout-align="left center" layout-padding ng-show="!isObjectEmpty(ngModelShared.filters)">
 			      <angular-table flex 
 			      			id='cockpitFilters' 
 			      			ng-model="ngModelShared.filters"
@@ -127,19 +122,16 @@
 							highlights-selected-item=true 
 							click-function = "selectRowFilter(row,column,listId,index,evt,columnName)"
 							speed-menu-option= actionsOnSelectionFilters
-		/> 
-		
-		</div>
+					/> 		
+			</div>
+			<div layout="row" layout-align="center center" ng-if="isObjectEmpty(ngModelShared.filters) && !newFilterAddMode && !newFilterEditMode">
+				<div class="kn-noItems">{{translate.load("sbi.cockpit.widgets.filtersConfiguration.noFilter")}}</div>
+			</div>
 
 		</md-card-content>
 	</md-card>
-	
-	<md-card ng-if="ngModelShared.filters==undefined">
-		<md-card class="noWidget ng-scope _md md-knowage-theme">
-			<md-card-content layout-align="center center" class="layout-align-center-center">
-				{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.specifydatasettofilter")}}
-			</md-card-content>
-		</md-card>
-	</md-card>
+	<div layout="row" ng-if="!ngModelShared.filters" layout-align="center center">
+		<div class="kn-noItems">{{translate.load('sbi.cockpit.table.missingdataset')}}</div>
+	</div>
 	
 </md-content>

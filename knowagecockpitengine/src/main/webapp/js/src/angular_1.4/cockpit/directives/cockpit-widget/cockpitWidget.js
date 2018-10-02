@@ -154,7 +154,19 @@ angular.module('cockpitModule')
 	                        		dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId)
 	                    		}
 
-	                    		scope.updateble=objType.updateble==undefined? true : objType.updateble;
+	                    		if(scope.ngModel.type.toLowerCase()=="chart" && scope.ngModel.drillable == undefined){
+	                    			if(scope.ngModel.cliccable){
+	                    				scope.ngModel.drillable = false;	
+	                    			} else {
+	                    				scope.ngModel.drillable = true;
+	                    			}
+	                    			
+	                    		}
+	                    		if(scope.ngModel.type == "selector"){
+	                    			scope.updateble = true;
+	                    		}else{
+	                    			scope.updateble=objType.updateble==undefined? true : objType.updateble;
+	                    		}
 	                    		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
 
 	                    		if(objType!=undefined){
@@ -260,8 +272,10 @@ function cockpitWidgetControllerFunction(
 			$scope.widgetActionButtonsVisible=false;
 		}
 	}
-
-	$scope.widgetClass = 'cockpit-widget-card-' + $scope.ngModel.type;
+	
+	if($scope.ngModel.style && $scope.ngModel.style.title && $scope.ngModel.style.title.label){
+		$scope.ngModel.content.name = $scope.ngModel.style.title.label;
+	}
 
 	// davverna - initializing search object to give all the columns to the user searchbar
 	if($scope.ngModel.type.toLowerCase() == "table" && (!$scope.ngModel.search || $scope.ngModel.search.columns == [])){
@@ -341,12 +355,14 @@ function cockpitWidgetControllerFunction(
 		switch(eventType){
 		case "REFRESH"  :
 			if($scope.refresh==undefined){
-				$timeout(function(){
+				/*$timeout(function(){
 					$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
-				},1000);
+				},1000);*/
+				$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
+			
 			}else{
-//				$scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection, config.changedChartType,config.chartConf);
-				$scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection, config.changedChartType,config.chartConf,config.options);
+																																								
+				$scope.refresh(config.element,config.width,config.height,config.data,config.nature,config.associativeSelection,config.changedChartType,config.chartConf,config.options);
 			}
 			break;
 		case "INIT" :
@@ -429,8 +445,8 @@ function cockpitWidgetControllerFunction(
 	}
 
 	$scope.updateFromDatasetFilter=function(label){
-//		var dataset= $scope.getDataset();
-		var dataset = $scope.getDataset(label);
+		var dataset= $scope.getDataset(label);
+										 
 
 		if($scope.ngModel.updateble==false){
 			if(dataset && $scope.cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
@@ -446,10 +462,10 @@ function cockpitWidgetControllerFunction(
 				(angular.isString(label) && angular.equals(label,dataset.label))
 			)
 		){
-			var options = {};
-			options.label = label;
-//			$scope.refreshWidget(undefined,'filters');
+					
+						 
 			$scope.refreshWidget(options,'filters');
+										   
 
 		}
 	}
@@ -472,6 +488,8 @@ function cockpitWidgetControllerFunction(
 
 	$scope.cloneWidget = function(){
 		var newModel = angular.copy($scope.ngModel);
+		delete newModel.col;
+		delete newModel.row;
 		newModel.id = new Date().getTime();
 		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
 	}
@@ -595,7 +613,21 @@ function cockpitWidgetControllerFunction(
 	    });
 	}
 
-	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId){
+	$scope.chartsForDrill = ["bar","pie","line","treemap"]
+	$scope.changeClickability = function(){
+		if($scope.ngModel.cliccable && !$scope.ngModel.drillable){
+			$scope.ngModel.cliccable = false;
+			$scope.ngModel.drillable = true;
+		} else if(!$scope.ngModel.cliccable && $scope.ngModel.drillable){
+			$scope.ngModel.cliccable = false;
+			$scope.ngModel.drillable = false;
+		}  else {
+			$scope.ngModel.cliccable = true;
+			$scope.ngModel.drillable = false;
+		}
+		$scope.$broadcast("drillClick",{ "drillable": $scope.ngModel.drillable, "cliccable": $scope.ngModel.cliccable});;
+	}
+	$scope.doSelection = function(columnName,columnValue,modalColumn,modalValue,row, skipRefresh, dsId){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
@@ -775,7 +807,7 @@ function cockpitWidgetControllerFunction(
 
 		var dataset = dsId != undefined ? cockpitModule_datasetServices.getDatasetById(dsId) : $scope.getDataset();
 
-		if(dataset && columnName){
+		if(dataset && columnName){					
 
 			if(modalColumn!=undefined && modalValue!=undefined)
 			{
@@ -1035,10 +1067,10 @@ function cockpitWidgetControllerFunction(
 		}
 
 		// update widgets background color
-		if($scope.extendedStyle.backgroundColor!=undefined) {
-			var tempBackGround={'background-color': $scope.extendedStyle.backgroundColor};
-			angular.merge($scope.borderShadowStyle,tempBackGround);
-		}
+													   
+		var tempBackGround={'background-color': $scope.extendedStyle.backgroundColor || ''};
+		angular.merge($scope.borderShadowStyle,tempBackGround);
+   
 
 		// update sheets background color
 		if($scope.extendedStyle.sheetsBackgroundColor!=undefined && $scope.cockpitModule_template.style) {

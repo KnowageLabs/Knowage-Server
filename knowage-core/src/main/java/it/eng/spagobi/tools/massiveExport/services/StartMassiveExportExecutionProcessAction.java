@@ -18,17 +18,6 @@
 
 package it.eng.spagobi.tools.massiveExport.services;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -46,6 +35,16 @@ import it.eng.spagobi.tools.massiveExport.utils.Utilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class StartMassiveExportExecutionProcessAction extends GetParametersForExecutionAction {
 
@@ -73,16 +72,8 @@ public class StartMassiveExportExecutionProcessAction extends GetParametersForEx
 	public void doService() {
 		logger.debug("IN");
 
-		IBIObjectDAO biObjDao;
-		ILowFunctionalityDAO funcDao;
-
-		try {
-			biObjDao = DAOFactory.getBIObjectDAO();
-			funcDao = DAOFactory.getLowFunctionalityDAO();
-		} catch (EMFUserError e1) {
-			logger.error(e1.getMessage(), e1);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Error occurred", e1);
-		}
+		IBIObjectDAO biObjDao = DAOFactory.getBIObjectDAO();
+		ILowFunctionalityDAO funcDao = DAOFactory.getLowFunctionalityDAO();
 
 		Integer folderId = this.getAttributeAsInteger(FUNCTIONALITY_ID);
 		String modality = this.getAttributeAsString(MODALITY);

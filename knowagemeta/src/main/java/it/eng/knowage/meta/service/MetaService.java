@@ -946,17 +946,31 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/updatePhysicalModel")
-	public Response updatePhysicalModel(@Context HttpServletRequest req) throws ClassNotFoundException, NamingException, SQLException, JSONException {
+	public Response updatePhysicalModel(@Context HttpServletRequest req)
+			throws ClassNotFoundException, NamingException, SQLException, JSONException, EMFUserError {
 		PhysicalModelInitializer physicalModelInitializer = new PhysicalModelInitializer();
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		ECrossReferenceAdapter crossReferenceAdapter = (ECrossReferenceAdapter) req.getSession().getAttribute(EMF_MODEL_CROSS_REFERENCE);
 		physicalModelInitializer.setCrossReferenceAdapter(crossReferenceAdapter);
 
-		PhysicalModel phyMod = model.getPhysicalModels().get(0);
-		IDataSource dataSource = phyMod.getDataSource();
-		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
-		List<String> missingColumns = physicalModelInitializer.getMissingColumnsNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
-		List<String> removingItems = physicalModelInitializer.getRemovedTablesAndColumnsNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
+		String modelName = model.getName();
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+		businessModelsDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		if (profile != null) {
+			UserProfile userProfile = (UserProfile) profile;
+			TenantManager.setTenant(new Tenant(userProfile.getOrganization()));
+		}
+		MetaModel metamodel = businessModelsDAO.loadMetaModelByName(modelName);
+		String dataSourceLabel = metamodel.getDataSourceLabel();
+		IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+		IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceLabel);
+		// PhysicalModel phyMod = model.getPhysicalModels().get(0);
+		// IDataSource dataSource = phyMod.getDataSource();
+
+		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource, model.getPhysicalModels().get(0));
+		List<String> missingColumns = physicalModelInitializer.getMissingColumnsNames(dataSource, model.getPhysicalModels().get(0));
+		List<String> removingItems = physicalModelInitializer.getRemovedTablesAndColumnsNames(dataSource, model.getPhysicalModels().get(0));
 		JSONObject resp = new JSONObject();
 		resp.put("missingTables", new JSONArray(JsonConverter.objectToJson(missingTables, missingTables.getClass())));
 		resp.put("missingColumns", new JSONArray(JsonConverter.objectToJson(missingColumns, missingColumns.getClass())));
@@ -1048,6 +1062,44 @@ public class MetaService extends AbstractSpagoBIResource {
 		String businessModelUniqueName = json.getString("businessModelUniqueName");
 		BusinessColumnSet currBM = model.getBusinessModels().get(0).getTableByUniqueName(businessModelUniqueName);
 		SimpleBusinessColumn columnToDelete = currBM.getSimpleBusinessColumnByUniqueName(businessColumnUniqueName);
+		if (columnToDelete.isIdentifier() || columnToDelete.isPartOfCompositeIdentifier()) {
+			// cannot delete because is an identifier
+			JSONObject jsonObject = new JSONObject();
+			JSONArray jsonArray = new JSONArray();
+			JSONObject jsonObjectMessage = new JSONObject();
+			jsonObjectMessage.put("message", "Cannot delete column used as identifier, please unset it as identifier first");
+			jsonArray.put(jsonObjectMessage);
+			jsonObject.put("errors", jsonArray);
+			return Response.status(Response.Status.BAD_REQUEST).entity(jsonObject.toString()).build();
+
+		}
+		// check if columns is used in a business relationship, if yes the delete is not possible
+		List<BusinessRelationship> businessRelationships = currBM.getRelationships();
+		boolean canDelete = true;
+		for (BusinessRelationship businessRelationship : businessRelationships) {
+			List<SimpleBusinessColumn> sourceColumns = businessRelationship.getSourceSimpleBusinessColumns();
+			if (sourceColumns.contains(columnToDelete)) {
+				canDelete = false;
+				break;
+			}
+			List<SimpleBusinessColumn> destinationColumns = businessRelationship.getDestinationSimpleBusinessColumns();
+			if (destinationColumns.contains(columnToDelete)) {
+				canDelete = false;
+				break;
+			}
+
+		}
+		if (!canDelete) {
+			// cannot delete column is inside a business relationship
+			JSONObject jsonObject = new JSONObject();
+			JSONArray jsonArray = new JSONArray();
+			JSONObject jsonObjectMessage = new JSONObject();
+			jsonObjectMessage.put("message", "Cannot delete column used in a business relationship, please remove the relationship first");
+			jsonArray.put(jsonObjectMessage);
+			jsonObject.put("errors", jsonArray);
+			return Response.status(Response.Status.BAD_REQUEST).entity(jsonObject.toString()).build();
+		}
+
 		columnToDelete.setIdentifier(false);
 		currBM.getColumns().remove(columnToDelete);
 

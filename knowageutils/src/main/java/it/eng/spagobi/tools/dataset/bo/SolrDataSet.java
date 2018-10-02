@@ -17,234 +17,191 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.SolrDataProxy;
-import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader.JSONPathAttribute;
+import it.eng.spagobi.tools.dataset.common.datareader.CompositeSolrDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.FacetSolrDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.SolrDataReader;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
+import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
 import it.eng.spagobi.tools.dataset.notifier.fiware.OAuth2Utils;
+import it.eng.spagobi.tools.dataset.solr.SolrConfiguration;
 import it.eng.spagobi.utilities.exceptions.ConfigurationException;
 import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
+import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SolrDataSet extends RESTDataSet {
 
-	public static final String DATASET_TYPE = "SbiSolrDataSet";
-	private static final Logger logger = Logger.getLogger(SolrDataSet.class);
-	private boolean isFacet = true;
+    public static final String DATASET_TYPE = "SbiSolrDataSet";
+    private static final Logger logger = Logger.getLogger(SolrDataSet.class);
 
-	public SolrDataSet() {
+    protected SolrConfiguration solrConfiguration;
 
-	};
+    public SolrDataSet(SpagoBiDataSet dataSetConfig) {
+        super(dataSetConfig);
 
-	public SolrDataSet(SpagoBiDataSet dataSetConfig) {
-		super(dataSetConfig);
+    }
 
-	}
+    public SolrDataSet(JSONObject jsonConf) {
+        setConfiguration(jsonConf.toString());
+        initConf(jsonConf, false);
 
-	public SolrDataSet(JSONObject jsonConf) {
-		this();
-		setConfiguration(jsonConf.toString());
-		initConf(jsonConf, false);
+    }
 
-	}
+    public SolrDataSet(JSONObject jsonConf, HashMap<String, String> parametersMap) {
+        this.setParamsMap(parametersMap);
+        setConfiguration(jsonConf.toString());
+        initConf(jsonConf, true);
 
-	public SolrDataSet(JSONObject jsonConf, HashMap<String, String> parametersMap) {
-		this();
-		this.setParamsMap(parametersMap);
-		setConfiguration(jsonConf.toString());
-		initConf(jsonConf, true);
+    }
 
-	}
+    @Override
+    public void initConf(JSONObject jsonConf, boolean resolveParams) {
+        initSolrConfiguration(jsonConf, resolveParams);
+        initDataProxy(jsonConf, resolveParams);
+        initDataReader(jsonConf, resolveParams);
+    }
 
-	@Override
-	public void initConf(JSONObject jsonConf, boolean resolveParams) {
-		String solrType = getProp(DataSetConstants.SOLR_TYPE, jsonConf, false, resolveParams);
-		isFacet = solrType == null || !solrType.equals(DataSetConstants.SOLR_TYPE_DOCUMENT);
-		initDataProxy(jsonConf, resolveParams);
-		initDataReader(jsonConf, resolveParams);
-	}
+    protected void initSolrConfiguration(JSONObject jsonConf, boolean resolveParams) {
+        try {
+            solrConfiguration = new SolrConfiguration();
+            String address = getProp(SolrDataSetConstants.SOLR_BASE_ADDRESS, jsonConf, false, resolveParams);
+            solrConfiguration.setUrl(address);
+            String collection = getProp(SolrDataSetConstants.SOLR_COLLECTION, jsonConf, false, resolveParams);
+            solrConfiguration.setCollection(collection);
+            SolrQuery solrQuery = new SolrQuery();
+            String query = getProp(SolrDataSetConstants.SOLR_QUERY, jsonConf, true, resolveParams);
+            if (query == null || query.isEmpty()) {
+                query = "*.*";
+            }
+            solrQuery.setQuery(query);
+            String fieldList = getProp(SolrDataSetConstants.SOLR_FIELD_LIST, jsonConf, true, resolveParams);
+            if(fieldList != null && !fieldList.trim().isEmpty()) {
+                solrQuery.setFields(fieldList.split(","));
+            }
 
-	private void initDataReader(JSONObject jsonConf, boolean resolveParams) {
-		// json data reader attributes
+            List<Couple<String, String>> filterQueries = getListProp(SolrDataSetConstants.SOLR_FILTER_QUERY, jsonConf, true);
+            if (filterQueries != null && !filterQueries.isEmpty()) {
+                String[] array = new String[filterQueries.size()];
+                for (int i = 0; i < array.length; i++) {
+                    array[i] = filterQueries.get(i).getFirst() + ":" + filterQueries.get(i).getSecond();
+                }
+                solrQuery.setFilterQueries(array);
+            }
+            solrQuery.setFacet(isFacet());
+            solrConfiguration.setSolrQuery(solrQuery);
+        } catch (JSONException e) {
+            throw new ConfigurationException("Problems in configuration of solr query", e);
+        }
+    }
 
-		if (!isFacet) {
-			logger.debug("Reading Solr dataste documents");
-			List<JSONPathAttribute> jsonPathAttributes;
-			try {
-				jsonPathAttributes = getJsonPathAttributes(DataSetConstants.REST_JSON_PATH_ATTRIBUTES, jsonConf, resolveParams);
-			} catch (JSONException e) {
-				throw new ConfigurationException("Problems in configuration of data reader", e);
-			}
+    protected void initDataReader(JSONObject jsonConf, boolean resolveParams) {
+        logger.debug("Reading Solr dataset documents");
 
-			String directlyAttributes = getProp(DataSetConstants.REST_JSON_DIRECTLY_ATTRIBUTES, jsonConf, true, resolveParams);
+        String[] fields = solrConfiguration.getSolrQuery().getFields().split(",");
+        List<JSONPathDataReader.JSONPathAttribute> jsonPathAttributes = new ArrayList<>(fields.length);
+        for(int i = 0; i < fields.length; i++) {
+            jsonPathAttributes.add(new JSONPathDataReader.JSONPathAttribute(fields[i], "$." + fields[i], "string"));
+        }
+        setDataReader(new SolrDataReader("$.response.docs.[*]", jsonPathAttributes));
+    }
 
-			setDataReader(new SolrDataReader("$.response.docs.[*]", jsonPathAttributes, Boolean.parseBoolean(directlyAttributes)));
+    private void initDataProxy(JSONObject jsonConf, boolean resolveParams) {
+        Map<String, String> requestHeaders = getRequestHeaders(jsonConf, resolveParams);
 
-		} else {
-			logger.debug("Reading Solr dataset facets");
-			if (getProp(DataSetConstants.SOLR_FACET_QUERY, jsonConf, true, resolveParams) != null) {
-				setDataReader(new SolrDataReader("$.facet_counts.facet_queries", true, true));
-			} else {
-				setDataReader(new SolrDataReader("$.facet_counts.facet_fields.*.[*]", true, false));
-			}
+        // Pagination parameters
+        String offset = getProp(RESTDataSetConstants.REST_OFFSET, jsonConf, true, resolveParams);
+        String fetchSize = getProp(RESTDataSetConstants.REST_FETCH_SIZE, jsonConf, true, resolveParams);
+        String maxResults = getProp(RESTDataSetConstants.REST_MAX_RESULTS, jsonConf, true, resolveParams);
 
-		}
+        String facetField = getSolrFacetField(jsonConf, resolveParams);
+        setDataProxy(new SolrDataProxy(solrConfiguration.toString(), HttpMethod.Get, facetField, requestHeaders, offset, fetchSize, maxResults, isFacet()));
+    }
 
-	}
+    protected String getSolrFacetField(JSONObject jsonConf, boolean resolveParams) {
+        return null;
+    }
 
-	private void initDataProxy(JSONObject jsonConf, boolean resolveParams) {
-		// data proxy attributes
-		String address = getProp(DataSetConstants.REST_ADDRESS, jsonConf, false, resolveParams);
+    private Map<String, String> getRequestHeaders(JSONObject jsonConf, boolean resolveParams) {
+        Map<String, String> requestHeaders;
+        try {
+            requestHeaders = getRequestHeadersPropMap(RESTDataSetConstants.REST_REQUEST_HEADERS, jsonConf, resolveParams);
 
-		HttpMethod methodEnum = HttpMethod.Get;
+            // add bearer token for OAuth Fiware
+            if (resolveParams && OAuth2Utils.isOAuth2() && !OAuth2Utils.containsOAuth2(requestHeaders)) {
+                String oAuth2Token = getOAuth2Token();
+                if (oAuth2Token != null) {
+                    requestHeaders.putAll(OAuth2Utils.getOAuth2Headers(oAuth2Token));
+                }
+            }
+            return requestHeaders;
+        } catch (Exception e) {
+            throw new ConfigurationException("Problems in configuration of data proxy", e);
+        }
+    }
 
-		Map<String, String> requestHeaders;
-		try {
-			requestHeaders = getRequestHeadersPropMap(DataSetConstants.REST_REQUEST_HEADERS, jsonConf, resolveParams);
+    protected boolean isFacet() {
+        return false;
+    }
 
-			// add bearer token for OAuth Fiware
-			if (resolveParams && OAuth2Utils.isOAuth2() && !OAuth2Utils.containsOAuth2(requestHeaders)) {
-				String oAuth2Token = getOAuth2Token();
-				if (oAuth2Token != null) {
-					requestHeaders.putAll(OAuth2Utils.getOAuth2Headers(oAuth2Token));
-				}
-			}
-		} catch (Exception e) {
-			throw new ConfigurationException("Problems in configuration of data proxy", e);
-		}
+    public SolrQuery getSolrQuery() {
+        return solrConfiguration.getSolrQuery();
+    }
 
-		// Pagination parameters
-		String offset = getProp(DataSetConstants.REST_OFFSET, jsonConf, true, resolveParams);
+    public String getSolrUrl() {
+        return solrConfiguration.getUrl();
+    }
 
-		String fetchSize = getProp(DataSetConstants.REST_FETCH_SIZE, jsonConf, true, resolveParams);
+    public String getSolrCollection() { return solrConfiguration.getCollection(); }
 
-		String maxResults = getProp(DataSetConstants.REST_MAX_RESULTS, jsonConf, true, resolveParams);
+    public String getSolrUrlWithCollection() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(solrConfiguration.getUrl());
+        if(!solrConfiguration.getUrl().endsWith("/")) sb.append("/");
+        sb.append(solrConfiguration.getCollection());
+        return sb.toString();
+    }
 
-		StringBuilder addressBuilder = new StringBuilder(address);
+    public void setSolrQuery(SolrQuery solrQuery) {
+        solrConfiguration.setSolrQuery(solrQuery);
+        try {
+            JSONObject jsonConfiguration = new JSONObject(configuration);
+            initDataProxy(jsonConfiguration, true);
+            initDataReader(jsonConfiguration, true);
+            String[] facets = solrQuery.getFacetFields();
+            if(facets != null) {
+                CompositeSolrDataReader compositeSolrDataReader = new CompositeSolrDataReader((SolrDataReader)dataReader);
 
-		addQueryParam(addressBuilder, jsonConf, resolveParams);
+                for(int i = 0; i < facets.length; i++) {
+                    FacetSolrDataReader facetSolrDataReader = new FacetSolrDataReader("$.facets.facet_fields." + facets[i] + ".buskets.[*]");
+                    facetSolrDataReader.setFacetField(facets[i]);
+                    facetSolrDataReader.setCalculateResultNumberEnabled(true);
+                    compositeSolrDataReader.addFacetSolrDataReader(facetSolrDataReader);
+                }
+                setDataReader(compositeSolrDataReader);
+            }
+        } catch (JSONException e) {
+            throw new ConfigurationException("Problems in configuration of data proxy", e);
+        }
+    }
 
-		addAdditionalParams(addressBuilder, jsonConf);
+    @Override
+    public boolean isCachingSupported() {
+        return false;
+    }
 
-		// add json writer
-		addressBuilder.append("&wt=json");
-
-		if (isFacet) {
-			addFacetParams(addressBuilder, jsonConf, resolveParams);
-			setDataProxy(new SolrDataProxy(addressBuilder.toString(), methodEnum, getProp(DataSetConstants.SOLR_FACET_FIELD, jsonConf, true, resolveParams),
-					requestHeaders, offset, fetchSize, maxResults, true));
-		} else {
-			setDataProxy(new SolrDataProxy(addressBuilder.toString(), methodEnum, null, requestHeaders, offset, maxResults, maxResults, false));
-		}
-
-	}
-
-	private void addFacetParams(StringBuilder address, JSONObject jsonConf, boolean resolveParams) {
-		logger.debug("Address without facet params [" + address + "]");
-		if (address.lastIndexOf("?") < 0) {
-			address.append("?");
-		} else {
-			address.append("&");
-		}
-		address.append("facet=on");
-		String facet = getProp(DataSetConstants.SOLR_FACET_FIELD, jsonConf, true, resolveParams);
-		if (facet == null) {
-			facet = getProp(DataSetConstants.SOLR_FACET_QUERY, jsonConf, true, resolveParams);
-			if (facet != null) {
-				if (!facet.contains("facet.query")) {
-					address.append("&facet.query=" + facet);
-				} else {
-					address.append("&");
-					address.append(facet);
-				}
-			}
-		} else {
-			try {
-				facet = URLEncoder.encode(facet, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				logger.error("Error creating facet", e);
-				facet = URLEncoder.encode(facet);
-			}
-			address.append("&facet.field=" + facet);
-		}
-
-		String facetPrefix = getProp(DataSetConstants.SOLR_FACET_PREFIX, jsonConf, true, resolveParams);
-		if (facetPrefix != null) {
-			address.append("&facet.prefix=" + facetPrefix);
-		}
-
-		logger.debug("Address with facet params [" + address + "]");
-
-	}
-
-	private void addQueryParam(StringBuilder address, JSONObject jsonConf, boolean resolveParams) {
-		logger.debug("Address without solr query [" + address + "]");
-		if (address.lastIndexOf("?") < 0) {
-			address.append("?");
-		} else {
-			address.append("&");
-		}
-		address.append("q=");
-		String query = getProp(DataSetConstants.REST_REQUEST_BODY, jsonConf, true, resolveParams);
-		if (query == null) {
-			query = "*.*";
-		}
-		address.append(query);
-
-		logger.debug("Address with solr query [" + address + "]");
-	}
-
-	private void addAdditionalParams(StringBuilder address, JSONObject jsonConf) {
-		logger.debug("Address without additional parameters [" + address + "]");
-
-		List<Couple<String, String>> requestHeaders;
-		try {
-			requestHeaders = getListProp(DataSetConstants.SOLR_ADDITIONAL_PARAMETERS, jsonConf, true);
-
-		} catch (Exception e) {
-			throw new ConfigurationException("Problems in configuration of data proxy", e);
-		}
-
-		for (Iterator<Couple<String, String>> iterator = requestHeaders.iterator(); iterator.hasNext();) {
-			Couple<String, String> key = iterator.next();
-			String values = key.getSecond();
-			address.append("&");
-			address.append(key.getFirst());
-			address.append("=");
-			if (values.indexOf(",") > 0) {// for multivalue parameters
-				int fieldEnd = values.indexOf(":") + 1;
-				String fqKey = values.substring(0, fieldEnd);
-				StringTokenizer stk = new StringTokenizer(values.substring(fieldEnd), ",");
-				while (stk.hasMoreTokens()) {
-					String value = stk.nextToken();
-					address.append(fqKey);
-					address.append(value);
-					address.append(" OR ");
-				}
-				if (address.length() > 3) {
-					address = address.delete(address.length() - 3, address.length());
-				}
-
-			} else {
-
-				address.append(key.getSecond());
-			}
-		}
-
-		logger.debug("Address with additional parameters  [" + address + "]");
-	}
-
+    @Override
+    public DatasetEvaluationStrategyType getEvaluationStrategy(boolean isNearRealtime) {
+        return DatasetEvaluationStrategyType.SOLR;
+    }
 }

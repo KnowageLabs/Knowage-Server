@@ -55,6 +55,8 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 */
 	public IDataSource loadDataSourceByLabel(String label) throws EMFUserError;
 
+	public IDataSource findDataSourceByLabel(String label);
+	
 	/**
 	 * Loads all detail information for all data sources. For each of them, detail information is stored into a <code>datasource</code> object. After that, all
 	 * data sources are stored into a <code>List</code>, which is returned.
@@ -148,7 +150,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 *             If an Exception occurred
 	 */
 
-	public List loadDataSourcesForSuperAdmin() throws EMFUserError;
+	public List<IDataSource> loadDataSourcesForSuperAdmin();
 
 	/**
 	 * Method to return name of BiObjects associated to datasource

@@ -37,6 +37,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.security.AuthorizationsBusinessMapper;
 import it.eng.spagobi.services.common.JWTSsoService;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
@@ -118,6 +119,8 @@ public class UserProfile implements IEngUserProfile {
 		}
 		// putting tenant id on user attributes (for Spago modules' queries) :
 		userAttributes.put(SpagoBIConstants.TENANT_ID, this.organization);
+		// putting user id as a predefined profile attribute:
+		userAttributes.put(SsoServiceInterface.USER_ID, this.userId);
 
 		logger.debug("OUT");
 	}
@@ -306,15 +309,17 @@ public class UserProfile implements IEngUserProfile {
 	 */
 	@Override
 	public boolean isAbleToExecuteAction(String actionName) throws EMFInternalError {
-		// first check if the actionName is a functionality...
-		if (functionalities != null && functionalities.contains(actionName)) {
-			return true;
-		}
-		List<String> businessProcessNames = AuthorizationsBusinessMapper.getInstance().mapActionToBusinessProcess(actionName);
-		if (businessProcessNames != null) {
-			for (String businessProcess : businessProcessNames) {
-				if (functionalities.contains(businessProcess)) {
-					return true;
+		if (functionalities != null) {
+			if (functionalities.contains(actionName)) {
+				return true;
+			}
+
+			List<String> businessProcessNames = AuthorizationsBusinessMapper.getInstance().mapActionToBusinessProcess(actionName);
+			if (businessProcessNames != null) {
+				for (String businessProcess : businessProcessNames) {
+					if (functionalities.contains(businessProcess)) {
+						return true;
+					}
 				}
 			}
 		}

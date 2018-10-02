@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,24 +11,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.spagobi.federateddataset.dao;
-
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.federateddataset.metadata.SbiDataSetFederation;
-import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
-import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,6 +30,20 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.federateddataset.metadata.SbiDataSetFederation;
+import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO implements ISbiFederationDefinitionDAO {
 
@@ -96,7 +98,8 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 
 	public SbiFederationDefinition saveSbiFederationDefinition(FederationDefinition dataset, boolean duplicated, Session session, Transaction transaction) {
 		LogMF.debug(logger, "IN:  model = [{0}]", dataset);
-
+		UserProfile userProfile = null;
+		String userID = null;
 		if (dataset == null) {
 			throw new IllegalArgumentException("Input parameter [dataset] cannot be null");
 		}
@@ -114,16 +117,11 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			}
 			logger.debug("The federation doesn't exist");
 		}
-
+		userProfile = UserProfileManager.getProfile();
+		userID = (String) userProfile.getUserId();
+		dataset.setOwner(userID);
 		SbiFederationDefinition hibFederatedDataset = new SbiFederationDefinition();
-
-		hibFederatedDataset.setFederation_id(dataset.getFederation_id());
-		hibFederatedDataset.setLabel(dataset.getLabel());
-		hibFederatedDataset.setName(dataset.getName());
-		hibFederatedDataset.setDescription(dataset.getDescription());
-		hibFederatedDataset.setRelationships(dataset.getRelationships());
-		hibFederatedDataset.setSourceDatasets(SbiFederationUtils.toSbiDataSet(dataset.getSourceDatasets()));
-		hibFederatedDataset.setDegenerated(dataset.isDegenerated());
+		SbiFederationUtils.toSbiFederationDefinition(hibFederatedDataset, dataset);
 
 		updateSbiCommonInfo4Insert(hibFederatedDataset);
 		session.save(hibFederatedDataset);
@@ -473,15 +471,9 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-
+			aSession.update(fds);
 			SbiFederationDefinition hibFederation = (SbiFederationDefinition) aSession.load(SbiFederationDefinition.class, fds.getFederation_id());
-
-			hibFederation.setLabel(fds.getLabel());
-			hibFederation.setName(fds.getName());
-			hibFederation.setDescription(fds.getDescription());
-			hibFederation.setRelationships(fds.getRelationships());
-			hibFederation.setSourceDatasets(SbiFederationUtils.toSbiDataSet(fds.getSourceDatasets()));
-			hibFederation.setDegenerated(fds.isDegenerated());
+			SbiFederationUtils.toSbiFederationDefinition(hibFederation, fds);
 
 			updateSbiCommonInfo4Update(hibFederation);
 			tx.commit();

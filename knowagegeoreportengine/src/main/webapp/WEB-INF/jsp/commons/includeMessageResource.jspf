@@ -33,13 +33,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		xmlhttp.open('GET', url, false);
+		xmlhttp.overrideMimeType('text/plain; charset=UTF-8');
 		xmlhttp.send();
 		callback(xmlhttp.responseText)
 	}
 	
 	//Initialization of the messageResource object
 	messageResource.init({
-  		filePath : "${pageContext.request.contextPath}/js/src/ext/sbi/messages/"
+  		filePath : "${pageContext.request.contextPath}/js/src/messages/"
   		, defaultLocale : 'en_US'
   		, ajaxFunction : getSynch
 	});

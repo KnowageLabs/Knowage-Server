@@ -179,18 +179,7 @@ public class Snapshot implements Serializable {
 	public byte[] getContent() throws EMFUserError, EMFInternalError {
 		if (content == null) {
 			if (binId != null) {
-				// reads from database
-				try {
-					content = DAOFactory.getBinContentDAO().getBinContent(binId);
-				} catch (EMFUserError e) {
-					logger.error("Error while recovering content of snapshot with id = [" + id + "], binary content id = [" + binId + "], " + "name = [" + name
-							+ "] of biobject with id = [" + biobjId + "]" + e);
-					throw e;
-				} catch (EMFInternalError e) {
-					logger.error("Error while recovering content of snapshot with id = [" + id + "], binary content id = [" + binId + "], " + "name = [" + name
-							+ "] of biobject with id = [" + biobjId + "]" + e);
-					throw e;
-				}
+				content = DAOFactory.getBinContentDAO().getBinContent(binId);
 			} else {
 				logger.warn("Both content field of this istance and binary identifier are null. Cannot load content from database.");
 			}
@@ -200,6 +189,10 @@ public class Snapshot implements Serializable {
 
 	/**
 	 * Sets the content.
+	 * <p>
+	 * <b> Note: </b> getContent() method checking if content field is null. If it is, getContent() method will try to load it from database if binary content
+	 * identifier is available. <b> Pay attention when using this method! </b>
+	 * </p>
 	 *
 	 * @param content
 	 *            the new content

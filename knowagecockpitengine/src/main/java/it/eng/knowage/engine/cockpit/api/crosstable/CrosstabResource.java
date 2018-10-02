@@ -51,9 +51,13 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCImpalaDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCVerticaDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -110,17 +114,17 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		logger.debug("IN");
 
 		// the sort options
-		Map<String, Object> columnsSortKeys;
-		Map<String, Object> rowsSortKeys;
-		Map<String, Object> measuresSortKeys;
+		List<Map<String, Object>> columnsSortKeys;
+		List<Map<String, Object>> rowsSortKeys;
+		List<Map<String, Object>> measuresSortKeys;
 		// the id of the crosstab in the client configuration array
 		Integer myGlobalId;
 
 		try {
 			JSONObject object = RestUtilities.readBodyAsJSONObject(servletRequest);
-			JSONObject columnsSortKeysJo = object.optJSONObject("columnsSortKeys");
-			JSONObject rowsSortKeysJo = object.optJSONObject("rowsSortKeys");
-			JSONObject measuresSortKeysJo = object.optJSONObject("measuresSortKeys");
+			JSONArray columnsSortKeysJo = object.optJSONArray("columnsSortKeys");
+			JSONArray rowsSortKeysJo = object.optJSONArray("rowsSortKeys");
+			JSONArray measuresSortKeysJo = object.optJSONArray("measuresSortKeys");
 			myGlobalId = object.optInt("myGlobalId");
 			columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
 			rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
@@ -151,9 +155,9 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		logger.debug("IN");
 
 		// the sort options
-		Map<String, Object> columnsSortKeys;
-		Map<String, Object> rowsSortKeys;
-		Map<String, Object> measuresSortKeys;
+		List<Map<String, Object>> columnsSortKeys;
+		List<Map<String, Object>> rowsSortKeys;
+		List<Map<String, Object>> measuresSortKeys;
 
 		// the id of the crosstab in the client configuration array
 		Integer myGlobalId;
@@ -175,15 +179,14 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);
 			JSONObject crosstabStyleJo = (request.isNull("style")) ? new JSONObject() : request.getJSONObject("style");
 			crosstabDefinitionConfigJo.put("style", crosstabStyleJo);
-			// String crosstabDefinition = crosstabDefinitionJo.toString();
-			// String crosstabDefinition = request.getJSONObject("crosstabDefinition").toString();
+
 			JSONObject crosstabDefinition = request.getJSONObject("crosstabDefinition");
 
 			JSONObject sortOptions = request.getJSONObject("sortOptions");
 
-			JSONObject columnsSortKeysJo = sortOptions.optJSONObject("columnsSortKeys");
-			JSONObject rowsSortKeysJo = sortOptions.optJSONObject("rowsSortKeys");
-			JSONObject measuresSortKeysJo = sortOptions.optJSONObject("measuresSortKeys");
+			JSONArray columnsSortKeysJo = sortOptions.optJSONArray("columnsSortKeys");
+			JSONArray rowsSortKeysJo = sortOptions.optJSONArray("rowsSortKeys");
+			JSONArray measuresSortKeysJo = sortOptions.optJSONArray("measuresSortKeys");
 			myGlobalId = sortOptions.optInt("myGlobalId");
 			columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
 			rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
@@ -229,6 +232,23 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		if (key != null)
 			sortKeys.put(key, nc);
 
+		return sortKeys;
+	}
+
+	private Map<Integer, NodeComparator> toComparatorMap(List<Map<String, Object>> sortKeyMap) {
+		Map<Integer, NodeComparator> sortKeys = new HashMap<Integer, NodeComparator>();
+
+		for (int s=0; s<sortKeyMap.size(); s++) {
+			Map <String, Object> sMap = sortKeyMap.get(s);
+			NodeComparator nc = new NodeComparator();
+
+			nc.setParentValue((String)sMap.get("parentValue"));
+			nc.setMeasureLabel((String)sMap.get("measureLabel"));
+			if (sMap.get("direction")!= null) {
+				nc.setDirection(Integer.valueOf(sMap.get("direction").toString()));
+				sortKeys.put(Integer.valueOf(sMap.get("column").toString()), nc);
+			}
+		}
 		return sortKeys;
 	}
 
@@ -350,7 +370,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 				String[] valuesArray = values.toArray(new String[0]);
 				Operand rightOperand = new Operand(valuesArray, null, AbstractStatement.OPERAND_TYPE_STATIC, null, null);
 				WhereField whereField = new WhereField(UUIDGenerator.getInstance().generateRandomBasedUUID().toString(), aFilterName, false, leftOperand,
-						operator, rightOperand, "AND");
+						operator, rightOperand, "AND", null);
 
 				whereFields.add(whereField);
 			}
@@ -387,7 +407,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 						operator = "IN";
 					}
 
-					whereFields.add(new WhereField("OptionalFilter" + i, "OptionalFilter" + i, false, leftOperand, operator, rightOperand, "AND"));
+					whereFields.add(new WhereField("OptionalFilter" + i, "OptionalFilter" + i, false, leftOperand, operator, rightOperand, "AND", null));
 				}
 			} else {
 				logger.debug("The values of the filter " + fieldName + " are not a JSONArray but " + valuesObject);
@@ -625,13 +645,18 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 			logger.debug("SQL statement is [" + crosstabQuery + "]");
 			IDataSet newdataset;
-			if (dataset instanceof JDBCHiveDataSet) {
+			if (dataset instanceof JDBCImpalaDataSet) {
+				newdataset = new JDBCImpalaDataSet();
+			} else if (dataset instanceof JDBCHiveDataSet) {
 				newdataset = new JDBCHiveDataSet();
-				((JDBCHiveDataSet) newdataset).setQuery(crosstabQuery);
+			} else if (dataset instanceof JDBCOrientDbDataSet) {
+				newdataset = new JDBCOrientDbDataSet();
+			} else if (dataset instanceof JDBCVerticaDataSet) {
+				newdataset = new JDBCVerticaDataSet();
 			} else {
 				newdataset = new JDBCDataSet();
-				((JDBCDataSet) newdataset).setQuery(crosstabQuery);
 			}
+			((AbstractDataSet) newdataset).setQuery(crosstabQuery);
 
 			newdataset.setDataSource(dataset.getDataSourceForReading());
 			if (start == null && limit == null) {

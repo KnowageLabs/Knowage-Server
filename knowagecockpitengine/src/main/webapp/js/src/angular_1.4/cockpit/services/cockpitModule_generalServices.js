@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_generalServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, cockpitModule_properties,$mdPanel,cockpitModule_widgetServices,$mdToast,$mdDialog,cockpitModule_widgetSelection,cockpitModule_datasetServices,$rootScope,cockpitModule_templateServices, $location){
+angular.module("cockpitModule").service("cockpitModule_generalServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, cockpitModule_properties,$mdPanel,cockpitModule_widgetServices,$mdToast,$mdDialog,cockpitModule_widgetSelection,cockpitModule_datasetServices,$rootScope,cockpitModule_templateServices, $location, kn_regex){
 			var gs=this;
 			this.openGeneralConfiguration=function(){
 			 var position = $mdPanel.newPanelPosition().absolute().center();
@@ -51,7 +51,7 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 			dataToSend.action=cockpitModule_properties.DOCUMENT_ID==null ? "DOC_SAVE" : "MODIFY_COCKPIT";
 			dataToSend.document={};
 			dataToSend.document.name=cockpitModule_properties.DOCUMENT_NAME;
-			dataToSend.document.label=cockpitModule_properties.DOCUMENT_LABEL || cockpitModule_properties.DOCUMENT_NAME ;
+		dataToSend.document.label=cockpitModule_properties.DOCUMENT_LABEL;
 			dataToSend.document.description=cockpitModule_properties.DOCUMENT_DESCRIPTION;
 			dataToSend.document.type="DOCUMENT_COMPOSITE";
 			dataToSend.folders=[];
@@ -113,31 +113,26 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 		
 		};
 		
-		this.saveCockpit=function(){
+	this.saveCockpit=function(event){
 			//check cockpit label
 			if(angular.equals(cockpitModule_properties.DOCUMENT_NAME.trim(),"")){
-				var confirm = $mdDialog.prompt()
-			      .title(sbiModule_translate.load("sbi.cockpit.saved.name.missing.message"))
-			      .textContent(sbiModule_translate.load("sbi.cockpit.saved.name.missing.text"))
-			      .placeholder(sbiModule_translate.load("sbi.cockpit.name"))
-			      .ariaLabel('cockpit name')
-			      .initialValue('')
-			      .ok(sbiModule_translate.load("sbi.generic.ok"))
-			      .cancel(sbiModule_translate.load("sbi.generic.cancel"));
-	
-			    $mdDialog.show(confirm).then(function(result) {
-			    	if(result==undefined || angular.equals(result.trim(),"")){
-			    		gs.saveCockpit();
-			    	}else{
-			    		cockpitModule_properties.DOCUMENT_NAME=result;
-			    		doSaveCockpit();
-			    	}
+		    $mdDialog.show(		    	
+	    		{
+	    			controller: saveCockpitController,
+	    			templateUrl: baseScriptPath + '/directives/cockpit-toolbar/templates/saveCockpit.tmpl.html',
+	    			parent: angular.element(document.body),
+	    			targetEvent: event,
+	    			clickOutsideToClose: false
+	    		}		    
+		    ).then(function(result){
+	    		cockpitModule_properties.DOCUMENT_LABEL = result.label;
+	    		cockpitModule_properties.DOCUMENT_NAME = result.name;
+	    		doSaveCockpit();		    	
 			    }, function() {
-			    });
-				
-				
-				
-			}else{
+		    	
+		    });
+			
+		} else {
 				doSaveCockpit();
 			}
 		}
@@ -187,4 +182,23 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 		var templatesUrl = 'js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/'+widget+'/templates/';
   		return basePath + templatesUrl + template +'.html';
   	}
+	
+	function saveCockpitController($scope, $mdDialog, sbiModule_translate, kn_regex){		
+		$scope.translate = sbiModule_translate;
+		$scope.regex = kn_regex;
+		$scope.cockpit = {
+			label: '',
+			name: ''
+		};
+				
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+		
+		$scope.save = function(result){
+			$mdDialog.hide(result);
+		}
+		
+	}
+	
 });

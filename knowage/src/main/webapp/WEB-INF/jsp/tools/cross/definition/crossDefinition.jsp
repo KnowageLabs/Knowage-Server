@@ -158,9 +158,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<div flex="50">
 						<md-input-container class="md-block"> 
 							<label>{{translate.load("sbi.crossnavigation.name");}}</label>
-							<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.name" required > 
-							<div ng-messages="tsForm.ctrl.detail.simpleNavigation.name.$error" ng-show="tsForm.ctrl.detail.simpleNavigation.name.$dirty">
-						    	<div ng-message="required">This is required!</div>
+							<input md-maxlength="40" type="text" name="name" ng-model="ctrl.detail.simpleNavigation.name" required > 
+							<div ng-messages="tsForm.name.$error" ng-show="tsForm.name.$dirty && tsForm.name.$invalid">
+						    	<div ng-message="md-maxlength">{{translate.load("sbi.crossnavigation.name.invalid");}}</div>
 						    </div>
 						</md-input-container>
 					</div>

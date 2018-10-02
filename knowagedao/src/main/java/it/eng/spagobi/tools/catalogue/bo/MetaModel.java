@@ -17,10 +17,13 @@
  */
 package it.eng.spagobi.tools.catalogue.bo;
 
+import java.util.List;
+
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 
 public class MetaModel {
@@ -46,6 +49,8 @@ public class MetaModel {
 
 	@Size(max = 100)
 	private String modelLocker;
+
+	private List<BIMetaModelParameter> biMetaModelParameters = null;
 
 	public Integer getId() {
 		return id;
@@ -130,6 +135,14 @@ public class MetaModel {
 	 */
 	public void setModelLocker(String modelLocker) {
 		this.modelLocker = modelLocker;
+	}
+
+	public List<BIMetaModelParameter> getBiMetaModelParameters() {
+		return biMetaModelParameters;
+	}
+
+	public void setBiMetaModelParameters(List<BIMetaModelParameter> biMetaModelParameters) {
+		this.biMetaModelParameters = biMetaModelParameters;
 	}
 
 }

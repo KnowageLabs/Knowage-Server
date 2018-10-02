@@ -1,0 +1,53 @@
+.kn-cross-navigation-definition {
+	.md-ExtraMini {
+		height: 30px !important;
+	}
+	.parametersList {
+		h3 {
+			margin-bottom: .2em;
+		}
+	}
+	.crossnavigation-parameter {
+		background-color: lighten($secondaryColor,10%); 
+		color: rgba($lightTextColor,0.87);
+		font-size: $baseFontSize;
+		padding:5px 16px 0 16px!important;
+		font-weight:$tabFontWeight;
+		min-height:33px!important;          
+		&.highlight-selected-parameter {
+			background-color: $secondaryColor;
+		}  
+		&.link {
+			color: $darkTextColor; 
+			background-color: $detailBackground;
+		}
+		.fa-link {
+			color: #3F51B5;
+		}
+	}
+	.loadingSpinner {
+		text-align:center;
+		vertical-align:middle;
+		width:100%;
+		height:100%;
+	}
+	.openDocIcon {
+		margin-top: 6px; 
+		color: $lightTextColor;
+	}
+	.parametersList {
+		padding: $standardPadding;
+		li {
+			border:0;
+			padding: 2px;
+			border:0!important;
+		}
+	}
+	.parametersList > div {
+		padding:3px;
+	}
+	button.md-raised {
+		margin-top:22px;
+	}
+}
+

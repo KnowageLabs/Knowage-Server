@@ -18,47 +18,45 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
-import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategy;
+import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.CacheException;
-import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.*;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBaseException;
+import org.apache.log4j.Logger;
+
+import java.util.Map;
 
 public abstract class AssociativeDatasetContainerFactory {
 
 	static protected Logger logger = Logger.getLogger(AssociativeDatasetContainerFactory.class);
 
-	public static IAssociativeDatasetContainer getContainer(DatasetEvaluationStrategy evaluationStrategy, IDataSet dataSet,
-			Map<String, String> parametersValues, UserProfile userProfile) throws DataBaseException {
-		Assert.assertNotNull(evaluationStrategy, "Dataset evaluation strategy cannot be null");
+	public static IAssociativeDatasetContainer getContainer(DatasetEvaluationStrategyType evaluationStrategyType, IDataSet dataSet,
+                                                            Map<String, String> parametersValues, UserProfile userProfile) throws DataBaseException {
+		Assert.assertNotNull(evaluationStrategyType, "Dataset evaluation strategy cannot be null");
 
-		switch (evaluationStrategy) {
+		switch (evaluationStrategyType) {
 		case PERSISTED:
 			return new PersistedAssociativeDatasetContainer(dataSet, parametersValues);
 		case FLAT:
 			return new FlatAssociativeDatasetContainer(dataSet, parametersValues);
 		case INLINE_VIEW:
-			return new JDBCAssociativeDatasetContainer(dataSet, parametersValues);
+			return new InlineViewAssociativeDatasetContainer(dataSet, parametersValues);
 		case CACHED:
 			IDataSource cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
-			ICache cache = SpagoBICacheManager.getCache();
+			ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 			String signature = dataSet.getSignature();
 			CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
 			cacheItem = cacheDataSetIfMissing(dataSet, cache, cacheItem, userProfile);
 			return new CachedAssociativeDatasetContainer(dataSet, cacheItem.getTable(), cacheDataSource, parametersValues);
+		case SOLR:
+			return new SolrAssociativeDatasetContainer(dataSet, parametersValues);
 		default:
-			throw new IllegalArgumentException("Dataset evaluation strategy [" + evaluationStrategy + "] not supported");
+			throw new IllegalArgumentException("Dataset evaluation strategy [" + evaluationStrategyType + "] not supported");
 		}
 	}
 

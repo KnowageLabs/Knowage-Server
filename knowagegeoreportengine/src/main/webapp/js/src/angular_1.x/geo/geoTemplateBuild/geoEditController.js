@@ -25,11 +25,11 @@
 	} ]);
 
 	app.controller('geoTemplateBuildController',
-			[ '$scope', 'sbiModule_translate', 'sbiModule_restServices',
+			[ '$scope', 'channelMessaging', 'sbiModule_translate', 'sbiModule_restServices',
 					'sbiModule_config', "$mdDialog",'sbiModule_messaging','$documentViewer', '$http', '$window',
 					geoTemplateBuildControllerFunction ]);
 
-	function geoTemplateBuildControllerFunction($scope, sbiModule_translate,
+	function geoTemplateBuildControllerFunction($scope, channelMessaging, sbiModule_translate,
 			sbiModule_restServices, sbiModule_config, $mdDialog, sbiModule_messaging,$documentViewer,$http, $window) {
 
 		$scope.tecnicalUser= isTechnicalUser==="true";
@@ -857,10 +857,7 @@
 
 
 		$scope.cancelBuildTemplateAdmin=function(){
-			 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+sbiModule_config.adapterPath;
-			 url+= "?PAGE=detailBIObjectPage&MESSAGEDET=DETAIL_SELECT&LIGHT_NAVIGATOR_BACK_TO=1";
-
-			 window.parent.location.href=url;
+			channelMessaging.sendMessage();
 		}
 
 		$scope.cancelBuildTemplate=function(){

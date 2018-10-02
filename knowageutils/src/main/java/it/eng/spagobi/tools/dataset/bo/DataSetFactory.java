@@ -82,9 +82,10 @@ public class DataSetFactory {
 		if (className.equals(JDBCDataSet.class.getName())) {
 			try {
 				IDataSource ds = DataSourceFactory.getDataSource(dataSetConfig.getDataSource());
-				if (SqlUtils.isHiveLikeDialect(ds.getHibDialectClass().toLowerCase())) {
+				String dialectToLowerCase = ds.getHibDialectClass().toLowerCase();
+				if (SqlUtils.isHiveLikeDialect(dialectToLowerCase)) {
 					className = JDBCHiveDataSet.class.getName();
-				} else if ((ds.getHibDialectClass()).toLowerCase().contains("mongo")) {
+				} else if (dialectToLowerCase.contains("mongo")) {
 					className = MongoDataSet.class.getName();
 				}
 
@@ -100,13 +101,14 @@ public class DataSetFactory {
 		Constructor c = null;
 		Object object = null;
 		if (className.endsWith("JDBCDataSet")) {
-			String dialect = dataSetConfig.getDataSource().getHibDialectClass();
-			if (SqlUtils.isHiveLikeDialect(dialect)) {
+			String dialectToLowerCase = dataSetConfig.getDataSource().getHibDialectClass().toLowerCase();
+			if (SqlUtils.isHiveLikeDialect(dialectToLowerCase)) {
 				className = JDBCHiveDataSet.class.getName();
-			} else if (dialect.contains("orient")) {
+			} else if (dialectToLowerCase.contains("orient")) {
 				className = JDBCOrientDbDataSet.class.getName();
+			} else if (dialectToLowerCase.contains("vertica")) {
+				className = JDBCVerticaDataSet.class.getName();
 			}
-
 		}
 		try {
 

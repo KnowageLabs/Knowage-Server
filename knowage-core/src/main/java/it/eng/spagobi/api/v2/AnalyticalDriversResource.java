@@ -461,6 +461,9 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		role.setIsAbleToSaveIntoPersonalFolder(bo.isAbleToSaveIntoPersonalFolder());
 		role.setIsAbleToEnableDatasetPersistence(bo.isAbleToEnableDatasetPersistence());
 		role.setIsAbleToEnableFederatedDataset(bo.isAbleToEnableFederatedDataset());
+		role.setIsAbleToEnableRate(bo.isAbleToEnableRate());
+		role.setIsAbleToEnablePrint(bo.isAbleToEnablePrint());
+		role.setIsAbleToEnableCopyAndEmbed(bo.isAbleToEnableCopyAndEmbed());
 		role.setAbleToManageGlossaryBusiness(bo.isAbleToManageGlossaryBusiness());
 		role.setAbleToManageGlossaryTechnical(bo.isAbleToManageGlossaryTechnical());
 		role.setAbleToManageKpiValue(bo.isAbleToManageKpiValue());
@@ -532,12 +535,9 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	/**
 	 * Controls if the name of the ParameterUse is already in use.
 	 *
-	 * @param paruse
-	 *            The paruse to check
-	 * @param operation
-	 *            Defines if the operation is of insertion or modify
-	 * @throws EMFUserError
-	 *             If any Exception occurred
+	 * @param paruse    The paruse to check
+	 * @param operation Defines if the operation is of insertion or modify
+	 * @throws EMFUserError If any Exception occurred
 	 */
 	private boolean parameterUseLabelControl(ParameterUse paruse, String operation) {
 

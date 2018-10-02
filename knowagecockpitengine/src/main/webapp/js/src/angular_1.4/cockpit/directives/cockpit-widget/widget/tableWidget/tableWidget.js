@@ -667,7 +667,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						columns[k].text = {"enabled":true};
 					}
 				}else if(columns[k].visType == "Chart") {
-					if(!columns[k].barchart.enabled) columns[k].barchart.enabled=true;
+					if(!columns[k].barchart || !columns[k].barchart.enabled) columns[k].barchart = {'enabled':true};
 					columns[k].barchart.maxValue = columns[k].barchart.maxValue ? columns[k].barchart.maxValue : 100;
 					delete columns[k].text;
 				}else if(columns[k].visType == "Text & Chart") {
@@ -800,9 +800,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.colorPickerPropertyTh.disabled = $scope.model.style.th.enabled;
 		}
 
+		$scope.toggleSummary = function(){
+			$scope.summaryColorPickerProperty.disabled = $scope.model.settings.summary.enabled;
+		}
+		
 		$scope.colorPickerPropertyTh = {format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select'), disabled:($scope.model.style.th && $scope.model.style.th.enabled === false)}
 
 		$scope.colorPickerProperty={format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select')};
+		$scope.summaryColorPickerProperty = {placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:!$scope.model.settings.summary.enabled};
 
 		$scope.colorPickerPropertyEvenOddRows = {placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:!$scope.model.settings.alternateRows.enabled};
 

@@ -36,6 +36,8 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoDataset/geoDatasetController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoTemplateBuild/geoEditController.js"></script> 
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/services/channelMessaging.js"></script>
+
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoRanges/geoRanges.js"></script> 
  
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jspdf/jspdf.min.js"></script>

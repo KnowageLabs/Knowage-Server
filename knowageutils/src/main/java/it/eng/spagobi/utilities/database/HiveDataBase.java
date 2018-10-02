@@ -18,42 +18,11 @@
 
 package it.eng.spagobi.utilities.database;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-public class HiveDataBase extends AbstractDataBase implements MetaDataBase {
+public class HiveDataBase extends AbstractDataBase {
 
 	public HiveDataBase(IDataSource dataSource) {
 		super(dataSource);
-	}
-
-	@Override
-	public String getAliasDelimiter() {
-		return "";
-	}
-
-	@Override
-	public String getSchema(Connection conn) throws SQLException {
-		Statement stmt = conn.createStatement();
-		try {
-			ResultSet rs = stmt.executeQuery("SELECT current_database()");
-			try {
-				rs.next();
-				return rs.getString(1);
-			} finally {
-				rs.close();
-			}
-		} finally {
-			stmt.close();
-		}
-	}
-
-	@Override
-	public String getCatalog(Connection conn) throws SQLException {
-		return conn.getCatalog();
 	}
 }

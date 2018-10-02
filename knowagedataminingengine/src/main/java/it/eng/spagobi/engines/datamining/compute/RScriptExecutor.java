@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.engines.datamining.compute;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
-import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
-import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
-import it.eng.spagobi.engines.datamining.model.DataMiningScript;
-import it.eng.spagobi.engines.datamining.model.Output;
-import it.eng.spagobi.engines.datamining.model.Variable;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -44,6 +35,15 @@ import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.REngineException;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
+import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
+import it.eng.spagobi.engines.datamining.model.DataMiningScript;
+import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.engines.datamining.model.Variable;
 
 public class RScriptExecutor {
 
@@ -82,14 +82,14 @@ public class RScriptExecutor {
 			logger.debug("loaded libraries from local dir (if needed)");
 			// command-->script name --> execute script without output
 			String scriptToExecute = getScriptCodeToEval(command, params);
-			logger.debug("loaded script to execute");
+			logger.debug("loaded script to execute: " + scriptToExecute);
 			// loading libraries, preprocessing, functions definition in main
 			// "auto"
 			// script
 			logger.info("creating temporary script...");
 
 			String ret = createTemporarySourceScript(scriptToExecute);
-			logger.info("created temporary script");
+			logger.info("created temporary script: " + ret);
 
 			logger.info("executing temporary script...");
 			REXP rexp = re.parseAndEval("source(\"" + ret + "\")");

@@ -1548,6 +1548,28 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					ctr.showSearchPreloader = false;
 				})
 	}
+	
+	ctr.GlossaryLike = function(searchValue, itemsPerPage) {
+		var item = "Page=1&ItemsPerPage=" + itemsPerPage;
+		item += "&GLOSSARY_NM=" + searchValue;
+		ctr.showSearchPreloaderGlossary = true;
+		sbiModule_restServices.get("1.0/glossary", "listGlossaryByName", item)
+			.success(function(data) {
+				
+				if (data.hasOwnProperty("errors")) {
+					showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
+
+				} else {
+					ctr.glossary = data.item;
+					ctr.totalGlossaries = data.itemCount;
+					ctr.showSearchPreloaderGlossary = false;
+				}
+				
+			}).error(function(data) {
+				showToast(sbiModule_translate.load("sbi.glossary.load.error"), 2000);
+				ctr.showSearchPreloaderGlossary = false;
+			})
+	}
 
 	function getWord(ele) {
 		showPreloader();

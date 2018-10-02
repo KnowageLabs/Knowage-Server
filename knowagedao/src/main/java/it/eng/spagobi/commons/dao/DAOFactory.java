@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons.dao;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
@@ -30,7 +31,10 @@ import it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.ISubreportDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIMetaModelParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IMetaModelParuseDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IMetaModelParviewDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
@@ -119,13 +123,6 @@ public class DAOFactory {
 	private static Object createDAOInstance(String daoName) {
 		Object daoObject = null;
 		try {
-			// ConfigSingleton configSingleton=ConfigSingleton.getInstance();
-			// SourceBean daoConfigSourceBean =(SourceBean)
-			// configSingleton.getFilteredSourceBeanAttribute("SPAGOBI.DAO-CONF.DAO","name",
-			// daoName);
-			// String daoClassName =
-			// (String)daoConfigSourceBean.getAttribute("implementation");
-			// daoObject = Class.forName(daoClassName).newInstance();
 			daoObject = Class.forName(getDAOClass(daoName)).newInstance();
 		} catch (Throwable e) {
 			throw new SpagoBIRuntimeException("Cannot instantiate " + daoName, e);
@@ -138,10 +135,8 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the BIObject
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
 	 */
-	public static IBIObjectDAO getBIObjectDAO() throws EMFUserError {
+	public static IBIObjectDAO getBIObjectDAO() {
 		return (IBIObjectDAO) createDAOInstance("BIObjectDAO");
 	}
 
@@ -150,10 +145,8 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the Subreport
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
 	 */
-	public static ISubreportDAO getSubreportDAO() throws EMFUserError {
+	public static ISubreportDAO getSubreportDAO() {
 		return (ISubreportDAO) createDAOInstance("SubreportDAO");
 	}
 
@@ -162,11 +155,13 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the BIObject parameter
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
 	 */
-	public static IBIObjectParameterDAO getBIObjectParameterDAO() throws EMFUserError {
+	public static IBIObjectParameterDAO getBIObjectParameterDAO() throws HibernateException {
 		return (IBIObjectParameterDAO) createDAOInstance("BIObjectParameterDAO");
+	}
+
+	public static IBIMetaModelParameterDAO getBIMetaModelParameterDAO() throws HibernateException {
+		return (IBIMetaModelParameterDAO) createDAOInstance("BIMetaModelParameterDAO");
 	}
 
 	/**
@@ -174,10 +169,8 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the value constraint
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
 	 */
-	public static ICheckDAO getChecksDAO() throws EMFUserError {
+	public static ICheckDAO getChecksDAO() {
 		return (ICheckDAO) createDAOInstance("ChecksDAO");
 	}
 
@@ -186,10 +179,8 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the domain
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
 	 */
-	public static IDomainDAO getDomainDAO() throws EMFUserError {
+	public static IDomainDAO getDomainDAO() {
 		return (IDomainDAO) createDAOInstance("DomainDAO");
 	}
 
@@ -198,10 +189,8 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the engine
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
 	 */
-	public static IEngineDAO getEngineDAO() throws EMFUserError {
+	public static IEngineDAO getEngineDAO() {
 		return (IEngineDAO) createDAOInstance("EngineDAO");
 	}
 
@@ -210,10 +199,8 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the low functionality
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
 	 */
-	public static ILowFunctionalityDAO getLowFunctionalityDAO() throws EMFUserError {
+	public static ILowFunctionalityDAO getLowFunctionalityDAO() {
 		return (ILowFunctionalityDAO) createDAOInstance("LowFunctionalityDAO");
 	}
 
@@ -222,10 +209,8 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the predefined LOV
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
 	 */
-	public static IModalitiesValueDAO getModalitiesValueDAO() throws EMFUserError {
+	public static IModalitiesValueDAO getModalitiesValueDAO() {
 		return (IModalitiesValueDAO) createDAOInstance("ModalitiesValueDAO");
 	}
 
@@ -234,10 +219,8 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the parameter
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
 	 */
-	public static IParameterDAO getParameterDAO() throws EMFUserError {
+	public static IParameterDAO getParameterDAO() {
 		return (IParameterDAO) createDAOInstance("ParameterDAO");
 	}
 
@@ -246,10 +229,8 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the parameter use mode
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
 	 */
-	public static IParameterUseDAO getParameterUseDAO() throws EMFUserError {
+	public static IParameterUseDAO getParameterUseDAO() {
 		return (IParameterUseDAO) createDAOInstance("ParameterUseDAO");
 	}
 
@@ -258,10 +239,8 @@ public class DAOFactory {
 	 *
 	 * @return a DAO instance for the role
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
 	 */
-	public static IRoleDAO getRoleDAO() throws EMFUserError {
+	public static IRoleDAO getRoleDAO() {
 		return (IRoleDAO) createDAOInstance("RoleDAO");
 	}
 
@@ -270,10 +249,9 @@ public class DAOFactory {
 	 *
 	 * @return the obj paruse dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IObjParuseDAO getObjParuseDAO() throws EMFUserError {
+	public static IObjParuseDAO getObjParuseDAO() throws HibernateException {
 		return (IObjParuseDAO) createDAOInstance("ObjParuseDAO");
 	}
 
@@ -282,10 +260,9 @@ public class DAOFactory {
 	 *
 	 * @return the obj parview dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IObjParviewDAO getObjParviewDAO() throws EMFUserError {
+	public static IObjParviewDAO getObjParviewDAO() throws HibernateException {
 		return (IObjParviewDAO) createDAOInstance("ObjParviewDAO");
 	}
 
@@ -297,7 +274,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static IViewpointDAO getViewpointDAO() throws EMFUserError {
+	public static IViewpointDAO getViewpointDAO() {
 		return (IViewpointDAO) createDAOInstance("ViewpointDAO");
 	}
 
@@ -306,10 +283,9 @@ public class DAOFactory {
 	 *
 	 * @return the data source dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IDataSourceDAO getDataSourceDAO() throws EMFUserError {
+	public static IDataSourceDAO getDataSourceDAO() {
 		return (IDataSourceDAO) createDAOInstance("DataSourceDAO");
 	}
 
@@ -318,10 +294,9 @@ public class DAOFactory {
 	 *
 	 * @return the data set dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IDataSetDAO getDataSetDAO() throws EMFUserError {
+	public static IDataSetDAO getDataSetDAO() {
 		return (IDataSetDAO) createDAOInstance("DataSetDAO");
 	}
 
@@ -330,10 +305,9 @@ public class DAOFactory {
 	 *
 	 * @return the sbi data set dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISbiDataSetDAO getSbiDataSetDAO() throws EMFUserError {
+	public static ISbiDataSetDAO getSbiDataSetDAO() {
 		return (ISbiDataSetDAO) createDAOInstance("SbiDataSetDAO");
 	}
 
@@ -342,10 +316,9 @@ public class DAOFactory {
 	 *
 	 * @return the bin content dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IBinContentDAO getBinContentDAO() throws EMFUserError {
+	public static IBinContentDAO getBinContentDAO() {
 		return (IBinContentDAO) createDAOInstance("BinContentDAO");
 	}
 
@@ -354,10 +327,9 @@ public class DAOFactory {
 	 *
 	 * @return the obj template dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IObjTemplateDAO getObjTemplateDAO() throws EMFUserError {
+	public static IObjTemplateDAO getObjTemplateDAO() {
 		return (IObjTemplateDAO) createDAOInstance("ObjTemplateDAO");
 	}
 
@@ -366,10 +338,9 @@ public class DAOFactory {
 	 *
 	 * @return the obj note dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IObjNoteDAO getObjNoteDAO() throws EMFUserError {
+	public static IObjNoteDAO getObjNoteDAO() {
 		return (IObjNoteDAO) createDAOInstance("ObjNoteDAO");
 	}
 
@@ -378,10 +349,9 @@ public class DAOFactory {
 	 *
 	 * @return the sub object dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISubObjectDAO getSubObjectDAO() throws EMFUserError {
+	public static ISubObjectDAO getSubObjectDAO() {
 		return (ISubObjectDAO) createDAOInstance("SubObjectDAO");
 	}
 
@@ -390,10 +360,9 @@ public class DAOFactory {
 	 *
 	 * @return the snapshot dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISnapshotDAO getSnapshotDAO() throws EMFUserError {
+	public static ISnapshotDAO getSnapshotDAO() {
 		return (ISnapshotDAO) createDAOInstance("SnapshotDAO");
 	}
 
@@ -405,7 +374,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static ISbiGeoMapsDAO getSbiGeoMapsDAO() throws EMFUserError {
+	public static ISbiGeoMapsDAO getSbiGeoMapsDAO() {
 		return (ISbiGeoMapsDAO) createDAOInstance("GeoMapDAO");
 	}
 
@@ -417,7 +386,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static ISbiGeoFeaturesDAO getSbiGeoFeaturesDAO() throws EMFUserError {
+	public static ISbiGeoFeaturesDAO getSbiGeoFeaturesDAO() {
 		return (ISbiGeoFeaturesDAO) createDAOInstance("GeoFeatureDAO");
 	}
 
@@ -429,7 +398,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static ISbiGeoMapFeaturesDAO getSbiGeoMapFeaturesDAO() throws EMFUserError {
+	public static ISbiGeoMapFeaturesDAO getSbiGeoMapFeaturesDAO() {
 		return (ISbiGeoMapFeaturesDAO) createDAOInstance("GeoMapFeatureDAO");
 	}
 
@@ -441,7 +410,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static IUserFunctionalityDAO getUserFunctionalityDAO() throws EMFUserError {
+	public static IUserFunctionalityDAO getUserFunctionalityDAO() {
 		return (IUserFunctionalityDAO) createDAOInstance("UserFunctionalityDAO");
 	}
 
@@ -450,10 +419,9 @@ public class DAOFactory {
 	 *
 	 * @return the distribution list dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IDistributionListDAO getDistributionListDAO() throws EMFUserError {
+	public static IDistributionListDAO getDistributionListDAO() {
 		return (IDistributionListDAO) createDAOInstance("DistributionListDAO");
 	}
 
@@ -462,10 +430,9 @@ public class DAOFactory {
 	 *
 	 * @return the remember me dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IRememberMeDAO getRememberMeDAO() throws EMFUserError {
+	public static IRememberMeDAO getRememberMeDAO() {
 		return (IRememberMeDAO) createDAOInstance("RememberMeDAO");
 	}
 
@@ -474,10 +441,9 @@ public class DAOFactory {
 	 *
 	 * @return the menu dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IMenuDAO getMenuDAO() throws EMFUserError {
+	public static IMenuDAO getMenuDAO() {
 		return (IMenuDAO) createDAOInstance("MenuDAO");
 	}
 
@@ -486,10 +452,9 @@ public class DAOFactory {
 	 *
 	 * @return the menu roles dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IMenuRolesDAO getMenuRolesDAO() throws EMFUserError {
+	public static IMenuRolesDAO getMenuRolesDAO() {
 		return (IMenuRolesDAO) createDAOInstance("MenuRolesDAO");
 	}
 
@@ -498,10 +463,9 @@ public class DAOFactory {
 	 *
 	 * @return the bI object rating dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IBIObjectRating getBIObjectRatingDAO() throws EMFUserError {
+	public static IBIObjectRating getBIObjectRatingDAO() {
 		return (IBIObjectRating) createDAOInstance("BIObjectRatingDAO");
 	}
 
@@ -510,10 +474,9 @@ public class DAOFactory {
 	 *
 	 * @return the KPI dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IKpiDAO getKpiDAO() throws EMFUserError {
+	public static IKpiDAO getKpiDAO() {
 		return (IKpiDAO) createDAOInstance("KpiDAO");
 	}
 
@@ -525,7 +488,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static IObjMetadataDAO getObjMetadataDAO() throws EMFUserError {
+	public static IObjMetadataDAO getObjMetadataDAO() {
 		return (IObjMetadataDAO) createDAOInstance("ObjMetadataDAO");
 	}
 
@@ -537,7 +500,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static IObjMetacontentDAO getObjMetacontentDAO() throws EMFUserError {
+	public static IObjMetacontentDAO getObjMetacontentDAO() {
 		return (IObjMetacontentDAO) createDAOInstance("ObjMetacontentDAO");
 	}
 
@@ -549,7 +512,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static ISbiUserDAO getSbiUserDAO() throws EMFUserError {
+	public static ISbiUserDAO getSbiUserDAO() {
 		return (ISbiUserDAO) createDAOInstance("SbiUserDAO");
 	}
 
@@ -561,7 +524,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static ISbiAttributeDAO getSbiAttributeDAO() throws EMFUserError {
+	public static ISbiAttributeDAO getSbiAttributeDAO() {
 		return (ISbiAttributeDAO) createDAOInstance("SbiAttributeDAO");
 	}
 
@@ -573,7 +536,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static IConfigDAO getSbiConfigDAO() throws EMFUserError {
+	public static IConfigDAO getSbiConfigDAO()  {
 		return (IConfigDAO) createDAOInstance("SbiConfigDAO");
 	}
 
@@ -585,7 +548,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static IUdpDAO getUdpDAO() throws EMFUserError {
+	public static IUdpDAO getUdpDAO() {
 		return (IUdpDAO) createDAOInstance("UdpDAO");
 	}
 
@@ -597,7 +560,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static IUdpValueDAO getUdpDAOValue() throws EMFUserError {
+	public static IUdpValueDAO getUdpDAOValue() {
 		return (IUdpValueDAO) createDAOInstance("UdpDAOValue");
 	}
 
@@ -618,7 +581,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static I18NMessagesDAO getI18NMessageDAO() throws EMFUserError {
+	public static I18NMessagesDAO getI18NMessageDAO() {
 		return (I18NMessagesDAO) createDAOInstance("I18NMessagesDAO");
 	}
 
@@ -630,7 +593,7 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static IProgressThreadDAO getProgressThreadDAO() throws EMFUserError {
+	public static IProgressThreadDAO getProgressThreadDAO() {
 		return (IProgressThreadDAO) createDAOInstance("ProgressThreadDAO");
 	}
 
@@ -642,11 +605,11 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public static ISchedulerDAO getSchedulerDAO() throws EMFUserError {
+	public static ISchedulerDAO getSchedulerDAO() {
 		return (ISchedulerDAO) createDAOInstance("SchedulerDAO");
 	}
 
-	public static SbiWsEventsDao getWsEventsDao() throws EMFUserError {
+	public static SbiWsEventsDao getWsEventsDao() {
 		return (SbiWsEventsDao) createDAOInstance("WsEventDAO");
 	}
 
@@ -683,14 +646,13 @@ public class DAOFactory {
 	 *
 	 * @return the Glossary dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IGlossaryDAO getGlossaryDAO() throws EMFUserError {
+	public static IGlossaryDAO getGlossaryDAO() {
 		return (IGlossaryDAO) createDAOInstance("GlossaryDAO");
 	}
 
-	public static ICalendarDAO geCalendarDAO() throws EMFUserError {
+	public static ICalendarDAO geCalendarDAO() {
 		return (ICalendarDAO) createDAOInstance("CalendarDAO");
 	}
 
@@ -700,15 +662,15 @@ public class DAOFactory {
 	 * @return the Images dao
 	 * @throws EMFUserError
 	 */
-	public static IImagesDAO getImagesDAO() throws EMFUserError {
+	public static IImagesDAO getImagesDAO() {
 		return (IImagesDAO) createDAOInstance("ImagesDAO");
 	}
 
-	public static ISbiFederationDefinitionDAO getFedetatedDatasetDAO() throws EMFUserError {
+	public static ISbiFederationDefinitionDAO getFedetatedDatasetDAO() {
 		return (ISbiFederationDefinitionDAO) createDAOInstance("FederationDefinitionDAO");
 	}
 
-	public static IBIObjDataSetDAO getBIObjDataSetDAO() throws EMFUserError {
+	public static IBIObjDataSetDAO getBIObjDataSetDAO() {
 		return (IBIObjDataSetDAO) createDAOInstance("BIObjDataSetDAO");
 	}
 
@@ -717,10 +679,9 @@ public class DAOFactory {
 	 *
 	 * @return the Timespan dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ITimespanDAO getTimespanDAO() throws EMFUserError {
+	public static ITimespanDAO getTimespanDAO() {
 		return (ITimespanDAO) createDAOInstance("TimespanDAO");
 	}
 
@@ -729,10 +690,9 @@ public class DAOFactory {
 	 *
 	 * @return the IFeaturesProviderFileDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IFeaturesProviderFileDAO getFeaturesProviderFileDAO() throws EMFUserError {
+	public static IFeaturesProviderFileDAO getFeaturesProviderFileDAO() {
 		return (IFeaturesProviderFileDAO) createDAOInstance("IFeaturesProviderFileDAO");
 
 	}
@@ -742,10 +702,9 @@ public class DAOFactory {
 	 *
 	 * @return the IFeaturesProviderWFSDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IFeaturesProviderWFSDAO getFeaturesProviderWFSDAO() throws EMFUserError {
+	public static IFeaturesProviderWFSDAO getFeaturesProviderWFSDAO() {
 		return (IFeaturesProviderWFSDAO) createDAOInstance("IFeaturesProviderWFSDAO");
 	}
 
@@ -754,10 +713,9 @@ public class DAOFactory {
 	 *
 	 * @return the CrossNavigationDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ICrossNavigationDAO getCrossNavigationDAO() throws EMFUserError {
+	public static ICrossNavigationDAO getCrossNavigationDAO() throws HibernateException {
 		return (ICrossNavigationDAO) createDAOInstance("CrossNavigationDAO");
 	}
 
@@ -766,10 +724,9 @@ public class DAOFactory {
 	 *
 	 * @return the OutputParameterDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IOutputParameterDAO getOutputParameterDAO() throws EMFUserError {
+	public static IOutputParameterDAO getOutputParameterDAO() {
 		return (IOutputParameterDAO) createDAOInstance("OutputParameterDAO");
 	}
 
@@ -778,10 +735,9 @@ public class DAOFactory {
 	 *
 	 * @return the SbiMetaSourceDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISbiMetaSourceDAO getSbiMetaSourceDAO() throws EMFUserError {
+	public static ISbiMetaSourceDAO getSbiMetaSourceDAO() {
 		return (ISbiMetaSourceDAO) createDAOInstance("ISbiMetaSourceDAO");
 	}
 
@@ -790,10 +746,9 @@ public class DAOFactory {
 	 *
 	 * @return the SbiMetaTableDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISbiMetaTableDAO getSbiMetaTableDAO() throws EMFUserError {
+	public static ISbiMetaTableDAO getSbiMetaTableDAO() {
 		return (ISbiMetaTableDAO) createDAOInstance("ISbiMetaTableDAO");
 	}
 
@@ -802,10 +757,9 @@ public class DAOFactory {
 	 *
 	 * @return the SbiMetaTableColumnDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISbiMetaTableColumnDAO getSbiMetaTableColumnDAO() throws EMFUserError {
+	public static ISbiMetaTableColumnDAO getSbiMetaTableColumnDAO() {
 		return (ISbiMetaTableColumnDAO) createDAOInstance("ISbiMetaTableColumnDAO");
 	}
 
@@ -814,10 +768,9 @@ public class DAOFactory {
 	 *
 	 * @return the SbiMetaBCDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISbiMetaBCDAO getSbiMetaBCDAO() throws EMFUserError {
+	public static ISbiMetaBCDAO getSbiMetaBCDAO() {
 		return (ISbiMetaBCDAO) createDAOInstance("ISbiMetaBCDAO");
 	}
 
@@ -826,10 +779,9 @@ public class DAOFactory {
 	 *
 	 * @return the SbiMetaBCAttributeDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISbiMetaBCAttributeDAO getSbiMetaBCAttributeDAO() throws EMFUserError {
+	public static ISbiMetaBCAttributeDAO getSbiMetaBCAttributeDAO() {
 		return (ISbiMetaBCAttributeDAO) createDAOInstance("ISbiMetaBCAttributeDAO");
 	}
 
@@ -838,10 +790,9 @@ public class DAOFactory {
 	 *
 	 * @return the SbiMetaJobDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISbiMetaJobDAO getSbiMetaJobDAO() throws EMFUserError {
+	public static ISbiMetaJobDAO getSbiMetaJobDAO() {
 		return (ISbiMetaJobDAO) createDAOInstance("ISbiMetaJobDAO");
 	}
 
@@ -850,10 +801,9 @@ public class DAOFactory {
 	 *
 	 * @return the SbiDsBcDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISbiDsBcDAO getSbiDsBcDAO() throws EMFUserError {
+	public static ISbiDsBcDAO getSbiDsBcDAO() {
 		return (ISbiDsBcDAO) createDAOInstance("ISbiDsBcDAO");
 	}
 
@@ -862,10 +812,9 @@ public class DAOFactory {
 	 *
 	 * @return the SbiJobSourceDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISbiJobSourceDAO getSbiJobSourceDAO() throws EMFUserError {
+	public static ISbiJobSourceDAO getSbiJobSourceDAO() {
 		return (ISbiJobSourceDAO) createDAOInstance("ISbiJobSourceDAO");
 	}
 
@@ -874,10 +823,9 @@ public class DAOFactory {
 	 *
 	 * @return the SbiJobTableDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISbiJobTableDAO getSbiJobTableDAO() throws EMFUserError {
+	public static ISbiJobTableDAO getSbiJobTableDAO() {
 		return (ISbiJobTableDAO) createDAOInstance("ISbiJobTableDAO");
 	}
 
@@ -886,10 +834,9 @@ public class DAOFactory {
 	 *
 	 * @return the SbiObjDsDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISbiObjDsDAO getSbiObjDsDAO() throws EMFUserError {
+	public static ISbiObjDsDAO getSbiObjDsDAO() {
 		return (ISbiObjDsDAO) createDAOInstance("ISbiObjDsDAO");
 	}
 
@@ -898,10 +845,9 @@ public class DAOFactory {
 	 *
 	 * @return the SbiTableBcDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISbiTableBcDAO getSbiTableBCDAO() throws EMFUserError {
+	public static ISbiTableBcDAO getSbiTableBCDAO() {
 		return (ISbiTableBcDAO) createDAOInstance("ISbiTableBcDAO");
 	}
 
@@ -910,18 +856,17 @@ public class DAOFactory {
 	 *
 	 * @return the SbiDsBcDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ISbiDsBcDAO getDsBcDAO() throws EMFUserError {
+	public static ISbiDsBcDAO getDsBcDAO() {
 		return (ISbiDsBcDAO) createDAOInstance("ISbiDsBcDAO");
 	}
 
-	public static ISbiMetaDsTabRel getDsTableRelDAO() throws EMFUserError {
+	public static ISbiMetaDsTabRel getDsTableRelDAO() {
 		return (ISbiMetaDsTabRel) createDAOInstance("ISbiMetaDsTabRel");
 	}
 
-	public static ISbiMetaDocTabRelDAO getSbiMetaDocTabRelDAO() throws EMFUserError {
+	public static ISbiMetaDocTabRelDAO getSbiMetaDocTabRelDAO() {
 		return (ISbiMetaDocTabRelDAO) createDAOInstance("ISbiMetaDocTabRelDAO");
 	}
 
@@ -930,10 +875,9 @@ public class DAOFactory {
 	 *
 	 * @return the AlertDAO dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static IAlertDAO getAlertDAO() throws EMFUserError {
+	public static IAlertDAO getAlertDAO() {
 		return (IAlertDAO) createDAOInstance("AlertDAO");
 	}
 
@@ -942,35 +886,41 @@ public class DAOFactory {
 	 *
 	 * @return the CatalogFunction dao
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 
 	 */
-	public static ICatalogFunctionDAO getCatalogFunctionDAO() throws EMFUserError {
+	public static ICatalogFunctionDAO getCatalogFunctionDAO() {
 		return (ICatalogFunctionDAO) createDAOInstance("ICatalogFunctionDAO");
 	}
 
-	public static IFunctionsOrganizerDAO getFunctionsOrganizerDAO() throws EMFUserError {
+	public static IFunctionsOrganizerDAO getFunctionsOrganizerDAO() {
 		return (IFunctionsOrganizerDAO) createDAOInstance("IFunctionsOrganizerDAO");
 	}
 
-	public static IWhatifWorkflowDAO getWhatifWorkflowDAO() throws EMFUserError {
+	public static IWhatifWorkflowDAO getWhatifWorkflowDAO() {
 		return (IWhatifWorkflowDAO) createDAOInstance("IWhatifWorkflowDAO");
 	}
 
-	public static IObjFuncOrganizerDAO getObjFuncOrganizerDAO() throws EMFUserError {
+	public static IObjFuncOrganizerDAO getObjFuncOrganizerDAO() {
 		return (IObjFuncOrganizerDAO) createDAOInstance("IObjFuncOrganizerDAO");
 	}
 
-	public static ISbiAccessibilityPreferencesDAO getSiAccessibilityPreferencesDAO() throws EMFUserError {
+	public static ISbiAccessibilityPreferencesDAO getSiAccessibilityPreferencesDAO() {
 		return (ISbiAccessibilityPreferencesDAO) createDAOInstance("SbiAccessibilityPreferencesDAO");
 	}
 
 	public static ISbiDossierActivityDAO getDossierActivityDao() {
 		return (ISbiDossierActivityDAO) createDAOInstance("DossierActivityDAO");
 	}
-	
+
 	public static ISbiExportersDAO getExportersDao() {
 		return (ISbiExportersDAO) createDAOInstance("ExportersDAO");
 	}
 
+	public static IMetaModelParuseDAO getMetaModelParuseDao() {
+		return (IMetaModelParuseDAO) createDAOInstance("MetaModelParuseDAO");
+	}
+
+	public static IMetaModelParviewDAO getMetaModelParviewDao() {
+		return (IMetaModelParviewDAO) createDAOInstance("MetaModelParviewDAO");
+	}
 }

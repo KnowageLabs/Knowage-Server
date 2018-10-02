@@ -124,7 +124,10 @@ public class PageResource {
 
 			// load roles
 			IRoleDAO rdao = DAOFactory.getRoleDAO();
-			List<Role> rlist = rdao.loadAllRoles();
+			if (userProfile != null) {
+				rdao.setUserProfile(userProfile);
+			}
+			List<Role> rlist = rdao.loadAllRolesFiltereByTenant();
 			List<String> rolL = new ArrayList<>();
 			for (Role ro : rlist) {
 				rolL.add(ro.getName());

@@ -85,8 +85,8 @@ $organizerHeight : 120px;
 		background-image: url('../../sbi_default/img/analiticalmodel/browser/folder.png')!important;
 	}
 	
-	.shared {
-	   color: $fabPrimaryColor;
+	.shared, .shared md-icon {
+	   color: $fabPrimaryColor !important;
 	}
 
 	.workspaceSearchInput{

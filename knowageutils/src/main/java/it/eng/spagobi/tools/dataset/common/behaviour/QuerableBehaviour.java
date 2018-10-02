@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,27 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.common.behaviour;
-
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
-import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
-import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
-import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
-import it.eng.spagobi.tools.dataset.common.query.IQueryTransformer;
-import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
-import it.eng.spagobi.tools.dataset.exceptions.ProfileAttributeDsException;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
 
 import java.io.File;
 import java.net.URL;
@@ -44,9 +28,27 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
+import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
+import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCVerticaDataSet;
+import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
+import it.eng.spagobi.tools.dataset.common.query.IQueryTransformer;
+import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
+import it.eng.spagobi.tools.dataset.exceptions.ProfileAttributeDsException;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class QuerableBehaviour extends AbstractDataSetBehaviour {
 
@@ -155,15 +157,17 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 
 		String newStatement = statement;
 
-		Map<String, Object> userProfileAttributes = getTargetDataSet().getUserProfileAttributes();
+		IDataSet targetDataSet = getTargetDataSet();
+		Map<String, Object> userProfileAttributes = targetDataSet.getUserProfileAttributes();
 
-		if (getTargetDataSet() instanceof ScriptDataSet) {
+		if (targetDataSet instanceof ScriptDataSet) {
 			try {
 				newStatement = substituteProfileAttributes(newStatement, userProfileAttributes);
 			} catch (Throwable e) {
 				throw new ProfileAttributeDsException("An error occurred while excuting query [" + newStatement + "]", e);
 			}
-		} else if (getTargetDataSet() instanceof JDBCDataSet || getTargetDataSet() instanceof JDBCHiveDataSet) {
+		} else if (targetDataSet instanceof JDBCDataSet || targetDataSet instanceof JDBCHiveDataSet || targetDataSet instanceof JDBCOrientDbDataSet
+				|| targetDataSet instanceof JDBCVerticaDataSet) {
 			try {
 				newStatement = StringUtilities.substituteParametersInString(newStatement, userProfileAttributes);
 			} catch (Exception e) {
@@ -302,7 +306,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 
 	/**
 	 * search if there are parameters unfilled and return their names
-	 * 
+	 *
 	 * @param statement
 	 * @return
 	 */

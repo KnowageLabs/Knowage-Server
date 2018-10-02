@@ -79,7 +79,7 @@
 					<md-list-item class="md-2-line">
 	 	          	<div class="md-list-item-text">
 	 	           		<h3><b>{{translate.load('sbi.workspace.recent.requestTime')}}</b></h3>
-	 	            	<p>{{selectedDocument.requestTime}}</p>
+	 	            	<p>{{selectedDocument.requestTime | date:'h:mm a EEEE, MMMM d, y'}}</p>
 	 	          	</div>
 					</md-list-item>
 

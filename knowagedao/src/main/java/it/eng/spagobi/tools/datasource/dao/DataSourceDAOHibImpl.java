@@ -49,6 +49,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
@@ -65,6 +66,8 @@ import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.bo.JDBCDataSourcePoolConfiguration;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 /**
@@ -166,6 +169,42 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	}
 
 	@Override
+	public IDataSource findDataSourceByLabel(String label) {
+		logger.debug("IN");
+		IDataSource biDS = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			Query hibQuery = null;
+			
+			hibQuery = tmpSession.createQuery("from SbiDataSource ds where ds.label = :label");
+			hibQuery.setString("label", label);
+			
+			SbiDataSource hibDS = (SbiDataSource) hibQuery.uniqueResult();
+			if(hibDS == null) {
+				return null;
+			}
+			
+			biDS = toDataSource(hibDS);
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			throw e;
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+		}		
+		logger.debug("OUT");
+		return biDS;
+	}
+	
+	@Override
 	public IDataSource loadDataSourceWriteDefault() throws EMFUserError {
 		logger.debug("IN");
 		IDataSource toReturn = null;
@@ -224,14 +263,13 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		Session aSession = null;
 		Transaction tx = null;
 		List<IDataSource> realResult = new ArrayList<>();
-		try {
 
+		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
 			Query hibQuery = null;
 
-			// superadmin task
 			hibQuery = aSession.createQuery("select ds.sbiDataSource from SbiOrganizationDatasource ds where ds.sbiOrganizations.name = :tenantName");
 			hibQuery.setString("tenantName", getTenant());
 
@@ -261,17 +299,23 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	}
 
 	@Override
-	public List loadDataSourcesForSuperAdmin() throws EMFUserError {
+	public List<IDataSource> loadDataSourcesForSuperAdmin() {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		List realResult = new ArrayList();
+		List<IDataSource> realResult = new ArrayList<IDataSource>();
+
 		try {
+
+			UserProfile profile = (UserProfile) this.getUserProfile();
+			Assert.assertNotNull(profile, "User profile object is null; it must be provided for this method to continue");
 
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = aSession.createQuery(" from SbiDataSource");
+			Query hibQuery = aSession.createQuery("select ds.sbiDataSource from SbiOrganizationDatasource ds where (ds.sbiOrganizations.name = :tenantName or ds.sbiDataSource.commonInfo.userIn = :userId) or length(ds.sbiDataSource.jndi) > 0");			
+			hibQuery.setString("tenantName", getTenant());
+			hibQuery.setString("userId", profile.getUserId().toString());
 
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
@@ -286,7 +330,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			if (tx != null)
 				tx.rollback();
 
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new SpagoBIRuntimeException("Error while loading data sources", he);
 
 		} finally {
 			if (aSession != null) {
@@ -680,6 +724,24 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		IDataSource ds = DataSourceFactory.getDataSource();
 
 		try {
+			ds.setDsId(hibDataSource.getDsId());
+			ds.setLabel(hibDataSource.getLabel());
+			ds.setDescr(hibDataSource.getDescr());
+			ds.setJndi(hibDataSource.getJndi());
+			ds.setUrlConnection(hibDataSource.getUrl_connection());
+			ds.setUser(hibDataSource.getUser());
+			ds.setPwd(hibDataSource.getPwd());
+			ds.setDriver(hibDataSource.getDriver());
+			ds.setOwner(hibDataSource.getCommonInfo().getUserIn());
+			ds.setDialectName(hibDataSource.getDialect().getValueCd());
+			ds.setHibDialectClass(hibDataSource.getDialect().getValueCd());
+			ds.setEngines(hibDataSource.getSbiEngineses());
+			ds.setObjects(hibDataSource.getSbiObjectses());
+			ds.setSchemaAttribute(hibDataSource.getSchemaAttribute());
+			ds.setMultiSchema(hibDataSource.getMultiSchema());
+			ds.setReadOnly(hibDataSource.getReadOnly());
+			ds.setWriteDefault(hibDataSource.getWriteDefault());
+
 			if (!ds.checkIsJndi()) {
 				if (jdbcAdvancedOptions != null) {
 					JDBCDataSourcePoolConfiguration jdbcPoolConfig = mapper.readValue(jdbcAdvancedOptions, JDBCDataSourcePoolConfiguration.class);
@@ -690,22 +752,6 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 					ds.setJdbcPoolConfiguration(new JDBCDataSourcePoolConfiguration());
 				}
 			}
-			ds.setDsId(hibDataSource.getDsId());
-			ds.setLabel(hibDataSource.getLabel());
-			ds.setDescr(hibDataSource.getDescr());
-			ds.setJndi(hibDataSource.getJndi());
-			ds.setUrlConnection(hibDataSource.getUrl_connection());
-			ds.setUser(hibDataSource.getUser());
-			ds.setPwd(hibDataSource.getPwd());
-			ds.setDriver(hibDataSource.getDriver());
-			ds.setDialectName(hibDataSource.getDialect().getValueCd());
-			ds.setHibDialectClass(hibDataSource.getDialect().getValueCd());
-			ds.setEngines(hibDataSource.getSbiEngineses());
-			ds.setObjects(hibDataSource.getSbiObjectses());
-			ds.setSchemaAttribute(hibDataSource.getSchemaAttribute());
-			ds.setMultiSchema(hibDataSource.getMultiSchema());
-			ds.setReadOnly(hibDataSource.getReadOnly());
-			ds.setWriteDefault(hibDataSource.getWriteDefault());
 
 		} catch (JsonParseException e) {
 			logger.error("Error with parsing JSON String to Object", e);

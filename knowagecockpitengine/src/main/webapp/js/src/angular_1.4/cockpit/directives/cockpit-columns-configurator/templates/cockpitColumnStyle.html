@@ -146,7 +146,7 @@
 							<md-option ng-repeat="f in formatPattern" value="{{f}}">{{f}}</md-option>
 						</md-select>
 					</md-input-container-->
-					<md-input-container flex class="md-block" class="small counter" ng-if="selectedColumn.type == 'java.lang.Double' || selectedColumn.type == 'java.lang.Float'">
+					<md-input-container flex class="md-block" class="small counter" ng-if="hasPrecision(selectedColumn)">
 						<label>{{translate.load('sbi.cockpit.style.precision')}}</label>
 						<input class="input_class" type="number" ng-model="selectedColumn.style.precision" min="0" > 
 					</md-input-container>

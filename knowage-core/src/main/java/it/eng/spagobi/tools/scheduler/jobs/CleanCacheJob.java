@@ -17,9 +17,9 @@
  */
 package it.eng.spagobi.tools.scheduler.jobs;
 
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
-
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -33,18 +33,18 @@ public class CleanCacheJob extends AbstractSpagoBIJob implements Job {
 		logger.debug("IN");
 		try {
 			this.setTenant(jobExecutionContext);
-			this.executeInternal(jobExecutionContext);
+			executeInternal();
 		} finally {
 			this.unsetTenant();
 			logger.debug("OUT");
 		}
 	}
 
-	private void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+	private void executeInternal() {
 
 		logger.debug("IN");
 		try {
-			ICache cache = SpagoBICacheManager.getCache();
+			ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 			cache.deleteAll();
 			logger.debug("Cache cleaning ended succesfully!");
 		} catch (Exception e) {

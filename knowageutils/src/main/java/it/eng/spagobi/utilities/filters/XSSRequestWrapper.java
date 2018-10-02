@@ -212,7 +212,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 		Pattern scriptPattern = Pattern.compile("<img[^>]+(src\\s*=\\s*['\"]([^'\"]+)['\"])[^>]*>",
 				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		Pattern dataPattern = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);base64",
+		Pattern dataPattern = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);(utf-8;)?base64",
 				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 		Matcher scriptMatcher = scriptPattern.matcher(value);
 
@@ -378,17 +378,28 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 	private static String checkCSS(String value) {
 		logger.debug("IN");
 		Pattern cssUrlPattern = Pattern.compile("url\\s*\\(['\"]?([^'\"\\)]+)['\"]?\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		Pattern cssUrlDataPattern = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);base64",
+		Pattern cssUrlDataPattern = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);(utf-8;)?base64",
 				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-
+		Pattern domElementID = Pattern.compile("(#[a-zA-Z0-9\\_\\-]+)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);		
+		String domId = "";
+		
 		Matcher urlMatcher = cssUrlPattern.matcher(value);
-
+						
 		while (urlMatcher.find()) {
 			String cssUrl = urlMatcher.group();
 			String link = urlMatcher.group(1);
 
 			Matcher dataMatcher = cssUrlDataPattern.matcher(link);
-
+			Matcher domIdMatcher = domElementID.matcher(link);
+			
+			if(domIdMatcher.find()) {
+				domId = domIdMatcher.group();
+				if(domId.length() > 50) {
+					logger.warn("Provided url attribute with Id is: " + domId + ". Its lenght is grater than 50 characters and therefore it will be delete");
+					value = value.replace(cssUrl, "");
+				}
+			}
+			
 			if (!dataMatcher.find()) {
 				try {
 					URL url = new URL(link);
@@ -402,6 +413,8 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 					logger.debug("URL [" + link + "] is malformed. Trying to see if it is a valid relative URL...");
 					if (isValidRelativeURL(link) && isTrustedRelativePath(link)) {
 						logger.debug("URL " + link + " is recognized to be a valid URL");
+					} else if(link.equals(domId)) {
+						return value;
 					} else {
 						logger.error("Malformed or untrusted URL [" + link + "]", e);
 						value = value.replace(cssUrl, "");

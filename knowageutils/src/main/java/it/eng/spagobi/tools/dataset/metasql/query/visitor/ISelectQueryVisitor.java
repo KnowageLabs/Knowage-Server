@@ -18,40 +18,10 @@
 
 package it.eng.spagobi.tools.dataset.metasql.query.visitor;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
 import it.eng.spagobi.tools.dataset.metasql.query.PreparedStatementData;
 import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
-import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.BetweenFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.OrFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
 
-public interface ISelectQueryVisitor {
-	void visit(AndFilter item);
-
-	void visit(BetweenFilter item);
-
-	void visit(InFilter item);
-
-	void visit(LikeFilter item);
-
-	void visit(NullaryFilter item);
-
-	void visit(OrFilter item);
-
-	void visit(UnaryFilter item);
-
-	void visit(UnsatisfiedFilter item);
-
-	String getFormattedTimestamp(Timestamp timestamp);
-
-	String getFormattedDate(Date date);
+public interface ISelectQueryVisitor extends IFilterVisitor {
 
 	String toSql(SelectQuery selectQuery);
 

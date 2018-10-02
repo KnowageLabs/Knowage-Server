@@ -18,12 +18,12 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
-import java.util.Map;
-
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-public class PersistedAssociativeDatasetContainer extends JDBCAssociativeDatasetContainer {
+import java.util.Map;
+
+public class PersistedAssociativeDatasetContainer extends InlineViewAssociativeDatasetContainer {
 
 	public PersistedAssociativeDatasetContainer(IDataSet dataSet, Map<String, String> parameters) {
 		super(dataSet, parameters);

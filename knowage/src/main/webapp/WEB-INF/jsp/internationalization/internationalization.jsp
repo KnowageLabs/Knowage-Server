@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>Internationalization</title>
 </head>
-<body ng-controller="internationalizationCtrl as ic">	
+<body ng-controller="internationalizationController">	
 	<rest-loading></rest-loading>
 	<div>
 		<md-content>

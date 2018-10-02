@@ -17,16 +17,17 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.ScriptDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.XmlDataReader;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 public class ScriptDataSet extends ConfigurableDataSet {
 
@@ -110,5 +111,10 @@ public class ScriptDataSet extends ConfigurableDataSet {
 
 	public String getScriptLanguage() {
 		return getDataProxy().getLanguage();
+	}
+
+	@Override
+	public IDataSource getDataSource() {
+		return null;
 	}
 }

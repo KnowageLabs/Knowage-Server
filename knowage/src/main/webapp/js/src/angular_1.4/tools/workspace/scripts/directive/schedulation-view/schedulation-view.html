@@ -1,10 +1,10 @@
-<div layout-padding>
-	<table class="kn-table" ng-hide="showGridView==true || ngModel.length==0 " >
+<div class="kn-table-container" ng-class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed">
+	<table ng-hide="showGridView==true || ngModel.length==0 " class="kn-table kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed">
 		<thead>
 			<tr> 
 			<th ng-repeat="column in schedulationColumns">{{column.label}}</th>
 			<th class="multiTableAction">
-			<md-button ng-if="runSnapshots" ng-disabled="selectedTriggers.length == 0" ng-click="runTriggers('all')">
+			<md-button ng-if="runSnapshots" ng-disabled="selectedTriggers.length == 0" ng-click="runTriggers('all')" style="margin: 0;">
 	            {{translate.load('kn.schedulation.triggers.runall')}}
 	        </md-button>
 	        </th>
@@ -15,7 +15,7 @@
 				<td ng-repeat="column in schedulationColumns">{{row[column.name]}}</td>
 					<td class="tableAction">
 						<div layout="row" layout-align="end center" >
-							<md-button class="md-icon-button" ng-click="getSchedulations.action(row,$event)">
+							<md-button class="md-icon-button" style="height: 32px;" ng-click="getSchedulations.action(row,$event)">
 								<md-tooltip>{{getSchedulations.label}}</md-tooltip>
 								<md-icon md-font-icon="{{getSchedulations.icon}}">
 							</md-button>
@@ -29,8 +29,6 @@
 						<tr>
 							<th>{{translate.load('kn.schedulation.triggers.name')}}</th>
 							<th>{{translate.load('kn.schedulation.triggers.description')}}</th>
-							<th>{{translate.load('kn.schedulation.triggers.start')}}</th>
-							<th>{{translate.load('kn.schedulation.triggers.end')}}</th>
 							<th></th>
 							<th></th>
 						</tr>
@@ -39,15 +37,13 @@
 						<tr ng-repeat="trigger in row.triggers track by $index ">
 							<td>{{trigger.triggerName}}</td>
 							<td>{{trigger.triggerDescription}}</td>
-							<td>{{trigger.triggerStartDate}} {{trigger.triggerStartTime}}</td>
-							<td>{{trigger.triggerEndDate}} {{trigger.triggerEndTime}}</td>
 							<td class="tableAction">
 								<md-checkbox ng-model="trigger.runnable" ng-change="toggleTriggerRun(trigger)"></md-checkbox>
 							</td>
-							<!-- REMOVED BECAUSE CAN CREATE CONFUSION. CAN EXECUTE USING RUN ON ON GRID VIEWtd class="tableAction">							
+							<td class="tableAction">							
 								<md-icon md-font-icon="fa fa-play-circle" ng-click="runTriggers(trigger, row)" >
 								<md-tooltip>{{translate.load('kn.schedulation.triggers.run')}}</md-tooltip></md-icon>
-							</td-->
+							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -66,7 +62,8 @@
 	       <md-card-title>
 	          <md-card-title-text>
 	            <p class=" ellipsis">{{document.jobName}}</p>
-	             <md-tooltip md-delay="1500">
+	             <md-tooltip md-delay="1000">
+	             {{document.jobName}}
 	            </md-tooltip>
 	          </md-card-title-text>
 	    </md-card-title>
@@ -88,13 +85,13 @@
 					<md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon>
 					<md-tooltip md-delay="1000"> {{translate.load("sbi.workspace.execute.document")}}</md-tooltip>
 				</md-button>
-				<!-- REMOVED BECAUSE CAN CREATE CONFUSION. CAN EXECUTE USING RUN ON ON GRID VIEW md-menu-content>
+				<md-menu-content> 
 					<md-menu-item ng-repeat="item in document.triggers | filter: onlySnapshots">
 			            <md-button ng-click="executeDocumentAction({doc:item, merge:document.jobMergeAllSnapshots, document:document});">
 			                {{translate.load("kn.schedulation.triggers.execute")}} {{item.triggerName}}
 			            </md-button>
 			        </md-menu-item>	
-				</md-menu-content-->
+				</md-menu-content>
 			</md-menu>
 		</md-menu-bar>
 	

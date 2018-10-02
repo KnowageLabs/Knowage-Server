@@ -51,6 +51,8 @@ import it.eng.knowage.meta.model.physical.PhysicalPrimaryKey;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.bo.JDBCDataSourcePoolConfiguration;
+import it.eng.spagobi.tools.datasource.bo.deserializer.JDBCDataSourcePoolConfigurationJSONDeserializer;
 
 /**
  * <!-- begin-user-doc --> An implementation of the model object '<em><b>Physical Model</b></em>'. <!-- end-user-doc -->
@@ -622,6 +624,20 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 		dataSource.setDriver(getPropertyValueOrNull(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER));
 		dataSource.setUser(getPropertyValueOrNull(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME));
 		dataSource.setPwd(getPropertyValueOrNull(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD));
+
+		String property = getPropertyValueOrNull(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JDBC_POOL_CONFIG);
+		if (property != null && !property.equals("")) {
+			JDBCDataSourcePoolConfiguration JdbcPoolConfig = (JDBCDataSourcePoolConfiguration) new JDBCDataSourcePoolConfigurationJSONDeserializer()
+					.deserialize(property);
+			dataSource.setJdbcPoolConfiguration(JdbcPoolConfig);
+		} else if (property == null) {
+			String jndi = getPropertyValueOrNull(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JNDI_NAME);
+			if (jndi == null || jndi.equals("")) {
+				JDBCDataSourcePoolConfiguration jdbcConfig = new JDBCDataSourcePoolConfiguration();
+				dataSource.setJdbcPoolConfiguration(jdbcConfig);
+			}
+		}
+
 		dataSource.setHibDialectClass("");
 		return dataSource;
 	}

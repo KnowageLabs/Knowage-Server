@@ -16,256 +16,68 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-
-<%-- 
-author: Andrea Gioia (andrea.gioia@eng.it)
---%>
-<%@page import="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineFromFederationStartAction"%>
-<%@page import="it.eng.qbe.datasource.jpa.JPADataSource"%>
-<%@ page language="java" 
-	     contentType="text/html; charset=UTF-8" 
-	     pageEncoding="UTF-8"%>	
-
-
-<%-- ---------------------------------------------------------------------- --%>
-<%-- JAVA IMPORTS															--%>
-<%-- ---------------------------------------------------------------------- --%>
-<%@page import="it.eng.spagobi.commons.QbeEngineStaticVariables"%>
-<%@page import="it.eng.qbe.serializer.SerializationManager"%>
-<%@page import="it.eng.spago.configuration.*"%>
-<%@page import="it.eng.qbe.model.structure.IModelStructure"%>
-<%@page import="it.eng.spago.base.*"%>
-<%@page import="it.eng.qbe.datasource.configuration.IDataSourceConfiguration"%>
-<%@page import="it.eng.spagobi.engines.qbe.QbeEngineConfig"%>
-<%@page import="it.eng.spagobi.engines.qbe.QbeEngineInstance"%>
-<%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
-<%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
-<%@page import="it.eng.spago.security.IEngUserProfile"%>
-<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
-<%@page import="java.util.Locale"%>
-<%@page import="it.eng.spagobi.services.common.EnginConf"%>
-<%@page import="java.util.Map"%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.Iterator"%>
-<%@page import="org.json.JSONObject"%>
-<%@page import="it.eng.spagobi.services.proxy.SbiDocumentServiceProxy"%>
-<%@page import="it.eng.qbe.query.serializer.SerializerFactory"%>
-<%@page import="it.eng.qbe.query.Query"%>
-<%@page import="org.json.JSONArray"%>
-<%-- ---------------------------------------------------------------------- --%>
-<%-- JAVA CODE 																--%>
-<%-- ---------------------------------------------------------------------- --%>
-<%
-	QbeEngineInstance qbeEngineInstance;
-	QbeEngineConfig qbeEngineConfig;
-	UserProfile profile;
-	Locale locale;
-	String isFromCross;
-	boolean isPowerUser;
-	Integer resultLimit;
-	boolean isMaxResultLimitBlocking;
-	boolean isQueryValidationEnabled;
-	boolean isQueryValidationBlocking;
-	int timeout;
-	int crosstabCellLimit;
-	int crosstabCalculatedFieldsDecimalePrecison;
-	String spagobiServerHost;
-	String spagobiContext;
-	String spagobiSpagoController;
-	
-	qbeEngineInstance = (QbeEngineInstance)ResponseContainer.getResponseContainer().getServiceResponse().getAttribute("ENGINE_INSTANCE");
-	profile = (UserProfile)qbeEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-	locale = (Locale)qbeEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
-	
-	isFromCross = (String)qbeEngineInstance.getEnv().get("isFromCross");
-	if (isFromCross == null) {
-		isFromCross = "false";
-	}
-	isPowerUser = true;//profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY);
-	
-	boolean isFromFederation = (Boolean)ResponseContainer.getResponseContainer().getServiceResponse().getAttribute("IS_FEDERATED");
-
-	qbeEngineConfig = QbeEngineConfig.getInstance();
-    
-	boolean isTech  = qbeEngineInstance.isTechnicalUser();
-	
-    // settings for max records number limit
-    resultLimit = qbeEngineConfig.getResultLimit();
-    isMaxResultLimitBlocking = qbeEngineConfig.isMaxResultLimitBlocking();
-    isQueryValidationEnabled = qbeEngineConfig.isQueryValidationEnabled();
-    isQueryValidationBlocking = qbeEngineConfig.isQueryValidationBlocking();
-    timeout = qbeEngineConfig.getQueryExecutionTimeout();
-    crosstabCellLimit = qbeEngineConfig.getCrosstabCellLimit();
-    crosstabCalculatedFieldsDecimalePrecison = qbeEngineConfig.getCrosstabCFDecimalPrecision();
-    spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
-    spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
-    spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
-    
-    String jSonPars = "[{}]";
-    
-    Object documentIdO = qbeEngineInstance.getEnv().get("DOCUMENT_ID");
-
-    if(documentIdO != null) { 
-		SbiDocumentServiceProxy proxy = new SbiDocumentServiceProxy(profile.getUserUniqueIdentifier().toString(), session);
-		jSonPars = proxy.getDocumentAnalyticalDriversJSON(Integer.valueOf(documentIdO.toString()), locale.getLanguage(), locale.getCountry());
-    }
-    
-%>
-
-
+<%@ page language="java"  contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>   
+<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>  
+<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+<%@include file="/WEB-INF/jsp/commons/qbeImport.jsp"%>
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 
-<html>
-	
-	<head>
-		<%@include file="commons/includeExtJS.jspf" %>
-		<%@include file="commons/includeMessageResource.jspf" %>
-		<%@include file="commons/includeSbiQbeJS.jspf"%>
-		
-		<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
-		<script type="text/javascript">
-		document.domain='<%= EnginConf.getInstance().getSpagoBiDomain() %>';
-		</script>
-		<-- END SCRIPT FOR DOMAIN DEFINITION --%>
-	
-	</head>
-	
-	<body>
-	
-    	<script type="text/javascript">  
-			Sbi.config = {};
-	
-			Sbi.config.queryVersion = <%= QbeEngineStaticVariables.CURRENT_QUERY_VERSION %>;
-			Sbi.config.queryLimit = {};
-			Sbi.config.queryLimit.maxRecords = <%= resultLimit != null ? "" + resultLimit.intValue() : "undefined" %>;
-			Sbi.config.queryLimit.isBlocking = <%= isMaxResultLimitBlocking %>;
-			Sbi.config.queryValidation = {};
-			Sbi.config.queryValidation.isEnabled = <%= isQueryValidationEnabled %>;
-			Sbi.config.queryValidation.isBlocking = <%= isQueryValidationBlocking %>;
-			Sbi.config.queryExecutionTimeout = <%= timeout %>;
-			Sbi.config.crosstabCellLimit = <%= crosstabCellLimit %>;
-			Sbi.config.crosstabCalculatedFieldsDecimalePrecison = <%= crosstabCalculatedFieldsDecimalePrecison %>;
-			Sbi.config.contextName = '<%= spagobiContext %>';
-			Sbi.config.isFromFederation = <%= isFromFederation %>;
-			Sbi.config.isTechnicalUser = <%= isTech %>;
+<html ng-app="qbeManager">
+
+	<body ng-controller="qbeController" class="kn-qbe md-knowage-theme">
+	<rest-loading></rest-loading>
+	<div layout="row">
+		<div flex=30 layout-fill class="qbeList">
+			<qbe-expander-list 
+			flex drag-action="droppedFunction(data)" 
+			ng-model="entityModel" 
+			font-icons="fa" 
+			entities-actions="entitiesFunctions" 
+			fields-actions="fieldsFunctions" 
+			colors="colors"
 			
-			var url = {
-		    	host: '<%= request.getServerName()%>'
-		    	, port: '<%= request.getServerPort()%>'
-		    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
-		    	   				  request.getContextPath().substring(1):
-		    	   				  request.getContextPath()%>'
-		    	    
-		    };
-	
-		    var params = {
-		    	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
-		    };
-	
-		    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
-		    	baseUrl: url
-		        , baseParams: params
-		    });
-	
-			var remoteUrl = {
-				completeUrl: '<%= spagobiServerHost + spagobiContext + spagobiSpagoController %>'
-			};
-		    
-		    Sbi.config.remoteServiceRegistry = new Sbi.service.ServiceRegistry({
-		    	baseUrl: remoteUrl
-		        , baseParams: params
-		        , defaultAbsolute: true
-		    });
-	
-	      	var qbeConfig = {};
-	      	
-	      	<%
-	      	IModelStructure ms =qbeEngineInstance.getDataSource().getModelStructure(profile);
-
-	      	JSONArray queries = new JSONArray();
-			Iterator queriesIt = qbeEngineInstance.getQueryCatalogue().getAllQueries(false).iterator();
-			while (queriesIt.hasNext()) {
-				Query query = (Query) queriesIt.next();
-				JSONObject queryJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(query, qbeEngineInstance.getDataSource(), locale);
-				queries.put(queryJSON);
-			}
-	      	%>
-	      	qbeConfig.initialQueriesCatalogue = {};
-	      	qbeConfig.initialQueriesCatalogue.catalogue = {};
-	      	qbeConfig.initialQueriesCatalogue.catalogue.queries = <%= queries %>;
-	      	qbeConfig.initialQueriesCatalogue.version = Sbi.config.queryVersion;
-	      	
-	      	qbeConfig.isFromCross = <%= isFromCross %>;
-	      	<%
-	      	StringBuffer datamartNamesBuffer = new StringBuffer("[");
-	      	
-	      	Iterator<String> it = ms.getModelNames().iterator();
-	      	while (it.hasNext()) {
-	      		datamartNamesBuffer.append("'" + it.next() + "'");
-	      		if (it.hasNext()) {
-	      			datamartNamesBuffer.append(",");
-	      		}
-	      	}
-	      	datamartNamesBuffer.append("]");
-	      	%>
-	      	qbeConfig.westConfig = {};
-	      	qbeConfig.westConfig.datamartsName = <%= datamartNamesBuffer.toString() %>;
-
-	      	qbeConfig.externalServicesConfig = <%= qbeEngineInstance.getTemplate() != null ? qbeEngineInstance.getTemplate().getExternalServiceConfigurationsAsJSONArray() : "[]"%>;
-	    	
-	        // javascript-side user profile object
-	        Ext.ns("Sbi.user");
-	        Sbi.user.isPowerUser = <%=  isPowerUser %>;
-	       
-		
-	        Sbi.user.functionalities=[];
-	        
-	        <% 
-	        for(Object s : profile.getFunctionalities()){
-	        	String ss=s.toString();
-	        %>
-	        Sbi.user.functionalities.push("<%= ss %>");
-	         <%   }    %>
-	        
-	         Sbi.user.isAbleTo=function(functio){
-	        	 return (Sbi.user.functionalities.indexOf(functio)!=-1);
-	         }
-	        
-	        
-	        
-	        
-	        var qbe = null;
-	        
-	        Ext.onReady(function(){
-	        	Ext.QuickTips.init();   
-	
-		        Ext.ns("Sbi.cache");
-		        
-	        	
-	        	var parametersStore = new Sbi.qbe.DocumentParametersStore({});
-	        	var parametersInfo = <%=jSonPars%>;	        	
-	        	parametersStore.loadData(parametersInfo);
-	        	
-	       		qbeConfig.documentParametersStore = parametersStore;
-
-	       		// if user is a power user, instantiate and show also the QueryBuilderPanel
-	       		qbeConfig.displayQueryBuilderPanel = Sbi.user.isPowerUser;
-	       		qbeConfig.displayFormBuilderPanel = false;
-	       		
-	           	qbe = new Sbi.qbe.QbePanel(qbeConfig);
-	           	var viewport = new Ext.Viewport(qbe);  
-	           	<%if (isPowerUser && isFromCross.equalsIgnoreCase("false")) {%>
-	           		qbe.queryEditorPanel.selectGridPanel.dropTarget = new Sbi.qbe.SelectGridDropTarget(qbe.queryEditorPanel.selectGridPanel); 
-	           		qbe.queryEditorPanel.filterGridPanel.dropTarget = new Sbi.qbe.FilterGridDropTarget(qbe.queryEditorPanel.filterGridPanel);
-	           		qbe.queryEditorPanel.havingGridPanel.dropTarget = new Sbi.qbe.HavingGridDropTarget(qbe.queryEditorPanel.havingGridPanel);
-
-	         	<%}%>
-	           	
-	      	});
-	    </script>
-	
+			>
+				<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="saveEntityTree()">
+		      		<md-tooltip md-direction="top">{{translate.load("kn.qbe.general.save")}}</md-tooltip>
+		        	<md-icon md-menu-origin class="fa fa-floppy-o"></md-icon>
+		      	</md-button>
+        	</qbe-expander-list>
+        	
+        	<qbe-expander-list 
+			flex 
+			ng-model="subqueriesModel" 
+			font-icons="fa" 
+			entities-actions="queryFunctions"
+			display-property-name="name"
+			children-name="fields"
+			>
+				<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="createSubquery()">
+		      		<md-tooltip md-direction="top">{{translate.load("kn.qbe.general.add")}}</md-tooltip>
+		        	<md-icon md-menu-origin class="fa fa-plus-circle"></md-icon>
+		      	</md-button>
+        	</qbe-expander-list>
+		</div>
+		<div flex layout="column">
+			<qbe-custom-table 
+			ng-drop="true" 
+			ng-drop-success="onDropComplete($data,$event)" 
+			ng-model="queryModel" expression="expression" 
+			filters="filters" 
+			is-temporal ="(entityModel.entities | filter:'temporal_dimension').length > 0 " >
+				<div >
+					<md-button  ng-click="stopEditingSubqueries()">
+                    	{{query.name}}
+                	</md-button>
+                	<md-icon ng-if="editQueryObj.name !== query.name" md-font-icon="fa fa-chevron-right"></md-icon>
+                	<md-button ng-if="editQueryObj.name !== query.name">
+                    	 {{editQueryObj.name}}
+                	</md-button>
+				</div>
+			</qbe-custom-table>
+		</div>
+	</div>
 	</body>
 
 </html>

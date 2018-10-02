@@ -17,153 +17,46 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
-import java.text.ParseException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import com.jayway.jsonpath.JsonPath;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 
-import com.jayway.jsonpath.JsonPath;
-
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.Field;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.datastore.Record;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.utilities.Helper;
+import java.text.ParseException;
+import java.util.List;
 
 public class SolrDataReader extends JSONPathDataReader {
 
-	private static final String KEY_HEADER = "key";
-	private static final String VALUE_HEADER = "value";
 	static private Logger logger = Logger.getLogger(SolrDataReader.class);
-	private boolean hasFacetQuery;
-	private boolean hasFacets;
-	private int resultNumber = -1;
+	protected int resultNumber = -1;
 
-	public SolrDataReader(String jsonPathItems, boolean hasFacets, boolean hasFacetQuery) {
-		super(jsonPathItems, null, false, false);
-		this.hasFacetQuery = hasFacetQuery;
-		this.hasFacets = hasFacets;
-
+	public SolrDataReader(String jsonPathItems) {
+		this(jsonPathItems, null);
 	}
 
-	public SolrDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes, boolean useDirectlyAttributesi) {
-		super(jsonPathItems, jsonPathAttributes, useDirectlyAttributesi, false);
-		hasFacets = false;
+	public SolrDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes) {
+		super(jsonPathItems, jsonPathAttributes, false, false);
 	}
 
 	@Override
-	protected void addFieldMetadata(MetaData dataStoreMeta, List<Object> parsedData) {
-		if (!hasFacets) {
+	protected void addFieldMetadata(IMetaData dataStoreMeta, List<Object> parsedData) {
 			super.addFieldMetadata(dataStoreMeta, parsedData);
-		} else {
-			// key field
-			FieldMetadata fm = new FieldMetadata();
-			fm.setAlias(KEY_HEADER);
-			fm.setName(KEY_HEADER);
-			fm.setType(String.class);
-			dataStoreMeta.addFiedMeta(fm);
-
-			fm = new FieldMetadata();
-			fm.setAlias(VALUE_HEADER);
-			fm.setName(VALUE_HEADER);
-			fm.setType(Double.class);
-			dataStoreMeta.addFiedMeta(fm);
-		}
-
 	}
 
 	@Override
-	protected void addData(String data, DataStore dataStore, MetaData dataStoreMeta, List<Object> parsedData, boolean skipPagination)
+	protected void addData(String data, IDataStore dataStore, IMetaData dataStoreMeta, List<Object> parsedData, boolean skipPagination)
 			throws ParseException, JSONException {
-		if (!hasFacets) {
 			super.addData(data, dataStore, dataStoreMeta, parsedData, true);
-		} else {
-			int rowFetched = 0;
-
-			if (hasFacetQuery) {// if the facets are calculated using query facet
-				resultNumber = 0;
-				if (isCalculateResultNumberEnabled()) {
-					for (int j = 0; j < parsedData.size(); j++) {
-						if (maxResults <= 0 || rowFetched < maxResults) {
-							Map<Object, Object> aMap = (Map<Object, Object>) parsedData.get(j);
-							resultNumber = resultNumber + aMap.keySet().size();
-						}
-					}
-				}
-
-				for (int j = 0; j < parsedData.size(); j++) {
-					if (maxResults <= 0 || rowFetched < maxResults) {
-						Map<Object, Object> aMap = (Map<Object, Object>) parsedData.get(j);
-						for (Iterator iterator = aMap.keySet().iterator(); iterator.hasNext();) {
-							IRecord record = new Record(dataStore);
-							Object key = iterator.next();
-							record.appendField(new Field(key));
-							record.appendField(new Field(aMap.get(key)));
-							dataStore.appendRecord(record);
-							rowFetched++;
-						}
-					}
-				}
-			} else {// facet field
-
-				for (int j = 0; j < parsedData.size(); j++) {
-					if (maxResults <= 0 || rowFetched < maxResults) {
-						IRecord record = new Record(dataStore);
-						IField field = new Field(parsedData.get(j));
-						record.appendField(field);
-
-						field = new Field(parsedData.get(j + 1));
-						record.appendField(field);
-						dataStore.appendRecord(record);
-						rowFetched++;
-					}
-					j = j + 1;
-				}
-			}
-
 			logger.debug("Insert [" + dataStore.getRecordsCount() + "] records");
-
-		}
-
 	}
 
 	@Override
-	public synchronized IDataStore read(Object data) {
-		if (!hasFacets) {
+	public IDataStore read(Object data) {
 			IDataStore ds = super.read(data);
 			Object parsed = JsonPath.read((String) data, "$.response.numFound");
 			ds.getMetaData().setProperty("resultNumber", parsed);
 			return ds;
-		} else {
-			Helper.checkNotNull(data, "data");
-			if (!(data instanceof String)) {
-				throw new IllegalArgumentException("data must be a string");
-			}
-			String d = (String) data;
-			try {
-				DataStore dataStore = new DataStore();
-				MetaData dataStoreMeta = new MetaData();
-				dataStore.setMetaData(dataStoreMeta);
-				List<Object> parsedData = getItems(d);
-				addFieldMetadata(dataStoreMeta, parsedData);
-				addData(d, dataStore, dataStoreMeta, parsedData, true);
-				dataStore.getMetaData().setProperty("resultNumber", getResultNumber());
-				return dataStore;
-			} catch (ParseException e) {
-				throw new JSONPathDataReaderException(e);
-			} catch (JSONPathDataReaderException e) {
-				throw e;
-			} catch (Exception e) {
-				throw new JSONPathDataReaderException(e);
-			}
-		}
 	}
 
 	public int getResultNumber() {

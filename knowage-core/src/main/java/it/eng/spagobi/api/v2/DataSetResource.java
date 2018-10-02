@@ -48,7 +48,6 @@ import org.json.JSONObject;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -64,9 +63,11 @@ import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
@@ -149,13 +150,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			return getDatasetsAsPagedList(pageStr, itemPerPageStr, search, seeTechnical, ids, spatialOnly);
 		}
 
-		ISbiDataSetDAO dsDAO;
-		try {
-			dsDAO = DAOFactory.getSbiDataSetDAO();
-		} catch (EMFUserError e) {
-			logger.error("Error while looking for datasets", e);
-			throw new SpagoBIRuntimeException("Error while looking for datasets", e);
-		}
+		ISbiDataSetDAO dsDAO = DAOFactory.getSbiDataSetDAO();
 
 		List<SbiDataSet> dataSets = dsDAO.loadSbiDataSets();
 		List<SbiDataSet> toBeReturned = new ArrayList<SbiDataSet>();
@@ -297,7 +292,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			JSONObject jo = new JSONObject();
 			JSONArray ja = new JSONArray();
 			for (SbiDataSet ds : dataset) {
-				IDataSet dataSet = DataSetFactory.toDataSet(ds);
+				IDataSet dataSet = DataSetFactory.toDataSet(ds, getUserProfile());
 				JSONObject jsonIDataSet = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataSet, null);
 
 				JSONObject jsonSbiDataSet = new JSONObject(JsonConverter.objectToJson(ds, SbiDataSet.class));
@@ -309,7 +304,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				if (dataSet instanceof AbstractJDBCDataset) {
 					IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
 					isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
-				} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted()) {
+				} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted() || dataSet instanceof SolrDataSet) {
 					isNearRealtimeSupported = true;
 				}
 				jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);
@@ -462,7 +457,7 @@ public class DataSetResource extends AbstractDataSetResource {
 							filter = new InFilter(projections, valueObjects);
 						}
 					} else if (SimpleFilterOperator.LIKE.equals(operator)) {
-						filter = new LikeFilter(projections.get(0), valueObjects.get(0).toString());
+						filter = new LikeFilter(projections.get(0), valueObjects.get(0).toString(), LikeFilter.TYPE.PATTERN);
 					} else if (SimpleFilterOperator.BETWEEN.equals(operator)) {
 						filter = new BetweenFilter(projections.get(0), valueObjects.get(0), valueObjects.get(1));
 					} else if (operator.isNullary()) {
@@ -534,10 +529,10 @@ public class DataSetResource extends AbstractDataSetResource {
 					String parameters = info.getString("parameters");
 
 					IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
-					ICache cache = SpagoBICacheManager.getCache();
+					ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 
 					DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI();
-					datasetManagementAPI.setDataSetParameters(dataSet, DataSetUtilities.getParametersMap(parameters));
+					dataSet.setParametersMap(DataSetUtilities.getParametersMap(parameters));
 					datasetManagementAPI.putDataSetInCache(dataSet, cache);
 				}
 			}
@@ -550,7 +545,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	@Override
-	protected IDataWriter getDataSetWriter() throws JSONException {
+	protected IDataWriter getDataStoreWriter() throws JSONException {
 		CockpitJSONDataWriter dataWriter = new CockpitJSONDataWriter(getDataSetWriterProperties());
 		dataWriter.setLocale(buildLocaleFromSession());
 		return dataWriter;

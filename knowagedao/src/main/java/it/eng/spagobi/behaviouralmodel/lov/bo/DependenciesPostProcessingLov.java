@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -32,17 +43,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.DateRangeUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import org.apache.log4j.Logger;
 
 /**
  * This class contains useful methods for LOV (list of values) that must evaluate dependencies (correlations with other parameters) AFTER their execution. They
@@ -100,7 +100,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 	private List filterForCorrelation(List list, ObjParuse objParuse, Map selectedParameterValues) {
 		try {
 
-			Integer objParFatherId = objParuse.getObjParFatherId();
+			Integer objParFatherId = objParuse.getParFatherId();
 			BIObjectParameter objParFather = DAOFactory.getBIObjectParameterDAO().loadForDetailByObjParId(objParFatherId);
 			// get the general parameter associated to the bi parameter father
 			IParameterDAO parameterDAO = DAOFactory.getParameterDAO();

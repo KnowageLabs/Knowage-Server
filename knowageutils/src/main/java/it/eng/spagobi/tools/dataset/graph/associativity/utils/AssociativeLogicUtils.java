@@ -18,33 +18,30 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.utils;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.metamodel.data.DataSet;
-import org.jgrapht.graph.Pseudograph;
-
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.Tuple;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 import it.eng.spagobi.tools.dataset.graph.associativity.container.IAssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
+import org.apache.metamodel.data.DataSet;
+import org.apache.solr.client.solrj.response.FacetField;
+import org.jgrapht.graph.Pseudograph;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 public class AssociativeLogicUtils {
 
-	public static String getUnlimitedInClauseValues(Set<String> values) {
-		Set<String> newValues = new HashSet<>();
-		for (String value : values) {
-			newValues.add(value.replaceFirst("\\(", "(1,"));
+	public static Set<Tuple> getTupleOfValues(FacetField facetField) {
+		Set<Tuple> tuples = new HashSet<>(facetField.getValueCount());
+		for(FacetField.Count distinctValue : facetField.getValues()) {
+			Tuple tuple = new Tuple(1);
+			tuple.add(distinctValue.getName());
+			tuples.add(tuple);
 		}
-		return StringUtils.join(newValues.iterator(), ",");
+		return tuples;
 	}
 
 	public static Set<Tuple> getTupleOfValues(ResultSet rs) throws SQLException {

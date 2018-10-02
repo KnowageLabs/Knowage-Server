@@ -17,16 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.log4j.Logger;
-
 import com.jayway.jsonpath.JsonPath;
-
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.SolrDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -35,10 +26,17 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 import it.eng.spagobi.utilities.rest.RestUtilities.Response;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.log4j.Logger;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class SolrDataProxy extends RESTDataProxy {
 
-	private String facetField = null;
+	private String facetField;
 	private boolean facets;
 	private static final Logger logger = Logger.getLogger(SolrDataProxy.class);
 	private int maxRestConf = 999999;
@@ -72,60 +70,6 @@ public class SolrDataProxy extends RESTDataProxy {
 			} else {
 				address = address + "&rows=" + maxRestConf;
 			}
-			// if (getOffsetParam() != null) {
-			// address = address + "&start=" + getOffsetParam();
-			// }
-			// if (getFetchSizeParam() != null) {
-			// address = address + "&rows=" + getFetchSizeParam();
-			// }
-			//
-			// if (dataReader.isOffsetSupported() && dataReader.isFetchSizeSupported()) {
-			// int offsetPag = 0;
-			// int offsetDef = 0;
-			// int fetchPag = 0;
-			// int fetchDef = 0;
-			//
-			// try {
-			// if (getOffsetParam() != null) {
-			// offsetDef = new Integer(getOffsetParam());
-			// }
-			// if (getFetchSizeParam() != null) {
-			// fetchDef = new Integer(getFetchSizeParam());
-			// }
-			// } catch (Exception e) {
-			// logger.debug("Error loading the offet and fetchParam");
-			// offsetDef = 0;
-			// fetchDef = 0;
-			// }
-			//
-			// fetchPag = dataReader.getFetchSize();
-			// offsetPag = dataReader.getOffset();
-			//
-			// if (offsetDef + offsetPag > 0) {
-			// address = address + "&start=" + (offsetDef + offsetPag);
-			// }
-			//
-			// if (fetchDef > 0 && fetchPag <= 0) {
-			// address = address + "&rows=" + fetchDef;
-			// } else if (fetchDef <= 0 && fetchPag > 0) {
-			// address = address + "&rows=" + fetchPag;
-			// } else if (fetchDef > 0 && fetchPag > 0) {
-			// if (fetchDef + offsetDef <= offsetDef + offsetPag + fetchPag) {
-			// address = address + "&rows=" + fetchPag;
-			// } else {
-			// address = address + "&rows=" + (fetchDef - offsetPag);
-			// }
-			// }
-			// } else {
-			//
-			// if (getOffsetParam() != null) {
-			// address = address + "&start=" + getOffsetParam();
-			// }
-			// if (getFetchSizeParam() != null) {
-			// address = address + "&rows=" + getFetchSizeParam();
-			// }
-			//
-			// }
 
 		}
 		return address;

@@ -42,7 +42,6 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
@@ -410,7 +409,7 @@ public class PersistedTableManager implements IPersistedManager {
 				toReturn[i] = statement;
 
 				if (this.isRowCountColumIncluded()) {
-					statement.setLong(1, i + 1);
+					statement.setLong(1, i + 1L);
 				}
 				
 
@@ -636,15 +635,6 @@ public class PersistedTableManager implements IPersistedManager {
 		String totalQuery = insertQuery + values;
 		logger.debug("create table statement: " + createQuery);
 		try {
-			if (getDialect().equals(DatabaseDialect.HSQL)) {
-				// WORKAROUND for HQL : it needs the physical table for define a
-				// prepareStatement.
-				// So, drop and create an empty target table
-				dropTableIfExists(datasource);
-				// creates temporary table
-				executeStatement(createQuery, datasource);
-			}
-
 			for (int i = 0; i < batchCount; i++) {
 				toReturn[i] = connection.prepareStatement(totalQuery);
 			}
@@ -656,7 +646,7 @@ public class PersistedTableManager implements IPersistedManager {
 				PreparedStatement statement = toReturn[currentBatch];
 
 				if (this.isRowCountColumIncluded()) {
-					statement.setLong(1, i + 1);
+					statement.setLong(1, i + 1L);
 				}
 
 				IRecord record = datastore.getRecordAt(i);
@@ -756,15 +746,6 @@ public class PersistedTableManager implements IPersistedManager {
 		String totalQuery = insertQuery + values;
 		logger.debug("create table statement: " + createQuery);
 		try {
-			if (getDialect().equals(DatabaseDialect.HSQL)) {
-				// WORKAROUND for HQL : it needs the physical table for define a
-				// prepareStatement.
-				// So, drop and create an empty target table
-				dropTableIfExists(datasource);
-				// creates temporary table
-				executeStatement(createQuery, datasource);
-			}
-
 			statement = connection.prepareStatement(totalQuery);
 
 			// set query timeout (if necessary)
@@ -845,29 +826,7 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	public Connection getConnection(IDataSource datasource) {
-		try {
-			Boolean multiSchema = datasource.getMultiSchema();
-			logger.debug("Datasource is multischema: " + multiSchema);
-			String schema;
-			if (multiSchema == null || !multiSchema.booleanValue()) {
-				schema = null;
-			} else {
-				String attributeName = datasource.getSchemaAttribute();
-				logger.debug("Datasource multischema attribute name: " + attributeName);
-
-				logger.debug("Looking for attribute " + attributeName + " for user " + profile + " ...");
-				Object attributeValue = profile.getUserAttribute(attributeName);
-				logger.debug("Attribute " + attributeName + "  is " + attributeValue);
-				if (attributeValue == null) {
-					throw new RuntimeException("No attribute with name " + attributeName + " found for user " + ((UserProfile) profile).getUserId());
-				} else {
-					schema = attributeValue.toString();
-				}
-			}
-			return datasource.getConnection(schema);
-		} catch (Exception e) {
-			throw new SpagoBIEngineRuntimeException("Cannot get connection to datasource", e);
-		}
+		return datasource.getConnectionByUserProfile(profile);
 	}
 
 	private void executeStatement(String sql, IDataSource dataSource) throws Exception {
@@ -934,9 +893,6 @@ public class PersistedTableManager implements IPersistedManager {
 			statement = "SELECT TABLE_NAME " + "FROM USER_TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toUpperCase() + "%'";
 		} else if (dialect.equals(DatabaseDialect.SQLSERVER) || dialect.equals(DatabaseDialect.MYSQL) || dialect.equals(DatabaseDialect.POSTGRESQL)) {
 			statement = "SELECT TABLE_NAME " + "FROM INFORMATION_SCHEMA.TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toLowerCase() + "%'";
-		} else if (dialect.equals(DatabaseDialect.HSQL)) {
-			statement = "SELECT TABLE_NAME " + "FROM INFORMATION_SCHEMA.SYSTEM_TABLES  " + "WHERE TABLE_TYPE = 'TABLE' AND TABLE_NAME LIKE '"
-					+ prefix.toUpperCase() + "%'";
 		}
 
 		if ((statement != null) && (!statement.isEmpty())) {

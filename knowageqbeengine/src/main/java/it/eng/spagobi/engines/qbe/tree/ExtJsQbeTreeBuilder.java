@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,7 +77,6 @@ public class ExtJsQbeTreeBuilder {
 	public static final String NODE_TYPE_HIERARCHY_LEVEL_FIELD = "hierarchyLevelField";
 	public static final String NODE_TYPE_INLINE_CALCULATED_FIELD = "inLineCalculatedField";
 	public static final String NODE_TYPE_RELATION_FIELD = "relation";
-	public static transient Logger logger = Logger.getLogger(ExtJsQbeTreeBuilder.class);
 
 	/**
 	 * Instantiates a new ext js qbe tree builder.
@@ -204,7 +202,8 @@ public class ExtJsQbeTreeBuilder {
 	 */
 	public void addEntityRootNode(JSONArray nodes, IModelEntity entity, int recursionLevel) {
 
-		// DatamartProperties datamartProperties = dataSource.getDataMartProperties();
+		// DatamartProperties datamartProperties =
+		// dataSource.getDataMartProperties();
 		String iconCls = entity.getPropertyAsString("type");
 		String label = getEntityLabel(entity);
 		String londDescription = QueryJSONSerializer.getEntityLongDescription(entity, getDatamartLabels());
@@ -218,6 +217,9 @@ public class ExtJsQbeTreeBuilder {
 		JSONArray childrenNodes = getFieldNodes(entity, recursionLevel);
 
 		JSONObject entityNode = new JSONObject();
+
+		JSONArray relationNodes = getRelationNodes(entity, recursionLevel);
+
 		try {
 			entityNode.put("id", entity.getUniqueName());
 			entityNode.put("text", label);
@@ -228,9 +230,21 @@ public class ExtJsQbeTreeBuilder {
 			nodeAttributes.put("iconCls", iconCls);
 			nodeAttributes.put("type", NODE_TYPE_ENTITY);
 			nodeAttributes.put("londDescription", londDescription);
-			nodeAttributes.put("linkedToWords", new Boolean(linkedToWords)); // TO-DO check if isabletoGlossary and if this nod have a word associated
+			nodeAttributes.put("linkedToWords", new Boolean(linkedToWords)); // TO-DO
+																				// check
+																				// if
+																				// isabletoGlossary
+																				// and
+																				// if
+																				// this
+																				// nod
+																				// have
+																				// a
+																				// word
+																				// associated
 			entityNode.put("attributes", nodeAttributes);
 			entityNode.put("children", childrenNodes);
+			entityNode.put("relation", relationNodes);
 
 		} catch (JSONException e) {
 			throw new SpagoBIRuntimeException("error generating the relation node");
@@ -287,28 +301,8 @@ public class ExtJsQbeTreeBuilder {
 		Iterator<IModelField> normalFieldIterator = normalFields.iterator();
 		while (normalFieldIterator.hasNext()) {
 			IModelField field = normalFieldIterator.next();
-			JSONObject jsObject = getFieldNode(entity, field);
-
-			// // add custom function if present
-			// try {
-			// if (field.getProperties().get("customFunction") != null && !field.getProperties().get("customFunction").equals("")) {
-			// // String uniqueName = field.getUniqueName();
-			// // String customFunctionS = field.getProperties().get("customFunction").toString();
-			// // CustomFunction customFunction = new CustomFunction(customFunctionS);
-			// // String nameFieldApplied = customFunction.apply(uniqueName);
-			// // JSONObject attObj = jsObject.getJSONObject("attributes");
-			// // attObj.put("field", nameFieldApplied);
-			// //
-			// // field.setName(nameFieldApplied);
-			// // jsObject.put("customFunction", customFunction);
-			// String customFunction = field.getProperties().get("customFunction").toString();
-			// jsObject.put("customFunction", customFunction);
-			// }
-			// } catch (JSONException e) {
-			// logger.error("Error in writing custon function", e);
-			// }
-
 			Boolean isARelation = (Boolean) field.getProperties().get("relation");
+			JSONObject jsObject = getFieldNode(entity, field);
 			if (jsObject != null && (isARelation == null || !isARelation)) {
 				children.put(jsObject);
 			}
@@ -327,25 +321,33 @@ public class ExtJsQbeTreeBuilder {
 			}
 		}
 
+		// add subentities
+		getSubEntitiesNodes(entity, children, recursionLevel);
+
+		return children;
+	}
+
+	public JSONArray getRelationNodes(IModelEntity entity, int recursionLevel) {
+		JSONArray relation = new JSONArray();
+
 		// add relations
 		Set<Relationship> relations = entity.getStructure().getRootEntityDirectConnections(entity);
 		if (relations != null) {
 			Iterator<Relationship> iter = relations.iterator();
 			while (iter.hasNext()) {
 				Relationship relationship = iter.next();
-				// if the source entity refer to another entity more than one time, we print the relation name in the label of the relation field
+				// if the source entity refer to another entity more than one
+				// time, we print the relation name in the label of the relation
+				// field
 				boolean needRelationInLabel = (entity.getStructure().getDirectConnections(entity, relationship.getTargetEntity())).size() > 1;
 				JSONObject jsObject = getRelationFieldNode(relationship, entity, needRelationInLabel);
 				if (jsObject != null) {
-					children.put(jsObject);
+					relation.put(jsObject);
 				}
 			}
 		}
 
-		// add subentities
-		getSubEntitiesNodes(entity, children, recursionLevel);
-
-		return children;
+		return relation;
 	}
 
 	/**
@@ -360,7 +362,8 @@ public class ExtJsQbeTreeBuilder {
 	 */
 	public JSONObject getFieldNode(IModelEntity parentEntity, IModelField field) {
 
-		// DatamartProperties datamartProperties = dataSource.getDataMartProperties();
+		// DatamartProperties datamartProperties =
+		// dataSource.getDataMartProperties();
 		String iconCls = field.getPropertyAsString("type");
 
 		String fieldLabel = getFieldLabel(field);
@@ -467,7 +470,6 @@ public class ExtJsQbeTreeBuilder {
 
 			JSONObject nodeAttributes = new JSONObject();
 			nodeAttributes.put("iconCls", "calculation");
-
 			if (field.isInLine()) {
 				nodeAttributes.put("type", NODE_TYPE_INLINE_CALCULATED_FIELD);
 			} else {
@@ -477,14 +479,12 @@ public class ExtJsQbeTreeBuilder {
 			nodeAttributes.put("entity", entityLabel);
 			nodeAttributes.put("field", fieldLabel);
 
-			// nodes added in backend for tree are not editable
-			nodeAttributes.put("editable", false);
-
 			JSONObject formState = new JSONObject();
 			formState.put("alias", field.getName());
 			formState.put("type", field.getType());
 			formState.put("nature", field.getNature());
 			formState.put("expression", field.getExpression());
+			formState.put("expressionSimple", field.getExpressionSimple());
 
 			List<Slot> slots = field.getSlots();
 			JSONArray slotsJSON = new JSONArray();
@@ -547,6 +547,10 @@ public class ExtJsQbeTreeBuilder {
 			fieldNode.put("iconCls", iconCls);
 			fieldNode.put("leaf", true);
 			fieldNode.put("qtip", relationTooltip);
+			fieldNode.put("relationName", relationName);
+			fieldNode.put("sourceFields", sourceText);
+			fieldNode.put("targetEntity", targetEntityLabel);
+			fieldNode.put("targetFields", targetText);
 
 			JSONObject nodeAttributes = new JSONObject();
 			nodeAttributes.put("iconCls", iconCls);
@@ -579,7 +583,7 @@ public class ExtJsQbeTreeBuilder {
 	public int addCalculatedFieldNodes(IQbeTree tree, IModelEntity entity, int parentEntityNodeId, int nodeCounter) {
 
 		/*
-		 * List manualCalcultatedFieldForEntity = getDatamartModel().getDataSource().getFormula().getManualCalculatedFieldsForEntity( entity.getType() );
+		 * List manualCalcultatedFieldForEntity = getDatamartModel().getDataSource().getFormula(). getManualCalculatedFieldsForEntity( entity.getType() );
 		 *
 		 * CalculatedField calculatedField = null; String fieldAction = null;
 		 *
@@ -592,7 +596,7 @@ public class ExtJsQbeTreeBuilder {
 		 * calculatedField.setFldCompleteNameInQuery(calculatedField.getId()); }
 		 *
 		 *
-		 * fieldAction = getUrlGenerator().getActionUrlForCalculateField(calculatedField.getId(), entity.getName(),
+		 * fieldAction = getUrlGenerator().getActionUrlForCalculateField(calculatedField.getId (), entity.getName(),
 		 * calculatedField.getFldCompleteNameInQuery());
 		 *
 		 * nodeCounter++; tree.addNode("" + nodeCounter, "" + parentEntityNodeId, calculatedField.getFldLabel(), fieldAction, calculatedField.getFldLabel(),

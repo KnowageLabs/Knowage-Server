@@ -258,7 +258,7 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 			JDBCDataProxy jdbcDataProxy = (JDBCDataProxy) dataProxy;
 			IDataSource dataSource = jdbcDataProxy.getDataSource();
 			Assert.assertNotNull(dataSource, "Invalid datasource");
-			Connection connection = dataSource.getConnection(jdbcDataProxy.getSchema());
+			Connection connection = dataSource.getConnection();
 			Statement stmt = connection.createStatement();
 			stmt.setFetchSize(5000);
 			ResultSet rs = (ResultSet) dataProxy.getData(dataReader, stmt);

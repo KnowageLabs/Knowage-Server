@@ -45,7 +45,8 @@
 		</div>
 
 	</aside>
-   <div id="contieniLinkAdmin" data-ng-class="{'open' : openAside}">
+    <div id="contieniLinkAdmin" ng-class="{'open' : openAside, 'hideAdminPanel':hideAdminPanel}"> 
+   <!-- <div id="contieniLinkTest" data-ng-class="{'open' : openAside}"> -->
       <div class="row">
          <div class="col-xs-6 col-sm-4 gruppoLinkAdmin" data-ng-repeat="group in groups">
             <h4 data-ng-if="!group.href"><i class="sidebar-icon material-icons-admin md-32">{{group.iconCls}}</i> {{group.title}}</h4>

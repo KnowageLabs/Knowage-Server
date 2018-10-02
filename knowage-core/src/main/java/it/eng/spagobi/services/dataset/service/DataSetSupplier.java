@@ -17,26 +17,22 @@
  */
 package it.eng.spagobi.services.dataset.service;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
+import org.apache.log4j.Logger;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
 
 public class DataSetSupplier {
 
@@ -119,8 +115,6 @@ public class DataSetSupplier {
 			} else {
 				logger.debug("Dataset with label [" + label + "] not found");
 			}
-		} catch (EMFUserError e) {
-			logger.error("Error getting dataset with label [" + label + "]", e);
 		} finally {
 			logger.debug("OUT");
 		}

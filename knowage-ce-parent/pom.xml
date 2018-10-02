@@ -54,6 +54,7 @@
 			<id>pentaho</id>
 			<url>http://nexus.pentaho.org/content/groups/omni</url>
 		</repository>
+		
 		<!-- We use xss-html-filter repository for xss-html-filter, needed by knowage CE; this library is not available on Maven Central -->
 		<repository>
 			<id>xss-html-filter releases</id>
@@ -64,6 +65,7 @@
 			<id>bidlink</id>
 			<url>http://repo.bidlink.cn/nexus/content/repositories/</url>
 		</repository>
+		
 		
 	</repositories>
   

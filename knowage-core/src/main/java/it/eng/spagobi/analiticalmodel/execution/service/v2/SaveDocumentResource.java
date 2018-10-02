@@ -123,23 +123,31 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		Integer id = null;
 		try {
 			JSONObject request = RestUtilities.readBodyAsJSONObject(req);
-			String action = request.optString("action");
-			logger.debug("Action type is equal to [" + action + "]");
-			if (DOC_SAVE.equalsIgnoreCase(action)) {
-				id = doInsertDocument(request, error);
-			} else if (DOC_UPDATE.equalsIgnoreCase(action)) {
-				logger.error("DOC_UPDATE action is no more supported");
-				throw new SpagoBIServiceException(req.getPathInfo(), "sbi.document.unsupported.udpateaction");
-			} else if (MODIFY_GEOREPORT.equalsIgnoreCase(action) || MODIFY_COCKPIT.equalsIgnoreCase(action) || MODIFY_KPI.equalsIgnoreCase(action)) {
-				id = doModifyDocument(request, action, error);
-			} else {
-				throw new SpagoBIServiceException(req.getPathInfo(), "sbi.document.unsupported.action");
-			}
-			if (error.hasErrors()) {
-				return Response.ok(error.toString()).build();
-			} else {
+			if (request.optBoolean("updateFromWorkspace")) {
+				JSONObject doc = request.optJSONObject("document");
+				id = updateDocument(doc);
 				return Response.ok(new JSONObject().put("id", id).toString()).build();
+
+			} else {
+				String action = request.optString("action");
+				logger.debug("Action type is equal to [" + action + "]");
+				if (DOC_SAVE.equalsIgnoreCase(action)) {
+					id = doInsertDocument(request, error);
+				} else if (DOC_UPDATE.equalsIgnoreCase(action)) {
+					logger.error("DOC_UPDATE action is no more supported");
+					throw new SpagoBIServiceException(req.getPathInfo(), "sbi.document.unsupported.udpateaction");
+				} else if (MODIFY_GEOREPORT.equalsIgnoreCase(action) || MODIFY_COCKPIT.equalsIgnoreCase(action) || MODIFY_KPI.equalsIgnoreCase(action)) {
+					id = doModifyDocument(request, action, error);
+				} else {
+					throw new SpagoBIServiceException(req.getPathInfo(), "sbi.document.unsupported.action");
+				}
+				if (error.hasErrors()) {
+					return Response.ok(error.toString()).build();
+				} else {
+					return Response.ok(new JSONObject().put("id", id).toString()).build();
+				}
 			}
+
 		} catch (SpagoBIServiceException e) {
 			throw e;
 		} catch (Exception e) {
@@ -147,6 +155,38 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private Integer updateDocument(JSONObject doc) {
+
+		logger.debug("IN");
+		Integer docId = doc.optInt("id");
+		Assert.assertNotNull(StringUtilities.isNotEmpty(doc.optString("name")), "Document's name cannot be null or empty");
+		Assert.assertNotNull(StringUtilities.isNotEmpty(doc.optString("label")), "Document's label cannot be null or empty");
+
+		try {
+
+			IBIObjectDAO ibiObjectDAO = DAOFactory.getBIObjectDAO();
+			String name = doc.optString("name");
+			String label = doc.optString("label");
+			String description = doc.optString("description");
+
+			BIObject biObject = ibiObjectDAO.loadBIObjectById(docId);
+			biObject.setName(name);
+			biObject.setLabel(label);
+			biObject.setDescription(description);
+
+			ibiObjectDAO.modifyBIObject(biObject);
+
+		} catch (EMFUserError e) {
+			throw new SpagoBIServiceException("sbi.document.updateError", e);
+
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return docId;
+
 	}
 
 	private Integer doInsertDocument(JSONObject request, JSError error) throws JSONException, EMFUserError {
@@ -158,7 +198,6 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		AnalyticalModelDocumentManagementAPI documentManagementAPI = null;
 		try {
 			documentManagementAPI = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-			documentJSON.put("label", documentJSON.getString("name"));// TODO remove this
 			if (documentManagementAPI.getDocument(documentJSON.getString("label")) != null) {
 				logger.error("sbi.document.labelAlreadyExistent");
 				error.addErrorKey("sbi.document.labelAlreadyExistent");

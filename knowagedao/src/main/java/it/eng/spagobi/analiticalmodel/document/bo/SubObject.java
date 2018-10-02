@@ -216,20 +216,7 @@ public class SubObject implements Serializable {
 	public byte[] getContent() throws EMFUserError, EMFInternalError {
 		if (content == null) {
 			if (binaryContentId != null) {
-				// reads from database
-				try {
-					content = DAOFactory.getBinContentDAO().getBinContent(binaryContentId);
-				} catch (EMFUserError e) {
-					logger.error("Error while recovering content of subobject with id = [" + id + "], " +
-							"binary content id = [" + binaryContentId + "], " +
-							"name = [" + name + "] of biobject with id = [" + biobjId + "]" + e);
-					throw e;
-				} catch (EMFInternalError e) {
-					logger.error("Error while recovering content of subobject with id = [" + id + "], " +
-							"binary content id = [" + binaryContentId + "], " +
-							"name = [" + name + "] of biobject with id = [" + biobjId + "]" + e);
-					throw e;
-				}
+				content = DAOFactory.getBinContentDAO().getBinContent(binaryContentId);
 			} else {
 				logger.warn("Both content field of this istance and binary identifier are null. Cannot load content from database.");
 			}

@@ -25,4 +25,10 @@ public class OrientDataBase extends AbstractDataBase {
 	public OrientDataBase(IDataSource dataSource) {
 		super(dataSource);
 	}
+
+	@Override
+	public String getSubQueryAlias() {
+		return "";
+
+	}
 }

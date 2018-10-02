@@ -26,6 +26,7 @@ import javax.naming.NamingException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
@@ -51,7 +52,14 @@ public interface IDataSource {
 	@JsonIgnore
 	public Connection getConnection() throws NamingException, SQLException, ClassNotFoundException;
 
-	public Connection getConnection(String schema) throws NamingException, SQLException, ClassNotFoundException;
+	public Connection getConnectionByUserProfile(IEngUserProfile profile);
+
+	/**
+	 * This method is in charge of getting the full JNDI name string at Runtime considering User profile Object for multischema Datasources. This method is
+	 * different from getJndi() method because it is returning the configured JNDI string without considering the User profile Object. <br>
+	 * <b>Note:</b> Strings returned from getJndi() and getJNDIRunTime() are different in case of multischema Datasource.
+	 */
+	public String getJNDIRunTime(IEngUserProfile profile);
 
 	/**
 	 * Gets the ds id.
@@ -63,8 +71,7 @@ public interface IDataSource {
 	/**
 	 * Sets the ds id.
 	 *
-	 * @param dsId
-	 *            the new ds id
+	 * @param dsId the new ds id
 	 */
 	public abstract void setDsId(int dsId);
 
@@ -78,8 +85,7 @@ public interface IDataSource {
 	/**
 	 * Sets the descr.
 	 *
-	 * @param descr
-	 *            the new descr
+	 * @param descr the new descr
 	 */
 	public abstract void setDescr(String descr);
 
@@ -93,8 +99,7 @@ public interface IDataSource {
 	/**
 	 * Sets the label.
 	 *
-	 * @param label
-	 *            the new label
+	 * @param label the new label
 	 */
 	public abstract void setLabel(String label);
 
@@ -108,8 +113,7 @@ public interface IDataSource {
 	/**
 	 * Sets the jndi.
 	 *
-	 * @param jndi
-	 *            the new jndi
+	 * @param jndi the new jndi
 	 */
 	public abstract void setJndi(String jndi);
 
@@ -123,8 +127,7 @@ public interface IDataSource {
 	/**
 	 * Sets the url connection.
 	 *
-	 * @param url_connection
-	 *            the new url connection
+	 * @param url_connection the new url connection
 	 */
 	public abstract void setUrlConnection(String url_connection);
 
@@ -138,8 +141,7 @@ public interface IDataSource {
 	/**
 	 * Sets the user.
 	 *
-	 * @param user
-	 *            the new user
+	 * @param user the new user
 	 */
 	public abstract void setUser(String user);
 
@@ -153,8 +155,7 @@ public interface IDataSource {
 	/**
 	 * Sets the pwd.
 	 *
-	 * @param pwd
-	 *            the new pwd
+	 * @param pwd the new pwd
 	 */
 	public abstract void setPwd(String pwd);
 
@@ -168,8 +169,7 @@ public interface IDataSource {
 	/**
 	 * Sets the driver.
 	 *
-	 * @param driver
-	 *            the new driver
+	 * @param driver the new driver
 	 */
 	public abstract void setDriver(String driver);
 
@@ -183,8 +183,7 @@ public interface IDataSource {
 	/**
 	 * Sets the dialect name.
 	 *
-	 * @param dialectName
-	 *            the new dialect name
+	 * @param dialectName the new dialect name
 	 */
 	public abstract void setDialectName(String dialectName);
 
@@ -198,8 +197,7 @@ public interface IDataSource {
 	/**
 	 * Sets the engines.
 	 *
-	 * @param engines
-	 *            the new engines
+	 * @param engines the new engines
 	 */
 	public abstract void setEngines(Set engines);
 
@@ -213,14 +211,17 @@ public interface IDataSource {
 	/**
 	 * Sets the objects.
 	 *
-	 * @param objects
-	 *            the new objects
+	 * @param objects the new objects
 	 */
 	public abstract void setObjects(Set objects);
 
 	public abstract JDBCDataSourcePoolConfiguration getJdbcPoolConfiguration();
 
 	public abstract void setJdbcPoolConfiguration(JDBCDataSourcePoolConfiguration jDBCPoolConfiguration);
+
+	public abstract String getOwner();
+
+	public abstract void setOwner(String owner);
 
 	public String getHibDialectClass();
 
@@ -239,5 +240,7 @@ public interface IDataSource {
 	public IDataStore executeStatement(String statement, Integer start, Integer limit, Integer maxRowCount);
 
 	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount) throws DataBaseException;
+
+	public String getSignature(IEngUserProfile profile);
 
 }

@@ -1,16 +1,5 @@
 package it.eng.spagobi.api;
 
-import java.util.HashMap;
-import java.util.List;
-
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -21,6 +10,12 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.List;
 
 @Path("/1.0/olapsubobjects")
 @ManageAuthorization
@@ -57,13 +52,7 @@ public class GetSubObjectsService extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response removeOlapSubObject(@QueryParam("idObj") Integer biobjectId) {
 		UserProfile userProfile = this.getUserProfile();
-		ISubObjectDAO dao = null;
-		try {
-			dao = DAOFactory.getSubObjectDAO();
-		} catch (EMFUserError e) {
-			logger.error("Error while istantiating DAO", e);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
-		}
+		ISubObjectDAO dao = DAOFactory.getSubObjectDAO();
 
 		SubObject subObject = null;
 		try {

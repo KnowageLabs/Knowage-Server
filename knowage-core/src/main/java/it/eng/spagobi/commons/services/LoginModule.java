@@ -144,7 +144,6 @@ public class LoginModule extends AbstractHttpModule {
 					logger.debug("User is authenticated");
 					// fill response
 					List lstMenu = MenuUtilities.getMenuItems(profile);
-					
 					String url = "/themes/" + currTheme + "/jsp/";
 					if (UserUtilities.isTechnicalUser(profile)) {
 						url += "adminHome.jsp";
@@ -153,7 +152,7 @@ public class LoginModule extends AbstractHttpModule {
 					}
 					servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-				
+					// response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
 					return;
 				} else {
 					// user must authenticate
@@ -187,7 +186,6 @@ public class LoginModule extends AbstractHttpModule {
 					logger.debug("User is authenticated");
 					// fill response
 					List lstMenu = MenuUtilities.getMenuItems(profile);
-
 					// set publisher name
 					String url = "/themes/" + currTheme + "/jsp/";
 					if (UserUtilities.isTechnicalUser(profile)) {
@@ -196,7 +194,7 @@ public class LoginModule extends AbstractHttpModule {
 						url += "userHome.jsp";
 					}
 					servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
-					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());				
+					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
 
 					return;
 				}

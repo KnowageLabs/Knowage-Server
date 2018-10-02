@@ -537,6 +537,10 @@
 		description="List of customized functions for DB"
 		isActive="true" valueCheck="" valueType="STRING"
 		category="GENERIC_CONFIGURATION" />
+    <CONFIG label="KNOWAGE.WORKSPACE_SHOW_GRID" name="Show grid view as default in workspace"
+        description="Show grid view as default in workspace"
+        isActive="true" valueCheck="true" valueType="STRING"
+        category="GENERIC_CONFIGURATION" />
 
 </CONFIGS>
 

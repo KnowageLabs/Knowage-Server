@@ -17,27 +17,8 @@
  */
 package it.eng.spagobi.tools.dataset;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.jgrapht.graph.ClassBasedEdgeFactory;
-import org.jgrapht.graph.Pseudograph;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.TcpIpConfig;
-
 import edu.emory.mathcs.backport.java.util.Arrays;
 import it.eng.spagobi.UtilitiesForTest;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -48,8 +29,9 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.associativity.strategy.AssociativeStrategyFactory;
 import it.eng.spagobi.tools.dataset.associativity.strategy.OuterAssociativityManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
@@ -62,6 +44,15 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
+import org.jgrapht.graph.ClassBasedEdgeFactory;
+import org.jgrapht.graph.Pseudograph;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 public class AssociativeLogicManagerTest {
 
@@ -111,7 +102,7 @@ public class AssociativeLogicManagerTest {
 			TenantManager.setTenant(new Tenant("DEFAULT_TENANT"));
 			UserProfileManager.setProfile(new UserProfile("biadmin", "DEFAULT_TENANT"));
 			setHazelcastDefaultConfig();
-			cache = SpagoBICacheManager.getCache();
+			cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 			dataSetDAO = DAOFactory.getDataSetDAO();
 
 			loadDataSetInCache(STORE);

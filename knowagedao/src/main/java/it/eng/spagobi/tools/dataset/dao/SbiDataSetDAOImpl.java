@@ -103,11 +103,9 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 	}
 
 	@Override
-	public SbiDataSet loadSbiDataSetByIdAndOrganiz(Integer id, String organiz) {
-		Session session = null;
+	public SbiDataSet loadSbiDataSetByIdAndOrganiz(Integer id, String organiz, Session session) {
 		SbiDataSet sbiDataSet = null;
 		try {
-			session = getSession();
 			Criteria c = session.createCriteria(SbiDataSet.class);
 			c.addOrder(Order.asc("label"));
 			c.add(Restrictions.eq("id.dsId", id));
@@ -119,6 +117,21 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			sbiDataSet = (SbiDataSet) c.uniqueResult();
 			initialize(sbiDataSet);
 
+		} catch (Exception e) {
+			throw new SpagoBIDAOException("An unexpected error occured while loading datasets", e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return sbiDataSet;
+	}
+
+	@Override
+	public SbiDataSet loadSbiDataSetByIdAndOrganiz(Integer id, String organiz) {
+		Session session = null;
+		SbiDataSet sbiDataSet = null;
+		try {
+			session = getSession();
+			sbiDataSet = loadSbiDataSetByIdAndOrganiz(id, organiz, session);
 		} catch (Exception e) {
 			throw new SpagoBIDAOException("An unexpected error occured while loading datasets", e);
 		} finally {

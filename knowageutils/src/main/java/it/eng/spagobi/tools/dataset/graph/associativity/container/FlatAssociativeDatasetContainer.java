@@ -22,7 +22,7 @@ import java.util.Map;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
-public class FlatAssociativeDatasetContainer extends JDBCAssociativeDatasetContainer {
+public class FlatAssociativeDatasetContainer extends InlineViewAssociativeDatasetContainer {
 
 	public FlatAssociativeDatasetContainer(IDataSet dataSet, Map<String, String> parameters) {
 		super(dataSet, parameters);

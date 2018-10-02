@@ -67,6 +67,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.IJavaClassLov;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.JavaClassDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
+import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ScriptDetail;
@@ -220,6 +221,50 @@ public class LovResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
 
+	}
+
+	@GET
+	@Path("{id}/preview")
+	@Produces(MediaType.APPLICATION_JSON)
+	// @UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
+	public List previewLovValues(@PathParam("id") Integer lovId) {
+		logger.debug("IN: input id = " + lovId);
+		GridMetadataContainer lovExecutionResult = new GridMetadataContainer();
+		IModalitiesValueDAO modalitiesValueDAO;
+		ModalitiesValue listOfValues = null;
+		List lovValues = new ArrayList();
+		List lovColumns = new ArrayList();
+		List valuesScript = new ArrayList();
+		String scriptValue = "";
+		SourceBean rowsSourceBean = null;
+		try {
+			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
+			modalitiesValueDAO.setUserProfile(getUserProfile());
+			listOfValues = modalitiesValueDAO.loadModalitiesValueByID(lovId);
+			if (listOfValues.getITypeCd().equalsIgnoreCase("SCRIPT")) {
+				ScriptDetail scriptDetail = ScriptDetail.fromXML(listOfValues.getLovProvider());
+				scriptValue = scriptDetail.getLovResult(getUserProfile(), null, null, null);
+				rowsSourceBean = SourceBean.fromXMLString(scriptValue);
+				lovColumns = findFirstRowAttributes(rowsSourceBean);
+				lovExecutionResult.setValues(toList(rowsSourceBean, 0, lovValues.size()));
+				lovExecutionResult.setFields(GridMetadataContainer.buildHeaderMapForGrid(lovColumns));
+				List rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
+				lovExecutionResult.setResults(rows.size());
+				valuesScript = lovExecutionResult.getValues();
+				return valuesScript;
+			} else {
+				String lovProv = listOfValues.getLovProvider();
+				ILovDetail lovProvDet = null;
+				lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+				String lovResult = lovProvDet.getLovResult(getUserProfile(), null, null, null);
+				LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
+				lovValues = lovResultHandler.getValues(lovProvDet.getValueColumnName());
+				return lovValues;
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to get lov details", e);
+		}
+		// return lovValues;
 	}
 
 	@POST

@@ -22,7 +22,7 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 	angular
-	.module('models_view_workspace', [])
+	.module('models_view_workspace', ['driversExecutionModule'])
 
 	/**
 	 * The HTML content of the Recent view (recent documents).
@@ -39,16 +39,16 @@
 	});
 
 	function modelsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window,
-			$mdSidenav, $qbeViewer, sbiModule_user, toastr, sbiModule_i18n){
+			$mdSidenav, $qbeViewer, sbiModule_user, toastr, sbiModule_i18n,$filter,driversExecutionService){
 
 		$scope.businessModelsInitial=[];
 		$scope.federationDefinitionsInitial=[];
 		$scope.rolesIds = [];
 		$scope.categoriesForUser = [];
 		$scope.selectedModel = undefined;
-
+		$scope.sbiUser = sbiModule_user;
 		$scope.i18n = sbiModule_i18n;
-
+		$scope.businessModelsDrivers = [];
 		/**
 		 * The Business Model interface is improved: when models are set to be viewed as a list - the 'Label' column is removed (since there
 		 * is no 'label' property of this object) and the 'Description' column is provided instead. Columns for Federation models remain the
@@ -56,8 +56,54 @@
 		 * @author Ana Tomic (atomic, ana.tomic@mht.net)
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
+
+		$scope.showQbeModel = function(model){
+
+			if($scope.currentModelsTab=='federations'){
+				$scope.showQbeFederation(model);
+			}else if($scope.currentModelsTab=='businessModels'){
+				$scope.showQbeFromBM(model);
+			}
+		}
+
+		$scope.showQbeFromBM=function(businessModel){
+
+			var modelName= businessModel.name;
+			var dataSource=businessModel.dataSourceLabel;
+			var url = datasetParameters.qbeFromBMServiceUrl
+			+'&MODEL_NAME='+modelName
+			+'&DATA_SOURCE_LABEL='+ dataSource
+			+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
+
+				var driversPerModel = $filter('filter')($scope.businessModelsDrivers, {biMetaModelID: businessModel.id},true)
+
+//			if( driversPerModel.length > 0){
+//				 $mdDialog.show({
+//	                 controller: executeDriversController,
+//	                 templateUrl:  sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/executeDrivers.html',
+//	                // targetEvent: $event,
+//	                 clickOutsideToClose: true,
+//	                 locals: {
+//	                	 businessModel: businessModel,
+//	                     drivers :  driversPerModel
+//	                 }
+//	             })
+//	             .then(
+//	                 function(answer) {
+	                	 $qbeViewer.openQbeInterfaceFromModel($scope,url);
+//	                 },
+//	                 function() {});
+//
+//		}
+		}
 		$scope.tableColumnsFederation = [{"label":"Label","name":"label"},{"label":"Name","name":"name"}];
-		$scope.tableColumnsModels = [{"label":"Name","name":"name"}, {"label":"Description","name":"description"}];
+		$scope.tableColumnsModels = [
+			{"label":"Name","name":"name","type":"text"}, 
+			{"label":"Description","name":"description","type":"text"},
+			{"type": "buttons", "buttons": [
+				{"name": "Open business model in QBE", "icon": "fa fa-search", "action": $scope.showQbeModel, "visible":function(){return true;}}
+			]}
+		];
 
 		$scope.showModelInfo = false;
 		$scope.idsOfFederationDefinitionsUsediNFederatedDatasets = [];
@@ -65,6 +111,10 @@
 
 		$scope.federationsEnabled= function (){
 			return datasetParameters.CAN_USE_FEDERATED_DATASET_AS_FINAL_USER === "true";
+		}
+
+		$scope.isAbletoDelete = function(federation){
+			return $scope.sbiUser.isTechnicalUser == "true"|| $scope.sbiUser.userId==federation.owner;
 		}
 
 		$scope.getFederatedDatasets = function() {
@@ -131,6 +181,7 @@
 
 					for (var i = 0 ; i < $scope.businessModels.length; i ++ ){
 						$scope.businessModels[i].description = $scope.i18n.getI18n($scope.businessModels[i].description);
+						getBusinessModelDrivers($scope.businessModels);
 					}
 
 					// S.Lupo - businessModels must be filtered by categories backend side
@@ -152,7 +203,16 @@
 
 			});
 		}
+		var getBusinessModelDrivers = function(businessModels){
+			var bussinesModelPath = '2.0/businessmodels';
+			for(var i = 0; i < businessModels.length; i++){
+				var driversPath = businessModels[i].id + '/drivers'
+				sbiModule_restServices.promiseGet(bussinesModelPath,driversPath).then(function(response){
+					$scope.businessModelsDrivers.push(response.data);
+				})
 
+			}
+		}
 		$scope.loadBusinessModelsCategories= function(roleIds){
 
 			sbiModule_restServices.promiseGet("2.0/domains", "rolesCategories", queryParamRolesIds(roleIds))
@@ -229,15 +289,6 @@
 				$scope.setDetailOpenModel(model !== undefined);
 			}
 		};
-
-		$scope.showQbeModel = function(model){
-
-			if($scope.currentModelsTab=='federations'){
-				$scope.showQbeFederation(model);
-			}else if($scope.currentModelsTab=='businessModels'){
-				$scope.showQbeFromBM(model);
-			}
-		}
 
 		$scope.showQbeFederation = function(federation){
 
@@ -334,20 +385,83 @@
 				locals:{federation:undefined}
 			})
 		}
+		var executeDriversController = function(businessModel , drivers , $mdDialog, $scope, $filter,sbiModule_translate){
+				$scope.drivers = drivers
+				$scope.translate = sbiModule_translate;
+				$scope.drivers = [/*
+					{allowInternalNodeSelection: true,
+						dataDependencies: [],
+						dependsOn: {},
+						driverLabel: "Tree inner node",
+						driverUseLabel: "A",
+						id: 263,
+						label: "Tree inner node",
+						lovDependencies: [],
+						mandatory: true,
+						multivalue: false,
+						selectedLayer: null,
+						selectedLayerProp: null,
+						selectionType: "",
+						showOnPanel: "true",
+						type: "STRING",
+						typeCode: "QUERY",
+						urlName: "par_cross2",
+						valueSelection: "lov",
+						visible: true,
+						visualDependencies: []},
+						{
+						allowInternalNodeSelection: false,
+						dataDependencies: [],
+						dependsOn: {},
+						driverLabel: "Tree",
+						driverUseLabel: "all",
+						id: 262,
+						label: "tree",
+						lovDependencies: [],
+						mandatory: true,
+						multivalue: false,
+						selectedLayer: null,
+						selectedLayerProp: null,
+						selectionType: "TREE",
+						showOnPanel: "true",
+						type: "STRING",
+						typeCode: "QUERY",
+						urlName: "par_cross",
+						valueSelection: "lov",
+						visible: true,
+						visualDependencies: []
+						},
+						{urlName:"outputType",
+							visible:true,
+							dependsOn:{},
+							selectedLayerProp:null,
+							dataDependencies:[],
+							valueSelection:"man_in",
+							showOnPanel:"true",
+							driverUseLabel:"All",
+							label:"outputType",
+							selectedLayer:null,
+							type:"STRING",
+							driverLabel:"MANUAL_STRING",
+							mandatory:false,
+							allowInternalNodeSelection:false,
+							lovDependencies:[],
+							typeCode:"MAN_IN",
+							multivalue:false,
+							selectionType:"",
+							visualDependencies:[],"id":266}
+					*/	];
+				$scope.businessModel = businessModel;
 
-		$scope.showQbeFromBM=function(businessModel){
 
-			var modelName= businessModel.name;
-			var dataSource=businessModel.dataSourceLabel;
-			var url = datasetParameters.qbeFromBMServiceUrl
-			+'&MODEL_NAME='+modelName
-			+'&DATA_SOURCE_LABEL='+ dataSource
-			+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
+				$scope.close = function(){
+					 $mdDialog.cancel();
+				}
+				$scope.hide = function(){
+					 $mdDialog.hide();
+				}
 
-			// $window.location.href=url;
-			$qbeViewer.openQbeInterfaceFromModel($scope,url);
-		}
-
+			}
 		function DialogEditFederationController($scope,$mdDialog,sbiModule_config,federation){
 
 			/**

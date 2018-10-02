@@ -32,7 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <head>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	
-	<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>"> 
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/domain/domainManagement.js")%>"></script>
 	
 </head>
@@ -40,25 +39,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body>
 	<div ng-controller="Controller as ctrl" layout="column" layout-wrap layout-fill>
 		
-		<angular-list-detail full-screen=true layout-column>
+		<angular-list-detail full-screen=true layout-column ng-cloak>
 			<list label="translate.load('sbi.domain.managedomains')" new-function="addDomain" >
-				<angular-table flex
-					id="table" ng-model="data" 
-					columns='["valueCd","valueName","domainCode","domainName","valueDescription"]'
-					columns-search='["valueCd","valueName","domainCode","domainName","valueDescription"]'
-					highlights-selected-item = "true"
-					show-search-bar="true"
-					selected-item="itemSelected"
-					speed-menu-option="domainSpeedMenu"
-				></angular-table>
+			
+				<div class="kn-grid-container">
+						<div ag-grid="gridOptions" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="width:100%;"></div>
+				</div>
+
 	 		</list>
 	 		
 	 		<detail label="labelDetailFunction()" save-function="saveRow" cancel-function="closeDetail" disable-save-button="domainForm.$invalid">
-	 			<form name="domainForm">
 			 		<md-content layout="row" layout-align="center center" class="config-content-detail">
 						<md-card flex="50" layout="column" layout-align="center center">
 							<md-card-content>
-							
+							<form name="domainForm">
 								<md-input-container flex="100" class="md-block"> 
 									<label>{{translate.load("sbi.domain.managedomains.fields.valuecd")}}</label> 
 									<input name="valueCd" ng-model="domain.valueCd" required type="text" ng-maxlength="100" ng-pattern="regex.extendedAlphanumeric">
@@ -103,11 +97,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									    <div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 160</div>
   									</div>
 								</md-input-container>
-							
+							</form>
 							</md-card-content>
 						</md-card>
 					</md-content>
-	 			</form>
+
 	 		</detail>
  		</angular-list-detail>
 			

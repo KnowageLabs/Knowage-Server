@@ -116,24 +116,32 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 	 $scope.showNearRealTimeCockpit = sbiModule_user.functionalities.indexOf("NearRealTimeCockpit")>-1;
 
 	 $scope.cockpitDatasetColumns = [
-		 {
-			 label:"",
-			 name:"parameters",
-			 type:"expand",
-			 expanded:true},
-		 {
-			 label:"Label",
-			 name:"label",
-			 type:"text"},
-		 {
-			 label:"Name",
-			 name:"name",
-			 type:"text"},
-		 {
-			 label:"Use cache",
-			 name:"usacache",
-			 type:"checkbox"
-		 }
+		{
+			label:"",
+			name:"parameters",
+			type:"expand",
+			expanded:true
+		},{
+			label:sbiModule_translate.load('sbi.generic.label'),
+			name:"label",
+			type:"text"
+		},{
+			label:sbiModule_translate.load('sbi.generic.name'),
+			name:"name",
+			type:"text"
+		},{
+			label:sbiModule_translate.load('sbi.cockpit.dataset.usecache'),
+			name:"usacache",
+			type:"checkbox"
+		},{
+			label:sbiModule_translate.load('sbi.cockpit.dataset.frequencyinseconds'),
+			name:"freq",
+			static:true,
+			type: "input",
+			template:"<md-input-container style='margin:0' ng-show='!row.useCache && (showNearRealTimeCockpit || row.isRealtime)' md-no-float class='md-block'>"+
+					"<input type='number' min='0' ng-model='row.frequency' placeholder='Frequency'>"+
+					"</md-input-container>"
+		}
 	 ];
 
 	 $scope.expandRow = function(row){
@@ -175,19 +183,8 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 			name:"usacache",
 			template:"<md-checkbox ng-show='!row.isRealtime' ng-model='row.useCache' aria-label='usaCache'></md-checkbox>",
 			static:true
-		}];
-	 if($scope.showNearRealTimeCockpit){
-		$scope.cockpitDatasetColumns.push(
-			{
-				label:"Frequency (seconds)",
-				name:"freq",
-				static:true,
-				type: "input",
-				template:"<md-input-container style='margin:0' ng-show='!row.useCache && !row.isRealtime' md-no-float class='md-block'>"+
-						"<input type='number' min='0' ng-model='row.frequency' placeholder='Frequency'>"+
-						"</md-input-container>"
-			});
-	 }
+		}
+    ];
 
 	 $scope.addDataset=function(){
 		 cockpitModule_datasetServices.addDataset("cockpitDataConfig",$scope.tmpAvaiableDataset,true);

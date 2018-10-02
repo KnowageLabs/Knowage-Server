@@ -40,7 +40,6 @@
 		<mapping resource="it/eng/spagobi/events/metadata/mapping/SbiEventsLog.hbm.xml" />
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiDomains.hbm.xml" />
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiConfig.hbm.xml" />
-		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiEventRole.hbm.xml" />
 
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiProductType.hbm.xml" />
 
@@ -142,6 +141,9 @@
 		<!-- tools: Meta-models catalogue -->
 		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModel.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModelContent.hbm.xml" />
+<!-- 		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModelParameter.hbm.xml" /> -->
+<!-- 		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetamodelParuse.hbm.xml" /> -->
+<!-- 		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetamodelParview.hbm.xml" /> -->
 			
 		<!-- Federation definition -->
 		<mapping resource="it/eng/spagobi/federateddataset/metadata/mapping/SbiFederationDefinition.hbm.xml"/>

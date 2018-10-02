@@ -1,55 +1,64 @@
 <md-card   class="flexCard customTableWidgetConfiguration" >
+	<md-toolbar>
+	  <div class="md-toolbar-tools">
+	    <h2>{{translate.format(translate.load('sbi.cockpit.widget.configuration'),translate.load('sbi.cockpit.widget.selection'))}}</h2>
+	    <span flex></span>
+	  </div>
+	</md-toolbar>
 	<md-card-content flex layout="column" class="noPadding">
-		<md-toolbar>
-		  <div class="md-toolbar-tools">
-		    <h2>{{translate.format(translate.load('sbi.cockpit.widget.configuration'),translate.load('sbi.cockpit.widget.selection'))}}</h2>
-		    <span flex></span>
-		  </div>
-		</md-toolbar>
-		<md-content flex layout="column">
-		   
-			<md-tabs flex md-border-bottom md-selected='selectedTab.tab'>
-		  
-			    <md-tab label="{{translate.load('sbi.cockpit.style')}}">
-			     	<cockpit-style-configurator widget ng-model="localModel.style">
-			     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.widget.table.rows')">
-							<div flex layout="column" ng-cloak>
-								<div layout="row">
-									<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.showDataset" class="md-block" flex="20">
-										{{translate.load('sbi.cockpit.widget.selection.showdataset')}}
-									</md-checkbox>
-									<md-input-container flex class="md-block" >
-										<label>{{translate.load('sbi.cockpit.widget.selection.row.height')}}</label>
-										<input class="input_class" ng-model="localModel.style.row.height" type="number" />
-									</md-input-container>
-								</div>
-								
-								<div layout="row">
-									<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.alternateRows.enabled" class="md-block" flex="20">
-										{{translate.load('sbi.cockpit.widget.selection.row.alternate')}}
-									</md-checkbox>
-									<md-input-container flex class="md-block">
-										<label>{{::translate.load('sbi.cockpit.table.alternate.evenrows')}}</label>
-										<color-picker options="colorPickerPropertyEvenOddRows" ng-model="localModel.style.alternateRows.evenRowsColor"/>
-									</md-input-container>
-									<md-input-container flex class="md-block">
-										<label>{{::translate.load('sbi.cockpit.table.alternate.oddrows')}}</label>
-										<color-picker options="colorPickerPropertyEvenOddRows" ng-model="localModel.style.alternateRows.oddRowsColor"/>
-									</md-input-container>
-								</div>
+		<md-tabs flex md-border-bottom >
+	  		<md-tab label="{{translate.load('sbi.cockpit.style')}}">
+	  		
+	  			<md-card>
+					<md-toolbar class="ternaryToolbar" >
+						<div class="md-toolbar-tools" layout="row">
+							<h2>{{translate.load('sbi.cockpit.widget.table.rows')}}</h2>
+							<span flex></span>
+						</div>
+					</md-toolbar>
+					<md-card-content >
+						<div flex layout="column" ng-cloak>
+							<div layout="row">
+								<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.showDataset" class="md-block" flex="20">
+									{{translate.load('sbi.cockpit.widget.selection.showdataset')}}
+								</md-checkbox>
+								<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.showColumn" class="md-block" flex="20">
+									Show Column
+								</md-checkbox>
+								<md-input-container flex class="md-block" >
+									<label>{{translate.load('sbi.cockpit.widget.selection.row.height')}}</label>
+									<input class="input_class" ng-model="localModel.style.row.height" type="number" />
+								</md-input-container>
 							</div>
-						</cockpit-style-custom-widget-configurator>
-			     	</cockpit-style-configurator>
-			    </md-tab>
-          		
-		  </md-tabs>
-		</md-content>
+							
+							<div layout="row">
+								<md-checkbox layout-align="start center" layout="row" ng-model="localModel.style.alternateRows.enabled" ng-change="changeAlternatedRows()" class="md-block" flex="20">
+									{{translate.load('sbi.cockpit.widget.selection.row.alternate')}}
+								</md-checkbox>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.table.alternate.evenrows')}}</label>
+									<color-picker options="colorPickerPropertyEvenOddRows" ng-model="localModel.style.alternateRows.evenRowsColor"/>
+								</md-input-container>
+								<md-input-container flex class="md-block">
+									<label>{{::translate.load('sbi.cockpit.table.alternate.oddrows')}}</label>
+									<color-picker options="colorPickerPropertyEvenOddRows" ng-model="localModel.style.alternateRows.oddRowsColor"/>
+								</md-input-container>
+							</div>
+						</div>
+					</md-card-content>
+				</md-card>
+	  		
+	  		
+		     	<cockpit-style-configurator widget ng-model="localModel.style">
+		     	</cockpit-style-configurator>
+		    </md-tab>
+		</md-tabs>
     </md-card-content>
     <md-card-actions layout="row" layout-align="end center">
-      <md-button ng-click="cancelConfiguration()" >
+      <md-button ng-click="cancelConfiguration()" class="md-raised">
          {{translate.load('sbi.generic.cancel')}}
       </md-button>
-      <md-button ng-click="saveConfiguration()"  >
+      <md-button ng-click="saveConfiguration()" class="md-raised md-primary">
          {{translate.load('sbi.generic.save')}}
       </md-button>
     </md-card-actions>

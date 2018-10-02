@@ -27,16 +27,10 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
 import org.apache.log4j.Logger;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -137,14 +131,6 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 			if (hasBehaviour(QuerableBehaviour.class.getName())) {
 				QuerableBehaviour querableBehaviour = (QuerableBehaviour) getBehaviour(QuerableBehaviour.class.getName());
 				String stm = querableBehaviour.getStatement();
-				// stm = stm.replaceAll("''", "'"); why????
-				// This line transforms, for example:
-				// .... where column = 'rock ''n'' roll'
-				// that is correct into
-				// .... where column = 'rock 'n' roll'
-				// THAT IS NOT CORRECT!!!
-				// Commenting out this line solves https://spagobi.eng.it/jira/browse/SPAGOBI-1697 Error in Smart Filter: an error occurs when a static open
-				// filter contains a single quote
 				dataProxy.setStatement(stm);
 			}
 

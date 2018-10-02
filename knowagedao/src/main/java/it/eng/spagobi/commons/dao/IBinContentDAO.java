@@ -30,6 +30,6 @@ public interface IBinContentDAO extends ISpagoBIDao{
 	 * 
 	 * @throws EMFInternalError the EMF internal error
 	 */
-	public byte[] getBinContent(Integer binId) throws EMFInternalError;
-	
+	public byte[] getBinContent(Integer binId);
+
 }

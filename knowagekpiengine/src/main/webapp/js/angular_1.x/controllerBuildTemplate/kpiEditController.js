@@ -9,7 +9,8 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
 app.controller('templateBuildController', 
 		['$scope',
-		'sbiModule_translate' ,
+		'sbiModule_translate', 
+		'channelMessaging',
 		"$mdDialog",
 		"sbiModule_restServices",
 		"$q","$mdToast",
@@ -25,6 +26,7 @@ app.controller('templateBuildController',
 function templateBuildControllerFunction(
 		$scope,
 		sbiModule_translate,
+		channelMessaging,
 		$mdDialog, 
 		sbiModule_restServices,
 		$q,
@@ -140,7 +142,7 @@ function templateBuildControllerFunction(
 	};
 
 	$scope.closeTemplate = function(){
-		window.history.back();
+		channelMessaging.sendMessage();
 	}
 	
 	

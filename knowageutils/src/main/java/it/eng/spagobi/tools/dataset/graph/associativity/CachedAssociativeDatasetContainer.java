@@ -21,10 +21,10 @@ package it.eng.spagobi.tools.dataset.graph.associativity;
 import java.util.Map;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.graph.associativity.container.JDBCAssociativeDatasetContainer;
+import it.eng.spagobi.tools.dataset.graph.associativity.container.InlineViewAssociativeDatasetContainer;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-public class CachedAssociativeDatasetContainer extends JDBCAssociativeDatasetContainer {
+public class CachedAssociativeDatasetContainer extends InlineViewAssociativeDatasetContainer {
 
 	private String tableName;
 	private IDataSource dataSource;

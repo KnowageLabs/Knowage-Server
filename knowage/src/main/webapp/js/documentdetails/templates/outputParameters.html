@@ -1,0 +1,76 @@
+<div flex ng-cloak layout="row" ng-controller="OutputParametersController as do" layout-fill ng-form name="outputparameters">
+    <div flex="40" style="border-right:1px solid #ccc">
+        <md-toolbar class="secondaryToolbar">
+            <div class="md-toolbar-tools" layout="row">
+                <h2>{{translate.load("sbi.documentdetails.outputparameters")}}</h2>
+                <span flex></span>
+                <md-button ng-click="do.addParameter()" aria-label="add output parameter">
+                    {{translate.load("sbi.generic.add")}}
+                </md-button>
+            </div>
+        </md-toolbar>
+        
+        <md-content layout="column" class="tabContainer">
+            <div layout="row" layout-align="center center" ng-if="!do.document.outputParameters || do.document.outputParameters.length == 0">
+                <div class="kn-noItems">
+                    {{translate.load("sbi.documentdetails.outputparameters.nooutputparameters")}}
+                </div>
+            </div>
+            <md-list class="md-dense" flex>
+                <md-list-item class=" md-2-line " ng-if="do.document.outputParameters || do.document.outputParameters.length > 0" 
+                ng-repeat="output in do.document.outputParameters | orderBy:'id' " ng-click="do.selectOutputParameter($index)">
+                    <div class="md-list-item-text ">
+                        <span class="outputName"> {{ output.name }} </span>
+                        <span class="outputType"> {{ output.type.translatedValueName }} </span>
+                    </div>
+                    <md-button class="md-secondary md-icon-button" ng-click="do.removeOutputParameterFromList($index)" aria-label="delete parameter " ng-if="output.isUserDefined != null">
+                        <md-icon md-font-icon="fa fa-trash " ></md-icon>
+                    </md-button>
+                    <md-divider></md-divider>
+                </md-list-item>
+            </md-list>
+        </md-content>
+    </div>
+    <div flex="60 ">
+        <md-toolbar class="secondaryToolbar ">
+            <div class="md-toolbar-tools " layout="row ">
+                <h2>Output parameter details</h2>
+            </div>
+        </md-toolbar>
+        <div layout="row" layout-align="center center" ng-if="!do.selectedParameter">
+            <div class="kn-noItems">
+                {{translate.load("sbi.documentdetails.outputparameters.nooutputparameterselected")}}
+            </div>
+        </div>
+
+        <md-card ng-if="do.selectedParameter">
+
+            <md-card-content layout="column">
+                <md-input-container class="md-block">
+                    <label>{{translate.load("sbi.documentdetails.outputparameters.name")}}</label>
+                    <input ng-required="true" name="name" ng-model="do.selectedParameter.name" type="text" ng-readonly="do.selectedParameter.isUserDefined == null ? true : false">
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>{{translate.load("sbi.documentdetails.outputparameters.type")}}</label>
+                    <md-select name="type" ng-model="do.selectedParameter.type" ng-model-options="{trackBy: '$value.valueId'}" ng-disabled="do.selectedParameter.isUserDefined == null ? true : false">
+                        <md-option ng-repeat="type in do.typeList" ng-value="type" >{{type.translatedValueName}}</md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container class="md-block" ng-if="do.selectedParameter.type.valueCd == 'DATE'">
+                    <label>{{translate.load("sbi.documentdetails.outputparameters.dateformat")}}</label>
+                    <md-select ng-model="do.selectedParameter.formatCode" ng-disabled="do.selectedParameter.isUserDefined == null ? true : false">
+                        <md-option  ng-repeat="dateForm in do.dateFormats" ng-value="dateForm.valueCd">{{dateForm.translatedValueName}}</md-option>
+                    </md-select>
+                </md-input-container>
+                
+                <md-input-container class="md-block" ng-if="do.selectedParameter.type.valueCd == 'DATE' && do.selectedParameter.formatCode == 'CUSTOM'">
+                    <label>{{translate.load("sbi.documentdetails.outputparameters.customvalue")}}</label>
+                    <input maxlength="20" type="text" ng-model="do.selectedParameter.formatValue" ng-readonly="do.selectedParameter.isUserDefined == null ? true : false">
+                </md-input-container>
+                
+            </md-card-content>
+        </md-card>
+    </div>
+</div>

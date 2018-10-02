@@ -156,59 +156,61 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 		if (dm != null) {
 			String valueCheck = dm.getValueCheck();
-			logger.debug("content of KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS variable to be cponverted in JSON");
-			try {
-				configJSON = new JSONObject(valueCheck);
-			} catch (JSONException e) {
-				logger.error("Error in converting " + valueCheck
-						+ " to JSON, correct the KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS variable, meanwhile ignore custom functions", e);
-			}
-
-			if (dataSourceId != null && dataSourceId != -1) {
-				logger.debug("get the db type and extract wanted information from config varaible");
-				JSONArray array = new JSONArray();
-
+			logger.debug("content of KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS variable to be cponverted in JSON " + valueCheck);
+			if (valueCheck != null && !valueCheck.equals("")) {
 				try {
-
-					IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
-					IDataSource dataSource = dataSourceDAO.loadDataSourceByID(dataSourceId);
-
-					IDataBase db = DataBaseFactory.getDataBase(dataSource);
-					String dbType = db.getName();
-
-					logger.debug("DB type is " + dbType);
-
-					if (dbType != null) {
-						// serach for a key contained in dbType (it could be more than one name like MySQL/Maria
-						String keyToSearch = null;
-						for (Iterator iterator = configJSON.keys(); iterator.hasNext();) {
-							String key = (String) iterator.next();
-							if (dbType.toLowerCase().contains(key.toLowerCase())) {
-								keyToSearch = key;
-							}
-						}
-						if (keyToSearch != null) {
-							array = configJSON.optJSONArray(keyToSearch);
-						} else {
-							logger.error("Problem in finding custom functions voice for dbType " + dbType);
-						}
-						toReturn.put("data", array);
-					}
-				} catch (DataBaseException e) {
-					logger.error("Error in recovering dialect DB", e);
-				} catch (EMFUserError e) {
-					logger.error("Error in recovering dialect DB", e);
+					configJSON = new JSONObject(valueCheck);
+				} catch (JSONException e) {
+					logger.error("Error in converting " + valueCheck
+							+ " to JSON, correct the KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS variable, meanwhile ignore custom functions", e);
 				}
-			} else {
-				logger.debug("get for all DB");
-				toReturn.put("data", configJSON);
-			}
 
+				if (dataSourceId != null && dataSourceId != -1) {
+					logger.debug("get the db type and extract wanted information from config varaible");
+					JSONArray array = new JSONArray();
+
+					try {
+
+						IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+						IDataSource dataSource = dataSourceDAO.loadDataSourceByID(dataSourceId);
+
+						IDataBase db = DataBaseFactory.getDataBase(dataSource);
+						String dbType = db.getName();
+
+						logger.debug("DB type is " + dbType);
+
+						if (dbType != null) {
+							// serach for a key contained in dbType (it could be more than one name like MySQL/Maria
+							String keyToSearch = null;
+							for (Iterator iterator = configJSON.keys(); iterator.hasNext();) {
+								String key = (String) iterator.next();
+								if (dbType.toLowerCase().contains(key.toLowerCase())) {
+									keyToSearch = key;
+								}
+							}
+							if (keyToSearch != null) {
+								array = configJSON.optJSONArray(keyToSearch);
+							} else {
+								logger.error("Problem in finding custom functions voice for dbType " + dbType);
+							}
+							toReturn.put("data", array);
+						}
+					} catch (DataBaseException e) {
+						logger.error("Error in recovering dialect DB", e);
+					} catch (EMFUserError e) {
+						logger.error("Error in recovering dialect DB", e);
+					}
+				} else {
+					logger.debug("get for all DB");
+					toReturn.put("data", configJSON);
+				}
+			}
 		}
 
 		logger.debug("OUT");
 
 		return toReturn.toString();
+
 	}
 
 	@POST

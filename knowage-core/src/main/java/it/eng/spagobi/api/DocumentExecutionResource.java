@@ -761,7 +761,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				JSONArray valuesLst = (JSONArray) valueObj;
 				JSONArray ValuesLstDecoded = new JSONArray();
 				for (int v = 0; v < valuesLst.length(); v++) {
-					String value = (String) valuesLst.get(v);
+					// String value = (String) valuesLst.get(v);
+					String value = (valuesLst.get(v) != null) ? String.valueOf(valuesLst.get(v)) : "";
 					if (!value.equals("") && !value.equalsIgnoreCase("%")) {
 						ValuesLstDecoded.put(URLDecoder.decode(value, "UTF-8"));
 					} else {

@@ -313,7 +313,9 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				fieldMeta.setName(fieldName);
 				fieldMeta.setType(String.class);
 			}
-			dataStoreMeta.addFiedMeta(fieldMeta);
+			if (!valueField.equals("")) {
+				dataStoreMeta.addFiedMeta(fieldMeta);
+			}
 		}
 
 		return dataStoreMeta;
@@ -387,6 +389,10 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 		case HSSFCell.CELL_TYPE_STRING:
 			valueField = cell.getStringCellValue();
+			break;
+
+		case HSSFCell.CELL_TYPE_BLANK:
+			valueField = "";
 			break;
 
 		default:

@@ -18,15 +18,6 @@
 
 package it.eng.spagobi.tools.dataset.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -42,9 +33,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.services.common.SsoServiceInterface;
-import it.eng.spagobi.tools.dataset.cache.CacheException;
-import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.*;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.ckan.CKANConfig;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -52,6 +41,10 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+
+import java.util.*;
 
 public class SelfServiceDatasetAction {
 
@@ -242,7 +235,7 @@ public class SelfServiceDatasetAction {
 		}
 
 		logger.debug("Getting the cache data source");
-		ICache cache = SpagoBICacheManager.getCache();
+		ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 		if (cache instanceof SQLDBCache) {
 			logger.debug("The cache is a SQL cache so we have the datasource");
 			label = ((SQLDBCache) cache).getDataSource().getLabel();
@@ -315,7 +308,7 @@ public class SelfServiceDatasetAction {
 		Map<String, String> parametersMap = buildQbeEditFederatedDataSetServiceBaseParametersMap(locale, profile);
 		parametersMap.put("SBI_EXECUTION_ID", executionId);
 
-		ICache cache = SpagoBICacheManager.getCache();
+		ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 		if (cache instanceof SQLDBCache) {
 			logger.debug("The cache is a SQL cache so we have the datasource");
 			label = ((SQLDBCache) cache).getDataSource().getLabel();
@@ -353,7 +346,7 @@ public class SelfServiceDatasetAction {
 		Map<String, String> parametersMap = buildQbeEditFromFederationServiceBaseParametersMap(locale, profile);
 		parametersMap.put("SBI_EXECUTION_ID", executionId);
 
-		ICache cache = SpagoBICacheManager.getCache();
+		ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 		if (cache instanceof SQLDBCache) {
 			logger.debug("The cache is a SQL cache so we have the datasource");
 			label = ((SQLDBCache) cache).getDataSource().getLabel();

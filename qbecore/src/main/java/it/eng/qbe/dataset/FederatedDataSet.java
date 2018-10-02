@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,30 +11,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.qbe.dataset;
-
-import it.eng.qbe.datasource.DriverManager;
-import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
-import it.eng.qbe.datasource.configuration.DataSetDataSourceConfiguration;
-import it.eng.qbe.datasource.dataset.DataSetDataSource;
-import it.eng.qbe.datasource.dataset.DataSetDriver;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.container.ObjectUtils;
-import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
-import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
-import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,9 +32,28 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.qbe.datasource.DriverManager;
+import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.DataSetDataSourceConfiguration;
+import it.eng.qbe.datasource.dataset.DataSetDataSource;
+import it.eng.qbe.datasource.dataset.DataSetDriver;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
+import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 /**
  * dataset derived from the federation of differnt datasets
- * 
+ *
  * @author ghedin
  */
 public class FederatedDataSet extends QbeDataSet {
@@ -69,28 +70,30 @@ public class FederatedDataSet extends QbeDataSet {
 		super(dataSetConfig);
 
 		federation = new FederationDefinition();
-		setDependentDataSets((SpagoBiDataSet[]) dataSetConfig.getDependentDataSets(),session);
+		setDependentDataSets((SpagoBiDataSet[]) dataSetConfig.getDependentDataSets(), session);
 
 		federation.setLabel(dataSetConfig.getFederationlabel());
 		federation.setFederation_id(dataSetConfig.getFederationId());
 		federation.setRelationships(dataSetConfig.getFederationRelations());
-		
+
 		federation.setDegenerated(dataSetConfig.isDegenerated());
 
 		// load the map dataset->cached table name
 		JSONObject jsonConf = ObjectUtils.toJSONObject(dataSetConfig.getConfiguration());
 		try {
-			this.setDataset2CacheTableName((jsonConf.opt(FederatedDataSet.QBE_DATASET_CACHE_MAP) != null) ? (JSONObject) jsonConf
-					.get(FederatedDataSet.QBE_DATASET_CACHE_MAP) : new JSONObject());
+			this.setDataset2CacheTableName(
+					(jsonConf.opt(FederatedDataSet.QBE_DATASET_CACHE_MAP) != null) ? (JSONObject) jsonConf.get(FederatedDataSet.QBE_DATASET_CACHE_MAP)
+							: new JSONObject());
 		} catch (JSONException e) {
 			logger.error("Error loading the map dataset->cached dataset table name", e);
 			throw new SpagoBIEngineRuntimeException("Error loading the map dataset->cached dataset table name", e);
 		}
 	}
-	
-	protected void setDatasourceInternal(SpagoBiDataSet dataSetConfig){
+
+	@Override
+	protected void setDatasourceInternal(SpagoBiDataSet dataSetConfig) {
 		SpagoBiDataSource ds = dataSetConfig.getDataSource();
-		if(ds==null){
+		if (ds == null) {
 			ds = dataSetConfig.getDataSourceForReading();
 		}
 		IDataSource dataSource = DataSourceFactory.getDataSource(ds);
@@ -121,7 +124,7 @@ public class FederatedDataSet extends QbeDataSet {
 		sbd.setFederationRelations(federation.getRelationships());
 		sbd.setFederationId(federation.getFederation_id());
 		sbd.setDegenerated(federation.isDegenerated());
-		
+
 		sbd.setType(DS_TYPE);
 
 		return sbd;
@@ -143,7 +146,7 @@ public class FederatedDataSet extends QbeDataSet {
 	public void setDependentDataSets(SpagoBiDataSet[] sourceDatasets, HttpSession session) {
 		Set<IDataSet> sourceDatasetsSet = new HashSet<IDataSet>();
 		for (int i = 0; i < sourceDatasets.length; i++) {
-			IDataSet iDataSet = DataSetFactory.getDataSet(sourceDatasets[i], getUserIn(),session);
+			IDataSet iDataSet = DataSetFactory.getDataSet(sourceDatasets[i], getUserIn(), session);
 			sourceDatasetsSet.add(iDataSet);
 		}
 		federation.setSourceDatasets(sourceDatasetsSet);
@@ -197,12 +200,12 @@ public class FederatedDataSet extends QbeDataSet {
 		}
 
 		String userId = (String) dataSourceProperties.get(EngineConstants.ENV_USER_ID);
-		
+
 		JSONObject datasetLabels = null;
 		try {
 			datasetLabels = FederationUtils.createDatasetsOnCache(federation.getDataSetRelationKeysMap(), userId);
 		} catch (JSONException e1) {
-			logger.error("Error caching the datasets",e1);
+			logger.error("Error caching the datasets", e1);
 			throw new SpagoBIRuntimeException("Error caching the datasets", e1);
 		}
 		setDataset2CacheTableName(datasetLabels);
@@ -251,6 +254,16 @@ public class FederatedDataSet extends QbeDataSet {
 		}
 
 		return userId;
+	}
+
+	@Override
+	public DataIterator iterator() {
+		throw new UnsupportedOperationException("This operation has to be overriden by subclasses in order to be used.");
+	}
+
+	@Override
+	public boolean isIterable() {
+		return false;
 	}
 
 	public void setUserId(String userId) {

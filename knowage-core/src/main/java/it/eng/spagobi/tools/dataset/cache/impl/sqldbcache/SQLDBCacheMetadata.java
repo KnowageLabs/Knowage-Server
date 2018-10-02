@@ -17,18 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 import com.hazelcast.core.IMap;
-
 import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -43,6 +32,11 @@ import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.DatabaseUtilities;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
+import org.apache.log4j.Logger;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -62,32 +56,14 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	private Integer cacheDsLastAccessTtl;
 	private Integer cachePercentageToStore;
 
-	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
-	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
-	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
-	public static final String CACHE_DS_LAST_ACCESS_TTL = "SPAGOBI.CACHE.DS_LAST_ACCESS_TTL";
-	public static final String CACHE_LIMIT_FOR_STORE_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_STORE";
-	public static final String DIALECT_MYSQL = "MySQL";
-	public static final String DIALECT_POSTGRES = "PostgreSQL";
-	public static final String DIALECT_ORACLE = "OracleDialect";
-	public static final String DIALECT_HSQL = "HSQL";
-	public static final String DIALECT_HSQL_PRED = "Predefined hibernate dialect";
-	public static final String DIALECT_ORACLE9i10g = "Oracle9Dialect";
-	public static final String DIALECT_SQLSERVER = "SQLServer";
-	public static final String DIALECT_DB2 = "DB2";
-	public static final String DIALECT_INGRES = "Ingres";
-	public static final String DIALECT_TERADATA = "Teradata";
-
 	static private Logger logger = Logger.getLogger(SQLDBCacheMetadata.class);
 
 	public SQLDBCacheMetadata(SQLDBCacheConfiguration cacheConfiguration) {
 		this.cacheConfiguration = cacheConfiguration;
-		if (this.cacheConfiguration != null) {
 			totalMemory = this.cacheConfiguration.getCacheSpaceAvailable();
 			cachePercentageToClean = this.cacheConfiguration.getCachePercentageToClean();
 			cacheDsLastAccessTtl = this.cacheConfiguration.getCacheDsLastAccessTtl();
 			cachePercentageToStore = this.cacheConfiguration.getCachePercentageToStore();
-		}
 
 		String tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
 		if (StringUtilities.isEmpty(tableNamePrefix)) {

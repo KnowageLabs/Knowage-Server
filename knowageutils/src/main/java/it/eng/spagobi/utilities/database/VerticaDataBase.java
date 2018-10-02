@@ -18,24 +18,11 @@
 
 package it.eng.spagobi.utilities.database;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-public class VerticaDataBase extends AbstractDataBase implements MetaDataBase {
+public class VerticaDataBase extends AbstractDataBase {
 
 	public VerticaDataBase(IDataSource dataSource) {
 		super(dataSource);
-	}
-
-	@Override
-	public String getSchema(Connection conn) throws SQLException {
-		return conn.getSchema();
-	}
-
-	@Override
-	public String getCatalog(Connection conn) throws SQLException {
-		return conn.getCatalog();
 	}
 }

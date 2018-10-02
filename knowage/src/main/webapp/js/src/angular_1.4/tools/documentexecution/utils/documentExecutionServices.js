@@ -23,7 +23,7 @@
 
 	}]);
 
-	documentExecutionModule.service('documentExecuteServices', function($mdToast,execProperties,sbiModule_restServices,sbiModule_config,$filter,sbiModule_dateServices,sbiModule_messaging) {
+	documentExecutionModule.service('documentExecuteServices', function($mdToast,execProperties,sbiModule_restServices,sbiModule_config,$filter,sbiModule_dateServices,sbiModule_messaging,driversExecutionService) {
 		var documentExecuteServicesObj = {
 //				decodeRequestStringToJson: function (str) {
 //				var hash;
@@ -55,176 +55,176 @@
 					sbiModule_messaging.showInfoMessage(text,"");
 				},
 
-				buildStringParameters : function (documentParameters) {
-					//console.log('buildStringParameters ' , documentParameters);
-
-					var jsonDatum =  {};
-					if(documentParameters.length > 0) {
-						for(var i = 0; i < documentParameters.length; i++ ) {
-							var parameter = documentParameters[i];
-							var valueKey = parameter.urlName;
-							var descriptionKey = parameter.urlName + "_field_visible_description";
-							var jsonDatumValue = null;
-							var jsonDatumDesc = null;
-
-							if(parameter.valueSelection.toLowerCase() == 'lov') {
-								//TREE MODIFY (see with benedetto)
-								if(parameter.selectionType.toLowerCase() == 'tree' || parameter.selectionType.toLowerCase() == 'lookup'){
-//									if(parameter.multivalue) {
-									var paramArrayTree = [];
-									var paramStrTree = "";
-
-									for(var z = 0; parameter.parameterValue && z < parameter.parameterValue.length; z++) {
-										if(z > 0) {
-											paramStrTree += ";";
-										}
-
-//										paramArrayTree[z] = parameter.parameterValue[z].value;
-//										paramStrTree += parameter.parameterValue[z].value;
-										paramArrayTree[z] = parameter.parameterValue[z];
-										//old
-										//paramStrTree += parameter.parameterValue[z];
-										//modify description tree
-										if(typeof parameter.parameterDescription !== 'undefined'){
-											paramStrTree += parameter.parameterDescription[parameter.parameterValue[z]];
-										}
-
-
-									}
-
-									jsonDatumValue = paramArrayTree;
-									jsonDatumDesc = paramStrTree;
-//									} else {
-//									jsonDatumValue = parameter.parameterValue? parameter.parameterValue.value : '';
-//									jsonDatumDesc = parameter.parameterValue? parameter.parameterValue.value : '';
+//				buildStringParameters : function (documentParameters) {
+//					//console.log('buildStringParameters ' , documentParameters);
+//
+//					var jsonDatum =  {};
+//					if(documentParameters.length > 0) {
+//						for(var i = 0; i < documentParameters.length; i++ ) {
+//							var parameter = documentParameters[i];
+//							var valueKey = parameter.urlName;
+//							var descriptionKey = parameter.urlName + "_field_visible_description";
+//							var jsonDatumValue = null;
+//							var jsonDatumDesc = null;
+//
+//							if(parameter.valueSelection.toLowerCase() == 'lov') {
+//								//TREE MODIFY (see with benedetto)
+//								if(parameter.selectionType.toLowerCase() == 'tree' || parameter.selectionType.toLowerCase() == 'lookup'){
+////									if(parameter.multivalue) {
+//									var paramArrayTree = [];
+//									var paramStrTree = "";
+//
+//									for(var z = 0; parameter.parameterValue && z < parameter.parameterValue.length; z++) {
+//										if(z > 0) {
+//											paramStrTree += ";";
+//										}
+//
+////										paramArrayTree[z] = parameter.parameterValue[z].value;
+////										paramStrTree += parameter.parameterValue[z].value;
+//										paramArrayTree[z] = parameter.parameterValue[z];
+//										//old
+//										//paramStrTree += parameter.parameterValue[z];
+//										//modify description tree
+//										if(typeof parameter.parameterDescription !== 'undefined'){
+//											paramStrTree += parameter.parameterDescription[parameter.parameterValue[z]];
+//										}
+//
+//
 //									}
-
-
-								} else {
-
-
-									if(parameter.multivalue) {
-
-										parameter.parameterValue = parameter.parameterValue || [];
-										jsonDatumValue = parameter.parameterValue;
-										// set descritpion
-										if(parameter.parameterDescription){
-											// if already in the form ; ;
-											if (typeof parameter.parameterDescription === 'string') {
-												jsonDatumDesc = parameter.parameterDescription;
-											}
-											else{
-												// else in the form object
-												var desc = '';
-												for(var z = 0; parameter.parameterValue && z < parameter.parameterValue.length; z++) {
-													if(z > 0) {
-														desc += ";";
-													}
-													// description is at index or at value depending on parameters type
-													if(parameter.parameterDescription[z] != undefined){
-														desc+=parameter.parameterDescription[z];
-													}
-													else if(parameter.parameterDescription[parameter.parameterValue[z]]!= undefined){
-														desc+=parameter.parameterDescription[parameter.parameterValue[z]];
-													}
-													else{
-														desc+= parameter.parameterValue[z];
-													}
-												}
-												jsonDatumDesc = desc;
-											}
-										}
-										else{
-											jsonDatumDesc = jsonDatumValue.join(";");
-										}
-
-									} else {
-
-										jsonDatumValue = parameter.parameterValue != undefined? parameter.parameterValue : '';
-										if(parameter.parameterDescription){
-											if (typeof parameter.parameterDescription === 'string') {
-												jsonDatumDesc = parameter.parameterDescription;
-											}
-											else{
-												jsonDatumDesc = parameter.parameterDescription[0];
-											}
-										}
-										else{
-											jsonDatumDesc = jsonDatumValue;
-										}
-									}
-								}
-							} else if(parameter.valueSelection.toLowerCase() == 'map_in'){
-								if(parameter.parameterValue && parameter.multivalue) {
-									parameter.parameterValue = parameter.parameterValue || [];
-
-//									jsonDatumValue = parameter.parameterValue;
-									jsonDatumValue = parameter.parameterValue.length > 0 ?
-											("'" + parameter.parameterValue.join("','") + "'")
-											: "";
-											jsonDatumDesc = jsonDatumValue;
-								} else {
-									jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
-									jsonDatumDesc = jsonDatumValue;
-								}
-							} else {
-								//DATE
-								if(parameter.type=='DATE'){
-//									dateToSubmit = $filter('date')(parameter.parameterValue,
-//									this.parseDateTemp(sbiModule_config.localizedDateFormat));
-									//submit server date
-									//dateToSubmit = sbiModule_dateServices.formatDate(parameter.parameterValue, t.parseDateTemp(sbiModule_config.serverDateFormat));
-									var dateToSubmitFilter = $filter('date')(parameter.parameterValue, sbiModule_config.serverDateFormat);
-									if( Object.prototype.toString.call( dateToSubmitFilter ) === '[object Array]' ) {
-										dateToSubmit = dateToSubmitFilter[0];
-									}else{
-										dateToSubmit = dateToSubmitFilter;
-									}
-									console.log('date to sub ' + dateToSubmit);
-									jsonDatumValue=dateToSubmit;
-									jsonDatumDesc=dateToSubmit;
-								}
-								//DATE RANGE
-								else if(parameter.type=='DATE_RANGE'){
-//									dateToSubmit = $filter('date')(parameter.parameterValue,
-//									this.parseDateTemp(sbiModule_config.localizedDateFormat));
-
-									var dateToSubmitFilter = $filter('date')(parameter.parameterValue, sbiModule_config.serverDateFormat);
-									if( Object.prototype.toString.call( dateToSubmitFilter ) === '[object Array]' ) {
-										dateToSubmit = dateToSubmitFilter[0].value;
-									}else{
-										dateToSubmit = dateToSubmitFilter;
-									}
-
-									if(dateToSubmit!= '' && dateToSubmit!=null && parameter.datarange && parameter.datarange.opt){
-										var defaultValueObj = {};
-										for(var ii=0; ii<parameter.defaultValues.length; ii++){
-											if(parameter.datarange && parameter.datarange.opt && parameter.defaultValues[ii].value==parameter.datarange.opt){
-												defaultValueObj = parameter.defaultValues[ii];
-												break;
-											}
-										}
-										var rangeStr = defaultValueObj.quantity + this.getRangeCharacter(defaultValueObj.type);
-										console.log('rangeStr ', rangeStr);
-										jsonDatumValue=dateToSubmit+"_"+rangeStr;
-										jsonDatumDesc=dateToSubmit+"_"+rangeStr;
-									}else{
-										jsonDatumValue='';
-										jsonDatumDesc='';
-									}
-								}
-								else{
-									jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
-									jsonDatumDesc = jsonDatumValue;
-								}
-							}
-							jsonDatum[valueKey] = jsonDatumValue;
-							jsonDatum[descriptionKey] = jsonDatumDesc;
-						}
-					}
-					//console.log('jsonDAtum ' , jsonDatum);
-					return jsonDatum;
-				},
+//
+//									jsonDatumValue = paramArrayTree;
+//									jsonDatumDesc = paramStrTree;
+////									} else {
+////									jsonDatumValue = parameter.parameterValue? parameter.parameterValue.value : '';
+////									jsonDatumDesc = parameter.parameterValue? parameter.parameterValue.value : '';
+////									}
+//
+//
+//								} else {
+//
+//
+//									if(parameter.multivalue) {
+//
+//										parameter.parameterValue = parameter.parameterValue || [];
+//										jsonDatumValue = parameter.parameterValue;
+//										// set descritpion
+//										if(parameter.parameterDescription){
+//											// if already in the form ; ;
+//											if (typeof parameter.parameterDescription === 'string') {
+//												jsonDatumDesc = parameter.parameterDescription;
+//											}
+//											else{
+//												// else in the form object
+//												var desc = '';
+//												for(var z = 0; parameter.parameterValue && z < parameter.parameterValue.length; z++) {
+//													if(z > 0) {
+//														desc += ";";
+//													}
+//													// description is at index or at value depending on parameters type
+//													if(parameter.parameterDescription[z] != undefined){
+//														desc+=parameter.parameterDescription[z];
+//													}
+//													else if(parameter.parameterDescription[parameter.parameterValue[z]]!= undefined){
+//														desc+=parameter.parameterDescription[parameter.parameterValue[z]];
+//													}
+//													else{
+//														desc+= parameter.parameterValue[z];
+//													}
+//												}
+//												jsonDatumDesc = desc;
+//											}
+//										}
+//										else{
+//											jsonDatumDesc = jsonDatumValue.join(";");
+//										}
+//
+//									} else {
+//
+//										jsonDatumValue = parameter.parameterValue != undefined? parameter.parameterValue : '';
+//										if(parameter.parameterDescription){
+//											if (typeof parameter.parameterDescription === 'string') {
+//												jsonDatumDesc = parameter.parameterDescription;
+//											}
+//											else{
+//												jsonDatumDesc = parameter.parameterDescription[0];
+//											}
+//										}
+//										else{
+//											jsonDatumDesc = jsonDatumValue;
+//										}
+//									}
+//								}
+//							} else if(parameter.valueSelection.toLowerCase() == 'map_in'){
+//								if(parameter.parameterValue && parameter.multivalue) {
+//									parameter.parameterValue = parameter.parameterValue || [];
+//
+////									jsonDatumValue = parameter.parameterValue;
+//									jsonDatumValue = parameter.parameterValue.length > 0 ?
+//											("'" + parameter.parameterValue.join("','") + "'")
+//											: "";
+//											jsonDatumDesc = jsonDatumValue;
+//								} else {
+//									jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+//									jsonDatumDesc = jsonDatumValue;
+//								}
+//							} else {
+//								//DATE
+//								if(parameter.type=='DATE'){
+////									dateToSubmit = $filter('date')(parameter.parameterValue,
+////									this.parseDateTemp(sbiModule_config.localizedDateFormat));
+//									//submit server date
+//									//dateToSubmit = sbiModule_dateServices.formatDate(parameter.parameterValue, t.parseDateTemp(sbiModule_config.serverDateFormat));
+//									var dateToSubmitFilter = $filter('date')(parameter.parameterValue, sbiModule_config.serverDateFormat);
+//									if( Object.prototype.toString.call( dateToSubmitFilter ) === '[object Array]' ) {
+//										dateToSubmit = dateToSubmitFilter[0];
+//									}else{
+//										dateToSubmit = dateToSubmitFilter;
+//									}
+//									console.log('date to sub ' + dateToSubmit);
+//									jsonDatumValue=dateToSubmit;
+//									jsonDatumDesc=dateToSubmit;
+//								}
+//								//DATE RANGE
+//								else if(parameter.type=='DATE_RANGE'){
+////									dateToSubmit = $filter('date')(parameter.parameterValue,
+////									this.parseDateTemp(sbiModule_config.localizedDateFormat));
+//
+//									var dateToSubmitFilter = $filter('date')(parameter.parameterValue, sbiModule_config.serverDateFormat);
+//									if( Object.prototype.toString.call( dateToSubmitFilter ) === '[object Array]' ) {
+//										dateToSubmit = dateToSubmitFilter[0].value;
+//									}else{
+//										dateToSubmit = dateToSubmitFilter;
+//									}
+//
+//									if(dateToSubmit!= '' && dateToSubmit!=null && parameter.datarange && parameter.datarange.opt){
+//										var defaultValueObj = {};
+//										for(var ii=0; ii<parameter.defaultValues.length; ii++){
+//											if(parameter.datarange && parameter.datarange.opt && parameter.defaultValues[ii].value==parameter.datarange.opt){
+//												defaultValueObj = parameter.defaultValues[ii];
+//												break;
+//											}
+//										}
+//										var rangeStr = defaultValueObj.quantity + this.getRangeCharacter(defaultValueObj.type);
+//										console.log('rangeStr ', rangeStr);
+//										jsonDatumValue=dateToSubmit+"_"+rangeStr;
+//										jsonDatumDesc=dateToSubmit+"_"+rangeStr;
+//									}else{
+//										jsonDatumValue='';
+//										jsonDatumDesc='';
+//									}
+//								}
+//								else{
+//									jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+//									jsonDatumDesc = jsonDatumValue;
+//								}
+//							}
+//							jsonDatum[valueKey] = jsonDatumValue;
+//							jsonDatum[descriptionKey] = jsonDatumDesc;
+//						}
+//					}
+//					//console.log('jsonDAtum ' , jsonDatum);
+//					return jsonDatum;
+//				},
 
 				parseDateTemp : function(date){
 					result = "";
@@ -563,7 +563,7 @@
 	documentExecutionModule.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config,docExecute_exportService
 			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories,$q,$filter,$timeout
-			,docExecute_dependencyService,sbiModule_messaging, $http,sbiModule_dateServices,$mdToast,docExecute_sessionParameterService,sbiModule_i18n ) {
+			,docExecute_dependencyService,sbiModule_messaging, $http,sbiModule_dateServices,$mdToast,docExecute_sessionParameterService,sbiModule_i18n,driversExecutionService ) {
 
 		var serviceScope = this;
 		serviceScope.showOlapMenu = false;
@@ -574,7 +574,9 @@
 		serviceScope.i18n = sbiModule_i18n;
 
 		serviceScope.executionProcesRestV1 = function(role, params) {
-			params= typeof params === 'undefined' ? {} : params;
+			console.log('params')
+			console.log(params)
+			params = typeof params === 'undefined' ? {} : params;
 
 			var dataPost = {
 					label: execProperties.executionInstance.OBJECT_LABEL,
@@ -602,9 +604,11 @@
 
 			// memorize parameters in session
 			docExecute_sessionParameterService.saveParameters(dataPost.parameters, parametersDetail);
-
-
+			console.log('params')
+			console.log(parametersDetail)
 			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
+			console.log('dataPost')
+			console.log(dataPost)
 			sbiModule_restServices.promisePost("1.0/documentexecution", 'url', dataPost)
 			.then(
 					function(response, status, headers, config) {
@@ -784,7 +788,6 @@
 							if(parameter.selectionType.toLowerCase() == "tree" || parameter.selectionType.toLowerCase() == "lookup") {
 								//TREE DESC FOR LABEL
 								var ArrValue = JSON.parse(params[parameter.urlName]);
-
 								if (typeof parameter.parameterDescription === 'undefined'){
 									parameter.parameterDescription = {};
 								}
@@ -799,22 +802,7 @@
 								}
 							} else {
 								//FROM VIEWPOINT : the lov value saved (multivalue or single value) matched  with the parameter
-								//parameter.parameterValue = parameter.multivalue ? JSON.parse(params[parameter.urlName])	: params[parameter.urlName];
-								//lookup old
-//								if(parameter.selectionType.toLowerCase() == "lookup"){
-//								var ArrValue = JSON.parse(params[parameter.urlName]);
-//								var ArrDesc = params[parameter.urlName+'_field_visible_description'].split(';');
-//								if (typeof parameter.parameterDescription === 'undefined'){
-//								parameter.parameterDescription = {};
-//								}
-//								for(var w=0; w<ArrValue.length; w++){
-//								parameter.parameterDescription[ArrValue[w]] =ArrDesc[w];
-//								}
-//								parameter.parameterValue = ArrValue;
-
-//								}else{
 								parameter.parameterValue = parameter.multivalue ? JSON.parse(params[parameter.urlName])	: params[parameter.urlName];
-								//}
 							}
 
 						} else if(parameter.valueSelection.toLowerCase() == 'map_in') {
@@ -824,13 +812,27 @@
 							parameter.parameterValue = (parameter.multivalue)? valueToBeSplitted : valueToBeCleanedByQuotes;
 						} else {
 							if(parameter.type=='NUM'){
-								parameter.parameterValue = parseFloat(params[parameter.urlName],10);
+								if (parameter.multivalue){
+									var values = params[parameter.urlName].split(",");
+									parameter.parameterValue = "";
+									for (var v=0; v<values.length; v++){
+										parameter.parameterValue += parseFloat(values[v],10);
+										if (v < (values.length-1)) parameter.parameterValue += ",";
+									}
+								}else
+									parameter.parameterValue = parseFloat(params[parameter.urlName],10);
 							}else if(parameter.type=='DATE'){
-
-								//parameter.parameterValue= new Date(params[parameter.urlName]);
 								//set parameter date server
-								parameter.parameterValue= sbiModule_dateServices.getDateFromFormat(params[parameter.urlName], sbiModule_config.serverDateFormat);
-
+								if (parameter.multivalue){
+									var values = params[parameter.urlName].split(",");
+									parameter.parameterValue = "";
+									for (var v=0; v<values.length; v++){
+										var res = sbiModule_dateServices.getDateFromFormat(values[v], sbiModule_config.serverDateFormat);
+										parameter.parameterValue += sbiModule_dateServices.formatDate(res, sbiModule_config.serverDateFormat); //convert to string
+										if (v < (values.length-1)) parameter.parameterValue += ",";
+									}
+								}else
+									parameter.parameterValue = sbiModule_dateServices.getDateFromFormat(params[parameter.urlName], sbiModule_config.serverDateFormat);
 							}else if(parameter.type=='DATE_RANGE'){
 								var dateRange = params[parameter.urlName];
 								var dateRangeArr = dateRange.split('_');
@@ -841,9 +843,7 @@
 									parameter.parameterValue= new Date(parseInt(dateRange));
 								}else{
 									//FROM VIEWPOINT
-
 									parameter.parameterValue= sbiModule_dateServices.getDateFromFormat(dateRange, sbiModule_config.serverDateFormat);
-
 								}
 								if(typeof parameter.datarange ==='undefined'){
 									parameter.datarange = {};
@@ -959,7 +959,7 @@
 
 										if (response.data.isReadyForExecution === true) {
 											serviceScope.executionProcesRestV1(execProperties.selectedRole.name,
-													documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters));
+													driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters));
 										} else {
 											serviceScope.frameLoaded = true; // this hides loading mask
 											docExecute_paramRolePanelService.toggleParametersPanel(true);
@@ -1029,7 +1029,7 @@
 //									$mdSidenav('parametersPanelSideNav').close();
 									docExecute_paramRolePanelService.toggleParametersPanel(false);
 									serviceScope.executionProcesRestV1(execProperties.selectedRole.name,
-											documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters));
+											driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters));
 
 								}
 
@@ -1149,7 +1149,7 @@
 						vpctl.newViewpoint.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
 						vpctl.newViewpoint.ROLE = execProperties.selectedRole.name;
 						//vpctl.newViewpoint.VIEWPOINT = documentExecuteServices.buildStringParametersForSave(execProperties.parametersData.documentParameters);
-						vpctl.newViewpoint.VIEWPOINT = documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+						vpctl.newViewpoint.VIEWPOINT = driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
 						sbiModule_restServices.post(
 								"1.0/documentviewpoint",
 								"addViewpoint", vpctl.newViewpoint)
@@ -1342,7 +1342,7 @@
 						objPost.PARAMETER_ID=dataDependenciesElementMap.parameterToChangeUrlName;
 						//console.log('mode parameter type ' + dataDependenciesElementMap.lovParameterMode);
 						objPost.MODE='simple';
-						objPost.PARAMETERS=documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+						objPost.PARAMETERS=driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
 						//objPost.PARAMETERS=JSON.parse('{"param1":"","param1_field_visible_description":"","param2":["South West"],"param2_field_visible_description":"South West"}');
 						sbiModule_restServices.post("1.0/documentExeParameters", "getParameters", objPost)
 						.success(function(data, status, headers, config) {
@@ -1731,9 +1731,9 @@
 						objToSend[l].parameterValue = paramValueArrNew;
 					}
 				}
-				obj=documentExecuteServices.buildStringParameters(objToSend);
+				obj=driversExecutionService.buildStringParameters(objToSend);
 			}else{
-				obj=documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+				obj=driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
 			}
 			return obj;
 		};

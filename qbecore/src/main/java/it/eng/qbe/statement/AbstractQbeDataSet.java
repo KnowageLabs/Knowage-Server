@@ -89,8 +89,8 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		return dataStore;
 	}
 
-	protected MetaData getDataStoreMeta(Query query) {
-		MetaData dataStoreMeta;
+	protected IMetaData getDataStoreMeta(Query query) {
+		IMetaData dataStoreMeta;
 		ISelectField queryFiled;
 		FieldMetadata dataStoreFieldMeta;
 
@@ -179,77 +179,80 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		return dataStoreMeta;
 	}
 
-	protected DataStore toDataStore(List result) {
-		DataStore dataStore;
-		MetaData dataStoreMeta;
-		Object[] row;
-
-		dataStore = new DataStore();
-		dataStoreMeta = getDataStoreMeta(statement.getQuery());
+	protected IDataStore toDataStore(List result, IMetaData dataStoreMeta) {
+		IDataStore dataStore = new DataStore();
 		dataStore.setMetaData(dataStoreMeta);
 
 		Iterator it = result.iterator();
 		int r = 0;
 		while (it.hasNext()) {
 			Object o = it.next();
-
-			if (!(o instanceof Object[])) {
-				row = new Object[1];
-				row[0] = o == null ? "" : o;
-			} else {
-				row = (Object[]) o;
-			}
+			IRecord record = toRecord(o, dataStoreMeta);
+			((Record) record).setDataStore(dataStore);
 			logger.debug("-------------RECORD " + r + "---------------");
 			r++;
-			String rowS = "";
-			for (int i = 0; i < row.length; i++) {
-				rowS = rowS + " [" + row[i] + "]";
-			}
-			IRecord record = new Record(dataStore);
-			for (int i = 0, j = 0; i < dataStoreMeta.getFieldCount(); i++) {
-				IFieldMetaData fieldMeta = dataStoreMeta.getFieldMeta(i);
-				Boolean calculated = (Boolean) fieldMeta.getProperty("calculated");
-				if (calculated.booleanValue() == false) {
-					Assert.assertTrue(j < row.length, "Impossible to read field [" + fieldMeta.getName() + "] from resultset");
-
-					if (row[j] instanceof java.sql.Clob) {
-						Clob clob = (Clob) row[j];
-						InputStream in;
-						try {
-							in = clob.getAsciiStream();
-						} catch (SQLException e) {
-							logger.error("Error in reading clob");
-							throw new RuntimeException(e);
-						}
-						Scanner s = new Scanner(in).useDelimiter("\\A");
-						String clobAsString = s.hasNext() ? s.next() : "";
-						record.appendField(new Field(clobAsString));
-						if (row[j] != null)
-							fieldMeta.setType(row[j].getClass());
-					} else {
-
-						record.appendField(new Field(row[j]));
-						if (row[j] != null)
-							fieldMeta.setType(row[j].getClass());
-					}
-					j++;
-				} else {
-					DataSetVariable variable = (DataSetVariable) fieldMeta.getProperty("variable");
-					if (variable.getResetType() == DataSetVariable.RESET_TYPE_RECORD) {
-						variable.reset();
-					}
-
-					record.appendField(new Field(variable.getValue()));
-					if (variable.getValue() != null)
-						fieldMeta.setType(variable.getValue().getClass());
-				}
-			}
-
 			processCalculatedFields(record, dataStore);
 			dataStore.appendRecord(record);
 		}
 
 		return dataStore;
+	}
+
+	public static IRecord toRecord(Object o, IMetaData dataStoreMeta) {
+		Object[] row;
+		if (!(o instanceof Object[])) {
+			row = new Object[1];
+			row[0] = o == null ? "" : o;
+		} else {
+			row = (Object[]) o;
+		}
+		String rowS = "";
+		for (int i = 0; i < row.length; i++) {
+			rowS = rowS + " [" + row[i] + "]";
+		}
+		IRecord record = new Record();
+		for (int i = 0, j = 0; i < dataStoreMeta.getFieldCount(); i++) {
+			IFieldMetaData fieldMeta = dataStoreMeta.getFieldMeta(i);
+			Boolean calculated = (Boolean) fieldMeta.getProperty("calculated");
+			if (calculated.booleanValue() == false) {
+				Assert.assertTrue(j < row.length, "Impossible to read field [" + fieldMeta.getName() + "] from resultset");
+
+				if (row[j] instanceof java.sql.Clob) {
+					Clob clob = (Clob) row[j];
+					InputStream in;
+					try {
+						in = clob.getAsciiStream();
+					} catch (SQLException e) {
+						logger.error("Error in reading clob");
+						throw new RuntimeException(e);
+					}
+					try (Scanner s = new Scanner(in)) {
+						s.useDelimiter("\\A");
+
+						String clobAsString = s.hasNext() ? s.next() : "";
+						record.appendField(new Field(clobAsString));
+					}
+					if (row[j] != null)
+						fieldMeta.setType(row[j].getClass());
+				} else {
+
+					record.appendField(new Field(row[j]));
+					if (row[j] != null)
+						fieldMeta.setType(row[j].getClass());
+				}
+				j++;
+			} else {
+				DataSetVariable variable = (DataSetVariable) fieldMeta.getProperty("variable");
+				if (variable.getResetType() == DataSetVariable.RESET_TYPE_RECORD) {
+					variable.reset();
+				}
+
+				record.appendField(new Field(variable.getValue()));
+				if (variable.getValue() != null)
+					fieldMeta.setType(variable.getValue().getClass());
+			}
+		}
+		return record;
 	}
 
 	private void processCalculatedFields(IRecord record, IDataStore dataStore) {
@@ -285,12 +288,6 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 				dmFields.put(dataStoreMeta.getFieldMeta(j).getProperty("uniqueName"), record.getFieldAt(j).getValue());
 				columns[j] = record.getFieldAt(j).getValue();
 			}
-
-			// groovyScriptEngine.put("qFields", qFields); // key = alias
-			// groovyScriptEngine.put("dmFields", dmFields); // key = id
-			// groovyScriptEngine.put("fields", qFields); // default key = alias
-			// groovyScriptEngine.put("columns", columns); // key = col-index
-			// groovyScriptEngine.put("api", new GroovyScriptAPI());
 
 			groovyBindings.put("qFields", qFields); // key = alias
 			groovyBindings.put("dmFields", dmFields); // key = id
@@ -434,7 +431,9 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
 	@Override
 	public String getSignature() {
-		return getSQLQuery(true);
+		String datasourceSignature = this.getDataSource().getSignature(getUserProfile());
+		String querySignature = getSQLQuery(true);
+		return datasourceSignature + "_" + querySignature;
 	}
 
 	@Override
@@ -553,10 +552,8 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	 * Adjusts the metadata of the datastore retrieved by a JDBCDataSet, since executed JDBC dataset does not contain correct metadata (name, alias,
 	 * attribute/measure) therefore we need to merge metadata
 	 *
-	 * @param jdbcMetadata
-	 *            the metadata retrieved by executing the JDBC dataset
-	 * @param qbeQueryMetaData
-	 *            the metadata of the Qbe query
+	 * @param jdbcMetadata     the metadata retrieved by executing the JDBC dataset
+	 * @param qbeQueryMetaData the metadata of the Qbe query
 	 */
 	protected IMetaData mergeMetadata(IMetaData jdbcMetadata, IMetaData qbeQueryMetaData) {
 		int count = jdbcMetadata.getFieldCount();

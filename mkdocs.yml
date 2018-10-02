@@ -1,0 +1,22 @@
+site_name: Knowage 
+site_url: https://knowage.readthedocs.org
+repo_url: https://github.com/KnowageLabs/Knowage-Server.git
+google_analytics: ['UA-85046107-2', 'knowage.readthedocs.io']
+site_description: Knowage Documentation
+docs_dir: doc
+site_dir: html
+markdown_extensions: [toc,fenced_code]
+use_directory_urls: false
+theme: readthedocs
+extra_css: ["https://fiware.org/style/fiware_readthedocs.css"]
+pages:
+- 'Home': 'index.md'
+- 'User & Programmers Manuals':
+    - 'CKAN': 'user/CKAN/README.md'
+    - 'Javascript SDK': 'user/JS/README.md'
+    - 'NGSI': 'user/NGSI/README.md'
+- 'Admin Manuals':
+    - 'Admin Guide': 'admin/README.md'
+    - 'Sanity check procedures': 'admin/sanity.md'
+    - 'Diagnosis procedures': 'admin/diagnosis.md'
+    - 'FIWARE theme': 'admin/theme.md'

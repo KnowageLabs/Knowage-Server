@@ -196,6 +196,7 @@ function cockpitChartWidgetControllerFunction(
 		sbiModule_translate,
 		sbiModule_user,
 		$filter,
+		$timeout,
 		cockpitModule_widgetServices,
 		cockpitModule_properties,
 		cockpitModule_template,
@@ -213,8 +214,17 @@ function cockpitChartWidgetControllerFunction(
 	};
 
 	$scope.init=function(element,width,height){
-		if($scope.ngModel.content.chartTemplate.creationFromSecondWidget){
-			setAggregationsOnChartEngine($scope.ngModel.content);
+		if($scope.ngModel.content.chartTemplate.CHART.type == "SCATTER" || $scope.ngModel.content.chartTemplate.CHART.type == "BAR" || $scope.ngModel.content.chartTemplate.CHART.type == "LINE"){
+	    	  for (var i = 0; i < $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length; i++) {
+	    		  for (var j = 0; j < $scope.ngModel.content.chartTemplate.CHART.AXES_LIST.AXIS.length; j++) {
+						if($scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE[i].axis == $scope.ngModel.content.chartTemplate.CHART.AXES_LIST.AXIS[j].alias && $scope.ngModel.content.chartTemplate.CHART.AXES_LIST.AXIS[j].labels){
+							$scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE[i].scaleFactor = $scope.ngModel.content.chartTemplate.CHART.AXES_LIST.AXIS[j].labels.scaleFactor
+						}
+		    	  }
+	    	  }
+		}
+		if($scope.ngModel.content.chartTemplate.CHART.COLORPALETTE.COLORCopy){
+			delete $scope.ngModel.content.chartTemplate.CHART.COLORPALETTE.COLORCopy
 		}
 		$scope.refreshWidget({type:"chart",chartInit:true},'init');
 	};
@@ -236,9 +246,9 @@ function cockpitChartWidgetControllerFunction(
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			var aggregations = cockpitModule_widgetSelection.getAggregation($scope.ngModel,dataset);
 
-			var filtersParams = $scope.cockpitModule_widgetSelection.getCurrentSelections(dataset.name);
+			var filtersParams = $scope.cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
 			if(Object.keys(filtersParams).length == 0){
-				var filtersParams = $scope.cockpitModule_widgetSelection.getCurrentFilters(dataset.name);
+				var filtersParams = $scope.cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 			}
 
 			var params = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
@@ -277,7 +287,10 @@ function cockpitChartWidgetControllerFunction(
 
 			} else {
 				//Refresh for Not realtime datasets
-				$scope.$broadcast(nature,data, false, changedChartType,dataAndChartConf,objForDrill);
+				$timeout(function (){
+					$scope.$broadcast(nature,data, false, changedChartType,dataAndChartConf,objForDrill);
+				},400)
+				
 			}
 		}
 
@@ -343,6 +356,7 @@ function cockpitChartWidgetControllerFunction(
 										  if(scope.realTimeDatasetData.jsonData){
 											  scope.realTimeDatasetData = JSON.parse(scope.realTimeDatasetData.jsonData);
 										  }
+
 										  //apply the filter function
 										  var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,columnName);
 										  if (!columnObject){
@@ -358,9 +372,9 @@ function cockpitChartWidgetControllerFunction(
 										  var metadataFields = scope.realTimeDatasetData.metaData.fields;
 										  scope.adaptMetadata(metadataFields);
 
-										  // adapt the metadata to be sent to the backend
-										  var metadataFields = scope.realTimeDatasetData.metaData.fields;
-										  scope.adaptMetadata(metadataFields);
+														   
+																		   
+												
 
 										  //send broadcast for selections with data filtered by selections
 										  scope.$broadcast('selections',scope.realTimeDatasetData,true);
@@ -687,6 +701,17 @@ function cockpitChartWidgetControllerFunction(
 			    		  }
 
 				    	  var chartTemplateFake = $scope.localModel.chartTemplate.CHART ? $scope.localModel.chartTemplate.CHART : $scope.localModel.chartTemplate;
+				    	  
+				    	  if(chartTemplateFake.type == "SCATTER" || chartTemplateFake.type == "BAR" || chartTemplateFake.type == "LINE"){
+					    	  for (var i = 0; i < chartTemplateFake.VALUES.SERIE.length; i++) {
+					    		  for (var j = 0; j < chartTemplateFake.AXES_LIST.AXIS.length; j++) {
+										if(chartTemplateFake.VALUES.SERIE[i].axis == chartTemplateFake.AXES_LIST.AXIS[j].alias && chartTemplateFake.AXES_LIST.AXIS[j].labels){
+											chartTemplateFake.VALUES.SERIE[i].scaleFactor = chartTemplateFake.AXES_LIST.AXIS[j].labels.scaleFactor
+										}
+						    	  }
+					    	  }
+				    	  }
+
 	    				  if (chartTemplateFake.type == "SCATTER" && chartTemplateFake.VALUES.SERIE.length>1) {
 	    					  var allSeries = chartTemplateFake.VALUES.SERIE;
 	    						var counter = 0;
@@ -827,6 +852,9 @@ function cockpitChartWidgetControllerFunction(
 		var event= item.select != undefined ? item.select : item;
 		var crossParameters= createCrossParameters(item);
 		var chartType = $scope.ngModel.content.chartTemplate.CHART.type;
+		if($scope.ngModel.content.chartTemplate.CHART.COLORPALETTE.COLORCopy){
+			delete $scope.ngModel.content.chartTemplate.CHART.COLORPALETTE.COLORCopy
+		}
 		if($scope.ngModel.updateble && chartType.toLowerCase()=="pie"){
 			$scope.ngModel.content.chartTemplate.CHART.COLORPALETTE.COLORCopy = angular.copy($scope.ngModel.content.chartTemplate.CHART.COLORPALETTE.COLOR)
 			if($scope.ngModel.content.chartTemplate.CHART.COLORPALETTE.COLOR[0]){
@@ -1214,6 +1242,6 @@ function setAggregationsOnChartEngine(wconf){
 }
 
 //this function register the widget in the cockpitModule_widgetConfigurator factory
-addWidgetFunctionality("chart",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':true});
+addWidgetFunctionality("chart",{'initialDimension':{'width':5, 'height':5},'updateble':true,'cliccable':true, 'drillable' : false});
 
 })();

@@ -1,50 +1,44 @@
 <div layout-fill class="overlayGray" layout="row" layout-align="center center">
 
-<md-dialog aria-label="table configuration" ng-cloak  layout="column" class="width80">
-   
+<md-dialog aria-label="crosstable configuration" ng-cloak  layout="column" class="width80">
+   <md-toolbar class="secondaryToolbar" layout="row">
+	        <h1 flex class="md-toolbar-tools">{{translate.load('sbi.cockpit.widgets.table.columnstyle')}}</h1>
+	         <md-button class="md-icon-button" ng-click="cleanStyleColumn()" >
+		      <md-icon md-font-icon="fa fa-eraser" aria-label="Clean"></md-icon>
+		      </md-button>
+	  </md-toolbar>
     <md-dialog-content flex layout="column" autoWrap:false>
-    	  <md-toolbar class="secondaryToolbar" layout="row">
-		        <h1 flex class="md-toolbar-tools">{{translate.load('sbi.cockpit.widgets.table.columnstyle')}}</h1>
-		         <md-button  flex=10  ng-click="cleanStyleColumn()" >
-			      <md-icon md-font-icon="fa fa-eraser" aria-label="Clean"></md-icon>
-			      </md-button>
-		  </md-toolbar>
+    	  
 		      <div layout-margin layout="column" flex class="relative"> 
 		       	
 				<div flex>
-				<div layout="row" ng-if="!selectedColumn.widgetType || (selectedColumn.widgetType == 'staticPivotTable' && selectedColumn.containerType!='COLUMNS') " >					
-					<md-input-container class="md-block" class="small counter" flex>
-						<label>{{translate.load('sbi.cockpit.table.columnSize')}}</label>
-						<input class="input_class" type="text" ng-model="selectedColumn.style.size"> 
-					</md-input-container>
-					<!-- only for simple table ng-enabled="!selectedColumn.widgetType" -->
-					<md-input-container  class="md-block" class="small counter" flex>
-						<label>{{translate.load('sbi.cockpit.table.maxChars')}}</label>
-						<input ng-disabled="selectedColumn.widgetType!=undefined" class="input_class" type="text" ng-model="selectedColumn.style.maxChars"> 
-					</md-input-container>
-					<md-switch ng-disabled="selectedColumn.widgetType!=undefined"  ng-model="selectedColumn.style.hiddenColumn" aria-label="Hidden Column" flex>
-						{{translate.load('sbi.cockpit.table.hiddencolumn')}}
-					</md-switch>
-					<md-switch ng-disabled="selectedColumn.widgetType!=undefined || selectedColumn.style.hiddenColumn" ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
-						{{translate.load('sbi.cockpit.table.hide')}}
-					</md-switch>
-				 </div>
-				 
 				 <div class="md-dialog-content" layout="column"  ng-if="selectedColumn.widgetType=='staticPivotTable'">
 
 				 	<md-checkbox ng-disabled="selectedColumn.disableShowHeader" flex ng-model="selectedColumn.showHeader">
 								{{translate.load("sbi.cockpit.table.showHeader")}}
 					</md-checkbox>
 				 	<div layout-margin layout="row" flex class="relative"> 
-						<md-input-container flex=50>
+						<md-input-container flex=30>
 						  <label>{{translate.load('sbi.cockpit.table.columnname')}}</label>
 						  <input ng-model="selectedColumn.id"  ng-disabled="true">
 						</md-input-container>
-						<md-input-container flex=50>
+						<md-input-container flex=30>
 						  <label>{{translate.load('sbi.cockpit.table.title')}}</label>
 						  <input ng-model="selectedColumn.alias">
 						</md-input-container>	
-				    </div> 					
+						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE'" flex="20" class="md-block">
+					       		<md-checkbox ng-model="selectedColumn.sorting" aria-label="Checkbox Order">
+							        	{{translate.load("sbi.cockpit.widgets.table.sorting.column")}}
+							    </md-checkbox>
+					    </md-input-container>
+					    <md-input-container ng-if="selectedColumn.fieldType!='MEASURE'" flex="20" class="md-block">
+			       			<label>{{translate.load("sbi.cockpit.widgets.table.sorting.order");}}</label>
+			          		<md-select ng-model="selectedColumn.sortingOrder" ng-disabled="!selectedColumn.sorting || selectedColumn.sorting==''">
+			           			<md-option value="ASC">{{translate.load("sbi.cockpit.widgets.table.sorting.asc");}}</md-option>
+			          			<md-option value="DESC">{{translate.load("sbi.cockpit.widgets.table.sorting.desc");}}</md-option>
+			       			</md-select>
+					    </md-input-container>
+				    </div>			
 					<md-input-container ng-if="selectedColumn.fieldType=='MEASURE'">
 						<label>{{translate.load('sbi.cockpit.aggregationwindow.selectAggregation')}}</label>
 						<md-select ng-model="selectedColumn.funct">
@@ -55,7 +49,7 @@
 					</md-input-container>
 				</div>
 		       
-				<!-- added by alepiova & revised by davverna -->
+		       <!-- ----------------- -->
 		       
 		       <div ng-if="selectedColumn.fieldType=='MEASURE'">
 		       		<!-- both simple table and static pivot table -->
@@ -182,22 +176,23 @@
 					</md-input-container>
 					<md-input-container flex class="md-block" class="small counter">
 						<label>{{translate.load('sbi.cockpit.style.precision')}}</label>
-						<input class="input_class" type="number" ng-model="selectedColumn.style.precision" min="0" ng-disabled="!isPrecisionEnabled()> 
+						<input class="input_class" type="number" ng-model="selectedColumn.style.precision" min="0" ng-disabled="!isPrecisionEnabled()"> 
 					</md-input-container>
 		       </div>	
-		       <div  flex>
-					<md-input-container class="md-block"> 
+		       <div  flex layout="row">
+		       		<md-input-container class="md-block" flex>
+						<label>{{translate.load('sbi.cockpit.table.columnSize')}}</label>
+						<input class="input_class" type="text" ng-model="selectedColumn.style.size"> 
+					</md-input-container>
+					<md-input-container flex class="md-block"> 
+						<label>{{translate.load('sbi.cockpit.table.fontcolor')}}</label>
+						<color-picker  options="colorPickerProperty" ng-model="selectedColumn.style.color"></color-picker>
+					</md-input-container>
+					<md-input-container flex class="md-block"> 
 						<label>{{translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
 						<color-picker  options="colorPickerProperty" ng-model="selectedColumn.style.background "></color-picker>
 					</md-input-container>
 				</div>
-				<div flex>
-				   	<md-input-container class="md-block"> 
-						<label>{{translate.load('sbi.cockpit.table.fontcolor')}}</label>
-						<color-picker  options="colorPickerProperty" ng-model="selectedColumn.style.color"></color-picker>
-					</md-input-container>
-				</div>
-			
 		       <div flex>
 		       		<md-input-container flex class="md-block"> 
 							<label>{{translate.load('sbi.cockpit.table.fontweight')}}</label>
@@ -236,10 +231,10 @@
    
     <md-dialog-actions layout="row">
       <span flex></span>
-      <md-button ng-click="cancelcolumnStyleConfiguration()" >
+      <md-button ng-click="cancelcolumnStyleConfiguration()" class="md-raised" >
         {{translate.load('sbi.generic.cancel')}}
       </md-button>
-      <md-button ng-click="saveColumnStyleConfiguration()" ng-disabled="checkIfDisable()" >
+      <md-button ng-click="saveColumnStyleConfiguration()" class="md-primary md-raised" ng-disabled="checkIfDisable()" >
         {{translate.load('sbi.generic.save')}}
       </md-button>
     </md-dialog-actions>

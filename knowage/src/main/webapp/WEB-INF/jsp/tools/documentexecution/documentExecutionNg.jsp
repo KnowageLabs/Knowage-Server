@@ -44,6 +44,8 @@ String engineName = null;
 String isFromDocumentWidget = null;
 String isForExport = null;
 String cockpitSelections = null;
+String documentType = null;
+boolean isNotOlapDoc = true;
 
 // author: danristo
 String executedFrom = null;
@@ -89,7 +91,13 @@ try{
     
     executingEngine = obj.getEngine();
     engineName = executingEngine.getName();
+    documentType = obj.getBiObjectTypeCode();
     
+   	if(documentType.equals("OLAP")) {
+   		isNotOlapDoc = false;
+   	} else {
+   		isNotOlapDoc = true;
+   	}
     
     if(objId != null && !("null".equalsIgnoreCase(objId))) {
         Integer objIdInt = new Integer(objId);
@@ -124,7 +132,7 @@ if(executionRoleNames.size() > 0) {
     <head>
         <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
         
-          <%-- ---------------------------------------------------------------------- --%>
+<%-- ---------------------------------------------------------------------- --%>
 <%-- INCLUDE Persist JS                                                     --%>
 <%-- ---------------------------------------------------------------------- --%>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/persist-0.1.0/persist.js")%>"></script>
@@ -133,7 +141,9 @@ if(executionRoleNames.size() > 0) {
 	_CURRENTCONTEXTURL="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution")%>"
 </script>
     
-        
+        <!--  Drivers Execution -->
+        <script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/driversexecution/driversExecutionService.js")%>"></script>
+  
         <!-- Styles -->
         <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>"> 
         <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>  
@@ -174,6 +184,7 @@ if(executionRoleNames.size() > 0) {
             var isAdmin = <%=isAdmin%>;
             var isSuperAdmin = <%=isSuperAdmin%>;
             var isAbleToExecuteAction = <%=isAbleToExecuteAction%>;
+            var isNotOlapDoc = <%=isNotOlapDoc%>;
         </script>
     
         <div  layout-fill ng-hide="hideProgressCircular.status" style="z-index: 10000; position: absolute; background-color: rgba(0, 0, 0, 0.21);">
@@ -218,45 +229,42 @@ if(executionRoleNames.size() > 0) {
                         <cross-navigation-bread-crumb id="clonedCrossBreadcrumb"> </cross-navigation-bread-crumb>
                     </cross-navigation>
         
-                    
-        <% if(engineName.equalsIgnoreCase( SpagoBIConstants.COCKPIT_ENGINE_NAME)
-                            && (isAdmin || userId.equals(obj.getCreationUser()))) {%>
-                    <md-button ng-if="cockpitEditing.documentMode == 'EDIT'" class="md-icon-button" ng-click="::cockpitEditing.stopCockpitEditing()"
-                            aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}">
-                            <md-tooltip direction="bottom">{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}</md-tooltip>
-                         <md-icon md-font-icon="fa fa-eye"></md-icon>
-                    </md-button>
-                    <md-button ng-if="cockpitEditing.documentMode != 'EDIT'" class="md-icon-button" ng-click="::cockpitEditing.startCockpitEditing()"
-                            aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.editcockpitdoc')}}">
-                            <md-tooltip direction="bottom">{{::translate.load('sbi.execution.executionpage.toolbar.editcockpitdoc')}}</md-tooltip>
-                         <md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
-                    </md-button>
-        <%} %>
-                    <md-button class="md-icon-button" ng-if="navigatorEnabled" ng-click="toggleNavigator($event)">
+        			<% if(engineName.equalsIgnoreCase( SpagoBIConstants.COCKPIT_ENGINE_NAME) && (isAdmin || userId.equals(obj.getCreationUser()))) {%>
+	                    <md-button hide-xs ng-if="cockpitEditing.documentMode == 'EDIT'" class="md-icon-button" ng-click="::cockpitEditing.stopCockpitEditing()"
+	                            aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}">
+	                            <md-tooltip direction="bottom">{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}</md-tooltip>
+	                         <md-icon md-font-icon="fa fa-eye"></md-icon>
+	                    </md-button>
+	                    <md-button hide-xs ng-if="cockpitEditing.documentMode != 'EDIT'" class="md-icon-button" ng-click="::cockpitEditing.startCockpitEditing()"
+	                            aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.editcockpitdoc')}}">
+	                            <md-tooltip direction="bottom">{{::translate.load('sbi.execution.executionpage.toolbar.editcockpitdoc')}}</md-tooltip>
+	                         <md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
+	                    </md-button>
+        			<%} %>
+        			
+                    <md-button hide-xs class="md-icon-button" ng-if="navigatorEnabled" ng-click="toggleNavigator($event)">
                          <md-tooltip direction="bottom">Navigator</md-tooltip>
                          <md-icon md-font-icon="fa fa-compass"></md-icon>
                     </md-button>
                     
-                    <md-button class="md-icon-button"  ng-if="checkHelpOnline()"  aria-label="{{::translate.load('sbi.generic.helpOnLine')}}" ng-click="openHelpOnLine()">
+                    <md-button hide-xs class="md-icon-button"  ng-if="checkHelpOnline()"  aria-label="{{::translate.load('sbi.generic.helpOnLine')}}" ng-click="openHelpOnLine()">
                          <md-tooltip direction="bottom">{{::translate.load('sbi.generic.helpOnLine')}}</md-tooltip>
                          <md-icon md-font-icon="fa fa-book"></md-icon>
                     </md-button>
                     
-                    <md-button class="md-icon-button" aria-label="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="executeParameter()" >
+                    <md-button hide-xs class="md-icon-button" aria-label="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="executeParameter()" >
                          <md-tooltip direction="bottom">{{::translate.load('sbi.scheduler.refresh')}}</md-tooltip>   
                          <md-icon md-font-icon="fa fa-refresh"></md-icon>
                     </md-button>
                     
                     <% 
-                    if(request.getParameter("CAN_RESET_PARAMETERS") != null && request.getParameter("CAN_RESET_PARAMETERS").equalsIgnoreCase("false")){
-                    }
+                    if(request.getParameter("CAN_RESET_PARAMETERS") != null && request.getParameter("CAN_RESET_PARAMETERS").equalsIgnoreCase("false")){ }
                     else{
                     %>
-                    <md-button class="md-icon-button" aria-label="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="paramRolePanelService.toggleParametersPanel()"
-                             ng-if="!isParameterRolePanelDisabled.status">
-                        <md-tooltip direction="bottom">{{::translate.load('sbi.scheduler.parameters')}}</md-tooltip>
-                        <md-icon md-font-icon="fa fa-filter"></md-icon> 
-                    </md-button>
+	                    <md-button class="md-icon-button" aria-label="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="paramRolePanelService.toggleParametersPanel()" ng-if="!isParameterRolePanelDisabled.status">
+	                        <md-tooltip direction="bottom">{{::translate.load('sbi.scheduler.parameters')}}</md-tooltip>
+	                        <md-icon md-font-icon="fa fa-filter"></md-icon> 
+	                    </md-button>
                     <%} %>
                     
                     <md-menu-bar id="menu">
@@ -266,8 +274,39 @@ if(executionRoleNames.size() > 0) {
                                 <md-icon md-font-icon="fa  fa-ellipsis-v"></md-icon>
                             </md-button>
                             <md-menu-content>
-                                <span class="divider">{{translate.load("sbi.ds.wizard.file")}}</span>
-                                <md-menu-item class="md-indent">
+                            	
+                            	<span hide-gt-xs class="divider">Document</span>
+                            	 <% if(engineName.equalsIgnoreCase( SpagoBIConstants.COCKPIT_ENGINE_NAME) && (isAdmin || userId.equals(obj.getCreationUser()))) {%>
+                            	 	<md-menu-item hide-gt-xs class="md-indent" ng-if="cockpitEditing.documentMode == 'EDIT'">
+                            	 		<md-icon md-font-icon="fa fa-eye"></md-icon>
+					                    <md-button ng-click="::cockpitEditing.stopCockpitEditing()" aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}">
+					                    	Switch to view mode
+					                    </md-button>
+				                    </md-menu-item>
+				                    <md-menu-item hide-gt-xs class="md-indent" ng-if="cockpitEditing.documentMode != 'EDIT'">
+                            	 		<md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
+					                    <md-button ng-click="::cockpitEditing.startCockpitEditing()" aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}">
+				                            Switch to edit mode
+					                    </md-button>
+				                    </md-menu-item>
+					        	<%} %>
+					        	
+					        	<md-menu-item hide-gt-xs class="md-indent" ng-if="checkHelpOnline()">
+					        		<md-icon md-font-icon="fa fa-book"></md-icon>
+						        	<md-button aria-label="{{::translate.load('sbi.generic.helpOnLine')}}" ng-click="openHelpOnLine()">
+				                         {{::translate.load('sbi.generic.helpOnLine')}}
+				                    </md-button>
+			                    </md-menu-item>
+			                    
+			                    <md-menu-item hide-gt-xs class="md-indent">
+			                    	<md-icon md-font-icon="fa fa-refresh"></md-icon>
+				                    <md-button aria-label="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="executeParameter()" >
+				                         {{::translate.load('sbi.scheduler.refresh')}}
+				                    </md-button>
+			                    </md-menu-item>
+					        	
+                                <span class="divider" ng-if="canPrintDocuments">{{translate.load("sbi.ds.wizard.file")}}</span>
+                                <md-menu-item class="md-indent" ng-if="canPrintDocuments">
                                     <md-icon class="fa fa-print "></md-icon>
                                     <md-button ng-click="printDocument()">
                                         {{translate.load("sbi.execution.executionpage.toolbar.print")}}
@@ -293,36 +332,35 @@ if(executionRoleNames.size() > 0) {
                                     </md-menu>
                                 </md-menu-item>
                           
-                                <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEND_MAIL_FUNCTIONALITY)
-                                        &&  obj.getBiObjectTypeCode().equals("REPORT")) { %>
-                                <md-menu-item class="md-indent">
-                                    <md-icon class="fa fa-paper-plane"></md-icon>
-                                    <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" class="toolbar-button-custom"
-                                            ng-click="sendMail()">{{translate.load('sbi.execution.executionpage.toolbar.send')}}
-                                    </md-button>
-                                </md-menu-item>
+                                <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEND_MAIL_FUNCTIONALITY) &&  obj.getBiObjectTypeCode().equals("REPORT")) { %>
+	                                <md-menu-item class="md-indent">
+	                                    <md-icon class="fa fa-paper-plane"></md-icon>
+	                                    <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" class="toolbar-button-custom"
+	                                            ng-click="sendMail()">{{translate.load('sbi.execution.executionpage.toolbar.send')}}
+	                                    </md-button>
+	                                </md-menu-item>
                                 <%} %>
                           
                                 <span class="divider" ng-if="showCollaborationMenu">{{translate.load("sbi.generic.info")}}</span>
                                 <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_METADATA_FUNCTIONALITY)) { %>
-                                <md-menu-item class="md-indent" ng-if="showCollaborationMenu">
-                                    <md-icon class="fa fa-info-circle"></md-icon>
-                                    <md-button ng-click="openInfoMetadata()">{{translate.load("sbi.execution.executionpage.toolbar.metadata")}}</md-button>
-                                </md-menu-item>
+	                                <md-menu-item class="md-indent" ng-if="showCollaborationMenu">
+	                                    <md-icon class="fa fa-info-circle"></md-icon>
+	                                    <md-button ng-click="openInfoMetadata()">{{translate.load("sbi.execution.executionpage.toolbar.metadata")}}</md-button>
+	                                </md-menu-item>
                                 <%} %>
-                                <md-menu-item class="md-indent" ng-if="showCollaborationMenu">
+                                <md-menu-item class="md-indent" ng-if="showCollaborationMenu && canRate">
                                     <md-icon class="fa fa-star"></md-icon>
                                     <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.rating')}}" class="toolbar-button-custom"
                                         ng-click="rankDocument()">{{translate.load('sbi.execution.executionpage.toolbar.rating')}}
                                     </md-button>
                                 </md-menu-item>
                                 <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_NOTES_FUNCTIONALITY)) { %>
-                                <md-menu-item class="md-indent" ng-if="showCollaborationMenu">
-                                    <md-icon class="fa fa-sticky-note-o"></md-icon>
-                                    <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" class="toolbar-button-custom"
-                                            ng-click="noteDocument()">{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}
-                                    </md-button>
-                                </md-menu-item>
+	                                <md-menu-item class="md-indent" ng-if="showCollaborationMenu">
+	                                    <md-icon class="fa fa-sticky-note-o"></md-icon>
+	                                    <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" class="toolbar-button-custom"
+	                                            ng-click="noteDocument()">{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}
+	                                    </md-button>
+	                                </md-menu-item>
                                 <%} %>
                                 
                                 <!-- 
@@ -330,92 +368,57 @@ if(executionRoleNames.size() > 0) {
                                     --------------------------- SHORTCUTS ---------------------------
                                     -----------------------------------------------------------------
                                 -->
-                                <!-- 
-                                    This DIV will gather all the DOM items, starting from the "Shortcuts" label and ending with the last option
-                                    under it. If there are no options available (for themselves), we will disable this DOM element (the DIV) 
-                                    completely, in order not to leave this label (for shortcuts) alone. Here we have all criteria gathered along
-                                    in one ng-if directive - this includes all criteria from all different options under the "Shortcuts" labels.
-                                    @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-                                -->
-                                <div ng-if="!(executedFrom=='WORKSPACE_ORGANIZER'||isAdmin||isSuperAdmin) || urlViewPointService.showOlapMenu || showScheduled">
                                     
-                                    <span class="divider">{{translate.load("sbi.execution.executionpage.toolbar.shortcuts")}}</span>
-                                    
-                                    <!-- 
-                                        Provided an ng-if criteria for this menu option for the executed document (whether it should be available).
-                                        @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-                                    -->
-                                    <md-menu-item class="md-indent" ng-if="isOrganizerEnabled()">
-                                        <md-icon class="fa fa-suitcase"></md-icon>
-                                        <md-button ng-disabled="false" class="toolbar-button-custom" ng-click="urlViewPointService.addToWorkspace()"
-                                                aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}">
-                                            {{translate.load('sbi.execution.executionpage.toolbar.savemyworkspace')}}
+                                  <span class="divider" ng-if="!(executedFrom=='WORKSPACE_ORGANIZER'||isAdmin||isSuperAdmin) || urlViewPointService.showOlapMenu || showScheduled">
+                                  	{{translate.load("sbi.execution.executionpage.toolbar.shortcuts")}}
+                                  </span>
+                                  
+                                  <md-menu-item class="md-indent" ng-if="isOrganizerEnabled()">
+                                      <md-icon class="fa fa-suitcase"></md-icon>
+                                      <md-button ng-click="urlViewPointService.addToWorkspace()" aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}">
+                                          {{translate.load('sbi.execution.executionpage.toolbar.savemyworkspace')}}
+                                      </md-button>
+                                  </md-menu-item>
+
+                                  <md-menu-item class="md-indent" ng-if="showScheduled">
+                                  	<md-icon class="fa fa-calendar"></md-icon>
+                                      <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}" ng-click="urlViewPointService.getSchedulers()">
+                                          {{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}
+                                      </md-button>
+                                  </md-menu-item>
+
+                               	<md-menu-item class="md-indent" ng-if="urlViewPointService.showOlapMenu">
+                       				<md-icon class="fa fa-th"></md-icon>
+                                      <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.show.olap.customized')}}" ng-click="urlViewPointService.getOlapDocs()" >
+                                              {{translate.load('sbi.execution.executionpage.toolbar.show.olap.customized')}}
                                         </md-button>
-                                    </md-menu-item>
-                                   
-                                    <!--  
-                                    <md-menu-item class="md-indent">
-                                        <md-icon class="fa fa-heart"></md-icon>
-                                        <md-button ng-disabled="false" class="toolbar-button-custom" ng-click="urlViewPointService.openFavoriteDefinitionForm()"
-                                                aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}">
-                                            {{translate.load('sbi.execution.executionpage.toolbar.addbookmark')}}
-                                        </md-button>
-                                    </md-menu-item>
-                                    -->
+                                  </md-menu-item>
                                     
-                                    <!-- 
-                                        Provided an ng-if criteria for this menu option for the executed document (whether it should be available).
-                                        @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-                                    -->
-                                    <md-menu-item class="md-indent" ng-if="showScheduled">
-                                        <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}"
-                                                class="toolbar-button-custom" ng-click="urlViewPointService.getSchedulers()">
-                                            {{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}
-                                        </md-button>
-                                    </md-menu-item>
-                                    
-                                    <!-- 
-                                        Provided an ng-if criteria for this menu option for the executed document (whether it should be available).
-                                        @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-                                    -->
-                                    <md-menu-item class="md-indent" ng-if="urlViewPointService.showOlapMenu">
-                                        <md-button  aria-label="{{translate.load('sbi.execution.executionpage.toolbar.show.olap.customized')}}"
-                                                class="toolbar-button-custom" ng-click="urlViewPointService.getOlapDocs()" >
-                                                {{translate.load('sbi.execution.executionpage.toolbar.show.olap.customized')}}
-    
-                                        </md-button>
-                                    </md-menu-item>
-                                    
-                                </div> 
-                                
                                 <!-- SHORTCUTS: end -->
 
-                                 <md-menu-item class="md-indent">
+                                 <md-menu-item class="md-indent" ng-if="canCopyAndEmbedLink">
                                     <md-icon class="fa fa-share"></md-icon>
-                                    <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" 
-                                    		   class="toolbar-button-custom"
-                                               ng-click="copyLinkHTML(false)">{{translate.load('sbi.execution.executionpage.toolbar.copyLink')}}
+                                    <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" ng-click="copyLinkHTML(false)">
+                                    	{{translate.load('sbi.execution.executionpage.toolbar.copyLink')}}
                                     </md-button>
                                 </md-menu-item>
                                 
                                                                 
-                                 <md-menu-item class="md-indent">
+                                 <md-menu-item class="md-indent" ng-if="canCopyAndEmbedLink">
                                     <md-icon class="fa fa-share"></md-icon>
-                                    <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" 
-                                    		   class="toolbar-button-custom"
-                                               ng-click="copyLinkHTML(true)">{{translate.load('sbi.execution.executionpage.toolbar.embedHTML')}}
+                                    <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" ng-click="copyLinkHTML(true)">
+                                    	{{translate.load('sbi.execution.executionpage.toolbar.embedHTML')}}
                                     </md-button>
                                 </md-menu-item>
 
-                                
                             </md-menu-content>
                         </md-menu>
                     </md-menu-bar>
                 
-                    <md-button class="md-icon-button" title="close" aria-label="Clear"  ng-if="isCloseDocumentButtonVisible()" ng-click="closeDocument()">
+                    <!-- md-button hide-xs class="md-icon-button" title="close" aria-label="Clear"  ng-if="isCloseDocumentButtonVisible()" ng-click="closeDocument()">
                     	<md-tooltip direction="bottom">{{::translate.load('sbi.general.close')}}</md-tooltip>
                         <md-icon md-font-icon="fa fa-times"></md-icon>
-                    </md-button>
+                    </md-button-->
                 </div>
             </md-toolbar>
             
@@ -468,7 +471,7 @@ if(executionRoleNames.size() > 0) {
         (function() {
             
             angular.module('documentExecutionModule', 
-                    ['ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list','cross_navigation','file_upload']);
+                    ['ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list','cross_navigation','file_upload','driversExecutionModule']);
             
             
             

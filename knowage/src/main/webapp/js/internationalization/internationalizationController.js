@@ -19,7 +19,7 @@
 (function() {
 	'use strict';
 	
-	angular.module('InternationalizationModule', ['ngMaterial', 'sbiModule', 'i18nAvailableLanguagesConfig'])
+	angular.module('InternationalizationModule', ['ngMaterial', 'sbiModule', 'i18nAvailableLanguagesModule'])
 		   .config([
 			   '$mdThemingProvider',
 				'$httpProvider',
@@ -27,7 +27,7 @@
 				   $mdThemingProvider.theme('knowage');
 				   $mdThemingProvider.setDefaultTheme('knowage');
 			   }
-		   ]).controller('internationalizationCtrl', ['$scope', 'i18nAvailableLanguagesService', 'sbiModule_restServices', 'sbiModule_messaging', 'sbiModule_translate', '$mdDialog', InternationalizationController])
+		   ]).controller('internationalizationController', ['$scope', 'i18nAvailableLanguagesService', 'sbiModule_restServices', 'sbiModule_messaging', 'sbiModule_translate', '$mdDialog', InternationalizationController])
 		     .filter('findEmpty', ['$filter', function($filter){
 		    	 return function(messages, emptyMessage) {
 		    		 if(emptyMessage) {

@@ -7,20 +7,27 @@
         the hibernate.org cfg2hbm engine
 -->
     <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuse" table="SBI_OBJ_PARUSE">
-       <composite-id name="id" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuseId">
-            <key-many-to-one name="sbiParuse" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse">
+      <id name="id" type="java.lang.Integer">
+            <column name="PARUSE_ID" />
+           <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+		        <param name="segment_value">SBI_OBJ_PARUSE</param>	
+		        <param name="initial_value">1</param>
+   			</generator>
+        </id>
+            <many-to-one name="sbiParuse" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse">
                 <column name="use_id" not-null="true"/>
-            </key-many-to-one>
-            <key-many-to-one name="sbiObjPar" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar">
+            </many-to-one>
+            <many-to-one name="sbiObjPar" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar">
             	<column name="obj_par_id" not-null="true" />
-        	</key-many-to-one>
-        	<key-many-to-one name="sbiObjParFather" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar">
+        	</many-to-one>
+        	<many-to-one name="sbiObjParFather" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar">
             	<column name="obj_par_father_id" not-null="true" />
-        	</key-many-to-one>
-        	 <key-property name="filterOperation" type="string">
+        	</many-to-one>
+        	 <property name="filterOperation" type="string">
             	<column name="filter_operation" length="20" not-null="true" />
-        	</key-property>
-        </composite-id>
+        	</property>
+        
  		<property name="prog" type="integer">
             <column name="prog" not-null="true" />
         </property>

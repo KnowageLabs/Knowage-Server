@@ -17,16 +17,6 @@
  */
 package it.eng.spagobi.commons.serializer;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -34,10 +24,19 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.constants.*;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 public class DataSetJSONSerializer implements Serializer {
 
@@ -128,8 +127,10 @@ public class DataSetJSONSerializer implements Serializer {
 	public static final String CKAN_URL = "ckanUrl";
 	public static final String CKAN_ID = "ckanId";
 	public static final String FEDERATION_ID = "federationId";
+	public static final String FEDERATION_NAME = "federationName";
 
 	public static final String IS_REALTIME = "isRealtime";
+	public static final String IS_ITERABLE = "isIterable";
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -150,6 +151,7 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(DESCRIPTION, ds.getDescription());
 			if (ds.getDatasetFederation() != null) {
 				result.put(FEDERATION_ID, ds.getDatasetFederation().getFederation_id());
+				result.put(FEDERATION_NAME, ds.getDatasetFederation().getName());
 			}
 
 			Integer numObjAssociated = DAOFactory.getDataSetDAO().countBIObjAssociated(dsId);
@@ -292,21 +294,21 @@ public class DataSetJSONSerializer implements Serializer {
 
 					if (type.equalsIgnoreCase(DataSetConstants.CKAN)) {
 
-						String ckanFileType = jsonConf.getString(DataSetConstants.CKAN_FILE_TYPE);
+						String ckanFileType = jsonConf.getString(CkanDataSetConstants.CKAN_FILE_TYPE);
 						if (ckanFileType != null) {
 							result.put(CKAN_FILE_TYPE, ckanFileType);
 						}
-						String ckanCsvDelimiter = jsonConf.getString(DataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
+						String ckanCsvDelimiter = jsonConf.getString(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
 						if (ckanCsvDelimiter != null) {
 							result.put(CKAN_CSV_FILE_DELIMITER_CHARACTER, ckanCsvDelimiter);
 						}
-						String ckanCsvQuote = jsonConf.getString(DataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
+						String ckanCsvQuote = jsonConf.getString(CkanDataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
 						if (ckanCsvQuote != null) {
 							result.put(CKAN_CSV_FILE_QUOTE_CHARACTER, ckanCsvQuote);
 						}
 						// added this check for retrocompatibility
-						if (jsonConf.has(DataSetConstants.CKAN_CSV_FILE_ENCODING)) {
-							String ckanCsvEncoding = jsonConf.getString(DataSetConstants.CKAN_CSV_FILE_ENCODING);
+						if (jsonConf.has(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING)) {
+							String ckanCsvEncoding = jsonConf.getString(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING);
 							if (ckanCsvEncoding != null) {
 								result.put(CKAN_CSV_FILE_ENCODING, ckanCsvEncoding);
 							}
@@ -314,33 +316,33 @@ public class DataSetJSONSerializer implements Serializer {
 							result.put(CKAN_CSV_FILE_ENCODING, "");
 						}
 
-						if (jsonConf.has(DataSetConstants.CKAN_CSV_DATE_FORMAT)) {
-							String dateFormat = jsonConf.getString(DataSetConstants.CKAN_CSV_DATE_FORMAT);
+						if (jsonConf.has(CkanDataSetConstants.CKAN_CSV_DATE_FORMAT)) {
+							String dateFormat = jsonConf.getString(CkanDataSetConstants.CKAN_CSV_DATE_FORMAT);
 							if (dateFormat != null) {
 								result.put(CKAN_CSV_DATE_FORMAT, dateFormat);
 							}
 						} else {
 							result.put(CKAN_CSV_DATE_FORMAT, "");
 						}
-						String ckanSkipRows = jsonConf.getString(DataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
+						String ckanSkipRows = jsonConf.getString(CkanDataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
 						if (ckanSkipRows != null) {
 							result.put(CKAN_XSL_FILE_SKIP_ROWS, ckanSkipRows);
 						}
-						String ckanLimitRows = jsonConf.getString(DataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
+						String ckanLimitRows = jsonConf.getString(CkanDataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
 						if (ckanLimitRows != null) {
 							result.put(CKAN_XSL_FILE_LIMIT_ROWS, ckanLimitRows);
 						}
-						String ckanXslSheetNumber = jsonConf.getString(DataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER);
+						String ckanXslSheetNumber = jsonConf.getString(CkanDataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER);
 						if (ckanXslSheetNumber != null) {
 							result.put(CKAN_XSL_FILE_SHEET_NUMBER, ckanXslSheetNumber);
 						}
 
-						String ckanUrl = jsonConf.getString(DataSetConstants.CKAN_URL);
+						String ckanUrl = jsonConf.getString(CkanDataSetConstants.CKAN_URL);
 						if (ckanUrl != null) {
 							result.put(CKAN_URL, ckanUrl);
 						}
 
-						String ckanId = jsonConf.getString(DataSetConstants.CKAN_ID);
+						String ckanId = jsonConf.getString(CkanDataSetConstants.CKAN_ID);
 						if (ckanId != null) {
 							result.put(CKAN_ID, ckanId);
 						}
@@ -361,6 +363,7 @@ public class DataSetJSONSerializer implements Serializer {
 					result.put(QBE_JSON_QUERY, jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 					result.put(QBE_DATA_SOURCE, jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
 					result.put(FEDERATION_ID, ds.getDatasetFederation().getFederation_id());
+					result.put(FEDERATION_NAME, ds.getDatasetFederation().getName());
 				} else if (type.equalsIgnoreCase(DataSetConstants.WEB_SERVICE)) {
 					String ws_address = jsonConf.getString(DataSetConstants.WS_ADDRESS);
 					if (ws_address != null) {
@@ -423,6 +426,7 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(END_DATE, ds.getEndDateField());
 			result.put(SCHEDULING_CRON_LINE, ds.getSchedulingCronLine());
 			result.put(IS_REALTIME, ds.isRealtime());
+			result.put(IS_ITERABLE, ds.isIterable());
 			result.put(OWNER, ds.getOwner());
 			result.put(DATE_IN, ds.getDateIn());
 			result.put(SCOPE_CD, ds.getScopeCd());
@@ -440,19 +444,19 @@ public class DataSetJSONSerializer implements Serializer {
 	}
 
 	private void manageSPARQLDataSet(JSONObject conf, JSONObject result) throws JSONException {
-		for (String attr : DataSetConstants.SPARQL_ATTRIBUTES) {
-			if(!conf.has(attr)) {
+		for (String attr : SPARQLDatasetConstants.SPARQL_ATTRIBUTES) {
+			if (!conf.has(attr)) {
 				continue;
 			}
 			Object value = conf.get(attr);
 			Assert.assertNotNull(value, "json value");
-			result.put(attr,  value.toString());
+			result.put(attr, value.toString());
 		}
 
 	}
 
 	private static void manageRESTDataSet(JSONObject conf, JSONObject result) throws JSONException {
-		for (String attr : DataSetConstants.REST_ALL_ATTRIBUTES) {
+		for (String attr : RESTDataSetConstants.REST_ALL_ATTRIBUTES) {
 			if (!conf.has(attr)) {
 				// optional attribute
 				continue;
@@ -464,15 +468,24 @@ public class DataSetJSONSerializer implements Serializer {
 	}
 
 	private static void manageSolrDataSet(JSONObject conf, JSONObject result) throws JSONException {
-		manageRESTDataSet(conf, result);
-		for (String attr : DataSetConstants.SOLR_ALL_ATTRIBUTES) {
-			if (!conf.has(attr)) {
-				// optional attribute
-				continue;
+		for (String ja : RESTDataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
+			Object prop = conf.get(ja);
+			if (prop != null) {
+				result.put(ja, new JSONObject(prop));
 			}
-			Object value = conf.get(attr);
-			Assert.assertNotNull(value, "json value");
-			result.put(attr, value.toString());
+		}
+
+		for (String sa : SolrDataSetConstants.SOLR_STRING_ATTRIBUTES) {
+			Object prop = conf.get(sa);
+			if (prop != null) {
+				result.put(sa, prop);
+			}
+		}
+		for (String ja : SolrDataSetConstants.SOLR_JSON_ARRAY_ATTRIBUTES) {
+			Object prop = conf.get(ja);
+			if (prop != null) {
+				result.put(ja, prop);
+			}
 		}
 	}
 

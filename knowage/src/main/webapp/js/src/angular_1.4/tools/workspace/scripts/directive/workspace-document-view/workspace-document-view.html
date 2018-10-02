@@ -1,16 +1,7 @@
-<angular-table  ng-hide="showGridView==true || ngModel.length==0 "
-				style="position:static;overflow:auto" 
-				layout-fill 
-				no-pagination=true
-				id='documentListTable' ng-model=ngModel
-				columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Date","name":"creationDate"}]'
-				columnsSearch='["name"]' 
-				show-search-bar=false
-				speed-menu-option=tableSpeedMenuOption
-				highlights-selected-item="true"
-				selected-item=selectedDocument
-				click-function="clickDocument(item);">
-</angular-table>				
+<kn-table ng-hide="showGridView==true || ngModel.length==0 "
+	columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Date","name":"creationDate","type":"date"}]' 
+	model=ngModel
+	click-function="clickDocument(item)" custom-class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed"></kn-table>		
 	
 <!-- Document Grid View -->
 
@@ -26,7 +17,7 @@
 	            	</md-tooltip>
 	          	</md-card-title-text>
 	    	</md-card-title>
-	       	<div class="md-card-image document_browser_image_{{document.typeCode}}"     ng-if="document.previewFile==null"></div>
+	       	<div class="md-card-image document_browser_image_{{document.typeCode}}" ng-if="document.previewFile==null"></div>
 				        
 	        <img align="center" class="preview-icon" ng-if="document.previewFile!=null"
 			ng-src="{{sbiModule_config.contextName}}/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&amp;SBI_ENVIRONMENT=DOCBROWSER&amp;

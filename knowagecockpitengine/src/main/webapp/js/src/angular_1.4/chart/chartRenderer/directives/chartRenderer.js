@@ -30,6 +30,7 @@ angular.module('chartRendererModule')
 			datasetLabel:'=',
 			widgetData:'=',
 			updateble:'=',
+			drillable:'=',
 			lib:'=',
 			onClickSeries:'='
 		},
@@ -102,6 +103,9 @@ angular.module('chartRendererModule')
 							renderObject.selectionsAndParams = selectionsAndParams;
 						}
 
+						if(chartConf.plotOptions && chartConf.series && chartConf.series[0] && chartConf.series[0].data && chartConf.series[0].data.length > chartConf.plotOptions.series.turboThreshold){
+							chartConf.lang.noData = "Your dataset is returning too much data"
+						}
 						scope.chartInitializer.renderChart(renderObject, jsonData);
 					}
 				}
@@ -121,6 +125,15 @@ angular.module('chartRendererModule')
 							}
 
 						}else{
+							if(chartTemplate.CHART.type == "SCATTER" || chartTemplate.CHART.type == "BAR" || chartTemplate.CHART.type == "LINE"){
+						    	  for (var i = 0; i < chartTemplate.CHART.VALUES.SERIE.length; i++) {
+						    		  for (var j = 0; j < chartTemplate.CHART.AXES_LIST.AXIS.length; j++) {
+											if(chartTemplate.CHART.VALUES.SERIE[i].axis == chartTemplate.CHART.AXES_LIST.AXIS[j].alias && chartTemplate.CHART.AXES_LIST.AXIS[j].LABELS){
+												chartTemplate.CHART.VALUES.SERIE[i].scaleFactor = chartTemplate.CHART.AXES_LIST.AXIS[j].LABELS.scaleFactor
+											}
+							    	  }
+						    	  }
+							}
 							jsonChartTemplate.readChartTemplate(chartTemplate,false,datesetLabel,jsonData)
 							.then(function(data){
 								scope.chartConf = eval("(" + data + ")");
@@ -211,7 +224,13 @@ angular.module('chartRendererModule')
 				scope.renderChart(scope.chartConf,data,selectionsAndParams);
 
 			})
+			
+			scope.$on('drillClick',function(event,data){
 
+				scope.chartInitializer.chart.drillable = data.drillable;
+				scope.chartInitializer.chart.cliccable = data.cliccable;
+			})
+			
 			if(!scope.widgetData){
 				var lib = getChartExecutionLib(scope.chartTemplate);
 				if(lib){

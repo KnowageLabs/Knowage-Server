@@ -18,9 +18,6 @@
 
 package it.eng.spagobi.tools.dataset.federation;
 
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +29,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 public class FederationDefinition {
 
@@ -51,6 +51,7 @@ public class FederationDefinition {
 									// a user creates a derived dataset the
 									// system creates a federation that links
 									// the original dataste and the derived one
+	private String owner;
 
 	public int getFederation_id() {
 		return federation_id;
@@ -104,8 +105,7 @@ public class FederationDefinition {
 	}
 
 	/**
-	 * Flats the relationships and return the single relations between couple
-	 * tables
+	 * Flats the relationships and return the single relations between couple tables
 	 *
 	 * @return
 	 * @throws JSONException
@@ -114,7 +114,7 @@ public class FederationDefinition {
 	public JSONArray getFlatReslationsShips() throws JSONException {
 
 		JSONArray flatJSONArray = new JSONArray();
-		if (getRelationships() != null && getRelationships().length()>0) {
+		if (getRelationships() != null && getRelationships().length() > 0) {
 			JSONArray array = new JSONArray(getRelationships());
 			if (array != null && array.length() > 0) {
 				for (int i = 0; i < array.length(); i++) {
@@ -198,6 +198,14 @@ public class FederationDefinition {
 
 		return new JSONObject(datasetKeyColumnMap);
 
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 }

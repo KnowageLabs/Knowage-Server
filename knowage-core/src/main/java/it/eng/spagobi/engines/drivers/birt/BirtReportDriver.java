@@ -24,7 +24,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
-import it.eng.spagobi.engines.drivers.AbstractDriver;
+import it.eng.spagobi.engines.drivers.AbstractEngineDriver;
 import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
@@ -42,7 +42,7 @@ import org.json.JSONException;
 /**
  * Driver Implementation (IEngineDriver Interface) for Birt Report Engine.
  */
-public class BirtReportDriver extends AbstractDriver implements IEngineDriver {
+public class BirtReportDriver extends AbstractEngineDriver implements IEngineDriver {
 	static private Logger logger = Logger.getLogger(BirtReportDriver.class);
 
 	/**

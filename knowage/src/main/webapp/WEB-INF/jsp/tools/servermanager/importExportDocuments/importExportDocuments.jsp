@@ -100,12 +100,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-checkbox class="little-check"
 									ng-model="checkboxs.exportSnapshots" aria-label="Export snapshots">{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</md-checkbox>
 								<md-checkbox class="little-check"
-									ng-model="checkboxs.exportCrossNav" aria-label="Export cross">Export Cross Navigation</md-checkbox>
+									ng-model="checkboxs.exportCrossNav" aria-label="Export cross">{{translate.load("SBISet.importexport.expCrossNav","component_impexp_messages");}}</md-checkbox>
 								<md-checkbox class="little-check"
-									ng-model="checkboxs.exportBirt" aria-label="Export BIRT">Export BIRT translations</md-checkbox>
+									ng-model="checkboxs.exportBirt" aria-label="Export BIRT">{{translate.load("SBISet.importexport.expBirtTranslation","component_impexp_messages");}}</md-checkbox>
 							    <md-checkbox class="little-check"
-									ng-model="checkboxs.exportScheduler" aria-label="Export sched">Export Scheduler</md-checkbox>
-						 
+									ng-model="checkboxs.exportScheduler" aria-label="Export sched">{{translate.load("SBISet.importexport.expScheduler","component_impexp_messages");}}</md-checkbox>
 							</div>
 							<div layout-padding layout-gt-sm="row"
 								layout-align-gt-sm="start center" layout-sm="column">

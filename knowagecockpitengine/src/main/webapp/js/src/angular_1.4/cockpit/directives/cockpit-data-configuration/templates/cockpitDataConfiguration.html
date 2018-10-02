@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													<span ng-if="column.type == 'text'">{{row[column.name]}}</span>
 													<md-checkbox ng-if="column.type == 'checkbox'" ng-disabled="(row.isCachingSupported && !row.isNearRealtimeSupported) || (!row.isCachingSupported && row.isNearRealtimeSupported) || row.isRealtime" ng-model="row.useCache"></md-checkbox>
 													<md-input-container ng-if="column.type == 'input'">
-												        <input type="number" ng-model="row.frequency" ng-disabled="row.useCache" ng-show='showNearRealTimeCockpit && !row.useCache'>
+												        <input type="number" ng-model="row.frequency" ng-disabled="row.useCache" ng-show='!row.useCache && (showNearRealTimeCockpit || row.isRealtime)'>
 												    </md-input-container>
 												</td>
 												<td class="tableAction">

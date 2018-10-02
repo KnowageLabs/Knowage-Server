@@ -23,7 +23,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
-
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 /**
@@ -51,45 +51,47 @@ public interface IObjParviewDAO extends ISpagoBIDao{
 	public List loadObjParview(Integer objParId, Integer parviewId) throws EMFUserError;
 
 	/**
-	 * Implements the query to modify a ObjParview. All information needed is stored
-	 * into the input <code>ObjParview</code> object.
-	 * 
-	 * @param aObjParview The ObjParview containing all modify information
-	 * 
-	 * @throws EMFUserError If an Exception occurred
+	 * Implements the query to modify a ObjParview. All information needed is stored into the input <code>ObjParview</code> object.
+	 *
+	 * @param aObjParview
+	 *            The ObjParview containing all modify information
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
 	 */
-	public void modifyObjParview(ObjParview aObjParview) throws EMFUserError;
+	public void modifyObjParview(ObjParview aObjParview) throws HibernateException;
 
 	/**
-	 * Implements the query to insert a ObjParview. All information needed is stored
-	 * into the input <code>ObjParview</code> object.
-	 * 
-	 * @param aObjParview The ObjParview containing all insert information
-	 * 
-	 * @throws EMFUserError If an Exception occurred
+	 * Implements the query to insert a ObjParview. All information needed is stored into the input <code>ObjParview</code> object.
+	 *
+	 * @param aObjParview
+	 *            The ObjParview containing all insert information
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
 	 */
-	public void insertObjParview(ObjParview aObjParview) throws EMFUserError;
+	public void insertObjParview(ObjParview aObjParview) throws HibernateException;
 
 	/**
-	 * Implements the query to erase a ObjParview. All information needed is stored
-	 * into the input <code>ObjParview</code> object.
-	 * 
-	 * @param aObjParview The object containing all delete information
-	 * 
-	 * @throws EMFUserError If an Exception occurred
+	 * Implements the query to erase a ObjParview. All information needed is stored into the input <code>ObjParview</code> object.
+	 *
+	 * @param aObjParview
+	 *            The object containing all delete information
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
 	 */
-	public void eraseObjParview(ObjParview aObjParview) throws EMFUserError;
-	
+	public void eraseObjParview(ObjParview aObjParview) throws HibernateException;
+
 	/**
-	 * 	 Implements the query to erase a ObjParview preserving the session. All information needed is stored
-	 * into the input <code>ObjParview</code> object.
-	 * 
+	 * Implements the query to erase a ObjParview preserving the session. All information needed is stored into the input <code>ObjParview</code> object.
+	 *
 	 * @param aObjParview
 	 * @param aSession
 	 * @throws EMFUserError
 	 */
-	
-	public void eraseObjParview(ObjParview aObjParview, Session aSession) throws EMFUserError; 
+
+	public void eraseObjParview(ObjParview aObjParview, Session aSession);
 
 	/**
 	 * 	 Implements the query to erase a ObjParview preserving the session. All information needed is stored
@@ -100,7 +102,7 @@ public interface IObjParviewDAO extends ISpagoBIDao{
 	 * @throws EMFUserError
 	 */
 
-	public void eraseObjParviewIfExists(ObjParview aObjParview, Session aSession) throws EMFUserError;
+	public void eraseObjParviewIfExists(ObjParview aObjParview, Session aSession) throws HibernateException;
 
 	
 	/**
@@ -113,7 +115,7 @@ public interface IObjParviewDAO extends ISpagoBIDao{
 	 * 
 	 * @throws EMFUserError If any exception occurred
 	 */
-	public List loadObjParviews(Integer objParId) throws EMFUserError;
+	public List loadObjParviews(Integer objParId) throws HibernateException;
 
 	/**
 	 * Returns the list of labels of BIObjectParameter objects that have a correlation relationship
@@ -163,5 +165,5 @@ public interface IObjParviewDAO extends ISpagoBIDao{
 	 * 
 	 * @throws EMFUserError If any exception occurred
 	 */
-	public List loadObjParviewsFather(Integer objParId) throws EMFUserError;
+	public List loadObjParviewsFather(Integer objParId) throws HibernateException;
 }

@@ -1,0 +1,55 @@
+<div flex ng-cloak layout="row" ng-controller="SubreportsController as ds" layout-fill ng-form name="subreports">
+    <div flex>
+        <md-toolbar class="secondaryToolbar">
+            <div class="md-toolbar-tools" layout="row">
+                <h2>Subreports</h2>
+                <span flex></span>
+                <md-button aria-label="show subreports" ng-click="ds.showSelected = !ds.showSelected" ng-bind="ds.showSelected ?  'Show only selected subreports' : 'Show all subreports'">                   
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-content class="tabContainer">
+            <md-card>
+	            <div layout="row " layout-align="center center " ng-if="ds.showSelected">
+		            <div class="kn-info " flex="80 ">
+		                Select the subreports you want to link to the document		                
+		            </div>
+		        </div>
+
+                <md-toolbar class="ternaryToolbar">
+                    <div layout="row" layout-align="center center" class="row layout-align-center-center">                       
+                        <span class="flex" flex>Label</span>
+                    	<span class="flex" flex>Name </span>
+                    	<span class="flex" flex>Description</span>
+                    </div>
+                </md-toolbar>
+                
+                <kn-custom-list class="h42" ng-if="ds.showSelected">
+                    <kn-list-item ng-repeat="document in ds.documentService.documentsList">                        
+                    	<div layout="row" layout-align="center center" class="row layout-align-center-center">
+			            	<span class="flex" flex> {{ document.label }} </span>
+			                <span class="flex" flex>{{ document.name }} </span>
+			                <span class="flex" flex>{{ document.description }}</span>
+			                <md-checkbox class="md-secondary" ng-model="document.wanted"></md-checkbox>			                
+			            </div>                                
+                        <md-divider></md-divider>                        
+                    </kn-list-item>                    
+                </kn-custom-list>
+                
+                <kn-custom-list class="h42" ng-if="!ds.showSelected">
+                    <kn-list-item ng-repeat="document in ds.documentService.documentsList" ng-if="document.wanted == true">                        
+                    	<div layout="row" layout-align="center center" class="row layout-align-center-center">
+			            	<span class="flex" flex> {{ document.label }} </span>
+			                <span class="flex" flex>{{ document.name }} </span>
+			                <span class="flex" flex>{{ document.description }}</span>
+			                <md-checkbox class="md-secondary" ng-model="document.wanted"></md-checkbox>			                
+			            </div>                                
+                        <md-divider></md-divider>                        
+                    </kn-list-item>                    
+                </kn-custom-list>
+                
+            </md-card>
+
+        </md-content>
+    </div>
+</div>

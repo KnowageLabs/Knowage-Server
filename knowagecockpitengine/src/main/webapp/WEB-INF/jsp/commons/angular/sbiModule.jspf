@@ -17,8 +17,8 @@ sbiM.factory('sbiModule_config',function(){
     	host: '<%= GeneralUtilities.getSpagoBiHost() %>',
     	curr_country: '<%= curr_country %>',
     	curr_language: '<%= curr_language%>',
-    	thous: '<%= GeneralUtilities.getGroupingSeparator()%>',
-    	dec: '<%= GeneralUtilities.getDecimalSeparator()%>',
+    	thous: '<%= GeneralUtilities.getGroupingSeparator(locale)%>',
+        dec: '<%= GeneralUtilities.getDecimalSeparator(locale)%>',
     	<%-- 		loginUrl: '<%= GeneralUtilities.getSpagoBiContext() %>', // login url, used when session is expired --%>
     	<%--     	currTheme: '<%= currTheme %>', --%>
 		<%-- 	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>, --%>
@@ -182,6 +182,47 @@ sbiM.config(['$httpProvider',function ($httpProvider) {
 }]);
 
 
+sbiM.config(['$httpProvider',function ($httpProvider) {
+	$httpProvider.interceptors.push(['$rootScope', '$q',
+		function ($rootScope, $q) {
+			return {
+				responseError: function (response) {
+					if (response.status === 401) {
+						redirectToLoginUrl();
+					}
+					return $q.reject(response);
+				}
+			};
+		}]);
+
+	var loginUrl = '<%= GeneralUtilities.getSpagoBiContext() %>'; // login url, used when session is expired
+
+	var redirectToLoginUrl = function() {
+    	var sessionExpiredSpagoBIJSFound = false;
+    	try {
+    		var currentWindow = window;
+    		var parentWindow = parent;
+    		while (parentWindow != currentWindow) {
+    			if (parentWindow.sessionExpiredSpagoBIJS) {
+    				parentWindow.location = loginUrl;
+    				sessionExpiredSpagoBIJSFound = true;
+    				break;
+    			} else {
+    				currentWindow = parentWindow;
+    				parentWindow = currentWindow.parent;
+    			}
+    		}
+    	} catch (err) {
+    		console.log(err);
+    	}
+    	
+    	if (!sessionExpiredSpagoBIJSFound) {
+    		window.location = loginUrl;
+    	}
+    };
+}]);
+
+
 sbiM.factory('sbiModule_user',function(){
 	
 	var user={};
@@ -282,6 +323,11 @@ sbiM.service('sbiModule_util',function(){
 	};
 });
 
+sbiM.service('kn_regex',function(){
+	this.extendedAlphanumeric = /^([\pL\w\s\-\_\(\)\[\]\;\:\!\?\,\.\'\"\x2F\x5F%])*$/;
+	this.xss = /^((?!<A|<LINK|<IMG|<SCRIPT|&LT;A|&LT;LINK|&LT;IMG|&LT;SCRIPT|{{).)*$/i;
+	this.alphanumeric = /^([a-zA-Z0-9\s\-\_])*$/;
+});
 
 sbiM.service('sbiModule_messaging',function(sbiModule_restServices,$mdToast){
 	
@@ -802,4 +848,7 @@ sbiM.service('sbiModule_i18n', function(sbiModule_config, sbiModule_restServices
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/sbiModule_services/sbiModule_dateServices.js"></script>
 <!-- sbiModule_jsonServices -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/sbiModule_services/sbiModule_jsonServices.js"></script>
+
+<script type="text/javascript" src="<%=request.getParameter(SpagoBIConstants.SBI_HOST)+request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>/js/lib/angular-localization/<%=curr_language%>-<%=curr_country%>.js"></script>
+
 	 

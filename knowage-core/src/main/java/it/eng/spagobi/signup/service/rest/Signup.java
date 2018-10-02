@@ -355,11 +355,8 @@ public class Signup {
 
 		try {
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
-			SbiUser user = null;
-			try {
-				user = userDao.loadSbiUserById(Integer.parseInt(id));
-			} catch (EMFUserError emferr) {
-			}
+			SbiUser user = userDao.loadSbiUserById(Integer.parseInt(id));
+
 			if (user == null) {
 				return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.unknownUser", "messages", locale) + "'}").toString();
 

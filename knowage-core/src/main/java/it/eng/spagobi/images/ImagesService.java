@@ -17,7 +17,9 @@
  */
 package it.eng.spagobi.images;
 
-import it.eng.spago.error.EMFUserError;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
@@ -31,27 +33,6 @@ import it.eng.spagobi.images.metadata.SbiImages;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.glossary.util.Util;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
 import org.apache.log4j.Logger;
@@ -59,9 +40,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.*;
 
 @Path("/1.0/images")
 public class ImagesService {
@@ -333,9 +321,6 @@ public class ImagesService {
 					dao.deleteImage(id);
 				}
 			}
-		} catch (EMFUserError e) {
-			success = false;
-			msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.deleteKO";
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while executing service \"deleteImage\"", t);
 			msg = "An unexpected error occured while executing service \"deleteImage\"";

@@ -42,7 +42,9 @@ public class JDBCDatasetFactory {
 
 		IDataSet dataSet = null;
 		switch (databaseDialect) {
+		case CASSANDRA:
 		case HIVE:
+		case HIVE2:
 		case SPARKSQL:
 			dataSet = new JDBCHiveDataSet();
 			break;
@@ -51,6 +53,9 @@ public class JDBCDatasetFactory {
 			break;
 		case IMPALA:
 			dataSet = new JDBCImpalaDataSet();
+			break;
+		case VERTICA:
+			dataSet = new JDBCVerticaDataSet();
 			break;
 		default:
 			dataSet = new JDBCDataSet();

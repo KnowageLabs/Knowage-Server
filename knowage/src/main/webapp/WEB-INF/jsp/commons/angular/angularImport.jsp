@@ -41,6 +41,7 @@ END-PRODUCTION -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-sanitize.min.js")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-messages.min.js")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-cookies.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/prettyCron/moment-with-locales.min.js")%>"></script> 
 
 <!-- IE Patch (official polyfill provided by https://developer.mozilla.org )-->
 <script type="text/javascript">
@@ -90,6 +91,7 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-tree/angular-ui-tree.js")%>"></script> 
 
 <!-- angular list -->
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/glossary/css/angular-list.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/AngularList.js")%>"></script> 		
 
 <!-- context menu -->
@@ -98,13 +100,14 @@ if(importAngularMaterialForExport == null) {
 <!--pagination-->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/pagination/dirPagination.js")%>"></script> 
 
-
 <!-- expanderBox -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/expander-box/expanderBox.js")%>"></script> 
 
 <!-- angular table -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js")%>"></script> 
+
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/kn-table/knTable.js")%>"></script> 
 
 <!-- document tree -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script> 
@@ -116,16 +119,16 @@ if(importAngularMaterialForExport == null) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/upload-file/FileUpload.js")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/upload-file/FileUploadBase64.js")%>"></script> 
 
-
 <!-- 	angular time picker -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js")%>"></script> 
 
-<!-- 	angular list dewtail template -->
+<!-- 	angular list detail template -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-list-detail/angularListDetail.js")%>"></script> 
 
 <!-- deprecated angular 2 col -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-list-detail/angular2Col.js")%>"></script> 
-
+	
+	 
 <!-- toastr -->
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/css/angular-toastr.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-toastr.tpls.js")%>"></script> 		
@@ -148,10 +151,17 @@ if(importAngularMaterialForExport == null) {
 <!-- angular-base64 -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-base64/angular-base64.min.js")%>"></script> 
 
+<!-- angular JSON FORMATTER -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/jsonformatter/dist/json-formatter.min.js")%>"></script> 
+
 <!-- angular-xregexp -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/xregexp/xregexp-all.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-xregexp/angular-xregexp.js")%>"></script> 
 
+<!-- AG GRID -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/ag-grid/dist/ag-grid.min.js")%>"></script>
+
+<!-- LOCALIZATION -->
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>">
 
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>

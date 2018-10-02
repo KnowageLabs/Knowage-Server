@@ -18,37 +18,24 @@
 
 package it.eng.spagobi.tools.dataset.metasql.query.visitor;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.metasql.query.PreparedStatementData;
 import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
-import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.BetweenFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.CompoundFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.NullaryFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.OrFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
-import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilterOperator;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
-import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
+import it.eng.spagobi.tools.dataset.metasql.query.item.*;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.database.IDataBase;
 
-public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor {
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor implements ISelectQueryVisitor {
 
 	protected static final String ALIAS_PREFIX = "AS";
 
@@ -60,7 +47,6 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 	protected IDataBase database;
 	protected String aliasPrefix;
 	protected String aliasDelimiter;
-	protected StringBuilder queryBuilder;
 	protected List<Object> queryParameters;
 
 	public AbstractSelectQueryVisitor(IDataBase database) {
@@ -69,28 +55,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		this.database = database;
 		this.aliasDelimiter = database.getAliasDelimiter();
 		this.aliasPrefix = ALIAS_PREFIX;
-		this.queryBuilder = new StringBuilder();
-		this.queryParameters = new ArrayList<Object>();
-	}
-
-	protected void visit(Filter filter) {
-		if (filter instanceof CompoundFilter) {
-			visit((CompoundFilter) filter);
-		} else if (filter instanceof SimpleFilter) {
-			visit((SimpleFilter) filter);
-		} else {
-			throw new IllegalArgumentException("No visit(" + filter.getClass().getCanonicalName() + ") method available");
-		}
-	}
-
-	@Override
-	public void visit(AndFilter item) {
-		visit((CompoundFilter) item);
-	}
-
-	@Override
-	public void visit(OrFilter item) {
-		visit((CompoundFilter) item);
+		this.queryParameters = new ArrayList<>();
 	}
 
 	@Override
@@ -107,24 +72,6 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		append(item.getProjection(), false);
 		queryBuilder.append(" ");
 		queryBuilder.append(item.getOperator());
-	}
-
-	protected void visit(CompoundFilter item) {
-		String spacedOp = " " + item.getCompositionOperator().toString() + " ";
-		List<Filter> filters = item.getFilters();
-
-		boolean isCompoundFilter = filters.get(0) instanceof CompoundFilter;
-		queryBuilder.append(isCompoundFilter ? "(" : "");
-		visit(filters.get(0));
-		queryBuilder.append(isCompoundFilter ? ")" : "");
-
-		for (int i = 1; i < filters.size(); i++) {
-			queryBuilder.append(spacedOp);
-			isCompoundFilter = filters.get(i) instanceof CompoundFilter;
-			queryBuilder.append(isCompoundFilter ? "(" : "");
-			visit(filters.get(i));
-			queryBuilder.append(isCompoundFilter ? ")" : "");
-		}
 	}
 
 	@Override
@@ -160,7 +107,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 	}
 
 	@Override
-	public String getFormattedTimestamp(Timestamp timestamp) {
+	protected String getFormattedTimestamp(Timestamp timestamp) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_TIMESTAMP_FORMAT);
 
 		StringBuilder sb = new StringBuilder();
@@ -174,7 +121,7 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 	}
 
 	@Override
-	public String getFormattedDate(Date date) {
+	protected String getFormattedDate(Date date) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT);
 
 		StringBuilder sb = new StringBuilder();
@@ -197,26 +144,6 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		} else {
 			append(item);
 		}
-	}
-
-	protected Filter transformToAndOrFilters(InFilter item) {
-		List<Projection> projections = item.getProjections();
-		List<Object> operands = item.getOperands();
-
-		int columnCount = projections.size();
-		int tupleCount = operands.size() / columnCount;
-
-		AndFilter[] andFilters = new AndFilter[tupleCount];
-		for (int tupleIndex = 0; tupleIndex < tupleCount; tupleIndex++) {
-			UnaryFilter[] equalFilters = new UnaryFilter[columnCount];
-			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-				equalFilters[columnIndex] = new UnaryFilter(projections.get(columnIndex), SimpleFilterOperator.EQUALS_TO,
-						operands.get(columnIndex + tupleIndex * columnCount));
-			}
-
-			andFilters[tupleIndex] = new AndFilter(equalFilters);
-		}
-		return new OrFilter(andFilters);
 	}
 
 	protected void append(InFilter item) {
@@ -263,12 +190,13 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 		append(item.getProjection(), false);
 		queryBuilder.append(" ");
 		queryBuilder.append(item.getOperator());
+		String value = item.isPattern() ? item.getValue() : "%" + item.getValue() + "%";
 		if (buildPreparedStatement) {
 			queryBuilder.append(" ?");
-			queryParameters.add(item.getPattern());
+			queryParameters.add(value);
 		} else {
 			queryBuilder.append(" '");
-			queryBuilder.append(item.getPattern());
+			queryBuilder.append(value);
 			queryBuilder.append("'");
 		}
 	}
@@ -335,24 +263,6 @@ public abstract class AbstractSelectQueryVisitor implements ISelectQueryVisitor 
 	@Override
 	public void visit(UnsatisfiedFilter item) {
 		queryBuilder.append(" 0=1");
-	}
-
-	public void visit(SimpleFilter item) {
-		if (item instanceof BetweenFilter) {
-			visit((BetweenFilter) item);
-		} else if (item instanceof InFilter) {
-			visit((InFilter) item);
-		} else if (item instanceof LikeFilter) {
-			visit((LikeFilter) item);
-		} else if (item instanceof NullaryFilter) {
-			visit((NullaryFilter) item);
-		} else if (item instanceof UnaryFilter) {
-			visit((UnaryFilter) item);
-		} else if (item instanceof UnsatisfiedFilter) {
-			visit((UnsatisfiedFilter) item);
-		} else {
-			throw new IllegalArgumentException("No visit(" + item.getClass().getCanonicalName() + ") method available");
-		}
 	}
 
 	protected void visit(SelectQuery selectQuery) {

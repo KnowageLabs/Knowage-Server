@@ -1,0 +1,75 @@
+<div class="expanderList">
+    <div ng-repeat="(key, value) in ngModel">
+    	<md-toolbar ng-class="{'opened':value.length>0}" class="secondaryToolbar">
+	   		<div class="md-toolbar-tools" >
+	   			<h2>{{key=="subqueries"? translate.load("kn.qbe.expander.list.derived.entities"):  translate.load("kn.qbe.expander.list.entities")}}</h2>
+	   			<span flex></span>
+	            <ng-transclude></ng-transclude>
+	            <span class="chip">{{value.length}}</span>
+	   		</div>
+	   	</md-toolbar>
+        
+        <div class="expandableEntities" ng-repeat="entity in value" >
+            <h4 ng-click="toggleExpander(entity)" ng-class="{'expanded':entity.expanded, 'filterEntityColor':isThereAFilter(entity)}" ng-drag="dragEnabled" ng-drag-data="entity" ng-drag-success="dragLi($data,$event)">
+                <i ng-class="[fontIcons, entity.iconCls]" ng-style="{'color':entity.color}"></i>
+                <span>{{entity.text}}</span>
+                 <span>{{entity.name}}</span>
+                <span flex></span>
+                
+                <md-button class="md-icon-button" ng-repeat="entAction in entitiesActions" ng-click="$event.stopPropagation();entAction.action(entity,$event)">
+                    <md-icon md-font-icon="{{entAction.icon}}"></md-icon>
+                </md-button>
+                
+                <md-button class="md-icon-button" >
+                    <md-icon md-font-icon="fa" ng-class="{'fa-chevron-up':entity.expanded, 'fa-chevron-down':!entity.expanded}"></md-icon>
+                </md-button>
+            </h4>
+            <ul ng-show="entity.expanded">
+            	<div ng-repeat="field in entity[childrenName]">
+            		<li layout="row" ng-click="field.expanded=!field.expanded;passEntityColorToTemporalFields(entity);" ng-if="!field.leaf" class="second-lvl-cursor">
+	            		<i class="fa" ng-class="{'fa-folder-open-o':field.expanded, 'fa-folder-o':!field.expanded}"></i>
+	                    <span ng-class="{'is-default':field.attributes.isdefault, 'is-not-default':!field.attributes.isdefault}">{{field["text"]}}</span>
+	                    <span flex></span>
+	                    <md-button class="md-icon-button" ng-show="!field.attributes.isdefault">
+	                    	 <md-icon class="second-lvl-chevron fa fa-sitemap" ng-click="setDefaultHierarchy(field, entity.id)" ></md-icon>
+	                    	 <md-tooltip>{{translate.load('kn.qbe.hierarchies.setdefault')}}</md-tooltip>
+	                    </md-button>
+	                    <md-button class="md-icon-button">
+	                    	<md-icon class="second-lvl-chevron fa" ng-class="{'fa-chevron-up':field.expanded, 'fa-chevron-down':!field.expanded}"></md-icon>
+	                    </md-button>
+            		</li>
+            	
+	            	<div layout="row"" ng-if="!field.leaf">
+	            		<ul ng-show="field.expanded" flex>
+	            		<li class="second-lvl-padding" ng-repeat="f in field.children"  al-click="moveFieldByClick(field)"  ng-drag="dragEnabled" ng-drag-data="f" ng-drag-success="dragLi($data,$event)" layout="row"">
+		            		<i class="fa fa-calendar"></i>
+		                   <span>{{f["text"]}}</span>
+		                   <span flex></span>
+		                   <md-button class="md-icon-button" ng-repeat="fieldAction in fieldsActions" ng-click="$event.stopPropagation();fieldAction.action(field,$event)">
+		                        <md-icon ng-class="field.iconCls=='the_date'&&fieldAction.icon=='fa fa-filter' ? 'temporal-filter-avaliable' : ''" md-font-icon="{{fieldAction.icon}}"></md-icon>
+		                        <md-tooltip ng-show="field.iconCls=='the_date'&&fieldAction.icon=='fa fa-filter'">{{translate.load('kn.qbe.expander.list.add.temporal.filter')}}</md-tooltip>
+		                    </md-button>
+	            		</li>
+	            	   </ul>
+	            	</div>
+            	</div>            	
+            		
+                <li ng-repeat="field in entity[childrenName]" al-click="moveFieldByClick(field)" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)" layout="row"" ng-if="field.leaf">
+                    <i ng-class="[fontIcons, field.iconCls]"></i>
+                    <span>{{field["text"]}}</span>
+                     <md-tooltip md-direction="top">{{countAll(field)>0 ? countAll(field) + " " + translate.load('kn.qbe.expander.list.tooltip.filters') : translate.load('kn.qbe.expander.list.tooltip.no.filters')}}</md-tooltip>
+                   <span>{{field["alias"]}}</span>
+                    <span flex></span>
+                    <md-button class="md-icon-button" ng-repeat="fieldAction in fieldsActions" ng-if="$event.stopPropagation();fieldAction.visible(field,$event)" ng-click="$event.stopPropagation();fieldAction.action(field,$event)">
+                        <md-icon ng-class="{'temporal-filter-avaliable':field.iconCls=='the_date'&&fieldAction.icon=='fa fa-filter' , 
+                        '':field.iconCls!='the_date'||fieldAction.icon!='fa fa-filter', 
+                        'filterColor':countFilters(field)>0 && fieldAction.icon=='fa fa-filter', 
+                        'havingColor':countHavings(field)>0 && fieldAction.icon=='fa fa-check-square-o'}" md-font-icon="{{fieldAction.icon}}"></md-icon>
+                        <md-tooltip ng-show="field.iconCls=='the_date'&&fieldAction.icon=='fa fa-filter'">{{translate.load('kn.qbe.expander.list.add.temporal.filter')}}</md-tooltip>
+                    </md-button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+</div>

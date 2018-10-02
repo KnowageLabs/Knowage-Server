@@ -388,7 +388,7 @@ public class SelectParametersLookupModule extends AbstractBasicListModule {
 	private static ListIFace filterForCorrelation(ListIFace list, ObjParuse objParuse, SourceBean request, HashMap parametersMap, EMFErrorHandler errorHandler) {
 		try {
 			// get the id of the parent parameter
-			Integer objParFatherId = objParuse.getObjParFatherId();
+			Integer objParFatherId = objParuse.getParFatherId();
 	        // find the bi parameter for the correlation (biparameter father)
 			BIObjectParameter objParFather = DAOFactory.getBIObjectParameterDAO().loadForDetailByObjParId(objParFatherId);
 	        // get the general parameter associated to the bi parameter father

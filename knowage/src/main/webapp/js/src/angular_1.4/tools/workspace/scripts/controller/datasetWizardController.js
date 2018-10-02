@@ -34,6 +34,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 	$scope.changingFile = false;
 	$scope.categorySet = null;
 
+
 	/**
 	 * 'step2ValidationErrors' - contains the validation result. If there is not error after the validation, the property will
 	 * not be present in the retrieved JSON got after the validating process and this scope variable will be of a value NULL.
@@ -85,6 +86,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 	$scope.csvQuoteChar = "";
 	$scope.csvEncoding= "";
 	$scope.dateFormat ="";
+	$scope.timestampFormat = "";
 
 	/**
 	 * If the type of the file that is uploaded for the file dataset is CSV and the dataset is opened in the wizard for the first
@@ -99,6 +101,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		$scope.csvQuoteChar = $scope.dataset.csvQuote;
 		$scope.csvEncoding= $scope.dataset.csvEncoding;
 		$scope.dateFormat = $scope.dataset.dateFormat;
+		$scope.timestampFormat = $scope.dataset.timestampFormat;
 	}
 
 	/**
@@ -144,7 +147,8 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 			// If at least one of those parameters is changed, signal to re-parse the file and get new metadata.
 			$scope.csvConfChanged = ($scope.csvDelimiter != $scope.dataset.csvDelimiter
 										|| $scope.csvQuoteChar != $scope.dataset.csvQuote
-											|| $scope.csvEncoding != $scope.dataset.csvEncoding || $scope.dateFormat != $scope.dataset.dateFormat) ?  true : false;
+											|| $scope.csvEncoding != $scope.dataset.csvEncoding || $scope.dateFormat != $scope.dataset.dateFormat
+												|| $scope.timestampFormat != $scope.dataset.timestampFormat) ?  true : false;
 
 			/**
 			 * If the CSV configuration is changed on the Step 1, set these indicators to false in order to reset the
@@ -250,17 +254,17 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 					var criteria3 = $scope.changedFileName == $scope.dataset.fileName;
 					var criteria4 = $scope.csvConfChanged == false;
 
-					if ((criteria1 || criteria2) && criteria3 && criteria4) {
-						$scope.dataset.meta = angular.copy($scope.metaDataCopy);
-					}
-					else {
+				//	if ((criteria1 || criteria2) && criteria3 && criteria4) {
+					//	$scope.dataset.meta = angular.copy($scope.metaDataCopy);
+					//}
+					//else {
 						// Reset the metadata
 						$scope.dataset.meta = {};
 						$scope.dataset.meta = angular.copy(response.data.meta);
 						$scope.changedFileName = $scope.dataset.fileName;
 						// Set the status to FALSE since the new metadata is collected and set. (danristo)
 						$scope.validationPassed = false;
-					}
+				//	}
 
 					angular.copy(response.data.datasetColumns,$scope.datasetColumns);
 
@@ -1034,7 +1038,8 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 				 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="string".toLowerCase() && insertString ||
 						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="double".toLowerCase()||
 						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="integer".toLowerCase()||
-						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="date".toLowerCase()){
+						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="date".toLowerCase() ||
+						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="timestamp".toLowerCase()){
 					 filteredMetaValues.push($scope.dsMetaValue[j]);
 				 }
 			}
@@ -1065,6 +1070,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 				typeValue = values[i].pvalue;
 				typeValue = typeValue!=null ? typeValue.replace("java.lang.","") : null;
 				typeValue = typeValue!=null ? typeValue.replace("java.util.","") : null;
+				typeValue = typeValue!=null ? typeValue.replace("java.sql.","") : null;
 				values[i].pvalue = typeValue;
 			}
 		}
